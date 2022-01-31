@@ -1,0 +1,8 @@
+#dla-jlab-filebrowser {
+  height: 500px;
+}
+
+.jp-FileBrowser {
+  min-width: 400px;
+  flex: 1 1 auto;
+}

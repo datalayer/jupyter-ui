@@ -1,0 +1,27 @@
+#dla-JupyterLab-Notebook {
+  height: 1000px !important;
+}
+
+.jp-Notebook {
+  flex: 1 1 auto;
+}
+
+.jp-NotebookPanel {
+  top: -20px !important;
+}
+
+.jp-NotebookPanel {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.jp-CodeCell {
+  position: relative !important;
+}
+
+.jp-Cell {
+  width: 100%;
+}
+
+.notebookCommandPalette {
+  min-width: 225px;
+}
