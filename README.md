@@ -24,6 +24,18 @@ The typedoc documentation is [available online](https://typedoc.datalayer.io/dat
 
 Please open [issues](https://github.com/datalayer/jupyter-react/issues) for questions, feature requests, bug reports... We also welcome [pull requests](https://github.com/datalayer/jupyter-react/pulls).
 
+## More
+
+Abstract from the talk given at [FOSDEM 2022](https://fosdem.org/2022). You can find more details on https://fosdem.org/2022/schedule/event/lt_jupyter (direct link to the video recording http://bofh.nikhef.nl/events/FOSDEM/2022/L.lightningtalks/lt_jupyter.webm).
+
+Jupyter notebook is a tool that allows Data Scientist to analyse dataset. However, it is not easy to create a custom user interface integrated in an existing application.
+
+Jupyter React, https://github.com/datalayer/jupyter-react, an open-source library, fills that gap and provides components that a developer can easily integrate in any React.js application.
+
+The Jupyter user interface stack is built on top of Lumino, which is an imperative way to build user interface and can not be consumed by industry standard declarative frameworks like React.js.
+
+As a user interface developer, if you want to create a custom data product on top of Jupyter, you have to stick to Lumino and update the existing notebook interface. This is not what you want. You want your toolkit (like React.js) and you want to integrate on a component basis the Jupyter functionality in your applicatio
+
 ## Contribute
 
 Follow the below steps to create your development environment. You will need [Miniconda](https://docs.conda.io/en/latest/miniconda.html) up-and-running on your machine (MacOS or Linux, Windows is not supported as development platform for the time-being).
