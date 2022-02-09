@@ -149,7 +149,7 @@ The following constitutes a non-exclusive list of prior art:
 - [Jupyter Widgets](https://github.com/jupyter-widgets) for a reactive solution that imply both frontend and backend.
 - JupyterLab RTC for collaboration.
 - JupyterHub management UI on top of React.js Bootstrap widgets https://github.com/jupyterhub/jupyterhub/tree/main/jsx
-- [Cocalc](https://github.com/sagemathinc/cocalc) connects to Jupyter Kernels with a frontend developed in Reacts.js.
+- [CoCalc](https://github.com/sagemathinc/cocalc) connects to Jupyter Kernels with a frontend developed in Reacts.js.
 - UI Toolkit is a component library for building web interfaces in Jupyter ecosystem (JupyterHub, Jupyter Widgets, JupyterLab,...) https://github.com/jupyterlab-contrib/jupyter-ui-toolkit. This JEP proposes to built on top tof this implementation.
 
 # Unresolved questions
