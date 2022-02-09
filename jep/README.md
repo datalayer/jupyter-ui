@@ -124,7 +124,7 @@ We have looked on various leading frontend technologies (React.js, Vue.js, Svelt
 
 We also see in the market more and more custom closed-source and open-source solutions providing notebook experiences and can expect actors will come with easy to use solutions to build custom user interface. If Jupyter does not move with a solutions, there is a risk that developers, and consequently users, will move to their own solution, with a risk that it can become a de-facto standard.
 
-Regarding the choice of [Fast Design](https://www.fast.design), an alternative is [Lit](https://lit.dev) backed by Google. The main disavantage for lit is the lack of out-of-the box widgets to start with and the really centric focuss on pure Web Elements which does not take into account React.js, Vue.js...  Although Lit provide nice features like [Reactive Controllers](https://lit.dev/docs/composition/controllers), we think Fast Design is a more adequate library to build upon.
+Regarding the choice of [Fast Design](https://www.fast.design), an alternative is [Lit](https://lit.dev) backed by Google. The main disavantage for lit is the lack of out-of-the box widgets to start with and the really centric focuss on pure Web Elements which does not take into account React.js, Vue.js...  Although Lit provide nice features like [Reactive Controllers](https://lit.dev/docs/composition/controllers), we think Fast Design is a more adequate library to build upon. Note also that today Fast integrates with Angular, Ember, React.js, Vue.js... but not yet with Svelte.
 
 # Prior art
 
@@ -141,12 +141,16 @@ This section is intended to encourage you as an author to think about the lesson
 If there is no prior art, that is fine - your ideas are interesting to us whether they are brand new or if it is an adaptation from other languages.
 ```
 
-- https://github.com/jupyterlab/extension-examples
-- https://github.com/nteract/nteract
-- Jupyter React https://github.com/datalayer/jupyter-react
-- Component library for building web interfaces in Jupyter ecosystem (JupyterHub, Jupyter Widgets, JupyterLab,...) https://github.com/jupyterlab-contrib/jupyter-ui-toolkit
+The following constitutes a non-exclusive list of prior art:
+
+- JupyterLab extension example using a React.js component https://github.com/jupyterlab/extension-examples/tree/master/react-widget
+- Nteract is a React.js notebook https://github.com/nteract/nteract
+- Jupyter React is a library with React.js components to create data products compatible with the Jupyter ecosystem.https://github.com/datalayer/jupyter-react
 - [Jupyter Widgets](https://github.com/jupyter-widgets) for a reactive solution that imply both frontend and backend.
 - JupyterLab RTC for collaboration.
+- JupyterHub management UI on top of React.js Bootstrap widgets https://github.com/jupyterhub/jupyterhub/tree/main/jsx
+- [Cocalc](https://github.com/sagemathinc/cocalc) connects to Jupyter Kernels with a frontend developed in Reacts.js.
+- UI Toolkit is a component library for building web interfaces in Jupyter ecosystem (JupyterHub, Jupyter Widgets, JupyterLab,...) https://github.com/jupyterlab-contrib/jupyter-ui-toolkit. This JEP proposes to built on top tof this implementation.
 
 # Unresolved questions
 
@@ -157,7 +161,7 @@ If there is no prior art, that is fine - your ideas are interesting to us whethe
 
 A base widget toolkit is in-scope of this JEP. Reactivity and collaborative are out-of-scope of this JEP.
 
-It should be possible for a React.js widget to share a global state with a widget deveoper in another technology (Vue.js, Svelte...). This can be achieved by a adequate global state/store system that is not restricted a single technology (so should be `polyglot`). This can be defined in subsequent JEP.
+It should be possible for a React.js widget to share a global state with a widget developed in another technology (Vue.js, Svelte...). This can be achieved by a adequate global state/store system that is not restricted a single technology (so should be `polyglot`). This can be defined in subsequent JEP.
 
 Reactivity to support features like [Jupyter Widgets](https://github.com/jupyter-widgets) can be defined in subsequent JEP. The current implementation of Jupyter Widgets relies on [Backbone.js](https://backbonejs.org) for which a successor would be welcome. We could imagine relying on the collaborative feature based on CRDT (Conflict-free replicated data types).
 
