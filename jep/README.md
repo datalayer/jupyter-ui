@@ -169,6 +169,11 @@ Realtime collaboration and local-first aplication are not in-scope for now but i
 
 Integration with the current Lumino extension system could be considered in the future. As this is a bit more complex to design, especially to support multiple technologies (not only React.js), we think a separated discussion will be better for that.
 
+There are also ongoing discussion to add more React.js and Web Component features in the Lumino toolkit, these topics should be discussed in their respective issues:
+
+- Lumino v2 Plan https://github.com/jupyterlab/lumino/issues/233
+- Switch from widget to standard web components https://github.com/jupyterlab/lumino/issues/290
+
 # Future possibilities
 
 ```
