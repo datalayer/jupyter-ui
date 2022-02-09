@@ -10,7 +10,7 @@ date-started: 2022-02-08
 
 This is a draft content towards a JEP for `React.js at Jupyter` based on the official [template](https://github.com/jupyter/enhancement-proposals/blob/master/jupyter-enhancement-proposal-guidelines/JEP-TEMPLATE.md).
 
-Once more public feedback gathere, we hope to submit it as a JEP (Jupyter Enhancement Proposal). We welcome contributors and reviewers in this early inception phase. More information on the JEP process can be read on:
+Once more preliminary feedback gathered, it will be submitted as a JEP (Jupyter Enhancement Proposal). We welcome contributors and reviewers in this early inception phase. More information on the JEP process can be read on:
 
 - [Guidelines](https://jupyter.org/enhancement-proposals/jupyter-enhancement-proposal-guidelines/jupyter-enhancement-proposal-guidelines.html)
 - [Repo](https://github.com/jupyter/enhancement-proposals)
@@ -24,7 +24,7 @@ One paragraph explanation of the proposal.
 
 This JEP defines how React.js technology can be used to build user interfaces in Jupyter related projects.
 
-The deliverable will be the creation of a `ui-toolkit` focused on React.js `widgets` that can also be a basis for other frontend technologies like Vue.js or Svelte. On top of that toolkit, extended functionalites on how `reactivity` and `collaboration` are also discussed here and are out-of-scope of the deliverable. It makes sense to already discuss those last aspects in relationship with [Jupyter Widgets](https://github.com/jupyter-widgets) and the current JupyterLab Realtime collaboration features.
+The deliverable will be the creation of a `ui-toolkit` focused on React.js `widgets` that can also be used as a basis for other frontend technologies like Vue.js or Svelte. On top of that toolkit, extended functionalites on how `reactivity` and `collaboration` are also discussed here and are out-of-scope of the deliverable. It makes sense to already discuss those last aspects in relationship with [Jupyter Widgets](https://github.com/jupyter-widgets) and the current JupyterLab Realtime collaboration features.
 
 # Motivation
 
@@ -145,6 +145,8 @@ If there is no prior art, that is fine - your ideas are interesting to us whethe
 - https://github.com/nteract/nteract
 - Jupyter React https://github.com/datalayer/jupyter-react
 - Component library for building web interfaces in Jupyter ecosystem (JupyterHub, Jupyter Widgets, JupyterLab,...) https://github.com/jupyterlab-contrib/jupyter-ui-toolkit
+- [Jupyter Widgets](https://github.com/jupyter-widgets) for a reactive solution that imply both frontend and backend.
+- JupyterLab RTC for collaboration.
 
 # Unresolved questions
 
@@ -155,13 +157,13 @@ If there is no prior art, that is fine - your ideas are interesting to us whethe
 
 A base widget toolkit is in-scope of this JEP. Reactivity and collaborative are out-of-scope of this JEP.
 
-Although not desirable, it should be possible for a React.js widget to share a global state with a widget deveoper in another technology (Vue.js, Svelte...). This can be achieved by a adequate global state/store system that is not restricted a single technology (so should be `polyglot`). This can be defined in subsequent JEP.
+It should be possible for a React.js widget to share a global state with a widget deveoper in another technology (Vue.js, Svelte...). This can be achieved by a adequate global state/store system that is not restricted a single technology (so should be `polyglot`). This can be defined in subsequent JEP.
 
-Reactivity so support features like [Jupyter Widgets](https://github.com/jupyter-widgets) can be defined in subsequent JEP.
+Reactivity to support features like [Jupyter Widgets](https://github.com/jupyter-widgets) can be defined in subsequent JEP. The current implementation of Jupyter Widgets relies on [Backbone.js](https://backbonejs.org) for which a successor would be welcome. We could imagine relying on the collaborative feature based on CRDT (Conflict-free replicated data types).
 
-Realtime collaboration, Local-first aplication are not in-scope for now.
+Realtime collaboration and local-first aplication are not in-scope for now but it is logical to mention that and depend on a CRDT solution (Y.js in use for now).
 
-Integration with the current Lumino extension system could be considered in the future. As this is a bit more comples to design, especially to support multiple technologies (not only React.js), we think a separated discussion will be better for that.
+Integration with the current Lumino extension system could be considered in the future. As this is a bit more complex to design, especially to support multiple technologies (not only React.js), we think a separated discussion will be better for that.
 
 # Future possibilities
 
