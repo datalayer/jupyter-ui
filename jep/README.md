@@ -61,8 +61,8 @@ The following defines key concepts used in today frontend landscape that we want
 - [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components) "is a suite of different technologies allowing you to create reusable custom elements — with their functionality encapsulated away from the rest of your code — and utilize them in your web apps" (quote from Mozilla developer).
 - A `Reactive UI` is not available today in Jupyter and can be defined as ... (see https://en.wikipedia.org/wiki/Reactive_user_interface, better defintion?). The best known example of such a UI is [ObservableHQ](https://observablehq.com).
 - A `global state` is not provided by the "advanced framework". React.js developers usually have to choose from existing solutions like [Redux](https://redux.js.org), [Mobx](https://mobx.js.org). For Vue.js, [Vuex](https://vuex.vuejs.org) is an option.
-- `Collaborative`:...
-- `Local-first` UI: ...
+- `Collaborative`: TODO
+- `Local-first` UI: TODO
 
 The current usage of those technologies at Jupyter is:
 
@@ -191,5 +191,7 @@ The section merely provides additional information.
 ```
 
 As mentioned earlier, subsequent JEP are expected to answer the open questions.
+
+The toolkit will target basic visual components and will not deliver higher level components like a usable `Cell`, or a collection of cells showing a basic `Notebook` connected to a running Kernel. Such components are for example available in the [Jupyter React](https://github.com/datalayer/jupyter-react) and would demeand further discussion around global state, connection to the services hosted on a server...
 
 We are also looking to use the current widgets in JupyterLab extensions and third party solutions (TODO give examples). Once released, we hope that existing solutions like e.g. the JupyterHub management UI will use them.
