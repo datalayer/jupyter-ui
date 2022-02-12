@@ -72,7 +72,7 @@ The current usage of those technologies at Jupyter is:
 
 - Notebook: Relies on jQuery.
 - JupyterLab: Relies on Lumino, potentially with React.js underneath.
-- JupyterHub: Relies on React.js (was jQuery until last year).
+- JupyterHub: Relies on jQuery and React.js.
 - Nteract: Relies on React.js.
 
 The goal is to create a widget toolkit that is usable by `React.js` developers, while being `Reactive` and `Collaborative`. The migration plan for an existing implementation has to be `non-breaking`.
