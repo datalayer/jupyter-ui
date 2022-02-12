@@ -203,4 +203,4 @@ As mentioned earlier, subsequent JEP are expected to answer the open questions.
 
 The toolkit will target basic visual components and will not deliver higher level components like a usable `Cell`, or a collection of cells showing a basic `Notebook` connected to a running Kernel. Such components are for example available in the [Jupyter React](https://github.com/datalayer/jupyter-react) and would demeand further discussion around global state, connection to the services hosted on a server...
 
-We are also looking to use the current widgets in JupyterLab extensions and third party solutions (TODO give examples). Once released, we hope that existing solutions like e.g. the JupyterHub management UI will use them.
+We are also looking to use the current widgets in JupyterLab extensions (e.g. [image editor](https://github.com/madhur-tandon/jlab-image-editor/) and [search accross files](https://github.com/jupyterlab-contrib/search-replace)) and third party solutions (e.g. [quetz-frontend](https://github.com/mamba-org/quetz-frontend)). Once released, we hope that existing solutions like e.g. the JupyterHub management UI will use them.
