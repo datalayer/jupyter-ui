@@ -123,7 +123,7 @@ The reader needs to understand that we are not reusing widgets toolkit but reall
 
 We want to provide widgets developed in a well adopted toolkit so that existing community can simply use them, instead of asking the javascript developer to learn a new framework (for example Lumino).
 
-We have looked on various leading frontend technologies (React.js, Vue.js, Svelte...) and based on the existing usage in the various Jupyter projects (JupyterLab, Nteract, JupyterHub), React.js is the best way to move forward. There are a lot of widget toolkits built on top of React.js (Material-UI, Chakra-UI...)
+We have looked on various leading frontend technologies (React.js, Vue.js, Svelte...) and based on the existing usage in the various Jupyter projects (JupyterLab, Nteract, JupyterHub) and the experience of lots of contributors, React.js is the best way to move forward.
 
 We also see in the market more and more custom closed-source and open-source solutions providing notebook experiences and can expect actors will come with easy to use solutions to build custom user interface. If Jupyter does not move with a solutions, there is a risk that developers, and consequently users, will move to their own solution, with a risk that it can become a de-facto standard.
 
