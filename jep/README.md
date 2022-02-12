@@ -38,7 +38,7 @@ Various community members, in their own group, had discussions about UI toolkit 
 
 With a better definition on which toolkit to use, we aim to help the various core Jupyter projects and the third-party extension developers to converge to a unified and more coherent end-user experience. This will also ease the development of complex widgets and remix applications by composing on-shelves components with few styling rules focusing on positioning rather than theming.
 
-In first instance, the outcome of this JEP will be `ui-toolkit` with [React.js](https://reactjs.org) components support backed by [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components). The Web Components aspect will allow third-party developers to create some widgets in others technologies like e.g. [Vue.js](https://vuejs.org), [Svelte](https://svelte.dev).
+In first instance, the outcome of this JEP will be `ui-toolkit` with [React.js](https://reactjs.org) components support backed by [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components). The Web Components aspect will allow third-party developers to include the widgets in others technologies like e.g. [Vue.js](https://vuejs.org), [Svelte](https://svelte.dev).
 
 # Guide-level explanation
 
