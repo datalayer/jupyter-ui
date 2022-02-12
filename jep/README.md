@@ -24,7 +24,9 @@ One paragraph explanation of the proposal.
 
 This JEP defines how React.js technology can be used to build user interfaces in Jupyter related projects.
 
-The deliverable will be the creation of a `ui-toolkit` focused on React.js `widgets` that can also be used as a basis for other frontend technologies like Vue.js or Svelte. On top of that toolkit, extended functionalites on how `reactivity` and `collaboration` are also discussed here and are out-of-scope of the deliverable. It makes sense to already discuss those last aspects in relationship with [Jupyter Widgets](https://github.com/jupyter-widgets) and the current JupyterLab Realtime collaboration features.
+The deliverable will be the creation of a `ui-toolkit` providing accessible and themed widgets fully compatible with React.js. But without blocking usage by other popular frontend technologies like Vue.js or Svelte.
+
+On top of that toolkit, extended functionalities on `reactivity` and `collaboration` are also discussed here. But they are out-of-scope of the deliverable. It makes sense to already discuss those last aspects in relationship with [Jupyter Widgets](https://github.com/jupyter-widgets) and the current JupyterLab Realtime collaboration features.
 
 # Motivation
 
