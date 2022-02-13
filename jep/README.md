@@ -120,6 +120,7 @@ The reader needs to understand that we are not reusing components but really red
 Creating custom element from scratch is possible. That process can be fasten by using third party libraries like Fast Design (by Microsoft) or [Lit](https://lit.dev) (by Google). Those libraries create components that can be integrated in more advanced frameworks. But like choosing one of those frameworks, the library chosen to create the toolkit will lock some choices for the toolkit development. For example, Fast Design goes beyond Lit by providing a design system based on observable [Design Tokens](https://www.fast.design/docs/design-systems/design-tokens) that ultimately define [CSS custom properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties) for styling the widgets.
 
 A known limitation of custom elements is the impossibility to use two elements with identical names. Cross libraries naming clashes is avoided by prefixing the element names (e.g. in jupyter-ui-toolkit the elements are prefixed by `jp-`). But this can likely happen when two different versions of the same library are loaded within the same page. This imposes to use only one version of the library in a web page. This can be mitigated by the documentation and by enforcing placing that library in the shared module scope when bundling the web application.
+
 # Rationale and alternatives
 
 ```
@@ -154,13 +155,14 @@ If there is no prior art, that is fine - your ideas are interesting to us whethe
 
 The following constitutes a non-exclusive list of prior art:
 
-- JupyterLab extension example using a React.js component https://github.com/jupyterlab/extension-examples/tree/master/react-widget
-- Nteract is a React.js notebook https://github.com/nteract/nteract
-- Jupyter React is a library with React.js components to create data products compatible with the Jupyter ecosystem.https://github.com/datalayer/jupyter-react
+- [JupyterLab](https://github.com/jupyterlab/extension-examples/tree/master/react-widget) extension example using a React.js component.
+- [Nteract](https://github.com/nteract/nteract) is a React.js notebook.
+- [Jupyter React](https://github.com/datalayer/jupyter-react) is a library with React.js components to create data products compatible with the Jupyter ecosystem.
+- [Vue Lumino](https://github.com/tupilabs/vue-lumino) allows to reuse the Lumino docking panel system in a Vue application. It is limited to docking aspects and will benefit from the components proposed in this JEP.
 - [Jupyter Widgets](https://github.com/jupyter-widgets) for a reactive solution that imply both frontend and backend.
-- JupyterHub management UI on top of React.js Bootstrap widgets https://github.com/jupyterhub/jupyterhub/tree/main/jsx
+- [JupyterHub management](https://github.com/jupyterhub/jupyterhub/tree/main/jsx) UI on top of React.js Bootstrap widgets.
 - [CoCalc](https://github.com/sagemathinc/cocalc) connects to Jupyter Kernels with a frontend developed in Reacts.js.
-- UI Toolkit is a component library for building web interfaces in Jupyter ecosystem (JupyterHub, Jupyter Widgets, JupyterLab,...) https://github.com/jupyterlab-contrib/jupyter-ui-toolkit. This JEP proposes to built on top tof this implementation.
+- [UI Toolkit](https://github.com/jupyterlab-contrib/jupyter-ui-toolkit) is a component library for building web interfaces in Jupyter ecosystem (JupyterHub, Jupyter Widgets, JupyterLab,...). This JEP proposes to built on top tof this implementation.
 
 # Unresolved questions
 
