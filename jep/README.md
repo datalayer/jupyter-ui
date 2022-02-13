@@ -24,9 +24,11 @@ One paragraph explanation of the proposal.
 
 This JEP defines how React.js technology can be used to build user interfaces in Jupyter related projects.
 
-The deliverable will be the creation of a `ui-toolkit` providing accessible and themed widgets fully compatible with React.js. But without blocking usage by other popular frontend technologies like Vue.js or Svelte.
+The deliverable will be the creation of a `ui-components` repository providing accessible and themed widgets fully compatible with React.js. But without blocking usage by other popular frontend technologies like Vue.js or Svelte.
 
-On top of that toolkit, extended functionalities on `reactivity` and `collaboration` are also discussed here. But they are out-of-scope of the deliverable. It makes sense to already discuss those last aspects in relationship with [Jupyter Widgets](https://github.com/jupyter-widgets) and the current JupyterLab Realtime collaboration features.
+On top of those components, extended functionalities on `reactivity` and `collaboration` are also discussed here. But they are out-of-scope of the deliverable. It makes sense to already discuss those last aspects in relationship with [Jupyter Widgets](https://github.com/jupyter-widgets) and the current JupyterLab Realtime collaboration features.
+
+We propose to move the current https://github.com/jupyterlab-contrib/jupyter-ui-toolkit repository to a Jupyter top-level repository. The home of that repository and the npm.js package naming still needs to be defined. That repository will be advertised as the default way to build user interface that conform to the Jupyter guidelines.
 
 # Motivation
 
@@ -34,11 +36,11 @@ On top of that toolkit, extended functionalities on `reactivity` and `collaborat
 Why are we doing this? What use cases does it support? What is the expected outcome?
 ```
 
-Various community members, in their own group, had discussions about UI toolkit and so far we have seen the emergence and use of different solutions. This has driven to the creation user interfaces relying on completely different widgets, resulting in non coherent look-and-feel that do not respond correctly to a desired theme. The communication and integration of those various technologies to act a single page application had also generated frustruations. The different solutions are often incompatible and are driving fragmentation of the overall Jupyter ecosystem.
+Various community members, in their own group, had discussions about UI components and so far we have seen the emergence and use of different solutions. This has driven to the creation user interfaces relying on completely different widgets, resulting in non coherent look-and-feel that do not respond correctly to a desired theme. The communication and integration of those various technologies to act a single page application had also generated frustruations. The different solutions are often incompatible and are driving fragmentation of the overall Jupyter ecosystem.
 
-With a better definition on which toolkit to use, we aim to help the various core Jupyter projects and the third-party extension developers to converge to a unified and more coherent end-user experience. This will also ease the development of complex widgets and remix applications by composing on-shelves components with few styling rules focusing on positioning rather than theming.
+With a better definition on which components to use, we aim to help the various core Jupyter projects and the third-party extension developers to converge to a unified and more coherent end-user experience. This will also ease the development of complex widgets and remix applications by composing on-shelves components with few styling rules focusing on positioning rather than theming.
 
-In first instance, the outcome of this JEP will be `ui-toolkit` with [React.js](https://reactjs.org) components support backed by [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components). The Web Components aspect will allow third-party developers to include the widgets in others technologies like e.g. [Vue.js](https://vuejs.org), [Svelte](https://svelte.dev).
+In first instance, the outcome of this JEP will be `ui-components` with [React.js](https://reactjs.org) components support backed by [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components). The Web Components aspect will allow third-party developers to include the widgets in others technologies like e.g. [Vue.js](https://vuejs.org), [Svelte](https://svelte.dev).
 
 # Guide-level explanation
 
@@ -75,7 +77,7 @@ The current usage of those technologies at Jupyter is:
 - JupyterHub: Relies on jQuery and React.js.
 - Nteract: Relies on React.js.
 
-The goal is to create a widget toolkit that is usable by `React.js` developers, while being `Reactive` and `Collaborative`. The migration plan for an existing implementation has to be `non-breaking`.
+The goal is to create a components that are usable by `React.js` developers, while being `Reactive` and `Collaborative`. The migration plan for an existing implementation has to be `non-breaking`.
 
 # Reference-level explanation
 
@@ -112,7 +114,7 @@ This jupyter-ui-toolkit repository contains three packages:
 
 Those features are brought through the [Fast Design](https://www.fast.design), a Microsoft backed project, released under [MIT license](https://github.com/microsoft/fast/blob/master/LICENSE).
 
-The reader needs to understand that we are not reusing widgets toolkit but really redeveloping one on a modern stack. The drawback is that we have to invest energy to build and maintain that toolkit, the unbeatable advantage is that we can build widgets suited to the very specific needs of Jupyter, having all sorts of data-driven widgets.
+The reader needs to understand that we are not reusing components but really redeveloping them on a modern stack. The drawback is that we have to invest energy to build and maintain those components, the unbeatable advantage is that we can build widgets suited to the very specific needs of Jupyter, having all sorts of data-driven widgets.
 
 # Rationale and alternatives
 
@@ -127,7 +129,7 @@ We want to provide widgets developed in a well adopted toolkit so that existing 
 We have looked on various leading frontend technologies (React.js, Vue.js, Svelte...) and based on the existing usage in the various Jupyter projects (JupyterLab, Nteract, JupyterHub) and the experience of lots of contributors, React.js is the best way to move forward.
 
 We also see in the market more and more custom closed-source and open-source solutions providing notebook experiences and can expect actors will come with easy to use solutions to build custom user interface. If Jupyter does not move with a solution, there is a risk that developers, and consequently users, will move to their own solution, with a risk that it can become a de-facto standard.  
-By building our own toolkit that eases integration for other players, we have an opportunity to increase contributions in the open-source Jupyter community.
+By building our own components that eases integration for other players, we have an opportunity to increase contributions in the open-source Jupyter community.
 
 Regarding the choice of [Fast Design](https://www.fast.design), an alternative is [Lit](https://lit.dev) backed by Google. The main disadvantage for Lit is the lack of out-of-the box widgets to start with, the absence of design system and the really centric focus on pure Web Elements which does not take into account React.js, Vue.js... . Therefore, we think Fast Design is a more adequate library to build upon. Note also that today Fast integrates with Angular, Ember, React.js, Vue.js... but not yet with Svelte. Lit provides [Reactive Controllers](https://lit.dev/docs/composition/controllers) which is a mean [similar to the React.js hook mechanism](https://github.com/lit/lit/tree/main/packages/labs/react#usecontroller) and is not mandatory is our case and is a feature that should be looked with the next discussions around a global state.
 
@@ -164,13 +166,13 @@ The following constitutes a non-exclusive list of prior art:
 - What related issues do you consider out of scope for this JEP that could be addressed in the future independently of the solution that comes out of this JEP?
 ```
 
-A base widget toolkit is in-scope of this JEP. Reactivity and collaborative are out-of-scope of this JEP.
+Base components are in-scope of this JEP. Reactivity and collaborative are out-of-scope of this JEP.
 
 It should be possible for a React.js widget to share a global state with a widget developed in another technology (Vue.js, Svelte...). This can be achieved by a adequate global state/store system that is not restricted a single technology (so should be `polyglot`). This can be defined in subsequent JEP.
 
 Reactivity to support features like [Jupyter Widgets](https://github.com/jupyter-widgets) can be defined in subsequent JEP. The current implementation of Jupyter Widgets relies on [Backbone.js](https://backbonejs.org) for which a successor would be welcome. We could imagine relying on the collaborative feature based on CRDT (Conflict-free replicated data types).
 
-Realtime collaboration and local-first aplication are not in-scope for now but it is logical to mention that and depend on a CRDT solution (Y.js in use for now).
+Realtime collaboration and local-first applications are not in-scope for now but it is logical to mention that and depend on a CRDT solution (Y.js in use for now).
 
 Integration with the current Lumino extension system could be considered in the future. As this is a bit more complex to design, especially to support multiple technologies (not only React.js), we think a separated discussion will be better for that.
 
@@ -178,6 +180,8 @@ There are also ongoing discussion to add more React.js and Web Component feature
 
 - Lumino v2 Plan https://github.com/jupyterlab/lumino/issues/233
 - Switch from widget to standard web components https://github.com/jupyterlab/lumino/issues/290
+
+The home of the ui-components repository and the npm.js package naming still need to be defined (read more on https://github.com/jupyterlab/retrolab/issues/313 and https://github.com/jupyter/notebook-team-compass/issues/2). The ideal naming would be `@jupyter/ui-components` (please note that the npm.js jupyter org is hold by someone else and that npm.js has not yet answered to our request to get that org back).
 
 # Future possibilities
 
@@ -202,6 +206,6 @@ The section merely provides additional information.
 
 As mentioned earlier, subsequent JEP are expected to answer the open questions.
 
-The toolkit will target basic visual components and will not deliver higher level components like a usable `Cell`, or a collection of cells showing a basic `Notebook` connected to a running Kernel. Such components are for example available in the [Jupyter React](https://github.com/datalayer/jupyter-react) and would demeand further discussion around global state, connection to the services hosted on a server...
+The components will target basic visual functions like buttons, drop-down... and will not deliver higher level components like a usable `Cell`, or a collection of cells showing a basic `Notebook` connected to a running Kernel. Such components are for example available in the [Jupyter React](https://github.com/datalayer/jupyter-react) and would demeand further discussion around global state, connection to the services hosted on a server...
 
 We are also looking to use the current widgets in JupyterLab extensions (e.g. [image editor](https://github.com/madhur-tandon/jlab-image-editor/) and [search accross files](https://github.com/jupyterlab-contrib/search-replace)) and third party solutions (e.g. [quetz-frontend](https://github.com/mamba-org/quetz-frontend)). Once released, we hope that existing solutions like e.g. the JupyterHub management UI will use them.
