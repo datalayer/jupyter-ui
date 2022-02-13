@@ -178,12 +178,12 @@ Reactivity to support features like [Jupyter Widgets](https://github.com/jupyter
 
 Realtime collaboration and local-first applications are not in-scope for now but it is logical to mention that and depend on a CRDT solution (Y.js in use for now).
 
-Integration with the current Lumino extension system could be considered in the future. As this is a bit more complex to design, especially to support multiple technologies (not only React.js), we think a separated discussion will be better for that.
-
-There are also ongoing discussion to add more React.js and Web Component features in the Lumino toolkit, these topics should be discussed in their respective issues:
+The technology put in place for this JEP once matured could be used to migrate the current Lumino widgets to ease their integration into modern frameworks. There are also ongoing discussion to add more React.js and Web Component features in the Lumino toolkit, these topics should be discussed in their respective issues:
 
 - Lumino v2 Plan https://github.com/jupyterlab/lumino/issues/233
 - Switch from widget to standard web components https://github.com/jupyterlab/lumino/issues/290
+
+The integration with the current Lumino extension system could be considered in the future. As this is a bit more complex to design, especially to support multiple technologies (not only React.js), we think a separated discussion will be better for that.
 
 The home of the ui-components repository and the npm.js package naming still need to be defined (read more on https://github.com/jupyterlab/retrolab/issues/313 and https://github.com/jupyter/notebook-team-compass/issues/2). The ideal naming would be `@jupyter/ui-components` (please note that the npm.js jupyter org is hold by someone else and that npm.js has not yet answered to our request to get that org back).
 
