@@ -72,7 +72,8 @@ They are built on the [custom element](https://html.spec.whatwg.org/multipage/cu
 
 The current usage of those technologies at Jupyter is:
 
-- Notebook: Relies on jQuery.
+- Notebook until V6: Relies on jQuery.
+- Notebook V7: Relies on Retrolab, thus on Lumino and JupyterLab (https://jupyter.org/enhancement-proposals/79-notebook-v7/notebook-v7.html).
 - JupyterLab: Relies on Lumino, potentially with React.js underneath.
 - JupyterHub: Relies on jQuery and React.js.
 - Nteract: Relies on React.js.
