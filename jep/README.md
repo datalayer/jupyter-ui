@@ -116,6 +116,9 @@ Those features are brought through the [Fast Design](https://www.fast.design), a
 
 The reader needs to understand that we are not reusing components but really redeveloping them on a modern stack. The drawback is that we have to invest energy to build and maintain those components, the unbeatable advantage is that we can build widgets suited to the very specific needs of Jupyter, having all sorts of data-driven widgets.
 
+Creating custom element from scratch is possible. That process can be fasten by using third party libraries like Fast Design (by Microsoft) or [Lit](https://lit.dev) (by Google). Those libraries create components that can be integrated in more advanced frameworks. But like choosing one of those frameworks, the library chosen to create the toolkit will lock some choices for the toolkit development. For example, Fast Design goes beyond Lit by providing a design system based on observable [Design Tokens](https://www.fast.design/docs/design-systems/design-tokens) that ultimately define [CSS custom properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties) for styling the widgets.
+
+A known limitation of custom elements is the impossibility to use two elements with identical names. Cross libraries naming clashes is avoided by prefixing the element names (e.g. in jupyter-ui-toolkit the elements are prefixed by `jp-`). But this can likely happen when two different versions of the same library are loaded within the same page. This imposes to use only one version of the library in a web page. This can be mitigated by the documentation and by enforcing placing that library in the shared module scope when bundling the web application.
 # Rationale and alternatives
 
 ```
