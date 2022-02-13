@@ -6,9 +6,9 @@ pr-number: <proposal-pull-request-number>
 date-started: 2022-02-08
 ---
 
-> JEP for React.js at Jupyter
+> JEP for Jupyter UI Components
 
-This is a draft content towards a JEP for `React.js at Jupyter` based on the official [template](https://github.com/jupyter/enhancement-proposals/blob/master/jupyter-enhancement-proposal-guidelines/JEP-TEMPLATE.md).
+This is a draft content towards a JEP for `Jupyter UI Components` based on the official [template](https://github.com/jupyter/enhancement-proposals/blob/master/jupyter-enhancement-proposal-guidelines/JEP-TEMPLATE.md).
 
 Once more preliminary feedback gathered, it will be submitted as a JEP (Jupyter Enhancement Proposal). We welcome contributors and reviewers in this early inception phase. More information on the JEP process can be read on:
 
