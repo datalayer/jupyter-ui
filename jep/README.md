@@ -158,7 +158,6 @@ The following constitutes a non-exclusive list of prior art:
 - Nteract is a React.js notebook https://github.com/nteract/nteract
 - Jupyter React is a library with React.js components to create data products compatible with the Jupyter ecosystem.https://github.com/datalayer/jupyter-react
 - [Jupyter Widgets](https://github.com/jupyter-widgets) for a reactive solution that imply both frontend and backend.
-- JupyterLab RTC for collaboration.
 - JupyterHub management UI on top of React.js Bootstrap widgets https://github.com/jupyterhub/jupyterhub/tree/main/jsx
 - [CoCalc](https://github.com/sagemathinc/cocalc) connects to Jupyter Kernels with a frontend developed in Reacts.js.
 - UI Toolkit is a component library for building web interfaces in Jupyter ecosystem (JupyterHub, Jupyter Widgets, JupyterLab,...) https://github.com/jupyterlab-contrib/jupyter-ui-toolkit. This JEP proposes to built on top tof this implementation.
@@ -174,9 +173,9 @@ Base components are in-scope of this JEP. Reactivity and collaborative are out-o
 
 It should be possible for a React.js widget to share a global state with a widget developed in another technology (Vue.js, Svelte...). This can be achieved by a adequate global state/store system that is not restricted a single technology (so should be `polyglot`). This can be defined in subsequent JEP.
 
-Reactivity to support features like [Jupyter Widgets](https://github.com/jupyter-widgets) can be defined in subsequent JEP. The current implementation of Jupyter Widgets relies on [Backbone.js](https://backbonejs.org) for which a successor would be welcome. We could imagine relying on the collaborative feature based on CRDT (Conflict-free replicated data types).
+Realtime collaboration and local-first applications are not in-scope for now but it is logical to mention that and to anticipate they will depend on a CRDT solution (e.g. Y.js in use for now in JupyterLab). We could imagine a global state being responsible to synchronize the model via CRDT messages. Such implementations are already being worked on with well-know global state systems like Redux, with e.g. [Y.js binding to Redux](https://github.com/lscheibel/redux-yjs-bindings). The UI components should thus be able to easily bind to such market standard global states.
 
-Realtime collaboration and local-first applications are not in-scope for now but it is logical to mention that and depend on a CRDT solution (Y.js in use for now).
+Reactivity to support features like [Jupyter Widgets](https://github.com/jupyter-widgets) can be defined in subsequent JEP. The current implementation of Jupyter Widgets relies on [Backbone.js](https://backbonejs.org) for which a successor would be welcome. We could imagine relying on the collaborative feature based on CRDT (Conflict-free replicated data types).
 
 The technology put in place for this JEP once matured could be used to migrate the current Lumino widgets to ease their integration into modern frameworks. There are also ongoing discussion to add more React.js and Web Component features in the Lumino toolkit, these topics should be discussed in their respective issues:
 
