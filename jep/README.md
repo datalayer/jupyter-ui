@@ -177,14 +177,12 @@ Realtime collaboration and local-first applications are not in-scope for now but
 
 Reactivity to support features like [Jupyter Widgets](https://github.com/jupyter-widgets) can be defined in subsequent JEP. The current implementation of Jupyter Widgets relies on [Backbone.js](https://backbonejs.org) for which a successor would be welcome. We could imagine relying on the collaborative feature based on CRDT (Conflict-free replicated data types).
 
-The technology put in place for this JEP once matured could be used to migrate the current Lumino widgets to ease their integration into modern frameworks. There are also ongoing discussion to add more React.js and Web Component features in the Lumino toolkit, these topics should be discussed in their respective issues:
+The integration with the current Lumino extension system could be considered in the future. As this is a bit more complex to design, especially to support multiple technologies (not only React.js), we think a separated discussion will be better for that. However we think the strengths of the JupyterLab ecosystem is its extension system. Developers will expect being able to reuse all the existing extensions that have been developed over the past years as is. So the UI components presented here should somehow be compatible with it. The technology put in place for this JEP once matured could be used to migrate the current Lumino widgets and extensions foundations to ease their integration into modern frameworks. There are also ongoing discussion to add more React.js and Web Component features in the Lumino toolkit, these topics should be discussed in their respective issues:
 
 - Lumino v2 Plan https://github.com/jupyterlab/lumino/issues/233
 - Switch from widget to standard web components https://github.com/jupyterlab/lumino/issues/290
 
-The integration with the current Lumino extension system could be considered in the future. As this is a bit more complex to design, especially to support multiple technologies (not only React.js), we think a separated discussion will be better for that.
-
-The home of the ui-components repository and the npm.js package naming still need to be defined (read more on https://github.com/jupyterlab/retrolab/issues/313 and https://github.com/jupyter/notebook-team-compass/issues/2). The ideal naming would be `@jupyter/ui-components` (please note that the npm.js jupyter org is hold by someone else and that npm.js has not yet answered to our request to get that org back).
+The home of the `ui-components` repository and the npm.js package naming still need to be defined (read more on https://github.com/jupyterlab/retrolab/issues/313 and https://github.com/jupyter/notebook-team-compass/issues/2). The ideal naming would be `@jupyter/ui-components` (please note that the npm.js jupyter org is hold by someone else and that npm.js has not yet answered to our request to get that org back).
 
 # Future possibilities
 
