@@ -61,14 +61,13 @@ The following defines key concepts used in today frontend landscape that we want
 - Vanilla JavaScript is not enough to create rich user interface in a efficient way. It is the closest layer to the DOM, giving the most control, but lacks higher level abstractions.
 - [jQuery](https://jquery.com) is a framework that has been extensively used to ease the developer experience. jQuery is used by the [Jupyter Notebook](https://github.com/jupyter/notebook) and historically by [JupyterHub](https://gitter.im/jupyterhub/jupyterhub).
 - jQuery is now being overruled by solutions like [React.js](https://reactjs.org), [Vue.js](https://vuejs.org), [Svelte](https://svelte.dev)..., which we can be called as `advanced frameworks` that simplify and empower the JavaScript developer. Each of these `advanced frameworks` do not ship usable widgets and provide advanced primitives like a virtual-DOM to render, refresh, manage local state... In the React.js case, the developer can create widgets from scratch or choose an existing toolkit like e.g. [Material-UI](https://mui.com), [Chakra-UI](https://chakra-ui.com).
-- [JupyterLab Lumino](https://github.com/jupyterlab/lumino) is a framework close to the DOM, supporting extensions, that is maintained and used by JupyterLab to create its own user interface. Outside of JupyterLab, its usage is limited and it may miss features available in other solutions like virtual-DOM. It is important to note that Lumino can embed React.js components, but that a React.js application can not reuse Lumino widgets. This means that Lumino can not be used by React.js developers. This is also true for any Vue.js, Svelte... developers who can not reuse Lumino widgets.  
+- [Lumino](https://github.com/jupyterlab/lumino) is a framework close to the DOM, supporting extensions, that is maintained and used by JupyterLab to create its own user interface. Outside of JupyterLab, its usage is limited and it may miss features available in other solutions like virtual-DOM. It is important to note that Lumino can embed React.js components, but that a React.js application can not reuse Lumino widgets. This means that Lumino can not be used by React.js developers. This is also true for any Vue.js, Svelte... developers who can not reuse Lumino widgets.  
 This is one of the main pain point for external parties that are interested in integrating some JupyterLab features in their products.
 - [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components) "is a suite of different technologies allowing you to create reusable custom elements — with their functionality encapsulated away from the rest of your code — and utilize them in your web apps" (quote from Mozilla developer).  
 They are built on the [custom element](https://html.spec.whatwg.org/multipage/custom-elements.html#dom-window-customelements) web standard.
 - A `Reactive UI` is not available today in Jupyter and can be defined as ... (see https://en.wikipedia.org/wiki/Reactive_user_interface, better defintion?). The best known example of such a UI is [ObservableHQ](https://observablehq.com).
 - A `global state` is not provided by the "advanced framework". React.js developers usually have to choose from existing solutions like [Redux](https://redux.js.org), [Mobx](https://mobx.js.org). For Vue.js, [Vuex](https://vuex.vuejs.org) is an option.
-- `Collaborative`: TODO
-- `Local-first` UI: TODO
+- `Local-first`: Read more about the Local-first applications [in this article](https://www.inkandswitch.com/local-first), "a set of principles for software that enables both collaboration and ownership for users".
 
 The current usage of those technologies at Jupyter is:
 
@@ -171,7 +170,7 @@ The following constitutes a non-exclusive list of prior art:
 - What related issues do you consider out of scope for this JEP that could be addressed in the future independently of the solution that comes out of this JEP?
 ```
 
-Base components are in-scope of this JEP. Reactivity and collaborative are out-of-scope of this JEP.
+Base components are in-scope of this JEP. Reactivity and collaboration/local-first are out-of-scope of this JEP.
 
 It should be possible for a React.js widget to share a global state with a widget developed in another technology (Vue.js, Svelte...). This can be achieved by a adequate global state/store system that is not restricted a single technology (so should be `polyglot`). This can be defined in subsequent JEP.
 
