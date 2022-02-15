@@ -57,7 +57,7 @@ The current usage of those technologies at Jupyter is:
 - JupyterHub: Relies on jQuery and React.js.
 - Nteract: Relies on React.js.
 
-The goal is to create an accessible themed widgets components that is usable by developers (with a focus on _React.js_ usage), while being **Reactive**,  **Collaborative** and easy to integrate outside official Jupyter projects. The migration plan from an existing implementation has to be **non-breaking** and **progressive** (non need to switch everything at once).
+The goal is to create accessible themed components that is usable by developers (with a focus on _React.js_ usage), while being **Reactive**,  **Collaborative** and easy to integrate outside official Jupyter projects. The migration plan from an existing implementation has to be **non-breaking** and **progressive** (non need to switch everything at once).
 
 # Reference-level explanation
 
