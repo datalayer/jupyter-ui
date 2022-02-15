@@ -61,16 +61,6 @@ The goal is to create accessible themed components that is usable by developers 
 
 # Reference-level explanation
 
-```
-This is the technical portion of the JEP. Explain the design in sufficient detail that:
-
-- Its interaction with other features is clear.
-- It is reasonably clear how the feature would be implemented.
-- Corner cases are dissected by example.
-
-The section should return to the examples given in the previous section, and explain more fully how the detailed proposal makes those examples work.
-```
-
 We propose to build the widget toolkit on the current work being done at https://github.com/jupyterlab-contrib/jupyter-ui-toolkit. The features of that library include:
 
 - **Implements the Jupyter design language:** All components follow the design language of Jupyter
