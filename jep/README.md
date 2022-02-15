@@ -118,7 +118,7 @@ The following constitutes a non-exclusive list of prior art:
 - [JupyterLab](https://github.com/jupyterlab/extension-examples/tree/master/react-widget) extension example using a React.js component.
 - [Nteract](https://github.com/nteract/nteract) is a React.js notebook.
 - [Jupyter React](https://github.com/datalayer/jupyter-react) is a library with React.js components to create data products compatible with the Jupyter ecosystem.
-- [Vue Lumino](https://github.com/tupilabs/vue-lumino) allows to reuse the Lumino docking panel system in a Vue application. It is limited to docking aspects and will benefit from the components proposed in this JEP.
+- [Vue Lumino](https://github.com/tupilabs/vue-lumino) allows to reuse the Lumino docking panel system in a Vue application. It is limited to docking aspects and will benefit from the components proposed in this JEP. Indeed web components are directly usable within Vue. So such wrappers should not be needed any longer if the Lumino widgets where to be converted to that technology.
 - [Jupyter Widgets](https://github.com/jupyter-widgets) for a reactive solution that imply both frontend and backend.
 - [JupyterHub management](https://github.com/jupyterhub/jupyterhub/tree/main/jsx) UI on top of React.js Bootstrap widgets.
 - [CoCalc](https://github.com/sagemathinc/cocalc) connects to Jupyter Kernels with a frontend developed in Reacts.js.
