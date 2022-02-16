@@ -9,7 +9,7 @@ import LuminoControl from '../../controls/LuminoControl';
 import LuminoExample from './../lumino/LuminoExample';
 import IpyWidgetsControl from '../../controls/IpyWidgetsControl';
 import IpyWidgetsExample from '../ipywidgets/IpyWidgetsExample';
-import { IpyWidgetsComponent } from '../../../index';
+import IpyWidgetsComponent from './../../../widgets/ipywidgets/IpyWidgetsComponent';
 import { CellLumino } from '../../../index';
 import CellControl from '../../controls/CellControl';
 import { CommandsLumino } from '../../../index';

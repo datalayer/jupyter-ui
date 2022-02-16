@@ -1,6 +1,6 @@
 // Jupyter
-export * from './jupyter/JupyterContext';
 export { default as Jupyter } from './jupyter/Jupyter';
+export * from './jupyter/JupyterContext';
 
 // Services
 export { default as Services } from './services/Services';
@@ -51,6 +51,3 @@ export { settingsActions as settingsActions } from './widgets/settings/SettingsS
 export { default as TerminalLumino } from './widgets/terminal/TerminalLumino';
 export { selectTerminal as selectTerminal } from './widgets/terminal/TerminalState';
 export { terminalActions as terminalActions } from './widgets/terminal/TerminalState';
-
-// Examples
-export { default as SimpleLumino } from './examples/examples/lumino/LuminoExample';
