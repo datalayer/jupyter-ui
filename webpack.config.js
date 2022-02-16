@@ -1,9 +1,15 @@
 const webpack = require("webpack");
+const path = require("path");
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
-
 const ModuleFederationPlugin = require("webpack").container.ModuleFederationPlugin;
+
+const shimJS = path.resolve(__dirname, "src", "emptyshim.js");
+
+function shim(regExp) {
+  return new webpack.NormalModuleReplacementPlugin(regExp, shimJS);
+}
 
 const IS_PRODUCTION = process.argv.indexOf('--mode=production') > -1;
 let mode = "development";
@@ -138,6 +144,7 @@ module.exports = {
     ]
   },
   plugins: [
+    shim(/@fortawesome/),
     new webpack.ProvidePlugin({
       process: 'process/browser'
     }),
