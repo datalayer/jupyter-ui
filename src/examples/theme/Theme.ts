@@ -101,7 +101,7 @@ const typography: Partial<Typography> = createTypography(palette, {
   fontWeightRegular: 400,
   fontWeightMedium: 500,
   fontWeightBold: 700,
-  // Tell Material-UI what's the font-size on the html element.
+  // Tell Datalayer what's the font-size on the html element.
   // 16px is the default font-size used by browsers.
   htmlFontSize: 16,
   // Apply the CSS properties to all the variants.
