@@ -24,6 +24,8 @@ The deliverable will be the creation of a `ui-components` repository providing a
 
 On top of those components, extended functionalities on `reactivity` and `collaboration` are also discussed here. But they are out-of-scope of the deliverable. It makes sense to already discuss those last aspects in relationship with [Jupyter Widgets](https://github.com/jupyter-widgets) and the current JupyterLab Realtime collaboration features.
 
+Accessibility criteria will drive the creation of those components.
+
 We propose to move the current https://github.com/jupyterlab-contrib/jupyter-ui-toolkit repository to a Jupyter top-level repository. The home of that repository and the npm.js package naming still needs to be defined. That repository will be advertised as the default way to build user interface that conform to the Jupyter guidelines.
 
 # Motivation
