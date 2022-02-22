@@ -29,9 +29,9 @@ const ErrorFallback = ({error, resetErrorBoundary}: any) => {
     <div role="alert">
       <p>Oops, something went wrong.</p>
       <pre>{error.message}</pre>
-      {/*
+{/*
       <button onClick={resetErrorBoundary}>Try again</button>
-      */}
+*/}
     </div>
   )
 }
