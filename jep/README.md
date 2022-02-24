@@ -79,7 +79,7 @@ We propose to build the widget toolkit on the current work being done at https:/
 - **Use any tech stack:** The library ships as a set of web components, meaning developers can use
   the toolkit no matter what tech stack (React, Vue, Svelte, etc.) their extension is built with.
 - **Accessible foundations out of the box:** All components ship with web standard compliant ARIA labels,
-  keyboard navigation and accessible color contrast.
+  keyboard navigation and accessible color contrast from the start.
 
 This jupyter-ui-toolkit repository contains three packages:
 
