@@ -36,6 +36,12 @@ With a better definition on which components to use, we aim to help the various 
 
 In first instance, the outcome of this JEP will be `ui-components` with [React.js](https://reactjs.org) components support backed by [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components). The Web Components aspect will allow third-party developers to include the widgets in others technologies like e.g. [Vue.js](https://vuejs.org), [Svelte](https://svelte.dev).
 
+Current solutions also share varying levels of accessibility; none were built with such concerns in mind from the start.
+For Jupyter projects to be truly open to everyone, accessibility needs to become standard. Having a common set of components for
+Jupyter projects with user interfaces takes some of the burden off individuals by providing foundational accessibility
+considerations built in. By endorsing a standard set of components with accessibility considerations at its core, Project Jupyter is
+also communicating the expectation that projects, contributions, and communities follow suit in evaluating and improving their own holistic accessibility.
+
 # Guide-level explanation
 
 The following defines key concepts used in today frontend landscape that we want to take into consideration in this JEP:
