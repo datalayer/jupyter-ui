@@ -24,7 +24,7 @@ The deliverable will be the creation of a `ui-components` repository providing a
 
 On top of those components, extended functionalities on `reactivity` and `collaboration` are also discussed here. But they are out-of-scope of the deliverable. It makes sense to already discuss those last aspects in relationship with [Jupyter Widgets](https://github.com/jupyter-widgets) and the current JupyterLab Realtime collaboration features.
 
-Accessibility criteria will drive the creation of those components.
+The fundamental components are [FAST components](https://www.fast.design/) that follow [WCAG 2.1](https://www.w3.org/WAI/standards-guidelines/wcag/), are [W3C spec-compliant](https://www.w3.org/TR/wai-aria-1.2) and use the [W3C interaction models](https://www.w3.org/TR/wai-aria-practices-1.2/) when available.
 
 We propose to move the current https://github.com/jupyterlab-contrib/jupyter-ui-toolkit repository to a Jupyter top-level repository. The home of that repository and the npm.js package naming still needs to be defined. That repository will be advertised as the default way to build user interface that conform to the Jupyter guidelines.
 
