@@ -15,8 +15,7 @@ export const initialState: IState = {
   counter: initInitialState
 }
 
-/* Actions */
-/*
+/* Actions
 export type ActionUnion<
   A extends { [asyncActionCreator: string]: (...args: any[]) => any; }
 > = Exclude<ReturnType<A[keyof A]>, (...args: any[]) => Promise<void>>;
@@ -26,6 +25,7 @@ export type NotebookAction = ActionUnion<typeof notebookActions>;
 
 export type AppAction = CellAction | NotebookAction;
 */
+
 /* Epics */
 
 export const epics = combineEpics<AnyAction, AnyAction, any>(

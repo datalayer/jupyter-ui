@@ -6,8 +6,13 @@ import { cellEpics, cellActions, cellReducer } from './CellState';
 import CellAdapter from './CellAdapter';
 import LuminoAttached from '../../lumino/LuminoAttached';
 import { asObservable } from '../../lumino/LuminoObservable';
-import { map } from "rxjs/operators";
+// import { map } from "rxjs/operators";
 // import KernelModel from './KernelModel';
+
+const DEFAULT_SOURCE = `from IPython.display import display
+
+for i in range(10):
+    display('String {} added to the DOM in separated DIV.'.format(i))`
 
 export type ICellProps = {
   source?: string;
@@ -26,7 +31,7 @@ const CellLumino = (props: ICellProps) => {
     outputs$.subscribe(
       outputsCount => { dispatch(cellActions.outputsCount.started(outputsCount)); }
     );
-    outputs$.pipe(map(output => { console.log('---- output', output); }));
+//    outputs$.pipe(map(output => { console.log('---- output', output); }));
     (injectableStore as any).injectReducer('cell', cellReducer);
     (injectableStore as any).injectEpic(cellEpics(cellLumino));
     dispatch(cellActions.source.started(props.source!));
@@ -45,11 +50,6 @@ const CellLumino = (props: ICellProps) => {
   }, []);
   return <LuminoAttached>{cellLumino.panel}</LuminoAttached>
 }
-
-const DEFAULT_SOURCE = `from IPython.display import display
-
-for i in range(10):
-    display('String {} added to the DOM in separated DIV.'.format(i))`
 
 CellLumino.defaultProps = {
   source: DEFAULT_SOURCE,

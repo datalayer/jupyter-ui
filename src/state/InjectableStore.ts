@@ -30,12 +30,12 @@ function createInjectableStore() {
   return injectableStore;
 }
 
-const injectableStore = createInjectableStore();
-
 export const epic$ = new BehaviorSubject(initEpics);
 const rootEpic = (action$: any, state$: any, deps: any) => epic$.pipe(
   mergeMap(epic => epic(action$, state$, deps))
 );
 epicMiddleware.run(rootEpic);
+
+const injectableStore = createInjectableStore();
 
 export default injectableStore;

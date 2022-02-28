@@ -1,19 +1,20 @@
 import { render } from 'react-dom';
-import Typography from '@mui/material/Typography';
 import { CacheProvider } from '@emotion/react';
 import { StylesProvider } from '@mui/styles';
+import Typography from '@mui/material/Typography';
 import { ThemeProvider } from '@mui/material/styles';
-import muiLightTheme from '../theme/Theme';
 import Jupyter from '../../jupyter/Jupyter';
-import setupMui from '../MuiSetup';
 import Gallery from '../examples/gallery/GalleryExample';
+import muiLightTheme from '../theme/Theme';
+import setupMui from '../MuiSetup';
 
 const { jss, cache } = setupMui('datalayer-jss-insertion-point');
 
 const div = document.createElement('div');
 document.body.appendChild(div);
 
-const Header = () =>  <>
+const Header = () => (
+  <>
     <Typography variant="h4" gutterBottom>
       Jupyter React Gallery
     </Typography>
@@ -21,6 +22,7 @@ const Header = () =>  <>
       © Datalayer, 2022
     </Typography>
   </>
+)
 
 render(
   <ThemeProvider theme={muiLightTheme}>
