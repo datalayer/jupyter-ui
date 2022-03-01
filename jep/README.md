@@ -22,6 +22,8 @@ This JEP proposes the adoption of well defined `UI Components` across Jupyter pr
 
 The deliverable will be the creation of a `ui-components` repository providing accessible and themed widgets fully compatible with React.js, without blocking usage by other popular frontend technologies.
 
+The components will target basic visual functions like buttons, drop-down... and will not deliver higher-level components like a usable `Cell`, or a collection of cells showing a basic `Notebook` connected to a running Kernel. Such components are for example available in the [Jupyter React](https://github.com/datalayer/jupyter-react) and would demand further discussion around global state, reactivity, connection to the services hosted on a server...
+
 On top of those components, extended functionalities on `reactivity` and `collaboration` are also discussed here. But they are out-of-scope for the deliverable. However, it makes sense to discuss those last aspects in this document in relation to [Jupyter Widgets](https://github.com/jupyter-widgets) and the current JupyterLab [real time collaboration](https://jupyterlab.readthedocs.io/en/stable/user/rtc.html) features.
 
 The fundamental components are built on the [FAST framework](https://www.fast.design/) that follow [WCAG 2.1](https://www.w3.org/WAI/standards-guidelines/wcag/), are [W3C spec-compliant](https://www.w3.org/TR/wai-aria-1.2) and use the [W3C interaction models](https://www.w3.org/TR/wai-aria-practices-1.2/) when available.
@@ -142,7 +144,5 @@ The home of the `ui-components` repository and the npm.js package naming still n
 # Future possibilities
 
 As mentioned earlier, subsequent JEP are expected to answer the open questions.
-
-The components will target basic visual functions like buttons, drop-down... and will not deliver higher-level components like a usable `Cell`, or a collection of cells showing a basic `Notebook` connected to a running Kernel. Such components are for example available in the [Jupyter React](https://github.com/datalayer/jupyter-react) and would demand further discussion around global state, reactivity, connection to the services hosted on a server... .
 
 We are also looking to use the [current components being developed](https://github.com/jupyterlab-contrib/jupyter-ui-toolkit) in JupyterLab extensions (e.g. [image editor](https://github.com/madhur-tandon/jlab-image-editor/) and [search accross files](https://github.com/jupyterlab-contrib/search-replace)) and third party solutions (e.g. [quetz-frontend](https://github.com/mamba-org/quetz-frontend)). Once released, we hope that existing solutions like e.g. the JupyterHub management UI will use them.
