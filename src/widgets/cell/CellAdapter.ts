@@ -3,14 +3,15 @@ import { SessionContext, Toolbar, ToolbarButton } from '@jupyterlab/apputils';
 import { CodeCellModel, CodeCell } from '@jupyterlab/cells';
 import { CodeMirrorMimeTypeService } from '@jupyterlab/codemirror';
 import { runIcon } from '@jupyterlab/ui-components';
-import { CompleterModel, Completer, CompletionHandler, KernelConnector } from '@jupyterlab/completer';
+import { Completer, CompleterModel, CompletionHandler, ConnectorProxy, KernelCompleterProvider } from '@jupyterlab/completer';
 import { RenderMimeRegistry, standardRendererFactories as initialFactories } from '@jupyterlab/rendermime';
-import { SessionManager, KernelManager, KernelSpecManager, Session } from '@jupyterlab/services';
+// import { Session } from '@jupyterlab/services';
+import { SessionManager, KernelManager, KernelSpecManager } from '@jupyterlab/services';
 import { ServerConnection } from '@jupyterlab/services';
 import { CommandRegistry } from '@lumino/commands';
-import { IPyWidgetsClassicManager } from "../../ipywidgets/IPyWidgetsClassicManager";
-import { requireLoader } from "@jupyter-widgets/html-manager";
-import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/lib/output_renderers";
+// import { IPyWidgetsClassicManager } from "../../ipywidgets/IPyWidgetsClassicManager";
+// import { requireLoader } from "@jupyter-widgets/html-manager";
+// import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/lib/output_renderers";
 
 import '@jupyterlab/cells/style/index.css';
 
@@ -65,8 +66,9 @@ class CellAdapter {
       useCapture
     );
     // Create the cell widget with a default rendermime instance.
-    const iPyWidgetsClassicManager = new IPyWidgetsClassicManager({ loader: requireLoader });
     const rendermime = new RenderMimeRegistry({ initialFactories });
+    /*
+    const iPyWidgetsClassicManager = new IPyWidgetsClassicManager({ loader: requireLoader });
     rendermime.addFactory(
       {
         safe: false,
@@ -75,6 +77,7 @@ class CellAdapter {
       },
       0
     );
+    */
     const codeCell = new CodeCell({
       rendermime,
       model: new CodeCellModel({
@@ -86,10 +89,12 @@ class CellAdapter {
         }
       })
     });
+    /*
     this._sessionContext.kernelChanged.connect((sender: SessionContext, arg: Session.ISessionConnection.IKernelChangedArgs) => {
       const kernelConnection = arg.newValue;
       iPyWidgetsClassicManager.registerWithKernel(kernelConnection)
     });
+    */
     this._codeCell = codeCell.initializeState();
     // Handle the mimeType for the current kernel asynchronously.
     this._sessionContext.kernelChanged.connect(() => {
@@ -105,7 +110,13 @@ class CellAdapter {
     const editor = this._codeCell.editor;
     const model = new CompleterModel();
     const completer = new Completer({ editor, model });
-    const connector = new KernelConnector({ session: this._sessionContext.session });
+    const timeout = 1000;
+    const provider = new KernelCompleterProvider();
+    const connector = new ConnectorProxy(
+      { widget: this._codeCell, editor, session: this._sessionContext.session },
+      [provider],
+      timeout
+    );
     const handler = new CompletionHandler({ completer, connector });
     // Set the handler's editor.
     handler.editor = editor;

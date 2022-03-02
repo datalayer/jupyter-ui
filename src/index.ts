@@ -7,7 +7,7 @@ export { default as Services } from './services/Services';
 export { default as Kernel } from './services/kernel/Kernel';
 
 // IpyWidgets.
-export { default as IpyWidgetsComponent } from './widgets/ipywidgets/IpyWidgetsComponent';
+// export { default as IpyWidgetsComponent } from './widgets/ipywidgets/IpyWidgetsComponent';
 
 // Cell
 export { default as CellLumino } from './widgets/cell/CellLumino';

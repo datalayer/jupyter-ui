@@ -1,4 +1,4 @@
-import { ServiceManager, ContentsManager } from '@jupyterlab/services';
+import { ServiceManager } from '@jupyterlab/services';
 
 class Services {
   private _services: ServiceManager;
@@ -11,7 +11,7 @@ class Services {
     return this._services.kernelspecs;
   }
 
-  public contents(): ContentsManager {
+  public contents() {
     return this._services.contents;
   }
 

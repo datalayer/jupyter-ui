@@ -7,9 +7,9 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import LuminoControl from '../../controls/LuminoControl';
 import LuminoExample from './../lumino/LuminoExample';
-import IpyWidgetsControl from '../../controls/IpyWidgetsControl';
-import IpyWidgetsExample from '../ipywidgets/IpyWidgetsExample';
-import IpyWidgetsComponent from './../../../widgets/ipywidgets/IpyWidgetsComponent';
+// import IpyWidgetsControl from '../../controls/IpyWidgetsControl';
+// import IpyWidgetsExample from '../ipywidgets/IpyWidgetsExample';
+// import IpyWidgetsComponent from './../../../widgets/ipywidgets/IpyWidgetsComponent';
 import { CellLumino } from '../../../index';
 import CellControl from '../../controls/CellControl';
 import { CommandsLumino } from '../../../index';
@@ -164,10 +164,12 @@ const Gallery = () => {
           <LuminoControl/>
           <LuminoExample/>
         </TabPanel>
+{/*
         <TabPanel value={value} index={1}>
           <IpyWidgetsControl/>
           <IpyWidgetsComponent widget={IpyWidgetsExample}/>
         </TabPanel>
+*/}
         <TabPanel value={value} index={2}>
           <OutputsControl/>
           <OutputLumino
