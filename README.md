@@ -5,13 +5,13 @@
 > ⚛️ [React.js](https://reactjs.org) components to create data products compatible with the [Jupyter](https://jupyter.org) ecosystem.
 
 <div align="center" style="text-align: center">
-  <img alt="Jupyter React Slate" src="https://jupyter-examples.datalayer.tech/jupyter-react-slate.gif" />
+  <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-slate.gif" />
 </div>
 
 You can create a custom data product `a-la-google-docs` as shown above. The below image shows a gallery of the available React.js components you ready to be used in you custom React.js application.
 
 <div align="center" style="text-align: center">
-  <img alt="Jupyter React Gallery" src="https://jupyter-examples.datalayer.tech/jupyter-react-gallery.gif" />
+  <img alt="Jupyter React Gallery" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-gallery.gif" />
 </div>
 
 ## Usage
