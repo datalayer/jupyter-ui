@@ -1,5 +1,9 @@
 import os
 
+#################
+# Logging
+#################
+
 c.ServerApp.log_level = 'INFO'
 
 #################
