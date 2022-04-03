@@ -2,8 +2,8 @@ import { combineReducers } from "redux";
 import { combineEpics } from "redux-observable";
 import { AnyAction } from "typescript-fsa";
 import { initReducer, initInitialState, IInitState, initEpics } from "./init/InitRedux";
-// import { cellActions } from "../widgets/cell/CellState";
-// import { notebookActions } from "../widgets/notebook/NotebookState";
+// import { cellActions } from "../components/cell/CellState";
+// import { notebookActions } from "../components/notebook/NotebookState";
 
 /* State */
 

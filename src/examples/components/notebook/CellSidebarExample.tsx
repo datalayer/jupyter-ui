@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { PanelLayout } from '@lumino/widgets';
-import { selectNotebook, notebookActions } from '../../../widgets/notebook/NotebookState';
+import { selectNotebook, notebookActions } from '../../../components/notebook/NotebookState';
 
 const CELL_HEADER_DIV_CLASS = 'dla-cellHeaderContainer';
 

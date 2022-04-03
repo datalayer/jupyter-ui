@@ -2,8 +2,8 @@ import { render } from 'react-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import muiLightTheme from '../theme/Theme';
 import Jupyter from '../../jupyter/Jupyter';
-// import IpyWidgetsComponent from '../../widgets/ipywidgets/IpyWidgetsComponent';
-// import IpyWidgetsExample from '../components/ipywidgets/IpyWidgetsExample';
+import IpyWidgetsComponent from '../../components/ipywidgets/IpyWidgetsComponent';
+import IpyWidgetsExample from '../components//ipywidgets/IpyWidgetsExample';
 import IpyWidgetsControl from '../controls/IpyWidgetsControl';
 import Layers from '../theme/Layers';
 
@@ -15,9 +15,7 @@ render(
     <Jupyter collaborative={false} terminals={false}>
       <Layers />
       <IpyWidgetsControl/>
-      {/*
       <IpyWidgetsComponent widget={IpyWidgetsExample}/>
-      */}
     </Jupyter>
   </ThemeProvider>
   ,

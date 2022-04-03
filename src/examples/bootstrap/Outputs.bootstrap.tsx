@@ -7,7 +7,7 @@ import Jupyter from '../../jupyter/Jupyter';
 import Kernel from '../../services/kernel/Kernel';
 import Layers from '../theme/Layers';
 import OutputsControl from '../controls/OutputsControl';
-import OutputLumino from '../../widgets/outputs/OutputLumino';
+import OutputLumino from '../../components/outputs/OutputLumino';
 
 const SOURCE_1 = `import ipywidgets as widgets
 widgets.IntSlider(

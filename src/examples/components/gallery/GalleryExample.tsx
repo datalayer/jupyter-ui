@@ -7,9 +7,9 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import LuminoControl from '../../controls/LuminoControl';
 import LuminoExample from './../lumino/LuminoExample';
-// import IpyWidgetsControl from '../../controls/IpyWidgetsControl';
-// import IpyWidgetsExample from '../ipywidgets/IpyWidgetsExample';
-// import IpyWidgetsComponent from './../../../widgets/ipywidgets/IpyWidgetsComponent';
+import IpyWidgetsControl from '../../controls/IpyWidgetsControl';
+import IpyWidgetsExample from '../ipywidgets/IpyWidgetsExample';
+import IpyWidgetsComponent from './../../../components/ipywidgets/IpyWidgetsComponent';
 import { CellLumino } from '../../../index';
 import CellControl from '../../controls/CellControl';
 import { CommandsLumino } from '../../../index';
@@ -18,8 +18,8 @@ import { ConsoleLumino } from '../../../index';
 import ConsoleControl from '../../controls/ConsoleControl';
 import { DialogLumino } from '../../../index';
 import DialogControl from '../../controls/DialogControl';
-import FileBrowser from '../../../widgets/filebrowser/FileBrowser';
-import FileBrowserLumino from '../../../widgets/filebrowser/FileBrowserLumino';
+import FileBrowser from '../../../components/filebrowser/FileBrowser';
+import FileBrowserLumino from '../../../components/filebrowser/FileBrowserLumino';
 import FileBrowserControl from '../../controls/FileBrowserControl';
 import { NotebookLumino } from '../../../index';
 import NotebookControl from '../../controls/NotebookControl';
@@ -164,12 +164,10 @@ const Gallery = () => {
           <LuminoControl/>
           <LuminoExample/>
         </TabPanel>
-{/*
         <TabPanel value={value} index={1}>
           <IpyWidgetsControl/>
           <IpyWidgetsComponent widget={IpyWidgetsExample}/>
         </TabPanel>
-*/}
         <TabPanel value={value} index={2}>
           <OutputsControl/>
           <OutputLumino

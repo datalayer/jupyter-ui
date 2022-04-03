@@ -3,8 +3,8 @@ import { ThemeProvider } from '@mui/material/styles';
 import muiLightTheme from '../theme/Theme';
 import Jupyter from '../../jupyter/Jupyter';
 import Layers from '../theme/Layers';
-import FileBrowser from './../../widgets/filebrowser/FileBrowser';
-import FileBrowserLumino from './../../widgets/filebrowser/FileBrowserLumino';
+import FileBrowser from './../../components/filebrowser/FileBrowser';
+import FileBrowserLumino from './../../components/filebrowser/FileBrowserLumino';
 
 const div = document.createElement('div');
 document.body.appendChild(div);

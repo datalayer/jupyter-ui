@@ -7,47 +7,47 @@ export { default as Services } from './services/Services';
 export { default as Kernel } from './services/kernel/Kernel';
 
 // IpyWidgets.
-// export { default as IpyWidgetsComponent } from './widgets/ipywidgets/IpyWidgetsComponent';
+export { default as IpyWidgetsComponent } from './components/ipywidgets/IpyWidgetsComponent';
 
 // Cell
-export { default as CellLumino } from './widgets/cell/CellLumino';
-export { selectCell as selectCell } from './widgets/cell/CellState';
-export { cellActions as cellActions } from './widgets/cell/CellState';
+export { default as CellLumino } from './components/cell/CellLumino';
+export { selectCell as selectCell } from './components/cell/CellState';
+export { cellActions as cellActions } from './components/cell/CellState';
 
 // Notebook
-export { default as NotebookLumino } from './widgets/notebook/NotebookLumino';
-export { selectNotebook as selectNotebook } from './widgets/notebook/NotebookState';
-export { notebookActions as notebookActions } from './widgets/notebook/NotebookState';
+export { default as NotebookLumino } from './components/notebook/NotebookLumino';
+export { selectNotebook as selectNotebook } from './components/notebook/NotebookState';
+export { notebookActions as notebookActions } from './components/notebook/NotebookState';
 
 // Commands
-export { default as CommandsLumino } from './widgets/commands/CommandsLumino';
-export { selectCommands as selectCommands } from './widgets/commands/CommandsState';
-export { commandsActions as commandsActions } from './widgets/commands/CommandsState';
+export { default as CommandsLumino } from './components/commands/CommandsLumino';
+export { selectCommands as selectCommands } from './components/commands/CommandsState';
+export { commandsActions as commandsActions } from './components/commands/CommandsState';
 
 // Console
-export { default as ConsoleLumino } from './widgets/console/ConsoleLumino';
-export { selectConsole as selectConsole } from './widgets/console/ConsoleState';
-export { consoleActions as consoleActions } from './widgets/console/ConsoleState';
+export { default as ConsoleLumino } from './components/console/ConsoleLumino';
+export { selectConsole as selectConsole } from './components/console/ConsoleState';
+export { consoleActions as consoleActions } from './components/console/ConsoleState';
 
 // Dialog
-export { default as DialogLumino } from './widgets/dialog/DialogLumino';
+export { default as DialogLumino } from './components/dialog/DialogLumino';
 
 // FileBrowser
-export { default as FileBrowser } from './widgets/filebrowser/FileBrowser';
-export { default as FileBrowserLumino } from './widgets/filebrowser/FileBrowserLumino';
-export { selectFileBrowser as selectFileBrowser } from './widgets/filebrowser/FileBrowserState';
-export { fileBrowserActions as fileBrowserActions } from './widgets/filebrowser/FileBrowserState';
+export { default as FileBrowser } from './components/filebrowser/FileBrowser';
+export { default as FileBrowserLumino } from './components/filebrowser/FileBrowserLumino';
+export { selectFileBrowser as selectFileBrowser } from './components/filebrowser/FileBrowserState';
+export { fileBrowserActions as fileBrowserActions } from './components/filebrowser/FileBrowserState';
 
 // Outputs
-export { default as OutputLumino } from './widgets/outputs/OutputLumino';
-export { selectOutput as selectOutput } from './widgets/outputs/OutputState';
+export { default as OutputLumino } from './components/outputs/OutputLumino';
+export { selectOutput as selectOutput } from './components/outputs/OutputState';
 
 // Settings
-export { default as SettingsLumino } from './widgets/settings/SettingsLumino';
-export { selectSettings as selectSettings } from './widgets/settings/SettingsState';
-export { settingsActions as settingsActions } from './widgets/settings/SettingsState';
+export { default as SettingsLumino } from './components/settings/SettingsLumino';
+export { selectSettings as selectSettings } from './components/settings/SettingsState';
+export { settingsActions as settingsActions } from './components/settings/SettingsState';
 
 // Terminal
-export { default as TerminalLumino } from './widgets/terminal/TerminalLumino';
-export { selectTerminal as selectTerminal } from './widgets/terminal/TerminalState';
-export { terminalActions as terminalActions } from './widgets/terminal/TerminalState';
+export { default as TerminalLumino } from './components/terminal/TerminalLumino';
+export { selectTerminal as selectTerminal } from './components/terminal/TerminalState';
+export { terminalActions as terminalActions } from './components/terminal/TerminalState';

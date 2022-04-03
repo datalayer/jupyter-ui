@@ -1,7 +1,7 @@
 import { render } from 'react-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import muiLightTheme from '../theme/Theme';
-import LuminoExample from './../components/lumino/LuminoExample';
+import LuminoExample from './../components//lumino/LuminoExample';
 import Jupyter from './../../jupyter/Jupyter';
 import LuminoControl from '../controls/LuminoControl';
 import Layers from './../theme/Layers';

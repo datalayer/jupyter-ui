@@ -2,7 +2,7 @@ import { render } from 'react-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import muiLightTheme from '../theme/Theme';
 import Jupyter from '../../jupyter/Jupyter';
-import NotebookLumino from '../../widgets/notebook/NotebookLumino';
+import NotebookLumino from '../../components/notebook/NotebookLumino';
 import NotebookControl from '../controls/NotebookControl';
 import Layers from '../theme/Layers'
 

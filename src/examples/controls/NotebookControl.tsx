@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import PlayCircleOutline from '@mui/icons-material/PlayCircleOutline';
 import SaveOutlined from '@mui/icons-material/SaveOutlined';
 import Typography from '@mui/material/Typography';
-import { notebookActions } from '../../widgets/notebook/NotebookState';
+import { notebookActions } from '../../components/notebook/NotebookState';
 
 const NotebookControl: React.FC = () => {
   const dispatch = useDispatch();

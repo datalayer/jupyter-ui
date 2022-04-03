@@ -4,7 +4,7 @@ import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { terminalActions } from '../../widgets/terminal/TerminalState';
+import { terminalActions } from '../../components/terminal/TerminalState';
 
 const TerminalControl: React.FC = () => {
   const dispatch = useDispatch();

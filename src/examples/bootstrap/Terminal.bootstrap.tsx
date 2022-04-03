@@ -2,7 +2,7 @@ import { render } from 'react-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import muiLightTheme from '../theme/Theme';
 import Jupyter from '../../jupyter/Jupyter';
-import TerminalLumino from './../../widgets/terminal/TerminalLumino';
+import TerminalLumino from './../../components/terminal/TerminalLumino';
 import TerminalControl from '../controls/TerminalControl';
 import Layers from '../theme/Layers';
 
