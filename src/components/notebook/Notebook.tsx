@@ -31,7 +31,7 @@ export const Notebook = (props: INotebookProps) => {
       (injectableStore as any).injectEpic(notebookEpics(notebookAdapter));
     }
     notebookAdapter.manager.ready.then(() => {
-      notebookAdapter.createApp(props.path);
+      notebookAdapter.loadNotebook(props.path);
       const activeCellChanged$ = asObservable(notebookAdapter.notebookPanel.content.activeCellChanged);
       activeCellChanged$.subscribe(
         activeCellChanged => {

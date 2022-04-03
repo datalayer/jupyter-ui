@@ -197,7 +197,7 @@ const Gallery = () => {
           <NotebookControl/>
           <Notebook
             path='ping.ipynb'
-            ipywidgets="lab"
+            ipywidgets="classic"
             sidebarComponent={CellSidebarExample}
             />
         </TabPanel>

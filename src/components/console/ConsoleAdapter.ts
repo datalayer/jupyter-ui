@@ -15,51 +15,42 @@ class ConsoleAdapter {
   private consolePanel: BoxPanel;
 
   constructor() {
-
     this.consolePanel = new BoxPanel();
     this.consolePanel.direction = 'top-to-bottom';
     this.consolePanel.spacing = 0;
-    this.consolePanel.id = 'dla-jlab-console'
-
-    const manager = new ServiceManager();
-    void manager.ready.then(() => {
-      start('console-path', manager, this.consolePanel);
-    });
-    
+    this.consolePanel.addClass('dla-JupyterLab-Console');
+    const serviceManager = new ServiceManager();
     function start(
       path: string,
-      manager: ServiceManager.IManager,
+      serviceManager: ServiceManager.IManager,
       panel: BoxPanel
     ) {
-
       const commands = new CommandRegistry();    
-
       document.addEventListener('keydown', event => {
         commands.processKeydownEvent(event);
       });
-
       const rendermime = new RenderMimeRegistry({ initialFactories });
       const editorFactory = editorServices.factoryService.newInlineEditor;
       const contentFactory = new ConsolePanel.ContentFactory({ editorFactory });
       const console = new ConsolePanel({
         rendermime,
-        manager,
+        manager: serviceManager,
         path,
         contentFactory,
-        mimeTypeService: editorServices.mimeTypeService
+        mimeTypeService: editorServices.mimeTypeService,
+        kernelPreference: {
+          shouldStart: true,
+          name: 'python3',
+        }
       });
       console.title.label = 'Console';
-
       BoxPanel.setStretch(console, 1);
       panel.addWidget(console);
-
       window.addEventListener('resize', () => {
         panel.update();
       });
-
       const selector = '.jp-ConsolePanel';
       let command: string;
-
       command = 'console:clear';
       commands.addCommand(command, {
         label: 'Clear',
@@ -67,7 +58,6 @@ class ConsoleAdapter {
           console.console.clear();
         }
       });
-
       command = 'console:execute';
       commands.addCommand(command, {
         label: 'Execute Prompt',
@@ -76,7 +66,6 @@ class ConsoleAdapter {
         }
       });
       commands.addKeyBinding({ command, selector, keys: ['Enter'] });
-
       command = 'console:execute-forced';
       commands.addCommand(command, {
         label: 'Execute Cell (forced)',
@@ -85,7 +74,6 @@ class ConsoleAdapter {
         }
       });
       commands.addKeyBinding({ command, selector, keys: ['Shift Enter'] });
-
       command = 'console:linebreak';
       commands.addCommand(command, {
         label: 'Insert Line Break',
@@ -94,9 +82,10 @@ class ConsoleAdapter {
         }
       });
       commands.addKeyBinding({ command, selector, keys: ['Ctrl Enter'] });    
-
     }
-    
+    void serviceManager.ready.then(() => {
+      start('console-path', serviceManager, this.consolePanel);
+    });
   }
 
   get panel(): BoxPanel {

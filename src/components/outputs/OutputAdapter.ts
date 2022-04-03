@@ -5,8 +5,8 @@ import { Kernel } from '@jupyterlab/services';
 import { IPyWidgetsClassicManager } from "../../ipywidgets/IPyWidgetsClassicManager";
 import { requireLoader } from "@jupyter-widgets/html-manager";
 import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/lib/output_renderers";
-// import { activateWidgetExtension } from "../../ipywidgets/IPyWidgetsPlugin";
-// import { activatePlotlyWidgetExtension } from "../../ipywidgets/plotly/jupyterlab-plugin";
+import { activateWidgetExtension } from "../../ipywidgets/IPyWidgetsJupyterLabPlugin";
+import { activatePlotlyWidgetExtension } from "../../ipywidgets/plotly/jupyterlab-plugin";
 
 import '@lumino/default-theme/style/index.css';
 import '@jupyterlab/json-extension/style/index.css';
@@ -44,8 +44,8 @@ class OutputAdapter {
       },
       0
     );
-//    const widgetRegistry = activateWidgetExtension(this._rendermime, null, null, null);
-//    activatePlotlyWidgetExtension(widgetRegistry);
+    const widgetRegistry = activateWidgetExtension(this._rendermime, null, null, null);
+    activatePlotlyWidgetExtension(widgetRegistry);
     if (this._kernelConnectionPromise) {
       this._kernelConnectionPromise.then((kernelConnection: Kernel.IKernelConnection) => {
         this._iPyWidgetsClassicManager.registerWithKernel(kernelConnection)
