@@ -1,4 +1,4 @@
-import { BoxPanel } from '@lumino/widgets';
+import { BoxPanel, Widget } from '@lumino/widgets';
 import { SessionContext, Toolbar, ToolbarButton } from '@jupyterlab/apputils';
 import { CodeCellModel, CodeCell } from '@jupyterlab/cells';
 import { CodeMirrorMimeTypeService } from '@jupyterlab/codemirror';
@@ -12,9 +12,11 @@ import { CommandRegistry } from '@lumino/commands';
 // import { IPyWidgetsClassicManager } from "../../ipywidgets/IPyWidgetsClassicManager";
 // import { requireLoader } from "@jupyter-widgets/html-manager";
 // import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/lib/output_renderers";
+import CellCommands from './CellCommands';
 
+import '@jupyterlab/application/style/index.css';
 import '@jupyterlab/cells/style/index.css';
-
+import '@jupyterlab/completer/style/index.css';
 // This should be only index.css, looks like jupyterlab has a regression here...
 import '@jupyterlab/theme-light-extension/style/theme.css';
 import '@jupyterlab/theme-light-extension/style/variables.css';
@@ -96,7 +98,6 @@ class CellAdapter {
     });
     */
     this._codeCell = codeCell.initializeState();
-    // Handle the mimeType for the current kernel asynchronously.
     this._sessionContext.kernelChanged.connect(() => {
       void this._sessionContext.session?.kernel?.info.then(info => {
         const lang = info.language_info;
@@ -104,9 +105,7 @@ class CellAdapter {
         this._codeCell.model.mimeType = mimeType;
       });
     });
-    // Use the default kernel.
     this._sessionContext.kernelPreference = { autoStartDefault: true };
-    // Set up a completer.
     const editor = this._codeCell.editor;
     const model = new CompleterModel();
     const completer = new Completer({ editor, model });
@@ -118,11 +117,19 @@ class CellAdapter {
       timeout
     );
     const handler = new CompletionHandler({ completer, connector });
-    // Set the handler's editor.
+    void this._sessionContext.ready.then(() => {
+      const provider = new KernelCompleterProvider();
+      handler.connector = new ConnectorProxy(
+        { widget: this._codeCell, editor, session: this._sessionContext.session },
+        [provider],
+        timeout
+      );
+    });
     handler.editor = editor;
-    // Hide the widget when it first loads.
+    CellCommands(commands, this._codeCell!, this._sessionContext, handler);  
     completer.hide();
-    // Create a toolbar for the cell.
+    completer.addClass('jp-Completer-Cell');
+    Widget.attach(completer, document.body);
     const toolbar = new Toolbar();
     toolbar.addItem('spacer', Toolbar.createSpacerItem());
     const runButton = new ToolbarButton({
@@ -137,37 +144,15 @@ class CellAdapter {
     toolbar.addItem('restart', Toolbar.createRestartButton(this._sessionContext));
     // toolbar.addItem('name', Toolbar.createKernelNameItem(this._sessionContext));
     toolbar.addItem('status', Toolbar.createKernelStatusItem(this._sessionContext));
-    this._cellPanel.addWidget(completer);
     this._cellPanel.addWidget(toolbar);
     BoxPanel.setStretch(toolbar, 0);
     this._cellPanel.addWidget(this._codeCell);
     BoxPanel.setStretch(this._codeCell, 1);
-    // Handle widget state.
     window.addEventListener('resize', () => {
       this._cellPanel.update();
     });
     this._codeCell.outputsScrolled = false;
     this._codeCell.activate();
-    // Add the commands.
-    commands.addCommand('invoke:completer', {
-      execute: () => {
-        handler.invoke();
-      }
-    });
-    commands.addCommand('run:cell', {
-      execute: () => CodeCell.execute(this._codeCell, this._sessionContext)
-    });
-    // Add the key bindings.
-    commands.addKeyBinding({
-      selector: '.jp-InputArea-editor.jp-mod-completer-enabled',
-      keys: ['Tab'],
-      command: 'invoke:completer'
-    });
-    commands.addKeyBinding({
-      selector: '.jp-InputArea-editor',
-      keys: ['Shift Enter'],
-      command: 'run:cell'
-    });
   }
 
   get panel(): BoxPanel {

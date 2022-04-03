@@ -3,7 +3,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import muiLightTheme from '../theme/Theme';
 import Jupyter from '../../jupyter/Jupyter';
 // import IpyWidgetsComponent from '../../widgets/ipywidgets/IpyWidgetsComponent';
-// import IpyWidgetsExample from '../examples/ipywidgets/IpyWidgetsExample';
+// import IpyWidgetsExample from '../components/ipywidgets/IpyWidgetsExample';
 import IpyWidgetsControl from '../controls/IpyWidgetsControl';
 import Layers from '../theme/Layers';
 

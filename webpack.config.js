@@ -213,7 +213,7 @@ module.exports = {
         'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap',
       ],
       tags: [
-        'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js'
+//        'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js'
       ],
       append: false, 
       publicPath: false

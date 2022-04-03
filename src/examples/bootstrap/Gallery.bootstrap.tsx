@@ -4,7 +4,7 @@ import { StylesProvider } from '@mui/styles';
 import Typography from '@mui/material/Typography';
 import { ThemeProvider } from '@mui/material/styles';
 import Jupyter from '../../jupyter/Jupyter';
-import Gallery from '../examples/gallery/GalleryExample';
+import Gallery from '../components/gallery/GalleryExample';
 import muiLightTheme from '../theme/Theme';
 import setupMui from '../MuiSetup';
 

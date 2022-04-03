@@ -14,3 +14,7 @@
   top: auto !important;
   position: relative !important;
 }
+
+.jp-Completer-Cell {
+  position: fixed;
+}

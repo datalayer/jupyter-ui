@@ -3,7 +3,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import muiLightTheme from '../theme/Theme';
 import Jupyter from '../../jupyter/Jupyter';
 import Layers from '../theme/Layers';
-import CellExample from './../examples/cell/CellExample';
+import CellExample from './../components/cell/CellExample';
 
 const div = document.createElement('div');
 document.body.appendChild(div);
