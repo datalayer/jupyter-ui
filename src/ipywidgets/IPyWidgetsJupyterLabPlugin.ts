@@ -24,7 +24,7 @@ const WIDGET_REGISTRY: base.IWidgetRegistryData[] = [];
 /**
  * The cached settings.
  */
-// const SETTINGS: WidgetManager.Settings = { saveState: false };
+const SETTINGS: WidgetManager.Settings = { saveState: false };
 
 /**
  * Iterate through all widget renderers in a notebook.
@@ -80,15 +80,13 @@ export function registerWidgetManager(
 ): DisposableDelegate {
   let wManager = Private.widgetManagerProperty.get(context);
   if (!wManager) {
-//    wManager = new WidgetManager(context, rendermime, SETTINGS);
+    wManager = new WidgetManager(context, rendermime, SETTINGS);
     WIDGET_REGISTRY.forEach((data) => wManager!.register(data));
     Private.widgetManagerProperty.set(context, wManager);
   }
-/*
   for (const r of renderers) {
     r.manager = wManager;
   }
-*/
   // Replace the placeholder widget renderer with one bound to this widget manager.
   rendermime.removeMimeType(WIDGET_VIEW_MIMETYPE);
   rendermime.addFactory(

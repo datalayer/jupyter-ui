@@ -15,7 +15,7 @@ const Example = () => {
       <Jupyter collaborative={false} terminals={false}>
         <Layers />
         <NotebookControl />
-        <Notebook 
+        <Notebook
           path='ping.ipynb'
           ipywidgets='classic'
         />

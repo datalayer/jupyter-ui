@@ -2,10 +2,10 @@ import { CommandRegistry } from '@lumino/commands';
 import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
 import { Widget, BoxPanel } from '@lumino/widgets';
 
-// import { IChangedArgs } from '@jupyterlab/coreutils';
+import { IChangedArgs } from '@jupyterlab/coreutils';
 import { PageConfig } from '@jupyterlab/coreutils';
 import { Cell, ICellModel } from '@jupyterlab/cells';
-// import { Kernel } from '@jupyterlab/services';
+import { Kernel } from '@jupyterlab/services';
 import { ServerConnection, ServiceManager } from '@jupyterlab/services';
 import { DocumentManager } from '@jupyterlab/docmanager';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
@@ -17,17 +17,17 @@ import { IEditorServices } from '@jupyterlab/codeeditor';
 import { Completer, CompleterModel, CompletionHandler, ConnectorProxy, KernelCompleterProvider } from '@jupyterlab/completer';
 import { MathJaxTypesetter } from '@jupyterlab/mathjax2';
 
-// import { requireLoader } from "@jupyter-widgets/html-manager";
-// import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/lib/output_renderers";
+import { requireLoader } from "@jupyter-widgets/html-manager";
+import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/lib/output_renderers";
 
 import { INotebookProps } from './Notebook';
 import { SetupCommands } from './NotebookCommands';
 import ContentFactoryWithSidebar from './extension/ContentFactoryWithSidebar';
-/*
+
 import { IPyWidgetsClassicManager } from "../../ipywidgets/IPyWidgetsClassicManager";
 import { activateWidgetExtension } from "../../ipywidgets/IPyWidgetsJupyterLabPlugin";
 import { activatePlotlyWidgetExtension } from "../../ipywidgets/plotly/jupyterlab-plugin";
-*/
+
 import '@jupyterlab/notebook/style/index.css';
 import '@jupyterlab/theme-light-extension/style/theme.css';
 import '@jupyterlab/theme-light-extension/style/variables.css';
@@ -41,7 +41,7 @@ class NotebookAdapter {
   private _serverSettings: ServerConnection.ISettings;
   private _serviceManager: ServiceManager;
   private _commands: CommandRegistry;
-//   private _iPyWidgetsClassicManager: IPyWidgetsClassicManager;
+  private _iPyWidgetsClassicManager: IPyWidgetsClassicManager;
   private _injectableStore: any;
 
   constructor(props: INotebookProps, injectableStore: any) {
@@ -137,7 +137,7 @@ class NotebookAdapter {
       new NotebookPanel.ContentFactory({ editorFactory });
 
     const tracker = new NotebookTracker({ namespace: 'notebook' });
-/*
+
     if (this._props.ipywidgets === 'classic') {
       this._iPyWidgetsClassicManager = new IPyWidgetsClassicManager({ loader: requireLoader });
       rendermime.addFactory(
@@ -153,7 +153,7 @@ class NotebookAdapter {
       const widgetRegistry = activateWidgetExtension(rendermime, tracker, null, null);
       activatePlotlyWidgetExtension(widgetRegistry);
     }
-*/
+
     const notebookWidgetFactory = new NotebookWidgetFactory({
       name: 'Notebook',
       modelName: 'notebook',
@@ -210,13 +210,13 @@ class NotebookAdapter {
     this._notebookPanel.content.activeCellChanged.connect((sender: any, cell: Cell<ICellModel>) => {
       handler.editor = cell && cell.editor;
     });
-/*
+
     if (this._props.ipywidgets === 'classic') {
       this._notebookPanel.sessionContext.kernelChanged.connect((sender: any, args: IChangedArgs<Kernel.IKernelConnection | null, Kernel.IKernelConnection | null, 'kernel'>) => {
         this._iPyWidgetsClassicManager.registerWithKernel(args.newValue);
       });
     }
-*/
+
     // Hide the widget when it first loads.
     completer.hide();
 

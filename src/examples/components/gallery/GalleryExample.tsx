@@ -195,7 +195,11 @@ const Gallery = () => {
         </TabPanel>
         <TabPanel value={value} index={4}>
           <NotebookControl/>
-          <Notebook path='ping.ipynb' ipywidgets="lab" sidebarComponent={CellSidebarExample}/>
+          <Notebook
+            path='ping.ipynb'
+            ipywidgets="lab"
+            sidebarComponent={CellSidebarExample}
+            />
         </TabPanel>
         <TabPanel value={value} index={5}>
           <CommandsControl/>

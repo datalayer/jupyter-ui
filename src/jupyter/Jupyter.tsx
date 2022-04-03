@@ -41,7 +41,7 @@ const ErrorFallback = ({error, resetErrorBoundary}: any) => {
  * and ensure the Redux and the Material UI theme providers
  * are available.
  */
-const Jupyter = (props: JupyterProps) => {
+export const Jupyter = (props: JupyterProps) => {
   loadJupyterConfig();
   const baseUrl = props.jupyterServerHttpUrl || getJupyterServerHttpUrl()
   PageConfig.setOption('baseUrl', baseUrl);

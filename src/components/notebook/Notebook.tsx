@@ -19,7 +19,7 @@ export type INotebookProps = {
  * @param props The notebook properties.
  * @returns A Notebook React.js component.
  */
-const Notebook = (props: INotebookProps) => {
+export const Notebook = (props: INotebookProps) => {
   const injectableStore = useStore();
   const dispatch = useDispatch();
   const notebook = selectNotebook();

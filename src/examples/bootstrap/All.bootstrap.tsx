@@ -75,7 +75,10 @@ const Example = () => {
     <FileBrowserTree />
     <FileBrowser />
     <NotebookControl />
-    <Notebook path='ping.ipynb' ipywidgets='classic'/>
+    <Notebook
+      path='ping.ipynb'
+      ipywidgets='classic'
+      />
     <SettingsControl />
     <Settings />
     <SimpleControl />
