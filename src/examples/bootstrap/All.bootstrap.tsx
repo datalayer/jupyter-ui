@@ -4,27 +4,27 @@ import { ThemeProvider } from '@mui/material/styles';
 import muiLightTheme from '../theme/Theme';
 import Jupyter from '../../jupyter/Jupyter';
 import { useJupyter } from '../../jupyter/JupyterContext';
-import CellLumino from '../../components/cell/CellLumino';
+import Cell from '../../components/cell/Cell';
 import CellControl from './../controls/CellControl';
-import CommandsLumino from '../../components/commands/CommandsLumino';
+import Commands from '../../components/commands/Commands';
 import CommandsControl from '../controls/CommandsControl';
-import ConsoleLumino from '../../components/console/ConsoleLumino';
+import Console from '../../components/console/Console';
 import ConsoleControl from '../controls/ConsoleControl';
-// import DialogLumino from './../components//dialog/DialogLumino';
+// import Dialog from './../components//dialog/Dialog';
 import DialogControl from '../controls/DialogControl';
+import FileBrowserTree from '../../components/filebrowser/FileBrowserTree';
 import FileBrowser from '../../components/filebrowser/FileBrowser';
-import FileBrowserLumino from '../../components/filebrowser/FileBrowserLumino';
 import FileBrowserControl from '../controls/FileBrowserControl';
-import NotebookLumino from '../../components/notebook/NotebookLumino';
+import Notebook from '../../components/notebook/Notebook';
 import NotebookControl from '../controls/NotebookControl';
-import OutputLumino from '../../components/outputs/OutputLumino';
+import Output from '../../components/outputs/Output';
 import OutputControl from '../controls/OutputsControl';
 import Kernel from '../../services/kernel/Kernel';
-import SettingsLumino from '../../components/settings/SettingsLumino';
+import Settings from '../../components/settings/Settings';
 import SettingsControl from '../controls/SettingsControl';
 import SimpleLumino from '../components//lumino/LuminoExample';
 import SimpleControl from '../controls/SimpleControl';
-import TerminalLumino from '../../components/terminal/TerminalLumino';
+import Terminal from '../../components/terminal/Terminal';
 import TerminalControl from '../controls/TerminalControl';
 
 /**
@@ -58,30 +58,30 @@ const Example = () => {
   useEffect(() => { window.scrollTo(0, 0); }, []);
   return <>
     <OutputControl />
-    <OutputLumino showEditor={true} autoRun={false} kernel={kernel} code={"print('Hello Datalayer 👍')"} />
-    <OutputLumino showEditor={true} autoRun={true} kernel={kernel} code={source} />
-    <OutputLumino showEditor={false} autoRun={true} kernel={kernel} code={"print('=> Hello Datalayer again... I am the output of an non-shown editor 👍 <=')"} />
+    <Output showEditor={true} autoRun={false} kernel={kernel} code={"print('Hello Datalayer 👍')"} />
+    <Output showEditor={true} autoRun={true} kernel={kernel} code={source} />
+    <Output showEditor={false} autoRun={true} kernel={kernel} code={"print('=> Hello Datalayer again... I am the output of an non-shown editor 👍 <=')"} />
     <CellControl />
-    <CellLumino source={source} />
+    <Cell source={source} />
     <CommandsControl />
-    <CommandsLumino />
+    <Commands />
     <ConsoleControl />
-    <ConsoleLumino />
+    <Console />
     <DialogControl />
 {/*
-    <DialogLumino />
+    <Dialog />
 */}
     <FileBrowserControl />
+    <FileBrowserTree />
     <FileBrowser />
-    <FileBrowserLumino />
     <NotebookControl />
-    <NotebookLumino path='ping.ipynb' ipywidgets='classic'/>
+    <Notebook path='ping.ipynb' ipywidgets='classic'/>
     <SettingsControl />
-    <SettingsLumino />
+    <Settings />
     <SimpleControl />
     <SimpleLumino />
     <TerminalControl />
-    <TerminalLumino />
+    <Terminal />
   </>
 }
 

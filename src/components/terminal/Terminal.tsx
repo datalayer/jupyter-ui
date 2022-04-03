@@ -4,14 +4,14 @@ import TerminalAdapter from './TerminalAdapter';
 import LuminoAttached from '../../lumino/LuminoAttached';
 import { terminalEpics, terminalReducer } from './TerminalState';
 
-const TerminalLumino = () => {
-  const terminalLumino = useMemo(() => new TerminalAdapter(), []);
+const Terminal = () => {
+  const terminalAdapter = useMemo(() => new TerminalAdapter(), []);
   const injectableStore = useStore();
   useEffect(() => {
     (injectableStore as any).injectReducer('terminal', terminalReducer);
-    (injectableStore as any).injectEpic(terminalEpics(terminalLumino));
+    (injectableStore as any).injectEpic(terminalEpics(terminalAdapter));
   }, []); 
-  return <LuminoAttached>{terminalLumino.panel}</LuminoAttached>
+  return <LuminoAttached>{terminalAdapter.panel}</LuminoAttached>
 }
 
-export default TerminalLumino;
+export default Terminal;

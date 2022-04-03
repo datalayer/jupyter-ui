@@ -7,7 +7,7 @@ import Jupyter from '../../jupyter/Jupyter';
 import Kernel from '../../services/kernel/Kernel';
 import Layers from '../theme/Layers';
 import OutputsControl from '../controls/OutputsControl';
-import OutputLumino from '../../components/outputs/OutputLumino';
+import Output from '../../components/outputs/Output';
 
 const SOURCE_1 = `import ipywidgets as widgets
 widgets.IntSlider(
@@ -142,21 +142,21 @@ const Example = () => {
   const [kernel,] = useState(new Kernel({ baseUrl, wsUrl }));
   return  <>
     <OutputsControl/>
-    <OutputLumino
+    <Output
       initialOutput={OUTPUT_2 as any}
       showEditor={false}
       autoRun={false}
       kernel={kernel}
     />
     <h3>Simple Output</h3>
-    <OutputLumino
+    <Output
       showEditor={true}
       autoRun={true}
       kernel={kernel}
       code={"print('Hello Datalayer 👍')"}
     />
     <h3>IPyWidget Output</h3>
-    <OutputLumino 
+    <Output 
       showEditor={true}
       autoRun={true}
       kernel={kernel}

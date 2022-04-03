@@ -1,4 +1,4 @@
-import { selectCell, CellLumino } from '../../../index';
+import { selectCell, Cell } from '../../../index';
 import CellControl from '../../controls/CellControl';
 
 /*
@@ -42,7 +42,7 @@ const CellPreview = () => {
 const CellExample = () =>  <>
   <CellPreview/>
   <CellControl />
-  <CellLumino source={SOURCE_2} />
+  <Cell source={SOURCE_2} />
 </>
 
 export default CellExample;

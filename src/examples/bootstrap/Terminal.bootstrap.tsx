@@ -2,7 +2,7 @@ import { render } from 'react-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import muiLightTheme from '../theme/Theme';
 import Jupyter from '../../jupyter/Jupyter';
-import TerminalLumino from './../../components/terminal/TerminalLumino';
+import Terminal from '../../components/terminal/Terminal';
 import TerminalControl from '../controls/TerminalControl';
 import Layers from '../theme/Layers';
 
@@ -14,7 +14,7 @@ render(
     <Jupyter collaborative={false} terminals={true}>
       <Layers/>
       <TerminalControl/>
-      <TerminalLumino/>
+      <Terminal/>
     </Jupyter>
   </ThemeProvider>
   ,

@@ -16,30 +16,30 @@ export type IOutputProps = {
   clearTrigger: number;
 }
 
-const OutputLumino = (props: IOutputProps) => {
+const Output = (props: IOutputProps) => {
   const { initialOutput, autoRun, code, kernel, showEditor, executeTrigger, clearTrigger } = props;
   const [model] = useState(new OutputAreaModel({
     trusted: true,
     values: initialOutput,
   }));
-  const outputAdapter = useMemo(() => { return new OutputAdapter(
+  const outputLumino = useMemo(() => { return new OutputAdapter(
     kernel.getJupyterKernel(),
     model,
     {},
   )}, []);
   useEffect(() => {
     if (!showEditor && autoRun) {
-      outputAdapter.execute(code);
+      outputLumino.execute(code);
     }
   }, [executeTrigger]);
   useEffect(() => {
     if (showEditor) {
-    outputAdapter.execute(code);
+    outputLumino.execute(code);
     }
   }, [executeTrigger]);
   useEffect(() => {
     if (showEditor) {
-      outputAdapter.clearOutput();
+      outputLumino.clearOutput();
     }
   }, [clearTrigger]);
   return <div>
@@ -48,7 +48,7 @@ const OutputLumino = (props: IOutputProps) => {
         <CodeMirrorEditor
           autoRun={autoRun}
           code={code}
-          outputAdapter={outputAdapter}
+          outputAdapter={outputLumino}
         />
       }
     </div>
@@ -59,12 +59,12 @@ const OutputLumino = (props: IOutputProps) => {
         },
       }}
     >
-      <LuminoAttached>{outputAdapter.panel}</LuminoAttached>
+      <LuminoAttached>{outputLumino.panel}</LuminoAttached>
     </div>
   </div>
 }
 
-OutputLumino.defaultProps = {
+Output.defaultProps = {
   initialOutput: [
     {
       "output_type": "execute_result",
@@ -81,4 +81,4 @@ OutputLumino.defaultProps = {
   clearTrigger: 0,
 } as Partial<IOutputProps>;
 
-export default OutputLumino;
+export default Output;

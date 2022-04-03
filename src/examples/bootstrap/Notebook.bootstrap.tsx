@@ -2,7 +2,7 @@ import { render } from 'react-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import muiLightTheme from '../theme/Theme';
 import Jupyter from '../../jupyter/Jupyter';
-import NotebookLumino from '../../components/notebook/NotebookLumino';
+import Notebook from '../../components/notebook/Notebook';
 import NotebookControl from '../controls/NotebookControl';
 import Layers from '../theme/Layers'
 
@@ -15,7 +15,7 @@ const Example = () => {
       <Jupyter collaborative={false} terminals={false}>
         <Layers />
         <NotebookControl />
-        <NotebookLumino 
+        <Notebook 
           path='ping.ipynb'
           ipywidgets='classic'
         />

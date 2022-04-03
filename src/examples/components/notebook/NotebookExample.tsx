@@ -1,7 +1,7 @@
 import Paper from '@mui/material/Paper';
 import { Theme } from '@mui/material/styles';
 import { makeStyles } from '@mui/styles';
-import { Jupyter, NotebookLumino } from '../../../index';
+import { Jupyter, Notebook } from '../../../index';
 import ToolbarExample from './ToolbarExample';
 import CellSidebarExample from './CellSidebarExample';
 
@@ -28,7 +28,7 @@ export default function NotebookExample() {
       <div className={classes.root}>
         <Paper elevation={3} style={{ width: '100%' }}>
           <ToolbarExample />
-          <NotebookLumino path='ping.ipynb' ipywidgets='lab' sidebarComponent={CellSidebarExample}/>
+          <Notebook path='ping.ipynb' ipywidgets='lab' sidebarComponent={CellSidebarExample}/>
         </Paper>
       </div>
     </Jupyter>

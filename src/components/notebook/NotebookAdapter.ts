@@ -20,7 +20,7 @@ import { MathJaxTypesetter } from '@jupyterlab/mathjax2';
 // import { requireLoader } from "@jupyter-widgets/html-manager";
 // import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/lib/output_renderers";
 
-import { INotebookProps } from './NotebookLumino';
+import { INotebookProps } from './Notebook';
 import { SetupCommands } from './NotebookCommands';
 import ContentFactoryWithSidebar from './extension/ContentFactoryWithSidebar';
 /*

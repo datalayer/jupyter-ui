@@ -3,8 +3,8 @@ import { ThemeProvider } from '@mui/material/styles';
 import muiLightTheme from '../theme/Theme';
 import Jupyter from '../../jupyter/Jupyter';
 import Layers from '../theme/Layers';
-import FileBrowser from './../../components/filebrowser/FileBrowser';
-import FileBrowserLumino from './../../components/filebrowser/FileBrowserLumino';
+import FileBrowserTree from '../../components/filebrowser/FileBrowserTree';
+import FileBrowser from '../../components/filebrowser/FileBrowser';
 
 const div = document.createElement('div');
 document.body.appendChild(div);
@@ -14,8 +14,8 @@ render(
     <Jupyter collaborative={false} terminals={false}>
       <Layers />
       <Jupyter collaborative={false} terminals={true}>
+        <FileBrowserTree/>
         <FileBrowser/>
-        <FileBrowserLumino/>
       </Jupyter>
     </Jupyter>
   </ThemeProvider>

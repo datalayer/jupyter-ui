@@ -19,27 +19,27 @@ export type ICellProps = {
   autoStart?: boolean;
 }
 
-const CellLumino = (props: ICellProps) => {
-  const cellLumino = useMemo(() => new CellAdapter(props.source!), []);
+const Cell = (props: ICellProps) => {
+  const cellAdapter = useMemo(() => new CellAdapter(props.source!), []);
   const dispatch = useDispatch();
   const injectableStore = useStore();  
   useEffect(() => {
-    cellLumino.codeCell.model.value.changed.connect((sender, changedArgs) => {
+    cellAdapter.codeCell.model.value.changed.connect((sender, changedArgs) => {
       dispatch(cellActions.source.started(sender.text));
     });
-    const outputs$ = asObservable(cellLumino.codeCell.outputArea.outputLengthChanged);
+    const outputs$ = asObservable(cellAdapter.codeCell.outputArea.outputLengthChanged);
     outputs$.subscribe(
       outputsCount => { dispatch(cellActions.outputsCount.started(outputsCount)); }
     );
 //    outputs$.pipe(map(output => { console.log('---- output', output); }));
     (injectableStore as any).injectReducer('cell', cellReducer);
-    (injectableStore as any).injectEpic(cellEpics(cellLumino));
+    (injectableStore as any).injectEpic(cellEpics(cellAdapter));
     dispatch(cellActions.source.started(props.source!));
-    cellLumino.sessionContext.initialize().then(() => {
+    cellAdapter.sessionContext.initialize().then(() => {
 //      const kernelModel = new KernelModel(cellLumino.sessionContext);
 //      kernelModel.execute(props.source!);
       if (props.autoStart) {
-        const executePromise = CodeCell.execute(cellLumino.codeCell, cellLumino.sessionContext);
+        const executePromise = CodeCell.execute(cellAdapter.codeCell, cellAdapter.sessionContext);
         executePromise.then((msg: void | KernelMessage.IExecuteReplyMsg) => {
           dispatch(cellActions.update.started({
             kernelAvailable: true,
@@ -48,12 +48,12 @@ const CellLumino = (props: ICellProps) => {
       }
     });
   }, []);
-  return <LuminoAttached>{cellLumino.panel}</LuminoAttached>
+  return <LuminoAttached>{cellAdapter.panel}</LuminoAttached>
 }
 
-CellLumino.defaultProps = {
+Cell.defaultProps = {
   source: DEFAULT_SOURCE,
   autoStart: true,
 } as Partial<ICellProps>;
 
-export default CellLumino;
+export default Cell;

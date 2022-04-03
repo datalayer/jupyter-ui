@@ -10,26 +10,26 @@ import LuminoExample from './../lumino/LuminoExample';
 import IpyWidgetsControl from '../../controls/IpyWidgetsControl';
 import IpyWidgetsExample from '../ipywidgets/IpyWidgetsExample';
 import IpyWidgetsComponent from './../../../components/ipywidgets/IpyWidgetsComponent';
-import { CellLumino } from '../../../index';
+import { Cell } from '../../../index';
 import CellControl from '../../controls/CellControl';
-import { CommandsLumino } from '../../../index';
+import { Commands } from '../../../index';
 import CommandsControl from '../../controls/CommandsControl';
-import { ConsoleLumino } from '../../../index';
+import { Console } from '../../../index';
 import ConsoleControl from '../../controls/ConsoleControl';
-import { DialogLumino } from '../../../index';
+import { Dialog } from '../../../index';
 import DialogControl from '../../controls/DialogControl';
+import FileBrowserTree from '../../../components/filebrowser/FileBrowserTree';
 import FileBrowser from '../../../components/filebrowser/FileBrowser';
-import FileBrowserLumino from '../../../components/filebrowser/FileBrowserLumino';
 import FileBrowserControl from '../../controls/FileBrowserControl';
-import { NotebookLumino } from '../../../index';
+import { Notebook } from '../../../index';
 import NotebookControl from '../../controls/NotebookControl';
 import CellSidebarExample from './../notebook/CellSidebarExample';
 import { Kernel } from '../../../index';
-import { OutputLumino } from '../../../index';
+import { Output } from '../../../index';
 import OutputsControl from '../../controls/OutputsControl';
-import { SettingsLumino } from '../../../index';
+import { Settings } from '../../../index';
 import SettingsControl from '../../controls/SettingsControl';
-import { TerminalLumino } from '../../../index';
+import { Terminal } from '../../../index';
 import TerminalControl from '../../controls/TerminalControl';
 
 /**
@@ -170,19 +170,19 @@ const Gallery = () => {
         </TabPanel>
         <TabPanel value={value} index={2}>
           <OutputsControl/>
-          <OutputLumino
+          <Output
             initialOutput={OUTPUT_2 as any}
             showEditor={false}
             autoRun={false}
             kernel={kernel}
          />
-          <OutputLumino
+          <Output
             showEditor={true}
             autoRun={false}
             kernel={kernel}
             code={"print('Hello Datalayer 👍')"}
          />
-          <OutputLumino
+          <Output
             showEditor={true}
             autoRun={true}
             kernel={kernel}
@@ -191,36 +191,36 @@ const Gallery = () => {
         </TabPanel>
         <TabPanel value={value} index={3}>
           <CellControl/>
-          <CellLumino source={SOURCE_1}/>
+          <Cell source={SOURCE_1}/>
         </TabPanel>
         <TabPanel value={value} index={4}>
           <NotebookControl/>
-          <NotebookLumino path='ping.ipynb' ipywidgets="lab" sidebarComponent={CellSidebarExample}/>
+          <Notebook path='ping.ipynb' ipywidgets="lab" sidebarComponent={CellSidebarExample}/>
         </TabPanel>
         <TabPanel value={value} index={5}>
           <CommandsControl/>
-          <CommandsLumino/>
+          <Commands/>
         </TabPanel>
         <TabPanel value={value} index={6}>
           <ConsoleControl/>
-          <ConsoleLumino/>
+          <Console/>
         </TabPanel>
         <TabPanel value={value} index={7}>
           <DialogControl/>
-          <DialogLumino/>
+          <Dialog/>
         </TabPanel>
         <TabPanel value={value} index={8}>
           <FileBrowserControl/>
+          <FileBrowserTree/>
           <FileBrowser/>
-          <FileBrowserLumino/>
         </TabPanel>
         <TabPanel value={value} index={9}>
           <SettingsControl/>
-          <SettingsLumino/>
+          <Settings/>
         </TabPanel>
         <TabPanel value={value} index={10}>
           <TerminalControl/>
-          <TerminalLumino/>
+          <Terminal/>
         </TabPanel>
       </div>
     </div>

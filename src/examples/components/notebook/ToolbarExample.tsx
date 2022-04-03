@@ -11,9 +11,9 @@ import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import SaveOutlined from '@mui/icons-material/SaveOutlined';
 import StopOutlined from '@mui/icons-material/StopOutlined';
 import QuestionAnswerOutlined from '@mui/icons-material/QuestionAnswerOutlined';
-import { notebookActions, selectNotebook, TerminalLumino } from '../../../index';
+import { notebookActions, selectNotebook, Terminal } from '../../../index';
 
-const terminal = <TerminalLumino />
+const terminal = <Terminal />
 
 const ToolbarExample = () => {
   const [state, setState] = useState({
