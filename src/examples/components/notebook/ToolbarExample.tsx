@@ -33,7 +33,7 @@ const ToolbarExample = () => {
               variant="text"
               color="primary"
               startIcon={<AddCircleOutlineIcon />}
-              onClick={() => dispatch(notebookActions.insertBelow.started())}
+              onClick={() => dispatch(notebookActions.insertBelow())}
               >
                 Text
             </Button>
@@ -41,7 +41,7 @@ const ToolbarExample = () => {
               variant="text"
               color="primary"
               startIcon={<AddCircleOutlineIcon />}
-              onClick={() => dispatch(notebookActions.insertBelow.started())}
+              onClick={() => dispatch(notebookActions.insertBelow())}
               >
                 Markdown
             </Button>
@@ -49,7 +49,7 @@ const ToolbarExample = () => {
               variant="text"
               color="primary"
               startIcon={<AddCircleOutlineIcon />}
-              onClick={() => dispatch(notebookActions.insertBelow.started())}
+              onClick={() => dispatch(notebookActions.insertBelow())}
               >
                 Code
             </Button>
@@ -67,7 +67,7 @@ const ToolbarExample = () => {
               variant="outlined"
               color="primary"
               startIcon={<SaveOutlined />}
-              onClick={() => dispatch(notebookActions.save.started())}
+              onClick={() => dispatch(notebookActions.save())}
               >
                 Save
             </Button>
@@ -76,7 +76,7 @@ const ToolbarExample = () => {
                 variant="outlined"
                 color="primary"
                 startIcon={<PlayCircleOutlineIcon />}
-                onClick={() => dispatch(notebookActions.runAll.started())}
+                onClick={() => dispatch(notebookActions.runAll())}
                 >
                   Run all
               </Button>
@@ -86,7 +86,7 @@ const ToolbarExample = () => {
                 variant="outlined"
                 color="secondary"
                 startIcon={<StopOutlined />}
-                onClick={() => dispatch(notebookActions.interrupt.started())}
+                onClick={() => dispatch(notebookActions.interrupt())}
                 >
                   Stop
               </Button>

@@ -31,7 +31,7 @@ const CellSidebarExample = (props: any) => {
     <div className={CELL_HEADER_DIV_CLASS}>
       <div
         onClick={event => {
-          dispatch(notebookActions.run.started());
+          dispatch(notebookActions.run());
         }}
       >
         <span style={{ display: "flex" }}>
@@ -41,7 +41,7 @@ const CellSidebarExample = (props: any) => {
       </div>
       <div
         onClick={event => {
-          dispatch(notebookActions.insertAbove.started());
+          dispatch(notebookActions.insertAbove());
         }}
       >
         <span style={{ display: "flex" }}>
@@ -51,7 +51,7 @@ const CellSidebarExample = (props: any) => {
       </div>
       <div
         onClick={event => {
-          dispatch(notebookActions.insertBelow.started());
+          dispatch(notebookActions.insertBelow());
         }}
       >
         <span style={{ display: "flex" }}>
@@ -61,7 +61,7 @@ const CellSidebarExample = (props: any) => {
       </div>
       <div
         onClick={event => {
-          dispatch(notebookActions.delete.started(undefined));
+          dispatch(notebookActions.delete(undefined));
         }}
       >
         <span style={{ display: "flex" }}>

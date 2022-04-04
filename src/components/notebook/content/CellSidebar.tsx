@@ -30,6 +30,6 @@ export class CellSidebar extends LuminoReactPortal implements ICellHeader {
       ,
       this.node
     );
-    injectableStore.dispatch(notebookActions.portal.started(portal));
+    injectableStore.dispatch(notebookActions.portal(portal));
   }
 }

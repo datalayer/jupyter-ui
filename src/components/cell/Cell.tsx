@@ -1,13 +1,19 @@
 import { useMemo, useEffect } from 'react';
-import { useDispatch, useStore } from "react-redux";
+import { useDispatch } from "react-redux";
 import { CodeCell } from '@jupyterlab/cells';
 import { KernelMessage } from '@jupyterlab/services';
-import { cellEpics, cellActions, cellReducer } from './CellState';
+import { cellActions } from './CellState';
 import CellAdapter from './CellAdapter';
 import LuminoAttached from '../../lumino/LuminoAttached';
-import { asObservable } from '../../lumino/LuminoObservable';
-// import { map } from "rxjs/operators";
-// import KernelModel from './KernelModel';
+
+import '@jupyterlab/application/style/index.css';
+import '@jupyterlab/cells/style/index.css';
+import '@jupyterlab/completer/style/index.css';
+// This should be only index.css, looks like jupyterlab has a regression here...
+import '@jupyterlab/theme-light-extension/style/theme.css';
+import '@jupyterlab/theme-light-extension/style/variables.css';
+
+import './Cell.css';
 
 const DEFAULT_SOURCE = `from IPython.display import display
 
@@ -20,35 +26,29 @@ export type ICellProps = {
 }
 
 const Cell = (props: ICellProps) => {
-  const cellAdapter = useMemo(() => new CellAdapter(props.source!), []);
+  const adapter = useMemo(() => new CellAdapter(props.source!), []);
   const dispatch = useDispatch();
-  const injectableStore = useStore();  
   useEffect(() => {
-    cellAdapter.codeCell.model.value.changed.connect((sender, changedArgs) => {
-      dispatch(cellActions.source.started(sender.text));
+    dispatch(cellActions.update({ adapter }));
+    dispatch(cellActions.source(props.source!));
+    adapter.codeCell.model.value.changed.connect((sender, changedArgs) => {
+      dispatch(cellActions.source(sender.text));
     });
-    const outputs$ = asObservable(cellAdapter.codeCell.outputArea.outputLengthChanged);
-    outputs$.subscribe(
-      outputsCount => { dispatch(cellActions.outputsCount.started(outputsCount)); }
-    );
-//    outputs$.pipe(map(output => { console.log('---- output', output); }));
-    (injectableStore as any).injectReducer('cell', cellReducer);
-    (injectableStore as any).injectEpic(cellEpics(cellAdapter));
-    dispatch(cellActions.source.started(props.source!));
-    cellAdapter.sessionContext.initialize().then(() => {
-//      const kernelModel = new KernelModel(cellLumino.sessionContext);
-//      kernelModel.execute(props.source!);
+    adapter.codeCell.outputArea.outputLengthChanged.connect((_, outputsCount) => {
+      dispatch(cellActions.outputsCount(outputsCount));
+    });
+    adapter.sessionContext.initialize().then(() => {
       if (props.autoStart) {
-        const executePromise = CodeCell.execute(cellAdapter.codeCell, cellAdapter.sessionContext);
+        const executePromise = CodeCell.execute(adapter.codeCell, adapter.sessionContext);
         executePromise.then((msg: void | KernelMessage.IExecuteReplyMsg) => {
-          dispatch(cellActions.update.started({
+          dispatch(cellActions.update({
             kernelAvailable: true,
           }));
         });  
       }
     });
   }, []);
-  return <LuminoAttached>{cellAdapter.panel}</LuminoAttached>
+  return <LuminoAttached>{adapter.panel}</LuminoAttached>
 }
 
 Cell.defaultProps = {

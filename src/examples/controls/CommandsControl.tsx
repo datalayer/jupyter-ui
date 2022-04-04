@@ -17,14 +17,14 @@ const CommandControl: React.FC = () => {
         <Button 
           variant="outlined"
           color="primary"
-          onClick={() => dispatch(commandsActions.execute.started())}
+          onClick={() => dispatch(commandsActions.execute())}
           >
             Execute
         </Button>
         <Button 
           variant="outlined"
           color="secondary"
-          onClick={() => dispatch(commandsActions.outputs.started(0))}
+          onClick={() => dispatch(commandsActions.outputs(0))}
           >
             Reset Outputs
         </Button>

@@ -17,14 +17,14 @@ const SettingsControl: React.FC = () => {
         <Button 
           variant="outlined"
           color="primary"
-          onClick={() => dispatch(settingsActions.execute.started())}
+          onClick={() => dispatch(settingsActions.execute())}
           >
             Execute
         </Button>
         <Button 
           variant="outlined"
           color="secondary"
-          onClick={() => dispatch(settingsActions.outputs.started(0))}
+          onClick={() => dispatch(settingsActions.outputs(0))}
           >
             Reset Outputs
         </Button>

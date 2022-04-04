@@ -17,14 +17,14 @@ const FileBrowserControl: React.FC = () => {
         <Button 
           variant="outlined"
           color="primary"
-          onClick={() => dispatch(fileBrowserActions.execute.started())}
+          onClick={() => dispatch(fileBrowserActions.execute())}
           >
             Execute
         </Button>
         <Button 
           variant="outlined"
           color="secondary"
-          onClick={() => dispatch(fileBrowserActions.outputs.started(0))}
+          onClick={() => dispatch(fileBrowserActions.outputs(0))}
           >
             Reset Outputs
         </Button>

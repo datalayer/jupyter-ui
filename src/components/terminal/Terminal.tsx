@@ -1,17 +1,16 @@
 import { useEffect, useMemo } from 'react';
-import { useStore } from "react-redux";
+import { useDispatch } from "react-redux";
 import TerminalAdapter from './TerminalAdapter';
+import { terminalActions } from './TerminalState';
 import LuminoAttached from '../../lumino/LuminoAttached';
-import { terminalEpics, terminalReducer } from './TerminalState';
 
-const Terminal = () => {
-  const terminalAdapter = useMemo(() => new TerminalAdapter(), []);
-  const injectableStore = useStore();
+export const Terminal = () => {
+  const dispatch = useDispatch();
+  const adapter = useMemo(() => new TerminalAdapter(), []);
   useEffect(() => {
-    (injectableStore as any).injectReducer('terminal', terminalReducer);
-    (injectableStore as any).injectEpic(terminalEpics(terminalAdapter));
-  }, []); 
-  return <LuminoAttached>{terminalAdapter.panel}</LuminoAttached>
+    dispatch(terminalActions.update({ adapter }));
+  }, []);
+  return <LuminoAttached>{adapter.panel}</LuminoAttached>
 }
 
 export default Terminal;

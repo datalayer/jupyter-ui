@@ -5,25 +5,16 @@ import { CodeMirrorMimeTypeService } from '@jupyterlab/codemirror';
 import { runIcon } from '@jupyterlab/ui-components';
 import { Completer, CompleterModel, CompletionHandler, ConnectorProxy, KernelCompleterProvider } from '@jupyterlab/completer';
 import { RenderMimeRegistry, standardRendererFactories as initialFactories } from '@jupyterlab/rendermime';
-// import { Session } from '@jupyterlab/services';
+import { Session } from '@jupyterlab/services';
 import { SessionManager, KernelManager, KernelSpecManager } from '@jupyterlab/services';
 import { ServerConnection } from '@jupyterlab/services';
 import { CommandRegistry } from '@lumino/commands';
-// import { IPyWidgetsClassicManager } from "../../ipywidgets/IPyWidgetsClassicManager";
-// import { requireLoader } from "@jupyter-widgets/html-manager";
-// import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/lib/output_renderers";
+import { IPyWidgetsClassicManager } from "../../ipywidgets/IPyWidgetsClassicManager";
+import { requireLoader } from "@jupyter-widgets/html-manager";
+import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/lib/output_renderers";
 import CellCommands from './CellCommands';
 
-import '@jupyterlab/application/style/index.css';
-import '@jupyterlab/cells/style/index.css';
-import '@jupyterlab/completer/style/index.css';
-// This should be only index.css, looks like jupyterlab has a regression here...
-import '@jupyterlab/theme-light-extension/style/theme.css';
-import '@jupyterlab/theme-light-extension/style/variables.css';
-
-import './CellAdapter.css';
-
-class CellAdapter {
+export class CellAdapter {
   private _codeCell: CodeCell;
   private _cellPanel: BoxPanel;
   private _sessionContext: SessionContext;
@@ -56,10 +47,8 @@ class CellAdapter {
       name: 'Datalayer'
     });
     const mimeService = new CodeMirrorMimeTypeService();
-    // Initialize the command registry with the bindings.
     const commands = new CommandRegistry();
     const useCapture = true;
-    // Setup the keydown listener for the document.
     document.addEventListener(
       'keydown',
       event => {
@@ -67,9 +56,7 @@ class CellAdapter {
       },
       useCapture
     );
-    // Create the cell widget with a default rendermime instance.
     const rendermime = new RenderMimeRegistry({ initialFactories });
-    /*
     const iPyWidgetsClassicManager = new IPyWidgetsClassicManager({ loader: requireLoader });
     rendermime.addFactory(
       {
@@ -79,7 +66,6 @@ class CellAdapter {
       },
       0
     );
-    */
     const codeCell = new CodeCell({
       rendermime,
       model: new CodeCellModel({
@@ -91,12 +77,10 @@ class CellAdapter {
         }
       })
     });
-    /*
     this._sessionContext.kernelChanged.connect((sender: SessionContext, arg: Session.ISessionConnection.IKernelChangedArgs) => {
       const kernelConnection = arg.newValue;
       iPyWidgetsClassicManager.registerWithKernel(kernelConnection)
     });
-    */
     this._codeCell = codeCell.initializeState();
     this._sessionContext.kernelChanged.connect(() => {
       void this._sessionContext.session?.kernel?.info.then(info => {
@@ -114,7 +98,7 @@ class CellAdapter {
     const connector = new ConnectorProxy(
       { widget: this._codeCell, editor, session: this._sessionContext.session },
       [provider],
-      timeout
+      timeout,
     );
     const handler = new CompletionHandler({ completer, connector });
     void this._sessionContext.ready.then(() => {
@@ -122,7 +106,7 @@ class CellAdapter {
       handler.connector = new ConnectorProxy(
         { widget: this._codeCell, editor, session: this._sessionContext.session },
         [provider],
-        timeout
+        timeout,
       );
     });
     handler.editor = editor;

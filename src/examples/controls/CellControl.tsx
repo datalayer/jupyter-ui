@@ -16,14 +16,14 @@ const CellControl: React.FC = () => {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => dispatch(cellActions.execute.started())}
+          onClick={() => dispatch(cellActions.execute())}
           >
             Execute
         </Button>
         <Button
           variant="outlined"
           color="secondary"
-          onClick={() => dispatch(cellActions.outputsCount.started(0))}
+          onClick={() => dispatch(cellActions.outputsCount(0))}
           >
             Reset outputs count
         </Button>

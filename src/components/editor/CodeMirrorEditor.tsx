@@ -54,7 +54,7 @@ const CodeMirrorEditor = (props: {
           parent: ref,
         });
         const runCode = () => {
-          outputLumino.execute(String(view.state.doc));  
+          Output.execute(String(view.state.doc));  
           return true;
         };
         runCode();

@@ -1,53 +1,46 @@
-// Jupyter
+// Jupyter.
 export { default as Jupyter } from './jupyter/Jupyter';
 export * from './jupyter/JupyterContext';
 
-// Services
+// Services.
 export { default as Services } from './services/Services';
 export { default as Kernel } from './services/kernel/Kernel';
 
 // IpyWidgets.
 export { default as IpyWidgetsComponent } from './components/ipywidgets/IpyWidgetsComponent';
 
-// Cell
+// Cell.
 export { default as Cell } from './components/cell/Cell';
-export { selectCell as selectCell } from './components/cell/CellState';
-export { cellActions as cellActions } from './components/cell/CellState';
+export { selectCell, cellActions } from './components/cell/CellState';
 
-// Notebook
+// Notebook.
 export { default as Notebook } from './components/notebook/Notebook';
-export { selectNotebook as selectNotebook } from './components/notebook/NotebookState';
-export { notebookActions as notebookActions } from './components/notebook/NotebookState';
+export { selectNotebook, notebookActions } from './components/notebook/NotebookState';
 
-// Commands
+// Commands.
 export { default as Commands } from './components/commands/Commands';
-export { selectCommands as selectCommands } from './components/commands/CommandsState';
-export { commandsActions as commandsActions } from './components/commands/CommandsState';
+export { selectCommands, commandsActions } from './components/commands/CommandsState';
 
-// Console
+// Console.
 export { default as Console } from './components/console/Console';
-export { selectConsole as selectConsole } from './components/console/ConsoleState';
-export { consoleActions as consoleActions } from './components/console/ConsoleState';
+export { selectConsole, consoleActions } from './components/console/ConsoleState';
 
-// Dialog
+// Dialog.
 export { default as Dialog } from './components/dialog/Dialog';
 
-// FileBrowser
-export { default as FileBrowserTree } from './components/filebrowser/FileBrowserTree';
+// FileBrowser.
 export { default as FileBrowser } from './components/filebrowser/FileBrowser';
-export { selectFileBrowser as selectFileBrowser } from './components/filebrowser/FileBrowserState';
-export { fileBrowserActions as fileBrowserActions } from './components/filebrowser/FileBrowserState';
+export { default as FileBrowserTree } from './components/filebrowser/FileBrowserTree';
+export { selectFileBrowser, fileBrowserActions } from './components/filebrowser/FileBrowserState';
 
-// Outputs
+// Outputs.
 export { default as Output } from './components/outputs/Output';
-export { selectOutput as selectOutput } from './components/outputs/OutputState';
+export { selectOutput } from './components/outputs/OutputState';
 
-// Settings
+// Settings.
 export { default as Settings } from './components/settings/Settings';
-export { selectSettings as selectSettings } from './components/settings/SettingsState';
-export { settingsActions as settingsActions } from './components/settings/SettingsState';
+export { selectSettings, settingsActions } from './components/settings/SettingsState';
 
-// Terminal
+// Terminal.
 export { default as Terminal } from './components/terminal/Terminal';
-export { selectTerminal as selectTerminal } from './components/terminal/TerminalState';
-export { terminalActions as terminalActions } from './components/terminal/TerminalState';
+export { selectTerminal, terminalActions } from './components/terminal/TerminalState';

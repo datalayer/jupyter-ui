@@ -1,9 +1,11 @@
 import { useEffect, useMemo } from "react";
 import { useDispatch, useStore } from "react-redux";
+import { Cell, ICellModel } from "@jupyterlab/cells";
+import { NotebookChange } from "@jupyterlab/shared-models";
+import { Kernel } from '@jupyterlab/services';
 import NotebookAdapter from './NotebookAdapter';
-import { notebookEpics, notebookActions, notebookReducer, selectNotebook } from './NotebookState';
+import { notebookActions, notebookReducer, selectNotebook } from './NotebookState';
 import LuminoAttached from '../../lumino/LuminoAttached';
-import { asObservable } from '../../lumino/LuminoObservable'
 
 export type INotebookProps = {
   path: string;
@@ -28,28 +30,18 @@ export const Notebook = (props: INotebookProps) => {
   useEffect(() => {
     if (!(injectableStore as any).asyncReducers!.notebook) {
       (injectableStore as any).injectReducer('notebook', notebookReducer);
-      (injectableStore as any).injectEpic(notebookEpics(notebookAdapter));
     }
     notebookAdapter.manager.ready.then(() => {
       notebookAdapter.loadNotebook(props.path);
-      const activeCellChanged$ = asObservable(notebookAdapter.notebookPanel.content.activeCellChanged);
-      activeCellChanged$.subscribe(
-        activeCellChanged => {
-          dispatch(notebookActions.activeCellChange.started(activeCellChanged));
-        }
-      );
-      const notebookChange$ = asObservable(notebookAdapter.notebookPanel.model!.sharedModel.changed);
-      notebookChange$.subscribe(
-        notebookChange => {
-          dispatch(notebookActions.notebookChange.started(notebookChange));
-        }
-      );
-      const kernelStatusChanged$ = asObservable(notebookAdapter.notebookPanel.sessionContext.statusChanged);
-      kernelStatusChanged$.subscribe(
-        kernelStatusChanged => {
-          dispatch(notebookActions.kernelStatusChanged.started(kernelStatusChanged));
-        }
-      );
+      notebookAdapter.notebookPanel.content.activeCellChanged.connect((_, activeCellChanged: Cell<ICellModel>) => {
+        dispatch(notebookActions.activeCellChange(activeCellChanged));
+      });
+      notebookAdapter.notebookPanel.model!.sharedModel.changed.connect((_, notebookChange: NotebookChange) => {
+        dispatch(notebookActions.notebookChange(notebookChange));
+      });
+      notebookAdapter.notebookPanel.sessionContext.statusChanged.connect((_, kernelStatusChanged: Kernel.Status) => {
+        dispatch(notebookActions.kernelStatusChanged(kernelStatusChanged));
+      });
     });
   }, []);
   return (

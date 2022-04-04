@@ -17,14 +17,14 @@ const ConsoleControl: React.FC = () => {
         <Button
           variant="outlined"
           color="primary"
-          onClick={() => dispatch(consoleActions.execute.started())}
+          onClick={() => dispatch(consoleActions.execute())}
           >
             Execute
         </Button>
         <Button 
           variant="outlined"
           color="secondary"
-          onClick={() => dispatch(consoleActions.outputs.started(0))}
+          onClick={() => dispatch(consoleActions.outputs(0))}
           >
             Reset Outputs
         </Button>

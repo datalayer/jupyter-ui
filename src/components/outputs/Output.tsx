@@ -22,24 +22,24 @@ const Output = (props: IOutputProps) => {
     trusted: true,
     values: initialOutput,
   }));
-  const outputLumino = useMemo(() => { return new OutputAdapter(
+  const Output = useMemo(() => { return new OutputAdapter(
     kernel.getJupyterKernel(),
     model,
     {},
   )}, []);
   useEffect(() => {
     if (!showEditor && autoRun) {
-      outputLumino.execute(code);
+      Output.execute(code);
     }
   }, [executeTrigger]);
   useEffect(() => {
     if (showEditor) {
-    outputLumino.execute(code);
+    Output.execute(code);
     }
   }, [executeTrigger]);
   useEffect(() => {
     if (showEditor) {
-      outputLumino.clearOutput();
+      Output.clearOutput();
     }
   }, [clearTrigger]);
   return <div>
@@ -48,7 +48,7 @@ const Output = (props: IOutputProps) => {
         <CodeMirrorEditor
           autoRun={autoRun}
           code={code}
-          outputAdapter={outputLumino}
+          outputAdapter={Output}
         />
       }
     </div>
@@ -59,7 +59,7 @@ const Output = (props: IOutputProps) => {
         },
       }}
     >
-      <LuminoAttached>{outputLumino.panel}</LuminoAttached>
+      <LuminoAttached>{Output.panel}</LuminoAttached>
     </div>
   </div>
 }

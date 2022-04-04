@@ -8,13 +8,13 @@ import '@jupyterlab/theme-light-extension/style/variables.css';
 
 import './TerminalAdapter.css';
 
-class TerminalAdapter {
+export class TerminalAdapter {
   private terminalPanel: BoxPanel;
   private terminal: Terminal;
 
   constructor() {
     this.terminalPanel = new BoxPanel();
-    this.terminalPanel.id = 'jupyterlab-terminal';
+    this.terminalPanel.addClass('jupyterlab-terminal');
     this.terminalPanel.spacing = 0;
     const manager = new TerminalManager();
     manager.startNew().then((s1) => {

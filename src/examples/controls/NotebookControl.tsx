@@ -18,7 +18,7 @@ const NotebookControl: React.FC = () => {
           variant="outlined"
           color="secondary"
           startIcon={<PlayCircleOutline />}
-          onClick={() => dispatch(notebookActions.run.started())}
+          onClick={() => dispatch(notebookActions.run())}
           >
             Execute
         </Button>
@@ -27,7 +27,7 @@ const NotebookControl: React.FC = () => {
         variant="outlined"
         color="secondary"
         startIcon={<SaveOutlined />}
-        onClick={() => dispatch(notebookActions.save.started())}
+        onClick={() => dispatch(notebookActions.save())}
         >
           Save
       </Button>

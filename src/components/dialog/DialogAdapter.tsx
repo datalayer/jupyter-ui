@@ -1,4 +1,4 @@
-import { Dialog as JPDialog } from '@jupyterlab/apputils';
+import { Dialog as JupyerLabDialog } from '@jupyterlab/apputils';
 
 import '@jupyterlab/apputils/style/index.css';
 import '@jupyterlab/theme-light-extension/style/theme.css';
@@ -6,18 +6,20 @@ import '@jupyterlab/theme-light-extension/style/variables.css';
  
 import './DialogAdapter.css';
 
-class DialogAdapter {
-  public dialog: JPDialog<any>;
+export class DialogAdapter {
+  public dialog: JupyerLabDialog<any>;
+
   public constructor() {
-    this.dialog = new JPDialog({
+    this.dialog = new JupyerLabDialog({
       title: 'Dialog Title',
       body: 'This is the body of the dialog...',
       buttons: [
-        JPDialog.cancelButton(),
-        JPDialog.okButton(),
+        JupyerLabDialog.cancelButton(),
+        JupyerLabDialog.okButton(),
       ]
     });
   }
+
 }
 
 export default DialogAdapter;
