@@ -33,7 +33,7 @@ const ToolbarExample = () => {
               variant="text"
               color="primary"
               startIcon={<AddCircleOutlineIcon />}
-              onClick={() => dispatch(notebookActions.insertBelow.started())}
+              onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertBelow.started()) }}
               >
                 Text
             </Button>
@@ -41,7 +41,7 @@ const ToolbarExample = () => {
               variant="text"
               color="primary"
               startIcon={<AddCircleOutlineIcon />}
-              onClick={() => dispatch(notebookActions.insertBelow.started())}
+              onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertBelow.started()) }}
               >
                 Markdown
             </Button>
@@ -49,7 +49,7 @@ const ToolbarExample = () => {
               variant="text"
               color="primary"
               startIcon={<AddCircleOutlineIcon />}
-              onClick={() => dispatch(notebookActions.insertBelow.started())}
+              onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertBelow.started()) }}
               >
                 Code
             </Button>
@@ -76,7 +76,7 @@ const ToolbarExample = () => {
                 variant="outlined"
                 color="primary"
                 startIcon={<PlayCircleOutlineIcon />}
-                onClick={() => dispatch(notebookActions.runAll())}
+                onClick={(e) => { e.preventDefault(); dispatch(notebookActions.runAll()) }}
                 >
                   Run all
               </Button>
@@ -86,7 +86,7 @@ const ToolbarExample = () => {
                 variant="outlined"
                 color="secondary"
                 startIcon={<StopOutlined />}
-                onClick={() => dispatch(notebookActions.interrupt())}
+                onClick={(e) =>  { e.preventDefault(); dispatch(notebookActions.interrupt()) }}
                 >
                   Stop
               </Button>
