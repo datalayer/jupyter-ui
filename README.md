@@ -34,7 +34,7 @@ Jupyter React, https://github.com/datalayer/jupyter-react, an open-source librar
 
 The Jupyter user interface stack is built on top of Lumino, which is an imperative way to build user interface and can not be consumed by industry standard declarative frameworks like React.js.
 
-As a user interface developer, if you want to create a custom data product on top of Jupyter, you have to stick to Lumino and update the existing notebook interface. This is not what you want. You want your toolkit (like React.js) and you want to integrate on a component basis the Jupyter functionality in your applicatio
+As a user interface developer, if you want to create a custom data product on top of Jupyter, you have to stick to Lumino and carry-on the full notebook interface not tailored to your specific needs. This is not what you want. You just want to expose what you need, you want to develop with your favortie toolkit (like React.js) and you also want to integrate on a per-component basis the Jupyter functionality in your application.
 
 ## Contribute
 
