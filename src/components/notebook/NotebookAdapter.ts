@@ -67,7 +67,7 @@ export class NotebookAdapter {
         url: PageConfig.getOption('mathjaxUrl'),
         config: PageConfig.getOption('mathjaxConfig'),
       }),
-//      markdownParser: getMarked(),
+      markdownParser: getMarked(),
     });
     const documentRegistry = new DocumentRegistry({});
     const mimeTypeService = new CodeMirrorMimeTypeService();
