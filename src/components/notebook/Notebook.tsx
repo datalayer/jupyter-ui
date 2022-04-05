@@ -1,11 +1,11 @@
 import { useEffect, useMemo } from "react";
 import { useDispatch, useStore } from "react-redux";
-import { Cell, ICellModel } from "@jupyterlab/cells";
 import { NotebookChange } from "@jupyterlab/shared-models";
 import { Kernel } from '@jupyterlab/services';
 import NotebookAdapter from './NotebookAdapter';
 import { notebookActions, selectNotebook } from './NotebookState';
 import LuminoAttached from '../../lumino/LuminoAttached';
+import { asObservable } from '../../lumino/LuminoObservable'
 
 import '@jupyterlab/notebook/style/index.css';
 import '@jupyterlab/completer/style/index.css';
@@ -39,9 +39,12 @@ export const Notebook = (props: INotebookProps) => {
     dispatch(notebookActions.update({ adapter }));
     adapter.manager.ready.then(() => {
       adapter.loadNotebook(props.path);
-      adapter.notebookPanel.content.activeCellChanged.connect((_, activeCellChanged: Cell<ICellModel>) => {
-        dispatch(notebookActions.activeCellChange(activeCellChanged));
-      });
+      const activeCellChanged$ = asObservable(adapter.notebookPanel.content.activeCellChanged);
+      activeCellChanged$.subscribe(
+        activeCellChanged => {
+          dispatch(notebookActions.activeCellChange(activeCellChanged));
+        }
+      );
       adapter.notebookPanel.model!.sharedModel.changed.connect((_, notebookChange: NotebookChange) => {
         dispatch(notebookActions.notebookChange(notebookChange));
       });
