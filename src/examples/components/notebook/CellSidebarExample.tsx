@@ -8,7 +8,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { PanelLayout } from '@lumino/widgets';
 import { selectNotebook, notebookActions } from '../../../components/notebook/NotebookState';
 
-const CELL_HEADER_DIV_CLASS = 'dla-cellHeaderContainer';
+const CELL_HEADER_DIV_CLASS = 'dla-CellHeader-container';
 
 const CellSidebarExample = (props: any) => {
   const [visible, setVisible] = useState(false);
@@ -30,17 +30,19 @@ const CellSidebarExample = (props: any) => {
   return (
     <div className={CELL_HEADER_DIV_CLASS}>
       <div
-        onClick={event => {
+        onClick={e => {
+          e.preventDefault();
           dispatch(notebookActions.run());
         }}
       >
         <span style={{ display: "flex" }}>
           <PlayArrow fontSize="small" />
-          <Typography variant="body2" color="textSecondary">Render</Typography>
+          <Typography variant="body2" color="textSecondary">Run</Typography>
         </span>
       </div>
       <div
-        onClick={event => {
+        onClick={e => {
+          e.preventDefault();
           dispatch(notebookActions.insertAbove());
         }}
       >
@@ -50,7 +52,8 @@ const CellSidebarExample = (props: any) => {
         </span>
       </div>
       <div
-        onClick={event => {
+        onClick={e => {
+          e.preventDefault();
           dispatch(notebookActions.insertBelow());
         }}
       >
@@ -60,7 +63,8 @@ const CellSidebarExample = (props: any) => {
         </span>
       </div>
       <div
-        onClick={event => {
+        onClick={e => {
+          e.preventDefault();
           dispatch(notebookActions.delete(undefined));
         }}
       >

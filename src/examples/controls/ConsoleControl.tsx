@@ -19,7 +19,7 @@ const ConsoleControl: React.FC = () => {
           color="primary"
           onClick={() => dispatch(consoleActions.execute())}
           >
-            Execute
+            Run
         </Button>
         <Button 
           variant="outlined"

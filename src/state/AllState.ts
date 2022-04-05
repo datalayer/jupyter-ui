@@ -1,6 +1,7 @@
 import { combineReducers } from "redux";
 import { initInitialState, initReducer, IInitState } from "./init/InitRedux";
 import { cellInitialState, cellReducer, ICellState } from "./../components/cell/CellState";
+import { notebookInitialState, notebookReducer, INotebookState } from "./../components/notebook/NotebookState";
 import { terminalInitialState, terminalReducer, ITerminalState } from "./../components/terminal/TerminalState";
 
 /* State */
@@ -8,12 +9,14 @@ import { terminalInitialState, terminalReducer, ITerminalState } from "./../comp
 export interface IState {
   counter: IInitState;
   cell: ICellState;
+  notebook: INotebookState;
   terminal: ITerminalState;
 }
 
 export const initialState: IState = {
   counter: initInitialState,
   cell: cellInitialState,
+  notebook: notebookInitialState,
   terminal: terminalInitialState,
 }
 
@@ -33,5 +36,6 @@ export type AppAction = CellAction | NotebookAction;
 export const reducers = combineReducers<IState>({
   counter: initReducer,
   cell: cellReducer,
+  notebook: notebookReducer,
   terminal: terminalReducer,
 });

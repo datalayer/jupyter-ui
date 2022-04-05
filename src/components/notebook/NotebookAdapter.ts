@@ -1,3 +1,4 @@
+import { Store } from 'redux';
 import { CommandRegistry } from '@lumino/commands';
 import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
 import { BoxPanel, Widget } from '@lumino/widgets';
@@ -20,15 +21,7 @@ import { IPyWidgetsClassicManager } from "../../ipywidgets/IPyWidgetsClassicMana
 import { activateWidgetExtension } from "../../ipywidgets/IPyWidgetsJupyterLabPlugin";
 import { activatePlotlyWidgetExtension } from "../../ipywidgets/plotly/jupyterlab-plugin";
 
-import '@jupyterlab/notebook/style/index.css';
-import '@jupyterlab/completer/style/index.css';
-import '@jupyterlab/documentsearch/style/index.css';
-import '@jupyterlab/theme-light-extension/style/theme.css';
-import '@jupyterlab/theme-light-extension/style/variables.css';
-
-import './NotebookAdapter.css';
-
-class NotebookAdapter {
+export class NotebookAdapter {
   private props: INotebookProps;
   private boxPanel: BoxPanel;
   private _notebookPanel: NotebookPanel;
@@ -36,9 +29,9 @@ class NotebookAdapter {
   private serverSettings: ServerConnection.ISettings;
   private serviceManager: ServiceManager;
   private iPyWidgetsClassicManager: IPyWidgetsClassicManager;
-  private store: any;
+  private store: Store;
 
-  constructor(props: INotebookProps, injectableStore: any) {
+  constructor(props: INotebookProps, store: Store) {
     this.props = props;
     this.boxPanel = new BoxPanel();
     this.boxPanel.addClass('dla-JupyterLab-Notebook');
@@ -54,7 +47,7 @@ class NotebookAdapter {
     this.serviceManager = new ServiceManager({
       serverSettings: this.serverSettings,
     });
-    this.store = injectableStore;
+    this.store = store;
   }
 
   loadNotebook(notebookPath: string): void {
@@ -65,13 +58,13 @@ class NotebookAdapter {
       event => {
         this.commandRegistry.processKeydownEvent(event);
       },
-      useCapture
+      useCapture,
     );
     const rendermime = new RenderMimeRegistry({
       initialFactories: initialFactories,
       latexTypesetter: new MathJaxTypesetter({
         url: PageConfig.getOption('mathjaxUrl'),
-        config: PageConfig.getOption('mathjaxConfig')
+        config: PageConfig.getOption('mathjaxConfig'),
       })
     });
     const documentRegistry = new DocumentRegistry({});

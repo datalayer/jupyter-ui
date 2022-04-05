@@ -20,7 +20,7 @@ const NotebookControl: React.FC = () => {
           startIcon={<PlayCircleOutline />}
           onClick={() => dispatch(notebookActions.run())}
           >
-            Execute
+            Run
         </Button>
       </>
       <Button 

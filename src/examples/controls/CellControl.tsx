@@ -18,7 +18,7 @@ const CellControl: React.FC = () => {
           color="primary"
           onClick={() => dispatch(cellActions.execute())}
           >
-            Execute
+            Run
         </Button>
         <Button
           variant="outlined"

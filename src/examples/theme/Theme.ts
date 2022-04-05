@@ -15,7 +15,7 @@ import { ZIndex } from '@mui/material/styles/zIndex';
 import red from '@mui/material/colors/red';
 import yellow from '@mui/material/colors/yellow';
 
-// vintage theme taken from apache echarts.
+// vintage theme taken from Apache ECharts.
 import vintage from './vintage.project.json';
 const colors = vintage.theme.color;
 export const color0 = colors[0];

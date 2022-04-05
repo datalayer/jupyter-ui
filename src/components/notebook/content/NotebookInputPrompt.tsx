@@ -41,7 +41,7 @@ export class NotebookInputPrompt extends ReactWidget implements IInputPrompt {
   }
 
   render() {
-    return <Countdown count={this.state.count} />
+    return <Countdown count={this.state.count}/>
   }
   /**
    * The execution count for the prompt.

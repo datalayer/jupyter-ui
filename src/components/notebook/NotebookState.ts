@@ -4,6 +4,8 @@ import { reducerWithInitialState } from "typescript-fsa-reducers";
 import { NotebookChange } from "@jupyterlab/shared-models";
 import { Cell, ICellModel } from "@jupyterlab/cells";
 import { Kernel } from "@jupyterlab/services";
+import { cmdIds } from "./NotebookCommands";
+import NotebookAdapter from "./NotebookAdapter";
 
 /* State */
 
@@ -12,6 +14,7 @@ export interface INotebookState {
   kernelStatus: Kernel.Status | undefined;
   notebookChange: NotebookChange | undefined;
   portals: React.ReactPortal[];
+  adapter?: NotebookAdapter;
 }
 
 export const notebookInitialState: INotebookState = {
@@ -35,6 +38,7 @@ export const selectNotebook = (): INotebookState =>
 /* Actions */
 
 export enum ActionType {
+  UPDATE = "notebook/UPDATE",
   NOTEBOOK_CHANGE = "notebook/NOTEBOOK_CHANGE",
   ACTIVE_CELL_CHANGE = "notebook/ACTIVE_CELL_CHANGE",
   KERNEL_STATUS_CHANGE = "notebook/KERNEL_STATUS_CHANGE",
@@ -52,6 +56,9 @@ export enum ActionType {
 const actionCreator = actionCreatorFactory('jupyterReact');
 
 export const notebookActions = {
+  update: actionCreator<Partial<INotebookState>>(
+    ActionType.UPDATE
+  ),
   notebookChange: actionCreator<NotebookChange>(
     ActionType.NOTEBOOK_CHANGE
   ),
@@ -93,37 +100,69 @@ export const notebookActions = {
 /* Reducers */
 
 export const notebookReducer = reducerWithInitialState(notebookInitialState)
-  .case(notebookActions.activeCellChange, (state: INotebookState, success: Cell<ICellModel>) => {
+  .case(notebookActions.update, (state: INotebookState, update: Partial<INotebookState>) => {
     return {
       ...state,
-      activeCell: success,
+      ...update,
     }
   })
-  .case(notebookActions.notebookChange, (state: INotebookState, success: NotebookChange) => {
+  .case(notebookActions.run, (state: INotebookState, _: void) => {
+    state.adapter && state.adapter.commands.execute(cmdIds.run);
+    return state;
+  })
+  .case(notebookActions.runAll, (state: INotebookState, run: void) => {
+    state.adapter && state.adapter.commands.execute(cmdIds.runAll);
+    return state;
+  })
+  .case(notebookActions.insertAbove, (state: INotebookState, _: void) => {
+    state.adapter && state.adapter.commands.execute(cmdIds.insertAbove);
+    return state;
+  })
+  .case(notebookActions.insertBelow, (state: INotebookState, _: void) => {
+    state.adapter && state.adapter.commands.execute(cmdIds.insertBelow);
+    return state;
+  })
+  .case(notebookActions.interrupt, (state: INotebookState, _: void) => {
+    state.adapter && state.adapter.commands.execute(cmdIds.interrupt);
+    return state;
+  })
+  .case(notebookActions.save, (state: INotebookState, _: void) => {
+    state.adapter && state.adapter.commands.execute(cmdIds.save);
+    return state;
+  })
+  .case(notebookActions.delete, (state: INotebookState, _: void) => {
+    state.adapter && state.adapter.commands.execute(cmdIds.deleteCells);
+    return state;
+  })
+  .case(notebookActions.activeCellChange, (state: INotebookState, activeCell: Cell<ICellModel>) => {
     return {
       ...state,
-      notebookChange: success,
-//      portals: new Array<React.ReactPortal>(),
+      activeCell,
     }
   })
-  .case(notebookActions.kernelStatusChanged, (state: INotebookState, success: Kernel.Status) => {
+  .case(notebookActions.notebookChange, (state: INotebookState, notebookChange: NotebookChange) => {
     return {
       ...state,
-      kernelStatus: success,
+      notebookChange,
     }
   })
-  .case(notebookActions.portal, (state: INotebookState, success: React.ReactPortal) => {
-    const portals = state.portals.concat(success);
-//    console.log('---', portals)
+  .case(notebookActions.kernelStatusChanged, (state: INotebookState, kernelStatus: Kernel.Status) => {
+    return {
+      ...state,
+      kernelStatus,
+    }
+  })
+  .case(notebookActions.portal, (state: INotebookState, portal: React.ReactPortal) => {
+    const portals = state.portals.concat(portal);
     return {
       ...state,
       portals,
     }
   })
-  .case(notebookActions.setPortals, (state: INotebookState, success: React.ReactPortal[]) => {
+  .case(notebookActions.setPortals, (state: INotebookState, portals: React.ReactPortal[]) => {
     return {
       ...state,
-      portals: success,
+      portals,
     }
   }
 );

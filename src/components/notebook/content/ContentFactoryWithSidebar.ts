@@ -1,3 +1,4 @@
+import { Store } from 'redux';
 import { NotebookPanel } from '@jupyterlab/notebook';
 import { ICellHeader, Cell } from '@jupyterlab/cells';
 import { CommandRegistry } from '@lumino/commands';
@@ -11,24 +12,26 @@ import { CellSidebar } from './CellSidebar';
 export class ContentFactoryWithSidebar extends NotebookPanel.ContentFactory {
   private readonly sidebarReact: any;
   private readonly commands: CommandRegistry;
-  private readonly injectableStore: any;
+  private readonly store: Store;
   constructor(
     sidebarReact: any,
     commands: CommandRegistry,
-    injectableStore: any,
+    store: any,
     options?: Cell.ContentFactory.IOptions | undefined
   ) {
     super(options);
     this.sidebarReact = sidebarReact;
     this.commands = commands;
-    this.injectableStore = injectableStore;
+    this.store = store;
   }
   createCellHeader(): ICellHeader {
-    return new CellSidebar(this.sidebarReact, this.commands, this.injectableStore);
+    return new CellSidebar(this.sidebarReact, this.commands, this.store);
   }
-//  createInputPrompt(): IInputPrompt {
-//    return new NotebookInputPrompt();
-//  }
+  /*
+  createInputPrompt(): IInputPrompt {
+    return new NotebookInputPrompt();
+  }
+  */
 }
 
 export default ContentFactoryWithSidebar;

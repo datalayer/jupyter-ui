@@ -4,8 +4,16 @@ import { Cell, ICellModel } from "@jupyterlab/cells";
 import { NotebookChange } from "@jupyterlab/shared-models";
 import { Kernel } from '@jupyterlab/services';
 import NotebookAdapter from './NotebookAdapter';
-import { notebookActions, notebookReducer, selectNotebook } from './NotebookState';
+import { notebookActions, selectNotebook } from './NotebookState';
 import LuminoAttached from '../../lumino/LuminoAttached';
+
+import '@jupyterlab/notebook/style/index.css';
+import '@jupyterlab/completer/style/index.css';
+import '@jupyterlab/documentsearch/style/index.css';
+import '@jupyterlab/theme-light-extension/style/theme.css';
+import '@jupyterlab/theme-light-extension/style/variables.css';
+
+import './Notebook.css';
 
 export type INotebookProps = {
   path: string;
@@ -15,31 +23,29 @@ export type INotebookProps = {
 }
 
 /**
- * This components creates a Notebook as a collection of cells 
- * with sidebars.
+ * This component creates a Notebook as a collection 
+ * of cells with sidebars.
  * 
  * @param props The notebook properties.
- * @returns A Notebook React.js component.
+ * @returns A Notebook component.
  */
 export const Notebook = (props: INotebookProps) => {
-  const injectableStore = useStore();
+  const store = useStore();
   const dispatch = useDispatch();
   const notebook = selectNotebook();
   const portals = notebook.portals;
-  const notebookAdapter = useMemo(() => new NotebookAdapter(props, injectableStore), []);
+  const adapter = useMemo(() => new NotebookAdapter(props, store), []);
   useEffect(() => {
-    if (!(injectableStore as any).asyncReducers!.notebook) {
-      (injectableStore as any).injectReducer('notebook', notebookReducer);
-    }
-    notebookAdapter.manager.ready.then(() => {
-      notebookAdapter.loadNotebook(props.path);
-      notebookAdapter.notebookPanel.content.activeCellChanged.connect((_, activeCellChanged: Cell<ICellModel>) => {
+    dispatch(notebookActions.update({ adapter }));
+    adapter.manager.ready.then(() => {
+      adapter.loadNotebook(props.path);
+      adapter.notebookPanel.content.activeCellChanged.connect((_, activeCellChanged: Cell<ICellModel>) => {
         dispatch(notebookActions.activeCellChange(activeCellChanged));
       });
-      notebookAdapter.notebookPanel.model!.sharedModel.changed.connect((_, notebookChange: NotebookChange) => {
+      adapter.notebookPanel.model!.sharedModel.changed.connect((_, notebookChange: NotebookChange) => {
         dispatch(notebookActions.notebookChange(notebookChange));
       });
-      notebookAdapter.notebookPanel.sessionContext.statusChanged.connect((_, kernelStatusChanged: Kernel.Status) => {
+      adapter.notebookPanel.sessionContext.statusChanged.connect((_, kernelStatusChanged: Kernel.Status) => {
         dispatch(notebookActions.kernelStatusChanged(kernelStatusChanged));
       });
     });
@@ -59,7 +65,7 @@ export const Notebook = (props: INotebookProps) => {
           top: '-5px',
           left: `${props.sidebarMargin + 10}px`,
         },
-        '& .jp-Cell .dla-cellHeaderContainer': {
+        '& .jp-Cell .dla-CellHeader-container': {
           padding: '4px 8px',
           width: `${props.sidebarMargin + 10}px`,
           cursor: 'pointer',
@@ -70,7 +76,7 @@ export const Notebook = (props: INotebookProps) => {
       }}
     >
       <>{portals.map((portal: React.ReactPortal) => portal)}</>
-      <LuminoAttached>{notebookAdapter.panel}</LuminoAttached>
+      <LuminoAttached>{adapter.panel}</LuminoAttached>
     </div>
   )
 }

@@ -4,7 +4,7 @@ import { CompletionHandler } from '@jupyterlab/completer';
 import { NotebookActions, NotebookPanel } from '@jupyterlab/notebook';
 import { NotebookSearchProvider, SearchInstance } from '@jupyterlab/documentsearch';
 
-const cmdIds = {
+export const cmdIds = {
   invoke: 'completer:invoke',
   select: 'completer:select',
   invokeNotebook: 'completer:invoke-notebook',

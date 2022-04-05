@@ -19,7 +19,7 @@ const CommandControl: React.FC = () => {
           color="primary"
           onClick={() => dispatch(commandsActions.execute())}
           >
-            Execute
+            Run
         </Button>
         <Button 
           variant="outlined"

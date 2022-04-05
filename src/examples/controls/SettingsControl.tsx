@@ -19,7 +19,7 @@ const SettingsControl: React.FC = () => {
           color="primary"
           onClick={() => dispatch(settingsActions.execute())}
           >
-            Execute
+            Run
         </Button>
         <Button 
           variant="outlined"

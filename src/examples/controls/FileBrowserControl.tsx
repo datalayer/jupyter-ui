@@ -19,7 +19,7 @@ const FileBrowserControl: React.FC = () => {
           color="primary"
           onClick={() => dispatch(fileBrowserActions.execute())}
           >
-            Execute
+            Run
         </Button>
         <Button 
           variant="outlined"
