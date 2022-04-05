@@ -61,7 +61,7 @@ install: ## Install yarn dependencies and link the theme from the storybook
 		rm -fr */node_modules/react-dom && \
 		rm -fr */*/node_modules/react && \
 		rm -fr */*/node_modules/react-dom && \
-		echo "The following sed is tested on MacOS - For other OS, you may need to fix the widget.d.ts file manually" \
+		echo "The following sed is tested on MacOS - For other OS, you may need to fix the widget.d.ts file manually" && \
 		sed -i.bu "s|showDoc: boolean \| null|showDoc: boolean|g" node_modules/\@jupyterlab/completer/lib/widget.d.ts )
 
 typedoc: ## generate typedoc
