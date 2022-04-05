@@ -7,9 +7,9 @@ import { notebookActions, selectNotebook } from './NotebookState';
 import LuminoAttached from '../../lumino/LuminoAttached';
 import { asObservable } from '../../lumino/LuminoObservable'
 
-import '@jupyterlab/notebook/style/index.css';
 import '@jupyterlab/completer/style/index.css';
 import '@jupyterlab/documentsearch/style/index.css';
+import '@jupyterlab/notebook/style/index.css';
 import '@jupyterlab/theme-light-extension/style/theme.css';
 import '@jupyterlab/theme-light-extension/style/variables.css';
 

@@ -54,6 +54,7 @@
     "@jupyterlab/filebrowser": "next",
     "@jupyterlab/json-extension": "next",
     "@jupyterlab/mathjax2": "next",
+    "@jupyterlab/markedparser-extension": "next",
     "@jupyterlab/notebook": "next",
     "@jupyterlab/outputarea": "next",
     "@jupyterlab/rendermime": "next",
@@ -67,6 +68,7 @@
     "@lumino/coreutils": "1.12.0",
     "@lumino/default-theme": "0.21.1",
     "@lumino/widgets": "1.31.1",
+    "marked": "4.0.10",
     "lodash": "^4.17.4",
     "plotly.js": "2.11.1",
     "react": "17.0.2",
@@ -81,6 +83,7 @@
     "uuid": "8.3.2"
   },
   "devDependencies": {
+    "@types/marked": "4.0.1",
     "@babel/core": "7.14.6",
     "@babel/plugin-proposal-class-properties": "7.14.5",
     "@babel/preset-react": "7.14.5",
@@ -135,6 +138,8 @@
     "**/@jupyterlab/json-extension": "next",
     "**/@jupyterlab/launcher": "next",
     "**/@jupyterlab/mainmenu": "next",
+    "**/@jupyterlab/markdownviewer": "next",
+    "**/@jupyterlab/markedparser-extension": "next",
     "**/@jupyterlab/mathjax2": "next",
     "**/@jupyterlab/notebook": "next",
     "**/@jupyterlab/rendermime": "next",
