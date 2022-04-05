@@ -1,10 +1,14 @@
 import { useSelector } from "react-redux";
-import actionCreatorFactory from "typescript-fsa";
+import actionCreatorFactory, { AnyAction, Action, Success } from "typescript-fsa";
+import { combineEpics, Epic } from "redux-observable";
+import { ignoreElements, tap } from "rxjs/operators";
+import { ofAction } from "@datalayer/typescript-fsa-redux-observable";
 import { reducerWithInitialState } from "typescript-fsa-reducers";
 import { NotebookChange } from "@jupyterlab/shared-models";
 import { Cell, ICellModel } from "@jupyterlab/cells";
 import { Kernel } from "@jupyterlab/services";
 import { cmdIds } from "./NotebookCommands";
+import { IState } from "./../../state/State";
 import NotebookAdapter from "./NotebookAdapter";
 
 /* State */
@@ -27,9 +31,9 @@ export const notebookInitialState: INotebookState = {
 /* Selectors */
 
 export const selectNotebook = (): INotebookState =>
-  useSelector((state: INotebookState) => {
-    if ((state as any).notebook) {
-      return (state as any).notebook;
+  useSelector((state: IState) => {
+    if (state.notebook) {
+      return state.notebook;
     }
     return notebookInitialState;
   }
@@ -80,22 +84,69 @@ export const notebookActions = {
   interrupt: actionCreator<void>(
     ActionType.INTERRUPT
   ),
-  insertAbove: actionCreator<void>(
-    ActionType.INSERT_ABOVE
-  ),
-  insertBelow: actionCreator<void>(
-    ActionType.INSERT_BELOW
-  ),
-  delete: actionCreator<void>(
-    ActionType.DELETE
-  ),
   portal: actionCreator<React.ReactPortal>(
     ActionType.PORTAL
   ),
   setPortals: actionCreator<React.ReactPortal[]>(
     ActionType.SET_PORTALS
   ),
+  insertAbove: actionCreator.async<void, void>(
+    ActionType.INSERT_ABOVE
+  ),
+  insertBelow: actionCreator.async<void, void>(
+    ActionType.INSERT_BELOW
+  ),
+  delete: actionCreator.async<void, void>(
+    ActionType.DELETE
+  ),
 }
+
+/* Epics */
+
+const insertAboveEpic: Epic<
+  AnyAction,
+  Action<Success<void, void>>,
+   IState
+> = (action$, state$) =>
+  action$.pipe(
+    ofAction(notebookActions.insertAbove.started),
+    tap(action => {
+      state$.value.notebook.adapter?.commands.execute(cmdIds.insertAbove);
+    }),
+    ignoreElements()
+  );
+
+const insertBelowEpic: Epic<
+  AnyAction,
+  Action<Success<void, void>>,
+  IState
+> = (action$, state$) =>
+  action$.pipe(
+    ofAction(notebookActions.insertBelow.started),
+    tap(action => {
+      state$.value.notebook.adapter?.commands.execute(cmdIds.insertBelow);
+    }),
+    ignoreElements()
+  );
+
+const deleteEpic: Epic<
+  AnyAction,
+  Action<Success<void, void>>,
+  IState
+> = (action$, state$) =>
+  action$.pipe(
+    ofAction(notebookActions.delete.started),
+    tap(action => {
+      state$.value.notebook.adapter?.commands.execute(cmdIds.deleteCells);
+    }),
+    ignoreElements()
+  );
+
+export const notebookEpics = combineEpics(
+  insertAboveEpic,
+  insertBelowEpic,
+  deleteEpic,
+);
 
 /* Reducers */
 
@@ -114,24 +165,12 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
     state.adapter && state.adapter.commands.execute(cmdIds.runAll);
     return state;
   })
-  .case(notebookActions.insertAbove, (state: INotebookState, _: void) => {
-    state.adapter && state.adapter.commands.execute(cmdIds.insertAbove);
-    return state;
-  })
-  .case(notebookActions.insertBelow, (state: INotebookState, _: void) => {
-    state.adapter && state.adapter.commands.execute(cmdIds.insertBelow);
-    return state;
-  })
   .case(notebookActions.interrupt, (state: INotebookState, _: void) => {
     state.adapter && state.adapter.commands.execute(cmdIds.interrupt);
     return state;
   })
   .case(notebookActions.save, (state: INotebookState, _: void) => {
     state.adapter && state.adapter.commands.execute(cmdIds.save);
-    return state;
-  })
-  .case(notebookActions.delete, (state: INotebookState, _: void) => {
-    state.adapter && state.adapter.commands.execute(cmdIds.deleteCells);
     return state;
   })
   .case(notebookActions.activeCellChange, (state: INotebookState, activeCell: Cell<ICellModel>) => {
@@ -164,5 +203,17 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
       ...state,
       portals,
     }
+  })
+  .case(notebookActions.insertAbove.done, (state: INotebookState, success: Success<void, void>) => {
+//    state.adapter && state.adapter.commands.execute(cmdIds.insertAbove);
+    return state;
+  })
+  .case(notebookActions.insertBelow.done, (state: INotebookState, success: Success<void, void>) => {
+//    state.adapter && state.adapter.commands.execute(cmdIds.insertBelow);
+    return state;
+  })
+  .case(notebookActions.delete.done, (state: INotebookState, success: Success<void, void>) => {
+//    state.adapter && state.adapter.commands.execute(cmdIds.deleteCells);
+    return state;
   }
 );

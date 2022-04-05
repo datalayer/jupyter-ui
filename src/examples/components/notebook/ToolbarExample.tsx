@@ -33,7 +33,7 @@ const ToolbarExample = () => {
               variant="text"
               color="primary"
               startIcon={<AddCircleOutlineIcon />}
-              onClick={() => dispatch(notebookActions.insertBelow())}
+              onClick={() => dispatch(notebookActions.insertBelow.started())}
               >
                 Text
             </Button>
@@ -41,7 +41,7 @@ const ToolbarExample = () => {
               variant="text"
               color="primary"
               startIcon={<AddCircleOutlineIcon />}
-              onClick={() => dispatch(notebookActions.insertBelow())}
+              onClick={() => dispatch(notebookActions.insertBelow.started())}
               >
                 Markdown
             </Button>
@@ -49,7 +49,7 @@ const ToolbarExample = () => {
               variant="text"
               color="primary"
               startIcon={<AddCircleOutlineIcon />}
-              onClick={() => dispatch(notebookActions.insertBelow())}
+              onClick={() => dispatch(notebookActions.insertBelow.started())}
               >
                 Code
             </Button>

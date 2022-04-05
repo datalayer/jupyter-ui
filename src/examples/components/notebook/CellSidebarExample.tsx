@@ -43,7 +43,7 @@ const CellSidebarExample = (props: any) => {
       <div
         onClick={e => {
           e.preventDefault();
-          dispatch(notebookActions.insertAbove());
+          dispatch(notebookActions.insertAbove.started());
         }}
       >
         <span style={{ display: "flex" }}>
@@ -54,7 +54,7 @@ const CellSidebarExample = (props: any) => {
       <div
         onClick={e => {
           e.preventDefault();
-          dispatch(notebookActions.insertBelow());
+          dispatch(notebookActions.insertBelow.started());
         }}
       >
         <span style={{ display: "flex" }}>
@@ -65,7 +65,7 @@ const CellSidebarExample = (props: any) => {
       <div
         onClick={e => {
           e.preventDefault();
-          dispatch(notebookActions.delete(undefined));
+          dispatch(notebookActions.delete.started());
         }}
       >
         <span style={{ display: "flex" }}>

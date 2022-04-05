@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { selectInit, initActions } from './InitRedux';
+import { selectInit, initActions } from './InitState';
 
 const Init: React.FC = () => {
   const init = selectInit();

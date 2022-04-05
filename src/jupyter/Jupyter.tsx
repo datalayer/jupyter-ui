@@ -2,7 +2,7 @@ import React from 'react';
 import { PageConfig } from '@jupyterlab/coreutils';
 import { Store } from 'redux';
 import { ErrorBoundary } from 'react-error-boundary'
-import injectableStore from '../state/InjectableStore';
+import injectableStore from '../state/Store';
 import { JupyterContextProvider } from './JupyterContext';
 import { loadJupyterConfig, getJupyterServerHttpUrl, getJupyterServerWsUrl, getJupyterToken } from './JupyterConfig';
 

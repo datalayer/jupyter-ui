@@ -1,5 +1,5 @@
 // @ts-ignore
-import bootstrap from "./bootstrap/Gallery.bootstrap";
+import bootstrap from "./bootstrap/NotebookWithSidebar.bootstrap";
 
 import "./../../style/index.css";
 

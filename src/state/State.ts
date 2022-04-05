@@ -1,8 +1,10 @@
 import { combineReducers } from "redux";
-import { initInitialState, initReducer, IInitState } from "./init/InitRedux";
-import { cellInitialState, cellReducer, ICellState } from "./../components/cell/CellState";
-import { notebookInitialState, notebookReducer, INotebookState } from "./../components/notebook/NotebookState";
-import { terminalInitialState, terminalReducer, ITerminalState } from "./../components/terminal/TerminalState";
+import { combineEpics } from "redux-observable";
+import { AnyAction } from "typescript-fsa";
+import { initInitialState, initReducer, initEpics, IInitState } from "./init/InitState";
+import { cellInitialState, cellReducer, ICellState } from "../components/cell/CellState";
+import { notebookInitialState, notebookEpics, notebookReducer, INotebookState } from "../components/notebook/NotebookState";
+import { terminalInitialState, terminalReducer, ITerminalState } from "../components/terminal/TerminalState";
 
 /* State */
 
@@ -30,6 +32,13 @@ export type NotebookAction = ActionUnion<typeof notebookActions>;
 
 export type AppAction = CellAction | NotebookAction;
 */
+
+/* Epics */
+
+export const epics = combineEpics<AnyAction, AnyAction, any>(
+  initEpics,
+  notebookEpics,
+);
 
 /* Reducers */
 
