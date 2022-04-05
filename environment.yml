@@ -15,10 +15,9 @@ dependencies:
   - yarn=1.22.5
   - pip:
     - jupyterlab==4.0.0a23
-    - jupyter-server
     - ipywidgets==8.0.0b1
-    - jupyterlab-lsp
-    - python-language-server[all]
+#    - jupyterlab-lsp
+#    - python-language-server[all]
     - plotly
     - bqplot
     - pyecharts
