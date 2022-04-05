@@ -15,7 +15,7 @@ dependencies:
   - yarn=1.22.5
   - pip:
     - jupyterlab==4.0.0a23
-    - jupyter-server==1.13.4
+    - jupyter-server
     - ipywidgets==8.0.0b1
     - jupyterlab-lsp
     - python-language-server[all]
