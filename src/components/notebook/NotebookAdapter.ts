@@ -6,12 +6,13 @@ import { IChangedArgs, PageConfig } from '@jupyterlab/coreutils';
 import { Cell, ICellModel } from '@jupyterlab/cells';
 import { Kernel, ServerConnection, ServiceManager } from '@jupyterlab/services';
 import { DocumentRegistry, Context} from '@jupyterlab/docregistry';
-import { standardRendererFactories as initialFactories, RenderMimeRegistry } from '@jupyterlab/rendermime';
+import { standardRendererFactories, RenderMimeRegistry } from '@jupyterlab/rendermime';
 import { NotebookModelFactory, NotebookPanel, NotebookWidgetFactory, NotebookTracker, NotebookActions } from '@jupyterlab/notebook';
 import { CodeMirrorEditorFactory, CodeMirrorMimeTypeService } from '@jupyterlab/codemirror';
 import { IEditorServices } from '@jupyterlab/codeeditor';
 import { Completer, CompleterModel, CompletionHandler, ConnectorProxy, KernelCompleterProvider } from '@jupyterlab/completer';
 import { MathJaxTypesetter } from '@jupyterlab/mathjax2';
+import getMarked from './render/marked';
 import { requireLoader } from "@jupyter-widgets/html-manager";
 import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/lib/output_renderers";
 import { INotebookProps } from './Notebook';
@@ -61,11 +62,12 @@ export class NotebookAdapter {
       useCapture,
     );
     const rendermime = new RenderMimeRegistry({
-      initialFactories: initialFactories,
+      initialFactories: standardRendererFactories,
       latexTypesetter: new MathJaxTypesetter({
         url: PageConfig.getOption('mathjaxUrl'),
         config: PageConfig.getOption('mathjaxConfig'),
-      })
+      }),
+//      markdownParser: getMarked(),
     });
     const documentRegistry = new DocumentRegistry({});
     const mimeTypeService = new CodeMirrorMimeTypeService();
