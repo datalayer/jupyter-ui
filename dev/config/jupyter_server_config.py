@@ -1,3 +1,5 @@
+"""Configuration for the Jupyter development server."""
+
 import os
 
 #################
@@ -83,6 +85,15 @@ c.ServerApp.preferred_dir = content_dir
 
 c.ServerApp.base_url = '/api/jupyter'
 c.ServerApp.default_url = '/api/jupyter/lab'
+
+#################
+# Kernel
+#################
+
+# See
+# https://github.com/jupyterlab/jupyterlab/pull/11841
+# https://github.com/jupyter-server/jupyter_server/pull/657
+c.ServerApp.kernel_ws_protocol = '' # None or ''
 
 #################
 # JupyterLab

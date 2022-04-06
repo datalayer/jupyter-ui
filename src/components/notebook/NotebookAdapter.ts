@@ -17,6 +17,7 @@ import { requireLoader } from "@jupyter-widgets/html-manager";
 import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/lib/output_renderers";
 import { INotebookProps } from './Notebook';
 import { NotebookCommands } from './NotebookCommands';
+import JupyterKernel from './../../kernel/Kernel';
 import ContentFactoryWithSidebar from './content/ContentFactoryWithSidebar';
 import { IPyWidgetsClassicManager } from "../../ipywidgets/IPyWidgetsClassicManager";
 import { activateWidgetExtension } from "../../ipywidgets/IPyWidgetsJupyterLabPlugin";
@@ -29,11 +30,13 @@ export class NotebookAdapter {
   private commandRegistry: CommandRegistry;
   private serverSettings: ServerConnection.ISettings;
   private serviceManager: ServiceManager;
+  private kernel?: JupyterKernel;
   private iPyWidgetsClassicManager: IPyWidgetsClassicManager;
   private store: Store;
 
-  constructor(props: INotebookProps, store: Store) {
+  constructor(props: INotebookProps, store: Store, kernel: JupyterKernel) {
     this.props = props;
+    this.kernel = kernel;
     this.boxPanel = new BoxPanel();
     this.boxPanel.addClass('dla-JupyterLab-Notebook');
     this.boxPanel.spacing = 0;
@@ -125,8 +128,8 @@ export class NotebookAdapter {
       factory: notebookModelFactory,
       path: notebookPath,
       kernelPreference: {
-        shouldStart: true,
-        name: 'python3',
+        shouldStart: false,
+//        name: 'python3',
       }
     });
     this._notebookPanel = documentRegistry.getWidgetFactory('notebook')?.createNew(context) as NotebookPanel;
@@ -165,9 +168,15 @@ export class NotebookAdapter {
       return handler;
     }
     context.initialize(false).then(() => {
-        const completerHandler = setupCompleter(this._notebookPanel!);
-        NotebookCommands(this.commandRegistry, this._notebookPanel!, completerHandler);  
-      });
+      this.kernel?.getJupyterKernel().then((kernel) => {
+  //    if (context.sessionContext.hasNoKernel) {
+        context.sessionContext.changeKernel(kernel.model).then(() => {
+          const completerHandler = setupCompleter(this._notebookPanel!);
+          NotebookCommands(this.commandRegistry, this._notebookPanel!, completerHandler);  
+        });
+//      }
+      })
+    });
     if (this.props.ipywidgets === 'classic') {
       this._notebookPanel.sessionContext.kernelChanged.connect((sender: any, args: IChangedArgs<Kernel.IKernelConnection | null, Kernel.IKernelConnection | null, 'kernel'>) => {
         this.iPyWidgetsClassicManager.registerWithKernel(args.newValue);
@@ -196,7 +205,7 @@ export class NotebookAdapter {
           NotebookActions.run(content, context.sessionContext);
         }
       },
-      isEnabled
+      isEnabled,
     });
   }
 

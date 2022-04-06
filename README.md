@@ -59,10 +59,9 @@ make env && \
 make clean install build
 ```
 
-You can launch an example and hack the source code. The changes will build automatically and will be available in your browser.
-
 ```bash
-# Start the example.
+# You can start an example and hack the source code.
+# The changes will build automatically and will be available in your browser.
 echo open http://localhost:3208
 yarn start
 ```

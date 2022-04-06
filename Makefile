@@ -66,6 +66,12 @@ install: ## Install yarn dependencies and link the theme from the storybook
 		echo "The following sed is tested on MacOS - For other OS, you may need to fix the widget.d.ts file manually" && \
 		sed -i.bu "s|showDoc: boolean \| null|showDoc: boolean|g" node_modules/\@jupyterlab/completer/lib/widget.d.ts )
 
+start-jupyter-server:
+	($(CONDA_ACTIVATE) ${ENV_NAME}; \
+		./dev/sh/kill-jupyter-server.sh || true )
+	($(CONDA_ACTIVATE) ${ENV_NAME}; \
+		cd ./dev/sh && ./start-jupyter-server.sh )
+
 typedoc: ## generate typedoc
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		yarn typedoc --tsconfig ./tsconfig.json && \

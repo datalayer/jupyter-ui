@@ -11,7 +11,5 @@ echo
 
 export CURR_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-source $(conda info --base)/etc/profile.d/conda.sh
-conda activate jupyter-react
 jupyter server \
   --config=${CURR_DIR}/../config/jupyter_server_config.py

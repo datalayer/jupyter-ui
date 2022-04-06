@@ -2,8 +2,11 @@ import { useEffect, useMemo } from "react";
 import { useDispatch, useStore } from "react-redux";
 import { NotebookChange } from "@jupyterlab/shared-models";
 import { Kernel } from '@jupyterlab/services';
+import { Cell, ICellModel } from '@jupyterlab/cells';
+import { useJupyter } from '../../jupyter/JupyterContext';
 import NotebookAdapter from './NotebookAdapter';
 import { notebookActions, selectNotebook } from './NotebookState';
+import JupyterKernel from './../../kernel/Kernel';
 import LuminoAttached from '../../lumino/LuminoAttached';
 import { asObservable } from '../../lumino/LuminoObservable'
 
@@ -32,16 +35,21 @@ export type INotebookProps = {
 export const Notebook = (props: INotebookProps) => {
   const store = useStore();
   const dispatch = useDispatch();
+  const { baseUrl, wsUrl } = useJupyter();
   const notebook = selectNotebook();
   const portals = notebook.portals;
-  const adapter = useMemo(() => new NotebookAdapter(props, store), []);
+  const kernel = useMemo(() => new JupyterKernel({
+    baseUrl,
+    wsUrl,
+  }), []);
+  const adapter = useMemo(() => new NotebookAdapter(props, store, kernel), []);
   useEffect(() => {
     dispatch(notebookActions.update({ adapter }));
     adapter.manager.ready.then(() => {
       adapter.loadNotebook(props.path);
       const activeCellChanged$ = asObservable(adapter.notebookPanel.content.activeCellChanged);
       activeCellChanged$.subscribe(
-        activeCellChanged => {
+        (activeCellChanged: Cell<ICellModel>) => {
           dispatch(notebookActions.activeCellChange(activeCellChanged));
         }
       );

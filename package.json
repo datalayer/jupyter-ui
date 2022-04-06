@@ -19,7 +19,7 @@
     "clean": "rimraf lib build dist tsconfig.tsbuildinfo",
     "start": "run-p -c start:*",
     "start:webpack": "webpack serve",
-    "start:jupyter": "./dev/sh/kill-jupyter-server.sh || true && cd ./dev/sh && ./start-jupyter-server.sh",
+    "start:jupyter": "make start-jupyter-server",
     "build:tsc:watch:tsc": "tsc --watch",
     "build:tsc:watch:res": "gulp resources-to-lib-watch",
     "typedoc": "typedoc ./src",
