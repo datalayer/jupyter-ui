@@ -20,7 +20,7 @@ Install the latest `@datalayer/jupyter-react` npm package and get inspired by th
 
 This library can be used to extend exsiting solutions. For example, we maintain an extension to [Docusaurus](https://docusaurus.io) in the [jupyter-docusaurus](https://github.com/datalayer/jupyter-docusaurus) repository.
 
-The typedoc documentation is [available online](https://typedoc.datalayer.io/datalayer/jupyter-react/0.0.2).
+The typedoc documentation is [available online](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.0.2).
 
 Please open [issues](https://github.com/datalayer/jupyter-react/issues) for questions, feature requests, bug reports... We also welcome [pull requests](https://github.com/datalayer/jupyter-react/pulls).
 

@@ -106,7 +106,7 @@ export const notebookActions = {
 const insertAboveEpic: Epic<
   AnyAction,
   Action<Success<void, void>>,
-   IState
+  IState
 > = (action$, state$) =>
   action$.pipe(
     ofAction(notebookActions.insertAbove.started),

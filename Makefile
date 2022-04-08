@@ -77,7 +77,7 @@ typedoc: ## generate typedoc
 		yarn typedoc --tsconfig ./tsconfig.json && \
 		open typedoc/index.html )
 
-typedoc-deploy: ## deploy typedoc
+typedoc-deploy: typedoc ## deploy typedoc
 	aws s3 rm \
 		s3://datalayer-typedoc/datalayer/jupyter-react/0.0.2/ \
 		--recursive \
@@ -87,4 +87,4 @@ typedoc-deploy: ## deploy typedoc
 		s3://datalayer-typedoc/datalayer/jupyter-react/0.0.2/ \
 		--recursive \
 		--profile datalayer
-	echo open ✨  https://typedoc.datalayer.io/datalayer/jupyter-react/0.0.2
+	echo open ✨  https://typedoc.datalayer.tech/datalayer/jupyter-react/0.0.2
