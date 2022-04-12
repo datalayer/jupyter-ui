@@ -121,7 +121,7 @@
     "webpack": "5.57.1",
     "webpack-cli": "4.9.0",
     "webpack-dev-middleware": "3.7.2",
-    "webpack-dev-server": "4.3.1"
+    "webpack-dev-server": "4.8.1"
   },
   "resolutions": {
     "**/@jupyterlab/application": "next",
@@ -180,6 +180,6 @@
     "**/html-webpack-plugin": "5.3.1",
     "**/webpack": "5.57.1",
     "**/webpack-cli": "4.9.0",
-    "**/webpack-dev-server": "4.3.1"
+    "**/webpack-dev-server": "4.8.1"
   }
 }
