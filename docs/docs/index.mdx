@@ -1,0 +1,123 @@
+import ModalImage from "react-modal-image";
+
+# Jupyter React
+
+Jupyter React ensure React.js is a first-class citizen in the Jupyter eco-system. It is composed of the following libraries:
+
+- [Components](#components): JupyterLab visual as React.js components
+- [Themes](#mui-themes): Themes for data analysis.
+- [Docusaurus](#docusaurus): Embed Jupyter in Docusaurus.
+- [Editor](#editor): Rich editor for Jupyter.
+
+You can get kick-started with simple [examples](https://github.com/datalayer/jupyter-examples). Jupyter React provides the foundations to build a modern and flexible data analysis user interface. Underneath, it gathers the minimum set of [Lumino](https://github.com/jupyterlab/lumino) and [JupyterLab](https://github.com/jupyterlab/jupyterlab) technologies:
+
+- Extension injection system.
+- Services to connect to kernels.
+- Lumino signals.
+- Lumino settings.
+- Lumino commands.
+
+## Components
+
+The Jupyter React components expose JupyterLab visuals as React.js components. It offers a bi-directional communication between React.js/Redux and JupyterLab/Lumino.
+
+```
+Host application -> Redux Observable Actions -> Jupyter React -> JupyterLab Commands
+Host application <- Redux State  <- Redux Observable Epics <- Jupyter React <- JupyterLab Signals
+```
+
+[JupyterLab](https://github.com/jupyterlab/jupyterlab) is built on the [Lumino](https://github.com/jupyterlab/lumino) widget toolkit.
+
+1. Lumino allows to wrap React components and expose them as Lumino Widgets.
+2. React.js **can not** use Lumino Widgets.
+
+Jupyter React components removes the above second limitation and supports:
+
+- Predefined Redux actions, epics and reducers with [Observable Epics](https://redux-observable.js.org/docs/basics/Epics.html)
+- A React.js context for Authentication, Authorization, Theming and Redux injectable store
+- Authentication via Jupyter tokens
+- Theming
+- Optional terminals
+- Optional realtime collaboration
+
+The below picture is an example of Notebook into a React.js component.
+
+<ModalImage
+  small="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-notebook.png"
+  large="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-notebook.png"
+  alt="Jupyter React Notebook"
+/>
+
+As an application developer, you may already have a Redux store. You can simply inject the Jupyter React store in your own store. JupyterLab/Lumino is heavily built on top of factories. Jupyter React uses those to create the ad-hoc widgets.
+
+This is what it takes to create a Notebook.
+
+```jsx
+<Jupyter terminals={true} collaborative={true}>
+  <Notebook path="test.ipynb"/>
+</Jupyter>
+```
+
+```js
+export type INotebookProps = {
+  path: string;
+  ipywidgets?: 'classic' | 'modern';
+  sidebarComponent: (props: any) => JSX.Element;
+  sidebarMargin: number;
+}
+```
+
+We wrap Lumino Widget in a LuminoAttached or LuminoDetached React component and expose Redux Observables Actions that proxy Lumino Commands. We bind Redux Observables Epics to Lumino Signals. Those bindings convert Lumino Signals to Observable to run the needed actions in the [Observable Epics](https://redux-observable.js.org/docs/basics/Epics.html).
+
+- All is created in a single React tree to ensure Jupyter React components can use any context created by the host application.
+- IpyWidgets is supported in `classic` or `modern` modes.
+- Collaborative RTC is also supported.
+- Plays nice with Jupyter Auth, Jupyterpool, Material-UI V4 and V5, Storybook, Docusaurus, Emotion.js... and many other standard libraries.
+- Benefits from current and new JupyterLab development, eg edit mode navigation, colored-collapser, collaborative cursor.
+
+Upon the Notebook component, you can also use the Cell, Notebook, Filemanage and Terminal components.
+
+<ModalImage
+  small="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-gallery.gif"
+  large="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-gallery.gif"
+  alt="Jupyter React Gallery"
+/>
+
+## Themes
+
+Jupyter React Material-UI themes are available for data analysis.
+
+- Light Theme.
+
+## Docusaurus
+
+Jupyter Docusaurus is [Docusaurus plugin](https://docusaurus.io/docs/next/using-plugins) to embed Jupyter into your [Docusaurus](https://docusaurus.io) website.
+
+[Jupyter Docusaurus source code](https://github.com/datalayer/jupyter-docusaurus) MIT license.
+
+## 🚧 Editor
+
+The Jupyter Editor is still under development.
+
+<ModalImage
+  small="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-slate.gif"
+  large="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-slate.gif"
+  alt="Jupyter React Slate"
+/>
+
+The Jupyter Editor, is a better Jupyter notebook. It adds value to the current existing ecosystem, by alphabetical order:
+
+- [x] Accessible.
+- [x] Collaborative.
+- [x] Performant.
+- [x] Reproducible.
+- [x] Reusable.
+- [x] Scalable.
+- [x] Secured.
+- [x] Shareable.
+
+## Resources
+
+[Jupyter React typedoc documentation](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.0.2/).
+
+[Jupyter React source code](https://github.com/datalayer/jupyter-react) MIT license.

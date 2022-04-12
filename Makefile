@@ -10,7 +10,7 @@ CONDA_REMOVE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda remove 
 
 ENV_NAME=jupyter-react
 
-.PHONY: help typedoc
+.PHONY: help
 
 default: help ## default target is help
 
@@ -28,7 +28,7 @@ start: ## start
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		yarn start )
 
-publihs: ## publish
+publish: ## publish
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		npm publish )
 	echo open https://www.npmjs.com/package/@datalayer/jupyter-react
@@ -77,7 +77,7 @@ typedoc: ## generate typedoc
 		yarn typedoc --tsconfig ./tsconfig.json && \
 		open typedoc/index.html )
 
-typedoc-deploy: typedoc ## deploy typedoc
+typedoc-publish: typedoc ## deploy typedoc
 	aws s3 rm \
 		s3://datalayer-typedoc/datalayer/jupyter-react/0.0.2/ \
 		--recursive \
