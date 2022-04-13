@@ -41,6 +41,12 @@ module.exports = {
           position: 'left',
           label: 'Welcome',
         },
+        {
+          href: 'https://github.com/datalayer/jupyter-react',
+          position: 'right',
+          className: 'header-github-link',
+          'aria-label': 'GitHub repository',
+        },
       ],
     },
     footer: {
