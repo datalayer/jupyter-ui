@@ -10,7 +10,7 @@ dependencies:
   - pip
   - pycurl
   - pytest
-  - python=3.8
+  - python=3.9
   - twine
   - yarn=1.22.5
   - pip:
