@@ -8,7 +8,7 @@ import NotebookAdapter from './NotebookAdapter';
 import { notebookActions, selectNotebook } from './NotebookState';
 import JupyterKernel from './../../kernel/Kernel';
 import LuminoAttached from '../../lumino/LuminoAttached';
-import { asObservable } from '../../lumino/LuminoObservable'
+import { asObservable } from '../../lumino/LuminoObservable';
 
 import '@jupyterlab/completer/style/index.css';
 import '@jupyterlab/documentsearch/style/index.css';
