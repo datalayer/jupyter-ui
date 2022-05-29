@@ -5,7 +5,7 @@ import { Widget } from '@lumino/widgets';
  * The LuminoAttached class allows to render a Lumino
  * Widget being mounted in the React.js tree.
  */
-class LuminoAttached extends React.Component {
+class LuminoAttached extends React.Component<any> {
   render() {
     return <div ref={ref => {
       if (ref) {
