@@ -79,7 +79,7 @@
     "react-redux": "7.2.4",
     "redux": "4.1.0",
     "redux-observable": "1.2.0",
-    "rxjs": "6.5.5",
+    "rxjs": "6.6.0",
     "typescript-fsa": "3.0.0",
     "typescript-fsa-reducers": "1.2.1",
     "uuid": "8.3.2"
@@ -178,7 +178,7 @@
     "**/react-redux": "7.2.4",
     "**/redux": "4.1.0",
     "**/redux-observable": "1.2.0",
-    "**/rxjs": "6.5.5",
+    "**/rxjs": "6.6.0",
     "**/typescript": "4.2.4",
     "**/html-webpack-plugin": "5.3.1",
     "**/webpack": "5.57.1",
