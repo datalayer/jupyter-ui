@@ -112,7 +112,7 @@ const typography: Partial<Typography> = createTypography(palette, {
 
 const zIndex: Partial<ZIndex> = {};
 
-const mixins: Mixins = createMixins(breakpoints, spacing, {});
+const mixins: Mixins = createMixins(breakpoints, {});
 
 const components = {
   MuiButtonBase: {
