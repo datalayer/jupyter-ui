@@ -1,18 +1,10 @@
 [![Datalayer](https://assets.datalayer.design/datalayer-25.svg)](https://datalayer.io)
 
-# Jupyter React
+# 🪐 ☀️ Jupyter React
 
-> ⚛️ [React.js](https://reactjs.org) components to create data products compatible with the [Jupyter](https://jupyter.org) ecosystem.
-
-<div align="center" style="text-align: center">
-  <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-slate.gif" />
-</div>
+> ⚛️ [React.js](https://reactjs.org) components to create `reactive` data products compatible with the [Jupyter](https://jupyter.org) ecosystem.
 
 You can create a custom data product `a-la-google-docs` as shown above. The below image shows a gallery of the available React.js components you ready to be used in you custom React.js application.
-
-<div align="center" style="text-align: center">
-  <img alt="Jupyter React Gallery" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-gallery.gif" />
-</div>
 
 ## Usage
 
@@ -26,15 +18,27 @@ Please open [issues](https://github.com/datalayer/jupyter-react/issues) for ques
 
 ## More
 
-Abstract from the talk given at [FOSDEM 2022](https://fosdem.org/2022). You can find more details on https://fosdem.org/2022/schedule/event/lt_jupyter (direct link to the video recording http://bofh.nikhef.nl/events/FOSDEM/2022/L.lightningtalks/lt_jupyter.webm).
+Abstract from the talk given at [FOSDEM 2022](https://fosdem.org/2022). You can find more details on <https://fosdem.org/2022/schedule/event/lt_jupyter> (direct link to the video recording <http://bofh.nikhef.nl/events/FOSDEM/2022/L.lightningtalks/lt_jupyter.webm>).
 
 Jupyter notebook is a tool that allows Data Scientist to analyse dataset. However, it is not easy to create a custom user interface integrated in an existing application.
 
-Jupyter React, https://github.com/datalayer/jupyter-react, an open-source library, fills that gap and provides components that a developer can easily integrate in any React.js application.
+Jupyter React, <https://github.com/datalayer/jupyter-react>, an open-source library, fills that gap and provides components that a developer can easily integrate in any React.js application.
 
 The Jupyter user interface stack is built on top of Lumino, which is an imperative way to build user interface and can not be consumed by industry standard declarative frameworks like React.js.
 
 As a user interface developer, if you want to create a custom data product on top of Jupyter, you have to stick to Lumino and carry-on the full notebook interface not tailored to your specific needs. This is not what you want. You just want to expose what you need, you want to develop with your favortie toolkit (like React.js) and you also want to integrate on a per-component basis the Jupyter functionality in your application.
+
+## Literate Notebook
+
+✍️ A notebook for literate programming, compatible with Jupyter and ObservableHQ, standalone or as Jupyter Notebook, JupyterLab, VS-Code extension
+
+A collaborative and accessible notebook to read, write and publish data analysis, integrated with office-365 and google workspace <https://literate.datalayer.tech>
+
+A [Literate programming](https://en.wikipedia.org/wiki/Literate_programming) environment, as envisioned by Donald Knuth back in 1983.
+
+Literate programming is a programming paradigm introduced by Donald Knuth in which a computer program is given an explanation of its logic in a natural language, such as English, interspersed with snippets of macros and traditional source code, from which compilable source code can be generated. The approach is used in scientific computing and in data science routinely for reproducible research and open access purposes.
+
+Source <https://en.wikipedia.org/wiki/Literate_programming>
 
 ## Contribute
 
@@ -66,7 +70,17 @@ echo open http://localhost:3208
 yarn start
 ```
 
-## License
+## TODO
+
+*   Visual Studio Code
+
+*   Theia
+
+*   TipTap
+
+*   ExecutableBooks
+
+## ⚖️ License
 
 Copyright (c) 2022 Datalayer, Inc.
 

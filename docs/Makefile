@@ -43,4 +43,8 @@ publish: build ## publish
 		s3://datalayer-jupyter-react-docs/ \
 		--recursive \
 		--profile datalayer && \
-	echo open ✨  https://jupyter-react.datalayer.tech )
+	  aws cloudfront create-invalidation \
+		--distribution-id E19S3MYI9U9B2S \
+		--paths / \
+		--profile datalayer && \
+	echo open ✨  https://jupyter-react.com )

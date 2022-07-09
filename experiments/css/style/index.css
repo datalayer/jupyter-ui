@@ -1,0 +1,7 @@
+:root {
+    --datalayer-green-color: green
+}
+
+.greenColor {
+    color: var(--datalayer-green-color)
+}

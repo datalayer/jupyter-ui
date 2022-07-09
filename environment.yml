@@ -10,9 +10,9 @@ dependencies:
   - pip
   - pycurl
   - pytest
-  - python=3.9
+  - python=3.10.4
   - twine
-  - yarn=1.22.5
+  - yarn=1.22.19
   - pip:
     - jupyterlab==4.0.0a23
     - ipywidgets==8.0.0b1

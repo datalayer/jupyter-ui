@@ -53,6 +53,9 @@ env-rm: ## create a conda environment
 env: ## create a conda environment
 	($(CONDA); \
 		conda env create -f environment.yml )
+	($(CONDA_ACTIVATE) ${ENV_NAME}; \
+		pip install --upgrade git+https://github.com/datalayer-externals/jupyter-server@sessions2#egg=jupyter_server && \
+		pip install --upgrade git+https://github.com/datalayer/jupyterpool@main#egg=jupyterpool )
 
 install: ## Install yarn dependencies and link the theme from the storybook
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
@@ -88,3 +91,14 @@ typedoc-publish: typedoc ## deploy typedoc
 		--recursive \
 		--profile datalayer
 	echo open ✨  https://typedoc.datalayer.tech/datalayer/jupyter-react/0.0.2
+
+example-build: ## build the storybook
+	($(CONDA_ACTIVATE) ${ENV_NAME}; \
+		rm -fr storybook/.out/* && \
+		yarn build:vercel && \
+		open example/.out/index.html )
+
+example-deploy: ## deploy the storybook
+	($(CONDA_ACTIVATE) ${ENV_NAME}; \
+		npx vercel --prod )
+
