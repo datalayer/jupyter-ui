@@ -4,7 +4,7 @@
 
 > ⚛️ [React.js](https://reactjs.org) components to create data products compatible with the [Jupyter](https://jupyter.org) ecosystem.
 
-The below image shows a gallery of the available React.js components you ready to be used in you custom React.js application.
+The below image shows a gallery of the available React.js components you ready to be used in you custom React.js application. These open source components power [the online Datalayer service](https://datalayer.io), a collaborative platform for data analysis.
 
 <div align="center" style="text-align: center">
   <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-gallery.gif" />
