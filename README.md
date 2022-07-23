@@ -97,7 +97,7 @@ yarn start
 ```bash
 # We have other examples, pick one of the following commands.
 yarn start:docusaurus # open http://localhost:3000
-yarn start:lexical    # open http://localhost:3000
+yarn start:lexical    # open http://localhost:3000/docs/intro
 yarn start:slate      # open http://localhost:3266
 ```
 
