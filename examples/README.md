@@ -15,7 +15,7 @@
 
 ## Docusaurus Example
 
-[Docusaurus example](./docusaurus): Integrate a Jupyter cell in a [Docusaurus](https://docusaurus.io) site with [jupyter-docusaurus-plugin](https://github.com/datalayer/jupyter-docusaurus).
+[Docusaurus example](./docusaurus): Integrate a Jupyter cell in a [Docusaurus](https://docusaurus.io) site with the [jupyter-docusaurus-plugin](https://github.com/datalayer/jupyter-react/tree/main/examples/docusaurus).
 
 <div align="center" style="text-align: center">
   <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-docusaurus.png" />
