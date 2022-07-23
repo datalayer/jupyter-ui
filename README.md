@@ -69,7 +69,7 @@ As part of the jupyter-react components, we also want to ease the creation of us
 Follow the below steps to create your development environment. You will need [Miniconda](https://docs.conda.io/en/latest/miniconda.html) up-and-running on your machine (MacOS or Linux, Windows is not supported as development platform for the time-being).
 
 ```bash
-# Clone this repository.
+# Clone the jupyter-react repository.
 git clone https://github.com/datalayer/jupyter-react.git && \
   cd jupyter-react
 ```
@@ -94,7 +94,14 @@ echo open http://localhost:3208
 yarn start
 ```
 
-The typedoc documentation is [available online](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.0.2). Please open [issues](https://github.com/datalayer/jupyter-react/issues) for questions, feature requests, bug reports... We also welcome [pull requests](https://github.com/datalayer/jupyter-react/pulls).
+```bash
+# We have other examples, pick one of the following commands.
+yarn start:docusaurus # open http://localhost:3000
+yarn start:lexical    # open http://localhost:3000
+yarn start:slate      # open http://localhost:3266
+```
+
+The typedoc documentation is [available online](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.0.6). Please open [issues](https://github.com/datalayer/jupyter-react/issues) for questions, feature requests, bug reports... We also welcome [pull requests](https://github.com/datalayer/jupyter-react/pulls).
 
 ## ⚖️ License
 

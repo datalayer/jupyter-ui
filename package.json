@@ -14,6 +14,10 @@
     "jupyterlab"
   ],
   "scripts": {
+    "start": "lerna run --parallel --scope @datalayer/jupyter-react start",
+    "start:docusaurus": "lerna run --parallel --scope @datalayer/jupyter-docusaurus-example start",
+    "start:lexical": "lerna run --parallel --scope @datalayer/jupyter-lexical-example dev",
+    "start:slate": "lerna run --parallel --scope @datalayer/jupyter-slate-example start",
     "build": "lerna run build",
     "build:example": "lerna run --scope @datalayer/* --parallel build:example",
     "build:vercel": "yarn && yarn build && yarn build:example",
