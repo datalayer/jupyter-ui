@@ -21,14 +21,6 @@
   <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-docusaurus.png" />
 </div>
 
-## JupyterLab
-
-[JupyterLab extensions example](https://github.com/datalayer-examples/jupyter-examples/tree/main/jupyterlab-extensions)
-
-## Server
-
-[Jupyter Server extensions example](https://github.com/datalayer-examples/jupyter-examples/tree/main/jupyter-server-extensions)
-
 ## License
 
 Copyright (c) 2022 Datalayer, Inc.
