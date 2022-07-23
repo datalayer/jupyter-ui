@@ -42,6 +42,7 @@
     "codemirror": "5.62.3",
     "image-extensions": "1.1.0",
     "is-url": "1.2.4",
+    "deep-equal": "2.0.5",
     "lodash": "^4.17.4",
     "prismjs": "1.24.1",
     "react": "18.1.0",
