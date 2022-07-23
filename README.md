@@ -34,9 +34,11 @@ The developer can now get a notebook or a cell in his page with a few lines of c
 
 ## Usage
 
-Install the latest `@datalayer/jupyter-react` npm package and get inspired by the [examples](./src/examples) in this repository. You can also reuse examples from this separated [jupyter-examples](https://github.com/datalayer/jupyter-examples) repository.
+The jupyter-reat can be used in any React.js application.
 
-This library can be used to extend exsiting solutions. For example, we maintain an plugin to [Docusaurus](https://docusaurus.io) in the [examples/docusarus](./examples/docusarus) folder.
+Install the latest `@datalayer/jupyter-react` npm package and get inspired by the [examples](./tree/main/examples) in this repository.
+
+We also maintain an plugin to [Docusaurus](https://docusaurus.io) in the [examples/docusaurus](./tree/main/examples/docusaurus) folder.
 
 ## Literate Notebook
 
