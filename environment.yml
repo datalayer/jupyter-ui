@@ -14,7 +14,7 @@ dependencies:
   - twine
   - yarn=1.22.19
   - pip:
-    - jupyterlab==4.0.0a23
+    - jupyterlab==4.0.0a26
     - ipywidgets==8.0.0b1
 #    - jupyterlab-lsp
 #    - python-language-server[all]
