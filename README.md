@@ -4,7 +4,7 @@
 
 > [React.js](https://reactjs.org) components to create data products compatible with the [Jupyter](https://jupyter.org) ecosystem.
 
-The image below shows a gallery of the available React.js components you ready to be used in you custom React.js application. These open source components power [Datalayer service](https://datalayer.io), a collaborative platform for data analysis.
+The image below shows a gallery of the available React.js components you ready to be used in you custom React.js application. These open source components power the online [Datalayer service](https://datalayer.io), a collaborative platform for data analysis.
 
 <div align="center" style="text-align: center">
   <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-gallery.gif" />
@@ -14,7 +14,7 @@ The image below shows a gallery of the available React.js components you ready t
 
 The Jupyter(Lab) notebook is a tool that allows data scientist to analyse dataset. However, it is not easy to create a custom user interface integrated in an existing application. [Jupyter React](https://jupyter-react.com), an open-source library, fills that gap and provides components that a developer can easily integrate in any React.js application.
 
-In terms of technical stack, the Jupyter(Lab) user interface is built on top of Lumino, which is an imperative way to build user interface and **can not** be consumed by industry standard declarative frameworks like React.js. As a user interface developer, if you want to create a custom data product on top of Jupyter, you have to stick to Lumino and carry-on the full notebook interface not tailored to your specific needs. This is not what you want. You just want to expose what you need, you want to develop with your favorite toolkit (like React.js) and you also want to integrate on a per-component basis the Jupyter functionality in your application. You can find more context reading this [abstract](https://fosdem.org/2022/schedule/event/lt_jupyter) of the talk given at [FOSDEM 2022](https://fosdem.org/2022) ([video recording](http://bofh.nikhef.nl/events/FOSDEM/2022/L.lightningtalks/lt_jupyter.webm)).
+In terms of technical stack, the Jupyter(Lab) user interface is built on top of Lumino, which is an imperative way to build user interface and **can not** be consumed by industry standard declarative frameworks like React.js. As a user interface developer, if you want to create a custom data product on top of Jupyter, you have to stick to Lumino and carry-on the full notebook interface not tailored to your specific needs. This is not what you want. You just want to expose what you need, you want to develop with your favorite toolkit (like React.js) and you also want to integrate on a per-component basis the Jupyter functionality in your application.
 
 Although a developer can embed a React.js component into JupyterLab, the reverse is not possible: you can not embed JupyterLab into a React.js application. To solve that issue, Jupyter-React ships components to easily create a React.js data product compatible with the Jupyter ecosystem. Those components can be used in any React.js application, and also in static websites like Docusaurus, Next.js or Remix. They wrap underneath the JupyterLab code and allow developing React.js applications with code execution capability. State management is based on Redux, and Mobx is to be added.
 
@@ -24,29 +24,31 @@ Although a developer can embed a React.js component into JupyterLab, the reverse
 
 IPyWidgets are supported (the Comm feature needs to be fixed). JupyterLite and PyScript support is on the roadmap. Autocompletion is also available.
 
-The developer can now get a notebook or a cell in his page with a few lines of code.
+You can find more context reading this [abstract](https://fosdem.org/2022/schedule/event/lt_jupyter) of the talk given at [FOSDEM 2022](https://fosdem.org/2022) ([video recording](http://bofh.nikhef.nl/events/FOSDEM/2022/L.lightningtalks/lt_jupyter.webm)).
+## Usage
+
+As a React.js developer, you just write a few lines of code get a live notebook or live cell in your application.
 
 <div align="center" style="text-align: center">
   <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-snippet.png" />
 </div>
 
+The `jupyter-react` library can be used in any React.js application. Install the latest `@datalayer/jupyter-react` npm package and get inspired by the [examples](https://github.com/datalayer/jupyter-react/tree/main/examples) in this repository.
+
 <div align="center" style="text-align: center">
   <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-notebook.png" />
 </div>
 
-## Usage
+We maintain a plugin for [Docusaurus](https://docusaurus.io) in the [docusaurus](https://github.com/datalayer/jupyter-react/tree/main/packages/docusaurus) package folder (see the [Docusaurus example]()).
 
-The jupyter-reat can be used in any React.js application.
-
-Install the latest `@datalayer/jupyter-react` npm package and get inspired by the [examples](https://github.com/datalayer/jupyter-react/tree/main/examples) in this repository.
-
-We also maintain an plugin to [Docusaurus](https://docusaurus.io) in the [examples/docusaurus](https://github.com/datalayer/jupyter-react/tree/main/examples/docusaurus) folder.
-
+<div align="center" style="text-align: center">
+  <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-docusaurus.png" />
+</div>
 ## Literate Notebook
 
 > ✍️ A notebook for literate programming, compatible with Jupyter and ObservableHQ. The literate notebook can be run standalone or as Jupyter Notebook, JupyterLab, Visual Studio Code extension
 
-As a successor to those components wrapping JupyterLab, we are developing a brand new user interface `Literate Notebook` to better address [literate programming requirements](https://en.wikipedia.org/wiki/Literate_programming), compatible with Jupyter and ObservableHQ as envisioned by [Donald Knuth](https://en.wikipedia.org/wiki/Donald_Knuth) back in 1983.
+As successor to the above components wrapping JupyterLab, we are developing a brand new user interface `Literate Notebook` to better address [literate programming requirements](https://en.wikipedia.org/wiki/Literate_programming), compatible with Jupyter and ObservableHQ as envisioned by [Donald Knuth](https://en.wikipedia.org/wiki/Donald_Knuth) back in 1983.
 
 > Literate programming is a programming paradigm introduced by Donald Knuth in which a computer program is given an explanation of its logic in a natural language, such as English, interspersed with snippets of macros and traditional source code, from which compilable source code can be generated. The approach is used in scientific computing and in data science routinely for reproducible research and open access purposes. <https://en.wikipedia.org/wiki/Literate_programming>
 
@@ -58,11 +60,11 @@ A a developer, you will create a custom data product `a-la-google-docs` as shown
   <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-slate.gif" />
 </div>
 
-We will add collaborative and accessible features to read, write and publish data analysis to Office-365 and Google workspace.
+We will add collaborative and accessible features to read, write and publish data analysis to `Microsoft Office 365` and `Google Workspace`.
 
 ## Traitlets React
 
-As part of the jupyter-react components, we also want to ease the creation of user interfaces based on the Jupyter Traits. This will allow a front-end developer to start from the traits (configuration definition) defined in Python code and automatically generate a React.js user interface which can be used to manage your settings in a visual way. The traits would be converted to json-schema definitions that can be used to create the React.js components. This is particularly useful to build management user interfaces.
+As part of the jupyter-react components, we also want to ease the creation of user interfaces based on the [Jupyter Traitlets](https://traitlets.readthedocs.io). This will allow a front-end developer to start from the traits (configuration definition) defined in Python code and automatically generate a React.js user interface which can be used to manage your settings in a visual way. The traits would be converted to json-schema definitions that can be used to create the React.js components. This is particularly useful to build management user interfaces.
 
 ## Contribute
 
@@ -96,8 +98,8 @@ yarn start
 
 ```bash
 # We have other examples, pick one of the following commands.
-yarn start:docusaurus # open http://localhost:3000
-yarn start:lexical    # open http://localhost:3000/docs/intro
+yarn start:docusaurus # open http://localhost:3000/docs/intro
+yarn start:lexical    # open http://localhost:3000
 yarn start:slate      # open http://localhost:3266
 ```
 
