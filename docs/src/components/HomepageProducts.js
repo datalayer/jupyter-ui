@@ -23,11 +23,11 @@ const ProductList = [
     ),
   },
   {
-    title: 'Sharebook',
+    title: 'Literate Notebook',
     Svg: require('../../static/img/product_3.svg').default,
     description: (
       <>
-        For a truly collaborative and accessible notebook, try <a href="./docs/editor/index">Sharebook</a>, a better better literate notebook, with built-in collaboration, accessibility...
+        For a truly collaborative and accessible notebook, try <a href="./docs/editor/index">Literate Notebook</a>, a better better literate notebook, with built-in collaboration, accessibility...
       </>
     ),
   },

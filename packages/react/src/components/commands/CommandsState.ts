@@ -27,7 +27,7 @@ export const selectCommands = (): ICommandState =>
 
 /* Actions */
 
-export enum ActionType {
+export enum CommandsActionType {
   OUTPUTS = "commands/OUTPUTS",
   EXECUTE = "commands/EXECUTE",
 }
@@ -36,10 +36,10 @@ const actionCreator = actionCreatorFactory('jupyterReact');
 
 export const commandsActions = {
   outputs: actionCreator<number>(
-    ActionType.OUTPUTS
+    CommandsActionType.OUTPUTS
   ),
   execute: actionCreator<void>(
-    ActionType.EXECUTE
+    CommandsActionType.EXECUTE
   ),
 }
 

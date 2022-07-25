@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import LuminoDetached from '../../lumino/LuminoDetached';
+import LuminoDetached from '../../jupyter/lumino/LuminoDetached';
 import DialogAdapter from './DialogAdapter';
 
-const Dialog = () => {
+export const Dialog = () => {
   const [dialogAdapter, _] = useState(new DialogAdapter());
   useEffect(() => {
     dialogAdapter.dialog.launch().then(success => success)

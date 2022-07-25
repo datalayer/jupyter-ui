@@ -5,11 +5,10 @@ import { CodeMirrorMimeTypeService } from '@jupyterlab/codemirror';
 import { runIcon } from '@jupyterlab/ui-components';
 import { Completer, CompleterModel, CompletionHandler, ConnectorProxy, KernelCompleterProvider } from '@jupyterlab/completer';
 import { RenderMimeRegistry, standardRendererFactories as initialFactories } from '@jupyterlab/rendermime';
-import { Session } from '@jupyterlab/services';
+import { Session, ServerConnection } from '@jupyterlab/services';
 import { SessionManager, KernelManager, KernelSpecManager } from '@jupyterlab/services';
-import { ServerConnection } from '@jupyterlab/services';
 import { CommandRegistry } from '@lumino/commands';
-import { IPyWidgetsClassicManager } from "../../ipywidgets/IPyWidgetsClassicManager";
+import { IPyWidgetsClassicManager } from "../../jupyter/ipywidgets/IPyWidgetsClassicManager";
 import { requireLoader } from "@jupyter-widgets/html-manager";
 import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/lib/output_renderers";
 import CellCommands from './CellCommands';
@@ -19,32 +18,29 @@ export class CellAdapter {
   private _cellPanel: BoxPanel;
   private _sessionContext: SessionContext;
 
-  constructor(source: string) {
+  constructor(source: string, serverSettings: ServerConnection.ISettings) {
     this._cellPanel = new BoxPanel();
     this._cellPanel.direction = 'top-to-bottom';
     this._cellPanel.spacing = 0;
-    this._cellPanel.addClass('dla-JupyterCell');
-    const serverSettings = ServerConnection.makeSettings({
-      appendToken: true,
-      init: {
-        credentials: "include",
-        mode: 'cors',
-      }
-    });
     const kernelManager = new KernelManager({
-      serverSettings
-    });
-    const specsManager = new KernelSpecManager({
       serverSettings
     });
     const sessionManager = new SessionManager({
       serverSettings,
       kernelManager
     });
+    const specsManager = new KernelSpecManager({
+      serverSettings
+    });
     this._sessionContext = new SessionContext({
       sessionManager,
       specsManager,
-      name: 'Datalayer'
+      name: 'Jupyter React',
+      kernelPreference: {
+        autoStartDefault: true,
+        shouldStart: true,
+        name: 'python3',
+      }
     });
     const mimeService = new CodeMirrorMimeTypeService();
     const commands = new CommandRegistry();
@@ -77,11 +73,12 @@ export class CellAdapter {
         }
       })
     });
+    this._codeCell = codeCell.initializeState();
+    this._codeCell.addClass('dla-JupyterCell');
     this._sessionContext.kernelChanged.connect((sender: SessionContext, arg: Session.ISessionConnection.IKernelChangedArgs) => {
       const kernelConnection = arg.newValue;
       iPyWidgetsClassicManager.registerWithKernel(kernelConnection)
     });
-    this._codeCell = codeCell.initializeState();
     this._sessionContext.kernelChanged.connect(() => {
       void this._sessionContext.session?.kernel?.info.then(info => {
         const lang = info.language_info;
@@ -89,7 +86,6 @@ export class CellAdapter {
         this._codeCell.model.mimeType = mimeType;
       });
     });
-    this._sessionContext.kernelPreference = { autoStartDefault: true };
     const editor = this._codeCell.editor;
     const model = new CompleterModel();
     const completer = new Completer({ editor, model });

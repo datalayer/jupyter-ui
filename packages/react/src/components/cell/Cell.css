@@ -1,10 +1,15 @@
+/*
 .jp-Toolbar {
+  height: auto !important;
+  height: 0px !important;
   display: none;
   position: relative !important;
-/*  height: auto !important; */
-  height: 0px !important;
 }
-
+*/
+.dla-JupyterCell {
+  margin-top: 30px;
+}
+  
 .jp-Cell {
   width: 100%;
 }
@@ -17,4 +22,8 @@
 
 .jp-Completer-Cell {
   position: fixed;
+}
+
+.jp-CodeMirrorEditor {
+  cursor: text !important;
 }

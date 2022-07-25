@@ -1,17 +1,19 @@
 import React from 'react';
-import { PageConfig } from '@jupyterlab/coreutils';
 import { Store } from 'redux';
-import { ErrorBoundary } from 'react-error-boundary'
-import injectableStore from '../state/Store';
+import { ThemeProvider, BaseStyles } from "@primer/react";
+import { ErrorBoundary } from 'react-error-boundary';
 import { JupyterContextProvider } from './JupyterContext';
-import { loadJupyterConfig, getJupyterServerHttpUrl, getJupyterServerWsUrl, getJupyterToken } from './JupyterConfig';
+import { getJupyterServerHttpUrl, getJupyterServerWsUrl, loadJupyterConfig } from './JupyterConfig';
+import injectableStore from '../state/Store';
 
 /**
  * Definition of the properties that can be passed
  * when creating a Jupyter context.
  */
-type JupyterProps = {
+export type JupyterProps = {
   children: React.ReactNode;
+  lite: boolean;
+  startDefaultKernel: boolean;
   injectableStore?: Store | any;
   collaborative?: boolean;
   jupyterServerHttpUrl?: string;
@@ -42,33 +44,36 @@ const ErrorFallback = ({error, resetErrorBoundary}: any) => {
  * are available.
  */
 export const Jupyter = (props: JupyterProps) => {
-  loadJupyterConfig();
-  const baseUrl = props.jupyterServerHttpUrl || getJupyterServerHttpUrl()
-  PageConfig.setOption('baseUrl', baseUrl);
-  PageConfig.setOption('collaborative', String(props.collaborative || false));
-  PageConfig.setOption('mathjaxUrl', 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js');
-  PageConfig.setOption('mathjaxConfig', 'TeX-AMS_CHTML-full,Safe');
-  PageConfig.setOption('terminalsAvailable', String(props.terminals || false));
-  PageConfig.setOption('token', props.jupyterToken || getJupyterToken());
-  const wsUrl = props.jupyterServerWsUrl || getJupyterServerWsUrl();
-  PageConfig.setOption('wsUrl', wsUrl);
+  const { lite, startDefaultKernel } = props;
+  loadJupyterConfig(props);
   return (
     <ErrorBoundary
       FallbackComponent={ErrorFallback}
-      onReset={() => {
-        console.log('The reset button has been clicked...');
-      }}
+//      onReset={() => { console.log('Reset has been invoked...'); }}
     >
-      <JupyterContextProvider
-        variant="default"
-        baseUrl = {baseUrl}
-        wsUrl = {wsUrl}
-        injectableStore={props.injectableStore || injectableStore}
-        >
-        { props.children }
-      </JupyterContextProvider>
+      <ThemeProvider colorMode="day">
+        <BaseStyles>
+          <JupyterContextProvider
+            lite={lite}
+            startDefaultKernel={startDefaultKernel}
+            baseUrl={getJupyterServerHttpUrl()}
+            wsUrl={getJupyterServerWsUrl()}
+            injectableStore={props.injectableStore || injectableStore}
+            variant="default"
+          >
+            { props.children }
+          </JupyterContextProvider>
+        </BaseStyles>
+      </ThemeProvider>
     </ErrorBoundary>
   )
+}
+
+Jupyter.defaultProps = {
+  lite: false,
+  startDefaultKernel: true,
+  collaborative: false,
+  terminals: false,
 }
 
 export default Jupyter;

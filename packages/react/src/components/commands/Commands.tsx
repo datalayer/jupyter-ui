@@ -1,9 +1,9 @@
 import CommandAdapter from './CommandsAdapter';
-import LuminoAttached from '../../lumino/LuminoAttached';
+import Lumino from '../../jupyter/lumino/Lumino';
 
-const Commands = () => {
+export const Commands = () => {
   const commandsAdapter = new CommandAdapter();
-  return <LuminoAttached>{commandsAdapter.panel}</LuminoAttached>
+  return <Lumino>{commandsAdapter.panel}</Lumino>
 }
 
 export default Commands;

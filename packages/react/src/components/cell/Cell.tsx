@@ -1,17 +1,18 @@
-import { useMemo, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useDispatch } from "react-redux";
 import { CodeCell } from '@jupyterlab/cells';
 import { KernelMessage } from '@jupyterlab/services';
-import { cellActions } from './CellState';
+import { useJupyter } from './../../jupyter/JupyterContext';
+import Lumino from '../../jupyter/lumino/Lumino';
+import { cellActions, cellReducer } from './CellState';
 import CellAdapter from './CellAdapter';
-import LuminoAttached from '../../lumino/LuminoAttached';
 
 import '@jupyterlab/application/style/index.css';
+import '@jupyterlab/codemirror/style/index.css';
 import '@jupyterlab/cells/style/index.css';
-import '@jupyterlab/completer/style/index.css';
-// This should be only index.css, looks like jupyterlab has a regression here...
-import '@jupyterlab/theme-light-extension/style/theme.css';
+import '@jupyterlab/theme-light-extension/style/theme.css'; // This should be only index.css, looks like jupyterlab has a regression here...
 import '@jupyterlab/theme-light-extension/style/variables.css';
+import '@jupyterlab/completer/style/index.css';
 
 import './Cell.css';
 
@@ -25,30 +26,45 @@ export type ICellProps = {
   autoStart?: boolean;
 }
 
-const Cell = (props: ICellProps) => {
-  const adapter = useMemo(() => new CellAdapter(props.source!), []);
+export const Cell = (props: ICellProps) => {
+  const { source, autoStart } = props;
+  const { serverSettings, injectableStore } = useJupyter();
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(cellActions.update({ adapter }));
-    dispatch(cellActions.source(props.source!));
-    adapter.codeCell.model.value.changed.connect((sender, changedArgs) => {
-      dispatch(cellActions.source(sender.text));
-    });
-    adapter.codeCell.outputArea.outputLengthChanged.connect((_, outputsCount) => {
-      dispatch(cellActions.outputsCount(outputsCount));
-    });
-    adapter.sessionContext.initialize().then(() => {
-      if (props.autoStart) {
-        const executePromise = CodeCell.execute(adapter.codeCell, adapter.sessionContext);
-        executePromise.then((msg: void | KernelMessage.IExecuteReplyMsg) => {
-          dispatch(cellActions.update({
-            kernelAvailable: true,
-          }));
-        });  
-      }
-    });
+  const [adapter, setAdapter] = useState<CellAdapter>();
+  useMemo(() => {
+    (injectableStore as any).inject('cell', cellReducer);
   }, []);
-  return <LuminoAttached>{adapter.panel}</LuminoAttached>
+  useEffect(() => {
+    if (source) {
+      const adapter = new CellAdapter(source, serverSettings);
+      dispatch(cellActions.update({ adapter }));
+      dispatch(cellActions.source(props.source!));
+      adapter.codeCell.model.value.changed.connect((sender, changedArgs) => {
+        dispatch(cellActions.source(sender.text));
+      });
+      adapter.codeCell.outputArea.outputLengthChanged.connect((outputArea, outputsCount) => {
+        dispatch(cellActions.outputsCount(outputsCount));
+      });
+      adapter.sessionContext.initialize().then(() => {
+        if (autoStart) {
+          const execute = CodeCell.execute(adapter.codeCell, adapter.sessionContext);
+          execute.then((msg: void | KernelMessage.IExecuteReplyMsg) => {
+            dispatch(cellActions.update({
+              kernelAvailable: true,
+            }));
+          });
+        }
+      });
+      setAdapter(adapter);  
+    }
+  }, [source]);
+  return adapter
+    ? 
+      <Lumino>
+        {adapter.panel}
+      </Lumino>
+    : 
+      <>Loading...</>
 }
 
 Cell.defaultProps = {

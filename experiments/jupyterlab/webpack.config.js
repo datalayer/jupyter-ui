@@ -22,7 +22,6 @@ if (IS_PRODUCTION) {
 }
 
 const JUPYTER_HOST = 'http://localhost:8686';
-// const JUPYTER_HOST = 'http://minikube.local';
 
 module.exports = {
   entry: ['./src/Example'],

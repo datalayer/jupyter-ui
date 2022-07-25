@@ -1,46 +1,56 @@
 // Jupyter.
-export { default as Jupyter } from './jupyter/Jupyter';
+export * from './jupyter/Jupyter';
 export * from './jupyter/JupyterContext';
-
+export * from './jupyter/JupyterConfig';
+export * from './jupyter/lumino/Lumino';
+export * from './jupyter/lumino/LuminoDetached';
+export * from './jupyter/lumino/LuminoNotebook';
+export * from './jupyter/lumino/LuminoObservable';
+export * from './jupyter/lumino/LuminoReactPortal';
+export * from './jupyter/lumino/LuminoRedux';
+export * from './jupyter/lite/LiteServer';
+export * from './jupyter/utils/Ids';
 // Services.
-export { default as Services } from './services/Services';
-export { default as Kernel } from './services/kernel/Kernel';
-
+export * from './jupyter/services/Services';
+export * from './jupyter/services/kernel/Kernel';
+export * from './jupyter/services/kernel/KernelModel';
 // IpyWidgets.
-export { default as IpyWidgetsComponent } from './components/ipywidgets/IpyWidgetsComponent';
-
+export * from './jupyter/ipywidgets/IpyWidgetsManager';
+export * from './components/ipywidgets/IpyWidgetsComponent';
 // Cell.
-export { default as Cell } from './components/cell/Cell';
-export { selectCell, cellActions } from './components/cell/CellState';
-
+export * from './components/cell/Cell';
+export * from './components/cell/CellState';
+// CodeMirror Editor.
+export * from './components/codemirror/CodeMirrorEditor';
 // Notebook.
-export { default as Notebook } from './components/notebook/Notebook';
-export { selectNotebook, notebookActions } from './components/notebook/NotebookState';
-
+export * from './components/notebook/Notebook';
+export * from './components/notebook/NotebookAdapter';
+export * from './components/notebook/NotebookState';
+export * from './components/notebook/cell/metadata/CellMetadataEditor';
+export * from './components/notebook/cell/metadata/NbGraderCells';
+export * from './components/notebook/cell/prompt/InputPrompt';
+export * from './components/notebook/cell/sidebar/base/CellSidebarContentFactory';
+export * from './components/notebook/cell/sidebar/base/CellSidebarWidget';
+export * from './components/notebook/cell/sidebar/CellSidebarDefault';
+export * from './components/notebook/cell/sidebar/CellSidebarRun';
 // Commands.
-export { default as Commands } from './components/commands/Commands';
-export { selectCommands, commandsActions } from './components/commands/CommandsState';
-
+export * from './components/commands/Commands';
+export * from './components/commands/CommandsState';
 // Console.
-export { default as Console } from './components/console/Console';
-export { selectConsole, consoleActions } from './components/console/ConsoleState';
-
+export * from './components/console/Console';
+export * from './components/console/ConsoleState';
 // Dialog.
-export { default as Dialog } from './components/dialog/Dialog';
-
+export * from './components/dialog/Dialog';
 // FileBrowser.
-export { default as FileBrowser } from './components/filebrowser/FileBrowser';
-export { default as FileBrowserTree } from './components/filebrowser/FileBrowserTree';
-export { selectFileBrowser, fileBrowserActions } from './components/filebrowser/FileBrowserState';
-
+export * from './components/filebrowser/FileBrowser';
+export * from './components/filebrowser/FileBrowserState';
 // Outputs.
-export { default as Output } from './components/outputs/Output';
-export { selectOutput } from './components/outputs/OutputState';
-
+export * from './components/output/Output';
+export * from './components/output/OutputAdapter';
+export * from './components/output/OutputState';
 // Settings.
-export { default as Settings } from './components/settings/Settings';
-export { selectSettings, settingsActions } from './components/settings/SettingsState';
-
+export * from './components/settings/Settings';
+export * from './components/settings/SettingsState';
 // Terminal.
-export { default as Terminal } from './components/terminal/Terminal';
-export { selectTerminal, terminalActions } from './components/terminal/TerminalState';
+export * from './components/terminal/Terminal';
+export * from './components/terminal/TerminalState';

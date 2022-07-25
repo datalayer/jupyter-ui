@@ -45,7 +45,7 @@ c.ServerApp.tornado_settings = {
   'headers': {
 #    'Access-Control-Allow-Origin': ORIGIN,
     'Access-Control-Allow-Methods': '*',
-    'Access-Control-Allow-Headers': 'Accept, Accept-Encoding, Accept-Language, Authorization, Cache-Control, Connection, Content-Type, Host, Origin, Pragma, Referer, sec-ch-ua, sec-ch-ua-mobile, sec-ch-ua-platform, Sec-Fetch-Dest, Sec-Fetch-Mode, Sec-Fetch-Site, Upgrade, User-Agent, X-XSRFToken, X-Datalayer',
+    'Access-Control-Allow-Headers': 'Accept, Accept-Encoding, Accept-Language, Authorization, Cache-Control, Connection, Content-Type, Host, Origin, Pragma, Referer, sec-ch-ua, sec-ch-ua-mobile, sec-ch-ua-platform, Sec-Fetch-Dest, Sec-Fetch-Mode, Sec-Fetch-Site, Upgrade, User-Agent, X-XSRFToken, X-Datalayer, Expires',
     'Access-Control-Allow-Credentials': 'true',
     'Content-Security-Policy': f"frame-ancestors 'self' {ORIGIN} ",
   },
@@ -82,7 +82,7 @@ c.ServerApp.cookie_options = {
 
 c.ServerApp.jpserver_extensions = {
     'jupyterlab': True,
-    'jupyterpool': True,
+#    'jupyterpool': True,
 }
 
 #################

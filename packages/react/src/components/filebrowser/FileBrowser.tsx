@@ -1,9 +1,9 @@
 import FileBrowserAdapter from './FileBrowserAdapter';
-import LuminoAttached from '../../lumino/LuminoAttached';
+import Lumino from '../../jupyter/lumino/Lumino';
 
-const FileBrowser = () => {
+export const FileBrowser = () => {
   const fileBrowserAdpater = new FileBrowserAdapter();
-  return <LuminoAttached>{fileBrowserAdpater.panel}</LuminoAttached>
+  return <Lumino>{fileBrowserAdpater.panel}</Lumino>
 }
 
 export default FileBrowser;

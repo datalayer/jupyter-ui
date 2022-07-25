@@ -1,17 +1,20 @@
-import { useEffect, useMemo } from "react";
-import { useDispatch, useStore } from "react-redux";
-import { NotebookChange } from "@jupyterlab/shared-models";
-import { Kernel } from '@jupyterlab/services';
+import { useState, useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
+import { useDispatch } from "react-redux";
+import { Box } from "@primer/react";
 import { Cell, ICellModel } from '@jupyterlab/cells';
-import { useJupyter } from '../../jupyter/JupyterContext';
+import * as nbformat from '@jupyterlab/nbformat';
+import { useJupyter } from "./../../jupyter/JupyterContext";
+import { Kernel } from "./../../jupyter/services/kernel/Kernel";
+import Lumino from '../../jupyter/lumino/LuminoNotebook';
+import { asObservable } from './../../jupyter/lumino/LuminoObservable';
+import CellMetadataEditor from './cell/metadata/CellMetadataEditor';
 import NotebookAdapter from './NotebookAdapter';
-import { notebookActions, selectNotebook } from './NotebookState';
-import JupyterKernel from './../../kernel/Kernel';
-import LuminoAttached from '../../lumino/LuminoAttached';
-import { asObservable } from '../../lumino/LuminoObservable';
+import { notebookActions, selectNotebookPortals, notebookEpics, notebookReducer } from './NotebookState';
 
 import '@jupyterlab/completer/style/index.css';
 import '@jupyterlab/documentsearch/style/index.css';
+import '@jupyterlab/codemirror/style/index.css';
 import '@jupyterlab/notebook/style/index.css';
 import '@jupyterlab/theme-light-extension/style/theme.css';
 import '@jupyterlab/theme-light-extension/style/variables.css';
@@ -19,82 +22,150 @@ import '@jupyterlab/theme-light-extension/style/variables.css';
 import './Notebook.css';
 
 export type INotebookProps = {
+  uid: string
   path: string;
-  ipywidgets?: 'classic' | 'lab';
-  sidebarMargin: number;
-  sidebarComponent?: (props: any) => JSX.Element;
+  model: nbformat.INotebookContent;
+  readOnly: boolean;
+  nbgrader: boolean;
+  ipywidgets: 'classic' | 'lab';
+  kernel?: Kernel;
+  cellMetadataPanel: boolean;
+  CellSidebar?: (props: any) => JSX.Element;
+  cellSidebarMargin: number;
+}
+
+const LuminoNotebook = (props: {adapter: NotebookAdapter }) => {
+  const { adapter } = props;
+  return <Lumino adapter={adapter}/>
 }
 
 /**
- * This component creates a Notebook as a collection 
- * of cells with sidebars.
+ * This component creates a Notebook as a collection of snippets 
+ * with sidebars.
  * 
  * @param props The notebook properties.
- * @returns A Notebook component.
+ * @returns A Notebook React.js component.
  */
 export const Notebook = (props: INotebookProps) => {
-  const store = useStore();
+  const { serviceManager, kernel, kernelManager, injectableStore } = useJupyter();
+  const { readOnly, cellMetadataPanel, nbgrader, uid, model } = props;
   const dispatch = useDispatch();
-  const { baseUrl, wsUrl } = useJupyter();
-  const notebook = selectNotebook();
-  const portals = notebook.portals;
-  const kernel = useMemo(() => new JupyterKernel({
-    baseUrl,
-    wsUrl,
-  }), []);
-  const adapter = useMemo(() => new NotebookAdapter(props, store, kernel), []);
-  useEffect(() => {
-    dispatch(notebookActions.update({ adapter }));
-    adapter.manager.ready.then(() => {
-      adapter.loadNotebook(props.path);
-      const activeCellChanged$ = asObservable(adapter.notebookPanel.content.activeCellChanged);
-      activeCellChanged$.subscribe(
-        (activeCellChanged: Cell<ICellModel>) => {
-          dispatch(notebookActions.activeCellChange(activeCellChanged));
-        }
-      );
-      adapter.notebookPanel.model!.sharedModel.changed.connect((_, notebookChange: NotebookChange) => {
-        dispatch(notebookActions.notebookChange(notebookChange));
-      });
-      adapter.notebookPanel.sessionContext.statusChanged.connect((_, kernelStatusChanged: Kernel.Status) => {
-        dispatch(notebookActions.kernelStatusChanged(kernelStatusChanged));
-      });
-    });
+  const portals = selectNotebookPortals();
+  const [adapter, setAdapter] = useState<NotebookAdapter>();
+  useMemo(() => {
+    (injectableStore as any).inject('notebook', notebookReducer, notebookEpics);
   }, []);
+  useEffect(() => {
+    if (serviceManager && kernelManager && kernel) {
+//      const kernel = readOnly ? undefined : new Kernel({ kernelManager });
+      const adapter = new NotebookAdapter(
+        { ...props, kernel },
+        injectableStore,
+        serviceManager,
+      );
+      setAdapter(adapter);
+      dispatch(notebookActions.update({ adapter }));
+      adapter.serviceManager.ready.then(() => {
+        adapter.loadNotebook();
+        if (!readOnly && cellMetadataPanel) {
+          const activeCellChanged$ = asObservable(adapter.notebookPanel!.content.activeCellChanged);
+          activeCellChanged$.subscribe(
+            (activeCellChanged: Cell<ICellModel>) => {
+              dispatch(notebookActions.activeCellChange(activeCellChanged));
+              const panelDiv = document.getElementById('right-panel-id') as HTMLDivElement;
+              if (panelDiv) {
+                const cellMetadataOptions = (
+                  <Box mt={3}>
+                    <CellMetadataEditor cell={activeCellChanged} nbgrader={nbgrader}/>
+                  </Box>
+                );
+                const portal = createPortal(cellMetadataOptions, panelDiv);
+                dispatch(notebookActions.setPortal({ portal, pinned: false }));  
+              }
+            }
+          );
+        }
+        adapter.notebookPanel?.model?.contentChanged.connect((notebookModel, _) => {
+          dispatch(notebookActions.modelChange(notebookModel));
+        });
+        adapter.notebookPanel?.content.activeCellChanged.connect((_, activeCellChanged) => {
+          dispatch(notebookActions.activeCellChange(activeCellChanged));
+        });
+        adapter.notebookPanel?.model!.sharedModel.changed.connect((_, notebookChange) => {
+          dispatch(notebookActions.notebookChange(notebookChange));
+        });
+        adapter.notebookPanel?.sessionContext.statusChanged.connect((_, kernelStatusChanged) => {
+          dispatch(notebookActions.kernelStatusChanged(kernelStatusChanged));
+        });  
+      });
+      return () => {
+        setAdapter(undefined);
+        dispatch(notebookActions.setPortal(undefined));
+      }
+    }
+  }, [uid, serviceManager, kernelManager, kernel, model]);
   return (
-    <div
-      css={{
-        '& .jp-Toolbar': {
-          display: 'none',
-        },
-        '& .jp-Cell': {
-          width: `calc(100% - ${props.sidebarMargin}px)`,
-        },
-        '& .jp-Cell .jp-CellHeader': {
-          height: 'auto',
-          position: 'absolute',
-          top: '-5px',
-          left: `${props.sidebarMargin + 10}px`,
-        },
-        '& .jp-Cell .dla-CellHeader-container': {
-          padding: '4px 8px',
-          width: `${props.sidebarMargin + 10}px`,
-          cursor: 'pointer',
-          userSelect: 'none',
-          marginLeft: 'auto',
-          zIndex: 100,
-        },
-      }}
-    >
-      <>{portals.map((portal: React.ReactPortal) => portal)}</>
-      <LuminoAttached>{adapter.panel}</LuminoAttached>
-    </div>
+    <Box>
+      <Box
+        css={{
+          '& .dla-JupyterLab-Notebook': {
+            height: 'calc(100vh - 230px)',
+            overflowY: 'hidden',
+          },
+          '& .jp-Notebook': {
+            flex: '1 1 auto !important',
+          },
+          '& .jp-NotebookPanel': {
+//            borderBottom: '1px solid #e0e0e0',
+          },
+          '& .jp-Toolbar': {
+            display: 'none',
+            zIndex: 0,
+          },
+          '& .jp-Toolbar .jp-HTMLSelect.jp-DefaultStyle select': {
+            fontSize: '14px',
+          },
+          '& .jp-Toolbar > .jp-Toolbar-responsive-opener': {
+            display: 'none',
+          },
+          '& .jp-Toolbar-kernelName': {
+            display: 'none',
+          },
+          '& .jp-Cell': {
+            width: `calc(100% - ${props.cellSidebarMargin}px)`,
+          },
+          '& .jp-Cell .jp-CellHeader': {
+            position: 'absolute',
+            top: '-5px',
+            left: `${props.cellSidebarMargin + 10}px`,
+            height: 'auto',
+          },
+          '& .jp-Cell .dla-CellHeader-Container': {
+            padding: '4px 8px',
+            width: `${props.cellSidebarMargin + 10}px`,
+            marginLeft: 'auto',
+          },
+        }}
+      >
+        <>
+          {portals.map((portal: React.ReactPortal) => portal)}
+        </>
+        <Box>
+          { adapter &&
+             <LuminoNotebook adapter={adapter}/>
+          }
+        </Box>
+      </Box>
+    </Box>
   )
 }
 
 Notebook.defaultProps = {
   ipywidgets: 'lab',
-  sidebarMargin: 100,
+  readOnly: false,
+  nbgrader: false,
+  cellMetadataPanel: true,
+  cellSidebarMargin: 120,
 } as Partial<INotebookProps>;
 
 export default Notebook;

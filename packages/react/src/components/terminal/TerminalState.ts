@@ -29,14 +29,14 @@ export const selectTerminal = (): ITerminalState =>
 
 /* Actions */
 
-export enum ActionType {
+export enum TerminalActionType {
   UPDATE = "terminal/UPDATE",
 }
 
 const actionCreator = actionCreatorFactory('jupyterReact');
 
 export const terminalActions = {
-  update: actionCreator<Partial<ITerminalState>>(ActionType.UPDATE),
+  update: actionCreator<Partial<ITerminalState>>(TerminalActionType.UPDATE),
 }
 
 /* Reducers */

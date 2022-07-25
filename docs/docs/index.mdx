@@ -67,7 +67,7 @@ export type INotebookProps = {
 }
 ```
 
-We wrap Lumino Widget in a LuminoAttached or LuminoDetached React component and expose Redux Observables Actions that proxy Lumino Commands. We bind Redux Observables Epics to Lumino Signals. Those bindings convert Lumino Signals to Observable to run the needed actions in the [Observable Epics](https://redux-observable.js.org/docs/basics/Epics.html).
+We wrap Lumino Widget in a Lumino or LuminoDetached React component and expose Redux Observables Actions that proxy Lumino Commands. We bind Redux Observables Epics to Lumino Signals. Those bindings convert Lumino Signals to Observable to run the needed actions in the [Observable Epics](https://redux-observable.js.org/docs/basics/Epics.html).
 
 - All is created in a single React tree to ensure Jupyter React components can use any context created by the host application.
 - IpyWidgets is supported in `classic` or `modern` modes.
@@ -118,6 +118,6 @@ The Jupyter Editor, is a better Jupyter notebook. It adds value to the current e
 
 ## Resources
 
-[Jupyter React typedoc documentation](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.0.2/).
+[Jupyter React typedoc documentation](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.0.6/index.html).
 
 [Jupyter React source code](https://github.com/datalayer/jupyter-react) MIT license.

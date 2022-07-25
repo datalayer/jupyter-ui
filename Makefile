@@ -4,7 +4,7 @@
 SHELL=/bin/bash
 
 CONDA=source $$(conda info --base)/etc/profile.d/conda.sh
-CONDA_ACTIVATE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda activate ; conda activate
+CONDA_ACTIVATE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda activate
 CONDA_DEACTIVATE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda deactivate
 CONDA_REMOVE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda remove -y --all -n
 
@@ -12,9 +12,12 @@ ENV_NAME=jupyter-react
 
 .PHONY: help
 
+help: ## display this help
+	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
+
 default: help ## default target is help
 
-all: clean install build
+all: clean install build publish
 
 build: ## build all modules
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
@@ -22,16 +25,12 @@ build: ## build all modules
 
 kill: ## kill
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		yarn kill )
+		./dev/sh/kill-jupyter-server.sh && \
+		./dev/sh/kill-webpack.sh )
 
 start: ## start
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		yarn start )
-
-publish: ## publish
-	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		npm publish )
-	echo open https://www.npmjs.com/package/@datalayer/jupyter-react
 
 clean: ## deletes node_modules, lib, build... folders and other generated info, lock, log... files
 	find . -name node_modules | xargs rm -fr {} || true
@@ -42,32 +41,38 @@ clean: ## deletes node_modules, lib, build... folders and other generated info, 
 	find . -name yarn-error.log | xargs rm {} || true
 	find . -name tsconfig.tsbuildinfo | xargs rm {} || true
 
-help: ## display this help
-	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
-
 env-rm: ## create a conda environment
 	($(CONDA); \
 		conda deactivate && \
 			conda remove -y --all -n ${ENV_NAME} )
 
-env: ## create a conda environment
+env: ## create a conda environment 
+# pip install --upgrade git+https://github.com/datalayer/jupyterpool@main#egg=jupyterpool
 	($(CONDA); \
 		conda env create -f environment.yml )
-	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		pip install --upgrade git+https://github.com/datalayer-externals/jupyter-server@sessions2#egg=jupyter_server && \
-		pip install --upgrade git+https://github.com/datalayer/jupyterpool@main#egg=jupyterpool )
+#	($(CONDA_ACTIVATE) ${ENV_NAME}; \
+#		pip install --upgrade git+https://github.com/datalayer-externals/jupyter-server@sessions2#egg=jupyter_server && \
+#		pip install jupyter_ydoc==0.1.17 )
 
-install: ## Install yarn dependencies and link the theme from the storybook
+install: ## Install yarn dependencies
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		yarn && \
-		rm -fr */node_modules/react && \
-		rm -fr */node_modules/react-dom && \
-		rm -fr */*/node_modules/react && \
-		rm -fr */*/node_modules/react-dom && \
-		rm -fr node_modules/\@jupyterlab/*/node_modules && \
-		rm -fr node_modules/\@jupyter-widgets/*/node_modules && \
-		echo "The following sed is tested on MacOS - For other OS, you may need to fix the widget.d.ts file manually" && \
-		sed -i.bu "s|showDoc: boolean \| null|showDoc: boolean|g" node_modules/\@jupyterlab/completer/lib/widget.d.ts )
+		yarn )
+	rm -fr */node_modules/react
+	rm -fr */node_modules/react-dom
+	rm -fr */*/node_modules/react
+	rm -fr */*/node_modules/react-dom
+	rm -fr node_modules/\@jupyterlab/*/node_modules
+	rm -fr node_modules/\@jupyter-widgets/*/node_modules
+	echo "The following is a temporary fix tested on MacOS - For other OS, you may need to fix manually"
+	sed -i.bu "s|k: keyof TableOfContents.IConfig|k: string|g" node_modules/\@jupyterlab/notebook/lib/toc.d.ts
+	sed -i.bu "s|uri: DocumentUri|uri: string|g" node_modules/vscode-languageserver-protocol/lib/common/protocol.diagnostic.d.ts
+	sed -i.bu "s|uri: DocumentUri|uri: string|g" node_modules/vscode-languageserver-types/lib/umd/main.d.ts
+	sed -i.bu "s|id: ChangeAnnotationIdentifier|uri: string|g" node_modules/vscode-languageserver-types/lib/umd/main.d.ts
+#	sed -i.bu "s|await this.initFilesystem(options)|// await this.initFilesystem(options);|g" node_modules/\@jupyterlite/pyolite-kernel/lib/worker.js
+	sed -i.bu "s|\[x: symbol\]: any;||g" node_modules/\@primer/react/lib/Button/LinkButton.d.ts
+	sed -i.bu "s|\| system||g" node_modules/\@primer/react/lib/Button/LinkButton.d.ts
+	sed -i.bu "s|never|any|g" node_modules/\@primer/react/lib/utils/types/KeyPaths.d.ts
+	sed -i.bu "s|src/LexicalTypeaheadMenuPlugin|LexicalTypeaheadMenuPlugin|g" node_modules/\@lexical/react/LexicalAutoEmbedPlugin.d.ts
 
 start-jupyter-server:
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
@@ -75,30 +80,17 @@ start-jupyter-server:
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		cd ./dev/sh && ./start-jupyter-server.sh )
 
-typedoc: ## generate typedoc
+define release_package
+	echo $1
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		yarn typedoc --tsconfig ./tsconfig.json && \
-		open typedoc/index.html )
+		cd $1 && yarn build && npm publish --access public )
+endef
 
-typedoc-publish: typedoc ## deploy typedoc
-	aws s3 rm \
-		s3://datalayer-typedoc/datalayer/jupyter-react/0.0.2/ \
-		--recursive \
-		--profile datalayer
-	aws s3 cp \
-		typedoc \
-		s3://datalayer-typedoc/datalayer/jupyter-react/0.0.2/ \
-		--recursive \
-		--profile datalayer
-	echo open ✨  https://typedoc.datalayer.tech/datalayer/jupyter-react/0.0.2
-
-example-build: ## build the storybook
-	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		rm -fr storybook/.out/* && \
-		yarn build:vercel && \
-		open example/.out/index.html )
-
-example-deploy: ## deploy the storybook
-	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		npx vercel --prod )
-
+publish:
+	@exec $(call release_package,patches/jupyterlite-session)
+	@exec $(call release_package,patches/jupyterlite-server)
+	@exec $(call release_package,patches/jupyterlite-server-extension)
+	@exec $(call release_package,patches/jupyterlite-kernel)
+	@exec $(call release_package,patches/jupyterlite-ipykernel)
+	@exec $(call release_package,patches/jupyterlite-ipykernel-extension)
+	@exec $(call release_package,packages/react)

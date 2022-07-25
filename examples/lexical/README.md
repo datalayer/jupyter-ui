@@ -1,2 +1,3 @@
-# lexical-rich-text-example
-Created with CodeSandbox
+[![Datalayer](https://assets.datalayer.design/datalayer-25.svg)](https://datalayer.io)
+
+# Datalayer Experiments Editor Lexical

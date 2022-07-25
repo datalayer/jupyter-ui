@@ -1,3 +1,3 @@
-# 🪐 ✍️ Jupyter plugin for Lexical
+[![Datalayer](https://assets.datalayer.design/datalayer-25.svg)](https://datalayer.io)
 
-> Lexical Plugin to create a Jupyter capabilities in a Lexical document.
+# Jupyter React for Lexical

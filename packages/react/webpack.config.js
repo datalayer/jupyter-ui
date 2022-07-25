@@ -3,7 +3,6 @@ const path = require("path");
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
-const ModuleFederationPlugin = require("webpack").container.ModuleFederationPlugin;
 
 const shimJS = path.resolve(__dirname, "src", "emptyshim.js");
 
@@ -27,11 +26,10 @@ if (IS_PRODUCTION) {
   minimize = true;
 }
 
-const JUPYTER_HOST = 'http://localhost:8686';
-// const JUPYTER_HOST = 'http://minikube.local';
+const JUPYTER_HOST = 'http://127.0.0.1:8686';
 
 module.exports = {
-  entry: ['./src/examples/Example'],
+  entry: ['./src/example/JupyterExample'],
   mode: mode,
   watchOptions: {
     aggregateTimeout: 300,
@@ -40,28 +38,39 @@ module.exports = {
   },
   devServer: {
     port: 3208,
+    historyApiFallback: true,
     proxy: {
+      '/build/pypi': {
+        target: 'https://datalayer-assets.s3.us-west-2.amazonaws.com/pypi',
+        pathRewrite: { '^/build/pypi': '' },
+        ws: false,
+        secure: false,
+        changeOrigin: true,
+      },
+      '/services.js': {
+        target: 'https://datalayer-assets.s3.us-west-2.amazonaws.com/services.js',
+        pathRewrite: { '^/services.js': '' },
+        ws: false,
+        secure: false,
+        changeOrigin: true,
+      },
       '/api/jupyter': {
         target: JUPYTER_HOST,
         ws: true,
         secure: false,
         changeOrigin: true,
-//        proxyTimeout: 1000 * 60 * 10,
-//        timeout: 1000 * 60 * 10,
       },
       '/plotly.js': {
         target: JUPYTER_HOST + '/api/jupyter/pool/react',
         ws: false,
         secure: false,
-        changeOrigin: true,
-//        proxyTimeout: 1000 * 60 * 10,
-//        timeout: 1000 * 60 * 10,
+        changeOrigin: false,
       },
     },
   },
-  devtool: devtool,
+  devtool,
   optimization: {
-    minimize: minimize,
+    minimize,
   },
   output: {
     publicPath: "http://localhost:3208/",
@@ -78,13 +87,6 @@ module.exports = {
   },
   module: {
     rules: [
-      {
-        test: /\.bootstrap\.tsx?$/,
-        loader: "bundle-loader",
-        options: {
-          lazy: true,
-        },
-      },
       {
         test: /\.tsx?$/,
         loader: "babel-loader",
@@ -103,6 +105,23 @@ module.exports = {
           cacheDirectory: true
         },
         exclude: /node_modules/,
+      },
+      {
+        test: /pypi\/.*/,
+        type: 'asset/resource',
+      },
+      {
+        resourceQuery: /raw/,
+        type: 'asset/source',
+      },
+      // just keep the woff2 fonts from fontawesome
+      {
+        test: /fontawesome-free.*\.(svg|eot|ttf|woff)$/,
+        loader: 'ignore-loader',
+      },
+      {
+        test: /\.(jpe?g|png|gif|ico|eot|ttf|map|woff2?)(\?v=\d+\.\d+\.\d+)?$/i,
+        type: 'asset/resource',
       },
       { test: /\.css$/, use: ['style-loader', 'css-loader'] },
       { test: /\.md$/, use: 'raw-loader' },
@@ -126,10 +145,6 @@ module.exports = {
         }
       },
       {
-        test: /\.(png|jpg|gif|ttf|woff|woff2|eot)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        use: [{ loader: 'url-loader', options: { limit: 10000 } }]
-      },
-      {
         test: /\.m?js/,
         resolve: {
           fullySpecified: false
@@ -147,61 +162,6 @@ module.exports = {
     shim(/@fortawesome/),
     new webpack.ProvidePlugin({
       process: 'process/browser'
-    }),
-    new ModuleFederationPlugin({
-      name: "jupyterReact",
-      filename: "jupyterReact.js",
-      exposes: {
-        "./Index": "./src/index",
-      },
-      shared: {
-//        ...deps,
-        react: {
-          eager: false,
-          singleton: true,
-          requiredVersion: false
-        },
-        "react-dom": {
-          eager: false,
-          singleton: true,
-          requiredVersion: false,
-        },
-        "react-router-dom": {
-          eager: false,
-          singleton: true,
-          requiredVersion: false,
-        },
-        '@mui/material': { 
-          eager: false,
-          singleton: true,
-          requiredVersion: false,
-        },
-        '@mui/styles': { 
-          eager: false,
-          singleton: true,
-          requiredVersion: false,
-        },
-        "@mui/private-theming": {
-          eager: false,
-          singleton: true,
-          requiredVersion: false,
-        },
-        '@emotion/core': {
-          eager: false,
-          singleton: true,
-          requiredVersion: false,
-        },
-        '@emotion/react': {
-          eager: false,
-          singleton: true,
-          requiredVersion: false,
-        },
-        '@emotion/styled': {
-          eager: false,
-          singleton: true,
-          requiredVersion: false,
-        },
-      },
     }),
     new HtmlWebpackPlugin({
       title: 'Jupyter React',

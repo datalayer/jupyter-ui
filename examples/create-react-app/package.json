@@ -1,0 +1,62 @@
+{
+  "name": "@datalayer/jupyter-create-react-app-example",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "run-p -c start:*",
+    "start:jupyter": "./dev/sh/start-jupyter-server.sh",
+    "start:react": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "@datalayer/jupyter-react": "0.0.15",
+    "@emotion/react": "11.4.0",
+    "@emotion/styled": "11.3.0",
+    "@mui/material": "5.8.3",
+    "@mui/icons-material": "5.8.3",
+    "@mui/lab": "5.0.0-alpha.85",
+    "@mui/styles": "5.8.3",
+    "@mui/system": "5.8.3",
+    "react": "18.1.0",
+    "react-dom": "18.1.0",
+    "web-vitals": "2.1.4"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.3.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^16.11.47",
+    "@types/react": "^18.0.15",
+    "@types/react-dom": "^18.0.6",
+    "npm-run-all": "4.1.5",
+    "react-scripts": "5.0.1",
+    "typescript": "4.8.1-rc"
+  },
+  "resolutions": {
+    "**/@types/react": "18.0.9",
+    "**/@types/react-dom": "18.0.5",
+    "**/react": "18.1.0",
+    "**/react-dom": "18.1.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

@@ -31,7 +31,7 @@ export const selectCell = (): ICellState =>
 
 /* Actions */
 
-export enum ActionType {
+export enum CellActionType {
   SOURCE = "cell/SOURCE",
   OUTPUTS_COUNT = "cell/OUTPUTS_COUNT",
   EXECUTE = "cell/EXECUTE",
@@ -42,16 +42,16 @@ const actionCreator = actionCreatorFactory('jupyterReact');
 
 export const cellActions = {
   source: actionCreator<string>(
-    ActionType.SOURCE
+    CellActionType.SOURCE
   ),
   outputsCount: actionCreator<number>(
-    ActionType.OUTPUTS_COUNT
+    CellActionType.OUTPUTS_COUNT
   ),
   execute: actionCreator<void>(
-    ActionType.EXECUTE
+    CellActionType.EXECUTE
   ),
   update: actionCreator<Partial<ICellState>>(
-    ActionType.UPDATE
+    CellActionType.UPDATE
   ),
 }
 

@@ -1,0 +1,24 @@
+/*
+@import 'prosemirror-view/style/prosemirror.css';
+@import 'prosemirror-menu/style/menu.css';
+@import 'prosemirror-example-setup/style/style.css';
+*/
+
+@import './prosemirror.css';
+@import './menu.css';
+@import './style.css';
+
+body {
+  font-family: sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.ProseMirror {
+  padding: 16px;
+}
+
+.empty:before {
+  content: "<empty-paragraph>";
+  background-color: yellow;
+}

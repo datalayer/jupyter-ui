@@ -2,13 +2,15 @@
 
 # 🪐 ⚛️ Jupyter React
 
-> [React.js](https://reactjs.org) components to create data products compatible with the [Jupyter](https://jupyter.org) ecosystem.
+> Jupyter React is a set of [React.js](https://reactjs.org) components that allow a frontend developer to build data products compatible with the [Jupyter](https://jupyter.org) ecosystem. The user interface delivers runnable notebooks and cells.
 
-The image below shows a gallery of the available React.js components you ready to be used in you custom React.js application. These open source components power the online [Datalayer service](https://datalayer.io), a collaborative platform for data analysis.
+The below image shows a gallery of the available React.js components ready to be used in you custom application. These open source components are used to build the online [Datalayer service](https://datalayer.io), a collaborative platform for data analysis.
 
 <div align="center" style="text-align: center">
-  <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-gallery.gif" />
+  <img alt="Jupyter React Gallery" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-gallery.gif" />
 </div>
+
+<hr/>
 
 ## Why?
 
@@ -19,12 +21,13 @@ In terms of technical stack, the Jupyter(Lab) user interface is built on top of 
 Although a developer can embed a React.js component into JupyterLab, the reverse is not possible: you can not embed JupyterLab into a React.js application. To solve that issue, Jupyter-React ships components to easily create a React.js data product compatible with the Jupyter ecosystem. Those components can be used in any React.js application, and also in static websites like Docusaurus, Next.js or Remix. They wrap underneath the JupyterLab code and allow developing React.js applications with code execution capability. State management is based on Redux, and Mobx is to be added.
 
 <div align="center" style="text-align: center">
-  <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-communication.png" />
+  <img alt="Jupyter React Communication" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-communication.png" />
 </div>
 
 IPyWidgets are supported (the Comm feature needs to be fixed). JupyterLite and PyScript support is on the roadmap. Autocompletion is also available.
 
 You can find more context reading this [abstract](https://fosdem.org/2022/schedule/event/lt_jupyter) of the talk given at [FOSDEM 2022](https://fosdem.org/2022) ([video recording](http://bofh.nikhef.nl/events/FOSDEM/2022/L.lightningtalks/lt_jupyter.webm)).
+
 ## Usage
 
 As a React.js developer, you just write a few lines of code get a live notebook or live cell in your application.
@@ -39,15 +42,23 @@ The `jupyter-react` library can be used in any React.js application. Install the
   <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-notebook.png" />
 </div>
 
+## Third party integrations
+
 We maintain a plugin for [Docusaurus](https://docusaurus.io) in the [docusaurus](https://github.com/datalayer/jupyter-react/tree/main/packages/docusaurus) package folder (see the [Docusaurus example](https://github.com/datalayer/jupyter-react/tree/main/examples/docusaurus)).
 
 <div align="center" style="text-align: center">
   <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-docusaurus.png" />
 </div>
 
-## Literate Notebook
+## Traitlets React
 
-> ✍️ A notebook for literate programming, compatible with Jupyter and ObservableHQ. The literate notebook can be run standalone or as Jupyter Notebook, JupyterLab, Visual Studio Code extension
+As part of the jupyter-react components, we also want to ease the creation of user interfaces based on the [Jupyter Traitlets](https://traitlets.readthedocs.io). This will allow a front-end developer to start from the traits (configuration definition) defined in Python code and automatically generate a React.js user interface which can be used to manage your settings in a visual way. The traits would be converted to json-schema definitions that can be used to create the React.js components. This is particularly useful to build management user interfaces.
+
+<hr/>
+
+## ✍️ 🖌️ Literate Notebook
+
+> The Literate Notebook for literate programming iscompatible with Jupyter and ObservableHQ. It can be run standalone or as Jupyter Notebook, JupyterLab, Visual Studio Code extension.
 
 As successor to the above components wrapping JupyterLab, we are developing a brand new user interface `Literate Notebook` to better address [literate programming requirements](https://en.wikipedia.org/wiki/Literate_programming), compatible with Jupyter and ObservableHQ as envisioned by [Donald Knuth](https://en.wikipedia.org/wiki/Donald_Knuth) back in 1983.
 
@@ -63,9 +74,17 @@ A a developer, you will create a custom data product `a-la-google-docs` as shown
 
 We will add collaborative and accessible features to read, write and publish data analysis to `Microsoft Office 365` and `Google Workspace`.
 
-## Traitlets React
+<hr/>
 
-As part of the jupyter-react components, we also want to ease the creation of user interfaces based on the [Jupyter Traitlets](https://traitlets.readthedocs.io). This will allow a front-end developer to start from the traits (configuration definition) defined in Python code and automatically generate a React.js user interface which can be used to manage your settings in a visual way. The traits would be converted to json-schema definitions that can be used to create the React.js components. This is particularly useful to build management user interfaces.
+## Documentation
+
+You can get more details on the [Jupyter React website](https://jupyter-react.com).
+
+The typedoc documentation is [available online](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.0.6/index.html).
+
+## Support
+
+Please open [issues](https://github.com/datalayer/jupyter-react/issues) for questions, feature requests, bug reports... We also welcome [pull requests](https://github.com/datalayer/jupyter-react/pulls).
 
 ## Contribute
 
@@ -86,8 +105,8 @@ make env && \
 ```
 
 ```bash
-# Clean, install and build.
-make clean install build
+# Install and build.
+make install build
 ```
 
 ```bash
@@ -98,13 +117,15 @@ yarn start
 ```
 
 ```bash
-# We have other examples, pick one of the following commands.
-yarn start:docusaurus # open http://localhost:3000/docs/intro
-yarn start:lexical    # open http://localhost:3000
-yarn start:slate      # open http://localhost:3266
+# We have more examples. Pick one of the following commands and enjoy.
+yarn start:create-react-app      # open http://localhost:3000
+yarn start:docusaurus            # open http://localhost:3000/docs/intro
+yarn start:lexical               # open http://localhost:3208
+yarn start:lexical:playground    # open http://localhost:3000
+# ...and some uncompleted and deprecated examples...
+yarn start:slate                 # open http://localhost:3266
+yarn start:prosemirror           # open http://localhost:4567
 ```
-
-The typedoc documentation is [available online](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.0.6). Please open [issues](https://github.com/datalayer/jupyter-react/issues) for questions, feature requests, bug reports... We also welcome [pull requests](https://github.com/datalayer/jupyter-react/pulls).
 
 ## ⚖️ License
 

@@ -1,3 +1,3 @@
 [![Datalayer](https://assets.datalayer.design/datalayer-25.svg)](https://datalayer.io)
 
-# Literate Notebook for Jupyter NbClassic
+# Jupyter React for Jupyter NbClassic

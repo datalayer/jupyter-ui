@@ -27,7 +27,7 @@ export const selectFileBrowser = (): IFileBrowserState =>
 
 /* Actions */
 
-export enum ActionType {
+export enum FileBrowserActionType {
   OUTPUTS = "fileBrowser/OUTPUTS",
   EXECUTE = "fileBrowser/EXECUTE",
 }
@@ -36,10 +36,10 @@ const actionCreator = actionCreatorFactory('jupyterReact');
 
 export const fileBrowserActions = {
   outputs: actionCreator<number>(
-    ActionType.OUTPUTS
+    FileBrowserActionType.OUTPUTS
   ),
   execute: actionCreator<void>(
-    ActionType.EXECUTE
+    FileBrowserActionType.EXECUTE
   ),
 }
 

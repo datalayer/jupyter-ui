@@ -27,7 +27,7 @@ export const selectSettings = (): ISettingsState =>
 
 /* Actions */
 
-export enum ActionType {
+export enum SettingsActionType {
   OUTPUTS = "settings/OUTPUTS",
   EXECUTE = "settings/EXECUTE",
 }
@@ -36,10 +36,10 @@ const actionCreator = actionCreatorFactory('jupyterReact');
 
 export const settingsActions = {
   outputs: actionCreator<number>(
-    ActionType.OUTPUTS
+    SettingsActionType.OUTPUTS
   ),
   execute: actionCreator<void>(
-    ActionType.EXECUTE
+    SettingsActionType.EXECUTE
   ),
 }
 

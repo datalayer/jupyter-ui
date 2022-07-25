@@ -1,6 +1,6 @@
 [![Datalayer](https://assets.datalayer.design/datalayer-25.svg)](https://datalayer.io)
 
-# 🪐 🦕 Jupyter plugin for Docusaurus
+# 🪐 🦕 Jupyter Plugin for Docusaurus
 
 > Docusaurus Plugin to create a Jupyter Cell in a Docusaurus site.
 
@@ -44,7 +44,7 @@ for i in range(10):
 />
 ```
 
-## License
+## ⚖️ License
 
 Copyright (c) 2022 Datalayer, Inc.
 

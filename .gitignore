@@ -23,12 +23,10 @@ node_modules
 coverage
 typedoc
 
-experiments/esbuild
-experiments/prosemirror
-
 # Include
 !**/.*ignore
 !**/.*rc
 !**/.*rc.js
 !**/.*config
 !*.*rc.json
+!**/.env

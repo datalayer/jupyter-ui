@@ -1,10 +1,10 @@
 import SettingsAdapter from './SettingsAdapter';
-import LuminoAttached from '../../lumino/LuminoAttached';
+import Lumino from '../../jupyter/lumino/Lumino';
 
-const Settings = () => {
+export const Settings = () => {
   const settingsAdapter = new SettingsAdapter();
   return <>
-    <LuminoAttached>{settingsAdapter.panel}</LuminoAttached>
+    <Lumino>{settingsAdapter.panel}</Lumino>
   </>
 }
 

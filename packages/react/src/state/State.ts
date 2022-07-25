@@ -1,23 +1,23 @@
 import { combineReducers } from "redux";
 import { combineEpics } from "redux-observable";
 import { AnyAction } from "typescript-fsa";
-import { initInitialState, initReducer, initEpics, IInitState } from "./init/InitState";
 import { cellInitialState, cellReducer, ICellState } from "../components/cell/CellState";
 import { notebookInitialState, notebookEpics, notebookReducer, INotebookState } from "../components/notebook/NotebookState";
 import { terminalInitialState, terminalReducer, ITerminalState } from "../components/terminal/TerminalState";
+import { outputInitialState, outputReducer, IOutputsState } from "../components/output/OutputState";
 
 /* State */
 
-export interface IState {
-  counter: IInitState;
+export interface IJupyterReactState {
   cell: ICellState;
+  output: IOutputsState;
   notebook: INotebookState;
   terminal: ITerminalState;
 }
 
-export const initialState: IState = {
-  counter: initInitialState,
+export const initialState: IJupyterReactState = {
   cell: cellInitialState,
+  output: outputInitialState,
   notebook: notebookInitialState,
   terminal: terminalInitialState,
 }
@@ -34,17 +34,14 @@ export type AppAction = CellAction | NotebookAction;
 */
 
 /* Epics */
-
 export const epics = combineEpics<AnyAction, AnyAction, any>(
-  initEpics,
   notebookEpics,
 );
 
 /* Reducers */
-
-export const reducers = combineReducers<IState>({
-  counter: initReducer,
+export const reducers = combineReducers<IJupyterReactState>({
   cell: cellReducer,
+  output: outputReducer,
   notebook: notebookReducer,
   terminal: terminalReducer,
 });

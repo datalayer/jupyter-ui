@@ -1,0 +1,138 @@
+.editor-wrapper .mtk1 {
+  color: #d4d4d4;
+}
+.editor-wrapper .mtk2 {
+  color: #1e1e1e;
+}
+.editor-wrapper .mtk3 {
+  color: #000080;
+}
+.editor-wrapper .mtk4 {
+  color: #6a9955;
+}
+.editor-wrapper .mtk5 {
+  color: #569cd6;
+}
+.editor-wrapper .mtk6 {
+  color: #b5cea8;
+}
+.editor-wrapper .mtk7 {
+  color: #646695;
+}
+.editor-wrapper .mtk8 {
+  color: #c586c0;
+}
+.editor-wrapper .mtk9 {
+  color: #9cdcfe;
+}
+.editor-wrapper .mtk10 {
+  color: #f44747;
+}
+.editor-wrapper .mtk11 {
+  color: #ce9178;
+}
+.editor-wrapper .mtk12 {
+  color: #6796e6;
+}
+.editor-wrapper .mtk13 {
+  color: #808080;
+}
+.editor-wrapper .mtk14 {
+  color: #d16969;
+}
+.editor-wrapper .mtk15 {
+  color: #dcdcaa;
+}
+.editor-wrapper .mtk16 {
+  color: #4ec9b0;
+}
+.editor-wrapper .mtk17 {
+  color: #c586c0;
+}
+.editor-wrapper .mtk18 {
+  color: #4fc1ff;
+}
+.editor-wrapper .mtk19 {
+  color: #c8c8c8;
+}
+.editor-wrapper .mtk20 {
+  color: #cd9731;
+}
+.editor-wrapper .mtk21 {
+  color: #b267e6;
+}
+.editor-wrapper .mtki {
+  font-style: italic;
+}
+.editor-wrapper .mtkb {
+  font-weight: bold;
+}
+.editor-wrapper .mtku {
+  text-decoration: underline;
+  text-underline-position: under;
+}
+
+.editor-wrapper .mtk100.Identifier.JsxElement.Bracket {
+  color: #0080ff;
+}
+
+.editor-wrapper .mtk1000.Identifier.JsxOpeningElement.Bracket {
+  color: #808080;
+  font-weight: bold;
+}
+
+.editor-wrapper .mtk1001.Identifier.JsxClosingElement.Bracket {
+  color: #808080;
+  font-weight: lighter;
+}
+
+.editor-wrapper .mtk101.Identifier.JsxOpeningElement.Identifier {
+  color: #569cd6;
+}
+
+.editor-wrapper .mtk102.Identifier.JsxClosingElement.Identifier {
+  color: #569cd6;
+  font-weight: lighter;
+}
+
+.editor-wrapper .mtk103.Identifier.JsxAttribute.Identifier {
+  color: #9cdcfe;
+}
+
+.editor-wrapper .mtk104.JsxElement.JsxText {
+  color: darkgoldenrod;
+}
+
+.editor-wrapper .mtk105.glyph.Identifier.JsxElement {
+  background: #61dafb;
+  opacity: 0.25;
+}
+
+.editor-wrapper .mtk12.Identifier.JsxExpression.JsxClosingElement {
+  color: #ec5f67;
+}
+
+.editor-wrapper .mtk12.Identifier.JsxSelfClosingElement {
+  color: #ec5f67;
+}
+.editor-wrapper .mtk12.Identifier.VariableStatement.JsxClosingElement {
+  color: #ec5f67 !important;
+}
+.editor-wrapper .mtk12.VariableStatement.JsxSelfClosingElement.Identifier {
+  color: #ec5f67;
+}
+.editor-wrapper .mtk12.Identifier.JsxAttribute.VariableDeclaration {
+  color: crimson;
+}
+.editor-wrapper .mtk12.JsxExpression.VariableStatement {
+  color: #fac863;
+}
+.editor-wrapper .mtk12.VariableStatement.JsxSelfClosingElement {
+  color: #ede0e0;
+}
+.editor-wrapper .mtk12.VariableStatement.JsxClosingElement {
+  color: #ede0e0;
+}
+.editor-wrapper .JsxText {
+  color: #0c141f;
+}

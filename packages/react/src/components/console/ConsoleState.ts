@@ -10,7 +10,7 @@ export interface IConsoleState {
 }
 
 export const consoleInitialState: IConsoleState = {
-  outputs: 0
+  outputs: 0,
 }
 
 /* Selectors */
@@ -28,7 +28,7 @@ export const selectConsole = (): IConsoleState =>
 
 import actionCreatorFactory from "typescript-fsa";
 
-export enum ActionType {
+export enum ConsoleActionType {
   OUTPUTS = "console/OUTPUTS",
   EXECUTE = "console/EXECUTE",
 }
@@ -37,10 +37,10 @@ const actionCreator = actionCreatorFactory('jupyterReact');
 
 export const consoleActions = {
   outputs: actionCreator<number>(
-    ActionType.OUTPUTS
+    ConsoleActionType.OUTPUTS
   ),
   execute: actionCreator<void>(
-    ActionType.EXECUTE
+    ConsoleActionType.EXECUTE
   ),
 }
 
