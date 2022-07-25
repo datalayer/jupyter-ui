@@ -36,7 +36,7 @@ Add the following in any Markdown file.
 import JupyterCell from '@theme/JupyterCell';
 
 <JupyterCell 
-  src={`print('Hello world')
+  source={`print('Hello world')
 for i in range(10):
   print(i)
 `}
