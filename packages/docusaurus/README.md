@@ -1,12 +1,10 @@
 [![Datalayer](https://assets.datalayer.design/datalayer-25.svg)](https://datalayer.io)
 
-# Jupyter Docusaurus
-
-🪐 🦕 Jupyter plugin for Docusaurus
+# 🪐 🦕 Jupyter plugin for Docusaurus
 
 > Docusaurus Plugin to create a Jupyter Cell in a Docusaurus site.
 
-See an example in [this repository](https://github.com/datalayer/jupyter-examples/tree/main/docusaurus).
+See an example in [this repository](https://github.com/datalayer/jupyter-react/tree/main/examples/docusaurus).
 
 <div align="center" style="text-align: center">
   <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-docusaurus.png" />

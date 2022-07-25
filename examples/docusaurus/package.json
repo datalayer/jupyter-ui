@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "./../dev/sh/kill-jupyter-server.sh || true && run-p -c start:*",
+    "start": "run-p -c start:*",
     "jupyter:example:docusaurus": "run-p start:*",
     "start:docusaurus": "docusaurus start",
     "start:jupyter": "cd ./../../dev/sh && ./kill-jupyter-server.sh || true && ./start-jupyter-server.sh docusaurus",

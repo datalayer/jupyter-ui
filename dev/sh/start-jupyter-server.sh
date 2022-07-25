@@ -5,7 +5,6 @@
 
 echo -e "\x1b[34m\x1b[43mStarting Jupyter Server\x1b[0m"
 echo
-echo ✨ open http://localhost:3208
 echo ✨ open http://localhost:8686/api/jupyter?token=60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6
 echo
 

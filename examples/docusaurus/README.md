@@ -1,20 +1,18 @@
 [![Datalayer](https://assets.datalayer.design/datalayer-25.svg)](https://datalayer.io)
 
-# Jupyter Docusaurus Example
+# 🪐 🦕 Jupyter Docusaurus Example
 
-This example is built using [Docusaurus](https://docusaurus.io), a modern static website generator.
+This example is built using [Docusaurus](https://docusaurus.io), a modern static website generator, and allows you to add a live cell in the Docusaurus site.
 
 ```base
 yarn install &&
-  echo open http://localhost:3000 && \
+  echo open http://localhost:3000/docs/intro && \
   yarn start
 ```
 
 <div align="center" style="text-align: center">
   <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-docusaurus.png" />
 </div>
-
-## Build
 
 ```base
 yarn build:docusaurus &&
@@ -24,13 +22,13 @@ yarn build:docusaurus &&
 
 ## Usage
 
-Add the following in any Markdown file.
+Add the following code in any Markdown file.
 
 ```jsx
 import JupyterCell from '@theme/JupyterCell';
 
 <JupyterCell 
-  src={`print('Hello world')
+  source={`print('Hello world')
 for i in range(10):
   print(i)
 `}
