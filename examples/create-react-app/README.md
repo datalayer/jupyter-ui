@@ -65,9 +65,15 @@ You need to add in the `public/index.html` the needed information to indicate wh
 
 ### React.js version resolutions
 
-A `create-react-app` requests coherent react.js versions. With JupyterLab, we are pulling various version in the node_modules subfolders. To avoid version conflicts, the `resolutions` in `package.json` specifies the needed versions.
+A `create-react-app` requests coherent React.js versions othewise you may hit the `Invalid Hook Call Warning` with `mismatching versions of React and React DOM` as documented on [this page](https://reactjs.org/warnings/invalid-hook-call-warning.html).
+
+With JupyterLab, we are pulling various version in the node_modules subfolders. To avoid version conflicts, set the `dependencies` and `resolutions` in `package.json` to explicitely specificy the needed versions.
 
 ```json
+  "dependencies": {
+    "react": "18.1.0",
+    "react-dom": "18.1.0"
+  },
   "resolutions": {
     "**/@types/react": "18.0.9",
     "**/@types/react-dom": "18.0.5",
