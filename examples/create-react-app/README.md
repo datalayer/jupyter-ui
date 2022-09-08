@@ -82,14 +82,74 @@ With JupyterLab, we are pulling various version in the node_modules subfolders. 
   },
 ```
 
-## Add dependencies
+### JupyterLab version resolutions
 
-This examples uses Material UI. You can add for example in package.json the following dependencies.
+JupyerLab is actively developed. We are tracking the latest releases as closely as possible.
+
+Therefor, for now, we ask to pin the following resolutions.
 
 ```json
-    "@emotion/react": "^11.10.4",
-    "@emotion/styled": "^11.10.4",
-    "@mui/material": "^5.10.4",
+  "resolutions": {
+    "**/@jupyter-widgets/base": "6.0.0-rc.0",
+    "**/@jupyter-widgets/controls": "5.0.0-rc.0",
+    "**/@jupyter-widgets/html-manager": "1.0.0-rc.0",
+    "**/@jupyter-widgets/jupyterlab-manager": "5.0.0-rc.0",
+    "**/@jupyter-widgets/output": "6.0.0-rc.0",
+    "**/@jupyterlab/application": "4.0.0-alpha.12",
+    "**/@jupyterlab/apputils": "4.0.0-alpha.12",
+    "**/@jupyterlab/cells": "4.0.0-alpha.12",
+    "**/@jupyterlab/codemirror": "4.0.0-alpha.12",
+    "**/@jupyterlab/completer": "4.0.0-alpha.12",
+    "**/@jupyterlab/console": "4.0.0-alpha.12",
+    "**/@jupyterlab/coreutils": "6.0.0-alpha.12",
+    "**/@jupyterlab/docmanager": "4.0.0-alpha.12",
+    "**/@jupyterlab/docprovider": "4.0.0-alpha.12",
+    "**/@jupyterlab/docregistry": "4.0.0-alpha.12",
+    "**/@jupyterlab/documentsearch": "4.0.0-alpha.12",
+    "**/@jupyterlab/filebrowser": "4.0.0-alpha.12",
+    "**/@jupyterlab/fileeditor": "4.0.0-alpha.12",
+    "**/@jupyterlab/inspector": "4.0.0-alpha.12",
+    "**/@jupyterlab/javascript-extension": "4.0.0-alpha.12",
+    "**/@jupyterlab/json-extension": "4.0.0-alpha.12",
+    "**/@jupyterlab/launcher": "4.0.0-alpha.12",
+    "**/@jupyterlab/mainmenu": "4.0.0-alpha.12",
+    "**/@jupyterlab/markdownviewer": "4.0.0-alpha.12",
+    "**/@jupyterlab/markedparser-extension": "4.0.0-alpha.12",
+    "**/@jupyterlab/mathjax2": "4.0.0-alpha.12",
+    "**/@jupyterlab/nbconvert-css": "4.0.0-alpha.12",
+    "**/@jupyterlab/nbformat": "4.0.0-alpha.12",
+    "**/@jupyterlab/notebook": "4.0.0-alpha.12",
+    "**/@jupyterlab/observables": "5.0.0-alpha.12",
+    "**/@jupyterlab/rendermime": "4.0.0-alpha.12",
+    "**/@jupyterlab/rendermime-extension": "4.0.0-alpha.12",
+    "**/@jupyterlab/rendermime-interfaces": "3.8.0-alpha.12",
+    "**/@jupyterlab/services": "7.0.0-alpha.12",
+    "**/@jupyterlab/settingregistry": "4.0.0-alpha.12",
+    "**/@jupyterlab/statedb": "4.0.0-alpha.12",
+    "**/@jupyterlab/terminal": "4.0.0-alpha.12",
+    "**/@jupyterlab/theme-dark-extension": "4.0.0-alpha.12",
+    "**/@jupyterlab/theme-light-extension": "4.0.0-alpha.12",
+    "**/@jupyterlab/translation": "4.0.0-alpha.12",
+    "**/@jupyterlab/ui-components": "4.0.0-alpha.27",
+    "**/@lumino/commands": "1.20.0",
+    "**/@lumino/coreutils": "1.12.0",
+    "**/@lumino/default-theme": "0.21.1",
+    "**/@lumino/widgets": "1.31.1"
+  }
+```
+
+## Add dependencies
+
+This example uses Material UI. You can add for example in package.json the following dependencies.
+
+```json
+    "@emotion/react": "11.4.0",
+    "@emotion/styled": "11.3.0",
+    "@mui/material": "5.8.3",
+    "@mui/icons-material": "5.8.3",
+    "@mui/lab": "5.0.0-alpha.85",
+    "@mui/styles": "5.8.3",
+    "@mui/system": "5.8.3",
 ```
 
 ## Strict Mode
