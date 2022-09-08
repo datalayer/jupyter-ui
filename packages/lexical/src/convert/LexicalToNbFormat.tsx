@@ -1,4 +1,4 @@
-import { LexicalNode, $isElementNode, $isTextNode } from "lexical";
+import { LexicalNode, $isElementNode, $isTextNode, $isParagraphNode } from "lexical";
 import { INotebookContent, ICodeCell, IMarkdownCell } from "@jupyterlab/nbformat";
 import { $isEquationNode } from "./../nodes/EquationNode";
 import { $isYouTubeNode } from "./../nodes/YouTubeNode";
@@ -36,9 +36,10 @@ export const lexicalToNbFormat = (nodes: LexicalNode[]) => {
   nodes.map(node => {
     if ($isJupyterCodeNode(node)) {
       nb.cells.push(newCodeCell(node.getTextContent()));
-    }
-    else if ($isEquationNode(node)) {
-      nb.cells.push(newMardownCell(node.getEquation()));
+    }    
+    else if ($isParagraphNode(node) && $isEquationNode(node.getFirstChild())) {
+      const equation = node.getFirstChild()!.getEquation();
+      nb.cells.push(newMardownCell(`$$${equation}$$`));
     }
     else if ($isYouTubeNode(node)) {
       const code = `from IPython.display import YouTubeVideo

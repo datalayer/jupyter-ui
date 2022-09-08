@@ -1,5 +1,4 @@
-import { LexicalEditor, EditorConfig, ElementFormatType, LexicalNode, NodeKey, Spread } from "lexical";
-import { DecoratorBlockNode, SerializedDecoratorBlockNode } from '@lexical/react/LexicalDecoratorBlockNode';
+import { LexicalEditor, EditorConfig, DecoratorNode, LexicalNode, NodeKey, Spread, SerializedLexicalNode } from "lexical";
 import { UUID } from '@lumino/coreutils';
 import { IOutput } from '@jupyterlab/nbformat';
 import { OUTPUT_UUID_TO_CODE_UUID, CODE_UUID_TO_OUTPUT_KEY, CODE_UUID_TO_OUTPUT_UUID, OUTPUT_UUID_TO_OUTPUT_KEY } from "../plugins/JupyterPlugin";
@@ -15,10 +14,10 @@ export type SerializedJupyterOutputNode = Spread<
     outputNodeUuid: string;
     version: 1;
   },
-  SerializedDecoratorBlockNode
+  SerializedLexicalNode
 >;
 
-export class JupyterOutputNode extends DecoratorBlockNode {
+export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
   __code: string;
   __outputs: IOutput[];
   __outputAdapter: OutputAdapter;
@@ -40,7 +39,6 @@ export class JupyterOutputNode extends DecoratorBlockNode {
        node.__autoRun,
        node.__codeNodeUuid,
        node.__outputNodeUuid,
-       node.__format,
        node.__key
        );
   }
@@ -58,10 +56,9 @@ export class JupyterOutputNode extends DecoratorBlockNode {
     autoRun: boolean,
     codeNodeUuid?: string,
     outputNodeUuid?: string,
-    format?: ElementFormatType,
     key?: NodeKey
   ) {
-    super(format, key);
+    super(key);
     this.__codeNodeUuid = codeNodeUuid || UUID.uuid4();
     this.__outputNodeUuid = outputNodeUuid || UUID.uuid4();
     this.__code = source;
@@ -135,14 +132,24 @@ export class JupyterOutputNode extends DecoratorBlockNode {
     return self.__outputs;
   }
 
+  /** @override */
   createDOM(): HTMLElement {
-    const elem = document.createElement('span');
-    elem.style.display = 'inline-block';
-    return elem;
+    return document.createElement('span');
   }
 
+  /** @override */
   updateDOM(): false {
     return false;
+  }
+
+  /** @override */
+  isTopLevel(): boolean {
+    return true;    
+  }
+
+  /** @override */
+  isIsolated(): boolean {
+    return false;    
   }
 
   /** @override */
@@ -161,7 +168,6 @@ export class JupyterOutputNode extends DecoratorBlockNode {
   /** @override */
   exportJSON(): SerializedJupyterOutputNode {
     return {
-      ...super.exportJSON(),
       type: "jupyter-output",
       source: this.getCode(),
       outputs: this.__outputAdapter.outputArea.model.toJSON(),

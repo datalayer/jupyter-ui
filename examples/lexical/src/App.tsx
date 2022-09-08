@@ -23,18 +23,23 @@ const Tabs = () => {
   const notebook = selectNotebook();
   const goToTab = (e: any, toTab: TabType, notebookModel: INotebookModel | undefined) => {
     e.preventDefault();
-    if (toTab === 'editor') {
+    if (tab === 'notebook' && toTab === 'editor') {
       if (notebookModel && editor) {
         setNotebookContent(notebookModel.toJSON() as INotebookContent);
       }
     }
-    if (toTab === "notebook") {
+    if (tab === 'editor' && toTab === "notebook") {
       editor?.update(() => {
         const root = $getRoot();
         const children = root.getChildren();
         const nb = lexicalToNbFormat(children);
         setNotebookContent(nb);
       });
+    }
+    if (tab === 'notebook' && toTab === 'nbformat') {
+      if (notebookModel && editor) {
+        setNotebookContent(notebookModel.toJSON() as INotebookContent);
+      }
     }
     setTab(toTab);
   }
@@ -86,7 +91,7 @@ const Tabs = () => {
       }
       { tab === 'nbformat' &&
         <Box>
-          <JSONTree/>;
+          <JSONTree data={notebookContent}/>;
         </Box>
       }
     </Box>

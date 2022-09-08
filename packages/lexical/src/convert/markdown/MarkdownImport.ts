@@ -50,7 +50,7 @@ export function createMarkdownImport(
     const lines = markdownString.split('\n');
     const linesLength = lines.length;
     const root = $getRoot();
-    root.clear();
+//    root.clear();
 
     for (let i = 0; i < linesLength; i++) {
       const lineText = lines[i];

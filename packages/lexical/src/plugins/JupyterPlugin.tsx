@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { $getSelection, $isRangeSelection, createCommand, NodeKey, COMMAND_PRIORITY_EDITOR, INSERT_LINE_BREAK_COMMAND, COMMAND_PRIORITY_HIGH, NodeMutation, $isLineBreakNode } from "lexical";
+import { $getSelection, $isRangeSelection, createCommand, NodeKey, COMMAND_PRIORITY_EDITOR, INSERT_LINE_BREAK_COMMAND, COMMAND_PRIORITY_HIGH, NodeMutation, $isLineBreakNode, $isElementNode } from "lexical";
 import { $getNodeByKey, $createNodeSelection, $setSelection } from "lexical";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $wrapLeafNodesInElements, } from "@lexical/selection";
@@ -145,18 +145,20 @@ export const JupyterPlugin = () => {
         }
         */
         if (selection.isCollapsed()) {
-          const nodes = selection.anchor.getNode().getChildren()
-          nodes.map((node: any) => {
-            if ($isLineBreakNode(node)) {
-              node.remove();
-            }
-          })
+          const anchorNode = selection.anchor.getNode();
+          if (anchorNode && $isElementNode(anchorNode)) {
+            const nodes = anchorNode.getChildren();
+            nodes.map((node: any) => {
+              if ($isLineBreakNode(node)) {
+                node.remove();
+              }
+            });              
+          }
           selection.insertRawText(code);
           $wrapLeafNodesInElements(selection, () => jupyterCodeNode);
         } else {
           selection.insertNodes([jupyterCodeNode]);
         }
-        console.log('---', jupyterCodeNode)
         const outputAdapter = new OutputAdapter(undefined, outputs);
         const jupyterOutputNode = $createJupyterOutputNode(code, outputAdapter, outputs || [], false, jupyterCodeNode.getCodeNodeUuid(), UUID.uuid4()) ;
         outputAdapter.outputArea.model.changed.connect((outputModel, args) => {

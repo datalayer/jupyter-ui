@@ -36,6 +36,7 @@ export const OutputRenderer = (props: Props) => {
   const { output } = props;
   let plain: string | undefined;
   let html: string | undefined;
+  let img: string | undefined;
   switch (output.output_type) {
     case "error": {
       plain = (output.traceback as string[]).join('\n');
@@ -53,6 +54,16 @@ export const OutputRenderer = (props: Props) => {
         plain = (t as string[]).join('\n');
       }
       else plain = t?.toString();
+      break;
+    }
+    case "display_data": {
+      const data = output.data as any;
+      if (data) {
+        const image_png = data["image/png"];
+        if (image_png) {
+          img = image_png;
+        }
+      }
       break;
     }
     case "execute_result": {
@@ -89,8 +100,13 @@ export const OutputRenderer = (props: Props) => {
         </pre>
       }
       { html &&
-        <div style={{color: "black"}}>
+        <div>
           <div dangerouslySetInnerHTML={{ __html: html }} />
+        </div>
+      }
+      { img &&
+        <div>
+          <img src={`data:image/png;base64,${img}`} />
         </div>
       }
     </>

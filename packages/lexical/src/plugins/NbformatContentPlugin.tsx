@@ -9,7 +9,6 @@ type Props = {
 
 export const NbformatContentPlugin = (props: Props) => {
   const { notebook } = props;
-  console.log('---', notebook)
   const [editor] = useLexicalComposerContext();
   useEffect(() => {
     if (notebook) {

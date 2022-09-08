@@ -104,9 +104,11 @@ export const Output = (props: IOutputProps) => {
   useMemo(() => {
       (injectableStore as any).inject('output', outputReducer);
   }, [sourceId]);
+  /*
   useEffect(() => {
     return () => console.log('--- deleted', id);
   }, []);
+  */
   useEffect(() => {
     if (!id) {
       setId(UUID.uuid4());
@@ -205,10 +207,10 @@ export const Output = (props: IOutputProps) => {
           />
         </div>
       }
-      { outputAdapter && kernelStatus !== 'idle' &&
-        <Box display="flex" style={{width: "200px"}}>
+      { outputAdapter &&
+        <Box display="flex">
           <Box flexGrow={1}>
-            <KernelProgressBar/>
+          { kernelStatus !== 'idle' && <KernelProgressBar/> }
           </Box>
           <Box style={{marginTop: "-13px"}}>
             <KernelProgressMenu outputAdapter={outputAdapter}/>

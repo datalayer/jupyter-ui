@@ -102,7 +102,7 @@
             "format": 0,
             "mode": "normal",
             "style": "",
-            "text": "'Cell3'",
+            "text": "'Cell 2'",
             "type": "jupyter-code-highlight",
             "version": 1,
             "highlightType": "string"
@@ -130,11 +130,11 @@
         "format": "",
         "type": "jupyter-output",
         "version": 1,
-        "source": "print('Cell3')",
+        "source": "print('Cell 2')",
         "outputs": [
           {
             "name": "stdout",
-            "text": "Cell3\n",
+            "text": "Cell 2\n",
             "output_type": "stream"
           }
         ],
