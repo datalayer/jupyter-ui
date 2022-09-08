@@ -65,19 +65,30 @@ You need to add in the `public/index.html` the needed information to indicate wh
 
 ### React.js version resolutions
 
-A `create-react-app` requests coherent react.js versions. With JupyterLab, we are pulling various version in the node_modules subfolders. To avoid version conflicts, the `resolutions` in `package.json` specifies the needed version.
+A `create-react-app` requests coherent react.js versions. With JupyterLab, we are pulling various version in the node_modules subfolders. To avoid version conflicts, the `resolutions` in `package.json` specifies the needed versions.
 
-### Fix JupyterLab dependency definitions
-
-Run `make install`. This will apply the following temporary patch on the JupyterLab dependency type definitions.
-
-```bash
-echo "The following is a temporary fix tested on MacOS - For other OS, you may need to fix manually"
-sed -i.bu "s|k: keyof TableOfContents.IConfig|k: string|g" node_modules/\@jupyterlab/notebook/lib/toc.d.ts
-sed -i.bu "s|uri: DocumentUri|uri: string|g" node_modules/vscode-languageserver-protocol/lib/common/protocol.diagnostic.d.ts
-sed -i.bu "s|uri: DocumentUri|uri: string|g" node_modules/vscode-languageserver-types/lib/umd/main.d.ts
-sed -i.bu "s|id: ChangeAnnotationIdentifier|uri: string|g" node_modules/vscode-languageserver-types/lib/umd/main.d.ts
+```json
+  "resolutions": {
+    "**/@types/react": "18.0.9",
+    "**/@types/react-dom": "18.0.5",
+    "**/react": "18.1.0",
+    "**/react-dom": "18.1.0"
+  },
 ```
+
+## Add dependencies
+
+This examples uses Material UI. You can add for example in package.json the following dependencies.
+
+```json
+    "@emotion/react": "^11.10.4",
+    "@emotion/styled": "^11.10.4",
+    "@mui/material": "^5.10.4",
+```
+
+## Strict Mode
+
+We don't fully support yet React [Strict Mode](https://reactjs.org/docs/strict-mode.html) (can be useful in development mode). Please remove any reference of `StrictMode` in your source.
 
 ## ⚖️ License
 

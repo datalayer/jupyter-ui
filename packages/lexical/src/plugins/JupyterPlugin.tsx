@@ -156,6 +156,7 @@ export const JupyterPlugin = () => {
         } else {
           selection.insertNodes([jupyterCodeNode]);
         }
+        console.log('---', jupyterCodeNode)
         const outputAdapter = new OutputAdapter(undefined, outputs);
         const jupyterOutputNode = $createJupyterOutputNode(code, outputAdapter, outputs || [], false, jupyterCodeNode.getCodeNodeUuid(), UUID.uuid4()) ;
         outputAdapter.outputArea.model.changed.connect((outputModel, args) => {

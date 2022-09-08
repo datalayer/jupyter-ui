@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { Box, TabNav, Button } from "@primer/react";
 import { ThreeBarsIcon } from "@primer/octicons-react"
-import { INotebookContent } from "@jupyterlab/nbformat";
-import { Jupyter, Notebook, CellSidebarDefault, selectNotebook } from "@datalayer/jupyter-react";
 import { JSONTree } from "react-json-tree";
-import Editor from "./Editor";
-import { $getRoot, $createNodeSelection } from "lexical";
+import { $getRoot } from "lexical";
+import { INotebookContent } from "@jupyterlab/nbformat";
+import { INotebookModel } from "@jupyterlab/notebook";
+import { Jupyter, Notebook, CellSidebarDefault, selectNotebook } from "@datalayer/jupyter-react";
 import { lexicalToNbFormat } from "@datalayer/jupyter-lexical";
-import { LexicalProvider } from "./context/LexicalContext";
-import { useLexical } from "./context/LexicalContext";
+import { useLexical, LexicalProvider } from "./context/LexicalContext";
+import Editor from "./Editor";
 
 import initialLexicalModel from "./content/Example.lexical.json";
 import initialNbformatModel from "./content/Example.ipynb.json";
@@ -19,39 +19,41 @@ const Tabs = () => {
   const { editor } = useLexical();
   const [tab, setTab] = useState<TabType>('editor');
   const [uid, setUid] = useState(0);
-  const [notebookModel, setNotebookModel] = useState<INotebookContent>(initialNbformatModel);
+  const [notebookContent, setNotebookContent] = useState<INotebookContent>(initialNbformatModel);
   const notebook = selectNotebook();
-  const goToTab = (e: any, toTab: TabType) => {
+  const goToTab = (e: any, toTab: TabType, notebookModel: INotebookModel | undefined) => {
     e.preventDefault();
-    if (tab == "notebook" && notebook.model) {
-      setNotebookModel(notebook.model.toJSON() as INotebookContent);
+    if (toTab === 'editor') {
+      if (notebookModel && editor) {
+        setNotebookContent(notebookModel.toJSON() as INotebookContent);
+      }
     }
-    if (tab == "editor") {
+    if (toTab === "notebook") {
       editor?.update(() => {
         const root = $getRoot();
         const children = root.getChildren();
         const nb = lexicalToNbFormat(children);
-        setNotebookModel(nb);
-      })
+        setNotebookContent(nb);
+      });
     }
     setTab(toTab);
   }
   return (
     <Box className="center">
       <TabNav>
-        <TabNav.Link href="" selected={tab === 'editor'} onClick={e => goToTab(e, 'editor')}>
+        <TabNav.Link href="" selected={tab === 'editor'} onClick={e => goToTab(e, 'editor', notebook.model)}>
           Editor
         </TabNav.Link>
-        <TabNav.Link href="" selected={tab === 'notebook'} onClick={e => goToTab(e, 'notebook')}>
+        <TabNav.Link href="" selected={tab === 'notebook'} onClick={e => goToTab(e, 'notebook', notebook.model)}>
           Notebook
         </TabNav.Link>
-        <TabNav.Link href="" selected={tab === 'nbformat'} onClick={e => goToTab(e, 'nbformat')}>
+        <TabNav.Link href="" selected={tab === 'nbformat'} onClick={e => goToTab(e, 'nbformat', notebook.model)}>
           NbFormat
         </TabNav.Link>
       </TabNav>
       { tab === 'editor' &&
         <Box>
-          <Editor notebook={notebookModel}/>
+          <Editor notebook={notebookContent} />
           <Button
             onClick={(e: React.MouseEvent) => {
               e.preventDefault();
@@ -69,14 +71,14 @@ const Tabs = () => {
           <Notebook
             uid={String(uid)}
             path=""
-            model={notebookModel}
+            model={notebookContent}
             CellSidebar={CellSidebarDefault}
             />
           <Button
             onClick={(e: React.MouseEvent) => {
               e.preventDefault();
               setUid(uid+1);
-              setNotebookModel(initialNbformatModel);
+              setNotebookContent(initialNbformatModel);
             }}>
               Reset Nbformat
           </Button>
@@ -84,7 +86,7 @@ const Tabs = () => {
       }
       { tab === 'nbformat' &&
         <Box>
-          <JSONTree data={notebookModel} />;
+          <JSONTree/>;
         </Box>
       }
     </Box>

@@ -8,7 +8,63 @@
             "format": 0,
             "mode": "normal",
             "style": "",
-            "text": "Notebook",
+            "text": "print",
+            "type": "jupyter-code-highlight",
+            "version": 1,
+            "highlightType": "keyword"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "(",
+            "type": "jupyter-code-highlight",
+            "version": 1,
+            "highlightType": "punctuation"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "'Cell 1'",
+            "type": "jupyter-code-highlight",
+            "version": 1,
+            "highlightType": "string"
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "jupyter-code",
+        "version": 1,
+        "language": "python",
+        "codeNodeUuid": "63cf52e9-1bff-4309-945b-68527dbb1c27"
+      },
+      {
+        "format": "",
+        "type": "jupyter-output",
+        "version": 1,
+        "source": "print('Cell 1')",
+        "outputs": [
+          {
+            "name": "stdout",
+            "text": "Cell 1\n",
+            "output_type": "stream"
+          }
+        ],
+        "codeNodeUuid": "63cf52e9-1bff-4309-945b-68527dbb1c27",
+        "outputNodeUuid": "25e7cca4-6f6a-4bbc-8a32-c3760b90dc2f"
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "Next...",
             "type": "text",
             "version": 1
           }
@@ -16,9 +72,8 @@
         "direction": "ltr",
         "format": "",
         "indent": 0,
-        "type": "heading",
-        "version": 1,
-        "tag": "h1"
+        "type": "paragraph",
+        "version": 1
       },
       {
         "children": [
@@ -27,74 +82,148 @@
             "format": 0,
             "mode": "normal",
             "style": "",
-            "text": "1",
+            "text": "print",
             "type": "jupyter-code-highlight",
             "version": 1,
-            "highlightType": "number"
+            "highlightType": "keyword"
           },
           {
             "detail": 0,
             "format": 0,
             "mode": "normal",
             "style": "",
-            "text": " ",
+            "text": "(",
             "type": "jupyter-code-highlight",
-            "version": 1
+            "version": 1,
+            "highlightType": "punctuation"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "'Cell3'",
+            "type": "jupyter-code-highlight",
+            "version": 1,
+            "highlightType": "string"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": ")",
+            "type": "jupyter-code-highlight",
+            "version": 1,
+            "highlightType": "punctuation"
           }
         ],
-        "direction": null,
+        "direction": "ltr",
         "format": "",
         "indent": 0,
         "type": "jupyter-code",
         "version": 1,
         "language": "python",
-        "codeNodeUuid": "0749f4f0-7e66-40bf-abab-614949d46241"
+        "codeNodeUuid": "1465bc96-0fbc-4327-9557-02b627ae6b23"
       },
       {
         "format": "",
         "type": "jupyter-output",
         "version": 1,
-        "source": "",
+        "source": "print('Cell3')",
         "outputs": [
           {
-            "output_type": "execute_result",
-            "execution_count": 0,
-            "data": {
-              "text/html": [
-                "<p>Type code in the cell and Shift+Enter to execute.</p>"
-              ]
-            },
-            "metadata": {}
+            "name": "stdout",
+            "text": "Cell3\n",
+            "output_type": "stream"
           }
         ],
-        "codeNodeUuid": "0749f4f0-7e66-40bf-abab-614949d46241",
-        "outputNodeUuid": "0e29f36c-5384-49a2-83ba-f5026a277480"
+        "codeNodeUuid": "1465bc96-0fbc-4327-9557-02b627ae6b23",
+        "outputNodeUuid": "9c0d20d7-42a8-482f-80fa-31fd6f9c234b"
       },
       {
-        "children": [],
-        "direction": null,
+        "children": [
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "More...",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
         "format": "",
         "indent": 0,
         "type": "paragraph",
         "version": 1
       },
       {
+        "children": [
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "print",
+            "type": "jupyter-code-highlight",
+            "version": 1,
+            "highlightType": "keyword"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "(",
+            "type": "jupyter-code-highlight",
+            "version": 1,
+            "highlightType": "punctuation"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "'Cell 3'",
+            "type": "jupyter-code-highlight",
+            "version": 1,
+            "highlightType": "string"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": ")",
+            "type": "jupyter-code-highlight",
+            "version": 1,
+            "highlightType": "punctuation"
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "jupyter-code",
+        "version": 1,
+        "language": "python",
+        "codeNodeUuid": "d792c092-60df-4fec-ad16-dd36a0213159"
+      },
+      {
         "format": "",
         "type": "jupyter-output",
         "version": 1,
-        "source": "1",
+        "source": "print('Cell 3')",
         "outputs": [
           {
-            "execution_count": 1,
-            "output_type": "execute_result",
-            "data": {
-              "text/plain": "1"
-            },
-            "metadata": {}
+            "name": "stdout",
+            "text": "Cell 3\n",
+            "output_type": "stream"
           }
         ],
-        "codeNodeUuid": "10c16a56-d2d3-4a61-b5fb-dac4b8937e33",
-        "outputNodeUuid": "7a3f6ec3-9767-4a7b-9e86-9b2704f78302"
+        "codeNodeUuid": "d792c092-60df-4fec-ad16-dd36a0213159",
+        "outputNodeUuid": "fc0cb97b-b295-4e5c-a70b-dab9222b3a78"
       },
       {
         "children": [
@@ -103,80 +232,12 @@
             "format": 0,
             "mode": "normal",
             "style": "",
-            "text": "2",
-            "type": "jupyter-code-highlight",
-            "version": 1,
-            "highlightType": "number"
+            "text": "Done!",
+            "type": "text",
+            "version": 1
           }
         ],
-        "direction": null,
-        "format": "",
-        "indent": 0,
-        "type": "jupyter-code",
-        "version": 1,
-        "language": "python",
-        "codeNodeUuid": "d320fab6-7547-478f-b26a-8d90151798f8"
-      },
-      {
-        "format": "",
-        "type": "jupyter-output",
-        "version": 1,
-        "source": "2",
-        "outputs": [
-          {
-            "execution_count": 2,
-            "output_type": "execute_result",
-            "data": {
-              "text/plain": "2"
-            },
-            "metadata": {}
-          }
-        ],
-        "codeNodeUuid": "d320fab6-7547-478f-b26a-8d90151798f8",
-        "outputNodeUuid": "d11e9757-3897-4d55-99fd-20fdf832392b"
-      },
-      {
-        "children": [
-          {
-            "detail": 0,
-            "format": 0,
-            "mode": "normal",
-            "style": "",
-            "text": "3",
-            "type": "jupyter-code-highlight",
-            "version": 1,
-            "highlightType": "number"
-          }
-        ],
-        "direction": null,
-        "format": "",
-        "indent": 0,
-        "type": "jupyter-code",
-        "version": 1,
-        "language": "python",
-        "codeNodeUuid": "771d9093-c5aa-4d95-880c-7a33bec88ba3"
-      },
-      {
-        "format": "",
-        "type": "jupyter-output",
-        "version": 1,
-        "source": "3",
-        "outputs": [
-          {
-            "execution_count": 3,
-            "output_type": "execute_result",
-            "data": {
-              "text/plain": "3"
-            },
-            "metadata": {}
-          }
-        ],
-        "codeNodeUuid": "771d9093-c5aa-4d95-880c-7a33bec88ba3",
-        "outputNodeUuid": "29483175-3873-4388-8760-816d6e3b7139"
-      },
-      {
-        "children": [],
-        "direction": null,
+        "direction": "ltr",
         "format": "",
         "indent": 0,
         "type": "paragraph",

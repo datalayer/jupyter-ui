@@ -164,7 +164,7 @@ Notebook.defaultProps = {
   ipywidgets: 'lab',
   readOnly: false,
   nbgrader: false,
-  cellMetadataPanel: true,
+  cellMetadataPanel: false,
   cellSidebarMargin: 120,
 } as Partial<INotebookProps>;
 

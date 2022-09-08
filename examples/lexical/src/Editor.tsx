@@ -73,7 +73,7 @@ const EditorContextPlugin = () => {
   const [editor] = useLexicalComposerContext();
   useEffect(() => {
     setEditor(editor);
-    return () => setEditor(undefined);
+//    return () => setEditor(undefined);
   }, [editor]);
   return null;
 }

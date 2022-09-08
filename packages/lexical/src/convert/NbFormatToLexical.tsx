@@ -1,5 +1,4 @@
 import { LexicalEditor, INSERT_PARAGRAPH_COMMAND } from "lexical";
-// import { $createHorizontalRuleNode} from "@lexical/react/LexicalHorizontalRuleNode";
 import { INotebookContent, IOutput } from "@jupyterlab/nbformat";
 import { INSERT_JUPYTER_CELL_COMMAND } from "../plugins/JupyterPlugin";
 import { $convertFromMarkdownString, TRANSFORMERS } from "./markdown";

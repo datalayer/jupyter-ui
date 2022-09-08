@@ -86,9 +86,7 @@ const KernelProgressBar = () => {
     return () => clearInterval(interval);
   }, [])
   return (
-    <Box>
-      <ProgressBar progress={progress} barSize="small" />
-    </Box>
+    <ProgressBar progress={progress} barSize="small" />
   )
 }
 
@@ -208,20 +206,20 @@ export const Output = (props: IOutputProps) => {
         </div>
       }
       { outputAdapter && kernelStatus !== 'idle' &&
-          <Box display="flex">
-            <Box flexGrow={1}>
-              <KernelProgressBar/>
-            </Box>
-            <Box style={{marginTop: "-13px"}}>
-              <KernelProgressMenu outputAdapter={outputAdapter}/>
-            </Box>
+        <Box display="flex" style={{width: "200px"}}>
+          <Box flexGrow={1}>
+            <KernelProgressBar/>
           </Box>
+          <Box style={{marginTop: "-13px"}}>
+            <KernelProgressMenu outputAdapter={outputAdapter}/>
+          </Box>
+        </Box>
       }
       { outputs &&
         <div
           css={{
             '& .jp-OutputPrompt': {
-              display: 'none',
+//              display: 'none',
             },
             '& .jp-OutputArea': {
               fontSize: '10px',
