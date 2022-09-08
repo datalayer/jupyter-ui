@@ -83,7 +83,7 @@ start-jupyter-server:
 define release_package
 	echo $1
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		cd $1 && yarn build && npm publish --access public )
+		cd $1 && rm tsconfig.tsbuildinfo && yarn build && npm publish --access public )
 endef
 
 publish:

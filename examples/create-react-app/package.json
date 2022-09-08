@@ -11,7 +11,7 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "@datalayer/jupyter-react": "0.0.15",
+    "@datalayer/jupyter-react": "0.0.16",
     "@emotion/react": "11.4.0",
     "@emotion/styled": "11.3.0",
     "@mui/material": "5.8.3",
