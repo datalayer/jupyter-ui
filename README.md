@@ -121,8 +121,7 @@ yarn start
 yarn start:create-react-app      # open http://localhost:3000
 yarn start:docusaurus            # open http://localhost:3000/docs/intro
 yarn start:lexical               # open http://localhost:3208
-yarn start:lexical:playground    # open http://localhost:3000
-# ...and some uncompleted and deprecated examples...
+# ...and some uncomplete and deprecated examples...
 yarn start:slate                 # open http://localhost:3266
 yarn start:prosemirror           # open http://localhost:4567
 ```
