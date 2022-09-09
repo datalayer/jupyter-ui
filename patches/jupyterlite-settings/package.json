@@ -1,7 +1,7 @@
 {
-  "name": "@datalayer/jupyterlite-server-extension",
+  "name": "@datalayer/jupyterlite-settings",
   "version": "0.1.0-beta.13",
-  "description": "JupyterLite - Server Extension",
+  "description": "JupyterLite - Settings",
   "homepage": "https://github.com/jupyterlite/jupyterlite",
   "bugs": {
     "url": "https://github.com/jupyterlite/jupyterlite/issues"
@@ -31,30 +31,34 @@
   ],
   "scripts": {
     "build": "tsc -b",
+    "build:test": "tsc --build tsconfig.test.json",
     "clean": "rimraf lib && rimraf tsconfig.tsbuildinfo",
     "docs": "typedoc src",
     "prepublishOnly": "npm run build",
+    "test": "jest",
+    "test:cov": "jest --collect-coverage",
+    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
+    "test:debug:watch": "node --inspect-brk node_modules/.bin/jest --runInBand --watch",
     "watch": "tsc -b --watch"
   },
   "dependencies": {
     "@jupyterlab/coreutils": "6.0.0-alpha.13",
-    "@datalayer/jupyterlite-kernel": "0.1.0-beta.13",
-    "@datalayer/jupyterlite-server": "0.1.0-beta.13",
-    "@datalayer/jupyterlite-session": "0.1.0-beta.13",
-    "@datalayer/jupyterlite-settings": "0.1.0-beta.13"
+    "@jupyterlab/settingregistry": "4.0.0-alpha.13",
+    "json5": "^2.2.0",
+    "localforage": "^1.9.0"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
     "@babel/preset-env": "^7.12.1",
+    "@jupyterlab/testutils": "4.0.0-alpha.13",
     "@types/jest": "^26.0.10",
     "jest": "^26.4.2",
     "rimraf": "~3.0.0",
     "ts-jest": "^26.3.0",
-    "typescript": "4.8.1-rc"
+    "typescript": "~4.5.2"
   },
   "publishConfig": {
     "access": "public"
   },
-  "jupyterlab": {},
   "styleModule": "style/index.js"
 }

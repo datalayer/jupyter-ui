@@ -68,7 +68,6 @@ install: ## Install yarn dependencies
 	sed -i.bu "s|uri: DocumentUri|uri: string|g" node_modules/vscode-languageserver-protocol/lib/common/protocol.diagnostic.d.ts
 	sed -i.bu "s|uri: DocumentUri|uri: string|g" node_modules/vscode-languageserver-types/lib/umd/main.d.ts
 	sed -i.bu "s|id: ChangeAnnotationIdentifier|uri: string|g" node_modules/vscode-languageserver-types/lib/umd/main.d.ts
-#	sed -i.bu "s|await this.initFilesystem(options)|// await this.initFilesystem(options);|g" node_modules/\@jupyterlite/pyolite-kernel/lib/worker.js
 	sed -i.bu "s|\[x: symbol\]: any;||g" node_modules/\@primer/react/lib/Button/LinkButton.d.ts
 	sed -i.bu "s|\| system||g" node_modules/\@primer/react/lib/Button/LinkButton.d.ts
 	sed -i.bu "s|never|any|g" node_modules/\@primer/react/lib/utils/types/KeyPaths.d.ts
@@ -87,6 +86,7 @@ define release_package
 endef
 
 publish:
+	@exec $(call release_package,patches/jupyterlite-settings)
 	@exec $(call release_package,patches/jupyterlite-session)
 	@exec $(call release_package,patches/jupyterlite-server)
 	@exec $(call release_package,patches/jupyterlite-server-extension)

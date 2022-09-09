@@ -28,7 +28,7 @@
     "watch": "tsc --watch"
   },
   "dependencies": {
-    "@datalayer/jupyter-react": "0.0.16",
+    "@datalayer/jupyter-react": "0.0.17",
     "@lexical/react": "0.4.0",
     "@primer/react": "35.8.0",
     "katex": "0.16.1",

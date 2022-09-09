@@ -26,12 +26,11 @@ export class OutputAdapter {
       initialFactories: this._renderers,
     });
     this._iPyWidgetsClassicManager = new IPyWidgetsClassicManager({ loader: requireLoader });
-    const iPyWidgetsRendererFactory = {
+    this._rendermime.addFactory({
       safe: false,
       mimeTypes: [WIDGET_MIMETYPE],
       createRenderer: (options: any) => new WidgetRenderer(options, this._iPyWidgetsClassicManager),
-    };
-    this._rendermime.addFactory(iPyWidgetsRendererFactory, 0);
+    }, 0);
 //    const widgetRegistry = activateWidgetExtension(this._rendermime, null, null, null);
 //    activatePlotlyWidgetExtension(widgetRegistry);
     const outputAreaModel = new OutputAreaModel({

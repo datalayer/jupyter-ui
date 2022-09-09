@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyterlite-server",
-  "version": "0.1.0-beta.12",
+  "version": "0.1.0-beta.13",
   "description": "JupyterLite - Server",
   "homepage": "https://github.com/jupyterlite/jupyterlite",
   "bugs": {
@@ -42,25 +42,20 @@
     "watch": "tsc -b --watch"
   },
   "dependencies": {
-    "@jupyterlab/coreutils": "6.0.0-alpha.12",
-    "@jupyterlab/nbformat": "4.0.0-alpha.12",
+    "@jupyterlab/coreutils": "6.0.0-alpha.13",
+    "@jupyterlab/nbformat": "4.0.0-alpha.13",
     "@jupyterlab/observables": "~4.4.3",
-    "@jupyterlab/services": "7.0.0-alpha.12",
-    "@jupyterlab/settingregistry": "4.0.0-alpha.12",
-    "@jupyterlab/statedb": "4.0.0-alpha.12",
-    "@jupyterlite/contents": "0.1.0-beta.12",
-    "@datalayer/jupyterlite-kernel": "0.1.0-beta.12",
-    "@datalayer/jupyterlite-session": "0.1.0-beta.12",
-    "@jupyterlite/settings": "0.1.0-beta.12",
-    "@jupyterlite/translation": "^0.1.0-beta.12",
-    "@lumino/application": "1.29.3",
-    "@lumino/coreutils": "1.12.0",
+    "@jupyterlab/services": "7.0.0-alpha.13",
+    "@jupyterlab/settingregistry": "4.0.0-alpha.13",
+    "@jupyterlab/statedb": "4.0.0-alpha.13",
+    "@datalayer/jupyterlite-kernel": "0.1.0-beta.13",
+    "@datalayer/jupyterlite-session": "0.1.0-beta.13",
     "mock-socket": "^9.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
     "@babel/preset-env": "^7.12.1",
-    "@jupyterlab/testutils": "~3.4.3",
+    "@jupyterlab/testutils": "4.0.0-alpha.13",
     "@types/jest": "^26.0.10",
     "jest": "^26.4.2",
     "rimraf": "~3.0.0",

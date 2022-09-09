@@ -1,21 +1,11 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
 
-import { PageConfig, PathExt } from '@jupyterlab/coreutils';
+import { PageConfig } from '@jupyterlab/coreutils';
 
-import { Contents as ServerContents, KernelSpec } from '@jupyterlab/services';
-
-import {
-  Contents,
-  DIR_MODE,
-  FILE_MODE,
-  IContents,
-  IModel,
-} from '@jupyterlite/contents';
+import { KernelSpec } from '@jupyterlab/services';
 
 import { IKernels, Kernels, IKernelSpecs, KernelSpecs } from '@datalayer/jupyterlite-kernel';
-
-import { ILicenses, Licenses } from '@jupyterlite/licenses';
 
 import {
   JupyterLiteServer,
@@ -27,173 +17,10 @@ import {
 
 import { ISessions, Sessions } from '@datalayer/jupyterlite-session';
 
-import { ISettings, Settings } from '@jupyterlite/settings';
-
-import { ITranslation, Translation } from '@jupyterlite/translation';
-
-import { ILocalForage, ensureMemoryStorage } from '@jupyterlite/localforage';
+import { ISettings, Settings } from '@datalayer/jupyterlite-settings';
 
 import localforage from 'localforage';
 
-/**
- * The localforage plugin
- */
-const localforagePlugin: JupyterLiteServerPlugin<ILocalForage> = {
-  id: '@datalayer/jupyterlite-server-extension:localforage',
-  autoStart: true,
-  provides: ILocalForage,
-  activate: (app: JupyterLiteServer) => {
-    return { localforage };
-  },
-};
-
-/**
- * The volatile localforage memory plugin
- */
-const localforageMemoryPlugin: JupyterLiteServerPlugin<void> = {
-  id: '@datalayer/jupyterlite-server-extension:localforage-memory-storage',
-  autoStart: true,
-  requires: [ILocalForage],
-  activate: async (app: JupyterLiteServer, forage: ILocalForage) => {
-    if (JSON.parse(PageConfig.getOption('enableMemoryStorage') || 'false')) {
-      console.warn(
-        'Memory storage fallback enabled: contents and settings may not be saved'
-      );
-      await ensureMemoryStorage(forage.localforage);
-    }
-  },
-};
-
-/**
- * The contents service plugin.
- */
-const contentsPlugin: JupyterLiteServerPlugin<IContents> = {
-  id: '@datalayer/jupyterlite-server-extension:contents',
-  requires: [ILocalForage],
-  autoStart: true,
-  provides: IContents,
-  activate: (app: JupyterLiteServer, forage: ILocalForage) => {
-    const storageName = PageConfig.getOption('contentsStorageName');
-    const storageDrivers = JSON.parse(
-      PageConfig.getOption('contentsStorageDrivers') || 'null'
-    );
-    const { localforage } = forage;
-    const contents = new Contents({
-      storageName,
-      storageDrivers,
-      localforage,
-    });
-    app.started.then(() => contents.initialize().catch(console.warn));
-    return contents;
-  },
-};
-
-/**
- * A plugin providing the routes for the contents service.
- */
-const contentsRoutesPlugin: JupyterLiteServerPlugin<void> = {
-  id: '@datalayer/jupyterlite-server-extension:contents-routes',
-  autoStart: true,
-  requires: [IContents],
-  activate: (app: JupyterLiteServer, contents: IContents) => {
-    // GET /api/contents/{path}/checkpoints - Get a list of checkpoints for a file
-    app.router.get(
-      '/api/contents/(.+)/checkpoints',
-      async (req: Router.IRequest, filename: string) => {
-        const res = await contents.listCheckpoints(filename);
-        return new Response(JSON.stringify(res));
-      }
-    );
-
-    // POST /api/contents/{path}/checkpoints/{checkpoint_id} - Restore a file to a particular checkpointed state
-    app.router.post(
-      '/api/contents/(.+)/checkpoints/(.*)',
-      async (req: Router.IRequest, filename: string, checkpoint: string) => {
-        const res = await contents.restoreCheckpoint(filename, checkpoint);
-        return new Response(JSON.stringify(res), { status: 204 });
-      }
-    );
-
-    // POST /api/contents/{path}/checkpoints - Create a new checkpoint for a file
-    app.router.post(
-      '/api/contents/(.+)/checkpoints',
-      async (req: Router.IRequest, filename: string) => {
-        const res = await contents.createCheckpoint(filename);
-        return new Response(JSON.stringify(res), { status: 201 });
-      }
-    );
-
-    // DELETE /api/contents/{path}/checkpoints/{checkpoint_id} - Delete a checkpoint
-    app.router.delete(
-      '/api/contents/(.+)/checkpoints/(.*)',
-      async (req: Router.IRequest, filename: string, checkpoint: string) => {
-        const res = await contents.deleteCheckpoint(filename, checkpoint);
-        return new Response(JSON.stringify(res), { status: 204 });
-      }
-    );
-
-    // GET /api/contents/{path} - Get contents of file or directory
-    app.router.get(
-      '/api/contents(.*)',
-      async (req: Router.IRequest, filename: string) => {
-        const options: ServerContents.IFetchOptions = {
-          content: req.query?.content === '1',
-        };
-        const nb = await contents.get(filename, options);
-        if (!nb) {
-          return new Response(null, { status: 404 });
-        }
-        return new Response(JSON.stringify(nb));
-      }
-    );
-
-    // POST /api/contents/{path} - Create a new file in the specified path
-    app.router.post('/api/contents(.*)', async (req: Router.IRequest, path: string) => {
-      const options = req.body;
-      const copyFrom = options?.copy_from as string;
-      let file: ServerContents.IModel | null;
-      if (copyFrom) {
-        file = await contents.copy(copyFrom, path);
-      } else {
-        file = await contents.newUntitled(options);
-      }
-      if (!file) {
-        return new Response(null, { status: 400 });
-      }
-      return new Response(JSON.stringify(file), { status: 201 });
-    });
-
-    // PATCH /api/contents/{path} - Rename a file or directory without re-uploading content
-    app.router.patch(
-      '/api/contents(.*)',
-      async (req: Router.IRequest, filename: string) => {
-        const newPath = (req.body?.path as string) ?? '';
-        filename = filename[0] === '/' ? filename.slice(1) : filename;
-        const nb = await contents.rename(filename, newPath);
-        return new Response(JSON.stringify(nb));
-      }
-    );
-
-    // PUT /api/contents/{path} - Save or upload a file
-    app.router.put(
-      '/api/contents/(.+)',
-      async (req: Router.IRequest, filename: string) => {
-        const body = req.body;
-        const nb = await contents.save(filename, body);
-        return new Response(JSON.stringify(nb));
-      }
-    );
-
-    // DELETE /api/contents/{path} - Delete a file in the given path
-    app.router.delete(
-      '/api/contents/(.+)',
-      async (req: Router.IRequest, filename: string) => {
-        await contents.delete(filename);
-        return new Response(null, { status: 204 });
-      }
-    );
-  },
-};
 
 /**
  * A plugin installing the service worker.
@@ -207,160 +34,6 @@ const serviceWorkerPlugin: JupyterLiteServerPlugin<IServiceWorkerRegistrationWra
       return new ServiceWorkerRegistrationWrapper();
     },
   };
-
-/**
- * A plugin handling communication with the Emscpriten file system.
- */
-const emscriptenFileSystemPlugin: JupyterLiteServerPlugin<void> = {
-  id: '@datalayer/jupyterlite-server-extension:emscripten-filesystem',
-  autoStart: true,
-  activate: (app: JupyterLiteServer) => {
-    // Setup communication with service worker for the virtual fs
-    const broadcast = new BroadcastChannel('/api/drive.v1');
-    let subitems: [];
-
-    broadcast.onmessage = async (event) => {
-      const request: {
-        path: string;
-        method: string;
-        args: string[] | null;
-        content: string;
-      } = event.data;
-      const contentManager = app.serviceManager.contents;
-
-      const path = request.path.replace('/api/drive/', '');
-
-      let model: ServerContents.IModel;
-
-      switch (request.method) {
-        case 'readdir': {
-          model = await contentManager.get(path, { content: true });
-
-          if (model.type === 'directory' && model.content) {
-            subitems = model.content.map((subcontent: IModel) => subcontent.name);
-            broadcast.postMessage(subitems);
-          } else {
-            broadcast.postMessage([]);
-          }
-          break;
-        }
-        case 'rmdir': {
-          await contentManager.delete(path);
-          broadcast.postMessage(null);
-          break;
-        }
-        case 'rename': {
-          if (request.args === null) {
-            broadcast.postMessage(null);
-            return;
-          }
-
-          await contentManager.rename(path, request.args[0]);
-          broadcast.postMessage(null);
-          break;
-        }
-        case 'getmode': {
-          model = await contentManager.get(path);
-
-          if (model.type === 'directory') {
-            broadcast.postMessage(DIR_MODE);
-          } else {
-            broadcast.postMessage(FILE_MODE);
-          }
-          break;
-        }
-        case 'lookup': {
-          try {
-            model = await contentManager.get(path);
-
-            broadcast.postMessage({
-              ok: true,
-              mode: model.type === 'directory' ? DIR_MODE : FILE_MODE,
-            });
-          } catch (e) {
-            broadcast.postMessage({
-              ok: false,
-            });
-          }
-
-          break;
-        }
-        case 'mknod': {
-          if (request.args === null) {
-            broadcast.postMessage(null);
-            return;
-          }
-
-          const mode = Number.parseInt(request.args[0]);
-
-          model = await contentManager.newUntitled({
-            path: PathExt.dirname(path),
-            type: mode === DIR_MODE ? 'directory' : 'file',
-            ext: PathExt.extname(path),
-          });
-          await contentManager.rename(model.path, path);
-
-          broadcast.postMessage(null);
-          break;
-        }
-        case 'getattr': {
-          model = await contentManager.get(path);
-
-          broadcast.postMessage({
-            dev: 0,
-            ino: 0,
-            mode: model.type === 'directory' ? DIR_MODE : FILE_MODE,
-            nlink: 0,
-            uid: 0,
-            gid: 0,
-            rdev: 0,
-            size: model.size,
-            blksize: 0,
-            blocks: 0,
-            atime: model.last_modified, // TODO Get the proper atime?
-            mtime: model.last_modified,
-            ctime: model.last_modified, // TODO Get the proper ctime?
-            timestamp: 0,
-          });
-          break;
-        }
-        case 'get': {
-          model = await contentManager.get(path, { content: true });
-
-          if (model.type === 'directory') {
-            broadcast.postMessage(null);
-            return;
-          }
-          let content = model.content;
-          if (model.format === 'json') {
-            content = JSON.stringify(model.content);
-          }
-
-          broadcast.postMessage({
-            content,
-            format: model.format,
-          });
-          break;
-        }
-        case 'put': {
-          if (request.args === null) {
-            broadcast.postMessage(null);
-            return;
-          }
-
-          await contentManager.save(path, {
-            content: request.content,
-            type: 'file',
-            format: request.args[0] as ServerContents.FileFormat,
-          });
-
-          broadcast.postMessage(null);
-          break;
-        }
-      }
-    };
-  },
-};
 
 /**
  * The kernels service plugin.
@@ -456,33 +129,6 @@ const kernelSpecRoutesPlugin: JupyterLiteServerPlugin<void> = {
 };
 
 /**
- * The licenses service plugin
- */
-const licensesPlugin: JupyterLiteServerPlugin<ILicenses> = {
-  id: '@datalayer/jupyterlite-server-extension:licenses',
-  autoStart: true,
-  provides: ILicenses,
-  activate: (app: JupyterLiteServer) => {
-    return new Licenses();
-  },
-};
-
-/**
- * A plugin providing the routes for the licenses service.
- */
-const licensesRoutesPlugin: JupyterLiteServerPlugin<void> = {
-  id: '@datalayer/jupyterlite-server-extension:licenses-routes',
-  autoStart: true,
-  requires: [ILicenses],
-  activate(app: JupyterLiteServer, licenses: ILicenses) {
-    app.router.get('/api/licenses', async (req: Router.IRequest) => {
-      const res = await licenses.get();
-      return new Response(JSON.stringify(res));
-    });
-  },
-};
-
-/**
  * A plugin providing the routes for the nbconvert service.
  * TODO: provide the service in a separate plugin?
  */
@@ -560,14 +206,13 @@ const sessionsRoutesPlugin: JupyterLiteServerPlugin<void> = {
 const settingsPlugin: JupyterLiteServerPlugin<ISettings> = {
   id: '@datalayer/jupyterlite-server-extension:settings',
   autoStart: true,
-  requires: [ILocalForage],
+  requires: [],
   provides: ISettings,
-  activate: (app: JupyterLiteServer, forage: ILocalForage) => {
+  activate: (app: JupyterLiteServer) => {
     const storageName = PageConfig.getOption('settingsStorageName');
     const storageDrivers = JSON.parse(
       PageConfig.getOption('settingsStorageDrivers') || 'null'
     );
-    const { localforage } = forage;
     const settings = new Settings({ storageName, storageDrivers, localforage });
     app.started.then(() => settings.initialize().catch(console.warn));
     return settings;
@@ -605,66 +250,18 @@ const settingsRoutesPlugin: JupyterLiteServerPlugin<void> = {
   },
 };
 
-/**
- * The translation service plugin.
- */
-const translationPlugin: JupyterLiteServerPlugin<ITranslation> = {
-  id: '@datalayer/jupyterlite-server-extension:translation',
-  autoStart: true,
-  provides: ITranslation,
-  activate: (app: JupyterLiteServer) => {
-    const translation = new Translation();
-
-    app.router.get(
-      '/api/translations/?(.*)',
-      async (req: Router.IRequest, locale: string) => {
-        const data = await translation.get(locale || 'all');
-        return new Response(JSON.stringify(data));
-      }
-    );
-
-    return translation;
-  },
-};
-
-/**
- * A plugin providing the routes for the translation service.
- */
-const translationRoutesPlugin: JupyterLiteServerPlugin<void> = {
-  id: '@datalayer/jupyterlite-server-extension:translation-routes',
-  autoStart: true,
-  requires: [ITranslation],
-  activate: (app: JupyterLiteServer, translation: ITranslation) => {
-    app.router.get(
-      '/api/translations/?(.*)',
-      async (req: Router.IRequest, locale: string) => {
-        const data = await translation.get(locale || 'all');
-        return new Response(JSON.stringify(data));
-      }
-    );
-  },
-};
 
 const plugins: JupyterLiteServerPlugin<any>[] = [
-  contentsPlugin,
-  contentsRoutesPlugin,
-  emscriptenFileSystemPlugin,
   kernelsPlugin,
   kernelsRoutesPlugin,
   kernelSpecPlugin,
   kernelSpecRoutesPlugin,
-  licensesPlugin,
-  licensesRoutesPlugin,
-  localforageMemoryPlugin,
-  localforagePlugin,
   nbconvertRoutesPlugin,
   serviceWorkerPlugin,
   sessionsPlugin,
   sessionsRoutesPlugin,
   settingsPlugin,
   settingsRoutesPlugin,
-  translationPlugin,
-  translationRoutesPlugin,
 ];
 
 export default plugins;

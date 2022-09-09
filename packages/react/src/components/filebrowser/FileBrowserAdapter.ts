@@ -13,7 +13,6 @@ import { addIcon } from '@jupyterlab/ui-components';
 import '@jupyterlab/codemirror/style/index.css';
 import '@jupyterlab/filebrowser/style/index.css';
 import '@jupyterlab/ui-components/style/index.css';
-
 import '@jupyterlab/theme-light-extension/style/theme.css';
 import '@jupyterlab/theme-light-extension/style/variables.css';
 
@@ -127,7 +126,7 @@ class FileBrowserAdapter {
       // Add commands.
       commands.addCommand('file-open', {
         label: 'Open',
-        icon: 'fa fa-folder-open-o',
+//        icon: 'fa fa-folder-open-o',
         mnemonic: 0,
         execute: () => {
           each(fbWidget.selectedItems(), item => {
@@ -137,7 +136,7 @@ class FileBrowserAdapter {
       });
       commands.addCommand('file-rename', {
         label: 'Rename',
-        icon: 'fa fa-edit',
+//        icon: 'fa fa-edit',
         mnemonic: 0,
         execute: () => {
           return fbWidget.rename();
@@ -151,14 +150,14 @@ class FileBrowserAdapter {
       });
       commands.addCommand('file-cut', {
         label: 'Cut',
-        icon: 'fa fa-cut',
+//        icon: 'fa fa-cut',
         execute: () => {
           fbWidget.cut();
         }
       });
       commands.addCommand('file-copy', {
         label: 'Copy',
-        icon: 'fa fa-copy',
+//        icon: 'fa fa-copy',
         mnemonic: 0,
         execute: () => {
           fbWidget.copy();
@@ -166,7 +165,7 @@ class FileBrowserAdapter {
       });
       commands.addCommand('file-delete', {
         label: 'Delete',
-        icon: 'fa fa-remove',
+//        icon: 'fa fa-remove',
         mnemonic: 0,
         execute: () => {
           return fbWidget.delete();
@@ -174,7 +173,7 @@ class FileBrowserAdapter {
       });
       commands.addCommand('file-duplicate', {
         label: 'Duplicate',
-        icon: 'fa fa-copy',
+//        icon: 'fa fa-copy',
         mnemonic: 0,
         execute: () => {
           return fbWidget.duplicate();
@@ -182,7 +181,7 @@ class FileBrowserAdapter {
       });
       commands.addCommand('file-paste', {
         label: 'Paste',
-        icon: 'fa fa-paste',
+//        icon: 'fa fa-paste',
         mnemonic: 0,
         execute: () => {
           return fbWidget.paste();
@@ -190,14 +189,14 @@ class FileBrowserAdapter {
       });
       commands.addCommand('file-download', {
         label: 'Download',
-        icon: 'fa fa-download',
+//        icon: 'fa fa-download',
         execute: () => {
           return fbWidget.download();
         }
       });
       commands.addCommand('file-shutdown-kernel', {
         label: 'Shut Down Kernel',
-        icon: 'fa fa-stop-circle-o',
+//        icon: 'fa fa-stop-circle-o',
         execute: () => {
           return fbWidget.shutdownKernels();
         }

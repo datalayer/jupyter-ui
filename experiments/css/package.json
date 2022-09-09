@@ -30,9 +30,9 @@
     "url": "git+https://github.com/datalayer/datalayer.git"
   },
   "dependencies": {
-    "@jupyterlab/theme-dark-extension": "4.0.0-alpha.12",
-    "@jupyterlab/theme-light-extension": "4.0.0-alpha.12",
-    "@jupyterlab/ui-components": "4.0.0-alpha.27",
+    "@jupyterlab/theme-dark-extension": "4.0.0-alpha.13",
+    "@jupyterlab/theme-light-extension": "4.0.0-alpha.13",
+    "@jupyterlab/ui-components": "4.0.0-alpha.28",
     "react": "18.1.0",
     "react-dom": "18.1.0"
   },
