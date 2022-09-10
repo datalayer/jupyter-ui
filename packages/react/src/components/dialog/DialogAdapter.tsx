@@ -1,9 +1,5 @@
 import { Dialog as JupyerLabDialog } from '@jupyterlab/apputils';
 
-import '@jupyterlab/apputils/style/index.css';
-import '@jupyterlab/theme-light-extension/style/theme.css';
-import '@jupyterlab/theme-light-extension/style/variables.css';
- 
 import './DialogAdapter.css';
 
 export class DialogAdapter {

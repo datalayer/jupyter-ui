@@ -7,13 +7,6 @@ import Lumino from '../../jupyter/lumino/Lumino';
 import { cellActions, cellReducer } from './CellState';
 import CellAdapter from './CellAdapter';
 
-import '@jupyterlab/application/style/index.css';
-import '@jupyterlab/codemirror/style/index.css';
-import '@jupyterlab/cells/style/index.css';
-import '@jupyterlab/theme-light-extension/style/theme.css'; // This should be only index.css, looks like jupyterlab has a regression here...
-import '@jupyterlab/theme-light-extension/style/variables.css';
-import '@jupyterlab/completer/style/index.css';
-
 import './Cell.css';
 
 const DEFAULT_SOURCE = `from IPython.display import display
@@ -59,12 +52,12 @@ export const Cell = (props: ICellProps) => {
     }
   }, [source]);
   return adapter
-    ? 
+    ?
       <Lumino>
         {adapter.panel}
       </Lumino>
-    : 
-      <>Loading...</>
+    :
+      <>Loading Jupyter Cell...</>
 }
 
 Cell.defaultProps = {

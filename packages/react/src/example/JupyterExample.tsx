@@ -10,9 +10,9 @@ import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarD
 import Output from "../components/output/Output";
 import FileBrowser from "../components/filebrowser/FileBrowser";
 import Console from "../components/console/Console";
+import Terminal from "../components/terminal/Terminal";
 import { selectCell, cellActions } from '../components/cell/CellState';
 import { notebookActions } from '../components/notebook/NotebookState';
-import Terminal from "../components/terminal/Terminal";
 
 import "./../../style/index.css";
 
@@ -152,8 +152,6 @@ root.render(
 //      model={notebookExample as INotebookContent}
       CellSidebar={CellSidebarDefault}
       />
-    <hr/>
-    <img src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-communication.png" width="1000px"/>
     <hr/>
     <FileBrowser/>
     <hr/>

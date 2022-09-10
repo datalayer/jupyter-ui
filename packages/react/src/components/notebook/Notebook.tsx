@@ -12,13 +12,6 @@ import CellMetadataEditor from './cell/metadata/CellMetadataEditor';
 import NotebookAdapter from './NotebookAdapter';
 import { notebookActions, selectNotebookPortals, notebookEpics, notebookReducer } from './NotebookState';
 
-import '@jupyterlab/completer/style/index.css';
-import '@jupyterlab/documentsearch/style/index.css';
-import '@jupyterlab/codemirror/style/index.css';
-import '@jupyterlab/notebook/style/index.css';
-import '@jupyterlab/theme-light-extension/style/theme.css';
-import '@jupyterlab/theme-light-extension/style/variables.css';
-
 import './Notebook.css';
 
 export type INotebookProps = {

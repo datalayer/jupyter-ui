@@ -20,10 +20,6 @@
   position: relative !important;
 }
 
-.jp-Completer-Cell {
-  position: fixed;
-}
-
 .jp-CodeMirrorEditor {
   cursor: text !important;
 }

@@ -1,8 +1,5 @@
 import { DockPanel } from '@lumino/widgets';
 
-import '@jupyterlab/theme-light-extension/style/theme.css';
-import '@jupyterlab/theme-light-extension/style/variables.css';
-
 import './SettingsAdapter.css';
 
 class SettingsAdapter {

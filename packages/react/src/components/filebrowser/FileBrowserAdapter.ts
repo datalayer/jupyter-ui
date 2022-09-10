@@ -10,12 +10,6 @@ import { FileBrowser, FilterFileBrowserModel } from '@jupyterlab/filebrowser';
 import { FileEditorFactory } from '@jupyterlab/fileeditor';
 import { addIcon } from '@jupyterlab/ui-components';
 
-import '@jupyterlab/codemirror/style/index.css';
-import '@jupyterlab/filebrowser/style/index.css';
-import '@jupyterlab/ui-components/style/index.css';
-import '@jupyterlab/theme-light-extension/style/theme.css';
-import '@jupyterlab/theme-light-extension/style/variables.css';
-
 import './FileBrowserAdapter.css';
 
 class FileBrowserAdapter {

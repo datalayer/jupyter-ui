@@ -16,9 +16,6 @@ import * as base from '@jupyter-widgets/base';
 import { JUPYTER_CONTROLS_VERSION } from '@jupyter-widgets/controls/lib/version';
 import { KernelMessage } from '@jupyterlab/services';
 
-import '@jupyter-widgets/base/css/index.css';
-import '@jupyter-widgets/controls/css/widgets-base.css';
-
 const WIDGET_REGISTRY: base.IWidgetRegistryData[] = [];
 
 /**

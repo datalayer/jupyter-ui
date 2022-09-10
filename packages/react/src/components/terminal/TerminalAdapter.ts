@@ -2,10 +2,6 @@ import { BoxPanel } from '@lumino/widgets';
 import { TerminalManager } from '@jupyterlab/services';
 import { Terminal, ITerminal } from '@jupyterlab/terminal';
 
-import '@jupyterlab/terminal/style/index.css';
-import '@jupyterlab/theme-light-extension/style/theme.css';
-import '@jupyterlab/theme-light-extension/style/variables.css';
-
 import './TerminalAdapter.css';
 
 export class TerminalAdapter {

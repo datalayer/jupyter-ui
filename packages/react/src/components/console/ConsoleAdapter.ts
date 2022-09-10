@@ -5,11 +5,6 @@ import { ServiceManager } from '@jupyterlab/services';
 import { editorServices } from '@jupyterlab/codemirror';
 import { ConsolePanel } from '@jupyterlab/console';
 
-import '@jupyterlab/console/style/index.css';
-import '@jupyterlab/codemirror/style/index.css';
-import '@jupyterlab/theme-light-extension/style/theme.css';
-import '@jupyterlab/theme-light-extension/style/variables.css';
-
 class ConsoleAdapter {
   private consolePanel: BoxPanel;
 

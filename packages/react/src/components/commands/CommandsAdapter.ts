@@ -1,8 +1,6 @@
 import { CommandRegistry } from '@lumino/commands';
 import { CommandPalette, BoxPanel } from '@lumino/widgets';
 
-import '@lumino/default-theme/style/index.css';
-
 import './CommandsAdapter.css';
 
 class CommandsAdapter {

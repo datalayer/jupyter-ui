@@ -13,13 +13,6 @@ import Lumino from '../../jupyter/lumino/Lumino';
 import CodeMirrorEditor from '../codemirror/CodeMirrorEditor';
 import OutputRenderer from './OutputRenderer';
 
-import "@jupyterlab/outputarea/style/index.css";
-// import '@lumino/default-theme/style/index.css';
-// import '@jupyterlab/json-extension/style/index.css';
-// import "@jupyterlab/theme-light-extension/style/theme.css";
-// import "@@jupyter-widgets/base/css/index.css";
-// import "@jupyter-widgets/controls/css/widgets-base.css";
-
 import './Output.css';
 
 export type IOutputProps = {
