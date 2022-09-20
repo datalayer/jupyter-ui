@@ -213,11 +213,15 @@ export const Output = (props: IOutputProps) => {
       { outputs &&
         <div
           css={{
+            '& .jp-OutputArea': {
+              fontSize: '10px',
+            },
             '& .jp-OutputPrompt': {
 //              display: 'none',
             },
-            '& .jp-OutputArea': {
-              fontSize: '10px',
+            '& .jp-OutputArea-prompt': {
+              display: 'none',
+//              width: '0px',
             },
             '& pre': {
               fontSize: '12px',

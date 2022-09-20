@@ -32,6 +32,7 @@ import { useLexical } from "./context/LexicalContext";
 
 import "./Editor.css";
 import "./Rich.css";
+import "./Jupyter.css";
 
 type Props = {
   notebook?: INotebookContent
