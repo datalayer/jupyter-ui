@@ -20,14 +20,14 @@ const SOURCE_1 = '1+1'
 
 const SOURCE_1_OUTPUTS: IOutput[] = [
   {
-   "data": {
-    "text/plain": [
-     "2"
-    ]
-   },
-   "execution_count": 1,
-   "metadata": {},
-   "output_type": "execute_result"
+    "data": {
+      "text/plain": [
+        "2"
+      ]
+    },
+    "execution_count": 1,
+    "metadata": {},
+    "output_type": "execute_result"
   }
 ];
 
@@ -38,9 +38,9 @@ widgets.IntSlider(
     max=10,
     step=1
  )`
- 
+
 const CellPreview = () => {
-const cell = selectCell();
+  const cell = selectCell();
   return (
     <>
       <>source: {cell.source}</>
@@ -60,15 +60,15 @@ const CellToolbar = () => {
             variant="default"
             size="small"
             onClick={() => dispatch(cellActions.execute())}
-            >
-              Run the cell
+          >
+            Run the cell
           </Button>
           <Button
             variant="outline"
             size="small"
             onClick={() => dispatch(cellActions.outputsCount(0))}
-            >
-              Reset outputs count
+          >
+            Reset outputs count
           </Button>
         </ButtonGroup>
       </Box>
@@ -89,15 +89,15 @@ const NotebookToolbar = () => {
             variant="default"
             size="small"
             onClick={() => dispatch(notebookActions.save.started(new Date()))}
-            >
-              Save the notebook
+          >
+            Save the notebook
           </Button>
           <Button
             variant="default"
             size="small"
             onClick={() => dispatch(notebookActions.runAll.started())}
-            >
-              Run all
+          >
+            Run all
           </Button>
         </ButtonGroup>
       </Box>
@@ -115,19 +115,19 @@ const Outputs = () => {
         kernel={kernel}
         code={SOURCE_1}
         outputs={SOURCE_1_OUTPUTS}
-        />
+      />
       <Output
         showEditor={true}
         autoRun={false}
         kernel={kernel}
         code={SOURCE_2}
-        />
+      />
       <Output
         showEditor={true}
         autoRun={true}
         kernel={kernel}
         code={SOURCE_2}
-        />
+      />
     </>
   )
 }
@@ -138,23 +138,25 @@ const root = createRoot(div)
 
 root.render(
   <Jupyter lite={false} terminals={true}>
-    <Console/>
-    <hr/>
-    <CellPreview/>
-    <CellToolbar/>
-    <Cell/>
-    <hr/>
-    <Outputs/>
-    <hr/>
-    <NotebookToolbar/>
-    <Notebook
-      path="test.ipynb"
-//      model={notebookExample as INotebookContent}
-      CellSidebar={CellSidebarDefault}
+    <Console />
+    <hr />
+    <CellPreview />
+    <CellToolbar />
+    <Cell />
+    <hr />
+    <Outputs />
+    <hr />
+    <NotebookToolbar />
+    <div style={{ height: "100vh", width: "100vw" }}>
+      <Notebook
+        path="test.ipynb"
+        //      model={notebookExample as INotebookContent}
+        CellSidebar={CellSidebarDefault}
       />
-    <hr/>
-    <FileBrowser/>
-    <hr/>
-    <Terminal/>
+    </div>
+    <hr />
+    <FileBrowser />
+    <hr />
+    <Terminal />
   </Jupyter>
 );

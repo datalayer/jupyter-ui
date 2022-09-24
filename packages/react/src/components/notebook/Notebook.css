@@ -1,3 +1,153 @@
 .jp-CodeMirrorEditor {
   cursor: text !important;
 }
+
+/* General CSS Fix */
+
+.lm-Widget.p-Widget.jp-MainAreaWidget.jp-NotebookPanel.lm-BoxPanel-child.p-BoxPanel-child .lm-Widget.p-Widget.jp-Notebook.jp-mod-scrollPastEnd.jp-mod-showHiddenCellsButton.jp-NotebookPanel-notebook.jp-mod-commandMode {
+  top: 0px !important;
+  height: 100% !important;
+}
+
+.lm-Widget.p-Widget.jp-MainAreaWidget.jp-NotebookPanel.lm-BoxPanel-child.p-BoxPanel-child .lm-Widget.p-Widget.jp-Notebook.jp-mod-scrollPastEnd.jp-mod-showHiddenCellsButton.jp-NotebookPanel-notebook.jp-mod-editMode {
+  top: 0px !important;
+}
+
+div.lm-Widget.jp-MainAreaWidget.jp-NotebookPanel.lm-BoxPanel-child {
+  width: 100% !important;
+}
+
+div.lm-Widget.jp-Notebook.jp-mod-scrollPastEnd.jp-mod-showHiddenCellsButton.jp-NotebookPanel-notebook.jp-mod-commandMode {
+  top: 0px !important;
+  height: 100% !important;
+  width: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: scroll !important;
+}
+
+div.lm-Widget.jp-Notebook.jp-mod-scrollPastEnd.jp-mod-showHiddenCellsButton.jp-NotebookPanel-notebook.jp-mod-editMode {
+  top: 0px !important;
+  height: 100% !important;
+  width: 100% !important;
+  overflow-x: hidden !important;
+  overflow-y: scroll !important;
+}
+
+div.Box-sc-1gh2r6s-0 {
+  height: 100% !important;
+}
+
+div.Box-sc-1gh2r6s-0 div {
+  height: 100% !important;
+}
+
+div.Box-sc-1gh2r6s-0.css-2tgqaj-Notebook {
+  height: 100% !important;
+}
+
+div.lm-Widget.lm-Panel.lm-BoxPanel.dla-JupyterLab-Notebook {
+  height: 100% !important;
+}
+
+div.lm-Widget.jp-Cell.jp-MarkdownCell.jp-mod-rendered.jp-Notebook-cell.jp-mod-active.jp-mod-selected {
+  height: unset !important;
+}
+
+div.lm-Widget.jp-Cell.jp-MarkdownCell.jp-mod-rendered.jp-Notebook-cell {
+  height: unset !important;
+}
+
+div.lm-Widget.jp-Cell.jp-CodeCell.jp-mod-noOutputs.jp-Notebook-cell.jp-mod-active.jp-mod-selected {
+  height: unset !important;
+}
+
+div.lm-Widget.jp-Cell.jp-CodeCell.jp-mod-noOutputs.jp-Notebook-cell {
+  height: unset !important;
+}
+
+div.lm-Widget.jp-Cell.jp-MarkdownCell.jp-Notebook-cell.jp-mod-active.jp-mod-selected {
+  height: unset !important;
+}
+
+div.lm-Widget.jp-Cell.jp-MarkdownCell.jp-Notebook-cell {
+  height: unset !important;
+}
+
+div.lm-Widget.jp-Cell.jp-CodeCell.jp-Notebook-cell.jp-mod-active.jp-mod-selected {
+  height: unset !important;
+}
+
+div.lm-Widget.jp-Cell.jp-CodeCell.jp-Notebook-cell {
+  height: unset !important;
+}
+
+div.lm-Widget.jp-CellHeader.jp-Cell-header {
+  height: auto !important;
+}
+
+.Pane {
+  height: 100% !important;
+}
+
+div.ant-tabs.ant-tabs-top.ant-tabs-editable.ant-tabs-card.ant-tabs-editable-card {
+  height: 100% !important;
+}
+
+div.ant-tabs-content.ant-tabs-content-top {
+  height: 100% !important;
+}
+
+div.ant-tabs-tabpane.ant-tabs-tabpane-active {
+  height: 100% !important;
+}
+
+div.BaseStyles__Base-sc-nfjs56-0.gUfnxs {
+  height: 100% !important;
+}
+
+div.BaseStyles__Base-sc-nfjs56-0 {
+  height: 100% !important;
+}
+
+div.BaseStyles__Base-sc-nfjs56-0.brIFCS {
+  height: 100% !important;
+}
+
+div.lm-Widget.p-Widget.jp-Notebook.jp-mod-scrollPastEnd.jp-mod-showHiddenCellsButton.jp-NotebookPanel-notebook.jp-mod-commandMode {
+  height: 100% !important;
+}
+
+div.lm-Widget.p-Widget.jp-Notebook.jp-mod-scrollPastEnd.jp-mod-showHiddenCellsButton.jp-NotebookPanel-notebook.jp-mod-editMode {
+  height: 100% !important;
+}
+
+div.lm-Widget.p-Widget.jp-Notebook.jp-mod-scrollPastEnd.jp-mod-showHiddenCellsButton.jp-NotebookPanel-notebook.jp-mod-editMode {
+  height: 100% !important;
+}
+
+div#id-fd3dcc5e-a2e8-40d7-9ade-dd6b9373b041.lm-Widget.p-Widget.jp-MainAreaWidget.jp-NotebookPanel.lm-BoxPanel-child.p-BoxPanel-child {
+  height: 100% !important;
+}
+
+div#id-1b953030-ae64-4371-83f0-ea4b5d272842.lm-Widget.p-Widget.jp-MainAreaWidget.jp-NotebookPanel.lm-BoxPanel-child.p-BoxPanel-child {
+  height: 100% !important;
+}
+
+div#id-1b953030-ae64-4371-83f0-ea4b5d272842.lm-Widget.p-Widget.jp-MainAreaWidget.jp-NotebookPanel.lm-BoxPanel-child.p-BoxPanel-child div#id-0e1e4cbc-c431-4ce8-b16f-2d7563d93f4a.lm-Widget.p-Widget.jp-Notebook.jp-mod-scrollPastEnd.jp-mod-showHiddenCellsButton.jp-NotebookPanel-notebook.jp-mod-commandMode {
+  height: 100% !important;
+}
+
+div.lm-Widget.p-Widget.jp-MainAreaWidget.jp-NotebookPanel.lm-BoxPanel-child.p-BoxPanel-child {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+div.lm-Widget.p-Widget.jp-MainAreaWidget.jp-NotebookPanel.lm-BoxPanel-child.p-BoxPanel-child {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+div.lm-Widget.p-Widget.jp-MainAreaWidget.jp-NotebookPanel.lm-BoxPanel-child.p-BoxPanel-child div.lm-Widget.p-Widget.jp-Notebook.jp-mod-scrollPastEnd.jp-mod-showHiddenCellsButton.jp-NotebookPanel-notebook.jp-mod-commandMode {
+  height: 100% !important;
+  width: 100% !important;
+}

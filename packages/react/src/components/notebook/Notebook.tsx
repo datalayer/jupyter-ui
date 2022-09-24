@@ -27,9 +27,9 @@ export type INotebookProps = {
   cellSidebarMargin: number;
 }
 
-const LuminoNotebook = (props: {adapter: NotebookAdapter }) => {
+const LuminoNotebook = (props: { adapter: NotebookAdapter }) => {
   const { adapter } = props;
-  return <Lumino adapter={adapter}/>
+  return <Lumino adapter={adapter} />
 }
 
 /**
@@ -50,7 +50,7 @@ export const Notebook = (props: INotebookProps) => {
   }, []);
   useEffect(() => {
     if (serviceManager && kernelManager && kernel) {
-//      const kernel = readOnly ? undefined : new Kernel({ kernelManager });
+      //      const kernel = readOnly ? undefined : new Kernel({ kernelManager });
       const adapter = new NotebookAdapter(
         { ...props, kernel },
         injectableStore,
@@ -69,11 +69,11 @@ export const Notebook = (props: INotebookProps) => {
               if (panelDiv) {
                 const cellMetadataOptions = (
                   <Box mt={3}>
-                    <CellMetadataEditor cell={activeCellChanged} nbgrader={nbgrader}/>
+                    <CellMetadataEditor cell={activeCellChanged} nbgrader={nbgrader} />
                   </Box>
                 );
                 const portal = createPortal(cellMetadataOptions, panelDiv);
-                dispatch(notebookActions.setPortal({ portal, pinned: false }));  
+                dispatch(notebookActions.setPortal({ portal, pinned: false }));
               }
             }
           );
@@ -89,7 +89,7 @@ export const Notebook = (props: INotebookProps) => {
         });
         adapter.notebookPanel?.sessionContext.statusChanged.connect((_, kernelStatusChanged) => {
           dispatch(notebookActions.kernelStatusChanged(kernelStatusChanged));
-        });  
+        });
       });
       return () => {
         setAdapter(undefined);
@@ -109,7 +109,7 @@ export const Notebook = (props: INotebookProps) => {
             flex: '1 1 auto !important',
           },
           '& .jp-NotebookPanel': {
-//            borderBottom: '1px solid #e0e0e0',
+            //            borderBottom: '1px solid #e0e0e0',
           },
           '& .jp-Toolbar': {
             display: 'none',
@@ -144,8 +144,8 @@ export const Notebook = (props: INotebookProps) => {
           {portals.map((portal: React.ReactPortal) => portal)}
         </>
         <Box>
-          { adapter &&
-             <LuminoNotebook adapter={adapter}/>
+          {adapter &&
+            <LuminoNotebook adapter={adapter} />
           }
         </Box>
       </Box>
