@@ -17,7 +17,7 @@ import {
 } from "lexical";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
-import { $isParentElementRTL, $wrapLeafNodesInElements, $isAtNodeEnd } from "@lexical/selection";
+import { $isParentElementRTL, $wrapNodes, $isAtNodeEnd } from "@lexical/selection";
 import { $getNearestNodeOfType, mergeRegister, $insertBlockNode } from '@lexical/utils';
 import { INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND, REMOVE_LIST_COMMAND, $isListNode, ListNode } from "@lexical/list";
 import { $createHeadingNode, $createQuoteNode, $isHeadingNode } from "@lexical/rich-text";
@@ -286,7 +286,7 @@ function BlockOptionsDropdownList({
         const selection = $getSelection();
 
         if ($isRangeSelection(selection)) {
-          $wrapLeafNodesInElements(selection, () => $createParagraphNode());
+          $wrapNodes(selection, () => $createParagraphNode());
         }
       });
     }
@@ -298,7 +298,7 @@ function BlockOptionsDropdownList({
         const selection = $getSelection();
 
         if ($isRangeSelection(selection)) {
-          $wrapLeafNodesInElements(selection, () => $createHeadingNode("h1"));
+          $wrapNodes(selection, () => $createHeadingNode("h1"));
         }
       });
     }
@@ -310,7 +310,7 @@ function BlockOptionsDropdownList({
         const selection = $getSelection();
 
         if ($isRangeSelection(selection)) {
-          $wrapLeafNodesInElements(selection, () => $createHeadingNode("h2"));
+          $wrapNodes(selection, () => $createHeadingNode("h2"));
         }
       });
     }
@@ -338,7 +338,7 @@ function BlockOptionsDropdownList({
         const selection = $getSelection();
 
         if ($isRangeSelection(selection)) {
-          $wrapLeafNodesInElements(selection, () => $createQuoteNode());
+          $wrapNodes(selection, () => $createQuoteNode());
         }
       });
     }

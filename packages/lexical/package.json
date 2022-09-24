@@ -30,10 +30,10 @@
   },
   "dependencies": {
     "@datalayer/jupyter-react": "0.0.18",
-    "@lexical/react": "0.4.1",
+    "@lexical/react": "0.5.0",
     "@primer/react": "35.8.0",
     "katex": "0.16.1",
-    "lexical": "0.4.1",
+    "lexical": "0.5.0",
     "react": "18.1.0",
     "react-dom": "18.1.0"
    },

@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { $getSelection, $isRangeSelection, createCommand, NodeKey, COMMAND_PRIORITY_EDITOR, INSERT_LINE_BREAK_COMMAND, COMMAND_PRIORITY_HIGH, NodeMutation, $isLineBreakNode, $isElementNode } from "lexical";
 import { $getNodeByKey, $createNodeSelection, $setSelection } from "lexical";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { $wrapLeafNodesInElements, } from "@lexical/selection";
-import { $insertBlockNode } from '@lexical/utils';
+import { $wrapNodes, } from "@lexical/selection";
+import { $insertNodeToNearestRoot } from '@lexical/utils';
 import { OutputAdapter } from '@datalayer/jupyter-react';
 import { UUID } from '@lumino/coreutils';
 import { IOutput } from '@jupyterlab/nbformat';
@@ -74,7 +74,7 @@ export const JupyterPlugin = () => {
               }
             }
             const jupyterOutputNode = $createJupyterOutputNode(code, new OutputAdapter(undefined, []), [], true, codeNodeUuid, UUID.uuid4());
-            $insertBlockNode(jupyterOutputNode);
+            $insertNodeToNearestRoot(jupyterOutputNode);
             const nodeSelection = $createNodeSelection();
             nodeSelection.add(parentNode.__key);
             $setSelection(nodeSelection);
@@ -137,7 +137,7 @@ export const JupyterPlugin = () => {
           const textNode = $createTextNode(code || "");
           paragraphNode.append(textNode);
           selection.insertNodes([paragraphNode]);
-          $wrapLeafNodesInElements(selection, () => codeNode);
+          $wrapNodes(selection, () => codeNode);
         } else {
           const textContent = selection.getTextContent();
           selection.insertNodes([codeNode]);
@@ -155,7 +155,7 @@ export const JupyterPlugin = () => {
             });              
           }
           selection.insertRawText(code);
-          $wrapLeafNodesInElements(selection, () => jupyterCodeNode);
+          $wrapNodes(selection, () => jupyterCodeNode);
         } else {
           selection.insertNodes([jupyterCodeNode]);
         }
@@ -166,7 +166,7 @@ export const JupyterPlugin = () => {
             jupyterOutputNode.setOutputs(outputModel.toJSON());
           });
         });
-        $insertBlockNode(jupyterOutputNode);
+        $insertNodeToNearestRoot(jupyterOutputNode);
         if (!loading) {
           jupyterCodeNode.selectEnd();
 //          selection.insertRawText(code);

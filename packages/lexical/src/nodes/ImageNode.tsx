@@ -25,7 +25,6 @@
 import './ImageNode.css';
 
 import {AutoFocusPlugin} from '@lexical/react/LexicalAutoFocusPlugin';
-import {useCollaborationContext} from '@lexical/react/LexicalCollaborationContext';
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import {HashtagPlugin} from '@lexical/react/LexicalHashtagPlugin';
 import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
@@ -155,7 +154,6 @@ function ImageComponent({
   const [isSelected, setSelected, clearSelection] =
     useLexicalNodeSelection(nodeKey);
   const [isResizing, setIsResizing] = useState<boolean>(false);
-  const {isCollabActive} = useCollaborationContext();
   const [editor] = useLexicalComposerContext();
   const [selection, setSelection] = useState<
     RangeSelection | NodeSelection | GridSelection | null
@@ -361,8 +359,6 @@ function ImageComponent({
                     Enter a caption...
                   </Placeholder>
                 }
-                // TODO Remove after it's inherited from the parent (LexicalComposer)
-                initialEditorState={isCollabActive ? null : undefined}
               />
             </LexicalNestedComposer>
           </div>
