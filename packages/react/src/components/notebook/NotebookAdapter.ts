@@ -57,7 +57,7 @@ export class NotebookAdapter {
     this._ipywidgets = props.ipywidgets;
     this._kernel = props.kernel;
     this._boxPanel = new BoxPanel();
-    this._boxPanel.addClass('dla-JupyterLab-Notebook');
+    this._boxPanel.addClass('dla-Jupyter-Notebook');
     this._boxPanel.spacing = 0;
     this._uid = props.uid;
     this._commandRegistry = new CommandRegistry();

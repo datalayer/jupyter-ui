@@ -147,13 +147,11 @@ root.render(
     <Outputs />
     <hr />
     <NotebookToolbar />
-    <div style={{ height: "100vh", width: "100vw" }}>
-      <Notebook
-        path="test.ipynb"
-        //      model={notebookExample as INotebookContent}
-        CellSidebar={CellSidebarDefault}
+    <Notebook
+      path="test.ipynb"
+      // model={notebookExample as INotebookContent}
+      CellSidebar={CellSidebarDefault}
       />
-    </div>
     <hr />
     <FileBrowser />
     <hr />

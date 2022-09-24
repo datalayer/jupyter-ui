@@ -3,6 +3,7 @@ import { Box, TabNav, Button } from "@primer/react";
 import { ThreeBarsIcon } from "@primer/octicons-react"
 import { JSONTree } from "react-json-tree";
 import { $getRoot } from "lexical";
+import styled from "styled-components";
 import { INotebookContent } from "@jupyterlab/nbformat";
 import { INotebookModel } from "@jupyterlab/notebook";
 import { Jupyter, Notebook, CellSidebarDefault, selectNotebook } from "@datalayer/jupyter-react";
@@ -14,6 +15,12 @@ import initialLexicalModel from "./content/Example.lexical.json";
 import initialNbformatModel from "./content/Example.ipynb.json";
 
 type TabType = 'editor' | 'notebook' | 'nbformat';
+
+const StyledNotebook = styled.div`
+  &[style] {
+    height: 100vh !important;
+  }
+`
 
 const Tabs = () => {
   const { editor } = useLexical();
@@ -72,22 +79,23 @@ const Tabs = () => {
         </Box>
       }
       { tab === 'notebook' &&
-        <Box mb={3}>
-          <Notebook
-            uid={String(uid)}
-            path=""
-            model={notebookContent}
-            CellSidebar={CellSidebarDefault}
-            />
-          <Button
-            onClick={(e: React.MouseEvent) => {
-              e.preventDefault();
-              setUid(uid+1);
-              setNotebookContent(initialNbformatModel);
-            }}>
-              Reset Nbformat
-          </Button>
-        </Box>
+        <StyledNotebook>
+          <Box mb={3}>
+            <Notebook
+              uid={String(uid)}
+              model={notebookContent}
+              CellSidebar={CellSidebarDefault}
+              />
+            <Button
+              onClick={(e: React.MouseEvent) => {
+                e.preventDefault();
+                setUid(uid+1);
+                setNotebookContent(initialNbformatModel);
+              }}>
+                Reset Nbformat
+            </Button>
+          </Box>
+        </StyledNotebook>
       }
       { tab === 'nbformat' &&
         <Box>
@@ -123,5 +131,5 @@ export default function App() {
         </ul>
       </div>
     </>
-  );
+  )
 }

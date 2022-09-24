@@ -98,58 +98,60 @@ export const Notebook = (props: INotebookProps) => {
     }
   }, [uid, serviceManager, kernelManager, kernel, model]);
   return (
-    <Box>
-      <Box
-        css={{
-          '& .dla-JupyterLab-Notebook': {
-            height: 'calc(100vh - 230px)',
-            overflowY: 'hidden',
-          },
-          '& .jp-Notebook': {
-            flex: '1 1 auto !important',
-          },
-          '& .jp-NotebookPanel': {
-            //            borderBottom: '1px solid #e0e0e0',
-          },
-          '& .jp-Toolbar': {
-            display: 'none',
-            zIndex: 0,
-          },
-          '& .jp-Toolbar .jp-HTMLSelect.jp-DefaultStyle select': {
-            fontSize: '14px',
-          },
-          '& .jp-Toolbar > .jp-Toolbar-responsive-opener': {
-            display: 'none',
-          },
-          '& .jp-Toolbar-kernelName': {
-            display: 'none',
-          },
-          '& .jp-Cell': {
-            width: `calc(100% - ${props.cellSidebarMargin}px)`,
-          },
-          '& .jp-Cell .jp-CellHeader': {
-            position: 'absolute',
-            top: '-5px',
-            left: `${props.cellSidebarMargin + 10}px`,
-            height: 'auto',
-          },
-          '& .jp-Cell .dla-CellHeader-Container': {
-            padding: '4px 8px',
-            width: `${props.cellSidebarMargin + 10}px`,
-            marginLeft: 'auto',
-          },
-        }}
-      >
-        <>
-          {portals.map((portal: React.ReactPortal) => portal)}
-        </>
-        <Box>
-          {adapter &&
-            <LuminoNotebook adapter={adapter} />
-          }
+    <div style={{ height: "100vh", width: "100vw" }}>
+      <Box>
+        <Box
+          css={{
+            '& .dla-Jupyter-Notebook': {
+              height: 'calc(100vh - 230px)',
+              overflowY: 'hidden',
+            },
+            '& .jp-Notebook': {
+              flex: '1 1 auto !important',
+            },
+            '& .jp-NotebookPanel': {
+              // borderBottom: '1px solid #e0e0e0',
+            },
+            '& .jp-Toolbar': {
+              display: 'none',
+              zIndex: 0,
+            },
+            '& .jp-Toolbar .jp-HTMLSelect.jp-DefaultStyle select': {
+              fontSize: '14px',
+            },
+            '& .jp-Toolbar > .jp-Toolbar-responsive-opener': {
+              display: 'none',
+            },
+            '& .jp-Toolbar-kernelName': {
+              display: 'none',
+            },
+            '& .jp-Cell': {
+              width: `calc(100% - ${props.cellSidebarMargin}px)`,
+            },
+            '& .jp-Cell .jp-CellHeader': {
+              position: 'absolute',
+              top: '-5px',
+              left: `${props.cellSidebarMargin + 10}px`,
+              height: 'auto',
+            },
+            '& .jp-Cell .dla-CellHeader-Container': {
+              padding: '4px 8px',
+              width: `${props.cellSidebarMargin + 10}px`,
+              marginLeft: 'auto',
+            },
+          }}
+        >
+          <>
+            {portals.map((portal: React.ReactPortal) => portal)}
+          </>
+          <Box>
+            {adapter &&
+              <LuminoNotebook adapter={adapter} />
+            }
+          </Box>
         </Box>
       </Box>
-    </Box>
+    </div>
   )
 }
 
