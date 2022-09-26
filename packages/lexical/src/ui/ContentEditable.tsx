@@ -18,5 +18,4 @@ export const LexicalContentEditable = ({
   return <ContentEditable className={className || 'ContentEditable__root'} />;
 }
 
-export default ContentEditable;
-
+export default LexicalContentEditable;

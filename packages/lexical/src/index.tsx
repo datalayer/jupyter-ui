@@ -45,3 +45,5 @@ export * from "./ui/TextInput";
 // Utils.
 export * from "./utils/selection";
 export * from "./utils/join";
+export * from "./utils/canUseDOM";
+export * from "./utils/useLayoutEffect";

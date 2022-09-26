@@ -98,7 +98,7 @@ export const Notebook = (props: INotebookProps) => {
     }
   }, [uid, serviceManager, kernelManager, kernel, model]);
   return (
-    <div style={{ height: "100vh", width: "100vw" }} id="dla-Jupyter-Notebook">
+    <div style={{ height: "100vh", width: "100%" }} id="dla-Jupyter-Notebook">
       <Box
         css={{
           '& .dla-Jupyter-Notebook': {
