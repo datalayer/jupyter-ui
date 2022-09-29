@@ -1,10 +1,10 @@
 import { ServiceManager } from '@jupyterlab/services';
 
-class Services {
+export class Services {
   private _services: ServiceManager;
 
-  public constructor() {
-    this._services = new ServiceManager();
+  public constructor(services: ServiceManager) {
+    this._services = services;
   }
   
   public kernelspecs() {
