@@ -102,7 +102,7 @@ export const Notebook = (props: INotebookProps) => {
       <Box
         css={{
           '& .dla-Jupyter-Notebook': {
-            height: 'calc(100vh - 230px)',
+            height: '100vh',
             width: '100%',
             overflowY: 'hidden',
           },
