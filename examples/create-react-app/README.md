@@ -98,6 +98,7 @@ Therefor, for now, we ask to pin the following resolutions.
     "**/@jupyterlab/application": "4.0.0-alpha.13",
     "**/@jupyterlab/apputils": "4.0.0-alpha.13",
     "**/@jupyterlab/cells": "4.0.0-alpha.13",
+    "**/@jupyterlab/codeeditor": "4.0.0-alpha.13",
     "**/@jupyterlab/codemirror": "4.0.0-alpha.13",
     "**/@jupyterlab/completer": "4.0.0-alpha.13",
     "**/@jupyterlab/console": "4.0.0-alpha.13",
@@ -112,6 +113,7 @@ Therefor, for now, we ask to pin the following resolutions.
     "**/@jupyterlab/javascript-extension": "4.0.0-alpha.13",
     "**/@jupyterlab/json-extension": "4.0.0-alpha.13",
     "**/@jupyterlab/launcher": "4.0.0-alpha.13",
+    "**/@jupyterlab/lsp": "4.0.0-alpha.13",
     "**/@jupyterlab/mainmenu": "4.0.0-alpha.13",
     "**/@jupyterlab/markdownviewer": "4.0.0-alpha.13",
     "**/@jupyterlab/markedparser-extension": "4.0.0-alpha.13",
@@ -120,6 +122,7 @@ Therefor, for now, we ask to pin the following resolutions.
     "**/@jupyterlab/nbformat": "4.0.0-alpha.13",
     "**/@jupyterlab/notebook": "4.0.0-alpha.13",
     "**/@jupyterlab/observables": "5.0.0-alpha.13",
+    "**/@jupyterlab/outputarea": "4.0.0-alpha.13",
     "**/@jupyterlab/rendermime": "4.0.0-alpha.13",
     "**/@jupyterlab/rendermime-extension": "4.0.0-alpha.13",
     "**/@jupyterlab/rendermime-interfaces": "3.8.0-alpha.13",
@@ -132,7 +135,22 @@ Therefor, for now, we ask to pin the following resolutions.
     "**/@jupyterlab/translation": "4.0.0-alpha.13",
     "**/@jupyterlab/ui-components": "4.0.0-alpha.28",
     "**/@lumino/default-theme": "1.0.0-alpha.4",
-    "**/@lumino/*": "2.0.0-alpha.4"
+    "**/@lumino/algorithm": "2.0.0-alpha.4",
+    "**/@lumino/application": "2.0.0-alpha.4",
+    "**/@lumino/collections": "2.0.0-alpha.4",
+    "**/@lumino/commands": "2.0.0-alpha.4",
+    "**/@lumino/coreutils": "2.0.0-alpha.4",
+    "**/@lumino/default-theme": "1.0.0-alpha.4",
+    "**/@lumino/disposable": "2.0.0-alpha.4",
+    "**/@lumino/domutils": "2.0.0-alpha.4",
+    "**/@lumino/dragdrop": "2.0.0-alpha.4",
+    "**/@lumino/keyboard": "2.0.0-alpha.4",
+    "**/@lumino/messaging": "2.0.0-alpha.4",
+    "**/@lumino/polling": "2.0.0-alpha.4",
+    "**/@lumino/properties": "2.0.0-alpha.4",
+    "**/@lumino/signaling": "2.0.0-alpha.4",
+    "**/@lumino/virtualdom": "2.0.0-alpha.4",
+    "**/@lumino/widgets": "2.0.0-alpha.4"
   }
 ```
 

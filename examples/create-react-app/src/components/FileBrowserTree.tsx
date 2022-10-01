@@ -3,7 +3,7 @@ import TreeView from '@mui/lab/TreeView';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import TreeItem from '@mui/lab/TreeItem';
-import Services from '@datalayer/jupyter-react/lib/jupyter/services/Services';
+import { useJupyter, Services } from '@datalayer/jupyter-react';
 
 interface RenderTree {
   id: string;
@@ -19,7 +19,8 @@ const initialTree: RenderTree = {
 export const FileBrowserTree = () => {
   const [tree, setTree] = useState(initialTree);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
-  const [services, _] = useState(new Services());
+  const { serviceManager } = useJupyter();
+  const [services, _] = useState(new Services(serviceManager!));
   const loadPath = (subTree: RenderTree, path: string[]) => {
     const loadFolderItems = (path: string[]): Promise<RenderTree[]> => {
       const folderItems = services.contents().get(path.join('/')).then(res => {
