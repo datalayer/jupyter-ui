@@ -13,7 +13,9 @@ import Console from "../components/console/Console";
 import Terminal from "../components/terminal/Terminal";
 import { selectCell, cellActions } from '../components/cell/CellState';
 import { notebookActions } from '../components/notebook/NotebookState';
-
+import NotebookToolbarAdvanced from "./NotebookToolbar";
+import NotebookToolbarAutoSave from "./NotebookToolbarAutoSave";
+import CellSidebarNew from '../components/notebook/cell/sidebar/CellSidebarNew';
 import "./../../style/index.css";
 
 const SOURCE_1 = '1+1'
@@ -151,7 +153,17 @@ root.render(
       path="test.ipynb"
       // model={notebookExample as INotebookContent}
       CellSidebar={CellSidebarDefault}
-      />
+    />
+    <Notebook
+      path="test.ipynb"
+      // model={notebookExample as INotebookContent}
+      CellSidebar={CellSidebarNew}
+      Toolbar={NotebookToolbarAdvanced}
+      // Height - Toolbar Height
+      height='calc(100vh - 2.6rem)'
+      width='100vw'
+      cellSidebarMargin={60}
+    />
     <hr />
     <FileBrowser />
     <hr />

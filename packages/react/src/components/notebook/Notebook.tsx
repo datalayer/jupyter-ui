@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Box } from "@primer/react";
 import { Cell, ICellModel } from '@jupyterlab/cells';
 import * as nbformat from '@jupyterlab/nbformat';
@@ -11,7 +11,6 @@ import { asObservable } from './../../jupyter/lumino/LuminoObservable';
 import CellMetadataEditor from './cell/metadata/CellMetadataEditor';
 import NotebookAdapter from './NotebookAdapter';
 import { notebookActions, selectNotebookPortals, notebookEpics, notebookReducer } from './NotebookState';
-
 import './Notebook.css';
 
 export type INotebookProps = {
@@ -25,6 +24,9 @@ export type INotebookProps = {
   cellMetadataPanel: boolean;
   CellSidebar?: (props: any) => JSX.Element;
   cellSidebarMargin: number;
+  Toolbar?: (props: any) => JSX.Element;
+  height?: string;
+  width?: string;
 }
 
 const LuminoNotebook = (props: { adapter: NotebookAdapter }) => {
@@ -45,9 +47,11 @@ export const Notebook = (props: INotebookProps) => {
   const dispatch = useDispatch();
   const portals = selectNotebookPortals();
   const [adapter, setAdapter] = useState<NotebookAdapter>();
+
   useMemo(() => {
     (injectableStore as any).inject('notebook', notebookReducer, notebookEpics);
   }, []);
+
   useEffect(() => {
     if (serviceManager && kernelManager && kernel) {
       //      const kernel = readOnly ? undefined : new Kernel({ kernelManager });
@@ -97,12 +101,16 @@ export const Notebook = (props: INotebookProps) => {
       }
     }
   }, [uid, serviceManager, kernelManager, kernel, model]);
+
   return (
-    <div style={{ height: "100vh", width: "100%" }} id="dla-Jupyter-Notebook">
-      <Box
+    <div style={{ height: props.height, width: '100%', position: "relative" }} id="dla-Jupyter-Notebook">
+      {
+        props.Toolbar && <props.Toolbar />
+      }
+      <Box className="box-notebook"
         css={{
           '& .dla-Jupyter-Notebook': {
-            height: '100vh',
+            height: props.height,
             width: '100%',
             overflowY: 'hidden',
           },
@@ -139,10 +147,27 @@ export const Notebook = (props: INotebookProps) => {
             width: `${props.cellSidebarMargin + 10}px`,
             marginLeft: 'auto',
           },
+          '.box-notebook': {
+            position: 'relative',
+            // height: props.Toolbar ? `calc(${props.height} - 2.6rem) !important` : props.height,
+            // top: '2.6rem'
+            // height: 'calc(100% - 2.6rem) !important',
+            height: `calc(100% - 2.6rem) !important`,
+          },
+          // '.Box-sc-1gh2r6s-0 .box-notebook .css-jz7k8d-Notebook': {
+          //   // height: props.Toolbar ? `calc(${props.height} - 2.6rem) !important` : props.height,
+          //   height: `calc(100% - 2.6rem) !important`,
+          // },
+          // 'div.Box-sc-1gh2r6s-0': {
+          //   height: `calc(100% - 2.6rem) !important`,
+          // }
+
         }}
       >
         <>
-          {portals.map((portal: React.ReactPortal) => portal)}
+          {portals.map((portal: React.ReactPortal) => (
+            (portal)
+          ))}
         </>
         <Box>
           {adapter &&
@@ -150,7 +175,7 @@ export const Notebook = (props: INotebookProps) => {
           }
         </Box>
       </Box>
-    </div>
+    </div >
   )
 }
 
@@ -160,6 +185,8 @@ Notebook.defaultProps = {
   nbgrader: false,
   cellMetadataPanel: false,
   cellSidebarMargin: 120,
+  height: '100vh',
+  width: '100vw'
 } as Partial<INotebookProps>;
 
 export default Notebook;
