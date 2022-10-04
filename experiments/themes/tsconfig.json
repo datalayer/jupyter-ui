@@ -8,6 +8,7 @@
     "**/node_modules"
   ],
   "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
     "baseUrl": "/",
     "rootDir": "./src",
     "allowSyntheticDefaultImports": true,
