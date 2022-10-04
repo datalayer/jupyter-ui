@@ -9,6 +9,7 @@
     "src/example"
   ],
   "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
     "baseUrl": "/",
     "rootDir": "./src",
     "allowSyntheticDefaultImports": true,

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
     "declaration": true,
     "esModuleInterop":true,
     "lib": ["es2015", "dom"],

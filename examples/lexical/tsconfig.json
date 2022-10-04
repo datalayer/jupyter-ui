@@ -3,6 +3,7 @@
     "./src/**/*"
   ],
   "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
     "strict": true,
     "downlevelIteration": true,
     "esModuleInterop": true,

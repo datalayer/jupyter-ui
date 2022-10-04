@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
     "target": "es2015",
     "module": "commonjs",
     "declaration": true,
