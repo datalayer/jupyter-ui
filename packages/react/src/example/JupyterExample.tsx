@@ -1,7 +1,7 @@
 import { useDispatch } from "react-redux";
 import { createRoot } from 'react-dom/client';
 import { Box, Button, ButtonGroup } from '@primer/react';
-import { IOutput } from '@jupyterlab/nbformat';
+import { IOutput, INotebookContent } from '@jupyterlab/nbformat';
 import Jupyter from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
 import Cell from '../components/cell/Cell';
@@ -13,6 +13,7 @@ import Console from "../components/console/Console";
 import Terminal from "../components/terminal/Terminal";
 import { selectCell, cellActions } from '../components/cell/CellState';
 import { notebookActions } from '../components/notebook/NotebookState';
+import notebookExample from './NotebookExample.ipynb.json';
 
 import "./../../style/index.css";
 
@@ -82,26 +83,24 @@ const CellToolbar = () => {
 const NotebookToolbar = () => {
   const dispatch = useDispatch();
   return (
-    <>
-      <Box display="flex">
-        <ButtonGroup>
-          <Button
-            variant="default"
-            size="small"
-            onClick={() => dispatch(notebookActions.save.started(new Date()))}
-          >
-            Save the notebook
-          </Button>
-          <Button
-            variant="default"
-            size="small"
-            onClick={() => dispatch(notebookActions.runAll.started())}
-          >
-            Run all
-          </Button>
-        </ButtonGroup>
-      </Box>
-    </>
+    <Box display="flex">
+      <ButtonGroup>
+        <Button
+          variant="default"
+          size="small"
+          onClick={() => dispatch(notebookActions.save.started(new Date()))}
+        >
+          Save the notebook
+        </Button>
+        <Button
+          variant="default"
+          size="small"
+          onClick={() => dispatch(notebookActions.runAll.started())}
+        >
+          Run all
+        </Button>
+      </ButtonGroup>
+    </Box>
   );
 }
 
@@ -146,12 +145,13 @@ root.render(
     <hr />
     <Outputs />
     <hr />
-    <NotebookToolbar />
-    <Notebook
-      path="test.ipynb"
-      // model={notebookExample as INotebookContent}
-      CellSidebar={CellSidebarDefault}
+    <div style={{maxWidth: '1000px'}}>
+      <NotebookToolbar />
+      <Notebook
+        model={notebookExample as INotebookContent}
+        CellSidebar={CellSidebarDefault}
       />
+    </div>
     <hr />
     <FileBrowser />
     <hr />

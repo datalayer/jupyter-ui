@@ -68,6 +68,7 @@ type JupyterContextProps = {
   wsUrl: string;
   lite: boolean;
   startDefaultKernel: boolean,
+  defaultKernelName: string,
   injectableStore: any;
 };
 /*
@@ -84,11 +85,12 @@ export const JupyterContextProvider: React.FC<{
   children: React.ReactNode,
   lite: boolean,
   startDefaultKernel: boolean,
+  defaultKernelName: string,
   variant: string,
   baseUrl: string,
   wsUrl: string,
   injectableStore: any
-}> = ({ children, lite, startDefaultKernel, variant, baseUrl, wsUrl, injectableStore }: JupyterContextProps) => {
+}> = ({children, lite, startDefaultKernel, defaultKernelName, variant, baseUrl, wsUrl, injectableStore }: JupyterContextProps) => {
   const [_, setVariant] = useState('default');
   const [serverSettings] = useState<ServerConnection.ISettings>(ServerConnection.makeSettings({
     baseUrl,
@@ -125,7 +127,7 @@ export const JupyterContextProvider: React.FC<{
       kernelManager.ready.then(() => {
         if (startDefaultKernel) {
 //          console.log('Kernel Manager is ready.');
-          const kernel = new Kernel({ kernelManager });
+          const kernel = new Kernel({ kernelManager, kernelName: defaultKernelName });
           kernel.getJupyterKernel().then(k => {
             console.log(`Kernel started with session id:client_id ${k.id}:${k.clientId}`);
             k.info.then(info => {
