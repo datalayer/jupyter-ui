@@ -127,7 +127,7 @@ const Gallery = () => {
   const classes = useStyles();
   const [value, setValue] = useState(0);
   const kernel = useMemo(() => {
-    if (kernelManager) return new Kernel({ kernelManager });
+    if (kernelManager) return new Kernel({ kernelManager, kernelName: 'python3' });
   }, [kernelManager]);
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);

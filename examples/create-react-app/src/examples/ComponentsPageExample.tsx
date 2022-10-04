@@ -49,7 +49,7 @@ plt.show()`;
 const AllExample = () => {
   const { kernelManager } = useJupyter();
   const kernel = useMemo(() => {
-    if (kernelManager) return new Kernel({ kernelManager });
+    if (kernelManager) return new Kernel({ kernelManager, kernelName: 'python3' });
   }, [kernelManager]);
   useEffect(() => { window.scrollTo(0, 0); }, []);
   return <>

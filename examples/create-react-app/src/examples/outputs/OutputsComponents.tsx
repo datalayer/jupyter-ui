@@ -133,7 +133,7 @@ const OUTPUT_3 = [
 export const OutputsComponents = () => {
   const { kernelManager } = useJupyter();
   const kernel = useMemo(() => {
-    if (kernelManager) return new Kernel({ kernelManager });
+    if (kernelManager) return new Kernel({ kernelManager, kernelName: 'python3' });
   }, [kernelManager]);
   return  <>
     <h3>Simple Output</h3>

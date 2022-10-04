@@ -15,7 +15,7 @@ import { KernelManager } from '@jupyterlab/services';
 
 const getKernel = (kernelManager: KernelManager | undefined): Kernel | undefined => {
   if (kernelManager) {
-    const kernel = new Kernel({ kernelManager });
+    const kernel = new Kernel({ kernelManager, kernelName: 'python3' });
     return kernel;  
   }
 }
