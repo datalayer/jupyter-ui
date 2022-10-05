@@ -35,6 +35,7 @@ export type JupyterProps = {
   children: React.ReactNode;
   lite: boolean;
   startDefaultKernel: boolean;
+  defaultKernelName: string;
   injectableStore?: Store | any;
   collaborative?: boolean;
   jupyterServerHttpUrl?: string;
@@ -65,7 +66,7 @@ const ErrorFallback = ({error, resetErrorBoundary}: any) => {
  * are available.
  */
 export const Jupyter = (props: JupyterProps) => {
-  const { lite, startDefaultKernel } = props;
+  const { lite, startDefaultKernel, defaultKernelName } = props;
   loadJupyterConfig(props);
   return (
     <ErrorBoundary
@@ -77,6 +78,7 @@ export const Jupyter = (props: JupyterProps) => {
           <JupyterContextProvider
             lite={lite}
             startDefaultKernel={startDefaultKernel}
+            defaultKernelName={defaultKernelName}
             baseUrl={getJupyterServerHttpUrl()}
             wsUrl={getJupyterServerWsUrl()}
             injectableStore={props.injectableStore || injectableStore}
@@ -93,6 +95,7 @@ export const Jupyter = (props: JupyterProps) => {
 Jupyter.defaultProps = {
   lite: false,
   startDefaultKernel: true,
+  defaultKernelName: 'python3',
   collaborative: false,
   terminals: false,
 }

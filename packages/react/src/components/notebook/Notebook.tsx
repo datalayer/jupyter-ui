@@ -43,7 +43,7 @@ const LuminoNotebook = (props: { adapter: NotebookAdapter }) => {
  */
 export const Notebook = (props: INotebookProps) => {
   const { serviceManager, kernel, kernelManager, injectableStore } = useJupyter();
-  const { readOnly, cellMetadataPanel, nbgrader, uid, model } = props;
+  const { readOnly, cellMetadataPanel, nbgrader, uid, model, height } = props;
   const dispatch = useDispatch();
   const portals = selectNotebookPortals();
   const [adapter, setAdapter] = useState<NotebookAdapter>();
@@ -54,7 +54,7 @@ export const Notebook = (props: INotebookProps) => {
 
   useEffect(() => {
     if (serviceManager && kernelManager && kernel) {
-      //      const kernel = readOnly ? undefined : new Kernel({ kernelManager });
+      //  const kernel = readOnly ? undefined : new Kernel({ kernelManager });
       const adapter = new NotebookAdapter(
         { ...props, kernel },
         injectableStore,
@@ -112,6 +112,7 @@ export const Notebook = (props: INotebookProps) => {
           '& .dla-Jupyter-Notebook': {
             height: props.height,
             width: '100%',
+            height,
             overflowY: 'hidden',
           },
           '& .jp-Notebook': {

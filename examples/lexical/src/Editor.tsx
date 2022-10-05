@@ -31,7 +31,7 @@ import ToolbarPlugin from "./plugins/ToolbarPlugin";
 import { useLexical } from "./context/LexicalContext";
 
 import "./Editor.css";
-import "./Rich.css";
+import "./rich.css";
 import "./Jupyter.css";
 
 type Props = {

@@ -3,17 +3,18 @@ import { UUID } from '@lumino/coreutils';
 
 export type IKernelProps = {
   kernelManager: KernelManager;
-  kernelType?: string;
+  kernelName: string;
 }
 
 export class Kernel {
   private _kernelManager: KernelManager;
-  private _kernelType: string;
+  private _kernelName: string;
   private _kernel: Promise<JupyterKernel.IKernelConnection>;
 
   public constructor(options: IKernelProps) {
     this._kernelManager = options.kernelManager;
-    this._kernelType = options.kernelType || 'python3';
+    this._kernelName = options.kernelName;
+    // Request the effective Jupyter Kernel.
     this._kernel = this.requestKernel();
   }
 
@@ -29,7 +30,7 @@ export class Kernel {
     const session = await sessionManager.startNew({
       path: randomName,
       name: randomName,
-      type: this._kernelType,
+      type: this._kernelName,
     });
     await session.kernel!.info;
     return session.kernel!;
