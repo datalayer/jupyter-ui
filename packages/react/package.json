@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyter-react",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "Jupyter React",
   "license": "MIT",
   "private": false,
@@ -64,6 +64,7 @@
     "@jupyterlab/rendermime-extension": "4.0.0-alpha.13",
     "@jupyterlab/rendermime-interfaces": "3.8.0-alpha.13",
     "@jupyterlab/services": "7.0.0-alpha.13",
+    "@jupyterlab/shared-models": "4.0.0-alpha.13",
     "@jupyterlab/terminal": "4.0.0-alpha.13",
     "@jupyterlab/theme-dark-extension": "4.0.0-alpha.13",
     "@jupyterlab/theme-light-extension": "4.0.0-alpha.13",
