@@ -115,10 +115,11 @@ const NotebookToolbar = () => {
 const NotebookKernelChange = () => {
   const { kernelManager } = useJupyter();
   const changeKernel = () => {
-    const kernel = new Kernel({ kernelManager, kernelName: "pythonqsdf" });
-    kernel.getJupyterKernel().then((kernelConnection) => {
-      //      setKernel(kernel);
-    });
+    if (kernelManager) {
+      const kernel = new Kernel({ kernelManager, kernelName: "pythonqsdf" });
+      kernel.getJupyterKernel().then((kernelConnection) => {
+      });
+    }
   }
   return (
     <>

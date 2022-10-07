@@ -106,6 +106,7 @@ export enum ActionType {
   CHANGE_CELL_TYPE = "notebook/CHANGE_CELL_TYPE",
   CHANGE_KERNEL = "notebook/CHANGE_KERNEL",
   DELETE = "notebook/DELETE",
+  DISPOSE = "notebook/DISPOSE",
   INSERT_ABOVE = "notebook/INSERT_ABOVE",
   INSERT_BELOW = "notebook/INSERT_BELOW",
   INTERRUPT = "notebook/INTERRUPT",
@@ -117,7 +118,7 @@ export enum ActionType {
   RUN_ALL = "notebook/RUN_ALL",
   SAVE = "notebook/SAVE",
   SET_PORTALS = "notebook/SET_PORTALS",
-  SET_PORTAL_DISPLAY = 'notebook/SET_PORTAL',
+  SET_PORTAL_DISPLAY = 'notebook/SET_PORTAL_DISPLAY',
   UPDATE = "notebook/UPDATE",
 }
 
@@ -194,6 +195,9 @@ export const notebookActions = {
   ),
   setPortalDisplay: actionCreator<PortalDisplayUid>(
     ActionType.SET_PORTAL_DISPLAY
+  ),
+  dispose: actionCreator<string>(
+    ActionType.DISPOSE
   ),
   save: actionCreator.async<DateUid, DateUid>(
     ActionType.SAVE
@@ -433,6 +437,14 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
     if (n) {
       n.portals = n.portals.concat(portalsUid.portals);
     }
+    return {
+      ...state,
+      notebooks,
+    }
+  })
+  .case(notebookActions.dispose, (state: INotebooksState, uid: string) => {
+    const notebooks = state.notebooks;
+    notebooks.delete(uid);
     return {
       ...state,
       notebooks,

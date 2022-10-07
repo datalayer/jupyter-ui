@@ -93,8 +93,10 @@ export const Notebook = (props: INotebookProps) => {
         });
       });
       return () => {
+        adapter.dispose();
         setAdapter(undefined);
         dispatch(notebookActions.setPortalDisplay({ uid, portalDisplay: undefined }));
+        dispatch(notebookActions.dispose(uid));
       }
     }
   }, [uid, serviceManager, kernelManager, effectiveKernel]);
