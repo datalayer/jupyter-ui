@@ -16,11 +16,13 @@ const NotebookKernelChange = () => {
   const { kernelManager } = useJupyter();
   const dispatch = useDispatch();
   const changeKernel = () => {
-    const kernel = new Kernel({ kernelManager, kernelName: "python" });
-    kernel.getJupyterKernel().then((kernelConnection) => {
-      dispatch(notebookActions.changeKernel({ uid: NOTEBOOK_UID, kernel }));
-      alert('The notebook kernel is changed.')
-    });
+    if (kernelManager) {
+      const kernel = new Kernel({ kernelManager, kernelName: "python" });
+      kernel.getJupyterKernel().then((kernelConnection) => {
+        dispatch(notebookActions.changeKernel({ uid: NOTEBOOK_UID, kernel }));
+        alert('The notebook kernel is changed.')
+      });
+    }
   }
   return (
     <>
