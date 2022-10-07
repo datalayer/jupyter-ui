@@ -1,4 +1,5 @@
 import { Kernel as JupyterKernel, KernelManager, SessionManager } from '@jupyterlab/services';
+import { ISessionConnection } from '@jupyterlab/services/lib/session/session';
 import { UUID } from '@lumino/coreutils';
 
 export type IKernelProps = {
@@ -9,6 +10,8 @@ export type IKernelProps = {
 export class Kernel {
   private _kernelManager: KernelManager;
   private _kernelName: string;
+  private _id: string;
+  private _session: ISessionConnection;
   private _kernel: Promise<JupyterKernel.IKernelConnection>;
 
   public constructor(options: IKernelProps) {
@@ -27,17 +30,27 @@ export class Kernel {
     });
     await sessionManager.ready;
     const randomName = UUID.uuid4();
-    const session = await sessionManager.startNew({
+    this._session = await sessionManager.startNew({
       path: randomName,
       name: randomName,
-      type: this._kernelName,
+      type: this._kernelName,      
     });
-    await session.kernel!.info;
-    return session.kernel!;
+    await this._session.kernel!.info;
+    this._id = this._session.kernel!.id;
+    return this._session.kernel!;
   }
 
   public getJupyterKernel(): Promise<JupyterKernel.IKernelConnection> {
     return this._kernel;
+  }
+
+  get id(): string {
+    return this._id;
+  }
+
+  shutdown() {
+    this._session.kernel?.shutdown();
+//    this.getJupyterKernel().then(k => k.dispose());
   }
 
 }

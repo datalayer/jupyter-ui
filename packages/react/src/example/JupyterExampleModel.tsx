@@ -13,8 +13,7 @@ import "./../../style/index.css";
 const NOTEBOOK_UID = 'notebook-id-model'
 
 const NotebookModelChange = () => {
-  const [uid, setUid] = useState(1)
-  const [model, setModel] = useState<INotebookContent>(notebookExample1)
+  const [model, setModel] = useState<INotebookContent>(notebookExample1);
   const changeModel = () => {
     setModel(notebookExample2);
   }

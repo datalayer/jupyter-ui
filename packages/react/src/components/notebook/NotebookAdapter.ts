@@ -149,7 +149,7 @@ export class NotebookAdapter {
 //        id: this.kernel?.kernelId,
         shouldStart: false,
         autoStartDefault: false,
-//        shutdownOnDispose: false,
+        shutdownOnDispose: false,
       }
     });
     this._notebookPanel = documentRegistry.getWidgetFactory('notebook')?.createNew(this._context) as NotebookPanel;
@@ -370,7 +370,6 @@ export class NotebookAdapter {
   dispose = () => {
     this._context?.dispose();
     this._notebookPanel?.dispose();
-//    this.kernel?.getJupyterKernel().then(k => k.shutdown());
   }
 
 }
