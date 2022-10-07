@@ -16,16 +16,17 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 
 export const CellSidebarNew = (props: CellSidebarProps) => {
+  const { notebookId } = props;
   const [visible, setVisible] = useState(false);
   const dispatch = useDispatch();
-  const activeCell = selectActiveCell();
+  const activeCell = selectActiveCell(notebookId);
   const layout = (activeCell?.layout);
   if (layout) {
     const cellWidget = (layout as PanelLayout).widgets[0];
-    if (!visible && (cellWidget?.node.id === props.id)) {
+    if (!visible && (cellWidget?.node.id === props.cellId)) {
       setVisible(true);
     }
-    if (visible && (cellWidget?.node.id !== props.id)) {
+    if (visible && (cellWidget?.node.id !== props.cellId)) {
       setVisible(false);
     }
   }
@@ -43,19 +44,19 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
         }}
       >
         <span style={{ display: "flex" }}>
-          <IconButton size="small" color="secondary" aria-label="Run Cell" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.run.started()) }}
+          <IconButton size="small" color="secondary" aria-label="Run Cell" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.run.started(notebookId)) }}
             style={{ color: 'grey' }}>
             <PlayArrowIcon fontSize="inherit" />
           </IconButton>
         </span>
         <span style={{ display: "flex" }}>
-          <IconButton size="small" color="secondary" aria-label="Add Code Above" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertAbove.started("code")); }}
+          <IconButton size="small" color="secondary" aria-label="Add Code Above" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertAbove.started({ uid: notebookId, cellType: "code" })); }}
             style={{ color: 'grey' }}>
             <KeyboardArrowUpIcon fontSize="inherit" />
           </IconButton>
         </span>
         <span style={{ display: "flex" }}>
-          <IconButton size="small" color="secondary" aria-label="Run Cell" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertAbove.started("markdown")); }}
+          <IconButton size="small" color="secondary" aria-label="Run Cell" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertAbove.started({ uid: notebookId, cellType: "markdown" })); }}
             style={{ color: 'grey' }}>
             <KeyboardDoubleArrowUpIcon fontSize="inherit" />
           </IconButton>
@@ -78,19 +79,19 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
         */}
         </span>
         <span style={{ display: "flex" }}>
-          <IconButton size="small" color="secondary" aria-label="Run Cell" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertBelow.started("markdown")); }}
+          <IconButton size="small" color="secondary" aria-label="Run Cell" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "markdown" })); }}
             style={{ color: 'grey' }}>
             <KeyboardDoubleArrowDownIcon fontSize="inherit" />
           </IconButton>
         </span>
         <span style={{ display: "flex" }}>
-          <IconButton size="small" color="secondary" aria-label="Run Cell" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertBelow.started("code")); }}
+          <IconButton size="small" color="secondary" aria-label="Run Cell" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "code" })); }}
             style={{ color: 'grey' }}>
             <KeyboardArrowDownIcon fontSize="inherit" />
           </IconButton>
         </span>
         <span style={{ display: "flex" }}>
-          <IconButton size="small" color="error" aria-label="Delete" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.delete.started()) }}>
+          <IconButton size="small" color="error" aria-label="Delete" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.delete.started(notebookId)) }}>
             <DeleteIcon fontSize="inherit" style={{ color: '#ef9a9a' }} />
           </IconButton>
         </span>

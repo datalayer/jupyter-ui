@@ -15,12 +15,13 @@ import { Terminal, notebookActions, selectNotebook } from '@datalayer/jupyter-re
 
 const terminal = <Terminal />
 
-const NotebookToolbar2 = () => {
+const NotebookToolbar = (props: { notebookId: string }) => {
+  const { notebookId } = props;
   const [state, setState] = useState({
     terminal: false,
   });
   const dispatch = useDispatch();
-  const notebook = selectNotebook();
+  const notebook = selectNotebook(notebookId);
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setState({ ...state, [event.target.name]: event.target.checked });
   };
@@ -33,28 +34,28 @@ const NotebookToolbar2 = () => {
               variant="text"
               color="primary"
               startIcon={<AddCircleOutlineIcon />}
-              onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertBelow.started("raw")) }}
-              >
-                Raw
+              onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "raw" })) }}
+            >
+              Raw
             </Button>
             <Button
               variant="text"
               color="primary"
               startIcon={<AddCircleOutlineIcon />}
-              onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertBelow.started("markdown")) }}
-              >
-                Markdown
+              onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "markdown" })) }}
+            >
+              Markdown
             </Button>
-            <Button 
+            <Button
               variant="text"
               color="primary"
               startIcon={<AddCircleOutlineIcon />}
-              onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertBelow.started("code")) }}
-              >
-                Code
+              onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "code" })) }}
+            >
+              Code
             </Button>
-            <FormGroup row style={{ paddingLeft: 10}}>
-              <FormControlLabel                
+            <FormGroup row style={{ paddingLeft: 10 }}>
+              <FormControlLabel
                 control={<Switch checked={state.terminal} onChange={handleChange} name="terminal" />}
                 label={<Typography variant="body2" display="block">Terminal</Typography>}
               />
@@ -63,42 +64,42 @@ const NotebookToolbar2 = () => {
         </Grid>
         <Grid item xs={6}>
           <Grid container justifyItems="flex-end">
-            <Button 
+            <Button
               variant="outlined"
               color="primary"
               startIcon={<SaveOutlined />}
-              onClick={() => dispatch(notebookActions.save.started(new Date()))}
-              >
-                Save
+              onClick={() => dispatch(notebookActions.save.started({ uid: notebookId, date: new Date() }))}
+            >
+              Save
             </Button>
-            {(notebook.kernelStatus === 'idle') &&
-              <Button 
+            {(notebook?.kernelStatus === 'idle') &&
+              <Button
                 variant="outlined"
                 color="primary"
                 startIcon={<PlayCircleOutlineIcon />}
-                onClick={(e) => { e.preventDefault(); dispatch(notebookActions.runAll.started()) }}
-                >
-                  Run all
+                onClick={(e) => { e.preventDefault(); dispatch(notebookActions.runAll.started(notebookId)) }}
+              >
+                Run all
               </Button>
-             }
-            {(notebook.kernelStatus === 'busy') &&
-              <Button 
+            }
+            {(notebook?.kernelStatus === 'busy') &&
+              <Button
                 variant="outlined"
                 color="secondary"
                 startIcon={<StopOutlined />}
-                onClick={(e) =>  { e.preventDefault(); dispatch(notebookActions.interrupt.started()) }}
-                >
-                  Stop
+                onClick={(e) => { e.preventDefault(); dispatch(notebookActions.interrupt.started(notebookId)) }}
+              >
+                Stop
               </Button>
-             }
-            {((notebook.kernelStatus !== 'idle') && (notebook.kernelStatus !== 'busy')) &&
-              <Button 
+            }
+            {((notebook?.kernelStatus !== 'idle') && (notebook?.kernelStatus !== 'busy')) &&
+              <Button
                 variant="outlined"
                 color="primary"
                 startIcon={<QuestionAnswerOutlined />}
-                >
+              >
               </Button>
-             }
+            }
           </Grid>
         </Grid>
       </Grid>
@@ -107,4 +108,4 @@ const NotebookToolbar2 = () => {
   )
 }
 
-export default NotebookToolbar2;
+export default NotebookToolbar;

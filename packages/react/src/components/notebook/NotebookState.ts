@@ -1,16 +1,17 @@
 import { ReactPortal } from "react";
 import { useSelector } from "react-redux";
-import actionCreatorFactory, { AnyAction, Action, Success } from "typescript-fsa";
+import actionCreatorFactory, { Action, Success } from "typescript-fsa";
 import { combineEpics, Epic } from "redux-observable";
 import { reducerWithInitialState } from "typescript-fsa-reducers";
 import { ignoreElements, map, tap } from "rxjs/operators";
 import { ofAction } from "@datalayer/typescript-fsa-redux-observable";
 import * as nbformat from "@jupyterlab/nbformat";
-import { INotebookModel, NotebookActions } from "@jupyterlab/notebook";
+import { INotebookModel } from "@jupyterlab/notebook";
 import { NotebookChange } from "@jupyterlab/shared-models";
 import { Cell, ICellModel } from "@jupyterlab/cells";
-import { Kernel } from "@jupyterlab/services";
+import { Kernel as JupyterKernel } from "@jupyterlab/services";
 import { cmdIds } from "./NotebookCommands";
+import Kernel from "./../../jupyter/services/kernel/Kernel";
 import NotebookAdapter from "./NotebookAdapter";
 import { IJupyterReactState } from "./../../state/State";
 
@@ -19,159 +20,203 @@ type PortalDisplay = {
   pinned: boolean;
 }
 
-/* State */
-
-export interface INotebookState {
+export type INotebookState = {
   model?: INotebookModel;
-  activeCell?: Cell<ICellModel>;
-  kernelStatus?: Kernel.Status;
-  notebookChange?: NotebookChange;
-  portals: ReactPortal[];
   adapter?: NotebookAdapter;
   saveRequest?: Date;
-  portal?: PortalDisplay;
+  activeCell?: Cell<ICellModel>;
+  kernelStatus?: JupyterKernel.Status;
+  notebookChange?: NotebookChange;
+  portals: ReactPortal[];
+  portalDisplay?: PortalDisplay;
 }
 
-export const notebookInitialState: INotebookState = {
-  model: undefined,
-  activeCell: undefined,
-  kernelStatus: undefined,
-  notebookChange: undefined,
-  portals: [],
-  adapter: undefined,
-  saveRequest: undefined,
+/* State */
+
+export interface INotebooksState {
+  notebooks: Map<string, INotebookState>;
 }
+
+export const notebookInitialState: INotebooksState = {
+  notebooks: new Map<string, INotebookState>(),
+}
+
 
 /* Selectors */
 
-export const selectNotebook = (): INotebookState =>
+export const selectNotebook = (uid: string): INotebookState | undefined =>
   useSelector((state: IJupyterReactState) => {
     if (state.notebook) {
-      return state.notebook;
+      return state.notebook.notebooks.get(uid);
     }
-    return notebookInitialState;
+    return undefined;
   }
-);
+  );
 
-export const selectNotebookModel = (): INotebookModel | undefined =>
+export const selectNotebookModel = (uid: string): INotebookModel | undefined =>
   useSelector((state: IJupyterReactState) => {
     if (state.notebook) {
-      return state.notebook.model;
+      return state.notebook.notebooks.get(uid)?.model;
     }
-    return notebookInitialState.model;
+    return undefined;
   }
-);
+  );
 
-export const selectActiveCell = (): Cell<ICellModel> | undefined =>
+export const selectActiveCell = (uid: string): Cell<ICellModel> | undefined =>
   useSelector((state: IJupyterReactState) => {
     if (state.notebook) {
-      return state.notebook.activeCell;
+      return state.notebook.notebooks.get(uid)?.activeCell;
     }
-    return notebookInitialState.activeCell;
+    return undefined;
   }
-);
+  );
 
-export const selectNotebookPortals = () =>
+export const selectNotebookPortals = (uid: string) =>
   useSelector((state: IJupyterReactState) => {
     if (state.notebook) {
-      return state.notebook.portals;
+      return state.notebook.notebooks.get(uid)?.portals;
     }
-    return notebookInitialState.portals;
+    return undefined;
   }
-);
+  );
 
-export const selectSaveRequest = (): Date | undefined =>
+export const selectSaveRequest = (uid: string): Date | undefined =>
   useSelector((state: IJupyterReactState) => {
     if (state.notebook) {
-      return state.notebook.saveRequest;
+      return state.notebook.notebooks.get(uid)?.saveRequest;
     }
-    return notebookInitialState.saveRequest;
+    return undefined;
   }
-);
+  );
 
-export const selectNotebookPortal = () =>
+export const selectNotebookPortalDisplay = (uid: string) =>
   useSelector((state: IJupyterReactState) => {
     if (state.notebook) {
-      return state.notebook.portal;
+      return state.notebook.notebooks.get(uid)?.portalDisplay;
     }
-    return notebookInitialState.portal;
+    return undefined;
   }
-);
+  );
 
 /* Actions */
 
 export enum ActionType {
-  RESET = "notebook/RESET",
-  UPDATE = "notebook/UPDATE",
-  NOTEBOOK_CHANGE = "notebook/NOTEBOOK_CHANGE",
-  MODEL_CHANGE = "notebook/MODEL_CHANGE",
   ACTIVE_CELL_CHANGE = "notebook/ACTIVE_CELL_CHANGE",
+  ADD_PORTALS = "notebook/ADD_PORTALS",
+  CHANGE_CELL_TYPE = "notebook/CHANGE_CELL_TYPE",
+  CHANGE_KERNEL = "notebook/CHANGE_KERNEL",
+  DELETE = "notebook/DELETE",
+  INSERT_ABOVE = "notebook/INSERT_ABOVE",
+  INSERT_BELOW = "notebook/INSERT_BELOW",
+  INTERRUPT = "notebook/INTERRUPT",
   KERNEL_STATUS_CHANGE = "notebook/KERNEL_STATUS_CHANGE",
+  MODEL_CHANGE = "notebook/MODEL_CHANGE",
+  NOTEBOOK_CHANGE = "notebook/NOTEBOOK_CHANGE",
+  RESET = "notebook/RESET",
   RUN = "notebook/RUN",
   RUN_ALL = "notebook/RUN_ALL",
   SAVE = "notebook/SAVE",
-  INTERRUPT = "notebook/INTERRUPT",
-  INSERT_ABOVE = "notebook/INSERT_ABOVE",
-  INSERT_BELOW = "notebook/INSERT_BELOW",
-  DELETE = "notebook/DELETE",
-  PORTAL = "notebook/PORTAL",
   SET_PORTALS = "notebook/SET_PORTALS",
-  CHANGE_CELL_TYPE = "notebook/CHANGE_CELL_TYPE",
-  SET_PORTAL = 'notebook/SET_PORTAL',
+  SET_PORTAL_DISPLAY = 'notebook/SET_PORTAL',
+  UPDATE = "notebook/UPDATE",
 }
 
 const actionCreator = actionCreatorFactory('jupyterNotebook');
 
+type UpdateUid = {
+  uid: string;
+  partialState: Partial<INotebookState>;
+}
+type NotebookChangeUid = {
+  uid: string;
+  notebookChange: NotebookChange;
+}
+type NotebookModelUid = {
+  uid: string;
+  notebookModel: INotebookModel;
+}
+type CellModelUid = {
+  uid: string;
+  cellModel: Cell<ICellModel>;
+}
+type KernelStatusUid = {
+  uid: string;
+  kernelStatus: JupyterKernel.Status;
+}
+type KernelChangeUid = {
+  uid: string;
+  kernel: Kernel;
+}
+type ReactPortalsUid = {
+  uid: string;
+  portals: ReactPortal[];
+}
+type PortalDisplayUid = {
+  uid: string;
+  portalDisplay: PortalDisplay | undefined;
+}
+type DateUid = {
+  uid: string;
+  date: Date | undefined;
+}
+type CellTypeUid = {
+  uid: string;
+  cellType: nbformat.CellType;
+}
+
 export const notebookActions = {
-  reset: actionCreator<void>(
+  reset: actionCreator<string>(
     ActionType.RESET
   ),
-  update: actionCreator<Partial<INotebookState>>(
+  update: actionCreator<UpdateUid>(
     ActionType.UPDATE
   ),
-  notebookChange: actionCreator<NotebookChange>(
+  notebookChange: actionCreator<NotebookChangeUid>(
     ActionType.NOTEBOOK_CHANGE
   ),
-  modelChange: actionCreator<INotebookModel>(
+  modelChange: actionCreator<NotebookModelUid>(
     ActionType.MODEL_CHANGE
   ),
-  activeCellChange: actionCreator<Cell<ICellModel>>(
+  changeKernel: actionCreator<KernelChangeUid>(
+    ActionType.CHANGE_KERNEL
+  ),
+  activeCellChange: actionCreator<CellModelUid>(
     ActionType.ACTIVE_CELL_CHANGE
   ),
-  kernelStatusChanged: actionCreator<Kernel.Status>(
+  kernelStatusChanged: actionCreator<KernelStatusUid>(
     ActionType.KERNEL_STATUS_CHANGE
   ),
-  portal: actionCreator<ReactPortal[]>(
-    ActionType.PORTAL
+  addPortals: actionCreator<ReactPortalsUid>(
+    ActionType.ADD_PORTALS
   ),
-  setPortals: actionCreator<ReactPortal[]>(
+  setPortals: actionCreator<ReactPortalsUid>(
     ActionType.SET_PORTALS
   ),
-  setPortal: actionCreator<PortalDisplay | undefined>(
-    ActionType.SET_PORTAL
+  setPortalDisplay: actionCreator<PortalDisplayUid>(
+    ActionType.SET_PORTAL_DISPLAY
   ),
-  save: actionCreator.async<Date | undefined, Date | undefined>(
+  save: actionCreator.async<DateUid, DateUid>(
     ActionType.SAVE
   ),
-  run: actionCreator.async<void, void>(
+  run: actionCreator.async<string, string>(
     ActionType.RUN
   ),
-  runAll: actionCreator.async<void, void>(
+  runAll: actionCreator.async<string, string>(
     ActionType.RUN_ALL
   ),
-  interrupt: actionCreator.async<void, void>(
+  interrupt: actionCreator.async<string, string>(
     ActionType.INTERRUPT
   ),
-  insertAbove: actionCreator.async<nbformat.CellType, nbformat.CellType>(
+  insertAbove: actionCreator.async<CellTypeUid, CellTypeUid>(
     ActionType.INSERT_ABOVE
   ),
-  insertBelow: actionCreator.async<nbformat.CellType, nbformat.CellType>(
+  insertBelow: actionCreator.async<CellTypeUid, CellTypeUid>(
     ActionType.INSERT_BELOW
   ),
-  delete: actionCreator.async<void, void>(
+  delete: actionCreator.async<string, string>(
     ActionType.DELETE
   ),
-  changeCellType: actionCreator.async<nbformat.CellType, nbformat.CellType>(
+  changeCellType: actionCreator.async<CellTypeUid, CellTypeUid>(
     ActionType.CHANGE_CELL_TYPE
   )
 }
@@ -179,118 +224,120 @@ export const notebookActions = {
 /* Epics */
 
 const runEpic: Epic<
-  AnyAction,
-  Action<Success<void, void>>,
+  Action<Success<string, string>>,
+  Action<Success<string, string>>,
   IJupyterReactState
 > = (action$, state$) =>
-  action$.pipe(
-    ofAction(notebookActions.run.started),
-    tap(action => {
-      state$.value.notebook?.adapter?.commands.execute(cmdIds.run);
-    }),
-    ignoreElements(),
-  );
+    action$.pipe(
+      ofAction(notebookActions.run.started),
+      tap(action => {
+        state$.value.notebook.notebooks.get(action.payload)?.adapter?.commands.execute(cmdIds.run);
+      }),
+      ignoreElements(),
+    );
 
 const runAllEpic: Epic<
-  AnyAction,
-  Action<Success<void, void>>,
+  Action<Success<string, string>>,
+  Action<Success<string, string>>,
   IJupyterReactState
 > = (action$, state$) =>
-  action$.pipe(
-    ofAction(notebookActions.runAll.started),
-    tap(action => {
-      state$.value.notebook?.adapter?.commands.execute(cmdIds.runAll);
-    }),
-    ignoreElements(),
-  );
+    action$.pipe(
+      ofAction(notebookActions.runAll.started),
+      tap(action => {
+        state$.value.notebook.notebooks.get(action.payload)?.adapter?.commands.execute(cmdIds.runAll);
+      }),
+      ignoreElements(),
+    );
 
 const interruptEpic: Epic<
-  AnyAction,
-  Action<Success<nbformat.CellType, nbformat.CellType>>,
+  Action<Success<string, string>>,
+  Action<Success<string, string>>,
   IJupyterReactState
 > = (action$, state$) =>
-  action$.pipe(
-    ofAction(notebookActions.interrupt.started),
-    tap(action => {
-      state$.value.notebook?.adapter?.commands.execute(cmdIds.interrupt);
-    }),
-    ignoreElements(),
-  );
+    action$.pipe(
+      ofAction(notebookActions.interrupt.started),
+      tap(action => {
+        state$.value.notebook.notebooks.get(action.payload)?.adapter?.commands.execute(cmdIds.interrupt);
+      }),
+      ignoreElements(),
+    );
 
 const insertAboveEpic: Epic<
-  AnyAction,
-  Action<Success<nbformat.CellType, nbformat.CellType>>,
+  Action<Success<CellTypeUid, CellTypeUid>>,
+  Action<Success<CellTypeUid, CellTypeUid>>,
   IJupyterReactState
 > = (action$, state$) =>
-  action$.pipe(
-    ofAction(notebookActions.insertAbove.started),
-    tap(action => {
-      (state$.value.notebook! as INotebookState).adapter!.setDefaultCellType(action.payload);
-      state$.value.notebook!.adapter!.commands.execute(cmdIds.insertAbove);
-    }),
-    ignoreElements(),
-  );
+    action$.pipe(
+      ofAction(notebookActions.insertAbove.started),
+      tap(action => {
+        state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.setDefaultCellType(action.payload.cellType);
+        state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.commands.execute(cmdIds.insertAbove);
+      }),
+      ignoreElements(),
+    );
 
 const insertBelowEpic: Epic<
-  AnyAction,
-  Action<Success<void, void>>,
+  Action<Success<CellTypeUid, CellTypeUid>>,
+  Action<Success<CellTypeUid, CellTypeUid>>,
   IJupyterReactState
 > = (action$, state$) =>
-  action$.pipe(
-    ofAction(notebookActions.insertBelow.started),
-    tap(action => {
-      (state$.value.notebook! as INotebookState).adapter!.setDefaultCellType(action.payload);
-      state$.value.notebook?.adapter?.commands.execute(cmdIds.insertBelow);
-    }),
-    ignoreElements(),
-  );
+    action$.pipe(
+      ofAction(notebookActions.insertBelow.started),
+      tap(action => {
+        state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.setDefaultCellType(action.payload.cellType);
+        state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.commands.execute(cmdIds.insertBelow);
+      }),
+      ignoreElements(),
+    );
 
 const deleteEpic: Epic<
-  AnyAction,
-  Action<Success<void, void>>,
+  Action<Success<string, string>>,
+  Action<Success<string, string>>,
   IJupyterReactState
 > = (action$, state$) =>
-  action$.pipe(
-    ofAction(notebookActions.delete.started),
-    tap(action => {
-      state$.value.notebook?.adapter?.commands.execute(cmdIds.deleteCells);
-    }),
-    ignoreElements(),
-  );
+    action$.pipe(
+      ofAction(notebookActions.delete.started),
+      tap(action => {
+        state$.value.notebook.notebooks.get(action.payload)?.adapter?.commands.execute(cmdIds.deleteCells);
+      }),
+      ignoreElements(),
+    );
 
 const changeCellTypeEpic: Epic<
-  AnyAction,
-  Action<Success<nbformat.CellType, nbformat.CellType>>,
+  Action<Success<CellTypeUid, CellTypeUid>>,
+  Action<Success<CellTypeUid, CellTypeUid>>,
   IJupyterReactState
 > = (action$, state$) =>
-  action$.pipe(
-    ofAction(notebookActions.changeCellType.started),
-    tap(action => {
-//      state$.value.notebook?.adapter?.changeCellType(action.payload);
-//      state$.value.notebook?.adapter?.commands.execute(cmdIds.toCode);
-      NotebookActions.changeCellType(
-        state$.value.notebook?.adapter?.notebookPanel?.content!,
-        action.payload
-      );
-    }),
-    ignoreElements(),
-  );
+    action$.pipe(
+      ofAction(notebookActions.changeCellType.started),
+      tap(action => {
+        //      state$.value.notebook?.adapter?.commands.execute(cmdIds.toCode);
+        state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.changeCellType(action.payload.cellType);
+        /*
+        NotebookActions.changeCellType(
+          state$.value.notebook.notebooks.get(action.payload)?.adapter?.notebookPanel?.content!,
+          action.payload
+        );
+        */
+      }),
+      ignoreElements(),
+    );
 
 const saveEpic: Epic<
-  AnyAction,
-  Action<Success<Date | undefined, Date | undefined>>,
+  Action<Success<DateUid, DateUid>>,
+  Action<Success<DateUid, DateUid>>,
   IJupyterReactState
 > = (action$, state$) =>
-  action$.pipe(
-    ofAction(notebookActions.save.started),
-    map(action => {
-      state$.value.notebook?.adapter?.commands.execute(cmdIds.save);
-      return notebookActions.save.done({
-        params: action.payload,
-        result: action.payload,
-      });
-    })
-  );
+    action$.pipe(
+      ofAction(notebookActions.save.started),
+      map(action => {
+        state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.commands.execute(cmdIds.save);
+        return notebookActions.save.done({
+          params: action.payload,
+          result: action.payload,
+        });
+      })
+    );
 
 export const notebookEpics = combineEpics(
   runEpic,
@@ -306,74 +353,139 @@ export const notebookEpics = combineEpics(
 /* Reducers */
 
 export const notebookReducer = reducerWithInitialState(notebookInitialState)
-  .case(notebookActions.reset, (state: INotebookState, _: void) => {
+  .case(notebookActions.reset, (state: INotebooksState, _: string) => {
     return notebookInitialState;
   })
-  .case(notebookActions.update, (state: INotebookState, partialState: Partial<INotebookState>) => {
+  .case(notebookActions.update, (state: INotebooksState, updateUid: UpdateUid) => {
+    const notebooks = state.notebooks;
+    let n = notebooks.get(updateUid.uid);
+    if (n) {
+      n = { ...n, ...updateUid.partialState }
+    } else {
+      notebooks.set(updateUid.uid, {
+        adapter: updateUid.partialState.adapter,
+        portals: [],
+      })
+    }
     return {
       ...state,
-      ...partialState,
+      notebooks,
     }
   })
-  .case(notebookActions.activeCellChange, (state: INotebookState, activeCell: Cell<ICellModel>) => {
+  .case(notebookActions.activeCellChange, (state: INotebooksState, cellModelUid: CellModelUid) => {
+    const notebooks = state.notebooks;
+    const n = notebooks.get(cellModelUid.uid);
+    if (n) {
+      n.activeCell = cellModelUid.cellModel;
+    }
     return {
       ...state,
-      activeCell,
+      notebooks,
     }
   })
-  .case(notebookActions.modelChange, (state: INotebookState, model: INotebookModel) => {
+  .case(notebookActions.modelChange, (state: INotebooksState, modelUid: NotebookModelUid) => {
+    const notebooks = state.notebooks;
+    const n = notebooks.get(modelUid.uid);
+    if (n) {
+      n.model = modelUid.notebookModel;
+    }
     return {
       ...state,
-      model,
+      notebooks,
     }
   })
-  .case(notebookActions.notebookChange, (state: INotebookState, notebookChange: NotebookChange) => {
+  .case(notebookActions.notebookChange, (state: INotebooksState, notebookChangeUid: NotebookChangeUid) => {
+    const notebooks = state.notebooks;
+    const n = notebooks.get(notebookChangeUid.uid);
+    if (n) {
+      n.notebookChange = notebookChangeUid.notebookChange;
+    }
     return {
       ...state,
-      notebookChange,
+      notebooks,
     }
   })
-  .case(notebookActions.kernelStatusChanged, (state: INotebookState, kernelStatus: Kernel.Status) => {
+  .case(notebookActions.kernelStatusChanged, (state: INotebooksState, kernelStatusUid: KernelStatusUid) => {
+    const notebooks = state.notebooks;
+    const n = notebooks.get(kernelStatusUid.uid);
+    if (n) {
+      n.kernelStatus = kernelStatusUid.kernelStatus;
+    }
     return {
       ...state,
-      kernelStatus,
+      notebooks,
     }
   })
-  .case(notebookActions.portal, (state: INotebookState, portal: ReactPortal[]) => {
-    const portals = state.portals.concat(portal);
+  .case(notebookActions.changeKernel, (state: INotebooksState, kernelChange: KernelChangeUid) => {
+    const notebooks = state.notebooks;
+    const n = notebooks.get(kernelChange.uid);
+    if (n) {
+      n.adapter?.changeKernel(kernelChange.kernel);
+    }
     return {
       ...state,
-      portals,
+      notebooks,
     }
   })
-  .case(notebookActions.setPortals, (state: INotebookState, portals: ReactPortal[]) => {
+  .case(notebookActions.addPortals, (state: INotebooksState, portalsUid: ReactPortalsUid) => {
+    const notebooks = state.notebooks;
+    const n = notebooks.get(portalsUid.uid);
+    if (n) {
+      n.portals = n.portals.concat(portalsUid.portals);
+    }
     return {
       ...state,
-      portals,
+      notebooks,
     }
   })
-  .case(notebookActions.setPortal, (state: INotebookState, portal: PortalDisplay) => {
+  .case(notebookActions.setPortals, (state: INotebooksState, portalsUid: ReactPortalsUid) => {
+    const notebooks = state.notebooks;
+    const n = notebooks.get(portalsUid.uid);
+    if (n) {
+      n.portals = portalsUid.portals;
+    }
     return {
       ...state,
-      portal,
+      notebooks,
     }
   })
-  .case(notebookActions.save.done, (state: INotebookState, payload: Success<Date | undefined, Date | undefined>) => {
+  .case(notebookActions.setPortalDisplay, (state: INotebooksState, portalDisplayUid: PortalDisplayUid) => {
+    const notebooks = state.notebooks;
+    const n = notebooks.get(portalDisplayUid.uid);
+    if (n) {
+      n.portalDisplay = portalDisplayUid.portalDisplay;
+    }
     return {
       ...state,
-      saveRequest: payload.result,
+      notebooks,
     }
   })
-  .case(notebookActions.insertAbove.done, (state: INotebookState, payload: Success<nbformat.CellType, nbformat.CellType>) => {
-      return state;
+  .case(notebookActions.save.done, (state: INotebooksState, dateUid: Success<DateUid, DateUid>) => {
+    const notebooks = state.notebooks;
+    const n = notebooks.get(dateUid.result.uid);
+    if (n) {
+      n.saveRequest = dateUid.result.date;
+    }
+    return {
+      ...state,
+      notebooks,
+    }
   })
-  .case(notebookActions.insertBelow.done, (state: INotebookState, payload: Success<nbformat.CellType, nbformat.CellType>) => {
-      return state;
-  })
-  .case(notebookActions.changeCellType.done, (state: INotebookState, payload: Success<nbformat.CellType, nbformat.CellType>) => {
+  .case(notebookActions.insertAbove.done, (state: INotebooksState, _: Success<CellTypeUid, CellTypeUid>) => {
     return state;
   })
-  .case(notebookActions.run.done, (state: INotebookState, _: Success<void, void>) => {
+  .case(notebookActions.insertBelow.done, (state: INotebooksState, _: Success<CellTypeUid, CellTypeUid>) => {
+    return state;
+  })
+  .case(notebookActions.changeCellType.done, (state: INotebooksState, _: Success<CellTypeUid, CellTypeUid>) => {
+    return state;
+  })
+  .case(notebookActions.run.done, (state: INotebooksState, _: Success<string, string>) => {
+    console.log("RUN DONE")
+    return state
+  })
+  .case(notebookActions.delete.done, (state: INotebooksState, _: Success<string, string>) => {
+    console.log("DELETE DONE")
     return state
   }
-);
+  );

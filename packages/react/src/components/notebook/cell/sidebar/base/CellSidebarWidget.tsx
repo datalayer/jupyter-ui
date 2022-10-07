@@ -10,8 +10,9 @@ import { notebookActions } from '../../../NotebookState';
 export const DLA_CELL_HEADER_CLASS = 'dla-CellHeader-Container';
 
 export type CellSidebarProps = {
+  notebookId: string;
+  cellId: string;
   command: CommandRegistry;
-  id: string;
   nbgrader: boolean;
 }
 
@@ -19,6 +20,7 @@ export class CellSidebarWidget extends LuminoReactPortal implements ICellHeader 
   private readonly commands: CommandRegistry;
   constructor(
     CellSidebar: (props: CellSidebarProps) => JSX.Element,
+    notebookId: string,
     nbgrader: boolean,
     commands: CommandRegistry,
     store: Store,
@@ -28,8 +30,9 @@ export class CellSidebarWidget extends LuminoReactPortal implements ICellHeader 
     this.addClass('jp-CellHeader');
     this.id = newUuid();
     const props: CellSidebarProps = {
+      notebookId,
+      cellId: this.id,
       command: this.commands,
-      id: this.id,
       nbgrader,
     };
     const sidebar = createElement(
@@ -43,7 +46,7 @@ export class CellSidebarWidget extends LuminoReactPortal implements ICellHeader 
       ,
       this.node,
     );
-    store.dispatch(notebookActions.portal([portal]));
+    store.dispatch(notebookActions.addPortals({ uid: notebookId, portals: [portal] }));
   }
 }
 

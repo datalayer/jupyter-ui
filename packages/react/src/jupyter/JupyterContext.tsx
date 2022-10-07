@@ -14,7 +14,7 @@ export type JupyterContextType = {
   serverSettings: ServerConnection.ISettings,
   serviceManager?: ServiceManager,
   kernelManager?: KernelManager,
-  kernel?: Kernel,
+  defaultKernel?: Kernel,
   startDefaultKernel: boolean,
   variant: string;
   setVariant: (value: string) => void;
@@ -147,7 +147,7 @@ export const JupyterContextProvider: React.FC<{
         serverSettings,
         serviceManager,
         kernelManager,
-        kernel,
+        defaultKernel: kernel,
         startDefaultKernel,
         variant,
         setVariant,

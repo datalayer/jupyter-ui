@@ -5,6 +5,7 @@ import { selectNotebook } from '../../NotebookState';
 import NbGraderType, { getNbGraderType, setCellGradeType } from './NbGraderCells';
 
 type Props = {
+  notebookId: string;
   cell: Cell<ICellModel>;
   nbgrader: boolean;
 };
@@ -29,14 +30,14 @@ const handlePointsChange = (cell: Cell<ICellModel>, points: string) => {
 }
 
 export const CellMetadataEditor = (props: Props) => {
-  const { cell, nbgrader } = props;
+  const { notebookId, cell, nbgrader } = props;
   if (!cell || !cell.model) {
     return <></>
   }
   const cellGradeType = getNbGraderType(cell);
   // TODO Do not remove for now this selectNotebook, otherwise this component will not refresh.
   // TODO Better handle this case with a local state.
-  selectNotebook();
+  selectNotebook(notebookId);
   const nbg = cell.model.metadata?.get('nbgrader') as any;
   return (
     <ActionList showDividers>

@@ -22,12 +22,13 @@ const StyledNotebook = styled.div`
   }
 `
 
+const NOTEBOOK_UID = 'notebook-uid-lexical';
+
 const Tabs = () => {
   const { editor } = useLexical();
   const [tab, setTab] = useState<TabType>('editor');
-  const [uid, setUid] = useState(0);
   const [notebookContent, setNotebookContent] = useState<INotebookContent>(initialNbformatModel);
-  const notebook = selectNotebook();
+  const notebook = selectNotebook(NOTEBOOK_UID);
   const goToTab = (e: any, toTab: TabType, notebookModel: INotebookModel | undefined) => {
     e.preventDefault();
     if (tab === 'notebook' && toTab === 'editor') {
@@ -53,13 +54,13 @@ const Tabs = () => {
   return (
     <Box className="center">
       <TabNav>
-        <TabNav.Link href="" selected={tab === 'editor'} onClick={e => goToTab(e, 'editor', notebook.model)}>
+        <TabNav.Link href="" selected={tab === 'editor'} onClick={e => goToTab(e, 'editor', notebook?.model)}>
           Editor
         </TabNav.Link>
-        <TabNav.Link href="" selected={tab === 'notebook'} onClick={e => goToTab(e, 'notebook', notebook.model)}>
+        <TabNav.Link href="" selected={tab === 'notebook'} onClick={e => goToTab(e, 'notebook', notebook?.model)}>
           Notebook
         </TabNav.Link>
-        <TabNav.Link href="" selected={tab === 'nbformat'} onClick={e => goToTab(e, 'nbformat', notebook.model)}>
+        <TabNav.Link href="" selected={tab === 'nbformat'} onClick={e => goToTab(e, 'nbformat', notebook?.model)}>
           NbFormat
         </TabNav.Link>
       </TabNav>
@@ -82,14 +83,13 @@ const Tabs = () => {
         <StyledNotebook>
           <Box mb={3}>
             <Notebook
-              uid={String(uid)}
+              uid={NOTEBOOK_UID}
               model={notebookContent}
               CellSidebar={CellSidebarDefault}
               />
             <Button
               onClick={(e: React.MouseEvent) => {
                 e.preventDefault();
-                setUid(uid+1);
                 setNotebookContent(initialNbformatModel);
               }}>
                 Reset Nbformat

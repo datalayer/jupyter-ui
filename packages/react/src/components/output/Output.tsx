@@ -84,7 +84,7 @@ const KernelProgressBar = () => {
 }
 
 export const Output = (props: IOutputProps) => {
-  const { injectableStore, kernel } = useJupyter();
+  const { injectableStore, defaultKernel: kernel } = useJupyter();
   const {
     sourceId, autoRun, code, showEditor, clearTrigger, executeTrigger, adapter,
     receipt, disableRun, insertText, toolbarPosition, codePre, luminoWidgets: useLumino

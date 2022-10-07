@@ -43,6 +43,8 @@ ax2.set_xlabel('time (s)')
 ax2.set_ylabel('Undamped')
 plt.show()`;
 
+const NOTEBOOK_UID = "notebook-uid-1"
+
 /**
  * A simple example for the Jupyter React.
  */
@@ -71,8 +73,9 @@ const AllExample = () => {
     <FileBrowserToolbar />
     <FileBrowserTree />
     <FileBrowser />
-    <NotebookToolbar />
+    <NotebookToolbar notebookId={NOTEBOOK_UID}/>
     <Notebook
+      uid={NOTEBOOK_UID}
       path='ping.ipynb'
       ipywidgets='classic'
       />

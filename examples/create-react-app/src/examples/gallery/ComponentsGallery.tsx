@@ -29,7 +29,7 @@ import TerminalToolbar from '../terminal/TerminalToolbar';
 /**
  * The source code to be shown in the examples.
  */
-const SOURCE_1 = `from IPython.display import display
+const SOURCE = `from IPython.display import display
 for i in range(3):
      display('😃 String {} added to the DOM in separated DIV.'.format(i))
 
@@ -48,7 +48,7 @@ ax2.set_xlabel('time (s)')
 ax2.set_ylabel('Undamped')
 plt.show()`;
 
-const OUTPUT_2: IOutput[] = [
+const OUTPUT: IOutput[] = [
     {
      "data": {
       "application/json": {
@@ -77,6 +77,8 @@ const OUTPUT_2: IOutput[] = [
      "output_type": "execute_result"
     }
   ];
+
+const NOTEBOOK_UID = "notebook-id-gallery";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -166,7 +168,7 @@ const Gallery = () => {
         <TabPanel value={value} index={2}>
           <OutputToolbar/>
           <Output
-            outputs={OUTPUT_2}
+            outputs={OUTPUT}
             autoRun={false}
             kernel={kernel}
          />
@@ -178,16 +180,17 @@ const Gallery = () => {
           <Output
             autoRun={true}
             kernel={kernel}
-            code={SOURCE_1}
+            code={SOURCE}
          />
         </TabPanel>
         <TabPanel value={value} index={3}>
           <CellToolbar/>
-          <Cell source={SOURCE_1}/>
+          <Cell source={SOURCE}/>
         </TabPanel>
         <TabPanel value={value} index={4}>
-          <NotebookToolbar/>
+          <NotebookToolbar notebookId={NOTEBOOK_UID}/>
           <Notebook
+            uid={NOTEBOOK_UID}
             path='ping.ipynb'
             ipywidgets="classic"
             CellSidebar={CellSidebarExample}
