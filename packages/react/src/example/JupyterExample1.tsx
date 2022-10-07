@@ -1,9 +1,11 @@
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { createRoot } from 'react-dom/client';
 import { Box, Button, ButtonGroup } from '@primer/react';
 import { IOutput, INotebookContent } from '@jupyterlab/nbformat';
 import Jupyter from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
+import { Kernel } from '../jupyter/services/kernel/Kernel';
 import Cell from '../components/cell/Cell';
 import Notebook from '../components/notebook/Notebook';
 import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarDefault';
@@ -18,6 +20,9 @@ import notebookExample from './NotebookExample.ipynb.json';
 import "./../../style/index.css";
 
 const SOURCE_1 = '1+1'
+
+const NOTEBOOK_UID_1 = 'notebook-uid-1'
+const NOTEBOOK_UID_2 = 'notebook-uid-2'
 
 const SOURCE_1_OUTPUTS: IOutput[] = [
   {
@@ -88,14 +93,14 @@ const NotebookToolbar = () => {
         <Button
           variant="default"
           size="small"
-          onClick={() => dispatch(notebookActions.save.started(new Date()))}
+          onClick={() => dispatch(notebookActions.save.started({ uid: NOTEBOOK_UID_1 , date: new Date() }))}
         >
           Save the notebook
         </Button>
         <Button
           variant="default"
           size="small"
-          onClick={() => dispatch(notebookActions.runAll.started())}
+          onClick={() => dispatch(notebookActions.runAll.started(NOTEBOOK_UID_1))}
         >
           Run all
         </Button>
@@ -104,27 +109,57 @@ const NotebookToolbar = () => {
   );
 }
 
+const NotebookKernelChange = () => {
+  const { kernelManager } = useJupyter();
+  const changeKernel = () => {
+    const kernel = new Kernel({ kernelManager, kernelName: "pythonqsdf" });
+    kernel.getJupyterKernel().then((kernelConnection) => {
+//      setKernel(kernel);
+    });
+  }
+  return (
+    <>
+      <Box display="flex">
+        <ButtonGroup>
+          <Button
+            variant="default"
+            size="small"
+            onClick={changeKernel}
+          >
+            Switch Kernel
+          </Button>
+        </ButtonGroup>
+      </Box>
+      <Notebook
+        path="test.ipynb"
+        CellSidebar={CellSidebarDefault}
+        uid={NOTEBOOK_UID_2}
+      />
+    </>
+  );
+}
+
 const Outputs = () => {
-  const { kernel } = useJupyter();
+  const { defaultKernel } = useJupyter();
   return (
     <>
       <Output
         showEditor={true}
         autoRun={false}
-        kernel={kernel}
+        kernel={defaultKernel}
         code={SOURCE_1}
         outputs={SOURCE_1_OUTPUTS}
       />
       <Output
         showEditor={true}
         autoRun={false}
-        kernel={kernel}
+        kernel={defaultKernel}
         code={SOURCE_2}
       />
       <Output
         showEditor={true}
         autoRun={true}
-        kernel={kernel}
+        kernel={defaultKernel}
         code={SOURCE_2}
       />
     </>
@@ -150,8 +185,11 @@ root.render(
       <Notebook
         model={notebookExample as INotebookContent}
         CellSidebar={CellSidebarDefault}
+        uid={NOTEBOOK_UID_1}
       />
     </div>
+    <hr />
+    <NotebookKernelChange />
     <hr />
     <FileBrowser />
     <hr />

@@ -7,6 +7,8 @@ import Layers from '../theme/Layers'
 
 import "./../index.css";
 
+const NOTEBOOK_UID = 'notebook-uid-example';
+
 /**
  * A simple example for the Jupyter React.
  */
@@ -15,8 +17,9 @@ const Example = () => {
     <ThemeProvider theme={muiLightTheme}>
       <Jupyter collaborative={false} terminals={false}>
         <Layers />
-        <NotebookSimpleToolbar />
+        <NotebookSimpleToolbar notebookId={NOTEBOOK_UID}/>
         <Notebook
+          uid={NOTEBOOK_UID}
           path='ping.ipynb'
           ipywidgets='classic'
         />

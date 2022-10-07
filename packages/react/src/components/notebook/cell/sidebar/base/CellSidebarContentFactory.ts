@@ -11,11 +11,13 @@ import { CellSidebarWidget, CellSidebarProps } from './CellSidebarWidget';
  */
 export class CellSidebarContentFactory extends NotebookPanel.ContentFactory {
   private readonly CellSidebar: (props: CellSidebarProps) => JSX.Element;
+  private readonly notebookId: string;
   private readonly nbgrader: boolean;
   private readonly commands: CommandRegistry;
   private readonly store: Store;
   constructor(
     CellSidebar: (props: CellSidebarProps) => JSX.Element,
+    notebookId: string,
     nbgrader: boolean,
     commands: CommandRegistry,
     store?: Store,
@@ -23,6 +25,7 @@ export class CellSidebarContentFactory extends NotebookPanel.ContentFactory {
   ) {
     super(options);
     this.CellSidebar = CellSidebar;
+    this.notebookId = notebookId,
     this.nbgrader = nbgrader;
     this.commands = commands;
     this.store = store!;
@@ -31,6 +34,7 @@ export class CellSidebarContentFactory extends NotebookPanel.ContentFactory {
   createCellHeader(): ICellHeader {
     return new CellSidebarWidget(
       this.CellSidebar,
+      this.notebookId,
       this.nbgrader, 
       this.commands, 
       this.store,

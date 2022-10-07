@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { PanelLayout } from '@lumino/widgets';
 import { ActionMenu, Button, IconButton } from "@primer/react";
-import { KebabHorizontalIcon, ChevronRightIcon, XIcon, ChevronUpIcon, ChevronDownIcon } from "@primer/octicons-react";
+import { KebabHorizontalIcon, ChevronRightIcon, XIcon, ChevronUpIcon, ChevronDownIcon, SquareIcon } from "@primer/octicons-react";
 import { DLA_CELL_HEADER_CLASS } from './base/CellSidebarWidget';
 import { notebookActions, selectActiveCell } from '../../NotebookState';
 import { CellSidebarProps } from './base/CellSidebarWidget';
@@ -10,16 +10,16 @@ import CellMetadataEditor from '../metadata/CellMetadataEditor';
 
 export const CellSidebarDefault = (props: CellSidebarProps) => {
   const [visible, setVisible] = useState(false);
-  const { nbgrader } = props;
+  const { notebookId, nbgrader } = props;
   const dispatch = useDispatch();
-  const activeCell = selectActiveCell();
+  const activeCell = selectActiveCell(notebookId);
   const layout = (activeCell?.layout);
   if (layout) {
     const cellWidget = (layout as PanelLayout).widgets[0];
-    if (!visible && (cellWidget?.node.id === props.id)) {
+    if (!visible && (cellWidget?.node.id === props.cellId)) {
       setVisible(true);
     }
-    if (visible && (cellWidget?.node.id !== props.id)) {
+    if (visible && (cellWidget?.node.id !== props.cellId)) {
       setVisible(false);
     }
   }
@@ -39,7 +39,7 @@ export const CellSidebarDefault = (props: CellSidebarProps) => {
         <span style={{ display: "flex" }}>
           <Button leadingIcon={ChevronRightIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
-            dispatch(notebookActions.run.started());
+            dispatch(notebookActions.run.started(notebookId));
           }}>
             Run
           </Button>
@@ -47,7 +47,7 @@ export const CellSidebarDefault = (props: CellSidebarProps) => {
         <span style={{ display: "flex" }}>
           <Button leadingIcon={ChevronUpIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
-            dispatch(notebookActions.insertAbove.started("code"));
+            dispatch(notebookActions.insertAbove.started({ uid: notebookId, cellType: "code" }));
           }}>
             Code
           </Button>
@@ -55,32 +55,32 @@ export const CellSidebarDefault = (props: CellSidebarProps) => {
         <span style={{ display: "flex" }}>
           <Button leadingIcon={ChevronUpIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
-            dispatch(notebookActions.insertAbove.started("markdown"));
+            dispatch(notebookActions.insertAbove.started({ uid: notebookId, cellType: "markdown" }));
           }}>
             Markdown
           </Button>
         </span>
         <span style={{ display: "flex" }}>
-        {/* activeCell.model.type === "code" ?
+        { activeCell.model.type === "code" ?
             <Button leadingIcon={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
               e.preventDefault();
-              dispatch(notebookActions.changeCellType.started("markdown"));
+              dispatch(notebookActions.changeCellType.started({ uid: notebookId, cellType: "markdown" }));
             }}>
               To Mardown
             </Button>
           :
             <Button leadingIcon={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
               e.preventDefault();
-              dispatch(notebookActions.changeCellType.started("code"));
+              dispatch(notebookActions.changeCellType.started({ uid: notebookId, cellType: "code" }));
             }}>
               To Code
             </Button>
-        */}
+        }
         </span>
         <span style={{ display: "flex" }}>
           <Button leadingIcon={ChevronDownIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
-            dispatch(notebookActions.insertBelow.started("markdown"));
+            dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "markdown" }));
           }}>
             Markdown
           </Button>
@@ -88,7 +88,7 @@ export const CellSidebarDefault = (props: CellSidebarProps) => {
         <span style={{ display: "flex" }}>
           <Button leadingIcon={ChevronDownIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
-            dispatch(notebookActions.insertBelow.started("code"));
+            dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "code" }));
           }}>
             Code
           </Button>
@@ -96,7 +96,7 @@ export const CellSidebarDefault = (props: CellSidebarProps) => {
         <span style={{ display: "flex" }}>
           <Button leadingIcon={XIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
-            dispatch(notebookActions.delete.started());
+            dispatch(notebookActions.delete.started(notebookId));
           }}>
             Delete
           </Button>
@@ -107,7 +107,7 @@ export const CellSidebarDefault = (props: CellSidebarProps) => {
               <IconButton icon={KebabHorizontalIcon} variant="invisible" aria-label="Open column options" />
             </ActionMenu.Anchor>
             <ActionMenu.Overlay>
-              <CellMetadataEditor cell={activeCell} nbgrader={nbgrader}/>
+              <CellMetadataEditor notebookId={notebookId} cell={activeCell} nbgrader={nbgrader}/>
             </ActionMenu.Overlay>
           </ActionMenu>
         }

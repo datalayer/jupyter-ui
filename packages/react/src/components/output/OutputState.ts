@@ -141,7 +141,7 @@ export const outputReducer = reducerWithInitialState(outputInitialState)
   .case(outputActions.dataset, (state: IOutputsState, dataset: OutputState.IDataset) => {
     const sourceId = dataset.sourceId;
     const outputs = state.outputs;
-    const d = outputs.get(dataset.sourceId);
+    const d = outputs.get(sourceId);
     if (d) {
       d.dataset = dataset;
     } else {

@@ -1,4 +1,3 @@
-import React from "react";
 import { useDispatch } from "react-redux";
 import Button from '@mui/material/Button';
 import PlayCircleOutline from '@mui/icons-material/PlayCircleOutline';
@@ -6,7 +5,8 @@ import SaveOutlined from '@mui/icons-material/SaveOutlined';
 import Typography from '@mui/material/Typography';
 import { notebookActions } from '@datalayer/jupyter-react';
 
-const NotebookSimpleToolbar: React.FC = () => {
+const NotebookSimpleToolbar = (props: { notebookId: string }) => {
+  const { notebookId } = props;
   const dispatch = useDispatch();
   return (
     <>
@@ -18,7 +18,7 @@ const NotebookSimpleToolbar: React.FC = () => {
           variant="outlined"
           color="secondary"
           startIcon={<PlayCircleOutline />}
-          onClick={() => dispatch(notebookActions.run.started())}
+          onClick={() => dispatch(notebookActions.run.started(notebookId))}
           >
             Run
         </Button>
@@ -27,7 +27,7 @@ const NotebookSimpleToolbar: React.FC = () => {
         variant="outlined"
         color="secondary"
         startIcon={<SaveOutlined />}
-        onClick={() => dispatch(notebookActions.save.started(new Date()))}
+        onClick={() => dispatch(notebookActions.save.started({ uid: notebookId, date: new Date() }))}
         >
           Save
       </Button>

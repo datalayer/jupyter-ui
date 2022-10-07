@@ -5,6 +5,8 @@ import { Jupyter, Notebook } from '@datalayer/jupyter-react';
 import NotebookToolbar from './NotebookToolbar';
 import CellSidebarComponent from './CellSidebarComponent';
 
+const NOTEBOOK_UID = "notebook-id-simple"
+
 const useStyles = makeStyles((theme: Theme) =>
   ({
     root: {
@@ -27,8 +29,9 @@ export default function NotebookSidebarComponent() {
     <Jupyter collaborative={false} terminals={true}>
       <div className={classes.root}>
         <Paper elevation={3} style={{ width: '100%' }}>
-          <NotebookToolbar />
+          <NotebookToolbar notebookId={NOTEBOOK_UID}/>
           <Notebook
+            uid={NOTEBOOK_UID}
             path='ping.ipynb'
             ipywidgets='lab'
             CellSidebar={CellSidebarComponent}

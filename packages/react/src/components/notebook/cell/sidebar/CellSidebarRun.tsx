@@ -8,16 +8,17 @@ import { notebookActions, selectActiveCell } from '../../NotebookState';
 import { CellSidebarProps } from './base/CellSidebarWidget';
 
 export const CellSidebarRun = (props: CellSidebarProps) => {
+  const { notebookId } = props;
   const [visible, setVisible] = useState(false);
   const dispatch = useDispatch();
-  const activeCell = selectActiveCell();
+  const activeCell = selectActiveCell(notebookId);
   const layout = (activeCell?.layout);
   if (layout) {
     const cellWidget = (layout as PanelLayout).widgets[0];
-    if (!visible && (cellWidget?.node.id === props.id)) {
+    if (!visible && (cellWidget?.node.id === props.cellId)) {
       setVisible(true);
     }
-    if (visible && (cellWidget?.node.id !== props.id)) {
+    if (visible && (cellWidget?.node.id !== props.cellId)) {
       setVisible(false);
     }
   }
@@ -37,7 +38,7 @@ export const CellSidebarRun = (props: CellSidebarProps) => {
           <span style={{ display: "flex" }}>
             <Button trailingIcon={PlayIcon} size="small" variant="invisible" onClick={(e: any) => {
               e.preventDefault();
-              dispatch(notebookActions.run.started());
+              dispatch(notebookActions.run.started(notebookId));
             }}>
               Run
             </Button>

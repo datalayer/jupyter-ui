@@ -2,7 +2,7 @@ import { combineReducers } from "redux";
 import { combineEpics } from "redux-observable";
 import { AnyAction } from "typescript-fsa";
 import { cellInitialState, cellReducer, ICellState } from "../components/cell/CellState";
-import { notebookInitialState, notebookEpics, notebookReducer, INotebookState } from "../components/notebook/NotebookState";
+import { notebookInitialState, notebookEpics, notebookReducer, INotebooksState } from "../components/notebook/NotebookState";
 import { terminalInitialState, terminalReducer, ITerminalState } from "../components/terminal/TerminalState";
 import { outputInitialState, outputReducer, IOutputsState } from "../components/output/OutputState";
 
@@ -11,7 +11,7 @@ import { outputInitialState, outputReducer, IOutputsState } from "../components/
 export interface IJupyterReactState {
   cell: ICellState;
   output: IOutputsState;
-  notebook: INotebookState;
+  notebook: INotebooksState;
   terminal: ITerminalState;
 }
 

@@ -93,6 +93,7 @@ export class NotebookAdapter {
     ?
       new CellSidebarContentFactory(
         this._CellSidebar,
+        this._uid,
         this._nbgrader,
         this._commandRegistry,
         this._store,
@@ -145,58 +146,21 @@ export class NotebookAdapter {
       factory: notebookModelFactory,  
       path: this._props.path || "ping.ipynb",
       kernelPreference: {
+//        id: this.kernel?.kernelId,
         shouldStart: false,
         autoStartDefault: false,
 //        shutdownOnDispose: false,
-//        id: this.kernel?.kernelId,
-//        name: 'python3',
       }
     });
-    const setupCompleter = (notebookPanel: NotebookPanel) => {
-      const editor = notebookPanel.content.activeCell && notebookPanel.content.activeCell.editor;
-      const sessionContext = notebookPanel.context.sessionContext;
-      const completerModel = new CompleterModel();
-      const completer = new Completer({ editor, model: completerModel });
-      const completerTimeout = 1000;
-      const provider = new KernelCompleterProvider();
-      const connector = new ConnectorProxy(
-        {
-          widget: notebookPanel,
-          editor,
-          session: sessionContext.session
-        },
-        [provider],
-        completerTimeout,
-      );
-      const handler = new CompletionHandler({ completer, connector });
-      void sessionContext.ready.then(() => {
-        const provider = new KernelCompleterProvider();
-        const connector = new ConnectorProxy(
-          { widget: this._notebookPanel!, editor, session: sessionContext.session },
-          [provider],
-          completerTimeout,
-        );
-        handler.connector = connector;
-      });
-      handler.editor = editor;
-      notebookPanel.content.activeCellChanged.connect((sender: any, snippet: Cell<ICellModel>) => {
-        handler.editor = snippet && snippet.editor;
-      });
-      completer.hide();
-      Widget.attach(completer, document.body);
-      return handler;
-    }
     this._notebookPanel = documentRegistry.getWidgetFactory('notebook')?.createNew(this._context) as NotebookPanel;
     const isNew = (this._props.path !== "") ? false : true;
     this._context.initialize(isNew).then(() => {
       if (this._kernel) {
         this._kernel.getJupyterKernel().then((kernel: any) => {
-//        if (this.context?.sessionContext.hasNoKernel) {
           this._context?.sessionContext.changeKernel(kernel.model).then(() => {
-            const completerHandler = setupCompleter(this._notebookPanel!);
+            const completerHandler = this.setupCompleter(this._notebookPanel!);
             NotebookCommands(this._commandRegistry, this._notebookPanel!, completerHandler, this._props);  
           });
-//        }
         });
       }
       if (this._model) {
@@ -280,6 +244,50 @@ export class NotebookAdapter {
       },
       isEnabled,
     });
+  }
+
+  setupCompleter(notebookPanel: NotebookPanel) {
+    const editor = notebookPanel.content.activeCell && notebookPanel.content.activeCell.editor;
+    const sessionContext = notebookPanel.context.sessionContext;
+    const completerModel = new CompleterModel();
+    const completer = new Completer({ editor, model: completerModel });
+    const completerTimeout = 1000;
+    const provider = new KernelCompleterProvider();
+    const connector = new ConnectorProxy(
+      {
+        widget: notebookPanel,
+        editor,
+        session: sessionContext.session
+      },
+      [provider],
+      completerTimeout,
+    );
+    const handler = new CompletionHandler({ completer, connector });
+    void sessionContext.ready.then(() => {
+      const provider = new KernelCompleterProvider();
+      const connector = new ConnectorProxy(
+        { widget: this._notebookPanel!, editor, session: sessionContext.session },
+        [provider],
+        completerTimeout,
+      );
+      handler.connector = connector;
+    });
+    handler.editor = editor;
+    notebookPanel.content.activeCellChanged.connect((sender: any, snippet: Cell<ICellModel>) => {
+      handler.editor = snippet && snippet.editor;
+    });
+    completer.hide();
+    Widget.attach(completer, document.body);
+    return handler;
+  }
+
+  changeKernel(kernel: Kernel) {
+    kernel.getJupyterKernel().then((kernel: any) => {
+      this._context?.sessionContext.changeKernel(kernel.model).then(() => {
+        const completerHandler = this.setupCompleter(this._notebookPanel!);
+        NotebookCommands(this._commandRegistry, this._notebookPanel!, completerHandler, this._props);  
+      });
+    });      
   }
 
   get uid(): string {
