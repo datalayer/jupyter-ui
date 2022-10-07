@@ -95,7 +95,12 @@ export const Notebook = (props: INotebookProps) => {
         dispatch(notebookActions.setPortalDisplay({ uid, portalDisplay: undefined }));
       }
     }
-  }, [uid, serviceManager, kernelManager, effectiveKernel, model]);
+  }, [uid, serviceManager, kernelManager, effectiveKernel]);
+  useEffect(() => {
+    if (adapter && model) {
+      adapter.populateNotebook(model);
+    }
+  }, [adapter, model]);
   return (
     <div id="dla-Jupyter-Notebook">
       <Box

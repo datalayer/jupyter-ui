@@ -14,7 +14,7 @@ import Console from "../components/console/Console";
 import Terminal from "../components/terminal/Terminal";
 import { selectCell, cellActions } from '../components/cell/CellState';
 import { notebookActions } from '../components/notebook/NotebookState';
-import notebookExample from './NotebookExample.ipynb.json';
+import notebookExample1 from './NotebookExample1.ipynb.json';
 
 import "./../../style/index.css";
 
@@ -182,7 +182,7 @@ root.render(
     <div style={{maxWidth: '1000px'}}>
       <NotebookToolbar />
       <Notebook
-        model={notebookExample as INotebookContent}
+        model={notebookExample1 as INotebookContent}
         CellSidebar={CellSidebarDefault}
         uid={NOTEBOOK_UID_1}
       />

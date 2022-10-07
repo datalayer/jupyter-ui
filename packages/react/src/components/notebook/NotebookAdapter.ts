@@ -163,55 +163,7 @@ export class NotebookAdapter {
           });
         });
       }
-      if (this._model) {
-        this._notebookPanel?.model?.cells.clear();
-        this._model.cells.map((cell, index) => {
-          switch(cell.cell_type) {
-            case "code": {
-              const cellModel = new CodeCellModel({
-                cell: {
-                  ...cell,
-                  metadata: {
-                    ...cell.metadata,
-                    editable: !this._readOnly,
-                  }
-                },
-                id: cell.id ? cell.id.toString() : newUuid(),
-              });
-              this._notebookPanel?.model?.cells.push(cellModel);
-              break;
-            }
-            case "markdown": {
-              const cellModel = new MarkdownCellModel({
-                cell: {
-                  ...cell,
-                  metadata: {
-                    ...cell.metadata,
-                    editable: !this._readOnly,
-                  }
-                },
-                id: cell.id ? cell.id.toString() : newUuid(),
-              });
-              this._notebookPanel?.model?.cells.push(cellModel);
-              break;
-            }
-            case "raw": {
-              const cellModel = new RawCellModel({
-                cell: {
-                  ...cell,
-                  metadata: {
-                    ...cell.metadata,
-                    editable: !this._readOnly,
-                  }
-                },
-                id: cell.id ? cell.id.toString() : newUuid(),
-              });
-              this._notebookPanel?.model?.cells.push(cellModel);
-              break;
-            }
-          }
-        });
-      }
+      this.populateNotebook(this._model);
     });
     if (this._ipywidgets === 'classic') {
       this._notebookPanel.sessionContext.kernelChanged.connect((sender: any, args: IChangedArgs<JupyterKernel.IKernelConnection | null, JupyterKernel.IKernelConnection | null, 'kernel'>) => {
@@ -244,6 +196,59 @@ export class NotebookAdapter {
       },
       isEnabled,
     });
+  }
+
+  populateNotebook(model: nbformat.INotebookContent) {
+    this._model = model;
+    if (this._model) {
+      this._notebookPanel?.model?.cells.clear();
+      this._model.cells.map((cell, index) => {
+        switch(cell.cell_type) {
+          case "code": {
+            const cellModel = new CodeCellModel({
+              cell: {
+                ...cell,
+                metadata: {
+                  ...cell.metadata,
+                  editable: !this._readOnly,
+                }
+              },
+              id: cell.id ? cell.id.toString() : newUuid(),
+            });
+            this._notebookPanel?.model?.cells.push(cellModel);
+            break;
+          }
+          case "markdown": {
+            const cellModel = new MarkdownCellModel({
+              cell: {
+                ...cell,
+                metadata: {
+                  ...cell.metadata,
+                  editable: !this._readOnly,
+                }
+              },
+              id: cell.id ? cell.id.toString() : newUuid(),
+            });
+            this._notebookPanel?.model?.cells.push(cellModel);
+            break;
+          }
+          case "raw": {
+            const cellModel = new RawCellModel({
+              cell: {
+                ...cell,
+                metadata: {
+                  ...cell.metadata,
+                  editable: !this._readOnly,
+                }
+              },
+              id: cell.id ? cell.id.toString() : newUuid(),
+            });
+            this._notebookPanel?.model?.cells.push(cellModel);
+            break;
+          }
+        }
+      });
+    }
   }
 
   setupCompleter(notebookPanel: NotebookPanel) {
