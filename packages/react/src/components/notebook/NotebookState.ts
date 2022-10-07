@@ -9,8 +9,9 @@ import * as nbformat from "@jupyterlab/nbformat";
 import { INotebookModel } from "@jupyterlab/notebook";
 import { NotebookChange } from "@jupyterlab/shared-models";
 import { Cell, ICellModel } from "@jupyterlab/cells";
-import { Kernel } from "@jupyterlab/services";
+import { Kernel as JupyterKernel } from "@jupyterlab/services";
 import { cmdIds } from "./NotebookCommands";
+import Kernel from "./../../jupyter/services/kernel/Kernel";
 import NotebookAdapter from "./NotebookAdapter";
 import { IJupyterReactState } from "./../../state/State";
 
@@ -24,7 +25,7 @@ export type INotebookState = {
   adapter?: NotebookAdapter;
   saveRequest?: Date;
   activeCell?: Cell<ICellModel>;
-  kernelStatus?: Kernel.Status;
+  kernelStatus?: JupyterKernel.Status;
   notebookChange?: NotebookChange;
   portals: ReactPortal[];
   portalDisplay?: PortalDisplay;
@@ -103,6 +104,7 @@ export enum ActionType {
   ACTIVE_CELL_CHANGE = "notebook/ACTIVE_CELL_CHANGE",
   ADD_PORTALS = "notebook/ADD_PORTALS",
   CHANGE_CELL_TYPE = "notebook/CHANGE_CELL_TYPE",
+  CHANGE_KERNEL = "notebook/CHANGE_KERNEL",
   DELETE = "notebook/DELETE",
   INSERT_ABOVE = "notebook/INSERT_ABOVE",
   INSERT_BELOW = "notebook/INSERT_BELOW",
@@ -139,7 +141,11 @@ type CellModelUid = {
 }
 type KernelStatusUid = {
   uid: string;
-  kernelStatus: Kernel.Status;
+  kernelStatus: JupyterKernel.Status;
+}
+type KernelChangeUid = {
+  uid: string;
+  kernel: Kernel;
 }
 type ReactPortalsUid = {
   uid: string;
@@ -170,6 +176,9 @@ export const notebookActions = {
   ),
   modelChange: actionCreator<NotebookModelUid>(
     ActionType.MODEL_CHANGE
+  ),
+  changeKernel: actionCreator<KernelChangeUid>(
+    ActionType.CHANGE_KERNEL
   ),
   activeCellChange: actionCreator<CellModelUid>(
     ActionType.ACTIVE_CELL_CHANGE
@@ -401,6 +410,17 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
     const n = notebooks.get(kernelStatusUid.uid);
     if (n) {
       n.kernelStatus = kernelStatusUid.kernelStatus;
+    }
+    return {
+      ...state,
+      notebooks,
+    }
+  })
+  .case(notebookActions.changeKernel, (state: INotebooksState, kernelChange: KernelChangeUid) => {
+    const notebooks = state.notebooks;
+    const n = notebooks.get(kernelChange.uid);
+    if (n) {
+      n.adapter?.changeKernel(kernelChange.kernel);
     }
     return {
       ...state,

@@ -1,21 +1,24 @@
-import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { createRoot } from 'react-dom/client';
 import { Box, Button, ButtonGroup } from '@primer/react';
 import Jupyter from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { Kernel } from '../jupyter/services/kernel/Kernel';
 import Notebook from '../components/notebook/Notebook';
+import { notebookActions } from '../components/notebook/NotebookState';
 import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarDefault';
 
 import "./../../style/index.css";
 
+const NOTEBOOK_UID = 'notebook-id'
+
 const NotebookKernelChange = () => {
   const { kernelManager } = useJupyter();
-  const [kernel, setKernel] = useState<Kernel>();
+  const dispatch = useDispatch();
   const changeKernel = () => {
-    const kernel = new Kernel({ kernelManager, kernelName: "pythonqsdf" });
+    const kernel = new Kernel({ kernelManager, kernelName: "python" });
     kernel.getJupyterKernel().then((kernelConnection) => {
-      setKernel(kernel);
+      dispatch(notebookActions.changeKernel({ uid: NOTEBOOK_UID, kernel }));
     });
   }
   return (
@@ -26,14 +29,14 @@ const NotebookKernelChange = () => {
             variant="default"
             size="small"
             onClick={changeKernel}
-          >
-            Switch Kernel
+            >
+            Assign a new Kernel
           </Button>
         </ButtonGroup>
       </Box>
       <Notebook
+        uid={NOTEBOOK_UID}
         path="test.ipynb"
-        kernel={kernel}
         CellSidebar={CellSidebarDefault}
         height="500px"
       />

@@ -282,7 +282,8 @@ export class NotebookAdapter {
   }
 
   changeKernel(kernel: Kernel) {
-    kernel.getJupyterKernel().then((kernel: any) => {
+    this._kernel = kernel;
+    this._kernel.getJupyterKernel().then((kernel: any) => {
       this._context?.sessionContext.changeKernel(kernel.model).then(() => {
         const completerHandler = this.setupCompleter(this._notebookPanel!);
         NotebookCommands(this._commandRegistry, this._notebookPanel!, completerHandler, this._props);  
