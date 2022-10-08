@@ -17,7 +17,7 @@ const NotebookKernelChange = () => {
   const dispatch = useDispatch();
   const changeKernel = () => {
     if (kernelManager) {
-      const kernel = new Kernel({ kernelManager, kernelName: "python" });
+      const kernel = new Kernel({ kernelManager, kernelName: "ir" });
       kernel.getJupyterKernel().then((kernelConnection) => {
         dispatch(notebookActions.changeKernel({ uid: NOTEBOOK_UID, kernel }));
         alert('The notebook kernel is changed.')
@@ -52,7 +52,7 @@ document.body.appendChild(div);
 const root = createRoot(div)
 
 root.render(
-  <Jupyter lite={false} terminals={true}>
+  <Jupyter lite={false} terminals={true} defaultKernelName="python">
     <NotebookKernelChange />
   </Jupyter>
 );

@@ -1,4 +1,4 @@
-import { Kernel as JupyterKernel, KernelManager, SessionManager } from '@jupyterlab/services';
+import { Kernel as JupyterKernel, KernelManager, SessionManager, KernelMessage } from '@jupyterlab/services';
 import { ISessionConnection } from '@jupyterlab/services/lib/session/session';
 import { UUID } from '@lumino/coreutils';
 
@@ -10,18 +10,18 @@ export type IKernelProps = {
 export class Kernel {
   private _kernelManager: KernelManager;
   private _kernelName: string;
-  private _id: string;
+  private _jupyterKernel: Promise<JupyterKernel.IKernelConnection>;
   private _session: ISessionConnection;
-  private _kernel: Promise<JupyterKernel.IKernelConnection>;
+  private _id: string;
+  private _info: KernelMessage.IInfoReply;
 
-  public constructor(options: IKernelProps) {
-    this._kernelManager = options.kernelManager;
-    this._kernelName = options.kernelName;
-    // Request the effective Jupyter Kernel.
-    this._kernel = this.requestKernel();
+  public constructor(props: IKernelProps) {
+    this._kernelManager = props.kernelManager;
+    this._kernelName = props.kernelName;
+    this._jupyterKernel = this.requestJupyterKernel(); // Request the effective Jupyter Kernel.
   }
 
-  private async requestKernel(): Promise<JupyterKernel.IKernelConnection> {
+  private async requestJupyterKernel(): Promise<JupyterKernel.IKernelConnection> {
     await this._kernelManager.ready;
     const sessionManager = new SessionManager({
       kernelManager: this._kernelManager,
@@ -29,28 +29,39 @@ export class Kernel {
       standby: 'never',
     });
     await sessionManager.ready;
-    const randomName = UUID.uuid4();
+    const randomName = UUID.uuid4() + ".ipynb";
     this._session = await sessionManager.startNew({
       path: randomName,
       name: randomName,
-      type: this._kernelName,      
+      type: 'notebook',
+      kernel: {
+        name: this._kernelName,
+      },
     });
-    await this._session.kernel!.info;
+    this._info = await this._session.kernel!.info;
     this._id = this._session.kernel!.id;
     return this._session.kernel!;
-  }
-
-  public getJupyterKernel(): Promise<JupyterKernel.IKernelConnection> {
-    return this._kernel;
   }
 
   get id(): string {
     return this._id;
   }
 
-  shutdown() {
+  get info(): KernelMessage.IInfoReply {
+    return this._info;
+  }
+
+  get session(): ISessionConnection {
+    return this._session;
+  }
+
+  public getJupyterKernel(): Promise<JupyterKernel.IKernelConnection> {
+    return this._jupyterKernel;
+  }
+
+  public shutdown() {
     this._session.kernel?.shutdown();
-//    this.getJupyterKernel().then(k => k.dispose());
+    this.getJupyterKernel().then(k => k.dispose());
   }
 
 }

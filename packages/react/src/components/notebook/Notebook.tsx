@@ -13,6 +13,7 @@ import CellMetadataEditor from './cell/metadata/CellMetadataEditor';
 import { CellSidebarProps } from './cell/sidebar/base/CellSidebarWidget'
 import NotebookAdapter from './NotebookAdapter';
 import { notebookActions, selectNotebookPortals, notebookEpics, notebookReducer } from './NotebookState';
+
 import './Notebook.css';
 
 export type INotebookProps = {

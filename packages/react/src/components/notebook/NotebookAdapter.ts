@@ -156,8 +156,8 @@ export class NotebookAdapter {
     const isNew = (this._props.path !== "") ? false : true;
     this._context.initialize(isNew).then(() => {
       if (this._kernel) {
-        this._kernel.getJupyterKernel().then((kernel: any) => {
-          this._context?.sessionContext.changeKernel(kernel.model).then(() => {
+        this._kernel.getJupyterKernel().then(kernelConnection => {
+          this._context?.sessionContext.changeKernel(kernelConnection.model).then(() => {
             const completerHandler = this.setupCompleter(this._notebookPanel!);
             NotebookCommands(this._commandRegistry, this._notebookPanel!, completerHandler, this._props);  
           });
@@ -288,8 +288,8 @@ export class NotebookAdapter {
 
   changeKernel(kernel: Kernel) {
     this._kernel = kernel;
-    this._kernel.getJupyterKernel().then((kernel: any) => {
-      this._context?.sessionContext.changeKernel(kernel.model).then(() => {
+    this._kernel.getJupyterKernel().then(kernelConnection => {
+      this._context?.sessionContext.changeKernel(kernelConnection.model).then(() => {
         const completerHandler = this.setupCompleter(this._notebookPanel!);
         NotebookCommands(this._commandRegistry, this._notebookPanel!, completerHandler, this._props);  
       });

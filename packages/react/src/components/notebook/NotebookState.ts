@@ -362,9 +362,9 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
   })
   .case(notebookActions.update, (state: INotebooksState, updateUid: UpdateUid) => {
     const notebooks = state.notebooks;
-    let n = notebooks.get(updateUid.uid);
-    if (n) {
-      n = { ...n, ...updateUid.partialState }
+    let notebook = notebooks.get(updateUid.uid);
+    if (notebook) {
+      notebook = { ...notebook, ...updateUid.partialState }
     } else {
       notebooks.set(updateUid.uid, {
         adapter: updateUid.partialState.adapter,
@@ -378,9 +378,9 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
   })
   .case(notebookActions.activeCellChange, (state: INotebooksState, cellModelUid: CellModelUid) => {
     const notebooks = state.notebooks;
-    const n = notebooks.get(cellModelUid.uid);
-    if (n) {
-      n.activeCell = cellModelUid.cellModel;
+    const notebook = notebooks.get(cellModelUid.uid);
+    if (notebook) {
+      notebook.activeCell = cellModelUid.cellModel;
     }
     return {
       ...state,
@@ -389,9 +389,9 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
   })
   .case(notebookActions.modelChange, (state: INotebooksState, modelUid: NotebookModelUid) => {
     const notebooks = state.notebooks;
-    const n = notebooks.get(modelUid.uid);
-    if (n) {
-      n.model = modelUid.notebookModel;
+    const notebook = notebooks.get(modelUid.uid);
+    if (notebook) {
+      notebook.model = modelUid.notebookModel;
     }
     return {
       ...state,
@@ -400,9 +400,9 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
   })
   .case(notebookActions.notebookChange, (state: INotebooksState, notebookChangeUid: NotebookChangeUid) => {
     const notebooks = state.notebooks;
-    const n = notebooks.get(notebookChangeUid.uid);
-    if (n) {
-      n.notebookChange = notebookChangeUid.notebookChange;
+    const notebook = notebooks.get(notebookChangeUid.uid);
+    if (notebook) {
+      notebook.notebookChange = notebookChangeUid.notebookChange;
     }
     return {
       ...state,
@@ -411,9 +411,9 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
   })
   .case(notebookActions.kernelStatusChanged, (state: INotebooksState, kernelStatusUid: KernelStatusUid) => {
     const notebooks = state.notebooks;
-    const n = notebooks.get(kernelStatusUid.uid);
-    if (n) {
-      n.kernelStatus = kernelStatusUid.kernelStatus;
+    const notebook = notebooks.get(kernelStatusUid.uid);
+    if (notebook) {
+      notebook.kernelStatus = kernelStatusUid.kernelStatus;
     }
     return {
       ...state,
@@ -422,9 +422,9 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
   })
   .case(notebookActions.changeKernel, (state: INotebooksState, kernelChange: KernelChangeUid) => {
     const notebooks = state.notebooks;
-    const n = notebooks.get(kernelChange.uid);
-    if (n) {
-      n.adapter?.changeKernel(kernelChange.kernel);
+    const notebook = notebooks.get(kernelChange.uid);
+    if (notebook) {
+      notebook.adapter?.changeKernel(kernelChange.kernel);
     }
     return {
       ...state,
@@ -433,9 +433,9 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
   })
   .case(notebookActions.addPortals, (state: INotebooksState, portalsUid: ReactPortalsUid) => {
     const notebooks = state.notebooks;
-    const n = notebooks.get(portalsUid.uid);
-    if (n) {
-      n.portals = n.portals.concat(portalsUid.portals);
+    const notebook = notebooks.get(portalsUid.uid);
+    if (notebook) {
+      notebook.portals = notebook.portals.concat(portalsUid.portals);
     }
     return {
       ...state,
@@ -452,9 +452,9 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
   })
   .case(notebookActions.setPortals, (state: INotebooksState, portalsUid: ReactPortalsUid) => {
     const notebooks = state.notebooks;
-    const n = notebooks.get(portalsUid.uid);
-    if (n) {
-      n.portals = portalsUid.portals;
+    const notebook = notebooks.get(portalsUid.uid);
+    if (notebook) {
+      notebook.portals = portalsUid.portals;
     }
     return {
       ...state,
@@ -463,9 +463,9 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
   })
   .case(notebookActions.setPortalDisplay, (state: INotebooksState, portalDisplayUid: PortalDisplayUid) => {
     const notebooks = state.notebooks;
-    const n = notebooks.get(portalDisplayUid.uid);
-    if (n) {
-      n.portalDisplay = portalDisplayUid.portalDisplay;
+    const notebook = notebooks.get(portalDisplayUid.uid);
+    if (notebook) {
+      notebook.portalDisplay = portalDisplayUid.portalDisplay;
     }
     return {
       ...state,
@@ -474,9 +474,9 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
   })
   .case(notebookActions.save.done, (state: INotebooksState, dateUid: Success<DateUid, DateUid>) => {
     const notebooks = state.notebooks;
-    const n = notebooks.get(dateUid.result.uid);
-    if (n) {
-      n.saveRequest = dateUid.result.date;
+    const notebook = notebooks.get(dateUid.result.uid);
+    if (notebook) {
+      notebook.saveRequest = dateUid.result.date;
     }
     return {
       ...state,
