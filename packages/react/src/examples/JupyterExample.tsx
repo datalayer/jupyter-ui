@@ -14,6 +14,9 @@ import Console from "../components/console/Console";
 import Terminal from "../components/terminal/Terminal";
 import { selectCell, cellActions } from '../components/cell/CellState';
 import { notebookActions } from '../components/notebook/NotebookState';
+import NotebookToolbarAdvanced from "./NotebookToolbar";
+import NotebookToolbarAutoSave from "./NotebookToolbarAutoSave";
+import CellSidebarNew from '../components/notebook/cell/sidebar/CellSidebarNew';
 import notebookExample1 from './NotebookExample1.ipynb.json';
 
 import "./../../style/index.css";
@@ -22,6 +25,7 @@ const SOURCE_1 = '1+1'
 
 const NOTEBOOK_UID_1 = 'notebook-uid-1'
 const NOTEBOOK_UID_2 = 'notebook-uid-2'
+const NOTEBOOK_UID_3 = 'notebook-uid-3'
 
 const SOURCE_1_OUTPUTS: IOutput[] = [
   {
@@ -92,7 +96,7 @@ const NotebookToolbar = () => {
         <Button
           variant="default"
           size="small"
-          onClick={() => dispatch(notebookActions.save.started({ uid: NOTEBOOK_UID_1 , date: new Date() }))}
+          onClick={() => dispatch(notebookActions.save.started({ uid: NOTEBOOK_UID_1, date: new Date() }))}
         >
           Save the notebook
         </Button>
@@ -114,7 +118,7 @@ const NotebookKernelChange = () => {
     if (kernelManager) {
       const kernel = new Kernel({ kernelManager, kernelName: "pythonqsdf" });
       kernel.getJupyterKernel().then((kernelConnection) => {
-      });        
+      });
     }
   }
   return (
@@ -180,14 +184,23 @@ root.render(
     <hr />
     <Outputs />
     <hr />
-    <div style={{maxWidth: '1000px'}}>
-      <NotebookToolbar />
-      <Notebook
-        model={notebookExample1 as INotebookContent}
-        CellSidebar={CellSidebarDefault}
-        uid={NOTEBOOK_UID_1}
-      />
-    </div>
+    <NotebookToolbar />
+    <Notebook
+      path="test.ipynb"
+      // model={notebookExample as INotebookContent}
+      CellSidebar={CellSidebarDefault}
+      uid={NOTEBOOK_UID_1}
+    />
+    <Notebook
+      path="test.ipynb"
+      // model={notebookExample1 as INotebookContent}
+      CellSidebar={CellSidebarNew}
+      Toolbar={NotebookToolbarAdvanced}
+      // Height - Toolbar Height
+      height='calc(100vh - 2.6rem)'
+      cellSidebarMargin={60}
+      uid={NOTEBOOK_UID_3}
+    />
     <hr />
     <NotebookKernelChange />
     <hr />

@@ -34,28 +34,28 @@ const NotebookToolbar = (props: { notebookId: string }) => {
               variant="text"
               color="primary"
               startIcon={<AddCircleOutlineIcon />}
-              onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertBelow.started({uid: notebookId, cellType: "raw" })) }}
-              >
-                Raw
+              onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "raw" })) }}
+            >
+              Raw
             </Button>
             <Button
               variant="text"
               color="primary"
               startIcon={<AddCircleOutlineIcon />}
-              onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertBelow.started({uid: notebookId, cellType: "markdown" })) }}
-              >
-                Markdown
+              onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "markdown" })) }}
+            >
+              Markdown
             </Button>
-            <Button 
+            <Button
               variant="text"
               color="primary"
               startIcon={<AddCircleOutlineIcon />}
-              onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertBelow.started({uid: notebookId, cellType: "code" })) }}
-              >
-                Code
+              onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "code" })) }}
+            >
+              Code
             </Button>
-            <FormGroup row style={{ paddingLeft: 10}}>
-              <FormControlLabel                
+            <FormGroup row style={{ paddingLeft: 10 }}>
+              <FormControlLabel
                 control={<Switch checked={state.terminal} onChange={handleChange} name="terminal" />}
                 label={<Typography variant="body2" display="block">Terminal</Typography>}
               />
@@ -64,42 +64,42 @@ const NotebookToolbar = (props: { notebookId: string }) => {
         </Grid>
         <Grid item xs={6}>
           <Grid container justifyItems="flex-end">
-            <Button 
+            <Button
               variant="outlined"
               color="primary"
               startIcon={<SaveOutlined />}
-              onClick={() => dispatch(notebookActions.save.started({uid: notebookId, date: new Date() }))}
-              >
-                Save
+              onClick={() => dispatch(notebookActions.save.started({ uid: notebookId, date: new Date() }))}
+            >
+              Save
             </Button>
             {(notebook?.kernelStatus === 'idle') &&
-              <Button 
+              <Button
                 variant="outlined"
                 color="primary"
                 startIcon={<PlayCircleOutlineIcon />}
                 onClick={(e) => { e.preventDefault(); dispatch(notebookActions.runAll.started(notebookId)) }}
-                >
-                  Run all
+              >
+                Run all
               </Button>
-             }
+            }
             {(notebook?.kernelStatus === 'busy') &&
-              <Button 
+              <Button
                 variant="outlined"
                 color="secondary"
                 startIcon={<StopOutlined />}
-                onClick={(e) =>  { e.preventDefault(); dispatch(notebookActions.interrupt.started(notebookId)) }}
-                >
-                  Stop
+                onClick={(e) => { e.preventDefault(); dispatch(notebookActions.interrupt.started(notebookId)) }}
+              >
+                Stop
               </Button>
-             }
+            }
             {((notebook?.kernelStatus !== 'idle') && (notebook?.kernelStatus !== 'busy')) &&
-              <Button 
+              <Button
                 variant="outlined"
                 color="primary"
                 startIcon={<QuestionAnswerOutlined />}
-                >
+              >
               </Button>
-             }
+            }
           </Grid>
         </Grid>
       </Grid>

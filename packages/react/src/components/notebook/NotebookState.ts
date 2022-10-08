@@ -51,7 +51,7 @@ export const selectNotebook = (uid: string): INotebookState | undefined =>
     }
     return undefined;
   }
-);
+  );
 
 export const selectNotebookModel = (uid: string): INotebookModel | undefined =>
   useSelector((state: IJupyterReactState) => {
@@ -60,7 +60,7 @@ export const selectNotebookModel = (uid: string): INotebookModel | undefined =>
     }
     return undefined;
   }
-);
+  );
 
 export const selectActiveCell = (uid: string): Cell<ICellModel> | undefined =>
   useSelector((state: IJupyterReactState) => {
@@ -69,7 +69,7 @@ export const selectActiveCell = (uid: string): Cell<ICellModel> | undefined =>
     }
     return undefined;
   }
-);
+  );
 
 export const selectNotebookPortals = (uid: string) =>
   useSelector((state: IJupyterReactState) => {
@@ -78,7 +78,7 @@ export const selectNotebookPortals = (uid: string) =>
     }
     return undefined;
   }
-);
+  );
 
 export const selectSaveRequest = (uid: string): Date | undefined =>
   useSelector((state: IJupyterReactState) => {
@@ -87,7 +87,7 @@ export const selectSaveRequest = (uid: string): Date | undefined =>
     }
     return undefined;
   }
-);
+  );
 
 export const selectNotebookPortalDisplay = (uid: string) =>
   useSelector((state: IJupyterReactState) => {
@@ -96,7 +96,7 @@ export const selectNotebookPortalDisplay = (uid: string) =>
     }
     return undefined;
   }
-);
+  );
 
 /* Actions */
 
@@ -232,116 +232,116 @@ const runEpic: Epic<
   Action<Success<string, string>>,
   IJupyterReactState
 > = (action$, state$) =>
-  action$.pipe(
-    ofAction(notebookActions.run.started),
-    tap(action => {
-      state$.value.notebook.notebooks.get(action.payload)?.adapter?.commands.execute(cmdIds.run);
-    }),
-    ignoreElements(),
-  );
+    action$.pipe(
+      ofAction(notebookActions.run.started),
+      tap(action => {
+        state$.value.notebook.notebooks.get(action.payload)?.adapter?.commands.execute(cmdIds.run);
+      }),
+      ignoreElements(),
+    );
 
 const runAllEpic: Epic<
   Action<Success<string, string>>,
   Action<Success<string, string>>,
   IJupyterReactState
 > = (action$, state$) =>
-  action$.pipe(
-    ofAction(notebookActions.runAll.started),
-    tap(action => {
-      state$.value.notebook.notebooks.get(action.payload)?.adapter?.commands.execute(cmdIds.runAll);
-    }),
-    ignoreElements(),
-  );
+    action$.pipe(
+      ofAction(notebookActions.runAll.started),
+      tap(action => {
+        state$.value.notebook.notebooks.get(action.payload)?.adapter?.commands.execute(cmdIds.runAll);
+      }),
+      ignoreElements(),
+    );
 
 const interruptEpic: Epic<
   Action<Success<string, string>>,
   Action<Success<string, string>>,
   IJupyterReactState
 > = (action$, state$) =>
-  action$.pipe(
-    ofAction(notebookActions.interrupt.started),
-    tap(action => {
-      state$.value.notebook.notebooks.get(action.payload)?.adapter?.commands.execute(cmdIds.interrupt);
-    }),
-    ignoreElements(),
-  );
+    action$.pipe(
+      ofAction(notebookActions.interrupt.started),
+      tap(action => {
+        state$.value.notebook.notebooks.get(action.payload)?.adapter?.commands.execute(cmdIds.interrupt);
+      }),
+      ignoreElements(),
+    );
 
 const insertAboveEpic: Epic<
   Action<Success<CellTypeUid, CellTypeUid>>,
   Action<Success<CellTypeUid, CellTypeUid>>,
   IJupyterReactState
 > = (action$, state$) =>
-  action$.pipe(
-    ofAction(notebookActions.insertAbove.started),
-    tap(action => {
-      state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.setDefaultCellType(action.payload.cellType);
-      state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.commands.execute(cmdIds.insertAbove);
-    }),
-    ignoreElements(),
-  );
+    action$.pipe(
+      ofAction(notebookActions.insertAbove.started),
+      tap(action => {
+        state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.setDefaultCellType(action.payload.cellType);
+        state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.commands.execute(cmdIds.insertAbove);
+      }),
+      ignoreElements(),
+    );
 
 const insertBelowEpic: Epic<
   Action<Success<CellTypeUid, CellTypeUid>>,
   Action<Success<CellTypeUid, CellTypeUid>>,
   IJupyterReactState
 > = (action$, state$) =>
-  action$.pipe(
-    ofAction(notebookActions.insertBelow.started),
-    tap(action => {
-      state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.setDefaultCellType(action.payload.cellType);
-      state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.commands.execute(cmdIds.insertBelow);
-    }),
-    ignoreElements(),
-  );
+    action$.pipe(
+      ofAction(notebookActions.insertBelow.started),
+      tap(action => {
+        state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.setDefaultCellType(action.payload.cellType);
+        state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.commands.execute(cmdIds.insertBelow);
+      }),
+      ignoreElements(),
+    );
 
 const deleteEpic: Epic<
   Action<Success<string, string>>,
   Action<Success<string, string>>,
   IJupyterReactState
 > = (action$, state$) =>
-  action$.pipe(
-    ofAction(notebookActions.delete.started),
-    tap(action => {
-      state$.value.notebook.notebooks.get(action.payload)?.adapter?.commands.execute(cmdIds.deleteCells);
-    }),
-    ignoreElements(),
-  );
+    action$.pipe(
+      ofAction(notebookActions.delete.started),
+      tap(action => {
+        state$.value.notebook.notebooks.get(action.payload)?.adapter?.commands.execute(cmdIds.deleteCells);
+      }),
+      ignoreElements(),
+    );
 
 const changeCellTypeEpic: Epic<
   Action<Success<CellTypeUid, CellTypeUid>>,
   Action<Success<CellTypeUid, CellTypeUid>>,
   IJupyterReactState
 > = (action$, state$) =>
-  action$.pipe(
-    ofAction(notebookActions.changeCellType.started),
-    tap(action => {
-//      state$.value.notebook?.adapter?.commands.execute(cmdIds.toCode);
-      state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.changeCellType(action.payload.cellType);
-      /*
-      NotebookActions.changeCellType(
-        state$.value.notebook.notebooks.get(action.payload)?.adapter?.notebookPanel?.content!,
-        action.payload
-      );
-      */
-    }),
-    ignoreElements(),
-  );
+    action$.pipe(
+      ofAction(notebookActions.changeCellType.started),
+      tap(action => {
+        //      state$.value.notebook?.adapter?.commands.execute(cmdIds.toCode);
+        state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.changeCellType(action.payload.cellType);
+        /*
+        NotebookActions.changeCellType(
+          state$.value.notebook.notebooks.get(action.payload)?.adapter?.notebookPanel?.content!,
+          action.payload
+        );
+        */
+      }),
+      ignoreElements(),
+    );
 
 const saveEpic: Epic<
   Action<Success<DateUid, DateUid>>,
   Action<Success<DateUid, DateUid>>,
   IJupyterReactState
 > = (action$, state$) =>
-  action$.pipe(
-    ofAction(notebookActions.save.started),
-    map(action => {
-      state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.commands.execute(cmdIds.save);
-      return notebookActions.save.done({
-        params: action.payload,
-        result: action.payload,
-      });
-    })
-  );
+    action$.pipe(
+      ofAction(notebookActions.save.started),
+      map(action => {
+        state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.commands.execute(cmdIds.save);
+        return notebookActions.save.done({
+          params: action.payload,
+          result: action.payload,
+        });
+      })
+    );
 
 export const notebookEpics = combineEpics(
   runEpic,
@@ -364,9 +364,9 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
     const notebooks = state.notebooks;
     let n = notebooks.get(updateUid.uid);
     if (n) {
-      n = { ...n, ...updateUid.partialState}
+      n = { ...n, ...updateUid.partialState }
     } else {
-      notebooks.set(updateUid.uid, { 
+      notebooks.set(updateUid.uid, {
         adapter: updateUid.partialState.adapter,
         portals: [],
       })
@@ -484,15 +484,20 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
     }
   })
   .case(notebookActions.insertAbove.done, (state: INotebooksState, _: Success<CellTypeUid, CellTypeUid>) => {
-      return state;
+    return state;
   })
   .case(notebookActions.insertBelow.done, (state: INotebooksState, _: Success<CellTypeUid, CellTypeUid>) => {
-      return state;
+    return state;
   })
   .case(notebookActions.changeCellType.done, (state: INotebooksState, _: Success<CellTypeUid, CellTypeUid>) => {
     return state;
   })
   .case(notebookActions.run.done, (state: INotebooksState, _: Success<string, string>) => {
+    console.log("RUN DONE")
+    return state
+  })
+  .case(notebookActions.delete.done, (state: INotebooksState, _: Success<string, string>) => {
+    console.log("DELETE DONE")
     return state
   }
-);
+  );
