@@ -1,7 +1,7 @@
 import { useDispatch } from "react-redux";
 import { createRoot } from 'react-dom/client';
 import { Box, Button, ButtonGroup } from '@primer/react';
-import { IOutput, INotebookContent } from '@jupyterlab/nbformat';
+import { IOutput } from '@jupyterlab/nbformat';
 import Jupyter from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { Kernel } from '../jupyter/services/kernel/Kernel';
@@ -15,9 +15,7 @@ import Terminal from "../components/terminal/Terminal";
 import { selectCell, cellActions } from '../components/cell/CellState';
 import { notebookActions } from '../components/notebook/NotebookState';
 import NotebookToolbarAdvanced from "./NotebookToolbar";
-import NotebookToolbarAutoSave from "./NotebookToolbarAutoSave";
 import CellSidebarNew from '../components/notebook/cell/sidebar/CellSidebarNew';
-import notebookExample1 from './NotebookExample1.ipynb.json';
 
 import "./../../style/index.css";
 

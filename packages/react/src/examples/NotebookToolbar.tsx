@@ -33,7 +33,6 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
 }));
 
 const NotebookToolbarAdvanced = (props: { notebookId: string }) => {
-
   const { notebookId } = props;
   const [autoSave, setAutoSave] = useState(true);
   const [addtype, setaddtype] = useState('code');

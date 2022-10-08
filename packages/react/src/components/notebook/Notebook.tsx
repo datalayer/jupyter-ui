@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Box } from "@primer/react";
 import { Cell, ICellModel } from '@jupyterlab/cells';
 import * as nbformat from '@jupyterlab/nbformat';
@@ -106,14 +106,14 @@ export const Notebook = (props: INotebookProps) => {
     }
   }, [adapter, model]);
   return (
-    <div style={{ height: props.height, width: '100%', position: "relative" }} id="dla-Jupyter-Notebook">
+    <div style={{ height, width: '100%', position: "relative" }} id="dla-Jupyter-Notebook">
       {
         props.Toolbar && <props.Toolbar notebookId={props.uid} />
       }
       <Box className="box-notebook"
         css={{
           '& .dla-Jupyter-Notebook': {
-            height: props.height,
+            height,
             width: '100%',
             overflowY: 'hidden',
           },

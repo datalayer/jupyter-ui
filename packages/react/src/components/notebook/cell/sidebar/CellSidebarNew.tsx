@@ -1,14 +1,11 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { PanelLayout } from '@lumino/widgets';
-import { ActionMenu, Button } from "@primer/react";
-import { KebabHorizontalIcon, ChevronRightIcon, XIcon, ChevronUpIcon, ChevronDownIcon } from "@primer/octicons-react";
 import { DLA_CELL_HEADER_CLASS } from './base/CellSidebarWidget';
 import { notebookActions, selectActiveCell } from '../../NotebookState';
 import { CellSidebarProps } from './base/CellSidebarWidget';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import DeleteIcon from '@mui/icons-material/Delete';
-import StopIcon from '@mui/icons-material/Stop';
 import IconButton from '@mui/material/IconButton';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
