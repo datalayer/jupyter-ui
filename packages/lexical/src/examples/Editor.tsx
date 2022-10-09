@@ -24,7 +24,7 @@ import {
   EquationsPlugin, ImagesPlugin, YouTubePlugin, ImageNode, YouTubeNode,
   JupyterCodeHighlightNode, JupyterCodeNode, JupyterOutputNode, CodeActionMenuPlugin,
   AutoEmbedPlugin, NbformatContentPlugin, TableOfContentsPlugin, MarkdownPlugin
-} from "@datalayer/jupyter-lexical";
+} from "./../index";
 import ExampleTheme from "./themes/Theme";
 import TreeViewPlugin from "./plugins/TreeViewPlugin";
 import ToolbarPlugin from "./plugins/ToolbarPlugin";

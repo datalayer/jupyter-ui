@@ -3,8 +3,8 @@ export * from "./components/InsertEquationDialog";
 export * from "./components/InsertImageDialog";
 export * from "./components/JupyterOutputComponent";
 // Convert.
-export * from "./convert/LexicalToNbFormat"
-export * from "./convert/NbFormatToLexical"
+export * from "./convert/LexicalToNbFormat";
+export * from "./convert/NbFormatToLexical";
 // Hooks.
 export * from "./hooks/useModal";
 // Nodes.

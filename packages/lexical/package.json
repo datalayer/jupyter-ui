@@ -25,6 +25,9 @@
     "clean": "rimraf lib build tsconfig.tsbuildinfo",
     "build:tsc:watch:tsc": "tsc --watch",
     "build:tsc:watch:res": "gulp resources-to-lib-watch",
+    "start": "run-p -c start:*",
+    "start:jupyter": "cd ./../.. && make start-jupyter-server",
+    "start:webpack": "webpack serve",
     "typedoc": "typedoc ./src",
     "watch": "tsc --watch"
   },
