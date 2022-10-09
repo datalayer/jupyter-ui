@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { PanelLayout } from '@lumino/widgets';
-import { ActionMenu, Button, IconButton } from "@primer/react";
-import { KebabHorizontalIcon, ChevronRightIcon, XIcon, ChevronUpIcon, ChevronDownIcon, SquareIcon } from "@primer/octicons-react";
+import { ActionMenu, Button } from "@primer/react";
+import { ChevronRightIcon, XIcon, ChevronUpIcon, ChevronDownIcon, SquareIcon } from "@primer/octicons-react";
 import { DLA_CELL_HEADER_CLASS } from './base/CellSidebarWidget';
 import { notebookActions, selectActiveCell } from '../../NotebookState';
 import { CellSidebarProps } from './base/CellSidebarWidget';
@@ -103,12 +103,16 @@ export const CellSidebarDefault = (props: CellSidebarProps) => {
         </span>
         {nbgrader &&
           <ActionMenu>
+            {/*
             <ActionMenu.Anchor>
               <IconButton icon={KebabHorizontalIcon} variant="invisible" aria-label="Open column options" />
             </ActionMenu.Anchor>
             <ActionMenu.Overlay>
+            */}
               <CellMetadataEditor notebookId={notebookId} cell={activeCell} nbgrader={nbgrader}/>
+            {/*
             </ActionMenu.Overlay>
+            */}
           </ActionMenu>
         }
       </div>
