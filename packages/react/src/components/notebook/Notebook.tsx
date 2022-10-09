@@ -29,6 +29,7 @@ export type INotebookProps = {
   cellSidebarMargin: number;
   Toolbar?: (props: any) => JSX.Element;
   height?: string;
+  maxHeight?: string;
 }
 
 /**
@@ -40,7 +41,7 @@ export type INotebookProps = {
  */
 export const Notebook = (props: INotebookProps) => {
   const { serviceManager, defaultKernel, kernelManager, injectableStore } = useJupyter();
-  const { kernel, readOnly, cellMetadataPanel, nbgrader, uid: propsUid, model, height } = props;
+  const { kernel, readOnly, cellMetadataPanel, nbgrader, uid: propsUid, model, height, maxHeight } = props;
   const [uid] = useState(propsUid || newUuid());
   const effectiveKernel = kernel || defaultKernel;
   const dispatch = useDispatch();
@@ -115,6 +116,7 @@ export const Notebook = (props: INotebookProps) => {
         css={{
           '& .dla-Jupyter-Notebook': {
             height,
+            maxHeight,
             width: '100%',
             overflowY: 'hidden',
           },
@@ -179,6 +181,7 @@ Notebook.defaultProps = {
   cellMetadataPanel: false,
   cellSidebarMargin: 120,
   height: '100vh',
+  maxHeight: '100vh',
 } as Partial<INotebookProps>;
 
 export default Notebook;
