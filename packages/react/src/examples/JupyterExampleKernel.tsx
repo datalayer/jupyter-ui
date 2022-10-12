@@ -10,7 +10,7 @@ import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarD
 
 import "./../../style/index.css";
 
-const NOTEBOOK_UID = 'notebook-id-kernel'
+const NOTEBOOK_UID = 'notebook-kernel-id';
 
 const NotebookKernelChange = () => {
   const { kernelManager } = useJupyter();

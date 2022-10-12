@@ -84,11 +84,16 @@ export const Notebook = (props: INotebookProps) => {
         adapter.notebookPanel?.model?.contentChanged.connect((notebookModel, _) => {
           dispatch(notebookActions.modelChange({ uid, notebookModel }));
         });
-        adapter.notebookPanel?.content.activeCellChanged.connect((_, cellModel) => {
-          dispatch(notebookActions.activeCellChange({ uid, cellModel }));
-        });
+        /*
         adapter.notebookPanel?.model!.sharedModel.changed.connect((_, notebookChange) => {
           dispatch(notebookActions.notebookChange({ uid, notebookChange }));
+        });
+        adapter.notebookPanel?.content.modelChanged.connect((notebook, _) => {
+          dispatch(notebookActions.notebookChange({ uid, notebook }));
+        });
+        */
+        adapter.notebookPanel?.content.activeCellChanged.connect((_, cellModel) => {
+          dispatch(notebookActions.activeCellChange({ uid, cellModel }));
         });
         adapter.notebookPanel?.sessionContext.statusChanged.connect((_, kernelStatus) => {
           dispatch(notebookActions.kernelStatusChanged({ uid, kernelStatus }));

@@ -10,10 +10,10 @@ import { INotebookModel } from "@jupyterlab/notebook";
 import { NotebookChange } from "@jupyterlab/shared-models";
 import { Cell, ICellModel } from "@jupyterlab/cells";
 import { Kernel as JupyterKernel } from "@jupyterlab/services";
-import { cmdIds } from "./NotebookCommands";
 import Kernel from "./../../jupyter/services/kernel/Kernel";
-import NotebookAdapter from "./NotebookAdapter";
 import { IJupyterReactState } from "./../../state/State";
+import { cmdIds } from "./NotebookCommands";
+import NotebookAdapter from "./NotebookAdapter";
 
 type PortalDisplay = {
   portal: ReactPortal;
@@ -41,7 +41,6 @@ export const notebookInitialState: INotebooksState = {
   notebooks: new Map<string, INotebookState>(),
 }
 
-
 /* Selectors */
 
 export const selectNotebook = (uid: string): INotebookState | undefined =>
@@ -51,16 +50,20 @@ export const selectNotebook = (uid: string): INotebookState | undefined =>
     }
     return undefined;
   }
-  );
+);
 
-export const selectNotebookModel = (uid: string): INotebookModel | undefined =>
+export const selectNotebookModel = (uid: string): {  model: INotebookModel | undefined, changed: any } | undefined =>
   useSelector((state: IJupyterReactState) => {
     if (state.notebook) {
-      return state.notebook.notebooks.get(uid)?.model;
+      // We need a changed attribute to deal the React-Redux shallow equality.
+      return {
+        model: state.notebook.notebooks.get(uid)?.model,
+        changed: state.notebook.notebooks.get(uid)?.model?.contentChanged,
+      };
     }
     return undefined;
-  }
-  );
+  },
+);
 
 export const selectActiveCell = (uid: string): Cell<ICellModel> | undefined =>
   useSelector((state: IJupyterReactState) => {
@@ -69,7 +72,7 @@ export const selectActiveCell = (uid: string): Cell<ICellModel> | undefined =>
     }
     return undefined;
   }
-  );
+);
 
 export const selectNotebookPortals = (uid: string) =>
   useSelector((state: IJupyterReactState) => {
@@ -78,7 +81,7 @@ export const selectNotebookPortals = (uid: string) =>
     }
     return undefined;
   }
-  );
+);
 
 export const selectSaveRequest = (uid: string): Date | undefined =>
   useSelector((state: IJupyterReactState) => {
@@ -87,7 +90,7 @@ export const selectSaveRequest = (uid: string): Date | undefined =>
     }
     return undefined;
   }
-  );
+);
 
 export const selectNotebookPortalDisplay = (uid: string) =>
   useSelector((state: IJupyterReactState) => {
@@ -96,7 +99,7 @@ export const selectNotebookPortalDisplay = (uid: string) =>
     }
     return undefined;
   }
-  );
+);
 
 /* Actions */
 
@@ -387,11 +390,11 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
       notebooks,
     }
   })
-  .case(notebookActions.modelChange, (state: INotebooksState, modelUid: NotebookModelUid) => {
+  .case(notebookActions.modelChange, (state: INotebooksState, notebookModelUid: NotebookModelUid) => {
     const notebooks = state.notebooks;
-    const notebook = notebooks.get(modelUid.uid);
+    const notebook = notebooks.get(notebookModelUid.uid);
     if (notebook) {
-      notebook.model = modelUid.notebookModel;
+      notebook.model = notebookModelUid.notebookModel;
     }
     return {
       ...state,
@@ -493,11 +496,9 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
     return state;
   })
   .case(notebookActions.run.done, (state: INotebooksState, _: Success<string, string>) => {
-    console.log("RUN DONE")
     return state
   })
   .case(notebookActions.delete.done, (state: INotebooksState, _: Success<string, string>) => {
-    console.log("DELETE DONE")
     return state
   }
-  );
+);

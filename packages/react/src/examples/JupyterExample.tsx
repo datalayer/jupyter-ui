@@ -21,9 +21,9 @@ import "./../../style/index.css";
 
 const SOURCE_1 = '1+1'
 
-const NOTEBOOK_UID_1 = 'notebook-uid-1'
-const NOTEBOOK_UID_2 = 'notebook-uid-2'
-const NOTEBOOK_UID_3 = 'notebook-uid-3'
+const NOTEBOOK_UID_1 = 'notebook-1-id';
+const NOTEBOOK_UID_2 = 'notebook-2-id';
+const NOTEBOOK_UID_3 = 'notebook-3-id';
 
 const SOURCE_1_OUTPUTS: IOutput[] = [
   {

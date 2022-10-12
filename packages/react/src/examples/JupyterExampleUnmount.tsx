@@ -10,7 +10,7 @@ import notebookExample from './NotebookExample1.ipynb.json';
 
 import "./../../style/index.css";
 
-const NOTEBOOK_UID = 'notebook-id-model'
+const NOTEBOOK_UID = 'notebook-unmount-id';
 
 const NotebookUnmount = () => {
   const [show, setShow] = useState(true);
