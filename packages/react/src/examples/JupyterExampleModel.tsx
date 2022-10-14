@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client';
 import { Box, Button, ButtonGroup } from '@primer/react';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import Jupyter from '../jupyter/Jupyter';
+import { useJupyter } from '../jupyter/JupyterContext';
+import { IJupyterReactState } from '../state/State';
 import Notebook from '../components/notebook/Notebook';
 import { selectNotebookModel } from '../components/notebook/NotebookState';
 import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarDefault';
@@ -14,10 +16,12 @@ import "./../../style/index.css";
 const NOTEBOOK_UID = 'notebook-model-id';
 
 const NotebookModelChange = () => {
+  const { injectableStore } = useJupyter();
   const [model, setModel] = useState<INotebookContent>(notebookExample1);
   const notebookModel = selectNotebookModel(NOTEBOOK_UID);
-  console.log('Current notebook model', notebookModel?.model, notebookModel?.model?.toJSON());
+  console.log('Current notebook model update', notebookModel?.model, notebookModel?.model?.toJSON());
   const changeModel = () => {
+    console.log('Current notebook model from store', (injectableStore.getState() as IJupyterReactState).notebook.notebooks.get(NOTEBOOK_UID)?.model?.toJSON());
     setModel(notebookExample2);
   }
   return (
