@@ -1,4 +1,7 @@
 
+# Copyright (c) Datalayer, Inc. https://datalayer.io
+# Distributed under the terms of the MIT License.
+
 name: ipyscript_docs
 channels:
   - conda-forge

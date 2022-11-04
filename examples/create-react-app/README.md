@@ -97,6 +97,7 @@ Therefor, for now, we ask to pin the following resolutions.
     "**/@jupyter-widgets/output": "6.0.1",
     "**/@jupyterlab/application": "4.0.0-alpha.13",
     "**/@jupyterlab/apputils": "4.0.0-alpha.13",
+    "**/@jupyterlab/attachments": "4.0.0-alpha.13",
     "**/@jupyterlab/cells": "4.0.0-alpha.13",
     "**/@jupyterlab/codeeditor": "4.0.0-alpha.13",
     "**/@jupyterlab/codemirror": "4.0.0-alpha.13",

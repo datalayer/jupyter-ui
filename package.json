@@ -57,7 +57,7 @@
     "eslint-plugin-react-hooks": "^1.6.0",
     "concurrently": "6.2.0",
     "jest-prop-type-error": "^1.1.0",
-    "lerna": "^3.10.7",
+    "lerna": "5.6.2",
     "prettier": "2.3.1",
     "vercel": "21.3.3"
   },
@@ -69,6 +69,7 @@
     "**/@jupyter-widgets/output": "6.0.1",
     "**/@jupyterlab/application": "4.0.0-alpha.13",
     "**/@jupyterlab/apputils": "4.0.0-alpha.13",
+    "**/@jupyterlab/attachments": "4.0.0-alpha.13",
     "**/@jupyterlab/cells": "4.0.0-alpha.13",
     "**/@jupyterlab/codeeditor": "4.0.0-alpha.13",
     "**/@jupyterlab/codemirror": "4.0.0-alpha.13",
