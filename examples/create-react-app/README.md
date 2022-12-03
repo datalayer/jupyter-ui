@@ -101,6 +101,7 @@ Therefor, for now, we ask to pin the following resolutions.
     "**/@jupyterlab/cells": "4.0.0-alpha.13",
     "**/@jupyterlab/codeeditor": "4.0.0-alpha.13",
     "**/@jupyterlab/codemirror": "4.0.0-alpha.13",
+    "**/@jupyterlab/collaboration": "4.0.0-alpha.13",
     "**/@jupyterlab/completer": "4.0.0-alpha.13",
     "**/@jupyterlab/console": "4.0.0-alpha.13",
     "**/@jupyterlab/coreutils": "6.0.0-alpha.13",

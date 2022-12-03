@@ -133,7 +133,7 @@ const NotebookKernelChange = () => {
         </ButtonGroup>
       </Box>
       <Notebook
-        path="test.ipynb"
+        path="ping.ipynb"
         CellSidebar={CellSidebarDefault}
         uid={NOTEBOOK_UID_2}
       />
@@ -184,13 +184,13 @@ root.render(
     <hr />
     <NotebookToolbar />
     <Notebook
-      path="test.ipynb"
+      path="ping.ipynb"
       // model={notebookExample as INotebookContent}
       CellSidebar={CellSidebarDefault}
       uid={NOTEBOOK_UID_1}
     />
     <Notebook
-      path="test.ipynb"
+      path="ping.ipynb"
       // model={notebookExample1 as INotebookContent}
       CellSidebar={CellSidebarNew}
       Toolbar={NotebookToolbarAdvanced}

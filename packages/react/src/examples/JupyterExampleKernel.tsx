@@ -39,7 +39,7 @@ const NotebookKernelChange = () => {
       </Box>
       <Notebook
         uid={NOTEBOOK_UID}
-        path="test.ipynb"
+        path="ping.ipynb"
         CellSidebar={CellSidebarDefault}
         height="500px"
       />

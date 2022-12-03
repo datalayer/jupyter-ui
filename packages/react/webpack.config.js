@@ -39,6 +39,8 @@ module.exports = {
   devServer: {
     port: 3208,
     historyApiFallback: true,
+    https: true,
+    server: 'https',
     proxy: {
       '/build/pypi': {
         target: 'https://datalayer-assets.s3.us-west-2.amazonaws.com/pypi',
@@ -73,7 +75,7 @@ module.exports = {
     minimize,
   },
   output: {
-    publicPath: "http://localhost:3208/",
+    publicPath: "https://localhost:3208/",
     filename: '[name].[contenthash].jupyterReact.js',
   },
   resolve: {
