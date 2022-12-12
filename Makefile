@@ -57,21 +57,21 @@ env: ## create a conda environment
 install: ## Install yarn dependencies
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		yarn )
+	echo "Temporary fixes tested on MacOS. For other OS, you may need to fix manually..."
 	rm -fr */node_modules/react
 	rm -fr */node_modules/react-dom
 	rm -fr */*/node_modules/react
 	rm -fr */*/node_modules/react-dom
 	rm -fr node_modules/\@jupyterlab/*/node_modules
 	rm -fr node_modules/\@jupyter-widgets/*/node_modules
-	echo "The following is a temporary fix tested on MacOS - For other OS, you may need to fix manually"
-	sed -i.bu "s|k: keyof TableOfContents.IConfig|k: string|g" node_modules/\@jupyterlab/notebook/lib/toc.d.ts
-	sed -i.bu "s|uri: DocumentUri|uri: string|g" node_modules/vscode-languageserver-protocol/lib/common/protocol.diagnostic.d.ts
-	sed -i.bu "s|uri: DocumentUri|uri: string|g" node_modules/vscode-languageserver-types/lib/umd/main.d.ts
-	sed -i.bu "s|id: ChangeAnnotationIdentifier|uri: string|g" node_modules/vscode-languageserver-types/lib/umd/main.d.ts
-	sed -i.bu "s|\[x: symbol\]: any;||g" node_modules/\@primer/react/lib/Button/LinkButton.d.ts
-	sed -i.bu "s|\| system||g" node_modules/\@primer/react/lib/Button/LinkButton.d.ts
-	sed -i.bu "s|never|any|g" node_modules/\@primer/react/lib/utils/types/KeyPaths.d.ts
-	sed -i.bu "s|src/LexicalTypeaheadMenuPlugin|LexicalTypeaheadMenuPlugin|g" node_modules/\@lexical/react/LexicalAutoEmbedPlugin.d.ts
+#	sed -i.bu "s|k: keyof TableOfContents.IConfig|k: string|g" node_modules/\@jupyterlab/notebook/lib/toc.d.ts
+#	sed -i.bu "s|uri: DocumentUri|uri: string|g" node_modules/vscode-languageserver-protocol/lib/common/protocol.diagnostic.d.ts
+#	sed -i.bu "s|uri: DocumentUri|uri: string|g" node_modules/vscode-languageserver-types/lib/umd/main.d.ts
+#	sed -i.bu "s|id: ChangeAnnotationIdentifier|uri: string|g" node_modules/vscode-languageserver-types/lib/umd/main.d.ts
+#	sed -i.bu "s|\[x: symbol\]: any;||g" node_modules/\@primer/react/lib/Button/LinkButton.d.ts
+#	sed -i.bu "s|\| system||g" node_modules/\@primer/react/lib/Button/LinkButton.d.ts
+#	sed -i.bu "s|never|any|g" node_modules/\@primer/react/lib/utils/types/KeyPaths.d.ts
+#	sed -i.bu "s|src/LexicalTypeaheadMenuPlugin|LexicalTypeaheadMenuPlugin|g" node_modules/\@lexical/react/LexicalAutoEmbedPlugin.d.ts
 
 start-jupyter-server:
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \

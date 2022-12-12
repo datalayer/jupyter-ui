@@ -20,10 +20,10 @@
   "dependencies": {
     "@emotion/react": "11.4.0",
     "@emotion/styled": "11.3.0",
-    "@mui/material": "5.8.3",
-    "@mui/icons-material": "5.8.3",
-    "@mui/styles": "5.8.3",
-    "@mui/system": "5.8.3",
+    "@mui/material": "5.10.7",
+    "@mui/icons-material": "5.10.16",
+    "@mui/styles": "5.10.7",
+    "@mui/system": "5.10.7",
     "react": "18.1.0",
     "react-dom": "18.1.0"
   },

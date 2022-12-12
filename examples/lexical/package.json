@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@datalayer/jupyter-lexical": "0.0.1",
-    "@primer/react": "35.10.0",
+    "@primer/react": "35.15.1",
     "react-json-tree": "0.17.0",
     "react": "18.1.0",
     "react-dom": "18.1.0"
