@@ -1,19 +1,19 @@
-import { useDispatch } from "react-redux";
+// import { useDispatch } from "react-redux";
 import { createRoot } from 'react-dom/client';
-import { Box, Button, ButtonGroup } from '@primer/react';
+// import { Box, Button, ButtonGroup } from '@primer/react';
 import { IOutput } from '@jupyterlab/nbformat';
 import Jupyter from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
-import { Kernel } from '../jupyter/services/kernel/Kernel';
+// import { Kernel } from '../jupyter/services/kernel/Kernel';
 import Cell from '../components/cell/Cell';
 import Notebook from '../components/notebook/Notebook';
-import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarDefault';
+// import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarDefault';
 import Output from "../components/output/Output";
 import FileBrowser from "../components/filebrowser/FileBrowser";
-import Console from "../components/console/Console";
+// import Console from "../components/console/Console";
 import Terminal from "../components/terminal/Terminal";
-import { selectCell, cellActions } from '../components/cell/CellState';
-import { notebookActions } from '../components/notebook/NotebookState';
+// import { selectCell, cellActions } from '../components/cell/CellState';
+// import { notebookActions } from '../components/notebook/NotebookState';
 import NotebookToolbarAdvanced from "./NotebookToolbar";
 import CellSidebarNew from '../components/notebook/cell/sidebar/CellSidebarNew';
 
@@ -21,8 +21,8 @@ import "./../../style/index.css";
 
 const SOURCE_1 = '1+1'
 
-const NOTEBOOK_UID_1 = 'notebook-1-id';
-const NOTEBOOK_UID_2 = 'notebook-2-id';
+// const NOTEBOOK_UID_1 = 'notebook-1-id';
+// const NOTEBOOK_UID_2 = 'notebook-2-id';
 const NOTEBOOK_UID_3 = 'notebook-3-id';
 
 const SOURCE_1_OUTPUTS: IOutput[] = [
@@ -45,7 +45,7 @@ widgets.IntSlider(
     max=10,
     step=1
  )`
-
+/*
 const CellPreview = () => {
   const cell = selectCell();
   return (
@@ -55,7 +55,8 @@ const CellPreview = () => {
     </>
   )
 }
-
+*/
+/*
 const CellToolbar = () => {
   const cell = selectCell();
   const dispatch = useDispatch();
@@ -85,7 +86,8 @@ const CellToolbar = () => {
     </>
   );
 }
-
+*/
+/*
 const NotebookToolbar = () => {
   const dispatch = useDispatch();
   return (
@@ -109,7 +111,8 @@ const NotebookToolbar = () => {
     </Box>
   );
 }
-
+*/
+/*
 const NotebookKernelChange = () => {
   const { kernelManager } = useJupyter();
   const changeKernel = () => {
@@ -140,7 +143,7 @@ const NotebookKernelChange = () => {
     </>
   );
 }
-
+*/
 const Outputs = () => {
   const { defaultKernel } = useJupyter();
   return (
@@ -174,21 +177,6 @@ const root = createRoot(div)
 
 root.render(
   <Jupyter lite={false} terminals={true}>
-    <Console />
-    <hr />
-    <CellPreview />
-    <CellToolbar />
-    <Cell />
-    <hr />
-    <Outputs />
-    <hr />
-    <NotebookToolbar />
-    <Notebook
-      path="ping.ipynb"
-      // model={notebookExample as INotebookContent}
-      CellSidebar={CellSidebarDefault}
-      uid={NOTEBOOK_UID_1}
-    />
     <Notebook
       path="ping.ipynb"
       // model={notebookExample1 as INotebookContent}
@@ -200,8 +188,28 @@ root.render(
       uid={NOTEBOOK_UID_3}
     />
     <hr />
+    {/*
+    <Console />
+    <hr />
+    <CellPreview />
+    <CellToolbar />
+    */}
+    <Cell />
+    <hr />
+    <Outputs />
+    <hr />
+    {/*
+    <NotebookToolbar />
+    <Notebook
+      path="ping.ipynb"
+      // model={notebookExample as INotebookContent}
+      CellSidebar={CellSidebarDefault}
+      uid={NOTEBOOK_UID_1}
+    />
+    <hr />    
     <NotebookKernelChange />
     <hr />
+    */}
     <FileBrowser />
     <hr />
     <Terminal />
