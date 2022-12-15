@@ -112,7 +112,8 @@ make install build
 ```bash
 # You can start an example and hack the source code.
 # The changes will build automatically and will be available in your browser.
-echo open http://localhost:3208
+# You will have to accept to SSL certificate in your browser the first time.
+echo open https://localhost:3208
 yarn start
 ```
 

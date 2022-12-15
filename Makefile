@@ -47,33 +47,16 @@ env-rm: ## create a conda environment
 			conda remove -y --all -n ${ENV_NAME} )
 
 env: ## create a conda environment 
-# pip install --upgrade git+https://github.com/datalayer/jupyterpool@main#egg=jupyterpool
 	($(CONDA); \
 		conda env create -f environment.yml )
-#	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-#		pip install --upgrade git+https://github.com/datalayer-externals/jupyter-server@sessions2#egg=jupyter_server && \
-#		pip install jupyter_ydoc==0.1.17 )
 
-install: ## Install yarn dependencies
+install: ## install npm dependencies
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		yarn )
 	echo "Temporary fixes tested on MacOS. For other OS, you may need to fix manually..."
-	rm -fr */node_modules/react
-	rm -fr */node_modules/react-dom
-	rm -fr */*/node_modules/react
-	rm -fr */*/node_modules/react-dom
-	rm -fr node_modules/\@jupyterlab/*/node_modules
-	rm -fr node_modules/\@jupyter-widgets/*/node_modules
-#	sed -i.bu "s|k: keyof TableOfContents.IConfig|k: string|g" node_modules/\@jupyterlab/notebook/lib/toc.d.ts
-#	sed -i.bu "s|uri: DocumentUri|uri: string|g" node_modules/vscode-languageserver-protocol/lib/common/protocol.diagnostic.d.ts
-#	sed -i.bu "s|uri: DocumentUri|uri: string|g" node_modules/vscode-languageserver-types/lib/umd/main.d.ts
-#	sed -i.bu "s|id: ChangeAnnotationIdentifier|uri: string|g" node_modules/vscode-languageserver-types/lib/umd/main.d.ts
-#	sed -i.bu "s|\[x: symbol\]: any;||g" node_modules/\@primer/react/lib/Button/LinkButton.d.ts
-#	sed -i.bu "s|\| system||g" node_modules/\@primer/react/lib/Button/LinkButton.d.ts
-#	sed -i.bu "s|never|any|g" node_modules/\@primer/react/lib/utils/types/KeyPaths.d.ts
-#	sed -i.bu "s|src/LexicalTypeaheadMenuPlugin|LexicalTypeaheadMenuPlugin|g" node_modules/\@lexical/react/LexicalAutoEmbedPlugin.d.ts
+	sed -i.bu "s|get changed(): ISignal<this, T>;|get changed(): ISignal<this, any>;|g" node_modules/\@jupyterlab/shared-models/lib/ymodels.d.ts
 
-start-jupyter-server:
+start-jupyter-server: ## start the jupyter server
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		./dev/sh/kill-jupyter-server.sh || true )
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
@@ -85,7 +68,7 @@ define release_package
 		cd $1 && rm tsconfig.tsbuildinfo && yarn build && npm publish --access public )
 endef
 
-publish:
+publish: # publish the npm packages
 	@exec $(call release_package,patches/jupyterlite-settings)
 	@exec $(call release_package,patches/jupyterlite-session)
 	@exec $(call release_package,patches/jupyterlite-server)
