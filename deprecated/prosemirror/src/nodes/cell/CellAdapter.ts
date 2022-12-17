@@ -5,10 +5,11 @@ import { CodeMirrorMimeTypeService } from '@jupyterlab/codemirror';
 import { runIcon } from '@jupyterlab/ui-components';
 import { Completer, CompleterModel, CompletionHandler, ConnectorProxy, KernelCompleterProvider } from '@jupyterlab/completer';
 import { RenderMimeRegistry, standardRendererFactories as initialFactories } from '@jupyterlab/rendermime';
-// import { Session } from '@jupyterlab/services';
 import { SessionManager, KernelManager, KernelSpecManager, } from '@jupyterlab/services';
 import { ServerConnection } from '@jupyterlab/services';
 import { CommandRegistry } from '@lumino/commands';
+import { createStandaloneCell, YCodeCell } from '@jupyter-notebook/ydoc';
+// import { Session } from '@jupyterlab/services';
 // import { IPyWidgetsClassicManager } from "../../ipywidgets/IPyWidgetsClassicManager";
 // import { requireLoader } from "@jupyter-widgets/html-manager";
 // import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/lib/output_renderers";
@@ -75,12 +76,11 @@ class CellAdapter {
     const codeCell = new CodeCell({
       rendermime,
       model: new CodeCellModel({
-        cell: {
+        sharedModel: createStandaloneCell({
           cell_type: 'code',
-          source: source,
-          metadata: {
-          }
-        }
+          source,
+          metadata: { collapsed: false }
+        }) as YCodeCell
       })
     });
     /*

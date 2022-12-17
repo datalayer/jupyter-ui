@@ -1,7 +1,7 @@
 # Copyright (c) Datalayer, Inc. https://datalayer.io
 # Distributed under the terms of the MIT License.
 
-name: jupyter-react
+name: datalayer
 channels:
   - conda-forge
 #  - defaults
@@ -17,7 +17,7 @@ dependencies:
   - twine
   - yarn=1.22.19
   - pip:
-    - jupyterlab==4.0.0a27
+    - jupyterlab==4.0.0a31
     - ipywidgets==8.0.1
 #    - jupyterlab-lsp
 #    - python-language-server[all]

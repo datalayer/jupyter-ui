@@ -32,8 +32,8 @@ export const Cell = (props: ICellProps) => {
       const adapter = new CellAdapter(source, serverSettings);
       dispatch(cellActions.update({ adapter }));
       dispatch(cellActions.source(props.source!));
-      adapter.codeCell.model.value.changed.connect((sender, changedArgs) => {
-        dispatch(cellActions.source(sender.text));
+      adapter.codeCell.model.contentChanged.connect((cellModel, changedArgs) => {
+        dispatch(cellActions.source(cellModel.sharedModel.getSource()));
       });
       adapter.codeCell.outputArea.outputLengthChanged.connect((outputArea, outputsCount) => {
         dispatch(cellActions.outputsCount(outputsCount));

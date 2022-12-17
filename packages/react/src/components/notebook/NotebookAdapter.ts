@@ -3,7 +3,8 @@ import { CommandRegistry } from '@lumino/commands';
 import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
 import { BoxPanel, Widget } from '@lumino/widgets';
 import { IChangedArgs, PageConfig } from '@jupyterlab/coreutils';
-import { Cell, ICellModel, CodeCellModel, MarkdownCellModel, RawCellModel, MarkdownCell } from '@jupyterlab/cells';
+// import { CodeCellModel, MarkdownCellModel, RawCellModel } from '@jupyterlab/cells';
+import { Cell, ICellModel, MarkdownCell } from '@jupyterlab/cells';
 import { ServiceManager, Kernel as JupyterKernel } from '@jupyterlab/services';
 import { DocumentRegistry, Context } from '@jupyterlab/docregistry';
 import { standardRendererFactories, RenderMimeRegistry } from '@jupyterlab/rendermime';
@@ -15,6 +16,8 @@ import { IEditorServices } from '@jupyterlab/codeeditor';
 import { Completer, CompleterModel, CompletionHandler, ConnectorProxy, KernelCompleterProvider } from '@jupyterlab/completer';
 import { MathJaxTypesetter } from '@jupyterlab/mathjax2';
 import * as nbformat from '@jupyterlab/nbformat';
+// import { createStandaloneCell, YCodeCell, YMarkdownCell, YRawCell } from '@jupyter-notebook/ydoc';
+import { ISharedAttachmentsCell } from '@jupyter-notebook/ydoc';
 import { newUuid } from './../../jupyter/utils/Ids';
 import getMarked from './marked/marked';
 import { requireLoader } from "@jupyter-widgets/html-manager";
@@ -201,49 +204,75 @@ export class NotebookAdapter {
   populateNotebook(model: nbformat.INotebookContent) {
     this._model = model;
     if (this._model) {
-      this._notebookPanel?.model?.cells.clear();
+      this._notebookPanel?.model?.sharedModel.cells.splice(0);
       this._model.cells.map((cell, index) => {
         switch(cell.cell_type) {
           case "code": {
+            /*
             const cellModel = new CodeCellModel({
-              cell: {
+              sharedModel: createStandaloneCell({
                 ...cell,
                 metadata: {
                   ...cell.metadata,
                   editable: !this._readOnly,
                 }
-              },
+              }) as YCodeCell,
               id: cell.id ? cell.id.toString() : newUuid(),
             });
-            this._notebookPanel?.model?.cells.push(cellModel);
+            */
+            this._notebookPanel?.model?.sharedModel.insertCell(this._notebookPanel?.model?.sharedModel.cells.length + 1, {
+              ...cell,
+              id: cell.id ? cell.id.toString() : newUuid(),
+              metadata: {
+                ...cell.metadata,
+                editable: !this._readOnly,
+              }});
             break;
           }
           case "markdown": {
+            /*
             const cellModel = new MarkdownCellModel({
-              cell: {
+              sharedModel: createStandaloneCell({
                 ...cell,
                 metadata: {
                   ...cell.metadata,
                   editable: !this._readOnly,
                 }
-              },
+              }) as YMarkdownCell,
               id: cell.id ? cell.id.toString() : newUuid(),
             });
-            this._notebookPanel?.model?.cells.push(cellModel);
+            */
+            this._notebookPanel?.model?.sharedModel.insertCell(this._notebookPanel?.model?.sharedModel.cells.length + 1, {
+              ...cell,
+              id: cell.id ? cell.id.toString() : newUuid(),
+              metadata: {
+                ...cell.metadata,
+                editable: !this._readOnly,
+              }
+            });
             break;
           }
           case "raw": {
+            /*
             const cellModel = new RawCellModel({
-              cell: {
+              sharedModel: createStandaloneCell({
                 ...cell,
                 metadata: {
                   ...cell.metadata,
                   editable: !this._readOnly,
                 }
-              },
+              }) as YRawCell,      
               id: cell.id ? cell.id.toString() : newUuid(),
             });
-            this._notebookPanel?.model?.cells.push(cellModel);
+            */
+            this._notebookPanel?.model?.sharedModel.insertCell(this._notebookPanel?.model?.sharedModel.cells.length + 1, {
+              ...cell,
+              id: cell.id ? cell.id.toString() : newUuid(),
+              metadata: {
+                ...cell.metadata,
+                editable: !this._readOnly,
+              }
+            });
             break;
           }
         }
@@ -329,14 +358,15 @@ export class NotebookAdapter {
     notebook: Notebook,
     value: nbformat.CellType
   ): void {
-    const model = notebook.model!;
-    const cells = model.cells;
-    cells.beginCompoundOperation();
+//    const model = notebook.model!;
+//    const cells = model.cells;
+    const notebookSharedModel = notebook.model!.sharedModel;
     notebook.widgets.forEach((child, index) => {
       if (!notebook.isSelectedOrActive(child)) {
         return;
       }
       if (child.model.type !== value) {
+        /*
         const cell = child.model.toJSON();
         let newCell: ICellModel;
         switch (value) {
@@ -356,6 +386,20 @@ export class NotebookAdapter {
             }
         }
         cells.set(index, newCell);
+        */
+        const raw = child.model.toJSON();
+        notebookSharedModel.transact(() => {
+          notebookSharedModel.deleteCell(index);
+          const newCell = notebookSharedModel.insertCell(index, {
+            cell_type: value,
+            source: raw.source,
+            metadata: raw.metadata
+          });
+          if (raw.attachments && ['markdown', 'raw'].includes(value)) {
+            (newCell as ISharedAttachmentsCell).attachments =
+              raw.attachments as nbformat.IAttachments;
+          }
+        });
       }
       if (value === 'markdown') {
         // Fetch the new widget and unrender it.
@@ -363,7 +407,6 @@ export class NotebookAdapter {
         (child as MarkdownCell).rendered = false;
       }
     });
-    cells.endCompoundOperation();
     notebook.deselectAll();
   }
 

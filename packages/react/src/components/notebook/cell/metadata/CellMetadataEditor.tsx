@@ -13,10 +13,10 @@ type Props = {
 export const CellMetadataEditor = (props: Props) => {
   const { cell } = props;
   const [cellGradeType, setCellGradeType] = useState(getNbGraderType(cell));
-  const [nbg, setNbg] = useState(cell.model.metadata?.get('nbgrader') as any);
+  const [nbg, setNbg] = useState(cell.model.getMetadata('nbgrader') as any);
   const handleGradeIdChange = (cell: Cell<ICellModel>, gradeId: string) => {
-    const nbgrader = cell.model.metadata.get("nbgrader") as any;
-    cell.model.metadata.set("nbgrader", {
+    const nbgrader = cell.model.getMetadata("nbgrader") as any;
+    cell.model.setMetadata("nbgrader", {
       ...nbgrader,
       grade_id: gradeId,
     });
@@ -28,8 +28,8 @@ export const CellMetadataEditor = (props: Props) => {
   const handlePointsChange = (cell: Cell<ICellModel>, points: string) => {
     var points_number: number = +points;
     if (!isNaN(points_number)) {
-      const nbgrader = cell.model.metadata.get("nbgrader") as any;
-      cell.model.metadata.set("nbgrader", {
+      const nbgrader = cell.model.getMetadata("nbgrader") as any;
+      cell.model.setMetadata("nbgrader", {
         ...nbgrader,
         points: points_number,
       });
@@ -42,13 +42,13 @@ export const CellMetadataEditor = (props: Props) => {
   const assignCellGradeType = (cell: Cell<ICellModel>, cellGradeType: NbGraderType) => {
     switch (cellGradeType) {
       case NbGraderType.NotGraded: {
-        cell.model.metadata.delete("nbgrader")
+        cell.model.deleteMetadata("nbgrader")
         setCellGradeType(NbGraderType.NotGraded);
         break;
       }
       case NbGraderType.AutogradedAnswer: {
-        const nbgrader = cell.model.metadata.get("nbgrader") as any;
-        cell.model.metadata.set("nbgrader", {
+        const nbgrader = cell.model.getMetadata("nbgrader") as any;
+        cell.model.setMetadata("nbgrader", {
           ...nbgrader,
           "grade": false,
           "solution": true,
@@ -59,8 +59,8 @@ export const CellMetadataEditor = (props: Props) => {
         break;
       }
       case NbGraderType.AutogradedTest: {
-        const nbgrader = cell.model.metadata.get("nbgrader") as any;
-        cell.model.metadata.set("nbgrader", {
+        const nbgrader = cell.model.getMetadata("nbgrader") as any;
+        cell.model.setMetadata("nbgrader", {
           ...nbgrader,
   //        "points": 1,
           "grade": true,
@@ -72,8 +72,8 @@ export const CellMetadataEditor = (props: Props) => {
         break;
       }
       case NbGraderType.ManuallyGradedAnswer: {
-        const nbgrader = cell.model.metadata.get("nbgrader") as any;
-        cell.model.metadata.set("nbgrader", {
+        const nbgrader = cell.model.getMetadata("nbgrader") as any;
+        cell.model.setMetadata("nbgrader", {
           ...nbgrader,
   //        "points": 1,
           "grade": true,
@@ -85,8 +85,8 @@ export const CellMetadataEditor = (props: Props) => {
         break;
       }
       case NbGraderType.ManuallyGradedTask: {
-        const nbgrader = cell.model.metadata.get("nbgrader") as any;
-        cell.model.metadata.set("nbgrader", {
+        const nbgrader = cell.model.getMetadata("nbgrader") as any;
+        cell.model.setMetadata("nbgrader", {
           ...nbgrader,
   //        "points": 1,
           "grade": false,
@@ -98,8 +98,8 @@ export const CellMetadataEditor = (props: Props) => {
         break;
       }
       case NbGraderType.ReadonlyGraded: {
-        const nbgrader = cell.model.metadata.get("nbgrader") as any;
-        cell.model.metadata.set("nbgrader", {
+        const nbgrader = cell.model.getMetadata("nbgrader") as any;
+        cell.model.setMetadata("nbgrader", {
           ...nbgrader,
           "grade": false,
           "solution": false,

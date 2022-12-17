@@ -66,7 +66,7 @@ export enum NbGraderType {
 }
 
 export const getNbGraderType = (cell: Cell<ICellModel>) => {
-  const nbgrader = cell.model.metadata.get("nbgrader") as any;
+  const nbgrader = cell.model.getMetadata("nbgrader") as any;
   if (!nbgrader) {
     return NbGraderType.NotGraded;
   }

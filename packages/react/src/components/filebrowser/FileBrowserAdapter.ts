@@ -1,11 +1,12 @@
 import { CommandRegistry } from '@lumino/commands';
 import { each } from '@lumino/algorithm';
+import { Signal } from '@lumino/signaling';
 import { DockPanel, Menu, SplitPanel, Widget } from '@lumino/widgets';
 import { ServiceManager } from '@jupyterlab/services';
 import { Dialog, ToolbarButton, showDialog } from '@jupyterlab/apputils';
 import { CodeMirrorEditorFactory, CodeMirrorMimeTypeService } from '@jupyterlab/codemirror';
-import { DocumentManager } from '@jupyterlab/docmanager';
-import { DocumentRegistry } from '@jupyterlab/docregistry';
+import { DocumentManager, IDocumentWidgetOpener } from '@jupyterlab/docmanager';
+import { DocumentRegistry, IDocumentWidget } from '@jupyterlab/docregistry';
 import { FileBrowser, FilterFileBrowserModel } from '@jupyterlab/filebrowser';
 import { FileEditorFactory } from '@jupyterlab/fileeditor';
 import { addIcon } from '@jupyterlab/ui-components';
@@ -35,7 +36,8 @@ class FileBrowserAdapter {
       const widgets: Widget[] = [];
       let activeWidget: Widget;
     
-      const opener = {
+      const opener: IDocumentWidgetOpener = {
+        opened: new Signal<IDocumentWidgetOpener, IDocumentWidget>(this),
         open: (widget: Widget) => {
           if (widgets.indexOf(widget) === -1) {
             dock.addWidget(widget, { mode: 'tab-after' });

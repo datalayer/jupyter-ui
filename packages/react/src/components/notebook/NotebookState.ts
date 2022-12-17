@@ -7,7 +7,7 @@ import { ignoreElements, map, tap } from "rxjs/operators";
 import { ofAction } from "@datalayer/typescript-fsa-redux-observable";
 import * as nbformat from "@jupyterlab/nbformat";
 import { INotebookModel } from "@jupyterlab/notebook";
-import { NotebookChange } from "@jupyterlab/shared-models";
+import { NotebookChange } from "@jupyter-notebook/ydoc";
 import { Cell, ICellModel } from "@jupyterlab/cells";
 import { Kernel as JupyterKernel } from "@jupyterlab/services";
 import Kernel from "./../../jupyter/services/kernel/Kernel";
@@ -141,7 +141,7 @@ type NotebookModelUid = {
 }
 type CellModelUid = {
   uid: string;
-  cellModel: Cell<ICellModel>;
+  cellModel?: Cell<ICellModel>;
 }
 type KernelStatusUid = {
   uid: string;

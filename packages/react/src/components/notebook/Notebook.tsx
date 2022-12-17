@@ -93,7 +93,11 @@ export const Notebook = (props: INotebookProps) => {
         });
         */
         adapter.notebookPanel?.content.activeCellChanged.connect((_, cellModel) => {
-          dispatch(notebookActions.activeCellChange({ uid, cellModel }));
+          if (cellModel === null) {
+            dispatch(notebookActions.activeCellChange({ uid, cellModel: undefined }));
+          } else {
+            dispatch(notebookActions.activeCellChange({ uid, cellModel }));
+          }
         });
         adapter.notebookPanel?.sessionContext.statusChanged.connect((_, kernelStatus) => {
           dispatch(notebookActions.kernelStatusChanged({ uid, kernelStatus }));

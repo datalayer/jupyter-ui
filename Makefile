@@ -53,8 +53,8 @@ env: ## create a conda environment
 install: ## install npm dependencies
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		yarn )
-	echo "Temporary fixes tested on MacOS. For other OS, you may need to fix manually..."
-	sed -i.bu "s|get changed(): ISignal<this, T>;|get changed(): ISignal<this, any>;|g" node_modules/\@jupyterlab/shared-models/lib/ymodels.d.ts
+#	echo "Temporary fixes tested on MacOS. For other OS, you may need to fix manually..."
+#	sed -i.bu "s|get changed(): ISignal<this, T>;|get changed(): ISignal<this, any>;|g" node_modules/\@jupyter-notebook/ydoc/lib/ymodels.d.ts
 
 start-jupyter-server: ## start the jupyter server
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \

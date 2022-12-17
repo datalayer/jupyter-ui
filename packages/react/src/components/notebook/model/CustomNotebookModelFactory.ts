@@ -1,5 +1,4 @@
 import { INotebookModel, NotebookModelFactory } from "@jupyterlab/notebook";
-import { IModelDB } from "@jupyterlab/observables";
 
 export class CustomNotebookModelFactory extends NotebookModelFactory {
 
@@ -10,11 +9,9 @@ export class CustomNotebookModelFactory extends NotebookModelFactory {
 
   /** @override */
   createNew(
-    languagePreference?: string,
-    modelDB?: IModelDB,
-    isInitialized?: boolean
+    languagePreference?: string
   ): INotebookModel {
-    const model = super.createNew(languagePreference, modelDB, isInitialized);
+    const model = super.createNew(languagePreference);
     return model;
   }
 

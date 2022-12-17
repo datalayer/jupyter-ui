@@ -7,6 +7,7 @@ import { Completer, CompleterModel, CompletionHandler, ConnectorProxy, KernelCom
 import { RenderMimeRegistry, standardRendererFactories as initialFactories } from '@jupyterlab/rendermime';
 import { Session, ServerConnection } from '@jupyterlab/services';
 import { SessionManager, KernelManager, KernelSpecManager } from '@jupyterlab/services';
+import { createStandaloneCell, YCodeCell } from '@jupyter-notebook/ydoc';
 import { CommandRegistry } from '@lumino/commands';
 import { IPyWidgetsClassicManager } from "../../jupyter/ipywidgets/IPyWidgetsClassicManager";
 import { requireLoader } from "@jupyter-widgets/html-manager";
@@ -65,12 +66,12 @@ export class CellAdapter {
     const codeCell = new CodeCell({
       rendermime,
       model: new CodeCellModel({
-        cell: {
+        sharedModel: createStandaloneCell({
           cell_type: 'code',
           source: source,
           metadata: {
           }
-        }
+        }) as YCodeCell
       })
     });
     this._codeCell = codeCell.initializeState();
