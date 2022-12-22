@@ -3,7 +3,6 @@ import { CommandRegistry } from '@lumino/commands';
 import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
 import { BoxPanel, Widget } from '@lumino/widgets';
 import { IChangedArgs, PageConfig } from '@jupyterlab/coreutils';
-// import { CodeCellModel, MarkdownCellModel, RawCellModel } from '@jupyterlab/cells';
 import { Cell, ICellModel, MarkdownCell } from '@jupyterlab/cells';
 import { ServiceManager, Kernel as JupyterKernel } from '@jupyterlab/services';
 import { DocumentRegistry, Context } from '@jupyterlab/docregistry';
@@ -16,7 +15,6 @@ import { IEditorServices } from '@jupyterlab/codeeditor';
 import { Completer, CompleterModel, CompletionHandler, ConnectorProxy, KernelCompleterProvider } from '@jupyterlab/completer';
 import { MathJaxTypesetter } from '@jupyterlab/mathjax2';
 import * as nbformat from '@jupyterlab/nbformat';
-// import { createStandaloneCell, YCodeCell, YMarkdownCell, YRawCell } from '@jupyter-notebook/ydoc';
 import { ISharedAttachmentsCell } from '@jupyter-notebook/ydoc';
 import { newUuid } from './../../jupyter/utils/Ids';
 import getMarked from './marked/marked';
@@ -53,17 +51,21 @@ export class NotebookAdapter {
     this._props = props;
     this._store = store;
     this._serviceManager = serviceManager;
+    //
     this._model = props.model;
     this._CellSidebar = props.CellSidebar;
     this._nbgrader = props.nbgrader;
     this._readOnly = props.readOnly;
     this._ipywidgets = props.ipywidgets;
     this._kernel = props.kernel;
+    this._uid = props.uid;
+    //
     this._boxPanel = new BoxPanel();
     this._boxPanel.addClass('dla-Jupyter-Notebook');
     this._boxPanel.spacing = 0;
-    this._uid = props.uid;
+    //
     this._commandRegistry = new CommandRegistry();
+    //
     this.loadNotebook = this.loadNotebook.bind(this);
   }
 
@@ -162,11 +164,10 @@ export class NotebookAdapter {
         this._kernel.getJupyterKernel().then(kernelConnection => {
           this._context?.sessionContext.changeKernel(kernelConnection.model).then(() => {
             const completerHandler = this.setupCompleter(this._notebookPanel!);
-            NotebookCommands(this._commandRegistry, this._notebookPanel!, completerHandler, this._props);  
+            NotebookCommands(this._commandRegistry, this._notebookPanel!, completerHandler, this._props);
           });
         });
       }
-      this.populateNotebook(this._model);
     });
     if (this._ipywidgets === 'classic') {
       this._notebookPanel.sessionContext.kernelChanged.connect((sender: any, args: IChangedArgs<JupyterKernel.IKernelConnection | null, JupyterKernel.IKernelConnection | null, 'kernel'>) => {
@@ -201,25 +202,15 @@ export class NotebookAdapter {
     });
   }
 
-  populateNotebook(model: nbformat.INotebookContent) {
+  setNotebookModel(model: nbformat.INotebookContent) {
     this._model = model;
     if (this._model) {
-      this._notebookPanel?.model?.sharedModel.cells.splice(0);
+      this._notebookPanel?.model?.fromJSON(model);
+/*
       this._model.cells.map((cell, index) => {
+        console.log('---', cell);
         switch(cell.cell_type) {
           case "code": {
-            /*
-            const cellModel = new CodeCellModel({
-              sharedModel: createStandaloneCell({
-                ...cell,
-                metadata: {
-                  ...cell.metadata,
-                  editable: !this._readOnly,
-                }
-              }) as YCodeCell,
-              id: cell.id ? cell.id.toString() : newUuid(),
-            });
-            */
             this._notebookPanel?.model?.sharedModel.insertCell(this._notebookPanel?.model?.sharedModel.cells.length + 1, {
               ...cell,
               id: cell.id ? cell.id.toString() : newUuid(),
@@ -230,18 +221,6 @@ export class NotebookAdapter {
             break;
           }
           case "markdown": {
-            /*
-            const cellModel = new MarkdownCellModel({
-              sharedModel: createStandaloneCell({
-                ...cell,
-                metadata: {
-                  ...cell.metadata,
-                  editable: !this._readOnly,
-                }
-              }) as YMarkdownCell,
-              id: cell.id ? cell.id.toString() : newUuid(),
-            });
-            */
             this._notebookPanel?.model?.sharedModel.insertCell(this._notebookPanel?.model?.sharedModel.cells.length + 1, {
               ...cell,
               id: cell.id ? cell.id.toString() : newUuid(),
@@ -253,18 +232,6 @@ export class NotebookAdapter {
             break;
           }
           case "raw": {
-            /*
-            const cellModel = new RawCellModel({
-              sharedModel: createStandaloneCell({
-                ...cell,
-                metadata: {
-                  ...cell.metadata,
-                  editable: !this._readOnly,
-                }
-              }) as YRawCell,      
-              id: cell.id ? cell.id.toString() : newUuid(),
-            });
-            */
             this._notebookPanel?.model?.sharedModel.insertCell(this._notebookPanel?.model?.sharedModel.cells.length + 1, {
               ...cell,
               id: cell.id ? cell.id.toString() : newUuid(),
@@ -277,6 +244,7 @@ export class NotebookAdapter {
           }
         }
       });
+*/
     }
   }
 
@@ -358,35 +326,12 @@ export class NotebookAdapter {
     notebook: Notebook,
     value: nbformat.CellType
   ): void {
-//    const model = notebook.model!;
-//    const cells = model.cells;
     const notebookSharedModel = notebook.model!.sharedModel;
     notebook.widgets.forEach((child, index) => {
       if (!notebook.isSelectedOrActive(child)) {
         return;
       }
       if (child.model.type !== value) {
-        /*
-        const cell = child.model.toJSON();
-        let newCell: ICellModel;
-        switch (value) {
-          case 'code':
-            newCell = model.contentFactory.createCodeCell({ cell });
-            break;
-          case 'markdown':
-            newCell = model.contentFactory.createMarkdownCell({ cell });
-            if (child.model.type === 'code') {
-              newCell.trusted = false;
-            }
-            break;
-          default:
-            newCell = model.contentFactory.createRawCell({ cell });
-            if (child.model.type === 'code') {
-              newCell.trusted = false;
-            }
-        }
-        cells.set(index, newCell);
-        */
         const raw = child.model.toJSON();
         notebookSharedModel.transact(() => {
           notebookSharedModel.deleteCell(index);

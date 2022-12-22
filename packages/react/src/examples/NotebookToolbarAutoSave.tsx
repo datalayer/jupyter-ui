@@ -35,16 +35,18 @@ const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
   const dispatch = useDispatch();
   const notebook = selectNotebook(notebookId);
   const notebookState = useSelector((state: IJupyterReactState) => state.notebook);
+
   useEffect(() => {
     notebookState.notebooks.get(notebookId)?.adapter?.commands.execute(cmdIds.save)
   }, [notebookState]);
+
   const handleChangeCellType = (
     event: React.MouseEvent<HTMLElement>,
     newType: string,
   ) => {
-    console.log("Value", newType)
     setaddtype(newType);
   };
+
   return (
     <div style={{ display: 'flex', width: '100%', borderBottom: '0.1rem solid lightgrey', position: 'relative', zIndex: '1', backgroundColor: 'white', top: '0' }}>
       <div style={{

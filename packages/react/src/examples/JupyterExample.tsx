@@ -1,29 +1,30 @@
-// import { useDispatch } from "react-redux";
 import { createRoot } from 'react-dom/client';
-// import { Box, Button, ButtonGroup } from '@primer/react';
-import { IOutput } from '@jupyterlab/nbformat';
+import { IOutput, INotebookContent } from '@jupyterlab/nbformat';
 import Jupyter from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
-// import { Kernel } from '../jupyter/services/kernel/Kernel';
 import Cell from '../components/cell/Cell';
 import Notebook from '../components/notebook/Notebook';
-// import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarDefault';
 import Output from "../components/output/Output";
 import FileBrowser from "../components/filebrowser/FileBrowser";
-// import Console from "../components/console/Console";
 import Terminal from "../components/terminal/Terminal";
+import NotebookToolbar from "./NotebookToolbar";
+import CellSidebarNew from "../components/notebook/cell/sidebar/CellSidebarNew";
+import notebookExample1 from "./NotebookExample1.ipynb.json";
+// import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarDefault';
+// import Console from "../components/console/Console";
+// import { useDispatch } from "react-redux";
+// import { Box, Button, ButtonGroup } from '@primer/react';
+// import { Kernel } from '../jupyter/services/kernel/Kernel';
 // import { selectCell, cellActions } from '../components/cell/CellState';
 // import { notebookActions } from '../components/notebook/NotebookState';
-import NotebookToolbarAdvanced from "./NotebookToolbar";
-import CellSidebarNew from '../components/notebook/cell/sidebar/CellSidebarNew';
 
 import "./../../style/index.css";
 
 const SOURCE_1 = '1+1'
 
-// const NOTEBOOK_UID_1 = 'notebook-1-id';
-// const NOTEBOOK_UID_2 = 'notebook-2-id';
-const NOTEBOOK_UID_3 = 'notebook-3-id';
+// const NOTEBOOK_UID_1 = 'notebook-1-uid';
+// const NOTEBOOK_UID_2 = 'notebook-2-uid';
+const NOTEBOOK_UID_3 = 'notebook-3-uid';
 
 const SOURCE_1_OUTPUTS: IOutput[] = [
   {
@@ -178,12 +179,12 @@ const root = createRoot(div)
 root.render(
   <Jupyter lite={false} terminals={true}>
     <Notebook
-      path="ping.ipynb"
-      // model={notebookExample1 as INotebookContent}
+      path="test.ipynb"
+//      path=""
+//      model={notebookExample1 as INotebookContent}
       CellSidebar={CellSidebarNew}
-      Toolbar={NotebookToolbarAdvanced}
-      // Height - Toolbar Height
-      height='calc(100vh - 2.6rem)'
+      Toolbar={NotebookToolbar}
+      height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
       cellSidebarMargin={60}
       uid={NOTEBOOK_UID_3}
     />

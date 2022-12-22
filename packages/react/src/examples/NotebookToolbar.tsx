@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import AddIcon from '@mui/icons-material/Add';
-import { notebookActions, selectNotebook } from '../components/notebook/NotebookState';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import FastForwardIcon from '@mui/icons-material/FastForward';
 import StopIcon from '@mui/icons-material/Stop';
@@ -15,6 +14,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { styled } from '@mui/material/styles';
 import { cmdIds } from '../components/notebook/NotebookCommands';
 import { IJupyterReactState } from '../state/State';
+import { notebookActions, selectNotebook, selectSaveRequest } from '../components/notebook/NotebookState';
 
 const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
   '& .MuiToggleButtonGroup-grouped': {
@@ -32,28 +32,34 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
   },
 }));
 
-const NotebookToolbarAdvanced = (props: { notebookId: string }) => {
+const NotebookToolbar = (props: { notebookId: string }) => {
   const { notebookId } = props;
-  const [autoSave, setAutoSave] = useState(true);
-  const [addtype, setaddtype] = useState('code');
+  const [autoSave, setAutoSave] = useState(false);
+  const [addType, setAddType] = useState('code');
   const dispatch = useDispatch();
   const notebook = selectNotebook(notebookId);
-  const notebook_state = useSelector((state: IJupyterReactState) => {
+  const saveRequest = selectSaveRequest(notebookId);
+  const notebookstate = useSelector((state: IJupyterReactState) => {
     return state.notebook;
-  }
-  );
+  });
+
+  useEffect(() => {
+    notebook?.adapter?.commands.execute(cmdIds.save)
+  }, [saveRequest]);
+
   useEffect(() => {
     if (autoSave) {
       notebook?.adapter?.commands.execute(cmdIds.save)
     }
-  }, [notebook_state]);
+  }, [notebookstate]);
 
   const handleChangeCellType = (
     event: React.MouseEvent<HTMLElement>,
     newType: string,
   ) => {
-    setaddtype(newType);
+    setAddType(newType);
   };
+
   return (
     <div style={{ display: 'flex', width: '100%', borderBottom: '0.1rem solid lightgrey', position: 'relative', zIndex: '1', backgroundColor: 'white', top: '0' }}>
       <div style={{
@@ -65,16 +71,14 @@ const NotebookToolbarAdvanced = (props: { notebookId: string }) => {
         <IconButton size="small" color="primary" aria-label="Save" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.save.started({ uid: notebookId, date: new Date() })) }} style={{ color: 'grey' }}>
           <SaveIcon fontSize="inherit" />
         </IconButton>
-
-        <IconButton size="small" color="primary" aria-label="Insert Cell" onClick={(e) => {
-          e.preventDefault();
-          if (addtype === 'raw')
-            dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "raw" }))
-          else if (addtype === 'code')
-            dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "code" }))
-          else if (addtype === 'markdown')
-            dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "markdown" }))
-        }}
+        <IconButton
+          size="small"
+          color="primary"
+          aria-label="Insert Cell"
+          onClick={(e) => {
+            e.preventDefault();
+            dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: addType }))
+          }}
           style={{ color: 'grey' }}>
           <AddIcon fontSize="inherit" />
         </IconButton>
@@ -96,7 +100,6 @@ const NotebookToolbarAdvanced = (props: { notebookId: string }) => {
         <IconButton size="small" color="error" aria-label="Delete" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.delete.started(notebookId)) }}>
           <DeleteIcon fontSize="inherit" style={{ color: '#e57373' }} />
         </IconButton>
-
       </div>
       <div style={{
         display: 'flex',
@@ -106,7 +109,6 @@ const NotebookToolbarAdvanced = (props: { notebookId: string }) => {
         justifyContent: 'flex-end',
         alignItems: 'center'
       }}>
-
         <ToggleButton
           value="Auto Save"
           selected={autoSave}
@@ -126,7 +128,7 @@ const NotebookToolbarAdvanced = (props: { notebookId: string }) => {
         <Divider flexItem orientation="vertical" sx={{ mx: 0.5, my: 1 }} />
         <StyledToggleButtonGroup
           size="small"
-          value={addtype}
+          value={addType}
           exclusive
           onChange={handleChangeCellType}
           aria-label="text alignment"
@@ -152,4 +154,4 @@ const NotebookToolbarAdvanced = (props: { notebookId: string }) => {
   )
 }
 
-export default NotebookToolbarAdvanced;
+export default NotebookToolbar;

@@ -47,15 +47,17 @@ export const Notebook = (props: INotebookProps) => {
   const dispatch = useDispatch();
   const portals = selectNotebookPortals(uid);
   const [adapter, setAdapter] = useState<NotebookAdapter>();
-
   useMemo(() => {
     (injectableStore as any).inject('notebook', notebookReducer, notebookEpics);
   }, []);
-
   useEffect(() => {
     if (serviceManager && kernelManager && effectiveKernel) {
       const adapter = new NotebookAdapter(
-        { ...props, kernel: effectiveKernel, uid },
+        {
+          ...props,
+          kernel: effectiveKernel,
+          uid,
+        },
         injectableStore,
         serviceManager,
       );
@@ -113,7 +115,7 @@ export const Notebook = (props: INotebookProps) => {
   }, [uid, serviceManager, kernelManager, effectiveKernel]);
   useEffect(() => {
     if (adapter && model) {
-      adapter.populateNotebook(model);
+      adapter.setNotebookModel(model);
     }
   }, [adapter, model]);
   return (
