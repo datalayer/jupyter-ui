@@ -179,9 +179,7 @@ const root = createRoot(div)
 root.render(
   <Jupyter lite={false} terminals={true}>
     <Notebook
-      path="test.ipynb"
-//      path=""
-//      model={notebookExample1 as INotebookContent}
+      model={notebookExample1 as INotebookContent}
       CellSidebar={CellSidebarNew}
       Toolbar={NotebookToolbar}
       height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).

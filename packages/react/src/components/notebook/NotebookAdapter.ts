@@ -16,7 +16,7 @@ import { Completer, CompleterModel, CompletionHandler, ConnectorProxy, KernelCom
 import { MathJaxTypesetter } from '@jupyterlab/mathjax2';
 import * as nbformat from '@jupyterlab/nbformat';
 import { ISharedAttachmentsCell } from '@jupyter-notebook/ydoc';
-import { newUuid } from './../../jupyter/utils/Ids';
+// import { newUuid } from './../../jupyter/utils/Ids';
 import getMarked from './marked/marked';
 import { requireLoader } from "@jupyter-widgets/html-manager";
 import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/lib/output_renderers";
@@ -44,7 +44,7 @@ export class NotebookAdapter {
   private _iPyWidgetsClassicManager?: IPyWidgetsClassicManager;
   private _CellSidebar?: (props: any) => JSX.Element;
   private _nbgrader: boolean;
-  private _readOnly: boolean;
+//  private _readOnly: boolean;
   private _context?: Context<INotebookModel>;
 
   constructor(props: INotebookProps, store: any, serviceManager: ServiceManager) {
@@ -55,7 +55,7 @@ export class NotebookAdapter {
     this._model = props.model;
     this._CellSidebar = props.CellSidebar;
     this._nbgrader = props.nbgrader;
-    this._readOnly = props.readOnly;
+//    this._readOnly = props.readOnly;
     this._ipywidgets = props.ipywidgets;
     this._kernel = props.kernel;
     this._uid = props.uid;
@@ -158,7 +158,7 @@ export class NotebookAdapter {
       }
     });
     this._notebookPanel = documentRegistry.getWidgetFactory('notebook')?.createNew(this._context) as NotebookPanel;
-    const isNew = (this._props.path !== "") ? false : true;
+    const isNew = ((this._props.path !== undefined) && (this._props.path !== "")) ? false : true;
     this._context.initialize(isNew).then(() => {
       if (this._kernel) {
         this._kernel.getJupyterKernel().then(kernelConnection => {
