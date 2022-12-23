@@ -32,7 +32,7 @@
     "react-dom": "18.1.0"
   },
   "devDependencies": {
-    "@types/node": "15.6.1",
+    "@types/node": "18.11.9",
     "assert": "2.0.0",
     "buffer": "6.0.3",
     "bufferutil": "4.0.3",

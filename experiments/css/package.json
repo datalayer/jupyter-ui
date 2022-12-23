@@ -41,7 +41,7 @@
     "@babel/preset-env": "7.19.4",
     "@babel/preset-react": "7.18.6",
     "@types/jest": "^26.0.23",
-    "@types/node": "15.6.1",
+    "@types/node": "18.11.9",
     "@types/react": "18.0.9",
     "@types/react-dom": "18.0.5",
     "@types/react-jss": "10.0.0",

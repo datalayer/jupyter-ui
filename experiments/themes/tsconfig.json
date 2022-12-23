@@ -28,7 +28,7 @@
     "resolveJsonModule": true,
     "sourceMap": true,
     "strictNullChecks": true,
-    "target": "ES2015",
+    "target": "ES2022",
     "types": [
       "node"
     ]

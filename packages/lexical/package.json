@@ -34,7 +34,7 @@
   "dependencies": {
     "@datalayer/jupyter-react": "0.0.23",
     "@lexical/react": "0.5.0",
-    "@primer/react": "35.15.1",
+    "@primer/react": "35.16.0",
     "katex": "0.16.1",
     "lexical": "0.5.0",
     "lodash-es": "4.17.21",
@@ -50,7 +50,7 @@
     "@babel/preset-typescript": "7.18.6",
     "@types/codemirror": "5.60.4",
     "@types/lodash-es": "4.17.6",
-    "@types/node": "15.6.1",
+    "@types/node": "18.11.9",
     "@types/plotly.js": "1.54.11",
     "@types/react": "18.0.9",
     "@types/react-dom": "18.0.5",

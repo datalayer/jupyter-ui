@@ -4,7 +4,7 @@
     "incremental": true,
     "rootDir": "src",
     "outDir": "lib",
-    "target": "es2015",
+    "target": "ES2022",
     "module": "commonjs",
     "lib": [
       "ESNext",

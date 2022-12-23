@@ -66,7 +66,7 @@
     "@types/jest": "^26.0.15",
     "@types/jscodeshift": "0.7.2",
     "@types/jwt-decode": "2.2.1",
-    "@types/node": "15.6.1",
+    "@types/node": "18.11.9",
     "@types/prettier": "2.2.3",
     "@types/react": "18.0.9",
     "@types/react-dom": "18.0.5",

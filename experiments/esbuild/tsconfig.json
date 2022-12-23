@@ -4,7 +4,7 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strictNullChecks": true,
-    "target": "es5",
+    "target": "ES2022",
     "lib": [
       "es6",
       "dom",

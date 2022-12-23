@@ -17,7 +17,7 @@
     "strict": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
-    "target": "es2019",
+    "target": "ES2022",
     "types": []
   }
 }
