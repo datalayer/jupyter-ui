@@ -22,7 +22,7 @@
     "clsx": "^1.1.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "react-router-dom": "6.3.0",
+    "react-router-dom": "6.6.0",
     "react-modal-image": "2.5.0"
   },
   "devDependencies": {

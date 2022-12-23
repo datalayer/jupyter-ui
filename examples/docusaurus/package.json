@@ -27,7 +27,7 @@
     "@svgr/webpack": "^5.5.0",
     "clsx": "^1.1.1",
     "prism-react-renderer": "^1.2.1",
-    "react-router-dom": "6.3.0",
+    "react-router-dom": "6.6.0",
     "react": "18.1.0",
     "react-dom": "18.1.0"
   },
