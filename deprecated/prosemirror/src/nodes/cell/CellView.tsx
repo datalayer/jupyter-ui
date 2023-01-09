@@ -1,7 +1,7 @@
 import { EditorView, NodeView } from "prosemirror-view";
 import { Node } from "prosemirror-model";
-import CellAdapter from './CellAdapter';
 import { Widget } from '@lumino/widgets';
+import CellAdapter from './CellAdapter';
 
 class CellView implements NodeView {
   public dom: HTMLElement;

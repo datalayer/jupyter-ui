@@ -12,7 +12,7 @@ import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javasc
 import { NotebookPanel, NotebookWidgetFactory, NotebookTracker, NotebookActions, INotebookModel, Notebook } from '@jupyterlab/notebook';
 import { CodeMirrorEditorFactory, CodeMirrorMimeTypeService } from '@jupyterlab/codemirror';
 import { IEditorServices } from '@jupyterlab/codeeditor';
-import { Completer, CompleterModel, CompletionHandler, ConnectorProxy, KernelCompleterProvider } from '@jupyterlab/completer';
+import { Completer, CompleterModel, CompletionHandler, ProviderReconciliator, KernelCompleterProvider } from '@jupyterlab/completer';
 import { MathJaxTypesetter } from '@jupyterlab/mathjax2';
 import * as nbformat from '@jupyterlab/nbformat';
 import { ISharedAttachmentsCell } from '@jupyter-notebook/ydoc';
@@ -255,24 +255,24 @@ export class NotebookAdapter {
     const completer = new Completer({ editor, model: completerModel });
     const completerTimeout = 1000;
     const provider = new KernelCompleterProvider();
-    const connector = new ConnectorProxy(
-      {
+    const reconciliator = new ProviderReconciliator({
+      context: {
         widget: notebookPanel,
         editor,
         session: sessionContext.session
       },
-      [provider],
-      completerTimeout,
-    );
-    const handler = new CompletionHandler({ completer, connector });
+      providers: [provider],
+      timeout: completerTimeout,
+    });
+    const handler = new CompletionHandler({ completer, reconciliator });
     void sessionContext.ready.then(() => {
       const provider = new KernelCompleterProvider();
-      const connector = new ConnectorProxy(
-        { widget: this._notebookPanel!, editor, session: sessionContext.session },
-        [provider],
-        completerTimeout,
-      );
-      handler.connector = connector;
+      const reconciliator = new ProviderReconciliator({
+        context: { widget: this._notebookPanel!, editor, session: sessionContext.session },
+        providers: [provider],
+        timeout: completerTimeout,
+      });
+      handler.reconciliator = reconciliator;
     });
     handler.editor = editor;
     notebookPanel.content.activeCellChanged.connect((sender: any, snippet: Cell<ICellModel>) => {

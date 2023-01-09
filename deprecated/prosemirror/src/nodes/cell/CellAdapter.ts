@@ -3,7 +3,7 @@ import { SessionContext, Toolbar, ToolbarButton } from '@jupyterlab/apputils';
 import { CodeCellModel, CodeCell } from '@jupyterlab/cells';
 import { CodeMirrorMimeTypeService } from '@jupyterlab/codemirror';
 import { runIcon } from '@jupyterlab/ui-components';
-import { Completer, CompleterModel, CompletionHandler, ConnectorProxy, KernelCompleterProvider } from '@jupyterlab/completer';
+import { Completer, CompleterModel, CompletionHandler, ProviderReconciliator, KernelCompleterProvider } from '@jupyterlab/completer';
 import { RenderMimeRegistry, standardRendererFactories as initialFactories } from '@jupyterlab/rendermime';
 import { SessionManager, KernelManager, KernelSpecManager, } from '@jupyterlab/services';
 import { ServerConnection } from '@jupyterlab/services';
@@ -106,12 +106,12 @@ class CellAdapter {
     const completer = new Completer({ editor, model });
     const timeout = 1000;
     const provider = new KernelCompleterProvider();
-    const connector = new ConnectorProxy(
-      { widget: this._codeCell, editor, session: this._sessionContext.session },
-      [provider],
-      timeout
-    );
-    const handler = new CompletionHandler({ completer, connector });
+    const reconciliator = new ProviderReconciliator({
+      context: { widget: this._codeCell, editor, session: this._sessionContext.session },
+      providers: [provider],
+      timeout: timeout,
+    });
+    const handler = new CompletionHandler({ completer, reconciliator });
     // Set the handler's editor.
     handler.editor = editor;
     // Hide the widget when it first loads.
