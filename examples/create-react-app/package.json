@@ -79,7 +79,7 @@
     "**/@jupyterlab/rendermime-interfaces": "3.8.0-alpha.17",
     "**/@jupyterlab/services": "7.0.0-alpha.17",
     "**/@jupyterlab/settingregistry": "4.0.0-alpha.17",
-    "**/@jupyter-notebook/ydoc": "0.2.0",
+    "**/@jupyter/ydoc": "0.2.2",
     "**/@jupyterlab/statedb": "4.0.0-alpha.17",
     "**/@jupyterlab/terminal": "4.0.0-alpha.17",
     "**/@jupyterlab/theme-dark-extension": "4.0.0-alpha.17",
