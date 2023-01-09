@@ -8,7 +8,7 @@ import { RenderMimeRegistry, standardRendererFactories as initialFactories } fro
 import { SessionManager, KernelManager, KernelSpecManager, } from '@jupyterlab/services';
 import { ServerConnection } from '@jupyterlab/services';
 import { CommandRegistry } from '@lumino/commands';
-import { createStandaloneCell, YCodeCell } from '@jupyter-notebook/ydoc';
+import { createStandaloneCell, YCodeCell } from '@jupyter/ydoc';
 // import { Session } from '@jupyterlab/services';
 // import { IPyWidgetsClassicManager } from "../../ipywidgets/IPyWidgetsClassicManager";
 // import { requireLoader } from "@jupyter-widgets/html-manager";

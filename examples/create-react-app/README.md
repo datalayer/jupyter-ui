@@ -130,7 +130,7 @@ Therefor, for now, we ask to pin the following resolutions.
     "**/@jupyterlab/rendermime-interfaces": "3.8.0-alpha.16",
     "**/@jupyterlab/services": "7.0.0-alpha.16",
     "**/@jupyterlab/settingregistry": "4.0.0-alpha.16",
-    "**/@jupyter-notebook/ydoc": "0.2.0",
+    "**/@jupyter/ydoc": "0.2.0",
     "**/@jupyterlab/statedb": "4.0.0-alpha.16",
     "**/@jupyterlab/terminal": "4.0.0-alpha.16",
     "**/@jupyterlab/theme-dark-extension": "4.0.0-alpha.16",

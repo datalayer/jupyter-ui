@@ -15,7 +15,7 @@ import { IEditorServices } from '@jupyterlab/codeeditor';
 import { Completer, CompleterModel, CompletionHandler, ProviderReconciliator, KernelCompleterProvider } from '@jupyterlab/completer';
 import { MathJaxTypesetter } from '@jupyterlab/mathjax2';
 import * as nbformat from '@jupyterlab/nbformat';
-import { ISharedAttachmentsCell } from '@jupyter-notebook/ydoc';
+import { ISharedAttachmentsCell } from '@jupyter/ydoc';
 // import { newUuid } from './../../jupyter/utils/Ids';
 import getMarked from './marked/marked';
 import { requireLoader } from "@jupyter-widgets/html-manager";

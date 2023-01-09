@@ -7,7 +7,7 @@ import { Completer, CompleterModel, CompletionHandler, ProviderReconciliator, Ke
 import { RenderMimeRegistry, standardRendererFactories as initialFactories } from '@jupyterlab/rendermime';
 import { Session, ServerConnection } from '@jupyterlab/services';
 import { SessionManager, KernelManager, KernelSpecManager } from '@jupyterlab/services';
-import { createStandaloneCell, YCodeCell } from '@jupyter-notebook/ydoc';
+import { createStandaloneCell, YCodeCell } from '@jupyter/ydoc';
 import { CommandRegistry } from '@lumino/commands';
 import { IPyWidgetsClassicManager } from "../../jupyter/ipywidgets/IPyWidgetsClassicManager";
 import { requireLoader } from "@jupyter-widgets/html-manager";
