@@ -41,19 +41,19 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
         }}
       >
         <span style={{ display: "flex" }}>
-          <IconButton size="small" color="secondary" aria-label="Run Cell" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.run.started(notebookId)) }}
+          <IconButton aria-labelledby="" size="small" color="secondary" aria-label="Run Cell" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.run.started(notebookId)) }}
             style={{ color: 'grey' }}>
             <PlayArrowIcon fontSize="inherit" />
           </IconButton>
         </span>
         <span style={{ display: "flex" }}>
-          <IconButton size="small" color="secondary" aria-label="Add Code Above" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertAbove.started({ uid: notebookId, cellType: "code" })); }}
+          <IconButton aria-labelledby="" size="small" color="secondary" aria-label="Add Code Above" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertAbove.started({ uid: notebookId, cellType: "code" })); }}
             style={{ color: 'grey' }}>
             <KeyboardArrowUpIcon fontSize="inherit" />
           </IconButton>
         </span>
         <span style={{ display: "flex" }}>
-          <IconButton size="small" color="secondary" aria-label="Run Cell" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertAbove.started({ uid: notebookId, cellType: "markdown" })); }}
+          <IconButton aria-labelledby="" size="small" color="secondary" aria-label="Run Cell" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertAbove.started({ uid: notebookId, cellType: "markdown" })); }}
             style={{ color: 'grey' }}>
             <KeyboardDoubleArrowUpIcon fontSize="inherit" />
           </IconButton>
@@ -76,19 +76,19 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
         */}
         </span>
         <span style={{ display: "flex" }}>
-          <IconButton size="small" color="secondary" aria-label="Run Cell" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "markdown" })); }}
+          <IconButton aria-labelledby="" size="small" color="secondary" aria-label="Run Cell" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "markdown" })); }}
             style={{ color: 'grey' }}>
             <KeyboardDoubleArrowDownIcon fontSize="inherit" />
           </IconButton>
         </span>
         <span style={{ display: "flex" }}>
-          <IconButton size="small" color="secondary" aria-label="Run Cell" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "code" })); }}
+          <IconButton aria-labelledby="" size="small" color="secondary" aria-label="Run Cell" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "code" })); }}
             style={{ color: 'grey' }}>
             <KeyboardArrowDownIcon fontSize="inherit" />
           </IconButton>
         </span>
         <span style={{ display: "flex" }}>
-          <IconButton size="small" color="error" aria-label="Delete" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.delete.started(notebookId)) }}>
+          <IconButton aria-labelledby="" size="small" color="error" aria-label="Delete" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.delete.started(notebookId)) }}>
             <DeleteIcon fontSize="inherit" style={{ color: '#ef9a9a' }} />
           </IconButton>
         </span>

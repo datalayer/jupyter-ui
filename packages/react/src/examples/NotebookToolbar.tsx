@@ -68,7 +68,7 @@ const NotebookToolbar = (props: { notebookId: string }) => {
         paddingLeft: '7vw',
         gap: '0.75vw',
       }}>
-        <IconButton size="small" color="primary" aria-label="Save" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.save.started({ uid: notebookId, date: new Date() })) }} style={{ color: 'grey' }}>
+        <IconButton aria-labelledby="" size="small" color="primary" aria-label="Save" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.save.started({ uid: notebookId, date: new Date() })) }} style={{ color: 'grey' }}>
           <SaveIcon fontSize="inherit" />
         </IconButton>
         <IconButton
@@ -82,22 +82,22 @@ const NotebookToolbar = (props: { notebookId: string }) => {
           style={{ color: 'grey' }}>
           <AddIcon fontSize="inherit" />
         </IconButton>
-        <IconButton size="small" color="secondary" aria-label="Run Cell" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.run.started(notebookId)) }}
+        <IconButton aria-labelledby="" size="small" color="secondary" aria-label="Run Cell" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.run.started(notebookId)) }}
           style={{ color: 'grey' }}>
           <PlayArrowIcon fontSize="inherit" />
         </IconButton>
         {(notebook?.kernelStatus === 'idle') &&
-          <IconButton size="small" color="secondary" aria-label="Run All Cells" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.runAll.started(notebookId)) }}
+          <IconButton aria-labelledby="" size="small" color="secondary" aria-label="Run All Cells" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.runAll.started(notebookId)) }}
             style={{ color: 'grey' }}>
             <FastForwardIcon fontSize="inherit" />
           </IconButton>
         }
         {(notebook?.kernelStatus === 'busy') &&
-          <IconButton size="small" color="error" aria-label="Interrupt" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.interrupt.started(notebookId)) }}>
+          <IconButton aria-labelledby="" size="small" color="error" aria-label="Interrupt" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.interrupt.started(notebookId)) }}>
             <StopIcon fontSize="inherit" style={{ color: '#e57373' }} />
           </IconButton>
         }
-        <IconButton size="small" color="error" aria-label="Delete" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.delete.started(notebookId)) }}>
+        <IconButton aria-labelledby="" size="small" color="error" aria-label="Delete" onClick={(e) => { e.preventDefault(); dispatch(notebookActions.delete.started(notebookId)) }}>
           <DeleteIcon fontSize="inherit" style={{ color: '#e57373' }} />
         </IconButton>
       </div>

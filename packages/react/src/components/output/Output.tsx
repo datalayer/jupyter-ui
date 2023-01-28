@@ -42,7 +42,7 @@ const KernelProgressMenu = (props: Props) => {
   return (
     <ActionMenu>
       <ActionMenu.Anchor>
-        <IconButton icon={KebabHorizontalIcon} variant="invisible"/>
+        <IconButton aria-labelledby="" icon={KebabHorizontalIcon} variant="invisible"/>
       </ActionMenu.Anchor>
       <ActionMenu.Overlay>
         <ActionList>

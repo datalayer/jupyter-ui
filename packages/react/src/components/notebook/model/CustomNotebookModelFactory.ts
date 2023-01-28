@@ -1,4 +1,6 @@
 import { INotebookModel, NotebookModelFactory } from "@jupyterlab/notebook";
+import { DocumentRegistry } from '@jupyterlab/docregistry';
+import type { ISharedNotebook } from '@jupyter/ydoc';
 
 export class CustomNotebookModelFactory extends NotebookModelFactory {
 
@@ -9,9 +11,9 @@ export class CustomNotebookModelFactory extends NotebookModelFactory {
 
   /** @override */
   createNew(
-    languagePreference?: string
+    options: DocumentRegistry.IModelOptions<ISharedNotebook>
   ): INotebookModel {
-    const model = super.createNew(languagePreference);
+    const model = super.createNew(options);
     return model;
   }
 
