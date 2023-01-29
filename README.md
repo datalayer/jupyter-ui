@@ -80,7 +80,7 @@ We will add collaborative and accessible features to read, write and publish dat
 
 You can get more details on the [Jupyter React website](https://jupyter-react.com).
 
-The typedoc documentation is [available online](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.0.6/index.html).
+The typedoc documentation is [available online](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.0.24/index.html).
 
 ## Support
 
