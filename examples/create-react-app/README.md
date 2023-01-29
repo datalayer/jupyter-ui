@@ -140,7 +140,7 @@ Therefor, for now, we ask to pin the following resolutions.
     "**/@jupyterlab/theme-dark-extension": "4.0.0-alpha.18",
     "**/@jupyterlab/theme-light-extension": "4.0.0-alpha.18",
     "**/@jupyterlab/translation": "4.0.0-alpha.18",
-    "**/@jupyterlab/ui-components": "4.0.0-alpha.31",
+    "**/@jupyterlab/ui-components": "4.0.0-alpha.33",
     "**/@lumino/default-theme": "1.0.0-alpha.6",
     "**/@lumino/algorithm": "2.0.0-alpha.6",
     "**/@lumino/application": "2.0.0-alpha.6",
