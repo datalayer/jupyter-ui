@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import AddIcon from '@mui/icons-material/Add';
-import { notebookActions, selectNotebook } from '../components/notebook/NotebookState';
+import { notebookActions, selectNotebook } from '../../components/notebook/NotebookState';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import FastForwardIcon from '@mui/icons-material/FastForward';
 import StopIcon from '@mui/icons-material/Stop';
@@ -10,8 +10,8 @@ import IconButton from '@mui/material/IconButton';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { styled } from '@mui/material/styles';
-import { IJupyterReactState } from '../state/State';
-import { cmdIds } from '../components/notebook/NotebookCommands';
+import { IJupyterReactState } from '../../state/State';
+import { cmdIds } from '../../components/notebook/NotebookCommands';
 
 const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
   '& .MuiToggleButtonGroup-grouped': {

@@ -1,6 +1,7 @@
 import { applyMiddleware, combineReducers, createStore } from "redux";
 import { createEpicMiddleware } from "redux-observable";
 import { AnyAction, Success } from "typescript-fsa";
+import { jupyterReactReducer } from "./JupyterReactState";
 
 const epicMiddleware = createEpicMiddleware<AnyAction, AnyAction, Success<any, any>, any>();
 
@@ -12,7 +13,7 @@ function createReducer(asyncReducers: any) {
 
 function createInjectableStore() {
   const injectableStore = createStore(
-    createReducer({}),
+    createReducer([jupyterReactReducer]),
     applyMiddleware(epicMiddleware),
   );
   (injectableStore as any).asyncReducers = {};

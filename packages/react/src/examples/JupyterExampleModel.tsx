@@ -8,8 +8,8 @@ import { IJupyterReactState } from '../state/State';
 import Notebook from '../components/notebook/Notebook';
 import { selectNotebookModel } from '../components/notebook/NotebookState';
 import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarDefault';
-import notebookExample1 from './NotebookExample1.ipynb.json';
-import notebookExample2 from './NotebookExample2.ipynb.json';
+import notebookExample1 from './notebooks/NotebookExample1.ipynb.json';
+import notebookExample2 from './notebooks/NotebookExample2.ipynb.json';
 
 import "./../../style/index.css";
 

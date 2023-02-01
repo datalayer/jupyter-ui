@@ -12,9 +12,9 @@ import Divider from '@mui/material/Divider';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { styled } from '@mui/material/styles';
-import { cmdIds } from '../components/notebook/NotebookCommands';
-import { IJupyterReactState } from '../state/State';
-import { notebookActions, selectNotebook, selectSaveRequest } from '../components/notebook/NotebookState';
+import { cmdIds } from '../../components/notebook/NotebookCommands';
+import { IJupyterReactState } from '../../state/State';
+import { notebookActions, selectNotebook, selectSaveRequest } from '../../components/notebook/NotebookState';
 
 const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
   '& .MuiToggleButtonGroup-grouped': {
