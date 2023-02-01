@@ -10,11 +10,11 @@ export class TerminalAdapter {
 
   constructor() {
     this.terminalPanel = new BoxPanel();
-    this.terminalPanel.addClass('jupyterlab-terminal');
+    this.terminalPanel.addClass('dla-JupyterLab-terminal');
     this.terminalPanel.spacing = 0;
     const manager = new TerminalManager();
-    manager.startNew().then((s1) => {
-      this.terminal = new Terminal(s1, { theme: 'light' });
+    manager.startNew().then((terminalConnection) => {
+      this.terminal = new Terminal(terminalConnection, { theme: 'light' });
       this.terminal.title.closable = true;
       this.terminalPanel.addWidget(this.terminal);
     });
@@ -24,8 +24,8 @@ export class TerminalAdapter {
     return this.terminalPanel;
   }
 
-  setTheme(theme: string) {
-    this.terminal.setOption('theme', theme as ITerminal.Theme);
+  setTheme(theme: ITerminal.Theme) {
+    this.terminal.setOption('theme', theme);
   }
 
 }

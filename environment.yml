@@ -17,8 +17,9 @@ dependencies:
   - twine
   - yarn=1.22.19
   - pip:
-    - jupyterlab==4.0.0a31
-    - ipywidgets==8.0.1
+    - jupyterlab==4.0.0a33
+    - ipywidgets==8.0.4
+    - jupyter_server_terminals
 #    - jupyterlab-lsp
 #    - python-language-server[all]
     - plotly

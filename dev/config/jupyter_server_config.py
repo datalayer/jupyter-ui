@@ -67,7 +67,8 @@ c.ServerApp.cookie_options = {
 #################
 
 c.ServerApp.jpserver_extensions = {
-    'jupyterlab': False,
+    'jupyterlab': True,
+    'jupyter_server_terminals': True,
 }
 
 #################

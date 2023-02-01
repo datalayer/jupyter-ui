@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useDispatch } from "react-redux";
 import TerminalAdapter from './TerminalAdapter';
 import { terminalActions, terminalReducer } from './TerminalState';
@@ -8,14 +8,22 @@ import Lumino from '../../jupyter/lumino/Lumino';
 export const Terminal = () => {
   const { injectableStore } = useJupyter();
   const dispatch = useDispatch();
-  const adapter = useMemo(() => new TerminalAdapter(), []);
+  const [adapter, setAdapter] = useState<TerminalAdapter>();
   useMemo(() => {
     (injectableStore as any).inject('terminal', terminalReducer);
   }, []);
   useEffect(() => {
+    const adapter = new TerminalAdapter();
     dispatch(terminalActions.update({ adapter }));
+    setAdapter(adapter);
   }, []);
-  return <Lumino>{adapter.panel}</Lumino>
+  return adapter
+  ?
+    <Lumino>
+      {adapter.panel}
+    </Lumino>
+  :
+    <>Loading Jupyter Terminal...</>
 }
 
 export default Terminal;

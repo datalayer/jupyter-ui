@@ -2,32 +2,13 @@
   --jp-ui-font-size1: 16px !important;
 }
 
+html {
+  box-sizing: content-box !important;
+}
+
 body {
   background: white;
   margin: 0;
   padding: 0;
   overflow-y: scroll;
 }
-
-html {
-  box-sizing: content-box !important;
-}
-
-/*
-p {
-  font-size: 14px !important;
-}
-[data-component="leadingIcon"] {
-  margin-top: 2px;
-}
-[data-component="trailingIcon"] {
-  margin-top: 2px;
-}
-Reset the jupyter unset variables and rules.
-*, *::before, *::after {
-  box-sizing: border-box !important;
-}
-p {
-  margin: 0 0 10px !important;
-}
-*/
