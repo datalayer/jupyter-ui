@@ -206,45 +206,6 @@ export class NotebookAdapter {
     this._model = model;
     if (this._model) {
       this._notebookPanel?.model?.fromJSON(model);
-/*
-      this._model.cells.map((cell, index) => {
-        console.log('---', cell);
-        switch(cell.cell_type) {
-          case "code": {
-            this._notebookPanel?.model?.sharedModel.insertCell(this._notebookPanel?.model?.sharedModel.cells.length + 1, {
-              ...cell,
-              id: cell.id ? cell.id.toString() : newUuid(),
-              metadata: {
-                ...cell.metadata,
-                editable: !this._readOnly,
-              }});
-            break;
-          }
-          case "markdown": {
-            this._notebookPanel?.model?.sharedModel.insertCell(this._notebookPanel?.model?.sharedModel.cells.length + 1, {
-              ...cell,
-              id: cell.id ? cell.id.toString() : newUuid(),
-              metadata: {
-                ...cell.metadata,
-                editable: !this._readOnly,
-              }
-            });
-            break;
-          }
-          case "raw": {
-            this._notebookPanel?.model?.sharedModel.insertCell(this._notebookPanel?.model?.sharedModel.cells.length + 1, {
-              ...cell,
-              id: cell.id ? cell.id.toString() : newUuid(),
-              metadata: {
-                ...cell.metadata,
-                editable: !this._readOnly,
-              }
-            });
-            break;
-          }
-        }
-      });
-*/
     }
   }
 

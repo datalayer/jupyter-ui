@@ -29,7 +29,7 @@ if (IS_PRODUCTION) {
 const JUPYTER_HOST = 'http://127.0.0.1:8686';
 
 module.exports = {
-  entry: ['./src/examples/JupyterExampleCell'],
+  entry: ['./src/examples/JupyterExampleNotebook'],
   mode: mode,
   watchOptions: {
     aggregateTimeout: 300,

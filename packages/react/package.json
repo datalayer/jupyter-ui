@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyter-react",
-  "version": "0.0.24",
+  "version": "0.0.25",
   "description": "Jupyter React",
   "license": "MIT",
   "private": false,
