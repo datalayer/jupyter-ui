@@ -17,6 +17,7 @@ const root = createRoot(div)
 root.render(
   <Jupyter lite={false} terminals={true}>
     <Notebook
+      path="test.ipynb"
       model={notebookExample1 as INotebookContent}
       CellSidebar={CellSidebarNew}
       Toolbar={NotebookToolbar}
