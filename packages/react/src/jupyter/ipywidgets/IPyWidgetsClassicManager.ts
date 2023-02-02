@@ -31,7 +31,6 @@ export class IPyWidgetsClassicManager extends HTMLManager {
     if (kernelConnection) {
       this._commRegistration = kernelConnection.registerCommTarget(
         this.comm_target_name,
-  //      (comm, message) => this.handle_comm_open(new ShimmedComm(comm), message)
         (comm: any, message: any) => {
           this.handle_comm_open(new shims.services.Comm(comm), message)
         }

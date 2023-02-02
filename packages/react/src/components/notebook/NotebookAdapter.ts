@@ -6,6 +6,7 @@ import { IChangedArgs, PageConfig } from '@jupyterlab/coreutils';
 import { Cell, ICellModel, MarkdownCell } from '@jupyterlab/cells';
 import { ServiceManager, Kernel as JupyterKernel } from '@jupyterlab/services';
 import { DocumentRegistry, Context } from '@jupyterlab/docregistry';
+import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { standardRendererFactories, RenderMimeRegistry } from '@jupyterlab/rendermime';
 import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
@@ -46,6 +47,8 @@ export class NotebookAdapter {
   private _nbgrader: boolean;
 //  private _readOnly: boolean;
   private _context?: Context<INotebookModel>;
+  private _renderers: IRenderMime.IRendererFactory[];
+  private _rendermime?: RenderMimeRegistry;
 
   constructor(props: INotebookProps, store: any, serviceManager: ServiceManager) {
     this._props = props;
@@ -59,13 +62,14 @@ export class NotebookAdapter {
     this._ipywidgets = props.ipywidgets;
     this._kernel = props.kernel;
     this._uid = props.uid;
-    //
+    this._renderers = props.renderers;
+
     this._boxPanel = new BoxPanel();
     this._boxPanel.addClass('dla-Jupyter-Notebook');
     this._boxPanel.spacing = 0;
-    //
+
     this._commandRegistry = new CommandRegistry();
-    //
+
     this.loadNotebook = this.loadNotebook.bind(this);
   }
 
@@ -76,17 +80,21 @@ export class NotebookAdapter {
       event => { this._commandRegistry?.processKeydownEvent(event); },
       useCapture,
     );
+
     const rendererFactories = standardRendererFactories.filter(factory => factory.mimeTypes[0] !== 'text/javascript');
     rendererFactories.push(jsonRendererFactory);
     rendererFactories.push(javascriptRendererFactory);
-    const rendermime = new RenderMimeRegistry({
+    this._renderers.map(renderer => rendererFactories.push(renderer));
+
+    this._rendermime = new RenderMimeRegistry({
       initialFactories: rendererFactories,
       latexTypesetter: new MathJaxTypesetter({
         url: PageConfig.getOption('mathjaxUrl'),
         config: PageConfig.getOption('mathjaxConfig'),
       }),
       markdownParser: getMarked(),
-    }); 
+    });
+
     const documentRegistry = new DocumentRegistry({});
     const mimeTypeService = new CodeMirrorMimeTypeService();
     const editorServices: IEditorServices = {
@@ -108,22 +116,29 @@ export class NotebookAdapter {
       new NotebookPanel.ContentFactory(
         { editorFactory }
       );
+
     this._tracker = new NotebookTracker({ namespace: this._uid });
-    if (this._ipywidgets === 'classic') {
-      this._iPyWidgetsClassicManager = new IPyWidgetsClassicManager({ loader: requireLoader });
-      rendermime.addFactory(
-        {
-          safe: false,
-          mimeTypes: [WIDGET_MIMETYPE],
-          createRenderer: (options) => new WidgetRenderer(options, this._iPyWidgetsClassicManager!),
-        },
-        1
-      );
-    }
-    else if (this._ipywidgets === 'lab') {
-      const widgetRegistry = activateWidgetExtension(rendermime, this._tracker , null, null);
-      activatePlotlyWidgetExtension(widgetRegistry);
-    }
+
+    switch(this._ipywidgets) { 
+      case 'classic': {
+        this._iPyWidgetsClassicManager = new IPyWidgetsClassicManager({ loader: requireLoader });
+        this._rendermime.addFactory(
+          {
+            safe: false,
+            mimeTypes: [WIDGET_MIMETYPE],
+            createRenderer: (options) => new WidgetRenderer(options, this._iPyWidgetsClassicManager!),
+          },
+          1
+        );
+        break;
+      }
+      case 'lab': {
+        const widgetRegistry = activateWidgetExtension(this._rendermime, this._tracker, null, null);
+        activatePlotlyWidgetExtension(widgetRegistry);
+        break;
+      }
+   }
+
     const notebookWidgetFactory = new NotebookWidgetFactory({
       name: 'Notebook',
       modelName: 'notebook',
@@ -131,24 +146,25 @@ export class NotebookAdapter {
       defaultFor: ['notebook'],
       preferKernel: true,
       canStartKernel: false,
-      rendermime,
+      rendermime: this._rendermime,
       contentFactory,
       mimeTypeService: editorServices.mimeTypeService,
     });
-    /*
+
     notebookWidgetFactory.widgetCreated.connect((sender, widget) => {
       widget.context.pathChanged.connect(() => {
         void this._tracker?.save(widget);
       });
       void this._tracker?.add(widget);
     });
-    */
+
     documentRegistry.addWidgetFactory(notebookWidgetFactory);
     const notebookModelFactory = new CustomNotebookModelFactory({});
     documentRegistry.addModelFactory(notebookModelFactory);
+
     this._context = new Context({
       manager: this._serviceManager,
-      factory: notebookModelFactory,  
+      factory: notebookModelFactory,
       path: this._props.path || "ping.ipynb",
       kernelPreference: {
 //        id: this.kernel?.kernelId,
@@ -158,22 +174,22 @@ export class NotebookAdapter {
       }
     });
     this._notebookPanel = documentRegistry.getWidgetFactory('notebook')?.createNew(this._context) as NotebookPanel;
-    const isNew = ((this._props.path !== undefined) && (this._props.path !== "")) ? false : true;
-    this._context.initialize(isNew).then(() => {
-      if (this._kernel) {
-        this._kernel.getJupyterKernel().then(kernelConnection => {
-          this._context?.sessionContext.changeKernel(kernelConnection.model).then(() => {
-            const completerHandler = this.setupCompleter(this._notebookPanel!);
-            NotebookCommands(this._commandRegistry, this._notebookPanel!, completerHandler, this._props);
-          });
-        });
-      }
-    });
+
     if (this._ipywidgets === 'classic') {
       this._notebookPanel.sessionContext.kernelChanged.connect((sender: any, args: IChangedArgs<JupyterKernel.IKernelConnection | null, JupyterKernel.IKernelConnection | null, 'kernel'>) => {
         this._iPyWidgetsClassicManager?.registerWithKernel(args.newValue);
       });
     }
+
+    const isNew = ((this._props.path !== undefined) && (this._props.path !== "")) ? false : true;
+    this._context.initialize(isNew).then(() => {
+      if (this._kernel) {
+//        this._kernel.getJupyterKernel().then(kernelConnection => {
+          this.changeKernel(this._kernel!);
+//        });
+      }
+    });
+
     BoxPanel.setStretch(this._notebookPanel, 0);
     this._boxPanel.addWidget(this._notebookPanel);
     window.addEventListener('resize', () => {
@@ -249,9 +265,12 @@ export class NotebookAdapter {
     this._kernel.getJupyterKernel().then(kernelConnection => {
       this._context?.sessionContext.changeKernel(kernelConnection.model).then(() => {
         const completerHandler = this.setupCompleter(this._notebookPanel!);
-        NotebookCommands(this._commandRegistry, this._notebookPanel!, completerHandler, this._props);  
+        NotebookCommands(this._commandRegistry, this._notebookPanel!, completerHandler, this._props);
+        this._iPyWidgetsClassicManager?.registerWithKernel(kernelConnection);
+//        const widgetRegistry = activateWidgetExtension(this._rendermime!, this._tracker!, null, null);
+//        activatePlotlyWidgetExtension(widgetRegistry);    
       });
-    });      
+    });
   }
 
   get uid(): string {

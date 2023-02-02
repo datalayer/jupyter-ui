@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { useDispatch } from "react-redux";
 import { Box } from "@primer/react";
 import { Cell, ICellModel } from '@jupyterlab/cells';
+import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import * as nbformat from '@jupyterlab/nbformat';
 import { useJupyter } from "./../../jupyter/JupyterContext";
 import { Kernel } from "./../../jupyter/services/kernel/Kernel";
@@ -30,6 +31,7 @@ export type INotebookProps = {
   Toolbar?: (props: any) => JSX.Element;
   height?: string;
   maxHeight?: string;
+  renderers: IRenderMime.IRendererFactory[];
 }
 
 /**
@@ -186,13 +188,14 @@ export const Notebook = (props: INotebookProps) => {
 }
 
 Notebook.defaultProps = {
-  ipywidgets: 'lab',
+  ipywidgets: 'classic',
   readOnly: false,
   nbgrader: false,
   cellMetadataPanel: false,
   cellSidebarMargin: 120,
   height: '100vh',
   maxHeight: '100vh',
+  renderers: [],
 } as Partial<INotebookProps>;
 
 export default Notebook;

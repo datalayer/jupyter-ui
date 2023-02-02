@@ -98,6 +98,8 @@
     "@babel/plugin-proposal-class-properties": "7.18.6",
     "@babel/preset-react": "7.18.6",
     "@babel/preset-typescript": "7.18.6",
+    "@jupyterlab/geojson-extension": "3.3.1",
+    "@jupyterlab/vega3-extension": "3.1.3",
     "@types/codemirror": "5.60.4",
     "@types/marked": "4.0.1",
     "@types/node": "18.11.9",

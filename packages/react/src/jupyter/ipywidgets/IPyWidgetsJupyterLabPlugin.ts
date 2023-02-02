@@ -34,6 +34,7 @@ function* widgetRenderers(
       for (const codecell of (cell as CodeCell).outputArea.widgets) {
         for (const output of toArray(codecell.children())) {
           if (output instanceof WidgetRenderer) {
+            console.log('----', output)
             yield output;
           }
         }
@@ -43,6 +44,8 @@ function* widgetRenderers(
 }
 /**
  * Iterate through all matching linked output views
+ */
+/*
 function* outputViews(
   app: JupyterFrontEnd,
   path: string
@@ -94,7 +97,6 @@ export function registerWidgetManager(
     },
     0
   );
-
   return new DisposableDelegate(() => {
     if (rendermime) {
       rendermime.removeMimeType(WIDGET_VIEW_MIMETYPE);
@@ -112,7 +114,6 @@ export function activateWidgetExtension(
   menu: IMainMenu | null,
   loggerRegistry: ILoggerRegistry | null
 ): base.IJupyterWidgetRegistry {
-
   const bindUnhandledIOPubMessageSignal = (notebookPanel: NotebookPanel): void => {
     if (!loggerRegistry) {
       return;
@@ -133,7 +134,7 @@ export function activateWidgetExtension(
             ...msg.content,
             output_type: msg.header.msg_type,
           };
-//          logger.rendermime = notebookPanel.content.rendermime;
+          logger.rendermime = notebookPanel.content.rendermime;
           logger.log({ type: 'output', data, level });
         }
       );
@@ -147,7 +148,7 @@ export function activateWidgetExtension(
       mimeTypes: [WIDGET_VIEW_MIMETYPE],
       createRenderer: (options) => new WidgetRenderer(options),
     },
-    0
+    -10
   );
 
   if (tracker !== null) {
