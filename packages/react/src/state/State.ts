@@ -1,6 +1,7 @@
 import { combineReducers } from "redux";
 import { combineEpics } from "redux-observable";
 import { AnyAction } from "typescript-fsa";
+import { initInitialState, initReducer, IInitState } from "./InitState";
 import { cellInitialState, cellReducer, ICellState } from "../components/cell/CellState";
 import { notebookInitialState, notebookEpics, notebookReducer, INotebooksState } from "../components/notebook/NotebookState";
 import { terminalInitialState, terminalReducer, ITerminalState } from "../components/terminal/TerminalState";
@@ -9,6 +10,7 @@ import { outputInitialState, outputReducer, IOutputsState } from "../components/
 /* State */
 
 export interface IJupyterReactState {
+  init: IInitState;
   cell: ICellState;
   output: IOutputsState;
   notebook: INotebooksState;
@@ -16,6 +18,7 @@ export interface IJupyterReactState {
 }
 
 export const initialState: IJupyterReactState = {
+  init: initInitialState,
   cell: cellInitialState,
   output: outputInitialState,
   notebook: notebookInitialState,
@@ -40,6 +43,7 @@ export const epics = combineEpics<AnyAction, AnyAction, any>(
 
 /* Reducers */
 export const reducers = combineReducers<IJupyterReactState>({
+  init: initReducer,
   cell: cellReducer,
   output: outputReducer,
   notebook: notebookReducer,

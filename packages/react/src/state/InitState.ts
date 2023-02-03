@@ -4,43 +4,43 @@ import { reducerWithInitialState } from "typescript-fsa-reducers";
 
 /* State */
 
-export interface IJupyterReactState {
+export interface IInitState {
   start?: Date;
 }
 
-export const jupyterReactInitialState: IJupyterReactState = {
+export const initInitialState: IInitState = {
   start: undefined,
 }
 
 /* Selectors */
 
 export const selectStart = (): Date | undefined =>
-  useSelector((state: any) => {
-    if (state.jupyterReact) {
-      return state.jupyterReact.start;
+  useSelector((state: IInitState) => {
+    if ((state as any).init) {
+      return (state as any).init.start;
     }
-    return jupyterReactInitialState.start;
+    return initInitialState.start;
   }
 );
 
 /* Actions */
 
-export enum JupyterReactActionType {
+export enum InitActionType {
   GET_START = "jupyterReact/GET_START",
 }
 
 const actionCreator = actionCreatorFactory('jupyterReact');
 
-export const jupyterReactActions = {
+export const initActions = {
   getStart: actionCreator<Date>(
-    JupyterReactActionType.GET_START
+    InitActionType.GET_START
   ),
 }
 
 /* Reducers */
 
-export const jupyterReactReducer = reducerWithInitialState(jupyterReactInitialState)
-  .case(jupyterReactActions.getStart, (state: IJupyterReactState, start: Date) => {
+export const initReducer = reducerWithInitialState(initInitialState)
+  .case(initActions.getStart, (state: IInitState, start: Date) => {
     return {
       ...state,
       start,

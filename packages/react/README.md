@@ -7,7 +7,7 @@
 The below image shows a gallery of the available React.js components ready to be used in you custom application. These open source components are used to build the online [Datalayer service](https://datalayer.io), a collaborative platform for data analysis.
 
 <div align="center" style="text-align: center">
-  <img alt="Jupyter React Gallery" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-gallery.gif" />
+  <img alt="Jupyter React Gallery" src="https://datalayer-jupyter-examples.s3.amazonreact.com/jupyter-react-gallery.gif" />
 </div>
 
 <hr/>
@@ -21,7 +21,7 @@ In terms of technical stack, the Jupyter(Lab) user interface is built on top of 
 Although a developer can embed a React.js component into JupyterLab, the reverse is not possible: you can not embed JupyterLab into a React.js application. To solve that issue, Jupyter-React ships components to easily create a React.js data product compatible with the Jupyter ecosystem. Those components can be used in any React.js application, and also in static websites like Docusaurus, Next.js or Remix. They wrap underneath the JupyterLab code and allow developing React.js applications with code execution capability. State management is based on Redux, and Mobx is to be added.
 
 <div align="center" style="text-align: center">
-  <img alt="Jupyter React Communication" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-communication.png" />
+  <img alt="Jupyter React Communication" src="https://datalayer-jupyter-examples.s3.amazonreact.com/jupyter-react-communication.png" />
 </div>
 
 IPyWidgets are supported (the Comm feature needs to be fixed). JupyterLite and PyScript support is on the roadmap. Autocompletion is also available.
@@ -33,11 +33,22 @@ You can find more context reading this [abstract](https://fosdem.org/2022/schedu
 As a React.js developer, you just write a few lines of code get a live notebook or live cell in your application.
 
 <div align="center" style="text-align: center">
-  <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-snippet.png" />
+  <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonreact.com/jupyter-react-snippet.png" />
 </div>
 
 The `jupyter-react` library can be used in any React.js application. Install the latest `@datalayer/jupyter-react` npm package and get inspired by the [examples](https://github.com/datalayer/jupyter-react/tree/main/examples) in this repository.
 
 <div align="center" style="text-align: center">
-  <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-notebook.png" />
+  <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonreact.com/jupyter-react-notebook.png" />
 </div>
+
+## JupyterLab Extension
+
+```bash
+pip install -e .[test]
+jupyter labextension develop . --overwrite
+jupyter labextension list
+jupyter server extension list
+# open http://localhost:8686/api/jupyter/lab?token=60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6
+yarn jupyterlab
+```

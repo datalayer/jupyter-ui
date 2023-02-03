@@ -43,14 +43,14 @@ module.exports = {
     server: 'https',
     proxy: {
       '/build/pypi': {
-        target: 'https://datalayer-assets.s3.us-west-2.amazonaws.com/pypi',
+        target: 'https://datalayer-assets.s3.us-west-2.amazonreact.com/pypi',
         pathRewrite: { '^/build/pypi': '' },
         ws: false,
         secure: false,
         changeOrigin: true,
       },
       '/services.js': {
-        target: 'https://datalayer-assets.s3.us-west-2.amazonaws.com/services.js',
+        target: 'https://datalayer-assets.s3.us-west-2.amazonreact.com/services.js',
         pathRewrite: { '^/services.js': '' },
         ws: false,
         secure: false,

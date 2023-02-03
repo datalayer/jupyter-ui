@@ -1,0 +1,8 @@
+{
+  "jupyter.lab.shortcuts": [],
+  "title": "@datalayer/jupyter-react",
+  "description": "@datalayer/jupyter-react settings.",
+  "type": "object",
+  "properties": {},
+  "additionalProperties": false
+}

@@ -20,7 +20,7 @@
     "url": "https://github.com/datalayer/jupyter-docusaurus.git"
   },
   "dependencies": {
-    "@datalayer/jupyter-react": "0.0.25",
+    "@datalayer/jupyter-react": "0.2.0",
     "@docusaurus/core": "2.1.0",
     "@docusaurus/types": "2.1.0"
   },
