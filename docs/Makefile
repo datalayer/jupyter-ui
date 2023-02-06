@@ -47,4 +47,4 @@ publish: build ## publish
 		--distribution-id E326O1JBGNXT46 \
 		--paths / \
 		--profile datalayer && \
-	echo open ✨  https://jupyter-react.com )
+	echo open ✨  https://jupyter-react.datalayer.tech )
