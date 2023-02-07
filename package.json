@@ -34,7 +34,7 @@
   "workspaces": {
     "packages": [
       "deprecated/*",
-      "docs/*",
+      "docs",
       "examples/*",
       "experiments/*",
       "packages/*",

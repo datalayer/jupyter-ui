@@ -17,7 +17,7 @@ export async function requestAPI<T>(
   const settings = ServerConnection.makeSettings();
   const requestUrl = URLExt.join(
     settings.baseUrl,
-    'datalayer', // API Namespace
+    'jupyter_react', // API Namespace
     endPoint
   );
 
