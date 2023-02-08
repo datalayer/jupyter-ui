@@ -179,7 +179,8 @@
   },
   "sideEffects": [
     "style/*.css",
-    "style/index.js"
+    "style/index.js",
+    "src/**/*.css"
   ],
   "styleModule": "style/index.js",
   "publishConfig": {

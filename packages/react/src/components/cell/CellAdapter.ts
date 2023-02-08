@@ -63,7 +63,7 @@ export class CellAdapter {
       },
       0
     );
-    const codeCell = new CodeCell({
+    this._codeCell = new CodeCell({
       rendermime,
       model: new CodeCellModel({
         sharedModel: createStandaloneCell({
@@ -74,8 +74,8 @@ export class CellAdapter {
         }) as YCodeCell
       })
     });
-    this._codeCell = codeCell.initializeState();
     this._codeCell.addClass('dla-JupyterCell');
+    this._codeCell.initializeState();
     this._sessionContext.kernelChanged.connect((sender: SessionContext, arg: Session.ISessionConnection.IKernelChangedArgs) => {
       const kernelConnection = arg.newValue;
       iPyWidgetsClassicManager.registerWithKernel(kernelConnection)

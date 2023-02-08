@@ -7,6 +7,7 @@ import CellSidebarNew from "../components/notebook/cell/sidebar/CellSidebarNew";
 import notebookExample1 from "./notebooks/NotebookExample1.ipynb.json";
 
 import "./../../style/index.css";
+import "./../components/notebook/Notebook.css";
 
 const div = document.createElement('div');
 document.body.appendChild(div);

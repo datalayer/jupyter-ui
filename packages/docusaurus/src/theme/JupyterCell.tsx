@@ -1,6 +1,8 @@
 import React from 'react';
 import BrowserOnly from '@docusaurus/core/lib/client/exports/BrowserOnly';
 
+import './JupyterCell.css';
+
 const JupyterCell = (props: any) => {
   return (
       <BrowserOnly
@@ -9,7 +11,8 @@ const JupyterCell = (props: any) => {
           // Keep the import via require in the BrowserOnly code block.
           const { Jupyter } = require('@datalayer/jupyter-react');
           const { Cell } = require('@datalayer/jupyter-react');
-          return <Jupyter
+          return (
+            <Jupyter
               jupyterToken={props.token}
               jupyterServerHttpUrl={props.serverHttpUrl}
               jupyterServerWsUrl={props.serverWsUrl}
@@ -17,6 +20,7 @@ const JupyterCell = (props: any) => {
               terminals={false}>
                 <Cell source={props.source}/>
             </Jupyter>
+          )
         }}
       </BrowserOnly>
   );

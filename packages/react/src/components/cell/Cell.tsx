@@ -48,7 +48,7 @@ export const Cell = (props: ICellProps) => {
           });
         }
       });
-      setAdapter(adapter);  
+      setAdapter(adapter);
     }
   }, [source]);
   return adapter
