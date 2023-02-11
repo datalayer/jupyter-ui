@@ -88,7 +88,7 @@ module.exports = {
           presets: [
             ["@babel/preset-react", {
                 runtime: 'automatic',
-                importSource: '@emotion/react'
+                importSource: 'react'
               },
             ],
             "@babel/preset-typescript",
@@ -202,7 +202,7 @@ module.exports = {
           singleton: true,
           requiredVersion: false,
         },
-        '@emotion/react': {
+        'react': {
           eager: false,
           singleton: true,
           requiredVersion: false,
