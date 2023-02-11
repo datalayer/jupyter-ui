@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Button } from '@primer/react';
+import { Box, Button } from '@primer/react';
 import { PlayIcon } from "@primer/octicons-react";
 import { PanelLayout } from '@lumino/widgets';
 import { DLA_CELL_HEADER_CLASS } from './base/CellSidebarWidget';
@@ -27,9 +27,9 @@ export const CellSidebarRun = (props: CellSidebarProps) => {
   }
   return (
     activeCell ? 
-      <div
+      <Box
         className={DLA_CELL_HEADER_CLASS}
-        css={{
+        sx={{
           '& p': {
             marginBottom: '0 !important',
           }
@@ -43,7 +43,7 @@ export const CellSidebarRun = (props: CellSidebarProps) => {
               Run
             </Button>
           </span>
-      </div>
+      </Box>
     :
       <></>
   );

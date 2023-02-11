@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { PanelLayout } from '@lumino/widgets';
+import { Box } from '@primer/react';
 import { DLA_CELL_HEADER_CLASS } from './base/CellSidebarWidget';
 import { notebookActions, selectActiveCell } from '../../NotebookState';
 import { CellSidebarProps } from './base/CellSidebarWidget';
@@ -32,9 +33,9 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
   }
   return (
     activeCell ?
-      <div
+      <Box
         className={DLA_CELL_HEADER_CLASS}
-        css={{
+        sx={{
           '& p': {
             marginBottom: '0 !important',
           }
@@ -92,7 +93,7 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
             <DeleteIcon fontSize="inherit" style={{ color: '#ef9a9a' }} />
           </IconButton>
         </span>
-      </div>
+      </Box>
       :
       <></>
   )

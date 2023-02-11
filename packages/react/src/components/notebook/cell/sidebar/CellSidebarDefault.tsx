@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { PanelLayout } from '@lumino/widgets';
-import { ActionMenu, Button } from "@primer/react";
+import { ActionMenu, Button, Box } from "@primer/react";
 import { ChevronRightIcon, XIcon, ChevronUpIcon, ChevronDownIcon, SquareIcon } from "@primer/octicons-react";
 import { DLA_CELL_HEADER_CLASS } from './base/CellSidebarWidget';
 import { notebookActions, selectActiveCell } from '../../NotebookState';
@@ -28,9 +28,9 @@ export const CellSidebarDefault = (props: CellSidebarProps) => {
   }
   return (
     activeCell ? 
-      <div
+      <Box
         className={DLA_CELL_HEADER_CLASS}
-        css={{
+        sx={{
           '& p': {
             marginBottom: '0 !important',
           }
@@ -115,7 +115,7 @@ export const CellSidebarDefault = (props: CellSidebarProps) => {
             */}
           </ActionMenu>
         }
-      </div>
+      </Box>
     :
       <></>
   )

@@ -29,7 +29,8 @@
     "literate-themes": "lerna run --parallel --scope @datalayer/jupyter-themes start",
     "editor:slate": "lerna run --parallel --scope '@datalayer/iterate' start",
     "editor:react": "lerna run --parallel --scope '@datalayer/{themes,widgets}' start",
-    "test": "lerna run test"
+    "test": "lerna run test",
+    "kill": "make kill"
   },
   "workspaces": {
     "packages": [

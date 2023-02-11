@@ -18,7 +18,7 @@
     "esModuleInterop": true,
     "incremental": true,
     "jsx": "react-jsx",
-    "jsxImportSource": "@emotion/react",
+    "jsxImportSource": "react",
     "module": "ESNext",
     "moduleResolution": "node",
     "noEmitOnError": true,

@@ -126,7 +126,7 @@ export const Notebook = (props: INotebookProps) => {
         props.Toolbar && <props.Toolbar notebookId={props.uid} />
       }
       <Box className="box-notebook"
-        css={{
+        sx={{
           '& .dla-Jupyter-Notebook': {
             height,
             maxHeight,

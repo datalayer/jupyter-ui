@@ -78,7 +78,7 @@ module.exports = {
             },
             {
               label: 'Blog',
-              to: 'https://blog.datalayer.io',
+              to: 'https://datalayer.blog',
             },
           ],
         },
@@ -98,7 +98,7 @@ module.exports = {
         blog: {
           showReadingTime: true,
           editUrl:
-            'https://blog.datalayer.io',
+            'https://datalayer.blog',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),

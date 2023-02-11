@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { ActionMenu, ActionList, IconButton, Box, ProgressBar } from '@primer/react'
+import { ActionMenu, ActionList, Box, IconButton, ProgressBar } from '@primer/react'
 import { KebabHorizontalIcon, StopIcon, PaintbrushIcon } from '@primer/octicons-react';
 import { UUID } from '@lumino/coreutils';
 import { IOutput } from '@jupyterlab/nbformat';
@@ -180,8 +180,8 @@ export const Output = (props: IOutputProps) => {
   return (
     <>
       { showEditor && outputAdapter && id &&
-        <div
-          css={{
+        <Box
+          sx={{
             '& .cm-editor': {
               borderRadius: '5px',
             },
@@ -198,7 +198,7 @@ export const Output = (props: IOutputProps) => {
             insertText={insertText}
             toolbarPosition={toolbarPosition}
           />
-        </div>
+        </Box>
       }
       { outputAdapter &&
         <Box display="flex">
@@ -211,8 +211,8 @@ export const Output = (props: IOutputProps) => {
         </Box>
       }
       { outputs &&
-        <div
-          css={{
+        <Box
+          sx={{
             '& .jp-OutputArea': {
               fontSize: '10px',
             },
@@ -248,7 +248,7 @@ export const Output = (props: IOutputProps) => {
                 </>
               )
           }
-        </div>
+        </Box>
       }
     </>
   )

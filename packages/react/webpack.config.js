@@ -29,7 +29,7 @@ if (IS_PRODUCTION) {
 const JUPYTER_HOST = 'http://127.0.0.1:8686';
 
 module.exports = {
-  entry: ['./src/examples/NotebookModel'],
+  entry: ['./src/examples/Terminal'],
   mode: mode,
   watchOptions: {
     aggregateTimeout: 300,
@@ -99,7 +99,7 @@ module.exports = {
           presets: [
             ["@babel/preset-react", {
                 runtime: 'automatic',
-                importSource: '@emotion/react'
+                importSource: 'react'
               },
             ],
             "@babel/preset-typescript",

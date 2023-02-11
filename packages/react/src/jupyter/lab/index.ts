@@ -18,7 +18,7 @@ import '../../../style/index.css';
  * The command IDs used by the react-widget plugin.
  */
 namespace CommandIDs {
-  export const create = 'create-react-widget';
+  export const create = 'create-jupyter-react-widget';
 }
 
 /**
