@@ -9,6 +9,12 @@
   font-size: 16px;
 }
 
+.theme-doc-markdown a {
+  color: var(--ifm-link-color) !important;
+  text-decoration: var(--ifm-link-decoration) !important;
+  transition: color var(--ifm-transition-fast) var(--ifm-transition-timing-default) !important;
+}
+
 /* You can override the default Infima variables here. */
 
 :root {

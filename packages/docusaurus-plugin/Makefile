@@ -28,26 +28,4 @@ build: ## build
 publish: clean build ## publish
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		npm publish )
-	echo open https://www.npmjs.com/package/@datalayer/jupyter-react
-
-typedoc: ## generate typedoc
-	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		rm -fr typedoc && \
-		yarn typedoc --tsconfig ./tsconfig.json && \
-		open typedoc/index.html )
-
-typedoc-publish: typedoc ## deploy typedoc
-	aws s3 rm \
-		s3://datalayer-typedoc/datalayer/jupyter-react/0.2.1/ \
-		--recursive \
-		--profile datalayer
-	aws s3 cp \
-		typedoc \
-		s3://datalayer-typedoc/datalayer/jupyter-react/0.2.1/ \
-		--recursive \
-		--profile datalayer
-	aws cloudfront create-invalidation \
-		--distribution-id E1CPG9FNSQJESH \
-		--paths / \
-		--profile datalayer
-	echo open ✨  https://typedoc.datalayer.tech/datalayer/jupyter-react/0.2.1
+	echo open https://www.npmjs.com/package/@datalayer/jupyter-docusaurus-plugin

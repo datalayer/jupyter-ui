@@ -4,7 +4,7 @@
 
 module.exports = {
   title: 'Jupyter React',
-  tagline: 'React.js components to create a data product compatible with the Jupyter ecosystem .',
+  tagline: 'React.js components to create flexible data products compatible with the Jupyter ecosystem .',
   url: 'https://datalayer.io',
   baseUrl: '/',
   onBrokenLinks: 'throw',
@@ -36,7 +36,7 @@ module.exports = {
       items: [
         {
           type: 'doc',
-          docId: 'about/welcome/index',
+          docId: '/category/welcome',
           position: 'left',
           label: 'Welcome',
         },

@@ -44,9 +44,9 @@ export default function (
         },
         plugins: [
           new webpack.DefinePlugin({
-            'process.env': '{}',
-            'process.cwd': '() => "/"',
-            'process.argv': 'undefined'
+//            'process.env': '{}',
+//            'process.cwd': '() => "/"',
+//            'process.argv': 'undefined'
           }),
           new webpack.ProvidePlugin({
             process: 'process/browser',

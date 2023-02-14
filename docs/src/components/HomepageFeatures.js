@@ -14,7 +14,7 @@ const FeatureList = [
     ),
   },
   {
-    title: 'Focus on What Matters',
+    title: 'Professional Support',
 //    Svg: require('../../static/img/feature_2.svg').default,
     description: (
       <>
@@ -27,7 +27,7 @@ const FeatureList = [
 //    Svg: require('../../static/img/feature_3.svg').default,
     description: (
       <>
-        Jupyter React is built on top of renowed opensource libraries and is also fully opensource.
+        Jupyter React is built on top of renowed open source libraries and is also fully opensource.
       </>
     ),
   },

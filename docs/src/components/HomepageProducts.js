@@ -4,7 +4,7 @@ import styles from './HomepageProducts.module.css';
 
 const ProductList = [
   {
-    title: '100% Jupyter compatible',
+    title: '100% Compatible with Jupyter',
 //    Svg: require('../../static/img/product_2.svg').default,
     description: (
       <>
@@ -17,7 +17,7 @@ const ProductList = [
 //    Svg: require('../../static/img/product_1.svg').default,
     description: (
       <>
-        A variety of React.js components from Notebook, Cell, Output and Terminal allow you to get the best of Jupyter, with features like authentication, authorization.
+        A variety of React.js components from Notebook, Cell, Output and Terminal allow you to get the best of Jupyter, with authentication and authorization.
       </>
     ),
   },
@@ -26,7 +26,7 @@ const ProductList = [
 //    Svg: require('../../static/img/product_3.svg').default,
     description: (
       <>
-        For a truly collaborative and accessible notebook, try <a href="./docs/editor/index">Literate Notebook</a>, a better better literate notebook, with built-in collaboration, accessibility...
+        For a truly collaborative and accessible notebook, try <a href="./docs/editor/index">Literate Notebook</a>, a better single-page notebook, with built-in collaboration, accessibility...
       </>
     ),
   },
