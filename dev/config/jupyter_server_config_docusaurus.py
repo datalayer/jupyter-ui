@@ -105,4 +105,4 @@ c.ServerApp.default_url = '/api/jupyter/lab'
 # JupyterLab
 #################
 
-c.LabApp.collaborative = True
+c.LabApp.collaborative = False

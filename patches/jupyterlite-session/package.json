@@ -42,14 +42,14 @@
     "watch": "tsc -b --watch"
   },
   "dependencies": {
-    "@jupyterlab/coreutils": "6.0.0-alpha.18",
-    "@jupyterlab/services": "7.0.0-alpha.18",
+    "@jupyterlab/coreutils": "6.0.0-alpha.19",
+    "@jupyterlab/services": "7.0.0-alpha.19",
     "@datalayer/jupyterlite-kernel": "0.1.0-beta.13"
   },
   "devDependencies": {
     "@babel/core": "7.19.6",
     "@babel/preset-env": "7.19.4",
-    "@jupyterlab/testutils": "4.0.0-alpha.18",
+    "@jupyterlab/testutils": "4.0.0-alpha.19",
     "@types/jest": "^26.0.10",
     "jest": "^26.4.2",
     "rimraf": "~3.0.0",

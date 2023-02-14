@@ -99,4 +99,4 @@ c.ServerApp.kernel_ws_protocol = None # None or ''
 # JupyterLab
 #################
 
-c.LabApp.collaborative = True
+c.LabApp.collaborative = False
