@@ -4,7 +4,11 @@
 
 > Jupyter React is a set of [React.js](https://reactjs.org) components that allow a frontend developer to build data products compatible with the [Jupyter](https://jupyter.org) ecosystem. The user interface delivers executable notebooks and cells.
 
-The below image shows a gallery of the available React.js components ready to be used in you custom application. These open source components are used to build the online [Datalayer service](https://datalayer.io), a collaborative platform for data analysis.
+<div style="background-color: rgb(230,246,230); font-size: large; text-align: center; padding: 10px; margin: 10px 0 10px 0;">
+Read the documentation on <a href="https://jupyter-react.datalayer.tech" target="_blank">https://jupyter-react.datalayer.tech</a>
+</div>
+
+The below image shows a gallery of the available React.js components ready to be used in you custom application. These open source components are used to build the online [Datalayer service](https://datalayer.app), a collaborative platform for data analysis.
 
 <div align="center" style="text-align: center">
   <img alt="Jupyter React Gallery" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-gallery.gif" />
@@ -36,7 +40,7 @@ As a React.js developer, you just write a few lines of code get a live notebook 
   <img alt="Jupyter React Snipppet" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-snippet.png" />
 </div>
 
-The `jupyter-react` library can be used in any React.js application. Install the latest `@datalayer/jupyter-react` npm package and get inspired by the [examples](https://github.com/datalayer/jupyter-react/tree/main/examples) in this repository.
+Jupyter React can be used in any React.js application. Install the latest `@datalayer/jupyter-react` npm package and get inspired by the [examples](https://github.com/datalayer/jupyter-react/tree/main/examples) in this repository.
 
 <div align="center" style="text-align: center">
   <img alt="Jupyter React Notebook" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-notebook.png" />
