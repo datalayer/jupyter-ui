@@ -33,13 +33,13 @@ You can find more context reading this [abstract](https://fosdem.org/2022/schedu
 As a React.js developer, you just write a few lines of code get a live notebook or live cell in your application.
 
 <div align="center" style="text-align: center">
-  <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-snippet.png" />
+  <img alt="Jupyter React Snipppet" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-snippet.png" />
 </div>
 
 The `jupyter-react` library can be used in any React.js application. Install the latest `@datalayer/jupyter-react` npm package and get inspired by the [examples](https://github.com/datalayer/jupyter-react/tree/main/examples) in this repository.
 
 <div align="center" style="text-align: center">
-  <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-notebook.png" />
+  <img alt="Jupyter React Notebook" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-notebook.png" />
 </div>
 
 ## Third party integrations
@@ -47,7 +47,7 @@ The `jupyter-react` library can be used in any React.js application. Install the
 We maintain a plugin for [Docusaurus](https://docusaurus.io) in the [docusaurus](https://github.com/datalayer/jupyter-react/tree/main/packages/docusaurus) package folder (see the [Docusaurus example](https://github.com/datalayer/jupyter-react/tree/main/examples/docusaurus)).
 
 <div align="center" style="text-align: center">
-  <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-docusaurus.png" />
+  <img alt="Jupyter React Docusaurus" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-docusaurus.png" />
 </div>
 
 ## Traitlets React

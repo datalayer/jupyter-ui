@@ -10,10 +10,6 @@ The below image shows a gallery of the available React.js components ready to be
   <img alt="Jupyter React Gallery" src="https://datalayer-jupyter-examples.s3.amazonreact.com/jupyter-react-gallery.gif" />
 </div>
 
-<hr/>
-
-## Why?
-
 The Jupyter(Lab) notebook is a tool that allows data scientist to analyse dataset. However, it is not easy to create a custom user interface integrated in an existing application. [Jupyter React](https://jupyter-react.datalayer.tech), an open-source library, fills that gap and provides components that a developer can easily integrate in any React.js application.
 
 In terms of technical stack, the Jupyter(Lab) user interface is built on top of Lumino, which is an imperative way to build user interface and **can not** be consumed by industry standard declarative frameworks like React.js. As a user interface developer, if you want to create a custom data product on top of Jupyter, you have to stick to Lumino and carry-on the full notebook interface not tailored to your specific needs. This is not what you want. You just want to expose what you need, you want to develop with your favorite toolkit (like React.js) and you also want to integrate on a per-component basis the Jupyter functionality in your application.
@@ -28,8 +24,6 @@ IPyWidgets are supported (the Comm feature needs to be fixed). JupyterLite and P
 
 You can find more context reading this [abstract](https://fosdem.org/2022/schedule/event/lt_jupyter) of the talk given at [FOSDEM 2022](https://fosdem.org/2022) ([video recording](http://bofh.nikhef.nl/events/FOSDEM/2022/L.lightningtalks/lt_jupyter.webm)).
 
-## Usage
-
 As a React.js developer, you just write a few lines of code get a live notebook or live cell in your application.
 
 <div align="center" style="text-align: center">
@@ -41,14 +35,3 @@ The `jupyter-react` library can be used in any React.js application. Install the
 <div align="center" style="text-align: center">
   <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonreact.com/jupyter-react-notebook.png" />
 </div>
-
-## JupyterLab Extension
-
-```bash
-pip install -e .[test]
-jupyter labextension develop . --overwrite
-jupyter labextension list
-jupyter server extension list
-# open http://localhost:8686/api/jupyter/lab?token=60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6
-yarn jupyterlab
-```

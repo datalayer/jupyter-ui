@@ -27,7 +27,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/datalayer/datalayer.git"
+    "url": "git+https://github.com/datalayer/jupyter-react.git"
   },
   "dependencies": {
     "@jupyterlab/theme-dark-extension": "4.0.0-alpha.18",

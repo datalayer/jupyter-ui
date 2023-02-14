@@ -11,17 +11,16 @@ module.exports = {
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
   organizationName: 'datalayer',
-  projectName: 'datalayer',
-  /*
+  projectName: 'Jupyter React',
   plugins: [
-    [
+    '@datalayer/jupyter-docusaurus-plugin'
+  ],
+  /*
 			'docusaurus-plugin-typedoc',
 			{
         entryPoints: ['../src/index.ts'],
         tsconfig: '../tsconfig.json',
 			},
-    ],
-  ],
   */
   themeConfig: {
     colorMode: {
@@ -29,7 +28,7 @@ module.exports = {
       disableSwitch: true,
     },
     navbar: {
-      title: 'Datalayer',
+      title: 'Jupyter React',
       logo: {
         alt: 'Datalayer Logo',
         src: 'img/datalayer/logo.svg',
@@ -37,10 +36,28 @@ module.exports = {
       items: [
         {
           type: 'doc',
-          docId: 'index',
+          docId: 'about/welcome/index',
           position: 'left',
           label: 'Welcome',
         },
+        {
+          type: 'doc',
+          docId: '/category/components',
+          position: 'left',
+          label: 'Components',
+        },
+        {
+          type: 'doc',
+          docId: '/category/examples',
+          position: 'left',
+          label: 'Examples',
+        },
+        {
+          type: 'doc',
+          docId: '/category/demos',
+          position: 'left',
+          label: 'Demos',
+        },        
         {
           href: 'https://github.com/datalayer/jupyter-react',
           position: 'right',

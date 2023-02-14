@@ -1,6 +1,6 @@
 [![Datalayer](https://assets.datalayer.design/datalayer-25.svg)](https://datalayer.io)
 
-# 🪐 🦕 Jupyter Docusaurus Example
+# 🪐 🦕 Jupyter React Docusaurus Example
 
 This example is built using [Docusaurus](https://docusaurus.io), a modern static website generator, and allows you to add a live cell in the Docusaurus site.
 

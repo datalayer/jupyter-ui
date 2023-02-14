@@ -2,10 +2,11 @@ import { useState, useEffect, useMemo } from 'react';
 import { useDispatch } from "react-redux";
 import { CodeCell } from '@jupyterlab/cells';
 import { KernelMessage } from '@jupyterlab/services';
-import { useJupyter } from './../../jupyter/JupyterContext';
-import Lumino from '../../jupyter/lumino/Lumino';
+import { Box } from "@primer/react";
 import { cellActions, cellReducer } from './CellState';
 import CellAdapter from './CellAdapter';
+import Lumino from '../../jupyter/lumino/Lumino';
+import { useJupyter } from './../../jupyter/JupyterContext';
 
 import './Cell.css';
 
@@ -53,11 +54,48 @@ export const Cell = (props: ICellProps) => {
   }, [source]);
   return adapter
     ?
-      <Lumino>
-        {adapter.panel}
-      </Lumino>
+      <Box
+        sx={{
+          '& .dla-JupyterCell': {
+            position: 'relative !important' as any,
+            contain: 'content !important' as any,
+//            height: '100% !important',
+//            marginTop: '30px',
+          },
+          '& .jp-Toolbar': {
+            height: 'auto !important',
+            position: 'relative',
+//            display: 'none',
+          },          
+          '& .lm-BoxPanel': {
+//            height: 'auto !important',
+//            minHeight: 'auto !important',
+            position: 'relative',
+          },
+          '& .jp-Cell': {
+//            width: '100%',
+//            height: '100% !important',
+            position: 'relative',
+          },
+          '& .jp-CodeCell': {
+            height: 'auto !important',
+            position: 'relative',
+//            top: 'auto !important',
+          },
+          '& .jp-Cell-outputArea': {
+            paddingBottom: '30px',
+          },
+          '& .jp-CodeMirrorEditor': {
+            cursor: 'text !important',
+          },
+        }}
+      >
+        <Lumino>
+          {adapter.panel}
+        </Lumino>
+      </Box>
     :
-      <>Loading Jupyter Cell...</>
+      <Box>Loading Jupyter Cell...</Box>
 }
 
 Cell.defaultProps = {

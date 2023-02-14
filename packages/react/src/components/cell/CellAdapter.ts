@@ -1,28 +1,24 @@
 import { BoxPanel, Widget } from '@lumino/widgets';
+import { CommandRegistry } from '@lumino/commands';
 import { SessionContext, Toolbar, ToolbarButton } from '@jupyterlab/apputils';
 import { CodeCellModel, CodeCell } from '@jupyterlab/cells';
 import { CodeMirrorMimeTypeService } from '@jupyterlab/codemirror';
 import { runIcon } from '@jupyterlab/ui-components';
 import { Completer, CompleterModel, CompletionHandler, ProviderReconciliator, KernelCompleterProvider } from '@jupyterlab/completer';
 import { RenderMimeRegistry, standardRendererFactories as initialFactories } from '@jupyterlab/rendermime';
-import { Session, ServerConnection } from '@jupyterlab/services';
-import { SessionManager, KernelManager, KernelSpecManager } from '@jupyterlab/services';
+import { Session, ServerConnection, SessionManager, KernelManager, KernelSpecManager } from '@jupyterlab/services';
 import { createStandaloneCell, YCodeCell } from '@jupyter/ydoc';
-import { CommandRegistry } from '@lumino/commands';
-import { IPyWidgetsClassicManager } from "../../jupyter/ipywidgets/IPyWidgetsClassicManager";
 import { requireLoader } from "@jupyter-widgets/html-manager";
 import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/lib/output_renderers";
+import { IPyWidgetsClassicManager } from "../../jupyter/ipywidgets/IPyWidgetsClassicManager";
 import CellCommands from './CellCommands';
 
 export class CellAdapter {
+  private _panel: BoxPanel;
   private _codeCell: CodeCell;
-  private _cellPanel: BoxPanel;
   private _sessionContext: SessionContext;
 
   constructor(source: string, serverSettings: ServerConnection.ISettings) {
-    this._cellPanel = new BoxPanel();
-    this._cellPanel.direction = 'top-to-bottom';
-    this._cellPanel.spacing = 0;
     const kernelManager = new KernelManager({
       serverSettings
     });
@@ -125,19 +121,25 @@ export class CellAdapter {
     toolbar.addItem('restart', Toolbar.createRestartButton(this._sessionContext));
     // toolbar.addItem('name', Toolbar.createKernelNameItem(this._sessionContext));
     toolbar.addItem('status', Toolbar.createKernelStatusItem(this._sessionContext));
-    this._cellPanel.addWidget(toolbar);
-    BoxPanel.setStretch(toolbar, 0);
-    this._cellPanel.addWidget(this._codeCell);
-    BoxPanel.setStretch(this._codeCell, 1);
-    window.addEventListener('resize', () => {
-      this._cellPanel.update();
-    });
+
     this._codeCell.outputsScrolled = false;
     this._codeCell.activate();
+
+    this._panel = new BoxPanel();
+    this._panel.direction = 'top-to-bottom';
+    this._panel.spacing = 0;
+    this._panel.addWidget(toolbar);
+    this._panel.addWidget(this._codeCell);
+    BoxPanel.setStretch(toolbar, 0);
+    BoxPanel.setStretch(this._codeCell, 1);
+    window.addEventListener('resize', () => {
+      this._panel.update();
+    });
+    this._panel.update();
   }
 
   get panel(): BoxPanel {
-    return this._cellPanel;
+    return this._panel;
   }
 
   get codeCell(): CodeCell {

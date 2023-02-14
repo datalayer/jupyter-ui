@@ -10,6 +10,8 @@ export * from './jupyter/lumino/LuminoReactPortal';
 export * from './jupyter/lumino/LuminoRedux';
 export * from './jupyter/lite/LiteServer';
 export * from './jupyter/utils/Ids';
+import './index.css';
+
 // Services.
 export * from './jupyter/services/Services';
 export * from './jupyter/services/kernel/Kernel';

@@ -1,0 +1,63 @@
+# Develop
+
+## Documentation
+
+You can get more details on the [Jupyter React website](https://jupyter-react.datalayer.tech).
+
+The typedoc documentation is [available online](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.0.24/index.html).
+
+## Support
+
+Please open [issues](https://github.com/datalayer/jupyter-react/issues) for questions, feature requests, bug reports... We also welcome [pull requests](https://github.com/datalayer/jupyter-react/pulls).
+
+## Contribute
+
+Follow the below steps to create your development environment. You will need [Miniconda](https://docs.conda.io/en/latest/miniconda.html) up-and-running on your machine (MacOS or Linux, Windows is not supported as development platform for the time-being).
+
+```bash
+# Clone the jupyter-react repository.
+git clone https://github.com/datalayer/jupyter-react.git && \
+  cd jupyter-react
+```
+
+```bash
+# Setup your development environment.
+conda deactivate && \
+  make env-rm # If you want to reset your environment.
+make env && \
+  conda activate datalayer
+```
+
+```bash
+# Install and build.
+make install build
+```
+
+```bash
+# You can start an example and hack the source code.
+# The changes will build automatically and will be available in your browser.
+# You will have to accept to SSL certificate in your browser the first time.
+echo open https://localhost:3208
+yarn start
+```
+
+```bash
+# We have more examples. Pick one of the following commands and enjoy.
+yarn start:create-react-app      # open http://localhost:3000
+yarn start:docusaurus            # open http://localhost:3000/docs/intro
+yarn start:lexical               # open http://localhost:3208
+# ...and some uncomplete and deprecated examples...
+yarn start:slate                 # open http://localhost:3266
+yarn start:prosemirror           # open http://localhost:4567
+```
+
+## Develop JupyterLab Extension
+
+```bash
+pip install -e .[test]
+jupyter labextension develop . --overwrite
+jupyter labextension list
+jupyter server extension list
+# open http://localhost:8686/api/jupyter/lab?token=60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6
+yarn jupyterlab
+```

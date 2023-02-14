@@ -1,3 +1,3 @@
 [![Datalayer](https://assets.datalayer.design/datalayer-25.svg)](https://datalayer.io)
 
-# JupyterLab React Rendered
+# Jupyter React Renderer

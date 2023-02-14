@@ -53,7 +53,9 @@ const plugin: JupyterFrontEndPlugin<void> = {
     palette.addItem({ command, category, args: { origin: 'from palette' } });
     if (launcher) {
       launcher.add({
-        command
+        command,
+        category: 'Datalayer',
+        rank: -1,
       });
     }
     console.log('JupyterLab extension @datalayer/jupyter-react is activated!');

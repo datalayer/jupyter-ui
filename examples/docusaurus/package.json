@@ -1,6 +1,6 @@
 {
-  "name": "@datalayer/jupyter-docusaurus-example",
-  "version": "0.0.0",
+  "name": "@datalayer-examples/jupyter-docusaurus-example",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",

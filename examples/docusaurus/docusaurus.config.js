@@ -14,7 +14,7 @@ module.exports = {
   plugins: [
     '@datalayer/jupyter-docusaurus-plugin'
   ],
-  organizationName: 'facebook', // Usually your GitHub org/user name.
+  organizationName: 'datalayer', // Usually your GitHub org/user name.
   projectName: 'docusaurus', // Usually your repo name.
   themeConfig: {
     navbar: {
@@ -32,7 +32,7 @@ module.exports = {
         },
         {to: '/blog', label: 'Blog', position: 'left'},
         {
-          href: 'https://github.com/facebook/docusaurus',
+          href: 'https://github.com/datalayer/jupyter-react',
           label: 'GitHub',
           position: 'right',
         },
