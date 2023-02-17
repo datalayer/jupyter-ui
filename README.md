@@ -21,7 +21,7 @@ The below image shows a gallery of the available React.js components ready to be
 
 ## Why?
 
-The Jupyter(Lab) notebook is a tool that allows data scientists to analyse dataset. However, it is not easy to create a custom user interface integrated in an existing application. [Jupyter React](https://jupyter-react.datalayer.tech), an open-source library, fills that gap and provides components that a developer can easily integrate in any React.js application.
+The Jupyter(Lab) notebook is a tool that allows data scientists to analyse datasets. However, it is not easy to create a custom user interface integrated in an existing application. [Jupyter React](https://jupyter-react.datalayer.tech), an open-source library, fills that gap and provides components that a developer can easily integrate in any React.js application.
 
 
 
@@ -33,7 +33,7 @@ Although a developer can embed a React.js component into JupyterLab, the reverse
   <img alt="Jupyter React Communication" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-communication.png" />
 </div>
 
-IPyWidgets are supported (the Comm feature needs to be fixed). JupyterLite and PyScript support is on the roadmap. Autocompletion is also available.
+IPyWidgets are supported (the Comm feature needs to be fixed).  JupyterLite and PyScript support is on the roadmap. Autocompletion is also available.
 
 You can find more context reading this [abstract](https://fosdem.org/2022/schedule/event/lt_jupyter) of the talk given at [FOSDEM 2022](https://fosdem.org/2022) ([video recording](http://bofh.nikhef.nl/events/FOSDEM/2022/L.lightningtalks/lt_jupyter.webm)).
 
@@ -46,6 +46,7 @@ As a React.js developer, you just write a few lines of code get a live notebook 
 </div>
 
 Jupyter React can be used in any React.js application. Install the latest `@datalayer/jupyter-react` npm package and get inspired by the [examples](https://github.com/datalayer/jupyter-react/tree/main/examples) in this repository.
+
 
 <div align="center" style="text-align: center">
   <img alt="Jupyter React Notebook" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-notebook.png" />
