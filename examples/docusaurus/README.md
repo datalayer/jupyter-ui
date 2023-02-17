@@ -4,6 +4,7 @@
 
 This example is built using [Docusaurus](https://docusaurus.io), a modern static website generator, and allows you to add a live cell in the Docusaurus site.
 
+
 ```base
 yarn install &&
   echo open http://localhost:3000/docs/intro && \
