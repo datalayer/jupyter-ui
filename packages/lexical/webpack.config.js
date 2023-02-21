@@ -164,7 +164,7 @@ module.exports = {
       process: 'process/browser'
     }),
     new HtmlWebpackPlugin({
-      title: 'Jupyter React',
+      title: 'Jupyter Lexical',
       template : 'public/index.html'
     }),
     new HtmlWebpackTagsPlugin({

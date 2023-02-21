@@ -11,9 +11,9 @@
   ],
   "keywords": [
     "jupyter",
-    "react",
     "jupyterlab",
-    "jupyterlab-extension"
+    "jupyterlab-extension",
+    "react"
   ],
   "repository": {
     "type": "git",
@@ -47,7 +47,6 @@
     "prettier:check": "jlpm prettier:base --check",
     "start": "run-p -c start:*",
     "start:jupyter": "cd ./../.. && make start-jupyter-server",
-    "start:jupyter-server": "cd ./../../dev/sh && ./start-jupyter-server.sh",
     "start:webpack": "webpack serve",
     "stylelint": "jlpm stylelint:check --fix",
     "stylelint:check": "stylelint --cache \"style/**/*.css\"",
@@ -185,8 +184,8 @@
   },
   "sideEffects": [
     "style/*.css",
-    "style/index.js",
-    "src/**/*.css"
+    "src/**/*.css",
+    "style/index.js"
   ],
   "styleModule": "style/index.js",
   "publishConfig": {

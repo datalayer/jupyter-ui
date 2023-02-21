@@ -30,7 +30,7 @@ As a React.js developer, you just write a few lines of code get a live notebook 
   <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonreact.com/jupyter-react-snippet.png" />
 </div>
 
-The `jupyter-react` library can be used in any React.js application. Install the latest `@datalayer/jupyter-react` npm package and get inspired by the [examples](https://github.com/datalayer/jupyter-react/tree/main/examples) in this repository.
+Jupyter React can be used in any React.js application. Install the latest `@datalayer/jupyter-react` npm package and get inspired by the [examples](https://github.com/datalayer/jupyter-react/tree/main/examples) in this repository.
 
 <div align="center" style="text-align: center">
   <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonreact.com/jupyter-react-notebook.png" />

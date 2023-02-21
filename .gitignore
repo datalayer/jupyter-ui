@@ -32,7 +32,7 @@ node_modules/
 *.egg-info/
 .ipynb_checkpoints
 *.tsbuildinfo
-**/jupyter_react/labextension
+**/labextension
 # Version file is handled by hatchling
 **/jupyter_react/_version.py
 

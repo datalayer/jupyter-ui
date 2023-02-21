@@ -1,0 +1,10 @@
+html {
+  box-sizing: content-box !important;
+}
+
+body {
+  background: white;
+  margin: 0;
+  padding: 0;
+  overflow-y: scroll;
+}

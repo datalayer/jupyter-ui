@@ -1,0 +1,8 @@
+{
+  "jupyter.lab.shortcuts": [],
+  "title": "@datalayer/jupyter-lexical",
+  "description": "@datalayer/jupyter-lexical settings.",
+  "type": "object",
+  "properties": {},
+  "additionalProperties": false
+}

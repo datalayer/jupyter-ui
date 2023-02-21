@@ -49,7 +49,7 @@ export default function App() {
         </h2>
         <ul>
           <li>
-            <a href="https://github.com/datalayer/jupyter-react" target="_blank">Jupyter React open-source repository</a>
+            <a href="https://github.com/datalayer/jupyter-react/tree/main/packages/lexical" target="_blank">Jupyter Lexical open-source repository</a>
           </li>
         </ul>
       </div>

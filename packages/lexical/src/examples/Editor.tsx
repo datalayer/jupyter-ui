@@ -43,7 +43,7 @@ function Placeholder() {
 }
 
 const initialConfig = {
-  namespace: 'Jupyter React Lexical example',
+  namespace: 'Jupyter Lexical Lexical example',
   theme: ExampleTheme,
   onError(error: Error) {
     throw error;
