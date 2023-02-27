@@ -1,14 +1,22 @@
-const jestJupyterLab = require('@jupyterlab/testutils/lib/jest-config');
+/*
+ * Copyright (c) Jupyter Development Team.
+ * Distributed under the terms of the Modified BSD License.
+ */
+
+const func = require('@jupyterlab/testutils/lib/jest-config');
+const jlabConfig = func(__dirname);
 
 const esModules = [
-  '@jupyterlab/',
+  '@codemirror',
+  '@jupyterlab',
+  '@jupyter',
   'lib0',
+  'nanoid',
+  'vscode\\-ws\\-jsonrpc',
   'y\\-protocols',
   'y\\-websocket',
   'yjs'
 ].join('|');
-
-const jlabConfig = jestJupyterLab(__dirname);
 
 const {
   moduleFileExtensions,
@@ -21,6 +29,8 @@ const {
 } = jlabConfig;
 
 module.exports = {
+/*
+  ...jlabConfig,
   moduleFileExtensions,
   moduleNameMapper,
   preset,
@@ -29,11 +39,13 @@ module.exports = {
   testPathIgnorePatterns,
   transform,
   automock: false,
-  collectCoverageFrom: [
-    'src/**/*.{ts,tsx}',
-    '!src/**/*.d.ts',
-    '!src/**/.ipynb_checkpoints/*'
-  ],
+*/
+//  collectCoverageFrom: [
+//    'src/**/*.{ts,tsx}',
+//    '!src/**/*.d.ts',
+//    '!src/**/.ipynb_checkpoints/*'
+//  ],
+/*
   coverageDirectory: 'coverage',
   coverageReporters: ['lcov', 'text'],
   globals: {
@@ -41,6 +53,8 @@ module.exports = {
       tsconfig: 'tsconfig.json'
     }
   },
-  testRegex: 'src/.*/.*.spec.ts[x]?$',
-  transformIgnorePatterns: [`/node_modules/(?!${esModules}).+`]
-};
+*/
+  testRegex: '(/src/__tests__/.*|(\\./src)(test|spec))\\.[jt]sx?$',
+  transformIgnorePatterns: [`/node_modules/(?!${esModules}).+`],
+  preset: "jest-puppeteer",
+}
