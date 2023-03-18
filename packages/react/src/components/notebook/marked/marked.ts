@@ -1,9 +1,9 @@
-import { Mode } from '@jupyterlab/codemirror';
 import { IMarkdownParser } from '@jupyterlab/rendermime';
+import { IEditorLanguageRegistry } from '@jupyterlab/codemirror';
 import { marked } from 'marked';
 
-export const getMarked = (): IMarkdownParser => {
-  Private.initializeMarked();
+export const getMarked = (languages: IEditorLanguageRegistry): IMarkdownParser => {
+  Private.initializeMarked(languages);
   return {
     render: (content: string): Promise<string> =>
       new Promise<string>((resolve, reject) => {
@@ -20,7 +20,7 @@ export const getMarked = (): IMarkdownParser => {
 
 namespace Private {
   let markedInitialized = false;
-  export function initializeMarked(): void {
+  export function initializeMarked(languages: IEditorLanguageRegistry): void {
     if (markedInitialized) {
       return;
     } else {
@@ -42,27 +42,20 @@ namespace Private {
           // no language, no highlight
           return cb(null, code);
         }
-        Mode.ensure(lang)
-          .then(spec => {
-            const el = document.createElement('div');
-            if (!spec) {
-              console.error(`No CodeMirror mode: ${lang}`);
-              return cb(null, code);
-            }
-            try {
-              Mode.run(code, spec, el);
+        const el = document.createElement('div');
+        try {
+          languages
+            .highlight(code, languages.findBest(lang), el)
+            .then(() => {
               return cb(null, el.innerHTML);
-            } catch (err: any) {
-              console.error(`Failed to highlight ${lang} code`, err);
-              return cb(err, code);
-            }
-          })
-          .catch(err => {
-            console.error(`No CodeMirror mode: ${lang}`);
-            console.error(`Require CodeMirror mode error: ${err}`);
-            return cb(null, code);
-          });
-        return code;
+            })
+            .catch(reason => {
+              return cb(reason, code);
+            });
+        } catch (err) {
+          console.error(`Failed to highlight ${lang} code`, err);
+          return cb(err, code);
+        }
       }
     });
   }

@@ -4,7 +4,7 @@ import { Signal } from '@lumino/signaling';
 import { DockPanel, Menu, SplitPanel, Widget } from '@lumino/widgets';
 import { ServiceManager } from '@jupyterlab/services';
 import { Dialog, ToolbarButton, showDialog } from '@jupyterlab/apputils';
-import { CodeMirrorEditorFactory, CodeMirrorMimeTypeService } from '@jupyterlab/codemirror';
+import { CodeMirrorEditorFactory, CodeMirrorMimeTypeService, EditorLanguageRegistry } from '@jupyterlab/codemirror';
 import { DocumentManager, IDocumentWidgetOpener } from '@jupyterlab/docmanager';
 import { DocumentRegistry, IDocumentWidget } from '@jupyterlab/docregistry';
 import { FileBrowser, FilterFileBrowserModel } from '@jupyterlab/filebrowser';
@@ -58,9 +58,28 @@ class FileBrowserAdapter {
         manager,
         opener
       });
+      const languages = new EditorLanguageRegistry();
+      EditorLanguageRegistry.getDefaultLanguages()
+        .filter(language =>
+          ['ipython', 'julia', 'python'].includes(language.name.toLowerCase())
+        )
+        .forEach(language => {
+          languages.addLanguage(language);
+        });
+      // Language for Markdown cells
+      languages.addLanguage({
+        name: 'ipythongfm',
+        mime: 'text/x-ipythongfm',
+        load: async () => {
+          const m = await import('@codemirror/lang-markdown');
+          return m.markdown({
+            codeLanguages: (info: string) => languages.findBest(info) as any
+          });
+        }
+      });
       const editorServices = {
         factoryService: new CodeMirrorEditorFactory(),
-        mimeTypeService: new CodeMirrorMimeTypeService()
+        mimeTypeService: new CodeMirrorMimeTypeService(languages)
       };
       const wFactory = new FileEditorFactory({
         editorServices,

@@ -30,9 +30,9 @@
     "url": "git+https://github.com/datalayer/jupyter-react.git"
   },
   "dependencies": {
-    "@jupyterlab/theme-dark-extension": "4.0.0-alpha.19",
-    "@jupyterlab/theme-light-extension": "4.0.0-alpha.19",
-    "@jupyterlab/ui-components": "4.0.0-alpha.34",
+    "@jupyterlab/theme-dark-extension": "4.0.0-alpha.22",
+    "@jupyterlab/theme-light-extension": "4.0.0-alpha.22",
+    "@jupyterlab/ui-components": "4.0.0-alpha.37",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },

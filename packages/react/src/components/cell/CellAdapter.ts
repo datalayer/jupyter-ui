@@ -1,8 +1,8 @@
 import { BoxPanel, Widget } from '@lumino/widgets';
 import { CommandRegistry } from '@lumino/commands';
 import { SessionContext, Toolbar, ToolbarButton } from '@jupyterlab/apputils';
-import { CodeCellModel, CodeCell } from '@jupyterlab/cells';
-import { CodeMirrorMimeTypeService } from '@jupyterlab/codemirror';
+import { CodeCellModel, CodeCell, Cell } from '@jupyterlab/cells';
+import { CodeMirrorMimeTypeService, EditorLanguageRegistry, CodeMirrorEditorFactory } from '@jupyterlab/codemirror';
 import { runIcon } from '@jupyterlab/ui-components';
 import { Completer, CompleterModel, CompletionHandler, ProviderReconciliator, KernelCompleterProvider } from '@jupyterlab/completer';
 import { RenderMimeRegistry, standardRendererFactories as initialFactories } from '@jupyterlab/rendermime';
@@ -39,7 +39,8 @@ export class CellAdapter {
         name: 'python3',
       }
     });
-    const mimeService = new CodeMirrorMimeTypeService();
+    const languages = new EditorLanguageRegistry();
+    const mimeService = new CodeMirrorMimeTypeService(languages);
     const commands = new CommandRegistry();
     const useCapture = true;
     document.addEventListener(
@@ -59,6 +60,7 @@ export class CellAdapter {
       },
       0
     );
+    const factoryService = new CodeMirrorEditorFactory({ languages });
     this._codeCell = new CodeCell({
       rendermime,
       model: new CodeCellModel({
@@ -68,7 +70,10 @@ export class CellAdapter {
           metadata: {
           }
         }) as YCodeCell
-      })
+      }),
+      contentFactory: new Cell.ContentFactory({
+        editorFactory: factoryService.newInlineEditor.bind(factoryService)
+      }),
     });
     this._codeCell.addClass('dla-JupyterCell');
     this._codeCell.initializeState();

@@ -1,12 +1,11 @@
 import { BoxPanel } from '@lumino/widgets';
 import { SessionContext, Toolbar, ToolbarButton } from '@jupyterlab/apputils';
-import { CodeCellModel, CodeCell } from '@jupyterlab/cells';
-import { CodeMirrorMimeTypeService } from '@jupyterlab/codemirror';
-import { runIcon } from '@jupyterlab/ui-components';
+import { CodeCellModel, CodeCell, Cell } from '@jupyterlab/cells';
+import { CodeMirrorMimeTypeService, EditorLanguageRegistry, CodeMirrorEditorFactory } from '@jupyterlab/codemirror';
 import { Completer, CompleterModel, CompletionHandler, ProviderReconciliator, KernelCompleterProvider } from '@jupyterlab/completer';
 import { RenderMimeRegistry, standardRendererFactories as initialFactories } from '@jupyterlab/rendermime';
-import { SessionManager, KernelManager, KernelSpecManager, } from '@jupyterlab/services';
-import { ServerConnection } from '@jupyterlab/services';
+import { SessionManager, KernelManager, KernelSpecManager, ServerConnection } from '@jupyterlab/services';
+import { runIcon } from '@jupyterlab/ui-components';
 import { CommandRegistry } from '@lumino/commands';
 import { createStandaloneCell, YCodeCell } from '@jupyter/ydoc';
 // import { Session } from '@jupyterlab/services';
@@ -48,7 +47,8 @@ class CellAdapter {
       specsManager,
       name: 'Datalayer'
     });
-    const mimeService = new CodeMirrorMimeTypeService();
+    const languages = new EditorLanguageRegistry();
+    const mimeService = new CodeMirrorMimeTypeService(languages);
     // Initialize the command registry with the bindings.
     const commands = new CommandRegistry();
     const useCapture = true;
@@ -73,6 +73,7 @@ class CellAdapter {
       0
     );
     */
+    const factoryService = new CodeMirrorEditorFactory({ languages });
     const codeCell = new CodeCell({
       rendermime,
       model: new CodeCellModel({
@@ -81,7 +82,10 @@ class CellAdapter {
           source,
           metadata: { collapsed: false }
         }) as YCodeCell
-      })
+      }),
+      contentFactory: new Cell.ContentFactory({
+        editorFactory: factoryService.newInlineEditor.bind(factoryService)
+      }),
     });
     /*
     this._sessionContext.kernelChanged.connect((sender: SessionContext, arg: Session.ISessionConnection.IKernelChangedArgs) => {

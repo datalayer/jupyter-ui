@@ -20,8 +20,8 @@ export class CellSidebarContentFactory extends NotebookPanel.ContentFactory {
     notebookId: string,
     nbgrader: boolean,
     commands: CommandRegistry,
+    options: Cell.ContentFactory.IOptions,
     store?: Store,
-    options?: Cell.ContentFactory.IOptions | undefined
   ) {
     super(options);
     this.CellSidebar = CellSidebar;

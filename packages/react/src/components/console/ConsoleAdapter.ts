@@ -1,8 +1,8 @@
 import { RenderMimeRegistry, standardRendererFactories as initialFactories } from '@jupyterlab/rendermime';
 import { CommandRegistry } from '@lumino/commands';
+import { CodeMirrorEditorFactory, CodeMirrorMimeTypeService, EditorLanguageRegistry } from '@jupyterlab/codemirror';
 import { BoxPanel } from '@lumino/widgets';
 import { ServiceManager } from '@jupyterlab/services';
-import { editorServices } from '@jupyterlab/codemirror';
 import { ConsolePanel } from '@jupyterlab/console';
 
 class ConsoleAdapter {
@@ -28,22 +28,32 @@ class ConsoleAdapter {
       commands.processKeydownEvent(event);
     });
     const rendermime = new RenderMimeRegistry({ initialFactories });
-    const editorFactory = editorServices.factoryService.newInlineEditor;
+    const languages = new EditorLanguageRegistry();
+    EditorLanguageRegistry.getDefaultLanguages()
+      .filter(language =>
+        ['ipython', 'julia', 'python'].includes(language.name.toLowerCase())
+      )
+      .forEach(language => {
+        languages.addLanguage(language);
+      });  
+    const factoryService = new CodeMirrorEditorFactory({ languages });
+    const mimeTypeService = new CodeMirrorMimeTypeService(languages);
+    const editorFactory = factoryService.newInlineEditor;
     const contentFactory = new ConsolePanel.ContentFactory({ editorFactory });
-    const console = new ConsolePanel({
-      rendermime,
+    const consolePanel = new ConsolePanel({
       manager: serviceManager,
+      rendermime,
       path,
       contentFactory,
-      mimeTypeService: editorServices.mimeTypeService,
+      mimeTypeService,
       kernelPreference: {
         shouldStart: true,
         name: 'python3',
       }
     });
-    console.title.label = 'Console';
-    BoxPanel.setStretch(console, 1);
-    panel.addWidget(console);
+    consolePanel.title.label = 'Console';
+    BoxPanel.setStretch(consolePanel, 1);
+    panel.addWidget(consolePanel);
     window.addEventListener('resize', () => {
       panel.update();
     });
@@ -53,14 +63,14 @@ class ConsoleAdapter {
     commands.addCommand(command, {
       label: 'Clear',
       execute: () => {
-        console.console.clear();
+        consolePanel.console.clear();
       }
     });
     command = 'console:execute';
     commands.addCommand(command, {
       label: 'Execute Prompt',
       execute: () => {
-        return console.console.execute();
+        return consolePanel.console.execute();
       }
     });
     commands.addKeyBinding({ command, selector, keys: ['Enter'] });
@@ -68,7 +78,7 @@ class ConsoleAdapter {
     commands.addCommand(command, {
       label: 'Execute Cell (forced)',
       execute: () => {
-        return console.console.execute(true);
+        return consolePanel.console.execute(true);
       }
     });
     commands.addKeyBinding({ command, selector, keys: ['Shift Enter'] });
@@ -76,7 +86,7 @@ class ConsoleAdapter {
     commands.addCommand(command, {
       label: 'Insert Line Break',
       execute: () => {
-        console.console.insertLinebreak();
+        consolePanel.console.insertLinebreak();
       }
     });
     commands.addKeyBinding({ command, selector, keys: ['Ctrl Enter'] });    

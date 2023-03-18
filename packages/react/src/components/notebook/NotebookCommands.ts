@@ -1,5 +1,5 @@
 import { CommandRegistry } from "@lumino/commands";
-import { sessionContextDialogs } from "@jupyterlab/apputils";
+import { SessionContextDialogs } from "@jupyterlab/apputils";
 import { CompletionHandler } from "@jupyterlab/completer";
 import { NotebookActions, NotebookPanel, NotebookSearchProvider } from '@jupyterlab/notebook';
 import { SearchDocumentModel, SearchDocumentView } from '@jupyterlab/documentsearch';
@@ -152,6 +152,7 @@ export const NotebookCommands = (
     execute: async () =>
       notebookPanel.context.sessionContext.session?.kernel?.interrupt(),
   });
+  const sessionContextDialogs = new SessionContextDialogs();
   commandRegistry.addCommand(cmdIds.restart, {
     label: "Restart Kernel",
     execute: () =>

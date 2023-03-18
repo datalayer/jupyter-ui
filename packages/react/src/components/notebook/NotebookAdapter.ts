@@ -11,7 +11,7 @@ import { standardRendererFactories, RenderMimeRegistry } from '@jupyterlab/rende
 import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
 import { NotebookPanel, NotebookWidgetFactory, NotebookTracker, NotebookActions, INotebookModel, Notebook } from '@jupyterlab/notebook';
-import { CodeMirrorEditorFactory, CodeMirrorMimeTypeService } from '@jupyterlab/codemirror';
+import { CodeMirrorEditorFactory, CodeMirrorMimeTypeService, EditorLanguageRegistry } from '@jupyterlab/codemirror';
 import { IEditorServices } from '@jupyterlab/codeeditor';
 import { Completer, CompleterModel, CompletionHandler, ProviderReconciliator, KernelCompleterProvider } from '@jupyterlab/completer';
 import { MathJaxTypesetter } from '@jupyterlab/mathjax2';
@@ -86,17 +86,19 @@ export class NotebookAdapter {
     rendererFactories.push(javascriptRendererFactory);
     this._renderers.map(renderer => rendererFactories.push(renderer));
 
+    const languages = new EditorLanguageRegistry();
+
     this._rendermime = new RenderMimeRegistry({
       initialFactories: rendererFactories,
       latexTypesetter: new MathJaxTypesetter({
         url: PageConfig.getOption('mathjaxUrl'),
         config: PageConfig.getOption('mathjaxConfig'),
       }),
-      markdownParser: getMarked(),
+      markdownParser: getMarked(languages),
     });
 
     const documentRegistry = new DocumentRegistry({});
-    const mimeTypeService = new CodeMirrorMimeTypeService();
+    const mimeTypeService = new CodeMirrorMimeTypeService(languages);
     const editorServices: IEditorServices = {
       factoryService: new CodeMirrorEditorFactory(),
       mimeTypeService,
@@ -109,8 +111,8 @@ export class NotebookAdapter {
         this._uid,
         this._nbgrader,
         this._commandRegistry,
-        this._store,
         { editorFactory },
+        this._store,
       )
     :
       new NotebookPanel.ContentFactory(
