@@ -17,17 +17,15 @@
     "@datalayer/jupyter-docusaurus-plugin": "0.0.8",
     "@docusaurus/core": "2.3.1",
     "@docusaurus/preset-classic": "2.3.1",
-    "unist-util-visit": "2.0.3",
     "@mdx-js/react": "^1.6.21",
-    "docusaurus-plugin-typedoc": "0.17.5",
-    "typedoc-plugin-markdown": "3.13.5",
     "clsx": "^1.1.1",
+    "docusaurus-plugin-typedoc": "0.17.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-modal-image": "2.5.0",
     "react-router-dom": "6.6.0",
-    "react-modal-image": "2.5.0"
-  },
-  "devDependencies": {
+    "typedoc-plugin-markdown": "3.13.5",
+    "unist-util-visit": "2.0.3"
   },
   "browserslist": {
     "production": [
