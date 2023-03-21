@@ -108,6 +108,10 @@ conda deactivate && \
   make env-rm # If you want to reset your environment.
 make env && \
   conda activate datalayer
+# JupyterLab has migrated to Yarn v3, we need Yarn v1 for resolutions and ease of vs-code usage.
+curl https://raw.githubusercontent.com/jupyterlab/jupyterlab/v4.0.0a36/jupyterlab/staging/yarn.js \
+ -o $( dirname "$(which jupyter)" )/../lib/python3.10/site-packages/jupyterlab/staging/yarn.js
+jlpm --version # Should be 1.22.19.
 ```
 
 ```bash
