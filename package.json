@@ -60,7 +60,6 @@
     "prettier": "2.3.1",
     "vercel": "21.3.3"
   },
-
   "resolutions": {
     "**/@jupyter-widgets/base": "6.0.2",
     "**/@jupyter-widgets/controls": "5.0.3",

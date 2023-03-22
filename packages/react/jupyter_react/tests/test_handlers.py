@@ -9,5 +9,5 @@ async def test_get_example(jp_fetch):
     assert response.code == 200
     payload = json.loads(response.body)
     assert payload == {
-        "data": "This is /jupyter_react//get_example endpoint!"
+        "data": "This is /jupyter_react/get_example endpoint!"
     }
