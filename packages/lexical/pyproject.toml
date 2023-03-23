@@ -42,7 +42,7 @@ fields = ["description", "authors", "urls"]
 
 [tool.hatch.build.targets.sdist]
 artifacts = ["jupyter_lexical/labextension"]
-exclude = [".github", "binder"]
+exclude = [".github", "binder", ".yarn"]
 
 [tool.hatch.build.targets.wheel.shared-data]
 "jupyter_lexical/labextension" = "share/jupyter/labextensions/@datalayer/jupyter-lexical"

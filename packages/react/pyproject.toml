@@ -42,7 +42,7 @@ fields = ["description", "authors", "urls"]
 
 [tool.hatch.build.targets.sdist]
 artifacts = ["jupyter_react/labextension"]
-exclude = [".github", "binder"]
+exclude = [".github", "binder", ".yarn"]
 
 [tool.hatch.build.targets.wheel.shared-data]
 "jupyter_react/labextension" = "share/jupyter/labextensions/@datalayer/jupyter-react"
