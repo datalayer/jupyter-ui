@@ -106,7 +106,7 @@
     "**/@jupyterlab/translation": "4.0.0-alpha.22",
     "**/@jupyterlab/ui-components": "4.0.0-alpha.37",
     "**/@lumino/algorithm": "2.0.0",
-    "**/@jupyter/ydoc": "0.3.3",
+    "**/@jupyter/ydoc": "0.3.4",
     "**/@lumino/application": "2.0.0",
     "**/@lumino/collections": "2.0.0",
     "**/@lumino/commands": "2.0.0",
