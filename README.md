@@ -10,6 +10,8 @@
 Read the documentation on <a href="https://jupyter-react.datalayer.tech" target="_blank">https://jupyter-react.datalayer.tech</a>
 </div>
 
+Try it on this [CodeSandbox](https://codesandbox.io/p/sandbox/jupyter-react-cra-example-zygjbm?file=%2Fsrc%2Findex.tsx).
+
 The below image shows a gallery of the available React.js components ready to be used in you custom application. These open source components are used to build the online [Datalayer service](https://datalayer.app), a collaborative platform for data analysis.
 
 <div align="center" style="text-align: center">
