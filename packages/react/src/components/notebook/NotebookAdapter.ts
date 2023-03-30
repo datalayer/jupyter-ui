@@ -11,12 +11,12 @@ import { standardRendererFactories, RenderMimeRegistry } from '@jupyterlab/rende
 import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
 import { NotebookPanel, NotebookWidgetFactory, NotebookTracker, NotebookActions, INotebookModel, Notebook } from '@jupyterlab/notebook';
-import { CodeMirrorEditorFactory, CodeMirrorMimeTypeService, EditorLanguageRegistry } from '@jupyterlab/codemirror';
+import { CodeMirrorEditorFactory, CodeMirrorMimeTypeService, EditorLanguageRegistry, EditorExtensionRegistry, ybinding } from '@jupyterlab/codemirror';
 import { IEditorServices } from '@jupyterlab/codeeditor';
 import { Completer, CompleterModel, CompletionHandler, ProviderReconciliator, KernelCompleterProvider } from '@jupyterlab/completer';
 import { MathJaxTypesetter } from '@jupyterlab/mathjax2';
 import * as nbformat from '@jupyterlab/nbformat';
-import { ISharedAttachmentsCell } from '@jupyter/ydoc';
+import { ISharedAttachmentsCell, IYText } from '@jupyter/ydoc';
 // import { newUuid } from './../../jupyter/utils/Ids';
 import getMarked from './marked/marked';
 import { requireLoader } from "@jupyter-widgets/html-manager";
@@ -99,8 +99,31 @@ export class NotebookAdapter {
 
     const documentRegistry = new DocumentRegistry({});
     const mimeTypeService = new CodeMirrorMimeTypeService(languages);
+    const editorExtensions = () => {
+      const registry = new EditorExtensionRegistry();
+      for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions({})) {
+        registry.addExtension(extensionFactory);
+      }
+      registry.addExtension({
+        name: 'yjs-binding',
+        factory: options => {
+          const sharedModel = options.model.sharedModel as IYText;
+          return EditorExtensionRegistry.createImmutableExtension(
+            ybinding({
+              ytext: sharedModel.ysource,
+              undoManager: sharedModel.undoManager ?? undefined
+            })
+          );
+        }
+      });
+      return registry;
+    }
+    const factoryService = new CodeMirrorEditorFactory({
+      extensions: editorExtensions(),
+      languages
+    });
     const editorServices: IEditorServices = {
-      factoryService: new CodeMirrorEditorFactory(),
+      factoryService,
       mimeTypeService,
     };
     const editorFactory = editorServices.factoryService.newInlineEditor;

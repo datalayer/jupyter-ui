@@ -2,12 +2,12 @@ import { BoxPanel, Widget } from '@lumino/widgets';
 import { CommandRegistry } from '@lumino/commands';
 import { SessionContext, Toolbar, ToolbarButton } from '@jupyterlab/apputils';
 import { CodeCellModel, CodeCell, Cell } from '@jupyterlab/cells';
-import { CodeMirrorMimeTypeService, EditorLanguageRegistry, CodeMirrorEditorFactory } from '@jupyterlab/codemirror';
+import { CodeMirrorMimeTypeService, EditorLanguageRegistry, CodeMirrorEditorFactory, EditorExtensionRegistry, ybinding } from '@jupyterlab/codemirror';
 import { runIcon } from '@jupyterlab/ui-components';
 import { Completer, CompleterModel, CompletionHandler, ProviderReconciliator, KernelCompleterProvider } from '@jupyterlab/completer';
 import { RenderMimeRegistry, standardRendererFactories as initialFactories } from '@jupyterlab/rendermime';
 import { Session, ServerConnection, SessionManager, KernelManager, KernelSpecManager } from '@jupyterlab/services';
-import { createStandaloneCell, YCodeCell } from '@jupyter/ydoc';
+import { createStandaloneCell, YCodeCell, IYText } from '@jupyter/ydoc';
 import { requireLoader } from "@jupyter-widgets/html-manager";
 import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/lib/output_renderers";
 import { IPyWidgetsClassicManager } from "../../jupyter/ipywidgets/IPyWidgetsClassicManager";
@@ -39,6 +39,25 @@ export class CellAdapter {
         name: 'python3',
       }
     });
+    const editorExtensions = () => {
+      const registry = new EditorExtensionRegistry();
+      for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions({})) {
+        registry.addExtension(extensionFactory);
+      }
+      registry.addExtension({
+        name: 'yjs-binding',
+        factory: options => {
+          const sharedModel = options.model.sharedModel as IYText;
+          return EditorExtensionRegistry.createImmutableExtension(
+            ybinding({
+              ytext: sharedModel.ysource,
+              undoManager: sharedModel.undoManager ?? undefined
+            })
+          );
+        }
+      });
+      return registry;
+    }  
     const languages = new EditorLanguageRegistry();
     const mimeService = new CodeMirrorMimeTypeService(languages);
     const commands = new CommandRegistry();
@@ -60,7 +79,10 @@ export class CellAdapter {
       },
       0
     );
-    const factoryService = new CodeMirrorEditorFactory({ languages });
+    const factoryService = new CodeMirrorEditorFactory({
+      extensions: editorExtensions(),
+      languages
+    });
     this._codeCell = new CodeCell({
       rendermime,
       model: new CodeCellModel({

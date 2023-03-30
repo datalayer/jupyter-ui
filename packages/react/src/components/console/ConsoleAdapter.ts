@@ -1,9 +1,10 @@
 import { RenderMimeRegistry, standardRendererFactories as initialFactories } from '@jupyterlab/rendermime';
 import { CommandRegistry } from '@lumino/commands';
-import { CodeMirrorEditorFactory, CodeMirrorMimeTypeService, EditorLanguageRegistry } from '@jupyterlab/codemirror';
+import { CodeMirrorEditorFactory, CodeMirrorMimeTypeService, EditorLanguageRegistry, EditorExtensionRegistry, ybinding } from '@jupyterlab/codemirror';
 import { BoxPanel } from '@lumino/widgets';
 import { ServiceManager } from '@jupyterlab/services';
 import { ConsolePanel } from '@jupyterlab/console';
+import { IYText } from '@jupyter/ydoc';
 
 class ConsoleAdapter {
   private consolePanel: BoxPanel;
@@ -28,6 +29,25 @@ class ConsoleAdapter {
       commands.processKeydownEvent(event);
     });
     const rendermime = new RenderMimeRegistry({ initialFactories });
+    const editorExtensions = () => {
+      const registry = new EditorExtensionRegistry();
+      for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions({})) {
+        registry.addExtension(extensionFactory);
+      }
+      registry.addExtension({
+        name: 'yjs-binding',
+        factory: options => {
+          const sharedModel = options.model.sharedModel as IYText;
+          return EditorExtensionRegistry.createImmutableExtension(
+            ybinding({
+              ytext: sharedModel.ysource,
+              undoManager: sharedModel.undoManager ?? undefined
+            })
+          );
+        }
+      });
+      return registry;
+    }
     const languages = new EditorLanguageRegistry();
     EditorLanguageRegistry.getDefaultLanguages()
       .filter(language =>
@@ -35,8 +55,11 @@ class ConsoleAdapter {
       )
       .forEach(language => {
         languages.addLanguage(language);
-      });  
-    const factoryService = new CodeMirrorEditorFactory({ languages });
+      });
+    const factoryService = new CodeMirrorEditorFactory({
+      extensions: editorExtensions(),
+      languages
+    });
     const mimeTypeService = new CodeMirrorMimeTypeService(languages);
     const editorFactory = factoryService.newInlineEditor;
     const contentFactory = new ConsolePanel.ContentFactory({ editorFactory });
