@@ -155,7 +155,7 @@
   "jupyter-releaser": {
     "hooks": {
       "before-build-npm": [
-        "python -m pip install jupyterlab==4.0.0a37",
+        "python -m pip install jupyterlab==4.0.0b0",
         "jlpm"
       ],
       "before-build-python": [

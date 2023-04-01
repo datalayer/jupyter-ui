@@ -10,4 +10,4 @@ dependencies:
   - pip:
     - build
     - hatch
-    - jupyterlab==4.0.0a37
+    - jupyterlab==4.0.0b0
