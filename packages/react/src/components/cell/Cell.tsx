@@ -66,7 +66,7 @@ export const Cell = (props: ICellProps) => {
             height: 'auto !important',
             position: 'relative',
 //            display: 'none',
-          },          
+          },
           '& .lm-BoxPanel': {
 //            height: 'auto !important',
 //            minHeight: 'auto !important',

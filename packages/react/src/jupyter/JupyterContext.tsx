@@ -78,6 +78,22 @@ const headers = new Headers({
   "Expires": "0",
 });
 */
+
+export const createServerSettings = (baseUrl: string, wsUrl: string) => {
+  return ServerConnection.makeSettings({
+    baseUrl,
+    wsUrl,
+    appendToken: true,
+    init: {
+      credentials: "include",
+      mode: 'cors',
+      cache: 'no-cache',
+//      headers,
+    }
+  });
+
+}
+
 /**
  * The Jupyter context provider.
  */
@@ -92,17 +108,7 @@ export const JupyterContextProvider: React.FC<{
   injectableStore: any
 }> = ({children, lite, startDefaultKernel, defaultKernelName, variant, baseUrl, wsUrl, injectableStore }: JupyterContextProps) => {
   const [_, setVariant] = useState('default');
-  const [serverSettings] = useState<ServerConnection.ISettings>(ServerConnection.makeSettings({
-    baseUrl,
-    wsUrl,
-    appendToken: true,
-    init: {
-      credentials: "include",
-      mode: 'cors',
-      cache: 'no-cache',
-//      headers,
-    }
-  }));
+  const [serverSettings] = useState<ServerConnection.ISettings>(createServerSettings(baseUrl, wsUrl));
   const [serviceManager, setServiceManager] = useState<ServiceManager>();
   const [kernelManager, setKernelManager] = useState<KernelManager>();
   const [kernel, setKernel] = useState<Kernel>();

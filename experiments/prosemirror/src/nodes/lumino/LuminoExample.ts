@@ -121,25 +121,7 @@ class LuminoExample {
     dock.addWidget(r2, { ref: b1 });
     dock.addWidget(b2, { mode: 'split-right', ref: y1 });
     dock.id = 'dock';
-/*
-    let savedLayouts: DockPanel.ILayoutConfig[] = [];
 
-    commands.addCommand('save-dock-layout', {
-      label: 'Save Layout',
-      caption: 'Save the current dock layout',
-      execute: () => {
-        savedLayouts.push(dock.saveLayout());
-      }
-    });
-    commands.addCommand('restore-dock-layout', {
-      label: args => {
-        return `Restore Layout ${args.index as number}`;
-      },
-      execute: args => {
-        dock.restoreLayout(savedLayouts[args.index as number]);
-      }
-    });
-*/
     BoxPanel.setStretch(dock, 1);
     this._panel = new BoxPanel({ direction: 'left-to-right', spacing: 0 });
     this._panel.addWidget(dock);

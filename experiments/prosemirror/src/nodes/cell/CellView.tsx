@@ -1,7 +1,11 @@
 import { EditorView, NodeView } from "prosemirror-view";
 import { Node } from "prosemirror-model";
 import { Widget } from '@lumino/widgets';
-import CellAdapter from './CellAdapter';
+import { CellAdapter, loadJupyterConfig, createServerSettings } from '@datalayer/jupyter-react';
+
+import '@jupyterlab/cells/style/base.css';
+
+import "./CellView.css"
 
 class CellView implements NodeView {
   public dom: HTMLElement;
@@ -9,7 +13,14 @@ class CellView implements NodeView {
     this.dom = document.createElement('div');
     this.dom.classList.add('cell')
     document.body.appendChild(this.dom);
-    const widget = new CellAdapter("print('hello')");
+    const config = loadJupyterConfig({
+      children: [],
+      lite: false,
+      startDefaultKernel: true,
+      defaultKernelName: "python"
+    });
+    const serverSettings = createServerSettings(config.jupyterServerHttpUrl, config.jupyterServerWsUrl);
+    const widget = new CellAdapter("print('hello')", serverSettings);
     Widget.attach(widget.panel, this.dom);
   }
   selectNode() {

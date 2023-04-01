@@ -1,5 +1,5 @@
 {
-  "name": "@datalayer-examples/jupyter-slate-example",
+  "name": "@datalayer-examples/jupyter-slate",
   "version": "0.0.0",
   "license": "MIT",
   "main": "lib/index.js",

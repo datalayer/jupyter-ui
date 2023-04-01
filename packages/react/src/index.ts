@@ -21,6 +21,7 @@ export * from './jupyter/ipywidgets/IpyWidgetsManager';
 export * from './components/ipywidgets/IpyWidgetsComponent';
 // Cell.
 export * from './components/cell/Cell';
+export * from './components/cell/CellAdapter';
 export * from './components/cell/CellState';
 // CodeMirror Editor.
 export * from './components/codemirror/CodeMirrorEditor';

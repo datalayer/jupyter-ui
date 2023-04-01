@@ -1,5 +1,5 @@
 {
-  "name": "@datalayer-examples/jupyter-prosemirror-example",
+  "name": "@datalayer-examples/jupyter-prosemirror",
   "version": "0.0.6",
   "license": "MIT",
   "main": "lib/index.js",
@@ -24,6 +24,7 @@
   "dependencies": {
     "@codemirror/lang-python": "6.0.1",
     "@datalayer/typescript-fsa-redux-observable": "0.18.0",
+    "@datalayer/jupyter-react": "0.2.2",
     "@jupyter-widgets/base": "6.0.0-rc.1",
     "@jupyter-widgets/controls": "5.0.0-rc.1",
     "@jupyter-widgets/html-manager": "1.0.0-rc.1",
