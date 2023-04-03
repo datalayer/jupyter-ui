@@ -11,5 +11,5 @@ yarn install &&
 ```
 
 <div align="center" style="text-align: center">
-  <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-slate.gif" />
+  <img alt="Jupyter UI Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-slate.gif" />
 </div>

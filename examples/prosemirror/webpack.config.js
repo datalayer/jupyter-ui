@@ -216,7 +216,7 @@ module.exports = {
       },
     }),
     new HtmlWebpackPlugin({
-      title: 'Jupyter React',
+      title: 'Jupyter UI',
       template : 'public/index.html'
     }),
     new HtmlWebpackTagsPlugin({

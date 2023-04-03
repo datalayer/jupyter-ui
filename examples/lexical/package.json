@@ -1,7 +1,7 @@
 {
   "name": "@datalayer-examples/jupyter-lexical",
   "version": "0.0.2",
-  "description": "Jupyter React example with Lexical",
+  "description": "Jupyter UI example with Lexical",
   "license": "MIT",
   "main": "lib/index.js",
   "files": [

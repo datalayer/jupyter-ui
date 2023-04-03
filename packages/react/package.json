@@ -1,7 +1,7 @@
 {
   "name": "@datalayer/jupyter-react",
   "version": "0.2.2",
-  "description": "Jupyter React",
+  "description": "Jupyter UI",
   "license": "MIT",
   "main": "lib/index.js",
   "files": [

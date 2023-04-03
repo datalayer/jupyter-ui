@@ -3,7 +3,7 @@
 // const path = require('path');
 
 module.exports = {
-  title: 'Jupyter React',
+  title: 'Jupyter UI',
   tagline: 'React.js components to create flexible data products compatible with the Jupyter ecosystem .',
   url: 'https://datalayer.io',
   baseUrl: '/',
@@ -11,7 +11,7 @@ module.exports = {
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
   organizationName: 'datalayer',
-  projectName: 'Jupyter React',
+  projectName: 'Jupyter UI',
   plugins: [
     '@datalayer/jupyter-docusaurus-plugin'
   ],
@@ -28,7 +28,7 @@ module.exports = {
       disableSwitch: true,
     },
     navbar: {
-      title: 'Jupyter React',
+      title: 'Jupyter UI',
       logo: {
         alt: 'Datalayer Logo',
         src: 'img/datalayer/logo.svg',

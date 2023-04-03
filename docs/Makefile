@@ -40,11 +40,11 @@ publish: build ## publish
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 	  aws s3 cp \
 		./build \
-		s3://datalayer-jupyter-react/ \
+		s3://datalayer-jupyter-ui/ \
 		--recursive \
 		--profile datalayer && \
 	  aws cloudfront create-invalidation \
-		--distribution-id E326O1JBGNXT46 \
+		--distribution-id E1PM85T96GGH8P \
 		--paths / \
 		--profile datalayer && \
-	echo open ✨  https://jupyter-react.datalayer.tech )
+	echo open ✨  https://jupyter-ui.datalayer.tech )

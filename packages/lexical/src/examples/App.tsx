@@ -33,7 +33,7 @@ export default function App() {
   return (
     <>
       <div className="App">
-        <h1>Jupyter React ❤️ Lexical</h1>
+        <h1>Jupyter UI ❤️ Lexical</h1>
       </div>
       <Jupyter>
         <LexicalProvider>

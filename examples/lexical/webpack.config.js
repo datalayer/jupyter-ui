@@ -164,7 +164,7 @@ module.exports = {
       process: 'process/browser'
     }),
     new HtmlWebpackPlugin({
-      title: 'Jupyter React',
+      title: 'Jupyter UI',
       template : 'public/index.html'
     }),
     new HtmlWebpackTagsPlugin({

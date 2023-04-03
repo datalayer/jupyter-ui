@@ -32,7 +32,7 @@ export class CellAdapter {
     this._sessionContext = new SessionContext({
       sessionManager,
       specsManager,
-      name: 'Jupyter React',
+      name: 'Jupyter UI',
       kernelPreference: {
         autoStartDefault: true,
         shouldStart: true,

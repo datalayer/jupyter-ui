@@ -46,7 +46,7 @@ plt.show()`;
 const NOTEBOOK_UID = "notebook-uid-1"
 
 /**
- * A simple example for the Jupyter React.
+ * A simple example for the Jupyter UI.
  */
 const AllExample = () => {
   const { kernelManager } = useJupyter();

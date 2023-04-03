@@ -38,18 +38,18 @@ const plugin: JupyterFrontEndPlugin<void> = {
     const { commands } = app;
     const command = CommandIDs.create;
     commands.addCommand(command, {
-      caption: 'Show Jupyter React',
-      label: 'Jupyter React',
+      caption: 'Show Jupyter UI',
+      label: 'Jupyter UI',
       icon: (args: any) => reactIcon,
       execute: () => {
         const content = new DatalayerWidget();
         const widget = new MainAreaWidget<DatalayerWidget>({ content });
-        widget.title.label = 'Jupyter React';
+        widget.title.label = 'Jupyter UI';
         widget.title.icon = reactIcon;
         app.shell.add(widget, 'main');
       }
     });
-    const category = 'Jupyter React';
+    const category = 'Jupyter UI';
     palette.addItem({ command, category, args: { origin: 'from palette' } });
     if (launcher) {
       launcher.add({

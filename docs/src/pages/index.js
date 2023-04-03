@@ -31,7 +31,7 @@ export default function Home() {
   return (
     <Layout
       title={`${siteConfig.title}`}
-      description="Jupyter React, by Datalayer">
+      description="Jupyter UI, by Datalayer">
       <HomepageHeader />
       <main>
         <br/>

@@ -18,7 +18,7 @@ const FeatureList = [
 //    Svg: require('../../static/img/feature_2.svg').default,
     description: (
       <>
-        Jupyter React lets you focus on your work, and we&apos;ll do the chores.
+        Jupyter UI lets you focus on your work, and we&apos;ll do the chores.
       </>
     ),
   },
@@ -27,7 +27,7 @@ const FeatureList = [
 //    Svg: require('../../static/img/feature_3.svg').default,
     description: (
       <>
-        Jupyter React is built on top of renowed open source libraries and is also fully opensource.
+        Jupyter UI is built on top of renowed open source libraries and is also fully opensource.
       </>
     ),
   },

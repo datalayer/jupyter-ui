@@ -2,6 +2,6 @@
 
 [![Become a Sponsor](https://img.shields.io/static/v1?label=Become%20a%20Sponsor&message=%E2%9D%A4&logo=GitHub&style=flat&color=1ABC9C)](https://github.com/sponsors/datalayer)
 
-# Jupyter React Theme
+# Jupyter UI Theme
 
-This folder contains [Material-UI Themes](https://next.material-ui.com/customization/theming) for [Jupyter React](https://github.com/datalayer/jupyter-react).
+This folder contains [Material-UI Themes](https://next.material-ui.com/customization/theming) for [Jupyter UI](https://github.com/datalayer/jupyter-react).

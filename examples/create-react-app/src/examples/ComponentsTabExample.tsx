@@ -18,7 +18,7 @@ document.body.appendChild(div);
 const Header = () => (
   <>
     <Typography variant="h4" gutterBottom>
-      Jupyter React Components Examples
+      Jupyter UI Components Examples
     </Typography>
   </>
 )

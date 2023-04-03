@@ -9,7 +9,7 @@
 See an example in [this repository](https://github.com/datalayer/jupyter-react/tree/main/examples/docusaurus).
 
 <div align="center" style="text-align: center">
-  <img alt="Jupyter React Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-docusaurus.png" />
+  <img alt="Jupyter UI Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-docusaurus.png" />
 </div>
 
 ## Installation

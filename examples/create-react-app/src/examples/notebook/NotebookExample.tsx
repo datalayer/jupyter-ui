@@ -10,7 +10,7 @@ import "./../index.css";
 const NOTEBOOK_UID = 'notebook-uid-example';
 
 /**
- * A simple example for the Jupyter React.
+ * A simple example for the Jupyter UI.
  */
 const Example = () => {
   return (

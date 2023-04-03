@@ -4,10 +4,10 @@
 
 # 🪐 ⚛️ Jupyter Create React App Example
 
-Example to showcase [Jupyter React](https://github.com/datalayer/jupyter-react) usage in a [Create React](https://reactjs.org/docs/create-a-new-react-app.html) application.
+Example to showcase [Jupyter UI](https://github.com/datalayer/jupyter-react) usage in a [Create React](https://reactjs.org/docs/create-a-new-react-app.html) application.
 
 <div align="center" style="text-align: center">
-  <img alt="Jupyter React Gallery" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-gallery.gif" />
+  <img alt="Jupyter UI Gallery" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-gallery.gif" />
 </div>
 
 ## ⚖️ License

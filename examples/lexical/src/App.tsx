@@ -110,7 +110,7 @@ export default function App() {
   return (
     <>
       <div className="App">
-        <h1>Jupyter React ❤️ Lexical</h1>
+        <h1>Jupyter UI ❤️ Lexical</h1>
       </div>
       <Jupyter>
         <LexicalProvider>
@@ -126,7 +126,7 @@ export default function App() {
         </h2>
         <ul>
           <li>
-            <a href="https://github.com/datalayer/jupyter-react" target="_blank">Jupyter React open-source repository</a>
+            <a href="https://github.com/datalayer/jupyter-react" target="_blank">Jupyter UI open-source repository</a>
           </li>
         </ul>
       </div>
