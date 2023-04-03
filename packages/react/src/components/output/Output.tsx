@@ -97,11 +97,6 @@ export const Output = (props: IOutputProps) => {
   useMemo(() => {
       (injectableStore as any).inject('output', outputReducer);
   }, [sourceId]);
-  /*
-  useEffect(() => {
-    return () => console.log('--- deleted', id);
-  }, []);
-  */
   useEffect(() => {
     if (!id) {
       setId(UUID.uuid4());
@@ -131,7 +126,6 @@ export const Output = (props: IOutputProps) => {
       }
       setOutputAdapter(outputAdapter);
       outputAdapter.outputArea.model.changed.connect((outputModel, args) => {
-//        console.log('---', id, outputModel.toJSON());
         setOutputs(outputModel.toJSON());
       });
     }

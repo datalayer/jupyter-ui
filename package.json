@@ -35,7 +35,6 @@
     "packages": [
       "docs",
       "examples/*",
-      "experiments/*",
       "packages/*",
       "patches/*"
     ],

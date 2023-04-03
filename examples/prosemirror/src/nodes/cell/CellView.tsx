@@ -11,13 +11,13 @@ class CellView implements NodeView {
   public dom: HTMLElement;
   constructor(node: Node, view: EditorView, getPos: () => number) {
     this.dom = document.createElement('div');
-    this.dom.classList.add('cell')
+    this.dom.classList.add('cell');
     document.body.appendChild(this.dom);
     const config = loadJupyterConfig({
       children: [],
       lite: false,
       startDefaultKernel: true,
-      defaultKernelName: "python"
+      defaultKernelName: "python",
     });
     const serverSettings = createServerSettings(config.jupyterServerHttpUrl, config.jupyterServerWsUrl);
     const widget = new CellAdapter("print('hello')", serverSettings);
