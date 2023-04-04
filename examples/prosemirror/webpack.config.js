@@ -3,8 +3,6 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
 
-const ModuleFederationPlugin = require("webpack").container.ModuleFederationPlugin;
-
 const IS_PRODUCTION = process.argv.indexOf('--mode=production') > -1;
 let mode = "development";
 if (IS_PRODUCTION) {
@@ -25,7 +23,7 @@ const JUPYTER_HOST = 'http://localhost:8686';
 // const JUPYTER_HOST = 'http://minikube.local';
 
 module.exports = {
-  entry: ['./src/Example'],
+  entry: ['./src/adapter/Example'],
   mode: mode,
   watchOptions: {
     aggregateTimeout: 300,
@@ -72,13 +70,6 @@ module.exports = {
   },
   module: {
     rules: [
-      {
-        test: /\.bootstrap\.tsx?$/,
-        loader: "bundle-loader",
-        options: {
-          lazy: true,
-        },
-      },
       {
         test: /\.tsx?$/,
         loader: "babel-loader",
@@ -159,61 +150,6 @@ module.exports = {
   plugins: [
     new webpack.ProvidePlugin({
       process: 'process/browser'
-    }),
-    new ModuleFederationPlugin({
-      name: "jupyterProsemirror",
-      filename: "jupyterProsemirror.js",
-      exposes: {
-        "./Index": "./src/index",
-      },
-      shared: {
-//        ...deps,
-        react: {
-          eager: false,
-          singleton: true,
-          requiredVersion: false
-        },
-        "react-dom": {
-          eager: false,
-          singleton: true,
-          requiredVersion: false,
-        },
-        "react-router-dom": {
-          eager: false,
-          singleton: true,
-          requiredVersion: false,
-        },
-        '@mui/material': { 
-          eager: false,
-          singleton: true,
-          requiredVersion: false,
-        },
-        '@mui/styles': { 
-          eager: false,
-          singleton: true,
-          requiredVersion: false,
-        },
-        "@mui/private-theming": {
-          eager: false,
-          singleton: true,
-          requiredVersion: false,
-        },
-        '@emotion/core': {
-          eager: false,
-          singleton: true,
-          requiredVersion: false,
-        },
-        'react': {
-          eager: false,
-          singleton: true,
-          requiredVersion: false,
-        },
-        '@emotion/styled': {
-          eager: false,
-          singleton: true,
-          requiredVersion: false,
-        },
-      },
     }),
     new HtmlWebpackPlugin({
       title: 'Jupyter UI',
