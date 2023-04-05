@@ -59,7 +59,7 @@ module.exports = {
           label: 'Demos',
         },        
         {
-          href: 'https://github.com/datalayer/jupyter-react',
+          href: 'https://github.com/datalayer/jupyter-ui',
           position: 'right',
           className: 'header-github-link',
           'aria-label': 'GitHub repository',
@@ -110,7 +110,7 @@ module.exports = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl:
-            'https://github.com/datalayer/jupyter-react/edit/main',
+            'https://github.com/datalayer/jupyter-ui/edit/main',
         },
         blog: {
           showReadingTime: true,

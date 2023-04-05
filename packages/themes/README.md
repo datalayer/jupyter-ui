@@ -4,4 +4,4 @@
 
 # Jupyter UI Theme
 
-This folder contains [Material-UI Themes](https://next.material-ui.com/customization/theming) for [Jupyter UI](https://github.com/datalayer/jupyter-react).
+This folder contains [Material-UI Themes](https://next.material-ui.com/customization/theming) for [Jupyter UI](https://github.com/datalayer/jupyter-ui).

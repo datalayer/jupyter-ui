@@ -32,7 +32,7 @@ module.exports = {
         },
         {to: '/blog', label: 'Blog', position: 'left'},
         {
-          href: 'https://github.com/datalayer/jupyter-react',
+          href: 'https://github.com/datalayer/jupyter-ui',
           label: 'GitHub',
           position: 'right',
         },

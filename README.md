@@ -6,23 +6,15 @@
 
 > Jupyter UI is a set of [React.js](https://reactjs.org) components that allow a frontend developer to build data products compatible with the [Jupyter](https://jupyter.org) ecosystem. The user interface delivers executable notebooks and cells.
 
-<div style="background-color: rgb(230,246,230); font-size: large; text-align: center; padding: 10px; margin: 10px 0 10px 0;">
-Read the documentation on <a href="https://jupyter-ui.datalayer.tech" target="_blank">https://jupyter-ui.datalayer.tech</a>
-</div>
+Read the [documentation](https://jupyter-ui.datalayer.tech) and stop extending, compose instead (see [composition over inheritance](https://en.wikipedia.org/wiki/Composition_over_inheritance)). You can try it on this [CodeSandbox](https://codesandbox.io/p/sandbox/jupyter-react-cra-example-zygjbm?file=%2Fsrc%2Findex.tsx).
 
-Try it on this [CodeSandbox](https://codesandbox.io/p/sandbox/jupyter-react-cra-example-zygjbm?file=%2Fsrc%2Findex.tsx).
-
-The below image shows a gallery of the available React.js components ready to be used in you custom application. These open source components are used to build the online [Datalayer service](https://datalayer.app), a collaborative platform for data analysis.
+The below image shows a gallery of the available React.js components ready to be used in you custom application. These open source components are used to build [Datalayer](https://datalayer.io), a collaborative platform for data analysis.
 
 <div align="center" style="text-align: center">
   <img alt="Jupyter UI Gallery" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-gallery.gif" />
 </div>
 
-<hr/>
-
 ## Why?
-
-> Stop extending, compose instead (cfr [Composition over inheritance](https://en.wikipedia.org/wiki/Composition_over_inheritance))
 
 The Jupyter(Lab) notebook is a tool that allows data scientist to analyse dataset. However, it is not easy to create a custom user interface integrated in an existing application. [Jupyter UI](https://jupyter-ui.datalayer.tech), an open-source library, fills that gap and provides components that a developer can easily integrate in any React.js application.
 
@@ -32,23 +24,15 @@ IPyWidgets are supported (the Comm feature needs to be fixed). JupyterLite and P
 
 You can find more context reading this [abstract](https://fosdem.org/2022/schedule/event/lt_jupyter) of the talk given at [FOSDEM 2022](https://fosdem.org/2022) ([video recording](http://bofh.nikhef.nl/events/FOSDEM/2022/L.lightningtalks/lt_jupyter.webm)).
 
-## Third party integrations
+## Integrations
 
-We maintain a plugin for [Docusaurus](https://docusaurus.io) in the [docusaurus](https://github.com/datalayer/jupyter-react/tree/main/packages/docusaurus) package folder (see the [Docusaurus example](https://github.com/datalayer/jupyter-react/tree/main/examples/docusaurus)).
+We maintain a plugin for [Docusaurus](https://docusaurus.io) in the [docusaurus](https://github.com/datalayer/jupyter-ui/tree/main/packages/docusaurus) package folder (see the [Docusaurus example](https://github.com/datalayer/jupyter-ui/tree/main/examples/docusaurus)).
 
 <div align="center" style="text-align: center">
   <img alt="Jupyter UI Docusaurus" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-docusaurus.png" />
 </div>
 
-## Documentation
-
-You can get more details on the [Jupyter UI website](https://jupyter-ui.datalayer.tech).
-
-The typedoc documentation is [available online](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.0.24/index.html).
-
-## Support
-
-Please open [issues](https://github.com/datalayer/jupyter-react/issues) for questions, feature requests, bug reports... We also welcome [pull requests](https://github.com/datalayer/jupyter-react/pulls).
+Please open [issues](https://github.com/datalayer/jupyter-ui/issues) for questions, feature requests, bug reports... We also welcome [pull requests](https://github.com/datalayer/jupyter-ui/pulls).
 
 ## Contribute
 
@@ -56,7 +40,7 @@ Follow the below steps to create your development environment. You will need [Mi
 
 ```bash
 # Clone the jupyter-react repository.
-git clone https://github.com/datalayer/jupyter-react.git && \
+git clone https://github.com/datalayer/jupyter-ui.git && \
   cd jupyter-react
 ```
 
@@ -94,6 +78,8 @@ yarn jupyter:example:docusaurus            # open http://localhost:3000/docs/int
 yarn jupyter:example:slate                 # open http://localhost:3266
 yarn jupyter:example:prosemirror           # open http://localhost:4567
 ```
+
+The typedoc documentation is [available online](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.0.24/index.html).
 
 ## ⚖️ License
 

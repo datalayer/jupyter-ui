@@ -4,9 +4,9 @@
   "license": "MIT",
   "private": true,
   "author": "Datalayer",
-  "homepage": "https://github.com/datalayer/jupyter-react/tree/main/experiments/css#README",
+  "homepage": "https://github.com/datalayer/jupyter-ui/tree/main/experiments/css#README",
   "bugs": {
-    "url": "https://github.com/datalayer/jupyter-react/issues"
+    "url": "https://github.com/datalayer/jupyter-ui/issues"
   },
   "scripts": {
     "watch": "concurrently --kill-others \"yarn tsc-watch\" \"yarn serve-watch\"",
@@ -27,7 +27,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/datalayer/jupyter-react.git"
+    "url": "git+https://github.com/datalayer/jupyter-ui.git"
   },
   "dependencies": {
     "@jupyterlab/theme-dark-extension": "4.0.0-beta.0",

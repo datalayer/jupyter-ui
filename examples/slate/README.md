@@ -4,6 +4,9 @@
 
 # Jupyter Slate Example
 
+Integrate Jupyter cells in a [Slate](https://www.slatejs.org) document.
+
+
 ```base
 yarn install &&
   echo open http://localhost:3266 && \
