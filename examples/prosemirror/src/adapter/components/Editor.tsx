@@ -5,7 +5,6 @@ import { useNodeViewFactory, usePluginViewFactory, useWidgetViewFactory } from '
 import type { EditorView } from 'prosemirror-view'
 import { DecorationSet } from 'prosemirror-view'
 import type { Node } from 'prosemirror-model';
-import type { Decoration, DecorationSource } from 'prosemirror-view';
 export type NodeViewDOMSpec = string | HTMLElement | ((node: Node) => HTMLElement);
 import type { FC } from 'react'
 import { useCallback, useRef } from 'react'

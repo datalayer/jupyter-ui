@@ -87,12 +87,12 @@ yarn start
 
 ```bash
 # We have more examples. Pick one of the following commands and enjoy.
-yarn start:create-react-app      # open http://localhost:3000
-yarn start:docusaurus            # open http://localhost:3000/docs/intro
-yarn start:lexical               # open http://localhost:3208
-# ...and some uncomplete and deprecated examples...
-yarn start:slate                 # open http://localhost:3266
-yarn start:prosemirror           # open http://localhost:4567
+yarn jupyter:example:cra                   # open http://localhost:3000
+yarn jupyter:example:lexical               # open http://localhost:3208
+yarn jupyter:example:docusaurus            # open http://localhost:3000/docs/intro
+# ...and some uncomplete or deprecated examples...
+yarn jupyter:example:slate                 # open http://localhost:3266
+yarn jupyter:example:prosemirror           # open http://localhost:4567
 ```
 
 ## ⚖️ License

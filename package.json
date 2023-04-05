@@ -23,12 +23,12 @@
     "juypyter:themes": "lerna run --parallel --scope @datalayer/jupyter-themes start",
     "kill": "make kill",
     "start": "lerna run --parallel --scope @datalayer/jupyter-react start",
-    "start:create-react-app": "lerna run --parallel --scope @datalayer-examples/jupyter-create-react-app start",
-    "start:docusaurus": "lerna run --parallel --scope @datalayer-examples/jupyter-docusaurus start",
+    "jupyter:example:cra": "lerna run --parallel --scope @datalayer-examples/jupyter-create-react-app start",
+    "jupyter:example:docusaurus": "lerna run --parallel --scope @datalayer-examples/jupyter-docusaurus start",
     "start:esbuild": "lerna run --parallel --scope @datalayer-examples/jupyter-esbuild start",
-    "start:lexical": "lerna run --parallel --scope @datalayer/jupyter-lexical start",
-    "start:prosemirror": "lerna run --parallel --scope @datalayer-examples/jupyter-prosemirror start",
-    "start:slate": "lerna run --parallel --scope @datalayer-examples/jupyter-slate start",
+    "jupyter:example:lexical": "lerna run --parallel --scope @datalayer/jupyter-lexical start",
+    "jupyter:example:prosemirror": "lerna run --parallel --scope @datalayer-examples/jupyter-prosemirror start",
+    "jupyter:example:slate": "lerna run --parallel --scope @datalayer-examples/jupyter-slate start",
     "test": "lerna run test"
   },
   "workspaces": {
