@@ -23,8 +23,8 @@
   },
   "dependencies": {
     "@codemirror/lang-python": "6.0.1",
-    "@datalayer/typescript-fsa-redux-observable": "0.18.0",
     "@datalayer/jupyter-react": "0.2.2",
+    "@datalayer/typescript-fsa-redux-observable": "0.18.0",
     "@jupyter-widgets/base": "6.0.0-rc.1",
     "@jupyter-widgets/controls": "5.0.0-rc.1",
     "@jupyter-widgets/html-manager": "1.0.0-rc.1",
