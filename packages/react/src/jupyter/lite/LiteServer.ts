@@ -50,7 +50,6 @@ export async function startLiteServer(): Promise<ServiceManager> {
       // CommonJS exports.
       exports = extension;
     }
-
     let plugins = Array.isArray(exports) ? exports : [exports];
     for (let plugin of plugins) {
       if (
