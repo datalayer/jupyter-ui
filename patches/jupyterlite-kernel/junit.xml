@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="1" failures="0" time="2.169">
-  <testsuite name="Kernel" errors="0" failures="0" skipped="0" timestamp="2022-08-13T09:11:14" time="1.168" tests="1">
-    <testcase classname="Kernel #constructor() should create a Kernel instance" name="Kernel #constructor() should create a Kernel instance" time="0.002">
-    </testcase>
-  </testsuite>
-</testsuites>
