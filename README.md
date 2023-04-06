@@ -39,9 +39,9 @@ Please open [issues](https://github.com/datalayer/jupyter-ui/issues) for questio
 Follow the below steps to create your development environment. You will need [Miniconda](https://docs.conda.io/en/latest/miniconda.html) up-and-running on your machine (MacOS or Linux, Windows is not supported as development platform for the time-being).
 
 ```bash
-# Clone the jupyter-react repository.
+# Clone the jupyter-ui repository.
 git clone https://github.com/datalayer/jupyter-ui.git && \
-  cd jupyter-react
+  cd jupyter-ui
 ```
 
 ```bash
