@@ -20,8 +20,7 @@ def _load_jupyter_server_extension(server_app):
 
     Parameters
     ----------
-    server_app: jupyterlab.labapp.LabApp
-        JupyterLab application instance
+    server_app: jupyter_server.serverapp.ServerApp
     """
     setup_handlers(server_app.web_app)
     name = "jupyter_lexical"
