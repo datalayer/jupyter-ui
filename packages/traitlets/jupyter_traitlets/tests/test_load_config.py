@@ -30,10 +30,6 @@ def test_load_config():
     notebookapp2.hello = 'hello2'
     config.NotebookApp.merge(notebookapp2)
     assert config.NotebookApp.hello == "hello2"
-    # notebookapp.items() == dict_items([('allow_credentials', False), ('port', 8889), ('password_required', True), ('hello', 'hello2')])
-    # notebookapp.keys()) == dict_keys(['allow_credentials', 'port', 'password_required', 'hello'])
-    # notebookapp.values()) == dict_values([False, 8889, True, 'hello2'])
-    # config.to_dict.to_dict()
-    # config.section_names.to_dict()
-    # config.class_config_section.to_dict()
-    # config.class_config_rst_doc.to_dict()
+    notebookapp.items() # dict_items([('allow_credentials', False), ('port', 8889), ('password_required', True), ('hello', 'hello2')])
+    notebookapp.keys() # dict_keys(['allow_credentials', 'port', 'password_required', 'hello'])
+    notebookapp.values() # dict_values([False, 8889, True, 'hello2'])
