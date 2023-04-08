@@ -1,4 +1,4 @@
-"""Trailtlets configuration loader."""
+"""Traitlets configuration loader."""
 
 import sys
 
