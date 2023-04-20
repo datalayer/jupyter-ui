@@ -30,9 +30,9 @@
     "url": "git+https://github.com/datalayer/jupyter-ui.git"
   },
   "dependencies": {
-    "@jupyterlab/theme-dark-extension": "4.0.0-beta.0",
-    "@jupyterlab/theme-light-extension": "4.0.0-beta.0",
-    "@jupyterlab/ui-components": "4.0.0-beta.0",
+    "@jupyterlab/theme-dark-extension": "4.0.0-beta.1",
+    "@jupyterlab/theme-light-extension": "4.0.0-beta.1",
+    "@jupyterlab/ui-components": "4.0.0-beta.1",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },

@@ -5,9 +5,13 @@ name: datalayer
 channels:
   - conda-forge
 dependencies:
+  - jq
   - nodejs=18.7.0
+  - pip
+  - python=3.11
   - yarn=1.22.19
   - pip:
     - build
     - hatch
-    - jupyterlab==4.0.0b0
+    - jupyter-packaging
+    - jupyterlab==4.0.0b1

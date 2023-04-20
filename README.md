@@ -6,7 +6,9 @@
 
 > Jupyter UI is a set of [React.js](https://reactjs.org) components that allow a frontend developer to build data products compatible with the [Jupyter](https://jupyter.org) ecosystem. The user interface delivers executable notebooks and cells.
 
-Read the [documentation](https://jupyter-ui.datalayer.tech) and stop extending, compose instead (see [composition over inheritance](https://en.wikipedia.org/wiki/Composition_over_inheritance)). You can try it on this [CodeSandbox](https://codesandbox.io/p/sandbox/jupyter-react-cra-example-zygjbm?file=%2Fsrc%2Findex.tsx).
+You can try it on this [CodeSandbox](https://codesandbox.io/p/sandbox/jupyter-react-cra-example-zygjbm?file=%2Fsrc%2Findex.tsx).
+
+Read the [documentation](https://jupyter-ui.datalayer.tech) and stop extending, [compose instead](https://en.wikipedia.org/wiki/Composition_over_inheritance).
 
 The below image shows a gallery of the available React.js components ready to be used in you custom application. These open source components are used to build [Datalayer](https://datalayer.io), a collaborative platform for data analysis.
 
@@ -18,7 +20,7 @@ The below image shows a gallery of the available React.js components ready to be
 
 The Jupyter(Lab) notebook is a tool that allows data scientist to analyse dataset. However, it is not easy to create a custom user interface integrated in an existing application. [Jupyter UI](https://jupyter-ui.datalayer.tech), an open-source library, fills that gap and provides components that a developer can easily integrate in any React.js application.
 
-In terms of technical stack, the Jupyter(Lab) user interface is built on top of Lumino, which is an imperative way to build user interface and **can not** be consumed by industry standard declarative frameworks like React.js. As a user interface developer, if you want to create a custom data product on top of Jupyter, you have to stick to Lumino and carry-on the full notebook interface not tailored to your specific needs. This is not what you want. You just want to expose what you need, you want to develop with your favorite toolkit (like React.js) and you also want to integrate on a per-component basis the Jupyter functionality in your application.
+The Jupyter(Lab) user interface is built on top of Lumino widget toolkit, an imperative way to build user interface and **can not** be consumed by industry standard declarative frameworks like React.js. As a user interface developer, if you want to create a custom data product on top of Jupyter, you have to stick to Lumino and carry-on the full notebook interface not tailored to your specific needs. This is not what you want. You just want to expose what you need, you want to develop with your favorite toolkit (like React.js) and you also want to integrate on a per-component basis the Jupyter functionality in your application.
 
 IPyWidgets are supported (the Comm feature needs to be fixed). JupyterLite and PyScript support is on the roadmap. Autocompletion is also available.
 
@@ -34,50 +36,9 @@ We maintain a plugin for [Docusaurus](https://docusaurus.io) in the [docusaurus]
 
 Please open [issues](https://github.com/datalayer/jupyter-ui/issues) for questions, feature requests, bug reports... We also welcome [pull requests](https://github.com/datalayer/jupyter-ui/pulls).
 
-## Contribute
+## Use and Contribute
 
-Follow the below steps to create your development environment. You will need [Miniconda](https://docs.conda.io/en/latest/miniconda.html) up-and-running on your machine (MacOS or Linux, Windows is not supported as development platform for the time-being).
-
-```bash
-# Clone the jupyter-ui repository.
-git clone https://github.com/datalayer/jupyter-ui.git && \
-  cd jupyter-ui
-```
-
-```bash
-# Setup your development environment.
-conda deactivate && \
-  make env-rm # If you want to reset your environment.
-make env && \
-  conda activate datalayer
-# JupyterLab has migrated to Yarn v3, we need Yarn v1 for resolutions and ease of vs-code usage.
-curl https://raw.githubusercontent.com/jupyterlab/jupyterlab/v4.0.0a36/jupyterlab/staging/yarn.js \
- -o $( dirname "$(which jupyter)" )/../lib/python3.10/site-packages/jupyterlab/staging/yarn.js
-jlpm --version # Should be 1.22.19.
-```
-
-```bash
-# Install and build.
-make install build
-```
-
-```bash
-# You can start an example and hack the source code.
-# The changes will build automatically and will be available in your browser.
-# You will have to accept to SSL certificate in your browser the first time.
-echo open https://localhost:3208
-yarn start
-```
-
-```bash
-# We have more examples. Pick one of the following commands and enjoy.
-yarn jupyter:example:cra                   # open http://localhost:3000
-yarn jupyter:example:lexical               # open http://localhost:3208
-yarn jupyter:example:docusaurus            # open http://localhost:3000/docs/intro
-# ...and some uncomplete or deprecated examples...
-yarn jupyter:example:slate                 # open http://localhost:3266
-yarn jupyter:example:prosemirror           # open http://localhost:4567
-```
+Start with the [setup of your environment](https://jupyter-ui.datalayer.tech/docs/welcome/develop), then you can [try out building your own with examples](https://jupyter-ui.datalayer.tech/docs/category/examples).
 
 The typedoc documentation is [available online](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.0.24/index.html).
 

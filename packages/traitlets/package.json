@@ -64,10 +64,10 @@
   },
   "dependencies": {
     "@datalayer/icons": "0.0.10",
-    "@jupyterlab/application": "4.0.0-beta.0",
-    "@jupyterlab/coreutils": "6.0.0-beta.0",
-    "@jupyterlab/services": "7.0.0-beta.0",
-    "@jupyterlab/settingregistry": "4.0.0-beta.0",
+    "@jupyterlab/application": "4.0.0-beta.1",
+    "@jupyterlab/coreutils": "6.0.0-beta.1",
+    "@jupyterlab/services": "7.0.0-beta.1",
+    "@jupyterlab/settingregistry": "4.0.0-beta.1",
     "@primer/octicons-react": "18.2.0",
     "@primer/react": "35.22.0",
     "mobx": "6.7.0",
@@ -82,9 +82,9 @@
     "@babel/preset-env": "7.20.2",
     "@babel/preset-react": "7.18.6",
     "@babel/preset-typescript": "7.21.0",
-    "@jupyterlab/builder": "4.0.0-beta.0",
-    "@jupyterlab/launcher": "4.0.0-beta.0",
-    "@jupyterlab/testutils": "4.0.0-beta.0",
+    "@jupyterlab/builder": "4.0.0-beta.1",
+    "@jupyterlab/launcher": "4.0.0-beta.1",
+    "@jupyterlab/testutils": "4.0.0-beta.1",
     "@types/jest": "29.4.0",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
@@ -141,7 +141,7 @@
   "jupyter-releaser": {
     "hooks": {
       "before-build-npm": [
-        "python -m pip install jupyterlab==4.0.0b0",
+        "python -m pip install jupyterlab==4.0.0b1",
         "jlpm"
       ],
       "before-build-python": [

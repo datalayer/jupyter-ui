@@ -4,7 +4,11 @@ description: Develop Jupyter UI.
 
 # Develop
 
-Follow the below steps to create your development environment. You will need [Miniconda](https://docs.conda.io/en/latest/miniconda.html) up-and-running on your machine
+Follow the below steps to use and develop Jupyter UI.
+
+## Environment
+
+First, you need [Miniconda](https://docs.conda.io/en/latest/miniconda.html) up-and-running on your machine.
 
 :::caution
 
@@ -12,44 +16,80 @@ MacOS or Linux, Windows is not supported as development platform for the time-be
 
 :::
 
-```bash
-# Clone the jupyter-react repository.
-git clone https://github.com/datalayer/jupyter-ui.git && \
-  cd jupyter-react
-```
+Clone the `jupyter-ui` repository.
 
 ```bash
-# Setup your development environment.
+git clone https://github.com/datalayer/jupyter-ui.git && \
+  cd jupyter-ui
+```
+
+If you already created a conda environment, please remove it.
+
+```bash
 conda deactivate && \
-  make env-rm # If you want to reset your environment.
+  make env-rm
+```
+
+Create a new conda environment.
+
+```bash
 make env && \
   conda activate datalayer
 ```
 
-```bash
-# Install and build.
-make install build
-```
+:::caution
+
+JupyterLab has migrated to Yarn v3 which is not friendly with resolutions, especially for non final (alpha, beta, rc) releases. Ensure Yarn v1 for resolutions and Visual Studio Code completions.
 
 ```bash
-# You can start an example and hack the source code.
-# The changes will build automatically and will be available in your browser.
-# You will have to accept to SSL certificate in your browser the first time.
+curl https://raw.githubusercontent.com/jupyterlab/jupyterlab/v4.0.0a36/jupyterlab/staging/yarn.js \
+ -o $( dirname "$(which jupyter)" )/../lib/python3.10/site-packages/jupyterlab/staging/yarn.js
+jlpm --version # Should be 1.22.19.
+```
+
+:::
+
+## Install and Build
+
+Install the dependencies. This will take some time, be patient. 👍
+
+```bash
+make install
+```
+
+Build the source code. This will also take some time, be also patient. 🙂
+
+```bash
+make build
+```
+
+## Examples
+
+Now you can start an example and hack the source code. The changes will build automatically and will be available in your browser. You will have to accept to SSL certificate in your browser the first time.
+
+```bash
 echo open https://localhost:3208
 yarn start
 ```
 
+We have more examples. Pick one of the following commands and enjoy.
+
 ```bash
-# We have more examples. Pick one of the following commands and enjoy.
 yarn jupyter:example:cra                   # open http://localhost:3000
 yarn jupyter:example:lexical               # open http://localhost:3208
 yarn jupyter:example:docusaurus            # open http://localhost:3000/docs/intro
-# ...and some uncomplete or deprecated examples...
+```
+
+We also have some uncomplete or deprecated examples...
+
+```bash
 yarn jupyter:example:slate                 # open http://localhost:3266
 yarn jupyter:example:prosemirror           # open http://localhost:4567
 ```
 
 ## JupyterLab Extension
+
+Jupyter UI can also be shipped as a JupyterLab extension.
 
 ```bash
 pip install -e .[test]

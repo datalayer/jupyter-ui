@@ -1,16 +1,16 @@
 ---
-description: The Literate Notebook Component
+description: Literate Notebook.
 ---
 
 import ModalImage from "react-modal-image";
 
 # ✍️ 🖌️ Literate Notebook
 
-> The Literate Notebook for literate programming iscompatible with Jupyter and ObservableHQ. It can be run standalone or as Jupyter Notebook, JupyterLab, Visual Studio Code extension.
+> The Literate Notebook for literate programming is compatible with Jupyter and ObservableHQ. It can be run standalone or as Jupyter Notebook, JupyterLab, Visual Studio Code extension.
 
 As successor to the above components wrapping JupyterLab, we are developing a brand new user interface `Literate Notebook` to better address [literate programming requirements](https://en.wikipedia.org/wiki/Literate_programming), compatible with Jupyter and ObservableHQ as envisioned by [Donald Knuth](https://en.wikipedia.org/wiki/Donald_Knuth) back in 1983.
 
-> Literate programming is a programming paradigm introduced by Donald Knuth in which a computer program is given an explanation of its logic in a natural language, such as English, interspersed with snippets of macros and traditional source code, from which compilable source code can be generated. The approach is used in scientific computing and in data science routinely for reproducible research and open access purposes. <https://en.wikipedia.org/wiki/Literate_programming>
+> [Literate programming](https://en.wikipedia.org/wiki/Literate_programming) is a programming paradigm introduced by Donald Knuth in which a computer program is given an explanation of its logic in a natural language, such as English, interspersed with snippets of macros and traditional source code, from which compilable source code can be generated. The approach is used in scientific computing and in data science routinely for reproducible research and open access purposes.
 
 Instead of having the well-known cell-based structure for notebooks (each cell being a separated editor), we will provide a Notebook user-experience that will be like Notion or Google Docs. After deep exploration of Slate, Prosemirror and Lexical as the foundation for this Literate Norebook, we have chosen Lexical (see the [playground](https://playground.lexical.dev)). Non-user-interface components from JupyterLab could be reused, like the services to communicate with the server (this is what Visual Studio is reusing also). However, in the long term, the services would need to be rewritten based on a robust state-machine (for now, a lot of if-then-else have grown empirically to fit the kernel message protocols and the quality is not there unfortunately).
 
@@ -23,11 +23,3 @@ A a developer, you will create a custom data product `a-la-google-docs` as shown
 />
 
 We will add collaborative and accessible features to read, write and publish data analysis to `Microsoft Office 365` and `Google Workspace`.
-
-The Jupyter Editor is still under development.
-
-<ModalImage
-  small="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-slate.gif"
-  large="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-slate.gif"
-  alt="Jupyter UI Slate"
-/>
