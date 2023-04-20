@@ -48,6 +48,6 @@ typedoc-publish: typedoc ## deploy typedoc
 		--profile datalayer
 	aws cloudfront create-invalidation \
 		--distribution-id E1CPG9FNSQJESH \
-		--paths / \
+		--paths /datalayer/jupyter-react/0.3.0/ \
 		--profile datalayer
 	echo open ✨  https://typedoc.datalayer.tech/datalayer/jupyter-react/0.3.0

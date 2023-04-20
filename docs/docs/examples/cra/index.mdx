@@ -12,20 +12,20 @@ Setup your [development environement](/docs/welcome/develop).
 
 ## Create a Project
 
-Create your WEB application and add the Jupyter React dependency.
+Create a WEB application skeleton based on `create-react-app`.
 
 ```bash
 npx create-react-app jupyter-react-cra-example -y --template typescript && \
   cd jupyter-react-cra-example
 ```
 
-### Resolutions
+## Resolutions
 
 We need coherent React.js versions otherwise you may hit the `Invalid Hook Call Warning` with `mismatching versions of React and React DOM` as documented on [this page](https://reactjs.org/warnings/invalid-hook-call-warning.html). JupyerLab is actively developed and we are tracking the latest (pre-)releases as closely as possible.
 
 Therefor, we ask to pin the yarn resolutions. Add [this block](https://github.com/datalayer/jupyter-ui/blob/bbc8df3f9415d511aa239477cf41687bc13a97be/package.json#L70-L175) in your package.json.
 
-### Startup Scripts
+## Startup Scripts
 
 You will need a Jupyter server up-and-running. We ship the configuration and scripts in the [jupyter-react-cra-example repository](https://github.com/datalayer-examples/jupyter-react-cra-example). Copy from that repository the `dev` folder in your project. This will provide you with the correct Jupyter server configuration and with the `content` folder that contains the `ping.ipynb` notebook as other example notebooks.
 
@@ -50,9 +50,9 @@ The need for `buffer` may be removed depending on upstream JupyterLab evolution.
 
 :::
 
-### Metadata
+## Dependencies
 
-Add in Jupyter React in `package.json`.
+Add Jupyter React in `package.json`.
 
 ```json
   "dependencies": {
@@ -60,13 +60,13 @@ Add in Jupyter React in `package.json`.
   },
 ```
 
-Install the dependencies (this will take time).
+Time to install the dependencies (this will take time).
 
 ```bash
 yarn install
 ```
 
-### Metadata
+## Metadata
 
 You need to add in the `<head/>` section of `public/index.html` the metadata to indicate where you Jupyter server is running, as the `require` javascript.
 
@@ -81,7 +81,7 @@ You need to add in the `<head/>` section of `public/index.html` the metadata to 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
 ```
 
-### Dot Env
+## Dot Env
 
 It looks like the `create-react-app` version 5 does not like sourcemaps pointing to non existing source code. To avoid error messages, please create a `.env` file at the top of your folder/repositoriy and add there `GENERATE_SOURCEMAP=false`.
 
@@ -92,22 +92,33 @@ GENERATE_SOURCEMAP=false
 
 ## Application
 
-Update `src/App.tsx` to import the `Notebook` component and change the App to return a Notebook.
+Update `src/App.tsx` to import the `Jupyter` and `Notebook` component and change the App like this.
 
 ```ts
-import { Notebook } from "@datalayer/jupyter-react";
+// App.tsx
+import { Notebook, Jupyter } from "@datalayer/jupyter-react";
 
 function App() {
   return (
-    <Notebook path="ping.ipynb" />
+    <Jupyter>
+      <Notebook path="ping.ipynb" />
+    </Jupyter>
   )
 }
 
+export default App;
 ```
 
 ## Strict Mode
 
-We don't support yet [React Strict Mode](https://reactjs.org/docs/strict-mode.html) (can be useful in development mode). Please remove any reference of `StrictMode` in the `./src/index.tsx` file.
+We don't support yet [React Strict Mode](https://reactjs.org/docs/strict-mode.html) (can be useful in development mode). Please remove any reference of `StrictMode` in the `./src/index.tsx` file, your call to `render` should look like this.
+
+```ts
+// index.tsx
+root.render(
+  <App />
+);
+```
 
 ## Start
 
