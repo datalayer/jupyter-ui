@@ -4,51 +4,71 @@ description: A Create React Application example.
 
 # Create React Application Example
 
-The example can be found in the [jupyter-react-cra-example repository](https://github.com/datalayer-examples/jupyter-react-cra-example).
+The source code of this example can be found in the [jupyter-react-cra-example repository](https://github.com/datalayer-examples/jupyter-react-cra-example).
 
 ## Environment
 
 Setup your [development environement](/docs/welcome/develop).
 
-## Create your own create-react-app (version 5)
+## Create a Project
 
-You can create your own WEB application and add the Jupyter React dependency.
+Create your WEB application and add the Jupyter React dependency.
 
 ```bash
-npx create-react-app jupyter-react-example --template typescript && \
-  cd jupyter-react-example && \
-  yarn add @datalayer/jupyter-react
+npx create-react-app jupyter-react-cra-example -y --template typescript && \
+  cd jupyter-react-cra-example
 ```
 
-Once this is done, double-check the following requirements (just checkout this repository for a complete setup).
+### Resolutions
+
+We need coherent React.js versions otherwise you may hit the `Invalid Hook Call Warning` with `mismatching versions of React and React DOM` as documented on [this page](https://reactjs.org/warnings/invalid-hook-call-warning.html). JupyerLab is actively developed and we are tracking the latest (pre-)releases as closely as possible.
+
+Therefor, we ask to pin the yarn resolutions. Add [this block](https://github.com/datalayer/jupyter-ui/blob/bbc8df3f9415d511aa239477cf41687bc13a97be/package.json#L70-L175) in your package.json.
 
 ### Startup Scripts
 
-You will need a Jupyter server up-and-running. We ship the configuration and scripts in this repository. You can add in your `package.json` the needed definitions.
+You will need a Jupyter server up-and-running. We ship the configuration and scripts in the [jupyter-react-cra-example repository](https://github.com/datalayer-examples/jupyter-react-cra-example). Copy from that repository the `dev` folder in your project. This will provide you with the correct Jupyter server configuration and with the `content` folder that contains the `ping.ipynb` notebook as other example notebooks.
+
+Now add in your `package.json` the needed scripts and development dependencies.
 
 ```json
   "scripts": {
     "start": "run-p -c start:*",
-    "start:jupyter": "make start-jupyter-server",
+    "start:jupyter": "./dev/sh/start-jupyter-server.sh",
     "start:react": "react-scripts start",
+    "kill": "./dev/sh/kill-jupyter-server.sh && ./dev/sh/kill-webpack.sh"
   },
   "devDependencies": {
     "npm-run-all": "4.1.5",
+    "buffer": "6.0.3"
   },
 ```
 
-### Dot Env
+:::note
 
-It looks like the `create-react-app` version 5 does not like sourcemaps pointing to non existing source code. To avoid error messages, please create a `.env` file at the top of your folder/repositoriy and add there `GENERATE_SOURCEMAP=false`.
+The need for `buffer` may be removed depending on upstream JupyterLab evolution.
 
-```dotenv
-// .env
-GENERATE_SOURCEMAP=false
+:::
+
+### Metadata
+
+Add in Jupyter React in `package.json`.
+
+```json
+  "dependencies": {
+    "@datalayer/jupyter-react": "0.3.0",
+  },
+```
+
+Install the dependencies (this will take time).
+
+```bash
+yarn install
 ```
 
 ### Metadata
 
-You need to add in the `public/index.html` the needed information to indicate where you Jupyter server is running.
+You need to add in the `<head/>` section of `public/index.html` the metadata to indicate where you Jupyter server is running, as the `require` javascript.
 
 ```html
     <script id="datalayer-config-data" type="application/json">
@@ -61,31 +81,51 @@ You need to add in the `public/index.html` the needed information to indicate wh
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
 ```
 
-### Resolutions
+### Dot Env
 
-A `create-react-app` requests coherent React.js versions othewise you may hit the `Invalid Hook Call Warning` with `mismatching versions of React and React DOM` as documented on [this page](https://reactjs.org/warnings/invalid-hook-call-warning.html).
+It looks like the `create-react-app` version 5 does not like sourcemaps pointing to non existing source code. To avoid error messages, please create a `.env` file at the top of your folder/repositoriy and add there `GENERATE_SOURCEMAP=false`.
 
-With JupyterLab, we are pulling various version in the node_modules subfolders. To avoid version conflicts, set the `dependencies` and `resolutions` in `package.json` to explicitely specificy the needed versions.
+```dotenv
+// .env
+GENERATE_SOURCEMAP=false
+```
 
-JupyerLab is actively developed. We are tracking the latest releases as closely as possible.
+## Application
 
-Therefor, for now, we ask to pin the yarn resolutions. Add [this block](https://github.com/datalayer/jupyter-ui/blob/bbc8df3f9415d511aa239477cf41687bc13a97be/package.json#L70-L175) in your package.json.
+Update `src/App.tsx` to import the `Notebook` component and change the App to return a Notebook.
 
+```ts
+import { Notebook } from "@datalayer/jupyter-react";
 
-## Add MUI dependencies
+function App() {
+  return (
+    <Notebook path="ping.ipynb" />
+  )
+}
 
-This example uses Material UI. You can add for example in package.json the following dependencies.
-
-```json
-    "@emotion/react": "11.4.0",
-    "@emotion/styled": "11.3.0",
-    "@mui/material": "5.8.3",
-    "@mui/icons-material": "5.8.3",
-    "@mui/lab": "5.0.0-alpha.85",
-    "@mui/styles": "5.8.3",
-    "@mui/system": "5.8.3",
 ```
 
 ## Strict Mode
 
-We don't fully support yet React [Strict Mode](https://reactjs.org/docs/strict-mode.html) (can be useful in development mode). Please remove any reference of `StrictMode` in your source.
+We don't support yet [React Strict Mode](https://reactjs.org/docs/strict-mode.html) (can be useful in development mode). Please remove any reference of `StrictMode` in the `./src/index.tsx` file.
+
+## Start
+
+:::info
+
+Finally we get there!
+
+:::
+
+Let's get started and enjoy a Notebook in React.js.
+
+```bash
+echo open http://localhost:3000
+yarn start
+```
+
+:::caution
+
+Run `yarn kill` before restarting as `CTRL-C` may leave ghost servers.
+
+:::
