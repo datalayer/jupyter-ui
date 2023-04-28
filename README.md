@@ -38,7 +38,7 @@ Please open [issues](https://github.com/datalayer/jupyter-ui/issues) for questio
 
 ## Use and Contribute
 
-Start with the [setup of your environment](https://jupyter-ui.datalayer.tech/docs/welcome/develop), then you can [try out building your own with examples](https://jupyter-ui.datalayer.tech/docs/category/examples).
+[Setup of your environment](https://jupyter-ui.datalayer.tech/docs/welcome/develop), then you can [try out building your own examples](https://jupyter-ui.datalayer.tech/docs/category/examples).
 
 The typedoc documentation is [available online](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.0.24/index.html).
 

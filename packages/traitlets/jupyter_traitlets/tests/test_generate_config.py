@@ -7,7 +7,6 @@ from ..generate_config import generate_config
 
 def test_generate_config():
     """Test the generation of a configuration."""
-
     serverapp = ServerApp()
     trait_names = serverapp.trait_names()
     for trait_name in trait_names:

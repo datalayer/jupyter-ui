@@ -1,10 +1,10 @@
-"""Test extension configurations."""
+"""Test extensions."""
 
 from jupyter_server.extension.application import ExtensionApp
 from jupyter_server.extension.serverextension import _get_extmanager_for_context
 
 
-def test_extensions():
+def test_extensions_loading():
     """Test the extensions loading."""
     extensions = {}
     configurations = (

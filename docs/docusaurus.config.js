@@ -4,7 +4,7 @@
 
 module.exports = {
   title: 'Jupyter UI',
-  tagline: 'React.js components to create flexible data products compatible with the Jupyter ecosystem .',
+  tagline: 'React.js components to create flexible data products compatible with the Jupyter ecosystem.',
   url: 'https://datalayer.io',
   baseUrl: '/',
   onBrokenLinks: 'throw',
@@ -57,7 +57,7 @@ module.exports = {
           docId: '/category/demos',
           position: 'left',
           label: 'Demos',
-        },        
+        },
         {
           href: 'https://github.com/datalayer/jupyter-ui',
           position: 'right',
