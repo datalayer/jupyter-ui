@@ -1,4 +1,4 @@
-import { PageConfig } from '@jupyterlab/coreutils/lib/pageconfig';
+import { PageConfig } from '@jupyterlab/coreutils';
 import { JupyterProps } from './Jupyter';
 
 /**
