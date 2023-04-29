@@ -92,9 +92,42 @@ yarn jupyter:example:prosemirror           # open http://localhost:4567
 Jupyter UI can also be shipped as a JupyterLab extension.
 
 ```bash
+cd packages/react
 pip install -e .[test]
+# Double check
+pip list | grep react
+# jupyter_react ...
+```
+
+Double check the jlpm version, as the pip command may have changed that.
+
+```bash
+# Should be 1.22.19.
+jlpm --version
+```
+
+If it is not `1.22.19`, run again the following command.
+
+```bash
+curl https://raw.githubusercontent.com/jupyterlab/jupyterlab/v4.0.0a36/jupyterlab/staging/yarn.js \
+ -o $( dirname "$(which jupyter)" )/../lib/python3.11/site-packages/jupyterlab/staging/yarn.js
+jlpm --version # Should be 1.22.19.
+```
+
+Link the JupyterLab extension for development.
+
+```bash
 jupyter labextension develop . --overwrite
+# Installing: .../jupyter_react/labextension -> @datalayer/jupyter-manager
+# Removing: .../labextensions/@datalayer/jupyter-manager
+# Symlinking: .../labextensions/@datalayer/jupyter-manager -> .../jupyter_react/labextension
+```
+
+```bash
 jupyter labextension list
 jupyter server extension list
+```
+
+```bash
 yarn jupyterlab
 ```

@@ -85,8 +85,8 @@ export const createServerSettings = (baseUrl: string, wsUrl: string) => {
     wsUrl,
     appendToken: true,
     init: {
-      credentials: "include",
       mode: 'cors',
+      credentials: 'include',
       cache: 'no-cache',
 //      headers,
     }

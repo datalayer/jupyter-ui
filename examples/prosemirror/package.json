@@ -65,7 +65,7 @@
     "prosemirror-state": "1.4.2",
     "prosemirror-transform": "1.7.1",
     "prosemirror-view": "1.30.2",
-    "redux": "4.1.0",
+    "redux": "4.0.5",
     "redux-observable": "1.2.0",
     "rxjs": "6.5.5",
     "typescript-fsa": "3.0.0",

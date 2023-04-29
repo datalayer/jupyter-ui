@@ -3,9 +3,9 @@
 // const path = require('path');
 
 module.exports = {
-  title: 'Jupyter UI',
-  tagline: 'React.js components to create flexible data products compatible with the Jupyter ecosystem.',
-  url: 'https://datalayer.io',
+  title: '🪐 ⚛️ Jupyter UI',
+  tagline: 'React.js components to create user interfaces 💯% compatible with Jupyter.',
+  url: 'https://jupyter-ui.datalayer.tech',
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',

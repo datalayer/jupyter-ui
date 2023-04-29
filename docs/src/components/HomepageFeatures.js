@@ -4,21 +4,11 @@ import styles from './HomepageFeatures.module.css';
 
 const FeatureList = [
   {
-    title: 'Easy to Use',
-//    Svg: require('../../static/img/feature_1.svg').default,
+    title: 'Literate Notebook',
+//    Svg: require('../../static/img/product_3.svg').default,
     description: (
       <>
-        Juyter React is designed from the ground up to be easily installed, used and extended
-        to get your custom data analysis up and running quickly.
-      </>
-    ),
-  },
-  {
-    title: 'Professional Support',
-//    Svg: require('../../static/img/feature_2.svg').default,
-    description: (
-      <>
-        Jupyter UI lets you focus on your work, and we&apos;ll do the chores.
+        For a truly collaborative and accessible notebook, try <a href="./docs/editor/index">Literate Notebook</a>, a better single-page notebook, with built-in collaboration, accessibility...
       </>
     ),
   },
@@ -28,6 +18,15 @@ const FeatureList = [
     description: (
       <>
         Jupyter UI is built on top of renowed open source libraries and is also fully opensource.
+      </>
+    ),
+  },
+  {
+    title: 'Professional Support',
+//    Svg: require('../../static/img/feature_2.svg').default,
+    description: (
+      <>
+        Jupyter UI lets you focus on your work, and we&apos;ll do the chores.
       </>
     ),
   },
