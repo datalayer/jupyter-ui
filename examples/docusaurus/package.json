@@ -5,7 +5,7 @@
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "run-p -c start:*",
-    "jupyter:example:docusaurus": "docusaurus start",
+    "jupyter:example:docusaurus": "run-p -c start:*",
     "start:docusaurus": "docusaurus start",
     "start:jupyter": "cd ./../../dev/sh && ./kill-jupyter-server.sh || true && ./start-jupyter-server.sh docusaurus",
     "build:docusaurus": "docusaurus build",
