@@ -2,7 +2,7 @@ import { BoxPanel, Widget } from '@lumino/widgets';
 import { CommandRegistry } from '@lumino/commands';
 import { SessionContext, Toolbar, ToolbarButton } from '@jupyterlab/apputils';
 import { CodeCellModel, CodeCell, Cell } from '@jupyterlab/cells';
-import { CodeMirrorMimeTypeService, EditorLanguageRegistry, CodeMirrorEditorFactory, EditorExtensionRegistry, ybinding } from '@jupyterlab/codemirror';
+import { CodeMirrorMimeTypeService, EditorLanguageRegistry, CodeMirrorEditorFactory, EditorExtensionRegistry, EditorThemeRegistry, ybinding } from '@jupyterlab/codemirror';
 import { runIcon } from '@jupyterlab/ui-components';
 import { Completer, CompleterModel, CompletionHandler, ProviderReconciliator, KernelCompleterProvider } from '@jupyterlab/completer';
 import { RenderMimeRegistry, standardRendererFactories as initialFactories } from '@jupyterlab/rendermime';
@@ -39,9 +39,14 @@ export class CellAdapter {
         name: 'python3',
       }
     });
+
+    const themes = new EditorThemeRegistry();
+    for (const theme of EditorThemeRegistry.getDefaultThemes()) {
+      themes.addTheme(theme);
+    }
     const editorExtensions = () => {
       const registry = new EditorExtensionRegistry();
-      for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions({})) {
+      for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions({ themes })) {
         registry.addExtension(extensionFactory);
       }
       registry.addExtension({
@@ -59,6 +64,23 @@ export class CellAdapter {
       return registry;
     }  
     const languages = new EditorLanguageRegistry();
+    // Register default languages.
+    for (const language of EditorLanguageRegistry.getDefaultLanguages()) {
+      languages.addLanguage(language);
+    }
+    // Add Jupyter Markdown flavor here to support code block highlighting.
+    languages.addLanguage({
+      name: 'ipythongfm',
+      mime: 'text/x-ipythongfm',
+      load: async () => {
+        // TODO: add support for LaTeX
+        const m = await import('@codemirror/lang-markdown');
+        return m.markdown({
+          codeLanguages: (info: string) => languages.findBest(info) as any
+        });
+      }
+    });
+    
     const mimeService = new CodeMirrorMimeTypeService(languages);
     const commands = new CommandRegistry();
     const useCapture = true;

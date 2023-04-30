@@ -1,6 +1,6 @@
 import { RenderMimeRegistry, standardRendererFactories as initialFactories } from '@jupyterlab/rendermime';
 import { CommandRegistry } from '@lumino/commands';
-import { CodeMirrorEditorFactory, CodeMirrorMimeTypeService, EditorLanguageRegistry, EditorExtensionRegistry, ybinding } from '@jupyterlab/codemirror';
+import { CodeMirrorEditorFactory, CodeMirrorMimeTypeService, EditorLanguageRegistry, EditorExtensionRegistry, EditorThemeRegistry, ybinding } from '@jupyterlab/codemirror';
 import { BoxPanel } from '@lumino/widgets';
 import { ServiceManager } from '@jupyterlab/services';
 import { ConsolePanel } from '@jupyterlab/console';
@@ -29,9 +29,14 @@ class ConsoleAdapter {
       commands.processKeydownEvent(event);
     });
     const rendermime = new RenderMimeRegistry({ initialFactories });
+
+    const themes = new EditorThemeRegistry();
+    for (const theme of EditorThemeRegistry.getDefaultThemes()) {
+      themes.addTheme(theme);
+    }
     const editorExtensions = () => {
       const registry = new EditorExtensionRegistry();
-      for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions({})) {
+      for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions({ themes })) {
         registry.addExtension(extensionFactory);
       }
       registry.addExtension({
@@ -49,13 +54,23 @@ class ConsoleAdapter {
       return registry;
     }
     const languages = new EditorLanguageRegistry();
-    EditorLanguageRegistry.getDefaultLanguages()
-      .filter(language =>
-        ['ipython', 'julia', 'python'].includes(language.name.toLowerCase())
-      )
-      .forEach(language => {
-        languages.addLanguage(language);
-      });
+    // Register default languages.
+    for (const language of EditorLanguageRegistry.getDefaultLanguages()) {
+      languages.addLanguage(language);
+    }
+    // Add Jupyter Markdown flavor here to support code block highlighting.
+    languages.addLanguage({
+      name: 'ipythongfm',
+      mime: 'text/x-ipythongfm',
+      load: async () => {
+        // TODO: add support for LaTeX
+        const m = await import('@codemirror/lang-markdown');
+        return m.markdown({
+          codeLanguages: (info: string) => languages.findBest(info) as any
+        });
+      }
+    });
+    
     const factoryService = new CodeMirrorEditorFactory({
       extensions: editorExtensions(),
       languages

@@ -11,7 +11,7 @@ import { standardRendererFactories, RenderMimeRegistry } from '@jupyterlab/rende
 import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
 import { NotebookPanel, NotebookWidgetFactory, NotebookTracker, NotebookActions, INotebookModel, Notebook } from '@jupyterlab/notebook';
-import { CodeMirrorEditorFactory, CodeMirrorMimeTypeService, EditorLanguageRegistry, EditorExtensionRegistry, ybinding } from '@jupyterlab/codemirror';
+import { CodeMirrorEditorFactory, CodeMirrorMimeTypeService, EditorLanguageRegistry, EditorExtensionRegistry, EditorThemeRegistry, ybinding } from '@jupyterlab/codemirror';
 import { IEditorServices } from '@jupyterlab/codeeditor';
 import { Completer, CompleterModel, CompletionHandler, ProviderReconciliator, KernelCompleterProvider } from '@jupyterlab/completer';
 import { MathJaxTypesetter } from '@jupyterlab/mathjax2';
@@ -87,6 +87,22 @@ export class NotebookAdapter {
     this._renderers.map(renderer => rendererFactories.push(renderer));
 
     const languages = new EditorLanguageRegistry();
+    // Register default languages.
+    for (const language of EditorLanguageRegistry.getDefaultLanguages()) {
+      languages.addLanguage(language);
+    }
+    // Add Jupyter Markdown flavor here to support code block highlighting.
+    languages.addLanguage({
+      name: 'ipythongfm',
+      mime: 'text/x-ipythongfm',
+      load: async () => {
+        // TODO: add support for LaTeX
+        const m = await import('@codemirror/lang-markdown');
+        return m.markdown({
+          codeLanguages: (info: string) => languages.findBest(info) as any
+        });
+      }
+    });
 
     this._rendermime = new RenderMimeRegistry({
       initialFactories: rendererFactories,
@@ -99,9 +115,14 @@ export class NotebookAdapter {
 
     const documentRegistry = new DocumentRegistry({});
     const mimeTypeService = new CodeMirrorMimeTypeService(languages);
+
+    const themes = new EditorThemeRegistry();
+    for (const theme of EditorThemeRegistry.getDefaultThemes()) {
+      themes.addTheme(theme);
+    }
     const editorExtensions = () => {
       const registry = new EditorExtensionRegistry();
-      for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions({})) {
+      for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions({ themes })) {
         registry.addExtension(extensionFactory);
       }
       registry.addExtension({
@@ -138,9 +159,7 @@ export class NotebookAdapter {
         this._store,
       )
     :
-      new NotebookPanel.ContentFactory(
-        { editorFactory }
-      );
+      new NotebookPanel.ContentFactory({ editorFactory });
 
     this._tracker = new NotebookTracker({ namespace: this._uid });
 
