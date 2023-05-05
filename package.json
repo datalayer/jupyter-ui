@@ -36,7 +36,7 @@
       "docs",
       "examples/*",
       "packages/*",
-      "patches/*"
+      "lite/*"
     ],
     "nohoist": [
       "**/hast-util-from-parse5",
