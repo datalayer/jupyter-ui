@@ -15,7 +15,7 @@ document.body.appendChild(div);
 const root = createRoot(div)
 
 root.render(
-  <Jupyter lite={false} terminals={true}>
+  <Jupyter lite={true} terminals={true}>
     <Notebook
       path="test.ipynb"
       model={notebookExample1 as INotebookContent}

@@ -7,15 +7,15 @@ import { ConsolePanel } from '@jupyterlab/console';
 import { IYText } from '@jupyter/ydoc';
 
 class ConsoleAdapter {
-  private consolePanel: BoxPanel;
+  private _panel: BoxPanel;
 
-  constructor(lite: boolean, serviceManager: ServiceManager) {
-    this.consolePanel = new BoxPanel();
-    this.consolePanel.direction = 'top-to-bottom';
-    this.consolePanel.spacing = 0;
-    this.consolePanel.addClass('dla-JupyterLab-Console');
+  constructor(serviceManager: ServiceManager) {
+    this._panel = new BoxPanel();
+    this._panel.direction = 'top-to-bottom';
+    this._panel.spacing = 0;
+    this._panel.addClass('dla-JupyterLab-Console');
     serviceManager.ready.then(() => {
-      this.startConsole('console-path', serviceManager, this.consolePanel);
+      this.startConsole('console-path', serviceManager, this._panel);
     });
   }
 
@@ -28,8 +28,6 @@ class ConsoleAdapter {
     document.addEventListener('keydown', event => {
       commands.processKeydownEvent(event);
     });
-    const rendermime = new RenderMimeRegistry({ initialFactories });
-
     const themes = new EditorThemeRegistry();
     for (const theme of EditorThemeRegistry.getDefaultThemes()) {
       themes.addTheme(theme);
@@ -69,12 +67,12 @@ class ConsoleAdapter {
           codeLanguages: (info: string) => languages.findBest(info) as any
         });
       }
-    });
-    
+    });    
     const factoryService = new CodeMirrorEditorFactory({
       extensions: editorExtensions(),
       languages
     });
+    const rendermime = new RenderMimeRegistry({ initialFactories });
     const mimeTypeService = new CodeMirrorMimeTypeService(languages);
     const editorFactory = factoryService.newInlineEditor;
     const contentFactory = new ConsolePanel.ContentFactory({ editorFactory });
@@ -86,7 +84,8 @@ class ConsoleAdapter {
       mimeTypeService,
       kernelPreference: {
         shouldStart: true,
-        name: 'python3',
+        name: 'python',
+//        autoStartDefault: true,
       }
     });
     consolePanel.title.label = 'Console';
@@ -131,7 +130,7 @@ class ConsoleAdapter {
   }
 
   get panel(): BoxPanel {
-    return this.consolePanel;
+    return this._panel;
   }
 
 }

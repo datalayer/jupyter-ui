@@ -36,7 +36,7 @@ export class CellAdapter {
       kernelPreference: {
         autoStartDefault: true,
         shouldStart: true,
-        name: 'python3',
+        name: 'python',
       }
     });
 

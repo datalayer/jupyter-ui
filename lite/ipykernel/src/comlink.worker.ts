@@ -5,9 +5,7 @@
  * A WebWorker entrypoint that uses comlink to handle postMessage details
  */
 import { expose } from 'comlink';
-
 import { PyoliteRemoteKernel } from './worker';
 
 const worker = new PyoliteRemoteKernel();
-
 expose(worker);

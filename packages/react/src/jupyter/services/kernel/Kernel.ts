@@ -29,11 +29,11 @@ export class Kernel {
       standby: 'never',
     });
     await sessionManager.ready;
-    const randomName = UUID.uuid4() + ".ipynb";
+    const randomName = UUID.uuid4();
     this._session = await sessionManager.startNew({
       path: randomName,
       name: randomName,
-      type: 'notebook',
+      type: this._kernelName,
       kernel: {
         name: this._kernelName,
       },

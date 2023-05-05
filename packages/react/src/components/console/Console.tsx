@@ -5,11 +5,11 @@ import ConsoleAdapter from './ConsoleAdapter';
 import './Console.css';
 
 export const Console = () => {
-  const { lite, serviceManager } = useJupyter();
+  const { serviceManager } = useJupyter();
   if (!serviceManager) {
     return <>Loading...</>;
-  } 
-  const consoleAdapter = new ConsoleAdapter(lite, serviceManager!);
+  }
+  const consoleAdapter = new ConsoleAdapter(serviceManager);
   return <Lumino>{consoleAdapter.panel}</Lumino>
 }
 

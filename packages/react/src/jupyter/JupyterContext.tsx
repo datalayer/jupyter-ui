@@ -78,7 +78,6 @@ const headers = new Headers({
   "Expires": "0",
 });
 */
-
 export const createServerSettings = (baseUrl: string, wsUrl: string) => {
   return ServerConnection.makeSettings({
     baseUrl,
@@ -116,7 +115,8 @@ export const JupyterContextProvider: React.FC<{
     if (lite) {
       startLiteServer().then((serviceManager: ServiceManager) => {
         setServiceManager(serviceManager);
-        setKernelManager((serviceManager.sessions as any)._kernelManager as KernelManager);
+        const kernelManager = (serviceManager.sessions as any)._kernelManager as KernelManager;
+        setKernelManager(kernelManager);
       });
     } else {
       ensureJupyterAuth(serverSettings).then(isAuth => {
@@ -125,23 +125,23 @@ export const JupyterContextProvider: React.FC<{
           console.warn('Redirecting to jupyter login url', loginUrl);
           window.location.replace(loginUrl);
         }
-      });
-      const serviceManager = new ServiceManager({ serverSettings });
-      setServiceManager(serviceManager);
-      const kernelManager = (serviceManager.sessions as any)._kernelManager as KernelManager;
-      setKernelManager(kernelManager);
-      kernelManager.ready.then(() => {
-        if (startDefaultKernel) {
-//          console.log('Kernel Manager is ready.');
-          const kernel = new Kernel({ kernelManager, kernelName: defaultKernelName });
-          kernel.getJupyterKernel().then(k => {
-            console.log(`Kernel started with session id:client_id ${k.id}:${k.clientId}`);
-            k.info.then(info => {
-//              console.log('Kernel information', info);
-            })
-            setKernel(kernel);
-          });
-        }  
+        const serviceManager = new ServiceManager({ serverSettings });
+        setServiceManager(serviceManager);
+        const kernelManager = (serviceManager.sessions as any)._kernelManager as KernelManager;
+        setKernelManager(kernelManager);
+        kernelManager.ready.then(() => {
+          console.log('Kernel Manager is ready', kernelManager);
+          if (startDefaultKernel) {
+            const kernel = new Kernel({ kernelManager, kernelName: defaultKernelName });
+            kernel.getJupyterKernel().then(k => {
+              console.log(`Kernel started with session client_id:id ${k.clientId}:${k.id}`);
+              k.info.then(info => {
+                console.log('Kernel information', info);
+              });
+              setKernel(kernel);
+            });
+          }
+        });
       });
     }
     setVariant(variant);

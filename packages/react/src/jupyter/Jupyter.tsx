@@ -95,8 +95,8 @@ export const Jupyter = (props: JupyterProps) => {
 
 Jupyter.defaultProps = {
   lite: false,
-  startDefaultKernel: true,
   defaultKernelName: 'python',
+  startDefaultKernel: true,
   collaborative: false,
   terminals: false,
 }

@@ -21,7 +21,6 @@ import { ISettings, Settings } from '@datalayer/jupyterlite-settings';
 
 import localforage from 'localforage';
 
-
 /**
  * A plugin installing the service worker.
  */
@@ -64,7 +63,6 @@ const kernelsRoutesPlugin: JupyterLiteServerPlugin<void> = {
         return new Response(JSON.stringify(res));
       }
     );
-
     // DELETE /api/kernels/{kernel_id} - Kill a kernel and delete the kernel id
     app.router.delete(
       '/api/kernels/(.*)',

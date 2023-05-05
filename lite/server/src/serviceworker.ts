@@ -1,12 +1,9 @@
 import { ISignal, Signal } from '@lumino/signaling';
-
-import { PageConfig, URLExt } from '@jupyterlab/coreutils';
-
+// import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 import { IServiceWorkerRegistrationWrapper } from './tokens';
 
-export class ServiceWorkerRegistrationWrapper
-  implements IServiceWorkerRegistrationWrapper
-{
+export class ServiceWorkerRegistrationWrapper implements IServiceWorkerRegistrationWrapper {
+
   constructor() {
     this.initialize();
   }
@@ -47,7 +44,8 @@ export class ServiceWorkerRegistrationWrapper
     }
 
     return await navigator.serviceWorker
-      .register(URLExt.join(PageConfig.getBaseUrl(), 'services.js'))
+//      .register(URLExt.join(PageConfig.getBaseUrl(), 'services.js'))
+      .register("/services.js")
       .then(
         (registration) => {
           this.setRegistration(registration);

@@ -288,7 +288,7 @@ class FileBrowserAdapter {
       const selector = document.createElement('select');
       const option0 = document.createElement('option');
       option0.value = 'python';
-      option0.text = 'Python 3';
+      option0.text = 'Python';
       selector.appendChild(option0);
       const option1 = document.createElement('option');
       option1.value = 'julia';

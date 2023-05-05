@@ -26,10 +26,10 @@ if (IS_PRODUCTION) {
   minimize = true;
 }
 
-const JUPYTER_HOST = 'http://127.0.0.1:8686';
+const JUPYTER_HOST = 'http://localhost:8686';
 
 module.exports = {
-  entry: ['./src/examples/NotebookModel'],
+  entry: ['./src/examples/Console'],
   mode: mode,
   watchOptions: {
     aggregateTimeout: 300,
@@ -39,43 +39,45 @@ module.exports = {
   devServer: {
     port: 3208,
     historyApiFallback: true,
-    https: true,
-    server: 'https',
+    https: false,
+    server: 'http',
     proxy: {
-      '/build/pypi': {
-        target: 'https://datalayer-assets.s3.us-west-2.amazonreact.com/pypi',
-        pathRewrite: { '^/build/pypi': '' },
-        ws: false,
-        secure: false,
-        changeOrigin: true,
+      proxy: {
+        '/build/pypi': {
+          target: 'https://datalayer-assets.s3.us-west-2.amazonaws.com/pypi',
+          pathRewrite: { '^/build/pypi': '' },
+          ws: false,
+          secure: false,
+          changeOrigin: true,
+        },
+        '/services.js': {
+          target: 'https://datalayer-assets.s3.us-west-2.amazonaws.com/services.js',
+          pathRewrite: { '^/services.js': '' },
+          ws: false,
+          secure: false,
+          changeOrigin: true,
+        },
+        '/api/jupyter': {
+          target: JUPYTER_HOST,
+          ws: true,
+          secure: false,
+          changeOrigin: true,
+        },
+        '/plotly.js': {
+          target: JUPYTER_HOST + '/api/jupyter/jupyter_react',
+          ws: false,
+          secure: false,
+          changeOrigin: false,
+        },
       },
-      '/services.js': {
-        target: 'https://datalayer-assets.s3.us-west-2.amazonreact.com/services.js',
-        pathRewrite: { '^/services.js': '' },
-        ws: false,
-        secure: false,
-        changeOrigin: true,
-      },
-      '/api/jupyter': {
-        target: JUPYTER_HOST,
-        ws: true,
-        secure: false,
-        changeOrigin: true,
-      },
-      '/plotly.js': {
-        target: JUPYTER_HOST + '/api/jupyter/pool/react',
-        ws: false,
-        secure: false,
-        changeOrigin: false,
-      },
-    },
+    }
   },
   devtool,
   optimization: {
     minimize,
   },
   output: {
-    publicPath: "https://localhost:3208/",
+    publicPath: "http://localhost:3208/",
     filename: '[name].[contenthash].jupyterReact.js',
   },
   resolve: {
@@ -181,4 +183,4 @@ module.exports = {
       publicPath: false
     }),
   ]
-};
+}

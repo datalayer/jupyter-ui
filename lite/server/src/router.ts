@@ -96,7 +96,6 @@ export class Router {
         ...matches
       );
     }
-
     throw new Error('Cannot route ' + req.method + ' ' + req.url);
   }
 
