@@ -2,7 +2,6 @@ import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import Jupyter from '../jupyter/Jupyter';
 import Notebook from '../components/notebook/Notebook';
-import NotebookHeader from "./toolbars/NotebookToolbarStatus";
 import NotebookToolbar from "./toolbars/NotebookToolbar";
 import CellSidebarNew from "../components/notebook/cell/sidebar/CellSidebarNew";
 import notebookExample1 from "./notebooks/NotebookExample1.ipynb.json";
@@ -17,7 +16,6 @@ const root = createRoot(div)
 
 root.render(
   <Jupyter lite={false} terminals={true}>
-    <NotebookHeader notebookId={NOTEBOOK_UID}/>
     <Notebook
       path="test.ipynb"
       model={notebookExample1 as INotebookContent}
