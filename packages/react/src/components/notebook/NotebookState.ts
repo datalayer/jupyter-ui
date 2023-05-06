@@ -65,6 +65,15 @@ export const selectNotebookModel = (uid: string): {  model: INotebookModel | und
   },
 );
 
+export const selectKernelStatus = (uid: string): string | undefined =>
+  useSelector((state: IJupyterReactState) => {
+    if (state.notebook) {
+      return state.notebook.notebooks.get(uid)?.kernelStatus;
+    }
+    return undefined;
+  }
+);
+
 export const selectActiveCell = (uid: string): Cell<ICellModel> | undefined =>
   useSelector((state: IJupyterReactState) => {
     if (state.notebook) {

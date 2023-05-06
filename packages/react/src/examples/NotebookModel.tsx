@@ -14,7 +14,7 @@ document.body.appendChild(div);
 const root = createRoot(div)
 
 root.render(
-  <Jupyter lite={true} terminals={true}>
+  <Jupyter lite={false} terminals={true}>
     <Notebook
       model={notebookExample1 as INotebookContent}
       CellSidebar={CellSidebarNew}

@@ -206,8 +206,6 @@ export class NotebookAdapter {
     const notebookModelFactory = new CustomNotebookModelFactory({});
     documentRegistry.addModelFactory(notebookModelFactory);
 
-    console.log('---', this._serviceManager);
-
     this._context = new Context({
       manager: this._serviceManager,
       factory: notebookModelFactory,
