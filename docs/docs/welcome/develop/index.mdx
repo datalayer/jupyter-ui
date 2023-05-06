@@ -68,26 +68,28 @@ make build
 Now you can start an example and hack the source code. The changes will build automatically and will be available in your browser. You will have to accept to SSL certificate in your browser the first time.
 
 ```bash
-echo open http://localhost:3208
+# open http://localhost:3208
 yarn start
 ```
 
 We have more examples. Pick one of the following commands and enjoy.
 
 ```bash
-echo open http://localhost:3000
+# open http://localhost:3000
 yarn jupyter:example:cra
-echo open http://localhost:3208
+# open http://localhost:3208
 yarn jupyter:example:lexical
-echo open http://localhost:3000/docs/intro
+# open http://localhost:3000/docs/intro
 yarn jupyter:example:docusaurus
 ```
 
 We also have some uncomplete or deprecated examples...
 
 ```bash
-yarn jupyter:example:slate                 # open http://localhost:3266
-yarn jupyter:example:prosemirror           # open http://localhost:4567
+# open http://localhost:3266
+yarn jupyter:example:slate
+# open http://localhost:4567
+yarn jupyter:example:prosemirror
 ```
 
 ## JupyterLab Extension
@@ -97,7 +99,7 @@ Jupyter UI can also be shipped as a JupyterLab extension.
 ```bash
 cd packages/react
 pip install -e .[test]
-# Double check
+# Double check...
 pip list | grep react
 # jupyter_react ...
 ```

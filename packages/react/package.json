@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyter-react",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Jupyter UI",
   "license": "MIT",
   "main": "lib/index.js",
@@ -45,7 +45,7 @@
     "prettier:base": "prettier \"**/*{.ts,.tsx,.js,.jsx,.css,.json,.md}\"",
     "prettier:check": "jlpm prettier:base --check",
     "start": "run-p -c start:*",
-    "start:jupyter": "cd ./../.. && make start-jupyter-server",
+    "start-jupyter": "cd ./../.. && make start-jupyter-server",
     "start:webpack": "webpack serve",
     "stylelint": "jlpm stylelint:check --fix",
     "stylelint:check": "stylelint --cache \"style/**/*.css\"",
