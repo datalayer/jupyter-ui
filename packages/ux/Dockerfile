@@ -18,4 +18,4 @@ WORKDIR /opt/datalayer/editor
 
 EXPOSE 9300
 
-CMD ["python", "jupyter_ui/main.py"]
+CMD ["python", "jupyter_ux/main.py"]

@@ -1,7 +1,7 @@
 {
   "NotebookApp": {
     "nbserver_extensions": {
-      "jupyter_ui": true
+      "jupyter_ux": true
     }
   }
 }

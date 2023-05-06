@@ -20,9 +20,8 @@ export const FileBrowserTree = () => {
   const [tree, setTree] = useState(initialTree);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   const { serviceManager } = useJupyter();
-  const [services, _] = useState(new Services(serviceManager!));
-  const loadPath = (subTree: RenderTree, path: string[]) => {
-    const loadFolderItems = (path: string[]): Promise<RenderTree[]> => {
+  const loadPath = (services: Services, subTree: RenderTree, path: string[]) => {
+    const loadFolderItems = (services: Services, path: string[]): Promise<RenderTree[]> => {
       const folderItems = services.contents().get(path.join('/')).then(res => {
         const items = res.content.map((e: any) => {
           if (e.type === 'directory') {
@@ -42,11 +41,11 @@ export const FileBrowserTree = () => {
       });
       return folderItems;
     };
-    loadFolderItems(path).then(folderItems => {
+    loadFolderItems(services, path).then(folderItems => {
       subTree.children = folderItems;
       for (const child of subTree.children) {
         if (child.id.startsWith('folder_')) {
-          loadPath(child, path.concat(child.name));
+          loadPath(services, child, path.concat(child.name));
         }
       }
       setTree(initialTree);
@@ -54,8 +53,11 @@ export const FileBrowserTree = () => {
     });
   }
   useEffect(() => {
-    loadPath(initialTree, []);
-  }, []);
+    if (serviceManager) {
+      const services = new Services(serviceManager!);
+      loadPath(services, initialTree, []);
+    }
+  }, [serviceManager]);
   const renderTree = (nodes: RenderTree) => {
     return <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
       {Array.isArray(nodes.children)

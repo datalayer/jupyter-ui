@@ -1,7 +1,7 @@
 {
   "jupyter.lab.shortcuts": [],
-  "title": "@datalayer/jupyter-ui",
-  "description": "@datalayer/jupyter-ui settings.",
+  "title": "@datalayer/jupyter-ux",
+  "description": "@datalayer/jupyter-ux settings.",
   "type": "object",
   "properties": {},
   "additionalProperties": false

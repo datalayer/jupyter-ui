@@ -5,13 +5,13 @@ from .handlers import setup_handlers
 def _jupyter_labextension_paths():
     return [{
         "src": "labextension",
-        "dest": "@datalayer/jupyter-ui"
+        "dest": "@datalayer/jupyter-ux"
     }]
 
 
 def _jupyter_server_extension_points():
     return [{
-        "module": "jupyter_ui"
+        "module": "jupyter_ux"
     }]
 
 
@@ -23,7 +23,7 @@ def _load_jupyter_server_extension(server_app):
     server_app: jupyter_server.serverapp.ServerApp
     """
     setup_handlers(server_app.web_app)
-    server_app.log.info("Registered jupyter_ui server extension")
+    server_app.log.info("Registered jupyter_ux server extension")
 
 
 # For backward compatibility with notebook server - useful for Binder/JupyterHub

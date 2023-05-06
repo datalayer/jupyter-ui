@@ -17,7 +17,7 @@ export type IJupyterDocker = {
 };
 
 export const IJupyterDocker = new Token<IJupyterDocker>(
-  '@datalayer/jupyter-ui:plugin'
+  '@datalayer/jupyter-ux:plugin'
 );
 
 export const jupyterDocker: IJupyterDocker = {
@@ -26,17 +26,17 @@ export const jupyterDocker: IJupyterDocker = {
 }
 
 /**
- * The command IDs used by the jupyter-ui-widget plugin.
+ * The command IDs used by the jupyter-ux-widget plugin.
  */
 namespace CommandIDs {
-  export const create = 'create-jupyter-ui-widget';
+  export const create = 'create-jupyter-ux-widget';
 }
 
 /**
- * Initialization data for the @datalayer/jupyter-ui extension.
+ * Initialization data for the @datalayer/jupyter-ux extension.
  */
 const plugin: JupyterFrontEndPlugin<IJupyterDocker> = {
-  id: '@datalayer/jupyter-ui:plugin',
+  id: '@datalayer/jupyter-ux:plugin',
   autoStart: true,
   requires: [ICommandPalette],
   optional: [ISettingRegistry, ILauncher],
@@ -50,18 +50,18 @@ const plugin: JupyterFrontEndPlugin<IJupyterDocker> = {
     const { commands } = app;
     const command = CommandIDs.create;
     commands.addCommand(command, {
-      caption: 'Show Jupyter UI',
-      label: 'Jupyter UI',
+      caption: 'Show Jupyter Ux',
+      label: 'Jupyter Ux',
       icon: (args: any) => reactIcon,
       execute: () => {
         const content = new DatalayerWidget();
         const widget = new MainAreaWidget<DatalayerWidget>({ content });
-        widget.title.label = 'Jupyter UI';
+        widget.title.label = 'Jupyter Ux';
         widget.title.icon = reactIcon;
         app.shell.add(widget, 'main');
       }
     });
-    const category = 'Jupyter UI';
+    const category = 'Jupyter Ux';
     palette.addItem({ command, category, args: { origin: 'from palette' } });
     if (launcher) {
       launcher.add({
@@ -70,15 +70,15 @@ const plugin: JupyterFrontEndPlugin<IJupyterDocker> = {
         rank: -1,
       });
     }
-    console.log('JupyterLab extension @datalayer/jupyter-ui is activated!');
+    console.log('JupyterLab extension @datalayer/jupyter-ux is activated!');
     if (settingRegistry) {
       settingRegistry
         .load(plugin.id)
         .then(settings => {
-          console.log('@datalayer/jupyter-ui settings loaded:', settings.composite);
+          console.log('@datalayer/jupyter-ux settings loaded:', settings.composite);
         })
         .catch(reason => {
-          console.error('Failed to load settings for @datalayer/jupyter-ui.', reason);
+          console.error('Failed to load settings for @datalayer/jupyter-ux.', reason);
         });
     }
     requestAPI<any>('get_example')
@@ -87,10 +87,10 @@ const plugin: JupyterFrontEndPlugin<IJupyterDocker> = {
       })
       .catch(reason => {
         console.error(
-          `The jupyter_ui server extension appears to be missing.\n${reason}`
+          `The jupyter_ux server extension appears to be missing.\n${reason}`
         );
       });
-    connect('ws://localhost:8888/jupyter_ui/echo', true);
+    connect('ws://localhost:8888/jupyter_ux/echo', true);
     return jupyterDocker;
   }
 };

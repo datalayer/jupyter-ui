@@ -1,7 +1,7 @@
 {
-  "name": "@datalayer/jupyter-ui-ui-tests",
+  "name": "@datalayer/jupyter-ux-ui-tests",
   "version": "1.0.0",
-  "description": "JupyterLab @datalayer/jupyter-ui Integration Tests",
+  "description": "JupyterLab @datalayer/jupyter-ux Integration Tests",
   "private": true,
   "scripts": {
     "start": "jupyter lab --config jupyter_server_test_config.py",

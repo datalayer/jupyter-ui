@@ -21,7 +21,7 @@ class JupyterDockerHandler(JupyterHandler):
     @tornado.web.authenticated
     def get(self):
         self.finish(json.dumps({
-            "data": "This is /jupyter_ui/get_example endpoint!"
+            "data": "This is /jupyter_ux/get_example endpoint!"
         }))
 
 
@@ -76,8 +76,8 @@ def setup_handlers(web_app):
     """setup handlers"""
     host_pattern = ".*$"
     base_url = web_app.settings["base_url"]
-    route_pattern = url_path_join(base_url, "jupyter_ui", "get_example")
-    echo_pattern = url_path_join(base_url, "jupyter_ui", "echo")
+    route_pattern = url_path_join(base_url, "jupyter_ux", "get_example")
+    echo_pattern = url_path_join(base_url, "jupyter_ux", "echo")
     handlers = [
         (route_pattern, JupyterDockerHandler),
         (echo_pattern, WsEchoHandler),
