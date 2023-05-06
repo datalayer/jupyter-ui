@@ -28,9 +28,17 @@ IPyWidgets are supported (the Comm feature needs to be fixed). JupyterLite and P
 
 You can find more context reading this [abstract](https://fosdem.org/2022/schedule/event/lt_jupyter) of the talk given at [FOSDEM 2022](https://fosdem.org/2022) ([video recording](http://bofh.nikhef.nl/events/FOSDEM/2022/L.lightningtalks/lt_jupyter.webm)).
 
-## Integrations
+## Next.js Integration
 
-We maintain a plugin for [Docusaurus](https://docusaurus.io) in the [docusaurus](https://github.com/datalayer/jupyter-ui/tree/main/packages/docusaurus) package folder (see the [Docusaurus example](https://github.com/datalayer/jupyter-ui/tree/main/examples/docusaurus)).
+See the [Next.js example](https://github.com/datalayer/jupyter-ui/tree/main/examples/next-js).
+
+<div align="center" style="text-align: center">
+  <img alt="Jupyter UI Docusaurus" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-nextjs.png" />
+</div>
+
+## Docusaurus Integration
+
+We maintain a plugin for [Docusaurus](https://docusaurus.io) in the [docusaurus](https://github.com/datalayer/jupyter-ui/tree/main/packages/docusaurus-plugin) package folder (see the [Docusaurus example](https://github.com/datalayer/jupyter-ui/tree/main/examples/docusaurus)).
 
 <div align="center" style="text-align: center">
   <img alt="Jupyter UI Docusaurus" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-docusaurus.png" />
