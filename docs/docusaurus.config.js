@@ -48,6 +48,12 @@ module.exports = {
         },
         {
           type: 'doc',
+          docId: '/category/integrations',
+          position: 'left',
+          label: 'Integrations',
+        },
+        {
+          type: 'doc',
           docId: '/category/examples',
           position: 'left',
           label: 'Examples',
