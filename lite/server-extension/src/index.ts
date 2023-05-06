@@ -2,11 +2,8 @@
 // Distributed under the terms of the Modified BSD License.
 
 import { PageConfig } from '@jupyterlab/coreutils';
-
 import { KernelSpec } from '@jupyterlab/services';
-
 import { IKernels, Kernels, IKernelSpecs, KernelSpecs } from '@datalayer/jupyterlite-kernel';
-
 import {
   JupyterLiteServer,
   JupyterLiteServerPlugin,
@@ -14,11 +11,8 @@ import {
   IServiceWorkerRegistrationWrapper,
   ServiceWorkerRegistrationWrapper,
 } from '@datalayer/jupyterlite-server';
-
 import { ISessions, Sessions } from '@datalayer/jupyterlite-session';
-
 import { ISettings, Settings } from '@datalayer/jupyterlite-settings';
-
 import localforage from 'localforage';
 
 /**

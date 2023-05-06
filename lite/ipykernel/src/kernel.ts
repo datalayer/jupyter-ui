@@ -1,14 +1,9 @@
 import { PromiseDelegate } from '@lumino/coreutils';
-
 import { URLExt, PageConfig } from '@jupyterlab/coreutils';
 import { KernelMessage } from '@jupyterlab/services';
-
 import { BaseKernel, IKernel } from '@datalayer/jupyterlite-kernel';
-
 import { wrap } from 'comlink';
-
 import { IPyoliteWorkerKernel, IRemotePyoliteWorkerKernel } from './tokens';
-
 import { PIPLITE_WHEEL } from './_pypi';
 
 /**

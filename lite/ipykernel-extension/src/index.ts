@@ -2,13 +2,11 @@
 // Distributed under the terms of the Modified BSD License.
 
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
-
 import {
   IServiceWorkerRegistrationWrapper,
   JupyterLiteServer,
   JupyterLiteServerPlugin,
 } from '@datalayer/jupyterlite-server';
-
 import { IKernel, IKernelSpecs } from '@datalayer/jupyterlite-kernel';
 
 /**

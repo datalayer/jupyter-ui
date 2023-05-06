@@ -117,6 +117,19 @@ export const JupyterContextProvider: React.FC<{
         setServiceManager(serviceManager);
         const kernelManager = (serviceManager.sessions as any)._kernelManager as KernelManager;
         setKernelManager(kernelManager);
+        kernelManager.ready.then(() => {
+          console.log('Kernel Manager is ready', kernelManager);
+          if (startDefaultKernel) {
+            const kernel = new Kernel({ kernelManager, kernelName: defaultKernelName });
+            kernel.getJupyterKernel().then(k => {
+              console.log(`Kernel started with session client_id:id ${k.clientId}:${k.id}`);
+              k.info.then(info => {
+                console.log('Kernel information', info);
+              });
+              setKernel(kernel);
+            });
+          }
+        });
       });
     } else {
       ensureJupyterAuth(serverSettings).then(isAuth => {
