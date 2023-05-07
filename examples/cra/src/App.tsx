@@ -7,12 +7,9 @@ import {
 import OutputsComponents from './examples/outputs/OutputsComponents';
 import CellComponents from './examples/cell/CellComponents';
 import IPyWidgetsSimple from './examples/ipywidgets/IPyWidgetsSimple';
-// import FileBrowserTree from './components/FileBrowserTree';
-
-import logo from './logo.svg';
+import FileBrowserTree from './components/FileBrowserTree';
 
 import './App.css';
-import FileBrowserTree from './components/FileBrowserTree';
 function App() {
   return (
     <>
@@ -22,8 +19,7 @@ function App() {
         <OutputsComponents />
         <CellComponents />
         <Notebook path={'/ping.ipynb'} CellSidebar={CellSidebarDefault} />
-
-        {/* <FileBrowserTree /> */}
+        <FileBrowserTree />
       </Jupyter>
     </>
   );
