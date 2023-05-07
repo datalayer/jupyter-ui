@@ -25,11 +25,11 @@
     "start:jupyter": "cd ./../.. && make start-jupyter-server",
     "start:webpack": "webpack serve",
     "start_vite": "vite --host",
-    "kill": "./../../dev/sh/kill-jupyter-server.sh || true "
+    "kill": "./../../dev/sh/kill-jupyter-server.sh || true"
   },
   "dependencies": {
     "@datalayer/jupyter-lexical": "0.0.1",
-    "@primer/react": "35.22.0",
+    "@primer/react": "35.24.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-json-tree": "0.17.0"

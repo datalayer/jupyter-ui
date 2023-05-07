@@ -14,7 +14,6 @@ function App() {
   return (
     <>
       <Jupyter startDefaultKernel={true}>
-        <FileBrowserTree />
         <IpyWidgetsComponent Widget={IPyWidgetsSimple} />
         <OutputsComponents />
         <CellComponents />
