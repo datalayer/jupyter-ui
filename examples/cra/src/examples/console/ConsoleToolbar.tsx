@@ -1,18 +1,15 @@
-import React from "react";
-import Typography from '@mui/material/Typography';
+import React from 'react';
+import {Text} from '@primer/react';
 // import { useDispatch } from "react-redux";
-// import Button from '@mui/material/Button';
 // import { selectConsole, consoleActions } from './ConsoleRedux';
 
 const ConsoleToolbar: React.FC = () => {
-//  const console = selectConsole();
-//  const dispatch = useDispatch();
+  //  const console = selectConsole();
+  //  const dispatch = useDispatch();
   return (
     <>
-      <Typography variant="h5" gutterBottom>
-        Console Example
-      </Typography>
-{/*
+      <Text as="h5">Console Example</Text>
+      {/*
       <div>
         <Button
           variant="outlined"
@@ -35,6 +32,6 @@ const ConsoleToolbar: React.FC = () => {
 */}
     </>
   );
-}
+};
 
 export default ConsoleToolbar;

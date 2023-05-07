@@ -1,41 +1,43 @@
-import { useDispatch } from "react-redux";
-import Button from '@mui/material/Button';
-import PlayCircleOutline from '@mui/icons-material/PlayCircleOutline';
-import SaveOutlined from '@mui/icons-material/SaveOutlined';
-import Typography from '@mui/material/Typography';
-import { notebookActions } from '@datalayer/jupyter-react';
+import {useDispatch} from 'react-redux';
+import {Button} from '@primer/react';
+import {PlayIcon} from '@primer/octicons-react';
+import {FileIcon} from '@primer/octicons-react';
+import {Text} from '@primer/react';
+import {notebookActions} from '@datalayer/jupyter-react';
 
-const NotebookSimpleToolbar = (props: { notebookId: string }) => {
-  const { notebookId } = props;
+const NotebookSimpleToolbar = (props: {notebookId: string}) => {
+  const {notebookId} = props;
   const dispatch = useDispatch();
   return (
     <>
-      <Typography variant="h5" gutterBottom>
-        Notebook Example
-      </Typography>
+      <Text as="h5">Notebook Example</Text>
       <>
         <Button
-          variant="outlined"
+          variant="outline"
           color="secondary"
-          startIcon={<PlayCircleOutline />}
+          leadingIcon={PlayIcon}
           onClick={() => dispatch(notebookActions.run.started(notebookId))}
-          >
-            Run
+        >
+          Run
         </Button>
       </>
-      <Button 
-        variant="outlined"
-        color="secondary"
-        startIcon={<SaveOutlined />}
-        onClick={() => dispatch(notebookActions.save.started({ uid: notebookId, date: new Date() }))}
-        >
-          Save
+      <Button
+        variant="outline"
+        // color="secondary"
+        leadingIcon={FileIcon}
+        onClick={() =>
+          dispatch(
+            notebookActions.save.started({uid: notebookId, date: new Date()})
+          )
+        }
+      >
+        Save
       </Button>
-      <Typography variant="subtitle1" gutterBottom>
+      <Text as="h3">
         {/* Notebook: {notebook.notebookChange.cellsChange} */}
-      </Typography>
+      </Text>
     </>
   );
-}
+};
 
 export default NotebookSimpleToolbar;

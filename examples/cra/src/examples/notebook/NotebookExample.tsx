@@ -1,11 +1,9 @@
-import { render } from 'react-dom';
-import { ThemeProvider } from '@mui/material/styles';
-import { Jupyter, Notebook } from '@datalayer/jupyter-react';
-import muiLightTheme from '../theme/Theme';
+import {render} from 'react-dom';
+import {Jupyter, Notebook} from '@datalayer/jupyter-react';
 import NotebookSimpleToolbar from './NotebookSimpleToolbar';
-import Layers from '../theme/Layers'
+import Layers from '../theme/Layers';
 
-import "./../index.css";
+import './../index.css';
 
 const NOTEBOOK_UID = 'notebook-uid-example';
 
@@ -14,25 +12,15 @@ const NOTEBOOK_UID = 'notebook-uid-example';
  */
 const Example = () => {
   return (
-    <ThemeProvider theme={muiLightTheme}>
-      <Jupyter collaborative={false} terminals={false}>
-        <Layers />
-        <NotebookSimpleToolbar notebookId={NOTEBOOK_UID}/>
-        <Notebook
-          uid={NOTEBOOK_UID}
-          path='ping.ipynb'
-          ipywidgets='classic'
-        />
-      </Jupyter>
-    </ThemeProvider>
-  )
-}
+    <Jupyter collaborative={false} terminals={false}>
+      <Layers />
+      <NotebookSimpleToolbar notebookId={NOTEBOOK_UID} />
+      <Notebook uid={NOTEBOOK_UID} path="ping.ipynb" ipywidgets="classic" />
+    </Jupyter>
+  );
+};
 
 const div = document.createElement('div');
 document.body.appendChild(div);
 
-render(
-  <Example/>
-  ,
-  div
-);
+render(<Example />, div);

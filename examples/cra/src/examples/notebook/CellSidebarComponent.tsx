@@ -1,32 +1,39 @@
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import PlayArrow from '@mui/icons-material/PlayArrowOutlined';
-import Delete from '@mui/icons-material/DeleteOutline';
-import Typography from '@mui/material/Typography';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { PanelLayout } from '@lumino/widgets';
-import { selectNotebook, notebookActions, CellSidebarProps } from '@datalayer/jupyter-react';
+import {useState} from 'react';
+import {useDispatch} from 'react-redux';
+import {
+  ChevronRightIcon,
+  ChevronUpIcon,
+  ChevronDownIcon,
+} from '@primer/octicons-react';
+import {XIcon} from '@primer/octicons-react';
+import {Text} from '@primer/react';
+import {PanelLayout} from '@lumino/widgets';
+import {
+  selectNotebook,
+  notebookActions,
+  CellSidebarProps,
+} from '@datalayer/jupyter-react';
 
 const CELL_HEADER_DIV_CLASS = 'dla-CellHeader-container';
 
 const CellSidebarComponent = (props: CellSidebarProps) => {
-  const { notebookId } = props;
+  const {notebookId} = props;
   const [visible, setVisible] = useState(false);
   const dispatch = useDispatch();
   const notebook = selectNotebook(notebookId);
   const layout = notebook?.activeCell?.layout;
   if (layout) {
-    const selectedCellSidebar = (notebook?.activeCell?.layout as PanelLayout).widgets[0];
-    if (!visible && (selectedCellSidebar.id === props.cellId)) {
+    const selectedCellSidebar = (notebook?.activeCell?.layout as PanelLayout)
+      .widgets[0];
+    if (!visible && selectedCellSidebar.id === props.cellId) {
       setVisible(true);
     }
-    if (visible && (selectedCellSidebar.id !== props.cellId)) {
+    if (visible && selectedCellSidebar.id !== props.cellId) {
       setVisible(false);
     }
   }
   if (!visible) {
-    return <div></div>
+    return <div></div>;
   }
   return (
     <div className={CELL_HEADER_DIV_CLASS}>
@@ -36,31 +43,48 @@ const CellSidebarComponent = (props: CellSidebarProps) => {
           dispatch(notebookActions.run.started(notebookId));
         }}
       >
-        <span style={{ display: "flex" }}>
-          <PlayArrow fontSize="small" />
-          <Typography variant="body2" color="textSecondary">Run</Typography>
+        <span style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
+          <ChevronRightIcon size={16} />
+          <Text as="p" color="textSecondary">
+            Run
+          </Text>
         </span>
       </div>
       <div
         onClick={e => {
           e.preventDefault();
-          dispatch(notebookActions.insertAbove.started({ uid: notebookId, cellType: "code" }));
+          dispatch(
+            notebookActions.insertAbove.started({
+              uid: notebookId,
+              cellType: 'code',
+            })
+          );
         }}
       >
-        <span style={{ display: "flex" }}>
-          <ArrowUpwardIcon fontSize="small" />
-          <Typography variant="body2" color="textSecondary">Add above</Typography>
+        <span style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
+          <ChevronUpIcon size={16} />
+
+          <Text as="p" color="textSecondary">
+            Add above
+          </Text>
         </span>
       </div>
       <div
         onClick={e => {
           e.preventDefault();
-          dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "code" }));
+          dispatch(
+            notebookActions.insertBelow.started({
+              uid: notebookId,
+              cellType: 'code',
+            })
+          );
         }}
       >
-        <span style={{ display: "flex" }}>
-          <ArrowDownwardIcon fontSize="small" />
-          <Typography variant="body2" color="textSecondary">Add below</Typography>
+        <span style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
+          <ChevronDownIcon size={16} />
+          <Text as="p" color="textSecondary">
+            Add below
+          </Text>
         </span>
       </div>
       <div
@@ -69,13 +93,15 @@ const CellSidebarComponent = (props: CellSidebarProps) => {
           dispatch(notebookActions.delete.started(notebookId));
         }}
       >
-        <span style={{ display: "flex" }}>
-          <Delete fontSize="small" />
-          <Typography variant="body2" color="textSecondary">Delete</Typography>
+        <span style={{display: 'flex', alignItems: 'center', gap: '5px'}}>
+          <XIcon size={16} />
+          <Text as="p" color="textSecondary">
+            Delete
+          </Text>
         </span>
       </div>
     </div>
   );
-}
+};
 
 export default CellSidebarComponent;

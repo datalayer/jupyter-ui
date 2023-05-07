@@ -1,18 +1,15 @@
-import React from "react";
-import Typography from '@mui/material/Typography';
+import React from 'react';
+import {Text} from '@primer/react';
 // import { useDispatch } from "react-redux";
-// import Button from '@mui/material/Button';
 // import { selectFileBrowser, fileBrowserActions } from './FileBrowserRedux';
 
 const FileBrowserToolbar: React.FC = () => {
-//  const fileBrowser = selectFileBrowser();
-//  const dispatch = useDispatch();
+  //  const fileBrowser = selectFileBrowser();
+  //  const dispatch = useDispatch();
   return (
     <>
-      <Typography variant="h5" gutterBottom>
-        FileBrowser Example
-      </Typography>
-{/*
+      <Text as="h5">FileBrowser Example</Text>
+      {/*
       <div>
         <Button 
           variant="outlined"
@@ -35,6 +32,6 @@ const FileBrowserToolbar: React.FC = () => {
 */}
     </>
   );
-}
+};
 
 export default FileBrowserToolbar;

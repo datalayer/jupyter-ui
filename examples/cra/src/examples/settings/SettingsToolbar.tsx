@@ -1,18 +1,15 @@
-import React from "react";
-import Typography from '@mui/material/Typography';
+import React from 'react';
+import {Text} from '@primer/react';
 // import { useDispatch } from "react-redux";
-// import Button from '@mui/material/Button';
 // import { selectSettings, settingsActions } from './SettingsRedux';
 
 const SettingsToolbar: React.FC = () => {
-//  const settings = selectSettings();
-//  const dispatch = useDispatch();
+  //  const settings = selectSettings();
+  //  const dispatch = useDispatch();
   return (
     <>
-      <Typography variant="h5" gutterBottom>
-        Settings Example
-      </Typography>
-{/*
+      <Text as="h5">Settings Example</Text>
+      {/*
       <div>
         <Button 
           variant="outlined"
@@ -35,6 +32,6 @@ const SettingsToolbar: React.FC = () => {
 */}
     </>
   );
-}
+};
 
 export default SettingsToolbar;

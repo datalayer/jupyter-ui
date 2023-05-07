@@ -1,16 +1,27 @@
-import React, { useState, useMemo } from 'react';
-import { Theme } from '@mui/material/styles';
-import { makeStyles } from '@mui/styles';
+import React, {useState, useMemo} from 'react';
+import {Theme} from '@mui/material/styles';
+import {makeStyles} from '@mui/styles';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography';
+// import Typography from '@mui/material/Typography';
+import {Text} from '@primer/react';
 import Box from '@mui/material/Box';
 import {
-  useJupyter, IpyWidgetsComponent, Cell, Commands, Console, Dialog,
-  FileBrowser, Notebook, Kernel, Output, Settings, Terminal
+  useJupyter,
+  IpyWidgetsComponent,
+  Cell,
+  Commands,
+  Console,
+  Dialog,
+  FileBrowser,
+  Notebook,
+  Kernel,
+  Output,
+  Settings,
+  Terminal,
 } from '@datalayer/jupyter-react';
-import { IOutput } from "@jupyterlab/nbformat";
-import FileBrowserTree from "./../../components/FileBrowserTree";
+import {IOutput} from '@jupyterlab/nbformat';
+import FileBrowserTree from './../../components/FileBrowserTree';
 import LuminoToolbar from '../lumino/LuminoToolbar';
 import LuminoComponent from '../lumino/LuminoComponent';
 import IpyWidgetsToolbar from '../ipywidgets/IpyWidgetsToolbar';
@@ -49,36 +60,30 @@ ax2.set_ylabel('Undamped')
 plt.show()`;
 
 const OUTPUT: IOutput[] = [
-    {
-     "data": {
-      "application/json": {
-       "array": [
-        1,
-        2,
-        3
-       ],
-       "bool": true,
-       "object": {
-        "foo": "bar"
-       },
-       "string": "string"
+  {
+    data: {
+      'application/json': {
+        array: [1, 2, 3],
+        bool: true,
+        object: {
+          foo: 'bar',
+        },
+        string: 'string',
       },
-      "text/plain": [
-       "<IPython.core.display.JSON object>"
-      ]
-     },
-     "execution_count": 8,
-     "metadata": {
-      "application/json": {
-       "expanded": false,
-       "root": "root"
-      }
-     },
-     "output_type": "execute_result"
-    }
-  ];
+      'text/plain': ['<IPython.core.display.JSON object>'],
+    },
+    execution_count: 8,
+    metadata: {
+      'application/json': {
+        expanded: false,
+        root: 'root',
+      },
+    },
+    output_type: 'execute_result',
+  },
+];
 
-const NOTEBOOK_UID = "notebook-id-gallery";
+const NOTEBOOK_UID = 'notebook-id-gallery';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -87,7 +92,7 @@ interface TabPanelProps {
 }
 
 function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
+  const {children, value, index, ...other} = props;
   return (
     <div
       role="tabpanel"
@@ -98,7 +103,7 @@ function TabPanel(props: TabPanelProps) {
     >
       {value === index && (
         <Box p={3}>
-          <Typography>{children}</Typography>
+          <Text>{children}</Text>
         </Box>
       )}
     </div>
@@ -109,7 +114,7 @@ function tabsProps(index: any) {
   return {
     id: `vertical-tab-${index}`,
     'aria-Toolbars': `vertical-tabpanel-${index}`,
-  }
+  };
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -125,11 +130,12 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 const Gallery = () => {
-  const { kernelManager } = useJupyter();
+  const {kernelManager} = useJupyter();
   const classes = useStyles();
   const [value, setValue] = useState(0);
   const kernel = useMemo(() => {
-    if (kernelManager) return new Kernel({ kernelManager, kernelName: 'python3' });
+    if (kernelManager)
+      return new Kernel({kernelManager, kernelName: 'python3'});
   }, [kernelManager]);
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
@@ -144,86 +150,78 @@ const Gallery = () => {
         aria-label="Vertical tabs example"
         className={classes.tabs}
       >
-        <Tab label="Lumino" {...tabsProps(0)}/>
-        <Tab label="IpyWidgets" {...tabsProps(1)}/>
-        <Tab label="Outputs" {...tabsProps(2)}/>
-        <Tab label="Cell" {...tabsProps(3)}/>
-        <Tab label="Notebook" {...tabsProps(4)}/>
-        <Tab label="Commands" {...tabsProps(5)}/>
-        <Tab label="Console" {...tabsProps(6)}/>
-        <Tab label="Dialog" {...tabsProps(7)}/>
-        <Tab label="File Browser" {...tabsProps(8)}/>
-        <Tab label="Settings" {...tabsProps(9)}/>
-        <Tab label="Terminal" {...tabsProps(10)}/>
+        <Tab label="Lumino" {...tabsProps(0)} />
+        <Tab label="IpyWidgets" {...tabsProps(1)} />
+        <Tab label="Outputs" {...tabsProps(2)} />
+        <Tab label="Cell" {...tabsProps(3)} />
+        <Tab label="Notebook" {...tabsProps(4)} />
+        <Tab label="Commands" {...tabsProps(5)} />
+        <Tab label="Console" {...tabsProps(6)} />
+        <Tab label="Dialog" {...tabsProps(7)} />
+        <Tab label="File Browser" {...tabsProps(8)} />
+        <Tab label="Settings" {...tabsProps(9)} />
+        <Tab label="Terminal" {...tabsProps(10)} />
       </Tabs>
-      <div style={{ width: '100vh' }}>
+      <div style={{width: '100vh'}}>
         <TabPanel value={value} index={0}>
-          <LuminoToolbar/>
-          <LuminoComponent/>
+          <LuminoToolbar />
+          <LuminoComponent />
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <IpyWidgetsToolbar/>
-          <IpyWidgetsComponent Widget={IpyWidgetsExample}/>
+          <IpyWidgetsToolbar />
+          <IpyWidgetsComponent Widget={IpyWidgetsExample} />
         </TabPanel>
         <TabPanel value={value} index={2}>
-          <OutputToolbar/>
-          <Output
-            outputs={OUTPUT}
-            autoRun={false}
-            kernel={kernel}
-         />
+          <OutputToolbar />
+          <Output outputs={OUTPUT} autoRun={false} kernel={kernel} />
           <Output
             autoRun={false}
             kernel={kernel}
             code={"print('Hello Datalayer 👍')"}
-         />
-          <Output
-            autoRun={true}
-            kernel={kernel}
-            code={SOURCE}
-         />
+          />
+          <Output autoRun={true} kernel={kernel} code={SOURCE} />
         </TabPanel>
         <TabPanel value={value} index={3}>
-          <CellToolbar/>
-          <Cell source={SOURCE}/>
+          <CellToolbar />
+          <Cell source={SOURCE} />
         </TabPanel>
         <TabPanel value={value} index={4}>
-          <NotebookToolbar notebookId={NOTEBOOK_UID}/>
+          <NotebookToolbar notebookId={NOTEBOOK_UID} />
           <Notebook
             uid={NOTEBOOK_UID}
-            path='ping.ipynb'
+            path="ping.ipynb"
             ipywidgets="classic"
             CellSidebar={CellSidebarExample}
-            />
+          />
         </TabPanel>
         <TabPanel value={value} index={5}>
-          <CommandsToolbar/>
-          <Commands/>
+          <CommandsToolbar />
+          <Commands />
         </TabPanel>
         <TabPanel value={value} index={6}>
-          <ConsoleToolbar/>
-          <Console/>
+          <ConsoleToolbar />
+          <Console />
         </TabPanel>
         <TabPanel value={value} index={7}>
-          <DialogToolbar/>
-          <Dialog/>
+          <DialogToolbar />
+          <Dialog />
         </TabPanel>
         <TabPanel value={value} index={8}>
-          <FileBrowserToolbar/>
-          <FileBrowserTree/>
-          <FileBrowser/>
+          <FileBrowserToolbar />
+          <FileBrowserTree />
+          <FileBrowser />
         </TabPanel>
         <TabPanel value={value} index={9}>
-          <SettingsToolbar/>
-          <Settings/>
+          <SettingsToolbar />
+          <Settings />
         </TabPanel>
         <TabPanel value={value} index={10}>
-          <TerminalToolbar/>
-          <Terminal/>
+          <TerminalToolbar />
+          <Terminal />
         </TabPanel>
       </div>
     </div>
   );
-}
+};
 
 export default Gallery;

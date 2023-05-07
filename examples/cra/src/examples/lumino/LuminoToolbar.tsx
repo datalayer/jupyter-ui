@@ -1,9 +1,7 @@
-import Typography from '@mui/material/Typography';
+import {Text} from '@primer/react';
 
 const LuminoToolbar = () => {
-  return <Typography variant="h5" gutterBottom>
-    Lumino Example
-  </Typography>
+  return <Text as="h5">Lumino Example</Text>;
 };
-  
+
 export default LuminoToolbar;

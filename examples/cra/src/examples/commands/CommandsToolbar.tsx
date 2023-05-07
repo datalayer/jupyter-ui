@@ -1,18 +1,15 @@
-import React from "react";
-import Typography from '@mui/material/Typography';
+import React from 'react';
+import {Text} from '@primer/react';
 // import { useDispatch } from "react-redux";
-// import Button from '@mui/material/Button';
 // import { selectCommands, commandsActions } from './CommandsRedux';
 
 const CommandToolbar: React.FC = () => {
-//  const commands = selectCommands();
-//  const dispatch = useDispatch();
+  //  const commands = selectCommands();
+  //  const dispatch = useDispatch();
   return (
     <>
-      <Typography variant="h5" gutterBottom>
-        Commands Example
-      </Typography>
-{/*
+      <Text as="h5">Commands Example</Text>
+      {/*
       <div>
         <Button 
           variant="outlined"
@@ -35,6 +32,6 @@ const CommandToolbar: React.FC = () => {
 */}
     </>
   );
-}
+};
 
 export default CommandToolbar;

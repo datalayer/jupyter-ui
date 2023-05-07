@@ -1,9 +1,7 @@
-import Typography from '@mui/material/Typography';
+import {Text} from '@primer/react';
 
 const DialogToolbar = () => {
-  return <Typography variant="h5" gutterBottom>
-    Dialog Example
-  </Typography>
+  return <Text as="h5">Dialog Example</Text>;
 };
-  
+
 export default DialogToolbar;
