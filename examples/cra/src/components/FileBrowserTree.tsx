@@ -1,9 +1,7 @@
 import {useState, useEffect, useReducer} from 'react';
-import TreeView from '@mui/lab/TreeView';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import TreeItem from '@mui/lab/TreeItem';
 import {useJupyter, Services} from '@datalayer/jupyter-react';
+import {TreeView} from '@primer/react';
+import {FileIcon} from '@primer/octicons-react';
 
 interface RenderTree {
   id: string;
@@ -69,25 +67,37 @@ export const FileBrowserTree = () => {
       loadPath(services, initialTree, []);
     }
   }, [serviceManager]);
-  const renderTree = (nodes: RenderTree) => {
-    return (
-      <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
-        {Array.isArray(nodes.children)
-          ? nodes.children.map(node => renderTree(node))
-          : null}
-      </TreeItem>
-    );
+
+  const renderTree = (nodes: RenderTree[]) => {
+    return nodes.map((node: RenderTree) => (
+      <TreeView.Item id={node.id}>
+        <TreeView.LeadingVisual>
+          {Array.isArray(node.children) ? (
+            <TreeView.DirectoryIcon />
+          ) : (
+            <FileIcon />
+          )}
+        </TreeView.LeadingVisual>
+        {node.name}
+        {Array.isArray(node.children) && (
+          <TreeView.SubTree>{renderTree(node.children)}</TreeView.SubTree>
+        )}
+      </TreeView.Item>
+    ));
   };
+
   return (
     <>
-      <TreeView
-        aria-label="rich object"
-        defaultCollapseIcon={<ExpandMoreIcon />}
-        defaultExpanded={['root']}
-        defaultExpandIcon={<ChevronRightIcon />}
-        sx={{height: 210, flexGrow: 1, maxWidth: 400, overflowY: 'auto'}}
-      >
-        {renderTree(tree)}
+      <TreeView>
+        <TreeView.Item id={tree.id} defaultExpanded>
+          <TreeView.LeadingVisual>
+            <TreeView.DirectoryIcon />
+          </TreeView.LeadingVisual>
+          {tree.name}
+          {Array.isArray(tree.children) && (
+            <TreeView.SubTree>{renderTree(tree.children)}</TreeView.SubTree>
+          )}
+        </TreeView.Item>
       </TreeView>
     </>
   );
