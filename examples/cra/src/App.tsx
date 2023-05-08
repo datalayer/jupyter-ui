@@ -1,6 +1,5 @@
 import {
   Jupyter,
-  Notebook,
 } from '@datalayer/jupyter-react';
 import Gallery from './examples/gallery/Gallery';
 
