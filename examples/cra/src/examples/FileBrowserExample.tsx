@@ -1,7 +1,7 @@
 import {render} from 'react-dom';
 import {Jupyter, FileBrowser} from '@datalayer/jupyter-react';
-import FileBrowserTree from '../../components/FileBrowserTree';
-import Layers from '../theme/Layers';
+import FileBrowserTree from '../components/FileBrowserTree';
+import Layers from './theme/Layers';
 
 import './../index.css';
 

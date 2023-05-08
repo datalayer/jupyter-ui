@@ -1,8 +1,10 @@
 import {render} from 'react-dom';
 import {Jupyter} from '@datalayer/jupyter-react';
-import LuminoToolbar from './LuminoToolbar';
-import Layers from '../theme/Layers';
-import LuminoComponent from './LuminoComponent';
+import Layers from './theme/Layers';
+import OutputsToolbar from './outputs/OutputsToolbar';
+import OutputsComponents from './outputs/OutputsComponents';
+
+import './../index.css';
 
 const div = document.createElement('div');
 document.body.appendChild(div);
@@ -10,8 +12,8 @@ document.body.appendChild(div);
 render(
   <Jupyter collaborative={false} terminals={false}>
     <Layers />
-    <LuminoToolbar />
-    <LuminoComponent />
+    <OutputsToolbar />
+    <OutputsComponents />
   </Jupyter>,
   div
 );

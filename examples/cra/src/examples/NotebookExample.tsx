@@ -1,7 +1,7 @@
 import {render} from 'react-dom';
 import {Jupyter, Notebook} from '@datalayer/jupyter-react';
-import NotebookSimpleToolbar from './NotebookSimpleToolbar';
-import Layers from '../theme/Layers';
+import NotebookSimpleToolbar from './notebook/NotebookSimpleToolbar';
+import Layers from './theme/Layers';
 
 import './../index.css';
 

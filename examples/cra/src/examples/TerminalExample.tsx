@@ -1,7 +1,7 @@
 import {render} from 'react-dom';
 import {Jupyter, Terminal} from '@datalayer/jupyter-react';
-import TerminalToolbar from './TerminalToolbar';
-import Layers from '../theme/Layers';
+import TerminalToolbar from './terminal/TerminalToolbar';
+import Layers from './theme/Layers';
 
 import './../index.css';
 

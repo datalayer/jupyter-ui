@@ -94,8 +94,8 @@ const AllExample = () => {
       <Console />
       <DialogToolbar />
       {/*
-    <Dialog />
-*/}
+      <Dialog />
+      */}
       <FileBrowserToolbar />
       <FileBrowserTree />
       <FileBrowser />

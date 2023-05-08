@@ -1,7 +1,7 @@
 import {render} from 'react-dom';
-import {Jupyter} from '@datalayer/jupyter-react';
-import CellComponents from './CellComponents';
-import Layers from '../theme/Layers';
+import {Jupyter, Console} from '@datalayer/jupyter-react';
+import Layers from './examples/theme/Layers';
+import ConsoleToolbar from './examples/console/ConsoleToolbar';
 
 import './../index.css';
 
@@ -11,7 +11,8 @@ document.body.appendChild(div);
 render(
   <Jupyter collaborative={false} terminals={false}>
     <Layers />
-    <CellComponents />
+    <ConsoleToolbar />
+    <Console />
   </Jupyter>,
   div
 );

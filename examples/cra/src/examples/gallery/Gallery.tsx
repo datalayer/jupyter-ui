@@ -1,6 +1,6 @@
-import { useState, useMemo } from 'react';
-import { UnderlineNav } from '@primer/react/drafts';
-import { Box } from '@primer/react';
+import {useState, useMemo} from 'react';
+import {UnderlineNav} from '@primer/react/drafts';
+import {Box} from '@primer/react';
 import {
   useJupyter,
   IpyWidgetsComponent,
@@ -15,8 +15,8 @@ import {
   Settings,
   Terminal,
 } from '@datalayer/jupyter-react';
-import { IOutput } from '@jupyterlab/nbformat';
-import { AppsIcon, CpuIcon } from '@primer/octicons-react';
+import {IOutput} from '@jupyterlab/nbformat';
+import {AppsIcon, CpuIcon} from '@primer/octicons-react';
 import FileBrowserTree from '../../components/FileBrowserTree';
 import LuminoToolbar from '../lumino/LuminoToolbar';
 import LuminoComponent from '../lumino/LuminoComponent';
@@ -24,8 +24,8 @@ import IpyWidgetsToolbar from '../ipywidgets/IpyWidgetsToolbar';
 import IpyWidgetsExample from '../ipywidgets/IPyWidgetsSimple';
 import CellToolbar from '../cell/CellToolbar';
 import CommandsToolbar from '../commands/CommandsToolbar';
-import NotebookToolbar from '../notebook/NotebookSimpleToolbar';
-import CellSidebarExample from '../notebook/CellSidebarComponent';
+import NotebookSimpleToolbar from '../notebook/NotebookSimpleToolbar';
+import CellSidebarComponent from '../notebook/CellSidebarComponent';
 import OutputToolbar from '../outputs/OutputsToolbar';
 import FileBrowserToolbar from '../filebrowser/FileBrowserToolbar';
 import ConsoleToolbar from '../console/ConsoleToolbar';
@@ -228,12 +228,12 @@ const Gallery = () => {
         {tab === 'Notebook' && (
           <>
             {' '}
-            <NotebookToolbar notebookId={NOTEBOOK_UID} />
+            <NotebookSimpleToolbar notebookId={NOTEBOOK_UID} />
             <Notebook
               uid={NOTEBOOK_UID}
               path="ping.ipynb"
               ipywidgets="classic"
-              CellSidebar={CellSidebarExample}
+              CellSidebar={CellSidebarComponent}
             />
           </>
         )}

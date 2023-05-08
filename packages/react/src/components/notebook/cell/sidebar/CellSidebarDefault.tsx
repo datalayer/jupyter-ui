@@ -10,16 +10,16 @@ import CellMetadataEditor from '../metadata/CellMetadataEditor';
 
 export const CellSidebarDefault = (props: CellSidebarProps) => {
   const [visible, setVisible] = useState(false);
-  const { notebookId, nbgrader } = props;
+  const { notebookId, cellId, nbgrader } = props;
   const dispatch = useDispatch();
   const activeCell = selectActiveCell(notebookId);
   const layout = (activeCell?.layout);
   if (layout) {
     const cellWidget = (layout as PanelLayout).widgets[0];
-    if (!visible && (cellWidget?.node.id === props.cellId)) {
+    if (!visible && (cellWidget?.node.id === cellId)) {
       setVisible(true);
     }
-    if (visible && (cellWidget?.node.id !== props.cellId)) {
+    if (visible && (cellWidget?.node.id !== cellId)) {
       setVisible(false);
     }
   }

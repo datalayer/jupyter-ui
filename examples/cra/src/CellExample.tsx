@@ -1,8 +1,7 @@
 import {render} from 'react-dom';
 import {Jupyter} from '@datalayer/jupyter-react';
-import Layers from '../theme/Layers';
-import OutputsToolbar from './OutputsToolbar';
-import OutputsComponents from './OutputsComponents';
+import CellComponents from './examples/cell/CellComponents';
+import Layers from './examples/theme/Layers';
 
 import './../index.css';
 
@@ -12,8 +11,7 @@ document.body.appendChild(div);
 render(
   <Jupyter collaborative={false} terminals={false}>
     <Layers />
-    <OutputsToolbar />
-    <OutputsComponents />
+    <CellComponents />
   </Jupyter>,
   div
 );

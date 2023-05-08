@@ -9,31 +9,30 @@ import {XIcon} from '@primer/octicons-react';
 import {Text} from '@primer/react';
 import {PanelLayout} from '@lumino/widgets';
 import {
-  selectNotebook,
   notebookActions,
   CellSidebarProps,
+  selectActiveCell,
 } from '@datalayer/jupyter-react';
 
-const CELL_HEADER_DIV_CLASS = 'dla-CellHeader-container';
+const CELL_HEADER_DIV_CLASS = 'dla-CellHeader-Container';
 
 const CellSidebarComponent = (props: CellSidebarProps) => {
-  const {notebookId} = props;
+  const {notebookId, cellId} = props;
   const [visible, setVisible] = useState(false);
   const dispatch = useDispatch();
-  const notebook = selectNotebook(notebookId);
-  const layout = notebook?.activeCell?.layout;
+  const activeCell = selectActiveCell(notebookId);
+  const layout = (activeCell?.layout);
   if (layout) {
-    const selectedCellSidebar = (notebook?.activeCell?.layout as PanelLayout)
-      .widgets[0];
-    if (!visible && selectedCellSidebar.id === props.cellId) {
+    const cellWidget = (layout as PanelLayout).widgets[0];
+    if (!visible && (cellWidget?.node.id === cellId)) {
       setVisible(true);
     }
-    if (visible && selectedCellSidebar.id !== props.cellId) {
+    if (visible && (cellWidget?.node.id !== cellId)) {
       setVisible(false);
     }
   }
   if (!visible) {
-    return <div></div>;
+    return <div></div>
   }
   return (
     <div className={CELL_HEADER_DIV_CLASS}>
