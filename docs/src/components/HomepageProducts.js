@@ -4,7 +4,7 @@ import styles from './HomepageProducts.module.css';
 
 const ProductList = [
   {
-    title: 'React.js Components',
+    title: 'React.js components',
 //    Svg: require('../../static/img/product_1.svg').default,
     description: (
       <>
@@ -13,21 +13,20 @@ const ProductList = [
     ),
   },
   {
-    title: '100% Compatible with Jupyter',
+    title: '100% compatible with Jupyter',
 //    Svg: require('../../static/img/product_2.svg').default,
     description: (
       <>
-        If you need more batteries for Jupyter, have a look to our <a href="./docs/tech/editor/index">Jupyter components</a>.
+        If you need more batteries for Jupyter, have a look to our <a href="./docs/category/components" style={{ textDecoration: "underline" }}>Jupyter components</a>.
       </>
     ),
   },
   {
-    title: 'Easy to Use',
-//    Svg: require('../../static/img/feature_1.svg').default,
+    title: 'Literate Notebook',
+//    Svg: require('../../static/img/product_3.svg').default,
     description: (
       <>
-        Juyter React is designed from the ground up to be easily installed, used and extended
-        to get your custom data analysis up and running quickly.
+        For a truly collaborative and accessible notebook, <a href="./docs/welcome/literate" style={{ textDecoration: "underline" }}>Literate Notebook</a> is a better single-page editor for your data analysis.
       </>
     ),
   },

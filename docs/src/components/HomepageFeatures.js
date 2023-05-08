@@ -4,11 +4,12 @@ import styles from './HomepageFeatures.module.css';
 
 const FeatureList = [
   {
-    title: 'Literate Notebook',
-//    Svg: require('../../static/img/product_3.svg').default,
+    title: 'Easy to use',
+//    Svg: require('../../static/img/feature_1.svg').default,
     description: (
       <>
-        For a truly collaborative and accessible notebook, try <a href="./docs/editor/index">Literate Notebook</a>, a better single-page notebook, with built-in collaboration, accessibility...
+        Juyter React is designed from the ground up to be easily installed, used and extended
+        to get your custom data analysis up and running quickly.
       </>
     ),
   },
@@ -22,7 +23,7 @@ const FeatureList = [
     ),
   },
   {
-    title: 'Professional Support',
+    title: 'Professional support',
 //    Svg: require('../../static/img/feature_2.svg').default,
     description: (
       <>
