@@ -8,7 +8,7 @@ const CommandToolbar: React.FC = () => {
   //  const dispatch = useDispatch();
   return (
     <>
-      <Text as="h5">Commands Example</Text>
+      <Text as="h3">Commands Example</Text>
       {/*
       <div>
         <Button 

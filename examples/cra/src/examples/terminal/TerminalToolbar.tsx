@@ -18,7 +18,7 @@ const TerminalToolbar: React.FC = () => {
   };
   return (
     <>
-      <Text as="h5">Terminal Example</Text>
+      <Text as="h3">Terminal Example</Text>
       <FormControl
         sx={{
           paddingLeft: 5,

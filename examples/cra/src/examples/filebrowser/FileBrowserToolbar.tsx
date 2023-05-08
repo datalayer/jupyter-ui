@@ -8,7 +8,7 @@ const FileBrowserToolbar: React.FC = () => {
   //  const dispatch = useDispatch();
   return (
     <>
-      <Text as="h5">FileBrowser Example</Text>
+      <Text as="h3">FileBrowser Example</Text>
       {/*
       <div>
         <Button 

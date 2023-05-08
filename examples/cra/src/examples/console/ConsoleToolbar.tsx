@@ -8,7 +8,7 @@ const ConsoleToolbar: React.FC = () => {
   //  const dispatch = useDispatch();
   return (
     <>
-      <Text as="h5">Console Example</Text>
+      <Text as="h3">Console Example</Text>
       {/*
       <div>
         <Button

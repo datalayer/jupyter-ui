@@ -10,7 +10,7 @@ const NotebookSimpleToolbar = (props: {notebookId: string}) => {
   const dispatch = useDispatch();
   return (
     <>
-      <Text as="h5">Notebook Example</Text>
+      <Text as="h3">Notebook Example</Text>
       <>
         <Button
           variant="outline"

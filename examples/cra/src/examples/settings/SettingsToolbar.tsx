@@ -8,7 +8,7 @@ const SettingsToolbar: React.FC = () => {
   //  const dispatch = useDispatch();
   return (
     <>
-      <Text as="h5">Settings Example</Text>
+      <Text as="h3">Settings Example</Text>
       {/*
       <div>
         <Button 

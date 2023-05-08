@@ -1,7 +1,7 @@
 import {render} from 'react-dom';
 import {Text} from '@primer/react';
 import {Jupyter} from '@datalayer/jupyter-react';
-import Gallery from './gallery/ComponentsGallery';
+import Gallery from './gallery/Gallery';
 
 import './../index.css';
 

@@ -1,6 +1,6 @@
-import React, {useState, useMemo} from 'react';
-import {UnderlineNav} from '@primer/react/drafts';
-import {Box} from '@primer/react';
+import { useState, useMemo } from 'react';
+import { UnderlineNav } from '@primer/react/drafts';
+import { Box } from '@primer/react';
 import {
   useJupyter,
   IpyWidgetsComponent,
@@ -15,8 +15,9 @@ import {
   Settings,
   Terminal,
 } from '@datalayer/jupyter-react';
-import {IOutput} from '@jupyterlab/nbformat';
-import FileBrowserTree from './../../components/FileBrowserTree';
+import { IOutput } from '@jupyterlab/nbformat';
+import { AppsIcon, CpuIcon } from '@primer/octicons-react';
+import FileBrowserTree from '../../components/FileBrowserTree';
 import LuminoToolbar from '../lumino/LuminoToolbar';
 import LuminoComponent from '../lumino/LuminoComponent';
 import IpyWidgetsToolbar from '../ipywidgets/IpyWidgetsToolbar';
@@ -31,7 +32,6 @@ import ConsoleToolbar from '../console/ConsoleToolbar';
 import SettingsToolbar from '../settings/SettingsToolbar';
 import DialogToolbar from '../dialog/DialogToolbar';
 import TerminalToolbar from '../terminal/TerminalToolbar';
-import {AppsIcon, CpuIcon} from '@primer/octicons-react';
 
 /**
  * The source code to be shown in the examples.
@@ -83,38 +83,35 @@ const NOTEBOOK_UID = 'notebook-id-gallery';
 
 const Gallery = () => {
   const {kernelManager} = useJupyter();
-  const [tab, setTab] = useState('Lumino');
-
+  const [tab, setTab] = useState('Notebook');
   const kernel = useMemo(() => {
     if (kernelManager)
-      return new Kernel({kernelManager, kernelName: 'python3'});
+      return new Kernel({ kernelManager, kernelName: 'python' });
   }, [kernelManager]);
-
   return (
     <Box>
       <Box mb={3}>
         <UnderlineNav>
           <UnderlineNav.Item
+            icon={CpuIcon}
             aria-current="page"
-            icon={AppsIcon}
             onSelect={e => {
               e.preventDefault();
-              setTab('Lumino');
+              setTab('Notebook');
             }}
           >
-            Lumino
+            Notebook
           </UnderlineNav.Item>
           <UnderlineNav.Item
             icon={CpuIcon}
             onSelect={e => {
               e.preventDefault();
-              setTab('IpyWidgets');
+              setTab('Cell');
             }}
           >
-            IpyWidgets
+            Cell
           </UnderlineNav.Item>
           <UnderlineNav.Item
-            aria-current="page"
             icon={AppsIcon}
             onSelect={e => {
               e.preventDefault();
@@ -127,34 +124,21 @@ const Gallery = () => {
             icon={CpuIcon}
             onSelect={e => {
               e.preventDefault();
-              setTab('Cell');
+              setTab('IpyWidgets');
             }}
           >
-            Cell
-          </UnderlineNav.Item>
-
-          <UnderlineNav.Item
-            icon={CpuIcon}
-            onSelect={e => {
-              e.preventDefault();
-              setTab('Notebook');
-            }}
-          >
-            Notebook
+            IpyWidgets
           </UnderlineNav.Item>
           <UnderlineNav.Item
-            aria-current="page"
             icon={AppsIcon}
             onSelect={e => {
               e.preventDefault();
-              setTab('Commands');
+              setTab('Terminal');
             }}
           >
-            Commands
+            Terminal
           </UnderlineNav.Item>
-
           <UnderlineNav.Item
-            aria-current="page"
             icon={AppsIcon}
             onSelect={e => {
               e.preventDefault();
@@ -163,9 +147,16 @@ const Gallery = () => {
           >
             Console
           </UnderlineNav.Item>
-
           <UnderlineNav.Item
-            aria-current="page"
+            icon={AppsIcon}
+            onSelect={e => {
+              e.preventDefault();
+              setTab('Commands');
+            }}
+          >
+            Commands
+          </UnderlineNav.Item>
+          <UnderlineNav.Item
             icon={AppsIcon}
             onSelect={e => {
               e.preventDefault();
@@ -174,9 +165,7 @@ const Gallery = () => {
           >
             Dialog
           </UnderlineNav.Item>
-
           <UnderlineNav.Item
-            aria-current="page"
             icon={AppsIcon}
             onSelect={e => {
               e.preventDefault();
@@ -185,9 +174,16 @@ const Gallery = () => {
           >
             File Browser
           </UnderlineNav.Item>
-
           <UnderlineNav.Item
-            aria-current="page"
+            icon={AppsIcon}
+            onSelect={e => {
+              e.preventDefault();
+              setTab('Lumino');
+            }}
+          >
+            Lumino
+          </UnderlineNav.Item>
+          <UnderlineNav.Item
             icon={AppsIcon}
             onSelect={e => {
               e.preventDefault();
@@ -195,17 +191,6 @@ const Gallery = () => {
             }}
           >
             Settings
-          </UnderlineNav.Item>
-
-          <UnderlineNav.Item
-            aria-current="page"
-            icon={AppsIcon}
-            onSelect={e => {
-              e.preventDefault();
-              setTab('Terminal');
-            }}
-          >
-            Terminal
           </UnderlineNav.Item>
         </UnderlineNav>
       </Box>

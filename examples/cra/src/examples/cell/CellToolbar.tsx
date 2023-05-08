@@ -9,7 +9,7 @@ const CellToolbar: React.FC = () => {
   const dispatch = useDispatch();
   return (
     <>
-      <Text as="h5">Cell Example</Text>
+      <Text as="h3">Cell Example</Text>
       <Button variant="primary" onClick={() => dispatch(cellActions.execute())}>
         Run
       </Button>
