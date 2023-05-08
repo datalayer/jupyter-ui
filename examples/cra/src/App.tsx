@@ -1,6 +1,4 @@
-import {
-  Jupyter,
-} from '@datalayer/jupyter-react';
+import {Jupyter} from '@datalayer/jupyter-react';
 import Gallery from './examples/gallery/Gallery';
 
 import './App.css';
