@@ -1,12 +1,19 @@
-import { useEffect, useMemo } from 'react';
-import { render } from 'react-dom';
-import { ThemeProvider } from '@mui/material/styles';
-import muiLightTheme from './theme/Theme';
-import { 
-  Jupyter, useJupyter, Kernel, Cell, FileBrowser, Commands, 
-  Console, Notebook, Output, Settings, Terminal
+import {useEffect, useMemo} from 'react';
+import {render} from 'react-dom';
+import {
+  Jupyter,
+  useJupyter,
+  Kernel,
+  Cell,
+  FileBrowser,
+  Commands,
+  Console,
+  Notebook,
+  Output,
+  Settings,
+  Terminal,
 } from '@datalayer/jupyter-react';
-import FileBrowserTree from "../components/FileBrowserTree";
+import FileBrowserTree from '../components/FileBrowserTree';
 // import Dialog from './../components//dialog/Dialog';
 import DialogToolbar from './dialog/DialogToolbar';
 import CellToolbar from './cell/CellToolbar';
@@ -19,7 +26,7 @@ import LuminoComponent from './lumino/LuminoComponent';
 import TerminalToolbar from './terminal/TerminalToolbar';
 import CommandsToolbar from './commands/CommandsToolbar';
 
-import "./../index.css";
+import './../index.css';
 
 /**
  * The source to be shown in the examples.
@@ -43,59 +50,72 @@ ax2.set_xlabel('time (s)')
 ax2.set_ylabel('Undamped')
 plt.show()`;
 
-const NOTEBOOK_UID = "notebook-uid-1"
+const NOTEBOOK_UID = 'notebook-uid-1';
 
 /**
  * A simple example for the Jupyter UI.
  */
 const AllExample = () => {
-  const { kernelManager } = useJupyter();
+  const {kernelManager} = useJupyter();
   const kernel = useMemo(() => {
-    if (kernelManager) return new Kernel({ kernelManager, kernelName: 'python3' });
+    if (kernelManager)
+      return new Kernel({kernelManager, kernelName: 'python3'});
   }, [kernelManager]);
-  useEffect(() => { window.scrollTo(0, 0); }, []);
-  return <>
-    <OutputToolbar />
-    <Output showEditor={true} autoRun={false} kernel={kernel} code={"print('Hello Datalayer 👍')"} />
-    <Output autoRun={false} kernel={kernel} code={"print('Hello Datalayer 👍')"} />
-    <Output autoRun={true} kernel={kernel} code={source} />
-    <Output autoRun={true} kernel={kernel} code={"print('=> Hello Datalayer again... I am the output of an non-shown editor 👍 <=')"} />
-    <CellToolbar />
-    <Cell source={source} />
-    <CommandsToolbar />
-    <Commands />
-    <ConsoleToolbar />
-    <Console />
-    <DialogToolbar />
-{/*
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  return (
+    <>
+      <OutputToolbar />
+      <Output
+        showEditor={true}
+        autoRun={false}
+        kernel={kernel}
+        code={"print('Hello Datalayer 👍')"}
+      />
+      <Output
+        autoRun={false}
+        kernel={kernel}
+        code={"print('Hello Datalayer 👍')"}
+      />
+      <Output autoRun={true} kernel={kernel} code={source} />
+      <Output
+        autoRun={true}
+        kernel={kernel}
+        code={
+          "print('=> Hello Datalayer again... I am the output of an non-shown editor 👍 <=')"
+        }
+      />
+      <CellToolbar />
+      <Cell source={source} />
+      <CommandsToolbar />
+      <Commands />
+      <ConsoleToolbar />
+      <Console />
+      <DialogToolbar />
+      {/*
     <Dialog />
 */}
-    <FileBrowserToolbar />
-    <FileBrowserTree />
-    <FileBrowser />
-    <NotebookToolbar notebookId={NOTEBOOK_UID}/>
-    <Notebook
-      uid={NOTEBOOK_UID}
-      path='ping.ipynb'
-      ipywidgets='classic'
-      />
-    <SettingsToolbar />
-    <Settings />
-    <LuminoComponent />
-    <TerminalToolbar />
-    <Terminal />
-  </>
-}
+      <FileBrowserToolbar />
+      <FileBrowserTree />
+      <FileBrowser />
+      <NotebookToolbar notebookId={NOTEBOOK_UID} />
+      <Notebook uid={NOTEBOOK_UID} path="ping.ipynb" ipywidgets="classic" />
+      <SettingsToolbar />
+      <Settings />
+      <LuminoComponent />
+      <TerminalToolbar />
+      <Terminal />
+    </>
+  );
+};
 
 const div = document.createElement('div');
 document.body.appendChild(div);
 
 render(
-  <ThemeProvider theme={muiLightTheme}>
-    <Jupyter collaborative={true} terminals={true}>
-      <AllExample/>
-    </Jupyter>
-  </ThemeProvider>
-  ,
+  <Jupyter collaborative={true} terminals={true}>
+    <AllExample />
+  </Jupyter>,
   div
 );

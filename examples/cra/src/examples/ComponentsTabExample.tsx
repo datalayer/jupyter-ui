@@ -1,39 +1,23 @@
-import { render } from 'react-dom';
-import { CacheProvider } from '@emotion/react';
-import { StylesProvider } from '@mui/styles';
-import Typography from '@mui/material/Typography';
-import { ThemeProvider } from '@mui/material/styles';
-import { Jupyter } from '@datalayer/jupyter-react';
-import muiLightTheme from './theme/Theme';
-import setupMui from './theme/MuiSetup';
+import {render} from 'react-dom';
+import {Text} from '@primer/react';
+import {Jupyter} from '@datalayer/jupyter-react';
 import Gallery from './gallery/ComponentsGallery';
 
-import "./../index.css";
-
-const { jss, cache } = setupMui('datalayer-jss-insertion-point');
+import './../index.css';
 
 const div = document.createElement('div');
 document.body.appendChild(div);
 
 const Header = () => (
   <>
-    <Typography variant="h4" gutterBottom>
-      Jupyter UI Components Examples
-    </Typography>
+    <Text as="h4">Jupyter UI Components Examples</Text>
   </>
-)
+);
 
 render(
-  <ThemeProvider theme={muiLightTheme}>
-    <CacheProvider value={cache}>
-      <StylesProvider jss={jss}>
-        <Jupyter collaborative={true} terminals={true}>
-          <Header/>
-          <Gallery/>
-        </Jupyter>
-      </StylesProvider>
-    </CacheProvider>
-  </ThemeProvider>
-  ,
+  <Jupyter collaborative={true} terminals={true}>
+    <Header />
+    <Gallery />
+  </Jupyter>,
   div
 );
