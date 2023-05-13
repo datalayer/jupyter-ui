@@ -37,6 +37,7 @@ export type JupyterProps = {
   lite: boolean;
   startDefaultKernel: boolean;
   defaultKernelName: string;
+  selectRunningKernel?: boolean;
   injectableStore?: Store | any;
   collaborative?: boolean;
   jupyterServerHttpUrl?: string;
@@ -80,6 +81,7 @@ export const Jupyter = (props: JupyterProps) => {
             lite={lite}
             startDefaultKernel={startDefaultKernel}
             defaultKernelName={defaultKernelName}
+            selectRunningKernel={props?.selectRunningKernel ?? false}
             baseUrl={getJupyterServerHttpUrl()}
             wsUrl={getJupyterServerWsUrl()}
             injectableStore={props.injectableStore || injectableStore}
@@ -97,6 +99,7 @@ Jupyter.defaultProps = {
   lite: false,
   defaultKernelName: 'python',
   startDefaultKernel: true,
+  selectRunningKernel: false,
   collaborative: false,
   terminals: false,
 }

@@ -16,6 +16,7 @@ export type JupyterContextType = {
   kernelManager?: KernelManager,
   defaultKernel?: Kernel,
   startDefaultKernel: boolean,
+  selectRunningKernel?: boolean,
   variant: string;
   setVariant: (value: string) => void;
   baseUrl: string;
@@ -68,6 +69,7 @@ type JupyterContextProps = {
   wsUrl: string;
   lite: boolean;
   startDefaultKernel: boolean,
+  selectRunningKernel: boolean,
   defaultKernelName: string,
   injectableStore: any;
 };
@@ -101,11 +103,12 @@ export const JupyterContextProvider: React.FC<{
   lite: boolean,
   startDefaultKernel: boolean,
   defaultKernelName: string,
+  selectRunningKernel: boolean,
   variant: string,
   baseUrl: string,
   wsUrl: string,
   injectableStore: any
-}> = ({children, lite, startDefaultKernel, defaultKernelName, variant, baseUrl, wsUrl, injectableStore }: JupyterContextProps) => {
+}> = ({children, lite, startDefaultKernel, defaultKernelName, selectRunningKernel, variant, baseUrl, wsUrl, injectableStore }: JupyterContextProps) => {
   const [_, setVariant] = useState('default');
   const [serverSettings] = useState<ServerConnection.ISettings>(createServerSettings(baseUrl, wsUrl));
   const [serviceManager, setServiceManager] = useState<ServiceManager>();
@@ -120,7 +123,7 @@ export const JupyterContextProvider: React.FC<{
         kernelManager.ready.then(() => {
           console.log('Kernel Manager is ready', kernelManager);
           if (startDefaultKernel) {
-            const kernel = new Kernel({ kernelManager, kernelName: defaultKernelName });
+            const kernel = new Kernel({ kernelManager, kernelName: defaultKernelName, selectRunningKernel: selectRunningKernel });
             kernel.getJupyterKernel().then(k => {
               console.log(`Kernel started with session client_id:id ${k.clientId}:${k.id}`);
               k.info.then(info => {
@@ -145,7 +148,7 @@ export const JupyterContextProvider: React.FC<{
         kernelManager.ready.then(() => {
           console.log('Kernel Manager is ready', kernelManager);
           if (startDefaultKernel) {
-            const kernel = new Kernel({ kernelManager, kernelName: defaultKernelName });
+            const kernel = new Kernel({ kernelManager, kernelName: defaultKernelName, selectRunningKernel: selectRunningKernel  });
             kernel.getJupyterKernel().then(k => {
               console.log(`Kernel started with session client_id:id ${k.clientId}:${k.id}`);
               k.info.then(info => {

@@ -5,6 +5,7 @@ import { UUID } from '@lumino/coreutils';
 export type IKernelProps = {
   kernelManager: KernelManager;
   kernelName: string;
+  selectRunningKernel?: boolean;
 }
 
 export class Kernel {
@@ -18,10 +19,10 @@ export class Kernel {
   public constructor(props: IKernelProps) {
     this._kernelManager = props.kernelManager;
     this._kernelName = props.kernelName;
-    this._jupyterKernel = this.requestJupyterKernel(); // Request the effective Jupyter Kernel.
+    this._jupyterKernel = this.requestJupyterKernel(props?.selectRunningKernel); // Request the effective Jupyter Kernel.
   }
 
-  private async requestJupyterKernel(): Promise<JupyterKernel.IKernelConnection> {
+  private async requestJupyterKernel(selectRunningKernel?: boolean): Promise<JupyterKernel.IKernelConnection> {
     await this._kernelManager.ready;
     const sessionManager = new SessionManager({
       kernelManager: this._kernelManager,
@@ -30,14 +31,21 @@ export class Kernel {
     });
     await sessionManager.ready;
     const randomName = UUID.uuid4();
-    this._session = await sessionManager.startNew({
-      path: randomName,
-      name: randomName,
-      type: this._kernelName,
-      kernel: {
-        name: this._kernelName,
-      },
-    });
+    
+    if (selectRunningKernel) {
+      console.log('Attempting to use pre-exisitng kernel')
+      const runningModel = sessionManager.running().next().value;
+      this._session = sessionManager.connectTo({model: runningModel});
+    } else {
+      this._session = await sessionManager.startNew({
+        path: randomName,
+        name: randomName,
+        type: this._kernelName,
+        kernel: {
+          name: this._kernelName,
+        },
+      });
+    }
     this._info = await this._session.kernel!.info;
     this._id = this._session.kernel!.id;
     return this._session.kernel!;
