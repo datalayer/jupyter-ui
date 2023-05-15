@@ -104,7 +104,7 @@ export const JupyterContextProvider: React.FC<{
   startDefaultKernel: boolean,
   defaultKernelName: string,
   useRunningKernelId?: string,
-  useRunningKernelIndex: number,
+  useRunningKernelIndex?: number,
   variant: string,
   baseUrl: string,
   wsUrl: string,

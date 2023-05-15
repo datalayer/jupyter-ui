@@ -38,7 +38,7 @@ export type JupyterProps = {
   startDefaultKernel: boolean;
   defaultKernelName: string;
   useRunningKernelId?: string;
-  useRunningKernelIndex: number;
+  useRunningKernelIndex?: number;
   injectableStore?: Store | any;
   collaborative?: boolean;
   jupyterServerHttpUrl?: string;
