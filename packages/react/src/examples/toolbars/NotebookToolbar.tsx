@@ -1,14 +1,15 @@
 import {useState, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
+import {Button, ButtonGroup, IconButton} from '@primer/react';
 import {
   PlusIcon,
-  PlayIcon,
+  ChevronRightIcon,
   StopIcon,
   FileAddedIcon,
   TrashIcon,
   SyncIcon,
 } from '@primer/octicons-react';
-import {Button, ButtonGroup, IconButton} from '@primer/react';
+import {FastForwardIcon} from '@datalayer-icons/react/outline';
 import {cmdIds} from '../../components/notebook/NotebookCommands';
 import {IJupyterReactState} from '../../state/State';
 import {
@@ -27,21 +28,17 @@ const NotebookToolbar = (props: {notebookId: string}) => {
   const notebookstate = useSelector((state: IJupyterReactState) => {
     return state.notebook;
   });
-
   useEffect(() => {
     notebook?.adapter?.commands.execute(cmdIds.save);
   }, [saveRequest]);
-
   useEffect(() => {
     if (autoSave) {
       notebook?.adapter?.commands.execute(cmdIds.save);
     }
   }, [notebookstate]);
-
   const handleChangeCellType = (newType: string) => {
     setAddType(newType);
   };
-
   return (
     <div
       style={{
@@ -75,7 +72,6 @@ const NotebookToolbar = (props: {notebookId: string}) => {
               notebookActions.save.started({uid: notebookId, date: new Date()})
             );
           }}
-          style={{color: 'grey'}}
           icon={FileAddedIcon}
         />
         <IconButton
@@ -92,7 +88,6 @@ const NotebookToolbar = (props: {notebookId: string}) => {
               })
             );
           }}
-          style={{color: 'grey'}}
           icon={PlusIcon}
         />
         <IconButton
@@ -104,10 +99,9 @@ const NotebookToolbar = (props: {notebookId: string}) => {
             e.preventDefault();
             dispatch(notebookActions.run.started(notebookId));
           }}
-          style={{color: 'grey'}}
-          icon={PlayIcon}
+          icon={ChevronRightIcon}
         />
-        {notebook?.kernelStatus === 'idle' && (
+        {notebook?.kernelStatus === 'idle' ?
           <IconButton
             variant="invisible"
             size="small"
@@ -117,11 +111,9 @@ const NotebookToolbar = (props: {notebookId: string}) => {
               e.preventDefault();
               dispatch(notebookActions.runAll.started(notebookId));
             }}
-            style={{color: 'grey'}}
-            icon={PlayIcon}
+              icon={FastForwardIcon}
           />
-        )}
-        {notebook?.kernelStatus === 'busy' && (
+        :
           <IconButton
             variant="invisible"
             size="small"
@@ -133,7 +125,7 @@ const NotebookToolbar = (props: {notebookId: string}) => {
             }}
             icon={StopIcon}
           />
-        )}
+        }
         <IconButton
           variant="invisible"
           size="small"
@@ -167,7 +159,6 @@ const NotebookToolbar = (props: {notebookId: string}) => {
           color={autoSave ? 'success' : 'error'}
           icon={SyncIcon}
         />
-
         <ButtonGroup>
           <Button
             variant={addType == 'code' ? 'primary' : 'outline'}

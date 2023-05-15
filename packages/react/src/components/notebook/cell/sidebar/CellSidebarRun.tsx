@@ -3,9 +3,10 @@ import { useDispatch } from 'react-redux';
 import { Box, Button } from '@primer/react';
 import { PlayIcon } from "@primer/octicons-react";
 import { PanelLayout } from '@lumino/widgets';
-import { DLA_CELL_HEADER_CLASS } from './base/CellSidebarWidget';
 import { notebookActions, selectActiveCell } from '../../NotebookState';
 import { CellSidebarProps } from './base/CellSidebarWidget';
+
+import { DLA_CELL_HEADER_CLASS } from './base/CellSidebarWidget';
 
 export const CellSidebarRun = (props: CellSidebarProps) => {
   const { notebookId } = props;

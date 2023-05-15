@@ -2,7 +2,6 @@ import {useState} from 'react';
 import {useDispatch} from 'react-redux';
 import {PanelLayout} from '@lumino/widgets';
 import {Box} from '@primer/react';
-import {DLA_CELL_HEADER_CLASS} from './base/CellSidebarWidget';
 import {notebookActions, selectActiveCell} from '../../NotebookState';
 import {CellSidebarProps} from './base/CellSidebarWidget';
 import {
@@ -12,6 +11,8 @@ import {
   XIcon,
 } from '@primer/octicons-react';
 import {IconButton} from '@primer/react';
+
+import {DLA_CELL_HEADER_CLASS} from './base/CellSidebarWidget';
 
 export const CellSidebarNew = (props: CellSidebarProps) => {
   const {notebookId} = props;
@@ -49,7 +50,6 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
             e.preventDefault();
             dispatch(notebookActions.run.started(notebookId));
           }}
-          style={{color: 'grey'}}
           icon={PlayIcon}
           variant="invisible"
         />
@@ -68,7 +68,6 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
               })
             );
           }}
-          style={{color: 'grey'}}
           icon={ChevronUpIcon}
           variant="invisible"
         />
@@ -87,7 +86,6 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
               })
             );
           }}
-          style={{color: 'grey'}}
           icon={ChevronUpIcon}
           variant="invisible"
         />
@@ -123,7 +121,6 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
               })
             );
           }}
-          style={{color: 'grey'}}
           icon={ChevronDownIcon}
           variant="invisible"
         />
@@ -142,7 +139,6 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
               })
             );
           }}
-          style={{color: 'grey'}}
           icon={ChevronDownIcon}
           variant="invisible"
         />

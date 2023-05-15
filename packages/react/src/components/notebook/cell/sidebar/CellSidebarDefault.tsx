@@ -3,10 +3,11 @@ import { useDispatch } from 'react-redux';
 import { PanelLayout } from '@lumino/widgets';
 import { ActionMenu, Button, Box } from "@primer/react";
 import { ChevronRightIcon, XIcon, ChevronUpIcon, ChevronDownIcon, SquareIcon } from "@primer/octicons-react";
-import { DLA_CELL_HEADER_CLASS } from './base/CellSidebarWidget';
 import { notebookActions, selectActiveCell } from '../../NotebookState';
 import { CellSidebarProps } from './base/CellSidebarWidget';
 import CellMetadataEditor from '../metadata/CellMetadataEditor';
+
+import { DLA_CELL_HEADER_CLASS } from './base/CellSidebarWidget';
 
 export const CellSidebarDefault = (props: CellSidebarProps) => {
   const [visible, setVisible] = useState(false);

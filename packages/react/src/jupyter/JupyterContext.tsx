@@ -158,7 +158,7 @@ export const JupyterContextProvider: React.FC<{
           let kernel = running.next();
           let i = 0;
           while (! kernel.done) {
-            console.log(`This Jupyter server has already this running kernel [${i}]`, kernel.value);
+            console.log(`This Jupyter server is hosting a kernel [${i}]`, kernel.value);
             kernel = running.next();
             i++;
           }
