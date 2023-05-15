@@ -47,7 +47,7 @@ export class OutputAdapter {
   public execute(code: string) {
     if (this._kernel) {
       this.clearOutput();
-      this._kernel.getJupyterKernel().then((kernelConnection) => {
+      this._kernel.connection.then((kernelConnection) => {
         this._outputArea.future = kernelConnection.requestExecute({code})
       });
     }
@@ -55,7 +55,7 @@ export class OutputAdapter {
 
   public interrupt() {
     if (this._kernel) {
-      this._kernel.getJupyterKernel().then((kernelConnection) => {
+      this._kernel.connection.then((kernelConnection) => {
         kernelConnection.interrupt();
       });  
     }
@@ -80,7 +80,7 @@ export class OutputAdapter {
 
   private initKernel() {
     if (this._kernel) {
-      this._kernel.getJupyterKernel().then((kernelConnection) => {
+      this._kernel.connection.then((kernelConnection) => {
         this._iPyWidgetsClassicManager.registerWithKernel(kernelConnection)
       });
     }

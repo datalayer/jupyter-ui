@@ -142,14 +142,14 @@ export const Output = (props: IOutputProps) => {
   }, [outputAdapter]);
   useEffect(() => {
     if (kernel) {
-      kernel.getJupyterKernel().then((kernelConnection: JupyterKernel.IKernelConnection) => {
+      kernel.connection.then((kernelConnection: JupyterKernel.IKernelConnection) => {
         setKernelStatus(kernelConnection.status);
         kernelConnection.statusChanged.connect((kernelConnection, status) => {
           setKernelStatus(status);
         })
       });
       return () => {
-        kernel.getJupyterKernel().then(k => k.shutdown().then(() => console.log(`Kernel ${k.id} is terminated.`)));
+        kernel.connection.then(k => k.shutdown().then(() => console.log(`Kernel ${k.id} is terminated.`)));
       }
     }
   }, [kernel]);

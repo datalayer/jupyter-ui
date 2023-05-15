@@ -37,6 +37,8 @@ export type JupyterProps = {
   lite: boolean;
   startDefaultKernel: boolean;
   defaultKernelName: string;
+  useRunningKernelId?: string;
+  useRunningKernelIndex: number;
   injectableStore?: Store | any;
   collaborative?: boolean;
   jupyterServerHttpUrl?: string;
@@ -67,7 +69,7 @@ const ErrorFallback = ({error, resetErrorBoundary}: any) => {
  * are available.
  */
 export const Jupyter = (props: JupyterProps) => {
-  const { lite, startDefaultKernel, defaultKernelName, children } = props;
+  const { lite, startDefaultKernel, defaultKernelName, useRunningKernelId, useRunningKernelIndex, children } = props;
   loadJupyterConfig(props);
   return (
     <ErrorBoundary
@@ -80,6 +82,8 @@ export const Jupyter = (props: JupyterProps) => {
             lite={lite}
             startDefaultKernel={startDefaultKernel}
             defaultKernelName={defaultKernelName}
+            useRunningKernelId={useRunningKernelId}
+            useRunningKernelIndex={useRunningKernelIndex}
             baseUrl={getJupyterServerHttpUrl()}
             wsUrl={getJupyterServerWsUrl()}
             injectableStore={props.injectableStore || injectableStore}
@@ -99,6 +103,7 @@ Jupyter.defaultProps = {
   startDefaultKernel: true,
   collaborative: false,
   terminals: false,
+  useRunningKernelIndex: -1,
 }
 
 export default Jupyter;

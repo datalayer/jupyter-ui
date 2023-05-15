@@ -18,7 +18,7 @@ const NotebookKernelChange = () => {
   const changeKernel = () => {
     if (kernelManager) {
       const kernel = new Kernel({ kernelManager, kernelName: "ir" });
-      kernel.getJupyterKernel().then((kernelConnection) => {
+      kernel.connection.then((kernelConnection) => {
         dispatch(notebookActions.changeKernel({ uid: NOTEBOOK_UID, kernel }));
         alert('The notebook kernel is changed.')
       });

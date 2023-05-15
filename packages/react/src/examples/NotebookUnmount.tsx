@@ -7,6 +7,7 @@ import { useJupyter } from '../jupyter/JupyterContext';
 import Kernel from '../jupyter/services/kernel/Kernel';
 import Notebook from '../components/notebook/Notebook';
 import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarDefault';
+
 import notebookExample from './notebooks/NotebookExample1.ipynb.json';
 
 import "./../../style/index.css";

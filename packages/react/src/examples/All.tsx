@@ -119,7 +119,7 @@ const NotebookKernelChange = () => {
   const changeKernel = () => {
     if (kernelManager) {
       const kernel = new Kernel({ kernelManager, kernelName: "pythonqsdf" });
-      kernel.getJupyterKernel().then((kernelConnection) => {
+      kernel.connection.then((kernelConnection) => {
       });
     }
   }

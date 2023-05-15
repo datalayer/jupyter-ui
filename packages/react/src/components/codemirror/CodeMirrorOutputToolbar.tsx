@@ -60,7 +60,7 @@ export const CodeMirrorOutputToolbar = (props: Props) => {
   const [kernelStatus, setKernelStatus] = useState<KernelMessage.Status>('unknown');
   useEffect(() => {
     if (kernel) {
-      kernel.getJupyterKernel().then((kernelConnection: JupyterKernel.IKernelConnection) => {
+      kernel.connection.then((kernelConnection: JupyterKernel.IKernelConnection) => {
         if (codePre) {
           executeCode(editorView, codePre);
         }

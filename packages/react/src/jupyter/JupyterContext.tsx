@@ -70,6 +70,8 @@ type JupyterContextProps = {
   startDefaultKernel: boolean,
   defaultKernelName: string,
   injectableStore: any;
+  useRunningKernelId?: string;
+  useRunningKernelIndex: number;
 };
 /*
 const headers = new Headers({
@@ -101,11 +103,13 @@ export const JupyterContextProvider: React.FC<{
   lite: boolean,
   startDefaultKernel: boolean,
   defaultKernelName: string,
+  useRunningKernelId?: string,
+  useRunningKernelIndex: number,
   variant: string,
   baseUrl: string,
   wsUrl: string,
   injectableStore: any
-}> = ({children, lite, startDefaultKernel, defaultKernelName, variant, baseUrl, wsUrl, injectableStore }: JupyterContextProps) => {
+}> = ({children, lite, startDefaultKernel, defaultKernelName, useRunningKernelId, useRunningKernelIndex, variant, baseUrl, wsUrl, injectableStore }: JupyterContextProps) => {
   const [_, setVariant] = useState('default');
   const [serverSettings] = useState<ServerConnection.ISettings>(createServerSettings(baseUrl, wsUrl));
   const [serviceManager, setServiceManager] = useState<ServiceManager>();
@@ -121,9 +125,9 @@ export const JupyterContextProvider: React.FC<{
           console.log('Kernel Manager is ready', kernelManager);
           if (startDefaultKernel) {
             const kernel = new Kernel({ kernelManager, kernelName: defaultKernelName });
-            kernel.getJupyterKernel().then(k => {
-              console.log(`Kernel started with session client_id:id ${k.clientId}:${k.id}`);
-              k.info.then(info => {
+            kernel.connection.then(kernelConnection => {
+              console.log(`Kernel started with session client_id:id ${kernelConnection.clientId}:${kernelConnection.id}`);
+              kernelConnection.info.then(info => {
                 console.log('Kernel information', info);
               });
               setKernel(kernel);
@@ -137,6 +141,12 @@ export const JupyterContextProvider: React.FC<{
           const loginUrl = getJupyterServerHttpUrl() + '/login?next=' + window.location;
           console.warn('Redirecting to Jupyter Server login URL', loginUrl);
           window.location.replace(loginUrl);
+        }
+        if (useRunningKernelId && useRunningKernelIndex > -1) {
+          throw new Error("You can not ask for useRunningKernelId and useRunningKernelIndex at the same time.");
+        }
+        if (startDefaultKernel && (useRunningKernelId || useRunningKernelIndex > -1)) {
+          throw new Error("You can not ask for startDefaultKernel and (useRunningKernelId or useRunningKernelIndex) at the same time.");
         }
         const serviceManager = new ServiceManager({ serverSettings });
         setServiceManager(serviceManager);
@@ -152,11 +162,25 @@ export const JupyterContextProvider: React.FC<{
             kernel = running.next();
             i++;
           }
-          if (startDefaultKernel) {  
+          if (useRunningKernelIndex > -1) {
+            const running = kernelManager.running();
+            let kernel = running.next();
+            let i = 0;
+            while (! kernel.done) {
+              console.log('----', kernel);
+              if (i === useRunningKernelIndex) {
+                setKernel(new Kernel({ kernelManager, kernelName: defaultKernelName, kernelModel: kernel.value }));
+                break;
+              }
+              kernel = running.next();
+              i++;
+            }
+          }
+          else if (startDefaultKernel) {  
             const kernel = new Kernel({ kernelManager, kernelName: defaultKernelName });
-            kernel.getJupyterKernel().then(k => {
-              console.log(`The default Kernel is now started with session client_id:id ${k.clientId}:${k.id}`);
-              k.info.then(kernelInfo => {
+            kernel.connection.then(kernelConnection => {
+              console.log(`The default Kernel is now started with session client_id:id ${kernelConnection.clientId}:${kernelConnection.id}`);
+              kernelConnection.info.then(kernelInfo => {
                 console.log('Kernel information', kernelInfo);
               });
               setKernel(kernel);
