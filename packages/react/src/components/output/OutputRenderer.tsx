@@ -91,7 +91,6 @@ export const OutputRenderer = (props: Props) => {
       break;
     }
   }
-//  console.log('---', output, plain, html);
   return (
     <>
       { plain &&

@@ -54,9 +54,9 @@ const ErrorFallback = ({error, resetErrorBoundary}: any) => {
     <div role="alert">
       <p>Oops, something went wrong.</p>
       <pre>{error.message}</pre>
-{/*
-      <button onClick={resetErrorBoundary}>Try again</button>
-*/}
+      <div style={{ visibility: "hidden" }}>
+        <button onClick={resetErrorBoundary}>Try again</button>
+      </div>
     </div>
   )
 }
@@ -67,12 +67,12 @@ const ErrorFallback = ({error, resetErrorBoundary}: any) => {
  * are available.
  */
 export const Jupyter = (props: JupyterProps) => {
-  const { lite, startDefaultKernel, defaultKernelName } = props;
+  const { lite, startDefaultKernel, defaultKernelName, children } = props;
   loadJupyterConfig(props);
   return (
     <ErrorBoundary
       FallbackComponent={ErrorFallback}
-//      onReset={() => { console.log('Reset has been invoked...'); }}
+      onReset={() => { console.log('Error Boundary reset has been invoked...'); }}
     >
       <ThemeProvider colorMode="day">
         <BaseStyles>
@@ -85,7 +85,7 @@ export const Jupyter = (props: JupyterProps) => {
             injectableStore={props.injectableStore || injectableStore}
             variant="default"
           >
-            { props.children }
+            { children }
           </JupyterContextProvider>
         </BaseStyles>
       </ThemeProvider>

@@ -148,12 +148,10 @@ export const Output = (props: IOutputProps) => {
           setKernelStatus(status);
         })
       });
+      return () => {
+        kernel.getJupyterKernel().then(k => k.shutdown().then(() => console.log(`Kernel ${k.id} is terminated.`)));
+      }
     }
-    /*
-    return () => {
-      kernel.getJupyterKernel().then(k => k.shutdown().then(() => console.log(`Kernel ${k.clientId} is terminated.`)));
-    }
-    */
   }, [kernel]);
   const executeRequest = selectExecute(sourceId);
   useEffect(() => {

@@ -11,16 +11,16 @@ import { timer, Timer, TimerView, ITimerViewProps } from "./store";
 
 import '../style/index.css';
 
-export type IJupyterDocker = {
+export type IJupyterUx = {
   timer: Timer,
   TimerView: (props: ITimerViewProps) => JSX.Element,
 };
 
-export const IJupyterDocker = new Token<IJupyterDocker>(
+export const IJupyterUx = new Token<IJupyterUx>(
   '@datalayer/jupyter-ux:plugin'
 );
 
-export const jupyterDocker: IJupyterDocker = {
+export const jupyterDocker: IJupyterUx = {
   timer,
   TimerView,
 }
@@ -35,18 +35,18 @@ namespace CommandIDs {
 /**
  * Initialization data for the @datalayer/jupyter-ux extension.
  */
-const plugin: JupyterFrontEndPlugin<IJupyterDocker> = {
+const plugin: JupyterFrontEndPlugin<IJupyterUx> = {
   id: '@datalayer/jupyter-ux:plugin',
   autoStart: true,
   requires: [ICommandPalette],
   optional: [ISettingRegistry, ILauncher],
-  provides: IJupyterDocker,
+  provides: IJupyterUx,
   activate: (
     app: JupyterFrontEnd,
     palette: ICommandPalette,
     settingRegistry: ISettingRegistry | null,
     launcher: ILauncher
-  ): IJupyterDocker => {
+  ): IJupyterUx => {
     const { commands } = app;
     const command = CommandIDs.create;
     commands.addCommand(command, {

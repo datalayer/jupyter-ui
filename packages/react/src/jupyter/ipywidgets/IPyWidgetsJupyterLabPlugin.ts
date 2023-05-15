@@ -12,7 +12,7 @@ import { WIDGET_VIEW_MIMETYPE } from '@jupyter-widgets/jupyterlab-manager/lib/ma
 import { OutputModel, OutputView, OUTPUT_WIDGET_VERSION } from '@jupyter-widgets/jupyterlab-manager/lib/output';
 import * as nbformat from '@jupyterlab/nbformat';
 import * as base from '@jupyter-widgets/base';
-// We import only the version from the specific module in controls so that the controls code can be split and dynamically loaded in webpack.
+// !!! We import only the version from the specific module in controls so that the controls code can be split and dynamically loaded in webpack.
 import { JUPYTER_CONTROLS_VERSION } from '@jupyter-widgets/controls/lib/version';
 import { KernelMessage } from '@jupyterlab/services';
 
@@ -34,7 +34,7 @@ function* widgetRenderers(
       for (const codecell of (cell as CodeCell).outputArea.widgets) {
         for (const output of toArray(codecell.children())) {
           if (output instanceof WidgetRenderer) {
-            console.log('----', output)
+            console.log('IPyWidgetsJupyterLabPlugin widgetRenderers output', output);
             yield output;
           }
         }

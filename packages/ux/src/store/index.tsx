@@ -26,6 +26,6 @@ export type ITimerViewProps = {
 
 export const TimerView = observer(({ timer }: ITimerViewProps) => (
   <button onClick={() => timer.reset()}>
-    Seconds passed: {timer.secondsPassed}
+    Jupyter UX: {timer.secondsPassed}
   </button>
 ));

@@ -1,15 +1,9 @@
 import { JupyterFrontEnd, JupyterFrontEndPlugin } from '@jupyterlab/application';
-
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
-
 import { MainAreaWidget, ICommandPalette } from '@jupyterlab/apputils';
-
 import { ILauncher } from '@jupyterlab/launcher';
-
 import { reactIcon } from '@jupyterlab/ui-components';
-
 import { requestAPI } from './handler';
-
 import { DatalayerWidget } from './widget';
 
 import '../../../style/index.css';
@@ -75,7 +69,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       })
       .catch(reason => {
         console.error(
-          `The jupyter server extension appears to be missing.\n${reason}`
+          `The Jupyter Server extension appears to be missing.\n${reason}`
         );
       });
   }

@@ -135,7 +135,7 @@ export const JupyterContextProvider: React.FC<{
       ensureJupyterAuth(serverSettings).then(isAuth => {
         if (!isAuth) {
           const loginUrl = getJupyterServerHttpUrl() + '/login?next=' + window.location;
-          console.warn('Redirecting to jupyter login url', loginUrl);
+          console.warn('Redirecting to Jupyter Server login URL', loginUrl);
           window.location.replace(loginUrl);
         }
         const serviceManager = new ServiceManager({ serverSettings });
@@ -143,13 +143,21 @@ export const JupyterContextProvider: React.FC<{
         const kernelManager = (serviceManager.sessions as any)._kernelManager as KernelManager;
         setKernelManager(kernelManager);
         kernelManager.ready.then(() => {
-          console.log('Kernel Manager is ready', kernelManager);
-          if (startDefaultKernel) {
+          console.log('Kernel Manager is now ready');
+          const running = kernelManager.running();
+          let kernel = running.next();
+          let i = 0;
+          while (! kernel.done) {
+            console.log(`This Jupyter server has already this running kernel [${i}]`, kernel.value);
+            kernel = running.next();
+            i++;
+          }
+          if (startDefaultKernel) {  
             const kernel = new Kernel({ kernelManager, kernelName: defaultKernelName });
             kernel.getJupyterKernel().then(k => {
-              console.log(`Kernel started with session client_id:id ${k.clientId}:${k.id}`);
-              k.info.then(info => {
-                console.log('Kernel information', info);
+              console.log(`The default Kernel is now started with session client_id:id ${k.clientId}:${k.id}`);
+              k.info.then(kernelInfo => {
+                console.log('Kernel information', kernelInfo);
               });
               setKernel(kernel);
             });
