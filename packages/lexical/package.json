@@ -65,7 +65,7 @@
     "@jupyterlab/settingregistry": "4.0.0-beta.1",
     "@lexical/react": "0.5.0",
     "@primer/octicons-react": "18.2.0",
-    "@primer/react": "35.24.0",
+    "@primer/react": "35.25.1",
     "katex": "0.16.1",
     "lexical": "0.5.0",
     "lodash-es": "4.17.21",
