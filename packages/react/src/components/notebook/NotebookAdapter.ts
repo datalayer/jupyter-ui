@@ -2,7 +2,7 @@ import { Store } from "redux";
 import { CommandRegistry } from '@lumino/commands';
 import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
 import { BoxPanel, Widget } from '@lumino/widgets';
-import { IChangedArgs, PageConfig } from '@jupyterlab/coreutils';
+import { IChangedArgs } from '@jupyterlab/coreutils';
 import { Cell, ICellModel, MarkdownCell } from '@jupyterlab/cells';
 import { ServiceManager, Kernel as JupyterKernel } from '@jupyterlab/services';
 import { DocumentRegistry, Context } from '@jupyterlab/docregistry';
@@ -14,7 +14,7 @@ import { NotebookPanel, NotebookWidgetFactory, NotebookTracker, NotebookActions,
 import { CodeMirrorEditorFactory, CodeMirrorMimeTypeService, EditorLanguageRegistry, EditorExtensionRegistry, EditorThemeRegistry, ybinding } from '@jupyterlab/codemirror';
 import { IEditorServices } from '@jupyterlab/codeeditor';
 import { Completer, CompleterModel, CompletionHandler, ProviderReconciliator, KernelCompleterProvider } from '@jupyterlab/completer';
-import { MathJaxTypesetter } from '@jupyterlab/mathjax2';
+import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
 import * as nbformat from '@jupyterlab/nbformat';
 import { ISharedAttachmentsCell, IYText } from '@jupyter/ydoc';
 // import { newUuid } from './../../jupyter/utils/Ids';
@@ -106,10 +106,7 @@ export class NotebookAdapter {
 
     this._rendermime = new RenderMimeRegistry({
       initialFactories: rendererFactories,
-      latexTypesetter: new MathJaxTypesetter({
-        url: PageConfig.getOption('mathjaxUrl'),
-        config: PageConfig.getOption('mathjaxConfig'),
-      }),
+      latexTypesetter: new MathJaxTypesetter(),
       markdownParser: getMarked(languages),
     });
 

@@ -41,7 +41,7 @@
     "@datalayer/jupyterlite-server": "0.1.0-beta.13",
     "@datalayer/jupyterlite-session": "0.1.0-beta.13",
     "@datalayer/jupyterlite-settings": "0.1.0-beta.13",
-    "@jupyterlab/coreutils": "6.0.0-beta.1"
+    "@jupyterlab/coreutils": "6.0.0"
   },
   "devDependencies": {
     "@babel/core": "7.21.0",
