@@ -4,11 +4,11 @@
 
 # 🪐 ⚛️ Jupyter UI
 
-> Jupyter UI is a set of [React.js](https://reactjs.org) components that allow a frontend developer to build data products compatible with the [Jupyter](https://jupyter.org) ecosystem. The user interface delivers executable notebooks and cells.
+> [React.js](https://reactjs.org) components that allow a frontend developer to build data products compatible with the [Jupyter](https://jupyter.org) ecosystem. The user interface delivers executable notebooks and cells.
 
-We have extensive [documentation](https://jupyter-ui.datalayer.tech). As a developer start with the [setup of your environment](https://jupyter-ui.datalayer.tech/docs/welcome/develop) and start with [one of the examples](https://jupyter-ui.datalayer.tech/docs/category/examples).
+As a developer start with the [setup of your environment](https://jupyter-ui.datalayer.tech/docs/welcome/develop) and try [one of the examples](https://jupyter-ui.datalayer.tech/docs/category/examples). We have [documentation](https://jupyter-ui.datalayer.tech) for more details.
 
-You can try a simple examples on this [CodeSandbox](https://codesandbox.io/p/sandbox/jupyter-react-cra-example-zygjbm?file=%2Fsrc%2Findex.tsx).
+You can try a simple example on this [CodeSandbox](https://codesandbox.io/p/sandbox/jupyter-react-cra-example-zygjbm?file=%2Fsrc%2Findex.tsx).
 
 <div align="center" style="text-align: center">
   <img alt="Jupyter UI Gallery" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-gallery.gif" />
