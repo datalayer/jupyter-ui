@@ -1,5 +1,5 @@
-import {Jupyter} from '@datalayer/jupyter-react';
-import Gallery from './examples/gallery/Gallery';
+import { Jupyter } from '@datalayer/jupyter-react';
+import GalleryExample from './examples/GalleryExample';
 
 import './App.css';
 
@@ -7,7 +7,7 @@ const App = () => {
   return (
     <>
       <Jupyter startDefaultKernel={true} terminals={true}>
-        <Gallery/>
+        <GalleryExample/>
       </Jupyter>
     </>
   );

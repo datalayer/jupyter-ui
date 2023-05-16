@@ -1,26 +1,22 @@
-import {useDispatch} from 'react-redux';
-import {Button} from '@primer/react';
-import {PlayIcon} from '@primer/octicons-react';
-import {FileIcon} from '@primer/octicons-react';
-import {Text} from '@primer/react';
-import {notebookActions} from '@datalayer/jupyter-react';
+import { useDispatch } from 'react-redux';
+import { Button, Text } from '@primer/react';
+import { Toolbar } from '@datalayer/primer-addons';
+import { PlayIcon, FileIcon } from '@primer/octicons-react';
+import { notebookActions } from '@datalayer/jupyter-react';
 
 const NotebookSimpleToolbar = (props: {notebookId: string}) => {
-  const {notebookId} = props;
+  const { notebookId } = props;
   const dispatch = useDispatch();
   return (
-    <>
-      <Text as="h3">Notebook Example</Text>
-      <>
-        <Button
-          variant="outline"
-          color="secondary"
-          leadingIcon={PlayIcon}
-          onClick={() => dispatch(notebookActions.run.started(notebookId))}
-        >
-          Run
-        </Button>
-      </>
+    <Toolbar>
+      <Button
+        variant="outline"
+        color="secondary"
+        leadingIcon={PlayIcon}
+        onClick={() => dispatch(notebookActions.run.started(notebookId))}
+      >
+        Run
+      </Button>
       <Button
         variant="outline"
         // color="secondary"
@@ -36,7 +32,7 @@ const NotebookSimpleToolbar = (props: {notebookId: string}) => {
       <Text as="h3">
         {/* Notebook: {notebook.notebookChange.cellsChange} */}
       </Text>
-    </>
+    </Toolbar>
   );
 };
 

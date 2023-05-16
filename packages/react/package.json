@@ -64,6 +64,7 @@
     "@datalayer/jupyterlite-server": "0.1.0-beta.13",
     "@datalayer/jupyterlite-server-extension": "0.1.0-beta.13",
     "@datalayer/typescript-fsa-redux-observable": "0.18.0",
+    "@datalayer/primer-addons": "0.0.4",
     "@jupyter-widgets/base": "6.0.4",
     "@jupyter-widgets/controls": "5.0.5",
     "@jupyter-widgets/html-manager": "1.0.7",
