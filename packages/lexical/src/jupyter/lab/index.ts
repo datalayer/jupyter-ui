@@ -75,7 +75,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       })
       .catch(reason => {
         console.error(
-          `The jupyter server extension appears to be missing.\n${reason}`
+          `The Jupyter Server extension appears to be missing.\n${reason}`
         );
       });
   }

@@ -53,7 +53,7 @@ export const ensureJupyterAuth = (serverSettings: ServerConnection.ISettings): P
     return true;
   })
   .catch(reason => {
-    console.log('The jupyter server API has failed with reason', reason);
+    console.log('The Jupyter Server API has failed with reason', reason);
     return false;
   });
 }
