@@ -13,6 +13,16 @@
     "react",
     "jupyterlab"
   ],
+  "engines": {
+    "node": ">= 18.0.0",
+    "npm": "please-use-yarn",
+    "pnpm": "please-use-yarn",
+    "yarn": ">= 3.5.0"
+  },
+  "os": [
+    "darwin",
+    "linux"
+  ],
   "scripts": {
     "build": "lerna run build",
     "build:example": "lerna run --parallel --scope '@datalayer/*' build:example",

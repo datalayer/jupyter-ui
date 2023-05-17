@@ -4,26 +4,26 @@
 
 # 🪐 ⚛️ Jupyter UI
 
-> [React.js](https://reactjs.org) components that allow a frontend developer to build data products compatible with the [Jupyter](https://jupyter.org) ecosystem. The user interface delivers executable notebooks and cells.
+> [React.js](https://reactjs.org) components that allow a frontend developer to build data products compatible with the [Jupyter](https://jupyter.org) ecosystem. The user interface delivers executable notebooks and cells as terminals.
 
-<div align="left" style="background-color: orange">
+<hr/>
 
-<p>
-Many users are reporting issues with their environment (build failures...). This is inherent to the mixed Python/JavaScript environment and dependcy on Jupyter toolchain. We are putting this issue at the <b>top of our priority</b> to ease your pain.
-</p>
+## Announcement
+
+Many users are reporting issues with their environment (build failures...). This is inherent to the mixed Python / JavaScript environment and dependency on Jupyter toolchain. We are putting this issue at the <b>top of our priority</b> to ease your pain.
 
 1. We have just migrated to `yarn v3` to align with JupyterLab 4 and latest `lerna`.
+2. Enforcing `engines` and `os` in package.json.
 2. We are offering `hosted kernels` so you don't need to run your local Jupyter Server. If you run `yarn start`, you will consume those hosted kernels from the cloud.
 3. We are looking towards `pyodide` kernels (already supported for the Console component).
 4. The default build should be `faster` and not build the examples, please give your opinion on https://github.com/datalayer/jupyter-ui/issues/63.
 5. `Docker` and `devcontainer` are options we are investigating, please comment on https://github.com/datalayer/jupyter-ui/issues/61.
-</ol>
 
-</div>
+<hr/>
 
 As a developer start with the [setup of your environment](https://jupyter-ui.datalayer.tech/docs/welcome/develop) and try [one of the examples](https://jupyter-ui.datalayer.tech/docs/category/examples). We have [documentation](https://jupyter-ui.datalayer.tech) for more details.
 
-You can try a simple example on this [CodeSandbox](https://codesandbox.io/p/sandbox/jupyter-react-cra-example-zygjbm?file=%2Fsrc%2Findex.tsx).
+You can try an example on this [CodeSandbox](https://codesandbox.io/p/sandbox/jupyter-react-cra-example-zygjbm?file=%2Fsrc%2Findex.tsx) that allows you to run code in a simple Jupyter Cell.
 
 <div align="center" style="text-align: center">
   <img alt="Jupyter UI Gallery" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-gallery.gif" />
