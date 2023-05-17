@@ -147,6 +147,8 @@ dmypy.json
 !**/.*ignore
 !**/.*rc
 !**/.*rc.js
+!**/.*rc.json
+!**/.*rc.yml
 !**/.*config
 !*.*rc.json
 !**/.env

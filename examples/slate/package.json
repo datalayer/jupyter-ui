@@ -1,5 +1,5 @@
 {
-  "name": "@datalayer-examples/jupyter-slate",
+  "name": "@datalayer/example-jupyter-slate",
   "version": "0.0.0",
   "license": "MIT",
   "main": "lib/index.js",
@@ -11,7 +11,7 @@
     "build": "gulp resources-to-lib && tsc && webpack",
     "build:prod": "gulp resources-to-lib && tsc && webpack --mode=production",
     "clean": "rimraf node_modules lib build",
-    "start": "run-p -c start:*",
+    "start": "run-p -c 'start:*'",
     "start:webpack": "webpack serve",
     "start:jupyter": "cd ./../../dev/sh && ./kill-jupyter-server.sh || true && ./start-jupyter-server.sh anonymous",
     "start:tsc": "tsc --watch",

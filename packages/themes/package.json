@@ -8,7 +8,7 @@
     "style"
   ],
   "scripts": {
-    "start": "run-p -c start:*",
+    "start": "run-p -c 'start:*'",
     "start:webpack": "webpack serve",
     "start:tsc": "tsc --watch",
     "build": "tsc",

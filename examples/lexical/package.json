@@ -1,5 +1,5 @@
 {
-  "name": "@datalayer-examples/jupyter-lexical",
+  "name": "@datalayer/example-jupyter-lexical",
   "version": "0.0.2",
   "description": "Jupyter UI example with Lexical",
   "license": "MIT",
@@ -21,7 +21,7 @@
   "scripts": {
     "build": "webpack",
     "clean": "rimraf lib build dist tsconfig.tsbuildinfo",
-    "start": "run-p -c start:*",
+    "start": "run-p -c 'start:*'",
     "start:jupyter": "cd ./../.. && make start-jupyter-server",
     "start:webpack": "webpack serve",
     "start_vite": "vite --host",

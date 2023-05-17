@@ -1,9 +1,9 @@
 {
-  "name": "@datalayer-examples/jupyter-create-react-app",
+  "name": "@datalayer/example-jupyter-create-react-app",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "run-p -c start:*",
+    "start": "run-p -c 'start:*'",
     "start:jupyter": "./dev/sh/start-jupyter-server.sh",
     "start:react": "react-scripts start",
     "build": "react-scripts build",

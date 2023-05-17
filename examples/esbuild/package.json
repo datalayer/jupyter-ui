@@ -1,11 +1,11 @@
 {
-  "name": "@datalayer-examples/jupyter-esbuild",
+  "name": "@datalayer/example-jupyter-esbuild",
   "version": "0.0.6",
   "license": "MIT",
   "private": true,
   "scripts": {
     "clean": "rimraf dist",
-    "start": "run-p -c start:*",
+    "start": "run-p -c 'start:*'",
     "start:ui": "webpack serve --no-client-overlay",
     "start:server": "",
     "build": "webpack",

@@ -1,11 +1,11 @@
 {
-  "name": "@datalayer-examples/jupyter-docusaurus",
+  "name": "@datalayer/example-jupyter-docusaurus",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "run-p -c start:*",
-    "jupyter:ui:docusaurus": "run-p -c start:*",
+    "start": "run-p -c 'start:*'",
+    "jupyter:ui:docusaurus": "run-p -c 'start:*'",
     "start:docusaurus": "docusaurus start",
     "start:jupyter": "cd ./../../dev/sh && ./kill-jupyter-server.sh || true && ./start-jupyter-server.sh docusaurus",
     "build:docusaurus": "docusaurus build",

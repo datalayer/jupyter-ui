@@ -9,7 +9,7 @@ dependencies:
   - nodejs=18.7.0
   - pip
   - python=3.11
-  - yarn=1.22.19
+  - yarn=3.5.0
   - pip:
     - build
     - hatch
