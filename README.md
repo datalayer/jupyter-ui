@@ -9,7 +9,7 @@
 <hr/>
 
 <div align="center" style="text-align: center;">
-<h1>Announcement</h1>
+<h1>📣 Announcement</h1>
 </div>
 Many developers are reporting issues with their environment (build failures...). This is inherent to the mixed Python / JavaScript build and dependency on Jupyter toolchain. We are putting this issue at the <b>top of our priority</b> to ease your pain.
 
@@ -20,7 +20,7 @@ Many developers are reporting issues with their environment (build failures...).
 4. We are looking towards `Pyodide` kernels (already supported for the Console component).
 5. `Docker` and `devcontainer` are options we are investigating, please comment on https://github.com/datalayer/jupyter-ui/issues/61.
 
-👉 Please continue reporting any failure and idea on how to make this better ❤️
+👉 Please continue reporting any failure and idea on how to make a better experience. ❤️
 
 <hr/>
 
