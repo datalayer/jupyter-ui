@@ -8,11 +8,17 @@ Follow the below steps to use and develop Jupyter UI.
 
 ## Environment
 
-First, you need [Miniconda](https://docs.conda.io/en/latest/miniconda.html) up-and-running on your machine.
+You need [Miniconda](https://docs.conda.io/en/latest/miniconda.html) up-and-running on your machine.
 
 :::caution
 
-You need to develop on macOS or Linux. Windows is not supported as development platform for the time-being.
+You need to develop on `macOS` or `Linux`. `Windows` is not supported as development platform for the time-being.
+
+:::
+
+:::caution
+
+Only `yarn` is supported (`npm` or `pnpm` will not work). This is due to some dependency on the JupyterLab build system which only support `yarn`.
 
 :::
 
@@ -23,31 +29,19 @@ git clone https://github.com/datalayer/jupyter-ui.git && \
   cd jupyter-ui
 ```
 
-If you already have created a conda environment, please remove it.
+If you already have created a conda environment named `datalayer`, please remove it.
 
 ```bash
 conda deactivate && \
   make env-rm
 ```
 
-Create a new conda environment.
+Create a new conda environment and activate it.
 
 ```bash
 make env && \
   conda activate datalayer
 ```
-
-:::caution
-
-JupyterLab has migrated to Yarn v3 which is not friendly with resolutions, especially for non final (alpha, beta, rc) releases. Ensure Yarn v1 for resolutions and Visual Studio Code completions.
-
-```bash
-curl https://raw.githubusercontent.com/jupyterlab/jupyterlab/v4.0.0a36/jupyterlab/staging/yarn.js \
- -o $( dirname "$(which jupyter)" )/../lib/python3.11/site-packages/jupyterlab/staging/yarn.js
-jlpm --version # Should be 1.22.19.
-```
-
-:::
 
 ## Install and Build
 
