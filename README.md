@@ -11,7 +11,7 @@
 <div align="center" style="text-align: center;">
 <h1>📣 Announcement</h1>
 </div>
-Many developers are reporting issues with their environment (build failures...). This is inherent to the mixed Python / JavaScript build and dependency on Jupyter toolchain. We are putting this issue at the <b>top of our priority</b> to ease your pain.
+Many developers are reporting issues with their environment (build failures...). This is inherent to the mixed Python and JavaScript build as dependency on Jupyter toolchain. We are putting this issue at the <b>top of our priority</b> to ease your pain.
 
 1. We have migrated to `Yarn v3` and latest `Lerna` to align with JupyterLab 4.
 2. `engines` and `os` are enforced in package.json - We **only support** Yarn v3 on macOS and Linux.
