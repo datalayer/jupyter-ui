@@ -32,6 +32,8 @@ As a React.js developer, you just write a few lines of code get a live notebook 
   <img alt="Jupyter UI Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-snippet.png" />
 </div>
 
+The typedoc documentation is [available online](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.4.0/index.html).
+
 Jupyter UI can be used in any React.js application. Install the latest `@datalayer/jupyter-react` npm package and get inspired by the [examples](https://github.com/datalayer/jupyter-ui/tree/main/examples) in this repository.
 
 <div align="center" style="text-align: center">

@@ -9,8 +9,9 @@
 <hr/>
 
 <div align="center" style="text-align: center;">
-<h1>📣 Announcement</h1>
+  <h1>📣 Announcement</h1>
 </div>
+
 Many developers are reporting issues with their environment (build failures...). This is inherent to the mixed Python and JavaScript build as dependency on Jupyter toolchain. We are putting this issue at the <b>top of our priority</b> to ease your pain.
 
 1. We have migrated to `Yarn v3` and latest `Lerna` to align with JupyterLab 4.
@@ -65,8 +66,6 @@ We maintain a plugin for [Docusaurus](https://docusaurus.io) in the [docusaurus]
 ## Support
 
 Please open [issues](https://github.com/datalayer/jupyter-ui/issues) for questions, feature requests, bug reports... We also welcome [pull requests](https://github.com/datalayer/jupyter-ui/pulls).
-
-The typedoc documentation is [available online](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.0.24/index.html).
 
 ## ⚖️ License
 
