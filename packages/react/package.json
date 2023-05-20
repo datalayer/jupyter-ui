@@ -19,6 +19,7 @@
     "url": "https://github.com/datalayer/jupyter-ui.git",
     "directory": "packages/react"
   },
+  "packageManager": "yarn@3.5.0",
   "scripts": {
     "build": "gulp resources-to-lib && tsc && webpack && jlpm build:lib && jlpm build:labextension:dev",
     "build:labextension": "jupyter labextension build .",
