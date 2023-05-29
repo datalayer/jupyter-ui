@@ -5,7 +5,7 @@
 [![Build Status](https://travis-ci.org/datalayer/ipyscript.svg?branch=master)](https://travis-ci.org/datalayer/ipyscript)
 [![codecov](https://codecov.io/gh/datalayer/ipyscript/branch/master/graph/badge.svg)](https://codecov.io/gh/datalayer/ipyscript)
 
-# 🪐 🔥 IpyScript
+# 🪐 🐉 IpyScript
 
 > IpyWidgets for PyScript.
 
