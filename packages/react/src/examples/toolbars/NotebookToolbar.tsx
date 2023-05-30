@@ -9,7 +9,7 @@ import {
   TrashIcon,
   SyncIcon,
 } from '@primer/octicons-react';
-import {FastForwardIcon} from '@datalayer/icons-react/outline';
+import {FastForwardIcon} from '@datalayer/icons-react';
 import {cmdIds} from '../../components/notebook/NotebookCommands';
 import {IJupyterReactState} from '../../state/State';
 import {

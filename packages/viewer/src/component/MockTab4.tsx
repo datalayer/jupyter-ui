@@ -1,5 +1,5 @@
 import { Timeline, StyledOcticon, Link, Box, SubNav } from '@primer/react';
-import { DaskIcon, PyTorchIcon, TensorFlowIcon } from "@datalayer/icons-react/solid";
+import { DaskIcon, PyTorchIcon, TensorFlowIcon } from "@datalayer/icons-react";
 
 const MockTab4 = (): JSX.Element => {
   return (
