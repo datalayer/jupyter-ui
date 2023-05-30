@@ -1,5 +1,5 @@
 import { Timeline, StyledOcticon, Link, Box, SubNav } from '@primer/react';
-import { DaskLogoIcon, PyTorchLogoIcon, TensorFlowLogoIcon } from "@datalayer/icons";
+import { DaskIcon, PyTorchIcon, TensorFlowIcon } from "@datalayer/icons-react/solid";
 
 const MockTab4 = (): JSX.Element => {
   return (
@@ -16,7 +16,7 @@ const MockTab4 = (): JSX.Element => {
       <Timeline>
         <Timeline.Item>
           <Timeline.Badge>
-            <StyledOcticon icon={PyTorchLogoIcon} />
+            <StyledOcticon icon={PyTorchIcon} />
           </Timeline.Badge>
           <Timeline.Body>
             <Link href="#" sx={{fontWeight: 'bold', color: 'fg.default', mr: 1}} muted>
@@ -32,7 +32,7 @@ const MockTab4 = (): JSX.Element => {
         </Timeline.Item>
         <Timeline.Item>
           <Timeline.Badge>
-            <StyledOcticon icon={TensorFlowLogoIcon} />
+            <StyledOcticon icon={TensorFlowIcon} />
           </Timeline.Badge>
           <Timeline.Body>
             <Link href="#" sx={{fontWeight: 'bold', color: 'fg.default', mr: 1}} muted>
@@ -48,7 +48,7 @@ const MockTab4 = (): JSX.Element => {
         </Timeline.Item>
         <Timeline.Item>
           <Timeline.Badge>
-            <StyledOcticon icon={DaskLogoIcon} />
+            <StyledOcticon icon={DaskIcon} />
           </Timeline.Badge>
           <Timeline.Body>
             <Link href="#" sx={{fontWeight: 'bold', color: 'fg.default', mr: 1}} muted>

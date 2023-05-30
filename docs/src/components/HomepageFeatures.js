@@ -14,7 +14,7 @@ const FeatureList = [
     ),
   },
   {
-    title: 'Open Source',
+    title: 'Open source',
 //    Svg: require('../../static/img/feature_3.svg').default,
     description: (
       <>
