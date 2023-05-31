@@ -62,7 +62,7 @@
     "kill": "make kill || true"
   },
   "dependencies": {
-    "@datalayer/icons-react": "0.0.10",
+    "@datalayer/icons-react": "0.0.11",
     "@jupyterlab/application": "4.0.0",
     "@jupyterlab/coreutils": "6.0.0",
     "@jupyterlab/services": "7.0.0",
