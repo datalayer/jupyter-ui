@@ -25,6 +25,7 @@ export class CellSidebarContentFactory extends NotebookPanel.ContentFactory {
   ) {
     super(options);
     this.CellSidebar = CellSidebar;
+    super.createCodeCell
     this.notebookId = notebookId,
     this.nbgrader = nbgrader;
     this.commands = commands;
