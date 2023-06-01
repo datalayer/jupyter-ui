@@ -30,7 +30,6 @@
     "clean": "rimraf node_modules lib build",
     "deploy": "lerna run deploy",
     "docs": "lerna run --scope' @datalayer/jupyter-react-docs' start",
-    "juypyter:themes": "lerna run --parallel --scope '@datalayer/jupyter-themes' start",
     "kill": "make kill",
     "ls": "lerna ls",
     "start": "lerna run --parallel --scope '@datalayer/jupyter-react' start",
