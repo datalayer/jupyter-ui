@@ -6,7 +6,7 @@ import {
   Box,
 } from '@primer/react';
 import { LinkIcon, AlertIcon } from '@primer/octicons-react';
-import { DaskIcon, PyTorchIcon, TensorFlowIcon } from "@datalayer/icons-react/default";
+import { DaskIcon, PyTorchIcon, TensorFlowIcon } from "@datalayer/icons-react";
 
 const MockTab1 = (): JSX.Element => {
   return (
