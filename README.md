@@ -27,7 +27,7 @@ Many developers are reporting issues with their environment (build failures...).
 
 As a developer start with the [setup of your environment](https://jupyter-ui.datalayer.tech/docs/welcome/develop) and try [one of the examples](https://jupyter-ui.datalayer.tech/docs/category/examples). We have [documentation](https://jupyter-ui.datalayer.tech) for more details.
 
-You can try an example on this [CodeSandbox](https://codesandbox.io/p/sandbox/jupyter-react-cra-example-zygjbm?file=%2Fsrc%2Findex.tsx) that allows you to run code in a simple Jupyter Cell.
+You can try an example on this [CodeSandbox](https://codesandbox.io/p/sandbox/jupyter-react-cra-example-te6hii?file=%2Fsrc%2Findex.tsx) that allows you to run code in a simple Jupyter Cell.
 
 <div align="center" style="text-align: center">
   <img alt="Jupyter UI Gallery" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-gallery.gif" />
