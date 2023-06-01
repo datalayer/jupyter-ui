@@ -19,7 +19,7 @@ export class CellAdapter {
   private _codeCell: CodeCell;
   private _sessionContext: SessionContext;
 
-  constructor(source: string, serverSettings: ServerConnection.ISettings, kernel: Kernel, ) {
+  constructor(source: string, serverSettings: ServerConnection.ISettings, kernel?: Kernel, ) {
     const kernelManager = new KernelManager({
       serverSettings
     });
@@ -30,15 +30,21 @@ export class CellAdapter {
     const specsManager = new KernelSpecManager({
       serverSettings
     });
+    const kernelPreference = kernel
+    ? {
+      id: kernel.id,
+      shouldStart: true,
+      autoStartDefault: false,
+    } : {
+      shouldStart: true,
+      autoStartDefault: true,
+      name: 'python',
+    }
     this._sessionContext = new SessionContext({
+      name: 'Jupyter React Cell',
       sessionManager,
       specsManager,
-      name: 'Jupyter UI',
-      kernelPreference: {
-        id: kernel.id,
-        shouldStart: true,
-        autoStartDefault: false,
-      }
+      kernelPreference
     });
 
     const themes = new EditorThemeRegistry();
