@@ -22,15 +22,15 @@ export type ICellProps = {
 
 export const Cell = (props: ICellProps) => {
   const { source, autoStart } = props;
-  const { serverSettings, injectableStore } = useJupyter();
+  const { serverSettings, injectableStore, defaultKernel } = useJupyter();
   const dispatch = useDispatch();
   const [adapter, setAdapter] = useState<CellAdapter>();
   useMemo(() => {
     (injectableStore as any).inject('cell', cellReducer);
   }, []);
   useEffect(() => {
-    if (source) {
-      const adapter = new CellAdapter(source, serverSettings);
+    if (source && defaultKernel) {
+      const adapter = new CellAdapter(source, serverSettings, defaultKernel);
       dispatch(cellActions.update({ adapter }));
       dispatch(cellActions.source(props.source!));
       adapter.codeCell.model.contentChanged.connect((cellModel, changedArgs) => {
@@ -51,7 +51,7 @@ export const Cell = (props: ICellProps) => {
       });
       setAdapter(adapter);
     }
-  }, [source]);
+  }, [source, defaultKernel]);
   return adapter
     ?
       <Box

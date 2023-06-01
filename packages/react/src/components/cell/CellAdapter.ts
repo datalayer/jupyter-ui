@@ -11,6 +11,7 @@ import { createStandaloneCell, YCodeCell, IYText } from '@jupyter/ydoc';
 import { requireLoader } from "@jupyter-widgets/html-manager";
 import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/lib/output_renderers";
 import { IPyWidgetsClassicManager } from "../../jupyter/ipywidgets/IPyWidgetsClassicManager";
+import Kernel from './../../jupyter/services/kernel/Kernel';
 import CellCommands from './CellCommands';
 
 export class CellAdapter {
@@ -18,7 +19,7 @@ export class CellAdapter {
   private _codeCell: CodeCell;
   private _sessionContext: SessionContext;
 
-  constructor(source: string, serverSettings: ServerConnection.ISettings) {
+  constructor(source: string, serverSettings: ServerConnection.ISettings, kernel: Kernel, ) {
     const kernelManager = new KernelManager({
       serverSettings
     });
@@ -34,9 +35,9 @@ export class CellAdapter {
       specsManager,
       name: 'Jupyter UI',
       kernelPreference: {
-        autoStartDefault: true,
+        id: kernel.id,
         shouldStart: true,
-        name: 'python',
+        autoStartDefault: false,
       }
     });
 

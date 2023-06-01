@@ -29,7 +29,7 @@ if (IS_PRODUCTION) {
 const JUPYTER_HOST = 'http://localhost:8686';
 
 module.exports = {
-  entry: ['./src/examples/NotebookModel'],
+  entry: ['./src/examples/Cells'],
   mode: mode,
   watchOptions: {
     aggregateTimeout: 300,
