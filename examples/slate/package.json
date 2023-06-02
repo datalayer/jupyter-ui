@@ -13,14 +13,14 @@
     "clean": "rimraf node_modules lib build",
     "start": "run-p -c 'start:*'",
     "start:webpack": "webpack serve",
-    "start:jupyter": "cd ./../../dev/sh && ./kill-jupyter-server.sh || true && ./start-jupyter-server.sh anonymous",
+    "start:jupyter": "cd ./../../dev/sh && ./kill.sh || true && ./start-jupyter-server.sh anonymous",
     "start:tsc": "tsc --watch",
     "build:tsc:watch:tsc": "tsc --watch",
     "build:tsc:watch:res": "gulp resources-to-lib-watch",
     "typedoc": "typedoc ./src",
     "watch": "tsc --watch",
     "start_:jupyterpool": "cd dist && jupyterpool --port 3266 --ServerApp.jpserver_extensions=\"{'jupyterlab': True, 'jupyterpool': True,  'nbclassic': True }\"",
-    "kill": "./../dev/sh/kill-jupyter-server.sh || true"
+    "kill": "./../dev/sh/kill.sh || true"
   },
   "dependencies": {
     "@datalayer/jupyter-react": "0.4.0",

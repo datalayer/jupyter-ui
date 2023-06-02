@@ -39,7 +39,7 @@
     "jupyterlab": "run-p -c 'jupyterlab:*'",
     "jupyterlab:start": "jupyter lab --watch --config=./dev/config/jupyter_server_config.py",
     "jupyterlab:watch": "run-p -c watch:src watch:labextension",
-    "kill": "./../../dev/sh/kill-jupyter-server.sh || true",
+    "kill": "./../../dev/sh/kill.sh || true",
     "lint": "jlpm stylelint && jlpm prettier && jlpm eslint",
     "lint:check": "jlpm stylelint:check && jlpm prettier:check && jlpm eslint:check",
     "prettier": "jlpm prettier:base --write --list-different",

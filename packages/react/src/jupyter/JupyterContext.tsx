@@ -167,7 +167,6 @@ export const JupyterContextProvider: React.FC<{
             let kernel = running.next();
             let i = 0;
             while (! kernel.done) {
-              console.log('----', kernel);
               if (i === useRunningKernelIndex) {
                 setKernel(new Kernel({ kernelManager, kernelName: defaultKernelName, kernelModel: kernel.value }));
                 break;

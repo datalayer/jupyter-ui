@@ -25,8 +25,7 @@ build: ## build all modules
 
 kill: ## kill
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		./dev/sh/kill-jupyter-server.sh && \
-		./dev/sh/kill-webpack.sh )
+		./dev/sh/kill.sh )
 
 start: ## start
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
@@ -56,7 +55,7 @@ install: ## install npm dependencies
 
 start-jupyter-server: ## start the jupyter server
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		./dev/sh/kill-jupyter-server.sh || true )
+		./dev/sh/kill.sh || true )
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		cd ./dev/sh && ./start-jupyter-server.sh )
 

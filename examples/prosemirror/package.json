@@ -13,13 +13,13 @@
     "clean": "rimraf node_modules lib build",
     "start": "run-p -c 'start:*'",
     "start:webpack": "webpack serve",
-    "start:jupyter": "cd ./../../dev/sh && ./kill-jupyter-server.sh || true && ./start-jupyter-server.sh prosemirror",
+    "start:jupyter": "cd ./../../dev/sh && ./kill.sh || true && ./start-jupyter-server.sh prosemirror",
     "tech:tsc": "tsc --watch",
     "build:tsc:watch:tsc": "tsc --watch",
     "build:tsc:watch:res": "gulp resources-to-lib-watch",
     "typedoc": "typedoc ./src",
     "watch": "tsc --watch",
-    "kill": "./../../dev/sh/kill-jupyter-server.sh || true"
+    "kill": "./../../dev/sh/kill.sh || true"
   },
   "dependencies": {
     "@codemirror/lang-python": "6.0.1",

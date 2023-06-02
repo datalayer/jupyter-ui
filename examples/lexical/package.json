@@ -25,7 +25,7 @@
     "start:jupyter": "cd ./../.. && make start-jupyter-server",
     "start:webpack": "webpack serve",
     "start_vite": "vite --host",
-    "kill": "./../../dev/sh/kill-jupyter-server.sh || true"
+    "kill": "./../../dev/sh/kill.sh || true"
   },
   "dependencies": {
     "@datalayer/jupyter-lexical": "0.0.1",
