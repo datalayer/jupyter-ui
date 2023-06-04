@@ -45,6 +45,6 @@ publish: build ## publish
 		--profile datalayer && \
 	  aws cloudfront create-invalidation \
 		--distribution-id E1PM85T96GGH8P \
-		--paths / \
+		--paths "/*" \
 		--profile datalayer && \
 	echo open ✨  https://jupyter-ui.datalayer.tech )

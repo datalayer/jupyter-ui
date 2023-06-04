@@ -48,6 +48,6 @@ typedoc-publish: typedoc ## deploy typedoc
 		--profile datalayer
 	aws cloudfront create-invalidation \
 		--distribution-id E1CPG9FNSQJESH \
-		--paths / \
+		--paths "/*" \
 		--profile datalayer
 	echo open ✨  https://typedoc.datalayer.tech/datalayer/jupyter-lexical/0.2.1
