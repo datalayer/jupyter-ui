@@ -26,7 +26,7 @@ const ProductList = [
 //    Svg: require('../../static/img/product_3.svg').default,
     description: (
       <>
-        For a truly collaborative and accessible notebook, <a href="./docs/welcome/literate" style={{ textDecoration: "underline" }}>Literate Notebook</a> is a better single-page editor for your data analysis.
+        For a truly collaborative and accessible notebook, <a href="./docs/cases/literate" style={{ textDecoration: "underline" }}>Literate Notebook</a> is a better single-page editor for your data analysis.
       </>
     ),
   },

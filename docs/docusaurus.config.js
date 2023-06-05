@@ -42,21 +42,33 @@ module.exports = {
         },
         {
           type: 'doc',
+          docId: '/category/cases',
+          position: 'left',
+          label: 'Cases',
+        },
+        {
+          type: 'doc',
+          docId: '/category/develop',
+          position: 'left',
+          label: 'Develop',
+        },
+        {
+          type: 'doc',
           docId: '/category/components',
           position: 'left',
           label: 'Components',
         },
         {
           type: 'doc',
-          docId: '/category/integrations',
-          position: 'left',
-          label: 'Integrations',
-        },
-        {
-          type: 'doc',
           docId: '/category/examples',
           position: 'left',
           label: 'Examples',
+        },
+        {
+          type: 'doc',
+          docId: '/category/integrations',
+          position: 'left',
+          label: 'Integrations',
         },
         {
           type: 'doc',
