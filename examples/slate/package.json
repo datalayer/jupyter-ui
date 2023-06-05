@@ -13,7 +13,7 @@
     "clean": "rimraf node_modules lib build",
     "start": "run-p -c 'start:*'",
     "start:webpack": "webpack serve",
-    "start:jupyter": "cd ./../../dev/sh && ./kill.sh || true && ./start-jupyter-server.sh anonymous",
+    "start_:jupyter": "cd ./../../dev/sh && ./kill.sh || true && ./start-jupyter-server.sh anonymous",
     "start:tsc": "tsc --watch",
     "build:tsc:watch:tsc": "tsc --watch",
     "build:tsc:watch:res": "gulp resources-to-lib-watch",
