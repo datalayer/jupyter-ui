@@ -1,10 +1,10 @@
 {
-  "name": "@datalayer/example-jupyter-create-react-app",
+  "name": "@datalayer/jupyter-cra-example",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "start": "run-p -c 'start:*'",
-    "start:jupyter": "./dev/sh/start-jupyter-server.sh",
+    "start_:jupyter": "./dev/sh/start-jupyter-server.sh",
     "start:react": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@datalayer/jupyter-react": "0.4.1",
+    "@datalayer/primer-addons": "0.0.13",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "web-vitals": "2.1.4"

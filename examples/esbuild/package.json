@@ -1,5 +1,5 @@
 {
-  "name": "@datalayer/example-jupyter-esbuild",
+  "name": "@datalayer/jupyter-esbuild-example",
   "version": "0.0.6",
   "license": "MIT",
   "private": true,

@@ -1,9 +1,9 @@
 import {render} from 'react-dom';
 import {Jupyter, Notebook} from '@datalayer/jupyter-react';
-import NotebookSimpleToolbar from './notebook/NotebookSimpleToolbar';
-import Layers from './theme/Layers';
+import NotebookSimpleToolbar from './notebook/NotebookToolbarSimple';
+import Layers from './../layout/Layers';
 
-import './../index.css';
+import './../App.css';
 
 const NOTEBOOK_UID = 'notebook-uid-example';
 

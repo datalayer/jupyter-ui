@@ -18,7 +18,7 @@ You need to develop on `macOS` or `Linux`. `Windows` is not supported as develop
 
 :::caution
 
-Only `yarn` is supported (`npm` or `pnpm` will not work). This is due to some dependency on the JupyterLab build system which only support `yarn`.
+Only `yarn` is supported (`npm` or `pnpm` will not work). This is due to some dependency on the JupyterLab build system which only supports `yarn`.
 
 :::
 
@@ -69,19 +69,31 @@ yarn start
 We have more examples. Pick one of the following commands and enjoy.
 
 ```bash
+# Create React App example
 # open http://localhost:3000
 yarn jupyter:ui:cra
+#
+# Lexical example
 # open http://localhost:3208
 yarn jupyter:ui:lexical
+#
+# Docusaurus example
 # open http://localhost:3000/docs/intro
 yarn jupyter:ui:docusaurus
+#
+# Next.js example
+# open http://localhost:3000
+yarn jupyter:ui:nextjs
 ```
 
 We also have some uncomplete or deprecated examples...
 
 ```bash
+# Slate example (deprecated)
 # open http://localhost:3266
 yarn jupyter:ui:slate
+#
+# Prosemirror example (deprecated)
 # open http://localhost:4567
 yarn jupyter:ui:prosemirror
 ```
@@ -96,21 +108,6 @@ pip install -e .[test]
 # Double check...
 pip list | grep react
 # jupyter_react ...
-```
-
-Double check the jlpm version, as the pip command may have changed that.
-
-```bash
-# Should be 1.22.19.
-jlpm --version
-```
-
-If it is not `1.22.19`, run again the following command.
-
-```bash
-curl https://raw.githubusercontent.com/jupyterlab/jupyterlab/v4.0.0a36/jupyterlab/staging/yarn.js \
- -o $( dirname "$(which jupyter)" )/../lib/python3.11/site-packages/jupyterlab/staging/yarn.js
-jlpm --version # Should be 1.22.19.
 ```
 
 Link the JupyterLab extension for development.

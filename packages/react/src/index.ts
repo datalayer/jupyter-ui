@@ -10,6 +10,7 @@ export * from './jupyter/lumino/LuminoReactPortal';
 export * from './jupyter/lumino/LuminoRedux';
 export * from './jupyter/lite/LiteServer';
 export * from './jupyter/utils/Ids';
+//
 import './index.css';
 
 // Services.
@@ -46,6 +47,7 @@ export * from './components/console/ConsoleState';
 export * from './components/dialog/Dialog';
 // FileBrowser.
 export * from './components/filebrowser/FileBrowser';
+export * from './components/filebrowser/FileBrowserLab';
 export * from './components/filebrowser/FileBrowserState';
 // Outputs.
 export * from './components/output/Output';

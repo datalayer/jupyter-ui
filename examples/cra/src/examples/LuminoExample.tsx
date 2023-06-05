@@ -1,7 +1,7 @@
 import {render} from 'react-dom';
 import {Jupyter} from '@datalayer/jupyter-react';
 import LuminoToolbar from './lumino/LuminoToolbar';
-import Layers from './theme/Layers';
+import Layers from './../layout/Layers';
 import LuminoComponent from './lumino/LuminoComponent';
 
 const div = document.createElement('div');

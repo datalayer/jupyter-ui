@@ -1,9 +1,9 @@
 import {render} from 'react-dom';
 import {Jupyter, Console} from '@datalayer/jupyter-react';
-import Layers from './examples/theme/Layers';
-import ConsoleToolbar from './examples/console/ConsoleToolbar';
+import Layers from './../layout/Layers';
+import ConsoleToolbar from './console/ConsoleToolbar';
 
-import './../index.css';
+import './../App.css';
 
 const div = document.createElement('div');
 document.body.appendChild(div);

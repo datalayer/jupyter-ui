@@ -1,9 +1,8 @@
 import {render} from 'react-dom';
-import {Jupyter, FileBrowser} from '@datalayer/jupyter-react';
-import FileBrowserTree from '../components/FileBrowserTree';
-import Layers from './theme/Layers';
+import {Jupyter, FileBrowser, FileBrowserLab} from '@datalayer/jupyter-react';
+import Layers from './../layout/Layers';
 
-import './../index.css';
+import './../App.css';
 
 const div = document.createElement('div');
 document.body.appendChild(div);
@@ -12,8 +11,8 @@ render(
   <Jupyter collaborative={false} terminals={false}>
     <Layers />
     <Jupyter collaborative={false} terminals={true}>
-      <FileBrowserTree />
       <FileBrowser />
+      <FileBrowserLab />
     </Jupyter>
   </Jupyter>,
   div

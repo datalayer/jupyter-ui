@@ -1,9 +1,9 @@
 import {render} from 'react-dom';
 import {Jupyter} from '@datalayer/jupyter-react';
-import CellComponents from './examples/cell/CellComponents';
-import Layers from './examples/theme/Layers';
+import Layers from './../layout/Layers';
+import CellComponents from './cell/CellComponents';
 
-import './../index.css';
+import './../App.css';
 
 const div = document.createElement('div');
 document.body.appendChild(div);

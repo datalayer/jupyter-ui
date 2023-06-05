@@ -1,10 +1,10 @@
 {
-  "name": "@datalayer/css",
+  "name": "@datalayer/jupyter-css",
   "version": "0.0.6",
   "license": "MIT",
   "private": true,
   "author": "Datalayer",
-  "homepage": "https://github.com/datalayer/jupyter-ui/tree/main/experiments/css#README",
+  "homepage": "https://github.com/datalayer/jupyter-ui/tree/main/packages/css#README",
   "bugs": {
     "url": "https://github.com/datalayer/jupyter-ui/issues"
   },

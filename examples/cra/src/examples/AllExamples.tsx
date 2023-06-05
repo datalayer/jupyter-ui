@@ -6,6 +6,7 @@ import {
   Kernel,
   Cell,
   FileBrowser,
+  FileBrowserLab,
   Commands,
   Console,
   Notebook,
@@ -13,20 +14,19 @@ import {
   Settings,
   Terminal,
 } from '@datalayer/jupyter-react';
-import FileBrowserTree from '../components/FileBrowserTree';
 // import Dialog from './../components//dialog/Dialog';
 import DialogToolbar from './dialog/DialogToolbar';
 import CellToolbar from './cell/CellToolbar';
 import ConsoleToolbar from './console/ConsoleToolbar';
 import FileBrowserToolbar from './filebrowser/FileBrowserToolbar';
-import NotebookToolbar from './notebook/NotebookSimpleToolbar';
+import NotebookToolbar from './notebook/NotebookToolbarSimple';
 import OutputToolbar from './outputs/OutputsToolbar';
 import SettingsToolbar from './settings/SettingsToolbar';
 import LuminoComponent from './lumino/LuminoComponent';
 import TerminalToolbar from './terminal/TerminalToolbar';
 import CommandsToolbar from './commands/CommandsToolbar';
 
-import './../index.css';
+import './../App.css';
 
 /**
  * The source to be shown in the examples.
@@ -97,8 +97,8 @@ const AllExample = () => {
       <Dialog />
       */}
       <FileBrowserToolbar />
-      <FileBrowserTree />
       <FileBrowser />
+      <FileBrowserLab />
       <NotebookToolbar notebookId={NOTEBOOK_UID} />
       <Notebook uid={NOTEBOOK_UID} path="ping.ipynb" ipywidgets="classic" />
       <SettingsToolbar />

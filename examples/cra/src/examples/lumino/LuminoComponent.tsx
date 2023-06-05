@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { Lumino } from "@datalayer/jupyter-react";
-import LuminoAdapter from './LuminoAdapter';
+import LuminoWidget from './LuminoWidget';
 
 export const LuminoComponent = () => {
-  const luminoAdapter = useMemo(() => new LuminoAdapter(), []);
-  return <Lumino>{luminoAdapter.panel}</Lumino>
+  const luminoWidget = useMemo(() => new LuminoWidget(), []);
+  return <Lumino>{luminoWidget.panel}</Lumino>
 }
 
 export default LuminoComponent;

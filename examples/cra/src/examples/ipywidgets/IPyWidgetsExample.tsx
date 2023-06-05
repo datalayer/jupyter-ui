@@ -2,9 +2,9 @@ import {render} from 'react-dom';
 import {Jupyter, IpyWidgetsComponent} from '@datalayer/jupyter-react';
 import IPyWidgetsSimple from './IPyWidgetsSimple';
 import IpyWidgetsToolbar from './IpyWidgetsToolbar';
-import Layers from '../theme/Layers';
+import Layers from '../../layout/Layers';
 
-import './../index.css';
+import './../App.css';
 
 const div = document.createElement('div');
 document.body.appendChild(div);

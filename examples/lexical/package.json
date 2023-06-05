@@ -1,5 +1,5 @@
 {
-  "name": "@datalayer/example-jupyter-lexical",
+  "name": "@datalayer/jupyter-lexical-example",
   "version": "0.0.2",
   "description": "Jupyter UI example with Lexical",
   "license": "MIT",

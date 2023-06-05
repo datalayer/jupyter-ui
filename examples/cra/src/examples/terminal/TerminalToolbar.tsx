@@ -8,10 +8,6 @@ const TerminalToolbar: React.FC = () => {
   const [state, setState] = useState({
     dark: false,
   });
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(terminalActions.update({dark: event.target.checked}));
-    setState({...state, [event.target.name]: event.target.checked});
-  };
   const onClick = () => {
     dispatch(terminalActions.update({dark: !state.dark}));
     setState({...state, dark: !state.dark});

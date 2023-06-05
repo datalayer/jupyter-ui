@@ -1,5 +1,5 @@
 {
-  "name": "@datalayer/example-jupyter-docusaurus",
+  "name": "@datalayer/jupyter-docusaurus-example",
   "version": "0.1.0",
   "private": true,
   "scripts": {

@@ -1,10 +1,10 @@
 import {render} from 'react-dom';
 import {Jupyter} from '@datalayer/jupyter-react';
-import Layers from './theme/Layers';
 import OutputsToolbar from './outputs/OutputsToolbar';
 import OutputsComponents from './outputs/OutputsComponents';
+import Layers from './../layout/Layers';
 
-import './../index.css';
+import './../App.css';
 
 const div = document.createElement('div');
 document.body.appendChild(div);

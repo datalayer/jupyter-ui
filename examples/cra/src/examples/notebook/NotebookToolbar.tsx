@@ -1,14 +1,8 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import {useDispatch} from 'react-redux';
 import {Button, FormControl, ToggleSwitch} from '@primer/react';
-import {Box} from '@primer/react';
-import {Text} from '@primer/react';
-import {PlusIcon} from '@primer/octicons-react';
-import {PlayIcon} from '@primer/octicons-react';
-import {FileIcon} from '@primer/octicons-react';
-import {StopIcon} from '@primer/octicons-react';
-import {CommentDiscussionIcon} from '@primer/octicons-react';
-
+import {Box, Text} from '@primer/react';
+import {PlusIcon, PlayIcon, FileIcon, StopIcon, CommentDiscussionIcon} from '@primer/octicons-react';
 import {
   Terminal,
   notebookActions,
@@ -24,9 +18,6 @@ const NotebookToolbar = (props: {notebookId: string}) => {
   });
   const dispatch = useDispatch();
   const notebook = selectNotebook(notebookId);
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setState({...state, [event.target.name]: event.target.checked});
-  };
   const onClick = () => {
     setState({...state, terminal: !state.terminal});
   };

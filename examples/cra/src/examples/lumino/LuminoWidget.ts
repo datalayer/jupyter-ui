@@ -3,7 +3,7 @@ import { DockPanel, BoxPanel, Widget } from '@lumino/widgets';
 
 import '@lumino/default-theme/style/index.css';
 
-import './LuminoAdapter.css'
+import './LuminoWidget.css'
 
 class SimpleContent extends Widget {
 

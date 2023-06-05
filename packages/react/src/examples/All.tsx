@@ -5,7 +5,7 @@ import { useJupyter } from '../jupyter/JupyterContext';
 import Cell from '../components/cell/Cell';
 import Notebook from '../components/notebook/Notebook';
 import Output from "../components/output/Output";
-import FileBrowser from "../components/filebrowser/FileBrowser";
+import FileBrowserLab from "../components/filebrowser/FileBrowserLab";
 import Terminal from "../components/terminal/Terminal";
 import NotebookToolbar from "./toolbars/NotebookToolbar";
 import CellSidebarNew from "../components/notebook/cell/sidebar/CellSidebarNew";
@@ -209,7 +209,7 @@ root.render(
     <NotebookKernelChange />
     <hr />
     */}
-    <FileBrowser />
+    <FileBrowserLab />
     <hr />
     <Terminal />
   </Jupyter>

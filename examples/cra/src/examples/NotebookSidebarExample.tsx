@@ -1,7 +1,7 @@
 import {Jupyter, Notebook} from '@datalayer/jupyter-react';
-import NotebookToolbar from './NotebookToolbar';
-import CellSidebarComponent from './CellSidebarComponent';
 import {Box} from '@primer/react';
+import NotebookToolbar from './notebook/NotebookToolbar';
+import CellSidebar from './notebook/cell/CellSidebar';
 
 const NOTEBOOK_UID = 'notebook-id-simple';
 
@@ -15,7 +15,7 @@ export default function NotebookSidebarComponent() {
             uid={NOTEBOOK_UID}
             path="ping.ipynb"
             ipywidgets="lab"
-            CellSidebar={CellSidebarComponent}
+            CellSidebar={CellSidebar}
           />
         </Box>
       </div>

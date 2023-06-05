@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { IOutput } from '@jupyterlab/nbformat';
 import { useJupyter, Kernel, Output } from '@datalayer/jupyter-react';
 
-import "./../index.css";
+import "./../App.css";
 
 const SOURCE_IPYWIDGET = `import ipywidgets as widgets
 widgets.IntSlider(
