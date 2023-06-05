@@ -11,7 +11,7 @@ import type {NodeKey} from 'lexical';
 import './TableOfContentsPlugin.css';
 
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
-import LexicalTableOfContents__EXPERIMENTAL from '@lexical/react/LexicalTableOfContents__EXPERIMENTAL';
+import LexicalTableOfContents from '@lexical/react/LexicalTableOfContents';
 import {useEffect, useRef, useState} from 'react';
 
 function indent(tagName: HeadingTagType) {
@@ -180,11 +180,11 @@ function TableOfContentsList({
 
 export const TableOfContentsPlugin = () => {
   return (
-    <LexicalTableOfContents__EXPERIMENTAL>
+    <LexicalTableOfContents>
       {(tableOfContents) => {
         return <TableOfContentsList tableOfContents={tableOfContents} />;
       }}
-    </LexicalTableOfContents__EXPERIMENTAL>
+    </LexicalTableOfContents>
   );
 }
 

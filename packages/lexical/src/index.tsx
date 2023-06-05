@@ -1,6 +1,6 @@
 // Components.
-export * from "./components/InsertEquationDialog";
-export * from "./components/InsertImageDialog";
+// export * from "./components/InsertEquationDialog";
+// export * from "./components/InsertImageDialog";
 export * from "./components/JupyterOutputComponent";
 // Convert.
 export * from "./convert/LexicalToNbFormat";

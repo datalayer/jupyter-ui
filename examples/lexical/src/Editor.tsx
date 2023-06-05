@@ -9,6 +9,7 @@ import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
 import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
 import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
+import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { HashtagNode } from '@lexical/hashtag';
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { CheckListPlugin } from "@lexical/react/LexicalCheckListPlugin";
@@ -93,6 +94,7 @@ export default function Editor(props: Props) {
             <RichTextPlugin
               contentEditable={<ContentEditable className="editor-input" />}
               placeholder={<Placeholder />}
+              ErrorBoundary={LexicalErrorBoundary}
             />
             <OnChangePlugin onChange={onChange} />
             <HistoryPlugin />

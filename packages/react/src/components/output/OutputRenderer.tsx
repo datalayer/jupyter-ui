@@ -94,7 +94,10 @@ export const OutputRenderer = (props: Props) => {
   return (
     <>
       { plain &&
-        <pre style={{color: "black"}}>
+        <pre style={{
+          color: "black",
+          backgroundColor: "white",
+        }}>
           {plain}
         </pre>
       }
