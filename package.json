@@ -46,7 +46,7 @@
     "docs",
     "examples/*",
     "packages/*",
-    "lite/*"
+    "packages/lite/*"
   ],
   "devDependencies": {
     "babel-eslint": "10.0.1",
