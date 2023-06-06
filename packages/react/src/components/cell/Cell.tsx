@@ -8,8 +8,6 @@ import CellAdapter from './CellAdapter';
 import Lumino from '../../jupyter/lumino/Lumino';
 import { useJupyter } from './../../jupyter/JupyterContext';
 
-import './Cell.css';
-
 const DEFAULT_SOURCE = `from IPython.display import display
 
 for i in range(10):

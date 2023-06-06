@@ -1,7 +1,5 @@
 import { Dialog as JupyerLabDialog } from '@jupyterlab/apputils';
 
-import './DialogAdapter.css';
-
 export class DialogAdapter {
   public dialog: JupyerLabDialog<any>;
 

@@ -153,7 +153,8 @@ export const JupyterContextProvider: React.FC<{
         const kernelManager = (serviceManager.sessions as any)._kernelManager as KernelManager;
         setKernelManager(kernelManager);
         kernelManager.ready.then(() => {
-          console.log('Kernel Manager is now ready');
+          console.log('The Jupyter Kernel Manager is now ready');
+          /*
           const running = kernelManager.running();
           let kernel = running.next();
           let i = 0;
@@ -162,6 +163,7 @@ export const JupyterContextProvider: React.FC<{
             kernel = running.next();
             i++;
           }
+          */
           if (useRunningKernelIndex > -1) {
             const running = kernelManager.running();
             let kernel = running.next();

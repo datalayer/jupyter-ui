@@ -377,7 +377,7 @@ export class NotebookAdapter {
   }
 
   dispose = () => {
-    this._context?.dispose();
+//    this._context?.dispose();
 //    this._notebookPanel?.dispose();
   }
 

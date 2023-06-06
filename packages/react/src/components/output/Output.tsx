@@ -149,7 +149,7 @@ export const Output = (props: IOutputProps) => {
         })
       });
       return () => {
-        kernel.connection.then(k => k.shutdown().then(() => console.log(`Kernel ${k.id} is terminated.`)));
+//        kernel.connection.then(k => k.shutdown().then(() => console.log(`Kernel ${k.id} is terminated.`)));
       }
     }
   }, [kernel]);
