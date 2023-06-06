@@ -18,6 +18,7 @@ import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
 import { ListItemNode, ListNode } from "@lexical/list";
 import { AutoLinkNode, LinkNode } from "@lexical/link";
+import { CodeNode } from "@lexical/code";
 import { INotebookContent } from "@jupyterlab/nbformat";
 import {
   JupyterPlugin, EquationNode, HorizontalRulePlugin,
@@ -61,6 +62,7 @@ const initialConfig = {
     TableRowNode,
     AutoLinkNode,
     LinkNode,
+    CodeNode,
     JupyterOutputNode,
     EquationNode,
     ImageNode,

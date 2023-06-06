@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { $getSelection, $isRangeSelection, createCommand, NodeKey, COMMAND_PRIORITY_EDITOR, INSERT_LINE_BREAK_COMMAND, COMMAND_PRIORITY_HIGH, NodeMutation, $isLineBreakNode, $isElementNode } from "lexical";
+import { $getSelection, $isRangeSelection, createCommand, NodeKey, COMMAND_PRIORITY_EDITOR, INSERT_LINE_BREAK_COMMAND, COMMAND_PRIORITY_HIGH, NodeMutation, $isLineBreakNode, $isElementNode, $insertNodes, $createParagraphNode } from "lexical";
 import { $getNodeByKey, $createNodeSelection, $setSelection } from "lexical";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { $wrapNodes, } from "@lexical/selection";
+import { $setBlocksType } from "@lexical/selection";
 import { $insertNodeToNearestRoot } from '@lexical/utils';
 import { OutputAdapter } from '@datalayer/jupyter-react';
 import { UUID } from '@lumino/coreutils';
@@ -155,7 +155,7 @@ export const JupyterPlugin = () => {
             });              
           }
           selection.insertRawText(code);
-          $wrapNodes(selection, () => jupyterCodeNode);
+          $setBlocksType(selection, () => jupyterCodeNode);
         } else {
           selection.insertNodes([jupyterCodeNode]);
         }
@@ -166,7 +166,10 @@ export const JupyterPlugin = () => {
             jupyterOutputNode.setOutputs(outputModel.toJSON());
           });
         });
+        const tmpParagraph = $createParagraphNode();
+        $insertNodes([tmpParagraph]);
         $insertNodeToNearestRoot(jupyterOutputNode);
+        tmpParagraph.remove();
         if (!loading) {
           jupyterCodeNode.selectEnd();
 //          selection.insertRawText(code);
