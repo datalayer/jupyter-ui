@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@codemirror/lang-python": "6.0.1",
-    "@datalayer/jupyter-react": "0.4.2",
+    "@datalayer/jupyter-react": "0.4.3",
     "@prosemirror-adapter/react": "0.2.4",
     "@types/orderedmap": "1.0.0",
     "codemirror": "6.0.1",

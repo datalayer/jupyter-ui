@@ -28,7 +28,7 @@ import { NotebookCommands } from './NotebookCommands';
 import CellSidebarContentFactory from './cell/sidebar/base/CellSidebarContentFactory';
 import { IPyWidgetsClassicManager } from "./../../jupyter/ipywidgets/IPyWidgetsClassicManager";
 import { activateWidgetExtension } from "./../../jupyter/ipywidgets/IPyWidgetsJupyterLabPlugin";
-import { activatePlotlyWidgetExtension } from "./../../jupyter/ipywidgets/plotly/JupyterlabPlugin";
+// import { activatePlotlyWidgetExtension } from "./../../jupyter/ipywidgets/plotly/JupyterlabPlugin";
 
 export class NotebookAdapter {
   private _boxPanel: BoxPanel;
@@ -174,8 +174,9 @@ export class NotebookAdapter {
         break;
       }
       case 'lab': {
-        const widgetRegistry = activateWidgetExtension(this._rendermime, this._tracker, null, null);
-        activatePlotlyWidgetExtension(widgetRegistry);
+        activateWidgetExtension(this._rendermime, this._tracker, null, null);
+//        const widgetRegistry = activateWidgetExtension(this._rendermime, this._tracker, null, null);
+//        activatePlotlyWidgetExtension(widgetRegistry);
         break;
       }
    }
