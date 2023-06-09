@@ -12,7 +12,7 @@ import {
 } from '@primer/octicons-react';
 import {IconButton} from '@primer/react';
 
-import {DLA_CELL_HEADER_CLASS} from './base/CellSidebarWidget';
+import {DATALAYER_CELL_HEADER_CLASS} from './base/CellSidebarWidget';
 
 export const CellSidebarNew = (props: CellSidebarProps) => {
   const {notebookId} = props;
@@ -34,7 +34,7 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
   }
   return activeCell ? (
     <Box
-      className={DLA_CELL_HEADER_CLASS}
+      className={DATALAYER_CELL_HEADER_CLASS}
       sx={{
         '& p': {
           marginBottom: '0 !important',

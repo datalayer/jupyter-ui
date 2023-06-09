@@ -43,7 +43,7 @@ services-build: ## services-build
 
 env: warning ## env
 	($(CONDA); \
-		SLUGIFY_USES_TEXT_UNIDECODE=yes conda env create -n datalayer -f ${DLAHOME}/src/environment.yml )
+		SLUGIFY_USES_TEXT_UNIDECODE=yes conda env create -n datalayer -f ${DATALAYER_HOME}/src/environment.yml )
 	@exec echo "You can now populate the datalayer environment."
 	@exec echo "-------------------------------------------------------"
 	@exec echo "conda activate datalayer"
@@ -53,9 +53,9 @@ env: warning ## env
 define init_ext
 	@exec echo
 	@exec echo -----------------------
-	@exec echo ${DLAHOME}/src/${2}
+	@exec echo ${DATALAYER_HOME}/src/${2}
 	@exec echo
-	cd ${DLAHOME}/src/${2} && \
+	cd ${DATALAYER_HOME}/src/${2} && \
 		git init || true && \
 		git checkout -b main || true && \
 		git remote add origin https://github.com/datalayer/${1}.git || true && \

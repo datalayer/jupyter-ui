@@ -7,7 +7,7 @@ import { newUuid } from '../../../../../jupyter/utils/Ids';
 import { LuminoReactPortal } from '../../../../../jupyter/lumino/LuminoReactPortal';
 import { notebookActions } from '../../../NotebookState';
 
-export const DLA_CELL_HEADER_CLASS = 'dla-CellHeader-Container';
+export const DATALAYER_CELL_HEADER_CLASS = 'dla-CellHeader-Container';
 
 export type CellSidebarProps = {
   notebookId: string;
@@ -40,7 +40,7 @@ export class CellSidebarWidget extends LuminoReactPortal implements ICellHeader 
       props,
     );
     const portal = createPortal(
-      <div className={DLA_CELL_HEADER_CLASS}>
+      <div className={DATALAYER_CELL_HEADER_CLASS}>
         {sidebar}
       </div>
       ,

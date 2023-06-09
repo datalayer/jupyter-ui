@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { PanelLayout } from '@lumino/widgets';
 import { ActionMenu, Button, Box } from "@primer/react";
 import { ChevronRightIcon, XIcon, ChevronUpIcon, ChevronDownIcon, SquareIcon } from "@primer/octicons-react";
-import { notebookActions, selectActiveCell, CellSidebarProps, CellMetadataEditor, DLA_CELL_HEADER_CLASS } from '@datalayer/jupyter-react';
+import { notebookActions, selectActiveCell, CellSidebarProps, CellMetadataEditor, DATALAYER_CELL_HEADER_CLASS } from '@datalayer/jupyter-react';
 
 export const CellSidebar = (props: CellSidebarProps) => {
   const [visible, setVisible] = useState(false);
@@ -26,7 +26,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
   return (
     activeCell ? 
       <Box
-        className={DLA_CELL_HEADER_CLASS}
+        className={DATALAYER_CELL_HEADER_CLASS}
         sx={{
           '& p': {
             marginBottom: '0 !important',

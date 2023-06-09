@@ -6,7 +6,7 @@ import { PanelLayout } from '@lumino/widgets';
 import { notebookActions, selectActiveCell } from '../../NotebookState';
 import { CellSidebarProps } from './base/CellSidebarWidget';
 
-import { DLA_CELL_HEADER_CLASS } from './base/CellSidebarWidget';
+import { DATALAYER_CELL_HEADER_CLASS } from './base/CellSidebarWidget';
 
 export const CellSidebarRun = (props: CellSidebarProps) => {
   const { notebookId } = props;
@@ -29,7 +29,7 @@ export const CellSidebarRun = (props: CellSidebarProps) => {
   return (
     activeCell ? 
       <Box
-        className={DLA_CELL_HEADER_CLASS}
+        className={DATALAYER_CELL_HEADER_CLASS}
         sx={{
           '& p': {
             marginBottom: '0 !important',

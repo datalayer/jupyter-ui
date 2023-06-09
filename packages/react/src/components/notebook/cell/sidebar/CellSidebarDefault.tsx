@@ -7,7 +7,7 @@ import { notebookActions, selectActiveCell } from '../../NotebookState';
 import { CellSidebarProps } from './base/CellSidebarWidget';
 import CellMetadataEditor from '../metadata/CellMetadataEditor';
 
-import { DLA_CELL_HEADER_CLASS } from './base/CellSidebarWidget';
+import { DATALAYER_CELL_HEADER_CLASS } from './base/CellSidebarWidget';
 
 export const CellSidebarDefault = (props: CellSidebarProps) => {
   const [visible, setVisible] = useState(false);
@@ -30,7 +30,7 @@ export const CellSidebarDefault = (props: CellSidebarProps) => {
   return (
     activeCell ? 
       <Box
-        className={DLA_CELL_HEADER_CLASS}
+        className={DATALAYER_CELL_HEADER_CLASS}
         sx={{
           '& p': {
             marginBottom: '0 !important',
