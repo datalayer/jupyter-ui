@@ -4,7 +4,9 @@
 
 # 🪐 ⚛️ Jupyter UI
 
-> [React.js](https://reactjs.org) components that allow a frontend developer to build data products compatible with the [Jupyter](https://jupyter.org) ecosystem. The user interface delivers executable notebooks and cells as terminals.
+> React.js components 💯% compatible with Jupyter.
+
+Jupyter UI is a set of [React.js](https://react.dev) components that allow a frontend/webapp developer to build data products compatible with the [Jupyter](https://jupyter.org) ecosystem. The user interface delivers executable notebooks and cells as terminals.
 
 <hr/>
 
