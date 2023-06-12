@@ -10,23 +10,6 @@ Jupyter UI is a set of [React.js](https://react.dev) components that allow a fro
 
 <hr/>
 
-<div align="center" style="text-align: center;">
-  <h1>📣 Announcement</h1>
-</div>
-
-Many developers are reporting issues with their environment (build failures...). This is inherent to the mixed Python and JavaScript build as dependency on Jupyter toolchain. We are putting this issue at the <b>top of our priority</b> to ease your pain.
-
-1. We have migrated to `Yarn v3` and latest `Lerna` to align with JupyterLab 4.
-2. `engines` and `os` are enforced in package.json - We **only support** Yarn v3 on macOS and Linux.
-2. We are offering `hosted kernels` so you don't need to run your local Jupyter Server. If you run `yarn start`, you will consume those hosted kernels from the cloud.
-3. The default build should be faster and `not build the examples`, please give your opinion on https://github.com/datalayer/jupyter-ui/issues/63.
-4. We are looking towards `Pyodide` kernels (already supported for the Console component).
-5. `Docker` and `devcontainer` are options we are investigating, please comment on https://github.com/datalayer/jupyter-ui/issues/61.
-
-👉 Please continue reporting any failure and idea on how to make a better experience. ❤️
-
-<hr/>
-
 As a developer start with the [setup of your environment](https://jupyter-ui.datalayer.tech/docs/develop/setup) and try [one of the examples](https://jupyter-ui.datalayer.tech/docs/category/examples). We have [documentation](https://jupyter-ui.datalayer.tech) for more details.
 
 You can try an example on this [CodeSandbox](https://codesandbox.io/p/sandbox/jupyter-react-cra-example-te6hii?file=%2Fsrc%2Findex.tsx) that allows you to run code in a simple Jupyter Cell.
