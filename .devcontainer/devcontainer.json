@@ -19,6 +19,10 @@
 		"3208": {
 			"label": "Webpack Application",
 			"onAutoForward": "notify"
+		},
+		"3000": {
+			"label": "CRA, Docusaurus, Next.js... ",
+			"onAutoForward": "notify"
 		}
 	},
 	"customizations": {
