@@ -1,11 +1,6 @@
 {
 	"name": "Jupyter UI",
-	"build": {
-		"dockerfile": "Dockerfile",
-		"context": ".",
-		"args": {
-		}
-	},
+	"image": "datalayer/vsc-ui-c607b5d12e1c12f7410cdc6a20c79a6bd12ffdc35082cf83557fad53f42bbcb9:latest",
 	"remoteUser": "jovyan",
 	"hostRequirements": {
 		"memory": "2gb",
