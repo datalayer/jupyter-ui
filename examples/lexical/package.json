@@ -20,7 +20,7 @@
   },
   "scripts": {
     "build": "webpack",
-    "clean": "rimraf lib build dist tsconfig.tsbuildinfo",
+    "clean": "rimraf node_modules lib dist build tsconfig.tsbuildinfo",
     "start": "run-p -c 'start:*'",
     "start_:jupyter": "cd ./../.. && make start-jupyter-server",
     "start:webpack": "webpack serve",

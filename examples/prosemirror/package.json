@@ -10,7 +10,7 @@
   "scripts": {
     "build": "gulp resources-to-lib && tsc && webpack",
     "build:prod": "gulp resources-to-lib && tsc && webpack --mode=production",
-    "clean": "rimraf node_modules lib build",
+    "clean": "rimraf node_modules lib dist build tsconfig.tsbuildinfo",
     "start": "run-p -c 'start:*'",
     "start:webpack": "webpack serve",
     "start_:jupyter": "cd ./../../dev/sh && ./kill.sh || true && ./start-jupyter-server.sh prosemirror",

@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "clean": "rimraf lib build dist tsconfig.tsbuildinfo",
+    "clean": "rimraf node_modules lib dist build tsconfig.tsbuildinfo",
     "watch": "node copyUntypedFiles.js && tsc --watch",
     "jupyter:ui:docusaurus": "tsc --watch"
   },

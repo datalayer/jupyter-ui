@@ -7,6 +7,7 @@
     "start_:jupyter": "./dev/sh/start-jupyter-server.sh",
     "start:react": "react-scripts start",
     "build": "react-scripts build",
+    "clean": "rimraf node_modules lib dist build tsconfig.tsbuildinfo",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

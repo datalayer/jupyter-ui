@@ -18,7 +18,7 @@
     "dev": "webpack --progress --colors --watch --env dev",
     "start": "webpack serve --open",
     "start-watch": "webpack serve --open --watch",
-    "clean": "rimraf lib dist",
+    "clean": "rimraf node_modules lib dist build tsconfig.tsbuildinfo",
     "clean-all": "rimraf lib dist node_modules",
     "test": "jest",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",

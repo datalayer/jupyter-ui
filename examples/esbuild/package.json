@@ -4,10 +4,10 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "clean": "rimraf dist",
     "start": "run-p -c 'start:*'",
     "start:ui": "webpack serve --no-client-overlay",
     "start:server": "",
+    "clean": "rimraf node_modules lib dist build tsconfig.tsbuildinfo",
     "build": "webpack",
     "build:prod": "webpack --mode=production",
     "build:tsc": "tsc"

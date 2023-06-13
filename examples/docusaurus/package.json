@@ -12,6 +12,7 @@
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
+    "clean": "rimraf node_modules lib dist build tsconfig.tsbuildinfo",
     "serve": "./../../dev/sh/kill.sh || true && run-p serve:*",
     "serve:docusaurus": "docusaurus serve",
     "serve:jupyter": "cd ./../dev/sh && ./start-jupyter-server.sh docusaurus",
