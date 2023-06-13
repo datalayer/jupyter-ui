@@ -8,20 +8,20 @@
 
 ```bash
 # Install the dependencies.
-make install
+yarn install
 ```
 
 ```bash
 # Local Development: This command starts a local development server and opens up a browser window.
 # Most changes are reflected live without having to restart the server.
 echo open http://localhost:3000
-make start
+yarn start
 ```
 
 ```bash
 # Build: This command generates static content into the `build` directory 
 # and can be served using any static contents hosting service.
-make build
+yarn build
 ```
 
 ```bash
