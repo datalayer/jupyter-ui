@@ -49,7 +49,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       launcher.add({
         command,
         category: 'Datalayer',
-        rank: -1,
+        rank: 99,
       });
     }
     console.log('JupyterLab extension @datalayer/jupyter-react is activated!');

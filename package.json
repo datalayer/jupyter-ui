@@ -26,7 +26,6 @@
   "scripts": {
     "build": "lerna run build",
     "build:example": "lerna run --parallel --scope @datalayer/*' build:example",
-    "build:vercel": "yarn && yarn build && yarn build:example",
     "clean": "lerna run clean && rimraf node_modules lib dist build tsconfig.tsbuildinfo",
     "deploy": "lerna run deploy",
     "docs": "lerna run --scope' @datalayer/jupyter-react-docs' start",

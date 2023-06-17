@@ -67,7 +67,7 @@ const plugin: JupyterFrontEndPlugin<IJupyterDashboard> = {
       launcher.add({
         command,
         category: 'Datalayer',
-        rank: -1,
+        rank: 99,
       });
     }
     console.log('JupyterLab extension @datalayer/jupyter-dashboard is activated!');
