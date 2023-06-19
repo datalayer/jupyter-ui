@@ -15,7 +15,7 @@ import { DatalayerWidget } from './widget';
 import '../../../style/index.css';
 
 /**
- * The command IDs used by the react-widget plugin.
+ * The command IDs used by the plugin.
  */
 namespace CommandIDs {
   export const create = 'create-jupyter-lexical-widget';
