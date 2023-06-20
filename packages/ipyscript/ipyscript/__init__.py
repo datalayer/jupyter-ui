@@ -7,7 +7,7 @@
 from .example import ExampleWidget
 from ._version import __version__, version_info
 
-def _jupyter_labextension_paths():
+def _jupyter_labextension_paths() -> List[Dict[str, str]]:
     """Called by Jupyter Lab Server to detect if it is a valid labextension and
     to install the widget
     Returns
