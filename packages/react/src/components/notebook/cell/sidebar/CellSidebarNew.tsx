@@ -92,14 +92,14 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
       </span>
       <span style={{display: 'flex'}}>
         {/* activeCell.model.type === "code" ?
-            <Button leadingIcon={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
+            <Button leadingVisual={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
               e.preventDefault();
               dispatch(notebookActions.changeCellType.started("markdown"));
             }}>
               To Mardown
             </Button>
           :
-            <Button leadingIcon={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
+            <Button leadingVisual={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
               e.preventDefault();
               dispatch(notebookActions.changeCellType.started("code"));
             }}>

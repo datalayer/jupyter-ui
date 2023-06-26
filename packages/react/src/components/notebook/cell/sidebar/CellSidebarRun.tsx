@@ -37,7 +37,7 @@ export const CellSidebarRun = (props: CellSidebarProps) => {
         }}
       >
           <span style={{ display: "flex" }}>
-            <Button trailingIcon={PlayIcon} size="small" variant="invisible" onClick={(e: any) => {
+            <Button trailingVisual={PlayIcon} size="small" variant="invisible" onClick={(e: any) => {
               e.preventDefault();
               dispatch(notebookActions.run.started(notebookId));
             }}>

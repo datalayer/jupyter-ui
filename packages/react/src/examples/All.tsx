@@ -73,7 +73,7 @@ const CellToolbar = () => {
             Run the cell
           </Button>
           <Button
-            variant="outline"
+            variant="invisible"
             size="small"
             onClick={() => dispatch(cellActions.outputsCount(0))}
           >

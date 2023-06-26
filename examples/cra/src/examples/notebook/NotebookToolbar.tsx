@@ -43,7 +43,7 @@ const NotebookToolbar = (props: {notebookId: string}) => {
             <Button
               variant="default"
               color="primary"
-              leadingIcon={PlusIcon}
+              leadingVisual={PlusIcon}
               onClick={e => {
                 e.preventDefault();
                 dispatch(
@@ -59,7 +59,7 @@ const NotebookToolbar = (props: {notebookId: string}) => {
             <Button
               variant="default"
               color="primary"
-              leadingIcon={PlusIcon}
+              leadingVisual={PlusIcon}
               onClick={e => {
                 e.preventDefault();
                 dispatch(
@@ -75,7 +75,7 @@ const NotebookToolbar = (props: {notebookId: string}) => {
             <Button
               variant="default"
               color="primary"
-              leadingIcon={PlusIcon}
+              leadingVisual={PlusIcon}
               onClick={e => {
                 e.preventDefault();
                 dispatch(
@@ -118,9 +118,9 @@ const NotebookToolbar = (props: {notebookId: string}) => {
             }}
           >
             <Button
-              variant="outline"
+              variant="invisible"
               color="primary"
-              leadingIcon={FileIcon}
+              leadingVisual={FileIcon}
               onClick={() =>
                 dispatch(
                   notebookActions.save.started({
@@ -134,9 +134,9 @@ const NotebookToolbar = (props: {notebookId: string}) => {
             </Button>
             {notebook?.kernelStatus === 'idle' && (
               <Button
-                variant="outline"
+                variant="invisible"
                 color="primary"
-                leadingIcon={PlayIcon}
+                leadingVisual={PlayIcon}
                 onClick={e => {
                   e.preventDefault();
                   dispatch(notebookActions.runAll.started(notebookId));
@@ -147,9 +147,9 @@ const NotebookToolbar = (props: {notebookId: string}) => {
             )}
             {notebook?.kernelStatus === 'busy' && (
               <Button
-                variant="outline"
+                variant="invisible"
                 color="secondary"
-                leadingIcon={StopIcon}
+                leadingVisual={StopIcon}
                 onClick={e => {
                   e.preventDefault();
                   dispatch(notebookActions.interrupt.started(notebookId));
@@ -161,9 +161,9 @@ const NotebookToolbar = (props: {notebookId: string}) => {
             {notebook?.kernelStatus !== 'idle' &&
               notebook?.kernelStatus !== 'busy' && (
                 <Button
-                  variant="outline"
+                  variant="invisible"
                   color="primary"
-                  leadingIcon={CommentDiscussionIcon}
+                  leadingVisual={CommentDiscussionIcon}
                 >
                   {/* //Doubt */}
                 </Button>

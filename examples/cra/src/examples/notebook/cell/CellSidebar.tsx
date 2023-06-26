@@ -34,7 +34,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
         }}
       >
         <span style={{ display: "flex" }}>
-          <Button leadingIcon={ChevronRightIcon} variant="invisible" size="small" onClick={(e: any) => {
+          <Button leadingVisual={ChevronRightIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
             dispatch(notebookActions.run.started(notebookId));
           }}>
@@ -42,7 +42,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
           </Button>
         </span>
         <span style={{ display: "flex" }}>
-          <Button leadingIcon={ChevronUpIcon} variant="invisible" size="small" onClick={(e: any) => {
+          <Button leadingVisual={ChevronUpIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
             dispatch(notebookActions.insertAbove.started({ uid: notebookId, cellType: "code" }));
           }}>
@@ -50,7 +50,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
           </Button>
         </span>
         <span style={{ display: "flex" }}>
-          <Button leadingIcon={ChevronUpIcon} variant="invisible" size="small" onClick={(e: any) => {
+          <Button leadingVisual={ChevronUpIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
             dispatch(notebookActions.insertAbove.started({ uid: notebookId, cellType: "markdown" }));
           }}>
@@ -59,14 +59,14 @@ export const CellSidebar = (props: CellSidebarProps) => {
         </span>
         <span style={{ display: "flex" }}>
         { activeCell.model.type === "code" ?
-            <Button leadingIcon={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
+            <Button leadingVisual={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
               e.preventDefault();
               dispatch(notebookActions.changeCellType.started({ uid: notebookId, cellType: "markdown" }));
             }}>
               To Mardown
             </Button>
           :
-            <Button leadingIcon={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
+            <Button leadingVisual={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
               e.preventDefault();
               dispatch(notebookActions.changeCellType.started({ uid: notebookId, cellType: "code" }));
             }}>
@@ -75,7 +75,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
         }
         </span>
         <span style={{ display: "flex" }}>
-          <Button leadingIcon={ChevronDownIcon} variant="invisible" size="small" onClick={(e: any) => {
+          <Button leadingVisual={ChevronDownIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
             dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "markdown" }));
           }}>
@@ -83,7 +83,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
           </Button>
         </span>
         <span style={{ display: "flex" }}>
-          <Button leadingIcon={ChevronDownIcon} variant="invisible" size="small" onClick={(e: any) => {
+          <Button leadingVisual={ChevronDownIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
             dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "code" }));
           }}>
@@ -91,7 +91,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
           </Button>
         </span>
         <span style={{ display: "flex" }}>
-          <Button leadingIcon={XIcon} variant="invisible" size="small" onClick={(e: any) => {
+          <Button leadingVisual={XIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
             dispatch(notebookActions.delete.started(notebookId));
           }}>

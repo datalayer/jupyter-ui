@@ -150,7 +150,7 @@ const NotebookToolbar = (props: {notebookId: string}) => {
       >
         <IconButton
           aria-label="Auto Save"
-          variant={autoSave ? 'primary' : 'outline'}
+          variant={autoSave ? 'primary' : 'invisible'}
           onClick={e => {
             e.preventDefault();
             setAutoSave(!autoSave);
@@ -161,21 +161,21 @@ const NotebookToolbar = (props: {notebookId: string}) => {
         />
         <ButtonGroup>
           <Button
-            variant={addType == 'code' ? 'primary' : 'outline'}
+            variant={addType == 'code' ? 'primary' : 'invisible'}
             onClick={() => handleChangeCellType('code')}
             size="small"
           >
             Code
           </Button>
           <Button
-            variant={addType == 'markdown' ? 'primary' : 'outline'}
+            variant={addType == 'markdown' ? 'primary' : 'default'}
             onClick={() => handleChangeCellType('markdown')}
             size="small"
           >
             Markdown
           </Button>
           <Button
-            variant={addType == 'raw' ? 'primary' : 'outline'}
+            variant={addType == 'raw' ? 'primary' : 'invisible'}
             onClick={() => handleChangeCellType('raw')}
             size="small"
           >

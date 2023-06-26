@@ -136,21 +136,21 @@ const NotebookToolbarAutoSave = (props: {notebookId: string}) => {
       >
         <ButtonGroup>
           <Button
-            variant={addtype == 'code' ? 'primary' : 'outline'}
+            variant={addtype == 'code' ? 'primary' : 'invisible'}
             onClick={() => handleChangeCellType('code')}
             size="small"
           >
             Code
           </Button>
           <Button
-            variant={addtype == 'markdown' ? 'primary' : 'outline'}
+            variant={addtype == 'markdown' ? 'primary' : 'invisible'}
             onClick={() => handleChangeCellType('markdown')}
             size="small"
           >
             Markdown
           </Button>
           <Button
-            variant={addtype == 'raw' ? 'primary' : 'outline'}
+            variant={addtype == 'raw' ? 'primary' : 'invisible'}
             onClick={() => handleChangeCellType('raw')}
             size="small"
           >
