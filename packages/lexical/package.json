@@ -59,7 +59,7 @@
   "dependencies": {
     "@datalayer/icons-react": "0.0.12",
     "@datalayer/jupyter-react": "0.4.3",
-    "@datalayer/primer-addons": "0.0.13",
+    "@datalayer/primer-addons": "0.0.14",
     "@jupyterlab/application": "4.0.0",
     "@jupyterlab/coreutils": "6.0.0",
     "@jupyterlab/services": "7.0.0",
