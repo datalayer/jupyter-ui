@@ -66,8 +66,8 @@ export const Notebook = (props: INotebookProps) => {
       setAdapter(adapter);
       dispatch(notebookActions.update({ uid, partialState: { adapter } }));
       adapter.serviceManager.ready.then(() => {
-//        adapter.loadNotebook();
         if (!readOnly && cellMetadataPanel) {
+//          const activeCellChanged$ = asObservable(adapter.notebookPanel!.content.cellInViewportChanged);
           const activeCellChanged$ = asObservable(adapter.notebookPanel!.content.activeCellChanged);
           activeCellChanged$.subscribe(
             (cellModel: Cell<ICellModel>) => {

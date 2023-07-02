@@ -15,18 +15,22 @@ import {IconButton} from '@primer/react';
 import {DATALAYER_CELL_HEADER_CLASS} from './base/CellSidebarWidget';
 
 export const CellSidebarNew = (props: CellSidebarProps) => {
-  const {notebookId} = props;
+  const { notebookId, cellId } = props;
   const [visible, setVisible] = useState(false);
   const dispatch = useDispatch();
   const activeCell = selectActiveCell(notebookId);
   const layout = activeCell?.layout;
   if (layout) {
     const cellWidget = (layout as PanelLayout).widgets[0];
-    if (!visible && cellWidget?.node.id === props.cellId) {
-      setVisible(true);
+    if (cellWidget?.node.id === cellId) {
+      if (!visible) {
+        setVisible(true);
+      }
     }
-    if (visible && cellWidget?.node.id !== props.cellId) {
-      setVisible(false);
+    if (cellWidget?.node.id !== cellId) {
+      if (visible) {
+        setVisible(false);
+      }
     }
   }
   if (!visible) {
@@ -96,7 +100,7 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
               e.preventDefault();
               dispatch(notebookActions.changeCellType.started("markdown"));
             }}>
-              To Mardown
+              To Markdown
             </Button>
           :
             <Button leadingVisual={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
@@ -157,9 +161,11 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
         />
       </span>
     </Box>
-  ) : (
+  )
+  :
+  (
     <></>
-  );
-};
+  )
+}
 
 export default CellSidebarNew;

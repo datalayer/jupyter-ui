@@ -10,7 +10,7 @@ import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { standardRendererFactories, RenderMimeRegistry } from '@jupyterlab/rendermime';
 import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
-import { NotebookPanel, NotebookWidgetFactory, NotebookTracker, NotebookActions, INotebookModel, Notebook, StaticNotebook } from '@jupyterlab/notebook';
+import { NotebookPanel, NotebookWidgetFactory, NotebookTracker, NotebookActions, INotebookModel, Notebook } from '@jupyterlab/notebook';
 import { CodeMirrorEditorFactory, CodeMirrorMimeTypeService, EditorLanguageRegistry, EditorExtensionRegistry, EditorThemeRegistry, ybinding } from '@jupyterlab/codemirror';
 import { IEditorServices } from '@jupyterlab/codeeditor';
 import { Completer, CompleterModel, CompletionHandler, ProviderReconciliator, KernelCompleterProvider } from '@jupyterlab/completer';
@@ -215,21 +215,22 @@ export class NotebookAdapter {
         shutdownOnDispose: false,
       }
     });
-
+    /*
     const content = new Notebook({
       rendermime: this._rendermime,
-      contentFactory: contentFactory,
+      contentFactory,
       mimeTypeService,
       notebookConfig: {
         ...StaticNotebook.defaultNotebookConfig,
         windowingMode: 'none'
       }
     });
-//    this._notebookPanel = documentRegistry.getWidgetFactory('notebook')?.createNew(this._context) as NotebookPanel;
     this._notebookPanel = new NotebookPanel({
       context: this._context,
       content,
     })
+    */
+    this._notebookPanel = documentRegistry.getWidgetFactory('notebook')?.createNew(this._context) as NotebookPanel;
 
     if (this._ipywidgets === 'classic') {
       this._notebookPanel.sessionContext.kernelChanged.connect((sender: any, args: IChangedArgs<JupyterKernel.IKernelConnection | null, JupyterKernel.IKernelConnection | null, 'kernel'>) => {

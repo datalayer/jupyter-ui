@@ -10,25 +10,29 @@ import CellMetadataEditor from '../metadata/CellMetadataEditor';
 import { DATALAYER_CELL_HEADER_CLASS } from './base/CellSidebarWidget';
 
 export const CellSidebarDefault = (props: CellSidebarProps) => {
-  const [visible, setVisible] = useState(false);
   const { notebookId, cellId, nbgrader } = props;
+  const [visible, setVisible] = useState(false);
   const dispatch = useDispatch();
   const activeCell = selectActiveCell(notebookId);
   const layout = (activeCell?.layout);
   if (layout) {
     const cellWidget = (layout as PanelLayout).widgets[0];
-    if (!visible && (cellWidget?.node.id === cellId)) {
-      setVisible(true);
+    if (cellWidget?.node.id === cellId) {
+      if (!visible) {
+        setVisible(true);
+      }
     }
-    if (visible && (cellWidget?.node.id !== cellId)) {
-      setVisible(false);
+    if (cellWidget?.node.id !== cellId) {
+      if (visible) {
+        setVisible(false);
+      }
     }
   }
   if (!visible) {
     return <div></div>
   }
-  return (
-    activeCell ? 
+  return activeCell ? 
+    (    
       <Box
         className={DATALAYER_CELL_HEADER_CLASS}
         sx={{
@@ -63,19 +67,19 @@ export const CellSidebarDefault = (props: CellSidebarProps) => {
         </span>
         <span style={{ display: "flex" }}>
         { activeCell.model.type === "code" ?
-            <Button leadingVisual={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
-              e.preventDefault();
-              dispatch(notebookActions.changeCellType.started({ uid: notebookId, cellType: "markdown" }));
-            }}>
-              To Mardown
-            </Button>
-          :
-            <Button leadingVisual={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
-              e.preventDefault();
-              dispatch(notebookActions.changeCellType.started({ uid: notebookId, cellType: "code" }));
-            }}>
-              To Code
-            </Button>
+          <Button leadingVisual={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
+            e.preventDefault();
+            dispatch(notebookActions.changeCellType.started({ uid: notebookId, cellType: "markdown" }));
+          }}>
+            To Markdown
+          </Button>
+        :
+          <Button leadingVisual={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
+            e.preventDefault();
+            dispatch(notebookActions.changeCellType.started({ uid: notebookId, cellType: "code" }));
+          }}>
+            To Code
+          </Button>
         }
         </span>
         <span style={{ display: "flex" }}>
@@ -110,16 +114,18 @@ export const CellSidebarDefault = (props: CellSidebarProps) => {
             </ActionMenu.Anchor>
             <ActionMenu.Overlay>
             */}
-              <CellMetadataEditor notebookId={notebookId} cell={activeCell} nbgrader={nbgrader}/>
+            <CellMetadataEditor notebookId={notebookId} cell={activeCell} nbgrader={nbgrader}/>
             {/*
             </ActionMenu.Overlay>
             */}
           </ActionMenu>
         }
       </Box>
+    )
     :
+    (
       <></>
-  )
+    )
 }
 
 export default CellSidebarDefault;
