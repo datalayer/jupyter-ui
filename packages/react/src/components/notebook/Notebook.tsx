@@ -43,7 +43,7 @@ export type INotebookProps = {
  */
 export const Notebook = (props: INotebookProps) => {
   const { serviceManager, defaultKernel, kernelManager, injectableStore } = useJupyter();
-  const { kernel, readOnly, cellMetadataPanel, nbgrader, uid: propsUid, height, maxHeight } = props;
+  const { kernel, readOnly, nbgrader, uid: propsUid, height, maxHeight } = props;
   const [uid] = useState(propsUid || newUuid());
   const effectiveKernel = kernel || defaultKernel;
   const dispatch = useDispatch();
@@ -66,8 +66,11 @@ export const Notebook = (props: INotebookProps) => {
       setAdapter(adapter);
       dispatch(notebookActions.update({ uid, partialState: { adapter } }));
       adapter.serviceManager.ready.then(() => {
-        if (!readOnly && cellMetadataPanel) {
-//          const activeCellChanged$ = asObservable(adapter.notebookPanel!.content.cellInViewportChanged);
+        if (!readOnly) {
+          const activeCell = adapter.notebookPanel!.content.activeCell
+          if (activeCell) {
+            dispatch(notebookActions.activeCellChange({ uid, cellModel: activeCell }));
+          }
           const activeCellChanged$ = asObservable(adapter.notebookPanel!.content.activeCellChanged);
           activeCellChanged$.subscribe(
             (cellModel: Cell<ICellModel>) => {
