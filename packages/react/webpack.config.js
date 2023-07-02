@@ -29,7 +29,7 @@ if (IS_PRODUCTION) {
 const JUPYTER_HOST = 'https://datalayer-dev.datalayer.run';
 
 module.exports = {
-  entry: ['./src/examples/Notebook'],
+  entry: ['./src/examples/NotebookModel'],
   mode: mode,
   watchOptions: {
     aggregateTimeout: 300,

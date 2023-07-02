@@ -1,5 +1,4 @@
 import { createRoot } from 'react-dom/client';
-import { INotebookContent } from '@jupyterlab/nbformat';
 import Jupyter from '../jupyter/Jupyter';
 import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from "./toolbars/NotebookToolbar";
