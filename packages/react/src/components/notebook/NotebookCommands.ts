@@ -5,7 +5,6 @@ import { NotebookActions, NotebookPanel, NotebookSearchProvider } from '@jupyter
 import { SearchDocumentModel, SearchDocumentView } from '@jupyterlab/documentsearch';
 import { Widget } from '@lumino/widgets';
 import { nullTranslator } from '@jupyterlab/translation';
-import { INotebookProps } from "./Notebook";
 
 /**
  * The map of command ids used by the notebook.
@@ -49,7 +48,7 @@ export const NotebookCommands = (
   commandRegistry: CommandRegistry,
   notebookPanel: NotebookPanel,
   completerHandler: CompletionHandler,
-  props: INotebookProps,
+  path: string,
 ): void => {
   // Add commands.
   commandRegistry.addCommand(cmdIds.invoke, {
@@ -76,7 +75,7 @@ export const NotebookCommands = (
       }
     },
   });
-  if (props.path) {
+  if (path) {
     commandRegistry.addCommand(cmdIds.save, {
       label: "Save",
       execute: () => notebookPanel.context.save(),
@@ -385,7 +384,7 @@ export const NotebookCommands = (
     },
   ];
   bindings.map((binding) => commandRegistry.addKeyBinding(binding));
-  if (props.path) {
+  if (path) {
     commandRegistry.addKeyBinding({
       selector: ".jp-Notebook",
       keys: ["Accel S"],

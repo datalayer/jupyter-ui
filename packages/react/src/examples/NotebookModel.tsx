@@ -20,7 +20,7 @@ root.render(
     terminals={false}
   >
     <Notebook
-      model={notebookExample1 as INotebookContent}
+      nbformat={notebookExample1 as INotebookContent}
       CellSidebar={CellSidebarDefault}
       Toolbar={NotebookToolbar}
       height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).

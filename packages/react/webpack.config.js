@@ -26,10 +26,10 @@ if (IS_PRODUCTION) {
   minimize = true;
 }
 
-const JUPYTER_HOST = 'http://localhost:8686';
+const JUPYTER_HOST = 'https://datalayer-dev.datalayer.run';
 
 module.exports = {
-  entry: ['./src/examples/NotebookModel'],
+  entry: ['./src/examples/Notebook'],
   mode: mode,
   watchOptions: {
     aggregateTimeout: 300,

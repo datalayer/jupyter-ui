@@ -39,7 +39,7 @@ const NotebookModelChange = () => {
       </Box>
       <Notebook
         uid={NOTEBOOK_UID}
-        model={model}
+        nbformat={model}
         CellSidebar={CellSidebarDefault}
         height="700px"
       />

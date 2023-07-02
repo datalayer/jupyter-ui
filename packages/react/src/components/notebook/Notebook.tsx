@@ -1,10 +1,10 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useDispatch } from "react-redux";
 import { Box } from "@primer/react";
 import { Cell, ICellModel } from '@jupyterlab/cells';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
-import * as nbformat from '@jupyterlab/nbformat';
+import { INotebookContent } from '@jupyterlab/nbformat';
 import { useJupyter } from "./../../jupyter/JupyterContext";
 import { Kernel } from "./../../jupyter/services/kernel/Kernel";
 import { newUuid } from './../../jupyter/utils/Ids';
@@ -20,7 +20,7 @@ import './Notebook.css';
 export type INotebookProps = {
   uid: string
   path: string;
-  model: nbformat.INotebookContent;
+  nbformat: INotebookContent;
   kernel?: Kernel;
   readOnly: boolean;
   nbgrader: boolean;
@@ -43,17 +43,17 @@ export type INotebookProps = {
  */
 export const Notebook = (props: INotebookProps) => {
   const { serviceManager, defaultKernel, kernelManager, injectableStore } = useJupyter();
-  const { kernel, readOnly, cellMetadataPanel, nbgrader, uid: propsUid, model, height, maxHeight } = props;
+  const { kernel, readOnly, cellMetadataPanel, nbgrader, uid: propsUid, height, maxHeight } = props;
   const [uid] = useState(propsUid || newUuid());
   const effectiveKernel = kernel || defaultKernel;
   const dispatch = useDispatch();
   const portals = selectNotebookPortals(uid);
   const [adapter, setAdapter] = useState<NotebookAdapter>();
-  useMemo(() => {
+  useEffect(() => {
     (injectableStore as any).inject('notebook', notebookReducer, notebookEpics);
   }, []);
   useEffect(() => {
-    if (serviceManager && kernelManager && effectiveKernel) {
+    if (uid && serviceManager && kernelManager && effectiveKernel) {
       const adapter = new NotebookAdapter(
         {
           ...props,
@@ -66,7 +66,7 @@ export const Notebook = (props: INotebookProps) => {
       setAdapter(adapter);
       dispatch(notebookActions.update({ uid, partialState: { adapter } }));
       adapter.serviceManager.ready.then(() => {
-        adapter.loadNotebook();
+//        adapter.loadNotebook();
         if (!readOnly && cellMetadataPanel) {
           const activeCellChanged$ = asObservable(adapter.notebookPanel!.content.activeCellChanged);
           activeCellChanged$.subscribe(
@@ -93,7 +93,7 @@ export const Notebook = (props: INotebookProps) => {
           dispatch(notebookActions.notebookChange({ uid, notebookChange }));
         });
         adapter.notebookPanel?.content.modelChanged.connect((notebook, _) => {
-          dispatch(notebookActions.notebookChange({ uid, notebook }));
+          dispatÅch(notebookActions.notebookChange({ uid, notebook }));
         });
         */
         adapter.notebookPanel?.content.activeCellChanged.connect((_, cellModel) => {
@@ -115,11 +115,6 @@ export const Notebook = (props: INotebookProps) => {
       }
     }
   }, [uid, serviceManager, kernelManager, effectiveKernel]);
-  useEffect(() => {
-    if (adapter && model) {
-      adapter.setNotebookModel(model);
-    }
-  }, [adapter, model]);
   return (
     <div style={{ height, width: '100%', position: "relative" }} id="dla-Jupyter-Notebook">
       {
@@ -181,12 +176,12 @@ export const Notebook = (props: INotebookProps) => {
           {portals?.map((portal: React.ReactPortal) => portal)}
         </>
         <Box>
-          {adapter &&
+          { adapter &&
             <LuminoNotebook adapter={adapter} />
           }
         </Box>
       </Box >
-    </div >
+    </div>
   )
 }
 

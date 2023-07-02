@@ -4,7 +4,6 @@ import Jupyter from '../jupyter/Jupyter';
 import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from "./toolbars/NotebookToolbar";
 import CellSidebarNew from "../components/notebook/cell/sidebar/CellSidebarNew";
-import notebookExample1 from "./notebooks/NotebookExample1.ipynb.json";
 
 import "./../../style/index.css";
 
@@ -18,7 +17,6 @@ root.render(
   <Jupyter lite={false} terminals={true}>
     <Notebook
       path="test.ipynb"
-      model={notebookExample1 as INotebookContent}
       CellSidebar={CellSidebarNew}
       Toolbar={NotebookToolbar}
       height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).

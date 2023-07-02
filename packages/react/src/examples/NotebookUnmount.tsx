@@ -48,7 +48,7 @@ const NotebookUnmount = () => {
                 </ButtonGroup>
               </Box>
               <Notebook
-                model={notebookExample as INotebookContent}
+                nbformat={notebookExample as INotebookContent}
 //                kernel={kernel}
                 CellSidebar={CellSidebarDefault}
                 height="700px"

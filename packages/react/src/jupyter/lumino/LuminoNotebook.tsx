@@ -12,6 +12,7 @@ export const LuminoNotebook = (props: {adapter: NotebookAdapter }) => {
     }
     Widget.attach(panel, ref.current!);
     return () => {
+      /*
       if (panel.isAttached) {
         try {
           Widget.detach(panel);
@@ -19,6 +20,7 @@ export const LuminoNotebook = (props: {adapter: NotebookAdapter }) => {
           console.warn('Exception while detaching Lumino widget.', e);
         }
       }
+      */
       adapter.dispose();
     }
   }, [adapter.uid]);
