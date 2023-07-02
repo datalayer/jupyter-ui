@@ -62,13 +62,11 @@
     "kill": "make kill || true"
   },
   "dependencies": {
-    "@datalayer/icons-react": "0.0.13",
-    "@datalayer/primer-addons": "0.0.14",
+    "@datalayer/primer-addons": "0.0.16",
     "@jupyterlab/application": "4.0.0",
     "@jupyterlab/coreutils": "6.0.0",
     "@jupyterlab/services": "7.0.0",
     "@jupyterlab/settingregistry": "4.0.0",
-    "@primer/octicons-react": "18.2.0",
     "mobx": "6.7.0",
     "mobx-react": "7.6.0",
     "react": "18.2.0",
