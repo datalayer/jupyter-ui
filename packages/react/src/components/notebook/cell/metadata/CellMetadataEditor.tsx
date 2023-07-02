@@ -13,7 +13,7 @@ type Props = {
 export const CellMetadataEditor = (props: Props) => {
   const { cell } = props;
   const [cellGradeType, setCellGradeType] = useState(getNbGraderType(cell));
-  const [nbg, setNbg] = useState(cell.model.getMetadata('nbgrader') as any);
+  const [nbg, setNbg] = useState(cell.model.getMetadata('nbgrader') || { grade_id: '', points: 0 });
   const handleGradeIdChange = (cell: Cell<ICellModel>, gradeId: string) => {
     const nbgrader = cell.model.getMetadata("nbgrader") as any;
     cell.model.setMetadata("nbgrader", {
@@ -62,7 +62,6 @@ export const CellMetadataEditor = (props: Props) => {
         const nbgrader = cell.model.getMetadata("nbgrader") as any;
         cell.model.setMetadata("nbgrader", {
           ...nbgrader,
-  //        "points": 1,
           "grade": true,
           "solution": false,
           "locked": false,
@@ -75,7 +74,6 @@ export const CellMetadataEditor = (props: Props) => {
         const nbgrader = cell.model.getMetadata("nbgrader") as any;
         cell.model.setMetadata("nbgrader", {
           ...nbgrader,
-  //        "points": 1,
           "grade": true,
           "solution": true,
           "locked": false,
@@ -185,10 +183,10 @@ export const CellMetadataEditor = (props: Props) => {
       { cellGradeType !== NbGraderType.NotGraded &&
         <ActionList.Group title="NbGrader Metadata" variant="subtle">
           <ActionList.Item onSelect={e => e.preventDefault()}>
-            Grade ID: { nbg && <TextInput block value={nbg.grade_id} onChange={e => { e.preventDefault(); handleGradeIdChange(cell, e.target.value); }} /> }
+            Grade ID: { <TextInput block value={nbg.grade_id} onChange={e => { e.preventDefault(); handleGradeIdChange(cell, e.target.value); }} /> }
           </ActionList.Item>
           <ActionList.Item>
-            Points: { nbg && <TextInput block value={nbg.points} onChange={e => { e.preventDefault(); handlePointsChange(cell, e.target.value); }} /> }
+            Points: { <TextInput block value={nbg.points} onChange={e => { e.preventDefault(); handlePointsChange(cell, e.target.value); }} /> }
           </ActionList.Item>
         </ActionList.Group>
       }
