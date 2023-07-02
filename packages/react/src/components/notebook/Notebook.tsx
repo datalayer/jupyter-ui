@@ -156,6 +156,9 @@ export const Notebook = (props: INotebookProps) => {
           '& .jp-Cell': {
             width: `calc(100% - ${props.cellSidebarMargin}px)`,
           },
+          '& .jp-Notebook-footer': {
+            width: `calc(100% - ${props.cellSidebarMargin + 82}px)`,
+          },
           '& .jp-Cell .jp-CellHeader': {
             position: 'absolute',
             top: '-5px',

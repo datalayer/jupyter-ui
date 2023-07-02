@@ -24,7 +24,7 @@ root.render(
       CellSidebar={CellSidebarDefault}
       Toolbar={NotebookToolbar}
       height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
-      cellSidebarMargin={110}
+      cellSidebarMargin={120}
       uid="notebook-uid"
     />
   </Jupyter>
