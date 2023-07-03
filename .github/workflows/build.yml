@@ -1,0 +1,42 @@
+name: Build
+
+on:
+  push:
+    branches: '*'
+  pull_request:
+    branches: '*'
+#  schedule:
+#    - cron: '0 0 * * *'
+
+jobs:
+  build:
+    name: Run build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: [3.11]
+    defaults:
+      run:
+        shell: bash -l {0}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Setup conda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        auto-update-conda: true
+#        mamba-version: "*"
+#        channels: conda-forge
+    - name: Create the environment
+      run: |
+        conda env create -f environment.yml
+    - name: Install the npm dependencies
+      run: |
+        conda activate datalayer
+        yarn
+    - name: Run the build
+      run: |
+        conda activate datalayer
+        yarn build
