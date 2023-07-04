@@ -46,14 +46,35 @@ yarn start # start and example defined in the webpack.config.js file.
 
 ## Examples
 
-Now you can start an example and hack the source code. The changes will build automatically and will be available in your browser. You will have to accept to SSL certificate in your browser the first time.
+Now you can start an example and hack the source code. The changes will build automatically and will be available in your browser.
 
 ```bash
 # open http://localhost:3208
 yarn start
 ```
 
-We have more examples. Pick one of the following commands and enjoy.
+This will consume kernels from the Datalayer development server in the cloud. You can run your own server with the following command.
+
+```bash
+# open http://localhost:3208
+yarn start-local
+```
+
+The used Jupyter Server configuration is available [in this jupyter_server_config.py](https://github.com/datalayer/jupyter-ui/blob/main/dev/config/jupyter_server_config.py). The important part of that configuration is the `Security` part where the settings for CORS access are defined.
+
+The [index-local.html](https://github.com/datalayer/jupyter-ui/blob/main/packages/react/public/index-local.html) is also used to defined the location of the Jupyter Server
+
+```html
+<script id="datalayer-config-data" type="application/json">
+  {
+    "jupyterServerHttpUrl": "https://datalayer-dev.datalayer.run/api/jupyter",
+    "jupyterServerWsUrl": "wss://datalayer-dev.datalayer.run/api/jupyter",
+    "jupyterToken": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+  }
+  </script>
+```
+
+We have more examples, pick one of the following commands and enjoy.
 
 ```bash
 # Create React App example

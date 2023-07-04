@@ -10,23 +10,14 @@ function shim(regExp) {
   return new webpack.NormalModuleReplacementPlugin(regExp, shimJS);
 }
 
+const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == "true";
+const indexPage = IS_JUPYTER_SERVER_LOCAL ? "index-local.html" : "index.html";
+const JUPYTER_HOST = IS_JUPYTER_SERVER_LOCAL ? "http://localhost:8686" : "https://datalayer-dev.datalayer.run";
+
 const IS_PRODUCTION = process.argv.indexOf('--mode=production') > -1;
-let mode = "development";
-if (IS_PRODUCTION) {
-  mode = "production";
-}
-
-let devtool = "inline-source-map";
-if (IS_PRODUCTION) {
-  devtool = false;
-}
-
-let minimize = false;
-if (IS_PRODUCTION) {
-  minimize = true;
-}
-
-const JUPYTER_HOST = 'https://datalayer-dev.datalayer.run';
+const mode = IS_PRODUCTION ? "production" : "development";
+const devtool = IS_PRODUCTION ? false : "inline-source-map";
+let minimize = IS_PRODUCTION ? true : false;
 
 module.exports = {
   entry: ['./src/examples/NotebookModel'],
@@ -169,7 +160,7 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       title: 'Jupyter UI',
-      template : 'public/index.html'
+      template : 'public/' + indexPage,
     }),
     new HtmlWebpackTagsPlugin({
       links: [

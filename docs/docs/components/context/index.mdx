@@ -1,0 +1,54 @@
+---
+description: Context.
+---
+
+# Jupyter Context
+
+Every component must be wrapped inside a Jupyter Context.
+
+```tsx
+root.render(
+  <Jupyter
+    lite={false}
+    useRunningKernelIndex={-1}
+    startDefaultKernel={true}
+    terminals={false}
+  >
+    <Notebook
+      nbformat={notebookExample1 as INotebookContent}
+      CellSidebar={CellSidebarDefault}
+      Toolbar={NotebookToolbar}
+      height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
+      cellSidebarMargin={120}
+      uid="notebook-uid"
+    />
+  </Jupyter>
+);
+```
+
+The Jupyter Context has the following properties.
+
+- lite
+- startDefaultKernel
+- defaultKernelName
+- useRunningKernelId
+- useRunningKernelIndex
+- injectableStore
+- collaborative
+- jupyterServerHttpUrl
+- jupyterServerWsUrl
+- jupyterToken
+- terminals
+- theme
+
+You can override some of those properties adding in the host HTML (index.html) a tag in the head section.
+
+```html
+<script id="datalayer-config-data" type="application/json">
+  {
+    "jupyterServerHttpUrl": "http://localhost:8686/api/jupyter",
+    "jupyterServerWsUrl": "ws://localhost:8686/api/jupyter",
+    "jupyterToken": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+  }
+</script>
+```

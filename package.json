@@ -32,6 +32,7 @@
     "kill": "fkill -s :3208 && fkill -s :8686",
     "ls": "lerna ls",
     "start": "lerna run --parallel --scope @datalayer/jupyter-react start",
+    "start-local": "lerna run --parallel --scope @datalayer/jupyter-react start-local",
     "jupyter:ui:cra": "lerna run --parallel --scope @datalayer/jupyter-cra-example start",
     "jupyter:ui:docusaurus": "lerna run --parallel --scope @datalayer/jupyter-docusaurus-example start",
     "jupyter:ui:esbuild": "lerna run --parallel --scope @datalayer/jupyter-esbuild-example start",
