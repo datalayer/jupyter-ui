@@ -60,6 +60,12 @@ module.exports = {
         },
         {
           type: 'doc',
+          docId: '/category/ipywidgets',
+          position: 'left',
+          label: 'IpyWidgets',
+        },
+        {
+          type: 'doc',
           docId: '/category/examples',
           position: 'left',
           label: 'Examples',
@@ -75,6 +81,12 @@ module.exports = {
           docId: '/category/demos',
           position: 'left',
           label: 'Demos',
+        },
+        {
+          type: 'doc',
+          docId: 'license/index',
+          position: 'left',
+          label: 'License',
         },
         {
           href: 'https://github.com/datalayer/jupyter-ui',

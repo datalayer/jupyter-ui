@@ -6,11 +6,11 @@
 
 > Create UI from your Jupyter Traits.
 
-This package eases the creation of user interfaces based on the [Jupyter Traitlets](https://traitlets.readthedocs.io) configuration system.
+This package eases the creation of user interfaces based on the [Jupyter Traitlets](https://traitlets.readthedocs.io) configuration system and can be used to manage your application configuration in a visual way.
 
-This allows a developer to start from the traits (configuration definition) defined in Python code and automatically generate a `React.js` user interface which can be used to manage your settings in a visual way. The traits would be converted to `json-schema` definitions that can be used to create the React.js components.
+The traits are converted to `json-schema` definitions that can be used to create the React.js components. This is particularly useful to build management user interfaces.
 
-This is particularly useful to build management user interfaces.
+PS: For now the development is done in the Jupyer Manager repository https://github.com/datalayer/jupyter-manager for convenience and will move back in the Jupyter UI repository https://github.com/datalayer/jupyter-ui as soon as possible.
 
 ```bash
 pip install -e .[test]

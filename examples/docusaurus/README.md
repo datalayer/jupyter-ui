@@ -6,17 +6,17 @@
 
 This example is built using [Docusaurus](https://docusaurus.io), a modern static website generator, and allows you to add a live cell in the Docusaurus site.
 
-```base
+```bash
 yarn install &&
   echo open http://localhost:3000/docs/intro && \
   yarn start
 ```
 
 <div align="center" style="text-align: center">
-  <img alt="Jupyter UI Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-docusaurus.png" />
+  <img alt="Jupyter UI Docusaurus" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-docusaurus.png" />
 </div>
 
-```base
+```bash
 yarn build:docusaurus &&
   echo open http://localhost:3000 && \
   yarn serve

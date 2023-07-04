@@ -2,6 +2,8 @@
 description: The Notebook component.
 ---
 
+import ModalImage from "react-modal-image";
+
 # Notebook Component
 
 The below picture is an example of Notebook into a React.js component.
@@ -12,8 +14,6 @@ The below picture is an example of Notebook into a React.js component.
   alt="Jupyter UI Notebook"
 />
 
-As an application developer, you may already have a Redux store. You can simply inject the Jupyter UI store in your own store. JupyterLab/Lumino is heavily built on top of factories. Jupyter UI uses those to create the ad-hoc widgets.
-
 This is what it takes to create a Notebook.
 
 ```jsx
@@ -22,7 +22,7 @@ This is what it takes to create a Notebook.
 </Jupyter>
 ```
 
-```js
+```jsx
 export type INotebookProps = {
   path: string;
   ipywidgets?: 'classic' | 'modern';
@@ -30,11 +30,3 @@ export type INotebookProps = {
   sidebarMargin: number;
 }
 ```
-
-Upon the Notebook component, you can also use the Cell, Notebook, Filemanager and Terminal components.
-
-<ModalImage
-  small="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-gallery.gif"
-  large="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-gallery.gif"
-  alt="Jupyter UI Gallery"
-/>
