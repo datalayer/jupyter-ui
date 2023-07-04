@@ -16,5 +16,5 @@ const App = () => {
 
 render(
   <App />,
-  document.getElementById("datalayer-root")
+  document.getElementById("root")
 );

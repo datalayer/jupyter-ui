@@ -17,7 +17,7 @@ const html = `
         </style>
       </head>
       <body>
-        <div id="datalayer-root"></div>
+        <div id="root"></div>
         <script>
           const handleError = (err) => {
             const root = document.querySelector('#root');
