@@ -36,18 +36,18 @@ typedoc: ## generate typedoc
 		yarn typedoc --tsconfig ./tsconfig.json && \
 		open typedoc/index.html )
 
-typedoc-publish: typedoc ## deploy typedoc
+publish-typedoc: typedoc ## deploy typedoc
 	aws s3 rm \
-		s3://datalayer-typedoc/datalayer/jupyter-react/0.4.0/ \
+		s3://datalayer-typedoc/datalayer/jupyter-react/0.5.0/ \
 		--recursive \
 		--profile datalayer
 	aws s3 cp \
 		typedoc \
-		s3://datalayer-typedoc/datalayer/jupyter-react/0.4.0/ \
+		s3://datalayer-typedoc/datalayer/jupyter-react/0.5.0/ \
 		--recursive \
 		--profile datalayer
 	aws cloudfront create-invalidation \
 		--distribution-id E1CPG9FNSQJESH \
 		--paths /datalayer/jupyter-react/0.3.0/ \
 		--profile datalayer
-	echo open ✨  https://typedoc.datalayer.tech/datalayer/jupyter-react/0.4.0
+	echo open ✨  https://typedoc.datalayer.tech/datalayer/jupyter-react/0.5.0
