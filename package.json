@@ -11,7 +11,8 @@
   "keywords": [
     "jupyter",
     "react",
-    "jupyterlab"
+    "jupyterlab",
+    "datalayer"
   ],
   "engines": {
     "node": ">= 18.0.0",
