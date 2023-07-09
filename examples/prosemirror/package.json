@@ -55,7 +55,7 @@
     "@babel/preset-typescript": "7.21.0",
     "@svgr/webpack": "5.5.0",
     "@types/codemirror": "5.60.4",
-    "@types/node": "18.11.9",
+    "@types/node": "18.15.3",
     "@types/plotly.js": "1.54.11",
     "@types/uuid": "8.3.0",
     "assert": "2.0.0",

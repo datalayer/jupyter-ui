@@ -82,7 +82,7 @@
     "@types/katex": "0.14.0",
     "@types/lodash-es": "4.17.6",
     "@types/marked": "4.0.1",
-    "@types/node": "18.11.9",
+    "@types/node": "18.15.3",
     "@types/plotly.js": "1.54.11",
     "@types/prismjs": "1.26.0",
     "@types/react": "18.2.12",
