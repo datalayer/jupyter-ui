@@ -6,7 +6,7 @@ import {
   Box,
 } from '@primer/react';
 import { LinkIcon, AlertIcon } from '@primer/octicons-react';
-import { DaskIcon, PyTorchIcon, TensorFlowIcon } from "@datalayer/icons-react";
+import { DaskIcon, PyTorchIcon, TensorFlowNoopIcon } from "@datalayer/icons-react";
 
 const MockTab1 = (): JSX.Element => {
   return (
@@ -40,7 +40,7 @@ const MockTab1 = (): JSX.Element => {
         </ActionList.Item>
         <ActionList.Item>
           <ActionList.LeadingVisual>
-            <TensorFlowIcon />
+            <TensorFlowNoopIcon />
           </ActionList.LeadingVisual>
           Tensorflow Kernel
         </ActionList.Item>
