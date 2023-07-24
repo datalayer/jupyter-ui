@@ -1,5 +1,5 @@
 import { Timeline, StyledOcticon, Link, Box, SubNav } from '@primer/react';
-import { DaskIcon, PyTorchIcon, TensorFlowNoopIcon } from "@datalayer/icons-react";
+import { DaskIcon, PyTorchIcon, TensorFlowIcon } from "@datalayer/icons-react";
 
 const MockTab4 = (): JSX.Element => {
   return (
@@ -32,7 +32,7 @@ const MockTab4 = (): JSX.Element => {
         </Timeline.Item>
         <Timeline.Item>
           <Timeline.Badge>
-            <StyledOcticon icon={TensorFlowNoopIcon} />
+            <StyledOcticon icon={TensorFlowIcon} />
           </Timeline.Badge>
           <Timeline.Body>
             <Link href="#" sx={{fontWeight: 'bold', color: 'fg.default', mr: 1}} muted>
