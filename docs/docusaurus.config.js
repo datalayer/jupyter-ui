@@ -36,7 +36,7 @@ module.exports = {
       items: [
         {
           type: 'doc',
-          docId: '/category/welcome',
+          docId: 'welcome/index',
           position: 'left',
           label: 'Welcome',
         },
@@ -83,10 +83,28 @@ module.exports = {
           label: 'License',
         },
         {
+          href: 'https://www.linkedin.com/company/datalayer',
+          position: 'right',
+          className: 'header-linkedin-link',
+          'aria-label': 'Linkedin',
+        },
+        {
+          href: 'https://twitter.com/DatalayerIO',
+          position: 'right',
+          className: 'header-twitter-link',
+          'aria-label': 'Twitter',
+        },
+        {
           href: 'https://github.com/datalayer/jupyter-ui',
           position: 'right',
           className: 'header-github-link',
           'aria-label': 'GitHub repository',
+        },
+        {
+          href: 'https://datalayer.tech',
+          position: 'right',
+          className: 'header-datalayer-io-link',
+          'aria-label': 'Datalayer IO',
         },
       ],
     },
@@ -114,15 +132,31 @@ module.exports = {
           title: 'More',
           items: [
             {
-              label: 'Datalayer',
-              to: 'https://datalayer.io',
+              label: 'Datalayer IO',
+              href: 'https://datalayer.io',
             },
             {
-              label: 'Blog',
-              to: 'https://datalayer.blog',
+              label: 'Datalayer App',
+              href: 'https://datalayer.app',
+            },
+            {
+              label: 'Datalayer Run',
+              href: 'https://datalayer.run',
+            },
+            {
+              label: 'Datalayer Tech',
+              href: 'https://datalayer.tech',
+            },
+            {
+              label: 'Clouder',
+              href: 'https://clouder.sh',
+            },
+            {
+              label: 'Datalayer Blog',
+              href: 'https://datalayer.blog',
             },
           ],
-        },
+        }
       ],
       copyright: `Copyright © ${new Date().getFullYear()} Datalayer, Inc.`,
     },

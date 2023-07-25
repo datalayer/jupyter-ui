@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:figma="http://www.figma.com/figma/ns"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   viewBox="0 0 250 292.90101"
+   version="1.1"
+   id="svg1327"
+   sodipodi:docname="product_2.svg"
+   inkscape:version="1.0.1 (c497b03c, 2020-09-10)"
+   width="250"
+   height="292.901">
+  <metadata
+     id="metadata1331">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Web_hosting_SVG</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1357"
+     inkscape:window-height="701"
+     id="namedview1329"
+     showgrid="false"
+     inkscape:zoom="0.98691435"
+     inkscape:cx="142.90769"
+     inkscape:cy="115.1505"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg1327"
+     inkscape:document-rotation="0"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <defs
+     id="defs835">
+    <style
+       id="style833">.cls-1,.cls-7{fill:#d6d8e5;}.cls-1{opacity:0.4;}.cls-2{fill:#d5d6e0;}.cls-3{fill:#e9eaf4;}.cls-4{fill:#dfe0ea;}.cls-5{fill:#2b303f;}.cls-6{fill:#8c50ff;}.cls-8{fill:#edf0f9;}.cls-9{fill:#e2e5f2;}.cls-10{fill:#e5e5e5;}.cls-11{fill:#f4f4f4;}.cls-12{fill:#bfbfbf;}.cls-13{fill:#dceeff;}.cls-14{fill:#dbdbdb;}.cls-15{fill:#1e212d;}.cls-16{fill:#ffcea9;}.cls-17{fill:#ededed;}.cls-18{fill:#38226d;}.cls-19{fill:#9c73ff;}.cls-20{fill:#3a2c6d;}</style>
+  </defs>
+  <title
+     id="title837">Web_hosting_SVG</title>
+  <g
+     id="Canvas"
+     transform="matrix(5.8574484,0,0,5.8574484,-9609.3786,-14372.362)"
+     figma:type="canvas">
+    <g
+       id="g2566"
+       style="mix-blend-mode:normal"
+       figma:type="group">
+      <g
+         id="g2564"
+         style="mix-blend-mode:normal"
+         figma:type="group">
+        <g
+           id="Group"
+           style="mix-blend-mode:normal"
+           figma:type="group">
+          <g
+             id="g"
+             style="mix-blend-mode:normal"
+             figma:type="group">
+            <g
+               id="path"
+               style="mix-blend-mode:normal"
+               figma:type="group">
+              <g
+                 id="path9 fill"
+                 style="mix-blend-mode:normal"
+                 figma:type="vector">
+                <path
+                   id="use2501"
+                   d="m 1642.285,2479.8353 c 0,1.5581 -0.1247,2.0655 -0.4452,2.4394 -0.3567,0.3213 -0.8198,0.4989 -1.2998,0.4986 l 0.1246,0.8903 c 0.7442,0.01 1.4664,-0.2528 2.0299,-0.7389 0.3033,-0.3698 0.5289,-0.7969 0.6635,-1.2558 0.1346,-0.4588 0.1754,-0.9401 0.12,-1.4151 v -5.8938 h -1.193 v 5.4397 z"
+                   style="mix-blend-mode:normal;fill:#4e4e4e" />
+              </g>
+            </g>
+            <g
+               id="g2508"
+               style="mix-blend-mode:normal"
+               figma:type="group">
+              <g
+                 id="path10 fill"
+                 style="mix-blend-mode:normal"
+                 figma:type="vector">
+                <path
+                   id="use2505"
+                   d="m 1651.182,2479.1331 c 0,0.6677 0,1.2642 0.053,1.7806 h -1.0595 l -0.071,-1.0595 c -0.2216,0.3749 -0.5385,0.6844 -0.9185,0.897 -0.38,0.2127 -0.8095,0.321 -1.2449,0.3138 -1.0328,0 -2.2614,-0.5609 -2.2614,-2.8489 v -3.8016 h 1.193 v 3.5612 c 0,1.2375 0.3828,2.0655 1.4601,2.0655 0.2216,0 0.4415,-0.04 0.6467,-0.1232 0.2053,-0.084 0.3917,-0.2076 0.5484,-0.3643 0.1567,-0.1568 0.2806,-0.3432 0.3643,-0.5484 0.084,-0.2053 0.1256,-0.4251 0.1233,-0.6468 v -3.9885 h 1.1929 v 4.7275 z"
+                   style="mix-blend-mode:normal;fill:#4e4e4e" />
+              </g>
+            </g>
+            <g
+               id="g2513"
+               style="mix-blend-mode:normal"
+               figma:type="group">
+              <g
+                 id="path11 fill"
+                 style="mix-blend-mode:normal"
+                 figma:type="vector">
+                <path
+                   id="use2510"
+                   d="m 1653.4434,2476.5326 c 0,-0.8279 0,-1.5046 -0.053,-2.1189 h 1.0684 l 0.053,1.1129 c 0.238,-0.4021 0.5807,-0.732 0.9915,-0.9546 0.4107,-0.2227 0.8742,-0.3297 1.3411,-0.3096 1.5847,0 2.7777,1.3265 2.7777,3.303 0,2.3326 -1.4334,3.49 -2.9825,3.49 -0.3965,0.018 -0.7909,-0.067 -1.1449,-0.2467 -0.3541,-0.1793 -0.6558,-0.447 -0.8761,-0.7772 v 0 3.5612 h -1.1752 v -7.0333 z m 1.1752,1.7361 c 0,0.1616 0.021,0.3225 0.053,0.4808 0.101,0.3953 0.331,0.7456 0.6535,0.9956 0.3225,0.2499 0.7191,0.3852 1.1271,0.3843 1.2553,0 1.9943,-1.0238 1.9943,-2.5106 0,-1.2998 -0.6944,-2.4127 -1.9498,-2.4127 -0.4967,0.041 -0.9616,0.2612 -1.3074,0.6201 -0.3459,0.3589 -0.5489,0.8317 -0.5711,1.3297 z"
+                   style="mix-blend-mode:normal;fill:#4e4e4e" />
+              </g>
+            </g>
+            <g
+               id="g2518"
+               style="mix-blend-mode:normal"
+               figma:type="group">
+              <g
+                 id="path12 fill"
+                 style="mix-blend-mode:normal"
+                 figma:type="vector">
+                <path
+                   id="use2515"
+                   d="m 1661.7476,2474.4078 1.4334,3.8372 c 0.1514,0.4273 0.3116,0.9437 0.4185,1.3265 0.1246,-0.3917 0.2581,-0.8903 0.4184,-1.3532 l 1.2998,-3.8105 h 1.2554 l -1.7806,4.6296 c -0.8903,2.2257 -1.4334,3.3742 -2.2525,4.0686 -0.4125,0.3768 -0.9155,0.6406 -1.4601,0.7657 l -0.2938,-0.9972 c 0.3808,-0.1251 0.7343,-0.3215 1.0417,-0.5787 0.4343,-0.3539 0.779,-0.8054 1.006,-1.3176 0.049,-0.089 0.082,-0.1851 0.098,-0.2849 -0.01,-0.1074 -0.037,-0.2126 -0.08,-0.3116 l -2.4216,-5.9917 h 1.2998 z"
+                   style="mix-blend-mode:normal;fill:#4e4e4e" />
+              </g>
+            </g>
+            <g
+               id="g2523"
+               style="mix-blend-mode:normal"
+               figma:type="group">
+              <g
+                 id="path13 fill"
+                 style="mix-blend-mode:normal"
+                 figma:type="vector">
+                <path
+                   id="use2520"
+                   d="m 1669.7401,2472.54 v 1.8696 h 1.7094 v 0.8903 h -1.7094 v 3.5078 c 0,0.8013 0.2315,1.2642 0.8903,1.2642 0.234,0 0.4675,-0.023 0.6945,-0.08 l 0.053,0.8903 c -0.3404,0.1179 -0.6995,0.1722 -1.0595,0.1602 -0.2384,0.015 -0.4772,-0.022 -0.7,-0.1079 -0.2229,-0.086 -0.4244,-0.2193 -0.5909,-0.3906 -0.3626,-0.4851 -0.5281,-1.0895 -0.463,-1.6916 v -3.5612 h -1.0149 v -0.8903 h 1.0327 v -1.5847 z"
+                   style="mix-blend-mode:normal;fill:#4e4e4e" />
+              </g>
+            </g>
+            <g
+               id="g2528"
+               style="mix-blend-mode:normal"
+               figma:type="group">
+              <g
+                 id="path14 fill"
+                 style="mix-blend-mode:normal"
+                 figma:type="vector">
+                <path
+                   id="use2525"
+                   d="m 1673.6472,2477.869 c -0.024,0.3019 0.017,0.6055 0.1221,0.8898 0.1047,0.2842 0.2698,0.5423 0.484,0.7565 0.2142,0.2142 0.4723,0.3793 0.7566,0.484 0.2842,0.1046 0.5878,0.1463 0.8897,0.1222 0.6107,0.014 1.2175,-0.1017 1.7806,-0.3384 l 0.2048,0.8903 c -0.6911,0.2847 -1.4341,0.4212 -2.1812,0.4007 -0.4356,0.03 -0.8724,-0.035 -1.2806,-0.1898 -0.4081,-0.1549 -0.778,-0.3962 -1.0841,-0.7074 -0.3062,-0.3112 -0.5414,-0.685 -0.6895,-1.0956 -0.1481,-0.4107 -0.2057,-0.8485 -0.1687,-1.2835 0,-1.9587 1.1663,-3.5078 3.0715,-3.5078 2.1367,0 2.6709,1.8696 2.6709,3.0626 0.011,0.1838 0.011,0.3682 0,0.552 h -4.6028 z m 3.4899,-0.8903 c 0.034,-0.238 0.017,-0.4806 -0.05,-0.7115 -0.067,-0.2309 -0.1834,-0.4447 -0.3403,-0.6269 -0.1569,-0.1822 -0.3511,-0.3287 -0.5694,-0.4296 -0.2183,-0.1008 -0.4557,-0.1537 -0.6962,-0.155 -0.4892,0.035 -0.9475,0.2522 -1.2851,0.6079 -0.3376,0.3558 -0.5302,0.8248 -0.54,1.3151 z"
+                   style="mix-blend-mode:normal;fill:#4e4e4e" />
+              </g>
+            </g>
+            <g
+               id="g2533"
+               style="mix-blend-mode:normal"
+               figma:type="group">
+              <g
+                 id="path15 fill"
+                 style="mix-blend-mode:normal"
+                 figma:type="vector">
+                <path
+                   id="use2530"
+                   d="m 1680.0334,2476.4323 c 0,-0.7657 0,-1.4245 -0.053,-2.0299 h 1.0684 v 1.2731 h 0.053 c 0.1121,-0.3929 0.3438,-0.7412 0.6629,-0.9965 0.3191,-0.2552 0.7097,-0.4048 1.1177,-0.4279 0.1123,-0.015 0.226,-0.015 0.3383,0 v 1.1128 c -0.1361,-0.016 -0.2735,-0.016 -0.4096,0 -0.4041,0.016 -0.7887,0.1779 -1.082,0.4565 -0.2933,0.2785 -0.4751,0.6542 -0.5116,1.057 -0.033,0.1822 -0.051,0.3668 -0.053,0.552 v 3.4633 h -1.1752 v -4.4515 z"
+                   style="mix-blend-mode:normal;fill:#4e4e4e" />
+              </g>
+            </g>
+          </g>
+        </g>
+        <g
+           id="g2562"
+           style="mix-blend-mode:normal"
+           figma:type="group">
+          <g
+             id="g2540"
+             style="mix-blend-mode:normal"
+             figma:type="group">
+            <g
+               id="path16 fill"
+               style="mix-blend-mode:normal"
+               figma:type="vector">
+              <path
+                 id="use2537"
+                 d="m 1679.5106,2456.5257 c 0.037,0.5981 -0.1057,1.1935 -0.4088,1.7105 -0.303,0.5169 -0.7531,0.9319 -1.2929,1.1922 -0.5397,0.2602 -1.1447,0.3539 -1.7379,0.2691 -0.5932,-0.085 -1.1477,-0.3442 -1.593,-0.7453 -0.4452,-0.4011 -0.7609,-0.9256 -0.907,-1.5067 -0.146,-0.5812 -0.1158,-1.1927 0.087,-1.7566 0.2027,-0.5639 0.5686,-1.0547 1.0513,-1.4099 0.4826,-0.3551 1.06,-0.5586 1.6586,-0.5845 0.3926,-0.022 0.7855,0.035 1.1562,0.1654 0.3707,0.1308 0.7119,0.3336 1.0039,0.5967 0.2921,0.2631 0.5293,0.5813 0.6979,0.9364 0.1687,0.3551 0.2654,0.74 0.2848,1.1327 z"
+                 style="mix-blend-mode:normal;fill:#767677" />
+            </g>
+          </g>
+          <g
+             id="g2545"
+             style="mix-blend-mode:normal"
+             figma:type="group">
+            <g
+               id="path17 fill"
+               style="mix-blend-mode:normal"
+               figma:type="vector">
+              <path
+                 id="use2542"
+                 d="m 1661.9062,2491.3924 c -8.0126,0 -15.0549,-2.8757 -18.6962,-7.1224 1.4128,3.8204 3.9622,7.1163 7.3048,9.444 3.3426,2.3278 7.3182,3.5756 11.3914,3.5756 4.0733,0 8.0488,-1.2478 11.3915,-3.5756 3.3426,-2.3277 5.8919,-5.6236 7.3048,-9.444 -3.6324,4.2467 -10.648,7.1224 -18.6963,7.1224 z"
+                 style="mix-blend-mode:normal;fill:#f37726" />
+            </g>
+          </g>
+          <g
+             id="g2550"
+             style="mix-blend-mode:normal"
+             figma:type="group">
+            <g
+               id="path18 fill"
+               style="mix-blend-mode:normal"
+               figma:type="vector">
+              <path
+                 id="use2547"
+                 d="m 1661.9062,2463.7773 c 8.0127,0 15.055,2.8756 18.6963,7.1223 -1.4129,-3.8204 -3.9622,-7.1163 -7.3048,-9.444 -3.3427,-2.3277 -7.3182,-3.5756 -11.3915,-3.5756 -4.0732,0 -8.0488,1.2479 -11.3914,3.5756 -3.3426,2.3277 -5.892,5.6236 -7.3048,9.444 3.6413,-4.2556 10.648,-7.1223 18.6962,-7.1223 z"
+                 style="mix-blend-mode:normal;fill:#f37726" />
+            </g>
+          </g>
+          <g
+             id="g2555"
+             style="mix-blend-mode:normal"
+             figma:type="group">
+            <g
+               id="path19 fill"
+               style="mix-blend-mode:normal"
+               figma:type="vector">
+              <path
+                 id="use2552"
+                 d="m 1650.8758,2499.6566 c 0.047,0.7533 -0.1314,1.5036 -0.5123,2.1553 -0.381,0.6516 -0.9473,1.1751 -1.6268,1.5037 -0.6796,0.3286 -1.4415,0.4475 -2.1889,0.3416 -0.7473,-0.106 -1.4462,-0.4321 -2.0076,-0.9367 -0.5614,-0.5046 -0.9598,-1.1649 -1.1446,-1.8967 -0.1847,-0.7319 -0.1474,-1.5022 0.1072,-2.2128 0.2546,-0.7106 0.715,-1.3293 1.3224,-1.7773 0.6075,-0.448 1.3347,-0.705 2.0887,-0.7383 0.494,-0.026 0.9884,0.045 1.4549,0.2094 0.4665,0.1647 0.8959,0.4197 1.2638,0.7504 0.368,0.3307 0.6671,0.7306 0.8804,1.177 0.2133,0.4464 0.3366,0.9304 0.3628,1.4244 z"
+                 style="mix-blend-mode:normal;fill:#9e9e9e" />
+            </g>
+          </g>
+          <g
+             id="g2560"
+             style="mix-blend-mode:normal"
+             figma:type="group">
+            <g
+               id="path20 fill"
+               style="mix-blend-mode:normal"
+               figma:type="vector">
+              <path
+                 id="use2557"
+                 d="m 1644.1206,2462.8094 c -0.4317,0.012 -0.8574,-0.1041 -1.2234,-0.3334 -0.366,-0.2293 -0.656,-0.5618 -0.8336,-0.9555 -0.1775,-0.3937 -0.2347,-0.8312 -0.1643,-1.2573 0.07,-0.4261 0.2652,-0.822 0.5599,-1.1377 0.2948,-0.3157 0.6763,-0.5372 1.0966,-0.6366 0.4203,-0.099 0.8606,-0.072 1.2656,0.078 0.405,0.1501 0.7566,0.4166 1.0105,0.766 0.2539,0.3494 0.3988,0.7661 0.4165,1.1977 0.017,0.5835 -0.1971,1.1501 -0.5955,1.5768 -0.3984,0.4268 -0.949,0.6791 -1.5323,0.7023 z"
+                 style="mix-blend-mode:normal;fill:#616262" />
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -5,7 +5,7 @@ import styles from './HomepageProducts.module.css';
 const ProductList = [
   {
     title: 'React.js components',
-//    Svg: require('../../static/img/product_1.svg').default,
+    Svg: require('../../static/img/react-js.svg').default,
     description: (
       <>
         A variety of React.js components from Notebook, Cell, Output and Terminal allow you to get the best of Jupyter, with authentication and authorization.
@@ -14,7 +14,7 @@ const ProductList = [
   },
   {
     title: '100% compatible with Jupyter',
-//    Svg: require('../../static/img/product_2.svg').default,
+    Svg: require('../../static/img/jupyter.svg').default,
     description: (
       <>
         If you need more batteries for Jupyter, have a look to our <a href="./docs/category/components" style={{ textDecoration: "underline" }}>Jupyter components</a>.
@@ -23,7 +23,7 @@ const ProductList = [
   },
   {
     title: 'Literate Notebook',
-//    Svg: require('../../static/img/product_3.svg').default,
+    Svg: require('../../static/img/memo.svg').default,
     description: (
       <>
         For a truly collaborative and accessible notebook, <a href="./docs/cases/literate" style={{ textDecoration: "underline" }}>Literate Notebook</a> is a better single-page editor for your data analysis.
@@ -35,11 +35,9 @@ const ProductList = [
 function Product({Svg, title, description}) {
   return (
     <div className={clsx('col col--4')}>
-{/*
       <div className="text--center">
         <Svg className={styles.productSvg} alt={title} />
       </div>
-*/}
       <div className="text--center padding-horiz--md">
         <h3>{title}</h3>
         <p>{description}</p>

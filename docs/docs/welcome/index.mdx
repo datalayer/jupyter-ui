@@ -1,16 +1,24 @@
 ---
-description: About Jupyter UI.
+description: Welcome to Jupyter UI.
 ---
 
 import ModalImage from "react-modal-image";
 
-# 🪐 ⚛️ About Jupyter UI
+# 🪐 ⚛️ Welcome to Jupyter UI
 
-> Jupyter UI is a set of [React.js](https://reactjs.org) components that allow a frontend developer to build data products compatible with the [Jupyter](https://jupyter.org) ecosystem. The user interface delivers executable notebooks, cells, terminals, file browsers and allows the developer to manage a full integrated React tree instead of relying on iframes to display the Jupyter noteboks.
+Jupyter UI is a set of [React.js](https://reactjs.org) components that allow a frontend developer to build data products compatible with the [Jupyter](https://jupyter.org) ecosystem. The user interface delivers executable notebooks, cells, terminals, file browsers and allows the developer to manage a full integrated React tree instead of relying on iframes to display the Jupyter noteboks.
 
 The Jupyter(Lab) Notebook is a tool that allows data scientist to analyse dataset. However, it is not easy to create a custom user interface integrated in an existing application. Jupyter UI, [an open-source library](https://github.com/datalayer/jupyter-ui), fills that gap and provides components that a developer can easily integrate in any React.js application.
 
-## Problem with JupyterLab for Web developers
+We ensure React.js as a first-class citizen in the Jupyter:
+
+- [Components](/docs/category/components): JupyterLab visual as React.js components
+- [Integrations](/docs/category/integrations): Embed Jupyter in Docusaurus.
+- [Themes](/docs/category/themes): Themes for your data analysis.
+
+You can get kick-started with simple [examples](/docs/category/examples)
+
+## Problems with JupyterLab for Web developers
 
 In terms of technical stack, the Jupyter(Lab) user interface is built on top of Lumino, which is an imperative way to build user interface and **can not** be consumed by industry standard declarative frameworks like React.js. As a user interface developer, if you want to create a custom data product on top of Jupyter, you have to stick to Lumino and carry-on the full notebook interface not tailored to your specific needs. This is not what you want. You just want to expose what you need, you want to develop with your favorite toolkit (like React.js) and you also want to integrate on a per-component basis the Jupyter functionality in your application.
 
@@ -29,7 +37,14 @@ Although a developer can embed a React.js component into JupyterLab, the reverse
 
 ## Jupyter UI at the rescue
 
-To solve that issue, Jupyter UI ships components to easily create a React.js data product compatible with the Jupyter ecosystem. Those components can be used in any React.js application, and also in static websites like Docusaurus, Next.js or Remix. They wrap underneath the JupyterLab code and allow developing React.js applications with code execution capability. State management is based on Redux, and Mobx is to be added.
+Jupyter UI provides the foundations to build a modern and flexible data prodcut user interface. Underneath, it gathers the minimum set of [Lumino](https://github.com/jupyterlab/lumino) and [JupyterLab](https://github.com/jupyterlab/jupyterlab) technologies. We wrap Lumino Widget in a React.js component and expose Redux Observables actions that proxy Lumino Commands. We bind Redux Observables Epics to Lumino Signals. Those bindings convert Lumino Signals to Observable to run the needed actions in the [Observable Epics](https://redux-observable.js.org/docs/basics/Epics.html).
+
+- Services to connect to kernels.
+- Extension injection system.
+- Lumino signals and messages integrated with Redux.
+- Lumino commands.
+
+To solve the above issues, Jupyter UI ships components to easily create a React.js data product compatible with the Jupyter ecosystem. Those components can be used in any React.js application, and also in static websites like Docusaurus, Next.js or Remix. They wrap underneath the JupyterLab code and allow developing React.js applications with code execution capability. State management is based on Redux, and Mobx is to be added.
 
 The Jupyter UI components expose JupyterLab visuals as React.js components and offers a bi-directional communication between React.js/Redux and JupyterLab/Lumino.
 
@@ -57,3 +72,18 @@ The below image shows a gallery of the available React.js components ready to be
   large="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-gallery.gif"
   alt="Jupyter UI Gallery"
 />
+
+## Open Source
+
+The open source components removes the above limitations and supports:
+
+- Predefined Redux actions, epics and reducers with [Observable Epics](https://redux-observable.js.org/docs/basics/Epics.html)
+- Everything is created in a single React tree to ensure Jupyter UI components can use any context created by the host application.
+- IpyWidgets and Panel interactive widgets are supported.
+- Collaborative RTC is also supported.
+- Plays nice with Jupyter Auth, Jupyterpool, Primer React, Material-UI , Storybook, Docusaurus, Emotion.js... and many other standard libraries.
+- A React.js context for Authentication, Authorization, Theming and Redux injectable store.
+- Benefits from current and new JupyterLab development, eg edit mode navigation, colored-collapser, collaborative cursor.
+- Authentication via Jupyter tokens.
+- Theming.
+- Terminals.
