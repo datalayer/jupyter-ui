@@ -80,7 +80,7 @@
     "@babel/preset-env": "7.20.2",
     "@babel/preset-react": "7.18.6",
     "@babel/preset-typescript": "7.21.0",
-    "@jupyterlab/builder": "4.0.0",
+    "@jupyterlab/builder": "4.0.3",
     "@jupyterlab/launcher": "4.0.3",
     "@jupyterlab/testutils": "4.0.3",
     "@types/jest": "29.4.0",
