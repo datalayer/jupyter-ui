@@ -59,10 +59,10 @@
   "dependencies": {
     "@datalayer/jupyter-react": "0.5.0",
     "@datalayer/primer-addons": "0.0.18",
-    "@jupyterlab/application": "4.0.0",
-    "@jupyterlab/coreutils": "6.0.0",
-    "@jupyterlab/services": "7.0.0",
-    "@jupyterlab/settingregistry": "4.0.0",
+    "@jupyterlab/application": "4.0.3",
+    "@jupyterlab/coreutils": "6.0.3",
+    "@jupyterlab/services": "7.0.3",
+    "@jupyterlab/settingregistry": "4.0.3",
     "@lexical/react": "0.11.0",
     "katex": "0.16.1",
     "lexical": "0.11.0",
@@ -154,7 +154,7 @@
   "jupyter-releaser": {
     "hooks": {
       "before-build-npm": [
-        "python -m pip install jupyterlab==4.0.0",
+        "python -m pip install jupyterlab==4.0.3",
         "jlpm"
       ],
       "before-build-python": [

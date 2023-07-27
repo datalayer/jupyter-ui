@@ -186,7 +186,7 @@ WORKDIR /tmp
 RUN mamba install --yes \
     'yarn=3.5.0' \
     'notebook' \
-    'jupyterlab=4.0.0' \
+    'jupyterlab=4.0.3' \
     'build' \
     'hatch' \
     'jupyter-packaging' && \
