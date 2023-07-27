@@ -16,7 +16,9 @@ As successor to the components wrapping JupyterLab, we are developing a brand ne
 
 Instead of having the well-known cell-based structure for notebooks (each cell being a separated editor), we will provide a Notebook user-experience that will be like Notion or Google Docs. After deep exploration of Slate, Prosemirror and Lexical as the foundation for this Literate Norebook, we have chosen Lexical (see the [playground](https://playground.lexical.dev)). Non-user-interface components from JupyterLab could be reused, like the services to communicate with the server (this is what Visual Studio is reusing also). However, in the long term, the services would need to be rewritten based on a robust state-machine (for now, a lot of if-then-else have grown empirically to fit the kernel message protocols and the quality is not there unfortunately).
 
-A a developer, you will create a custom data product `a-la-google-docs` as shown above. This `Literate Notebook` will be shipped as a standalone component, as Jupyter Notebook, JupyterLab and as Visual Studio Code extension.
+## A-la-Google-Docs
+
+A a developer, you can create your own custom data product `a-la-google-docs` as shown below. Your custom `Literate Notebook` can be shipped as a standalone component, as Jupyter Notebook, JupyterLab and as Visual Studio Code extension.
 
 <ModalImage
   small="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-slate.gif"
@@ -24,4 +26,4 @@ A a developer, you will create a custom data product `a-la-google-docs` as shown
   alt="Jupyter UI Slate"
 />
 
-We will add collaborative and accessible features to read, write and publish data analysis to `Microsoft Office 365` and `Google Workspace`.
+We are adding collaborative and Realtime collaboration features as well as a integration with `Microsoft Office 365` and `Google Workspace`.
