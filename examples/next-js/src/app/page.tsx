@@ -47,8 +47,8 @@ export default function Home() {
       </div>
 
       <Jupyter
-        jupyterServerHttpUrl="https://datalayer-dev.datalayer.run/api/jupyter"
-        jupyterServerWsUrl="wss://datalayer-dev.datalayer.run/api/jupyter"
+        jupyterServerHttpUrl="https://oss.datalayer.tech/api/jupyter"
+        jupyterServerWsUrl="wss://oss.datalayer.tech/api/jupyter"
         jupyterToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
       >
         <Cell source={source}/>
