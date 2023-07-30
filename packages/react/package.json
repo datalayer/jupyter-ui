@@ -28,6 +28,7 @@
     "build:prod": "gulp resources-to-lib && tsc && jlpm clean && jlpm build:lib && jlpm build:labextension",
     "build:tsc:watch:res": "gulp resources-to-lib-watch",
     "build:tsc:watch:tsc": "tsc --watch",
+    "build:webpack": "webpack-cli build",
     "clean": "rimraf node_modules lib dist build tsconfig.tsbuildinfo",
     "clean:all": "jlpm clean:lib && jlpm clean:labextension && jlpm clean:lintcache",
     "clean:labextension": "rimraf datalayer/labextension",

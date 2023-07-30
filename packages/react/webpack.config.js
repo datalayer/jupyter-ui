@@ -34,6 +34,12 @@ module.exports = {
     server: 'http',
     proxy: {
       proxy: {
+        '/api/jupyter': {
+          target: JUPYTER_HOST,
+          ws: true,
+          secure: false,
+          changeOrigin: true,
+        },
         '/build/pypi': {
           target: 'https://datalayer-assets.s3.us-west-2.amazonaws.com/pypi',
           pathRewrite: { '^/build/pypi': '' },
@@ -45,12 +51,6 @@ module.exports = {
           target: 'https://datalayer-assets.s3.us-west-2.amazonaws.com/services.js',
           pathRewrite: { '^/services.js': '' },
           ws: false,
-          secure: false,
-          changeOrigin: true,
-        },
-        '/api/jupyter': {
-          target: JUPYTER_HOST,
-          ws: true,
           secure: false,
           changeOrigin: true,
         },
@@ -69,7 +69,7 @@ module.exports = {
   },
   output: {
     publicPath: "http://localhost:3208/",
-    filename: '[name].[contenthash].jupyterReact.js',
+    filename: '[name].jupyter-react.js',
   },
   resolve: {
     extensions: [ '.tsx', '.ts', 'jsx', '.js' ],

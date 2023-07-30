@@ -144,6 +144,10 @@ dmypy.json
 # OSX files
 .DS_Store
 
+# Static
+**/static/*.js
+**/static/*.css
+
 # Include
 !**/.*ignore
 !**/.*rc

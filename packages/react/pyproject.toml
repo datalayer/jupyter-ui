@@ -35,8 +35,19 @@ test = [
     "pytest-tornasync"
 ]
 
+[project.scripts]
+jupyter-react = "jupyter_react.application:main"
+
 [tool.hatch.version]
 source = "nodejs"
+
+[tool.hatch.build]
+artifacts = [
+  "jupyter_react/static",
+  "jupyter_react/templates"
+]
+
+[tool.hatch.build.hooks.custom]
 
 [tool.hatch.metadata.hooks.nodejs]
 fields = ["description", "authors", "urls"]

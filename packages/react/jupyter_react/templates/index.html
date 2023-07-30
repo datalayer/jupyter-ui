@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Ξ Jupyter React</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="shortcut icon" href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAC7SURBVFiF7ZU9CgIxEIXfTHbPopfYc+pJ9AALtmJnZSOIoJWFoCTzLHazxh/Ebpt5EPIxM8XXTCKTxYyMCYwJFhOYCo4JFiMuu317PZwaqEBUIar4YMmskL73DytGjgu4gAt4PDJdzkkzMBloBhqBgcu69XW+1I+rNSQESNDuaMEhdP/Fj/7oW+ACLuACHk/3F5BAfuMLBjm8/ZnxNvNtHmY4b7Ztut0bqStoVSHfWj9Z6mr8LXABF3CBB3nvkDfEVN6PAAAAAElFTkSuQmCC" type="image/x-icon" />
+    <!--
+        "hubPrefix": "/hub"
+    -->
+    <script id="jupyter-config-data" type="application/json">
+      {
+        "baseUrl": "http://localhost:8686{{ base_url }}",
+        "wsUrl": "ws://localhost:8686{{ base_url }}",
+        "token": "{{ token }}",
+        "collaborative": "false",
+        "terminalsAvailable": "false",
+        "mathjaxUrl": "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js",
+        "mathjaxConfig": "TeX-AMS_CHTML-full,Safe"
+      }
+    </script>
+    <script id="datalayer-config-data" type="application/json">
+      {
+        "jupyterServerHttpUrl": "https://oss.datalayer.tech/api/jupyter",
+        "jupyterServerWsUrl": "wss://oss.datalayer.tech/api/jupyter",
+        "jupyterToken": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+      }
+    </script>
+    <script defer src="{{ base_url }}static/jupyter_react/main.jupyter-react.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
