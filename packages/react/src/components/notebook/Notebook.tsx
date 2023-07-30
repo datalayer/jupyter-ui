@@ -50,7 +50,7 @@ export const Notebook = (props: INotebookProps) => {
   const portals = selectNotebookPortals(uid);
   const [adapter, setAdapter] = useState<NotebookAdapter>();
   useEffect(() => {
-    (injectableStore as any).inject('notebook', notebookReducer, notebookEpics);
+    injectableStore.inject('notebook', notebookReducer, notebookEpics);
   }, []);
   useEffect(() => {
     if (uid && serviceManager && kernelManager && effectiveKernel) {

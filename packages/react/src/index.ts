@@ -10,13 +10,24 @@ export * from './jupyter/lumino/LuminoReactPortal';
 export * from './jupyter/lumino/LuminoRedux';
 export * from './jupyter/lite/LiteServer';
 export * from './jupyter/utils/Ids';
-//
+
+// CSS
+
 import './index.css';
 
+// Redux.
+
+export * from './redux/State';
+export * from './redux/Store';
+
 // Services.
+
 export * from './jupyter/services/Services';
 export * from './jupyter/services/kernel/Kernel';
 export * from './jupyter/services/kernel/KernelModel';
+
+// Components
+
 // IpyWidgets.
 export * from './jupyter/ipywidgets/IpyWidgetsManager';
 export * from './components/ipywidgets/IpyWidgetsComponent';

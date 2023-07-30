@@ -4,6 +4,7 @@ import { ServiceManager, ServerConnection, KernelManager } from '@jupyterlab/ser
 import { getJupyterServerHttpUrl} from './JupyterConfig';
 import { requestAPI } from './JupyterHandlers';
 import { startLiteServer } from './../jupyter/lite/LiteServer';
+import { InjectableStore } from './../redux/Store';
 import Kernel from './services/kernel/Kernel';
 
 /**
@@ -20,7 +21,7 @@ export type JupyterContextType = {
   setVariant: (value: string) => void;
   baseUrl: string;
   wsUrl: string;
-  injectableStore: any;
+  injectableStore: InjectableStore;
 };
 
 /**
@@ -69,7 +70,7 @@ type JupyterContextProps = {
   lite: boolean;
   startDefaultKernel: boolean,
   defaultKernelName: string,
-  injectableStore: any;
+  injectableStore: InjectableStore;
   useRunningKernelId?: string;
   useRunningKernelIndex: number;
 };
@@ -108,8 +109,11 @@ export const JupyterContextProvider: React.FC<{
   variant: string,
   baseUrl: string,
   wsUrl: string,
-  injectableStore: any
-}> = ({children, lite, startDefaultKernel, defaultKernelName, useRunningKernelId, useRunningKernelIndex, variant, baseUrl, wsUrl, injectableStore }: JupyterContextProps) => {
+  injectableStore: InjectableStore
+}> = ({
+        children, lite, startDefaultKernel, defaultKernelName, useRunningKernelId, 
+        useRunningKernelIndex, variant, baseUrl, wsUrl, injectableStore
+      }: JupyterContextProps) => {
   const [_, setVariant] = useState('default');
   const [serverSettings] = useState<ServerConnection.ISettings>(createServerSettings(baseUrl, wsUrl));
   const [serviceManager, setServiceManager] = useState<ServiceManager>();

@@ -24,7 +24,7 @@ export const Cell = (props: ICellProps) => {
   const dispatch = useDispatch();
   const [adapter, setAdapter] = useState<CellAdapter>();
   useMemo(() => {
-    (injectableStore as any).inject('cell', cellReducer);
+    injectableStore.inject('cell', cellReducer);
   }, []);
   useEffect(() => {
     if (source && defaultKernel) {

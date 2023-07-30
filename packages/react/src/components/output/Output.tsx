@@ -95,7 +95,7 @@ export const Output = (props: IOutputProps) => {
   const [outputAdapter, setOutputAdapter] = useState<OutputAdapter>();
   const [outputs, setOutputs] = useState<IOutput[] | undefined>(props.outputs);
   useMemo(() => {
-      (injectableStore as any).inject('output', outputReducer);
+      injectableStore.inject('output', outputReducer);
   }, [sourceId]);
   useEffect(() => {
     if (!id) {

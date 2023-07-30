@@ -20,7 +20,7 @@ const devtool = IS_PRODUCTION ? false : "inline-source-map";
 let minimize = IS_PRODUCTION ? true : false;
 
 module.exports = {
-  entry: ['./src/examples/NotebookModel'],
+  entry: ['./src/examples/NotebookRedux'],
   mode: mode,
   watchOptions: {
     aggregateTimeout: 300,
@@ -159,7 +159,7 @@ module.exports = {
       process: 'process/browser'
     }),
     new HtmlWebpackPlugin({
-      title: 'Jupyter UI',
+      title: 'Jupyter React',
       template : 'public/' + indexPage,
     }),
     new HtmlWebpackTagsPlugin({

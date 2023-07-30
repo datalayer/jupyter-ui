@@ -10,7 +10,7 @@ export const Terminal = () => {
   const dispatch = useDispatch();
   const [adapter, setAdapter] = useState<TerminalAdapter>();
   useMemo(() => {
-    (injectableStore as any).inject('terminal', terminalReducer);
+    injectableStore.inject('terminal', terminalReducer);
   }, []);
   useEffect(() => {
     const adapter = new TerminalAdapter();

@@ -1,10 +1,9 @@
 import React from 'react';
-import { Store } from 'redux';
 import { ThemeProvider, BaseStyles } from "@primer/react";
 import { ErrorBoundary } from 'react-error-boundary';
 import { JupyterContextProvider } from './JupyterContext';
 import { getJupyterServerHttpUrl, getJupyterServerWsUrl, loadJupyterConfig } from './JupyterConfig';
-import injectableStore from '../state/Store';
+import defaultInjectableStore, { InjectableStore } from '../redux/Store';
 
 import '@lumino/widgets/style/index.css';
 import '@lumino/dragdrop/style/index.css';
@@ -39,7 +38,7 @@ export type JupyterProps = {
   defaultKernelName: string;
   useRunningKernelId?: string;
   useRunningKernelIndex?: number;
-  injectableStore?: Store | any;
+  injectableStore?: InjectableStore;
   collaborative?: boolean;
   jupyterServerHttpUrl?: string;
   jupyterServerWsUrl?: string;
@@ -69,7 +68,10 @@ const ErrorFallback = ({error, resetErrorBoundary}: any) => {
  * are available.
  */
 export const Jupyter = (props: JupyterProps) => {
-  const { lite, startDefaultKernel, defaultKernelName, useRunningKernelId, useRunningKernelIndex, children } = props;
+  const {
+    lite, startDefaultKernel, defaultKernelName, injectableStore,
+    useRunningKernelId, useRunningKernelIndex, children
+  } = props;
   loadJupyterConfig(props);
   return (
     <ErrorBoundary
@@ -86,7 +88,7 @@ export const Jupyter = (props: JupyterProps) => {
             useRunningKernelIndex={useRunningKernelIndex}
             baseUrl={getJupyterServerHttpUrl()}
             wsUrl={getJupyterServerWsUrl()}
-            injectableStore={props.injectableStore || injectableStore}
+            injectableStore={injectableStore || defaultInjectableStore}
             variant="default"
           >
             { children }

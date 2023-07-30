@@ -6,7 +6,7 @@ import {
 } from '../../components/notebook/NotebookState';
 import {PlusIcon, PlayIcon, StopIcon, TrashIcon} from '@primer/octicons-react';
 import {IconButton} from '@primer/react';
-import {IJupyterReactState} from '../../state/State';
+import {IJupyterReactState} from '../../redux/State';
 import {cmdIds} from '../../components/notebook/NotebookCommands';
 import {Button, ButtonGroup} from '@primer/react';
 

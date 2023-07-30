@@ -4,7 +4,7 @@ import { Box, Button, ButtonGroup } from '@primer/react';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import Jupyter from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
-import { IJupyterReactState } from '../state/State';
+import { IJupyterReactState } from '../redux/State';
 import Notebook from '../components/notebook/Notebook';
 import { selectNotebookModel } from '../components/notebook/NotebookState';
 import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarDefault';

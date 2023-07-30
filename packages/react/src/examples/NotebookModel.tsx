@@ -8,11 +8,7 @@ import notebookExample1 from "./notebooks/NotebookExample1.ipynb.json";
 
 import "./../../style/index.css";
 
-const div = document.createElement('div');
-document.body.appendChild(div);
-const root = createRoot(div)
-
-root.render(
+const NotebookModel = () => (
   <Jupyter
     lite={false}
     useRunningKernelIndex={-1}
@@ -28,4 +24,12 @@ root.render(
       uid="notebook-uid"
     />
   </Jupyter>
+)
+
+const div = document.createElement('div');
+document.body.appendChild(div);
+const root = createRoot(div)
+
+root.render(
+  <NotebookModel/>
 );
