@@ -60,6 +60,12 @@ module.exports = {
         },
         {
           type: 'doc',
+          docId: '/category/state',
+          position: 'left',
+          label: 'State',
+        },
+        {
+          type: 'doc',
           docId: '/category/examples',
           position: 'left',
           label: 'Examples',
