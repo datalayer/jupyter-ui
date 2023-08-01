@@ -1,0 +1,137 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "3a86eccf-352d-480d-b1b0-4cf355921be9",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "application/vnd.jupyter.widget-view+json": {
+       "model_id": "c686864a5ad44793b53c9cf1b112fafe",
+       "version_major": 2,
+       "version_minor": 0
+      },
+      "text/plain": [
+       "IntSlider(value=0)"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "import ipywidgets as widgets",
+    "from IPython.display import display",
+    "w = widgets.IntSlider()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "3c41e451-a5eb-4494-87a0-94d39ccf9db8",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "application/vnd.jupyter.widget-view+json": {
+       "model_id": "c686864a5ad44793b53c9cf1b112fafe",
+       "version_major": 2,
+       "version_minor": 0
+      },
+      "text/plain": [
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "display(w)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "f347e0ac-7614-4643-8fed-e6b5dfb67bcd",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "application/vnd.jupyter.widget-view+json": {
+       "model_id": "e361a274319a4715ae5cfc8104c87224",
+       "version_major": 2,
+       "version_minor": 0
+      },
+      "text/plain": [
+       "FloatText(value=0.0)"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "application/vnd.jupyter.widget-view+json": {
+       "model_id": "859ac1871f56461fa8f2c97e6e18c4c4",
+       "version_major": 2,
+       "version_minor": 0
+      },
+      "text/plain": [
+       "FloatSlider(value=0.0)"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "a = widgets.FloatText()\n",
+    "b = widgets.FloatSlider()\n",
+    "display(a,b)\n",
+    "\n",
+    "mylink = widgets.jslink((a, 'value'), (b, 'value'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "07f52271-ccae-476d-83b9-715c96168c7c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "mylink.unlink()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "81b15288-063d-412d-99db-c73453e18565",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.11.4"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
