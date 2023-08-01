@@ -20,7 +20,7 @@ const devtool = IS_PRODUCTION ? false : "inline-source-map";
 let minimize = IS_PRODUCTION ? true : false;
 
 module.exports = {
-  entry: ['./src/examples/NotebookRedux'],
+  entry: ['./src/examples/Plotly'],
   mode: mode,
   watchOptions: {
     aggregateTimeout: 300,
@@ -54,12 +54,14 @@ module.exports = {
           secure: false,
           changeOrigin: true,
         },
+        /*
         '/plotly.js': {
           target: JUPYTER_HOST + '/api/jupyter/jupyter_react',
           ws: false,
           secure: false,
           changeOrigin: false,
         },
+        */
       },
     }
   },

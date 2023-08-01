@@ -114,13 +114,14 @@ export function activateWidgetExtension(
   menu: IMainMenu | null,
   loggerRegistry: ILoggerRegistry | null
 ): base.IJupyterWidgetRegistry {
+
   const bindUnhandledIOPubMessageSignal = (notebookPanel: NotebookPanel): void => {
     if (!loggerRegistry) {
       return;
     }
-    const wManager = Private.widgetManagerProperty.get(notebookPanel.context);
-    if (wManager) {
-      wManager.onUnhandledIOPubMessage.connect(
+    const widgetManager = Private.widgetManagerProperty.get(notebookPanel.context);
+    if (widgetManager) {
+      widgetManager.onUnhandledIOPubMessage.connect(
         (sender: WidgetManager, msg: KernelMessage.IIOPubMessage) => {
           const logger = loggerRegistry.getLogger(notebookPanel.context.path);
           let level: LogLevel = 'warning';
@@ -245,4 +246,5 @@ namespace Private {
     name: 'widgetManager',
     create: (owner: DocumentRegistry.Context): undefined => undefined,
   });
+
 }

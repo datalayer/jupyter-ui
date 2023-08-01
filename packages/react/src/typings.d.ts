@@ -22,3 +22,9 @@ declare module "*.svg" {
   const value: any;
   export default value;
 }
+/*
+declare module "plotly.js/dist/plotly" {
+  const value: any;
+  export default value;
+}
+*/

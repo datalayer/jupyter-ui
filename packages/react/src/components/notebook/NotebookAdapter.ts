@@ -172,8 +172,8 @@ export class NotebookAdapter {
         break;
       }
       case 'lab': {
-        activateWidgetExtension(this._rendermime, this._tracker, null, null);
-//        const widgetRegistry = activateWidgetExtension(this._rendermime, this._tracker, null, null);
+        const widgetRegistry = activateWidgetExtension(this._rendermime, this._tracker, null, null);
+        console.log('Widget Registry', widgetRegistry);
 //        activatePlotlyWidgetExtension(widgetRegistry);
         break;
       }

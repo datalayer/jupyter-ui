@@ -9,7 +9,6 @@ import FileBrowserLab from "../components/filebrowser/FileBrowserLab";
 import Terminal from "../components/terminal/Terminal";
 import NotebookToolbar from "./toolbars/NotebookToolbar";
 import CellSidebarNew from "../components/notebook/cell/sidebar/CellSidebarNew";
-import notebookExample1 from "./notebooks/NotebookExample1.ipynb.json";
 // import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarDefault';
 // import Console from "../components/console/Console";
 // import { useDispatch } from "react-redux";
@@ -17,6 +16,8 @@ import notebookExample1 from "./notebooks/NotebookExample1.ipynb.json";
 // import { Kernel } from '../jupyter/services/kernel/Kernel';
 // import { selectCell, cellActions } from '../components/cell/CellState';
 // import { notebookActions } from '../components/notebook/NotebookState';
+
+import notebookExample from "./notebooks/NotebookExample1.ipynb.json";
 
 import "./../../style/index.css";
 
@@ -179,7 +180,7 @@ const root = createRoot(div)
 root.render(
   <Jupyter lite={false} terminals={true}>
     <Notebook
-      nbformat={notebookExample1 as INotebookContent}
+      nbformat={notebookExample as INotebookContent}
       CellSidebar={CellSidebarNew}
       Toolbar={NotebookToolbar}
       height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).

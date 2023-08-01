@@ -19,8 +19,8 @@ if (typeof window !== "undefined" && typeof (window as any).define !== "undefine
  * The class responsible for the classic IPyWidget rendering.
  */
 export class IPyWidgetsClassicManager extends HTMLManager {
-  private _commRegistration: any;
   public _kernelConnection: Kernel.IKernelConnection | null;
+  private _commRegistration: any;
   private _onError: any;
   
   registerWithKernel(kernelConnection: Kernel.IKernelConnection | null) {
