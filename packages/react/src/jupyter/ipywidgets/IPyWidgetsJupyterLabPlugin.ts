@@ -27,9 +27,9 @@ const SETTINGS: WidgetManager.Settings = { saveState: false };
  * Iterate through all widget renderers in a notebook.
  */
 function* widgetRenderers(
-  nb: Notebook
+  notebook: Notebook
 ): Generator<WidgetRenderer, void, unknown> {
-  for (const cell of nb.widgets) {
+  for (const cell of notebook.widgets) {
     if (cell.model.type === 'code') {
       for (const codecell of (cell as CodeCell).outputArea.widgets) {
         for (const output of toArray(codecell.children())) {
@@ -78,31 +78,37 @@ export function registerWidgetManager(
   rendermime: IRenderMimeRegistry,
   renderers: IterableIterator<WidgetRenderer>
 ): DisposableDelegate {
-  let wManager = Private.widgetManagerProperty.get(context);
-  if (!wManager) {
-    wManager = new WidgetManager(context, rendermime, SETTINGS);
-    WIDGET_REGISTRY.forEach((data) => wManager!.register(data));
-    Private.widgetManagerProperty.set(context, wManager);
+
+  let widgetManager = Private.widgetManagerProperty.get(context);
+
+  if (!widgetManager) {
+    widgetManager = new WidgetManager(context, rendermime, SETTINGS);
+    WIDGET_REGISTRY.forEach((data) => widgetManager!.register(data));
+    Private.widgetManagerProperty.set(context, widgetManager);
   }
+
   for (const r of renderers) {
-    r.manager = wManager;
+    r.manager = widgetManager;
   }
+
   // Replace the placeholder widget renderer with one bound to this widget manager.
   rendermime.removeMimeType(WIDGET_VIEW_MIMETYPE);
   rendermime.addFactory(
     {
       safe: false,
       mimeTypes: [WIDGET_VIEW_MIMETYPE],
-      createRenderer: (options) => new WidgetRenderer(options, wManager),
+      createRenderer: (options) => new WidgetRenderer(options, widgetManager),
     },
     0
   );
+
   return new DisposableDelegate(() => {
     if (rendermime) {
       rendermime.removeMimeType(WIDGET_VIEW_MIMETYPE);
     }
-    wManager!.dispose();
+    widgetManager!.dispose();
   });
+
 }
 
 /**

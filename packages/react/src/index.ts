@@ -29,8 +29,8 @@ export * from './jupyter/services/kernel/KernelModel';
 // Components
 
 // IpyWidgets.
-export * from './jupyter/ipywidgets/IpyWidgetsManager';
-export * from './components/ipywidgets/IpyWidgetsComponent';
+export * from './jupyter/ipywidgets/IPyWidgetsManager';
+export * from './components/ipywidgets/IPyWidgetsComponent';
 // Cell.
 export * from './components/cell/Cell';
 export * from './components/cell/CellAdapter';
@@ -44,8 +44,8 @@ export * from './components/notebook/NotebookState';
 export * from './components/notebook/cell/metadata/CellMetadataEditor';
 export * from './components/notebook/cell/metadata/NbGraderCells';
 export * from './components/notebook/cell/prompt/InputPrompt';
-export * from './components/notebook/cell/sidebar/base/CellSidebarContentFactory';
-export * from './components/notebook/cell/sidebar/base/CellSidebarWidget';
+export * from './components/notebook/content/JupyterReactContentFactory';
+export * from './components/notebook/cell/sidebar/lumino/CellSidebarWidget';
 export * from './components/notebook/cell/sidebar/CellSidebarDefault';
 export * from './components/notebook/cell/sidebar/CellSidebarRun';
 // Commands.

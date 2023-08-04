@@ -28,27 +28,15 @@ root.render(
 
 The Jupyter Context has the following properties.
 
-- lite
-- startDefaultKernel
-- defaultKernelName
-- useRunningKernelId
-- useRunningKernelIndex
-- injectableStore (read more about the [State](/docs/state))
-- collaborative
-- jupyterServerHttpUrl
-- jupyterServerWsUrl
-- jupyterToken
-- terminals
-- theme
-
-You can override some of those properties adding in the host HTML (index.html) a tag in the head section.
-
-```html
-<script id="datalayer-config-data" type="application/json">
-  {
-    "jupyterServerHttpUrl": "http://localhost:8686/api/jupyter",
-    "jupyterServerWsUrl": "ws://localhost:8686/api/jupyter",
-    "jupyterToken": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
-  }
-</script>
-```
+- `collaborative`
+- `defaultKernelName`
+- `injectableStore`: Read more about the [State](/docs/state)
+- `jupyterServerHttpUrl` - Read also [Deployment](/docs/deployments/jupyter-server)
+- `jupyterServerWsUrl` - Read also [Deployment](/docs/deployments/jupyter-server)
+- `jupyterToken` - Read also [Deployment](/docs/deployments/jupyter-server)
+- `lite`
+- `startDefaultKernel`
+- `terminals`
+- `theme`
+- `useRunningKernelId`
+- `useRunningKernelIndex`

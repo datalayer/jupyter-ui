@@ -3,7 +3,7 @@ import {useDispatch} from 'react-redux';
 import {PanelLayout} from '@lumino/widgets';
 import {Box} from '@primer/react';
 import {notebookActions, selectActiveCell} from '../../NotebookState';
-import {CellSidebarProps} from './base/CellSidebarWidget';
+import {CellSidebarProps} from './lumino/CellSidebarWidget';
 import {
   PlayIcon,
   ChevronUpIcon,
@@ -12,7 +12,7 @@ import {
 } from '@primer/octicons-react';
 import {IconButton} from '@primer/react';
 
-import {DATALAYER_CELL_HEADER_CLASS} from './base/CellSidebarWidget';
+import {DATALAYER_CELL_HEADER_CLASS} from './lumino/CellSidebarWidget';
 
 export const CellSidebarNew = (props: CellSidebarProps) => {
   const { notebookId, cellId } = props;

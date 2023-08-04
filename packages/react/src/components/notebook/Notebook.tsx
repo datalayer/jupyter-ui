@@ -11,7 +11,7 @@ import { newUuid } from './../../jupyter/utils/Ids';
 import LuminoNotebook from '../../jupyter/lumino/LuminoNotebook';
 import { asObservable } from './../../jupyter/lumino/LuminoObservable';
 import CellMetadataEditor from './cell/metadata/CellMetadataEditor';
-import { CellSidebarProps } from './cell/sidebar/base/CellSidebarWidget'
+import { CellSidebarProps } from './cell/sidebar/lumino/CellSidebarWidget'
 import NotebookAdapter from './NotebookAdapter';
 import { notebookActions, selectNotebookPortals, notebookEpics, notebookReducer } from './NotebookState';
 

@@ -5,7 +5,7 @@ import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from "./toolbars/NotebookToolbar";
 import CellSidebarDefault from "../components/notebook/cell/sidebar/CellSidebarDefault";
 
-import notebookExample from "./notebooks/IpyWidgetsExample1.ipynb.json";
+import notebookExample from "./notebooks/IPyWidgetsExample1.ipynb.json";
 
 import "./../../style/index.css";
 

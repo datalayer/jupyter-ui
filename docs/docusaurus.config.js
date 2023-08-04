@@ -66,6 +66,12 @@ module.exports = {
         },
         {
           type: 'doc',
+          docId: '/category/deployments',
+          position: 'left',
+          label: 'Deployments',
+        },
+        {
+          type: 'doc',
           docId: '/category/examples',
           position: 'left',
           label: 'Examples',

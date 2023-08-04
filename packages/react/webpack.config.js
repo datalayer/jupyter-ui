@@ -20,7 +20,7 @@ const devtool = IS_PRODUCTION ? false : "inline-source-map";
 let minimize = IS_PRODUCTION ? true : false;
 
 module.exports = {
-  entry: ['./src/examples/Plotly'],
+  entry: ['./src/examples/IPyWidgets'],
   mode: mode,
   watchOptions: {
     aggregateTimeout: 300,

@@ -1,4 +1,4 @@
-import { IpyWidgetManager } from "@datalayer/jupyter-react";
+import { IPyWidgetManager } from "@datalayer/jupyter-react";
 
 class IPyWidgetsSimple {
 
@@ -148,7 +148,7 @@ class IPyWidgetsSimple {
         }
       }
     };
-    var manager = new IpyWidgetManager(el);
+    var manager = new IPyWidgetManager(el);
     manager
       .set_state(state)
       .then((models: any) =>

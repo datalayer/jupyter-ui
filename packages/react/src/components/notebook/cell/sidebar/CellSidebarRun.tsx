@@ -4,9 +4,9 @@ import { Box, Button } from '@primer/react';
 import { PlayIcon } from "@primer/octicons-react";
 import { PanelLayout } from '@lumino/widgets';
 import { notebookActions, selectActiveCell } from '../../NotebookState';
-import { CellSidebarProps } from './base/CellSidebarWidget';
+import { CellSidebarProps } from './lumino/CellSidebarWidget';
 
-import { DATALAYER_CELL_HEADER_CLASS } from './base/CellSidebarWidget';
+import { DATALAYER_CELL_HEADER_CLASS } from './lumino/CellSidebarWidget';
 
 export const CellSidebarRun = (props: CellSidebarProps) => {
   const { notebookId } = props;

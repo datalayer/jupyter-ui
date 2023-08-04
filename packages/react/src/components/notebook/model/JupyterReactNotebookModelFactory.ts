@@ -3,7 +3,7 @@ import { INotebookModel, NotebookModelFactory, NotebookModel } from "@jupyterlab
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import type { ISharedNotebook } from '@jupyter/ydoc';
 
-export class DatalayerNotebookModelFactory extends NotebookModelFactory {
+export class JupyterReactNotebookModelFactory extends NotebookModelFactory {
   private _nbformat?: INotebookContent;
 
   /** @override */
@@ -23,14 +23,12 @@ export class DatalayerNotebookModelFactory extends NotebookModelFactory {
     }
     return super.createNew(options);
   }
-
 }
 
 export declare namespace DatalayerNotebookModelFactory {
   interface IOptions extends NotebookModelFactory.IOptions {
     nbformat?: INotebookContent;
   }
-
 }
 
-export default DatalayerNotebookModelFactory;
+export default JupyterReactNotebookModelFactory;

@@ -2,14 +2,14 @@ import { Store } from 'redux';
 import { CommandRegistry } from '@lumino/commands';
 import { NotebookPanel } from '@jupyterlab/notebook';
 import { ICellHeader, Cell } from '@jupyterlab/cells';
-import { CellSidebarWidget, CellSidebarProps } from './CellSidebarWidget';
+import { CellSidebarWidget, CellSidebarProps } from '../cell/sidebar/lumino/CellSidebarWidget';
 // import { IInputPrompt } from '@jupyterlab/cells';
 // import { NotebookInputPrompt } from './NotebookInputPrompt';
 
 /**
  * Extend the default implementation NotebookPanel.ContentFactory of `IContentFactory`.
  */
-export class CellSidebarContentFactory extends NotebookPanel.ContentFactory {
+export class JupyterReactContentFactory extends NotebookPanel.ContentFactory {
   private readonly CellSidebar: (props: CellSidebarProps) => JSX.Element;
   private readonly notebookId: string;
   private readonly nbgrader: boolean;
@@ -48,4 +48,4 @@ export class CellSidebarContentFactory extends NotebookPanel.ContentFactory {
   */
 }
 
-export default CellSidebarContentFactory;
+export default JupyterReactContentFactory;

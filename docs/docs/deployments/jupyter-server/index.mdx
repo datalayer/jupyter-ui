@@ -1,0 +1,67 @@
+# Jupyter Server
+
+To connect to a Jupyter Server, you have to define the URL for HTTP and WebSocket, as the token.
+
+Those properties can be provided in the [Jupyter Context](/docs/components/context) or by setting them in the host HTML (index.html) a `script` tag in the head section.
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <script id="datalayer-config-data" type="application/json">
+    {
+      "jupyterServerHttpUrl": "http://localhost:8686/api/jupyter",
+      "jupyterServerWsUrl": "ws://localhost:8686/api/jupyter",
+      "jupyterToken": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+    }
+  </script>
+</head>
+</html>
+```
+
+The values define in the host HTML are taking precedence on the values set in the context.
+
+If you are delivering the React.js web application from a different URL than your Jupyter Server, the Jupyter Server should be configured to accept Cross-origin request with for example in the `jupyter_server_config.py` the following traits.
+
+:::caution
+
+Please tune the following example to fit your security requirements, this is in no way production-ready configuration.
+
+Use the following at your own risk!
+
+:::caution
+
+```py
+#################
+# Authentication
+#################
+
+c.ServerApp.token = '60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6'
+
+#################
+# Security
+#################
+
+c.ServerApp.disable_check_xsrf = False
+# ORIGIN = 'http://localhost:3208'
+# c.ServerApp.allow_origin = ORIGIN # Best to restrict the ORIGIN
+c.ServerApp.allow_origin_pat = '.*'
+c.ServerApp.allow_credentials = True
+c.ServerApp.tornado_settings = {
+  'headers': {
+#    'Access-Control-Allow-Origin': ORIGIN,  # Best to restrict the ORIGIN
+    'Access-Control-Allow-Methods': '*',
+    'Access-Control-Allow-Headers': 'Accept, Accept-Encoding, Accept-Language, Authorization, Cache-Control, Connection, Content-Type, Host, Origin, Pragma, Referer, sec-ch-ua, sec-ch-ua-mobile, sec-ch-ua-platform, Sec-Fetch-Dest, Sec-Fetch-Mode, Sec-Fetch-Site, Upgrade, User-Agent, X-XSRFToken, X-Datalayer, Expires',
+    'Access-Control-Allow-Credentials': 'true',
+    'Content-Security-Policy': f"frame-ancestors 'self' {ORIGIN} ",
+  },
+  'cookie_options': {
+    'SameSite': 'None',
+    'Secure': True
+  }
+}
+c.ServerApp.cookie_options = {
+  "SameSite": "None",
+  "Secure": True,
+}
+```

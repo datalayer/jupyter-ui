@@ -17,16 +17,16 @@ import { Completer, CompleterModel, CompletionHandler, ProviderReconciliator, Ke
 import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
 import { INotebookContent, CellType, IAttachments } from '@jupyterlab/nbformat';
 import { ISharedAttachmentsCell, IYText } from '@jupyter/ydoc';
-import getMarked from './marked/marked';
 import { requireLoader } from "@jupyter-widgets/html-manager";
 import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/lib/output_renderers";
 import { Kernel } from "./../../jupyter/services/kernel/Kernel";
-import DatalayerNotebookModelFactory from './model/DatalayerNotebookModelFactory';
+import JupyterReactContentFactory from './content/JupyterReactContentFactory';
+import JupyterReactNotebookModelFactory from './model/JupyterReactNotebookModelFactory';
 import { INotebookProps } from './Notebook';
 import { NotebookCommands } from './NotebookCommands';
-import CellSidebarContentFactory from './cell/sidebar/base/CellSidebarContentFactory';
 import { IPyWidgetsClassicManager } from "./../../jupyter/ipywidgets/IPyWidgetsClassicManager";
 import { activateWidgetExtension } from "./../../jupyter/ipywidgets/IPyWidgetsJupyterLabPlugin";
+import getMarked from './marked/marked';
 // import { activatePlotlyWidgetExtension } from "./../../jupyter/ipywidgets/plotly/JupyterlabPlugin";
 
 export class NotebookAdapter {
@@ -145,7 +145,7 @@ export class NotebookAdapter {
     const editorFactory = editorServices.factoryService.newInlineEditor;
     const contentFactory = this._CellSidebar
     ?
-      new CellSidebarContentFactory(
+      new JupyterReactContentFactory(
         this._CellSidebar,
         this._uid,
         this._nbgrader,
@@ -191,15 +191,16 @@ export class NotebookAdapter {
       mimeTypeService: editorServices.mimeTypeService,
     });
 
-    notebookWidgetFactory.widgetCreated.connect((sender, widget) => {
-      widget.context.pathChanged.connect(() => {
-        void this._tracker?.save(widget);
+    notebookWidgetFactory.widgetCreated.connect((sender, notebookPanel) => {
+      notebookPanel.context.pathChanged.connect(() => {
+        void this._tracker?.save(notebookPanel);
       });
-      void this._tracker?.add(widget);
+      void this._tracker?.add(notebookPanel);
     });
+
     documentRegistry.addWidgetFactory(notebookWidgetFactory);
 
-    const notebookModelFactory = new DatalayerNotebookModelFactory({
+    const notebookModelFactory = new JupyterReactNotebookModelFactory({
       nbformat: this._nbformat,
     });
     documentRegistry.addModelFactory(notebookModelFactory);
@@ -230,7 +231,7 @@ export class NotebookAdapter {
       content,
     })
     */
-    this._notebookPanel = documentRegistry.getWidgetFactory('notebook')?.createNew(this._context) as NotebookPanel;
+    this._notebookPanel = documentRegistry.getWidgetFactory('Notebook')?.createNew(this._context) as NotebookPanel;
 
     if (this._ipywidgets === 'classic') {
       this._notebookPanel.sessionContext.kernelChanged.connect((sender: any, args: IChangedArgs<JupyterKernel.IKernelConnection | null, JupyterKernel.IKernelConnection | null, 'kernel'>) => {
@@ -252,14 +253,15 @@ export class NotebookAdapter {
     window.addEventListener('resize', () => {
       this._notebookPanel?.update();
     });
-    const tracker = this._tracker;
+//    const tracker = this._tracker;
     function getCurrent(args: ReadonlyPartialJSONObject): NotebookPanel | null {
-      const widget = tracker.currentWidget;
-      return widget;
+//      const widget = tracker.currentWidget;
+      return this._tracker.currentWidget;
     }
     function isEnabled(): boolean {
       return (
-        tracker.currentWidget !== null
+//        this._tracker.currentWidget !== null
+        this._tracker.currentWidget !== null
       );
     }
     this._commandRegistry.addCommand('run-selected-codecell', {

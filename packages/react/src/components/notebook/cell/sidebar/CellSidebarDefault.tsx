@@ -4,17 +4,19 @@ import { PanelLayout } from '@lumino/widgets';
 import { ActionMenu, Button, Box } from "@primer/react";
 import { ChevronRightIcon, XIcon, ChevronUpIcon, ChevronDownIcon, SquareIcon } from "@primer/octicons-react";
 import { notebookActions, selectActiveCell } from '../../NotebookState';
-import { CellSidebarProps } from './base/CellSidebarWidget';
+import { CellSidebarProps } from './lumino/CellSidebarWidget';
 import CellMetadataEditor from '../metadata/CellMetadataEditor';
 
-import { DATALAYER_CELL_HEADER_CLASS } from './base/CellSidebarWidget';
+import { DATALAYER_CELL_HEADER_CLASS } from './lumino/CellSidebarWidget';
 
 export const CellSidebarDefault = (props: CellSidebarProps) => {
+
   const { notebookId, cellId, nbgrader } = props;
   const [visible, setVisible] = useState(false);
   const dispatch = useDispatch();
   const activeCell = selectActiveCell(notebookId);
   const layout = (activeCell?.layout);
+
   if (layout) {
     const cellWidget = (layout as PanelLayout).widgets[0];
     if (cellWidget?.node.id === cellId) {
