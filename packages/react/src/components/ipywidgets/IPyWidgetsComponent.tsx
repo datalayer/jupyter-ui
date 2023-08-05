@@ -1,6 +1,6 @@
 import IPyWidgetsAttached from '../../jupyter/ipywidgets/IPyWidgetsAttached';
 
-import './PyWidgetsComponent.css';
+import './IPyWidgetsComponent.css';
 
 export const IpyWidgetsComponent = (props: { Widget: any }) => {
   const { Widget } = props;

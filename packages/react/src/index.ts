@@ -29,8 +29,8 @@ export * from './jupyter/services/kernel/KernelModel';
 // Components
 
 // IpyWidgets.
-export * from './jupyter/ipywidgets/PyWidgetsManager';
-export * from './components/ipywidgets/PyWidgetsComponent';
+export * from './jupyter/ipywidgets/IPyWidgetsManager';
+export * from './components/ipywidgets/IPyWidgetsComponent';
 // Cell.
 export * from './components/cell/Cell';
 export * from './components/cell/CellAdapter';
