@@ -23,7 +23,7 @@ class NotebookHeader extends ReactWidget {
 export class NotebookHeaderExtension implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> {
   createNew(panel: NotebookPanel, _: DocumentRegistry.IContext<INotebookModel>): IDisposable {
     const notebookHeader = new NotebookHeader();
-    notebookHeader.addClass('dla-Notebook-header');
+    notebookHeader.addClass('dla-NotebookPanel-header');
     panel.contentHeader.insertWidget(0, notebookHeader);
 //    panel.content.model = null;
     return new DisposableDelegate(() => {

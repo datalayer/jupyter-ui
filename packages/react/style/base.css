@@ -1,3 +1,4 @@
+/*
 html {
   box-sizing: content-box !important;
 }
@@ -9,6 +10,11 @@ body {
   overflow-y: scroll;
 }
 
-.dla-Notebook-header {
-  min-height: 100%;
+.jp-NotebookPanel-toolbar {
+  height: 0px !important;
+  min-height: 0px !important;
+}
+*/
+.dla-NotebookPanel-header {
+  min-height: 40px;
 }
