@@ -1,8 +1,8 @@
 import { createRoot } from 'react-dom/client';
-import MockComponent from './component/MockComponent';
+import JupyterReact from './JupyterReact';
 
 const root = createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-root.render(<MockComponent />);
+root.render(<JupyterReact />);

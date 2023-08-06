@@ -1,14 +1,13 @@
 import { ReactWidget } from '@jupyterlab/apputils';
+import JupyterReact from '../../app/JupyterReact';
 
-import MockComponent from './component/MockComponent';
-
-export class DatalayerWidget extends ReactWidget {
+export class JupyterReactWidget extends ReactWidget {
   constructor() {
     super();
     this.addClass('dla-Container');
   }
 
   render(): JSX.Element {
-    return <MockComponent />;
+    return <JupyterReact />;
   }
 }

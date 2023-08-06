@@ -3,7 +3,7 @@ import { ManagerBase} from '@jupyter-widgets/base-manager';
 import * as base from '@jupyter-widgets/base';
 import * as controls from '@jupyter-widgets/controls';
 
-export class IPyWidgetManager extends ManagerBase {
+export class IPyWidgetsManager extends ManagerBase {
   private el;
   constructor(el: any) {
     super();
@@ -60,4 +60,4 @@ export class IPyWidgetManager extends ManagerBase {
   }
 }
 
-export default IPyWidgetManager;
+export default IPyWidgetsManager;

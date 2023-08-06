@@ -2,9 +2,9 @@ import { useState} from 'react';
 import { ThemeProvider, BaseStyles, Box } from '@primer/react';
 import { CpuIcon } from '@primer/octicons-react';
 import { UnderlineNav } from '@primer/react/drafts';
-import MockTab1 from './MockTab1';
+import CellTab from './tabs/CellTab';
 
-const MockComponent = (): JSX.Element => {
+const JupyterReact = (): JSX.Element => {
   const [tab, setTab] = useState(1);
   return (
     <>
@@ -14,12 +14,12 @@ const MockComponent = (): JSX.Element => {
             <Box mb={3}>
               <UnderlineNav>
                 <UnderlineNav.Item aria-current="page" icon={CpuIcon} onSelect={e => {e.preventDefault(); setTab(1);}}>
-                    Kernels
+                    Cell
                 </UnderlineNav.Item>
               </UnderlineNav>
             </Box>
             <Box>
-              {(tab === 1) && <MockTab1/>}
+              {(tab === 1) && <CellTab/>}
             </Box>
           </Box>
         </BaseStyles>
@@ -28,4 +28,4 @@ const MockComponent = (): JSX.Element => {
   );
 };
 
-export default MockComponent;
+export default JupyterReact;

@@ -1,4 +1,5 @@
 import { useRef, useEffect, PropsWithChildren } from 'react';
+import ReactDOM from 'react-dom';
 import { Widget } from '@lumino/widgets';
 
 export const Lumino = (props: PropsWithChildren<any>) => {
@@ -13,6 +14,8 @@ export const Lumino = (props: PropsWithChildren<any>) => {
     }
     return () => {
       try {
+        ReactDOM.unmountComponentAtNode(widget.node);
+        widget.dispose();
         if (widget.isAttached || widget.node.isConnected) {
           Widget.detach(widget);
         }

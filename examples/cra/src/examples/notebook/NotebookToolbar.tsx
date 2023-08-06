@@ -23,7 +23,7 @@ const NotebookToolbar = (props: {notebookId: string}) => {
   };
   return (
     <>
-      {/* <Grid container spacing={3} style={{padding: '30px 110px 0px 30px'}}> */}
+      <Text as="h3">Notebook Example</Text>
       <Box
         sx={{
           display: 'flex',

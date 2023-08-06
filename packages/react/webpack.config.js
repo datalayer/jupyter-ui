@@ -10,17 +10,22 @@ function shim(regExp) {
   return new webpack.NormalModuleReplacementPlugin(regExp, shimJS);
 }
 
+const ENTRY = process.env.BUILD_APP == "true" ? 
+  "./src/app/App" : "./src/examples/NotebookModel" ;
+
 const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == "true";
 const indexPage = IS_JUPYTER_SERVER_LOCAL ? "index-local.html" : "index.html";
+
 const JUPYTER_HOST = IS_JUPYTER_SERVER_LOCAL ? "http://localhost:8686" : "https://oss.datalayer.tech";
 
 const IS_PRODUCTION = process.argv.indexOf('--mode=production') > -1;
+
 const mode = IS_PRODUCTION ? "production" : "development";
 const devtool = IS_PRODUCTION ? false : "inline-source-map";
 let minimize = IS_PRODUCTION ? true : false;
 
 module.exports = {
-  entry: ['./src/examples/IPyWidgets'],
+  entry: [ENTRY],
   mode: mode,
   watchOptions: {
     aggregateTimeout: 300,

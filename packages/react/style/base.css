@@ -8,3 +8,7 @@ body {
   padding: 0;
   overflow-y: scroll;
 }
+
+.dla-Notebook-header {
+  min-height: 100%;
+}

@@ -2,11 +2,11 @@ import IPyWidgetsAttached from '../../jupyter/ipywidgets/IPyWidgetsAttached';
 
 import './IPyWidgetsComponent.css';
 
-export const IpyWidgetsComponent = (props: { Widget: any }) => {
+export const IPyWidgetsComponent = (props: { Widget: any }) => {
   const { Widget } = props;
   return <>
     <IPyWidgetsAttached Widget={Widget}/>
   </>
 }
 
-export default IpyWidgetsComponent;
+export default IPyWidgetsComponent;

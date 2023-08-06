@@ -1,7 +1,7 @@
-import {Text} from '@primer/react';
+import { Text } from '@primer/react';
 
-const IpyWidgetsToolbar = () => {
+const IPyWidgetsToolbar = () => {
   return <Text as="h3">IpyWidgets Example</Text>;
 };
 
-export default IpyWidgetsToolbar;
+export default IPyWidgetsToolbar;

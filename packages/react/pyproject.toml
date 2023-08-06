@@ -36,7 +36,7 @@ test = [
 ]
 
 [project.scripts]
-jupyter-react = "jupyter_react.application:main"
+jupyter-react = "jupyter_react.__main__:main"
 
 [tool.hatch.version]
 source = "nodejs"

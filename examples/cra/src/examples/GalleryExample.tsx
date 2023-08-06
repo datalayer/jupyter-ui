@@ -3,7 +3,7 @@ import { UnderlineNav } from '@primer/react/drafts';
 import { Box } from '@primer/react';
 import {
   useJupyter,
-  IpyWidgetsComponent,
+  IPyWidgetsComponent,
   Cell,
   Commands,
   Console,
@@ -20,7 +20,7 @@ import { IOutput } from '@jupyterlab/nbformat';
 import { AppsIcon, CpuIcon } from '@primer/octicons-react';
 import LuminoToolbar from './lumino/LuminoToolbar';
 import LuminoComponent from './lumino/LuminoComponent';
-import IpyWidgetsToolbar from './ipywidgets/IpyWidgetsToolbar';
+import IPyWidgetsToolbar from './ipywidgets/IPyWidgetsToolbar';
 import IpyWidgetsExample from './ipywidgets/IPyWidgetsSimple';
 import CellToolbar from './cell/CellToolbar';
 import CommandsToolbar from './commands/CommandsToolbar';
@@ -203,8 +203,8 @@ const GalleryExample = () => {
         )}
         {tab === 'IpyWidgets' && (
           <>
-            <IpyWidgetsToolbar />
-            <IpyWidgetsComponent Widget={IpyWidgetsExample} />
+            <IPyWidgetsToolbar />
+            <IPyWidgetsComponent Widget={IpyWidgetsExample} />
           </>
         )}
         {tab === 'Outputs' && (

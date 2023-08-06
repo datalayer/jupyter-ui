@@ -5,7 +5,7 @@
     "./src/**/*.json"
   ],
   "exclude": [
-    "**/node_modules",
+    "node_modules",
     "src/example"
   ],
   "compilerOptions": {
@@ -29,10 +29,13 @@
     "resolveJsonModule": true,
     "sourceMap": true,
     "strictNullChecks": true,
-    "target": "ES2022",
+    "target": "ESNext",
     "types": [
-      "node",
       "jest"
+    ],
+    "lib": [
+      "ESNext",
+      "DOM"
     ]
   }
 }

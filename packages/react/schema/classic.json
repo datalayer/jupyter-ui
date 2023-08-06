@@ -1,0 +1,17 @@
+{
+  "title": "Classic Render",
+  "description": "Classic Render Settings.",
+  "type": "object",
+  "properties": {
+    "renderOnSave": {
+      "title": "Render Classic on Save",
+      "description": "Render with classic automatically after saving the notebook",
+      "default": false,
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false,
+  "jupyter.lab.setting-icon-class": "jp-NotebookIcon",
+  "jupyter.lab.setting-icon-label": "Classic Render",
+  "jupyter.lab.shortcuts": []
+}
