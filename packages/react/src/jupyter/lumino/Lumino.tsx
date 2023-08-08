@@ -15,10 +15,12 @@ export const Lumino = (props: PropsWithChildren<any>) => {
     return () => {
       try {
         ReactDOM.unmountComponentAtNode(widget.node);
-        widget.dispose();
+        /*
         if (widget.isAttached || widget.node.isConnected) {
+          widget.dispose();
           Widget.detach(widget);
         }
+        */
       } catch(e) {
         console.warn('Exception while detaching Lumino widget.', e);
       }

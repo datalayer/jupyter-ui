@@ -15,10 +15,12 @@ export const LuminoNotebook = (props: { adapter: NotebookAdapter }) => {
     return () => {
       try {
         ReactDOM.unmountComponentAtNode(panel.node);
+        /*
         if (panel.isAttached) {
+          adapter.dispose();
           Widget.detach(panel);
         }
-        adapter.dispose();
+        */
       }
       catch(e) {
         console.warn('Exception while detaching Lumino widget.', e);
