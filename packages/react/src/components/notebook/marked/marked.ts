@@ -14,9 +14,10 @@ export const getMarked = (languages: IEditorLanguageRegistry): IMarkdownParser =
             resolve(content);
           }
         });
-      })
-  };
-};
+      }
+    )
+  }
+}
 
 namespace Private {
   let markedInitialized = false;

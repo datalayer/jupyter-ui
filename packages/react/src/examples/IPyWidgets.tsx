@@ -5,7 +5,7 @@ import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from "./toolbars/NotebookToolbar";
 import CellSidebarDefault from "../components/notebook/cell/sidebar/CellSidebarDefault";
 
-import notebookExample from "./notebooks/IPyWidgetsExample1.ipynb.json";
+import notebook from "./notebooks/IPyWidgetsExample1.ipynb.json";
 
 import "./../../style/index.css";
 
@@ -17,7 +17,7 @@ const IPyWidgets = () => (
     terminals={false}
   >
     <Notebook
-      nbformat={notebookExample as INotebookContent}
+      nbformat={notebook as INotebookContent}
       CellSidebar={CellSidebarDefault}
       Toolbar={NotebookToolbar} 
       height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).

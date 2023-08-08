@@ -8,7 +8,7 @@ import Kernel from '../jupyter/services/kernel/Kernel';
 import Notebook from '../components/notebook/Notebook';
 import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarDefault';
 
-import notebookExample from './notebooks/NotebookExample1.ipynb.json';
+import notebook from './notebooks/NotebookExample1.ipynb.json';
 
 import "./../../style/index.css";
 
@@ -48,7 +48,7 @@ const NotebookUnmount = () => {
                 </ButtonGroup>
               </Box>
               <Notebook
-                nbformat={notebookExample as INotebookContent}
+                nbformat={notebook as INotebookContent}
 //                kernel={kernel}
                 CellSidebar={CellSidebarDefault}
                 height="700px"

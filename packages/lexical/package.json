@@ -58,7 +58,7 @@
   },
   "dependencies": {
     "@datalayer/jupyter-react": "0.5.2",
-    "@datalayer/primer-addons": "0.0.18",
+    "@datalayer/primer-addons": "0.0.19",
     "@jupyterlab/application": "4.0.3",
     "@jupyterlab/coreutils": "6.0.3",
     "@jupyterlab/services": "7.0.3",

@@ -9,7 +9,7 @@ import NotebookToolbar from "./toolbars/NotebookToolbar";
 import { createReduxEpicStore, createInjectableStore, InjectableStore } from '../redux/Store';
 import { exampleReducer, selectFoo, exampleActions } from './redux/ExampleState';
 
-import notebookExample from "./notebooks/NotebookExample1.ipynb.json";
+import notebook from "./notebooks/NotebookExample1.ipynb.json";
 
 import "./../../style/index.css";
 
@@ -49,7 +49,7 @@ const NotebookRedux = (props: {injectableStore: InjectableStore}) => {
         <FooDisplay/>
         <FooAction/>
         <Notebook
-          nbformat={notebookExample as INotebookContent}
+          nbformat={notebook as INotebookContent}
           CellSidebar={CellSidebarDefault}
           Toolbar={NotebookToolbar}
           height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).

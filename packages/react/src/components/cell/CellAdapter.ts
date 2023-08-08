@@ -63,7 +63,7 @@ export class CellAdapter {
           return EditorExtensionRegistry.createImmutableExtension(
             ybinding({
               ytext: sharedModel.ysource,
-              undoManager: sharedModel.undoManager ?? undefined
+              undoManager: sharedModel.undoManager ?? undefined,
             })
           );
         }
@@ -87,7 +87,6 @@ export class CellAdapter {
         });
       }
     });
-    
     const mimeService = new CodeMirrorMimeTypeService(languages);
     const commands = new CommandRegistry();
     const useCapture = true;

@@ -9,8 +9,8 @@ import Notebook from '../components/notebook/Notebook';
 import { selectNotebookModel } from '../components/notebook/NotebookState';
 import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarDefault';
 
-import notebookExample1 from './notebooks/NotebookExample1.ipynb.json';
-import notebookExample2 from './notebooks/NotebookExample2.ipynb.json';
+import notebook1 from './notebooks/NotebookExample1.ipynb.json';
+import notebook2 from './notebooks/NotebookExample2.ipynb.json';
 
 import "./../../style/index.css";
 
@@ -18,12 +18,12 @@ const NOTEBOOK_UID = 'notebook-model-id';
 
 const NotebookModelChange = () => {
   const { injectableStore } = useJupyter();
-  const [model, setModel] = useState<INotebookContent>(notebookExample1);
+  const [model, setModel] = useState<INotebookContent>(notebook1);
   const notebookModel = selectNotebookModel(NOTEBOOK_UID);
   console.log('Current notebook model update', notebookModel?.model, notebookModel?.model?.toJSON());
   const changeModel = () => {
     console.log('Current notebook model from store', (injectableStore.getState() as IJupyterReactState).notebook.notebooks.get(NOTEBOOK_UID)?.model?.toJSON());
-    setModel(notebookExample2);
+    setModel(notebook2);
   }
   return (
     <>

@@ -17,7 +17,7 @@ import CellSidebarNew from "../components/notebook/cell/sidebar/CellSidebarNew";
 // import { selectCell, cellActions } from '../components/cell/CellState';
 // import { notebookActions } from '../components/notebook/NotebookState';
 
-import notebookExample from "./notebooks/NotebookExample1.ipynb.json";
+import notebook from "./notebooks/NotebookExample1.ipynb.json";
 
 import "./../../style/index.css";
 
@@ -180,7 +180,7 @@ const root = createRoot(div)
 root.render(
   <Jupyter lite={false} terminals={true}>
     <Notebook
-      nbformat={notebookExample as INotebookContent}
+      nbformat={notebook as INotebookContent}
       CellSidebar={CellSidebarNew}
       Toolbar={NotebookToolbar}
       height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
@@ -202,7 +202,7 @@ root.render(
     <NotebookToolbar />
     <Notebook
       path="ping.ipynb"
-      // model={notebookExample as INotebookContent}
+      // model={notebook as INotebookContent}
       CellSidebar={CellSidebarDefault}
       uid={NOTEBOOK_UID_1}
     />

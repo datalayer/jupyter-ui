@@ -114,7 +114,7 @@ export const CodeMirrorEditor = (props: {
   }, [setSource]);
   return (
     <>
-      { kernel &&  toolbarPosition === 'up' &&
+      { kernel && toolbarPosition === 'up' &&
         <CodeMirrorOutputToolbar
           editorView={view}
           codePre={codePre}
