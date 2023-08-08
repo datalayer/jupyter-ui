@@ -1,0 +1,17 @@
+# Copyright (c) Datalayer, Inc. https://datalayer.io
+# Distributed under the terms of the MIT License.
+
+name: jupyter-dashboard
+channels:
+  - conda-forge
+dependencies:
+  - jq
+  - nodejs=18.15.0
+  - pip
+  - python=3.11
+  - yarn=3.5.0
+  - pip:
+    - build
+    - hatch
+    - jupyter-packaging
+    - jupyterlab==4.0.3

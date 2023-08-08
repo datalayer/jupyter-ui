@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { Widget } from '@lumino/widgets';
 import NotebookAdapter from "../../components/notebook/NotebookAdapter";
 
-export const LuminoNotebook = (props: {adapter: NotebookAdapter }) => {
+export const LuminoNotebook = (props: { adapter: NotebookAdapter }) => {
   const { adapter } = props;
   const panel = adapter.panel;
   const ref = useRef<HTMLDivElement>(null);
@@ -21,7 +21,7 @@ export const LuminoNotebook = (props: {adapter: NotebookAdapter }) => {
         adapter.dispose();
       }
       catch(e) {
-          console.warn('Exception while detaching Lumino widget.', e);
+        console.warn('Exception while detaching Lumino widget.', e);
       }
     }
   }, [adapter.uid]);

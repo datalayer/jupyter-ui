@@ -6,10 +6,10 @@ export * from './jupyter/lumino/Lumino';
 export * from './jupyter/lumino/LuminoDetached';
 export * from './jupyter/lumino/LuminoNotebook';
 export * from './jupyter/lumino/LuminoObservable';
-export * from './jupyter/lumino/LuminoReactPortal';
 export * from './jupyter/lumino/LuminoRedux';
 export * from './jupyter/lite/LiteServer';
 export * from './jupyter/utils/Ids';
+export * from './jupyter/lumino/ReactPortalWidget';
 
 // CSS
 
@@ -43,7 +43,7 @@ export * from './components/notebook/NotebookAdapter';
 export * from './components/notebook/NotebookState';
 export * from './components/notebook/cell/metadata/CellMetadataEditor';
 export * from './components/notebook/cell/metadata/NbGraderCells';
-export * from './components/notebook/cell/prompt/InputPrompt';
+export * from './components/notebook/cell/prompt/CountdownInputPrompt';
 export * from './components/notebook/content/JupyterReactContentFactory';
 export * from './components/notebook/cell/sidebar/lumino/CellSidebarWidget';
 export * from './components/notebook/cell/sidebar/CellSidebarDefault';

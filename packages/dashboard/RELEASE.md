@@ -1,4 +1,4 @@
-# Making a new release of datalayer
+# Making a new release of Jupyter Dashboard
 
 The extension can be published to `PyPI` and `npm` manually or using the [Jupyter Releaser](https://github.com/jupyter-server/jupyter_releaser).
 

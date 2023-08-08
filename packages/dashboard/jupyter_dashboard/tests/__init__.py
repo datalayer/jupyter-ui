@@ -1,1 +1,1 @@
-"""Python unit tests for datalayer."""
+"""Python unit tests for jupyter_dashboard."""

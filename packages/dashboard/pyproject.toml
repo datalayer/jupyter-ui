@@ -21,8 +21,9 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
 ]
+
 dependencies = [
-    "jupyter_server>=2.0,<3"
+    "jupyter_server>=2,<3"
 ]
 dynamic = ["version", "description", "authors", "urls", "keywords"]
 
@@ -32,11 +33,23 @@ test = [
     "pytest",
     "pytest-asyncio",
     "pytest-cov",
-    "pytest-tornasync"
+    "pytest-jupyter",
+    "pytest-tornasync",
 ]
+
+[project.scripts]
+jupyter-dashboard = "jupyter_dashboard.application:main"
 
 [tool.hatch.version]
 source = "nodejs"
+
+[tool.hatch.build]
+artifacts = [
+  "jupyter_dashboard/static",
+  "jupyter_dashboard/templates"
+]
+
+[tool.hatch.build.hooks.custom]
 
 [tool.hatch.metadata.hooks.nodejs]
 fields = ["description", "authors", "urls"]

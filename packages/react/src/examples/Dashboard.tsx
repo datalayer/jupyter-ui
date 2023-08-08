@@ -9,7 +9,7 @@ import notebookExample from "./notebooks/IPyWidgetsExample1.ipynb.json";
 
 import "./../../style/index.css";
 
-const NotebookModel = () => (
+const Dashboard = () => (
   <Jupyter
     lite={false}
     useRunningKernelIndex={-1}
@@ -33,5 +33,5 @@ document.body.appendChild(div);
 const root = createRoot(div)
 
 root.render(
-  <NotebookModel/>
+  <Dashboard/>
 );

@@ -1,16 +1,14 @@
 import { JupyterFrontEnd, JupyterFrontEndPlugin } from '@jupyterlab/application';
-import { MainAreaWidget, ICommandPalette, IToolbarWidgetRegistry, ISessionContextDialogs } from '@jupyterlab/apputils';
+import { MainAreaWidget, ICommandPalette } from '@jupyterlab/apputils';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { ILauncher } from '@jupyterlab/launcher';
-import { NotebookPanel } from '@jupyterlab/notebook';
-import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
-import { IEditorServices } from '@jupyterlab/codeeditor';
-import { ITranslator } from '@jupyterlab/translation';
 import { reactIcon } from '@jupyterlab/ui-components';
 import { requestAPI } from './handler';
 import { JupyterReactWidget } from './widget';
-import notebookClassicPlugin from './notebook/classic';
-import { NotebookHeaderExtension } from './notebook/header';
+import { NotebookHeaderExtension } from './notebook/header/NotebookHeader';
+import notebookClassicPlugin from './notebook/classic/plugin';
+import dashboardPlugin from './notebook/dashboard/plugin';
+import notebookContentFactoryPlugin from './notebook/content/plugin';
 
 import '../../../style/index.css';
 
@@ -27,21 +25,14 @@ namespace CommandIDs {
 const jupyterReactPlugin: JupyterFrontEndPlugin<void> = {
   id: '@datalayer/jupyter-react:plugin',
   autoStart: true,
-  requires: [ICommandPalette, IRenderMimeRegistry, NotebookPanel.IContentFactory, IEditorServices, IToolbarWidgetRegistry, ITranslator],
-  optional: [ISettingRegistry, ISessionContextDialogs, ILauncher],
+  requires: [ICommandPalette],
+  optional: [ISettingRegistry, ILauncher],
   activate: (
     app: JupyterFrontEnd,
     palette: ICommandPalette,
-    rendermime: IRenderMimeRegistry,
-    contentFactory: NotebookPanel.IContentFactory,
-    editorServices: IEditorServices,
-    toolbarRegistry: IToolbarWidgetRegistry,
-    translator: ITranslator,
-    settingRegistry: ISettingRegistry | null,
-    sessionContextDialogs_: ISessionContextDialogs | null,
-    launcher: ILauncher | null
+    settingRegistry?: ISettingRegistry,
+    launcher?: ILauncher,
   ) => {
-
     const { commands } = app;
     const command = CommandIDs.create;
     commands.addCommand(command, {
@@ -65,7 +56,6 @@ const jupyterReactPlugin: JupyterFrontEndPlugin<void> = {
         rank: 99,
       });
     }
-
     if (settingRegistry) {
       settingRegistry
         .load(jupyterReactPlugin.id)
@@ -86,17 +76,16 @@ const jupyterReactPlugin: JupyterFrontEndPlugin<void> = {
         );
       }
     );
-
-    console.log('JupyterLab extension @datalayer/jupyter-react is activated!');
-
-    app.docRegistry.addWidgetExtension('Notebook', new NotebookHeaderExtension());
-
+    app.docRegistry.addWidgetExtension('Notebook', new NotebookHeaderExtension(commands));
+    console.log('JupyterLab extension @datalayer/jupyter-react is activated.');
   }
 }
 
 const plugins = [
   jupyterReactPlugin,
   notebookClassicPlugin,
+  dashboardPlugin,
+  notebookContentFactoryPlugin,
 ]
 
 export default plugins;

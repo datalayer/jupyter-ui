@@ -3,12 +3,7 @@
 
 SHELL=/bin/bash
 
-CONDA=source $$(conda info --base)/etc/profile.d/conda.sh
-CONDA_ACTIVATE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda activate
-CONDA_DEACTIVATE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda deactivate
-CONDA_REMOVE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda remove -y --all -n
-
-ENV_NAME=datalayer
+ENV_NAME=jupyter-dashboard
 
 .DEFAULT_GOAL := default
 
@@ -21,64 +16,43 @@ help: ## display this help
 
 default: help ## default target is help
 
-clean: ui-clean services-clean ## clean
-
-install: ui-install services-install ## install
-
-build: ui-build services-build ## build
-
-backend: services-clean services-build services-install ## api
-
-services-clean: ## services-clean
-	find . -name *.egg-info | xargs rm -fr {} || true
-	find . -name __pycache__ | xargs rm -fr {} || true
-	find . -name dist | xargs rm -fr {} || true
-
-services-install: ## services-install
-	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-	  ./../bin/dla env-dev plane )
-
-services-build: ## services-build
-	echo Done.
-
 env: warning ## env
-	($(CONDA); \
-		SLUGIFY_USES_TEXT_UNIDECODE=yes conda env create -n datalayer -f ${DATALAYER_HOME}/src/environment.yml )
-	@exec echo "You can now populate the datalayer environment."
+	micromamba env create -y -n ${ENV_NAME} -f environment.yml
 	@exec echo "-------------------------------------------------------"
-	@exec echo "conda activate datalayer"
-	@exec echo "make env-dev"
+	@exec echo "micromamba activate ${ENV_NAME}"
 	@exec echo "-------------------------------------------------------"
-
-define init_ext
-	@exec echo
-	@exec echo -----------------------
-	@exec echo ${DATALAYER_HOME}/src/${2}
-	@exec echo
-	cd ${DATALAYER_HOME}/src/${2} && \
-		git init || true && \
-		git checkout -b main || true && \
-		git remote add origin https://github.com/datalayer/${1}.git || true && \
-		git add -A || true && \
-		git commit -am "big bang" || true && \
-		git push origin main
-endef
-
-env-dev: ## env-dev
-	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		./../bin/dla env-dev all )
 
 env-rm: warning ## env-rm
-	($(CONDA); \
-		conda deactivate && \
-		conda remove -y --name ${ENV_NAME} --all || true )
-
-env-status: ## env-status
-	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		./../bin/dla env-status )
+	micromamba deactivate && \
+	micromamba remove -y --name ${ENV_NAME} --all || true
 
 kill:
-	./dev/sh/kill.sh
+	./dev/utils/kill.sh
 
 warning:
 	echo "\x1b[34m\x1b[43mEnsure you have run \x1b[1;37m\x1b[41m conda deactivate \x1b[22m\x1b[34m\x1b[43m before invoking this.\x1b[0m"
+
+publish: clean build ## publish
+	npm publish
+	echo open https://www.npmjs.com/package/@datalayer/jupyter-dashboard
+
+typedoc: ## generate typedoc
+	rm -fr typedoc && \
+	yarn typedoc --tsconfig ./tsconfig.json && \
+	open typedoc/index.html
+
+publish-typedoc: typedoc ## deploy typedoc
+	aws s3 rm \
+		s3://datalayer-typedoc/datalayer/jupyter-dashboard/0.0.1/ \
+		--recursive \
+		--profile datalayer
+	aws s3 cp \
+		typedoc \
+		s3://datalayer-typedoc/datalayer/jupyter-dashboard/0.0.1/ \
+		--recursive \
+		--profile datalayer
+	aws cloudfront create-invalidation \
+		--distribution-id XXX \
+		--paths /datalayer/jupyter-dashboard/0.0.1/ \
+		--profile datalayer
+	echo open ✨  https://typedoc.datalayer.tech/datalayer/jupyter-dashboard/0.0.1

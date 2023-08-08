@@ -3,8 +3,6 @@ const webpack = require("webpack");
 
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-// const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
-// const deps = require("./package.json").dependencies;
 
 const shimJS = path.resolve(__dirname, "src", "emptyshim.js");
 function shim(regExp) {
@@ -20,27 +18,12 @@ const devtool = IS_PRODUCTION ? false : "inline-cheap-source-map";
 const minimize = IS_PRODUCTION ? true : false;
 
 module.exports = {
-  entry: "./src/Example",
+  entry: "./src/App",
   mode: mode,
   devServer: {
     port: 3063,
     client: { overlay: false },
     historyApiFallback: true,
-//    static: path.join(__dirname, "dist"),
-    proxy: {
-      '/api/jupyter': {
-        target: JUPYTER_HOST,
-        ws: true,
-        secure: false,
-        changeOrigin: true,
-      },
-      '/plotly.js': {
-        target: JUPYTER_HOST + '/api/jupyter/pool/react',
-        ws: false,
-        secure: false,
-        changeOrigin: true,
-      },
-    },
   },
   watchOptions: {
     aggregateTimeout: 300,
@@ -54,7 +37,8 @@ module.exports = {
   },
   output: {
     publicPath: "http://localhost:3063/",
-    filename: '[name].[contenthash].jupyterDocker.js',
+//    filename: '[name].[contenthash].jupyter-dashboard.js',
+    filename: '[name].jupyter-dashboard.js',
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx"],
@@ -65,15 +49,6 @@ module.exports = {
   },
   module: {
     rules: [
-/*
-      {
-        test: /bootstrap\.tsx$/,
-        loader: "bundle-loader",
-        options: {
-          lazy: true,
-        },
-      },
-*/
       {
         test: /\.tsx?$/,
         loader: "babel-loader",
@@ -84,7 +59,6 @@ module.exports = {
           presets: [
             ["@babel/preset-react", {
                 runtime: 'automatic',
-/*                importSource: 'react' */
               },
             ],
             "@babel/preset-typescript",
@@ -156,13 +130,11 @@ module.exports = {
           openAnalyzer: false,
           generateStatsFile: false,
         }),
-/*
     shim(/@fortawesome/),
     shim(/moment/),
     shim(/react-jvectormap/),
     shim(/react-slick/),
     shim(/react-tagsinput/),
-*/
     new HtmlWebpackPlugin({
       template: "./public/index.html",
     }),

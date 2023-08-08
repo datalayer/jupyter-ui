@@ -8,7 +8,7 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 import { useJupyter } from "./../../jupyter/JupyterContext";
 import { Kernel } from "./../../jupyter/services/kernel/Kernel";
 import { newUuid } from './../../jupyter/utils/Ids';
-import LuminoNotebook from '../../jupyter/lumino/LuminoNotebook';
+import Lumino from '../../jupyter/lumino/Lumino';
 import { asObservable } from './../../jupyter/lumino/LuminoObservable';
 import CellMetadataEditor from './cell/metadata/CellMetadataEditor';
 import { CellSidebarProps } from './cell/sidebar/lumino/CellSidebarWidget'
@@ -183,7 +183,7 @@ export const Notebook = (props: INotebookProps) => {
         </>
         <Box>
           { adapter &&
-            <LuminoNotebook adapter={adapter} />
+            <Lumino>{adapter.panel}</Lumino>
           }
         </Box>
       </Box >

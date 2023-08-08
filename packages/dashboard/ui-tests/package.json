@@ -5,8 +5,7 @@
   "private": true,
   "scripts": {
     "start": "jupyter lab --config jupyter_server_test_config.py",
-    "test": "jlpm playwright test",
-    "clean": "rimraf node_modules lib dist build tsconfig.tsbuildinfo"
+    "test": "jlpm playwright test"
   },
   "devDependencies": {
     "@jupyterlab/galata": "5.0.3"

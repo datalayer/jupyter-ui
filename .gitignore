@@ -144,6 +144,9 @@ dmypy.json
 # OSX files
 .DS_Store
 
+# Content
+packages/*/content
+
 # Static
 **/static/*.js
 **/static/*.css

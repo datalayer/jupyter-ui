@@ -1,3 +1,4 @@
+.*
 yarn.lock
 *.bundle.*
 lib/
@@ -8,8 +9,14 @@ node_modules/
 .ipynb_checkpoints
 *.tsbuildinfo
 jupyter_dashboard/labextension
+
 # Version file is handled by hatchling
 jupyter_dashboard/_version.py
+
+jupyter_dashboard/static/*.js
+jupyter_dashboard/static/*.css
+
+coverage
 
 # Integration tests
 ui-tests/test-results/
@@ -117,5 +124,18 @@ dmypy.json
 
 # End of https://www.gitignore.io/api/python
 
-# OSX files
-.DS_Store
+*creds.sh
+
+*ystore.db
+
+# Include
+!**/.*ignore
+!**/.*rc
+!**/.*rc.js
+!**/.*rc.json
+!**/.*rc.yml
+!**/.*config
+!*.*rc.json
+!**/.env
+!.github
+!.devcontainer

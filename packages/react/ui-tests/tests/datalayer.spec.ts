@@ -16,6 +16,6 @@ test('should emit an activation console message', async ({ page }) => {
   await page.goto();
 
   expect(
-    logs.filter(s => s === 'JupyterLab extension @datalayer/jupyter-react is activated!')
+    logs.filter(s => s === 'JupyterLab extension @datalayer/jupyter-react is activated.')
   ).toHaveLength(1);
 });

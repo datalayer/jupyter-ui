@@ -4,7 +4,7 @@ import { NotebookPanel } from '@jupyterlab/notebook';
 import { ICellHeader, Cell } from '@jupyterlab/cells';
 import { CellSidebarWidget, CellSidebarProps } from '../cell/sidebar/lumino/CellSidebarWidget';
 // import { IInputPrompt } from '@jupyterlab/cells';
-// import { NotebookInputPrompt } from './NotebookInputPrompt';
+// import { NotebookInputPrompt } from './../cell/InputPrompt';
 
 /**
  * Extend the default implementation NotebookPanel.ContentFactory of `IContentFactory`.
@@ -15,6 +15,7 @@ export class JupyterReactContentFactory extends NotebookPanel.ContentFactory {
   private readonly nbgrader: boolean;
   private readonly commands: CommandRegistry;
   private readonly store: Store;
+
   constructor(
     CellSidebar: (props: CellSidebarProps) => JSX.Element,
     notebookId: string,
@@ -31,6 +32,7 @@ export class JupyterReactContentFactory extends NotebookPanel.ContentFactory {
     this.commands = commands;
     this.store = store!;
   }
+
   /** @override */
   createCellHeader(): ICellHeader {
     return new CellSidebarWidget(
@@ -43,7 +45,7 @@ export class JupyterReactContentFactory extends NotebookPanel.ContentFactory {
   }
   /*
   createInputPrompt(): IInputPrompt {
-    return new NotebookInputPrompt();
+    return new InputPrompt();
   }
   */
 }

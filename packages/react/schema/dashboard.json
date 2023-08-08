@@ -1,0 +1,17 @@
+{
+  "title": "Jupyter React Dashboard",
+  "description": "Jupyter React Dashboard Settings.",
+  "type": "object",
+  "properties": {
+    "renderOnSave": {
+      "title": "Render dashboard on Save",
+      "description": "Render with dashboard automatically after saving the notebook",
+      "default": false,
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false,
+  "jupyter.lab.setting-icon-class": "jp-NotebookIcon",
+  "jupyter.lab.setting-icon-label": "Jupyter React Dashboard",
+  "jupyter.lab.shortcuts": []
+}
