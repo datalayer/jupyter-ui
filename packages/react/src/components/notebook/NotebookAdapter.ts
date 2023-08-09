@@ -172,8 +172,7 @@ export class NotebookAdapter {
         break;
       }
       case 'lab': {
-        const widgetRegistry = activateWidgetExtension(this._rendermime, this._tracker, null, null);
-        console.log('Widget Registry', widgetRegistry);
+        activateWidgetExtension(this._rendermime, this._tracker, null, null);
 //        activatePlotlyWidgetExtension(widgetRegistry);
         break;
       }
@@ -326,8 +325,8 @@ export class NotebookAdapter {
         const completerHandler = this.setupCompleter(this._notebookPanel!);
         NotebookCommands(this._commandRegistry, this._notebookPanel!, completerHandler, this._path);
         this._iPyWidgetsClassicManager?.registerWithKernel(kernelConnection);
-//        const widgetRegistry = activateWidgetExtension(this._rendermime!, this._tracker!, null, null);
-//        activatePlotlyWidgetExtension(widgetRegistry);    
+        activateWidgetExtension(this._rendermime!, this._tracker!, null, null);
+        // activatePlotlyWidgetExtension(widgetRegistry);
       });
     });
   }

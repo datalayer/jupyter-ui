@@ -15,7 +15,7 @@ const root = createRoot(div)
 root.render(
   <Jupyter>
     <Notebook
-      path="renderer.ipynb"
+      path="geojson-1.ipynb"
       renderers={[
         geojsonRenderer,
 //        vega3Renderer,

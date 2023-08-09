@@ -17,7 +17,7 @@ import CellSidebarNew from "../components/notebook/cell/sidebar/CellSidebarNew";
 // import { selectCell, cellActions } from '../components/cell/CellState';
 // import { notebookActions } from '../components/notebook/NotebookState';
 
-import notebook from "./notebooks/NotebookExample1.ipynb.json";
+import notebook from "./samples/NotebookExample1.ipynb.json";
 
 import "./../../style/index.css";
 

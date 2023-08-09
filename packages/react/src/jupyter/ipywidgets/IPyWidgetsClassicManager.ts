@@ -4,7 +4,7 @@ import { HTMLManager } from "@jupyter-widgets/html-manager";
 import { shims } from "@jupyter-widgets/base/lib/services-shim";
 
 import * as luminoWidget from "@lumino/widgets";
-import * as outputWidgets from "@jupyter-widgets/jupyterlab-manager/lib/output"
+import * as outputWidgets from "@jupyter-widgets/jupyterlab-manager/lib/output";
 
 // Exposing @jupyter-widgets/base and @jupyter-widgets/controls as AMD modules for custom widget bundles that depend on it.
 import * as base from "@jupyter-widgets/base";

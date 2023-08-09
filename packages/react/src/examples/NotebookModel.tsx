@@ -5,7 +5,7 @@ import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from "./toolbars/NotebookToolbar";
 import CellSidebarDefault from "../components/notebook/cell/sidebar/CellSidebarDefault";
 
-import notebook from "./notebooks/NotebookExample1.ipynb.json";
+import notebook from "./samples/NotebookExample1.ipynb.json";
 
 import "./../../style/index.css";
 

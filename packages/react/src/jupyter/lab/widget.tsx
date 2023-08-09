@@ -8,6 +8,6 @@ export class JupyterReactWidget extends ReactWidget {
   }
 
   render(): JSX.Element {
-    return <JupyterReact />;
+    return <JupyterReact />
   }
 }

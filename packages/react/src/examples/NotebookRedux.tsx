@@ -9,7 +9,7 @@ import NotebookToolbar from "./toolbars/NotebookToolbar";
 import { createReduxEpicStore, createInjectableStore, InjectableStore } from '../redux/Store';
 import { exampleReducer, selectFoo, exampleActions } from './redux/ExampleState';
 
-import notebook from "./notebooks/NotebookExample1.ipynb.json";
+import notebook from "./samples/NotebookExample1.ipynb.json";
 
 import "./../../style/index.css";
 

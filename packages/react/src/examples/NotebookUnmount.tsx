@@ -8,7 +8,7 @@ import Kernel from '../jupyter/services/kernel/Kernel';
 import Notebook from '../components/notebook/Notebook';
 import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarDefault';
 
-import notebook from './notebooks/NotebookExample1.ipynb.json';
+import notebook from './samples/NotebookExample1.ipynb.json';
 
 import "./../../style/index.css";
 

@@ -16,19 +16,12 @@
    "outputs": [],
    "source": [
     "from matplotlib import pyplot as plt\n",
-    "\n",
     "import numpy as np\n",
-    "\n",
     "%matplotlib inline\n",
-    "\n",
     "x = np.linspace(0, 1, 100)\n",
-    "\n",
     "y = 0.2+0.4*x**2+0.3*x*np.sin(15*x)+0.05*np.cos(50*x)\n",
-    "\n",
     "plt.figure(figsize=(6, 6))\n",
-    "\n",
     "plt.plot(x, y)\n",
-    "\n",
     "plt.show()"
    ]
   },
@@ -48,19 +41,12 @@
    "outputs": [],
    "source": [
     "from matplotlib import pyplot as plt\n",
-    "\n",
     "import numpy as np\n",
-    "\n",
     "%matplotlib widget\n",
-    "\n",
     "x = np.linspace(0, 1, 100)\n",
-    "\n",
     "y = 0.2+0.4*x**2+0.3*x*np.sin(15*x)+0.05*np.cos(50*x)\n",
-    "\n",
     "plt.figure(figsize=(6, 6))\n",
-    "\n",
     "plt.plot(x, y)\n",
-    "\n",
     "plt.show()"
    ]
   },

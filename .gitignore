@@ -24,6 +24,8 @@ node_modules
 coverage
 typedoc
 
+*.exclude.*
+
 yarn.lock
 *.bundle.*
 lib/

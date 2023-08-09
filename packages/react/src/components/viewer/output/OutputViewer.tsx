@@ -1,6 +1,6 @@
 import { ICell, IOutput } from '@jupyterlab/nbformat';
-import OutputAdapter from '../../../components/output/OutputAdapter';
 import Lumino from '../../../jupyter/lumino/Lumino';
+import OutputAdapter from '../../../components/output/OutputAdapter';
 
 type Props = {
   cell: ICell,

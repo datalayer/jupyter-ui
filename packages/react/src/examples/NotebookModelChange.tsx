@@ -9,8 +9,8 @@ import Notebook from '../components/notebook/Notebook';
 import { selectNotebookModel } from '../components/notebook/NotebookState';
 import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarDefault';
 
-import notebook1 from './notebooks/NotebookExample1.ipynb.json';
-import notebook2 from './notebooks/NotebookExample2.ipynb.json';
+import notebook1 from './samples/NotebookExample1.ipynb.json';
+import notebook2 from './samples/NotebookExample2.ipynb.json';
 
 import "./../../style/index.css";
 

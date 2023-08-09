@@ -23,9 +23,13 @@ const visualisations: NotebookExample[] = [
     url: "https://raw.githubusercontent.com/jstac/quantecon_nyu_2016/master/lecture9/Plotly_Presentation.ipynb",
   },
   {
-    title: "Bicycle control",
+    title: "Bicycle Control",
     url: "https://raw.githubusercontent.com/plotly/IPython-plotly/master/notebooks/bicycle_control/bicycle_control.ipynb",
   },
+  {
+    title: "IPyWidgets Example",
+    url: " https://raw.githubusercontent.com/jupyter-widgets/ipywidgets/main/docs/source/examples/Widget%20Basics.ipynb",
+  }, 
 ]
 
 const astronomies: NotebookExample[] = [
@@ -88,7 +92,6 @@ const ViewerExample = () => {
         setNbformat(JSON.parse(nbformat));
       });
   }, [notebookExample]);
-  const e = () => <JupyterBaseIcon colored/>;
 
   return (
     <>
@@ -96,7 +99,7 @@ const ViewerExample = () => {
         <Jupyter startDefaultKernel={false}>
           <ActionMenu>
             <ActionMenu.Button leadingVisual={() => <JupyterBaseIcon colored/>}>
-              Notebook Viewer
+              Jupyter Viewer
             </ActionMenu.Button>
             <ActionMenu.Overlay>
               <ActionList showDividers>
