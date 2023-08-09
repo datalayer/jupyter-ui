@@ -1,14 +1,14 @@
+import { CommandRegistry } from '@lumino/commands';
+import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
+import { IDisposable } from '@lumino/disposable';
 import { JupyterFrontEnd, JupyterFrontEndPlugin, ILayoutRestorer } from '@jupyterlab/application';
 import { ICommandPalette, WidgetTracker, ToolbarButton } from '@jupyterlab/apputils';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { IMainMenu } from '@jupyterlab/mainmenu';
 import { INotebookTracker, NotebookPanel, INotebookModel } from '@jupyterlab/notebook';
-import { CommandRegistry } from '@lumino/commands';
-import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
-import { IDisposable } from '@lumino/disposable';
 import { Dashboard, IDashboardTracker, DashboardFactory } from './dashboard';
-import { dashboardIcon } from './icon';
+import { academicCapIconLabIcon as dashboardIcon } from '@datalayer/icons-react/data1/AcademicCapIconLabIcon';
 
 export namespace CommandIDs {
   export const dashboardRender = 'notebook:render-with-dashboard';
@@ -28,7 +28,7 @@ class DashboardButton implements DocumentRegistry.IWidgetExtension<NotebookPanel
     const button = new ToolbarButton({
       className: 'dashboardRender',
       tooltip: 'Dashboard',
-      icon: dashboardIcon,
+      icon: dashboardIcon as any,
       onClick: () => { this._commands.execute(CommandIDs.dashboardRender); }
     });
     panel.toolbar.insertAfter('cellType', 'dashboardRender', button);
