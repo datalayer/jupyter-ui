@@ -7,8 +7,8 @@ import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { IMainMenu } from '@jupyterlab/mainmenu';
 import { INotebookTracker, NotebookPanel, INotebookModel } from '@jupyterlab/notebook';
+import dashboardIcon from '@datalayer/icons-react/data1/AcademicCapIconLabIcon';
 import { Dashboard, IDashboardTracker, DashboardFactory } from './dashboard';
-import { academicCapIconLabIcon as dashboardIcon } from '@datalayer/icons-react/data1/AcademicCapIconLabIcon';
 
 export namespace CommandIDs {
   export const dashboardRender = 'notebook:render-with-dashboard';

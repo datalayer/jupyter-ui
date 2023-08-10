@@ -8,8 +8,8 @@ import { INotebookTracker, NotebookPanel, INotebookModel } from '@jupyterlab/not
 import { CommandRegistry } from '@lumino/commands';
 import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
 import { IDisposable } from '@lumino/disposable';
+import classicRender from '@datalayer/icons-react/data1/DashboardColorIconLabIcon';
 import { ClassicRender, IClassicRenderTracker, ClassicRenderFactory } from './classicRender';
-import { jupiterIconLabIcon as notebookClassicIcon } from '@datalayer/icons-react/data2/JupiterIconLabIcon';
 
 export namespace CommandIDs {
   export const classicRender = 'notebook:render-with-classic';
@@ -29,7 +29,7 @@ class ClassicRenderButton implements DocumentRegistry.IWidgetExtension<NotebookP
     const button = new ToolbarButton({
       className: 'classicRender',
       tooltip: 'Render with Classic',
-      icon: notebookClassicIcon as any,
+      icon: classicRender,
       onClick: () => { this._commands.execute(CommandIDs.classicRender); }
     });
     panel.toolbar.insertAfter('cellType', 'classicRender', button);

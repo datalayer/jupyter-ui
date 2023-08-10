@@ -1,12 +1,9 @@
-// Copyright (c) Jupyter Development Team.
-// Distributed under the terms of the Modified BSD License.
-
+import React from 'react';
+import ReactDOM from 'react-dom';
 import { IDisposable } from '@lumino/disposable';
 import { Message, MessageLoop } from '@lumino/messaging';
 import { ISignal, Signal } from '@lumino/signaling';
 import { Widget } from '@lumino/widgets';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 
 type ReactRenderElement =
   | Array<React.ReactElement<any>>

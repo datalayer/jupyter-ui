@@ -72,7 +72,7 @@ const InputViewer = (props: Props) => {
         contentFactory: new Cell.ContentFactory({
           editorFactory: factoryService.newInlineEditor.bind(factoryService)
         })
-      });
+      }).initializeState();
       if (languageInfo && languageInfo.mimetype) {
         codeCell.model.mimeType = languageInfo.mimetype;
       }
@@ -92,7 +92,7 @@ const InputViewer = (props: Props) => {
         contentFactory: new Cell.ContentFactory({
           editorFactory: factoryService.newInlineEditor.bind(factoryService)
         })
-      });
+      }).initializeState();
       return (
         <>
           <Lumino>{markdownCell}</Lumino>

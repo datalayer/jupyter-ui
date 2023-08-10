@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react';
-import ReactDOM from 'react-dom';
+import { unmountComponentAtNode } from 'react-dom';
 import { Widget } from '@lumino/widgets';
 import NotebookAdapter from "../../components/notebook/NotebookAdapter";
 
@@ -14,16 +14,14 @@ export const LuminoNotebook = (props: { adapter: NotebookAdapter }) => {
     Widget.attach(panel, ref.current!);
     return () => {
       try {
-        ReactDOM.unmountComponentAtNode(panel.node);
-        /*
-        if (panel.isAttached) {
+        unmountComponentAtNode(panel.node);
+        if (panel.isAttached || panel.node.isConnected) {
           adapter.dispose();
           Widget.detach(panel);
         }
-        */
       }
       catch(e) {
-        console.warn('Exception while detaching Lumino widget.', e);
+        console.debug('Exception while detaching Lumino widget.', e);
       }
     }
   }, [adapter.uid]);

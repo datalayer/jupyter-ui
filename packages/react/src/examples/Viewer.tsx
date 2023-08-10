@@ -15,12 +15,12 @@ type NotebookExample = {
 
 const visualisations: NotebookExample[] = [
   {
-    title: "Matplotlib",
-    url: "https://raw.githubusercontent.com/anissa111/matplotlib-tutorial/main/notebooks/01-basic-matplotlib-tutorial.ipynb",
-  },
-  {
     title: "Plotly Presentation",
     url: "https://raw.githubusercontent.com/jstac/quantecon_nyu_2016/master/lecture9/Plotly_Presentation.ipynb",
+  },
+  {
+    title: "Matplotlib",
+    url: "https://raw.githubusercontent.com/anissa111/matplotlib-tutorial/main/notebooks/01-basic-matplotlib-tutorial.ipynb",
   },
   {
     title: "Bicycle Control",
@@ -30,17 +30,6 @@ const visualisations: NotebookExample[] = [
     title: "IPyWidgets Example",
     url: " https://raw.githubusercontent.com/jupyter-widgets/ipywidgets/main/docs/source/examples/Widget%20Basics.ipynb",
   }, 
-]
-
-const astronomies: NotebookExample[] = [
-  {
-    title: "Center of Mass",
-    url: "https://raw.githubusercontent.com/JuanCab/AstroInteractives/master/Interactives/Center_of_Mass.ipynb",
-  },
-  {
-    title: "Propagation Effects",
-    url: "https://raw.githubusercontent.com/ratt-ru/fundamentals_of_interferometry/master/7_Observing_Systems/7_7_propagation_effects.ipynb",
-  },
 ]
 
 const dataSciences: NotebookExample[] = [
@@ -56,6 +45,19 @@ const dataSciences: NotebookExample[] = [
     title: "Survival Analysis",
     url: "https://raw.githubusercontent.com/plotly/IPython-plotly/master/notebooks/survival_analysis/survival_analysis.ipynb",
   },
+]
+
+const astronomies: NotebookExample[] = [
+  {
+    title: "Center of Mass",
+    url: "https://raw.githubusercontent.com/JuanCab/AstroInteractives/master/Interactives/Center_of_Mass.ipynb",
+  },
+  /*
+  {
+    title: "Propagation Effects",
+    url: "https://raw.githubusercontent.com/ratt-ru/fundamentals_of_interferometry/master/7_Observing_Systems/7_7_propagation_effects.ipynb",
+  },
+  */
 ]
 
 type MenuLineProps = {
@@ -106,14 +108,13 @@ const ViewerExample = () => {
                 <ActionList.Group title="Visualisations">
                   {visualisations.map(visualisation => 
                     <MenuLine notebookExample={visualisation} icon={<NetworkIcon colored/>} setNotebookExample={setNotebookExample} />)}
+                </ActionList.Group>                <ActionList.Group title="Data Science">
+                  {dataSciences.map(dataScience => 
+                    <MenuLine notebookExample={dataScience} icon={<ScientistIcon colored/>} setNotebookExample={setNotebookExample} />)}
                 </ActionList.Group>
                 <ActionList.Group title="Astronomy">
                   {astronomies.map(astronomy => 
                     <MenuLine notebookExample={astronomy} icon={<JupiterIcon colored/>} setNotebookExample={setNotebookExample} />)}
-                </ActionList.Group>
-                <ActionList.Group title="Data Science">
-                  {dataSciences.map(dataScience => 
-                    <MenuLine notebookExample={dataScience} icon={<ScientistIcon colored/>} setNotebookExample={setNotebookExample} />)}
                 </ActionList.Group>
               </ActionList>
             </ActionMenu.Overlay>

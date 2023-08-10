@@ -2,7 +2,7 @@ import { ISignal } from "@lumino/signaling";
 import { Observable } from "rxjs";
 
 /**
- * Convert a Lumino Signal to a rx-js Observable.
+ * Convert a Lumino Signal to a Rx-js Observable.
  */
 export function asObservable<T>(signal: ISignal<unknown, T>): Observable<T> {
   return new Observable((subscriber) => {
@@ -12,6 +12,6 @@ export function asObservable<T>(signal: ISignal<unknown, T>): Observable<T> {
     signal.connect(slot);
     return (): void => {
       signal.disconnect(slot);
-    };
+    }
   });
 }

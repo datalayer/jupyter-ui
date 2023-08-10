@@ -1,5 +1,5 @@
 import { useRef, useEffect, PropsWithChildren } from 'react';
-import ReactDOM from 'react-dom';
+import { unmountComponentAtNode } from 'react-dom';
 import { Widget } from '@lumino/widgets';
 
 export const Lumino = (props: PropsWithChildren<any>) => {
@@ -14,15 +14,13 @@ export const Lumino = (props: PropsWithChildren<any>) => {
     }
     return () => {
       try {
-        ReactDOM.unmountComponentAtNode(widget.node);
-        /*
+        unmountComponentAtNode(widget.node);
         if (widget.isAttached || widget.node.isConnected) {
           widget.dispose();
           Widget.detach(widget);
         }
-        */
       } catch(e) {
-        console.warn('Exception while detaching Lumino widget.', e);
+        console.debug('Exception while detaching Lumino widget.', e);
       }
     }
   }, [children]);

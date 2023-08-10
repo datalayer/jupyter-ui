@@ -3,13 +3,13 @@ import { UnderlineNav } from '@primer/react/drafts';
 import { Box } from '@primer/react';
 import {
   useJupyter,
-  IPyWidgetsComponent,
   Cell,
   Commands,
   Console,
   Dialog,
   FileBrowser,
   FileBrowserLab,
+  IPyWidgetsOutput,
   Notebook,
   Kernel,
   Output,
@@ -18,10 +18,10 @@ import {
 } from '@datalayer/jupyter-react';
 import { IOutput } from '@jupyterlab/nbformat';
 import { AppsIcon, CpuIcon } from '@primer/octicons-react';
+import { state, view } from './ipywidgets/IPyWidgetsSimple';
 import LuminoToolbar from './lumino/LuminoToolbar';
 import LuminoComponent from './lumino/LuminoComponent';
 import IPyWidgetsToolbar from './ipywidgets/IPyWidgetsToolbar';
-import IpyWidgetsExample from './ipywidgets/IPyWidgetsSimple';
 import CellToolbar from './cell/CellToolbar';
 import CommandsToolbar from './commands/CommandsToolbar';
 import NotebookToolbarSimple from './notebook/NotebookToolbarSimple';
@@ -55,7 +55,7 @@ ax2.set_xlabel('time (s)')
 ax2.set_ylabel('Undamped')
 plt.show()`;
 
-const OUTPUT: IOutput[] = [
+const OUTPUTS: IOutput[] = [
   {
     data: {
       'application/json': {
@@ -204,13 +204,13 @@ const GalleryExample = () => {
         {tab === 'IpyWidgets' && (
           <>
             <IPyWidgetsToolbar />
-            <IPyWidgetsComponent Widget={IpyWidgetsExample} />
+            <IPyWidgetsOutput state={state} view={view} />
           </>
         )}
         {tab === 'Outputs' && (
           <>
             <OutputToolbar />
-            <Output outputs={OUTPUT} autoRun={false} kernel={kernel} />
+            <Output outputs={OUTPUTS} autoRun={false} kernel={kernel} />
             <Output
               autoRun={false}
               kernel={kernel}
