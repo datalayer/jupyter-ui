@@ -1,0 +1,32 @@
+{
+  "metadata": {
+    "dashboardHeight": 1080,
+    "dashboardWidth": 1920
+  },
+  "version": 1,
+  "outputs": {
+    "2e121961-067c-46d7-a5c1-41b094669679": [
+      {
+        "cellId": "9f2ad7ff-ad83-47c6-9ad7-39d95c60095e",
+        "pos": {
+          "left": 32,
+          "top": 32,
+          "width": 32,
+          "height": 32
+        }
+      },
+      {
+        "cellId": "7627ee83-3f6c-4fb5-a96a-16cbc5ac33a0",
+        "pos": {
+          "left": 32,
+          "top": 96,
+          "width": 352,
+          "height": 32
+        }
+      }
+    ]
+  },
+  "paths": {
+    "Dashboard.ipynb": "2e121961-067c-46d7-a5c1-41b094669679"
+  }
+}

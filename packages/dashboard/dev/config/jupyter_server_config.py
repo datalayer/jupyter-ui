@@ -13,7 +13,7 @@ c.ServerApp.log_level = 'INFO'
 #################
 
 c.ServerApp.ip = '0.0.0.0'
-c.ServerApp.port = 8686
+c.ServerApp.port = 8888
 c.ServerApp.port_retries = 0
 
 #################
@@ -76,7 +76,7 @@ c.ServerApp.jpserver_extensions = {
 #################
 
 # c.FileContentsManager.delete_to_trash = False
-content_dir = os.path.dirname(os.path.realpath(__file__)) + '/../notebooks'
+content_dir = os.path.dirname(os.path.realpath(__file__)) + '/../content'
 c.ServerApp.root_dir = content_dir
 c.ServerApp.preferred_dir = content_dir
 
@@ -84,8 +84,8 @@ c.ServerApp.preferred_dir = content_dir
 # URLs
 #################
 
-c.ServerApp.base_url = '/api/jupyter'
-c.ServerApp.default_url = '/api/jupyter/lab'
+c.ServerApp.base_url = '/'
+c.ServerApp.default_url = '/lab'
 
 #################
 # Kernel

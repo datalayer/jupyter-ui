@@ -5,11 +5,12 @@ import OutputViewer from './output/OutputViewer';
 import { newUuid } from './../../jupyter/utils/Ids';
 
 type Props = {
-  nbformat: INotebookContent
+  nbformat: INotebookContent,
+  outputs: boolean,
 }
 
 const Viewer = (props: Props) => {
-  const { nbformat } = props;
+  const { nbformat, outputs } = props;
   const [model, setModel] = useState<INotebookContent>()
   useEffect(() => {
     setModel(nbformat);
@@ -20,7 +21,7 @@ const Viewer = (props: Props) => {
         return (
           <div key={cell.id?.toString() || newUuid()}>
             <InputViewer cell={cell} languageInfo={nbformat.metadata.language_info}/>
-            <OutputViewer cell={cell}/>
+            { outputs && <OutputViewer cell={cell}/> }
           </div>
         )
       })}

@@ -1,37 +1,16 @@
+import { PartialJSONObject } from '@lumino/coreutils';
+import { Signal } from '@lumino/signaling';
 import { PathExt } from '@jupyterlab/coreutils';
 import { DocumentRegistry, DocumentModel } from '@jupyterlab/docregistry';
-import {
-  IModelDB,
-  IObservableJSON,
-  ObservableJSON
-} from '@jupyterlab/observables';
-
-import {
-  IDashboardContent,
-  IDashboardMetadata,
-  DASHBOARD_VERSION,
-  IOutputInfo
-} from './dbformat';
-
-import { DashboardWidget } from './widget';
-
 import { INotebookTracker } from '@jupyterlab/notebook';
-
-import { getPathFromNotebookId } from './utils';
-
-import { Widgetstore } from './widgetstore';
-
 import { ContentsManager, Contents } from '@jupyterlab/services';
-
-import { each } from '@lumino/algorithm';
-
-import { Signal } from '@lumino/signaling';
-
-import { Dashboard } from './dashboard';
-
-import { getNotebookById } from './utils';
-
-import { PartialJSONObject } from '@lumino/coreutils';
+import { IModelDB, IObservableJSON, ObservableJSON } from '@jupyterlab/observables';
+import { IDashboardContent, IDashboardMetadata, DASHBOARD_VERSION, IOutputInfo } from './content';
+import { WidgetStore } from './widgetStore';
+import { Dashboard, } from './dashboard';
+import { getPathFromNotebookId, getNotebookById } from './utils';
+import { DashboardWidget } from './widget';
+import { YFile } from '@jupyter/ydoc';
 
 /**
  * The definition of a model object for a dashboard widget.
@@ -40,7 +19,7 @@ export interface IDashboardModel extends DocumentRegistry.IModel {
   /**
    * The widget store for the dashboard.
    */
-  readonly widgetstore: Widgetstore;
+  readonly widgetStore: WidgetStore;
 
   /**
    * The notebook tracker for the dashboard.
@@ -101,15 +80,15 @@ export class DashboardModel extends DocumentModel implements IDashboardModel {
    * Construct a new dashboard model.
    */
   constructor(options: DashboardModel.IOptions) {
-    super(options.languagePreference, options.modelDB);
+    super(options);
 
     const notebookTracker = (this.notebookTracker = options.notebookTracker);
 
-    if (options.widgetstore !== undefined) {
-      this.widgetstore = options.widgetstore;
+    if (options.widgetStore !== undefined) {
+      this.widgetStore = options.widgetStore;
       this._restore = true;
     } else {
-      this.widgetstore = new Widgetstore({ id: 0, notebookTracker });
+      this.widgetStore = new WidgetStore({ id: 0, notebookTracker });
     }
 
     this.contentsManager = options.contentsManager || new ContentsManager();
@@ -119,16 +98,16 @@ export class DashboardModel extends DocumentModel implements IDashboardModel {
    * Deserialize the model from JSON.
    */
   async fromJSON(value: PartialJSONObject): Promise<void> {
-    // A widgetstore has been supplied and the dashboard is ready to be populated.
+    // A widgetStore has been supplied and the dashboard is ready to be populated.
     if (this._restore) {
       this._loaded.emit(void 0);
     }
 
-    const outputs: Widgetstore.WidgetInfo[] = [];
+    const outputs: WidgetStore.WidgetInfo[] = [];
 
-    for (const [_path, notebookId] of Object.entries(value.paths)) {
+    for (const [_path, notebookId] of Object.entries((value as any).paths)) {
       const path = PathExt.resolve(PathExt.dirname(this.path), _path);
-      if (!getNotebookById(notebookId, this.notebookTracker)) {
+      if (!getNotebookById(notebookId as string, this.notebookTracker)) {
         await this.contentsManager
           .get(path)
           .then(async model => {
@@ -140,9 +119,9 @@ export class DashboardModel extends DocumentModel implements IDashboardModel {
       }
     }
 
-    for (const [notebookId, notebookOutputs] of Object.entries(value.outputs)) {
-      for (const outputInfo of notebookOutputs) {
-        const info: Widgetstore.WidgetInfo = {
+    for (const [notebookId, notebookOutputs] of Object.entries((value as any).outputs)) {
+      for (const outputInfo of (notebookOutputs as any)) {
+        const info: WidgetStore.WidgetInfo = {
           ...outputInfo,
           notebookId,
           widgetId: DashboardWidget.createDashboardWidgetId()
@@ -153,16 +132,14 @@ export class DashboardModel extends DocumentModel implements IDashboardModel {
 
     this._metadata.clear();
     const metadata = value.metadata;
-    for (const [key, value] of Object.entries(metadata)) {
+    for (const [key, value] of Object.entries(metadata as any)) {
       this._setMetadataProperty(key, value);
     }
 
-    this.widgetstore.startBatch();
-    this.widgetstore.clear();
+    this.widgetStore.clear();
     outputs.forEach(output => {
-      this.widgetstore.addWidget(output);
+      this.widgetStore.addWidget(output);
     });
-    this.widgetstore.endBatch();
 
     this._loaded.emit(void 0);
   }
@@ -174,7 +151,7 @@ export class DashboardModel extends DocumentModel implements IDashboardModel {
     const notebookTracker = this.notebookTracker;
 
     // Get all widgets that haven't been removed.
-    const records = this.widgetstore.getWidgets();
+    const records = this.widgetStore.getWidgets();
 
     const metadata: IDashboardMetadata = {
       name: this.name,
@@ -189,7 +166,7 @@ export class DashboardModel extends DocumentModel implements IDashboardModel {
       paths: {}
     };
 
-    each(records, record => {
+    for (let record of records) {
       const notebookId = record.notebookId;
       const _path = getPathFromNotebookId(notebookId, notebookTracker);
 
@@ -217,7 +194,7 @@ export class DashboardModel extends DocumentModel implements IDashboardModel {
       };
 
       file.outputs[notebookId].push(outputInfo);
-    });
+    };
 
     return file;
   }
@@ -284,7 +261,7 @@ export class DashboardModel extends DocumentModel implements IDashboardModel {
    * The width of the dashboard in pixels.
    */
   get width(): number {
-    return +this.metadata.get('dashboardWidth');
+    return +(this.metadata.get('dashboardWidth') || 0);
   }
   set width(newValue: number) {
     this._setMetadataProperty('dashboardWidth', newValue);
@@ -294,7 +271,7 @@ export class DashboardModel extends DocumentModel implements IDashboardModel {
    * The height of the dashboard in pixels.
    */
   get height(): number {
-    return +this.metadata.get('dashboardHeight');
+    return +(this.metadata.get('dashboardHeight') || 0);
   }
   set height(newValue: number) {
     this._setMetadataProperty('dashboardHeight', newValue);
@@ -349,7 +326,7 @@ export class DashboardModel extends DocumentModel implements IDashboardModel {
   /**
    * The widget store for the dashboard.
    */
-  readonly widgetstore: Widgetstore;
+  readonly widgetStore: WidgetStore;
 
   /**
    * The notebook tracker for the dashboard.
@@ -365,7 +342,7 @@ export class DashboardModel extends DocumentModel implements IDashboardModel {
   protected _loaded = new Signal<this, void>(this);
   private _mode: Dashboard.Mode = 'grid-edit';
   private _scrollMode: Dashboard.ScrollMode = 'constrained';
-  private _path: string;
+  private _path: string = '';
   private _restore = false;
 }
 
@@ -380,7 +357,7 @@ export namespace DashboardModel {
 
     modelDB?: IModelDB;
 
-    widgetstore?: Widgetstore;
+    widgetStore?: WidgetStore;
 
     contentsManager?: ContentsManager;
   }
@@ -442,22 +419,14 @@ export class DashboardModelFactory
 
   /**
    * Create a new model for a given path.
-   *
-   * @param languagePreference - an optional kernel language preference.
-   *
-   * @param modelDB - the model database associated with the model.
    */
-  createNew(languagePreference?: string, modelDB?: IModelDB): DashboardModel {
+  createNew(options: DocumentRegistry.IModelOptions<YFile>): DashboardModel {
     const notebookTracker = this._notebookTracker;
     const contentsManager = new ContentsManager();
-
     const model = new DashboardModel({
       notebookTracker,
-      languagePreference,
-      modelDB,
       contentsManager
     });
-
     return model;
   }
 

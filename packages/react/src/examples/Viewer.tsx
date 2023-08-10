@@ -119,7 +119,7 @@ const ViewerExample = () => {
               </ActionList>
             </ActionMenu.Overlay>
           </ActionMenu>
-          { nbformat && <Viewer nbformat={nbformat} /> }
+          { nbformat && <Viewer nbformat={nbformat} outputs={true} /> }
         </Jupyter>
       </Box>
     </>

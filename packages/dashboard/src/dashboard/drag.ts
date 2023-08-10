@@ -129,8 +129,6 @@ export class Drag implements IDisposable {
     this.source = options.source || null;
     this._dragAdjustX = options.dragAdjustX || 0;
     this._dragAdjustY = options.dragAdjustY || 0;
-    this._dragOffsetX = 0;
-    this._dragOffsetY = 0;
   }
 
   /**
@@ -617,8 +615,8 @@ export class Drag implements IDisposable {
   private _resolve: ((value: DropAction) => void) | null = null;
   private _dragAdjustX: number;
   private _dragAdjustY: number;
-  private _dragOffsetX: number;
-  private _dragOffsetY: number;
+  private _dragOffsetX: number = 0;
+  private _dragOffsetY: number = 0;
 }
 
 /**

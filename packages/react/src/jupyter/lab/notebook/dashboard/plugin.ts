@@ -15,7 +15,7 @@ export namespace CommandIDs {
   export const dashboardOpen = 'notebook:open-with-dashboard';
 }
 
-export const DASHBOARD_WIDGET_FACTORY = 'Dashboard';
+export const DASHBOARD_WIDGET_FACTORY = 'Dashboard Preview';
 
 class DashboardButton implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> {
   private _commands: CommandRegistry;

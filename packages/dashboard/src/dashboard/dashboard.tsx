@@ -1,34 +1,34 @@
-import * as React from 'react';
-import { NotebookPanel } from '@jupyterlab/notebook';
-import { CodeCell, MarkdownCell, Cell } from '@jupyterlab/cells';
-import { map, toArray, each } from '@lumino/algorithm';
-import { WidgetTracker, CommandToolbarButton, IWidgetTracker, Toolbar, ReactWidget } from '@jupyterlab/apputils';
+import React from 'react';
 import { CommandRegistry } from '@lumino/commands';
 import { Token } from '@lumino/coreutils';
 import { Widget } from '@lumino/widgets';
 import { Message } from '@lumino/messaging';
 import { IDragEvent } from '@lumino/dragdrop';
+import { UUID } from '@lumino/coreutils';
+import { DocumentWidget, DocumentRegistry, ABCWidgetFactory, IDocumentWidget } from '@jupyterlab/docregistry';
+import { NotebookPanel } from '@jupyterlab/notebook';
+import { CodeCell, MarkdownCell, Cell } from '@jupyterlab/cells';
+import { map, toArray, each } from '@lumino/algorithm';
+import { WidgetTracker, CommandToolbarButton, IWidgetTracker, Toolbar, ReactWidget } from '@jupyterlab/apputils';
+import { HTMLSelect } from '@jupyterlab/ui-components';
 import { DashboardLayout } from './layout';
 import { DashboardWidget } from './widget';
-import { WidgetPosition, Widgetstore } from './widgetstore';
+import { WidgetPosition, WidgetStore } from './widgetStore';
 import { addCellId, addNotebookId, getNotebookById, getCellId, updateMetadata } from './utils';
-import { DocumentWidget, DocumentRegistry, ABCWidgetFactory, IDocumentWidget } from '@jupyterlab/docregistry';
 import { IDashboardModel, DashboardModel } from './model';
 import { CommandIDs } from './commands';
-import { HTMLSelect } from '@jupyterlab/ui-components';
-import { UUID } from '@lumino/coreutils';
 
 // HTML element classes
 
-export const DASHBOARD_CLASS = 'pr-JupyterDashboard';
+export const DASHBOARD_CLASS = 'dsh-JupyterDashboard';
 
-export const DROP_TARGET_CLASS = 'pr-DropTarget';
+export const DROP_TARGET_CLASS = 'dsh-DropTarget';
 
-export const TOOLBAR_MODE_SWITCHER_CLASS = 'pr-ToolbarModeSwitcher';
+export const TOOLBAR_MODE_SWITCHER_CLASS = 'dsh-ToolbarModeSwitcher';
 
-export const TOOLBAR_SELECT_CLASS = 'pr-ToolbarSelector';
+export const TOOLBAR_SELECT_CLASS = 'dsh-ToolbarSelector';
 
-export const TOOLBAR_CLASS = 'pr-DashboardToolbar';
+export const TOOLBAR_CLASS = 'dsh-DashboardToolbar';
 
 export const IDashboardTracker = new Token<IDashboardTracker>(
   'jupyterlab_interactive_dashboard_editor'
@@ -49,13 +49,11 @@ export class Dashboard extends Widget {
 
     const { outputTracker, model } = options;
     this._model = model;
-    if (options.context !== undefined) {
-      this._context = options.context;
-    }
-    const { widgetstore, mode } = model;
+    this._context = options.context!;
+    const { widgetStore, mode } = model;
 
     this.layout = new DashboardLayout({
-      widgetstore,
+      widgetStore,
       outputTracker,
       model,
       mode,
@@ -63,9 +61,9 @@ export class Dashboard extends Widget {
       height: options.dashboardHeight || Dashboard.DEFAULT_HEIGHT
     });
 
-    widgetstore.connectDashboard(this);
+    widgetStore.connectDashboard(this);
 
-    this._model.loaded.connect(this.updateLayoutFromWidgetstore, this);
+    this._model.loaded.connect(this.updateLayoutFromWidgetStore, this);
 
     this.addClass(DASHBOARD_CLASS);
   }
@@ -150,7 +148,7 @@ export class Dashboard extends Widget {
         this.updateWidget(widget, pos);
       } else {
         // dragging between dashboards
-        const info: Widgetstore.WidgetInfo = {
+        const info: WidgetStore.WidgetInfo = {
           widgetId: DashboardWidget.createDashboardWidgetId(),
           notebookId: widget.notebookId,
           cellId: widget.cellId,
@@ -173,7 +171,7 @@ export class Dashboard extends Widget {
         cell = notebook.content.activeCell as CodeCell;
       }
 
-      const info: Widgetstore.WidgetInfo = {
+      const info: WidgetStore.WidgetInfo = {
         widgetId: DashboardWidget.createDashboardWidgetId(),
         notebookId: addNotebookId(notebook),
         cellId: addCellId(cell),
@@ -242,13 +240,13 @@ export class Dashboard extends Widget {
    *
    * @param widget - the widget to add.
    */
-  addWidget(widget: DashboardWidget, pos: Widgetstore.WidgetPosition): void {
+  addWidget(widget: DashboardWidget, pos: WidgetStore.WidgetPosition): void {
     (this.layout as DashboardLayout).addWidget(widget, pos);
   }
 
   updateWidget(
     widget: DashboardWidget,
-    pos: Widgetstore.WidgetPosition
+    pos: WidgetStore.WidgetPosition
   ): boolean {
     return (this.layout as DashboardLayout).updateWidget(widget, pos);
   }
@@ -277,16 +275,16 @@ export class Dashboard extends Widget {
   }
 
   /**
-   * Adds a dashboard widget's information to the widgetstore.
+   * Adds a dashboard widget's information to the widgetStore.
    *
-   * @param info - the information to add to the widgetstore.
+   * @param info - the information to add to the widgetStore.
    */
-  updateWidgetInfo(info: Widgetstore.WidgetInfo): void {
+  updateWidgetInfo(info: WidgetStore.WidgetInfo): void {
     (this.layout as DashboardLayout).updateWidgetInfo(info);
   }
 
   /**
-   * Mark a widget as deleted in the widgetstore.
+   * Mark a widget as deleted in the widgetStore.
    *
    * @param widget - the widget to mark as deleted.
    */
@@ -295,7 +293,7 @@ export class Dashboard extends Widget {
   }
 
   /**
-   * Update a widgetstore entry for a widget given that widget.
+   * Update a widgetStore entry for a widget given that widget.
    *
    * @param widget - the widget to update from.
    */
@@ -306,8 +304,8 @@ export class Dashboard extends Widget {
   /**
    * Updates the layout based on the state of the datastore.
    */
-  updateLayoutFromWidgetstore(): void {
-    (this.layout as DashboardLayout).updateLayoutFromWidgetstore();
+  updateLayoutFromWidgetStore(): void {
+    (this.layout as DashboardLayout).updateLayoutFromWidgetStore();
   }
 
   /**
@@ -324,13 +322,13 @@ export class Dashboard extends Widget {
     (this.layout as DashboardLayout).redo();
   }
 
-  createWidget(info: Widgetstore.WidgetInfo, fit?: boolean): DashboardWidget {
+  createWidget(info: WidgetStore.WidgetInfo, fit?: boolean): DashboardWidget {
     return (this.layout as DashboardLayout).createWidget(info, fit);
   }
 
   saveToNotebookMetadata(): void {
     // Get a list of all notebookIds used in the dashboard.
-    const widgets = toArray(this.model.widgetstore.getWidgets());
+    const widgets = Array.from(this.model.widgetStore.getWidgets());
 
     const notebookIds = toArray(map(widgets, record => record.notebookId));
 
@@ -344,9 +342,9 @@ export class Dashboard extends Widget {
     const notebookTracker = this.model.notebookTracker;
     const notebook = getNotebookById(notebookId, notebookTracker);
 
-    updateMetadata(notebook, { hasDashboard: true });
+    updateMetadata(notebook!, { hasDashboard: true });
 
-    const cells = notebook.content.widgets;
+    const cells = notebook!.content.widgets;
 
     const widgetMap = new Map<string, WidgetPosition>(
       widgets.map(widget => [widget.cellId, widget.pos])
@@ -354,7 +352,7 @@ export class Dashboard extends Widget {
 
     each(cells, cell => {
       const cellId = getCellId(cell);
-      const pos = widgetMap.get(cellId);
+      const pos = widgetMap.get(cellId!);
       if (pos != null) {
         updateMetadata(cell, { pos, hidden: false });
       } else {
@@ -362,7 +360,7 @@ export class Dashboard extends Widget {
       }
     });
 
-    notebook.context.save();
+    notebook?.context.save();
   }
 
   get model(): IDashboardModel {
@@ -402,7 +400,7 @@ export namespace Dashboard {
      */
     name?: string;
 
-    store?: Widgetstore;
+    store?: WidgetStore;
 
     dashboardWidth?: number;
 
@@ -488,9 +486,9 @@ export namespace DashboardDocument {
     name?: string;
 
     /**
-     * Optional widgetstore to restore from.
+     * Optional widgetStore to restore from.
      */
-    store?: Widgetstore;
+    store?: WidgetStore;
 
     /**
      * Dashboard canvas width (default is 1280).

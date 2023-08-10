@@ -1,54 +1,44 @@
 import { Widget, Layout, LayoutItem } from '@lumino/widgets';
-
-import { Record } from '@lumino/datastore';
-
-import { IIterator, map, each, filter, toArray } from '@lumino/algorithm';
-
+import { map, each, filter, toArray } from '@lumino/algorithm';
 import { MessageLoop, Message } from '@lumino/messaging';
-
-import { DashboardWidget } from './widget';
-
-import { Widgetstore, WidgetSchema, WidgetPosition } from './widgetstore';
-
-import { WidgetTracker } from '@jupyterlab/apputils';
-
-import { Dashboard } from './dashboard';
-
 import { Signal } from '@lumino/signaling';
-
 import { DocumentRegistry } from '@jupyterlab/docregistry';
-
 import { IChangedArgs } from '@jupyterlab/coreutils';
+import { WidgetTracker } from '@jupyterlab/apputils';
+import { Dashboard } from './dashboard';
+import { DashboardWidget } from './widget';
+import { WidgetStore, WidgetPosition } from './widgetStore';
 
 /**
  * The class name added to the dashboard canvas.
  */
-const CANVAS_CLASS = 'pr-Canvas';
+const CANVAS_CLASS = 'dsh-Canvas';
 
 /**
  * The class name added to a dashboard in tiled mode.
  */
-const TILED_LAYOUT_CLASS = 'pr-TiledLayout';
+const TILED_LAYOUT_CLASS = 'dsh-TiledLayout';
 
 /**
  * The class name added to a dashboard in free mode.
  */
-const FREE_LAYOUT_CLASS = 'pr-FreeLayout';
+const FREE_LAYOUT_CLASS = 'dsh-FreeLayout';
 
 /**
  * A layout for dashboards.
  */
 export class DashboardLayout extends Layout {
+
   /**
    * Construct a dashboard layout.
    */
   constructor(options: DashboardLayout.IOptions) {
     super(options);
 
-    const { widgetstore, outputTracker, width, height, mode, model } = options;
+    const { widgetStore, outputTracker, width, height, mode, model } = options;
 
     this._items = new Map<string, LayoutItem>();
-    this._widgetstore = widgetstore;
+    this._widgetStore = widgetStore;
     this._outputTracker = outputTracker;
 
     this._width = width || 0;
@@ -103,7 +93,7 @@ export class DashboardLayout extends Layout {
   init(): void {
     super.init();
     each(this, widget => this.attachWidget(widget));
-    this.parent.node.appendChild(this._canvas);
+    this.parent!.node.appendChild(this._canvas);
   }
 
   /**
@@ -111,8 +101,8 @@ export class DashboardLayout extends Layout {
    */
   dispose(): void {
     this._items.forEach(item => item.dispose());
-    this._outputTracker = null;
-    this._widgetstore = null;
+    this._outputTracker = undefined;
+    this._widgetStore = undefined;
     super.dispose();
   }
 
@@ -130,10 +120,17 @@ export class DashboardLayout extends Layout {
   /**
    * Create an iterator over the widgets in the layout.
    *
+   * @override
+   * 
    * @returns a new iterator over the widgets in the layout.
    */
-  iter(): IIterator<Widget> {
+  iter(): Iterator<Widget> {
     // Is there a lazy way to iterate through the map?
+    const arr = Array.from(this._items.values());
+    return map(arr, item => item.widget);
+  }
+
+  [Symbol.iterator](): IterableIterator<Widget> {
     const arr = Array.from(this._items.values());
     return map(arr, item => item.widget);
   }
@@ -209,7 +206,7 @@ export class DashboardLayout extends Layout {
    *
    * @param _pos - the desired size/position of the added widget.
    */
-  addWidget(widget: DashboardWidget, _pos: Widgetstore.WidgetPosition): void {
+  addWidget(widget: DashboardWidget, _pos: WidgetStore.WidgetPosition): void {
     this.startBatch();
     this._addWidget(widget, _pos);
   }
@@ -226,7 +223,7 @@ export class DashboardLayout extends Layout {
    * shoudn't be called directly. If you want to add a widget, use the
    * .addWidget() method instead.
    */
-  _addWidget(widget: DashboardWidget, _pos: Widgetstore.WidgetPosition): void {
+  _addWidget(widget: DashboardWidget, _pos: WidgetStore.WidgetPosition): void {
     // Add the widget to the layout.
     const item = new LayoutItem(widget);
     this._items.set(widget.id, item);
@@ -247,7 +244,7 @@ export class DashboardLayout extends Layout {
       widget.ready.connect(() => {
         this._updateWidget(widget, widget.pos, false);
         this.fixOverlaps(widget);
-        this._outputTracker.add(widget);
+        this._outputTracker!.add(widget);
 
         const change: IDashboardChange = {
           type: 'add',
@@ -275,7 +272,7 @@ export class DashboardLayout extends Layout {
    */
   updateWidget(
     widget: DashboardWidget,
-    pos: Widgetstore.WidgetPosition
+    pos: WidgetStore.WidgetPosition
   ): boolean {
     const wasInBatch = this.inBatch;
     if (!wasInBatch) {
@@ -308,7 +305,7 @@ export class DashboardLayout extends Layout {
    */
   private _updateWidgetHelper(
     widget: DashboardWidget,
-    pos: Widgetstore.WidgetPosition,
+    pos: WidgetStore.WidgetPosition,
     fixOverlaps = true
   ): boolean {
     const success = this._updateWidget(widget, pos, fixOverlaps);
@@ -341,7 +338,7 @@ export class DashboardLayout extends Layout {
    */
   private _updateWidget(
     widget: DashboardWidget,
-    pos: Widgetstore.WidgetPosition,
+    pos: WidgetStore.WidgetPosition,
     fixOverlaps = true
   ): boolean {
     // Get the item from the map.
@@ -438,25 +435,25 @@ export class DashboardLayout extends Layout {
   }
 
   /**
-   * Adds a dashboard widget's information to the widgetstore.
+   * Adds a dashboard widget's information to the widgetStore.
    *
-   * @param info - the information to add to the widgetstore.
+   * @param info - the information to add to the widgetStore.
    */
-  updateWidgetInfo(info: Widgetstore.WidgetInfo): void {
-    this._widgetstore.addWidget(info);
+  updateWidgetInfo(info: WidgetStore.WidgetInfo): void {
+    this._widgetStore?.addWidget(info);
   }
 
   /**
-   * Mark a widget as deleted in the widgetstore.
+   * Mark a widget as deleted in the widgetStore.
    *
    * @param widget - the widget to mark as deleted.
    */
   deleteWidgetInfo(widget: DashboardWidget): void {
-    this._widgetstore.deleteWidget(widget.id);
+    this._widgetStore?.deleteWidget(widget.id);
   }
 
   /**
-   * Update a widgetstore entry for a widget given that widget.
+   * Update a widgetStore entry for a widget given that widget.
    *
    * @param widget - the widget to update from.
    */
@@ -465,12 +462,12 @@ export class DashboardLayout extends Layout {
   }
 
   /**
-   * Update the layout from a widgetstore record.
+   * Update the layout from a widgetStore record.
    *
    * @param record - the record to update from.
    */
-  private _updateLayoutFromRecord(record: Record<WidgetSchema>): void {
-    const item = this._items.get(record.$id);
+  private _updateLayoutFromRecord(record: WidgetStore.WidgetInfo): void {
+    const item = this._items.get(record.widgetId);
     const pos = record.pos;
 
     if (record.widgetId === '') {
@@ -487,10 +484,10 @@ export class DashboardLayout extends Layout {
         return;
       } else {
         // Widget is newly added or undeleted; add.
-        const newWidget = this._widgetstore.createWidget(
-          record as Widgetstore.WidgetInfo
+        const newWidget = this._widgetStore?.createWidget(
+          record as WidgetStore.WidgetInfo
         );
-        this.addWidget(newWidget, pos);
+        this.addWidget(newWidget!, pos);
       }
     } else {
       // Widget was just removed; delete.
@@ -506,11 +503,11 @@ export class DashboardLayout extends Layout {
   /**
    * Updates the layout based on the state of the datastore.
    */
-  updateLayoutFromWidgetstore(): void {
+  updateLayoutFromWidgetStore(): void {
     this._signalChanges = false;
-    const records = this._widgetstore.get(Widgetstore.WIDGET_SCHEMA);
-    each(records, record => {
-      this._updateLayoutFromRecord(record);
+    const records = this._widgetStore?.getWidgets()
+    Array.from(records!).map(record => {
+      this._updateLayoutFromRecord(record);      
     });
     this._signalChanges = true;
   }
@@ -519,16 +516,14 @@ export class DashboardLayout extends Layout {
    * Undo the last change to the layout.
    */
   undo(): void {
-    this._widgetstore.undo();
-    this.updateLayoutFromWidgetstore();
+    this.updateLayoutFromWidgetStore();
   }
 
   /**
    * Redo the last change to the layout.
    */
   redo(): void {
-    this._widgetstore.redo();
-    this.updateLayoutFromWidgetstore();
+    this.updateLayoutFromWidgetStore();
   }
 
   /**
@@ -543,7 +538,7 @@ export class DashboardLayout extends Layout {
   widgetsAtPoint(
     left: number,
     top: number
-  ): IIterator<DashboardWidget.Overlap> {
+  ): Iterator<DashboardWidget.Overlap> {
     const pos = {
       left,
       top,
@@ -561,9 +556,7 @@ export class DashboardLayout extends Layout {
    *
    * @returns - an iterator containing widgets in that selection.
    */
-  private _widgetsInSelection(
-    pos: WidgetPosition
-  ): IIterator<DashboardWidget.Overlap> {
+  private _widgetsInSelection(pos: WidgetPosition): IterableIterator<DashboardWidget.Overlap> {
     const relations = map(this, _widget => {
       const widget = _widget as DashboardWidget;
       return widget.overlaps(pos);
@@ -584,7 +577,7 @@ export class DashboardLayout extends Layout {
    * relative to the underlying widget.
    */
   private _handleOverlap(
-    pos: Widgetstore.WidgetPosition,
+    pos: WidgetStore.WidgetPosition,
     overlap: DashboardWidget.Overlap
   ): void {
     const { left, top, width, height } = pos;
@@ -638,8 +631,8 @@ export class DashboardLayout extends Layout {
    * @param pos - the dimensions/position of the widget being overlapped.
    */
   handleOverlaps(
-    overlaps: IIterator<DashboardWidget.Overlap>,
-    pos: Widgetstore.WidgetPosition
+    overlaps: Iterable<DashboardWidget.Overlap>,
+    pos: WidgetStore.WidgetPosition
   ): void {
     each(overlaps, overlap => void this._handleOverlap(pos, overlap));
   }
@@ -654,7 +647,6 @@ export class DashboardLayout extends Layout {
       this._widgetsInSelection(widget.pos),
       overlap => overlap.widget !== widget
     );
-
     widget.locked = true;
     this.handleOverlaps(overlaps, widget.pos);
     widget.locked = false;
@@ -745,14 +737,14 @@ export class DashboardLayout extends Layout {
     });
     switch (newMode) {
       case 'present':
-        this.canvas.style.backgroundPosition = null;
-        this.canvas.style.backgroundSize = null;
+        this.canvas.style.backgroundPosition = '';
+        this.canvas.style.backgroundSize = '';
         this._canvas.classList.remove(FREE_LAYOUT_CLASS);
         this._canvas.classList.remove(TILED_LAYOUT_CLASS);
         break;
       case 'free-edit':
-        this.canvas.style.backgroundPosition = null;
-        this.canvas.style.backgroundSize = null;
+        this.canvas.style.backgroundPosition = '';
+        this.canvas.style.backgroundSize = '';
         this._canvas.classList.remove(TILED_LAYOUT_CLASS);
         this._canvas.classList.add(FREE_LAYOUT_CLASS);
         break;
@@ -812,8 +804,8 @@ export class DashboardLayout extends Layout {
    * @throws - an error if a notebook or cell isn't found from the ids in the
    * widgetinfo object.
    */
-  createWidget(info: Widgetstore.WidgetInfo, fit?: boolean): DashboardWidget {
-    return this._widgetstore.createWidget(info, fit);
+  createWidget(info: WidgetStore.WidgetInfo, fit?: boolean): DashboardWidget {
+    return this._widgetStore!.createWidget(info, fit);
   }
 
   /**
@@ -831,8 +823,8 @@ export class DashboardLayout extends Layout {
   clearCanvas(): CanvasRenderingContext2D {
     const canvas = this.canvas;
     const context = canvas.getContext('2d');
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    return context;
+    context!.clearRect(0, 0, canvas.width, canvas.height);
+    return context!;
   }
 
   /**
@@ -842,7 +834,7 @@ export class DashboardLayout extends Layout {
    *
    * @param color - the color of the rectangle.
    */
-  drawDropZone(pos: Widgetstore.WidgetPosition, color: string): void {
+  drawDropZone(pos: WidgetStore.WidgetPosition, color: string): void {
     const context = this.clearCanvas();
 
     context.setLineDash([5]);
@@ -873,7 +865,7 @@ export class DashboardLayout extends Layout {
 
     // this.canvas.style.backgroundPosition = backgroundPosition;
     this.canvas.style.backgroundSize = `${s}px ${s}px`;
-    this.parent.update();
+    this.parent!.update();
 
     this.startBatch();
     each(this, _widget => {
@@ -923,9 +915,9 @@ export class DashboardLayout extends Layout {
   // Map from widget ids to LayoutItems
   private _items: Map<string, LayoutItem>;
   // Datastore widgets are rendered from / saved to.
-  private _widgetstore: Widgetstore | undefined;
+  private _widgetStore: WidgetStore | undefined;
   // Output tracker to add new widgets to.
-  private _outputTracker: WidgetTracker<DashboardWidget>;
+  private _outputTracker?: WidgetTracker<DashboardWidget>;
   // Dummy canvas element to set dimensions of dashboard.
   private _canvas: HTMLCanvasElement;
   // Dashboard width (zero if unconstrained).
@@ -935,7 +927,7 @@ export class DashboardLayout extends Layout {
   // Mode (either interactive or edit);
   private _mode: Dashboard.Mode;
   // Parent dashboard.
-  private _dashboard: Dashboard;
+  private _dashboard?: Dashboard;
   // Size of a single tile in tiled layout in pixels.
   private _tileSize = DashboardLayout.DEFAULT_TILE_SIZE;
   // Changed signal
@@ -964,9 +956,9 @@ export namespace DashboardLayout {
     outputTracker: WidgetTracker<DashboardWidget>;
 
     /**
-     * The widgetstore to update from.
+     * The widgetStore to update from.
      */
-    widgetstore: Widgetstore;
+    widgetStore: WidgetStore;
 
     /**
      * The static width of the dashboard area.

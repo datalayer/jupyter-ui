@@ -15,7 +15,7 @@ const Dashboard = (props: Props) => {
   });
   return (
     <>
-      <Viewer nbformat={model}/>
+      <Viewer nbformat={model} outputs={false} />
     </>
   )
 }

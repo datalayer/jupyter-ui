@@ -1,9 +1,160 @@
-/*
-    See the JupyterLab Developer Guide for useful CSS Patterns:
+.dsh-JupyterDashboard {
+    overflow: auto;
+  }
+  
+.dsh-DashboardWidget {
+  display: inline-flex;
+}
 
-    https://jupyterlab.readthedocs.io/en/stable/developer/css.html
-*/
+.dsh-DashboardWidget .dsh-MarkdownOutput {
+  display: inline-block;
+}
 
-.dla-Container {
-    overflow-y: visible;
+.dsh-EditableWidget {
+  outline: var(--jp-border-width) solid var(--jp-inverse-layout-color4);
+  outline-offset: calc(-1 * var(--jp-border-width));
+  background: var(--jp-layout-color0);
+  overflow: visible;
+  contain: none !important;
+}
+
+.dsh-EditableWidget > .dsh-DashboardWidgetChild {
+  pointer-events: none;
+}
+
+.dsh-EditableWidget:focus {
+  outline: var(--jp-border-width) solid var(--jp-brand-color1);
+  outline-offset: calc(-1 * var(--jp-border-width));
+}
+
+.dsh-EditableWidget:hover {
+  outline: var(--jp-border-width) solid var(--jp-brand-color1);
+  outline-offset: calc(-1 * var(--jp-border-width));
+  cursor: move;
+}
+
+.dsh-DashboardArea {
+  overflow: auto;
+}
+
+.dsh-Resizer {
+  display: none;
+  width: 4px;
+  height: 4px;
+  outline: 1px solid var(--jp-brand-color1);
+  z-index: 3;
+  background-color: var(--jp-layout-color0);
+  position: absolute;
+}
+
+.dsh-Resizer:hover {
+  background-color: var(--jp-brand-color1);
+}
+
+.dsh-ResizerBottomRight {
+  right: -2px;
+  bottom: -2px;
+  cursor: nwse-resize;
+}
+
+.dsh-ResizerBottomLeft {
+  left: -2px;
+  bottom: -2px;
+  cursor: nesw-resize;
+}
+
+.dsh-ResizerTopRight {
+  right: -2px;
+  top: -2px;
+  cursor: nesw-resize;
+}
+
+.dsh-ResizerTopLeft {
+  left: -2px;
+  top: -2px;
+  cursor: nwse-resize;
+}
+
+.dsh-DashboardWidgetChild {
+  /*
+  width: 100%;
+  height: 100%;
+  */
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dsh-EditableWidget:focus .dsh-Resizer {
+  display: block;
+}
+
+.dsh-Canvas {
+  pointer-events: none;
+}
+
+.dsh-Canvas.dsh-FreeLayout {
+  background-image: linear-gradient(
+      to right,
+      var(--jp-border-color2) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, var(--jp-border-color2) 1px, transparent 1px);
+  background-color: var(--jp-cell-editor-background);
+  background-size: 10px 10px;
+}
+
+.dsh-Canvas.dsh-TiledLayout {
+  background-image: linear-gradient(
+      to right,
+      var(--jp-border-color2) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, var(--jp-border-color2) 1px, transparent 1px);
+  background-color: var(--jp-cell-editor-background);
+  background-size: 32px 32px;
+}
+
+.dsh-OnboardingGif {
+  position: absolute;
+  visibility: hidden;
+  object-fit: contain;
+  left: 0;
+  top: 0;
+}
+
+.dsh-DashboardToolbar {
+  padding: 2px;
+}
+
+.jp-Toolbar-item.dsh-ToolbarModeSwitcher .jp-select-wrapper.jp-mod-focused {
+  border: none;
+  box-shadow: none;
+}
+
+select.dsh-ToolbarSelector.jp-mod-styled {
+  height: 24px;
+  font-size: var(--jp-ui-font-size1);
+  line-height: 14px;
+  border-radius: 0;
+  display: block;
+  box-shadow: none;
+  border: none;
+}
+
+.dsh-ToolbarSelector.jp-mod-styled select {
+  height: 24px;
+  font-size: var(--jp-ui-font-size1);
+  line-height: 14px;
+  border-radius: 0;
+  display: block;
+  box-shadow: none;
+  border: none;
+}
+
+.dsh-DragImage {
+  box-shadow: var(--jp-elevation-z1);
+  outline: var(--jp-border-width) solid var(--jp-brand-color1);
+  outline-offset: calc(-1 * var(--jp-border-width));
 }

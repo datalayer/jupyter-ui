@@ -9,38 +9,51 @@ import { Drag } from './drag';
 import { Dashboard } from './dashboard';
 import { getNotebookId, getCellId, getNotebookById, getCellById } from './utils';
 import { Signal, ISignal } from '@lumino/signaling';
-import { Widgetstore, WidgetPosition } from './widgetstore';
+import { WidgetStore, WidgetPosition } from './widgetStore';
 import { DashboardLayout } from './layout';
 
 /**
  * The class name added to dashboard outputs
  */
-const DASHBOARD_WIDGET_CLASS = 'pr-DashboardWidget';
+const DASHBOARD_WIDGET_CLASS = 'dsh-DashboardWidget';
 
 /**
  * The class name for the widget drag mime.
  */
-const DASHBOARD_WIDGET_MIME = 'pr-DashboardWidgetMine';
+const DASHBOARD_WIDGET_MIME = 'dsh-DashboardWidgetMine';
 
 /**
  * The class name added to the children of dashboard outputs.
  */
-const DASHBOARD_WIDGET_CHILD_CLASS = 'pr-DashboardWidgetChild';
+const DASHBOARD_WIDGET_CHILD_CLASS = 'dsh-DashboardWidgetChild';
 
 /**
  * The class name added to editable dashboard outputs.
  */
-const EDITABLE_WIDGET_CLASS = 'pr-EditableWidget';
+const EDITABLE_WIDGET_CLASS = 'dsh-EditableWidget';
 
 /**
  * The class name added to markdown dashboard outputs.
  */
-const MARKDOWN_OUTPUT_CLASS = 'pr-MarkdownOutput';
+const MARKDOWN_OUTPUT_CLASS = 'dsh-MarkdownOutput';
 
 /**
  * The class name added to dashboard widget drag images.
  */
-const DRAG_IMAGE_CLASS = 'pr-DragImage';
+const DRAG_IMAGE_CLASS = 'dsh-DragImage';
+
+type ClickData = {
+  pressX: number;
+  pressY: number;
+  origWidth: number;
+  origHeight: number;
+  origLeft: number;
+  origTop: number;
+  target: HTMLElement;
+  cell: CodeCell | MarkdownCell;
+  widgetX: number;
+  widgetY: number;
+}
 
 /**
  * Widget to wrap delete/move/etc functionality of widgets in a dashboard (future).
@@ -51,15 +64,15 @@ export class DashboardWidget extends Widget {
 
     const { notebook, cell, cellId, notebookId, fit } = options;
 
-    this._notebook = notebook || null;
+    this._notebook = notebook!;
     this._cell = cell || null;
     this.id = DashboardWidget.createDashboardWidgetId();
 
     // Makes widget focusable.
     this.node.setAttribute('tabindex', '-1');
 
-    const _cellId = getCellId(cell);
-    const _notebookId = getNotebookId(notebook);
+    const _cellId = getCellId(cell!);
+    const _notebookId = getNotebookId(notebook!);
 
     if (_notebookId === undefined) {
       this.node.style.background = 'red';
@@ -89,7 +102,7 @@ export class DashboardWidget extends Widget {
 
       void this._notebook.context.ready.then(() => {
         let clone: Widget;
-        const cellType = cell.model.type;
+        const cellType = cell!.model.type;
         const container = document.createElement('div');
         let cloneNode: HTMLElement;
         let nodes: HTMLCollectionOf<Element>;
@@ -136,7 +149,7 @@ export class DashboardWidget extends Widget {
             this.fitContent();
           }
           // Make widget visible again.
-          this.node.style.opacity = null;
+          this.node.style.opacity = '';
           // Emit the ready signal.
           this._ready.emit(undefined);
         };
@@ -297,13 +310,13 @@ export class DashboardWidget extends Widget {
 
     const elem = target as HTMLElement;
     // Set mode to resize if the mousedown happened on a resizer.
-    if (elem.classList.contains('pr-Resizer')) {
+    if (elem.classList.contains('dsh-Resizer')) {
       this._mouseMode = 'resize';
-      if (elem.classList.contains('pr-ResizerTopRight')) {
+      if (elem.classList.contains('dsh-ResizerTopRight')) {
         this._selectedResizer = 'top-right';
-      } else if (elem.classList.contains('pr-ResizerTopLeft')) {
+      } else if (elem.classList.contains('dsh-ResizerTopLeft')) {
         this._selectedResizer = 'top-left';
-      } else if (elem.classList.contains('pr-ResizerBottomLeft')) {
+      } else if (elem.classList.contains('dsh-ResizerBottomLeft')) {
         this._selectedResizer = 'bottom-left';
       } else {
         this._selectedResizer = 'bottom-right';
@@ -374,7 +387,7 @@ export class DashboardWidget extends Widget {
       origHeight,
       origLeft,
       origTop
-    } = this._clickData;
+    } = this._clickData!;
 
     const deltaX = event.clientX - pressX;
     const deltaY = event.clientY - pressY;
@@ -407,7 +420,7 @@ export class DashboardWidget extends Widget {
     this.pos = { width, height, top, left };
 
     if (this.mode === 'grid-edit') {
-      (this.parent.layout as DashboardLayout).drawDropZone(this.pos, '#2b98f0');
+      (this.parent!.layout as DashboardLayout).drawDropZone(this.pos, '#2b98f0');
     }
     if (this.mode === 'free-edit' && this._fitToContent && !event.altKey) {
       this.fitContent();
@@ -418,13 +431,13 @@ export class DashboardWidget extends Widget {
    * Fit widget width/height to the width/height of the underlying content.
    */
   fitContent(): void {
-    const element = this._content.node.firstChild as HTMLElement;
+    const element = this._content!.node.firstChild as HTMLElement;
     // Pixels are added to prevent weird wrapping issues. Kind of a hack.
     this.pos = {
       width: element.clientWidth + 3,
       height: element.clientHeight + 2,
-      left: undefined,
-      top: undefined
+      left: 0,
+      top: 0
     };
   }
 
@@ -452,7 +465,7 @@ export class DashboardWidget extends Widget {
    *
    * @returns - an object containing the type of overlap and this widget.
    */
-  overlaps(_pos: Widgetstore.WidgetPosition): DashboardWidget.Overlap {
+  overlaps(_pos: WidgetStore.WidgetPosition): DashboardWidget.Overlap {
     const { left, top, width, height } = _pos;
     const pos = this.pos;
     const w = 0.5 * (width + pos.width);
@@ -493,8 +506,8 @@ export class DashboardWidget extends Widget {
       proposedAction: 'move',
       supportedActions: 'copy-move',
       source: this,
-      dragAdjustX: this._clickData.widgetX,
-      dragAdjustY: this._clickData.widgetY
+      dragAdjustX: this._clickData!.widgetX,
+      dragAdjustY: this._clickData!.widgetY
     });
 
     this._drag.mimeData.setData(DASHBOARD_WIDGET_MIME, this);
@@ -506,7 +519,7 @@ export class DashboardWidget extends Widget {
       if (this.isDisposed) {
         return;
       }
-      this.node.style.opacity = null;
+      this.node.style.opacity = '';
       this.node.style.pointerEvents = 'auto';
       this._drag = null;
       this._clickData = null;
@@ -520,7 +533,7 @@ export class DashboardWidget extends Widget {
     event.stopPropagation();
     event.preventDefault();
 
-    this.node.style.opacity = null;
+    this.node.style.opacity = '';
 
     if (this._mouseMode === 'resize' && this.parent !== undefined) {
       const pos = this.pos;
@@ -528,7 +541,7 @@ export class DashboardWidget extends Widget {
     }
 
     this._mouseMode = 'none';
-    (this.parent.layout as DashboardLayout).clearCanvas();
+    (this.parent!.layout as DashboardLayout).clearCanvas();
     window.removeEventListener('mouseup', this);
     window.removeEventListener('mousemove', this);
   }
@@ -560,7 +573,7 @@ export class DashboardWidget extends Widget {
   /**
    * Information sufficient to reconstruct the widget.
    */
-  get info(): Widgetstore.WidgetInfo {
+  get info(): WidgetStore.WidgetInfo {
     const pos = this.pos;
     return {
       pos,
@@ -575,14 +588,14 @@ export class DashboardWidget extends Widget {
    * The id of the cell the widget is generated from.
    */
   get cellId(): string {
-    return this._cellId || getCellId(this._cell);
+    return this._cellId || getCellId(this._cell!)!;
   }
 
   /**
    * The id of the notebook the widget is generated from.
    */
   get notebookId(): string {
-    return this._notebookId || getNotebookId(this._notebook);
+    return this._notebookId || getNotebookId(this._notebook!)!;
   }
 
   /**
@@ -599,7 +612,7 @@ export class DashboardWidget extends Widget {
    * The cell the widget is generated from.
    */
   get cell(): CodeCell | MarkdownCell {
-    return this._cell;
+    return this._cell!;
   }
 
   /**
@@ -618,7 +631,7 @@ export class DashboardWidget extends Widget {
           this._notebook.content.widgets,
           c => c === this._cell
         )
-      : this._index;
+      : this._index!;
   }
 
   /**
@@ -669,38 +682,26 @@ export class DashboardWidget extends Widget {
    * The content of the widget.
    */
   get content(): Widget {
-    return this._content;
+    return this._content!;
   }
   set content(newContent: Widget) {
-    this._content.dispose();
+    this._content?.dispose();
     this._content = newContent;
   }
-
   private _notebook: NotebookPanel;
-  private _notebookId: string;
-  private _index: number;
-  private _cell: CodeCell | MarkdownCell | null = null;
-  private _cellId: string;
+  private _notebookId?: string;
+  private _index?: number;
+  private _cell: CodeCell | MarkdownCell | null;
+  private _cellId?: string;
   private _ready = new Signal<this, void>(this);
   private _fitToContent = false;
   private _mouseMode: DashboardWidget.MouseMode = 'none';
   private _mode: Dashboard.Mode = 'grid-edit';
   private _drag: Drag | null = null;
-  private _clickData: {
-    pressX: number;
-    pressY: number;
-    origWidth: number;
-    origHeight: number;
-    origLeft: number;
-    origTop: number;
-    target: HTMLElement;
-    cell: CodeCell | MarkdownCell;
-    widgetX: number;
-    widgetY: number;
-  } | null = null;
+  private _clickData: ClickData | null = null;
   private _locked = false;
-  private _content: Widget;
-  private _selectedResizer: DashboardWidget.ResizerCorner;
+  private _content?: Widget;
+  private _selectedResizer?: DashboardWidget.ResizerCorner;
 }
 
 /**
@@ -711,7 +712,7 @@ export namespace DashboardWidget {
     /**
      * The notebook associated with the cloned output area.
      */
-    notebook: NotebookPanel;
+    notebook?: NotebookPanel;
 
     /**
      * The cell for which to clone the output area.
@@ -774,23 +775,23 @@ export namespace DashboardWidget {
    */
   export function createResizer(corner: ResizerCorner): HTMLElement {
     const resizer = document.createElement('div');
-    resizer.classList.add('pr-Resizer');
+    resizer.classList.add('dsh-Resizer');
 
     switch (corner) {
       case 'top-left':
-        resizer.classList.add('pr-ResizerTopLeft');
+        resizer.classList.add('dsh-ResizerTopLeft');
         break;
       case 'top-right':
-        resizer.classList.add('pr-ResizerTopRight');
+        resizer.classList.add('dsh-ResizerTopRight');
         break;
       case 'bottom-left':
-        resizer.classList.add('pr-ResizerBottomLeft');
+        resizer.classList.add('dsh-ResizerBottomLeft');
         break;
       case 'bottom-right':
-        resizer.classList.add('pr-ResizerBottomRight');
+        resizer.classList.add('dsh-ResizerBottomRight');
         break;
       default:
-        resizer.classList.add('pr-ResizerBottomRight');
+        resizer.classList.add('dsh-ResizerBottomRight');
         break;
     }
 
@@ -810,7 +811,7 @@ export namespace DashboardWidget {
    * @returns - a new dashboard widget.
    */
   export function createWidget(
-    options: Widgetstore.WidgetInfo,
+    options: WidgetStore.WidgetInfo,
     notebookTracker: INotebookTracker,
     fit = false
   ): DashboardWidget {

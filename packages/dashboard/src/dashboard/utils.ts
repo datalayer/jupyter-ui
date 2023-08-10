@@ -9,7 +9,7 @@ import { ArrayExt, toArray } from '@lumino/algorithm';
  * @param source - the notebook or cell containing the metadata.
  */
 export function getMetadata(source: NotebookPanel | Cell): any | undefined {
-  return source.model.metadata.get('presto');
+  return source.model?.getMetadata('presto');
 }
 
 export function updateMetadata(
@@ -18,9 +18,9 @@ export function updateMetadata(
 ): void {
   const oldMetadata = getMetadata(source);
   if (oldMetadata != null) {
-    source.model.metadata.set('presto', { ...oldMetadata, ...newValues });
+    source.model?.setMetadata('presto', { ...oldMetadata, ...newValues });
   } else {
-    source.model.metadata.set('presto', newValues);
+    source.model?.setMetadata('presto', newValues);
   }
 }
 /**
@@ -39,10 +39,10 @@ export function addNotebookId(notebook: NotebookPanel): string {
       return metadata.id;
     }
     id = UUID.uuid4();
-    notebook.model.metadata.set('presto', { ...metadata, id });
+    notebook.model?.setMetadata('presto', { ...metadata, id });
   } else {
     id = UUID.uuid4();
-    notebook.model.metadata.set('presto', { id });
+    notebook.model?.setMetadata('presto', { id });
   }
 
   return id;
@@ -93,10 +93,10 @@ export function addCellId(cell: Cell): string {
       return metadata.id;
     }
     id = UUID.uuid4();
-    cell.model.metadata.set('presto', { ...metadata, id });
+    cell.model.setMetadata('presto', { ...metadata, id });
   } else {
     id = UUID.uuid4();
-    cell.model.metadata.set('presto', { id });
+    cell.model.setMetadata('presto', { id });
   }
 
   return id;
