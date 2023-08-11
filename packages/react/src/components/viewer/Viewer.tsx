@@ -9,7 +9,7 @@ type Props = {
   outputs: boolean,
 }
 
-const Viewer = (props: Props) => {
+export const Viewer = (props: Props) => {
   const { nbformat, outputs } = props;
   const [model, setModel] = useState<INotebookContent>()
   useEffect(() => {

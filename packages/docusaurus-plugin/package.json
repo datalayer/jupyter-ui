@@ -22,7 +22,7 @@
     "directory": "packages/docusaurus-plugin"
   },
   "dependencies": {
-    "@datalayer/jupyter-react": "0.6.0",
+    "@datalayer/jupyter-react": "0.6.1",
     "@docusaurus/core": "2.4.0",
     "@docusaurus/types": "2.1.0"
   },
@@ -37,11 +37,11 @@
     "file-loader": "~5.0.2",
     "fs-extra": "^9.1.0",
     "process": "0.11.10",
-    "raw-loader": "~4.0.0",
+    "raw-loader": "4.0.2",
     "rimraf": "3.0.2",
     "stream-browserify": "2.0.2",
     "style-loader": "2.0.0",
-    "svg-url-loader": "~3.0.3",
+    "svg-url-loader": "7.1.1",
     "ts-loader": "8.0.3",
     "tslib": "^2.1.0",
     "typescript": "5.0.3",
