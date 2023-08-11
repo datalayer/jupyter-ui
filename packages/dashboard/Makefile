@@ -32,6 +32,12 @@ kill:
 warning:
 	echo "\x1b[34m\x1b[43mEnsure you have run \x1b[1;37m\x1b[41m conda deactivate \x1b[22m\x1b[34m\x1b[43m before invoking this.\x1b[0m"
 
+clean: ## clean
+	yarn clean
+
+build: ## build
+	yarn build
+
 publish: clean build ## publish
 	npm publish
 	echo open https://www.npmjs.com/package/@datalayer/jupyter-dashboard

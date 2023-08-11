@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyter-dashboard",
-  "version": "0.0.0",
+  "version": "0.0.4",
   "description": "🪐 🏄 Jupyter Dashboard.",
   "keywords": [
     "jupyter",
