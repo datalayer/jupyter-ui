@@ -124,10 +124,10 @@ const GalleryExample = () => {
             icon={CpuIcon}
             onSelect={e => {
               e.preventDefault();
-              setTab('IpyWidgets');
+              setTab('IPyWidgets');
             }}
           >
-            IpyWidgets
+            IPyWidgets
           </UnderlineNav.Item>
           <UnderlineNav.Item
             icon={AppsIcon}
@@ -201,7 +201,7 @@ const GalleryExample = () => {
             <LuminoComponent />
           </>
         )}
-        {tab === 'IpyWidgets' && (
+        {tab === 'IPyWidgets' && (
           <>
             <IPyWidgetsToolbar />
             <IPyWidgetsOutput state={state} view={view} />

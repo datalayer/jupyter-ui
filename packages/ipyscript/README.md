@@ -5,9 +5,9 @@
 [![Build Status](https://travis-ci.org/datalayer/ipyscript.svg?branch=master)](https://travis-ci.org/datalayer/ipyscript)
 [![codecov](https://codecov.io/gh/datalayer/ipyscript/branch/master/graph/badge.svg)](https://codecov.io/gh/datalayer/ipyscript)
 
-# 🪐 🐉 IpyScript
+# 🪐 🐉 IPyScript
 
-> IpyWidgets for PyScript.
+> IPyWidgets for PyScript.
 
 A Custom Jupyter Widget Library
 
