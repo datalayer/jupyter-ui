@@ -4,12 +4,12 @@ import { UUID, ReadonlyPartialJSONObject } from '@lumino/coreutils';
 import { ArrayExt, toArray } from '@lumino/algorithm';
 
 /**
- * Gets the presto metadata portion of a notebook or cell.
+ * Gets the jupyter_dashboard metadata portion of a notebook or cell.
  *
  * @param source - the notebook or cell containing the metadata.
  */
 export function getMetadata(source: NotebookPanel | Cell): any | undefined {
-  return source.model?.getMetadata('presto');
+  return source.model?.getMetadata('jupyter_dashboard');
 }
 
 export function updateMetadata(
@@ -18,9 +18,9 @@ export function updateMetadata(
 ): void {
   const oldMetadata = getMetadata(source);
   if (oldMetadata != null) {
-    source.model?.setMetadata('presto', { ...oldMetadata, ...newValues });
+    source.model?.setMetadata('jupyter_dashboard', { ...oldMetadata, ...newValues });
   } else {
-    source.model?.setMetadata('presto', newValues);
+    source.model?.setMetadata('jupyter_dashboard', newValues);
   }
 }
 /**
@@ -39,10 +39,10 @@ export function addNotebookId(notebook: NotebookPanel): string {
       return metadata.id;
     }
     id = UUID.uuid4();
-    notebook.model?.setMetadata('presto', { ...metadata, id });
+    notebook.model?.setMetadata('jupyter_dashboard', { ...metadata, id });
   } else {
     id = UUID.uuid4();
-    notebook.model?.setMetadata('presto', { id });
+    notebook.model?.setMetadata('jupyter_dashboard', { id });
   }
 
   return id;
@@ -93,10 +93,10 @@ export function addCellId(cell: Cell): string {
       return metadata.id;
     }
     id = UUID.uuid4();
-    cell.model.setMetadata('presto', { ...metadata, id });
+    cell.model.setMetadata('jupyter_dashboard', { ...metadata, id });
   } else {
     id = UUID.uuid4();
-    cell.model.setMetadata('presto', { id });
+    cell.model.setMetadata('jupyter_dashboard', { id });
   }
 
   return id;

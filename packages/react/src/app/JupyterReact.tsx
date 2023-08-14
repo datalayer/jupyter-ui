@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { ThemeProvider, BaseStyles, Box } from '@primer/react';
 import { UnderlineNav } from '@primer/react/drafts';
-import { ReactJsIcon as AboutIcon, NetworkIcon as PluginsIcon } from '@datalayer/icons-react';
+import { ReactJsIcon, BricksIcon } from '@datalayer/icons-react';
 import { ServerConnection } from '@jupyterlab/services';
 import AboutTab from './tabs/AboutTab';
-import PluginsTab from './tabs/PluginsTab';
+import ComponentsTab from './tabs/ComponentsTab';
 import { requestAPI } from '../jupyter/JupyterHandlers';
 
 const JupyterReact = (): JSX.Element => {
@@ -28,17 +28,17 @@ const JupyterReact = (): JSX.Element => {
           <Box style={{maxWidth: 700}}>
             <Box mb={3}>
               <UnderlineNav aria-label="jupyter-react">
-                <UnderlineNav.Item aria-current="page" icon={AboutIcon} onSelect={e => {e.preventDefault(); setTab(1);}}>
+                <UnderlineNav.Item aria-current="page" icon={ReactJsIcon} onSelect={e => {e.preventDefault(); setTab(1);}}>
                   About
                 </UnderlineNav.Item>
-                <UnderlineNav.Item icon={PluginsIcon} onSelect={e => {e.preventDefault(); setTab(2);}}>
-                  Plugins
+                <UnderlineNav.Item icon={BricksIcon} onSelect={e => {e.preventDefault(); setTab(2);}}>
+                  Components
                 </UnderlineNav.Item>
               </UnderlineNav>
             </Box>
             <Box m={3}>
               {(tab === 1) && <AboutTab version={version}/>}
-              {(tab === 2) && <PluginsTab/>}
+              {(tab === 2) && <ComponentsTab />}
             </Box>
           </Box>
         </BaseStyles>

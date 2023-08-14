@@ -550,9 +550,7 @@ export namespace DashboardDocument {
   }
 }
 
-export class DashboardDocumentFactory extends ABCWidgetFactory<
-  DashboardDocument
-> {
+export class DashboardDocumentFactory extends ABCWidgetFactory<DashboardDocument> {
   constructor(options: DashboardDocumentFactory.IOptions) {
     super(options);
     this._commandRegistry = options.commandRegistry;

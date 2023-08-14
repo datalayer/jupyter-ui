@@ -45,12 +45,12 @@ const extension: JupyterFrontEndPlugin<IDashboardTracker> = {
     // Define dashboard file type.
     const dashboardFiletype: Partial<DocumentRegistry.IFileType> = {
       name: 'dashboard',
-      displayName: 'Dashboard',
+      displayName: 'Jupyter Dashboard',
       contentType: 'file',
       extensions: ['.dashboard', '.dash'],
       fileFormat: 'text',
       icon: DashboardIcons.dashboardTeal,
-      iconLabel: 'Dashboard',
+      iconLabel: 'Jupyter Dashboard',
       mimeTypes: ['application/json']
     };
     // Add dashboard file type to the doc registry.
@@ -255,7 +255,7 @@ const extension: JupyterFrontEndPlugin<IDashboardTracker> = {
     launcher.add({
       command: CommandIDs.createNew,
       category: 'Datalayer',
-      rank: 11,
+      rank: 2,
     });
 
     return dashboardTracker;
@@ -509,13 +509,12 @@ function addCommands(
   });
 
   commands.addCommand(CommandIDs.createNew, {
-    label: 'Dashboard',
+    label: 'Jupyter Dashboard',
     icon: DashboardIcons.dashboardTeal,
     execute: async args => {
       // A new file is created and opened separately to override the default
       // opening behavior when there's a notebook and open the dashboard in a
       // split pane instead of a tab.
-
       const notebook = notebookTracker.currentWidget;
       const newModel = await docManager.newUntitled({
         ext: 'dash',
