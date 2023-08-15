@@ -6,11 +6,14 @@
 
 > Create and publish Dashboard from Jupyter.
 
+A [WYSIWYG](https://en.wikipedia.org/wiki/WYSIWYG) dashboard editor.
+
+<div align="center" style="text-align: center">
+  <img alt="Jupyter Dashboard Editor" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-dashboard-editor.gif" />
+</div>
+
 ```bash
 yarn
-#  "installConfig": {
-#    "hoistingLimits": "workspaces"
-#  },
 yarn build
 # open http://localhost:3063
 # open http://localhost:8686/api/jupyter/lab?token=60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6
