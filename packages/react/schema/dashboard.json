@@ -1,6 +1,6 @@
 {
-  "title": "Jupyter React Dashboard",
-  "description": "Jupyter React Dashboard Settings.",
+  "title": "Jupyter Dashboard",
+  "description": "Jupyter Dashboard Settings.",
   "type": "object",
   "properties": {
     "renderOnSave": {
@@ -12,6 +12,6 @@
   },
   "additionalProperties": false,
   "jupyter.lab.setting-icon-class": "jp-NotebookIcon",
-  "jupyter.lab.setting-icon-label": "Jupyter React Dashboard",
+  "jupyter.lab.setting-icon-label": "Jupyter Dashboard",
   "jupyter.lab.shortcuts": []
 }

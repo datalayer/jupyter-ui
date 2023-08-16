@@ -20,9 +20,10 @@ const NotebookModelChange = () => {
   const { injectableStore } = useJupyter();
   const [model, setModel] = useState<INotebookContent>(notebook1);
   const notebookModel = selectNotebookModel(NOTEBOOK_UID);
-  console.log('Current notebook model update', notebookModel?.model, notebookModel?.model?.toJSON());
+  console.log('Notebook Model', notebookModel?.model);
+  console.log('Notebook NbFormat', notebookModel?.model?.toJSON() as INotebookContent);
   const changeModel = () => {
-    console.log('Current notebook model from store', (injectableStore.getState() as IJupyterReactState).notebook.notebooks.get(NOTEBOOK_UID)?.model?.toJSON());
+    console.log('Notebook NbFormat from store', (injectableStore.getState() as IJupyterReactState).notebook.notebooks.get(NOTEBOOK_UID)?.model?.toJSON() as INotebookContent);
     setModel(notebook2);
   }
   return (

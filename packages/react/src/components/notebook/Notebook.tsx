@@ -43,8 +43,8 @@ export type INotebookProps = {
  */
 export const Notebook = (props: INotebookProps) => {
   const { serviceManager, defaultKernel, kernelManager, injectableStore } = useJupyter();
-  const { kernel, readOnly, nbgrader, uid: propsUid, height, maxHeight } = props;
-  const [uid] = useState(propsUid || newUuid());
+  const { kernel, readOnly, nbgrader, height, maxHeight, nbformat, Toolbar } = props;
+  const [uid] = useState(props.uid || newUuid());
   const effectiveKernel = kernel || defaultKernel;
   const dispatch = useDispatch();
   const portals = selectNotebookPortals(uid);
@@ -117,11 +117,11 @@ export const Notebook = (props: INotebookProps) => {
         dispatch(notebookActions.dispose(uid));
       }
     }
-  }, [uid, serviceManager, kernelManager, effectiveKernel]);
+  }, [uid, serviceManager, kernelManager, effectiveKernel, nbformat]);
   return (
     <div style={{ height, width: '100%', position: "relative" }} id="dla-Jupyter-Notebook">
       {
-        props.Toolbar && <props.Toolbar notebookId={props.uid} />
+        Toolbar && <Toolbar notebookId={props.uid} />
       }
       <Box className="box-notebook"
         sx={{
