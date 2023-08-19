@@ -5,7 +5,7 @@ import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extensi
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
 import { requireLoader } from "@jupyter-widgets/html-manager";
 import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/lib/output_renderers";
-import { IPyWidgetsClassicManager } from "../../jupyter/ipywidgets/IPyWidgetsClassicManager";
+import { IPyWidgetsManager } from "../../jupyter/ipywidgets/IPyWidgetsManager";
 import Kernel from "./../../jupyter/services/kernel/Kernel";
 // import { activateWidgetExtension } from "./../../jupyter/ipywidgets/IPyWidgetsJupyterLabPlugin";
 // import { activatePlotlyWidgetExtension } from "./../../jupyter/ipywidgets/plotly/JupyterlabPlugin";
@@ -15,7 +15,7 @@ export class OutputAdapter {
   private _renderers: IRenderMime.IRendererFactory[];
   private _outputArea: OutputArea;
   private _rendermime: RenderMimeRegistry;
-  private _iPyWidgetsClassicManager: IPyWidgetsClassicManager;
+  private _iPyWidgetsClassicManager: IPyWidgetsManager;
 
   public constructor(kernel: Kernel | undefined, outputs?: IOutput[]) {
     this._kernel = kernel;
@@ -25,7 +25,7 @@ export class OutputAdapter {
     this._rendermime = new RenderMimeRegistry({
       initialFactories: this._renderers,
     });
-    this._iPyWidgetsClassicManager = new IPyWidgetsClassicManager({ loader: requireLoader });
+    this._iPyWidgetsClassicManager = new IPyWidgetsManager({ loader: requireLoader });
     this._rendermime.addFactory({
       safe: false,
       mimeTypes: [WIDGET_MIMETYPE],

@@ -8,11 +8,7 @@ import CellSidebarNew from "../components/notebook/cell/sidebar/CellSidebarNew";
 
 import "./../../style/index.css";
 
-const div = document.createElement('div');
-document.body.appendChild(div);
-const root = createRoot(div)
-
-root.render(
+const GeoJson = () => (
   <Jupyter>
     <Notebook
       path="geojson-1.ipynb"
@@ -20,10 +16,18 @@ root.render(
         geojsonRenderer,
 //        vega3Renderer,
       ]}
+      uid="notebook-uid"
+      height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
       CellSidebar={CellSidebarNew}
       Toolbar={NotebookToolbar}
-      height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
-      uid="notebook-uid"
     />
   </Jupyter>
+)
+
+const div = document.createElement('div');
+document.body.appendChild(div);
+const root = createRoot(div)
+
+root.render(
+  <GeoJson/>
 );

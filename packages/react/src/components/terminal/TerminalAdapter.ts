@@ -12,8 +12,8 @@ export class TerminalAdapter {
     this.terminalPanel = new BoxPanel();
     this.terminalPanel.addClass('dla-JupyterLab-terminal');
     this.terminalPanel.spacing = 0;
-    const manager = new TerminalManager();
-    manager.startNew().then((terminalConnection) => {
+    const terminalManager = new TerminalManager();
+    terminalManager.startNew().then((terminalConnection) => {
       this.terminal = new Terminal(terminalConnection, { theme: 'light' });
       this.terminal.title.closable = true;
       this.terminalPanel.addWidget(this.terminal);

@@ -13,7 +13,9 @@ export class Kernel {
   private _kernelName: string;
   private _kernelConnection: Promise<JupyterKernel.IKernelConnection>;
   private _session: ISessionConnection;
-  private _id: string;
+  private _clientId: string;
+  private _serverId: string;
+  private _sessionId: string;
   private _info: KernelMessage.IInfoReply;
 
   public constructor(props: IKernelProps) {
@@ -33,27 +35,44 @@ export class Kernel {
     await sessionManager.ready;
     if (kernelModel) {
       console.log('Reusing a pre-existing kernel model.')
-      const runningModel = sessionManager.running().next().value;
-      this._session = sessionManager.connectTo({model: runningModel});
+      const model = sessionManager.running().next().value;
+      this._session = sessionManager.connectTo({model});
     }
     else {
       const randomName = UUID.uuid4();
-      this._session = await sessionManager.startNew({
-        name: randomName,
-        path: randomName,
-        type: this._kernelName,
-        kernel: {
-          name: this._kernelName,
+      this._session = await sessionManager.startNew(
+        {
+          name: randomName,
+          path: randomName,
+          type: this._kernelName,
+          kernel: {
+            name: this._kernelName,
+          },
         },
-      });
+        {
+          kernelConnectionOptions: {
+            handleComms: true,
+          }
+        }
+      );
     }
     this._info = await this._session.kernel!.info;
-    this._id = this._session.kernel!.id;  
+    this._clientId = this._session.kernel!.clientId;  
+    this._serverId = this._session.kernel!.id; 
+    this._sessionId = this._session.id;
     return this._session.kernel!;
   }
 
-  get id(): string {
-    return this._id;
+  get clientId(): string {
+    return this._clientId;
+  }
+
+  get serverId(): string {
+    return this._serverId;
+  }
+
+  get sessionId(): string {
+    return this._sessionId;
   }
 
   get info(): KernelMessage.IInfoReply {

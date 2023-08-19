@@ -13,14 +13,14 @@ document.body.appendChild(div);
 const root = createRoot(div)
 
 root.render(
-  <Jupyter lite={false} terminals={true}>
+  <Jupyter>
     <Notebook
-      path="test.ipynb"
+      path="ipywidgets.ipynb"
+      uid={NOTEBOOK_UID}
+      cellSidebarMargin={60}
+      height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
       CellSidebar={CellSidebarNew}
       Toolbar={NotebookToolbar}
-      height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
-      cellSidebarMargin={60}
-      uid={NOTEBOOK_UID}
     />
   </Jupyter>
 );

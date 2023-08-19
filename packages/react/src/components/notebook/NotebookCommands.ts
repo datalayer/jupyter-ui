@@ -1,7 +1,8 @@
+import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
 import { CommandRegistry } from "@lumino/commands";
 import { SessionContextDialogs } from "@jupyterlab/apputils";
 import { CompletionHandler } from "@jupyterlab/completer";
-import { NotebookActions, NotebookPanel, NotebookSearchProvider } from '@jupyterlab/notebook';
+import { NotebookActions, NotebookPanel, NotebookSearchProvider, NotebookTracker } from '@jupyterlab/notebook';
 import { SearchDocumentModel, SearchDocumentView } from '@jupyterlab/documentsearch';
 import { Widget } from '@lumino/widgets';
 import { nullTranslator } from '@jupyterlab/translation';
@@ -48,7 +49,8 @@ export const NotebookCommands = (
   commandRegistry: CommandRegistry,
   notebookPanel: NotebookPanel,
   completerHandler: CompletionHandler,
-  path: string,
+  tracker: NotebookTracker,
+  path?: string,
 ): void => {
   // Add commands.
   commandRegistry.addCommand(cmdIds.invoke, {
@@ -264,6 +266,26 @@ export const NotebookCommands = (
   commandRegistry.addCommand(cmdIds.toCode, {
     label: 'Change to Code Cell Type',
     execute: args => NotebookActions.changeCellType(notebookPanel.content, 'markdown')
+  });
+
+  function getCurrent(args: ReadonlyPartialJSONObject): NotebookPanel | null {
+    return tracker.currentWidget;
+  }
+  function isEnabled(): boolean {
+    return (
+      tracker.currentWidget !== null
+    );
+  }
+  commandRegistry.addCommand('run-selected-codecell', {
+    label: 'Run Cell',
+    execute: args => {
+      const current = getCurrent(args);
+      if (current) {
+        const { context, content } = current;
+        NotebookActions.run(content, context.sessionContext);
+      }
+    },
+    isEnabled,
   });
 
   const bindings = [

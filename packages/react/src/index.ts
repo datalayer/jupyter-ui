@@ -23,7 +23,7 @@ export * from './jupyter/services/kernel/Kernel';
 export * from './jupyter/services/kernel/KernelModel';
 
 // IPyWidgets.
-export * from './jupyter/ipywidgets/IPyWidgetsManager';
+export * from './jupyter/ipywidgets/IPyWidgetsViewManager';
 export * from './components/ipywidgets/IPyWidgetsOutput';
 
 // Cell.

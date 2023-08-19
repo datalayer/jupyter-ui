@@ -20,7 +20,6 @@ const Dashboard = () => (
       nbformat={notebook as INotebookContent}
       CellSidebar={CellSidebarDefault}
       Toolbar={NotebookToolbar}
-      ipywidgets='classic'
       height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
       cellSidebarMargin={120}
       uid="notebook-uid"

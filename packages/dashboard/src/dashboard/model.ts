@@ -5,12 +5,12 @@ import { DocumentRegistry, DocumentModel } from '@jupyterlab/docregistry';
 import { INotebookTracker } from '@jupyterlab/notebook';
 import { ContentsManager, Contents } from '@jupyterlab/services';
 import { IModelDB, IObservableJSON, ObservableJSON } from '@jupyterlab/observables';
+import { YFile } from '@jupyter/ydoc';
 import { IDashboardContent, IDashboardMetadata, DASHBOARD_VERSION, IOutputInfo } from './content';
 import { WidgetStore } from './widgetStore';
 import { Dashboard, } from './dashboard';
 import { getPathFromNotebookId, getNotebookById } from './utils';
 import { DashboardWidget } from './widget';
-import { YFile } from '@jupyter/ydoc';
 
 /**
  * The definition of a model object for a dashboard widget.

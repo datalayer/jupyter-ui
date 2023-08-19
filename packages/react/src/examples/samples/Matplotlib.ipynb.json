@@ -15,13 +15,13 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "from matplotlib import pyplot as plt\n",
-    "import numpy as np\n",
-    "%matplotlib inline\n",
-    "x = np.linspace(0, 1, 100)\n",
-    "y = 0.2+0.4*x**2+0.3*x*np.sin(15*x)+0.05*np.cos(50*x)\n",
-    "plt.figure(figsize=(6, 6))\n",
-    "plt.plot(x, y)\n",
+    "from matplotlib import pyplot as plt",
+    "import numpy as np",
+    "%matplotlib inline",
+    "x = np.linspace(0, 1, 100)",
+    "y = 0.2+0.4*x**2+0.3*x*np.sin(15*x)+0.05*np.cos(50*x)",
+    "plt.figure(figsize=(6, 6))",
+    "plt.plot(x, y)",
     "plt.show()"
    ]
   },
@@ -40,13 +40,13 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "from matplotlib import pyplot as plt\n",
-    "import numpy as np\n",
-    "%matplotlib widget\n",
-    "x = np.linspace(0, 1, 100)\n",
-    "y = 0.2+0.4*x**2+0.3*x*np.sin(15*x)+0.05*np.cos(50*x)\n",
-    "plt.figure(figsize=(6, 6))\n",
-    "plt.plot(x, y)\n",
+    "from matplotlib import pyplot as plt",
+    "import numpy as np",
+    "%matplotlib widget",
+    "x = np.linspace(0, 1, 100)",
+    "y = 0.2+0.4*x**2+0.3*x*np.sin(15*x)+0.05*np.cos(50*x)",
+    "plt.figure(figsize=(6, 6))",
+    "plt.plot(x, y)",
     "plt.show()"
    ]
   },
@@ -141,13 +141,13 @@
         ],
         [
          "Pan",
-         "Left button pans, Right button zooms\nx/y fixes axis, CTRL fixes aspect",
+         "Left button pans, Right button zoomsx/y fixes axis, CTRL fixes aspect",
          "arrows",
          "pan"
         ],
         [
          "Zoom",
-         "Zoom to rectangle\nx/y fixes axis",
+         "Zoom to rectanglex/y fixes axis",
          "square-o",
          "zoom"
         ],

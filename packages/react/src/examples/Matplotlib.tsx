@@ -5,20 +5,19 @@ import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from "./toolbars/NotebookToolbar";
 import CellSidebarDefault from "../components/notebook/cell/sidebar/CellSidebarDefault";
 
-import notebook from "./samples/NotebookMatplotlib.ipynb.json";
+import notebook from "./samples/Matplotlib.ipynb.json";
 
 import "./../../style/index.css";
 
-const NotebookMatplotlib = () => (
+const Matplotlib = () => (
   <Jupyter>
     <Notebook
-      ipywidgets="lab"
       nbformat={notebook as INotebookContent}
-      CellSidebar={CellSidebarDefault}
-      Toolbar={NotebookToolbar}
+      uid="notebook-matplotlib-uid"
       height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
       cellSidebarMargin={120}
-      uid="notebook-uid"
+      CellSidebar={CellSidebarDefault}
+      Toolbar={NotebookToolbar}
     />
   </Jupyter>
 )
@@ -28,5 +27,5 @@ document.body.appendChild(div);
 const root = createRoot(div)
 
 root.render(
-  <NotebookMatplotlib/>
+  <Matplotlib/>
 );

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch } from "react-redux";
 import TerminalAdapter from './TerminalAdapter';
 import { terminalActions, terminalReducer } from './TerminalState';
@@ -9,10 +9,8 @@ export const Terminal = () => {
   const { injectableStore } = useJupyter();
   const dispatch = useDispatch();
   const [adapter, setAdapter] = useState<TerminalAdapter>();
-  useMemo(() => {
-    injectableStore.inject('terminal', terminalReducer);
-  }, []);
   useEffect(() => {
+    injectableStore.inject('terminal', terminalReducer);
     const adapter = new TerminalAdapter();
     dispatch(terminalActions.update({ adapter }));
     setAdapter(adapter);

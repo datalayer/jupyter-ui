@@ -10,7 +10,7 @@ document.body.appendChild(div);
 const root = createRoot(div)
 
 root.render(
-  <Jupyter lite={false}>
+  <Jupyter>
     <Box as="h1">Jupyter Cells wrapped in a single Jupyter Context</Box>
     <Cell source="x=1"/>
     <Cell source="print(x)"/>

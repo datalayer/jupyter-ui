@@ -10,19 +10,14 @@ import notebook from "./samples/IPyWidgetsExample1.ipynb.json";
 import "./../../style/index.css";
 
 const IPyWidgets = () => (
-  <Jupyter
-    lite={false}
-    useRunningKernelIndex={-1}
-    startDefaultKernel={true}
-    terminals={false}
-  >
+  <Jupyter>
     <Notebook
       nbformat={notebook as INotebookContent}
-      CellSidebar={CellSidebarDefault}
-      Toolbar={NotebookToolbar} 
+      uid="notebook-uid"
       height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
       cellSidebarMargin={120}
-      uid="notebook-uid"
+      CellSidebar={CellSidebarDefault}
+      Toolbar={NotebookToolbar} 
     />
   </Jupyter>
 )

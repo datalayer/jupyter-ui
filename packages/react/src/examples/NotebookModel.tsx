@@ -10,19 +10,14 @@ import notebook from "./samples/NotebookExample1.ipynb.json";
 import "./../../style/index.css";
 
 const NotebookModel = () => (
-  <Jupyter
-    lite={false}
-    useRunningKernelIndex={-1}
-    startDefaultKernel={true}
-    terminals={false}
-  >
+  <Jupyter>
     <Notebook
       nbformat={notebook as INotebookContent}
+      uid="notebook-uid"
+      cellSidebarMargin={120}
+      height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
       CellSidebar={CellSidebarDefault}
       Toolbar={NotebookToolbar}
-      height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
-      cellSidebarMargin={120}
-      uid="notebook-uid"
     />
   </Jupyter>
 )

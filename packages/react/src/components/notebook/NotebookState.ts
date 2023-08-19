@@ -436,7 +436,7 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
     const notebooks = state.notebooks;
     const notebook = notebooks.get(kernelChange.uid);
     if (notebook) {
-      notebook.adapter?.changeKernel(kernelChange.kernel);
+      notebook.adapter?.assignKernel(kernelChange.kernel);
     }
     return {
       ...state,

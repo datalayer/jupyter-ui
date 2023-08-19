@@ -7,48 +7,22 @@
    "metadata": {},
    "outputs": [
     {
-     "data": {
-      "application/vnd.jupyter.widget-view+json": {
-       "model_id": "c686864a5ad44793b53c9cf1b112fafe",
-       "version_major": 2,
-       "version_minor": 0
+      "data": {
+        "application/vnd.jupyter.widget-view+json": {
+        "model_id": "c686864a5ad44793b53c9cf1b112fafe",
+        "version_major": 2,
+        "version_minor": 0
       },
       "text/plain": [
-       "IntSlider(value=0)"
       ]
-     },
-     "metadata": {},
-     "output_type": "display_data"
+    },
+    "metadata": {},
+    "output_type": "display_data"
     }
-   ],
+  ],
    "source": [
     "import ipywidgets as widgets",
-    "from IPython.display import display",
-    "w = widgets.IntSlider()"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 3,
-   "id": "3c41e451-a5eb-4494-87a0-94d39ccf9db8",
-   "metadata": {},
-   "outputs": [
-    {
-     "data": {
-      "application/vnd.jupyter.widget-view+json": {
-       "model_id": "c686864a5ad44793b53c9cf1b112fafe",
-       "version_major": 2,
-       "version_minor": 0
-      },
-      "text/plain": [
-      ]
-     },
-     "metadata": {},
-     "output_type": "display_data"
-    }
-   ],
-   "source": [
-    "display(w)"
+    "widgets.IntSlider()"
    ]
   },
   {
@@ -87,10 +61,10 @@
     }
    ],
    "source": [
-    "a = widgets.FloatText()\n",
-    "b = widgets.FloatSlider()\n",
-    "display(a,b)\n",
-    "\n",
+    "from IPython.display import display",
+    "a = widgets.FloatText()",
+    "b = widgets.FloatSlider()",
+    "display(a,b)",
     "mylink = widgets.jslink((a, 'value'), (b, 'value'))"
    ]
   },

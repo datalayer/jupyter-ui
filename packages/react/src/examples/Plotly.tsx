@@ -6,7 +6,7 @@ import CellSidebarDefault from "../components/notebook/cell/sidebar/CellSidebarD
 
 import "./../../style/index.css";
 
-const NotebookExample = () => (
+const Plotly = () => (
   <Jupyter
     lite={false}
     useRunningKernelIndex={-1}
@@ -15,11 +15,11 @@ const NotebookExample = () => (
   >
     <Notebook
       path="plotly.ipynb"
-      CellSidebar={CellSidebarDefault}
-      Toolbar={NotebookToolbar}
+      uid="notebook-plotly-uid"
       height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
       cellSidebarMargin={120}
-      uid="notebook-uid"
+      CellSidebar={CellSidebarDefault}
+      Toolbar={NotebookToolbar}
     />
   </Jupyter>
 )
@@ -29,5 +29,5 @@ document.body.appendChild(div);
 const root = createRoot(div)
 
 root.render(
-  <NotebookExample/>
+  <Plotly/>
 );

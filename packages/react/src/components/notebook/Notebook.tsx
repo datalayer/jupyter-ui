@@ -18,20 +18,20 @@ import { notebookActions, selectNotebookPortals, notebookEpics, notebookReducer 
 import './Notebook.css';
 
 export type INotebookProps = {
-  uid: string
-  path: string;
-  nbformat: INotebookContent;
-  kernel?: Kernel;
-  readOnly: boolean;
-  nbgrader: boolean;
-  ipywidgets: 'classic' | 'lab';
   cellMetadataPanel: boolean;
-  CellSidebar?: (props: CellSidebarProps) => JSX.Element;
   cellSidebarMargin: number;
-  Toolbar?: (props: any) => JSX.Element;
   height?: string;
+  ipywidgets: 'classic' | 'lab';
+  kernel?: Kernel;
   maxHeight?: string;
+  nbformat?: INotebookContent;
+  nbgrader: boolean;
+  path?: string;
+  readOnly: boolean;
   renderers: IRenderMime.IRendererFactory[];
+  uid: string
+  CellSidebar?: (props: CellSidebarProps) => JSX.Element;
+  Toolbar?: (props: any) => JSX.Element;
 }
 
 /**
@@ -192,13 +192,13 @@ export const Notebook = (props: INotebookProps) => {
 }
 
 Notebook.defaultProps = {
-  ipywidgets: 'classic',
-  readOnly: false,
-  nbgrader: false,
   cellMetadataPanel: false,
   cellSidebarMargin: 120,
   height: '100vh',
+  ipywidgets: 'lab',
   maxHeight: '100vh',
+  nbgrader: false,
+  readOnly: false,
   renderers: [],
 } as Partial<INotebookProps>;
 

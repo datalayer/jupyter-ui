@@ -11,7 +11,9 @@ function shim(regExp) {
 }
 
 const ENTRY = process.env.BUILD_APP == "true" ?
-  "./src/app/App" : "./src/examples/Viewer";
+    "./src/app/App"
+  :
+    "./src/examples/Matplotlib";
 
 const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == "true";
 const indexPage = IS_JUPYTER_SERVER_LOCAL ? "index-local.html" : "index.html";
@@ -94,6 +96,12 @@ module.exports = {
         loader: "babel-loader",
         options: {
           plugins: [
+            [
+              '@babel/plugin-transform-typescript',
+              {
+                allowDeclareFields: true,
+              },
+            ],
             "@babel/plugin-proposal-class-properties",
           ],
           presets: [

@@ -7,12 +7,7 @@ import CellSidebarDefault from "../components/notebook/cell/sidebar/CellSidebarD
 import "./../../style/index.css";
 
 const NotebookExample = () => (
-  <Jupyter
-    lite={false}
-    useRunningKernelIndex={-1}
-    startDefaultKernel={true}
-    terminals={false}
-  >
+  <Jupyter>
     <Notebook
       path="bqplot.ipynb"
       CellSidebar={CellSidebarDefault}

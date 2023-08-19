@@ -10,7 +10,7 @@ document.body.appendChild(div);
 const root = createRoot(div)
 
 root.render(
-  <Jupyter lite={false}>
+  <Jupyter>
     <Box as="h1">A Jupyter Cell</Box>
     <Cell />
   </Jupyter>

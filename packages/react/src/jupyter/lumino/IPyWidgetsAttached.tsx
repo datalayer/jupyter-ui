@@ -1,4 +1,4 @@
-import IPyWidgetsManager from '../../jupyter/ipywidgets/IPyWidgetsManager';
+import IPyWidgetsViewManager from '../ipywidgets/IPyWidgetsViewManager';
 
 type Props = {
   view: any,
@@ -14,7 +14,7 @@ const IPyWidgetsAttached = (props: Props) => {
   return (
     <div ref={ref => {
       if (ref) {
-        var manager = new IPyWidgetsManager(ref);
+        var manager = new IPyWidgetsViewManager(ref);
         manager
           .set_state(state)
           .then((models: any) =>

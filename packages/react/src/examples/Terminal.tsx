@@ -9,7 +9,7 @@ document.body.appendChild(div);
 const root = createRoot(div)
 
 root.render(
-  <Jupyter lite={false} terminals={true}>
+  <Jupyter terminals={true}>
     <Terminal />
   </Jupyter>
 );
