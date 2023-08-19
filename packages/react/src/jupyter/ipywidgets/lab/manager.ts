@@ -259,7 +259,6 @@ export abstract class LabWidgetManager
   }
 
   register(data: IWidgetRegistryData): void {
-    console.log('---register', data);
     this._registry.set(data.name, data.version, data.exports);
   }
 

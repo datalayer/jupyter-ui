@@ -9,6 +9,7 @@ import notebook from "./samples/Matplotlib.ipynb.json";
 
 import "./../../style/index.css";
 
+
 const Matplotlib = () => (
   <Jupyter>
     <Notebook

@@ -19,7 +19,7 @@
     "incremental": true,
     "jsx": "react-jsx",
     "jsxImportSource": "react",
-    "module": "ESNext",
+    "module": "ES2022",
     "moduleResolution": "node",
     "noEmitOnError": true,
     "noImplicitAny": true,

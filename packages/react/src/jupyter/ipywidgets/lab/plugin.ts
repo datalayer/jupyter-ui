@@ -1,17 +1,14 @@
-// Copyright (c) Jupyter Development Team.
-// Distributed under the terms of the Modified BSD License.
-
+import { DisposableDelegate } from '@lumino/disposable';
+import { AttachedProperty } from '@lumino/properties';
+// import { filter } from '@lumino/algorithm';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
-import * as nbformat from '@jupyterlab/nbformat';
-import { DocumentRegistry } from '@jupyterlab/docregistry';
-import { INotebookModel, INotebookTracker, Notebook, NotebookPanel } from '@jupyterlab/notebook';
+import { DocumentRegistry, Context } from '@jupyterlab/docregistry';
+import { INotebookModel, INotebookTracker, Notebook, NotebookPanel, NotebookTracker } from '@jupyterlab/notebook';
 import { IMainMenu } from '@jupyterlab/mainmenu';
 import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
 import { ILoggerRegistry, LogLevel } from '@jupyterlab/logconsole';
 import { CodeCell } from '@jupyterlab/cells';
-// import { filter } from '@lumino/algorithm';
-import { DisposableDelegate } from '@lumino/disposable';
-import { AttachedProperty } from '@lumino/properties';
+import * as nbformat from '@jupyterlab/nbformat';
 import { WidgetRenderer } from './renderer';
 import { WidgetManager, WIDGET_VIEW_MIMETYPE } from './manager';
 import { OutputModel, OutputView, OUTPUT_WIDGET_VERSION } from './output';
@@ -36,10 +33,8 @@ const SETTINGS: WidgetManager.Settings = { saveState: false };
 /**
  * Iterate through all widget renderers in a notebook.
  */
-function* widgetRenderers(
-  nb: Notebook
-): Generator<WidgetRenderer, void, unknown> {
-  for (const cell of nb.widgets) {
+function* widgetRenderers(notebook: Notebook): Generator<WidgetRenderer, void, unknown> {
+  for (const cell of notebook.widgets) {
     if (cell.model.type === 'code') {
       for (const codecell of (cell as CodeCell).outputArea.widgets) {
         for (const output of Array.from(codecell.children())) {
@@ -54,10 +49,7 @@ function* widgetRenderers(
 
 /**
  * Iterate through all matching linked output views
-function* outputViews(
-  app: JupyterFrontEnd,
-  path: string
-): Generator<WidgetRenderer, void, unknown> {
+function* outputViews(app: JupyterFrontEnd, path: string): Generator<WidgetRenderer, void, unknown> {
   const linkedViews = filter(
     app.shell.widgets(),
     (w) => w.id.startsWith('LinkedOutputView-') && (w as any).path === path
@@ -80,6 +72,33 @@ function* chain<T>(
     yield* it;
   }
 }
+
+const bindUnhandledIOPubMessageSignal = (notebookPanel: NotebookPanel, loggerRegistry: ILoggerRegistry | null): void => {
+  if (!loggerRegistry) {
+    return;
+  }
+  const widgetManager = Private.widgetManagerProperty.get(notebookPanel.context);
+  if (widgetManager) {
+    widgetManager.onUnhandledIOPubMessage.connect(
+      (sender: WidgetManager, msg: KernelMessage.IIOPubMessage) => {
+        const logger = loggerRegistry.getLogger(notebookPanel.context.path);
+        let level: LogLevel = 'warning';
+        if (
+          KernelMessage.isErrorMsg(msg) ||
+          (KernelMessage.isStreamMsg(msg) && msg.content.name === 'stderr')
+        ) {
+          level = 'error';
+        }
+        const data: nbformat.IOutput = {
+          ...msg.content,
+          output_type: msg.header.msg_type,
+        };
+        logger.rendermime = notebookPanel.content.rendermime;
+        logger.log({ type: 'output', data, level });
+      }
+    );
+  }
+};
 
 export function registerWidgetManager(
   context: DocumentRegistry.IContext<INotebookModel>,
@@ -113,13 +132,39 @@ export function registerWidgetManager(
   });
 }
 
+export const externalIPyWidgetsPlugin = (context: Context<INotebookModel>, notebookTracker: NotebookTracker) => {
+  requireLoader("jupyter-matplotlib", "0.11.3").then((mod) => {
+    const exports = { ...mod };
+    delete exports['MODULE_NAME'];
+    delete exports['MODULE_VERSION'];
+    const data = {
+      name: mod.MODULE_NAME,
+      version: mod.MODULE_VERSION,
+      exports,
+    };
+    WIDGET_REGISTRY.push(data);
+    notebookTracker.forEach((notebookPanel) => {
+      const widgetManager = Private.widgetManagerProperty.get(context);
+      widgetManager!.register(data);
+      registerWidgetManager(
+        notebookPanel.context,
+        notebookPanel.content.rendermime,
+        chain(
+          widgetRenderers(notebookPanel.content),
+  //          outputViews(app, panel.context.path)
+        )
+      );
+      bindUnhandledIOPubMessageSignal(notebookPanel, null);
+    });
+  });
+}
+
 /**
  * The widget manager provider.
  */
-export const managerPlugin =
-  {
-    activate: activateWidgetExtension,
-  };
+export const managerPlugin = {
+  activate: activateWidgetExtension,
+};
 
 /**
  * Activate the widget extension.
@@ -133,33 +178,6 @@ function activateWidgetExtension(
   translator: ITranslator | null
 ): base.IJupyterWidgetRegistry {
 
-  const bindUnhandledIOPubMessageSignal = (nb: NotebookPanel): void => {
-    if (!loggerRegistry) {
-      return;
-    }
-
-    const widgetManager = Private.widgetManagerProperty.get(nb.context);
-    if (widgetManager) {
-      widgetManager.onUnhandledIOPubMessage.connect(
-        (sender: WidgetManager, msg: KernelMessage.IIOPubMessage) => {
-          const logger = loggerRegistry.getLogger(nb.context.path);
-          let level: LogLevel = 'warning';
-          if (
-            KernelMessage.isErrorMsg(msg) ||
-            (KernelMessage.isStreamMsg(msg) && msg.content.name === 'stderr')
-          ) {
-            level = 'error';
-          }
-          const data: nbformat.IOutput = {
-            ...msg.content,
-            output_type: msg.header.msg_type,
-          };
-          logger.rendermime = nb.content.rendermime;
-          logger.log({ type: 'output', data, level });
-        }
-      );
-    }
-  };
   // Add a placeholder widget renderer.
   rendermime.addFactory(
     {
@@ -170,44 +188,30 @@ function activateWidgetExtension(
     -10
   );
 
-  requireLoader("jupyter-matplotlib", "0.11.3").then((mod) => {
-
-    const exports = {...mod};
-    console.log('---', exports)
-    delete exports['MODULE_NAME'];
-    delete exports['MODULE_VERSION'];
-    WIDGET_REGISTRY.push({
-      name: mod.MODULE_NAME,
-      version: mod.MODULE_VERSION,
-      exports,
+  if (tracker !== null) {
+    tracker.forEach((notebookPanel) => {
+      registerWidgetManager(
+        notebookPanel.context,
+        notebookPanel.content.rendermime,
+        chain(
+          widgetRenderers(notebookPanel.content),
+//          outputViews(app, panel.context.path)
+        )
+      );
+      bindUnhandledIOPubMessageSignal(notebookPanel, loggerRegistry);
     });
-
-    if (tracker !== null) {
-      tracker.forEach((panel) => {
-        registerWidgetManager(
-          panel.context,
-          panel.content.rendermime,
-          chain(
-            widgetRenderers(panel.content),
-  //          outputViews(app, panel.context.path)
-          )
-        );
-        bindUnhandledIOPubMessageSignal(panel);
-      });
-      tracker.widgetAdded.connect((sender, panel) => {
-        registerWidgetManager(
-          panel.context,
-          panel.content.rendermime,
-          chain(
-            widgetRenderers(panel.content),
-  //          outputViews(app, panel.context.path)
-          )
-        );
-        bindUnhandledIOPubMessageSignal(panel);
-      });
-    }
-  
-  });
+    tracker.widgetAdded.connect((sender, notebookPanel) => {
+      registerWidgetManager(
+        notebookPanel.context,
+        notebookPanel.content.rendermime,
+        chain(
+          widgetRenderers(notebookPanel.content),
+//          outputViews(app, panel.context.path)
+        )
+      );
+      bindUnhandledIOPubMessageSignal(notebookPanel, loggerRegistry);
+    });
+  }
 
   if (menu) {
     menu.settingsMenu.addGroup([

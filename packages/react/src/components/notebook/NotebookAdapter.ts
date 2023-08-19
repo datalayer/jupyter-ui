@@ -25,7 +25,7 @@ import { INotebookProps } from './Notebook';
 import { NotebookCommands } from './NotebookCommands';
 import { IPyWidgetsManager } from "../../jupyter/ipywidgets/IPyWidgetsManager";
 import getMarked from './marked/marked';
-import { managerPlugin, baseWidgetsPlugin, controlWidgetsPlugin, outputWidgetPlugin } from "../../jupyter/ipywidgets/lab/plugin";
+import { managerPlugin, baseWidgetsPlugin, controlWidgetsPlugin, outputWidgetPlugin, externalIPyWidgetsPlugin } from "../../jupyter/ipywidgets/lab/plugin";
 // import { activateWidgetExtension } from "../../jupyter/ipywidgets/lab2/IPyWidgetsJupyterLab";
 // import { activatePlotlyWidgetExtension } from "./../../jupyter/ipywidgets/plotly/JupyterlabPlugin";
 
@@ -222,6 +222,7 @@ export class NotebookAdapter {
       }
     });
     /*
+    // Alternative way to create a NotebookPanel.
     const content = new Notebook({
       rendermime: this._rendermime!,
       contentFactory,
@@ -246,6 +247,10 @@ export class NotebookAdapter {
         ) => {
           this._iPyWidgetsClassicManager?.registerWithKernel(args.newValue);
         });
+        break;
+      }
+      case 'lab': {
+        externalIPyWidgetsPlugin(this._context, this._tracker)
         break;
       }
     }
