@@ -9,12 +9,12 @@ import notebook from "./samples/Matplotlib.ipynb.json";
 
 import "./../../style/index.css";
 
-
 const Matplotlib = () => (
   <Jupyter>
     <Notebook
       nbformat={notebook as INotebookContent}
       uid="notebook-matplotlib-uid"
+      externalIPyWidgets={["jupyter-matplotlib:0.11.3"]}
       height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
       cellSidebarMargin={120}
       CellSidebar={CellSidebarDefault}

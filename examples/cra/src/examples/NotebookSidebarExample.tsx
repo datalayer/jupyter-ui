@@ -12,9 +12,8 @@ export default function NotebookSidebarComponent() {
         <Box sx={{width: '100%'}}>
           <NotebookToolbar notebookId={NOTEBOOK_UID} />
           <Notebook
-            uid={NOTEBOOK_UID}
             path="ping.ipynb"
-            ipywidgets="lab"
+            uid={NOTEBOOK_UID}
             CellSidebar={CellSidebar}
           />
         </Box>

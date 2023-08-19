@@ -15,7 +15,7 @@ const Example = () => {
     <Jupyter collaborative={false} terminals={false}>
       <Layers />
       <NotebookSimpleToolbar notebookId={NOTEBOOK_UID} />
-      <Notebook uid={NOTEBOOK_UID} path="ping.ipynb" ipywidgets="classic" />
+      <Notebook uid={NOTEBOOK_UID} path="ping.ipynb" />
     </Jupyter>
   );
 };

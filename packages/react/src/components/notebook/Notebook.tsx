@@ -22,6 +22,7 @@ export type INotebookProps = {
   cellSidebarMargin: number;
   height?: string;
   ipywidgets: 'classic' | 'lab';
+  externalIPyWidgets?: string[];
   kernel?: Kernel;
   maxHeight?: string;
   nbformat?: INotebookContent;

@@ -231,7 +231,6 @@ const GalleryExample = () => {
             <Notebook
               uid={NOTEBOOK_UID}
               path="ping.ipynb"
-              ipywidgets="classic"
               CellSidebar={CellSidebar}
             />
           </>

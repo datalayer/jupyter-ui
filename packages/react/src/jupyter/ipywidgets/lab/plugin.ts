@@ -132,30 +132,34 @@ export function registerWidgetManager(
   });
 }
 
-export const externalIPyWidgetsPlugin = (context: Context<INotebookModel>, notebookTracker: NotebookTracker) => {
-  requireLoader("jupyter-matplotlib", "0.11.3").then((mod) => {
-    const exports = { ...mod };
-    delete exports['MODULE_NAME'];
-    delete exports['MODULE_VERSION'];
-    const data = {
-      name: mod.MODULE_NAME,
-      version: mod.MODULE_VERSION,
-      exports,
-    };
-    WIDGET_REGISTRY.push(data);
-    notebookTracker.forEach((notebookPanel) => {
-      const widgetManager = Private.widgetManagerProperty.get(context);
-      widgetManager!.register(data);
-      registerWidgetManager(
-        notebookPanel.context,
-        notebookPanel.content.rendermime,
-        chain(
-          widgetRenderers(notebookPanel.content),
-  //          outputViews(app, panel.context.path)
-        )
-      );
-      bindUnhandledIOPubMessageSignal(notebookPanel, null);
+export const externalIPyWidgetsPlugin = (context: Context<INotebookModel>, notebookTracker: NotebookTracker, ipywidgets: string[]) => {
+  const loadIPyWidget = (name: string, version: string ) => {
+    requireLoader(name, version).then((mod) => {
+      const exports = { ...mod };
+      const data = {
+        name,
+        version,
+        exports,
+      };
+      WIDGET_REGISTRY.push(data);
+      notebookTracker.forEach((notebookPanel) => {
+        const widgetManager = Private.widgetManagerProperty.get(context);
+        widgetManager!.register(data);
+        registerWidgetManager(
+          notebookPanel.context,
+          notebookPanel.content.rendermime,
+          chain(
+            widgetRenderers(notebookPanel.content),
+    //          outputViews(app, panel.context.path)
+          )
+        );
+        bindUnhandledIOPubMessageSignal(notebookPanel, null);
+      });
     });
+  };
+  ipywidgets.forEach(ipywidget => {
+    const splits = ipywidget.split(":");
+    loadIPyWidget(splits[0], splits[1]);
   });
 }
 

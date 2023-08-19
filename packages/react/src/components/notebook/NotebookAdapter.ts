@@ -33,41 +33,44 @@ const FALLBACK_PATH = "ping.ipynb"
 
 export class NotebookAdapter {
   private _boxPanel: BoxPanel;
-  private _notebookPanel?: NotebookPanel;
-  private _uid: string;
-  private _serviceManager: ServiceManager;
   private _commandRegistry: CommandRegistry;
-  private _path?: string;
-  private _nbformat?: INotebookContent;
-  private _tracker?: NotebookTracker;
-  private _kernel: Kernel;
-  private _store?: Store;
-  private _ipywidgets: 'lab' | 'classic';
-  private _iPyWidgetsClassicManager?: IPyWidgetsManager;
-  private _CellSidebar?: (props: any) => JSX.Element;
-  private _nbgrader: boolean;
-  private _readOnly: boolean;
   private _context?: Context<INotebookModel>;
+  private _externalIPyWidgets?: string[];
+  private _iPyWidgetsClassicManager?: IPyWidgetsManager;
+  private _ipywidgets: 'lab' | 'classic';
+  private _kernel: Kernel;
+  private _nbformat?: INotebookContent;
+  private _nbgrader: boolean;
+  private _notebookPanel?: NotebookPanel;
+  private _path?: string;
+  private _readOnly: boolean;
   private _renderers: IRenderMime.IRendererFactory[];
   private _rendermime?: RenderMimeRegistry;
+  private _serviceManager: ServiceManager;
+  private _store?: Store;
+  private _tracker?: NotebookTracker;
+  private _uid: string;
+  private _CellSidebar?: (props: any) => JSX.Element;
 
   constructor(props: INotebookProps, store: any, serviceManager: ServiceManager) {
-    this._path = props.path;
-    this._store = store;
-    this._serviceManager = serviceManager;
-    this._nbformat = props.nbformat;
-    this._CellSidebar = props.CellSidebar;
-    this._nbgrader = props.nbgrader;
-    this._readOnly = props.readOnly;
+    this._externalIPyWidgets = props.externalIPyWidgets;
     this._ipywidgets = props.ipywidgets;
     this._kernel = props.kernel!;
-    this._uid = props.uid;
+    this._nbformat = props.nbformat;
+    this._nbgrader = props.nbgrader;
+    this._path = props.path;
+    this._readOnly = props.readOnly;
     this._renderers = props.renderers;
+    this._serviceManager = serviceManager;
+    this._store = store;
+    this._uid = props.uid;
+    this._CellSidebar = props.CellSidebar;
+    //
     this._boxPanel = new BoxPanel();
     this._boxPanel.addClass('dla-Jupyter-Notebook');
     this._boxPanel.spacing = 0;
     this._commandRegistry = new CommandRegistry();
-//    this.loadNotebook = this.loadNotebook.bind(this);
+    //
     this.loadNotebook();
   }
 
@@ -250,7 +253,9 @@ export class NotebookAdapter {
         break;
       }
       case 'lab': {
-        externalIPyWidgetsPlugin(this._context, this._tracker)
+        if (this._externalIPyWidgets) {
+          externalIPyWidgetsPlugin(this._context, this._tracker, this._externalIPyWidgets);
+        }
         break;
       }
     }

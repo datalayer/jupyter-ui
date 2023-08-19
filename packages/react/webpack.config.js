@@ -13,7 +13,7 @@ function shim(regExp) {
 const ENTRY = process.env.BUILD_APP == "true" ?
     "./src/app/App"
   :
-    "./src/examples/Matplotlib";
+    "./src/examples/Bqplot";
 
 const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == "true";
 const indexPage = IS_JUPYTER_SERVER_LOCAL ? "index-local.html" : "index.html";

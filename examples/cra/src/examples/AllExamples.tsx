@@ -100,7 +100,9 @@ const AllExample = () => {
       <FileBrowser />
       <FileBrowserLab />
       <NotebookToolbar notebookId={NOTEBOOK_UID} />
-      <Notebook uid={NOTEBOOK_UID} path="ping.ipynb" ipywidgets="classic" />
+      <Notebook
+         uid={NOTEBOOK_UID} path="ping.ipynb"
+      />
       <SettingsToolbar />
       <Settings />
       <LuminoComponent />

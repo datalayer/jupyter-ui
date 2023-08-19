@@ -10,11 +10,11 @@ const NotebookExample = () => (
   <Jupyter>
     <Notebook
       path="bokeh.ipynb"
-      CellSidebar={CellSidebarDefault}
-      Toolbar={NotebookToolbar}
       height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
       cellSidebarMargin={120}
       uid="notebook-uid"
+      CellSidebar={CellSidebarDefault}
+      Toolbar={NotebookToolbar}
     />
   </Jupyter>
 )

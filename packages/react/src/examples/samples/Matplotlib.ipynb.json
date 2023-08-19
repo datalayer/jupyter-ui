@@ -15,9 +15,9 @@
    "metadata": {},
    "outputs": [],
    "source": [
+    "%matplotlib inline",
     "from matplotlib import pyplot as plt",
     "import numpy as np",
-    "%matplotlib inline",
     "x = np.linspace(0, 1, 100)",
     "y = 0.2+0.4*x**2+0.3*x*np.sin(15*x)+0.05*np.cos(50*x)",
     "plt.figure(figsize=(6, 6))",

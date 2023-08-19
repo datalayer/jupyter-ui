@@ -6,15 +6,16 @@ import CellSidebarDefault from "../components/notebook/cell/sidebar/CellSidebarD
 
 import "./../../style/index.css";
 
-const NotebookExample = () => (
+const Bqplot = () => (
   <Jupyter>
     <Notebook
       path="bqplot.ipynb"
-      CellSidebar={CellSidebarDefault}
-      Toolbar={NotebookToolbar}
+      uid="notebook-uid"
+      externalIPyWidgets={["bqplot:0.5.42"]}
       height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
       cellSidebarMargin={120}
-      uid="notebook-uid"
+      CellSidebar={CellSidebarDefault}
+      Toolbar={NotebookToolbar}
     />
   </Jupyter>
 )
@@ -24,5 +25,5 @@ document.body.appendChild(div);
 const root = createRoot(div)
 
 root.render(
-  <NotebookExample/>
+  <Bqplot/>
 );
