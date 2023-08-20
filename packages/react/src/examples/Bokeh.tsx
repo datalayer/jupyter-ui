@@ -6,13 +6,13 @@ import CellSidebarDefault from "../components/notebook/cell/sidebar/CellSidebarD
 
 import "./../../style/index.css";
 
-const NotebookExample = () => (
+const Bokeh = () => (
   <Jupyter>
     <Notebook
       path="bokeh.ipynb"
+      uid="notebook-bokeh-uid"
       height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
       cellSidebarMargin={120}
-      uid="notebook-uid"
       CellSidebar={CellSidebarDefault}
       Toolbar={NotebookToolbar}
     />
@@ -24,5 +24,5 @@ document.body.appendChild(div);
 const root = createRoot(div)
 
 root.render(
-  <NotebookExample/>
+  <Bokeh/>
 );

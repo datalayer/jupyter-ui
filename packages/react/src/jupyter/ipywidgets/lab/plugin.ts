@@ -16,6 +16,8 @@ import { KernelMessage } from '@jupyterlab/services';
 import { ITranslator } from '@jupyterlab/translation';
 import { requireLoader } from "@jupyter-widgets/html-manager";
 import * as base from '@jupyter-widgets/base';
+import { BundledIPyWidgets, ExternalIPyWidgets } from '../../../components/notebook/Notebook';
+
 // We import only the version from the specific module in controls so that the
 // controls code can be split and dynamically loaded in webpack.
 import { JUPYTER_CONTROLS_VERSION } from '@jupyter-widgets/controls/lib/version';
@@ -132,10 +134,10 @@ export function registerWidgetManager(
   });
 }
 
-export const externalIPyWidgetsPlugin = (context: Context<INotebookModel>, notebookTracker: NotebookTracker, ipywidgets: string[]) => {
+export const externalIPyWidgetsPlugin = (context: Context<INotebookModel>, notebookTracker: NotebookTracker, ipywidgets: ExternalIPyWidgets[]) => {
   const loadIPyWidget = (name: string, version: string ) => {
-    requireLoader(name, version).then((mod) => {
-      const exports = { ...mod };
+    requireLoader(name, version).then((module) => {
+      const exports = { ...module };
       const data = {
         name,
         version,
@@ -158,8 +160,35 @@ export const externalIPyWidgetsPlugin = (context: Context<INotebookModel>, noteb
     });
   };
   ipywidgets.forEach(ipywidget => {
-    const splits = ipywidget.split(":");
-    loadIPyWidget(splits[0], splits[1]);
+    loadIPyWidget(ipywidget.name, ipywidget.version);
+  });
+}
+
+export const bundledIPyWidgetsPlugin = (context: Context<INotebookModel>, notebookTracker: NotebookTracker, ipywidgets: BundledIPyWidgets[]) => {
+  const loadIPyWidget = (name: string, version: string, module: any) => {
+    const exports = { ...module };
+    const data = {
+      name,
+      version,
+      exports,
+    };
+    WIDGET_REGISTRY.push(data);
+    notebookTracker.forEach((notebookPanel) => {
+      const widgetManager = Private.widgetManagerProperty.get(context);
+      widgetManager!.register(data);
+      registerWidgetManager(
+        notebookPanel.context,
+        notebookPanel.content.rendermime,
+        chain(
+          widgetRenderers(notebookPanel.content),
+  //          outputViews(app, panel.context.path)
+        )
+      );
+      bindUnhandledIOPubMessageSignal(notebookPanel, null);
+    });
+  };
+  ipywidgets.forEach(ipywidget => {
+    loadIPyWidget(ipywidget.name, ipywidget.version, ipywidget.module);
   });
 }
 

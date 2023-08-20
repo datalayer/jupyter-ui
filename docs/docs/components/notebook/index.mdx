@@ -22,11 +22,31 @@ This is what it takes to create a Notebook.
 </Jupyter>
 ```
 
+For IPyWidgets, use the following properties:
+
+- `ipywidgets`: `lab` or `classic` (deprecated, will be soon removed)
+- `bundledIPyWidgets`: List of module name, version and exports.
+- `externalIPyWidgets`: List of module name and version to be loaded from public CDNs.
+
+Here is a complete list of the available Notebook properties.
+
 ```jsx
 export type INotebookProps = {
-  path: string;
-  ipywidgets?: 'classic' | 'modern';
-  sidebarComponent: (props: any) => JSX.Element;
-  sidebarMargin: number;
+  cellMetadataPanel: boolean;
+  cellSidebarMargin: number;
+  height?: string;
+  ipywidgets: 'classic' | 'lab';
+  bundledIPyWidgets?: BundledIPyWidgets[];
+  externalIPyWidgets?: ExternalIPyWidgets[];
+  kernel?: Kernel;
+  maxHeight?: string;
+  nbformat?: INotebookContent;
+  nbgrader: boolean;
+  path?: string;
+  readOnly: boolean;
+  renderers: IRenderMime.IRendererFactory[];
+  uid: string
+  CellSidebar?: (props: CellSidebarProps) => JSX.Element;
+  Toolbar?: (props: any) => JSX.Element;
 }
 ```

@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import { rendererFactory as geojsonRenderer } from '@jupyterlab/geojson-extension';
+import { rendererFactory as vega3Renderer } from '@jupyterlab/vega3-extension';
 import Jupyter from '../jupyter/Jupyter';
 import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from "./toolbars/NotebookToolbar";
@@ -7,13 +7,13 @@ import CellSidebarNew from "../components/notebook/cell/sidebar/CellSidebarNew";
 
 import "./../../style/index.css";
 
-const GeoJson = () => (
+const Vega = () => (
   <Jupyter>
     <Notebook
-      path="renderers/geojson-1.ipynb"
-      uid="notebook-geojson-uid"
+      path="vega/Vega.ipynb"
+      uid="notebook-vega-uid"
       renderers={[
-        geojsonRenderer,
+        vega3Renderer,
       ]}
       height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
       CellSidebar={CellSidebarNew}
@@ -27,5 +27,5 @@ document.body.appendChild(div);
 const root = createRoot(div)
 
 root.render(
-  <GeoJson/>
+  <Vega/>
 );

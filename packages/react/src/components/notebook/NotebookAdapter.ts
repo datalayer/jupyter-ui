@@ -21,11 +21,11 @@ import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/l
 import { Kernel } from "./../../jupyter/services/kernel/Kernel";
 import JupyterReactContentFactory from './content/JupyterReactContentFactory';
 import JupyterReactNotebookModelFactory from './model/JupyterReactNotebookModelFactory';
-import { INotebookProps } from './Notebook';
+import { INotebookProps, ExternalIPyWidgets, BundledIPyWidgets } from './Notebook';
 import { NotebookCommands } from './NotebookCommands';
 import { IPyWidgetsManager } from "../../jupyter/ipywidgets/IPyWidgetsManager";
 import getMarked from './marked/marked';
-import { managerPlugin, baseWidgetsPlugin, controlWidgetsPlugin, outputWidgetPlugin, externalIPyWidgetsPlugin } from "../../jupyter/ipywidgets/lab/plugin";
+import { managerPlugin, baseWidgetsPlugin, controlWidgetsPlugin, outputWidgetPlugin, externalIPyWidgetsPlugin, bundledIPyWidgetsPlugin } from "../../jupyter/ipywidgets/lab/plugin";
 // import { activateWidgetExtension } from "../../jupyter/ipywidgets/lab2/IPyWidgetsJupyterLab";
 // import { activatePlotlyWidgetExtension } from "./../../jupyter/ipywidgets/plotly/JupyterlabPlugin";
 
@@ -35,7 +35,8 @@ export class NotebookAdapter {
   private _boxPanel: BoxPanel;
   private _commandRegistry: CommandRegistry;
   private _context?: Context<INotebookModel>;
-  private _externalIPyWidgets?: string[];
+  private _bundledIPyWidgets?: BundledIPyWidgets[];
+  private _externalIPyWidgets?: ExternalIPyWidgets[];
   private _iPyWidgetsClassicManager?: IPyWidgetsManager;
   private _ipywidgets: 'lab' | 'classic';
   private _kernel: Kernel;
@@ -53,6 +54,7 @@ export class NotebookAdapter {
   private _CellSidebar?: (props: any) => JSX.Element;
 
   constructor(props: INotebookProps, store: any, serviceManager: ServiceManager) {
+    this._bundledIPyWidgets = props.bundledIPyWidgets;
     this._externalIPyWidgets = props.externalIPyWidgets;
     this._ipywidgets = props.ipywidgets;
     this._kernel = props.kernel!;
@@ -253,6 +255,9 @@ export class NotebookAdapter {
         break;
       }
       case 'lab': {
+        if (this._bundledIPyWidgets) {
+          bundledIPyWidgetsPlugin(this._context, this._tracker, this._bundledIPyWidgets);
+        }
         if (this._externalIPyWidgets) {
           externalIPyWidgetsPlugin(this._context, this._tracker, this._externalIPyWidgets);
         }

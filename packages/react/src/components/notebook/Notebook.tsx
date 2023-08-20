@@ -17,12 +17,23 @@ import { notebookActions, selectNotebookPortals, notebookEpics, notebookReducer 
 
 import './Notebook.css';
 
+
+export type ExternalIPyWidgets = {
+  name: string;
+  version: string;
+}
+
+export type BundledIPyWidgets = ExternalIPyWidgets & {
+  module: any;
+}
+
 export type INotebookProps = {
   cellMetadataPanel: boolean;
   cellSidebarMargin: number;
   height?: string;
   ipywidgets: 'classic' | 'lab';
-  externalIPyWidgets?: string[];
+  bundledIPyWidgets?: BundledIPyWidgets[];
+  externalIPyWidgets?: ExternalIPyWidgets[];
   kernel?: Kernel;
   maxHeight?: string;
   nbformat?: INotebookContent;

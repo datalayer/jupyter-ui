@@ -8,9 +8,9 @@
     "jupyterlab-extension",
     "datalayer"
   ],
-  "homepage": "https://github.com/datalayer/jupyter-dashboard",
+  "homepage": "https://github.com/datalayer/jupyter-ui",
   "bugs": {
-    "url": "https://github.com/datalayer/jupyter-dashboard/issues"
+    "url": "https://github.com/datalayer/jupyter-ui/issues"
   },
   "license": "BSD-3-Clause",
   "author": {
@@ -27,7 +27,8 @@
   "style": "style/index.css",
   "repository": {
     "type": "git",
-    "url": "https://github.com/datalayer/jupyter-dashboard.git"
+    "url": "https://github.com/datalayer/jupyter-ui.git",
+    "directory": "packages/dashboard"
   },
   "scripts": {
     "build": "jlpm build:lib && jlpm build:labextension:dev",
