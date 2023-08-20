@@ -40,7 +40,7 @@ const jupyterReactPlugin: JupyterFrontEndPlugin<void> = {
       label: 'Jupyter React',
       icon: (args: any) => reactIcon,
       execute: () => {
-        const content = new JupyterReactWidget();
+        const content = new JupyterReactWidget(app);
         const widget = new MainAreaWidget<JupyterReactWidget>({ content });
         widget.title.label = 'Jupyter React';
         widget.title.icon = reactIcon;

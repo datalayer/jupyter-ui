@@ -58,28 +58,37 @@ export const setJupyterServerHttpUrl = (jupyterServerHttpUrl: string) => {
  */
 export const loadJupyterConfig = (props: JupyterProps) => {
   const { lite, jupyterServerHttpUrl, jupyterServerWsUrl, collaborative, terminals, jupyterToken } = props;
-  const htmlConfig = document.getElementById('datalayer-config-data');
-  if (htmlConfig) {
-    config = JSON.parse(htmlConfig.textContent || '') as IJupyterConfig;
+  const jupyterHtmlConfig = document.getElementById('jupyter-config-data');
+  if (jupyterHtmlConfig) {
+    const conf = JSON.parse(jupyterHtmlConfig.textContent || '');
+    setJupyterServerHttpUrl(location.protocol + '//' + location.host + conf.baseUrl);
+    setJupyterServerWsUrl(location.protocol === "https" ? "wss://" + location.host : "ws://" + location.host + conf.baseUrl);
+    setJupyterToken(conf.token);
   }
-  if (lite) {
-    setJupyterServerHttpUrl(location.protocol + '//' + location.host);
-  } else if (config.jupyterServerHttpUrl) {
-    setJupyterServerHttpUrl(config.jupyterServerHttpUrl);
-  } else {
-    setJupyterServerHttpUrl(jupyterServerHttpUrl || location.protocol + '//' + location.host + "/api/jupyter");
-  }
-  if (lite) {
-    setJupyterServerWsUrl(location.protocol === "https" ? "wss://" + location.host : "ws://" + location.host);
-  } else if (config.jupyterServerWsUrl) {
-    setJupyterServerWsUrl(config.jupyterServerWsUrl);
-  } else {
-    setJupyterServerWsUrl(jupyterServerWsUrl || location.protocol.replace('http', 'ws') + '//' + location.host + "/api/jupyter");
-  }
-  if (config.jupyterToken) {
-    setJupyterToken(config.jupyterToken);
-  } else {
-    setJupyterToken(jupyterToken || '');
+  else {
+    const datalayerHtmlConfig = document.getElementById('datalayer-config-data');
+    if (datalayerHtmlConfig) {
+      config = JSON.parse(datalayerHtmlConfig.textContent || '') as IJupyterConfig;
+    }
+    if (lite) {
+      setJupyterServerHttpUrl(location.protocol + '//' + location.host);
+    } else if (config.jupyterServerHttpUrl) {
+      setJupyterServerHttpUrl(config.jupyterServerHttpUrl);
+    } else {
+      setJupyterServerHttpUrl(jupyterServerHttpUrl || location.protocol + '//' + location.host + "/api/jupyter");
+    }
+    if (lite) {
+      setJupyterServerWsUrl(location.protocol === "https" ? "wss://" + location.host : "ws://" + location.host);
+    } else if (config.jupyterServerWsUrl) {
+      setJupyterServerWsUrl(config.jupyterServerWsUrl);
+    } else {
+      setJupyterServerWsUrl(jupyterServerWsUrl || location.protocol.replace('http', 'ws') + '//' + location.host + "/api/jupyter");
+    }
+    if (config.jupyterToken) {
+      setJupyterToken(config.jupyterToken);
+    } else {
+      setJupyterToken(jupyterToken || '');
+    }  
   }
   PageConfig.setOption('baseUrl', getJupyterServerHttpUrl());
   PageConfig.setOption('wsUrl', getJupyterServerWsUrl());

@@ -1,13 +1,19 @@
 import { useState, useEffect } from 'react';
+import { JupyterFrontEnd } from '@jupyterlab/application';
 import { ThemeProvider, BaseStyles, Box } from '@primer/react';
 import { UnderlineNav } from '@primer/react/drafts';
-import { ReactJsIcon, BricksIcon } from '@datalayer/icons-react';
+import { ReactJsIcon, RingedPlanetIcon } from '@datalayer/icons-react';
 import { ServerConnection } from '@jupyterlab/services';
 import AboutTab from './tabs/AboutTab';
 import ComponentsTab from './tabs/ComponentsTab';
 import { requestAPI } from '../jupyter/JupyterHandlers';
 
-const JupyterReact = (): JSX.Element => {
+export type JupyterFrontEndProps = {
+  app?: JupyterFrontEnd;
+}
+
+const JupyterReact = (props: JupyterFrontEndProps): JSX.Element => {
+  const { app } = props;
   const [tab, setTab] = useState(1);
   const [version, setVersion] = useState('');
   useEffect(() => {
@@ -28,17 +34,17 @@ const JupyterReact = (): JSX.Element => {
           <Box style={{maxWidth: 700}}>
             <Box mb={3}>
               <UnderlineNav aria-label="jupyter-react">
-                <UnderlineNav.Item aria-current="page" icon={ReactJsIcon} onSelect={e => {e.preventDefault(); setTab(1);}}>
-                  About
-                </UnderlineNav.Item>
-                <UnderlineNav.Item icon={BricksIcon} onSelect={e => {e.preventDefault(); setTab(2);}}>
+                <UnderlineNav.Item aria-current="page" icon={RingedPlanetIcon} onSelect={e => {e.preventDefault(); setTab(1);}}>
                   Components
+                </UnderlineNav.Item>
+                <UnderlineNav.Item icon={ReactJsIcon} onSelect={e => {e.preventDefault(); setTab(2);}}>
+                  About
                 </UnderlineNav.Item>
               </UnderlineNav>
             </Box>
             <Box m={3}>
-              {(tab === 1) && <AboutTab version={version}/>}
-              {(tab === 2) && <ComponentsTab />}
+              {(tab === 1) && <ComponentsTab app={app}/>}
+              {(tab === 2) && <AboutTab version={version}/>}
             </Box>
           </Box>
         </BaseStyles>
