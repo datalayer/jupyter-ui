@@ -1,25 +1,27 @@
-import { JupyterFrontEnd, JupyterFrontEndPlugin } from '@jupyterlab/application';
-import { INotebookTracker } from '@jupyterlab/notebook';
-import { WidgetTracker, showDialog, Dialog, InputDialog } from '@jupyterlab/apputils';
-import { CodeCell } from '@jupyterlab/cells';
-import { Dashboard, DashboardDocumentFactory, DashboardTracker, IDashboardTracker } from './dashboard/dashboard';
-import { DashboardWidget } from './dashboard/widget';
-import { IDocumentManager } from '@jupyterlab/docmanager';
-import { IMainMenu } from '@jupyterlab/mainmenu';
-import { Widget, Menu } from '@lumino/widgets';
-import { DocumentRegistry } from '@jupyterlab/docregistry';
-import { ILauncher } from '@jupyterlab/launcher';
-import { DashboardIcons } from './dashboard/icons';
-import { DashboardModel, DashboardModelFactory } from './dashboard/model';
-import { undoIcon, redoIcon, copyIcon, cutIcon, pasteIcon, runIcon, saveIcon } from '@jupyterlab/ui-components';
-import { CommandIDs } from './dashboard/commands';
 import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
+import { Widget, Menu } from '@lumino/widgets';
+import { JupyterFrontEnd, JupyterFrontEndPlugin } from '@jupyterlab/application';
+import { ILauncher } from '@jupyterlab/launcher';
+import { WidgetTracker, showDialog, Dialog, InputDialog } from '@jupyterlab/apputils';
+import { IMainMenu } from '@jupyterlab/mainmenu';
+import { DocumentRegistry } from '@jupyterlab/docregistry';
+import { IDocumentManager } from '@jupyterlab/docmanager';
+import { CodeCell } from '@jupyterlab/cells';
+import { INotebookTracker } from '@jupyterlab/notebook';
+import { undoIcon, redoIcon, copyIcon, cutIcon, pasteIcon, runIcon, saveIcon } from '@jupyterlab/ui-components';
+import { Dashboard, DashboardDocumentFactory, DashboardTracker, IDashboardTracker } from './dashboard/dashboard';
+import { DashboardIcons } from './dashboard/icons';
+import { DashboardWidget } from './dashboard/widget';
+import { DashboardModel, DashboardModelFactory } from './dashboard/model';
+import { CommandIDs } from './dashboard/commands';
 import { DashboardLayout } from './dashboard/layout';
 import { WidgetStore, WidgetInfo } from './dashboard/widgetStore';
 import { getMetadata } from './dashboard/utils';
 
-const extension: JupyterFrontEndPlugin<IDashboardTracker> = {
-  id: 'jupyterlab_interactive_dashboard_editor',
+import "./../style/index.css";
+
+const dashboardTrackerPlugin: JupyterFrontEndPlugin<IDashboardTracker> = {
+  id: '@datalayer/jupyter-dashboard-tracker',
   autoStart: true,
   requires: [INotebookTracker, IMainMenu, IDocumentManager, ILauncher],
   provides: IDashboardTracker,
@@ -30,19 +32,9 @@ const extension: JupyterFrontEndPlugin<IDashboardTracker> = {
     docManager: IDocumentManager,
     launcher: ILauncher
   ): IDashboardTracker => {
-
-    // Tracker for Dashboard
     const dashboardTracker = new DashboardTracker({ namespace: 'dashboards' });
-
-    // Tracker for DashboardWidgets
-    const outputTracker = new WidgetTracker<DashboardWidget>({
-      namespace: 'dashboard-outputs'
-    });
-
-    // Clipboard for copy/pasting outputs.
+    const outputTracker = new WidgetTracker<DashboardWidget>({namespace: 'dashboard-outputs' });
     const clipboard = new Set<WidgetStore.WidgetInfo>();
-
-    // Define dashboard file type.
     const dashboardFiletype: Partial<DocumentRegistry.IFileType> = {
       name: 'dashboard',
       displayName: 'Jupyter Dashboard',
@@ -53,9 +45,7 @@ const extension: JupyterFrontEndPlugin<IDashboardTracker> = {
       iconLabel: 'Jupyter Dashboard',
       mimeTypes: ['application/json']
     };
-    // Add dashboard file type to the doc registry.
     app.docRegistry.addFileType(dashboardFiletype);
-
     addCommands(
       app,
       dashboardTracker,
@@ -64,11 +54,7 @@ const extension: JupyterFrontEndPlugin<IDashboardTracker> = {
       docManager,
       notebookTracker
     );
-
-    // Create a new model factory.
     const modelFactory = new DashboardModelFactory({ notebookTracker });
-
-    // Create a new widget factory.
     const widgetFactory = new DashboardDocumentFactory({
       name: 'dashboard',
       modelName: 'dashboard',
@@ -77,166 +63,133 @@ const extension: JupyterFrontEndPlugin<IDashboardTracker> = {
       commandRegistry: app.commands,
       outputTracker
     });
-
     app.docRegistry.addModelFactory(modelFactory);
     app.docRegistry.addWidgetFactory(widgetFactory);
-
-    // Add newly created dashboards to the tracker, set their icon and label,
-    // and set the default width, height, and scrollMode.
     widgetFactory.widgetCreated.connect((_sender, widget) => {
       void dashboardTracker.add(widget.content);
-
       widget.title.icon = dashboardFiletype.icon;
       widget.title.iconClass = dashboardFiletype.iconClass || '';
       widget.title.iconLabel = dashboardFiletype.iconLabel || '';
-
       const model = widget.content.model;
       // TODO: Make scrollMode changable in JL. Default 'infinite' for now.
       model.scrollMode = 'infinite';
       model.width = Dashboard.DEFAULT_WIDTH;
       model.height = Dashboard.DEFAULT_HEIGHT;
     });
-
-    // Add commands to context menus.
     app.contextMenu.addItem({
       command: CommandIDs.save,
       selector: '.dsh-JupyterDashboard',
       rank: 3
     });
-
     app.contextMenu.addItem({
       command: CommandIDs.undo,
       selector: '.dsh-JupyterDashboard',
       rank: 1
     });
-
     app.contextMenu.addItem({
       command: CommandIDs.redo,
       selector: '.dsh-JupyterDashboard',
       rank: 2
     });
-
     app.contextMenu.addItem({
       command: CommandIDs.cut,
       selector: '.dsh-JupyterDashboard',
       rank: 3
     });
-
     app.contextMenu.addItem({
       command: CommandIDs.copy,
       selector: '.dsh-JupyterDashboard',
       rank: 4
     });
-
     app.contextMenu.addItem({
       command: CommandIDs.paste,
       selector: '.dsh-JupyterDashboard',
       rank: 5
     });
-
     const experimentalMenu = new Menu({ commands: app.commands });
     experimentalMenu.title.label = 'Experimental';
-
     experimentalMenu.addItem({
       command: CommandIDs.saveToMetadata
     });
-
     experimentalMenu.addItem({
       command: CommandIDs.toggleInfiniteScroll
     });
-
     experimentalMenu.addItem({
       command: CommandIDs.trimDashboard
     });
-
     app.contextMenu.addItem({
       type: 'submenu',
       submenu: experimentalMenu,
       selector: '.dsh-JupyterDashboard',
       rank: 6
     });
-
     app.contextMenu.addItem({
       command: CommandIDs.deleteOutput,
       selector: '.dsh-EditableWidget',
       rank: 0
     });
-
     app.contextMenu.addItem({
       command: CommandIDs.toggleFitContent,
       selector: '.dsh-EditableWidget',
       rank: 1
     });
-
     app.contextMenu.addItem({
       command: CommandIDs.toggleWidgetMode,
       selector: '.dsh-EditableWidget',
       rank: 2
     });
-
     app.contextMenu.addItem({
       type: 'separator',
       selector: '.dsh-EditableWidget',
       rank: 3
     });
-
     app.contextMenu.addItem({
       command: CommandIDs.openFromMetadata,
       selector: '.jp-Notebook',
       rank: 16
     });
-
-    // Add commands to key bindings
     app.commands.addKeyBinding({
       command: CommandIDs.deleteOutput,
       args: {},
       keys: ['Backspace'],
       selector: '.dsh-EditableWidget'
     });
-
     app.commands.addKeyBinding({
       command: CommandIDs.undo,
       args: {},
       keys: ['Z'],
       selector: '.dsh-JupyterDashboard'
     });
-
     app.commands.addKeyBinding({
       command: CommandIDs.redo,
       args: {},
       keys: ['Shift Z'],
       selector: '.dsh-JupyterDashboard'
     });
-
     app.commands.addKeyBinding({
       command: CommandIDs.cut,
       args: {},
       keys: ['Accel X'],
       selector: '.dsh-JupyterDashboard'
     });
-
     app.commands.addKeyBinding({
       command: CommandIDs.copy,
       args: {},
       keys: ['Accel C'],
       selector: '.dsh-JupyterDashboard'
     });
-
     app.commands.addKeyBinding({
       command: CommandIDs.paste,
       args: {},
       keys: ['Accel V'],
       selector: '.dsh-JupyterDashboard'
     });
-
     app.commands.addKeyBinding({
       command: CommandIDs.toggleFitContent,
       args: {},
       keys: ['K'],
       selector: '.dsh-EditableWidget'
     });
-
-    // Add commands to edit menu.
     mainMenu.fileMenu.addGroup([
       {
         command: CommandIDs.setDimensions
@@ -245,21 +198,17 @@ const extension: JupyterFrontEndPlugin<IDashboardTracker> = {
         command: CommandIDs.setTileSize
       }
     ]);
-
     mainMenu.fileMenu.newMenu.addGroup([
       {
         command: CommandIDs.createNew
       }
     ]);
-
     launcher.add({
       command: CommandIDs.createNew,
       category: 'Datalayer',
       rank: 2,
     });
-
     return dashboardTracker;
-
   }
 };
 
@@ -287,25 +236,21 @@ function addCommands(
   notebookTracker: INotebookTracker
 ): void {
   const { commands } = app;
-
   /**
    * Whether there is an active dashboard.
    */
   function hasDashboard(): boolean {
     return dashboardTracker.currentWidget !== null;
   }
-
   /**
    * Whether there is a dashboard output.
    */
   function hasOutput(): boolean {
     return outputTracker.currentWidget !== null;
   }
-
   function inToolbar(args?: ReadonlyPartialJSONObject): boolean {
     return args ? args.toolbar as boolean : false;
   }
-
   /**
    * Deletes a selected DashboardWidget.
    */
@@ -317,7 +262,6 @@ function addCommands(
       dashboard.deleteWidget(widget);
     }
   });
-
   /**
    * Undo the last change to a dashboard.
    */
@@ -330,7 +274,6 @@ function addCommands(
     isEnabled: args =>
       inToolbar(args)
   });
-
   /**
    * Redo the last undo to a dashboard.
    */
@@ -343,7 +286,6 @@ function addCommands(
     isEnabled: args =>
       inToolbar(args)
   });
-
   commands.addCommand(CommandIDs.toggleFitContent, {
     label: args => 'Fit To Content',
     execute: args => {
@@ -356,7 +298,6 @@ function addCommands(
     isVisible: args => outputTracker.currentWidget?.mode === 'free-edit',
     isToggled: args => outputTracker.currentWidget?.fitToContent || false,
   });
-
   commands.addCommand(CommandIDs.toggleMode, {
     icon: args => {
       const mode = dashboardTracker.currentWidget?.model.mode || 'present';
@@ -386,7 +327,6 @@ function addCommands(
       }
     }
   });
-
   commands.addCommand(CommandIDs.runOutput, {
     label: args => (inToolbar(args) ? '' : 'Run Output'),
     icon: runIcon,
@@ -396,7 +336,6 @@ function addCommands(
       CodeCell.execute(widget.cell as CodeCell, sessionContext);
     }
   });
-
   commands.addCommand(CommandIDs.setDimensions, {
     label: 'Set Dashboard Dimensions',
     execute: async args => {
@@ -435,7 +374,6 @@ function addCommands(
     },
     isEnabled: hasDashboard
   });
-
   commands.addCommand(CommandIDs.setTileSize, {
     label: 'Set Grid Dimensions',
     execute: async args => {
@@ -449,7 +387,6 @@ function addCommands(
     },
     isEnabled: hasDashboard
   });
-
   commands.addCommand(CommandIDs.copy, {
     label: args => (inToolbar(args) ? '' : 'Copy'),
     icon: copyIcon,
@@ -460,7 +397,6 @@ function addCommands(
     },
     isEnabled: args => inToolbar(args) || hasOutput()
   });
-
   commands.addCommand(CommandIDs.cut, {
     label: args => (inToolbar(args) ? '' : 'Cut'),
     icon: cutIcon,
@@ -474,7 +410,6 @@ function addCommands(
     },
     isEnabled: args => inToolbar(args) || hasOutput()
   });
-
   commands.addCommand(CommandIDs.paste, {
     label: args => (inToolbar(args) ? '' : 'Paste'),
     icon: pasteIcon,
@@ -499,7 +434,6 @@ function addCommands(
     },
     isEnabled: args => inToolbar(args) || (hasOutput() && clipboard.size !== 0)
   });
-
   commands.addCommand(CommandIDs.saveToMetadata, {
     label: 'Save Dashboard To Notebook Metadata',
     execute: args => {
@@ -507,7 +441,6 @@ function addCommands(
       dashboard?.saveToNotebookMetadata();
     }
   });
-
   commands.addCommand(CommandIDs.createNew, {
     label: 'Jupyter Dashboard',
     icon: DashboardIcons.dashboardTeal,
@@ -532,7 +465,6 @@ function addCommands(
       }
     }
   });
-
   // TODO: Make this optionally saveAs (based on filename?)
   commands.addCommand(CommandIDs.save, {
     label: args => (inToolbar(args) ? '' : 'Save'),
@@ -543,7 +475,6 @@ function addCommands(
     },
     isEnabled: args => inToolbar(args) || hasDashboard()
   });
-
   commands.addCommand(CommandIDs.openFromMetadata, {
     label: 'Open Metadata Dashboard',
     execute: args => {
@@ -551,9 +482,7 @@ function addCommands(
       const notebookMetadata = getMetadata(notebook!);
       const notebookId = notebookMetadata.id;
       const cells = notebook?.content.widgets;
-
       const widgetStore = new WidgetStore({ id: 0, notebookTracker });
-
       for (const cell of cells!) {
         const metadata = getMetadata(cell);
         if (metadata !== undefined && !metadata.hidden) {
@@ -566,20 +495,16 @@ function addCommands(
           widgetStore.addWidget(widgetInfo);
         }
       }
-
       const model = new DashboardModel({
         widgetStore,
         notebookTracker
       });
-
       const dashboard = new Dashboard({
         outputTracker,
         model
       });
-
       dashboard.updateLayoutFromWidgetStore();
       dashboard.model.mode = 'present';
-
       notebook?.context.addSibling(dashboard, { mode: 'split-left' });
     },
     isEnabled: args => {
@@ -591,7 +516,6 @@ function addCommands(
       return false;
     }
   });
-
   commands.addCommand(CommandIDs.toggleWidgetMode, {
     label: 'Snap to Grid',
     isToggled: args => {
@@ -607,7 +531,6 @@ function addCommands(
       }
     }
   });
-
   commands.addCommand(CommandIDs.toggleInfiniteScroll, {
     label: 'Infinite Scroll',
     isToggled: args =>
@@ -621,7 +544,6 @@ function addCommands(
       }
     }
   });
-
   commands.addCommand(CommandIDs.trimDashboard, {
     label: 'Trim Dashboard',
     execute: args => {
@@ -643,7 +565,6 @@ namespace Private {
       const node = document.createElement('div');
       const name = document.createElement('label');
       name.textContent = 'Enter New Width/Height';
-
       const width = document.createElement('input');
       const height = document.createElement('input');
       width.type = 'number';
@@ -656,11 +577,9 @@ namespace Private {
       height.required = true;
       width.placeholder = `Width (${oldWidth})`;
       height.placeholder = `Height (${oldHeight})`;
-
       node.appendChild(name);
       node.appendChild(width);
       node.appendChild(height);
-
       super({ node });
     }
 
@@ -673,4 +592,4 @@ namespace Private {
   }
 }
 
-export default extension;
+export default dashboardTrackerPlugin;

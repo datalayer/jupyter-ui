@@ -31,7 +31,7 @@ export const TOOLBAR_SELECT_CLASS = 'dsh-ToolbarSelector';
 export const TOOLBAR_CLASS = 'dsh-DashboardToolbar';
 
 export const IDashboardTracker = new Token<IDashboardTracker>(
-  'jupyterlab_interactive_dashboard_editor'
+  '@datalayer/jupyter-dashboard-tracker'
 );
 
 export type IDashboardTracker = IWidgetTracker<Dashboard>;
@@ -44,14 +44,11 @@ export class DashboardTracker extends WidgetTracker<Dashboard> {}
 export class Dashboard extends Widget {
   constructor(options: Dashboard.IOptions) {
     super(options);
-
     this.id = UUID.uuid4();
-
     const { outputTracker, model } = options;
     this._model = model;
     this._context = options.context!;
     const { widgetStore, mode } = model;
-
     this.layout = new DashboardLayout({
       widgetStore,
       outputTracker,
@@ -60,11 +57,8 @@ export class Dashboard extends Widget {
       width: options.dashboardWidth || Dashboard.DEFAULT_WIDTH,
       height: options.dashboardHeight || Dashboard.DEFAULT_HEIGHT
     });
-
     widgetStore.connectDashboard(this);
-
     this._model.loaded.connect(this.updateLayoutFromWidgetStore, this);
-
     this.addClass(DASHBOARD_CLASS);
   }
 
@@ -215,22 +209,18 @@ export class Dashboard extends Widget {
 
   private _evtScroll(_event: Event): void {
     const model = this.model;
-
     if (model.scrollMode !== 'infinite') {
       return;
     }
-
     const elem = this.node;
     const rightEdge = elem.offsetWidth + elem.scrollLeft;
     const bottomEdge = elem.offsetHeight + elem.scrollTop;
-
     if (rightEdge >= model.width && rightEdge > this._oldRightEdge) {
       model.width += 200;
     }
     if (bottomEdge >= model.height && bottomEdge > this._oldBottomEdge) {
       model.height += 200;
     }
-
     this._oldBottomEdge = bottomEdge;
     this._oldRightEdge = rightEdge;
   }
@@ -329,27 +319,20 @@ export class Dashboard extends Widget {
   saveToNotebookMetadata(): void {
     // Get a list of all notebookIds used in the dashboard.
     const widgets = Array.from(this.model.widgetStore.getWidgets());
-
     const notebookIds = toArray(map(widgets, record => record.notebookId));
-
     if (!notebookIds.every(v => v === notebookIds[0])) {
       throw new Error(
         'Only single notebook dashboards can be saved to metadata.'
       );
     }
-
     const notebookId = notebookIds[0];
     const notebookTracker = this.model.notebookTracker;
     const notebook = getNotebookById(notebookId, notebookTracker);
-
     updateMetadata(notebook!, { hasDashboard: true });
-
     const cells = notebook!.content.widgets;
-
     const widgetMap = new Map<string, WidgetPosition>(
       widgets.map(widget => [widget.cellId, widget.pos])
     );
-
     each(cells, cell => {
       const cellId = getCellId(cell);
       const pos = widgetMap.get(cellId!);
@@ -359,7 +342,6 @@ export class Dashboard extends Widget {
         updateMetadata(cell, { hidden: true });
       }
     });
-
     notebook?.context.save();
   }
 
@@ -425,16 +407,11 @@ export class DashboardDocument extends DocumentWidget<Dashboard> {
       content: content as Dashboard,
       reveal
     });
-
     // Build the toolbar
-
     this.toolbar.addClass(TOOLBAR_CLASS);
-
     const commands = commandRegistry;
     const { save, undo, redo, cut, copy, paste } = CommandIDs;
-
     const args = { toolbar: true, dashboardId: content.id };
-
     const makeToolbarButton = (
       id: string,
       tooltip: string
@@ -443,7 +420,6 @@ export class DashboardDocument extends DocumentWidget<Dashboard> {
       button.node.title = tooltip;
       return button;
     };
-
     const saveButton = makeToolbarButton(save, 'Save');
     const undoButton = makeToolbarButton(undo, 'Undo');
     const redoButton = makeToolbarButton(redo, 'Redo');
@@ -453,7 +429,6 @@ export class DashboardDocument extends DocumentWidget<Dashboard> {
       paste,
       'Paste outputs from the clipboard'
     );
-
     this.toolbar.addItem(save, saveButton);
     this.toolbar.addItem(undo, undoButton);
     this.toolbar.addItem(redo, redoButton);

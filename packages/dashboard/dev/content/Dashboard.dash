@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "dashboardHeight": 1080,
+    "dashboardHeight": 1152,
     "dashboardWidth": 1920
   },
   "version": 1,
@@ -9,26 +9,17 @@
       {
         "cellId": "9f2ad7ff-ad83-47c6-9ad7-39d95c60095e",
         "pos": {
-          "left": 32,
-          "top": 64,
+          "left": 96,
+          "top": 96,
           "width": 32,
-          "height": 32
-        }
-      },
-      {
-        "cellId": "7627ee83-3f6c-4fb5-a96a-16cbc5ac33a0",
-        "pos": {
-          "left": 32,
-          "top": 128,
-          "width": 320,
           "height": 32
         }
       },
       {
         "cellId": "10839d93-0469-4517-a065-c46191420812",
         "pos": {
-          "left": 32,
-          "top": 192,
+          "left": 64,
+          "top": 256,
           "width": 288,
           "height": 256
         }
@@ -36,6 +27,6 @@
     ]
   },
   "paths": {
-    "RTC:Dashboard.ipynb": "2e121961-067c-46d7-a5c1-41b094669679"
+    "Dashboard.ipynb": "2e121961-067c-46d7-a5c1-41b094669679"
   }
 }

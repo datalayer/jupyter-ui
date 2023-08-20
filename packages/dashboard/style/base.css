@@ -95,7 +95,8 @@
 }
 
 .dsh-Canvas.dsh-FreeLayout {
-  background-image: linear-gradient(
+  background-image:
+    linear-gradient(
       to right,
       var(--jp-border-color2) 1px,
       transparent 1px
@@ -106,7 +107,8 @@
 }
 
 .dsh-Canvas.dsh-TiledLayout {
-  background-image: linear-gradient(
+  background-image:
+    linear-gradient(
       to right,
       var(--jp-border-color2) 1px,
       transparent 1px
