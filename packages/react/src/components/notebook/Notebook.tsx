@@ -31,6 +31,9 @@ export type INotebookProps = {
   cellMetadataPanel: boolean;
   cellSidebarMargin: number;
   height?: string;
+  /*
+   * @deprecated since version 0.6.2
+   */
   ipywidgets: 'classic' | 'lab';
   bundledIPyWidgets?: BundledIPyWidgets[];
   externalIPyWidgets?: ExternalIPyWidgets[];
