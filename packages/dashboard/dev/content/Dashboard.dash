@@ -18,10 +18,19 @@
       {
         "cellId": "10839d93-0469-4517-a065-c46191420812",
         "pos": {
-          "left": 64,
-          "top": 256,
-          "width": 288,
+          "left": 96,
+          "top": 160,
+          "width": 256,
           "height": 256
+        }
+      },
+      {
+        "cellId": "7627ee83-3f6c-4fb5-a96a-16cbc5ac33a0",
+        "pos": {
+          "left": 96,
+          "top": 448,
+          "width": 320,
+          "height": 32
         }
       }
     ]
