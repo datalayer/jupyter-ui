@@ -55,7 +55,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
       launcher.add({
         command,
         category: 'Datalayer',
-        rank: 99,
+        rank: 2,
       });
     }
     console.log('JupyterLab extension @datalayer/jupyter-lexical is activated!');

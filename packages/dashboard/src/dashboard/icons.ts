@@ -1,7 +1,7 @@
 import dashboardBlue from '@datalayer/icons-react/data1/DashboardOutlineWhiteIconLabIcon';
+import dashboardGreen from '@datalayer/icons-react/data1/DashboardGreenIconLabIcon';
 import dashboardGrey from '@datalayer/icons-react/data1/DashboardGreyIconLabIcon';
 import dashboardGreyOutline from '@datalayer/icons-react/data1/DashboardOutlineWhiteIconLabIcon';
-import dashboardTeal from '@datalayer/icons-react/data1/DashboardTealIconLabIcon';
 import dashboardWhite from '@datalayer/icons-react/data1/DashboardWhiteIconLabIcon';
 import dashboardWhiteOutline from '@datalayer/icons-react/data1/DashboardOutlineWhiteIconLabIcon';
 import dragIndicator from '@datalayer/icons-react/data1/DragIndicatorIconLabIcon';
@@ -13,9 +13,9 @@ import view from '@datalayer/icons-react/data1/ViewIconLabIcon';
 
 export const DashboardIcons = {
   dashboardBlue,
+  dashboardGreen,
   dashboardGrey,
   dashboardGreyOutline,
-  dashboardTeal,
   dashboardWhite,
   dashboardWhiteOutline,
   dragIndicator,

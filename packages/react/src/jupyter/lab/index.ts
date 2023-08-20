@@ -53,7 +53,7 @@ const jupyterReactPlugin: JupyterFrontEndPlugin<void> = {
       launcher.add({
         command,
         category: 'Datalayer',
-        rank: 10,
+        rank: 2,
       });
     }
     if (settingRegistry) {
