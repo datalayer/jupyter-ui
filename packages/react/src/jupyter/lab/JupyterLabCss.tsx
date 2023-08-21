@@ -1,9 +1,6 @@
 import '@lumino/widgets/style/index.css';
 import '@lumino/dragdrop/style/index.css';
 
-import '@jupyter-widgets/base/css/index.css';
-import '@jupyter-widgets/controls/css/widgets-base.css';
-
 import '@jupyterlab/apputils/style/base.css';
 import '@jupyterlab/rendermime/style/base.css';
 import '@jupyterlab/codeeditor/style/base.css';
@@ -20,3 +17,6 @@ import '@jupyterlab/terminal/style/index.css';
 import '@jupyterlab/theme-light-extension/style/theme.css';
 import '@jupyterlab/theme-light-extension/style/variables.css';
 import '@jupyterlab/ui-components/style/base.css';
+
+import '@jupyter-widgets/base/css/index.css';
+import '@jupyter-widgets/controls/css/widgets-base.css';

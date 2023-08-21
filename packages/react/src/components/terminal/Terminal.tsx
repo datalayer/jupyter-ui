@@ -15,8 +15,7 @@ export const Terminal = () => {
     dispatch(terminalActions.update({ adapter }));
     setAdapter(adapter);
   }, []);
-  return adapter
-  ?
+  return adapter ?
     <Lumino>
       {adapter.panel}
     </Lumino>

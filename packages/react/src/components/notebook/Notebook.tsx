@@ -146,6 +146,9 @@ export const Notebook = (props: INotebookProps) => {
             width: '100%',
             overflowY: 'hidden',
           },
+          '& .dla-NotebookPanel-header': {
+            minHeight: '50px',
+          },
           '& .jp-Notebook': {
             flex: '1 1 auto !important',
             height: '100%',

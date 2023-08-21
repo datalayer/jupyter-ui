@@ -11,19 +11,18 @@ import defaultInjectableStore, { InjectableStore } from '../redux/Store';
  */
 export type JupyterProps = {
   children: React.ReactNode;
-  lite: boolean;
-  loadJupyterCss: boolean;
-  startDefaultKernel: boolean;
-  defaultKernelName: string;
-  useRunningKernelId?: string;
-  useRunningKernelIndex?: number;
-  injectableStore?: InjectableStore;
   collaborative?: boolean;
+  defaultKernelName: string;
+  injectableStore?: InjectableStore;
   jupyterServerHttpUrl?: string;
   jupyterServerWsUrl?: string;
   jupyterToken?: string;
+  lite: boolean;
+  startDefaultKernel: boolean;
   terminals?: boolean;
   theme?: any;
+  useRunningKernelId?: string;
+  useRunningKernelIndex?: number;
 }
 
 /**
@@ -49,14 +48,14 @@ const ErrorFallback = ({error, resetErrorBoundary}: any) => {
 export const Jupyter = (props: JupyterProps) => {
   const {
     lite, startDefaultKernel, defaultKernelName, injectableStore,
-    useRunningKernelId, useRunningKernelIndex, children, loadJupyterCss,
+    useRunningKernelId, useRunningKernelIndex, children,
   } = props;
-  useMemo(() => loadJupyterConfig(props), []);
+  const config = useMemo(() => loadJupyterConfig(props), []);
   useEffect(() => {
-    if (loadJupyterCss) {
-      import("./JupyterCss");
-    }
-  }, [loadJupyterCss]);
+    if (!config.insideJupyterLab) {
+      import("./lab/JupyterLabCss");
+    }  
+  }, [config]);
   return (
     <ErrorBoundary
       FallbackComponent={ErrorFallback}
@@ -87,7 +86,6 @@ Jupyter.defaultProps = {
   collaborative: false,
   defaultKernelName: 'python',
   lite: false,
-  loadJupyterCss: true,
   startDefaultKernel: true,
   terminals: false,
   useRunningKernelIndex: -1,

@@ -185,8 +185,12 @@ export const JupyterContextProvider: React.FC<{
             const kernel = new Kernel({ kernelManager, kernelName: defaultKernelName });
             kernel.connection.then(kernelConnection => {
               kernelConnection.info.then(kernelInfo => {
-                console.log(`The default Kernel is available`, `kernel_client_id:${kernel.clientId}`,
-                `kernel_server_id:${kernel.serverId}`, `kernel_session_id:${kernel.sessionId}`, `kernelInfo:`, kernelInfo);
+                console.log(`The default Kernel is available`,
+                  `client_id:${kernel.clientId}`,
+                  `server_id:${kernel.serverId}`,
+                  `session_id:${kernel.sessionId}`,
+                  `kernelInfo:`, kernelInfo
+                );
               });
               setKernel(kernel);
             });

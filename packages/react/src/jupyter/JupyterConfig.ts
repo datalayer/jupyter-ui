@@ -8,6 +8,8 @@ export type IJupyterConfig = {
   jupyterServerHttpUrl: string;
   jupyterServerWsUrl: string;
   jupyterToken: string;
+  insideJupyterLab: boolean;
+  insideJupyterHub: boolean;
 }
 
 /**
@@ -17,6 +19,8 @@ let config: IJupyterConfig = {
   jupyterServerHttpUrl: '',
   jupyterServerWsUrl: '',
   jupyterToken: '',
+  insideJupyterLab: false,
+  insideJupyterHub: false,
 }
 
 /**
@@ -60,10 +64,11 @@ export const loadJupyterConfig = (props: JupyterProps) => {
   const { lite, jupyterServerHttpUrl, jupyterServerWsUrl, collaborative, terminals, jupyterToken } = props;
   const jupyterHtmlConfig = document.getElementById('jupyter-config-data');
   if (jupyterHtmlConfig) {
-    const conf = JSON.parse(jupyterHtmlConfig.textContent || '');
-    setJupyterServerHttpUrl(location.protocol + '//' + location.host + conf.baseUrl);
-    setJupyterServerWsUrl(location.protocol === "https" ? "wss://" + location.host : "ws://" + location.host + conf.baseUrl);
-    setJupyterToken(conf.token);
+    const jupyterConfig = JSON.parse(jupyterHtmlConfig.textContent || '');
+    setJupyterServerHttpUrl(location.protocol + '//' + location.host + jupyterConfig.baseUrl);
+    setJupyterServerWsUrl(location.protocol === "https" ? "wss://" + location.host : "ws://" + location.host + jupyterConfig.baseUrl);
+    setJupyterToken(jupyterConfig.token);
+    config.insideJupyterLab = jupyterConfig.appName === 'JupyterLab';
   }
   else {
     const datalayerHtmlConfig = document.getElementById('datalayer-config-data');
@@ -97,5 +102,21 @@ export const loadJupyterConfig = (props: JupyterProps) => {
   PageConfig.setOption('terminalsAvailable', String(terminals || false));
   PageConfig.setOption('mathjaxUrl', 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js');
   PageConfig.setOption('mathjaxConfig', 'TeX-AMS_CHTML-full,Safe');
+  /*
+  PageConfig.getOption('hubHost')
+  PageConfig.getOption('hubPrefix')
+  PageConfig.getOption('hubUser')
+  PageConfig.getOption('hubServerName')
+  */
+  config.insideJupyterHub = PageConfig.getOption('hubHost') !== "";
   return config;
+}
+
+export const runsInJupyterLab = () => {
+  const jupyterHtmlConfig = document.getElementById('jupyter-config-data');
+  if (jupyterHtmlConfig) {
+    const jupyterConfig = JSON.parse(jupyterHtmlConfig.textContent || '');
+    return jupyterConfig.appName === 'JupyterLab';
+  }
+  return false
 }
