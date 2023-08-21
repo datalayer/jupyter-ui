@@ -31,7 +31,7 @@ export const TOOLBAR_SELECT_CLASS = 'dsh-ToolbarSelector';
 export const TOOLBAR_CLASS = 'dsh-DashboardToolbar';
 
 export const IDashboardTracker = new Token<IDashboardTracker>(
-  '@datalayer/jupyter-dashboard-tracker'
+  '@datalayer/jupyter-dashboard:tracker'
 );
 
 export type IDashboardTracker = IWidgetTracker<Dashboard>;

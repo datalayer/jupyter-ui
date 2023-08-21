@@ -20,7 +20,7 @@ const MainTab = (props: JupyterFrontEndProps) => {
               <NavList.LeadingVisual>
                 <RingedPlanetIcon />
               </NavList.LeadingVisual>
-              Jupyter React
+              File Browser
             </NavList.Item>
           </NavList>
         </Box>

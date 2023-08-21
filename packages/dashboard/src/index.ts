@@ -21,7 +21,7 @@ import { getMetadata } from './dashboard/utils';
 import "./../style/index.css";
 
 const dashboardTrackerPlugin: JupyterFrontEndPlugin<IDashboardTracker> = {
-  id: '@datalayer/jupyter-dashboard-tracker',
+  id: '@datalayer/jupyter-dashboard:tracker',
   autoStart: true,
   requires: [INotebookTracker, IMainMenu, IDocumentManager, ILauncher],
   provides: IDashboardTracker,

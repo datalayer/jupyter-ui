@@ -31,7 +31,8 @@
     "strictNullChecks": true,
     "target": "ESNext",
     "types": [
-      "jest"
+      "jest",
+      "node"
     ],
     "lib": [
       "ESNext",
