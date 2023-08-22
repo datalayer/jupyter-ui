@@ -14,7 +14,7 @@ import notebook2 from './samples/NotebookExample2.ipynb.json';
 
 import "./../../style/index.css";
 
-const NOTEBOOK_UID = 'notebook-model-id';
+const NOTEBOOK_UID = 'notebook-model-change-id';
 
 const NotebookModelChange = () => {
   const { injectableStore } = useJupyter();
@@ -42,8 +42,8 @@ const NotebookModelChange = () => {
       <Notebook
         uid={NOTEBOOK_UID}
         nbformat={model}
-        CellSidebar={CellSidebarDefault}
         height="700px"
+        CellSidebar={CellSidebarDefault}
       />
     </>
   );
@@ -54,7 +54,7 @@ document.body.appendChild(div);
 const root = createRoot(div)
 
 root.render(
-  <Jupyter lite={false} terminals={true}>
+  <Jupyter>
     <NotebookModelChange />
   </Jupyter>
 );
