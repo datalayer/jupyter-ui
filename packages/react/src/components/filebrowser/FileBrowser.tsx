@@ -12,7 +12,7 @@ interface RenderTree {
 
 const initialTree: RenderTree = {
   id: 'root',
-  name: 'Jupyter Content',
+  name: 'File Browser',
 };
 
 export const FileBrowser = () => {
@@ -46,7 +46,17 @@ export const FileBrowser = () => {
               };
             }
           });
-          return items as RenderTree[];
+          const renderTree = items as RenderTree[];
+          renderTree.sort((a, b) => {
+            if ((a.id.startsWith("folder_")) && (b.id.startsWith("file_"))) {
+              return -1;
+            }
+            if ((a.id.startsWith("file_")) && (b.id.startsWith("folder_"))) {
+              return 1;
+            }
+            return a.name.localeCompare(b.name);
+          });
+          return renderTree;
         });
       return folderItems;
     };
@@ -67,7 +77,6 @@ export const FileBrowser = () => {
       loadPath(services, initialTree, []);
     }
   }, [serviceManager]);
-
   const renderTree = (nodes: RenderTree[]) => {
     return nodes.map((node: RenderTree) => (
       <TreeView.Item id={node.id}>
@@ -85,7 +94,6 @@ export const FileBrowser = () => {
       </TreeView.Item>
     ));
   }
-
   return (
     <>
       <TreeView>
@@ -95,7 +103,9 @@ export const FileBrowser = () => {
           </TreeView.LeadingVisual>
           {tree.name}
           {Array.isArray(tree.children) && (
-            <TreeView.SubTree>{renderTree(tree.children)}</TreeView.SubTree>
+            <TreeView.SubTree>
+              {renderTree(tree.children)}
+            </TreeView.SubTree>
           )}
         </TreeView.Item>
       </TreeView>

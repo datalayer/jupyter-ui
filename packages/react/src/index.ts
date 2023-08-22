@@ -59,8 +59,12 @@ export * from './components/dialog/Dialog';
 
 // FileBrowser.
 export * from './components/filebrowser/FileBrowser';
-export * from './components/filebrowser/FileBrowserLab';
-export * from './components/filebrowser/FileBrowserState';
+
+// FileManager.
+export * from './components/filemanager/FileManagerState';
+
+// FileManager (Lab variant).
+export * from './components/filemanager/lab/FileManagerLab';
 
 // Outputs.
 export * from './components/output/Output';

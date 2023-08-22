@@ -11,7 +11,7 @@ import { FileBrowser, FilterFileBrowserModel } from '@jupyterlab/filebrowser';
 import { FileEditorFactory } from '@jupyterlab/fileeditor';
 import { addIcon } from '@jupyterlab/ui-components';
 
-import './FileBrowserAdapter.css';
+import './FileManagerAdapter.css';
 
 class FileBrowserAdapter {
   private fileBrowserPanel: SplitPanel;

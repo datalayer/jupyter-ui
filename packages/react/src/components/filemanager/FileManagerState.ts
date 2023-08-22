@@ -4,20 +4,20 @@ import { reducerWithInitialState } from "typescript-fsa-reducers";
 
 /* State */
 
-export type IFileBrowser = number;
+export type IFileManager = number;
 
-export interface IFileBrowserState {
-  outputs: IFileBrowser;
+export interface IFileManagerState {
+  outputs: IFileManager;
 }
 
-export const fileBrowserInitialState: IFileBrowserState = {
+export const fileBrowserInitialState: IFileManagerState = {
   outputs: 0
 }
 
 /* Selectors */
 
-export const selectFileBrowser = (): IFileBrowserState =>
-  useSelector((state: IFileBrowserState) => {
+export const selectFileManager = (): IFileManagerState =>
+  useSelector((state: IFileManagerState) => {
     if ((state as any).fileBrowser) {
       return (state as any).fileBrowser;
     }
@@ -27,7 +27,7 @@ export const selectFileBrowser = (): IFileBrowserState =>
 
 /* Actions */
 
-export enum FileBrowserActionType {
+export enum FileManagerActionType {
   OUTPUTS = "fileBrowser/OUTPUTS",
   EXECUTE = "fileBrowser/EXECUTE",
 }
@@ -36,17 +36,17 @@ const actionCreator = actionCreatorFactory('jupyterReact');
 
 export const fileBrowserActions = {
   outputs: actionCreator<number>(
-    FileBrowserActionType.OUTPUTS
+    FileManagerActionType.OUTPUTS
   ),
   execute: actionCreator<void>(
-    FileBrowserActionType.EXECUTE
+    FileManagerActionType.EXECUTE
   ),
 }
 
 /* Reducers */
 
 export const fileBrowserReducer = reducerWithInitialState(fileBrowserInitialState)
-  .case(fileBrowserActions.outputs, (state: IFileBrowserState, success: number) => {
+  .case(fileBrowserActions.outputs, (state: IFileManagerState, success: number) => {
     return {
       ...state,
       outputs: success,

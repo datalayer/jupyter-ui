@@ -8,7 +8,8 @@ import { Kernel } from '../jupyter/services/kernel/Kernel';
 import Cell from '../components/cell/Cell';
 import Notebook from '../components/notebook/Notebook';
 import Output from "../components/output/Output";
-import FileBrowserLab from "../components/filebrowser/FileBrowserLab";
+import FileBrowser from "../components/filebrowser/FileBrowser";
+import FileManagerLab from "../components/filemanager/lab/FileManagerLab";
 import Terminal from "../components/terminal/Terminal";
 import CellSidebarNew from "../components/notebook/cell/sidebar/CellSidebarNew";
 import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarDefault';
@@ -183,26 +184,28 @@ root.render(
       CellSidebar={CellSidebarNew}
       Toolbar={NotebookToolbar}
     />
-    <hr />
+    <hr/>
     <Console />
-    <hr />
+    <hr/>
     <CellPreview />
     <CellToolbar />
     <Cell />
-    <hr />
+    <hr/>
     <Outputs />
-    <hr />
+    <hr/>
     <NotebookToolbar />
     <Notebook
       path="ipywidgets.ipynb"
       CellSidebar={CellSidebarDefault}
       uid={NOTEBOOK_UID_1}
     />
-    <hr />    
+    <hr/>    
     <NotebookKernelChange />
-    <hr />
-    <FileBrowserLab />
-    <hr />
+    <hr/>
+    <FileManagerLab />
+    <hr/>
+    <FileBrowser />
+    <hr/>
     <Terminal />
   </Jupyter>
 );
