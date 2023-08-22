@@ -6,7 +6,7 @@ import {
   Kernel,
   Cell,
   FileBrowser,
-  FileBrowserLab,
+  FileManagerLab,
   Commands,
   Console,
   Notebook,
@@ -98,7 +98,7 @@ const AllExample = () => {
       */}
       <FileBrowserToolbar />
       <FileBrowser />
-      <FileBrowserLab />
+      <FileManagerLab />
       <NotebookToolbar notebookId={NOTEBOOK_UID} />
       <Notebook
          uid={NOTEBOOK_UID} path="ping.ipynb"

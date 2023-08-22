@@ -1,5 +1,5 @@
 import {render} from 'react-dom';
-import {Jupyter, FileBrowser, FileBrowserLab} from '@datalayer/jupyter-react';
+import {Jupyter, FileBrowser, FileManagerLab} from '@datalayer/jupyter-react';
 import Layers from './../layout/Layers';
 
 import './../App.css';
@@ -12,7 +12,7 @@ render(
     <Layers />
     <Jupyter collaborative={false} terminals={true}>
       <FileBrowser />
-      <FileBrowserLab />
+      <FileManagerLab />
     </Jupyter>
   </Jupyter>,
   div

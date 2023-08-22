@@ -8,7 +8,7 @@ import {
   Console,
   Dialog,
   FileBrowser,
-  FileBrowserLab,
+  FileManagerLab,
   IPyWidgetsOutput,
   Notebook,
   Kernel,
@@ -258,7 +258,7 @@ const GalleryExample = () => {
           <>
             <FileBrowserToolbar />
             <FileBrowser />
-            <FileBrowserLab />
+            <FileManagerLab />
           </>
         )}
         {tab === 'Settings' && (
