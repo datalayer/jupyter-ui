@@ -67,7 +67,7 @@ const plugin: JupyterFrontEndPlugin<IJupytertraitlets> = {
       launcher.add({
         command,
         category: 'Datalayer',
-        rank: 2,
+        rank: 4,
       });
     }
     console.log('JupyterLab extension @datalayer/jupyter-traitlets is activated!');

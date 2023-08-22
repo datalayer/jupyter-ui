@@ -206,7 +206,7 @@ const dashboardTrackerPlugin: JupyterFrontEndPlugin<IDashboardTracker> = {
     launcher.add({
       command: CommandIDs.createNew,
       category: 'Datalayer',
-      rank: 2,
+      rank: 4,
     });
     return dashboardTracker;
   }
