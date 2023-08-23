@@ -2,7 +2,7 @@ import { JupyterFrontEnd, JupyterFrontEndPlugin } from '@jupyterlab/application'
 import { MainAreaWidget, ICommandPalette } from '@jupyterlab/apputils';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { ILauncher } from '@jupyterlab/launcher';
-import { reactIcon } from '@jupyterlab/ui-components';
+import icon from '@datalayer/icons-react/data2/AtomSymbolIconLabIcon';
 import { requestAPI } from './handler';
 import { JupyterReactWidget } from './widget';
 import { NotebookHeaderExtension } from './notebook/header/NotebookHeader';
@@ -38,12 +38,12 @@ const jupyterReactPlugin: JupyterFrontEndPlugin<void> = {
     commands.addCommand(command, {
       caption: 'Show Jupyter React',
       label: 'Jupyter React',
-      icon: (args: any) => reactIcon,
+      icon,
       execute: () => {
         const content = new JupyterReactWidget(app);
         const widget = new MainAreaWidget<JupyterReactWidget>({ content });
         widget.title.label = 'Jupyter React';
-        widget.title.icon = reactIcon;
+        widget.title.icon = icon;
         app.shell.add(widget, 'main');
       }
     });

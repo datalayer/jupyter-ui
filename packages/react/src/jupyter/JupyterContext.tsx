@@ -128,12 +128,9 @@ export const JupyterContextProvider: React.FC<{
         kernelManager.ready.then(() => {
           console.log('Kernel Manager is ready', kernelManager);
           if (startDefaultKernel) {
-            const kernel = new Kernel({ kernelManager, kernelName: defaultKernelName });
-            kernel.connection.then(kernelConnection => {
-              console.log(`Kernel started with session client_id:id ${kernelConnection.clientId}:${kernelConnection.id}`);
-              kernelConnection.info.then(info => {
-                console.log('Kernel information', info);
-              });
+            const kernel = new Kernel({ kernelManager, kernelName: defaultKernelName, serverSettings });
+            kernel.ready.then(() => {
+              console.log('Lite Kernel is ready', kernel.toString());
               setKernel(kernel);
             });
           }
@@ -157,7 +154,7 @@ export const JupyterContextProvider: React.FC<{
         const kernelManager = (serviceManager.sessions as any)._kernelManager as KernelManager;
         setKernelManager(kernelManager);
         kernelManager.ready.then(() => {
-          console.log('The Jupyter Kernel Manager is now ready');
+          console.log('Jupyter Kernel Manager is ready.');
           /*
           const running = kernelManager.running();
           let kernel = running.next();
@@ -174,7 +171,7 @@ export const JupyterContextProvider: React.FC<{
             let i = 0;
             while (! kernel.done) {
               if (i === useRunningKernelIndex) {
-                setKernel(new Kernel({ kernelManager, kernelName: defaultKernelName, kernelModel: kernel.value }));
+                setKernel(new Kernel({ kernelManager, kernelName: defaultKernelName, kernelModel: kernel.value, serverSettings }));
                 break;
               }
               kernel = running.next();
@@ -182,17 +179,9 @@ export const JupyterContextProvider: React.FC<{
             }
           }
           else if (startDefaultKernel) {  
-            const kernel = new Kernel({ kernelManager, kernelName: defaultKernelName });
-            kernel.connection.then(kernelConnection => {
-              kernelConnection.info.then(kernelInfo => {
-                console.log(`The default Kernel is available`,
-                  `client_id:${kernel.clientId}`,
-                  `server_id:${kernel.serverId}`,
-                  `session_id:${kernel.sessionId}`,
-                  `kernelInfo:`, kernelInfo
-                );
-              });
-              setKernel(kernel);
+            const defaultKernel = new Kernel({ kernelManager, kernelName: defaultKernelName, serverSettings });
+            defaultKernel.ready.then(() => {
+              setKernel(defaultKernel);
             });
           }
         });

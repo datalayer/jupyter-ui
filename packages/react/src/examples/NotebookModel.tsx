@@ -13,7 +13,12 @@ const NotebookModel = () => (
   <Jupyter>
     <Notebook
       nbformat={notebook as INotebookContent}
-      uid="notebook-uid"
+      uid="notebook-model-uid"
+      externalIPyWidgets={[
+        { name: "bqplot", version: "0.5.42" },
+        { name: "jupyter-matplotlib", version: "0.11.3" },
+        { name: "@widgetti/jupyter-react", version: "0.3.0" },
+      ]}
       cellSidebarMargin={120}
       height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
       CellSidebar={CellSidebarDefault}

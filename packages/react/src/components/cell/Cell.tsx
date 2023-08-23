@@ -20,6 +20,7 @@ export type ICellProps = {
 
 export const Cell = (props: ICellProps) => {
   const { source, autoStart } = props;
+  console.log('---', source)
   const { serverSettings, injectableStore, defaultKernel } = useJupyter();
   const dispatch = useDispatch();
   const [adapter, setAdapter] = useState<CellAdapter>();
@@ -28,30 +29,35 @@ export const Cell = (props: ICellProps) => {
   }, []);
   useEffect(() => {
     if (source && defaultKernel) {
-      const adapter = new CellAdapter(source, serverSettings, defaultKernel);
-      dispatch(cellActions.update({ adapter }));
-      dispatch(cellActions.source(props.source!));
-      adapter.codeCell.model.contentChanged.connect((cellModel, changedArgs) => {
-        dispatch(cellActions.source(cellModel.sharedModel.getSource()));
+      defaultKernel.ready.then(() => {
+        const adapter = new CellAdapter({
+          source,
+          serverSettings,
+          kernel: defaultKernel,
+        });
+        dispatch(cellActions.update({ adapter }));
+        dispatch(cellActions.source(props.source!));
+        adapter.codeCell.model.contentChanged.connect((cellModel, changedArgs) => {
+          dispatch(cellActions.source(cellModel.sharedModel.getSource()));
+        });
+        adapter.codeCell.outputArea.outputLengthChanged.connect((outputArea, outputsCount) => {
+          dispatch(cellActions.outputsCount(outputsCount));
+        });
+        adapter.sessionContext.initialize().then(() => {
+          if (autoStart) {
+            const execute = CodeCell.execute(adapter.codeCell, adapter.sessionContext);
+            execute.then((msg: void | KernelMessage.IExecuteReplyMsg) => {
+              dispatch(cellActions.update({
+                kernelAvailable: true,
+              }));
+            });
+          }
+        });
+        setAdapter(adapter);  
       });
-      adapter.codeCell.outputArea.outputLengthChanged.connect((outputArea, outputsCount) => {
-        dispatch(cellActions.outputsCount(outputsCount));
-      });
-      adapter.sessionContext.initialize().then(() => {
-        if (autoStart) {
-          const execute = CodeCell.execute(adapter.codeCell, adapter.sessionContext);
-          execute.then((msg: void | KernelMessage.IExecuteReplyMsg) => {
-            dispatch(cellActions.update({
-              kernelAvailable: true,
-            }));
-          });
-        }
-      });
-      setAdapter(adapter);
     }
   }, [source, defaultKernel]);
-  return adapter
-    ?
+  return adapter ?
       <Box
         sx={{
           '& .dla-JupyterCell': {

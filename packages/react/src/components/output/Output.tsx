@@ -4,7 +4,7 @@ import { ActionMenu, ActionList, Box, IconButton, ProgressBar } from '@primer/re
 import { KebabHorizontalIcon, StopIcon, PaintbrushIcon } from '@primer/octicons-react';
 import { UUID } from '@lumino/coreutils';
 import { IOutput } from '@jupyterlab/nbformat';
-import { Kernel as JupyterKernel, KernelMessage } from '@jupyterlab/services';
+import { KernelMessage } from '@jupyterlab/services';
 import OutputAdapter from './OutputAdapter';
 import { selectExecute, outputActions, outputReducer } from './OutputState';
 import { useJupyter } from "../../jupyter/JupyterContext";
@@ -142,9 +142,9 @@ export const Output = (props: IOutputProps) => {
   }, [outputAdapter]);
   useEffect(() => {
     if (kernel) {
-      kernel.connection.then((kernelConnection: JupyterKernel.IKernelConnection) => {
-        setKernelStatus(kernelConnection.status);
-        kernelConnection.statusChanged.connect((kernelConnection, status) => {
+      kernel.ready.then(() => {
+        setKernelStatus(kernel.connection!.status);
+        kernel.connection!.statusChanged.connect((kernelConnection, status) => {
           setKernelStatus(status);
         })
       });

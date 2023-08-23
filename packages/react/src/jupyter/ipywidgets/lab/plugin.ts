@@ -1,19 +1,14 @@
 import { DisposableDelegate } from '@lumino/disposable';
 import { AttachedProperty } from '@lumino/properties';
 // import { filter } from '@lumino/algorithm';
-import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { DocumentRegistry, Context } from '@jupyterlab/docregistry';
 import { INotebookModel, INotebookTracker, Notebook, NotebookPanel, NotebookTracker } from '@jupyterlab/notebook';
-import { IMainMenu } from '@jupyterlab/mainmenu';
 import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
-import { ILoggerRegistry, LogLevel } from '@jupyterlab/logconsole';
 import { CodeCell } from '@jupyterlab/cells';
-import * as nbformat from '@jupyterlab/nbformat';
 import { WidgetRenderer } from './renderer';
 import { WidgetManager, WIDGET_VIEW_MIMETYPE } from './manager';
 import { OutputModel, OutputView, OUTPUT_WIDGET_VERSION } from './output';
 import { KernelMessage } from '@jupyterlab/services';
-import { ITranslator } from '@jupyterlab/translation';
 import { requireLoader } from "@jupyter-widgets/html-manager";
 import * as base from '@jupyter-widgets/base';
 import { BundledIPyWidgets, ExternalIPyWidgets } from '../../../components/notebook/Notebook';
@@ -75,28 +70,12 @@ function* chain<T>(
   }
 }
 
-const bindUnhandledIOPubMessageSignal = (notebookPanel: NotebookPanel, loggerRegistry: ILoggerRegistry | null): void => {
-  if (!loggerRegistry) {
-    return;
-  }
+const bindUnhandledIOPubMessageSignal = (notebookPanel: NotebookPanel): void => {
   const widgetManager = Private.widgetManagerProperty.get(notebookPanel.context);
   if (widgetManager) {
     widgetManager.onUnhandledIOPubMessage.connect(
       (sender: WidgetManager, msg: KernelMessage.IIOPubMessage) => {
-        const logger = loggerRegistry.getLogger(notebookPanel.context.path);
-        let level: LogLevel = 'warning';
-        if (
-          KernelMessage.isErrorMsg(msg) ||
-          (KernelMessage.isStreamMsg(msg) && msg.content.name === 'stderr')
-        ) {
-          level = 'error';
-        }
-        const data: nbformat.IOutput = {
-          ...msg.content,
-          output_type: msg.header.msg_type,
-        };
-        logger.rendermime = notebookPanel.content.rendermime;
-        logger.log({ type: 'output', data, level });
+        console.log('unhandledIOPubMessageSignal', sender, msg);
       }
     );
   }
@@ -155,7 +134,7 @@ export const externalIPyWidgetsPlugin = (context: Context<INotebookModel>, noteb
     //          outputViews(app, panel.context.path)
           )
         );
-        bindUnhandledIOPubMessageSignal(notebookPanel, null);
+        bindUnhandledIOPubMessageSignal(notebookPanel);
       });
     });
   };
@@ -184,7 +163,7 @@ export const bundledIPyWidgetsPlugin = (context: Context<INotebookModel>, notebo
   //          outputViews(app, panel.context.path)
         )
       );
-      bindUnhandledIOPubMessageSignal(notebookPanel, null);
+      bindUnhandledIOPubMessageSignal(notebookPanel);
     });
   };
   ipywidgets.forEach(ipywidget => {
@@ -204,13 +183,8 @@ export const managerPlugin = {
  */
 function activateWidgetExtension(
   rendermime: IRenderMimeRegistry,
-  tracker: INotebookTracker | null,
-  settingRegistry: ISettingRegistry | null,
-  menu: IMainMenu | null,
-  loggerRegistry: ILoggerRegistry | null,
-  translator: ITranslator | null
+  tracker: INotebookTracker,
 ): base.IJupyterWidgetRegistry {
-
   // Add a placeholder widget renderer.
   rendermime.addFactory(
     {
@@ -220,44 +194,33 @@ function activateWidgetExtension(
     },
     -10
   );
-
-  if (tracker !== null) {
-    tracker.forEach((notebookPanel) => {
-      registerWidgetManager(
-        notebookPanel.context,
-        notebookPanel.content.rendermime,
-        chain(
-          widgetRenderers(notebookPanel.content),
+  tracker.forEach((notebookPanel) => {
+    registerWidgetManager(
+      notebookPanel.context,
+      notebookPanel.content.rendermime,
+      chain(
+        widgetRenderers(notebookPanel.content),
 //          outputViews(app, panel.context.path)
-        )
-      );
-      bindUnhandledIOPubMessageSignal(notebookPanel, loggerRegistry);
-    });
-    tracker.widgetAdded.connect((sender, notebookPanel) => {
-      registerWidgetManager(
-        notebookPanel.context,
-        notebookPanel.content.rendermime,
-        chain(
-          widgetRenderers(notebookPanel.content),
+      )
+    );
+    bindUnhandledIOPubMessageSignal(notebookPanel);
+  });
+  tracker.widgetAdded.connect((sender, notebookPanel) => {
+    registerWidgetManager(
+      notebookPanel.context,
+      notebookPanel.content.rendermime,
+      chain(
+        widgetRenderers(notebookPanel.content),
 //          outputViews(app, panel.context.path)
-        )
-      );
-      bindUnhandledIOPubMessageSignal(notebookPanel, loggerRegistry);
-    });
-  }
-
-  if (menu) {
-    menu.settingsMenu.addGroup([
-      { command: '@jupyter-widgets/jupyterlab-manager:saveWidgetState' },
-    ]);
-  }
-
+      )
+    );
+    bindUnhandledIOPubMessageSignal(notebookPanel);
+  });
   return {
     registerWidget(data: base.IWidgetRegistryData): void {
       WIDGET_REGISTRY.push(data);
     },
   };
-
 }
 
 /**

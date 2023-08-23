@@ -13,12 +13,12 @@ import notebook from './samples/NotebookExample1.ipynb.json';
 import "./../../style/index.css";
 
 const NotebookUnmount = () => {
+  const { kernelManager, serverSettings } = useJupyter();
   const [showNotebook, setShowNotebook] = useState(false);
   const [kernel, setKernel] = useState<Kernel>()
-  const { kernelManager } = useJupyter();
   useEffect(() => {
     if (kernelManager) {
-      const kernel = new Kernel({ kernelManager, kernelName: "python" });
+      const kernel = new Kernel({ kernelManager, kernelName: "python", serverSettings });
       setKernel(kernel);
       setShowNotebook(true);
     }

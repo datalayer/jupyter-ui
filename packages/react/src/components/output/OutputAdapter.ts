@@ -47,17 +47,13 @@ export class OutputAdapter {
   public execute(code: string) {
     if (this._kernel) {
       this.clearOutput();
-      this._kernel.connection.then((kernelConnection) => {
-        this._outputArea.future = kernelConnection.requestExecute({code})
-      });
+      this._outputArea.future = this._kernel?.connection!.requestExecute({code})
     }
   }
 
   public interrupt() {
     if (this._kernel) {
-      this._kernel.connection.then((kernelConnection) => {
-        kernelConnection.interrupt();
-      });  
+      this._kernel.connection!.interrupt();
     }
   }
 
@@ -80,9 +76,7 @@ export class OutputAdapter {
 
   private initKernel() {
     if (this._kernel) {
-      this._kernel.connection.then((kernelConnection) => {
-        this._iPyWidgetsClassicManager.registerWithKernel(kernelConnection)
-      });
+      this._iPyWidgetsClassicManager.registerWithKernel(this._kernel?.connection)
     }
   }
 

@@ -1,15 +1,13 @@
+import { Widget } from "@lumino/widgets";
 import { Kernel } from '@jupyterlab/services';
 import { WidgetModel, WidgetView, DOMWidgetView, ICallbacks } from '@jupyter-widgets/base';
 import { HTMLManager } from "@jupyter-widgets/html-manager";
 import { shims } from "@jupyter-widgets/base/lib/services-shim";
-
-import * as luminoWidget from "@lumino/widgets";
 import * as outputWidgets from "@jupyter-widgets/jupyterlab-manager/lib/output";
 
 // Exposing @jupyter-widgets/base and @jupyter-widgets/controls as AMD modules for custom widget bundles that depend on it.
 import * as base from "@jupyter-widgets/base";
 import * as controls from "@jupyter-widgets/controls";
-
 if (typeof window !== "undefined" && typeof (window as any).define !== "undefined") {
   (window as any).define("@jupyter-widgets/base", base);
   (window as any).define("@jupyter-widgets/controls", controls);
@@ -44,7 +42,7 @@ export class IPyWidgetsManager extends HTMLManager {
 
   display_view(view: Promise<DOMWidgetView> | DOMWidgetView, el: HTMLElement): Promise<void> {
     return Promise.resolve(view).then((view) => {
-      luminoWidget.Widget.attach(view.luminoWidget, el);
+      Widget.attach(view.luminoWidget, el);
       view.on("remove", function () {
         console.log("view removed", view);
       });

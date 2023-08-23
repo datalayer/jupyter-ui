@@ -171,19 +171,19 @@ export class NotebookAdapter {
       fileTypes: ['notebook'],
       defaultFor: ['notebook'],
       preferKernel: true,
+      autoStartDefault: false,
       canStartKernel: false,
+      shutdownOnClose: false,
       rendermime: this._rendermime,
       contentFactory,
       mimeTypeService: editorServices.mimeTypeService,
     });
-
     notebookWidgetFactory.widgetCreated.connect((sender, notebookPanel) => {
       notebookPanel.context.pathChanged.connect(() => {
         this._tracker?.save(notebookPanel);
       });
       this._tracker?.add(notebookPanel);
     });
-
     documentRegistry.addWidgetFactory(notebookWidgetFactory);
 
     const notebookModelFactory = new JupyterReactNotebookModelFactory({
@@ -205,27 +205,7 @@ export class NotebookAdapter {
         );
         break;
       }
-      case 'lab': {
-        const jupyterWidgetRegistry = managerPlugin.activate(this._rendermime, this._tracker, null, null, null, null);
-        baseWidgetsPlugin.activate(jupyterWidgetRegistry);
-        controlWidgetsPlugin.activate(jupyterWidgetRegistry);
-        outputWidgetPlugin.activate(jupyterWidgetRegistry);
-        break;
-      }
-    }
-    
-    this._context = new Context({
-      manager: this._serviceManager,
-      factory: notebookModelFactory,
-      path: this._path ?? FALLBACK_PATH,
-      kernelPreference: {
-        id: this._kernel.serverId, // The core jupyterlab does not behave as expected.
-        shouldStart: true,
-        canStart: true,
-        autoStartDefault: false,
-        shutdownOnDispose: false,
-      }
-    });
+    }    
     /*
     // Alternative way to create a NotebookPanel.
     const content = new Notebook({
@@ -242,29 +222,115 @@ export class NotebookAdapter {
       content,
     });
     */
-    this._notebookPanel = documentRegistry.getWidgetFactory('Notebook')?.createNew(this._context) as NotebookPanel;
-
-    switch(this._ipywidgets) { 
-      case 'classic': {
-        this._notebookPanel.sessionContext.kernelChanged.connect((
-          sender: any, 
-          args: IChangedArgs<JupyterKernel.IKernelConnection | null, JupyterKernel.IKernelConnection | null, 'kernel'>
-        ) => {
-          this._iPyWidgetsClassicManager?.registerWithKernel(args.newValue);
-        });
-        break;
+    this._context = new Context({
+      manager: this._serviceManager,
+      factory: notebookModelFactory,
+      path: this._path ?? FALLBACK_PATH,
+      kernelPreference: {
+        id: this._kernel.id,
+        shouldStart: true,
+        canStart: false,
+        autoStartDefault: false,
+        shutdownOnDispose: false,
       }
-      case 'lab': {
-        if (this._bundledIPyWidgets) {
-          bundledIPyWidgetsPlugin(this._context, this._tracker, this._bundledIPyWidgets);
-        }
-        if (this._externalIPyWidgets) {
-          externalIPyWidgetsPlugin(this._context, this._tracker, this._externalIPyWidgets);
-        }
-        break;
+    });
+    /*
+    // These are temporary fixes to support the IPyWidget Comms in all cases.
+    (this._context.sessionContext as any)._initialize = async (): Promise<boolean> => {
+      const manager = (this._context!.sessionContext as any).sessionManager;
+      await manager.ready;
+      await manager.refreshRunning();
+      const model = find(manager.running(), (item: any) => {
+          return (item as any).path === (this._context!.sessionContext as any)._path;
+      });
+      if (model) {
+          try {
+            const session = manager.connectTo({
+              model,
+              kernelConnectionOptions: {
+                handleComms: true,
+              }
+            });
+            (this._context!.sessionContext as any)._handleNewSession(session);
+          }
+          catch (err) {
+            void (this._context!.sessionContext as any)._handleSessionError(err);
+            return Promise.reject(err);
+          }
+      }
+      return await (this._context!.sessionContext as any)._startIfNecessary();
+   };
+   (this._context.sessionContext as any).startKernel = async (): Promise<boolean> => {
+    const preference = (this._context!.sessionContext as any).kernelPreference;
+    if (!preference.autoStartDefault && preference.shouldStart === false) {
+      return true;
+    }
+    let options: Partial<JupyterKernel.IModel> | undefined;
+    if (preference.id) {
+      options = { id: preference.id };
+    } else {
+      const name = (this._context!.sessionContext as any).Private.getDefaultKernel({
+        specs: (this._context!.sessionContext as any).specsManager.specs,
+        sessions: (this._context!.sessionContext as any).sessionManager.running(),
+        preference
+      });
+      if (name) {
+        options = { name };
       }
     }
-    
+    if (options) {
+      try {
+        await (this._context!.sessionContext as any)._changeKernel(options);
+        return false;
+      } catch (err) {
+        // no-op
+      }
+    }
+    return true;
+  }
+*/
+   const registerIPyWidgets = () => {
+      switch(this._ipywidgets) { 
+        case 'classic': {
+          this._notebookPanel!.sessionContext.kernelChanged.connect((
+            sender: any,
+            args: IChangedArgs<JupyterKernel.IKernelConnection | null, JupyterKernel.IKernelConnection | null, 'kernel'>
+          ) => {
+            this._iPyWidgetsClassicManager?.registerWithKernel(args.newValue);
+          });
+          break;
+        }
+        case 'lab': {
+          const jupyterWidgetRegistry = managerPlugin.activate(this._rendermime!, this._tracker!);
+          baseWidgetsPlugin.activate(jupyterWidgetRegistry);
+          controlWidgetsPlugin.activate(jupyterWidgetRegistry);
+          outputWidgetPlugin.activate(jupyterWidgetRegistry);
+           if (this._bundledIPyWidgets) {
+            bundledIPyWidgetsPlugin(this._context!, this._tracker!, this._bundledIPyWidgets);
+          }
+          if (this._externalIPyWidgets) {
+            externalIPyWidgetsPlugin(this._context!, this._tracker!, this._externalIPyWidgets);
+          }
+          break;
+        }
+      }
+    }
+
+    registerIPyWidgets();
+
+    this._context.sessionContext.kernelChanged.connect((_, args) => {
+      const kernelConnection = args.newValue;
+      console.log('New Kernel Connection is created', kernelConnection);
+      if (kernelConnection && !kernelConnection.handleComms) {
+        console.warn('The kernelConnection does not handle Comms', kernelConnection.id);
+        (kernelConnection as any).handleComms = true;
+        console.log('New Kernel Connection is updated to force Comm support', kernelConnection);
+      }
+//      registerIPyWidgets();
+    });
+
+    this._notebookPanel = documentRegistry.getWidgetFactory('Notebook')?.createNew(this._context) as NotebookPanel;
+
     const completerHandler = this.setupCompleter(this._notebookPanel!);
     NotebookCommands(this._commandRegistry, this._notebookPanel, completerHandler, this._tracker, this._path);
 
@@ -280,14 +346,15 @@ export class NotebookAdapter {
     });
 
   }
-
+  /*
+  // @depreacted Don't use this, the notebook may show wrong content...
   setNbformat(nbformat: INotebookContent) {
     this._nbformat = nbformat;
     if (this._nbformat) {
       this._notebookPanel?.model?.fromJSON(nbformat);
     }
   }
-
+  */
   setupCompleter(notebookPanel: NotebookPanel) {
     const editor = notebookPanel.content.activeCell && notebookPanel.content.activeCell.editor;
     const sessionContext = notebookPanel.context.sessionContext;
@@ -325,17 +392,13 @@ export class NotebookAdapter {
 
   assignKernel(kernel: Kernel) {
     this._kernel = kernel;
-    this._kernel.connection.then(kernelConnection => {
-      this._context?.sessionContext.changeKernel({
-        id: this._kernel?.serverId,
-      }).then(() => {
-        switch(this._ipywidgets) { 
-          case 'classic': {
-            this._iPyWidgetsClassicManager?.registerWithKernel(kernelConnection);
-            break;
-          }
+    this._context?.sessionContext.changeKernel({ id: this._kernel?.id }).then(() => {
+      switch(this._ipywidgets) { 
+        case 'classic': {
+          this._iPyWidgetsClassicManager?.registerWithKernel(this._kernel.connection);
+          break;
         }
-      });
+      }
     });
   }
 

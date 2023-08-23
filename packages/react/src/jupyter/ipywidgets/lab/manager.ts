@@ -252,7 +252,6 @@ export abstract class LabWidgetManager
 
   /**
    * A signal emitted for unhandled iopub kernel messages.
-   *
    */
   get onUnhandledIOPubMessage(): ISignal<this, KernelMessage.IIOPubMessage> {
     return this._onUnhandledIOPubMessage;

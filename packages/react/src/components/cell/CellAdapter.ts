@@ -1,16 +1,16 @@
 import { BoxPanel, Widget } from '@lumino/widgets';
 import { CommandRegistry } from '@lumino/commands';
-import { SessionContext, Toolbar, ToolbarButton } from '@jupyterlab/apputils';
+import { SessionContext, ISessionContext, Toolbar, ToolbarButton } from '@jupyterlab/apputils';
 import { CodeCellModel, CodeCell, Cell } from '@jupyterlab/cells';
-import { CodeMirrorMimeTypeService, EditorLanguageRegistry, CodeMirrorEditorFactory, EditorExtensionRegistry, EditorThemeRegistry, ybinding } from '@jupyterlab/codemirror';
-import { runIcon } from '@jupyterlab/ui-components';
+import { ybinding, CodeMirrorMimeTypeService, EditorLanguageRegistry, CodeMirrorEditorFactory, EditorExtensionRegistry, EditorThemeRegistry } from '@jupyterlab/codemirror';
 import { Completer, CompleterModel, CompletionHandler, ProviderReconciliator, KernelCompleterProvider } from '@jupyterlab/completer';
 import { RenderMimeRegistry, standardRendererFactories as initialFactories } from '@jupyterlab/rendermime';
 import { Session, ServerConnection, SessionManager, KernelManager, KernelSpecManager } from '@jupyterlab/services';
 import { createStandaloneCell, YCodeCell, IYText } from '@jupyter/ydoc';
-import { requireLoader } from "@jupyter-widgets/html-manager";
+import { requireLoader as loader } from "@jupyter-widgets/html-manager";
 import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/lib/output_renderers";
-import { IPyWidgetsManager } from "../../jupyter/ipywidgets/IPyWidgetsManager";
+import { runIcon } from '@jupyterlab/ui-components';
+import IPyWidgetsManager from "../../jupyter/ipywidgets/IPyWidgetsManager";
 import Kernel from './../../jupyter/services/kernel/Kernel';
 import CellCommands from './CellCommands';
 
@@ -19,34 +19,68 @@ export class CellAdapter {
   private _codeCell: CodeCell;
   private _sessionContext: SessionContext;
 
-  constructor(source: string, serverSettings: ServerConnection.ISettings, kernel?: Kernel, ) {
-    const kernelManager = new KernelManager({
+  constructor(options: CellAdapter.ICellAdapterOptions) {
+    const { source, serverSettings, kernel } = options;
+    const kernelManager = kernel?.kernelManager ?? new KernelManager({
       serverSettings
     });
-    const sessionManager = new SessionManager({
+    const sessionManager = kernel?.sessionManager ?? new SessionManager({
       serverSettings,
       kernelManager
     });
-    const specsManager = new KernelSpecManager({
+    const specsManager = kernel?.kerneSpeclManager ?? new KernelSpecManager({
       serverSettings
     });
-    const kernelPreference = kernel
-    ? {
-      id: kernel.serverId,
-      shouldStart: true,
-      autoStartDefault: false,
-    } : {
-      shouldStart: true,
-      autoStartDefault: true,
-      name: 'python',
-    }
+    const kernelPreference: ISessionContext.IKernelPreference = kernel ?
+      {
+        id: kernel.id,
+        shouldStart: false,
+        autoStartDefault: false,
+        shutdownOnDispose: false,
+      }
+    :
+      {
+        name: 'python',
+        shouldStart: true,
+        autoStartDefault: true,
+        shutdownOnDispose: true,
+      }
+
     this._sessionContext = new SessionContext({
-      name: 'Jupyter React Cell',
+      name: kernel?.path,
+      path: kernel?.path,
       sessionManager,
       specsManager,
-      kernelPreference
+      type: 'python',
+      kernelPreference,
     });
-
+    /*
+    // This is a hack to support handleComms.
+    (this._sessionContext as any)._initialize = async (): Promise<boolean> => {
+      const manager = (this._sessionContext as any).sessionManager;
+      await manager.ready;
+      await manager.refreshRunning();
+      const model = find(manager.running(), item => {
+          return (item as any).path === (this._sessionContext as any)._path;
+      });
+      if (model) {
+          try {
+            const session = manager.connectTo({
+              model,
+              kernelConnectionOptions: {
+                handleComms: true,
+              }
+            });
+            (this._sessionContext as any)._handleNewSession(session);
+          }
+          catch (err) {
+            void (this._sessionContext as any)._handleSessionError(err);
+            return Promise.reject(err);
+          }
+      }
+      return await (this._sessionContext as any)._startIfNecessary();
+   };
+   */
     const themes = new EditorThemeRegistry();
     for (const theme of EditorThemeRegistry.getDefaultThemes()) {
       themes.addTheme(theme);
@@ -71,16 +105,14 @@ export class CellAdapter {
       return registry;
     }  
     const languages = new EditorLanguageRegistry();
-    // Register default languages.
     for (const language of EditorLanguageRegistry.getDefaultLanguages()) {
       languages.addLanguage(language);
     }
-    // Add Jupyter Markdown flavor here to support code block highlighting.
     languages.addLanguage({
       name: 'ipythongfm',
       mime: 'text/x-ipythongfm',
       load: async () => {
-        // TODO: add support for LaTeX
+        // TODO: add support for LaTeX.
         const m = await import('@codemirror/lang-markdown');
         return m.markdown({
           codeLanguages: (info: string) => languages.findBest(info) as any
@@ -98,7 +130,7 @@ export class CellAdapter {
       useCapture
     );
     const rendermime = new RenderMimeRegistry({ initialFactories });
-    const iPyWidgetsClassicManager = new IPyWidgetsManager({ loader: requireLoader });
+    const iPyWidgetsClassicManager = new IPyWidgetsManager({ loader });
     rendermime.addFactory(
       {
         safe: false,
@@ -109,7 +141,7 @@ export class CellAdapter {
     );
     const factoryService = new CodeMirrorEditorFactory({
       extensions: editorExtensions(),
-      languages
+      languages,
     });
     this._codeCell = new CodeCell({
       rendermime,
@@ -122,14 +154,19 @@ export class CellAdapter {
         }) as YCodeCell
       }),
       contentFactory: new Cell.ContentFactory({
-        editorFactory: factoryService.newInlineEditor.bind(factoryService)
+        editorFactory: factoryService.newInlineEditor.bind(factoryService),
       }),
     });
     this._codeCell.addClass('dla-JupyterCell');
     this._codeCell.initializeState();
     this._sessionContext.kernelChanged.connect((sender: SessionContext, arg: Session.ISessionConnection.IKernelChangedArgs) => {
       const kernelConnection = arg.newValue;
-      iPyWidgetsClassicManager.registerWithKernel(kernelConnection)
+      if (kernelConnection) {
+        console.warn('The kernelConnection does not handle Comms', kernelConnection.id);
+        (kernelConnection as any).handleComms = true;
+        console.log('New Kernel Connection is updated to force Comm support', kernelConnection);
+      }
+      iPyWidgetsClassicManager.registerWithKernel(kernelConnection);
     });
     this._sessionContext.kernelChanged.connect(() => {
       void this._sessionContext.session?.kernel?.info.then(info => {
@@ -209,6 +246,15 @@ export class CellAdapter {
     CodeCell.execute(this._codeCell, this._sessionContext);
   }
 
+}
+
+export namespace CellAdapter {
+
+  export type ICellAdapterOptions = {
+    source: string;
+    serverSettings: ServerConnection.ISettings;
+    kernel?: Kernel;
+  }
 }
 
 export default CellAdapter;

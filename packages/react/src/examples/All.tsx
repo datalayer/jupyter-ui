@@ -113,12 +113,15 @@ const NotebookToolbar = () => {
 }
 
 const NotebookKernelChange = () => {
-  const { kernelManager } = useJupyter();
+  const { kernelManager, serverSettings } = useJupyter();
+  const dispatch = useDispatch();
   const changeKernel = () => {
     if (kernelManager) {
-      const kernel = new Kernel({ kernelManager, kernelName: "pythonqsdf" });
-      kernel.connection.then((kernelConnection) => {
-      });
+      const kernel = new Kernel({ kernelManager, kernelName: "python", serverSettings });
+      kernel.ready.then(() => {
+        dispatch(notebookActions.changeKernel({ uid: NOTEBOOK_UID_2, kernel }));
+        alert('The kernel is changed.')
+      });      
     }
   }
   return (

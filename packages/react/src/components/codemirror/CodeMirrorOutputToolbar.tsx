@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useTheme, ActionMenu, ActionList, IconButton, Box } from '@primer/react'
 import { KebabHorizontalIcon, ArrowRightIcon, StopIcon, PaintbrushIcon } from '@primer/octicons-react';
-import { Kernel as JupyterKernel, KernelMessage } from '@jupyterlab/services';
+import { KernelMessage } from '@jupyterlab/services';
 import { EditorView } from 'codemirror';
 import OutputAdapter from '../output/OutputAdapter';
 import Kernel from '../../jupyter/services/kernel/Kernel';
@@ -60,12 +60,12 @@ export const CodeMirrorOutputToolbar = (props: Props) => {
   const [kernelStatus, setKernelStatus] = useState<KernelMessage.Status>('unknown');
   useEffect(() => {
     if (kernel) {
-      kernel.connection.then((kernelConnection: JupyterKernel.IKernelConnection) => {
+      kernel.ready.then(() => {
         if (codePre) {
           executeCode(editorView, codePre);
         }
-        setKernelStatus(kernelConnection.status);
-        kernelConnection.statusChanged.connect((kernelConnection, status) => {
+        setKernelStatus(kernel.connection!.status);
+        kernel.connection!.statusChanged.connect((kernelConnection, status) => {
           setKernelStatus(status);
         });
       });

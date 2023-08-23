@@ -17,6 +17,11 @@ root.render(
     <Notebook
       path="ipywidgets.ipynb"
       uid={NOTEBOOK_UID}
+      externalIPyWidgets={[
+        { name: "bqplot", version: "0.5.42" },
+        { name: "jupyter-matplotlib", version: "0.11.3" },
+        { name: "@widgetti/jupyter-react", version: "0.3.0" },
+      ]}
       cellSidebarMargin={60}
       height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
       CellSidebar={CellSidebarNew}

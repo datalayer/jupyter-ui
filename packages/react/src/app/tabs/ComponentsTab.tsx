@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Box, NavList } from '@primer/react';
 import { JupyterFrontEndProps } from '../JupyterReact';
 import FileBrowserComponent from './components/FileBrowserComponent';
+import CellComponent from './components/CellComponent';
+import NotebookComponent from './components/NotebookComponent';
 
 const MainTab = (props: JupyterFrontEndProps) => {
   const [nav, setNav] = useState(1);
@@ -17,10 +19,18 @@ const MainTab = (props: JupyterFrontEndProps) => {
             <NavList.Item aria-current={nav === 1 ? 'page' : undefined} onClick={e => setNav(1)}>
               File Browser
             </NavList.Item>
+            <NavList.Item aria-current={nav === 2 ? 'page' : undefined} onClick={e => setNav(2)}>
+              Cell
+            </NavList.Item>
+            <NavList.Item aria-current={nav === 3 ? 'page' : undefined} onClick={e => setNav(3)}>
+              Notebook
+            </NavList.Item>
           </NavList>
         </Box>
         <Box ml={3} sx={{ width: '100%'}}>
           {(nav === 1) && <FileBrowserComponent/>}
+          {(nav === 2) && <CellComponent/>}
+          {(nav === 3) && <NotebookComponent/>}
         </Box>
       </Box>
     </>
