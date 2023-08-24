@@ -35,10 +35,10 @@ class JupyterReactExtensionApp(ExtensionAppJinjaMixin, ExtensionApp):
         self.serverapp.jinja_template_vars.update({"jupyter_react_version" : __version__})
 
     def initialize_handlers(self):
-        self.log.info("Jupyter React Config {}".format(self.settings['jupyter_react_jinja2_env']))
+        self.log.debug("Jupyter React Config {}".format(self.settings['jupyter_react_jinja2_env']))
         handlers = [
             ("jupyter_react", IndexHandler),
-            (url_path_join("jupyter_react", "get_config"), ConfigHandler),
+            (url_path_join("jupyter_react", "config"), ConfigHandler),
         ]
         self.handlers.extend(handlers)
 

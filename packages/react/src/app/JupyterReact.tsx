@@ -17,13 +17,13 @@ const JupyterReact = (props: JupyterFrontEndProps): JSX.Element => {
   const [tab, setTab] = useState(1);
   const [version, setVersion] = useState('');
   useEffect(() => {
-    requestAPI<any>(ServerConnection.makeSettings(), 'jupyter_react', 'get_config')
+    requestAPI<any>(ServerConnection.makeSettings(), 'jupyter_react', 'config')
     .then(data => {
       setVersion(data.version);
     })
     .catch(reason => {
       console.error(
-        `The Jupyter Server jupyter_react extension appears to be missing.\n${reason}`
+        `Error while accessing the jupyter server jupyter_react extension.\n${reason}`
       );
     });
   });

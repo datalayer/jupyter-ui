@@ -66,7 +66,7 @@ const jupyterReactPlugin: JupyterFrontEndPlugin<void> = {
           console.error('Failed to load settings for @datalayer/jupyter-react.', reason);
         });
     }
-    requestAPI<any>('get_config')
+    requestAPI<any>('config')
       .then(data => {
         console.log(data);
       })

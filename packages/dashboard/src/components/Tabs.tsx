@@ -13,13 +13,13 @@ const Tabs = (): JSX.Element => {
   const [tab, setTab] = useState(1);
   const [version, setVersion] = useState('');
   useEffect(() => {
-    requestAPI<any>('get_config')
+    requestAPI<any>('config')
     .then(data => {
       setVersion(data.version);
     })
     .catch(reason => {
       console.error(
-        `The Jupyter Server datalayer_example extension appears to be missing.\n${reason}`
+        `Error while accessing the jupyter server datalayer_example extension.\n${reason}`
       );
     });
   });
