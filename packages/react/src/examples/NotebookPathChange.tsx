@@ -7,12 +7,10 @@ import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarD
 
 import "./../../style/index.css";
 
-const NOTEBOOK_UID = 'notebook-path-change-id';
+const PATH_1 = "matplotlib.ipynb";
+const PATH_2 = "ipywidgets.ipynb";
 
-const PATH_1 = "ipywidgets.ipynb";
-const PATH_2 = "panel.ipynb";
-
-const NotebookModelChange = () => {
+const NotebookPathChange = () => {
   const [path, setPath] = useState<string>(PATH_1);
   const changePath = () => {
     path === PATH_1 ? setPath(PATH_2) : setPath(PATH_1);
@@ -30,12 +28,17 @@ const NotebookModelChange = () => {
           </Button>
         </ButtonGroup>
       </Box>
-      <Box>
-        <Text>Current path: {path}</Text>
+      <Box mt={2}>
+        <Text as="span" sx={{color: 'fg.onEmphasis', bg: 'neutral.emphasis', p: 2}}>{path}</Text>
       </Box>
       <Notebook
-        uid={NOTEBOOK_UID}
         path={path}
+        uid="notebook-path-change-id"
+        externalIPyWidgets={[
+          { name: "bqplot", version: "0.5.42" },
+          { name: "jupyter-matplotlib", version: "0.11.3" },
+          { name: "@widgetti/jupyter-react", version: "0.3.0" },
+        ]}
         CellSidebar={CellSidebarDefault}
       />
     </>
@@ -48,6 +51,6 @@ const root = createRoot(div)
 
 root.render(
   <Jupyter>
-    <NotebookModelChange />
+    <NotebookPathChange />
   </Jupyter>
 );
