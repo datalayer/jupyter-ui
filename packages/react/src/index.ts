@@ -12,6 +12,7 @@ export * from './jupyter/lumino/ReactPortalWidget';
 
 // CSS.
 import './index.css';
+import './jupyter/lab/JupyterLabCss';
 
 // Redux.
 export * from './redux/State';

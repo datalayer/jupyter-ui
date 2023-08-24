@@ -11,17 +11,18 @@ import Kernel from './services/kernel/Kernel';
  * The type for the Jupyter context.
  */
 export type JupyterContextType = {
+  baseUrl: string;
+  defaultKernel?: Kernel,
+  disableCssLoading: boolean,
+  injectableStore: InjectableStore;
+  kernelManager?: KernelManager,
   lite: boolean;
   serverSettings: ServerConnection.ISettings,
   serviceManager?: ServiceManager,
-  kernelManager?: KernelManager,
-  defaultKernel?: Kernel,
+  setVariant: (value: string) => void;
   startDefaultKernel: boolean,
   variant: string;
-  setVariant: (value: string) => void;
-  baseUrl: string;
   wsUrl: string;
-  injectableStore: InjectableStore;
 };
 
 /**
@@ -63,16 +64,17 @@ export const ensureJupyterAuth = (serverSettings: ServerConnection.ISettings): P
  * The type for the properties of the Jupyter context.
  */
 type JupyterContextProps = {
-  children: React.ReactNode;
-  variant: string;
   baseUrl: string;
-  wsUrl: string;
+  children: React.ReactNode;
+  defaultKernelName: string;
+  disableCssLoading: boolean;
+  injectableStore: InjectableStore;
   lite: boolean;
   startDefaultKernel: boolean,
-  defaultKernelName: string,
-  injectableStore: InjectableStore;
   useRunningKernelId?: string;
   useRunningKernelIndex: number;
+  variant: string;
+  wsUrl: string;
 };
 /*
 const headers = new Headers({
@@ -99,21 +101,11 @@ export const createServerSettings = (baseUrl: string, wsUrl: string) => {
 /**
  * The Jupyter context provider.
  */
-export const JupyterContextProvider: React.FC<{ 
-  children: React.ReactNode,
-  lite: boolean,
-  startDefaultKernel: boolean,
-  defaultKernelName: string,
-  useRunningKernelId?: string,
-  useRunningKernelIndex?: number,
-  variant: string,
-  baseUrl: string,
-  wsUrl: string,
-  injectableStore: InjectableStore
-}> = ({
-        children, lite, startDefaultKernel, defaultKernelName, useRunningKernelId, 
-        useRunningKernelIndex, variant, baseUrl, wsUrl, injectableStore
-      }: JupyterContextProps) => {
+export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => {
+  const {
+    children, lite, startDefaultKernel, defaultKernelName, disableCssLoading, useRunningKernelId, 
+    useRunningKernelIndex, variant, baseUrl, wsUrl, injectableStore
+  } = props;
   const [_, setVariant] = useState('default');
   const [serverSettings] = useState<ServerConnection.ISettings>(createServerSettings(baseUrl, wsUrl));
   const [serviceManager, setServiceManager] = useState<ServiceManager>();
@@ -197,6 +189,7 @@ export const JupyterContextProvider: React.FC<{
         serviceManager,
         kernelManager,
         defaultKernel: kernel,
+        disableCssLoading,
         startDefaultKernel,
         variant,
         setVariant,

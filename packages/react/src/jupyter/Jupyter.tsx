@@ -13,6 +13,7 @@ export type JupyterProps = {
   children: React.ReactNode;
   collaborative?: boolean;
   defaultKernelName: string;
+  disableCssLoading: boolean;
   injectableStore?: InjectableStore;
   jupyterServerHttpUrl?: string;
   jupyterServerWsUrl?: string;
@@ -48,12 +49,14 @@ const ErrorFallback = ({error, resetErrorBoundary}: any) => {
 export const Jupyter = (props: JupyterProps) => {
   const {
     lite, startDefaultKernel, defaultKernelName, injectableStore,
-    useRunningKernelId, useRunningKernelIndex, children,
+    useRunningKernelId, useRunningKernelIndex, children, disableCssLoading,
   } = props;
   const config = useMemo(() => loadJupyterConfig(props), []);
   useEffect(() => {
     if (!config.insideJupyterLab) {
-      import("./lab/JupyterLabCss");
+      if (!disableCssLoading) {
+        import("./lab/JupyterLabCss");
+      }
     }  
   }, [config]);
   return (
@@ -64,15 +67,16 @@ export const Jupyter = (props: JupyterProps) => {
       <ThemeProvider colorMode="day">
         <BaseStyles>
           <JupyterContextProvider
+            baseUrl={getJupyterServerHttpUrl()}
+            defaultKernelName={defaultKernelName}
+            disableCssLoading={disableCssLoading}
+            injectableStore={injectableStore || defaultInjectableStore}
             lite={lite}
             startDefaultKernel={startDefaultKernel}
-            defaultKernelName={defaultKernelName}
             useRunningKernelId={useRunningKernelId}
-            useRunningKernelIndex={useRunningKernelIndex}
-            baseUrl={getJupyterServerHttpUrl()}
-            wsUrl={getJupyterServerWsUrl()}
-            injectableStore={injectableStore || defaultInjectableStore}
+            useRunningKernelIndex={useRunningKernelIndex ?? -1}
             variant="default"
+            wsUrl={getJupyterServerWsUrl()}
           >
             { children }
           </JupyterContextProvider>
@@ -85,6 +89,7 @@ export const Jupyter = (props: JupyterProps) => {
 Jupyter.defaultProps = {
   collaborative: false,
   defaultKernelName: 'python',
+  disableCssLoading: false,
   lite: false,
   startDefaultKernel: true,
   terminals: false,
