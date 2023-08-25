@@ -72,7 +72,7 @@ const jupyterReactPlugin: JupyterFrontEndPlugin<void> = {
       })
       .catch(reason => {
         console.error(
-          `The Jupyter Server jupyter_react extension appears to be missing.\n${reason}`
+          `The Jupyter Server jupyter_react extension extension.\n${reason}`
         );
       }
     );

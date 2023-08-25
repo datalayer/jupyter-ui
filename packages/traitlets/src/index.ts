@@ -87,7 +87,7 @@ const plugin: JupyterFrontEndPlugin<IJupytertraitlets> = {
       })
       .catch(reason => {
         console.error(
-          `The jupyter_traitlets server extension appears to be missing.\n${reason}`
+          `The jupyter_traitlets server extension extension.\n${reason}`
         );
       });
     connect('ws://localhost:8888/jupyter_traitlets/echo', true);
