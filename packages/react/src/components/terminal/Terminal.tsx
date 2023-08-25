@@ -6,16 +6,17 @@ import { useJupyter } from './../../jupyter/JupyterContext';
 import Lumino from '../../jupyter/lumino/Lumino';
 
 export const Terminal = () => {
-  const { injectableStore } = useJupyter();
+  const { injectableStore, serverSettings } = useJupyter();
   const dispatch = useDispatch();
   const [adapter, setAdapter] = useState<TerminalAdapter>();
   useEffect(() => {
     injectableStore.inject('terminal', terminalReducer);
-    const adapter = new TerminalAdapter();
+    const adapter = new TerminalAdapter(serverSettings);
     dispatch(terminalActions.update({ adapter }));
     setAdapter(adapter);
   }, []);
-  return adapter ?
+  return adapter
+  ?
     <Lumino>
       {adapter.panel}
     </Lumino>
