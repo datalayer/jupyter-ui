@@ -1,5 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import { IOutput } from '@jupyterlab/nbformat';
+import { Text } from '@primer/react';
 import Jupyter from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
 import Output from "../components/output/Output";
@@ -25,11 +26,17 @@ const Outputs = () => {
   const { defaultKernel } = useJupyter();
   return (
     <>
+      <Text as="h1">Output with Editor</Text>
       <Output
         showEditor={true}
         autoRun={false}
         kernel={defaultKernel}
         code={SOURCE_1}
+        outputs={SOURCE_1_OUTPUTS}
+      />
+      <Text as="h1">Output without Editor</Text>
+      <Output
+        showEditor={false}
         outputs={SOURCE_1_OUTPUTS}
       />
     </>
