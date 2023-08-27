@@ -3,26 +3,26 @@ import { ABCWidgetFactory, DocumentRegistry, DocumentWidget } from '@jupyterlab/
 import { INotebookModel } from '@jupyterlab/notebook';
 import { Token } from '@lumino/coreutils';
 import { Signal } from '@lumino/signaling';
-import DashboardWidget from './dashboardWidget';
+import DashboardWidget from './viewerWidget';
 
-export type IDashboardTracker = IWidgetTracker<Dashboard>
+export type IViewerTracker = IWidgetTracker<Viewer>
 
-export const IDashboardTracker = new Token<IDashboardTracker>(
-  '@datalayer/jupyter-react:IDashboardTracker'
+export const IViewerTracker = new Token<IViewerTracker>(
+  '@datalayer/jupyter-dashboard:IViewerTracker'
 );
 
-export const DASHBOARD_ICON_CLASS = 'jp-MaterialIcon jp-NotebookIcon';
+export const VIEWER_ICON_CLASS = 'jp-MaterialIcon jp-NotebookIcon';
 
-export class Dashboard extends DocumentWidget<DashboardWidget, INotebookModel> {
-  private _renderOnSave: boolean;
+export class Viewer extends DocumentWidget<DashboardWidget, INotebookModel> {
+  private _renderOnSave: boolean = false;
 
-  constructor(options: Dashboard.IOptions) {
+  constructor(options: Viewer.IOptions) {
     super({
       ...options,
       content: new DashboardWidget(options.context),
     });
     const { context, renderOnSave } = options;
-    this.content.title.iconClass = DASHBOARD_ICON_CLASS;
+    this.content.title.iconClass = VIEWER_ICON_CLASS;
     this.renderOnSave = renderOnSave ? true : false;
     context.pathChanged.connect(() => {
 //      this.content.url = getClassicUrl(context.path);
@@ -87,21 +87,21 @@ export class Dashboard extends DocumentWidget<DashboardWidget, INotebookModel> {
 
 }
 
-export namespace Dashboard {
+export namespace Viewer {
   export interface IOptions extends DocumentWidget.IOptionsOptionalContent<DashboardWidget, INotebookModel> {
     renderOnSave?: boolean;
   }
 }
 
-export class DashboardFactory extends ABCWidgetFactory<Dashboard, INotebookModel> {
+export class ViewerFactory extends ABCWidgetFactory<Viewer, INotebookModel> {
   public defaultRenderOnSave = false;
 
-  constructor(options: DocumentRegistry.IWidgetFactoryOptions<Dashboard>) {
+  constructor(options: DocumentRegistry.IWidgetFactoryOptions<Viewer>) {
     super(options);
   }
 
-  protected createNewWidget(context: DocumentRegistry.IContext<INotebookModel>): Dashboard {
-    return new Dashboard({
+  protected createNewWidget(context: DocumentRegistry.IContext<INotebookModel>): Viewer {
+    return new Viewer({
       context,
       renderOnSave: this.defaultRenderOnSave
     });

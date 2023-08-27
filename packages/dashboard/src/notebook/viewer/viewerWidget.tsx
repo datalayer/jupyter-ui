@@ -2,7 +2,7 @@ import { ReactWidget } from '@jupyterlab/apputils';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { INotebookModel } from '@jupyterlab/notebook';
 import { ThemeProvider, BaseStyles, Box } from '@primer/react';
-import Dashboard from './components/Dashboard';
+import SimpleViewer from './components/SimpleViewer';
 
 class DashboardWidget extends ReactWidget {
   private _context: DocumentRegistry.IContext<INotebookModel>
@@ -17,7 +17,7 @@ class DashboardWidget extends ReactWidget {
       <ThemeProvider>
         <BaseStyles>
           <Box m={3}>
-            <Dashboard context={this._context}/>
+            <SimpleViewer context={this._context}/>
           </Box>
         </BaseStyles>
       </ThemeProvider>

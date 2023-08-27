@@ -7,17 +7,17 @@ import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { IMainMenu } from '@jupyterlab/mainmenu';
 import { INotebookTracker, NotebookPanel, INotebookModel } from '@jupyterlab/notebook';
-import dashboardIcon from '@datalayer/icons-react/data1/AcademicCapIconLabIcon';
-import { Dashboard, IDashboardTracker, DashboardFactory } from './dashboard';
+import icon from '@datalayer/icons-react/data2/EyesIconLabIcon';
+import { Viewer, IViewerTracker, ViewerFactory } from './viewer';
 
 export namespace CommandIDs {
-  export const dashboardRender = 'notebook:render-with-dashboard';
-  export const dashboardOpen = 'notebook:open-with-dashboard';
+  export const viewerRender = 'notebook:render-with-viewer';
+  export const viewerOpen = 'notebook:open-with-viewer';
 }
 
-export const DASHBOARD_WIDGET_FACTORY = 'Dashboard Preview';
+export const VIEWER_WIDGET_FACTORY = 'Viewer';
 
-class DashboardButton implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> {
+class ViewerButton implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> {
   private _commands: CommandRegistry;
 
   constructor(commands: CommandRegistry) {
@@ -26,12 +26,12 @@ class DashboardButton implements DocumentRegistry.IWidgetExtension<NotebookPanel
 
   createNew(panel: NotebookPanel): IDisposable {
     const button = new ToolbarButton({
-      className: 'dashboardRender',
-      tooltip: 'Dashboard',
-      icon: dashboardIcon as any,
-      onClick: () => { this._commands.execute(CommandIDs.dashboardRender); }
+      className: 'viewerRender',
+      tooltip: 'Viewer',
+      icon,
+      onClick: () => { this._commands.execute(CommandIDs.viewerRender); }
     });
-    panel.toolbar.insertAfter('cellType', 'dashboardRender', button);
+    panel.toolbar.insertAfter('classicRender', 'viewer', button);
     return button;
   }
 
@@ -40,12 +40,12 @@ class DashboardButton implements DocumentRegistry.IWidgetExtension<NotebookPanel
 /**
  * Initialization data for the jupyterlab-preview extension.
  */
-const dashboardPlugin: JupyterFrontEndPlugin<IDashboardTracker> = {
-  id: '@datalayer/jupyter-react:dashboard',
+const viewerPlugin: JupyterFrontEndPlugin<IViewerTracker> = {
+  id: '@datalayer/jupyter-dashboard:viewer',
   autoStart: true,
   requires: [INotebookTracker],
   optional: [ICommandPalette, ILayoutRestorer, IMainMenu, ISettingRegistry],
-  provides: IDashboardTracker,
+  provides: IViewerTracker,
   activate: (
     app: JupyterFrontEnd,
     notebookTracker: INotebookTracker,
@@ -55,15 +55,15 @@ const dashboardPlugin: JupyterFrontEndPlugin<IDashboardTracker> = {
     settingRegistry: ISettingRegistry | null
   ) => {
     const { commands, docRegistry } = app;
-    const tracker = new WidgetTracker<Dashboard>({
-      namespace: 'dashboard-preview'
+    const tracker = new WidgetTracker<Viewer>({
+      namespace: 'viewer'
     });
     if (restorer) {
       restorer.restore(tracker, {
         command: 'docmanager:open',
         args: panel => ({
           path: panel.context.path,
-          factory: dashboardRenderFactory.name
+          factory: viwerRenderFactory.name
         }),
         name: panel => panel.context.path,
         when: app.serviceManager.ready
@@ -83,23 +83,23 @@ const dashboardPlugin: JupyterFrontEndPlugin<IDashboardTracker> = {
         notebookTracker.currentWidget === app.shell.currentWidget
       );
     }
-    const dashboardRenderFactory = new DashboardFactory({
-      name: DASHBOARD_WIDGET_FACTORY,
+    const viwerRenderFactory = new ViewerFactory({
+      name: VIEWER_WIDGET_FACTORY,
       fileTypes: ['notebook'],
       modelName: 'notebook',
     });
-    dashboardRenderFactory.widgetCreated.connect((sender, dashboard) => {
-      dashboard.context.pathChanged.connect(() => {
-        void tracker.save(dashboard);
+    viwerRenderFactory.widgetCreated.connect((sender, viewer) => {
+      viewer.context.pathChanged.connect(() => {
+        void tracker.save(viewer);
       });
-      void tracker.add(dashboard);
+      void tracker.add(viewer);
     });
     const updateSettings = (settings: ISettingRegistry.ISettings): void => {
-      dashboardRenderFactory.defaultRenderOnSave = settings.get('renderOnSave')
+      viwerRenderFactory.defaultRenderOnSave = settings.get('renderOnSave')
         .composite as boolean;
     };
     if (settingRegistry) {
-      Promise.all([settingRegistry.load(dashboardPlugin.id), app.restored])
+      Promise.all([settingRegistry.load(viewerPlugin.id), app.restored])
         .then(([settings]) => {
           updateSettings(settings);
           settings.changed.connect(updateSettings);    
@@ -108,8 +108,8 @@ const dashboardPlugin: JupyterFrontEndPlugin<IDashboardTracker> = {
           console.error(reason.message);
         });
     }
-    commands.addCommand(CommandIDs.dashboardRender, {
-      label: 'Dashboard',
+    commands.addCommand(CommandIDs.viewerRender, {
+      label: 'Viewer',
       execute: async args => {
         const notebookPanel = getCurrentNotebookPanel(args);
         let context: DocumentRegistry.IContext<INotebookModel>;
@@ -118,7 +118,7 @@ const dashboardPlugin: JupyterFrontEndPlugin<IDashboardTracker> = {
           await context.save();
           commands.execute('docmanager:open', {
             path: context.path,
-            factory: DASHBOARD_WIDGET_FACTORY,
+            factory: VIEWER_WIDGET_FACTORY,
             options: {
               mode: 'split-right'
             }
@@ -127,7 +127,7 @@ const dashboardPlugin: JupyterFrontEndPlugin<IDashboardTracker> = {
       },
       isEnabled
     });
-    commands.addCommand(CommandIDs.dashboardOpen, {
+    commands.addCommand(CommandIDs.viewerOpen, {
       label: 'Open with Dashboard',
       execute: async args => {
         const notebookPanel = getCurrentNotebookPanel(args);
@@ -140,7 +140,7 @@ const dashboardPlugin: JupyterFrontEndPlugin<IDashboardTracker> = {
     });
     if (palette) {
       const category = 'Notebook Operations';
-      [CommandIDs.dashboardRender, CommandIDs.dashboardOpen].forEach(command => {
+      [CommandIDs.viewerRender, CommandIDs.viewerOpen].forEach(command => {
         palette.addItem({ command, category });
       });
     }
@@ -148,18 +148,18 @@ const dashboardPlugin: JupyterFrontEndPlugin<IDashboardTracker> = {
       menu.viewMenu.addGroup(
         [
           {
-            command: CommandIDs.dashboardRender
+            command: CommandIDs.viewerRender
           },
           {
-            command: CommandIDs.dashboardOpen
+            command: CommandIDs.viewerOpen
           }
         ],
         1000
       );
     }
-    const dashboardRenderButton = new DashboardButton(commands);
+    const dashboardRenderButton = new ViewerButton(commands);
     //
-    docRegistry.addWidgetFactory(dashboardRenderFactory);
+    docRegistry.addWidgetFactory(viwerRenderFactory);
     docRegistry.addWidgetExtension('Notebook', dashboardRenderButton);
     //
     return tracker;
@@ -167,4 +167,4 @@ const dashboardPlugin: JupyterFrontEndPlugin<IDashboardTracker> = {
 
 }
 
-export default dashboardPlugin;
+export default viewerPlugin;

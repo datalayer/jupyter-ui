@@ -7,13 +7,13 @@ import { Signal } from '@lumino/signaling';
 export type IClassicRenderTracker = IWidgetTracker<ClassicRender>
 
 export const IClassicRenderTracker = new Token<IClassicRenderTracker>(
-  '@datalayer/jupyter-react:IClassicRenderTracker'
+  '@datalayer/jupyter-dashboard:IClassicRenderTracker'
 );
 
 export const CLASSIC_RENDER_ICON_CLASS = 'jp-MaterialIcon jp-NotebookIcon';
 
 export class ClassicRender extends DocumentWidget<IFrame, INotebookModel> {
-  private _renderOnSave: boolean;
+  private _renderOnSave: boolean = false;
 
   constructor(options: ClassicRender.IOptions) {
     super({

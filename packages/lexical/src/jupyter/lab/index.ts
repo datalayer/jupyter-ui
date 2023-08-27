@@ -58,7 +58,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         rank: 4,
       });
     }
-    console.log('JupyterLab extension @datalayer/jupyter-lexical is activated!');
+    console.log('JupyterLab plugin @datalayer/jupyter-lexical is activated!');
     if (settingRegistry) {
       settingRegistry
         .load(plugin.id)

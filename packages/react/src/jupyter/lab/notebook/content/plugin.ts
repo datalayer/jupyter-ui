@@ -7,7 +7,7 @@ import CountdownContentFactory from './CountdownContentFactory';
  * The notebook cell factory provider.
  */
 const contentFactoryPlugin: JupyterFrontEndPlugin<NotebookPanel.IContentFactory> = {
-  id: '@datalayer/jupyter-react:notebook-extension-factory',
+  id: '@datalayer/jupyter-react:notebook-content-factory',
   description: 'Provides the notebook cell factory.',
   provides: NotebookPanel.IContentFactory,
   requires: [IEditorServices],

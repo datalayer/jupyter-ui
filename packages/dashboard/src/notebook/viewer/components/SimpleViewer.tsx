@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { INotebookModel } from '@jupyterlab/notebook';
-import Viewer from './../../../../../components/viewer/Viewer';
+import Viewer from '@datalayer/jupyter-react/lib/components/viewer/Viewer';
 
 type Props = {
   context: DocumentRegistry.IContext<INotebookModel>,
 }
 
-const Dashboard = (props: Props) => {
+const SimpleViewer = (props: Props) => {
   const { context } = props;
   const [model, setModel] = useState(context.model.sharedModel.toJSON());
   context.model.contentChanged.connect((model, _) => {
@@ -20,4 +20,4 @@ const Dashboard = (props: Props) => {
   )
 }
 
-export default Dashboard;
+export default SimpleViewer;

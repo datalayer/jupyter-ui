@@ -24,4 +24,5 @@ export namespace CommandIDs {
   export const toggleWidgetMode = 'dashboard:toggle-widget-mode';
   export const toggleInfiniteScroll = 'dashboard:toggle-infinite-scroll';
   export const trimDashboard = 'dashboard:trim-dashboard';
+  export const showDashboardHome = 'dashboad:show-dashboard-home';
 }

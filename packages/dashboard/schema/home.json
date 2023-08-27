@@ -1,0 +1,8 @@
+{
+  "jupyter.lab.shortcuts": [],
+  "title": "@datalayer/jupyter-dashboard:home",
+  "description": "@datalayer/jupyter-dashboard:home settings.",
+  "type": "object",
+  "properties": {},
+  "additionalProperties": false
+}

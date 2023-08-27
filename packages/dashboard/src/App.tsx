@@ -1,8 +1,8 @@
 import { createRoot } from 'react-dom/client';
-import Tabs from './components/Tabs';
+import DashboardHome from './DashboardHome';
 
 const root = createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-root.render(<Tabs />);
+root.render(<DashboardHome />);

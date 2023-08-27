@@ -8,7 +8,7 @@ import { INotebookTracker, NotebookPanel, INotebookModel } from '@jupyterlab/not
 import { CommandRegistry } from '@lumino/commands';
 import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
 import { IDisposable } from '@lumino/disposable';
-import classicRender from '@datalayer/icons-react/data1/DashboardColorIconLabIcon';
+import icon from '@datalayer/icons-react/data1/JupyterBaseIconLabIcon';
 import { ClassicRender, IClassicRenderTracker, ClassicRenderFactory } from './classicRender';
 
 export namespace CommandIDs {
@@ -29,7 +29,7 @@ class ClassicRenderButton implements DocumentRegistry.IWidgetExtension<NotebookP
     const button = new ToolbarButton({
       className: 'classicRender',
       tooltip: 'Render with Classic',
-      icon: classicRender,
+      icon,
       onClick: () => { this._commands.execute(CommandIDs.classicRender); }
     });
     panel.toolbar.insertAfter('cellType', 'classicRender', button);
@@ -41,8 +41,8 @@ class ClassicRenderButton implements DocumentRegistry.IWidgetExtension<NotebookP
 /**
  * Initialization data for the jupyterlab-preview extension.
  */
-const notebookClassicPlugin: JupyterFrontEndPlugin<IClassicRenderTracker> = {
-  id: '@datalayer/jupyter-react:classic',
+const classicRenderPlugin: JupyterFrontEndPlugin<IClassicRenderTracker> = {
+  id: '@datalayer/jupyter-dashboard:classic-render',
   autoStart: true,
   requires: [INotebookTracker],
   optional: [ICommandPalette, ILayoutRestorer, IMainMenu, ISettingRegistry],
@@ -57,7 +57,7 @@ const notebookClassicPlugin: JupyterFrontEndPlugin<IClassicRenderTracker> = {
   ) => {
     const { commands, docRegistry } = app;
     const tracker = new WidgetTracker<ClassicRender>({
-      namespace: 'classic-preview'
+      namespace: 'classic-render'
     });
     if (restorer) {
       restorer.restore(tracker, {
@@ -93,7 +93,7 @@ const notebookClassicPlugin: JupyterFrontEndPlugin<IClassicRenderTracker> = {
       fileTypes: ['notebook'],
       modelName: 'notebook'
     });
-    classicRenderFactory.widgetCreated.connect((sender, classicRender) => {
+    classicRenderFactory.widgetCreated.connect((_, classicRender) => {
       classicRender.context.pathChanged.connect(() => {
         void tracker.save(classicRender);
       });
@@ -104,7 +104,7 @@ const notebookClassicPlugin: JupyterFrontEndPlugin<IClassicRenderTracker> = {
         .composite as boolean;
     };
     if (settingRegistry) {
-      Promise.all([settingRegistry.load(notebookClassicPlugin.id), app.restored])
+      Promise.all([settingRegistry.load(classicRenderPlugin.id), app.restored])
         .then(([settings]) => {
           updateSettings(settings);
           settings.changed.connect(updateSettings);    
@@ -164,14 +164,15 @@ const notebookClassicPlugin: JupyterFrontEndPlugin<IClassicRenderTracker> = {
         1000
       );
     }
-    const classicRenderButton = new ClassicRenderButton(commands);
-    //
+
     docRegistry.addWidgetFactory(classicRenderFactory);
+
+    const classicRenderButton = new ClassicRenderButton(commands);
     docRegistry.addWidgetExtension('Notebook', classicRenderButton);
-    //
+
     return tracker;
   }
 
 }
 
-export default notebookClassicPlugin;
+export default classicRenderPlugin;

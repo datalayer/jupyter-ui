@@ -40,7 +40,7 @@
     "eslint:check": "eslint . --cache --ext .ts,.tsx",
     "install:extension": "jlpm build",
     "jupyterlab": "run-p -c 'jupyterlab:*'",
-    "jupyterlab:start": "jupyter lab --watch --config=./dev/config/jupyter_server_config.py",
+    "jupyterlab:start": "jupyter lab --watch --config=./../../dev/config/jupyter_server_config.py",
     "jupyterlab:watch": "run-p -c watch:src watch:labextension",
     "kill": "./../../dev/sh/kill.sh || true",
     "lint": "jlpm stylelint && jlpm prettier && jlpm eslint",

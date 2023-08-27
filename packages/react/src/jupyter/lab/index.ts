@@ -1,13 +1,11 @@
 import { JupyterFrontEnd, JupyterFrontEndPlugin } from '@jupyterlab/application';
 import { MainAreaWidget, ICommandPalette } from '@jupyterlab/apputils';
+import { ServerConnection } from '@jupyterlab/services';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { ILauncher } from '@jupyterlab/launcher';
 import icon from '@datalayer/icons-react/data2/AtomSymbolIconLabIcon';
-import { requestAPI } from './handler';
+import { requestAPI } from './../JupyterHandlers';
 import { JupyterReactWidget } from './widget';
-import { NotebookHeaderExtension } from './notebook/header/NotebookHeader';
-import notebookClassicPlugin from './notebook/classic/plugin';
-import dashboardPlugin from './notebook/dashboard/plugin';
 import notebookContentFactoryPlugin from './notebook/content/plugin';
 
 import '../../../style/index.css';
@@ -66,7 +64,7 @@ const jupyterReactPlugin: JupyterFrontEndPlugin<void> = {
           console.error('Failed to load settings for @datalayer/jupyter-react.', reason);
         });
     }
-    requestAPI<any>('config')
+    requestAPI<any>(ServerConnection.makeSettings(), 'jupyter_react', 'config')
       .then(data => {
         console.log(data);
       })
@@ -76,15 +74,12 @@ const jupyterReactPlugin: JupyterFrontEndPlugin<void> = {
         );
       }
     );
-    app.docRegistry.addWidgetExtension('Notebook', new NotebookHeaderExtension(commands));
-    console.log('JupyterLab extension @datalayer/jupyter-react is activated.');
+    console.log('JupyterLab plugin @datalayer/jupyter-react is activated.');
   }
 }
 
 const plugins = [
   jupyterReactPlugin,
-  notebookClassicPlugin,
-  dashboardPlugin,
   notebookContentFactoryPlugin,
 ]
 

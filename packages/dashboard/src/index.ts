@@ -4,21 +4,102 @@ import { JupyterFrontEnd, JupyterFrontEndPlugin } from '@jupyterlab/application'
 import { ILauncher } from '@jupyterlab/launcher';
 import { WidgetTracker, showDialog, Dialog, InputDialog } from '@jupyterlab/apputils';
 import { IMainMenu } from '@jupyterlab/mainmenu';
+import { ISettingRegistry } from '@jupyterlab/settingregistry';
+import { MainAreaWidget, ICommandPalette } from '@jupyterlab/apputils';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { IDocumentManager } from '@jupyterlab/docmanager';
 import { CodeCell } from '@jupyterlab/cells';
 import { INotebookTracker } from '@jupyterlab/notebook';
 import { undoIcon, redoIcon, copyIcon, cutIcon, pasteIcon, runIcon, saveIcon } from '@jupyterlab/ui-components';
-import { Dashboard, DashboardDocumentFactory, DashboardTracker, IDashboardTracker } from './dashboard/dashboard';
-import { DashboardIcons } from './dashboard/icons';
-import { DashboardWidget } from './dashboard/widget';
-import { DashboardModel, DashboardModelFactory } from './dashboard/model';
-import { CommandIDs } from './dashboard/commands';
-import { DashboardLayout } from './dashboard/layout';
-import { WidgetStore, WidgetInfo } from './dashboard/widgetStore';
-import { getMetadata } from './dashboard/utils';
+import { DashboardIcons } from './editor/icons';
+import { NotebookHeaderExtension } from './notebook/header/NotebookHeader';
+import classicRenderPlugin from './notebook/classic/plugin';
+import viewerPlugin from './notebook/viewer/plugin';
+import { Dashboard, DashboardDocumentFactory, DashboardTracker, IDashboardTracker } from './editor/dashboard';
+import { DashboardWidget } from './editor/widget';
+import { DashboardModel, DashboardModelFactory } from './editor/model';
+import { CommandIDs } from './editor/commands';
+import { DashboardLayout } from './editor/layout';
+import { WidgetStore, WidgetInfo } from './editor/widgetStore';
+import { getMetadata } from './editor/utils';
+import { requestAPI } from './handler';
+import { DashboardHomeWidget } from './widget';
 
-import "./../style/index.css";
+
+import '../style/index.css';
+
+const dashboardNotebookHeaderPlugin: JupyterFrontEndPlugin<void> = {
+  id: '@datalayer/jupyter-dashboard:notebook-header',
+  autoStart: true,
+  requires: [ICommandPalette],
+  optional: [ISettingRegistry, ILauncher],
+  activate: (
+    app: JupyterFrontEnd,
+    palette: ICommandPalette,
+    settingRegistry: ISettingRegistry | null,
+    launcher: ILauncher
+  ) => {
+    const { commands } = app;
+    app.docRegistry.addWidgetExtension('Notebook', new NotebookHeaderExtension(commands));
+  }
+};
+
+const dashboardHomePlugin: JupyterFrontEndPlugin<void> = {
+  id: '@datalayer/jupyter-dashboard:home',
+  autoStart: true,
+  requires: [ICommandPalette],
+  optional: [ISettingRegistry, ILauncher],
+  activate: (
+    app: JupyterFrontEnd,
+    palette: ICommandPalette,
+    settingRegistry: ISettingRegistry | null,
+    launcher: ILauncher
+  ) => {
+    const { commands } = app;
+    const command = CommandIDs.showDashboardHome;
+    commands.addCommand(command, {
+      caption: 'Show Dashboard',
+      label: 'Dashboard',
+      icon: DashboardIcons.dashboardGreen,
+      execute: () => {
+        const content = new DashboardHomeWidget();
+        const widget = new MainAreaWidget<DashboardHomeWidget>({ content });
+        widget.title.label = 'Dashboard';
+        widget.title.icon = DashboardIcons.dashboardGreen;
+        app.shell.add(widget, 'main');
+      }
+    });
+    const category = 'Datalayer';
+    palette.addItem({ command, category });
+    if (launcher) {
+      launcher.add({
+        command,
+        category,
+        rank: 4
+      });
+    }
+    console.log('JupyterLab plugin @datalayer/jupyter-dashboard:home is activated!');
+    if (settingRegistry) {
+      settingRegistry
+        .load(dashboardHomePlugin.id)
+        .then(settings => {
+          console.log('@datalayer/jupyter-dashboard:home settings loaded:', settings.composite);
+        })
+        .catch(reason => {
+          console.error('Failed to load settings for @datalayer/juptyer-dashboard:home.', reason);
+        });
+    }
+    requestAPI<any>('config')
+      .then(data => {
+        console.log(data);
+      })
+      .catch(reason => {
+        console.error(
+          `Error while accessing the jupyter server extension.\n${reason}`
+        );
+      });
+  }
+};
 
 const dashboardTrackerPlugin: JupyterFrontEndPlugin<IDashboardTracker> = {
   id: '@datalayer/jupyter-dashboard:tracker',
@@ -35,17 +116,6 @@ const dashboardTrackerPlugin: JupyterFrontEndPlugin<IDashboardTracker> = {
     const dashboardTracker = new DashboardTracker({ namespace: 'dashboards' });
     const outputTracker = new WidgetTracker<DashboardWidget>({namespace: 'dashboard-outputs' });
     const clipboard = new Set<WidgetStore.WidgetInfo>();
-    const dashboardFiletype: Partial<DocumentRegistry.IFileType> = {
-      name: 'dashboard',
-      displayName: 'Jupyter Dashboard',
-      contentType: 'file',
-      extensions: ['.dashboard', '.dash'],
-      fileFormat: 'text',
-      icon: DashboardIcons.dashboardGreen,
-      iconLabel: 'Jupyter Dashboard',
-      mimeTypes: ['application/json']
-    };
-    app.docRegistry.addFileType(dashboardFiletype);
     addCommands(
       app,
       dashboardTracker,
@@ -54,7 +124,22 @@ const dashboardTrackerPlugin: JupyterFrontEndPlugin<IDashboardTracker> = {
       docManager,
       notebookTracker
     );
+    const dashboardFiletype: Partial<DocumentRegistry.IFileType> = {
+      name: 'dashboard',
+      displayName: 'Jupyter Dashboard',
+      contentType: 'file',
+      extensions: [
+        '.dash',
+        '.dashboard',
+      ],
+      fileFormat: 'text',
+      icon: DashboardIcons.dashboardGreen,
+      iconLabel: 'Jupyter Dashboard',
+      mimeTypes: ['application/json']
+    };
+    app.docRegistry.addFileType(dashboardFiletype);
     const modelFactory = new DashboardModelFactory({ notebookTracker });
+    app.docRegistry.addModelFactory(modelFactory);
     const widgetFactory = new DashboardDocumentFactory({
       name: 'dashboard',
       modelName: 'dashboard',
@@ -63,7 +148,6 @@ const dashboardTrackerPlugin: JupyterFrontEndPlugin<IDashboardTracker> = {
       commandRegistry: app.commands,
       outputTracker
     });
-    app.docRegistry.addModelFactory(modelFactory);
     app.docRegistry.addWidgetFactory(widgetFactory);
     widgetFactory.widgetCreated.connect((_sender, widget) => {
       void dashboardTracker.add(widget.content);
@@ -203,11 +287,13 @@ const dashboardTrackerPlugin: JupyterFrontEndPlugin<IDashboardTracker> = {
         command: CommandIDs.createNew
       }
     ]);
+    /*
     launcher.add({
       command: CommandIDs.createNew,
       category: 'Datalayer',
       rank: 5,
     });
+    */
     return dashboardTracker;
   }
 };
@@ -592,4 +678,10 @@ namespace Private {
   }
 }
 
-export default dashboardTrackerPlugin;
+export default [
+  classicRenderPlugin,
+  viewerPlugin,
+  dashboardNotebookHeaderPlugin,
+  dashboardHomePlugin,
+  dashboardTrackerPlugin,
+];

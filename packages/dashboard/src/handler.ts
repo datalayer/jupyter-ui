@@ -16,7 +16,7 @@ export async function requestAPI<T>(
   const settings = ServerConnection.makeSettings();
   const requestUrl = URLExt.join(
     settings.baseUrl,
-    'datalayer_example', // API Namespace
+    'jupyter_dashboard', // API Namespace
     endPoint
   );
 

@@ -11,7 +11,7 @@ import JupyterAuthError from './JupyterAuthError';
  */
 export async function requestAPI<T>(
   serverSettings: ServerConnection.ISettings,
-  namespace = '',
+  namespace = 'api',
   endPoint = '',
   init: RequestInit = {}
 ): Promise<T> {

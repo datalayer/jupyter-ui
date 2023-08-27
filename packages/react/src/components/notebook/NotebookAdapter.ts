@@ -167,7 +167,7 @@ export class NotebookAdapter {
 
     const notebookWidgetFactory = new NotebookWidgetFactory({
       name: 'Notebook',
-      modelName: 'notebook',
+      modelName: 'viewer',
       fileTypes: ['notebook'],
       defaultFor: ['notebook'],
       preferKernel: true,

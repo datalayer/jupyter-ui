@@ -1,0 +1,41 @@
+{
+  "metadata": {
+    "dashboardHeight": 1080,
+    "dashboardWidth": 1920
+  },
+  "version": 1,
+  "outputs": {
+    "e5720652-361e-4123-b157-287d3734a7f3": [
+      {
+        "cellId": "958c5591-5076-49af-8db7-87cf7bcf8ee8",
+        "pos": {
+          "left": 64,
+          "top": 64,
+          "width": 32,
+          "height": 32
+        }
+      },
+      {
+        "cellId": "8086a641-b3d3-4ed0-8595-afa0d3ed1a03",
+        "pos": {
+          "left": 64,
+          "top": 128,
+          "width": 64,
+          "height": 32
+        }
+      },
+      {
+        "cellId": "0d819fc4-f4a2-4828-8f73-5e3f2637ce3d",
+        "pos": {
+          "left": 64,
+          "top": 192,
+          "width": 320,
+          "height": 32
+        }
+      }
+    ]
+  },
+  "paths": {
+    "example1.ipynb": "e5720652-361e-4123-b157-287d3734a7f3"
+  }
+}
