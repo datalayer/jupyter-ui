@@ -48,7 +48,7 @@ document.body.appendChild(div);
 const root = createRoot(div)
 
 root.render(
-  <Jupyter lite={false} terminals={true}>
+  <Jupyter>
     <Outputs />
   </Jupyter>
 );

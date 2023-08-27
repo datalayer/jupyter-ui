@@ -25,7 +25,6 @@ export * from './jupyter/services/kernel/KernelModel';
 
 // IPyWidgets.
 export * from './jupyter/ipywidgets/IPyWidgetsViewManager';
-export * from './components/ipywidgets/IPyWidgetsOutput';
 
 // Cell.
 export * from './components/cell/Cell';
@@ -71,6 +70,7 @@ export * from './components/filemanager/lab/FileManagerLab';
 export * from './components/output/Output';
 export * from './components/output/OutputAdapter';
 export * from './components/output/OutputState';
+export * from './components/output/OutputIPyWidgets';
 
 // Settings.
 export * from './components/settings/Settings';

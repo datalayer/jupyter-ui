@@ -1,13 +1,13 @@
 import IPyWidgetsAttached from '../../jupyter/lumino/IPyWidgetsAttached';
 
-import './IPyWidgetsOutput.css';
+import './OutputIPyWidgets.css';
 
 type Props = {
   view: any,
   state: any,
 }
 
-export const IPyWidgetsOutput = (props: Props) => {
+export const OutputIPyWidgets = (props: Props) => {
   const { view, state } = props;
   return (
     <>
@@ -16,4 +16,4 @@ export const IPyWidgetsOutput = (props: Props) => {
   )
 }
 
-export default IPyWidgetsOutput;
+export default OutputIPyWidgets;
