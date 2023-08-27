@@ -1,5 +1,5 @@
 import { render } from 'react-dom';
-import { Jupyter, IPyWidgetsOutput } from '@datalayer/jupyter-react';
+import { Jupyter, OutputIPyWidgets } from '@datalayer/jupyter-react';
 import { state, view } from './IPyWidgetsSimple';
 import IPyWidgetsToolbar from './IPyWidgetsToolbar';
 import Layers from '../../layout/Layers';
@@ -13,7 +13,7 @@ render(
   <Jupyter collaborative={false} terminals={false}>
     <Layers />
     <IPyWidgetsToolbar />
-    <IPyWidgetsOutput state={state} view={view} />
+    <OutputIPyWidgets state={state} view={view} />
   </Jupyter>,
   div
 );

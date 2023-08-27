@@ -19,7 +19,6 @@ class OutputView implements NodeView {
       lite: false,
       startDefaultKernel: true,
       defaultKernelName: "python",
-      disableCssLoading: false,
     });
     const serverSettings = createServerSettings(
       config.jupyterServerHttpUrl,

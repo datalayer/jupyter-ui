@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { UnderlineNav } from '@primer/react/drafts';
+import { UnderlineNav } from '@primer/react';
 import { Box } from '@primer/react';
 import {
   useJupyter,
@@ -9,7 +9,7 @@ import {
   Dialog,
   FileBrowser,
   FileManagerLab,
-  IPyWidgetsOutput,
+  OutputIPyWidgets,
   Notebook,
   Kernel,
   Output,
@@ -208,7 +208,7 @@ const GalleryExample = () => {
         {tab === 'IPyWidgets' && (
           <>
             <IPyWidgetsToolbar />
-            <IPyWidgetsOutput state={state} view={view} />
+            <OutputIPyWidgets state={state} view={view} />
           </>
         )}
         {tab === 'Outputs' && (

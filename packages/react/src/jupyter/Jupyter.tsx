@@ -13,7 +13,7 @@ export type JupyterProps = {
   children: React.ReactNode;
   collaborative?: boolean;
   defaultKernelName: string;
-  disableCssLoading: boolean;
+  disableCssLoading?: boolean;
   injectableStore?: InjectableStore;
   jupyterServerHttpUrl?: string;
   jupyterServerWsUrl?: string;

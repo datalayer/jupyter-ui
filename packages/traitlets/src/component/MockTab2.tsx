@@ -1,5 +1,4 @@
-import { StyledOcticon } from "@primer/react";
-import { TreeView } from "@primer/react/drafts";
+import { StyledOcticon, TreeView } from "@primer/react";
 import { FileIcon, DiffAddedIcon, DiffModifiedIcon } from '@primer/octicons-react';
 
 const MockTab2 = (): JSX.Element => {

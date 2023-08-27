@@ -13,7 +13,7 @@ import Kernel from './services/kernel/Kernel';
 export type JupyterContextType = {
   baseUrl: string;
   defaultKernel?: Kernel,
-  disableCssLoading: boolean,
+  disableCssLoading?: boolean,
   injectableStore: InjectableStore;
   kernelManager?: KernelManager,
   lite: boolean;
@@ -67,7 +67,7 @@ type JupyterContextProps = {
   baseUrl: string;
   children: React.ReactNode;
   defaultKernelName: string;
-  disableCssLoading: boolean;
+  disableCssLoading?: boolean;
   injectableStore: InjectableStore;
   lite: boolean;
   startDefaultKernel: boolean,

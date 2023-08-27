@@ -20,7 +20,10 @@ class CellView implements NodeView {
       defaultKernelName: "python",
     });
     const serverSettings = createServerSettings(config.jupyterServerHttpUrl, config.jupyterServerWsUrl);
-    const widget = new CellAdapter("print('hello')", serverSettings, undefined);
+    const widget = new CellAdapter({
+      source: "print('hello')",
+      serverSettings,
+    });
     Widget.attach(widget.panel, this.dom);
   }
   selectNode() {

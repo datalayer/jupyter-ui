@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import { ThemeProvider, BaseStyles, Box } from '@primer/react';
+import { ThemeProvider, BaseStyles, Box, UnderlineNav } from '@primer/react';
 import { CpuIcon, CodeIcon, AlertIcon, HistoryIcon, CommentDiscussionIcon } from '@primer/octicons-react';
-import { UnderlineNav } from '@primer/react/drafts';
 import Tab1 from './tabs/Tab1';
 import Tab2 from './tabs/Tab2';
 import Tab3 from './tabs/Tab3';
