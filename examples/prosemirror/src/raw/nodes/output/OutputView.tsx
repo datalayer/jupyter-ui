@@ -19,6 +19,7 @@ class OutputView implements NodeView {
       lite: false,
       startDefaultKernel: true,
       defaultKernelName: "python",
+      disableCssLoading: false,
     });
     const serverSettings = createServerSettings(
       config.jupyterServerHttpUrl,
@@ -30,6 +31,7 @@ class OutputView implements NodeView {
     const kernel = new Kernel({
       kernelManager,
       kernelName: 'python',
+      serverSettings,
     });
     const widget = new OutputAdapter(kernel);
     Widget.attach(widget.outputArea, this.dom);

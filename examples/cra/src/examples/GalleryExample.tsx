@@ -83,10 +83,14 @@ const NOTEBOOK_UID = 'notebook-id-gallery';
 
 const GalleryExample = () => {
   const [tab, setTab] = useState('Notebook');
-  const { kernelManager } = useJupyter();
+  const { kernelManager, serverSettings } = useJupyter();
   const kernel = useMemo(() => {
     if (kernelManager)
-      return new Kernel({ kernelManager, kernelName: 'python' });
+      return new Kernel({
+        kernelManager,
+        kernelName: 'python',
+        serverSettings,
+      });
   }, [kernelManager]);
   return (
     <Box>

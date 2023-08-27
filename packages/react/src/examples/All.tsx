@@ -117,7 +117,11 @@ const NotebookKernelChange = () => {
   const dispatch = useDispatch();
   const changeKernel = () => {
     if (kernelManager) {
-      const kernel = new Kernel({ kernelManager, kernelName: "python", serverSettings });
+      const kernel = new Kernel({
+        kernelManager,
+        kernelName: "python",
+        serverSettings
+      });
       kernel.ready.then(() => {
         dispatch(notebookActions.changeKernel({ uid: NOTEBOOK_UID_2, kernel }));
         alert('The kernel is changed.')

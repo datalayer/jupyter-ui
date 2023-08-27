@@ -18,7 +18,11 @@ const NotebookUnmount = () => {
   const [kernel, setKernel] = useState<Kernel>()
   useEffect(() => {
     if (kernelManager) {
-      const kernel = new Kernel({ kernelManager, kernelName: "python", serverSettings });
+      const kernel = new Kernel({
+        kernelManager,
+        kernelName: "python",
+        serverSettings
+      });
       setKernel(kernel);
       setShowNotebook(true);
     }

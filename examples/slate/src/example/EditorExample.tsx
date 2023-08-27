@@ -3,6 +3,7 @@ import { createEditor, Range, Descendant } from 'slate';
 import { Slate, withReact } from 'slate-react';
 import { withHistory } from "slate-history";
 import { Kernel, useJupyter } from '@datalayer/jupyter-react';
+import { ServerConnection } from '@jupyterlab/services';
 import pipe from "lodash/fp/pipe";
 import initialValue from './initialValue';
 import LayoutExample from './LayoutExample';
@@ -13,9 +14,13 @@ import FormatPopover from './popover/FormatPopover';
 import CellPopover from './popover/CellPopover';
 import { KernelManager } from '@jupyterlab/services';
 
-const getKernel = (kernelManager: KernelManager | undefined): Kernel | undefined => {
+const getKernel = (kernelManager: KernelManager | undefined, serverSettings: ServerConnection.ISettings): Kernel | undefined => {
   if (kernelManager) {
-    const kernel = new Kernel({ kernelManager, kernelName: 'python3' });
+    const kernel = new Kernel({
+      kernelManager,
+      kernelName: 'python',
+      serverSettings,
+    });
     return kernel;  
   }
 }
@@ -29,13 +34,13 @@ const withPlugins = pipe(
 
 const EditorExample = () => {
   const slateEditor = useMemo(() => withPlugins(createEditor()), []);
-  const { kernelManager } = useJupyter();
-  const kernel = useMemo(() => getKernel(kernelManager), [kernelManager]);
+  const { kernelManager, serverSettings } = useJupyter();
+  const kernel = useMemo(() => getKernel(kernelManager, serverSettings), [kernelManager]);
   const [value, setValue] = useState<Descendant[]>();
   const [previousSelection, selection, setSelection] = useSelection(slateEditor);
   useEffect(() => {
     if (kernelManager) {
-      const kernel = getKernel(kernelManager);
+      const kernel = getKernel(kernelManager, serverSettings);
       setValue(initialValue(kernel!));
     }
   }, [kernelManager]);

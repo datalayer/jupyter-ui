@@ -56,10 +56,14 @@ const NOTEBOOK_UID = 'notebook-uid-1';
  * A simple example for the Jupyter UI.
  */
 const AllExample = () => {
-  const {kernelManager} = useJupyter();
+  const { kernelManager, serverSettings } = useJupyter();
   const kernel = useMemo(() => {
     if (kernelManager)
-      return new Kernel({kernelManager, kernelName: 'python3'});
+      return new Kernel({
+        kernelManager,
+        kernelName: 'python',
+        serverSettings,
+      });
   }, [kernelManager]);
   useEffect(() => {
     window.scrollTo(0, 0);

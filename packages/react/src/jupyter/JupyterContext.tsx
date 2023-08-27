@@ -120,7 +120,11 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
         kernelManager.ready.then(() => {
           console.log('Kernel Manager is ready', kernelManager);
           if (startDefaultKernel) {
-            const kernel = new Kernel({ kernelManager, kernelName: defaultKernelName, serverSettings });
+            const kernel = new Kernel({
+              kernelManager,
+              kernelName: defaultKernelName,
+              serverSettings,
+            });
             kernel.ready.then(() => {
               console.log('Lite Kernel is ready', kernel.toString());
               setKernel(kernel);
@@ -163,7 +167,12 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
             let i = 0;
             while (! kernel.done) {
               if (i === useRunningKernelIndex) {
-                setKernel(new Kernel({ kernelManager, kernelName: defaultKernelName, kernelModel: kernel.value, serverSettings }));
+                setKernel(new Kernel({
+                  kernelManager,
+                  kernelName: defaultKernelName,
+                  kernelModel: kernel.value,
+                  serverSettings,
+                }));
                 break;
               }
               kernel = running.next();
@@ -171,7 +180,11 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
             }
           }
           else if (startDefaultKernel) {  
-            const defaultKernel = new Kernel({ kernelManager, kernelName: defaultKernelName, serverSettings });
+            const defaultKernel = new Kernel({
+              kernelManager,
+              kernelName: defaultKernelName,
+              serverSettings,
+            });
             defaultKernel.ready.then(() => {
               setKernel(defaultKernel);
             });
