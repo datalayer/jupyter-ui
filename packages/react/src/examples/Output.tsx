@@ -5,8 +5,6 @@ import Jupyter from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
 import Output from "../components/output/Output";
 
-import "./../../style/index.css";
-
 const SOURCE_1 = '1+1'
 
 const SOURCE_1_OUTPUTS: IOutput[] = [
@@ -22,7 +20,23 @@ const SOURCE_1_OUTPUTS: IOutput[] = [
   }
 ];
 
-const Outputs = () => {
+const OutputWithEditor = () => {
+  const { defaultKernel } = useJupyter();
+  return (
+    <>
+      <Text as="h1">Output with Editor</Text>
+      <Output
+        showEditor={true}
+        autoRun={false}
+        kernel={defaultKernel}
+        code={SOURCE_1}
+        outputs={SOURCE_1_OUTPUTS}
+      />
+    </>
+  )
+}
+
+const OutputWithoutEditor = () => {
   const { defaultKernel } = useJupyter();
   return (
     <>
@@ -49,6 +63,7 @@ const root = createRoot(div)
 
 root.render(
   <Jupyter>
-    <Outputs />
+    <OutputWithEditor />
+    <OutputWithoutEditor />
   </Jupyter>
 );

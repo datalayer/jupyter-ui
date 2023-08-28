@@ -1,3 +1,8 @@
+.datalayer-NotebookPanel-header {
+/*  height: 50px !important; */
+  min-height: 50px !important;
+}
+
 .dsh-JupyterDashboard {
     overflow: auto;
   }

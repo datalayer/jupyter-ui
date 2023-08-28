@@ -11,6 +11,7 @@ from ._version import __version__
 
 from .handlers.index.handler import IndexHandler
 from .handlers.config.handler import ConfigHandler
+from .handlers.publish.handler import PublishHandler
 
 
 DEFAULT_STATIC_FILES_PATH = os.path.join(os.path.dirname(__file__), "./static")
@@ -45,6 +46,7 @@ class DatalayerExampleExtensionApp(ExtensionAppJinjaMixin, ExtensionApp):
         handlers = [
             ("jupyter_dashboard", IndexHandler),
             (url_path_join("jupyter_dashboard", "config"), ConfigHandler),
+            (url_path_join("jupyter_dashboard", "publish"), PublishHandler),
         ]
         self.handlers.extend(handlers)
 

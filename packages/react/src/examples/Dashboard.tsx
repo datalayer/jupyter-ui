@@ -7,8 +7,6 @@ import CellSidebarDefault from "../components/notebook/cell/sidebar/CellSidebarD
 
 import notebook from "./samples/IPyWidgetsExample1.ipynb.json";
 
-import "./../../style/index.css";
-
 const Dashboard = () => (
   <Jupyter
     lite={false}

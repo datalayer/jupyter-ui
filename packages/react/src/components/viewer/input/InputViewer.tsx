@@ -57,7 +57,7 @@ const factoryService = new CodeMirrorEditorFactory({
   languages,
 });
 
-const InputViewer = (props: Props) => {
+export const InputViewer = (props: Props) => {
   const { cell, languageInfo } = props;
   switch(cell.cell_type) {
     case 'code': {
@@ -67,7 +67,7 @@ const InputViewer = (props: Props) => {
           sharedModel: createStandaloneCell(cell) as YCodeCell
         }),
         editorConfig: {
-          readOnly: true,          
+          readOnly: true,
         },
         contentFactory: new Cell.ContentFactory({
           editorFactory: factoryService.newInlineEditor.bind(factoryService)

@@ -6,8 +6,6 @@ import { NetworkIcon, JupyterBaseIcon, JupiterIcon, ScientistIcon } from '@datal
 import Jupyter from '../jupyter/Jupyter';
 import Viewer from '../components/viewer/Viewer';
 
-import "./../../style/index.css";
-
 type NotebookExample = {
   title: string,
   url: string,

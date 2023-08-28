@@ -4,8 +4,6 @@ import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from "./toolbars/NotebookToolbar";
 import CellSidebarDefault from "../components/notebook/cell/sidebar/CellSidebarDefault";
 
-import "./../../style/index.css";
-
 const IPyReact = () => (
   <Jupyter
     lite={false}

@@ -76,7 +76,8 @@ c.ServerApp.jpserver_extensions = {
 #################
 
 # c.FileContentsManager.delete_to_trash = False
-content_dir = os.path.dirname(os.path.realpath(__file__)) + '/../content'
+# content_dir = os.path.dirname(os.path.realpath(__file__)) + '/../content'
+content_dir = os.path.expanduser('~') + '/notebooks'
 c.ServerApp.root_dir = content_dir
 c.ServerApp.preferred_dir = content_dir
 

@@ -5,8 +5,6 @@ import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from "./toolbars/NotebookToolbar";
 import CellSidebarNew from "../components/notebook/cell/sidebar/CellSidebarNew";
 
-import "./../../style/index.css";
-
 const Vega = () => (
   <Jupyter>
     <Notebook

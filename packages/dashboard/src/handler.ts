@@ -1,5 +1,6 @@
 import { URLExt } from '@jupyterlab/coreutils';
 import { ServerConnection } from '@jupyterlab/services';
+import { ReadonlyJSONObject } from '@lumino/coreutils';
 
 /**
  * Call the API extension
@@ -10,6 +11,8 @@ import { ServerConnection } from '@jupyterlab/services';
  */
 export async function requestAPI<T>(
   endPoint = '',
+  method = 'GET',
+  body: ReadonlyJSONObject | null = null,
   init: RequestInit = {}
 ): Promise<T> {
   // Make request to Jupyter API
@@ -20,9 +23,15 @@ export async function requestAPI<T>(
     endPoint
   );
 
+  const requestInit: RequestInit = {
+    method,
+    body: body ? JSON.stringify(body) : undefined
+  };
+
   let response: Response;
   try {
-    response = await ServerConnection.makeRequest(requestUrl, init, settings);
+    response = await ServerConnection.makeRequest(requestUrl, requestInit, settings
+    );
   } catch (error: any) {
     throw new ServerConnection.NetworkError(error);
   }

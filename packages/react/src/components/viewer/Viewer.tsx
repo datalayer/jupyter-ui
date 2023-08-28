@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import InputViewer from './input/InputViewer';
-import OutputViewer from './output/OutputViewer';
+// import OutputViewer from './output/OutputViewer';
 import { newUuid } from './../../jupyter/utils/Ids';
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
 }
 
 export const Viewer = (props: Props) => {
-  const { nbformat, outputs } = props;
+  const { nbformat } = props;
   const [model, setModel] = useState<INotebookContent>()
   useEffect(() => {
     setModel(nbformat);
@@ -21,7 +21,7 @@ export const Viewer = (props: Props) => {
         return (
           <div key={cell.id?.toString() || newUuid()}>
             <InputViewer cell={cell} languageInfo={nbformat.metadata.language_info}/>
-            { outputs && <OutputViewer cell={cell}/> }
+            {/* outputs && <OutputViewer cell={cell}/> */}
           </div>
         )
       })}

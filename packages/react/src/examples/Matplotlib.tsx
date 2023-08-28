@@ -30,8 +30,6 @@ import '@jupyterlab/ui-components/style/base.css';
 import '@jupyter-widgets/base/css/index.css';
 import '@jupyter-widgets/controls/css/widgets-base.css';
 
-import "./../../style/index.css";
-
 const Matplotlib = () => (
   <Jupyter disableCssLoading={true}>
     <Notebook

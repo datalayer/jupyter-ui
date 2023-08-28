@@ -12,8 +12,6 @@ import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarD
 import notebook1 from './samples/NotebookExample1.ipynb.json';
 import notebook2 from './samples/NotebookExample2.ipynb.json';
 
-import "./../../style/index.css";
-
 const NOTEBOOK_UID = 'notebook-model-change-id';
 
 const NotebookModelChange = () => {

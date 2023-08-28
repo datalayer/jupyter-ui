@@ -19,8 +19,6 @@ import { notebookActions } from '../components/notebook/NotebookState';
 
 import notebook from "./samples/NotebookExample1.ipynb.json";
 
-import "./../../style/index.css";
-
 const SOURCE_1 = '1+1'
 
 const NOTEBOOK_UID_1 = 'notebook-1-uid';

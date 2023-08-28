@@ -12,7 +12,7 @@ function shim(regExp) {
 
 const ENTRY = process.env.BUILD_APP == "true"
   ? "./src/app/App"
-  : "./src/examples/OutputIPyWidgets";
+  : "./src/examples/Outputs";
 
 const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == "true";
 const indexPage = IS_JUPYTER_SERVER_LOCAL
@@ -43,35 +43,34 @@ module.exports = {
     https: false,
     server: 'http',
     proxy: {
-      proxy: {
-        '/api/jupyter': {
-          target: JUPYTER_HOST,
-          ws: true,
-          secure: false,
-          changeOrigin: true,
-        },
-        '/build/pypi': {
-          target: 'https://datalayer-assets.s3.us-west-2.amazonaws.com/pypi',
-          pathRewrite: { '^/build/pypi': '' },
-          ws: false,
-          secure: false,
-          changeOrigin: true,
-        },
-        '/services.js': {
-          target: 'https://datalayer-assets.s3.us-west-2.amazonaws.com/services.js',
-          pathRewrite: { '^/services.js': '' },
-          ws: false,
-          secure: false,
-          changeOrigin: true,
-        },
-        /*
-        '/plotly.js': {
-          target: JUPYTER_HOST + '/api/jupyter/jupyter_react',
-          ws: false,
-          secure: false,
-          changeOrigin: false,
-        },
-        */
+      /*
+      '/api/jupyter': {
+        target: JUPYTER_HOST,
+        ws: true,
+        secure: false,
+        changeOrigin: true,
+      },
+      */
+      '/build/pypi': {
+        target: 'https://datalayer-assets.s3.us-west-2.amazonaws.com/pypi',
+        pathRewrite: { '^/build/pypi': '' },
+        ws: false,
+        secure: false,
+        changeOrigin: true,
+      },
+      '/services.js': {
+        target: 'https://datalayer-assets.s3.us-west-2.amazonaws.com/services.js',
+        pathRewrite: { '^/services.js': '' },
+        ws: false,
+        secure: false,
+        changeOrigin: true,
+      },
+      '/plotly.js': {
+        target: 'https://cdn.plot.ly',
+        pathRewrite: { '^/plotly.js': 'plotly-2.25.2.min.js' },
+        ws: false,
+        secure: false,
+        changeOrigin: true,
       },
     }
   },

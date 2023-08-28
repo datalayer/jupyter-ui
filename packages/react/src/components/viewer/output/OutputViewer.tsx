@@ -6,7 +6,7 @@ type Props = {
   cell: ICell,
 }
 
-const OutputViewer = (props: Props) => {
+export const OutputViewer = (props: Props) => {
   const { cell } = props;
   const outputs = cell.outputs ? (cell.outputs as IOutput[]) : undefined;
   const outputAdapter = new OutputAdapter(outputs);

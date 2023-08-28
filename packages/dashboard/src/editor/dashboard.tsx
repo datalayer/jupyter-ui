@@ -18,8 +18,6 @@ import { addCellId, addNotebookId, getNotebookById, getCellId, updateMetadata } 
 import { IDashboardModel, DashboardModel } from './model';
 import { CommandIDs } from './commands';
 
-// HTML element classes
-
 export const DASHBOARD_CLASS = 'dsh-JupyterDashboard';
 
 export const DROP_TARGET_CLASS = 'dsh-DropTarget';

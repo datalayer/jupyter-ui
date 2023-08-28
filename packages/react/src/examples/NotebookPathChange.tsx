@@ -5,8 +5,6 @@ import Jupyter from '../jupyter/Jupyter';
 import Notebook from '../components/notebook/Notebook';
 import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarDefault';
 
-import "./../../style/index.css";
-
 const PATH_1 = "matplotlib.ipynb";
 const PATH_2 = "ipywidgets.ipynb";
 

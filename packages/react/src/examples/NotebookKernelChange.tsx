@@ -8,8 +8,6 @@ import Notebook from '../components/notebook/Notebook';
 import { notebookActions } from '../components/notebook/NotebookState';
 import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarDefault';
 
-import "./../../style/index.css";
-
 const NOTEBOOK_UID = 'notebook-kernel-id';
 
 const NotebookKernelChange = () => {

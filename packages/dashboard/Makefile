@@ -62,3 +62,19 @@ publish-typedoc: typedoc ## deploy typedoc
 		--paths /datalayer/jupyter-dashboard/0.0.1/ \
 		--profile datalayer
 	echo open ✨  https://typedoc.datalayer.tech/datalayer/jupyter-dashboard/0.0.1
+
+build-render: ## build-render
+	($(CONDA_ACTIVATE) ${ENV_NAME}; \
+		yarn render:build )
+
+publish-render: build-render ## publish-render
+	($(CONDA_ACTIVATE) ${ENV_NAME}; \
+	  aws s3 cp \
+		./dist/main.jupyter-dashboard.js \
+		s3://jupyter-dashboards/ \
+		--profile datalayer && \
+	  aws cloudfront create-invalidation \
+		--distribution-id ERV91PVG4M1TA \
+		--paths "/*" \
+		--profile datalayer && \
+	echo open ✨  https://jupyter-dashboards.datalayer.tech/main.jupyter-dashboard.js )

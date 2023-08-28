@@ -5,14 +5,13 @@ import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from "./toolbars/NotebookToolbar";
 import CellSidebarDefault from "../components/notebook/cell/sidebar/CellSidebarDefault";
 
-import notebook from "./samples/NotebookExample1.ipynb.json";
-
-import "./../../style/index.css";
+import nbformat from "./samples/NotebookExample1.ipynb.json";
+// import nbformat from './samples/DashboardExample.exclude.json';
 
 const NotebookModel = () => (
   <Jupyter>
     <Notebook
-      nbformat={notebook as INotebookContent}
+      nbformat={nbformat as INotebookContent}
       uid="notebook-model-uid"
       externalIPyWidgets={[
         { name: "bqplot", version: "0.5.42" },

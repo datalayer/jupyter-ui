@@ -12,7 +12,7 @@ import { CodeCell } from '@jupyterlab/cells';
 import { INotebookTracker } from '@jupyterlab/notebook';
 import { undoIcon, redoIcon, copyIcon, cutIcon, pasteIcon, runIcon, saveIcon } from '@jupyterlab/ui-components';
 import { DashboardIcons } from './editor/icons';
-import { NotebookHeaderExtension } from './notebook/header/NotebookHeader';
+import notebookHeaderPlugin from './notebook/header/plugin';
 import classicRenderPlugin from './notebook/classic/plugin';
 import viewerPlugin from './notebook/viewer/plugin';
 import { Dashboard, DashboardDocumentFactory, DashboardTracker, IDashboardTracker } from './editor/dashboard';
@@ -25,24 +25,7 @@ import { getMetadata } from './editor/utils';
 import { requestAPI } from './handler';
 import { DashboardHomeWidget } from './widget';
 
-
 import '../style/index.css';
-
-const dashboardNotebookHeaderPlugin: JupyterFrontEndPlugin<void> = {
-  id: '@datalayer/jupyter-dashboard:notebook-header',
-  autoStart: true,
-  requires: [ICommandPalette],
-  optional: [ISettingRegistry, ILauncher],
-  activate: (
-    app: JupyterFrontEnd,
-    palette: ICommandPalette,
-    settingRegistry: ISettingRegistry | null,
-    launcher: ILauncher
-  ) => {
-    const { commands } = app;
-    app.docRegistry.addWidgetExtension('Notebook', new NotebookHeaderExtension(commands));
-  }
-};
 
 const dashboardHomePlugin: JupyterFrontEndPlugin<void> = {
   id: '@datalayer/jupyter-dashboard:home',
@@ -298,21 +281,6 @@ const dashboardTrackerPlugin: JupyterFrontEndPlugin<IDashboardTracker> = {
   }
 };
 
-/**
- * Add commands to the main JupyterLab command registry.
- *
- * @param app - the JupyterLab instance.
- *
- * @param dashboardTracker - a tracker for dashboards.
- *
- * @param outputTracker - a tracker for dashboard outputs.
- *
- * @param clipboard - a set used to keep track of widgets for copy/pasting.
- *
- * @param docManager - a document manager used to create/rename files.
- *
- * @param notebookTracker - a tracker for notebooks.
- */
 function addCommands(
   app: JupyterFrontEnd,
   dashboardTracker: WidgetTracker<Dashboard>,
@@ -681,7 +649,7 @@ namespace Private {
 export default [
   classicRenderPlugin,
   viewerPlugin,
-  dashboardNotebookHeaderPlugin,
+  notebookHeaderPlugin,
   dashboardHomePlugin,
   dashboardTrackerPlugin,
 ];

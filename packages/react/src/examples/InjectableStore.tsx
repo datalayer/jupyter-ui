@@ -11,8 +11,6 @@ import { exampleReducer, selectFoo, exampleActions } from './redux/ExampleState'
 
 import notebook from "./samples/NotebookExample1.ipynb.json";
 
-import "./../../style/index.css";
-
 const store = createReduxEpicStore();
 const injectableStore = createInjectableStore(store);
 injectableStore.inject('init', exampleReducer);

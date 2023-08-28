@@ -1,25 +1,18 @@
-import { ToolbarButton, ReactWidget, IWidgetTracker } from '@jupyterlab/apputils';
+import { ToolbarButton, ReactWidget } from '@jupyterlab/apputils';
 import { ABCWidgetFactory, DocumentRegistry, DocumentWidget } from '@jupyterlab/docregistry';
 import { INotebookModel } from '@jupyterlab/notebook';
-import { Token } from '@lumino/coreutils';
 import { Signal } from '@lumino/signaling';
-import DashboardWidget from './viewerWidget';
-
-export type IViewerTracker = IWidgetTracker<Viewer>
-
-export const IViewerTracker = new Token<IViewerTracker>(
-  '@datalayer/jupyter-dashboard:IViewerTracker'
-);
+import ViewerWidget from './ViewerWidget';
 
 export const VIEWER_ICON_CLASS = 'jp-MaterialIcon jp-NotebookIcon';
 
-export class Viewer extends DocumentWidget<DashboardWidget, INotebookModel> {
+export class Viewer extends DocumentWidget<ViewerWidget, INotebookModel> {
   private _renderOnSave: boolean = false;
 
   constructor(options: Viewer.IOptions) {
     super({
       ...options,
-      content: new DashboardWidget(options.context),
+      content: new ViewerWidget(options.context),
     });
     const { context, renderOnSave } = options;
     this.content.title.iconClass = VIEWER_ICON_CLASS;
@@ -88,7 +81,7 @@ export class Viewer extends DocumentWidget<DashboardWidget, INotebookModel> {
 }
 
 export namespace Viewer {
-  export interface IOptions extends DocumentWidget.IOptionsOptionalContent<DashboardWidget, INotebookModel> {
+  export interface IOptions extends DocumentWidget.IOptionsOptionalContent<ViewerWidget, INotebookModel> {
     renderOnSave?: boolean;
   }
 }

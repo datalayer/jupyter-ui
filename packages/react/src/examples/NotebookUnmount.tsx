@@ -10,8 +10,6 @@ import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarD
 
 import notebook from './samples/NotebookExample1.ipynb.json';
 
-import "./../../style/index.css";
-
 const NotebookUnmount = () => {
   const { kernelManager, serverSettings } = useJupyter();
   const [showNotebook, setShowNotebook] = useState(false);

@@ -82,6 +82,8 @@ export * from './components/terminal/TerminalState';
 
 // Viewer.
 export * from './components/viewer/Viewer';
+export * from './components/viewer/input/InputViewer';
+export * from './components/viewer/output/OutputViewer';
 
 // Utils
 export * from './jupyter/utils/Ids';

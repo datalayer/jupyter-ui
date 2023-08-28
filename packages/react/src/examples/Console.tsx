@@ -3,8 +3,6 @@ import { Box } from '@primer/react';
 import Jupyter from '../jupyter/Jupyter';
 import Console from '../components/console/Console';
 
-import "./../../style/index.css";
-
 const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div)

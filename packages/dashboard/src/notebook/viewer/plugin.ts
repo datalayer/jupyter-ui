@@ -1,14 +1,13 @@
-import { CommandRegistry } from '@lumino/commands';
 import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
-import { IDisposable } from '@lumino/disposable';
 import { JupyterFrontEnd, JupyterFrontEndPlugin, ILayoutRestorer } from '@jupyterlab/application';
-import { ICommandPalette, WidgetTracker, ToolbarButton } from '@jupyterlab/apputils';
+import { ICommandPalette, WidgetTracker } from '@jupyterlab/apputils';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { IMainMenu } from '@jupyterlab/mainmenu';
 import { INotebookTracker, NotebookPanel, INotebookModel } from '@jupyterlab/notebook';
-import icon from '@datalayer/icons-react/data2/EyesIconLabIcon';
-import { Viewer, IViewerTracker, ViewerFactory } from './viewer';
+import { IViewerTracker } from './token';
+import { Viewer, ViewerFactory } from './ViewerDocument';
+import ViewerButton from './ViewerButton';
 
 export namespace CommandIDs {
   export const viewerRender = 'notebook:render-with-viewer';
@@ -17,29 +16,6 @@ export namespace CommandIDs {
 
 export const VIEWER_WIDGET_FACTORY = 'Viewer';
 
-class ViewerButton implements DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> {
-  private _commands: CommandRegistry;
-
-  constructor(commands: CommandRegistry) {
-    this._commands = commands;
-  }
-
-  createNew(panel: NotebookPanel): IDisposable {
-    const button = new ToolbarButton({
-      className: 'viewerRender',
-      tooltip: 'Viewer',
-      icon,
-      onClick: () => { this._commands.execute(CommandIDs.viewerRender); }
-    });
-    panel.toolbar.insertAfter('classicRender', 'viewer', button);
-    return button;
-  }
-
-}
-
-/**
- * Initialization data for the jupyterlab-preview extension.
- */
 const viewerPlugin: JupyterFrontEndPlugin<IViewerTracker> = {
   id: '@datalayer/jupyter-dashboard:viewer',
   autoStart: true,
@@ -55,11 +31,11 @@ const viewerPlugin: JupyterFrontEndPlugin<IViewerTracker> = {
     settingRegistry: ISettingRegistry | null
   ) => {
     const { commands, docRegistry } = app;
-    const tracker = new WidgetTracker<Viewer>({
+    const viewerTracker = new WidgetTracker<Viewer>({
       namespace: 'viewer'
     });
     if (restorer) {
-      restorer.restore(tracker, {
+      restorer.restore(viewerTracker, {
         command: 'docmanager:open',
         args: panel => ({
           path: panel.context.path,
@@ -90,9 +66,9 @@ const viewerPlugin: JupyterFrontEndPlugin<IViewerTracker> = {
     });
     viwerRenderFactory.widgetCreated.connect((sender, viewer) => {
       viewer.context.pathChanged.connect(() => {
-        void tracker.save(viewer);
+        void viewerTracker.save(viewer);
       });
-      void tracker.add(viewer);
+      void viewerTracker.add(viewer);
     });
     const updateSettings = (settings: ISettingRegistry.ISettings): void => {
       viwerRenderFactory.defaultRenderOnSave = settings.get('renderOnSave')
@@ -157,12 +133,12 @@ const viewerPlugin: JupyterFrontEndPlugin<IViewerTracker> = {
         1000
       );
     }
-    const dashboardRenderButton = new ViewerButton(commands);
-    //
+    const viewerButton = new ViewerButton(commands);
+
     docRegistry.addWidgetFactory(viwerRenderFactory);
-    docRegistry.addWidgetExtension('Notebook', dashboardRenderButton);
-    //
-    return tracker;
+    docRegistry.addWidgetExtension('Notebook', viewerButton);
+
+    return viewerTracker;
   }
 
 }
