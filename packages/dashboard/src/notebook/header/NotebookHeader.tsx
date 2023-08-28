@@ -1,7 +1,7 @@
 import { IDisposable, DisposableDelegate } from '@lumino/disposable';
 import { ReactWidget } from '@jupyterlab/apputils';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
-import { ThemeProvider, BaseStyles, Button, Box } from '@primer/react';
+import { ThemeProvider, BaseStyles, Button, ButtonGroup, Box } from '@primer/react';
 import { JupyterBaseIcon, DashboardGreenIcon, EyesIcon } from '@datalayer/icons-react'
 import { NotebookPanel, INotebookModel } from '@jupyterlab/notebook';
 import { CommandRegistry } from '@lumino/commands';
@@ -55,39 +55,38 @@ class NotebookHeader extends ReactWidget {
           <Box m={3} sx={{display: 'flex', flexGrow: 1}}>
             <Box sx={{flexGrow: 1}}></Box>
             <Box>
-              <Button
-                aria-label="Classic Render"
-                title="Render the classic way"
-                size="small"
-                variant="invisible"
-                leadingVisual={() => <JupyterBaseIcon colored/>}
-                onClick={e => { e.preventDefault(); this.showClassicRender()}}
-              >
-                View classic
-              </Button>
-            </Box>
-            <Box sx={{ml: 3}}>
-              <Button
-                aria-label="View"
-                title="View"
-                size="small"
-                variant="invisible"
-                leadingVisual={() => <EyesIcon colored/>}
-                onClick={e => { e.preventDefault(); this.showViewer()}}                
-              >
-                View static
-              </Button>
-            </Box>
-            <Box sx={{ml: 3}}>
-              <Button
-                aria-label="Publish as a Dashboard"
-                title="Publish as a Dashboard"
-                size="small"
-                leadingVisual={() => <DashboardGreenIcon colored/>}
-                onClick={e => { e.preventDefault(); this.showDashboard()}}
-              >
-                Publish
-              </Button>
+              <ButtonGroup>
+                <Button
+                  aria-label="Classic Render"
+                  title="Render the classic way"
+                  size="small"
+                  variant="invisible"
+                  leadingVisual={() => <JupyterBaseIcon colored/>}
+                  onClick={e => { e.preventDefault(); this.showClassicRender()}}
+                >
+                  View classic
+                </Button>
+                <Button
+                  aria-label="View"
+                  title="View"
+                  size="small"
+                  variant="invisible"
+                  leadingVisual={() => <EyesIcon colored/>}
+                  onClick={e => { e.preventDefault(); this.showViewer()}}                
+                >
+                  View static
+                </Button>
+                <Button
+                  aria-label="Publish as a Dashboard"
+                  title="Publish as a Dashboard"
+                  size="small"
+                  variant="invisible"
+                  leadingVisual={() => <DashboardGreenIcon colored/>}
+                  onClick={e => { e.preventDefault(); this.showDashboard()}}
+                >
+                  Publish
+                </Button>
+              </ButtonGroup>
             </Box>
           </Box>
         </BaseStyles>

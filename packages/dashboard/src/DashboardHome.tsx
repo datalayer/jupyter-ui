@@ -9,7 +9,7 @@ import ClouderTab from './tabs/DashboardTab';
 import AboutTab from './tabs/AboutTab';
 import appState from "./state";
 
-import '@primer/react-brand/lib/css/main.css';
+// import '@primer/react-brand/lib/css/main.css';
 
 const DashboardHome = observer((): JSX.Element => {
   const [version, setVersion] = useState('');

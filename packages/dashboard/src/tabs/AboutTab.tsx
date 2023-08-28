@@ -11,9 +11,9 @@ const AboutTab = (props: Props): JSX.Element => {
   const [pirate, setPirate] = useState(false);
   return (
     <>
-      <Pagehead as="h3">☁️ Clouder<Label sx={{marginLeft: 1}}>{version}</Label></Pagehead>
+      <Pagehead as="h3">🪐 🏄 Jupyter Dashboard<Label sx={{marginLeft: 1}}>{version}</Label></Pagehead>
       <Box>
-        <Text>Create, manage and share Kubernetes clusters.</Text>
+        <Text>Create and publish Dashboard from Jupyter.</Text>
       </Box>
       <Box mt={3}>
         {!pirate ?
