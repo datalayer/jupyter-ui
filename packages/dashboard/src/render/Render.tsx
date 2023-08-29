@@ -10,9 +10,9 @@ import { loadSpecs } from './Specs';
 const NotebookRender = (props: {config: IConfig, notebook: INotebookContent, layout: ILayout}) => {
   const { config, notebook, layout } = props;
   const { layoutVariant } = config;
-  if (layoutVariant === 'blank') return <NotebookBlankLayout notebook={notebook} layout={layout}/>
-  if (layoutVariant === 'simple') return <NotebookSimpleLayout notebook={notebook} layout={layout}/>
-  if (layoutVariant === 'article') return <NotebookArticleLayout notebook={notebook} layout={layout}/>
+  if (layoutVariant === 'blank') return <NotebookBlankLayout notebook={notebook} layout={layout} adaptPlotly={true} />
+  if (layoutVariant === 'simple') return <NotebookSimpleLayout notebook={notebook} layout={layout} adaptPlotly={true} />
+  if (layoutVariant === 'article') return <NotebookArticleLayout notebook={notebook} layout={layout} adaptPlotly={true} />
   return <></>
 }
 

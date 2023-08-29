@@ -10,7 +10,7 @@ import { getCell } from '../Specs';
 import '@primer/react-brand/lib/css/main.css'
 
 export const NotebookSimpleLayout = (props: NotebookSimpleLayout.IConfig): JSX.Element => {
-  const { notebook, layout } = props;
+  const { notebook, layout, adaptPlotly } = props;
   const [dashCells, setDashCells] = useState<Array<IDashCell>>();
   useEffect(() => {
     const dashCells = Object.values((layout as ILayout).outputs)[0];
@@ -42,7 +42,7 @@ export const NotebookSimpleLayout = (props: NotebookSimpleLayout.IConfig): JSX.E
                 }}
               key={index}
               >
-                <OutputViewer cell={cell} />
+                <OutputViewer cell={cell} adaptPlotly={adaptPlotly} />
               </Box>
             :
               <></>
@@ -151,8 +151,9 @@ export const NotebookSimpleLayout = (props: NotebookSimpleLayout.IConfig): JSX.E
 export namespace NotebookSimpleLayout {
 
   export type IConfig = {
-    notebook: INotebookContent,
-    layout: ILayout,
+    notebook: INotebookContent;
+    layout: ILayout;
+    adaptPlotly: boolean;
   }
 
 }

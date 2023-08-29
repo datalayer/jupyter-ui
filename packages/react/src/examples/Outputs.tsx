@@ -9,21 +9,23 @@ import nbformat from './samples/IPyWidgetsExample1.ipynb.json';
 
 const Outputs = () => {
   return (
-    (nbformat as INotebookContent).cells.map((cell, index) => {
-      return (
-        <>
-          <Text as="h1">Output {index}</Text>
-          { cell.outputs && 
-            <Output
-              showEditor={false}
-              autoRun={false}
-              outputs={cell.outputs as IOutput[]}
-              key={index}
-            />
-          }
-        </>
-      )}
-    )
+    <>
+      {(nbformat as INotebookContent).cells.map((cell, index) => {
+        return (
+          <>
+            <Text as="h1">Output {index}</Text>
+            { cell.outputs && 
+              <Output
+                showEditor={false}
+                autoRun={false}
+                outputs={cell.outputs as IOutput[]}
+                key={index}
+              />
+            }
+          </>
+        )}
+     )}
+    </>
   )
 }
 

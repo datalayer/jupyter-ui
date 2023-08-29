@@ -136,9 +136,9 @@ const NotebookHeader = (props: Props) => {
             />
           </Box>
         </Box>
-        { layoutVariant === 'blank' && notebook && layout && <NotebookBlankLayout notebook={notebook} layout={layout}/> }
-        { layoutVariant === 'simple' && notebook && layout && <NotebookSimpleLayout notebook={notebook} layout={layout}/> }
-        { layoutVariant === 'article' && notebook && layout && <NotebookArticleLayout notebook={notebook} layout={layout}/> }
+        { layoutVariant === 'blank' && notebook && layout && <NotebookBlankLayout notebook={notebook} layout={layout} adaptPlotly={false} /> }
+        { layoutVariant === 'simple' && notebook && layout && <NotebookSimpleLayout notebook={notebook} layout={layout} adaptPlotly={false} /> }
+        { layoutVariant === 'article' && notebook && layout && <NotebookArticleLayout notebook={notebook} layout={layout} adaptPlotly={false} /> }
       </Box>
     )
   }
@@ -277,7 +277,7 @@ const NotebookHeader = (props: Props) => {
                               <ActionList.Description variant="block">
                                 A blank layout to start easy.
                               </ActionList.Description>
-                              <ActionList.TrailingVisual>⌘O</ActionList.TrailingVisual>
+                              <ActionList.TrailingVisual>⌘B</ActionList.TrailingVisual>
                             </ActionList.Item>
                             <ActionList.Item onSelect={e => setLayoutVariant('simple')}>
                               Simple
@@ -285,7 +285,7 @@ const NotebookHeader = (props: Props) => {
                               <ActionList.Description variant="block">
                                 A simple and effective layout to share your insights.
                               </ActionList.Description>
-                              <ActionList.TrailingVisual>⌘O</ActionList.TrailingVisual>
+                              <ActionList.TrailingVisual>⌘S</ActionList.TrailingVisual>
                             </ActionList.Item>
                             <ActionList.Item onSelect={e => setLayoutVariant('article')}>
                               Article
@@ -293,7 +293,7 @@ const NotebookHeader = (props: Props) => {
                               <ActionList.Description variant="block">
                                 Create a brand new article with a fresh image and checkout this dashboard.
                               </ActionList.Description>
-                              <ActionList.TrailingVisual>⌘C</ActionList.TrailingVisual>
+                              <ActionList.TrailingVisual>⌘A</ActionList.TrailingVisual>
                             </ActionList.Item>
                           </ActionList>
                         </ActionMenu.Overlay>

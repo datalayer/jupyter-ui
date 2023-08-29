@@ -9,7 +9,7 @@ export class OutputAdapter {
   private _outputArea: OutputArea;
   private _rendermime: RenderMimeRegistry;
 
-  public constructor(outputs?: IOutput[]) {
+  public constructor(adaptPlotly: boolean, outputs?: IOutput[]) {
     this._renderers = standardRendererFactories.filter(factory => factory.mimeTypes[0] !== 'text/javascript');
     this._renderers.push(jsonRendererFactory);
     this._renderers.push(javascriptRendererFactory);
@@ -24,7 +24,7 @@ export class OutputAdapter {
       model: outputAreaModel,
       rendermime: this._rendermime,
     });
-    if (outputs && outputs[0]) {
+    if (adaptPlotly && outputs && outputs[0]) {
       const data = outputs[0].data as any;
       const isPlotly = data['application/vnd.plotly.v1+json'];
       if (isPlotly) {
