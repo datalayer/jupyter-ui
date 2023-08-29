@@ -13,6 +13,7 @@ import { VIEWER_WIDGET_FACTORY } from '../viewer/plugin';
 import { DashboardDocument } from './../../editor/dashboard';
 import { ILayout } from '../../render/Types';
 import { ILayoutVariant } from '../../render/Types';
+import { NotebookBlankLayout } from '../../render/layout/NotebookBlankLayout';
 import { NotebookSimpleLayout } from '../../render/layout/NotebookSimpleLayout';
 import { NotebookArticleLayout } from '../../render/layout/NotebookArticleLayout';
 import Identity from './Identity';
@@ -35,7 +36,7 @@ const NotebookHeader = (props: Props) => {
   const [dashboardUrl, setDashboardUrl] = useState<string>();
   const [publishing, setPublishing] = useState<boolean>(false);
   const [showPreview, setShowPreview] = useState(false);
-  const [layoutVariant, setLayoutVariant] = useState<ILayoutVariant>('article');
+  const [layoutVariant, setLayoutVariant] = useState<ILayoutVariant>('blank');
   useEffect(() => {
     const portalName = "notebook-header-dropdown-portal";
     registerPortalRoot(notebookPanel.node, portalName);
@@ -93,7 +94,7 @@ const NotebookHeader = (props: Props) => {
     )
     .then((data: any) => {
       setPublishing(false);
-      toast(data.message);
+      toast(<>{data.message}. <a href={data.url} target="_blank">Click to open</a></>);
       setDashboardUrl(data.url);
     })
     .catch(reason => {
@@ -108,8 +109,20 @@ const NotebookHeader = (props: Props) => {
     dashboardDocument?.close();
   };
   const PreviewContent = () => {
-    const notebook = notebookPanel.context.model.toJSON() as INotebookContent;
-    const layout = dashboardDocument!.context.model.toJSON() as any as ILayout;
+    const [notebook, setNotebook] = useState<INotebookContent>();
+    const [layout, setLayout] = useState<ILayout>();
+    useEffect(() => {
+      const notebook = notebookPanel.context.model.toJSON() as INotebookContent;
+      setNotebook(notebook);
+      const layout = dashboardDocument!.context.model.toJSON() as any as ILayout;
+      setLayout(layout);
+      /*
+      dashboardDocument!.context.model.contentChanged.connect((_, content) => {
+        const layout = dashboardDocument!.context.model.toJSON() as any as ILayout;
+        setLayout(layout);  
+      });
+      */
+    }, []);
     return (
       <Box>
         <Box display="flex">
@@ -123,8 +136,9 @@ const NotebookHeader = (props: Props) => {
             />
           </Box>
         </Box>
-        { layoutVariant === 'simple' && <NotebookSimpleLayout notebook={notebook} layout={layout}/> }
-        { layoutVariant === 'article' && <NotebookArticleLayout notebook={notebook} layout={layout}/> }
+        { layoutVariant === 'blank' && notebook && layout && <NotebookBlankLayout notebook={notebook} layout={layout}/> }
+        { layoutVariant === 'simple' && notebook && layout && <NotebookSimpleLayout notebook={notebook} layout={layout}/> }
+        { layoutVariant === 'article' && notebook && layout && <NotebookArticleLayout notebook={notebook} layout={layout}/> }
       </Box>
     )
   }
@@ -257,11 +271,19 @@ const NotebookHeader = (props: Props) => {
                         <ActionMenu.Button variant="invisible" size="small">Layout</ActionMenu.Button>
                         <ActionMenu.Overlay width="medium">
                           <ActionList>
+                            <ActionList.Item onSelect={e => setLayoutVariant('blank')}>
+                              Blank
+                              <ActionList.LeadingVisual>{ layoutVariant === 'blank' && <CheckIcon/> }</ActionList.LeadingVisual>
+                              <ActionList.Description variant="block">
+                                A blank layout to start easy.
+                              </ActionList.Description>
+                              <ActionList.TrailingVisual>⌘O</ActionList.TrailingVisual>
+                            </ActionList.Item>
                             <ActionList.Item onSelect={e => setLayoutVariant('simple')}>
                               Simple
                               <ActionList.LeadingVisual>{ layoutVariant === 'simple' && <CheckIcon/> }</ActionList.LeadingVisual>
                               <ActionList.Description variant="block">
-                                A simple and effecitve layout to share your insights.
+                                A simple and effective layout to share your insights.
                               </ActionList.Description>
                               <ActionList.TrailingVisual>⌘O</ActionList.TrailingVisual>
                             </ActionList.Item>

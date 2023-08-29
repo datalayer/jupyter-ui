@@ -1,10 +1,20 @@
 
 import { useState, useEffect } from 'react';
 import { INotebookContent } from '@jupyterlab/nbformat';
+import NotebookBlankLayout from './layout/NotebookBlankLayout';
 import NotebookSimpleLayout from './layout/NotebookSimpleLayout';
 import NotebookArticleLayout from './layout/NotebookArticleLayout';
 import { ILayout, IDashCell, IConfig } from './Types';
 import { loadSpecs } from './Specs';
+
+const NotebookRender = (props: {config: IConfig, notebook: INotebookContent, layout: ILayout}) => {
+  const { config, notebook, layout } = props;
+  const { layoutVariant } = config;
+  if (layoutVariant === 'blank') return <NotebookBlankLayout notebook={notebook} layout={layout}/>
+  if (layoutVariant === 'simple') return <NotebookSimpleLayout notebook={notebook} layout={layout}/>
+  if (layoutVariant === 'article') return <NotebookArticleLayout notebook={notebook} layout={layout}/>
+  return <></>
+}
 
 const Render = (): JSX.Element => {
   const [notebook, setNotebook,] = useState<INotebookContent>();
@@ -30,15 +40,12 @@ const Render = (): JSX.Element => {
   return (
     notebook
     && layout
+    && config
     && dashCells
-    ? (
-      config?.layoutVariant == 'simple'
-      ?
-        <NotebookSimpleLayout notebook={notebook} layout={layout}/>
-      :
-        <NotebookArticleLayout notebook={notebook} layout={layout}/>
-    )
-    : <></>
+    ? 
+       <NotebookRender config={config} notebook={notebook} layout={layout}/>
+    :
+      <></>
   )
 }
 

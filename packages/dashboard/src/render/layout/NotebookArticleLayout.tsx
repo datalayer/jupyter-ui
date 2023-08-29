@@ -49,7 +49,7 @@ export const NotebookArticleLayout = (props: NotebookArticleLayout.IConfig): JSX
               <Box
                 sx={{
                   position: "fixed",
-                  top: dashCell.pos.top + 450,
+                  top: dashCell.pos.top + 470,
                   left: dashCell.pos.left,
                   width: dashCell.pos.width + 100,
                   height: dashCell.pos.height,

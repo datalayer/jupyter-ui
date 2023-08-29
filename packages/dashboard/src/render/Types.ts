@@ -1,4 +1,4 @@
-export type ILayoutVariant = 'simple' | 'article' | undefined;
+export type ILayoutVariant = 'blank' | 'simple' | 'article' | undefined;
 
 export type IConfig = {
   layoutVariant: ILayoutVariant;
