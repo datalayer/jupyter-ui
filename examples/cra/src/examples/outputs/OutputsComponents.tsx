@@ -136,6 +136,8 @@ export const OutputsComponents = () => {
     if (kernelManager) return new Kernel({
       kernelManager,
       kernelName: 'python',
+      kernelSpecName: 'python',
+      kernelType: 'notebook',
       serverSettings,
     });
   }, [kernelManager]);

@@ -28,7 +28,7 @@ const createView = (div: HTMLDivElement, state: EditorState) => {
         return new LuminoView(node, view, getPos);
       },
       cell(node: Node, view: EditorView, getPos: () => number) {
-        return new CellView(node, view, getPos);
+        return new CellView(node, view, kernel, getPos);
       },
     },
     dispatchTransaction(transaction: Transaction) {

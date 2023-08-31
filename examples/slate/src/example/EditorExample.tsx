@@ -19,6 +19,8 @@ const getKernel = (kernelManager: KernelManager | undefined, serverSettings: Ser
     const kernel = new Kernel({
       kernelManager,
       kernelName: 'python',
+      kernelSpecName: 'python',
+      kernelType: 'notebook',
       serverSettings,
     });
     return kernel;  

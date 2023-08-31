@@ -179,7 +179,7 @@ export namespace Kernel {
     kernelManager: KernelManager;
     kernelName: string;
     kernelSpecName: string;
-    kernelType: string;
+    kernelType: 'notebook' | 'file';
     serverSettings: ServerConnection.ISettings;
     kernelModel?: JupyterKernel.IModel;
   }

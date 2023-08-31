@@ -123,7 +123,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
             const kernel = new Kernel({
               kernelManager,
               kernelName: defaultKernelName,
-              kernelType: "python",
+              kernelType: "notebook",
               kernelSpecName: "python",
               serverSettings,
             });
@@ -173,7 +173,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
                   kernelManager,
                   kernelName: defaultKernelName,
                   kernelModel: kernel.value,
-                  kernelType: "python",
+                  kernelType: "notebook",
                   kernelSpecName: "python",
                   serverSettings,
                 }));
@@ -187,7 +187,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
             const defaultKernel = new Kernel({
               kernelManager,
               kernelName: defaultKernelName,
-              kernelType: "python",
+              kernelType: "notebook",
               kernelSpecName: "python",
               serverSettings,
             });

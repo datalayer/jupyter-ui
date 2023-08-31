@@ -89,6 +89,8 @@ const GalleryExample = () => {
       return new Kernel({
         kernelManager,
         kernelName: 'python',
+        kernelSpecName: 'python',
+        kernelType: 'notebook',
         serverSettings,
       });
   }, [kernelManager]);
