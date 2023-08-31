@@ -3,7 +3,7 @@ import { ThemeProvider, BaseStyles } from "@primer/react";
 import { ErrorBoundary } from 'react-error-boundary';
 import { JupyterContextProvider } from './JupyterContext';
 import { getJupyterServerHttpUrl, getJupyterServerWsUrl, loadJupyterConfig } from './JupyterConfig';
-import defaultInjectableStore, { InjectableStore } from '../redux/Store';
+import defaultInjectableStore, { InjectableStore } from '../state/redux/Store';
 
 /**
  * Definition of the properties that can be passed

@@ -5,22 +5,17 @@ import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from "./toolbars/NotebookToolbar";
 import CellSidebarDefault from "../components/notebook/cell/sidebar/CellSidebarDefault";
 
-import notebook from "./samples/IPyWidgetsExample1.ipynb.json";
+import notebook from "./notebooks/IPyWidgetsExample1.ipynb.json";
 
 const Dashboard = () => (
-  <Jupyter
-    lite={false}
-    useRunningKernelIndex={-1}
-    startDefaultKernel={true}
-    terminals={false}
-  >
+  <Jupyter>
     <Notebook
       nbformat={notebook as INotebookContent}
-      CellSidebar={CellSidebarDefault}
-      Toolbar={NotebookToolbar}
+      uid="notebook-uid"
       height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
       cellSidebarMargin={120}
-      uid="notebook-uid"
+      CellSidebar={CellSidebarDefault}
+      Toolbar={NotebookToolbar}
     />
   </Jupyter>
 )

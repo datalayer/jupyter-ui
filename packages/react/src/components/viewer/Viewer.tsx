@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import InputViewer from './input/InputViewer';
 // import OutputViewer from './output/OutputViewer';
-import { newUuid } from './../../jupyter/utils/Ids';
+import { newUuid } from '../../utils/Utils';
 
 type Props = {
   nbformat: INotebookContent,

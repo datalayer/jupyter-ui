@@ -20,6 +20,18 @@ const SOURCE_1_OUTPUTS: IOutput[] = [
   }
 ];
 
+const OutputWithoutEditor = () => {
+  return (
+    <>
+      <Text as="h1">Output without Editor</Text>
+      <Output
+        showEditor={false}
+        outputs={SOURCE_1_OUTPUTS}
+      />
+    </>
+  )
+}
+
 const OutputWithEditor = () => {
   const { defaultKernel } = useJupyter();
   return (
@@ -36,34 +48,13 @@ const OutputWithEditor = () => {
   )
 }
 
-const OutputWithoutEditor = () => {
-  const { defaultKernel } = useJupyter();
-  return (
-    <>
-      <Text as="h1">Output with Editor</Text>
-      <Output
-        showEditor={true}
-        autoRun={false}
-        kernel={defaultKernel}
-        code={SOURCE_1}
-        outputs={SOURCE_1_OUTPUTS}
-      />
-      <Text as="h1">Output without Editor</Text>
-      <Output
-        showEditor={false}
-        outputs={SOURCE_1_OUTPUTS}
-      />
-    </>
-  )
-}
-
 const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div)
 
 root.render(
   <Jupyter>
-    <OutputWithEditor />
     <OutputWithoutEditor />
+    <OutputWithEditor />
   </Jupyter>
 );

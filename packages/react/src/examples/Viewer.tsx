@@ -96,7 +96,7 @@ const ViewerExample = () => {
   return (
     <>
       <Box m={3}>
-        <Jupyter startDefaultKernel={false}>
+        <Jupyter>
           <ActionMenu>
             <ActionMenu.Button leadingVisual={() => <JupyterBaseIcon colored/>}>
               Jupyter Viewer

@@ -5,7 +5,7 @@ import { Jupyter } from '../../../jupyter/Jupyter';
 const NotebookComponent = () => {
   return (
     <>
-      <Jupyter startDefaultKernel={true}>
+      <Jupyter>
        {/* 
         <Notebook
           path="ipywidgets.ipynb"

@@ -2,7 +2,7 @@ import { Store } from 'redux';
 import { CommandRegistry } from '@lumino/commands';
 import { NotebookPanel } from '@jupyterlab/notebook';
 import { ICellHeader, Cell } from '@jupyterlab/cells';
-import { CellSidebarWidget, CellSidebarProps } from '../cell/sidebar/lumino/CellSidebarWidget';
+import { CellSidebarWidget, CellSidebarProps } from '../cell/sidebar/CellSidebarWidget';
 // import { IInputPrompt } from '@jupyterlab/cells';
 // import { NotebookInputPrompt } from './../cell/InputPrompt';
 

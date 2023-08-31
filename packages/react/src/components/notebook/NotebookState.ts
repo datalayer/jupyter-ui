@@ -11,7 +11,7 @@ import { NotebookChange } from "@jupyter/ydoc";
 import { Cell, ICellModel } from "@jupyterlab/cells";
 import { Kernel as JupyterKernel } from "@jupyterlab/services";
 import Kernel from "./../../jupyter/services/kernel/Kernel";
-import { IJupyterReactState } from "./../../redux/State";
+import { IJupyterReactState } from "../../state/redux/State";
 import { cmdIds } from "./NotebookCommands";
 import NotebookAdapter from "./NotebookAdapter";
 
@@ -152,29 +152,30 @@ type CellModelUid = {
   uid: string;
   cellModel?: Cell<ICellModel>;
 }
-type KernelStatusUid = {
+type KernelStatusMutation = {
   uid: string;
   kernelStatus: JupyterKernel.Status;
 }
-type KernelChangeUid = {
+type KernelChangeMutation = {
   uid: string;
   kernel: Kernel;
 }
-type ReactPortalsUid = {
+type ReactPortalsMutation = {
   uid: string;
   portals: ReactPortal[];
 }
-type PortalDisplayUid = {
+type PortalDisplayMutation = {
   uid: string;
   portalDisplay: PortalDisplay | undefined;
 }
-type DateUid = {
+type DateMutation = {
   uid: string;
   date: Date | undefined;
 }
-type CellTypeUid = {
+type CellMutation = {
   uid: string;
   cellType: nbformat.CellType;
+  source?: string;
 }
 
 export const notebookActions = {
@@ -190,28 +191,28 @@ export const notebookActions = {
   modelChange: actionCreator<NotebookModelUid>(
     ActionType.MODEL_CHANGE
   ),
-  changeKernel: actionCreator<KernelChangeUid>(
+  changeKernel: actionCreator<KernelChangeMutation>(
     ActionType.CHANGE_KERNEL
   ),
   activeCellChange: actionCreator<CellModelUid>(
     ActionType.ACTIVE_CELL_CHANGE
   ),
-  kernelStatusChanged: actionCreator<KernelStatusUid>(
+  kernelStatusChanged: actionCreator<KernelStatusMutation>(
     ActionType.KERNEL_STATUS_CHANGE
   ),
-  addPortals: actionCreator<ReactPortalsUid>(
+  addPortals: actionCreator<ReactPortalsMutation>(
     ActionType.ADD_PORTALS
   ),
-  setPortals: actionCreator<ReactPortalsUid>(
+  setPortals: actionCreator<ReactPortalsMutation>(
     ActionType.SET_PORTALS
   ),
-  setPortalDisplay: actionCreator<PortalDisplayUid>(
+  setPortalDisplay: actionCreator<PortalDisplayMutation>(
     ActionType.SET_PORTAL_DISPLAY
   ),
   dispose: actionCreator<string>(
     ActionType.DISPOSE
   ),
-  save: actionCreator.async<DateUid, DateUid>(
+  save: actionCreator.async<DateMutation, DateMutation>(
     ActionType.SAVE
   ),
   run: actionCreator.async<string, string>(
@@ -223,16 +224,16 @@ export const notebookActions = {
   interrupt: actionCreator.async<string, string>(
     ActionType.INTERRUPT
   ),
-  insertAbove: actionCreator.async<CellTypeUid, CellTypeUid>(
+  insertAbove: actionCreator.async<CellMutation, CellMutation>(
     ActionType.INSERT_ABOVE
   ),
-  insertBelow: actionCreator.async<CellTypeUid, CellTypeUid>(
+  insertBelow: actionCreator.async<CellMutation, CellMutation>(
     ActionType.INSERT_BELOW
   ),
   delete: actionCreator.async<string, string>(
     ActionType.DELETE
   ),
-  changeCellType: actionCreator.async<CellTypeUid, CellTypeUid>(
+  changeCellType: actionCreator.async<CellMutation, CellMutation>(
     ActionType.CHANGE_CELL_TYPE
   )
 }
@@ -279,29 +280,31 @@ const interruptEpic: Epic<
     );
 
 const insertAboveEpic: Epic<
-  Action<Success<CellTypeUid, CellTypeUid>>,
-  Action<Success<CellTypeUid, CellTypeUid>>,
+  Action<Success<CellMutation, CellMutation>>,
+  Action<Success<CellMutation, CellMutation>>,
   IJupyterReactState
 > = (action$, state$) =>
     action$.pipe(
       ofAction(notebookActions.insertAbove.started),
       tap(action => {
         state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.setDefaultCellType(action.payload.cellType);
-        state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.commands.execute(cmdIds.insertAbove);
+//        state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.commands.execute(cmdIds.insertAbove);
+        state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.insertAbove(action.payload.source);
       }),
       ignoreElements(),
     );
 
 const insertBelowEpic: Epic<
-  Action<Success<CellTypeUid, CellTypeUid>>,
-  Action<Success<CellTypeUid, CellTypeUid>>,
+  Action<Success<CellMutation, CellMutation>>,
+  Action<Success<CellMutation, CellMutation>>,
   IJupyterReactState
 > = (action$, state$) =>
     action$.pipe(
       ofAction(notebookActions.insertBelow.started),
       tap(action => {
         state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.setDefaultCellType(action.payload.cellType);
-        state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.commands.execute(cmdIds.insertBelow);
+//        state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.commands.execute(cmdIds.insertBelow);
+        state$.value.notebook.notebooks.get(action.payload.uid)?.adapter?.insertBelow(action.payload.source);
       }),
       ignoreElements(),
     );
@@ -320,8 +323,8 @@ const deleteEpic: Epic<
     );
 
 const changeCellTypeEpic: Epic<
-  Action<Success<CellTypeUid, CellTypeUid>>,
-  Action<Success<CellTypeUid, CellTypeUid>>,
+  Action<Success<CellMutation, CellMutation>>,
+  Action<Success<CellMutation, CellMutation>>,
   IJupyterReactState
 > = (action$, state$) =>
     action$.pipe(
@@ -340,8 +343,8 @@ const changeCellTypeEpic: Epic<
     );
 
 const saveEpic: Epic<
-  Action<Success<DateUid, DateUid>>,
-  Action<Success<DateUid, DateUid>>,
+  Action<Success<DateMutation, DateMutation>>,
+  Action<Success<DateMutation, DateMutation>>,
   IJupyterReactState
 > = (action$, state$) =>
     action$.pipe(
@@ -421,7 +424,7 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
       notebooks,
     }
   })
-  .case(notebookActions.kernelStatusChanged, (state: INotebooksState, kernelStatusUid: KernelStatusUid) => {
+  .case(notebookActions.kernelStatusChanged, (state: INotebooksState, kernelStatusUid: KernelStatusMutation) => {
     const notebooks = state.notebooks;
     const notebook = notebooks.get(kernelStatusUid.uid);
     if (notebook) {
@@ -432,7 +435,7 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
       notebooks,
     }
   })
-  .case(notebookActions.changeKernel, (state: INotebooksState, kernelChange: KernelChangeUid) => {
+  .case(notebookActions.changeKernel, (state: INotebooksState, kernelChange: KernelChangeMutation) => {
     const notebooks = state.notebooks;
     const notebook = notebooks.get(kernelChange.uid);
     if (notebook) {
@@ -443,7 +446,7 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
       notebooks,
     }
   })
-  .case(notebookActions.addPortals, (state: INotebooksState, portalsUid: ReactPortalsUid) => {
+  .case(notebookActions.addPortals, (state: INotebooksState, portalsUid: ReactPortalsMutation) => {
     const notebooks = state.notebooks;
     const notebook = notebooks.get(portalsUid.uid);
     if (notebook) {
@@ -462,7 +465,7 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
       notebooks,
     }
   })
-  .case(notebookActions.setPortals, (state: INotebooksState, portalsUid: ReactPortalsUid) => {
+  .case(notebookActions.setPortals, (state: INotebooksState, portalsUid: ReactPortalsMutation) => {
     const notebooks = state.notebooks;
     const notebook = notebooks.get(portalsUid.uid);
     if (notebook) {
@@ -473,7 +476,7 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
       notebooks,
     }
   })
-  .case(notebookActions.setPortalDisplay, (state: INotebooksState, portalDisplayUid: PortalDisplayUid) => {
+  .case(notebookActions.setPortalDisplay, (state: INotebooksState, portalDisplayUid: PortalDisplayMutation) => {
     const notebooks = state.notebooks;
     const notebook = notebooks.get(portalDisplayUid.uid);
     if (notebook) {
@@ -484,7 +487,7 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
       notebooks,
     }
   })
-  .case(notebookActions.save.done, (state: INotebooksState, dateUid: Success<DateUid, DateUid>) => {
+  .case(notebookActions.save.done, (state: INotebooksState, dateUid: Success<DateMutation, DateMutation>) => {
     const notebooks = state.notebooks;
     const notebook = notebooks.get(dateUid.result.uid);
     if (notebook) {
@@ -495,13 +498,13 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
       notebooks,
     }
   })
-  .case(notebookActions.insertAbove.done, (state: INotebooksState, _: Success<CellTypeUid, CellTypeUid>) => {
+  .case(notebookActions.insertAbove.done, (state: INotebooksState, _: Success<CellMutation, CellMutation>) => {
     return state;
   })
-  .case(notebookActions.insertBelow.done, (state: INotebooksState, _: Success<CellTypeUid, CellTypeUid>) => {
+  .case(notebookActions.insertBelow.done, (state: INotebooksState, _: Success<CellMutation, CellMutation>) => {
     return state;
   })
-  .case(notebookActions.changeCellType.done, (state: INotebooksState, _: Success<CellTypeUid, CellTypeUid>) => {
+  .case(notebookActions.changeCellType.done, (state: INotebooksState, _: Success<CellMutation, CellMutation>) => {
     return state;
   })
   .case(notebookActions.run.done, (state: INotebooksState, _: Success<string, string>) => {

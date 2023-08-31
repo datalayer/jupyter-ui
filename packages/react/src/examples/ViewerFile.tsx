@@ -3,13 +3,13 @@ import { Box } from '@primer/react';
 import Jupyter from '../jupyter/Jupyter';
 import Viewer from '../components/viewer/Viewer';
 
-import nbformat from './samples/Matplotlib.ipynb.json';
+import nbformat from './notebooks/Matplotlib.ipynb.json';
 
 const ViewerFile= () => {
   return (
     <>
       <Box m={3}>
-        <Jupyter startDefaultKernel={false}>
+        <Jupyter>
           { nbformat && <Viewer nbformat={nbformat} outputs={true} /> }
         </Jupyter>
       </Box>

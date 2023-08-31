@@ -4,7 +4,7 @@ import { ServiceManager, ServerConnection, KernelManager } from '@jupyterlab/ser
 import { getJupyterServerHttpUrl} from './JupyterConfig';
 import { requestAPI } from './JupyterHandlers';
 import { startLiteServer } from './../jupyter/lite/LiteServer';
-import { InjectableStore } from './../redux/Store';
+import { InjectableStore } from '../state/redux/Store';
 import Kernel from './services/kernel/Kernel';
 
 /**
@@ -123,6 +123,8 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
             const kernel = new Kernel({
               kernelManager,
               kernelName: defaultKernelName,
+              kernelType: "python",
+              kernelSpecName: "python",
               serverSettings,
             });
             kernel.ready.then(() => {
@@ -150,7 +152,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
         const kernelManager = (serviceManager.sessions as any)._kernelManager as KernelManager;
         setKernelManager(kernelManager);
         kernelManager.ready.then(() => {
-          console.log('Jupyter Kernel Manager is ready.');
+          console.log('The Jupyter Kernel Manager is ready.');
           /*
           const running = kernelManager.running();
           let kernel = running.next();
@@ -171,6 +173,8 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
                   kernelManager,
                   kernelName: defaultKernelName,
                   kernelModel: kernel.value,
+                  kernelType: "python",
+                  kernelSpecName: "python",
                   serverSettings,
                 }));
                 break;
@@ -183,6 +187,8 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
             const defaultKernel = new Kernel({
               kernelManager,
               kernelName: defaultKernelName,
+              kernelType: "python",
+              kernelSpecName: "python",
               serverSettings,
             });
             defaultKernel.ready.then(() => {

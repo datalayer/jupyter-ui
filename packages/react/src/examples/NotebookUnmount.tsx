@@ -8,7 +8,7 @@ import Kernel from '../jupyter/services/kernel/Kernel';
 import Notebook from '../components/notebook/Notebook';
 import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarDefault';
 
-import notebook from './samples/NotebookExample1.ipynb.json';
+import notebook from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookUnmount = () => {
   const { kernelManager, serverSettings } = useJupyter();
@@ -18,7 +18,9 @@ const NotebookUnmount = () => {
     if (kernelManager) {
       const kernel = new Kernel({
         kernelManager,
-        kernelName: "python",
+        kernelName: "defaultKernel",
+        kernelType: "python",
+        kernelSpecName: "python",
         serverSettings
       });
       setKernel(kernel);
@@ -77,7 +79,7 @@ document.body.appendChild(div);
 const root = createRoot(div)
 
 root.render(
-  <Jupyter lite={false} terminals={true} startDefaultKernel={true}>
+  <Jupyter>
     <NotebookUnmount />
   </Jupyter>
 );

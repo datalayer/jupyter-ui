@@ -3,9 +3,9 @@ import { createPortal } from 'react-dom';
 import { Store } from 'redux';
 import { ICellHeader } from '@jupyterlab/cells';
 import { CommandRegistry } from '@lumino/commands';
-import { newUuid } from '../../../../../jupyter/utils/Ids';
-import { ReactPortalWidget } from '../../../../../jupyter/lumino/ReactPortalWidget';
-import { notebookActions } from '../../../NotebookState';
+import { newUuid } from '../../../../utils/Utils';
+import { ReactPortalWidget } from '../../../../jupyter/lumino/ReactPortalWidget';
+import { notebookActions } from '../../NotebookState';
 
 export const DATALAYER_CELL_HEADER_CLASS = 'dla-CellHeader-Container';
 

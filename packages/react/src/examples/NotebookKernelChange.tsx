@@ -17,7 +17,9 @@ const NotebookKernelChange = () => {
     if (kernelManager) {
       const kernel = new Kernel({
         kernelManager,
-        kernelName: "python",
+        kernelName: "defaultKernel",
+        kernelType: "python",
+        kernelSpecName: "python",
         serverSettings,
       });
       kernel.ready.then(() => {

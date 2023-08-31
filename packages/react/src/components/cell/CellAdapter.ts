@@ -1,4 +1,5 @@
 import { BoxPanel, Widget } from '@lumino/widgets';
+import { find } from '@lumino/algorithm';
 import { CommandRegistry } from '@lumino/commands';
 import { SessionContext, ISessionContext, Toolbar, ToolbarButton } from '@jupyterlab/apputils';
 import { CodeCellModel, CodeCell, Cell } from '@jupyterlab/cells';
@@ -6,21 +7,23 @@ import { ybinding, CodeMirrorMimeTypeService, EditorLanguageRegistry, CodeMirror
 import { Completer, CompleterModel, CompletionHandler, ProviderReconciliator, KernelCompleterProvider } from '@jupyterlab/completer';
 import { RenderMimeRegistry, standardRendererFactories as initialFactories } from '@jupyterlab/rendermime';
 import { Session, ServerConnection, SessionManager, KernelManager, KernelSpecManager } from '@jupyterlab/services';
+import { runIcon } from '@jupyterlab/ui-components';
 import { createStandaloneCell, YCodeCell, IYText } from '@jupyter/ydoc';
 import { requireLoader as loader } from "@jupyter-widgets/html-manager";
 import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/lib/output_renderers";
-import { runIcon } from '@jupyterlab/ui-components';
 import IPyWidgetsManager from "../../jupyter/ipywidgets/IPyWidgetsManager";
 import Kernel from './../../jupyter/services/kernel/Kernel';
 import CellCommands from './CellCommands';
 
 export class CellAdapter {
-  private _panel: BoxPanel;
   private _codeCell: CodeCell;
+  private _kernel: Kernel;
+  private _panel: BoxPanel;
   private _sessionContext: SessionContext;
 
   constructor(options: CellAdapter.ICellAdapterOptions) {
     const { source, serverSettings, kernel } = options;
+    this._kernel = kernel;
     const kernelManager = kernel?.kernelManager ?? new KernelManager({
       serverSettings
     });
@@ -28,7 +31,7 @@ export class CellAdapter {
       serverSettings,
       kernelManager
     });
-    const specsManager = kernel?.kerneSpeclManager ?? new KernelSpecManager({
+    const specsManager = kernel?.kernelSpecManager ?? new KernelSpecManager({
       serverSettings
     });
     const kernelPreference: ISessionContext.IKernelPreference = kernel ?
@@ -54,15 +57,16 @@ export class CellAdapter {
       type: 'python',
       kernelPreference,
     });
-    /*
-    // This is a hack to support handleComms.
+
+    // These are fixes to have more control on the kernel launch.
     (this._sessionContext as any)._initialize = async (): Promise<boolean> => {
-      const manager = (this._sessionContext as any).sessionManager;
+      const manager = (this._sessionContext as any).sessionManager as SessionManager;
       await manager.ready;
       await manager.refreshRunning();
       const model = find(manager.running(), item => {
-          return (item as any).path === (this._sessionContext as any)._path;
-      });
+//          return (item as any).path === (this._sessionContext as any)._path;
+          return item.kernel?.id === this._kernel.id;
+        });
       if (model) {
           try {
             const session = manager.connectTo({
@@ -80,7 +84,7 @@ export class CellAdapter {
       }
       return await (this._sessionContext as any)._startIfNecessary();
    };
-   */
+
     const themes = new EditorThemeRegistry();
     for (const theme of EditorThemeRegistry.getDefaultThemes()) {
       themes.addTheme(theme);
@@ -159,12 +163,13 @@ export class CellAdapter {
     });
     this._codeCell.addClass('dla-JupyterCell');
     this._codeCell.initializeState();
-    this._sessionContext.kernelChanged.connect((sender: SessionContext, arg: Session.ISessionConnection.IKernelChangedArgs) => {
+    this._sessionContext.kernelChanged.connect((_, arg: Session.ISessionConnection.IKernelChangedArgs) => {
       const kernelConnection = arg.newValue;
-      if (kernelConnection) {
-        console.warn('The kernelConnection does not handle Comms', kernelConnection.id);
+      console.log('Current Kernel Connection', kernelConnection);
+      if (kernelConnection && !kernelConnection.handleComms) {
+        console.warn('The Kernel Connection does not handle Comms', kernelConnection.id);
         (kernelConnection as any).handleComms = true;
-        console.log('New Kernel Connection is updated to force Comm support', kernelConnection);
+        console.log('The Kernel Connection is updated to enforce Comms support', kernelConnection.handleComms);
       }
       iPyWidgetsClassicManager.registerWithKernel(kernelConnection);
     });
@@ -242,6 +247,10 @@ export class CellAdapter {
     return this._sessionContext;
   }
 
+  get kernel(): Kernel {
+    return this._kernel;
+  }
+
   execute = () => {
     CodeCell.execute(this._codeCell, this._sessionContext);
   }
@@ -253,7 +262,7 @@ export namespace CellAdapter {
   export type ICellAdapterOptions = {
     source: string;
     serverSettings: ServerConnection.ISettings;
-    kernel?: Kernel;
+    kernel: Kernel;
   }
 }
 

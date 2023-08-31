@@ -5,7 +5,7 @@ import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from "./toolbars/NotebookToolbar";
 import CellSidebarDefault from "../components/notebook/cell/sidebar/CellSidebarDefault";
 
-import notebook from "./samples/Matplotlib.ipynb.json";
+import notebook from "./notebooks/Matplotlib.ipynb.json";
 
 import '@lumino/widgets/style/index.css';
 import '@lumino/dragdrop/style/index.css';

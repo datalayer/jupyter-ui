@@ -20,3 +20,7 @@ import '@jupyterlab/ui-components/style/base.css';
 
 import '@jupyter-widgets/base/css/index.css';
 import '@jupyter-widgets/controls/css/widgets-base.css';
+
+export const JupyterLabCss = () => <></>
+
+export default JupyterLabCss;

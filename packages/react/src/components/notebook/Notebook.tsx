@@ -7,11 +7,11 @@ import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { useJupyter } from "./../../jupyter/JupyterContext";
 import { Kernel } from "./../../jupyter/services/kernel/Kernel";
-import { newUuid } from './../../jupyter/utils/Ids';
 import Lumino from '../../jupyter/lumino/Lumino';
 import { asObservable } from './../../jupyter/lumino/LuminoObservable';
-import { CellSidebarProps } from './cell/sidebar/lumino/CellSidebarWidget'
+import { CellSidebarProps } from './cell/sidebar/CellSidebarWidget'
 import CellMetadataEditor from './cell/metadata/CellMetadataEditor';
+import { newUuid } from '../../utils/Utils';
 import NotebookAdapter from './NotebookAdapter';
 import { notebookActions, selectNotebookPortals, notebookEpics, notebookReducer } from './NotebookState';
 
@@ -63,10 +63,7 @@ export const Notebook = (props: INotebookProps) => {
   const dispatch = useDispatch();
   const portals = selectNotebookPortals(uid);
   const [adapter, setAdapter] = useState<NotebookAdapter>();
-  useEffect(() => {
-    injectableStore.inject('notebook', notebookReducer, notebookEpics);
-  }, []);
-  useEffect(() => {
+  const newAdapterState = () => {
     if (uid && serviceManager && kernelManager && kernel) {
       kernel.ready.then(() => {
         const adapter = new NotebookAdapter(
@@ -79,7 +76,7 @@ export const Notebook = (props: INotebookProps) => {
           serviceManager,
         );
         setAdapter(adapter);
-        dispatch(notebookActions.update({ uid, partialState: { adapter } }));
+        dispatch(notebookActions.update({ uid, partialState: { adapter: adapter } }));
         adapter.serviceManager.ready.then(() => {
           if (!readOnly) {
             const activeCell = adapter.notebookPanel!.content.activeCell
@@ -125,15 +122,28 @@ export const Notebook = (props: INotebookProps) => {
             dispatch(notebookActions.kernelStatusChanged({ uid, kernelStatus }));
           });
         });
-        return () => {
-          adapter.dispose();
-          setAdapter(undefined);
-          dispatch(notebookActions.setPortalDisplay({ uid, portalDisplay: undefined }));
-          dispatch(notebookActions.dispose(uid));
-        }
       });
     }
-  }, [uid, serviceManager, kernelManager, kernel, nbformat, path]);
+  }
+  useEffect(() => {
+    injectableStore.inject('notebook', notebookReducer, notebookEpics);
+  }, []);
+  useEffect(() => {
+    newAdapterState();
+    return () => {
+      if (adapter) {
+        adapter.dispose();
+      }
+      setAdapter(undefined);
+      dispatch(notebookActions.setPortalDisplay({ uid, portalDisplay: undefined }));
+      dispatch(notebookActions.dispose(uid));
+    }
+  }, [uid, serviceManager, kernelManager, kernel, path]);
+  useEffect(() => {
+    if (adapter && nbformat) {
+      adapter.setNbformat(nbformat);
+    }
+  }, [nbformat]);
   return (
     <div style={{ height, width: '100%', position: "relative" }} id="dla-Jupyter-Notebook">
       {
@@ -201,7 +211,7 @@ export const Notebook = (props: INotebookProps) => {
           { portals?.map((portal: React.ReactPortal) => portal) }
         </>
         <Box>
-          { adapter && <Lumino>{adapter.panel}</Lumino> }
+          { adapter && <Lumino id={path}>{adapter.panel}</Lumino> }
         </Box>
       </Box >
     </div>

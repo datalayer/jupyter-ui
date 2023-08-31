@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import actionCreatorFactory from "typescript-fsa";
 import { reducerWithInitialState } from "typescript-fsa-reducers";
-import { IJupyterReactState } from "./../../redux/State";
+import { IJupyterReactState } from "../../state/redux/State";
 
 /* State */
 

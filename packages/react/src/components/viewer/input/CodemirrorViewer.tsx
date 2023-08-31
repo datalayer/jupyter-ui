@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { ICell } from '@jupyterlab/nbformat';
 import { createView } from "./CodemirrorView";
-import { sourceAsString } from "../../../jupyter/utils/Utils";
+import { sourceAsString } from "../../../utils/Utils";
 
 type Props = {
   cell: ICell,

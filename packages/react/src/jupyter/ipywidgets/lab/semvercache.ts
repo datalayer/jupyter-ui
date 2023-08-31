@@ -1,6 +1,3 @@
-// Copyright (c) Jupyter Development Team.
-// Distributed under the terms of the Modified BSD License.
-
 import { maxSatisfying } from 'semver';
 
 /**
@@ -14,7 +11,8 @@ export class SemVerCache<T> {
     if (!(version in this._cache[key])) {
       this._cache[key][version] = object;
     } else {
-      throw `Version ${version} of key ${key} already registered.`;
+//      throw `Version ${version} of key ${key} already registered.`;
+      console.warn(`Version ${version} of key ${key} already registered.`);
     }
   }
 
@@ -34,6 +32,6 @@ export class SemVerCache<T> {
     }
   }
 
-  private _cache: { [key: string]: { [version: string]: T } } =
-    Object.create(null);
+  private _cache: { [key: string]: { [version: string]: T } } = Object.create(null);
+
 }

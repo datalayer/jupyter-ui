@@ -6,10 +6,10 @@ import Jupyter from '../jupyter/Jupyter';
 import Notebook from '../components/notebook/Notebook';
 import CellSidebarDefault from "../components/notebook/cell/sidebar/CellSidebarDefault";
 import NotebookToolbar from "./toolbars/NotebookToolbar";
-import { createReduxEpicStore, createInjectableStore, InjectableStore } from '../redux/Store';
-import { exampleReducer, selectFoo, exampleActions } from './redux/ExampleState';
+import { createReduxEpicStore, createInjectableStore, InjectableStore } from '../state/redux/Store';
+import { exampleReducer, selectFoo, exampleActions } from './state/ExampleReduxState';
 
-import notebook from "./samples/NotebookExample1.ipynb.json";
+import nbformat from "./notebooks/NotebookExample1.ipynb.json";
 
 const store = createReduxEpicStore();
 const injectableStore = createInjectableStore(store);
@@ -35,24 +35,20 @@ const FooAction = () => {
   )
 }
 
-const NotebookRedux = (props: {injectableStore: InjectableStore}) => {
+const NotebookInjectableReduxStore = (props: {injectableStore: InjectableStore}) => {
   const { injectableStore } = props;
   return (
     <>
-      <Jupyter
-        injectableStore={injectableStore}
-        startDefaultKernel={true}
-        terminals={false}
-      >
+      <Jupyter injectableStore={injectableStore}>
         <FooDisplay/>
         <FooAction/>
         <Notebook
-          nbformat={notebook as INotebookContent}
-          CellSidebar={CellSidebarDefault}
-          Toolbar={NotebookToolbar}
+          nbformat={nbformat as INotebookContent}
+          uid="notebook-uid-1"
           height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
           cellSidebarMargin={120}
-          uid="notebook-uid-1"
+          CellSidebar={CellSidebarDefault}
+          Toolbar={NotebookToolbar}
         />
       </Jupyter>
     </>
@@ -64,5 +60,5 @@ document.body.appendChild(div);
 const root = createRoot(div)
 
 root.render(
-  <NotebookRedux injectableStore={injectableStore} />
+  <NotebookInjectableReduxStore injectableStore={injectableStore} />
 );

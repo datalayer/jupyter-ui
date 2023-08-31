@@ -3,13 +3,13 @@ import { useDispatch } from 'react-redux';
 import { PanelLayout } from '@lumino/widgets';
 import { ActionMenu, Button, Box } from "@primer/react";
 import { ChevronRightIcon, XIcon, ChevronUpIcon, ChevronDownIcon, SquareIcon } from "@primer/octicons-react";
-import { notebookActions, selectActiveCell } from '../../NotebookState';
-import { CellSidebarProps } from './CellSidebarWidget';
-import CellMetadataEditor from '../metadata/CellMetadataEditor';
+import { notebookActions, selectActiveCell } from '../../components/notebook/NotebookState';
+import { CellSidebarProps } from '../../components/notebook/cell/sidebar/CellSidebarWidget';
+import CellMetadataEditor from '../../components/notebook/cell/metadata/CellMetadataEditor';
 
-import { DATALAYER_CELL_HEADER_CLASS } from './CellSidebarWidget';
+import { DATALAYER_CELL_HEADER_CLASS } from '../../components/notebook/cell/sidebar/CellSidebarWidget';
 
-export const CellSidebarDefault = (props: CellSidebarProps) => {
+export const CellSidebarSource = (props: CellSidebarProps) => {
   const { notebookId, cellId, nbgrader } = props;
   const [visible, setVisible] = useState(false);
   const dispatch = useDispatch();
@@ -31,7 +31,7 @@ export const CellSidebarDefault = (props: CellSidebarProps) => {
   if (!visible) {
     return <div></div>
   }
-  return activeCell ? 
+  return activeCell ?
     (    
       <Box
         className={DATALAYER_CELL_HEADER_CLASS}
@@ -52,9 +52,9 @@ export const CellSidebarDefault = (props: CellSidebarProps) => {
         <span style={{ display: "flex" }}>
           <Button leadingVisual={ChevronUpIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
-            dispatch(notebookActions.insertAbove.started({ uid: notebookId, cellType: "code" }));
+            dispatch(notebookActions.insertAbove.started({ uid: notebookId, cellType: "code", source: "print('Hello 🪐 ⚛️ Jupyter React, I have been inserted up ⬆️.')" }));
           }}>
-            Code
+            Code (with source)
           </Button>
         </span>
         <span style={{ display: "flex" }}>
@@ -93,9 +93,9 @@ export const CellSidebarDefault = (props: CellSidebarProps) => {
         <span style={{ display: "flex" }}>
           <Button leadingVisual={ChevronDownIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
-            dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "code" }));
+            dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "code", source: "print('Hello 🪐 ⚛️ Jupyter React, I have been inserted down ⬇️.')" }));
           }}>
-            Code
+            Code (with source)
           </Button>
         </span>
         <span style={{ display: "flex" }}>
@@ -128,4 +128,4 @@ export const CellSidebarDefault = (props: CellSidebarProps) => {
     )
 }
 
-export default CellSidebarDefault;
+export default CellSidebarSource;

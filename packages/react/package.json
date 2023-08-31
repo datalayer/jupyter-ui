@@ -136,8 +136,7 @@
     "stream": "0.0.2",
     "styled-components": "5.3.10",
     "typescript-fsa": "3.0.0",
-    "typescript-fsa-reducers": "1.2.1",
-    "uuid": "8.3.2"
+    "typescript-fsa-reducers": "1.2.1"
   },
   "devDependencies": {
     "@babel/core": "7.21.0",

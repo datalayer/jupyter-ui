@@ -5,12 +5,7 @@ import NotebookToolbar from "./toolbars/NotebookToolbar";
 import CellSidebarDefault from "../components/notebook/cell/sidebar/CellSidebarDefault";
 
 const IPyReact = () => (
-  <Jupyter
-    lite={false}
-    useRunningKernelIndex={-1}
-    startDefaultKernel={true}
-    terminals={false}
-  >
+  <Jupyter>
     <Notebook
       path="ipyreact.ipynb"
       uid="notebook-ipyreact-uid"

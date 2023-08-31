@@ -1,14 +1,16 @@
 import { BoxPanel } from '@lumino/widgets';
 import { TerminalManager, ServerConnection } from '@jupyterlab/services';
-import { Terminal, ITerminal } from '@jupyterlab/terminal';
+import { Terminal as JupyterTerminal, ITerminal } from '@jupyterlab/terminal';
+import { Terminal } from './Terminal';
 
 import './TerminalAdapter.css';
 
 export class TerminalAdapter {
+  private terminal: JupyterTerminal;
   private terminalPanel: BoxPanel;
-  private terminal: Terminal;
 
-  constructor(serverSettings: ServerConnection.ISettings) {
+  constructor(options: TerminalAdapter.ITerminalAdapterOptions) {
+    const { serverSettings, theme } = options;
     this.terminalPanel = new BoxPanel();
     this.terminalPanel.addClass('dla-JupyterLab-terminal');
     this.terminalPanel.spacing = 0;
@@ -19,9 +21,9 @@ export class TerminalAdapter {
       terminalConnection.connectionStatusChanged.connect((_, status) => {
         console.log('Jupyter Terminal status', status);
       });
-      this.terminal = new Terminal(terminalConnection, { theme: 'light' });
+      this.terminal = new JupyterTerminal(terminalConnection, { theme });
       this.terminal.title.closable = true;
-      this.terminalPanel.addWidget(this.terminal);  
+      this.terminalPanel.addWidget(this.terminal);
     });
   }
 
@@ -33,6 +35,13 @@ export class TerminalAdapter {
     this.terminal.setOption('theme', theme);
   }
 
+}
+
+export namespace TerminalAdapter {
+
+  export interface ITerminalAdapterOptions extends Terminal.ITerminalOptions {
+    serverSettings: ServerConnection.ISettings;
+  }
 }
 
 export default TerminalAdapter;

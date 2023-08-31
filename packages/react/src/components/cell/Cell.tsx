@@ -20,7 +20,6 @@ export type ICellProps = {
 
 export const Cell = (props: ICellProps) => {
   const { source, autoStart } = props;
-  console.log('---', source)
   const { serverSettings, injectableStore, defaultKernel } = useJupyter();
   const dispatch = useDispatch();
   const [adapter, setAdapter] = useState<CellAdapter>();
@@ -57,7 +56,8 @@ export const Cell = (props: ICellProps) => {
       });
     }
   }, [source, defaultKernel]);
-  return adapter ?
+  return adapter
+    ?
       <Box
         sx={{
           '& .dla-JupyterCell': {

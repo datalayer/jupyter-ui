@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { PanelLayout } from '@lumino/widgets';
 import { Box, Button } from '@primer/react';
 import { PlayIcon } from "@primer/octicons-react";
-import { PanelLayout } from '@lumino/widgets';
 import { notebookActions, selectActiveCell } from '../../NotebookState';
-import { CellSidebarProps } from './lumino/CellSidebarWidget';
+import { CellSidebarProps } from './CellSidebarWidget';
 
-import { DATALAYER_CELL_HEADER_CLASS } from './lumino/CellSidebarWidget';
+import { DATALAYER_CELL_HEADER_CLASS } from './CellSidebarWidget';
 
 export const CellSidebarRun = (props: CellSidebarProps) => {
   const { notebookId } = props;

@@ -5,7 +5,6 @@ export * from './jupyter/JupyterConfig';
 export * from './jupyter/lite/LiteServer';
 export * from './jupyter/lumino/Lumino';
 export * from './jupyter/lumino/LuminoDetached';
-export * from './jupyter/lumino/LuminoNotebook';
 export * from './jupyter/lumino/LuminoObservable';
 export * from './jupyter/lumino/LuminoRedux';
 export * from './jupyter/lumino/ReactPortalWidget';
@@ -15,8 +14,8 @@ import './index.css';
 import './jupyter/lab/JupyterLabCss';
 
 // Redux.
-export * from './redux/State';
-export * from './redux/Store';
+export * from './state/redux/State';
+export * from './state/redux/Store';
 
 // Services.
 export * from './jupyter/services/Services';
@@ -42,7 +41,7 @@ export * from './components/notebook/cell/metadata/CellMetadataEditor';
 export * from './components/notebook/cell/metadata/NbGraderCells';
 export * from './components/notebook/cell/prompt/CountdownInputPrompt';
 export * from './components/notebook/content/JupyterReactContentFactory';
-export * from './components/notebook/cell/sidebar/lumino/CellSidebarWidget';
+export * from './components/notebook/cell/sidebar/CellSidebarWidget';
 export * from './components/notebook/cell/sidebar/CellSidebarDefault';
 export * from './components/notebook/cell/sidebar/CellSidebarRun';
 
@@ -86,5 +85,4 @@ export * from './components/viewer/input/InputViewer';
 export * from './components/viewer/output/OutputViewer';
 
 // Utils
-export * from './jupyter/utils/Ids';
-export * from './jupyter/utils/Utils';
+export * from './utils/Utils';

@@ -4,7 +4,7 @@ import { Jupyter } from '../../../jupyter/Jupyter';
 const CellComponent = () => {
   return (
     <>
-      <Jupyter startDefaultKernel={true}>
+      <Jupyter>
         {/*
         <Cell source="print('Hello 🪐 ⚛️ Jupyter React')"/>
         */}

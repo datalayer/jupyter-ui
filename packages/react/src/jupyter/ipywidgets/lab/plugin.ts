@@ -109,7 +109,9 @@ export function registerWidgetManager(
     if (rendermime) {
       rendermime.removeMimeType(WIDGET_VIEW_MIMETYPE);
     }
-    widgetManager!.dispose();
+    if (widgetManager) {
+      widgetManager.dispose();
+    }
   });
 }
 
@@ -125,16 +127,18 @@ export const externalIPyWidgetsPlugin = (context: Context<INotebookModel>, noteb
       WIDGET_REGISTRY.push(data);
       notebookTracker.forEach((notebookPanel) => {
         const widgetManager = Private.widgetManagerProperty.get(context);
-        widgetManager!.register(data);
-        registerWidgetManager(
-          notebookPanel.context,
-          notebookPanel.content.rendermime,
-          chain(
-            widgetRenderers(notebookPanel.content),
-    //          outputViews(app, panel.context.path)
-          )
-        );
-        bindUnhandledIOPubMessageSignal(notebookPanel);
+        if (widgetManager) {
+          widgetManager.register(data);
+          registerWidgetManager(
+            notebookPanel.context,
+            notebookPanel.content.rendermime,
+            chain(
+              widgetRenderers(notebookPanel.content),
+      //          outputViews(app, panel.context.path)
+            )
+          );
+          bindUnhandledIOPubMessageSignal(notebookPanel);
+        }
       });
     });
   };
@@ -154,16 +158,18 @@ export const bundledIPyWidgetsPlugin = (context: Context<INotebookModel>, notebo
     WIDGET_REGISTRY.push(data);
     notebookTracker.forEach((notebookPanel) => {
       const widgetManager = Private.widgetManagerProperty.get(context);
-      widgetManager!.register(data);
-      registerWidgetManager(
-        notebookPanel.context,
-        notebookPanel.content.rendermime,
-        chain(
-          widgetRenderers(notebookPanel.content),
-  //          outputViews(app, panel.context.path)
-        )
-      );
-      bindUnhandledIOPubMessageSignal(notebookPanel);
+      if (widgetManager) {
+        widgetManager.register(data);
+        registerWidgetManager(
+          notebookPanel.context,
+          notebookPanel.content.rendermime,
+          chain(
+            widgetRenderers(notebookPanel.content),
+    //          outputViews(app, panel.context.path)
+          )
+        );
+        bindUnhandledIOPubMessageSignal(notebookPanel);  
+      }
     });
   };
   ipywidgets.forEach(ipywidget => {

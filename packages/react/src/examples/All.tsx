@@ -17,7 +17,7 @@ import Console from "../components/console/Console";
 import { selectCell, cellActions } from '../components/cell/CellState';
 import { notebookActions } from '../components/notebook/NotebookState';
 
-import notebook from "./samples/NotebookExample1.ipynb.json";
+import notebook from "./notebooks/NotebookExample1.ipynb.json";
 
 const SOURCE_1 = '1+1'
 
@@ -117,8 +117,10 @@ const NotebookKernelChange = () => {
     if (kernelManager) {
       const kernel = new Kernel({
         kernelManager,
-        kernelName: "python",
-        serverSettings
+        kernelName: "defaultKernel",
+        kernelType: "python",
+        kernelSpecName: "python",
+        serverSettings,
       });
       kernel.ready.then(() => {
         dispatch(notebookActions.changeKernel({ uid: NOTEBOOK_UID_2, kernel }));
@@ -183,9 +185,9 @@ root.render(
   <Jupyter lite={false} terminals={true}>
     <Notebook
       nbformat={notebook as INotebookContent}
+      uid={NOTEBOOK_UID_3}
       height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
       cellSidebarMargin={60}
-      uid={NOTEBOOK_UID_3}
       CellSidebar={CellSidebarNew}
       Toolbar={NotebookToolbar}
     />

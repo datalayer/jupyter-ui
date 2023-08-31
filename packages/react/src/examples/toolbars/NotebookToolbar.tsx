@@ -11,7 +11,7 @@ import {
 } from '@primer/octicons-react';
 import {FastForwardIcon} from '@datalayer/icons-react';
 import {cmdIds} from '../../components/notebook/NotebookCommands';
-import {IJupyterReactState} from '../../redux/State';
+import {IJupyterReactState} from '../../state/redux/State';
 import {
   notebookActions,
   selectNotebook,

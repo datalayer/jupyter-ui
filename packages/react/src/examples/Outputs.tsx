@@ -3,21 +3,22 @@ import { INotebookContent, IOutput } from '@jupyterlab/nbformat';
 import { Text } from '@primer/react';
 import Jupyter from '../jupyter/Jupyter';
 import Output from "../components/output/Output";
+import { sourceAsString } from "./../utils/Utils"
 
-import nbformat from './samples/IPyWidgetsExample1.ipynb.json';
-// import nbformat from './samples/DashboardExample.exclude.json';
+import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
 const Outputs = () => {
   return (
     <>
+      <Text as="h1">Outputs</Text>
       {(nbformat as INotebookContent).cells.map((cell, index) => {
         return (
           <>
-            <Text as="h1">Output {index}</Text>
             { cell.outputs && 
               <Output
-                showEditor={false}
+                showEditor={true}
                 autoRun={false}
+                code={sourceAsString(cell)}
                 outputs={cell.outputs as IOutput[]}
                 key={index}
               />

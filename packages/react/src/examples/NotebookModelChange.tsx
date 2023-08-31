@@ -4,25 +4,27 @@ import { Box, Button, ButtonGroup } from '@primer/react';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import Jupyter from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
-import { IJupyterReactState } from '../redux/State';
+import { IJupyterReactState } from '../state/redux/State';
 import Notebook from '../components/notebook/Notebook';
-import { selectNotebookModel } from '../components/notebook/NotebookState';
 import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarDefault';
+// import { selectNotebookModel } from '../components/notebook/NotebookState';
 
-import notebook1 from './samples/NotebookExample1.ipynb.json';
-import notebook2 from './samples/NotebookExample2.ipynb.json';
+import nbformat1 from './notebooks/NotebookExample1.ipynb.json';
+import nbformat2 from './notebooks/NotebookExample2.ipynb.json';
 
 const NOTEBOOK_UID = 'notebook-model-change-id';
 
 const NotebookModelChange = () => {
   const { injectableStore } = useJupyter();
-  const [model, setModel] = useState<INotebookContent>(notebook1);
-  const notebookModel = selectNotebookModel(NOTEBOOK_UID);
-  console.log('Notebook Model', notebookModel?.model);
-  console.log('Notebook NbFormat', notebookModel?.model?.toJSON() as INotebookContent);
+  const [nbformat, setNbformat] = useState(nbformat1);
+//  const notebookModel = selectNotebookModel(NOTEBOOK_UID);
+//  console.log('Notebook Model', notebookModel?.model);
+//  console.log('Notebook Model NbFormat', notebookModel?.model?.toJSON() as INotebookContent);
   const changeModel = () => {
     console.log('Notebook NbFormat from store', (injectableStore.getState() as IJupyterReactState).notebook.notebooks.get(NOTEBOOK_UID)?.model?.toJSON() as INotebookContent);
-    setModel(notebook2);
+    nbformat === nbformat1
+    ? setNbformat(nbformat2)
+    : setNbformat(nbformat1);
   }
   return (
     <>
@@ -39,8 +41,13 @@ const NotebookModelChange = () => {
       </Box>
       <Notebook
         uid={NOTEBOOK_UID}
-        nbformat={model}
+        nbformat={nbformat}
         height="700px"
+        externalIPyWidgets={[
+          { name: "@widgetti/jupyter-react", version: "0.3.0" },
+          { name: "bqplot", version: "0.5.42" },
+          { name: "jupyter-matplotlib", version: "0.11.3" },
+        ]}
         CellSidebar={CellSidebarDefault}
       />
     </>
