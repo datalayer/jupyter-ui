@@ -4,6 +4,7 @@ import JupyterReact from '../../app/JupyterReact';
 
 export class JupyterReactWidget extends ReactWidget {
   private _app: JupyterFrontEnd;
+
   constructor(app: JupyterFrontEnd) {
     super();
     this._app = app;
