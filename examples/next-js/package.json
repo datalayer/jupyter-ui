@@ -10,7 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@datalayer/jupyter-react": "0.7.2",
+    "@datalayer/jupyter-react": "0.7.4",
     "autoprefixer": "10.4.14",
     "eslint": "8.40.0",
     "eslint-config-next": "13.4.1",

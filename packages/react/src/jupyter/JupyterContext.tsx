@@ -81,13 +81,11 @@ const headers = new Headers({
   "Cache-Control": "no-cache, no-store, must-revalidate",
   "Pragma": "no-cache",
   "Expires": "0",
+  "Authorization": getJupyterToken(),
 });
 */
-const headers = new Headers({
-  "Authorization": 'token ' + getJupyterToken(),
-});
-
 export const createServerSettings = (baseUrl: string, wsUrl: string) => {
+  console.log('---', getJupyterToken());
   return ServerConnection.makeSettings({
     baseUrl,
     wsUrl,
@@ -97,7 +95,7 @@ export const createServerSettings = (baseUrl: string, wsUrl: string) => {
       mode: 'cors',
       credentials: 'include',
       cache: 'no-cache',
-      headers,
+//      headers,
     }
   });
 
