@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@codemirror/lang-python": "6.0.1",
-    "@datalayer/jupyter-react": "0.7.1",
+    "@datalayer/jupyter-react": "0.7.2",
     "@prosemirror-adapter/react": "0.2.4",
     "@types/orderedmap": "1.0.0",
     "codemirror": "6.0.1",
@@ -41,7 +41,7 @@
     "prosemirror-state": "1.4.2",
     "prosemirror-transform": "1.7.1",
     "prosemirror-view": "1.30.2",
-    "redux": "4.0.5",
+    "redux": "4.2.1",
     "redux-observable": "1.2.0",
     "rxjs": "6.5.5",
     "typescript-fsa": "3.0.0",

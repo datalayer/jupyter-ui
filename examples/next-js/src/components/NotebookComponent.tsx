@@ -5,7 +5,7 @@ import { Jupyter, Notebook, CellSidebar } from '@datalayer/jupyter-react';
 export const HomeComponent = () => {
   return (
     <>
-      <div style={{fontSize: 20}}>Jupyter React in Next.js</div>
+      <div style={{fontSize: 20}}>Jupyter Notebook in Next.js</div>
       <Jupyter
         jupyterServerHttpUrl="https://oss.datalayer.tech/api/jupyter"
         jupyterServerWsUrl="wss://oss.datalayer.tech/api/jupyter"
