@@ -1,6 +1,6 @@
 import './globals.css'
 
-  import Script from 'next/script'
+import Script from 'next/script'
 import { Inter } from 'next/font/google'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -17,7 +17,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <Script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js" strategy="beforeInteractive" />
+      <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js" />
+      </head>
       <body className={inter.className}>{children}</body>
     </html>
   )
