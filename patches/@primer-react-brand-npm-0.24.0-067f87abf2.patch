@@ -1,7 +1,7 @@
-diff --git a/lib/animation/useAnimation.d.ts b/lib/animation/useAnimation.d.ts
+diff --git a/node_modules/@primer/react-brand/lib/animation/useAnimation.d.ts b/node_modules/@primer/react-brand/lib/animation/useAnimation.d.ts
 index 41e3ea96de58b977cbad8095bd63b2574c577ae3..36916832a3322a091ddfdc0dbf278fb7859e925f 100644
---- a/lib/animation/useAnimation.d.ts
-+++ b/lib/animation/useAnimation.d.ts
+--- a/node_modules/@primer/react-brand/lib/animation/useAnimation.d.ts
++++ b/node_modules/@primer/react-brand/lib/animation/useAnimation.d.ts
 @@ -1,6 +1,6 @@
  import { CSSProperties } from 'react';
  import { AnimateProps } from './AnimationProvider';

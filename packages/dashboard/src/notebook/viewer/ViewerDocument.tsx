@@ -2,7 +2,7 @@ import { ToolbarButton, ReactWidget } from '@jupyterlab/apputils';
 import { ABCWidgetFactory, DocumentRegistry, DocumentWidget } from '@jupyterlab/docregistry';
 import { INotebookModel } from '@jupyterlab/notebook';
 import { Signal } from '@lumino/signaling';
-import ViewerWidget from './ViewerWidget';
+import ViewerWidget from './ViewerWidget2';
 
 export const VIEWER_ICON_CLASS = 'jp-MaterialIcon jp-NotebookIcon';
 
