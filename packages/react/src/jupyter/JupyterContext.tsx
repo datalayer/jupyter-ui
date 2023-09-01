@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, createContext } from "react";
 import { Provider as ReduxProvider } from "react-redux";
 import { ServiceManager, ServerConnection, KernelManager } from '@jupyterlab/services';
-import { getJupyterServerHttpUrl} from './JupyterConfig';
+import { getJupyterServerHttpUrl, getJupyterToken } from './JupyterConfig';
 import { requestAPI } from './JupyterHandlers';
 import { startLiteServer } from './../jupyter/lite/LiteServer';
 import { InjectableStore } from '../state/redux/Store';
@@ -83,16 +83,21 @@ const headers = new Headers({
   "Expires": "0",
 });
 */
+const headers = new Headers({
+  "Authorization": 'token ' + getJupyterToken(),
+});
+
 export const createServerSettings = (baseUrl: string, wsUrl: string) => {
   return ServerConnection.makeSettings({
     baseUrl,
     wsUrl,
+    token: getJupyterToken(),
     appendToken: true,
     init: {
       mode: 'cors',
       credentials: 'include',
       cache: 'no-cache',
-//      headers,
+      headers,
     }
   });
 
@@ -104,7 +109,7 @@ export const createServerSettings = (baseUrl: string, wsUrl: string) => {
 export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => {
   const {
     children, lite, startDefaultKernel, defaultKernelName, disableCssLoading, useRunningKernelId, 
-    useRunningKernelIndex, variant, baseUrl, wsUrl, injectableStore
+    useRunningKernelIndex, variant, baseUrl, wsUrl, injectableStore,
   } = props;
   const [_, setVariant] = useState('default');
   const [serverSettings] = useState<ServerConnection.ISettings>(createServerSettings(baseUrl, wsUrl));
