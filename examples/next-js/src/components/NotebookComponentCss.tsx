@@ -1,14 +1,12 @@
-// This is a nextjs client component.
-"use client";
+'use client'
 
 import Image from 'next/image';
 
 import Jupyter from '@datalayer/jupyter-react/lib/jupyter/Jupyter';
 import Notebook from '@datalayer/jupyter-react/lib/components/notebook/Notebook';
-import Cell from '@datalayer/jupyter-react/lib/components/cell/Cell';
+import CellSidebar from '@datalayer/jupyter-react/lib/components/notebook/cell/sidebar/CellSidebar';
 
-
-export default function Home() {
+const HomeComponentCss = () => {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
@@ -41,26 +39,17 @@ export default function Home() {
         jupyterServerWsUrl="wss://oss.datalayer.tech/api/jupyter"
         jupyterToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
       >
-
         <Notebook
-          path="test.ipynb"
-          uid="notebook-1"
+          path="ipywidgets.ipynb"
+          uid="notebook-nextjs-css"
+          externalIPyWidgets={[
+            { name: "@widgetti/jupyter-react", version: "0.3.0" },
+            { name: "bqplot", version: "0.5.42" },
+            { name: "jupyter-matplotlib", version: "0.11.3" },
+          ]}
+          cellSidebarMargin={120}
+          CellSidebar={CellSidebar}
         />
-
-        <Cell
-          source={`import matplotlib.pyplot as plt
-
-data = {'apple': 10, 'orange': 15, 'lemon': 5, 'lime': 20}
-names = list(data.keys())
-values = list(data.values())
-
-fig, axs = plt.subplots(1, 3, figsize=(9, 3), sharey=True)
-axs[0].bar(names, values)
-axs[1].scatter(names, values)
-axs[2].plot(names, values)
-fig.suptitle('Categorical Plotting')`}
-        />
-
       </Jupyter>
 
       <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px]">
@@ -73,7 +62,6 @@ fig.suptitle('Categorical Plotting')`}
           priority
         />
       </div>
-
       <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
         <a
           href="https://beta.nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
@@ -146,3 +134,5 @@ fig.suptitle('Categorical Plotting')`}
     </main>
   )
 }
+
+export default HomeComponentCss;

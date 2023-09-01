@@ -4,7 +4,7 @@ import { KebabHorizontalIcon, ArrowRightIcon, StopIcon, PaintbrushIcon } from '@
 import { KernelMessage } from '@jupyterlab/services';
 import { EditorView } from 'codemirror';
 import OutputAdapter from '../output/OutputAdapter';
-import Kernel from '../../jupyter/services/kernel/Kernel';
+import Kernel from '../../jupyter/kernel/Kernel';
 
 type Props = {
   editorView?: EditorView;

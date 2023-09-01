@@ -4,7 +4,7 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 import { Box, Button } from '@primer/react';
 import Jupyter from '../jupyter/Jupyter';
 import Notebook from '../components/notebook/Notebook';
-import CellSidebarDefault from "../components/notebook/cell/sidebar/CellSidebarDefault";
+import CellSidebar from "../components/notebook/cell/sidebar/CellSidebar";
 import NotebookToolbar from "./toolbars/NotebookToolbar";
 import { createReduxEpicStore, createInjectableStore, InjectableStore } from '../state/redux/Store';
 import { exampleReducer, selectFoo, exampleActions } from './state/ExampleReduxState';
@@ -47,7 +47,7 @@ const NotebookInjectableReduxStore = (props: {injectableStore: InjectableStore})
           uid="notebook-uid-1"
           height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
           cellSidebarMargin={120}
-          CellSidebar={CellSidebarDefault}
+          CellSidebar={CellSidebar}
           Toolbar={NotebookToolbar}
         />
       </Jupyter>

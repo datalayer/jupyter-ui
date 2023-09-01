@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { Box, Button, Text } from '@primer/react';
 import Jupyter from '../jupyter/Jupyter';
 import Notebook from '../components/notebook/Notebook';
-import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarDefault';
+import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 
 const PATH_1 = "ipywidgets.ipynb";
 const PATH_2 = "matplotlib.ipynb";
@@ -35,7 +35,7 @@ const NotebookPathChange = () => {
           { name: "bqplot", version: "0.5.42" },
           { name: "jupyter-matplotlib", version: "0.11.3" },
         ]}
-        CellSidebar={CellSidebarDefault}
+        CellSidebar={CellSidebar}
       />
     </>
   );

@@ -9,7 +9,7 @@ import CellMetadataEditor from '../metadata/CellMetadataEditor';
 
 import { DATALAYER_CELL_HEADER_CLASS } from './CellSidebarWidget';
 
-export const CellSidebarDefault = (props: CellSidebarProps) => {
+export const CellSidebar = (props: CellSidebarProps) => {
   const { notebookId, cellId, nbgrader } = props;
   const [visible, setVisible] = useState(false);
   const dispatch = useDispatch();
@@ -128,4 +128,4 @@ export const CellSidebarDefault = (props: CellSidebarProps) => {
     )
 }
 
-export default CellSidebarDefault;
+export default CellSidebar;

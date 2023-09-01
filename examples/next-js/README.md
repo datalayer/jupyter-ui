@@ -10,6 +10,8 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
   <img alt="Jupyter UI Docusaurus" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-nextjs.png" />
 </div>
 
+Read more on the [Datalayer documentation website](https://jupyter-ui.datalayer.tech/docs/examples/next-js).
+
 ## Getting Started
 
 First, run the development server:

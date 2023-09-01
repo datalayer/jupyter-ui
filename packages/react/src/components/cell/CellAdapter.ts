@@ -12,7 +12,7 @@ import { createStandaloneCell, YCodeCell, IYText } from '@jupyter/ydoc';
 import { requireLoader as loader } from "@jupyter-widgets/html-manager";
 import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/lib/output_renderers";
 import IPyWidgetsManager from "../../jupyter/ipywidgets/IPyWidgetsManager";
-import Kernel from './../../jupyter/services/kernel/Kernel';
+import Kernel from '../../jupyter/kernel/Kernel';
 import CellCommands from './CellCommands';
 
 export class CellAdapter {

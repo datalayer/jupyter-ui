@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { createRoot } from 'react-dom/client';
-import { Box, Button, ButtonGroup } from '@primer/react';
+import { Box, Button } from '@primer/react';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import Jupyter from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
-import Kernel from '../jupyter/services/kernel/Kernel';
+import Kernel from '../jupyter/kernel/Kernel';
 import Notebook from '../components/notebook/Notebook';
-import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarDefault';
+import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 
 import notebook from './notebooks/NotebookExample1.ipynb.json';
 
@@ -41,22 +41,20 @@ const NotebookUnmount = () => {
         (
             <>
               <Box display="flex">
-                <ButtonGroup>
-                  <Button
-                    variant="default"
-                    size="small"
-                    onClick={unmount}
-                  >
-                    Unmount
-                  </Button>
-                </ButtonGroup>
+                <Button
+                  variant="default"
+                  size="small"
+                  onClick={unmount}
+                >
+                  Unmount
+                </Button>
               </Box>
               <Notebook
                 nbformat={notebook as INotebookContent}
-//                kernel={kernel}
-                CellSidebar={CellSidebarDefault}
-                height="700px"
                 uid="notebook-unmount-id"
+//                kernel={kernel}
+                height="700px"
+                CellSidebar={CellSidebar}
               />
             </>
           )

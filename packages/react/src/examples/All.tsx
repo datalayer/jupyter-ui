@@ -4,7 +4,7 @@ import { IOutput, INotebookContent } from '@jupyterlab/nbformat';
 import { Box, Button, ButtonGroup } from '@primer/react';
 import Jupyter from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
-import { Kernel } from '../jupyter/services/kernel/Kernel';
+import { Kernel } from '../jupyter/kernel/Kernel';
 import Cell from '../components/cell/Cell';
 import Notebook from '../components/notebook/Notebook';
 import Output from "../components/output/Output";
@@ -12,7 +12,7 @@ import FileBrowser from "../components/filebrowser/FileBrowser";
 import FileManagerLab from "../components/filemanager/lab/FileManagerLab";
 import Terminal from "../components/terminal/Terminal";
 import CellSidebarNew from "../components/notebook/cell/sidebar/CellSidebarNew";
-import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarDefault';
+import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 import Console from "../components/console/Console";
 import { selectCell, cellActions } from '../components/cell/CellState';
 import { notebookActions } from '../components/notebook/NotebookState';
@@ -143,7 +143,7 @@ const NotebookKernelChange = () => {
       </Box>
       <Notebook
         path="test.ipynb"
-        CellSidebar={CellSidebarDefault}
+        CellSidebar={CellSidebar}
         uid={NOTEBOOK_UID_2}
       />
     </>
@@ -203,7 +203,7 @@ root.render(
     <NotebookToolbar />
     <Notebook
       path="ipywidgets.ipynb"
-      CellSidebar={CellSidebarDefault}
+      CellSidebar={CellSidebar}
       uid={NOTEBOOK_UID_1}
     />
     <hr/>    

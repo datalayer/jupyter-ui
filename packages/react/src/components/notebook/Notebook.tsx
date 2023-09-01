@@ -6,7 +6,7 @@ import { Cell, ICellModel } from '@jupyterlab/cells';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { useJupyter } from "./../../jupyter/JupyterContext";
-import { Kernel } from "./../../jupyter/services/kernel/Kernel";
+import { Kernel } from "../../jupyter/kernel/Kernel";
 import Lumino from '../../jupyter/lumino/Lumino';
 import { asObservable } from './../../jupyter/lumino/LuminoObservable';
 import { CellSidebarProps } from './cell/sidebar/CellSidebarWidget'

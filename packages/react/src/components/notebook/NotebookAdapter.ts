@@ -19,7 +19,7 @@ import { INotebookContent, CellType, IAttachments } from '@jupyterlab/nbformat';
 import { ISharedAttachmentsCell, IYText } from '@jupyter/ydoc';
 import { requireLoader } from "@jupyter-widgets/html-manager";
 import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/lib/output_renderers";
-import { Kernel } from "./../../jupyter/services/kernel/Kernel";
+import { Kernel } from "../../jupyter/kernel/Kernel";
 import JupyterReactContentFactory from './content/JupyterReactContentFactory';
 import JupyterReactNotebookModelFactory from './model/JupyterReactNotebookModelFactory';
 import { INotebookProps, ExternalIPyWidgets, BundledIPyWidgets } from './Notebook';

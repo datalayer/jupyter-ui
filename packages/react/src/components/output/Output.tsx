@@ -8,7 +8,7 @@ import { KernelMessage } from '@jupyterlab/services';
 import OutputAdapter from './OutputAdapter';
 import { selectExecute, outputActions, outputReducer } from './OutputState';
 import { useJupyter } from "../../jupyter/JupyterContext";
-import Kernel from '../../jupyter/services/kernel/Kernel';
+import Kernel from '../../jupyter/kernel/Kernel';
 import Lumino from '../../jupyter/lumino/Lumino';
 import CodeMirrorEditor from '../codemirror/CodeMirrorEditor';
 import OutputRenderer from './OutputRenderer';

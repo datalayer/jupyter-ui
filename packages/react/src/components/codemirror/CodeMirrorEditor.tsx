@@ -4,7 +4,7 @@ import { basicSetup } from 'codemirror';
 import { EditorState, Compartment } from '@codemirror/state';
 import { keymap, EditorView, ViewUpdate } from '@codemirror/view';
 import { python } from '@codemirror/lang-python';
-import Kernel from './../../jupyter/services/kernel/Kernel';
+import Kernel from '../../jupyter/kernel/Kernel';
 import codeMirrorTheme from './CodeMirrorTheme';
 import OutputAdapter from '../output/OutputAdapter';
 import CodeMirrorOutputToolbar from './CodeMirrorOutputToolbar';

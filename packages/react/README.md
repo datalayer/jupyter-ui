@@ -4,28 +4,6 @@
 
 # 🪐 ⚛️ Jupyter React
 
-
-```
-
-clientId
-: 
-"8bbaf1ef-b6b4-4b36-93a4-50c3e78e9372"
-id
-: 
-"114ecc62-9162-4ee8-b349-8012ca743ba3"
-kernelInfo
-: 
-undefined
-path
-: 
-"kernel-b5e89a69-0867-4ffd-abf2-e5f4f32ce51d"
-sessionId
-: 
-"2873df11-3e7d-45e1-8946-49f0e2ece55a"
-
-
-```
-
 > Jupyter React is a set of [React.js](https://reactjs.org) components that allow a frontend developer to build data products compatible with the [Jupyter](https://jupyter.org) ecosystem. The user interface delivers executable notebooks and cells.
 
 The below image shows a gallery of the available React.js components ready to be used in you custom application. These open source components are used to build the online [Datalayer service](https://datalayer.io), a collaborative platform for data analysis.

@@ -6,7 +6,7 @@ import Jupyter from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { IJupyterReactState } from '../state/redux/State';
 import Notebook from '../components/notebook/Notebook';
-import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarDefault';
+import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 // import { selectNotebookModel } from '../components/notebook/NotebookState';
 
 import nbformat1 from './notebooks/NotebookExample1.ipynb.json';
@@ -48,7 +48,7 @@ const NotebookModelChange = () => {
           { name: "bqplot", version: "0.5.42" },
           { name: "jupyter-matplotlib", version: "0.11.3" },
         ]}
-        CellSidebar={CellSidebarDefault}
+        CellSidebar={CellSidebar}
       />
     </>
   );

@@ -6,7 +6,7 @@ import { $getRoot } from "lexical";
 import styled from "styled-components";
 import { INotebookContent } from "@jupyterlab/nbformat";
 import { INotebookModel } from "@jupyterlab/notebook";
-import { Jupyter, Notebook, CellSidebarDefault, selectNotebook } from "@datalayer/jupyter-react";
+import { Jupyter, Notebook, CellSidebar, selectNotebook } from "@datalayer/jupyter-react";
 import { lexicalToNbFormat } from "@datalayer/jupyter-lexical";
 import { useLexical, LexicalProvider } from "./context/LexicalContext";
 import Editor from "./Editor";
@@ -85,7 +85,7 @@ const Tabs = () => {
             <Notebook
               uid={NOTEBOOK_UID}
               model={notebookContent}
-              CellSidebar={CellSidebarDefault}
+              CellSidebar={CellSidebar}
               />
             <Button
               onClick={(e: React.MouseEvent) => {

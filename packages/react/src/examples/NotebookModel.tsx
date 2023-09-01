@@ -3,7 +3,7 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 import Jupyter from '../jupyter/Jupyter';
 import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from "./toolbars/NotebookToolbar";
-import CellSidebarDefault from "../components/notebook/cell/sidebar/CellSidebarDefault";
+import CellSidebar from "../components/notebook/cell/sidebar/CellSidebar";
 
 import nbformat from "./notebooks/NotebookExample1.ipynb.json";
 
@@ -19,7 +19,7 @@ const NotebookModel = () => (
       ]}
       height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
       cellSidebarMargin={120}
-      CellSidebar={CellSidebarDefault}
+      CellSidebar={CellSidebar}
       Toolbar={NotebookToolbar}
     />
   </Jupyter>

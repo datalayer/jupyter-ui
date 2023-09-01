@@ -6,7 +6,7 @@ import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javasc
 import { requireLoader } from "@jupyter-widgets/html-manager";
 import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/lib/output_renderers";
 import { IPyWidgetsManager } from "../../jupyter/ipywidgets/IPyWidgetsManager";
-import Kernel from "./../../jupyter/services/kernel/Kernel";
+import Kernel from "../../jupyter/kernel/Kernel";
 // import { activateWidgetExtension } from "./../../jupyter/ipywidgets/IPyWidgetsJupyterLabPlugin";
 // import { activatePlotlyWidgetExtension } from "./../../jupyter/ipywidgets/plotly/JupyterlabPlugin";
 

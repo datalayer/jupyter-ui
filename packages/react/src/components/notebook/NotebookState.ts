@@ -10,7 +10,7 @@ import { INotebookModel } from "@jupyterlab/notebook";
 import { NotebookChange } from "@jupyter/ydoc";
 import { Cell, ICellModel } from "@jupyterlab/cells";
 import { Kernel as JupyterKernel } from "@jupyterlab/services";
-import Kernel from "./../../jupyter/services/kernel/Kernel";
+import Kernel from "../../jupyter/kernel/Kernel";
 import { IJupyterReactState } from "../../state/redux/State";
 import { cmdIds } from "./NotebookCommands";
 import NotebookAdapter from "./NotebookAdapter";

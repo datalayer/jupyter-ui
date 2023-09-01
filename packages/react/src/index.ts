@@ -19,8 +19,10 @@ export * from './state/redux/Store';
 
 // Services.
 export * from './jupyter/services/Services';
-export * from './jupyter/services/kernel/Kernel';
-export * from './jupyter/services/kernel/KernelModel';
+
+// Kernel.
+export * from './jupyter/kernel/Kernel';
+export * from './jupyter/kernel/KernelModel';
 
 // IPyWidgets.
 export * from './jupyter/ipywidgets/IPyWidgetsViewManager';
@@ -42,7 +44,7 @@ export * from './components/notebook/cell/metadata/NbGraderCells';
 export * from './components/notebook/cell/prompt/CountdownInputPrompt';
 export * from './components/notebook/content/JupyterReactContentFactory';
 export * from './components/notebook/cell/sidebar/CellSidebarWidget';
-export * from './components/notebook/cell/sidebar/CellSidebarDefault';
+export * from './components/notebook/cell/sidebar/CellSidebar';
 export * from './components/notebook/cell/sidebar/CellSidebarRun';
 
 // Commands.

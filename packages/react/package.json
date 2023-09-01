@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyter-react",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "🪐 ⚛️ Jupyter React, React.js components 💯% compatible with Jupyter.",
   "license": "MIT",
   "main": "lib/index.js",
@@ -122,8 +122,8 @@
     "@jupyterlab/ui-components-extension": "4.0.3",
     "@lumino/default-theme": "2.1.2",
     "assert": "2.0.0",
+    "bufferutil": "4.0.7",
     "codemirror": "6.0.1",
-    "cross-env": "7.0.3",
     "lodash": "^4.17.4",
     "marked": "4.0.10",
     "react": "18.2.0",
@@ -136,7 +136,8 @@
     "stream": "0.0.2",
     "styled-components": "5.3.10",
     "typescript-fsa": "3.0.0",
-    "typescript-fsa-reducers": "1.2.1"
+    "typescript-fsa-reducers": "1.2.1",
+    "utf-8-validate": "6.0.3"
   },
   "devDependencies": {
     "@babel/core": "7.21.0",
@@ -168,6 +169,7 @@
     "@typescript-eslint/parser": "4.8.1",
     "babel-loader": "9.1.2",
     "bundle-loader": "0.5.6",
+    "cross-env": "7.0.3",
     "css-loader": "5.2.4",
     "eslint": "7.14.0",
     "eslint-config-prettier": "6.15.0",

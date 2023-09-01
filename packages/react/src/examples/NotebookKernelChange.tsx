@@ -1,12 +1,12 @@
 import { createRoot } from 'react-dom/client';
 import { useDispatch } from "react-redux";
-import { Box, Button, ButtonGroup } from '@primer/react';
+import { Box, Button } from '@primer/react';
 import Jupyter from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
-import { Kernel } from '../jupyter/services/kernel/Kernel';
+import { Kernel } from '../jupyter/kernel/Kernel';
 import Notebook from '../components/notebook/Notebook';
 import { notebookActions } from '../components/notebook/NotebookState';
-import CellSidebarDefault from '../components/notebook/cell/sidebar/CellSidebarDefault';
+import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 
 const NOTEBOOK_UID = 'notebook-kernel-id';
 
@@ -31,21 +31,19 @@ const NotebookKernelChange = () => {
   return (
     <>
       <Box display="flex">
-        <ButtonGroup>
-          <Button
-            variant="default"
-            size="small"
-            onClick={changeKernel}
-            >
-            Assign a new Kernel
-          </Button>
-        </ButtonGroup>
+        <Button
+          variant="default"
+          size="small"
+          onClick={changeKernel}
+          >
+          Assign a new Kernel
+        </Button>
       </Box>
       <Notebook
-        uid={NOTEBOOK_UID}
         path="test.ipynb"
-        CellSidebar={CellSidebarDefault}
         height="500px"
+        uid={NOTEBOOK_UID}
+        CellSidebar={CellSidebar}
       />
     </>
   );

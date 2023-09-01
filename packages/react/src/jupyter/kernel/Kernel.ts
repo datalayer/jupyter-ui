@@ -3,7 +3,7 @@ import { UUID } from '@lumino/coreutils';
 import { Kernel as JupyterKernel, ServerConnection, KernelManager, SessionManager, KernelMessage, KernelSpecManager } from '@jupyterlab/services';
 import { ISessionConnection } from '@jupyterlab/services/lib/session/session';
 import { ConnectionStatus } from '@jupyterlab/services/lib/kernel/kernel';
-import { getCookie } from '../../../utils/Utils';
+import { getCookie } from '../../utils/Utils';
 
 const JUPYTER_REACT_PATH_COOKIE_NAME = "jupyter-react-kernel-path";
 
@@ -12,6 +12,7 @@ export class Kernel {
   private _connectionStatus: ConnectionStatus;
   private _id: string;
   private _info: KernelMessage.IInfoReply;
+  private _serverSettings: ServerConnection.ISettings;
   private _kernelConnection: JupyterKernel.IKernelConnection | null;
   private _kernelManager: KernelManager;
   private _kernelName: string;
@@ -32,6 +33,7 @@ export class Kernel {
     this._kernelName = kernelName;
     this._kernelType = kernelType;
     this._kernelSpecName = kernelSpecName;
+    this._serverSettings = serverSettings;
     this.initReady = this.initReady.bind(this);
     this.initReady();
     this.requestKernel(kernelModel);
@@ -47,7 +49,7 @@ export class Kernel {
     await this._kernelManager.ready;
     this._sessionManager = new SessionManager({
       kernelManager: this._kernelManager,
-      serverSettings: this._kernelManager.serverSettings, // Important, do not remove this.
+      serverSettings: this._serverSettings,
       standby: 'never',
     });
     await this._sessionManager.ready;
