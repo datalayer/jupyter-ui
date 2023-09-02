@@ -1,6 +1,3 @@
-import '@lumino/widgets/style/index.css';
-import '@lumino/dragdrop/style/index.css';
-
 import '@jupyterlab/apputils/style/base.css';
 import '@jupyterlab/rendermime/style/base.css';
 import '@jupyterlab/codeeditor/style/base.css';

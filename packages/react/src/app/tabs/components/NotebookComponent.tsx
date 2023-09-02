@@ -1,9 +1,8 @@
-/*
-import Notebook from '../../../components/notebook/Notebook';
-import CellSidebarNew from "../../../components/notebook/cell/sidebar/CellSidebarNew";
+// import Notebook from '../../../components/notebook/Notebook';
+// import CellSidebarNew from "../../../components/notebook/cell/sidebar/CellSidebarNew";
 
-import nbformat from "../../..//examples/notebooks/IPyWidgetsExample1.ipynb.json";
-*/
+// import nbformat from "../../..//examples/notebooks/IPyWidgetsExample1.ipynb.json";
+
 const NotebookComponent = () => {
   return (
     <>
@@ -26,4 +25,3 @@ const NotebookComponent = () => {
 }
 
 export default NotebookComponent;
-

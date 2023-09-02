@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import Jupyter from '../jupyter/Jupyter';
+import JupyterLabCss from '../jupyter/lab/JupyterLabCss';
 import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from "./toolbars/NotebookToolbar";
 import CellSidebar from "../components/notebook/cell/sidebar/CellSidebar";
@@ -9,6 +10,7 @@ import notebook from "./notebooks/Matplotlib.ipynb.json";
 
 const Matplotlib = () => (
   <Jupyter disableCssLoading={true}>
+    <JupyterLabCss/>
     <Notebook
       nbformat={notebook as INotebookContent}
       uid="notebook-matplotlib-uid"

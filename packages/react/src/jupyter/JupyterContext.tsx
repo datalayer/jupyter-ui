@@ -85,7 +85,6 @@ const headers = new Headers({
 });
 */
 export const createServerSettings = (baseUrl: string, wsUrl: string) => {
-  console.log('---', getJupyterToken());
   return ServerConnection.makeSettings({
     baseUrl,
     wsUrl,
