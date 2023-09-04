@@ -42,12 +42,12 @@ const dashboardHomePlugin: JupyterFrontEndPlugin<void> = {
     const command = CommandIDs.showDashboardHome;
     commands.addCommand(command, {
       caption: 'Show Dashboard',
-      label: 'Jupyter Dashboard',
+      label: 'Dashboard',
       icon: DashboardIcons.dashboardGreen,
       execute: () => {
         const content = new DashboardHomeWidget();
         const widget = new MainAreaWidget<DashboardHomeWidget>({ content });
-        widget.title.label = 'Jupyter Dashboard';
+        widget.title.label = 'Dashboard';
         widget.title.icon = DashboardIcons.dashboardGreen;
         app.shell.add(widget, 'main');
       }
@@ -109,7 +109,7 @@ const dashboardTrackerPlugin: JupyterFrontEndPlugin<IDashboardTracker> = {
     );
     const dashboardFiletype: Partial<DocumentRegistry.IFileType> = {
       name: 'dashboard',
-      displayName: 'Jupyter Dashboard',
+      displayName: 'Dashboard',
       contentType: 'file',
       extensions: [
         '.dash',
@@ -117,7 +117,7 @@ const dashboardTrackerPlugin: JupyterFrontEndPlugin<IDashboardTracker> = {
       ],
       fileFormat: 'text',
       icon: DashboardIcons.dashboardGreen,
-      iconLabel: 'Jupyter Dashboard',
+      iconLabel: 'Dashboard',
       mimeTypes: ['application/json']
     };
     app.docRegistry.addFileType(dashboardFiletype);
@@ -496,7 +496,7 @@ function addCommands(
     }
   });
   commands.addCommand(CommandIDs.createNew, {
-    label: 'Jupyter Dashboard',
+    label: 'Dashboard',
     icon: DashboardIcons.dashboardGreen,
     execute: async args => {
       // A new file is created and opened separately to override the default

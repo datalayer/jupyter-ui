@@ -1,5 +1,5 @@
 import { Stack, Card } from '@primer/react-brand';
-import { OvhCloudIcon, AwsIcon } from '@datalayer/icons-react';
+import { DashboardGreenIcon } from '@datalayer/icons-react';
 import appState from "../state";
 
 const DashboardTab = (): JSX.Element => {
@@ -11,18 +11,25 @@ const DashboardTab = (): JSX.Element => {
         justifyContent="center"
         gap="normal"
       >
-        <Card href="" onClick={e => {e.preventDefault(); appState.setTab(2)}}>
-          <Card.Icon icon={() => <OvhCloudIcon/>} color="indigo" hasBackground />
+        <Card href="" ctaText="View dashboard" onClick={e => {e.preventDefault(); appState.setTab(1)}}>
+          <Card.Icon icon={() => <DashboardGreenIcon/>} color="indigo" hasBackground />
           <Card.Heading>Dashboard 1</Card.Heading>
           <Card.Description>
-            Everything you need to know about getting started with OVHcloud.
+            Everything you need to know about getting started with data analysis.
           </Card.Description>
         </Card>
-        <Card href="" onClick={e => {e.preventDefault(); appState.setTab(3)}}>
-          <Card.Icon icon={() => <AwsIcon/>} color="purple" hasBackground />
+        <Card href="" ctaText="View dashboard" onClick={e => {e.preventDefault(); appState.setTab(2)}}>
+          <Card.Icon icon={() => <DashboardGreenIcon/>} color="purple" hasBackground />
           <Card.Heading>Dashboard 2</Card.Heading>
           <Card.Description>
-            Everything you need to know about getting started with AWS.
+            Everything you need to know about getting started with data analysis.
+          </Card.Description>
+        </Card>
+        <Card href="" ctaText="View dashboard" onClick={e => {e.preventDefault(); appState.setTab(3)}}>
+          <Card.Icon icon={() => <DashboardGreenIcon/>} color="teal" hasBackground />
+          <Card.Heading>Dashboard 3</Card.Heading>
+          <Card.Description>
+            Everything you need to know about getting started with data analysis.
           </Card.Description>
         </Card>
       </Stack>

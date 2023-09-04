@@ -11,9 +11,9 @@ const AboutTab = (props: Props): JSX.Element => {
   const [pirate, setPirate] = useState(false);
   return (
     <>
-      <Pagehead as="h3">Jupyter React<Label sx={{marginLeft: 1}}>{version}</Label></Pagehead>
+      <Pagehead>🪐 ⚛️ Jupyter React<Label sx={{marginLeft: 1}}>{version}</Label></Pagehead>
       <Box>
-        <Text>🪐 ⚛️ React.js components 💯% compatible with Jupyter.</Text>
+        <Text>React.js components 💯% compatible with Jupyter.</Text>
       </Box>
       <Box mt={3}>
         {!pirate ?
