@@ -1,17 +1,12 @@
 import { JupyterLab } from '@jupyterlab/application';
 import { PageConfig } from '@jupyterlab/coreutils';
+import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 
 // The webpack public path needs to be set before loading the CSS assets.
-// eslint-disable-next-line
-__webpack_public_path__ = PageConfig.getOption('fullStaticUrl') + '/';
+(global as any).__webpack_public_path__ = PageConfig.getOption('fullStaticUrl') + '/';
 
-// Load the CSS assets
-const styles = import('../../../build/style.js');
+const styles = import('./JupyterLabStyles' as any) as Promise<any>;
 
-// These extension and mimeExtension imports should match the list of extensions in package.json. They are listed
-// separately in package.json so the webpack config Build.ensureAssets step can copy
-// extension assets to the build directory. These import statements assume
-// the JupyterLab plugins are the default export from each package.
 const extensions = [
   import('@jupyterlab/application-extension'),
   import('@jupyterlab/apputils-extension'),
@@ -21,12 +16,20 @@ const extensions = [
   import('@jupyterlab/docmanager-extension'),
   import('@jupyterlab/filebrowser-extension'),
   import('@jupyterlab/fileeditor-extension').then(plugins =>
-    plugins.default.filter(({ id }) => !id.includes(':language-server'))
+    plugins.default.filter(({ id }) => !(
+      id.includes(':language-server') ||
+      id.includes(':search')
+    ))
   ),
   import('@jupyterlab/launcher-extension'),
   import('@jupyterlab/mainmenu-extension'),
   import('@jupyterlab/notebook-extension').then(plugins =>
-    plugins.default.filter(({ id }) => !id.includes(':language-server'))
+    plugins.default.filter(({ id }) => !(
+      id.includes(':language-server') ||
+      id.includes(':toc') ||
+      id.includes(':update-raw-mimetype') ||
+      id.includes(':search')
+    ))
   ),
   import('@jupyterlab/rendermime-extension'),
   import('@jupyterlab/shortcuts-extension'),
@@ -34,26 +37,23 @@ const extensions = [
   import('@jupyterlab/theme-light-extension'),
   import('@jupyterlab/translation-extension'),
   import('@jupyterlab/ui-components-extension')
-];
+] as Array<Promise<JupyterLab.IPluginModule>>;
 
 const mimeExtensions = [
   import('@jupyterlab/json-extension'),
-];
+] as Array<Promise<IRenderMime.IExtensionModule>>;
 
 window.addEventListener('load', async function () {
-  // Make sure the styles have loaded
+  // Make sure the styles have loaded.
   await styles;
-
   // Initialize JupyterLab with the mime extensions and application extensions.
   const lab = new JupyterLab({
-    mimeExtensions: await Promise.all(mimeExtensions)
+    mimeExtensions: await Promise.all(mimeExtensions),
   });
   lab.registerPluginModules(await Promise.all(extensions));
-
-  /* eslint-disable no-console */
-  console.log('Starting app');
+  console.log('Starting JupyterLab application.');
   await lab.start();
-  console.log('App started, waiting for restore');
+  console.log('JupyterLab application started, waiting for restore.');
   await lab.restored;
-  console.log('Example started!');
+  console.log('JupyterLab application is restored.');
 });

@@ -3,7 +3,7 @@ import { ThemeProvider, BaseStyles, Box } from '@primer/react';
 import { observer } from 'mobx-react';
 import { ThemeProvider as BrandThemeProvider } from '@primer/react-brand'
 import { UnderlineNav } from '@primer/react';
-import { CloudGreyIcon } from '@datalayer/icons-react';
+import { DashboardGreenIcon } from '@datalayer/icons-react';
 import { requestAPI } from './handler';
 import DashboardTab from './tabs/DashboardTab';
 import AboutTab from './tabs/AboutTab';
@@ -32,10 +32,10 @@ const DashboardHome = observer((): JSX.Element => {
             <Box className="datalayer-Primer-Brand">
               <Box>
                 <UnderlineNav aria-current="page" aria-label="clouder">
-                  <UnderlineNav.Item aria-label="clouder" aria-current={appState.tab === 1 ? "page" : undefined} icon={CloudGreyIcon} onSelect={e => {e.preventDefault(); appState.setTab(1);}}>
+                  <UnderlineNav.Item aria-label="clouder" aria-current={appState.tab === 1 ? "page" : undefined} icon={DashboardGreenIcon} onSelect={e => {e.preventDefault(); appState.setTab(1);}}>
                     Dashboard
                   </UnderlineNav.Item>
-                  <UnderlineNav.Item aria-label="about" aria-current={appState.tab === 2 ? "page" : undefined} icon={CloudGreyIcon} onSelect={e => {e.preventDefault(); appState.setTab(2);}}>
+                  <UnderlineNav.Item aria-label="about" aria-current={appState.tab === 2 ? "page" : undefined} icon={DashboardGreenIcon} onSelect={e => {e.preventDefault(); appState.setTab(2);}}>
                     About
                   </UnderlineNav.Item>
                 </UnderlineNav>

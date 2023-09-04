@@ -15,7 +15,8 @@ const ENTRY = process.env.BUILD_APP == "true"
   : "./src/examples/NotebookPathChange";
 
 const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == "true";
-const indexPage = IS_JUPYTER_SERVER_LOCAL
+
+const INDEX_PAGE = IS_JUPYTER_SERVER_LOCAL
   ? "index-local.html"
   : "index.html";
 
@@ -44,10 +45,11 @@ module.exports = {
     server: 'http',
     proxy: {
       /*
-      '/api/jupyter': {
+      '/api': {
         target: JUPYTER_HOST,
+        pathRewrite: { '^/api': '/api/jupyter/api' },
         ws: true,
-        secure: false,
+        secure: true,
         changeOrigin: true,
       },
       */
@@ -177,7 +179,7 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       title: 'Jupyter React',
-      template : 'public/' + indexPage,
+      template : 'public/' + INDEX_PAGE,
     }),
     new HtmlWebpackTagsPlugin({
       links: [
