@@ -11,7 +11,7 @@ import Output from "../components/output/Output";
 import FileBrowser from "../components/filebrowser/FileBrowser";
 import FileManagerLab from "../components/filemanager/lab/FileManagerLab";
 import Terminal from "../components/terminal/Terminal";
-import CellSidebarNew from "../components/notebook/cell/sidebar/CellSidebarNew";
+import CellSidebarNew from "../components/notebook/cell/sidebar/CellSidebarButton";
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 import Console from "../components/console/Console";
 import { selectCell, cellActions } from '../components/cell/CellState';

@@ -42,7 +42,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
         }}
       >
         <span style={{ display: "flex" }}>
-          <Button leadingVisual={ChevronRightIcon} variant="invisible" size="small" onClick={(e: any) => {
+          <Button title="Run cell" leadingVisual={ChevronRightIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
             dispatch(notebookActions.run.started(notebookId));
           }}>
@@ -50,7 +50,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
           </Button>
         </span>
         <span style={{ display: "flex" }}>
-          <Button leadingVisual={ChevronUpIcon} variant="invisible" size="small" onClick={(e: any) => {
+          <Button title="Insert code cell above" leadingVisual={ChevronUpIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
             dispatch(notebookActions.insertAbove.started({ uid: notebookId, cellType: "code" }));
           }}>
@@ -58,7 +58,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
           </Button>
         </span>
         <span style={{ display: "flex" }}>
-          <Button leadingVisual={ChevronUpIcon} variant="invisible" size="small" onClick={(e: any) => {
+          <Button title="Insert markdown cell above" leadingVisual={ChevronUpIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
             dispatch(notebookActions.insertAbove.started({ uid: notebookId, cellType: "markdown" }));
           }}>
@@ -67,14 +67,14 @@ export const CellSidebar = (props: CellSidebarProps) => {
         </span>
         <span style={{ display: "flex" }}>
         { activeCell.model.type === "code" ?
-          <Button leadingVisual={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
+          <Button title="Convert to markdow cell" leadingVisual={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
             dispatch(notebookActions.changeCellType.started({ uid: notebookId, cellType: "markdown" }));
           }}>
             To Markdown
           </Button>
         :
-          <Button leadingVisual={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
+          <Button title="Convert to code cell" leadingVisual={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
             dispatch(notebookActions.changeCellType.started({ uid: notebookId, cellType: "code" }));
           }}>
@@ -83,7 +83,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
         }
         </span>
         <span style={{ display: "flex" }}>
-          <Button leadingVisual={ChevronDownIcon} variant="invisible" size="small" onClick={(e: any) => {
+          <Button title="Insert markdown cell below" leadingVisual={ChevronDownIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
             dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "markdown" }));
           }}>
@@ -91,7 +91,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
           </Button>
         </span>
         <span style={{ display: "flex" }}>
-          <Button leadingVisual={ChevronDownIcon} variant="invisible" size="small" onClick={(e: any) => {
+          <Button title="Insert code cell below" leadingVisual={ChevronDownIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
             dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "code" }));
           }}>
@@ -99,7 +99,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
           </Button>
         </span>
         <span style={{ display: "flex" }}>
-          <Button leadingVisual={XIcon} variant="invisible" size="small" onClick={(e: any) => {
+          <Button title="Delete cell" leadingVisual={XIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
             dispatch(notebookActions.delete.started(notebookId));
           }}>

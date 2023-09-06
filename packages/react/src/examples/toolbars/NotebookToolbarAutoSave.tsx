@@ -1,108 +1,78 @@
-import {useState, useEffect} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {
-  notebookActions,
-  selectNotebook,
-} from '../../components/notebook/NotebookState';
-import {PlusIcon, PlayIcon, StopIcon, TrashIcon} from '@primer/octicons-react';
-import {IconButton} from '@primer/react';
-import {IJupyterReactState} from '../../state/redux/State';
-import {cmdIds} from '../../components/notebook/NotebookCommands';
-import {Button, ButtonGroup} from '@primer/react';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Box, Button, ButtonGroup, IconButton } from '@primer/react';
+import { PlusIcon, ChevronRightIcon, StopIcon, ZapIcon, TrashIcon, SyncIcon } from '@primer/octicons-react';
+import { FastForwardIcon } from '@datalayer/icons-react';
+import { IJupyterReactState } from '../../state/redux/State';
+import { cmdIds } from '../../components/notebook/NotebookCommands';
+import { notebookActions, selectNotebook, selectSaveRequest } from '../../components/notebook/NotebookState';
 
-const NotebookToolbarAutoSave = (props: {notebookId: string}) => {
+export const NotebookToolbarAutoSave = (props: {notebookId: string}) => {
   const {notebookId} = props;
-  const [addtype, setaddtype] = useState('code');
+  const [autoSave, setAutoSave] = useState(false);
+  const [addType, setAddType] = useState('code');
   const dispatch = useDispatch();
   const notebook = selectNotebook(notebookId);
-  const notebookState = useSelector(
-    (state: IJupyterReactState) => state.notebook
-  );
+  const saveRequest = selectSaveRequest(notebookId);
+  const notebookstate = useSelector((state: IJupyterReactState) => {
+    return state.notebook;
+  });
   useEffect(() => {
-    notebookState.notebooks
-      .get(notebookId)
-      ?.adapter?.commands.execute(cmdIds.save);
-  }, [notebookState]);
+    notebook?.adapter?.commands.execute(cmdIds.save);
+  }, [saveRequest]);
+  useEffect(() => {
+    if (autoSave) {
+      notebook?.adapter?.commands.execute(cmdIds.save);
+    }
+  }, [notebookstate]);
   const handleChangeCellType = (newType: string) => {
-    setaddtype(newType);
+    setAddType(newType);
   };
   return (
-    <div
-      style={{
-        display: 'flex',
-        width: '100%',
-        borderBottom: '0.1rem solid lightgrey',
-        position: 'relative',
-        zIndex: '1',
-        backgroundColor: 'white',
-        top: '0',
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          width: '50%',
-          paddingLeft: '7vw',
-          gap: '0.75vw',
-        }}
-      >
+    <Box display="flex" pt={1} pb={1} style={{ width: '100%', borderBottom: '0.1rem solid lightgrey', position: 'relative', top: '0' }}>
+      <Box flexGrow={1} style={{ width: '50%', paddingLeft: '7vw', gap: '0.75vw' }}>
         <IconButton
+          variant="invisible"
           size="small"
           color="primary"
-          aria-label="Insert Cell"
+          aria-label="Save"
+          title="Save"
           onClick={e => {
             e.preventDefault();
-            if (addtype === 'raw')
-              dispatch(
-                notebookActions.insertBelow.started({
-                  uid: notebookId,
-                  cellType: 'raw',
-                })
-              );
-            else if (addtype === 'code')
-              dispatch(
-                notebookActions.insertBelow.started({
-                  uid: notebookId,
-                  cellType: 'code',
-                })
-              );
-            else if (addtype === 'markdown')
-              dispatch(
-                notebookActions.insertBelow.started({
-                  uid: notebookId,
-                  cellType: 'markdown',
-                })
-              );
+            dispatch(
+              notebookActions.save.started({uid: notebookId, date: new Date()})
+            );
           }}
-          style={{color: 'grey'}}
-          icon={PlusIcon}
+          icon={ZapIcon}
         />
         <IconButton
+          variant="invisible"
           size="small"
           color="secondary"
-          aria-label="Run Cell"
+          aria-label="Run cell"
+          title="Run cell"
           onClick={e => {
             e.preventDefault();
             dispatch(notebookActions.run.started(notebookId));
           }}
-          style={{color: 'grey'}}
-          icon={PlayIcon}
+          icon={ChevronRightIcon}
         />
-        {notebook?.kernelStatus === 'idle' && (
+        {notebook?.kernelStatus === 'idle' ?
           <IconButton
+            variant="invisible"
             size="small"
             color="secondary"
-            aria-label="Run All Cells"
+            aria-label="Run all cells"
+            title="Run all cells"
             onClick={e => {
               e.preventDefault();
               dispatch(notebookActions.runAll.started(notebookId));
             }}
-            style={{color: 'grey'}}
-            icon={PlayIcon}
+            icon={FastForwardIcon}
           />
-        )}
-        {notebook?.kernelStatus === 'busy' && (
+        :
           <IconButton
+            variant="invisible"
             size="small"
             color="error"
             aria-label="Interrupt"
@@ -112,54 +82,83 @@ const NotebookToolbarAutoSave = (props: {notebookId: string}) => {
             }}
             icon={StopIcon}
           />
-        )}
+        }
         <IconButton
+          variant="invisible"
           size="small"
           color="error"
           aria-label="Delete"
+          title="Delete"
           onClick={e => {
             e.preventDefault();
             dispatch(notebookActions.delete.started(notebookId));
           }}
           icon={TrashIcon}
         />
-      </div>
-      <div
-        style={{
-          display: 'flex',
-          width: '50%',
-          paddingRight: '7vw',
-          gap: '0.75vw',
-          justifyContent: 'flex-end',
-          alignItems: 'center',
-        }}
-      >
+      </Box>
+      <Box sx={{
+        display: 'flex',
+        width: '50%',
+        paddingRight: '7vw',
+        gap: '0.75vw',
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+      }}>
+        <IconButton
+          aria-label="Autosave"
+          title="Autosave"
+          variant={autoSave ? 'primary' : 'invisible'}          
+          onClick={e => {
+            e.preventDefault();
+            setAutoSave(!autoSave);
+          }}
+          size="small"
+          color={autoSave ? 'success' : 'error'}
+          icon={SyncIcon}
+        />
+        <IconButton
+          variant="invisible"
+          size="small"
+          color="primary"
+          aria-label="Insert cell"
+          title="Insert cell"
+          onClick={e => {
+            e.preventDefault();
+            dispatch(
+              notebookActions.insertBelow.started({
+                uid: notebookId,
+                cellType: addType,
+              })
+            );
+          }}
+          icon={PlusIcon}
+        />
         <ButtonGroup>
           <Button
-            variant={addtype == 'code' ? 'primary' : 'invisible'}
+            variant={addType == 'code' ? 'primary' : 'invisible'}
             onClick={() => handleChangeCellType('code')}
             size="small"
           >
             Code
           </Button>
           <Button
-            variant={addtype == 'markdown' ? 'primary' : 'invisible'}
+            variant={addType == 'markdown' ? 'primary' : 'default'}
             onClick={() => handleChangeCellType('markdown')}
             size="small"
           >
             Markdown
           </Button>
           <Button
-            variant={addtype == 'raw' ? 'primary' : 'invisible'}
+            variant={addType == 'raw' ? 'primary' : 'invisible'}
             onClick={() => handleChangeCellType('raw')}
             size="small"
           >
             Raw
           </Button>
         </ButtonGroup>
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
-};
+}
 
 export default NotebookToolbarAutoSave;

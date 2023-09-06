@@ -3,7 +3,7 @@ import { rendererFactory as geojsonRenderer } from '@jupyterlab/geojson-extensio
 import Jupyter from '../jupyter/Jupyter';
 import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from "./toolbars/NotebookToolbar";
-import CellSidebarNew from "../components/notebook/cell/sidebar/CellSidebarNew";
+import CellSidebarNew from "../components/notebook/cell/sidebar/CellSidebarButton";
 
 const GeoJson = () => (
   <Jupyter>

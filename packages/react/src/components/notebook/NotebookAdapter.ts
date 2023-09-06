@@ -206,7 +206,7 @@ export class NotebookAdapter {
         );
         break;
       }
-    }    
+    }
 
     this._context = new Context({
       manager: this._serviceManager,
@@ -227,13 +227,17 @@ export class NotebookAdapter {
       await manager.ready;
       await manager.refreshRunning();
       const model = find(manager.running(), (item) => {
-//        return (item as any).name === (this._context!.sessionContext as any)._name;
         return item.kernel?.id === this._kernel.id;
       });
+      console.log('---', model);
       if (model) {
           try {
             const session = manager.connectTo({
-              model,
+              model: {
+                ...model,
+                path: this._path ?? model.path,
+                name: this._path ?? model.name,
+              },
               kernelConnectionOptions: {
                 handleComms: true,
               }
@@ -247,36 +251,7 @@ export class NotebookAdapter {
       }
       return await (this._context!.sessionContext as any)._startIfNecessary();
    };
-   /*
-   (this._context.sessionContext as any).startKernel = async (): Promise<boolean> => {
-    const preference = (this._context!.sessionContext as any).kernelPreference;
-    if (!preference.autoStartDefault && preference.shouldStart === false) {
-      return true;
-    }
-    let options: Partial<JupyterKernel.IModel> | undefined;
-    if (preference.id) {
-      options = { id: preference.id };
-    } else {
-      const name = (this._context!.sessionContext as any).Private.getDefaultKernel({
-        specs: (this._context!.sessionContext as any).specsManager.specs,
-        sessions: (this._context!.sessionContext as any).sessionManager.running(),
-        preference
-      });
-      if (name) {
-        options = { name };
-      }
-    }
-    if (options) {
-      try {
-        await (this._context!.sessionContext as any)._changeKernel(options);
-        return false;
-      } catch (err) {
-        // no-op
-      }
-    }
-    return true;
-  }
-  */
+
   const registerIPyWidgets = () => {
       switch(this._ipywidgets) { 
         case 'classic': {
@@ -314,7 +289,6 @@ export class NotebookAdapter {
         (kernelConnection as any).handleComms = true;
         console.log('The Kernel Connection is updated to enforce Comms support', kernelConnection.handleComms);
       }
-//      registerIPyWidgets();
     });
     /*
     // Alternative way to create a NotebookPanel.
@@ -342,12 +316,10 @@ export class NotebookAdapter {
     window.addEventListener('resize', () => {
       this._notebookPanel?.update();
     });
-
     const isNew = ((this._path !== undefined) && (this._path !== "")) ? false : true;
     this._context.initialize(isNew).then(() => {
-//      this.assignKernel(this._kernel!);
+      // no-op
     });
-
   }
 
   setupCompleter(notebookPanel: NotebookPanel) {

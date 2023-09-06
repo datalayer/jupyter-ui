@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { PanelLayout } from '@lumino/widgets';
 import { Box, IconButton } from '@primer/react';
-import { PlayIcon, ChevronUpIcon, ChevronDownIcon, XIcon } from '@primer/octicons-react';
+import { PlayIcon, ChevronUpIcon, ChevronDownIcon, SquareIcon, XIcon } from '@primer/octicons-react';
 import { notebookActions, selectActiveCell } from '../../NotebookState';
 import { CellSidebarProps } from './CellSidebarWidget';
 
@@ -43,7 +43,8 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
         <IconButton
           size="small"
           color="secondary"
-          aria-label="Run Cell"
+          aria-label="Run cell"
+          title="Run cell"
           onClick={e => {
             e.preventDefault();
             dispatch(notebookActions.run.started(notebookId));
@@ -56,7 +57,8 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
         <IconButton
           size="small"
           color="secondary"
-          aria-label="Add Code Above"
+          aria-label="Add code cell above"
+          title="Add code cell above"
           onClick={e => {
             e.preventDefault();
             dispatch(
@@ -74,7 +76,8 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
         <IconButton
           size="small"
           color="secondary"
-          aria-label="Run Cell"
+          aria-label="Add markdown cell above"
+          title="Add markdown cell above"
           onClick={e => {
             e.preventDefault();
             dispatch(
@@ -89,27 +92,38 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
         />
       </span>
       <span style={{display: 'flex'}}>
-        {/* activeCell.model.type === "code" ?
-            <Button leadingVisual={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
-              e.preventDefault();
-              dispatch(notebookActions.changeCellType.started("markdown"));
-            }}>
-              To Markdown
-            </Button>
+       { activeCell.model.type === "code" ?
+            <IconButton
+              aria-label="Convert to markdow cell"
+              title="Convert to markdow cell" 
+              icon={SquareIcon}
+              size="small"
+              variant="invisible"
+              onClick={e => {
+                e.preventDefault();
+                dispatch(notebookActions.changeCellType.started({ uid: notebookId, cellType: "markdown" }));
+              }
+            }/>
           :
-            <Button leadingVisual={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
-              e.preventDefault();
-              dispatch(notebookActions.changeCellType.started("code"));
-            }}>
-              To Code
-            </Button>
-        */}
+            <IconButton
+              aria-label="Convert to code cell"
+              title="Convert to code cell" 
+              icon={SquareIcon}
+              variant="invisible"
+              size="small"
+              onClick={(e: any) => {
+                e.preventDefault();
+                dispatch(notebookActions.changeCellType.started({ uid: notebookId, cellType: "code" }));
+              }}
+            />
+          }
       </span>
       <span style={{display: 'flex'}}>
         <IconButton
           size="small"
           color="secondary"
-          aria-label="Run Cell"
+          aria-label="Add markdown cell below"
+          title="Add markdown cell below"
           onClick={e => {
             e.preventDefault();
             dispatch(
@@ -127,7 +141,8 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
         <IconButton
           size="small"
           color="secondary"
-          aria-label="Run Cell"
+          aria-label="Add code cell above"
+          title="Add code cell above"
           onClick={e => {
             e.preventDefault();
             dispatch(
@@ -145,7 +160,8 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
         <IconButton
           size="small"
           color="error"
-          aria-label="Delete"
+          aria-label="Delete cell"
+          title="Delete cell"
           onClick={e => {
             e.preventDefault();
             dispatch(notebookActions.delete.started(notebookId));
