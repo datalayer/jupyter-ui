@@ -229,7 +229,6 @@ export class NotebookAdapter {
       const model = find(manager.running(), (item) => {
         return item.kernel?.id === this._kernel.id;
       });
-      console.log('---', model);
       if (model) {
           try {
             const session = manager.connectTo({
