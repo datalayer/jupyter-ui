@@ -35,7 +35,7 @@ const NotebookExternalContent = () => {
     alert("Save this notebook: " + JSON.stringify(updatedNbFormat));
   }
   return (
-    nbformat &&
+    nbformat ?
       <>
         <Box>
           <IconButton
@@ -64,6 +64,8 @@ const NotebookExternalContent = () => {
           CellSidebar={CellSidebar}
         />
       </>
+    :
+      <></>
   )
 };
 
