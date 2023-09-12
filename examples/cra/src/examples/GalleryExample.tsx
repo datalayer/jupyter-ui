@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { UnderlineNav } from '@primer/react';
+import { UnderlineNav } from '@primer/react/drafts';
 import { Box } from '@primer/react';
 import {
   useJupyter,

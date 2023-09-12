@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { JupyterFrontEnd } from '@jupyterlab/application';
 import { ThemeProvider, BaseStyles, Box } from '@primer/react';
-import { UnderlineNav } from '@primer/react';
+import { UnderlineNav } from '@primer/react/drafts';
 import { ReactJsIcon, RingedPlanetIcon } from '@datalayer/icons-react';
 import { ServerConnection } from '@jupyterlab/services';
 import AboutTab from './tabs/AboutTab';
