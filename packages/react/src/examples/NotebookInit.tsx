@@ -52,7 +52,7 @@ const NotebookInit: React.FC = () => {
   const notebook = selectNotebook(NOTEBOOK_ID);
   useEffect(() => {
     if (notebook && !IS_INITIALIZED) {
-      notebook.adapter?.notebookPanel?.model?.contentChanged.connect(m => {
+      notebook.adapter?.notebookPanel?.model?.contentChanged.connect(_ => {
         if (!IS_INITIALIZED) {
           IS_INITIALIZED = true;
 //          console.log("You can use one of these commands:", notebook.adapter?.commands.listCommands());
@@ -69,7 +69,7 @@ const NotebookInit: React.FC = () => {
     }
   }, [kernel, notebook]);
   return (
-    kernel && (
+    kernel ?
       <Notebook
         path="ipywidgets.ipynb"
         uid={NOTEBOOK_ID}
@@ -78,7 +78,8 @@ const NotebookInit: React.FC = () => {
         CellSidebar={CellSidebar}
         Toolbar={NotebookToolbar}
       />
-    )
+    :
+      <></>
   );
 };
 
