@@ -58,7 +58,7 @@ const dashboardHomePlugin: JupyterFrontEndPlugin<void> = {
       launcher.add({
         command,
         category,
-        rank: 6.8,
+        rank: 6.7,
       });
     }
     console.log('JupyterLab plugin @datalayer/jupyter-dashboard:home is activated!');
