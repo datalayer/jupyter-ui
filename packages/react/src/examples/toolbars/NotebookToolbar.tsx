@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Box, IconButton, Button, ButtonGroup } from '@primer/react';
-import { PlusIcon, PlayIcon, StopIcon, TrashIcon, ZapIcon } from '@primer/octicons-react';
-import { notebookActions, selectNotebook } from '../../components/notebook/NotebookState';
+import { PlusIcon, PlayIcon, StopIcon, TrashIcon, ZapIcon, PaperAirplaneIcon } from '@primer/octicons-react';
+import { notebookActions, selectKernelStatus } from '../../components/notebook/NotebookState';
 
 export const NotebookToolbar = (props: {notebookId: string}) => {
   const { notebookId } = props;
   const [type, setType] = useState('code');
   const dispatch = useDispatch();
-  const notebook = selectNotebook(notebookId);
+  const kernelStatus = selectKernelStatus(notebookId);
   const handleChangeCellType = (newType: string) => {
     setType(newType);
   };
@@ -30,9 +30,7 @@ export const NotebookToolbar = (props: {notebookId: string}) => {
           title="Save"
           onClick={e => {
             e.preventDefault();
-            dispatch(
-              notebookActions.save.started({uid: notebookId, date: new Date()})
-            );
+            dispatch(notebookActions.save.started({uid: notebookId, date: new Date()}));
           }}
           icon={ZapIcon}
         />
@@ -48,35 +46,34 @@ export const NotebookToolbar = (props: {notebookId: string}) => {
           }}
           style={{color: 'grey'}}
           icon={PlayIcon}
+          disabled={(kernelStatus !== 'idle')}
         />
-        {notebook?.kernelStatus === 'idle' && (
-          <IconButton
-            variant="invisible"
-            size="small"
-            color="secondary"
-            aria-label="Run all cells"
-            title="Run all cells"
-            onClick={e => {
-              e.preventDefault();
-              dispatch(notebookActions.runAll.started(notebookId));
-            }}
-            style={{color: 'grey'}}
-            icon={PlayIcon}
+        <IconButton
+          variant="invisible"
+          size="small"
+          color="secondary"
+          aria-label="Run all cells"
+          title="Run all cells"
+          onClick={e => {
+            e.preventDefault();
+            dispatch(notebookActions.runAll.started(notebookId));
+          }}
+          style={{color: 'grey'}}
+          icon={PaperAirplaneIcon}
+          disabled={(kernelStatus !== 'idle')}
+        />
+        <IconButton
+          variant="invisible"
+          size="small"
+          color="error"
+          aria-label="Interrupt"
+          onClick={e => {
+            e.preventDefault();
+            dispatch(notebookActions.interrupt.started(notebookId));
+          }}
+          icon={StopIcon}
+          disabled={(kernelStatus !== 'busy')}
           />
-        )}
-        {notebook?.kernelStatus === 'busy' && (
-          <IconButton
-            variant="invisible"
-            size="small"
-            color="error"
-            aria-label="Interrupt"
-            onClick={e => {
-              e.preventDefault();
-              dispatch(notebookActions.interrupt.started(notebookId));
-            }}
-            icon={StopIcon}
-          />
-        )}
         <IconButton
           variant="invisible"
           size="small"

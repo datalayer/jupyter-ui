@@ -62,38 +62,26 @@ export const setJupyterServerHttpUrl = (jupyterServerHttpUrl: string) => {
  */
 export const loadJupyterConfig = (props: JupyterProps) => {
   const { lite, jupyterServerHttpUrl, jupyterServerWsUrl, collaborative, terminals, jupyterToken } = props;
-  const jupyterHtmlConfig = document.getElementById('jupyter-config-data');
-  if (jupyterHtmlConfig) {
-    const jupyterConfig = JSON.parse(jupyterHtmlConfig.textContent || '');
-    setJupyterServerHttpUrl(location.protocol + '//' + location.host + jupyterConfig.baseUrl);
-    setJupyterServerWsUrl(location.protocol === "https" ? "wss://" + location.host : "ws://" + location.host + jupyterConfig.baseUrl);
-    setJupyterToken(jupyterConfig.token);
-    config.insideJupyterLab = jupyterConfig.appName === 'JupyterLab';
+  const datalayerConfigData = document.getElementById('datalayer-config-data');
+  if (datalayerConfigData) {
+    config = JSON.parse(datalayerConfigData.textContent || '') as IJupyterConfig;
+    setJupyterServerHttpUrl(config.jupyterServerHttpUrl ?? jupyterServerHttpUrl ?? location.protocol + '//' + location.host + "/api/jupyter");
+    setJupyterServerWsUrl(config.jupyterServerWsUrl ?? jupyterServerWsUrl ?? location.protocol.replace('http', 'ws') + '//' + location.host + "/api/jupyter");
+    setJupyterToken(config.jupyterToken ?? jupyterToken ?? '');
   }
   else {
-    const datalayerHtmlConfig = document.getElementById('datalayer-config-data');
-    if (datalayerHtmlConfig) {
-      config = JSON.parse(datalayerHtmlConfig.textContent || '') as IJupyterConfig;
+    const jupyterConfigData = document.getElementById('jupyter-config-data');
+    if (jupyterConfigData) {
+      const jupyterConfig = JSON.parse(jupyterConfigData.textContent || '');
+      setJupyterServerHttpUrl(location.protocol + '//' + location.host + jupyterConfig.baseUrl);
+      setJupyterServerWsUrl(location.protocol === "https" ? "wss://" + location.host : "ws://" + location.host + jupyterConfig.baseUrl);
+      setJupyterToken(jupyterConfig.token);
+      config.insideJupyterLab = jupyterConfig.appName === 'JupyterLab';
     }
-    if (lite) {
-      setJupyterServerHttpUrl(location.protocol + '//' + location.host);
-    } else if (config.jupyterServerHttpUrl) {
-      setJupyterServerHttpUrl(config.jupyterServerHttpUrl);
-    } else {
-      setJupyterServerHttpUrl(jupyterServerHttpUrl || location.protocol + '//' + location.host + "/api/jupyter");
-    }
-    if (lite) {
-      setJupyterServerWsUrl(location.protocol === "https" ? "wss://" + location.host : "ws://" + location.host);
-    } else if (config.jupyterServerWsUrl) {
-      setJupyterServerWsUrl(config.jupyterServerWsUrl);
-    } else {
-      setJupyterServerWsUrl(jupyterServerWsUrl || location.protocol.replace('http', 'ws') + '//' + location.host + "/api/jupyter");
-    }
-    if (config.jupyterToken) {
-      setJupyterToken(config.jupyterToken);
-    } else {
-      setJupyterToken(jupyterToken || '');
-    }  
+  }
+  if (lite) {
+    setJupyterServerHttpUrl(location.protocol + '//' + location.host);
+    setJupyterServerWsUrl(location.protocol === "https" ? "wss://" + location.host : "ws://" + location.host);
   }
   PageConfig.setOption('baseUrl', getJupyterServerHttpUrl());
   PageConfig.setOption('wsUrl', getJupyterServerWsUrl());
@@ -102,21 +90,10 @@ export const loadJupyterConfig = (props: JupyterProps) => {
   PageConfig.setOption('terminalsAvailable', String(terminals || false));
   PageConfig.setOption('mathjaxUrl', 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js');
   PageConfig.setOption('mathjaxConfig', 'TeX-AMS_CHTML-full,Safe');
-  /*
-  PageConfig.getOption('hubHost')
-  PageConfig.getOption('hubPrefix')
-  PageConfig.getOption('hubUser')
-  PageConfig.getOption('hubServerName')
-  */
+//  PageConfig.getOption('hubHost')
+//  PageConfig.getOption('hubPrefix')
+//  PageConfig.getOption('hubUser')
+//  PageConfig.getOption('hubServerName')
   config.insideJupyterHub = PageConfig.getOption('hubHost') !== "";
   return config;
-}
-
-export const runsInJupyterLab = () => {
-  const jupyterHtmlConfig = document.getElementById('jupyter-config-data');
-  if (jupyterHtmlConfig) {
-    const jupyterConfig = JSON.parse(jupyterHtmlConfig.textContent || '');
-    return jupyterConfig.appName === 'JupyterLab';
-  }
-  return false
 }
