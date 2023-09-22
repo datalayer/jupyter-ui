@@ -125,8 +125,8 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
             const kernel = new Kernel({
               kernelManager,
               kernelName: defaultKernelName,
+              kernelSpecName: defaultKernelName,
               kernelType: "notebook",
-              kernelSpecName: "python",
               serverSettings,
             });
             kernel.ready.then(() => {
@@ -174,9 +174,9 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
                 setKernel(new Kernel({
                   kernelManager,
                   kernelName: defaultKernelName,
+                  kernelSpecName: defaultKernelName,
                   kernelModel: kernel.value,
                   kernelType: "notebook",
-                  kernelSpecName: "python",
                   serverSettings,
                 }));
                 break;
@@ -185,15 +185,17 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
               i++;
             }
           }
-          else if (startDefaultKernel) {  
+          else if (startDefaultKernel) {
+            console.log('Starting Kernel', defaultKernelName);
             const defaultKernel = new Kernel({
               kernelManager,
               kernelName: defaultKernelName,
+              kernelSpecName: defaultKernelName,
               kernelType: "notebook",
-              kernelSpecName: "python",
               serverSettings,
             });
             defaultKernel.ready.then(() => {
+              console.log("The kernel is ready", defaultKernel);
               setKernel(defaultKernel);
             });
           }

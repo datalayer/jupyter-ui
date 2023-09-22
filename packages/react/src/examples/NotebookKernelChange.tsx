@@ -10,6 +10,8 @@ import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 
 const NOTEBOOK_UID = 'notebook-kernel-id';
 
+const NEW_KERNEL_NAME = "python-slow"
+
 const NotebookKernelChange = () => {
   const { kernelManager, serverSettings } = useJupyter();
   const dispatch = useDispatch();
@@ -17,9 +19,9 @@ const NotebookKernelChange = () => {
     if (kernelManager) {
       const kernel = new Kernel({
         kernelManager,
-        kernelName: "defaultKernel",
+        kernelName: NEW_KERNEL_NAME,
+        kernelSpecName: NEW_KERNEL_NAME,
         kernelType: "notebook",
-        kernelSpecName: "python",
         serverSettings,
       });
       kernel.ready.then(() => {
@@ -54,7 +56,7 @@ document.body.appendChild(div);
 const root = createRoot(div)
 
 root.render(
-  <Jupyter lite={false} terminals={true} defaultKernelName="python">
+  <Jupyter defaultKernelName="python">
     <NotebookKernelChange />
   </Jupyter>
 );

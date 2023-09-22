@@ -28,10 +28,10 @@ const useKernel = () => {
     kernelManager?.ready.then(() => {
       const customKernel = new Kernel({
         kernelManager,
-        serverSettings,
-        kernelSpecName: JUPYTER_KERNEL_NAME,
         kernelName: JUPYTER_KERNEL_NAME,
+        kernelSpecName: JUPYTER_KERNEL_NAME,
         kernelType: "notebook",
+        serverSettings,
       });
       customKernel.ready.then(() => {
         startedKernel = customKernel;

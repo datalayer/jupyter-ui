@@ -64,10 +64,10 @@ export class Kernel {
       }
     }
     else {
-      let path = getCookie(JUPYTER_REACT_PATH_COOKIE_NAME);
+      let path = getCookie(this.cookieName);
       if (!path) {
         path = "kernel-" + UUID.uuid4();
-        document.cookie = JUPYTER_REACT_PATH_COOKIE_NAME + "=" + path;
+        document.cookie = this.cookieName + "=" + path;
       }
       this._path = path;
       this._session = await this._sessionManager.startNew(
@@ -105,9 +105,13 @@ export class Kernel {
       });
       this._kernelConnection.info.then((info) => {
         this._info = info;
-        console.log(`The default Kernel is ready`, this.toJSON());
+        console.log(`The Kernel is ready`, this.toJSON());
       });
     }
+  }
+
+  get cookieName() {
+    return JUPYTER_REACT_PATH_COOKIE_NAME + "_" + this._kernelSpecName;
   }
 
   get ready(): Promise<void> {
