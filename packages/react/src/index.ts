@@ -13,7 +13,7 @@ export * from './jupyter/lumino/ReactPortalWidget';
 // import './index.css';
 // import './jupyter/lab/JupyterLabCss';
 
-// Redux.
+// State Redux.
 export * from './state/redux/State';
 export * from './state/redux/Store';
 
@@ -24,8 +24,9 @@ export * from './jupyter/services/Services';
 export * from './jupyter/kernel/Kernel';
 export * from './jupyter/kernel/KernelModel';
 
-// IPyWidgets.
-export * from './jupyter/ipywidgets/IPyWidgetsViewManager';
+// JupyterLabApp.
+export * from './components/app/JupyterLabApp';
+export * from './components/app/JupyterLabPlugins';
 
 // Cell.
 export * from './components/cell/Cell';
@@ -46,6 +47,9 @@ export * from './components/notebook/content/JupyterReactContentFactory';
 export * from './components/notebook/cell/sidebar/CellSidebarWidget';
 export * from './components/notebook/cell/sidebar/CellSidebar';
 export * from './components/notebook/cell/sidebar/CellSidebarRun';
+
+// IPyWidgets.
+export * from './jupyter/ipywidgets/IPyWidgetsViewManager';
 
 // Commands.
 export * from './components/commands/Commands';

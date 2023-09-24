@@ -12,7 +12,7 @@ import '@jupyterlab/notebook/style/base.css';
 import '@jupyterlab/filebrowser/style/base.css';
 import '@jupyterlab/terminal/style/index.css';
 import '@jupyterlab/theme-light-extension/style/theme.css';
-import '@jupyterlab/theme-light-extension/style/variables.css';
+// import '@jupyterlab/theme-light-extension/style/variables.css';
 import '@jupyterlab/ui-components/style/base.css';
 
 import '@jupyter-widgets/base/css/index.css';

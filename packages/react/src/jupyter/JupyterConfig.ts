@@ -70,6 +70,7 @@ export const loadJupyterConfig = (props: JupyterProps) => {
     setJupyterToken(config.jupyterToken ?? jupyterToken ?? '');
   }
   else {
+    // No Datalayer Config.
     const jupyterConfigData = document.getElementById('jupyter-config-data');
     if (jupyterConfigData) {
       const jupyterConfig = JSON.parse(jupyterConfigData.textContent || '');
@@ -78,6 +79,15 @@ export const loadJupyterConfig = (props: JupyterProps) => {
       setJupyterToken(jupyterConfig.token);
       config.insideJupyterLab = jupyterConfig.appName === 'JupyterLab';
     }
+    else {
+      // No Datalayer and no JupyterLab Config.
+      config.jupyterServerHttpUrl = jupyterServerHttpUrl!;
+      config.jupyterServerWsUrl = jupyterServerWsUrl!;
+      config.jupyterToken = jupyterToken!;
+      setJupyterServerHttpUrl(config.jupyterServerHttpUrl ?? location.protocol + '//' + location.host + "/api/jupyter");
+      setJupyterServerWsUrl(config.jupyterServerWsUrl ?? location.protocol.replace('http', 'ws') + '//' + location.host + "/api/jupyter");
+      setJupyterToken(config.jupyterToken ?? '');
+      }
   }
   if (lite) {
     setJupyterServerHttpUrl(location.protocol + '//' + location.host);

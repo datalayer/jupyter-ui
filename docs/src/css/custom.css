@@ -9,6 +9,10 @@
   font-size: 16px;
 }
 
+body {
+  background-color: white !important;
+}
+
 .theme-doc-markdown a {
   color: var(--ifm-link-color) !important;
   text-decoration: var(--ifm-link-decoration) !important;

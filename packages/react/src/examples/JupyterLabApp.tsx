@@ -2,20 +2,18 @@ import { createRoot } from 'react-dom/client';
 import { JupyterLab } from '@jupyterlab/application';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import Jupyter from '../jupyter/Jupyter';
-import App from "../components/app/App";
+import JupyterLabApp from "../components/app/JupyterLabApp";
 
 import * as mainMenuExtension from '@jupyterlab/mainmenu-extension';
 import * as applicationExtension from '@jupyterlab/application-extension';
-
 import * as javascriptExtension from '@jupyterlab/javascript-extension';
 
 const extensionsPromises = [
-
 //  import('@jupyterlab/application-extension'),
 //  import('@jupyterlab/mainmenu-extension'),
-
   import('@jupyterlab/apputils-extension'),
   import('@jupyterlab/codemirror-extension'),
+  import('@jupyterlab/cell-toolbar-extension'),
   import('@jupyterlab/completer-extension'),
   import('@jupyterlab/console-extension'),
   import('@jupyterlab/docmanager-extension'),
@@ -27,6 +25,8 @@ const extensionsPromises = [
     ))
   ),
   import('@jupyterlab/launcher-extension'),
+  import('@jupyterlab/markdownviewer-extension'),
+  import('@jupyterlab/markedparser-extension'),
   import('@jupyterlab/notebook-extension').then(plugins => {
     return plugins.default.filter(({ id }) => !(
       id.includes(':language-server') ||
@@ -40,17 +40,15 @@ const extensionsPromises = [
   import('@jupyterlab/statusbar-extension'),
   import('@jupyterlab/translation-extension'),
   import('@jupyterlab/ui-components-extension'),
-
   import('@jupyterlab/theme-light-extension'),
-
 ] as Array<Promise<JupyterLab.IPluginModule>>;
 
 const mimeExtensionsPromises = [
   import('@jupyterlab/json-extension'),
 ] as Array<Promise<IRenderMime.IExtensionModule>>;
 
-const JupyterReactApp = () => (
-  <App
+const App = () => (
+  <JupyterLabApp
     extensions={[
       applicationExtension,
       mainMenuExtension,
@@ -60,6 +58,8 @@ const JupyterReactApp = () => (
     ]}
     extensionPromises={extensionsPromises}
     mimeExtensionsPromises={mimeExtensionsPromises}
+    hostId="jupyterlab-app-id"
+    height="calc(100vh - 74px)"
   />
 )
 
@@ -68,8 +68,8 @@ document.body.appendChild(div);
 const root = createRoot(div)
 
 root.render(
-  <Jupyter startDefaultKernel={false} disableCssLoading={false}>
+  <Jupyter startDefaultKernel={false} disableCssLoading={true}>
     <h1>Jupyter React Application</h1>
-    <JupyterReactApp/>
+    <App/>
   </Jupyter>
 );

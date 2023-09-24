@@ -12,19 +12,19 @@ export class Kernel {
   private _connectionStatus: ConnectionStatus;
   private _id: string;
   private _info: KernelMessage.IInfoReply;
-  private _serverSettings: ServerConnection.ISettings;
   private _kernelConnection: JupyterKernel.IKernelConnection | null;
   private _kernelManager: KernelManager;
   private _kernelName: string;
-  private _kernelType: string;
-  private _kernelSpecName: string;
   private _kernelSpecManager: KernelSpecManager;
+  private _kernelSpecName: string;
+  private _kernelType: string;
   private _path: string;
+  private _ready: Promise<void>;
   private _readyResolve: () => void;
+  private _serverSettings: ServerConnection.ISettings;
   private _session: ISessionConnection;
   private _sessionId: string;
   private _sessionManager: SessionManager;
-  private _ready: Promise<void>;
 
   public constructor(props: Kernel.IKernelProps) {
     const { kernelManager, kernelName, kernelType, kernelSpecName, kernelModel, serverSettings } = props;
@@ -110,7 +110,7 @@ export class Kernel {
     }
   }
 
-  get cookieName() {
+  get cookieName(): string {
     return JUPYTER_REACT_PATH_COOKIE_NAME + "_" + this._kernelSpecName;
   }
 
