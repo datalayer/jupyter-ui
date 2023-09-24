@@ -21,7 +21,7 @@ export class JupyterLabAppAdapter {
   }
 
   async loadApp(props: JupyterLabAppProps) {
-    const { hostId, extensions, mimeExtensions, extensionPromises, mimeExtensionsPromises, devMode } = props;
+    const { hostId, extensions, mimeExtensions, extensionPromises, mimeExtensionsPromises, devMode, headless } = props;
     this._props = props;
 //    await styles;
     const renderMimeExtensionResolved = await Promise.all(mimeExtensionsPromises);
@@ -37,6 +37,9 @@ export class JupyterLabAppAdapter {
     const extensionResolved = await Promise.all(extensionPromises);
     extensions.push(...extensionResolved);
     this._jupyterLab.registerPluginModules(extensions);
+    if (headless) {
+      this._jupyterLab.deregisterPlugin('@jupyterlab/apputils-extension:splash', true);
+    }
     this._jupyterLab.start({
       hostID: hostId,
     });

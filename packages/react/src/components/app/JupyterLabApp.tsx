@@ -14,11 +14,12 @@ export type JupyterLabAppProps = {
   width: string | number;
   height: string | number;
   devMode: boolean;
+  headless: boolean;
   onReady: (jupyterLab: JupyterLab) => void
 }
 
 export const JupyterLabApp = (props: JupyterLabAppProps) => {
-  const { hostId, position, height, width, onReady } = props;
+  const { hostId, position, height, width, headless, onReady } = props;
   const ref = useRef<HTMLDivElement>(null);
   const [_, setAdapter] = useState<JupyterLabAppAdapter>();
   useEffect(() => {
@@ -40,12 +41,13 @@ export const JupyterLabApp = (props: JupyterLabAppProps) => {
             position: position as any,
             height: height as any,
             width: width as any,
-          }
+            display: headless ? 'none' : 'inherit',
+          },
         }}
       >
         <div ref={ref} id={hostId}/>
-    </Box>
-  </>
+      </Box>
+    </>
   )
 }
 
@@ -58,7 +60,8 @@ JupyterLabApp.defaultProps = {
   position: "relative",
   width: "100%",
   height: "100vh",
-  devMode: true,
+  devMode: false,
+  headless: false,
   onReady: (jupyterLab: JupyterLab) => {}
 } as Partial<JupyterLabAppProps>;
 
