@@ -21,10 +21,10 @@ export class JupyterLabAppAdapter {
   }
 
   async loadApp(props: JupyterLabAppProps) {
-    const { hostId, extensions, mimeExtensions, extensionPromises, mimeExtensionsPromises, devMode, headless } = props;
+    const { hostId, extensions, mimeExtensions, extensionPromises, mimeExtensionPromises, devMode, headless } = props;
     this._props = props;
 //    await styles;
-    const renderMimeExtensionResolved = await Promise.all(mimeExtensionsPromises);
+    const renderMimeExtensionResolved = await Promise.all(mimeExtensionPromises);
     mimeExtensions.push(...renderMimeExtensionResolved);
     this._jupyterLab = new JupyterLab({
       mimeExtensions,

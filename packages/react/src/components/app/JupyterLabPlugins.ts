@@ -1,8 +1,8 @@
 import { JupyterLab } from '@jupyterlab/application';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 
-export const JupyterLabPluginsMinimum = {
-  extensionsPromises : [
+export const JupyterLabMinimumPlugins = {
+  extensionPromises : [
     import('@jupyterlab/application-extension'),
     import('@jupyterlab/apputils-extension'),
     import('@jupyterlab/codemirror-extension'),
@@ -36,14 +36,14 @@ export const JupyterLabPluginsMinimum = {
     import('@jupyterlab/ui-components-extension'),
     import('@jupyterlab/theme-light-extension'),
   ] as Array<Promise<JupyterLab.IPluginModule>>,
-  mimeExtensionsPromises: [
+  mimeExtensionPromises: [
     import('@jupyterlab/javascript-extension'),
     import('@jupyterlab/json-extension'),
   ] as Array<Promise<IRenderMime.IExtensionModule>>,
 }
 
-export const JupyterLabPluginsCore = {
-  extensionsPromises : [
+export const JupyterLabCorePlugins = {
+  extensionPromises : [
     import('@jupyterlab/application-extension'),
     import('@jupyterlab/apputils-extension'),
     import('@jupyterlab/codemirror-extension'),
@@ -80,7 +80,7 @@ export const JupyterLabPluginsCore = {
     import('@jupyterlab/ui-components-extension'),
     import('@jupyterlab/theme-light-extension'),
   ] as Array<Promise<JupyterLab.IPluginModule>>,
-  mimeExtensionsPromises: [
+  mimeExtensionPromises: [
 //    import('@jupyterlab/csvviewer-extension'),
     import('@jupyterlab/javascript-extension'),
     import('@jupyterlab/json-extension'),

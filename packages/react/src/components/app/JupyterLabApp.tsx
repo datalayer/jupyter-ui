@@ -9,7 +9,7 @@ export type JupyterLabAppProps = {
   extensions: Array<JupyterLab.IPluginModule>;
   mimeExtensions: Array<IRenderMime.IExtensionModule>;
   extensionPromises: Array<Promise<JupyterLab.IPluginModule>>;
-  mimeExtensionsPromises: Array<Promise<IRenderMime.IExtensionModule>>;
+  mimeExtensionPromises: Array<Promise<IRenderMime.IExtensionModule>>;
   position: string;
   width: string | number;
   height: string | number;
@@ -56,7 +56,7 @@ JupyterLabApp.defaultProps = {
   extensions: [],
   mimeExtensions: [],
   extensionPromises: [],
-  mimeExtensionsPromises: [],
+  mimeExtensionPromises: [],
   position: "relative",
   width: "100%",
   height: "100vh",

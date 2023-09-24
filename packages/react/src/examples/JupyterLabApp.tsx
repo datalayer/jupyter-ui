@@ -8,7 +8,7 @@ import * as mainMenuExtension from '@jupyterlab/mainmenu-extension';
 import * as applicationExtension from '@jupyterlab/application-extension';
 import * as javascriptExtension from '@jupyterlab/javascript-extension';
 
-const extensionsPromises = [
+const extensionPromises = [
 //  import('@jupyterlab/application-extension'),
 //  import('@jupyterlab/mainmenu-extension'),
   import('@jupyterlab/apputils-extension'),
@@ -43,7 +43,7 @@ const extensionsPromises = [
   import('@jupyterlab/theme-light-extension'),
 ] as Array<Promise<JupyterLab.IPluginModule>>;
 
-const mimeExtensionsPromises = [
+const mimeExtensionPromises = [
   import('@jupyterlab/json-extension'),
 ] as Array<Promise<IRenderMime.IExtensionModule>>;
 
@@ -56,8 +56,8 @@ const App = () => (
     mimeExtensions={[
       javascriptExtension,
     ]}
-    extensionPromises={extensionsPromises}
-    mimeExtensionsPromises={mimeExtensionsPromises}
+    extensionPromises={extensionPromises}
+    mimeExtensionPromises={mimeExtensionPromises}
     hostId="jupyterlab-app-id"
     height="calc(100vh - 74px)"
   />
