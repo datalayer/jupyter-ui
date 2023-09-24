@@ -10,7 +10,6 @@ import * as javascriptExtension from '@jupyterlab/javascript-extension';
 
 const extensionPromises = [
 //  import('@jupyterlab/application-extension'),
-//  import('@jupyterlab/mainmenu-extension'),
   import('@jupyterlab/apputils-extension'),
   import('@jupyterlab/codemirror-extension'),
   import('@jupyterlab/cell-toolbar-extension'),
@@ -25,6 +24,7 @@ const extensionPromises = [
     ))
   ),
   import('@jupyterlab/launcher-extension'),
+//  import('@jupyterlab/mainmenu-extension'),
   import('@jupyterlab/markdownviewer-extension'),
   import('@jupyterlab/markedparser-extension'),
   import('@jupyterlab/notebook-extension').then(plugins => {

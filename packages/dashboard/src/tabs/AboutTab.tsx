@@ -17,7 +17,7 @@ const AboutTab = (props: Props): JSX.Element => {
       </Box>
       <Box mt={3}>
         {!pirate ?
-          <img src="https://assets.datalayer.tech/releases/0.2.0-omalley.png" onClick={e => setPirate(true)}/>
+          <img src="https://assets.datalayer.tech/releases/datalayer-0.2.0-omalley.png" onClick={e => setPirate(true)}/>
             :
           <PirateSkull2Icon size={500} onClick={e => setPirate(false)}/>
         }
