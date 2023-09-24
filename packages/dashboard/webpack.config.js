@@ -15,7 +15,7 @@ const ENTRY = process.env.RENDER == "true"
 
 const IS_PRODUCTION = process.argv.indexOf('--mode=production') > -1;
 const mode = IS_PRODUCTION ? "production" : "development";
-// inline-source-map
+
 const devtool = IS_PRODUCTION ? false : "inline-source-map";
 const minimize = IS_PRODUCTION ? true : false;
 

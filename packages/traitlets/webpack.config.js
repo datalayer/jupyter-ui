@@ -15,7 +15,7 @@ const JUPYTER_HOST = 'http://localhost:8686';
 
 const IS_PRODUCTION = process.argv.indexOf('--mode=production') > -1;
 const mode = IS_PRODUCTION ? "production" : "development";
-// inline-source-map
+
 const devtool = IS_PRODUCTION ? false : "inline-cheap-source-map";
 const minimize = IS_PRODUCTION ? true : false;
 
