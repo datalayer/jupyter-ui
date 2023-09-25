@@ -26,7 +26,8 @@ export * from './jupyter/kernel/KernelModel';
 
 // JupyterLabApp.
 export * from './components/app/JupyterLabApp';
-export * from './components/app/JupyterLabPlugins';
+export * from './components/app/JupyterLabAppAdapter';
+export * from './components/app/JupyterLabAppPlugins';
 
 // Cell.
 export * from './components/cell/Cell';

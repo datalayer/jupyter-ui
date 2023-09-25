@@ -1,15 +1,44 @@
-import { JupyterLab } from '@jupyterlab/application';
+import { JupyterLab, JupyterFrontEndPlugin } from '@jupyterlab/application';
+import { JupyterFrontEnd, LabShell, ILabShell } from '@jupyterlab/application';
 import { PageConfig } from '@jupyterlab/coreutils';
+// import { Widget } from '@lumino/widgets';
 import { JupyterLabAppProps } from "./JupyterLabApp";
 
 // The webpack public path needs to be set before loading the CSS assets.
 (global as any).__webpack_public_path__ = PageConfig.getOption('fullStaticUrl') + '/';
 // const styles = import('./AppCss' as any) as Promise<any>;
 import('./JupyterLabAppCss') as Promise<any>;
+/*
+interface IHeadLessLabShell extends ILabShell {
+//  set currentWidget(widget: Widget | null);
+}
+
+class HeadlessLabShell extends LabShell implements IHeadLessLabShell {
+  private _currentWidget: Widget | null;
+  constructor(options?: ILabShell.IOptions) {
+    super(options);
+  }
+  get currentWidget() {
+    return this._currentWidget;
+  }
+  set currentWidget(widget: Widget | null) {
+    this._currentWidget = widget;
+  }
+}
+*/
+class HeadLessJupyterLab extends JupyterLab implements JupyterFrontEnd<ILabShell> {
+  constructor(options?: JupyterLab.IOptions) {
+    super(options);
+  }
+}
 
 export class JupyterLabAppAdapter {
   private _props: JupyterLabAppProps;
-  private _jupyterLab: JupyterLab;
+  private _jupyterlab: HeadLessJupyterLab;
+  private _shell: LabShell;
+  private _plugins: Map<string, JupyterFrontEndPlugin<any, any, any> & {
+    service: any;
+  }>;
   private _ready: Promise<void>;
   private _readyResolve: () => void;
 
@@ -26,10 +55,16 @@ export class JupyterLabAppAdapter {
 //    await styles;
     const mimeExtensionResolved = await Promise.all(mimeExtensionPromises);
     mimeExtensions.push(...mimeExtensionResolved);
-    this._jupyterLab = new JupyterLab({
+    this._shell = new LabShell();
+    this._jupyterlab = new HeadLessJupyterLab({
+      shell: this._shell,
       mimeExtensions,
       devMode,
       serviceManager,
+      disabled: {
+        patterns: [],
+        matches: [],
+      },
       deferred: {
         patterns: [],
         matches: [],
@@ -37,20 +72,55 @@ export class JupyterLabAppAdapter {
     });
     const extensionResolved = await Promise.all(extensionPromises);
     extensions.push(...extensionResolved);
-    this._jupyterLab.registerPluginModules(extensions);
+    this._jupyterlab.registerPluginModules(extensions);
     if (headless) {
-      this._jupyterLab.deregisterPlugin('@jupyterlab/apputils-extension:splash', true);
+      this._jupyterlab.deregisterPlugin('@jupyterlab/apputils-extension:splash', true);
     }
-    this._jupyterLab.start({
+    this._jupyterlab.start({
       hostID: hostId,
+      startPlugins: [],
+      ignorePlugins: [],
     });
-    this._jupyterLab.restored.then(() => {
+    this._jupyterlab.restored.then(() => {
+      this._plugins = (this._jupyterlab as any)['_plugins'];
       this._readyResolve();
     });
   }
 
-  get jupyterLab() {
-    return this._jupyterLab;
+  get jupyterlab() {
+    return this._jupyterlab;
+  }
+
+  get shell() {
+    return this._shell;
+  }
+
+  get docRegistry() {
+    return this._jupyterlab.docRegistry;
+  }
+
+  get commands() {
+    return this._jupyterlab.commands;
+  }
+
+  get info() {
+    return this._jupyterlab.info;
+  }
+
+  get mimeExtensions() {
+    return this._jupyterlab.info.mimeExtensions;
+  }
+
+  get contextMenu() {
+    return this._jupyterlab.contextMenu;
+  }
+
+  get path() {
+    return this._jupyterlab.paths;
+  }
+
+  get plugins() {
+    return this._plugins;
   }
 
   get ready() {
@@ -59,6 +129,14 @@ export class JupyterLabAppAdapter {
 
   get props() {
     return this._props;
+  }
+
+  plugin(id: string) {
+    return this._plugins.get(id);
+  }
+
+  service(id: string) {
+    return this._plugins.get(id)?.service;
   }
 
 }

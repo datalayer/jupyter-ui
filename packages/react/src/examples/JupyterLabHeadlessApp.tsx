@@ -1,8 +1,14 @@
+import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { Box } from "@primer/react";
+import { BoxPanel } from '@lumino/widgets';
 import { JupyterLab } from '@jupyterlab/application';
-import { NotebookPanel } from '@jupyterlab/notebook';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
+import { NotebookPanel } from '@jupyterlab/notebook';
+// import { NotebookTracker } from '@jupyterlab/notebook';
+import { Widget } from '@lumino/widgets';
 import Jupyter from '../jupyter/Jupyter';
+import Lumino from '../jupyter/lumino/Lumino';
 import JupyterLabApp from "../components/app/JupyterLabApp";
 import JupyterLabAppAdapter from "../components/app/JupyterLabAppAdapter";
 
@@ -12,6 +18,13 @@ import * as javascriptExtension from '@jupyterlab/javascript-extension';
 import * as ipywidgetsExtension from '@jupyter-widgets/jupyterlab-manager';
 import * as plotlyExtension from 'jupyterlab-plotly/lib/jupyterlab-plugin';
 import * as mimePlotlyExtension from 'jupyterlab-plotly/lib/plotly-renderer';
+
+const PATHS = [
+  "ipywidgets.ipynb",
+  "plotly.ipynb"
+]
+
+const PATH_INDEX = 1;
 
 const extensionPromises = [
 //  import('@jupyterlab/application-extension'),
@@ -52,32 +65,62 @@ const mimeExtensionPromises = [
   import('@jupyterlab/json-extension'),
 ] as Array<Promise<IRenderMime.IExtensionModule>>;
 
-const JupyterLabAppExample = () => {
+const height = "800px";
+
+const JupyterLabHeadlessAppExample = () => {
+  const [boxPanel, setBoxPanel] = useState<BoxPanel>();
   const onReady = async (jupyterlabAdapter: JupyterLabAppAdapter) => {
     const jupyterlab = jupyterlabAdapter.jupyterlab;
-    console.log('JupyterLab is ready', jupyterlab);
-    jupyterlab.commands.execute('notebook:create-new', { kernelName: 'python3' }).then((notebookPanel: NotebookPanel) => {
-      console.log('Notebook Panel', notebookPanel);
+    await jupyterlab.commands.execute('apputils:reset');
+    const notebookPanel = await jupyterlab.commands.execute('docmanager:open', { path: PATHS[PATH_INDEX], factory: 'Notebook', kernel: { name: 'python3' } }) as NotebookPanel;
+//    const notebookTracker = jupyterlabAdapter.service("@jupyterlab/notebook-extension:tracker") as NotebookTracker;
+    Object.defineProperty((jupyterlabAdapter.shell as any), 'currentWidget', {
+      get: function() { return notebookPanel },
+      set: function(widget: Widget | null) {},
     });
+    const boxPanel = new BoxPanel();
+    boxPanel.addClass('dla-Jupyter-Notebook');
+    boxPanel.spacing = 0;
+    boxPanel.addWidget(notebookPanel);
+    setBoxPanel(boxPanel);
   }
   return (
-    <JupyterLabApp
-      extensions={[
-        applicationExtension,
-        mainMenuExtension,
-        ipywidgetsExtension,
-        plotlyExtension,
-      ]}
-      mimeExtensions={[
-        javascriptExtension,
-        mimePlotlyExtension,
-      ]}
-      extensionPromises={extensionPromises}
-      mimeExtensionPromises={mimeExtensionPromises}
-      hostId="jupyterlab-app-id"
-      height="calc(100vh - 74px)"
-      onReady={onReady}
-    />
+    <>
+      { boxPanel && 
+        <div style={{ height, width: '100%', position: "relative" }}>
+        <Box className="jp-LabShell"
+          sx={{
+            '& .dla-Jupyter-Notebook': {
+              height,
+              maxHeight: height,
+              width: '100%',
+            },
+          }}
+        >
+          <Box>
+            <Lumino>{boxPanel}</Lumino>
+          </Box>
+        </Box >
+      </div>      
+      }
+      <JupyterLabApp
+        extensions={[
+          applicationExtension,
+          mainMenuExtension,
+          ipywidgetsExtension,
+          plotlyExtension,
+        ]}
+        mimeExtensions={[
+          javascriptExtension,
+          mimePlotlyExtension,
+        ]}
+        extensionPromises={extensionPromises}
+        mimeExtensionPromises={mimeExtensionPromises}
+        headless={true}
+        hostId="jupyterlab-headless-id"
+        onReady={onReady}
+      />
+    </>
   )
 }
 
@@ -87,7 +130,7 @@ const root = createRoot(div)
 
 root.render(
   <Jupyter startDefaultKernel={false} disableCssLoading={true}>
-    <h1>JupyterLab Application</h1>
-    <JupyterLabAppExample/>
+    <h1>JupyterLab Headless Application</h1>
+    <JupyterLabHeadlessAppExample/>
   </Jupyter>
 );

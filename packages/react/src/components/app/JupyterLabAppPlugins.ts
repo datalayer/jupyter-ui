@@ -1,7 +1,7 @@
 import { JupyterLab } from '@jupyterlab/application';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 
-export const JupyterLabMinimumPlugins = {
+export const JupyterLabAppMinimumPlugins = {
   extensionPromises : [
     import('@jupyterlab/application-extension'),
     import('@jupyterlab/apputils-extension'),
@@ -42,7 +42,7 @@ export const JupyterLabMinimumPlugins = {
   ] as Array<Promise<IRenderMime.IExtensionModule>>,
 }
 
-export const JupyterLabCorePlugins = {
+export const JupyterLabAppCorePlugins = {
   extensionPromises : [
     import('@jupyterlab/application-extension'),
     import('@jupyterlab/apputils-extension'),

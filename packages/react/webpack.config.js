@@ -12,7 +12,8 @@ function shim(regExp) {
 
 const ENTRY =
 // "./src/app/App";
-"./src/examples/JupyterLabApp";
+// "./src/examples/JupyterLabApp";
+"./src/examples/JupyterLabHeadlessApp";
 // "./src/examples/Matplotlib";
 // "./src/examples/Notebook";
 // "./src/examples/NotebookModel";

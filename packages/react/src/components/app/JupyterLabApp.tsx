@@ -18,7 +18,7 @@ export type JupyterLabAppProps = {
   devMode: boolean;
   headless: boolean;
   serviceManager?: ServiceManager
-  onReady: (jupyterLab: JupyterLab) => void
+  onReady: (jupyterlabAdapter: JupyterLabAppAdapter) => void
 }
 
 export const JupyterLabApp = (props: JupyterLabAppProps) => {
@@ -33,7 +33,7 @@ export const JupyterLabApp = (props: JupyterLabAppProps) => {
         serviceManager,
       });
       adapter.ready.then(() => {
-        onReady(adapter.jupyterLab);
+        onReady(adapter);
       });
       setAdapter(adapter);
     }
@@ -67,7 +67,7 @@ JupyterLabApp.defaultProps = {
   height: "100vh",
   devMode: false,
   headless: false,
-  onReady: (jupyterLab: JupyterLab) => {}
+  onReady: (jupyterlabAdapter: JupyterLabAppAdapter) => {}
 } as Partial<JupyterLabAppProps>;
 
 export default JupyterLabApp;
