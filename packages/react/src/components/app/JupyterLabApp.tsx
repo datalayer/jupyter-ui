@@ -2,7 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import { Box } from "@primer/react";
 import { JupyterLab } from '@jupyterlab/application';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
+import { ServiceManager } from "@jupyterlab/services";
 import JupyterLabAppAdapter from "./JupyterLabAppAdapter";
+import { useJupyter } from "../../jupyter/JupyterContext";
 
 export type JupyterLabAppProps = {
   hostId: string;
@@ -15,24 +17,27 @@ export type JupyterLabAppProps = {
   height: string | number;
   devMode: boolean;
   headless: boolean;
+  serviceManager?: ServiceManager
   onReady: (jupyterLab: JupyterLab) => void
 }
 
 export const JupyterLabApp = (props: JupyterLabAppProps) => {
   const { hostId, position, height, width, headless, onReady } = props;
+  const { serviceManager } = useJupyter();
   const ref = useRef<HTMLDivElement>(null);
   const [_, setAdapter] = useState<JupyterLabAppAdapter>();
   useEffect(() => {
-    if (ref) {
+    if (ref && serviceManager) {
       const adapter = new JupyterLabAppAdapter({
         ...props,
+        serviceManager,
       });
       adapter.ready.then(() => {
         onReady(adapter.jupyterLab);
       });
       setAdapter(adapter);
     }
-  }, [hostId, ref]);
+  }, [hostId, ref, serviceManager]);
   return (
     <>
       <Box

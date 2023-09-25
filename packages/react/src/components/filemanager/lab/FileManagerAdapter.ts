@@ -14,22 +14,21 @@ import { addIcon } from '@jupyterlab/ui-components';
 import './FileManagerAdapter.css';
 
 class FileBrowserAdapter {
-  private fileBrowserPanel: SplitPanel;
+  private _fileBrowserPanel: SplitPanel;
 
-  constructor() {
+  constructor(serviceManager: ServiceManager) {
 
-    this.fileBrowserPanel = new SplitPanel();
-    this.fileBrowserPanel.id = 'dla-jlab-filebrowser';
-    this.fileBrowserPanel.orientation = 'horizontal';
-    this.fileBrowserPanel.spacing = 0;
+    this._fileBrowserPanel = new SplitPanel();
+    this._fileBrowserPanel.id = 'dla-jlab-FleBrowser';
+    this._fileBrowserPanel.orientation = 'horizontal';
+    this._fileBrowserPanel.spacing = 0;
 
-    const manager = new ServiceManager();
-    void manager.ready.then(() => {
-      createApp(manager, this.fileBrowserPanel);
+    serviceManager.ready.then(() => {
+      createApp(serviceManager, this._fileBrowserPanel);
     });
     
     function createApp(
-      manager: ServiceManager.IManager,
+      serviceManager: ServiceManager.IManager,
       panel: SplitPanel
     ): void {
     
@@ -55,7 +54,7 @@ class FileBrowserAdapter {
       const docRegistry = new DocumentRegistry();
       const docManager = new DocumentManager({
         registry: docRegistry,
-        manager,
+        manager: serviceManager,
         opener
       });
       const languages = new EditorLanguageRegistry();
@@ -99,7 +98,7 @@ class FileBrowserAdapter {
       const fbModel = new FilterFileBrowserModel({
         manager: docManager
       });
-      const fbWidget = new FileBrowser({
+      const fileBrowserWidget = new FileBrowser({
         id: 'filebrowser',
         model: fbModel
       });
@@ -118,10 +117,10 @@ class FileBrowserAdapter {
             });
         }
       });
-      fbWidget.toolbar.insertItem(0, 'create', creator);
+      fileBrowserWidget.toolbar.insertItem(0, 'create', creator);
     
-      panel.addWidget(fbWidget);
-      SplitPanel.setStretch(fbWidget, 0);
+      panel.addWidget(fileBrowserWidget);
+      SplitPanel.setStretch(fileBrowserWidget, 0);
 
       const dock = new DockPanel();
       panel.addWidget(dock);
@@ -144,7 +143,7 @@ class FileBrowserAdapter {
 //        icon: 'fa fa-folder-open-o',
         mnemonic: 0,
         execute: () => {
-          each(fbWidget.selectedItems(), item => {
+          each(fileBrowserWidget.selectedItems(), item => {
             docManager.openOrReveal(item.path);
           });
         }
@@ -154,7 +153,7 @@ class FileBrowserAdapter {
 //        icon: 'fa fa-edit',
         mnemonic: 0,
         execute: () => {
-          return fbWidget.rename();
+          return fileBrowserWidget.rename();
         }
       });
       commands.addCommand('file-save', {
@@ -167,7 +166,7 @@ class FileBrowserAdapter {
         label: 'Cut',
 //        icon: 'fa fa-cut',
         execute: () => {
-          fbWidget.cut();
+          fileBrowserWidget.cut();
         }
       });
       commands.addCommand('file-copy', {
@@ -175,7 +174,7 @@ class FileBrowserAdapter {
 //        icon: 'fa fa-copy',
         mnemonic: 0,
         execute: () => {
-          fbWidget.copy();
+          fileBrowserWidget.copy();
         }
       });
       commands.addCommand('file-delete', {
@@ -183,7 +182,7 @@ class FileBrowserAdapter {
 //        icon: 'fa fa-remove',
         mnemonic: 0,
         execute: () => {
-          return fbWidget.delete();
+          return fileBrowserWidget.delete();
         }
       });
       commands.addCommand('file-duplicate', {
@@ -191,7 +190,7 @@ class FileBrowserAdapter {
 //        icon: 'fa fa-copy',
         mnemonic: 0,
         execute: () => {
-          return fbWidget.duplicate();
+          return fileBrowserWidget.duplicate();
         }
       });
       commands.addCommand('file-paste', {
@@ -199,27 +198,27 @@ class FileBrowserAdapter {
 //        icon: 'fa fa-paste',
         mnemonic: 0,
         execute: () => {
-          return fbWidget.paste();
+          return fileBrowserWidget.paste();
         }
       });
       commands.addCommand('file-download', {
         label: 'Download',
 //        icon: 'fa fa-download',
         execute: () => {
-          return fbWidget.download();
+          return fileBrowserWidget.download();
         }
       });
       commands.addCommand('file-shutdown-kernel', {
         label: 'Shut Down Kernel',
 //        icon: 'fa fa-stop-circle-o',
         execute: () => {
-          return fbWidget.shutdownKernels();
+          return fileBrowserWidget.shutdownKernels();
         }
       });
       commands.addCommand('file-dialog-demo', {
         label: 'Dialog Demo',
         execute: () => {
-          dialogDemo();
+          createDialog();
         }
       });
       commands.addCommand('file-info-demo', {
@@ -263,7 +262,7 @@ class FileBrowserAdapter {
       menu.addItem({ command: 'file-info-demo' });
     
       // Add a context menu to the dir listing.
-      const node = fbWidget.node.getElementsByClassName('jp-DirListing-content')[0];
+      const node = fileBrowserWidget.node.getElementsByClassName('jp-DirListing-content')[0];
       node.addEventListener('contextmenu', (event: MouseEvent) => {
         event.preventDefault();
         const x = event.clientX;
@@ -281,7 +280,7 @@ class FileBrowserAdapter {
     /**
      * Create a non-functional dialog demo.
      */
-    function dialogDemo(): void {
+    function createDialog(): void {
       const body = document.createElement('div');
       const input = document.createElement('input');
       input.value = 'Untitled.ipynb';
@@ -299,13 +298,12 @@ class FileBrowserAdapter {
       void showDialog({
         title: 'Create new notebook'
       });
-
     }
 
   }
 
   get panel(): SplitPanel {
-    return this.fileBrowserPanel;
+    return this._fileBrowserPanel;
   }
 
 }

@@ -9,7 +9,7 @@ import Cell from '../components/cell/Cell';
 import Notebook from '../components/notebook/Notebook';
 import Output from "../components/output/Output";
 import FileBrowser from "../components/filebrowser/FileBrowser";
-import FileManagerLab from "../components/filemanager/lab/FileManagerLab";
+import FileManagerJupyterLab from "../components/filemanager/FileManagerJupyterLab";
 import Terminal from "../components/terminal/Terminal";
 import CellSidebarNew from "../components/notebook/cell/sidebar/CellSidebarButton";
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
@@ -209,7 +209,7 @@ root.render(
     <hr/>    
     <NotebookKernelChange />
     <hr/>
-    <FileManagerLab />
+    <FileManagerJupyterLab />
     <hr/>
     <FileBrowser />
     <hr/>

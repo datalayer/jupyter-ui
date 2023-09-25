@@ -68,8 +68,8 @@ export * from './components/filebrowser/FileBrowser';
 // FileManager.
 export * from './components/filemanager/FileManagerState';
 
-// FileManager (Lab variant).
-export * from './components/filemanager/lab/FileManagerLab';
+// FileManager (JupyterLab variant).
+export * from './components/filemanager/FileManagerJupyterLab';
 
 // Outputs.
 export * from './components/output/Output';

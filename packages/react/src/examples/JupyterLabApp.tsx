@@ -1,12 +1,16 @@
 import { createRoot } from 'react-dom/client';
 import { JupyterLab } from '@jupyterlab/application';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
+import { NotebookPanel } from '@jupyterlab/notebook';
 import Jupyter from '../jupyter/Jupyter';
 import JupyterLabApp from "../components/app/JupyterLabApp";
 
 import * as mainMenuExtension from '@jupyterlab/mainmenu-extension';
 import * as applicationExtension from '@jupyterlab/application-extension';
 import * as javascriptExtension from '@jupyterlab/javascript-extension';
+import * as ipywidgetsExtension from '@jupyter-widgets/jupyterlab-manager';
+import * as plotlyExtension from 'jupyterlab-plotly/lib/jupyterlab-plugin';
+import * as mimePlotlyExtension from 'jupyterlab-plotly/lib/plotly-renderer';
 
 const extensionPromises = [
 //  import('@jupyterlab/application-extension'),
@@ -47,21 +51,33 @@ const mimeExtensionPromises = [
   import('@jupyterlab/json-extension'),
 ] as Array<Promise<IRenderMime.IExtensionModule>>;
 
-const App = () => (
-  <JupyterLabApp
-    extensions={[
-      applicationExtension,
-      mainMenuExtension,
-    ]}
-    mimeExtensions={[
-      javascriptExtension,
-    ]}
-    extensionPromises={extensionPromises}
-    mimeExtensionPromises={mimeExtensionPromises}
-    hostId="jupyterlab-app-id"
-    height="calc(100vh - 74px)"
-  />
-)
+const JupyterLabAppExample = () => {
+  const onReady = (jupyterLab: JupyterLab) => {
+    console.log('JupyterLab is ready', jupyterLab);
+    jupyterLab.commands.execute('notebook:create-new', { kernelName: 'python3' }).then((notebookPanel: NotebookPanel) => {
+      console.log('---', notebookPanel);
+    });
+  }
+  return (
+    <JupyterLabApp
+      extensions={[
+        applicationExtension,
+        mainMenuExtension,
+        ipywidgetsExtension,
+        plotlyExtension,
+      ]}
+      mimeExtensions={[
+        javascriptExtension,
+        mimePlotlyExtension,
+      ]}
+      extensionPromises={extensionPromises}
+      mimeExtensionPromises={mimeExtensionPromises}
+      hostId="jupyterlab-app-id"
+      height="calc(100vh - 74px)"
+      onReady={onReady}
+    />
+  )
+}
 
 const div = document.createElement('div');
 document.body.appendChild(div);
@@ -70,6 +86,6 @@ const root = createRoot(div)
 root.render(
   <Jupyter startDefaultKernel={false} disableCssLoading={true}>
     <h1>Jupyter React Application</h1>
-    <App/>
+    <JupyterLabAppExample/>
   </Jupyter>
 );
