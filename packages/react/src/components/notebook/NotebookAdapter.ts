@@ -308,6 +308,7 @@ export class NotebookAdapter {
     this._notebookPanel = documentRegistry.getWidgetFactory('Notebook')?.createNew(this._context) as NotebookPanel;
 
     const completerHandler = this.setupCompleter(this._notebookPanel!);
+
     NotebookCommands(this._commandRegistry, this._notebookPanel, completerHandler, this._tracker, this._path);
 
     this._boxPanel.addWidget(this._notebookPanel);

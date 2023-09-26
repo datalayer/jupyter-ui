@@ -71,6 +71,7 @@ type JupyterContextProps = {
   injectableStore: InjectableStore;
   lite: boolean;
   startDefaultKernel: boolean,
+  theme: 'light' | 'dark',
   useRunningKernelId?: string;
   useRunningKernelIndex: number;
   variant: string;
@@ -106,7 +107,7 @@ export const createServerSettings = (baseUrl: string, wsUrl: string) => {
 export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => {
   const {
     children, lite, startDefaultKernel, defaultKernelName, disableCssLoading, useRunningKernelId, 
-    useRunningKernelIndex, variant, baseUrl, wsUrl, injectableStore,
+    useRunningKernelIndex, variant, baseUrl, wsUrl, injectableStore, theme,
   } = props;
   const [_, setVariant] = useState('default');
   const [serverSettings] = useState<ServerConnection.ISettings>(createServerSettings(baseUrl, wsUrl));
@@ -203,7 +204,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
       });
     }
     setVariant(variant);
-  }, [lite, variant]);
+  }, [lite, variant, theme]);
   return (
     <ReduxProvider store={injectableStore}>
       <JupyterProvider value={{

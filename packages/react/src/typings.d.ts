@@ -23,6 +23,26 @@ declare module "*.svg" {
   export default value;
 }
 
+declare module "*/theme.css" {
+  const value: any;
+  export default value;
+}
+
+declare module "*/base.css" {
+  const value: any;
+  export default value;
+}
+
+declare module "*/index.css" {
+  const value: any;
+  export default value;
+}
+
+declare module "*/widgets-base.css" {
+  const value: any;
+  export default value;
+}
+
 declare module "jupyterlab-plotly/lib/jupyterlab-plugin" {
   const value: any;
   export default value;

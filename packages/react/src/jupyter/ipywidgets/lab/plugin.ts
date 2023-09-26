@@ -17,9 +17,6 @@ import { BundledIPyWidgets, ExternalIPyWidgets } from '../../../components/noteb
 // controls code can be split and dynamically loaded in webpack.
 import { JUPYTER_CONTROLS_VERSION } from '@jupyter-widgets/controls/lib/version';
 
-import '@jupyter-widgets/base/css/index.css';
-import '@jupyter-widgets/controls/css/widgets-base.css';
-
 const WIDGET_REGISTRY: base.IWidgetRegistryData[] = [];
 
 /**

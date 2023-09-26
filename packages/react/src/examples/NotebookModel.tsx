@@ -8,7 +8,7 @@ import CellSidebar from "../components/notebook/cell/sidebar/CellSidebar";
 import nbformat from "./notebooks/NotebookExample1.ipynb.json";
 
 const NotebookModel = () => (
-  <Jupyter>
+  <Jupyter theme="dark">
     <Notebook
       nbformat={nbformat as INotebookContent}
       uid="notebook-model-uid"

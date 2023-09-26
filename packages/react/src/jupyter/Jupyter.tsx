@@ -2,6 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { ThemeProvider, BaseStyles } from "@primer/react";
 import { ErrorBoundary } from 'react-error-boundary';
 import { JupyterContextProvider } from './JupyterContext';
+import JupyterLabCss  from './lab/JupyterLabCss';
 import { getJupyterServerHttpUrl, getJupyterServerWsUrl, loadJupyterConfig } from './JupyterConfig';
 import defaultInjectableStore, { InjectableStore } from '../state/redux/Store';
 
@@ -21,7 +22,7 @@ export type JupyterProps = {
   lite: boolean;
   startDefaultKernel: boolean;
   terminals?: boolean;
-  theme?: any;
+  theme: 'light' | 'dark';
   useRunningKernelId?: string;
   useRunningKernelIndex?: number;
 }
@@ -48,17 +49,10 @@ const ErrorFallback = ({error, resetErrorBoundary}: any) => {
  */
 export const Jupyter = (props: JupyterProps) => {
   const {
-    lite, startDefaultKernel, defaultKernelName, injectableStore,
+    lite, startDefaultKernel, defaultKernelName, injectableStore, theme,
     useRunningKernelId, useRunningKernelIndex, children, disableCssLoading,
   } = props;
   const config = useMemo(() => loadJupyterConfig(props), []);
-  useEffect(() => {
-    if (!config.insideJupyterLab) {
-      if (!disableCssLoading) {
-        import("./lab/JupyterLabCss");
-      }
-    }  
-  }, [config]);
   return (
     <ErrorBoundary
       FallbackComponent={ErrorFallback}
@@ -66,6 +60,7 @@ export const Jupyter = (props: JupyterProps) => {
     >
       <ThemeProvider colorMode="day">
         <BaseStyles>
+          { !config.insideJupyterLab && !disableCssLoading && <JupyterLabCss theme={theme}/> }
           <JupyterContextProvider
             baseUrl={getJupyterServerHttpUrl()}
             defaultKernelName={defaultKernelName}
@@ -73,6 +68,7 @@ export const Jupyter = (props: JupyterProps) => {
             injectableStore={injectableStore || defaultInjectableStore}
             lite={lite}
             startDefaultKernel={startDefaultKernel}
+            theme={theme}
             useRunningKernelId={useRunningKernelId}
             useRunningKernelIndex={useRunningKernelIndex ?? -1}
             variant="default"
@@ -93,6 +89,7 @@ Jupyter.defaultProps = {
   lite: false,
   startDefaultKernel: true,
   terminals: false,
+  theme: 'light',
   useRunningKernelIndex: -1,
 }
 

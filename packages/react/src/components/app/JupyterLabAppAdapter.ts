@@ -1,18 +1,14 @@
 import { JupyterLab, JupyterFrontEndPlugin } from '@jupyterlab/application';
 import { JupyterFrontEnd, LabShell, ILabShell } from '@jupyterlab/application';
-import { PageConfig } from '@jupyterlab/coreutils';
+import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
+import { CommandRegistry } from '@lumino/commands';
+import { DocumentRegistry } from '@jupyterlab/docregistry';
 // import { Widget } from '@lumino/widgets';
 import { JupyterLabAppProps } from "./JupyterLabApp";
-
-// The webpack public path needs to be set before loading the CSS assets.
-(global as any).__webpack_public_path__ = PageConfig.getOption('fullStaticUrl') + '/';
-// const styles = import('./AppCss' as any) as Promise<any>;
-import('./JupyterLabAppCss') as Promise<any>;
 /*
 interface IHeadLessLabShell extends ILabShell {
 //  set currentWidget(widget: Widget | null);
 }
-
 class HeadlessLabShell extends LabShell implements IHeadLessLabShell {
   private _currentWidget: Widget | null;
   constructor(options?: ILabShell.IOptions) {
@@ -52,7 +48,6 @@ export class JupyterLabAppAdapter {
   async loadApp(props: JupyterLabAppProps) {
     this._props = props;
     const { hostId, extensions, mimeExtensions, extensionPromises, mimeExtensionPromises, devMode, headless, serviceManager } = props;
-//    await styles;
     const mimeExtensionResolved = await Promise.all(mimeExtensionPromises);
     mimeExtensions.push(...mimeExtensionResolved);
     this._shell = new LabShell();
@@ -95,20 +90,20 @@ export class JupyterLabAppAdapter {
     return this._shell;
   }
 
-  get docRegistry() {
+  get docRegistry(): DocumentRegistry {
     return this._jupyterlab.docRegistry;
   }
 
-  get commands() {
+  get commands(): CommandRegistry {
     return this._jupyterlab.commands;
+  }
+
+  get mimeExtensions(): IRenderMime.IExtensionModule[] {
+    return this._jupyterlab.info.mimeExtensions;
   }
 
   get info() {
     return this._jupyterlab.info;
-  }
-
-  get mimeExtensions() {
-    return this._jupyterlab.info.mimeExtensions;
   }
 
   get contextMenu() {

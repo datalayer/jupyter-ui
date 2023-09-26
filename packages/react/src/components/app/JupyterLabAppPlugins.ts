@@ -34,7 +34,6 @@ export const JupyterLabAppMinimumPlugins = {
     import('@jupyterlab/statusbar-extension'),
     import('@jupyterlab/translation-extension'),
     import('@jupyterlab/ui-components-extension'),
-    import('@jupyterlab/theme-light-extension'),
   ] as Array<Promise<JupyterLab.IPluginModule>>,
   mimeExtensionPromises: [
     import('@jupyterlab/javascript-extension'),
@@ -78,7 +77,6 @@ export const JupyterLabAppCorePlugins = {
     import('@jupyterlab/translation-extension'),
     import('@jupyterlab/toc-extension'),
     import('@jupyterlab/ui-components-extension'),
-    import('@jupyterlab/theme-light-extension'),
   ] as Array<Promise<JupyterLab.IPluginModule>>,
   mimeExtensionPromises: [
 //    import('@jupyterlab/csvviewer-extension'),

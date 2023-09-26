@@ -1,10 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import { Box } from "@primer/react";
+import { PageConfig } from '@jupyterlab/coreutils';
 import { JupyterLab } from '@jupyterlab/application';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { ServiceManager } from "@jupyterlab/services";
 import JupyterLabAppAdapter from "./JupyterLabAppAdapter";
+import { JupyterLabAppCorePlugins } from "./JupyterLabAppPlugins";
 import { useJupyter } from "../../jupyter/JupyterContext";
+import JupyterLabAppCss from "./JupyterLabAppCss";
+
+// The webpack public path needs to be set before loading the CSS assets.
+(global as any).__webpack_public_path__ = PageConfig.getOption('fullStaticUrl') + '/';
 
 export type JupyterLabAppProps = {
   hostId: string;
@@ -17,12 +23,13 @@ export type JupyterLabAppProps = {
   height: string | number;
   devMode: boolean;
   headless: boolean;
+  theme: 'light' | 'dark',
   serviceManager?: ServiceManager
   onReady: (jupyterlabAdapter: JupyterLabAppAdapter) => void
 }
 
 export const JupyterLabApp = (props: JupyterLabAppProps) => {
-  const { hostId, position, height, width, headless, onReady } = props;
+  const { hostId, position, height, width, headless, theme, onReady } = props;
   const { serviceManager } = useJupyter();
   const ref = useRef<HTMLDivElement>(null);
   const [_, setAdapter] = useState<JupyterLabAppAdapter>();
@@ -37,7 +44,7 @@ export const JupyterLabApp = (props: JupyterLabAppProps) => {
       });
       setAdapter(adapter);
     }
-  }, [hostId, ref, serviceManager]);
+  }, [hostId, ref, serviceManager, theme]);
   return (
     <>
       <Box
@@ -50,6 +57,7 @@ export const JupyterLabApp = (props: JupyterLabAppProps) => {
           },
         }}
       >
+        <JupyterLabAppCss theme={theme}/>
         <div ref={ref} id={hostId}/>
       </Box>
     </>
@@ -60,12 +68,13 @@ JupyterLabApp.defaultProps = {
   hostId: "app-example-id",
   extensions: [],
   mimeExtensions: [],
-  extensionPromises: [],
-  mimeExtensionPromises: [],
+  extensionPromises: JupyterLabAppCorePlugins.extensionPromises,
+  mimeExtensionPromises: JupyterLabAppCorePlugins.mimeExtensionPromises,
   position: "relative",
   width: "100%",
   height: "100vh",
   devMode: false,
+  theme: 'light',
   headless: false,
   onReady: (jupyterlabAdapter: JupyterLabAppAdapter) => {}
 } as Partial<JupyterLabAppProps>;

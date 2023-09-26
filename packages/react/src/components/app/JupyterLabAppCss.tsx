@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import '@jupyterlab/application-extension/style/index.js';
 import '@jupyterlab/apputils-extension/style/index.js';
 import '@jupyterlab/cell-toolbar-extension/style/index.js';
@@ -17,7 +19,29 @@ import '@jupyterlab/notebook-extension/style/index.js';
 import '@jupyterlab/rendermime-extension/style/index.js';
 import '@jupyterlab/shortcuts-extension/style/index.js';
 import '@jupyterlab/statusbar-extension/style/index.js';
-import '@jupyterlab/theme-light-extension/style/theme.css';
 import '@jupyterlab/toc-extension/style/index.js';
 import '@jupyterlab/translation-extension/style/index.js';
 import '@jupyterlab/ui-components-extension/style/index.js';
+
+type Props = {
+  theme: 'light' | 'dark',
+}
+
+export const JupyterLabCss = (props: Props) => {
+  const { theme } = props;
+  useEffect(() => {
+    switch(theme) {
+      case 'light': {
+        import('@jupyterlab/theme-light-extension/style/theme.css');
+        break;
+      }
+      case 'dark': {
+        import('@jupyterlab/theme-dark-extension/style/theme.css');
+        break;
+      }
+    }
+  }, [theme]);
+  return <></>
+}
+
+export default JupyterLabCss;
