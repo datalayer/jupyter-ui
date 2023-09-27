@@ -106,10 +106,6 @@ export class JupyterLabAppAdapter {
     return this._jupyterlab.info;
   }
 
-  get contextMenu() {
-    return this._jupyterlab.contextMenu;
-  }
-
   get path() {
     return this._jupyterlab.paths;
   }
