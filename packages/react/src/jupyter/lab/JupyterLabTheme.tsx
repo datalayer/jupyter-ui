@@ -1,1 +1,1 @@
-export type JupyterLabTheme ='light' | 'dark';
+export type JupyterLabTheme = 'light' | 'dark';

@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { Text, ToggleSwitch } from "@primer/react";
 import { INotebookContent } from '@jupyterlab/nbformat';
 import Jupyter from '../jupyter/Jupyter';
+import { JupyterLabTheme } from '../jupyter/lab/JupyterLabTheme';
 import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from "./toolbars/NotebookToolbar";
 import CellSidebar from "../components/notebook/cell/sidebar/CellSidebar";
@@ -10,13 +11,16 @@ import CellSidebar from "../components/notebook/cell/sidebar/CellSidebar";
 import nbformat from "./notebooks/NotebookExample1.ipynb.json";
 
 const NotebookThemed = () => {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<JupyterLabTheme>('light');
   const [isOn, setIsOn] = useState(false);
+//  const { setColorMode } = useTheme();
   const onClick = () => {
     if (isOn) {
       setTheme('light');
+//      setColorMode('day');
     } else {
       setTheme('dark');
+//      setColorMode('night');
     }
     setIsOn(!isOn);
   }

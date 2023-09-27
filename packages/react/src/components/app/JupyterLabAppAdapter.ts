@@ -69,7 +69,7 @@ export class JupyterLabAppAdapter {
     extensions.push(...extensionResolved);
     this._jupyterlab.registerPluginModules(extensions);
     if (headless) {
-      this._jupyterlab.deregisterPlugin('@jupyterlab/apputils-extension:splash', true);
+//      this._jupyterlab.deregisterPlugin('@jupyterlab/apputils-extension:splash', true);
     }
     this._jupyterlab.start({
       hostID: hostId,
