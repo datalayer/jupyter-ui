@@ -149,7 +149,7 @@ export const Notebook = (props: INotebookProps) => {
       {
         Toolbar && <Toolbar notebookId={props.uid} />
       }
-      <Box className="box-notebook"
+      <Box className="dla-Box-Notebook"
         sx={{
           '& .dla-Jupyter-Notebook': {
             height,
@@ -202,7 +202,7 @@ export const Notebook = (props: INotebookProps) => {
           '& .jp-CodeMirrorEditor': {
             cursor: 'text !important',
           },
-          '.box-notebook': {
+          '.dla-Box-Notebook': {
             position: 'relative',
           },
         }}

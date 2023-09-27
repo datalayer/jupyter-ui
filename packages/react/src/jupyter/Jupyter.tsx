@@ -1,10 +1,11 @@
-import React, { useEffect, useMemo } from 'react';
-import { ThemeProvider, BaseStyles } from "@primer/react";
+import React, { useMemo } from 'react';
+import { ThemeProvider, BaseStyles, Box } from "@primer/react";
 import { ErrorBoundary } from 'react-error-boundary';
 import { JupyterContextProvider } from './JupyterContext';
 import JupyterLabCss  from './lab/JupyterLabCss';
 import { getJupyterServerHttpUrl, getJupyterServerWsUrl, loadJupyterConfig } from './JupyterConfig';
 import defaultInjectableStore, { InjectableStore } from '../state/redux/Store';
+import { JupyterLabTheme } from "./lab/JupyterLabTheme";
 
 /**
  * Definition of the properties that can be passed
@@ -22,7 +23,7 @@ export type JupyterProps = {
   lite: boolean;
   startDefaultKernel: boolean;
   terminals?: boolean;
-  theme: 'light' | 'dark';
+  theme: JupyterLabTheme;
   useRunningKernelId?: string;
   useRunningKernelIndex?: number;
 }
@@ -52,30 +53,34 @@ export const Jupyter = (props: JupyterProps) => {
     lite, startDefaultKernel, defaultKernelName, injectableStore, theme,
     useRunningKernelId, useRunningKernelIndex, children, disableCssLoading,
   } = props;
-  const config = useMemo(() => loadJupyterConfig(props), []);
+  const config = useMemo(() => {
+    return loadJupyterConfig(props);
+  }, [props]);
   return (
     <ErrorBoundary
       FallbackComponent={ErrorFallback}
       onReset={() => { console.log('Error Boundary reset has been invoked...'); }}
     >
-      <ThemeProvider colorMode="day">
+      <ThemeProvider colorMode={theme === 'light' ? "day" : "night"} dayScheme="light" nightScheme="dark_high_contrast">
         <BaseStyles>
-          { !config.insideJupyterLab && !disableCssLoading && <JupyterLabCss theme={theme}/> }
-          <JupyterContextProvider
-            baseUrl={getJupyterServerHttpUrl()}
-            defaultKernelName={defaultKernelName}
-            disableCssLoading={disableCssLoading}
-            injectableStore={injectableStore || defaultInjectableStore}
-            lite={lite}
-            startDefaultKernel={startDefaultKernel}
-            theme={theme}
-            useRunningKernelId={useRunningKernelId}
-            useRunningKernelIndex={useRunningKernelIndex ?? -1}
-            variant="default"
-            wsUrl={getJupyterServerWsUrl()}
-          >
-            { children }
-          </JupyterContextProvider>
+          <Box color="fg.default" bg="canvas.default">
+            { !config.insideJupyterLab && !disableCssLoading && <JupyterLabCss theme={theme}/> }
+            <JupyterContextProvider
+              baseUrl={getJupyterServerHttpUrl()}
+              defaultKernelName={defaultKernelName}
+              disableCssLoading={disableCssLoading}
+              injectableStore={injectableStore || defaultInjectableStore}
+              lite={lite}
+              startDefaultKernel={startDefaultKernel}
+              theme={theme}
+              useRunningKernelId={useRunningKernelId}
+              useRunningKernelIndex={useRunningKernelIndex ?? -1}
+              variant="default"
+              wsUrl={getJupyterServerWsUrl()}
+            >
+              { children }
+            </JupyterContextProvider>
+          </Box>
         </BaseStyles>
       </ThemeProvider>
     </ErrorBoundary>

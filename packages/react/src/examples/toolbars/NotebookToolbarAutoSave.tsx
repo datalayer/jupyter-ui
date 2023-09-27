@@ -29,7 +29,7 @@ export const NotebookToolbarAutoSave = (props: {notebookId: string}) => {
     setAddType(newType);
   };
   return (
-    <Box display="flex" pt={1} pb={1} style={{ width: '100%', borderBottom: '0.1rem solid lightgrey', position: 'relative', top: '0' }}>
+    <Box display="flex" pt={1} pb={1} style={{ width: '100%', position: 'relative', top: '0' }}>
       <Box flexGrow={1} style={{ width: '50%', paddingLeft: '7vw', gap: '0.75vw' }}>
         <IconButton
           variant="invisible"

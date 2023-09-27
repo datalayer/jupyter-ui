@@ -9,10 +9,6 @@ export * from './jupyter/lumino/LuminoObservable';
 export * from './jupyter/lumino/LuminoRedux';
 export * from './jupyter/lumino/ReactPortalWidget';
 
-// CSS.
-// import './index.css';
-// import './jupyter/lab/JupyterLabCss';
-
 // State Redux.
 export * from './state/redux/State';
 export * from './state/redux/Store';

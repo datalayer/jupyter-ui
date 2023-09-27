@@ -65,28 +65,25 @@ export const loadJupyterConfig = (props: JupyterProps) => {
   const datalayerConfigData = document.getElementById('datalayer-config-data');
   if (datalayerConfigData) {
     config = JSON.parse(datalayerConfigData.textContent || '') as IJupyterConfig;
-    setJupyterServerHttpUrl(config.jupyterServerHttpUrl ?? jupyterServerHttpUrl ?? location.protocol + '//' + location.host + "/api/jupyter");
-    setJupyterServerWsUrl(config.jupyterServerWsUrl ?? jupyterServerWsUrl ?? location.protocol.replace('http', 'ws') + '//' + location.host + "/api/jupyter");
-    setJupyterToken(config.jupyterToken ?? jupyterToken ?? '');
+    setJupyterServerHttpUrl(jupyterServerHttpUrl ?? config.jupyterServerHttpUrl ?? location.protocol + '//' + location.host + "/api/jupyter");
+    setJupyterServerWsUrl(jupyterServerWsUrl ?? config.jupyterServerWsUrl ?? location.protocol.replace('http', 'ws') + '//' + location.host + "/api/jupyter");
+    setJupyterToken(jupyterToken ?? config.jupyterToken ?? '');
   }
   else {
     // No Datalayer Config.
     const jupyterConfigData = document.getElementById('jupyter-config-data');
     if (jupyterConfigData) {
       const jupyterConfig = JSON.parse(jupyterConfigData.textContent || '');
-      setJupyterServerHttpUrl(location.protocol + '//' + location.host + jupyterConfig.baseUrl);
-      setJupyterServerWsUrl(location.protocol === "https" ? "wss://" + location.host : "ws://" + location.host + jupyterConfig.baseUrl);
-      setJupyterToken(jupyterConfig.token);
+      setJupyterServerHttpUrl(jupyterServerHttpUrl ?? location.protocol + '//' + location.host + jupyterConfig.baseUrl);
+      setJupyterServerWsUrl(jupyterServerWsUrl ?? location.protocol === "https" ? "wss://" + location.host : "ws://" + location.host + jupyterConfig.baseUrl);
+      setJupyterToken(jupyterToken ?? jupyterConfig.token);
       config.insideJupyterLab = jupyterConfig.appName === 'JupyterLab';
     }
     else {
       // No Datalayer and no JupyterLab Config.
-      config.jupyterServerHttpUrl = jupyterServerHttpUrl!;
-      config.jupyterServerWsUrl = jupyterServerWsUrl!;
-      config.jupyterToken = jupyterToken!;
-      setJupyterServerHttpUrl(config.jupyterServerHttpUrl ?? location.protocol + '//' + location.host + "/api/jupyter");
-      setJupyterServerWsUrl(config.jupyterServerWsUrl ?? location.protocol.replace('http', 'ws') + '//' + location.host + "/api/jupyter");
-      setJupyterToken(config.jupyterToken ?? '');
+      setJupyterServerHttpUrl(jupyterServerHttpUrl ?? location.protocol + '//' + location.host + "/api/jupyter");
+      setJupyterServerWsUrl(jupyterServerWsUrl ?? location.protocol.replace('http', 'ws') + '//' + location.host + "/api/jupyter");
+      setJupyterToken(jupyterToken ?? '');
       }
   }
   if (lite) {

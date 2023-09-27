@@ -6,6 +6,7 @@ import { requestAPI } from './JupyterHandlers';
 import { startLiteServer } from './../jupyter/lite/LiteServer';
 import { InjectableStore } from '../state/redux/Store';
 import Kernel from './kernel/Kernel';
+import { JupyterLabTheme } from "./lab/JupyterLabTheme";
 
 /**
  * The type for the Jupyter context.
@@ -70,8 +71,8 @@ type JupyterContextProps = {
   disableCssLoading?: boolean;
   injectableStore: InjectableStore;
   lite: boolean;
-  startDefaultKernel: boolean,
-  theme: 'light' | 'dark',
+  startDefaultKernel: boolean;
+  theme: JupyterLabTheme;
   useRunningKernelId?: string;
   useRunningKernelIndex: number;
   variant: string;

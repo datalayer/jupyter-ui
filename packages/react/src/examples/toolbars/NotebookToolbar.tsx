@@ -13,7 +13,7 @@ export const NotebookToolbar = (props: {notebookId: string}) => {
     setType(newType);
   };
   return (
-    <Box display="flex" pt={1} pb={1} sx={{ width: '100%', borderBottom: '0.1rem solid lightgrey' }}>
+    <Box display="flex" pt={1} pb={1} sx={{ width: '100%', borderBottomWidth: 1, borderBottomStyle: 'solid', borderColor: 'border.default' }}>
       <Box
         sx={{
           display: 'flex',

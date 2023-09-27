@@ -16,9 +16,10 @@ const ENTRY =
 "./src/examples/JupyterLabHeadlessApp";
 // "./src/examples/Matplotlib";
 // "./src/examples/Notebook";
+// "./src/examples/NotebookKernelChange";
 // "./src/examples/NotebookModel";
 // "./src/examples/NotebookModelChange";
-// "./src/examples/NotebookKernelChange";
+// "./src/examples/NotebookThemed";
 
 const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == "true";
 

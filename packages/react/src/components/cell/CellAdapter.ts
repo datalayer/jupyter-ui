@@ -161,7 +161,7 @@ export class CellAdapter {
         editorFactory: factoryService.newInlineEditor.bind(factoryService),
       }),
     });
-    this._codeCell.addClass('dla-JupyterCell');
+    this._codeCell.addClass('dla-Jupyter-Cell');
     this._codeCell.initializeState();
     this._sessionContext.kernelChanged.connect((_, arg: Session.ISessionConnection.IKernelChangedArgs) => {
       const kernelConnection = arg.newValue;

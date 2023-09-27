@@ -60,16 +60,16 @@ export const Cell = (props: ICellProps) => {
     ?
       <Box
         sx={{
-          '& .dla-JupyterCell': {
-            position: 'relative !important' as any,
-            contain: 'content !important' as any,
+          '& .dla-Jupyter-Cell': {
 //            height: '100% !important',
 //            marginTop: '30px',
+            position: 'relative !important' as any,
+            contain: 'content !important' as any,
           },
           '& .jp-Toolbar': {
+//            display: 'none',
             height: 'auto !important',
             position: 'relative',
-//            display: 'none',
           },
           '& .lm-BoxPanel': {
 //            height: 'auto !important',

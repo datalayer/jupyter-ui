@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { JupyterLabTheme } from "./../../jupyter/lab/JupyterLabTheme";
 
 import '@jupyterlab/application-extension/style/index.js';
 import '@jupyterlab/apputils-extension/style/index.js';
@@ -24,8 +25,8 @@ import '@jupyterlab/translation-extension/style/index.js';
 import '@jupyterlab/ui-components-extension/style/index.js';
 
 type Props = {
-  theme: 'light' | 'dark',
-}
+  theme: JupyterLabTheme;
+};
 
 export const JupyterLabCss = (props: Props) => {
   const { theme } = props;
@@ -41,7 +42,7 @@ export const JupyterLabCss = (props: Props) => {
       }
     }
   }, [theme]);
-  return <></>
+  return <div id="dla-JupyterLabAppCss-id"></div>
 }
 
 export default JupyterLabCss;

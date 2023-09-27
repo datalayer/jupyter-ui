@@ -25,20 +25,23 @@ const height = "900px";
 
 const JupyterLabHeadlessAppExample = () => {
   const [boxPanel, setBoxPanel] = useState<BoxPanel>();
+  const [_, setJupyterlabAdapter] = useState<JupyterLabAppAdapter>();
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [isOn, setIsOn] = useState(false);
   const onClick = () => {
+    boxPanel?.dispose();
+    if (isOn) {
+      setTheme('light');
+    } else {
+      setTheme('dark');
+    }
     setIsOn(!isOn);
   }
   const handleSwitchChange = (on: boolean) => {
     setIsOn(on);
-    if (on) {
-      setTheme('dark');
-    } else {
-      setTheme('light');
-    }
   }
   const onReady = async (jupyterlabAdapter: JupyterLabAppAdapter) => {
+    setJupyterlabAdapter(jupyterlabAdapter);
     const jupyterlab = jupyterlabAdapter.jupyterlab;
     await jupyterlab.commands.execute('apputils:reset');
     const notebookPanel = await jupyterlab.commands.execute('docmanager:open', { path: PATHS[PATH_INDEX], factory: 'Notebook', kernel: { name: 'python3' } }) as NotebookPanel;
@@ -55,23 +58,25 @@ const JupyterLabHeadlessAppExample = () => {
   }
   return (
     <>
-      <Jupyter startDefaultKernel={false} disableCssLoading={true}>
+      <Jupyter startDefaultKernel={false} disableCssLoading={true} theme={theme}>
         <Box display="flex">
           <Box mr={3}>
-            <Text as="h3">JupyterLab Headless Application</Text>
+            <Text as="h2">JupyterLab Headless Application</Text>
           </Box>
           <Box>
-            <Text as="h3">Light theme</Text>
-          </Box>
-          <Box>
-            <ToggleSwitch
-              size="small"
-              style={{marginTop: 15}}
-              onClick={onClick}
-              onChange={handleSwitchChange}
-              checked={isOn}
-              aria-labelledby="switch-label"
-            />
+            <Box>
+            <Text fontSize={2} fontWeight="bold" id="switch-label" display="block" mb={1}>Dark theme</Text>
+            </Box>
+            <Box>
+              <ToggleSwitch
+                size="small"
+                onClick={onClick}
+                onChange={handleSwitchChange}
+                checked={isOn}
+                statusLabelPosition="end"
+                aria-labelledby="switch-label"
+              />
+            </Box>
           </Box>
         </Box>
         { boxPanel &&

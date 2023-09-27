@@ -8,6 +8,7 @@ import JupyterLabAppAdapter from "./JupyterLabAppAdapter";
 import { JupyterLabAppCorePlugins } from "./JupyterLabAppPlugins";
 import { useJupyter } from "../../jupyter/JupyterContext";
 import JupyterLabAppCss from "./JupyterLabAppCss";
+import { JupyterLabTheme } from "./../../jupyter/lab/JupyterLabTheme";
 
 // The webpack public path needs to be set before loading the CSS assets.
 (global as any).__webpack_public_path__ = PageConfig.getOption('fullStaticUrl') + '/';
@@ -23,9 +24,9 @@ export type JupyterLabAppProps = {
   height: string | number;
   devMode: boolean;
   headless: boolean;
-  theme: 'light' | 'dark',
-  serviceManager?: ServiceManager
-  onReady: (jupyterlabAdapter: JupyterLabAppAdapter) => void
+  serviceManager?: ServiceManager;
+  theme: JupyterLabTheme;
+  onReady: (jupyterlabAdapter: JupyterLabAppAdapter) => void;
 }
 
 export const JupyterLabApp = (props: JupyterLabAppProps) => {
