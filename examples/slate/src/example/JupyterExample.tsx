@@ -18,7 +18,6 @@ const JupyterExample = () => {
 //            jupyterServerWsUrl="ws://localhost:3266/api/jupyter"
             collaborative={false}
             terminals={false}
-            theme={theme}
           >
             <EditorExample/>
           </Jupyter>

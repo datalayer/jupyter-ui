@@ -4,11 +4,11 @@ import { PageConfig } from '@jupyterlab/coreutils';
 import { JupyterLab } from '@jupyterlab/application';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { ServiceManager } from "@jupyterlab/services";
+import { useJupyter } from "../../jupyter/JupyterContext";
+import { JupyterLabTheme } from "./../../jupyter/lab/JupyterLabTheme";
 import JupyterLabAppAdapter from "./JupyterLabAppAdapter";
 import { JupyterLabAppCorePlugins } from "./JupyterLabAppPlugins";
-import { useJupyter } from "../../jupyter/JupyterContext";
 import JupyterLabAppCss from "./JupyterLabAppCss";
-import { JupyterLabTheme } from "./../../jupyter/lab/JupyterLabTheme";
 
 // The webpack public path needs to be set before loading the CSS assets.
 (global as any).__webpack_public_path__ = PageConfig.getOption('fullStaticUrl') + '/';
@@ -26,7 +26,7 @@ export type JupyterLabAppProps = {
   headless: boolean;
   serviceManager?: ServiceManager;
   theme: JupyterLabTheme;
-  onReady: (jupyterlabAdapter: JupyterLabAppAdapter) => void;
+  onReady: (jupyterlabAppdapter: JupyterLabAppAdapter) => void;
 }
 
 export const JupyterLabApp = (props: JupyterLabAppProps) => {
@@ -77,7 +77,7 @@ JupyterLabApp.defaultProps = {
   devMode: false,
   theme: 'light',
   headless: false,
-  onReady: (jupyterlabAdapter: JupyterLabAppAdapter) => {}
+  onReady: (jupyterlabAppAdapter: JupyterLabAppAdapter) => {}
 } as Partial<JupyterLabAppProps>;
 
 export default JupyterLabApp;

@@ -1,9 +1,9 @@
-import { JupyterLab, JupyterFrontEndPlugin } from '@jupyterlab/application';
-import { JupyterFrontEnd, LabShell, ILabShell } from '@jupyterlab/application';
-import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { CommandRegistry } from '@lumino/commands';
-import { DocumentRegistry } from '@jupyterlab/docregistry';
 // import { Widget } from '@lumino/widgets';
+import { JupyterLab, JupyterFrontEndPlugin } from '@jupyterlab/application';
+import { JupyterFrontEnd, LabShell } from '@jupyterlab/application';
+import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
+import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { JupyterLabAppProps } from "./JupyterLabApp";
 /*
 interface IHeadLessLabShell extends ILabShell {
@@ -21,20 +21,23 @@ class HeadlessLabShell extends LabShell implements IHeadLessLabShell {
     this._currentWidget = widget;
   }
 }
-*/
 class HeadLessJupyterLab extends JupyterLab implements JupyterFrontEnd<ILabShell> {
   constructor(options?: JupyterLab.IOptions) {
     super(options);
   }
 }
+*/
+type Plugin = JupyterFrontEndPlugin<any, any, any> & {
+  service: any;
+}
+
+type Plugins = Map<string, Plugin>;
 
 export class JupyterLabAppAdapter {
   private _props: JupyterLabAppProps;
-  private _jupyterlab: HeadLessJupyterLab;
+  private _jupyterlab: JupyterLab;
   private _shell: LabShell;
-  private _plugins: Map<string, JupyterFrontEndPlugin<any, any, any> & {
-    service: any;
-  }>;
+  private _plugins: Plugins;
   private _ready: Promise<void>;
   private _readyResolve: () => void;
 
@@ -51,7 +54,7 @@ export class JupyterLabAppAdapter {
     const mimeExtensionResolved = await Promise.all(mimeExtensionPromises);
     mimeExtensions.push(...mimeExtensionResolved);
     this._shell = new LabShell();
-    this._jupyterlab = new HeadLessJupyterLab({
+    this._jupyterlab = new JupyterLab({
       shell: this._shell,
       mimeExtensions,
       devMode,
@@ -78,15 +81,15 @@ export class JupyterLabAppAdapter {
     });
     this._jupyterlab.restored.then(() => {
       this._plugins = (this._jupyterlab as any)['_plugins'];
-      this._readyResolve();
-    });
+      this._readyResolve();  
+    })
   }
 
-  get jupyterlab() {
+  get jupyterlab(): JupyterLab {
     return this._jupyterlab;
   }
 
-  get shell() {
+  get shell(): LabShell {
     return this._shell;
   }
 
@@ -102,31 +105,31 @@ export class JupyterLabAppAdapter {
     return this._jupyterlab.info.mimeExtensions;
   }
 
-  get info() {
+  get info(): JupyterLab.IInfo {
     return this._jupyterlab.info;
   }
 
-  get path() {
+  get path(): JupyterFrontEnd.IPaths {
     return this._jupyterlab.paths;
   }
 
-  get plugins() {
+  get plugins(): Plugins {
     return this._plugins;
   }
 
-  get ready() {
+  get ready(): Promise<void> {
     return this._ready;
   }
 
-  get props() {
+  get props(): JupyterLabAppProps {
     return this._props;
   }
 
-  plugin(id: string) {
+  plugin(id: string): Plugin | undefined {
     return this._plugins.get(id);
   }
 
-  service(id: string) {
+  service(id: string): Plugin["service"] {
     return this._plugins.get(id)?.service;
   }
 
