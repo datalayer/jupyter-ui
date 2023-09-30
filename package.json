@@ -43,7 +43,7 @@
     "jupyter:ui:prosemirror": "lerna run --parallel --scope @datalayer/jupyter-prosemirror-example start",
     "jupyter:ui:slate": "lerna run --parallel --scope @datalayer/jupyter-slate-example start",
     "test": "lerna run test",
-    "postinstall": "git apply patches/*"
+    "postinstall": "patch-package --use-yarn"
   },
   "workspaces": [
     "docs",
@@ -67,7 +67,7 @@
     "fkill-cli": "7.1.0",
     "jest-prop-type-error": "^1.1.0",
     "lerna": "6.6.2",
-    "patch-package": "7.0.0",
+    "patch-package": "8.0.0",
     "prettier": "2.3.1",
     "rimraf": "3.0.2",
     "vercel": "21.3.3"

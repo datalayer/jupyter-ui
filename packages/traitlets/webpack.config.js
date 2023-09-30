@@ -26,6 +26,7 @@ module.exports = {
     port: 3063,
     client: { overlay: false },
     historyApiFallback: true,
+    hot: !IS_PRODUCTION,
 //    static: path.join(__dirname, "dist"),
     proxy: {
       '/api/jupyter': {

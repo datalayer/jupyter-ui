@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { memo, useState, useEffect, useRef } from "react";
 import { Box } from "@primer/react";
 import { PageConfig } from '@jupyterlab/coreutils';
 import { JupyterLab } from '@jupyterlab/application';
@@ -9,6 +9,8 @@ import { JupyterLabTheme } from "./../../jupyter/lab/JupyterLabTheme";
 import JupyterLabAppAdapter from "./JupyterLabAppAdapter";
 import { JupyterLabAppCorePlugins } from "./JupyterLabAppPlugins";
 import JupyterLabAppCss from "./JupyterLabAppCss";
+
+let _adapter: JupyterLabAppAdapter | undefined = undefined;
 
 // The webpack public path needs to be set before loading the CSS assets.
 (global as any).__webpack_public_path__ = PageConfig.getOption('fullStaticUrl') + '/';
@@ -35,6 +37,11 @@ export const JupyterLabApp = (props: JupyterLabAppProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const [_, setAdapter] = useState<JupyterLabAppAdapter>();
   useEffect(() => {
+    if (_adapter) {
+      setAdapter(_adapter);
+      onReady(_adapter);
+      return;
+    }
     if (ref && serviceManager) {
       const adapter = new JupyterLabAppAdapter({
         ...props,
@@ -43,7 +50,8 @@ export const JupyterLabApp = (props: JupyterLabAppProps) => {
       adapter.ready.then(() => {
         onReady(adapter);
       });
-      setAdapter(adapter);
+      setAdapter(_adapter);
+      _adapter = adapter;
     }
   }, [hostId, ref, serviceManager, theme]);
   return (
@@ -80,4 +88,4 @@ JupyterLabApp.defaultProps = {
   onReady: (jupyterlabAppAdapter: JupyterLabAppAdapter) => {}
 } as Partial<JupyterLabAppProps>;
 
-export default JupyterLabApp;
+export default memo(JupyterLabApp);

@@ -48,6 +48,7 @@ module.exports = {
   devServer: {
     port: 3208,
     historyApiFallback: true,
+    hot: !IS_PRODUCTION,
     https: false,
     server: 'http',
     proxy: {

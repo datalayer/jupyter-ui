@@ -16,7 +16,7 @@ def build_javascript():
         cwd=here,
     )
     check_call(
-        ['yarn', 'build:webpack'],
+        ['yarn', 'build:webpack', '--mode=production'],
         cwd=here,
     )
     shutil.copyfile(

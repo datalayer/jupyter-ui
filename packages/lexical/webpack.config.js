@@ -39,6 +39,7 @@ module.exports = {
   devServer: {
     port: 3208,
     historyApiFallback: true,
+    hot: !IS_PRODUCTION,
     proxy: {
       '/build/pypi': {
         target: 'https://datalayer-assets.s3.us-west-2.amazonaws.com/pypi',
