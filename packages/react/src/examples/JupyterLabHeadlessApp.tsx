@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Box, Text, ToggleSwitch, ThemeProvider, useTheme } from "@primer/react";
 import { BoxPanel } from '@lumino/widgets';
-import { ThemeManager } from '@jupyterlab/apputils';
 import { NotebookPanel } from '@jupyterlab/notebook';
 // import { NotebookTracker } from '@jupyterlab/notebook';
+// import { ThemeManager } from '@jupyterlab/apputils';
 import { Widget } from '@lumino/widgets';
 import Jupyter from '../jupyter/Jupyter';
 import Lumino from '../jupyter/lumino/Lumino';
@@ -35,14 +35,17 @@ const JupyterLabHeadlessAppExample = () => {
   const [isOn, setIsOn] = useState(false);
   const onClick = async () => {
     if (jupyterlabAdapter) {
+      /*
       const themeManager = jupyterlabAdapter.service("@jupyterlab/apputils-extension:themes") as ThemeManager;
       const isLight = themeManager.isLight(themeManager.theme ?? "JupyterLab Light");
       const themes = [
         'JupyterLab Light',
         'JupyterLab Dark',
       ];
+      */
       await jupyterlabAdapter.commands.execute('apputils:change-theme', {
-        theme: themes[~~isLight],
+//        theme: themes[~~isLight],
+        theme: isOn ? 'JupyterLab Light' : 'JupyterLab Dark',
       });
       setTheme(isOn ? 'light' : 'dark');
       setColorMode(isOn ? 'night' : 'day');
