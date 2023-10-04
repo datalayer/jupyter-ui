@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Box, Text, ToggleSwitch, ThemeProvider, useTheme } from "@primer/react";
-import { ThemeManager } from '@jupyterlab/apputils';
 import { BoxPanel } from '@lumino/widgets';
+import { ThemeManager } from '@jupyterlab/apputils';
 import { NotebookPanel } from '@jupyterlab/notebook';
 // import { NotebookTracker } from '@jupyterlab/notebook';
 import { Widget } from '@lumino/widgets';
@@ -104,9 +104,7 @@ const JupyterLabHeadlessAppExample = () => {
                 }
               }}
             >
-              <Box>
-                <Lumino>{boxPanel}</Lumino>
-              </Box>
+              <Lumino>{boxPanel}</Lumino>
             </Box >
           </div>
         }
