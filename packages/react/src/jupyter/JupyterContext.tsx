@@ -13,6 +13,7 @@ import { JupyterLabTheme } from "./lab/JupyterLabTheme";
  */
 export type JupyterContextType = {
   baseUrl: string;
+  collaborative: boolean;
   defaultKernel?: Kernel,
   disableCssLoading?: boolean,
   injectableStore: InjectableStore;
@@ -66,6 +67,7 @@ export const ensureJupyterAuth = (serverSettings: ServerConnection.ISettings): P
  */
 type JupyterContextProps = {
   baseUrl: string;
+  collaborative: boolean;
   children: React.ReactNode;
   defaultKernelName: string;
   disableCssLoading?: boolean;
@@ -107,7 +109,7 @@ export const createServerSettings = (baseUrl: string, wsUrl: string) => {
  */
 export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => {
   const {
-    children, lite, startDefaultKernel, defaultKernelName, disableCssLoading, useRunningKernelId, 
+    children, lite, collaborative, startDefaultKernel, defaultKernelName, disableCssLoading, useRunningKernelId, 
     useRunningKernelIndex, variant, baseUrl, wsUrl, injectableStore, theme,
   } = props;
   const [_, setVariant] = useState('default');
@@ -209,18 +211,19 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
   return (
     <ReduxProvider store={injectableStore}>
       <JupyterProvider value={{
+        baseUrl,
+        collaborative,
+        defaultKernel: kernel,
+        disableCssLoading,
+        injectableStore,
+        kernelManager,
         lite,
         serverSettings,
         serviceManager,
-        kernelManager,
-        defaultKernel: kernel,
-        disableCssLoading,
+        setVariant,
         startDefaultKernel,
         variant,
-        setVariant,
-        baseUrl,
         wsUrl,
-        injectableStore,
       }}>
         { children }
       </JupyterProvider>

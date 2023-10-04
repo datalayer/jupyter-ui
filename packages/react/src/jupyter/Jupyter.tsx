@@ -13,7 +13,7 @@ import { JupyterLabTheme } from "./lab/JupyterLabTheme";
  */
 export type JupyterProps = {
   children: React.ReactNode;
-  collaborative?: boolean;
+  collaborative: boolean;
   defaultKernelName: string;
   disableCssLoading?: boolean;
   injectableStore?: InjectableStore;
@@ -50,7 +50,7 @@ const ErrorFallback = ({error, resetErrorBoundary}: any) => {
  */
 export const Jupyter = (props: JupyterProps) => {
   const {
-    lite, startDefaultKernel, defaultKernelName, injectableStore, theme,
+    lite, collaborative, startDefaultKernel, defaultKernelName, injectableStore, theme,
     useRunningKernelId, useRunningKernelIndex, children, disableCssLoading,
   } = props;
   const config = useMemo(() => {
@@ -67,6 +67,7 @@ export const Jupyter = (props: JupyterProps) => {
             { !config.insideJupyterLab && !disableCssLoading && <JupyterLabCss theme={theme}/> }
             <JupyterContextProvider
               baseUrl={getJupyterServerHttpUrl()}
+              collaborative={collaborative}
               defaultKernelName={defaultKernelName}
               disableCssLoading={disableCssLoading}
               injectableStore={injectableStore || defaultInjectableStore}

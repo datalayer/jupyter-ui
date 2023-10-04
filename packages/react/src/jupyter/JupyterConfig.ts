@@ -93,8 +93,9 @@ export const loadJupyterConfig = (props: JupyterProps) => {
   PageConfig.setOption('baseUrl', getJupyterServerHttpUrl());
   PageConfig.setOption('wsUrl', getJupyterServerWsUrl());
   PageConfig.setOption('token', getJupyterToken());
-  PageConfig.setOption('collaborative', String(collaborative || false));
-  PageConfig.setOption('terminalsAvailable', String(terminals || false));
+  PageConfig.setOption('collaborative', String(collaborative));
+  PageConfig.setOption('disableRTC', String(!collaborative));
+  PageConfig.setOption('terminalsAvailable', String(terminals));
   PageConfig.setOption('mathjaxUrl', 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js');
   PageConfig.setOption('mathjaxConfig', 'TeX-AMS_CHTML-full,Safe');
 //  PageConfig.getOption('hubHost')

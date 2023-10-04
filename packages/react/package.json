@@ -73,7 +73,7 @@
     "@jupyter-widgets/html-manager": "1.0.8",
     "@jupyter-widgets/jupyterlab-manager": "5.0.8",
     "@jupyter-widgets/output": "6.0.5",
-    "@jupyter/ydoc": "1.1.0-a0",
+    "@jupyter/ydoc": "1.1.1",
     "@jupyterlab/application": "4.0.3",
     "@jupyterlab/application-extension": "4.0.3",
     "@jupyterlab/apputils": "4.1.3",

@@ -117,7 +117,7 @@
     "@jupyterlab/theme-light-extension": "4.0.3",
     "@jupyterlab/translation": "4.0.3",
     "@jupyterlab/ui-components": "4.0.3",
-    "@jupyter/ydoc": "1.1.0-a0",
+    "@jupyter/ydoc": "1.1.1",
     "@lumino/algorithm": "2.0.0",
     "@lumino/application": "2.2.0",
     "@lumino/collections": "2.0.0",

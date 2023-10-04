@@ -2,9 +2,11 @@ import { CommandRegistry } from '@lumino/commands';
 // import { Widget } from '@lumino/widgets';
 import { JupyterLab, JupyterFrontEndPlugin } from '@jupyterlab/application';
 import { JupyterFrontEnd, LabShell } from '@jupyterlab/application';
-import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
+import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
+import { ServiceManager } from "@jupyterlab/services";
 import { JupyterLabAppProps } from "./JupyterLabApp";
+import { JupyterLabAppCorePlugins } from "./JupyterLabAppPlugins";
 /*
 interface IHeadLessLabShell extends ILabShell {
 //  set currentWidget(widget: Widget | null);
@@ -33,25 +35,34 @@ type Plugin = JupyterFrontEndPlugin<any, any, any> & {
 
 type Plugins = Map<string, Plugin>;
 
+type Props = JupyterLabAppProps & {
+  serviceManager: ServiceManager;
+  collaborative: boolean,
+};
+
 export class JupyterLabAppAdapter {
-  private _props: JupyterLabAppProps;
+  private _props: Props;
   private _jupyterlab: JupyterLab;
   private _shell: LabShell;
   private _plugins: Plugins;
   private _ready: Promise<void>;
   private _readyResolve: () => void;
 
-  constructor(props: JupyterLabAppProps) {
+  constructor(props: Props ) {
     this._ready = new Promise((resolve, _) => {
       this._readyResolve = resolve;
     });
     this.loadApp(props);
   }
 
-  async loadApp(props: JupyterLabAppProps) {
+  async loadApp(props: Props) {
     this._props = props;
-    const { hostId, extensions, mimeExtensions, extensionPromises, mimeExtensionPromises, devMode, headless, serviceManager } = props;
-    const mimeExtensionResolved = await Promise.all(mimeExtensionPromises);
+    const {
+      hostId, extensions, mimeExtensions, collaborative, 
+      extensionPromises, mimeExtensionPromises, devMode, serviceManager
+    } = props;
+    const mimeExtensionPromises2 = mimeExtensionPromises ?? JupyterLabAppCorePlugins(collaborative).mimeExtensionPromises;
+    const mimeExtensionResolved = await Promise.all(mimeExtensionPromises2);
     mimeExtensions.push(...mimeExtensionResolved);
     this._shell = new LabShell();
     this._jupyterlab = new JupyterLab({
@@ -59,7 +70,7 @@ export class JupyterLabAppAdapter {
       mimeExtensions,
       devMode,
       serviceManager,
-      disabled: {
+      disabled: {  // The disabled property is not honoored in JupyterLab core although it is part of the public API...
         patterns: [],
         matches: [],
       },
@@ -68,12 +79,18 @@ export class JupyterLabAppAdapter {
         matches: [],
       },
     });
-    const extensionResolved = await Promise.all(extensionPromises);
+    const extensionPromises2 = extensionPromises ?? JupyterLabAppCorePlugins(collaborative).extensionPromises;
+    const extensionResolved = await Promise.all(extensionPromises2);
     extensions.push(...extensionResolved);
     this._jupyterlab.registerPluginModules(extensions);
+    /*
     if (headless) {
-//      this._jupyterlab.deregisterPlugin('@jupyterlab/apputils-extension:splash', true);
+      this._jupyterlab.deregisterPlugin('@jupyterlab/apputils-extension:splash', true);
     }
+    if (collaborative) {
+      this._jupyterlab.deregisterPlugin("@jupyterlab/filebrowser-extension:default-file-browser", true);          
+    }
+    */
     this._jupyterlab.start({
       hostID: hostId,
       startPlugins: [],
