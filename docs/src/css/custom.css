@@ -13,6 +13,11 @@ body {
   background-color: white !important;
 }
 
+h1, h2, h3, h4, h5, h6, p {
+  color: rgb(28, 30, 33) !important;
+/*  color: var(--ifm-heading-color) !important; */
+}
+
 .theme-doc-markdown a {
   color: var(--ifm-link-color) !important;
   text-decoration: var(--ifm-link-decoration) !important;

@@ -9,6 +9,15 @@
   font-size: 16px;
 }
 
+body {
+  background-color: white !important;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+  color: rgb(28, 30, 33) !important;
+/*  color: var(--ifm-heading-color) !important; */
+}
+
 /* You can override the default Infima variables here. */
 :root {
   --ifm-color-primary: #25c2a0;

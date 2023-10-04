@@ -17,6 +17,7 @@ const JupyterCell = (props: any) => {
             jupyterServerWsUrl={serverWsUrl}
             collaborative={false}
             terminals={false}
+            disableCssLoading={true}
           >
             <Cell source={source}/>
           </Jupyter>

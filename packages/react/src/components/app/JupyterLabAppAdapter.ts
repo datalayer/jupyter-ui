@@ -41,22 +41,29 @@ type Props = JupyterLabAppProps & {
 };
 
 export class JupyterLabAppAdapter {
-  private _props: Props;
   private _jupyterlab: JupyterLab;
   private _shell: LabShell;
   private _plugins: Plugins;
   private _ready: Promise<void>;
   private _readyResolve: () => void;
 
-  constructor(props: Props ) {
+  constructor(props: Props, jupyterlab?: JupyterLab) {
+    if (jupyterlab) {
+      this._jupyterlab = jupyterlab;
+      this._ready = new Promise((resolve, _) => {
+        this._readyResolve = resolve;
+      });
+      this._plugins = (this._jupyterlab as any)['_plugins'];
+      this._readyResolve();
+      return;
+    }
     this._ready = new Promise((resolve, _) => {
       this._readyResolve = resolve;
     });
-    this.loadApp(props);
+    this.load(props);
   }
 
-  async loadApp(props: Props) {
-    this._props = props;
+  private async load(props: Props) {
     const {
       hostId, extensions, mimeExtensions, collaborative, 
       extensionPromises, mimeExtensionPromises, devMode, serviceManager
@@ -102,12 +109,17 @@ export class JupyterLabAppAdapter {
     })
   }
 
+  static create(jupyterlab: JupyterLab): JupyterLabAppAdapter {
+    const adapter = new JupyterLabAppAdapter(undefined as any, jupyterlab);
+    return adapter;
+  }
+
   get jupyterlab(): JupyterLab {
     return this._jupyterlab;
   }
 
   get shell(): LabShell {
-    return this._shell;
+    return this._jupyterlab.shell;
   }
 
   get docRegistry(): DocumentRegistry {
@@ -136,10 +148,6 @@ export class JupyterLabAppAdapter {
 
   get ready(): Promise<void> {
     return this._ready;
-  }
-
-  get props(): JupyterLabAppProps {
-    return this._props;
   }
 
   plugin(id: string): Plugin | undefined {
