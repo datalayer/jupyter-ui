@@ -4,6 +4,7 @@ export * from './jupyter/JupyterContext';
 export * from './jupyter/JupyterConfig';
 export * from './jupyter/lite/LiteServer';
 export * from './jupyter/lumino/Lumino';
+export * from './jupyter/lumino/LuminoBox';
 export * from './jupyter/lumino/LuminoDetached';
 export * from './jupyter/lumino/LuminoObservable';
 export * from './jupyter/lumino/LuminoRedux';

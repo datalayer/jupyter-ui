@@ -1,35 +1,41 @@
-import { useRef, useEffect, PropsWithChildren } from 'react';
+import { useRef, useEffect } from 'react';
 import { unmountComponentAtNode } from 'react-dom';
 import { Widget } from '@lumino/widgets';
 
-type Props = any & {
-  id: string;
+type Props = {
+  id?: string;
+  children: Widget;
 }
 
-export const Lumino = (props: PropsWithChildren<Props>) => {
+export const Lumino = (props: Props) => {
   const ref = useRef<HTMLDivElement>(null);
   const { children, id } = props;
   useEffect(() => {
-    const widget = children as Widget;
-    try {
-      Widget.attach(widget, ref.current!);
-    } catch(e) {
-      console.warn('Exception while attaching Lumino widget.', e);
-    }
-    return () => {
+    if (ref && ref.current) {
       try {
-        unmountComponentAtNode(widget.node);
-        if (widget.isAttached || widget.node.isConnected) {
-          widget.dispose();
-          Widget.detach(widget);
-        }
+        Widget.attach(children, ref.current);
       } catch(e) {
-        // no-op
-        // console.debug('Exception while detaching Lumino widget.', e);
+        console.warn('Exception while attaching Lumino widget.', e);
       }
+      return () => {
+        try {
+          unmountComponentAtNode(children.node);
+          if (children.isAttached || children.node.isConnected) {
+            children.dispose();
+            Widget.detach(children);
+          }
+        } catch(e) {
+          // no-op
+          // console.debug('Exception while detaching Lumino widget.', e);
+        }
+      }  
     }
-  }, [children]);
+  }, [ref, children]);
   return <div ref={ref} id={id}/>
+}
+
+Lumino.defaultProps = {
+  id: "lumino-id",
 }
 
 export default Lumino;
