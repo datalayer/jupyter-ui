@@ -165,6 +165,7 @@
     "@types/react-dom": "18.2.5",
     "@types/styled-components": "5.1.26",
     "@types/uuid": "8.3.0",
+    "@types/webpack-env": "1.18.2",
     "@typescript-eslint/eslint-plugin": "4.8.1",
     "@typescript-eslint/parser": "4.8.1",
     "babel-loader": "9.1.2",

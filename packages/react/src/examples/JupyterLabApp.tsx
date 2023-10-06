@@ -9,10 +9,10 @@ import * as plotlyExtension from 'jupyterlab-plotly/lib/jupyterlab-plugin';
 import * as mimePlotlyExtension from 'jupyterlab-plotly/lib/plotly-renderer';
 
 const JupyterLabAppExample = () => {
-  const onReady = async (jupyterlabAdapter: JupyterLabAppAdapter) => {
-    const jupyterlab = jupyterlabAdapter.jupyterlab;
-    console.log('JupyterLab is ready', jupyterlab);
-    jupyterlab.commands.execute('notebook:create-new', { kernelName: 'python3' }).then((notebookPanel: NotebookPanel) => {
+  const onJupyterLab = async (jupyterLabAdapter: JupyterLabAppAdapter) => {
+    const jupyterLab = jupyterLabAdapter.jupyterLab;
+    console.log('JupyterLab is ready', jupyterLab);
+    jupyterLab.commands.execute('notebook:create-new', { kernelName: 'python3' }).then((notebookPanel: NotebookPanel) => {
       console.log('Notebook Panel', notebookPanel);
     });
   }
@@ -26,7 +26,7 @@ const JupyterLabAppExample = () => {
         mimePlotlyExtension,
       ]}
       height="calc(100vh - 74px)"
-      onReady={onReady}
+      onJupyterLab={onJupyterLab}
     />
   )
 }

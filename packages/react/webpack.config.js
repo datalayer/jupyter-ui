@@ -22,20 +22,17 @@ const ENTRY =
 // "./src/examples/NotebookThemed";
 
 const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == "true";
-
 const INDEX_PAGE = IS_JUPYTER_SERVER_LOCAL
   ? "index-local.html"
   : "index.html";
-
 const IS_PRODUCTION = process.argv.indexOf('--mode=production') > -1;
-/*
-const JUPYTER_HOST = IS_JUPYTER_SERVER_LOCAL
-  ? "http://localhost:8686"
-  : "https://oss.datalayer.tech";
-*/
+// const JUPYTER_HOST = IS_JUPYTER_SERVER_LOCAL
+//   ? "http://localhost:8686"
+//   : "https://oss.datalayer.tech";
 const mode = IS_PRODUCTION ? "production" : "development";
 const devtool = IS_PRODUCTION ? false : "inline-source-map";
-let minimize = IS_PRODUCTION ? true : false;
+const minimize = IS_PRODUCTION ? true : false;
+const publicPath = IS_PRODUCTION ? "/static/jupyter_react/" : "http://localhost:3208/";
 
 module.exports = {
   entry: [ENTRY],
@@ -89,7 +86,7 @@ module.exports = {
     minimize,
   },
   output: {
-    publicPath: "http://localhost:3208/",
+    publicPath,
     filename: '[name].jupyter-react.js',
   },
   resolve: {

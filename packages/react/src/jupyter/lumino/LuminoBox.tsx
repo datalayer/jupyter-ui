@@ -5,7 +5,7 @@ import { Box } from '@primer/react';
 
 type Props = {
   id?: string;
-  height: number;
+  height: number | string;
   children: Widget;
 }
 

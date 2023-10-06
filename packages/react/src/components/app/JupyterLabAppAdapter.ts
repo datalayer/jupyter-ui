@@ -41,7 +41,7 @@ type Props = JupyterLabAppProps & {
 };
 
 export class JupyterLabAppAdapter {
-  private _jupyterlab: JupyterLab;
+  private _jupyterLab: JupyterLab;
   private _shell: LabShell;
   private _plugins: Plugins;
   private _ready: Promise<void>;
@@ -49,11 +49,11 @@ export class JupyterLabAppAdapter {
 
   constructor(props: Props, jupyterlab?: JupyterLab) {
     if (jupyterlab) {
-      this._jupyterlab = jupyterlab;
+      this._jupyterLab = jupyterlab;
       this._ready = new Promise((resolve, _) => {
         this._readyResolve = resolve;
       });
-      this._plugins = (this._jupyterlab as any)['_plugins'];
+      this._plugins = (this._jupyterLab as any)['_plugins'];
       this._readyResolve();
       return;
     }
@@ -72,7 +72,7 @@ export class JupyterLabAppAdapter {
     const mimeExtensionResolved = await Promise.all(mimeExtensionPromises2);
     mimeExtensions.push(...mimeExtensionResolved);
     this._shell = new LabShell();
-    this._jupyterlab = new JupyterLab({
+    this._jupyterLab = new JupyterLab({
       shell: this._shell,
       mimeExtensions,
       devMode,
@@ -89,7 +89,7 @@ export class JupyterLabAppAdapter {
     const extensionPromises2 = extensionPromises ?? JupyterLabAppCorePlugins(collaborative).extensionPromises;
     const extensionResolved = await Promise.all(extensionPromises2);
     extensions.push(...extensionResolved);
-    this._jupyterlab.registerPluginModules(extensions);
+    this._jupyterLab.registerPluginModules(extensions);
     /*
     if (headless) {
       this._jupyterlab.deregisterPlugin('@jupyterlab/apputils-extension:splash', true);
@@ -98,13 +98,13 @@ export class JupyterLabAppAdapter {
       this._jupyterlab.deregisterPlugin("@jupyterlab/filebrowser-extension:default-file-browser", true);          
     }
     */
-    this._jupyterlab.start({
+    this._jupyterLab.start({
       hostID: hostId,
       startPlugins: [],
       ignorePlugins: [],
     });
-    this._jupyterlab.restored.then(() => {
-      this._plugins = (this._jupyterlab as any)['_plugins'];
+    this._jupyterLab.restored.then(() => {
+      this._plugins = (this._jupyterLab as any)['_plugins'];
       this._readyResolve();  
     })
   }
@@ -114,32 +114,32 @@ export class JupyterLabAppAdapter {
     return adapter;
   }
 
-  get jupyterlab(): JupyterLab {
-    return this._jupyterlab;
+  get jupyterLab(): JupyterLab {
+    return this._jupyterLab;
   }
 
   get shell(): LabShell {
-    return this._jupyterlab.shell;
+    return this._jupyterLab.shell;
   }
 
   get docRegistry(): DocumentRegistry {
-    return this._jupyterlab.docRegistry;
+    return this._jupyterLab.docRegistry;
   }
 
   get commands(): CommandRegistry {
-    return this._jupyterlab.commands;
+    return this._jupyterLab.commands;
   }
 
   get mimeExtensions(): IRenderMime.IExtensionModule[] {
-    return this._jupyterlab.info.mimeExtensions;
+    return this._jupyterLab.info.mimeExtensions;
   }
 
   get info(): JupyterLab.IInfo {
-    return this._jupyterlab.info;
+    return this._jupyterLab.info;
   }
 
   get path(): JupyterFrontEnd.IPaths {
-    return this._jupyterlab.paths;
+    return this._jupyterLab.paths;
   }
 
   get plugins(): Plugins {

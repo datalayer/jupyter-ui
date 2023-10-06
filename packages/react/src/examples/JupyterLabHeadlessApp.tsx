@@ -1,15 +1,17 @@
+/// <reference types="webpack-env" />
+
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Box, Text, ToggleSwitch, ThemeProvider, useTheme } from "@primer/react";
 import { BoxPanel } from '@lumino/widgets';
 import { NotebookPanel } from '@jupyterlab/notebook';
 // import { NotebookTracker } from '@jupyterlab/notebook';
-// import { ThemeManager } from '@jupyterlab/apputils';
+import { ThemeManager } from '@jupyterlab/apputils';
 import { Widget } from '@lumino/widgets';
 import Jupyter from '../jupyter/Jupyter';
 import Lumino from '../jupyter/lumino/Lumino';
-import JupyterLabApp from "../components/app/JupyterLabApp";
 import { JupyterLabTheme } from '../jupyter/lab/JupyterLabTheme';
+import JupyterLabApp from "../components/app/JupyterLabApp";
 import JupyterLabAppAdapter from "../components/app/JupyterLabAppAdapter";
 
 import * as darkThemeExtension from '@jupyterlab/theme-dark-extension';
@@ -18,6 +20,8 @@ import * as ipywidgetsExtension from '@jupyter-widgets/jupyterlab-manager';
 import * as plotlyExtension from 'jupyterlab-plotly/lib/jupyterlab-plugin';
 import * as mimePlotlyExtension from 'jupyterlab-plotly/lib/plotly-renderer';
 
+const height = "900px";
+
 const PATHS = [
   "ipywidgets.ipynb",
   "plotly.ipynb",
@@ -25,43 +29,35 @@ const PATHS = [
 
 const PATH_INDEX = 1;
 
-const height = "900px";
-
 const JupyterLabHeadlessAppExample = () => {
   const [boxPanel, setBoxPanel] = useState<BoxPanel>();
   const [theme, setTheme] = useState<JupyterLabTheme>('light');
-  const [jupyterlabAdapter, setJupyterlabAdapter] = useState<JupyterLabAppAdapter>();
+  const [jupyterLabAdapter, setJupyterlabAdapter] = useState<JupyterLabAppAdapter>();
   const { setColorMode } = useTheme();
-  const [isOn, setIsOn] = useState(false);
-  const onClick = async () => {
-    if (jupyterlabAdapter) {
-      /*
-      const themeManager = jupyterlabAdapter.service("@jupyterlab/apputils-extension:themes") as ThemeManager;
-      const isLight = themeManager.isLight(themeManager.theme ?? "JupyterLab Light");
-      const themes = [
-        'JupyterLab Light',
-        'JupyterLab Dark',
-      ];
-      */
-      await jupyterlabAdapter.commands.execute('apputils:change-theme', {
-//        theme: themes[~~isLight],
-        theme: isOn ? 'JupyterLab Light' : 'JupyterLab Dark',
+  const [isDark, setDark] = useState(false);
+  const onSwitchClick = async () => {
+    if (jupyterLabAdapter) {
+      await jupyterLabAdapter.commands.execute('apputils:change-theme', {
+        theme: isDark ? 'JupyterLab Light' : 'JupyterLab Dark',
       });
-      setTheme(isOn ? 'light' : 'dark');
-      setColorMode(isOn ? 'night' : 'day');
+      setTheme(isDark ? 'light' : 'dark');
+      setColorMode(isDark ? 'night' : 'day');
     }
-    setIsOn(!isOn);
+    setDark(!isDark);
   }
-  const handleSwitchChange = (on: boolean) => {
-    setIsOn(on);
+  const handleSwitchChange = (dark: boolean) => {
+    setDark(dark);
   }
-  const onReady = async (jupyterlabAdapter: JupyterLabAppAdapter) => {
-    setJupyterlabAdapter(jupyterlabAdapter);
-    const jupyterlab = jupyterlabAdapter.jupyterlab;
-    await jupyterlab.commands.execute('apputils:reset');
-    const notebookPanel = await jupyterlab.commands.execute('docmanager:open', { path: PATHS[PATH_INDEX], factory: 'Notebook', kernel: { name: 'python3' } }) as NotebookPanel;
-//    const notebookTracker = jupyterlabAdapter.service("@jupyterlab/notebook-extension:tracker") as NotebookTracker;
-    Object.defineProperty((jupyterlabAdapter.shell as any), 'currentWidget', {
+  const onJupyterLab = async (jupyterLabAdapter: JupyterLabAppAdapter) => {
+    setJupyterlabAdapter(jupyterLabAdapter);
+    const jupyterLab = jupyterLabAdapter.jupyterLab;
+    await jupyterLab.commands.execute('apputils:reset');
+    const notebookPanel = await jupyterLab.commands.execute('docmanager:open', {
+      path: PATHS[PATH_INDEX],
+      factory: 'Notebook',
+      kernel: { name: 'python3' },
+    }) as NotebookPanel;
+    Object.defineProperty((jupyterLabAdapter.shell as any), 'currentWidget', {
       get: function() { return notebookPanel },
       set: function(widget: Widget | null) {},
     });
@@ -70,6 +66,10 @@ const JupyterLabHeadlessAppExample = () => {
     boxPanel.spacing = 0;
     boxPanel.addWidget(notebookPanel);
     setBoxPanel(boxPanel);
+  }
+  const onPlugin = (themeManager: ThemeManager) => {
+    // const notebookTracker = jupyterlabAdapter.service("@jupyterlab/notebook-extension:tracker") as NotebookTracker;
+    console.log('Current theme', themeManager.theme);
   }
   return (
     <>
@@ -86,9 +86,9 @@ const JupyterLabHeadlessAppExample = () => {
               <Box>
                 <ToggleSwitch
                   size="small"
-                  onClick={onClick}
+                  onClick={onSwitchClick}
                   onChange={handleSwitchChange}
-                  checked={isOn}
+                  checked={isDark}
                   statusLabelPosition="end"
                   aria-labelledby="switch-label"
                 />
@@ -100,15 +100,16 @@ const JupyterLabHeadlessAppExample = () => {
           <div style={{ position: "relative" }}>
             <Box className="jp-LabShell"
               sx={{
+                position: "relative",
                 '& .dla-Jupyter-Notebook': {
                   height,
                   maxHeight: height,
                   width: '100%',
-                }
+                },
               }}
             >
               <Lumino>{boxPanel}</Lumino>
-            </Box >
+            </Box>
           </div>
         }
         <JupyterLabApp
@@ -121,9 +122,11 @@ const JupyterLabHeadlessAppExample = () => {
           mimeExtensions={[
             mimePlotlyExtension,
           ]}
-          hostId={`jupyterlab-app-example-id`}
           headless={true}
-          onReady={onReady}
+          onJupyterLab={onJupyterLab}
+          pluginId="@jupyterlab/apputils-extension:themes"
+          PluginType={ThemeManager}
+          onPlugin={onPlugin}
         />
       </Jupyter>
     </>

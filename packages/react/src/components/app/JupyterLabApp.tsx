@@ -14,42 +14,48 @@ let _adapter: JupyterLabAppAdapter | undefined = undefined;
 (global as any).__webpack_public_path__ = PageConfig.getOption('fullStaticUrl') + '/';
 
 export type JupyterLabAppProps = {
-  hostId: string;
-  extensions: Array<JupyterLab.IPluginModule>;
-  mimeExtensions: Array<IRenderMime.IExtensionModule>;
-  extensionPromises?: Array<Promise<JupyterLab.IPluginModule>>;
-  mimeExtensionPromises?: Array<Promise<IRenderMime.IExtensionModule>>;
-  position: string;
-  width: string | number;
-  height: string | number;
   devMode: boolean;
+  extensionPromises?: Array<Promise<JupyterLab.IPluginModule>>;
+  extensions: Array<JupyterLab.IPluginModule>;
   headless: boolean;
+  height: string | number;
+  hostId: string;
+  mimeExtensionPromises?: Array<Promise<IRenderMime.IExtensionModule>>;
+  mimeExtensions: Array<IRenderMime.IExtensionModule>;
+  onPlugin?: (plugin: any) => void;
+  onJupyterLab: (jupyterLabAppdapter: JupyterLabAppAdapter) => void;
+  pluginId?: string;
+  PluginType?: any;
+  position: string;
   theme: JupyterLabTheme;
-  onReady: (jupyterlabAppdapter: JupyterLabAppAdapter) => void;
+  width: string | number;
 }
 
 export const JupyterLabApp = (props: JupyterLabAppProps) => {
-  const { hostId, position, height, width, headless, theme, onReady } = props;
+  const {
+    hostId, position, height, width, headless, theme,
+    onJupyterLab, pluginId, PluginType, onPlugin,
+  } = props;
   const { serviceManager, collaborative } = useJupyter();
   const ref = useRef<HTMLDivElement>(null);
   const [_, setAdapter] = useState<JupyterLabAppAdapter>();
   useEffect(() => {
-    if (_adapter) {
-      setAdapter(_adapter);
-      onReady(_adapter);
-      return;
-    }
     if (ref && serviceManager) {
-      const adapter = new JupyterLabAppAdapter({
-        ...props,
-        collaborative,
-        serviceManager,
-      });
-      adapter.ready.then(() => {
-        onReady(adapter);
+      if (!_adapter) {
+        _adapter = new JupyterLabAppAdapter({
+          ...props,
+          collaborative,
+          serviceManager,
+        });
+      }
+      _adapter.ready.then(() => {
+        onJupyterLab(_adapter!);
+        if (pluginId && PluginType && onPlugin) {
+          const plugin = _adapter!.service(pluginId) as typeof PluginType;
+          onPlugin(plugin);
+        }
       });
       setAdapter(_adapter);
-      _adapter = adapter;
     }
   }, [hostId, ref, serviceManager, theme]);
   return (
@@ -72,16 +78,16 @@ export const JupyterLabApp = (props: JupyterLabAppProps) => {
 }
 
 JupyterLabApp.defaultProps = {
-  hostId: "app-example-id",
-  extensions: [],
-  mimeExtensions: [],
-  position: "relative",
-  width: "100%",
-  height: "100vh",
   devMode: false,
-  theme: 'light',
+  extensions: [],
   headless: false,
-  onReady: (jupyterlabAppAdapter: JupyterLabAppAdapter) => {}
+  height: "100vh",
+  hostId: "app-example-id",
+  mimeExtensions: [],
+  onJupyterLab: (jupyterlabAppAdapter: JupyterLabAppAdapter) => {},
+  position: "relative",
+  theme: 'light',
+  width: "100%",
 } as Partial<JupyterLabAppProps>;
 
 export default memo(JupyterLabApp);
