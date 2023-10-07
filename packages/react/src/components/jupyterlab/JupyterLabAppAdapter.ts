@@ -9,7 +9,7 @@ import { JupyterLabAppProps } from "./JupyterLabApp";
 import { JupyterLabAppCorePlugins } from "./JupyterLabAppPlugins";
 /*
 interface IHeadLessLabShell extends ILabShell {
-//  set currentWidget(widget: Widget | null);
+  set currentWidget(widget: Widget | null);
 }
 class HeadlessLabShell extends LabShell implements IHeadLessLabShell {
   private _currentWidget: Widget | null;
@@ -37,8 +37,8 @@ type Plugins = Map<string, Plugin>;
 
 type Props = JupyterLabAppProps & {
   serviceManager: ServiceManager;
-  collaborative: boolean,
-};
+  collaborative: boolean;
+}
 
 export class JupyterLabAppAdapter {
   private _jupyterLab: JupyterLab;
@@ -65,11 +65,10 @@ export class JupyterLabAppAdapter {
 
   private async load(props: Props) {
     const {
-      hostId, extensions, mimeExtensions, collaborative, 
-      extensionPromises, mimeExtensionPromises, devMode, serviceManager
+      hostId, extensions, mimeExtensions, collaborative, splash,
+      extensionPromises, mimeExtensionPromises, devMode, serviceManager,
     } = props;
-    const mimeExtensionPromises2 = mimeExtensionPromises ?? JupyterLabAppCorePlugins(collaborative).mimeExtensionPromises;
-    const mimeExtensionResolved = await Promise.all(mimeExtensionPromises2);
+    const mimeExtensionResolved = await Promise.all(mimeExtensionPromises ?? JupyterLabAppCorePlugins(collaborative).mimeExtensionPromises);
     mimeExtensions.push(...mimeExtensionResolved);
     this._shell = new LabShell();
     this._jupyterLab = new JupyterLab({
@@ -86,16 +85,15 @@ export class JupyterLabAppAdapter {
         matches: [],
       },
     });
-    const extensionPromises2 = extensionPromises ?? JupyterLabAppCorePlugins(collaborative).extensionPromises;
-    const extensionResolved = await Promise.all(extensionPromises2);
+    const extensionResolved = await Promise.all(extensionPromises ?? JupyterLabAppCorePlugins(collaborative).extensionPromises);
     extensions.push(...extensionResolved);
     this._jupyterLab.registerPluginModules(extensions);
-    /*
-    if (headless) {
-      this._jupyterlab.deregisterPlugin('@jupyterlab/apputils-extension:splash', true);
+    if (!splash) {
+      this._jupyterLab.deregisterPlugin('@jupyterlab/apputils-extension:splash', true);
     }
+    /*
     if (collaborative) {
-      this._jupyterlab.deregisterPlugin("@jupyterlab/filebrowser-extension:default-file-browser", true);          
+      this._jupyterLab.deregisterPlugin("@jupyterlab/filebrowser-extension:default-file-browser", true);          
     }
     */
     this._jupyterLab.start({
@@ -106,12 +104,11 @@ export class JupyterLabAppAdapter {
     this._jupyterLab.restored.then(() => {
       this._plugins = (this._jupyterLab as any)['_plugins'];
       this._readyResolve();  
-    })
+    });
   }
 
-  static create(jupyterlab: JupyterLab): JupyterLabAppAdapter {
-    const adapter = new JupyterLabAppAdapter(undefined as any, jupyterlab);
-    return adapter;
+  static create(jupyterLab: JupyterLab): JupyterLabAppAdapter {
+    return new JupyterLabAppAdapter(undefined as any, jupyterLab);
   }
 
   get jupyterLab(): JupyterLab {
@@ -128,6 +125,10 @@ export class JupyterLabAppAdapter {
 
   get commands(): CommandRegistry {
     return this._jupyterLab.commands;
+  }
+
+  get serviceManager(): ServiceManager.IManager {
+    return this._jupyterLab.serviceManager;
   }
 
   get mimeExtensions(): IRenderMime.IExtensionModule[] {

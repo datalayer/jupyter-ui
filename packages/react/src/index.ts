@@ -21,11 +21,6 @@ export * from './jupyter/services/Services';
 export * from './jupyter/kernel/Kernel';
 export * from './jupyter/kernel/KernelModel';
 
-// JupyterLabApp.
-export * from './components/app/JupyterLabApp';
-export * from './components/app/JupyterLabAppAdapter';
-export * from './components/app/JupyterLabAppPlugins';
-
 // Cell.
 export * from './components/cell/Cell';
 export * from './components/cell/CellAdapter';
@@ -33,6 +28,11 @@ export * from './components/cell/CellState';
 
 // CodeMirror Editor.
 export * from './components/codemirror/CodeMirrorEditor';
+
+// JupyterLab.
+export * from './components/jupyterlab/JupyterLabApp';
+export * from './components/jupyterlab/JupyterLabAppAdapter';
+export * from './components/jupyterlab/JupyterLabAppPlugins';
 
 // Notebook.
 export * from './components/notebook/Notebook';

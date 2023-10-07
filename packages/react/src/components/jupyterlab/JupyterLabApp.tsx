@@ -27,6 +27,7 @@ export type JupyterLabAppProps = {
   pluginId?: string;
   PluginType?: any;
   position: string;
+  splash: boolean;
   theme: JupyterLabTheme;
   width: string | number;
 }
@@ -86,6 +87,7 @@ JupyterLabApp.defaultProps = {
   mimeExtensions: [],
   onJupyterLab: (jupyterlabAppAdapter: JupyterLabAppAdapter) => {},
   position: "relative",
+  splash: true,
   theme: 'light',
   width: "100%",
 } as Partial<JupyterLabAppProps>;

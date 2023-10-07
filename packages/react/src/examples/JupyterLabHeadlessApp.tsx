@@ -1,5 +1,3 @@
-/// <reference types="webpack-env" />
-
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Box, Text, ToggleSwitch, ThemeProvider, useTheme } from "@primer/react";
@@ -11,8 +9,8 @@ import { Widget } from '@lumino/widgets';
 import Jupyter from '../jupyter/Jupyter';
 import Lumino from '../jupyter/lumino/Lumino';
 import { JupyterLabTheme } from '../jupyter/lab/JupyterLabTheme';
-import JupyterLabApp from "../components/app/JupyterLabApp";
-import JupyterLabAppAdapter from "../components/app/JupyterLabAppAdapter";
+import JupyterLabApp from "../components/jupyterlab/JupyterLabApp";
+import JupyterLabAppAdapter from "../components/jupyterlab/JupyterLabAppAdapter";
 
 import * as darkThemeExtension from '@jupyterlab/theme-dark-extension';
 import * as lightThemeExtension from '@jupyterlab/theme-light-extension';

@@ -1,8 +1,8 @@
 import { createRoot } from 'react-dom/client';
 import { NotebookPanel } from '@jupyterlab/notebook';
 import Jupyter from '../jupyter/Jupyter';
-import JupyterLabApp from "../components/app/JupyterLabApp";
-import JupyterLabAppAdapter from "../components/app/JupyterLabAppAdapter";
+import JupyterLabApp from "../components/jupyterlab/JupyterLabApp";
+import JupyterLabAppAdapter from "../components/jupyterlab/JupyterLabAppAdapter";
 
 import * as ipywidgetsExtension from '@jupyter-widgets/jupyterlab-manager';
 import * as plotlyExtension from 'jupyterlab-plotly/lib/jupyterlab-plugin';
