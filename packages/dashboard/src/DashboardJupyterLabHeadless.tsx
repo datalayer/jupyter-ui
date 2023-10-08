@@ -5,7 +5,7 @@ import Dashboard from './Dashboard';
 
 import * as lightThemeExtension from '@jupyterlab/theme-light-extension';
 import * as collaborationExtension from '@jupyter/collaboration-extension';
-import * as DashboardExtension from './jupyterlab/index';
+import * as dashboardExtension from './jupyterlab/index';
 
 const ThemeGlobalStyle = createGlobalStyle<any>`
   body {
@@ -25,7 +25,7 @@ const JupyterLabHeadless = () => {
         extensions={[
           lightThemeExtension,
           collaborationExtension,
-          DashboardExtension,
+          dashboardExtension,
         ]}
         headless={true}
         onJupyterLab={onJupyterLab}
