@@ -17,7 +17,7 @@ import { NotebookBlankLayout } from '../../render/layout/NotebookBlankLayout';
 import { NotebookSimpleLayout } from '../../render/layout/NotebookSimpleLayout';
 import { NotebookArticleLayout } from '../../render/layout/NotebookArticleLayout';
 import Identity from './Identity';
-import { requestAPI } from './../../handler';
+import { requestAPI } from '../../jupyterlab/handler';
 
 import 'react-toastify/dist/ReactToastify.css';
 

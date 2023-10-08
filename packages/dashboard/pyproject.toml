@@ -39,6 +39,7 @@ test = [
 
 [project.scripts]
 jupyter-dashboard = "jupyter_dashboard.application:main"
+jupyter-dashboard-server = "jupyter_dashboard.serverapplication:main"
 
 [tool.hatch.version]
 source = "nodejs"

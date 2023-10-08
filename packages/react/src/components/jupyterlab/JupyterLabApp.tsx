@@ -85,7 +85,7 @@ JupyterLabApp.defaultProps = {
   height: "100vh",
   hostId: "app-example-id",
   mimeExtensions: [],
-  onJupyterLab: (jupyterlabAppAdapter: JupyterLabAppAdapter) => {},
+  onJupyterLab: (jupyterLabAppAdapter: JupyterLabAppAdapter) => {},
   position: "relative",
   splash: true,
   theme: 'light',

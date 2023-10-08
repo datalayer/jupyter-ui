@@ -1,6 +1,6 @@
 import { Stack, Card } from '@primer/react-brand';
 import { DashboardGreenIcon } from '@datalayer/icons-react';
-import appState from "../state";
+import appState from "../state/mobx";
 
 const DashboardTab = (): JSX.Element => {
   return (

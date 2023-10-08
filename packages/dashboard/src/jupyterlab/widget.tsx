@@ -1,5 +1,5 @@
 import { ReactWidget } from '@jupyterlab/apputils';
-import DashboardHome from './DashboardHome';
+import DashboardHome from '../Dashboard';
 
 export class DashboardHomeWidget extends ReactWidget {
   constructor() {

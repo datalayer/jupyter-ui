@@ -4,10 +4,10 @@ import { observer } from 'mobx-react';
 import { ThemeProvider as BrandThemeProvider } from '@primer/react-brand'
 import { UnderlineNav } from '@primer/react/drafts';
 import { DashboardGreenIcon } from '@datalayer/icons-react';
-import { requestAPI } from './handler';
+import { requestAPI } from './jupyterlab/handler';
 import DashboardTab from './tabs/DashboardTab';
 import AboutTab from './tabs/AboutTab';
-import appState from "./state";
+import appState from "./state/mobx";
 
 import '@primer/react-brand/lib/css/main.css';
 

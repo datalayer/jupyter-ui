@@ -11,13 +11,13 @@ function shim(regExp) {
 
 const ENTRY = process.env.RENDER == "true"
   ? "./src/render/App"
-  : "./src/App";
+  : "./src/DashboardApp";
 
 const IS_PRODUCTION = process.argv.indexOf('--mode=production') > -1;
 const mode = IS_PRODUCTION ? "production" : "development";
-
 const devtool = IS_PRODUCTION ? false : "inline-source-map";
 const minimize = IS_PRODUCTION ? true : false;
+const publicPath = IS_PRODUCTION ? "/static/jupyter_dashboard/" : "http://localhost:3063/";
 
 module.exports = {
   entry: ENTRY,
@@ -26,8 +26,7 @@ module.exports = {
     port: 3063,
     client: { overlay: false },
     historyApiFallback: true,
-    hot: !IS_PRODUCTION,
-        https: false,
+    https: false,
     server: 'http',
     proxy: {
       /*
@@ -72,7 +71,7 @@ module.exports = {
 //    usedExports: true,
   },
   output: {
-    publicPath: "http://localhost:3063/",
+    publicPath,
 //    filename: '[name].[contenthash].jupyter-dashboard.js',
     filename: '[name].jupyter-dashboard.js',
   },
