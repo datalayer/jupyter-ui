@@ -68,16 +68,16 @@ export class NotebookAdapter {
     this._store = store;
     this._uid = props.uid;
     this._CellSidebar = props.CellSidebar;
-    //
+
     this._boxPanel = new BoxPanel();
     this._boxPanel.addClass('dla-Jupyter-Notebook');
     this._boxPanel.spacing = 0;
     this._commandRegistry = new CommandRegistry();
-    //
-    this.loadNotebook();
+
+    this.load();
   }
 
-  private loadNotebook(): void {
+  private load(): void {
 
     const useCapture = true;
 
@@ -230,28 +230,28 @@ export class NotebookAdapter {
         return item.kernel?.id === this._kernel.id;
       });
       if (model) {
-          try {
-            const session = manager.connectTo({
-              model: {
-                ...model,
-                path: this._path ?? model.path,
-                name: this._path ?? model.name,
-              },
-              kernelConnectionOptions: {
-                handleComms: true,
-              }
-            });
-            (this._context!.sessionContext as any)._handleNewSession(session);
-          }
-          catch (err) {
-            void (this._context!.sessionContext as any)._handleSessionError(err);
-            return Promise.reject(err);
-          }
+        try {
+          const session = manager.connectTo({
+            model: {
+              ...model,
+              path: this._path ?? model.path,
+              name: this._path ?? model.name,
+            },
+            kernelConnectionOptions: {
+              handleComms: true,
+            }
+          });
+          (this._context!.sessionContext as any)._handleNewSession(session);
+        }
+        catch (err) {
+          void (this._context!.sessionContext as any)._handleSessionError(err);
+          return Promise.reject(err);
+        }
       }
       return await (this._context!.sessionContext as any)._startIfNecessary();
-   };
+    };
 
-  const registerIPyWidgets = () => {
+    const registerIPyWidgets = () => {
       switch(this._ipywidgets) { 
         case 'classic': {
           this._notebookPanel!.sessionContext.kernelChanged.connect((
@@ -320,6 +320,7 @@ export class NotebookAdapter {
     this._context.initialize(isNew).then(() => {
       // no-op
     });
+
   }
 
   setupCompleter(notebookPanel: NotebookPanel) {
@@ -390,7 +391,7 @@ export class NotebookAdapter {
   }
 
   /*
-  * Only use this to change an existing nbformat.
+  * Only use this method to change an already existing nbformat.
   */
   setNbformat(nbformat: INotebookContent) {
     if (nbformat === null) {
@@ -468,7 +469,7 @@ export class NotebookAdapter {
       metadata:
         notebook.notebookConfig.defaultCell === 'code'
           ? {
-              // This is an empty cell created by user, thus is trusted
+              // This is an empty cell created by user, thus is trusted.
               trusted: true
             }
           : {}
