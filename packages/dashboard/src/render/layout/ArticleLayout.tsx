@@ -6,16 +6,16 @@ import { SectionIntro, ThemeProvider, Label, Stack, FAQ, InlineLink, Text } from
 import { OutputViewer } from '@datalayer/jupyter-react/lib/components/viewer/output/OutputViewer';
 import { StarIcon } from '@primer/octicons-react';
 import { JupyterBaseIcon } from '@datalayer/icons-react';
-import { ILayout, IDashCell } from '../Types';
-import { getCell } from '../Specs';
+import { IDashboardLayout, IDashboardCell } from '../types/DashboardTypes';
+import { getDashboardCell } from '../specs/DashboardSpecs';
 
 import '@primer/react-brand/lib/css/main.css';
 
-export const NotebookArticleLayout = (props: NotebookArticleLayout.IConfig): JSX.Element => {
+export const ArticleLayout = (props: ArticleLayout.IConfig): JSX.Element => {
   const { notebook, layout, adaptPlotly } = props;
-  const [dashCells, setDashCells] = useState<Array<IDashCell>>();
+  const [dashCells, setDashCells] = useState<Array<IDashboardCell>>();
   useEffect(() => {
-    const dashCells = Object.values((layout as ILayout).outputs)[0];
+    const dashCells = Object.values((layout as IDashboardLayout).outputs)[0];
     setDashCells(dashCells);
   }, [notebook, layout]);
   return (
@@ -42,7 +42,7 @@ export const NotebookArticleLayout = (props: NotebookArticleLayout.IConfig): JSX
           </SectionIntro>
         </section>
         { dashCells.map((dashCell, index) => {
-          const cell = getCell(dashCell.cellId, notebook);
+          const cell = getDashboardCell(dashCell.cellId, notebook);
           return (
             cell
             ?
@@ -162,14 +162,12 @@ export const NotebookArticleLayout = (props: NotebookArticleLayout.IConfig): JSX
   )
 }
 
-export namespace NotebookArticleLayout {
-
+export namespace ArticleLayout {
   export type IConfig = {
     notebook: INotebookContent;
-    layout: ILayout;
+    layout: IDashboardLayout;
     adaptPlotly: boolean;
   }
-
 }
 
-export default NotebookArticleLayout;
+export default ArticleLayout;

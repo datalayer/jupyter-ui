@@ -1,9 +1,9 @@
 import { createRoot } from 'react-dom/client';
-import Render from './Render';
+import DashboardRender from './DashboardRender';
 
 window.onload = () => {
   const div = document.createElement('div');
   document.body.appendChild(div);
   const root = createRoot(div)
-  root.render(<Render />);
+  root.render(<DashboardRender />);
 }

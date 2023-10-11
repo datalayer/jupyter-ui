@@ -3,16 +3,16 @@ import { useState, useEffect } from 'react';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { Box } from '@primer/react';
 import { OutputViewer } from '@datalayer/jupyter-react/lib/components/viewer/output/OutputViewer';
-import { ILayout, IDashCell } from '../Types';
-import { getCell } from '../Specs';
+import { IDashboardLayout, IDashboardCell } from '../types/DashboardTypes';
+import { getDashboardCell } from '../specs/DashboardSpecs';
 
 import '@primer/react-brand/lib/css/main.css'
 
-export const NotebookBlankLayout = (props: NotebookBlankLayout.IConfig): JSX.Element => {
+export const BlankLayout = (props: BlankLayout.IConfig): JSX.Element => {
   const { notebook, layout, adaptPlotly } = props;
-  const [dashCells, setDashCells] = useState<Array<IDashCell>>();
+  const [dashCells, setDashCells] = useState<Array<IDashboardCell>>();
   useEffect(() => {
-    const dashCells = Object.values((layout as ILayout).outputs)[0];
+    const dashCells = Object.values((layout as IDashboardLayout).outputs)[0];
     setDashCells(dashCells);
   }, [notebook, layout]);
   return (
@@ -20,7 +20,7 @@ export const NotebookBlankLayout = (props: NotebookBlankLayout.IConfig): JSX.Ele
     ? (
       <>
         { dashCells.map((dashCell, index) => {
-          const cell = getCell(dashCell.cellId, notebook);
+          const cell = getDashboardCell(dashCell.cellId, notebook);
           return (
             cell
             ?
@@ -47,14 +47,12 @@ export const NotebookBlankLayout = (props: NotebookBlankLayout.IConfig): JSX.Ele
   )
 }
 
-export namespace NotebookBlankLayout {
-
+export namespace BlankLayout {
   export type IConfig = {
     notebook: INotebookContent;
-    layout: ILayout;
+    layout: IDashboardLayout;
     adaptPlotly: boolean;
   }
-
 }
 
-export default NotebookBlankLayout;
+export default BlankLayout;

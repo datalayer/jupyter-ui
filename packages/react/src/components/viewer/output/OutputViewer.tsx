@@ -3,8 +3,8 @@ import Lumino from '../../../jupyter/lumino/Lumino';
 import OutputAdapter from './OutputAdapter';
 
 type Props = {
-  cell: ICell,
-  adaptPlotly: boolean,
+  cell: ICell;
+  adaptPlotly: boolean;
 }
 
 export const OutputViewer = (props: Props) => {

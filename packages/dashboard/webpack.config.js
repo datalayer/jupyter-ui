@@ -10,7 +10,7 @@ function shim(regExp) {
 }
 
 const ENTRY = process.env.RENDER == "true"
-  ? "./src/render/App"
+  ? "./src/render/DashboardRenderApp"
   : "./src/DashboardApp";
 
 const IS_PRODUCTION = process.argv.indexOf('--mode=production') > -1;

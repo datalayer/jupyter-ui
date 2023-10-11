@@ -6,15 +6,17 @@ import { NetworkIcon, JupyterBaseIcon, JupiterIcon, ScientistIcon } from '@datal
 import Jupyter from '../jupyter/Jupyter';
 import Viewer from '../components/viewer/Viewer';
 
+import("./../jupyter/lab/JupyterLabCssImports");
+
 type NotebookExample = {
-  title: string,
-  url: string,
+  title: string;
+  url: string;
 }
 
-const visualisations: NotebookExample[] = [
+const visualisationExamples: NotebookExample[] = [
   {
-    title: "Plotly Presentation",
-    url: "https://raw.githubusercontent.com/jstac/quantecon_nyu_2016/master/lecture9/Plotly_Presentation.ipynb",
+    title: "Plotly Daily Stocks",
+    url: "https://raw.githubusercontent.com/datalayer-examples/notebooks/main/daily-stock.ipynb",
   },
   {
     title: "Matplotlib",
@@ -30,7 +32,7 @@ const visualisations: NotebookExample[] = [
   }, 
 ]
 
-const dataSciences: NotebookExample[] = [
+const dataScienceExamples: NotebookExample[] = [
   {
     title: "Fair Experiment",
     url: "https://raw.githubusercontent.com/datalayer-courses/foundations-of-data-science-with-python/main/04-probability1/fair-experiments.ipynb",
@@ -45,7 +47,7 @@ const dataSciences: NotebookExample[] = [
   },
 ]
 
-const astronomies: NotebookExample[] = [
+const astronomyExamples: NotebookExample[] = [
   {
     title: "Center of Mass",
     url: "https://raw.githubusercontent.com/JuanCab/AstroInteractives/master/Interactives/Center_of_Mass.ipynb",
@@ -59,9 +61,9 @@ const astronomies: NotebookExample[] = [
 ]
 
 type MenuLineProps = {
-  notebookExample: NotebookExample,
-  setNotebookExample: React.Dispatch<React.SetStateAction<NotebookExample>>,
-  icon: JSX.Element,
+  notebookExample: NotebookExample;
+  setNotebookExample: React.Dispatch<React.SetStateAction<NotebookExample>>;
+  icon: JSX.Element;
 }
 
 const MenuLine = (props: MenuLineProps) => {
@@ -80,39 +82,39 @@ const MenuLine = (props: MenuLineProps) => {
 }
 
 const ViewerExample = () => {
-  const [notebookExample, setNotebookExample] = useState<NotebookExample>(visualisations[0]);
+  const [notebookExample, setNotebookExample] = useState<NotebookExample>(visualisationExamples[0]);
   const [nbformat, setNbformat] = useState<INotebookContent>();
   useEffect(() => {
     fetch(notebookExample.url)
       .then(response => {
         return response.text();
       })
-      .then(nb => {
-        const nbformat = nb.replaceAll('\\n', '');
+      .then(nbformat => {
+//        const nbformat = nb.replaceAll('\\n', '');
         setNbformat(JSON.parse(nbformat));
       });
   }, [notebookExample]);
-
   return (
     <>
       <Box m={3}>
-        <Jupyter>
+        <Jupyter startDefaultKernel={false} disableCssLoading={true}>
           <ActionMenu>
             <ActionMenu.Button leadingVisual={() => <JupyterBaseIcon colored/>}>
               Jupyter Viewer
             </ActionMenu.Button>
             <ActionMenu.Overlay>
               <ActionList showDividers>
-                <ActionList.Group title="Visualisations">
-                  {visualisations.map(visualisation => 
-                    <MenuLine notebookExample={visualisation} icon={<NetworkIcon colored/>} setNotebookExample={setNotebookExample} />)}
-                </ActionList.Group>                <ActionList.Group title="Data Science">
-                  {dataSciences.map(dataScience => 
-                    <MenuLine notebookExample={dataScience} icon={<ScientistIcon colored/>} setNotebookExample={setNotebookExample} />)}
+                <ActionList.Group title="Visualisation">
+                  {visualisationExamples.map(example =>
+                    <MenuLine notebookExample={example} icon={<NetworkIcon colored/>} setNotebookExample={setNotebookExample} key={example.url} />)}
+                </ActionList.Group>
+                <ActionList.Group title="Data Science">
+                  {dataScienceExamples.map(example =>
+                    <MenuLine notebookExample={example} icon={<ScientistIcon colored/>} setNotebookExample={setNotebookExample} key={example.url} />)}
                 </ActionList.Group>
                 <ActionList.Group title="Astronomy">
-                  {astronomies.map(astronomy => 
-                    <MenuLine notebookExample={astronomy} icon={<JupiterIcon colored/>} setNotebookExample={setNotebookExample} />)}
+                  {astronomyExamples.map(example =>
+                    <MenuLine notebookExample={example} icon={<JupiterIcon colored/>} setNotebookExample={setNotebookExample} key={example.url} />)}
                 </ActionList.Group>
               </ActionList>
             </ActionMenu.Overlay>

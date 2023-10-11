@@ -119,6 +119,7 @@ export class RenderedPlotly extends Widget implements IRenderMime.IRenderer {
   }
 
   private createGraph(model: IRenderMime.IMimeModel): Promise<void> {
+    console.log('---', model)
     const { data, layout, frames, config } = model.data[this._mimeType] as
       | any
       | IPlotlySpec;
@@ -219,6 +220,7 @@ export class RenderedPlotly extends Widget implements IRenderMime.IRenderer {
 export const rendererFactory: IRenderMime.IRendererFactory = {
   safe: true,
   mimeTypes: [MIME_TYPE],
+  defaultRank: 10,
   createRenderer: (options) => new RenderedPlotly(options),
 };
 
@@ -226,7 +228,7 @@ const extensions: IRenderMime.IExtension | IRenderMime.IExtension[] = [
   {
     id: "@jupyterlab/plotly-extension:factory",
     rendererFactory,
-    rank: 0,
+    rank: 1,
     dataType: "json",
     fileTypes: [
       {

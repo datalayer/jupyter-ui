@@ -5,8 +5,8 @@ import InputViewer from './input/InputViewer';
 import { newUuid } from '../../utils/Utils';
 
 type Props = {
-  nbformat: INotebookContent,
-  outputs: boolean,
+  nbformat: INotebookContent;
+  outputs: boolean;
 }
 
 export const Viewer = (props: Props) => {
@@ -20,8 +20,11 @@ export const Viewer = (props: Props) => {
       {model?.cells.map(cell => {
         return (
           <div key={cell.id?.toString() || newUuid()}>
-            <InputViewer cell={cell} languageInfo={nbformat.metadata.language_info}/>
-            {/* outputs && <OutputViewer cell={cell}/> */}
+            <InputViewer
+              cell={cell}
+              languageInfo={nbformat.metadata.language_info}
+            />
+           {/* cell.outputs && <OutputViewer cell={cell}/> */}
           </div>
         )
       })}

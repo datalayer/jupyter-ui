@@ -1,4 +1,4 @@
-"""Publication handler."""
+"""Dashboard publication handler."""
 
 import json
 import uuid
@@ -12,23 +12,18 @@ from jupyter_server.extension.handler import ExtensionHandlerMixin
 
 # pylint: disable=W0223
 class PublishHandler(ExtensionHandlerMixin, APIHandler):
-    """The handler for publication."""
+    """The handler for dashboard publication."""
 
     @tornado.web.authenticated
     async def post(self, path: str = ""):
-
         data = self.get_json_body()
-
         dashboard_id = str(uuid.uuid4())
         dashboard_file_name = dashboard_id + '.html'
         notebook_file_name = dashboard_id + '.ipynb'
-
         notebook = data['notebook']
         layout = data['layout']
         config = data['config']
-
         config['notebookUrl'] = notebook_file_name
-
         index_page = f"""<!DOCTYPE html>
 <html>
   <head>
@@ -48,16 +43,13 @@ class PublishHandler(ExtensionHandlerMixin, APIHandler):
   </body>
 </html>
 """
-
         s3 = boto3.resource('s3')
         bucket = s3.Bucket('jupyter-dashboards')
-
         bucket.put_object(
             Key = dashboard_file_name,
             Body = index_page,
             ContentType = 'text/html'
         )
-
         bucket.put_object(
             Key = notebook_file_name,
             Body = json.dumps(notebook),
@@ -72,7 +64,6 @@ class PublishHandler(ExtensionHandlerMixin, APIHandler):
             Body = index_page
             ContentType='text/html',
         )
-
         notebook_object = s3.Object(
             bucket_name = 'jupyter-dashboards', 
             key = notebook_file_name,
@@ -82,7 +73,6 @@ class PublishHandler(ExtensionHandlerMixin, APIHandler):
             ContentType='text/html',
         )
         """
-
         response = {
             "success": True,
             "message": "The dashboard is published",

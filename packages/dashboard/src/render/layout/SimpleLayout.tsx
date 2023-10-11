@@ -4,16 +4,16 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 import { Box } from '@primer/react';
 import { Pillar, ThemeProvider, FAQ, InlineLink, Text } from '@primer/react-brand';
 import { OutputViewer } from '@datalayer/jupyter-react/lib/components/viewer/output/OutputViewer';
-import { ILayout, IDashCell } from '../Types';
-import { getCell } from '../Specs';
+import { IDashboardLayout, IDashboardCell } from '../types/DashboardTypes';
+import { getDashboardCell } from '../specs/DashboardSpecs';
 
 import '@primer/react-brand/lib/css/main.css'
 
-export const NotebookSimpleLayout = (props: NotebookSimpleLayout.IConfig): JSX.Element => {
+export const SimpleLayout = (props: SimpleLayout.IConfig): JSX.Element => {
   const { notebook, layout, adaptPlotly } = props;
-  const [dashCells, setDashCells] = useState<Array<IDashCell>>();
+  const [dashCells, setDashCells] = useState<Array<IDashboardCell>>();
   useEffect(() => {
-    const dashCells = Object.values((layout as ILayout).outputs)[0];
+    const dashCells = Object.values((layout as IDashboardLayout).outputs)[0];
     setDashCells(dashCells);
   }, [notebook, layout]);
   return (
@@ -28,7 +28,7 @@ export const NotebookSimpleLayout = (props: NotebookSimpleLayout.IConfig): JSX.E
           <Pillar.Link href="https://jupyter.org">Learn more</Pillar.Link>
         </Pillar>
         { dashCells.map((dashCell, index) => {
-          const cell = getCell(dashCell.cellId, notebook);
+          const cell = getDashboardCell(dashCell.cellId, notebook);
           return (
             cell
             ?
@@ -148,14 +148,12 @@ export const NotebookSimpleLayout = (props: NotebookSimpleLayout.IConfig): JSX.E
   )
 }
 
-export namespace NotebookSimpleLayout {
-
+export namespace SimpleLayout {
   export type IConfig = {
     notebook: INotebookContent;
-    layout: ILayout;
+    layout: IDashboardLayout;
     adaptPlotly: boolean;
   }
-
 }
 
-export default NotebookSimpleLayout;
+export default SimpleLayout;

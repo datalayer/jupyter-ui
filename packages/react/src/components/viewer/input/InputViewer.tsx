@@ -1,18 +1,21 @@
 import { EditorThemeRegistry, EditorLanguageRegistry, CodeMirrorEditorFactory, EditorExtensionRegistry, ybinding } from '@jupyterlab/codemirror';
-import { RenderMimeRegistry, standardRendererFactories as initialFactories } from '@jupyterlab/rendermime';
+import { RenderMimeRegistry, standardRendererFactories } from '@jupyterlab/rendermime';
 import { Cell, CodeCell, MarkdownCell, RawCell, CodeCellModel, MarkdownCellModel, RawCellModel } from '@jupyterlab/cells';
 import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
 import { ICell, ILanguageInfoMetadata } from '@jupyterlab/nbformat';
 import { createStandaloneCell, YCodeCell, YMarkdownCell, YRawCell, IYText } from '@jupyter/ydoc';
+import { rendererFactory as plotlyFactory } from './../../../jupyter/renderers/plotly/PlotlyRenderer';
 import { getMarked } from './../../notebook/marked/marked';
 import Lumino from '../../../jupyter/lumino/Lumino';
+import { newUuid } from '../../../utils/Utils';
 
 type Props = {
-  cell: ICell,
-  languageInfo?: ILanguageInfoMetadata,
+  cell: ICell;
+  languageInfo?: ILanguageInfoMetadata;
 }
 
 const themes = new EditorThemeRegistry();
+
 const editorExtensions = () => {
   const registry = new EditorExtensionRegistry();
   for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions({ themes })) {
@@ -32,6 +35,7 @@ const editorExtensions = () => {
   });
   return registry;
 }
+
 const languages = new EditorLanguageRegistry();
 for (const language of EditorLanguageRegistry.getDefaultLanguages()) {
   languages.addLanguage(language);
@@ -47,11 +51,14 @@ languages.addLanguage({
     });
   }
 });
+
+const renderFactories = standardRendererFactories.concat(plotlyFactory);
 const rendermime = new RenderMimeRegistry({
-  initialFactories,
+  initialFactories: renderFactories,
   latexTypesetter: new MathJaxTypesetter(),
   markdownParser: getMarked(languages),
 });
+
 const factoryService = new CodeMirrorEditorFactory({
   extensions: editorExtensions(),
   languages,
@@ -59,6 +66,7 @@ const factoryService = new CodeMirrorEditorFactory({
 
 export const InputViewer = (props: Props) => {
   const { cell, languageInfo } = props;
+  const id = cell.id as string || newUuid();
   switch(cell.cell_type) {
     case 'code': {
       const codeCell = new CodeCell({
@@ -78,7 +86,7 @@ export const InputViewer = (props: Props) => {
       }
       return (
         <>
-          <Lumino>{codeCell}</Lumino>
+          <Lumino id={id}>{codeCell}</Lumino>
         </>
       );
     }
@@ -95,7 +103,7 @@ export const InputViewer = (props: Props) => {
       }).initializeState();
       return (
         <>
-          <Lumino>{markdownCell}</Lumino>
+          <Lumino id={id}>{markdownCell}</Lumino>
         </>
       );
     }
@@ -110,7 +118,7 @@ export const InputViewer = (props: Props) => {
       });
       return (
         <>
-          <Lumino>{rawCell}</Lumino>
+          <Lumino id={id}>{rawCell}</Lumino>
         </>
       );
     }

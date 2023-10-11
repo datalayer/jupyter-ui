@@ -13,18 +13,19 @@ function shim(regExp) {
 const ENTRY =
 // "./src/app/App";
 // "./src/examples/JupyterLabApp";
-"./src/examples/JupyterLabHeadlessApp";
+// "./src/examples/JupyterLabHeadlessApp";
 // "./src/examples/Matplotlib";
 // "./src/examples/Notebook";
 // "./src/examples/NotebookKernelChange";
 // "./src/examples/NotebookModel";
 // "./src/examples/NotebookModelChange";
 // "./src/examples/NotebookThemed";
+"./src/examples/Viewer";
 
 const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == "true";
+// const JUPYTER_HOST = IS_JUPYTER_SERVER_LOCAL ? "http://localhost:8686" : "https://oss.datalayer.tech";
 const INDEX_PAGE = IS_JUPYTER_SERVER_LOCAL ? "index-local.html" : "index.html";
 const IS_PRODUCTION = process.argv.indexOf('--mode=production') > -1;
-// const JUPYTER_HOST = IS_JUPYTER_SERVER_LOCAL ? "http://localhost:8686" : "https://oss.datalayer.tech";
 const mode = IS_PRODUCTION ? "production" : "development";
 const devtool = IS_PRODUCTION ? false : "inline-source-map";
 const minimize = IS_PRODUCTION ? true : false;

@@ -11,11 +11,11 @@ import { IDashboardTracker } from './../../editor/dashboard';
 import { CLASSIC_RENDER_WIDGET_FACTORY } from '../classic/plugin';
 import { VIEWER_WIDGET_FACTORY } from '../viewer/plugin';
 import { DashboardDocument } from './../../editor/dashboard';
-import { ILayout } from '../../render/Types';
-import { ILayoutVariant } from '../../render/Types';
-import { NotebookBlankLayout } from '../../render/layout/NotebookBlankLayout';
-import { NotebookSimpleLayout } from '../../render/layout/NotebookSimpleLayout';
-import { NotebookArticleLayout } from '../../render/layout/NotebookArticleLayout';
+import { IDashboardLayout } from '../../render/types/DashboardTypes';
+import { IDashboardLayoutVariant } from '../../render/types/DashboardTypes';
+import { BlankLayout } from '../../render/layout/BlankLayout';
+import { SimpleLayout } from '../../render/layout/SimpleLayout';
+import { ArticleLayout } from '../../render/layout/ArticleLayout';
 import Identity from './Identity';
 import { requestAPI } from '../../jupyterlab/handler';
 
@@ -36,7 +36,7 @@ const NotebookHeader = (props: Props) => {
   const [dashboardUrl, setDashboardUrl] = useState<string>();
   const [publishing, setPublishing] = useState<boolean>(false);
   const [showPreview, setShowPreview] = useState(false);
-  const [layoutVariant, setLayoutVariant] = useState<ILayoutVariant>('blank');
+  const [layoutVariant, setLayoutVariant] = useState<IDashboardLayoutVariant>('blank');
   useEffect(() => {
     const portalName = "notebook-header-dropdown-portal";
     registerPortalRoot(notebookPanel.node, portalName);
@@ -110,11 +110,11 @@ const NotebookHeader = (props: Props) => {
   };
   const PreviewContent = () => {
     const [notebook, setNotebook] = useState<INotebookContent>();
-    const [layout, setLayout] = useState<ILayout>();
+    const [layout, setLayout] = useState<IDashboardLayout>();
     useEffect(() => {
       const notebook = notebookPanel.context.model.toJSON() as INotebookContent;
       setNotebook(notebook);
-      const layout = dashboardDocument!.context.model.toJSON() as any as ILayout;
+      const layout = dashboardDocument!.context.model.toJSON() as any as IDashboardLayout;
       setLayout(layout);
       /*
       dashboardDocument!.context.model.contentChanged.connect((_, content) => {
@@ -136,9 +136,9 @@ const NotebookHeader = (props: Props) => {
             />
           </Box>
         </Box>
-        { layoutVariant === 'blank' && notebook && layout && <NotebookBlankLayout notebook={notebook} layout={layout} adaptPlotly={false} /> }
-        { layoutVariant === 'simple' && notebook && layout && <NotebookSimpleLayout notebook={notebook} layout={layout} adaptPlotly={false} /> }
-        { layoutVariant === 'article' && notebook && layout && <NotebookArticleLayout notebook={notebook} layout={layout} adaptPlotly={false} /> }
+        { layoutVariant === 'blank' && notebook && layout && <BlankLayout notebook={notebook} layout={layout} adaptPlotly={false} /> }
+        { layoutVariant === 'simple' && notebook && layout && <SimpleLayout notebook={notebook} layout={layout} adaptPlotly={false} /> }
+        { layoutVariant === 'article' && notebook && layout && <ArticleLayout notebook={notebook} layout={layout} adaptPlotly={false} /> }
       </Box>
     )
   }
