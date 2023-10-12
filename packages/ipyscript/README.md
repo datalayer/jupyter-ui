@@ -9,7 +9,14 @@
 
 > IPyWidgets for PyScript.
 
-A Custom Jupyter Widget Library
+A Custom Jupyter Widget Library.
+
+## Examples
+
+Examples of ipyscript projects:
+
+- https://leriomaggio.pyscriptapps.com/simple-panel-application/latest/
+- https://pyscript.com/@leriomaggio/simple-panel-application/latest
 
 ## Installation
 

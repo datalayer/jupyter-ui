@@ -5,9 +5,9 @@ import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
 import { ICell, ILanguageInfoMetadata } from '@jupyterlab/nbformat';
 import { createStandaloneCell, YCodeCell, YMarkdownCell, YRawCell, IYText } from '@jupyter/ydoc';
 import { rendererFactory as plotlyFactory } from './../../../jupyter/renderers/plotly/PlotlyRenderer';
+import { newUuid } from '../../../utils/Utils';
 import { getMarked } from './../../notebook/marked/marked';
 import Lumino from '../../../jupyter/lumino/Lumino';
-import { newUuid } from '../../../utils/Utils';
 
 type Props = {
   cell: ICell;
