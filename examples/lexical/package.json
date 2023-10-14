@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@datalayer/jupyter-lexical": "0.0.1",
-    "@datalayer/primer-addons": "0.1.5",
+    "@datalayer/primer-addons": "0.1.8",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-json-tree": "0.17.0"
@@ -55,6 +55,7 @@
     "process": "0.11.10",
     "raw-loader": "4.0.2",
     "rimraf": "3.0.2",
+    "stream": "0.0.2",
     "stream-browserify": "2.0.2",
     "style-loader": "2.0.0",
     "svg-url-loader": "7.1.1",

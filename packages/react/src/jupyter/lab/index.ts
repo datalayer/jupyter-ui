@@ -3,7 +3,7 @@ import { MainAreaWidget, ICommandPalette, WidgetTracker } from '@jupyterlab/appu
 import { ILauncher } from '@jupyterlab/launcher';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { ServerConnection } from '@jupyterlab/services';
-import icon from '@datalayer/icons-react/data2/AtomSymbolIconLabIcon';
+import icon from '@datalayer/icons-react/data2/AtomSymbolIconJupyterLab';
 import { requestAPI } from './../JupyterHandlers';
 import { JupyterReactWidget } from './widget';
 import notebookContentFactoryPlugin from './notebook/content/plugin';

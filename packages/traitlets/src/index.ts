@@ -70,7 +70,7 @@ const plugin: JupyterFrontEndPlugin<IJupytertraitlets> = {
         rank: 4,
       });
     }
-    console.log('JupyterLab plugin @datalayer/jupyter-traitlets is activated!');
+    console.log('JupyterLab plugin @datalayer/jupyter-traitlets:plugin is activated.');
     if (settingRegistry) {
       settingRegistry
         .load(plugin.id)
