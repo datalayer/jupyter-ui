@@ -4,9 +4,11 @@ import Jupyter from '../jupyter/Jupyter';
 import JupyterLabApp from "../components/jupyterlab/JupyterLabApp";
 import JupyterLabAppAdapter from "../components/jupyterlab/JupyterLabAppAdapter";
 
+import * as lightThemeExtension from '@jupyterlab/theme-light-extension';
 import * as ipywidgetsExtension from '@jupyter-widgets/jupyterlab-manager';
 import * as plotlyExtension from 'jupyterlab-plotly/lib/jupyterlab-plugin';
 import * as mimePlotlyExtension from 'jupyterlab-plotly/lib/plotly-renderer';
+import * as reactExtension from './../jupyter/lab/index';
 
 const JupyterLabAppExample = () => {
   const onJupyterLab = async (jupyterLabAdapter: JupyterLabAppAdapter) => {
@@ -19,8 +21,10 @@ const JupyterLabAppExample = () => {
   return (
     <JupyterLabApp
       extensions={[
+        lightThemeExtension,
         ipywidgetsExtension,
         plotlyExtension,
+        reactExtension,
       ]}
       mimeExtensions={[
         mimePlotlyExtension,

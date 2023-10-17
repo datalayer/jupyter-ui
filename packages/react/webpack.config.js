@@ -17,10 +17,10 @@ const ENTRY =
 // "./src/examples/Matplotlib";
 // "./src/examples/Notebook";
 // "./src/examples/NotebookKernelChange";
-// "./src/examples/NotebookModel";
+ "./src/examples/NotebookModel";
 // "./src/examples/NotebookModelChange";
 // "./src/examples/NotebookThemed";
-"./src/examples/Viewer";
+// "./src/examples/Viewer";
 
 const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == "true";
 // const JUPYTER_HOST = IS_JUPYTER_SERVER_LOCAL ? "http://localhost:8686" : "https://oss.datalayer.tech";
