@@ -68,8 +68,9 @@ yarn start-local
 
 The used Jupyter Server configuration is available [in this jupyter_server_config.py](https://github.com/datalayer/jupyter-ui/blob/main/dev/config/jupyter_server_config.py). The important part of that configuration is the `Security` part where the settings for CORS access are defined.
 
-The [index-local.html](https://github.com/datalayer/jupyter-ui/blob/main/packages/react/public/index-local.html) is also used to defined the location of the Jupyter Server
+Additionally, you can to define in the head section your host index HTML page information for your React application about the location of your Juptyer Server.
 
+See for example the content of this [index-local.html](https://github.com/datalayer/jupyter-ui/blob/main/packages/react/public/index-local.html).
 ```html
 <script id="datalayer-config-data" type="application/json">
   {
@@ -77,6 +78,24 @@ The [index-local.html](https://github.com/datalayer/jupyter-ui/blob/main/package
     "jupyterServerWsUrl": "wss://oss.datalayer.tech/api/jupyter",
     "jupyterToken": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
   }
+  </script>
+```
+
+If you are using the [JupyterLabApp](/docs/components/jupyterlabapp) component, additional information will be needed (see [index-local.html](https://github.com/datalayer/jupyter-ui/blob/main/packages/react/public/index-local.html))
+
+```html
+  <script id="jupyter-config-data" type="application/json">
+    {
+      "baseUrl": "https://oss.datalayer.tech/api/jupyter",
+      "wsUrl": "wss://oss.datalayer.tech/api/jupyter",
+      "token": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6",
+      "appUrl": "/lab",
+      "themesUrl": "/lab/api/themes",
+      "disableRTC": false,
+      "terminalsAvailable": "false",
+      "mathjaxUrl": "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js",
+      "mathjaxConfig": "TeX-AMS_CHTML-full,Safe"
+    }
   </script>
 ```
 

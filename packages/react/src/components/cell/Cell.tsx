@@ -61,30 +61,22 @@ export const Cell = (props: ICellProps) => {
       <Box
         sx={{
           '& .dla-Jupyter-Cell': {
-//            height: '100% !important',
-//            marginTop: '30px',
             position: 'relative !important' as any,
             contain: 'content !important' as any,
           },
           '& .jp-Toolbar': {
-//            display: 'none',
             height: 'auto !important',
             position: 'relative',
           },
           '& .lm-BoxPanel': {
-//            height: 'auto !important',
-//            minHeight: 'auto !important',
             position: 'relative',
           },
           '& .jp-Cell': {
-//            width: '100%',
-//            height: '100% !important',
             position: 'relative',
           },
           '& .jp-CodeCell': {
             height: 'auto !important',
             position: 'relative',
-//            top: 'auto !important',
           },
           '& .jp-Cell-outputArea': {
             paddingBottom: '30px',

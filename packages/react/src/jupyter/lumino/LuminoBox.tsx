@@ -3,13 +3,13 @@ import { unmountComponentAtNode } from 'react-dom';
 import { Widget, BoxPanel } from '@lumino/widgets';
 import { Box } from '@primer/react';
 
-type Props = {
+type LuminoBoxProps = {
   id?: string;
   height: number | string;
   children: Widget;
 }
 
-export const LuminoBox = (props: Props) => {
+export const LuminoBox = (props: LuminoBoxProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const { id, height, children } = props;
   useEffect(() => {

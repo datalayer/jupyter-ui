@@ -13,7 +13,11 @@ body {
   background-color: white !important;
 }
 
-h1, h2, h3, h4, h5, h6, p {
+.hero__title, .hero__subtitle {
+  color: white !important;
+}
+
+.container {
   color: rgb(28, 30, 33) !important;
 /*  color: var(--ifm-heading-color) !important; */
 }
@@ -25,7 +29,6 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 /* You can override the default Infima variables here. */
-
 :root {
   --ifm-color-primary: #25c2a0;
   --ifm-color-primary-dark: rgb(33, 175, 144);

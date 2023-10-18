@@ -2,9 +2,9 @@
 description: A demonstation of the Cell component.
 ---
 
-import JupyterCell from '@theme/JupyterCell';
-
 # Cell Demo
+
+import JupyterCell from '@theme/JupyterCell';
 
 :::tip
 
@@ -15,6 +15,9 @@ Type your code in the below cell and hit `SHIFT+ENTER` to execute your  code.
 :::
 
 <JupyterCell
+  serverHttpUrl='https://oss.datalayer.tech/api/jupyter'
+  serverWsUrl='wss://oss.datalayer.tech/api/jupyter'
+  token='60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6'
   source= {`import numpy as np
 import matplotlib.pyplot as plt
 x1 = np.linspace(0.0, 5.0)
@@ -29,7 +32,4 @@ ax2.plot(x2, y2, '.-')
 ax2.set_xlabel('time (s)')
 ax2.set_ylabel('Undamped')
 plt.show()`}
-  serverHttpUrl='https://oss.datalayer.tech/api/jupyter'
-  serverWsUrl='wss://oss.datalayer.tech/api/jupyter'
-  token='60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6'
- />
+/>

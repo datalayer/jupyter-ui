@@ -2,12 +2,12 @@ import { useRef, useEffect } from 'react';
 import { unmountComponentAtNode } from 'react-dom';
 import { Widget } from '@lumino/widgets';
 
-type Props = {
+type LuminoProps = {
   id?: string;
   children: Widget;
 }
 
-export const Lumino = (props: Props) => {
+export const Lumino = (props: LuminoProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const { children, id } = props;
   useEffect(() => {
