@@ -62,7 +62,7 @@ const jupyterReactPlugin: JupyterFrontEndPlugin<void> = {
       launcher.add({
         command,
         category,
-        rank: 3.4,
+        rank: 2.4,
       });
     }
     if (settingRegistry) {

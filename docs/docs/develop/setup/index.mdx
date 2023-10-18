@@ -47,16 +47,15 @@ If you just want to develop the core package of the repository, the `@datalayer/
 ```bash
 cd packages/react
 yarn build
-yarn start # start and example defined in the webpack.config.js file.
 ```
 
-## Examples
+## Simple Example
 
 Now you can start an example and hack the source code. The changes will build automatically and will be available in your browser.
 
 ```bash
 # open http://localhost:3208
-yarn start
+yarn start # start and example defined in the packages/react/webpack.config.js file.
 ```
 
 This will consume kernels from the Datalayer development server in the cloud. You can run your own server with the following command.
@@ -68,9 +67,8 @@ yarn start-local
 
 The used Jupyter Server configuration is available [in this jupyter_server_config.py](https://github.com/datalayer/jupyter-ui/blob/main/dev/config/jupyter_server_config.py). The important part of that configuration is the `Security` part where the settings for CORS access are defined.
 
-Additionally, you can to define in the head section your host index HTML page information for your React application about the location of your Juptyer Server.
+Additionally, you can to define in the head section your host index HTML page information for your React application about the location of your Juptyer Server (see for example the content of this [index-local.html](https://github.com/datalayer/jupyter-ui/blob/main/packages/react/public/index-local.html)).
 
-See for example the content of this [index-local.html](https://github.com/datalayer/jupyter-ui/blob/main/packages/react/public/index-local.html).
 ```html
 <script id="datalayer-config-data" type="application/json">
   {
@@ -98,6 +96,8 @@ If you are using the [JupyterLabApp](/docs/components/jupyterlabapp) component, 
     }
   </script>
 ```
+
+## Other Examples
 
 We have more examples, pick one of the following commands and enjoy.
 
