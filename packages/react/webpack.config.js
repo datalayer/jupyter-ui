@@ -13,13 +13,14 @@ function shim(regExp) {
 const ENTRY =
 // "./src/app/App";
 // "./src/examples/JupyterLabApp";
-// "./src/examples/JupyterLabHeadlessApp";
+"./src/examples/JupyterLabHeadlessApp";
 // "./src/examples/Matplotlib";
 // "./src/examples/Notebook";
 // "./src/examples/NotebookKernelChange";
- "./src/examples/NotebookModel";
+// "./src/examples/NotebookModel";
 // "./src/examples/NotebookModelChange";
 // "./src/examples/NotebookThemed";
+// "./src/examples/Terminal";
 // "./src/examples/Viewer";
 
 const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == "true";

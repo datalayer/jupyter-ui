@@ -21,7 +21,7 @@ export const JupyterLabCss = (props: Props) => {
     import('@jupyterlab/cells/style/base.css');
     import('@jupyterlab/notebook/style/base.css');
     import('@jupyterlab/filebrowser/style/base.css');
-    import('@jupyterlab/terminal/style/base.css');
+    import('@jupyterlab/terminal/style/index.css');
     switch(theme) {
       case 'light': {
         import('@jupyterlab/theme-light-extension/style/theme.css');
