@@ -12,8 +12,8 @@ export class TerminalAdapter {
   constructor(options: TerminalAdapter.ITerminalAdapterOptions) {
     const { serverSettings, theme } = options;
     this.terminalPanel = new BoxPanel();
-    this.terminalPanel.addClass('dla-JupyterLab-terminal');
     this.terminalPanel.spacing = 0;
+    this.terminalPanel.addClass("dla-JupyterLab-Terminal-id");
     const terminalManager = new TerminalManager({
       serverSettings,
     });

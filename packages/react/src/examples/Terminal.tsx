@@ -8,6 +8,6 @@ const root = createRoot(div)
 
 root.render(
   <Jupyter startDefaultKernel={false} terminals={true}>
-    <Terminal theme='dark'/>
+    <Terminal theme='dark' height="800px"/>
   </Jupyter>
 );
