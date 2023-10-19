@@ -1,0 +1,6 @@
+{
+  "recommendations": [
+    "ms-toolsai.jupyter",
+    "ms-python.autopep8"
+  ]
+}

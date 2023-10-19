@@ -162,5 +162,6 @@ packages/*/content
 !**/.*config
 !*.*rc.json
 !**/.env
-!.github
 !.devcontainer
+!.github
+!.vscode

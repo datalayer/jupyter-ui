@@ -15,7 +15,7 @@ const AboutTab = (props: Props): JSX.Element => {
       <Box>
         <Text>React.js components 💯% compatible with Jupyter.</Text>
       </Box>
-      <Box mt={3}>
+      <Box mt={3} style={{height: 350}}>
         {!egg ?
           <img src="https://assets.datalayer.tech/releases/datalayer-0.2.0-omalley.png" onClick={e => setEgg(true)}/>
             :
