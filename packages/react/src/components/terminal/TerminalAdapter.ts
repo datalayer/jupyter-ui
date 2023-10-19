@@ -3,8 +3,6 @@ import { TerminalManager, ServerConnection } from '@jupyterlab/services';
 import { Terminal as JupyterTerminal, ITerminal } from '@jupyterlab/terminal';
 import { Terminal } from './Terminal';
 
-import './TerminalAdapter.css';
-
 export class TerminalAdapter {
   private terminal: JupyterTerminal;
   private terminalPanel: BoxPanel;
