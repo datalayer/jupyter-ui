@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Pagehead, Label, Text, Link, Box } from '@primer/react';
-import PirateSkull2Icon from '@datalayer/icons-react/eggs/PirateSkull2Icon';
+import ECharlesIcon from '@datalayer/icons-react/eggs/ECharlesIcon';
 
 type Props = {
   version: string,
@@ -11,7 +11,7 @@ const AboutTab = (props: Props): JSX.Element => {
   const [pirate, setPirate] = useState(false);
   return (
     <>
-      <Pagehead>🪐 ⚛️ Jupyter React<Label sx={{marginLeft: 1}}>{version}</Label></Pagehead>
+      <Pagehead as="h2">🪐 ⚛️ Jupyter React<Label sx={{marginLeft: 1}}>{version}</Label></Pagehead>
       <Box>
         <Text>React.js components 💯% compatible with Jupyter.</Text>
       </Box>
@@ -19,12 +19,12 @@ const AboutTab = (props: Props): JSX.Element => {
         {!pirate ?
           <img src="https://assets.datalayer.tech/releases/datalayer-0.2.0-omalley.png" onClick={e => setPirate(true)}/>
             :
-          <PirateSkull2Icon size={500} onClick={e => setPirate(false)}/>
+          <ECharlesIcon size={300} onClick={e => setPirate(false)}/>
         }
       </Box>
       <Box>
         <Link href="https://datalayer.tech/docs/releases/0.2.0-omalley" target="_blank">
-          <Text as="h4">O'Malley release</Text>
+          <Text as="h4">Datalayer 0.2.0 O'Malley Release</Text>
         </Link>
       </Box>
       <Box>
