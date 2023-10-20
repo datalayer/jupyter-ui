@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Pagehead, Label, Text, Link, Box } from '@primer/react';
-import ECharlesIcon from '@datalayer/icons-react/eggs/ECharlesIcon';
+import { ECharlesIcon } from '@datalayer/icons-react/eggs';
 
 type Props = {
   version: string,
