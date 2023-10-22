@@ -2,7 +2,7 @@ import {render} from 'react-dom';
 import {Jupyter} from '@datalayer/jupyter-react';
 import OutputsToolbar from './outputs/OutputsToolbar';
 import OutputsComponents from './outputs/OutputsComponents';
-import Layers from './../layout/Layers';
+import Layers from '../layout/Layers';
 
 import './../App.css';
 

@@ -2,23 +2,13 @@ import { useState, useMemo } from 'react';
 import { UnderlineNav } from '@primer/react/drafts';
 import { Box } from '@primer/react';
 import {
-  useJupyter,
-  Cell,
-  Commands,
-  Console,
-  Dialog,
-  FileBrowser,
-  FileManagerJupyterLab,
-  OutputIPyWidgets,
-  Notebook,
-  Kernel,
-  Output,
-  Settings,
-  Terminal,
+  useJupyter, Cell, Commands, Console, Dialog, FileBrowser, FileManagerJupyterLab,
+  OutputIPyWidgets, Notebook, Kernel, Output, Settings, Terminal,
 } from '@datalayer/jupyter-react';
 import { IOutput } from '@jupyterlab/nbformat';
 import { AppsIcon, CpuIcon } from '@primer/octicons-react';
 import { state, view } from './ipywidgets/IPyWidgetsSimple';
+import JupyterLabHeadlessAppExample from './labapp/JupyterLabHeadlessApp';
 import LuminoToolbar from './lumino/LuminoToolbar';
 import LuminoComponent from './lumino/LuminoComponent';
 import IPyWidgetsToolbar from './ipywidgets/IPyWidgetsToolbar';
@@ -97,10 +87,10 @@ const GalleryExample = () => {
   return (
     <Box>
       <Box mb={3}>
-        <UnderlineNav>
+        <UnderlineNav aria-label='gallery'>
           <UnderlineNav.Item
             icon={CpuIcon}
-            aria-current="page"
+            aria-current={tab === 'Notebook' ? "page" : undefined}
             onSelect={e => {
               e.preventDefault();
               setTab('Notebook');
@@ -110,6 +100,7 @@ const GalleryExample = () => {
           </UnderlineNav.Item>
           <UnderlineNav.Item
             icon={CpuIcon}
+            aria-current={tab === 'Cell' ? "page" : undefined}
             onSelect={e => {
               e.preventDefault();
               setTab('Cell');
@@ -118,7 +109,18 @@ const GalleryExample = () => {
             Cell
           </UnderlineNav.Item>
           <UnderlineNav.Item
+            icon={CpuIcon}
+            aria-current={tab === 'LabApp' ? "page" : undefined}
+            onSelect={e => {
+              e.preventDefault();
+              setTab('LabApp');
+            }}
+          >
+            Lab Application
+          </UnderlineNav.Item>
+          <UnderlineNav.Item
             icon={AppsIcon}
+            aria-current={tab === 'Outputs' ? "page" : undefined}
             onSelect={e => {
               e.preventDefault();
               setTab('Outputs');
@@ -128,6 +130,7 @@ const GalleryExample = () => {
           </UnderlineNav.Item>
           <UnderlineNav.Item
             icon={CpuIcon}
+            aria-current={tab === 'IPyWidgets' ? "page" : undefined}
             onSelect={e => {
               e.preventDefault();
               setTab('IPyWidgets');
@@ -137,6 +140,7 @@ const GalleryExample = () => {
           </UnderlineNav.Item>
           <UnderlineNav.Item
             icon={AppsIcon}
+            aria-current={tab === 'Terminal' ? "page" : undefined}
             onSelect={e => {
               e.preventDefault();
               setTab('Terminal');
@@ -146,6 +150,7 @@ const GalleryExample = () => {
           </UnderlineNav.Item>
           <UnderlineNav.Item
             icon={AppsIcon}
+            aria-current={tab === 'Console' ? "page" : undefined}
             onSelect={e => {
               e.preventDefault();
               setTab('Console');
@@ -155,6 +160,7 @@ const GalleryExample = () => {
           </UnderlineNav.Item>
           <UnderlineNav.Item
             icon={AppsIcon}
+            aria-current={tab === 'Commands' ? "page" : undefined}
             onSelect={e => {
               e.preventDefault();
               setTab('Commands');
@@ -164,6 +170,7 @@ const GalleryExample = () => {
           </UnderlineNav.Item>
           <UnderlineNav.Item
             icon={AppsIcon}
+            aria-current={tab === 'Dialog' ? "page" : undefined}
             onSelect={e => {
               e.preventDefault();
               setTab('Dialog');
@@ -173,6 +180,7 @@ const GalleryExample = () => {
           </UnderlineNav.Item>
           <UnderlineNav.Item
             icon={AppsIcon}
+            aria-current={tab === 'File Browser' ? "page" : undefined}
             onSelect={e => {
               e.preventDefault();
               setTab('File Browser');
@@ -182,6 +190,7 @@ const GalleryExample = () => {
           </UnderlineNav.Item>
           <UnderlineNav.Item
             icon={AppsIcon}
+            aria-current={tab === 'Lumino' ? "page" : undefined}
             onSelect={e => {
               e.preventDefault();
               setTab('Lumino');
@@ -191,6 +200,7 @@ const GalleryExample = () => {
           </UnderlineNav.Item>
           <UnderlineNav.Item
             icon={AppsIcon}
+            aria-current={tab === 'Settings' ? "page" : undefined}
             onSelect={e => {
               e.preventDefault();
               setTab('Settings');
@@ -201,16 +211,25 @@ const GalleryExample = () => {
         </UnderlineNav>
       </Box>
       <Box>
-        {tab === 'Lumino' && (
+        {tab === 'Notebook' && (
           <>
-            <LuminoToolbar />
-            <LuminoComponent />
+            <NotebookToolbarSimple notebookId={NOTEBOOK_UID} />
+            <Notebook
+              uid={NOTEBOOK_UID}
+              path="ping.ipynb"
+              CellSidebar={CellSidebar}
+            />
           </>
         )}
-        {tab === 'IPyWidgets' && (
+        {tab === 'Cell' && (
           <>
-            <IPyWidgetsToolbar />
-            <OutputIPyWidgets state={state} view={view} />
+            <CellToolbar />
+            <Cell source={SOURCE} />
+          </>
+        )}
+        {tab === 'LabApp' && (
+          <>
+            <JupyterLabHeadlessAppExample />
           </>
         )}
         {tab === 'Outputs' && (
@@ -225,32 +244,28 @@ const GalleryExample = () => {
             <Output autoRun={true} kernel={kernel} code={SOURCE} />
           </>
         )}
-        {tab === 'Cell' && (
+        {tab === 'IPyWidgets' && (
           <>
-            <CellToolbar />
-            <Cell source={SOURCE} />
+            <IPyWidgetsToolbar />
+            <OutputIPyWidgets state={state} view={view} />
           </>
         )}
-        {tab === 'Notebook' && (
+        {tab === 'Terminal' && (
           <>
-            <NotebookToolbarSimple notebookId={NOTEBOOK_UID} />
-            <Notebook
-              uid={NOTEBOOK_UID}
-              path="ping.ipynb"
-              CellSidebar={CellSidebar}
-            />
-          </>
-        )}
-        {tab === 'Commands' && (
-          <>
-            <CommandsToolbar />
-            <Commands />
+            <TerminalToolbar />
+            <Terminal height='500px' />
           </>
         )}
         {tab === 'Console' && (
           <>
             <ConsoleToolbar />
             <Console />
+          </>
+        )}
+        {tab === 'Commands' && (
+          <>
+            <CommandsToolbar />
+            <Commands />
           </>
         )}
         {tab === 'Dialog' && (
@@ -263,20 +278,26 @@ const GalleryExample = () => {
         {tab === 'File Browser' && (
           <>
             <FileBrowserToolbar />
-            <FileBrowser />
-            <FileManagerJupyterLab />
+            <Box display="flex">
+              <Box sx={{width: 400}}>
+                <FileBrowser />
+              </Box>
+              <Box ml={3} sx={{width: 400}}>
+                <FileManagerJupyterLab />
+              </Box>
+            </Box>
+          </>
+        )}
+        {tab === 'Lumino' && (
+          <>
+            <LuminoToolbar />
+            <LuminoComponent />
           </>
         )}
         {tab === 'Settings' && (
           <>
             <SettingsToolbar />
             <Settings />
-          </>
-        )}
-        {tab === 'Terminal' && (
-          <>
-            <TerminalToolbar />
-            <Terminal />
           </>
         )}
       </Box>

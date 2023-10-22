@@ -1,7 +1,7 @@
 import {render} from 'react-dom';
 import {Jupyter, Terminal} from '@datalayer/jupyter-react';
 import TerminalToolbar from './terminal/TerminalToolbar';
-import Layers from './../layout/Layers';
+import Layers from '../layout/Layers';
 
 import './../App.css';
 
@@ -12,7 +12,7 @@ render(
   <Jupyter collaborative={false} terminals={true}>
     <Layers />
     <TerminalToolbar />
-    <Terminal />
+    <Terminal height="500px" />
   </Jupyter>,
   div
 );

@@ -6,7 +6,7 @@ import {terminalActions} from '@datalayer/jupyter-react';
 const TerminalToolbar: React.FC = () => {
   const dispatch = useDispatch();
   const [state, setState] = useState({
-    dark: false,
+    dark: true,
   });
   const onClick = () => {
     dispatch(terminalActions.update({dark: !state.dark}));
