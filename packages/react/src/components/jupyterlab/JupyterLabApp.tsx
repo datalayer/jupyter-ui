@@ -11,7 +11,8 @@ import JupyterLabAppCss from "./JupyterLabAppCss";
 let _adapter: JupyterLabAppAdapter | undefined = undefined;
 
 // The webpack public path needs to be set before loading the CSS assets.
-(global as any).__webpack_public_path__ = PageConfig.getOption('fullStaticUrl') + '/';
+(globalThis as any).__webpack_public_path__ = PageConfig.getOption('fullStaticUrl') + '/';
+(window as any).__webpack_public_path__ = PageConfig.getOption('fullStaticUrl') + '/';
 
 export type JupyterLabAppProps = {
   devMode: boolean;

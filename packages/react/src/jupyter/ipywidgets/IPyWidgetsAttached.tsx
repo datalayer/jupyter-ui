@@ -1,4 +1,4 @@
-import IPyWidgetsViewManager from '../ipywidgets/IPyWidgetsViewManager';
+import IPyWidgetsViewManager from './IPyWidgetsViewManager';
 
 type Props = {
   view: any,

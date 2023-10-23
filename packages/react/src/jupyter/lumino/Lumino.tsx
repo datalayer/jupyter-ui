@@ -4,12 +4,13 @@ import { Widget } from '@lumino/widgets';
 
 type LuminoProps = {
   id?: string;
+  height?: string | number;
   children: Widget;
 }
 
 export const Lumino = (props: LuminoProps) => {
   const ref = useRef<HTMLDivElement>(null);
-  const { children, id } = props;
+  const { children, id, height } = props;
   useEffect(() => {
     if (ref && ref.current) {
       try {
@@ -31,11 +32,12 @@ export const Lumino = (props: LuminoProps) => {
       }  
     }
   }, [ref, children]);
-  return <div ref={ref} id={id}/>
+  return <div ref={ref} id={id} style={{ height: height, minHeight: height }} />
 }
 
 Lumino.defaultProps = {
   id: "lumino-id",
+  height: "100%",
 }
 
 export default Lumino;

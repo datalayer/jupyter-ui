@@ -47,6 +47,8 @@ export * from './components/notebook/cell/sidebar/CellSidebar';
 export * from './components/notebook/cell/sidebar/CellSidebarRun';
 
 // IPyWidgets.
+export * from './jupyter/ipywidgets/IPyWidgetsAttached';
+export * from './jupyter/ipywidgets/IPyWidgetsViewManager';
 export * from './jupyter/ipywidgets/IPyWidgetsViewManager';
 
 // Commands.
@@ -60,13 +62,13 @@ export * from './components/console/ConsoleState';
 // Dialog.
 export * from './components/dialog/Dialog';
 
-// FileBrowser.
+// File Browser.
 export * from './components/filebrowser/FileBrowser';
 
-// FileManager.
+// File Manager.
 export * from './components/filemanager/FileManagerState';
 
-// FileManager (JupyterLab variant).
+// File Manager (JupyterLab variant).
 export * from './components/filemanager/FileManagerJupyterLab';
 
 // Outputs.

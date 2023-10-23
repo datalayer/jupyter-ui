@@ -1,4 +1,4 @@
-import IPyWidgetsAttached from '../../jupyter/lumino/IPyWidgetsAttached';
+import IPyWidgetsAttached from '../../jupyter/ipywidgets/IPyWidgetsAttached';
 
 import './OutputIPyWidgets.css';
 
