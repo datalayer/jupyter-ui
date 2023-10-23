@@ -30,8 +30,8 @@ export const LuminoBox = (props: LuminoBoxProps) => {
             Widget.detach(boxPanel);
           }
         } catch(e) {
-          // no-op
-          // console.debug('Exception while detaching Lumino widget.', e);
+          // no-op.
+//          console.debug('Exception while detaching Lumino widget.', e);
         }
       }
     }

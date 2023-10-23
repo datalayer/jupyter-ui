@@ -26,13 +26,20 @@ export const Lumino = (props: LuminoProps) => {
             Widget.detach(children);
           }
         } catch(e) {
-          // no-op
-          // console.debug('Exception while detaching Lumino widget.', e);
+          // no-op.
+//          console.debug('Exception while detaching Lumino widget.', e);
         }
       }  
     }
   }, [ref, children]);
-  return <div ref={ref} id={id} style={{ height: height, minHeight: height }} />
+  return (
+    <div
+      ref={ref}
+      id={id}
+      style={{ height: height, minHeight: height }}
+    >
+    </div>
+  )
 }
 
 Lumino.defaultProps = {

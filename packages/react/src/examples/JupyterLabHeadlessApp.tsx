@@ -30,7 +30,7 @@ const PATH_INDEX = 1;
 
 const JupyterLabHeadlessAppExample = () => {
   const [notebookBoxPanel, setNotebookBoxPanel] = useState<BoxPanel>();
-  const [runningSessions, setRunningSessions] = useState<BoxPanel>();
+  const [runningSessions, setRunningSessions] = useState<RunningSessions>();
   const [theme, setTheme] = useState<JupyterLabTheme>('light');
   const [jupyterLabAdapter, setJupyterlabAdapter] = useState<JupyterLabAppAdapter>();
   const { setColorMode } = useTheme();
