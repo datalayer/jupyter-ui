@@ -35,7 +35,7 @@ export const JupyterLabCss = (props: Props) => {
     import('@jupyterlab/ui-components/style/base.css');
     // ipywidgets.
     import('@jupyter-widgets/base/css/index.css');
-    import('@jupyter-widgets/controls/css/widgets-base.css');        
+    import('@jupyter-widgets/controls/css/widgets-base.css');
   }, [theme]);
   return <div id="dla-JupyterLabCss-id"></div>
 }
