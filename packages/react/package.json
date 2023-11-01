@@ -117,6 +117,7 @@
     "@jupyterlab/rendermime-extension": "4.0.3",
     "@jupyterlab/rendermime-interfaces": "3.8.3",
     "@jupyterlab/services": "7.0.3",
+    "@jupyterlab/settingregistry": "4.0.3",
     "@jupyterlab/shortcuts-extension": "4.0.3",
     "@jupyterlab/statusbar-extension": "4.0.3",
     "@jupyterlab/terminal": "4.0.3",

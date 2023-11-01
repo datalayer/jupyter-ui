@@ -60,7 +60,7 @@ export const setJupyterServerHttpUrl = (jupyterServerHttpUrl: string) => {
  * Method to load the Jupyter configuration from the
  * host HTML page.
  */
-export const loadJupyterConfig = (props: JupyterProps) => {
+export const loadJupyterConfig = (props: Pick<JupyterProps, 'lite' | 'jupyterServerHttpUrl' | 'jupyterServerWsUrl' | 'collaborative' | 'terminals' | 'jupyterToken'>) => {
   const { lite, jupyterServerHttpUrl, jupyterServerWsUrl, collaborative, terminals, jupyterToken } = props;
   const datalayerConfigData = document.getElementById('datalayer-config-data');
   if (datalayerConfigData) {

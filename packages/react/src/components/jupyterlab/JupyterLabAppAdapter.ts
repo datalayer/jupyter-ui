@@ -37,7 +37,7 @@ type Plugins = Map<string, Plugin>;
 
 type Props = JupyterLabAppProps & {
   serviceManager: ServiceManager;
-  collaborative: boolean;
+  collaborative?: boolean;
 }
 
 export class JupyterLabAppAdapter {

@@ -12,15 +12,15 @@ import { JupyterLabTheme } from "./lab/JupyterLabTheme";
  * when creating a Jupyter context.
  */
 export type JupyterProps = {
-  children: React.ReactNode;
-  collaborative: boolean;
+  children?: React.ReactNode;
+  collaborative?: boolean;
   defaultKernelName: string;
   disableCssLoading?: boolean;
   injectableStore?: InjectableStore;
   jupyterServerHttpUrl?: string;
   jupyterServerWsUrl?: string;
   jupyterToken?: string;
-  lite: boolean;
+  lite?: boolean;
   startDefaultKernel: boolean;
   terminals?: boolean;
   theme: JupyterLabTheme;

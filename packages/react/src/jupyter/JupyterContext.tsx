@@ -12,19 +12,19 @@ import { JupyterLabTheme } from "./lab/JupyterLabTheme";
  * The type for the Jupyter context.
  */
 export type JupyterContextType = {
-  baseUrl: string;
-  collaborative: boolean;
+  baseUrl?: string;
+  collaborative?: boolean;
   defaultKernel?: Kernel,
   disableCssLoading?: boolean,
   injectableStore: InjectableStore;
   kernelManager?: KernelManager,
-  lite: boolean;
+  lite?: boolean;
   serverSettings: ServerConnection.ISettings,
   serviceManager?: ServiceManager,
   setVariant: (value: string) => void;
   startDefaultKernel: boolean,
   variant: string;
-  wsUrl: string;
+  wsUrl?: string;
 };
 
 /**
@@ -66,19 +66,19 @@ export const ensureJupyterAuth = (serverSettings: ServerConnection.ISettings): P
  * The type for the properties of the Jupyter context.
  */
 type JupyterContextProps = {
-  baseUrl: string;
-  collaborative: boolean;
-  children: React.ReactNode;
+  baseUrl?: string;
+  collaborative?: boolean;
+  children?: React.ReactNode;
   defaultKernelName: string;
   disableCssLoading?: boolean;
   injectableStore: InjectableStore;
-  lite: boolean;
+  lite?: boolean;
   startDefaultKernel: boolean;
   theme: JupyterLabTheme;
   useRunningKernelId?: string;
   useRunningKernelIndex: number;
   variant: string;
-  wsUrl: string;
+  wsUrl?: string;
 };
 /*
 const headers = new Headers({
@@ -113,7 +113,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
     useRunningKernelIndex, variant, baseUrl, wsUrl, injectableStore, theme,
   } = props;
   const [_, setVariant] = useState('default');
-  const [serverSettings] = useState<ServerConnection.ISettings>(createServerSettings(baseUrl, wsUrl));
+  const [serverSettings] = useState<ServerConnection.ISettings>(createServerSettings(baseUrl ?? '', wsUrl ?? ''));
   const [serviceManager, setServiceManager] = useState<ServiceManager>();
   const [kernelManager, setKernelManager] = useState<KernelManager>();
   const [kernel, setKernel] = useState<Kernel>();
