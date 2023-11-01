@@ -65,7 +65,7 @@ export class JupyterLabAppAdapter {
 
   private async load(props: Props) {
     const {
-      hostId, extensions, mimeExtensions, collaborative, splash,
+      hostId, extensions, mimeExtensions, collaborative, splash, deactivatePlugins,
       extensionPromises, mimeExtensionPromises, devMode, serviceManager,
     } = props;
     const mimeExtensionResolved = await Promise.all(mimeExtensionPromises ?? JupyterLabAppCorePlugins(collaborative).mimeExtensionPromises);
@@ -91,9 +91,12 @@ export class JupyterLabAppAdapter {
     if (!splash) {
       this._jupyterLab.deregisterPlugin('@jupyterlab/apputils-extension:splash', true);
     }
+    deactivatePlugins.map(plugin => {
+      this._jupyterLab.deregisterPlugin(plugin, true)
+    });
     /*
     if (collaborative) {
-      this._jupyterLab.deregisterPlugin("@jupyterlab/filebrowser-extension:default-file-browser", true);          
+      this._jupyterLab.deregisterPlugin("@jupyterlab/filebrowser-extension:default-file-browser", true);
     }
     */
     this._jupyterLab.start({
@@ -103,7 +106,7 @@ export class JupyterLabAppAdapter {
     });
     this._jupyterLab.restored.then(() => {
       this._plugins = (this._jupyterLab as any)['_plugins'];
-      this._readyResolve();  
+      this._readyResolve();
     });
   }
 

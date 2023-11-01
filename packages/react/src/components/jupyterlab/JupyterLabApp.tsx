@@ -23,6 +23,7 @@ export type JupyterLabAppProps = {
   hostId: string;
   mimeExtensionPromises?: Array<Promise<IRenderMime.IExtensionModule>>;
   mimeExtensions: Array<IRenderMime.IExtensionModule>;
+  deactivatePlugins: Array<string>;
   onPlugin?: (plugin: any) => void;
   onJupyterLab: (jupyterLabAppdapter: JupyterLabAppAdapter) => void;
   pluginId?: string;
@@ -86,6 +87,7 @@ JupyterLabApp.defaultProps = {
   height: "100vh",
   hostId: "app-example-id",
   mimeExtensions: [],
+  deactivatePlugins: [],
   onJupyterLab: (jupyterLabAppAdapter: JupyterLabAppAdapter) => {},
   position: "relative",
   splash: true,

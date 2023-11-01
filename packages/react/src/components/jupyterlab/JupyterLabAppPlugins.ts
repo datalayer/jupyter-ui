@@ -4,7 +4,11 @@ import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 export const JupyterLabAppMinimumPlugins = {
   extensionPromises : [
     import('@jupyterlab/application-extension'),
-    import('@jupyterlab/apputils-extension'),
+    import('@jupyterlab/apputils-extension').then(plugins => 
+      plugins.default.filter(({ id }) => !(
+        id.includes(':sessionDialogs')
+      ))
+    ),
     import('@jupyterlab/codemirror-extension'),
     import('@jupyterlab/cell-toolbar-extension'),
     import('@jupyterlab/completer-extension'),
@@ -45,7 +49,11 @@ export const JupyterLabAppCorePlugins = (collaborative?: boolean) => {
   return {
     extensionPromises : [
       import('@jupyterlab/application-extension'),
-      import('@jupyterlab/apputils-extension'),
+      import('@jupyterlab/apputils-extension').then(plugins => 
+        plugins.default.filter(({ id }) => !(
+          id.includes(':sessionDialogs')
+        ))
+      ),
       import('@jupyterlab/codemirror-extension'),
       import('@jupyterlab/cell-toolbar-extension'),
       import('@jupyterlab/completer-extension'),
