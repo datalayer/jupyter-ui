@@ -58,19 +58,24 @@ const jupyterReactPlugin: JupyterFrontEndPlugin<void> = {
     });
     const category = 'Datalayer';
     palette.addItem({ command, category, args: { origin: 'from palette' } });
-    if (launcher) {
-      launcher.add({
-        command,
-        category,
-        rank: 2.4,
-      });
-    }
+    const settingsUpdated = (settings: ISettingRegistry.ISettings) => {
+      const showInLauncher = settings.get('showInLauncher').composite as boolean;
+      if (launcher && showInLauncher) {
+        launcher.add({
+          command,
+          category,
+          rank: 2.4,
+        });
+      }
+    };
     if (settingRegistry) {
       settingRegistry
         .load(jupyterReactPlugin.id)
         .then(settings => {
           console.log('@datalayer/jupyter-react settings loaded:', settings.composite);
-        })
+          settingsUpdated(settings);
+          settings.changed.connect(settingsUpdated);
+         })
         .catch(reason => {
           console.error('Failed to load settings for @datalayer/jupyter-react.', reason);
         });
