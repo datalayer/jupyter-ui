@@ -25,8 +25,8 @@ import '@jupyterlab/translation-extension/style/index.js';
 import '@jupyterlab/ui-components-extension/style/index.js';
 
 type Props = {
-  theme: JupyterLabTheme;
-};
+  theme?: JupyterLabTheme;
+}
 
 export const JupyterLabAppCss = (props: Props) => {
   const { theme } = props;
@@ -44,5 +44,9 @@ export const JupyterLabAppCss = (props: Props) => {
   }, [theme]);
   return <div id="dla-JupyterLabAppCss-id"></div>
 }
+
+JupyterLabAppCss.defaultProps = {
+  theme: "light",
+} as Partial<Props>;
 
 export default JupyterLabAppCss;
