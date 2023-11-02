@@ -2,7 +2,12 @@
 export * from './jupyter/Jupyter';
 export * from './jupyter/JupyterContext';
 export * from './jupyter/JupyterConfig';
+export * from './jupyter/lab/JupyterLabCss';
+
+// Lite
 export * from './jupyter/lite/LiteServer';
+
+// Lumino
 export * from './jupyter/lumino/Lumino';
 export * from './jupyter/lumino/LuminoBox';
 export * from './jupyter/lumino/LuminoDetached';
@@ -33,6 +38,7 @@ export * from './components/codemirror/CodeMirrorEditor';
 export * from './components/jupyterlab/JupyterLabApp';
 export * from './components/jupyterlab/JupyterLabAppAdapter';
 export * from './components/jupyterlab/JupyterLabAppPlugins';
+export * from './components/jupyterlab/JupyterLabAppCss';
 
 // Notebook.
 export * from './components/notebook/Notebook';

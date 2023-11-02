@@ -101,5 +101,5 @@ export const JupyterLabAppCorePlugins = (collaborative?: boolean) => {
       import('@jupyterlab/javascript-extension'),
       import('@jupyterlab/json-extension'),
     ] as Array<Promise<IRenderMime.IExtensionModule>>,
-}
+  }
 }

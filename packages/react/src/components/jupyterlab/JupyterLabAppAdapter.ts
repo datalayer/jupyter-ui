@@ -1,7 +1,7 @@
 import { CommandRegistry } from '@lumino/commands';
+import { JupyterLab, JupyterFrontEndPlugin, JupyterFrontEnd, LabShell } from '@jupyterlab/application';
+// import { PageConfig } from '@jupyterlab/coreutils';
 // import { Widget } from '@lumino/widgets';
-import { JupyterLab, JupyterFrontEndPlugin } from '@jupyterlab/application';
-import { JupyterFrontEnd, LabShell } from '@jupyterlab/application';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { ServiceManager } from "@jupyterlab/services";
@@ -65,9 +65,10 @@ export class JupyterLabAppAdapter {
 
   private async load(props: Props) {
     const {
-      hostId, extensions, mimeExtensions, collaborative, splash, deactivatePlugins,
+      hostId, extensions, mimeExtensions, collaborative, splash,
       extensionPromises, mimeExtensionPromises, devMode, serviceManager,
     } = props;
+//    PageConfig.setOption("disabledExtensions", '["@jupyterlab/apputils-extension:sessionDialogs"]');
     const mimeExtensionResolved = await Promise.all(mimeExtensionPromises ?? JupyterLabAppCorePlugins(collaborative).mimeExtensionPromises);
     mimeExtensions.push(...mimeExtensionResolved);
     this._shell = new LabShell();
@@ -91,9 +92,6 @@ export class JupyterLabAppAdapter {
     if (!splash) {
       this._jupyterLab.deregisterPlugin('@jupyterlab/apputils-extension:splash', true);
     }
-    deactivatePlugins.map(plugin => {
-      this._jupyterLab.deregisterPlugin(plugin, true)
-    });
     /*
     if (collaborative) {
       this._jupyterLab.deregisterPlugin("@jupyterlab/filebrowser-extension:default-file-browser", true);
@@ -101,8 +99,8 @@ export class JupyterLabAppAdapter {
     */
     this._jupyterLab.start({
       hostID: hostId,
-      startPlugins: [],
-      ignorePlugins: [],
+      startPlugins: [], // How is this used in JupyterLab core?
+      ignorePlugins: [], // How is this used in JupyterLab core?
     });
     this._jupyterLab.restored.then(() => {
       this._plugins = (this._jupyterLab as any)['_plugins'];

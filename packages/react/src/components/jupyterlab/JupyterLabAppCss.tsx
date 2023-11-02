@@ -28,7 +28,7 @@ type Props = {
   theme: JupyterLabTheme;
 };
 
-export const JupyterLabCss = (props: Props) => {
+export const JupyterLabAppCss = (props: Props) => {
   const { theme } = props;
   useEffect(() => {
     switch(theme) {
@@ -45,4 +45,4 @@ export const JupyterLabCss = (props: Props) => {
   return <div id="dla-JupyterLabAppCss-id"></div>
 }
 
-export default JupyterLabCss;
+export default JupyterLabAppCss;
