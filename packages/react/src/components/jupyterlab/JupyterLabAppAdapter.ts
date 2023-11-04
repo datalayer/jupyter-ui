@@ -1,9 +1,11 @@
 import { CommandRegistry } from '@lumino/commands';
+import { BoxPanel, Widget, FocusTracker } from '@lumino/widgets';
 import { JupyterLab, JupyterFrontEndPlugin, JupyterFrontEnd, LabShell } from '@jupyterlab/application';
 // import { PageConfig } from '@jupyterlab/coreutils';
 // import { Widget } from '@lumino/widgets';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
+import { NotebookPanel } from '@jupyterlab/notebook';
 import { ServiceManager } from "@jupyterlab/services";
 import { JupyterLabAppProps } from "./JupyterLabApp";
 import { JupyterLabAppCorePlugins } from "./JupyterLabAppPlugins";
@@ -152,12 +154,31 @@ export class JupyterLabAppAdapter {
     return this._ready;
   }
 
+  get focusTracker(): FocusTracker<Widget> {
+    return (this.shell as any)._tracker as FocusTracker<Widget>
+  }
+
   plugin(id: string): Plugin | undefined {
     return this._plugins.get(id);
   }
 
   service(id: string): Plugin["service"] {
     return this._plugins.get(id)?.service;
+  }
+
+  async notebook(path: string) {
+    await this.commands.execute('apputils:reset');
+    const notebookPanel = await this.commands.execute('docmanager:open', {
+      path: path,
+      factory: 'Notebook',
+      kernel: { name: 'python3' },
+    }) as NotebookPanel;
+    const boxPanel = new BoxPanel();
+    boxPanel.addClass('dla-Jupyter-Notebook');
+    boxPanel.spacing = 0;
+    boxPanel.addWidget(notebookPanel);
+    this.focusTracker.add(notebookPanel); 
+    return boxPanel;
   }
 
 }

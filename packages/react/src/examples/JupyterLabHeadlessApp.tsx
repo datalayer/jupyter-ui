@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Box, Text, ToggleSwitch, ThemeProvider, useTheme } from "@primer/react";
-import { BoxPanel, Widget } from '@lumino/widgets';
+import { BoxPanel } from '@lumino/widgets';
 import { ThemeManager } from '@jupyterlab/apputils';
-import { NotebookPanel } from '@jupyterlab/notebook';
-import { RunningSessions } from '@jupyterlab/running';
 // import { NotebookTracker } from '@jupyterlab/notebook';
+import { RunningSessions } from '@jupyterlab/running';
 import Jupyter from '../jupyter/Jupyter';
 import Lumino from '../jupyter/lumino/Lumino';
 import { JupyterLabTheme } from '../jupyter/lab/JupyterLabTheme';
@@ -50,21 +49,7 @@ const JupyterLabHeadlessAppExample = () => {
   }
   const onJupyterLab = async (jupyterLabAdapter: JupyterLabAppAdapter) => {
     setJupyterlabAdapter(jupyterLabAdapter);
-    const jupyterLab = jupyterLabAdapter.jupyterLab;
-    await jupyterLab.commands.execute('apputils:reset');
-    const notebookPanel = await jupyterLab.commands.execute('docmanager:open', {
-      path: PATHS[PATH_INDEX],
-      factory: 'Notebook',
-      kernel: { name: 'python3' },
-    }) as NotebookPanel;
-    Object.defineProperty((jupyterLabAdapter.shell as any), 'currentWidget', {
-      get: function() { return notebookPanel },
-      set: function(widget: Widget | null) {},
-    });
-    const boxPanel = new BoxPanel();
-    boxPanel.addClass('dla-Jupyter-Notebook');
-    boxPanel.spacing = 0;
-    boxPanel.addWidget(notebookPanel);
+    const boxPanel = await jupyterLabAdapter.notebook(PATHS[PATH_INDEX]);
     setNotebookBoxPanel(boxPanel);
     const runningSessionManagers = jupyterLabAdapter.service('@jupyterlab/running-extension:plugin');
     const runningSessions = new RunningSessions(runningSessionManagers);
