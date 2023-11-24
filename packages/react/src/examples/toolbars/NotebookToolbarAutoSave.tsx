@@ -5,7 +5,7 @@ import { PlusIcon, ChevronRightIcon, StopIcon, ZapIcon, TrashIcon, SyncIcon } fr
 import { FastForwardIcon } from '@datalayer/icons-react';
 import { IJupyterReactState } from '../../state/redux/State';
 import { cmdIds } from '../../components/notebook/NotebookCommands';
-import { notebookActions, selectNotebook, selectSaveRequest } from '../../components/notebook/NotebookState';
+import { notebookActions, selectNotebook, selectSaveRequest } from '../../components/notebook/NotebookRedux';
 
 export const NotebookToolbarAutoSave = (props: {notebookId: string}) => {
   const {notebookId} = props;

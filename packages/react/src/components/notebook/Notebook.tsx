@@ -13,7 +13,7 @@ import { CellSidebarProps } from './cell/sidebar/CellSidebarWidget'
 import CellMetadataEditor from './cell/metadata/CellMetadataEditor';
 import { newUuid } from '../../utils/Utils';
 import NotebookAdapter from './NotebookAdapter';
-import { notebookActions, selectNotebookPortals, notebookEpics, notebookReducer } from './NotebookState';
+import { notebookActions, selectNotebookPortals, notebookEpics, notebookReducer } from './NotebookRedux';
 
 import './Notebook.css';
 

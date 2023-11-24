@@ -29,7 +29,8 @@ export * from './jupyter/kernel/KernelModel';
 // Cell.
 export * from './components/cell/Cell';
 export * from './components/cell/CellAdapter';
-export * from './components/cell/CellState';
+export * from './components/cell/CellRedux';
+export * from './components/cell/CellZustand';
 
 // CodeMirror Editor.
 export * from './components/codemirror/CodeMirrorEditor';
@@ -43,7 +44,7 @@ export * from './components/jupyterlab/JupyterLabAppCss';
 // Notebook.
 export * from './components/notebook/Notebook';
 export * from './components/notebook/NotebookAdapter';
-export * from './components/notebook/NotebookState';
+export * from './components/notebook/NotebookRedux';
 export * from './components/notebook/cell/metadata/CellMetadataEditor';
 export * from './components/notebook/cell/metadata/NbGraderCells';
 export * from './components/notebook/cell/prompt/CountdownInputPrompt';
@@ -63,7 +64,7 @@ export * from './components/commands/CommandsState';
 
 // Console.
 export * from './components/console/Console';
-export * from './components/console/ConsoleState';
+export * from './components/console/ConsoleRedux';
 
 // Dialog.
 export * from './components/dialog/Dialog';
@@ -80,16 +81,16 @@ export * from './components/filemanager/FileManagerJupyterLab';
 // Outputs.
 export * from './components/output/Output';
 export * from './components/output/OutputAdapter';
-export * from './components/output/OutputState';
+export * from './components/output/OutputRedux';
 export * from './components/output/OutputIPyWidgets';
 
 // Settings.
 export * from './components/settings/Settings';
-export * from './components/settings/SettingsState';
+export * from './components/settings/SettingsRedux';
 
 // Terminal.
 export * from './components/terminal/Terminal';
-export * from './components/terminal/TerminalState';
+export * from './components/terminal/TerminalRedux';
 
 // Viewer.
 export * from './components/viewer/Viewer';

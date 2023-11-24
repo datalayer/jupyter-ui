@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { Box } from '@primer/react';
 import { ITerminal } from '@jupyterlab/terminal';
 import TerminalAdapter from './TerminalAdapter';
-import { terminalActions, terminalReducer } from './TerminalState';
+import { terminalActions, terminalReducer } from './TerminalRedux';
 import { useJupyter } from './../../jupyter/JupyterContext';
 import LuminoBox from '../../jupyter/lumino/LuminoBox';
 

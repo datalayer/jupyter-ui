@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { PanelLayout } from '@lumino/widgets';
 import { Box, Button } from '@primer/react';
 import { PlayIcon } from "@primer/octicons-react";
-import { notebookActions, selectActiveCell } from '../../NotebookState';
+import { notebookActions, selectActiveCell } from '../../NotebookRedux';
 import { CellSidebarProps } from './CellSidebarWidget';
 
 import { DATALAYER_CELL_HEADER_CLASS } from './CellSidebarWidget';

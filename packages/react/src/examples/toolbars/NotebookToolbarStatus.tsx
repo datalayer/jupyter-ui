@@ -1,4 +1,4 @@
-import { selectKernelStatus } from '../../components/notebook/NotebookState';
+import { selectKernelStatus } from '../../components/notebook/NotebookRedux';
 
 const NotebookToolbarStatus = (props: { notebookId: string }) => {
   const { notebookId } = props;

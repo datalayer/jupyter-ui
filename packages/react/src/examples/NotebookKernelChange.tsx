@@ -5,7 +5,7 @@ import Jupyter from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { Kernel } from '../jupyter/kernel/Kernel';
 import Notebook from '../components/notebook/Notebook';
-import { notebookActions } from '../components/notebook/NotebookState';
+import { notebookActions } from '../components/notebook/NotebookRedux';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 
 const NOTEBOOK_UID = 'notebook-kernel-id';

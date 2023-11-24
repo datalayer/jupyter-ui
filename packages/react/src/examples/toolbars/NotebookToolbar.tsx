@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Box, IconButton, Button, ButtonGroup } from '@primer/react';
 import { PlusIcon, PlayIcon, StopIcon, TrashIcon, ZapIcon, PaperAirplaneIcon } from '@primer/octicons-react';
-import { notebookActions, selectKernelStatus } from '../../components/notebook/NotebookState';
+import { notebookActions, selectKernelStatus } from '../../components/notebook/NotebookRedux';
 
 export const NotebookToolbar = (props: {notebookId: string}) => {
   const { notebookId } = props;

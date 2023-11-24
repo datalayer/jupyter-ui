@@ -144,7 +144,8 @@
     "styled-components": "5.3.10",
     "typescript-fsa": "3.0.0",
     "typescript-fsa-reducers": "1.2.1",
-    "utf-8-validate": "6.0.3"
+    "utf-8-validate": "6.0.3",
+    "zustand": "4.4.1"
   },
   "devDependencies": {
     "@babel/core": "7.21.0",

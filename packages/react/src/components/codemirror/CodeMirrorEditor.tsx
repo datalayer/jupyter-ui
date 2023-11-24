@@ -8,7 +8,7 @@ import Kernel from '../../jupyter/kernel/Kernel';
 import codeMirrorTheme from './CodeMirrorTheme';
 import OutputAdapter from '../output/OutputAdapter';
 import CodeMirrorOutputToolbar from './CodeMirrorOutputToolbar';
-import { selectDataset, selectJupyterSetSource, outputActions } from '../output/OutputState';
+import { selectDataset, selectJupyterSetSource, outputActions } from '../output/OutputRedux';
 
 export const CodeMirrorEditor = (props: {
   code: string;

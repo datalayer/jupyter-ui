@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { PanelLayout } from '@lumino/widgets';
 import { ActionMenu, Button, Box } from "@primer/react";
 import { ChevronRightIcon, XIcon, ChevronUpIcon, ChevronDownIcon, SquareIcon } from "@primer/octicons-react";
-import { notebookActions, selectActiveCell } from '../../components/notebook/NotebookState';
+import { notebookActions, selectActiveCell } from '../../components/notebook/NotebookRedux';
 import { CellSidebarProps } from '../../components/notebook/cell/sidebar/CellSidebarWidget';
 import CellMetadataEditor from '../../components/notebook/cell/metadata/CellMetadataEditor';
 

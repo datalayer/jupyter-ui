@@ -6,7 +6,7 @@ import { UUID } from '@lumino/coreutils';
 import { IOutput } from '@jupyterlab/nbformat';
 import { KernelMessage } from '@jupyterlab/services';
 import OutputAdapter from './OutputAdapter';
-import { selectExecute, outputActions, outputReducer } from './OutputState';
+import { selectExecute, outputActions, outputReducer } from './OutputRedux';
 import { useJupyter } from "../../jupyter/JupyterContext";
 import Kernel from '../../jupyter/kernel/Kernel';
 import Lumino from '../../jupyter/lumino/Lumino';

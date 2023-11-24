@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { CodeCell } from '@jupyterlab/cells';
 import { KernelMessage } from '@jupyterlab/services';
 import { Box } from "@primer/react";
-import { cellActions, cellReducer } from './CellState';
+import { cellActions, cellReducer } from './CellRedux';
 import CellAdapter from './CellAdapter';
 import Lumino from '../../jupyter/lumino/Lumino';
 import { useJupyter } from './../../jupyter/JupyterContext';

@@ -14,8 +14,8 @@ import Terminal from "../components/terminal/Terminal";
 import CellSidebarNew from "../components/notebook/cell/sidebar/CellSidebarButton";
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 import Console from "../components/console/Console";
-import { selectCell, cellActions } from '../components/cell/CellState';
-import { notebookActions } from '../components/notebook/NotebookState';
+import { selectCell, cellActions } from '../components/cell/CellRedux';
+import { notebookActions } from '../components/notebook/NotebookRedux';
 
 import notebook from "./notebooks/NotebookExample1.ipynb.json";
 
