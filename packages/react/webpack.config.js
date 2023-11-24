@@ -12,6 +12,7 @@ function shim(regExp) {
 
 const ENTRY =
 // "./src/app/App";
+// "./src/app/Cell";
 // "./src/examples/JupyterLabApp";
 "./src/examples/JupyterLabHeadlessApp";
 // "./src/examples/Lumino";
@@ -21,6 +22,7 @@ const ENTRY =
 // "./src/examples/NotebookModel";
 // "./src/examples/NotebookModelChange";
 // "./src/examples/NotebookThemed";
+// "./src/examples/RunningSessions";
 // "./src/examples/Terminal";
 // "./src/examples/Viewer";
 
