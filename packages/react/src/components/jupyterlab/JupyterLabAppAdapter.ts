@@ -8,7 +8,6 @@ import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { NotebookPanel } from '@jupyterlab/notebook';
 import { ServiceManager } from "@jupyterlab/services";
 import { JupyterLabAppProps } from "./JupyterLabApp";
-import { JupyterLabAppCorePlugins } from "./JupyterLabAppPlugins";
 /*
 interface IHeadLessLabShell extends ILabShell {
   set currentWidget(widget: Widget | null);
@@ -67,11 +66,11 @@ export class JupyterLabAppAdapter {
 
   private async load(props: Props) {
     const {
-      hostId, extensions, mimeExtensions, collaborative, splash,
+      hostId, extensions, mimeExtensions, splash,
       extensionPromises, mimeExtensionPromises, devMode, serviceManager,
     } = props;
 //    PageConfig.setOption("disabledExtensions", '["@jupyterlab/apputils-extension:sessionDialogs"]');
-    const mimeExtensionResolved = await Promise.all(mimeExtensionPromises ?? JupyterLabAppCorePlugins(collaborative).mimeExtensionPromises);
+    const mimeExtensionResolved = await Promise.all(mimeExtensionPromises!);
     mimeExtensions.push(...mimeExtensionResolved);
     this._shell = new LabShell();
     this._jupyterLab = new JupyterLab({
@@ -88,7 +87,7 @@ export class JupyterLabAppAdapter {
         matches: [],
       },
     });
-    const extensionResolved = await Promise.all(extensionPromises ?? JupyterLabAppCorePlugins(collaborative).extensionPromises);
+    const extensionResolved = await Promise.all(extensionPromises!);
     extensions.push(...extensionResolved);
     this._jupyterLab.registerPluginModules(extensions);
     if (!splash) {

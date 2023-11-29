@@ -1,14 +1,13 @@
-import { memo, useState, useEffect, useRef } from "react";
+import { memo, useState, useEffect, useMemo, useRef } from "react";
 import { Box } from "@primer/react";
-import { PageConfig } from '@jupyterlab/coreutils';
 import { JupyterLab } from '@jupyterlab/application';
+import { PageConfig } from '@jupyterlab/coreutils';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { useJupyter } from "../../jupyter/JupyterContext";
 import { JupyterLabTheme } from "./../../jupyter/lab/JupyterLabTheme";
+import { JupyterLabAppCorePlugins } from "./JupyterLabAppPlugins";
 import JupyterLabAppAdapter from "./JupyterLabAppAdapter";
 import JupyterLabAppCss from "./JupyterLabAppCss";
-
-let _adapter: JupyterLabAppAdapter | undefined = undefined;
 
 // The webpack public path needs to be set before loading the CSS assets.
 (globalThis as any).__webpack_public_path__ = PageConfig.getOption('fullStaticUrl') + '/';
@@ -40,25 +39,27 @@ export const JupyterLabApp = (props: JupyterLabAppProps) => {
     onJupyterLab, pluginId, PluginType, onPlugin,
   } = props;
   const { serviceManager, collaborative } = useJupyter();
+  const defaultMimeExtensionPromises = useMemo(() => props.mimeExtensionPromises ?? JupyterLabAppCorePlugins(collaborative).mimeExtensionPromises, []);
+  const defaultExtensionPromises = useMemo(() => props.extensionPromises ?? JupyterLabAppCorePlugins(collaborative).extensionPromises, []);
   const ref = useRef<HTMLDivElement>(null);
   const [_, setAdapter] = useState<JupyterLabAppAdapter>();
   useEffect(() => {
     if (ref && serviceManager) {
-      if (!_adapter) {
-        _adapter = new JupyterLabAppAdapter({
+      const adapter = new JupyterLabAppAdapter({
           ...props,
+          mimeExtensionPromises: defaultMimeExtensionPromises,
+          extensionPromises: defaultExtensionPromises,
           collaborative,
           serviceManager,
         });
-      }
-      _adapter.ready.then(() => {
-        onJupyterLab(_adapter!);
+      adapter.ready.then(() => {
+        onJupyterLab(adapter!);
         if (pluginId && PluginType && onPlugin) {
-          const plugin = _adapter!.service(pluginId) as typeof PluginType;
+          const plugin = adapter!.service(pluginId) as typeof PluginType;
           onPlugin(plugin);
         }
       });
-      setAdapter(_adapter);
+      setAdapter(adapter);
     }
   }, [hostId, ref, serviceManager, theme]);
   return (
