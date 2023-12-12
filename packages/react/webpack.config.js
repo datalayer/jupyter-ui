@@ -12,14 +12,14 @@ function shim(regExp) {
 
 const ENTRY =
 // "./src/app/App";
-// "./src/app/Cell";
+"./src/examples/Cell";
 // "./src/examples/JupyterLabApp";
 // "./src/examples/JupyterLabHeadlessApp";
 // "./src/examples/Lumino";
 // "./src/examples/Matplotlib";
 // "./src/examples/Notebook";
 // "./src/examples/NotebookKernelChange";
-"./src/examples/NotebookModel";
+// "./src/examples/NotebookModel";
 // "./src/examples/NotebookModelChange";
 // "./src/examples/NotebookThemed";
 // "./src/examples/RunningSessions";

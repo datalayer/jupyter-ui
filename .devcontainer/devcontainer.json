@@ -1,7 +1,12 @@
 {
 	"name": "Jupyter UI",
-	"image": "datalayer/vsc-ui-c607b5d12e1c12f7410cdc6a20c79a6bd12ffdc35082cf83557fad53f42bbcb9:latest",
-	"remoteUser": "jovyan",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"context": "../",
+		"target": "dev"
+	},
+	"remoteUser": "mambauser",
+	"postStartCommand": "yarn install",
 	"hostRequirements": {
 		"memory": "2gb",
 		"cpus": 2

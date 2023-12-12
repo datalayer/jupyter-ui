@@ -6,12 +6,11 @@ channels:
   - conda-forge
 dependencies:
   - jq
+  - make
   - nodejs=18.16.1
   - pip
   - python=3.11
   - yarn=3.5.0
-  - pip:
-    - build
-    - hatch
-    - jupyter-packaging
-    - jupyterlab==4.0.3
+  - build
+  - hatch
+  - jupyterlab==4.0.3
