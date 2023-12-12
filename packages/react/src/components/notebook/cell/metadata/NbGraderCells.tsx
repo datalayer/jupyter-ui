@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { Cell, ICellModel } from "@jupyterlab/cells";
 /*
 // Autograded answer (only for code cells) { grade: false, solution: true, locked: false  }

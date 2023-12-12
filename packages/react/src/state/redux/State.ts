@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { combineReducers } from "redux";
 import { combineEpics } from "redux-observable";
 import { AnyAction } from "typescript-fsa";

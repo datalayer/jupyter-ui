@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { LexicalEditor, INSERT_PARAGRAPH_COMMAND } from "lexical";
 import { INotebookContent, IOutput } from "@jupyterlab/nbformat";
 import { INSERT_JUPYTER_CELL_COMMAND } from "../plugins/JupyterPlugin";

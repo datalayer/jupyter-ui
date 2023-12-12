@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { ICell, IOutput } from '@jupyterlab/nbformat';
 import Lumino from '../../../jupyter/lumino/Lumino';
 import OutputAdapter from './OutputAdapter';

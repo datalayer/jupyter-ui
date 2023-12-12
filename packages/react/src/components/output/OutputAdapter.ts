@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { IOutput } from '@jupyterlab/nbformat';
 import { OutputArea, OutputAreaModel } from '@jupyterlab/outputarea';
 import { IRenderMime, RenderMimeRegistry, standardRendererFactories } from '@jupyterlab/rendermime';

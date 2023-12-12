@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 var postcss = require('postcss')
 var atImport = require("postcss-import")
 var css_variables = require('postcss-css-variables')

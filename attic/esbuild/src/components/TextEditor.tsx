@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import React, { FC, useEffect, useRef, useState } from "react";
 import MDEditor from "@uiw/react-md-editor";
 import { Cell } from "../state";

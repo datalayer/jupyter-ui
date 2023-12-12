@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { color0, color1, color2, color3, color4, color5, color6, color7 } from './Theme';
 
 const Layers = () => (

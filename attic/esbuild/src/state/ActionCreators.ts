@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import React, { Dispatch } from "react";
 import bundle from "../bundler/Bundler";
 import { ActionType } from "./ActionTypes";

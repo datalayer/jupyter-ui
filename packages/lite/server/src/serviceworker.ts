@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { ISignal, Signal } from '@lumino/signaling';
 // import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 import { IServiceWorkerRegistrationWrapper } from './tokens';

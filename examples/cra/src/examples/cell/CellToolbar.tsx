@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import React from 'react';
 import {useDispatch} from 'react-redux';
 import { Box, IconButton, Text, Tooltip } from '@primer/react';

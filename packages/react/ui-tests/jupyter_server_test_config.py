@@ -1,3 +1,7 @@
+# Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+#
+# MIT License
+
 """Server configuration for integration tests.
 
 !! Never use this configuration in production because it

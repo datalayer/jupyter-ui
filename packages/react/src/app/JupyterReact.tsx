@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { useState, useEffect } from 'react';
 import { JupyterFrontEnd } from '@jupyterlab/application';
 import { ThemeProvider, BaseStyles, Box } from '@primer/react';

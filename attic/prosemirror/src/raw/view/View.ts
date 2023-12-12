@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { EditorState, Transaction } from "prosemirror-state";
 import { Node } from "prosemirror-model";
 import { EditorView } from "prosemirror-view";

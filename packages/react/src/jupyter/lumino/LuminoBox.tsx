@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { useRef, useEffect } from 'react';
 import { unmountComponentAtNode } from 'react-dom';
 import { Widget, BoxPanel } from '@lumino/widgets';

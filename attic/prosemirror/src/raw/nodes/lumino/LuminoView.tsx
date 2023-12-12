@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { EditorView, NodeView } from "prosemirror-view";
 import { Node } from "prosemirror-model";
 import LuminoExample from './LuminoExample';

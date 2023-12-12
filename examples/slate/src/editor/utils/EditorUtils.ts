@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { Editor, Element, Point, Range, Text, Transforms } from "slate";
 import isUrl from "is-url";
 

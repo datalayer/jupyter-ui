@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import React, { useMemo } from 'react';
 import { ThemeProvider, BaseStyles, Box } from "@primer/react";
 import { ErrorBoundary } from 'react-error-boundary';

@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { useEffect, useState, useMemo } from 'react';
 import { useTheme, ActionMenu, ActionList, IconButton, Box } from '@primer/react'
 import { KebabHorizontalIcon, ArrowRightIcon, StopIcon, PaintbrushIcon } from '@primer/octicons-react';

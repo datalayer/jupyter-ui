@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { ISessionContext } from '@jupyterlab/apputils';
 import { IOutput } from '@jupyterlab/nbformat';
 import { Kernel, KernelMessage } from '@jupyterlab/services';

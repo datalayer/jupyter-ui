@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import * as esbuild from "esbuild-wasm";
 import { fetchPlugin } from "./FetchPlugin";
 import { unpkgPathPlugin } from "./UnpkgPathPlugin";

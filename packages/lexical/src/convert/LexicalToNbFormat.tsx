@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { LexicalNode, $isElementNode, $isTextNode, $isParagraphNode } from "lexical";
 import { INotebookContent, ICodeCell, IMarkdownCell } from "@jupyterlab/nbformat";
 import { $isEquationNode } from "./../nodes/EquationNode";

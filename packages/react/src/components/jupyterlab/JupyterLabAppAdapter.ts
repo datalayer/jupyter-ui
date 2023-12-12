@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { CommandRegistry } from '@lumino/commands';
 import { BoxPanel, Widget, FocusTracker } from '@lumino/widgets';
 import { JupyterLab, JupyterFrontEndPlugin, JupyterFrontEnd, LabShell } from '@jupyterlab/application';

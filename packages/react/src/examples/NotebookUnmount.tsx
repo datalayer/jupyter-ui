@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { useEffect, useState } from "react";
 import { createRoot } from 'react-dom/client';
 import { Box, Button } from '@primer/react';

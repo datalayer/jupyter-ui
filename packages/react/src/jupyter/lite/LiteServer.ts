@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { JupyterLiteServer } from '@datalayer/jupyterlite-server';
 import { PageConfig } from '@jupyterlab/coreutils';
 import { ServiceManager } from '@jupyterlab/services';

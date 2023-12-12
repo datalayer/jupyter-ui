@@ -1,3 +1,7 @@
+# Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+#
+# MIT License
+
 [build-system]
 requires = ["hatchling>=1.4.0", "jupyterlab==4.0.3", "hatch-nodejs-version"]
 build-backend = "hatchling.build"

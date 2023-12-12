@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
 import { CommandRegistry } from "@lumino/commands";
 import { SessionContextDialogs } from "@jupyterlab/apputils";

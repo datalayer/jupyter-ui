@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { Editor } from "slate";
 import { useSlate } from "slate-react";
 import { ToggleButton } from "@mui/material";

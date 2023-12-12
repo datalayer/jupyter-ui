@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { useState } from "react";
 import { ActionList, TextInput } from "@primer/react";
 import { CheckIcon } from "@primer/octicons-react";

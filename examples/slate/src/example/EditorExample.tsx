@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { useMemo, useState, useCallback, useEffect } from 'react';
 import { createEditor, Range, Descendant } from 'slate';
 import { Slate, withReact } from 'slate-react';

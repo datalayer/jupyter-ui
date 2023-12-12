@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import React, { PropsWithChildren } from "react";
 // import { createBrowserHistory } from "history";
 import { Route, BrowserRouter, Routes } from "react-router-dom";

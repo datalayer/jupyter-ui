@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { useCallback } from "react";
 import { LexicalEditor } from "lexical";
 import { KatexEquationAlterer } from './../ui/KatexEquationAlterer';

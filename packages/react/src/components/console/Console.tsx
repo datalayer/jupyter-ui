@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { useState, useEffect } from 'react';
 import { useJupyter } from './../../jupyter/JupyterContext';
 import Lumino from '../../jupyter/lumino/Lumino';

@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { DOMWidgetModel, DOMWidgetView, ISerializers } from "@jupyter-widgets/base";
 import _ from "lodash";
 import Plotly from "plotly.js";

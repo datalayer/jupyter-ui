@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { Schema } from "prosemirror-model"
 import { addListNodes } from "prosemirror-schema-list";
 import { nodes } from "./nodes";

@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { useState, useEffect, useReducer } from 'react';
 import { TreeView } from '@primer/react';
 import { FileIcon } from '@primer/octicons-react';

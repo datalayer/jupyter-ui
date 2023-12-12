@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { IOutput } from "@jupyterlab/nbformat";
 import { Output } from "@datalayer/jupyter-react";
 import { OutputAdapter } from '@datalayer/jupyter-react';

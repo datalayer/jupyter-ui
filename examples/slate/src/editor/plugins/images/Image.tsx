@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { RenderElementProps, useSelected, useFocused } from 'slate-react';
 import { css } from '@emotion/css';
 import { ImageElement } from '../../../slate';

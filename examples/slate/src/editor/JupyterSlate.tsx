@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { useCallback } from 'react';
 import { Editor as SlateEditor, Range } from 'slate';
 import { Editable, RenderPlaceholderProps } from 'slate-react';

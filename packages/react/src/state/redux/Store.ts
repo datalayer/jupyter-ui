@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { applyMiddleware, combineReducers, createStore, Store, ReducersMapObject } from "redux";
 import { createEpicMiddleware } from "redux-observable";
 import { AnyAction, Success } from "typescript-fsa";

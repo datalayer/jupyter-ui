@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import React, { useState } from "react";
 import { Box, TabNav, Button } from "@primer/react";
 import { ThreeBarsIcon } from "@primer/octicons-react"

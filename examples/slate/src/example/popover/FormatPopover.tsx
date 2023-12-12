@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { useState, useRef, useEffect, Ref } from "react";
 import { Range, Editor } from "slate";
 import { ReactEditor } from "slate-react";

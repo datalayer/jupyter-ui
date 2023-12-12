@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import actionCreatorFactory from "typescript-fsa";
 import { useSelector } from "react-redux";
 import { reducerWithInitialState } from "typescript-fsa-reducers";

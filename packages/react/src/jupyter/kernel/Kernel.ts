@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { find } from '@lumino/algorithm';
 import { UUID } from '@lumino/coreutils';
 import { Kernel as JupyterKernel, ServerConnection, KernelManager, SessionManager, KernelMessage, KernelSpecManager } from '@jupyterlab/services';

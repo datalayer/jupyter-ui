@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { PromiseDelegate } from '@lumino/coreutils';
 import { URLExt, PageConfig } from '@jupyterlab/coreutils';
 import { KernelMessage } from '@jupyterlab/services';
