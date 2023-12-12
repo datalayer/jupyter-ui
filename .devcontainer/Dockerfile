@@ -1,5 +1,8 @@
 ARG VARIANT=latest
-FROM ghcr.io/mamba-org/micromamba-devcontainer:${VARIANT}
+#
+# Development image
+#
+FROM ghcr.io/mamba-org/micromamba-devcontainer:${VARIANT} as dev
 
 LABEL maintainer="Datalayer <support@datalayer.io>"
 
@@ -9,7 +12,24 @@ RUN : \
     # Configure Conda to use the conda-forge channel
     && micromamba config append channels conda-forge \
     # Install and clean up
-    && micromamba install --yes -c conda-forge --name base \
+    && micromamba env create --yes -c conda-forge --name datalayer \
         --file /tmp/environment.yml \
     && micromamba clean --all --force-pkgs-dirs --yes \
+;
+
+# Set the default environment
+ENV ENV_NAME=datalayer
+
+#
+#  Builder image
+#
+FROM dev as builder
+
+LABEL maintainer="Datalayer <support@datalayer.io>"
+
+RUN : \
+    # Install JS dependencies
+    && yarn install \
+    # Build JS assets
+    && yarn build \
 ;

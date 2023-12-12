@@ -2,7 +2,8 @@
 	"name": "Jupyter UI",
 	"build": {
 		"dockerfile": "Dockerfile",
-		"context": "../"
+		"context": "../",
+		"target": "dev"
 	},
 	"remoteUser": "mambauser",
 	"postStartCommand": "yarn install",
