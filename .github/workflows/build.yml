@@ -2,13 +2,57 @@ name: Build
 
 on:
   push:
-    branches: '*'
+    branches: 'main'
   pull_request:
     branches: '*'
-#  schedule:
-#    - cron: '0 0 * * *'
 
 jobs:
+  docker-dev:
+    name: Build on dev container
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_NAME: ${{ github.repository }}
+
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+
+      - 
+        name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      -
+        name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ".devcontainer/Dockerfile"
+          target: "builder"
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
   build:
     name: Run build on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -26,17 +70,14 @@ jobs:
     - name: Setup conda
       uses: conda-incubator/setup-miniconda@v2
       with:
-        auto-update-conda: true
-#        mamba-version: "*"
-#        channels: conda-forge
-    - name: Create the environment
-      run: |
-        conda env create -f environment.yml
+        mamba-version: "*"
+        channels: conda-forge,defaults
+        channel-priority: true
+        environment-file: environment.yml
+        activate-environment: datalayer
     - name: Install the npm dependencies
       run: |
-        conda activate datalayer
-        yarn
+        yarn install
     - name: Run the build
       run: |
-        conda activate datalayer
         yarn build
