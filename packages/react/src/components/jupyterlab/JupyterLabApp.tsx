@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { memo, useState, useEffect, useMemo, useRef } from "react";
 import { Box } from "@primer/react";
 import { JupyterLab } from '@jupyterlab/application';

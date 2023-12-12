@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { JupyterLab } from '@jupyterlab/application';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 

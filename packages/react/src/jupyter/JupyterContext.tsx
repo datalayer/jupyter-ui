@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import React, { useState, useEffect, useContext, createContext } from "react";
 import { Provider as ReduxProvider } from "react-redux";
 import { ServiceManager, ServerConnection, KernelManager } from '@jupyterlab/services';

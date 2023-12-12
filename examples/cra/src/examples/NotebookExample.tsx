@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import {render} from 'react-dom';
 import {Jupyter, Notebook} from '@datalayer/jupyter-react';
 import NotebookSimpleToolbar from './notebook/NotebookToolbarSimple';

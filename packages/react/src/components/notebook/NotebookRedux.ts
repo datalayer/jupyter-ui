@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { ReactPortal } from "react";
 import { useSelector } from "react-redux";
 import actionCreatorFactory, { Action, Success } from "typescript-fsa";

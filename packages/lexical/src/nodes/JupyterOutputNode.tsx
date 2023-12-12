@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { LexicalEditor, EditorConfig, DecoratorNode, LexicalNode, NodeKey, Spread, SerializedLexicalNode } from "lexical";
 import { UUID } from '@lumino/coreutils';
 import { IOutput } from '@jupyterlab/nbformat';

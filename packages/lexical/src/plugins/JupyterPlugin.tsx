@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { useEffect } from "react";
 import { $getSelection, $isRangeSelection, createCommand, NodeKey, COMMAND_PRIORITY_EDITOR, INSERT_LINE_BREAK_COMMAND, COMMAND_PRIORITY_HIGH, NodeMutation, $isLineBreakNode, $isElementNode, $insertNodes, $createParagraphNode } from "lexical";
 import { $getNodeByKey, $createNodeSelection, $setSelection } from "lexical";

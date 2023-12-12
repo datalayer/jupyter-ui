@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 /* Copyright 2021, Prosemirror Adapter by Mirone. */
 import { usePluginViewContext } from '@prosemirror-adapter/react'
 

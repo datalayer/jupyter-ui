@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { CommandRegistry } from '@lumino/commands';
 import { each } from '@lumino/algorithm';
 import { Signal } from '@lumino/signaling';

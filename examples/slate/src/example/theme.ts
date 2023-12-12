@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { createTheme } from "@mui/material/styles";
 import { grey } from "@mui/material/colors";
 

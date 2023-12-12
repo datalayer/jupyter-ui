@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import React, { FC, Fragment } from "react";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import AddCell from "./AddCell";

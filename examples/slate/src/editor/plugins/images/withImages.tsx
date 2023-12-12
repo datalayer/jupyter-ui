@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { Editor, Transforms } from 'slate';
 import imageExtensions from 'image-extensions';
 import isUrl from 'is-url';

@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import '@lumino/widgets/style/index.css';
 import '@lumino/dragdrop/style/index.css';
 

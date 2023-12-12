@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { useSelected, useFocused } from 'slate-react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';

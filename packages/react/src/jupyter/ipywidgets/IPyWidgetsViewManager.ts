@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { Widget } from '@lumino/widgets';
 import { ManagerBase} from '@jupyter-widgets/base-manager';
 import * as base from '@jupyter-widgets/base';

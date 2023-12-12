@@ -1,3 +1,7 @@
+rem Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+rem
+rem MIT License
+
 @ECHO OFF
 
 pushd %~dp0

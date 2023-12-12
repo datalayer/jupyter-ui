@@ -1,3 +1,7 @@
+# Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+#
+# MIT License
+
 """Base handler."""
 
 from jupyter_server.base.handlers import JupyterHandler

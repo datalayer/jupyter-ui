@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 // import Notebook from '../../../components/notebook/Notebook';
 // import CellSidebarNew from "../../../components/notebook/cell/sidebar/CellSidebarNew";
 

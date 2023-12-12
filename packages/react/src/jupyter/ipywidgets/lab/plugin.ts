@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { DisposableDelegate } from '@lumino/disposable';
 import { AttachedProperty } from '@lumino/properties';
 // import { filter } from '@lumino/algorithm';

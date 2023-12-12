@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { useEffect } from "react";
 import { $getSelection, $isElementNode, $isRangeSelection, INDENT_CONTENT_COMMAND, COMMAND_PRIORITY_HIGH, RangeSelection } from "lexical";
 import { $getListDepth, $isListItemNode, $isListNode } from "@lexical/list";

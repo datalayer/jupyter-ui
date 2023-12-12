@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { OutputAdapter, loadJupyterConfig, createServerSettings, Kernel } from '@datalayer/jupyter-react';
 import { KernelManager } from "@jupyterlab/services";
 import { Widget } from '@lumino/widgets';

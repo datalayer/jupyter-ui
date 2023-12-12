@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { EditorThemeRegistry, EditorLanguageRegistry, CodeMirrorEditorFactory, EditorExtensionRegistry, ybinding } from '@jupyterlab/codemirror';
 import { RenderMimeRegistry, standardRendererFactories } from '@jupyterlab/rendermime';
 import { Cell, CodeCell, MarkdownCell, RawCell, CodeCellModel, MarkdownCellModel, RawCellModel } from '@jupyterlab/cells';

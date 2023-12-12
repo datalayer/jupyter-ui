@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { createRoot } from 'react-dom/client';
 import { rendererFactory as geojsonRenderer } from '@jupyterlab/geojson-extension';
 import Jupyter from '../jupyter/Jupyter';

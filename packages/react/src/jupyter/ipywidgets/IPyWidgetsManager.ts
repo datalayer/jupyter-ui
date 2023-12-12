@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { Widget } from "@lumino/widgets";
 import { Kernel } from '@jupyterlab/services';
 import { WidgetModel, WidgetView, DOMWidgetView, ICallbacks } from '@jupyter-widgets/base';

@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { IMarkdownParser } from '@jupyterlab/rendermime';
 import { IEditorLanguageRegistry } from '@jupyterlab/codemirror';
 import { marked } from 'marked';

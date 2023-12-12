@@ -165,3 +165,4 @@ packages/*/content
 !.devcontainer
 !.github
 !.vscode
+!.licenserc.yaml

@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { Session } from '@jupyterlab/services';
 
 import { PathExt } from '@jupyterlab/coreutils';

@@ -1,3 +1,7 @@
+# Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+#
+# MIT License
+
 import os
 
 from subprocess import check_call

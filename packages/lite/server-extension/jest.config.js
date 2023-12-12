@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 const func = require('@jupyterlab/testutils/lib/jest-config');
 const upstream = func(__dirname);
 

@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { BoxPanel } from '@lumino/widgets';
 import { TerminalManager, ServerConnection } from '@jupyterlab/services';
 import { Terminal as JupyterTerminal, ITerminal } from '@jupyterlab/terminal';

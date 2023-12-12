@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import React, { FC, useEffect, useRef } from "react";
 
 import "./Preview.css";

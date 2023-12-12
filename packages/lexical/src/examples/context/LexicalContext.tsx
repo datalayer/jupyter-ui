@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import React, {useState, createContext, useContext} from 'react';
 import { LexicalEditor } from "lexical";
 

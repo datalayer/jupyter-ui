@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import {Schema, NodeSpec, MarkSpec, DOMOutputSpec} from "prosemirror-model"
 
 const pDOM: DOMOutputSpec = ["p", 0];

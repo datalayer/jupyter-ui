@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { RenderElementProps } from 'slate-react';
 import { Kernel } from '@datalayer/jupyter-react';
 import Image from './../plugins/images/Image';

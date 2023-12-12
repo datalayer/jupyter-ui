@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { IJupyterWidgetRegistry } from "@jupyter-widgets/base";
 import { MODULE_NAME, MODULE_VERSION } from "./Version";
 
