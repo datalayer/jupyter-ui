@@ -27,7 +27,13 @@ FROM dev as builder
 
 LABEL maintainer="Datalayer <support@datalayer.io>"
 
+# Copy the code
+COPY --chown=${MAMBA_USER}:${MAMBA_USER} . /workspaces/jupyter-ui
+
 RUN : \
+    && eval "$(micromamba shell hook --shell bash)" \
+    && micromamba activate datalayer \
+    && cd /workspaces/jupyter-ui \
     # Install JS dependencies
     && yarn install \
     # Build JS assets
