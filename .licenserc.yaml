@@ -1,0 +1,39 @@
+header:
+  license:
+    spdx-id: MIT
+    copyright-owner: Datalayer Inc
+    copyright-year: 2022-2023
+    content: |
+      Copyright (c) [year] [owner]. All rights reserved.
+
+      MIT License
+
+  paths-ignore:
+    - '**/*.ipynb'
+    - '**/*.json'
+    - '**/*.md'
+    - '**/*.svg'
+    - '**/*.yml'
+    - '**/*.yaml'
+    - '**/build'
+    - '**/lib'
+    - '**/node_modules'
+    - '**/MANIFEST.in'
+    - '**/static'
+    - '**/typings'
+    - '**/schemas'
+    - '**/themes'
+    - '*.map.js'
+    - '*.bundle.js'
+    - '**/.*'
+    - 'LICENSE'
+    - '.devcontainer/resources/'
+    - 'dev/notebooks/example1.dash'
+    - 'dev/notebooks/subfolder-2/untitled.txt'
+    - 'examples/cra/public/robots.txt'
+    - '**/LICENSE.txt'
+    - '**/*.nblink'
+    - 'packages/lexical/src/ui/PrettierButton.tsx_tmp'
+    - 'patches/'
+
+  comment: on-failure
