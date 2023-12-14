@@ -18,7 +18,8 @@ function shim(regExp) {
 
 const ENTRY =
 // "./src/app/App";
-"./src/examples/Cell";
+"./src/examples/IPyLeaflet";
+// "./src/examples/IPyReact";
 // "./src/examples/JupyterLabApp";
 // "./src/examples/JupyterLabHeadlessApp";
 // "./src/examples/Lumino";

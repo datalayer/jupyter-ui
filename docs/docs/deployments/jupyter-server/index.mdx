@@ -25,7 +25,17 @@ Those properties can be provided in the [Jupyter Context](/docs/components/conte
 </html>
 ```
 
-The values define in the host HTML are taking precedence on the values set in the context.
+The values defined in the host HTML are taking precedence on the values set in the Jupyter context.
+
+```ts
+<Jupyter
+  "jupyterServerHttpUrl": "http://localhost:8686/api/jupyter"
+  "jupyterServerWsUrl": "ws://localhost:8686/api/jupyter"
+  "jupyterToken": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+>
+  <Notebook/>
+</Jupyter>
+```
 
 If you are delivering the React.js web application from a different URL than your Jupyter Server, the Jupyter Server should be configured to accept Cross-origin request with for example in the `jupyter_server_config.py` the following traits.
 
