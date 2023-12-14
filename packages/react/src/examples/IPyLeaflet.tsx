@@ -13,8 +13,8 @@ import CellSidebar from "../components/notebook/cell/sidebar/CellSidebar";
 const IPyLeaflet = () => (
   <Jupyter>
     <Notebook
-      path="ipyreact.ipynb"
-      uid="notebook-ipyreact-uid"
+      path="ipyleaflet.ipynb"
+      uid="notebook-ipyleaflet-uid"
       externalIPyWidgets={[
         { name: "jupyter-leaflet", version: "0.18.0" },
       ]}
