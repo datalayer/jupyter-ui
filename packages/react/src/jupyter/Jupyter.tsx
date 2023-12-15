@@ -12,6 +12,7 @@ import JupyterLabCss  from './lab/JupyterLabCss';
 import { getJupyterServerHttpUrl, getJupyterServerWsUrl, loadJupyterConfig } from './JupyterConfig';
 import defaultInjectableStore, { InjectableStore } from '../state/redux/Store';
 import { JupyterLabTheme } from "./lab/JupyterLabTheme";
+import defaultTheme from './theme';
 
 /**
  * Definition of the properties that can be passed
@@ -67,7 +68,7 @@ export const Jupyter = (props: JupyterProps) => {
       FallbackComponent={ErrorFallback}
       onReset={() => { console.log('Error Boundary reset has been invoked...'); }}
     >
-      <ThemeProvider colorMode={theme === 'light' ? "day" : "night"} dayScheme="light" nightScheme="dark_high_contrast">
+      <ThemeProvider theme={defaultTheme} colorMode={theme === 'light' ? 'day' : 'night'} dayScheme='jupyter' nightScheme='jupyter'>
         <BaseStyles>
           <Box color="fg.default" bg="canvas.default">
             { !config.insideJupyterLab && !disableCssLoading && <JupyterLabCss theme={theme}/> }
