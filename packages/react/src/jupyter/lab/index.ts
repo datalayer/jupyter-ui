@@ -51,7 +51,7 @@ const jupyterReactPlugin: JupyterFrontEndPlugin<void> = {
     }
     commands.addCommand(command, {
       caption: 'Show Jupyter React',
-      label: 'React',
+      label: 'Jupyter React',
       icon,
       execute: () => {
         const content = new JupyterReactWidget(app);
