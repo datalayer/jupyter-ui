@@ -6,7 +6,7 @@
     "showInLauncher": {
       "title": "Show Jupyter React in the launcher",
       "description": "Show Jupyter React in the launcher",
-      "default": false,
+      "default": true,
       "type": "boolean"
     }
   },
