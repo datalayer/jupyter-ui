@@ -21,16 +21,16 @@ const AboutTab = (props: Props): JSX.Element => {
       <Box>
         <Text>React.js components 💯% compatible with Jupyter.</Text>
       </Box>
-      <Box mt={3} style={{height: 350}}>
+      <Box mt={3} style={{width: 350}}>
         {!egg ?
-          <img src="https://assets.datalayer.tech/releases/datalayer-0.2.0-omalley.png" onClick={e => setEgg(true)}/>
+          <img src="https://assets.datalayer.tech/releases/datalayer-0.3.0-black-snake_1024.png" onClick={e => setEgg(true)}/>
             :
           <ECharlesIcon size={300} onClick={e => setEgg(false)}/>
         }
       </Box>
       <Box>
-        <Link href="https://datalayer.tech/docs/releases/0.2.0-omalley" target="_blank">
-          <Text as="h4">Datalayer 0.2.0 O'Malley Release</Text>
+        <Link href="https://datalayer.tech/docs/releases/0.3.0-black-snake" target="_blank">
+          <Text as="h4">Datalayer 0.3.0 Black Snake Release</Text>
         </Link>
       </Box>
       <Box>
