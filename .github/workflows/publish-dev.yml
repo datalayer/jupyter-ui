@@ -25,13 +25,16 @@ jobs:
           # Defaults to the user or organization that owns the workflow file
           scope: '@datalayer'
       -
-        run: corepack enable
+        working-directory: packages/react
+        run: |
+            corepack enable
+            yarn install
+            yarn run build
       -
         if: github.event_name == 'push'
         # Bump the version
         working-directory: packages/react
         run: |
-            yarn install
             npm version --preid dev --no-git-tag-version prerelease
 
             git config --global user.name "github-actions[bot]"
