@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import type { Meta, StoryObj } from '@storybook/react';
 
 import { Header } from './Header';
