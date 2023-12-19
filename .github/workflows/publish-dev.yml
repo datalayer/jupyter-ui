@@ -25,6 +25,8 @@ jobs:
           # Defaults to the user or organization that owns the workflow file
           scope: '@datalayer'
       -
+        run: corepack enable
+      -
         if: github.event_name == 'push'
         # Bump the version
         working-directory: packages/react
