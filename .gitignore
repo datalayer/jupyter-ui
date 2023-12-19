@@ -23,6 +23,7 @@ __pycache__
 node_modules
 coverage
 typedoc
+storybook-static
 
 *.exclude.*
 
@@ -164,5 +165,6 @@ packages/*/content
 !**/.env
 !.devcontainer
 !.github
+!.storybook
 !.vscode
 !.licenserc.yaml

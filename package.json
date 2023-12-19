@@ -42,6 +42,7 @@
     "jupyter:ui:nextjs": "lerna run --parallel --scope @datalayer/jupyter-nextjs-example dev",
     "jupyter:ui:prosemirror": "lerna run --parallel --scope @datalayer/jupyter-prosemirror-example start",
     "jupyter:ui:slate": "lerna run --parallel --scope @datalayer/jupyter-slate-example start",
+    "storybook": "lerna run --scope @datalayer/jupyter-ui-storybook storybook",
     "test": "lerna run test",
     "postinstall": "patch-package --use-yarn"
   },
@@ -49,7 +50,8 @@
     "docs",
     "examples/*",
     "packages/*",
-    "packages/lite/*"
+    "packages/lite/*",
+    "storybook"
   ],
   "devDependencies": {
     "babel-eslint": "10.0.1",
