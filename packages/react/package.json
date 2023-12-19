@@ -21,7 +21,7 @@
   },
   "packageManager": "yarn@3.5.0",
   "scripts": {
-    "build": "gulp resources-to-lib && tsc && webpack && yarn build:labextension:dev",
+    "build": "gulp resources-to-lib && tsc && webpack && (yarn build:labextension:dev || true)",
     "build:labextension": "jupyter labextension build .",
     "build:labextension:dev": "jupyter labextension build --development True .",
     "build:lib": "tsc",
