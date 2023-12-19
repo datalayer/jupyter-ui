@@ -21,37 +21,37 @@
   },
   "packageManager": "yarn@3.5.0",
   "scripts": {
-    "build": "gulp resources-to-lib && tsc && webpack && jlpm build:lib && jlpm build:labextension:dev",
+    "build": "gulp resources-to-lib && tsc && webpack && yarn build:labextension:dev",
     "build:labextension": "jupyter labextension build .",
     "build:labextension:dev": "jupyter labextension build --development True .",
     "build:lib": "tsc",
-    "build:prod": "gulp resources-to-lib && tsc && jlpm clean && jlpm build:lib && jlpm build:labextension",
+    "build:prod": "gulp resources-to-lib && tsc && yarn clean && yarn build:lib && yarn build:labextension",
     "build:tsc:watch:res": "gulp resources-to-lib-watch",
     "build:tsc:watch:tsc": "tsc --watch",
     "build:webpack": "cross-env BUILD_APP=true webpack-cli build",
     "clean": "rimraf node_modules lib dist build tsconfig.tsbuildinfo",
-    "clean:all": "jlpm clean:lib && jlpm clean:labextension && jlpm clean:lintcache",
+    "clean:all": "yarn clean:lib && yarn clean:labextension && yarn clean:lintcache",
     "clean:labextension": "rimraf datalayer/labextension",
     "clean:lib": "rimraf lib tsconfig.tsbuildinfo",
     "clean:lintcache": "rimraf .eslintcache .stylelintcache",
-    "eslint": "jlpm eslint:check --fix",
+    "eslint": "yarn eslint:check --fix",
     "eslint:check": "eslint . --cache --ext .ts,.tsx",
-    "install:extension": "jlpm build",
+    "install:extension": "yarn build",
     "jupyterlab": "run-p -c 'jupyterlab:*'",
     "jupyterlab:start": "jupyter lab --watch --config=./../../dev/config/jupyter_server_config.py",
     "jupyterlab:watch": "run-p -c watch:src watch:labextension",
     "kill": "./../../dev/sh/kill.sh || true",
-    "lint": "jlpm stylelint && jlpm prettier && jlpm eslint",
-    "lint:check": "jlpm stylelint:check && jlpm prettier:check && jlpm eslint:check",
-    "prettier": "jlpm prettier:base --write --list-different",
+    "lint": "yarn stylelint && yarn prettier && yarn eslint",
+    "lint:check": "yarn stylelint:check && yarn prettier:check && yarn eslint:check",
+    "prettier": "yarn prettier:base --write --list-different",
     "prettier:base": "prettier \"**/*{.ts,.tsx,.js,.jsx,.css,.json,.md}\"",
-    "prettier:check": "jlpm prettier:base --check",
+    "prettier:check": "yarn prettier:base --check",
     "start": "run-p -c 'start:*'",
     "start:webpack": "webpack serve",
     "start-local": "run-p -c 'start-local:*'",
     "start-local:webpack": "cross-env LOCAL_JUPYTER_SERVER=true webpack serve",
     "start-local:jupyter-server": "cd ./../.. && make start-jupyter-server",
-    "stylelint": "jlpm stylelint:check --fix",
+    "stylelint": "yarn stylelint:check --fix",
     "stylelint:check": "stylelint --cache \"style/**/*.css\"",
     "test": "jest --coverage",
     "typedoc": "typedoc ./src",
@@ -246,10 +246,10 @@
     "hooks": {
       "before-build-npm": [
         "python -m pip install jupyterlab==4.0.3",
-        "jlpm"
+        "yarn"
       ],
       "before-build-python": [
-        "jlpm clean:all"
+        "yarn clean:all"
       ]
     }
   }
