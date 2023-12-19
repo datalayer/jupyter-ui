@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import type { StorybookConfig } from "@storybook/react-vite";
 
 const config: StorybookConfig = {
