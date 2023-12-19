@@ -20,6 +20,7 @@
     "pnpm": "please-use-yarn",
     "yarn": ">= 3.5.0"
   },
+  "packageManager": "yarn@3.5.0",
   "os": [
     "darwin",
     "linux"
