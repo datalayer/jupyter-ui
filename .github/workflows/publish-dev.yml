@@ -25,7 +25,6 @@ jobs:
           # Defaults to the user or organization that owns the workflow file
           scope: '@datalayer'
       -
-        working-directory: packages/react
         run: |
             corepack enable
             yarn install
