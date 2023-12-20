@@ -3,6 +3,9 @@ on:
   push:
     branches:
         - main
+  release:
+    types: [published]
+  # FIXME workflow_dispatch should not be needed
   workflow_dispatch: 
 
 jobs:
@@ -38,10 +41,10 @@ jobs:
 
             git config --global user.name "github-actions[bot]"
             git config --global user.email "github-actions[bot]@users.noreply.github.com"
-            git commit -a -m "Bump pre release version"
+            git commit -a -m "Bump dev version"
       -
         working-directory: packages/react
-        run: yarn npm publish
+        run: npm publish --access public --tag next
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
