@@ -74,7 +74,7 @@ jobs:
       # Keep only the 3 latest pre releases
       - uses: actions/delete-package-versions@v4
         with:
-          package-name: '@datalayer/jupyter-react'
+          package-name: 'jupyter-react'
           package-type: 'npm'
           min-versions-to-keep: 3
           delete-only-pre-release-versions: "true"
