@@ -6,8 +6,55 @@ on:
   pull_request:
     branches: '*'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
+  build:
+    name: Run build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: [3.11]
+    defaults:
+      run:
+        shell: bash -l {0}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Setup conda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        mamba-version: "*"
+        channels: conda-forge,defaults
+        channel-priority: true
+        environment-file: environment.yml
+        activate-environment: datalayer
+    - name: Get yarn cache directory path
+      id: yarn-cache-dir-path
+      run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+    
+    - uses: actions/cache@v3
+      id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+      with:
+        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+        key: ${{ runner.os }}-yarn-${{ hashFiles('**/package.json') }}
+        restore-keys: |
+          ${{ runner.os }}-yarn-
+    - name: Install the npm dependencies
+      run: |
+        yarn install
+    - name: Run the build
+      run: |
+        yarn build
+
   docker-dev:
+    # Don't run if the previous case fails
+    needs: build
+
     name: Build on dev container
     runs-on: ubuntu-latest
 
@@ -53,32 +100,3 @@ jobs:
           # push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-
-  build:
-    name: Run build on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: [3.11]
-    defaults:
-      run:
-        shell: bash -l {0}
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-    - name: Setup conda
-      uses: conda-incubator/setup-miniconda@v2
-      with:
-        mamba-version: "*"
-        channels: conda-forge,defaults
-        channel-priority: true
-        environment-file: environment.yml
-        activate-environment: datalayer
-    - name: Install the npm dependencies
-      run: |
-        yarn install
-    - name: Run the build
-      run: |
-        yarn build

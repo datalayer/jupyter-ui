@@ -8,6 +8,10 @@ on:
   # FIXME workflow_dispatch should not be needed
   workflow_dispatch: 
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+    
 jobs:
   publish:
     # Forbid manual execution on non-main branches
@@ -16,6 +20,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       -
         uses: actions/checkout@v4
@@ -32,6 +38,17 @@ jobs:
             corepack enable
             yarn install
             yarn run build
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+      
+      - uses: actions/cache@v3
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
       -
         if: github.event_name == 'push'
         # Bump the version
@@ -45,8 +62,6 @@ jobs:
       -
         working-directory: packages/react
         run: npm publish --access public --tag next
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       -
         if: github.event_name == 'push'
