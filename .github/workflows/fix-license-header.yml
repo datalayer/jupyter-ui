@@ -17,9 +17,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Configure git to use https
-        run: git config --global hub.protocol https
-
       - name: Checkout the branch from the PR that triggered the job
         run: gh pr checkout ${{ github.event.pull_request.number }}
         env:
