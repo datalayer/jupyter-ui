@@ -36,12 +36,11 @@ jobs:
       -
         run: |
             corepack enable
-            yarn install
-            yarn run build
+
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-      
+
       - uses: actions/cache@v3
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
@@ -49,19 +48,37 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/package.json') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
+      
+      -
+        run: |
+            yarn install
+            yarn run build
       -
         if: github.event_name == 'push'
         # Bump the version
-        working-directory: packages/react
         run: |
-            npm version --preid dev --no-git-tag-version prerelease
+            npm version --preid dev --no-git-tag-version prerelease \
+              --workspace ./packages/react \
+              --workspace ./packages/lite\ipykernel \
+              --workspace ./packages/lite\ipykernel-extension \
+              --workspace ./packages/lite\kernel \
+              --workspace ./packages/lite\server \
+              --workspace ./packages/lite\server-extension
 
             git config --global user.name "github-actions[bot]"
             git config --global user.email "github-actions[bot]@users.noreply.github.com"
             git commit -a -m "Bump dev version"
       -
-        working-directory: packages/react
-        run: npm publish --access public --tag next
+        run: |
+          npm publish --access public --tag next \
+            --workspace ./packages/react \
+            --workspace ./packages/lite\ipykernel \
+            --workspace ./packages/lite\ipykernel-extension \
+            --workspace ./packages/lite\kernel \
+            --workspace ./packages/lite\server \
+            --workspace ./packages/lite\server-extension
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       -
         if: github.event_name == 'push'
@@ -75,6 +92,36 @@ jobs:
       - uses: actions/delete-package-versions@v4
         with:
           package-name: 'jupyter-react'
+          package-type: 'npm'
+          min-versions-to-keep: 3
+          delete-only-pre-release-versions: "true"
+      - uses: actions/delete-package-versions@v4
+        with:
+          package-name: 'jupyterlite-ipykernel'
+          package-type: 'npm'
+          min-versions-to-keep: 3
+          delete-only-pre-release-versions: "true"
+      - uses: actions/delete-package-versions@v4
+        with:
+          package-name: 'jupyterlite-ipykernel-extension'
+          package-type: 'npm'
+          min-versions-to-keep: 3
+          delete-only-pre-release-versions: "true"
+      - uses: actions/delete-package-versions@v4
+        with:
+          package-name: 'jupyterlite-kernel'
+          package-type: 'npm'
+          min-versions-to-keep: 3
+          delete-only-pre-release-versions: "true"
+      - uses: actions/delete-package-versions@v4
+        with:
+          package-name: 'jupyterlite-server'
+          package-type: 'npm'
+          min-versions-to-keep: 3
+          delete-only-pre-release-versions: "true"
+      - uses: actions/delete-package-versions@v4
+        with:
+          package-name: 'jupyterlite-server-extension'
           package-type: 'npm'
           min-versions-to-keep: 3
           delete-only-pre-release-versions: "true"
