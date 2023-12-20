@@ -18,7 +18,7 @@ jobs:
     if: github.ref_name == 'main'
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
     env:
       NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -68,6 +68,8 @@ jobs:
         # Push version bump
         run: |
           git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Keep only the 3 latest pre releases
       - uses: actions/delete-package-versions@v4
