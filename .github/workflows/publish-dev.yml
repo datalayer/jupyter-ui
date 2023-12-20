@@ -20,6 +20,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       -
         uses: actions/checkout@v4
@@ -60,8 +62,6 @@ jobs:
       -
         working-directory: packages/react
         run: npm publish --access public --tag next
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       -
         if: github.event_name == 'push'
