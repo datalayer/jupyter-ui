@@ -68,7 +68,7 @@ export const Jupyter = (props: JupyterProps) => {
       FallbackComponent={ErrorFallback}
       onReset={() => { console.log('Error Boundary reset has been invoked...'); }}
     >
-      <ThemeProvider theme={defaultTheme} colorMode={theme === 'light' ? 'day' : 'night'} dayScheme='jupyter' nightScheme='jupyter'>
+      <ThemeProvider theme={defaultTheme} colorMode={theme === 'light' ? 'day' : 'night'} dayScheme='light' nightScheme='dark'>
         <BaseStyles>
           <Box color="fg.default" bg="canvas.default">
             { !config.insideJupyterLab && !disableCssLoading && <JupyterLabCss theme={theme}/> }
