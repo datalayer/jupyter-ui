@@ -7,11 +7,14 @@
 import type { Preview } from "@storybook/react";
 import { toolbarTypes, withThemeProvider } from "../stories/story-helpers";
 
+import './custom.css';
+
 import '@jupyterlab/apputils/style/materialcolors.css';
-import '@jupyterlab/theme-light-extension/style/theme.css';
 import '@jupyterlab/application/style/buttons.css';
 import '@jupyterlab/ui-components/style/styling.css';
 import '@jupyterlab/apputils/style/dialog.css';
+
+
 
 export const globalTypes = toolbarTypes
 export const decorators = [withThemeProvider]

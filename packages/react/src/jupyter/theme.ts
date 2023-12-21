@@ -315,13 +315,13 @@ const jupyterTheme = {
           counterBg: 'var(--jp-layout-color4, #757575)',
           primary: {
             text: 'var(--jp-ui-inverse-font-color1, rgba(255, 255, 255, 1))',
-            bg: 'var(--jp-accent-color1, #388e3c)',
+            bg: 'var(--jp-brand-color1, #388e3c)',
             border: 'var(--jp-border-color1, #bdbdbd)',
-            hoverBg: 'var(--jp-accent-color2, #81c784)',
+            hoverBg: 'var(--jp-brand-color2, #81c784)',
             hoverBorder: 'var(--jp-border-color1, #bdbdbd)',
-            selectedBg: 'var(--jp-accent-color0, #1b5e20)',
+            selectedBg: 'var(--jp-brand-color0, #1b5e20)',
             disabledText: 'var(--jp-ui-inverse-font-color2, rgba(255, 255, 255, 0.7))',
-            disabledBg: 'var(--jp-accent-color3, #c8e6c9)',
+            disabledBg: 'var(--jp-brand-color3, #c8e6c9)',
             disabledBorder: 'var(--jp-border-color1, #bdbdbd)',
             icon: 'var(--jp-ui-inverse-font-color2, rgba(255, 255, 255, 0.7))',
             counterBg: 'var(--jp-inverse-layout-color3, #616161)',
@@ -836,13 +836,13 @@ const jupyterTheme = {
           counterBg: 'var(--jp-layout-color4, #757575)',
           primary: {
             text: 'var(--jp-ui-inverse-font-color1, rgba(0, 0, 0, 0.8))',
-            bg: 'var(--jp-accent-color1, #4caf50)',
+            bg: 'var(--jp-brand-color1, #4caf50)',
             border: 'var(--jp-border-color1, #616161)',
-            hoverBg: 'var(--jp-accent-color2, #81c784)',
+            hoverBg: 'var(--jp-brand-color2, #81c784)',
             hoverBorder: 'var(--jp-border-color1, #616161)',
-            selectedBg: 'var(--jp-accent-color0, #388e3c)',
+            selectedBg: 'var(--jp-brand-color0, #388e3c)',
             disabledText: 'var(--jp-ui-inverse-font-color2)',
-            disabledBg: 'var(--jp-accent-color3, #c8e6c9)',
+            disabledBg: 'var(--jp-brand-color3, #c8e6c9)',
             disabledBorder: 'var(--jp-border-color1, #616161)',
             icon: 'var(--jp-ui-inverse-font-color2)',
             counterBg: 'var(--jp-inverse-layout-color3)',
@@ -1105,18 +1105,19 @@ const jupyterTheme = {
   },
 }
 
+const {colorSchemes: defaultSchemes, ...defaultOthers} = theme;
 const {colorSchemes: jpSchemes, ...jpOthers} = jupyterTheme;
 
 // Merge with the light theme to ensure all variables are defined (although
 // the style may be ugly)
-const defaultTheme = merge(theme, jpOthers)
+const defaultTheme = merge(defaultOthers, jpOthers, {colorSchemes: {light: {}, dark: {}}})
 defaultTheme.colorSchemes.light = {
-    colors: merge(theme.colorSchemes.light.colors, jpSchemes.light.colors),
-    shadows: merge(theme.colorSchemes.light.shadows, jpSchemes.light.shadows)
+    colors: merge(defaultSchemes.light.colors, jpSchemes.light.colors),
+    shadows: merge(defaultSchemes.light.shadows, jpSchemes.light.shadows)
 }
 defaultTheme.colorSchemes.dark = {
-  colors: merge(theme.colorSchemes.dark.colors, jpSchemes.dark.colors),
-  shadows: merge(theme.colorSchemes.dark.shadows, jpSchemes.dark.shadows)
+  colors: merge(defaultSchemes.dark.colors, jpSchemes.dark.colors),
+  shadows: merge(defaultSchemes.dark.shadows, jpSchemes.dark.shadows)
 }
 
 export {defaultTheme as jupyterTheme};

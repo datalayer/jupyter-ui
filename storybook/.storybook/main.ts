@@ -9,6 +9,7 @@ import {join, dirname} from 'path';
 function getAbsolutePath(value: string): any {
   return dirname(require.resolve(join(value, 'package.json')));
 }
+
 const config: StorybookConfig = {
   stories: [
     '../stories/**/*.mdx',
@@ -16,7 +17,12 @@ const config: StorybookConfig = {
   ],
   addons: [
     getAbsolutePath('@storybook/addon-links'),
-    getAbsolutePath('@storybook/addon-essentials'),
+    {
+      name: getAbsolutePath('@storybook/addon-essentials'),
+      options: {
+        backgrounds: false,
+      },
+    },
     getAbsolutePath('@storybook/addon-onboarding'),
     getAbsolutePath('@storybook/addon-interactions'),
   ],

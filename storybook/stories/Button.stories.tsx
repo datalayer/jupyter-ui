@@ -23,7 +23,7 @@ type Story = StoryObj<typeof Button>
 const Template = (args, { globals: { labComparison } }) => {
   return (<>
   <Button {...args}>{args.label ?? 'Default'}</Button>
-  {labComparison === 'display' && <div dangerouslySetInnerHTML={{__html: createLabButton(args)}}></div>}
+  {labComparison === 'display' && <div className='vertical-spacer' dangerouslySetInnerHTML={{__html: createLabButton(args)}}></div>}
 </>)
 }
 
