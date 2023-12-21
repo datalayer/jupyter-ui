@@ -6,6 +6,7 @@
 
 // Jupyter.
 export * from './jupyter/Jupyter';
+export * from './jupyter/theme';
 export * from './jupyter/JupyterContext';
 export * from './jupyter/JupyterConfig';
 export * from './jupyter/lab/JupyterLabCss';

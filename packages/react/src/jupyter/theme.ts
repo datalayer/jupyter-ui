@@ -1119,4 +1119,4 @@ defaultTheme.colorSchemes.dark = {
   shadows: merge(theme.colorSchemes.dark.shadows, jpSchemes.dark.shadows)
 }
 
-export default defaultTheme;
+export {defaultTheme as jupyterTheme};
