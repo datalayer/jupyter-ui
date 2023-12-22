@@ -102,6 +102,9 @@ export * from './components/settings/SettingsRedux';
 export * from './components/terminal/Terminal';
 export * from './components/terminal/TerminalRedux';
 
+// TextInput
+export * from './components/textinput/TextInput';
+
 // Viewer.
 export * from './components/viewer/Viewer';
 export * from './components/viewer/input/InputViewer';

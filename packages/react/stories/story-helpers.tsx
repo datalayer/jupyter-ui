@@ -3,6 +3,7 @@ import {createGlobalStyle} from 'styled-components'
 import { Icon } from '@primer/octicons-react'
 import {jupyterTheme as theme} from '../src/jupyter/theme'
 import React from 'react'
+import { ArgTypes } from '@storybook/react'
 
 // we don't import StoryContext from storybook because of exports that conflict
 // with primer/react more: https://github.com/primer/react/runs/6129115026?check_suite_focus=true
@@ -59,6 +60,84 @@ export const toolbarTypes = {
     }
   }
 }
+
+export const inputWrapperArgTypes: ArgTypes = {
+  block: {
+    defaultValue: false,
+    control: {
+      type: 'boolean',
+    },
+  },
+  contrast: {
+    defaultValue: false,
+    control: {
+      type: 'boolean',
+    },
+  },
+  disabled: {
+    defaultValue: false,
+    control: {
+      type: 'boolean',
+    },
+  },
+  placeholder: {
+    defaultValue: '',
+    control: {
+      type: 'text',
+    },
+  },
+  size: {
+    name: 'size (input)', // TODO: remove '(input)'
+    defaultValue: 'medium',
+    options: ['small', 'medium', 'large'],
+    control: {type: 'radio'},
+  },
+  validationStatus: {
+    defaultValue: undefined,
+    options: ['error', 'success', undefined],
+    control: {type: 'radio'},
+  },
+}
+
+const textInputArgTypesUnsorted: ArgTypes = {
+  ...inputWrapperArgTypes,
+  loading: {
+    defaultValue: false,
+    control: {
+      type: 'boolean',
+    },
+  },
+  loaderPosition: {
+    defaultValue: 'auto',
+    options: ['auto', 'leading', 'trailing'],
+    control: {
+      type: 'radio',
+    },
+  },
+  monospace: {
+    defaultValue: false,
+    control: {
+      type: 'boolean',
+    },
+  },
+}
+
+// Alphabetize and optionally categorize the props
+export const getTextInputArgTypes = (category?: string) =>
+  Object.keys(textInputArgTypesUnsorted)
+    .sort()
+    .reduce<Record<string, unknown>>((obj, key) => {
+      obj[key] = category
+        ? {
+            // have to do weird type casting so we can spread the object
+            ...(textInputArgTypesUnsorted[key] as {[key: string]: unknown}),
+            table: {
+              category,
+            },
+          }
+        : textInputArgTypesUnsorted[key]
+      return obj
+    }, {})
 
 // Use this function for icon options in the controls. Desired icons are passed in as an array of Octicons
 export const OcticonArgType = (iconList: Icon[]) => {

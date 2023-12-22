@@ -573,7 +573,7 @@ const jupyterTheme = {
         primer: {
           shadow: {
             highlight: 'inset 0 1px 0 rgba(255,255,255,0.25)',
-            inset: 'inset 0 1px 0 rgba(208,215,222,0.2)',
+            inset: 'inset 0 0 0 var(--jp-border-width) var(--jp-input-border-color)',
           },
         },
       },
@@ -1097,7 +1097,7 @@ const jupyterTheme = {
         primer: {
           shadow: {
             highlight: '0 0 transparent',
-            inset: '0 0 transparent',
+            inset: 'inset 0 0 0 var(--jp-border-width) var(--jp-input-border-color)',
           },
         },
       },
