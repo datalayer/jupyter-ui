@@ -6,7 +6,7 @@
 
 import {EyeClosedIcon, EyeIcon, SearchIcon, TriangleDownIcon, XIcon, HeartIcon} from '@primer/octicons-react'
 import type {Meta, StoryObj} from '@storybook/react'
-import {Button} from '@primer/react'
+import {Button} from '../src';
 import React from 'react'
 import {OcticonArgType} from './story-helpers'
 import { createLabButton } from './labBuilders'

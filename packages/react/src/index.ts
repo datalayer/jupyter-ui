@@ -33,6 +33,9 @@ export * from './jupyter/services/Services';
 export * from './jupyter/kernel/Kernel';
 export * from './jupyter/kernel/KernelModel';
 
+// Button
+export * from './components/button/Button';
+
 // Cell.
 export * from './components/cell/Cell';
 export * from './components/cell/CellAdapter';

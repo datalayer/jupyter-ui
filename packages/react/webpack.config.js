@@ -151,8 +151,8 @@ module.exports = {
         type: 'asset/resource',
       },
       { test: /\.css$/, use: ['style-loader', 'css-loader'] },
-      { test: /\.md$/, use: 'raw-loader' },
-      { test: /\.js.map$/, use: 'file-loader' },
+      { test: /\.md$/, type: 'asset/source' },
+      { test: /\.js.map$/, type: 'asset/resource' },
       {
         // In .css files, svg is loaded as a data URI.
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
@@ -167,9 +167,7 @@ module.exports = {
         // must be loaded as a raw string instead of data URIs.
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
         issuer: /\.js$/,
-        use: {
-          loader: 'raw-loader'
-        }
+        type: 'asset/source'
       },
       {
         test: /\.m?js/,

@@ -34,6 +34,34 @@ const config: StorybookConfig = {
       },
     },
   },
+  webpackFinal: config => {
+    config.module?.rules?.push(      {
+      test: /\.tsx?$/,
+      loader: "babel-loader",
+      options: {
+        plugins: [
+          [
+            '@babel/plugin-transform-typescript',
+            {
+              allowDeclareFields: true,
+            },
+          ],
+          "@babel/plugin-proposal-class-properties",
+        ],
+        presets: [
+          ["@babel/preset-react", {
+              runtime: 'automatic',
+              importSource: 'react'
+            },
+          ],
+          "@babel/preset-typescript",
+        ],
+        cacheDirectory: true
+      },
+      exclude: /node_modules/,
+    })
+    return config;
+  },
   docs: {
     autodocs: 'tag',
   },

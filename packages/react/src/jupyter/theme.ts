@@ -48,7 +48,7 @@ const jupyterTheme = {
     condensed: 1.25,
     default: 1.5,
   },
-  radii: ['0', '3px', '6px', '100px'],
+  radii: ['0', 'calc(var(--jp-border-radius) * 0.5)', 'var(--jp-border-radius)', '100px'],
   sizes: {
     small: '544px',
     medium: '768px',

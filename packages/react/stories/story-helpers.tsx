@@ -1,7 +1,7 @@
 import {Box, ThemeProvider, themeGet, BaseStyles} from '@primer/react'
 import {createGlobalStyle} from 'styled-components'
 import { Icon } from '@primer/octicons-react'
-import {jupyterTheme as theme} from '@datalayer/jupyter-react'
+import {jupyterTheme as theme} from '../src/jupyter/theme'
 import React from 'react'
 
 // we don't import StoryContext from storybook because of exports that conflict
