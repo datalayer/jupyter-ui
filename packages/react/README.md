@@ -12,6 +12,8 @@ The below image shows a gallery of the available React.js components ready to be
   <img alt="Jupyter React Gallery" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-gallery.gif" />
 </div>
 
+We host a Storybook on ✨ https://jupyter-ui-storybook.datalayer.tech that showcases various low-level as high-level React.js components useful to build a Data Product.
+
 The Jupyter(Lab) notebook is a tool that allows data scientist to analyse dataset. However, it is not easy to create a custom user interface integrated in an existing application. [Jupyter React](https://jupyter-react.datalayer.tech), an open-source library, fills that gap and provides components that a developer can easily integrate in any React.js application.
 
 In terms of technical stack, the Jupyter(Lab) user interface is built on top of Lumino, which is an imperative way to build user interface and **can not** be consumed by industry standard declarative frameworks like React.js. As a user interface developer, if you want to create a custom data product on top of Jupyter, you have to stick to Lumino and carry-on the full notebook interface not tailored to your specific needs. This is not what you want. You just want to expose what you need, you want to develop with your favorite toolkit (like React.js) and you also want to integrate on a per-component basis the Jupyter functionality in your application.

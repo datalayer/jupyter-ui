@@ -55,3 +55,28 @@ publish-typedoc: typedoc ## deploy typedoc
 		--paths /datalayer/jupyter-react/0.3.0/ \
 		--profile datalayer
 	echo open ✨  https://typedoc.datalayer.tech/datalayer/jupyter-react/0.7.3
+
+start-storybook: ## start-storybook
+	($(CONDA_ACTIVATE) ${ENV_NAME}; \
+	  yarn storybook )
+
+build-storybook: ## build-storybook
+	($(CONDA_ACTIVATE) ${ENV_NAME}; \
+	  yarn build:storybook )
+
+publish-storybook: build-storybook ## publish to s3
+	($(CONDA_ACTIVATE) ${ENV_NAME}; \
+	  aws s3 rm \
+		s3://datalayer-jupyter-ui-storybook/ \
+		--recursive \
+		--profile datalayer && \
+	  aws s3 cp \
+		./storybook-static \
+		s3://datalayer-jupyter-ui-storybook/ \
+		--recursive \
+		--profile datalayer && \
+	  aws cloudfront create-invalidation \
+		--distribution-id E1FS3TTXFD6GQX \
+		--paths "/*" \
+		--profile datalayer && \
+	echo open ✨ https://jupyter-ui-storybook.datalayer.tech )

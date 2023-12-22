@@ -58,11 +58,11 @@ export const toolbarTypes = {
   labComparison: {
     name: 'JupyterLab comparison',
     description: 'Display the equivalent in JupyterLab',
-    defaultValue: 'hide',
+    defaultValue: 'display',
     toolbar: {
       icon: 'mirror',
       items: ['display', 'hide'],
-      title: 'vs Lab'
+      title: 'Native JupyterLab equivalent'
     }
   }
 }
