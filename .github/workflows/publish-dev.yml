@@ -63,7 +63,8 @@ jobs:
               --workspace ./packages/lite/ipykernel-extension \
               --workspace ./packages/lite/kernel \
               --workspace ./packages/lite/server \
-              --workspace ./packages/lite/server-extension
+              --workspace ./packages/lite/server-extension \
+              --workspace ./packages/lite/session
 
             git config --global user.name "github-actions[bot]"
             git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -76,7 +77,8 @@ jobs:
             --workspace ./packages/lite/ipykernel-extension \
             --workspace ./packages/lite/kernel \
             --workspace ./packages/lite/server \
-            --workspace ./packages/lite/server-extension
+            --workspace ./packages/lite/server-extension \
+            --workspace ./packages/lite/session
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -122,6 +124,12 @@ jobs:
       - uses: actions/delete-package-versions@v4
         with:
           package-name: 'jupyterlite-server-extension'
+          package-type: 'npm'
+          min-versions-to-keep: 3
+          delete-only-pre-release-versions: "true"
+      - uses: actions/delete-package-versions@v4
+        with:
+          package-name: 'jupyterlite-session'
           package-type: 'npm'
           min-versions-to-keep: 3
           delete-only-pre-release-versions: "true"
