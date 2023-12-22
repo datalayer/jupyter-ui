@@ -1,6 +1,6 @@
-import type {StorybookConfig} from '@storybook/react-webpack5';
+import type { StorybookConfig } from '@storybook/react-webpack5';
 
-import {join, dirname} from 'path';
+import { join, dirname } from 'path';
 
 /**
  * This function is used to resolve the absolute path of a package.
@@ -23,7 +23,6 @@ const config: StorybookConfig = {
         backgrounds: false,
       },
     },
-    getAbsolutePath('@storybook/addon-onboarding'),
     getAbsolutePath('@storybook/addon-interactions'),
   ],
   framework: {
@@ -35,7 +34,7 @@ const config: StorybookConfig = {
     },
   },
   webpackFinal: config => {
-    config.module?.rules?.push(      {
+    config.module?.rules?.push({
       test: /\.tsx?$/,
       loader: "babel-loader",
       options: {
@@ -50,9 +49,9 @@ const config: StorybookConfig = {
         ],
         presets: [
           ["@babel/preset-react", {
-              runtime: 'automatic',
-              importSource: 'react'
-            },
+            runtime: 'automatic',
+            importSource: 'react'
+          },
           ],
           "@babel/preset-typescript",
         ],

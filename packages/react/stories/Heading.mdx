@@ -1,0 +1,65 @@
+import {Canvas, Meta} from '@storybook/blocks';
+import * as HeadingStories from './Heading.stories';
+
+<Meta of={HeadingStories} />
+
+# Heading
+
+This component displays an heading. By default it is a `h2` heading.
+
+<Canvas of={HeadingStories.Default} />
+
+> The `Heading` component does not change the font size with the level.
+
+# Comparison with JupyterLab
+
+> You can display the JupyterLab equivalent component through the toolbar.
+
+In JupyterLab, you will need to set the style manually to customize the
+style of an heading using the CSS properies `--jp-content-font-family`
+for the font family and `--jp-content-font-size#` for the font size (
+the available range of size is 0 to 5 - 5 being the biggest size).
+
+```jsx
+<h2
+  style={{
+    fontFamily: 'var(--jp-content-font-family)',
+    fontSize: 'var(--jp-content-font-size1)',
+  }}
+>
+  {'Heading'}
+</h2>
+```
+
+> ⚠️ JupyterLab font size are using relative unit [em](https://developer.mozilla.org/en-US/docs/Web/CSS/length#relative_length_units_based_on_font)
+> except for `--jp-content-font-size1`. This may have poor side effect like the following nested:
+
+```jsx
+<p
+  style={{
+    fontFamily: 'var(--jp-content-font-family)',
+    fontSize: 'var(--jp-content-font-size1)',
+  }}
+>
+  <span style={{fontSize: 'var(--jp-content-font-size3)'}}>
+    {'Expected change'}
+    <span style={{fontSize: 'var(--jp-content-font-size3)'}}>
+      {'Unexpected'}
+    </span>
+  </span>
+</p>
+```
+
+<p
+  style={{
+    fontFamily: 'var(--jp-content-font-family)',
+    fontSize: 'var(--jp-content-font-size1)',
+  }}
+>
+  <span style={{fontSize: 'var(--jp-content-font-size3)'}}>
+    {'Expected change'}
+    <span style={{fontSize: 'var(--jp-content-font-size3)'}}>
+      {'Unexpected'}
+    </span>
+  </span>
+</p>

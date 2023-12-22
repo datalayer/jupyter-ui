@@ -1,14 +1,14 @@
-import {Box, ThemeProvider, themeGet, BaseStyles} from '@primer/react'
-import {createGlobalStyle} from 'styled-components'
+import { ThemeProvider, themeGet, BaseStyles } from '@primer/react'
+import { createGlobalStyle } from 'styled-components'
 import { Icon } from '@primer/octicons-react'
-import {jupyterTheme as theme} from '../src/jupyter/theme'
+import { jupyterTheme as theme } from '../src/jupyter/theme'
 import React from 'react'
 import { ArgTypes } from '@storybook/react'
 
 // we don't import StoryContext from storybook because of exports that conflict
 // with primer/react more: https://github.com/primer/react/runs/6129115026?check_suite_focus=true
 type StoryContext = Record<string, unknown> & {
-  globals: {colorScheme: string; labComparison: 'display' | 'hide'}
+  globals: { colorScheme: string; labComparison: 'display' | 'hide' }
   parameters: Record<string, unknown>
 }
 
@@ -26,11 +26,11 @@ export const withThemeProvider = (Story: React.FC<React.PropsWithChildren<StoryC
   // used for testing ThemeProvider.stories.tsx
   if (context.parameters.disableThemeDecorator) return Story(context)
 
-  const {colorScheme} = context.globals
+  const { colorScheme } = context.globals
 
   return (
     <ThemeProvider colorMode="day" dayScheme={colorScheme} nightScheme={colorScheme}>
-      {colorScheme.startsWith('light') ? <GlobalStyle $lightTheme /> :  <GlobalStyle />}
+      {colorScheme.startsWith('light') ? <GlobalStyle $lightTheme /> : <GlobalStyle />}
       <BaseStyles>
         <div id="html-addon-root">{Story(context)}</div>
       </BaseStyles>
@@ -64,38 +64,30 @@ export const toolbarTypes = {
 export const inputWrapperArgTypes: ArgTypes = {
   block: {
     defaultValue: false,
-    control: {
-      type: 'boolean',
-    },
+    control: 'boolean',
   },
   contrast: {
     defaultValue: false,
-    control: {
-      type: 'boolean',
-    },
+    control: 'boolean',
   },
   disabled: {
     defaultValue: false,
-    control: {
-      type: 'boolean',
-    },
+    control: 'boolean',
   },
   placeholder: {
     defaultValue: '',
-    control: {
-      type: 'text',
-    },
+    control: 'text',
   },
   size: {
     name: 'size (input)', // TODO: remove '(input)'
     defaultValue: 'medium',
     options: ['small', 'medium', 'large'],
-    control: {type: 'radio'},
+    control: 'radio',
   },
   validationStatus: {
     defaultValue: undefined,
     options: ['error', 'success', undefined],
-    control: {type: 'radio'},
+    control: 'radio',
   },
 }
 
@@ -103,22 +95,16 @@ const textInputArgTypesUnsorted: ArgTypes = {
   ...inputWrapperArgTypes,
   loading: {
     defaultValue: false,
-    control: {
-      type: 'boolean',
-    },
+    control: 'boolean',
   },
   loaderPosition: {
     defaultValue: 'auto',
     options: ['auto', 'leading', 'trailing'],
-    control: {
-      type: 'radio',
-    },
+    control: 'radio',
   },
   monospace: {
     defaultValue: false,
-    control: {
-      type: 'boolean',
-    },
+    control: 'boolean',
   },
 }
 
@@ -129,12 +115,12 @@ export const getTextInputArgTypes = (category?: string) =>
     .reduce<Record<string, unknown>>((obj, key) => {
       obj[key] = category
         ? {
-            // have to do weird type casting so we can spread the object
-            ...(textInputArgTypesUnsorted[key] as {[key: string]: unknown}),
-            table: {
-              category,
-            },
-          }
+          // have to do weird type casting so we can spread the object
+          ...(textInputArgTypesUnsorted[key] as { [key: string]: unknown }),
+          table: {
+            category,
+          },
+        }
         : textInputArgTypesUnsorted[key]
       return obj
     }, {})
@@ -148,9 +134,7 @@ export const OcticonArgType = (iconList: Icon[]) => {
 
   return {
     options: Object.keys(icons),
-    control: {
-      type: 'select',
-    },
+    control: 'select',
     mapping: icons,
   }
 }
