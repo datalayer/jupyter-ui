@@ -279,7 +279,7 @@ const jupyterTheme = {
           bgActive: 'rgba(0,0,0,0)',
         },
         input: {
-          disabledBg: 'var(--jp-inverse-layout-color2, #424242)',
+          disabledBg: 'var(--jp-layout-color2, #eee)',
         },
         timeline: {
           badgeBg: 'var(--jp-layout-color2, #eee)',
@@ -443,7 +443,7 @@ const jupyterTheme = {
           onEmphasis: 'var(--jp-ui-inverse-font-color1, rgba(255, 255, 255, 1))',
         },
         canvas: {
-          default: 'var(--jp-ui-inverse-font-color1, rgba(255, 255, 255, 1))',
+          default: 'var(--jp-layout-color1, white)',
           overlay: 'var(--jp-ui-inverse-font-color1, rgba(255, 255, 255, 1))',
           inset: 'var(--jp-layout-color1, white)',
           subtle: 'var(--jp-layout-color1, white)',
@@ -800,7 +800,7 @@ const jupyterTheme = {
           bgActive: 'rgba(0,0,0,0)',
         },
         input: {
-          disabledBg: 'var(--jp-inverse-layout-color2)',
+          disabledBg: 'var(--jp-layout-color2, #424242)',
         },
         timeline: {
           badgeBg: 'var(--jp-layout-color2, #424242)',
@@ -964,7 +964,7 @@ const jupyterTheme = {
           onEmphasis: 'var(--jp-ui-inverse-font-color1, rgba(0, 0, 0, 0.8))',
         },
         canvas: {
-          default: 'var(--jp-ui-inverse-font-color1, rgba(0, 0, 0, 0.8))',
+          default: 'var(--jp-layout-color1, #212121)',
           overlay: 'var(--jp-ui-inverse-font-color1, rgba(0, 0, 0, 0.8))',
           inset: 'var(--jp-layout-color1, #212121)',
           subtle: 'var(--jp-layout-color1, #212121)',

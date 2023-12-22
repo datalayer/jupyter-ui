@@ -7,7 +7,12 @@ import type {FC} from 'react'
  */
 export const TextInput: FC<TextInputProps> = (props) => {
     const sx: BetterSystemStyleObject = {
-        border: 'none'
+        border: 'none',
+        ':focus-within': {
+            borderColor: 'inherit',
+            outline: 'none',
+            boxShadow: 'inset 0 0 0 var(--jp-border-width) var(--jp-input-active-box-shadow-color), inset 0 0 0 3px var(--jp-input-active-box-shadow-color)'
+        }
     };
 
     return <BaseTextInput sx={sx} {...props} />
