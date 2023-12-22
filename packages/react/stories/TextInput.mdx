@@ -1,0 +1,25 @@
+{/*
+  ~ Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+  ~
+  ~ MIT License
+*/}
+
+import { Canvas, Meta } from '@storybook/blocks';
+import * as TextInputStories from './TextInput.stories';
+
+<Meta of={TextInputStories} />
+
+# TextInput
+
+This component allows an user to provide a string.
+
+<Canvas of={TextInputStories.Default} />
+
+# Comparison with JupyterLab
+
+> You can display the JupyterLab equivalent component through the toolbar.
+
+The JupyterLab `InputGroup` are the one displayed in the filebrowser
+filter or in the extension filter. Their CSS rules
+are defined in the CSS stylesheet (in addition to the theme):
+- `@jupyterlab/ui-components/style/base.css`

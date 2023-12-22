@@ -48,7 +48,7 @@ const jupyterTheme = {
     condensed: 1.25,
     default: 1.5,
   },
-  radii: ['0', '3px', '6px', '100px'],
+  radii: ['0', 'calc(var(--jp-border-radius) * 0.5)', 'var(--jp-border-radius)', '100px'],
   sizes: {
     small: '544px',
     medium: '768px',
@@ -279,7 +279,7 @@ const jupyterTheme = {
           bgActive: 'rgba(0,0,0,0)',
         },
         input: {
-          disabledBg: 'var(--jp-inverse-layout-color2, #424242)',
+          disabledBg: 'var(--jp-layout-color2, #eee)',
         },
         timeline: {
           badgeBg: 'var(--jp-layout-color2, #eee)',
@@ -315,13 +315,13 @@ const jupyterTheme = {
           counterBg: 'var(--jp-layout-color4, #757575)',
           primary: {
             text: 'var(--jp-ui-inverse-font-color1, rgba(255, 255, 255, 1))',
-            bg: 'var(--jp-accent-color1, #388e3c)',
+            bg: 'var(--jp-brand-color1, #388e3c)',
             border: 'var(--jp-border-color1, #bdbdbd)',
-            hoverBg: 'var(--jp-accent-color2, #81c784)',
+            hoverBg: 'var(--jp-brand-color2, #81c784)',
             hoverBorder: 'var(--jp-border-color1, #bdbdbd)',
-            selectedBg: 'var(--jp-accent-color0, #1b5e20)',
+            selectedBg: 'var(--jp-brand-color0, #1b5e20)',
             disabledText: 'var(--jp-ui-inverse-font-color2, rgba(255, 255, 255, 0.7))',
-            disabledBg: 'var(--jp-accent-color3, #c8e6c9)',
+            disabledBg: 'var(--jp-brand-color3, #c8e6c9)',
             disabledBorder: 'var(--jp-border-color1, #bdbdbd)',
             icon: 'var(--jp-ui-inverse-font-color2, rgba(255, 255, 255, 0.7))',
             counterBg: 'var(--jp-inverse-layout-color3, #616161)',
@@ -443,7 +443,7 @@ const jupyterTheme = {
           onEmphasis: 'var(--jp-ui-inverse-font-color1, rgba(255, 255, 255, 1))',
         },
         canvas: {
-          default: 'var(--jp-ui-inverse-font-color1, rgba(255, 255, 255, 1))',
+          default: 'var(--jp-layout-color1, white)',
           overlay: 'var(--jp-ui-inverse-font-color1, rgba(255, 255, 255, 1))',
           inset: 'var(--jp-layout-color1, white)',
           subtle: 'var(--jp-layout-color1, white)',
@@ -573,7 +573,7 @@ const jupyterTheme = {
         primer: {
           shadow: {
             highlight: 'inset 0 1px 0 rgba(255,255,255,0.25)',
-            inset: 'inset 0 1px 0 rgba(208,215,222,0.2)',
+            inset: 'inset 0 0 0 var(--jp-border-width) var(--jp-input-border-color)',
           },
         },
       },
@@ -800,7 +800,7 @@ const jupyterTheme = {
           bgActive: 'rgba(0,0,0,0)',
         },
         input: {
-          disabledBg: 'var(--jp-inverse-layout-color2)',
+          disabledBg: 'var(--jp-layout-color2, #424242)',
         },
         timeline: {
           badgeBg: 'var(--jp-layout-color2, #424242)',
@@ -835,25 +835,25 @@ const jupyterTheme = {
           selectedBg: 'var(--jp-layout-color0, #111)',
           counterBg: 'var(--jp-layout-color4, #757575)',
           primary: {
-            text: 'var(--jp-ui-inverse-font-color1, rgba(0, 0, 0, 0.8))',
-            bg: 'var(--jp-accent-color1, #4caf50)',
+            text: 'var(--jp-ui-font-color1, rgba(0, 0, 0, 0.8))',
+            bg: 'var(--jp-brand-color1, #4caf50)',
             border: 'var(--jp-border-color1, #616161)',
-            hoverBg: 'var(--jp-accent-color2, #81c784)',
+            hoverBg: 'var(--jp-brand-color2, #81c784)',
             hoverBorder: 'var(--jp-border-color1, #616161)',
-            selectedBg: 'var(--jp-accent-color0, #388e3c)',
-            disabledText: 'var(--jp-ui-inverse-font-color2)',
-            disabledBg: 'var(--jp-accent-color3, #c8e6c9)',
+            selectedBg: 'var(--jp-brand-color0, #388e3c)',
+            disabledText: 'var(--jp-ui-font-color2)',
+            disabledBg: 'var(--jp-brand-color3, #c8e6c9)',
             disabledBorder: 'var(--jp-border-color1, #616161)',
-            icon: 'var(--jp-ui-inverse-font-color2)',
+            icon: 'var(--jp-ui-font-color2)',
             counterBg: 'var(--jp-inverse-layout-color3)',
           },
           outline: {
             text: 'var(--jp-brand-color1, #2196f3)',
-            hoverText: 'var(--jp-ui-inverse-font-color1, rgba(0, 0, 0, 0.8))',
+            hoverText: 'var(--jp-ui-font-color1, rgba(0, 0, 0, 0.8))',
             hoverBg: 'var(--jp-brand-color1, #2196f3)',
             hoverBorder: 'var(--jp-border-color1, #616161)',
             hoverCounterBg: 'var(--jp-brand-color4)',
-            selectedText: 'var(--jp-ui-inverse-font-color1, rgba(0, 0, 0, 0.8))',
+            selectedText: 'var(--jp-ui-font-color1, rgba(0, 0, 0, 0.8))',
             selectedBg: 'var(--jp-brand-color2, #64b5f6)',
             selectedBorder: 'var(--jp-border-color1, #616161)',
             disabledText: 'var(--jp-brand-color3, #bbdefb)',
@@ -866,11 +866,11 @@ const jupyterTheme = {
           },
           danger: {
             text: 'var(--jp-error-color0, #d32f2f)',
-            hoverText: 'var(--jp-ui-inverse-font-color1, rgba(0, 0, 0, 0.8))',
+            hoverText: 'var(--jp-ui-font-color1, rgba(0, 0, 0, 0.8))',
             hoverBg: 'var(--jp-error-color1, #f44336)',
             hoverBorder: 'var(--jp-border-color1, #616161)',
             hoverCounterBg: 'var(--jp-brand-color4)',
-            selectedText: 'var(--jp-ui-inverse-font-color1, rgba(0, 0, 0, 0.8))',
+            selectedText: 'var(--jp-ui-font-color1, rgba(0, 0, 0, 0.8))',
             selectedBg: 'var(--jp-error-color0, #d32f2f)',
             selectedBorder: 'var(--jp-border-color1, #616161)',
             disabledText: 'var(--jp-error-color3, #ffcdd2)',
@@ -878,7 +878,7 @@ const jupyterTheme = {
             disabledCounterBg: 'var(--jp-error-color3, #ffcdd2)',
             counterBg: 'var(--jp-error-color2, #e57373)',
             icon: 'var(--jp-error-color0, #d32f2f)',
-            hoverIcon: 'var(--jp-ui-inverse-font-color1, rgba(0, 0, 0, 0.8))',
+            hoverIcon: 'var(--jp-ui-font-color1, rgba(0, 0, 0, 0.8))',
             counterFg: 'var(--jp-error-color1, #f44336)',
             hoverCounterFg: 'var(--jp-ui-inverse-font-color1, rgba(0, 0, 0, 0.8))',
             disabledCounterFg: 'var(--jp-error-color3, #ffcdd2)',
@@ -964,7 +964,7 @@ const jupyterTheme = {
           onEmphasis: 'var(--jp-ui-inverse-font-color1, rgba(0, 0, 0, 0.8))',
         },
         canvas: {
-          default: 'var(--jp-ui-inverse-font-color1, rgba(0, 0, 0, 0.8))',
+          default: 'var(--jp-layout-color1, #212121)',
           overlay: 'var(--jp-ui-inverse-font-color1, rgba(0, 0, 0, 0.8))',
           inset: 'var(--jp-layout-color1, #212121)',
           subtle: 'var(--jp-layout-color1, #212121)',
@@ -1097,7 +1097,7 @@ const jupyterTheme = {
         primer: {
           shadow: {
             highlight: '0 0 transparent',
-            inset: '0 0 transparent',
+            inset: 'inset 0 0 0 var(--jp-border-width) var(--jp-input-border-color)',
           },
         },
       },
@@ -1105,18 +1105,19 @@ const jupyterTheme = {
   },
 }
 
+const {colorSchemes: defaultSchemes, ...defaultOthers} = theme;
 const {colorSchemes: jpSchemes, ...jpOthers} = jupyterTheme;
 
 // Merge with the light theme to ensure all variables are defined (although
 // the style may be ugly)
-const defaultTheme = merge(theme, jpOthers)
+const defaultTheme = merge(defaultOthers, jpOthers, {colorSchemes: {light: {}, dark: {}}})
 defaultTheme.colorSchemes.light = {
-    colors: merge(theme.colorSchemes.light.colors, jpSchemes.light.colors),
-    shadows: merge(theme.colorSchemes.light.shadows, jpSchemes.light.shadows)
+    colors: merge(defaultSchemes.light.colors, jpSchemes.light.colors),
+    shadows: merge(defaultSchemes.light.shadows, jpSchemes.light.shadows)
 }
 defaultTheme.colorSchemes.dark = {
-  colors: merge(theme.colorSchemes.dark.colors, jpSchemes.dark.colors),
-  shadows: merge(theme.colorSchemes.dark.shadows, jpSchemes.dark.shadows)
+  colors: merge(defaultSchemes.dark.colors, jpSchemes.dark.colors),
+  shadows: merge(defaultSchemes.dark.shadows, jpSchemes.dark.shadows)
 }
 
-export default defaultTheme;
+export {defaultTheme as jupyterTheme};

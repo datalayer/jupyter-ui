@@ -6,6 +6,7 @@
 
 // Jupyter.
 export * from './jupyter/Jupyter';
+export * from './jupyter/theme';
 export * from './jupyter/JupyterContext';
 export * from './jupyter/JupyterConfig';
 export * from './jupyter/lab/JupyterLabCss';
@@ -31,6 +32,9 @@ export * from './jupyter/services/Services';
 // Kernel.
 export * from './jupyter/kernel/Kernel';
 export * from './jupyter/kernel/KernelModel';
+
+// Button
+export * from './components/button/Button';
 
 // Cell.
 export * from './components/cell/Cell';
@@ -97,6 +101,9 @@ export * from './components/settings/SettingsRedux';
 // Terminal.
 export * from './components/terminal/Terminal';
 export * from './components/terminal/TerminalRedux';
+
+// TextInput
+export * from './components/textinput/TextInput';
 
 // Viewer.
 export * from './components/viewer/Viewer';

@@ -13,6 +13,7 @@ header:
     - '**/*.json'
     - '**/*.md'
     - '**/*.svg'
+    - '**/*.tsbuildinfo'
     - '**/*.yml'
     - '**/*.yaml'
     - '**/build'
@@ -34,6 +35,7 @@ header:
     - '**/LICENSE.txt'
     - '**/*.nblink'
     - 'packages/lexical/src/ui/PrettierButton.tsx_tmp'
+    - 'packages/react/third-party-license.txt'
     - 'patches/'
 
   comment: on-failure
