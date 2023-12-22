@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import {Button as BaseButton, ButtonProps} from '@primer/react'
 import type { BetterCssProperties } from '@primer/react/lib/sx'
 import type {FC} from 'react'

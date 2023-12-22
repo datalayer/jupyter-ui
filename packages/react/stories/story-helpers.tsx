@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import { ThemeProvider, themeGet, BaseStyles } from '@primer/react'
 import { createGlobalStyle } from 'styled-components'
 import { Icon } from '@primer/octicons-react'

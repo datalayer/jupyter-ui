@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ *
+ * MIT License
+ */
+
 import {TextInput as BaseTextInput, TextInputProps} from '@primer/react'
 import type { BetterSystemStyleObject } from '@primer/react/lib/sx'
 import type {FC} from 'react'
