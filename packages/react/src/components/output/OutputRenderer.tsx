@@ -9,7 +9,6 @@ import { IOutput } from '@jupyterlab/nbformat';
 type Props = {
   output: IOutput;
 }
-
 /*
 {
     "execution_count": 2,

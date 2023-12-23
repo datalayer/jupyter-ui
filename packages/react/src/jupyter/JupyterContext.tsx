@@ -164,7 +164,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
         const kernelManager = (serviceManager.sessions as any)._kernelManager as KernelManager;
         setKernelManager(kernelManager);
         kernelManager.ready.then(() => {
-          console.log('The Jupyter Kernel Manager is ready.');
+          console.log('Kernel Manager is ready.');
           /*
           const running = kernelManager.running();
           let kernel = running.next();
@@ -205,7 +205,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
               serverSettings,
             });
             defaultKernel.ready.then(() => {
-              console.log("The kernel is ready", defaultKernel);
+              console.log("Kernel is ready", defaultKernel);
               setKernel(defaultKernel);
             });
           }

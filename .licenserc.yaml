@@ -34,6 +34,7 @@ header:
     - 'examples/cra/public/robots.txt'
     - '**/LICENSE.txt'
     - '**/*.nblink'
+    - 'docs/docs'
     - 'packages/lexical/src/ui/PrettierButton.tsx_tmp'
     - 'packages/react/third-party-license.txt'
     - 'patches/'

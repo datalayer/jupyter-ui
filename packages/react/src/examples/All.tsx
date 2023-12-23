@@ -130,7 +130,7 @@ const NotebookKernelChange = () => {
       });
       kernel.ready.then(() => {
         dispatch(notebookActions.changeKernel({ uid: NOTEBOOK_UID_2, kernel }));
-        alert('The kernel is changed.')
+        alert('Kernel is changed.')
       });      
     }
   }

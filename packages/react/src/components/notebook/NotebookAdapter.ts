@@ -70,20 +70,22 @@ export class NotebookAdapter {
     this._path = props.path;
     this._readOnly = props.readOnly;
     this._renderers = props.renderers;
-    this._serviceManager = serviceManager;
-    this._store = store;
     this._uid = props.uid;
     this._CellSidebar = props.CellSidebar;
+
+    this._store = store;
+    this._serviceManager = serviceManager;
 
     this._boxPanel = new BoxPanel();
     this._boxPanel.addClass('dla-Jupyter-Notebook');
     this._boxPanel.spacing = 0;
+
     this._commandRegistry = new CommandRegistry();
 
-    this.load();
+    this.setupAdapter();
   }
 
-  private load(): void {
+  private setupAdapter(): void {
 
     const useCapture = true;
 
@@ -232,8 +234,8 @@ export class NotebookAdapter {
       const manager = (this._context!.sessionContext as any).sessionManager as SessionManager;
       await manager.ready;
       await manager.refreshRunning();
-      const model = find(manager.running(), (item) => {
-        return item.kernel?.id === this._kernel.id;
+      const model = find(manager.running(), (model) => {
+        return model.kernel?.id === this._kernel.id;
       });
       if (model) {
         try {
@@ -287,12 +289,13 @@ export class NotebookAdapter {
     registerIPyWidgets();
 
     this._context.sessionContext.kernelChanged.connect((_, args) => {
+      console.log('Previous Kernel Connection', args.oldValue);
       const kernelConnection = args.newValue;
       console.log('Current Kernel Connection', kernelConnection);
       if (kernelConnection && !kernelConnection.handleComms) {
-        console.warn('The Kernel Connection does not handle Comms', kernelConnection.id);
+        console.warn('The current Kernel Connection does not handle Comms', kernelConnection.id);
         (kernelConnection as any).handleComms = true;
-        console.log('The Kernel Connection is updated to enforce Comms support', kernelConnection.handleComms);
+        console.log('The current Kernel Connection is updated to enforce Comms support', kernelConnection.handleComms);
       }
     });
     /*

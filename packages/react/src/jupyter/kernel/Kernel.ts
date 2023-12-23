@@ -111,7 +111,7 @@ export class Kernel {
       });
       this._kernelConnection.info.then((info) => {
         this._info = info;
-        console.log(`The Kernel is ready`, this.toJSON());
+        console.log(`Kernel info`, this.toJSON());
       });
     }
   }

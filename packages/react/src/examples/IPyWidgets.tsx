@@ -11,7 +11,7 @@ import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from "./toolbars/NotebookToolbar";
 import CellSidebar from "../components/notebook/cell/sidebar/CellSidebar";
 
-import notebook from "./notebooks/IPyWidgetsExample1.ipynb.json";
+import notebook from "./notebooks/IPyWidgetsExample.ipynb.json";
 
 const IPyWidgets = () => (
   <Jupyter>

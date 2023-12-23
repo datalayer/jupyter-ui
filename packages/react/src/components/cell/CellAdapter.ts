@@ -173,9 +173,9 @@ export class CellAdapter {
       const kernelConnection = arg.newValue;
       console.log('Current Kernel Connection', kernelConnection);
       if (kernelConnection && !kernelConnection.handleComms) {
-        console.warn('The Kernel Connection does not handle Comms', kernelConnection.id);
+        console.warn('Kernel Connection does not handle Comms', kernelConnection.id);
         (kernelConnection as any).handleComms = true;
-        console.log('The Kernel Connection is updated to enforce Comms support', kernelConnection.handleComms);
+        console.log('Kernel Connection is updated to enforce Comms support', kernelConnection.handleComms);
       }
       iPyWidgetsClassicManager.registerWithKernel(kernelConnection);
     });

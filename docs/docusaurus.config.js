@@ -48,12 +48,6 @@ module.exports = {
         },
         {
           type: 'doc',
-          docId: '/category/cases',
-          position: 'left',
-          label: 'Cases',
-        },
-        {
-          type: 'doc',
           docId: '/category/develop',
           position: 'left',
           label: 'Develop',

@@ -18,13 +18,17 @@ function shim(regExp) {
 
 const ENTRY =
 // "./src/app/App";
-"./src/examples/IPyLeaflet";
+// "./src/examples/Cell";
+// "./src/examples/Console";
+// "./src/examples/IPyLeaflet";
 // "./src/examples/IPyReact";
+// "./src/examples/IPyWidgets";
+// "./src/examples/IPyWidgetsWithState";
 // "./src/examples/JupyterLabApp";
 // "./src/examples/JupyterLabHeadlessApp";
 // "./src/examples/Lumino";
 // "./src/examples/Matplotlib";
-// "./src/examples/Notebook";
+"./src/examples/Notebook";
 // "./src/examples/NotebookKernelChange";
 // "./src/examples/NotebookModel";
 // "./src/examples/NotebookModelChange";
