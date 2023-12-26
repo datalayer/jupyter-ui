@@ -14,39 +14,29 @@ The below picture is an example of Notebook into a React.js component.
   alt="Jupyter UI Notebook"
 />
 
-This is what it takes to create a Notebook.
+This is what it takes to create a Notebook. In this first example, the Jupyter Server will be fetched for the `test.ipynb` notebook "ipynb" file content.
 
 ```jsx
 <Jupyter terminals={true} collaborative={true}>
-  <Notebook path="test.ipynb"/>
+  <Notebook path="test.ipynb" />
+</Jupyter>
+```
+
+Alternatively, you can get a notebook "ipynb" content from any JSON file compatible with the `INotebookContent` interface.
+
+```jsx
+import { INotebookContent } from '@jupyterlab/nbformat';
+import nbformat from "./NotebookExample.ipynb.json";
+
+<Jupyter terminals={true} collaborative={true}>
+  <Notebook nbformat={nbformat as INotebookContent} />
 </Jupyter>
 ```
 
 For IPyWidgets, use the following properties:
 
-- `ipywidgets`: `lab` or `classic` (deprecated, will be soon removed)
 - `bundledIPyWidgets`: List of module name, version and exports.
 - `externalIPyWidgets`: List of module name and version to be loaded from public CDNs.
+- `ipywidgets`: `lab` or `classic` (deprecated, will be soon removed). Please use `lab`
 
-Here is a complete list of the available Notebook properties.
-
-```jsx
-export type INotebookProps = {
-  cellMetadataPanel: boolean;
-  cellSidebarMargin: number;
-  height?: string;
-  ipywidgets: 'classic' | 'lab';
-  bundledIPyWidgets?: BundledIPyWidgets[];
-  externalIPyWidgets?: ExternalIPyWidgets[];
-  kernel?: Kernel;
-  maxHeight?: string;
-  nbformat?: INotebookContent;
-  nbgrader: boolean;
-  path?: string;
-  readOnly: boolean;
-  renderers: IRenderMime.IRendererFactory[];
-  uid: string
-  CellSidebar?: (props: CellSidebarProps) => JSX.Element;
-  Toolbar?: (props: any) => JSX.Element;
-}
-```
+The available properties for the Notebook component are available on this [TypeDoc page](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.8.1/types/INotebookProps.html).
