@@ -42,7 +42,6 @@ export const cmdIds = {
   deleteCells: 'notebook-cells:delete',
   insertAbove: 'notebook-cells:insert-above',
   insertBelow: 'notebook-cells:insert-below',
-  deleteCell: 'notebook-cells:delete',
   selectAbove: 'notebook-cells:select-above',
   selectBelow: 'notebook-cells:select-below',
   extendAbove: 'notebook-cells:extend-above',
@@ -209,7 +208,7 @@ export const NotebookCommands = (
     },
   });
   commandRegistry.addCommand(cmdIds.deleteCells, {
-    label: 'Delete',
+    label: 'Delete Cells',
     execute: () => {
       return NotebookActions.deleteCells(notebookPanel.content);
     },
@@ -329,6 +328,11 @@ export const NotebookCommands = (
       selector: '.jp-Notebook',
       keys: ['Accel F'],
       command: cmdIds.startSearch,
+    },
+    {
+      selector: '.jp-Notebook:focus',
+      keys: ['D', 'D'],
+      command: cmdIds.deleteCells,
     },
     {
       selector: '.jp-Notebook',
