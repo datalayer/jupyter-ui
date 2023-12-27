@@ -20,6 +20,7 @@ import {
 } from '@primer/octicons-react';
 import { UUID } from '@lumino/coreutils';
 import { IOutput } from '@jupyterlab/nbformat';
+import { IOutputAreaModel } from '@jupyterlab/outputarea';
 import { KernelMessage } from '@jupyterlab/services';
 import OutputAdapter from './OutputAdapter';
 import { selectExecute, outputActions, outputReducer } from './OutputRedux';
@@ -33,6 +34,7 @@ import './Output.css';
 
 export type IOutputProps = {
   outputs?: IOutput[];
+  outputAreaModel?: IOutputAreaModel;
   adapter?: OutputAdapter;
   kernel: Kernel;
   autoRun: boolean;
@@ -46,7 +48,7 @@ export type IOutputProps = {
   executeTrigger: number;
   toolbarPosition: 'up' | 'middle' | 'none';
   insertText?: (payload?: any) => string;
-  luminoWidgets: boolean;
+  lumino: boolean;
 };
 
 type Props = {
@@ -124,10 +126,11 @@ export const Output = (props: IOutputProps) => {
     adapter,
     receipt,
     disableRun,
+    outputAreaModel,
     insertText,
     toolbarPosition,
     codePre,
-    luminoWidgets,
+    lumino,
   } = props;
   const dispatch = useDispatch();
   const [id, setId] = useState<string | undefined>(sourceId);
@@ -146,7 +149,7 @@ export const Output = (props: IOutputProps) => {
   }, []);
   useEffect(() => {
     if (id && kernel) {
-      const outputAdapter = adapter || new OutputAdapter(kernel, outputs || []);
+      const outputAdapter = adapter ?? new OutputAdapter(kernel, outputs ?? [], outputAreaModel);
       if (receipt) {
         outputAdapter.outputArea.model.changed.connect((sender, change) => {
           if (change.type === 'add') {
@@ -267,7 +270,7 @@ export const Output = (props: IOutputProps) => {
             },
           }}
         >
-          {luminoWidgets
+          {lumino
             ? outputAdapter && <Lumino>{outputAdapter.outputArea}</Lumino>
             : outputs && (
                 <>
@@ -299,7 +302,7 @@ Output.defaultProps = {
   toolbarPosition: 'up',
   executeTrigger: 0,
   clearTrigger: 0,
-  luminoWidgets: true,
+  lumino: true,
 } as Partial<IOutputProps>;
 
 export default Output;

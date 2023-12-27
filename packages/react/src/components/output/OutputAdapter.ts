@@ -5,7 +5,7 @@
  */
 
 import { IOutput } from '@jupyterlab/nbformat';
-import { OutputArea, OutputAreaModel } from '@jupyterlab/outputarea';
+import { IOutputAreaModel, OutputArea, OutputAreaModel } from '@jupyterlab/outputarea';
 import {
   IRenderMime,
   RenderMimeRegistry,
@@ -13,7 +13,7 @@ import {
 } from '@jupyterlab/rendermime';
 import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
-import { requireLoader } from '@jupyter-widgets/html-manager';
+import { requireLoader as loader } from '@jupyter-widgets/html-manager';
 import {
   WIDGET_MIMETYPE,
   WidgetRenderer,
@@ -28,7 +28,7 @@ export class OutputAdapter {
   private _rendermime: RenderMimeRegistry;
   private _iPyWidgetsClassicManager: IPyWidgetsClassicManager;
 
-  public constructor(kernel: Kernel | undefined, outputs?: IOutput[]) {
+  public constructor(kernel?: Kernel, outputs?: IOutput[], outputAreaModel?: IOutputAreaModel) {
     this._kernel = kernel;
     this._renderers = standardRendererFactories.filter(
       factory => factory.mimeTypes[0] !== 'text/javascript'
@@ -39,7 +39,7 @@ export class OutputAdapter {
       initialFactories: this._renderers,
     });
     this._iPyWidgetsClassicManager = new IPyWidgetsClassicManager({
-      loader: requireLoader,
+      loader,
     });
     this._rendermime.addFactory(
       {
@@ -52,12 +52,12 @@ export class OutputAdapter {
     );
     //    const widgetRegistry = activateWidgetExtension(this._rendermime);
     //    activatePlotlyWidgetExtension(widgetRegistry);
-    const outputAreaModel = new OutputAreaModel({
+    const model = outputAreaModel ?? new OutputAreaModel({
       trusted: true,
       values: outputs,
     });
     this._outputArea = new OutputArea({
-      model: outputAreaModel,
+      model,
       rendermime: this._rendermime,
     });
     if (outputs && outputs[0]) {

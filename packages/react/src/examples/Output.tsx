@@ -13,7 +13,7 @@ import Output from '../components/output/Output';
 
 const SOURCE_1 = '1+1';
 
-const SOURCE_1_OUTPUTS: IOutput[] = [
+const OUTPUTS_1: IOutput[] = [
   {
     data: {
       'text/plain': ['2'],
@@ -28,7 +28,7 @@ const OutputWithoutEditor = () => {
   return (
     <>
       <Text as="h1">Output without Editor</Text>
-      <Output showEditor={false} outputs={SOURCE_1_OUTPUTS} />
+      <Output showEditor={false} outputs={OUTPUTS_1} />
     </>
   );
 };
@@ -43,7 +43,7 @@ const OutputWithEditor = () => {
         autoRun={false}
         kernel={defaultKernel}
         code={SOURCE_1}
-        outputs={SOURCE_1_OUTPUTS}
+        outputs={OUTPUTS_1}
       />
     </>
   );

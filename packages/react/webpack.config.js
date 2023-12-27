@@ -17,28 +17,30 @@ function shim(regExp) {
 }
 
 const ENTRY =
-  // "./src/app/App";
-  // "./src/examples/Cell";
-  // "./src/examples/Console";
-  // "./src/examples/IPyLeaflet";
-  // "./src/examples/IPyReact";
-  // "./src/examples/IPyWidgets";
-  // "./src/examples/IPyWidgetsWithState";
-  // "./src/examples/JupyterLabApp";
-  // "./src/examples/JupyterLabHeadlessApp";
-  // "./src/examples/Lumino";
-  // "./src/examples/Matplotlib";
-  './src/examples/Notebook';
-// "./src/examples/NotebookKernelChange";
-// "./src/examples/NotebookModel";
-// "./src/examples/NotebookModelChange";
-// "./src/examples/NotebookThemed";
-// "./src/examples/RunningSessions";
-// "./src/examples/Terminal";
-// "./src/examples/Viewer";
+  // './src/app/App';
+  // './src/examples/Cell';
+  // './src/examples/Console';
+  // './src/examples/IPyLeaflet';
+  // './src/examples/IPyReact';
+  // './src/examples/IPyWidgets';
+  // './src/examples/IPyWidgetsWithState';
+  // './src/examples/JupyterLabApp';
+  // './src/examples/JupyterLabHeadlessApp';
+  './src/examples/KernelExecutor';
+  // './src/examples/Lumino';
+  // './src/examples/Matplotlib';
+  // './src/examples/Notebook';
+  // './src/examples/NotebookKernelChange';
+  // './src/examples/NotebookModel';
+  // './src/examples/NotebookModelChange';
+  // './src/examples/NotebookThemed';
+  // './src/examples/Outputs';
+  // './src/examples/RunningSessions';
+  // './src/examples/Terminal';
+  // './src/examples/Viewer';
 
 const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == 'true';
-// const JUPYTER_HOST = IS_JUPYTER_SERVER_LOCAL ? "http://localhost:8686" : "https://oss.datalayer.tech";
+// const JUPYTER_HOST = IS_JUPYTER_SERVER_LOCAL ? "http://localhost:8686" : "https://oss.datalayer.tech';
 const INDEX_PAGE = IS_JUPYTER_SERVER_LOCAL ? 'index-local.html' : 'index.html';
 const IS_PRODUCTION = process.argv.indexOf('--mode=production') > -1;
 const mode = IS_PRODUCTION ? 'production' : 'development';

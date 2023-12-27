@@ -17,6 +17,7 @@ import {
 import { ISessionConnection } from '@jupyterlab/services/lib/session/session';
 import { ConnectionStatus } from '@jupyterlab/services/lib/kernel/kernel';
 import { getCookie } from '../../utils/Utils';
+import KernelExecutor from './KernelExecutor';
 
 const JUPYTER_REACT_PATH_COOKIE_NAME = 'jupyter-react-kernel-path';
 
@@ -128,7 +129,7 @@ export class Kernel {
       );
       this._kernelConnection.info.then(info => {
         this._info = info;
-        console.log(`Kernel info`, this.toJSON());
+        console.log(`Kernel Info`, this.toJSON());
       });
     }
   }
@@ -179,6 +180,14 @@ export class Kernel {
 
   get connection(): JupyterKernel.IKernelConnection | null {
     return this._kernelConnection;
+  }
+
+  execute(code: string): KernelExecutor | undefined {
+    if (this._kernelConnection) {
+      const kernelExecutor = new KernelExecutor(this._kernelConnection)
+      kernelExecutor.execute(code);
+      return kernelExecutor;
+    }
   }
 
   toJSON() {

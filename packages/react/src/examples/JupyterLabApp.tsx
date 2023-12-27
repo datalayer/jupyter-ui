@@ -19,7 +19,7 @@ import * as reactExtension from './../jupyter/lab/index';
 const JupyterLabAppExample = () => {
   const onJupyterLab = async (jupyterLabAdapter: JupyterLabAppAdapter) => {
     const jupyterLab = jupyterLabAdapter.jupyterLab;
-    console.log('JupyterLab is ready', jupyterLab);
+    console.log('JupyterLab is Ready', jupyterLab);
     jupyterLab.commands
       .execute('notebook:create-new', { kernelName: 'python3' })
       .then((notebookPanel: NotebookPanel) => {

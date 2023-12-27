@@ -36,6 +36,28 @@ type Props = {
     "evalue": "invalid decimal literal (2376046737.py, line 1)",
     "output_type": "error"
 }
+{
+  "cell_type": "code",
+  "execution_count": 1,
+  "id": "7e5deaa8-6f0e-4b70-b5af-4b70b53ea130",
+  "metadata": {},
+  "outputs": [
+  {
+    "name": "stdout",
+    "output_type": "stream",
+    "text": [
+    "1\n",
+    "2\n"
+    ]
+  }
+  ],
+  "source": [
+  "from time import sleep\n",
+  "for i in range(1, 3):\n",
+  "      sleep(i)\n",
+  "      print(i)"
+  ]
+},
 */
 export const OutputRenderer = (props: Props) => {
   const { output } = props;

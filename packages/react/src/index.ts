@@ -31,7 +31,7 @@ export * from './jupyter/services/Services';
 
 // Kernel.
 export * from './jupyter/kernel/Kernel';
-export * from './jupyter/kernel/KernelModel';
+export * from './jupyter/kernel/KernelExecutor';
 
 // Button
 export * from './components/button/Button';

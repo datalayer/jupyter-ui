@@ -153,7 +153,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
           ._kernelManager as KernelManager;
         setKernelManager(kernelManager);
         kernelManager.ready.then(() => {
-          console.log('Kernel Manager is ready', kernelManager);
+          console.log('Kernel Manager is Ready', kernelManager);
           if (startDefaultKernel) {
             const kernel = new Kernel({
               kernelManager,
@@ -163,7 +163,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
               serverSettings,
             });
             kernel.ready.then(() => {
-              console.log('Lite Kernel is ready', kernel.toString());
+              console.log('Lite Kernel is Ready', kernel.toString());
               setKernel(kernel);
             });
           }
@@ -196,7 +196,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
           ._kernelManager as KernelManager;
         setKernelManager(kernelManager);
         kernelManager.ready.then(() => {
-          console.log('Kernel Manager is ready.');
+          console.log('Kernel Manager is Ready.');
           /*
           const running = kernelManager.running();
           let kernel = running.next();
@@ -229,7 +229,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
               i++;
             }
           } else if (startDefaultKernel) {
-            console.log('Starting Kernel', defaultKernelName);
+            console.log('Starting Kernel Name:', defaultKernelName);
             const defaultKernel = new Kernel({
               kernelManager,
               kernelName: defaultKernelName,
@@ -238,7 +238,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
               serverSettings,
             });
             defaultKernel.ready.then(() => {
-              console.log('Kernel is ready', defaultKernel);
+              console.log('Kernel is Ready', defaultKernel);
               setKernel(defaultKernel);
             });
           }

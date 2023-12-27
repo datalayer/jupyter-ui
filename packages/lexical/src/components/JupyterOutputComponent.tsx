@@ -29,7 +29,7 @@ export const JupyterOutputComponent = (props: Props) => {
       autoRun={autoRun}
       sourceId={outputNodeUuid}
       executeTrigger={executeTrigger}
-      luminoWidgets={false}
+      lumino={false}
       />
   )
 }
