@@ -7,14 +7,25 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, Button, ButtonGroup, IconButton } from '@primer/react';
-import { PlusIcon, ChevronRightIcon, StopIcon, ZapIcon, TrashIcon, SyncIcon } from '@primer/octicons-react';
+import {
+  PlusIcon,
+  ChevronRightIcon,
+  StopIcon,
+  ZapIcon,
+  TrashIcon,
+  SyncIcon,
+} from '@primer/octicons-react';
 import { FastForwardIcon } from '@datalayer/icons-react';
 import { IJupyterReactState } from '../../state/redux/State';
 import { cmdIds } from '../../components/notebook/NotebookCommands';
-import { notebookActions, selectNotebook, selectSaveRequest } from '../../components/notebook/NotebookRedux';
+import {
+  notebookActions,
+  selectNotebook,
+  selectSaveRequest,
+} from '../../components/notebook/NotebookRedux';
 
-export const NotebookToolbarAutoSave = (props: {notebookId: string}) => {
-  const {notebookId} = props;
+export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
+  const { notebookId } = props;
   const [autoSave, setAutoSave] = useState(false);
   const [addType, setAddType] = useState('code');
   const dispatch = useDispatch();
@@ -35,8 +46,16 @@ export const NotebookToolbarAutoSave = (props: {notebookId: string}) => {
     setAddType(newType);
   };
   return (
-    <Box display="flex" pt={1} pb={1} style={{ width: '100%', position: 'relative', top: '0' }}>
-      <Box flexGrow={1} style={{ width: '50%', paddingLeft: '7vw', gap: '0.75vw' }}>
+    <Box
+      display="flex"
+      pt={1}
+      pb={1}
+      style={{ width: '100%', position: 'relative', top: '0' }}
+    >
+      <Box
+        flexGrow={1}
+        style={{ width: '50%', paddingLeft: '7vw', gap: '0.75vw' }}
+      >
         <IconButton
           variant="invisible"
           size="small"
@@ -46,7 +65,10 @@ export const NotebookToolbarAutoSave = (props: {notebookId: string}) => {
           onClick={e => {
             e.preventDefault();
             dispatch(
-              notebookActions.save.started({uid: notebookId, date: new Date()})
+              notebookActions.save.started({
+                uid: notebookId,
+                date: new Date(),
+              })
             );
           }}
           icon={ZapIcon}
@@ -63,7 +85,7 @@ export const NotebookToolbarAutoSave = (props: {notebookId: string}) => {
           }}
           icon={ChevronRightIcon}
         />
-        {notebook?.kernelStatus === 'idle' ?
+        {notebook?.kernelStatus === 'idle' ? (
           <IconButton
             variant="invisible"
             size="small"
@@ -76,7 +98,7 @@ export const NotebookToolbarAutoSave = (props: {notebookId: string}) => {
             }}
             icon={FastForwardIcon}
           />
-        :
+        ) : (
           <IconButton
             variant="invisible"
             size="small"
@@ -88,7 +110,7 @@ export const NotebookToolbarAutoSave = (props: {notebookId: string}) => {
             }}
             icon={StopIcon}
           />
-        }
+        )}
         <IconButton
           variant="invisible"
           size="small"
@@ -102,18 +124,20 @@ export const NotebookToolbarAutoSave = (props: {notebookId: string}) => {
           icon={TrashIcon}
         />
       </Box>
-      <Box sx={{
-        display: 'flex',
-        width: '50%',
-        paddingRight: '7vw',
-        gap: '0.75vw',
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-      }}>
+      <Box
+        sx={{
+          display: 'flex',
+          width: '50%',
+          paddingRight: '7vw',
+          gap: '0.75vw',
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+        }}
+      >
         <IconButton
           aria-label="Autosave"
           title="Autosave"
-          variant={autoSave ? 'primary' : 'invisible'}          
+          variant={autoSave ? 'primary' : 'invisible'}
           onClick={e => {
             e.preventDefault();
             setAutoSave(!autoSave);
@@ -165,6 +189,6 @@ export const NotebookToolbarAutoSave = (props: {notebookId: string}) => {
       </Box>
     </Box>
   );
-}
+};
 
 export default NotebookToolbarAutoSave;

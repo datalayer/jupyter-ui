@@ -9,7 +9,7 @@ import Lumino from '../../jupyter/lumino/Lumino';
 
 export const Commands = () => {
   const commandsAdapter = new CommandAdapter();
-  return <Lumino>{commandsAdapter.panel}</Lumino>
-}
+  return <Lumino>{commandsAdapter.panel}</Lumino>;
+};
 
 export default Commands;

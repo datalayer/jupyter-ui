@@ -42,7 +42,7 @@ const config: StorybookConfig = {
   webpackFinal: config => {
     config.module?.rules?.push({
       test: /\.tsx?$/,
-      loader: "babel-loader",
+      loader: 'babel-loader',
       options: {
         plugins: [
           [
@@ -51,20 +51,22 @@ const config: StorybookConfig = {
               allowDeclareFields: true,
             },
           ],
-          "@babel/plugin-proposal-class-properties",
+          '@babel/plugin-proposal-class-properties',
         ],
         presets: [
-          ["@babel/preset-react", {
-            runtime: 'automatic',
-            importSource: 'react'
-          },
+          [
+            '@babel/preset-react',
+            {
+              runtime: 'automatic',
+              importSource: 'react',
+            },
           ],
-          "@babel/preset-typescript",
+          '@babel/preset-typescript',
         ],
-        cacheDirectory: true
+        cacheDirectory: true,
       },
       exclude: /node_modules/,
-    })
+    });
     return config;
   },
   docs: {

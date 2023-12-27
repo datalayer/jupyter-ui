@@ -14,8 +14,8 @@ export class CountdownInputPrompt extends ReactWidget implements IInputPrompt {
   private _executionCount: string | null = null;
 
   private state = {
-    count: 100
-  }
+    count: 100,
+  };
 
   constructor() {
     super();
@@ -24,7 +24,7 @@ export class CountdownInputPrompt extends ReactWidget implements IInputPrompt {
 
   /** @override */
   render() {
-    return <Countdown count={this.state.count} />
+    return <Countdown count={this.state.count} />;
   }
 
   get executionCount(): string | null {
@@ -35,23 +35,21 @@ export class CountdownInputPrompt extends ReactWidget implements IInputPrompt {
     this._executionCount = value;
     if (value === null) {
       this.state = {
-        count: 0
+        count: 0,
       };
     } else {
       if (value === '*') {
         this.state = {
-          count: 0
+          count: 0,
         };
-      }
-      else {
+      } else {
         this.state = {
-          count: Number(value)
+          count: Number(value),
         };
         this.update();
       }
     }
   }
-
 }
 
 export default CountdownInputPrompt;

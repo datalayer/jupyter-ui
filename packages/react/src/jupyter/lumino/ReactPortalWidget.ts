@@ -58,7 +58,7 @@ export abstract class ReactPortalWidget extends Widget {
     // console.js:213 Warning: unmountComponentAtNode():
     // The node you're attempting to unmount was rendered by React and is not a top-level container.
     // Instead, have the parent component update its state and rerender in order to remove this component.
-//    ReactDOM.unmountComponentAtNode(this.node);
+    //    ReactDOM.unmountComponentAtNode(this.node);
   }
 
   /**

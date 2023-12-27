@@ -6,14 +6,24 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { ActionMenu, ActionList, Box, IconButton, ProgressBar } from '@primer/react'
-import { KebabHorizontalIcon, StopIcon, PaintbrushIcon } from '@primer/octicons-react';
+import {
+  ActionMenu,
+  ActionList,
+  Box,
+  IconButton,
+  ProgressBar,
+} from '@primer/react';
+import {
+  KebabHorizontalIcon,
+  StopIcon,
+  PaintbrushIcon,
+} from '@primer/octicons-react';
 import { UUID } from '@lumino/coreutils';
 import { IOutput } from '@jupyterlab/nbformat';
 import { KernelMessage } from '@jupyterlab/services';
 import OutputAdapter from './OutputAdapter';
 import { selectExecute, outputActions, outputReducer } from './OutputRedux';
-import { useJupyter } from "../../jupyter/JupyterContext";
+import { useJupyter } from '../../jupyter/JupyterContext';
 import Kernel from '../../jupyter/kernel/Kernel';
 import Lumino from '../../jupyter/lumino/Lumino';
 import CodeMirrorEditor from '../codemirror/CodeMirrorEditor';
@@ -37,28 +47,43 @@ export type IOutputProps = {
   toolbarPosition: 'up' | 'middle' | 'none';
   insertText?: (payload?: any) => string;
   luminoWidgets: boolean;
-}
+};
 
 type Props = {
   outputAdapter: OutputAdapter;
-}
+};
 
 const KernelProgressMenu = (props: Props) => {
   const { outputAdapter } = props;
   return (
     <ActionMenu>
       <ActionMenu.Anchor>
-        <IconButton aria-labelledby="" icon={KebabHorizontalIcon} variant="invisible"/>
+        <IconButton
+          aria-labelledby=""
+          icon={KebabHorizontalIcon}
+          variant="invisible"
+        />
       </ActionMenu.Anchor>
       <ActionMenu.Overlay>
         <ActionList>
-          <ActionList.Item onSelect={ e => { e.preventDefault(); outputAdapter.interrupt() }}>
+          <ActionList.Item
+            onSelect={e => {
+              e.preventDefault();
+              outputAdapter.interrupt();
+            }}
+          >
             <ActionList.LeadingVisual>
               <StopIcon />
             </ActionList.LeadingVisual>
             Interrupt kernel
           </ActionList.Item>
-          <ActionList.Item variant="danger" onClick={ e => { e.preventDefault(); outputAdapter.clearOutput() }}>
+          <ActionList.Item
+            variant="danger"
+            onClick={e => {
+              e.preventDefault();
+              outputAdapter.clearOutput();
+            }}
+          >
             <ActionList.LeadingVisual>
               <PaintbrushIcon />
             </ActionList.LeadingVisual>
@@ -67,8 +92,8 @@ const KernelProgressMenu = (props: Props) => {
         </ActionList>
       </ActionMenu.Overlay>
     </ActionMenu>
-  )
-}
+  );
+};
 
 const KernelProgressBar = () => {
   const [progress, setProgress] = useState(0);
@@ -83,25 +108,36 @@ const KernelProgressBar = () => {
       });
     }, 100);
     return () => clearInterval(interval);
-  }, [])
-  return (
-    <ProgressBar progress={progress} barSize="small" />
-  )
-}
+  }, []);
+  return <ProgressBar progress={progress} barSize="small" />;
+};
 
 export const Output = (props: IOutputProps) => {
   const { injectableStore, defaultKernel: kernel } = useJupyter();
   const {
-    sourceId, autoRun, code, showEditor, clearTrigger, executeTrigger, adapter,
-    receipt, disableRun, insertText, toolbarPosition, codePre, luminoWidgets
+    sourceId,
+    autoRun,
+    code,
+    showEditor,
+    clearTrigger,
+    executeTrigger,
+    adapter,
+    receipt,
+    disableRun,
+    insertText,
+    toolbarPosition,
+    codePre,
+    luminoWidgets,
   } = props;
   const dispatch = useDispatch();
   const [id, setId] = useState<string | undefined>(sourceId);
-  const [kernelStatus, setKernelStatus] = useState<KernelMessage.Status>('unknown');
+  const [kernelStatus, setKernelStatus] = useState<KernelMessage.Status>(
+    'unknown'
+  );
   const [outputAdapter, setOutputAdapter] = useState<OutputAdapter>();
   const [outputs, setOutputs] = useState<IOutput[] | undefined>(props.outputs);
   useMemo(() => {
-      injectableStore.inject('output', outputReducer);
+    injectableStore.inject('output', outputReducer);
   }, [sourceId]);
   useEffect(() => {
     if (!id) {
@@ -119,10 +155,12 @@ export const Output = (props: IOutputProps) => {
                 const out = val.data['text/html']; // val.data['application/vnd.jupyter.stdout'];
                 if (out) {
                   if ((out as string).indexOf(receipt) > -1) {
-                    dispatch(outputActions.grade({
-                      sourceId,
-                      success: true,
-                    }));
+                    dispatch(
+                      outputActions.grade({
+                        sourceId,
+                        success: true,
+                      })
+                    );
                   }
                 }
               }
@@ -152,11 +190,11 @@ export const Output = (props: IOutputProps) => {
         setKernelStatus(kernel.connection!.status);
         kernel.connection!.statusChanged.connect((kernelConnection, status) => {
           setKernelStatus(status);
-        })
+        });
       });
       return () => {
-//        kernel.connection.then(k => k.shutdown().then(() => console.log(`Kernel ${k.id} is terminated.`)));
-      }
+        //        kernel.connection.then(k => k.shutdown().then(() => console.log(`Kernel ${k.id} is terminated.`)));
+      };
     }
   }, [kernel]);
   const executeRequest = selectExecute(sourceId);
@@ -177,7 +215,7 @@ export const Output = (props: IOutputProps) => {
   }, [clearTrigger, outputAdapter]);
   return (
     <>
-      { showEditor && outputAdapter && id &&
+      {showEditor && outputAdapter && id && (
         <Box
           sx={{
             '& .cm-editor': {
@@ -197,29 +235,29 @@ export const Output = (props: IOutputProps) => {
             toolbarPosition={toolbarPosition}
           />
         </Box>
-      }
-      { outputAdapter &&
+      )}
+      {outputAdapter && (
         <Box display="flex">
           <Box flexGrow={1}>
-          { kernelStatus !== 'idle' && <KernelProgressBar/> }
+            {kernelStatus !== 'idle' && <KernelProgressBar />}
           </Box>
-          <Box style={{marginTop: "-13px"}}>
-            <KernelProgressMenu outputAdapter={outputAdapter}/>
+          <Box style={{ marginTop: '-13px' }}>
+            <KernelProgressMenu outputAdapter={outputAdapter} />
           </Box>
         </Box>
-      }
-      { outputs &&
+      )}
+      {outputs && (
         <Box
           sx={{
             '& .jp-OutputArea': {
               fontSize: '10px',
             },
             '& .jp-OutputPrompt': {
-//              display: 'none',
+              //              display: 'none',
             },
             '& .jp-OutputArea-prompt': {
               display: 'none',
-//              width: '0px',
+              //              width: '0px',
             },
             '& pre': {
               fontSize: '12px',
@@ -229,41 +267,33 @@ export const Output = (props: IOutputProps) => {
             },
           }}
         >
-          { luminoWidgets
-            ?
-              ( outputAdapter &&
-                <Lumino>
-                  {outputAdapter.outputArea}
-                </Lumino>
-              )
-            :
-              ( outputs &&
+          {luminoWidgets
+            ? outputAdapter && <Lumino>{outputAdapter.outputArea}</Lumino>
+            : outputs && (
                 <>
-                  { outputs.map((output: IOutput) => {
-                      return <OutputRenderer output={output}/>
-                    })
-                  }
+                  {outputs.map((output: IOutput) => {
+                    return <OutputRenderer output={output} />;
+                  })}
                 </>
-              )
-          }
+              )}
         </Box>
-      }
+      )}
     </>
-  )
-}
+  );
+};
 
 Output.defaultProps = {
   outputs: [
     {
-      "output_type": "execute_result",
-      "data": {
-        "text/html": [
-          "<p>Type code in the cell and Shift+Enter to execute.</p>"
-        ]
+      output_type: 'execute_result',
+      data: {
+        'text/html': [
+          '<p>Type code in the cell and Shift+Enter to execute.</p>',
+        ],
       },
-      "execution_count": 0,
-      "metadata": {},
-    }
+      execution_count: 0,
+      metadata: {},
+    },
   ],
   disableRun: false,
   toolbarPosition: 'up',

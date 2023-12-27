@@ -6,12 +6,19 @@
 
 import { find } from '@lumino/algorithm';
 import { UUID } from '@lumino/coreutils';
-import { Kernel as JupyterKernel, ServerConnection, KernelManager, SessionManager, KernelMessage, KernelSpecManager } from '@jupyterlab/services';
+import {
+  Kernel as JupyterKernel,
+  ServerConnection,
+  KernelManager,
+  SessionManager,
+  KernelMessage,
+  KernelSpecManager,
+} from '@jupyterlab/services';
 import { ISessionConnection } from '@jupyterlab/services/lib/session/session';
 import { ConnectionStatus } from '@jupyterlab/services/lib/kernel/kernel';
 import { getCookie } from '../../utils/Utils';
 
-const JUPYTER_REACT_PATH_COOKIE_NAME = "jupyter-react-kernel-path";
+const JUPYTER_REACT_PATH_COOKIE_NAME = 'jupyter-react-kernel-path';
 
 export class Kernel {
   private _clientId: string;
@@ -33,7 +40,14 @@ export class Kernel {
   private _sessionManager: SessionManager;
 
   public constructor(props: Kernel.IKernelProps) {
-    const { kernelManager, kernelName, kernelType, kernelSpecName, kernelModel, serverSettings } = props;
+    const {
+      kernelManager,
+      kernelName,
+      kernelType,
+      kernelSpecName,
+      kernelModel,
+      serverSettings,
+    } = props;
     this._kernelSpecManager = new KernelSpecManager({ serverSettings });
     this._kernelManager = kernelManager;
     this._kernelName = kernelName;
@@ -51,7 +65,9 @@ export class Kernel {
     });
   }
 
-  private async requestKernel(kernelModel?: JupyterKernel.IModel): Promise<void> {
+  private async requestKernel(
+    kernelModel?: JupyterKernel.IModel
+  ): Promise<void> {
     await this._kernelManager.ready;
     this._sessionManager = new SessionManager({
       kernelManager: this._kernelManager,
@@ -60,20 +76,19 @@ export class Kernel {
     });
     await this._sessionManager.ready;
     if (kernelModel) {
-      console.log('Reusing a pre-existing kernel model.')
+      console.log('Reusing a pre-existing kernel model.');
       await this._sessionManager.refreshRunning();
-      const model = find(this._sessionManager.running(), (item) => {
+      const model = find(this._sessionManager.running(), item => {
         return item.path === this._path;
       });
       if (model) {
         this._session = this._sessionManager.connectTo({ model });
       }
-    }
-    else {
+    } else {
       let path = getCookie(this.cookieName);
       if (!path) {
-        path = "kernel-" + UUID.uuid4();
-        document.cookie = this.cookieName + "=" + path;
+        path = 'kernel-' + UUID.uuid4();
+        document.cookie = this.cookieName + '=' + path;
       }
       this._path = path;
       this._session = await this._sessionManager.startNew(
@@ -88,7 +103,7 @@ export class Kernel {
         {
           kernelConnectionOptions: {
             handleComms: true,
-          }
+          },
         }
       );
     }
@@ -99,17 +114,19 @@ export class Kernel {
         this._id = this._session.kernel!.id;
         this._readyResolve();
       }
-    }
+    };
     if (this._kernelConnection) {
       this._sessionId = this._session.id;
       this._connectionStatus = this._kernelConnection.connectionStatus;
-      updateConnectionStatus()
-      this._kernelConnection.connectionStatusChanged.connect((_, connectionStatus) => {
-//        this.initReady();
-        this._connectionStatus = connectionStatus;
-        updateConnectionStatus();
-      });
-      this._kernelConnection.info.then((info) => {
+      updateConnectionStatus();
+      this._kernelConnection.connectionStatusChanged.connect(
+        (_, connectionStatus) => {
+          //        this.initReady();
+          this._connectionStatus = connectionStatus;
+          updateConnectionStatus();
+        }
+      );
+      this._kernelConnection.info.then(info => {
         this._info = info;
         console.log(`Kernel info`, this.toJSON());
       });
@@ -117,7 +134,7 @@ export class Kernel {
   }
 
   get cookieName(): string {
-    return JUPYTER_REACT_PATH_COOKIE_NAME + "_" + this._kernelSpecName;
+    return JUPYTER_REACT_PATH_COOKIE_NAME + '_' + this._kernelSpecName;
   }
 
   get ready(): Promise<void> {
@@ -171,7 +188,7 @@ export class Kernel {
       clientId: this.clientId,
       sessionId: this.sessionId,
       kernelInfo: this.info,
-    }
+    };
   }
 
   toString() {
@@ -182,11 +199,9 @@ export class Kernel {
     this._session.kernel?.shutdown();
     this.connection?.dispose();
   }
-
 }
 
 export namespace Kernel {
-
   export type IKernelProps = {
     kernelManager: KernelManager;
     kernelName: string;
@@ -194,7 +209,7 @@ export namespace Kernel {
     kernelType: 'notebook' | 'file';
     serverSettings: ServerConnection.ISettings;
     kernelModel?: JupyterKernel.IModel;
-  }
+  };
 }
 
 export default Kernel;

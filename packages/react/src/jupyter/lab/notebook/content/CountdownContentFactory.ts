@@ -24,7 +24,6 @@ export class CountdownContentFactory extends NotebookPanel.ContentFactory {
   createOutputPrompt(): IOutputPrompt {
     return new CountdownOutputPrompt();
   }
-
 }
 
 export default CountdownContentFactory;

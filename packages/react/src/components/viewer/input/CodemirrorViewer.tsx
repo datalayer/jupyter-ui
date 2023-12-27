@@ -4,14 +4,14 @@
  * MIT License
  */
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 import { ICell } from '@jupyterlab/nbformat';
-import { createView } from "./CodemirrorView";
-import { sourceAsString } from "../../../utils/Utils";
+import { createView } from './CodemirrorView';
+import { sourceAsString } from '../../../utils/Utils';
 
 type Props = {
-  cell: ICell,
-}
+  cell: ICell;
+};
 
 const CodemirrorViewer = (props: Props) => {
   const { cell } = props;
@@ -20,14 +20,14 @@ const CodemirrorViewer = (props: Props) => {
   useEffect(() => {
     const view = createView({
       doc: source,
-      parent: ref.current
+      parent: ref.current,
     });
     view.focus();
     return () => {
       view.destroy();
     };
   }, [cell]);
-  return <div ref={ref} style={{ height: "100%", overflow: "auto" }}></div>;
-}
+  return <div ref={ref} style={{ height: '100%', overflow: 'auto' }}></div>;
+};
 
 export default CodemirrorViewer;

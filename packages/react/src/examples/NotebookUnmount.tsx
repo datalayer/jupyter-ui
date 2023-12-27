@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Box, Button } from '@primer/react';
 import { INotebookContent } from '@jupyterlab/nbformat';
@@ -19,15 +19,15 @@ import notebook from './notebooks/NotebookExample1.ipynb.json';
 const NotebookUnmount = () => {
   const { kernelManager, serverSettings } = useJupyter();
   const [showNotebook, setShowNotebook] = useState(false);
-  const [kernel, setKernel] = useState<Kernel>()
+  const [kernel, setKernel] = useState<Kernel>();
   useEffect(() => {
     if (kernelManager) {
       const kernel = new Kernel({
         kernelManager,
-        kernelName: "defaultKernel",
-        kernelSpecName: "python",
-        kernelType: "notebook",
-        serverSettings
+        kernelName: 'defaultKernel',
+        kernelSpecName: 'python',
+        kernelType: 'notebook',
+        serverSettings,
       });
       setKernel(kernel);
       setShowNotebook(true);
@@ -40,47 +40,40 @@ const NotebookUnmount = () => {
   }, [showNotebook]);
   const unmount = () => {
     setShowNotebook(false);
-  }
+  };
   return (
     <>
-      { (showNotebook && kernel) ?
-        (
-            <>
-              <Box display="flex">
-                <Button
-                  variant="default"
-                  size="small"
-                  onClick={unmount}
-                >
-                  Unmount
-                </Button>
-              </Box>
-              <Notebook
-                nbformat={notebook as INotebookContent}
-                uid="notebook-unmount-id"
-//                kernel={kernel}
-                height="700px"
-                CellSidebar={CellSidebar}
-              />
-            </>
-          )
-        :
-          <>
-            <Box>
-              The Notebook React.js component is not mounted.
-            </Box>
-            <Box>
-              The connections to the Kernel should not happen any more - Check the Network tab in your Browser Devtools.
-            </Box>
-          </>
-      }
+      {showNotebook && kernel ? (
+        <>
+          <Box display="flex">
+            <Button variant="default" size="small" onClick={unmount}>
+              Unmount
+            </Button>
+          </Box>
+          <Notebook
+            nbformat={notebook as INotebookContent}
+            uid="notebook-unmount-id"
+            //                kernel={kernel}
+            height="700px"
+            CellSidebar={CellSidebar}
+          />
+        </>
+      ) : (
+        <>
+          <Box>The Notebook React.js component is not mounted.</Box>
+          <Box>
+            The connections to the Kernel should not happen any more - Check the
+            Network tab in your Browser Devtools.
+          </Box>
+        </>
+      )}
     </>
   );
-}
+};
 
 const div = document.createElement('div');
 document.body.appendChild(div);
-const root = createRoot(div)
+const root = createRoot(div);
 
 root.render(
   <Jupyter>

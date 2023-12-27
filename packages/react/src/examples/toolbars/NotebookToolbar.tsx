@@ -7,10 +7,20 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Box, IconButton, Button, ButtonGroup } from '@primer/react';
-import { PlusIcon, PlayIcon, StopIcon, TrashIcon, ZapIcon, PaperAirplaneIcon } from '@primer/octicons-react';
-import { notebookActions, selectKernelStatus } from '../../components/notebook/NotebookRedux';
+import {
+  PlusIcon,
+  PlayIcon,
+  StopIcon,
+  TrashIcon,
+  ZapIcon,
+  PaperAirplaneIcon,
+} from '@primer/octicons-react';
+import {
+  notebookActions,
+  selectKernelStatus,
+} from '../../components/notebook/NotebookRedux';
 
-export const NotebookToolbar = (props: {notebookId: string}) => {
+export const NotebookToolbar = (props: { notebookId: string }) => {
   const { notebookId } = props;
   const [type, setType] = useState('code');
   const dispatch = useDispatch();
@@ -19,7 +29,17 @@ export const NotebookToolbar = (props: {notebookId: string}) => {
     setType(newType);
   };
   return (
-    <Box display="flex" pt={1} pb={1} sx={{ width: '100%', borderBottomWidth: 1, borderBottomStyle: 'solid', borderColor: 'border.default' }}>
+    <Box
+      display="flex"
+      pt={1}
+      pb={1}
+      sx={{
+        width: '100%',
+        borderBottomWidth: 1,
+        borderBottomStyle: 'solid',
+        borderColor: 'border.default',
+      }}
+    >
       <Box
         sx={{
           display: 'flex',
@@ -36,7 +56,12 @@ export const NotebookToolbar = (props: {notebookId: string}) => {
           title="Save"
           onClick={e => {
             e.preventDefault();
-            dispatch(notebookActions.save.started({uid: notebookId, date: new Date()}));
+            dispatch(
+              notebookActions.save.started({
+                uid: notebookId,
+                date: new Date(),
+              })
+            );
           }}
           icon={ZapIcon}
         />
@@ -50,9 +75,9 @@ export const NotebookToolbar = (props: {notebookId: string}) => {
             e.preventDefault();
             dispatch(notebookActions.run.started(notebookId));
           }}
-          style={{color: 'grey'}}
+          style={{ color: 'grey' }}
           icon={PlayIcon}
-          disabled={(kernelStatus !== 'idle')}
+          disabled={kernelStatus !== 'idle'}
         />
         <IconButton
           variant="invisible"
@@ -64,9 +89,9 @@ export const NotebookToolbar = (props: {notebookId: string}) => {
             e.preventDefault();
             dispatch(notebookActions.runAll.started(notebookId));
           }}
-          style={{color: 'grey'}}
+          style={{ color: 'grey' }}
           icon={PaperAirplaneIcon}
-          disabled={(kernelStatus !== 'idle')}
+          disabled={kernelStatus !== 'idle'}
         />
         <IconButton
           variant="invisible"
@@ -78,8 +103,8 @@ export const NotebookToolbar = (props: {notebookId: string}) => {
             dispatch(notebookActions.interrupt.started(notebookId));
           }}
           icon={StopIcon}
-          disabled={(kernelStatus !== 'busy')}
-          />
+          disabled={kernelStatus !== 'busy'}
+        />
         <IconButton
           variant="invisible"
           size="small"
@@ -133,7 +158,7 @@ export const NotebookToolbar = (props: {notebookId: string}) => {
                 })
               );
           }}
-          style={{color: 'grey'}}
+          style={{ color: 'grey' }}
           icon={PlusIcon}
         />
         <ButtonGroup>
@@ -162,6 +187,6 @@ export const NotebookToolbar = (props: {notebookId: string}) => {
       </Box>
     </Box>
   );
-}
+};
 
 export default NotebookToolbar;

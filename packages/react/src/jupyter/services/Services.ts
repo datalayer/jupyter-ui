@@ -12,7 +12,7 @@ export class Services {
   public constructor(services: ServiceManager) {
     this._serviceManager = services;
   }
-  
+
   public kernelspecs() {
     return this._serviceManager.kernelspecs;
   }
@@ -56,7 +56,6 @@ export class Services {
   public getKernelspecs() {
     return this.kernelspecs().specs;
   }
-
 }
 
 export default Services;

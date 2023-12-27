@@ -5,8 +5,19 @@
  */
 
 import { useEffect, useState, useMemo } from 'react';
-import { useTheme, ActionMenu, ActionList, IconButton, Box } from '@primer/react'
-import { KebabHorizontalIcon, ArrowRightIcon, StopIcon, PaintbrushIcon } from '@primer/octicons-react';
+import {
+  useTheme,
+  ActionMenu,
+  ActionList,
+  IconButton,
+  Box,
+} from '@primer/react';
+import {
+  KebabHorizontalIcon,
+  ArrowRightIcon,
+  StopIcon,
+  PaintbrushIcon,
+} from '@primer/octicons-react';
 import { KernelMessage } from '@jupyterlab/services';
 import { EditorView } from 'codemirror';
 import OutputAdapter from '../output/OutputAdapter';
@@ -18,31 +29,51 @@ type Props = {
   kernel: Kernel;
   outputAdapter: OutputAdapter;
   executeCode: (editorView?: EditorView, code?: string) => void;
-}
+};
 
 const CodeMirrorOutputToolbarMenu = (props: Props) => {
-  const {executeCode, outputAdapter, editorView} = props;
+  const { executeCode, outputAdapter, editorView } = props;
   return (
     <ActionMenu>
       <ActionMenu.Anchor>
-        <IconButton aria-labelledby="" icon={KebabHorizontalIcon} variant="invisible"/>
+        <IconButton
+          aria-labelledby=""
+          icon={KebabHorizontalIcon}
+          variant="invisible"
+        />
       </ActionMenu.Anchor>
       <ActionMenu.Overlay>
         <ActionList>
-          <ActionList.Item onSelect={ e => { e.preventDefault(); executeCode(editorView) }}>
+          <ActionList.Item
+            onSelect={e => {
+              e.preventDefault();
+              executeCode(editorView);
+            }}
+          >
             <ActionList.LeadingVisual>
               <ArrowRightIcon />
             </ActionList.LeadingVisual>
             <ActionList.TrailingVisual>⇧ ↵</ActionList.TrailingVisual>
             Run code
           </ActionList.Item>
-          <ActionList.Item onSelect={ e => { e.preventDefault(); outputAdapter.interrupt() }}>
+          <ActionList.Item
+            onSelect={e => {
+              e.preventDefault();
+              outputAdapter.interrupt();
+            }}
+          >
             <ActionList.LeadingVisual>
               <StopIcon />
             </ActionList.LeadingVisual>
             Interrupt kernel
           </ActionList.Item>
-          <ActionList.Item variant="danger" onClick={ e => { e.preventDefault(); outputAdapter.clearOutput() }}>
+          <ActionList.Item
+            variant="danger"
+            onClick={e => {
+              e.preventDefault();
+              outputAdapter.clearOutput();
+            }}
+          >
             <ActionList.LeadingVisual>
               <PaintbrushIcon />
             </ActionList.LeadingVisual>
@@ -51,19 +82,34 @@ const CodeMirrorOutputToolbarMenu = (props: Props) => {
         </ActionList>
       </ActionMenu.Overlay>
     </ActionMenu>
-  )
-}
+  );
+};
 
-const KernelStatus: React.FC<{color: string}> = ({color}) => (
-  <Box sx={{backgroundColor: color, width: '14px', height: '14px', borderRadius: 3}} />
-)
+const KernelStatus: React.FC<{ color: string }> = ({ color }) => (
+  <Box
+    sx={{
+      backgroundColor: color,
+      width: '14px',
+      height: '14px',
+      borderRadius: 3,
+    }}
+  />
+);
 
 export const CodeMirrorOutputToolbar = (props: Props) => {
   const { executeCode, editorView, kernel, codePre } = props;
   const { theme } = useTheme();
-  const okColor = useMemo(() => theme?.colorSchemes.light.colors.success.muted, []);
-  const nokColor = useMemo(() => theme?.colorSchemes.light.colors.severe.muted, []);
-  const [kernelStatus, setKernelStatus] = useState<KernelMessage.Status>('unknown');
+  const okColor = useMemo(
+    () => theme?.colorSchemes.light.colors.success.muted,
+    []
+  );
+  const nokColor = useMemo(
+    () => theme?.colorSchemes.light.colors.severe.muted,
+    []
+  );
+  const [kernelStatus, setKernelStatus] = useState<KernelMessage.Status>(
+    'unknown'
+  );
   useEffect(() => {
     if (kernel) {
       kernel.ready.then(() => {
@@ -78,22 +124,22 @@ export const CodeMirrorOutputToolbar = (props: Props) => {
     }
   }, [kernel]);
   const getKernelStatusColor = (status: KernelMessage.Status) => {
-    if (status === "idle") {
+    if (status === 'idle') {
       return okColor;
     }
     return nokColor;
-  }
+  };
   return (
     <Box display="flex">
       <Box flexGrow={1} />
-      <Box sx={{paddingTop: '6px'}}>
+      <Box sx={{ paddingTop: '6px' }}>
         <KernelStatus color={getKernelStatusColor(kernelStatus)} />
       </Box>
       <Box>
         <CodeMirrorOutputToolbarMenu {...props} />
       </Box>
     </Box>
-  )
-}
+  );
+};
 
 export default CodeMirrorOutputToolbar;

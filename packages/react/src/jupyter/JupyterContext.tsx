@@ -4,15 +4,19 @@
  * MIT License
  */
 
-import React, { useState, useEffect, useContext, createContext } from "react";
-import { Provider as ReduxProvider } from "react-redux";
-import { ServiceManager, ServerConnection, KernelManager } from '@jupyterlab/services';
+import React, { useState, useEffect, useContext, createContext } from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
+import {
+  ServiceManager,
+  ServerConnection,
+  KernelManager,
+} from '@jupyterlab/services';
 import { getJupyterServerHttpUrl, getJupyterToken } from './JupyterConfig';
 import { requestAPI } from './JupyterHandlers';
 import { startLiteServer } from './../jupyter/lite/LiteServer';
 import { InjectableStore } from '../state/redux/Store';
 import Kernel from './kernel/Kernel';
-import { JupyterLabTheme } from "./lab/JupyterLabTheme";
+import { JupyterLabTheme } from './lab/JupyterLabTheme';
 
 /**
  * The type for the Jupyter context.
@@ -20,15 +24,15 @@ import { JupyterLabTheme } from "./lab/JupyterLabTheme";
 export type JupyterContextType = {
   baseUrl?: string;
   collaborative?: boolean;
-  defaultKernel?: Kernel,
-  disableCssLoading?: boolean,
+  defaultKernel?: Kernel;
+  disableCssLoading?: boolean;
   injectableStore: InjectableStore;
-  kernelManager?: KernelManager,
+  kernelManager?: KernelManager;
   lite?: boolean;
-  serverSettings: ServerConnection.ISettings,
-  serviceManager?: ServiceManager,
+  serverSettings: ServerConnection.ISettings;
+  serviceManager?: ServiceManager;
   setVariant: (value: string) => void;
-  startDefaultKernel: boolean,
+  startDefaultKernel: boolean;
   variant: string;
   wsUrl?: string;
 };
@@ -36,13 +40,16 @@ export type JupyterContextType = {
 /**
  * The instance for the Jupyter context.
  */
-export const JupyterContext = createContext<JupyterContextType | undefined>(undefined);
+export const JupyterContext = createContext<JupyterContextType | undefined>(
+  undefined
+);
 
 export const useJupyter = (): JupyterContextType => {
   const context = useContext(JupyterContext);
-  if (!context) throw new Error("useContext must be inside a provider with a value.");
+  if (!context)
+    throw new Error('useContext must be inside a provider with a value.');
   return context;
-}
+};
 
 /**
  * The type for the Jupyter context consumer.
@@ -52,21 +59,24 @@ export const JupyterContextConsumer = JupyterContext.Consumer;
 /**
  * The type for the Jupyter context provider.
  */
- const JupyterProvider = JupyterContext.Provider;
+const JupyterProvider = JupyterContext.Provider;
 
 /**
  * Utiliy method to ensure the Jupyter context is authenticated
  * with the Jupyter server.
  */
-export const ensureJupyterAuth = (serverSettings: ServerConnection.ISettings): Promise<boolean> => {
-  return requestAPI<any>(serverSettings, 'api', '').then(data => {
-    return true;
-  })
-  .catch(reason => {
-    console.log('The Jupyter Server API has failed with reason', reason);
-    return false;
-  });
-}
+export const ensureJupyterAuth = (
+  serverSettings: ServerConnection.ISettings
+): Promise<boolean> => {
+  return requestAPI<any>(serverSettings, 'api', '')
+    .then(data => {
+      return true;
+    })
+    .catch(reason => {
+      console.log('The Jupyter Server API has failed with reason', reason);
+      return false;
+    });
+};
 
 /**
  * The type for the properties of the Jupyter context.
@@ -104,22 +114,34 @@ export const createServerSettings = (baseUrl: string, wsUrl: string) => {
       mode: 'cors',
       credentials: 'include',
       cache: 'no-cache',
-//      headers,
-    }
+      //      headers,
+    },
   });
-
-}
+};
 
 /**
  * The Jupyter context provider.
  */
-export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => {
+export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
   const {
-    children, lite, collaborative, startDefaultKernel, defaultKernelName, disableCssLoading, useRunningKernelId, 
-    useRunningKernelIndex, variant, baseUrl, wsUrl, injectableStore, theme,
+    children,
+    lite,
+    collaborative,
+    startDefaultKernel,
+    defaultKernelName,
+    disableCssLoading,
+    useRunningKernelId,
+    useRunningKernelIndex,
+    variant,
+    baseUrl,
+    wsUrl,
+    injectableStore,
+    theme,
   } = props;
   const [_, setVariant] = useState('default');
-  const [serverSettings] = useState<ServerConnection.ISettings>(createServerSettings(baseUrl ?? '', wsUrl ?? ''));
+  const [serverSettings] = useState<ServerConnection.ISettings>(
+    createServerSettings(baseUrl ?? '', wsUrl ?? '')
+  );
   const [serviceManager, setServiceManager] = useState<ServiceManager>();
   const [kernelManager, setKernelManager] = useState<KernelManager>();
   const [kernel, setKernel] = useState<Kernel>();
@@ -127,7 +149,8 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
     if (lite) {
       startLiteServer().then((serviceManager: ServiceManager) => {
         setServiceManager(serviceManager);
-        const kernelManager = (serviceManager.sessions as any)._kernelManager as KernelManager;
+        const kernelManager = (serviceManager.sessions as any)
+          ._kernelManager as KernelManager;
         setKernelManager(kernelManager);
         kernelManager.ready.then(() => {
           console.log('Kernel Manager is ready', kernelManager);
@@ -136,7 +159,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
               kernelManager,
               kernelName: defaultKernelName,
               kernelSpecName: defaultKernelName,
-              kernelType: "notebook",
+              kernelType: 'notebook',
               serverSettings,
             });
             kernel.ready.then(() => {
@@ -149,19 +172,28 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
     } else {
       ensureJupyterAuth(serverSettings).then(isAuth => {
         if (!isAuth) {
-          const loginUrl = getJupyterServerHttpUrl() + '/login?next=' + window.location;
+          const loginUrl =
+            getJupyterServerHttpUrl() + '/login?next=' + window.location;
           console.warn('Redirecting to Jupyter Server login URL', loginUrl);
           window.location.replace(loginUrl);
         }
         if (useRunningKernelId && useRunningKernelIndex > -1) {
-          throw new Error("You can not ask for useRunningKernelId and useRunningKernelIndex at the same time.");
+          throw new Error(
+            'You can not ask for useRunningKernelId and useRunningKernelIndex at the same time.'
+          );
         }
-        if (startDefaultKernel && (useRunningKernelId || useRunningKernelIndex > -1)) {
-          throw new Error("You can not ask for startDefaultKernel and (useRunningKernelId or useRunningKernelIndex) at the same time.");
+        if (
+          startDefaultKernel &&
+          (useRunningKernelId || useRunningKernelIndex > -1)
+        ) {
+          throw new Error(
+            'You can not ask for startDefaultKernel and (useRunningKernelId or useRunningKernelIndex) at the same time.'
+          );
         }
         const serviceManager = new ServiceManager({ serverSettings });
         setServiceManager(serviceManager);
-        const kernelManager = (serviceManager.sessions as any)._kernelManager as KernelManager;
+        const kernelManager = (serviceManager.sessions as any)
+          ._kernelManager as KernelManager;
         setKernelManager(kernelManager);
         kernelManager.ready.then(() => {
           console.log('Kernel Manager is ready.');
@@ -179,33 +211,34 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
             const running = kernelManager.running();
             let kernel = running.next();
             let i = 0;
-            while (! kernel.done) {
+            while (!kernel.done) {
               if (i === useRunningKernelIndex) {
-                setKernel(new Kernel({
-                  kernelManager,
-                  kernelName: defaultKernelName,
-                  kernelSpecName: defaultKernelName,
-                  kernelModel: kernel.value,
-                  kernelType: "notebook",
-                  serverSettings,
-                }));
+                setKernel(
+                  new Kernel({
+                    kernelManager,
+                    kernelName: defaultKernelName,
+                    kernelSpecName: defaultKernelName,
+                    kernelModel: kernel.value,
+                    kernelType: 'notebook',
+                    serverSettings,
+                  })
+                );
                 break;
               }
               kernel = running.next();
               i++;
             }
-          }
-          else if (startDefaultKernel) {
+          } else if (startDefaultKernel) {
             console.log('Starting Kernel', defaultKernelName);
             const defaultKernel = new Kernel({
               kernelManager,
               kernelName: defaultKernelName,
               kernelSpecName: defaultKernelName,
-              kernelType: "notebook",
+              kernelType: 'notebook',
               serverSettings,
             });
             defaultKernel.ready.then(() => {
-              console.log("Kernel is ready", defaultKernel);
+              console.log('Kernel is ready', defaultKernel);
               setKernel(defaultKernel);
             });
           }
@@ -216,23 +249,25 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
   }, [lite, variant, theme]);
   return (
     <ReduxProvider store={injectableStore}>
-      <JupyterProvider value={{
-        baseUrl,
-        collaborative,
-        defaultKernel: kernel,
-        disableCssLoading,
-        injectableStore,
-        kernelManager,
-        lite,
-        serverSettings,
-        serviceManager,
-        setVariant,
-        startDefaultKernel,
-        variant,
-        wsUrl,
-      }}>
-        { children }
+      <JupyterProvider
+        value={{
+          baseUrl,
+          collaborative,
+          defaultKernel: kernel,
+          disableCssLoading,
+          injectableStore,
+          kernelManager,
+          lite,
+          serverSettings,
+          serviceManager,
+          setVariant,
+          startDefaultKernel,
+          variant,
+          wsUrl,
+        }}
+      >
+        {children}
       </JupyterProvider>
     </ReduxProvider>
-  )
-}
+  );
+};

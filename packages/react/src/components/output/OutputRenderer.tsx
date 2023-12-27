@@ -8,7 +8,7 @@ import { IOutput } from '@jupyterlab/nbformat';
 
 type Props = {
   output: IOutput;
-}
+};
 /*
 {
     "execution_count": 2,
@@ -43,50 +43,45 @@ export const OutputRenderer = (props: Props) => {
   let html: string | undefined;
   let img: string | undefined;
   switch (output.output_type) {
-    case "error": {
+    case 'error': {
       plain = (output.traceback as string[]).join('\n');
       break;
     }
-    case "stream": {
+    case 'stream': {
       const t = output.text;
-      if (typeof t === "string") {
+      if (typeof t === 'string') {
         plain = t;
-      }
-      else if (typeof t === "boolean") {
-        plain = t ? "true" : "false";
-      }
-      else if (Array.isArray(t)) {
+      } else if (typeof t === 'boolean') {
+        plain = t ? 'true' : 'false';
+      } else if (Array.isArray(t)) {
         plain = (t as string[]).join('\n');
-      }
-      else plain = t?.toString();
+      } else plain = t?.toString();
       break;
     }
-    case "display_data": {
+    case 'display_data': {
       const data = output.data as any;
       if (data) {
-        const image_png = data["image/png"];
+        const image_png = data['image/png'];
         if (image_png) {
           img = image_png;
         }
       }
       break;
     }
-    case "execute_result": {
+    case 'execute_result': {
       const data = output.data as any;
       if (data) {
-        const text_plain = data["text/plain"];
+        const text_plain = data['text/plain'];
         if (text_plain) {
-          if (typeof text_plain === "string") {
+          if (typeof text_plain === 'string') {
             plain = text_plain;
-          }
-          else if (Array.isArray(text_plain)) {
+          } else if (Array.isArray(text_plain)) {
             plain = text_plain.join('\n');
-          }
-          else plain = text_plain.toString();
+          } else plain = text_plain.toString();
         }
-        const text_html = data["text/html"];
+        const text_html = data['text/html'];
         if (text_html) {
-          if (typeof text_html === "string") {
+          if (typeof text_html === 'string') {
             html = text_html;
           } else {
             html = text_html.join('\n');
@@ -98,26 +93,28 @@ export const OutputRenderer = (props: Props) => {
   }
   return (
     <>
-      { plain &&
-        <pre style={{
-          color: "black",
-          backgroundColor: "white",
-        }}>
+      {plain && (
+        <pre
+          style={{
+            color: 'black',
+            backgroundColor: 'white',
+          }}
+        >
           {plain}
         </pre>
-      }
-      { html &&
+      )}
+      {html && (
         <div>
           <div dangerouslySetInnerHTML={{ __html: html }} />
         </div>
-      }
-      { img &&
+      )}
+      {img && (
         <div>
           <img src={`data:image/png;base64,${img}`} />
         </div>
-      }
+      )}
     </>
-  )
-}
+  );
+};
 
 export default OutputRenderer;

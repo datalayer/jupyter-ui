@@ -14,7 +14,11 @@ import Kernel from '../../jupyter/kernel/Kernel';
 import codeMirrorTheme from './CodeMirrorTheme';
 import OutputAdapter from '../output/OutputAdapter';
 import CodeMirrorOutputToolbar from './CodeMirrorOutputToolbar';
-import { selectDataset, selectJupyterSetSource, outputActions } from '../output/OutputRedux';
+import {
+  selectDataset,
+  selectJupyterSetSource,
+  outputActions,
+} from '../output/OutputRedux';
 
 export const CodeMirrorEditor = (props: {
   code: string;
@@ -27,7 +31,17 @@ export const CodeMirrorEditor = (props: {
   toolbarPosition: 'up' | 'middle' | 'none';
   insertText?: (payload?: any) => string;
 }) => {
-  const { code, codePre, outputAdapter, autoRun, disableRun, sourceId, toolbarPosition, insertText, kernel } = props;
+  const {
+    code,
+    codePre,
+    outputAdapter,
+    autoRun,
+    disableRun,
+    sourceId,
+    toolbarPosition,
+    insertText,
+    kernel,
+  } = props;
   const dispatch = useDispatch();
   const [view, setView] = useState<EditorView>();
   const dataset = selectDataset(sourceId);
@@ -40,38 +54,41 @@ export const CodeMirrorEditor = (props: {
           from: 0,
           to: view.state.doc.length,
           insert: source,
-        }
-      })
+        },
+      });
     }
-  }
+  };
   const doInsertText = (payload?: any) => {
     if (view && insertText) {
       view.dispatch({
         changes: {
           from: 0,
-          insert: insertText(payload)
-        }
-      })
+          insert: insertText(payload),
+        },
+      });
     }
-  }
+  };
   const executeCode = (editorView: EditorView, code?: string) => {
     if (disableRun) {
-      alert('Code execution is disabled for this editor. There should be a button on the page to run this editor.');
+      alert(
+        'Code execution is disabled for this editor. There should be a button on the page to run this editor.'
+      );
       return true;
     }
     if (code) {
       outputAdapter.execute(code);
-    }
-    else {
+    } else {
       outputAdapter.execute(editorView.state.doc.toString());
     }
     return true;
   };
   useEffect(() => {
-    dispatch(outputActions.source({
-      sourceId,
-      source: code,
-    }));
+    dispatch(
+      outputActions.source({
+        sourceId,
+        source: code,
+      })
+    );
     let editorView: EditorView;
     const language = new Compartment();
     const keyBinding = [
@@ -92,12 +109,14 @@ export const CodeMirrorEditor = (props: {
         EditorView.updateListener.of((viewUpdate: ViewUpdate) => {
           if (viewUpdate.docChanged) {
             const source = viewUpdate.state.doc.toString();
-            dispatch(outputActions.source({
-              sourceId,
-              source,
-            }));
+            dispatch(
+              outputActions.source({
+                sourceId,
+                source,
+              })
+            );
           }
-        })
+        }),
       ],
     });
     editorView = new EditorView({
@@ -110,8 +129,8 @@ export const CodeMirrorEditor = (props: {
     }
     return () => {
       editorView.destroy();
-    }
-  }, [code])
+    };
+  }, [code]);
   useEffect(() => {
     doInsertText(dataset?.dataset);
   }, [dataset]);
@@ -120,7 +139,7 @@ export const CodeMirrorEditor = (props: {
   }, [setSource]);
   return (
     <>
-      { kernel && toolbarPosition === 'up' &&
+      {kernel && toolbarPosition === 'up' && (
         <CodeMirrorOutputToolbar
           editorView={view}
           codePre={codePre}
@@ -128,9 +147,9 @@ export const CodeMirrorEditor = (props: {
           outputAdapter={outputAdapter}
           executeCode={executeCode}
         />
-      }
+      )}
       <div ref={editorDiv as any}></div>
-      { kernel && toolbarPosition === 'middle' &&
+      {kernel && toolbarPosition === 'middle' && (
         <CodeMirrorOutputToolbar
           editorView={view}
           codePre={codePre}
@@ -138,9 +157,9 @@ export const CodeMirrorEditor = (props: {
           outputAdapter={outputAdapter}
           executeCode={executeCode}
         />
-      }
+      )}
     </>
-  )
-}
+  );
+};
 
 export default CodeMirrorEditor;

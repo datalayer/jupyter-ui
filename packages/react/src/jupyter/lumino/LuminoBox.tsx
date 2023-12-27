@@ -13,7 +13,7 @@ type LuminoBoxProps = {
   id?: string;
   height: number | string;
   children: Widget;
-}
+};
 
 export const LuminoBox = (props: LuminoBoxProps) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -25,7 +25,7 @@ export const LuminoBox = (props: LuminoBoxProps) => {
       boxPanel.addWidget(children);
       try {
         Widget.attach(boxPanel, ref.current);
-      } catch(e) {
+      } catch (e) {
         console.warn('Exception while attaching Lumino widget.', e);
       }
       return () => {
@@ -35,11 +35,11 @@ export const LuminoBox = (props: LuminoBoxProps) => {
             boxPanel.dispose();
             Widget.detach(boxPanel);
           }
-        } catch(e) {
+        } catch (e) {
           // no-op.
-//          console.debug('Exception while detaching Lumino widget.', e);
+          //          console.debug('Exception while detaching Lumino widget.', e);
         }
-      }
+      };
     }
   }, [ref, children]);
   return (
@@ -50,14 +50,14 @@ export const LuminoBox = (props: LuminoBoxProps) => {
         width: '100%',
       }}
     >
-      <div id={id} ref={ref}/>
+      <div id={id} ref={ref} />
     </Box>
-  )
-}
+  );
+};
 
 LuminoBox.defaultProps = {
-  id: "lumino-box-id",
-  height: "100%",
-}
+  id: 'lumino-box-id',
+  height: '100%',
+};
 
 export default LuminoBox;

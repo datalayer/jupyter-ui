@@ -13,13 +13,9 @@ export class DialogAdapter {
     this.dialog = new JupyerLabDialog({
       title: 'Dialog Title',
       body: 'This is the body of the dialog...',
-      buttons: [
-        JupyerLabDialog.cancelButton(),
-        JupyerLabDialog.okButton(),
-      ]
+      buttons: [JupyerLabDialog.cancelButton(), JupyerLabDialog.okButton()],
     });
   }
-
 }
 
 export default DialogAdapter;

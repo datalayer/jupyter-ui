@@ -13,14 +13,14 @@ import { newUuid } from '../../utils/Utils';
 type Props = {
   nbformat: INotebookContent;
   outputs: boolean;
-}
+};
 
 export const Viewer = (props: Props) => {
   const { nbformat } = props;
-  const [model, setModel] = useState<INotebookContent>()
+  const [model, setModel] = useState<INotebookContent>();
   useEffect(() => {
     setModel(nbformat);
-  }, [nbformat])
+  }, [nbformat]);
   return (
     <>
       {model?.cells.map(cell => {
@@ -30,12 +30,12 @@ export const Viewer = (props: Props) => {
               cell={cell}
               languageInfo={nbformat.metadata.language_info}
             />
-           {/* cell.outputs && <OutputViewer cell={cell}/> */}
+            {/* cell.outputs && <OutputViewer cell={cell}/> */}
           </div>
-        )
+        );
       })}
     </>
   );
-}
+};
 
 export default Viewer;

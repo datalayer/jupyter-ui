@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { Cell, ICellModel } from "@jupyterlab/cells";
+import { Cell, ICellModel } from '@jupyterlab/cells';
 /*
 // Autograded answer (only for code cells) { grade: false, solution: true, locked: false  }
 {
@@ -72,7 +72,7 @@ export enum NbGraderType {
 }
 
 export const getNbGraderType = (cell: Cell<ICellModel>) => {
-  const nbgrader = cell.model.getMetadata("nbgrader") as any;
+  const nbgrader = cell.model.getMetadata('nbgrader') as any;
   if (!nbgrader) {
     return NbGraderType.NotGraded;
   }
@@ -101,6 +101,6 @@ export const getNbGraderType = (cell: Cell<ICellModel>) => {
     return NbGraderType.ReadonlyGraded;
   }
   return NbGraderType.NotGraded;
-}
+};
 
 export default NbGraderType;

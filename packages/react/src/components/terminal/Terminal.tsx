@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { useDispatch } from "react-redux";
+import { useDispatch } from 'react-redux';
 import { Box } from '@primer/react';
 import { ITerminal } from '@jupyterlab/terminal';
 import TerminalAdapter from './TerminalAdapter';
@@ -27,25 +27,22 @@ export const Terminal = (props: Terminal.ITerminalOptions) => {
     dispatch(terminalActions.update({ adapter }));
     setAdapter(adapter);
   }, []);
-  return adapter
-  ?
+  return adapter ? (
     <Box
-      sx= {{        
+      sx={{
         '& .lm-BoxPanel': {
           height: `${height} !important`,
         },
       }}
-      >
-      <LuminoBox>
-        {adapter.panel}
-      </LuminoBox>
+    >
+      <LuminoBox>{adapter.panel}</LuminoBox>
     </Box>
-  :
+  ) : (
     <></>
-}
+  );
+};
 
 export namespace Terminal {
-
   export interface ITerminalOptions {
     height?: string;
     theme?: ITerminal.Theme;
@@ -53,8 +50,8 @@ export namespace Terminal {
 }
 
 Terminal.defaultProps = {
-  height: "100%",
-  theme: "dark",
+  height: '100%',
+  theme: 'dark',
 } as Partial<Terminal.ITerminalOptions>;
 
 export default Terminal;

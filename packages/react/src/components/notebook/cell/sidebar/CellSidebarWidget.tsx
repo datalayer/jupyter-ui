@@ -20,16 +20,18 @@ export type CellSidebarProps = {
   cellId: string;
   command: CommandRegistry;
   nbgrader: boolean;
-}
+};
 
-export class CellSidebarWidget extends ReactPortalWidget implements ICellHeader {
+export class CellSidebarWidget
+  extends ReactPortalWidget
+  implements ICellHeader {
   private readonly commands: CommandRegistry;
   constructor(
     CellSidebar: (props: CellSidebarProps) => JSX.Element,
     notebookId: string,
     nbgrader: boolean,
     commands: CommandRegistry,
-    store: Store,
+    store: Store
   ) {
     super();
     this.commands = commands;
@@ -43,15 +45,15 @@ export class CellSidebarWidget extends ReactPortalWidget implements ICellHeader 
     };
     const sidebar = createElement(CellSidebar, props);
     const portalDiv = (
-      <div className={DATALAYER_CELL_HEADER_CLASS}>
-        {sidebar}
-      </div>
-    )
+      <div className={DATALAYER_CELL_HEADER_CLASS}>{sidebar}</div>
+    );
     const portal = createPortal(portalDiv, this.node);
-    store.dispatch(notebookActions.addPortals({
-      uid: notebookId,
-      portals: [portal]
-    }));
+    store.dispatch(
+      notebookActions.addPortals({
+        uid: notebookId,
+        portals: [portal],
+      })
+    );
   }
 }
 

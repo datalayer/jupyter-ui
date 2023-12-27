@@ -6,14 +6,14 @@
 
 import Viewer from '../../../components/viewer/Viewer';
 
-import nbformat from "../../..//examples/notebooks/IPyWidgetsExample.ipynb.json";
+import nbformat from '../../..//examples/notebooks/IPyWidgetsExample.ipynb.json';
 
 const ViewerComponent = () => {
   return (
     <>
-      <Viewer nbformat={nbformat} outputs={true}/>
+      <Viewer nbformat={nbformat} outputs={true} />
     </>
-  )
-}
+  );
+};
 
 export default ViewerComponent;

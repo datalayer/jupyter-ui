@@ -4,30 +4,29 @@
  * MIT License
  */
 
-import type { Meta, StoryObj } from '@storybook/react'
-import { UndoIcon } from "@datalayer/icons-react";
+import type { Meta, StoryObj } from '@storybook/react';
+import { UndoIcon } from '@datalayer/icons-react';
 
-import { undoIcon } from "@jupyterlab/ui-components/lib/icon/iconimports"
+import { undoIcon } from '@jupyterlab/ui-components/lib/icon/iconimports';
 
-import React from 'react'
-
+import React from 'react';
 
 const meta: Meta = {
-    title: 'Components/Icon',
-} as Meta
+  title: 'Components/Icon',
+} as Meta;
 
-export default meta
+export default meta;
 
-type Story = StoryObj
+type Story = StoryObj;
 
 const Template = (args, { globals: { labComparison } }) => {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <UndoIcon />
+      {/* FIXME webpack is not able to bundle the lab SVG */}
+      {labComparison === 'display' && <undoIcon.react tag="span" />}
+    </div>
+  );
+};
 
-    return (<div style={{ display: 'flex', flexDirection: 'column' }}>
-        <UndoIcon />
-        {/* FIXME webpack is not able to bundle the lab SVG */}
-        {labComparison === 'display' &&
-            <undoIcon.react tag="span"/>}
-    </div>)
-}
-
-export const Default: Story = Template.bind({})
+export const Default: Story = Template.bind({});

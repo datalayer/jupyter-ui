@@ -4,9 +4,19 @@
  * MIT License
  */
 
-import { RenderMimeRegistry, standardRendererFactories as initialFactories } from '@jupyterlab/rendermime';
+import {
+  RenderMimeRegistry,
+  standardRendererFactories as initialFactories,
+} from '@jupyterlab/rendermime';
 import { CommandRegistry } from '@lumino/commands';
-import { ybinding, CodeMirrorEditorFactory, CodeMirrorMimeTypeService, EditorLanguageRegistry, EditorExtensionRegistry, EditorThemeRegistry } from '@jupyterlab/codemirror';
+import {
+  ybinding,
+  CodeMirrorEditorFactory,
+  CodeMirrorMimeTypeService,
+  EditorLanguageRegistry,
+  EditorExtensionRegistry,
+  EditorThemeRegistry,
+} from '@jupyterlab/codemirror';
 import { BoxPanel } from '@lumino/widgets';
 import { ServiceManager } from '@jupyterlab/services';
 import { ConsolePanel } from '@jupyterlab/console';
@@ -30,7 +40,7 @@ class ConsoleAdapter {
     serviceManager: ServiceManager.IManager,
     panel: BoxPanel
   ) {
-    const commands = new CommandRegistry();    
+    const commands = new CommandRegistry();
     document.addEventListener('keydown', event => {
       commands.processKeydownEvent(event);
     });
@@ -40,7 +50,9 @@ class ConsoleAdapter {
     }
     const editorExtensions = () => {
       const registry = new EditorExtensionRegistry();
-      for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions({ themes })) {
+      for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions(
+        { themes }
+      )) {
         registry.addExtension(extensionFactory);
       }
       registry.addExtension({
@@ -50,13 +62,13 @@ class ConsoleAdapter {
           return EditorExtensionRegistry.createImmutableExtension(
             ybinding({
               ytext: sharedModel.ysource,
-              undoManager: sharedModel.undoManager ?? undefined
+              undoManager: sharedModel.undoManager ?? undefined,
             })
           );
-        }
+        },
       });
       return registry;
-    }
+    };
     const languages = new EditorLanguageRegistry();
     // Register default languages.
     for (const language of EditorLanguageRegistry.getDefaultLanguages()) {
@@ -70,13 +82,13 @@ class ConsoleAdapter {
         // TODO: add support for LaTeX
         const m = await import('@codemirror/lang-markdown');
         return m.markdown({
-          codeLanguages: (info: string) => languages.findBest(info) as any
+          codeLanguages: (info: string) => languages.findBest(info) as any,
         });
-      }
-    });    
+      },
+    });
     const factoryService = new CodeMirrorEditorFactory({
       extensions: editorExtensions(),
-      languages
+      languages,
     });
     const rendermime = new RenderMimeRegistry({ initialFactories });
     const mimeTypeService = new CodeMirrorMimeTypeService(languages);
@@ -91,8 +103,8 @@ class ConsoleAdapter {
       kernelPreference: {
         shouldStart: true,
         name: 'python',
-//        autoStartDefault: true,
-      }
+        //        autoStartDefault: true,
+      },
     });
     consolePanel.title.label = 'Console';
     BoxPanel.setStretch(consolePanel, 1);
@@ -107,14 +119,14 @@ class ConsoleAdapter {
       label: 'Clear',
       execute: () => {
         consolePanel.console.clear();
-      }
+      },
     });
     command = 'console:execute';
     commands.addCommand(command, {
       label: 'Execute Prompt',
       execute: () => {
         return consolePanel.console.execute();
-      }
+      },
     });
     commands.addKeyBinding({ command, selector, keys: ['Enter'] });
     command = 'console:execute-forced';
@@ -122,7 +134,7 @@ class ConsoleAdapter {
       label: 'Execute Cell (forced)',
       execute: () => {
         return consolePanel.console.execute(true);
-      }
+      },
     });
     commands.addKeyBinding({ command, selector, keys: ['Shift Enter'] });
     command = 'console:linebreak';
@@ -130,15 +142,14 @@ class ConsoleAdapter {
       label: 'Insert Line Break',
       execute: () => {
         consolePanel.console.insertLinebreak();
-      }
+      },
     });
-    commands.addKeyBinding({ command, selector, keys: ['Ctrl Enter'] });    
+    commands.addKeyBinding({ command, selector, keys: ['Ctrl Enter'] });
   }
 
   get panel(): BoxPanel {
     return this._panel;
   }
-
 }
 
 export default ConsoleAdapter;

@@ -5,7 +5,7 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import { useDispatch } from "react-redux";
+import { useDispatch } from 'react-redux';
 import { IOutput, INotebookContent } from '@jupyterlab/nbformat';
 import { Box, Button, ButtonGroup } from '@primer/react';
 import Jupyter from '../jupyter/Jupyter';
@@ -13,19 +13,19 @@ import { useJupyter } from '../jupyter/JupyterContext';
 import { Kernel } from '../jupyter/kernel/Kernel';
 import Cell from '../components/cell/Cell';
 import Notebook from '../components/notebook/Notebook';
-import Output from "../components/output/Output";
-import FileBrowser from "../components/filebrowser/FileBrowser";
-import FileManagerJupyterLab from "../components/filemanager/FileManagerJupyterLab";
-import Terminal from "../components/terminal/Terminal";
-import CellSidebarNew from "../components/notebook/cell/sidebar/CellSidebarButton";
+import Output from '../components/output/Output';
+import FileBrowser from '../components/filebrowser/FileBrowser';
+import FileManagerJupyterLab from '../components/filemanager/FileManagerJupyterLab';
+import Terminal from '../components/terminal/Terminal';
+import CellSidebarNew from '../components/notebook/cell/sidebar/CellSidebarButton';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
-import Console from "../components/console/Console";
+import Console from '../components/console/Console';
 import { selectCell, cellActions } from '../components/cell/CellRedux';
 import { notebookActions } from '../components/notebook/NotebookRedux';
 
-import notebook from "./notebooks/NotebookExample1.ipynb.json";
+import notebook from './notebooks/NotebookExample1.ipynb.json';
 
-const SOURCE_1 = '1+1'
+const SOURCE_1 = '1+1';
 
 const NOTEBOOK_UID_1 = 'notebook-1-uid';
 const NOTEBOOK_UID_2 = 'notebook-2-uid';
@@ -33,15 +33,13 @@ const NOTEBOOK_UID_3 = 'notebook-3-uid';
 
 const SOURCE_1_OUTPUTS: IOutput[] = [
   {
-    "data": {
-      "text/plain": [
-        "2"
-      ]
+    data: {
+      'text/plain': ['2'],
     },
-    "execution_count": 1,
-    "metadata": {},
-    "output_type": "execute_result"
-  }
+    execution_count: 1,
+    metadata: {},
+    output_type: 'execute_result',
+  },
 ];
 
 const SOURCE_2 = `import ipywidgets as widgets
@@ -50,7 +48,7 @@ widgets.IntSlider(
     min=0,
     max=10,
     step=1
- )`
+ )`;
 
 const CellPreview = () => {
   const cell = selectCell();
@@ -59,8 +57,8 @@ const CellPreview = () => {
       <>source: {cell.source}</>
       <>kernel available: {String(cell.kernelAvailable)}</>
     </>
-  )
-}
+  );
+};
 
 const CellToolbar = () => {
   const cell = selectCell();
@@ -85,12 +83,10 @@ const CellToolbar = () => {
           </Button>
         </ButtonGroup>
       </Box>
-      <Box>
-        Outputs count: {cell.outputsCount}
-      </Box>
+      <Box>Outputs count: {cell.outputsCount}</Box>
     </>
   );
-}
+};
 
 const NotebookToolbar = () => {
   const dispatch = useDispatch();
@@ -100,21 +96,30 @@ const NotebookToolbar = () => {
         <Button
           variant="default"
           size="small"
-          onClick={() => dispatch(notebookActions.save.started({ uid: NOTEBOOK_UID_1, date: new Date() }))}
+          onClick={() =>
+            dispatch(
+              notebookActions.save.started({
+                uid: NOTEBOOK_UID_1,
+                date: new Date(),
+              })
+            )
+          }
         >
           Save the notebook
         </Button>
         <Button
           variant="default"
           size="small"
-          onClick={() => dispatch(notebookActions.runAll.started(NOTEBOOK_UID_1))}
+          onClick={() =>
+            dispatch(notebookActions.runAll.started(NOTEBOOK_UID_1))
+          }
         >
           Run all
         </Button>
       </ButtonGroup>
     </Box>
   );
-}
+};
 
 const NotebookKernelChange = () => {
   const { kernelManager, serverSettings } = useJupyter();
@@ -123,26 +128,22 @@ const NotebookKernelChange = () => {
     if (kernelManager) {
       const kernel = new Kernel({
         kernelManager,
-        kernelName: "defaultKernel",
-        kernelSpecName: "python",
-        kernelType: "notebook",
+        kernelName: 'defaultKernel',
+        kernelSpecName: 'python',
+        kernelType: 'notebook',
         serverSettings,
       });
       kernel.ready.then(() => {
         dispatch(notebookActions.changeKernel({ uid: NOTEBOOK_UID_2, kernel }));
-        alert('Kernel is changed.')
-      });      
+        alert('Kernel is changed.');
+      });
     }
-  }
+  };
   return (
     <>
       <Box display="flex">
         <ButtonGroup>
-          <Button
-            variant="default"
-            size="small"
-            onClick={changeKernel}
-          >
+          <Button variant="default" size="small" onClick={changeKernel}>
             Switch Kernel
           </Button>
         </ButtonGroup>
@@ -154,7 +155,7 @@ const NotebookKernelChange = () => {
       />
     </>
   );
-}
+};
 
 const Outputs = () => {
   const { defaultKernel } = useJupyter();
@@ -180,45 +181,45 @@ const Outputs = () => {
         code={SOURCE_2}
       />
     </>
-  )
-}
+  );
+};
 
 const div = document.createElement('div');
 document.body.appendChild(div);
-const root = createRoot(div)
+const root = createRoot(div);
 
 root.render(
   <Jupyter lite={false} terminals={true}>
     <Notebook
       nbformat={notebook as INotebookContent}
       uid={NOTEBOOK_UID_3}
-      height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
+      height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       cellSidebarMargin={60}
       CellSidebar={CellSidebarNew}
       Toolbar={NotebookToolbar}
     />
-    <hr/>
+    <hr />
     <Console />
-    <hr/>
+    <hr />
     <CellPreview />
     <CellToolbar />
     <Cell />
-    <hr/>
+    <hr />
     <Outputs />
-    <hr/>
+    <hr />
     <NotebookToolbar />
     <Notebook
       path="ipywidgets.ipynb"
       CellSidebar={CellSidebar}
       uid={NOTEBOOK_UID_1}
     />
-    <hr/>    
+    <hr />
     <NotebookKernelChange />
-    <hr/>
+    <hr />
     <FileManagerJupyterLab />
-    <hr/>
+    <hr />
     <FileBrowser />
-    <hr/>
+    <hr />
     <Terminal />
   </Jupyter>
 );

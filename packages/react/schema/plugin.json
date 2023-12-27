@@ -12,14 +12,14 @@
   },
   "additionalProperties": false,
   "_jupyter.lab.toolbars": {
-    "Cell": [ 
+    "Cell": [
       {
         "name": "run",
         "icon": "ui-components:react",
         "command": "runmenu:run"
       }
     ],
-    "Notebook": [ 
+    "Notebook": [
       {
         "name": "run",
         "icon": "ui-components:react",
@@ -34,7 +34,7 @@
       "selector": ".jp-mod-searchable"
     }
   ],
-  "_jupyter.lab.menus":  {
+  "_jupyter.lab.menus": {
     "main": [
       {
         "id": "jp-mainmenu-myextension",

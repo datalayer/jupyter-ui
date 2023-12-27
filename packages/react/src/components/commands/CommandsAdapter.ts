@@ -31,8 +31,8 @@ class CommandsAdapter {
     commands.addCommand(command, {
       label: 'Execute Cell',
       execute: () => {
-        window.alert('Execute Cell')
-      }
+        window.alert('Execute Cell');
+      },
     });
     palette.addItem({ command, category });
     commands.addKeyBinding({ command, selector, keys: ['Shift Enter'] });
@@ -41,7 +41,6 @@ class CommandsAdapter {
   get panel(): BoxPanel {
     return this.commandsPanel;
   }
-
 }
 
 export default CommandsAdapter;

@@ -12,7 +12,7 @@ type LuminoProps = {
   id?: string;
   height?: string | number;
   children: Widget;
-}
+};
 
 export const Lumino = (props: LuminoProps) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -21,7 +21,7 @@ export const Lumino = (props: LuminoProps) => {
     if (ref && ref.current) {
       try {
         Widget.attach(children, ref.current);
-      } catch(e) {
+      } catch (e) {
         console.warn('Exception while attaching Lumino widget.', e);
       }
       return () => {
@@ -31,26 +31,21 @@ export const Lumino = (props: LuminoProps) => {
             children.dispose();
             Widget.detach(children);
           }
-        } catch(e) {
+        } catch (e) {
           // no-op.
-//          console.debug('Exception while detaching Lumino widget.', e);
+          //          console.debug('Exception while detaching Lumino widget.', e);
         }
-      }  
+      };
     }
   }, [ref, children]);
   return (
-    <div
-      ref={ref}
-      id={id}
-      style={{ height: height, minHeight: height }}
-    >
-    </div>
-  )
-}
+    <div ref={ref} id={id} style={{ height: height, minHeight: height }}></div>
+  );
+};
 
 Lumino.defaultProps = {
-  id: "lumino-id",
-  height: "100%",
-}
+  id: 'lumino-id',
+  height: '100%',
+};
 
 export default Lumino;

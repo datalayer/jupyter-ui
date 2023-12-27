@@ -11,7 +11,7 @@ import Cell from '../components/cell/Cell';
 
 const div = document.createElement('div');
 document.body.appendChild(div);
-const root = createRoot(div)
+const root = createRoot(div);
 
 root.render(
   <Jupyter>

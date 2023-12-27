@@ -4,9 +4,9 @@
  * MIT License
  */
 
-import actionCreatorFactory from "typescript-fsa";
-import { useSelector } from "react-redux";
-import { reducerWithInitialState } from "typescript-fsa-reducers";
+import actionCreatorFactory from 'typescript-fsa';
+import { useSelector } from 'react-redux';
+import { reducerWithInitialState } from 'typescript-fsa-reducers';
 
 /* State */
 
@@ -17,8 +17,8 @@ export interface IFileManagerState {
 }
 
 export const fileBrowserInitialState: IFileManagerState = {
-  outputs: 0
-}
+  outputs: 0,
+};
 
 /* Selectors */
 
@@ -27,35 +27,33 @@ export const selectFileManager = (): IFileManagerState =>
     if ((state as any).fileBrowser) {
       return (state as any).fileBrowser;
     }
-    return {outputs: 0};
-  }
-);
+    return { outputs: 0 };
+  });
 
 /* Actions */
 
 export enum FileManagerActionType {
-  OUTPUTS = "fileBrowser/OUTPUTS",
-  EXECUTE = "fileBrowser/EXECUTE",
+  OUTPUTS = 'fileBrowser/OUTPUTS',
+  EXECUTE = 'fileBrowser/EXECUTE',
 }
 
 const actionCreator = actionCreatorFactory('jupyterReact');
 
 export const fileBrowserActions = {
-  outputs: actionCreator<number>(
-    FileManagerActionType.OUTPUTS
-  ),
-  execute: actionCreator<void>(
-    FileManagerActionType.EXECUTE
-  ),
-}
+  outputs: actionCreator<number>(FileManagerActionType.OUTPUTS),
+  execute: actionCreator<void>(FileManagerActionType.EXECUTE),
+};
 
 /* Reducers */
 
-export const fileBrowserReducer = reducerWithInitialState(fileBrowserInitialState)
-  .case(fileBrowserActions.outputs, (state: IFileManagerState, success: number) => {
+export const fileBrowserReducer = reducerWithInitialState(
+  fileBrowserInitialState
+).case(
+  fileBrowserActions.outputs,
+  (state: IFileManagerState, success: number) => {
     return {
       ...state,
       outputs: success,
-    }
+    };
   }
 );

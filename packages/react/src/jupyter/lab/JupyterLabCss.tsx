@@ -28,7 +28,7 @@ export const JupyterLabCss = (props: Props) => {
     import('@jupyterlab/notebook/style/base.css');
     import('@jupyterlab/filebrowser/style/base.css');
     import('@jupyterlab/terminal/style/index.css');
-    switch(theme) {
+    switch (theme) {
       case 'light': {
         import('@jupyterlab/theme-light-extension/style/theme.css');
         break;
@@ -43,11 +43,11 @@ export const JupyterLabCss = (props: Props) => {
     import('@jupyter-widgets/base/css/index.css');
     import('@jupyter-widgets/controls/css/widgets-base.css');
   }, [theme]);
-  return <div id="dla-JupyterLabCss-id"></div>
-}
+  return <div id="dla-JupyterLabCss-id"></div>;
+};
 
 JupyterLabCss.defaultProps = {
   theme: 'light',
-}
+};
 
 export default JupyterLabCss;

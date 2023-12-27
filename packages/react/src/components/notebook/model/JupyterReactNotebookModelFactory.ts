@@ -5,7 +5,11 @@
  */
 
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { INotebookModel, NotebookModelFactory, NotebookModel } from "@jupyterlab/notebook";
+import {
+  INotebookModel,
+  NotebookModelFactory,
+  NotebookModel,
+} from '@jupyterlab/notebook';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import type { ISharedNotebook } from '@jupyter/ydoc';
 
@@ -31,7 +35,7 @@ export class JupyterReactNotebookModelFactory extends NotebookModelFactory {
     } else {
       const notebookModel = super.createNew(options);
       notebookModel.readOnly = this._readOnly;
-      return notebookModel;  
+      return notebookModel;
     }
   }
 }

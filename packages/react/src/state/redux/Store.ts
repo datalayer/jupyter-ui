@@ -4,19 +4,30 @@
  * MIT License
  */
 
-import { applyMiddleware, combineReducers, createStore, Store, ReducersMapObject } from "redux";
-import { createEpicMiddleware } from "redux-observable";
-import { AnyAction, Success } from "typescript-fsa";
-import { initReducer } from "./InitState";
+import {
+  applyMiddleware,
+  combineReducers,
+  createStore,
+  Store,
+  ReducersMapObject,
+} from 'redux';
+import { createEpicMiddleware } from 'redux-observable';
+import { AnyAction, Success } from 'typescript-fsa';
+import { initReducer } from './InitState';
 // import { BehaviorSubject } from "rxjs";
 // import { mergeMap } from 'rxjs/operators';
 
 export type InjectableStore = Store & {
-  asyncReducers: ReducersMapObject,
-  inject: (key: string, asyncReducer: any, epic?: any) => void,
-}
+  asyncReducers: ReducersMapObject;
+  inject: (key: string, asyncReducer: any, epic?: any) => void;
+};
 
-const epicMiddleware = createEpicMiddleware<AnyAction, AnyAction, Success<any, any>, any>();
+const epicMiddleware = createEpicMiddleware<
+  AnyAction,
+  AnyAction,
+  Success<any, any>,
+  any
+>();
 
 function createReducer(asyncReducers: ReducersMapObject) {
   return combineReducers({
@@ -45,14 +56,12 @@ export const createInjectableStore = (store: Store): InjectableStore => {
       const newReducer = createReducer(injectableStore.asyncReducers);
       injectableStore.replaceReducer(newReducer);
     }
-  }
+  };
   return injectableStore as InjectableStore;
-}
+};
 
-export const createReduxEpicStore = () => createStore(
-  createReducer({initReducer}),
-  applyMiddleware(epicMiddleware),
-);
+export const createReduxEpicStore = () =>
+  createStore(createReducer({ initReducer }), applyMiddleware(epicMiddleware));
 
 const store = createReduxEpicStore();
 const injectableStore = createInjectableStore(store);

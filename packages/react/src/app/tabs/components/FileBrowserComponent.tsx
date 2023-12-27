@@ -9,9 +9,9 @@ import { FileBrowser } from '../../../components/filebrowser/FileBrowser';
 const FileBrowserComponent = () => {
   return (
     <>
-      <FileBrowser/>
+      <FileBrowser />
     </>
-  )
-}
+  );
+};
 
 export default FileBrowserComponent;

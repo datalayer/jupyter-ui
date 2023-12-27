@@ -6,14 +6,19 @@
 
 import { CommandRegistry } from '@lumino/commands';
 import { BoxPanel, Widget, FocusTracker } from '@lumino/widgets';
-import { JupyterLab, JupyterFrontEndPlugin, JupyterFrontEnd, LabShell } from '@jupyterlab/application';
+import {
+  JupyterLab,
+  JupyterFrontEndPlugin,
+  JupyterFrontEnd,
+  LabShell,
+} from '@jupyterlab/application';
 // import { PageConfig } from '@jupyterlab/coreutils';
 // import { Widget } from '@lumino/widgets';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { NotebookPanel } from '@jupyterlab/notebook';
-import { ServiceManager } from "@jupyterlab/services";
-import { JupyterLabAppProps } from "./JupyterLabApp";
+import { ServiceManager } from '@jupyterlab/services';
+import { JupyterLabAppProps } from './JupyterLabApp';
 /*
 interface IHeadLessLabShell extends ILabShell {
   set currentWidget(widget: Widget | null);
@@ -38,14 +43,14 @@ class HeadLessJupyterLab extends JupyterLab implements JupyterFrontEnd<ILabShell
 */
 type Plugin = JupyterFrontEndPlugin<any, any, any> & {
   service: any;
-}
+};
 
 type Plugins = Map<string, Plugin>;
 
 type Props = JupyterLabAppProps & {
   serviceManager: ServiceManager;
   collaborative?: boolean;
-}
+};
 
 export class JupyterLabAppAdapter {
   private _jupyterLab: JupyterLab;
@@ -72,10 +77,16 @@ export class JupyterLabAppAdapter {
 
   private async load(props: Props) {
     const {
-      hostId, extensions, mimeExtensions, splash,
-      extensionPromises, mimeExtensionPromises, devMode, serviceManager,
+      hostId,
+      extensions,
+      mimeExtensions,
+      splash,
+      extensionPromises,
+      mimeExtensionPromises,
+      devMode,
+      serviceManager,
     } = props;
-//    PageConfig.setOption("disabledExtensions", '["@jupyterlab/apputils-extension:sessionDialogs"]');
+    //    PageConfig.setOption("disabledExtensions", '["@jupyterlab/apputils-extension:sessionDialogs"]');
     const mimeExtensionResolved = await Promise.all(mimeExtensionPromises!);
     mimeExtensions.push(...mimeExtensionResolved);
     this._shell = new LabShell();
@@ -84,7 +95,8 @@ export class JupyterLabAppAdapter {
       mimeExtensions,
       devMode,
       serviceManager,
-      disabled: {  // The disabled property is not honoored in JupyterLab core although it is part of the public API...
+      disabled: {
+        // The disabled property is not honoored in JupyterLab core although it is part of the public API...
         patterns: [],
         matches: [],
       },
@@ -97,7 +109,10 @@ export class JupyterLabAppAdapter {
     extensions.push(...extensionResolved);
     this._jupyterLab.registerPluginModules(extensions);
     if (!splash) {
-      this._jupyterLab.deregisterPlugin('@jupyterlab/apputils-extension:splash', true);
+      this._jupyterLab.deregisterPlugin(
+        '@jupyterlab/apputils-extension:splash',
+        true
+      );
     }
     /*
     if (collaborative) {
@@ -160,32 +175,31 @@ export class JupyterLabAppAdapter {
   }
 
   get focusTracker(): FocusTracker<Widget> {
-    return (this.shell as any)._tracker as FocusTracker<Widget>
+    return (this.shell as any)._tracker as FocusTracker<Widget>;
   }
 
   plugin(id: string): Plugin | undefined {
     return this._plugins.get(id);
   }
 
-  service(id: string): Plugin["service"] {
+  service(id: string): Plugin['service'] {
     return this._plugins.get(id)?.service;
   }
 
   async notebook(path: string) {
     await this.commands.execute('apputils:reset');
-    const notebookPanel = await this.commands.execute('docmanager:open', {
+    const notebookPanel = (await this.commands.execute('docmanager:open', {
       path: path,
       factory: 'Notebook',
       kernel: { name: 'python3' },
-    }) as NotebookPanel;
+    })) as NotebookPanel;
     const boxPanel = new BoxPanel();
     boxPanel.addClass('dla-Jupyter-Notebook');
     boxPanel.spacing = 0;
     boxPanel.addWidget(notebookPanel);
-    this.focusTracker.add(notebookPanel); 
+    this.focusTracker.add(notebookPanel);
     return boxPanel;
   }
-
 }
 
 export default JupyterLabAppAdapter;

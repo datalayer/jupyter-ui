@@ -4,12 +4,35 @@
  * MIT License
  */
 
-import { EditorThemeRegistry, EditorLanguageRegistry, CodeMirrorEditorFactory, EditorExtensionRegistry, ybinding } from '@jupyterlab/codemirror';
-import { RenderMimeRegistry, standardRendererFactories } from '@jupyterlab/rendermime';
-import { Cell, CodeCell, MarkdownCell, RawCell, CodeCellModel, MarkdownCellModel, RawCellModel } from '@jupyterlab/cells';
+import {
+  EditorThemeRegistry,
+  EditorLanguageRegistry,
+  CodeMirrorEditorFactory,
+  EditorExtensionRegistry,
+  ybinding,
+} from '@jupyterlab/codemirror';
+import {
+  RenderMimeRegistry,
+  standardRendererFactories,
+} from '@jupyterlab/rendermime';
+import {
+  Cell,
+  CodeCell,
+  MarkdownCell,
+  RawCell,
+  CodeCellModel,
+  MarkdownCellModel,
+  RawCellModel,
+} from '@jupyterlab/cells';
 import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
 import { ICell, ILanguageInfoMetadata } from '@jupyterlab/nbformat';
-import { createStandaloneCell, YCodeCell, YMarkdownCell, YRawCell, IYText } from '@jupyter/ydoc';
+import {
+  createStandaloneCell,
+  YCodeCell,
+  YMarkdownCell,
+  YRawCell,
+  IYText,
+} from '@jupyter/ydoc';
 import { rendererFactory as plotlyFactory } from './../../../jupyter/renderers/plotly/PlotlyRenderer';
 import { newUuid } from '../../../utils/Utils';
 import { getMarked } from './../../notebook/marked/marked';
@@ -18,13 +41,15 @@ import Lumino from '../../../jupyter/lumino/Lumino';
 type Props = {
   cell: ICell;
   languageInfo?: ILanguageInfoMetadata;
-}
+};
 
 const themes = new EditorThemeRegistry();
 
 const editorExtensions = () => {
   const registry = new EditorExtensionRegistry();
-  for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions({ themes })) {
+  for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions({
+    themes,
+  })) {
     registry.addExtension(extensionFactory);
   }
   registry.addExtension({
@@ -34,13 +59,13 @@ const editorExtensions = () => {
       return EditorExtensionRegistry.createImmutableExtension(
         ybinding({
           ytext: sharedModel.ysource,
-          undoManager: sharedModel.undoManager ?? undefined
+          undoManager: sharedModel.undoManager ?? undefined,
         })
       );
-    }
+    },
   });
   return registry;
-}
+};
 
 const languages = new EditorLanguageRegistry();
 for (const language of EditorLanguageRegistry.getDefaultLanguages()) {
@@ -53,9 +78,9 @@ languages.addLanguage({
     // TODO: add support for LaTeX
     const m = await import('@codemirror/lang-markdown');
     return m.markdown({
-      codeLanguages: (info: string) => languages.findBest(info) as any
+      codeLanguages: (info: string) => languages.findBest(info) as any,
     });
-  }
+  },
 });
 
 const renderFactories = standardRendererFactories.concat(plotlyFactory);
@@ -72,20 +97,20 @@ const factoryService = new CodeMirrorEditorFactory({
 
 export const InputViewer = (props: Props) => {
   const { cell, languageInfo } = props;
-  const id = cell.id as string || newUuid();
-  switch(cell.cell_type) {
+  const id = (cell.id as string) || newUuid();
+  switch (cell.cell_type) {
     case 'code': {
       const codeCell = new CodeCell({
         rendermime,
         model: new CodeCellModel({
-          sharedModel: createStandaloneCell(cell) as YCodeCell
+          sharedModel: createStandaloneCell(cell) as YCodeCell,
         }),
         editorConfig: {
           readOnly: true,
         },
         contentFactory: new Cell.ContentFactory({
-          editorFactory: factoryService.newInlineEditor.bind(factoryService)
-        })
+          editorFactory: factoryService.newInlineEditor.bind(factoryService),
+        }),
       }).initializeState();
       if (languageInfo && languageInfo.mimetype) {
         codeCell.model.mimeType = languageInfo.mimetype;
@@ -101,11 +126,11 @@ export const InputViewer = (props: Props) => {
         rendermime,
         showEditorForReadOnlyMarkdown: false,
         model: new MarkdownCellModel({
-          sharedModel: createStandaloneCell(cell) as YMarkdownCell
+          sharedModel: createStandaloneCell(cell) as YMarkdownCell,
         }),
         contentFactory: new Cell.ContentFactory({
-          editorFactory: factoryService.newInlineEditor.bind(factoryService)
-        })
+          editorFactory: factoryService.newInlineEditor.bind(factoryService),
+        }),
       }).initializeState();
       return (
         <>
@@ -116,11 +141,11 @@ export const InputViewer = (props: Props) => {
     case 'raw': {
       const rawCell = new RawCell({
         model: new RawCellModel({
-          sharedModel: createStandaloneCell(cell) as YRawCell
+          sharedModel: createStandaloneCell(cell) as YRawCell,
         }),
         contentFactory: new Cell.ContentFactory({
-          editorFactory: factoryService.newInlineEditor.bind(factoryService)
-        })
+          editorFactory: factoryService.newInlineEditor.bind(factoryService),
+        }),
       });
       return (
         <>
@@ -129,10 +154,9 @@ export const InputViewer = (props: Props) => {
       );
     }
     default: {
-      return <></>
+      return <></>;
     }
   }
-
-}
+};
 
 export default InputViewer;

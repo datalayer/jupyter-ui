@@ -7,17 +7,47 @@
 import { BoxPanel, Widget } from '@lumino/widgets';
 import { find } from '@lumino/algorithm';
 import { CommandRegistry } from '@lumino/commands';
-import { SessionContext, ISessionContext, Toolbar, ToolbarButton } from '@jupyterlab/apputils';
+import {
+  SessionContext,
+  ISessionContext,
+  Toolbar,
+  ToolbarButton,
+} from '@jupyterlab/apputils';
 import { CodeCellModel, CodeCell, Cell } from '@jupyterlab/cells';
-import { ybinding, CodeMirrorMimeTypeService, EditorLanguageRegistry, CodeMirrorEditorFactory, EditorExtensionRegistry, EditorThemeRegistry } from '@jupyterlab/codemirror';
-import { Completer, CompleterModel, CompletionHandler, ProviderReconciliator, KernelCompleterProvider } from '@jupyterlab/completer';
-import { RenderMimeRegistry, standardRendererFactories as initialFactories } from '@jupyterlab/rendermime';
-import { Session, ServerConnection, SessionManager, KernelManager, KernelSpecManager } from '@jupyterlab/services';
+import {
+  ybinding,
+  CodeMirrorMimeTypeService,
+  EditorLanguageRegistry,
+  CodeMirrorEditorFactory,
+  EditorExtensionRegistry,
+  EditorThemeRegistry,
+} from '@jupyterlab/codemirror';
+import {
+  Completer,
+  CompleterModel,
+  CompletionHandler,
+  ProviderReconciliator,
+  KernelCompleterProvider,
+} from '@jupyterlab/completer';
+import {
+  RenderMimeRegistry,
+  standardRendererFactories as initialFactories,
+} from '@jupyterlab/rendermime';
+import {
+  Session,
+  ServerConnection,
+  SessionManager,
+  KernelManager,
+  KernelSpecManager,
+} from '@jupyterlab/services';
 import { runIcon } from '@jupyterlab/ui-components';
 import { createStandaloneCell, YCodeCell, IYText } from '@jupyter/ydoc';
-import { requireLoader as loader } from "@jupyter-widgets/html-manager";
-import { WIDGET_MIMETYPE, WidgetRenderer } from "@jupyter-widgets/html-manager/lib/output_renderers";
-import IPyWidgetsManager from "../../jupyter/ipywidgets/IPyWidgetsManager";
+import { requireLoader as loader } from '@jupyter-widgets/html-manager';
+import {
+  WIDGET_MIMETYPE,
+  WidgetRenderer,
+} from '@jupyter-widgets/html-manager/lib/output_renderers';
+import IPyWidgetsClassicManager from '../../jupyter/ipywidgets/manager/IPyWidgetsClassicManager';
 import Kernel from '../../jupyter/kernel/Kernel';
 import CellCommands from './CellCommands';
 
@@ -30,30 +60,43 @@ export class CellAdapter {
   constructor(options: CellAdapter.ICellAdapterOptions) {
     const { source, serverSettings, kernel } = options;
     this._kernel = kernel;
-    const kernelManager = kernel?.kernelManager ?? new KernelManager({
-      serverSettings
-    });
-    const sessionManager = kernel?.sessionManager ?? new SessionManager({
-      serverSettings,
-      kernelManager
-    });
-    const specsManager = kernel?.kernelSpecManager ?? new KernelSpecManager({
-      serverSettings
-    });
-    const kernelPreference: ISessionContext.IKernelPreference = kernel ?
-      {
-        id: kernel.id,
-        shouldStart: false,
-        autoStartDefault: false,
-        shutdownOnDispose: false,
-      }
-    :
-      {
-        name: 'python',
-        shouldStart: true,
-        autoStartDefault: true,
-        shutdownOnDispose: true,
-      }
+    this.setupCell(source, serverSettings, kernel);
+  }
+
+  private setupCell(
+    source: string,
+    serverSettings: ServerConnection.ISettings,
+    kernel: Kernel
+  ) {
+    const kernelManager =
+      kernel.kernelManager ??
+      new KernelManager({
+        serverSettings,
+      });
+    const sessionManager =
+      kernel.sessionManager ??
+      new SessionManager({
+        serverSettings,
+        kernelManager,
+      });
+    const specsManager =
+      kernel.kernelSpecManager ??
+      new KernelSpecManager({
+        serverSettings,
+      });
+    const kernelPreference: ISessionContext.IKernelPreference = kernel
+      ? {
+          id: kernel.id,
+          shouldStart: false,
+          autoStartDefault: false,
+          shutdownOnDispose: false,
+        }
+      : {
+          name: 'python',
+          shouldStart: true,
+          autoStartDefault: true,
+          shutdownOnDispose: true,
+        };
 
     this._sessionContext = new SessionContext({
       name: kernel?.path,
@@ -66,30 +109,30 @@ export class CellAdapter {
 
     // These are fixes to have more control on the kernel launch.
     (this._sessionContext as any)._initialize = async (): Promise<boolean> => {
-      const manager = (this._sessionContext as any).sessionManager as SessionManager;
+      const manager = (this._sessionContext as any)
+        .sessionManager as SessionManager;
       await manager.ready;
       await manager.refreshRunning();
       const model = find(manager.running(), item => {
-//          return (item as any).path === (this._sessionContext as any)._path;
-          return item.kernel?.id === this._kernel.id;
-        });
+        //          return (item as any).path === (this._sessionContext as any)._path;
+        return item.kernel?.id === this._kernel.id;
+      });
       if (model) {
-          try {
-            const session = manager.connectTo({
-              model,
-              kernelConnectionOptions: {
-                handleComms: true,
-              }
-            });
-            (this._sessionContext as any)._handleNewSession(session);
-          }
-          catch (err) {
-            void (this._sessionContext as any)._handleSessionError(err);
-            return Promise.reject(err);
-          }
+        try {
+          const session = manager.connectTo({
+            model,
+            kernelConnectionOptions: {
+              handleComms: true,
+            },
+          });
+          (this._sessionContext as any)._handleNewSession(session);
+        } catch (err) {
+          void (this._sessionContext as any)._handleSessionError(err);
+          return Promise.reject(err);
+        }
       }
       return await (this._sessionContext as any)._startIfNecessary();
-   };
+    };
 
     const themes = new EditorThemeRegistry();
     for (const theme of EditorThemeRegistry.getDefaultThemes()) {
@@ -97,7 +140,9 @@ export class CellAdapter {
     }
     const editorExtensions = () => {
       const registry = new EditorExtensionRegistry();
-      for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions({ themes })) {
+      for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions(
+        { themes }
+      )) {
         registry.addExtension(extensionFactory);
       }
       registry.addExtension({
@@ -110,10 +155,10 @@ export class CellAdapter {
               undoManager: sharedModel.undoManager ?? undefined,
             })
           );
-        }
+        },
       });
       return registry;
-    }  
+    };
     const languages = new EditorLanguageRegistry();
     for (const language of EditorLanguageRegistry.getDefaultLanguages()) {
       languages.addLanguage(language);
@@ -125,9 +170,9 @@ export class CellAdapter {
         // TODO: add support for LaTeX.
         const m = await import('@codemirror/lang-markdown');
         return m.markdown({
-          codeLanguages: (info: string) => languages.findBest(info) as any
+          codeLanguages: (info: string) => languages.findBest(info) as any,
         });
-      }
+      },
     });
     const mimeService = new CodeMirrorMimeTypeService(languages);
     const commands = new CommandRegistry();
@@ -140,15 +185,17 @@ export class CellAdapter {
       useCapture
     );
     const rendermime = new RenderMimeRegistry({ initialFactories });
-    const iPyWidgetsClassicManager = new IPyWidgetsManager({ loader });
+    const iPyWidgetsClassicManager = new IPyWidgetsClassicManager({ loader });
     rendermime.addFactory(
       {
         safe: false,
         mimeTypes: [WIDGET_MIMETYPE],
-        createRenderer: (options) => new WidgetRenderer(options, iPyWidgetsClassicManager),
+        createRenderer: options =>
+          new WidgetRenderer(options, iPyWidgetsClassicManager),
       },
       0
     );
+    iPyWidgetsClassicManager.registerWithKernel(kernel.connection);
     const factoryService = new CodeMirrorEditorFactory({
       extensions: editorExtensions(),
       languages,
@@ -159,9 +206,8 @@ export class CellAdapter {
         sharedModel: createStandaloneCell({
           cell_type: 'code',
           source: source,
-          metadata: {
-          }
-        }) as YCodeCell
+          metadata: {},
+        }) as YCodeCell,
       }),
       contentFactory: new Cell.ContentFactory({
         editorFactory: factoryService.newInlineEditor.bind(factoryService),
@@ -169,16 +215,24 @@ export class CellAdapter {
     });
     this._codeCell.addClass('dla-Jupyter-Cell');
     this._codeCell.initializeState();
-    this._sessionContext.kernelChanged.connect((_, arg: Session.ISessionConnection.IKernelChangedArgs) => {
-      const kernelConnection = arg.newValue;
-      console.log('Current Kernel Connection', kernelConnection);
-      if (kernelConnection && !kernelConnection.handleComms) {
-        console.warn('Kernel Connection does not handle Comms', kernelConnection.id);
-        (kernelConnection as any).handleComms = true;
-        console.log('Kernel Connection is updated to enforce Comms support', kernelConnection.handleComms);
+    this._sessionContext.kernelChanged.connect(
+      (_, arg: Session.ISessionConnection.IKernelChangedArgs) => {
+        const kernelConnection = arg.newValue;
+        console.log('Current Kernel Connection', kernelConnection);
+        if (kernelConnection && !kernelConnection.handleComms) {
+          console.warn(
+            'Kernel Connection does not handle Comms',
+            kernelConnection.id
+          );
+          (kernelConnection as any).handleComms = true;
+          console.log(
+            'Kernel Connection is updated to enforce Comms support',
+            kernelConnection.handleComms
+          );
+        }
+        iPyWidgetsClassicManager.registerWithKernel(kernelConnection);
       }
-      iPyWidgetsClassicManager.registerWithKernel(kernelConnection);
-    });
+    );
     this._sessionContext.kernelChanged.connect(() => {
       void this._sessionContext.session?.kernel?.info.then(info => {
         const lang = info.language_info;
@@ -192,7 +246,11 @@ export class CellAdapter {
     const timeout = 1000;
     const provider = new KernelCompleterProvider();
     const reconciliator = new ProviderReconciliator({
-      context: { widget: this._codeCell, editor, session: this._sessionContext.session },
+      context: {
+        widget: this._codeCell,
+        editor,
+        session: this._sessionContext.session,
+      },
       providers: [provider],
       timeout,
     });
@@ -200,13 +258,17 @@ export class CellAdapter {
     void this._sessionContext.ready.then(() => {
       const provider = new KernelCompleterProvider();
       handler.reconciliator = new ProviderReconciliator({
-        context: { widget: this._codeCell, editor, session: this._sessionContext.session },
+        context: {
+          widget: this._codeCell,
+          editor,
+          session: this._sessionContext.session,
+        },
         providers: [provider],
         timeout,
       });
     });
     handler.editor = editor;
-    CellCommands(commands, this._codeCell!, this._sessionContext, handler);  
+    CellCommands(commands, this._codeCell!, this._sessionContext, handler);
     completer.hide();
     completer.addClass('jp-Completer-Cell');
     Widget.attach(completer, document.body);
@@ -217,13 +279,22 @@ export class CellAdapter {
       onClick: () => {
         CodeCell.execute(this._codeCell, this._sessionContext);
       },
-      tooltip: 'Run'
+      tooltip: 'Run',
     });
     toolbar.addItem('run', runButton);
-    toolbar.addItem('interrupt', Toolbar.createInterruptButton(this._sessionContext));
-    toolbar.addItem('restart', Toolbar.createRestartButton(this._sessionContext));
+    toolbar.addItem(
+      'interrupt',
+      Toolbar.createInterruptButton(this._sessionContext)
+    );
+    toolbar.addItem(
+      'restart',
+      Toolbar.createRestartButton(this._sessionContext)
+    );
     // toolbar.addItem('name', Toolbar.createKernelNameItem(this._sessionContext));
-    toolbar.addItem('status', Toolbar.createKernelStatusItem(this._sessionContext));
+    toolbar.addItem(
+      'status',
+      Toolbar.createKernelStatusItem(this._sessionContext)
+    );
 
     this._codeCell.outputsScrolled = false;
     this._codeCell.activate();
@@ -259,17 +330,15 @@ export class CellAdapter {
 
   execute = () => {
     CodeCell.execute(this._codeCell, this._sessionContext);
-  }
-
+  };
 }
 
 export namespace CellAdapter {
-
   export type ICellAdapterOptions = {
     source: string;
     serverSettings: ServerConnection.ISettings;
     kernel: Kernel;
-  }
+  };
 }
 
 export default CellAdapter;

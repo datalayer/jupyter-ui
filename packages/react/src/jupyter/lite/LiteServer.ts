@@ -9,9 +9,9 @@ import { PageConfig } from '@jupyterlab/coreutils';
 import { ServiceManager } from '@jupyterlab/services';
 
 const serverExtensions = [
-//  import('@jupyterlite/javascript-kernel-extension'),
+  //  import('@jupyterlite/javascript-kernel-extension'),
   import('@datalayer/jupyterlite-ipykernel-extension'),
-  import('@datalayer/jupyterlite-server-extension')
+  import('@datalayer/jupyterlite-server-extension'),
 ];
 
 // custom list of disabled plugins.
@@ -25,7 +25,7 @@ const disabled = [
   '@jupyterlab/filebrowser-extension:download',
   '@jupyterlab/filebrowser-extension:share-file',
   '@jupyterlab/help-extension:about',
-/*
+  /*
   '@jupyterlite/server-extension:contents',
   '@jupyterlite/server-extension:contents-routes',
   '@jupyterlite/server-extension:emscripten-filesystem',

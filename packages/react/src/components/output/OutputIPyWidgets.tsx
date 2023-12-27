@@ -9,9 +9,9 @@ import IPyWidgetsAttached from '../../jupyter/ipywidgets/IPyWidgetsAttached';
 import './OutputIPyWidgets.css';
 
 type Props = {
-  view: any,
-  state: any,
-}
+  view: any;
+  state: any;
+};
 
 export const OutputIPyWidgets = (props: Props) => {
   const { view, state } = props;
@@ -19,7 +19,7 @@ export const OutputIPyWidgets = (props: Props) => {
     <>
       <IPyWidgetsAttached view={view} state={state} />
     </>
-  )
-}
+  );
+};
 
 export default OutputIPyWidgets;

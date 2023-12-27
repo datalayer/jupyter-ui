@@ -17,11 +17,11 @@ export class TerminalAdapter {
     const { serverSettings, theme } = options;
     this.terminalPanel = new BoxPanel();
     this.terminalPanel.spacing = 0;
-    this.terminalPanel.addClass("dla-JupyterLab-Terminal-id");
+    this.terminalPanel.addClass('dla-JupyterLab-Terminal-id');
     const terminalManager = new TerminalManager({
       serverSettings,
     });
-    terminalManager.startNew().then((terminalConnection) => {
+    terminalManager.startNew().then(terminalConnection => {
       terminalConnection.connectionStatusChanged.connect((_, status) => {
         console.log('Jupyter Terminal status', status);
       });
@@ -38,11 +38,9 @@ export class TerminalAdapter {
   setTheme(theme: ITerminal.Theme) {
     this.terminal.setOption('theme', theme);
   }
-
 }
 
 export namespace TerminalAdapter {
-
   export interface ITerminalAdapterOptions extends Terminal.ITerminalOptions {
     serverSettings: ServerConnection.ISettings;
   }

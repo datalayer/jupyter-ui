@@ -9,10 +9,9 @@ import { DockPanel, BoxPanel, Widget } from '@lumino/widgets';
 
 import '@lumino/default-theme/style/index.css';
 
-import './LuminoWidget.css'
+import './LuminoWidget.css';
 
 class LuminoWidget extends Widget {
-
   constructor(name: string) {
     super({ node: LuminoWidget.createNode() });
     this.setFlag(Widget.Flag.DisallowLayout);
@@ -42,19 +41,13 @@ class LuminoWidget extends Widget {
       this.inputNode.focus();
     }
   }
-
 }
 
 class SimpleAdapter {
   private simplePanel: BoxPanel;
 
   constructor() {
-    const colors = [
-      'Red', 
-      'Yellow',
-      'Green',
-      'Blue'
-    ];
+    const colors = ['Red', 'Yellow', 'Green', 'Blue'];
 
     this.simplePanel = new BoxPanel();
     this.simplePanel.id = 'simple-panel';
@@ -84,13 +77,11 @@ class SimpleAdapter {
       const c = new LuminoWidget(colors[Math.floor(Math.random() * 4)]);
       this.simplePanel.addWidget(c);
     }
-
   }
 
   get panel(): BoxPanel {
     return this.simplePanel;
   }
-
 }
 
 export default SimpleAdapter;

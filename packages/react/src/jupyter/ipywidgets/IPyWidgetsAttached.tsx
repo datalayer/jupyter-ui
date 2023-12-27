@@ -7,9 +7,9 @@
 import IPyWidgetsViewManager from './IPyWidgetsViewManager';
 
 type Props = {
-  view: any,
-  state: any,
-}
+  view: any;
+  state: any;
+};
 
 /**
  * IPyWidgetAttached allows to render a Lumino
@@ -18,22 +18,24 @@ type Props = {
 const IPyWidgetsAttached = (props: Props) => {
   const { view, state } = props;
   return (
-    <div ref={ref => {
-      if (ref) {
-        var manager = new IPyWidgetsViewManager(ref);
-        manager
-          .set_state(state)
-          .then((models: any) =>
-            manager.create_view(
-              models.find(
-                (element: any) => element.model_id === view.model_id
+    <div
+      ref={ref => {
+        if (ref) {
+          var manager = new IPyWidgetsViewManager(ref);
+          manager
+            .set_state(state)
+            .then((models: any) =>
+              manager.create_view(
+                models.find(
+                  (element: any) => element.model_id === view.model_id
+                )
               )
             )
-          )
-          .then((view: any) => manager.display_view(view));    
-      }
-    }}/>
+            .then((view: any) => manager.display_view(view));
+        }
+      }}
+    />
   );
-}
+};
 
 export default IPyWidgetsAttached;

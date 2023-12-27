@@ -54,10 +54,10 @@ export const FileBrowser = () => {
           });
           const renderTree = items as RenderTree[];
           renderTree.sort((a, b) => {
-            if ((a.id.startsWith("folder_")) && (b.id.startsWith("file_"))) {
+            if (a.id.startsWith('folder_') && b.id.startsWith('file_')) {
               return -1;
             }
-            if ((a.id.startsWith("file_")) && (b.id.startsWith("folder_"))) {
+            if (a.id.startsWith('file_') && b.id.startsWith('folder_')) {
               return 1;
             }
             return a.name.localeCompare(b.name);
@@ -99,7 +99,7 @@ export const FileBrowser = () => {
         )}
       </TreeView.Item>
     ));
-  }
+  };
   return (
     <>
       <TreeView>
@@ -109,14 +109,12 @@ export const FileBrowser = () => {
           </TreeView.LeadingVisual>
           {tree.name}
           {Array.isArray(tree.children) && (
-            <TreeView.SubTree>
-              {renderTree(tree.children)}
-            </TreeView.SubTree>
+            <TreeView.SubTree>{renderTree(tree.children)}</TreeView.SubTree>
           )}
         </TreeView.Item>
       </TreeView>
     </>
   );
-}
+};
 
 export default FileBrowser;

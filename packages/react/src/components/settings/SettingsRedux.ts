@@ -4,9 +4,9 @@
  * MIT License
  */
 
-import { useSelector } from "react-redux";
-import actionCreatorFactory from "typescript-fsa";
-import { reducerWithInitialState } from "typescript-fsa-reducers";
+import { useSelector } from 'react-redux';
+import actionCreatorFactory from 'typescript-fsa';
+import { reducerWithInitialState } from 'typescript-fsa-reducers';
 
 /* State */
 
@@ -18,7 +18,7 @@ export interface ISettingsState {
 
 export const settingsInitialState: ISettingsState = {
   outputs: 0,
-}
+};
 
 /* Selectors */
 
@@ -27,35 +27,30 @@ export const selectSettings = (): ISettingsState =>
     if ((state as any).settings) {
       return (state as any).settings;
     }
-    return {outputs: 0};
-  }
-);
+    return { outputs: 0 };
+  });
 
 /* Actions */
 
 export enum SettingsActionType {
-  OUTPUTS = "settings/OUTPUTS",
-  EXECUTE = "settings/EXECUTE",
+  OUTPUTS = 'settings/OUTPUTS',
+  EXECUTE = 'settings/EXECUTE',
 }
 
 const actionCreator = actionCreatorFactory('jupyterReact');
 
 export const settingsActions = {
-  outputs: actionCreator<number>(
-    SettingsActionType.OUTPUTS
-  ),
-  execute: actionCreator<void>(
-    SettingsActionType.EXECUTE
-  ),
-}
+  outputs: actionCreator<number>(SettingsActionType.OUTPUTS),
+  execute: actionCreator<void>(SettingsActionType.EXECUTE),
+};
 
 /* Reducers */
 
-export const settingsReducer = reducerWithInitialState(settingsInitialState)
-  .case(settingsActions.outputs, (state: ISettingsState, success: number) => {
-    return {
-      ...state,
-      outputs: success
-    }
-  }
-);
+export const settingsReducer = reducerWithInitialState(
+  settingsInitialState
+).case(settingsActions.outputs, (state: ISettingsState, success: number) => {
+  return {
+    ...state,
+    outputs: success,
+  };
+});

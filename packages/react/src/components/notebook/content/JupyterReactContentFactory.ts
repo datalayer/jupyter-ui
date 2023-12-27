@@ -8,7 +8,10 @@ import { Store } from 'redux';
 import { CommandRegistry } from '@lumino/commands';
 import { NotebookPanel } from '@jupyterlab/notebook';
 import { ICellHeader, Cell } from '@jupyterlab/cells';
-import { CellSidebarWidget, CellSidebarProps } from '../cell/sidebar/CellSidebarWidget';
+import {
+  CellSidebarWidget,
+  CellSidebarProps,
+} from '../cell/sidebar/CellSidebarWidget';
 // import { IInputPrompt } from '@jupyterlab/cells';
 // import { NotebookInputPrompt } from './../cell/InputPrompt';
 
@@ -28,13 +31,12 @@ export class JupyterReactContentFactory extends NotebookPanel.ContentFactory {
     nbgrader: boolean,
     commands: CommandRegistry,
     options: Cell.ContentFactory.IOptions,
-    store?: Store,
+    store?: Store
   ) {
     super(options);
     this.CellSidebar = CellSidebar;
-    super.createCodeCell
-    this.notebookId = notebookId,
-    this.nbgrader = nbgrader;
+    super.createCodeCell;
+    (this.notebookId = notebookId), (this.nbgrader = nbgrader);
     this.commands = commands;
     this.store = store!;
   }
@@ -44,10 +46,10 @@ export class JupyterReactContentFactory extends NotebookPanel.ContentFactory {
     return new CellSidebarWidget(
       this.CellSidebar,
       this.notebookId,
-      this.nbgrader, 
-      this.commands, 
-      this.store,
-      );
+      this.nbgrader,
+      this.commands,
+      this.store
+    );
   }
   /*
   createInputPrompt(): IInputPrompt {

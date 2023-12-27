@@ -27,7 +27,7 @@ const NotebookComponent = () => {
       />
       */}
     </>
-  )
-}
+  );
+};
 
 export default NotebookComponent;

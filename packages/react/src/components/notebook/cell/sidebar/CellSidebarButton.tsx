@@ -8,7 +8,13 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { PanelLayout } from '@lumino/widgets';
 import { Box, IconButton } from '@primer/react';
-import { PlayIcon, ChevronUpIcon, ChevronDownIcon, SquareIcon, XIcon } from '@primer/octicons-react';
+import {
+  PlayIcon,
+  ChevronUpIcon,
+  ChevronDownIcon,
+  SquareIcon,
+  XIcon,
+} from '@primer/octicons-react';
 import { notebookActions, selectActiveCell } from '../../NotebookRedux';
 import { CellSidebarProps } from './CellSidebarWidget';
 
@@ -45,7 +51,7 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
         },
       }}
     >
-      <span style={{display: 'flex'}}>
+      <span style={{ display: 'flex' }}>
         <IconButton
           size="small"
           color="secondary"
@@ -59,7 +65,7 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
           variant="invisible"
         />
       </span>
-      <span style={{display: 'flex'}}>
+      <span style={{ display: 'flex' }}>
         <IconButton
           size="small"
           color="secondary"
@@ -78,7 +84,7 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
           variant="invisible"
         />
       </span>
-      <span style={{display: 'flex'}}>
+      <span style={{ display: 'flex' }}>
         <IconButton
           size="small"
           color="secondary"
@@ -97,34 +103,44 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
           variant="invisible"
         />
       </span>
-      <span style={{display: 'flex'}}>
-       { activeCell.model.type === "code" ?
-            <IconButton
-              aria-label="Convert to markdow cell"
-              title="Convert to markdow cell" 
-              icon={SquareIcon}
-              size="small"
-              variant="invisible"
-              onClick={e => {
-                e.preventDefault();
-                dispatch(notebookActions.changeCellType.started({ uid: notebookId, cellType: "markdown" }));
-              }
-            }/>
-          :
-            <IconButton
-              aria-label="Convert to code cell"
-              title="Convert to code cell" 
-              icon={SquareIcon}
-              variant="invisible"
-              size="small"
-              onClick={(e: any) => {
-                e.preventDefault();
-                dispatch(notebookActions.changeCellType.started({ uid: notebookId, cellType: "code" }));
-              }}
-            />
-          }
+      <span style={{ display: 'flex' }}>
+        {activeCell.model.type === 'code' ? (
+          <IconButton
+            aria-label="Convert to markdow cell"
+            title="Convert to markdow cell"
+            icon={SquareIcon}
+            size="small"
+            variant="invisible"
+            onClick={e => {
+              e.preventDefault();
+              dispatch(
+                notebookActions.changeCellType.started({
+                  uid: notebookId,
+                  cellType: 'markdown',
+                })
+              );
+            }}
+          />
+        ) : (
+          <IconButton
+            aria-label="Convert to code cell"
+            title="Convert to code cell"
+            icon={SquareIcon}
+            variant="invisible"
+            size="small"
+            onClick={(e: any) => {
+              e.preventDefault();
+              dispatch(
+                notebookActions.changeCellType.started({
+                  uid: notebookId,
+                  cellType: 'code',
+                })
+              );
+            }}
+          />
+        )}
       </span>
-      <span style={{display: 'flex'}}>
+      <span style={{ display: 'flex' }}>
         <IconButton
           size="small"
           color="secondary"
@@ -143,7 +159,7 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
           variant="invisible"
         />
       </span>
-      <span style={{display: 'flex'}}>
+      <span style={{ display: 'flex' }}>
         <IconButton
           size="small"
           color="secondary"
@@ -162,7 +178,7 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
           variant="invisible"
         />
       </span>
-      <span style={{display: 'flex'}}>
+      <span style={{ display: 'flex' }}>
         <IconButton
           size="small"
           color="error"
@@ -177,11 +193,9 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
         />
       </span>
     </Box>
-  )
-  :
-  (
+  ) : (
     <></>
-  )
-}
+  );
+};
 
 export default CellSidebarNew;

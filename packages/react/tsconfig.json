@@ -1,13 +1,7 @@
 {
   "$schema": "http://json.schemastore.org/tsconfig",
-  "include": [
-    "./src/**/*",
-    "./src/**/*.json"
-  ],
-  "exclude": [
-    "node_modules",
-    "src/example"
-  ],
+  "include": ["./src/**/*", "./src/**/*.json"],
+  "exclude": ["node_modules", "src/example"],
   "compilerOptions": {
     "forceConsistentCasingInFileNames": true,
     "baseUrl": "/",
@@ -30,13 +24,7 @@
     "sourceMap": true,
     "strictNullChecks": true,
     "target": "ESNext",
-    "types": [
-      "jest",
-      "node"
-    ],
-    "lib": [
-      "ESNext",
-      "DOM"
-    ]
+    "types": ["jest", "node"],
+    "lib": ["ESNext", "DOM"]
   }
 }

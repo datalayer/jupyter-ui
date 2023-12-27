@@ -6,13 +6,14 @@
 
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
-import * as outputBase from '@jupyter-widgets/output';
+
+import { OutputAreaModel, OutputArea } from '@jupyterlab/outputarea';
+import { KernelMessage, Session } from '@jupyterlab/services';
 import { JupyterLuminoPanelWidget } from '@jupyter-widgets/base';
 import { Panel } from '@lumino/widgets';
-import { LabWidgetManager, WidgetManager } from './manager';
-import { OutputAreaModel, OutputArea } from '@jupyterlab/outputarea';
+import { NotebookWidgetManager, BaseWidgetManager } from './manager';
 import * as nbformat from '@jupyterlab/nbformat';
-import { KernelMessage, Session } from '@jupyterlab/services';
+import * as outputBase from '@jupyter-widgets/output';
 import $ from 'jquery';
 
 export const OUTPUT_WIDGET_VERSION = outputBase.OUTPUT_WIDGET_VERSION;
@@ -32,8 +33,8 @@ export class OutputModel extends outputBase.OutputModel {
     };
 
     // if the context is available, react on kernel changes
-    if (this.widget_manager instanceof WidgetManager) {
-      this.widget_manager.context.sessionContext.kernelChanged.connect(
+    if (this.widgetManager instanceof BaseWidgetManager) {
+      this.widgetManager.context.sessionContext.kernelChanged.connect(
         (sender, args) => {
           this._handleKernelChanged(args);
         }
@@ -61,7 +62,7 @@ export class OutputModel extends outputBase.OutputModel {
    * Reset the message id.
    */
   reset_msg_id(): void {
-    const kernel = this.widget_manager.kernel;
+    const kernel = this.widgetManager.kernel;
     const msgId = this.get('msg_id');
     const oldMsgId = this.previous('msg_id');
 
@@ -115,7 +116,7 @@ export class OutputModel extends outputBase.OutputModel {
     }
   }
 
-  declare widget_manager: LabWidgetManager;
+  declare widgetManager: NotebookWidgetManager;
 
   private _msgHook: (msg: KernelMessage.IIOPubMessage) => boolean;
   private _outputs: OutputAreaModel;
@@ -143,7 +144,7 @@ export class OutputView extends outputBase.OutputView {
   render(): void {
     super.render();
     this._outputView = new OutputArea({
-      rendermime: this.model.widget_manager.rendermime,
+      rendermime: this.model.widgetManager.rendermime,
       contentFactory: OutputArea.defaultContentFactory,
       model: this.model.outputs,
     });

@@ -5,7 +5,7 @@
  */
 
 import { useEffect } from 'react';
-import { JupyterLabTheme } from "./../../jupyter/lab/JupyterLabTheme";
+import { JupyterLabTheme } from './../../jupyter/lab/JupyterLabTheme';
 
 import '@jupyterlab/application-extension/style/index.js';
 import '@jupyterlab/apputils-extension/style/index.js';
@@ -32,27 +32,27 @@ import '@jupyterlab/ui-components-extension/style/index.js';
 
 type Props = {
   theme?: JupyterLabTheme;
-}
+};
 
 export const JupyterLabAppCss = (props: Props) => {
   const { theme } = props;
   useEffect(() => {
-    switch(theme) {
+    switch (theme) {
       case 'light': {
-//        import('@jupyterlab/theme-light-extension/style/theme.css');
+        //        import('@jupyterlab/theme-light-extension/style/theme.css');
         break;
       }
       case 'dark': {
-//        import('@jupyterlab/theme-dark-extension/style/theme.css');
+        //        import('@jupyterlab/theme-dark-extension/style/theme.css');
         break;
       }
     }
   }, [theme]);
-  return <div id="dla-JupyterLabAppCss-id"></div>
-}
+  return <div id="dla-JupyterLabAppCss-id"></div>;
+};
 
 JupyterLabAppCss.defaultProps = {
-  theme: "light",
+  theme: 'light',
 } as Partial<Props>;
 
 export default JupyterLabAppCss;

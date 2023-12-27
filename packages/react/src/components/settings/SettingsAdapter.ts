@@ -20,7 +20,6 @@ class SettingsAdapter {
   get panel(): DockPanel {
     return this.settingsPanel;
   }
-
 }
 
 export default SettingsAdapter;

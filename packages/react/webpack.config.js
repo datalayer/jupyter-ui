@@ -4,31 +4,31 @@
  * MIT License
  */
 
-const webpack = require("webpack");
-const path = require("path");
+const webpack = require('webpack');
+const path = require('path');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
-  
-const shimJS = path.resolve(__dirname, "src", "emptyshim.js");
+
+const shimJS = path.resolve(__dirname, 'src', 'emptyshim.js');
 
 function shim(regExp) {
   return new webpack.NormalModuleReplacementPlugin(regExp, shimJS);
 }
 
 const ENTRY =
-// "./src/app/App";
-// "./src/examples/Cell";
-// "./src/examples/Console";
-// "./src/examples/IPyLeaflet";
-// "./src/examples/IPyReact";
-// "./src/examples/IPyWidgets";
-// "./src/examples/IPyWidgetsWithState";
-// "./src/examples/JupyterLabApp";
-// "./src/examples/JupyterLabHeadlessApp";
-// "./src/examples/Lumino";
-// "./src/examples/Matplotlib";
-"./src/examples/Notebook";
+  // "./src/app/App";
+  // "./src/examples/Cell";
+  // "./src/examples/Console";
+  // "./src/examples/IPyLeaflet";
+  // "./src/examples/IPyReact";
+  // "./src/examples/IPyWidgets";
+  // "./src/examples/IPyWidgetsWithState";
+  // "./src/examples/JupyterLabApp";
+  // "./src/examples/JupyterLabHeadlessApp";
+  // "./src/examples/Lumino";
+  // "./src/examples/Matplotlib";
+  './src/examples/Notebook';
 // "./src/examples/NotebookKernelChange";
 // "./src/examples/NotebookModel";
 // "./src/examples/NotebookModelChange";
@@ -37,14 +37,16 @@ const ENTRY =
 // "./src/examples/Terminal";
 // "./src/examples/Viewer";
 
-const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == "true";
+const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == 'true';
 // const JUPYTER_HOST = IS_JUPYTER_SERVER_LOCAL ? "http://localhost:8686" : "https://oss.datalayer.tech";
-const INDEX_PAGE = IS_JUPYTER_SERVER_LOCAL ? "index-local.html" : "index.html";
+const INDEX_PAGE = IS_JUPYTER_SERVER_LOCAL ? 'index-local.html' : 'index.html';
 const IS_PRODUCTION = process.argv.indexOf('--mode=production') > -1;
-const mode = IS_PRODUCTION ? "production" : "development";
-const devtool = IS_PRODUCTION ? false : "inline-source-map";
+const mode = IS_PRODUCTION ? 'production' : 'development';
+const devtool = IS_PRODUCTION ? false : 'inline-source-map';
 const minimize = IS_PRODUCTION ? true : false;
-const publicPath = IS_PRODUCTION ? "/static/jupyter_react/" : "http://localhost:3208/";
+const publicPath = IS_PRODUCTION
+  ? '/static/jupyter_react/'
+  : 'http://localhost:3208/';
 
 module.exports = {
   entry: [ENTRY],
@@ -52,7 +54,7 @@ module.exports = {
   watchOptions: {
     aggregateTimeout: 300,
     poll: 2000, // Seems to stabilise HMR file change detection.
-    ignored: "/node_modules/"
+    ignored: '/node_modules/',
   },
   devServer: {
     port: 3208,
@@ -78,7 +80,8 @@ module.exports = {
         changeOrigin: true,
       },
       '/services.js': {
-        target: 'https://datalayer-assets.s3.us-west-2.amazonaws.com/services.js',
+        target:
+          'https://datalayer-assets.s3.us-west-2.amazonaws.com/services.js',
         pathRewrite: { '^/services.js': '' },
         ws: false,
         secure: false,
@@ -91,7 +94,7 @@ module.exports = {
         secure: false,
         changeOrigin: true,
       },
-    }
+    },
   },
   devtool,
   optimization: {
@@ -102,19 +105,19 @@ module.exports = {
     filename: '[name].jupyter-react.js',
   },
   resolve: {
-    extensions: [ '.tsx', '.ts', 'jsx', '.js' ],
-    alias: { 
-      "stream": "stream-browserify",
+    extensions: ['.tsx', '.ts', 'jsx', '.js'],
+    alias: {
+      stream: 'stream-browserify',
     },
-    fallback: { 
-      "assert": require.resolve("assert/"),
-    }
+    fallback: {
+      assert: require.resolve('assert/'),
+    },
   },
   module: {
     rules: [
       {
         test: /\.tsx?$/,
-        loader: "babel-loader",
+        loader: 'babel-loader',
         options: {
           plugins: [
             [
@@ -123,17 +126,19 @@ module.exports = {
                 allowDeclareFields: true,
               },
             ],
-            "@babel/plugin-proposal-class-properties",
+            '@babel/plugin-proposal-class-properties',
           ],
           presets: [
-            ["@babel/preset-react", {
+            [
+              '@babel/preset-react',
+              {
                 runtime: 'automatic',
-                importSource: 'react'
+                importSource: 'react',
               },
             ],
-            "@babel/preset-typescript",
+            '@babel/preset-typescript',
           ],
-          cacheDirectory: true
+          cacheDirectory: true,
         },
         exclude: /node_modules/,
       },
@@ -163,38 +168,38 @@ module.exports = {
         issuer: /\.css$/,
         use: {
           loader: 'svg-url-loader',
-          options: { encoding: 'none', limit: 10000 }
-        }
+          options: { encoding: 'none', limit: 10000 },
+        },
       },
       {
         // In .ts and .tsx files (both of which compile to .js), svg files
         // must be loaded as a raw string instead of data URIs.
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
         issuer: /\.js$/,
-        type: 'asset/source'
+        type: 'asset/source',
       },
       {
         test: /\.m?js/,
         resolve: {
-          fullySpecified: false
-        }
+          fullySpecified: false,
+        },
       },
       {
         test: /\.c?js/,
         resolve: {
-          fullySpecified: false
-        }
-      }
-    ]
+          fullySpecified: false,
+        },
+      },
+    ],
   },
   plugins: [
     shim(/@fortawesome/),
     new webpack.ProvidePlugin({
-      process: 'process/browser'
+      process: 'process/browser',
     }),
     new HtmlWebpackPlugin({
       title: 'Jupyter React',
-      template : 'public/' + INDEX_PAGE,
+      template: 'public/' + INDEX_PAGE,
     }),
     new HtmlWebpackTagsPlugin({
       links: [
@@ -202,10 +207,10 @@ module.exports = {
         'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap',
       ],
       tags: [
-//        'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js'
+        //        'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js'
       ],
-      append: false, 
-      publicPath: false
+      append: false,
+      publicPath: false,
     }),
-  ]
-}
+  ],
+};

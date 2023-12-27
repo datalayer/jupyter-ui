@@ -22,14 +22,14 @@ export async function requestAPI<T>(
   init: RequestInit = {}
 ): Promise<T> {
   // Make request to the Jupyter API.
-  const requestUrl = URLExt.join(
-    serverSettings.baseUrl,
-    namespace,
-    endPoint
-  );
+  const requestUrl = URLExt.join(serverSettings.baseUrl, namespace, endPoint);
   let response: Response;
   try {
-    response = await ServerConnection.makeRequest(requestUrl, init, serverSettings);
+    response = await ServerConnection.makeRequest(
+      requestUrl,
+      init,
+      serverSettings
+    );
     if (response.status === 403) {
       throw new JupyterAuthError();
     }

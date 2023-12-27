@@ -4,8 +4,16 @@
  * MIT License
  */
 
-import { JupyterFrontEnd, JupyterFrontEndPlugin, ILayoutRestorer } from '@jupyterlab/application';
-import { MainAreaWidget, ICommandPalette, WidgetTracker } from '@jupyterlab/apputils';
+import {
+  JupyterFrontEnd,
+  JupyterFrontEndPlugin,
+  ILayoutRestorer,
+} from '@jupyterlab/application';
+import {
+  MainAreaWidget,
+  ICommandPalette,
+  WidgetTracker,
+} from '@jupyterlab/apputils';
 import { ILauncher } from '@jupyterlab/launcher';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { ServerConnection } from '@jupyterlab/services';
@@ -36,7 +44,7 @@ const jupyterReactPlugin: JupyterFrontEndPlugin<void> = {
     palette: ICommandPalette,
     settingRegistry?: ISettingRegistry,
     launcher?: ILauncher,
-    restorer?: ILayoutRestorer,
+    restorer?: ILayoutRestorer
   ) => {
     const { commands } = app;
     const command = CommandIDs.create;
@@ -60,12 +68,13 @@ const jupyterReactPlugin: JupyterFrontEndPlugin<void> = {
         widget.title.icon = icon;
         app.shell.add(widget, 'main');
         tracker.add(widget);
-      }
+      },
     });
     const category = 'Datalayer';
     palette.addItem({ command, category, args: { origin: 'from palette' } });
     const settingsUpdated = (settings: ISettingRegistry.ISettings) => {
-      const showInLauncher = settings.get('showInLauncher').composite as boolean;
+      const showInLauncher = settings.get('showInLauncher')
+        .composite as boolean;
       if (launcher && showInLauncher) {
         launcher.add({
           command,
@@ -78,12 +87,18 @@ const jupyterReactPlugin: JupyterFrontEndPlugin<void> = {
       settingRegistry
         .load(jupyterReactPlugin.id)
         .then(settings => {
-          console.log('@datalayer/jupyter-react settings loaded:', settings.composite);
+          console.log(
+            '@datalayer/jupyter-react settings loaded:',
+            settings.composite
+          );
           settingsUpdated(settings);
           settings.changed.connect(settingsUpdated);
-         })
+        })
         .catch(reason => {
-          console.error('Failed to load settings for @datalayer/jupyter-react.', reason);
+          console.error(
+            'Failed to load settings for @datalayer/jupyter-react.',
+            reason
+          );
         });
     }
     requestAPI<any>(ServerConnection.makeSettings(), 'jupyter_react', 'config')
@@ -94,15 +109,11 @@ const jupyterReactPlugin: JupyterFrontEndPlugin<void> = {
         console.error(
           `The Jupyter Server jupyter_react extension extension.\n${reason}`
         );
-      }
-    );
+      });
     console.log('JupyterLab plugin @datalayer/jupyter-react is activated.');
-  }
-}
+  },
+};
 
-const plugins = [
-  jupyterReactPlugin,
-  notebookContentFactoryPlugin,
-]
+const plugins = [jupyterReactPlugin, notebookContentFactoryPlugin];
 
 export default plugins;

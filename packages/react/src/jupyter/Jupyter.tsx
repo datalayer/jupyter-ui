@@ -5,14 +5,18 @@
  */
 
 import React, { useMemo } from 'react';
-import { ThemeProvider, BaseStyles, Box } from "@primer/react";
+import { ThemeProvider, BaseStyles, Box } from '@primer/react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { JupyterContextProvider } from './JupyterContext';
-import JupyterLabCss  from './lab/JupyterLabCss';
-import { getJupyterServerHttpUrl, getJupyterServerWsUrl, loadJupyterConfig } from './JupyterConfig';
+import JupyterLabCss from './lab/JupyterLabCss';
+import {
+  getJupyterServerHttpUrl,
+  getJupyterServerWsUrl,
+  loadJupyterConfig,
+} from './JupyterConfig';
 import defaultInjectableStore, { InjectableStore } from '../state/redux/Store';
-import { JupyterLabTheme } from "./lab/JupyterLabTheme";
-import {jupyterTheme} from './theme';
+import { JupyterLabTheme } from './lab/JupyterLabTheme';
+import { jupyterTheme } from './theme';
 
 /**
  * Definition of the properties that can be passed
@@ -33,22 +37,22 @@ export type JupyterProps = {
   theme: JupyterLabTheme;
   useRunningKernelId?: string;
   useRunningKernelIndex?: number;
-}
+};
 
 /**
  * The component to be used as fallback in case of error.
  */
-const ErrorFallback = ({error, resetErrorBoundary}: any) => {
+const ErrorFallback = ({ error, resetErrorBoundary }: any) => {
   return (
     <div role="alert">
       <p>Oops, something went wrong.</p>
       <pre>{error.message}</pre>
-      <div style={{ visibility: "hidden" }}>
+      <div style={{ visibility: 'hidden' }}>
         <button onClick={resetErrorBoundary}>Try again</button>
       </div>
     </div>
-  )
-}
+  );
+};
 
 /**
  * The Jupyter context. This handles the needed initialization
@@ -57,8 +61,16 @@ const ErrorFallback = ({error, resetErrorBoundary}: any) => {
  */
 export const Jupyter = (props: JupyterProps) => {
   const {
-    lite, collaborative, startDefaultKernel, defaultKernelName, injectableStore, theme,
-    useRunningKernelId, useRunningKernelIndex, children, disableCssLoading,
+    lite,
+    collaborative,
+    startDefaultKernel,
+    defaultKernelName,
+    injectableStore,
+    theme,
+    useRunningKernelId,
+    useRunningKernelIndex,
+    children,
+    disableCssLoading,
   } = props;
   const config = useMemo(() => {
     return loadJupyterConfig(props);
@@ -66,12 +78,21 @@ export const Jupyter = (props: JupyterProps) => {
   return (
     <ErrorBoundary
       FallbackComponent={ErrorFallback}
-      onReset={() => { console.log('Error Boundary reset has been invoked...'); }}
+      onReset={() => {
+        console.log('Error Boundary reset has been invoked...');
+      }}
     >
-      <ThemeProvider theme={jupyterTheme} colorMode={theme === 'light' ? 'day' : 'night'} dayScheme='light' nightScheme='dark'>
+      <ThemeProvider
+        theme={jupyterTheme}
+        colorMode={theme === 'light' ? 'day' : 'night'}
+        dayScheme="light"
+        nightScheme="dark"
+      >
         <BaseStyles>
           <Box color="fg.default" bg="canvas.default">
-            { !config.insideJupyterLab && !disableCssLoading && <JupyterLabCss theme={theme}/> }
+            {!config.insideJupyterLab && !disableCssLoading && (
+              <JupyterLabCss theme={theme} />
+            )}
             <JupyterContextProvider
               baseUrl={getJupyterServerHttpUrl()}
               collaborative={collaborative}
@@ -86,14 +107,14 @@ export const Jupyter = (props: JupyterProps) => {
               variant="default"
               wsUrl={getJupyterServerWsUrl()}
             >
-              { children }
+              {children}
             </JupyterContextProvider>
           </Box>
         </BaseStyles>
       </ThemeProvider>
     </ErrorBoundary>
-  )
-}
+  );
+};
 
 Jupyter.defaultProps = {
   collaborative: false,
@@ -104,6 +125,6 @@ Jupyter.defaultProps = {
   terminals: false,
   theme: 'light',
   useRunningKernelIndex: -1,
-}
+};
 
 export default Jupyter;

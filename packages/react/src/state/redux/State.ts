@@ -4,14 +4,31 @@
  * MIT License
  */
 
-import { combineReducers } from "redux";
-import { combineEpics } from "redux-observable";
-import { AnyAction } from "typescript-fsa";
-import { initInitialState, initReducer } from "./InitState";
-import { cellInitialState, cellReducer, ICellState } from "../../components/cell/CellRedux";
-import { notebookInitialState, notebookEpics, notebookReducer, INotebooksState } from "../../components/notebook/NotebookRedux";
-import { terminalInitialState, terminalReducer, ITerminalState } from "../../components/terminal/TerminalRedux";
-import { outputInitialState, outputReducer, IOutputsState } from "../../components/output/OutputRedux";
+import { combineReducers } from 'redux';
+import { combineEpics } from 'redux-observable';
+import { AnyAction } from 'typescript-fsa';
+import { initInitialState, initReducer } from './InitState';
+import {
+  cellInitialState,
+  cellReducer,
+  ICellState,
+} from '../../components/cell/CellRedux';
+import {
+  notebookInitialState,
+  notebookEpics,
+  notebookReducer,
+  INotebooksState,
+} from '../../components/notebook/NotebookRedux';
+import {
+  terminalInitialState,
+  terminalReducer,
+  ITerminalState,
+} from '../../components/terminal/TerminalRedux';
+import {
+  outputInitialState,
+  outputReducer,
+  IOutputsState,
+} from '../../components/output/OutputRedux';
 
 /* State */
 
@@ -29,7 +46,7 @@ export const initialState: IJupyterReactState = {
   output: outputInitialState,
   notebook: notebookInitialState,
   terminal: terminalInitialState,
-}
+};
 
 /* Actions
 export type ActionUnion<
@@ -43,9 +60,7 @@ export type AppAction = CellAction | NotebookAction;
 */
 
 /* Epics */
-export const epics = combineEpics<AnyAction, AnyAction, any>(
-  notebookEpics,
-);
+export const epics = combineEpics<AnyAction, AnyAction, any>(notebookEpics);
 
 /* Reducers */
 export const reducers = combineReducers<IJupyterReactState>({

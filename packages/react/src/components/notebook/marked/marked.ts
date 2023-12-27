@@ -8,7 +8,9 @@ import { IMarkdownParser } from '@jupyterlab/rendermime';
 import { IEditorLanguageRegistry } from '@jupyterlab/codemirror';
 import { marked } from 'marked';
 
-export const getMarked = (languages: IEditorLanguageRegistry): IMarkdownParser => {
+export const getMarked = (
+  languages: IEditorLanguageRegistry
+): IMarkdownParser => {
   Private.initializeMarked(languages);
   return {
     render: (content: string): Promise<string> =>
@@ -20,10 +22,9 @@ export const getMarked = (languages: IEditorLanguageRegistry): IMarkdownParser =
             resolve(content);
           }
         });
-      }
-    )
-  }
-}
+      }),
+  };
+};
 
 namespace Private {
   let markedInitialized = false;
@@ -63,7 +64,7 @@ namespace Private {
           console.error(`Failed to highlight ${lang} code`, err);
           return cb(err, code);
         }
-      }
+      },
     });
   }
 }

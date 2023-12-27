@@ -20,11 +20,11 @@ export const Console = () => {
       setAdapter(adapter);
     }
   }, [serviceManager]);
-  return serviceManager && adapter
-    ?
-      <Lumino>{adapter.panel}</Lumino>
-    :
-      <>Loading Jupyter Console...</>
-}
+  return serviceManager && adapter ? (
+    <Lumino>{adapter.panel}</Lumino>
+  ) : (
+    <>Loading Jupyter Console...</>
+  );
+};
 
 export default Console;

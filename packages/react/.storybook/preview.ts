@@ -4,8 +4,8 @@
  * MIT License
  */
 
-import type { Preview } from "@storybook/react";
-import { toolbarTypes, withThemeProvider } from "../stories/story-helpers";
+import type { Preview } from '@storybook/react';
+import { toolbarTypes, withThemeProvider } from '../stories/story-helpers';
 
 import './custom.css';
 
@@ -14,19 +14,18 @@ import '@jupyterlab/application/style/buttons.css';
 import '@jupyterlab/ui-components/style/base.css';
 import '@jupyterlab/apputils/style/dialog.css';
 
-export const globalTypes = toolbarTypes
-export const decorators = [withThemeProvider]
-
+export const globalTypes = toolbarTypes;
+export const decorators = [withThemeProvider];
 
 const preview: Preview = {
   parameters: {
-    actions: { argTypesRegex: "^on[A-Z].*" },
+    actions: { argTypesRegex: '^on[A-Z].*' },
     html: {
       root: '#html-addon-root',
       removeEmptyComments: true,
     },
     controls: {
-hideNoControlsWarning: true,
+      hideNoControlsWarning: true,
       matchers: {
         color: /(background|color)$/i,
         date: /Date$/i,

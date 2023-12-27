@@ -11,7 +11,7 @@ import { PromiseDelegate } from '@lumino/coreutils';
 import { IDisposable } from '@lumino/disposable';
 import { Panel, Widget as LuminoWidget } from '@lumino/widgets';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
-import { LabWidgetManager } from './manager';
+import { BaseWidgetManager } from './manager';
 import { DOMWidgetModel } from '@jupyter-widgets/base';
 
 /**
@@ -19,11 +19,10 @@ import { DOMWidgetModel } from '@jupyter-widgets/base';
  */
 export class WidgetRenderer
   extends Panel
-  implements IRenderMime.IRenderer, IDisposable
-{
+  implements IRenderMime.IRenderer, IDisposable {
   constructor(
     options: IRenderMime.IRendererOptions,
-    manager?: LabWidgetManager
+    manager?: BaseWidgetManager
   ) {
     super();
     this.mimeType = options.mimeType;
@@ -35,7 +34,7 @@ export class WidgetRenderer
   /**
    * The widget manager.
    */
-  set manager(value: LabWidgetManager) {
+  set manager(value: BaseWidgetManager) {
     value.restored.connect(this._rerender, this);
     this._manager.resolve(value);
   }
@@ -122,6 +121,6 @@ export class WidgetRenderer
    * The mimetype being rendered.
    */
   readonly mimeType: string;
-  private _manager = new PromiseDelegate<LabWidgetManager>();
+  private _manager = new PromiseDelegate<BaseWidgetManager>();
   private _rerenderMimeModel: IRenderMime.IMimeModel | null = null;
 }

@@ -18,6 +18,6 @@ export class JupyterReactWidget extends ReactWidget {
   }
 
   render(): JSX.Element {
-    return <JupyterReact app={this._app} />
+    return <JupyterReact app={this._app} />;
   }
 }

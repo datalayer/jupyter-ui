@@ -17,29 +17,19 @@ import {
   WidgetView,
   ICallbacks,
 } from '@jupyter-widgets/base';
-
 import {
   ManagerBase,
   serialize_state,
   IStateOptions,
 } from '@jupyter-widgets/base-manager';
-
 import { IDisposable } from '@lumino/disposable';
-
 import { ReadonlyPartialJSONValue } from '@lumino/coreutils';
-
 import { INotebookModel } from '@jupyterlab/notebook';
-
 import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
-
 import { Kernel, KernelMessage, Session } from '@jupyterlab/services';
-
 import { DocumentRegistry } from '@jupyterlab/docregistry';
-
 import { ISignal, Signal } from '@lumino/signaling';
-
 import { valid } from 'semver';
-
 import { SemVerCache } from './semvercache';
 
 /**
@@ -56,10 +46,9 @@ export const WIDGET_STATE_MIMETYPE =
 /**
  * A widget manager that returns Lumino widgets.
  */
-export abstract class LabWidgetManager
+export abstract class BaseWidgetManager
   extends ManagerBase
-  implements IDisposable
-{
+  implements IDisposable {
   constructor(rendermime: IRenderMimeRegistry) {
     super();
     this._rendermime = rendermime;
@@ -82,15 +71,14 @@ export abstract class LabWidgetManager
    * Register a new kernel
    */
   protected _handleKernelChanged({
-    oldValue,
-    newValue,
+    oldValue: oldKernel,
+    newValue: newKernel,
   }: Session.ISessionConnection.IKernelChangedArgs): void {
-    if (oldValue) {
-      oldValue.removeCommTarget(this.comm_target_name, this._handleCommOpen);
+    if (oldKernel) {
+      oldKernel.removeCommTarget(this.comm_target_name, this._handleCommOpen);
     }
-
-    if (newValue) {
-      newValue.registerCommTarget(this.comm_target_name, this._handleCommOpen);
+    if (newKernel) {
+      newKernel.registerCommTarget(this.comm_target_name, this._handleCommOpen);
     }
   }
 
@@ -111,7 +99,6 @@ export abstract class LabWidgetManager
       // A "load" for a kernel that does not handle comms does nothing.
       return;
     }
-
     return super._loadFromKernel();
   }
 
@@ -172,7 +159,6 @@ export abstract class LabWidgetManager
       return;
     }
     this._isDisposed = true;
-
     if (this._commRegistration) {
       this._commRegistration.dispose();
     }
@@ -274,7 +260,7 @@ export abstract class LabWidgetManager
     super.register_model(model_id, modelPromise);
 
     // Update the synchronous model map
-    modelPromise.then((model) => {
+    modelPromise.then(model => {
       this._modelsSync.set(model_id, model);
       model.once('comm:close', () => {
         this._modelsSync.delete(model_id);
@@ -314,10 +300,10 @@ export abstract class LabWidgetManager
   // single object that can be registered and removed
   protected _handleCommOpen = async (
     comm: Kernel.IComm,
-    msg: KernelMessage.ICommOpenMsg
+    message: KernelMessage.ICommOpenMsg
   ): Promise<void> => {
-    const oldComm = new shims.services.Comm(comm);
-    await this.handle_comm_open(oldComm, msg);
+    const classicComm = new shims.services.Comm(comm);
+    await this.handle_comm_open(classicComm, message);
   };
 
   protected _restored = new Signal<this, void>(this);
@@ -340,21 +326,19 @@ export abstract class LabWidgetManager
 /**
  * A widget manager that returns Lumino widgets.
  */
-export class KernelWidgetManager extends LabWidgetManager {
+export class KernelWidgetManager extends BaseWidgetManager {
   constructor(
     kernel: Kernel.IKernelConnection,
     rendermime: IRenderMimeRegistry
   ) {
     super(rendermime);
     this._kernel = kernel;
-
     kernel.statusChanged.connect((sender, args) => {
       this._handleKernelStatusChange(args);
     });
     kernel.connectionStatusChanged.connect((sender, args) => {
       this._handleKernelConnectionStatusChange(args);
     });
-
     this._handleKernelChanged({
       name: 'kernel',
       oldValue: null,
@@ -401,7 +385,6 @@ export class KernelWidgetManager extends LabWidgetManager {
     if (this.isDisposed) {
       return;
     }
-
     this._kernel = null!;
     super.dispose();
   }
@@ -414,40 +397,42 @@ export class KernelWidgetManager extends LabWidgetManager {
 }
 
 /**
- * A widget manager that returns phosphor widgets.
+ * A widget manager that returns Lumino widgets.
  */
-export class WidgetManager extends LabWidgetManager {
+export class NotebookWidgetManager extends BaseWidgetManager {
   constructor(
     context: DocumentRegistry.IContext<INotebookModel>,
     rendermime: IRenderMimeRegistry,
-    settings: WidgetManager.Settings
+    settings: NotebookWidgetManager.Settings,
+    kernelConnection: Kernel.IKernelConnection | null
   ) {
     super(rendermime);
-    this._context = context;
 
-    context.sessionContext.kernelChanged.connect((sender, args) => {
+    this._context = context;
+    this._settings = settings;
+
+    this._context.sessionContext.kernelChanged.connect((sender, args) => {
       this._handleKernelChanged(args);
     });
-
-    context.sessionContext.statusChanged.connect((sender, args) => {
+    this._context.sessionContext.statusChanged.connect((sender, args) => {
       this._handleKernelStatusChange(args);
     });
-
-    context.sessionContext.connectionStatusChanged.connect((sender, args) => {
-      this._handleKernelConnectionStatusChange(args);
-    });
-
-    if (context.sessionContext.session?.kernel) {
+    this._context.sessionContext.connectionStatusChanged.connect(
+      (sender, args) => {
+        this._handleKernelConnectionStatusChange(args);
+      }
+    );
+    kernelConnection?.registerCommTarget(this.comm_target_name, this._handleCommOpen);
+    /*
+    if (this._context.sessionContext.session?.kernel) {
       this._handleKernelChanged({
         name: 'kernel',
         oldValue: null,
-        newValue: context.sessionContext.session?.kernel,
+        newValue: this._context.sessionContext.session?.kernel,
       });
     }
-
+    */
     this.restoreWidgets(this._context!.model);
-
-    this._settings = settings;
     context.saveState.connect((sender, saveState) => {
       if (saveState === 'started' && settings.saveState) {
         this._saveState();
@@ -545,7 +530,6 @@ export class WidgetManager extends LabWidgetManager {
     if (this.isDisposed) {
       return;
     }
-
     this._context = null!;
     super.dispose();
   }
@@ -576,6 +560,7 @@ export class WidgetManager extends LabWidgetManager {
 
   /**
    * Close all widgets and empty the widget state.
+   *
    * @return Promise that resolves when the widget state is cleared.
    */
   async clear_state(): Promise<void> {
@@ -595,10 +580,10 @@ export class WidgetManager extends LabWidgetManager {
   }
 
   private _context: DocumentRegistry.IContext<INotebookModel>;
-  private _settings: WidgetManager.Settings;
+  private _settings: NotebookWidgetManager.Settings;
 }
 
-export namespace WidgetManager {
+export namespace NotebookWidgetManager {
   export type Settings = {
     saveState: boolean;
   };

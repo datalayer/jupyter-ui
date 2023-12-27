@@ -4,7 +4,10 @@
  * MIT License
  */
 
-import { JupyterFrontEnd, JupyterFrontEndPlugin } from '@jupyterlab/application';
+import {
+  JupyterFrontEnd,
+  JupyterFrontEndPlugin,
+} from '@jupyterlab/application';
 import { NotebookPanel } from '@jupyterlab/notebook';
 import { IEditorServices } from '@jupyterlab/codeeditor';
 import CountdownContentFactory from './CountdownContentFactory';
@@ -21,7 +24,7 @@ const contentFactoryPlugin: JupyterFrontEndPlugin<NotebookPanel.IContentFactory>
   activate: (app: JupyterFrontEnd, editorServices: IEditorServices) => {
     const editorFactory = editorServices.factoryService.newInlineEditor;
     return new CountdownContentFactory({ editorFactory });
-  }
-}
+  },
+};
 
 export default contentFactoryPlugin;

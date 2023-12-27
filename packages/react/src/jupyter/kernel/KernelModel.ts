@@ -47,7 +47,7 @@ export class KernelModel {
       return;
     }
     this.future = this._sessionContext.session?.kernel?.requestExecute({
-      code
+      code,
     });
   }
 

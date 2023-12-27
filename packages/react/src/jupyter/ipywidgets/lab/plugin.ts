@@ -8,32 +8,46 @@ import { DisposableDelegate } from '@lumino/disposable';
 import { AttachedProperty } from '@lumino/properties';
 // import { filter } from '@lumino/algorithm';
 import { DocumentRegistry, Context } from '@jupyterlab/docregistry';
-import { INotebookModel, INotebookTracker, Notebook, NotebookPanel, NotebookTracker } from '@jupyterlab/notebook';
+import {
+  INotebookModel,
+  INotebookTracker,
+  Notebook,
+  NotebookPanel,
+  NotebookTracker,
+} from '@jupyterlab/notebook';
 import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
 import { CodeCell } from '@jupyterlab/cells';
+import { Kernel } from '@jupyterlab/services';
 import { WidgetRenderer } from './renderer';
-import { WidgetManager, WIDGET_VIEW_MIMETYPE } from './manager';
+import { NotebookWidgetManager, WIDGET_VIEW_MIMETYPE } from './manager';
 import { OutputModel, OutputView, OUTPUT_WIDGET_VERSION } from './output';
 import { KernelMessage } from '@jupyterlab/services';
-import { requireLoader } from "@jupyter-widgets/html-manager";
+import { requireLoader } from '@jupyter-widgets/html-manager';
 import * as base from '@jupyter-widgets/base';
-import { BundledIPyWidgets, ExternalIPyWidgets } from '../../../components/notebook/Notebook';
-
+import {
+  BundledIPyWidgets,
+  ExternalIPyWidgets,
+} from '../../../components/notebook/Notebook';
 // We import only the version from the specific module in controls so that the
 // controls code can be split and dynamically loaded in webpack.
 import { JUPYTER_CONTROLS_VERSION } from '@jupyter-widgets/controls/lib/version';
 
+/**
+ * The widget registry.
+ */
 const WIDGET_REGISTRY: base.IWidgetRegistryData[] = [];
 
 /**
  * The cached settings.
  */
-const SETTINGS: WidgetManager.Settings = { saveState: false };
+const SETTINGS: NotebookWidgetManager.Settings = { saveState: false };
 
 /**
  * Iterate through all widget renderers in a notebook.
  */
-function* widgetRenderers(notebook: Notebook): Generator<WidgetRenderer, void, unknown> {
+function* widgetRenderers(
+  notebook: Notebook
+): Generator<WidgetRenderer, void, unknown> {
   for (const cell of notebook.widgets) {
     if (cell.model.type === 'code') {
       for (const codecell of (cell as CodeCell).outputArea.widgets) {
@@ -46,7 +60,6 @@ function* widgetRenderers(notebook: Notebook): Generator<WidgetRenderer, void, u
     }
   }
 }
-
 /**
  * Iterate through all matching linked output views
 function* outputViews(app: JupyterFrontEnd, path: string): Generator<WidgetRenderer, void, unknown> {
@@ -73,12 +86,16 @@ function* chain<T>(
   }
 }
 
-const bindUnhandledIOPubMessageSignal = (notebookPanel: NotebookPanel): void => {
-  const widgetManager = Private.widgetManagerProperty.get(notebookPanel.context);
+const bindUnhandledIOPubMessageSignal = (
+  notebookPanel: NotebookPanel
+): void => {
+  const widgetManager = Private.widgetManagerProperty.get(
+    notebookPanel.context
+  );
   if (widgetManager) {
     widgetManager.onUnhandledIOPubMessage.connect(
-      (sender: WidgetManager, msg: KernelMessage.IIOPubMessage) => {
-        console.log('unhandledIOPubMessageSignal', sender, msg);
+      (sender: NotebookWidgetManager, msg: KernelMessage.IIOPubMessage) => {
+        console.warn('Unhandled IOPub Message Signal', sender, msg);
       }
     );
   }
@@ -87,12 +104,13 @@ const bindUnhandledIOPubMessageSignal = (notebookPanel: NotebookPanel): void => 
 export function registerWidgetManager(
   context: DocumentRegistry.IContext<INotebookModel>,
   rendermime: IRenderMimeRegistry,
-  renderers: IterableIterator<WidgetRenderer>
+  kernelConnection: Kernel.IKernelConnection | null,
+  renderers: IterableIterator<WidgetRenderer>,
 ): DisposableDelegate {
   let widgetManager = Private.widgetManagerProperty.get(context);
   if (!widgetManager) {
-    widgetManager = new WidgetManager(context, rendermime, SETTINGS);
-    WIDGET_REGISTRY.forEach((data) => widgetManager!.register(data));
+    widgetManager = new NotebookWidgetManager(context, rendermime, SETTINGS, kernelConnection);
+    WIDGET_REGISTRY.forEach(data => widgetManager!.register(data));
     Private.widgetManagerProperty.set(context, widgetManager);
   }
   for (const renderer of renderers) {
@@ -104,11 +122,11 @@ export function registerWidgetManager(
     {
       safe: false,
       mimeTypes: [WIDGET_VIEW_MIMETYPE],
-      createRenderer: (options) => new WidgetRenderer(options, widgetManager),
+      createRenderer: options => new WidgetRenderer(options, widgetManager),
     },
     -10
   );
-  return new DisposableDelegate(() => {
+  const disposable = new DisposableDelegate(() => {
     if (rendermime) {
       rendermime.removeMimeType(WIDGET_VIEW_MIMETYPE);
     }
@@ -116,11 +134,17 @@ export function registerWidgetManager(
       widgetManager.dispose();
     }
   });
+  return disposable;
 }
 
-export const externalIPyWidgetsPlugin = (context: Context<INotebookModel>, notebookTracker: NotebookTracker, ipywidgets: ExternalIPyWidgets[]) => {
-  const loadIPyWidget = (name: string, version: string ) => {
-    requireLoader(name, version).then((module) => {
+export const externalIPyWidgetsPlugin = (
+  context: Context<INotebookModel>,
+  notebookTracker: NotebookTracker,
+  ipywidgets: ExternalIPyWidgets[],
+  kernelConnection: Kernel.IKernelConnection | null
+) => {
+  const loadIPyWidget = (name: string, version: string) => {
+    requireLoader(name, version).then(module => {
       const exports = { ...module };
       const data = {
         name,
@@ -128,16 +152,17 @@ export const externalIPyWidgetsPlugin = (context: Context<INotebookModel>, noteb
         exports,
       };
       WIDGET_REGISTRY.push(data);
-      notebookTracker.forEach((notebookPanel) => {
+      notebookTracker.forEach(notebookPanel => {
         const widgetManager = Private.widgetManagerProperty.get(context);
         if (widgetManager) {
           widgetManager.register(data);
           registerWidgetManager(
             notebookPanel.context,
             notebookPanel.content.rendermime,
+            kernelConnection,
             chain(
-              widgetRenderers(notebookPanel.content),
-      //          outputViews(app, panel.context.path)
+              widgetRenderers(notebookPanel.content)
+              //          outputViews(app, panel.context.path)
             )
           );
           bindUnhandledIOPubMessageSignal(notebookPanel);
@@ -148,9 +173,14 @@ export const externalIPyWidgetsPlugin = (context: Context<INotebookModel>, noteb
   ipywidgets.forEach(ipywidget => {
     loadIPyWidget(ipywidget.name, ipywidget.version);
   });
-}
+};
 
-export const bundledIPyWidgetsPlugin = (context: Context<INotebookModel>, notebookTracker: NotebookTracker, ipywidgets: BundledIPyWidgets[]) => {
+export const bundledIPyWidgetsPlugin = (
+  context: Context<INotebookModel>,
+  notebookTracker: NotebookTracker,
+  ipywidgets: BundledIPyWidgets[],
+  kernelConnection: Kernel.IKernelConnection | null
+) => {
   const loadIPyWidget = (name: string, version: string, module: any) => {
     const exports = { ...module };
     const data = {
@@ -159,57 +189,60 @@ export const bundledIPyWidgetsPlugin = (context: Context<INotebookModel>, notebo
       exports,
     };
     WIDGET_REGISTRY.push(data);
-    notebookTracker.forEach((notebookPanel) => {
+    notebookTracker.forEach(notebookPanel => {
       const widgetManager = Private.widgetManagerProperty.get(context);
       if (widgetManager) {
         widgetManager.register(data);
         registerWidgetManager(
           notebookPanel.context,
           notebookPanel.content.rendermime,
+          kernelConnection,
           chain(
-            widgetRenderers(notebookPanel.content),
-    //          outputViews(app, panel.context.path)
+            widgetRenderers(notebookPanel.content)
+            //          outputViews(app, panel.context.path)
           )
         );
-        bindUnhandledIOPubMessageSignal(notebookPanel);  
+        bindUnhandledIOPubMessageSignal(notebookPanel);
       }
     });
   };
   ipywidgets.forEach(ipywidget => {
     loadIPyWidget(ipywidget.name, ipywidget.version, ipywidget.module);
   });
-}
+};
 
 /**
  * The widget manager provider.
  */
-export const managerPlugin = {
-  activate: activateWidgetExtension,
+export const iPyWidgetsPlugin = {
+  activate: activateIPyWidgetExtension,
 };
 
 /**
  * Activate the widget extension.
  */
-function activateWidgetExtension(
+function activateIPyWidgetExtension(
   rendermime: IRenderMimeRegistry,
   tracker: INotebookTracker,
+  kernelConnection: Kernel.IKernelConnection | null
 ): base.IJupyterWidgetRegistry {
   // Add a placeholder widget renderer.
   rendermime.addFactory(
     {
       safe: false,
       mimeTypes: [WIDGET_VIEW_MIMETYPE],
-      createRenderer: (options) => new WidgetRenderer(options),
+      createRenderer: options => new WidgetRenderer(options),
     },
     -10
   );
-  tracker.forEach((notebookPanel) => {
+  tracker.forEach(notebookPanel => {
     registerWidgetManager(
       notebookPanel.context,
       notebookPanel.content.rendermime,
+      kernelConnection,
       chain(
-        widgetRenderers(notebookPanel.content),
-//          outputViews(app, panel.context.path)
+        widgetRenderers(notebookPanel.content)
+        //          outputViews(app, panel.context.path)
       )
     );
     bindUnhandledIOPubMessageSignal(notebookPanel);
@@ -218,27 +251,27 @@ function activateWidgetExtension(
     registerWidgetManager(
       notebookPanel.context,
       notebookPanel.content.rendermime,
+      kernelConnection,
       chain(
-        widgetRenderers(notebookPanel.content),
-//          outputViews(app, panel.context.path)
+        widgetRenderers(notebookPanel.content)
+        //          outputViews(app, panel.context.path)
       )
     );
     bindUnhandledIOPubMessageSignal(notebookPanel);
   });
-  return {
+  const registerWidget = {
     registerWidget(data: base.IWidgetRegistryData): void {
       WIDGET_REGISTRY.push(data);
     },
   };
+  return registerWidget;
 }
 
 /**
  * The base widgets.
  */
 export const baseWidgetsPlugin = {
-  activate: (
-    registry: base.IJupyterWidgetRegistry
-  ): void => {
+  activate: (registry: base.IJupyterWidgetRegistry): void => {
     registry.registerWidget({
       name: '@jupyter-widgets/base',
       version: base.JUPYTER_WIDGETS_VERSION,
@@ -261,9 +294,7 @@ export const baseWidgetsPlugin = {
  * The control widgets.
  */
 export const controlWidgetsPlugin = {
-  activate: (
-    registry: base.IJupyterWidgetRegistry
-  ): void => {
+  activate: (registry: base.IJupyterWidgetRegistry): void => {
     registry.registerWidget({
       name: '@jupyter-widgets/controls',
       version: JUPYTER_CONTROLS_VERSION,
@@ -290,9 +321,7 @@ export const controlWidgetsPlugin = {
  * The output widget.
  */
 export const outputWidgetPlugin = {
-  activate: (
-    registry: base.IJupyterWidgetRegistry
-  ): void => {
+  activate: (registry: base.IJupyterWidgetRegistry): void => {
     registry.registerWidget({
       name: '@jupyter-widgets/output',
       version: OUTPUT_WIDGET_VERSION,
@@ -301,21 +330,22 @@ export const outputWidgetPlugin = {
   },
 };
 
-export default [
-  managerPlugin,
-  baseWidgetsPlugin,
-  controlWidgetsPlugin,
-  outputWidgetPlugin,
-];
 namespace Private {
   /**
    * A private attached property for a widget manager.
    */
   export const widgetManagerProperty = new AttachedProperty<
     DocumentRegistry.Context,
-    WidgetManager | undefined
+    NotebookWidgetManager | undefined
   >({
     name: 'widgetManager',
     create: (owner: DocumentRegistry.Context): undefined => undefined,
   });
 }
+
+export default [
+  iPyWidgetsPlugin,
+  baseWidgetsPlugin,
+  controlWidgetsPlugin,
+  outputWidgetPlugin,
+];
