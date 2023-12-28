@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Datalayer, Inc.
  *
  * MIT License
  */
@@ -21,7 +21,7 @@ const AboutTab = (props: Props): JSX.Element => {
         🪐 ⚛️ Jupyter React<Label sx={{ marginLeft: 1 }}>{version}</Label>
       </Pagehead>
       <Box>
-        <Text>React.js components 💯% compatible with Jupyter.</Text>
+        <Text>React.js components 💯% compatible with 🪐 Jupyter.</Text>
       </Box>
       <Box mt={3} style={{ width: 350 }}>
         {!egg ? (

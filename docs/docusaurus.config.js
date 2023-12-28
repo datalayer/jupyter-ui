@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Datalayer, Inc.
  *
  * MIT License
  */
@@ -10,7 +10,7 @@
 
 module.exports = {
   title: '🪐 ⚛️ Jupyter UI',
-  tagline: 'React.js components 💯% compatible with Jupyter.',
+  tagline: 'React.js components 💯% compatible with 🪐 Jupyter.',
   url: 'https://jupyter-ui.datalayer.tech',
   baseUrl: '/',
   onBrokenLinks: 'throw',

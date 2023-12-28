@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
-# Copyright (c) 2022-2023 Datalayer Inc. All rights reserved.
+# Copyright (c) 2021-2023 Datalayer, Inc.
 #
 # MIT License
 

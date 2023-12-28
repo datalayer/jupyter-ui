@@ -1,10 +1,10 @@
 header:
   license:
     spdx-id: MIT
-    copyright-owner: Datalayer Inc
-    copyright-year: 2022-2023
+    copyright-owner: Datalayer, Inc.
+    copyright-year: 2021-2023
     content: |
-      Copyright (c) [year] [owner]. All rights reserved.
+      Copyright (c) [year] [owner]
 
       MIT License
 
