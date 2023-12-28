@@ -58,11 +58,6 @@ Playground.argTypes = {
       type: 'boolean',
     },
   },
-  inactive: {
-    control: {
-      type: 'boolean',
-    },
-  },
   variant: {
     control: {
       type: 'radio',
@@ -100,7 +95,6 @@ Playground.args = {
   block: false,
   size: 'medium',
   disabled: false,
-  inactive: false,
   variant: 'default',
   alignContent: 'center',
   trailingVisual: null,
@@ -116,7 +110,6 @@ Primary.args = {
   block: false,
   size: 'medium',
   disabled: false,
-  inactive: false,
   variant: 'primary',
   alignContent: 'center',
   trailingVisual: null,
@@ -132,7 +125,6 @@ Danger.args = {
   block: false,
   size: 'medium',
   disabled: false,
-  inactive: false,
   variant: 'danger',
   alignContent: 'center',
   trailingVisual: null,
@@ -148,7 +140,6 @@ Invisible.args = {
   block: false,
   size: 'medium',
   disabled: false,
-  inactive: false,
   variant: 'invisible',
   alignContent: 'center',
   trailingVisual: null,
