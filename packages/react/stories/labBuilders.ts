@@ -12,7 +12,7 @@ export function createLabButton(args): string {
   }
   const labButton = Dialog.defaultRenderer.createButtonNode(
     Dialog.createButton({
-      label: args.label,
+      label: args.label ?? 'Default',
       displayType: args.variant === 'danger' ? 'warn' : undefined,
       accept: args.variant === 'primary' ? true : false,
     })

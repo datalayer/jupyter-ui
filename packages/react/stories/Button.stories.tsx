@@ -44,7 +44,7 @@ export const Default = Template.bind({});
 
 export const Playground: Story = {
   render: (args, options) =>
-    Template.bind({})({ label: 'Button', ...args }, options),
+    Template.bind({})({ label: 'Default', ...args }, options),
 };
 Playground.argTypes = {
   size: {
@@ -104,7 +104,7 @@ Playground.args = {
 
 export const Primary: Story = {
   render: (args, options) =>
-    Template.bind({})({ label: 'Button', ...args }, options),
+    Template.bind({})({ label: 'Primary', ...args }, options),
 };
 Primary.args = {
   block: false,
@@ -119,7 +119,7 @@ Primary.args = {
 
 export const Danger: Story = {
   render: (args, options) =>
-    Template.bind({})({ label: 'Button', ...args }, options),
+    Template.bind({})({ label: 'Danger', ...args }, options),
 };
 Danger.args = {
   block: false,
@@ -134,7 +134,7 @@ Danger.args = {
 
 export const Invisible: Story = {
   render: (args, options) =>
-    Template.bind({})({ label: 'Button', ...args }, options),
+    Template.bind({})({ label: 'Invisble', ...args }, options),
 };
 Invisible.args = {
   block: false,
