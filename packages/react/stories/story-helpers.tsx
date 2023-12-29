@@ -7,7 +7,7 @@
 import { ThemeProvider, themeGet, BaseStyles } from '@primer/react';
 import { createGlobalStyle } from 'styled-components';
 import { Icon } from '@primer/octicons-react';
-import { jupyterTheme as theme } from '../src/jupyter/theme';
+import { jupyterTheme as theme } from '../src';
 import React from 'react';
 import { ArgTypes } from '@storybook/react';
 

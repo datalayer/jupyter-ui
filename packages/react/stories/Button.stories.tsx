@@ -13,7 +13,7 @@ import {
   HeartIcon,
 } from '@primer/octicons-react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Button } from '../src';
+import { Button } from './../src';
 import React from 'react';
 import { OcticonArgType } from './story-helpers';
 import { createLabButton } from './labBuilders';
