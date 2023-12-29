@@ -57,23 +57,23 @@ export const withThemeProvider = (
 
 export const toolbarTypes = {
   colorScheme: {
-    name: 'Color scheme',
+    name: 'Color Scheme',
     description: 'Switch color scheme',
     defaultValue: 'light',
     toolbar: {
       icon: 'photo',
       items: [...Object.keys(theme.colorSchemes)],
-      title: 'Color scheme',
+      title: 'Color Scheme',
     },
   },
   labComparison: {
-    name: 'JupyterLab comparison',
+    name: 'JupyterLab Comparison',
     description: 'Display the equivalent in JupyterLab',
     defaultValue: 'display',
     toolbar: {
       icon: 'mirror',
       items: ['display', 'hide'],
-      title: 'Native JupyterLab equivalent',
+      title: 'Native JupyterLab Equivalent',
     },
   },
 };
