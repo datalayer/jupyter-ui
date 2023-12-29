@@ -8,7 +8,7 @@ import { ThemeProvider, themeGet, BaseStyles } from '@primer/react';
 import { createGlobalStyle } from 'styled-components';
 import { Icon } from '@primer/octicons-react';
 import { jupyterTheme as theme } from '../src';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArgTypes } from '@storybook/react';
 
 // we don't import StoryContext from storybook because of exports that conflict
@@ -32,26 +32,43 @@ export const withThemeProvider = (
   Story: React.FC<React.PropsWithChildren<StoryContext>>,
   context: StoryContext
 ) => {
+
+  const [isRequireJsLoaded, setRequireJsIsLoaded] = useState(false);
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.onload = () => {
+      setRequireJsIsLoaded(true);
+    };
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js';
+    document.head.appendChild(script);
+    return () => {
+    };
+  }, []);
+
   // used for testing ThemeProvider.stories.tsx
   if (context.parameters.disableThemeDecorator) return Story(context);
 
   const { colorScheme } = context.globals;
 
   return (
-    <ThemeProvider
-      colorMode="day"
-      dayScheme={colorScheme}
-      nightScheme={colorScheme}
-    >
-      {colorScheme.startsWith('light') ? (
-        <GlobalStyle $lightTheme />
-      ) : (
-        <GlobalStyle />
-      )}
-      <BaseStyles>
-        <div id="html-addon-root">{Story(context)}</div>
-      </BaseStyles>
-    </ThemeProvider>
+    isRequireJsLoaded ?
+      <ThemeProvider
+        colorMode="day"
+        dayScheme={colorScheme}
+        nightScheme={colorScheme}
+      >
+        {colorScheme.startsWith('light') ? (
+          <GlobalStyle $lightTheme />
+        ) : (
+          <GlobalStyle />
+        )}
+        <BaseStyles>
+          <div id="html-addon-root">{Story(context)}</div>
+        </BaseStyles>
+      </ThemeProvider>
+    :
+     <></>
   );
 };
 

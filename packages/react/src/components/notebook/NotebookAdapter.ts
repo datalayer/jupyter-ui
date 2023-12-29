@@ -62,8 +62,8 @@ import {
   BundledIPyWidgets,
 } from './Notebook';
 import { NotebookCommands } from './NotebookCommands';
-import { IPyWidgetsClassicManager } from '../../jupyter/ipywidgets/manager/IPyWidgetsClassicManager';
 import getMarked from './marked/marked';
+import { IPyWidgetsClassicManager } from '../../jupyter/ipywidgets/manager/IPyWidgetsClassicManager';
 import {
   iPyWidgetsPlugin,
   baseWidgetsPlugin,
@@ -264,7 +264,14 @@ export class NotebookAdapter {
           this._iPyWidgetsClassicManager?.registerWithKernel(
             this._kernel.connection
           );
-        });
+        }
+      );
+      if (this._bundledIPyWidgets) {
+        this._iPyWidgetsClassicManager.bundledIPyWidgetsPlugin(this._bundledIPyWidgets);
+      }
+      if (this._externalIPyWidgets) {
+        this._iPyWidgetsClassicManager.externalIPyWidgets(this._externalIPyWidgets);
+      }
     }
 
     if (this._ipywidgets === 'lab') {

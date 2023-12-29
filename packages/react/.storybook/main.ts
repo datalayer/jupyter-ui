@@ -84,10 +84,23 @@ const config: StorybookConfig = {
       issuer: /\.js$/,
       type: 'asset/source',
     });
+    config.module?.rules?.push({
+      test: /\.m?js/,
+      resolve: {
+        fullySpecified: false,
+      },
+    });
+    config.module?.rules?.push({
+      test: /\.c?js/,
+      resolve: {
+        fullySpecified: false,
+      },
+    });
     return config;
   },
   docs: {
     autodocs: 'tag',
   },
 };
+
 export default config;

@@ -15,10 +15,14 @@ import {
   DOMWidgetView,
   ICallbacks,
 } from '@jupyter-widgets/base';
-import { HTMLManager } from '@jupyter-widgets/html-manager';
+import { requireLoader, HTMLManager } from '@jupyter-widgets/html-manager';
 import { shims } from '@jupyter-widgets/base/lib/services-shim';
 import * as outputWidgets from '@jupyter-widgets/jupyterlab-manager/lib/output';
-
+import {
+  BundledIPyWidgets,
+  ExternalIPyWidgets,
+} from '../../../components/notebook/Notebook';
+  
 // Exposing @jupyter-widgets/base and @jupyter-widgets/controls as AMD modules for custom widget bundles that depend on it.
 
 import * as base from '@jupyter-widgets/base';
@@ -40,7 +44,7 @@ export class IPyWidgetsClassicManager extends HTMLManager {
   private _commRegistration: any;
   private _onError: any;
 
-  registerWithKernel(kernelConnection: Kernel.IKernelConnection | null) {
+  public registerWithKernel(kernelConnection: Kernel.IKernelConnection | null) {
     this._kernelConnection = kernelConnection;
     if (this._commRegistration) {
       this._commRegistration.dispose();
@@ -59,7 +63,7 @@ export class IPyWidgetsClassicManager extends HTMLManager {
     return this._onError;
   }
 
-  display_view(
+  public display_view(
     view: Promise<DOMWidgetView> | DOMWidgetView,
     el: HTMLElement
   ): Promise<void> {
@@ -72,7 +76,7 @@ export class IPyWidgetsClassicManager extends HTMLManager {
     });
   }
 
-  loadClass(
+  public loadClass(
     className: string,
     moduleName: any,
     moduleVersion: string
@@ -92,14 +96,14 @@ export class IPyWidgetsClassicManager extends HTMLManager {
     }
   }
 
-  callbacks(view: WidgetView): ICallbacks {
+  public callbacks(view: WidgetView): ICallbacks {
     const baseCallbacks = super.callbacks(view);
     return Object.assign({}, baseCallbacks, {
       iopub: { output: (msg: any) => this._onError.emit(msg) },
     });
   }
 
-  _create_comm(
+  public _create_comm(
     target_name: any,
     model_id: string,
     data?: any,
@@ -113,11 +117,38 @@ export class IPyWidgetsClassicManager extends HTMLManager {
     return Promise.resolve(new shims.services.Comm(comm!));
   }
 
-  _get_comm_info(): Promise<{}> {
+  public _get_comm_info(): Promise<{}> {
     return this._kernelConnection!.requestCommInfo({
       target_name: this.comm_target_name,
     }).then((reply: any) => reply.content.comms);
   }
+
+  public bundledIPyWidgetsPlugin = (
+    ipywidgets: BundledIPyWidgets[],
+  ): void => {
+    const loadIPyWidget = (name: string, version: string, module: any) => {
+      requireLoader(name, version).then(module => {
+        console.log('bundledIPyWidgetsPlugin', name, version, module)
+      });
+    };
+    ipywidgets.forEach(ipywidget => {
+      loadIPyWidget(ipywidget.name, ipywidget.version, ipywidget.module);
+    });
+  }
+
+  public externalIPyWidgets(
+    ipywidgets: ExternalIPyWidgets[],
+  ): void {
+    const loadIPyWidget = (name: string, version: string) => {
+      requireLoader(name, version).then(module => {
+        console.log('---externalIPyWidgets', name, version, module)
+      });
+    };
+    ipywidgets.forEach(ipywidget => {
+      loadIPyWidget(ipywidget.name, ipywidget.version);
+    });
+  };
+    
 }
 
 export default IPyWidgetsClassicManager;

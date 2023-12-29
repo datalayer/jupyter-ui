@@ -13,11 +13,14 @@ import { cellActions, cellReducer } from './CellRedux';
 import CellAdapter from './CellAdapter';
 import Lumino from '../../jupyter/lumino/Lumino';
 import { useJupyter } from './../../jupyter/JupyterContext';
-
+/*
 const DEFAULT_SOURCE = `from IPython.display import display
 
 for i in range(10):
     display('String {} added to the DOM in separated DIV.'.format(i))`;
+*/
+const DEFAULT_SOURCE = `from ipywidgets import IntSlider
+IntSlider()`;
 
 export type ICellProps = {
   source?: string;

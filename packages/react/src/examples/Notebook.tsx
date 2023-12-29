@@ -21,7 +21,6 @@ root.render(
     <Notebook
       path="ipywidgets.ipynb"
       uid={NOTEBOOK_UID}
-      ipywidgets="lab"
       externalIPyWidgets={[
         { name: '@widgetti/jupyter-react', version: '0.3.0' },
         { name: 'bqplot', version: '0.5.42' },
