@@ -7,7 +7,7 @@
 import { Message } from '@lumino/messaging';
 import { DockPanel, BoxPanel, Widget } from '@lumino/widgets';
 
-import '@lumino/default-theme/style/index.css';
+import '@lumino/default-theme/style/index.js';
 
 import './LuminoWidget.css';
 

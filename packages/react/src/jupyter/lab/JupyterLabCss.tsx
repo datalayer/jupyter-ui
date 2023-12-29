@@ -14,20 +14,20 @@ type Props = {
 export const JupyterLabCss = (props: Props) => {
   const { theme } = props;
   useEffect(() => {
-    import('@jupyterlab/apputils/style/base.css');
-    import('@jupyterlab/rendermime/style/base.css');
-    import('@jupyterlab/codeeditor/style/base.css');
-    import('@jupyterlab/cells/style/base.css');
-    import('@jupyterlab/documentsearch/style/base.css');
-    import('@jupyterlab/outputarea/style/base.css');
-    import('@jupyterlab/console/style/base.css');
-    import('@jupyterlab/completer/style/base.css');
-    import('@jupyterlab/codemirror/style/base.css');
-    import('@jupyterlab/codeeditor/style/base.css');
-    import('@jupyterlab/cells/style/base.css');
-    import('@jupyterlab/notebook/style/base.css');
-    import('@jupyterlab/filebrowser/style/base.css');
-    import('@jupyterlab/terminal/style/index.css');
+    import('@jupyterlab/apputils/style/index.js');
+    import('@jupyterlab/rendermime/style/index.js');
+    import('@jupyterlab/codeeditor/style/index.js');
+    import('@jupyterlab/cells/style/index.js');
+    import('@jupyterlab/documentsearch/style/index.js');
+    import('@jupyterlab/outputarea/style/index.js');
+    import('@jupyterlab/console/style/index.js');
+    import('@jupyterlab/completer/style/index.js');
+    import('@jupyterlab/codemirror/style/index.js');
+    import('@jupyterlab/codeeditor/style/index.js');
+    import('@jupyterlab/cells/style/index.js');
+    import('@jupyterlab/notebook/style/index.js');
+    import('@jupyterlab/filebrowser/style/index.js');
+    import('@jupyterlab/terminal/style/index.js');
     switch (theme) {
       case 'light': {
         import('@jupyterlab/theme-light-extension/style/theme.css');
@@ -38,7 +38,7 @@ export const JupyterLabCss = (props: Props) => {
         break;
       }
     }
-    import('@jupyterlab/ui-components/style/base.css');
+    import('@jupyterlab/ui-components/style/index.js');
     // ipywidgets.
     import('@jupyter-widgets/base/css/index.css');
     import('@jupyter-widgets/controls/css/widgets-base.css');

@@ -29,6 +29,11 @@ declare module '*.svg' {
   export default value;
 }
 
+declare module '*/style/index.js' {
+  const value: any;
+  export default value;
+}
+
 declare module '*/theme.css' {
   const value: any;
   export default value;
