@@ -7,7 +7,7 @@ channels:
 dependencies:
   - jq
   - make
-  - nodejs=18.16.1
+  - nodejs=18.17.1
   - pip
   - python=3.11
   - yarn=3.5.0
