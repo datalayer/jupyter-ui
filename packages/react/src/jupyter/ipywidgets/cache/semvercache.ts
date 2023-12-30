@@ -4,6 +4,9 @@
  * MIT License
  */
 
+// Copyright (c) Jupyter Development Team.
+// Distributed under the terms of the Modified BSD License.
+
 import { maxSatisfying } from 'semver';
 
 /**
@@ -41,4 +44,5 @@ export class SemVerCache<T> {
   private _cache: { [key: string]: { [version: string]: T } } = Object.create(
     null
   );
+
 }

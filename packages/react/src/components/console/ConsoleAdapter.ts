@@ -31,11 +31,11 @@ class ConsoleAdapter {
     this._panel.spacing = 0;
     this._panel.addClass('dla-JupyterLab-Console');
     serviceManager.ready.then(() => {
-      this.startConsole('console-path', serviceManager, this._panel);
+      this.setupConsole('console-path', serviceManager, this._panel);
     });
   }
 
-  startConsole(
+  setupConsole(
     path: string,
     serviceManager: ServiceManager.IManager,
     panel: BoxPanel

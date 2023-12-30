@@ -8,7 +8,7 @@ import { ThemeProvider, themeGet, BaseStyles } from '@primer/react';
 import { createGlobalStyle } from 'styled-components';
 import { Icon } from '@primer/octicons-react';
 import { jupyterTheme as theme } from '../src';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArgTypes } from '@storybook/react';
 
 // we don't import StoryContext from storybook because of exports that conflict
@@ -38,6 +38,16 @@ export const withThemeProvider = (
 
   const { colorScheme } = context.globals;
 
+  const [isLoaded, setIsLoaded] = useState(false);
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.onload = () => {
+      setIsLoaded(true);
+    };
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js';
+    document.body.appendChild(script);
+  }, []);
+
   return (
     <ThemeProvider
       colorMode="day"
@@ -50,7 +60,9 @@ export const withThemeProvider = (
         <GlobalStyle />
       )}
       <BaseStyles>
-        <div id="html-addon-root">{Story(context)}</div>
+        <div id="html-addon-root">
+          {isLoaded && Story(context)}
+        </div>
       </BaseStyles>
     </ThemeProvider>
   );

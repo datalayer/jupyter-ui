@@ -200,7 +200,7 @@ export const registerBundledIPyWidgets = (
   notebookTracker: NotebookTracker,
   ipywidgets: BundledIPyWidgets[],
   kernelConnection: Kernel.IKernelConnection | null,
-  app: JupyterFrontEnd
+  app?: JupyterFrontEnd
 ) => {
   const loadIPyWidget = (name: string, version: string, module: any) => {
     const exports = { ...module };
@@ -246,7 +246,7 @@ function activateIPyWidgetExtension(
   rendermime: IRenderMimeRegistry,
   tracker: INotebookTracker,
   kernelConnection: Kernel.IKernelConnection | null,
-  app: JupyterFrontEnd
+  app?: JupyterFrontEnd
 ): base.IJupyterWidgetRegistry {
   // Add a placeholder widget renderer.
   rendermime.addFactory(
@@ -298,15 +298,15 @@ export const baseWidgetsPlugin = {
       name: '@jupyter-widgets/base',
       version: base.JUPYTER_WIDGETS_VERSION,
       exports: {
-        WidgetModel: base.WidgetModel,
-        WidgetView: base.WidgetView,
-        DOMWidgetView: base.DOMWidgetView,
         DOMWidgetModel: base.DOMWidgetModel,
+        DOMWidgetView: base.DOMWidgetView,
+        ErrorWidgetView: base.ErrorWidgetView,
         LayoutModel: base.LayoutModel,
         LayoutView: base.LayoutView,
         StyleModel: base.StyleModel,
         StyleView: base.StyleView,
-        ErrorWidgetView: base.ErrorWidgetView,
+        WidgetModel: base.WidgetModel,
+        WidgetView: base.WidgetView,
       },
     });
   },
@@ -347,7 +347,10 @@ export const outputWidgetPlugin = {
     registry.registerWidget({
       name: '@jupyter-widgets/output',
       version: OUTPUT_WIDGET_VERSION,
-      exports: { OutputModel, OutputView },
+      exports: {
+        OutputModel,
+        OutputView
+      },
     });
   },
 };

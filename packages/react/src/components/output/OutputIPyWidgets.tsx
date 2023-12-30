@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import IPyWidgetsAttached from '../../jupyter/ipywidgets/IPyWidgetsAttached';
+import IPyWidgetsAttached from './ipywidgets/IPyWidgetsAttached';
 
 import './OutputIPyWidgets.css';
 

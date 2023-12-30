@@ -31,7 +31,7 @@ import {
 } from '@jupyter-widgets/base-manager';
 import { requireLoader } from '@jupyter-widgets/html-manager';
 import { valid } from 'semver';
-import { SemVerCache } from './semvercache';
+import { SemVerCache } from '../cache/semvercache';
 
 /**
  * The mime type for a widget view.

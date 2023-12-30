@@ -63,7 +63,7 @@ import {
 } from './Notebook';
 import { NotebookCommands } from './NotebookCommands';
 import getMarked from './marked/marked';
-import { IPyWidgetsClassicManager } from '../../jupyter/ipywidgets/manager/IPyWidgetsClassicManager';
+import { IPyWidgetsClassicManager } from '../../jupyter/ipywidgets/classic/IPyWidgetsClassicManager';
 import {
   iPyWidgetsPlugin,
   baseWidgetsPlugin,

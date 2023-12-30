@@ -64,9 +64,9 @@ export * from './components/notebook/cell/sidebar/CellSidebar';
 export * from './components/notebook/cell/sidebar/CellSidebarRun';
 
 // IPyWidgets.
-export * from './jupyter/ipywidgets/IPyWidgetsAttached';
-export * from './jupyter/ipywidgets/IPyWidgetsViewManager';
-export * from './jupyter/ipywidgets/IPyWidgetsViewManager';
+export * from './components/output/ipywidgets/IPyWidgetsAttached';
+export * from './components/output/ipywidgets/IPyWidgetsViewManager';
+export * from './components/output/ipywidgets/IPyWidgetsViewManager';
 
 // Commands.
 export * from './components/commands/Commands';

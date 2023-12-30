@@ -16,7 +16,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Button } from './../src';
 import React from 'react';
 import { OcticonArgType } from './story-helpers';
-import { createLabButton } from './labBuilders';
+import { createLabButton } from './lab-builders';
 
 const meta: Meta<typeof Button> = {
   title: 'Components/Button',

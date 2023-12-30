@@ -18,7 +18,7 @@ import {
   WIDGET_MIMETYPE,
   WidgetRenderer,
 } from '@jupyter-widgets/html-manager/lib/output_renderers';
-import { IPyWidgetsClassicManager } from '../../jupyter/ipywidgets/manager/IPyWidgetsClassicManager';
+import { IPyWidgetsClassicManager } from '../../jupyter/ipywidgets/classic/IPyWidgetsClassicManager';
 import Kernel from '../../jupyter/kernel/Kernel';
 
 export class OutputAdapter {
