@@ -7,6 +7,13 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
 
+import { ReadonlyPartialJSONValue } from '@lumino/coreutils';
+import { IDisposable } from '@lumino/disposable';
+import { ISignal, Signal } from '@lumino/signaling';
+import { INotebookModel } from '@jupyterlab/notebook';
+import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
+import { Kernel, KernelMessage, Session } from '@jupyterlab/services';
+import { DocumentRegistry } from '@jupyterlab/docregistry';
 import {
   shims,
   IClassicComm,
@@ -22,13 +29,7 @@ import {
   serialize_state,
   IStateOptions,
 } from '@jupyter-widgets/base-manager';
-import { IDisposable } from '@lumino/disposable';
-import { ReadonlyPartialJSONValue } from '@lumino/coreutils';
-import { INotebookModel } from '@jupyterlab/notebook';
-import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
-import { Kernel, KernelMessage, Session } from '@jupyterlab/services';
-import { DocumentRegistry } from '@jupyterlab/docregistry';
-import { ISignal, Signal } from '@lumino/signaling';
+import { requireLoader } from '@jupyter-widgets/html-manager';
 import { valid } from 'semver';
 import { SemVerCache } from './semvercache';
 
@@ -191,16 +192,29 @@ export abstract class BaseWidgetManager
       moduleVersion = `^${moduleVersion}`;
     }
 
-    const allVersions = this._registry.getAllVersions(moduleName);
+    let allVersions = this._registry.getAllVersions(moduleName);
+    const semanticVersion = moduleVersion.split('.').length === 2 ?
+      moduleVersion + '.0'
+      :
+      moduleVersion;
     if (!allVersions) {
-      throw new Error(`No version of module ${moduleName} is registered`);
+      const module = await requireLoader(moduleName, semanticVersion);
+      const widgetRegistryData = {
+        name: moduleName,
+        version: semanticVersion.replaceAll('^', ''),
+        exports: { ...module }
+      };
+      this.register(widgetRegistryData);
+      allVersions = this._registry.getAllVersions(moduleName);
+      if (!allVersions) {
+        throw new Error(`No version of module ${moduleName} is registered`);
+      }
     }
-    const mod = this._registry.get(moduleName, moduleVersion);
-
+    const mod = this._registry.get(moduleName, semanticVersion);
     if (!mod) {
-      const registeredVersionList = Object.keys(allVersions);
+      const registeredVersionList = Object.keys(allVersions!);
       throw new Error(
-        `Module ${moduleName}, version ${moduleVersion} is not registered, however, \
+        `Module ${moduleName}, version ${semanticVersion} is not registered, however, \
         ${registeredVersionList.join(',')} ${
           registeredVersionList.length > 1 ? 'are' : 'is'
         }`
@@ -309,13 +323,10 @@ export abstract class BaseWidgetManager
   protected _restored = new Signal<this, void>(this);
   protected _restoredStatus = false;
   protected _kernelRestoreInProgress = false;
-
   private _isDisposed = false;
   private _registry: SemVerCache<ExportData> = new SemVerCache<ExportData>();
   private _rendermime: IRenderMimeRegistry;
-
   private _commRegistration: IDisposable;
-
   private _modelsSync = new Map<string, WidgetModel>();
   private _onUnhandledIOPubMessage = new Signal<
     this,

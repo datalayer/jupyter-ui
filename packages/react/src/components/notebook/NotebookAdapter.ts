@@ -48,7 +48,7 @@ import {
 import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
 import { INotebookContent, CellType, IAttachments } from '@jupyterlab/nbformat';
 import { ISharedAttachmentsCell, IYText } from '@jupyter/ydoc';
-import { requireLoader } from '@jupyter-widgets/html-manager';
+import { requireLoader as loader } from '@jupyter-widgets/html-manager';
 import {
   WIDGET_MIMETYPE,
   WidgetRenderer,
@@ -69,8 +69,8 @@ import {
   baseWidgetsPlugin,
   controlWidgetsPlugin,
   outputWidgetPlugin,
-  bundledIPyWidgetsPlugin,
-  externalIPyWidgetsPlugin,
+  registerBundledIPyWidgets,
+  registerExternalIPyWidgets,
 } from '../../jupyter/ipywidgets/lab/plugin';
 
 const FALLBACK_PATH = 'ping.ipynb';
@@ -245,10 +245,21 @@ export class NotebookAdapter {
     });
     documentRegistry.addModelFactory(notebookModelFactory);
 
+    this._context = new Context({
+      manager: this._serviceManager,
+      factory: notebookModelFactory,
+      path: this._path ?? FALLBACK_PATH,
+      kernelPreference: {
+        id: this._kernel.id,
+        shouldStart: false,
+        canStart: false,
+        autoStartDefault: false,
+        shutdownOnDispose: false,
+      },
+    });
+
     if (this._ipywidgets === 'classic') {
-      this._iPyWidgetsClassicManager = new IPyWidgetsClassicManager({
-        loader: requireLoader,
-      });
+      this._iPyWidgetsClassicManager = new IPyWidgetsClassicManager({ loader });
       this._rendermime!.addFactory(
         {
           safe: false,
@@ -267,52 +278,12 @@ export class NotebookAdapter {
         }
       );
       if (this._bundledIPyWidgets) {
-        this._iPyWidgetsClassicManager.bundledIPyWidgetsPlugin(this._bundledIPyWidgets);
+        this._iPyWidgetsClassicManager.loadBundledIPyWidgets(this._bundledIPyWidgets);
       }
       if (this._externalIPyWidgets) {
-        this._iPyWidgetsClassicManager.externalIPyWidgets(this._externalIPyWidgets);
+        this._iPyWidgetsClassicManager.loadExternalIPyWidgets(this._externalIPyWidgets);
       }
     }
-
-    if (this._ipywidgets === 'lab') {
-      const jupyterWidgetRegistry = iPyWidgetsPlugin.activate(
-        this._rendermime!,
-        this._tracker!,
-        this._kernel.connection
-      );
-      baseWidgetsPlugin.activate(jupyterWidgetRegistry);
-      controlWidgetsPlugin.activate(jupyterWidgetRegistry);
-      outputWidgetPlugin.activate(jupyterWidgetRegistry);
-      if (this._bundledIPyWidgets) {
-        bundledIPyWidgetsPlugin(
-          this._context!,
-          this._tracker!,
-          this._bundledIPyWidgets,
-          this._kernel.connection
-          );
-      }
-      if (this._externalIPyWidgets) {
-        externalIPyWidgetsPlugin(
-          this._context!,
-          this._tracker!,
-          this._externalIPyWidgets,
-          this._kernel.connection
-          );
-      }
-    }
-
-    this._context = new Context({
-      manager: this._serviceManager,
-      factory: notebookModelFactory,
-      path: this._path ?? FALLBACK_PATH,
-      kernelPreference: {
-        id: this._kernel.id,
-        shouldStart: false,
-        canStart: false,
-        autoStartDefault: false,
-        shutdownOnDispose: false,
-      },
-    });
 
     // These are fixes to have more control on the kernel launch.
     (this._context.sessionContext as any)._initialize = async (): Promise<
@@ -345,6 +316,33 @@ export class NotebookAdapter {
       }
       return await (this._context!.sessionContext as any)._startIfNecessary();
     };
+
+    if (this._ipywidgets === 'lab') {
+      const jupyterWidgetRegistry = iPyWidgetsPlugin.activate(
+        this._rendermime!,
+        this._tracker!,
+        this._kernel.connection
+      );
+      baseWidgetsPlugin.activate(jupyterWidgetRegistry);
+      controlWidgetsPlugin.activate(jupyterWidgetRegistry);
+      outputWidgetPlugin.activate(jupyterWidgetRegistry);
+      if (this._bundledIPyWidgets) {
+        registerBundledIPyWidgets(
+          this._context!,
+          this._tracker!,
+          this._bundledIPyWidgets,
+          this._kernel.connection
+          );
+      }
+      if (this._externalIPyWidgets) {
+        registerExternalIPyWidgets(
+          this._context!,
+          this._tracker!,
+          this._externalIPyWidgets,
+          this._kernel.connection
+          );
+      }
+    }
 
     this._context.sessionContext.kernelChanged.connect((_, args) => {
       console.log('Previous Kernel Connection', args.oldValue);

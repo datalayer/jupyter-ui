@@ -15,18 +15,18 @@ import {
   DOMWidgetView,
   ICallbacks,
 } from '@jupyter-widgets/base';
-import { requireLoader, HTMLManager } from '@jupyter-widgets/html-manager';
 import { shims } from '@jupyter-widgets/base/lib/services-shim';
-import * as outputWidgets from '@jupyter-widgets/jupyterlab-manager/lib/output';
+import { requireLoader, HTMLManager } from '@jupyter-widgets/html-manager';
 import {
   BundledIPyWidgets,
   ExternalIPyWidgets,
 } from '../../../components/notebook/Notebook';
-  
-// Exposing @jupyter-widgets/base and @jupyter-widgets/controls as AMD modules for custom widget bundles that depend on it.
 
+import * as outputWidgets from '@jupyter-widgets/jupyterlab-manager/lib/output';
 import * as base from '@jupyter-widgets/base';
 import * as controls from '@jupyter-widgets/controls';
+
+// Exposing @jupyter-widgets/base and @jupyter-widgets/controls as AMD modules for custom widget bundles that depend on it.
 
 if (
   typeof window !== 'undefined' &&
@@ -52,8 +52,8 @@ export class IPyWidgetsClassicManager extends HTMLManager {
     if (kernelConnection) {
       this._commRegistration = kernelConnection.registerCommTarget(
         this.comm_target_name,
-        (comm: Kernel.IComm, message: KernelMessage.ICommOpenMsg) => {
-          this.handle_comm_open(new shims.services.Comm(comm), message);
+        (comm: Kernel.IComm, commOpenMessage: KernelMessage.ICommOpenMsg) => {
+          this.handle_comm_open(new shims.services.Comm(comm), commOpenMessage);
         }
       );
     }
@@ -70,7 +70,7 @@ export class IPyWidgetsClassicManager extends HTMLManager {
     return Promise.resolve(view).then(view => {
       Widget.attach(view.luminoWidget, el);
       view.on('remove', function () {
-        console.log('view removed', view);
+        console.log('The IPyWidgets view is removed', view);
       });
       //      return view;
     });
@@ -123,12 +123,12 @@ export class IPyWidgetsClassicManager extends HTMLManager {
     }).then((reply: any) => reply.content.comms);
   }
 
-  public bundledIPyWidgetsPlugin = (
+  public loadBundledIPyWidgets = (
     ipywidgets: BundledIPyWidgets[],
   ): void => {
     const loadIPyWidget = (name: string, version: string, module: any) => {
       requireLoader(name, version).then(module => {
-        console.log('bundledIPyWidgetsPlugin', name, version, module)
+        //
       });
     };
     ipywidgets.forEach(ipywidget => {
@@ -136,12 +136,12 @@ export class IPyWidgetsClassicManager extends HTMLManager {
     });
   }
 
-  public externalIPyWidgets(
+  public loadExternalIPyWidgets(
     ipywidgets: ExternalIPyWidgets[],
   ): void {
     const loadIPyWidget = (name: string, version: string) => {
       requireLoader(name, version).then(module => {
-        console.log('---externalIPyWidgets', name, version, module)
+        //
       });
     };
     ipywidgets.forEach(ipywidget => {

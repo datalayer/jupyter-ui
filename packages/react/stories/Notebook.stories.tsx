@@ -26,12 +26,6 @@ const Template = (args, { globals: { labComparison } }) => {
     >
       <Notebook
         {...args}
-        externalIPyWidgets={[
-          { name: '@widgetti/jupyter-react', version: '0.3.0' },
-          { name: 'jupyter-leaflet', version: '0.18.0' },
-          { name: 'jupyter-matplotlib', version: '0.11.3' },
-          { name: 'bqplot', version: '0.5.42' },
-        ]}
       />
     </Jupyter>
   );

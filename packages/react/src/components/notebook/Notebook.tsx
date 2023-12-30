@@ -275,7 +275,7 @@ Notebook.defaultProps = {
   cellMetadataPanel: false,
   cellSidebarMargin: 120,
   height: '100vh',
-  ipywidgets: 'classic',
+  ipywidgets: 'lab',
   maxHeight: '100vh',
   nbgrader: false,
   readOnly: false,
