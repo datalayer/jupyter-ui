@@ -34,7 +34,7 @@ class ConfettiWidget(ipyreact.ReactWidget):
           <button onClick={() => confetti() && set_value(value + 1)}>
             CLICK here for some CONFETTIS
           </button>
-          <h2>You have {value || 0} whishe{ (value > 1) && 's' } so far...</h2>
+          <h2>You have {value || 0} wishe{ (value > 1) && 's' } so far...</h2>
           <quote>Powered by 🪐 Jupyter UI</quote>
         </>
       )

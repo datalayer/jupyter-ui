@@ -32,7 +32,7 @@ const ProductList = [
     Svg: require('../../static/img/memo.svg').default,
     description: (
       <>
-        For a truly collaborative and accessible notebook, <a href="./docs/cases/literate" style={{ textDecoration: "underline" }}>Literate Notebook</a> is a better single-page editor for your data analysis.
+        For a truly collaborative and accessible notebook, <a href="https://datalayer.tech/docs/datalayer/cases/literate-notebook" style={{ textDecoration: "underline" }}>Literate Notebook</a> is a better single-page editor for your data analysis.
       </>
     ),
   },
