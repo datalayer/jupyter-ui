@@ -56,7 +56,9 @@ export class IPyWidgetsClassicManager extends HTMLManager {
       loader?: (moduleName: string, moduleVersion: string) => Promise<any>;
   }) {
     super(options);
-    this._registry = new SemVerCache<ExportData>();
+    (window as any).define('@jupyter-widgets/base', base);
+    (window as any).define('@jupyter-widgets/controls', controls);
+      this._registry = new SemVerCache<ExportData>();
     this.register({
       name: '@jupyter-widgets/base',
       version: base.JUPYTER_WIDGETS_VERSION,
