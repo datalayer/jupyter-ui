@@ -6,7 +6,6 @@
 
 import React, { useState, useEffect, useContext, createContext } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import { Theme } from '@primer/react/lib/ThemeProvider';
 import {
   ServiceManager,
   ServerConnection,
@@ -17,7 +16,6 @@ import { requestAPI } from './JupyterHandlers';
 import { startLiteServer } from './../jupyter/lite/LiteServer';
 import { InjectableStore } from '../state/redux/Store';
 import Kernel from './kernel/Kernel';
-import { ColorMode } from './lab/JupyterLabTheme';
 
 /**
  * The type for the Jupyter context.
