@@ -86,7 +86,7 @@ export const Jupyter = (props: JupyterProps) => {
       }}
     >
       <ThemeProvider
-        theme={theme}
+        theme={theme ?? primerTheme}
         colorMode={colorMode === 'light' ? 'day' : 'night'}
         dayScheme="light"
         nightScheme="dark"

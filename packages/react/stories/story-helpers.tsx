@@ -38,11 +38,12 @@ export const withThemeProvider = (
 
   const { colorScheme } = context.globals;
 
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [requirejsIsLoaded, setRequirejsIsLoaded] = useState(false);
+
   useEffect(() => {
     const script = document.createElement('script');
     script.onload = () => {
-      setIsLoaded(true);
+      setRequirejsIsLoaded(true);
     };
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js';
     document.body.appendChild(script);
@@ -50,6 +51,7 @@ export const withThemeProvider = (
 
   return (
     <ThemeProvider
+      theme={theme}
       colorMode="day"
       dayScheme={colorScheme}
       nightScheme={colorScheme}
@@ -61,7 +63,7 @@ export const withThemeProvider = (
       )}
       <BaseStyles>
         <div id="html-addon-root">
-          {isLoaded && Story(context)}
+          {requirejsIsLoaded && Story(context)}
         </div>
       </BaseStyles>
     </ThemeProvider>

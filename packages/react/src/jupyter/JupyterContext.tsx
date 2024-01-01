@@ -17,7 +17,7 @@ import { startLiteServer } from './../jupyter/lite/LiteServer';
 import { InjectableStore } from '../state/redux/Store';
 import Kernel from './kernel/Kernel';
 
-/**
+/**Fré
  * The type for the Jupyter context.
  */
 export type JupyterContextType = {
