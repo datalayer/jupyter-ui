@@ -17,7 +17,7 @@ import { ThemeManager } from '@jupyterlab/apputils';
 import { RunningSessions } from '@jupyterlab/running';
 import Jupyter from '../jupyter/Jupyter';
 import Lumino from '../jupyter/lumino/Lumino';
-import { JupyterLabTheme } from '../jupyter/lab/JupyterLabTheme';
+import { ColorMode } from '../jupyter/lab/JupyterLabTheme';
 import JupyterLabApp from '../components/jupyterlab/JupyterLabApp';
 import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter';
 
@@ -27,7 +27,7 @@ import * as runningExtension from '@jupyterlab/running-extension';
 
 const RunningSessionsExample = () => {
   const [runningSessions, setRunningSessions] = useState<RunningSessions>();
-  const [theme, setTheme] = useState<JupyterLabTheme>('light');
+  const [theme, setTheme] = useState<ColorMode>('light');
   const [jupyterLabAdapter, setJupyterlabAdapter] = useState<
     JupyterLabAppAdapter
   >();
@@ -62,7 +62,7 @@ const RunningSessionsExample = () => {
       <Jupyter
         startDefaultKernel={false}
         disableCssLoading={true}
-        theme="light"
+        colorMode="light"
       >
         <ThemeProvider
           colorMode={theme === 'light' ? 'day' : 'night'}

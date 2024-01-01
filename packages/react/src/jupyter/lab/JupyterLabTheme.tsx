@@ -4,4 +4,4 @@
  * MIT License
  */
 
-export type JupyterLabTheme = 'light' | 'dark';
+export type ColorMode = 'light' | 'dark';

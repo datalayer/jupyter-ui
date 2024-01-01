@@ -5,14 +5,14 @@
  */
 
 import { useEffect } from 'react';
-import { JupyterLabTheme } from './JupyterLabTheme';
+import { ColorMode } from './JupyterLabTheme';
 
 type Props = {
-  theme: JupyterLabTheme;
+  colorMode: ColorMode;
 };
 
 export const JupyterLabCss = (props: Props) => {
-  const { theme } = props;
+  const { colorMode } = props;
   useEffect(() => {
     import('@jupyterlab/apputils/style/index.js');
     import('@jupyterlab/rendermime/style/index.js');
@@ -28,7 +28,7 @@ export const JupyterLabCss = (props: Props) => {
     import('@jupyterlab/notebook/style/index.js');
     import('@jupyterlab/filebrowser/style/index.js');
     import('@jupyterlab/terminal/style/index.js');
-    switch (theme) {
+    switch (colorMode) {
       case 'light': {
         import('@jupyterlab/theme-light-extension/style/theme.css');
         break;
@@ -42,7 +42,7 @@ export const JupyterLabCss = (props: Props) => {
     // ipywidgets.
     import('@jupyter-widgets/base/css/index.css');
     import('@jupyter-widgets/controls/css/widgets-base.css');
-  }, [theme]);
+  }, [colorMode]);
   return <div id="dla-JupyterLabCss-id"></div>;
 };
 

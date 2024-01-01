@@ -4,17 +4,17 @@
  * MIT License
  */
 
-import { theme } from '@primer/react';
+import { theme as primerTheme } from '@primer/react';
 import merge from 'lodash-es/merge';
 
 /**
- * Theme for Primer React based on JupyterLab theme
+ * Theme for Primer React based on JupyterLab theme.
  *
  * It sets the Primer theme tokens using the JupyterLab CSS
  * properties with a fallback in case no JupyterLab theme is
  * is provided to the page.
  */
-const jupyterTheme = {
+const jupyterThemeDefs = {
   animation: {
     easeOutCubic: 'cubic-bezier(0.33, 1, 0.68, 1)',
   },
@@ -1154,21 +1154,21 @@ const jupyterTheme = {
   },
 };
 
-const { colorSchemes: defaultSchemes, ...defaultOthers } = theme;
-const { colorSchemes: jpSchemes, ...jpOthers } = jupyterTheme;
+const { colorSchemes: primerSchemes, ...primerOthers } = primerTheme;
+const { colorSchemes: jupyterSchemes, ...jupyterOthers } = jupyterThemeDefs;
 
 // Merge with the light theme to ensure all variables are defined (although
 // the style may be ugly)
-const defaultTheme = merge(defaultOthers, jpOthers, {
+const theme = merge(primerOthers, jupyterOthers, {
   colorSchemes: { light: {}, dark: {} },
 });
-defaultTheme.colorSchemes.light = {
-  colors: merge(defaultSchemes.light.colors, jpSchemes.light.colors),
-  shadows: merge(defaultSchemes.light.shadows, jpSchemes.light.shadows),
+theme.colorSchemes.light = {
+  colors: merge(primerSchemes.light.colors, jupyterSchemes.light.colors),
+  shadows: merge(primerSchemes.light.shadows, jupyterSchemes.light.shadows),
 };
-defaultTheme.colorSchemes.dark = {
-  colors: merge(defaultSchemes.dark.colors, jpSchemes.dark.colors),
-  shadows: merge(defaultSchemes.dark.shadows, jpSchemes.dark.shadows),
+theme.colorSchemes.dark = {
+  colors: merge(primerSchemes.dark.colors, jupyterSchemes.dark.colors),
+  shadows: merge(primerSchemes.dark.shadows, jupyterSchemes.dark.shadows),
 };
 
-export { defaultTheme as jupyterTheme };
+export { theme as jupyterTheme };

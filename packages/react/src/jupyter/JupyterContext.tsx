@@ -6,6 +6,7 @@
 
 import React, { useState, useEffect, useContext, createContext } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
+import { Theme } from '@primer/react/lib/ThemeProvider';
 import {
   ServiceManager,
   ServerConnection,
@@ -16,7 +17,7 @@ import { requestAPI } from './JupyterHandlers';
 import { startLiteServer } from './../jupyter/lite/LiteServer';
 import { InjectableStore } from '../state/redux/Store';
 import Kernel from './kernel/Kernel';
-import { JupyterLabTheme } from './lab/JupyterLabTheme';
+import { ColorMode } from './lab/JupyterLabTheme';
 
 /**
  * The type for the Jupyter context.
@@ -90,7 +91,6 @@ type JupyterContextProps = {
   injectableStore: InjectableStore;
   lite?: boolean;
   startDefaultKernel: boolean;
-  theme: JupyterLabTheme;
   useRunningKernelId?: string;
   useRunningKernelIndex: number;
   variant: string;
@@ -124,19 +124,18 @@ export const createServerSettings = (baseUrl: string, wsUrl: string) => {
  */
 export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
   const {
+    baseUrl,
     children,
-    lite,
     collaborative,
-    startDefaultKernel,
     defaultKernelName,
     disableCssLoading,
+    injectableStore,
+    lite,
+    startDefaultKernel,
     useRunningKernelId,
     useRunningKernelIndex,
     variant,
-    baseUrl,
     wsUrl,
-    injectableStore,
-    theme,
   } = props;
   const [_, setVariant] = useState('default');
   const [serverSettings] = useState<ServerConnection.ISettings>(
@@ -246,7 +245,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
       });
     }
     setVariant(variant);
-  }, [lite, variant, theme]);
+  }, [lite, variant]);
   return (
     <ReduxProvider store={injectableStore}>
       <JupyterProvider

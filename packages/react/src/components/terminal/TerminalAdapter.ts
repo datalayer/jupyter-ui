@@ -14,7 +14,7 @@ export class TerminalAdapter {
   private terminalPanel: BoxPanel;
 
   constructor(options: TerminalAdapter.ITerminalAdapterOptions) {
-    const { serverSettings, theme } = options;
+    const { serverSettings, colorMode } = options;
     this.terminalPanel = new BoxPanel();
     this.terminalPanel.spacing = 0;
     this.terminalPanel.addClass('dla-JupyterLab-Terminal-id');
@@ -25,7 +25,7 @@ export class TerminalAdapter {
       terminalConnection.connectionStatusChanged.connect((_, status) => {
         console.log('Jupyter Terminal status', status);
       });
-      this.terminal = new JupyterTerminal(terminalConnection, { theme });
+      this.terminal = new JupyterTerminal(terminalConnection, { theme: colorMode });
       this.terminal.title.closable = true;
       this.terminalPanel.addWidget(this.terminal);
     });

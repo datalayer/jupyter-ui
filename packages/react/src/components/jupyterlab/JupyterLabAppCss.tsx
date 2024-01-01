@@ -5,7 +5,7 @@
  */
 
 import { useEffect } from 'react';
-import { JupyterLabTheme } from './../../jupyter/lab/JupyterLabTheme';
+import { ColorMode } from './../../jupyter/lab/JupyterLabTheme';
 
 import '@jupyterlab/application-extension/style/index.js';
 import '@jupyterlab/apputils-extension/style/index.js';
@@ -31,7 +31,7 @@ import '@jupyterlab/translation-extension/style/index.js';
 import '@jupyterlab/ui-components-extension/style/index.js';
 
 type Props = {
-  theme?: JupyterLabTheme;
+  theme?: ColorMode;
 };
 
 export const JupyterLabAppCss = (props: Props) => {

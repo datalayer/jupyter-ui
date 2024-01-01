@@ -45,13 +45,13 @@ export const Terminal = (props: Terminal.ITerminalOptions) => {
 export namespace Terminal {
   export interface ITerminalOptions {
     height?: string;
-    theme?: ITerminal.Theme;
+    colorMode?: ITerminal.Theme;
   }
 }
 
 Terminal.defaultProps = {
   height: '100%',
-  theme: 'dark',
+  colorMode: 'dark',
 } as Partial<Terminal.ITerminalOptions>;
 
 export default Terminal;

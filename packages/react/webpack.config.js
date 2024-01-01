@@ -29,11 +29,12 @@ const ENTRY =
   // './src/examples/KernelExecutor';
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
-  './src/examples/Notebook';
+  // './src/examples/Notebook';
+  './src/examples/NotebookColorMode';
   // './src/examples/NotebookKernelChange';
   // './src/examples/NotebookModel';
   // './src/examples/NotebookModelChange';
-  // './src/examples/NotebookThemed';
+  // './src/examples/NotebookTheme';
   // './src/examples/Outputs';
   // './src/examples/RunningSessions';
   // './src/examples/Terminal';
