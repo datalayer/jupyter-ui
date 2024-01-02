@@ -30,7 +30,7 @@ export const insertCell = (editor: Editor, kernel: Kernel) => {
         code: NEW_CODE,
         executeTrigger: 0,
         clearTrigger: 0,
-        luminoWidgets: true
+        lumino: true
       }),
       clearTrigger: 0,
       executeTrigger: 0,
