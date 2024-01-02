@@ -23,7 +23,7 @@ const sidebars = {
     {
       type: 'doc',
       id: 'about/index',
-      label: 'Welcome',
+      label: 'About',
     },
     {
       type: 'category',
