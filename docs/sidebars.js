@@ -22,7 +22,7 @@ const sidebars = {
   jupyterReactSidebar: [
     {
       type: 'doc',
-      id: 'welcome/index',
+      id: 'about/index',
       label: 'Welcome',
     },
     {
