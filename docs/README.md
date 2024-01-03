@@ -4,7 +4,7 @@
 
 # Jupyter UI Docs
 
-> 📚 Source code for the [Jupyter UI](https://github.com/datalayer/jupyter-ui), built with [Docusaurus](https://docusaurus.io).
+> 📚 Source code for the [Jupyter UI](https://github.com/datalayer/jupyter-ui) documentation website, built with [Docusaurus](https://docusaurus.io).
 
 ```bash
 # Install the dependencies.
