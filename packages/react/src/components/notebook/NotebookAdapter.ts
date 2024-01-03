@@ -11,6 +11,7 @@ import { BoxPanel, Widget } from '@lumino/widgets';
 import { IChangedArgs } from '@jupyterlab/coreutils';
 import { Cell, ICellModel, MarkdownCell } from '@jupyterlab/cells';
 import {
+  Contents,
   ServiceManager,
   Kernel as JupyterKernel,
   SessionManager,
@@ -413,9 +414,32 @@ export class NotebookAdapter {
     window.addEventListener('resize', () => {
       this._notebookPanel?.update();
     });
-    const isNew = this._path !== undefined && this._path !== '' ? false : true;
-    this._context.initialize(isNew).then(() => {
-      // no-op
+    const isNbFormat = this._path !== undefined && this._path !== '' ? false : true;
+    if (isNbFormat) {
+      // Fixes if nbformat is provided and we don't want to interact with the content manager.
+      (this._context as any).initialize = async (isNew: boolean): Promise<void> => {
+        (this._context as Context<INotebookModel>).model.dirty = false;
+        const now = new Date().toISOString();
+        const model: Contents.IModel = {
+          path: this._uid,
+          name: this._uid,
+          type: "notebook",
+          content: undefined,
+          writable: true,
+          created: now,
+          last_modified: now,
+          mimetype: "application/x-ipynb+json",
+          format: "json"
+        };
+        (this._context as any)._updateContentsModel(model);
+        await (this._context as any)._populate();
+        (this._context as Context<INotebookModel>).model.sharedModel.clearUndoHistory();
+      }
+    }
+    this._context.initialize(isNbFormat).then(() => {
+      if (isNbFormat) {
+        this._notebookPanel?.model?.fromJSON(this._nbformat!);
+      }
     });
   }
 

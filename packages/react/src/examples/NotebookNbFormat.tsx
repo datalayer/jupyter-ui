@@ -13,7 +13,7 @@ import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
-const NotebookModel = () => (
+const NotebookNbFormat = () => (
   <Jupyter>
     <Notebook
       nbformat={nbformat as INotebookContent}
@@ -35,4 +35,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookModel />);
+root.render(<NotebookNbFormat />);
