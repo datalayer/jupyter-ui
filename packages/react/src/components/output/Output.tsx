@@ -6,18 +6,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import {
-  ActionMenu,
-  ActionList,
-  Box,
-  IconButton,
-  ProgressBar,
-} from '@primer/react';
-import {
-  KebabHorizontalIcon,
-  StopIcon,
-  PaintbrushIcon,
-} from '@primer/octicons-react';
+import { Box } from '@primer/react';
 import { UUID } from '@lumino/coreutils';
 import { IOutput } from '@jupyterlab/nbformat';
 import { IOutputAreaModel } from '@jupyterlab/outputarea';
@@ -26,6 +15,7 @@ import OutputAdapter from './OutputAdapter';
 import { selectExecute, outputActions, outputReducer } from './OutputRedux';
 import { useJupyter } from '../../jupyter/JupyterContext';
 import Kernel from '../../jupyter/kernel/Kernel';
+import { KernelControlMenu, KernelProgressBar }from './../kernel'
 import Lumino from '../../jupyter/lumino/Lumino';
 import CodeMirrorEditor from '../codemirror/CodeMirrorEditor';
 import OutputRenderer from './OutputRenderer';
@@ -33,104 +23,43 @@ import OutputRenderer from './OutputRenderer';
 import './Output.css';
 
 export type IOutputProps = {
-  outputs?: IOutput[];
-  outputAreaModel?: IOutputAreaModel;
   adapter?: OutputAdapter;
-  kernel: Kernel;
   autoRun: boolean;
-  disableRun: boolean;
-  showEditor: boolean;
+  clearTrigger: number;
   code: string;
   codePre?: string;
-  clearTrigger: number;
-  sourceId: string;
-  receipt?: string;
+  disableRun: boolean;
   executeTrigger: number;
-  toolbarPosition: 'up' | 'middle' | 'none';
   insertText?: (payload?: any) => string;
+  kernel: Kernel;
   lumino: boolean;
-};
-
-type Props = {
-  outputAdapter: OutputAdapter;
-};
-
-const KernelProgressMenu = (props: Props) => {
-  const { outputAdapter } = props;
-  return (
-    <ActionMenu>
-      <ActionMenu.Anchor>
-        <IconButton
-          aria-labelledby=""
-          icon={KebabHorizontalIcon}
-          variant="invisible"
-        />
-      </ActionMenu.Anchor>
-      <ActionMenu.Overlay>
-        <ActionList>
-          <ActionList.Item
-            onSelect={e => {
-              e.preventDefault();
-              outputAdapter.interrupt();
-            }}
-          >
-            <ActionList.LeadingVisual>
-              <StopIcon />
-            </ActionList.LeadingVisual>
-            Interrupt kernel
-          </ActionList.Item>
-          <ActionList.Item
-            variant="danger"
-            onClick={e => {
-              e.preventDefault();
-              outputAdapter.clearOutput();
-            }}
-          >
-            <ActionList.LeadingVisual>
-              <PaintbrushIcon />
-            </ActionList.LeadingVisual>
-            Clear outputs
-          </ActionList.Item>
-        </ActionList>
-      </ActionMenu.Overlay>
-    </ActionMenu>
-  );
-};
-
-const KernelProgressBar = () => {
-  const [progress, setProgress] = useState(0);
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress((oldValue: number) => {
-        let newValue = oldValue + 1;
-        if (newValue > 100) {
-          newValue = 0;
-        }
-        return newValue;
-      });
-    }, 100);
-    return () => clearInterval(interval);
-  }, []);
-  return <ProgressBar progress={progress} barSize="small" />;
+  model?: IOutputAreaModel;
+  outputs?: IOutput[];
+  receipt?: string;
+  showControl?: boolean;
+  showEditor: boolean;
+  sourceId: string;
+  toolbarPosition: 'up' | 'middle' | 'none';
 };
 
 export const Output = (props: IOutputProps) => {
   const { injectableStore, defaultKernel: kernel } = useJupyter();
   const {
-    sourceId,
-    autoRun,
-    code,
-    showEditor,
-    clearTrigger,
-    executeTrigger,
     adapter,
-    receipt,
-    disableRun,
-    outputAreaModel,
-    insertText,
-    toolbarPosition,
+    autoRun,
+    clearTrigger,
+    code,
     codePre,
+    disableRun,
+    executeTrigger,
+    insertText,
     lumino,
+    model,
+    receipt,
+    showControl,
+    showEditor,
+    sourceId,
+    toolbarPosition,
   } = props;
   const dispatch = useDispatch();
   const [id, setId] = useState<string | undefined>(sourceId);
@@ -149,7 +78,7 @@ export const Output = (props: IOutputProps) => {
   }, []);
   useEffect(() => {
     if (id && kernel) {
-      const outputAdapter = adapter ?? new OutputAdapter(kernel, outputs ?? [], outputAreaModel);
+      const outputAdapter = adapter ?? new OutputAdapter(kernel, outputs ?? [], model);
       if (receipt) {
         outputAdapter.outputArea.model.changed.connect((sender, change) => {
           if (change.type === 'add') {
@@ -213,7 +142,7 @@ export const Output = (props: IOutputProps) => {
   }, [executeTrigger]);
   useEffect(() => {
     if (outputAdapter && clearTrigger > 0) {
-      outputAdapter.clearOutput();
+      outputAdapter.clear();
     }
   }, [clearTrigger, outputAdapter]);
   return (
@@ -230,11 +159,11 @@ export const Output = (props: IOutputProps) => {
             autoRun={autoRun}
             code={code}
             codePre={codePre}
+            disableRun={disableRun}
+            insertText={insertText}
             kernel={kernel}
             outputAdapter={outputAdapter}
             sourceId={id}
-            disableRun={disableRun}
-            insertText={insertText}
             toolbarPosition={toolbarPosition}
           />
         </Box>
@@ -244,9 +173,10 @@ export const Output = (props: IOutputProps) => {
           <Box flexGrow={1}>
             {kernelStatus !== 'idle' && <KernelProgressBar />}
           </Box>
-          <Box style={{ marginTop: '-13px' }}>
-            <KernelProgressMenu outputAdapter={outputAdapter} />
+          { showControl && <Box style={{ marginTop: '-13px' }}>
+            <KernelControlMenu outputAdapter={outputAdapter} />
           </Box>
+          }
         </Box>
       )}
       {outputs && (
@@ -270,15 +200,16 @@ export const Output = (props: IOutputProps) => {
             },
           }}
         >
-          {lumino
+          { lumino
             ? outputAdapter && <Lumino>{outputAdapter.outputArea}</Lumino>
             : outputs && (
-                <>
-                  {outputs.map((output: IOutput) => {
-                    return <OutputRenderer output={output} />;
-                  })}
-                </>
-              )}
+              <>
+                {outputs.map((output: IOutput) => {
+                  return <OutputRenderer output={output} />;
+                })}
+              </>
+            )
+          }
         </Box>
       )}
     </>
@@ -286,6 +217,11 @@ export const Output = (props: IOutputProps) => {
 };
 
 Output.defaultProps = {
+  clearTrigger: 0,
+  disableRun: false,
+  executeTrigger: 0,
+  showControl: true,
+  lumino: true,
   outputs: [
     {
       output_type: 'execute_result',
@@ -298,11 +234,7 @@ Output.defaultProps = {
       metadata: {},
     },
   ],
-  disableRun: false,
   toolbarPosition: 'up',
-  executeTrigger: 0,
-  clearTrigger: 0,
-  lumino: true,
 } as Partial<IOutputProps>;
 
 export default Output;

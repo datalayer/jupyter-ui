@@ -13,8 +13,8 @@ export class KernelExecutor {
   private _kernelConnection: Kernel.IKernelConnection;
   private _outputs: IOutput[];
   private _outputsChanged = new Signal<KernelExecutor, IOutput[]>(this);
-  private _outputAreaModel: IOutputAreaModel;
-  private _outputAreaModelChanged = new Signal<KernelExecutor, IOutputAreaModel>(this);
+  private _model: IOutputAreaModel;
+  private _modelChanged = new Signal<KernelExecutor, IOutputAreaModel>(this);
   private _executeReplyReceived = new Signal<KernelExecutor, IOutputAreaModel>(this);
   private _future?: Kernel.IFuture<
     KernelMessage.IExecuteRequestMsg,
@@ -26,7 +26,7 @@ export class KernelExecutor {
   constructor(kernelConnection: Kernel.IKernelConnection) {
     this._kernelConnection = kernelConnection;
     this._outputs = [];
-    this._outputAreaModel = new OutputAreaModel();
+    this._model = new OutputAreaModel();
     this._executed = new Promise((resolve, _) => {
       this._executedResolve = resolve;
     });
@@ -50,26 +50,26 @@ export class KernelExecutor {
       case 'execute_result':
         this._outputs.push(message.content as IExecuteResult);
         this._outputsChanged.emit(this._outputs);
-        this._outputAreaModel.add(output);
-        this._outputAreaModelChanged.emit(this._outputAreaModel);
+        this._model.add(output);
+        this._modelChanged.emit(this._model);
         break;
       case 'stream':
         this._outputs.push(message.content as IStream);
         this._outputsChanged.emit(this._outputs);
-        this._outputAreaModel.add(output);
-        this._outputAreaModelChanged.emit(this._outputAreaModel);
+        this._model.add(output);
+        this._modelChanged.emit(this._model);
         break;  
       case 'display_data':
         this._outputs.push(message.content as IDisplayData);
         this._outputsChanged.emit(this._outputs);
-        this._outputAreaModel.add(output);
-        this._outputAreaModelChanged.emit(this._outputAreaModel);
+        this._model.add(output);
+        this._modelChanged.emit(this._model);
         break;
       case 'update_display_data':
         this._outputs.push(message.content as IDisplayUpdate);
         this._outputsChanged.emit(this._outputs);
-        this._outputAreaModel.add(output);
-        this._outputAreaModelChanged.emit(this._outputAreaModel);
+        this._model.add(output);
+        this._modelChanged.emit(this._model);
         break;
       default:
         break;
@@ -87,8 +87,8 @@ export class KernelExecutor {
         };
         this._outputs.push(message.content as IExecuteResult);
         this._outputsChanged.emit(this._outputs);
-        this._outputAreaModel.add(output);
-        this.executeReplyReceived.emit(this._outputAreaModel);
+        this._model.add(output);
+        this.executeReplyReceived.emit(this._model);
         this._executedResolve();
         break;
       default:
@@ -129,12 +129,12 @@ export class KernelExecutor {
     return this._outputsChanged;
   }
 
-  get outputAreaModel() {
-    return this._outputAreaModel;
+  get model() {
+    return this._model;
   }
 
-  get outputAreaModelChanged() {
-    return this._outputAreaModelChanged;
+  get modelChanged() {
+    return this._modelChanged;
   }
 
   get executeReplyReceived() {

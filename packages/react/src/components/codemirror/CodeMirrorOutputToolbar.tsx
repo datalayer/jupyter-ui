@@ -71,7 +71,7 @@ const CodeMirrorOutputToolbarMenu = (props: Props) => {
             variant="danger"
             onClick={e => {
               e.preventDefault();
-              outputAdapter.clearOutput();
+              outputAdapter.clear();
             }}
           >
             <ActionList.LeadingVisual>

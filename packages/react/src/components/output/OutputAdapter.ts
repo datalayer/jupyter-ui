@@ -77,7 +77,7 @@ export class OutputAdapter {
 
   public execute(code: string) {
     if (this._kernel) {
-      this.clearOutput();
+      this.clear();
       this._outputArea.future = this._kernel?.connection!.requestExecute({
         code,
       });
@@ -86,11 +86,11 @@ export class OutputAdapter {
 
   public interrupt() {
     if (this._kernel) {
-      this._kernel.connection!.interrupt();
+      this._kernel.connection?.interrupt();
     }
   }
 
-  public clearOutput() {
+  public clear() {
     this._outputArea.model.clear();
   }
 
