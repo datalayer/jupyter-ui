@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2021-2023 Datalayer, Inc.
  *
- * MIT License
+ * MIT License  
  */
 
 import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
@@ -25,37 +25,39 @@ import { nullTranslator } from '@jupyterlab/translation';
  * The map of command ids used by the notebook.
  */
 export const cmdIds = {
-  invoke: 'completer:invoke',
-  select: 'completer:select',
-  invokeNotebook: 'completer:invoke-notebook',
-  selectNotebook: 'completer:select-notebook',
-  startSearch: 'documentsearch:start-search',
-  findNext: 'documentsearch:find-next',
-  findPrevious: 'documentsearch:find-previous',
-  save: 'notebook:save',
-  interrupt: 'notebook:interrupt-kernel',
-  restart: 'notebook:restart-kernel',
-  switchKernel: 'notebook:switch-kernel',
-  runAndAdvance: 'notebook-cells:run-and-advance',
-  run: 'notebook:run-cell',
-  runAll: 'notebook:run-all',
+  changeCellType: 'notebook-cell:change-cell-type',
+  changeCellTypeToCode: 'notebook-cell:change-cell-to-code',
+  changeCellTypeToMarkdown: 'notebook-cell:change-cell-to-markdown',
+  changeCellTypeToRaw: 'notebook-cell:change-cell-to-raw',
+  commandMode: 'notebook:command-mode',
   deleteCells: 'notebook-cells:delete',
-  insertAbove: 'notebook-cells:insert-above',
-  insertBelow: 'notebook-cells:insert-below',
-  selectAbove: 'notebook-cells:select-above',
-  selectBelow: 'notebook-cells:select-below',
+  editMode: 'notebook:edit-mode',
   extendAbove: 'notebook-cells:extend-above',
-  extendTop: 'notebook-cells:extend-top',
   extendBelow: 'notebook-cells:extend-below',
   extendBottom: 'notebook-cells:extend-bottom',
-  editMode: 'notebook:edit-mode',
+  extendTop: 'notebook-cells:extend-top',
+  findNext: 'documentsearch:find-next',
+  findPrevious: 'documentsearch:find-previous',
+  insertAbove: 'notebook-cells:insert-above',
+  insertBelow: 'notebook-cells:insert-below',
+  interrupt: 'notebook:interrupt-kernel',
+  invoke: 'completer:invoke',
+  invokeNotebook: 'completer:invoke-notebook',
   merge: 'notebook-cells:merge',
-  split: 'notebook-cells:split',
-  commandMode: 'notebook:command-mode',
-  undo: 'notebook-cells:undo',
   redo: 'notebook-cells:redo',
-  changeCellType: 'notebook-cell:change-cell-type',
-  toCode: 'notebook-cell:to-code',
+  restart: 'notebook:restart-kernel',
+  run: 'notebook:run-cell',
+  runAll: 'notebook:run-all',
+  runAndAdvance: 'notebook-cells:run-and-advance',
+  save: 'notebook:save',
+  select: 'completer:select',
+  selectAbove: 'notebook-cells:select-above',
+  selectBelow: 'notebook-cells:select-below',
+  selectNotebook: 'completer:select-notebook',
+  split: 'notebook-cells:split',
+  startSearch: 'documentsearch:start-search',
+  switchKernel: 'notebook:switch-kernel',
+  undo: 'notebook-cells:undo',
 };
 
 export const NotebookCommands = (
@@ -279,10 +281,20 @@ export const NotebookCommands = (
     label: 'Redo',
     execute: () => NotebookActions.redo(notebookPanel.content),
   });
-  commandRegistry.addCommand(cmdIds.toCode, {
-    label: 'Change to Code Cell Type',
+  commandRegistry.addCommand(cmdIds.changeCellTypeToCode, {
+    label: 'Change Cell Type to Code',
+    execute: args =>
+      NotebookActions.changeCellType(notebookPanel.content, 'code'),
+  });
+  commandRegistry.addCommand(cmdIds.changeCellTypeToMarkdown, {
+    label: 'Change Cell Type to Markdown',
     execute: args =>
       NotebookActions.changeCellType(notebookPanel.content, 'markdown'),
+  });
+  commandRegistry.addCommand(cmdIds.changeCellTypeToRaw, {
+    label: 'Change Cell Type to Raw',
+    execute: args =>
+      NotebookActions.changeCellType(notebookPanel.content, 'raw'),
   });
 
   function getCurrent(args: ReadonlyPartialJSONObject): NotebookPanel | null {
@@ -416,16 +428,32 @@ export const NotebookCommands = (
     },
     {
       selector: '.jp-Notebook.jp-mod-commandMode:focus',
-      keys: ['Z'],
+      keys: ['Ctrl Z'],
       command: cmdIds.undo,
     },
     {
       selector: '.jp-Notebook.jp-mod-commandMode:focus',
-      keys: ['Y'],
+      keys: ['Ctrl Y'],
       command: cmdIds.redo,
+    },
+    {
+      selector: '.jp-Notebook:focus',
+      keys: ['M'],
+      command: cmdIds.changeCellTypeToMarkdown
+    },
+    {
+      selector: '.jp-Notebook:focus',
+      keys: ['R'],
+      command: cmdIds.changeCellTypeToRaw
+    },
+    {
+      selector: '.jp-Notebook:focus',
+      keys: ['Y'],
+      command: cmdIds.changeCellTypeToCode
     },
   ];
   bindings.map(binding => commandRegistry.addKeyBinding(binding));
+
   if (path) {
     commandRegistry.addKeyBinding({
       selector: '.jp-Notebook',
@@ -433,6 +461,7 @@ export const NotebookCommands = (
       command: cmdIds.save,
     });
   }
+
 };
 
 export default NotebookCommands;
