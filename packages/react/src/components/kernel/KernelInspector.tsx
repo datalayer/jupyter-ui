@@ -12,7 +12,7 @@ type Props = {
   kernel?: Kernel;
 }
 
-export const KernelMessageInspector = (props: Props) => {
+export const KernelInspector = (props: Props) => {
   const { kernel } = props;
   const [ready, setReady] = useState(false);
   useEffect(() => {
@@ -20,7 +20,6 @@ export const KernelMessageInspector = (props: Props) => {
       setReady(true);
     });
   }, [kernel]);
-  console.log('---', ready, kernel);
   return (
     ready
     ?
@@ -30,4 +29,4 @@ export const KernelMessageInspector = (props: Props) => {
   )
 };
 
-export default KernelMessageInspector;
+export default KernelInspector;

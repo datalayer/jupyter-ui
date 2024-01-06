@@ -9,7 +9,11 @@ import { useState } from 'react';
 import { Box, Heading, Textarea, Button, Pagehead, Text } from '@primer/react';
 import Jupyter from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
-import { KernelProgressBar, KernelStatus, KernelSelector, KernelUsage, KernelMessageInspector, KernelVariables, KernelLogs } from './../components/kernel';
+import { 
+  KernelProgressBar, KernelStatus, KernelActionMenu,
+  KernelSelector, KernelUsage, KernelInspector,
+  KernelVariables, KernelLogs, KERNEL_STATES
+} from './../components/kernel';
 
 export const KernelExecResultView = () => {
   const { defaultKernel } = useJupyter();
@@ -64,82 +68,79 @@ const Kernels = () => {
   const { defaultKernel } = useJupyter();
   return (
     <>
-
       <Box display="flex">
-
         <Box>
           <KernelExecResultView/>
         </Box>
-
         <Box>
-
           <Box display="flex" mt={3}>
             <Box>
               <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernel Status</Text>
             </Box>
-            <Box ml={3} style={{ alignItems: 'center'}}>
+            <Box ml={3}>
               <KernelStatus kernel={defaultKernel}/>
             </Box>
+            <Box ml={3}>
+              { Array.from(KERNEL_STATES.entries()).map((entry) => {
+                return (
+                  <Box display="flex">
+                    <Box style={{ verticalAlign: 'middle', display: 'inline-flex' }}>{entry[1]}</Box>
+                    <Box ml={3}>{entry[0]}</Box>
+                  </Box>
+                )
+              })}
+            </Box>
           </Box>
-
           <Box display="flex" mt={3}>
             <Box>
               <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernel Selector</Text>
             </Box>
-            <Box ml={3} style={{ alignItems: 'center'}}>
+            <Box ml={3} style={{ verticalAlign: 'middle', display: 'inline-flex' }}>
               <KernelSelector kernel={defaultKernel}/>
             </Box>
           </Box>
-{/*
           <Box display="flex" mt={3}>
             <Box>
-              <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernel Control Menu</Text>
+              <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernel Action Menu</Text>
             </Box>
-            <Box ml={3} style={{ alignItems: 'center'}}>
-              <KernelControlMenu kernel={defaultKernel}/>
+            <Box ml={3} style={{ verticalAlign: 'middle', display: 'inline-flex' }}>
+              <KernelActionMenu kernel={defaultKernel}/>
             </Box>
           </Box>
-*/}
           <Box display="flex" mt={3}>
             <Box>
               <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernel Usage</Text>
             </Box>
-            <Box ml={3} style={{ alignItems: 'center'}}>
+            <Box ml={3} style={{ verticalAlign: 'middle', display: 'inline-flex' }}>
               <KernelUsage kernel={defaultKernel}/>
             </Box>
           </Box>
-
           <Box display="flex" mt={3}>
             <Box>
-              <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernel Message Inspector</Text>
+              <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernel Inspector</Text>
             </Box>
-            <Box ml={3} style={{ alignItems: 'center'}}>
-              <KernelMessageInspector kernel={defaultKernel}/>
+            <Box ml={3} style={{ verticalAlign: 'middle', display: 'inline-flex' }}>
+              <KernelInspector kernel={defaultKernel}/>
             </Box>
           </Box>
-
           <Box display="flex" mt={3}>
             <Box>
               <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernel Variables</Text>
             </Box>
-            <Box ml={3} style={{ alignItems: 'center'}}>
+            <Box ml={3} style={{ verticalAlign: 'middle', display: 'inline-flex' }}>
               <KernelVariables kernel={defaultKernel}/>
             </Box>
           </Box>
-
           <Box display="flex" mt={3}>
             <Box>
               <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernel Logs</Text>
             </Box>
-            <Box ml={3} style={{ alignItems: 'center'}}>
+            <Box ml={3} style={{ verticalAlign: 'middle', display: 'inline-flex' }}>
               <KernelLogs kernel={defaultKernel}/>
             </Box>
           </Box>
-
         </Box>
-
       </Box>
-
     </>
   )
 }

@@ -78,15 +78,16 @@ export class OutputAdapter {
   public execute(code: string) {
     if (this._kernel) {
       this.clear();
-      this._outputArea.future = this._kernel?.connection!.requestExecute({
-        code,
-      });
+      const kernelExecutor = this._kernel?.execute(code);
+      if (kernelExecutor && kernelExecutor.future) {
+        this._outputArea.future = kernelExecutor.future;
+      }
     }
   }
 
   public interrupt() {
     if (this._kernel) {
-      this._kernel.connection?.interrupt();
+      this._kernel.interrupt();
     }
   }
 

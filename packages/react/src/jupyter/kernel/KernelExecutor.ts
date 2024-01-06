@@ -78,6 +78,11 @@ export class KernelExecutor {
         this._model.add(output);
         this._modelChanged.emit(this._model);
         break;
+      case 'status':
+        // execution_state: 'busy' 'starting' 'terminating' 'restarting' 'initializing' 'connecting' 'disconnected' 'dead' 'unknown' 'idle'
+        const executionState = (message.content as any).execution_state;
+        executionState
+        break;
       default:
         break;
     }

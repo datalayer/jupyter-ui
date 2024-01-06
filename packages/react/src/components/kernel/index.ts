@@ -4,9 +4,9 @@
  * MIT License
  */
 
-export * from './KernelControlMenu';
+export * from './KernelActionMenu';
+export * from './KernelInspector';
 export * from './KernelLogs';
-export * from './KernelMessageInspector';
 export * from './KernelProgressBar';
 export * from './KernelSelector';
 export * from './KernelStatus';

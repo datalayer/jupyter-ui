@@ -69,7 +69,7 @@ export * from './components/output/ipywidgets/IPyWidgetsViewManager';
 export * from './components/output/ipywidgets/IPyWidgetsViewManager';
 
 // Kernel.
-export * from './components/kernel/KernelControlMenu';
+export * from './components/kernel/KernelActionMenu';
 export * from './components/kernel/KernelProgressBar';
 
 // Commands.

@@ -15,7 +15,7 @@ import OutputAdapter from './OutputAdapter';
 import { selectExecute, outputActions, outputReducer } from './OutputRedux';
 import { useJupyter } from '../../jupyter/JupyterContext';
 import Kernel from '../../jupyter/kernel/Kernel';
-import { KernelControlMenu, KernelProgressBar }from './../kernel'
+import { KernelActionMenu, KernelProgressBar }from './../kernel'
 import Lumino from '../../jupyter/lumino/Lumino';
 import CodeMirrorEditor from '../codemirror/CodeMirrorEditor';
 import OutputRenderer from './OutputRenderer';
@@ -45,7 +45,7 @@ export type IOutputProps = {
 export const Output = (props: IOutputProps) => {
   const { injectableStore, defaultKernel: kernel } = useJupyter();
   const {
-    adapter,
+    adapter: propsAdapter,
     autoRun,
     clearTrigger,
     code,
@@ -66,8 +66,8 @@ export const Output = (props: IOutputProps) => {
   const [kernelStatus, setKernelStatus] = useState<KernelMessage.Status>(
     'unknown'
   );
-  const [outputAdapter, setOutputAdapter] = useState<OutputAdapter>();
   const [outputs, setOutputs] = useState<IOutput[] | undefined>(props.outputs);
+  const [adapter, setAdapter] = useState<OutputAdapter>();
   useMemo(() => {
     injectableStore.inject('output', outputReducer);
   }, [sourceId]);
@@ -78,9 +78,9 @@ export const Output = (props: IOutputProps) => {
   }, []);
   useEffect(() => {
     if (id && kernel) {
-      const outputAdapter = adapter ?? new OutputAdapter(kernel, outputs ?? [], model);
+      const adapter = propsAdapter ?? new OutputAdapter(kernel, outputs ?? [], model);
       if (receipt) {
-        outputAdapter.outputArea.model.changed.connect((sender, change) => {
+        adapter.outputArea.model.changed.connect((sender, change) => {
           if (change.type === 'add') {
             change.newValues.map(val => {
               if (val && val.data) {
@@ -100,22 +100,22 @@ export const Output = (props: IOutputProps) => {
           }
         });
       }
-      setOutputAdapter(outputAdapter);
-      outputAdapter.outputArea.model.changed.connect((outputModel, args) => {
+      setAdapter(adapter);
+      adapter.outputArea.model.changed.connect((outputModel, args) => {
         setOutputs(outputModel.toJSON());
       });
     }
   }, [id, kernel]);
   useEffect(() => {
-    if (outputAdapter) {
-      if (!outputAdapter.kernel) {
-        outputAdapter.kernel = kernel;
+    if (adapter) {
+      if (!adapter.kernel) {
+        adapter.kernel = kernel;
       }
       if (autoRun) {
-        outputAdapter.execute(code);
+        adapter.execute(code);
       }
     }
-  }, [outputAdapter]);
+  }, [adapter]);
   useEffect(() => {
     if (kernel) {
       kernel.ready.then(() => {
@@ -131,23 +131,23 @@ export const Output = (props: IOutputProps) => {
   }, [kernel]);
   const executeRequest = selectExecute(sourceId);
   useEffect(() => {
-    if (outputAdapter && executeRequest && executeRequest.sourceId === id) {
-      outputAdapter.execute(executeRequest.source);
+    if (adapter && executeRequest && executeRequest.sourceId === id) {
+      adapter.execute(executeRequest.source);
     }
-  }, [executeRequest, outputAdapter]);
+  }, [executeRequest, adapter]);
   useEffect(() => {
-    if (outputAdapter && executeTrigger > 0) {
-      outputAdapter.execute(code);
+    if (adapter && executeTrigger > 0) {
+      adapter.execute(code);
     }
   }, [executeTrigger]);
   useEffect(() => {
-    if (outputAdapter && clearTrigger > 0) {
-      outputAdapter.clear();
+    if (adapter && clearTrigger > 0) {
+      adapter.clear();
     }
-  }, [clearTrigger, outputAdapter]);
+  }, [clearTrigger, adapter]);
   return (
     <>
-      {showEditor && outputAdapter && id && (
+      {showEditor && adapter && id && (
         <Box
           sx={{
             '& .cm-editor': {
@@ -162,19 +162,19 @@ export const Output = (props: IOutputProps) => {
             disableRun={disableRun}
             insertText={insertText}
             kernel={kernel}
-            outputAdapter={outputAdapter}
+            outputAdapter={adapter}
             sourceId={id}
             toolbarPosition={toolbarPosition}
           />
         </Box>
       )}
-      {outputAdapter && (
+      {adapter && (
         <Box display="flex">
           <Box flexGrow={1}>
             {kernelStatus !== 'idle' && <KernelProgressBar />}
           </Box>
           { showControl && <Box style={{ marginTop: '-13px' }}>
-            <KernelControlMenu outputAdapter={outputAdapter} />
+            <KernelActionMenu kernel={kernel} outputAdapter={adapter} />
           </Box>
           }
         </Box>
@@ -201,7 +201,7 @@ export const Output = (props: IOutputProps) => {
           }}
         >
           { lumino
-            ? outputAdapter && <Lumino>{outputAdapter.outputArea}</Lumino>
+            ? adapter && <Lumino>{adapter.outputArea}</Lumino>
             : outputs && (
               <>
                 {outputs.map((output: IOutput) => {

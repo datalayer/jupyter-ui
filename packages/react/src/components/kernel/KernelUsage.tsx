@@ -20,7 +20,6 @@ export const KernelUsage = (props: Props) => {
       setReady(true);
     });
   }, [kernel]);
-  console.log('---', ready, kernel);
   return (
     ready
     ?
