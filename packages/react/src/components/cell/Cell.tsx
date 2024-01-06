@@ -30,7 +30,7 @@ class ConfettiWidget(ipyreact.ReactWidget):
     export default function({value, set_value, debug}) {
         return (
         <>
-          <h1>Happy New Year 2024 🎉 from Datalayer</h1>
+          <h1>Ask anything to Datalayer</h1>
           <button onClick={() => confetti() && set_value(value + 1)}>
             CLICK here for some CONFETTIS
           </button>
