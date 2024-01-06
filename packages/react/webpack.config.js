@@ -26,8 +26,9 @@ const ENTRY =
   // './src/examples/IPyWidgetsWithState';
   // './src/examples/JupyterLabApp';
   // './src/examples/JupyterLabHeadlessApp';
+  './src/examples/Kernels';
   // './src/examples/KernelExecutor';
-  './src/examples/KernelExecResult';
+  // './src/examples/KernelExecResult';
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
   // './src/examples/Notebook';
