@@ -17,7 +17,7 @@ import {
 import { ISessionConnection } from '@jupyterlab/services/lib/session/session';
 import { ConnectionStatus } from '@jupyterlab/services/lib/kernel/kernel';
 import { getCookie } from '../../utils/Utils';
-import KernelExecutor from './KernelExecutor';
+import KernelExecutor, { IOPubMessageHook, ShellMessageHook } from './KernelExecutor';
 
 const JUPYTER_REACT_PATH_COOKIE_NAME = 'jupyter-react-kernel-path';
 
@@ -182,10 +182,14 @@ export class Kernel {
     return this._kernelConnection;
   }
 
-  execute(code: string): KernelExecutor | undefined {
+  execute(
+    code: string,
+    iopubMessageHooks: IOPubMessageHook[] = [],
+    shellMessageHooks: ShellMessageHook[] = [],
+  ): KernelExecutor | undefined {
     if (this._kernelConnection) {
       const kernelExecutor = new KernelExecutor(this._kernelConnection)
-      kernelExecutor.execute(code);
+      kernelExecutor.execute(code, iopubMessageHooks, shellMessageHooks);
       return kernelExecutor;
     }
   }

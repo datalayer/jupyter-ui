@@ -69,13 +69,13 @@ const config: StorybookConfig = {
       exclude: /node_modules/,
     });
     config.module?.rules?.push({
-      // In .css files, svg is loaded as a data URI. 
-      test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, 
+      // In .css files, svg is loaded as a data URI.
+      test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
       issuer: /\.css$/,
-      use: { 
-        loader: 'svg-url-loader', 
-        options: { encoding: 'none', limit: 10000 } 
-      }
+      use: {
+        loader: 'svg-url-loader',
+        options: { encoding: 'none', limit: 10000 },
+      },
     });
     config.module?.rules?.push({
       // In .ts and .tsx files (both of which compile to .js), svg files

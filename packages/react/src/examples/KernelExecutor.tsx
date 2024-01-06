@@ -8,17 +8,18 @@ import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Box, Heading } from '@primer/react';
 import { IOutputAreaModel } from '@jupyterlab/outputarea';
+import { KernelMessage } from '@jupyterlab/services';
 import Jupyter from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { Output } from '../components/output/Output';
+import { IOPubMessageHook, ShellMessageHook } from '../jupyter/kernel/KernelExecutor';
 
 const CODE = `from time import sleep
 for i in range(0, 4):
       sleep(i)
       print("👉 " + str(i))
 
-print("Loop is finished!")
-`
+print("🔁 I am done with looping!")`
 
 const KernelExecutorView = () => {
   const { defaultKernel } = useJupyter();
@@ -27,7 +28,17 @@ const KernelExecutorView = () => {
   const [done, setDone] = useState(false);
   useEffect(() => {
     if (defaultKernel?.connection) {
-      const kernelExecutor = defaultKernel.execute(CODE);
+      const iopubMessageHook: IOPubMessageHook = (msg: KernelMessage.IIOPubMessage) => {
+        // Do something with the IOPub message.
+        console.log('---iopubMessage', msg);
+        return true;
+      }
+      const shellMessageHook: ShellMessageHook = (msg: KernelMessage.IShellControlMessage) => {
+        // Do something with the IOPub message.
+        console.log('---shellMessage', msg);
+        return true;
+      }
+      const kernelExecutor = defaultKernel.execute(CODE, [iopubMessageHook], [shellMessageHook]);
       kernelExecutor?.modelChanged.connect((_, outputAreaModel) => {
         setOutputAreaModel(outputAreaModel);
       });

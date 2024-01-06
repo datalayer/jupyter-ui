@@ -9,6 +9,9 @@ import { IOutput, IStream, IExecuteResult, IDisplayData, IDisplayUpdate, IMimeBu
 import { IOutputAreaModel, OutputAreaModel } from '@jupyterlab/outputarea';
 import { Kernel, KernelMessage } from '@jupyterlab/services';
 
+export type IOPubMessageHook = (msg: KernelMessage.IIOPubMessage) => boolean | PromiseLike<boolean>;
+export type ShellMessageHook = (msg: KernelMessage.IShellMessage) => boolean | PromiseLike<boolean>;
+
 export class KernelExecutor {
   private _kernelConnection: Kernel.IKernelConnection;
   private _outputs: IOutput[];
@@ -20,6 +23,7 @@ export class KernelExecutor {
     KernelMessage.IExecuteRequestMsg,
     KernelMessage.IExecuteReplyMsg
   >;
+  private _shellMessageHooks: Array<ShellMessageHook>;
   private _executed: Promise<void>;
   private _executedResolve: () => void;
 
@@ -27,24 +31,26 @@ export class KernelExecutor {
     this._kernelConnection = kernelConnection;
     this._outputs = [];
     this._model = new OutputAreaModel();
-    this._executed = new Promise((resolve, _) => {
+    this._executed = new Promise<void>((resolve, _) => {
       this._executedResolve = resolve;
     });
   }
 
-  execute(code: string): Kernel.IFuture<
+  execute(code: string, iopubMessageHooks: IOPubMessageHook[] = [], shellMessageHooks: ShellMessageHook[] = []): Kernel.IFuture<
     KernelMessage.IExecuteRequestMsg,
     KernelMessage.IExecuteReplyMsg
   > | undefined {
     const future = this._kernelConnection.requestExecute({
       code,
     });
+    iopubMessageHooks.forEach(hook => future.registerMessageHook(hook));
+    this._shellMessageHooks = shellMessageHooks;
     this.future = future;
     return future;
   }
 
   private _onIOPub = (message: KernelMessage.IIOPubMessage): void => {
-    const messageType = message.header.msg_type;
+    const messageType: KernelMessage.IOPubMessageType = message.header.msg_type;
     const output = { ...message.content, output_type: messageType };
     switch (messageType) {
       case 'execute_result':
@@ -77,7 +83,8 @@ export class KernelExecutor {
   }
 
   private _onReply = (message: KernelMessage.IShellMessage): void => {
-    const messageType = message.header.msg_type;
+    const messageType: KernelMessage.ShellMessageType = message.header.msg_type;
+    this._shellMessageHooks.forEach(hook => hook(message));
     switch (messageType) {
       case 'execute_reply':
         const output: IOutput = {
@@ -94,6 +101,10 @@ export class KernelExecutor {
       default:
         break;
     }
+  }
+
+  registerIOPubMessageHook = (msg: IOPubMessageHook) => {
+    this._future?.registerMessageHook(msg);
   }
 
   get executed(): Promise<void> {

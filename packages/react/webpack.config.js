@@ -26,10 +26,10 @@ const ENTRY =
   // './src/examples/IPyWidgetsWithState';
   // './src/examples/JupyterLabApp';
   // './src/examples/JupyterLabHeadlessApp';
-  './src/examples/KernelExecutor';
+  // './src/examples/KernelExecutor';
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
-  // './src/examples/Notebook';
+  './src/examples/Notebook';
   // './src/examples/NotebookColorMode';
   // './src/examples/NotebookKernelChange';
   // './src/examples/NotebookNbFormat';

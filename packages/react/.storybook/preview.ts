@@ -15,9 +15,7 @@ import '@jupyterlab/ui-components/style/base.css';
 import '@jupyterlab/apputils/style/dialog.css';
 
 export const globalTypes = toolbarTypes;
-export const decorators = [
-  withThemeProvider
-];
+export const decorators = [withThemeProvider];
 
 const preview: Preview = {
   parameters: {
