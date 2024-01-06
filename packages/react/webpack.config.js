@@ -27,9 +27,10 @@ const ENTRY =
   // './src/examples/JupyterLabApp';
   // './src/examples/JupyterLabHeadlessApp';
   // './src/examples/KernelExecutor';
+  './src/examples/KernelExecResult';
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
-  './src/examples/Notebook';
+  // './src/examples/Notebook';
   // './src/examples/NotebookColorMode';
   // './src/examples/NotebookKernelChange';
   // './src/examples/NotebookNbFormat';

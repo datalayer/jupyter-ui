@@ -9,7 +9,7 @@ import { INotebookContent, IOutput } from '@jupyterlab/nbformat';
 import { Text } from '@primer/react';
 import Jupyter from '../jupyter/Jupyter';
 import Output from '../components/output/Output';
-import { sourceAsString } from './../utils/Utils';
+import { cellSourceAsString } from './../utils/Utils';
 
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
@@ -24,7 +24,7 @@ const Outputs = () => {
               <Output
                 showEditor={true}
                 autoRun={false}
-                code={sourceAsString(cell)}
+                code={cellSourceAsString(cell)}
                 outputs={cell.outputs as IOutput[]}
                 key={index}
               />

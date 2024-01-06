@@ -182,6 +182,10 @@ export class Kernel {
     return this._kernelConnection;
   }
 
+  interrupt() {
+    this._kernelConnection?.interrupt();
+  }
+
   execute(
     code: string,
     iopubMessageHooks: IOPubMessageHook[] = [],

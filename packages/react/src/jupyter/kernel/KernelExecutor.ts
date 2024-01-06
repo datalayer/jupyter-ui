@@ -8,6 +8,7 @@ import { Signal } from '@lumino/signaling';
 import { IOutput, IStream, IExecuteResult, IDisplayData, IDisplayUpdate, IMimeBundle } from '@jupyterlab/nbformat';
 import { IOutputAreaModel, OutputAreaModel } from '@jupyterlab/outputarea';
 import { Kernel, KernelMessage } from '@jupyterlab/services';
+import { outputsAsString } from '../../utils/Utils';
 
 export type IOPubMessageHook = (msg: KernelMessage.IIOPubMessage) => boolean | PromiseLike<boolean>;
 export type ShellMessageHook = (msg: KernelMessage.IShellMessage) => boolean | PromiseLike<boolean>;
@@ -24,14 +25,14 @@ export class KernelExecutor {
     KernelMessage.IExecuteReplyMsg
   >;
   private _shellMessageHooks: Array<ShellMessageHook>;
-  private _executed: Promise<void>;
-  private _executedResolve: () => void;
+  private _executed: Promise<IOutputAreaModel>;
+  private _executedResolve: (model: IOutputAreaModel) => void;
 
   constructor(kernelConnection: Kernel.IKernelConnection) {
     this._kernelConnection = kernelConnection;
     this._outputs = [];
     this._model = new OutputAreaModel();
-    this._executed = new Promise<void>((resolve, _) => {
+    this._executed = new Promise<IOutputAreaModel>((resolve, _) => {
       this._executedResolve = resolve;
     });
   }
@@ -96,7 +97,7 @@ export class KernelExecutor {
         this._outputsChanged.emit(this._outputs);
         this._model.add(output);
         this.executeReplyReceived.emit(this._model);
-        this._executedResolve();
+        this._executedResolve(this._model);
         break;
       default:
         break;
@@ -107,7 +108,7 @@ export class KernelExecutor {
     this._future?.registerMessageHook(msg);
   }
 
-  get executed(): Promise<void> {
+  get executed(): Promise<IOutputAreaModel> {
     return this._executed;
   }
 
@@ -130,6 +131,12 @@ export class KernelExecutor {
     }
     value.onIOPub = this._onIOPub;
     value.onReply = this._onReply
+  }
+
+  get result(): Promise<string> {
+    return this.executed.then((model) => {
+      return outputsAsString(model.toJSON());
+    });
   }
 
   get outputs() {

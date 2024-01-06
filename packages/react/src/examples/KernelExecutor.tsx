@@ -15,8 +15,8 @@ import { Output } from '../components/output/Output';
 import { IOPubMessageHook, ShellMessageHook } from '../jupyter/kernel/KernelExecutor';
 
 const CODE = `from time import sleep
-for i in range(0, 4):
-      sleep(i)
+for i in range(0, 3):
+      sleep(1)
       print("👉 " + str(i))
 
 print("🔁 I am done with looping!")`

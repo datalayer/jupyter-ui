@@ -7,7 +7,7 @@
 import { useEffect, useRef } from 'react';
 import { ICell } from '@jupyterlab/nbformat';
 import { createView } from './CodemirrorView';
-import { sourceAsString } from '../../../utils/Utils';
+import { cellSourceAsString } from '../../../utils/Utils';
 
 type Props = {
   cell: ICell;
@@ -15,7 +15,7 @@ type Props = {
 
 const CodemirrorViewer = (props: Props) => {
   const { cell } = props;
-  const source = sourceAsString(cell);
+  const source = cellSourceAsString(cell);
   const ref = useRef(null);
   useEffect(() => {
     const view = createView({
