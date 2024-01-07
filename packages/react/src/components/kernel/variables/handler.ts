@@ -185,7 +185,7 @@ export class VariableInspectionHandler extends AbstractHandler {
             break;
           }
           case 'error':
-            console.log(response);
+            console.error(response);
             reject("Kernel error on 'matrixQuery' call!");
             break;
           default:

@@ -135,18 +135,18 @@ const KernelComponents = () => {
       </Box>
       <Box mt={3}>
         <Box>
-          <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernel Variables</Text>
-        </Box>
-        <Box ml={3}>
-          <KernelVariables kernel={defaultKernel}/>
-        </Box>
-      </Box>
-      <Box mt={3}>
-        <Box>
           <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernel Usage</Text>
         </Box>
         <Box ml={3}>
           <KernelUsage kernel={defaultKernel}/>
+        </Box>
+      </Box>
+      <Box mt={3}>
+        <Box>
+          <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernel Variables</Text>
+        </Box>
+        <Box ml={3}>
+          <KernelVariables kernel={defaultKernel}/>
         </Box>
       </Box>
       <Box mt={3}>

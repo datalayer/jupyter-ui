@@ -65,27 +65,31 @@ export const registerKernel = (manager: VariableInspectorManager, kernel: Kernel
         initScript: initScript,
         id: kernel.path //Using the sessions path as an identifier for now.
       };
+
       const handler = new VariableInspectionHandler(options);
+
       manager.addHandler(handler);
+
       kernel.connection?.disposed.connect(() => {
         delete handlers[kernel.id];
         handler.dispose();
       });
+
       handler.ready.then(() => {
+        const future = handlers[kernel.id];    
+        future?.then((source: VariableInspectionHandler) => {
+          if (source) {
+            manager.source = source;
+            manager.source.performInspection();
+          }
+        });
         resolve(handler);
       });
+
     }).catch((result: string) => {
       reject(result);
     });
 
-    const future = handlers[kernel.id];
-
-    future?.then((source: VariableInspectionHandler) => {
-      if (source) {
-        manager.source = source;
-        manager.source.performInspection();
-      }
-    });
 
   });
 
