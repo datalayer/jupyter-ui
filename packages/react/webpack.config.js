@@ -38,6 +38,7 @@ const ENTRY =
   // './src/examples/NotebookNbFormat';
   // './src/examples/NotebookModelChange';
   // './src/examples/NotebookTheme';
+  // './src/examples/ObservableHQ';
   // './src/examples/Outputs';
   // './src/examples/RunningSessions';
   // './src/examples/Terminal';
