@@ -64,15 +64,13 @@ export const KernelStatus = (props: Props) => {
   }
   useEffect(() => {
     if (kernel && kernel.connection) {
+      setConnectionStatus(kernel.connection?.connectionStatus);
+      setStatus(kernel.connection?.status);
       kernel.connection.connectionStatusChanged.connect((_, connectionStatus) => {
-          setConnectionStatus(connectionStatus);
+        setConnectionStatus(connectionStatus);
       });
       kernel.connection.statusChanged.connect((_, status) => {
         setStatus(status);
-      })
-      kernel.ready.then(() => {
-        setConnectionStatus(kernel.connection?.connectionStatus);
-        setStatus(kernel.connection?.status);
       });
     }
   }, [kernel, kernel?.connection]);

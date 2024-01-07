@@ -22,8 +22,7 @@ export const KernelExecResultView = () => {
   const exec = async () => {
     setRunning(true);
     setResult('');
-    const kernelExecutor = defaultKernel?.execute(code);
-    const result = await kernelExecutor?.result;
+    const result = await defaultKernel?.execute(code)?.result;
     setResult(result);
     setRunning(false);
   }

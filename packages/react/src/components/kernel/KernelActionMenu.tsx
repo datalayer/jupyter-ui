@@ -14,6 +14,7 @@ import {
   StopIcon,
   PaintbrushIcon,
 } from '@primer/octicons-react';
+import { RestartIcon } from '@datalayer/icons-react';
 import OutputAdapter from '../output/OutputAdapter';
 import Kernel from '../../jupyter/kernel/Kernel';
 
@@ -35,10 +36,9 @@ export const KernelActionMenu = (props: Props) => {
       </ActionMenu.Anchor>
       <ActionMenu.Overlay>
         <ActionList>
-          { kernel && 
+        { kernel && 
             <ActionList.Item
               onSelect={e => {
-                e.preventDefault();
                 kernel.interrupt();
               }}
             >
@@ -48,11 +48,22 @@ export const KernelActionMenu = (props: Props) => {
               Interrupt kernel
             </ActionList.Item>
           }
+          { kernel && 
+            <ActionList.Item
+              onSelect={e => {
+                kernel.restart();
+              }}
+            >
+              <ActionList.LeadingVisual>
+                <RestartIcon />
+              </ActionList.LeadingVisual>
+              Restart kernel
+            </ActionList.Item>
+          }
           { outputAdapter &&
             <ActionList.Item
               variant="danger"
-              onClick={e => {
-                e.preventDefault();
+              onSelect={e => {
                 outputAdapter.clear();
               }}
             >

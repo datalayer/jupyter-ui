@@ -12,7 +12,7 @@ import { useJupyter } from '../jupyter/JupyterContext';
 import { 
   KernelProgressBar, KernelStatus, KernelActionMenu,
   KernelSelector, KernelUsage, KernelInspector,
-  KernelVariables, KernelLogs, KERNEL_STATES
+  KernelVariables, KernelLogs, Kernels, KERNEL_STATES
 } from './../components/kernel';
 
 export const KernelExecResultView = () => {
@@ -64,7 +64,7 @@ export const KernelExecResultView = () => {
   );
 }
 
-const Kernels = () => {
+const KernelComponents = () => {
   const { defaultKernel } = useJupyter();
   return (
     <>
@@ -93,18 +93,18 @@ const Kernels = () => {
           </Box>
           <Box display="flex" mt={3}>
             <Box>
-              <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernel Selector</Text>
-            </Box>
-            <Box ml={3} style={{ verticalAlign: 'middle', display: 'inline-flex' }}>
-              <KernelSelector kernel={defaultKernel}/>
-            </Box>
-          </Box>
-          <Box display="flex" mt={3}>
-            <Box>
               <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernel Action Menu</Text>
             </Box>
             <Box ml={3} style={{ verticalAlign: 'middle', display: 'inline-flex' }}>
               <KernelActionMenu kernel={defaultKernel}/>
+            </Box>
+          </Box>
+          <Box display="flex" mt={3}>
+            <Box>
+              <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernel Selector</Text>
+            </Box>
+            <Box ml={3} style={{ verticalAlign: 'middle', display: 'inline-flex' }}>
+              <KernelSelector kernel={defaultKernel}/>
             </Box>
           </Box>
           <Box display="flex" mt={3}>
@@ -139,6 +139,14 @@ const Kernels = () => {
               <KernelLogs kernel={defaultKernel}/>
             </Box>
           </Box>
+          <Box display="flex" mt={3}>
+            <Box>
+              <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernels</Text>
+            </Box>
+            <Box ml={3} style={{ verticalAlign: 'middle', display: 'inline-flex' }}>
+              <Kernels kernel={defaultKernel}/>
+            </Box>
+          </Box>
         </Box>
       </Box>
     </>
@@ -152,6 +160,6 @@ const root = createRoot(div);
 root.render(
   <Jupyter>
     <Pagehead>The Kernel Components</Pagehead>
-    <Kernels />
+    <KernelComponents />
   </Jupyter>
 );

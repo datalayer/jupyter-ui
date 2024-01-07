@@ -182,8 +182,12 @@ export class Kernel {
     return this._kernelConnection;
   }
 
+  restart() {
+    return this._kernelConnection?.restart();
+  }
+
   interrupt() {
-    this._kernelConnection?.interrupt();
+    return this._kernelConnection?.interrupt();
   }
 
   execute(

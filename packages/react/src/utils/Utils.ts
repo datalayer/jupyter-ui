@@ -30,6 +30,7 @@ export const cellSourceAsString = (cell: ICell) => {
 export const outputsAsString = (outputs: IOutput[]) => {
   let result = '';
   outputs.forEach(output => {
+    console.log('---', output)
     switch (output.output_type) {
       case 'display_data': {
         if (output.text) {
@@ -56,8 +57,9 @@ export const outputsAsString = (outputs: IOutput[]) => {
         break;
       }
       case 'execute_result': {
-        if (output.text) {
-          result = result + output.text + '\n';
+        if (output.data) {
+          const display = (output.data as any)['text/html'] ?? (output.data as any)['text/plain'] ?? '';
+          result = result + display + '\n';
         }
         break;
       }

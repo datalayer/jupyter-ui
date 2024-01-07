@@ -8,6 +8,7 @@ export * from './KernelActionMenu';
 export * from './KernelInspector';
 export * from './KernelLogs';
 export * from './KernelProgressBar';
+export * from './Kernels';
 export * from './KernelSelector';
 export * from './KernelStatus';
 export * from './KernelUsage';
