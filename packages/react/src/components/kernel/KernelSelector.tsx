@@ -35,12 +35,12 @@ export const KernelSelector = (props: Props) => {
         const kernelSpecs = serviceManager.kernelspecs.specs?.kernelspecs;
         setKernelSpecs(kernelSpecs);
       });
-      serviceManager.kernels.refreshRunning().then(() => {
-        const kernels = Array.from(serviceManager.kernels.running());
-        setKernels(kernels);
-      });
     });
-  }, [serviceManager]);
+    serviceManager?.kernels.refreshRunning().then(() => {
+      const kernels = Array.from(serviceManager.kernels.running());
+      setKernels(kernels);
+    });
+}, [serviceManager]);
   return (
     <>
     <ActionMenu>
@@ -64,7 +64,7 @@ export const KernelSelector = (props: Props) => {
                   <ActionList.LeadingVisual>
                     <JupyterKernelIcon />
                   </ActionList.LeadingVisual>
-                  {kernel.name}
+                    {kernel.name}
                   <ActionList.Description variant="block">
                     {kernel.id}
                   </ActionList.Description>

@@ -144,17 +144,17 @@ const KernelComponents = () => {
               <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernel Logs</Text>
             </Box>
             <Box ml={3} style={{ verticalAlign: 'middle', display: 'inline-flex' }}>
-              <KernelLogs kernel={defaultKernel}/>
+              <KernelLogs/>
             </Box>
           </Box>
-          <Box display="flex" mt={3}>
-            <Box>
-              <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernels</Text>
-            </Box>
-            <Box ml={3} style={{ verticalAlign: 'middle', display: 'inline-flex' }}>
-              <Kernels kernel={defaultKernel}/>
-            </Box>
-          </Box>
+        </Box>
+      </Box>
+      <Box mt={3}>
+        <Box>
+          <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernels</Text>
+        </Box>
+        <Box ml={3} style={{ verticalAlign: 'middle', display: 'inline-flex' }}>
+          <Kernels/>
         </Box>
       </Box>
       <Box mt={3}>
