@@ -9,7 +9,8 @@ import { Tooltip } from '@primer/react';
 import {
   CircleYellowIcon, CircleGreenIcon, CircleBlackIcon,
   CircleBrownIcon, CircleHollowRedIcon, CircleOrangeIcon,
-  CirclePurpleIcon, CircleRedIcon, CircleWhiteIcon, CircledMIcon
+  CirclePurpleIcon, CircleRedIcon, CircleWhiteIcon, CircledMIcon,
+  SquareWhiteLargeIcon
 } from '@datalayer/icons-react';
 import Kernel from '../../jupyter/kernel/Kernel';
 import { KernelMessage } from '@jupyterlab/services';
@@ -75,9 +76,16 @@ export const KernelStatus = (props: Props) => {
     }
   }, [kernel, kernel?.connection]);
   return (
-    connectionStatus && status && (
+    connectionStatus && status ?
+    (
       <Tooltip aria-label={`${connectionStatus} - ${status}`}>
         { KERNEL_STATES.get(toState(connectionStatus, status)) }
+      </Tooltip>
+    )
+    :
+    (
+      <Tooltip aria-label="Unkown state">
+        <SquareWhiteLargeIcon/>
       </Tooltip>
     )
   )
