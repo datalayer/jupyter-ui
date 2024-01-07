@@ -125,20 +125,20 @@ const KernelComponents = () => {
           </Box>
           <Box display="flex" mt={3}>
             <Box>
-              <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernel Variables</Text>
-            </Box>
-            <Box ml={3} style={{ verticalAlign: 'middle', display: 'inline-flex' }}>
-              <KernelVariables kernel={defaultKernel}/>
-            </Box>
-          </Box>
-          <Box display="flex" mt={3}>
-            <Box>
               <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernel Logs</Text>
             </Box>
             <Box ml={3} style={{ verticalAlign: 'middle', display: 'inline-flex' }}>
               <KernelLogs/>
             </Box>
           </Box>
+        </Box>
+      </Box>
+      <Box mt={3}>
+        <Box>
+          <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernel Variables</Text>
+        </Box>
+        <Box ml={3}>
+          <KernelVariables kernel={defaultKernel}/>
         </Box>
       </Box>
       <Box mt={3}>
@@ -153,7 +153,7 @@ const KernelComponents = () => {
         <Box>
           <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernels</Text>
         </Box>
-        <Box ml={3} style={{ verticalAlign: 'middle', display: 'inline-flex' }}>
+        <Box ml={3}>
           <Kernels/>
         </Box>
       </Box>
@@ -161,7 +161,9 @@ const KernelComponents = () => {
         <Box>
           <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernel Inspector</Text>
         </Box>
-        <KernelInspector kernel={defaultKernel}/>
+        <Box>
+          <KernelInspector kernel={defaultKernel}/>
+        </Box>
       </Box>
     </>
   )

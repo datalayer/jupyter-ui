@@ -28,13 +28,16 @@ export const KernelInspector = (props: Props) => {
     ?
       <Box
         sx={{
+          '& dla-KernelInspector-view': {
+            height: '1000px',
+          },
           '& .dla-KernelInspector-messagelog': {
             height: '100px',
             minHeight: '100px',
           },
         }}
       >
-        <Lumino height="1000px">{kernelSpyView}</Lumino>
+        <Lumino>{kernelSpyView}</Lumino>
       </Box>
     :
       <></>

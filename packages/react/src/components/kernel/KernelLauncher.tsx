@@ -4,28 +4,9 @@
  * MIT License
  */
 
-import { useState, useEffect } from 'react';
-import { CircleYellowIcon, CircleGreenIcon } from '@datalayer/icons-react';
-import Kernel from '../../jupyter/kernel/Kernel';
-
-type Props = {
-  kernel?: Kernel;
-}
-
-export const KernelLauncher = (props: Props) => {
-  const { kernel } = props;
-  const [ready, setReady] = useState(false);
-  useEffect(() => {
-    kernel?.ready.then(() => {
-      setReady(true);
-    });
-  }, [kernel]);
+export const KernelLauncher = () => {
   return (
-    ready
-    ?
-      <CircleGreenIcon/>
-    :
-      <CircleYellowIcon/>
+    <></>
   )
 };
 

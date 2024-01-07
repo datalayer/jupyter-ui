@@ -5,8 +5,10 @@
  */
 
 import { useState, useEffect } from 'react';
-import { CircleYellowIcon, CircleGreenIcon } from '@datalayer/icons-react';
 import Kernel from '../../jupyter/kernel/Kernel';
+import Lumino from '../../jupyter/lumino/Lumino';
+import { createVariablesInspectorManager, registerKernel} from './variables/variablesinspector';
+import { VariableInspectorPanel } from './variables/widget';
 
 type Props = {
   kernel?: Kernel;
@@ -14,18 +16,20 @@ type Props = {
 
 export const KernelVariables = (props: Props) => {
   const { kernel } = props;
-  const [ready, setReady] = useState(false);
+  const [panel, setPanel] = useState<VariableInspectorPanel>();
   useEffect(() => {
     kernel?.ready.then(() => {
-      setReady(true);
+      const manager = createVariablesInspectorManager();
+      setPanel(manager.panel);
+      registerKernel(manager, kernel);
     });
   }, [kernel]);
   return (
-    ready
+    panel
     ?
-      <CircleGreenIcon/>
+      <Lumino>{panel}</Lumino>
     :
-      <CircleYellowIcon/>
+      <></>
   )
 };
 

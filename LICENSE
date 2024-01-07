@@ -24,4 +24,5 @@ This repository contains source code from the following repositories under BSD-3
 
 - JupyterLab https://github.com/jupyterlab/jupyterlab
 - JupyterLite https://github.com/jupyterlite/jupyterlite
-- JupyterLab KernelSpy https://github.com/jupyterlab-contrib/jupyterlab-kernelspy
+- JupyterLab KernelSpy: https://github.com/jupyterlab-contrib/jupyterlab-kernelspy
+- JupyterLab Variables Inspecdtor: https://github.com/jupyterlab-contrib/jupyterlab-variableInspector
