@@ -20,13 +20,14 @@ const ENTRY =
   // './src/app/App';
   // './src/examples/Cell';
   // './src/examples/Console';
+  './src/examples/Deno';
   // './src/examples/IPyLeaflet';
   // './src/examples/IPyReact';
   // './src/examples/IPyWidgets';
   // './src/examples/IPyWidgetsWithState';
   // './src/examples/JupyterLabApp';
   // './src/examples/JupyterLabHeadlessApp';
-  './src/examples/Kernels';
+  // './src/examples/Kernels';
   // './src/examples/KernelExecutor';
   // './src/examples/KernelExecResult';
   // './src/examples/Lumino';
