@@ -170,6 +170,10 @@ export class KernelExecutor {
     return this._executeReplyReceived;
   }
 
+  get done() {
+    return this._future?.done as Promise<KernelMessage.IExecuteReplyMsg>;
+  }
+
 }
 
 export default KernelExecutor;
