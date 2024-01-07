@@ -36,7 +36,7 @@ type KernelState = string;
  * 
  * Status = 'unknown' | 'starting' | 'idle' | 'busy' | 'terminating' | 'restarting' | 'autorestarting' | 'dead';
  */
-export const KERNEL_STATES: Map<KernelState, ReactElement> = new Map([
+export const KERNEL_STATES: Map<KernelState, ReactElement> = new Map([ 
   [ 'connecting', <CircleBlackIcon/> ],
   [ 'connected-unknown', <CircledMIcon/> ],
   [ 'connected-starting', <CircleYellowIcon/> ],
@@ -47,6 +47,7 @@ export const KERNEL_STATES: Map<KernelState, ReactElement> = new Map([
   [ 'connected-autorestarting', <CircleHollowRedIcon/> ],
   [ 'connected-dead', <CircleRedIcon/> ],
   [ 'disconnecting', <CircleBrownIcon/> ],
+  [ 'undefined', <SquareWhiteLargeIcon/> ],
 ]);
 
 type Props = {
@@ -84,8 +85,8 @@ export const KernelStatus = (props: Props) => {
     )
     :
     (
-      <Tooltip aria-label="Unkown state">
-        <SquareWhiteLargeIcon/>
+      <Tooltip aria-label="Undefined state">
+        { KERNEL_STATES.get('undefined') }
       </Tooltip>
     )
   )
