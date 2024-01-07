@@ -7,12 +7,14 @@
 import { createRoot } from 'react-dom/client';
 import { useState } from 'react';
 import { Box, Heading, Textarea, Button, Pagehead, Text } from '@primer/react';
+import { IModel } from '@jupyterlab/services/lib/kernel/kernel';
+import { ISpecModel } from '@jupyterlab/services/lib/kernelspec/kernelspec';
 import Jupyter from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { 
-  KernelProgressBar, KernelStatus, KernelActionMenu,
-  KernelSelector, KernelUsage, KernelInspector,
-  KernelVariables, KernelLogs, Kernels, KERNEL_STATES
+  KERNEL_STATES, KernelProgressBar, KernelStatus,
+  KernelActionMenu, KernelSelector, KernelUsage, KernelInspector,
+  KernelLauncher, KernelVariables, KernelLogs, Kernels
 } from './../components/kernel';
 
 export const KernelExecResultView = () => {
@@ -66,6 +68,12 @@ export const KernelExecResultView = () => {
 
 const KernelComponents = () => {
   const { defaultKernel } = useJupyter();
+  const selectKernel = (kernelModel: IModel) => {
+    console.log('---', kernelModel);
+  }
+  const selectKernelSpec = (specModel: ISpecModel) => {
+    console.log('---', specModel);
+  }
   return (
     <>
       <Box display="flex">
@@ -104,7 +112,15 @@ const KernelComponents = () => {
               <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernel Selector</Text>
             </Box>
             <Box ml={3} style={{ verticalAlign: 'middle', display: 'inline-flex' }}>
-              <KernelSelector kernel={defaultKernel}/>
+              <KernelSelector selectKernel={selectKernel} selectKernelSpec={selectKernelSpec}/>
+            </Box>
+          </Box>
+          <Box display="flex" mt={3}>
+            <Box>
+              <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernel Launcher</Text>
+            </Box>
+            <Box ml={3} style={{ verticalAlign: 'middle', display: 'inline-flex' }}>
+              <KernelLauncher kernel={defaultKernel}/>
             </Box>
           </Box>
           <Box display="flex" mt={3}>

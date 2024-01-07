@@ -7,6 +7,7 @@
 export * from './KernelActionMenu';
 export * from './KernelInspector';
 export * from './KernelLogs';
+export * from './KernelLauncher';
 export * from './KernelProgressBar';
 export * from './Kernels';
 export * from './KernelSelector';
