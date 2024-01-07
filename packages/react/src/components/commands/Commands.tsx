@@ -5,7 +5,7 @@
  */
 
 import CommandAdapter from './CommandsAdapter';
-import Lumino from '../../jupyter/lumino/Lumino';
+import Lumino from '../lumino/Lumino';
 
 export const Commands = () => {
   const commandsAdapter = new CommandAdapter();

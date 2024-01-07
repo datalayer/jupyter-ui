@@ -6,7 +6,7 @@
 
 import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
-import LuminoBox from './../jupyter/lumino/LuminoBox';
+import LuminoBox from '../components/lumino/LuminoBox';
 import LuminoWidget from './lumino/LuminoWidget';
 
 export const LuminoExample = () => {

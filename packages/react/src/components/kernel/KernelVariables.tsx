@@ -6,7 +6,7 @@
 
 import { useState, useEffect } from 'react';
 import Kernel from '../../jupyter/kernel/Kernel';
-import Lumino from '../../jupyter/lumino/Lumino';
+import Lumino from '../lumino/Lumino';
 import { createVariablesInspectorManager, registerKernel} from './variables/variablesinspector';
 import { VariableInspectorPanel } from './variables/widget';
 

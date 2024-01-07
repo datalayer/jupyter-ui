@@ -5,7 +5,7 @@
  */
 
 import SettingsAdapter from './SettingsAdapter';
-import Lumino from '../../jupyter/lumino/Lumino';
+import Lumino from '../lumino/Lumino';
 
 export const Settings = () => {
   const settingsAdapter = new SettingsAdapter();

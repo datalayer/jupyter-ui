@@ -15,12 +15,12 @@ export * from './jupyter/lab/JupyterLabCss';
 export * from './jupyter/lite/LiteServer';
 
 // Lumino
-export * from './jupyter/lumino/Lumino';
-export * from './jupyter/lumino/LuminoBox';
-export * from './jupyter/lumino/LuminoDetached';
-export * from './jupyter/lumino/LuminoObservable';
-export * from './jupyter/lumino/LuminoRedux';
-export * from './jupyter/lumino/ReactPortalWidget';
+export * from './components/lumino/Lumino';
+export * from './components/lumino/LuminoBox';
+export * from './components/lumino/LuminoDetached';
+export * from './components/lumino/LuminoObservable';
+export * from './components/lumino/LuminoRedux';
+export * from './components/lumino/ReactPortalWidget';
 
 // State Redux.
 export * from './state/redux/State';

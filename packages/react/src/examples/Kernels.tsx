@@ -120,7 +120,7 @@ const KernelComponents = () => {
               <Text as="p" sx={{ color: 'fg.onEmphasis', bg: 'neutral.emphasis', m: 0, p: 2 }}>Kernel Launcher</Text>
             </Box>
             <Box ml={3} style={{ verticalAlign: 'middle', display: 'inline-flex' }}>
-              <KernelLauncher kernel={defaultKernel}/>
+              <KernelLauncher/>
             </Box>
           </Box>
           <Box display="flex" mt={3}>

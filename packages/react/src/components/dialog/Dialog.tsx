@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import LuminoDetached from '../../jupyter/lumino/LuminoDetached';
+import LuminoDetached from '../lumino/LuminoDetached';
 import DialogAdapter from './DialogAdapter';
 
 export const Dialog = () => {

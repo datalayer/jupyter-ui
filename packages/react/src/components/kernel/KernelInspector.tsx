@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import Lumino from '../../jupyter/lumino/Lumino';
+import Lumino from '../lumino/Lumino';
 import Kernel from '../../jupyter/kernel/Kernel';
 import { KernelSpyView } from './inspector/widget';
 import { Box } from '@primer/react';

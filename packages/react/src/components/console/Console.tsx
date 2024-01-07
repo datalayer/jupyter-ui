@@ -6,7 +6,7 @@
 
 import { useState, useEffect } from 'react';
 import { useJupyter } from './../../jupyter/JupyterContext';
-import Lumino from '../../jupyter/lumino/Lumino';
+import Lumino from '../lumino/Lumino';
 import ConsoleAdapter from './ConsoleAdapter';
 
 import './Console.css';

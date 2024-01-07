@@ -7,7 +7,7 @@
 import { useState, useEffect } from 'react';
 import { useJupyter } from '../../jupyter/JupyterContext';
 import FileManagerAdapter from './lab/FileManagerAdapter';
-import Lumino from '../../jupyter/lumino/Lumino';
+import Lumino from '../lumino/Lumino';
 
 export const FileManagerJupyterLab = () => {
   const { serviceManager } = useJupyter();

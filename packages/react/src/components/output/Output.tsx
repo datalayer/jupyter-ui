@@ -16,7 +16,7 @@ import { selectExecute, outputActions, outputReducer } from './OutputRedux';
 import { useJupyter } from '../../jupyter/JupyterContext';
 import Kernel from '../../jupyter/kernel/Kernel';
 import { KernelActionMenu, KernelProgressBar }from './../kernel'
-import Lumino from '../../jupyter/lumino/Lumino';
+import Lumino from '../lumino/Lumino';
 import CodeMirrorEditor from '../codemirror/CodeMirrorEditor';
 import OutputRenderer from './OutputRenderer';
 

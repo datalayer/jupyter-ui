@@ -36,7 +36,7 @@ import {
 import { rendererFactory as plotlyFactory } from './../../../jupyter/renderers/plotly/PlotlyRenderer';
 import { newUuid } from '../../../utils/Utils';
 import { getMarked } from './../../notebook/marked/marked';
-import Lumino from '../../../jupyter/lumino/Lumino';
+import Lumino from '../../lumino/Lumino';
 
 type Props = {
   cell: ICell;

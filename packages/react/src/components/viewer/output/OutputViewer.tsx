@@ -5,7 +5,7 @@
  */
 
 import { ICell, IOutput } from '@jupyterlab/nbformat';
-import Lumino from '../../../jupyter/lumino/Lumino';
+import Lumino from '../../lumino/Lumino';
 import OutputAdapter from './OutputAdapter';
 
 type Props = {

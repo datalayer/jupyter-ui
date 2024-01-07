@@ -11,7 +11,7 @@ import { KernelMessage } from '@jupyterlab/services';
 import { Box } from '@primer/react';
 import { cellActions, cellReducer } from './CellRedux';
 import CellAdapter from './CellAdapter';
-import Lumino from '../../jupyter/lumino/Lumino';
+import Lumino from '../lumino/Lumino';
 import { useJupyter } from './../../jupyter/JupyterContext';
 /*
 const DEFAULT_SOURCE = `from IPython.display import display
