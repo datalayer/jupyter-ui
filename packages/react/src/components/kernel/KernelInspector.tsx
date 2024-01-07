@@ -5,8 +5,10 @@
  */
 
 import { useState, useEffect } from 'react';
-import { CircleYellowIcon, CircleGreenIcon } from '@datalayer/icons-react';
+import Lumino from '../../jupyter/lumino/Lumino';
 import Kernel from '../../jupyter/kernel/Kernel';
+import { KernelSpyView } from './inspector/widget';
+import { Box } from '@primer/react';
 
 type Props = {
   kernel?: Kernel;
@@ -14,18 +16,28 @@ type Props = {
 
 export const KernelInspector = (props: Props) => {
   const { kernel } = props;
-  const [ready, setReady] = useState(false);
+  const [kernelSpyView, setKernelSpyView] = useState<KernelSpyView>();
   useEffect(() => {
     kernel?.ready.then(() => {
-      setReady(true);
+      const kernelSpyView = new KernelSpyView(kernel?.connection);
+      setKernelSpyView(kernelSpyView);
     });
   }, [kernel]);
   return (
-    ready
+    kernelSpyView
     ?
-      <CircleGreenIcon/>
+      <Box
+        sx={{
+          '& .dla-KernelInspector-messagelog': {
+            height: '100px',
+            minHeight: '100px',
+          },
+        }}
+      >
+        <Lumino height="1000px">{kernelSpyView}</Lumino>
+      </Box>
     :
-      <CircleYellowIcon/>
+      <></>
   )
 };
 
