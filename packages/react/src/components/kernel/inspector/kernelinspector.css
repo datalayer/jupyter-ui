@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 .dla-KernelInspector-view .dla-KernelInspector-toolbar {
   border-bottom: var(--jp-border-width) solid var(--jp-toolbar-border-color);
   padding: 2px;

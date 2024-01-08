@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 import { OutputAreaModel, SimplifiedOutputArea } from '@jupyterlab/outputarea';
 import { closeIcon, searchIcon } from '@jupyterlab/ui-components';
 import { DataGrid, DataModel } from '@lumino/datagrid';

@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 import { listIcon } from '@jupyterlab/ui-components';
 import { addJupyterLabThemeChangeListener } from '@jupyter/web-components';
 import { VariableInspectionHandler } from './handler';

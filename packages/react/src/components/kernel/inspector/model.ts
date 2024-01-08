@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 import { VDomModel } from '@jupyterlab/apputils';
 import { Kernel, KernelMessage } from '@jupyterlab/services';
 
