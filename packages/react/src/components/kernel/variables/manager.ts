@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 import { VariableInspectionHandler } from './handler';
 import { VariableInspectorPanel } from './widget';
 import { IVariableInspector, IVariableInspectorManager } from './tokens';

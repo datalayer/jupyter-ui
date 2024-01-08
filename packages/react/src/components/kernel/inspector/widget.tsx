@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 import { VDomRenderer, Toolbar, ToolbarButton } from '@jupyterlab/apputils';
 import { KernelMessage, Kernel } from '@jupyterlab/services';
 import {

@@ -5,16 +5,23 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { CopyrightIcon } from '@datalayer/icons-react';
-import { UndoIcon } from '@datalayer/icons-react';
+import * as dtIcons from '@datalayer/icons-react';
 
-import { copyrightIcon } from '@jupyterlab/ui-components/lib/icon/iconimports';
-import { undoIcon } from '@jupyterlab/ui-components/lib/icon/iconimports';
+import * as jpIcons from '@jupyterlab/ui-components';
 
 import React from 'react';
 
 const meta: Meta = {
   title: 'Components/Icon',
+  argTypes: {
+    icon: {
+      control: 'text',
+      options: [
+        'copyright',
+        'undo'
+      ]
+    }
+  },
 } as Meta;
 
 export default meta;
@@ -22,29 +29,29 @@ export default meta;
 type Story = StoryObj;
 
 const Template = (args, { globals: { labComparison } }) => {
+  const icon = ((args.icon ?? 'undo') as string).toLowerCase()
+  const datalayerIcon = dtIcons[icon.charAt(0).toUpperCase() + icon.slice(1) + 'Icon']
+  const labIcon: jpIcons.LabIcon = labComparison === 'display' ? jpIcons[icon + 'Icon'] : null;
+  console.log(datalayerIcon, labIcon)
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <UndoIcon />
-      <CopyrightIcon />
-      {labComparison === 'display' && (
-        <>
-          <copyrightIcon.react tag="span" />
-          <undoIcon.react tag="span" />
-        </>
-      )}
+      {datalayerIcon ? React.createElement(datalayerIcon) : 'Unknown DataLayer icon'}
+      {labIcon ? <labIcon.react tag="span" /> : 'Unknown Jupyter icon'}
     </div>
   );
 };
 
 export const Default = Template.bind({});
+Default.args = {
+  icon: 'undo'
+}
 
 export const Playground: Story = {
   render: (args, options) =>
     Template.bind({})({ ...args }, options),
 };
-Playground.argTypes = {
-};
 Playground.args = {
+  ...Default.args
 };
 
 export const Copyright: Story = {
@@ -52,6 +59,7 @@ export const Copyright: Story = {
     Template.bind({})({ ...args }, options),
 };
 Copyright.args = {
+  icon: 'copyright'
 };
 
 export const Undo: Story = {
@@ -59,4 +67,5 @@ export const Undo: Story = {
     Template.bind({})({ ...args }, options),
 };
 Undo.args = {
+  icon: 'undo'
 };

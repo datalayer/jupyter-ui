@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
 import { Kernel, KernelMessage } from '@jupyterlab/services';
 import { DataModel } from '@lumino/datagrid';
