@@ -46,7 +46,8 @@ export * from './components/cell/CellRedux';
 export * from './components/cell/CellZustand';
 
 // CodeMirror Editor.
-// TODO CodeMirrorEditor breaks the JupyterLab extension loading.
+// @todo CodeMirrorEditor breaks the JupyterLab extension loading.
+// @see https://github.com/datalayer/jupyter-ui/issues/170
 // export * from './components/codemirror/CodeMirrorEditor';
 
 // JupyterLab.
@@ -103,7 +104,8 @@ export * from './components/filemanager/FileManagerState';
 export * from './components/filemanager/FileManagerJupyterLab';
 
 // Outputs.
-// TODO CodeMirrorEditor imported by Output breaks the JupyterLab extension loading.
+// @todo CodeMirrorEditor imported by Output breaks the JupyterLab extension loading.
+// @see https://github.com/datalayer/jupyter-ui/issues/170
 // export * from './components/output/Output';
 export * from './components/output/OutputAdapter';
 export * from './components/output/OutputRedux';
