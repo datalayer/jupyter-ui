@@ -5,7 +5,7 @@
  */
 
 import { IOutput } from "@jupyterlab/nbformat";
-import { Output } from "@datalayer/jupyter-react";
+import { Output } from "@datalayer/jupyter-react/lib/components/output/Output";
 import { OutputAdapter } from '@datalayer/jupyter-react';
 
 type Props = {
