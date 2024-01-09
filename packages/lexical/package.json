@@ -97,7 +97,7 @@
     "eslint": "7.14.0",
     "eslint-config-prettier": "6.15.0",
     "eslint-plugin-prettier": "3.1.4",
-    "file-loader": "~5.0.2",
+    "file-loader": "6.2.0",
     "gulp": "4.0.2",
     "gulp-append-prepend": "1.0.8",
     "gulp-filter": "6.0.0",
