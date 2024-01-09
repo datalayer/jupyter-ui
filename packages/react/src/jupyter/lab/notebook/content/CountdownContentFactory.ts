@@ -10,7 +10,7 @@ import { IOutputPrompt } from '@jupyterlab/outputarea';
 import CountdownInputPrompt from '../../../../components/notebook/cell/prompt/CountdownInputPrompt';
 import CountdownOutputPrompt from '../../../../components/notebook/cell/prompt/CountdownOutputPrompt';
 
-export class CountdownContentFactory extends NotebookPanel.ContentFactory {
+export class CountdownPromptContentFactory extends NotebookPanel.ContentFactory {
   constructor(options: Cell.ContentFactory.IOptions) {
     super(options);
   }
@@ -26,4 +26,4 @@ export class CountdownContentFactory extends NotebookPanel.ContentFactory {
   }
 }
 
-export default CountdownContentFactory;
+export default CountdownPromptContentFactory;

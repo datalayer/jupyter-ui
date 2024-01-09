@@ -6,6 +6,7 @@
 
 import { Widget } from '@lumino/widgets';
 import { ManagerBase } from '@jupyter-widgets/base-manager';
+
 import * as base from '@jupyter-widgets/base';
 import * as controls from '@jupyter-widgets/controls';
 

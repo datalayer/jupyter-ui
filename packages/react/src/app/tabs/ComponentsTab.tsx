@@ -60,7 +60,7 @@ const MainTab = (props: JupyterFrontEndProps) => {
           </NavList>
         </Box>
         <Box ml={3} sx={{ width: '100%' }}>
-          <Jupyter startDefaultKernel={false}>
+          <Jupyter startDefaultKernel={true}>
             {nav === 1 && <FileBrowserComponent />}
             {nav === 2 && <CellComponent />}
             {nav === 3 && <NotebookComponent />}

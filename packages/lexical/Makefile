@@ -42,16 +42,16 @@ typedoc: ## generate typedoc
 
 typedoc-publish: typedoc ## deploy typedoc
 	aws s3 rm \
-		s3://datalayer-typedoc/datalayer/jupyter-lexical/0.2.1/ \
+		s3://datalayer-typedoc/datalayer/jupyter-lexical/0.0.1/ \
 		--recursive \
 		--profile datalayer
 	aws s3 cp \
 		typedoc \
-		s3://datalayer-typedoc/datalayer/jupyter-lexical/0.2.1/ \
+		s3://datalayer-typedoc/datalayer/jupyter-lexical/0.0.1/ \
 		--recursive \
 		--profile datalayer
 	aws cloudfront create-invalidation \
 		--distribution-id E1CPG9FNSQJESH \
 		--paths "/*" \
 		--profile datalayer
-	echo open ✨  https://typedoc.datalayer.tech/datalayer/jupyter-lexical/0.2.1
+	echo open ✨  https://typedoc.datalayer.tech/datalayer/jupyter-lexical/0.0.1

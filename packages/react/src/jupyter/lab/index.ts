@@ -114,6 +114,7 @@ const jupyterReactPlugin: JupyterFrontEndPlugin<void> = {
   },
 };
 
-const plugins = [jupyterReactPlugin, notebookContentFactoryPlugin];
-
-export default plugins;
+export default [
+  jupyterReactPlugin,
+  notebookContentFactoryPlugin
+];

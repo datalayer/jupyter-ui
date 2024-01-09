@@ -4,6 +4,10 @@
  * MIT License
  */
 
+/**
+ * Jupyter.
+ */
+
 // Jupyter.
 export * from './jupyter/Jupyter';
 export * from './jupyter/theme';
@@ -11,27 +15,26 @@ export * from './jupyter/JupyterContext';
 export * from './jupyter/JupyterConfig';
 export * from './jupyter/lab/JupyterLabCss';
 
-// Lite
+// Jupyter Lite
 export * from './jupyter/lite/LiteServer';
 
-// Lumino
-export * from './components/lumino/Lumino';
-export * from './components/lumino/LuminoBox';
-export * from './components/lumino/LuminoDetached';
-export * from './components/lumino/LuminoObservable';
-export * from './components/lumino/LuminoRedux';
-export * from './components/lumino/ReactPortalWidget';
-
-// State Redux.
+// Jupyter State.
 export * from './state/redux/State';
 export * from './state/redux/Store';
 
-// Services.
+// Jupyter Services.
 export * from './jupyter/services/Services';
 
-// Kernel.
-export * from './jupyter/kernel/Kernel';
-export * from './jupyter/kernel/KernelExecutor';
+// Jupyter Kernel.
+export * from './jupyter/kernel';
+
+// Jupyter IPyWidgets.
+export * from './jupyter/ipywidgets/classic/IPyWidgetsClassicManager';
+export * from './jupyter/ipywidgets/lab/manager';
+
+/**
+ * Components.
+ */
 
 // Button
 export * from './components/button/Button';
@@ -43,7 +46,8 @@ export * from './components/cell/CellRedux';
 export * from './components/cell/CellZustand';
 
 // CodeMirror Editor.
-export * from './components/codemirror/CodeMirrorEditor';
+// TODO CodeMirrorEditor breaks the JupyterLab extension loading.
+// export * from './components/codemirror/CodeMirrorEditor';
 
 // JupyterLab.
 export * from './components/jupyterlab/JupyterLabApp';
@@ -51,14 +55,22 @@ export * from './components/jupyterlab/JupyterLabAppAdapter';
 export * from './components/jupyterlab/JupyterLabAppPlugins';
 export * from './components/jupyterlab/JupyterLabAppCss';
 
+// Lumino
+export * from './components/lumino/Lumino';
+export * from './components/lumino/LuminoBox';
+export * from './components/lumino/LuminoDetached';
+export * from './components/lumino/LuminoObservable';
+export * from './components/lumino/LuminoRedux';
+export * from './components/lumino/ReactPortalWidget';
+
 // Notebook.
 export * from './components/notebook/Notebook';
 export * from './components/notebook/NotebookAdapter';
 export * from './components/notebook/NotebookRedux';
+export * from './components/notebook/content/JupyterReactContentFactory';
 export * from './components/notebook/cell/metadata/CellMetadataEditor';
 export * from './components/notebook/cell/metadata/NbGraderCells';
 export * from './components/notebook/cell/prompt/CountdownInputPrompt';
-export * from './components/notebook/content/JupyterReactContentFactory';
 export * from './components/notebook/cell/sidebar/CellSidebarWidget';
 export * from './components/notebook/cell/sidebar/CellSidebar';
 export * from './components/notebook/cell/sidebar/CellSidebarRun';
@@ -66,11 +78,9 @@ export * from './components/notebook/cell/sidebar/CellSidebarRun';
 // IPyWidgets.
 export * from './components/output/ipywidgets/IPyWidgetsAttached';
 export * from './components/output/ipywidgets/IPyWidgetsViewManager';
-export * from './components/output/ipywidgets/IPyWidgetsViewManager';
 
 // Kernel.
-export * from './components/kernel/KernelActionMenu';
-export * from './components/kernel/KernelProgressBar';
+export * from './components/kernel';
 
 // Commands.
 export * from './components/commands/Commands';
@@ -89,13 +99,15 @@ export * from './components/filebrowser/FileBrowser';
 // File Manager.
 export * from './components/filemanager/FileManagerState';
 
-// File Manager (JupyterLab variant).
+// File Manager - JupyterLab variant.
 export * from './components/filemanager/FileManagerJupyterLab';
 
 // Outputs.
-export * from './components/output/Output';
+// TODO CodeMirrorEditor imported by Output breaks the JupyterLab extension loading.
+// export * from './components/output/Output';
 export * from './components/output/OutputAdapter';
 export * from './components/output/OutputRedux';
+export * from './components/output/OutputZustand';
 export * from './components/output/OutputIPyWidgets';
 
 // Settings.
@@ -113,6 +125,10 @@ export * from './components/textinput/TextInput';
 export * from './components/viewer/Viewer';
 export * from './components/viewer/input/InputViewer';
 export * from './components/viewer/output/OutputViewer';
+
+/**
+ * Utils.
+ */
 
 // Utils
 export * from './utils/Utils';

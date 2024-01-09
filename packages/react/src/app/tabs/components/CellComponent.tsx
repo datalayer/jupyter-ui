@@ -4,13 +4,13 @@
  * MIT License
  */
 
-// import Cell from '../../../components/cell/Cell';
+import Cell from '../../../components/cell/Cell';
 
 const CellComponent = () => {
   return (
-    <>{/*
+    <>
       <Cell source="print('Hello 🪐 ⚛️ Jupyter React')"/>
-      */}</>
+    </>
   );
 };
 

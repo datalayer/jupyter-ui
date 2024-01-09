@@ -11,13 +11,13 @@ import { UUID } from '@lumino/coreutils';
 import { IOutput } from '@jupyterlab/nbformat';
 import { IOutputAreaModel } from '@jupyterlab/outputarea';
 import { KernelMessage } from '@jupyterlab/services';
-import OutputAdapter from './OutputAdapter';
-import { selectExecute, outputActions, outputReducer } from './OutputRedux';
 import { useJupyter } from '../../jupyter/JupyterContext';
 import Kernel from '../../jupyter/kernel/Kernel';
 import { KernelActionMenu, KernelProgressBar }from './../kernel'
 import Lumino from '../lumino/Lumino';
 import CodeMirrorEditor from '../codemirror/CodeMirrorEditor';
+import { selectExecute, outputActions, outputReducer } from './OutputRedux';
+import OutputAdapter from './OutputAdapter';
 import OutputRenderer from './OutputRenderer';
 
 import './Output.css';

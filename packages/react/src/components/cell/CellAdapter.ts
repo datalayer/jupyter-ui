@@ -42,7 +42,7 @@ import {
 } from '@jupyterlab/services';
 import { runIcon } from '@jupyterlab/ui-components';
 import { createStandaloneCell, YCodeCell, IYText } from '@jupyter/ydoc';
-import { requireLoader as loader } from '@jupyter-widgets/html-manager';
+import { requireLoader as loader } from '@jupyter-widgets/html-manager/lib/libembed-amd';
 import {
   WIDGET_MIMETYPE,
   WidgetRenderer,

@@ -11,16 +11,21 @@ import { Widget } from '@lumino/widgets';
 import { Kernel, KernelMessage } from '@jupyterlab/services';
 import {
   DOMWidgetView,
+  WidgetModel,
+  WidgetView,
+} from '@jupyter-widgets/base/lib/widget';
+import {
   IWidgetRegistryData,
   ExportMap,
   ExportData,
+} from '@jupyter-widgets/base/lib/registry';
+import {
   ICallbacks,
-  WidgetModel,
-  WidgetView,
-} from '@jupyter-widgets/base';
-import { shims } from '@jupyter-widgets/base/lib/services-shim';
+  shims,
+} from '@jupyter-widgets/base/lib/services-shim';
+import { requireLoader } from '@jupyter-widgets/html-manager/lib/libembed-amd';
+import { HTMLManager } from '@jupyter-widgets/html-manager/lib/htmlmanager';
 import { valid } from 'semver';
-import { requireLoader, HTMLManager } from '@jupyter-widgets/html-manager';
 import {
   BundledIPyWidgets,
   ExternalIPyWidgets,
@@ -28,13 +33,12 @@ import {
 import { SemVerCache } from '../cache/semvercache';
 import { MODULE_NAME, MODULE_VERSION } from './../plotly/Version';
 
-// import * as outputWidgets from '@jupyter-widgets/jupyterlab-manager/lib/output';
 import * as base from '@jupyter-widgets/base';
 import * as controls from '@jupyter-widgets/controls';
-import * as output from '@jupyter-widgets/output';
+// import * as output from '@jupyter-widgets/output';
+// import * as outputWidgets from '@jupyter-widgets/jupyterlab-manager/lib/output';
 
 // Exposing @jupyter-widgets/base and @jupyter-widgets/controls as AMD modules for custom widget bundles that depend on it.
-
 if (
   typeof window !== 'undefined' &&
   typeof (window as any).define !== 'undefined'
@@ -69,11 +73,13 @@ export class IPyWidgetsClassicManager extends HTMLManager {
       version: controls.JUPYTER_CONTROLS_VERSION,
       exports: () => import('@jupyter-widgets/controls') as any,
     });
+    /*
     this.register({
       name: '@jupyter-widgets/output',
       version: output.OUTPUT_WIDGET_VERSION,
       exports: () => import('@jupyter-widgets/output') as any,
     });
+    */
     this.register({
       name: MODULE_NAME,
       version: MODULE_VERSION,

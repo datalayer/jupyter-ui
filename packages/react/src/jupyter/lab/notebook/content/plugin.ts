@@ -10,7 +10,7 @@ import {
 } from '@jupyterlab/application';
 import { NotebookPanel } from '@jupyterlab/notebook';
 import { IEditorServices } from '@jupyterlab/codeeditor';
-import CountdownContentFactory from './CountdownContentFactory';
+import CountdownPromptContentFactory from './CountdownContentFactory';
 
 /**
  * The notebook cell factory provider.
@@ -23,7 +23,7 @@ const contentFactoryPlugin: JupyterFrontEndPlugin<NotebookPanel.IContentFactory>
   autoStart: true,
   activate: (app: JupyterFrontEnd, editorServices: IEditorServices) => {
     const editorFactory = editorServices.factoryService.newInlineEditor;
-    return new CountdownContentFactory({ editorFactory });
+    return new CountdownPromptContentFactory({ editorFactory });
   },
 };
 

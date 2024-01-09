@@ -13,11 +13,8 @@ import {
 } from '@jupyterlab/rendermime';
 import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
-import { requireLoader as loader } from '@jupyter-widgets/html-manager';
-import {
-  WIDGET_MIMETYPE,
-  WidgetRenderer,
-} from '@jupyter-widgets/html-manager/lib/output_renderers';
+import { requireLoader as loader } from '@jupyter-widgets/html-manager/lib/libembed-amd';
+import { WIDGET_MIMETYPE, WidgetRenderer,} from '@jupyter-widgets/html-manager/lib/output_renderers';
 import { IPyWidgetsClassicManager } from '../../jupyter/ipywidgets/classic/IPyWidgetsClassicManager';
 import Kernel from '../../jupyter/kernel/Kernel';
 
