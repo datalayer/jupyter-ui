@@ -5,7 +5,7 @@
  */
 
 import { useEffect } from 'react';
-import { ColorMode } from './JupyterLabTheme';
+import { ColorMode } from './JupyterLabColorMode';
 
 type Props = {
   colorMode: ColorMode;
@@ -47,7 +47,7 @@ export const JupyterLabCss = (props: Props) => {
 };
 
 JupyterLabCss.defaultProps = {
-  theme: 'light',
+  colorMode: 'light',
 };
 
 export default JupyterLabCss;

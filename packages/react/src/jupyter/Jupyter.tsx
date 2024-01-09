@@ -16,7 +16,7 @@ import {
   getJupyterServerWsUrl,
   loadJupyterConfig,
 } from './JupyterConfig';
-import { ColorMode } from './lab/JupyterLabTheme';
+import { ColorMode } from './lab/JupyterLabColorMode';
 // import { jupyterTheme } from './theme';
 
 /**

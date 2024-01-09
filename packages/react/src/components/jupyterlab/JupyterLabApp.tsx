@@ -10,7 +10,7 @@ import { JupyterLab } from '@jupyterlab/application';
 import { PageConfig } from '@jupyterlab/coreutils';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { useJupyter } from '../../jupyter/JupyterContext';
-import { ColorMode } from './../../jupyter/lab/JupyterLabTheme';
+import { ColorMode } from '../../jupyter/lab/JupyterLabColorMode';
 import { JupyterLabAppCorePlugins } from './JupyterLabAppPlugins';
 import JupyterLabAppAdapter from './JupyterLabAppAdapter';
 import JupyterLabAppCss from './JupyterLabAppCss';

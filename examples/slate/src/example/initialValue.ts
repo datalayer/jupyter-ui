@@ -6,7 +6,8 @@
 
 import { createElement } from "react";
 import { Descendant } from "slate";
-import { Output, Kernel, newSourceId } from '@datalayer/jupyter-react';
+import { Kernel, newSourceId } from '@datalayer/jupyter-react';
+import { Output } from '@datalayer/jupyter-react/lib/components/output/Output';
 
 const SOURCE_1 = `from IPython.display import display
 for i in range(3):

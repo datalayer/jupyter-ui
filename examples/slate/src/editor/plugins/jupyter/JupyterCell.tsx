@@ -7,7 +7,7 @@
 import { useSelected, useFocused } from 'slate-react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import { Output } from '@datalayer/jupyter-react';
+import { Output } from '@datalayer/jupyter-react/lib/components/output/Output';
 import { RenderJupyterProps } from "../../elements/Element";
 import { JupyterCellElement } from "../../../slate";
 

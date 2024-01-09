@@ -17,7 +17,7 @@ import { ThemeManager } from '@jupyterlab/apputils';
 import { RunningSessions } from '@jupyterlab/running';
 import Jupyter from '../jupyter/Jupyter';
 import Lumino from '../components/lumino/Lumino';
-import { ColorMode } from '../jupyter/lab/JupyterLabTheme';
+import { ColorMode } from '../jupyter/lab/JupyterLabColorMode';
 import JupyterLabApp from '../components/jupyterlab/JupyterLabApp';
 import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter';
 

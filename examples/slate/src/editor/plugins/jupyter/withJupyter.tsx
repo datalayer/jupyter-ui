@@ -6,7 +6,8 @@
 
 import { createElement } from "react";
 import { Editor, Transforms, Path, Range, NodeEntry } from 'slate';
-import { newSourceId, Output, Kernel } from "@datalayer/jupyter-react";
+import { newSourceId, Kernel } from "@datalayer/jupyter-react";
+import { Output } from '@datalayer/jupyter-react/lib/components/output/Output';
 import { JupyterCellElement } from "../../../slate";
 
 const NEW_CODE = 'print(\'Hello 👍\')'

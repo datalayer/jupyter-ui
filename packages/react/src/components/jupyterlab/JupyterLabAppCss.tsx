@@ -5,7 +5,7 @@
  */
 
 import { useEffect } from 'react';
-import { ColorMode } from './../../jupyter/lab/JupyterLabTheme';
+import { ColorMode } from '../../jupyter/lab/JupyterLabColorMode';
 
 import '@jupyterlab/application-extension/style/index.js';
 import '@jupyterlab/apputils-extension/style/index.js';

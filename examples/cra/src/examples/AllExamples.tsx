@@ -16,10 +16,10 @@ import {
   Commands,
   Console,
   Notebook,
-  Output,
   Settings,
   Terminal,
 } from '@datalayer/jupyter-react';
+import { Output } from '@datalayer/jupyter-react/lib/components/output/Output';
 // import Dialog from './../components//dialog/Dialog';
 import DialogToolbar from './dialog/DialogToolbar';
 import CellToolbar from './cell/CellToolbar';

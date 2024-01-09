@@ -4,14 +4,14 @@
  * MIT License
  */
 
-import Notebook from '../../../components/notebook/Notebook';
-import CellSidebarNew from './../../../components/notebook/cell/sidebar/CellSidebarButton';
+// import Notebook from '../../../components/notebook/Notebook';
+// import CellSidebarNew from './../../../components/notebook/cell/sidebar/CellSidebarButton';
 
-import nbformat from './../../..//examples/notebooks/IPyWidgetsExample.ipynb.json';
+// import nbformat from './../../..//examples/notebooks/IPyWidgetsExample.ipynb.json';
 
 const NotebookComponent = () => {
   return (
-    <>
+    <>{/*
       <Notebook
         nbformat={nbformat}
         uid="notebook-uid"
@@ -19,7 +19,7 @@ const NotebookComponent = () => {
         height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
         CellSidebar={CellSidebarNew}
       />
-    </>
+  */}</>
   );
 };
 

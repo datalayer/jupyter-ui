@@ -9,7 +9,7 @@ import { createRoot } from 'react-dom/client';
 import { Text, ToggleSwitch } from '@primer/react';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import Jupyter from '../jupyter/Jupyter';
-import { ColorMode } from '../jupyter/lab/JupyterLabTheme';
+import { ColorMode } from '../jupyter/lab/JupyterLabColorMode';
 import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from './toolbars/NotebookToolbar';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
