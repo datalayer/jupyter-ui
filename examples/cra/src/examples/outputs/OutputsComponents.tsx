@@ -6,7 +6,8 @@
 
 import { useMemo } from 'react';
 import { IOutput } from '@jupyterlab/nbformat';
-import { useJupyter, Kernel, Output } from '@datalayer/jupyter-react';
+import { useJupyter, Kernel } from '@datalayer/jupyter-react';
+import { Output } from '@datalayer/jupyter-react/lib/components/output/Output';
 
 import "./../App.css";
 
