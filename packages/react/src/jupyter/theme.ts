@@ -5,7 +5,8 @@
  */
 
 import { theme as primerTheme } from '@primer/react';
-import merge from 'lodash-es/merge';
+import cloneDeep from 'lodash/cloneDeep.js';
+import merge from 'lodash/merge.js';
 
 /**
  * Theme for Primer React based on JupyterLab theme.
@@ -1154,7 +1155,7 @@ const jupyterThemeDefs = {
   },
 };
 
-const { colorSchemes: primerSchemes, ...primerOthers } = primerTheme;
+const { colorSchemes: primerSchemes, ...primerOthers } = cloneDeep(primerTheme);
 const { colorSchemes: jupyterSchemes, ...jupyterOthers } = jupyterThemeDefs;
 
 // Merge with the light theme to ensure all variables are defined (although
