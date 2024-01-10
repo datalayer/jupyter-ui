@@ -49,6 +49,7 @@
   },
   "workspaces": [
     "docs",
+    "examples/*",
     "packages/*",
     "packages/lite/*",
     "storybook"

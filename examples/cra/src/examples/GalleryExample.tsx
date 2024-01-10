@@ -9,8 +9,9 @@ import { UnderlineNav } from '@primer/react/drafts';
 import { Box } from '@primer/react';
 import {
   useJupyter, Cell, Commands, Console, Dialog, FileBrowser, FileManagerJupyterLab,
-  OutputIPyWidgets, Notebook, Kernel, Output, Settings, Terminal,
+  OutputIPyWidgets, Notebook, Kernel, Settings, Terminal,
 } from '@datalayer/jupyter-react';
+import { Output } from '@datalayer/jupyter-react/lib/components/output/Output';
 import { IOutput } from '@jupyterlab/nbformat';
 import { AppsIcon, CpuIcon } from '@primer/octicons-react';
 import { state, view } from './ipywidgets/IPyWidgetsSimple';

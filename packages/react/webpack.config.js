@@ -70,15 +70,6 @@ module.exports = {
     https: false,
     server: 'http',
     proxy: {
-      /*
-      '/api': {
-        target: JUPYTER_HOST,
-        pathRewrite: { '^/api': '/api/jupyter/api' },
-        ws: true,
-        secure: true,
-        changeOrigin: true,
-      },
-      */
       '/build/pypi': {
         target: 'https://datalayer-assets.s3.us-west-2.amazonaws.com/pypi',
         pathRewrite: { '^/build/pypi': '' },
@@ -90,13 +81,6 @@ module.exports = {
         target:
           'https://datalayer-assets.s3.us-west-2.amazonaws.com/services.js',
         pathRewrite: { '^/services.js': '' },
-        ws: false,
-        secure: false,
-        changeOrigin: true,
-      },
-      '/plotly.js': {
-        target: 'https://cdn.plot.ly',
-        pathRewrite: { '^/plotly.js': 'plotly-2.25.2.min.js' },
         ws: false,
         secure: false,
         changeOrigin: true,
@@ -211,10 +195,6 @@ module.exports = {
     new HtmlWebpackTagsPlugin({
       links: [
         'https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css',
-        'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap',
-      ],
-      tags: [
-        //        'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js'
       ],
       append: false,
       publicPath: false,
