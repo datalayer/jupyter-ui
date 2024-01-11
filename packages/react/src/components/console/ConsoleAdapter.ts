@@ -21,29 +21,51 @@ import { BoxPanel } from '@lumino/widgets';
 import { ServiceManager } from '@jupyterlab/services';
 import { ConsolePanel } from '@jupyterlab/console';
 import { IYText } from '@jupyter/ydoc';
+import { Kernel } from '../../jupyter/kernel';
+
+const DEFAULT_CONSOLE_PATH = 'console-path';
+
+/**
+ * Console adapter options
+ */
+export interface IConsoleAdapterOptions {
+  /**
+   * Default kernel
+   */
+  kernel?: Kernel;
+  /**
+   * Application service manager
+   */
+  serviceManager: ServiceManager;
+}
 
 class ConsoleAdapter {
   private _panel: BoxPanel;
 
-  constructor(serviceManager: ServiceManager) {
+  constructor(options: IConsoleAdapterOptions) {
+    const {kernel, serviceManager} = options;
     this._panel = new BoxPanel();
     this._panel.direction = 'top-to-bottom';
     this._panel.spacing = 0;
     this._panel.addClass('dla-JupyterLab-Console');
-    serviceManager.ready.then(() => {
-      this.setupConsole('console-path', serviceManager, this._panel);
+    Promise.all([serviceManager.ready, kernel?.ready]).then(() => {
+      this.setupConsole(serviceManager, kernel);
     });
   }
 
-  setupConsole(
-    path: string,
-    serviceManager: ServiceManager.IManager,
-    panel: BoxPanel
+  protected setupConsole(
+    serviceManager: ServiceManager,
+    kernel?: Kernel
   ) {
+    const panel = this._panel;
+
+    // Set up a command registry
     const commands = new CommandRegistry();
-    document.addEventListener('keydown', event => {
+    panel.node.addEventListener('keydown', event => {
       commands.processKeydownEvent(event);
     });
+
+    // Set up the text editor
     const themes = new EditorThemeRegistry();
     for (const theme of EditorThemeRegistry.getDefaultThemes()) {
       themes.addTheme(theme);
@@ -93,19 +115,23 @@ class ConsoleAdapter {
     const rendermime = new RenderMimeRegistry({ initialFactories });
     const mimeTypeService = new CodeMirrorMimeTypeService(languages);
     const editorFactory = factoryService.newInlineEditor;
+
     const contentFactory = new ConsolePanel.ContentFactory({ editorFactory });
     const consolePanel = new ConsolePanel({
+      name: kernel?.session.name,
       manager: serviceManager,
       rendermime,
-      path,
+      path: kernel?.session.path ?? DEFAULT_CONSOLE_PATH,
       contentFactory,
       mimeTypeService,
       kernelPreference: {
         shouldStart: true,
-        name: 'python',
-        //        autoStartDefault: true,
+        name: kernel?.connection?.name ?? 'python',
+        id: kernel?.id,
+        language: kernel?.info?.language_info.name,
       },
     });
+
     consolePanel.title.label = 'Console';
     BoxPanel.setStretch(consolePanel, 1);
     panel.addWidget(consolePanel);
@@ -113,6 +139,8 @@ class ConsoleAdapter {
       panel.update();
     });
     const selector = '.jp-ConsolePanel';
+
+    // Add commands
     let command: string;
     command = 'console:clear';
     commands.addCommand(command, {

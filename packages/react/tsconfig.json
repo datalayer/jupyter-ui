@@ -22,6 +22,7 @@
     "preserveWatchOutput": true,
     "resolveJsonModule": true,
     "sourceMap": true,
+    "skipLibCheck": true,
     "strictNullChecks": true,
     "target": "ESNext",
     "types": ["jest", "node"],

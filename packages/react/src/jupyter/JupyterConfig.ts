@@ -69,7 +69,7 @@ export const getJupyterToken = () => config.jupyterToken;
 export const loadJupyterConfig = (
   props: Pick<
     JupyterProps,
-    | 'lite'
+    | 'browserKernelUrl'
     | 'jupyterServerHttpUrl'
     | 'jupyterServerWsUrl'
     | 'collaborative'
@@ -78,7 +78,7 @@ export const loadJupyterConfig = (
   >
 ) => {
   const {
-    lite,
+    browserKernelUrl,
     jupyterServerHttpUrl,
     jupyterServerWsUrl,
     collaborative,
@@ -136,7 +136,7 @@ export const loadJupyterConfig = (
       setJupyterToken(jupyterToken ?? '');
     }
   }
-  if (lite) {
+  if (browserKernelUrl) {
     setJupyterServerHttpUrl(location.protocol + '//' + location.host);
     setJupyterServerWsUrl(
       location.protocol === 'https'

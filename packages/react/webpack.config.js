@@ -20,6 +20,7 @@ const ENTRY =
   // './src/app/App';
   // './src/examples/Cell';
   // './src/examples/Console';
+  './src/examples/ConsoleLite';
   // './src/examples/Deno';
   // './src/examples/IPyLeaflet';
   // './src/examples/IPyReact';
@@ -32,17 +33,17 @@ const ENTRY =
   // './src/examples/KernelExecResult';
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
-  './src/examples/Notebook';
-  // './src/examples/NotebookColorMode';
-  // './src/examples/NotebookKernelChange';
-  // './src/examples/NotebookNbFormat';
-  // './src/examples/NotebookModelChange';
-  // './src/examples/NotebookTheme';
-  // './src/examples/ObservableHQ';
-  // './src/examples/Outputs';
-  // './src/examples/RunningSessions';
-  // './src/examples/Terminal';
-  // './src/examples/Viewer';
+  // './src/examples/Notebook';
+// './src/examples/NotebookColorMode';
+// './src/examples/NotebookKernelChange';
+// './src/examples/NotebookNbFormat';
+// './src/examples/NotebookModelChange';
+// './src/examples/NotebookTheme';
+// './src/examples/ObservableHQ';
+// './src/examples/Outputs';
+// './src/examples/RunningSessions';
+// './src/examples/Terminal';
+// './src/examples/Viewer';
 
 const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == 'true';
 // const JUPYTER_HOST = IS_JUPYTER_SERVER_LOCAL ? "http://localhost:8686" : "https://oss.datalayer.tech';
@@ -76,15 +77,7 @@ module.exports = {
         ws: false,
         secure: false,
         changeOrigin: true,
-      },
-      '/services.js': {
-        target:
-          'https://datalayer-assets.s3.us-west-2.amazonaws.com/services.js',
-        pathRewrite: { '^/services.js': '' },
-        ws: false,
-        secure: false,
-        changeOrigin: true,
-      },
+      }
     },
   },
   devtool,
@@ -134,10 +127,6 @@ module.exports = {
         exclude: /node_modules/,
       },
       {
-        test: /pypi\/.*/,
-        type: 'asset/resource',
-      },
-      {
         resourceQuery: /raw/,
         type: 'asset/source',
       },
@@ -181,6 +170,29 @@ module.exports = {
           fullySpecified: false,
         },
       },
+      // Ship the JupyterLite service worker.
+      {
+        resourceQuery: /text/,
+        type: 'asset/resource',
+        generator: {
+          filename: '[name][ext]'
+        }
+      },
+      // Rule for pyodide kernel
+      {
+        test: /pypi\/.*/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'pypi/[name][ext][query]',
+        },
+      },
+      {
+        test: /schema\/.*/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'schema/[name][ext][query]',
+        },
+      }
     ],
   },
   plugins: [
