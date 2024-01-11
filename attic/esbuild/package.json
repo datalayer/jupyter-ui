@@ -46,7 +46,7 @@
     "react-resizable": "1.11.0",
     "react-router": "6.0.2",
     "react-router-dom": "6.6.0",
-    "react-scripts": "4.0.3",
+    "react-scripts": "4.0.10",
     "react-syntax-highlighter": "15.4.3",
     "redux": "4.2.1",
     "redux-observable": "1.2.0",

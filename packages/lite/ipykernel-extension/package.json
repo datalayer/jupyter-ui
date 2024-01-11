@@ -40,7 +40,7 @@
     "@datalayer/jupyterlite-ipykernel": "0.1.0-beta.13",
     "@datalayer/jupyterlite-kernel": "0.1.0-beta.13",
     "@datalayer/jupyterlite-server": "0.1.0-beta.13",
-    "@jupyterlab/coreutils": "6.0.3"
+    "@jupyterlab/coreutils": "6.0.10"
   },
   "devDependencies": {
     "@babel/core": "7.21.0",

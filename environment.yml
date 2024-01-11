@@ -13,4 +13,4 @@ dependencies:
   - yarn=3.5.0
   - build
   - hatch
-  - jupyterlab==4.0.3
+  - jupyterlab==4.0.10
