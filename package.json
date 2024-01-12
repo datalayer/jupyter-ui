@@ -50,8 +50,7 @@
   "workspaces": [
     "docs",
     "examples/*",
-    "packages/*",
-    "storybook"
+    "packages/*"
   ],
   "devDependencies": {
     "babel-eslint": "10.0.1",
