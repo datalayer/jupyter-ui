@@ -10,7 +10,7 @@ import {
   caretDownIcon,
   caretRightIcon,
   closeIcon,
-  jsonIcon
+  jsonIcon,
 } from '@jupyterlab/ui-components';
 import { UUID } from '@lumino/coreutils';
 import { Message as luminoMessage } from '@lumino/messaging';
@@ -18,7 +18,7 @@ import { Widget, BoxLayout } from '@lumino/widgets';
 import {
   ObjectInspector,
   ObjectLabel,
-  InspectorNodeParams
+  InspectorNodeParams,
 } from 'react-inspector';
 import { KernelSpyModel, ThreadIterator } from './model';
 
@@ -49,7 +49,7 @@ const theme = {
   TREENODE_FONT_FAMILY: 'var(--jp-code-font-family)',
   TREENODE_FONT_SIZE: 'var(--jp-code-font-size)',
   TREENODE_LINE_HEIGHT: 'var(--jp-code-line-height)',
-  TREENODE_PADDING_LEFT: 12
+  TREENODE_PADDING_LEFT: 12,
 };
 
 function msgNodeRenderer(args: InspectorNodeParams) {
@@ -64,7 +64,7 @@ function msgNodeRenderer(args: InspectorNodeParams) {
       />
     );
   }
-  const msg = data as unknown as KernelMessage.IMessage;
+  const msg = (data as unknown) as KernelMessage.IMessage;
   return <span key={'node-label'}>{msg.header.msg_id}</span>;
 }
 
@@ -107,7 +107,7 @@ function Message(props: Message.IProperties): React.ReactElement<any>[] {
         theme={theme as any}
         nodeRenderer={msgNodeRenderer}
       />
-    </div>
+    </div>,
   ];
 }
 
@@ -179,7 +179,7 @@ export class MessageLogView extends VDomRenderer<KernelSpyModel> {
             hasChildren: thread.hasChildren,
             onCollapse: message => {
               this.onCollapse(message);
-            }
+            },
           })
         );
       }
@@ -240,7 +240,7 @@ export class KernelSpyView extends Widget {
       },
       className: 'dla-KernelInspector-collapseAll',
       icon: caretRightIcon,
-      tooltip: 'Collapse all threads'
+      tooltip: 'Collapse all threads',
     });
     this._toolbar.addItem('collapse-all', this.collapseAllButton);
 
@@ -250,7 +250,7 @@ export class KernelSpyView extends Widget {
       },
       className: 'dla-KernelInspector-expandAll',
       icon: caretDownIcon,
-      tooltip: 'Expand all threads'
+      tooltip: 'Expand all threads',
     });
     this._toolbar.addItem('expand-all', this.expandAllButton);
 
@@ -260,7 +260,7 @@ export class KernelSpyView extends Widget {
       },
       className: 'dla-KernelInspector-clearAll',
       icon: closeIcon,
-      tooltip: 'Clear all threads'
+      tooltip: 'Clear all threads',
     });
     this._toolbar.addItem('clear-all', this.clearAllButton);
   }

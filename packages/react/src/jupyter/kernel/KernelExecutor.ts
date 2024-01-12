@@ -5,13 +5,24 @@
  */
 
 import { Signal } from '@lumino/signaling';
-import { IOutput, IStream, IExecuteResult, IDisplayData, IDisplayUpdate, IMimeBundle } from '@jupyterlab/nbformat';
+import {
+  IOutput,
+  IStream,
+  IExecuteResult,
+  IDisplayData,
+  IDisplayUpdate,
+  IMimeBundle,
+} from '@jupyterlab/nbformat';
 import { IOutputAreaModel, OutputAreaModel } from '@jupyterlab/outputarea';
 import { Kernel, KernelMessage } from '@jupyterlab/services';
 import { outputsAsString } from '../../utils/Utils';
 
-export type IOPubMessageHook = (msg: KernelMessage.IIOPubMessage) => boolean | PromiseLike<boolean>;
-export type ShellMessageHook = (msg: KernelMessage.IShellMessage) => boolean | PromiseLike<boolean>;
+export type IOPubMessageHook = (
+  msg: KernelMessage.IIOPubMessage
+) => boolean | PromiseLike<boolean>;
+export type ShellMessageHook = (
+  msg: KernelMessage.IShellMessage
+) => boolean | PromiseLike<boolean>;
 
 export class KernelExecutor {
   private _kernelConnection: Kernel.IKernelConnection;
@@ -19,7 +30,9 @@ export class KernelExecutor {
   private _outputsChanged = new Signal<KernelExecutor, IOutput[]>(this);
   private _model: IOutputAreaModel;
   private _modelChanged = new Signal<KernelExecutor, IOutputAreaModel>(this);
-  private _executeReplyReceived = new Signal<KernelExecutor, IOutputAreaModel>(this);
+  private _executeReplyReceived = new Signal<KernelExecutor, IOutputAreaModel>(
+    this
+  );
   private _future?: Kernel.IFuture<
     KernelMessage.IExecuteRequestMsg,
     KernelMessage.IExecuteReplyMsg
@@ -37,10 +50,16 @@ export class KernelExecutor {
     });
   }
 
-  execute(code: string, iopubMessageHooks: IOPubMessageHook[] = [], shellMessageHooks: ShellMessageHook[] = []): Kernel.IFuture<
-    KernelMessage.IExecuteRequestMsg,
-    KernelMessage.IExecuteReplyMsg
-  > | undefined {
+  execute(
+    code: string,
+    iopubMessageHooks: IOPubMessageHook[] = [],
+    shellMessageHooks: ShellMessageHook[] = []
+  ):
+    | Kernel.IFuture<
+        KernelMessage.IExecuteRequestMsg,
+        KernelMessage.IExecuteReplyMsg
+      >
+    | undefined {
     const future = this._kernelConnection.requestExecute({
       code,
     });
@@ -68,7 +87,7 @@ export class KernelExecutor {
         this._outputsChanged.emit(this._outputs);
         this._model.add(output);
         this._modelChanged.emit(this._model);
-        break;  
+        break;
       case 'display_data':
         this._outputs.push(message.content as IDisplayData);
         this._outputsChanged.emit(this._outputs);
@@ -84,12 +103,12 @@ export class KernelExecutor {
       case 'status':
         // execution_state: 'busy' 'starting' 'terminating' 'restarting' 'initializing' 'connecting' 'disconnected' 'dead' 'unknown' 'idle'
         const executionState = (message.content as any).execution_state;
-        executionState
+        executionState;
         break;
       default:
         break;
     }
-  }
+  };
 
   private _onReply = (message: KernelMessage.IShellMessage): void => {
     if (this._future?.msg.header.msg_id !== message.parent_header.msg_id) {
@@ -102,7 +121,7 @@ export class KernelExecutor {
         const output: IOutput = {
           output_type: 'display_data',
           data: (message.content as IExecuteResult).data as IMimeBundle,
-          metadata: {}
+          metadata: {},
         };
         this._outputs.push(message.content as IExecuteResult);
         this._outputsChanged.emit(this._outputs);
@@ -113,39 +132,43 @@ export class KernelExecutor {
       default:
         break;
     }
-  }
+  };
 
   registerIOPubMessageHook = (msg: IOPubMessageHook) => {
     this._future?.registerMessageHook(msg);
-  }
+  };
 
   get executed(): Promise<IOutputAreaModel> {
     return this._executed;
   }
 
-  get future(): Kernel.IFuture<
-    KernelMessage.IExecuteRequestMsg,
-    KernelMessage.IExecuteReplyMsg
-  > | undefined {
+  get future():
+    | Kernel.IFuture<
+        KernelMessage.IExecuteRequestMsg,
+        KernelMessage.IExecuteReplyMsg
+      >
+    | undefined {
     return this._future;
   }
 
   set future(
-    value: Kernel.IFuture<
-      KernelMessage.IExecuteRequestMsg,
-      KernelMessage.IExecuteReplyMsg
-    > | undefined
+    value:
+      | Kernel.IFuture<
+          KernelMessage.IExecuteRequestMsg,
+          KernelMessage.IExecuteReplyMsg
+        >
+      | undefined
   ) {
     this._future = value;
     if (!value) {
       return;
     }
     value.onIOPub = this._onIOPub;
-    value.onReply = this._onReply
+    value.onReply = this._onReply;
   }
 
   get result(): Promise<string> {
-    return this.executed.then((model) => {
+    return this.executed.then(model => {
       return outputsAsString(model.toJSON());
     });
   }
@@ -173,7 +196,6 @@ export class KernelExecutor {
   get done() {
     return this._future?.done as Promise<KernelMessage.IExecuteReplyMsg>;
   }
-
 }
 
 export default KernelExecutor;

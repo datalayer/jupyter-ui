@@ -5,9 +5,7 @@
  */
 
 export const KernelLauncher = () => {
-  return (
-    <></>
-  )
+  return <></>;
 };
 
 export default KernelLauncher;

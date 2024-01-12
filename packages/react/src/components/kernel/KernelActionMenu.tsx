@@ -4,11 +4,7 @@
  * MIT License
  */
 
-import {
-  ActionMenu,
-  ActionList,
-  IconButton,
-} from '@primer/react';
+import { ActionMenu, ActionList, IconButton } from '@primer/react';
 import {
   KebabHorizontalIcon,
   StopIcon,
@@ -36,7 +32,7 @@ export const KernelActionMenu = (props: Props) => {
       </ActionMenu.Anchor>
       <ActionMenu.Overlay>
         <ActionList>
-        { kernel && 
+          {kernel && (
             <ActionList.Item
               onSelect={e => {
                 kernel.interrupt();
@@ -47,8 +43,8 @@ export const KernelActionMenu = (props: Props) => {
               </ActionList.LeadingVisual>
               Interrupt kernel
             </ActionList.Item>
-          }
-          { kernel && 
+          )}
+          {kernel && (
             <ActionList.Item
               onSelect={e => {
                 kernel.restart();
@@ -59,8 +55,8 @@ export const KernelActionMenu = (props: Props) => {
               </ActionList.LeadingVisual>
               Restart kernel
             </ActionList.Item>
-          }
-          { outputAdapter &&
+          )}
+          {outputAdapter && (
             <ActionList.Item
               variant="danger"
               onSelect={e => {
@@ -72,11 +68,11 @@ export const KernelActionMenu = (props: Props) => {
               </ActionList.LeadingVisual>
               Clear outputs
             </ActionList.Item>
-          }
+          )}
         </ActionList>
       </ActionMenu.Overlay>
     </ActionMenu>
   );
-}
+};
 
 export default KernelActionMenu;

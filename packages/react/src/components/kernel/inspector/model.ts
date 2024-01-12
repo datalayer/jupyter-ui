@@ -69,9 +69,9 @@ export class ThreadIterator {
         // But do return the current index position arguments and
         return {
           value: { args: entry.args, hasChildren: entry.children.length > 0 },
-          done: false
+          done: false,
         };
-      }
+      },
     };
   }
 
@@ -204,7 +204,7 @@ export class KernelSpyModel extends VDomModel {
     });
     const thread: MessageThread = {
       args: this._messages[msgId],
-      children: childThreads
+      children: childThreads,
     };
     return thread;
   }

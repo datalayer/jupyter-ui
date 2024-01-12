@@ -193,16 +193,16 @@ export abstract class BaseWidgetManager
     }
 
     let allVersions = this._registry.getAllVersions(moduleName);
-    const semanticVersion = moduleVersion.split('.').length === 2 ?
-      moduleVersion + '.0'
-      :
-      moduleVersion;
+    const semanticVersion =
+      moduleVersion.split('.').length === 2
+        ? moduleVersion + '.0'
+        : moduleVersion;
     if (!allVersions) {
       const module = await requireLoader(moduleName, semanticVersion);
       const widgetRegistryData = {
         name: moduleName,
         version: semanticVersion.replaceAll('^', ''),
-        exports: { ...module }
+        exports: { ...module },
       };
       this.register(widgetRegistryData);
       allVersions = this._registry.getAllVersions(moduleName);
@@ -433,7 +433,10 @@ export class NotebookWidgetManager extends BaseWidgetManager {
         this._handleKernelConnectionStatusChange(args);
       }
     );
-    kernelConnection?.registerCommTarget(this.comm_target_name, this._handleCommOpen);
+    kernelConnection?.registerCommTarget(
+      this.comm_target_name,
+      this._handleCommOpen
+    );
     /*
     if (this._context.sessionContext.session?.kernel) {
       this._handleKernelChanged({

@@ -6,7 +6,12 @@
 
 import { useState, useEffect } from 'react';
 import { useInterval } from 'usehooks-ts';
-import { Sparklines, SparklinesLine, SparklinesSpots, SparklinesBars } from 'react-sparklines';
+import {
+  Sparklines,
+  SparklinesLine,
+  SparklinesSpots,
+  SparklinesBars,
+} from 'react-sparklines';
 import { Text, Box } from '@primer/react';
 import Kernel from '../../jupyter/kernel/Kernel';
 
@@ -65,22 +70,26 @@ print(f"""{{
   "cpu_count": "{cpu_count}",
   "host_virtual_memory": {str(host_virtual_memory)}
 }}""")
-`
+`;
 type Props = {
   kernel?: Kernel;
-}
+};
 
 export const KernelUsage = (props: Props) => {
   const { kernel } = props;
   const [usage, setUsage] = useState({});
   const [virtualMemoryTotal, setVirtualMemoryTotal] = useState<number>();
-  const [virtualMemoryAvailable, setVirtualMemoryAvailable] = useState(new Array<number>());
+  const [virtualMemoryAvailable, setVirtualMemoryAvailable] = useState(
+    new Array<number>()
+  );
   // { "kernel_cpu": "0", "cpu_count": "4", "host_virtual_memory": {"total": 15335940096, "available": 13279002624, "percent": 13.4, "used": 1704222720, "free": 11412717568, "active": 696995840, "inactive": 2084093952, "buffers": 237412352, "cached": 1981587456, "shared": 4796416, "slab": 989294592} }
   const refreshUsage = async () => {
     const result = await kernel!.execute(REQUEST_USAGE)?.result;
     if (result) {
-      const usage = JSON.parse(result.replaceAll("'", "\""));
-      const v = virtualMemoryAvailable.concat([usage['host_virtual_memory']['available'] / 1000]);
+      const usage = JSON.parse(result.replaceAll("'", '"'));
+      const v = virtualMemoryAvailable.concat([
+        usage['host_virtual_memory']['available'] / 1000,
+      ]);
       if (v.length > MAX_ITEMS) {
         v.shift();
       }
@@ -88,7 +97,7 @@ export const KernelUsage = (props: Props) => {
       setVirtualMemoryTotal(usage['host_virtual_memory']['total'] / 1000);
       setUsage(usage);
     }
-  }
+  };
   useEffect(() => {
     kernel?.ready.then(async () => {
       refreshUsage();
@@ -99,24 +108,31 @@ export const KernelUsage = (props: Props) => {
       refreshUsage();
     }
   }, 1000);
-  return (
-    usage
-    ?
+  return usage ? (
+    <Box>
       <Box>
-        <Box>
-          <Text>Virtual Memory Available</Text>
-        </Box>
-        <Box>
-          <Sparklines data={virtualMemoryAvailable} limit={MAX_ITEMS} svgHeight={100} svgWidth={200} min={0} max={virtualMemoryTotal}>
-            <SparklinesBars style={{ stroke: "white", fill: "#41c3f9", fillOpacity: ".25" }} />
-            <SparklinesLine style={{ stroke: "#41c3f9", fill: "none" }} />
-            <SparklinesSpots />
-          </Sparklines>
-        </Box>
+        <Text>Virtual Memory Available</Text>
       </Box>
-    :
-      <></>
-  )
+      <Box>
+        <Sparklines
+          data={virtualMemoryAvailable}
+          limit={MAX_ITEMS}
+          svgHeight={100}
+          svgWidth={200}
+          min={0}
+          max={virtualMemoryTotal}
+        >
+          <SparklinesBars
+            style={{ stroke: 'white', fill: '#41c3f9', fillOpacity: '.25' }}
+          />
+          <SparklinesLine style={{ stroke: '#41c3f9', fill: 'none' }} />
+          <SparklinesSpots />
+        </Sparklines>
+      </Box>
+    </Box>
+  ) : (
+    <></>
+  );
 };
 
 export default KernelUsage;

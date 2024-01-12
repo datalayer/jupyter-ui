@@ -6,12 +6,7 @@
 
 import { useState, useEffect } from 'react';
 import { Table, DataTable, Blankslate } from '@primer/react/drafts';
-import {
-  Box,
-  Text,
-  IconButton,
-  Spinner,
-} from '@primer/react';
+import { Box, Text, IconButton, Spinner } from '@primer/react';
 import {
   CrossMarkIcon,
   JupyterIcon,
@@ -55,7 +50,7 @@ export const Kernels = () => {
             const oldInfo = kernelSpecInfos.get(kernelSpecName);
             const newInfo = {
               description: metadata['description'] as string,
-              notebookExampleUrl: metadata['notebook_example_url'] as string
+              notebookExampleUrl: metadata['notebook_example_url'] as string,
             };
             if (!JSONExt.deepEqual(oldInfo ?? {}, newInfo)) {
               newSpecs.set(kernelSpecName, newInfo);
@@ -79,8 +74,8 @@ export const Kernels = () => {
     });
   };
   return (
-    <Box mt={3} style={{width: '1000px'}}>
-     { kernels ?
+    <Box mt={3} style={{ width: '1000px' }}>
+      {kernels ? (
         <Table.Container>
           <Table.Title as="h2" id="images">
             Kernels
@@ -96,19 +91,19 @@ export const Kernels = () => {
               {
                 header: 'Name',
                 field: 'name',
-                renderCell: row => <Text>{row.name}</Text>
+                renderCell: row => <Text>{row.name}</Text>,
               },
               {
                 header: 'Description',
                 id: 'description',
                 renderCell: row => (
                   <Text>{kernelSpecInfos.get(row.name)?.description}</Text>
-                )
+                ),
               },
               {
                 header: 'State',
                 field: 'execution_state',
-                renderCell: row => <Text>{row.execution_state}</Text>
+                renderCell: row => <Text>{row.execution_state}</Text>,
               },
               {
                 header: 'Example',
@@ -120,12 +115,11 @@ export const Kernels = () => {
                         aria-label={`Create an example notebook for kernel ${row.name}`}
                         icon={NotebookIcon}
                         size="small"
-                        onClick={() => {
-                        }}
+                        onClick={() => {}}
                       />
                     }
                   </>
-                )
+                ),
               },
               {
                 header: 'Delete',
@@ -138,20 +132,17 @@ export const Kernels = () => {
                         icon={CrossMarkIcon}
                         size="small"
                         onClick={() => {
-                          deleteKernel(
-                            serviceManager!,
-                            row.id
-                          );
+                          deleteKernel(serviceManager!, row.id);
                         }}
                       />
                     }
                   </>
-                )
-              }
+                ),
+              },
             ]}
           />
         </Table.Container>
-      :
+      ) : (
         <Blankslate border>
           <Blankslate.Visual>
             <JupyterIcon size="medium" />
@@ -166,9 +157,9 @@ export const Kernels = () => {
             </Box>
           </Blankslate.Description>
         </Blankslate>
-      }  
+      )}
     </Box>
-  )
+  );
 };
 
 export default Kernels;

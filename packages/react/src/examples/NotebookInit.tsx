@@ -35,9 +35,12 @@ injectableStore.inject('init', (state: IJupyterReactState, _action: any) => {
 });
 
 const useKernel = () => {
-  const { kernelManager, serverSettings } = useJupyter();
+  const { kernelManager, serviceManager } = useJupyter();
   const [kernel, setKernel] = useState<Kernel>();
   useEffect(() => {
+    if(!serviceManager) {
+      return;
+    }
     let startedKernel: Kernel;
     kernelManager?.ready.then(() => {
       const customKernel = new Kernel({
@@ -45,7 +48,8 @@ const useKernel = () => {
         kernelName: JUPYTER_KERNEL_NAME,
         kernelSpecName: JUPYTER_KERNEL_NAME,
         kernelType: 'notebook',
-        serverSettings,
+        kernelspecsManager: serviceManager.kernelspecs,
+        sessionManager: serviceManager.sessions
       });
       customKernel.ready.then(() => {
         startedKernel = customKernel;
@@ -57,7 +61,7 @@ const useKernel = () => {
         kernelManager?.shutdown(startedKernel.id).then();
       }
     };
-  }, [kernelManager, serverSettings]);
+  }, [kernelManager, serviceManager]);
   return kernel;
 };
 

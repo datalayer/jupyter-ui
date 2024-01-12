@@ -41,7 +41,8 @@
   margin-bottom: 3px;
 }
 
-.dla-KernelInspector-view .dla-KernelInspector-divider.dla-KernelInspector-logheader {
+.dla-KernelInspector-view
+  .dla-KernelInspector-divider.dla-KernelInspector-logheader {
   border-bottom: var(--jp-border-width) solid var(--jp-border-color0);
 }
 

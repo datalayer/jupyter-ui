@@ -35,6 +35,10 @@ export type JupyterContextType = {
    *
    * If `true`, it does not ensure a default kernel will
    * be created successfully.
+   * 
+   * This is useful to not mount to quickly a Lumino Widget
+   * to be unmount right away when the default kernel will
+   * be available.
    */
   defaultKernelIsLoading: boolean;
   injectableStore: InjectableStore;

@@ -32,7 +32,6 @@ export const withThemeProvider = (
   Story: React.FC<React.PropsWithChildren<StoryContext>>,
   context: StoryContext
 ) => {
-
   // used for testing ThemeProvider.stories.tsx
   if (context.parameters.disableThemeDecorator) return Story(context);
 
@@ -45,7 +44,8 @@ export const withThemeProvider = (
     script.onload = () => {
       setRequirejsIsLoaded(true);
     };
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js';
+    script.src =
+      'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js';
     document.body.appendChild(script);
   }, []);
 
@@ -62,9 +62,7 @@ export const withThemeProvider = (
         <GlobalStyle />
       )}
       <BaseStyles>
-        <div id="html-addon-root">
-          {requirejsIsLoaded && Story(context)}
-        </div>
+        <div id="html-addon-root">{requirejsIsLoaded && Story(context)}</div>
       </BaseStyles>
     </ThemeProvider>
   );

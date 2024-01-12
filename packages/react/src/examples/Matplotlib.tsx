@@ -16,7 +16,7 @@ import notebook from './notebooks/Matplotlib.ipynb.json';
 
 const Matplotlib = () => (
   <Jupyter disableCssLoading={true}>
-    <JupyterLabCss colorMode="light"/>
+    <JupyterLabCss colorMode="light" />
     <Notebook
       nbformat={notebook as INotebookContent}
       uid="notebook-matplotlib-uid"

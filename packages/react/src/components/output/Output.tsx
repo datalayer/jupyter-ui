@@ -13,7 +13,7 @@ import { IOutputAreaModel } from '@jupyterlab/outputarea';
 import { KernelMessage } from '@jupyterlab/services';
 import { useJupyter } from '../../jupyter/JupyterContext';
 import Kernel from '../../jupyter/kernel/Kernel';
-import { KernelActionMenu, KernelProgressBar }from './../kernel'
+import { KernelActionMenu, KernelProgressBar } from './../kernel';
 import Lumino from '../lumino/Lumino';
 import CodeMirrorEditor from '../codemirror/CodeMirrorEditor';
 import { selectExecute, outputActions, outputReducer } from './OutputRedux';
@@ -78,7 +78,8 @@ export const Output = (props: IOutputProps) => {
   }, []);
   useEffect(() => {
     if (id && kernel) {
-      const adapter = propsAdapter ?? new OutputAdapter(kernel, outputs ?? [], model);
+      const adapter =
+        propsAdapter ?? new OutputAdapter(kernel, outputs ?? [], model);
       if (receipt) {
         adapter.outputArea.model.changed.connect((sender, change) => {
           if (change.type === 'add') {
@@ -173,10 +174,11 @@ export const Output = (props: IOutputProps) => {
           <Box flexGrow={1}>
             {kernelStatus !== 'idle' && <KernelProgressBar />}
           </Box>
-          { showControl && <Box style={{ marginTop: '-13px' }}>
-            <KernelActionMenu kernel={kernel} outputAdapter={adapter} />
-          </Box>
-          }
+          {showControl && (
+            <Box style={{ marginTop: '-13px' }}>
+              <KernelActionMenu kernel={kernel} outputAdapter={adapter} />
+            </Box>
+          )}
         </Box>
       )}
       {outputs && (
@@ -200,16 +202,15 @@ export const Output = (props: IOutputProps) => {
             },
           }}
         >
-          { lumino
+          {lumino
             ? adapter && <Lumino>{adapter.outputArea}</Lumino>
             : outputs && (
-              <>
-                {outputs.map((output: IOutput) => {
-                  return <OutputRenderer output={output} />;
-                })}
-              </>
-            )
-          }
+                <>
+                  {outputs.map((output: IOutput) => {
+                    return <OutputRenderer output={output} />;
+                  })}
+                </>
+              )}
         </Box>
       )}
     </>

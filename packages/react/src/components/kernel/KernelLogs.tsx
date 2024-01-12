@@ -5,9 +5,7 @@
  */
 
 export const KernelLogs = () => {
-  return (
-    <></>
-  )
+  return <></>;
 };
 
 export default KernelLogs;

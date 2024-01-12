@@ -11,7 +11,7 @@ import NotebookToolbar from './toolbars/NotebookToolbar';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 
 const Deno = () => (
-  <Jupyter defaultKernelName='deno'>
+  <Jupyter defaultKernelName="deno">
     <Notebook
       path="deno/examples/10.2_Polar DataFrames.ipynb"
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).

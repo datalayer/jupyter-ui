@@ -43,7 +43,7 @@ export const outputsAsString = (outputs: IOutput[]) => {
         }
         break;
       }
-      case 'stream': { 
+      case 'stream': {
         if (output.text) {
           result = result + output.text + '\n';
         }
@@ -57,16 +57,22 @@ export const outputsAsString = (outputs: IOutput[]) => {
       }
       case 'execute_result': {
         if (output.data) {
-          const display = (output.data as any)['text/html'] ?? (output.data as any)['text/plain'] ?? '';
+          const display =
+            (output.data as any)['text/html'] ??
+            (output.data as any)['text/plain'] ??
+            '';
           result = result + display + '\n';
         }
         break;
       }
       default: {
-        console.warn('Unknown output type while converting output to string', output);
+        console.warn(
+          'Unknown output type while converting output to string',
+          output
+        );
       }
     }
-  })
+  });
   return result;
 };
 
