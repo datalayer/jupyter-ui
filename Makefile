@@ -70,11 +70,4 @@ define release_package
 endef
 
 publish: # publish the npm packages
-	@exec $(call release_package,lite/settings)
-	@exec $(call release_package,lite/session)
-	@exec $(call release_package,lite/server)
-	@exec $(call release_package,lite/server-extension)
-	@exec $(call release_package,lite/kernel)
-	@exec $(call release_package,lite/ipykernel)
-	@exec $(call release_package,lite/ipykernel-extension)
 	@exec $(call release_package,packages/react)

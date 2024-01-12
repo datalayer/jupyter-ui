@@ -54,13 +54,6 @@ module.exports = {
         secure: false,
         changeOrigin: true,
       },
-      '/services.js': {
-        target: 'https://datalayer-assets.s3.us-west-2.amazonaws.com/services.js',
-        pathRewrite: { '^/services.js': '' },
-        ws: false,
-        secure: false,
-        changeOrigin: true,
-      },
       '/api/jupyter': {
         target: JUPYTER_HOST,
         ws: true,
@@ -114,10 +107,6 @@ module.exports = {
         exclude: /node_modules/,
       },
       {
-        test: /pypi\/.*/,
-        type: 'asset/resource',
-      },
-      {
         resourceQuery: /raw/,
         type: 'asset/source',
       },
@@ -162,7 +151,30 @@ module.exports = {
         resolve: {
           fullySpecified: false
         }
-      }
+      },
+      // Ship the JupyterLite service worker.
+      {
+        resourceQuery: /text/,
+        type: 'asset/resource',
+        generator: {
+          filename: '[name][ext]',
+        },
+      },
+      // Rule for pyodide kernel
+      {
+        test: /pypi\/.*/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'pypi/[name][ext][query]',
+        },
+      },
+      {
+        test: /schema\/.*/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'schema/[name][ext][query]',
+        },
+      },
     ]
   },
   plugins: [

@@ -19,10 +19,7 @@ import {
   ExportMap,
   ExportData,
 } from '@jupyter-widgets/base/lib/registry';
-import {
-  ICallbacks,
-  shims,
-} from '@jupyter-widgets/base/lib/services-shim';
+import { ICallbacks, shims } from '@jupyter-widgets/base/lib/services-shim';
 import { requireLoader } from '@jupyter-widgets/html-manager/lib/libembed-amd';
 import { HTMLManager } from '@jupyter-widgets/html-manager/lib/htmlmanager';
 import { valid } from 'semver';
@@ -57,12 +54,12 @@ export class IPyWidgetsClassicManager extends HTMLManager {
   private _registry: SemVerCache<ExportData>;
 
   constructor(options?: {
-      loader?: (moduleName: string, moduleVersion: string) => Promise<any>;
+    loader?: (moduleName: string, moduleVersion: string) => Promise<any>;
   }) {
     super(options);
     (window as any).define('@jupyter-widgets/base', base);
     (window as any).define('@jupyter-widgets/controls', controls);
-      this._registry = new SemVerCache<ExportData>();
+    this._registry = new SemVerCache<ExportData>();
     this.register({
       name: '@jupyter-widgets/base',
       version: base.JUPYTER_WIDGETS_VERSION,
@@ -84,7 +81,7 @@ export class IPyWidgetsClassicManager extends HTMLManager {
       name: MODULE_NAME,
       version: MODULE_VERSION,
       exports: () => import('./../plotly/index'),
-    })
+    });
     this.register = this.register.bind(this);
     this.registerWithKernel = this.registerWithKernel.bind(this);
     this._getRegistry = this._getRegistry.bind(this);
@@ -97,17 +94,20 @@ export class IPyWidgetsClassicManager extends HTMLManager {
       this._commRegistration.dispose();
     }
     if (kernelConnection) {
-      kernelConnection.registerCommTarget(this.comm_target_name, this._handleCommOpen);
+      kernelConnection.registerCommTarget(
+        this.comm_target_name,
+        this._handleCommOpen
+      );
     }
   }
 
-  private async _handleCommOpen (
+  private async _handleCommOpen(
     comm: Kernel.IComm,
     message: KernelMessage.ICommOpenMsg
   ): Promise<void> {
     const classicComm = new shims.services.Comm(comm);
     await this.handle_comm_open(classicComm, message);
-  };
+  }
 
   private _getRegistry() {
     return this._registry;
@@ -151,16 +151,16 @@ export class IPyWidgetsClassicManager extends HTMLManager {
     }
 
     let allVersions = this._getRegistry().getAllVersions(moduleName);
-    const semanticVersion = moduleVersion.split('.').length === 2 ?
-      moduleVersion + '.0'
-      :
-      moduleVersion;
+    const semanticVersion =
+      moduleVersion.split('.').length === 2
+        ? moduleVersion + '.0'
+        : moduleVersion;
     if (!allVersions) {
       const module = await requireLoader(moduleName, semanticVersion);
       const widgetRegistryData = {
         name: moduleName,
         version: semanticVersion.replaceAll('^', ''),
-        exports: { ...module }
+        exports: { ...module },
       };
       this.register(widgetRegistryData);
       allVersions = this._getRegistry().getAllVersions(moduleName);
@@ -218,9 +218,7 @@ export class IPyWidgetsClassicManager extends HTMLManager {
     }).then((reply: any) => reply.content.comms);
   }
 
-  public loadBundledIPyWidgets = (
-    ipywidgets: BundledIPyWidgets[],
-  ): void => {
+  public loadBundledIPyWidgets = (ipywidgets: BundledIPyWidgets[]): void => {
     const loadIPyWidget = (name: string, version: string, module: any) => {
       requireLoader(name, version).then(module => {
         //
@@ -229,11 +227,9 @@ export class IPyWidgetsClassicManager extends HTMLManager {
     ipywidgets.forEach(ipywidget => {
       loadIPyWidget(ipywidget.name, ipywidget.version, ipywidget.module);
     });
-  }
+  };
 
-  public loadExternalIPyWidgets(
-    ipywidgets: ExternalIPyWidgets[],
-  ): void {
+  public loadExternalIPyWidgets(ipywidgets: ExternalIPyWidgets[]): void {
     const loadIPyWidget = (name: string, version: string) => {
       requireLoader(name, version).then(module => {
         //
@@ -242,12 +238,11 @@ export class IPyWidgetsClassicManager extends HTMLManager {
     ipywidgets.forEach(ipywidget => {
       loadIPyWidget(ipywidget.name, ipywidget.version);
     });
-  };
+  }
 
   register(data: IWidgetRegistryData): void {
     this._getRegistry().set(data.name, data.version, data.exports);
   }
-
 }
 
 export default IPyWidgetsClassicManager;

@@ -5,10 +5,13 @@
  */
 
 import { KernelMessage } from '@jupyterlab/services';
-import { IKernelConnection, IShellFuture } from '@jupyterlab/services/lib/kernel/kernel';
+import {
+  IKernelConnection,
+  IShellFuture,
+} from '@jupyterlab/services/lib/kernel/kernel';
 import {
   IExecuteReplyMsg,
-  IExecuteRequestMsg
+  IExecuteRequestMsg,
 } from '@jupyterlab/services/lib/kernel/messages';
 import { ISignal, Signal } from '@lumino/signaling';
 import Kernel from './../../../jupyter/kernel/Kernel';
@@ -104,5 +107,4 @@ export namespace KernelConnector {
   export interface IOptions {
     kernel: Kernel;
   }
-
 }

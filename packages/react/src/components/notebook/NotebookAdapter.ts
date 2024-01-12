@@ -276,13 +276,16 @@ export class NotebookAdapter {
           this._iPyWidgetsClassicManager?.registerWithKernel(
             this._kernel.connection
           );
-        }
-      );
+        });
       if (this._bundledIPyWidgets) {
-        this._iPyWidgetsClassicManager.loadBundledIPyWidgets(this._bundledIPyWidgets);
+        this._iPyWidgetsClassicManager.loadBundledIPyWidgets(
+          this._bundledIPyWidgets
+        );
       }
       if (this._externalIPyWidgets) {
-        this._iPyWidgetsClassicManager.loadExternalIPyWidgets(this._externalIPyWidgets);
+        this._iPyWidgetsClassicManager.loadExternalIPyWidgets(
+          this._externalIPyWidgets
+        );
       }
     }
 
@@ -333,7 +336,7 @@ export class NotebookAdapter {
           this._tracker!,
           this._bundledIPyWidgets,
           this._kernel.connection
-          );
+        );
       }
       if (this._externalIPyWidgets) {
         registerExternalIPyWidgets(
@@ -341,7 +344,7 @@ export class NotebookAdapter {
           this._tracker!,
           this._externalIPyWidgets,
           this._kernel.connection
-          );
+        );
       }
     }
 
@@ -414,27 +417,32 @@ export class NotebookAdapter {
     window.addEventListener('resize', () => {
       this._notebookPanel?.update();
     });
-    const isNbFormat = this._path !== undefined && this._path !== '' ? false : true;
+    const isNbFormat =
+      this._path !== undefined && this._path !== '' ? false : true;
     if (isNbFormat) {
       // Fixes if nbformat is provided and we don't want to interact with the content manager.
-      (this._context as any).initialize = async (isNew: boolean): Promise<void> => {
+      (this._context as any).initialize = async (
+        isNew: boolean
+      ): Promise<void> => {
         (this._context as Context<INotebookModel>).model.dirty = false;
         const now = new Date().toISOString();
         const model: Contents.IModel = {
           path: this._uid,
           name: this._uid,
-          type: "notebook",
+          type: 'notebook',
           content: undefined,
           writable: true,
           created: now,
           last_modified: now,
-          mimetype: "application/x-ipynb+json",
-          format: "json"
+          mimetype: 'application/x-ipynb+json',
+          format: 'json',
         };
         (this._context as any)._updateContentsModel(model);
         await (this._context as any)._populate();
-        (this._context as Context<INotebookModel>).model.sharedModel.clearUndoHistory();
-      }
+        (this._context as Context<
+          INotebookModel
+        >).model.sharedModel.clearUndoHistory();
+      };
     }
     this._context.initialize(isNbFormat).then(() => {
       if (isNbFormat) {

@@ -46,6 +46,29 @@ export default function (
                   fullySpecified: false
               }
             },
+            // Ship the JupyterLite service worker.
+            {
+              resourceQuery: /text/,
+              type: 'asset/resource',
+              generator: {
+                filename: '[name][ext]',
+              },
+            },
+            // Rule for pyodide kernel
+            {
+              test: /pypi\/.*/,
+              type: 'asset/resource',
+              generator: {
+                filename: 'pypi/[name][ext][query]',
+              },
+            },
+            {
+              test: /schema\/.*/,
+              type: 'asset/resource',
+              generator: {
+                filename: 'schema/[name][ext][query]',
+              },
+            },
           ],
         },
         plugins: [

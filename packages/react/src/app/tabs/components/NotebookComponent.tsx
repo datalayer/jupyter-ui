@@ -16,7 +16,7 @@ const NotebookComponent = () => {
         nbformat={nbformat}
         uid="notebook-uid"
         cellSidebarMargin={60}
-        height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
+        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         CellSidebar={CellSidebarNew}
       />
   */}</>

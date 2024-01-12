@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2021-2023 Datalayer, Inc.
  *
- * MIT License  
+ * MIT License
  */
 
 import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
@@ -439,17 +439,17 @@ export const NotebookCommands = (
     {
       selector: '.jp-Notebook:focus',
       keys: ['M'],
-      command: cmdIds.changeCellTypeToMarkdown
+      command: cmdIds.changeCellTypeToMarkdown,
     },
     {
       selector: '.jp-Notebook:focus',
       keys: ['R'],
-      command: cmdIds.changeCellTypeToRaw
+      command: cmdIds.changeCellTypeToRaw,
     },
     {
       selector: '.jp-Notebook:focus',
       keys: ['Y'],
-      command: cmdIds.changeCellTypeToCode
+      command: cmdIds.changeCellTypeToCode,
     },
   ];
   bindings.map(binding => commandRegistry.addKeyBinding(binding));
@@ -461,7 +461,6 @@ export const NotebookCommands = (
       command: cmdIds.save,
     });
   }
-
 };
 
 export default NotebookCommands;

@@ -58,13 +58,7 @@ jobs:
         # Bump the version
         run: |
             npm version --preid dev --no-git-tag-version prerelease \
-              --workspace ./packages/react \
-              --workspace ./packages/lite/ipykernel \
-              --workspace ./packages/lite/ipykernel-extension \
-              --workspace ./packages/lite/kernel \
-              --workspace ./packages/lite/server \
-              --workspace ./packages/lite/server-extension \
-              --workspace ./packages/lite/session
+              --workspace ./packages/react
 
             git config --global user.name "github-actions[bot]"
             git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -72,13 +66,7 @@ jobs:
       -
         run: |
           npm publish --access public --tag next \
-            --workspace ./packages/react \
-            --workspace ./packages/lite/ipykernel \
-            --workspace ./packages/lite/ipykernel-extension \
-            --workspace ./packages/lite/kernel \
-            --workspace ./packages/lite/server \
-            --workspace ./packages/lite/server-extension \
-            --workspace ./packages/lite/session
+            --workspace ./packages/react
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

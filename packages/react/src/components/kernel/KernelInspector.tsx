@@ -12,7 +12,7 @@ import { Box } from '@primer/react';
 
 type Props = {
   kernel?: Kernel;
-}
+};
 
 export const KernelInspector = (props: Props) => {
   const { kernel } = props;
@@ -23,25 +23,23 @@ export const KernelInspector = (props: Props) => {
       setKernelSpyView(kernelSpyView);
     });
   }, [kernel]);
-  return (
-    kernelSpyView
-    ?
-      <Box
-        sx={{
-          '& dla-KernelInspector-view': {
-            height: '1000px',
-          },
-          '& .dla-KernelInspector-messagelog': {
-            height: '100px',
-            minHeight: '100px',
-          },
-        }}
-      >
-        <Lumino>{kernelSpyView}</Lumino>
-      </Box>
-    :
-      <></>
-  )
+  return kernelSpyView ? (
+    <Box
+      sx={{
+        '& dla-KernelInspector-view': {
+          height: '1000px',
+        },
+        '& .dla-KernelInspector-messagelog': {
+          height: '100px',
+          minHeight: '100px',
+        },
+      }}
+    >
+      <Lumino>{kernelSpyView}</Lumino>
+    </Box>
+  ) : (
+    <></>
+  );
 };
 
 export default KernelInspector;

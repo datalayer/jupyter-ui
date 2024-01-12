@@ -122,16 +122,17 @@ const NotebookToolbar = () => {
 };
 
 const NotebookKernelChange = () => {
-  const { kernelManager, serverSettings } = useJupyter();
+  const { kernelManager, serviceManager } = useJupyter();
   const dispatch = useDispatch();
   const changeKernel = () => {
-    if (kernelManager) {
+    if (serviceManager && kernelManager) {
       const kernel = new Kernel({
         kernelManager,
         kernelName: 'defaultKernel',
         kernelSpecName: 'python',
         kernelType: 'notebook',
-        serverSettings,
+        kernelspecsManager: serviceManager.kernelspecs,
+        sessionManager: serviceManager.sessions,
       });
       kernel.ready.then(() => {
         dispatch(notebookActions.changeKernel({ uid: NOTEBOOK_UID_2, kernel }));
@@ -189,7 +190,7 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <Jupyter lite={false} terminals={true}>
+  <Jupyter terminals={true}>
     <Notebook
       nbformat={notebook as INotebookContent}
       uid={NOTEBOOK_UID_3}

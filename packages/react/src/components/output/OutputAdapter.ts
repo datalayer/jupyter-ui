@@ -5,7 +5,11 @@
  */
 
 import { IOutput } from '@jupyterlab/nbformat';
-import { IOutputAreaModel, OutputArea, OutputAreaModel } from '@jupyterlab/outputarea';
+import {
+  IOutputAreaModel,
+  OutputArea,
+  OutputAreaModel,
+} from '@jupyterlab/outputarea';
 import {
   IRenderMime,
   RenderMimeRegistry,
@@ -14,7 +18,10 @@ import {
 import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
 import { requireLoader as loader } from '@jupyter-widgets/html-manager/lib/libembed-amd';
-import { WIDGET_MIMETYPE, WidgetRenderer,} from '@jupyter-widgets/html-manager/lib/output_renderers';
+import {
+  WIDGET_MIMETYPE,
+  WidgetRenderer,
+} from '@jupyter-widgets/html-manager/lib/output_renderers';
 import { IPyWidgetsClassicManager } from '../../jupyter/ipywidgets/classic/IPyWidgetsClassicManager';
 import Kernel from '../../jupyter/kernel/Kernel';
 
@@ -25,7 +32,11 @@ export class OutputAdapter {
   private _rendermime: RenderMimeRegistry;
   private _iPyWidgetsClassicManager: IPyWidgetsClassicManager;
 
-  public constructor(kernel?: Kernel, outputs?: IOutput[], outputAreaModel?: IOutputAreaModel) {
+  public constructor(
+    kernel?: Kernel,
+    outputs?: IOutput[],
+    outputAreaModel?: IOutputAreaModel
+  ) {
     this._kernel = kernel;
     this._renderers = standardRendererFactories.filter(
       factory => factory.mimeTypes[0] !== 'text/javascript'
@@ -49,10 +60,12 @@ export class OutputAdapter {
     );
     //    const widgetRegistry = activateWidgetExtension(this._rendermime);
     //    activatePlotlyWidgetExtension(widgetRegistry);
-    const model = outputAreaModel ?? new OutputAreaModel({
-      trusted: true,
-      values: outputs,
-    });
+    const model =
+      outputAreaModel ??
+      new OutputAreaModel({
+        trusted: true,
+        values: outputs,
+      });
     this._outputArea = new OutputArea({
       model,
       rendermime: this._rendermime,

@@ -19,16 +19,17 @@ const NOTEBOOK_UID = 'notebook-kernel-id';
 const NEW_KERNEL_NAME = 'python-bis';
 
 const NotebookKernelChange = () => {
-  const { kernelManager, serverSettings } = useJupyter();
+  const { kernelManager, serviceManager } = useJupyter();
   const dispatch = useDispatch();
   const changeKernel = () => {
-    if (kernelManager) {
+    if (kernelManager && serviceManager) {
       const kernel = new Kernel({
         kernelManager,
         kernelName: NEW_KERNEL_NAME,
         kernelSpecName: NEW_KERNEL_NAME,
         kernelType: 'notebook',
-        serverSettings,
+        kernelspecsManager: serviceManager.kernelspecs,
+        sessionManager: serviceManager.sessions,
       });
       kernel.ready.then(() => {
         dispatch(notebookActions.changeKernel({ uid: NOTEBOOK_UID, kernel }));

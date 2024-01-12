@@ -11,7 +11,7 @@ import NotebookToolbar from './toolbars/NotebookToolbar';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 
 const ObservableHQ = () => (
-  <Jupyter defaultKernelName='deno'>
+  <Jupyter defaultKernelName="deno">
     <Notebook
       path="deno/display-js/Observable Plot.ipynb"
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).

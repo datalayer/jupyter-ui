@@ -5,76 +5,67 @@
  */
 
 import { find } from '@lumino/algorithm';
-import { UUID } from '@lumino/coreutils';
+import { PromiseDelegate, UUID } from '@lumino/coreutils';
 import {
   Kernel as JupyterKernel,
-  ServerConnection,
-  KernelManager,
-  SessionManager,
   KernelMessage,
-  KernelSpecManager,
+  KernelSpec,
+  Session,
 } from '@jupyterlab/services';
 import { ISessionConnection } from '@jupyterlab/services/lib/session/session';
 import { ConnectionStatus } from '@jupyterlab/services/lib/kernel/kernel';
 import { getCookie } from '../../utils/Utils';
-import KernelExecutor, { IOPubMessageHook, ShellMessageHook } from './KernelExecutor';
+import KernelExecutor, {
+  IOPubMessageHook,
+  ShellMessageHook,
+} from './KernelExecutor';
 
 const JUPYTER_REACT_PATH_COOKIE_NAME = 'jupyter-react-kernel-path';
 
+/**
+ * Jupyter Kernel handler
+ */
 export class Kernel {
   private _clientId: string;
   private _connectionStatus: ConnectionStatus;
   private _id: string;
-  private _info: KernelMessage.IInfoReply;
+  private _info?: KernelMessage.IInfoReply;
   private _kernelConnection: JupyterKernel.IKernelConnection | null;
-  private _kernelManager: KernelManager;
+  private _kernelManager: JupyterKernel.IManager;
   private _kernelName: string;
-  private _kernelSpecManager: KernelSpecManager;
+  private _kernelSpecManager: KernelSpec.IManager;
   private _kernelSpecName: string;
   private _kernelType: string;
   private _path: string;
-  private _ready: Promise<void>;
-  private _readyResolve: () => void;
-  private _serverSettings: ServerConnection.ISettings;
+  private _ready: PromiseDelegate<void>;
   private _session: ISessionConnection;
   private _sessionId: string;
-  private _sessionManager: SessionManager;
+  private _sessionManager: Session.IManager;
 
   public constructor(props: Kernel.IKernelProps) {
     const {
       kernelManager,
       kernelName,
       kernelType,
+      kernelspecsManager,
       kernelSpecName,
       kernelModel,
-      serverSettings,
+      sessionManager,
     } = props;
-    this._kernelSpecManager = new KernelSpecManager({ serverSettings });
+    this._kernelSpecManager = kernelspecsManager;
     this._kernelManager = kernelManager;
     this._kernelName = kernelName;
     this._kernelType = kernelType;
     this._kernelSpecName = kernelSpecName;
-    this._serverSettings = serverSettings;
-    this.initReady = this.initReady.bind(this);
-    this.initReady();
+    this._sessionManager = sessionManager;
+    this._ready = new PromiseDelegate();
     this.requestKernel(kernelModel);
-  }
-
-  private initReady() {
-    this._ready = new Promise((resolve, _) => {
-      this._readyResolve = resolve;
-    });
   }
 
   private async requestKernel(
     kernelModel?: JupyterKernel.IModel
   ): Promise<void> {
     await this._kernelManager.ready;
-    this._sessionManager = new SessionManager({
-      kernelManager: this._kernelManager,
-      serverSettings: this._serverSettings,
-      standby: 'never',
-    });
     await this._sessionManager.ready;
     if (kernelModel) {
       console.log('Reusing a pre-existing kernel model.');
@@ -113,7 +104,7 @@ export class Kernel {
       if (this._connectionStatus === 'connected') {
         this._clientId = this._session.kernel!.clientId;
         this._id = this._session.kernel!.id;
-        this._readyResolve();
+        this._ready.resolve();
       }
     };
     if (this._kernelConnection) {
@@ -134,74 +125,99 @@ export class Kernel {
     }
   }
 
-  get cookieName(): string {
-    return JUPYTER_REACT_PATH_COOKIE_NAME + '_' + this._kernelSpecName;
-  }
-
-  get ready(): Promise<void> {
-    return this._ready;
-  }
-
   get clientId(): string {
     return this._clientId;
-  }
-
-  get id(): string {
-    return this._id;
-  }
-
-  get sessionId(): string {
-    return this._sessionId;
-  }
-
-  get info(): KernelMessage.IInfoReply {
-    return this._info;
-  }
-
-  get session(): ISessionConnection {
-    return this._session;
-  }
-
-  get kernelManager(): KernelManager {
-    return this._kernelManager;
-  }
-
-  get kernelSpecManager(): KernelSpecManager {
-    return this._kernelSpecManager;
-  }
-
-  get sessionManager(): SessionManager {
-    return this._sessionManager;
-  }
-
-  get path(): string {
-    return this._path;
   }
 
   get connection(): JupyterKernel.IKernelConnection | null {
     return this._kernelConnection;
   }
 
-  restart() {
-    return this._kernelConnection?.restart();
+  get cookieName(): string {
+    return JUPYTER_REACT_PATH_COOKIE_NAME + '_' + this._kernelSpecName;
   }
 
-  interrupt() {
-    return this._kernelConnection?.interrupt();
+  get id(): string {
+    return this._id;
   }
 
+  get info(): KernelMessage.IInfoReply | undefined {
+    return this._info;
+  }
+
+  get kernelManager(): JupyterKernel.IManager {
+    return this._kernelManager;
+  }
+
+  get kernelSpecManager(): KernelSpec.IManager {
+    return this._kernelSpecManager;
+  }
+
+  get path(): string {
+    return this._path;
+  }
+
+  get ready(): Promise<void> {
+    return this._ready.promise;
+  }
+
+  get sessionId(): string {
+    return this._sessionId;
+  }
+
+  get session(): ISessionConnection {
+    return this._session;
+  }
+
+  get sessionManager(): Session.IManager {
+    return this._sessionManager;
+  }
+
+  /**
+   * Execute a code snippet
+   *
+   * @param code The code snippet
+   * @param iopubMessageHooks Message hooks on IOPub channel
+   * @param shellMessageHooks Message hooks on Shell channel
+   * @returns The kernel executor
+   */
   execute(
     code: string,
     iopubMessageHooks: IOPubMessageHook[] = [],
-    shellMessageHooks: ShellMessageHook[] = [],
+    shellMessageHooks: ShellMessageHook[] = []
   ): KernelExecutor | undefined {
     if (this._kernelConnection) {
-      const kernelExecutor = new KernelExecutor(this._kernelConnection)
+      const kernelExecutor = new KernelExecutor(this._kernelConnection);
       kernelExecutor.execute(code, iopubMessageHooks, shellMessageHooks);
       return kernelExecutor;
     }
   }
 
+  /**
+   * Interrupt the kernel
+   */
+  interrupt(): Promise<void> {
+    return this._kernelConnection?.interrupt() ?? Promise.resolve();
+  }
+
+  /**
+   * Restart the kernel
+   */
+  restart(): Promise<void> {
+    return this._kernelConnection?.restart() ?? Promise.resolve();
+  }
+
+  /**
+   * Shutdown the kernel
+   */
+  async shutdown(): Promise<void> {
+    await this._session.kernel?.shutdown();
+    this.connection?.dispose();
+  }
+
+  /**
+   * Serialize the kernel to JSON
+   */
   toJSON() {
     return {
       path: this._path,
@@ -212,23 +228,46 @@ export class Kernel {
     };
   }
 
+  /**
+   * Serialize the kernel to string
+   */
   toString() {
     return `id:${this.id} - client_id:${this.clientId} - session_id:${this.sessionId} - path:${this._path}`;
-  }
-
-  shutdown() {
-    this._session.kernel?.shutdown();
-    this.connection?.dispose();
   }
 }
 
 export namespace Kernel {
+  /**
+   * Kernel options
+   */
   export type IKernelProps = {
-    kernelManager: KernelManager;
+    /**
+     * Kernel manager
+     */
+    kernelManager: JupyterKernel.IManager;
+    /**
+     * Kernel specs manager
+     */
+    kernelspecsManager: KernelSpec.IManager;
+    /**
+     * Kernel name
+     */
     kernelName: string;
+    /**
+     * Kernel spec name
+     */
     kernelSpecName: string;
+    /**
+     * Kernel type
+     */
     kernelType: 'notebook' | 'file';
-    serverSettings: ServerConnection.ISettings;
+    /**
+     * Session manager
+     */
+    sessionManager: Session.IManager;
+    /**
+     * Kernel model
+     */
     kernelModel?: JupyterKernel.IModel;
   };
 }

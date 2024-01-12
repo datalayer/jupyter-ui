@@ -35,10 +35,12 @@ export const createVariablesInspectorManager = () => {
   manager.panel = createVariableInspectorPanel();
   manager.source?.performInspection();
   return manager;
-}
+};
 
-export const registerKernel = (manager: VariableInspectorManager, kernel: Kernel) => {
-
+export const registerKernel = (
+  manager: VariableInspectorManager,
+  kernel: Kernel
+) => {
   const handlers: { [id: string]: Promise<VariableInspectionHandler> } = {};
 
   /**
@@ -56,47 +58,45 @@ export const registerKernel = (manager: VariableInspectorManager, kernel: Kernel
       }
     );
 
-    scripts.then((result: Languages.LanguageModel) => {
-      const initScript = result.initScript;
-      const queryCommand = result.queryCommand;
-      const matrixQueryCommand = result.matrixQueryCommand;
-      const widgetQueryCommand = result.widgetQueryCommand;
-      const deleteCommand = result.deleteCommand;
-      const options: VariableInspectionHandler.IOptions = {
-        queryCommand: queryCommand,
-        matrixQueryCommand: matrixQueryCommand,
-        widgetQueryCommand,
-        deleteCommand: deleteCommand,
-        connector: connector,
-        initScript: initScript,
-        id: kernel.path //Using the sessions path as an identifier for now.
-      };
+    scripts
+      .then((result: Languages.LanguageModel) => {
+        const initScript = result.initScript;
+        const queryCommand = result.queryCommand;
+        const matrixQueryCommand = result.matrixQueryCommand;
+        const widgetQueryCommand = result.widgetQueryCommand;
+        const deleteCommand = result.deleteCommand;
+        const options: VariableInspectionHandler.IOptions = {
+          queryCommand: queryCommand,
+          matrixQueryCommand: matrixQueryCommand,
+          widgetQueryCommand,
+          deleteCommand: deleteCommand,
+          connector: connector,
+          initScript: initScript,
+          id: kernel.path, //Using the sessions path as an identifier for now.
+        };
 
-      const handler = new VariableInspectionHandler(options);
+        const handler = new VariableInspectionHandler(options);
 
-      manager.addHandler(handler);
+        manager.addHandler(handler);
 
-      kernel.connection?.disposed.connect(() => {
-        delete handlers[kernel.id];
-        handler.dispose();
-      });
-
-      handler.ready.then(() => {
-        const future = handlers[kernel.id];    
-        future?.then((source: VariableInspectionHandler) => {
-          if (source) {
-            manager.source = source;
-            manager.source.performInspection();
-          }
+        kernel.connection?.disposed.connect(() => {
+          delete handlers[kernel.id];
+          handler.dispose();
         });
-        resolve(handler);
+
+        handler.ready.then(() => {
+          const future = handlers[kernel.id];
+          future?.then((source: VariableInspectionHandler) => {
+            if (source) {
+              manager.source = source;
+              manager.source.performInspection();
+            }
+          });
+          resolve(handler);
+        });
+      })
+      .catch((result: string) => {
+        reject(result);
       });
-
-    }).catch((result: string) => {
-      reject(result);
-    });
-
-
   });
-
-}
+};

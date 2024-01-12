@@ -24,7 +24,7 @@ import {
   jpTextField,
   jpOption,
   jpSelect,
-  jpButton
+  jpButton,
 } from '@jupyter/web-components';
 
 provideJupyterDesignSystem().register(
@@ -59,8 +59,7 @@ type FILTER_TYPES = 'type' | 'name';
  */
 export class VariableInspectorPanel
   extends Widget
-  implements IVariableInspector
-{
+  implements IVariableInspector {
   private _source: IVariableInspector.IInspectable | null = null;
   private _table: WebDataGrid;
   private _filteredTable: HTMLDivElement;
@@ -402,8 +401,8 @@ export class VariableInspectorPanel
         rowHeight: 32,
         columnWidth: 128,
         rowHeaderWidth: 64,
-        columnHeaderHeight: 32
-      }
+        columnHeaderHeight: 32,
+      },
     });
 
     datagrid.dataModel = dataModel;
@@ -423,7 +422,7 @@ namespace Private {
       '>': '&gt;',
       '"': '&quot;',
       "'": '&#39;',
-      '/': '&#x2F;'
+      '/': '&#x2F;',
     })
   );
 
@@ -497,7 +496,7 @@ namespace Private {
     buttonText.className = 'filtered-variable-button-text';
     buttonText.innerHTML = filterName;
     const icon = closeIcon.element({
-      container: filterButtonContent
+      container: filterButtonContent,
     });
     filterButtonContent.appendChild(buttonText);
     filterButtonContent.appendChild(icon);

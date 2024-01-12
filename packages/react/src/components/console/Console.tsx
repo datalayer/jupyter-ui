@@ -12,15 +12,22 @@ import ConsoleAdapter from './ConsoleAdapter';
 import './Console.css';
 
 export const Console = () => {
-  const { serviceManager } = useJupyter();
+  const {
+    defaultKernel,
+    defaultKernelIsLoading,
+    serviceManager,
+  } = useJupyter();
   const [adapter, setAdapter] = useState<ConsoleAdapter>();
   useEffect(() => {
-    if (serviceManager) {
-      const adapter = new ConsoleAdapter(serviceManager);
+    if (serviceManager && !defaultKernelIsLoading) {
+      const adapter = new ConsoleAdapter({
+        kernel: defaultKernel,
+        serviceManager,
+      });
       setAdapter(adapter);
     }
-  }, [serviceManager]);
-  return serviceManager && adapter ? (
+  }, [defaultKernel, defaultKernelIsLoading, serviceManager]);
+  return adapter ? (
     <Lumino>{adapter.panel}</Lumino>
   ) : (
     <>Loading Jupyter Console...</>

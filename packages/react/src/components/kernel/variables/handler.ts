@@ -10,7 +10,7 @@ import { KernelMessage, Kernel as JupyterKernel } from '@jupyterlab/services';
 import {
   IExecuteInputMsg,
   IExecuteReplyMsg,
-  IExecuteRequestMsg
+  IExecuteRequestMsg,
 } from '@jupyterlab/services/lib/kernel/messages';
 import { Signal, ISignal } from '@lumino/signaling';
 import { JSONModel, DataModel } from '@lumino/datagrid';
@@ -111,11 +111,11 @@ export class VariableInspectionHandler extends AbstractHandler {
     this._connector.kernelRestarted.connect(
       (sender, kernelReady: Promise<void>) => {
         const title: IVariableInspector.IVariableTitle = {
-          contextName: '<b>Restarting kernel...</b> '
+          contextName: '<b>Restarting kernel...</b> ',
         };
         this._inspected.emit({
           title: title,
-          payload: []
+          payload: [],
         } as IVariableInspector.IVariableInspectorUpdate);
 
         this._ready = kernelReady.then(() => {
@@ -142,7 +142,7 @@ export class VariableInspectionHandler extends AbstractHandler {
     const content: KernelMessage.IExecuteRequestMsg['content'] = {
       code: this._queryCommand,
       stop_on_error: false,
-      store_history: false
+      store_history: false,
     };
     this._connector.fetch(content, this._handleQueryResponse);
   }
@@ -156,7 +156,7 @@ export class VariableInspectionHandler extends AbstractHandler {
     const request: KernelMessage.IExecuteRequestMsg['content'] = {
       code: this._widgetQueryCommand + '(' + varName + ')',
       stop_on_error: false,
-      store_history: false
+      store_history: false,
     };
     return this._connector.execute(request);
   }
@@ -171,7 +171,7 @@ export class VariableInspectionHandler extends AbstractHandler {
     const request: KernelMessage.IExecuteRequestMsg['content'] = {
       code: this._matrixQueryCommand + '(' + varName + ', ' + maxRows + ')',
       stop_on_error: false,
-      store_history: false
+      store_history: false,
     };
     const con = this._connector;
     return new Promise((resolve, reject) => {
@@ -208,7 +208,7 @@ export class VariableInspectionHandler extends AbstractHandler {
     const content: KernelMessage.IExecuteRequestMsg['content'] = {
       code: this._deleteCommand + "('" + varName + "')",
       stop_on_error: false,
-      store_history: false
+      store_history: false,
     };
 
     this._connector.fetch(content, this._handleQueryResponse);
@@ -221,7 +221,7 @@ export class VariableInspectionHandler extends AbstractHandler {
     const content: KernelMessage.IExecuteRequestMsg['content'] = {
       code: this._initScript,
       stop_on_error: false,
-      silent: true
+      silent: true,
     };
 
     return this._connector.fetch(content, () => {
@@ -249,7 +249,7 @@ export class VariableInspectionHandler extends AbstractHandler {
         const update = JSON.parse(content) as IVariableInspector.IVariable[];
         const title = {
           contextName: '',
-          kernelName: this._connector.kernelName || ''
+          kernelName: this._connector.kernelName || '',
         };
 
         this._inspected.emit({ title: title, payload: update });
@@ -276,7 +276,7 @@ export class VariableInspectionHandler extends AbstractHandler {
 
         const titleDisplay = {
           contextName: '',
-          kernelName: this._connector.kernelName || ''
+          kernelName: this._connector.kernelName || '',
         };
 
         this._inspected.emit({ title: titleDisplay, payload: updateDisplay });
@@ -340,11 +340,11 @@ export class DummyHandler extends AbstractHandler {
   performInspection(): void {
     const title: IVariableInspector.IVariableTitle = {
       contextName: '. <b>Language currently not supported.</b> ',
-      kernelName: this._connector.kernelName || ''
+      kernelName: this._connector.kernelName || '',
     };
     this._inspected.emit({
       title: title,
-      payload: []
+      payload: [],
     } as IVariableInspector.IVariableInspectorUpdate);
   }
 
@@ -366,7 +366,7 @@ export class DummyHandler extends AbstractHandler {
     const request: KernelMessage.IExecuteRequestMsg['content'] = {
       code: '',
       stop_on_error: false,
-      store_history: false
+      store_history: false,
     };
     return this._connector.execute(request);
   }

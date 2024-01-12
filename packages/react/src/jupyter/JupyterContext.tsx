@@ -4,36 +4,87 @@
  * MIT License
  */
 
-import React, { useState, useEffect, useContext, createContext } from 'react';
-import { Provider as ReduxProvider } from 'react-redux';
 import {
-  ServiceManager,
+  Kernel as CoreKernel,
   ServerConnection,
-  KernelManager,
+  ServiceManager,
 } from '@jupyterlab/services';
+import type { JupyterLiteServerPlugin } from '@jupyterlite/server';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
+import defaultInjectableStore, { InjectableStore } from '../state/redux/Store';
+import { createLiteServer } from './../jupyter/lite/LiteServer';
 import { getJupyterServerHttpUrl, getJupyterToken } from './JupyterConfig';
 import { requestAPI } from './JupyterHandlers';
-import { startLiteServer } from './../jupyter/lite/LiteServer';
-import { InjectableStore } from '../state/redux/Store';
 import Kernel from './kernel/Kernel';
 
-/**Fré
+/**
  * The type for the Jupyter context.
  */
 export type JupyterContextType = {
-  baseUrl?: string;
+  /**
+   * Whether the component is collaborative or not.
+   */
   collaborative?: boolean;
+  /**
+   * Default kernel
+   */
   defaultKernel?: Kernel;
-  disableCssLoading?: boolean;
+  /**
+   * Will be true while waiting for the default kernel.
+   *
+   * If `true`, it does not ensure a default kernel will
+   * be created successfully.
+   *
+   * This is useful to not mount to quickly a Lumino Widget
+   * to be unmount right away when the default kernel will
+   * be available.
+   */
+  defaultKernelIsLoading: boolean;
   injectableStore: InjectableStore;
-  kernelManager?: KernelManager;
-  lite?: boolean;
+  kernelManager?: CoreKernel.IManager;
+  /**
+   * If `true`, it will load the Pyodide jupyterlite kernel.
+   *
+   * You can also set it to dynamically import any jupyterlite
+   * kernel package.
+   *
+   * If defined, {@link serverUrls} and {@link defaultKernelName}
+   * will be ignored and the component will run this in-browser
+   * kernel.
+   *
+   * @example
+   * `browserKernelModule: true` => Load dynamically the package @jupyterlite/pyodide-kernel-extension
+   *
+   * `browserKernelModule: import('@jupyterlite/javascript-kernel-extension')` => Load dynamically
+   */
+  browserKernelModule?:
+    | boolean
+    | Promise<{ default: JupyterLiteServerPlugin<any>[] }>;
+  /**
+   * Jupyter Server settings
+   *
+   * This is useless if running an in-browser kernel via {@link browserKernelModule}.
+   */
   serverSettings: ServerConnection.ISettings;
+  /**
+   * Jupyter services manager
+   */
   serviceManager?: ServiceManager;
   setVariant: (value: string) => void;
-  startDefaultKernel: boolean;
   variant: string;
-  wsUrl?: string;
+  /**
+   * Jupyter Server base URL
+   *
+   * Useless if running an in-browser kernel.
+   */
+  baseUrl: string;
+  /**
+   * Jupyter Server websocket URL
+   *
+   * Useless if running an in-browser kernel.
+   */
+  wsUrl: string;
 };
 
 /**
@@ -61,47 +112,78 @@ export const JupyterContextConsumer = JupyterContext.Consumer;
 const JupyterProvider = JupyterContext.Provider;
 
 /**
- * Utiliy method to ensure the Jupyter context is authenticated
+ * Utility method to ensure the Jupyter context is authenticated
  * with the Jupyter server.
  */
-export const ensureJupyterAuth = (
+export const ensureJupyterAuth = async (
   serverSettings: ServerConnection.ISettings
 ): Promise<boolean> => {
-  return requestAPI<any>(serverSettings, 'api', '')
-    .then(data => {
-      return true;
-    })
-    .catch(reason => {
-      console.log('The Jupyter Server API has failed with reason', reason);
-      return false;
-    });
+  try {
+    await requestAPI<any>(serverSettings, 'api', '');
+    return true;
+  } catch (reason) {
+    console.log('The Jupyter Server API has failed with reason', reason);
+    return false;
+  }
 };
 
 /**
- * The type for the properties of the Jupyter context.
+ * Jupyter Server URLs
  */
-type JupyterContextProps = {
-  baseUrl?: string;
+export interface IServerUrls {
+  /**
+   * The base url of the server.
+   */
+  readonly baseUrl: string;
+  /**
+   * The base ws url of the server.
+   */
+  readonly wsUrl: string;
+}
+
+/**
+ * The Jupyter context properties type.
+ */
+export type JupyterContextProps = React.PropsWithChildren<{
+  /**
+   * Whether the component is collaborative or not.
+   */
   collaborative?: boolean;
-  children?: React.ReactNode;
-  defaultKernelName: string;
-  disableCssLoading?: boolean;
-  injectableStore: InjectableStore;
-  lite?: boolean;
-  startDefaultKernel: boolean;
+  /**
+   * Default kernel name
+   */
+  defaultKernelName?: string;
+  /**
+   * URL to fetch a JupyterLite kernel (i.e. in-browser kernel).
+   *
+   * If defined, {@link serverUrls} and {@link defaultKernelName}
+   * will be ignored and the component will run this in-browser
+   * kernel.
+   *
+   * @example
+   * https://cdn.jsdelivr.net/npm/@jupyterlite/pyodide-kernel-extension
+   */
+  browserKernelModule?:
+    | boolean
+    | Promise<{ default: JupyterLiteServerPlugin<any>[] }>;
+  /**
+   * Jupyter Server URLs to connect to.
+   *
+   * It will be ignored if a {@link browserKernelModule} is provided.
+   */
+  serverUrls?: IServerUrls;
+  /**
+   * Whether to start the default kernel or not.
+   */
+  startDefaultKernel?: boolean;
+
+  // Advanced properties
+  injectableStore?: InjectableStore;
   useRunningKernelId?: string;
-  useRunningKernelIndex: number;
-  variant: string;
-  wsUrl?: string;
-};
-/*
-const headers = new Headers({
-  "Cache-Control": "no-cache, no-store, must-revalidate",
-  "Pragma": "no-cache",
-  "Expires": "0",
-  "Authorization": getJupyterToken(),
-});
-*/
+  useRunningKernelIndex?: number;
+  variant?: string;
+}>;
+
 export const createServerSettings = (baseUrl: string, wsUrl: string) => {
   return ServerConnection.makeSettings({
     baseUrl,
@@ -111,8 +193,7 @@ export const createServerSettings = (baseUrl: string, wsUrl: string) => {
     init: {
       mode: 'cors',
       credentials: 'include',
-      cache: 'no-cache',
-      //      headers,
+      cache: 'no-store',
     },
   });
 };
@@ -122,51 +203,64 @@ export const createServerSettings = (baseUrl: string, wsUrl: string) => {
  */
 export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
   const {
-    baseUrl,
     children,
-    collaborative,
-    defaultKernelName,
-    disableCssLoading,
-    injectableStore,
-    lite,
-    startDefaultKernel,
+    collaborative = false,
+    defaultKernelName = 'python',
+    injectableStore = defaultInjectableStore,
+    browserKernelModule = false,
+    startDefaultKernel = true,
     useRunningKernelId,
-    useRunningKernelIndex,
-    variant,
-    wsUrl,
+    useRunningKernelIndex = -1,
+    variant = 'default',
+    serverUrls,
   } = props;
-  const [_, setVariant] = useState('default');
-  const [serverSettings] = useState<ServerConnection.ISettings>(
-    createServerSettings(baseUrl ?? '', wsUrl ?? '')
-  );
+
+  const { baseUrl, wsUrl } = serverUrls ?? {};
+
+  const [_, setVariant] = useState(variant);
+
   const [serviceManager, setServiceManager] = useState<ServiceManager>();
-  const [kernelManager, setKernelManager] = useState<KernelManager>();
   const [kernel, setKernel] = useState<Kernel>();
+  const [kernelIsLoading, setIsLoading] = useState<boolean>(
+    startDefaultKernel || useRunningKernelIndex > -1
+  );
+
+  // Create a service manager
   useEffect(() => {
-    if (lite) {
-      startLiteServer().then((serviceManager: ServiceManager) => {
-        setServiceManager(serviceManager);
-        const kernelManager = (serviceManager.sessions as any)
-          ._kernelManager as KernelManager;
-        setKernelManager(kernelManager);
-        kernelManager.ready.then(() => {
-          console.log('Kernel Manager is Ready', kernelManager);
-          if (startDefaultKernel) {
-            const kernel = new Kernel({
-              kernelManager,
-              kernelName: defaultKernelName,
-              kernelSpecName: defaultKernelName,
-              kernelType: 'notebook',
-              serverSettings,
-            });
-            kernel.ready.then(() => {
-              console.log('Lite Kernel is Ready', kernel.toString());
-              setKernel(kernel);
-            });
+    if (browserKernelModule) {
+      createLiteServer().then(async liteServer => {
+        // Load the browser kernel
+        const mod =
+          typeof browserKernelModule === 'boolean'
+            ? await import('@jupyterlite/pyodide-kernel-extension')
+            : await browserKernelModule;
+        // Load the module manually to get the list of plugin IDs
+        let data = mod.default;
+        // Handle commonjs exports.
+        if (!Object.prototype.hasOwnProperty.call(mod, '__esModule')) {
+          data = mod as any;
+        }
+        if (!Array.isArray(data)) {
+          data = [data];
+        }
+        const pluginIDs = data.map(item => {
+          try {
+            liteServer.registerPlugin(item);
+            return item.id;
+          } catch (error) {
+            console.error(error);
+            return null;
           }
         });
+
+        // Activate the loaded plugins
+        await Promise.all(
+          pluginIDs.filter(id => id).map(id => liteServer.activatePlugin(id!))
+        );
+        setServiceManager(liteServer.serviceManager);
       });
     } else {
+      const serverSettings = createServerSettings(baseUrl ?? '', wsUrl ?? '');
       ensureJupyterAuth(serverSettings).then(isAuth => {
         if (!isAuth) {
           const loginUrl =
@@ -189,78 +283,78 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
         }
         const serviceManager = new ServiceManager({ serverSettings });
         setServiceManager(serviceManager);
-        const kernelManager = (serviceManager.sessions as any)
-          ._kernelManager as KernelManager;
-        setKernelManager(kernelManager);
-        kernelManager.ready.then(() => {
-          console.log('Kernel Manager is Ready.');
-          /*
-          const running = kernelManager.running();
-          let kernel = running.next();
-          let i = 0;
-          while (! kernel.done) {
-            console.log(`This Jupyter server is hosting a kernel [${i}]`, kernel.value);
-            kernel = running.next();
-            i++;
-          }
-          */
-          if (useRunningKernelIndex > -1) {
-            const running = kernelManager.running();
-            let kernel = running.next();
-            let i = 0;
-            while (!kernel.done) {
-              if (i === useRunningKernelIndex) {
-                setKernel(
-                  new Kernel({
-                    kernelManager,
-                    kernelName: defaultKernelName,
-                    kernelSpecName: defaultKernelName,
-                    kernelModel: kernel.value,
-                    kernelType: 'notebook',
-                    serverSettings,
-                  })
-                );
-                break;
-              }
-              kernel = running.next();
-              i++;
-            }
-          } else if (startDefaultKernel) {
-            console.log('Starting Kernel Name:', defaultKernelName);
-            const defaultKernel = new Kernel({
-              kernelManager,
-              kernelName: defaultKernelName,
-              kernelSpecName: defaultKernelName,
-              kernelType: 'notebook',
-              serverSettings,
-            });
-            defaultKernel.ready.then(() => {
-              console.log('Kernel is Ready', defaultKernel);
-              setKernel(defaultKernel);
-            });
-          }
-        });
       });
     }
     setVariant(variant);
-  }, [lite, variant]);
+  }, [baseUrl, wsUrl, browserKernelModule, variant]);
+
+  // Create a kernel
+  useEffect(() => {
+    serviceManager?.kernels.ready.then(() => {
+      const kernelManager = serviceManager.kernels;
+      console.log('Kernel Manager is Ready', kernelManager);
+      if (useRunningKernelIndex > -1) {
+        const running = kernelManager.running();
+        let kernel = running.next();
+        let i = 0;
+        while (!kernel.done) {
+          if (i === useRunningKernelIndex) {
+            setKernel(
+              new Kernel({
+                kernelManager,
+                kernelName: defaultKernelName,
+                kernelSpecName: defaultKernelName,
+                kernelModel: kernel.value,
+                kernelType: 'notebook',
+                kernelspecsManager: serviceManager.kernelspecs,
+                sessionManager: serviceManager.sessions,
+              })
+            );
+            setIsLoading(false);
+            break;
+          }
+          kernel = running.next();
+          i++;
+        }
+        setIsLoading(false);
+      } else if (startDefaultKernel) {
+        console.log('Starting Kernel Name:', defaultKernelName);
+        const defaultKernel = new Kernel({
+          kernelManager,
+          kernelName: defaultKernelName,
+          kernelSpecName: defaultKernelName,
+          kernelType: 'notebook',
+          kernelspecsManager: serviceManager.kernelspecs,
+          sessionManager: serviceManager.sessions,
+        });
+        defaultKernel.ready.then(() => {
+          console.log('Kernel is Ready', defaultKernel);
+          setKernel(defaultKernel);
+          setIsLoading(false);
+        });
+      }
+    });
+  }, [browserKernelModule, serviceManager]);
+
   return (
     <ReduxProvider store={injectableStore}>
       <JupyterProvider
         value={{
-          baseUrl,
+          // FIXME we should not expose sub attributes
+          // to promote single source of truth (like URLs come from serverSettings)
+          baseUrl: serviceManager?.serverSettings.baseUrl ?? '',
           collaborative,
           defaultKernel: kernel,
-          disableCssLoading,
+          defaultKernelIsLoading: kernelIsLoading,
           injectableStore,
-          kernelManager,
-          lite,
-          serverSettings,
+          kernelManager: serviceManager?.kernels,
+          browserKernelModule: browserKernelModule,
+          serverSettings:
+            serviceManager?.serverSettings ?? createServerSettings('', ''),
           serviceManager,
           setVariant,
-          startDefaultKernel,
           variant,
-          wsUrl,
+          wsUrl: serviceManager?.serverSettings.wsUrl ?? '',
         }}
       >
         {children}

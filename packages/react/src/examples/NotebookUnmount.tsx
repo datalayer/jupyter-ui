@@ -17,22 +17,23 @@ import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 import notebook from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookUnmount = () => {
-  const { kernelManager, serverSettings } = useJupyter();
+  const { kernelManager, serviceManager } = useJupyter();
   const [showNotebook, setShowNotebook] = useState(false);
   const [kernel, setKernel] = useState<Kernel>();
   useEffect(() => {
-    if (kernelManager) {
+    if (serviceManager && kernelManager) {
       const kernel = new Kernel({
         kernelManager,
         kernelName: 'defaultKernel',
         kernelSpecName: 'python',
         kernelType: 'notebook',
-        serverSettings,
+        kernelspecsManager: serviceManager.kernelspecs,
+        sessionManager: serviceManager.sessions,
       });
       setKernel(kernel);
       setShowNotebook(true);
     }
-  }, [kernelManager]);
+  }, [serviceManager, kernelManager]);
   useEffect(() => {
     if (!showNotebook && kernel) {
       kernel.shutdown();

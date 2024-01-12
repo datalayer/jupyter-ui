@@ -20,13 +20,13 @@ const Template = (args, { globals: { labComparison } }) => {
   const Tag = `${(args.as as string) ?? 'span'}` as keyof JSX.IntrinsicElements;
   return (
     <Jupyter
-      jupyterServerHttpUrl='https://oss.datalayer.tech/api/jupyter'
-      jupyterServerWsUrl='wss://oss.datalayer.tech/api/jupyter'
-      jupyterToken='60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6'
+      jupyterServerHttpUrl="https://oss.datalayer.tech/api/jupyter"
+      jupyterServerWsUrl="wss://oss.datalayer.tech/api/jupyter"
+      jupyterToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
       startDefaultKernel={false}
       terminals={true}
     >
-      <Terminal {...args}/>
+      <Terminal {...args} />
     </Jupyter>
   );
 };
@@ -39,7 +39,7 @@ export const Playground: Story = {
 
 Playground.args = {
   height: '800px',
-  theme: "dark",
+  theme: 'dark',
 };
 
 Playground.argTypes = {

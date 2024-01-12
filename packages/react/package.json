@@ -54,20 +54,17 @@
     "stylelint": "yarn stylelint:check --fix",
     "stylelint:check": "stylelint --cache \"style/**/*.css\"",
     "test": "jest --coverage",
+    "test:visual": "playwright test",
     "typedoc": "typedoc ./src",
     "watch": "run-p watch:src watch:labextension",
     "watch:labextension": "jupyter labextension watch .",
     "watch:src": "tsc -w",
     "storybook": "storybook dev -p 6006",
+    "storybook:ci": "storybook dev -p 6006 --ci --quiet",
     "build:storybook": "storybook build"
   },
   "dependencies": {
     "@codemirror/lang-python": "6.0.1",
-    "@datalayer/jupyterlite-ipykernel": "0.1.0-beta.13",
-    "@datalayer/jupyterlite-ipykernel-extension": "0.1.0-beta.13",
-    "@datalayer/jupyterlite-kernel": "0.1.0-beta.13",
-    "@datalayer/jupyterlite-server": "0.1.0-beta.13",
-    "@datalayer/jupyterlite-server-extension": "0.1.0-beta.13",
     "@datalayer/primer-addons": "0.2.1",
     "@datalayer/typescript-fsa-redux-observable": "0.18.0",
     "@jupyter-widgets/base": "6.0.6",
@@ -130,6 +127,9 @@
     "@jupyterlab/toc-extension": "6.0.10",
     "@jupyterlab/translation-extension": "4.0.10",
     "@jupyterlab/ui-components-extension": "4.0.10",
+    "@jupyterlite/pyodide-kernel-extension": "0.2.0",
+    "@jupyterlite/server": "0.2.2",
+    "@jupyterlite/server-extension": "0.2.2",
     "@lumino/default-theme": "2.1.4",
     "@primer/react": "0.0.0-20230912151940",
     "assert": "2.0.0",
@@ -168,6 +168,8 @@
     "@jupyterlab/running-extension": "4.0.10",
     "@jupyterlab/testutils": "4.0.10",
     "@jupyterlab/vega3-extension": "3.3.0",
+    "@jupyterlite/javascript-kernel-extension": "0.2.2",
+    "@playwright/test": "^1.40.1",
     "@primer/octicons-react": "^19.8.0",
     "@storybook/addon-essentials": "^7.6.5",
     "@storybook/addon-interactions": "^7.6.5",
@@ -262,7 +264,8 @@
     },
     "extension": "./lib/jupyter/lab/index.js",
     "outputDir": "jupyter_react/labextension",
-    "schemaDir": "schema"
+    "schemaDir": "schema",
+    "webpackConfig": "./webpack.lab-config.js"
   },
   "jupyter-releaser": {
     "hooks": {

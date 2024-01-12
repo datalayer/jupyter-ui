@@ -78,11 +78,14 @@ function* widgetRenderers(
 /**
  * Iterate through all matching linked output views
  */
-function* outputViews(path: string, app?: JupyterFrontEnd): Generator<WidgetRenderer, void, unknown> {
+function* outputViews(
+  path: string,
+  app?: JupyterFrontEnd
+): Generator<WidgetRenderer, void, unknown> {
   if (app) {
     const linkedViews = filter(
       app.shell.widgets(),
-      (w) => w.id.startsWith('LinkedOutputView-') && (w as any).path === path
+      w => w.id.startsWith('LinkedOutputView-') && (w as any).path === path
     );
     for (const view of Array.from(linkedViews)) {
       for (const outputs of Array.from(view.children())) {
@@ -92,7 +95,7 @@ function* outputViews(path: string, app?: JupyterFrontEnd): Generator<WidgetRend
           }
         }
       }
-    }  
+    }
   }
 }
 
@@ -124,11 +127,16 @@ export function registerWidgetManager(
   rendermime: IRenderMimeRegistry,
   kernelConnection: Kernel.IKernelConnection | null,
   renderers: IterableIterator<WidgetRenderer>,
-  app?: JupyterFrontEnd,
+  app?: JupyterFrontEnd
 ): DisposableDelegate {
   let widgetManager = Private.widgetManagerProperty.get(context);
   if (!widgetManager) {
-    widgetManager = new NotebookWidgetManager(context, rendermime, SETTINGS, kernelConnection);
+    widgetManager = new NotebookWidgetManager(
+      context,
+      rendermime,
+      SETTINGS,
+      kernelConnection
+    );
     WIDGET_REGISTRY.forEach(data => widgetManager!.register(data));
     Private.widgetManagerProperty.set(context, widgetManager);
   }
@@ -349,7 +357,7 @@ export const outputWidgetPlugin = {
       version: OUTPUT_WIDGET_VERSION,
       exports: {
         OutputModel,
-        OutputView
+        OutputView,
       },
     });
   },

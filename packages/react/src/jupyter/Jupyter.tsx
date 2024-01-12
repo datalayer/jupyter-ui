@@ -4,42 +4,51 @@
  * MIT License
  */
 
-import React, { useMemo } from 'react';
-import { ThemeProvider, BaseStyles, Box, theme as primerTheme } from '@primer/react';
+import type { JupyterLiteServerPlugin } from '@jupyterlite/server';
+import {
+  BaseStyles,
+  Box,
+  ThemeProvider,
+  theme as primerTheme,
+} from '@primer/react';
 import { Theme } from '@primer/react/lib/ThemeProvider';
+import React, { useMemo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { JupyterContextProvider } from './JupyterContext';
-import defaultInjectableStore, { InjectableStore } from '../state/redux/Store';
-import JupyterLabCss from './lab/JupyterLabCss';
+import type { InjectableStore } from '../state/redux/Store';
 import {
   getJupyterServerHttpUrl,
   getJupyterServerWsUrl,
   loadJupyterConfig,
 } from './JupyterConfig';
+import { JupyterContextProvider } from './JupyterContext';
 import { ColorMode } from './lab/JupyterLabColorMode';
-// import { jupyterTheme } from './theme';
+import JupyterLabCss from './lab/JupyterLabCss';
 
 /**
  * Definition of the properties that can be passed
  * when creating a Jupyter context.
  */
-export type JupyterProps = {
-  children?: React.ReactNode;
+export type JupyterProps = React.PropsWithChildren<{
   collaborative?: boolean;
-  colorMode: ColorMode;
-  defaultKernelName: string;
+  colorMode?: ColorMode;
+  defaultKernelName?: string;
   disableCssLoading?: boolean;
   injectableStore?: InjectableStore;
   jupyterServerHttpUrl?: string;
   jupyterServerWsUrl?: string;
   jupyterToken?: string;
-  lite?: boolean;
-  startDefaultKernel: boolean;
-  theme: Theme;
+  /**
+   * Whether to run Jupyter within the browser or not.
+   */
+  browserKernelModule?:
+    | boolean
+    | Promise<{ default: JupyterLiteServerPlugin<any>[] }>;
+  startDefaultKernel?: boolean;
+  theme?: Theme;
   terminals?: boolean;
   useRunningKernelId?: string;
   useRunningKernelIndex?: number;
-};
+}>;
 
 /**
  * The component to be used as fallback in case of error.
@@ -65,19 +74,39 @@ export const Jupyter = (props: JupyterProps) => {
   const {
     children,
     collaborative,
-    colorMode,
+    colorMode = 'light',
     defaultKernelName,
-    disableCssLoading,
+    disableCssLoading = false,
     injectableStore,
-    lite,
+    jupyterServerHttpUrl,
+    jupyterServerWsUrl,
+    jupyterToken,
+    browserKernelModule,
     startDefaultKernel,
-    theme,
+    terminals = false,
+    theme = primerTheme,
     useRunningKernelId,
     useRunningKernelIndex,
   } = props;
+
   const config = useMemo(() => {
-    return loadJupyterConfig(props);
-  }, [props]);
+    return loadJupyterConfig({
+      collaborative,
+      jupyterServerHttpUrl,
+      jupyterServerWsUrl,
+      jupyterToken,
+      browserKernelModule,
+      terminals,
+    });
+  }, [
+    collaborative,
+    jupyterServerHttpUrl,
+    jupyterServerWsUrl,
+    jupyterToken,
+    browserKernelModule,
+    terminals,
+  ]);
+
   return (
     <ErrorBoundary
       FallbackComponent={ErrorFallback}
@@ -86,7 +115,7 @@ export const Jupyter = (props: JupyterProps) => {
       }}
     >
       <ThemeProvider
-        theme={theme ?? primerTheme}
+        theme={theme}
         colorMode={colorMode === 'light' ? 'day' : 'night'}
         dayScheme="light"
         nightScheme="dark"
@@ -97,17 +126,17 @@ export const Jupyter = (props: JupyterProps) => {
               <JupyterLabCss colorMode={colorMode} />
             )}
             <JupyterContextProvider
-              baseUrl={getJupyterServerHttpUrl()}
               collaborative={collaborative}
               defaultKernelName={defaultKernelName}
-              disableCssLoading={disableCssLoading}
-              injectableStore={injectableStore || defaultInjectableStore}
-              lite={lite}
+              injectableStore={injectableStore}
+              browserKernelModule={browserKernelModule}
+              serverUrls={{
+                baseUrl: getJupyterServerHttpUrl(),
+                wsUrl: getJupyterServerWsUrl(),
+              }}
               startDefaultKernel={startDefaultKernel}
               useRunningKernelId={useRunningKernelId}
-              useRunningKernelIndex={useRunningKernelIndex ?? -1}
-              variant="default"
-              wsUrl={getJupyterServerWsUrl()}
+              useRunningKernelIndex={useRunningKernelIndex}
             >
               {children}
             </JupyterContextProvider>
@@ -116,18 +145,6 @@ export const Jupyter = (props: JupyterProps) => {
       </ThemeProvider>
     </ErrorBoundary>
   );
-};
-
-Jupyter.defaultProps = {
-  collaborative: false,
-  colorMode: 'light',
-  defaultKernelName: 'python',
-  disableCssLoading: false,
-  lite: false,
-  startDefaultKernel: true,
-  terminals: false,
-  theme: primerTheme, // TODO Use jupyterTheme, see https://github.com/datalayer/jupyter-ui/issues/160
-  useRunningKernelIndex: -1,
 };
 
 export default Jupyter;

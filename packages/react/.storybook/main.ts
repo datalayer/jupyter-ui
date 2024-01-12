@@ -41,61 +41,86 @@ const config: StorybookConfig = {
     },
   },
   webpackFinal: config => {
-    config.module?.rules?.push({
-      test: /\.tsx?$/,
-      loader: 'babel-loader',
-      options: {
-        plugins: [
-          [
-            '@babel/plugin-transform-typescript',
-            {
-              allowDeclareFields: true,
-            },
+    config.module?.rules?.push(
+      {
+        test: /\.tsx?$/,
+        loader: 'babel-loader',
+        options: {
+          plugins: [
+            [
+              '@babel/plugin-transform-typescript',
+              {
+                allowDeclareFields: true,
+              },
+            ],
+            '@babel/plugin-proposal-class-properties',
           ],
-          '@babel/plugin-proposal-class-properties',
-        ],
-        presets: [
-          [
-            '@babel/preset-react',
-            {
-              runtime: 'automatic',
-              importSource: 'react',
-            },
+          presets: [
+            [
+              '@babel/preset-react',
+              {
+                runtime: 'automatic',
+                importSource: 'react',
+              },
+            ],
+            '@babel/preset-typescript',
           ],
-          '@babel/preset-typescript',
-        ],
-        cacheDirectory: true,
+          cacheDirectory: true,
+        },
+        exclude: /node_modules/,
       },
-      exclude: /node_modules/,
-    });
-    config.module?.rules?.push({
-      // In .css files, svg is loaded as a data URI.
-      test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-      issuer: /\.css$/,
-      use: {
-        loader: 'svg-url-loader',
-        options: { encoding: 'none', limit: 10000 },
+      {
+        // In .css files, svg is loaded as a data URI.
+        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+        issuer: /\.css$/,
+        use: {
+          loader: 'svg-url-loader',
+          options: { encoding: 'none', limit: 10000 },
+        },
       },
-    });
-    config.module?.rules?.push({
-      // In .ts and .tsx files (both of which compile to .js), svg files
-      // must be loaded as a raw string instead of data URIs.
-      test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-      issuer: /\.js$/,
-      type: 'asset/source',
-    });
-    config.module?.rules?.push({
-      test: /\.m?js/,
-      resolve: {
-        fullySpecified: false,
+      {
+        // In .ts and .tsx files (both of which compile to .js), svg files
+        // must be loaded as a raw string instead of data URIs.
+        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+        issuer: /\.js$/,
+        type: 'asset/source',
       },
-    });
-    config.module?.rules?.push({
-      test: /\.c?js/,
-      resolve: {
-        fullySpecified: false,
+      {
+        test: /\.m?js/,
+        resolve: {
+          fullySpecified: false,
+        },
       },
-    });
+      {
+        test: /\.c?js/,
+        resolve: {
+          fullySpecified: false,
+        },
+      },
+      // Rule for jupyterlite service worker
+      {
+        resourceQuery: /text/,
+        type: 'asset/resource',
+        generator: {
+          filename: '[name][ext]',
+        },
+      },
+      // Rules for pyodide kernel assets
+      {
+        test: /pypi\/.*/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'pypi/[name][ext][query]',
+        },
+      },
+      {
+        test: /schema\/.*/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'schema/[name][ext][query]',
+        },
+      }
+    );
     return config;
   },
   docs: {
