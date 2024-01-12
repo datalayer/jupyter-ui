@@ -54,11 +54,13 @@
     "stylelint": "yarn stylelint:check --fix",
     "stylelint:check": "stylelint --cache \"style/**/*.css\"",
     "test": "jest --coverage",
+    "test:visual": "playwright test",
     "typedoc": "typedoc ./src",
     "watch": "run-p watch:src watch:labextension",
     "watch:labextension": "jupyter labextension watch .",
     "watch:src": "tsc -w",
     "storybook": "storybook dev -p 6006",
+    "storybook:ci": "storybook dev -p 6006 --ci --quiet",
     "build:storybook": "storybook build"
   },
   "dependencies": {
@@ -167,6 +169,7 @@
     "@jupyterlab/testutils": "4.0.10",
     "@jupyterlab/vega3-extension": "3.3.0",
     "@jupyterlite/javascript-kernel-extension": "0.2.2",
+    "@playwright/test": "^1.40.1",
     "@primer/octicons-react": "^19.8.0",
     "@storybook/addon-essentials": "^7.6.5",
     "@storybook/addon-interactions": "^7.6.5",

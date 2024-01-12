@@ -1,0 +1,57 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
+import { test, expect } from '@playwright/test';
+
+test('Default', async ({ page }) => {
+  await page.goto(
+    'http://localhost:6006/iframe.html?id=components-console--default'
+  );
+
+  await page.getByText(/^Python \d.\d+.\d+ | packaged by/).waitFor();
+  await page
+    .getByLabel('Code Cell Content')
+    .getByRole('textbox')
+    .fill('print("hello from remote")');
+  await page.keyboard.press('Shift+Enter');
+  await expect(
+    page.getByLabel('notebook content').locator('pre')
+  ).toContainText('hello from remote');
+});
+
+test('Pyodide', async ({ page }) => {
+  await page.goto(
+    'http://localhost:6006/iframe.html?id=components-console--in-browser'
+  );
+
+  await page
+    .getByText('A WebAssembly-powered Python kernel backed by Pyodide')
+    .waitFor();
+  await page
+    .getByLabel('Code Cell Content')
+    .getByRole('textbox')
+    .fill('print("hello from pyodide")');
+  await page.keyboard.press('Shift+Enter');
+  await expect(
+    page.getByLabel('notebook content').locator('pre')
+  ).toContainText('hello from pyodide');
+});
+
+test('in-browser JavaScript', async ({ page }) => {
+  await page.goto(
+    'http://localhost:6006/iframe.html?id=components-console--in-browser-js'
+  );
+
+  await page.getByText('A JavaScript kernel running in the browser').waitFor();
+  await page
+    .getByLabel('Code Cell Content')
+    .getByRole('textbox')
+    .fill('Array(4).fill("a")');
+  await page.keyboard.press('Shift+Enter');
+  await expect(
+    page.getByLabel('notebook content').locator('pre')
+  ).toContainText("[ 'a', 'a', 'a', 'a' ]");
+});

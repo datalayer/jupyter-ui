@@ -41,8 +41,8 @@ node_modules/
 **/jupyter_react/_version.py
 
 # Integration tests
-**/ui-tests/test-results/
-**/ui-tests/playwright-report/
+test-results/
+playwright-report/
 
 ### Python ###
 # Byte-compiled / optimized / DLL files

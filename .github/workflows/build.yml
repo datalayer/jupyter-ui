@@ -51,6 +51,70 @@ jobs:
       run: |
         yarn build
 
+  visual-test:
+    runs-on: ubuntu-latest
+    needs: build
+    name: Stories visual tests
+    timeout-minutes: 60
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/pw-browsers
+
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+
+      - name: Setup Node 💾
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+      - name: Setup yarn cache
+        uses: actions/cache@v3
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            yarn-
+
+      - name: Install Dependencies 📥
+        env:
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
+        run: yarn install
+
+      - name: Set up browser cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ${{ github.workspace }}/pw-browsers
+          key: ${{ runner.os }}-${{ hashFiles('ui-tests/yarn.lock') }}
+
+      - name: Install Playwright Browsers
+        run: yarn run playwright install chromium --with-deps
+        working-directory: packages/react
+
+      - name: Run Visual Tests 🧪
+        run: yarn run test:visual
+        working-directory: packages/react
+
+      - name: Update Snapshots
+        if: ${{ failure() }}
+        run: |
+          mv test-results test-assets
+          yarn run test:visual -u
+        working-directory: packages/react
+
+      - uses: actions/upload-artifact@v3
+        if: ${{ failure() }}
+        with:
+          name: jupyter-react-test
+          path: |
+            packages/react/test-assets/
+            packages/react/stories/**/*-snapshots/*
+
   docker-dev:
     # Don't run if the previous case fails
     needs: build
