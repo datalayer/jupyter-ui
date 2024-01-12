@@ -70,6 +70,9 @@ module.exports = {
     hot: !IS_PRODUCTION,
     https: false,
     server: 'http',
+    client: {
+      overlay: false,
+    },
     proxy: {
       '/build/pypi': {
         target: 'https://datalayer-assets.s3.us-west-2.amazonaws.com/pypi',
@@ -184,13 +187,6 @@ module.exports = {
         type: 'asset/resource',
         generator: {
           filename: 'pypi/[name][ext][query]',
-        },
-      },
-      {
-        test: /schema\/.*/,
-        type: 'asset/resource',
-        generator: {
-          filename: 'schema/[name][ext][query]',
         },
       },
     ],

@@ -113,13 +113,6 @@ const config: StorybookConfig = {
           filename: 'pypi/[name][ext][query]',
         },
       },
-      {
-        test: /schema\/.*/,
-        type: 'asset/resource',
-        generator: {
-          filename: 'schema/[name][ext][query]',
-        },
-      }
     );
     return config;
   },
