@@ -51,7 +51,6 @@
     "docs",
     "examples/*",
     "packages/*",
-    "packages/lite/*",
     "storybook"
   ],
   "devDependencies": {
