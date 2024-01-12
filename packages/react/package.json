@@ -261,7 +261,8 @@
     },
     "extension": "./lib/jupyter/lab/index.js",
     "outputDir": "jupyter_react/labextension",
-    "schemaDir": "schema"
+    "schemaDir": "schema",
+    "webpackConfig": "./webpack.lab-config.js"
   },
   "jupyter-releaser": {
     "hooks": {
