@@ -200,7 +200,7 @@ module.exports = {
     new webpack.ProvidePlugin({
       process: 'process/browser',
     }),
-        new HtmlWebpackPlugin({
+    new HtmlWebpackPlugin({
       title: 'Jupyter React',
       template: 'public/' + INDEX_PAGE,
     }),

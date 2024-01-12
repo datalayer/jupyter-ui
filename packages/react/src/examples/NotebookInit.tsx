@@ -38,7 +38,7 @@ const useKernel = () => {
   const { kernelManager, serviceManager } = useJupyter();
   const [kernel, setKernel] = useState<Kernel>();
   useEffect(() => {
-    if(!serviceManager) {
+    if (!serviceManager) {
       return;
     }
     let startedKernel: Kernel;
@@ -49,7 +49,7 @@ const useKernel = () => {
         kernelSpecName: JUPYTER_KERNEL_NAME,
         kernelType: 'notebook',
         kernelspecsManager: serviceManager.kernelspecs,
-        sessionManager: serviceManager.sessions
+        sessionManager: serviceManager.sessions,
       });
       customKernel.ready.then(() => {
         startedKernel = customKernel;

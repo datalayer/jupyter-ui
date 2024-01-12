@@ -40,7 +40,9 @@ export type JupyterProps = React.PropsWithChildren<{
   /**
    * Whether to run Jupyter within the browser or not.
    */
-  browserKernelModule?: boolean | Promise<{default: JupyterLiteServerPlugin<any>[]}>;
+  browserKernelModule?:
+    | boolean
+    | Promise<{ default: JupyterLiteServerPlugin<any>[] }>;
   startDefaultKernel?: boolean;
   theme?: Theme;
   terminals?: boolean;

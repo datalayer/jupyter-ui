@@ -43,7 +43,7 @@ class ConsoleAdapter {
   private _panel: BoxPanel;
 
   constructor(options: IConsoleAdapterOptions) {
-    const {kernel, serviceManager} = options;
+    const { kernel, serviceManager } = options;
     this._panel = new BoxPanel();
     this._panel.direction = 'top-to-bottom';
     this._panel.spacing = 0;
@@ -53,10 +53,7 @@ class ConsoleAdapter {
     });
   }
 
-  protected setupConsole(
-    serviceManager: ServiceManager,
-    kernel?: Kernel
-  ) {
+  protected setupConsole(serviceManager: ServiceManager, kernel?: Kernel) {
     const panel = this._panel;
 
     // Set up a command registry

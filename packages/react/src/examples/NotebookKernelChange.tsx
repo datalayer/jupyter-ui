@@ -29,7 +29,7 @@ const NotebookKernelChange = () => {
         kernelSpecName: NEW_KERNEL_NAME,
         kernelType: 'notebook',
         kernelspecsManager: serviceManager.kernelspecs,
-        sessionManager: serviceManager.sessions
+        sessionManager: serviceManager.sessions,
       });
       kernel.ready.then(() => {
         dispatch(notebookActions.changeKernel({ uid: NOTEBOOK_UID, kernel }));

@@ -132,7 +132,7 @@ const NotebookKernelChange = () => {
         kernelSpecName: 'python',
         kernelType: 'notebook',
         kernelspecsManager: serviceManager.kernelspecs,
-        sessionManager: serviceManager.sessions
+        sessionManager: serviceManager.sessions,
       });
       kernel.ready.then(() => {
         dispatch(notebookActions.changeKernel({ uid: NOTEBOOK_UID_2, kernel }));

@@ -28,7 +28,7 @@ const NotebookUnmount = () => {
         kernelSpecName: 'python',
         kernelType: 'notebook',
         kernelspecsManager: serviceManager.kernelspecs,
-        sessionManager: serviceManager.sessions
+        sessionManager: serviceManager.sessions,
       });
       setKernel(kernel);
       setShowNotebook(true);
