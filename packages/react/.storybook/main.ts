@@ -113,6 +113,13 @@ const config: StorybookConfig = {
           filename: 'pypi/[name][ext][query]',
         },
       },
+      {
+        test: /pyodide-kernel-extension\/schema\/.*/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'schema/[name][ext][query]',
+        },
+      }
     );
     return config;
   },
