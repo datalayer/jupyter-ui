@@ -53,7 +53,7 @@ const EditorExample = () => {
       const kernel = getKernel(kernelManager, serviceManager);
       setValue(initialValue(kernel!));
     }
-  }, [kernelManager]);
+  }, [kernelManager, serviceManager]);
   const onChange = useCallback(
     (value: any) => {
       (setSelection as (selection: any) => void)(slateEditor.selection);

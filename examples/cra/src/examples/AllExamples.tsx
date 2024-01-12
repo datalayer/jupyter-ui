@@ -62,17 +62,18 @@ const NOTEBOOK_UID = 'notebook-uid-1';
  * A simple example for the Jupyter UI.
  */
 const AllExample = () => {
-  const { kernelManager, serverSettings } = useJupyter();
+  const { kernelManager, serviceManager } = useJupyter();
   const kernel = useMemo(() => {
-    if (kernelManager)
+    if (serviceManager && kernelManager)
       return new Kernel({
         kernelManager,
         kernelName: 'python',
         kernelSpecName: 'python',
         kernelType: 'notebook',
-        serverSettings,
+        kernelspecsManager: serviceManager.kernelspecs,
+        sessionManager: serviceManager.sessions,
       });
-  }, [kernelManager]);
+  }, [kernelManager, serviceManager]);
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
