@@ -21,19 +21,19 @@ const ENTRY =
   // './src/examples/Cell';
   // './src/examples/Console';
   './src/examples/ConsoleLite';
-  // './src/examples/Deno';
-  // './src/examples/IPyLeaflet';
-  // './src/examples/IPyReact';
-  // './src/examples/IPyWidgets';
-  // './src/examples/IPyWidgetsWithState';
-  // './src/examples/JupyterLabApp';
-  // './src/examples/JupyterLabHeadlessApp';
-  // './src/examples/Kernels';
-  // './src/examples/KernelExecutor';
-  // './src/examples/KernelExecResult';
-  // './src/examples/Lumino';
-  // './src/examples/Matplotlib';
-  // './src/examples/Notebook';
+// './src/examples/Deno';
+// './src/examples/IPyLeaflet';
+// './src/examples/IPyReact';
+// './src/examples/IPyWidgets';
+// './src/examples/IPyWidgetsWithState';
+// './src/examples/JupyterLabApp';
+// './src/examples/JupyterLabHeadlessApp';
+// './src/examples/Kernels';
+// './src/examples/KernelExecutor';
+// './src/examples/KernelExecResult';
+// './src/examples/Lumino';
+// './src/examples/Matplotlib';
+// './src/examples/Notebook';
 // './src/examples/NotebookColorMode';
 // './src/examples/NotebookKernelChange';
 // './src/examples/NotebookNbFormat';
@@ -175,8 +175,8 @@ module.exports = {
         resourceQuery: /text/,
         type: 'asset/resource',
         generator: {
-          filename: '[name][ext]'
-        }
+          filename: '[name][ext]',
+        },
       },
       // Rule for pyodide kernel
       {
@@ -192,7 +192,7 @@ module.exports = {
         generator: {
           filename: 'schema/[name][ext][query]',
         },
-      }
+      },
     ],
   },
   plugins: [
@@ -200,7 +200,7 @@ module.exports = {
     new webpack.ProvidePlugin({
       process: 'process/browser',
     }),
-    new HtmlWebpackPlugin({
+        new HtmlWebpackPlugin({
       title: 'Jupyter React',
       template: 'public/' + INDEX_PAGE,
     }),

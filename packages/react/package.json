@@ -166,6 +166,7 @@
     "@jupyterlab/running-extension": "4.0.10",
     "@jupyterlab/testutils": "4.0.10",
     "@jupyterlab/vega3-extension": "3.3.0",
+    "@jupyterlite/javascript-kernel-extension": "0.2.2",
     "@primer/octicons-react": "^19.8.0",
     "@storybook/addon-essentials": "^7.6.5",
     "@storybook/addon-interactions": "^7.6.5",

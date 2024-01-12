@@ -15,9 +15,7 @@ const root = createRoot(div);
 
 root.render(
   <Jupyter
-    browserKernelUrl={
-      'https://cdn.jsdelivr.net/npm/@jupyterlite/pyodide-kernel-extension'
-    }
+    browserKernelModule={true}
   >
     <Box as="h1">A Jupyter Console with a Lite Kernel</Box>
     <Console />

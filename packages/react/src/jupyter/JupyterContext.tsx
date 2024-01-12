@@ -4,18 +4,18 @@
  * MIT License
  */
 
-import React, { useState, useEffect, useContext, createContext } from 'react';
-import defaultInjectableStore from '../state/redux/Store';
-import { Provider as ReduxProvider } from 'react-redux';
 import {
-  ServiceManager,
-  ServerConnection,
   Kernel as CoreKernel,
+  ServerConnection,
+  ServiceManager,
 } from '@jupyterlab/services';
+import type { JupyterLiteServerPlugin } from '@jupyterlite/server';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
+import defaultInjectableStore, { InjectableStore } from '../state/redux/Store';
+import { createLiteServer } from './../jupyter/lite/LiteServer';
 import { getJupyterServerHttpUrl, getJupyterToken } from './JupyterConfig';
 import { requestAPI } from './JupyterHandlers';
-import { createLiteServer } from './../jupyter/lite/LiteServer';
-import { InjectableStore } from '../state/redux/Store';
 import Kernel from './kernel/Kernel';
 
 /**
@@ -35,7 +35,7 @@ export type JupyterContextType = {
    *
    * If `true`, it does not ensure a default kernel will
    * be created successfully.
-   * 
+   *
    * This is useful to not mount to quickly a Lumino Widget
    * to be unmount right away when the default kernel will
    * be available.
@@ -44,20 +44,27 @@ export type JupyterContextType = {
   injectableStore: InjectableStore;
   kernelManager?: CoreKernel.IManager;
   /**
-   * URL to fetch a JupyterLite kernel (i.e. in-browser kernel).
+   * If `true`, it will load the Pyodide jupyterlite kernel.
+   *
+   * You can also set it to dynamically import any jupyterlite
+   * kernel package.
    *
    * If defined, {@link serverUrls} and {@link defaultKernelName}
    * will be ignored and the component will run this in-browser
    * kernel.
    *
    * @example
-   * https://cdn.jsdelivr.net/npm/@jupyterlite/pyodide-kernel-extension
+   * `browserKernelModule: true` => Load dynamically the package @jupyterlite/pyodide-kernel-extension
+   *
+   * `browserKernelModule: import('@jupyterlite/javascript-kernel-extension')` => Load dynamically
    */
-  browserKernelUrl?: string;
+  browserKernelModule?:
+    | boolean
+    | Promise<{ default: JupyterLiteServerPlugin<any>[] }>;
   /**
    * Jupyter Server settings
    *
-   * This is useless if running an in-browser kernel via {@link browserKernelUrl}.
+   * This is useless if running an in-browser kernel via {@link browserKernelModule}.
    */
   serverSettings: ServerConnection.ISettings;
   /**
@@ -156,11 +163,13 @@ export type JupyterContextProps = React.PropsWithChildren<{
    * @example
    * https://cdn.jsdelivr.net/npm/@jupyterlite/pyodide-kernel-extension
    */
-  browserKernelUrl?: string;
+  browserKernelModule?:
+    | boolean
+    | Promise<{ default: JupyterLiteServerPlugin<any>[] }>;
   /**
    * Jupyter Server URLs to connect to.
    *
-   * It will be ignored if a {@link browserKernelUrl} is provided.
+   * It will be ignored if a {@link browserKernelModule} is provided.
    */
   serverUrls?: IServerUrls;
   /**
@@ -198,7 +207,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
     collaborative = false,
     defaultKernelName = 'python',
     injectableStore = defaultInjectableStore,
-    browserKernelUrl = '',
+    browserKernelModule = false,
     startDefaultKernel = true,
     useRunningKernelId,
     useRunningKernelIndex = -1,
@@ -218,10 +227,13 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
 
   // Create a service manager
   useEffect(() => {
-    if (browserKernelUrl) {
+    if (browserKernelModule) {
       createLiteServer().then(async liteServer => {
         // Load the browser kernel
-        const mod = await import('@jupyterlite/pyodide-kernel-extension');
+        const mod =
+          typeof browserKernelModule === 'boolean'
+            ? await import('@jupyterlite/pyodide-kernel-extension')
+            : await browserKernelModule;
         // Load the module manually to get the list of plugin IDs
         let data = mod.default;
         // Handle commonjs exports.
@@ -274,7 +286,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
       });
     }
     setVariant(variant);
-  }, [baseUrl, wsUrl, browserKernelUrl, variant]);
+  }, [baseUrl, wsUrl, browserKernelModule, variant]);
 
   // Create a kernel
   useEffect(() => {
@@ -322,7 +334,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
         });
       }
     });
-  }, [browserKernelUrl, serviceManager]);
+  }, [browserKernelModule, serviceManager]);
 
   return (
     <ReduxProvider store={injectableStore}>
@@ -336,7 +348,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
           defaultKernelIsLoading: kernelIsLoading,
           injectableStore,
           kernelManager: serviceManager?.kernels,
-          browserKernelUrl: browserKernelUrl,
+          browserKernelModule: browserKernelModule,
           serverSettings:
             serviceManager?.serverSettings ?? createServerSettings('', ''),
           serviceManager,

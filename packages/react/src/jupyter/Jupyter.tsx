@@ -4,24 +4,25 @@
  * MIT License
  */
 
-import React, { useMemo } from 'react';
+import type { JupyterLiteServerPlugin } from '@jupyterlite/server';
 import {
-  ThemeProvider,
   BaseStyles,
   Box,
+  ThemeProvider,
   theme as primerTheme,
 } from '@primer/react';
 import { Theme } from '@primer/react/lib/ThemeProvider';
+import React, { useMemo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { JupyterContextProvider } from './JupyterContext';
 import type { InjectableStore } from '../state/redux/Store';
-import JupyterLabCss from './lab/JupyterLabCss';
 import {
   getJupyterServerHttpUrl,
   getJupyterServerWsUrl,
   loadJupyterConfig,
 } from './JupyterConfig';
+import { JupyterContextProvider } from './JupyterContext';
 import { ColorMode } from './lab/JupyterLabColorMode';
+import JupyterLabCss from './lab/JupyterLabCss';
 
 /**
  * Definition of the properties that can be passed
@@ -39,7 +40,7 @@ export type JupyterProps = React.PropsWithChildren<{
   /**
    * Whether to run Jupyter within the browser or not.
    */
-  browserKernelUrl?: string;
+  browserKernelModule?: boolean | Promise<{default: JupyterLiteServerPlugin<any>[]}>;
   startDefaultKernel?: boolean;
   theme?: Theme;
   terminals?: boolean;
@@ -78,7 +79,7 @@ export const Jupyter = (props: JupyterProps) => {
     jupyterServerHttpUrl,
     jupyterServerWsUrl,
     jupyterToken,
-    browserKernelUrl,
+    browserKernelModule,
     startDefaultKernel,
     terminals = false,
     theme = primerTheme,
@@ -92,7 +93,7 @@ export const Jupyter = (props: JupyterProps) => {
       jupyterServerHttpUrl,
       jupyterServerWsUrl,
       jupyterToken,
-      browserKernelUrl,
+      browserKernelModule,
       terminals,
     });
   }, [
@@ -100,7 +101,7 @@ export const Jupyter = (props: JupyterProps) => {
     jupyterServerHttpUrl,
     jupyterServerWsUrl,
     jupyterToken,
-    browserKernelUrl,
+    browserKernelModule,
     terminals,
   ]);
 
@@ -126,7 +127,7 @@ export const Jupyter = (props: JupyterProps) => {
               collaborative={collaborative}
               defaultKernelName={defaultKernelName}
               injectableStore={injectableStore}
-              browserKernelUrl={browserKernelUrl}
+              browserKernelModule={browserKernelModule}
               serverUrls={{
                 baseUrl: getJupyterServerHttpUrl(),
                 wsUrl: getJupyterServerWsUrl(),
