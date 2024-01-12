@@ -98,7 +98,7 @@ export const Notebook = (props: INotebookProps) => {
             uid,
           },
           injectableStore,
-          serviceManager
+          serviceManager,
         );
         setAdapter(adapter);
         dispatch(

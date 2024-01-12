@@ -415,7 +415,7 @@ export class NotebookAdapter {
     this._boxPanel.addWidget(this._notebookPanel);
     BoxPanel.setStretch(this._notebookPanel, 0);
     window.addEventListener('resize', () => {
-      this._notebookPanel?.update();
+      this._notebookPanel?.update()
     });
     const isNbFormat =
       this._path !== undefined && this._path !== '' ? false : true;

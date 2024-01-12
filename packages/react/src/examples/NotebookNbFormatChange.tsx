@@ -20,7 +20,7 @@ import nbformat2 from './notebooks/NotebookExample2.ipynb.json';
 
 const NOTEBOOK_UID = 'notebook-model-change-id';
 
-const NotebookModelChange = () => {
+const NotebookNbFormatChange = () => {
   const { injectableStore } = useJupyter();
   const [nbformat, setNbformat] = useState(nbformat1);
   //  const notebookModel = selectNotebookModel(NOTEBOOK_UID);
@@ -65,6 +65,6 @@ const root = createRoot(div);
 
 root.render(
   <Jupyter>
-    <NotebookModelChange />
+    <NotebookNbFormatChange />
   </Jupyter>
 );
