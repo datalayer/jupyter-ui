@@ -66,6 +66,8 @@ build-storybook: ## build-storybook
 
 publish-storybook: build-storybook ## publish to s3
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
+		mkdir -p ./storybook-static/api/contents && \
+		cp ./storybook-static/pypi/all.json ./storybook-static/api/contents/all.json && \
 	  aws s3 rm \
 		s3://datalayer-jupyter-ui-storybook/ \
 		--recursive \
