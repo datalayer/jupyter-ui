@@ -29,7 +29,7 @@ module.exports = {
         },
       },
       {
-        test: /schema\/.*/,
+        test: /pyodide-kernel-extension\/schema\/.*/,
         type: 'asset/resource',
         generator: {
           filename: 'schema/[name][ext][query]',
