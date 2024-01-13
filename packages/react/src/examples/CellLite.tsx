@@ -15,7 +15,8 @@ const root = createRoot(div);
 
 root.render(
   <Jupyter lite={true}>
-    <Box as="h1">A Jupyter Cell</Box>
-    <Cell />
+    <Box as="h1">A Jupyter Cell with a Lite Kernel</Box>
+    <Cell source={`print('👋 Hello Jupyter UI Lite')
+get_ipython()`}/>
   </Jupyter>
 );

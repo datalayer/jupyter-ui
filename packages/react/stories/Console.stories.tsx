@@ -24,7 +24,7 @@ export default meta;
 type Story = StoryObj<typeof Console>;
 
 const Template = (args, { globals: { labComparison } }) => {
-  const browserKernelModel = {
+  const lite = {
     true: true,
     false: false,
     '@jupyterlite/javascript-kernel-extension': import(
@@ -39,7 +39,7 @@ const Template = (args, { globals: { labComparison } }) => {
 
   return (
     <Jupyter
-      lite={browserKernelModel}
+      lite={lite}
       defaultKernelName={kernelName}
       jupyterServerHttpUrl="https://oss.datalayer.tech/api/jupyter"
       jupyterServerWsUrl="wss://oss.datalayer.tech/api/jupyter"
@@ -55,14 +55,14 @@ Default.args = {
   lite: 'false',
 };
 
-export const InBrowser: Story = Template.bind({});
-InBrowser.args = {
+export const LitePython: Story = Template.bind({});
+LitePython.args = {
   ...Default.args,
   lite: 'true',
 };
 
-export const InBrowserJS: Story = Template.bind({});
-InBrowserJS.args = {
+export const LiteJavascript: Story = Template.bind({});
+LiteJavascript.args = {
   ...Default.args,
   lite: '@jupyterlite/javascript-kernel-extension',
 };

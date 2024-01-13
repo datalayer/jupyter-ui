@@ -54,6 +54,7 @@ import {
   WIDGET_MIMETYPE,
   WidgetRenderer,
 } from '@jupyter-widgets/html-manager/lib/output_renderers';
+import { Lite } from '../../jupyter/JupyterContext';
 import { Kernel } from '../../jupyter/kernel/Kernel';
 import JupyterReactContentFactory from './content/JupyterReactContentFactory';
 import JupyterReactNotebookModelFactory from './model/JupyterReactNotebookModelFactory';
@@ -85,6 +86,7 @@ export class NotebookAdapter {
   private _iPyWidgetsClassicManager?: IPyWidgetsClassicManager;
   private _ipywidgets: 'lab' | 'classic';
   private _kernel: Kernel;
+  private _lite?: Lite;
   private _nbformat?: INotebookContent;
   private _nbgrader: boolean;
   private _notebookPanel?: NotebookPanel;
@@ -101,18 +103,21 @@ export class NotebookAdapter {
   constructor(
     props: INotebookProps,
     store: any,
-    serviceManager: ServiceManager
+    serviceManager: ServiceManager,
+    lite?: Lite
   ) {
     this._bundledIPyWidgets = props.bundledIPyWidgets;
     this._externalIPyWidgets = props.externalIPyWidgets;
     this._ipywidgets = props.ipywidgets;
     this._kernel = props.kernel!;
+    this._lite = lite;
     this._nbformat = props.nbformat;
     this._nbgrader = props.nbgrader;
     this._path = props.path;
     this._readOnly = props.readOnly;
     this._renderers = props.renderers;
     this._uid = props.uid;
+
     this._CellSidebar = props.CellSidebar;
 
     this._store = store;
@@ -419,7 +424,7 @@ export class NotebookAdapter {
     });
     const isNbFormat =
       this._path !== undefined && this._path !== '' ? false : true;
-    if (isNbFormat) {
+    if (isNbFormat && !this._lite) {
       // Fixes if nbformat is provided and we don't want to interact with the content manager.
       (this._context as any).initialize = async (
         isNew: boolean

@@ -18,6 +18,10 @@ import { getJupyterServerHttpUrl, getJupyterToken } from './JupyterConfig';
 import { requestAPI } from './JupyterHandlers';
 import Kernel from './kernel/Kernel';
 
+export type Lite = 
+  | boolean
+  | Promise<{ default: JupyterLiteServerPlugin<any>[] }>
+
 /**
  * The type for the Jupyter context.
  */
@@ -58,9 +62,7 @@ export type JupyterContextType = {
    *
    * `lite: import('@jupyterlite/javascript-kernel-extension')` => Load dynamically
    */
-  lite?:
-    | boolean
-    | Promise<{ default: JupyterLiteServerPlugin<any>[] }>;
+  lite?: Lite;
   /**
    * Jupyter Server settings
    *

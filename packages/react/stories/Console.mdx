@@ -35,7 +35,7 @@ It supports in-browser kernel (using [JupyterLite kernels](https://jupyterlite.r
 To use the [Pyodide](https://pyodide.org/) Python [kernel](https://github.com/jupyterlite/pyodide-kernel),
 you can simply set `lite` to `true`:
 
-<Canvas of={ConsoleStories.InBrowser} source={{code: `<Jupyter
+<Canvas of={ConsoleStories.LitePython} source={{code: `<Jupyter
     lite={true}
 >
     <Console />
@@ -44,7 +44,7 @@ you can simply set `lite` to `true`:
 But you can also load your own JupyterLite kernel. For example here, the console loads
 the [JavaScript kernel](https://github.com/jupyterlite/jupyterlite/tree/main/py/jupyterlite-javascript-kernel).
 
-<Canvas of={ConsoleStories.InBrowserJS} source={{code: `<Jupyter
+<Canvas of={ConsoleStories.LiteJavascript} source={{code: `<Jupyter
     lite={import('@jupyterlite/javascript-kernel-extension')}
     defaultKernelName={'javascript'}
 >

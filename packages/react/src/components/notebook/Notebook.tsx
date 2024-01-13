@@ -83,11 +83,12 @@ export const Notebook = (props: INotebookProps) => {
     nbformat,
     Toolbar,
   } = props;
+  const { lite } = useJupyter()
   const [uid] = useState(props.uid || newUuid());
+  const [adapter, setAdapter] = useState<NotebookAdapter>();
   const kernel = propsKernel || defaultKernel;
   const dispatch = useDispatch();
   const portals = selectNotebookPortals(uid);
-  const [adapter, setAdapter] = useState<NotebookAdapter>();
   const newAdapterState = () => {
     if (uid && serviceManager && kernelManager && kernel) {
       kernel.ready.then(() => {
@@ -99,6 +100,7 @@ export const Notebook = (props: INotebookProps) => {
           },
           injectableStore,
           serviceManager,
+          lite
         );
         setAdapter(adapter);
         dispatch(

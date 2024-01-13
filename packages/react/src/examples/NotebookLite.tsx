@@ -5,6 +5,7 @@
  */
 
 import { createRoot } from 'react-dom/client';
+import { Box } from '@primer/react';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import Jupyter from '../jupyter/Jupyter';
 import Notebook from '../components/notebook/Notebook';
@@ -13,8 +14,9 @@ import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
-const NotebookNbFormat = () => (
+const NotebookLite = () => (
   <Jupyter lite={true}>
+    <Box as="h1">A Jupyter Notebook with a Lite Kernel</Box>
     <Notebook
       nbformat={nbformat as INotebookContent}
       uid="notebook-model-uid"
@@ -30,4 +32,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookNbFormat />);
+root.render(<NotebookLite />);
