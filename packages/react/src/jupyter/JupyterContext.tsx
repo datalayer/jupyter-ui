@@ -54,17 +54,17 @@ export type JupyterContextType = {
    * kernel.
    *
    * @example
-   * `browserKernelModule: true` => Load dynamically the package @jupyterlite/pyodide-kernel-extension
+   * `lite: true` => Load dynamically the package @jupyterlite/pyodide-kernel-extension
    *
-   * `browserKernelModule: import('@jupyterlite/javascript-kernel-extension')` => Load dynamically
+   * `lite: import('@jupyterlite/javascript-kernel-extension')` => Load dynamically
    */
-  browserKernelModule?:
+  lite?:
     | boolean
     | Promise<{ default: JupyterLiteServerPlugin<any>[] }>;
   /**
    * Jupyter Server settings
    *
-   * This is useless if running an in-browser kernel via {@link browserKernelModule}.
+   * This is useless if running an in-browser kernel via {@link lite}.
    */
   serverSettings: ServerConnection.ISettings;
   /**
@@ -163,13 +163,13 @@ export type JupyterContextProps = React.PropsWithChildren<{
    * @example
    * https://cdn.jsdelivr.net/npm/@jupyterlite/pyodide-kernel-extension
    */
-  browserKernelModule?:
+  lite?:
     | boolean
     | Promise<{ default: JupyterLiteServerPlugin<any>[] }>;
   /**
    * Jupyter Server URLs to connect to.
    *
-   * It will be ignored if a {@link browserKernelModule} is provided.
+   * It will be ignored if a {@link lite} is provided.
    */
   serverUrls?: IServerUrls;
   /**
@@ -207,7 +207,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
     collaborative = false,
     defaultKernelName = 'python',
     injectableStore = defaultInjectableStore,
-    browserKernelModule = false,
+    lite = false,
     startDefaultKernel = true,
     useRunningKernelId,
     useRunningKernelIndex = -1,
@@ -227,13 +227,13 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
 
   // Create a service manager
   useEffect(() => {
-    if (browserKernelModule) {
+    if (lite) {
       createLiteServer().then(async liteServer => {
         // Load the browser kernel
         const mod =
-          typeof browserKernelModule === 'boolean'
+          typeof lite === 'boolean'
             ? await import('@jupyterlite/pyodide-kernel-extension')
-            : await browserKernelModule;
+            : await lite;
         // Load the module manually to get the list of plugin IDs
         let data = mod.default;
         // Handle commonjs exports.
@@ -286,7 +286,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
       });
     }
     setVariant(variant);
-  }, [baseUrl, wsUrl, browserKernelModule, variant]);
+  }, [baseUrl, wsUrl, lite, variant]);
 
   // Create a kernel
   useEffect(() => {
@@ -334,7 +334,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
         });
       }
     });
-  }, [browserKernelModule, serviceManager]);
+  }, [lite, serviceManager]);
 
   return (
     <ReduxProvider store={injectableStore}>
@@ -348,7 +348,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
           defaultKernelIsLoading: kernelIsLoading,
           injectableStore,
           kernelManager: serviceManager?.kernels,
-          browserKernelModule: browserKernelModule,
+          lite: lite,
           serverSettings:
             serviceManager?.serverSettings ?? createServerSettings('', ''),
           serviceManager,

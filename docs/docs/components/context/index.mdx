@@ -9,7 +9,7 @@ Every component must be wrapped inside a Jupyter Context.
 ```tsx
 root.render(
   <Jupyter
-    browserKernelModule={false}
+    lite={false}
     useRunningKernelIndex={-1}
     startDefaultKernel={true}
     terminals={false}
@@ -34,7 +34,7 @@ The Jupyter Context has the following properties.
 - `jupyterServerHttpUrl` - Read also [Deployment](/docs/deployments/jupyter-server)
 - `jupyterServerWsUrl` - Read also [Deployment](/docs/deployments/jupyter-server)
 - `jupyterToken` - Read also [Deployment](/docs/deployments/jupyter-server)
-- `browserKernelModule`
+- `lite`
 - `loadJupyterCss`
 - `startDefaultKernel`
 - `terminals`

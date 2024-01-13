@@ -14,7 +14,7 @@ import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookNbFormat = () => (
-  <Jupyter browserKernelModule={true}>
+  <Jupyter lite={true}>
     <Notebook
       nbformat={nbformat as INotebookContent}
       uid="notebook-model-uid"

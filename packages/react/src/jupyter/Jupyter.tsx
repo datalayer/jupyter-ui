@@ -40,7 +40,7 @@ export type JupyterProps = React.PropsWithChildren<{
   /**
    * Whether to run Jupyter within the browser or not.
    */
-  browserKernelModule?:
+  lite?:
     | boolean
     | Promise<{ default: JupyterLiteServerPlugin<any>[] }>;
   startDefaultKernel?: boolean;
@@ -81,7 +81,7 @@ export const Jupyter = (props: JupyterProps) => {
     jupyterServerHttpUrl,
     jupyterServerWsUrl,
     jupyterToken,
-    browserKernelModule,
+    lite,
     startDefaultKernel,
     terminals = false,
     theme = primerTheme,
@@ -95,7 +95,7 @@ export const Jupyter = (props: JupyterProps) => {
       jupyterServerHttpUrl,
       jupyterServerWsUrl,
       jupyterToken,
-      browserKernelModule,
+      lite,
       terminals,
     });
   }, [
@@ -103,7 +103,7 @@ export const Jupyter = (props: JupyterProps) => {
     jupyterServerHttpUrl,
     jupyterServerWsUrl,
     jupyterToken,
-    browserKernelModule,
+    lite,
     terminals,
   ]);
 
@@ -129,7 +129,7 @@ export const Jupyter = (props: JupyterProps) => {
               collaborative={collaborative}
               defaultKernelName={defaultKernelName}
               injectableStore={injectableStore}
-              browserKernelModule={browserKernelModule}
+              lite={lite}
               serverUrls={{
                 baseUrl: getJupyterServerHttpUrl(),
                 wsUrl: getJupyterServerWsUrl(),

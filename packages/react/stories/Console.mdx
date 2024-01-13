@@ -33,10 +33,10 @@ You can set the following props to connect it to a running Jupyter Server:
 It supports in-browser kernel (using [JupyterLite kernels](https://jupyterlite.readthedocs.io/en/stable/)).
 
 To use the [Pyodide](https://pyodide.org/) Python [kernel](https://github.com/jupyterlite/pyodide-kernel),
-you can simply set `browserKernelModule` to `true`:
+you can simply set `lite` to `true`:
 
 <Canvas of={ConsoleStories.InBrowser} source={{code: `<Jupyter
-    browserKernelModule={true}
+    lite={true}
 >
     <Console />
 </Jupyter>`}} />
@@ -45,12 +45,12 @@ But you can also load your own JupyterLite kernel. For example here, the console
 the [JavaScript kernel](https://github.com/jupyterlite/jupyterlite/tree/main/py/jupyterlite-javascript-kernel).
 
 <Canvas of={ConsoleStories.InBrowserJS} source={{code: `<Jupyter
-    browserKernelModule={import('@jupyterlite/javascript-kernel-extension')}
+    lite={import('@jupyterlite/javascript-kernel-extension')}
     defaultKernelName={'javascript'}
 >
     <Console />
 </Jupyter>`}} />
 
 To do so, you will need to specify two props:
-- `browserKernelModule`: Should be set with the dynamic import of the kernel NPM package
+- `lite`: Should be set with the dynamic import of the kernel NPM package
 - `defaultKernelName`: Should match the name of the dynamically imported kernel

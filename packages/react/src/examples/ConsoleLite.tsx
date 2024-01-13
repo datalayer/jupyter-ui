@@ -14,7 +14,7 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <Jupyter browserKernelModule={true}>
+  <Jupyter lite={true}>
     <Box as="h1">A Jupyter Console with a Lite Kernel</Box>
     <Console />
   </Jupyter>

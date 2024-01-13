@@ -11,7 +11,7 @@ import React from 'react';
 const meta: Meta<typeof Console> = {
   title: 'Components/Console',
   argTypes: {
-    browserKernelModule: {
+    lite: {
       table: {
         disable: true,
       },
@@ -30,16 +30,16 @@ const Template = (args, { globals: { labComparison } }) => {
     '@jupyterlite/javascript-kernel-extension': import(
       '@jupyterlite/javascript-kernel-extension'
     ),
-  }[args.browserKernelModule];
+  }[args.lite];
 
   const kernelName =
-    args.browserKernelModule === '@jupyterlite/javascript-kernel-extension'
+    args.lite === '@jupyterlite/javascript-kernel-extension'
       ? 'javascript'
       : undefined;
 
   return (
     <Jupyter
-      browserKernelModule={browserKernelModel}
+      lite={browserKernelModel}
       defaultKernelName={kernelName}
       jupyterServerHttpUrl="https://oss.datalayer.tech/api/jupyter"
       jupyterServerWsUrl="wss://oss.datalayer.tech/api/jupyter"
@@ -52,17 +52,17 @@ const Template = (args, { globals: { labComparison } }) => {
 
 export const Default: Story = Template.bind({});
 Default.args = {
-  browserKernelModule: 'false',
+  lite: 'false',
 };
 
 export const InBrowser: Story = Template.bind({});
 InBrowser.args = {
   ...Default.args,
-  browserKernelModule: 'true',
+  lite: 'true',
 };
 
 export const InBrowserJS: Story = Template.bind({});
 InBrowserJS.args = {
   ...Default.args,
-  browserKernelModule: '@jupyterlite/javascript-kernel-extension',
+  lite: '@jupyterlite/javascript-kernel-extension',
 };
