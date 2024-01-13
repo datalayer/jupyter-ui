@@ -75,15 +75,6 @@ module.exports = {
     client: {
       overlay: false,
     },
-    proxy: {
-      '/build/pypi': {
-        target: 'https://datalayer-assets.s3.us-west-2.amazonaws.com/pypi',
-        pathRewrite: { '^/build/pypi': '' },
-        ws: false,
-        secure: false,
-        changeOrigin: true,
-      }
-    },
   },
   devtool,
   optimization: {
