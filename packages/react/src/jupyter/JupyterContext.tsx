@@ -165,9 +165,7 @@ export type JupyterContextProps = React.PropsWithChildren<{
    * @example
    * https://cdn.jsdelivr.net/npm/@jupyterlite/pyodide-kernel-extension
    */
-  lite?:
-    | boolean
-    | Promise<{ default: JupyterLiteServerPlugin<any>[] }>;
+  lite?: Lite;
   /**
    * Jupyter Server URLs to connect to.
    *

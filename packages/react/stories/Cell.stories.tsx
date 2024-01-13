@@ -4,9 +4,9 @@
  * MIT License
  */
 
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Jupyter, Cell } from './../src';
-import React from 'react';
 
 const meta: Meta<typeof Cell> = {
   title: 'Components/Cell',

@@ -4,7 +4,6 @@
  * MIT License
  */
 
-import type { JupyterLiteServerPlugin } from '@jupyterlite/server';
 import {
   BaseStyles,
   Box,
@@ -20,7 +19,7 @@ import {
   getJupyterServerWsUrl,
   loadJupyterConfig,
 } from './JupyterConfig';
-import { JupyterContextProvider } from './JupyterContext';
+import { JupyterContextProvider, Lite } from './JupyterContext';
 import { ColorMode } from './lab/JupyterLabColorMode';
 import JupyterLabCss from './lab/JupyterLabCss';
 
@@ -40,9 +39,7 @@ export type JupyterProps = React.PropsWithChildren<{
   /**
    * Whether to run Jupyter within the browser or not.
    */
-  lite?:
-    | boolean
-    | Promise<{ default: JupyterLiteServerPlugin<any>[] }>;
+  lite?: Lite;
   startDefaultKernel?: boolean;
   theme?: Theme;
   terminals?: boolean;

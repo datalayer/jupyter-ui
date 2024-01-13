@@ -4,9 +4,9 @@
  * MIT License
  */
 
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Jupyter, Console } from './../src';
-import React from 'react';
 
 const meta: Meta<typeof Console> = {
   title: 'Components/Console',
@@ -45,7 +45,13 @@ const Template = (args, { globals: { labComparison } }) => {
       jupyterServerWsUrl="wss://oss.datalayer.tech/api/jupyter"
       jupyterToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
     >
-      <Console {...args} />
+      <Console
+        code={
+          [
+            "print('👋 Hello Jupyter Console')"
+          ]
+        }
+      />
     </Jupyter>
   );
 };
@@ -58,7 +64,7 @@ Default.args = {
 export const LitePython: Story = Template.bind({});
 LitePython.args = {
   ...Default.args,
-  lite: 'true',
+  lite: true,
 };
 
 export const LiteJavascript: Story = Template.bind({});

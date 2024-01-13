@@ -11,7 +11,7 @@ import ConsoleAdapter from './ConsoleAdapter';
 
 import './Console.css';
 
-export const Console = () => {
+export const Console = (options: Console.IConsoleOptions) => {
   const {
     defaultKernel,
     defaultKernelIsLoading,
@@ -23,6 +23,7 @@ export const Console = () => {
       const adapter = new ConsoleAdapter({
         kernel: defaultKernel,
         serviceManager,
+        code: options.code,
       });
       setAdapter(adapter);
     }
@@ -33,5 +34,17 @@ export const Console = () => {
     <>Loading Jupyter Console...</>
   );
 };
+
+export namespace Console {
+  /**
+   * Console adapter options
+   */
+  export interface IConsoleOptions {
+    /**
+     * Initial code to run.
+     */
+    code?: string[];
+  }
+}
 
 export default Console;

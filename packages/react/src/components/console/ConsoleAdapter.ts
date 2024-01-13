@@ -4,11 +4,12 @@
  * MIT License
  */
 
+import { CommandRegistry } from '@lumino/commands';
+import { BoxPanel } from '@lumino/widgets';
 import {
   RenderMimeRegistry,
   standardRendererFactories as initialFactories,
 } from '@jupyterlab/rendermime';
-import { CommandRegistry } from '@lumino/commands';
 import {
   ybinding,
   CodeMirrorEditorFactory,
@@ -17,7 +18,6 @@ import {
   EditorExtensionRegistry,
   EditorThemeRegistry,
 } from '@jupyterlab/codemirror';
-import { BoxPanel } from '@lumino/widgets';
 import { ServiceManager } from '@jupyterlab/services';
 import { ConsolePanel } from '@jupyterlab/console';
 import { IYText } from '@jupyter/ydoc';
@@ -25,25 +25,13 @@ import { Kernel } from '../../jupyter/kernel';
 
 const DEFAULT_CONSOLE_PATH = 'console-path';
 
-/**
- * Console adapter options
- */
-export interface IConsoleAdapterOptions {
-  /**
-   * Default kernel
-   */
-  kernel?: Kernel;
-  /**
-   * Application service manager
-   */
-  serviceManager: ServiceManager;
-}
-
 class ConsoleAdapter {
   private _panel: BoxPanel;
+  private _code?: string[];
 
-  constructor(options: IConsoleAdapterOptions) {
-    const { kernel, serviceManager } = options;
+  constructor(options: ConsoleAdapter.IConsoleAdapterOptions) {
+    const { kernel, serviceManager, code } = options;
+    this._code = code;
     this._panel = new BoxPanel();
     this._panel.direction = 'top-to-bottom';
     this._panel.spacing = 0;
@@ -54,11 +42,10 @@ class ConsoleAdapter {
   }
 
   protected setupConsole(serviceManager: ServiceManager, kernel?: Kernel) {
-    const panel = this._panel;
 
-    // Set up a command registry
+    // Set up a command registry.
     const commands = new CommandRegistry();
-    panel.node.addEventListener('keydown', event => {
+    this._panel.node.addEventListener('keydown', event => {
       commands.processKeydownEvent(event);
     });
 
@@ -98,7 +85,7 @@ class ConsoleAdapter {
       name: 'ipythongfm',
       mime: 'text/x-ipythongfm',
       load: async () => {
-        // TODO: add support for LaTeX
+        // TODO: add support for LaTeX.
         const m = await import('@codemirror/lang-markdown');
         return m.markdown({
           codeLanguages: (info: string) => languages.findBest(info) as any,
@@ -114,6 +101,7 @@ class ConsoleAdapter {
     const editorFactory = factoryService.newInlineEditor;
 
     const contentFactory = new ConsolePanel.ContentFactory({ editorFactory });
+
     const consolePanel = new ConsolePanel({
       name: kernel?.session.name,
       manager: serviceManager,
@@ -131,13 +119,15 @@ class ConsoleAdapter {
 
     consolePanel.title.label = 'Console';
     BoxPanel.setStretch(consolePanel, 1);
-    panel.addWidget(consolePanel);
+    this._panel.addWidget(consolePanel);
+
     window.addEventListener('resize', () => {
-      panel.update();
+      this._panel.update();
     });
+
     const selector = '.jp-ConsolePanel';
 
-    // Add commands
+    // Add Console commands.
     let command: string;
     command = 'console:clear';
     commands.addCommand(command, {
@@ -170,10 +160,37 @@ class ConsoleAdapter {
       },
     });
     commands.addKeyBinding({ command, selector, keys: ['Ctrl Enter'] });
+
+    if (this._code) {
+      consolePanel.console.sessionContext.ready.then(() => {
+        this._code!.forEach((line) => consolePanel.console.inject(line));
+      });
+    }
+
   }
 
   get panel(): BoxPanel {
     return this._panel;
+  }
+}
+
+export namespace ConsoleAdapter {
+  /**
+   * Console adapter options
+   */
+  export interface IConsoleAdapterOptions {
+    /**
+     * Default kernel
+     */
+    kernel?: Kernel;
+    /**
+     * Application service manager
+     */
+    serviceManager: ServiceManager;
+    /**
+     * Initial code to run.
+     */
+    code?: string[];
   }
 }
 

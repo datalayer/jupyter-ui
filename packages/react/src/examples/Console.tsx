@@ -16,6 +16,12 @@ const root = createRoot(div);
 root.render(
   <Jupyter>
     <Box as="h1">A Jupyter Console</Box>
-    <Console />
+    <Console
+      code={
+        [
+          "print('👋 Hello Jupyter Console')"
+        ]
+      }
+    />
   </Jupyter>
 );
