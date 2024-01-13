@@ -22,9 +22,9 @@ test('Default', async ({ page }) => {
   ).toContainText('hello from remote');
 });
 
-test('Pyodide', async ({ page }) => {
+test('Lite Python', async ({ page }) => {
   await page.goto(
-    'http://localhost:6006/iframe.html?id=components-console--in-browser'
+    'http://localhost:6006/iframe.html?id=components-console--lite-python'
   );
 
   await page
@@ -40,9 +40,9 @@ test('Pyodide', async ({ page }) => {
   ).toContainText('hello from pyodide');
 });
 
-test('in-browser JavaScript', async ({ page }) => {
+test('Lite JavaScript', async ({ page }) => {
   await page.goto(
-    'http://localhost:6006/iframe.html?id=components-console--in-browser-js'
+    'http://localhost:6006/iframe.html?id=components-console--lite-javascript'
   );
 
   await page.getByText('A JavaScript kernel running in the browser').waitFor();
