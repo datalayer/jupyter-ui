@@ -77,7 +77,7 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
               notebookActions.insertAbove.started({
                 uid: notebookId,
                 cellType: 'code',
-              }),
+              })
             );
           }}
           icon={ChevronUpIcon}
@@ -96,7 +96,7 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
               notebookActions.insertAbove.started({
                 uid: notebookId,
                 cellType: 'markdown',
-              }),
+              })
             );
           }}
           icon={ChevronUpIcon}
@@ -117,7 +117,7 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
                 notebookActions.changeCellType.started({
                   uid: notebookId,
                   cellType: 'markdown',
-                }),
+                })
               );
             }}
           />
@@ -134,7 +134,7 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
                 notebookActions.changeCellType.started({
                   uid: notebookId,
                   cellType: 'code',
-                }),
+                })
               );
             }}
           />
@@ -152,7 +152,7 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
               notebookActions.insertBelow.started({
                 uid: notebookId,
                 cellType: 'markdown',
-              }),
+              })
             );
           }}
           icon={ChevronDownIcon}
@@ -171,7 +171,7 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
               notebookActions.insertBelow.started({
                 uid: notebookId,
                 cellType: 'code',
-              }),
+              })
             );
           }}
           icon={ChevronDownIcon}

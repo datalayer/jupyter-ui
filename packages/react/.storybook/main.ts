@@ -119,7 +119,7 @@ const config: StorybookConfig = {
         generator: {
           filename: 'schema/[name][ext][query]',
         },
-      },
+      }
     );
     return config;
   },

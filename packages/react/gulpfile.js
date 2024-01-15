@@ -56,7 +56,7 @@ gulp.task('licenses', async function () {
 
 =========================================================
 
-*/`),
+*/`)
     )
     .pipe(gulp.dest('./', { overwrite: true }));
 
@@ -77,7 +77,7 @@ gulp.task('licenses', async function () {
 
 =========================================================
 
--->`),
+-->`)
     )
     .pipe(gulp.dest('./', { overwrite: true }));
 
@@ -96,7 +96,7 @@ gulp.task('licenses', async function () {
 
 * Coded by Datalayer
       
-*/`),
+*/`)
     )
     .pipe(gulp.dest('./', { overwrite: true }));
   return;

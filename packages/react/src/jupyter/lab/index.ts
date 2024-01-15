@@ -44,7 +44,7 @@ const jupyterReactPlugin: JupyterFrontEndPlugin<void> = {
     palette: ICommandPalette,
     settingRegistry?: ISettingRegistry,
     launcher?: ILauncher,
-    restorer?: ILayoutRestorer,
+    restorer?: ILayoutRestorer
   ) => {
     const { commands } = app;
     const command = CommandIDs.create;
@@ -89,7 +89,7 @@ const jupyterReactPlugin: JupyterFrontEndPlugin<void> = {
         .then(settings => {
           console.log(
             '@datalayer/jupyter-react settings loaded:',
-            settings.composite,
+            settings.composite
           );
           settingsUpdated(settings);
           settings.changed.connect(settingsUpdated);
@@ -97,7 +97,7 @@ const jupyterReactPlugin: JupyterFrontEndPlugin<void> = {
         .catch(reason => {
           console.error(
             'Failed to load settings for @datalayer/jupyter-react.',
-            reason,
+            reason
           );
         });
     }
@@ -107,7 +107,7 @@ const jupyterReactPlugin: JupyterFrontEndPlugin<void> = {
       })
       .catch(reason => {
         console.error(
-          `The Jupyter Server jupyter_react extension extension.\n${reason}`,
+          `The Jupyter Server jupyter_react extension extension.\n${reason}`
         );
       });
     console.log('JupyterLab plugin @datalayer/jupyter-react is activated.');

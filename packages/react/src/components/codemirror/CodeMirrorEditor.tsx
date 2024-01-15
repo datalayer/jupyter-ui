@@ -71,7 +71,7 @@ export const CodeMirrorEditor = (props: {
   const executeCode = (editorView: EditorView, code?: string) => {
     if (disableRun) {
       alert(
-        'Code execution is disabled for this editor. There should be a button on the page to run this editor.',
+        'Code execution is disabled for this editor. There should be a button on the page to run this editor.'
       );
       return true;
     }
@@ -87,7 +87,7 @@ export const CodeMirrorEditor = (props: {
       outputActions.source({
         sourceId,
         source: code,
-      }),
+      })
     );
     const language = new Compartment();
     const keyBinding = [
@@ -112,7 +112,7 @@ export const CodeMirrorEditor = (props: {
               outputActions.source({
                 sourceId,
                 source,
-              }),
+              })
             );
           }
         }),

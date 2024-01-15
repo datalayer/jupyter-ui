@@ -18,10 +18,10 @@ import { Kernel, KernelMessage } from '@jupyterlab/services';
 import { outputsAsString } from '../../utils/Utils';
 
 export type IOPubMessageHook = (
-  msg: KernelMessage.IIOPubMessage,
+  msg: KernelMessage.IIOPubMessage
 ) => boolean | PromiseLike<boolean>;
 export type ShellMessageHook = (
-  msg: KernelMessage.IShellMessage,
+  msg: KernelMessage.IShellMessage
 ) => boolean | PromiseLike<boolean>;
 
 export class KernelExecutor {
@@ -31,7 +31,7 @@ export class KernelExecutor {
   private _model: IOutputAreaModel;
   private _modelChanged = new Signal<KernelExecutor, IOutputAreaModel>(this);
   private _executeReplyReceived = new Signal<KernelExecutor, IOutputAreaModel>(
-    this,
+    this
   );
   private _future?: Kernel.IFuture<
     KernelMessage.IExecuteRequestMsg,
@@ -53,7 +53,7 @@ export class KernelExecutor {
   execute(
     code: string,
     iopubMessageHooks: IOPubMessageHook[] = [],
-    shellMessageHooks: ShellMessageHook[] = [],
+    shellMessageHooks: ShellMessageHook[] = []
   ):
     | Kernel.IFuture<
         KernelMessage.IExecuteRequestMsg,
@@ -161,7 +161,7 @@ export class KernelExecutor {
           KernelMessage.IExecuteRequestMsg,
           KernelMessage.IExecuteReplyMsg
         >
-      | undefined,
+      | undefined
   ) {
     this._future = value;
     if (!value) {

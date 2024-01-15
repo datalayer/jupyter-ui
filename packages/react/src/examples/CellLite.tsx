@@ -20,5 +20,5 @@ root.render(
       source={`print('👋 Hello Jupyter UI Lite')
 get_ipython()`}
     />
-  </Jupyter>,
+  </Jupyter>
 );

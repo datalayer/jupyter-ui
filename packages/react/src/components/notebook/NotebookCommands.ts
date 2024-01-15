@@ -65,7 +65,7 @@ export const NotebookCommands = (
   notebookPanel: NotebookPanel,
   completerHandler: CompletionHandler,
   tracker: NotebookTracker,
-  path?: string,
+  path?: string
 ): void => {
   // Add commands.
   commandRegistry.addCommand(cmdIds.invoke, {
@@ -105,7 +105,7 @@ export const NotebookCommands = (
       if (!searchInstance) {
         const provider = new NotebookSearchProvider(
           notebookPanel,
-          nullTranslator,
+          nullTranslator
         );
         const searchModel = new SearchDocumentModel(provider, 500);
         searchInstance = new SearchDocumentView(searchModel);
@@ -187,7 +187,7 @@ export const NotebookCommands = (
     execute: () => {
       return NotebookActions.runAndAdvance(
         notebookPanel.content,
-        notebookPanel.context.sessionContext,
+        notebookPanel.context.sessionContext
       );
     },
   });
@@ -196,7 +196,7 @@ export const NotebookCommands = (
     execute: () => {
       return NotebookActions.run(
         notebookPanel.content,
-        notebookPanel.context.sessionContext,
+        notebookPanel.context.sessionContext
       );
     },
   });
@@ -205,7 +205,7 @@ export const NotebookCommands = (
     execute: () => {
       return NotebookActions.runAll(
         notebookPanel.content,
-        notebookPanel.context.sessionContext,
+        notebookPanel.context.sessionContext
       );
     },
   });

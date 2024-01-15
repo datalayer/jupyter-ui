@@ -21,7 +21,7 @@ export class OutputAdapter {
 
   public constructor(adaptPlotly: boolean, outputs?: IOutput[]) {
     this._renderers = standardRendererFactories.filter(
-      factory => factory.mimeTypes[0] !== 'text/javascript',
+      factory => factory.mimeTypes[0] !== 'text/javascript'
     );
     this._renderers.push(jsonRendererFactory);
     this._renderers.push(javascriptRendererFactory);

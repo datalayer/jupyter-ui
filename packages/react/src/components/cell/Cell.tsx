@@ -67,24 +67,24 @@ export const Cell = (props: ICellProps) => {
         adapter.codeCell.model.contentChanged.connect(
           (cellModel, changedArgs) => {
             dispatch(cellActions.source(cellModel.sharedModel.getSource()));
-          },
+          }
         );
         adapter.codeCell.outputArea.outputLengthChanged.connect(
           (outputArea, outputsCount) => {
             dispatch(cellActions.outputsCount(outputsCount));
-          },
+          }
         );
         adapter.sessionContext.initialize().then(() => {
           if (autoStart) {
             const execute = CodeCell.execute(
               adapter.codeCell,
-              adapter.sessionContext,
+              adapter.sessionContext
             );
             execute.then((msg: void | KernelMessage.IExecuteReplyMsg) => {
               dispatch(
                 cellActions.update({
                   kernelAvailable: true,
-                }),
+                })
               );
             });
           }

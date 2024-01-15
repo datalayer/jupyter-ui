@@ -15,5 +15,5 @@ const root = createRoot(div);
 root.render(
   <Jupyter>
     <FileBrowser />
-  </Jupyter>,
+  </Jupyter>
 );

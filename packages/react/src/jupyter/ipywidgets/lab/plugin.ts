@@ -60,7 +60,7 @@ const SETTINGS: NotebookWidgetManager.Settings = { saveState: false };
  * Iterate through all widget renderers in a notebook.
  */
 function* widgetRenderers(
-  notebook: Notebook,
+  notebook: Notebook
 ): Generator<WidgetRenderer, void, unknown> {
   for (const cell of notebook.widgets) {
     if (cell.model.type === 'code') {
@@ -80,12 +80,12 @@ function* widgetRenderers(
  */
 function* outputViews(
   path: string,
-  app?: JupyterFrontEnd,
+  app?: JupyterFrontEnd
 ): Generator<WidgetRenderer, void, unknown> {
   if (app) {
     const linkedViews = filter(
       app.shell.widgets(),
-      w => w.id.startsWith('LinkedOutputView-') && (w as any).path === path,
+      w => w.id.startsWith('LinkedOutputView-') && (w as any).path === path
     );
     for (const view of Array.from(linkedViews)) {
       for (const outputs of Array.from(view.children())) {
@@ -108,16 +108,16 @@ function* chain<T>(
 }
 
 const bindUnhandledIOPubMessageSignal = (
-  notebookPanel: NotebookPanel,
+  notebookPanel: NotebookPanel
 ): void => {
   const widgetManager = Private.widgetManagerProperty.get(
-    notebookPanel.context,
+    notebookPanel.context
   );
   if (widgetManager) {
     widgetManager.onUnhandledIOPubMessage.connect(
       (sender: NotebookWidgetManager, msg: KernelMessage.IIOPubMessage) => {
         console.warn('Unhandled IOPub Message Signal', sender, msg);
-      },
+      }
     );
   }
 };
@@ -127,7 +127,7 @@ export function registerWidgetManager(
   rendermime: IRenderMimeRegistry,
   kernelConnection: Kernel.IKernelConnection | null,
   renderers: IterableIterator<WidgetRenderer>,
-  app?: JupyterFrontEnd,
+  app?: JupyterFrontEnd
 ): DisposableDelegate {
   let widgetManager = Private.widgetManagerProperty.get(context);
   if (!widgetManager) {
@@ -135,7 +135,7 @@ export function registerWidgetManager(
       context,
       rendermime,
       SETTINGS,
-      kernelConnection,
+      kernelConnection
     );
     WIDGET_REGISTRY.forEach(data => widgetManager!.register(data));
     Private.widgetManagerProperty.set(context, widgetManager);
@@ -151,7 +151,7 @@ export function registerWidgetManager(
       mimeTypes: [WIDGET_VIEW_MIMETYPE],
       createRenderer: options => new WidgetRenderer(options, widgetManager),
     },
-    -10,
+    -10
   );
   const disposable = new DisposableDelegate(() => {
     if (rendermime) {
@@ -169,7 +169,7 @@ export const registerExternalIPyWidgets = (
   notebookTracker: NotebookTracker,
   ipywidgets: ExternalIPyWidgets[],
   kernelConnection: Kernel.IKernelConnection | null,
-  app?: JupyterFrontEnd,
+  app?: JupyterFrontEnd
 ) => {
   const loadIPyWidget = (name: string, version: string) => {
     requireLoader(name, version).then(module => {
@@ -190,8 +190,8 @@ export const registerExternalIPyWidgets = (
             kernelConnection,
             chain(
               widgetRenderers(notebookPanel.content),
-              outputViews(notebookPanel.context.path, app),
-            ),
+              outputViews(notebookPanel.context.path, app)
+            )
           );
           bindUnhandledIOPubMessageSignal(notebookPanel);
         }
@@ -208,7 +208,7 @@ export const registerBundledIPyWidgets = (
   notebookTracker: NotebookTracker,
   ipywidgets: BundledIPyWidgets[],
   kernelConnection: Kernel.IKernelConnection | null,
-  app?: JupyterFrontEnd,
+  app?: JupyterFrontEnd
 ) => {
   const loadIPyWidget = (name: string, version: string, module: any) => {
     const exports = { ...module };
@@ -228,8 +228,8 @@ export const registerBundledIPyWidgets = (
           kernelConnection,
           chain(
             widgetRenderers(notebookPanel.content),
-            outputViews(notebookPanel.context.path, app),
-          ),
+            outputViews(notebookPanel.context.path, app)
+          )
         );
         bindUnhandledIOPubMessageSignal(notebookPanel);
       }
@@ -254,7 +254,7 @@ function activateIPyWidgetExtension(
   rendermime: IRenderMimeRegistry,
   tracker: INotebookTracker,
   kernelConnection: Kernel.IKernelConnection | null,
-  app?: JupyterFrontEnd,
+  app?: JupyterFrontEnd
 ): base.IJupyterWidgetRegistry {
   // Add a placeholder widget renderer.
   rendermime.addFactory(
@@ -263,7 +263,7 @@ function activateIPyWidgetExtension(
       mimeTypes: [WIDGET_VIEW_MIMETYPE],
       createRenderer: options => new WidgetRenderer(options),
     },
-    -10,
+    -10
   );
   tracker.forEach(notebookPanel => {
     registerWidgetManager(
@@ -272,8 +272,8 @@ function activateIPyWidgetExtension(
       kernelConnection,
       chain(
         widgetRenderers(notebookPanel.content),
-        outputViews(notebookPanel.context.path, app),
-      ),
+        outputViews(notebookPanel.context.path, app)
+      )
     );
     bindUnhandledIOPubMessageSignal(notebookPanel);
   });
@@ -284,8 +284,8 @@ function activateIPyWidgetExtension(
       kernelConnection,
       chain(
         widgetRenderers(notebookPanel.content),
-        outputViews(notebookPanel.context.path, app),
-      ),
+        outputViews(notebookPanel.context.path, app)
+      )
     );
     bindUnhandledIOPubMessageSignal(notebookPanel);
   });
@@ -339,7 +339,7 @@ export const controlWidgetsPlugin = {
             (err: any) => {
               reject(err);
             },
-            '@jupyter-widgets/controls',
+            '@jupyter-widgets/controls'
           );
         });
       },

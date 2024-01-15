@@ -68,7 +68,7 @@ export const outputsAsString = (outputs: IOutput[]) => {
       default: {
         console.warn(
           'Unknown output type while converting output to string',
-          output,
+          output
         );
       }
     }

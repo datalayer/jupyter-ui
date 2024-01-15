@@ -21,5 +21,5 @@ const root = createRoot(div);
 root.render(
   <>
     <LuminoExample />
-  </>,
+  </>
 );

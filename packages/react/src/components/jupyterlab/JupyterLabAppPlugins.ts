@@ -22,9 +22,8 @@ export const JupyterLabAppMinimumPlugins = {
     import('@jupyterlab/markedparser-extension'),
     import('@jupyterlab/fileeditor-extension').then(plugins =>
       plugins.default.filter(
-        ({ id }) =>
-          !(id.includes(':language-server') || id.includes(':search')),
-      ),
+        ({ id }) => !(id.includes(':language-server') || id.includes(':search'))
+      )
     ),
     import('@jupyterlab/launcher-extension'),
     import('@jupyterlab/notebook-extension').then(plugins => {
@@ -35,7 +34,7 @@ export const JupyterLabAppMinimumPlugins = {
             id.includes(':toc') ||
             id.includes(':update-raw-mimetype') ||
             id.includes(':search')
-          ),
+          )
       );
     }),
     import('@jupyterlab/rendermime-extension'),
@@ -67,7 +66,7 @@ export const JupyterLabAppCorePlugins = (collaborative?: boolean) => {
             ({ id }) =>
               !(
                 id.includes(':default-file-browser') // For RTC.
-              ),
+              )
           );
         } else {
           return plugins.default;
@@ -82,8 +81,8 @@ export const JupyterLabAppCorePlugins = (collaborative?: boolean) => {
             !(
               //        id.includes(':search') ||
               id.includes(':language-server')
-            ),
-        ),
+            )
+        )
       ),
       import('@jupyterlab/launcher-extension'),
       //    import('@jupyterlab/lsp-extension'),
@@ -95,7 +94,7 @@ export const JupyterLabAppCorePlugins = (collaborative?: boolean) => {
               //        id.includes(':toc') ||
               //        id.includes(':search') ||
               id.includes(':update-raw-mimetype')
-            ),
+            )
         );
       }),
       import('@jupyterlab/rendermime-extension'),

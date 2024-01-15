@@ -81,5 +81,5 @@ const root = createRoot(div);
 root.render(
   <Jupyter>
     <NotebookExternalContent />
-  </Jupyter>,
+  </Jupyter>
 );

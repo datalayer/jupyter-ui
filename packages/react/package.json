@@ -334,7 +334,8 @@
     "arrowParens": "avoid",
     "bracketSpacing": true,
     "jsxSingleQuote": false,
-    "printWidth": 80
+    "printWidth": 80,
+    "trailingComma": "es5"
   },
   "stylelint": {
     "extends": [

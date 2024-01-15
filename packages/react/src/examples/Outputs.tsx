@@ -43,5 +43,5 @@ const root = createRoot(div);
 root.render(
   <Jupyter>
     <Outputs />
-  </Jupyter>,
+  </Jupyter>
 );

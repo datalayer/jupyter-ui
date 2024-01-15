@@ -91,7 +91,7 @@ export const Output = (props: IOutputProps) => {
                       outputActions.grade({
                         sourceId,
                         success: true,
-                      }),
+                      })
                     );
                   }
                 }

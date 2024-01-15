@@ -34,5 +34,5 @@ root.render(
       CellSidebar={CellSidebar}
       Toolbar={NotebookToolbar}
     />
-  </Jupyter>,
+  </Jupyter>
 );

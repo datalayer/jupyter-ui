@@ -25,7 +25,7 @@ const theme = EditorView.theme(
       //    maxHeight: "600px"
     },
   },
-  { dark: false },
+  { dark: false }
 );
 
 export const codeMirrorTheme: Extension = [theme];

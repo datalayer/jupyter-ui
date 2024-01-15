@@ -31,7 +31,7 @@ export class JupyterReactContentFactory extends NotebookPanel.ContentFactory {
     nbgrader: boolean,
     commands: CommandRegistry,
     options: Cell.ContentFactory.IOptions,
-    store?: Store,
+    store?: Store
   ) {
     super(options);
     this.CellSidebar = CellSidebar;
@@ -48,7 +48,7 @@ export class JupyterReactContentFactory extends NotebookPanel.ContentFactory {
       this.notebookId,
       this.nbgrader,
       this.commands,
-      this.store,
+      this.store
     );
   }
   /*

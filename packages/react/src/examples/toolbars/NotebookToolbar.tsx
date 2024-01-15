@@ -60,7 +60,7 @@ export const NotebookToolbar = (props: { notebookId: string }) => {
               notebookActions.save.started({
                 uid: notebookId,
                 date: new Date(),
-              }),
+              })
             );
           }}
           icon={ZapIcon}
@@ -141,21 +141,21 @@ export const NotebookToolbar = (props: { notebookId: string }) => {
                 notebookActions.insertBelow.started({
                   uid: notebookId,
                   cellType: 'raw',
-                }),
+                })
               );
             } else if (type === 'code') {
               dispatch(
                 notebookActions.insertBelow.started({
                   uid: notebookId,
                   cellType: 'code',
-                }),
+                })
               );
             } else if (type === 'markdown') {
               dispatch(
                 notebookActions.insertBelow.started({
                   uid: notebookId,
                   cellType: 'markdown',
-                }),
+                })
               );
             }
           }}

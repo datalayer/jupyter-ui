@@ -68,7 +68,7 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
               notebookActions.save.started({
                 uid: notebookId,
                 date: new Date(),
-              }),
+              })
             );
           }}
           icon={ZapIcon}
@@ -158,7 +158,7 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
               notebookActions.insertBelow.started({
                 uid: notebookId,
                 cellType: addType,
-              }),
+              })
             );
           }}
           icon={PlusIcon}

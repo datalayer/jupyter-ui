@@ -27,9 +27,9 @@ const IPyWidgetsAttached = (props: Props) => {
             .then((models: any) =>
               manager.create_view(
                 models.find(
-                  (element: any) => element.model_id === view.model_id,
-                ),
-              ),
+                  (element: any) => element.model_id === view.model_id
+                )
+              )
             )
             .then((view: any) => manager.display_view(view));
         }

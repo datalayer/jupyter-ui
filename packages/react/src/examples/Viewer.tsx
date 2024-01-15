@@ -92,7 +92,7 @@ const MenuLine = (props: MenuLineProps) => {
 
 const ViewerExample = () => {
   const [notebookExample, setNotebookExample] = useState<NotebookExample>(
-    visualisationExamples[0],
+    visualisationExamples[0]
   );
   const [nbformat, setNbformat] = useState<INotebookContent>();
   useEffect(() => {

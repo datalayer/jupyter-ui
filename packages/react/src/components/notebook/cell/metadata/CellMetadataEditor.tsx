@@ -20,7 +20,7 @@ export const CellMetadataEditor = (props: Props) => {
   const { cell } = props;
   const [cellGradeType, setCellGradeType] = useState(getNbGraderType(cell));
   const [nbg, setNbg] = useState(
-    cell.model.getMetadata('nbgrader') || { grade_id: '', points: 0 },
+    cell.model.getMetadata('nbgrader') || { grade_id: '', points: 0 }
   );
   const handleGradeIdChange = (cell: Cell<ICellModel>, gradeId: string) => {
     const nbgrader = cell.model.getMetadata('nbgrader') as any;
@@ -49,7 +49,7 @@ export const CellMetadataEditor = (props: Props) => {
   };
   const assignCellGradeType = (
     cell: Cell<ICellModel>,
-    cellGradeType: NbGraderType,
+    cellGradeType: NbGraderType
   ) => {
     switch (cellGradeType) {
       case NbGraderType.NotGraded: {

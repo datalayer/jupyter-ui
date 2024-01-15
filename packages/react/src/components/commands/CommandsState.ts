@@ -47,7 +47,7 @@ export const commandsActions = {
 /* Reducers */
 
 export const commandsReducer = reducerWithInitialState(
-  commandsInitialState,
+  commandsInitialState
 ).case(commandsActions.outputs, (state: ICommandState, success: number) => {
   return {
     ...state,

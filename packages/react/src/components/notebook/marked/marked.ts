@@ -9,7 +9,7 @@ import { IEditorLanguageRegistry } from '@jupyterlab/codemirror';
 import { marked } from 'marked';
 
 export const getMarked = (
-  languages: IEditorLanguageRegistry,
+  languages: IEditorLanguageRegistry
 ): IMarkdownParser => {
   Private.initializeMarked(languages);
   return {

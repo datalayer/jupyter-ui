@@ -50,5 +50,5 @@ export const exampleReducer = reducerWithInitialState(initExampleState).case(
       ...state,
       foo,
     };
-  },
+  }
 );

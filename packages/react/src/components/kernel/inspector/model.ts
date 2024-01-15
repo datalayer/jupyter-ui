@@ -13,7 +13,7 @@ export type MessageThread = {
 };
 
 function isHeader(
-  candidate: { [key: string]: undefined } | KernelMessage.IHeader,
+  candidate: { [key: string]: undefined } | KernelMessage.IHeader
 ): candidate is KernelMessage.IHeader {
   return candidate.msg_id !== undefined;
 }
@@ -211,7 +211,7 @@ export class KernelSpyModel extends VDomModel {
 
   protected onMessage(
     sender: Kernel.IKernelConnection,
-    args: Kernel.IAnyMessageArgs,
+    args: Kernel.IAnyMessageArgs
   ) {
     const { msg } = args;
     this._log.push(args);
@@ -228,7 +228,7 @@ export class KernelSpyModel extends VDomModel {
   }
 
   private _findParent(
-    args: Kernel.IAnyMessageArgs,
+    args: Kernel.IAnyMessageArgs
   ): Kernel.IAnyMessageArgs | null {
     if (isHeader(args.msg.parent_header)) {
       return this._messages[args.msg.parent_header.msg_id] || null;

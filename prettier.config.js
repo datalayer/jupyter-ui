@@ -9,5 +9,6 @@ module.exports = {
 	printWidth: 80,
 	jsxSingleQuote: false,
 	bracketSpacing: true,
-	arrowParens: 'avoid'
+	arrowParens: 'avoid',
+	trailingComma: 'es5'
 };

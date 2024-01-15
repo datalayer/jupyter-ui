@@ -54,5 +54,5 @@ export const consoleReducer = reducerWithInitialState(consoleInitialState).case(
       ...state,
       outputs: success,
     };
-  },
+  }
 );

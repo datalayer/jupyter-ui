@@ -101,7 +101,7 @@ const NotebookToolbar = () => {
               notebookActions.save.started({
                 uid: NOTEBOOK_UID_1,
                 date: new Date(),
-              }),
+              })
             )
           }
         >
@@ -222,5 +222,5 @@ root.render(
     <FileBrowser />
     <hr />
     <Terminal />
-  </Jupyter>,
+  </Jupyter>
 );

@@ -17,5 +17,5 @@ root.render(
   <Jupyter>
     <Box as="h1">A Jupyter Cell</Box>
     <Cell />
-  </Jupyter>,
+  </Jupyter>
 );

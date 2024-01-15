@@ -48,7 +48,7 @@ const RunningSessionsExample = () => {
   const onJupyterLab = async (jupyterLabAdapter: JupyterLabAppAdapter) => {
     setJupyterlabAdapter(jupyterLabAdapter);
     const runningSessionManagers = jupyterLabAdapter.service(
-      '@jupyterlab/running-extension:plugin',
+      '@jupyterlab/running-extension:plugin'
     );
     const runningSessions = new RunningSessions(runningSessionManagers);
     setRunningSessions(runningSessions);

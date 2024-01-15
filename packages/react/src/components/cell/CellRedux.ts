@@ -74,7 +74,7 @@ export const cellReducer = reducerWithInitialState(cellInitialState)
     (state: ICellState, partial: Partial<ICellState>) => ({
       ...state,
       ...partial,
-    }),
+    })
   )
   .case(cellActions.outputsCount, (state: ICellState, outputsCount: number) => {
     return {

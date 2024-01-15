@@ -49,5 +49,5 @@ export const initReducer = reducerWithInitialState(initInitialState).case(
       ...state,
       start,
     };
-  },
+  }
 );

@@ -28,11 +28,11 @@ export const FileBrowser = () => {
   const loadPath = (
     services: Services,
     subTree: RenderTree,
-    path: string[],
+    path: string[]
   ) => {
     const loadFolderItems = (
       services: Services,
-      path: string[],
+      path: string[]
     ): Promise<RenderTree[]> => {
       const folderItems = services
         .contents()

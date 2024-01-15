@@ -78,7 +78,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
               notebookActions.insertAbove.started({
                 uid: notebookId,
                 cellType: 'code',
-              }),
+              })
             );
           }}
         >
@@ -97,7 +97,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
               notebookActions.insertAbove.started({
                 uid: notebookId,
                 cellType: 'markdown',
-              }),
+              })
             );
           }}
         >
@@ -117,7 +117,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
                 notebookActions.changeCellType.started({
                   uid: notebookId,
                   cellType: 'markdown',
-                }),
+                })
               );
             }}
           >
@@ -135,7 +135,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
                 notebookActions.changeCellType.started({
                   uid: notebookId,
                   cellType: 'code',
-                }),
+                })
               );
             }}
           >
@@ -155,7 +155,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
               notebookActions.insertBelow.started({
                 uid: notebookId,
                 cellType: 'markdown',
-              }),
+              })
             );
           }}
         >
@@ -174,7 +174,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
               notebookActions.insertBelow.started({
                 uid: notebookId,
                 cellType: 'code',
-              }),
+              })
             );
           }}
         >

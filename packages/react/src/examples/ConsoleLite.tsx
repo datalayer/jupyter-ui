@@ -23,5 +23,5 @@ root.render(
         "print('👋 Hello Jupyter Console')",
       ]}
     />
-  </Jupyter>,
+  </Jupyter>
 );

@@ -27,5 +27,5 @@ render(
   <Jupyter>
     <Example />
   </Jupyter>,
-  div,
+  div
 );

@@ -24,5 +24,5 @@ root.render(
 r = random.randint(0,9)`}
     />
     <Cell source="print(f'Random integer: {r}')" />
-  </Jupyter>,
+  </Jupyter>
 );

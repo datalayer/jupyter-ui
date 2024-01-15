@@ -178,7 +178,7 @@ export class RenderedPlotly extends Widget implements IRenderMime.IRenderer {
               this.updateImage(png_data);
               return Promise.resolve();
             }
-          },
+          }
         );
       });
   }

@@ -56,7 +56,7 @@ class ConsoleAdapter {
     const editorExtensions = () => {
       const registry = new EditorExtensionRegistry();
       for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions(
-        { themes },
+        { themes }
       )) {
         registry.addExtension(extensionFactory);
       }
@@ -68,7 +68,7 @@ class ConsoleAdapter {
             ybinding({
               ytext: sharedModel.ysource,
               undoManager: sharedModel.undoManager ?? undefined,
-            }),
+            })
           );
         },
       });

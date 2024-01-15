@@ -80,7 +80,7 @@ const NotebookInit: React.FC = () => {
               uid: NOTEBOOK_ID,
               cellType: 'code',
               source: 'print("Hello 🪐 ⚛️ Jupyter React")',
-            }),
+            })
           );
         }
       });
@@ -109,5 +109,5 @@ root.render(
     <div style={{ width: NOTEBOOK_WIDTH, height: NOTEBOOK_HEIGHT }}>
       <NotebookInit />
     </div>
-  </Jupyter>,
+  </Jupyter>
 );

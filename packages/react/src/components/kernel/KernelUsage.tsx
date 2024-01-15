@@ -80,7 +80,7 @@ export const KernelUsage = (props: Props) => {
   const [usage, setUsage] = useState({});
   const [virtualMemoryTotal, setVirtualMemoryTotal] = useState<number>();
   const [virtualMemoryAvailable, setVirtualMemoryAvailable] = useState(
-    new Array<number>(),
+    new Array<number>()
   );
   // { "kernel_cpu": "0", "cpu_count": "4", "host_virtual_memory": {"total": 15335940096, "available": 13279002624, "percent": 13.4, "used": 1704222720, "free": 11412717568, "active": 696995840, "inactive": 2084093952, "buffers": 237412352, "cached": 1981587456, "shared": 4796416, "slab": 989294592} }
   const refreshUsage = async () => {

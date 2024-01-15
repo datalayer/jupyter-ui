@@ -49,5 +49,5 @@ root.render(
   <Jupyter startDefaultKernel={false} disableCssLoading={true}>
     <h1>JupyterLab Application</h1>
     <JupyterLabAppExample />
-  </Jupyter>,
+  </Jupyter>
 );

@@ -35,7 +35,7 @@ export class KernelConnector {
           default:
             break;
         }
-      },
+      }
     );
   }
 
@@ -78,12 +78,12 @@ export class KernelConnector {
    */
   fetch(
     content: KernelMessage.IExecuteRequestMsg['content'],
-    ioCallback: (msg: KernelMessage.IIOPubMessage) => any,
+    ioCallback: (msg: KernelMessage.IIOPubMessage) => any
   ): Promise<KernelMessage.IExecuteReplyMsg> {
     const kernel = this._kernel.connection;
     if (!kernel) {
       return Promise.reject(
-        new Error('Require kernel to perform variable inspection!'),
+        new Error('Require kernel to perform variable inspection!')
       );
     }
     const future = kernel.requestExecute(content);
@@ -94,7 +94,7 @@ export class KernelConnector {
   }
 
   execute(
-    content: KernelMessage.IExecuteRequestMsg['content'],
+    content: KernelMessage.IExecuteRequestMsg['content']
   ): IShellFuture<IExecuteRequestMsg, IExecuteReplyMsg> {
     if (!this._kernel.connection) {
       throw new Error('No session available.');

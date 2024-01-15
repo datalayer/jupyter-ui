@@ -32,7 +32,7 @@ export class CellSidebarWidget
     notebookId: string,
     nbgrader: boolean,
     commands: CommandRegistry,
-    store: Store,
+    store: Store
   ) {
     super();
     this.commands = commands;
@@ -53,7 +53,7 @@ export class CellSidebarWidget
       notebookActions.addPortals({
         uid: notebookId,
         portals: [portal],
-      }),
+      })
     );
   }
 }

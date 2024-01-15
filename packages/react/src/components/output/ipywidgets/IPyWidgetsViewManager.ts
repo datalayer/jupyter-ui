@@ -19,7 +19,7 @@ export class IPyWidgetsViewManager extends ManagerBase {
   async loadClass(
     className: string,
     moduleName: string,
-    moduleVersion: string,
+    moduleVersion: string
   ) {
     return new Promise((resolve, reject) => {
       if (moduleName === '@jupyter-widgets/controls') {
@@ -31,14 +31,14 @@ export class IPyWidgetsViewManager extends ManagerBase {
           const failedId = err.requireModules && err.requireModules[0];
           if (failedId) {
             console.log(
-              `Falling back to jsDelivr for ${moduleName}@${moduleVersion}`,
+              `Falling back to jsDelivr for ${moduleName}@${moduleVersion}`
             );
             (window as any).require(
               [
                 `https://cdn.jsdelivr.net/npm/${moduleName}@${moduleVersion}/dist/index.js`,
               ],
               resolve,
-              reject,
+              reject
             );
           } else {
             throw err;
@@ -51,7 +51,7 @@ export class IPyWidgetsViewManager extends ManagerBase {
         return module[className];
       } else {
         return Promise.reject(
-          `Class ${className} not found in module ${moduleName}@${moduleVersion}`,
+          `Class ${className} not found in module ${moduleName}@${moduleVersion}`
         );
       }
     });

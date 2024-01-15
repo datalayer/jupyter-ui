@@ -29,7 +29,7 @@ const JupyterReact = (props: JupyterFrontEndProps): JSX.Element => {
       })
       .catch(reason => {
         console.error(
-          `Error while accessing the jupyter server jupyter_react extension.\n${reason}`,
+          `Error while accessing the jupyter server jupyter_react extension.\n${reason}`
         );
       });
   });

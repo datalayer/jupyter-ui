@@ -63,7 +63,7 @@ export class Kernel {
   }
 
   private async requestKernel(
-    kernelModel?: JupyterKernel.IModel,
+    kernelModel?: JupyterKernel.IModel
   ): Promise<void> {
     await this._kernelManager.ready;
     await this._sessionManager.ready;
@@ -96,7 +96,7 @@ export class Kernel {
           kernelConnectionOptions: {
             handleComms: true,
           },
-        },
+        }
       );
     }
     this._kernelConnection = this._session.kernel;
@@ -116,7 +116,7 @@ export class Kernel {
           //        this.initReady();
           this._connectionStatus = connectionStatus;
           updateConnectionStatus();
-        },
+        }
       );
       this._kernelConnection.info.then(info => {
         this._info = info;
@@ -184,7 +184,7 @@ export class Kernel {
   execute(
     code: string,
     iopubMessageHooks: IOPubMessageHook[] = [],
-    shellMessageHooks: ShellMessageHook[] = [],
+    shellMessageHooks: ShellMessageHook[] = []
   ): KernelExecutor | undefined {
     if (this._kernelConnection) {
       const kernelExecutor = new KernelExecutor(this._kernelConnection);

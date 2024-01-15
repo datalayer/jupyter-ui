@@ -638,7 +638,7 @@ export class FigureModel extends DOMWidgetModel {
     if (msgData !== null) {
       const restyleData = msgData.restyle_data;
       const restyleTraces = this._normalize_trace_indexes(
-        msgData.restyle_traces,
+        msgData.restyle_traces
       );
       performRestyleLike(this.get('_data'), restyleData, restyleTraces);
     }
@@ -700,7 +700,7 @@ export class FigureModel extends DOMWidgetModel {
   do_removeLayoutProps() {
     /** @type {Py2JsRemoveLayoutPropsMsg} */
     const msgData: Py2JsRemoveLayoutPropsMsg = this.get(
-      '_py2js_removeLayoutProps',
+      '_py2js_removeLayoutProps'
     );
 
     if (msgData !== null) {
@@ -716,7 +716,7 @@ export class FigureModel extends DOMWidgetModel {
   do_removeTraceProps() {
     /** @type {Py2JsRemoveTracePropsMsg} */
     const msgData: Py2JsRemoveTracePropsMsg = this.get(
-      '_py2js_removeTraceProps',
+      '_py2js_removeTraceProps'
     );
     if (msgData !== null) {
       const keyPaths = msgData.remove_props;
@@ -876,13 +876,13 @@ export class FigureView extends DOMWidgetView {
         'plotly_restyle',
         (update: any) => {
           that.handle_plotly_restyle(update);
-        },
+        }
       );
       (<Plotly.PlotlyHTMLElement>that.el).on(
         'plotly_relayout',
         (update: any) => {
           that.handle_plotly_relayout(update);
-        },
+        }
       );
       /*
         (<Plotly.PlotlyHTMLElement>that.el).on("plotly_update", function (update: any) {
@@ -899,13 +899,13 @@ export class FigureView extends DOMWidgetView {
         'plotly_unhover',
         (update: any) => {
           that.handle_plotly_unhover(update);
-        },
+        }
       );
       (<Plotly.PlotlyHTMLElement>that.el).on(
         'plotly_selected',
         (update: any) => {
           that.handle_plotly_selected(update);
-        },
+        }
       );
       /*
         (<Plotly.PlotlyHTMLElement>that.el).on("plotly_deselect", function (update: any) {
@@ -1006,7 +1006,7 @@ export class FigureView extends DOMWidgetView {
       {},
       ((<Plotly.PlotlyHTMLElement>this.el) as any)._fullData,
       ((<Plotly.PlotlyHTMLElement>this.el) as any).data,
-      fullMergeCustomizer,
+      fullMergeCustomizer
     );
   }
 
@@ -1021,7 +1021,7 @@ export class FigureView extends DOMWidgetView {
       {},
       ((<Plotly.PlotlyHTMLElement>this.el) as any)._fullLayout,
       ((<Plotly.PlotlyHTMLElement>this.el) as any).layout,
-      fullMergeCustomizer,
+      fullMergeCustomizer
     );
   }
 
@@ -1416,7 +1416,7 @@ export class FigureView extends DOMWidgetView {
     if (msgData !== null) {
       const restyleData = msgData.restyle_data;
       const traceIndexes = (this.model as FigureModel)._normalize_trace_indexes(
-        msgData.restyle_traces,
+        msgData.restyle_traces
       );
 
       restyleData['_doNotReportToPy'] = true;
@@ -1463,7 +1463,7 @@ export class FigureView extends DOMWidgetView {
       const style = msgData.style_data || {};
       const layout = msgData.layout_data || {};
       const traceIndexes = (this.model as FigureModel)._normalize_trace_indexes(
-        msgData.style_traces,
+        msgData.style_traces
       );
 
       style['_doNotReportToPy'] = true;
@@ -1495,7 +1495,7 @@ export class FigureView extends DOMWidgetView {
       const styles = msgData.style_data;
       const layout = msgData.layout_data;
       const traceIndexes = (this.model as FigureModel)._normalize_trace_indexes(
-        msgData.style_traces,
+        msgData.style_traces
       );
 
       const animationData: any = {
@@ -1533,7 +1533,7 @@ export class FigureView extends DOMWidgetView {
     // ### Handle layout delta ###
     const layout_delta = createDeltaObject(
       this.getFullLayout(),
-      this.model.get('_layout'),
+      this.model.get('_layout')
     );
 
     /** @type{Js2PyLayoutDeltaMsg} */
@@ -1564,7 +1564,7 @@ export class FigureView extends DOMWidgetView {
       const traceInd = traceIndexes[i];
       trace_deltas[i] = createDeltaObject(
         (fullData as any)[traceInd],
-        trace_data[traceInd],
+        trace_data[traceInd]
       );
     }
 
@@ -1805,7 +1805,7 @@ function performRelayoutLike(parentObj: any, relayoutData: any) {
 function performRestyleLike(
   parentArray: any[],
   restyleData: any,
-  restyleTraces: number[],
+  restyleTraces: number[]
 ) {
   // Loop over the properties of restyleData
   for (const rawKey in restyleData) {
@@ -1860,7 +1860,7 @@ function performRestyleLike(
 function performMoveTracesLike(
   parentArray: any[],
   currentInds: number[],
-  newInds: number[],
+  newInds: number[]
 ) {
   // ### Remove by currentInds in reverse order ###
   let movingTracesData: any[] = [];
@@ -1907,7 +1907,7 @@ function performMoveTracesLike(
  */
 function performRemoveProps(
   parentObj: object,
-  keyPaths: Array<Array<number | string>>,
+  keyPaths: Array<Array<number | string>>
 ) {
   for (let i = 0; i < keyPaths.length; i++) {
     const keyPath = keyPaths[i];
@@ -2021,7 +2021,7 @@ function randstr(
   existing?: { [k: string]: any },
   bits?: number,
   base?: number,
-  _recursion?: number,
+  _recursion?: number
 ): string {
   if (!base) {
     base = 16;

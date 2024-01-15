@@ -23,7 +23,7 @@ export class WidgetRenderer
 {
   constructor(
     options: IRenderMime.IRendererOptions,
-    manager?: BaseWidgetManager,
+    manager?: BaseWidgetManager
   ) {
     super();
     this.mimeType = options.mimeType;

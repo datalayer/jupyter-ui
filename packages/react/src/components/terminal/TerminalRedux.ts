@@ -47,7 +47,7 @@ export const terminalActions = {
 /* Reducers */
 
 export const terminalReducer = reducerWithInitialState(
-  terminalInitialState,
+  terminalInitialState
 ).case(
   terminalActions.update,
   (state: ITerminalState, update: Partial<ITerminalState>) => {
@@ -64,5 +64,5 @@ export const terminalReducer = reducerWithInitialState(
       ...state,
       ...update,
     };
-  },
+  }
 );

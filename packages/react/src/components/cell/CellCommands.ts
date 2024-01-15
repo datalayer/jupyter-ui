@@ -18,7 +18,7 @@ export const CellCommands = (
   commandRegistry: CommandRegistry,
   codeCell: CodeCell,
   sessionContext: SessionContext,
-  completerHandler: CompletionHandler,
+  completerHandler: CompletionHandler
 ): void => {
   commandRegistry.addCommand(cmdIds.invoke, {
     label: 'Completer: Invoke',

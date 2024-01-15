@@ -67,7 +67,7 @@ export const KernelStatus = (props: Props) => {
   const [status, setStatus] = useState<KernelMessage.Status>();
   const toState = (
     connectionStatus: ConnectionStatus,
-    status: KernelMessage.Status,
+    status: KernelMessage.Status
   ) => {
     if (
       connectionStatus === 'connecting' ||
@@ -84,7 +84,7 @@ export const KernelStatus = (props: Props) => {
       kernel.connection.connectionStatusChanged.connect(
         (_, connectionStatus) => {
           setConnectionStatus(connectionStatus);
-        },
+        }
       );
       kernel.connection.statusChanged.connect((_, status) => {
         setStatus(status);

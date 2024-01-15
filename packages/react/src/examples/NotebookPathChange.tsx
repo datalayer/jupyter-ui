@@ -55,5 +55,5 @@ const root = createRoot(div);
 root.render(
   <Jupyter>
     <NotebookPathChange />
-  </Jupyter>,
+  </Jupyter>
 );
