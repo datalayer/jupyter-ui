@@ -11,7 +11,7 @@ import { Jupyter, Console } from './../src';
 const meta: Meta<typeof Console> = {
   title: 'Components/Console',
   argTypes: {
-    lite: {
+    browser: {
       table: {
         disable: true,
       },
@@ -21,7 +21,7 @@ const meta: Meta<typeof Console> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Console>;
+type Story = StoryObj<typeof Console | typeof Jupyter | {browser: string}>;
 
 const Template = (args, { globals: { labComparison } }) => {
   const lite = {
@@ -30,10 +30,10 @@ const Template = (args, { globals: { labComparison } }) => {
     '@jupyterlite/javascript-kernel-extension': import(
       '@jupyterlite/javascript-kernel-extension'
     ),
-  }[args.lite];
+  }[args.browser];
 
   const kernelName =
-    args.lite === '@jupyterlite/javascript-kernel-extension'
+    args.browser === '@jupyterlite/javascript-kernel-extension'
       ? 'javascript'
       : undefined;
 
@@ -47,7 +47,10 @@ const Template = (args, { globals: { labComparison } }) => {
     >
       <Console
         code={
-          [
+          kernelName === 'javascript' ? [
+            "a = 'hello';",
+            "Array(4).fill(`${a} the world`);"
+          ] : [
             "print('👋 Hello Jupyter Console')"
           ]
         }
@@ -58,17 +61,17 @@ const Template = (args, { globals: { labComparison } }) => {
 
 export const Default: Story = Template.bind({});
 Default.args = {
-  lite: 'false',
+  browser: 'false',
 };
 
 export const LitePython: Story = Template.bind({});
 LitePython.args = {
   ...Default.args,
-  lite: true,
+  browser: 'true',
 };
 
 export const LiteJavascript: Story = Template.bind({});
 LiteJavascript.args = {
   ...Default.args,
-  lite: '@jupyterlite/javascript-kernel-extension',
+  browser: '@jupyterlite/javascript-kernel-extension',
 };
