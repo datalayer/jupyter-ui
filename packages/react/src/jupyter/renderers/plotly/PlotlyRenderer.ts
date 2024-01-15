@@ -94,7 +94,7 @@ export class RenderedPlotly extends Widget implements IRenderMime.IRenderer {
 
   private hideGraph() {
     // Hide the graph if there is one
-    let el = <HTMLDivElement>this.node.querySelector('.plot-container');
+    const el = <HTMLDivElement>this.node.querySelector('.plot-container');
     if (el !== null && el !== undefined) {
       el.style.display = 'none';
     }
@@ -102,7 +102,7 @@ export class RenderedPlotly extends Widget implements IRenderMime.IRenderer {
 
   private showGraph() {
     // Show the graph if there is one
-    let el = <HTMLDivElement>this.node.querySelector('.plot-container');
+    const el = <HTMLDivElement>this.node.querySelector('.plot-container');
     if (el !== null && el !== undefined) {
       el.style.display = 'block';
     }
@@ -110,7 +110,7 @@ export class RenderedPlotly extends Widget implements IRenderMime.IRenderer {
 
   private hideImage() {
     // Hide the image element
-    let el = <HTMLImageElement>this.node.querySelector('.plot-img');
+    const el = <HTMLImageElement>this.node.querySelector('.plot-img');
     if (el !== null && el !== undefined) {
       el.style.display = 'none';
     }
@@ -118,7 +118,7 @@ export class RenderedPlotly extends Widget implements IRenderMime.IRenderer {
 
   private showImage() {
     // Show the image element
-    let el = <HTMLImageElement>this.node.querySelector('.plot-img');
+    const el = <HTMLImageElement>this.node.querySelector('.plot-img');
     if (el !== null && el !== undefined) {
       el.style.display = 'block';
     }

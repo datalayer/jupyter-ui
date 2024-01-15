@@ -136,48 +136,49 @@ export const NotebookToolbar = (props: { notebookId: string }) => {
           title="Insert cell"
           onClick={e => {
             e.preventDefault();
-            if (type === 'raw')
+            if (type === 'raw') {
               dispatch(
                 notebookActions.insertBelow.started({
                   uid: notebookId,
                   cellType: 'raw',
                 })
               );
-            else if (type === 'code')
+            } else if (type === 'code') {
               dispatch(
                 notebookActions.insertBelow.started({
                   uid: notebookId,
                   cellType: 'code',
                 })
               );
-            else if (type === 'markdown')
+            } else if (type === 'markdown') {
               dispatch(
                 notebookActions.insertBelow.started({
                   uid: notebookId,
                   cellType: 'markdown',
                 })
               );
+            }
           }}
           style={{ color: 'grey' }}
           icon={PlusIcon}
         />
         <ButtonGroup>
           <Button
-            variant={type == 'code' ? 'primary' : 'invisible'}
+            variant={type === 'code' ? 'primary' : 'invisible'}
             onClick={() => handleChangeCellType('code')}
             size="small"
           >
             Code
           </Button>
           <Button
-            variant={type == 'markdown' ? 'primary' : 'invisible'}
+            variant={type === 'markdown' ? 'primary' : 'invisible'}
             onClick={() => handleChangeCellType('markdown')}
             size="small"
           >
             Markdown
           </Button>
           <Button
-            variant={type == 'raw' ? 'primary' : 'invisible'}
+            variant={type === 'raw' ? 'primary' : 'invisible'}
             onClick={() => handleChangeCellType('raw')}
             size="small"
           >

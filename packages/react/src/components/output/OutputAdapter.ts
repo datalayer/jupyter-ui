@@ -75,8 +75,9 @@ export class OutputAdapter {
       if (data) {
         const isPlotly = data['application/vnd.plotly.v1+json'];
         if (isPlotly) {
-          let script = this._outputArea.node.children[0].children[1].children[0]
-            .children[1].innerHTML;
+          let script =
+            this._outputArea.node.children[0].children[1].children[0]
+              .children[1].innerHTML;
           script = script.replaceAll('\n,', '\n');
           eval(script);
         }

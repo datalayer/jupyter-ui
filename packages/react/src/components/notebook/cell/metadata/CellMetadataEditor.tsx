@@ -34,7 +34,7 @@ export const CellMetadataEditor = (props: Props) => {
     });
   };
   const handlePointsChange = (cell: Cell<ICellModel>, points: string) => {
-    var points_number: number = +points;
+    const points_number: number = +points;
     if (!isNaN(points_number)) {
       const nbgrader = cell.model.getMetadata('nbgrader') as any;
       cell.model.setMetadata('nbgrader', {

@@ -21,14 +21,14 @@ export class IPyWidgetsViewManager extends ManagerBase {
     moduleName: string,
     moduleVersion: string
   ) {
-    return new Promise(function (resolve, reject) {
+    return new Promise((resolve, reject) => {
       if (moduleName === '@jupyter-widgets/controls') {
         resolve(controls);
       } else if (moduleName === '@jupyter-widgets/base') {
         resolve(base);
       } else {
-        var fallback = function (err: any) {
-          let failedId = err.requireModules && err.requireModules[0];
+        const fallback = function (err: any) {
+          const failedId = err.requireModules && err.requireModules[0];
           if (failedId) {
             console.log(
               `Falling back to jsDelivr for ${moduleName}@${moduleVersion}`
@@ -46,7 +46,7 @@ export class IPyWidgetsViewManager extends ManagerBase {
         };
         (window as any).require([`${moduleName}.js`], resolve, fallback);
       }
-    }).then(function (module: any) {
+    }).then((module: any) => {
       if (module[className]) {
         return module[className];
       } else {
@@ -57,8 +57,9 @@ export class IPyWidgetsViewManager extends ManagerBase {
     });
   }
   async display_view(view: any) {
-    var that = this;
-    return Promise.resolve(view).then(function (view) {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const that = this;
+    return Promise.resolve(view).then(view => {
       Widget.attach(view.luminoWidget, that.el);
       return view;
     });

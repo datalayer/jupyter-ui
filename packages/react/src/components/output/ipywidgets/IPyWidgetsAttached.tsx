@@ -21,7 +21,7 @@ const IPyWidgetsAttached = (props: Props) => {
     <div
       ref={ref => {
         if (ref) {
-          var manager = new IPyWidgetsViewManager(ref);
+          const manager = new IPyWidgetsViewManager(ref);
           manager
             .set_state(state)
             .then((models: any) =>

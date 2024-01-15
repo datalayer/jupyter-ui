@@ -13,7 +13,8 @@ const OUTPUT_PROMPT_CLASS = 'jp-OutputPrompt';
 
 export class CountdownOutputPrompt
   extends ReactWidget
-  implements IOutputPrompt {
+  implements IOutputPrompt
+{
   private _executionCount: ExecutionCount = null;
 
   private state = {

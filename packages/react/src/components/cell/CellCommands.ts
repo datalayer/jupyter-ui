@@ -43,7 +43,7 @@ export const CellCommands = (
   });
   const bindings = [
     {
-      selector: `.jp-InputArea-editor.jp-mod-completer-active`,
+      selector: '.jp-InputArea-editor.jp-mod-completer-active',
       keys: ['Enter'],
       command: cmdIds.select,
     },

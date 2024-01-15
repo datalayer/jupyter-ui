@@ -49,7 +49,8 @@ export const WIDGET_STATE_MIMETYPE =
  */
 export abstract class BaseWidgetManager
   extends ManagerBase
-  implements IDisposable {
+  implements IDisposable
+{
   constructor(rendermime: IRenderMimeRegistry) {
     super();
     this._rendermime = rendermime;

@@ -12,11 +12,8 @@ import ConsoleAdapter from './ConsoleAdapter';
 import './Console.css';
 
 export const Console = (options: Console.IConsoleOptions) => {
-  const {
-    defaultKernel,
-    defaultKernelIsLoading,
-    serviceManager,
-  } = useJupyter();
+  const { defaultKernel, defaultKernelIsLoading, serviceManager } =
+    useJupyter();
   const [adapter, setAdapter] = useState<ConsoleAdapter>();
   useEffect(() => {
     if (serviceManager && !defaultKernelIsLoading) {

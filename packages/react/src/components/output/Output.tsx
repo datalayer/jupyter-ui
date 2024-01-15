@@ -63,9 +63,8 @@ export const Output = (props: IOutputProps) => {
   } = props;
   const dispatch = useDispatch();
   const [id, setId] = useState<string | undefined>(sourceId);
-  const [kernelStatus, setKernelStatus] = useState<KernelMessage.Status>(
-    'unknown'
-  );
+  const [kernelStatus, setKernelStatus] =
+    useState<KernelMessage.Status>('unknown');
   const [outputs, setOutputs] = useState<IOutput[] | undefined>(props.outputs);
   const [adapter, setAdapter] = useState<OutputAdapter>();
   useMemo(() => {

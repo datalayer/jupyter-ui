@@ -18,9 +18,9 @@ import { getJupyterServerHttpUrl, getJupyterToken } from './JupyterConfig';
 import { requestAPI } from './JupyterHandlers';
 import Kernel from './kernel/Kernel';
 
-export type Lite = 
+export type Lite =
   | boolean
-  | Promise<{ default: JupyterLiteServerPlugin<any>[] }>
+  | Promise<{ default: JupyterLiteServerPlugin<any>[] }>;
 
 /**
  * The type for the Jupyter context.
@@ -98,8 +98,9 @@ export const JupyterContext = createContext<JupyterContextType | undefined>(
 
 export const useJupyter = (): JupyterContextType => {
   const context = useContext(JupyterContext);
-  if (!context)
+  if (!context) {
     throw new Error('useContext must be inside a provider with a value.');
+  }
   return context;
 };
 

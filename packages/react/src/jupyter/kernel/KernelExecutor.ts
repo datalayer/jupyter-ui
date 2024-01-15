@@ -101,9 +101,11 @@ export class KernelExecutor {
         this._modelChanged.emit(this._model);
         break;
       case 'status':
-        // execution_state: 'busy' 'starting' 'terminating' 'restarting' 'initializing' 'connecting' 'disconnected' 'dead' 'unknown' 'idle'
-        const executionState = (message.content as any).execution_state;
-        executionState;
+        {
+          // execution_state: 'busy' 'starting' 'terminating' 'restarting' 'initializing' 'connecting' 'disconnected' 'dead' 'unknown' 'idle'
+          const executionState = (message.content as any).execution_state;
+          executionState;
+        }
         break;
       default:
         break;
@@ -118,16 +120,18 @@ export class KernelExecutor {
     this._shellMessageHooks.forEach(hook => hook(message));
     switch (messageType) {
       case 'execute_reply':
-        const output: IOutput = {
-          output_type: 'display_data',
-          data: (message.content as IExecuteResult).data as IMimeBundle,
-          metadata: {},
-        };
-        this._outputs.push(message.content as IExecuteResult);
-        this._outputsChanged.emit(this._outputs);
-        this._model.add(output);
-        this.executeReplyReceived.emit(this._model);
-        this._executedResolve(this._model);
+        {
+          const output: IOutput = {
+            output_type: 'display_data',
+            data: (message.content as IExecuteResult).data as IMimeBundle,
+            metadata: {},
+          };
+          this._outputs.push(message.content as IExecuteResult);
+          this._outputsChanged.emit(this._outputs);
+          this._model.add(output);
+          this.executeReplyReceived.emit(this._model);
+          this._executedResolve(this._model);
+        }
         break;
       default:
         break;

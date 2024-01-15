@@ -15,10 +15,11 @@ test('Default', async ({ page }) => {
   await page
     .getByLabel('Code Cell Content')
     .getByRole('textbox')
+    .last()
     .fill('print("hello from remote")');
   await page.keyboard.press('Shift+Enter');
   await expect(
-    page.getByLabel('notebook content').locator('pre')
+    page.getByLabel('notebook content').locator('pre').last()
   ).toContainText('hello from remote');
 });
 
@@ -33,10 +34,11 @@ test('Lite Python', async ({ page }) => {
   await page
     .getByLabel('Code Cell Content')
     .getByRole('textbox')
+    .last()
     .fill('print("hello from pyodide")');
   await page.keyboard.press('Shift+Enter');
   await expect(
-    page.getByLabel('notebook content').locator('pre')
+    page.getByLabel('notebook content').locator('pre').last()
   ).toContainText('hello from pyodide');
 });
 
@@ -49,9 +51,10 @@ test('Lite JavaScript', async ({ page }) => {
   await page
     .getByLabel('Code Cell Content')
     .getByRole('textbox')
+    .last()
     .fill('Array(4).fill("a")');
   await page.keyboard.press('Shift+Enter');
   await expect(
-    page.getByLabel('notebook content').locator('pre')
+    page.getByLabel('notebook content').locator('pre').last()
   ).toContainText("[ 'a', 'a', 'a', 'a' ]");
 });

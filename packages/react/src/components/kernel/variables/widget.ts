@@ -59,7 +59,8 @@ type FILTER_TYPES = 'type' | 'name';
  */
 export class VariableInspectorPanel
   extends Widget
-  implements IVariableInspector {
+  implements IVariableInspector
+{
   private _source: IVariableInspector.IInspectable | null = null;
   private _table: WebDataGrid;
   private _filteredTable: HTMLDivElement;

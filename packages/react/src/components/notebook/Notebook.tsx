@@ -67,12 +67,8 @@ export type INotebookProps = {
  * @returns A Notebook React.js component.
  */
 export const Notebook = (props: INotebookProps) => {
-  const {
-    serviceManager,
-    defaultKernel,
-    kernelManager,
-    injectableStore,
-  } = useJupyter();
+  const { serviceManager, defaultKernel, kernelManager, injectableStore } =
+    useJupyter();
   const {
     path,
     kernel: propsKernel,
@@ -83,7 +79,7 @@ export const Notebook = (props: INotebookProps) => {
     nbformat,
     Toolbar,
   } = props;
-  const { lite } = useJupyter()
+  const { lite } = useJupyter();
   const [uid] = useState(props.uid || newUuid());
   const [adapter, setAdapter] = useState<NotebookAdapter>();
   const kernel = propsKernel || defaultKernel;
@@ -111,7 +107,10 @@ export const Notebook = (props: INotebookProps) => {
             const activeCell = adapter.notebookPanel!.content.activeCell;
             if (activeCell) {
               dispatch(
-                notebookActions.activeCellChange({ uid, cellModel: activeCell })
+                notebookActions.activeCellChange({
+                  uid,
+                  cellModel: activeCell,
+                })
               );
             }
             const activeCellChanged$ = asObservable(

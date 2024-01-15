@@ -322,7 +322,7 @@ export const NotebookCommands = (
       command: cmdIds.invokeNotebook,
     },
     {
-      selector: `.jp-mod-completer-active`,
+      selector: '.jp-mod-completer-active',
       keys: ['Enter'],
       command: cmdIds.selectNotebook,
     },

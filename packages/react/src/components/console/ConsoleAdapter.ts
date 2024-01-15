@@ -42,7 +42,6 @@ class ConsoleAdapter {
   }
 
   protected setupConsole(serviceManager: ServiceManager, kernel?: Kernel) {
-
     // Set up a command registry.
     const commands = new CommandRegistry();
     this._panel.node.addEventListener('keydown', event => {
@@ -163,10 +162,9 @@ class ConsoleAdapter {
 
     if (this._code) {
       consolePanel.console.sessionContext.ready.then(() => {
-        this._code!.forEach((line) => consolePanel.console.inject(line));
+        this._code!.forEach(line => consolePanel.console.inject(line));
       });
     }
-
   }
 
   get panel(): BoxPanel {

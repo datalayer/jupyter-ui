@@ -295,36 +295,37 @@ export class NotebookAdapter {
     }
 
     // These are fixes to have more control on the kernel launch.
-    (this._context.sessionContext as any)._initialize = async (): Promise<
-      boolean
-    > => {
-      const manager = (this._context!.sessionContext as any)
-        .sessionManager as SessionManager;
-      await manager.ready;
-      await manager.refreshRunning();
-      const model = find(manager.running(), model => {
-        return model.kernel?.id === this._kernel.id;
-      });
-      if (model) {
-        try {
-          const session = manager.connectTo({
-            model: {
-              ...model,
-              path: this._path ?? model.path,
-              name: this._path ?? model.name,
-            },
-            kernelConnectionOptions: {
-              handleComms: true,
-            },
-          });
-          (this._context!.sessionContext as any)._handleNewSession(session);
-        } catch (err) {
-          void (this._context!.sessionContext as any)._handleSessionError(err);
-          return Promise.reject(err);
+    (this._context.sessionContext as any)._initialize =
+      async (): Promise<boolean> => {
+        const manager = (this._context!.sessionContext as any)
+          .sessionManager as SessionManager;
+        await manager.ready;
+        await manager.refreshRunning();
+        const model = find(manager.running(), model => {
+          return model.kernel?.id === this._kernel.id;
+        });
+        if (model) {
+          try {
+            const session = manager.connectTo({
+              model: {
+                ...model,
+                path: this._path ?? model.path,
+                name: this._path ?? model.name,
+              },
+              kernelConnectionOptions: {
+                handleComms: true,
+              },
+            });
+            (this._context!.sessionContext as any)._handleNewSession(session);
+          } catch (err) {
+            void (this._context!.sessionContext as any)._handleSessionError(
+              err
+            );
+            return Promise.reject(err);
+          }
         }
-      }
-      return await (this._context!.sessionContext as any)._startIfNecessary();
-    };
+        return await (this._context!.sessionContext as any)._startIfNecessary();
+      };
 
     if (this._ipywidgets === 'lab') {
       const jupyterWidgetRegistry = iPyWidgetsPlugin.activate(
@@ -420,7 +421,7 @@ export class NotebookAdapter {
     this._boxPanel.addWidget(this._notebookPanel);
     BoxPanel.setStretch(this._notebookPanel, 0);
     window.addEventListener('resize', () => {
-      this._notebookPanel?.update()
+      this._notebookPanel?.update();
     });
     const isNbFormat =
       this._path !== undefined && this._path !== '' ? false : true;
@@ -444,9 +445,9 @@ export class NotebookAdapter {
         };
         (this._context as any)._updateContentsModel(model);
         await (this._context as any)._populate();
-        (this._context as Context<
-          INotebookModel
-        >).model.sharedModel.clearUndoHistory();
+        (
+          this._context as Context<INotebookModel>
+        ).model.sharedModel.clearUndoHistory();
       };
     }
     this._context.initialize(isNbFormat).then(() => {
@@ -544,7 +545,7 @@ export class NotebookAdapter {
 
   changeCellType = (cellType: CellType) => {
     //    NotebookActions.changeCellType(this._notebookPanel?.content!, cellType);
-    const notebook = this._notebookPanel?.content!;
+    const notebook = this._notebookPanel!.content!;
     const notebookSharedModel = notebook.model!.sharedModel;
     notebook.widgets.forEach((child, index) => {
       if (!notebook.isSelectedOrActive(child)) {
@@ -560,7 +561,8 @@ export class NotebookAdapter {
             metadata: raw.metadata,
           });
           if (raw.attachments && ['markdown', 'raw'].includes(cellType)) {
-            (newCell as ISharedAttachmentsCell).attachments = raw.attachments as IAttachments;
+            (newCell as ISharedAttachmentsCell).attachments =
+              raw.attachments as IAttachments;
           }
         });
       }
@@ -574,8 +576,8 @@ export class NotebookAdapter {
   };
 
   insertAbove = (source?: string): void => {
-    const notebook = this._notebookPanel?.content!;
-    const model = this._notebookPanel?.context.model!;
+    const notebook = this._notebookPanel!.content!;
+    const model = this._notebookPanel!.context.model!;
     const newIndex = notebook.activeCell ? notebook.activeCellIndex : 0;
     model.sharedModel.insertCell(newIndex, {
       cell_type: notebook.notebookConfig.defaultCell,
@@ -594,8 +596,8 @@ export class NotebookAdapter {
   };
 
   insertBelow = (source?: string): void => {
-    const notebook = this._notebookPanel?.content!;
-    const model = this._notebookPanel?.context.model!;
+    const notebook = this._notebookPanel!.content!;
+    const model = this._notebookPanel!.context.model!;
     const newIndex = notebook.activeCell ? notebook.activeCellIndex + 1 : 0;
     model.sharedModel.insertCell(newIndex, {
       cell_type: notebook.notebookConfig.defaultCell,

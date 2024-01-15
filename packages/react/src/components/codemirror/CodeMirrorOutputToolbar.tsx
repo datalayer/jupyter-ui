@@ -107,9 +107,8 @@ export const CodeMirrorOutputToolbar = (props: Props) => {
     () => theme?.colorSchemes.light.colors.severe.muted,
     []
   );
-  const [kernelStatus, setKernelStatus] = useState<KernelMessage.Status>(
-    'unknown'
-  );
+  const [kernelStatus, setKernelStatus] =
+    useState<KernelMessage.Status>('unknown');
   useEffect(() => {
     if (kernel) {
       kernel.ready.then(() => {

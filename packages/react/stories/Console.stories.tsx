@@ -10,9 +10,20 @@ import { Jupyter, Console } from './../src';
 
 const meta: Meta<typeof Console> = {
   title: 'Components/Console',
+  component: Console,
   argTypes: {
-    lite: {
+    browser: {
+      control: 'radio',
+      options: ['true', 'false', '@jupyterlite/javascript-kernel-extension'],
       table: {
+        // Switching live does not work
+        disable: true,
+      },
+    },
+    code: {
+      control: 'text',
+      table: {
+        // Switching live does not work
         disable: true,
       },
     },
@@ -21,7 +32,9 @@ const meta: Meta<typeof Console> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Console>;
+type Story = StoryObj<
+  typeof Console | typeof Jupyter | { browser: string; code: string }
+>;
 
 const Template = (args, { globals: { labComparison } }) => {
   const lite = {
@@ -30,10 +43,10 @@ const Template = (args, { globals: { labComparison } }) => {
     '@jupyterlite/javascript-kernel-extension': import(
       '@jupyterlite/javascript-kernel-extension'
     ),
-  }[args.lite];
+  }[args.browser];
 
   const kernelName =
-    args.lite === '@jupyterlite/javascript-kernel-extension'
+    args.browser === '@jupyterlite/javascript-kernel-extension'
       ? 'javascript'
       : undefined;
 
@@ -45,30 +58,26 @@ const Template = (args, { globals: { labComparison } }) => {
       jupyterServerWsUrl="wss://oss.datalayer.tech/api/jupyter"
       jupyterToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
     >
-      <Console
-        code={
-          [
-            "print('👋 Hello Jupyter Console')"
-          ]
-        }
-      />
+      <Console code={args.code ? args.code.split('\n') : undefined} />
     </Jupyter>
   );
 };
 
 export const Default: Story = Template.bind({});
 Default.args = {
-  lite: 'false',
+  browser: 'false',
+  code: "print('👋 Hello Jupyter Console')",
 };
 
 export const LitePython: Story = Template.bind({});
 LitePython.args = {
   ...Default.args,
-  lite: true,
+  browser: 'true',
 };
 
 export const LiteJavascript: Story = Template.bind({});
 LiteJavascript.args = {
   ...Default.args,
-  lite: '@jupyterlite/javascript-kernel-extension',
+  browser: '@jupyterlite/javascript-kernel-extension',
+  code: "a = 'hello';\nArray(4).fill(`${a} the world`);",
 };

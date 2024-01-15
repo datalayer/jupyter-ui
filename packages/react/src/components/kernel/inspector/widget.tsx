@@ -64,7 +64,7 @@ function msgNodeRenderer(args: InspectorNodeParams) {
       />
     );
   }
-  const msg = (data as unknown) as KernelMessage.IMessage;
+  const msg = data as unknown as KernelMessage.IMessage;
   return <span key={'node-label'}>{msg.header.msg_id}</span>;
 }
 

@@ -123,7 +123,7 @@ export class IPyWidgetsClassicManager extends HTMLManager {
   ): Promise<void> {
     return Promise.resolve(view).then(view => {
       Widget.attach(view.luminoWidget, el);
-      view.on('remove', function () {
+      view.on('remove', () => {
         console.log('The IPyWidgets view is removed', view);
       });
       //      return view;
@@ -212,7 +212,7 @@ export class IPyWidgetsClassicManager extends HTMLManager {
     return Promise.resolve(new shims.services.Comm(comm!));
   }
 
-  public _get_comm_info(): Promise<{}> {
+  public _get_comm_info(): Promise<any> {
     return this._kernelConnection!.requestCommInfo({
       target_name: this.comm_target_name,
     }).then((reply: any) => reply.content.comms);

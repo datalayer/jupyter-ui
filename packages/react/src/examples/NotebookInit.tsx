@@ -79,7 +79,7 @@ const NotebookInit: React.FC = () => {
             notebookActions.insertAbove.started({
               uid: NOTEBOOK_ID,
               cellType: 'code',
-              source: `print("Hello 🪐 ⚛️ Jupyter React")`,
+              source: 'print("Hello 🪐 ⚛️ Jupyter React")',
             })
           );
         }

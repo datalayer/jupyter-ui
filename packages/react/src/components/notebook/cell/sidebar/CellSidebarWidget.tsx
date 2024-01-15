@@ -24,7 +24,8 @@ export type CellSidebarProps = {
 
 export class CellSidebarWidget
   extends ReactPortalWidget
-  implements ICellHeader {
+  implements ICellHeader
+{
   private readonly commands: CommandRegistry;
   constructor(
     CellSidebar: (props: CellSidebarProps) => JSX.Element,

@@ -89,7 +89,6 @@ export const CodeMirrorEditor = (props: {
         source: code,
       })
     );
-    let editorView: EditorView;
     const language = new Compartment();
     const keyBinding = [
       {
@@ -119,7 +118,7 @@ export const CodeMirrorEditor = (props: {
         }),
       ],
     });
-    editorView = new EditorView({
+    const editorView = new EditorView({
       state: state,
       parent: editorDiv.current,
     });

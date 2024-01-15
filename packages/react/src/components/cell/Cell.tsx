@@ -47,7 +47,7 @@ export type ICellProps = {
 };
 
 export const Cell = (props: ICellProps) => {
-  const { source, autoStart } = props;
+  const { source = '', autoStart } = props;
   const { serverSettings, injectableStore, defaultKernel } = useJupyter();
   const dispatch = useDispatch();
   const [adapter, setAdapter] = useState<CellAdapter>();
@@ -55,7 +55,7 @@ export const Cell = (props: ICellProps) => {
     injectableStore.inject('cell', cellReducer);
   }, []);
   useEffect(() => {
-    if (source && defaultKernel) {
+    if (defaultKernel) {
       defaultKernel.ready.then(() => {
         const adapter = new CellAdapter({
           source,

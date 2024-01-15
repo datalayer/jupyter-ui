@@ -77,7 +77,9 @@ export const OutputRenderer = (props: Props) => {
         plain = t ? 'true' : 'false';
       } else if (Array.isArray(t)) {
         plain = (t as string[]).join('\n');
-      } else plain = t?.toString();
+      } else {
+        plain = t?.toString();
+      }
       break;
     }
     case 'display_data': {
@@ -99,7 +101,9 @@ export const OutputRenderer = (props: Props) => {
             plain = text_plain;
           } else if (Array.isArray(text_plain)) {
             plain = text_plain.join('\n');
-          } else plain = text_plain.toString();
+          } else {
+            plain = text_plain.toString();
+          }
         }
         const text_html = data['text/html'];
         if (text_html) {

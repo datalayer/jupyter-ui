@@ -27,9 +27,8 @@ print("🔁 I am done with looping!")`;
 const KernelExecutorView = () => {
   const { defaultKernel } = useJupyter();
   const [outputAreaModel, setOutputAreaModel] = useState<IOutputAreaModel>();
-  const [finalOutputAreaModel, setFinalOutputAreaModel] = useState<
-    IOutputAreaModel
-  >();
+  const [finalOutputAreaModel, setFinalOutputAreaModel] =
+    useState<IOutputAreaModel>();
   const [done, setDone] = useState(false);
   useEffect(() => {
     if (defaultKernel?.connection) {
