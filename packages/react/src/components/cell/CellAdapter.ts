@@ -66,7 +66,7 @@ export class CellAdapter {
   private setupCell(
     source: string,
     serverSettings: ServerConnection.ISettings,
-    kernel: Kernel
+    kernel: Kernel,
   ) {
     const kernelManager =
       kernel.kernelManager ??
@@ -141,7 +141,7 @@ export class CellAdapter {
     const editorExtensions = () => {
       const registry = new EditorExtensionRegistry();
       for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions(
-        { themes }
+        { themes },
       )) {
         registry.addExtension(extensionFactory);
       }
@@ -153,7 +153,7 @@ export class CellAdapter {
             ybinding({
               ytext: sharedModel.ysource,
               undoManager: sharedModel.undoManager ?? undefined,
-            })
+            }),
           );
         },
       });
@@ -182,7 +182,7 @@ export class CellAdapter {
       event => {
         commands.processKeydownEvent(event);
       },
-      useCapture
+      useCapture,
     );
     const rendermime = new RenderMimeRegistry({ initialFactories });
     const iPyWidgetsClassicManager = new IPyWidgetsClassicManager({ loader });
@@ -193,7 +193,7 @@ export class CellAdapter {
         createRenderer: options =>
           new WidgetRenderer(options, iPyWidgetsClassicManager),
       },
-      0
+      0,
     );
     iPyWidgetsClassicManager.registerWithKernel(kernel.connection);
     const factoryService = new CodeMirrorEditorFactory({
@@ -222,16 +222,16 @@ export class CellAdapter {
         if (kernelConnection && !kernelConnection.handleComms) {
           console.warn(
             'Kernel Connection does not handle Comms',
-            kernelConnection.id
+            kernelConnection.id,
           );
           (kernelConnection as any).handleComms = true;
           console.log(
             'Kernel Connection is updated to enforce Comms support',
-            kernelConnection.handleComms
+            kernelConnection.handleComms,
           );
         }
         iPyWidgetsClassicManager.registerWithKernel(kernelConnection);
-      }
+      },
     );
     this._sessionContext.kernelChanged.connect(() => {
       void this._sessionContext.session?.kernel?.info.then(info => {
@@ -284,16 +284,16 @@ export class CellAdapter {
     toolbar.addItem('run', runButton);
     toolbar.addItem(
       'interrupt',
-      Toolbar.createInterruptButton(this._sessionContext)
+      Toolbar.createInterruptButton(this._sessionContext),
     );
     toolbar.addItem(
       'restart',
-      Toolbar.createRestartButton(this._sessionContext)
+      Toolbar.createRestartButton(this._sessionContext),
     );
     // toolbar.addItem('name', Toolbar.createKernelNameItem(this._sessionContext));
     toolbar.addItem(
       'status',
-      Toolbar.createKernelStatusItem(this._sessionContext)
+      Toolbar.createKernelStatusItem(this._sessionContext),
     );
 
     this._codeCell.outputsScrolled = false;

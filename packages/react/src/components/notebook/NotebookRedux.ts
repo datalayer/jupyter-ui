@@ -58,7 +58,7 @@ export const selectNotebook = (uid: string): INotebookState | undefined =>
   });
 
 export const selectNotebookModel = (
-  uid: string
+  uid: string,
 ): { model: INotebookModel | undefined; changed: any } | undefined =>
   useSelector((state: IJupyterReactState) => {
     if (state.notebook) {
@@ -187,12 +187,12 @@ export const notebookActions = {
   changeKernel: actionCreator<KernelChangeMutation>(ActionType.CHANGE_KERNEL),
   activeCellChange: actionCreator<CellModelUid>(ActionType.ACTIVE_CELL_CHANGE),
   kernelStatusChanged: actionCreator<KernelStatusMutation>(
-    ActionType.KERNEL_STATUS_CHANGE
+    ActionType.KERNEL_STATUS_CHANGE,
   ),
   addPortals: actionCreator<ReactPortalsMutation>(ActionType.ADD_PORTALS),
   setPortals: actionCreator<ReactPortalsMutation>(ActionType.SET_PORTALS),
   setPortalDisplay: actionCreator<PortalDisplayMutation>(
-    ActionType.SET_PORTAL_DISPLAY
+    ActionType.SET_PORTAL_DISPLAY,
   ),
   dispose: actionCreator<string>(ActionType.DISPOSE),
   save: actionCreator.async<DateMutation, DateMutation>(ActionType.SAVE),
@@ -200,14 +200,14 @@ export const notebookActions = {
   runAll: actionCreator.async<string, string>(ActionType.RUN_ALL),
   interrupt: actionCreator.async<string, string>(ActionType.INTERRUPT),
   insertAbove: actionCreator.async<CellMutation, CellMutation>(
-    ActionType.INSERT_ABOVE
+    ActionType.INSERT_ABOVE,
   ),
   insertBelow: actionCreator.async<CellMutation, CellMutation>(
-    ActionType.INSERT_BELOW
+    ActionType.INSERT_BELOW,
   ),
   delete: actionCreator.async<string, string>(ActionType.DELETE),
   changeCellType: actionCreator.async<CellMutation, CellMutation>(
-    ActionType.CHANGE_CELL_TYPE
+    ActionType.CHANGE_CELL_TYPE,
   ),
 };
 
@@ -225,7 +225,7 @@ const runEpic: Epic<
         .get(action.payload)
         ?.adapter?.commands.execute(cmdIds.run);
     }),
-    ignoreElements()
+    ignoreElements(),
   );
 
 const runAllEpic: Epic<
@@ -240,7 +240,7 @@ const runAllEpic: Epic<
         .get(action.payload)
         ?.adapter?.commands.execute(cmdIds.runAll);
     }),
-    ignoreElements()
+    ignoreElements(),
   );
 
 const interruptEpic: Epic<
@@ -255,7 +255,7 @@ const interruptEpic: Epic<
         .get(action.payload)
         ?.adapter?.commands.execute(cmdIds.interrupt);
     }),
-    ignoreElements()
+    ignoreElements(),
   );
 
 const insertAboveEpic: Epic<
@@ -274,7 +274,7 @@ const insertAboveEpic: Epic<
         .get(action.payload.uid)
         ?.adapter?.insertAbove(action.payload.source);
     }),
-    ignoreElements()
+    ignoreElements(),
   );
 
 const insertBelowEpic: Epic<
@@ -293,7 +293,7 @@ const insertBelowEpic: Epic<
         .get(action.payload.uid)
         ?.adapter?.insertBelow(action.payload.source);
     }),
-    ignoreElements()
+    ignoreElements(),
   );
 
 const deleteEpic: Epic<
@@ -308,7 +308,7 @@ const deleteEpic: Epic<
         .get(action.payload)
         ?.adapter?.commands.execute(cmdIds.deleteCells);
     }),
-    ignoreElements()
+    ignoreElements(),
   );
 
 const changeCellTypeEpic: Epic<
@@ -330,7 +330,7 @@ const changeCellTypeEpic: Epic<
         );
         */
     }),
-    ignoreElements()
+    ignoreElements(),
   );
 
 const saveEpic: Epic<
@@ -348,7 +348,7 @@ const saveEpic: Epic<
         params: action.payload,
         result: action.payload,
       });
-    })
+    }),
   );
 
 export const notebookEpics = combineEpics(
@@ -359,7 +359,7 @@ export const notebookEpics = combineEpics(
   insertBelowEpic,
   deleteEpic,
   changeCellTypeEpic,
-  saveEpic
+  saveEpic,
 );
 
 /* Reducers */
@@ -385,7 +385,7 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
         ...state,
         notebooks,
       };
-    }
+    },
   )
   .case(
     notebookActions.activeCellChange,
@@ -399,7 +399,7 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
         ...state,
         notebooks,
       };
-    }
+    },
   )
   .case(
     notebookActions.modelChange,
@@ -413,7 +413,7 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
         ...state,
         notebooks,
       };
-    }
+    },
   )
   .case(
     notebookActions.notebookChange,
@@ -427,7 +427,7 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
         ...state,
         notebooks,
       };
-    }
+    },
   )
   .case(
     notebookActions.kernelStatusChanged,
@@ -441,7 +441,7 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
         ...state,
         notebooks,
       };
-    }
+    },
   )
   .case(
     notebookActions.changeKernel,
@@ -455,7 +455,7 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
         ...state,
         notebooks,
       };
-    }
+    },
   )
   .case(
     notebookActions.addPortals,
@@ -469,7 +469,7 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
         ...state,
         notebooks,
       };
-    }
+    },
   )
   .case(notebookActions.dispose, (state: INotebooksState, uid: string) => {
     const notebooks = state.notebooks;
@@ -491,7 +491,7 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
         ...state,
         notebooks,
       };
-    }
+    },
   )
   .case(
     notebookActions.setPortalDisplay,
@@ -505,7 +505,7 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
         ...state,
         notebooks,
       };
-    }
+    },
   )
   .case(
     notebookActions.save.done,
@@ -519,35 +519,35 @@ export const notebookReducer = reducerWithInitialState(notebookInitialState)
         ...state,
         notebooks,
       };
-    }
+    },
   )
   .case(
     notebookActions.insertAbove.done,
     (state: INotebooksState, _: Success<CellMutation, CellMutation>) => {
       return state;
-    }
+    },
   )
   .case(
     notebookActions.insertBelow.done,
     (state: INotebooksState, _: Success<CellMutation, CellMutation>) => {
       return state;
-    }
+    },
   )
   .case(
     notebookActions.changeCellType.done,
     (state: INotebooksState, _: Success<CellMutation, CellMutation>) => {
       return state;
-    }
+    },
   )
   .case(
     notebookActions.run.done,
     (state: INotebooksState, _: Success<string, string>) => {
       return state;
-    }
+    },
   )
   .case(
     notebookActions.delete.done,
     (state: INotebooksState, _: Success<string, string>) => {
       return state;
-    }
+    },
   );

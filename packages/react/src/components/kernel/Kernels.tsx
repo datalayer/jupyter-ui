@@ -26,7 +26,7 @@ export const Kernels = () => {
   const { serviceManager } = useJupyter();
   const [kernels, setKernels] = useState<IModel[]>();
   const [kernelSpecInfos, setKernelSpecInfos] = useState(
-    new Map<string, KerneSpecInfos>()
+    new Map<string, KerneSpecInfos>(),
   );
   const refreshKernels = (serviceManager: ServiceManager.IManager) => {
     setKernels(Array.from(serviceManager.kernels.running()));
@@ -38,7 +38,7 @@ export const Kernels = () => {
     });
     serviceManager?.kernelspecs.refreshSpecs().then(() => {
       const kernelSpecs = Object.values(
-        serviceManager.kernelspecs.specs!.kernelspecs!
+        serviceManager.kernelspecs.specs!.kernelspecs!,
       );
       // Look for new kernel specifications
       const newSpecs = new Map<string, KerneSpecInfos>();
@@ -66,7 +66,7 @@ export const Kernels = () => {
   }, [serviceManager]);
   const deleteKernel = (
     serviceManager: ServiceManager.IManager,
-    kernelId: string
+    kernelId: string,
   ) => {
     serviceManager.kernels.shutdown(kernelId).then(() => {
       console.log(`Kernel ${kernelId} is terminated.`);

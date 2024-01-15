@@ -34,7 +34,7 @@ const NotebookKernelChange = () => {
       kernel.ready.then(() => {
         dispatch(notebookActions.changeKernel({ uid: NOTEBOOK_UID, kernel }));
         alert(
-          'The kernel is changed (was python3, now is python-bis). Bummer, all your variables are lost!'
+          'The kernel is changed (was python3, now is python-bis). Bummer, all your variables are lost!',
         );
       });
     }
@@ -63,5 +63,5 @@ const root = createRoot(div);
 root.render(
   <Jupyter defaultKernelName="python">
     <NotebookKernelChange />
-  </Jupyter>
+  </Jupyter>,
 );

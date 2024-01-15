@@ -47,7 +47,7 @@ export const fileBrowserActions = {
 /* Reducers */
 
 export const fileBrowserReducer = reducerWithInitialState(
-  fileBrowserInitialState
+  fileBrowserInitialState,
 ).case(
   fileBrowserActions.outputs,
   (state: IFileManagerState, success: number) => {
@@ -55,5 +55,5 @@ export const fileBrowserReducer = reducerWithInitialState(
       ...state,
       outputs: success,
     };
-  }
+  },
 );

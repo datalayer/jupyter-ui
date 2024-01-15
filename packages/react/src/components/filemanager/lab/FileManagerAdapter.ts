@@ -38,7 +38,7 @@ class FileBrowserAdapter {
 
     function createApp(
       serviceManager: ServiceManager.IManager,
-      panel: SplitPanel
+      panel: SplitPanel,
     ): void {
       const widgets: Widget[] = [];
       let activeWidget: Widget;
@@ -68,7 +68,7 @@ class FileBrowserAdapter {
       const languages = new EditorLanguageRegistry();
       EditorLanguageRegistry.getDefaultLanguages()
         .filter(language =>
-          ['ipython', 'julia', 'python'].includes(language.name.toLowerCase())
+          ['ipython', 'julia', 'python'].includes(language.name.toLowerCase()),
         )
         .forEach(language => {
           languages.addLanguage(language);
@@ -271,7 +271,7 @@ class FileBrowserAdapter {
 
       // Add a context menu to the dir listing.
       const node = fileBrowserWidget.node.getElementsByClassName(
-        'jp-DirListing-content'
+        'jp-DirListing-content',
       )[0];
       node.addEventListener('contextmenu', (event: MouseEvent) => {
         event.preventDefault();

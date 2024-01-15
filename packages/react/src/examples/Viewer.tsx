@@ -27,49 +27,41 @@ type NotebookExample = {
 const visualisationExamples: NotebookExample[] = [
   {
     title: 'Plotly Daily Stocks',
-    url:
-      'https://raw.githubusercontent.com/datalayer-examples/notebooks/main/daily-stock.ipynb',
+    url: 'https://raw.githubusercontent.com/datalayer-examples/notebooks/main/daily-stock.ipynb',
   },
   {
     title: 'Matplotlib',
-    url:
-      'https://raw.githubusercontent.com/anissa111/matplotlib-tutorial/main/notebooks/01-basic-matplotlib-tutorial.ipynb',
+    url: 'https://raw.githubusercontent.com/anissa111/matplotlib-tutorial/main/notebooks/01-basic-matplotlib-tutorial.ipynb',
   },
   {
     title: 'Bicycle Control',
-    url:
-      'https://raw.githubusercontent.com/plotly/IPython-plotly/master/notebooks/bicycle_control/bicycle_control.ipynb',
+    url: 'https://raw.githubusercontent.com/plotly/IPython-plotly/master/notebooks/bicycle_control/bicycle_control.ipynb',
   },
   {
     title: 'IPyWidgets Example',
-    url:
-      ' https://raw.githubusercontent.com/jupyter-widgets/ipywidgets/main/docs/source/examples/Widget%20Basics.ipynb',
+    url: ' https://raw.githubusercontent.com/jupyter-widgets/ipywidgets/main/docs/source/examples/Widget%20Basics.ipynb',
   },
 ];
 
 const dataScienceExamples: NotebookExample[] = [
   {
     title: 'Fair Experiment',
-    url:
-      'https://raw.githubusercontent.com/datalayer-courses/foundations-of-data-science-with-python/main/04-probability1/fair-experiments.ipynb',
+    url: 'https://raw.githubusercontent.com/datalayer-courses/foundations-of-data-science-with-python/main/04-probability1/fair-experiments.ipynb',
   },
   {
     title: 'Text Vectorization',
-    url:
-      'https://raw.githubusercontent.com/datalayer-courses/python-text-mining-intro/main/4-text-vectorization.ipynb',
+    url: 'https://raw.githubusercontent.com/datalayer-courses/python-text-mining-intro/main/4-text-vectorization.ipynb',
   },
   {
     title: 'Survival Analysis',
-    url:
-      'https://raw.githubusercontent.com/plotly/IPython-plotly/master/notebooks/survival_analysis/survival_analysis.ipynb',
+    url: 'https://raw.githubusercontent.com/plotly/IPython-plotly/master/notebooks/survival_analysis/survival_analysis.ipynb',
   },
 ];
 
 const astronomyExamples: NotebookExample[] = [
   {
     title: 'Center of Mass',
-    url:
-      'https://raw.githubusercontent.com/JuanCab/AstroInteractives/master/Interactives/Center_of_Mass.ipynb',
+    url: 'https://raw.githubusercontent.com/JuanCab/AstroInteractives/master/Interactives/Center_of_Mass.ipynb',
   },
   /*
   {
@@ -100,7 +92,7 @@ const MenuLine = (props: MenuLineProps) => {
 
 const ViewerExample = () => {
   const [notebookExample, setNotebookExample] = useState<NotebookExample>(
-    visualisationExamples[0]
+    visualisationExamples[0],
   );
   const [nbformat, setNbformat] = useState<INotebookContent>();
   useEffect(() => {

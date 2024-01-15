@@ -18,10 +18,10 @@ import { Kernel, KernelMessage } from '@jupyterlab/services';
 import { outputsAsString } from '../../utils/Utils';
 
 export type IOPubMessageHook = (
-  msg: KernelMessage.IIOPubMessage
+  msg: KernelMessage.IIOPubMessage,
 ) => boolean | PromiseLike<boolean>;
 export type ShellMessageHook = (
-  msg: KernelMessage.IShellMessage
+  msg: KernelMessage.IShellMessage,
 ) => boolean | PromiseLike<boolean>;
 
 export class KernelExecutor {
@@ -31,7 +31,7 @@ export class KernelExecutor {
   private _model: IOutputAreaModel;
   private _modelChanged = new Signal<KernelExecutor, IOutputAreaModel>(this);
   private _executeReplyReceived = new Signal<KernelExecutor, IOutputAreaModel>(
-    this
+    this,
   );
   private _future?: Kernel.IFuture<
     KernelMessage.IExecuteRequestMsg,
@@ -53,7 +53,7 @@ export class KernelExecutor {
   execute(
     code: string,
     iopubMessageHooks: IOPubMessageHook[] = [],
-    shellMessageHooks: ShellMessageHook[] = []
+    shellMessageHooks: ShellMessageHook[] = [],
   ):
     | Kernel.IFuture<
         KernelMessage.IExecuteRequestMsg,
@@ -101,9 +101,11 @@ export class KernelExecutor {
         this._modelChanged.emit(this._model);
         break;
       case 'status':
-        // execution_state: 'busy' 'starting' 'terminating' 'restarting' 'initializing' 'connecting' 'disconnected' 'dead' 'unknown' 'idle'
-        const executionState = (message.content as any).execution_state;
-        executionState;
+        {
+          // execution_state: 'busy' 'starting' 'terminating' 'restarting' 'initializing' 'connecting' 'disconnected' 'dead' 'unknown' 'idle'
+          const executionState = (message.content as any).execution_state;
+          executionState;
+        }
         break;
       default:
         break;
@@ -118,16 +120,18 @@ export class KernelExecutor {
     this._shellMessageHooks.forEach(hook => hook(message));
     switch (messageType) {
       case 'execute_reply':
-        const output: IOutput = {
-          output_type: 'display_data',
-          data: (message.content as IExecuteResult).data as IMimeBundle,
-          metadata: {},
-        };
-        this._outputs.push(message.content as IExecuteResult);
-        this._outputsChanged.emit(this._outputs);
-        this._model.add(output);
-        this.executeReplyReceived.emit(this._model);
-        this._executedResolve(this._model);
+        {
+          const output: IOutput = {
+            output_type: 'display_data',
+            data: (message.content as IExecuteResult).data as IMimeBundle,
+            metadata: {},
+          };
+          this._outputs.push(message.content as IExecuteResult);
+          this._outputsChanged.emit(this._outputs);
+          this._model.add(output);
+          this.executeReplyReceived.emit(this._model);
+          this._executedResolve(this._model);
+        }
         break;
       default:
         break;
@@ -157,7 +161,7 @@ export class KernelExecutor {
           KernelMessage.IExecuteRequestMsg,
           KernelMessage.IExecuteReplyMsg
         >
-      | undefined
+      | undefined,
   ) {
     this._future = value;
     if (!value) {

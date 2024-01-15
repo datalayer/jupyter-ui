@@ -60,7 +60,7 @@ const editorExtensions = () => {
         ybinding({
           ytext: sharedModel.ysource,
           undoManager: sharedModel.undoManager ?? undefined,
-        })
+        }),
       );
     },
   });

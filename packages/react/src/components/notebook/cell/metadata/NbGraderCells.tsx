@@ -6,7 +6,7 @@
 
 import { Cell, ICellModel } from '@jupyterlab/cells';
 /*
-// Autograded answer (only for code cells) { grade: false, solution: true, locked: false  }
+// Autograded answer (only for code cells) { grade: false, solution: true, locked: false  }
 {
   "nbgrader": {
     "grade_id": "squares",
@@ -16,7 +16,7 @@ import { Cell, ICellModel } from '@jupyterlab/cells';
     "locked": false
   }
 }
-// Autograded test (only for code cells) { grade: true, solution: false, locked: false, points: ... }
+// Autograded test (only for code cells) { grade: true, solution: false, locked: false, points: ... }
 {
   "nbgrader": {
     "grade_id": "correct_squares",
@@ -27,7 +27,7 @@ import { Cell, ICellModel } from '@jupyterlab/cells';
     "points": 1
   }
 }
-// Manually graded task { grade: false, solution: false, locked: true, task: true, points: ... }
+// Manually graded task { grade: false, solution: false, locked: true, task: true, points: ... }
 {
   "nbgrader": {
     "grade_id": "part-a",
@@ -39,7 +39,7 @@ import { Cell, ICellModel } from '@jupyterlab/cells';
     "points": 0
   }
 }
-// Manually graded answer { grade: true, solution: true, locked: false, points: ... }
+// Manually graded answer { grade: true, solution: true, locked: false, points: ... }
 {
   "nbgrader": {
     "grade_id": "sum_of_squares_equation",
@@ -50,7 +50,7 @@ import { Cell, ICellModel } from '@jupyterlab/cells';
     "points": 1
   }
 }
-// Readonly { grade: false, solution: false, solution: false, locked: true, task: false }
+// Readonly { grade: false, solution: false, solution: false, locked: true, task: false }
 {
   "nbgrader": {
     "grade_id": "squares",
@@ -80,23 +80,23 @@ export const getNbGraderType = (cell: Cell<ICellModel>) => {
   const solution = nbgrader.solution;
   const locked = nbgrader.locked;
   const task = nbgrader.task;
-  // Autograded answer (only for code cells) { grade: false, solution: true, locked: false  }
+  // Autograded answer (only for code cells) { grade: false, solution: true, locked: false  }
   if (!grade && solution && !locked) {
     return NbGraderType.AutogradedAnswer;
   }
-  // Autograded test (only for code cells) { grade: true, solution: false, locked: false, points: ... }
+  // Autograded test (only for code cells) { grade: true, solution: false, locked: false, points: ... }
   if (grade && !solution && !locked) {
     return NbGraderType.AutogradedTest;
   }
-  // Manually graded task { grade: false, solution: false, locked: true, task: true, points: ... }
+  // Manually graded task { grade: false, solution: false, locked: true, task: true, points: ... }
   if (!grade && !solution && locked && task) {
     return NbGraderType.ManuallyGradedTask;
   }
-  // Manually graded answer { grade: true, solution: true, locked: false, points: ... }
+  // Manually graded answer { grade: true, solution: true, locked: false, points: ... }
   if (grade && solution && !locked) {
     return NbGraderType.ManuallyGradedAnswer;
   }
-  // Readonly { grade: false, solution: false, solution: false, locked: true, task: false }
+  // Readonly { grade: false, solution: false, solution: false, locked: true, task: false }
   if (!grade && !solution && locked && !task) {
     return NbGraderType.ReadonlyGraded;
   }

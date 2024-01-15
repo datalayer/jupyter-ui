@@ -101,15 +101,14 @@ export const CodeMirrorOutputToolbar = (props: Props) => {
   const { theme } = useTheme();
   const okColor = useMemo(
     () => theme?.colorSchemes.light.colors.success.muted,
-    []
+    [],
   );
   const nokColor = useMemo(
     () => theme?.colorSchemes.light.colors.severe.muted,
-    []
+    [],
   );
-  const [kernelStatus, setKernelStatus] = useState<KernelMessage.Status>(
-    'unknown'
-  );
+  const [kernelStatus, setKernelStatus] =
+    useState<KernelMessage.Status>('unknown');
   useEffect(() => {
     if (kernel) {
       kernel.ready.then(() => {

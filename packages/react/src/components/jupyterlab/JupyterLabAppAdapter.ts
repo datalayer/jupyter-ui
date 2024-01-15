@@ -111,7 +111,7 @@ export class JupyterLabAppAdapter {
     if (!splash) {
       this._jupyterLab.deregisterPlugin(
         '@jupyterlab/apputils-extension:splash',
-        true
+        true,
       );
     }
     /*

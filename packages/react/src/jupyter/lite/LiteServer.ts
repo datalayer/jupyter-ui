@@ -14,20 +14,21 @@ import { PageConfig } from '@jupyterlab/coreutils';
  * Iterate over active plugins in an extension.
  */
 function* activePlugins(
-  extension: any
+  extension: any,
 ): Generator<JupyterLiteServerPlugin<any>> {
   // Handle commonjs or es2015 modules.
   let exports;
+  // eslint-disable-next-line no-prototype-builtins
   if (extension.hasOwnProperty('__esModule')) {
     exports = extension.default;
   } else {
     // CommonJS exports.
     exports = extension;
   }
-  let plugins: JupyterLiteServerPlugin<any>[] = Array.isArray(exports)
+  const plugins: JupyterLiteServerPlugin<any>[] = Array.isArray(exports)
     ? exports
     : [exports];
-  for (let plugin of plugins) {
+  for (const plugin of plugins) {
     if (PageConfig.Extension.isDisabled(plugin.id)) {
       console.info(`JupyterLite plugin '${plugin.id}' has been disabled.`);
       continue;
@@ -50,7 +51,7 @@ export async function createLiteServer(): Promise<JupyterLiteServer> {
 
   // Load the base serverlite extensions.
   const baseServerExtension = await import('@jupyterlite/server-extension');
-  for (let plugin of activePlugins(baseServerExtension)) {
+  for (const plugin of activePlugins(baseServerExtension)) {
     litePluginsToRegister.push(plugin);
   }
 

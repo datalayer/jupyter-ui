@@ -9,7 +9,7 @@ import { IEditorLanguageRegistry } from '@jupyterlab/codemirror';
 import { marked } from 'marked';
 
 export const getMarked = (
-  languages: IEditorLanguageRegistry
+  languages: IEditorLanguageRegistry,
 ): IMarkdownParser => {
   Private.initializeMarked(languages);
   return {
@@ -38,7 +38,7 @@ namespace Private {
       gfm: true,
       sanitize: false,
       // breaks: true; We can't use GFM breaks as it causes problems with tables
-      langPrefix: `language-`,
+      langPrefix: 'language-',
       highlight: (code, lang, callback) => {
         const cb = (err: Error | null, code: string) => {
           if (callback) {

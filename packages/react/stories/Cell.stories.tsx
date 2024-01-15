@@ -17,24 +17,24 @@ const meta: Meta<typeof Cell> = {
       options: ['true', 'false', '@jupyterlite/javascript-kernel-extension'],
       table: {
         // Switching live does not work
-        disable: true
-      }
+        disable: true,
+      },
     },
     source: {
       control: 'text',
     },
     autoStart: {
-      control: 'boolean'
-    }
-  }
+      control: 'boolean',
+    },
+  },
 } as Meta<typeof Cell>;
 
 export default meta;
 
-type Story = StoryObj<typeof Cell | typeof Jupyter | {browser: string}>;
+type Story = StoryObj<typeof Cell | typeof Jupyter | { browser: string }>;
 
 const Template = (args, { globals: { labComparison } }) => {
-  const {browser, ...others} = args;
+  const { browser, ...others } = args;
   const lite = {
     true: true,
     false: false,
@@ -66,7 +66,7 @@ Default.args = {
   browser: 'false',
   source: '',
   autoStart: false,
-}
+};
 
 export const Playground: Story = {
   render: Template.bind({}),
@@ -98,5 +98,5 @@ LitePython.args = {
   source: `import sys
 print(f"{sys.platform=}")
 
-${Playground.args.source ?? ''}`
+${Playground.args.source ?? ''}`,
 };

@@ -24,14 +24,15 @@ export type CellSidebarProps = {
 
 export class CellSidebarWidget
   extends ReactPortalWidget
-  implements ICellHeader {
+  implements ICellHeader
+{
   private readonly commands: CommandRegistry;
   constructor(
     CellSidebar: (props: CellSidebarProps) => JSX.Element,
     notebookId: string,
     nbgrader: boolean,
     commands: CommandRegistry,
-    store: Store
+    store: Store,
   ) {
     super();
     this.commands = commands;
@@ -52,7 +53,7 @@ export class CellSidebarWidget
       notebookActions.addPortals({
         uid: notebookId,
         portals: [portal],
-      })
+      }),
     );
   }
 }

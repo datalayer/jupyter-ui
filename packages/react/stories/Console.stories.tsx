@@ -17,22 +17,24 @@ const meta: Meta<typeof Console> = {
       options: ['true', 'false', '@jupyterlite/javascript-kernel-extension'],
       table: {
         // Switching live does not work
-        disable: true
-      }
+        disable: true,
+      },
     },
     code: {
       control: 'text',
       table: {
         // Switching live does not work
-        disable: true
-      }
-    }
+        disable: true,
+      },
+    },
   },
 } as Meta<typeof Console>;
 
 export default meta;
 
-type Story = StoryObj<typeof Console | typeof Jupyter | {browser: string, code: string}>;
+type Story = StoryObj<
+  typeof Console | typeof Jupyter | { browser: string; code: string }
+>;
 
 const Template = (args, { globals: { labComparison } }) => {
   const lite = {
@@ -56,11 +58,7 @@ const Template = (args, { globals: { labComparison } }) => {
       jupyterServerWsUrl="wss://oss.datalayer.tech/api/jupyter"
       jupyterToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
     >
-      <Console
-        code={
-          args.code ? args.code.split('\n') : undefined
-        }
-      />
+      <Console code={args.code ? args.code.split('\n') : undefined} />
     </Jupyter>
   );
 };
@@ -68,7 +66,7 @@ const Template = (args, { globals: { labComparison } }) => {
 export const Default: Story = Template.bind({});
 Default.args = {
   browser: 'false',
-  code: "print('👋 Hello Jupyter Console')"
+  code: "print('👋 Hello Jupyter Console')",
 };
 
 export const LitePython: Story = Template.bind({});
@@ -81,5 +79,5 @@ export const LiteJavascript: Story = Template.bind({});
 LiteJavascript.args = {
   ...Default.args,
   browser: '@jupyterlite/javascript-kernel-extension',
-  code: "a = 'hello';\nArray(4).fill(`${a} the world`);"
+  code: "a = 'hello';\nArray(4).fill(`${a} the world`);",
 };

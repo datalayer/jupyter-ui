@@ -96,14 +96,14 @@ export class IPyWidgetsClassicManager extends HTMLManager {
     if (kernelConnection) {
       kernelConnection.registerCommTarget(
         this.comm_target_name,
-        this._handleCommOpen
+        this._handleCommOpen,
       );
     }
   }
 
   private async _handleCommOpen(
     comm: Kernel.IComm,
-    message: KernelMessage.ICommOpenMsg
+    message: KernelMessage.ICommOpenMsg,
   ): Promise<void> {
     const classicComm = new shims.services.Comm(comm);
     await this.handle_comm_open(classicComm, message);
@@ -119,11 +119,11 @@ export class IPyWidgetsClassicManager extends HTMLManager {
 
   public display_view(
     view: Promise<DOMWidgetView> | DOMWidgetView,
-    el: HTMLElement
+    el: HTMLElement,
   ): Promise<void> {
     return Promise.resolve(view).then(view => {
       Widget.attach(view.luminoWidget, el);
-      view.on('remove', function () {
+      view.on('remove', () => {
         console.log('The IPyWidgets view is removed', view);
       });
       //      return view;
@@ -136,7 +136,7 @@ export class IPyWidgetsClassicManager extends HTMLManager {
   protected async loadClass(
     className: string,
     moduleName: string,
-    moduleVersion: string
+    moduleVersion: string,
   ): Promise<typeof WidgetModel | typeof WidgetView> {
     // Special-case the Jupyter base and controls packages. If we have just a
     // plain version, with no indication of the compatible range, prepend a ^ to
@@ -175,7 +175,7 @@ export class IPyWidgetsClassicManager extends HTMLManager {
         `Module ${moduleName}, version ${semanticVersion} is not registered, however, \
         ${registeredVersionList.join(',')} ${
           registeredVersionList.length > 1 ? 'are' : 'is'
-        }`
+        }`,
       );
     }
     let module: ExportMap;
@@ -203,7 +203,7 @@ export class IPyWidgetsClassicManager extends HTMLManager {
     model_id: string,
     data?: any,
     metadata?: any,
-    buffers?: ArrayBuffer[] | ArrayBufferView[]
+    buffers?: ArrayBuffer[] | ArrayBufferView[],
   ): Promise<any> {
     const comm = this._kernelConnection?.createComm(target_name, model_id);
     if (data || metadata) {
@@ -212,7 +212,7 @@ export class IPyWidgetsClassicManager extends HTMLManager {
     return Promise.resolve(new shims.services.Comm(comm!));
   }
 
-  public _get_comm_info(): Promise<{}> {
+  public _get_comm_info(): Promise<any> {
     return this._kernelConnection!.requestCommInfo({
       target_name: this.comm_target_name,
     }).then((reply: any) => reply.content.comms);

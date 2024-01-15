@@ -27,21 +27,20 @@ print("🔁 I am done with looping!")`;
 const KernelExecutorView = () => {
   const { defaultKernel } = useJupyter();
   const [outputAreaModel, setOutputAreaModel] = useState<IOutputAreaModel>();
-  const [finalOutputAreaModel, setFinalOutputAreaModel] = useState<
-    IOutputAreaModel
-  >();
+  const [finalOutputAreaModel, setFinalOutputAreaModel] =
+    useState<IOutputAreaModel>();
   const [done, setDone] = useState(false);
   useEffect(() => {
     if (defaultKernel?.connection) {
       const iopubMessageHook: IOPubMessageHook = (
-        msg: KernelMessage.IIOPubMessage
+        msg: KernelMessage.IIOPubMessage,
       ) => {
         // Do something with the IOPub message.
         console.log('---iopubMessage', msg);
         return true;
       };
       const shellMessageHook: ShellMessageHook = (
-        msg: KernelMessage.IShellControlMessage
+        msg: KernelMessage.IShellControlMessage,
       ) => {
         // Do something with the IOPub message.
         console.log('---shellMessage', msg);
@@ -50,7 +49,7 @@ const KernelExecutorView = () => {
       const kernelExecutor = defaultKernel.execute(
         CODE,
         [iopubMessageHook],
-        [shellMessageHook]
+        [shellMessageHook],
       );
       kernelExecutor?.modelChanged.connect((_, outputAreaModel) => {
         setOutputAreaModel(outputAreaModel);

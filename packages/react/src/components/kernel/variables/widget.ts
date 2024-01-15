@@ -34,7 +34,7 @@ provideJupyterDesignSystem().register(
   jpTextField(),
   jpOption(),
   jpSelect(),
-  jpButton()
+  jpButton(),
 );
 
 import wildcardMatch from 'wildcard-match';
@@ -59,7 +59,8 @@ type FILTER_TYPES = 'type' | 'name';
  */
 export class VariableInspectorPanel
   extends Widget
-  implements IVariableInspector {
+  implements IVariableInspector
+{
   private _source: IVariableInspector.IInspectable | null = null;
   private _table: WebDataGrid;
   private _filteredTable: HTMLDivElement;
@@ -84,19 +85,19 @@ export class VariableInspectorPanel
   //Sets up the filter table so when the filter button is pressed, a new filter is created
   protected intializeFilteredTable() {
     const filterType = this._filteredTable.querySelector(
-      '.' + FILTER_TYPE_CLASS
+      '.' + FILTER_TYPE_CLASS,
     ) as Select;
     const filterInput = this._filteredTable.querySelector(
-      '.' + FILTER_INPUT_CLASS
+      '.' + FILTER_INPUT_CLASS,
     ) as TextField;
     const filterButton = this._filteredTable.querySelector(
-      '.' + FILTER_BUTTON_CLASS
+      '.' + FILTER_BUTTON_CLASS,
     ) as Button;
     filterButton.addEventListener('click', () => {
       this.onFilterChange(
         filterType.value as FILTER_TYPES,
         filterInput.value,
-        true
+        true,
       );
     });
   }
@@ -123,7 +124,7 @@ export class VariableInspectorPanel
   protected onFilterChange(
     filterType: FILTER_TYPES,
     varName: string,
-    isAdding: boolean
+    isAdding: boolean,
   ) {
     if (varName === '') {
       return;
@@ -134,15 +135,15 @@ export class VariableInspectorPanel
       }
       this._filtered[filterType].push(varName);
       const filterList = this._filteredTable.querySelector(
-        '.' + FILTER_LIST_CLASS
+        '.' + FILTER_LIST_CLASS,
       ) as HTMLUListElement;
       const newFilteredButton = Private.createFilteredButton(
         varName,
-        filterType
+        filterType,
       );
       newFilteredButton.addEventListener('click', () => {
         const filterText = newFilteredButton.querySelector(
-          '.filtered-variable-button-text'
+          '.filtered-variable-button-text',
         ) as HTMLDivElement;
         this.onFilterChange(filterType, filterText.innerHTML, false);
         this.addFilteredOutRows();
@@ -152,7 +153,7 @@ export class VariableInspectorPanel
       this.filterOutTable();
     } else {
       this._filtered[filterType] = this._filtered[filterType].filter(
-        filter => filter !== varName
+        filter => filter !== varName,
       );
     }
   }
@@ -163,14 +164,14 @@ export class VariableInspectorPanel
   */
   protected addFilteredOutRows() {
     const rows = this._table.querySelectorAll(
-      '.' + TABLE_ROW_HIDDEN_CLASS
+      '.' + TABLE_ROW_HIDDEN_CLASS,
     ) as NodeListOf<DataGridRow>;
     for (let i = 0; i < rows.length; i++) {
       const rowName = rows[i].querySelector(
-        '.' + TABLE_NAME_CLASS
+        '.' + TABLE_NAME_CLASS,
       ) as DataGridCell;
       const rowType = rows[i].querySelector(
-        '.' + TABLE_TYPE_CLASS
+        '.' + TABLE_TYPE_CLASS,
       ) as DataGridCell;
       if (
         !this.stringInFilter(rowName.innerHTML, 'name') &&
@@ -187,14 +188,14 @@ export class VariableInspectorPanel
   */
   protected filterOutTable() {
     const rows = this._table.querySelectorAll(
-      '.' + TABLE_ROW_CLASS
+      '.' + TABLE_ROW_CLASS,
     ) as NodeListOf<DataGridRow>;
     for (let i = 0; i < rows.length; i++) {
       const rowName = rows[i].querySelector(
-        '.' + TABLE_NAME_CLASS
+        '.' + TABLE_NAME_CLASS,
       ) as DataGridCell;
       const rowType = rows[i].querySelector(
-        '.' + TABLE_TYPE_CLASS
+        '.' + TABLE_TYPE_CLASS,
       ) as DataGridCell;
       if (
         this.stringInFilter(rowName.innerHTML, 'name') ||
@@ -210,11 +211,11 @@ export class VariableInspectorPanel
   */
   protected removeRow(name: string) {
     const rows = this._table.querySelectorAll(
-      '.' + TABLE_ROW_CLASS
+      '.' + TABLE_ROW_CLASS,
     ) as NodeListOf<DataGridRow>;
     for (let i = 0; i < rows.length; i++) {
       const cell = rows[i].querySelector(
-        '.' + TABLE_NAME_CLASS
+        '.' + TABLE_NAME_CLASS,
       ) as DataGridCell;
       if (cell.innerHTML === name) {
         rows[i].remove();
@@ -259,7 +260,7 @@ export class VariableInspectorPanel
 
   protected onInspectorUpdate(
     sender: any,
-    allArgs: IVariableInspector.IVariableInspectorUpdate
+    allArgs: IVariableInspector.IVariableInspectorUpdate,
   ): void {
     if (!this.isAttached) {
       return;
@@ -281,7 +282,7 @@ export class VariableInspectorPanel
     const columns = [' ', ' ', 'NAME', 'TYPE', 'SIZE', 'SHAPE', 'CONTENT'];
     for (let i = 0; i < columns.length; i++) {
       const headerCell = document.createElement(
-        'jp-data-grid-cell'
+        'jp-data-grid-cell',
       ) as DataGridCell;
       headerCell.className = 'column-header';
       headerCell.textContent = columns[i];
@@ -375,7 +376,7 @@ export class VariableInspectorPanel
       } else {
         cell.innerHTML = Private.escapeHtml(item.varContent).replace(
           /\\n/g,
-          '</br>'
+          '</br>',
         );
       }
       cell.gridColumn = '7';
@@ -394,7 +395,7 @@ export class VariableInspectorPanel
   private _showMatrix(
     dataModel: DataModel,
     name: string,
-    varType: string
+    varType: string,
   ): void {
     const datagrid = new DataGrid({
       defaultSizes: {
@@ -423,13 +424,13 @@ namespace Private {
       '"': '&quot;',
       "'": '&#39;',
       '/': '&#x2F;',
-    })
+    }),
   );
 
   export function escapeHtml(source: string): string {
     return String(source).replace(
       /[&<>"'/]/g,
-      (s: string) => entityMap.get(s)!
+      (s: string) => entityMap.get(s)!,
     );
   }
 
@@ -484,7 +485,7 @@ namespace Private {
   //Creates a button with given filter information displayed on the button
   export function createFilteredButton(
     filterName: string,
-    filterType: FILTER_TYPES
+    filterType: FILTER_TYPES,
   ): Button {
     const filteredButton = document.createElement('jp-button') as Button;
     filteredButton.value = filterType;

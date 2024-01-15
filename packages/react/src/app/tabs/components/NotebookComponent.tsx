@@ -11,7 +11,8 @@
 
 const NotebookComponent = () => {
   return (
-    <>{/*
+    <>
+      {/*
       <Notebook
         nbformat={nbformat}
         uid="notebook-uid"
@@ -19,7 +20,8 @@ const NotebookComponent = () => {
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         CellSidebar={CellSidebarNew}
       />
-  */}</>
+  */}
+    </>
   );
 };
 

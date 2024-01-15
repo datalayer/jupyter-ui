@@ -35,10 +35,10 @@ export namespace IVariableInspector {
     performInspection(): void;
     performMatrixInspection(
       varName: string,
-      maxRows?: number
+      maxRows?: number,
     ): Promise<DataModel>;
     performWidgetInspection(
-      varName: string
+      varName: string,
     ): Kernel.IShellFuture<
       KernelMessage.IExecuteRequestMsg,
       KernelMessage.IExecuteReplyMsg

@@ -21,7 +21,7 @@ export class OutputAdapter {
 
   public constructor(adaptPlotly: boolean, outputs?: IOutput[]) {
     this._renderers = standardRendererFactories.filter(
-      factory => factory.mimeTypes[0] !== 'text/javascript'
+      factory => factory.mimeTypes[0] !== 'text/javascript',
     );
     this._renderers.push(jsonRendererFactory);
     this._renderers.push(javascriptRendererFactory);
@@ -40,8 +40,9 @@ export class OutputAdapter {
       const data = outputs[0].data as any;
       const isPlotly = data['application/vnd.plotly.v1+json'];
       if (isPlotly) {
-        let script = this._outputArea.node.children[0].children[1].children[0]
-          .children[1].innerHTML;
+        let script =
+          this._outputArea.node.children[0].children[1].children[0].children[1]
+            .innerHTML;
         script = script.replaceAll('\n,', '\n');
         eval(script);
       }

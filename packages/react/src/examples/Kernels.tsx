@@ -289,5 +289,5 @@ root.render(
   <Jupyter>
     <Pagehead>The Kernel Components</Pagehead>
     <KernelComponents />
-  </Jupyter>
+  </Jupyter>,
 );

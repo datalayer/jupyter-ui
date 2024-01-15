@@ -47,7 +47,7 @@ export const settingsActions = {
 /* Reducers */
 
 export const settingsReducer = reducerWithInitialState(
-  settingsInitialState
+  settingsInitialState,
 ).case(settingsActions.outputs, (state: ISettingsState, success: number) => {
   return {
     ...state,

@@ -79,5 +79,5 @@ const root = createRoot(div);
 root.render(
   <Jupyter>
     <NotebookUnmount />
-  </Jupyter>
+  </Jupyter>,
 );

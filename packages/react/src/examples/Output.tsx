@@ -57,5 +57,5 @@ root.render(
   <Jupyter>
     <OutputWithoutEditor />
     <OutputWithEditor />
-  </Jupyter>
+  </Jupyter>,
 );

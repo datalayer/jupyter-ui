@@ -31,7 +31,7 @@ const NotebookNbFormatChange = () => {
       'Notebook NbFormat from store',
       (injectableStore.getState() as IJupyterReactState).notebook.notebooks
         .get(NOTEBOOK_UID)
-        ?.model?.toJSON() as INotebookContent
+        ?.model?.toJSON() as INotebookContent,
     );
     nbformat === nbformat1 ? setNbformat(nbformat2) : setNbformat(nbformat1);
   };
@@ -66,5 +66,5 @@ const root = createRoot(div);
 root.render(
   <Jupyter>
     <NotebookNbFormatChange />
-  </Jupyter>
+  </Jupyter>,
 );

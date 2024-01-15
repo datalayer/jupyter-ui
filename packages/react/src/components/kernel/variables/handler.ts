@@ -55,11 +55,11 @@ abstract class AbstractHandler implements IVariableInspector.IInspectable {
 
   abstract performMatrixInspection(
     varName: string,
-    maxRows: number
+    maxRows: number,
   ): Promise<DataModel>;
 
   abstract performWidgetInspection(
-    varName: string
+    varName: string,
   ): JupyterKernel.IShellFuture<
     KernelMessage.IExecuteRequestMsg,
     KernelMessage.IExecuteReplyMsg
@@ -124,7 +124,7 @@ export class VariableInspectionHandler extends AbstractHandler {
             this.performInspection();
           });
         });
-      }
+      },
     );
   }
 
@@ -151,7 +151,7 @@ export class VariableInspectionHandler extends AbstractHandler {
    * Performs an inspection of a Jupyter Widget
    */
   performWidgetInspection(
-    varName: string
+    varName: string,
   ): JupyterKernel.IShellFuture<IExecuteRequestMsg, IExecuteReplyMsg> {
     const request: KernelMessage.IExecuteRequestMsg['content'] = {
       code: this._widgetQueryCommand + '(' + varName + ')',
@@ -166,7 +166,7 @@ export class VariableInspectionHandler extends AbstractHandler {
    */
   performMatrixInspection(
     varName: string,
-    maxRows = 100000
+    maxRows = 100000,
   ): Promise<DataModel> {
     const request: KernelMessage.IExecuteRequestMsg['content'] = {
       code: this._matrixQueryCommand + '(' + varName + ', ' + maxRows + ')',
@@ -234,7 +234,7 @@ export class VariableInspectionHandler extends AbstractHandler {
    * (TODO: query resp. could be forwarded to panel directly)
    */
   private _handleQueryResponse = (
-    response: KernelMessage.IIOPubMessage
+    response: KernelMessage.IIOPubMessage,
   ): void => {
     const msgType = response.header.msg_type;
     switch (msgType) {
@@ -271,7 +271,7 @@ export class VariableInspectionHandler extends AbstractHandler {
         }
 
         const updateDisplay = JSON.parse(
-          contentDisplay
+          contentDisplay,
         ) as IVariableInspector.IVariable[];
 
         const titleDisplay = {
@@ -292,7 +292,7 @@ export class VariableInspectionHandler extends AbstractHandler {
    */
   private _queryCall = (
     kernel: IKernelConnection,
-    msg: KernelMessage.IMessage
+    msg: KernelMessage.IMessage,
   ): void => {
     const msgType = msg.header.msg_type;
     switch (msgType) {
@@ -350,7 +350,7 @@ export class DummyHandler extends AbstractHandler {
 
   performMatrixInspection(
     varName: string,
-    maxRows: number
+    maxRows: number,
   ): Promise<DataModel> {
     return new Promise((resolve, reject) => {
       reject('Cannot inspect matrices w/ the DummyHandler!');
@@ -358,7 +358,7 @@ export class DummyHandler extends AbstractHandler {
   }
 
   performWidgetInspection(
-    varName: string
+    varName: string,
   ): JupyterKernel.IShellFuture<
     KernelMessage.IExecuteRequestMsg,
     KernelMessage.IExecuteReplyMsg

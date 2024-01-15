@@ -75,7 +75,7 @@ export const loadJupyterConfig = (
     | 'collaborative'
     | 'terminals'
     | 'jupyterToken'
-  >
+  >,
 ) => {
   const {
     lite,
@@ -88,12 +88,12 @@ export const loadJupyterConfig = (
   const datalayerConfigData = document.getElementById('datalayer-config-data');
   if (datalayerConfigData) {
     config = JSON.parse(
-      datalayerConfigData.textContent || ''
+      datalayerConfigData.textContent || '',
     ) as IJupyterConfig;
     setJupyterServerHttpUrl(
       jupyterServerHttpUrl ??
         config.jupyterServerHttpUrl ??
-        location.protocol + '//' + location.host + '/api/jupyter'
+        location.protocol + '//' + location.host + '/api/jupyter',
     );
     setJupyterServerWsUrl(
       jupyterServerWsUrl ??
@@ -101,7 +101,7 @@ export const loadJupyterConfig = (
         location.protocol.replace('http', 'ws') +
           '//' +
           location.host +
-          '/api/jupyter'
+          '/api/jupyter',
     );
     setJupyterToken(jupyterToken ?? config.jupyterToken ?? '');
   } else {
@@ -111,12 +111,12 @@ export const loadJupyterConfig = (
       const jupyterConfig = JSON.parse(jupyterConfigData.textContent || '');
       setJupyterServerHttpUrl(
         jupyterServerHttpUrl ??
-          location.protocol + '//' + location.host + jupyterConfig.baseUrl
+          location.protocol + '//' + location.host + jupyterConfig.baseUrl,
       );
       setJupyterServerWsUrl(
         jupyterServerWsUrl ?? location.protocol === 'https'
           ? 'wss://' + location.host
-          : 'ws://' + location.host + jupyterConfig.baseUrl
+          : 'ws://' + location.host + jupyterConfig.baseUrl,
       );
       setJupyterToken(jupyterToken ?? jupyterConfig.token);
       config.insideJupyterLab = jupyterConfig.appName === 'JupyterLab';
@@ -124,14 +124,14 @@ export const loadJupyterConfig = (
       // No Datalayer and no JupyterLab Config.
       setJupyterServerHttpUrl(
         jupyterServerHttpUrl ??
-          location.protocol + '//' + location.host + '/api/jupyter'
+          location.protocol + '//' + location.host + '/api/jupyter',
       );
       setJupyterServerWsUrl(
         jupyterServerWsUrl ??
           location.protocol.replace('http', 'ws') +
             '//' +
             location.host +
-            '/api/jupyter'
+            '/api/jupyter',
       );
       setJupyterToken(jupyterToken ?? '');
     }
@@ -141,7 +141,7 @@ export const loadJupyterConfig = (
     setJupyterServerWsUrl(
       location.protocol === 'https:'
         ? 'wss://' + location.host
-        : 'ws://' + location.host
+        : 'ws://' + location.host,
     );
   }
   PageConfig.setOption('baseUrl', getJupyterServerHttpUrl());
@@ -152,7 +152,7 @@ export const loadJupyterConfig = (
   PageConfig.setOption('terminalsAvailable', String(terminals));
   PageConfig.setOption(
     'mathjaxUrl',
-    'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js'
+    'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js',
   );
   PageConfig.setOption('mathjaxConfig', 'TeX-AMS_CHTML-full,Safe');
   //  PageConfig.getOption('hubHost')

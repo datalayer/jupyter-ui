@@ -23,9 +23,9 @@ class LuminoWidget extends Widget {
   }
 
   static createNode(): HTMLElement {
-    let node = document.createElement('div');
-    let content = document.createElement('div');
-    let input = document.createElement('input');
+    const node = document.createElement('div');
+    const content = document.createElement('div');
+    const input = document.createElement('input');
     input.placeholder = 'Placeholder...';
     content.appendChild(input);
     node.appendChild(content);

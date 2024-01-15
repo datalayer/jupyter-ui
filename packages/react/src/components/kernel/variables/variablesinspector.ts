@@ -39,7 +39,7 @@ export const createVariablesInspectorManager = () => {
 
 export const registerKernel = (
   manager: VariableInspectorManager,
-  kernel: Kernel
+  kernel: Kernel,
 ) => {
   const handlers: { [id: string]: Promise<VariableInspectionHandler> } = {};
 
@@ -55,7 +55,7 @@ export const registerKernel = (
       async () => {
         const lang = await connector.kernelLanguage;
         return Languages.getScript(lang);
-      }
+      },
     );
 
     scripts

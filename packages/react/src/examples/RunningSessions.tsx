@@ -28,9 +28,8 @@ import * as runningExtension from '@jupyterlab/running-extension';
 const RunningSessionsExample = () => {
   const [runningSessions, setRunningSessions] = useState<RunningSessions>();
   const [theme, setTheme] = useState<ColorMode>('light');
-  const [jupyterLabAdapter, setJupyterlabAdapter] = useState<
-    JupyterLabAppAdapter
-  >();
+  const [jupyterLabAdapter, setJupyterlabAdapter] =
+    useState<JupyterLabAppAdapter>();
   const { setColorMode } = useTheme();
   const [isDark, setDark] = useState(false);
   const onSwitchClick = async () => {
@@ -49,7 +48,7 @@ const RunningSessionsExample = () => {
   const onJupyterLab = async (jupyterLabAdapter: JupyterLabAppAdapter) => {
     setJupyterlabAdapter(jupyterLabAdapter);
     const runningSessionManagers = jupyterLabAdapter.service(
-      '@jupyterlab/running-extension:plugin'
+      '@jupyterlab/running-extension:plugin',
     );
     const runningSessions = new RunningSessions(runningSessionManagers);
     setRunningSessions(runningSessions);

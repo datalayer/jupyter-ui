@@ -17,14 +17,11 @@ root.render(
   <Jupyter lite={true}>
     <Box as="h1">A Jupyter Console with a Lite Kernel</Box>
     <Console
-      code={
-        [
-          "import piplite",
-          "await piplite.install('numpy')",
-          "print('👋 Hello Jupyter Console')"
-        ]
-      }
+      code={[
+        'import piplite',
+        "await piplite.install('numpy')",
+        "print('👋 Hello Jupyter Console')",
+      ]}
     />
-
-  </Jupyter>
+  </Jupyter>,
 );

@@ -79,8 +79,8 @@ const NotebookInit: React.FC = () => {
             notebookActions.insertAbove.started({
               uid: NOTEBOOK_ID,
               cellType: 'code',
-              source: `print("Hello 🪐 ⚛️ Jupyter React")`,
-            })
+              source: 'print("Hello 🪐 ⚛️ Jupyter React")',
+            }),
           );
         }
       });
@@ -109,5 +109,5 @@ root.render(
     <div style={{ width: NOTEBOOK_WIDTH, height: NOTEBOOK_HEIGHT }}>
       <NotebookInit />
     </div>
-  </Jupyter>
+  </Jupyter>,
 );

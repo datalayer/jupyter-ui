@@ -26,7 +26,7 @@ export class JupyterReactNotebookModelFactory extends NotebookModelFactory {
 
   /** @override */
   createNew(
-    options: DocumentRegistry.IModelOptions<ISharedNotebook>
+    options: DocumentRegistry.IModelOptions<ISharedNotebook>,
   ): INotebookModel {
     if (this._nbformat) {
       const notebookModel = new NotebookModel();

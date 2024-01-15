@@ -53,7 +53,7 @@ export const outputInitialState: IOutputsState = {
 /* Selectors */
 
 export const selectJupyterSource = (
-  id: string
+  id: string,
 ): OutputState.ISource | undefined =>
   useSelector((state: IJupyterReactState) => {
     if (state.output) {
@@ -63,7 +63,7 @@ export const selectJupyterSource = (
   });
 
 export const selectJupyterSetSource = (
-  id: string
+  id: string,
 ): OutputState.ISource | undefined =>
   useSelector((state: IJupyterReactState) => {
     if (state.output) {
@@ -134,7 +134,7 @@ export const outputReducer = reducerWithInitialState(outputInitialState)
         ...state,
         outputs,
       };
-    }
+    },
   )
   .case(
     outputActions.dataset,
@@ -151,7 +151,7 @@ export const outputReducer = reducerWithInitialState(outputInitialState)
         ...state,
         outputs,
       };
-    }
+    },
   )
   .case(
     outputActions.execute,
@@ -168,7 +168,7 @@ export const outputReducer = reducerWithInitialState(outputInitialState)
         ...state,
         outputs,
       };
-    }
+    },
   )
   .case(
     outputActions.setSource,
@@ -185,7 +185,7 @@ export const outputReducer = reducerWithInitialState(outputInitialState)
         ...state,
         outputs,
       };
-    }
+    },
   )
   .case(
     outputActions.grade,
@@ -202,5 +202,5 @@ export const outputReducer = reducerWithInitialState(outputInitialState)
         ...state,
         outputs,
       };
-    }
+    },
   );

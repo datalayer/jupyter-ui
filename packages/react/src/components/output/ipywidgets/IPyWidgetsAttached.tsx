@@ -21,15 +21,15 @@ const IPyWidgetsAttached = (props: Props) => {
     <div
       ref={ref => {
         if (ref) {
-          var manager = new IPyWidgetsViewManager(ref);
+          const manager = new IPyWidgetsViewManager(ref);
           manager
             .set_state(state)
             .then((models: any) =>
               manager.create_view(
                 models.find(
-                  (element: any) => element.model_id === view.model_id
-                )
-              )
+                  (element: any) => element.model_id === view.model_id,
+                ),
+              ),
             )
             .then((view: any) => manager.display_view(view));
         }

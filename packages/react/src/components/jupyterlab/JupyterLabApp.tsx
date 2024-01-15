@@ -59,13 +59,13 @@ export const JupyterLabApp = (props: JupyterLabAppProps) => {
     () =>
       props.mimeExtensionPromises ??
       JupyterLabAppCorePlugins(collaborative).mimeExtensionPromises,
-    []
+    [],
   );
   const defaultExtensionPromises = useMemo(
     () =>
       props.extensionPromises ??
       JupyterLabAppCorePlugins(collaborative).extensionPromises,
-    []
+    [],
   );
   const ref = useRef<HTMLDivElement>(null);
   const [_, setAdapter] = useState<JupyterLabAppAdapter>();

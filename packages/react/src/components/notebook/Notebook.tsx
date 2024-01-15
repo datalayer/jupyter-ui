@@ -67,12 +67,8 @@ export type INotebookProps = {
  * @returns A Notebook React.js component.
  */
 export const Notebook = (props: INotebookProps) => {
-  const {
-    serviceManager,
-    defaultKernel,
-    kernelManager,
-    injectableStore,
-  } = useJupyter();
+  const { serviceManager, defaultKernel, kernelManager, injectableStore } =
+    useJupyter();
   const {
     path,
     kernel: propsKernel,
@@ -83,7 +79,7 @@ export const Notebook = (props: INotebookProps) => {
     nbformat,
     Toolbar,
   } = props;
-  const { lite } = useJupyter()
+  const { lite } = useJupyter();
   const [uid] = useState(props.uid || newUuid());
   const [adapter, setAdapter] = useState<NotebookAdapter>();
   const kernel = propsKernel || defaultKernel;
@@ -100,27 +96,30 @@ export const Notebook = (props: INotebookProps) => {
           },
           injectableStore,
           serviceManager,
-          lite
+          lite,
         );
         setAdapter(adapter);
         dispatch(
-          notebookActions.update({ uid, partialState: { adapter: adapter } })
+          notebookActions.update({ uid, partialState: { adapter: adapter } }),
         );
         adapter.serviceManager.ready.then(() => {
           if (!readOnly) {
             const activeCell = adapter.notebookPanel!.content.activeCell;
             if (activeCell) {
               dispatch(
-                notebookActions.activeCellChange({ uid, cellModel: activeCell })
+                notebookActions.activeCellChange({
+                  uid,
+                  cellModel: activeCell,
+                }),
               );
             }
             const activeCellChanged$ = asObservable(
-              adapter.notebookPanel!.content.activeCellChanged
+              adapter.notebookPanel!.content.activeCellChanged,
             );
             activeCellChanged$.subscribe((cellModel: Cell<ICellModel>) => {
               dispatch(notebookActions.activeCellChange({ uid, cellModel }));
               const panelDiv = document.getElementById(
-                'right-panel-id'
+                'right-panel-id',
               ) as HTMLDivElement;
               if (panelDiv) {
                 const cellMetadataOptions = (
@@ -137,7 +136,7 @@ export const Notebook = (props: INotebookProps) => {
                   notebookActions.setPortalDisplay({
                     uid,
                     portalDisplay: { portal, pinned: false },
-                  })
+                  }),
                 );
               }
             });
@@ -145,7 +144,7 @@ export const Notebook = (props: INotebookProps) => {
           adapter.notebookPanel?.model?.contentChanged.connect(
             (notebookModel, _) => {
               dispatch(notebookActions.modelChange({ uid, notebookModel }));
-            }
+            },
           );
           /*
           adapter.notebookPanel?.model!.sharedModel.changed.connect((_, notebookChange) => {
@@ -162,19 +161,19 @@ export const Notebook = (props: INotebookProps) => {
                   notebookActions.activeCellChange({
                     uid,
                     cellModel: undefined,
-                  })
+                  }),
                 );
               } else {
                 dispatch(notebookActions.activeCellChange({ uid, cellModel }));
               }
-            }
+            },
           );
           adapter.notebookPanel?.sessionContext.statusChanged.connect(
             (_, kernelStatus) => {
               dispatch(
-                notebookActions.kernelStatusChanged({ uid, kernelStatus })
+                notebookActions.kernelStatusChanged({ uid, kernelStatus }),
               );
-            }
+            },
           );
         });
       });
@@ -191,7 +190,7 @@ export const Notebook = (props: INotebookProps) => {
       }
       setAdapter(undefined);
       dispatch(
-        notebookActions.setPortalDisplay({ uid, portalDisplay: undefined })
+        notebookActions.setPortalDisplay({ uid, portalDisplay: undefined }),
       );
       dispatch(notebookActions.dispose(uid));
     };

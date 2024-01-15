@@ -11,9 +11,8 @@ import Lumino from '../lumino/Lumino';
 
 export const FileManagerJupyterLab = () => {
   const { serviceManager } = useJupyter();
-  const [fileManagerAdapter, setFileManagerAdapter] = useState<
-    FileManagerAdapter
-  >();
+  const [fileManagerAdapter, setFileManagerAdapter] =
+    useState<FileManagerAdapter>();
   useEffect(() => {
     if (serviceManager) {
       const fileManagerAdapter = new FileManagerAdapter(serviceManager);

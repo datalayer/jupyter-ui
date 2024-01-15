@@ -68,7 +68,7 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
               notebookActions.save.started({
                 uid: notebookId,
                 date: new Date(),
-              })
+              }),
             );
           }}
           icon={ZapIcon}
@@ -158,28 +158,28 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
               notebookActions.insertBelow.started({
                 uid: notebookId,
                 cellType: addType,
-              })
+              }),
             );
           }}
           icon={PlusIcon}
         />
         <ButtonGroup>
           <Button
-            variant={addType == 'code' ? 'primary' : 'invisible'}
+            variant={addType === 'code' ? 'primary' : 'invisible'}
             onClick={() => handleChangeCellType('code')}
             size="small"
           >
             Code
           </Button>
           <Button
-            variant={addType == 'markdown' ? 'primary' : 'default'}
+            variant={addType === 'markdown' ? 'primary' : 'default'}
             onClick={() => handleChangeCellType('markdown')}
             size="small"
           >
             Markdown
           </Button>
           <Button
-            variant={addType == 'raw' ? 'primary' : 'invisible'}
+            variant={addType === 'raw' ? 'primary' : 'invisible'}
             onClick={() => handleChangeCellType('raw')}
             size="small"
           >

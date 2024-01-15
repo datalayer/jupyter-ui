@@ -64,7 +64,7 @@ function msgNodeRenderer(args: InspectorNodeParams) {
       />
     );
   }
-  const msg = (data as unknown) as KernelMessage.IMessage;
+  const msg = data as unknown as KernelMessage.IMessage;
   return <span key={'node-label'}>{msg.header.msg_id}</span>;
 }
 
@@ -148,7 +148,7 @@ export class MessageLogView extends VDomRenderer<KernelSpyModel> {
       <span
         key="header-divider"
         className="dla-KernelInspector-logheader dla-KernelInspector-divider"
-      />
+      />,
     );
 
     const threads = new ThreadIterator(model.tree, this.collapsed);
@@ -166,7 +166,7 @@ export class MessageLogView extends VDomRenderer<KernelSpyModel> {
               <span
                 key={`'divider-${thread.args.msg.header.msg_id}`}
                 className="dla-KernelInspector-divider"
-              />
+              />,
             );
           }
         }
@@ -180,7 +180,7 @@ export class MessageLogView extends VDomRenderer<KernelSpyModel> {
             onCollapse: message => {
               this.onCollapse(message);
             },
-          })
+          }),
         );
       }
     }

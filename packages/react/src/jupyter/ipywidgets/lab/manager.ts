@@ -49,7 +49,8 @@ export const WIDGET_STATE_MIMETYPE =
  */
 export abstract class BaseWidgetManager
   extends ManagerBase
-  implements IDisposable {
+  implements IDisposable
+{
   constructor(rendermime: IRenderMimeRegistry) {
     super();
     this._rendermime = rendermime;
@@ -111,7 +112,7 @@ export abstract class BaseWidgetManager
     model_id: string,
     data?: any,
     metadata?: any,
-    buffers?: ArrayBuffer[] | ArrayBufferView[]
+    buffers?: ArrayBuffer[] | ArrayBufferView[],
   ): Promise<IClassicComm> {
     const kernel = this.kernel;
     if (!kernel) {
@@ -178,7 +179,7 @@ export abstract class BaseWidgetManager
   protected async loadClass(
     className: string,
     moduleName: string,
-    moduleVersion: string
+    moduleVersion: string,
   ): Promise<typeof WidgetModel | typeof WidgetView> {
     // Special-case the Jupyter base and controls packages. If we have just a
     // plain version, with no indication of the compatible range, prepend a ^ to
@@ -217,7 +218,7 @@ export abstract class BaseWidgetManager
         `Module ${moduleName}, version ${semanticVersion} is not registered, however, \
         ${registeredVersionList.join(',')} ${
           registeredVersionList.length > 1 ? 'are' : 'is'
-        }`
+        }`,
       );
     }
     let module: ExportMap;
@@ -314,7 +315,7 @@ export abstract class BaseWidgetManager
   // single object that can be registered and removed
   protected _handleCommOpen = async (
     comm: Kernel.IComm,
-    message: KernelMessage.ICommOpenMsg
+    message: KernelMessage.ICommOpenMsg,
   ): Promise<void> => {
     const classicComm = new shims.services.Comm(comm);
     await this.handle_comm_open(classicComm, message);
@@ -340,7 +341,7 @@ export abstract class BaseWidgetManager
 export class KernelWidgetManager extends BaseWidgetManager {
   constructor(
     kernel: Kernel.IKernelConnection,
-    rendermime: IRenderMimeRegistry
+    rendermime: IRenderMimeRegistry,
   ) {
     super(rendermime);
     this._kernel = kernel;
@@ -415,7 +416,7 @@ export class NotebookWidgetManager extends BaseWidgetManager {
     context: DocumentRegistry.IContext<INotebookModel>,
     rendermime: IRenderMimeRegistry,
     settings: NotebookWidgetManager.Settings,
-    kernelConnection: Kernel.IKernelConnection | null
+    kernelConnection: Kernel.IKernelConnection | null,
   ) {
     super(rendermime);
 
@@ -431,11 +432,11 @@ export class NotebookWidgetManager extends BaseWidgetManager {
     this._context.sessionContext.connectionStatusChanged.connect(
       (sender, args) => {
         this._handleKernelConnectionStatusChange(args);
-      }
+      },
     );
     kernelConnection?.registerCommTarget(
       this.comm_target_name,
-      this._handleCommOpen
+      this._handleCommOpen,
     );
     /*
     if (this._context.sessionContext.session?.kernel) {
@@ -497,7 +498,7 @@ export class NotebookWidgetManager extends BaseWidgetManager {
    */
   async restoreWidgets(
     notebook: INotebookModel,
-    { loadKernel, loadNotebook } = { loadKernel: true, loadNotebook: true }
+    { loadKernel, loadNotebook } = { loadKernel: true, loadNotebook: true },
   ): Promise<void> {
     try {
       if (loadKernel) {

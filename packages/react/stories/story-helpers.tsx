@@ -30,7 +30,7 @@ const GlobalStyle = createGlobalStyle`
 
 export const withThemeProvider = (
   Story: React.FC<React.PropsWithChildren<StoryContext>>,
-  context: StoryContext
+  context: StoryContext,
 ) => {
   // used for testing ThemeProvider.stories.tsx
   if (context.parameters.disableThemeDecorator) return Story(context);

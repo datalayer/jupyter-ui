@@ -35,11 +35,11 @@ export class OutputAdapter {
   public constructor(
     kernel?: Kernel,
     outputs?: IOutput[],
-    outputAreaModel?: IOutputAreaModel
+    outputAreaModel?: IOutputAreaModel,
   ) {
     this._kernel = kernel;
     this._renderers = standardRendererFactories.filter(
-      factory => factory.mimeTypes[0] !== 'text/javascript'
+      factory => factory.mimeTypes[0] !== 'text/javascript',
     );
     this._renderers.push(jsonRendererFactory);
     this._renderers.push(javascriptRendererFactory);
@@ -56,7 +56,7 @@ export class OutputAdapter {
         createRenderer: (options: any) =>
           new WidgetRenderer(options, this._iPyWidgetsClassicManager),
       },
-      0
+      0,
     );
     //    const widgetRegistry = activateWidgetExtension(this._rendermime);
     //    activatePlotlyWidgetExtension(widgetRegistry);
@@ -75,8 +75,9 @@ export class OutputAdapter {
       if (data) {
         const isPlotly = data['application/vnd.plotly.v1+json'];
         if (isPlotly) {
-          let script = this._outputArea.node.children[0].children[1].children[0]
-            .children[1].innerHTML;
+          let script =
+            this._outputArea.node.children[0].children[1].children[0]
+              .children[1].innerHTML;
           script = script.replaceAll('\n,', '\n');
           eval(script);
         }
@@ -121,7 +122,7 @@ export class OutputAdapter {
   private initKernel() {
     if (this._kernel) {
       this._iPyWidgetsClassicManager.registerWithKernel(
-        this._kernel.connection
+        this._kernel.connection,
       );
     }
   }

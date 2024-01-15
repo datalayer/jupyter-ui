@@ -18,9 +18,9 @@ import { getJupyterServerHttpUrl, getJupyterToken } from './JupyterConfig';
 import { requestAPI } from './JupyterHandlers';
 import Kernel from './kernel/Kernel';
 
-export type Lite = 
+export type Lite =
   | boolean
-  | Promise<{ default: JupyterLiteServerPlugin<any>[] }>
+  | Promise<{ default: JupyterLiteServerPlugin<any>[] }>;
 
 /**
  * The type for the Jupyter context.
@@ -93,13 +93,14 @@ export type JupyterContextType = {
  * The instance for the Jupyter context.
  */
 export const JupyterContext = createContext<JupyterContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export const useJupyter = (): JupyterContextType => {
   const context = useContext(JupyterContext);
-  if (!context)
+  if (!context) {
     throw new Error('useContext must be inside a provider with a value.');
+  }
   return context;
 };
 
@@ -118,7 +119,7 @@ const JupyterProvider = JupyterContext.Provider;
  * with the Jupyter server.
  */
 export const ensureJupyterAuth = async (
-  serverSettings: ServerConnection.ISettings
+  serverSettings: ServerConnection.ISettings,
 ): Promise<boolean> => {
   try {
     await requestAPI<any>(serverSettings, 'api', '');
@@ -222,7 +223,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
   const [serviceManager, setServiceManager] = useState<ServiceManager>();
   const [kernel, setKernel] = useState<Kernel>();
   const [kernelIsLoading, setIsLoading] = useState<boolean>(
-    startDefaultKernel || useRunningKernelIndex > -1
+    startDefaultKernel || useRunningKernelIndex > -1,
   );
 
   // Create a service manager
@@ -255,7 +256,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
 
         // Activate the loaded plugins
         await Promise.all(
-          pluginIDs.filter(id => id).map(id => liteServer.activatePlugin(id!))
+          pluginIDs.filter(id => id).map(id => liteServer.activatePlugin(id!)),
         );
         setServiceManager(liteServer.serviceManager);
       });
@@ -270,7 +271,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
         }
         if (useRunningKernelId && useRunningKernelIndex > -1) {
           throw new Error(
-            'You can not ask for useRunningKernelId and useRunningKernelIndex at the same time.'
+            'You can not ask for useRunningKernelId and useRunningKernelIndex at the same time.',
           );
         }
         if (
@@ -278,7 +279,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
           (useRunningKernelId || useRunningKernelIndex > -1)
         ) {
           throw new Error(
-            'You can not ask for startDefaultKernel and (useRunningKernelId or useRunningKernelIndex) at the same time.'
+            'You can not ask for startDefaultKernel and (useRunningKernelId or useRunningKernelIndex) at the same time.',
           );
         }
         const serviceManager = new ServiceManager({ serverSettings });
@@ -308,7 +309,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
                 kernelType: 'notebook',
                 kernelspecsManager: serviceManager.kernelspecs,
                 sessionManager: serviceManager.sessions,
-              })
+              }),
             );
             setIsLoading(false);
             break;

@@ -104,7 +104,7 @@ export class NotebookAdapter {
     props: INotebookProps,
     store: any,
     serviceManager: ServiceManager,
-    lite?: Lite
+    lite?: Lite,
   ) {
     this._bundledIPyWidgets = props.bundledIPyWidgets;
     this._externalIPyWidgets = props.externalIPyWidgets;
@@ -140,11 +140,11 @@ export class NotebookAdapter {
       event => {
         this._commandRegistry?.processKeydownEvent(event);
       },
-      useCapture
+      useCapture,
     );
 
     const rendererFactories = standardRendererFactories.filter(
-      factory => factory.mimeTypes[0] !== 'text/javascript'
+      factory => factory.mimeTypes[0] !== 'text/javascript',
     );
     rendererFactories.push(jsonRendererFactory);
     rendererFactories.push(javascriptRendererFactory);
@@ -184,7 +184,7 @@ export class NotebookAdapter {
     const editorExtensions = () => {
       const registry = new EditorExtensionRegistry();
       for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions(
-        { themes }
+        { themes },
       )) {
         registry.addExtension(extensionFactory);
       }
@@ -196,7 +196,7 @@ export class NotebookAdapter {
             ybinding({
               ytext: sharedModel.ysource,
               undoManager: sharedModel.undoManager ?? undefined,
-            })
+            }),
           );
         },
       });
@@ -218,7 +218,7 @@ export class NotebookAdapter {
           this._nbgrader,
           this._commandRegistry,
           { editorFactory },
-          this._store
+          this._store,
         )
       : new NotebookPanel.ContentFactory({ editorFactory });
 
@@ -273,64 +273,65 @@ export class NotebookAdapter {
           createRenderer: options =>
             new WidgetRenderer(options, this._iPyWidgetsClassicManager!),
         },
-        1
+        1,
       );
       this._context?.sessionContext
         .changeKernel({ id: this._kernel.id })
         .then(() => {
           this._iPyWidgetsClassicManager?.registerWithKernel(
-            this._kernel.connection
+            this._kernel.connection,
           );
         });
       if (this._bundledIPyWidgets) {
         this._iPyWidgetsClassicManager.loadBundledIPyWidgets(
-          this._bundledIPyWidgets
+          this._bundledIPyWidgets,
         );
       }
       if (this._externalIPyWidgets) {
         this._iPyWidgetsClassicManager.loadExternalIPyWidgets(
-          this._externalIPyWidgets
+          this._externalIPyWidgets,
         );
       }
     }
 
     // These are fixes to have more control on the kernel launch.
-    (this._context.sessionContext as any)._initialize = async (): Promise<
-      boolean
-    > => {
-      const manager = (this._context!.sessionContext as any)
-        .sessionManager as SessionManager;
-      await manager.ready;
-      await manager.refreshRunning();
-      const model = find(manager.running(), model => {
-        return model.kernel?.id === this._kernel.id;
-      });
-      if (model) {
-        try {
-          const session = manager.connectTo({
-            model: {
-              ...model,
-              path: this._path ?? model.path,
-              name: this._path ?? model.name,
-            },
-            kernelConnectionOptions: {
-              handleComms: true,
-            },
-          });
-          (this._context!.sessionContext as any)._handleNewSession(session);
-        } catch (err) {
-          void (this._context!.sessionContext as any)._handleSessionError(err);
-          return Promise.reject(err);
+    (this._context.sessionContext as any)._initialize =
+      async (): Promise<boolean> => {
+        const manager = (this._context!.sessionContext as any)
+          .sessionManager as SessionManager;
+        await manager.ready;
+        await manager.refreshRunning();
+        const model = find(manager.running(), model => {
+          return model.kernel?.id === this._kernel.id;
+        });
+        if (model) {
+          try {
+            const session = manager.connectTo({
+              model: {
+                ...model,
+                path: this._path ?? model.path,
+                name: this._path ?? model.name,
+              },
+              kernelConnectionOptions: {
+                handleComms: true,
+              },
+            });
+            (this._context!.sessionContext as any)._handleNewSession(session);
+          } catch (err) {
+            void (this._context!.sessionContext as any)._handleSessionError(
+              err,
+            );
+            return Promise.reject(err);
+          }
         }
-      }
-      return await (this._context!.sessionContext as any)._startIfNecessary();
-    };
+        return await (this._context!.sessionContext as any)._startIfNecessary();
+      };
 
     if (this._ipywidgets === 'lab') {
       const jupyterWidgetRegistry = iPyWidgetsPlugin.activate(
         this._rendermime!,
         this._tracker!,
-        this._kernel.connection
+        this._kernel.connection,
       );
       baseWidgetsPlugin.activate(jupyterWidgetRegistry);
       controlWidgetsPlugin.activate(jupyterWidgetRegistry);
@@ -340,7 +341,7 @@ export class NotebookAdapter {
           this._context!,
           this._tracker!,
           this._bundledIPyWidgets,
-          this._kernel.connection
+          this._kernel.connection,
         );
       }
       if (this._externalIPyWidgets) {
@@ -348,7 +349,7 @@ export class NotebookAdapter {
           this._context!,
           this._tracker!,
           this._externalIPyWidgets,
-          this._kernel.connection
+          this._kernel.connection,
         );
       }
     }
@@ -360,12 +361,12 @@ export class NotebookAdapter {
       if (kernelConnection && !kernelConnection.handleComms) {
         console.warn(
           'The current Kernel Connection does not handle Comms',
-          kernelConnection.id
+          kernelConnection.id,
         );
         (kernelConnection as any).handleComms = true;
         console.log(
           'The current Kernel Connection is updated to enforce Comms support',
-          kernelConnection.handleComms
+          kernelConnection.handleComms,
         );
       }
     });
@@ -391,7 +392,7 @@ export class NotebookAdapter {
 
     if (this._ipywidgets === 'classic') {
       this._iPyWidgetsClassicManager?.registerWithKernel(
-        this._kernel.connection
+        this._kernel.connection,
       );
       this._notebookPanel!.sessionContext.kernelChanged.connect(
         (
@@ -400,10 +401,10 @@ export class NotebookAdapter {
             JupyterKernel.IKernelConnection | null,
             JupyterKernel.IKernelConnection | null,
             'kernel'
-          >
+          >,
         ) => {
           this._iPyWidgetsClassicManager?.registerWithKernel(args.newValue);
-        }
+        },
       );
     }
 
@@ -414,20 +415,20 @@ export class NotebookAdapter {
       this._notebookPanel,
       completerHandler,
       this._tracker,
-      this._path
+      this._path,
     );
 
     this._boxPanel.addWidget(this._notebookPanel);
     BoxPanel.setStretch(this._notebookPanel, 0);
     window.addEventListener('resize', () => {
-      this._notebookPanel?.update()
+      this._notebookPanel?.update();
     });
     const isNbFormat =
       this._path !== undefined && this._path !== '' ? false : true;
     if (isNbFormat && !this._lite) {
       // Fixes if nbformat is provided and we don't want to interact with the content manager.
       (this._context as any).initialize = async (
-        isNew: boolean
+        isNew: boolean,
       ): Promise<void> => {
         (this._context as Context<INotebookModel>).model.dirty = false;
         const now = new Date().toISOString();
@@ -444,9 +445,9 @@ export class NotebookAdapter {
         };
         (this._context as any)._updateContentsModel(model);
         await (this._context as any)._populate();
-        (this._context as Context<
-          INotebookModel
-        >).model.sharedModel.clearUndoHistory();
+        (
+          this._context as Context<INotebookModel>
+        ).model.sharedModel.clearUndoHistory();
       };
     }
     this._context.initialize(isNbFormat).then(() => {
@@ -492,7 +493,7 @@ export class NotebookAdapter {
     notebookPanel.content.activeCellChanged.connect(
       (sender: any, snippet: Cell<ICellModel>) => {
         handler.editor = snippet && snippet.editor;
-      }
+      },
     );
     completer.hide();
     Widget.attach(completer, document.body);
@@ -529,7 +530,7 @@ export class NotebookAdapter {
   setNbformat(nbformat: INotebookContent) {
     if (nbformat === null) {
       throw new Error(
-        'The nformat should first be set via the constructor of NotebookAdapater'
+        'The nformat should first be set via the constructor of NotebookAdapater',
       );
     }
     this._nbformat = nbformat;
@@ -544,7 +545,7 @@ export class NotebookAdapter {
 
   changeCellType = (cellType: CellType) => {
     //    NotebookActions.changeCellType(this._notebookPanel?.content!, cellType);
-    const notebook = this._notebookPanel?.content!;
+    const notebook = this._notebookPanel!.content!;
     const notebookSharedModel = notebook.model!.sharedModel;
     notebook.widgets.forEach((child, index) => {
       if (!notebook.isSelectedOrActive(child)) {
@@ -560,7 +561,8 @@ export class NotebookAdapter {
             metadata: raw.metadata,
           });
           if (raw.attachments && ['markdown', 'raw'].includes(cellType)) {
-            (newCell as ISharedAttachmentsCell).attachments = raw.attachments as IAttachments;
+            (newCell as ISharedAttachmentsCell).attachments =
+              raw.attachments as IAttachments;
           }
         });
       }
@@ -574,8 +576,8 @@ export class NotebookAdapter {
   };
 
   insertAbove = (source?: string): void => {
-    const notebook = this._notebookPanel?.content!;
-    const model = this._notebookPanel?.context.model!;
+    const notebook = this._notebookPanel!.content!;
+    const model = this._notebookPanel!.context.model!;
     const newIndex = notebook.activeCell ? notebook.activeCellIndex : 0;
     model.sharedModel.insertCell(newIndex, {
       cell_type: notebook.notebookConfig.defaultCell,
@@ -594,8 +596,8 @@ export class NotebookAdapter {
   };
 
   insertBelow = (source?: string): void => {
-    const notebook = this._notebookPanel?.content!;
-    const model = this._notebookPanel?.context.model!;
+    const notebook = this._notebookPanel!.content!;
+    const model = this._notebookPanel!.context.model!;
     const newIndex = notebook.activeCell ? notebook.activeCellIndex + 1 : 0;
     model.sharedModel.insertCell(newIndex, {
       cell_type: notebook.notebookConfig.defaultCell,
