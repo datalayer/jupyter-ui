@@ -20,6 +20,7 @@ const config: PlaywrightTestConfig = {
   use: {
     baseURL: process.env.TARGET_URL ?? 'http://localhost:6006',
     trace: 'on-first-retry',
+    video: process.env.CI ? 'off' : 'retain-on-failure',
   },
   projects: [
     {
