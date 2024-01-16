@@ -59,11 +59,13 @@ const NotebookExternalContent = () => {
       <Notebook
         nbformat={nbformat}
         uid={NOTEBOOK_UID}
+        /*
         externalIPyWidgets={[
           { name: '@widgetti/jupyter-react', version: '0.3.0' },
           { name: 'bqplot', version: '0.5.42' },
           { name: 'jupyter-matplotlib', version: '0.11.3' },
         ]}
+        */
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         cellSidebarMargin={120}
         CellSidebar={CellSidebar}

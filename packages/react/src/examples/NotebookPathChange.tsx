@@ -37,11 +37,13 @@ const NotebookPathChange = () => {
       <Notebook
         path={path}
         uid="notebook-path-change-id"
+        /*
         externalIPyWidgets={[
           { name: '@widgetti/jupyter-react', version: '0.3.0' },
           { name: 'bqplot', version: '0.5.42' },
           { name: 'jupyter-matplotlib', version: '0.11.3' },
         ]}
+        */
         CellSidebar={CellSidebar}
       />
     </>

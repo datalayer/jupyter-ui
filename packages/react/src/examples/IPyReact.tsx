@@ -15,9 +15,11 @@ const IPyReact = () => (
     <Notebook
       path="ipyreact.ipynb"
       uid="notebook-ipyreact-uid"
+      /*
       externalIPyWidgets={[
         { name: '@widgetti/jupyter-react', version: '0.3.0' },
       ]}
+      */
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       cellSidebarMargin={120}
       CellSidebar={CellSidebar}

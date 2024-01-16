@@ -15,7 +15,11 @@ const Bqplot = () => (
     <Notebook
       path="bqplot.ipynb"
       uid="notebook-bqplot-uid"
-      externalIPyWidgets={[{ name: 'bqplot', version: '0.5.42' }]}
+      /*
+      externalIPyWidgets={[
+        { name: 'bqplot', version: '0.5.42' }
+      ]}
+      */
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       cellSidebarMargin={120}
       CellSidebar={CellSidebar}
