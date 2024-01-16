@@ -1,5 +1,46 @@
 # Develop
 
+## Packaging
+
+As Jupyter React ships with the in-browser Python kernel [Pyodide](https://github.com/jupyterlite/pyodide-kernel/), packaging
+your code is not trivial. We recommend using [Webpack](https://webpack.js.org/) as bundler for your project. Then you will need to
+add the following rules to support in-browser kernels:
+
+```json5
+  "module": {
+    "rules": [
+      /*
+       ... the rules for the JavaScript and CSS assets
+      */
+      // Rule for the JupyterLite service worker.
+      // !important this must result in a file named `service-worker.js`
+      // to be served at the root of your website.
+      {
+        resourceQuery: /text/,
+        type: 'asset/resource',
+        generator: {
+          filename: '[name][ext]',
+        },
+      },
+      // Rule for pyodide kernel
+      {
+        test: /pypi\/.*/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'pypi/[name][ext][query]',
+        },
+      },
+      {
+        test: /pyodide-kernel-extension\/schema\/.*/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'schema/[name][ext][query]',
+        },
+      }
+    ]
+  }
+```
+
 ## Simple Example
 
 Now you can start an example and hack the source code. The changes will build automatically and will be available in your browser.

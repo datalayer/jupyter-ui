@@ -2,4 +2,46 @@
 description: The Cell component.
 ---
 
+import { StorybookView } from '../StorybookView.js';
+
 # 🪐 Cell Component
+
+This component displays a Jupyter Cell.
+
+## With a Jupyter server
+
+<StorybookView 
+    story='components-cell--default'
+/>
+
+```jsx
+<Jupyter
+    jupyterServerHttpUrl="https://oss.datalayer.tech/api/jupyter"
+    jupyterServerWsUrl="wss://oss.datalayer.tech/api/jupyter"
+    jupyterToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+>
+    <Cell />
+</Jupyter>
+```
+
+## With in-browser kernel
+
+You can use an in-browser kernel by setting the `lite` property
+of `Jupyter` component:
+
+<StorybookView 
+    story='components-cell--lite-python'
+/>
+
+```jsx
+<Jupyter
+    lite={true}
+>
+    <Cell
+        source={`import sys
+print(f"{sys.platform=}")
+
+#...`}
+    />
+</Jupyter>
+```

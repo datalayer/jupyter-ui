@@ -2,6 +2,8 @@
 description: The Notebook component.
 ---
 
+import { StorybookView } from '../StorybookView.js';
+
 import ModalImage from "react-modal-image";
 
 # 🪐 Notebook Component
@@ -40,3 +42,72 @@ For IPyWidgets, use the following properties:
 - `ipywidgets`: `lab` or `classic` (deprecated, will be soon removed). Please use `lab`
 
 The available properties for the Notebook component are available on this [TypeDoc page](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.8.1/types/INotebookProps.html).
+
+## With a Jupyter server
+
+<StorybookView 
+    story='components-notebook--default'
+/>
+
+```jsx
+<Jupyter
+    jupyterServerHttpUrl="https://oss.datalayer.tech/api/jupyter"
+    jupyterServerWsUrl="wss://oss.datalayer.tech/api/jupyter"
+    jupyterToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+>
+    <Notebook />
+</Jupyter>
+```
+
+You can set the following props to connect it to a running Jupyter Server:
+- `jupyterServerHttpUrl`: The server URL
+- `jupyterServerWsUrl`: The server websocket URL
+- `jupyterToken`: The server authentication token
+
+> Your server will likely need to accept connection from external client.
+
+## With in-browser kernel
+
+It supports in-browser kernel (using [JupyterLite kernels](https://jupyterlite.readthedocs.io/en/stable/)).
+
+To use the [Pyodide](https://pyodide.org/) Python [kernel](https://github.com/jupyterlite/pyodide-kernel),
+you can simply set `lite` to `true`:
+
+<StorybookView 
+    story='components-notebook--lite-python'
+/>
+
+```jsx
+<Jupyter
+    lite={true}
+>
+    <Notebook
+      ipywidgets={'classic'}
+      {/* Include a default content */}
+      nbformat={{
+        cells: [
+          {
+            cell_type: 'code',
+            outputs: [],
+            source:
+              "import piplite\nawait piplite.install('ipywidgets')",
+          },
+          {
+            cell_type: 'code',
+            outputs: [],
+            source: 'import ipywidgets as widgets\nw = widgets.IntSlider()\nw',
+          }
+        ],  
+        metadata: {
+          kernelspec: {
+            display_name: 'Python 3 (ipykernel)',
+            language: 'python',
+            name: 'python3',
+          },
+        },
+        nbformat: 4,
+        nbformat_minor: 5,
+      }}
+    />
+</Jupyter>
+```
