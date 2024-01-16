@@ -16,8 +16,7 @@ module.exports = {
         resourceQuery: /text/,
         type: 'asset/resource',
         generator: {
-          // Must match the filename in jupyter_kernels/handlers/service_worker/handler.py
-          filename: 'lite-[name][ext]',
+          filename: '[name][ext]',
         },
       },
       // Rules for pyodide kernel assets
