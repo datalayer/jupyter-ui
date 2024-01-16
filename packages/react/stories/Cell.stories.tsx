@@ -68,6 +68,30 @@ Default.args = {
   autoStart: false,
 };
 
+export const Confettis: Story = Template.bind({});
+Confettis.args = {
+  browser: 'false',
+  source: `import ipyreact
+class ConfettiWidget(ipyreact.ReactWidget):
+  _esm = """
+    import confetti from "canvas-confetti";
+    import * as React from "react";
+    export default function({value, set_value, debug}) {
+        return (
+        <>
+          <h1>Ask anything to Datalayer</h1>
+          <button onClick={() => confetti() && set_value(value + 1)}>
+            CLICK here for some CONFETTIS
+          </button>
+          <h2>You have {value || 0} wishe{ (value > 1) && 's' } so far...</h2>
+          <quote>Powered by 🪐 Jupyter UI</quote>
+        </>
+      )
+    };"""
+ConfettiWidget()`,
+    autoStart: true,
+};
+
 export const Playground: Story = {
   render: Template.bind({}),
 };
