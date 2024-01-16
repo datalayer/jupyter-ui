@@ -89,7 +89,7 @@ class ConfettiWidget(ipyreact.ReactWidget):
       )
     };"""
 ConfettiWidget()`,
-    autoStart: true,
+  autoStart: true,
 };
 
 export const Playground: Story = {

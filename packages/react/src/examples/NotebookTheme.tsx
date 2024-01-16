@@ -4,12 +4,13 @@
  * MIT License
  */
 
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Text, ToggleSwitch, theme as primerTheme } from '@primer/react';
 import { Theme } from '@primer/react/lib/ThemeProvider';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import Jupyter from '../jupyter/Jupyter';
+import { jupyterTheme } from '../jupyter/theme';
 import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from './toolbars/NotebookToolbar';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
@@ -17,19 +18,21 @@ import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookTheme = () => {
-  const [theme, setTheme] = useState<Theme>();
+  const [theme, setTheme] = useState<Theme>(jupyterTheme);
   const [isOn, setIsOn] = useState(false);
-  const onClick = () => {
+  const onClick = useCallback(() => {
+    setIsOn(!isOn);
+  }, [isOn]);
+  useEffect(() => {
     if (isOn) {
       setTheme(primerTheme);
     } else {
-      setTheme(undefined);
+      setTheme(jupyterTheme);
     }
-    setIsOn(!isOn);
-  };
-  const handleSwitchChange = (on: boolean) => {
+  }, [isOn]);
+  const handleSwitchChange = useCallback((on: boolean) => {
     setIsOn(on);
-  };
+  }, []);
   return (
     <>
       <Jupyter theme={theme}>

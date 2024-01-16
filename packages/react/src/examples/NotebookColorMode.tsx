@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Text, ToggleSwitch } from '@primer/react';
 import { INotebookContent } from '@jupyterlab/nbformat';
@@ -19,17 +19,19 @@ import nbformat from './notebooks/NotebookExample1.ipynb.json';
 const NotebookColorMode = () => {
   const [colorMode, setColorMode] = useState<ColorMode>('light');
   const [isOn, setIsOn] = useState(false);
-  const onClick = () => {
+  useEffect(() => {
     if (isOn) {
-      setColorMode('light');
-    } else {
       setColorMode('dark');
+    } else {
+      setColorMode('light');
     }
+  }, [isOn]);
+  const onClick = useCallback(() => {
     setIsOn(!isOn);
-  };
-  const handleSwitchChange = (on: boolean) => {
+  }, [isOn]);
+  const handleSwitchChange = useCallback((on: boolean) => {
     setIsOn(on);
-  };
+  }, []);
   return (
     <>
       <Jupyter colorMode={colorMode}>
