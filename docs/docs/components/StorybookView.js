@@ -14,7 +14,6 @@ export function StorybookView({ story = '', args }) {
     let queryArgs = '';
     if (args) {
         const params = Object.entries(args).map(([k, v]) => `${encodeURIComponent(k)}:${encodeURIComponent(v)}`).join(';')
-        console.log(params)
         if (params) {
             queryArgs = `&args=${params}`
         }

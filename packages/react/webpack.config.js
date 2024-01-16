@@ -36,16 +36,16 @@ const ENTRY =
   // './src/examples/Matplotlib';
   // './src/examples/Notebook';
   './src/examples/NotebookColorMode';
-  // './src/examples/NotebookKernelChange';
-  // './src/examples/NotebookLite';
-  // './src/examples/NotebookNbFormat';
-  // './src/examples/NotebookNbFormatChange';
-  // './src/examples/NotebookTheme';
-  // './src/examples/ObservableHQ';
-  // './src/examples/Outputs';
-  // './src/examples/RunningSessions';
-  // './src/examples/Terminal';
-  // './src/examples/Viewer';
+// './src/examples/NotebookKernelChange';
+// './src/examples/NotebookLite';
+// './src/examples/NotebookNbFormat';
+// './src/examples/NotebookNbFormatChange';
+// './src/examples/NotebookTheme';
+// './src/examples/ObservableHQ';
+// './src/examples/Outputs';
+// './src/examples/RunningSessions';
+// './src/examples/Terminal';
+// './src/examples/Viewer';
 
 const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == 'true';
 // const JUPYTER_HOST = IS_JUPYTER_SERVER_LOCAL ? "http://localhost:8686" : "https://oss.datalayer.tech';
@@ -135,7 +135,9 @@ module.exports = {
         test: /\.(jpe?g|png|gif|ico|eot|ttf|map|woff2?)(\?v=\d+\.\d+\.\d+)?$/i,
         type: 'asset/resource',
       },
-      { test: /\.css$/, use: ['style-loader', 'css-loader'] },
+      // We must escape the JupyterLab theme style sheets to apply specific rules
+      // this is only needed in stand-alone mode
+      { test: /(?<!style\/theme)\.css$/, use: ['style-loader', 'css-loader'] },
       { test: /\.md$/, type: 'asset/source' },
       { test: /\.js.map$/, type: 'asset/resource' },
       {
@@ -165,6 +167,12 @@ module.exports = {
         resolve: {
           fullySpecified: false,
         },
+      },
+      // Special webpack rule for the JupyterLab theme style sheets.
+      {
+        test: /style\/theme\.css$/i,
+        loader: 'css-loader',
+        options: { exportType: 'string' },
       },
       // Ship the JupyterLite service worker.
       {

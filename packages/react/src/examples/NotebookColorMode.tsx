@@ -25,7 +25,7 @@ const NotebookColorMode = () => {
     } else {
       setColorMode('light');
     }
-  }, [isOn])
+  }, [isOn]);
   const onClick = useCallback(() => {
     setIsOn(!isOn);
   }, [isOn]);

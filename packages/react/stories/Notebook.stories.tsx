@@ -208,5 +208,5 @@ LitePython.args = {
   ...Default.args,
   browser: 'true',
   nbformat: WIDGETS_EXAMPLE,
-  ipywidgets: 'classic'
+  ipywidgets: 'classic',
 };
