@@ -27,7 +27,7 @@ const DEFAULT_CONSOLE_PATH = 'console-path';
 
 class ConsoleAdapter {
   private _panel: BoxPanel;
-  private _code?: string[];
+  private _code?: string;
 
   constructor(options: ConsoleAdapter.IConsoleAdapterOptions) {
     const { kernel, serviceManager, code } = options;
@@ -162,7 +162,7 @@ class ConsoleAdapter {
 
     if (this._code) {
       consolePanel.console.sessionContext.ready.then(() => {
-        this._code!.forEach(line => consolePanel.console.inject(line));
+        consolePanel.console.inject(this._code ?? '');
       });
     }
   }
@@ -188,7 +188,7 @@ export namespace ConsoleAdapter {
     /**
      * Initial code to run.
      */
-    code?: string[];
+    code?: string;
   }
 }
 

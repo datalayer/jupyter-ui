@@ -40,7 +40,7 @@ export namespace Console {
     /**
      * Initial code to run.
      */
-    code?: string[];
+    code?: string;
   }
 }
 
