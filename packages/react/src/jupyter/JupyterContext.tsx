@@ -157,6 +157,12 @@ export type JupyterContextProps = React.PropsWithChildren<{
    */
   defaultKernelName?: string;
   /**
+   * Code to be executed silently at kernel startup
+   *
+   * This is ignored if there is no default kernel.
+   */
+  initCode?: string;
+  /**
    * URL to fetch a JupyterLite kernel (i.e. in-browser kernel).
    *
    * If defined, {@link serverUrls} and {@link defaultKernelName}
@@ -207,6 +213,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
     children,
     collaborative = false,
     defaultKernelName = 'python',
+    initCode = '',
     injectableStore = defaultInjectableStore,
     lite = false,
     startDefaultKernel = true,
@@ -291,7 +298,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
 
   // Create a kernel
   useEffect(() => {
-    serviceManager?.kernels.ready.then(() => {
+    serviceManager?.kernels.ready.then(async () => {
       const kernelManager = serviceManager.kernels;
       console.log('Kernel Manager is Ready', kernelManager);
       if (useRunningKernelIndex > -1) {
@@ -300,17 +307,23 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
         let i = 0;
         while (!kernel.done) {
           if (i === useRunningKernelIndex) {
-            setKernel(
-              new Kernel({
-                kernelManager,
-                kernelName: defaultKernelName,
-                kernelSpecName: defaultKernelName,
-                kernelModel: kernel.value,
-                kernelType: 'notebook',
-                kernelspecsManager: serviceManager.kernelspecs,
-                sessionManager: serviceManager.sessions,
-              })
-            );
+            const wrappedKernel = new Kernel({
+              kernelManager,
+              kernelName: defaultKernelName,
+              kernelSpecName: defaultKernelName,
+              kernelModel: kernel.value,
+              kernelType: 'notebook',
+              kernelspecsManager: serviceManager.kernelspecs,
+              sessionManager: serviceManager.sessions,
+            });
+            if (initCode) {
+              try {
+                await wrappedKernel.execute(initCode)?.done;
+              } catch (error) {
+                console.error('Failed to execute the initial code', error);
+              }
+            }
+            setKernel(wrappedKernel);
             setIsLoading(false);
             break;
           }
@@ -328,7 +341,14 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
           kernelspecsManager: serviceManager.kernelspecs,
           sessionManager: serviceManager.sessions,
         });
-        defaultKernel.ready.then(() => {
+        defaultKernel.ready.then(async () => {
+          if (initCode) {
+            try {
+              await defaultKernel.execute(initCode)?.done;
+            } catch (error) {
+              console.error('Failed to execute the initial code', error);
+            }
+          }
           console.log('Kernel is Ready', defaultKernel);
           setKernel(defaultKernel);
           setIsLoading(false);
@@ -358,7 +378,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
           wsUrl: serviceManager?.serverSettings.wsUrl ?? '',
         }}
       >
-        {children}
+        {kernelIsLoading ? 'The kernel is starting…' : children}
       </JupyterProvider>
     </ReduxProvider>
   );

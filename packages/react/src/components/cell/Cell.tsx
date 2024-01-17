@@ -13,36 +13,15 @@ import { cellActions, cellReducer } from './CellRedux';
 import CellAdapter from './CellAdapter';
 import Lumino from '../lumino/Lumino';
 import { useJupyter } from './../../jupyter/JupyterContext';
-/*
-const DEFAULT_SOURCE = `from IPython.display import display
-
-for i in range(10):
-    display('String {} added to the DOM in separated DIV.'.format(i))`;
-
-const DEFAULT_SOURCE = `from ipywidgets import IntSlider
-IntSlider()`;
-*/
-const DEFAULT_SOURCE = `import ipyreact
-class ConfettiWidget(ipyreact.ReactWidget):
-  _esm = """
-    import confetti from "canvas-confetti";
-    import * as React from "react";
-    export default function({value, set_value, debug}) {
-        return (
-        <>
-          <h1>Ask anything to Datalayer</h1>
-          <button onClick={() => confetti() && set_value(value + 1)}>
-            CLICK here for some CONFETTIS
-          </button>
-          <h2>You have {value || 0} wishe{ (value > 1) && 's' } so far...</h2>
-          <quote>Powered by 🪐 Jupyter UI</quote>
-        </>
-      )
-    };"""
-ConfettiWidget()`;
 
 export type ICellProps = {
+  /**
+   * Code cell source
+   */
   source?: string;
+  /**
+   * Whether to execute directly the code cell or not.
+   */
   autoStart?: boolean;
 };
 
@@ -130,7 +109,7 @@ export const Cell = (props: ICellProps) => {
 };
 
 Cell.defaultProps = {
-  source: DEFAULT_SOURCE,
+  source: '',
   autoStart: true,
 } as Partial<ICellProps>;
 

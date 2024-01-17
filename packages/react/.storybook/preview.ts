@@ -25,6 +25,7 @@ const preview: Preview = {
       removeEmptyComments: true,
     },
     controls: {
+      expanded: true,
       hideNoControlsWarning: true,
       matchers: {
         color: /(background|color)$/i,

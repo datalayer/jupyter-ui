@@ -11,15 +11,14 @@ import {
   theme as primerTheme,
 } from '@primer/react';
 import { Theme } from '@primer/react/lib/ThemeProvider';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import type { InjectableStore } from '../state/redux/Store';
 import {
   getJupyterServerHttpUrl,
   getJupyterServerWsUrl,
   loadJupyterConfig,
 } from './JupyterConfig';
-import { JupyterContextProvider, Lite } from './JupyterContext';
+import { JupyterContextProps, JupyterContextProvider } from './JupyterContext';
 import { ColorMode } from './lab/JupyterLabColorMode';
 import JupyterLabCss from './lab/JupyterLabCss';
 
@@ -27,25 +26,18 @@ import JupyterLabCss from './lab/JupyterLabCss';
  * Definition of the properties that can be passed
  * when creating a Jupyter context.
  */
-export type JupyterProps = React.PropsWithChildren<{
-  collaborative?: boolean;
+export type JupyterProps = Omit<
+  JupyterContextProps,
+  'serverUrls' | 'variant'
+> & {
   colorMode?: ColorMode;
-  defaultKernelName?: string;
   disableCssLoading?: boolean;
-  injectableStore?: InjectableStore;
   jupyterServerHttpUrl?: string;
   jupyterServerWsUrl?: string;
   jupyterToken?: string;
-  /**
-   * Whether to run Jupyter within the browser or not.
-   */
-  lite?: Lite;
-  startDefaultKernel?: boolean;
   theme?: Theme;
   terminals?: boolean;
-  useRunningKernelId?: string;
-  useRunningKernelIndex?: number;
-}>;
+};
 
 /**
  * The component to be used as fallback in case of error.
@@ -74,6 +66,7 @@ export const Jupyter = (props: JupyterProps) => {
     colorMode = 'light',
     defaultKernelName,
     disableCssLoading = false,
+    initCode = '',
     injectableStore,
     jupyterServerHttpUrl,
     jupyterServerWsUrl,
@@ -126,6 +119,7 @@ export const Jupyter = (props: JupyterProps) => {
               collaborative={collaborative}
               defaultKernelName={defaultKernelName}
               injectableStore={injectableStore}
+              initCode={initCode}
               lite={lite}
               serverUrls={{
                 baseUrl: getJupyterServerHttpUrl(),

@@ -52,3 +52,18 @@ test('Lite Python', async ({ page }) => {
     page.getByLabel('Code Cell Content with Output').locator('pre')
   ).toContainText("sys.platform='emscripten'");
 });
+
+test('With initialization', async ({ page }) => {
+  test.setTimeout(60000);
+
+  await page.goto(
+    'http://localhost:6006/iframe.html?id=components-notebook--with-initialization'
+  );
+
+  await page.getByText('import ipywidgets').click();
+  await page.keyboard.press('Escape');
+  await page.keyboard.press('Shift+Enter');
+  await page.getByLabel('Code Cell Content with Output').waitFor();
+
+  await expect(page.locator('.jupyter-widgets.widget-slider')).toBeVisible();
+});

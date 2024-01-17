@@ -5,19 +5,27 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { Jupyter, Terminal } from './../src';
+import { Jupyter, JupyterProps, Terminal } from './../src';
 import React from 'react';
 
 const meta: Meta<typeof Terminal> = {
   title: 'Components/Terminal',
+  component: Terminal,
+  argTypes: {
+    // height: {
+    //   type: 'string',
+    // },
+    colorMode: {
+      options: ['dark', 'light'],
+    },
+  },
 } as Meta<typeof Terminal>;
 
 export default meta;
 
-type Story = StoryObj<typeof Terminal>;
+type Story = StoryObj<typeof Terminal | typeof Jupyter>;
 
 const Template = (args, { globals: { labComparison } }) => {
-  const Tag = `${(args.as as string) ?? 'span'}` as keyof JSX.IntrinsicElements;
   return (
     <Jupyter
       jupyterServerHttpUrl="https://oss.datalayer.tech/api/jupyter"
@@ -32,21 +40,24 @@ const Template = (args, { globals: { labComparison } }) => {
 };
 
 export const Default: Story = Template.bind({});
+Default.args = {
+  height: '800px',
+  colorMode: 'light',
+};
 
 export const Playground: Story = {
   render: Template.bind({}),
 };
-
 Playground.args = {
+  ...Default.args,
   height: '800px',
-  theme: 'dark',
+  colorMode: 'dark',
 };
 
-Playground.argTypes = {
-  height: {
-    type: 'string',
-  },
-  theme: {
-    type: 'string',
-  },
+export const WithInitialization: Story = {
+  render: Template.bind({}),
+};
+WithInitialization.args = {
+  ...Default.args,
+  initCode: 'echo "Hello from shell $0"',
 };
