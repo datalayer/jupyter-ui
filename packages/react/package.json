@@ -116,7 +116,7 @@
     "@jupyterlab/property-inspector": "4.1.0-beta.0",
     "@jupyterlab/rendermime": "4.1.0-beta.0",
     "@jupyterlab/rendermime-extension": "4.1.0-beta.0",
-    "@jupyterlab/rendermime-interfaces": "4.0.0-alpha.9",
+    "@jupyterlab/rendermime-interfaces": "3.9.0-beta.0",
     "@jupyterlab/services": "7.0.10",
     "@jupyterlab/settingregistry": "4.1.0-beta.0",
     "@jupyterlab/shortcuts-extension": "4.1.0-beta.0",
