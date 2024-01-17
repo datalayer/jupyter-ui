@@ -65,7 +65,5 @@ test('With initialization', async ({ page }) => {
   await page.keyboard.press('Shift+Enter');
   await page.getByLabel('Code Cell Content with Output').waitFor();
 
-  await expect(
-    page.locator('.jupyter-widgets.widget-slider')
-  ).toBeVisible();
+  await expect(page.locator('.jupyter-widgets.widget-slider')).toBeVisible();
 });

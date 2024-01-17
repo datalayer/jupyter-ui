@@ -18,10 +18,7 @@ import {
   getJupyterServerWsUrl,
   loadJupyterConfig,
 } from './JupyterConfig';
-import {
-  JupyterContextProps,
-  JupyterContextProvider
-} from './JupyterContext';
+import { JupyterContextProps, JupyterContextProvider } from './JupyterContext';
 import { ColorMode } from './lab/JupyterLabColorMode';
 import JupyterLabCss from './lab/JupyterLabCss';
 

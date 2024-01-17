@@ -21,15 +21,15 @@ const meta: Meta<typeof Cell> = {
       },
     },
     initCode: {
-      control: 'text'
+      control: 'text',
     },
     source: {
-      control: 'text'
+      control: 'text',
     },
     autoStart: {
-      control: 'boolean'
+      control: 'boolean',
     },
-  }
+  },
 } as Meta<typeof Cell>;
 
 export default meta;
@@ -136,5 +136,5 @@ WithInitialization.args = {
   browser: 'true',
   initCode: 'import piplite\nawait piplite.install("ipywidgets")',
   source: '# ipywidgets is imported at initialization\nimport ipywidgets',
-  autoStart: true
-}
+  autoStart: true,
+};

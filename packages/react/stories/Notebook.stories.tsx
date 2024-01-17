@@ -21,7 +21,7 @@ const meta: Meta<typeof Notebook> = {
       },
     },
     initCode: {
-      control: 'text'
+      control: 'text',
     },
   },
 } as Meta<typeof Notebook>;
@@ -170,8 +170,8 @@ const INIT_EXAMPLE = {
         "import piplite\nawait piplite.install('ipywidgets')\nawait piplite.install('bqplot')\nawait piplite.install('ipyleaflet')\nawait piplite.install('ipyreact')\nawait piplite.install('plotly')\nawait piplite.install('nbformat')\nawait piplite.install('ipympl')",
     },
     ...WIDGETS_EXAMPLE.cells,
-  ]
-}
+  ],
+};
 
 export const LitePython: Story = Template.bind({});
 LitePython.args = {
@@ -185,7 +185,8 @@ export const WithInitialization: Story = Template.bind({});
 WithInitialization.args = {
   ...Default.args,
   browser: 'true',
-  initCode: "import piplite\nawait piplite.install('ipywidgets')\nawait piplite.install('bqplot')\nawait piplite.install('ipyleaflet')\nawait piplite.install('ipyreact')\nawait piplite.install('plotly')\nawait piplite.install('nbformat')\nawait piplite.install('ipympl')",
+  initCode:
+    "import piplite\nawait piplite.install('ipywidgets')\nawait piplite.install('bqplot')\nawait piplite.install('ipyleaflet')\nawait piplite.install('ipyreact')\nawait piplite.install('plotly')\nawait piplite.install('nbformat')\nawait piplite.install('ipympl')",
   nbformat: WIDGETS_EXAMPLE,
   ipywidgets: 'classic',
 };

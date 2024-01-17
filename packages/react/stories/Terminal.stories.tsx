@@ -16,9 +16,9 @@ const meta: Meta<typeof Terminal> = {
     //   type: 'string',
     // },
     colorMode: {
-      options: ['dark', 'light']
+      options: ['dark', 'light'],
     },
-  }
+  },
 } as Meta<typeof Terminal>;
 
 export default meta;
@@ -59,6 +59,5 @@ export const WithInitialization: Story = {
 };
 WithInitialization.args = {
   ...Default.args,
-  initCode: 'echo "Hello from shell $0"'
+  initCode: 'echo "Hello from shell $0"',
 };
-

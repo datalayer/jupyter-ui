@@ -21,7 +21,7 @@ const meta: Meta<typeof Console> = {
       },
     },
     initCode: {
-      control: 'text'
+      control: 'text',
     },
     code: {
       control: 'text',
