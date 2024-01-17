@@ -20,13 +20,16 @@ const meta: Meta<typeof Cell> = {
         disable: true,
       },
     },
+    initCode: {
+      control: 'text'
+    },
     source: {
-      control: 'text',
+      control: 'text'
     },
     autoStart: {
-      control: 'boolean',
+      control: 'boolean'
     },
-  },
+  }
 } as Meta<typeof Cell>;
 
 export default meta;
@@ -34,7 +37,7 @@ export default meta;
 type Story = StoryObj<typeof Cell | typeof Jupyter | { browser: string }>;
 
 const Template = (args, { globals: { labComparison } }) => {
-  const { browser, ...others } = args;
+  const { browser, initCode, ...others } = args;
   const lite = {
     true: true,
     false: false,
@@ -51,6 +54,7 @@ const Template = (args, { globals: { labComparison } }) => {
   return (
     <Jupyter
       lite={lite}
+      initCode={initCode}
       defaultKernelName={kernelName}
       jupyterServerHttpUrl="https://oss.datalayer.tech/api/jupyter"
       jupyterServerWsUrl="wss://oss.datalayer.tech/api/jupyter"
@@ -64,6 +68,7 @@ const Template = (args, { globals: { labComparison } }) => {
 export const Default: Story = Template.bind({});
 Default.args = {
   browser: 'false',
+  initCode: '',
   source: '',
   autoStart: false,
 };
@@ -124,3 +129,12 @@ print(f"{sys.platform=}")
 
 ${Playground.args.source ?? ''}`,
 };
+
+export const WithInitialization: Story = Template.bind({});
+WithInitialization.args = {
+  ...Default.args,
+  browser: 'true',
+  initCode: 'import piplite\nawait piplite.install("ipywidgets")',
+  source: '# ipywidgets is imported at initialization\nimport ipywidgets',
+  autoStart: true
+}

@@ -20,6 +20,9 @@ const meta: Meta<typeof Console> = {
         disable: true,
       },
     },
+    initCode: {
+      control: 'text'
+    },
     code: {
       control: 'text',
       table: {
@@ -37,6 +40,7 @@ type Story = StoryObj<
 >;
 
 const Template = (args, { globals: { labComparison } }) => {
+  const { browser, initCode, ...others } = args;
   const lite = {
     true: true,
     false: false,
@@ -53,12 +57,13 @@ const Template = (args, { globals: { labComparison } }) => {
   return (
     <Jupyter
       lite={lite}
+      initCode={initCode}
       defaultKernelName={kernelName}
       jupyterServerHttpUrl="https://oss.datalayer.tech/api/jupyter"
       jupyterServerWsUrl="wss://oss.datalayer.tech/api/jupyter"
       jupyterToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
     >
-      <Console code={args.code ? args.code.split('\n') : undefined} />
+      <Console {...others} />
     </Jupyter>
   );
 };
@@ -66,6 +71,7 @@ const Template = (args, { globals: { labComparison } }) => {
 export const Default: Story = Template.bind({});
 Default.args = {
   browser: 'false',
+  initCode: '',
   code: "print('👋 Hello Jupyter Console')",
 };
 

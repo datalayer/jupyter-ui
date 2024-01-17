@@ -42,7 +42,13 @@ class ConfettiWidget(ipyreact.ReactWidget):
 ConfettiWidget()`;
 
 export type ICellProps = {
+  /**
+   * Code cell source
+   */
   source?: string;
+  /**
+   * Whether to execute directly the code cell or not.
+   */
   autoStart?: boolean;
 };
 
@@ -130,7 +136,7 @@ export const Cell = (props: ICellProps) => {
 };
 
 Cell.defaultProps = {
-  source: DEFAULT_SOURCE,
+  source: '',
   autoStart: true,
 } as Partial<ICellProps>;
 
