@@ -14,20 +14,27 @@ export class TerminalAdapter {
   private terminalPanel: BoxPanel;
 
   constructor(options: TerminalAdapter.ITerminalAdapterOptions) {
-    const { serverSettings, colorMode } = options;
+    const { serverSettings, colorMode, initCode } = options;
     this.terminalPanel = new BoxPanel();
     this.terminalPanel.spacing = 0;
     this.terminalPanel.addClass('dla-JupyterLab-Terminal-id');
     const terminalManager = new TerminalManager({
       serverSettings,
     });
-    terminalManager.startNew().then(terminalConnection => {
+    terminalManager.startNew().then(async terminalConnection => {
       terminalConnection.connectionStatusChanged.connect((_, status) => {
         console.log('Jupyter Terminal status', status);
       });
       this.terminal = new JupyterTerminal(terminalConnection, {
         theme: colorMode,
       });
+      if (initCode) {
+        await this.terminal.ready;
+        this.terminal.session.send({
+          type: 'stdin',
+          content: [initCode],
+        });
+      }
       this.terminal.title.closable = true;
       this.terminalPanel.addWidget(this.terminal);
     });

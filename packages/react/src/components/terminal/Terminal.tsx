@@ -46,6 +46,10 @@ export namespace Terminal {
   export interface ITerminalOptions {
     height?: string;
     colorMode?: ITerminal.Theme;
+    /**
+     * Code to be executed at terminal startup
+     */
+    initCode?: string;
   }
 }
 
