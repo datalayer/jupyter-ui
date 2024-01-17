@@ -29,6 +29,10 @@ build: ## build
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		yarn build )
 
+build-prod: ## build-prod
+	git clean -fdx
+	python -m build
+
 publish: clean build ## publish
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		npm publish )
