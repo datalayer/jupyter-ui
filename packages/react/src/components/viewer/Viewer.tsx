@@ -11,15 +11,28 @@ import InputViewer from './input/InputViewer';
 import { newUuid } from '../../utils/Utils';
 
 type Props = {
-  nbformat: INotebookContent;
+  nbformat?: INotebookContent;
+  nbformatUrl?: string;
   outputs: boolean;
 };
 
 export const Viewer = (props: Props) => {
-  const { nbformat } = props;
+  const { nbformat, nbformatUrl } = props;
   const [model, setModel] = useState<INotebookContent>();
   useEffect(() => {
-    setModel(nbformat);
+    if (nbformat) {
+      setModel(nbformat);
+    }
+    if (nbformatUrl) {
+      fetch(nbformatUrl)
+      .then(response => {
+        return response.text();
+      })
+      .then(nbformat => {
+        //        const nbformat = nb.replaceAll('\\n', '');
+        setModel(JSON.parse(nbformat));
+      });
+    }
   }, [nbformat]);
   return (
     <>
@@ -28,7 +41,7 @@ export const Viewer = (props: Props) => {
           <div key={cell.id?.toString() || newUuid()}>
             <InputViewer
               cell={cell}
-              languageInfo={nbformat.metadata.language_info}
+              languageInfo={model.metadata.language_info}
             />
             {/* cell.outputs && <OutputViewer cell={cell}/> */}
           </div>
