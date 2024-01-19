@@ -37,6 +37,7 @@ export const Viewer = (props: Props) => {
   return (
     <>
       {model?.cells.map(cell => {
+        cell.metadata['editable'] = false;
         return (
           <div key={cell.id?.toString() || newUuid()}>
             <InputViewer

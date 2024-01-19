@@ -105,9 +105,6 @@ export const InputViewer = (props: Props) => {
         model: new CodeCellModel({
           sharedModel: createStandaloneCell(cell) as YCodeCell,
         }),
-        editorConfig: {
-          readOnly: true,
-        },
         contentFactory: new Cell.ContentFactory({
           editorFactory: factoryService.newInlineEditor.bind(factoryService),
         }),

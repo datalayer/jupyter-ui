@@ -378,7 +378,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
           wsUrl: serviceManager?.serverSettings.wsUrl ?? '',
         }}
       >
-        {kernelIsLoading ? 'The kernel is starting…' : children}
+        {children}
       </JupyterProvider>
     </ReduxProvider>
   );

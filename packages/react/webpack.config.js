@@ -46,6 +46,7 @@ const ENTRY =
 // './src/examples/RunningSessions';
 // './src/examples/Terminal';
 // './src/examples/Viewer';
+// './src/examples/ViewerUrl';
 
 const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == 'true';
 // const JUPYTER_HOST = IS_JUPYTER_SERVER_LOCAL ? "http://localhost:8686" : "https://oss.datalayer.tech';

@@ -6,12 +6,15 @@
 
 import Viewer from '../../../components/viewer/Viewer';
 
-import nbformat from '../../..//examples/notebooks/IPyWidgetsExample.ipynb.json';
+// import nbformat from '../../..//examples/notebooks/IPyWidgetsExample.ipynb.json';
 
 const ViewerComponent = () => {
   return (
     <>
-      <Viewer nbformat={nbformat} outputs={true} />
+      <Viewer
+        nbformatUrl={"https://raw.githubusercontent.com/anissa111/matplotlib-tutorial/main/notebooks/01-basic-matplotlib-tutorial.ipynb"}
+        outputs={true}
+      />
     </>
   );
 };
