@@ -73,6 +73,7 @@ export const Jupyter = (props: JupyterProps) => {
     jupyterToken,
     lite,
     startDefaultKernel,
+    skeleton,
     terminals = false,
     theme = primerTheme,
     useRunningKernelId,
@@ -125,6 +126,7 @@ export const Jupyter = (props: JupyterProps) => {
                 baseUrl: getJupyterServerHttpUrl(),
                 wsUrl: getJupyterServerWsUrl(),
               }}
+              skeleton={skeleton}
               startDefaultKernel={startDefaultKernel}
               useRunningKernelId={useRunningKernelId}
               useRunningKernelIndex={useRunningKernelIndex}

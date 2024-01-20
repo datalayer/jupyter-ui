@@ -22,7 +22,7 @@
     "directory": "packages/docusaurus-plugin"
   },
   "dependencies": {
-    "@datalayer/jupyter-react": "0.8.3",
+    "@datalayer/jupyter-react": "0.9.0",
     "@docusaurus/core": "2.4.0",
     "@docusaurus/types": "2.1.0"
   },
@@ -33,7 +33,7 @@
     "@types/react": "18.2.12",
     "assert": "2.0.0",
     "babel-loader": "9.1.2",
-    "css-loader": "5.2.4",
+    "css-loader": "6.9.1",
     "file-loader": "6.2.0",
     "fs-extra": "^9.1.0",
     "process": "0.11.10",

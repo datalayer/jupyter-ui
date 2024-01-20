@@ -59,7 +59,7 @@
     "@types/plotly.js": "1.54.11",
     "@types/uuid": "8.3.0",
     "assert": "2.0.0",
-    "css-loader": "5.2.4",
+    "css-loader": "6.9.1",
     "file-loader": "6.2.0",
     "gulp": "4.0.2",
     "gulp-append-prepend": "1.0.8",

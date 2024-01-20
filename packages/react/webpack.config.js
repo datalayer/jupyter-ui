@@ -35,18 +35,18 @@ const ENTRY =
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
   // './src/examples/Notebook';
-  './src/examples/NotebookColorMode';
-// './src/examples/NotebookKernelChange';
-// './src/examples/NotebookLite';
-// './src/examples/NotebookNbFormat';
-// './src/examples/NotebookNbFormatChange';
-// './src/examples/NotebookTheme';
+  // './src/examples/NotebookColorMode';
+  // './src/examples/NotebookKernelChange';
+  // './src/examples/NotebookLite';
+  // './src/examples/NotebookNbFormat';
+  // './src/examples/NotebookNbFormatChange';
+  // './src/examples/NotebookSkeleton';
+ './src/examples/NotebookTheme';
 // './src/examples/ObservableHQ';
 // './src/examples/Outputs';
 // './src/examples/RunningSessions';
 // './src/examples/Terminal';
 // './src/examples/Viewer';
-// './src/examples/ViewerUrl';
 
 const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == 'true';
 // const JUPYTER_HOST = IS_JUPYTER_SERVER_LOCAL ? "http://localhost:8686" : "https://oss.datalayer.tech';

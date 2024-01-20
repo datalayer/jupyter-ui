@@ -133,4 +133,4 @@ export * from './components/viewer/output/OutputViewer';
  */
 
 // Utils
-export * from './utils/Utils';
+export * from './utils';

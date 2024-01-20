@@ -23,6 +23,14 @@ export type IOPubMessageHook = (
 export type ShellMessageHook = (
   msg: KernelMessage.IShellMessage
 ) => boolean | PromiseLike<boolean>;
+export type ExecutionResult = {
+    future: Kernel.IFuture<
+    KernelMessage.IExecuteRequestMsg,
+    KernelMessage.IExecuteReplyMsg
+  >
+  | undefined,
+executor: KernelExecutor
+}
 
 export class KernelExecutor {
   private _kernelConnection: Kernel.IKernelConnection;
@@ -54,19 +62,17 @@ export class KernelExecutor {
     code: string,
     iopubMessageHooks: IOPubMessageHook[] = [],
     shellMessageHooks: ShellMessageHook[] = []
-  ):
-    | Kernel.IFuture<
-        KernelMessage.IExecuteRequestMsg,
-        KernelMessage.IExecuteReplyMsg
-      >
-    | undefined {
+  ): ExecutionResult {
     const future = this._kernelConnection.requestExecute({
       code,
     });
     iopubMessageHooks.forEach(hook => future.registerMessageHook(hook));
     this._shellMessageHooks = shellMessageHooks;
     this.future = future;
-    return future;
+    return { 
+      future,
+      executor: this,
+    };
   }
 
   private _onIOPub = (message: KernelMessage.IIOPubMessage): void => {

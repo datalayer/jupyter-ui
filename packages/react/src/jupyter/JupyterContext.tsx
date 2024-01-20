@@ -183,6 +183,10 @@ export type JupyterContextProps = React.PropsWithChildren<{
    * Whether to start the default kernel or not.
    */
   startDefaultKernel?: boolean;
+  /**
+   * A loader to display while the kernel is being setup.
+   */
+  skeleton?: JSX.Element;
 
   // Advanced properties
   injectableStore?: InjectableStore;
@@ -219,6 +223,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
     startDefaultKernel = true,
     useRunningKernelId,
     useRunningKernelIndex = -1,
+    skeleton = <></>,
     variant = 'default',
     serverUrls,
   } = props;
@@ -378,7 +383,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
           wsUrl: serviceManager?.serverSettings.wsUrl ?? '',
         }}
       >
-        {children}
+        {kernelIsLoading ? skeleton : children}
       </JupyterProvider>
     </ReduxProvider>
   );
