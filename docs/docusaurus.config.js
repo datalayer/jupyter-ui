@@ -19,7 +19,8 @@ module.exports = {
   organizationName: 'datalayer',
   projectName: 'Jupyter UI',
   plugins: [
-    '@datalayer/jupyter-docusaurus-plugin'
+    '@datalayer/jupyter-docusaurus-plugin',
+    '@docusaurus/theme-live-codeblock'
   ],
   /*
 			'docusaurus-plugin-typedoc',
@@ -32,6 +33,9 @@ module.exports = {
     colorMode: {
       defaultMode: 'light',
       disableSwitch: true,
+    },
+    liveCodeBlock: {
+      playgroundPosition: 'top',
     },
     navbar: {
       title: 'Jupyter UI',
@@ -116,7 +120,7 @@ module.exports = {
           href: 'https://datalayer.tech',
           position: 'right',
           className: 'header-datalayer-io-link',
-          'aria-label': 'Datalayer IO',
+          'aria-label': 'Datalayer Tech',
         },
       ],
     },

@@ -22,6 +22,10 @@ import { JupyterContextProps, JupyterContextProvider } from './JupyterContext';
 import { ColorMode } from './lab/JupyterLabColorMode';
 import JupyterLabCss from './lab/JupyterLabCss';
 
+const script = document.createElement('script');
+script.src = 'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js';
+document.body.appendChild(script);
+
 /**
  * Definition of the properties that can be passed
  * when creating a Jupyter context.
