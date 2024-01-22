@@ -4,12 +4,12 @@
  * MIT License
  */
 
-import { ThemeProvider, themeGet, BaseStyles } from '@primer/react';
-import { createGlobalStyle } from 'styled-components';
-import { Icon } from '@primer/octicons-react';
-import { jupyterTheme as theme } from '../src';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ArgTypes } from '@storybook/react';
+import { ThemeProvider, themeGet, BaseStyles } from '@primer/react';
+import { Icon } from '@primer/octicons-react';
+import { createGlobalStyle } from 'styled-components';
+import { jupyterTheme as theme } from '../src';
 
 // we don't import StoryContext from storybook because of exports that conflict
 // with primer/react more: https://github.com/primer/react/runs/6129115026?check_suite_focus=true
@@ -36,7 +36,7 @@ export const withThemeProvider = (
   if (context.parameters.disableThemeDecorator) return Story(context);
 
   const { colorScheme } = context.globals;
-
+/*
   const [requirejsIsLoaded, setRequirejsIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export const withThemeProvider = (
       'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js';
     document.body.appendChild(script);
   }, []);
-
+*/
   return (
     <ThemeProvider
       theme={theme}
@@ -62,7 +62,7 @@ export const withThemeProvider = (
         <GlobalStyle />
       )}
       <BaseStyles>
-        <div id="html-addon-root">{requirejsIsLoaded && Story(context)}</div>
+        <div id="html-addon-root">{Story(context)}</div>
       </BaseStyles>
     </ThemeProvider>
   );
