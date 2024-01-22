@@ -35,7 +35,7 @@ module.exports = {
       disableSwitch: true,
     },
     liveCodeBlock: {
-      playgroundPosition: 'top',
+      playgroundPosition: 'bottom',
     },
     navbar: {
       title: 'Jupyter UI',
