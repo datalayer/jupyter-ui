@@ -2,7 +2,7 @@ import React from 'react';
 import BrowserOnly from '@docusaurus/core/lib/client/exports/BrowserOnly';
 import { ContentLoader } from '@datalayer/primer-addons';
 
-const Cell = (props) => {
+const Cell = (props: any) => {
   return (
     <BrowserOnly
       fallback={<div>Jupyter Cell fallback content for prerendering.</div>}>
