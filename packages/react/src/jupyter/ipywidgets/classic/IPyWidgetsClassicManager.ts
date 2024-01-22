@@ -117,6 +117,11 @@ export class IPyWidgetsClassicManager extends HTMLManager {
     return this._onError;
   }
 
+  public async restoreStateFromNotebook(state: any) {
+    this.filterExistingModelState(state);
+    await this.set_state(state);
+  }
+
   public display_view(
     view: Promise<DOMWidgetView> | DOMWidgetView,
     el: HTMLElement

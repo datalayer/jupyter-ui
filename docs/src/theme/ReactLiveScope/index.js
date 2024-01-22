@@ -1,5 +1,6 @@
 import React from 'react';
 import BrowserOnly from '@docusaurus/core/lib/client/exports/BrowserOnly';
+import { ContentLoader } from '@datalayer/primer-addons';
 
 const Cell = (props) => {
   return (
@@ -16,6 +17,7 @@ const Cell = (props) => {
             jupyterServerWsUrl="wss://oss.datalayer.tech/api/jupyter"
             jupyterToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
             disableCssLoading={true}
+            skeleton={<ContentLoader/>}
           >
             <Cell {...props}/>
           </Jupyter>

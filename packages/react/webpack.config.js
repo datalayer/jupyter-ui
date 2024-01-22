@@ -26,7 +26,7 @@ const ENTRY =
   // './src/examples/IPyLeaflet';
   // './src/examples/IPyReact';
   // './src/examples/IPyWidgets';
-  // './src/examples/IPyWidgetsWithState';
+  './src/examples/IPyWidgetsWithState';
   // './src/examples/JupyterLabApp';
   // './src/examples/JupyterLabHeadlessApp';
   // './src/examples/Kernels';
@@ -41,7 +41,7 @@ const ENTRY =
   // './src/examples/NotebookNbFormat';
   // './src/examples/NotebookNbFormatChange';
   // './src/examples/NotebookSkeleton';
- './src/examples/NotebookTheme';
+  // './src/examples/NotebookTheme';
 // './src/examples/ObservableHQ';
 // './src/examples/Outputs';
 // './src/examples/RunningSessions';
