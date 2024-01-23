@@ -86,13 +86,11 @@ export class OutputAdapter {
     this.initKernel();
   }
 
-  public execute(code: string) {
+  public async execute(code: string) {
     if (this._kernel) {
       this.clear();
-      const kernelExecutor = this._kernel?.execute(code);
-      if (kernelExecutor && kernelExecutor.future) {
-        this._outputArea.future = kernelExecutor.future;
-      }
+      await this._kernel?.execute(code, { model: this._outputArea.model })
+        ?.done;
     }
   }
 

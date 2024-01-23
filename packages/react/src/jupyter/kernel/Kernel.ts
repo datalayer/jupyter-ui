@@ -19,6 +19,7 @@ import KernelExecutor, {
   IOPubMessageHook,
   ShellMessageHook,
 } from './KernelExecutor';
+import { IOutputAreaModel } from '@jupyterlab/outputarea';
 
 const JUPYTER_REACT_PATH_COOKIE_NAME = 'jupyter-react-kernel-path';
 
@@ -177,18 +178,31 @@ export class Kernel {
    * Execute a code snippet
    *
    * @param code The code snippet
-   * @param iopubMessageHooks Message hooks on IOPub channel
-   * @param shellMessageHooks Message hooks on Shell channel
+   * @param options Callbacks on IOPub messages and on reply message
+   *  and outputs model to populate
    * @returns The kernel executor
    */
   execute(
     code: string,
-    iopubMessageHooks: IOPubMessageHook[] = [],
-    shellMessageHooks: ShellMessageHook[] = []
+    {
+      iopubMessageHooks = [],
+      shellMessageHooks = [],
+      model,
+    }: {
+      iopubMessageHooks?: IOPubMessageHook[];
+      shellMessageHooks?: ShellMessageHook[];
+      model?: IOutputAreaModel;
+    } = {}
   ): KernelExecutor | undefined {
     if (this._kernelConnection) {
-      const kernelExecutor = new KernelExecutor(this._kernelConnection);
-      kernelExecutor.execute(code, iopubMessageHooks, shellMessageHooks);
+      const kernelExecutor = new KernelExecutor({
+        connection: this._kernelConnection,
+        model,
+      });
+      kernelExecutor.execute(code, {
+        iopubMessageHooks,
+        shellMessageHooks,
+      });
       return kernelExecutor;
     }
   }

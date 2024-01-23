@@ -16,13 +16,13 @@ export class CountdownPromptContentFactory extends NotebookPanel.ContentFactory 
     super(options);
   }
   /** @override */
-/*
+  /*
   createInputPrompt(): IInputPrompt {
     return new CountdownInputPrompt();
   }
 */
   /** @override */
-/*
+  /*
   createOutputPrompt(): IOutputPrompt {
     return new CountdownOutputPrompt();
   }

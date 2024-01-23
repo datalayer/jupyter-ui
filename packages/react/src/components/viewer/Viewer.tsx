@@ -25,13 +25,13 @@ export const Viewer = (props: Props) => {
     }
     if (nbformatUrl) {
       fetch(nbformatUrl)
-      .then(response => {
-        return response.text();
-      })
-      .then(nbformat => {
-        //        const nbformat = nb.replaceAll('\\n', '');
-        setModel(JSON.parse(nbformat));
-      });
+        .then(response => {
+          return response.text();
+        })
+        .then(nbformat => {
+          //        const nbformat = nb.replaceAll('\\n', '');
+          setModel(JSON.parse(nbformat));
+        });
     }
   }, [nbformat]);
   return (

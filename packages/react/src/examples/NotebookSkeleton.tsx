@@ -18,7 +18,7 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <Jupyter skeleton={<ContentLoader count={3  }/>}>
+  <Jupyter skeleton={<ContentLoader count={3} />}>
     <Notebook
       path="ipywidgets.ipynb"
       uid={NOTEBOOK_UID}

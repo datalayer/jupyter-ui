@@ -12,7 +12,9 @@ const ViewerComponent = () => {
   return (
     <>
       <Viewer
-        nbformatUrl={"https://raw.githubusercontent.com/anissa111/matplotlib-tutorial/main/notebooks/01-basic-matplotlib-tutorial.ipynb"}
+        nbformatUrl={
+          'https://raw.githubusercontent.com/anissa111/matplotlib-tutorial/main/notebooks/01-basic-matplotlib-tutorial.ipynb'
+        }
         outputs={true}
       />
     </>

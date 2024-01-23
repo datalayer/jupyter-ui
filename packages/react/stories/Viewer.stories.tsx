@@ -7,8 +7,8 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Jupyter, Viewer } from '../src';
-import nbformat1 from './../src/examples/notebooks/NotebookExample1.ipynb.json'
-import nbformat2 from './../src/examples/notebooks/NotebookExample2.ipynb.json'
+import nbformat1 from './../src/examples/notebooks/NotebookExample1.ipynb.json';
+import nbformat2 from './../src/examples/notebooks/NotebookExample2.ipynb.json';
 
 const meta: Meta<typeof Viewer> = {
   title: 'Components/Viewer',
@@ -41,7 +41,7 @@ const Template = (args, { globals: { labComparison } }) => {
         nbformatUrl={nbformatUrl}
         outputs={outputs}
         {...others}
-      /> 
+      />
     </Jupyter>
   );
 };
@@ -55,7 +55,7 @@ Default.args = {
 export const ViewerSimple: Story = Template.bind({});
 ViewerSimple.args = {
   nbformat: nbformat2,
-  outputs: true
+  outputs: true,
 };
 /*
 export const ViewerPlotly: Story = Template.bind({});
@@ -66,6 +66,7 @@ ViewerPlotly.args = {
 */
 export const ViewerMatplotlib: Story = Template.bind({});
 ViewerMatplotlib.args = {
-  nbformatUrl: "https://raw.githubusercontent.com/anissa111/matplotlib-tutorial/main/notebooks/01-basic-matplotlib-tutorial.ipynb",
-  outputs: true
+  nbformatUrl:
+    'https://raw.githubusercontent.com/anissa111/matplotlib-tutorial/main/notebooks/01-basic-matplotlib-tutorial.ipynb',
+  outputs: true,
 };
