@@ -46,15 +46,14 @@ const KernelExecutorView = () => {
         console.log('---shellMessage', msg);
         return true;
       };
-      const kernelExecutor = defaultKernel.execute(
-        CODE,
-        [iopubMessageHook],
-        [shellMessageHook]
-      );
+      const kernelExecutor = defaultKernel.execute(CODE, {
+        iopubMessageHooks: [iopubMessageHook],
+        shellMessageHooks: [shellMessageHook],
+      });
       kernelExecutor?.modelChanged.connect((_, outputAreaModel) => {
         setOutputAreaModel(outputAreaModel);
       });
-      kernelExecutor?.executed.then(() => {
+      kernelExecutor?.done.then(() => {
         setDone(true);
         setFinalOutputAreaModel(kernelExecutor.model);
       });
