@@ -116,7 +116,24 @@ export class NotebookAdapter {
 
     this._commandRegistry = new CommandRegistry();
 
-    this.setupAdapter();
+    if (props.url) {
+      this.loadFromUrl(props.url).then((nbformat) => {
+        this._nbformat = nbformat;
+        this.setupAdapter();
+      })
+    }
+    else {
+      this.setupAdapter();
+    }
+  }
+
+  async loadFromUrl(url: string) {
+    return fetch(url).then(response => {
+      return response.text();
+    }).then(nb => {
+//      const nbformat = nb.replaceAll('\\n', '');
+      return JSON.parse(nb);
+    });
   }
 
   private setupAdapter(): void {

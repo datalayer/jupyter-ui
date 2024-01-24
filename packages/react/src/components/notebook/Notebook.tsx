@@ -41,7 +41,26 @@ export type INotebookProps = {
   cellMetadataPanel: boolean;
   cellSidebarMargin: number;
   height?: string;
+  /*
+  Example:
+    bundledIPyWidgets={[
+      {
+        name: 'jupyter-matplotlib',
+        version: '0.11.3',
+        module: require('jupyter-matplotlib'),
+      },
+    ]}
+  */
   bundledIPyWidgets?: BundledIPyWidgets[];
+  /*
+  Example:
+    externalIPyWidgets={[
+      { name: '@widgetti/jupyter-react', version: '0.3.0' },
+      { name: 'bqplot', version: '0.5.42' },
+      { name: 'jupyter-leaflet', version: '0.18.0' },
+      { name: 'jupyter-matplotlib', version: '0.11.3' },
+    ]}
+  */
   externalIPyWidgets?: ExternalIPyWidgets[];
   kernel?: Kernel;
   maxHeight?: string;
@@ -51,6 +70,7 @@ export type INotebookProps = {
   readOnly: boolean;
   renderers: IRenderMime.IRendererFactory[];
   uid: string;
+  url?: string;
   CellSidebar?: (props: CellSidebarProps) => JSX.Element;
   Toolbar?: (props: any) => JSX.Element;
 };

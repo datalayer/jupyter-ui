@@ -19,7 +19,7 @@ const root = createRoot(div);
 root.render(
   <Jupyter>
     <Notebook
-      path="ipywidgets.ipynb"
+      url="IPyWidgetsExampleWithState.ipynb"
       uid={NOTEBOOK_UID}
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       cellSidebarMargin={60}

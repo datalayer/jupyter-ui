@@ -20,15 +20,6 @@ const Matplotlib = () => (
     <Notebook
       nbformat={notebook as INotebookContent}
       uid="notebook-matplotlib-uid"
-      /*
-      bundledIPyWidgets={[
-        {
-          name: 'jupyter-matplotlib',
-          version: '0.11.3',
-          module: require('jupyter-matplotlib'),
-        },
-      ]}
-      */
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       cellSidebarMargin={120}
       CellSidebar={CellSidebar}

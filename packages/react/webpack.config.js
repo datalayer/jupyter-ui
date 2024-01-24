@@ -34,7 +34,8 @@ const ENTRY =
   // './src/examples/KernelExecResult';
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
-  './src/examples/Notebook';
+  // './src/examples/Notebook';
+  './src/examples/NotebookUrl';
   // './src/examples/NotebookColorMode';
   // './src/examples/NotebookKernelChange';
   // './src/examples/NotebookLite';
