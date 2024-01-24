@@ -4,16 +4,6 @@
  * MIT License
  */
 
-// Copyright (c) Jupyter Development Team.
-// Distributed under the terms of the Modified BSD License.
-
-import { ReadonlyPartialJSONValue } from '@lumino/coreutils';
-import { IDisposable } from '@lumino/disposable';
-import { ISignal, Signal } from '@lumino/signaling';
-import { INotebookModel } from '@jupyterlab/notebook';
-import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
-import { Kernel, KernelMessage, Session } from '@jupyterlab/services';
-import { DocumentRegistry } from '@jupyterlab/docregistry';
 import {
   shims,
   IClassicComm,
@@ -29,31 +19,53 @@ import {
   serialize_state,
   IStateOptions,
 } from '@jupyter-widgets/base-manager';
-import { requireLoader } from '@jupyter-widgets/html-manager';
+import { IDisposable } from '@lumino/disposable';
+import { ReadonlyPartialJSONValue } from '@lumino/coreutils';
+import { INotebookModel } from '@jupyterlab/notebook';
+import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
+import { Kernel, KernelMessage, Session } from '@jupyterlab/services';
+import { DocumentRegistry } from '@jupyterlab/docregistry';
+import { ISignal, Signal } from '@lumino/signaling';
+import { requireLoader } from '@jupyter-widgets/html-manager/lib/libembed-amd';
 import { valid } from 'semver';
-import { SemVerCache } from '../cache/semvercache';
+import { SemVerCache } from './../semvercache';
+import { WIDGET_STATE_MIMETYPE } from './../mimetypes';
 
-/**
- * The mime type for a widget view.
- */
-export const WIDGET_VIEW_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
+import * as base from '@jupyter-widgets/base';
+import * as controls from '@jupyter-widgets/controls';
 
-/**
- * The mime type for widget state data.
- */
-export const WIDGET_STATE_MIMETYPE =
-  'application/vnd.jupyter.widget-state+json';
+// Exposing @jupyter-widgets/base and @jupyter-widgets/controls as AMD modules for custom widget bundles that depend on it.
+if (
+  typeof window !== 'undefined' &&
+  typeof (window as any).define !== 'undefined'
+) {
+  (window as any).define('@jupyter-widgets/base', base);
+  (window as any).define('@jupyter-widgets/controls', controls);
+}
 
 /**
  * A widget manager that returns Lumino widgets.
  */
-export abstract class BaseWidgetManager
+export abstract class LabWidgetManager
   extends ManagerBase
   implements IDisposable
 {
   constructor(rendermime: IRenderMimeRegistry) {
     super();
     this._rendermime = rendermime;
+    (window as any).define('@jupyter-widgets/base', base);
+    (window as any).define('@jupyter-widgets/controls', controls);
+    this._registry = new SemVerCache<ExportData>();
+    this.register({
+      name: '@jupyter-widgets/base',
+      version: base.JUPYTER_WIDGETS_VERSION,
+      exports: () => import('@jupyter-widgets/base') as any,
+    });
+    this.register({
+      name: '@jupyter-widgets/controls',
+      version: controls.JUPYTER_CONTROLS_VERSION,
+      exports: () => import('@jupyter-widgets/controls') as any,
+    });
   }
 
   /**
@@ -69,18 +81,31 @@ export abstract class BaseWidgetManager
     };
   }
 
+  public registerWithKernel(kernelConnection: Kernel.IKernelConnection | null) {
+    if (this._commRegistration) {
+      this._commRegistration.dispose();
+    }
+    if (kernelConnection) {
+      kernelConnection.registerCommTarget(
+        this.comm_target_name,
+        this._handleCommOpen
+      );
+    }
+  }
+
   /**
    * Register a new kernel
    */
   protected _handleKernelChanged({
-    oldValue: oldKernel,
-    newValue: newKernel,
+    oldValue,
+    newValue,
   }: Session.ISessionConnection.IKernelChangedArgs): void {
-    if (oldKernel) {
-      oldKernel.removeCommTarget(this.comm_target_name, this._handleCommOpen);
+    if (oldValue) {
+      oldValue.removeCommTarget(this.comm_target_name, this._handleCommOpen);
     }
-    if (newKernel) {
-      newKernel.registerCommTarget(this.comm_target_name, this._handleCommOpen);
+
+    if (newValue) {
+      newValue.registerCommTarget(this.comm_target_name, this._handleCommOpen);
     }
   }
 
@@ -101,6 +126,7 @@ export abstract class BaseWidgetManager
       // A "load" for a kernel that does not handle comms does nothing.
       return;
     }
+
     return super._loadFromKernel();
   }
 
@@ -161,6 +187,7 @@ export abstract class BaseWidgetManager
       return;
     }
     this._isDisposed = true;
+
     if (this._commRegistration) {
       this._commRegistration.dispose();
     }
@@ -193,7 +220,14 @@ export abstract class BaseWidgetManager
       moduleVersion = `^${moduleVersion}`;
     }
 
-    let allVersions = this._registry.getAllVersions(moduleName);
+    /*
+    const allVersions = this._registry.getAllVersions(moduleName);
+    if (!allVersions) {
+      throw new Error(`No version of module ${moduleName} is registered`);
+    }
+    */
+
+    let allVersions = this._getRegistry().getAllVersions(moduleName);
     const semanticVersion =
       moduleVersion.split('.').length === 2
         ? moduleVersion + '.0'
@@ -206,16 +240,18 @@ export abstract class BaseWidgetManager
         exports: { ...module },
       };
       this.register(widgetRegistryData);
-      allVersions = this._registry.getAllVersions(moduleName);
+      allVersions = this._getRegistry().getAllVersions(moduleName);
       if (!allVersions) {
         throw new Error(`No version of module ${moduleName} is registered`);
       }
     }
-    const mod = this._registry.get(moduleName, semanticVersion);
+
+    const mod = this._registry.get(moduleName, moduleVersion);
+
     if (!mod) {
-      const registeredVersionList = Object.keys(allVersions!);
+      const registeredVersionList = Object.keys(allVersions);
       throw new Error(
-        `Module ${moduleName}, version ${semanticVersion} is not registered, however, \
+        `Module ${moduleName}, version ${moduleVersion} is not registered, however, \
         ${registeredVersionList.join(',')} ${
           registeredVersionList.length > 1 ? 'are' : 'is'
         }`
@@ -232,6 +268,10 @@ export abstract class BaseWidgetManager
       throw new Error(`Class ${className} not found in module ${moduleName}`);
     }
     return cls;
+  }
+
+  private _getRegistry() {
+    return this._registry;
   }
 
   abstract get kernel(): Kernel.IKernelConnection | null;
@@ -259,6 +299,7 @@ export abstract class BaseWidgetManager
 
   /**
    * A signal emitted for unhandled iopub kernel messages.
+   *
    */
   get onUnhandledIOPubMessage(): ISignal<this, KernelMessage.IIOPubMessage> {
     return this._onUnhandledIOPubMessage;
@@ -275,7 +316,7 @@ export abstract class BaseWidgetManager
     super.register_model(model_id, modelPromise);
 
     // Update the synchronous model map
-    modelPromise.then(model => {
+    modelPromise.then((model) => {
       this._modelsSync.set(model_id, model);
       model.once('comm:close', () => {
         this._modelsSync.delete(model_id);
@@ -315,19 +356,22 @@ export abstract class BaseWidgetManager
   // single object that can be registered and removed
   protected _handleCommOpen = async (
     comm: Kernel.IComm,
-    message: KernelMessage.ICommOpenMsg
+    msg: KernelMessage.ICommOpenMsg
   ): Promise<void> => {
-    const classicComm = new shims.services.Comm(comm);
-    await this.handle_comm_open(classicComm, message);
+    const oldComm = new shims.services.Comm(comm);
+    await this.handle_comm_open(oldComm, msg);
   };
 
   protected _restored = new Signal<this, void>(this);
   protected _restoredStatus = false;
   protected _kernelRestoreInProgress = false;
+
   private _isDisposed = false;
   private _registry: SemVerCache<ExportData> = new SemVerCache<ExportData>();
   private _rendermime: IRenderMimeRegistry;
+
   private _commRegistration: IDisposable;
+
   private _modelsSync = new Map<string, WidgetModel>();
   private _onUnhandledIOPubMessage = new Signal<
     this,
@@ -338,25 +382,30 @@ export abstract class BaseWidgetManager
 /**
  * A widget manager that returns Lumino widgets.
  */
-export class KernelWidgetManager extends BaseWidgetManager {
+export class KernelWidgetManager extends LabWidgetManager {
   constructor(
     kernel: Kernel.IKernelConnection,
     rendermime: IRenderMimeRegistry
   ) {
     super(rendermime);
     this._kernel = kernel;
+
     kernel.statusChanged.connect((sender, args) => {
       this._handleKernelStatusChange(args);
     });
+
     kernel.connectionStatusChanged.connect((sender, args) => {
       this._handleKernelConnectionStatusChange(args);
     });
+
     this._handleKernelChanged({
       name: 'kernel',
       oldValue: null,
       newValue: kernel,
     });
+
     this.restoreWidgets();
+
   }
 
   _handleKernelConnectionStatusChange(status: Kernel.ConnectionStatus): void {
@@ -397,6 +446,7 @@ export class KernelWidgetManager extends BaseWidgetManager {
     if (this.isDisposed) {
       return;
     }
+
     this._kernel = null!;
     super.dispose();
   }
@@ -409,45 +459,40 @@ export class KernelWidgetManager extends BaseWidgetManager {
 }
 
 /**
- * A widget manager that returns Lumino widgets.
+ * A widget manager that returns phosphor widgets.
  */
-export class NotebookWidgetManager extends BaseWidgetManager {
+export class WidgetManager extends LabWidgetManager {
   constructor(
     context: DocumentRegistry.IContext<INotebookModel>,
     rendermime: IRenderMimeRegistry,
-    settings: NotebookWidgetManager.Settings,
-    kernelConnection: Kernel.IKernelConnection | null
+    settings: WidgetManager.Settings
   ) {
     super(rendermime);
-
     this._context = context;
-    this._settings = settings;
 
-    this._context.sessionContext.kernelChanged.connect((sender, args) => {
+    context.sessionContext.kernelChanged.connect((sender, args) => {
       this._handleKernelChanged(args);
     });
-    this._context.sessionContext.statusChanged.connect((sender, args) => {
+
+    context.sessionContext.statusChanged.connect((sender, args) => {
       this._handleKernelStatusChange(args);
     });
-    this._context.sessionContext.connectionStatusChanged.connect(
-      (sender, args) => {
-        this._handleKernelConnectionStatusChange(args);
-      }
-    );
-    kernelConnection?.registerCommTarget(
-      this.comm_target_name,
-      this._handleCommOpen
-    );
-    /*
-    if (this._context.sessionContext.session?.kernel) {
+
+    context.sessionContext.connectionStatusChanged.connect((sender, args) => {
+      this._handleKernelConnectionStatusChange(args);
+    });
+
+    if (context.sessionContext.session?.kernel) {
       this._handleKernelChanged({
         name: 'kernel',
         oldValue: null,
-        newValue: this._context.sessionContext.session?.kernel,
+        newValue: context.sessionContext.session?.kernel,
       });
     }
-    */
+
     this.restoreWidgets(this._context!.model);
+
+    this._settings = settings;
     context.saveState.connect((sender, saveState) => {
       if (saveState === 'started' && settings.saveState) {
         this._saveState();
@@ -460,17 +505,9 @@ export class NotebookWidgetManager extends BaseWidgetManager {
    */
   private _saveState(): void {
     const state = this.get_state_sync({ drop_defaults: true });
-    if (this._context.model.setMetadata) {
-      this._context.model.setMetadata('widgets', {
-        'application/vnd.jupyter.widget-state+json': state,
-      });
-    } else {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore JupyterLab 3 support
-      this._context.model.metadata.set('widgets', {
-        'application/vnd.jupyter.widget-state+json': state,
-      });
-    }
+    this._context.model.setMetadata('widgets', {
+      'application/vnd.jupyter.widget-state+json': state,
+    });
   }
 
   _handleKernelConnectionStatusChange(status: Kernel.ConnectionStatus): void {
@@ -500,7 +537,11 @@ export class NotebookWidgetManager extends BaseWidgetManager {
     notebook: INotebookModel,
     { loadKernel, loadNotebook } = { loadKernel: true, loadNotebook: true }
   ): Promise<void> {
+
+   await this.context.sessionContext.ready;
+
     try {
+
       if (loadKernel) {
         try {
           this._kernelRestoreInProgress = true;
@@ -509,6 +550,7 @@ export class NotebookWidgetManager extends BaseWidgetManager {
           this._kernelRestoreInProgress = false;
         }
       }
+
       if (loadNotebook) {
         await this._loadFromNotebook(notebook);
       }
@@ -525,14 +567,10 @@ export class NotebookWidgetManager extends BaseWidgetManager {
    * Load widget state from notebook metadata
    */
   async _loadFromNotebook(notebook: INotebookModel): Promise<void> {
-    const widget_md = notebook.getMetadata
-      ? (notebook.getMetadata('widgets') as any)
-      : // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore JupyterLab 3 support
-        notebook.metadata.get('widgets');
+    const widgets = notebook.getMetadata('widgets') as any;
     // Restore any widgets from saved state that are not live
-    if (widget_md && widget_md[WIDGET_STATE_MIMETYPE]) {
-      let state = widget_md[WIDGET_STATE_MIMETYPE];
+    if (widgets && widgets[WIDGET_STATE_MIMETYPE]) {
+      let state = widgets[WIDGET_STATE_MIMETYPE];
       state = this.filterExistingModelState(state);
       await this.set_state(state);
     }
@@ -545,6 +583,7 @@ export class NotebookWidgetManager extends BaseWidgetManager {
     if (this.isDisposed) {
       return;
     }
+
     this._context = null!;
     super.dispose();
   }
@@ -575,7 +614,6 @@ export class NotebookWidgetManager extends BaseWidgetManager {
 
   /**
    * Close all widgets and empty the widget state.
-   *
    * @return Promise that resolves when the widget state is cleared.
    */
   async clear_state(): Promise<void> {
@@ -595,10 +633,10 @@ export class NotebookWidgetManager extends BaseWidgetManager {
   }
 
   private _context: DocumentRegistry.IContext<INotebookModel>;
-  private _settings: NotebookWidgetManager.Settings;
+  private _settings: WidgetManager.Settings;
 }
 
-export namespace NotebookWidgetManager {
+export namespace WidgetManager {
   export type Settings = {
     saveState: boolean;
   };

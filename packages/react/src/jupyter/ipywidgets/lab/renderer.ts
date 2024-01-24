@@ -4,14 +4,11 @@
  * MIT License
  */
 
-// Copyright (c) Jupyter Development Team.
-// Distributed under the terms of the Modified BSD License.
-
 import { PromiseDelegate } from '@lumino/coreutils';
 import { IDisposable } from '@lumino/disposable';
 import { Panel, Widget as LuminoWidget } from '@lumino/widgets';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
-import { BaseWidgetManager } from './manager';
+import { LabWidgetManager } from './manager';
 import { DOMWidgetModel } from '@jupyter-widgets/base';
 
 /**
@@ -23,7 +20,7 @@ export class WidgetRenderer
 {
   constructor(
     options: IRenderMime.IRendererOptions,
-    manager?: BaseWidgetManager
+    manager?: LabWidgetManager
   ) {
     super();
     this.mimeType = options.mimeType;
@@ -35,12 +32,13 @@ export class WidgetRenderer
   /**
    * The widget manager.
    */
-  set manager(value: BaseWidgetManager) {
+  set manager(value: LabWidgetManager) {
     value.restored.connect(this._rerender, this);
     this._manager.resolve(value);
   }
 
   async renderModel(model: IRenderMime.IMimeModel): Promise<void> {
+
     const source: any = model.data[this.mimeType];
 
     // Let's be optimistic, and hope the widget state will come later.
@@ -112,7 +110,6 @@ export class WidgetRenderer
       // Clear the error message
       this.node.textContent = '';
       this.removeClass('jupyter-widgets');
-
       // Attempt to rerender.
       this.renderModel(this._rerenderMimeModel);
     }
@@ -122,6 +119,6 @@ export class WidgetRenderer
    * The mimetype being rendered.
    */
   readonly mimeType: string;
-  private _manager = new PromiseDelegate<BaseWidgetManager>();
+  private _manager = new PromiseDelegate<LabWidgetManager>();
   private _rerenderMimeModel: IRenderMime.IMimeModel | null = null;
 }

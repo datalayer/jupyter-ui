@@ -41,10 +41,6 @@ export type INotebookProps = {
   cellMetadataPanel: boolean;
   cellSidebarMargin: number;
   height?: string;
-  /*
-   * @deprecated since version 0.6.2
-   */
-  ipywidgets: 'classic' | 'lab';
   bundledIPyWidgets?: BundledIPyWidgets[];
   externalIPyWidgets?: ExternalIPyWidgets[];
   kernel?: Kernel;
@@ -276,7 +272,6 @@ Notebook.defaultProps = {
   cellMetadataPanel: false,
   cellSidebarMargin: 120,
   height: '100vh',
-  ipywidgets: 'classic',
   maxHeight: '100vh',
   nbgrader: false,
   readOnly: false,

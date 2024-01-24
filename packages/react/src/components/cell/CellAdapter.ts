@@ -47,7 +47,7 @@ import {
   WIDGET_MIMETYPE,
   WidgetRenderer,
 } from '@jupyter-widgets/html-manager/lib/output_renderers';
-import IPyWidgetsClassicManager from '../../jupyter/ipywidgets/classic/IPyWidgetsClassicManager';
+import ClassicWidgetManager from '../../jupyter/ipywidgets/classic/manager';
 import Kernel from '../../jupyter/kernel/Kernel';
 import CellCommands from './CellCommands';
 
@@ -185,7 +185,7 @@ export class CellAdapter {
       useCapture
     );
     const rendermime = new RenderMimeRegistry({ initialFactories });
-    const iPyWidgetsClassicManager = new IPyWidgetsClassicManager({ loader });
+    const iPyWidgetsClassicManager = new ClassicWidgetManager({ loader });
     rendermime.addFactory(
       {
         safe: false,

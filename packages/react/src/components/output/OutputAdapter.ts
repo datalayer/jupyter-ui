@@ -22,7 +22,7 @@ import {
   WIDGET_MIMETYPE,
   WidgetRenderer,
 } from '@jupyter-widgets/html-manager/lib/output_renderers';
-import { IPyWidgetsClassicManager } from '../../jupyter/ipywidgets/classic/IPyWidgetsClassicManager';
+import { ClassicWidgetManager } from '../../jupyter/ipywidgets/classic/manager';
 import Kernel from '../../jupyter/kernel/Kernel';
 
 export class OutputAdapter {
@@ -30,7 +30,7 @@ export class OutputAdapter {
   private _renderers: IRenderMime.IRendererFactory[];
   private _outputArea: OutputArea;
   private _rendermime: RenderMimeRegistry;
-  private _iPyWidgetsClassicManager: IPyWidgetsClassicManager;
+  private _iPyWidgetsClassicManager: ClassicWidgetManager;
 
   public constructor(
     kernel?: Kernel,
@@ -46,7 +46,7 @@ export class OutputAdapter {
     this._rendermime = new RenderMimeRegistry({
       initialFactories: this._renderers,
     });
-    this._iPyWidgetsClassicManager = new IPyWidgetsClassicManager({
+    this._iPyWidgetsClassicManager = new ClassicWidgetManager({
       loader,
     });
     this._rendermime.addFactory(

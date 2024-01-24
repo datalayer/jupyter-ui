@@ -4,9 +4,6 @@
  * MIT License
  */
 
-// Copyright (c) Jupyter Development Team.
-// Distributed under the terms of the Modified BSD License.
-
 import { Widget } from '@lumino/widgets';
 import { Kernel, KernelMessage } from '@jupyterlab/services';
 import {
@@ -23,31 +20,22 @@ import { ICallbacks, shims } from '@jupyter-widgets/base/lib/services-shim';
 import { requireLoader } from '@jupyter-widgets/html-manager/lib/libembed-amd';
 import { HTMLManager } from '@jupyter-widgets/html-manager/lib/htmlmanager';
 import { valid } from 'semver';
+import { INotebookModel } from '@jupyterlab/notebook';
 import {
   BundledIPyWidgets,
   ExternalIPyWidgets,
 } from '../../../components/notebook/Notebook';
-import { SemVerCache } from '../cache/semvercache';
-import { MODULE_NAME, MODULE_VERSION } from './../plotly/Version';
+import { SemVerCache } from '../semvercache';
+import { WIDGET_STATE_MIMETYPE } from './../mimetypes';
+import { MODULE_NAME, MODULE_VERSION } from '../plotly/Version';
 
 import * as base from '@jupyter-widgets/base';
 import * as controls from '@jupyter-widgets/controls';
-// import * as output from '@jupyter-widgets/output';
-// import * as outputWidgets from '@jupyter-widgets/jupyterlab-manager/lib/output';
-
-// Exposing @jupyter-widgets/base and @jupyter-widgets/controls as AMD modules for custom widget bundles that depend on it.
-if (
-  typeof window !== 'undefined' &&
-  typeof (window as any).define !== 'undefined'
-) {
-  (window as any).define('@jupyter-widgets/base', base);
-  (window as any).define('@jupyter-widgets/controls', controls);
-}
 
 /**
  * The class is responsible for the classic IPyWidget rendering.
  */
-export class IPyWidgetsClassicManager extends HTMLManager {
+export class ClassicWidgetManager extends HTMLManager {
   public _kernelConnection: Kernel.IKernelConnection | null;
   private _commRegistration: any;
   private _onError: any;
@@ -60,6 +48,10 @@ export class IPyWidgetsClassicManager extends HTMLManager {
     (window as any).define('@jupyter-widgets/base', base);
     (window as any).define('@jupyter-widgets/controls', controls);
     this._registry = new SemVerCache<ExportData>();
+    this.register = this.register.bind(this);
+    this.registerWithKernel = this.registerWithKernel.bind(this);
+    this._getRegistry = this._getRegistry.bind(this);
+    this._handleCommOpen = this._handleCommOpen.bind(this);
     this.register({
       name: '@jupyter-widgets/base',
       version: base.JUPYTER_WIDGETS_VERSION,
@@ -70,22 +62,24 @@ export class IPyWidgetsClassicManager extends HTMLManager {
       version: controls.JUPYTER_CONTROLS_VERSION,
       exports: () => import('@jupyter-widgets/controls') as any,
     });
-    /*
-    this.register({
-      name: '@jupyter-widgets/output',
-      version: output.OUTPUT_WIDGET_VERSION,
-      exports: () => import('@jupyter-widgets/output') as any,
-    });
-    */
     this.register({
       name: MODULE_NAME,
       version: MODULE_VERSION,
-      exports: () => import('./../plotly/index'),
+      exports: () => import('../plotly/index'),
     });
-    this.register = this.register.bind(this);
-    this.registerWithKernel = this.registerWithKernel.bind(this);
-    this._getRegistry = this._getRegistry.bind(this);
-    this._handleCommOpen = this._handleCommOpen.bind(this);
+  }
+
+  /**
+   * Load widget state from notebook metadata
+   */
+  async _loadFromNotebook(notebook: INotebookModel): Promise<void> {
+    const widget_md = notebook.getMetadata('widgets') as any;
+    // Restore any widgets from saved state that are not live
+    if (widget_md && widget_md[WIDGET_STATE_MIMETYPE]) {
+      let state = widget_md[WIDGET_STATE_MIMETYPE];
+      state = this.filterExistingModelState(state);
+      await this.set_state(state);
+    }
   }
 
   public registerWithKernel(kernelConnection: Kernel.IKernelConnection | null) {
@@ -116,12 +110,7 @@ export class IPyWidgetsClassicManager extends HTMLManager {
   get onError() {
     return this._onError;
   }
-  /*
-  public async restoreStateFromNotebook(state: any) {
-    this.filterExistingModelState(state);
-    await this.set_state(state);
-  }
-  */
+
   public display_view(
     view: Promise<DOMWidgetView> | DOMWidgetView,
     el: HTMLElement
@@ -250,4 +239,4 @@ export class IPyWidgetsClassicManager extends HTMLManager {
   }
 }
 
-export default IPyWidgetsClassicManager;
+export default ClassicWidgetManager;

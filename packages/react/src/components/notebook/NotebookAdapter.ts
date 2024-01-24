@@ -49,31 +49,20 @@ import {
 import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
 import { INotebookContent, CellType, IAttachments } from '@jupyterlab/nbformat';
 import { ISharedAttachmentsCell, IYText } from '@jupyter/ydoc';
-import { requireLoader as loader } from '@jupyter-widgets/html-manager';
-import {
-  WIDGET_MIMETYPE,
-  WidgetRenderer,
-} from '@jupyter-widgets/html-manager/lib/output_renderers';
+import { WIDGET_MIMETYPE } from '@jupyter-widgets/html-manager/lib/output_renderers';
 import { Lite } from '../../jupyter/JupyterContext';
 import { Kernel } from '../../jupyter/kernel/Kernel';
 import JupyterReactContentFactory from './content/JupyterReactContentFactory';
 import JupyterReactNotebookModelFactory from './model/JupyterReactNotebookModelFactory';
 import {
   INotebookProps,
-  ExternalIPyWidgets,
-  BundledIPyWidgets,
+//  ExternalIPyWidgets,
+//  BundledIPyWidgets,
 } from './Notebook';
 import { NotebookCommands } from './NotebookCommands';
 import getMarked from './marked/marked';
-import { IPyWidgetsClassicManager } from '../../jupyter/ipywidgets/classic/IPyWidgetsClassicManager';
-import {
-  iPyWidgetsPlugin,
-  baseWidgetsPlugin,
-  controlWidgetsPlugin,
-  outputWidgetPlugin,
-  registerBundledIPyWidgets,
-  registerExternalIPyWidgets,
-} from '../../jupyter/ipywidgets/lab/plugin';
+import { WidgetManager } from '../../jupyter/ipywidgets/lab/manager';
+import { WidgetRenderer } from '../../jupyter/ipywidgets/lab/renderer';
 
 const FALLBACK_PATH = 'ping.ipynb';
 
@@ -81,10 +70,9 @@ export class NotebookAdapter {
   private _boxPanel: BoxPanel;
   private _commandRegistry: CommandRegistry;
   private _context?: Context<INotebookModel>;
-  private _bundledIPyWidgets?: BundledIPyWidgets[];
-  private _externalIPyWidgets?: ExternalIPyWidgets[];
-  private _iPyWidgetsClassicManager?: IPyWidgetsClassicManager;
-  private _ipywidgets: 'lab' | 'classic';
+//  private _bundledIPyWidgets?: BundledIPyWidgets[];
+//  private _externalIPyWidgets?: ExternalIPyWidgets[];
+  private _iPyWidgetsManager?: WidgetManager;
   private _kernel: Kernel;
   private _lite?: Lite;
   private _nbformat?: INotebookContent;
@@ -106,9 +94,8 @@ export class NotebookAdapter {
     serviceManager: ServiceManager,
     lite?: Lite
   ) {
-    this._bundledIPyWidgets = props.bundledIPyWidgets;
-    this._externalIPyWidgets = props.externalIPyWidgets;
-    this._ipywidgets = props.ipywidgets;
+//    this._bundledIPyWidgets = props.bundledIPyWidgets;
+//    this._externalIPyWidgets = props.externalIPyWidgets;
     this._kernel = props.kernel!;
     this._lite = lite;
     this._nbformat = props.nbformat;
@@ -143,12 +130,23 @@ export class NotebookAdapter {
       useCapture
     );
 
-    const rendererFactories = standardRendererFactories.filter(
+    const initialFactories = standardRendererFactories.filter(
       factory => factory.mimeTypes[0] !== 'text/javascript'
     );
-    rendererFactories.push(jsonRendererFactory);
-    rendererFactories.push(javascriptRendererFactory);
-    this._renderers.map(renderer => rendererFactories.push(renderer));
+
+    const ipywidgetsRendererFactory: IRenderMime.IRendererFactory =  {
+      safe: true,
+      mimeTypes: [WIDGET_MIMETYPE],
+      defaultRank: 1,
+      createRenderer: options =>
+        new WidgetRenderer(options, this._iPyWidgetsManager!),
+    };
+
+    initialFactories.push(ipywidgetsRendererFactory);
+    initialFactories.push(jsonRendererFactory);
+    initialFactories.push(javascriptRendererFactory);
+
+    this._renderers.map(renderer => initialFactories.push(renderer));
 
     const languages = new EditorLanguageRegistry();
     // Register default languages.
@@ -169,7 +167,7 @@ export class NotebookAdapter {
     });
 
     this._rendermime = new RenderMimeRegistry({
-      initialFactories: rendererFactories,
+      initialFactories,
       latexTypesetter: new MathJaxTypesetter(),
       markdownParser: getMarked(languages),
     });
@@ -264,36 +262,38 @@ export class NotebookAdapter {
       },
     });
 
-    if (this._ipywidgets === 'classic') {
-      this._iPyWidgetsClassicManager = new IPyWidgetsClassicManager({ loader });
-      this._rendermime!.addFactory(
-        {
-          safe: false,
-          mimeTypes: [WIDGET_MIMETYPE],
-          createRenderer: options =>
-            new WidgetRenderer(options, this._iPyWidgetsClassicManager!),
-        },
-        1
-      );
-      this._context?.sessionContext
-        .changeKernel({ id: this._kernel.id })
-        .then(() => {
-          this._iPyWidgetsClassicManager?.registerWithKernel(
-            this._kernel.connection
-          );
-        });
-      if (this._bundledIPyWidgets) {
-        this._iPyWidgetsClassicManager.loadBundledIPyWidgets(
-          this._bundledIPyWidgets
+    this._iPyWidgetsManager = new WidgetManager(this._context, this._rendermime, {saveState: false});
+    /*
+    this._rendermime!.addFactory(
+      {
+        safe: false,
+        mimeTypes: [WIDGET_MIMETYPE],
+        createRenderer: options =>
+          new WidgetRenderer(options, this._iPyWidgetsManager!),
+      },
+      1
+    );
+    */
+    this._context?.sessionContext
+      .changeKernel({ id: this._kernel.id })
+      .then(() => {
+        this._iPyWidgetsManager?.registerWithKernel(
+          this._kernel.connection
         );
-      }
-      if (this._externalIPyWidgets) {
-        this._iPyWidgetsClassicManager.loadExternalIPyWidgets(
-          this._externalIPyWidgets
-        );
-      }
-    }
+      });
 
+    /*
+    if (this._bundledIPyWidgets) {
+      this._iPyWidgetsManager.loadBundledIPyWidgets(
+        this._bundledIPyWidgets
+      );
+    }
+    if (this._externalIPyWidgets) {
+      this._iPyWidgetsManager.loadExternalIPyWidgets(
+        this._externalIPyWidgets
+      );
+    }
+    */
     // These are fixes to have more control on the kernel launch.
     (this._context.sessionContext as any)._initialize =
       async (): Promise<boolean> => {
@@ -326,33 +326,6 @@ export class NotebookAdapter {
         }
         return await (this._context!.sessionContext as any)._startIfNecessary();
       };
-
-    if (this._ipywidgets === 'lab') {
-      const jupyterWidgetRegistry = iPyWidgetsPlugin.activate(
-        this._rendermime!,
-        this._tracker!,
-        this._kernel.connection
-      );
-      baseWidgetsPlugin.activate(jupyterWidgetRegistry);
-      controlWidgetsPlugin.activate(jupyterWidgetRegistry);
-      outputWidgetPlugin.activate(jupyterWidgetRegistry);
-      if (this._bundledIPyWidgets) {
-        registerBundledIPyWidgets(
-          this._context!,
-          this._tracker!,
-          this._bundledIPyWidgets,
-          this._kernel.connection
-        );
-      }
-      if (this._externalIPyWidgets) {
-        registerExternalIPyWidgets(
-          this._context!,
-          this._tracker!,
-          this._externalIPyWidgets,
-          this._kernel.connection
-        );
-      }
-    }
 
     this._context.sessionContext.kernelChanged.connect((_, args) => {
       console.log('Previous Kernel Connection', args.oldValue);
@@ -390,23 +363,22 @@ export class NotebookAdapter {
       .getWidgetFactory('Notebook')
       ?.createNew(this._context) as NotebookPanel;
 
-    if (this._ipywidgets === 'classic') {
-      this._iPyWidgetsClassicManager?.registerWithKernel(
-        this._kernel.connection
-      );
-      this._notebookPanel!.sessionContext.kernelChanged.connect(
-        (
-          sender: any,
-          args: IChangedArgs<
-            JupyterKernel.IKernelConnection | null,
-            JupyterKernel.IKernelConnection | null,
-            'kernel'
-          >
-        ) => {
-          this._iPyWidgetsClassicManager?.registerWithKernel(args.newValue);
-        }
-      );
-    }
+    this._iPyWidgetsManager?.registerWithKernel(
+      this._kernel.connection
+    );
+
+    this._notebookPanel!.sessionContext.kernelChanged.connect(
+      (
+        sender: any,
+        args: IChangedArgs<
+          JupyterKernel.IKernelConnection | null,
+          JupyterKernel.IKernelConnection | null,
+          'kernel'
+        >
+      ) => {
+        this._iPyWidgetsManager?.registerWithKernel(args.newValue);
+      }
+    );
 
     const completerHandler = this.setupCompleter(this._notebookPanel!);
 

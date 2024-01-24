@@ -25,7 +25,7 @@ export * from './jupyter/kernel';
 export * from './jupyter/lite/LiteServer';
 
 // Jupyter IPyWidgets.
-export * from './jupyter/ipywidgets/classic/IPyWidgetsClassicManager';
+export * from './jupyter/ipywidgets/classic/manager';
 export * from './jupyter/ipywidgets/lab/manager';
 
 // Jupyter State.
