@@ -53,11 +53,11 @@ test('Lite Python', async ({ page }) => {
   ).toContainText("sys.platform='emscripten'");
 });
 
-test('With initialization', async ({ page }) => {
+test('Lite Python Init', async ({ page }) => {
   test.setTimeout(60000);
 
   await page.goto(
-    'http://localhost:6006/iframe.html?id=components-notebook--with-initialization'
+    'http://localhost:6006/iframe.html?id=components-notebook--lite-python-init'
   );
 
   await page.getByText('import ipywidgets').click();
