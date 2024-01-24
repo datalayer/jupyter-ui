@@ -30,6 +30,11 @@ let config: IJupyterConfig = {
 };
 
 /**
+ * Datalayer configuration
+ */
+let configLoaded = false;
+
+/**
  * Setter for jupyterServerHttpUrl.
  */
 export const setJupyterServerHttpUrl = (jupyterServerHttpUrl: string) => {
@@ -63,6 +68,30 @@ export const setJupyterToken = (jupyterToken: string) => {
 export const getJupyterToken = () => config.jupyterToken;
 
 /**
+ * Get the datalayer configuration fully or for a particular parameter.
+ *
+ * @param name The parameter name
+ * @returns The parameter value if {@link name} is specified, otherwise the full configuration.
+ */
+export function getDatalayerConfig(name?: string): any {
+  if (!configLoaded) {
+    const datalayerConfigData = document.getElementById(
+      'datalayer-config-data'
+    );
+    if (datalayerConfigData?.textContent) {
+      try {
+        config = { ...config, ...JSON.parse(datalayerConfigData.textContent) };
+        configLoaded = true;
+      } catch (error) {
+        console.error('Failed to parse the Datalayer configuration.', error);
+      }
+    }
+  }
+  // @ts-expect-error IJupyterConfig does not have index signature
+  return name ? config[name] : config;
+}
+
+/**
  * Method to load the Jupyter configuration from the
  * host HTML page.
  */
@@ -85,11 +114,9 @@ export const loadJupyterConfig = (
     terminals,
     jupyterToken,
   } = props;
-  const datalayerConfigData = document.getElementById('datalayer-config-data');
-  if (datalayerConfigData) {
-    config = JSON.parse(
-      datalayerConfigData.textContent || ''
-    ) as IJupyterConfig;
+  // Load the config
+  getDatalayerConfig();
+  if (configLoaded) {
     setJupyterServerHttpUrl(
       jupyterServerHttpUrl ??
         config.jupyterServerHttpUrl ??
