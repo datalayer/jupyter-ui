@@ -120,6 +120,8 @@
     "@jupyterlab/theme-light-extension": "4.1.0-beta.0",
     "@jupyterlab/translation": "4.1.0-beta.0",
     "@jupyterlab/ui-components": "4.1.0-beta.0",
+    "@jupyterlite/server": "0.2.3",
+    "@jupyterlite/server-extension": "0.2.3",
     "@jupyter/ydoc": "1.1.1",
     "@lumino/algorithm": "2.0.1",
     "@lumino/application": "2.2.0",

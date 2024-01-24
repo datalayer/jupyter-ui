@@ -68,7 +68,6 @@ Default.args = {
   cellMetadataPanel: false,
   cellSidebarMargin: 120,
   height: '100vh',
-  ipywidgets: 'lab',
   maxHeight: '100vh',
   nbgrader: false,
   readOnly: false,
@@ -81,7 +80,6 @@ export const Playground: Story = {
 Playground.args = {
   ...Default.args,
   path: 'ipywidgets.ipynb',
-  ipywidgets: 'classic',
   uid: 'uid-1',
 };
 
@@ -173,20 +171,24 @@ const INIT_EXAMPLE = {
   ],
 };
 
+export const IpywidgetsState: Story = Template.bind({});
+IpywidgetsState.args = {
+  ...Default.args,
+  url: 'https://raw.githubusercontent.com/datalayer/jupyter-ui/main/packages/react/src/examples/notebooks/IPyWidgetsExampleWithState.ipynb.json'
+};
+
 export const LitePython: Story = Template.bind({});
 LitePython.args = {
   ...Default.args,
   browser: 'true',
   nbformat: INIT_EXAMPLE,
-  ipywidgets: 'classic',
 };
 
-export const WithInitialization: Story = Template.bind({});
-WithInitialization.args = {
+export const LitePythonInit: Story = Template.bind({});
+LitePythonInit.args = {
   ...Default.args,
   browser: 'true',
   initCode:
     "import piplite\nawait piplite.install('ipywidgets')\nawait piplite.install('bqplot')\nawait piplite.install('ipyleaflet')\nawait piplite.install('ipyreact')\nawait piplite.install('plotly')\nawait piplite.install('nbformat')\nawait piplite.install('ipympl')",
   nbformat: WIDGETS_EXAMPLE,
-  ipywidgets: 'classic',
 };
