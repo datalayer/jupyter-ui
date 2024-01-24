@@ -19,7 +19,7 @@ const root = createRoot(div);
 root.render(
   <Jupyter>
     <Notebook
-      url="IPyWidgetsExampleWithState.ipynb"
+      url="https://raw.githubusercontent.com/datalayer/jupyter-ui/main/packages/react/src/examples/notebooks/IPyWidgetsExampleWithState.ipynb.json"
       uid={NOTEBOOK_UID}
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       cellSidebarMargin={60}
