@@ -14,6 +14,7 @@ export * from './jupyter/theme';
 export * from './jupyter/JupyterContext';
 export * from './jupyter/JupyterConfig';
 export * from './jupyter/lab/JupyterLabCss';
+export * from './jupyter/lab/JupyterLabColorMode';
 
 // Jupyter Services.
 export * from './jupyter/services/Services';

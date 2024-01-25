@@ -42,7 +42,7 @@ const NotebookColorMode = () => {
           display="block"
           mb={1}
         >
-          Dark Mode
+          { colorMode === 'light' ? 'Light' : 'Dark' } Mode
         </Text>
         <ToggleSwitch
           size="small"
