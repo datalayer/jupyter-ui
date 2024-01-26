@@ -61,6 +61,7 @@ export class KernelExecutor {
    *
    * @param code Code to be executed
    * @param options Callbacks on IOPub messages and on reply message
+   *   and execution options
    * @returns The outputs model
    *
    * @example
@@ -76,14 +77,23 @@ export class KernelExecutor {
     {
       iopubMessageHooks = [],
       shellMessageHooks = [],
+      silent,
+      stopOnError,
+      storeHistory,
     }: {
       iopubMessageHooks?: IOPubMessageHook[];
       shellMessageHooks?: ShellMessageHook[];
+      silent?: boolean;
+      stopOnError?: boolean;
+      storeHistory?: boolean;
     } = {}
   ): Promise<IOutputAreaModel> {
     const future = (this._future = this._kernelConnection.requestExecute({
       code,
       allow_stdin: false,
+      silent,
+      stop_on_error: stopOnError,
+      store_history: storeHistory,
     }));
     iopubMessageHooks.forEach(hook => future.registerMessageHook(hook));
     this._shellMessageHooks = shellMessageHooks;

@@ -178,8 +178,8 @@ export class Kernel {
    * Execute a code snippet
    *
    * @param code The code snippet
-   * @param options Callbacks on IOPub messages and on reply message
-   *  and outputs model to populate
+   * @param options Callbacks on IOPub messages and on reply message,
+   *  outputs model to populate and execution options
    * @returns The kernel executor
    */
   execute(
@@ -188,10 +188,16 @@ export class Kernel {
       iopubMessageHooks = [],
       shellMessageHooks = [],
       model,
+      silent,
+      stopOnError,
+      storeHistory,
     }: {
       iopubMessageHooks?: IOPubMessageHook[];
       shellMessageHooks?: ShellMessageHook[];
       model?: IOutputAreaModel;
+      silent?: boolean;
+      stopOnError?: boolean;
+      storeHistory?: boolean;
     } = {}
   ): KernelExecutor | undefined {
     if (this._kernelConnection) {
@@ -202,6 +208,9 @@ export class Kernel {
       kernelExecutor.execute(code, {
         iopubMessageHooks,
         shellMessageHooks,
+        silent,
+        stopOnError,
+        storeHistory,
       });
       return kernelExecutor;
     }
