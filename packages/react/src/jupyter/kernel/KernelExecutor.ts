@@ -4,17 +4,25 @@
  * MIT License
  */
 
-import { IDisplayUpdate, IMimeBundle, IOutput } from '@jupyterlab/nbformat';
+import { PromiseDelegate } from '@lumino/coreutils';
+import { Signal, ISignal } from '@lumino/signaling';
+import {
+  IOutput,
+  IStream,
+  IExecuteResult,
+  IDisplayData,
+  IDisplayUpdate,
+  IMimeBundle,
+} from '@jupyterlab/nbformat';
 import { IOutputAreaModel, OutputAreaModel } from '@jupyterlab/outputarea';
 import { Kernel, KernelMessage } from '@jupyterlab/services';
 import { IClearOutputMsg } from '@jupyterlab/services/lib/kernel/messages';
-import { PromiseDelegate } from '@lumino/coreutils';
-import { ISignal, Signal } from '@lumino/signaling';
 import { outputsAsString } from '../../utils/Utils';
 
 export type IOPubMessageHook = (
   msg: KernelMessage.IIOPubMessage
 ) => boolean | PromiseLike<boolean>;
+
 export type ShellMessageHook = (
   msg: KernelMessage.IShellMessage
 ) => boolean | PromiseLike<boolean>;
@@ -33,9 +41,6 @@ export interface IKernelExecutorOptions {
   model?: IOutputAreaModel;
 }
 
-/**
- * A handler to execute code snippet.
- */
 export class KernelExecutor {
   private _kernelConnection: Kernel.IKernelConnection;
   private _outputs: IOutput[];
@@ -61,7 +66,6 @@ export class KernelExecutor {
    *
    * @param code Code to be executed
    * @param options Callbacks on IOPub messages and on reply message
-   *   and execution options
    * @returns The outputs model
    *
    * @example
@@ -88,26 +92,29 @@ export class KernelExecutor {
       storeHistory?: boolean;
     } = {}
   ): Promise<IOutputAreaModel> {
-    const future = (this._future = this._kernelConnection.requestExecute({
+    this._shellMessageHooks = shellMessageHooks;
+    this._future = this._kernelConnection.requestExecute({
       code,
       allow_stdin: false,
-      silent,
-      stop_on_error: stopOnError,
-      store_history: storeHistory,
-    }));
-    iopubMessageHooks.forEach(hook => future.registerMessageHook(hook));
-    this._shellMessageHooks = shellMessageHooks;
-    future.onIOPub = this._onIOPub;
-    future.onReply = this._onReply;
-
-    // FIXME Handle stdin. It will require updating the `allow_stdin`
-    // param above.
-    // future.onStdin = msg => {
-    //   if (KernelMessage.isInputRequestMsg(msg)) {
-    //     this.onInputRequest(msg, value);
-    //   }
-    // };
-
+//      silent,
+//      stop_on_error: stopOnError,
+//      store_history: storeHistory,
+    });
+    iopubMessageHooks.forEach(hook => this._future!.registerMessageHook(hook));
+    this._future.onIOPub = this._onIOPub;
+    this._future.onReply = this._onReply;
+    /*
+    FIXME Handle stdin. It will require updating the `allow_stdin` param aboove  .
+    future.onStdin = msg => {
+      if (KernelMessage.isInputRequestMsg(msg)) {
+        this.onInputRequest(msg, value);
+      }
+    };
+    */
+    // Wait for future to be done before resolving.
+    this._future.done.then(() => {
+      this._executed.resolve(this._model);
+    });
     return this._executed.promise;
   }
 
@@ -128,19 +135,28 @@ export class KernelExecutor {
     const output = { ...message.content, output_type: messageType };
     switch (messageType) {
       case 'execute_result':
-      case 'display_data':
-      case 'stream':
-      case 'error':
-        this._outputs.push(message.content as IOutput);
+        this._outputs.push(message.content as IExecuteResult);
         this._outputsChanged.emit(this._outputs);
         this._model.add(output);
         this._modelChanged.emit(this._model);
         break;
-      case 'clear_output': {
+      case 'display_data':
+        this._outputs.push(message.content as IDisplayData);
+        this._outputsChanged.emit(this._outputs);
+        this._model.add(output);
+        this._modelChanged.emit(this._model);
+        break;
+      case 'stream':
+      case 'error':
+        this._outputs.push(message.content as IStream);
+        this._outputsChanged.emit(this._outputs);
+        this._model.add(output);
+        this._modelChanged.emit(this._model);
+        break;
+      case 'clear_output':
         const wait = (message as IClearOutputMsg).content.wait;
         this._model.clear(wait);
         break;
-      }
       case 'update_display_data':
         this._outputs.push(message.content as IDisplayUpdate);
         this._outputsChanged.emit(this._outputs);
@@ -149,17 +165,37 @@ export class KernelExecutor {
         this._modelChanged.emit(this._model);
         break;
       case 'status':
-        {
-          // execution_state: 'busy' 'starting' 'terminating' 'restarting' 'initializing' 'connecting' 'disconnected' 'dead' 'unknown' 'idle'
-          const executionState = (message.content as any).execution_state;
-          executionState;
-        }
+        // execution_state: 'busy' 'starting' 'terminating' 'restarting' 'initializing' 'connecting' 'disconnected' 'dead' 'unknown' 'idle'
+        const executionState = (message.content as any).execution_state;
+        executionState;
         break;
       default:
         break;
     }
   };
-
+/*
+  private _onReply = (message: KernelMessage.IShellMessage): void => {
+    if (this._future?.msg.header.msg_id !== message.parent_header.msg_id) {
+      return;
+    }
+    const messageType: KernelMessage.ShellMessageType = message.header.msg_type;
+    this._shellMessageHooks.forEach(hook => hook(message));
+    switch (messageType) {
+      case 'execute_reply':
+        const output: IOutput = {
+          output_type: 'display_data',
+          data: (message.content as IExecuteResult).data as IMimeBundle,
+          metadata: {},
+        };
+        this._outputs.push(message.content as IExecuteResult);
+        this._outputsChanged.emit(this._outputs);
+        this._model.add(output);
+        break;
+      default:
+        break;
+    }
+  };
+*/
   private _onReply = (message: KernelMessage.IExecuteReplyMsg): void => {
     if (this._future?.msg.header.msg_id !== message.parent_header.msg_id) {
       return;
@@ -184,7 +220,6 @@ export class KernelExecutor {
       }
       return;
     }
-
     // API responses that contain a pager are special cased and their type
     // is overridden from 'execute_reply' to 'display_data' in order to
     // render output.
@@ -204,11 +239,10 @@ export class KernelExecutor {
         this._modelChanged.emit(this._model);
       }
     }
+  };
 
-    // Wait for future to be done before resolving
-    this._future.done.then(() => {
-      this._executed.resolve(this._model);
-    });
+  registerIOPubMessageHook = (msg: IOPubMessageHook) => {
+    this._future?.registerMessageHook(msg);
   };
 
   /**
@@ -230,32 +264,33 @@ export class KernelExecutor {
   }
 
   /**
-   * Kernel outputs emitted
+   * Kernel outputs emitted.
    */
-  get outputs() {
+  get outputs(): IOutput[] {
     return this._outputs;
   }
 
   /**
-   * Signal emitted when the outputs list changes
-   */
-  get outputsChanged(): ISignal<KernelExecutor, IOutput[]> {
-    return this._outputsChanged;
-  }
-
-  /**
-   * Kernel outputs wrapped in a model
+   * Kernel outputs wrapped in a model.
    */
   get model(): IOutputAreaModel {
     return this._model;
   }
 
   /**
-   * Signal emitted when the outputs model changes
+   * Signal emitted when the outputs list changes.
+   */
+  get outputsChanged(): ISignal<KernelExecutor, IOutput[]> {0
+    return this._outputsChanged;
+  }
+
+  /**
+   * Signal emitted when the outputs model changes.
    */
   get modelChanged(): ISignal<KernelExecutor, IOutputAreaModel> {
     return this._modelChanged;
   }
+
 }
 
 export default KernelExecutor;
