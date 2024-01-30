@@ -81,9 +81,9 @@ export class KernelExecutor {
     {
       iopubMessageHooks = [],
       shellMessageHooks = [],
-      silent,
-      stopOnError,
-      storeHistory,
+      silent = false,
+      stopOnError = false,
+      storeHistory = true,
     }: {
       iopubMessageHooks?: IOPubMessageHook[];
       shellMessageHooks?: ShellMessageHook[];
@@ -96,9 +96,9 @@ export class KernelExecutor {
     this._future = this._kernelConnection.requestExecute({
       code,
       allow_stdin: false,
-//      silent,
-//      stop_on_error: stopOnError,
-//      store_history: storeHistory,
+      silent,
+      stop_on_error: stopOnError,
+      store_history: storeHistory,
     });
     iopubMessageHooks.forEach(hook => this._future!.registerMessageHook(hook));
     this._future.onIOPub = this._onIOPub;
@@ -173,29 +173,7 @@ export class KernelExecutor {
         break;
     }
   };
-/*
-  private _onReply = (message: KernelMessage.IShellMessage): void => {
-    if (this._future?.msg.header.msg_id !== message.parent_header.msg_id) {
-      return;
-    }
-    const messageType: KernelMessage.ShellMessageType = message.header.msg_type;
-    this._shellMessageHooks.forEach(hook => hook(message));
-    switch (messageType) {
-      case 'execute_reply':
-        const output: IOutput = {
-          output_type: 'display_data',
-          data: (message.content as IExecuteResult).data as IMimeBundle,
-          metadata: {},
-        };
-        this._outputs.push(message.content as IExecuteResult);
-        this._outputsChanged.emit(this._outputs);
-        this._model.add(output);
-        break;
-      default:
-        break;
-    }
-  };
-*/
+
   private _onReply = (message: KernelMessage.IExecuteReplyMsg): void => {
     if (this._future?.msg.header.msg_id !== message.parent_header.msg_id) {
       return;
