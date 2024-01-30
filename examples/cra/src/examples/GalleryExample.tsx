@@ -5,7 +5,7 @@
  */
 
 import { useState, useMemo } from 'react';
-import { UnderlineNav } from '@primer/react/drafts';
+import { UnderlineNav } from '@primer/react';
 import { Box } from '@primer/react';
 import {
   useJupyter, Cell, Commands, Console, Dialog, FileBrowser, FileManagerJupyterLab,
