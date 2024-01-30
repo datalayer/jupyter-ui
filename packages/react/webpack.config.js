@@ -30,11 +30,11 @@ const ENTRY =
   // './src/examples/JupyterLabApp';
   // './src/examples/JupyterLabHeadlessApp';
   // './src/examples/Kernels';
-  './src/examples/KernelExecutor';
+  // './src/examples/KernelExecutor';
   // './src/examples/KernelExecResult';
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
-  // './src/examples/Notebook';
+  './src/examples/Notebook';
   // './src/examples/NotebookUrl';
   // './src/examples/NotebookColorMode';
   // './src/examples/NotebookKernelChange';

@@ -2,6 +2,7 @@
 #
 # MIT License
 
+import glob
 import os
 
 from subprocess import check_call
@@ -23,10 +24,11 @@ def build_javascript():
         ['yarn', 'build:webpack', '--mode=production'],
         cwd=here,
     )
-    shutil.copyfile(
-        './dist/main.jupyter-react.js',
-        './jupyter_react/static/main.jupyter-react.js'
-    )
+    for file in glob.glob(r'./dist/*.*'):
+        shutil.copy(
+            file,
+            './jupyter_react/static/'
+        )
 
 
 class JupyterBuildHook(BuildHookInterface):

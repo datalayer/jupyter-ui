@@ -57,7 +57,7 @@ __pycache__/
 .Python
 build/
 develop-eggs/
-dist/
+dist
 downloads/
 eggs/
 .eggs/
@@ -151,8 +151,7 @@ dmypy.json
 packages/*/content
 
 # Static
-**/static/*.js
-**/static/*.css
+**/static/*
 
 # Include
 !**/.*ignore
@@ -168,3 +167,4 @@ packages/*/content
 !.storybook
 !.vscode
 !.licenserc.yaml
+!static/README.md
