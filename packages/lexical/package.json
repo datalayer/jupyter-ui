@@ -61,7 +61,7 @@
     "@datalayer/primer-addons": "0.2.2",
     "@jupyterlab/application": "4.1.0-beta.0",
     "@jupyterlab/coreutils": "6.1.0-beta.0",
-    "@jupyterlab/services": "7.0.10",
+    "@jupyterlab/services": "7.1.0-beta.0",
     "@jupyterlab/settingregistry": "4.1.0-beta.0",
     "@lexical/react": "0.11.0",
     "katex": "0.16.1",
