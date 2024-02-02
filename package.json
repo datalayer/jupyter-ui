@@ -74,6 +74,12 @@
     "vercel": "21.3.3"
   },
   "resolutions": {
+    "@datalayer/jupyter-docusaurus-plugin": "workspace:^",
+    "@datalayer/jupyter-lexical": "workspace:^",
+    "@datalayer/jupyter-lexical-example": "workspace:^",
+    "@datalayer/jupyter-react": "workspace:^",
+    "@datalayer/jupyter-slate-example": "workspace:^",
+    "@datalayer/jupyter-ui-docs": "workspace:^",
     "@jupyter-widgets/base": "6.0.6",
     "@jupyter-widgets/controls": "5.0.7",
     "@jupyter-widgets/html-manager": "1.0.9",
