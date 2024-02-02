@@ -43,9 +43,6 @@
     "prosemirror-view": "1.30.2",
     "redux": "4.2.1",
     "redux-observable": "1.2.0",
-    "rxjs": "6.5.5",
-    "typescript-fsa": "3.0.0",
-    "typescript-fsa-reducers": "1.2.1",
     "uuid": "8.3.2"
   },
   "devDependencies": {
@@ -74,7 +71,7 @@
     "stream-browserify": "2.0.2",
     "style-loader": "2.0.0",
     "svg-url-loader": "7.1.1",
-    "typedoc": "0.20.37",
+    "typedoc": "0.25.7",
     "typescript": "5.0.3",
     "url-loader": "~3.0.0",
     "watch": "~1.0.2",
