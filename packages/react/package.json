@@ -149,6 +149,8 @@
     "redux-observable": "1.2.0",
     "rxjs": "6.6.0",
     "styled-components": "5.3.10",
+    "typescript-fsa": "2.5.0",
+    "typescript-fsa-reducers": "1.2.2",
     "usehooks-ts": "2.9.1",
     "utf-8-validate": "6.0.3",
     "wildcard-match": "5.1.2",
