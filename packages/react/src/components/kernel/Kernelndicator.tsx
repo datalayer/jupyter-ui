@@ -7,23 +7,34 @@
 import { useState, useEffect, ReactElement } from 'react';
 import { Tooltip } from '@primer/react';
 import {
-  CircleYellowIcon,
-  CircleGreenIcon,
   CircleBlackIcon,
   CircleBrownIcon,
+  CircleGreenIcon,
   CircleHollowRedIcon,
   CircleOrangeIcon,
   CirclePurpleIcon,
   CircleRedIcon,
   CircleWhiteIcon,
+  CircleYellowIcon,
   CircledMIcon,
-  SquareWhiteLargeIcon,
+  SquareWhiteLargeIcon
 } from '@datalayer/icons-react';
-import Kernel from '../../jupyter/kernel/Kernel';
 import { KernelMessage } from '@jupyterlab/services';
-import { ConnectionStatus } from '@jupyterlab/services/lib/kernel/kernel';
+import { ConnectionStatus, IKernelConnection } from '@jupyterlab/services/lib/kernel/kernel';
+import { Environment } from '../environment/Environment';
 
-type KernelState = string;
+type KernelState = 
+  'connecting' |
+  'connected-unknown' |
+  'connected-starting' |
+  'connected-idle' |
+  'connected-busy' |
+  'connected-terminating' |
+  'connected-restarting' |
+  'connected-autorestarting' |
+  'connected-dead' |
+  'disconnecting' | 
+  'undefined';
 
 /**
  * The valid kernel connection states.
@@ -58,41 +69,42 @@ export const KERNEL_STATES: Map<KernelState, ReactElement> = new Map([
 ]);
 
 type Props = {
-  kernel?: Kernel;
+  kernel?: IKernelConnection | null;
+  env?: Environment;
 };
 
-export const KernelStatus = (props: Props) => {
-  const { kernel } = props;
+export const KernelIndicator = (props: Props) => {
+  const { kernel, env } = props;
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>();
   const [status, setStatus] = useState<KernelMessage.Status>();
   const toState = (
     connectionStatus: ConnectionStatus,
     status: KernelMessage.Status
-  ) => {
+  ): KernelState => {
     if (
       connectionStatus === 'connecting' ||
       connectionStatus === 'disconnected'
     ) {
-      return connectionStatus;
+      return connectionStatus as KernelState;
     }
-    return connectionStatus + '-' + status;
+    return connectionStatus + '-' + status as KernelState;
   };
   useEffect(() => {
-    if (kernel && kernel.connection) {
-      setConnectionStatus(kernel.connection?.connectionStatus);
-      setStatus(kernel.connection?.status);
-      kernel.connection.connectionStatusChanged.connect(
+    if (kernel) {
+      setConnectionStatus(kernel?.connectionStatus);
+      setStatus(kernel?.status);
+      kernel.connectionStatusChanged.connect(
         (_, connectionStatus) => {
           setConnectionStatus(connectionStatus);
         }
       );
-      kernel.connection.statusChanged.connect((_, status) => {
+      kernel.statusChanged.connect((_, status) => {
         setStatus(status);
       });
     }
-  }, [kernel, kernel?.connection]);
+  }, [kernel]);
   return connectionStatus && status ? (
-    <Tooltip aria-label={`${connectionStatus} - ${status}`}>
+    <Tooltip aria-label={`${connectionStatus} - ${status} - ${env?.display_name}`}>
       {KERNEL_STATES.get(toState(connectionStatus, status))}
     </Tooltip>
   ) : (
@@ -102,4 +114,4 @@ export const KernelStatus = (props: Props) => {
   );
 };
 
-export default KernelStatus;
+export default KernelIndicator;

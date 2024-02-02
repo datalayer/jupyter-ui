@@ -14,7 +14,7 @@ import { useJupyter } from '../jupyter/JupyterContext';
 import {
   KERNEL_STATES,
   KernelProgressBar,
-  KernelStatus,
+  KernelIndicator,
   KernelActionMenu,
   KernelSelector,
   KernelUsage,
@@ -116,7 +116,7 @@ const KernelComponents = () => {
               </Text>
             </Box>
             <Box ml={3}>
-              <KernelStatus kernel={defaultKernel} />
+              <KernelIndicator kernel={defaultKernel?.connection} />
             </Box>
             <Box ml={3}>
               {Array.from(KERNEL_STATES.entries()).map(entry => {

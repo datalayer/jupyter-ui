@@ -11,6 +11,6 @@ export * from './KernelLauncher';
 export * from './KernelProgressBar';
 export * from './Kernels';
 export * from './KernelSelector';
-export * from './KernelStatus';
+export * from './Kernelndicator';
 export * from './KernelUsage';
 export * from './KernelVariables';
