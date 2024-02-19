@@ -45,6 +45,7 @@ const ENTRY =
   // './src/examples/NotebookTheme';
 // './src/examples/ObservableHQ';
 // './src/examples/Outputs';
+// './src/examples/Plotly';
 // './src/examples/RunningSessions';
 // './src/examples/Terminal';
 // './src/examples/Viewer';

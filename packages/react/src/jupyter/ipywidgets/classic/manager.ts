@@ -27,7 +27,6 @@ import {
 } from '../../../components/notebook/Notebook';
 import { SemVerCache } from '../semvercache';
 import { WIDGET_STATE_MIMETYPE } from './../mimetypes';
-import { MODULE_NAME, MODULE_VERSION } from '../plotly/Version';
 
 import * as base from '@jupyter-widgets/base';
 import * as controls from '@jupyter-widgets/controls';
@@ -61,11 +60,6 @@ export class ClassicWidgetManager extends HTMLManager {
       name: '@jupyter-widgets/controls',
       version: controls.JUPYTER_CONTROLS_VERSION,
       exports: () => import('@jupyter-widgets/controls') as any,
-    });
-    this.register({
-      name: MODULE_NAME,
-      version: MODULE_VERSION,
-      exports: () => import('../plotly/index'),
     });
   }
 
