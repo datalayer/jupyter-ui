@@ -85,39 +85,3 @@ jobs:
           package-type: 'npm'
           min-versions-to-keep: 3
           delete-only-pre-release-versions: "true"
-      - uses: actions/delete-package-versions@v4
-        with:
-          package-name: 'jupyterlite-ipykernel'
-          package-type: 'npm'
-          min-versions-to-keep: 3
-          delete-only-pre-release-versions: "true"
-      - uses: actions/delete-package-versions@v4
-        with:
-          package-name: 'jupyterlite-ipykernel-extension'
-          package-type: 'npm'
-          min-versions-to-keep: 3
-          delete-only-pre-release-versions: "true"
-      - uses: actions/delete-package-versions@v4
-        with:
-          package-name: 'jupyterlite-kernel'
-          package-type: 'npm'
-          min-versions-to-keep: 3
-          delete-only-pre-release-versions: "true"
-      - uses: actions/delete-package-versions@v4
-        with:
-          package-name: 'jupyterlite-server'
-          package-type: 'npm'
-          min-versions-to-keep: 3
-          delete-only-pre-release-versions: "true"
-      - uses: actions/delete-package-versions@v4
-        with:
-          package-name: 'jupyterlite-server-extension'
-          package-type: 'npm'
-          min-versions-to-keep: 3
-          delete-only-pre-release-versions: "true"
-      - uses: actions/delete-package-versions@v4
-        with:
-          package-name: 'jupyterlite-session'
-          package-type: 'npm'
-          min-versions-to-keep: 3
-          delete-only-pre-release-versions: "true"
