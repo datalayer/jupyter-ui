@@ -218,7 +218,13 @@ export const Notebook = (props: INotebookProps) => {
   }, [nbformat]);
   return (
     <div
-      style={{ height, width: '100%', position: 'relative' }}
+      style={{
+        height: '96vh',
+        width: '100%',
+        position: 'relative',
+        backgroundColor: '#161616',
+        marginTop: -2
+      }}
       id="dla-Jupyter-Notebook"
     >
       {Toolbar && <Toolbar notebookId={props.uid} />}
@@ -226,8 +232,7 @@ export const Notebook = (props: INotebookProps) => {
         className="dla-Box-Notebook"
         sx={{
           '& .dla-Jupyter-Notebook': {
-            height,
-            maxHeight,
+            height: '95vh',
             width: '100%',
             overflowY: 'hidden',
           },
@@ -238,10 +243,12 @@ export const Notebook = (props: INotebookProps) => {
             flex: '1 1 auto !important',
             height: '100%',
             overflowY: 'scroll',
+            backgroundColor: '#161616'
           },
           '& .jp-NotebookPanel': {
             height: '100% !important',
             width: '100% !important',
+            backgroundColor: '#161616'
           },
           '& .jp-Toolbar': {
             display: 'none',
@@ -258,23 +265,37 @@ export const Notebook = (props: INotebookProps) => {
           },
           '& .jp-Cell': {
             width: `calc(100% - ${props.cellSidebarMargin}px)`,
+            borderRadius: 8,
+            marginLeft: "-5px",
+            backgroundColor: '#161616',
           },
           '& .jp-Notebook-footer': {
             width: `calc(100% - ${props.cellSidebarMargin + 82}px)`,
           },
           '& .jp-Cell .jp-CellHeader': {
             position: 'absolute',
-            top: '-5px',
+            top: '0px',
             left: `${props.cellSidebarMargin + 10}px`,
             height: 'auto',
+            borderRadius: 8,
+            backgroundColor: '#161616',
           },
           '& .jp-Cell .dla-CellHeader-Container': {
-            padding: '4px 8px',
+            padding: '4px 18px',
             width: `${props.cellSidebarMargin + 10}px`,
             marginLeft: 'auto',
+            backgroundColor: '#161616',
+            borderRadius: 8,
+            borderColor: 'rgba(255,255,255,0.01)',
+            borderWidth: 1,
           },
           '& .jp-CodeMirrorEditor': {
             cursor: 'text !important',
+            backgroundColor: '#161616',
+            borderRadius: 8,
+            borderColor: 'rgba(255,255,255,0.09)',
+            borderWidth: 1,
+            padding: 1,
           },
           '.dla-Box-Notebook': {
             position: 'relative',
