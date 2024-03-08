@@ -26,6 +26,8 @@ import {
   notebookReducer,
 } from './NotebookRedux';
 
+import {NotebookToolbarAutoSave} from '../../examples/toolbars/NotebookToolbarAutoSave'
+
 
 import './Notebook.css';
 
@@ -231,7 +233,7 @@ export const Notebook = (props: INotebookProps) => {
       }}
       id="dla-Jupyter-Notebook"
     >
-      {Toolbar && <Toolbar notebookId={props.uid} />}
+      <NotebookToolbarAutoSave notebookId={props.uid} />
       <Box
         className="dla-Box-Notebook"
         sx={{
