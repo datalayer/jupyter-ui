@@ -133,6 +133,7 @@ export enum ActionType {
   SET_PORTALS = 'notebook/SET_PORTALS',
   SET_PORTAL_DISPLAY = 'notebook/SET_PORTAL_DISPLAY',
   UPDATE = 'notebook/UPDATE',
+  CODE_GENERATE = 'notebook/CODE_GENERATE'
 }
 
 const actionCreator = actionCreatorFactory('jupyterNotebook');
@@ -209,6 +210,7 @@ export const notebookActions = {
   changeCellType: actionCreator.async<CellMutation, CellMutation>(
     ActionType.CHANGE_CELL_TYPE
   ),
+  codeGenerate: actionCreator.async<CellMutation, CellMutation>(ActionType.CODE_GENERATE)
 };
 
 /* Epics */
@@ -333,23 +335,54 @@ const changeCellTypeEpic: Epic<
     ignoreElements()
   );
 
-const saveEpic: Epic<
+  const saveEpic: Epic<
   Action<Success<DateMutation, DateMutation>>,
   Action<Success<DateMutation, DateMutation>>,
   IJupyterReactState
 > = (action$, state$) =>
-  action$.pipe(
-    ofAction(notebookActions.save.started),
-    map(action => {
-      state$.value.notebook.notebooks
-        .get(action.payload.uid)
-        ?.adapter?.commands.execute(cmdIds.save);
-      return notebookActions.save.done({
-        params: action.payload,
-        result: action.payload,
-      });
-    })
-  );
+    action$.pipe(
+      ofAction(notebookActions.save.started),
+      map(action => {
+        // Retrieve the notebook from the state using the unique identifier (uid)
+
+        const notebook = state$.value.notebook.notebooks.get(action.payload.uid);
+
+        // Get the JSON representation of the notebook model
+        const notebookJSON = notebook?.model?.toJSON();
+
+        // Log the JSON representation of the saved notebook
+        console.log('JSON of the saved notebook:', notebookJSON);
+
+        // Call saveNotebook function passing the notebookJSON, profile, and selectedNotebook
+        notebook?.adapter?.saveNotebook(notebookJSON);
+
+        // Execute the save command
+        notebook?.adapter?.commands.execute(cmdIds.save);
+
+        // Return the action indicating that the save operation is done
+        return notebookActions.save.done({
+          params: action.payload,
+          result: action.payload,
+        });
+      })
+    );
+
+  const codeGenerateEpic: Epic<
+    Action<Success<CellMutation, CellMutation>>,
+    Action<Success<CellMutation, CellMutation>>,
+    IJupyterReactState
+  > = (action$, state$) =>
+      action$.pipe(
+        ofAction(notebookActions.codeGenerate.started),
+        tap(action => {
+          const source = action.payload;
+          console.log('Action Payload Source:', source); // Log the source
+          state$.value.notebook.notebooks
+            .get(action.payload.uid)
+            ?.adapter?.generateCode(source);
+        }),
+        ignoreElements()
+      );
 
 export const notebookEpics = combineEpics(
   runEpic,
@@ -359,7 +392,8 @@ export const notebookEpics = combineEpics(
   insertBelowEpic,
   deleteEpic,
   changeCellTypeEpic,
-  saveEpic
+  saveEpic,
+  codeGenerateEpic
 );
 
 /* Reducers */

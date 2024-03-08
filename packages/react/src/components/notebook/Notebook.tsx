@@ -73,6 +73,7 @@ export type INotebookProps = {
   url?: string;
   CellSidebar?: (props: CellSidebarProps) => JSX.Element;
   Toolbar?: (props: any) => JSX.Element;
+  onSaveNotebook: (notebookId: string, notebookJSON: any) => Promise<void>;
 };
 
 /**
@@ -90,10 +91,11 @@ export const Notebook = (props: INotebookProps) => {
     kernel: propsKernel,
     readOnly,
     nbgrader,
-    height,
-    maxHeight,
+    // height,
+    // maxHeight,
     nbformat,
     Toolbar,
+    onSaveNotebook
   } = props;
   const { lite } = useJupyter();
   const [uid] = useState(props.uid || newUuid());
@@ -109,6 +111,7 @@ export const Notebook = (props: INotebookProps) => {
             ...props,
             kernel,
             uid,
+            onSaveNotebook
           },
           injectableStore,
           serviceManager,

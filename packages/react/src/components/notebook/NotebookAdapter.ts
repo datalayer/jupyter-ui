@@ -87,12 +87,13 @@ export class NotebookAdapter {
   private _tracker?: NotebookTracker;
   private _uid: string;
   private _CellSidebar?: (props: any) => JSX.Element;
+  private _saveNotebook: (notebookId: string, notebookJSON: any) => Promise<void>;
 
   constructor(
     props: INotebookProps,
     store: any,
     serviceManager: ServiceManager,
-    lite?: Lite
+    lite?: Lite,
   ) {
 //    this._bundledIPyWidgets = props.bundledIPyWidgets;
 //    this._externalIPyWidgets = props.externalIPyWidgets;
@@ -104,6 +105,7 @@ export class NotebookAdapter {
     this._readOnly = props.readOnly;
     this._renderers = props.renderers;
     this._uid = props.uid;
+    this._saveNotebook = props.onSaveNotebook;
 
     this._CellSidebar = props.CellSidebar;
 
@@ -583,6 +585,48 @@ export class NotebookAdapter {
     notebook.activeCellIndex = newIndex;
     notebook.deselectAll();
   };
+
+  generateCode = async (source: string) => {
+    const notebook = this._notebookPanel!.content!;
+    const model = this._notebookPanel!.context.model!;
+    const newIndex = notebook.activeCell ? notebook.activeCellIndex : 0;
+    const selectedWidget = notebook.widgets.find(child => {
+      return notebook.isSelectedOrActive(child)
+    })
+    // Insert a new code cell with empty source
+    const newCell = model.sharedModel.insertCell(newIndex + 1, {
+      cell_type: 'code',
+      source: '', // Empty source initially
+      metadata: {
+        // This is an empty cell created by the user, thus is trusted
+        trusted: true,
+      }
+    });
+    const prompt = selectedWidget?.model.toJSON().source
+    const response = await fetch('/api/codeGenerate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ input: prompt })
+    });
+
+    // Parse the JSON response
+    const { content } = await response.json();
+
+    // Split the response content into lines
+    const lines = content.split('\n');
+
+    // Update the new cell with the response content
+    for (const line of lines) {
+      newCell.source += line + '\n';
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+  }
+
+  saveNotebook = async (notebookJSON: any) => {
+    await this._saveNotebook(this._uid, notebookJSON)
+  }
 
   insertBelow = (source?: string): void => {
     const notebook = this._notebookPanel!.content!;

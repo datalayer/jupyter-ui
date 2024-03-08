@@ -13,7 +13,7 @@ import type { JupyterLiteServerPlugin } from '@jupyterlite/server';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import defaultInjectableStore, { InjectableStore } from '../state/redux/Store';
-import { createLiteServer } from './../jupyter/lite/LiteServer';
+// import { createLiteServer } from './../jupyter/lite/LiteServer';
 import { getJupyterServerHttpUrl, getJupyterToken } from './JupyterConfig';
 import { requestAPI } from './JupyterHandlers';
 import Kernel from './kernel/Kernel';
@@ -241,37 +241,37 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
   // Create a service manager
   useEffect(() => {
     if (lite) {
-      createLiteServer().then(async liteServer => {
-        // Load the browser kernel
-        const mod =
-          typeof lite === 'boolean'
-            ? await import('@jupyterlite/pyodide-kernel-extension')
-            : await lite;
-        // Load the module manually to get the list of plugin IDs
-        let data = mod.default;
-        // Handle commonjs exports.
-        if (!Object.prototype.hasOwnProperty.call(mod, '__esModule')) {
-          data = mod as any;
-        }
-        if (!Array.isArray(data)) {
-          data = [data];
-        }
-        const pluginIDs = data.map(item => {
-          try {
-            liteServer.registerPlugin(item);
-            return item.id;
-          } catch (error) {
-            console.error(error);
-            return null;
-          }
-        });
+      // createLiteServer().then(async liteServer => {
+      //   // Load the browser kernel
+      //   const mod =
+      //     typeof lite === 'boolean'
+      //       ? await import('@jupyterlite/pyodide-kernel-extension')
+      //       : await lite;
+      //   // Load the module manually to get the list of plugin IDs
+      //   let data = mod.default;
+      //   // Handle commonjs exports.
+      //   if (!Object.prototype.hasOwnProperty.call(mod, '__esModule')) {
+      //     data = mod as any;
+      //   }
+      //   if (!Array.isArray(data)) {
+      //     data = [data];
+      //   }
+      //   const pluginIDs = data.map(item => {
+      //     try {
+      //       liteServer.registerPlugin(item);
+      //       return item.id;
+      //     } catch (error) {
+      //       console.error(error);
+      //       return null;
+      //     }
+      //   });
 
-        // Activate the loaded plugins
-        await Promise.all(
-          pluginIDs.filter(id => id).map(id => liteServer.activatePlugin(id!))
-        );
-        setServiceManager(liteServer.serviceManager);
-      });
+      //   // Activate the loaded plugins
+      //   await Promise.all(
+      //     pluginIDs.filter(id => id).map(id => liteServer.activatePlugin(id!))
+      //   );
+      //   setServiceManager(liteServer.serviceManager);
+      // });
     } else {
       const serverSettings = createServerSettings(baseUrl ?? '', wsUrl ?? '');
       ensureJupyterAuth(serverSettings).then(isAuth => {

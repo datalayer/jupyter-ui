@@ -58,6 +58,7 @@ export const cmdIds = {
   startSearch: 'documentsearch:start-search',
   switchKernel: 'notebook:switch-kernel',
   undo: 'notebook-cells:undo',
+  generateCode: 'notebook:generate-code'
 };
 
 export const NotebookCommands = (
@@ -68,6 +69,10 @@ export const NotebookCommands = (
   path?: string
 ): void => {
   // Add commands.
+  commandRegistry.addCommand(cmdIds.generateCode, {
+    label: 'Generate',
+    execute: () => completerHandler.invoke(),
+  });
   commandRegistry.addCommand(cmdIds.invoke, {
     label: 'Completer: Invoke',
     execute: () => completerHandler.invoke(),
@@ -92,12 +97,10 @@ export const NotebookCommands = (
       }
     },
   });
-  if (path) {
-    commandRegistry.addCommand(cmdIds.save, {
-      label: 'Save',
-      execute: () => notebookPanel.context.save(),
-    });
-  }
+  commandRegistry.addCommand(cmdIds.save, {
+    label: 'Save',
+    execute: () => notebookPanel.context.save(),
+  });
   let searchInstance: SearchDocumentView | undefined;
   commandRegistry.addCommand(cmdIds.startSearch, {
     label: 'Find…',
