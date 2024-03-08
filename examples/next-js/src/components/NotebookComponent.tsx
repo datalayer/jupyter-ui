@@ -6,7 +6,8 @@
 
 'use client'
 
-import { Jupyter, Notebook, CellSidebar } from '@datalayer/jupyter-react';
+import {Jupyter, Notebook, CellSidebar} from "../../../../packages/react"
+// import {NotebookToolbarAutoSave} from '../../../../packages/react/src/examples/toolbars/NotebookToolbarAutoSave'
 
 type NotebookComponentProps = {
   colorMode: 'light' | 'dark';
@@ -27,7 +28,8 @@ export const NotebookComponent = (props: NotebookComponentProps) => {
           path="ipywidgets.ipynb"
           uid="notebook-nextjs-1"
           cellSidebarMargin={120}
-          CellSidebar={CellSidebar}
+          // CellSidebar={CellSidebar}
+          // Toolbar={NotebookToolbarAutoSave}
         />
     </Jupyter>
   </>

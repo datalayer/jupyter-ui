@@ -20,6 +20,7 @@ const nextConfig = {
       delete config.module.generator.asset
     }
     */
+
     config.module.rules.push(
       // TODO Fix this @see https://github.com/datalayer/jupyter-ui/issues/104#issuecomment-1906371673
       // We must escape the JupyterLab theme style sheets to apply specific rules
@@ -37,6 +38,13 @@ const nextConfig = {
       },
       */
       // Ship the JupyterLite service worker.
+      {
+        test: /\.whl$/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'pypi/[name][ext][query]',
+        },
+      },
       {
         resourceQuery: /text/,
         type: 'asset/resource',
@@ -59,7 +67,9 @@ const nextConfig = {
           filename: 'schema/[name][ext][query]',
         },
       },
+
     )
+    config.resolve.extensions.push('.ts', '.tsx');
     return config
   },
 }

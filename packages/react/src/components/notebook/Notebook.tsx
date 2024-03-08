@@ -26,6 +26,7 @@ import {
   notebookReducer,
 } from './NotebookRedux';
 
+
 import './Notebook.css';
 
 export type ExternalIPyWidgets = {
