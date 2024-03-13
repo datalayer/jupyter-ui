@@ -572,7 +572,7 @@ export class NotebookAdapter {
     const newIndex = notebook.activeCell ? notebook.activeCellIndex : 0;
     model.sharedModel.insertCell(newIndex, {
       cell_type: notebook.notebookConfig.defaultCell,
-      source,
+      source:  notebook.notebookConfig.defaultCell === "raw" ? "#PROMPT: ": "",
       metadata:
         notebook.notebookConfig.defaultCell === 'code'
           ? {
@@ -634,7 +634,7 @@ export class NotebookAdapter {
     const newIndex = notebook.activeCell ? notebook.activeCellIndex + 1 : 0;
     model.sharedModel.insertCell(newIndex, {
       cell_type: notebook.notebookConfig.defaultCell,
-      source,
+      source:  notebook.notebookConfig.defaultCell === "raw" ? "#PROMPT: ": "",
       metadata:
         notebook.notebookConfig.defaultCell === 'code'
           ? {
