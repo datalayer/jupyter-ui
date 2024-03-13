@@ -5,13 +5,13 @@
  */
 
 import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Box, Button, ButtonGroup, IconButton } from '@primer/react';
+import { useDispatch } from 'react-redux';
+import { Box, Button, ButtonGroup } from '@primer/react';
 import {
   StopIcon,
   TrashIcon,
 } from '@primer/octicons-react';
-import { IJupyterReactState } from '../../state/redux/State';
+
 import { cmdIds } from '../../components/notebook/NotebookCommands';
 import {
   notebookActions,
@@ -30,22 +30,17 @@ import AppBar from "@mui/material/AppBar";
 
 export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
   const { notebookId } = props;
-  const [autoSave, setAutoSave] = useState(false);
   const [addType, setAddType] = useState('code');
   const dispatch = useDispatch();
   const notebook = selectNotebook(notebookId);
   const saveRequest = selectSaveRequest(notebookId);
-  const notebookstate = useSelector((state: IJupyterReactState) => {
-    return state.notebook;
-  });
+  // const notebookstate = useSelector((state: IJupyterReactState) => {
+  //   return state.notebook;
+  // });
   useEffect(() => {
     notebook?.adapter?.commands.execute(cmdIds.save);
   }, [saveRequest]);
-  useEffect(() => {
-    if (autoSave) {
-      notebook?.adapter?.commands.execute(cmdIds.save);
-    }
-  }, [notebookstate]);
+
   const handleChangeCellType = (newType: string) => {
     setAddType(newType);
   };
@@ -74,10 +69,10 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
         paddingLeft: '4vw',
       }}
     >
-      <IconButton
+      <Button
         style={{alignItems: 'center', justifyContent: 'center'}}
         variant="invisible"
-        size="medium"
+        size="small"
         aria-label="Save Notebook"
         title="Save Notebook"
         sx={{
@@ -85,6 +80,7 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
             backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
           },
           transition: 'background-color 0.3s', // Add transition for smoother effect
+          color: 'rgba(255,255,255,0.3)'
         }}
         onClick={e => {
           e.preventDefault();
@@ -96,12 +92,12 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
           );
         }} 
       >
-        <IoMdSave size={20} style={{marginBottom: -2}}/>
-      </IconButton>
+        <IoMdSave size={20} style={{marginBottom: -4}}  />
+      </Button>
       <Box sx={{width: 0.1, height: 22, backgroundColor: 'rgba(255,255,255,0.1)', marginX: 3}}/>
-      <IconButton
+      <Button
         variant="invisible"
-        size="medium"
+        size="small"
         aria-label="Insert cell"
         title="Insert cell"
         sx={{
@@ -109,6 +105,7 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
             backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
           },
           transition: 'background-color 0.3s', // Add transition for smoother effect
+          color: 'rgba(255,255,255,0.3)'
         }}
         onClick={e => {
           e.preventDefault();
@@ -121,11 +118,11 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
         }}
         
       >
-        <MdOutlineAdd size={22} style={{marginBottom: -2}}/>
-      </IconButton>
-       <IconButton
+        <MdOutlineAdd size={22} style={{marginBottom: -4}}/>
+      </Button>
+       <Button
         variant="invisible"
-        size="medium"
+        size="small"
         aria-label="Delete"
         title="Delete"
         sx={{
@@ -133,6 +130,7 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
             backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
           },
           transition: 'background-color 0.3s', // Add transition for smoother effect
+          color: 'rgba(255,255,255,0.3)'
         }}
         onClick={e => {
           e.preventDefault();
@@ -141,10 +139,10 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
         icon={TrashIcon}
       />
       <Box sx={{width: 0.1, height: 22, backgroundColor: 'rgba(255,255,255,0.1)', marginX: 3}}/>
-      <IconButton
+      <Button
         style={{alignItems: 'center', justifyContent: 'center'}}
         variant="invisible"
-        size="medium"
+        size="small"
         aria-label="Run cell"
         title="Run cell"
         sx={{
@@ -152,19 +150,20 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
             backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
           },
           transition: 'background-color 0.3s', // Add transition for smoother effect
+          color: 'rgba(255,255,255,0.3)'
         }}
         onClick={e => {
           e.preventDefault();
           dispatch(notebookActions.run.started(notebookId));
         }}
       >
-        <FaPlay size={14} />
-      </IconButton>
+        <FaPlay size={12} />
+      </Button>
       {notebook?.kernelStatus === 'idle' ? (
-        <IconButton
+        <Button
           style={{alignItems: 'center', justifyContent: 'center'}}
           variant="invisible"
-          size="medium"
+          size="small"
           aria-label="Run all cells"
           title="Run all cells"
           sx={{
@@ -172,6 +171,7 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
               backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
             },
             transition: 'background-color 0.3s', // Add transition for smoother effect
+            color: 'rgba(255,255,255,0.3)'
           }}
           onClick={e => {
             e.preventDefault();
@@ -180,9 +180,9 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
          
         >
           <FaPlayCircle size={16} style={{marginBottom: -2}}/>
-        </IconButton>
+        </Button>
       ) : (
-        <IconButton
+        <Button
           variant="invisible"
           size="small"
           aria-label="Interrupt"
@@ -191,6 +191,7 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
               backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
             },
             transition: 'background-color 0.3s', // Add transition for smoother effect
+            color: 'rgba(255,255,255,0.3)'
           }}
           onClick={e => {
             e.preventDefault();

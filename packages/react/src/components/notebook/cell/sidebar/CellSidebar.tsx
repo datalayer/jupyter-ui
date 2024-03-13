@@ -2,20 +2,11 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { PanelLayout } from '@lumino/widgets';
 import { ActionMenu, Button, Box } from '@primer/react';
-import {
-  ChevronRightIcon,
-  XIcon,
-  ChevronUpIcon,
-  ChevronDownIcon,
-  SquareIcon,
-  SyncIcon
-} from '@primer/octicons-react';
-import { MdOutlineAdd } from "react-icons/md";
 import { FaSyncAlt } from "react-icons/fa";
 import { FaTrash } from "react-icons/fa";
 import { GoTriangleDown } from "react-icons/go";
 import { GoTriangleUp } from "react-icons/go";
-import { FaPlay, FaPlayCircle  } from "react-icons/fa";
+import { FaPlay } from "react-icons/fa";
 import { FaWandMagicSparkles } from "react-icons/fa6";
 import { notebookActions, selectActiveCell } from '../../NotebookRedux';
 import { CellSidebarProps } from './CellSidebarWidget';
