@@ -97,7 +97,6 @@ export const Notebook = (props: INotebookProps) => {
     // height,
     // maxHeight,
     nbformat,
-    Toolbar,
     onSaveNotebook
   } = props;
   const { lite } = useJupyter();
@@ -225,11 +224,10 @@ export const Notebook = (props: INotebookProps) => {
   return (
     <div
       style={{
-        height: '96vh',
+        height: '100vh',
         width: '100%',
         position: 'relative',
         backgroundColor: '#161616',
-        marginTop: -2
       }}
       id="dla-Jupyter-Notebook"
     >
@@ -284,13 +282,13 @@ export const Notebook = (props: INotebookProps) => {
             left: `${props.cellSidebarMargin + 10}px`,
             height: 'auto',
             borderRadius: 8,
-            backgroundColor: '#161616',
+            // backgroundColor: '#161616',
           },
           '& .jp-Cell .dla-CellHeader-Container': {
             padding: '4px 18px',
             width: `${props.cellSidebarMargin + 10}px`,
             marginLeft: 'auto',
-            backgroundColor: '#161616',
+            // backgroundColor: '#161616',
             borderRadius: 8,
             borderColor: 'rgba(255,255,255,0.01)',
             borderWidth: 1,

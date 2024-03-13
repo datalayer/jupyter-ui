@@ -1,9 +1,3 @@
-/*
- * Copyright (c) 2021-2023 Datalayer, Inc.
- *
- * MIT License
- */
-
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { PanelLayout } from '@lumino/widgets';
@@ -14,12 +8,20 @@ import {
   ChevronUpIcon,
   ChevronDownIcon,
   SquareIcon,
+  SyncIcon
 } from '@primer/octicons-react';
+import { MdOutlineAdd } from "react-icons/md";
+import { FaSyncAlt } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa";
+import { GoTriangleDown } from "react-icons/go";
+import { GoTriangleUp } from "react-icons/go";
+import { FaPlay, FaPlayCircle  } from "react-icons/fa";
+import { FaWandMagicSparkles } from "react-icons/fa6";
 import { notebookActions, selectActiveCell } from '../../NotebookRedux';
 import { CellSidebarProps } from './CellSidebarWidget';
 import CellMetadataEditor from '../metadata/CellMetadataEditor';
-
 import { DATALAYER_CELL_HEADER_CLASS } from './CellSidebarWidget';
+import {Stack, Typography} from '@mui/material'
 
 export const CellSidebar = (props: CellSidebarProps) => {
   const { notebookId, cellId, nbgrader } = props;
@@ -52,24 +54,59 @@ export const CellSidebar = (props: CellSidebarProps) => {
         },
       }}
     >
-      <span style={{ display: 'flex' }}>
+
+      {activeCell.model.type === 'raw' ?  <span style={{ display: 'flex' }}>
         <Button
-          title="Run cell"
-          leadingVisual={ChevronRightIcon}
+          title="Generate"
           variant="invisible"
           size="small"
+          sx={{
+            '&:hover': {
+              backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
+            },
+            transition: 'background-color 0.3s', // Add transition for smoother effect
+          }}
+          onClick={e => {
+            e.preventDefault();
+            dispatch(notebookActions.codeGenerate.started({
+              uid: notebookId,
+              cellType: 'code',
+            }));
+          }}
+        >
+          <Stack spacing={1} direction="row" sx={{ alignItems: 'center' }}>
+            <FaWandMagicSparkles color="rgba(255, 255, 255, 0.5)" size={15} style={{ marginBottom: -2 }} />
+            <Typography sx={{ color: 'rgba(255, 255, 255, 0.5)' }} fontSize={13}>Generate</Typography>
+          </Stack>
+        </Button>
+      </span> : null}
+
+      {activeCell.model.type !== 'raw' ? <span style={{ display: 'flex' }}>
+        <Button
+          title="Run cell"
+          variant="invisible"
+          size="small"
+          sx={{
+            '&:hover': {
+              backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
+            },
+            transition: 'background-color 0.3s', // Add transition for smoother effect
+          }}
           onClick={(e: any) => {
             e.preventDefault();
             dispatch(notebookActions.run.started(notebookId));
           }}
         >
-          Run
+          <Stack spacing={1} direction="row" sx={{ alignItems: 'center', paddingLeft: 0.5}}>
+            <FaPlay size={8} color='rgba(255,255,255,0.3)' />
+            <Typography sx={{ color: 'rgba(255, 255, 255, 0.3)' }} fontSize={13}>Run</Typography>
+          </Stack>
         </Button>
-      </span>
+      </span> : null}
+      
       <span style={{ display: 'flex' }}>
         <Button
           title="Insert code cell above"
-          leadingVisual={ChevronUpIcon}
           variant="invisible"
           size="small"
           onClick={(e: any) => {
@@ -82,13 +119,15 @@ export const CellSidebar = (props: CellSidebarProps) => {
             );
           }}
         >
-          Code
+          <Stack spacing={1} direction="row" sx={{ alignItems: 'center' }}>
+            <GoTriangleUp size={16} color='rgba(255,255,255,0.3)' />
+            <Typography sx={{ color: 'rgba(255, 255, 255, 0.3)' }} fontSize={13}>Code</Typography>
+          </Stack>
         </Button>
       </span>
       <span style={{ display: 'flex' }}>
         <Button
           title="Insert markdown cell above"
-          leadingVisual={ChevronUpIcon}
           variant="invisible"
           size="small"
           onClick={(e: any) => {
@@ -101,14 +140,37 @@ export const CellSidebar = (props: CellSidebarProps) => {
             );
           }}
         >
-          Markdown
+          <Stack spacing={1} direction="row" sx={{ alignItems: 'center' }}>
+            <GoTriangleUp size={16} color='rgba(255,255,255,0.3)' />
+            <Typography sx={{ color: 'rgba(255, 255, 255, 0.3)' }} fontSize={13}>Markdown</Typography>
+          </Stack>
+        </Button>
+      </span>
+      <span style={{ display: 'flex' }}>
+        <Button
+          title="Insert prompt cell above"
+          variant="invisible"
+          size="small"
+          onClick={(e: any) => {
+            e.preventDefault();
+            dispatch(
+              notebookActions.insertAbove.started({
+                uid: notebookId,
+                cellType: 'raw',
+              })
+            );
+          }}
+        >
+          <Stack spacing={1} direction="row" sx={{ alignItems: 'center' }}>
+            <GoTriangleUp size={16} color='rgba(255,255,255,0.3)' />
+            <Typography sx={{ color: 'rgba(255, 255, 255, 0.3)' }} fontSize={13}>Prompt</Typography>
+          </Stack>
         </Button>
       </span>
       <span style={{ display: 'flex' }}>
         {activeCell.model.type === 'code' ? (
           <Button
-            title="Convert to markdow cell"
-            leadingVisual={SquareIcon}
+            title="Convert to markdown cell"
             variant="invisible"
             size="small"
             onClick={(e: any) => {
@@ -121,12 +183,14 @@ export const CellSidebar = (props: CellSidebarProps) => {
               );
             }}
           >
-            To Markdown
+            <Stack spacing={1} direction="row" sx={{ alignItems: 'center', paddingLeft: 0.3 }}>
+              <FaSyncAlt size={12} color='rgba(255,255,255,0.3)' />
+              <Typography sx={{ color: 'rgba(255, 255, 255, 0.3)' }} fontSize={13}>To Markdown</Typography>
+            </Stack>
           </Button>
         ) : (
           <Button
             title="Convert to code cell"
-            leadingVisual={SquareIcon}
             variant="invisible"
             size="small"
             onClick={(e: any) => {
@@ -139,33 +203,16 @@ export const CellSidebar = (props: CellSidebarProps) => {
               );
             }}
           >
-            To Code
+            <Stack spacing={1} direction="row" sx={{ alignItems: 'center', paddingLeft: 0.3 }}>
+              <FaSyncAlt size={12} color='rgba(255,255,255,0.3)' />
+              <Typography sx={{ color: 'rgba(255, 255, 255, 0.3)' }} fontSize={13}>To Code</Typography>
+            </Stack>
           </Button>
         )}
       </span>
       <span style={{ display: 'flex' }}>
         <Button
-          title="Insert markdown cell below"
-          leadingVisual={ChevronDownIcon}
-          variant="invisible"
-          size="small"
-          onClick={(e: any) => {
-            e.preventDefault();
-            dispatch(
-              notebookActions.insertBelow.started({
-                uid: notebookId,
-                cellType: 'markdown',
-              })
-            );
-          }}
-        >
-          Markdown
-        </Button>
-      </span>
-      <span style={{ display: 'flex' }}>
-        <Button
           title="Insert code cell below"
-          leadingVisual={ChevronDownIcon}
           variant="invisible"
           size="small"
           onClick={(e: any) => {
@@ -178,13 +225,57 @@ export const CellSidebar = (props: CellSidebarProps) => {
             );
           }}
         >
-          Code
+          <Stack spacing={1} direction="row" sx={{ alignItems: 'center' }}>
+            <GoTriangleDown size={16} color='rgba(255,255,255,0.3)' />
+            <Typography sx={{ color: 'rgba(255, 255, 255, 0.3)' }} fontSize={13}>Code</Typography>
+          </Stack>
+        </Button>
+      </span>
+      <span style={{ display: 'flex' }}>
+        <Button
+          title="Insert markdown cell below"
+          variant="invisible"
+          size="small"
+          onClick={(e: any) => {
+            e.preventDefault();
+            dispatch(
+              notebookActions.insertBelow.started({
+                uid: notebookId,
+                cellType: 'markdown',
+              })
+            );
+          }}
+        >
+          <Stack spacing={1} direction="row" sx={{ alignItems: 'center' }}>
+            <GoTriangleDown size={16} color='rgba(255,255,255,0.3)' />
+            <Typography sx={{ color: 'rgba(255, 255, 255, 0.3)' }} fontSize={13}>Markdown</Typography>
+          </Stack>
+        </Button>
+      </span>
+      <span style={{ display: 'flex' }}>
+        <Button
+          title="Insert prompt cell below"
+          variant="invisible"
+          size="small"
+          onClick={(e: any) => {
+            e.preventDefault();
+            dispatch(
+              notebookActions.insertAbove.started({
+                uid: notebookId,
+                cellType: 'raw',
+              })
+            );
+          }}
+        >
+          <Stack spacing={1} direction="row" sx={{ alignItems: 'center' }}>
+            <GoTriangleDown size={16} color='rgba(255,255,255,0.3)' />
+            <Typography sx={{ color: 'rgba(255, 255, 255, 0.3)' }} fontSize={13}>Prompt</Typography>
+          </Stack>
         </Button>
       </span>
       <span style={{ display: 'flex' }}>
         <Button
           title="Delete cell"
-          leadingVisual={XIcon}
           variant="invisible"
           size="small"
           onClick={(e: any) => {
@@ -192,7 +283,10 @@ export const CellSidebar = (props: CellSidebarProps) => {
             dispatch(notebookActions.delete.started(notebookId));
           }}
         >
-          Delete
+          <Stack spacing={1} direction="row" sx={{ alignItems: 'center', paddingLeft: 0.3 }}>
+            <FaTrash size={12} color='rgba(255,255,255,0.3)' />
+            <Typography sx={{ color: 'rgba(255, 255, 255, 0.3)' }} fontSize={13}>Delete</Typography>
+          </Stack>
         </Button>
       </span>
       {nbgrader && (

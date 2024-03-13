@@ -8,14 +8,9 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Box, Button, ButtonGroup, IconButton } from '@primer/react';
 import {
-  PlusIcon,
-  ChevronRightIcon,
   StopIcon,
-  ZapIcon,
   TrashIcon,
-  SyncIcon,
 } from '@primer/octicons-react';
-import { FastForwardIcon } from '@datalayer/icons-react';
 import { IJupyterReactState } from '../../state/redux/State';
 import { cmdIds } from '../../components/notebook/NotebookCommands';
 import {
@@ -23,6 +18,13 @@ import {
   selectNotebook,
   selectSaveRequest,
 } from '../../components/notebook/NotebookRedux';
+
+import { IoMdSave } from "react-icons/io";
+import { FaPlay, FaPlayCircle  } from "react-icons/fa";
+import { FaWandMagicSparkles } from "react-icons/fa6";
+import { MdOutlineAdd } from "react-icons/md";
+import { Stack, Typography } from '@mui/material';
+
 
 import AppBar from "@mui/material/AppBar";
 
@@ -52,7 +54,7 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
     position={'sticky'}
     sx={{
       top: 0,
-      height: 45,
+      height: 50,
       width: '100%',
       flexDirection: 'row',
       borderBottomWidth: 0.5,
@@ -63,20 +65,27 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
     }}
     elevation={2}
   >
-    <Box
-      flexGrow={1}
+    <Stack
+      direction="row"
+      spacing={0.5}
       style={{
+        alignItems: 'center',
         width: '50%',
         paddingLeft: '4vw',
-        gap: '0.75vw',
       }}
     >
       <IconButton
+        style={{alignItems: 'center', justifyContent: 'center'}}
         variant="invisible"
-        size="small"
-        color="primary"
-        aria-label="Save"
-        title="Save"
+        size="medium"
+        aria-label="Save Notebook"
+        title="Save Notebook"
+        sx={{
+          '&:hover': {
+            backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
+          },
+          transition: 'background-color 0.3s', // Add transition for smoother effect
+        }}
         onClick={e => {
           e.preventDefault();
           dispatch(
@@ -85,55 +94,104 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
               date: new Date(),
             })
           );
-        }}
-        icon={ZapIcon}
-      />
+        }} 
+      >
+        <IoMdSave size={20} style={{marginBottom: -2}}/>
+      </IconButton>
+      <Box sx={{width: 0.1, height: 22, backgroundColor: 'rgba(255,255,255,0.1)', marginX: 3}}/>
       <IconButton
         variant="invisible"
-        size="small"
-        color="secondary"
+        size="medium"
+        aria-label="Insert cell"
+        title="Insert cell"
+        sx={{
+          '&:hover': {
+            backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
+          },
+          transition: 'background-color 0.3s', // Add transition for smoother effect
+        }}
+        onClick={e => {
+          e.preventDefault();
+          dispatch(
+            notebookActions.insertBelow.started({
+              uid: notebookId,
+              cellType: addType,
+            })
+          );
+        }}
+        
+      >
+        <MdOutlineAdd size={22} style={{marginBottom: -2}}/>
+      </IconButton>
+       <IconButton
+        variant="invisible"
+        size="medium"
+        aria-label="Delete"
+        title="Delete"
+        sx={{
+          '&:hover': {
+            backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
+          },
+          transition: 'background-color 0.3s', // Add transition for smoother effect
+        }}
+        onClick={e => {
+          e.preventDefault();
+          dispatch(notebookActions.delete.started(notebookId));
+        }}
+        icon={TrashIcon}
+      />
+      <Box sx={{width: 0.1, height: 22, backgroundColor: 'rgba(255,255,255,0.1)', marginX: 3}}/>
+      <IconButton
+        style={{alignItems: 'center', justifyContent: 'center'}}
+        variant="invisible"
+        size="medium"
         aria-label="Run cell"
         title="Run cell"
+        sx={{
+          '&:hover': {
+            backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
+          },
+          transition: 'background-color 0.3s', // Add transition for smoother effect
+        }}
         onClick={e => {
           e.preventDefault();
           dispatch(notebookActions.run.started(notebookId));
         }}
-        icon={ChevronRightIcon}
-      />
-      <IconButton
-        variant="invisible"
-        size="small"
-        color="secondary"
-        aria-label="Generate Code"
-        title="Generate Code"
-        onClick={e => {
-          e.preventDefault();
-          dispatch(notebookActions.codeGenerate.started({
-            uid: notebookId,
-            cellType: 'code',
-          }));
-        }}
-        icon={ChevronRightIcon}
-      />
+      >
+        <FaPlay size={14} />
+      </IconButton>
       {notebook?.kernelStatus === 'idle' ? (
         <IconButton
+          style={{alignItems: 'center', justifyContent: 'center'}}
           variant="invisible"
-          size="small"
-          color="secondary"
+          size="medium"
           aria-label="Run all cells"
           title="Run all cells"
+          sx={{
+            '&:hover': {
+              backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
+            },
+            transition: 'background-color 0.3s', // Add transition for smoother effect
+          }}
           onClick={e => {
             e.preventDefault();
             dispatch(notebookActions.runAll.started(notebookId));
           }}
-          icon={FastForwardIcon}
-        />
+         
+        >
+          <FaPlayCircle size={16} style={{marginBottom: -2}}/>
+        </IconButton>
       ) : (
         <IconButton
           variant="invisible"
           size="small"
-          color="error"
           aria-label="Interrupt"
+          sx={{
+            '&:hover': {
+              backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
+            },
+            transition: 'background-color 0.3s', // Add transition for smoother effect
+          }}
           onClick={e => {
             e.preventDefault();
             dispatch(notebookActions.interrupt.started(notebookId));
@@ -141,19 +199,34 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
           icon={StopIcon}
         />
       )}
-      <IconButton
+
+      <Box sx={{width: 0.1, height: 22, backgroundColor: 'rgba(255,255,255,0.1)', marginX: 3}}/>
+      <Button
         variant="invisible"
         size="small"
-        color="error"
-        aria-label="Delete"
-        title="Delete"
+        aria-label="Generate Code"
+        title="Generate Code"
+        sx={{
+          '&:hover': {
+            backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
+          },
+          transition: 'background-color 0.3s', // Add transition for smoother effect
+        }}
         onClick={e => {
           e.preventDefault();
-          dispatch(notebookActions.delete.started(notebookId));
+          dispatch(notebookActions.codeGenerate.started({
+            uid: notebookId,
+            cellType: 'code',
+          }));
         }}
-        icon={TrashIcon}
-      />
-    </Box>
+      >
+        <Stack spacing={1} direction="row" sx={{ alignItems: 'center' }}>
+          <Typography sx={{ color: 'rgba(255, 255, 255, 0.3)' }} fontSize={13}>Generate</Typography>
+          <FaWandMagicSparkles color="rgba(255, 255, 255, 0.5)" size={17} style={{ marginBottom: -2 }} />
+        </Stack>
+      </Button>
+      
+    </Stack>
     <Box
       sx={{
         display: 'flex',
@@ -164,41 +237,19 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
         alignItems: 'center',
       }}
     >
-      <IconButton
-        aria-label="Autosave"
-        title="Autosave"
-        variant={autoSave ? 'primary' : 'invisible'}
-        onClick={e => {
-          e.preventDefault();
-          setAutoSave(!autoSave);
-        }}
-        size="small"
-        color={autoSave ? 'success' : 'error'}
-        icon={SyncIcon}
-      />
-      <IconButton
-        variant="invisible"
-        size="small"
-        color="primary"
-        aria-label="Insert cell"
-        title="Insert cell"
-        onClick={e => {
-          e.preventDefault();
-          dispatch(
-            notebookActions.insertBelow.started({
-              uid: notebookId,
-              cellType: addType,
-            })
-          );
-        }}
-        icon={PlusIcon}
-      />
       <ButtonGroup>
         <Button
           variant={addType === 'code' ? 'primary' : 'invisible'}
           onClick={() => handleChangeCellType('code')}
           size="small"
-          style={{ borderRadius: 20 }}
+          style={{
+            fontSize: 12,
+            borderRadius: 8,
+            borderWidth: 1,
+            borderColor: addType === 'code' ? 'rgba(255,255,255,0.1)' : 'transparent',
+            backgroundColor: addType === 'code' ? 'rgba(255,255,255,0.05)' : 'transparent',
+            color: addType !== 'code' ? 'gray' : undefined // Set color to gray if not selected
+          }}
         >
           Code
         </Button>
@@ -206,17 +257,33 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
           variant={addType === 'markdown' ? 'primary' : 'invisible'}
           onClick={() => handleChangeCellType('markdown')}
           size="small"
-          style={{ borderRadius: 20 }}
+          style={{
+            fontSize: 12,
+            borderRadius: 8,
+            borderWidth: 1,
+            borderColor: addType === 'markdown' ? 'rgba(255,255,255,0.1)' : 'transparent',
+            marginInline: 2,
+            backgroundColor: addType === 'markdown' ? 'rgba(255,255,255,0.05)' : 'transparent',
+            color: addType !== 'markdown' ? 'gray' : undefined // Set color to gray if not selected
+          }}
         >
           Markdown
         </Button>
+
         <Button
           variant={addType === 'raw' ? 'primary' : 'invisible'}
           onClick={() => handleChangeCellType('raw')}
           size="small"
-          style={{ borderRadius: 20 }}
+          style={{
+            fontSize: 12,
+            borderRadius: 8,
+            borderWidth: 1,
+            borderColor: addType === 'raw' ? 'rgba(255,255,255,0.1)' : 'transparent',
+            backgroundColor: addType === 'raw' ? 'rgba(255,255,255,0.05)' : 'transparent',
+            color: addType !== 'raw' ? 'gray' : undefined // Set color to gray if not selected
+          }}
         >
-          Raw
+          Prompt
         </Button>
       </ButtonGroup>
     </Box>

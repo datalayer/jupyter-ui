@@ -79,7 +79,7 @@ export const JupyterLabHeadlessAppExample = () => {
           mimeExtensions={[
             mimePlotlyExtension,
           ]}
-          headless={true}
+          // headless={true}
           onJupyterLab={onJupyterLab}
           pluginId="@jupyterlab/apputils-extension:themes"
           PluginType={ThemeManager}

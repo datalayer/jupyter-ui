@@ -64,7 +64,6 @@ const JupyterDemo = () => {
         aria-labelledby="switch-label"
       />
       <NotebookComponentNoSSR colorMode={theme === 'light' ? 'light' : 'dark'} />
-      <CellComponentNoSSR colorMode={theme === 'light' ? 'light' : 'dark'} />
     </>
   )
 }

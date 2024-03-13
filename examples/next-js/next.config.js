@@ -38,6 +38,7 @@ const nextConfig = {
       },
       */
       // Ship the JupyterLite service worker.
+
       {
         test: /\.whl$/,
         type: 'asset/resource',
@@ -69,7 +70,6 @@ const nextConfig = {
       },
 
     )
-    config.resolve.extensions.push('.ts', '.tsx');
     return config
   },
 }

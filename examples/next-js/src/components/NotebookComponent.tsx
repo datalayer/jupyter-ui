@@ -6,7 +6,8 @@
 
 'use client'
 
-import {Jupyter, Notebook, CellSidebar} from "../../../../packages/react"
+import {Jupyter} from "../../../../packages/react"
+import {Notebook} from "../../../../packages/react/src/components/notebook/Notebook"
 // import {NotebookToolbarAutoSave} from '../../../../packages/react/src/examples/toolbars/NotebookToolbarAutoSave'
 
 type NotebookComponentProps = {
@@ -17,7 +18,6 @@ export const NotebookComponent = (props: NotebookComponentProps) => {
   const { colorMode } = props;
   return (
     <>
-      <div style={{fontSize: 20}}>Jupyter Notebook in Next.js</div>
       <Jupyter
         jupyterServerHttpUrl="https://oss.datalayer.tech/api/jupyter"
         jupyterServerWsUrl="wss://oss.datalayer.tech/api/jupyter"
