@@ -593,6 +593,8 @@ export class NotebookAdapter {
     const selectedWidget = notebook.widgets.find(child => {
       return notebook.isSelectedOrActive(child)
     })
+
+    const prevCode = `[CODE_PREV] ${notebook.widgets[currentIndex]?.model.toJSON().source} [/CODE_PREV]`;
     
     const prompt = selectedWidget?.model.toJSON().source
     const response = await fetch('/api/codeGenerate', {
@@ -600,7 +602,7 @@ export class NotebookAdapter {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ input: prompt })
+      body: JSON.stringify({ input: `${prevCode} ${prompt}` })
     });
 
     // Parse the JSON response
@@ -628,7 +630,7 @@ export class NotebookAdapter {
 
     const promptCell = model.sharedModel.insertCell(currentIndex , {
       cell_type: 'raw',
-      source: prompt,
+      source: '',
       metadata: {
         trusted: true,
       }
@@ -653,7 +655,7 @@ export class NotebookAdapter {
     // Update the new cell with the extracted Python code with typing animation
     for (const line of pythonCode.split('\n')) {
       newCodeCell.source += line + '\n';
-        await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 100));
     }
 
     // Ensure the new cell is visible and focused
