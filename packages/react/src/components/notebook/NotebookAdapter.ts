@@ -589,19 +589,11 @@ export class NotebookAdapter {
   generateCode = async (source: string) => {
     const notebook = this._notebookPanel!.content!;
     const model = this._notebookPanel!.context.model!;
-    const newIndex = notebook.activeCell ? notebook.activeCellIndex : 0;
+    const currentIndex = notebook.activeCell ? notebook.activeCellIndex : 0;
     const selectedWidget = notebook.widgets.find(child => {
       return notebook.isSelectedOrActive(child)
     })
-    // Insert a new code cell with empty source
-    const newCell = model.sharedModel.insertCell(newIndex + 1, {
-      cell_type: 'code',
-      source: '', // Empty source initially
-      metadata: {
-        // This is an empty cell created by the user, thus is trusted
-        trusted: true,
-      }
-    });
+    
     const prompt = selectedWidget?.model.toJSON().source
     const response = await fetch('/api/codeGenerate', {
       method: 'POST',
@@ -625,28 +617,49 @@ export class NotebookAdapter {
     let pythonCode = '';
 
     if (markdownMatch && pythonMatch) {
-        markdownContent = markdownMatch[1].trim();
+        markdownContent = `${prompt} \n ${markdownMatch[1].trim()}`;
         pythonCode = pythonMatch[1].trim();
     } else {
         console.error("Failed to extract markdown or python code from content");
     }
 
+    const notebookSharedModel = notebook.model!.sharedModel;
+    notebookSharedModel.deleteCell(currentIndex);
+
+    const promptCell = model.sharedModel.insertCell(currentIndex , {
+      cell_type: 'raw',
+      source: prompt,
+      metadata: {
+        trusted: true,
+      }
+    });
+
+    // Insert a new code cell with empty source
+    const newCodeCell = model.sharedModel.insertCell(currentIndex + 1, {
+      cell_type: 'code',
+      source: '', // Empty source initially
+      metadata: {
+        // This is an empty cell created by the user, thus is trusted
+        trusted: true,
+      }
+    });
+
     // Update the current cell with the extracted markdown content with typing animation
     for (const line of markdownContent.split('\n')) {
-      selectedWidget!.model.toJSON().source = line + '\n';
+      promptCell.source += line + '\n';
       await new Promise(resolve => setTimeout(resolve, 100));
     }
 
     // Update the new cell with the extracted Python code with typing animation
     for (const line of pythonCode.split('\n')) {
-        newCell.source += line + '\n';
+      newCodeCell.source += line + '\n';
         await new Promise(resolve => setTimeout(resolve, 100));
     }
 
     // Ensure the new cell is visible and focused
-    notebook.activeCellIndex = newIndex + 1;
+    notebook.activeCellIndex = currentIndex + 1;
     notebook.activeCell!.inputHidden = false;
-    notebook.activeCell!.editor.focus();
+    // notebook.activeCell!.editor.focus();
 }
 
 
