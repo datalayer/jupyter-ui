@@ -43,6 +43,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
         '& p': {
           marginBottom: '0 !important',
         },
+
       }}
     >
 
@@ -251,7 +252,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
           onClick={(e: any) => {
             e.preventDefault();
             dispatch(
-              notebookActions.insertAbove.started({
+              notebookActions.insertBelow.started({
                 uid: notebookId,
                 cellType: 'raw',
               })

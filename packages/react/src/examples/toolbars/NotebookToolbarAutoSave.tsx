@@ -46,19 +46,19 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
   };
   return (
     <AppBar
-    position={'sticky'}
-    sx={{
-      top: 0,
-      height: 50,
-      width: '100%',
-      flexDirection: 'row',
-      borderBottomWidth: 0.5,
-      borderBottomColor: 'rgba(255,255,255,0.05)',
-      backgroundColor: '#161616',
-      justifyContent: 'space-between',
-      alignItems: 'center'
-    }}
-    elevation={2}
+      position={'sticky'}
+      sx={{
+        top: 0,
+        height: 50,
+        width: '100%',
+        flexDirection: 'row',
+        borderBottomWidth: 0.5,
+        borderBottomColor: 'rgba(255,255,255,0.05)',
+        backgroundColor: '#161616',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}
+      elevation={2}
   >
     <Stack
       direction="row"
@@ -92,7 +92,7 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
           );
         }} 
       >
-        <IoMdSave size={20} style={{marginBottom: -4}}  />
+        <IoMdSave size={20} style={{marginBottom: -1}}  />
       </Button>
       <Box sx={{width: 0.1, height: 22, backgroundColor: 'rgba(255,255,255,0.1)', marginX: 3}}/>
       <Button
@@ -118,7 +118,7 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
         }}
         
       >
-        <MdOutlineAdd size={22} style={{marginBottom: -4}}/>
+        <MdOutlineAdd size={22} style={{marginBottom: -1}}/>
       </Button>
        <Button
         variant="invisible"
@@ -179,7 +179,7 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
           }}
          
         >
-          <FaPlayCircle size={16} style={{marginBottom: -2}}/>
+          <FaPlayCircle size={16}/>
         </Button>
       ) : (
         <Button
