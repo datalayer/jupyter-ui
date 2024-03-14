@@ -572,7 +572,7 @@ export class NotebookAdapter {
     const newIndex = notebook.activeCell ? notebook.activeCellIndex : 0;
     model.sharedModel.insertCell(newIndex, {
       cell_type: notebook.notebookConfig.defaultCell,
-      source:  notebook.notebookConfig.defaultCell === "raw" ? "#PROMPT: ": "",
+      source:  notebook.notebookConfig.defaultCell === "raw" ? "## PROMPT: ": "",
       metadata:
         notebook.notebookConfig.defaultCell === 'code'
           ? {
@@ -614,15 +614,41 @@ export class NotebookAdapter {
     // Parse the JSON response
     const { content } = await response.json();
 
-    // Split the response content into lines
-    const lines = content.split('\n');
+    // Extract markdown content and Python code from the response content
+    const markdownRegex = /\[MARKDOWN\](.*?)\[\/MARKDOWN\]/s;
+    const pythonRegex = /\[PYTHON\](.*?)\[\/PYTHON\]/s;
 
-    // Update the new cell with the response content
-    for (const line of lines) {
-      newCell.source += line + '\n';
+    const markdownMatch = content.match(markdownRegex);
+    const pythonMatch = content.match(pythonRegex);
+
+    let markdownContent = '';
+    let pythonCode = '';
+
+    if (markdownMatch && pythonMatch) {
+        markdownContent = markdownMatch[1].trim();
+        pythonCode = pythonMatch[1].trim();
+    } else {
+        console.error("Failed to extract markdown or python code from content");
+    }
+
+    // Update the current cell with the extracted markdown content with typing animation
+    for (const line of markdownContent.split('\n')) {
+      selectedWidget!.model.toJSON().source = line + '\n';
       await new Promise(resolve => setTimeout(resolve, 100));
     }
-  }
+
+    // Update the new cell with the extracted Python code with typing animation
+    for (const line of pythonCode.split('\n')) {
+        newCell.source += line + '\n';
+        await new Promise(resolve => setTimeout(resolve, 100));
+    }
+
+    // Ensure the new cell is visible and focused
+    notebook.activeCellIndex = newIndex + 1;
+    notebook.activeCell!.inputHidden = false;
+    notebook.activeCell!.editor.focus();
+}
+
 
   saveNotebook = async (notebookJSON: any) => {
     await this._saveNotebook(this._uid, notebookJSON)
