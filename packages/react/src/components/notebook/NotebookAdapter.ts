@@ -672,8 +672,8 @@ export class NotebookAdapter {
       return notebook.isSelectedOrActive(child)
     })
     const code = `[CODE] ${selectedWidget?.model.toJSON().source} [/CODE]`
+    // @ts-ignore
     const errorText = `[ERROR] ${selectedWidget?.node.childNodes[3].innerText} [/ERROR]`;
-
     const response = await fetch('/api/codeGenerate', {
       method: 'POST',
       headers: {
