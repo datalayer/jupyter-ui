@@ -619,7 +619,7 @@ export class NotebookAdapter {
     let pythonCode = '';
 
     if (markdownMatch && pythonMatch) {
-        markdownContent = `${prompt} \n ${markdownMatch[1].trim()}`;
+        markdownContent = `${prompt} \n\n ${markdownMatch[1].trim()}`;
         pythonCode = pythonMatch[1].trim();
     } else {
         console.error("Failed to extract markdown or python code from content");
@@ -635,6 +635,8 @@ export class NotebookAdapter {
         trusted: true,
       }
     });
+
+    console.log("MARKDOWN RESPONSE: ", markdownContent)
 
     // Insert a new code cell with empty source
     const newCodeCell = model.sharedModel.insertCell(currentIndex + 1, {
@@ -676,14 +678,14 @@ export class NotebookAdapter {
     const errorText = `[ERROR] ${selectedWidget?.node.childNodes[3].innerText} [/ERROR]`;
 
     console.log("Code causing error: ", code)
-    console.log("Error message: ", code)
+    console.log("Error message: ", errorText)
 
     const response = await fetch('/api/codeGenerate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ input: `${errorText} ${code}`, type: 'fixCode' })
+      body: JSON.stringify({ input: `[ERROR_CODE] ${code} [/ERROR_CODE] [ERROR_MESSAGE] ${errorText} [/ERROR_MESSAGE]`, type: 'fixCode' })
     });
 
     const { content } = await response.json();
@@ -715,7 +717,6 @@ export class NotebookAdapter {
       newCodeCell.source += line + '\n';
       await new Promise(resolve => setTimeout(resolve, 100));
     }
-  
   }
 
 
