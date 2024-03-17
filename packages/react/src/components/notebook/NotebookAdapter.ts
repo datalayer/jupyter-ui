@@ -63,6 +63,7 @@ import { NotebookCommands } from './NotebookCommands';
 import getMarked from './marked/marked';
 import { WidgetManager } from '../../jupyter/ipywidgets/lab/manager';
 import { WidgetRenderer } from '../../jupyter/ipywidgets/lab/renderer';
+import { codeGenerate } from '../../codeGenerate';
 
 const FALLBACK_PATH = 'ping.ipynb';
 
@@ -680,6 +681,7 @@ export class NotebookAdapter {
 
     console.log("FIX CELL INPUT: ", input)
     
+    // API call for app
     const response = await fetch('/api/codeGenerate', {
       method: 'POST',
       headers: {
@@ -688,7 +690,16 @@ export class NotebookAdapter {
       body: JSON.stringify({ input: input, type: 'fixCode' })
     });
 
+    // Parse the JSON response
     const { content } = await response.json();
+
+    // const response = await codeGenerate({
+    //   input: input,
+    //   type: 'fixCode'
+    // })
+
+    // console.log("RESPONSE: ", response)
+
     const pythonRegex = /\[PYTHON\](.*?)\[\/PYTHON\]/s;
     const pythonMatch = content.match(pythonRegex);
     let pythonCode = '';
@@ -703,7 +714,7 @@ export class NotebookAdapter {
     notebookSharedModel.deleteCell(currentIndex);
 
      // Insert a new code cell with empty source
-    const newCodeCell = model.sharedModel.insertCell(currentIndex + 1, {
+     const newCodeCell = model.sharedModel.insertCell(currentIndex, {
       cell_type: 'code',
       source: '', // Empty source initially
       metadata: {

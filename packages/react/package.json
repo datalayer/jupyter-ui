@@ -1,6 +1,6 @@
 {
   "name": "atlas-jupyter-react",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "description": "Jupyter React - React.js components 100% compatible with Jupyter.",
   "license": "MIT",
   "main": "lib/index.js",
@@ -141,6 +141,7 @@
     "encoding": "0.1.13",
     "lodash": "^4.17.4",
     "marked": "4.0.10",
+    "openai": "^4.29.1",
     "plotly.js": "2.26.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
