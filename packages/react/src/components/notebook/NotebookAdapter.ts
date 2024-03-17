@@ -676,16 +676,16 @@ export class NotebookAdapter {
     const code = `[CODE] ${selectedWidget?.model.toJSON().source} [/CODE]`
     // @ts-ignore
     const errorText = `[ERROR] ${selectedWidget?.node.childNodes[3].innerText} [/ERROR]`;
+    const input = `[ERROR_CODE] ${code} [/ERROR_CODE] [ERROR_MESSAGE] ${errorText} [/ERROR_MESSAGE]`
 
-    console.log("Code causing error: ", code)
-    console.log("Error message: ", errorText)
-
+    console.log("FIX CELL INPUT: ", input)
+    
     const response = await fetch('/api/codeGenerate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ input: `[ERROR_CODE] ${code} [/ERROR_CODE] [ERROR_MESSAGE] ${errorText} [/ERROR_MESSAGE]`, type: 'fixCode' })
+      body: JSON.stringify({ input: input, type: 'fixCode' })
     });
 
     const { content } = await response.json();

@@ -1,6 +1,6 @@
 {
   "name": "atlas-jupyter-react",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "Jupyter React - React.js components 100% compatible with Jupyter.",
   "license": "MIT",
   "main": "lib/index.js",
