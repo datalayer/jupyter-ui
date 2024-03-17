@@ -73,6 +73,33 @@ export const CellSidebar = (props: CellSidebarProps) => {
         </Button>
       </span> : null}
 
+      {activeCell.model.type === 'code' ?  <span style={{ display: 'flex' }}>
+        <Button
+          title="Fix"
+          variant="invisible"
+          size="small"
+          sx={{
+            '&:hover': {
+              backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
+            },
+            transition: 'background-color 0.3s', // Add transition for smoother effect
+          }}
+          onClick={e => {
+            e.preventDefault();
+            dispatch(notebookActions.fixCode.started({
+              uid: notebookId,
+              cellType: 'code',
+            }));
+          }}
+        >
+          <Stack spacing={1} direction="row" sx={{ alignItems: 'center' }}>
+            <FaWandMagicSparkles color="rgba(255, 255, 255, 0.5)" size={15} style={{ marginBottom: -2 }} />
+            <Typography sx={{ color: 'rgba(255, 255, 255, 0.5)' }} fontSize={13}>Fix</Typography>
+          </Stack>
+        </Button>
+      </span> : null}
+
+
       {activeCell.model.type !== 'raw' ? <span style={{ display: 'flex' }}>
         <Button
           title="Run cell"

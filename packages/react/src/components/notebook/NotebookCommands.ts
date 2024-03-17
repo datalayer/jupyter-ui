@@ -58,7 +58,8 @@ export const cmdIds = {
   startSearch: 'documentsearch:start-search',
   switchKernel: 'notebook:switch-kernel',
   undo: 'notebook-cells:undo',
-  generateCode: 'notebook:generate-code'
+  generateCode: 'notebook:generate-code',
+  fixCode: 'notebook:fix-code'
 };
 
 export const NotebookCommands = (
@@ -71,6 +72,10 @@ export const NotebookCommands = (
   // Add commands.
   commandRegistry.addCommand(cmdIds.generateCode, {
     label: 'Generate',
+    execute: () => completerHandler.invoke(),
+  });
+  commandRegistry.addCommand(cmdIds.fixCode, {
+    label: 'Fix',
     execute: () => completerHandler.invoke(),
   });
   commandRegistry.addCommand(cmdIds.invoke, {

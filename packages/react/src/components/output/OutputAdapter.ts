@@ -37,6 +37,10 @@ export class OutputAdapter {
     outputs?: IOutput[],
     outputAreaModel?: IOutputAreaModel
   ) {
+
+
+    console.log("OUTPUTS: ", outputs)
+
     this._kernel = kernel;
     this._renderers = standardRendererFactories.filter(
       factory => factory.mimeTypes[0] !== 'text/javascript'

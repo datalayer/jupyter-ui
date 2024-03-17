@@ -133,7 +133,8 @@ export enum ActionType {
   SET_PORTALS = 'notebook/SET_PORTALS',
   SET_PORTAL_DISPLAY = 'notebook/SET_PORTAL_DISPLAY',
   UPDATE = 'notebook/UPDATE',
-  CODE_GENERATE = 'notebook/CODE_GENERATE'
+  CODE_GENERATE = 'notebook/CODE_GENERATE',
+  FIX = 'notebook/FIX'
 }
 
 const actionCreator = actionCreatorFactory('jupyterNotebook');
@@ -210,7 +211,8 @@ export const notebookActions = {
   changeCellType: actionCreator.async<CellMutation, CellMutation>(
     ActionType.CHANGE_CELL_TYPE
   ),
-  codeGenerate: actionCreator.async<CellMutation, CellMutation>(ActionType.CODE_GENERATE)
+  codeGenerate: actionCreator.async<CellMutation, CellMutation>(ActionType.CODE_GENERATE),
+  fixCode: actionCreator.async<CellMutation, CellMutation>(ActionType.FIX)
 };
 
 /* Epics */
@@ -244,6 +246,22 @@ const runAllEpic: Epic<
     }),
     ignoreElements()
   );
+
+  const fixCodeEpic: Epic<
+    Action<Success<CellMutation, CellMutation>>,
+    Action<Success<CellMutation, CellMutation>>,
+    IJupyterReactState
+  > = (action$, state$) =>
+      action$.pipe(
+        ofAction(notebookActions.fixCode.started),
+        tap(action => {
+          state$.value.notebook.notebooks
+            .get(action.payload.uid)
+            ?.adapter?.fixCell()
+        }),
+        ignoreElements()
+      );
+
 
 const interruptEpic: Epic<
   Action<Success<string, string>>,
@@ -343,20 +361,11 @@ const changeCellTypeEpic: Epic<
     action$.pipe(
       ofAction(notebookActions.save.started),
       map(action => {
-        // Retrieve the notebook from the state using the unique identifier (uid)
-
         const notebook = state$.value.notebook.notebooks.get(action.payload.uid);
 
         // Get the JSON representation of the notebook model
         const notebookJSON = notebook?.model?.toJSON();
-
-        // Log the JSON representation of the saved notebook
-        console.log('JSON of the saved notebook:', notebookJSON);
-
-        // Call saveNotebook function passing the notebookJSON, profile, and selectedNotebook
         notebook?.adapter?.saveNotebook(notebookJSON);
-
-        // Execute the save command
         notebook?.adapter?.commands.execute(cmdIds.save);
 
         // Return the action indicating that the save operation is done
@@ -393,7 +402,8 @@ export const notebookEpics = combineEpics(
   deleteEpic,
   changeCellTypeEpic,
   saveEpic,
-  codeGenerateEpic
+  codeGenerateEpic,
+  fixCodeEpic
 );
 
 /* Reducers */

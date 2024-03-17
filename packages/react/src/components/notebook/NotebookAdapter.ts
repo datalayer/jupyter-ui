@@ -593,16 +593,16 @@ export class NotebookAdapter {
     const selectedWidget = notebook.widgets.find(child => {
       return notebook.isSelectedOrActive(child)
     })
-
-    const prevCode = `[CODE_PREV] ${notebook.widgets[currentIndex]?.model.toJSON().source} [/CODE_PREV]`;
     
-    const prompt = selectedWidget?.model.toJSON().source
+    const prevCode = `[CODE_PREV] ${notebook.widgets[currentIndex]?.model.toJSON().source} [/CODE_PREV]`;
+    const prompt = `[COMMAND] ${selectedWidget?.model.toJSON().source} [/COMMAND]`;
+    
     const response = await fetch('/api/codeGenerate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ input: `${prevCode} ${prompt}` })
+      body: JSON.stringify({ input: `${prevCode} ${prompt}`, type: 'generateCode' })
     });
 
     // Parse the JSON response
@@ -664,6 +664,56 @@ export class NotebookAdapter {
     // notebook.activeCell!.editor.focus();
 }
 
+  fixCell = async () => {
+    const notebook = this._notebookPanel!.content!;
+    const model = this._notebookPanel!.context.model!;
+    const currentIndex = notebook.activeCell ? notebook.activeCellIndex : 0;
+    const selectedWidget = notebook.widgets.find(child => {
+      return notebook.isSelectedOrActive(child)
+    })
+    const code = `[CODE] ${selectedWidget?.model.toJSON().source} [/CODE]`
+    const errorText = `[ERROR] ${selectedWidget?.node.childNodes[3].innerText} [/ERROR]`;
+
+    const response = await fetch('/api/codeGenerate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ input: `${errorText} ${code}`, type: 'fixCode' })
+    });
+
+    const { content } = await response.json();
+    const pythonRegex = /\[PYTHON\](.*?)\[\/PYTHON\]/s;
+    const pythonMatch = content.match(pythonRegex);
+    let pythonCode = '';
+    
+    if (pythonMatch) {
+      pythonCode = pythonMatch[1].trim();
+    } else {
+      console.error("Failed to extract python code from content");
+    }
+
+    const notebookSharedModel = notebook.model!.sharedModel;
+    notebookSharedModel.deleteCell(currentIndex);
+
+     // Insert a new code cell with empty source
+    const newCodeCell = model.sharedModel.insertCell(currentIndex + 1, {
+      cell_type: 'code',
+      source: '', // Empty source initially
+      metadata: {
+        // This is an empty cell created by the user, thus is trusted
+        trusted: true,
+      }
+    });
+
+    // Update the new cell with the extracted Python code with typing animation
+    for (const line of pythonCode.split('\n')) {
+      newCodeCell.source += line + '\n';
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+  
+  }
+
 
   saveNotebook = async (notebookJSON: any) => {
     await this._saveNotebook(this._uid, notebookJSON)
@@ -675,7 +725,7 @@ export class NotebookAdapter {
     const newIndex = notebook.activeCell ? notebook.activeCellIndex + 1 : 0;
     model.sharedModel.insertCell(newIndex, {
       cell_type: notebook.notebookConfig.defaultCell,
-      source:  notebook.notebookConfig.defaultCell === "raw" ? "#PROMPT: ": "",
+      source:  notebook.notebookConfig.defaultCell === "raw" ? "# PROMPT: ": "",
       metadata:
         notebook.notebookConfig.defaultCell === 'code'
           ? {
