@@ -673,9 +673,9 @@ export class NotebookAdapter {
     const selectedWidget = notebook.widgets.find(child => {
       return notebook.isSelectedOrActive(child)
     })
-    const code = `[CODE] ${selectedWidget?.model.toJSON().source} [/CODE]`
+    const code = selectedWidget?.model.toJSON().source.toString()
     // @ts-ignore
-    const errorText = `[ERROR] ${selectedWidget?.node.childNodes[3].innerText} [/ERROR]`;
+    const errorText = selectedWidget?.node.childNodes[3].innerText.toString()
     const input = `[ERROR_CODE] ${code} [/ERROR_CODE] [ERROR_MESSAGE] ${errorText} [/ERROR_MESSAGE]`
 
     console.log("FIX CELL INPUT: ", input)
