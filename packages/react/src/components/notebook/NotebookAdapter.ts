@@ -594,15 +594,15 @@ export class NotebookAdapter {
       return notebook.isSelectedOrActive(child)
     })
     
-    const prevCode = `[CODE_PREV] ${notebook.widgets[currentIndex]?.model.toJSON().source} [/CODE_PREV]`;
-    const prompt = `[COMMAND] ${selectedWidget?.model.toJSON().source} [/COMMAND]`;
+    const prevCode = notebook.widgets[currentIndex]?.model.toJSON().source;
+    const prompt = selectedWidget?.model.toJSON().source;
     
     const response = await fetch('/api/codeGenerate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ input: `${prevCode} ${prompt}`, type: 'generateCode' })
+      body: JSON.stringify({ input: `[CODE_PREV] ${prevCode} [/CODE_PREV] [COMMAND] ${prompt} [/COMMAND]`, type: 'generateCode' })
     });
 
     // Parse the JSON response
@@ -674,6 +674,10 @@ export class NotebookAdapter {
     const code = `[CODE] ${selectedWidget?.model.toJSON().source} [/CODE]`
     // @ts-ignore
     const errorText = `[ERROR] ${selectedWidget?.node.childNodes[3].innerText} [/ERROR]`;
+
+    console.log("Code causing error: ", code)
+    console.log("Error message: ", code)
+
     const response = await fetch('/api/codeGenerate', {
       method: 'POST',
       headers: {
