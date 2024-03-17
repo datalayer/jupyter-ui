@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyter-react",
-  "version": "0.9.5-dev.6",
+  "version": "0.9.5",
   "description": "Jupyter React - React.js components 100% compatible with Jupyter.",
   "license": "MIT",
   "main": "lib/index.js",
@@ -65,7 +65,7 @@
   },
   "dependencies": {
     "@codemirror/lang-python": "6.0.1",
-    "@datalayer/primer-addons": "0.2.2",
+    "@datalayer/primer-addons": "0.2.3",
     "@datalayer/typescript-fsa-redux-observable": "0.18.0",
     "@jupyter-widgets/base": "6.0.6",
     "@jupyter-widgets/controls": "5.0.7",
