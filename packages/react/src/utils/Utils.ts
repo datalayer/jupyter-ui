@@ -10,6 +10,24 @@ import { UUID } from '@lumino/coreutils';
 // const MAX = Number.MAX_SAFE_INTEGER;
 // const MAX = 999999;
 
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+
+export function formatDate(input: string | number | Date): string {
+  const date = new Date(input)
+  return date.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric"
+  })
+}
+
+
+
 export const newSourceId = (base: string) => {
   //  return base + Math.floor(Math.random() * MAX).toString();
   return base;

@@ -236,10 +236,10 @@ export const Notebook = (props: INotebookProps) => {
         className="dla-Box-Notebook"
         sx={{
           '& .dla-Jupyter-Notebook': {
-            height: '100vh',
+            height: '96vh',
             width: '100%',
             overflowY: 'hidden',
-            marginTop: -50
+            marginTop: -30
           },
           '& .datalayer-NotebookPanel-header': {
             minHeight: '50px',

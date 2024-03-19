@@ -63,7 +63,6 @@ import { NotebookCommands } from './NotebookCommands';
 import getMarked from './marked/marked';
 import { WidgetManager } from '../../jupyter/ipywidgets/lab/manager';
 import { WidgetRenderer } from '../../jupyter/ipywidgets/lab/renderer';
-import { codeGenerate } from '../../codeGenerate';
 
 const FALLBACK_PATH = 'ping.ipynb';
 
@@ -698,7 +697,7 @@ export class NotebookAdapter {
     //   type: 'fixCode'
     // })
 
-    // console.log("RESPONSE: ", response)
+    console.log("CONTENT: ", content)
 
     const pythonRegex = /\[PYTHON\](.*?)\[\/PYTHON\]/s;
     const pythonMatch = content.match(pythonRegex);

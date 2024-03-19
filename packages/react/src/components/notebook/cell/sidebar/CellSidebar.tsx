@@ -14,6 +14,9 @@ import CellMetadataEditor from '../metadata/CellMetadataEditor';
 import { DATALAYER_CELL_HEADER_CLASS } from './CellSidebarWidget';
 import {Stack, Typography} from '@mui/material'
 
+import { Popover, PopoverContent, PopoverTrigger } from '../../../popover/popover';
+import ModifyCode from '../../../popover/modify-code'; 
+
 export const CellSidebar = (props: CellSidebarProps) => {
   const { notebookId, cellId, nbgrader } = props;
   const [visible, setVisible] = useState(false);
@@ -97,6 +100,38 @@ export const CellSidebar = (props: CellSidebarProps) => {
             <Typography sx={{ color: 'rgba(255, 255, 255, 0.5)' }} fontSize={13}>Fix</Typography>
           </Stack>
         </Button>
+      </span> : null}
+
+      {activeCell.model.type === 'code' ?  <span style={{ display: 'flex' }}>
+      <Popover>
+        <PopoverTrigger>
+          <Button
+              title="Modify"
+              variant="invisible"
+              size="small"
+              sx={{
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
+                },
+                transition: 'background-color 0.3s', // Add transition for smoother effect
+              }}
+              onClick={() => {}}
+            >
+              <Stack spacing={1} direction="row" sx={{ alignItems: 'center' }}>
+                <FaWandMagicSparkles color="rgba(255, 255, 255, 0.5)" size={15} style={{ marginBottom: -2 }} />
+                <Typography sx={{ color: 'rgba(255, 255, 255, 0.5)' }} fontSize={13}>Modify</Typography>
+              </Stack>
+            </Button>
+        </PopoverTrigger>
+
+        <PopoverContent
+          className="bg-background border-input relative flex max-h-[calc(100vh-60px)] w-[300px] flex-col space-y-4 overflow-auto rounded-lg border-2 p-6 sm:w-[350px] md:w-[400px] lg:w-[500px] dark:border-none"
+          align="end"
+        >
+          <ModifyCode />
+        </PopoverContent>
+      </Popover>
+       
       </span> : null}
 
 
