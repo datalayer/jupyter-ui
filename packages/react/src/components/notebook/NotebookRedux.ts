@@ -134,7 +134,8 @@ export enum ActionType {
   SET_PORTAL_DISPLAY = 'notebook/SET_PORTAL_DISPLAY',
   UPDATE = 'notebook/UPDATE',
   CODE_GENERATE = 'notebook/CODE_GENERATE',
-  FIX = 'notebook/FIX'
+  FIX = 'notebook/FIX',
+  MODIFY_CODE = 'notebook/MODIFY_CODE'
 }
 
 const actionCreator = actionCreatorFactory('jupyterNotebook');
@@ -180,6 +181,10 @@ type CellMutation = {
   cellType: nbformat.CellType;
   source?: string;
 };
+type ModifyMutation = {
+  uid: string;
+  modifyPrompt: string
+}
 
 export const notebookActions = {
   reset: actionCreator<string>(ActionType.RESET),
@@ -212,7 +217,8 @@ export const notebookActions = {
     ActionType.CHANGE_CELL_TYPE
   ),
   codeGenerate: actionCreator.async<CellMutation, CellMutation>(ActionType.CODE_GENERATE),
-  fixCode: actionCreator.async<CellMutation, CellMutation>(ActionType.FIX)
+  fixCode: actionCreator.async<CellMutation, CellMutation>(ActionType.FIX),
+  modifyCode: actionCreator.async<ModifyMutation, ModifyMutation>(ActionType.MODIFY_CODE)
 };
 
 /* Epics */
@@ -261,6 +267,23 @@ const runAllEpic: Epic<
         }),
         ignoreElements()
       );
+
+  const modifyCodeEpic: Epic<
+      Action<Success<ModifyMutation, ModifyMutation>>,
+      Action<Success<ModifyMutation, ModifyMutation>>,
+      IJupyterReactState
+    > = (action$, state$) =>
+        action$.pipe(
+          ofAction(notebookActions.modifyCode.started),
+          tap(action => {
+            const { modifyPrompt } = action.payload;
+            console.log("MOD PROMPT FROM EPIC: ", modifyPrompt)
+            state$.value.notebook.notebooks
+        .get(action.payload.uid)
+        ?.adapter?.modifyCode(modifyPrompt);
+          }),
+          ignoreElements()
+        );
 
 
 const interruptEpic: Epic<
@@ -403,7 +426,8 @@ export const notebookEpics = combineEpics(
   changeCellTypeEpic,
   saveEpic,
   codeGenerateEpic,
-  fixCodeEpic
+  fixCodeEpic,
+  modifyCodeEpic
 );
 
 /* Reducers */

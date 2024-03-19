@@ -586,6 +586,66 @@ export class NotebookAdapter {
     notebook.deselectAll();
   };
 
+  modifyCode = async (modifyPrompt: string) => {
+    const notebook = this._notebookPanel!.content!;
+    const model = this._notebookPanel!.context.model!;
+    const currentIndex = notebook.activeCell ? notebook.activeCellIndex : 0;
+    const selectedWidget = notebook.widgets.find(child => {
+      return notebook.isSelectedOrActive(child)
+    })
+
+    const codeToModify = selectedWidget?.model.toJSON().source.toString()
+
+    const response = await fetch('/api/codeGenerate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ input: `[CODE] ${codeToModify} [/CODE] [COMMAND] ${prompt} [/COMMAND]`, type: 'modifyCode' })
+    });
+
+      // Parse the JSON response
+    const { content } = await response.json();
+
+    // const response = await codeGenerate({
+    //   input: input,
+    //   type: 'fixCode'
+    // })
+
+    console.log("CONTENT: ", content)
+
+    const pythonRegex = /\[PYTHON\](.*?)\[\/PYTHON\]/s;
+    const pythonMatch = content.match(pythonRegex);
+    let pythonCode = '';
+    
+    if (pythonMatch) {
+      pythonCode = pythonMatch[1].trim();
+    } else {
+      console.error("Failed to extract python code from content");
+    }
+
+    const notebookSharedModel = notebook.model!.sharedModel;
+    notebookSharedModel.deleteCell(currentIndex);
+
+     // Insert a new code cell with empty source
+     const newCodeCell = model.sharedModel.insertCell(currentIndex, {
+      cell_type: 'code',
+      source: '', // Empty source initially
+      metadata: {
+        // This is an empty cell created by the user, thus is trusted
+        trusted: true,
+      }
+    });
+
+    // Update the new cell with the extracted Python code with typing animation
+    for (const line of pythonCode.split('\n')) {
+      newCodeCell.source += line + '\n';
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+
+    
+  }
+
   generateCode = async (source: string) => {
     const notebook = this._notebookPanel!.content!;
     const model = this._notebookPanel!.context.model!;

@@ -1,19 +1,22 @@
-import { FC, useState } from 'react';
-import TextareaAutosize from '@mui/material/TextareaAutosize';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { Typography } from '@mui/material';
+import { TextareaAutosize } from '../text/textarea-autosize';
+import { notebookActions } from '../notebook/NotebookRedux';
 
-interface ModifyCodeProps {
-    onSubmit: (newPrompt: string) => void;
-    onCancel: () => void;
-}
 
-const ModifyCode: FC<ModifyCodeProps> = ({ onSubmit, onCancel }) => {
+
+const ModifyCode = ({uid}) => {
     const [prompt, setPrompt] = useState('');
+    const dispatch = useDispatch();
 
     const handleSubmit = () => {
-        onSubmit(prompt);
+        dispatch(notebookActions.modifyCode.started({
+            uid: uid,
+            modifyPrompt: prompt,
+        }));
     };
 
     return (
@@ -28,25 +31,15 @@ const ModifyCode: FC<ModifyCodeProps> = ({ onSubmit, onCancel }) => {
             }}
         >
             <Box sx={{ mb: 2 }}>
-                <Typography variant="h6">Modify Code</Typography>
+                <Typography sx={{fontWeight: 'semibold', fontSize: 16}}>Modify Code</Typography>
             </Box>
             <TextareaAutosize
+                className="bg-background border-input border-0.5"
+                placeholder="Modify this code..."
+                onValueChange={prompt => setPrompt(prompt)}
                 value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                placeholder="Enter your new chat prompt"
                 minRows={3}
                 maxRows={6}
-                style={{
-                    backgroundColor: '#1B1B1B',
-                    color: 'white',
-                    width: '380',
-                    border: 'none',
-                    resize: 'none',
-                    outline: 'none',
-                    fontFamily: 'inherit',
-                    fontSize: 'inherit',
-
-                }}
             />
             <Box
                 sx={{
@@ -54,10 +47,10 @@ const ModifyCode: FC<ModifyCodeProps> = ({ onSubmit, onCancel }) => {
                     alignSelf: 'flex-end'
                 }}
             >   
-                <Button variant="outlined" onClick={onCancel} sx={{ ml: 1 }}>
+                {/* <Button variant="outlined" onClick={onCancel} sx={{ ml: 1 }}>
                     Cancel
-                </Button>
-                <Button variant="contained" onClick={handleSubmit} sx={{ ml: 1 }}>
+                </Button> */}
+                <Button variant="text" onClick={handleSubmit} sx={{ ml: 1 }}>
                     Submit
                 </Button>
             </Box>
