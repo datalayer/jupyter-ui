@@ -32,7 +32,7 @@ export const TextareaAutosize: FC<TextareaAutosizeProps> = ({
         <ReactTextareaAutosize
             ref={textareaRef}
             style={{backgroundColor: '#1B1B1B', color: 'white', width: '100%', borderColor: "rgba(255,255,255,0.1)"}}
-            // className={`dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 dark:focus:ring dark:focus:ring-blue-500 dark:focus:outline-none dark:rounded-md dark:border dark:border-gray-700 ${className}`}
+            className={`dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 dark:focus:ring dark:focus:ring-blue-500 dark:focus:outline-none dark:rounded-md dark:border dark:border-gray-700 ${className}`}
             minRows={minRows}
             maxRows={minRows > maxRows ? minRows : maxRows}
             placeholder={placeholder}

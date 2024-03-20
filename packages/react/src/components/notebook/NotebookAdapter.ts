@@ -601,7 +601,7 @@ export class NotebookAdapter {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ input: `[CODE] ${codeToModify} [/CODE] [COMMAND] ${prompt} [/COMMAND]`, type: 'modifyCode' })
+      body: JSON.stringify({ input: `[CODE] ${codeToModify} [/CODE] [COMMAND] ${modifyPrompt} [/COMMAND]`, type: 'modifyCode' })
     });
 
       // Parse the JSON response

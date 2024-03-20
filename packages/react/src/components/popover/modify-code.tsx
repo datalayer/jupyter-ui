@@ -7,8 +7,11 @@ import { TextareaAutosize } from '../text/textarea-autosize';
 import { notebookActions } from '../notebook/NotebookRedux';
 
 
+interface ModifyCodeProps {
+    uid: string;
+}
 
-const ModifyCode = ({uid}) => {
+const ModifyCode: React.FC<ModifyCodeProps> = ({ uid }) => {
     const [prompt, setPrompt] = useState('');
     const dispatch = useDispatch();
 
@@ -22,10 +25,7 @@ const ModifyCode = ({uid}) => {
     return (
         <Box
             sx={{
-                border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: '8px',
-                p: 2,
-                backgroundColor: '#1B1B1B',
+                // backgroundColor: '#1B1B1B',
                 position: 'relative',
                 width: 400
             }}
