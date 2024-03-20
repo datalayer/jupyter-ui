@@ -6,7 +6,6 @@ import { Typography } from '@mui/material';
 import { TextareaAutosize } from '../text/textarea-autosize';
 import { notebookActions } from '../notebook/NotebookRedux';
 
-
 interface ModifyCodeProps {
     uid: string;
 }
@@ -16,22 +15,28 @@ const ModifyCode: React.FC<ModifyCodeProps> = ({ uid }) => {
     const dispatch = useDispatch();
 
     const handleSubmit = () => {
-        dispatch(notebookActions.modifyCode.started({
-            uid: uid,
-            modifyPrompt: prompt,
-        }));
+        dispatch(
+            notebookActions.modifyCode.started({
+                uid: uid,
+                modifyPrompt: prompt,
+            })
+        );
     };
 
     return (
         <Box
             sx={{
-                // backgroundColor: '#1B1B1B',
+                backgroundColor: '#1B1B1B',
                 position: 'relative',
-                width: 400
+                width: 600,
+                border: 1,
+                borderColor: 'rgba(255,255,255,0.1)',
             }}
         >
             <Box sx={{ mb: 2 }}>
-                <Typography sx={{fontWeight: 'semibold', fontSize: 16}}>Modify Code</Typography>
+                <Typography sx={{ fontWeight: 'semibold', fontSize: 16 }}>
+                    Modify Code
+                </Typography>
             </Box>
             <TextareaAutosize
                 className="bg-background border-input border-0.5"
@@ -44,9 +49,9 @@ const ModifyCode: React.FC<ModifyCodeProps> = ({ uid }) => {
             <Box
                 sx={{
                     width: '100%',
-                    alignSelf: 'flex-end'
+                    alignSelf: 'flex-end',
                 }}
-            >   
+            >
                 {/* <Button variant="outlined" onClick={onCancel} sx={{ ml: 1 }}>
                     Cancel
                 </Button> */}
