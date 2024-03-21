@@ -615,26 +615,29 @@ export class NotebookAdapter {
 
         const codeToModify = selectedWidget?.model.toJSON().source.toString();
 
+        // =========================== Live ============================
+
         const response = await fetch('/api/codeGenerate', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                input: `[CODE] ${codeToModify} [/CODE] [COMMAND] ${modifyPrompt} [/COMMAND]`,
+                input: ` [COMMAND] ${modifyPrompt} [/COMMAND] [CODE] ${codeToModify} [/CODE]`,
                 type: 'modifyCode',
             }),
         });
 
-        // Parse the JSON response
         const { content } = await response.json();
 
-        // const response = await codeGenerate({
-        //   input: input,
-        //   type: 'fixCode'
-        // })
+        // ============================= Testing =============================
 
-        console.log('CONTENT: ', content);
+        // const content = await codeGenerate({
+        //     input: `[COMMAND] ${modifyPrompt} [/COMMAND] [CODE] ${codeToModify} [/CODE]`,
+        //     type: 'fixCode',
+        // });
+
+        // =================================================================
 
         const pythonRegex = /\[PYTHON\](.*?)\[\/PYTHON\]/s;
         const pythonMatch = content.match(pythonRegex);
@@ -664,6 +667,9 @@ export class NotebookAdapter {
             newCodeCell.source += line + '\n';
             await new Promise(resolve => setTimeout(resolve, 100));
         }
+
+        notebook.activeCellIndex = currentIndex + 1;
+        notebook.activeCell!.inputHidden = false;
     };
 
     generateCode = async (generateCodePrompt: string, previousCode: string) => {
@@ -687,24 +693,27 @@ export class NotebookAdapter {
         });
 
         // ============================= Live =============
-        // const response = await fetch('/api/codeGenerate', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify({
-        //         input: `[COMMAND] ${generateCodePrompt} [/COMMAND] [CODE_PREV] ${previousCode} [/CODE_PREV]`,
-        //         type: 'generateCode',
-        //     }),
-        // });
+        const response = await fetch('/api/codeGenerate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                input: `[COMMAND] ${generateCodePrompt} [/COMMAND] [CODE_PREV] ${previousCode} [/CODE_PREV]`,
+                type: 'generateCode',
+            }),
+        });
 
-        // const { content } = await response.json();
+        const { content } = await response.json();
 
         // ============================= Testing ===============================
-        const content = await codeGenerate({
-            input: `[COMMAND] ${generateCodePrompt} [/COMMAND] [CODE_PREV] ${previousCode} [/CODE_PREV]`,
-            type: 'generateCode',
-        });
+
+        // const content = await codeGenerate({
+        //     input: `[COMMAND] ${generateCodePrompt} [/COMMAND] [CODE_PREV] ${previousCode} [/CODE_PREV]`,
+        //     type: 'generateCode',
+        // });
+
+        // =====================================================================
 
         // Extract markdown content and Python code from the response content
         const markdownRegex = /\[MARKDOWN\](.*?)\[\/MARKDOWN\]/s;
@@ -749,28 +758,30 @@ export class NotebookAdapter {
             await new Promise(resolve => setTimeout(resolve, 100));
         }
 
-        // Ensure the new cell is visible and focused
         notebook.activeCellIndex = currentIndex + 1;
         notebook.activeCell!.inputHidden = false;
-        // notebook.activeCell!.editor.focus();
     };
 
-    fixCell = async () => {
+    fixCell = async (fixPrompt: string, errorMessage: string) => {
         const notebook = this._notebookPanel!.content!;
         const model = this._notebookPanel!.context.model!;
         const currentIndex = notebook.activeCell ? notebook.activeCellIndex : 0;
         const selectedWidget = notebook.widgets.find(child => {
             return notebook.isSelectedOrActive(child);
         });
-        const code = selectedWidget?.model.toJSON().source.toString();
+
+        // User prompt for code fix is optional, set to empty string if we don't have it
+        const userPrompt = fixPrompt ? `[COMMAND] ${fixPrompt} [/COMMAND]` : '';
+
+        const errorCode = selectedWidget?.model.toJSON().source.toString();
         // @ts-ignore
-        const errorText =
-            selectedWidget?.node.childNodes[3].innerText.toString();
-        const input = `[ERROR_CODE] ${code} [/ERROR_CODE] [ERROR_MESSAGE] ${errorText} [/ERROR_MESSAGE]`;
 
-        console.log('FIX CELL INPUT: ', input);
+        const input = `${userPrompt} [ERROR_CODE] ${errorCode} [/ERROR_CODE] [ERROR_MESSAGE] ${errorMessage} [/ERROR_MESSAGE]`;
 
-        // API call for app
+        console.log('Fix code input: ', input);
+
+        // ====================== Live =====================
+
         const response = await fetch('/api/codeGenerate', {
             method: 'POST',
             headers: {
@@ -779,15 +790,18 @@ export class NotebookAdapter {
             body: JSON.stringify({ input: input, type: 'fixCode' }),
         });
 
-        // Parse the JSON response
         const { content } = await response.json();
 
-        // const response = await codeGenerate({
-        //   input: input,
-        //   type: 'fixCode'
-        // })
+        // ====================== Testing ===================
 
-        console.log('CONTENT: ', content);
+        // const content = await codeGenerate({
+        //     input: input,
+        //     type: 'fixCode',
+        // });
+
+        // console.log('CONTENT: ', content);
+
+        // ==================================================
 
         const pythonRegex = /\[PYTHON\](.*?)\[\/PYTHON\]/s;
         const pythonMatch = content.match(pythonRegex);
@@ -817,6 +831,9 @@ export class NotebookAdapter {
             newCodeCell.source += line + '\n';
             await new Promise(resolve => setTimeout(resolve, 100));
         }
+
+        notebook.activeCellIndex = currentIndex + 1;
+        notebook.activeCell!.inputHidden = false;
     };
 
     saveNotebook = async (notebookJSON: any) => {

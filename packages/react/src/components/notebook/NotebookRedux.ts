@@ -194,6 +194,12 @@ type ModifyMutation = {
     modifyPrompt: string;
 };
 
+type FixMutation = {
+    uid: string;
+    fixPrompt: string;
+    errorMessage: string;
+};
+
 export const notebookActions = {
     reset: actionCreator<string>(ActionType.RESET),
     update: actionCreator<UpdateUid>(ActionType.UPDATE),
@@ -232,7 +238,7 @@ export const notebookActions = {
         CodeGenerateMutation,
         CodeGenerateMutation
     >(ActionType.CODE_GENERATE),
-    fixCode: actionCreator.async<CellMutation, CellMutation>(ActionType.FIX),
+    fixCode: actionCreator.async<FixMutation, FixMutation>(ActionType.FIX),
     modifyCode: actionCreator.async<ModifyMutation, ModifyMutation>(
         ActionType.MODIFY_CODE
     ),
@@ -271,16 +277,17 @@ const runAllEpic: Epic<
     );
 
 const fixCodeEpic: Epic<
-    Action<Success<CellMutation, CellMutation>>,
-    Action<Success<CellMutation, CellMutation>>,
+    Action<Success<FixMutation, FixMutation>>,
+    Action<Success<FixMutation, FixMutation>>,
     IJupyterReactState
 > = (action$, state$) =>
     action$.pipe(
         ofAction(notebookActions.fixCode.started),
         tap(action => {
+            const { fixPrompt, errorMessage } = action.payload;
             state$.value.notebook.notebooks
                 .get(action.payload.uid)
-                ?.adapter?.fixCell();
+                ?.adapter?.fixCell(fixPrompt, errorMessage);
         }),
         ignoreElements()
     );
@@ -294,9 +301,6 @@ const codeGenerateEpic: Epic<
         ofAction(notebookActions.codeGenerate.started),
         tap(action => {
             const { codeGeneratePrompt, previousCode } = action.payload;
-            console.log('CODE: ', previousCode);
-            console.log('Prompt: ', codeGeneratePrompt);
-
             state$.value.notebook.notebooks
                 .get(action.payload.uid)
                 ?.adapter?.generateCode(codeGeneratePrompt, previousCode);
@@ -313,7 +317,6 @@ const modifyCodeEpic: Epic<
         ofAction(notebookActions.modifyCode.started),
         tap(action => {
             const { modifyPrompt } = action.payload;
-            console.log('MOD PROMPT FROM EPIC: ', modifyPrompt);
             state$.value.notebook.notebooks
                 .get(action.payload.uid)
                 ?.adapter?.modifyCode(modifyPrompt);

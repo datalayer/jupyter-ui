@@ -1,28 +1,46 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { Typography, TextField } from '@mui/material';
 import { notebookActions } from '../notebook/NotebookRedux';
+import { selectNotebook } from '../notebook/NotebookRedux';
 
-interface ModifyCodeProps {
+interface FixCodeProps {
     uid: string;
 }
 
-const ModifyCode: React.FC<ModifyCodeProps> = ({ uid, onClose }) => {
+const FixCode: React.FC<FixCodeProps> = ({ uid, onClose }) => {
     const [prompt, setPrompt] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const selectedNotebook = selectNotebook(uid);
     const dispatch = useDispatch();
 
     const handlePromptChange = event => {
         setPrompt(event.target.value);
     };
 
+    const handleErrorMessageChange = event => {
+        setErrorMessage(event.target.value);
+    };
+
+    useEffect(() => {
+        const adapter = selectedNotebook?.adapter?.notebookPanel?.content;
+        const currentIndex = adapter?.activeCellIndex;
+
+        const selectedWidget = adapter?.widgets[currentIndex];
+        const errorText =
+            selectedWidget?.node.childNodes[3].innerText.toString();
+        setErrorMessage(errorText);
+    }, []);
+
     const handleSubmit = () => {
         try {
             dispatch(
-                notebookActions.modifyCode.started({
+                notebookActions.fixCode.started({
                     uid: uid,
-                    modifyPrompt: prompt,
+                    fixPrompt: prompt,
+                    errorMessage: errorMessage,
                 })
             );
             onClose();
@@ -37,24 +55,24 @@ const ModifyCode: React.FC<ModifyCodeProps> = ({ uid, onClose }) => {
                 backgroundColor: '#1B1B1B',
                 color: '#FFFFFF', // Text color
                 position: 'relative',
-                width: 600,
-                p: 3,
+                width: 650,
+                p: 2,
                 border: '1.5px solid rgba(255,255,255,0.1)', // Outer box border
             }}
         >
             <Typography sx={{ fontWeight: 'semibold', fontSize: 16 }}>
-                Modify Code
+                Fix Code
             </Typography>
 
             {/* Prompt TextArea */}
             <Box sx={{ mt: 2 }}>
                 <Typography sx={{ fontWeight: 'semibold', fontSize: 12 }}>
-                    Prompt
+                    Prompt (optional)
                 </Typography>
                 <TextField
                     placeholder="Write your prompt here..."
                     multiline
-                    rows={4}
+                    rows={2}
                     variant="outlined"
                     fullWidth
                     value={prompt}
@@ -76,6 +94,50 @@ const ModifyCode: React.FC<ModifyCodeProps> = ({ uid, onClose }) => {
                     }}
                     InputProps={{
                         style: { color: '#FFFFFF', fontSize: 12 }, // Text color of TextArea
+                    }}
+                />
+            </Box>
+
+            {/* Error TextArea */}
+            <Box sx={{ mt: 2 }}>
+                <Typography
+                    sx={{
+                        fontWeight: 'semibold',
+                        fontSize: 12,
+                        color: '#BD0202',
+                        marginBottom: 1,
+                    }}
+                >
+                    Error Message
+                </Typography>
+                <TextField
+                    multiline
+                    rows={10}
+                    variant="outlined"
+                    fullWidth
+                    value={errorMessage}
+                    onChange={handleErrorMessageChange}
+                    sx={{
+                        '& .MuiInputBase-input': {
+                            fontFamily: 'monospace', // Use monospace font for code-like appearance
+                            whiteSpace: 'pre-wrap', // Preserve line breaks and spaces
+                            color: '#BD0202', // Use error color for text
+                        },
+                        '& .MuiOutlinedInput-root': {
+                            borderColor: '#BD0202', // Error color for TextField border
+                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#BD0202', // Hover state border color
+                            },
+                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#BD0202', // Focused state border color
+                            },
+                        },
+                        '& .MuiOutlinedInput-notchedOutline': {
+                            borderColor: '#BD0202', // Notched outline border color
+                        },
+                    }}
+                    InputProps={{
+                        style: { fontSize: 12 }, // Text color of TextArea
                     }}
                 />
             </Box>
@@ -102,11 +164,11 @@ const ModifyCode: React.FC<ModifyCodeProps> = ({ uid, onClose }) => {
                         textTransform: 'none', // Prevent all caps
                     }}
                 >
-                    Submit
+                    Submit Fix
                 </Button>
             </Box>
         </Box>
     );
 };
 
-export default ModifyCode;
+export default FixCode;

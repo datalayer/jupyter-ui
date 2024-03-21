@@ -31,17 +31,18 @@ your output should not contain code that already exists in previous lines.
 
 // Prompt for fixing Python code based on user commands
 const prompt_fix_code = `
-You are a helpful Python code fixer. Your job is to fix Python code.  
+You are a helpful Python code fixer.  Your job is to modify Python code based on 
+an optional command given by the user (wrapped between [COMMAND] [/COMMAND] tags). If there is no [COMMAND] tags, you
+will just have to fix the user code between [ERROR_CODE] and [/ERROR_CODE] tags and the error message will be between [ERROR_MESSAGE] and 
+[/ERROR_MESSAGE] tags.
 
-The user code will be given between [ERROR_CODE] and [/ERROR_CODE] tags. While error messages produced by the code will be given
-between [ERROR_MESSAGE] and [/ERROR_MESSAGE] tags. There might be more than one error. Your output must
+There might be more than one error. Your output must
 be runnable Python code (comments ok), that is,
 no markdown and no raw text. Your output must be runnable
 Python code (comments should only be above lines to explain the following code), that is, it should 
-not contain [CODE] or [/CODE] tags or be between a python comment. The returned code must be between [PYTHON] and [/PYTHON] code.
+not contain [CODE] or [/CODE] tags or be between a python comment. 
 
-When generating output, you must re-use existing variables and only generate new code,
-your output should not contain code that already exists in previous lines.
+The returned code must be between [PYTHON] and [/PYTHON] code.
 `;
 
 // Prompt for modifying Python code based on user commands
@@ -53,7 +54,7 @@ You should limit yourself to return updated Python code, that is, no markdown an
 no raw text. The user code to be modified will be given between
 [CODE] and [/CODE] tags. Your output must be runnable
 Python code (comments should only be above lines to explain the following code), that is, it should 
-not contain [CODE] or [/CODE] tags or be between a python comment.
+not contain [CODE] or [/CODE] tags. The returned code should not be between a python comment
 
 The returned code must be between [PYTHON] and [/PYTHON] code.
 `;
@@ -70,7 +71,7 @@ export async function codeGenerate(request: any) {
         const prompt = REQUEST_TYPE[requestType];
 
         const openai = new OpenAI({
-            apiKey: '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',
+            apiKey: '',
             dangerouslyAllowBrowser: true,
         });
 

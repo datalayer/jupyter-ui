@@ -7,6 +7,7 @@ import { FaTrash } from 'react-icons/fa';
 import { GoTriangleDown } from 'react-icons/go';
 import { GoTriangleUp } from 'react-icons/go';
 import { FaPlay } from 'react-icons/fa';
+import { RiToolsFill } from 'react-icons/ri';
 import { FaWandMagicSparkles } from 'react-icons/fa6';
 import { notebookActions, selectActiveCell } from '../../NotebookRedux';
 import { CellSidebarProps } from './CellSidebarWidget';
@@ -16,13 +17,47 @@ import { Stack, Typography } from '@mui/material';
 
 import ModifyCode from '../../../popover/modify-code';
 import GenerateCode from '../../../popover/generate-code';
+import FixCode from '../../../popover/fix-code';
 
 import Popover from '@mui/material/Popover';
 
 export const CellSidebar = (props: CellSidebarProps) => {
     const { notebookId, cellId, nbgrader } = props;
     const [visible, setVisible] = useState(false);
-    const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+
+    const [anchorGenerate, setAnchorGenerate] =
+        useState<HTMLButtonElement | null>(null);
+    const [anchorModify, setAnchorModify] = useState<HTMLButtonElement | null>(
+        null
+    );
+    const [anchorFix, setAnchorFix] = useState<HTMLButtonElement | null>(null);
+
+    const handleClickGenerate = (
+        event: React.MouseEvent<HTMLButtonElement>
+    ) => {
+        setAnchorGenerate(event.currentTarget);
+    };
+
+    const handleClickModify = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorModify(event.currentTarget);
+    };
+
+    const handleClickFix = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorFix(event.currentTarget);
+    };
+
+    const handleCloseGenerate = () => {
+        setAnchorGenerate(null);
+    };
+
+    const handleCloseModify = () => {
+        setAnchorModify(null);
+    };
+
+    const handleCloseFix = () => {
+        setAnchorFix(null);
+    };
+
     const dispatch = useDispatch();
     const activeCell = selectActiveCell(notebookId);
     const layout = activeCell?.layout;
@@ -43,16 +78,15 @@ export const CellSidebar = (props: CellSidebarProps) => {
         return <div></div>;
     }
 
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
+    const openGenerate = Boolean(anchorGenerate);
+    const idGenerate = openGenerate ? 'generate' : undefined;
 
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
+    const openModify = Boolean(anchorModify);
+    const idModify = openModify ? 'modify' : undefined;
 
-    const open = Boolean(anchorEl);
-    const id = open ? 'simple-popover' : undefined;
+    const openFix = Boolean(anchorFix);
+    const idFix = openFix ? 'fix' : undefined;
+
     return activeCell ? (
         <Box
             className={DATALAYER_CELL_HEADER_CLASS}
@@ -74,7 +108,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
                             },
                             transition: 'background-color 0.3s', // Add transition for smoother effect
                         }}
-                        onClick={handleClick}
+                        onClick={handleClickGenerate}
                     >
                         <Stack
                             spacing={1}
@@ -95,16 +129,19 @@ export const CellSidebar = (props: CellSidebarProps) => {
                         </Stack>
                     </Button>
                     <Popover
-                        id={id}
-                        open={open}
-                        anchorEl={anchorEl}
-                        onClose={handleClose}
+                        id={idGenerate}
+                        open={openGenerate}
+                        anchorEl={anchorGenerate}
+                        onClose={handleCloseGenerate}
                         anchorOrigin={{
                             vertical: 'bottom',
                             horizontal: 'left',
                         }}
                     >
-                        <GenerateCode uid={notebookId} onClose={handleClose} />
+                        <GenerateCode
+                            uid={notebookId}
+                            onClose={handleCloseGenerate}
+                        />
                     </Popover>
                 </span>
             ) : null}
@@ -121,15 +158,54 @@ export const CellSidebar = (props: CellSidebarProps) => {
                             },
                             transition: 'background-color 0.3s', // Add transition for smoother effect
                         }}
-                        onClick={e => {
-                            e.preventDefault();
-                            dispatch(
-                                notebookActions.fixCode.started({
-                                    uid: notebookId,
-                                    cellType: 'code',
-                                })
-                            );
+                        onClick={handleClickFix}
+                    >
+                        <Stack
+                            spacing={1}
+                            direction="row"
+                            sx={{ alignItems: 'center' }}
+                        >
+                            <RiToolsFill
+                                color="rgba(255, 255, 255, 0.5)"
+                                size={19}
+                                style={{ marginBottom: -2 }}
+                            />
+                            <Typography
+                                sx={{ color: 'rgba(255, 255, 255, 0.5)' }}
+                                fontSize={13}
+                            >
+                                Fix
+                            </Typography>
+                        </Stack>
+                    </Button>
+                    <Popover
+                        id={idFix}
+                        open={openFix}
+                        anchorEl={anchorFix}
+                        onClose={handleCloseFix}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left',
                         }}
+                    >
+                        <FixCode uid={notebookId} onClose={handleCloseFix} />
+                    </Popover>
+                </span>
+            ) : null}
+
+            {activeCell.model.type === 'code' ? (
+                <span style={{ display: 'flex' }}>
+                    <Button
+                        title="Modify"
+                        variant="invisible"
+                        size="small"
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
+                            },
+                            transition: 'background-color 0.3s', // Add transition for smoother effect
+                        }}
+                        onClick={handleClickModify}
                     >
                         <Stack
                             spacing={1}
@@ -142,69 +218,42 @@ export const CellSidebar = (props: CellSidebarProps) => {
                                 style={{ marginBottom: -2 }}
                             />
                             <Typography
-                                sx={{ color: 'rgba(255, 255, 255, 0.5)' }}
+                                sx={{
+                                    color: 'rgba(255, 255, 255, 0.5)',
+                                }}
                                 fontSize={13}
                             >
-                                Fix
+                                Modify
                             </Typography>
                         </Stack>
                     </Button>
+                    <Popover
+                        id={idModify}
+                        open={openModify}
+                        anchorEl={anchorModify}
+                        onClose={handleCloseModify}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'left',
+                        }}
+                    >
+                        <ModifyCode
+                            uid={notebookId}
+                            onClose={handleCloseModify}
+                        />
+                    </Popover>
                 </span>
             ) : null}
 
-            {/* {activeCell.model.type === 'code' ? (
-                <span style={{ display: 'flex' }}>
-                    <Popover>
-                        <PopoverTrigger
-                            style={{
-                                backgroundColor: 'transparent',
-                                border: 'none',
-                            }}
-                        >
-                            <Button
-                                title="Modify"
-                                variant="invisible"
-                                size="small"
-                                sx={{
-                                    '&:hover': {
-                                        backgroundColor:
-                                            'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
-                                    },
-                                    transition: 'background-color 0.3s', // Add transition for smoother effect
-                                }}
-                                onClick={() => {}}
-                            >
-                                <Stack
-                                    spacing={1}
-                                    direction="row"
-                                    sx={{ alignItems: 'center' }}
-                                >
-                                    <FaWandMagicSparkles
-                                        color="rgba(255, 255, 255, 0.5)"
-                                        size={15}
-                                        style={{ marginBottom: -2 }}
-                                    />
-                                    <Typography
-                                        sx={{
-                                            color: 'rgba(255, 255, 255, 0.5)',
-                                        }}
-                                        fontSize={13}
-                                    >
-                                        Modify
-                                    </Typography>
-                                </Stack>
-                            </Button>
-                        </PopoverTrigger>
-
-                        <PopoverContent
-                            className="bg-background border-input relative flex max-h-[calc(100vh-60px)] w-[300px] flex-col space-y-4 overflow-auto rounded-lg border-2 p-6 sm:w-[350px] md:w-[400px] lg:w-[500px] dark:border-none"
-                            align="end"
-                        >
-                            <ModifyCode uid={notebookId} />
-                        </PopoverContent>
-                    </Popover>
-                </span>
-            ) : null} */}
+            {/* Function divider */}
+            <Box
+                sx={{
+                    height: 1,
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    width: '95%',
+                    my: 1,
+                }}
+            />
 
             {activeCell.model.type !== 'raw' ? (
                 <span style={{ display: 'flex' }}>
