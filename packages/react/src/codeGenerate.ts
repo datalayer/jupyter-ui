@@ -59,11 +59,15 @@ not contain [CODE] or [/CODE] tags. The returned code should not be between a py
 The returned code must be between [PYTHON] and [/PYTHON] code.
 `;
 
-const REQUEST_TYPE = Object.freeze({
+const REQUEST_TYPE: RequestType = Object.freeze({
     generateCode: prompt_generate_code,
     fixCode: prompt_fix_code,
     modifyCode: prompt_modify_code,
 });
+
+interface RequestType {
+    [key: string]: string; // Assuming the keys are strings and values are strings
+}
 
 export async function codeGenerate(request: any) {
     try {

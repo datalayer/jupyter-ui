@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { useDispatch } from 'react-redux';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
@@ -8,6 +8,7 @@ import { selectNotebook } from '../notebook/NotebookRedux';
 
 interface FixCodeProps {
     uid: string;
+    onClose: any;
 }
 
 const FixCode: React.FC<FixCodeProps> = ({ uid, onClose }) => {
@@ -16,11 +17,11 @@ const FixCode: React.FC<FixCodeProps> = ({ uid, onClose }) => {
     const selectedNotebook = selectNotebook(uid);
     const dispatch = useDispatch();
 
-    const handlePromptChange = event => {
+    const handlePromptChange = (event: ChangeEvent<HTMLInputElement>) => {
         setPrompt(event.target.value);
     };
 
-    const handleErrorMessageChange = event => {
+    const handleErrorMessageChange = (event: ChangeEvent<HTMLInputElement>) => {
         setErrorMessage(event.target.value);
     };
 
@@ -28,6 +29,7 @@ const FixCode: React.FC<FixCodeProps> = ({ uid, onClose }) => {
         const adapter = selectedNotebook?.adapter?.notebookPanel?.content;
         const currentIndex = adapter?.activeCellIndex;
 
+        // @ts-ignore
         const selectedWidget = adapter?.widgets[currentIndex];
         const errorText =
             selectedWidget?.node.childNodes[3].innerText.toString();

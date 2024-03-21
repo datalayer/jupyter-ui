@@ -1,3 +1,5 @@
+import React, { ChangeEvent } from 'react';
+
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import { Chip } from '@mui/material';
@@ -14,12 +16,16 @@ const MenuProps = {
     },
 };
 
-export default function MultipleSelectCheckmarks({
-    selection,
-    selectedItems,
-    setSelectedItems,
-}) {
-    const handleChange = event => {
+interface MultipleSelectCheckmarksProps {
+    selection: any;
+    selectedItems: any;
+    setSelectedItems: any;
+}
+
+export const MultipleSelectCheckmarks: React.FC<
+    MultipleSelectCheckmarksProps
+> = ({ selection, selectedItems, setSelectedItems }) => {
+    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const {
             target: { value },
         } = event;
@@ -45,7 +51,7 @@ export default function MultipleSelectCheckmarks({
                                 marginLeft: -8,
                             }}
                         >
-                            {selected.map(index => (
+                            {selected.map((index: number) => (
                                 <Chip
                                     key={index}
                                     label={selection[index].label}
@@ -97,7 +103,7 @@ export default function MultipleSelectCheckmarks({
                         },
                     }}
                 >
-                    {selection.map((cell, index) => (
+                    {selection.map((cell: any, index: number) => (
                         <MenuItem
                             sx={{ height: 40, color: 'white' }}
                             key={index}
@@ -114,4 +120,4 @@ export default function MultipleSelectCheckmarks({
             </FormControl>
         </div>
     );
-}
+};

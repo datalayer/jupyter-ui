@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, ChangeEvent } from 'react';
 import { useDispatch } from 'react-redux';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
@@ -7,13 +7,14 @@ import { notebookActions } from '../notebook/NotebookRedux';
 
 interface ModifyCodeProps {
     uid: string;
+    onClose: any;
 }
 
 const ModifyCode: React.FC<ModifyCodeProps> = ({ uid, onClose }) => {
     const [prompt, setPrompt] = useState('');
     const dispatch = useDispatch();
 
-    const handlePromptChange = event => {
+    const handlePromptChange = (event: ChangeEvent<HTMLInputElement>) => {
         setPrompt(event.target.value);
     };
 

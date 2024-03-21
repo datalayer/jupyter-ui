@@ -1,15 +1,16 @@
-import { useState } from 'react';
+import { useState, ChangeEvent } from 'react';
 import { useDispatch } from 'react-redux';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { Typography, TextField } from '@mui/material';
 import { notebookActions } from '../notebook/NotebookRedux';
-import MultipleSelectCheckmarks from '../select/multi-select';
+import { MultipleSelectCheckmarks } from '../select/multi-select';
 import { selectNotebook } from '../notebook/NotebookRedux';
 import { HiMiniQuestionMarkCircle } from 'react-icons/hi2';
 
 interface ModifyCodeProps {
     uid: string;
+    onClose: any;
 }
 
 const GenerateCode: React.FC<ModifyCodeProps> = ({ uid, onClose }) => {
@@ -35,7 +36,7 @@ const GenerateCode: React.FC<ModifyCodeProps> = ({ uid, onClose }) => {
         };
     });
 
-    const handlePromptChange = event => {
+    const handlePromptChange = (event: ChangeEvent<HTMLInputElement>) => {
         setPrompt(event.target.value);
     };
 
