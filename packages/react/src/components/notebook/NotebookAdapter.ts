@@ -66,7 +66,7 @@ import { WidgetRenderer } from '../../jupyter/ipywidgets/lab/renderer';
 
 const FALLBACK_PATH = 'ping.ipynb';
 
-import { codeGenerate } from '../../codeGenerate';
+// import { codeGenerate } from '../../codeGenerate';
 
 export class NotebookAdapter {
     private _boxPanel: BoxPanel;
@@ -777,9 +777,6 @@ export class NotebookAdapter {
         // @ts-ignore
 
         const input = `${userPrompt} [ERROR_CODE] ${errorCode} [/ERROR_CODE] [ERROR_MESSAGE] ${errorMessage} [/ERROR_MESSAGE]`;
-
-        console.log('Fix code input: ', input);
-
         // ====================== Live =====================
 
         const response = await fetch('/api/codeGenerate', {
@@ -848,7 +845,7 @@ export class NotebookAdapter {
             cell_type: notebook.notebookConfig.defaultCell,
             source:
                 notebook.notebookConfig.defaultCell === 'raw'
-                    ? '# PROMPT: '
+                    ? '## PROMPT: '
                     : '',
             metadata:
                 notebook.notebookConfig.defaultCell === 'code'

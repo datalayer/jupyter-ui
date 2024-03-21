@@ -182,13 +182,6 @@ type CellMutation = {
     cellType: nbformat.CellType;
     source?: string;
 };
-
-type CodeGenerateMutation = {
-    uid: string;
-    previousCode: string;
-    codeGeneratePrompt: string;
-};
-
 type ModifyMutation = {
     uid: string;
     modifyPrompt: string;
@@ -198,6 +191,12 @@ type FixMutation = {
     uid: string;
     fixPrompt: string;
     errorMessage: string;
+};
+
+type CodeGenerateMutation = {
+    uid: string;
+    previousCode: string;
+    codeGeneratePrompt: string; // Corrected key name
 };
 
 export const notebookActions = {
