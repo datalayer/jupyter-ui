@@ -301,17 +301,17 @@ const codeGenerateEpic: Epic<
     action$.pipe(
         ofAction(notebookActions.codeGenerate.started),
         tap(async action => {
-            const { codeGeneratePrompt, previousCode, uid } = action.payload;
-            const selectedNotebook = state$.value.notebook.notebooks.get(uid);
-            await codeGenerate({
-                input: `[COMMAND] ${codeGeneratePrompt} [/COMMAND] [CODE_PREV] ${previousCode} [/CODE_PREV]`,
-                type: 'generateCode',
-                uid: uid,
-                selectedNotebook,
-            });
-            // state$.value.notebook.notebooks
-            //     .get(action.payload.uid)
-            //     ?.adapter?.generateCode(codeGeneratePrompt, previousCode);
+            const { codeGeneratePrompt, previousCode } = action.payload;
+            // const selectedNotebook = state$.value.notebook.notebooks.get(uid);
+            // await codeGenerate({
+            //     input: `[COMMAND] ${codeGeneratePrompt} [/COMMAND] [CODE_PREV] ${previousCode} [/CODE_PREV]`,
+            //     type: 'generateCode',
+            //     uid: uid,
+            //     selectedNotebook,
+            // });
+            state$.value.notebook.notebooks
+                .get(action.payload.uid)
+                ?.adapter?.generateCode(codeGeneratePrompt, previousCode);
         }),
         ignoreElements()
     );
