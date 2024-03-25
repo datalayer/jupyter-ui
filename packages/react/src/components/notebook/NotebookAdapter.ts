@@ -677,69 +677,21 @@ export class NotebookAdapter {
         const model = this._notebookPanel!.context.model!;
         const currentIndex = notebook.activeCell ? notebook.activeCellIndex : 0;
         const notebookSharedModel = notebook.model!.sharedModel;
-        notebookSharedModel.deleteCell(currentIndex);
 
-        const promptCell = model.sharedModel.insertCell(currentIndex, {
-            cell_type: 'raw',
-            source: `# PROMPT: ${generateCodePrompt}`,
-            metadata: {
-                trusted: true,
+        await fetch('/api/codeGenerate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
             },
+            body: JSON.stringify({
+                userInput: generateCodePrompt,
+                previousCode: previousCode,
+                notebook: notebook,
+                model: model,
+                currentIndex: currentIndex,
+                notebookSharedModel: notebookSharedModel,
+            }),
         });
-
-        const newCodeCell = model.sharedModel.insertCell(currentIndex + 1, {
-            cell_type: 'code',
-            source: 'Loading response...', // Empty source initially
-            metadata: {
-                // This is an empty cell created by the user, thus is trusted
-                trusted: true,
-            },
-        });
-
-        const content = await codeGenerate({
-            input: `[COMMAND] ${generateCodePrompt} [/COMMAND] [CODE_PREV] ${previousCode} [/CODE_PREV]`,
-            type: 'generateCode',
-        });
-
-        // =====================================================================
-
-        // Extract markdown content and Python code from the response content
-        const markdownRegex = /\[MARKDOWN\](.*?)\[\/MARKDOWN\]/s;
-        const pythonRegex = /\[PYTHON\](.*?)\[\/PYTHON\]/s;
-
-        const markdownMatch = content.match(markdownRegex);
-        const pythonMatch = content.match(pythonRegex);
-
-        let markdownContent = '';
-        let pythonCode = '';
-
-        if (markdownMatch && pythonMatch) {
-            markdownContent = `\n\n${markdownMatch[1].trim()}`;
-            pythonCode = pythonMatch[1].trim();
-        } else {
-            console.error(
-                'Failed to extract markdown or python code from content'
-            );
-        }
-
-        // Update the current cell with the extracted markdown content with typing animation
-        for (const line of markdownContent.split('\n')) {
-            promptCell.source += line + '\n';
-            await new Promise(resolve => setTimeout(resolve, 100));
-        }
-
-        console.log('MARKDOWN RESPONSE: ', markdownContent);
-
-        // Insert a new code cell with empty source
-
-        // Update the new cell with the extracted Python code with typing animation
-        for (const line of pythonCode.split('\n')) {
-            newCodeCell.source += line + '\n';
-            await new Promise(resolve => setTimeout(resolve, 100));
-        }
-
-        notebook.activeCellIndex = currentIndex + 1;
-        notebook.activeCell!.inputHidden = false;
     };
 
     fixCell = async (fixPrompt: string, errorMessage: string) => {
