@@ -79,7 +79,7 @@ export async function codeGenerate(request: any) {
         const currentIndex = adapter?.activeCellIndex;
 
         const openai = new OpenAI({
-            apiKey: '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',
+            apiKey: '',
             dangerouslyAllowBrowser: true,
         });
 
