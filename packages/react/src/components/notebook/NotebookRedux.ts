@@ -21,7 +21,7 @@ import { IJupyterReactState } from '../../state/redux/State';
 import { cmdIds } from './NotebookCommands';
 import NotebookAdapter from './NotebookAdapter';
 
-import { codeGenerate } from '../../codeGenerate';
+// import { codeGenerate } from '../../codeGenerate';
 
 type PortalDisplay = {
     portal: ReactPortal;

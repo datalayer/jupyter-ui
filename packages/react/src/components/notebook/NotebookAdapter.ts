@@ -68,6 +68,13 @@ const FALLBACK_PATH = 'ping.ipynb';
 
 // import { codeGenerate } from '../../codeGenerate';
 
+// Define states for the streaming content
+const STATE = {
+    NONE: 'none',
+    MARKDOWN: 'markdown',
+    PYTHON: 'python',
+};
+
 export class NotebookAdapter {
     private _boxPanel: BoxPanel;
     private _commandRegistry: CommandRegistry;
@@ -88,6 +95,7 @@ export class NotebookAdapter {
     private _store?: Store;
     private _tracker?: NotebookTracker;
     private _uid: string;
+    private _currentState: string;
     private _CellSidebar?: (props: any) => JSX.Element;
     private _saveNotebook: (
         notebookId: string,
@@ -120,6 +128,8 @@ export class NotebookAdapter {
         this._boxPanel = new BoxPanel();
         this._boxPanel.addClass('dla-Jupyter-Notebook');
         this._boxPanel.spacing = 0;
+
+        this._currentState = STATE.NONE;
 
         this._commandRegistry = new CommandRegistry();
 
@@ -676,22 +686,118 @@ export class NotebookAdapter {
         const notebook = this._notebookPanel!.content!;
         const model = this._notebookPanel!.context.model!;
         const currentIndex = notebook.activeCell ? notebook.activeCellIndex : 0;
-        const notebookSharedModel = notebook.model!.sharedModel;
+        // const selectedWidget = notebook.widgets.find(child => {
+        //     return notebook.isSelectedOrActive(child);
+        // });
 
-        await fetch('/api/codeGenerate', {
+        // Add New Prompt Cell with the users prompt
+        const notebookSharedModel = notebook.model!.sharedModel;
+        notebookSharedModel.deleteCell(currentIndex);
+
+        const promptCell = model.sharedModel.insertCell(currentIndex, {
+            cell_type: 'raw',
+            source: `# PROMPT: ${generateCodePrompt}`,
+            metadata: {
+                trusted: true,
+            },
+        });
+
+        // Insert a new code cell with empty source
+        const newCodeCell = model.sharedModel.insertCell(currentIndex + 1, {
+            cell_type: 'code',
+            source: 'Loading Response...', // Empty source initially
+            metadata: {
+                // This is an empty cell created by the user, thus is trusted
+                trusted: true,
+            },
+        });
+
+        // ============================= Live =============
+        const response = await fetch('/api/codeGenerate', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                userInput: generateCodePrompt,
-                previousCode: previousCode,
-                notebook: notebook,
-                model: model,
-                currentIndex: currentIndex,
-                notebookSharedModel: notebookSharedModel,
+                input: `[COMMAND] ${generateCodePrompt} [/COMMAND] [CODE_PREV] ${previousCode} [/CODE_PREV]`,
+                type: 'generateCode',
             }),
         });
+
+        // const { content } = await response.json();
+
+        // ============================= Testing ===============================
+
+        // const content = await codeGenerate({
+        //     input: `[COMMAND] ${generateCodePrompt} [/COMMAND] [CODE_PREV] ${previousCode} [/CODE_PREV]`,
+        //     type: 'generateCode',
+        // });
+
+        // =====================================================================
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        newCodeCell.source = '';
+
+        if (response.body) {
+            const reader = response.body.getReader();
+
+            try {
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    const chunkContent = new TextDecoder().decode(value, {
+                        stream: true,
+                    });
+                    // Assuming chunkContent is a JSON string that needs to be parsed
+                    const chunkData = JSON.parse(chunkContent);
+                    const content = chunkData.choices[0]?.delta?.content || '';
+                    // Update notebook cells with the received content
+                    await this.updateNotebookCell(
+                        promptCell,
+                        newCodeCell,
+                        content
+                    );
+                }
+            } catch (error) {
+                console.error('Error reading the stream', error);
+            }
+        }
+
+        notebook.activeCellIndex = currentIndex + 1;
+        notebook.activeCell!.inputHidden = false;
+    };
+
+    // Initialize currentState outside of the updateNotebookCell function
+
+    updateNotebookCell = async (
+        promptCell: any,
+        codeCell: any,
+        content: string
+    ) => {
+        if (!promptCell || !codeCell) {
+            console.error('Cells not found');
+            return;
+        }
+
+        // Check for state-changing tags and update the current state accordingly
+        if (content === '§') {
+            this._currentState = STATE.MARKDOWN;
+        } else if (content === '¶') {
+            this._currentState = STATE.PYTHON;
+        } else {
+            // Append the content to the appropriate cell based on the current state
+            if (this._currentState === STATE.MARKDOWN) {
+                promptCell.source += content;
+            } else if (this._currentState === STATE.PYTHON) {
+                codeCell.source += content;
+            }
+        }
+
+        // Optionally, you can add a delay to simulate typing animation
+        await new Promise(resolve => setTimeout(resolve, 1));
     };
 
     fixCell = async (fixPrompt: string, errorMessage: string) => {
