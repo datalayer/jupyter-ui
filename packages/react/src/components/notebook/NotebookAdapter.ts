@@ -66,7 +66,7 @@ import { WidgetRenderer } from '../../jupyter/ipywidgets/lab/renderer';
 
 const FALLBACK_PATH = 'ping.ipynb';
 
-// import { codeGenerate } from '../../codeGenerate';
+import { codeGenerate } from '../../codeGenerate';
 
 export class NotebookAdapter {
     private _boxPanel: BoxPanel;
@@ -676,11 +676,6 @@ export class NotebookAdapter {
         const notebook = this._notebookPanel!.content!;
         const model = this._notebookPanel!.context.model!;
         const currentIndex = notebook.activeCell ? notebook.activeCellIndex : 0;
-        // const selectedWidget = notebook.widgets.find(child => {
-        //     return notebook.isSelectedOrActive(child);
-        // });
-
-        // Add New Prompt Cell with the users prompt
         const notebookSharedModel = notebook.model!.sharedModel;
         notebookSharedModel.deleteCell(currentIndex);
 
@@ -692,26 +687,19 @@ export class NotebookAdapter {
             },
         });
 
-        // ============================= Live =============
-        const response = await fetch('/api/codeGenerate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
+        const newCodeCell = model.sharedModel.insertCell(currentIndex + 1, {
+            cell_type: 'code',
+            source: 'Loading response...', // Empty source initially
+            metadata: {
+                // This is an empty cell created by the user, thus is trusted
+                trusted: true,
             },
-            body: JSON.stringify({
-                input: `[COMMAND] ${generateCodePrompt} [/COMMAND] [CODE_PREV] ${previousCode} [/CODE_PREV]`,
-                type: 'generateCode',
-            }),
         });
 
-        const { content } = await response.json();
-
-        // ============================= Testing ===============================
-
-        // const content = await codeGenerate({
-        //     input: `[COMMAND] ${generateCodePrompt} [/COMMAND] [CODE_PREV] ${previousCode} [/CODE_PREV]`,
-        //     type: 'generateCode',
-        // });
+        const content = await codeGenerate({
+            input: `[COMMAND] ${generateCodePrompt} [/COMMAND] [CODE_PREV] ${previousCode} [/CODE_PREV]`,
+            type: 'generateCode',
+        });
 
         // =====================================================================
 
@@ -743,14 +731,6 @@ export class NotebookAdapter {
         console.log('MARKDOWN RESPONSE: ', markdownContent);
 
         // Insert a new code cell with empty source
-        const newCodeCell = model.sharedModel.insertCell(currentIndex + 1, {
-            cell_type: 'code',
-            source: '', // Empty source initially
-            metadata: {
-                // This is an empty cell created by the user, thus is trusted
-                trusted: true,
-            },
-        });
 
         // Update the new cell with the extracted Python code with typing animation
         for (const line of pythonCode.split('\n')) {

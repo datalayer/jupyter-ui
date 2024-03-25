@@ -21,6 +21,8 @@ import { IJupyterReactState } from '../../state/redux/State';
 import { cmdIds } from './NotebookCommands';
 import NotebookAdapter from './NotebookAdapter';
 
+import { codeGenerate } from '../../codeGenerate';
+
 type PortalDisplay = {
     portal: ReactPortal;
     pinned: boolean;
@@ -298,11 +300,18 @@ const codeGenerateEpic: Epic<
 > = (action$, state$) =>
     action$.pipe(
         ofAction(notebookActions.codeGenerate.started),
-        tap(action => {
-            const { codeGeneratePrompt, previousCode } = action.payload;
-            state$.value.notebook.notebooks
-                .get(action.payload.uid)
-                ?.adapter?.generateCode(codeGeneratePrompt, previousCode);
+        tap(async action => {
+            const { codeGeneratePrompt, previousCode, uid } = action.payload;
+            const selectedNotebook = state$.value.notebook.notebooks.get(uid);
+            await codeGenerate({
+                input: `[COMMAND] ${codeGeneratePrompt} [/COMMAND] [CODE_PREV] ${previousCode} [/CODE_PREV]`,
+                type: 'generateCode',
+                uid: uid,
+                selectedNotebook,
+            });
+            // state$.value.notebook.notebooks
+            //     .get(action.payload.uid)
+            //     ?.adapter?.generateCode(codeGeneratePrompt, previousCode);
         }),
         ignoreElements()
     );

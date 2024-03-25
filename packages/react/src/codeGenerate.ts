@@ -13,17 +13,17 @@ export const CHAT_SETTING_LIMITS = {
 };
 
 const prompt_generate_code = `
-You are a helpful Python code generator. Your job is to generate Python code based on
+You are a helpful Python code generator to generate quantitive finance code. Your job is to generate Python code based on
 a command given by the user (wrapped between [COMMAND] [/COMMAND] tags).
 
-You should limit yourself to return first markdown text explaining the code between [MARKDOWN] and [/MARKDOWN] 
-tags and then runnable Python code, that is,
-no markdown and no raw text between [PYTHON] and [/PYTHON] tags. Your output must be runnable
+You should limit yourself to return first markdown text explaining the code between §
+characters and then runnable Python code, that is,
+no markdown and no raw text between ¶ characters. Your output must be runnable
 Python code (comments should only be above lines to explain the following code), that is, it should 
-not contain [CODE] or [/CODE] tags or be between a python comment.
+not be between a python comment. The format must be § [returned markdown] § ¶ [returned python] ¶
+
 User's code might refer to existing code. Code that exists in previous lines will
-be given between [CODE_PREV] and [/CODE_PREV] tags. Code that exists in the following
-lines will be given between [CODE_POST] and [/CODE_POST] tags.
+be given between [CODE_PREV] and [/CODE_PREV] tags. 
 
 When generating output, you must re-use existing variables and only generate new code,
 your output should not contain code that already exists in previous lines.
@@ -71,15 +71,37 @@ interface RequestType {
 
 export async function codeGenerate(request: any) {
     try {
-        const { input: input, type: requestType } = request;
-        const prompt = REQUEST_TYPE[requestType];
+        const { input, type, selectedNotebook } = request;
+        const prompt = REQUEST_TYPE[type];
+
+        const adapter = selectedNotebook?.adapter?.notebookPanel?.content;
+        const model = selectedNotebook?.adapter?.notebookPanel?.model;
+        const currentIndex = adapter?.activeCellIndex;
 
         const openai = new OpenAI({
-            apiKey: '',
+            apiKey: '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',
             dangerouslyAllowBrowser: true,
         });
 
-        const response = await openai.chat.completions.create({
+        // Create new cells
+        const promptCell = model?.sharedModel.insertCell(currentIndex, {
+            cell_type: 'raw',
+            source: `## PROMPT: ${input}\n`,
+            metadata: {
+                trusted: true,
+            },
+        });
+
+        const newCodeCell = model?.sharedModel.insertCell(currentIndex + 1, {
+            cell_type: 'code',
+            source: '', // Empty source initially
+            metadata: {
+                // This is an empty cell created by the user, thus is trusted
+                trusted: true,
+            },
+        });
+
+        const stream = await openai.chat.completions.create({
             model: 'gpt-4-1106-preview',
             messages: [
                 {
@@ -88,22 +110,63 @@ export async function codeGenerate(request: any) {
                 },
                 {
                     role: 'user',
-                    content: input, // Use the extracted input value
+                    content: input,
                 },
             ],
             temperature: 0,
             max_tokens:
                 CHAT_SETTING_LIMITS['gpt-4-1106-preview']
                     .MAX_TOKEN_OUTPUT_LENGTH,
+            stream: true, // Enable streaming
         });
 
-        const content = response.choices[0].message.content;
-        return content;
+        for await (const chunk of stream) {
+            const content = chunk.choices[0]?.delta?.content || '';
+            console.log('Chunk: ', content);
+            // Update notebook cells with the received content
+            await updateNotebookCell(promptCell, newCodeCell, content);
+        }
     } catch (error: any) {
         console.error(error);
         const errorMessage =
             error.error?.message || 'An unexpected error occurred';
-
         return errorMessage;
     }
+}
+
+// Define states for the streaming content
+const STATE = {
+    NONE: 'none',
+    MARKDOWN: 'markdown',
+    PYTHON: 'python',
+};
+
+let currentState = STATE.NONE;
+
+async function updateNotebookCell(
+    promptCell: any,
+    codeCell: any,
+    content: string
+) {
+    if (!promptCell || !codeCell) {
+        console.error('Cells not found');
+        return;
+    }
+
+    // Check for state-changing tags and update the current state accordingly
+    if (content === '§') {
+        currentState = STATE.MARKDOWN;
+    } else if (content === '¶') {
+        currentState = STATE.PYTHON;
+    } else {
+        // Append the content to the appropriate cell based on the current state
+        if (currentState === STATE.MARKDOWN) {
+            promptCell.source += content;
+        } else if (currentState === STATE.PYTHON) {
+            codeCell.source += content;
+        }
+    }
+
+    // Optionally, you can add a delay to simulate typing animation
+    await new Promise(resolve => setTimeout(resolve, 1));
 }

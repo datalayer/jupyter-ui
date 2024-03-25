@@ -94,6 +94,8 @@ export const CellSidebar = (props: CellSidebarProps) => {
                 '& p': {
                     marginBottom: '0 !important',
                 },
+                borderWidth: 0.5,
+                borderColor: 'rgba(255,255,255,0.05)',
             }}
         >
             {activeCell.model.type === 'raw' ? (
@@ -248,8 +250,8 @@ export const CellSidebar = (props: CellSidebarProps) => {
             {/* Function divider */}
             <Box
                 sx={{
-                    height: 1,
-                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    height: 0.5,
+                    backgroundColor: 'rgba(255,255,255,0.05)',
                     width: '95%',
                     my: 1,
                 }}
