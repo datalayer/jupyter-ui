@@ -784,9 +784,9 @@ export class NotebookAdapter {
         }
 
         // Check for state-changing tags within the content and update the current state accordingly
-        if (content.includes('~m')) {
+        if (content.includes('##')) {
             this._currentState = STATE.MARKDOWN;
-        } else if (content.includes('~p')) {
+        } else if (content.includes('@@')) {
             this._currentState = STATE.PYTHON;
         } else {
             // Append the content to the appropriate cell based on the current state
