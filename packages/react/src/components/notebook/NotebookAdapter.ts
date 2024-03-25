@@ -743,26 +743,27 @@ export class NotebookAdapter {
 
         if (response.body) {
             const reader = response.body.getReader();
+            let accumulatedContent = ''; // This will hold the accumulated content
 
             try {
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
-                    const chunkContent = new TextDecoder().decode(value, {
+                    // Decode the value and add it to the accumulated content
+                    accumulatedContent += new TextDecoder().decode(value, {
                         stream: true,
                     });
-                    // Assuming chunkContent is a JSON string that needs to be parsed
-                    const chunkData = JSON.parse(chunkContent);
-                    const content = chunkData.choices[0]?.delta?.content || '';
-                    // Update notebook cells with the received content
-                    await this.updateNotebookCell(
-                        promptCell,
-                        newCodeCell,
-                        content
-                    );
                 }
+                // Ensure the accumulated content is treated as a string within JSON
+                const jsonData = JSON.parse(`"${accumulatedContent}"`);
+                const content = jsonData.choices[0]?.delta?.content || '';
+                // Update notebook cells with the received content
+                await this.updateNotebookCell(promptCell, newCodeCell, content);
             } catch (error) {
-                console.error('Error reading the stream', error);
+                console.error(
+                    'Error reading the stream or parsing JSON',
+                    error
+                );
             }
         }
 
