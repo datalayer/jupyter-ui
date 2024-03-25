@@ -66,7 +66,7 @@ import { WidgetRenderer } from '../../jupyter/ipywidgets/lab/renderer';
 
 const FALLBACK_PATH = 'ping.ipynb';
 
-import { codeGenerate } from '../../codeGenerate';
+// import { codeGenerate } from '../../codeGenerate';
 
 export class NotebookAdapter {
     private _boxPanel: BoxPanel;
