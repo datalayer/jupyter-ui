@@ -712,6 +712,17 @@ export class NotebookAdapter {
             },
         });
 
+        // const { content } = await response.json();
+
+        // ============================= Testing ===============================
+
+        // const content = await codeGenerate({
+        //     input: `[COMMAND] ${generateCodePrompt} [/COMMAND] [CODE_PREV] ${previousCode} [/CODE_PREV]`,
+        //     type: 'generateCode',
+        // });
+
+        // =====================================================================
+
         // ============================= Live =============
         const response = await fetch('/api/codeGenerate', {
             method: 'POST',
@@ -723,17 +734,6 @@ export class NotebookAdapter {
                 type: 'generateCode',
             }),
         });
-
-        // const { content } = await response.json();
-
-        // ============================= Testing ===============================
-
-        // const content = await codeGenerate({
-        //     input: `[COMMAND] ${generateCodePrompt} [/COMMAND] [CODE_PREV] ${previousCode} [/CODE_PREV]`,
-        //     type: 'generateCode',
-        // });
-
-        // =====================================================================
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -782,10 +782,10 @@ export class NotebookAdapter {
             return;
         }
 
-        // Check for state-changing tags and update the current state accordingly
-        if (content === '§') {
+        // Check for state-changing tags within the content and update the current state accordingly
+        if (content.includes('~m')) {
             this._currentState = STATE.MARKDOWN;
-        } else if (content === '¶') {
+        } else if (content.includes('~p')) {
             this._currentState = STATE.PYTHON;
         } else {
             // Append the content to the appropriate cell based on the current state
@@ -797,7 +797,7 @@ export class NotebookAdapter {
         }
 
         // Optionally, you can add a delay to simulate typing animation
-        await new Promise(resolve => setTimeout(resolve, 1));
+        // await new Promise(resolve => setTimeout(resolve, 1));
     };
 
     fixCell = async (fixPrompt: string, errorMessage: string) => {
