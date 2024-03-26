@@ -10,7 +10,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@datalayer/icons-react": "0.2.4",
     "@datalayer/jupyter-react": "0.9.5",
+    "@datalayer/primer-addons": "0.2.3",
     "autoprefixer": "10.4.14",
     "eslint": "8.40.0",
     "eslint-config-next": "13.4.1",
