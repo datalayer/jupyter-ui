@@ -57,7 +57,7 @@
     "watch:src": "tsc -w"
   },
   "dependencies": {
-    "@datalayer/icons-react": "0.2.4",
+    "@datalayer/icons-react": "0.2.5",
     "@datalayer/jupyter-react": "0.9.5",
     "@datalayer/primer-addons": "0.2.3",
     "@jupyterlab/application": "4.1.0-beta.0",

@@ -12,7 +12,7 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "@datalayer/icons-react": "0.2.4",
+    "@datalayer/icons-react": "0.2.5",
     "@datalayer/jupyter-react": "0.9.5",
     "@datalayer/primer-addons": "0.2.3",
     "jupyterlab-plotly": "5.17.0",

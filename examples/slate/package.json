@@ -23,7 +23,7 @@
     "kill": "./../dev/sh/kill.sh || true"
   },
   "dependencies": {
-    "@datalayer/icons-react": "0.2.4",
+    "@datalayer/icons-react": "0.2.5",
     "@datalayer/jupyter-react": "0.9.5",
     "@datalayer/primer-addons": "0.2.3",
     "@emotion/css": "11.1.3",
