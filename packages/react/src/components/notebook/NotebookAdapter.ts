@@ -627,6 +627,19 @@ export class NotebookAdapter {
 
         const codeToModify = selectedWidget?.model.toJSON().source.toString();
 
+        const notebookSharedModel = notebook.model!.sharedModel;
+        notebookSharedModel.deleteCell(currentIndex);
+
+        // Insert a new code cell with empty source
+        const newCodeCell = model.sharedModel.insertCell(currentIndex, {
+            cell_type: 'code',
+            source: 'Loading Response...', // Empty source initially
+            metadata: {
+                // This is an empty cell created by the user, thus is trusted
+                trusted: true,
+            },
+        });
+
         // =========================== Live ============================
 
         const response = await fetch('/api/codeGenerate', {
@@ -640,57 +653,52 @@ export class NotebookAdapter {
             }),
         });
 
-        const { content } = await response.json();
-
         // ============================= Testing =============================
 
-        // const content = await codeGenerate({
+        // const response = await codeGenerate({
         //     input: `[COMMAND] ${modifyPrompt} [/COMMAND] [CODE] ${codeToModify} [/CODE]`,
         //     type: 'fixCode',
         // });
 
         // =================================================================
 
-        const pythonRegex = /\[PYTHON\](.*?)\[\/PYTHON\]/s;
-        const pythonMatch = content.match(pythonRegex);
-        let pythonCode = '';
+        newCodeCell.source = '';
 
-        if (pythonMatch) {
-            pythonCode = pythonMatch[1].trim();
-        } else {
-            console.error('Failed to extract python code from content');
+        if (response.body) {
+            await consumeReadableStream(response.body, chunk => {
+                try {
+                    let contentToAdd = chunk;
+
+                    this.updateNotebookCellModify(newCodeCell, contentToAdd);
+                } catch (error) {
+                    console.error('Error parsing JSON:', error);
+                }
+            });
         }
 
-        const notebookSharedModel = notebook.model!.sharedModel;
-        notebookSharedModel.deleteCell(currentIndex);
-
-        // Insert a new code cell with empty source
-        const newCodeCell = model.sharedModel.insertCell(currentIndex, {
-            cell_type: 'code',
-            source: '', // Empty source initially
-            metadata: {
-                // This is an empty cell created by the user, thus is trusted
-                trusted: true,
-            },
-        });
-
-        // Update the new cell with the extracted Python code with typing animation
-        for (const line of pythonCode.split('\n')) {
-            newCodeCell.source += line + '\n';
-            await new Promise(resolve => setTimeout(resolve, 100));
-        }
-
-        notebook.activeCellIndex = currentIndex + 1;
+        notebook.activeCellIndex = currentIndex;
         notebook.activeCell!.inputHidden = false;
+    };
+
+    updateNotebookCellModify = async (codeCell: any, content: string) => {
+        if (!codeCell) {
+            console.error('Cells not found');
+            return;
+        }
+
+        if (content.includes('@@')) {
+            this._currentState = STATE.PYTHON;
+        } else {
+            if (this._currentState === STATE.PYTHON) {
+                codeCell.source += content;
+            }
+        }
     };
 
     generateCode = async (generateCodePrompt: string, previousCode: string) => {
         const notebook = this._notebookPanel!.content!;
         const model = this._notebookPanel!.context.model!;
         const currentIndex = notebook.activeCell ? notebook.activeCellIndex : 0;
-        // const selectedWidget = notebook.widgets.find(child => {
-        //     return notebook.isSelectedOrActive(child);
-        // });
 
         // Add New Prompt Cell with the users prompt
         const notebookSharedModel = notebook.model!.sharedModel;
@@ -698,7 +706,7 @@ export class NotebookAdapter {
 
         const promptCell = model.sharedModel.insertCell(currentIndex, {
             cell_type: 'raw',
-            source: `# PROMPT: ${generateCodePrompt}`,
+            source: `# PROMPT: ${generateCodePrompt}\n\n`,
             metadata: {
                 trusted: true,
             },
@@ -714,18 +722,8 @@ export class NotebookAdapter {
             },
         });
 
-        // const { content } = await response.json();
-
-        // ============================= Testing ===============================
-
-        // const content = await codeGenerate({
-        //     input: `[COMMAND] ${generateCodePrompt} [/COMMAND] [CODE_PREV] ${previousCode} [/CODE_PREV]`,
-        //     type: 'generateCode',
-        // });
-
-        // =====================================================================
-
         // ============================= Live =============
+
         const response = await fetch('/api/codeGenerate', {
             method: 'POST',
             headers: {
@@ -736,6 +734,15 @@ export class NotebookAdapter {
                 type: 'generateCode',
             }),
         });
+
+        // ============================= Testing ===============================
+
+        // const content = await codeGenerate({
+        //     input: `[COMMAND] ${generateCodePrompt} [/COMMAND] [CODE_PREV] ${previousCode} [/CODE_PREV]`,
+        //     type: 'generateCode',
+        // });
+
+        // =====================================================================
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -753,7 +760,6 @@ export class NotebookAdapter {
                         newCodeCell,
                         contentToAdd
                     );
-                    // fullText += contentToAdd;
                 } catch (error) {
                     console.error('Error parsing JSON:', error);
                 }
@@ -763,8 +769,6 @@ export class NotebookAdapter {
         notebook.activeCellIndex = currentIndex + 1;
         notebook.activeCell!.inputHidden = false;
     };
-
-    // Initialize currentState outside of the updateNotebookCell function
 
     updateNotebookCell = async (
         promptCell: any,
@@ -789,9 +793,6 @@ export class NotebookAdapter {
                 codeCell.source += content;
             }
         }
-
-        // Optionally, you can add a delay to simulate typing animation
-        // await new Promise(resolve => setTimeout(resolve, 1));
     };
 
     fixCell = async (fixPrompt: string, errorMessage: string) => {
@@ -804,11 +805,20 @@ export class NotebookAdapter {
 
         // User prompt for code fix is optional, set to empty string if we don't have it
         const userPrompt = fixPrompt ? `[COMMAND] ${fixPrompt} [/COMMAND]` : '';
-
         const errorCode = selectedWidget?.model.toJSON().source.toString();
-        // @ts-ignore
-
         const input = `${userPrompt} [ERROR_CODE] ${errorCode} [/ERROR_CODE] [ERROR_MESSAGE] ${errorMessage} [/ERROR_MESSAGE]`;
+
+        const notebookSharedModel = notebook.model!.sharedModel;
+        notebookSharedModel.deleteCell(currentIndex);
+
+        // Insert a new code cell with empty source
+        const newCodeCell = model.sharedModel.insertCell(currentIndex, {
+            cell_type: 'code',
+            source: 'Fixing code...',
+            metadata: {
+                trusted: true,
+            },
+        });
         // ====================== Live =====================
 
         const response = await fetch('/api/codeGenerate', {
@@ -819,49 +829,29 @@ export class NotebookAdapter {
             body: JSON.stringify({ input: input, type: 'fixCode' }),
         });
 
-        const { content } = await response.json();
-
         // ====================== Testing ===================
 
-        // const content = await codeGenerate({
+        // const response = await codeGenerate({
         //     input: input,
         //     type: 'fixCode',
         // });
 
-        // console.log('CONTENT: ', content);
-
         // ==================================================
 
-        const pythonRegex = /\[PYTHON\](.*?)\[\/PYTHON\]/s;
-        const pythonMatch = content.match(pythonRegex);
-        let pythonCode = '';
+        newCodeCell.source = '';
 
-        if (pythonMatch) {
-            pythonCode = pythonMatch[1].trim();
-        } else {
-            console.error('Failed to extract python code from content');
+        if (response.body) {
+            await consumeReadableStream(response.body, chunk => {
+                try {
+                    let contentToAdd = chunk;
+                    this.updateNotebookCellModify(newCodeCell, contentToAdd);
+                } catch (error) {
+                    console.error('Error parsing JSON:', error);
+                }
+            });
         }
 
-        const notebookSharedModel = notebook.model!.sharedModel;
-        notebookSharedModel.deleteCell(currentIndex);
-
-        // Insert a new code cell with empty source
-        const newCodeCell = model.sharedModel.insertCell(currentIndex, {
-            cell_type: 'code',
-            source: '', // Empty source initially
-            metadata: {
-                // This is an empty cell created by the user, thus is trusted
-                trusted: true,
-            },
-        });
-
-        // Update the new cell with the extracted Python code with typing animation
-        for (const line of pythonCode.split('\n')) {
-            newCodeCell.source += line + '\n';
-            await new Promise(resolve => setTimeout(resolve, 100));
-        }
-
-        notebook.activeCellIndex = currentIndex + 1;
+        notebook.activeCellIndex = currentIndex;
         notebook.activeCell!.inputHidden = false;
     };
 
