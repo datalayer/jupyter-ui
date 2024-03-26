@@ -746,14 +746,7 @@ export class NotebookAdapter {
         if (response.body) {
             await consumeReadableStream(response.body, chunk => {
                 try {
-                    let contentToAdd = chunk
-                        .trimEnd()
-                        .split('\n')
-                        .reduce(
-                            (acc, line) =>
-                                acc + JSON.parse(line).message.content,
-                            ''
-                        );
+                    let contentToAdd = chunk;
 
                     this.updateNotebookCell(
                         promptCell,
