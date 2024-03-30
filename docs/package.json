@@ -25,7 +25,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-modal-image": "2.5.0",
-    "react-router-dom": "6.6.0",
+    "react-router-dom": "6.22.3",
     "typedoc-plugin-markdown": "3.13.5"
   },
   "devDependencies": {
