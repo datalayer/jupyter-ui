@@ -16,21 +16,21 @@
   },
   "dependencies": {
     "@datalayer/jupyter-docusaurus-plugin": "0.0.9",
-    "@docusaurus/core": "2.4.0",
-    "@docusaurus/preset-classic": "2.4.0",
-    "@docusaurus/theme-live-codeblock": "2.4.0",
+    "@docusaurus/core": "~2.4.0",
+    "@docusaurus/preset-classic": "~2.4.0",
+    "@docusaurus/theme-live-codeblock": "~2.4.0",
     "@mdx-js/react": "^1.6.22",
     "clsx": "^1.2.1",
-    "docusaurus-plugin-typedoc": "0.17.5",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-modal-image": "2.5.0",
-    "react-router-dom": "6.22.3",
-    "typedoc-plugin-markdown": "3.13.5"
+    "docusaurus-plugin-typedoc": "~0.17.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-modal-image": "^2.5.0",
+    "react-router-dom": "^6.22.3",
+    "typedoc-plugin-markdown": "^3.13.5"
   },
   "devDependencies": {
-    "@types/node": "18.15.3",
-    "typescript": "5.0.3"
+    "@types/node": "^18.15.3",
+    "typescript": "~5.0.3"
   },
   "browserslist": {
     "production": [
