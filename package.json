@@ -26,7 +26,7 @@
     "linux"
   ],
   "scripts": {
-    "build": "echo 'oups'",
+    "build": "lerna run build",
     "build:example": "lerna run --parallel --scope @datalayer/*' build:example",
     "clean": "lerna run clean && rimraf node_modules lib dist build tsconfig.tsbuildinfo",
     "deploy": "lerna run deploy",
