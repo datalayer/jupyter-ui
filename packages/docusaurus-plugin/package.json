@@ -22,9 +22,9 @@
     "directory": "packages/docusaurus-plugin"
   },
   "dependencies": {
-    "@datalayer/icons-react": "0.2.5",
-    "@datalayer/jupyter-react": "0.9.5",
-    "@datalayer/primer-addons": "0.2.3",
+    "@datalayer/icons-react": "0.3.0",
+    "@datalayer/jupyter-react": "0.9.6",
+    "@datalayer/primer-addons": "0.3.0",
     "@docusaurus/core": "~2.4.0",
     "@docusaurus/types": "~2.1.0"
   },
