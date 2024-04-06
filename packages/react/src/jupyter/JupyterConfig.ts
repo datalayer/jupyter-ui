@@ -8,6 +8,11 @@ import { PageConfig } from '@jupyterlab/coreutils';
 import { JupyterProps } from './Jupyter';
 
 /**
+ * The URL prefix for the kernel api.
+ */
+const API_KERNEL_PREFIX_URL = '/api/kernel';
+
+/**
  * Type of the Jupyter configuration.
  */
 export type IJupyterConfig = {
@@ -30,9 +35,14 @@ let config: IJupyterConfig = {
 };
 
 /**
- * Datalayer configuration
+ * Datalayer configuration is loaded.
  */
-let configLoaded = false;
+let datalayerConfigLoaded = false;
+
+/**
+ * Jupyter configuration is loaded.
+ */
+let jupyterConfigLoaded = false;
 
 /**
  * Setter for jupyterServerHttpUrl.
@@ -74,14 +84,14 @@ export const getJupyterToken = () => config.jupyterToken;
  * @returns The parameter value if {@link name} is specified, otherwise the full configuration.
  */
 export function getDatalayerConfig(name?: string): any {
-  if (!configLoaded) {
+  if (!datalayerConfigLoaded) {
     const datalayerConfigData = document.getElementById(
       'datalayer-config-data'
     );
     if (datalayerConfigData?.textContent) {
       try {
         config = { ...config, ...JSON.parse(datalayerConfigData.textContent) };
-        configLoaded = true;
+        datalayerConfigLoaded = true;
       } catch (error) {
         console.error('Failed to parse the Datalayer configuration.', error);
       }
@@ -114,9 +124,14 @@ export const loadJupyterConfig = (
     terminals,
     jupyterToken,
   } = props;
-  // Load the config
+  if (jupyterConfigLoaded) {
+    // Bail, the Jupyter config is already loaded.
+    return config;
+  }
+  // Load the Datalayer config.
   getDatalayerConfig();
-  if (configLoaded) {
+  if (datalayerConfigLoaded) {
+    // There is a Datalayer config, rely on that.
     setJupyterServerHttpUrl(
       jupyterServerHttpUrl ??
         config.jupyterServerHttpUrl ??
@@ -125,14 +140,14 @@ export const loadJupyterConfig = (
     setJupyterServerWsUrl(
       jupyterServerWsUrl ??
         config.jupyterServerWsUrl ??
-        location.protocol.replace('http', 'ws') +
+        location.protocol.replace(/^http/, 'ws') +
           '//' +
           location.host +
           '/api/jupyter'
     );
     setJupyterToken(jupyterToken ?? config.jupyterToken ?? '');
   } else {
-    // No Datalayer Config.
+    // No Datalayer config, look for a Jupyter config.
     const jupyterConfigData = document.getElementById('jupyter-config-data');
     if (jupyterConfigData) {
       const jupyterConfig = JSON.parse(jupyterConfigData.textContent || '');
@@ -141,28 +156,29 @@ export const loadJupyterConfig = (
           location.protocol + '//' + location.host + jupyterConfig.baseUrl
       );
       setJupyterServerWsUrl(
-        jupyterServerWsUrl ?? location.protocol === 'https:'
-          ? 'wss://' + location.host
-          : 'ws://' + location.host + jupyterConfig.baseUrl
+        jupyterServerWsUrl ?? getJupyterServerHttpUrl().replace(/^http/, 'ws')
       );
       setJupyterToken(jupyterToken ?? jupyterConfig.token);
       config.insideJupyterLab = jupyterConfig.appName === 'JupyterLab';
+      // Hub related information ('hubHost' 'hubPrefix' 'hubUser' ,'hubServerName').
+      config.insideJupyterHub = PageConfig.getOption('hubHost') !== '';
     } else {
-      // No Datalayer and no JupyterLab Config.
+      // No Datalayer and no Jupyter config, rely on location...
       setJupyterServerHttpUrl(
         jupyterServerHttpUrl ??
-          location.protocol + '//' + location.host + '/api/jupyter'
+          location.protocol + '//' + location.host + API_KERNEL_PREFIX_URL
       );
       setJupyterServerWsUrl(
         jupyterServerWsUrl ??
-          location.protocol.replace('http', 'ws') +
+          location.protocol.replace(/^http/, 'ws') +
             '//' +
             location.host +
-            '/api/jupyter'
+            API_KERNEL_PREFIX_URL
       );
       setJupyterToken(jupyterToken ?? '');
     }
   }
+  jupyterConfigLoaded = true;
   if (lite) {
     setJupyterServerHttpUrl(location.protocol + '//' + location.host);
     setJupyterServerWsUrl(
@@ -170,6 +186,10 @@ export const loadJupyterConfig = (
         ? 'wss://' + location.host
         : 'ws://' + location.host
     );
+  }
+  if (config.insideJupyterLab) {
+    // Bail if running inisde JupyterLab, we don't want to change the existing PageConfig.
+    return config;
   }
   PageConfig.setOption('baseUrl', getJupyterServerHttpUrl());
   PageConfig.setOption('wsUrl', getJupyterServerWsUrl());
@@ -182,10 +202,5 @@ export const loadJupyterConfig = (
     'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js'
   );
   PageConfig.setOption('mathjaxConfig', 'TeX-AMS_CHTML-full,Safe');
-  //  PageConfig.getOption('hubHost')
-  //  PageConfig.getOption('hubPrefix')
-  //  PageConfig.getOption('hubUser')
-  //  PageConfig.getOption('hubServerName')
-  config.insideJupyterHub = PageConfig.getOption('hubHost') !== '';
   return config;
 };
