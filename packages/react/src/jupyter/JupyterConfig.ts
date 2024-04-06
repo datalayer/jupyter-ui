@@ -141,7 +141,7 @@ export const loadJupyterConfig = (
           location.protocol + '//' + location.host + jupyterConfig.baseUrl
       );
       setJupyterServerWsUrl(
-        jupyterServerWsUrl ?? location.protocol === 'https'
+        jupyterServerWsUrl ?? location.protocol === 'https:'
           ? 'wss://' + location.host
           : 'ws://' + location.host + jupyterConfig.baseUrl
       );
