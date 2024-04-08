@@ -84,7 +84,7 @@ export const MultipleSelectCheckmarks: React.FC<
                             borderColor: 'rgba(255, 255, 255, 0.1)', // Always maintain this color
                         },
                         '& .MuiChip-root': {
-                            backgroundColor: '#111418', // Background color of chips
+                            backgroundColor: '#161616', // Background color of chips
                             height: '32px', // Adjusted chip height
                             display: 'flex',
                             alignItems: 'center',
