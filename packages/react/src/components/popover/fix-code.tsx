@@ -3,6 +3,8 @@ import { useDispatch } from 'react-redux';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { Typography, TextField } from '@mui/material';
+import { HiMiniQuestionMarkCircle } from 'react-icons/hi2';
+import { MultipleSelectCheckmarks } from '../select/multi-select';
 import { notebookActions } from '../notebook/NotebookRedux';
 import { selectNotebook } from '../notebook/NotebookRedux';
 
@@ -14,8 +16,25 @@ interface FixCodeProps {
 const FixCode: React.FC<FixCodeProps> = ({ uid, onClose }) => {
     const [prompt, setPrompt] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [selectedItems, setSelectedItems] = useState<number[]>([]);
     const selectedNotebook = selectNotebook(uid);
     const dispatch = useDispatch();
+
+    const adapter = selectedNotebook?.adapter?.notebookPanel?.content;
+    const currentIndex = adapter?.activeCellIndex;
+
+    const widgetList = adapter?.widgets.slice(0, currentIndex);
+    const widgetMap = widgetList?.map(widget => widget.model);
+    const filteredMap = widgetMap?.filter(
+        widget => widget.toJSON().cell_type === 'code'
+    );
+
+    const cellSelection = filteredMap?.map((item, index) => {
+        return {
+            idx: index,
+            label: `Code Cell ${index + 1}`,
+        };
+    });
 
     const handlePromptChange = (event: ChangeEvent<HTMLInputElement>) => {
         setPrompt(event.target.value);
@@ -38,10 +57,22 @@ const FixCode: React.FC<FixCodeProps> = ({ uid, onClose }) => {
 
     const handleSubmit = () => {
         try {
+            let codePrevious = '';
+            // Sort selectedItems array in ascending order
+            selectedItems
+                .sort((a, b) => a - b)
+                .forEach(i => {
+                    if (filteredMap && filteredMap[i]) {
+                        codePrevious += `\n${filteredMap[i]
+                            .toJSON()
+                            .source.toString()}\n`;
+                    }
+                });
             dispatch(
                 notebookActions.fixCode.started({
                     uid: uid,
                     fixPrompt: prompt,
+                    previousCode: codePrevious,
                     errorMessage: errorMessage,
                 })
             );
@@ -54,12 +85,11 @@ const FixCode: React.FC<FixCodeProps> = ({ uid, onClose }) => {
     return (
         <Box
             sx={{
-                backgroundColor: '#1B1B1B',
-                color: '#FFFFFF', // Text color
+                backgroundColor: '#161616',
+                color: '#FFFFFF',
                 position: 'relative',
                 width: 650,
                 p: 2,
-                border: '1.5px solid rgba(255,255,255,0.1)', // Outer box border
             }}
         >
             <Typography sx={{ fontWeight: 'semibold', fontSize: 16 }}>
@@ -81,6 +111,7 @@ const FixCode: React.FC<FixCodeProps> = ({ uid, onClose }) => {
                     onChange={handlePromptChange}
                     sx={{
                         mt: 1,
+                        borderWidth: 2,
                         '& .MuiOutlinedInput-root': {
                             borderColor: 'rgba(255,255,255,0.1)', // TextField border color
                             '&:hover .MuiOutlinedInput-notchedOutline': {
@@ -144,6 +175,37 @@ const FixCode: React.FC<FixCodeProps> = ({ uid, onClose }) => {
                 />
             </Box>
 
+            {/* Code Cells Selection */}
+            <Box sx={{ mt: 3 }}>
+                <Typography
+                    sx={{
+                        fontWeight: 'semibold',
+                        fontSize: 12,
+                        marginBottom: 1,
+                        display: 'flex', // To align the icon vertically
+                        alignItems: 'center', // To center the icon vertically
+                    }}
+                >
+                    Code Cells to include in the context. Takes last cell by
+                    default (optional)
+                    <span
+                        data-toggle="tooltip"
+                        title="Here you can select which code cells before the current cell you want to include in the context. Often times the LLM needs to interpret code cells beyond the last cell in order to give a more accurate response."
+                        style={{ marginLeft: '4px', cursor: 'help' }} // Adjust the spacing and cursor style
+                    >
+                        <HiMiniQuestionMarkCircle
+                            size={16}
+                            style={{ color: 'white', marginBottom: -4 }}
+                        />
+                    </span>
+                </Typography>
+                <MultipleSelectCheckmarks
+                    selection={cellSelection}
+                    selectedItems={selectedItems}
+                    setSelectedItems={setSelectedItems}
+                />
+            </Box>
+
             {/* Buttons */}
             <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
                 <Button
@@ -159,11 +221,14 @@ const FixCode: React.FC<FixCodeProps> = ({ uid, onClose }) => {
                     Cancel
                 </Button>
                 <Button
-                    variant="outlined"
                     onClick={handleSubmit}
                     sx={{
-                        color: 'rgba(255,255,255,0.9)', // Text color
-                        textTransform: 'none', // Prevent all caps
+                        color: '#111111',
+                        textTransform: 'none',
+                        backgroundColor: 'rgba(255,255,255,1 )',
+                        '&:hover': {
+                            backgroundColor: 'rgba(255, 255, 255, 0.5)', // Adjust the background color on hover
+                        },
                     }}
                 >
                     Submit Fix

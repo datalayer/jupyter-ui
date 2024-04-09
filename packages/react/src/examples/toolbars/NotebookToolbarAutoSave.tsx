@@ -50,7 +50,7 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
                 flexDirection: 'row',
                 borderBottomWidth: 0.5,
                 borderBottomColor: 'rgba(255,255,255,0.05)',
-                backgroundColor: '#161616',
+                backgroundColor: '#1B1B1B',
                 justifyContent: 'space-between',
                 alignItems: 'center',
             }}

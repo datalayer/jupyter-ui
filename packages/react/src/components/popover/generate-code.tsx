@@ -70,12 +70,11 @@ const GenerateCode: React.FC<ModifyCodeProps> = ({ uid, onClose }) => {
     return (
         <Box
             sx={{
-                backgroundColor: '#1B1B1B',
+                backgroundColor: '#161616',
                 color: '#FFFFFF', // Text color
                 position: 'relative',
                 width: 600,
-                p: 3,
-                border: '1.5px solid rgba(255,255,255,0.1)', // Outer box border
+                p: 2,
             }}
         >
             <Typography sx={{ fontWeight: 'semibold', fontSize: 16 }}>
@@ -165,8 +164,12 @@ const GenerateCode: React.FC<ModifyCodeProps> = ({ uid, onClose }) => {
                     variant="outlined"
                     onClick={handleSubmit}
                     sx={{
-                        color: 'rgba(255,255,255,0.9)', // Text color
-                        textTransform: 'none', // Prevent all caps
+                        color: '#111111',
+                        textTransform: 'none',
+                        backgroundColor: 'rgba(255,255,255,1 )',
+                        '&:hover': {
+                            backgroundColor: 'rgba(255, 255, 255, 0.5)', // Adjust the background color on hover
+                        },
                     }}
                 >
                     Submit

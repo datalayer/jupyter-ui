@@ -186,19 +186,21 @@ type CellMutation = {
 };
 type ModifyMutation = {
     uid: string;
+    previousCode: string;
     modifyPrompt: string;
 };
 
 type FixMutation = {
     uid: string;
     fixPrompt: string;
+    previousCode: string;
     errorMessage: string;
 };
 
 type CodeGenerateMutation = {
     uid: string;
     previousCode: string;
-    codeGeneratePrompt: string; // Corrected key name
+    codeGeneratePrompt: string;
 };
 
 export const notebookActions = {
@@ -285,10 +287,10 @@ const fixCodeEpic: Epic<
     action$.pipe(
         ofAction(notebookActions.fixCode.started),
         tap(action => {
-            const { fixPrompt, errorMessage } = action.payload;
+            const { fixPrompt, errorMessage, previousCode } = action.payload;
             state$.value.notebook.notebooks
                 .get(action.payload.uid)
-                ?.adapter?.fixCell(fixPrompt, errorMessage);
+                ?.adapter?.fixCell(fixPrompt, errorMessage, previousCode);
         }),
         ignoreElements()
     );
@@ -324,10 +326,10 @@ const modifyCodeEpic: Epic<
     action$.pipe(
         ofAction(notebookActions.modifyCode.started),
         tap(action => {
-            const { modifyPrompt } = action.payload;
+            const { modifyPrompt, previousCode } = action.payload;
             state$.value.notebook.notebooks
                 .get(action.payload.uid)
-                ?.adapter?.modifyCode(modifyPrompt);
+                ?.adapter?.modifyCode(modifyPrompt, previousCode);
         }),
         ignoreElements()
     );

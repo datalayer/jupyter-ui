@@ -259,7 +259,7 @@ export const Notebook = (props: INotebookProps) => {
                 height: '100vh',
                 width: '100%',
                 position: 'relative',
-                backgroundColor: '#161616',
+                backgroundColor: '#1B1B1B',
             }}
             id="dla-Jupyter-Notebook"
         >
@@ -280,12 +280,12 @@ export const Notebook = (props: INotebookProps) => {
                         flex: '1 1 auto !important',
                         height: '100%',
                         overflowY: 'scroll',
-                        backgroundColor: '#161616',
+                        backgroundColor: '#1B1B1B',
                     },
                     '& .jp-NotebookPanel': {
                         height: '100% !important',
                         width: '100% !important',
-                        backgroundColor: '#161616',
+                        backgroundColor: '#1B1B1B',
                     },
                     '& .jp-Toolbar': {
                         display: 'none',
@@ -304,7 +304,7 @@ export const Notebook = (props: INotebookProps) => {
                         width: `calc(100% - ${props.cellSidebarMargin}px)`,
                         borderRadius: 8,
                         marginLeft: '-5px',
-                        backgroundColor: '#161616',
+                        backgroundColor: '#1B1B1B',
                     },
                     '& .jp-Notebook-footer': {
                         width: `calc(100% - ${props.cellSidebarMargin + 82}px)`,
@@ -315,20 +315,20 @@ export const Notebook = (props: INotebookProps) => {
                         left: `${props.cellSidebarMargin + 10}px`,
                         height: 'auto',
                         borderRadius: 8,
-                        // backgroundColor: '#161616',
+                        // backgroundColor: '#1B1B1B',
                     },
                     '& .jp-Cell .dla-CellHeader-Container': {
                         padding: '4px 18px',
                         width: `${props.cellSidebarMargin + 10}px`,
                         marginLeft: 'auto',
-                        // backgroundColor: '#161616',
+                        // backgroundColor: '#1B1B1B',
                         borderRadius: 8,
                         borderColor: 'rgba(255,255,255,0.01)',
                         borderWidth: 1,
                     },
                     '& .jp-CodeMirrorEditor': {
                         cursor: 'text !important',
-                        backgroundColor: '#161616',
+                        backgroundColor: '#1B1B1B',
                         borderRadius: 8,
                         borderColor: 'rgba(255,255,255,0.09)',
                         borderWidth: 1,

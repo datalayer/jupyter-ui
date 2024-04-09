@@ -617,7 +617,7 @@ export class NotebookAdapter {
         notebook.deselectAll();
     };
 
-    modifyCode = async (modifyPrompt: string) => {
+    modifyCode = async (modifyPrompt: string, previousCode: string) => {
         const notebook = this._notebookPanel!.content!;
         const model = this._notebookPanel!.context.model!;
         const currentIndex = notebook.activeCell ? notebook.activeCellIndex : 0;
@@ -629,6 +629,10 @@ export class NotebookAdapter {
 
         const notebookSharedModel = notebook.model!.sharedModel;
         notebookSharedModel.deleteCell(currentIndex);
+
+        const prevCode = previousCode
+            ? `[CODE_PREV] ${previousCode} [/CODE_PREV]`
+            : '';
 
         // Insert a new code cell with empty source
         const newCodeCell = model.sharedModel.insertCell(currentIndex, {
@@ -648,7 +652,7 @@ export class NotebookAdapter {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                input: ` [COMMAND] ${modifyPrompt} [/COMMAND] [CODE] ${codeToModify} [/CODE]`,
+                input: `[COMMAND] ${modifyPrompt} [/COMMAND] ${prevCode} [CODE] ${codeToModify} [/CODE]`,
                 type: 'modifyCode',
             }),
         });
@@ -782,20 +786,26 @@ export class NotebookAdapter {
 
         // Check for state-changing tags within the content and update the current state accordingly
         if (content.includes('##')) {
+            content = content.replace(/^##.*$/gm, '');
             this._currentState = STATE.MARKDOWN;
         } else if (content.includes('@@')) {
+            content = content.replace(/^@@.*$/gm, '');
             this._currentState = STATE.PYTHON;
-        } else {
-            // Append the content to the appropriate cell based on the current state
-            if (this._currentState === STATE.MARKDOWN) {
-                promptCell.source += content;
-            } else if (this._currentState === STATE.PYTHON) {
-                codeCell.source += content;
-            }
+        }
+
+        // Append the content to the appropriate cell based on the current state
+        if (this._currentState === STATE.MARKDOWN) {
+            promptCell.source += content;
+        } else if (this._currentState === STATE.PYTHON) {
+            codeCell.source += content;
         }
     };
 
-    fixCell = async (fixPrompt: string, errorMessage: string) => {
+    fixCell = async (
+        fixPrompt: string,
+        errorMessage: string,
+        previousCode: string
+    ) => {
         const notebook = this._notebookPanel!.content!;
         const model = this._notebookPanel!.context.model!;
         const currentIndex = notebook.activeCell ? notebook.activeCellIndex : 0;
@@ -806,7 +816,10 @@ export class NotebookAdapter {
         // User prompt for code fix is optional, set to empty string if we don't have it
         const userPrompt = fixPrompt ? `[COMMAND] ${fixPrompt} [/COMMAND]` : '';
         const errorCode = selectedWidget?.model.toJSON().source.toString();
-        const input = `${userPrompt} [ERROR_CODE] ${errorCode} [/ERROR_CODE] [ERROR_MESSAGE] ${errorMessage} [/ERROR_MESSAGE]`;
+        const prevCode = previousCode
+            ? `[CODE_PREV] ${previousCode} [/CODE_PREV]`
+            : '';
+        const input = `${userPrompt} ${prevCode} [ERROR_CODE] ${errorCode} [/ERROR_CODE] [ERROR_MESSAGE] ${errorMessage} [/ERROR_MESSAGE]`;
 
         const notebookSharedModel = notebook.model!.sharedModel;
         notebookSharedModel.deleteCell(currentIndex);

@@ -135,6 +135,13 @@ export const CellSidebar = (props: CellSidebarProps) => {
                         open={openGenerate}
                         anchorEl={anchorGenerate}
                         onClose={handleCloseGenerate}
+                        PaperProps={{
+                            style: {
+                                borderRadius: '8px', // Adjust the border radius as needed
+                                backgroundColor: '#161616',
+                                border: '2px solid rgba(255,255,255,0.02)',
+                            },
+                        }}
                         anchorOrigin={{
                             vertical: 'bottom',
                             horizontal: 'left',
@@ -185,6 +192,13 @@ export const CellSidebar = (props: CellSidebarProps) => {
                         open={openFix}
                         anchorEl={anchorFix}
                         onClose={handleCloseFix}
+                        PaperProps={{
+                            style: {
+                                borderRadius: '8px', // Adjust the border radius as needed
+                                backgroundColor: '#161616',
+                                border: '2px solid rgba(255,255,255,0.02)',
+                            },
+                        }}
                         anchorOrigin={{
                             vertical: 'bottom',
                             horizontal: 'left',
@@ -234,6 +248,13 @@ export const CellSidebar = (props: CellSidebarProps) => {
                         open={openModify}
                         anchorEl={anchorModify}
                         onClose={handleCloseModify}
+                        PaperProps={{
+                            style: {
+                                borderRadius: '8px', // Adjust the border radius as needed
+                                backgroundColor: '#161616',
+                                border: '2px solid rgba(255,255,255,0.02)',
+                            },
+                        }}
                         anchorOrigin={{
                             vertical: 'bottom',
                             horizontal: 'left',
