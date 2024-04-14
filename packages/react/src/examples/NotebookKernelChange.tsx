@@ -16,7 +16,7 @@ import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 
 const NOTEBOOK_UID = 'notebook-kernel-id';
 
-const NEW_KERNEL_NAME = 'python-bis';
+const NEW_KERNEL_NAME = 'deno';
 
 const NotebookKernelChange = () => {
   const { kernelManager, serviceManager } = useJupyter();
@@ -34,7 +34,7 @@ const NotebookKernelChange = () => {
       kernel.ready.then(() => {
         dispatch(notebookActions.changeKernel({ uid: NOTEBOOK_UID, kernel }));
         alert(
-          'The kernel is changed (was python3, now is python-bis). Bummer, all your variables are lost!'
+          `The kernel is changed (was python3, now ${NEW_KERNEL_NAME}). Bummer, all your variables are lost!`
         );
       });
     }

@@ -291,14 +291,17 @@ export class NotebookAdapter {
       1
     );
     */
+    /*
+    // This code block was causing https://github.com/datalayer/jupyter-ui/issues/195
+    // TODO Double check there is not side effect.
     this._context?.sessionContext
-      .changeKernel({ id: this._kernel.id })
+      .changeKernel({id: this._kernel.id })
       .then(() => {
         this._iPyWidgetsManager?.registerWithKernel(
           this._kernel.connection
         );
       });
-
+    */
     /*
     if (this._bundledIPyWidgets) {
       this._iPyWidgetsManager.loadBundledIPyWidgets(
@@ -491,6 +494,9 @@ export class NotebookAdapter {
 
   assignKernel(kernel: Kernel) {
     this._kernel = kernel;
+    this._context?.sessionContext.changeKernel({
+      id: kernel.id,
+    });
   }
 
   get uid(): string {

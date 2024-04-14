@@ -43,12 +43,12 @@ const ENTRY =
   // './src/examples/NotebookNbFormatChange';
   // './src/examples/NotebookSkeleton';
   // './src/examples/NotebookTheme';
-// './src/examples/ObservableHQ';
-// './src/examples/Outputs';
-// './src/examples/Plotly';
-// './src/examples/RunningSessions';
-// './src/examples/Terminal';
-// './src/examples/Viewer';
+  // './src/examples/ObservableHQ';
+  // './src/examples/Outputs';
+  // './src/examples/Plotly';
+  // './src/examples/RunningSessions';
+  // './src/examples/Terminal';
+  // './src/examples/Viewer';
 
 const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == 'true';
 // const JUPYTER_HOST = IS_JUPYTER_SERVER_LOCAL ? "http://localhost:8686" : "https://oss.datalayer.tech';
