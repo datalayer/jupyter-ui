@@ -87,8 +87,8 @@ c.ServerApp.preferred_dir = content_dir
 # URLs
 #################
 
-c.ServerApp.base_url = '/api/jupyter'
-c.ServerApp.default_url = '/api/jupyter/lab'
+c.ServerApp.base_url = '/api/kernel'
+c.ServerApp.default_url = '/api/kernel/lab'
 
 #################
 # Kernel

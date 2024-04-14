@@ -135,7 +135,7 @@ export const loadJupyterConfig = (
     setJupyterServerHttpUrl(
       jupyterServerHttpUrl ??
         config.jupyterServerHttpUrl ??
-        location.protocol + '//' + location.host + '/api/jupyter'
+        location.protocol + '//' + location.host + '/api/kernel'
     );
     setJupyterServerWsUrl(
       jupyterServerWsUrl ??
@@ -143,7 +143,7 @@ export const loadJupyterConfig = (
         location.protocol.replace(/^http/, 'ws') +
           '//' +
           location.host +
-          '/api/jupyter'
+          '/api/kernel'
     );
     setJupyterToken(jupyterToken ?? config.jupyterToken ?? '');
   } else {
