@@ -47,8 +47,7 @@ jobs:
           ${{ runner.os }}-yarn-
     - name: Install the npm dependencies
       run: |
-        yarn install || true
-        cat /tmp/*/*.log
+        yarn install
     - name: Run the build
       run: |
         yarn build

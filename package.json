@@ -49,7 +49,11 @@
   },
   "workspaces": [
     "docs",
-    "examples/*",
+    "examples/cra",
+    "examples/docusaurus",
+    "examples/lexical",
+    "examples/next-js",
+    "examples/remix-run",
     "packages/*"
   ],
   "devDependencies": {
