@@ -88,9 +88,27 @@ module.exports = {
         },
         {
           type: 'doc',
+          docId: '/category/themes',
+          position: 'left',
+          label: 'Themes',
+        },
+        {
+          type: 'doc',
           docId: '/category/demos',
           position: 'left',
           label: 'Demos',
+        },
+        {
+          type: 'doc',
+          docId: 'resources/index',
+          position: 'left',
+          label: 'Resources',
+        },
+        {
+          type: 'doc',
+          docId: 'support/index',
+          position: 'left',
+          label: 'Support',
         },
         {
           type: 'doc',
