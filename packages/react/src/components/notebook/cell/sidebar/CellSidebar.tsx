@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { PanelLayout } from '@lumino/widgets';
-import { ActionMenu, Button} from '@primer/react';
+import { ActionMenu} from '@primer/react';
 import { FaSyncAlt } from 'react-icons/fa';
 import { FaTrash } from 'react-icons/fa';
 import { GoTriangleDown } from 'react-icons/go';
@@ -12,8 +12,7 @@ import { FaWandMagicSparkles } from 'react-icons/fa6';
 import { notebookActions, selectActiveCell } from '../../NotebookRedux';
 import { CellSidebarProps } from './CellSidebarWidget';
 import CellMetadataEditor from '../metadata/CellMetadataEditor';
-import { DATALAYER_CELL_HEADER_CLASS } from './CellSidebarWidget';
-import { Stack, Typography, Box } from '@mui/material';
+import { Stack, Typography, Box, Button } from '@mui/material';
 
 import ModifyCode from '../../../popover/modify-code';
 import GenerateCode from '../../../popover/generate-code';
@@ -32,9 +31,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
     );
     const [anchorFix, setAnchorFix] = useState<HTMLButtonElement | null>(null);
 
-    const handleClickGenerate = (
-        event: React.MouseEvent<HTMLButtonElement>
-    ) => {
+    const handleClickGenerate = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorGenerate(event.currentTarget);
     };
 
@@ -42,7 +39,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
         setAnchorModify(event.currentTarget);
     };
 
-    const handleClickFix = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const handleClickFix = (event: any) => {
         setAnchorFix(event.currentTarget);
     };
 
@@ -89,39 +86,34 @@ export const CellSidebar = (props: CellSidebarProps) => {
 
     return activeCell ? (
         <Box
-            className={DATALAYER_CELL_HEADER_CLASS}
             sx={{
-                '& p': {
-                    marginBottom: '0 !important',
-                },
-                border: '1px solid rgba(255,255,255,0.5)', // Border styling
-                backgroundColor: '#161616',
-                paddingLeft: -16,
-                marginLeft: -24
+                border: '1px solid rgba(255,255,255,0.1)',
+                p: 0.5,
+                borderRadius: 2,
+                width: '130%',
+                alignContent: 'flex-start',
+                justifyContent: 'flex-start',
+                marginLeft: -1.5
             }}
         >
             {activeCell.model.type === 'raw' ? (
                 <span style={{ display: 'flex' }}>
                     <Button
-                        title="Generate"
-                        variant="invisible"
-                        size="small"
-                        alignContent='flex-start'
                         sx={{
                             '&:hover': {
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)', 
                             },
-                            transition: 'background-color 0.3s', // Add transition for smoother effect
-                            width: '102%',
-                            marginLeft: -2,
-                            
+                            transition: 'background-color 0.3s',
+                            width: '100%',
+                            alignContent: 'flex-start',
+                            textTransform: 'none',
                         }}
                         onClick={handleClickGenerate}
                     >
                         <Stack
                             spacing={1}
                             direction="row"
-                            sx={{ alignItems: 'center' }}
+                            sx={{ alignContent: 'flex-start', width: '100%' }} 
                         >
                             <FaWandMagicSparkles
                                 color="rgba(255, 255, 255, 0.5)"
@@ -164,25 +156,23 @@ export const CellSidebar = (props: CellSidebarProps) => {
             {activeCell.model.type === 'code' ? (
                 <span style={{ display: 'flex' }}>
                     <Button
-                        title="Fix"
-                        variant="invisible"
-                        size="small"
-                        alignContent='flex-start'
                         sx={{
                             '&:hover': {
                                 backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
                             },
                             transition: 'background-color 0.3s', // Add transition for smoother effect
-                            width: '102%',
-                            marginLeft: -2,
-                            
+                            width: '100%',
+                            alignContent: 'flex-start',
+                            textTransform: 'none',
+
                         }}
                         onClick={handleClickFix}
                     >
                         <Stack
                             spacing={1}
                             direction="row"
-                            sx={{ alignItems: 'center' }}
+                            alignItems="center" // Center items vertically within the Stack
+                            sx={{ alignContent: 'flex-start', width: '100%' }} // Align items to the left within the Stack
                         >
                             <RiToolsFill
                                 color="rgba(255, 255, 255, 0.5)"
@@ -222,25 +212,21 @@ export const CellSidebar = (props: CellSidebarProps) => {
             {activeCell.model.type === 'code' ? (
                 <span style={{ display: 'flex' }}>
                     <Button
-                        title="Modify"
-                        variant="invisible"
-                        size="small"
-                        alignContent='flex-start'
                         sx={{
                             '&:hover': {
                                 backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
                             },
                             transition: 'background-color 0.3s', // Add transition for smoother effect
-                            width: '102%',
-                            marginLeft: -2,
-                            
+                            width: '100%',
+                            alignContent: 'flex-start',
+                            textTransform: 'none',
                         }}
                         onClick={handleClickModify}
                     >
                         <Stack
                             spacing={1}
                             direction="row"
-                            sx={{ alignItems: 'center' }}
+                            sx={{ alignContent: 'flex-start', width: '100%' }} // Align items to the left within the Stack
                         >
                             <FaWandMagicSparkles
                                 color="rgba(255, 255, 255, 0.5)"
@@ -285,28 +271,25 @@ export const CellSidebar = (props: CellSidebarProps) => {
             {/* Function divider */}
             <Box
                 sx={{
-                    height: 1,
-                    backgroundColor: 'rgba(255,255,255,0.2)',
-                    width: '95%',
-                    my: 1,
+                    height: 2,
+                    backgroundColor: 'rgba(255,255,255,0.03)',
+                    width: '100%',
+                    my: 0.5,
+                    
                 }}
             />
 
             {activeCell.model.type !== 'raw' ? (
                 <span style={{ display: 'flex' }}>
                     <Button
-                        title="Run cell"
-                        variant="invisible"
-                        size="small"
-                        alignContent='flex-start'
                         sx={{
                             '&:hover': {
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)', 
                             },
-                            transition: 'background-color 0.3s', // Add transition for smoother effect
-                            width: '102%',
-                            marginLeft: -2,
-                            
+                            transition: 'background-color 0.3s', 
+                            width: '100%',
+                            alignContent: 'flex-start',
+                            textTransform: 'none',
                         }}
                         onClick={(e: any) => {
                             e.preventDefault();
@@ -316,9 +299,9 @@ export const CellSidebar = (props: CellSidebarProps) => {
                         <Stack
                             spacing={1}
                             direction="row"
-                            sx={{ alignItems: 'center', paddingLeft: 0.5 }}
+                            sx={{ alignContent: 'flex-start', width: '100%', paddingLeft: 0.5 }} 
                         >
-                            <FaPlay size={8} color="rgba(255,255,255,0.3)" />
+                            <FaPlay style={{alignSelf: 'center'}} size={8} color="rgba(255,255,255,0.3)" />
                             <Typography
                                 sx={{ color: 'rgba(255, 255, 255, 0.3)' }}
                                 fontSize={13}
@@ -332,18 +315,14 @@ export const CellSidebar = (props: CellSidebarProps) => {
 
             <span style={{ display: 'flex' }}>
                 <Button
-                    title="Insert code cell above"
-                    variant="invisible"
-                    size="small"
-                    alignContent='flex-start'
                     sx={{
                         '&:hover': {
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
+                            backgroundColor: 'rgba(255, 255, 255, 0.05)', 
                         },
-                        transition: 'background-color 0.3s', // Add transition for smoother effect
-                        width: '102%',
-                        marginLeft: -2,
-                        
+                        transition: 'background-color 0.3s', 
+                        width: '100%',
+                        alignContent: 'flex-start',
+                        textTransform: 'none',
                     }}
                     onClick={(e: any) => {
                         e.preventDefault();
@@ -358,11 +337,11 @@ export const CellSidebar = (props: CellSidebarProps) => {
                     <Stack
                         spacing={1}
                         direction="row"
-                        sx={{ alignItems: 'center' }}
+                        sx={{ alignContent: 'flex-start', width: '100%' }} 
                     >
-                        <GoTriangleUp size={16} color="rgba(255,255,255,0.3)" />
+                        <GoTriangleUp style={{alignSelf: 'center'}} size={16} color="rgba(255,255,255,0.3)" />
                         <Typography
-                            sx={{ color: 'rgba(255, 255, 255, 0.3)' }}
+                            sx={{ color: 'rgba(255, 255, 255, 0.3)', marginLeft: -6 }}
                             fontSize={13}
                         >
                             Code
@@ -372,19 +351,15 @@ export const CellSidebar = (props: CellSidebarProps) => {
             </span>
             <span style={{ display: 'flex' }}>
                 <Button
-                    title="Insert markdown cell above"
-                    variant="invisible"
-                    size="small"
-                    alignContent='flex-start'
-                        sx={{
-                            '&:hover': {
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
-                            },
-                            transition: 'background-color 0.3s', // Add transition for smoother effect
-                            width: '102%',
-                            marginLeft: -2,
-                            
-                        }}
+                    sx={{
+                        '&:hover': {
+                            backgroundColor: 'rgba(255, 255, 255, 0.05)', 
+                        },
+                        transition: 'background-color 0.3s',
+                        width: '100%',
+                        alignContent: 'flex-start',
+                        textTransform: 'none',
+                    }}
                     onClick={(e: any) => {
                         e.preventDefault();
                         dispatch(
@@ -398,7 +373,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
                     <Stack
                         spacing={1}
                         direction="row"
-                        sx={{ alignItems: 'center' }}
+                        sx={{ alignContent: 'flex-start', width: '100%' }} 
                     >
                         <GoTriangleUp size={16} color="rgba(255,255,255,0.3)" />
                         <Typography
@@ -412,19 +387,15 @@ export const CellSidebar = (props: CellSidebarProps) => {
             </span>
             <span style={{ display: 'flex' }}>
                 <Button
-                    title="Insert prompt cell above"
-                    variant="invisible"
-                    size="small"
-                    alignContent='flex-start'
-                        sx={{
-                            '&:hover': {
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
-                            },
-                            transition: 'background-color 0.3s', // Add transition for smoother effect
-                            width: '102%',
-                            marginLeft: -2,
-                            
-                        }}
+                    sx={{
+                        '&:hover': {
+                            backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
+                        },
+                        transition: 'background-color 0.3s', // Add transition for smoother effect
+                        width: '100%',
+                        alignContent: 'flex-start',
+                        textTransform: 'none',
+                    }}
                     onClick={(e: any) => {
                         e.preventDefault();
                         dispatch(
@@ -438,7 +409,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
                     <Stack
                         spacing={1}
                         direction="row"
-                        sx={{ alignItems: 'center' }}
+                        sx={{ alignContent: 'flex-start', width: '100%' }} 
                     >
                         <GoTriangleUp size={16} color="rgba(255,255,255,0.3)" />
                         <Typography
@@ -453,18 +424,15 @@ export const CellSidebar = (props: CellSidebarProps) => {
             <span style={{ display: 'flex' }}>
                 {activeCell.model.type === 'code' ? (
                     <Button
-                        title="Convert to markdown cell"
-                        variant="invisible"
-                        size="small"
-                        alignContent='flex-start'
                         sx={{
                             '&:hover': {
                                 backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
                             },
                             transition: 'background-color 0.3s', // Add transition for smoother effect
-                            width: '102%',
-                            marginLeft: -2,
-                            
+                            width: '100%',
+                            alignContent: 'flex-start',
+                            textTransform: 'none',
+
                         }}
                         onClick={(e: any) => {
                             e.preventDefault();
@@ -479,15 +447,16 @@ export const CellSidebar = (props: CellSidebarProps) => {
                         <Stack
                             spacing={1}
                             direction="row"
-                            sx={{ alignItems: 'center', paddingLeft: 0.3 }}
+                            sx={{ alignContent: 'flex-start', width: '100%', paddingLeft: 0.3 }} 
                         >
                             <FaSyncAlt
                                 size={12}
+                                style={{alignSelf: 'center'}}
                                 color="rgba(255,255,255,0.3)"
                             />
                             <Typography
                                 sx={{ color: 'rgba(255, 255, 255, 0.3)' }}
-                                fontSize={13}
+                                fontSize={12}
                             >
                                 To Markdown
                             </Typography>
@@ -495,18 +464,15 @@ export const CellSidebar = (props: CellSidebarProps) => {
                     </Button>
                 ) : (
                     <Button
-                        title="Convert to code cell"
-                        variant="invisible"
-                        size="small"
-                        alignContent='flex-start'
                         sx={{
                             '&:hover': {
                                 backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
                             },
                             transition: 'background-color 0.3s', // Add transition for smoother effect
-                            width: '102%',
-                            marginLeft: -2,
-                            
+                            width: '100%',
+                            alignContent: 'flex-start',
+                            textTransform: 'none',
+
                         }}
                         onClick={(e: any) => {
                             e.preventDefault();
@@ -521,10 +487,11 @@ export const CellSidebar = (props: CellSidebarProps) => {
                         <Stack
                             spacing={1}
                             direction="row"
-                            sx={{ alignItems: 'center', paddingLeft: 0.3 }}
+                            sx={{ alignContent: 'flex-start', width: '100%', paddingLeft: 0.3 }} 
                         >
                             <FaSyncAlt
                                 size={12}
+                                style={{alignSelf: 'center'}}
                                 color="rgba(255,255,255,0.3)"
                             />
                             <Typography
@@ -539,19 +506,15 @@ export const CellSidebar = (props: CellSidebarProps) => {
             </span>
             <span style={{ display: 'flex' }}>
                 <Button
-                    title="Insert code cell below"
-                    variant="invisible"
-                    size="small"
-                    alignContent='flex-start'
-                        sx={{
-                            '&:hover': {
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
-                            },
-                            transition: 'background-color 0.3s', // Add transition for smoother effect
-                            width: '102%',
-                            marginLeft: -2,
-                            
-                        }}
+                    sx={{
+                        '&:hover': {
+                            backgroundColor: 'rgba(255, 255, 255, 0.05)', 
+                        },
+                        transition: 'background-color 0.3s',
+                        width: '100%',
+                        alignContent: 'flex-start',
+                        textTransform: 'none',
+                    }}
                     onClick={(e: any) => {
                         e.preventDefault();
                         dispatch(
@@ -565,14 +528,15 @@ export const CellSidebar = (props: CellSidebarProps) => {
                     <Stack
                         spacing={1}
                         direction="row"
-                        sx={{ alignItems: 'center' }}
+                        sx={{ alignContent: 'flex-start', width: '100%' }} 
                     >
                         <GoTriangleDown
+                            style={{alignSelf: 'center'}}
                             size={16}
                             color="rgba(255,255,255,0.3)"
                         />
                         <Typography
-                            sx={{ color: 'rgba(255, 255, 255, 0.3)' }}
+                            sx={{ color: 'rgba(255, 255, 255, 0.3)', marginLeft: -6 }}
                             fontSize={13}
                         >
                             Code
@@ -582,19 +546,15 @@ export const CellSidebar = (props: CellSidebarProps) => {
             </span>
             <span style={{ display: 'flex' }}>
                 <Button
-                    title="Insert markdown cell below"
-                    variant="invisible"
-                    size="small"
-                    alignContent='flex-start'
-                        sx={{
-                            '&:hover': {
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
-                            },
-                            transition: 'background-color 0.3s', // Add transition for smoother effect
-                            width: '102%',
-                            marginLeft: -2,
-                            
-                        }}
+                    sx={{
+                        '&:hover': {
+                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                        },
+                        transition: 'background-color 0.3s', 
+                        width: '100%',
+                        alignContent: 'flex-start',
+                        textTransform: 'none',
+                    }}
                     onClick={(e: any) => {
                         e.preventDefault();
                         dispatch(
@@ -608,7 +568,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
                     <Stack
                         spacing={1}
                         direction="row"
-                        sx={{ alignItems: 'center' }}
+                        sx={{ alignContent: 'flex-start', width: '100%' }} 
                     >
                         <GoTriangleDown
                             size={16}
@@ -625,19 +585,15 @@ export const CellSidebar = (props: CellSidebarProps) => {
             </span>
             <span style={{ display: 'flex' }}>
                 <Button
-                    title="Insert prompt cell below"
-                    variant="invisible"
-                    size="small"
-                    alignContent='flex-start'
-                        sx={{
-                            '&:hover': {
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
-                            },
-                            transition: 'background-color 0.3s', // Add transition for smoother effect
-                            width: '102%',
-                            marginLeft: -2,
-                            
-                        }}
+                    sx={{
+                        '&:hover': {
+                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                        },
+                        transition: 'background-color 0.3s', 
+                        width: '100%',
+                        alignContent: 'flex-start',
+                        textTransform: 'none',
+                    }}
                     onClick={(e: any) => {
                         e.preventDefault();
                         dispatch(
@@ -651,7 +607,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
                     <Stack
                         spacing={1}
                         direction="row"
-                        sx={{ alignItems: 'center' }}
+                        sx={{ alignContent: 'flex-start', width: '100%' }} 
                     >
                         <GoTriangleDown
                             size={16}
@@ -668,19 +624,15 @@ export const CellSidebar = (props: CellSidebarProps) => {
             </span>
             <span style={{ display: 'flex' }}>
                 <Button
-                    title="Delete cell"
-                    variant="invisible"
-                    size="small"
-                    alignContent='flex-start'
-                        sx={{
-                            '&:hover': {
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
-                            },
-                            transition: 'background-color 0.3s', // Add transition for smoother effect
-                            width: '102%',
-                            marginLeft: -2,
-                            
-                        }}
+                    sx={{
+                        '&:hover': {
+                            backgroundColor: 'rgba(255, 255, 255, 0.05)', 
+                        },
+                        transition: 'background-color 0.3s',
+                        width: '100%',
+                        alignContent: 'flex-start',
+                        textTransform: 'none',
+                    }}
                     onClick={(e: any) => {
                         e.preventDefault();
                         dispatch(notebookActions.delete.started(notebookId));
@@ -689,9 +641,9 @@ export const CellSidebar = (props: CellSidebarProps) => {
                     <Stack
                         spacing={1}
                         direction="row"
-                        sx={{ alignItems: 'center', paddingLeft: 0.3 }}
+                        sx={{ alignContent: 'flex-start', width: '100%', paddingLeft: 0.3 }} 
                     >
-                        <FaTrash size={12} color="rgba(255,255,255,0.3)" />
+                        <FaTrash style={{alignSelf: 'center'}} size={12} color="rgba(255,255,255,0.3)" />
                         <Typography
                             sx={{ color: 'rgba(255, 255, 255, 0.3)' }}
                             fontSize={13}
