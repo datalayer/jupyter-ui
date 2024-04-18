@@ -281,12 +281,7 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
                         size="small"
                         style={{
                             fontSize: 12,
-                            borderRadius: 8,
-                            borderWidth: 1,
-                            borderColor:
-                                addType === 'code'
-                                    ? 'rgba(255,255,255,0.1)'
-                                    : 'transparent',
+                            borderRadius: 16,
                             backgroundColor:
                                 addType === 'code'
                                     ? 'rgba(255,255,255,0.05)'
@@ -304,12 +299,7 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
                         size="small"
                         style={{
                             fontSize: 12,
-                            borderRadius: 8,
-                            borderWidth: 1,
-                            borderColor:
-                                addType === 'markdown'
-                                    ? 'rgba(255,255,255,0.1)'
-                                    : 'transparent',
+                            borderRadius: 16,
                             marginInline: 2,
                             backgroundColor:
                                 addType === 'markdown'
@@ -327,12 +317,7 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
                         size="small"
                         style={{
                             fontSize: 12,
-                            borderRadius: 8,
-                            borderWidth: 1,
-                            borderColor:
-                                addType === 'raw'
-                                    ? 'rgba(255,255,255,0.1)'
-                                    : 'transparent',
+                            borderRadius: 16,
                             backgroundColor:
                                 addType === 'raw'
                                     ? 'rgba(255,255,255,0.05)'
