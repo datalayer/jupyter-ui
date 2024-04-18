@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { PanelLayout } from '@lumino/widgets';
-import { ActionMenu, Button, Box } from '@primer/react';
+import { ActionMenu, Button} from '@primer/react';
 import { FaSyncAlt } from 'react-icons/fa';
 import { FaTrash } from 'react-icons/fa';
 import { GoTriangleDown } from 'react-icons/go';
@@ -13,7 +13,7 @@ import { notebookActions, selectActiveCell } from '../../NotebookRedux';
 import { CellSidebarProps } from './CellSidebarWidget';
 import CellMetadataEditor from '../metadata/CellMetadataEditor';
 import { DATALAYER_CELL_HEADER_CLASS } from './CellSidebarWidget';
-import { Stack, Typography } from '@mui/material';
+import { Stack, Typography, Box } from '@mui/material';
 
 import ModifyCode from '../../../popover/modify-code';
 import GenerateCode from '../../../popover/generate-code';
@@ -94,8 +94,10 @@ export const CellSidebar = (props: CellSidebarProps) => {
                 '& p': {
                     marginBottom: '0 !important',
                 },
-                borderWidth: 0.5,
-                borderColor: 'rgba(255,255,255,0.05)',
+                border: '1px solid rgba(255,255,255,0.5)', // Border styling
+                backgroundColor: '#161616',
+                paddingLeft: -16,
+                marginLeft: -24
             }}
         >
             {activeCell.model.type === 'raw' ? (
@@ -104,11 +106,15 @@ export const CellSidebar = (props: CellSidebarProps) => {
                         title="Generate"
                         variant="invisible"
                         size="small"
+                        alignContent='flex-start'
                         sx={{
                             '&:hover': {
                                 backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
                             },
                             transition: 'background-color 0.3s', // Add transition for smoother effect
+                            width: '102%',
+                            marginLeft: -2,
+                            
                         }}
                         onClick={handleClickGenerate}
                     >
@@ -161,11 +167,15 @@ export const CellSidebar = (props: CellSidebarProps) => {
                         title="Fix"
                         variant="invisible"
                         size="small"
+                        alignContent='flex-start'
                         sx={{
                             '&:hover': {
                                 backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
                             },
                             transition: 'background-color 0.3s', // Add transition for smoother effect
+                            width: '102%',
+                            marginLeft: -2,
+                            
                         }}
                         onClick={handleClickFix}
                     >
@@ -215,11 +225,15 @@ export const CellSidebar = (props: CellSidebarProps) => {
                         title="Modify"
                         variant="invisible"
                         size="small"
+                        alignContent='flex-start'
                         sx={{
                             '&:hover': {
                                 backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
                             },
                             transition: 'background-color 0.3s', // Add transition for smoother effect
+                            width: '102%',
+                            marginLeft: -2,
+                            
                         }}
                         onClick={handleClickModify}
                     >
@@ -271,8 +285,8 @@ export const CellSidebar = (props: CellSidebarProps) => {
             {/* Function divider */}
             <Box
                 sx={{
-                    height: 0.5,
-                    backgroundColor: 'rgba(255,255,255,0.05)',
+                    height: 1,
+                    backgroundColor: 'rgba(255,255,255,0.2)',
                     width: '95%',
                     my: 1,
                 }}
@@ -284,11 +298,15 @@ export const CellSidebar = (props: CellSidebarProps) => {
                         title="Run cell"
                         variant="invisible"
                         size="small"
+                        alignContent='flex-start'
                         sx={{
                             '&:hover': {
                                 backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
                             },
                             transition: 'background-color 0.3s', // Add transition for smoother effect
+                            width: '102%',
+                            marginLeft: -2,
+                            
                         }}
                         onClick={(e: any) => {
                             e.preventDefault();
@@ -317,6 +335,16 @@ export const CellSidebar = (props: CellSidebarProps) => {
                     title="Insert code cell above"
                     variant="invisible"
                     size="small"
+                    alignContent='flex-start'
+                    sx={{
+                        '&:hover': {
+                            backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
+                        },
+                        transition: 'background-color 0.3s', // Add transition for smoother effect
+                        width: '102%',
+                        marginLeft: -2,
+                        
+                    }}
                     onClick={(e: any) => {
                         e.preventDefault();
                         dispatch(
@@ -347,6 +375,16 @@ export const CellSidebar = (props: CellSidebarProps) => {
                     title="Insert markdown cell above"
                     variant="invisible"
                     size="small"
+                    alignContent='flex-start'
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
+                            },
+                            transition: 'background-color 0.3s', // Add transition for smoother effect
+                            width: '102%',
+                            marginLeft: -2,
+                            
+                        }}
                     onClick={(e: any) => {
                         e.preventDefault();
                         dispatch(
@@ -377,6 +415,16 @@ export const CellSidebar = (props: CellSidebarProps) => {
                     title="Insert prompt cell above"
                     variant="invisible"
                     size="small"
+                    alignContent='flex-start'
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
+                            },
+                            transition: 'background-color 0.3s', // Add transition for smoother effect
+                            width: '102%',
+                            marginLeft: -2,
+                            
+                        }}
                     onClick={(e: any) => {
                         e.preventDefault();
                         dispatch(
@@ -408,6 +456,16 @@ export const CellSidebar = (props: CellSidebarProps) => {
                         title="Convert to markdown cell"
                         variant="invisible"
                         size="small"
+                        alignContent='flex-start'
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
+                            },
+                            transition: 'background-color 0.3s', // Add transition for smoother effect
+                            width: '102%',
+                            marginLeft: -2,
+                            
+                        }}
                         onClick={(e: any) => {
                             e.preventDefault();
                             dispatch(
@@ -440,6 +498,16 @@ export const CellSidebar = (props: CellSidebarProps) => {
                         title="Convert to code cell"
                         variant="invisible"
                         size="small"
+                        alignContent='flex-start'
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
+                            },
+                            transition: 'background-color 0.3s', // Add transition for smoother effect
+                            width: '102%',
+                            marginLeft: -2,
+                            
+                        }}
                         onClick={(e: any) => {
                             e.preventDefault();
                             dispatch(
@@ -474,6 +542,16 @@ export const CellSidebar = (props: CellSidebarProps) => {
                     title="Insert code cell below"
                     variant="invisible"
                     size="small"
+                    alignContent='flex-start'
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
+                            },
+                            transition: 'background-color 0.3s', // Add transition for smoother effect
+                            width: '102%',
+                            marginLeft: -2,
+                            
+                        }}
                     onClick={(e: any) => {
                         e.preventDefault();
                         dispatch(
@@ -507,6 +585,16 @@ export const CellSidebar = (props: CellSidebarProps) => {
                     title="Insert markdown cell below"
                     variant="invisible"
                     size="small"
+                    alignContent='flex-start'
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
+                            },
+                            transition: 'background-color 0.3s', // Add transition for smoother effect
+                            width: '102%',
+                            marginLeft: -2,
+                            
+                        }}
                     onClick={(e: any) => {
                         e.preventDefault();
                         dispatch(
@@ -540,6 +628,16 @@ export const CellSidebar = (props: CellSidebarProps) => {
                     title="Insert prompt cell below"
                     variant="invisible"
                     size="small"
+                    alignContent='flex-start'
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
+                            },
+                            transition: 'background-color 0.3s', // Add transition for smoother effect
+                            width: '102%',
+                            marginLeft: -2,
+                            
+                        }}
                     onClick={(e: any) => {
                         e.preventDefault();
                         dispatch(
@@ -573,6 +671,16 @@ export const CellSidebar = (props: CellSidebarProps) => {
                     title="Delete cell"
                     variant="invisible"
                     size="small"
+                    alignContent='flex-start'
+                        sx={{
+                            '&:hover': {
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)', // Adjust the background color on hover
+                            },
+                            transition: 'background-color 0.3s', // Add transition for smoother effect
+                            width: '102%',
+                            marginLeft: -2,
+                            
+                        }}
                     onClick={(e: any) => {
                         e.preventDefault();
                         dispatch(notebookActions.delete.started(notebookId));
