@@ -34,6 +34,11 @@ declare module '*/style/index.js' {
   export default value;
 }
 
+declare module '*/variables.css' {
+  const value: any;
+  export default value;
+}
+
 declare module '*/theme.css' {
   const value: any;
   export default value;
