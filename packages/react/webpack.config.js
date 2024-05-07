@@ -43,6 +43,7 @@ const ENTRY =
   // './src/examples/NotebookNbFormatChange';
   // './src/examples/NotebookSkeleton';
   // './src/examples/NotebookTheme';
+  // './src/examples/NotebookThemeColorMode';
   // './src/examples/ObservableHQ';
   // './src/examples/Outputs';
   // './src/examples/Plotly';

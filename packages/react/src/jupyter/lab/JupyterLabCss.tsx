@@ -55,11 +55,11 @@ export const JupyterLabCss = (props: Props) => {
     let theme;
     switch (colorMode) {
       case 'light': {
-        theme = import('@jupyterlab/theme-light-extension/style/theme.css');
+        theme = import('!!raw-loader!@jupyterlab/theme-light-extension/style/variables.css');
         break;
       }
       case 'dark': {
-        theme = import('@jupyterlab/theme-dark-extension/style/theme.css');
+        theme = import('!!raw-loader!@jupyterlab/theme-dark-extension/style/variables.css');
         break;
       }
     }
@@ -69,6 +69,7 @@ export const JupyterLabCss = (props: Props) => {
     //   with css-loader as string - this is available in css-loader v6.3.0 or later:
     //   { test: /style\/theme\.css$/i, loader: 'css-loader', options: {exportType: 'string'} }
     theme?.then(module => {
+
       if (module.default) {
         document.body.insertAdjacentHTML(
           'afterbegin',
