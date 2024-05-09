@@ -19,8 +19,8 @@ const Cell = (props: any) => {
         return (
           <>
           <Jupyter
-            jupyterServerHttpUrl="https://oss.datalayer.tech/api/kernel"
-            jupyterServerWsUrl="wss://oss.datalayer.tech/api/kernel"
+            jupyterServerHttpUrl="https://oss.datalayer.run/api/jupyter-kernels"
+            jupyterServerWsUrl="wss://oss.datalayer.run/api/jupyter-kernels"
             jupyterToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
             disableCssLoading={true}
             skeleton={<ContentLoader/>}

@@ -54,14 +54,14 @@ module.exports = {
         secure: false,
         changeOrigin: true,
       },
-      '/api/kernel': {
+      '/api/jupyter-kernels': {
         target: JUPYTER_HOST,
         ws: true,
         secure: false,
         changeOrigin: true,
       },
       '/plotly.js': {
-        target: JUPYTER_HOST + '/api/kernel/pool/react',
+        target: JUPYTER_HOST + '/api/jupyter-kernels/pool/react',
         ws: false,
         secure: false,
         changeOrigin: false,

@@ -20,8 +20,8 @@ const JupyterExample = () => {
       <CacheProvider value={cache}>
         <StylesProvider jss={jss}>
           <Jupyter
-//            jupyterServerHttpUrl="http://localhost:3266/api/kernel"
-//            jupyterServerWsUrl="ws://localhost:3266/api/kernel"
+//            jupyterServerHttpUrl="http://localhost:3266/api/jupyter-kernels"
+//            jupyterServerWsUrl="ws://localhost:3266/api/jupyter-kernels"
             collaborative={false}
             terminals={false}
           >

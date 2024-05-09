@@ -53,7 +53,7 @@ module.exports = {
   devServer: {
     port: 3266,
     proxy: {
-      '/api/kernel': {
+      '/api/jupyter-kernels': {
         target: JUPYTER_HOST,
         ws: true,
         secure: false,
@@ -62,7 +62,7 @@ module.exports = {
 //        timeout: 1000 * 60 * 10,
       },
       '/plotly.js': {
-        target: JUPYTER_HOST + '/api/kernel/pool/react',
+        target: JUPYTER_HOST + '/api/jupyter-kernels/pool/react',
         ws: false,
         secure: false,
         changeOrigin: true,

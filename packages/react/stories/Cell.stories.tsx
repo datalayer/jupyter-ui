@@ -56,8 +56,8 @@ const Template = (args, { globals: { labComparison } }) => {
       lite={lite}
       initCode={initCode}
       defaultKernelName={kernelName}
-      jupyterServerHttpUrl="https://oss.datalayer.tech/api/jupyter"
-      jupyterServerWsUrl="wss://oss.datalayer.tech/api/jupyter"
+      jupyterServerHttpUrl="https://oss.datalayer.run/api/jupyter-kernels"
+      jupyterServerWsUrl="wss://oss.datalayer.run/api/jupyter-kernels"
       jupyterToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
     >
       <Cell {...others} />
@@ -79,16 +79,19 @@ Confettis.args = {
   source: `import ipyreact
 class ConfettiWidget(ipyreact.ReactWidget):
   _esm = """
-    import confetti from "canvas-confetti";
+//    import confetti from "canvas-confetti";
     import * as React from "react";
     export default function({value, set_value, debug}) {
         return (
         <>
           <h1>Ask anything to Datalayer</h1>
+          {/*
+          // Disabled for now as randomly failing to fetch the canvas-confetti package...
           <button onClick={() => confetti() && set_value(value + 1)}>
             CLICK here for some CONFETTIS
           </button>
           <h2>You have {value || 0} wishe{ (value > 1) && 's' } so far...</h2>
+          */}
           <quote>Powered by 🪐 Jupyter UI</quote>
         </>
       )
