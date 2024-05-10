@@ -17,11 +17,11 @@ import {
 } from '@jupyterlab/rendermime';
 import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
-import { requireLoader as loader } from '@jupyter-widgets/html-manager/lib/libembed-amd';
 import {
   WIDGET_MIMETYPE,
   WidgetRenderer,
 } from '@jupyter-widgets/html-manager/lib/output_renderers';
+import { requireLoader as loader } from '../../jupyter/ipywidgets/libembed-amd';
 import { ClassicWidgetManager } from '../../jupyter/ipywidgets/classic/manager';
 import Kernel from '../../jupyter/kernel/Kernel';
 

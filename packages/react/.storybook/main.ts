@@ -36,10 +36,18 @@ const config: StorybookConfig = {
     name: getAbsolutePath('@storybook/react-webpack5'),
     options: {
       builder: {
-        useSWC: true,
+//        useSWC: true,
       },
     },
   },
+  previewHead: (head) => `
+    ${head}
+    <script
+      data-jupyter-widgets-cdn="https://cdn.jsdelivr.net/npm/"
+      data-jupyter-widgets-cdn-only="true"
+    >
+    </script>
+  `,
   webpackFinal: config => {
     config.module?.rules?.push(
       {

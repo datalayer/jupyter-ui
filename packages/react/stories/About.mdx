@@ -5,12 +5,18 @@
 */}
 
 import { Canvas } from '@storybook/blocks';
-import * as ButtonStories from './Button.stories';
+
+import * as Notebook from './Notebook.stories';
 import * as CellStories from './Cell.stories';
+import * as ButtonStories from './Button.stories';
 
 # Jupyter UI by Datalayer
 
 React.js components 💯% compatible with 🪐 Jupyter.
+
+## Notebook
+
+<Canvas of={Notebook.IpyReact} />
 
 ## Cell
 
@@ -18,4 +24,4 @@ React.js components 💯% compatible with 🪐 Jupyter.
 
 ## Button
 
-<Canvas of={ButtonStories.Default} />
+<Canvas of={ButtonStories.Primary} />

@@ -22,10 +22,14 @@ import { JupyterContextProps, JupyterContextProvider } from './JupyterContext';
 import { ColorMode } from './lab/JupyterLabColorMode';
 import JupyterLabCss from './lab/JupyterLabCss';
 
-const script = document.createElement('script');
-script.src =
+const requireJsScript = document.createElement('script');
+requireJsScript.src =
   'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js';
-document.body.appendChild(script);
+document.body.appendChild(requireJsScript);
+
+const cdnOnlyScript = document.createElement('script');
+cdnOnlyScript.setAttribute('data-jupyter-widgets-cdn-only', 'true');
+document.body.appendChild(cdnOnlyScript);
 
 /**
  * Definition of the properties that can be passed

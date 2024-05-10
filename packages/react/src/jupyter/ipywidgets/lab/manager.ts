@@ -26,8 +26,8 @@ import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
 import { Kernel, KernelMessage, Session } from '@jupyterlab/services';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { ISignal, Signal } from '@lumino/signaling';
-import { requireLoader } from '@jupyter-widgets/html-manager/lib/libembed-amd';
 import { valid } from 'semver';
+import { requireLoader } from './../libembed-amd';
 import { SemVerCache } from './../semvercache';
 import { WIDGET_STATE_MIMETYPE } from './../mimetypes';
 

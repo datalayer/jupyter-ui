@@ -4,9 +4,12 @@
  * MIT License
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
-import { Jupyter, Notebook } from './../src';
 import React from 'react';
+import { INotebookContent } from "@jupyterlab/nbformat"
+
+import type { Meta, StoryObj } from '@storybook/react';
+
+import { Jupyter, Notebook } from './../src';
 
 const meta: Meta<typeof Notebook> = {
   title: 'Components/Notebook',
@@ -67,8 +70,8 @@ Default.args = {
   uid: undefined,
   cellMetadataPanel: false,
   cellSidebarMargin: 120,
-  height: '100vh',
-  maxHeight: '100vh',
+  height: '600px',
+  maxHeight: '600px',
   nbgrader: false,
   readOnly: false,
   renderers: [],
@@ -83,49 +86,107 @@ Playground.args = {
   uid: 'uid-1',
 };
 
-const WIDGETS_EXAMPLE = {
+const IPYREACT_EXAMPLE: INotebookContent = {
   cells: [
     {
+      metadata: {},
+      cell_type: 'code',
+      outputs: [],
+      source: [
+        "import ipyreact\n",
+        "\n",
+        "class ConfettiWidget(ipyreact.ValueWidget):\n",
+        "  _esm = \"\"\"\n",
+        "  import confetti from \"canvas-confetti\";\n",
+        "  import * as React from \"react\";\n",
+        "  export default function({value, setValue}) {\n",
+        "      return <>\n",
+        "        <h1>Ask anything to Datalayer</h1>\n",
+        "        <button onClick={() => confetti() && setValue(value + 1)}>\n",
+        "          CLICK here for some CONFETTIS\n",
+        "        </button>\n",
+        "        <h2>You have {value || 0} wishe{ (value > 1) && 's' } so far...</h2>\n",
+        "        <quote>Powered by 🪐 Jupyter UI</quote>\n",
+        "      </>\n",
+        "  };\"\"\"\n",
+        "ConfettiWidget()"
+       ]
+    },
+  ],
+  metadata: {
+    kernelspec: {
+      display_name: 'Python 3 (ipykernel)',
+      language: 'python',
+      name: 'python3',
+    },
+    language_info: {
+      codemirror_mode: {
+        name: 'ipython',
+        version: 3,
+      },
+      file_extension: '.py',
+      mimetype: 'text/x-python',
+      name: 'python',
+      nbconvert_exporter: 'python',
+      pygments_lexer: 'ipython3',
+      version: '3.11.4',
+    },
+  },
+  nbformat: 4,
+  nbformat_minor: 5,
+};
+
+const WIDGETS_EXAMPLE: INotebookContent = {
+  cells: [
+    {
+      metadata: {},
       cell_type: 'code',
       outputs: [],
       source: 'import ipywidgets as widgets\nw = widgets.IntSlider()\nw',
     },
     {
+      metadata: {},
       cell_type: 'code',
       outputs: [],
       source: 'from IPython.display import display\ndisplay(w)',
     },
     {
+      metadata: {},
       cell_type: 'code',
       outputs: [],
       source:
         "a = widgets.FloatText()\nb = widgets.FloatSlider()\ndisplay(a,b)\nlink = widgets.jslink((a, 'value'), (b, 'value'))",
     },
     {
+      metadata: {},
       cell_type: 'code',
       outputs: [],
       source:
         'import numpy as np\nimport bqplot.pyplot as plt\nsize = 100\nscale = 100.0\nnp.random.seed(0)\nx_data = np.arange(size)\ny_data = np.cumsum(np.random.randn(size) * scale)\nfig = plt.figure(title="First Example")\nplt.plot(y_data)\nfig',
     },
     {
+      metadata: {},
       cell_type: 'code',
       outputs: [],
       source:
         'from ipyleaflet import Map, Marker\ncenter = (52.204793, 360.121558)\nm = Map(center=center, zoom=15)\nmarker = Marker(location=center, draggable=True)\nm.add(marker)\nmarker.location = (50, 356)\nm',
     },
     {
+      metadata: {},
       cell_type: 'code',
       outputs: [],
       source:
         'import ipyreact\nclass ConfettiWidget(ipyreact.ReactWidget):\n    _esm = """\n    import confetti from "canvas-confetti";\n    import * as React from "react";\n\n    export default function({value, set_value, debug}) {\n        return <button onClick={() => confetti() && set_value(value + 1)}>\n            {value || 0} times confetti\n        </button>\n    };"""\nConfettiWidget()',
     },
     {
+      metadata: {},
       cell_type: 'code',
       outputs: [],
       source:
         'import plotly.express as px\ndf = px.data.stocks()\nfig = px.line(df, x="date", y=df.columns,\n              hover_data={"date": "|%B %d, %Y"},\n              title=\'custom tick labels\')\nfig.update_xaxes(\n    dtick="M1",\n    tickformat="%b %Y",\n    range=["2018-01-01", "2018-12-31"])\nfig.show()',
     },
     {
+      metadata: {},
       cell_type: 'code',
       outputs: [],
       source:
@@ -155,7 +216,7 @@ const WIDGETS_EXAMPLE = {
   nbformat_minor: 5,
 };
 
-const INIT_EXAMPLE = {
+const INIT_EXAMPLE: INotebookContent = {
   ...WIDGETS_EXAMPLE,
   cells: [
     {
@@ -171,10 +232,16 @@ const INIT_EXAMPLE = {
   ],
 };
 
-export const IpywidgetsState: Story = Template.bind({});
-IpywidgetsState.args = {
+export const IpyWidgetsState: Story = Template.bind({});
+IpyWidgetsState.args = {
   ...Default.args,
   url: 'https://raw.githubusercontent.com/datalayer/jupyter-ui/main/packages/react/src/examples/notebooks/IPyWidgetsExampleWithState.ipynb.json'
+};
+
+export const IpyReact: Story = Template.bind({});
+IpyReact.args = {
+  ...Default.args,
+  nbformat: IPYREACT_EXAMPLE,
 };
 
 export const LitePython: Story = Template.bind({});

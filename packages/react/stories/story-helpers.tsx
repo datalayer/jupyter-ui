@@ -36,19 +36,7 @@ export const withThemeProvider = (
   if (context.parameters.disableThemeDecorator) return Story(context);
 
   const { colorScheme } = context.globals;
-/*
-  const [requirejsIsLoaded, setRequirejsIsLoaded] = useState(false);
 
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.onload = () => {
-      setRequirejsIsLoaded(true);
-    };
-    script.src =
-      'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js';
-    document.body.appendChild(script);
-  }, []);
-*/
   return (
     <ThemeProvider
       theme={theme}

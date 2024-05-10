@@ -17,10 +17,10 @@ import {
   ExportData,
 } from '@jupyter-widgets/base/lib/registry';
 import { ICallbacks, shims } from '@jupyter-widgets/base/lib/services-shim';
-import { requireLoader } from '@jupyter-widgets/html-manager/lib/libembed-amd';
 import { HTMLManager } from '@jupyter-widgets/html-manager/lib/htmlmanager';
 import { valid } from 'semver';
 import { INotebookModel } from '@jupyterlab/notebook';
+import { requireLoader } from './../libembed-amd';
 import {
   BundledIPyWidgets,
   ExternalIPyWidgets,

@@ -42,11 +42,11 @@ import {
 } from '@jupyterlab/services';
 import { runIcon } from '@jupyterlab/ui-components';
 import { createStandaloneCell, YCodeCell, IYText } from '@jupyter/ydoc';
-import { requireLoader as loader } from '@jupyter-widgets/html-manager/lib/libembed-amd';
 import {
   WIDGET_MIMETYPE,
   WidgetRenderer,
 } from '@jupyter-widgets/html-manager/lib/output_renderers';
+import { requireLoader as loader } from '../../jupyter/ipywidgets/libembed-amd';
 import ClassicWidgetManager from '../../jupyter/ipywidgets/classic/manager';
 import Kernel from '../../jupyter/kernel/Kernel';
 import CellCommands from './CellCommands';
