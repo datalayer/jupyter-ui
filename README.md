@@ -10,10 +10,13 @@ Jupyter UI is a set of [React.js](https://react.dev) components that allow a fro
 
 <hr/>
 
-As a developer start with the [setup of your environment](https://jupyter-ui.datalayer.tech/docs/develop/setup) and try [one of the examples](https://jupyter-ui.datalayer.tech/docs/category/examples). We have [documentation](https://jupyter-ui.datalayer.tech) for more details. You can try examples on CodeSanbox:
+As a developer start with the [setup of your environment](https://jupyter-ui.datalayer.tech/docs/develop/setup) and try [one of the examples](https://jupyter-ui.datalayer.tech/docs/category/examples). We have [documentation](https://jupyter-ui.datalayer.tech) for more details.
 
-- [A Notebook](https://codesandbox.io/p/sandbox/jupyter-react-cra-notebook-66r25c-66r25c?file=/src/index.tsx) on CodeSandbox.
-- [A Cell](https://codesandbox.io/p/sandbox/jupyter-react-cra-cell-te6hii-te6hii?file=/src/index.tsx) on CodeSandbox.
+> You can try the CodeSanbox examples.
+
+- [A Notebook with CRA](https://codesandbox.io/p/sandbox/jupyter-react-cra-notebook-66r25c-66r25c).
+- [A Notebook with Next JS](https://codesandbox.io/p/devbox/jupyter-react-nextjs-qzv8cz).
+- [A simple Cell](https://codesandbox.io/p/sandbox/jupyter-react-cra-cell-te6hii-te6hii).
 
 We host a Storybook on ✨ https://jupyter-ui-storybook.datalayer.tech that showcases various low-level as high-level React.js components useful to build a Data Product.
 
