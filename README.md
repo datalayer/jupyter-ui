@@ -16,7 +16,7 @@ As a developer start with the [setup of your environment](https://jupyter-ui.dat
 
 - [A Notebook with CRA](https://codesandbox.io/p/sandbox/jupyter-react-cra-notebook-66r25c-66r25c).
 - [A Notebook with Next JS](https://codesandbox.io/p/devbox/jupyter-react-nextjs-qzv8cz).
-- [A simple Cell](https://codesandbox.io/p/sandbox/jupyter-react-cra-cell-te6hii-te6hii).
+- [A simple Cell](https://codesandbox.io/p/sandbox/jupyter-react-cra-cell-te6hii-te6hii) - You may need to refesh the sandbox navigator.
 
 We host a Storybook on ✨ https://jupyter-ui-storybook.datalayer.tech that showcases various low-level as high-level React.js components useful to build a Data Product.
 
