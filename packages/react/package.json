@@ -1,6 +1,6 @@
 {
   "name": "atlas-jupyter-react",
-  "version": "0.0.41",
+  "version": "0.0.43",
   "description": "Jupyter React - React.js components 100% compatible with Jupyter.",
   "license": "MIT",
   "main": "lib/index.js",
@@ -132,6 +132,7 @@
     "@jupyterlite/server-extension": "0.2.2",
     "@lumino/default-theme": "2.1.4",
     "@mui/material": "^5.15.12",
+    "@primer/octicons-react": "^19.9.0",
     "@primer/react": "^36.17.0",
     "@radix-ui/react-popover": "^1.0.7",
     "assert": "2.0.0",
