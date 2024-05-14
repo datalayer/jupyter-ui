@@ -64,7 +64,6 @@
   },
   "dependencies": {
     "@codemirror/lang-python": "6.0.1",
-    "@datalayer/primer-addons": "0.2.2",
     "@datalayer/typescript-fsa-redux-observable": "0.18.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
@@ -133,7 +132,6 @@
     "@jupyterlite/server-extension": "0.2.2",
     "@lumino/default-theme": "2.1.4",
     "@mui/material": "^5.15.12",
-    "@primer/react": "36.6.0",
     "@radix-ui/react-popover": "^1.0.7",
     "assert": "2.0.0",
     "atlas-jupyter-react": "^0.0.3",
@@ -180,7 +178,6 @@
     "@jupyterlab/vega3-extension": "3.3.0",
     "@jupyterlite/javascript-kernel-extension": "0.2.2",
     "@playwright/test": "^1.40.1",
-    "@primer/octicons-react": "^19.8.0",
     "@storybook/addon-essentials": "^7.6.5",
     "@storybook/addon-interactions": "^7.6.5",
     "@storybook/addon-links": "^7.6.5",
