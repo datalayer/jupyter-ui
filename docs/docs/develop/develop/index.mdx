@@ -63,30 +63,30 @@ Additionally, you can to define in the head section your host index HTML page in
 
 ```html
 <script id="datalayer-config-data" type="application/json">
-  {
-    "jupyterServerHttpUrl": "https://oss.datalayer.tech/api/jupyter",
-    "jupyterServerWsUrl": "wss://oss.datalayer.tech/api/jupyter",
-    "jupyterToken": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
-  }
-  </script>
+    {
+        "jupyterServerHttpUrl": "https://oss.datalayer.run/api/jupyter-kernels",
+        "jupyterServerWsUrl": "wss://oss.datalayer.run/api/jupyter-kernels",
+        "jupyterToken": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+    }
+</script>
 ```
 
 If you are using the [JupyterLabApp](/docs/components/jupyterlabapp) component, additional information will be needed (see [index-local.html](https://github.com/datalayer/jupyter-ui/blob/main/packages/react/public/index-local.html))
 
 ```html
-  <script id="jupyter-config-data" type="application/json">
+<script id="jupyter-config-data" type="application/json">
     {
-      "baseUrl": "https://oss.datalayer.tech/api/jupyter",
-      "wsUrl": "wss://oss.datalayer.tech/api/jupyter",
-      "token": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6",
-      "appUrl": "/lab",
-      "themesUrl": "/lab/api/themes",
-      "disableRTC": false,
-      "terminalsAvailable": "false",
-      "mathjaxUrl": "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js",
-      "mathjaxConfig": "TeX-AMS_CHTML-full,Safe"
+        "baseUrl": "https://oss.datalayer.run/api/jupyter-kernels",
+        "wsUrl": "wss://oss.datalayer.run/api/jupyter-kernels",
+        "token": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6",
+        "appUrl": "/lab",
+        "themesUrl": "/lab/api/themes",
+        "disableRTC": false,
+        "terminalsAvailable": "false",
+        "mathjaxUrl": "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js",
+        "mathjaxConfig": "TeX-AMS_CHTML-full,Safe"
     }
-  </script>
+</script>
 ```
 
 ## Other Examples
@@ -113,8 +113,8 @@ yarn jupyter:ui:nextjs
 
 While running those example, hot reload is supported:
 
-- Changing the source code of the example and your browser should reflect those changes.
-- If you need to change the core react package `@datalayer/jupyter-react`, you will need to run `yarn watch` in the `packages/react` folder.
+-   Changing the source code of the example and your browser should reflect those changes.
+-   If you need to change the core react package `@datalayer/jupyter-react`, you will need to run `yarn watch` in the `packages/react` folder.
 
 PS: We also have some uncomplete or deprecated examples...
 
@@ -127,4 +127,3 @@ yarn jupyter:ui:slate
 # open http://localhost:4567
 yarn jupyter:ui:prosemirror
 ```
-

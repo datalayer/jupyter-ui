@@ -8,17 +8,17 @@ import JupyterCell from '@theme/JupyterCell';
 
 :::tip
 
-Type your code in the below cell and hit `SHIFT+ENTER` to execute your  code.
+Type your code in the below cell and hit `SHIFT+ENTER` to execute your code.
 
 > ✨ This is fast, isn't it?
 
 :::
 
 <JupyterCell
-  serverHttpUrl='https://oss.datalayer.tech/api/jupyter'
-  serverWsUrl='wss://oss.datalayer.tech/api/jupyter'
-  token='60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6'
-  source= {`import numpy as np
+    serverHttpUrl="https://oss.datalayer.run/api/jupyter-kernels"
+    serverWsUrl="wss://oss.datalayer.run/api/jupyter-kernels"
+    token="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+    source={`import numpy as np
 import matplotlib.pyplot as plt
 x1 = np.linspace(0.0, 5.0)
 x2 = np.linspace(0.0, 2.0)

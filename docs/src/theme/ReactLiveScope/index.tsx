@@ -9,36 +9,43 @@ import BrowserOnly from '@docusaurus/core/lib/client/exports/BrowserOnly';
 import { ContentLoader } from '@datalayer/primer-addons';
 
 const Cell = (props: any) => {
-  return (
-    <BrowserOnly
-      fallback={<div>Jupyter Cell fallback content for prerendering.</div>}>
-      {() => {
-        // Keep the import via require in the BrowserOnly code block.
-        const { Jupyter } = require('@datalayer/jupyter-react/lib/jupyter/Jupyter');
-        const { Cell } = require('@datalayer/jupyter-react/lib/components/cell/Cell');
-        return (
-          <>
-          <Jupyter
-            jupyterServerHttpUrl="https://oss.datalayer.tech/api/jupyter"
-            jupyterServerWsUrl="wss://oss.datalayer.tech/api/jupyter"
-            jupyterToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
-            disableCssLoading={true}
-            skeleton={<ContentLoader/>}
-          >
-            <Cell {...props}/>
-          </Jupyter>
-        </>
-        )
-     }}
-    </BrowserOnly>
-  )
-}
+    return (
+        <BrowserOnly
+            fallback={
+                <div>Jupyter Cell fallback content for prerendering.</div>
+            }
+        >
+            {() => {
+                // Keep the import via require in the BrowserOnly code block.
+                const {
+                    Jupyter,
+                } = require('@datalayer/jupyter-react/lib/jupyter/Jupyter');
+                const {
+                    Cell,
+                } = require('@datalayer/jupyter-react/lib/components/cell/Cell');
+                return (
+                    <>
+                        <Jupyter
+                            jupyterServerHttpUrl="https://oss.datalayer.run/api/jupyter-kernels"
+                            jupyterServerWsUrl="wss://oss.datalayer.run/api/jupyter-kernels"
+                            jupyterToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+                            disableCssLoading={true}
+                            skeleton={<ContentLoader />}
+                        >
+                            <Cell {...props} />
+                        </Jupyter>
+                    </>
+                );
+            }}
+        </BrowserOnly>
+    );
+};
 
 // Add react-live imports you need here
 const ReactLiveScope = {
-  React,
-  ...React,
-  Cell,
+    React,
+    ...React,
+    Cell,
 };
 
 export default ReactLiveScope;

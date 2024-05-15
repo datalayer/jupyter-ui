@@ -71,14 +71,14 @@ yarn install
 You need to add in the `<head/>` section of `public/index.html` the metadata to indicate where you Jupyter server is running, as the `require` javascript.
 
 ```html
-    <script id="datalayer-config-data" type="application/json">
-      {
-        "jupyterServerHttpUrl": "https://oss.datalayer.tech/api/jupyter",
-        "jupyterServerWsUrl": "wss://oss.datalayer.tech/api/jupyter",
+<script id="datalayer-config-data" type="application/json">
+    {
+        "jupyterServerHttpUrl": "https://oss.datalayer.run/api/jupyter-kernels",
+        "jupyterServerWsUrl": "wss://oss.datalayer.run/api/jupyter-kernels",
         "jupyterToken": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
-      }
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    }
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
 ```
 
 ## Dot Env
@@ -96,14 +96,14 @@ Update `src/App.tsx` to import the `Jupyter` and `Notebook` component and change
 
 ```ts
 // App.tsx
-import { Notebook, Jupyter } from "@datalayer/jupyter-react";
+import { Notebook, Jupyter } from '@datalayer/jupyter-react';
 
 function App() {
-  return (
-    <Jupyter>
-      <Notebook path="ping.ipynb" />
-    </Jupyter>
-  )
+    return (
+        <Jupyter>
+            <Notebook path="ping.ipynb" />
+        </Jupyter>
+    );
 }
 
 export default App;
@@ -115,9 +115,7 @@ We don't support yet [React Strict Mode](https://reactjs.org/docs/strict-mode.ht
 
 ```ts
 // index.tsx
-root.render(
-  <App />
-);
+root.render(<App />);
 ```
 
 ## Start

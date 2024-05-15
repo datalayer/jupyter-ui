@@ -4,23 +4,23 @@ description: The Notebook component.
 
 import { StorybookView } from '@theme/StorybookView';
 
-import ModalImage from "react-modal-image";
+import ModalImage from 'react-modal-image';
 
 # 🪐 Notebook Component
 
 The below picture is an example of Notebook into a React.js component.
 
 <ModalImage
-  small="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-notebook.png"
-  large="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-notebook.png"
-  alt="Jupyter UI Notebook"
+    small="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-notebook.png"
+    large="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-notebook.png"
+    alt="Jupyter UI Notebook"
 />
 
 This is what it takes to create a Notebook. In this first example, the Jupyter Server will be fetched for the `test.ipynb` notebook "ipynb" file content.
 
 ```jsx
 <Jupyter terminals={true} collaborative={true}>
-  <Notebook path="test.ipynb" />
+    <Notebook path="test.ipynb" />
 </Jupyter>
 ```
 
@@ -37,22 +37,20 @@ import nbformat from "./NotebookExample.ipynb.json";
 
 For IPyWidgets, use the following properties:
 
-- `bundledIPyWidgets`: List of module name, version and exports.
-- `externalIPyWidgets`: List of module name and version to be loaded from public CDNs.
-- `ipywidgets`: `lab` or `classic` (deprecated, will be soon removed). Please use `lab`
+-   `bundledIPyWidgets`: List of module name, version and exports.
+-   `externalIPyWidgets`: List of module name and version to be loaded from public CDNs.
+-   `ipywidgets`: `lab` or `classic` (deprecated, will be soon removed). Please use `lab`
 
 The available properties for the Notebook component are available on this [TypeDoc page](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.8.1/types/INotebookProps.html).
 
 ## With a Jupyter server
 
-<StorybookView 
-    story='components-notebook--default'
-/>
+<StorybookView story="components-notebook--default" />
 
 ```jsx
 <Jupyter
-    jupyterServerHttpUrl="https://oss.datalayer.tech/api/jupyter"
-    jupyterServerWsUrl="wss://oss.datalayer.tech/api/jupyter"
+    jupyterServerHttpUrl="https://oss.datalayer.run/api/jupyter-kernels"
+    jupyterServerWsUrl="wss://oss.datalayer.run/api/jupyter-kernels"
     jupyterToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
 >
     <Notebook />
@@ -60,9 +58,10 @@ The available properties for the Notebook component are available on this [TypeD
 ```
 
 You can set the following props to connect it to a running Jupyter Server:
-- `jupyterServerHttpUrl`: The server URL
-- `jupyterServerWsUrl`: The server websocket URL
-- `jupyterToken`: The server authentication token
+
+-   `jupyterServerHttpUrl`: The server URL
+-   `jupyterServerWsUrl`: The server websocket URL
+-   `jupyterToken`: The server authentication token
 
 > Your server will likely need to accept connection from external client.
 
@@ -73,9 +72,7 @@ It supports in-browser kernel (using [JupyterLite kernels](https://jupyterlite.r
 To use the [Pyodide](https://pyodide.org/) Python [kernel](https://github.com/jupyterlite/pyodide-kernel),
 you can simply set `lite` to `true`:
 
-<StorybookView 
-    story='components-notebook--lite-python'
-/>
+<StorybookView story="components-notebook--lite-python" />
 
 ```jsx
 <Jupyter
@@ -97,7 +94,7 @@ you can simply set `lite` to `true`:
             outputs: [],
             source: 'import ipywidgets as widgets\nw = widgets.IntSlider()\nw',
           }
-        ],  
+        ],
         metadata: {
           kernelspec: {
             display_name: 'Python 3 (ipykernel)',
