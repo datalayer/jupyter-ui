@@ -15,7 +15,7 @@
     "write-heading-ids": "docusaurus write-heading-ids"
   },
   "dependencies": {
-    "@datalayer/jupyter-docusaurus-plugin": "0.0.9",
+    "@datalayer/jupyter-docusaurus-plugin": "0.1.0",
     "@docusaurus/core": "~2.4.0",
     "@docusaurus/preset-classic": "~2.4.0",
     "@docusaurus/theme-live-codeblock": "~2.4.0",
