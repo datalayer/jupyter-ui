@@ -136,16 +136,14 @@ export class NotebookAdapter {
     });
   }
 
+  notebookKeydownListener = (event: KeyboardEvent) => {
+    this._commandRegistry?.processKeydownEvent(event);
+  }
+
   private setupAdapter(): void {
     const useCapture = true;
 
-    document.addEventListener(
-      'keydown',
-      event => {
-        this._commandRegistry?.processKeydownEvent(event);
-      },
-      useCapture
-    );
+    document.addEventListener( 'keydown', this.notebookKeydownListener, useCapture);
 
     const initialFactories = standardRendererFactories.filter(
       factory => factory.mimeTypes[0] !== 'text/javascript'
@@ -611,6 +609,7 @@ export class NotebookAdapter {
   };
 
   dispose = () => {
+    document.removeEventListener('keydown', this.notebookKeydownListener, true);
     //    this._boxPanel.dispose();
     //    this._notebookPanel?.dispose();
     //    this._context?.dispose();

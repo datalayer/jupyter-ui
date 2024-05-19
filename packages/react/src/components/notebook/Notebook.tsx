@@ -198,12 +198,11 @@ export const Notebook = (props: INotebookProps) => {
     injectableStore.inject('notebook', notebookReducer, notebookEpics);
   }, []);
   useEffect(() => {
+    if (adapter) {
+      adapter.dispose();
+    }
     newAdapterState();
     return () => {
-      if (adapter) {
-        adapter.dispose();
-      }
-      setAdapter(undefined);
       dispatch(
         notebookActions.setPortalDisplay({ uid, portalDisplay: undefined })
       );
