@@ -10,25 +10,6 @@ import styles from './HomepageFeatures.module.css';
 
 const FeatureList = [
   {
-    title: 'Easy to use',
-    Svg: require('../../static/img/rocket.svg').default,
-    description: (
-      <>
-        Juyter UI is designed from the ground up to be easily installed, used and extended
-        to get your custom data analysis up and running quickly.
-      </>
-    ),
-  },
-  {
-    title: 'Open source',
-    Svg: require('../../static/img/open-source.svg').default,
-    description: (
-      <>
-        Jupyter UI is built on top of renowed open source libraries and is also fully opensource.
-      </>
-    ),
-  },
-  {
     title: 'Professional support',
     Svg: require('../../static/img/target.svg').default,
     description: (
