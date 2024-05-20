@@ -30,13 +30,13 @@ import {
   JupyterPlugin, EquationNode, HorizontalRulePlugin,
   ListMaxIndentLevelPlugin, AutoLinkPlugin, ComponentPickerMenuPlugin,
   EquationsPlugin, ImagesPlugin, YouTubePlugin, ImageNode, YouTubeNode,
-  JupyterCodeHighlightNode, JupyterCodeNode, JupyterOutputNode, CodeActionMenuPlugin,
-  AutoEmbedPlugin, NbformatContentPlugin, TableOfContentsPlugin, MarkdownPlugin
+  JupyterCodeHighlightNode, JupyterCodeNode, JupyterOutputNode, CustomNode,
+  CodeActionMenuPlugin, AutoEmbedPlugin, NbformatContentPlugin, TableOfContentsPlugin, MarkdownPlugin, CustomPlugin
 } from "../../index";
 import ExampleTheme from "../themes/Theme";
+import { useLexical } from "../context/LexicalContext";
 import TreeViewPlugin from "../plugins/TreeViewPlugin";
 import ToolbarPlugin from "../plugins/ToolbarPlugin";
-import { useLexical } from "../context/LexicalContext";
 import DraggableBlockPlugin from "./../plugins/DraggableBlockPlugin"
 
 import "./../styles/Editor.css";
@@ -58,24 +58,25 @@ const initialConfig = {
     throw error;
   },
   nodes: [
-    HeadingNode,
-    ListNode,
-    ListItemNode,
-    QuoteNode,
-    CodeNode,
-    JupyterCodeNode,
-    JupyterCodeHighlightNode,
-    TableNode,
-    TableCellNode,
-    TableRowNode,
     AutoLinkNode,
-    LinkNode,
-    JupyterOutputNode,
+    CodeNode,
+    CustomNode,
     EquationNode,
-    ImageNode,
-    YouTubeNode,
-    HorizontalRuleNode,
     HashtagNode,
+    HeadingNode,
+    HorizontalRuleNode,
+    ImageNode,
+    JupyterCodeHighlightNode,
+    JupyterCodeNode,
+    JupyterOutputNode,
+    LinkNode,
+    ListItemNode,
+    ListNode,
+    QuoteNode,
+    TableCellNode,
+    TableNode,
+    TableRowNode,
+    YouTubeNode,
   ]
 };
 
@@ -130,6 +131,7 @@ export default function Editor(props: Props) {
             <AutoLinkPlugin />
             <ListMaxIndentLevelPlugin maxDepth={7} />
             <MarkdownPlugin />
+            <CustomPlugin />
             <JupyterPlugin />
             <ComponentPickerMenuPlugin/>
             <EquationsPlugin/>
