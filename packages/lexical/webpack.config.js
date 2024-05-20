@@ -32,8 +32,6 @@ if (IS_PRODUCTION) {
   minimize = true;
 }
 
-const JUPYTER_HOST = 'http://127.0.0.1:8686';
-
 module.exports = {
   entry: ['./src/examples/Example'],
   mode: mode,
@@ -46,26 +44,8 @@ module.exports = {
     port: 3208,
     historyApiFallback: true,
     hot: !IS_PRODUCTION,
-    proxy: {
-      '/build/pypi': {
-        target: 'https://datalayer-assets.s3.us-west-2.amazonaws.com/pypi',
-        pathRewrite: { '^/build/pypi': '' },
-        ws: false,
-        secure: false,
-        changeOrigin: true,
-      },
-      '/api/jupyter-kernels': {
-        target: JUPYTER_HOST,
-        ws: true,
-        secure: false,
-        changeOrigin: true,
-      },
-      '/plotly.js': {
-        target: JUPYTER_HOST + '/api/jupyter-kernels/pool/react',
-        ws: false,
-        secure: false,
-        changeOrigin: false,
-      },
+    client: {
+      overlay: false,
     },
   },
   devtool,
@@ -122,23 +102,23 @@ module.exports = {
       { test: /\.css$/, use: ['style-loader', 'css-loader'] },
       { test: /\.md$/, use: 'raw-loader' },
       { test: /\.js.map$/, use: 'file-loader' },
+      /*
       {
         // In .css files, svg is loaded as a data URI.
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
         issuer: /\.css$/,
         use: {
           loader: 'svg-url-loader',
-          options: { encoding: 'none', limit: 10000 }
-        }
+          options: { encoding: 'none', limit: 10000 },
+        },
       },
+      */
       {
         // In .ts and .tsx files (both of which compile to .js), svg files
         // must be loaded as a raw string instead of data URIs.
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
         issuer: /\.js$/,
-        use: {
-          loader: 'raw-loader'
-        }
+        type: 'asset/source',
       },
       {
         test: /\.m?js/,
@@ -151,6 +131,12 @@ module.exports = {
         resolve: {
           fullySpecified: false
         }
+      },
+      // Special webpack rule for the JupyterLab theme style sheets.
+      {
+        test: /style\/theme\.css$/i,
+        loader: 'css-loader',
+        options: { exportType: 'string' },
       },
       // Ship the JupyterLite service worker.
       {
@@ -169,7 +155,7 @@ module.exports = {
         },
       },
       {
-        test: /schema\/.*/,
+        test: /pyodide-kernel-extension\/schema\/.*/,
         type: 'asset/resource',
         generator: {
           filename: 'schema/[name][ext][query]',
