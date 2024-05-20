@@ -1,0 +1,68 @@
+{
+  "name": "@datalayer/jupyter-ui-storybook",
+  "version": "0.0.1",
+  "description": "Jupyter UI Storybook.",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "files": [
+    "lib",
+    "style"
+  ],
+  "keywords": [
+    "jupyter",
+    "jupyterlab",
+    "jupyterlab-extension",
+    "react"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/datalayer/jupyter-ui.git",
+    "directory": "storybook"
+  },
+  "packageManager": "yarn@3.5.0",
+  "scripts": {
+    "storybook": "storybook dev -p 6006",
+    "storybook:ci": "storybook dev -p 6006 --ci --quiet",
+    "build:storybook": "storybook build"
+  },
+  "dependencies": {
+    "@datalayer/jupyter-lexical": "0.10.1",
+    "@datalayer/jupyter-react": "0.10.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.21.0",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/plugin-transform-typescript": "^7.22.10",
+    "@babel/preset-env": "^7.20.2",
+    "@babel/preset-react": "^7.18.6",
+    "@babel/preset-typescript": "^7.21.0",
+    "@jupyterlab/builder": "^4.0.0",
+    "@jupyterlab/geojson-extension": "^3.4.0",
+    "@jupyterlab/running": "^4.0.0",
+    "@jupyterlab/running-extension": "^4.0.0",
+    "@jupyterlab/testutils": "^4.0.0",
+    "@jupyterlab/vega3-extension": "^3.3.0",
+    "@jupyterlite/javascript-kernel-extension": "^0.2.2",
+    "@playwright/test": "^1.40.1",
+    "@primer/octicons-react": "^19.8.0",
+    "@storybook/addon-essentials": "^8.0.10",
+    "@storybook/addon-interactions": "^8.0.10",
+    "@storybook/addon-links": "^8.0.10",
+    "@storybook/addon-onboarding": "^8.0.10",
+    "@storybook/addon-themes": "^8.0.10",
+    "@storybook/blocks": "^8.0.10",
+    "@storybook/manager-api": "^8.0.10",
+    "@storybook/react": "^8.0.10",
+    "@storybook/react-webpack5": "^8.0.10",
+    "@storybook/test": "^8.0.10",
+    "@types/react": "^18.2.12",
+    "@types/react-dom": "^18.2.5",
+    "storybook": "^8.0.10",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.9.3",
+    "whatwg-fetch": "^3.6.2"
+  }
+}

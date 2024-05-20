@@ -1,0 +1,11 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * Datalayer License
+ */
+
+ @import url("https://use.fontawesome.com/releases/v5.0.10/css/all.css");
+
+.vertical-spacer {
+  margin: 12px 0;
+}

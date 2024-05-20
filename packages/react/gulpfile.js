@@ -46,7 +46,7 @@ gulp.task('licenses', async function () {
       gap.prependText(`/*!
 
 =========================================================
-* Datalayer - v0.3.0
+* Datalayer
 =========================================================
 
 * Product Page: https://datalayer.io
@@ -67,7 +67,7 @@ gulp.task('licenses', async function () {
       gap.prependText(`<!--
 
 =========================================================
-* Datalayer - v0.3.0
+* Datalayer
 =========================================================
 
 * Product Page: https://datalayer.io
@@ -88,7 +88,7 @@ gulp.task('licenses', async function () {
       gap.prependText(`/*!
 
 =========================================================
-* Datalayer - v0.3.0
+* Datalayer
 =========================================================
 
 * Product Page: https://datalayer.io
