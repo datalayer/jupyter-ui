@@ -9,7 +9,7 @@ import { Box, Button } from "@primer/react";
 import { ThreeBarsIcon } from "@primer/octicons-react"
 import { Jupyter } from "@datalayer/jupyter-react";
 import { useLexical, LexicalProvider } from "./context/LexicalContext";
-import Editor from "./Editor";
+import Editor from "./editor/Editor";
 
 import initialLexicalModel from "./content/Example.lexical.json";
 import initialNbformatModel from "./content/Example.ipynb.json";
