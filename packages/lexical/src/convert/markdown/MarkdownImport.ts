@@ -12,7 +12,6 @@
  *
  */
 
-import type {JupyterCodeNode} from './../../nodes/JupyterCodeNode';
 import type {
   ElementTransformer,
   TextFormatTransformer,
@@ -21,7 +20,7 @@ import type {
 } from '.';
 import type {LexicalNode, RootNode, TextNode} from 'lexical';
 
-import {$createJupyterCodeNode} from './../../nodes/JupyterCodeNode';
+import {JupyterCodeNode, $createJupyterCodeNode} from './../../nodes/JupyterCodeNode';
 import {$isListItemNode, $isListNode} from '@lexical/list';
 import {$isQuoteNode} from '@lexical/rich-text';
 import {$findMatchingParent} from '@lexical/utils';

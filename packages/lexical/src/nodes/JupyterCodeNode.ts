@@ -73,7 +73,6 @@ const LANGUAGE_DATA_ATTRIBUTE = 'data-highlight-language';
 export class JupyterCodeNode extends ElementNode {
   /** @internal */
   __language: string | null | undefined;
-
   __codeNodeUuid: string;
 
   static getType(): string {

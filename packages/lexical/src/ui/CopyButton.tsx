@@ -39,8 +39,8 @@ export function CopyButton({editor, getCodeDOMNode}: Props) {
     let content = '';
     editor.update(() => {
       const codeNode = $getNearestNodeFromDOMNode(codeDOMNode);
-      if ($isJupyterCodeNode(codeNode)) {
-        content = codeNode.getTextContent();
+      if (codeNode && $isJupyterCodeNode(codeNode)) {
+        content = codeNode!.getTextContent();
       }
       const selection = $getSelection();
       $setSelection(selection);
