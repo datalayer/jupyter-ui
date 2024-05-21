@@ -168,3 +168,4 @@ packages/*/content
 !.vscode
 !.licenserc.yaml
 !static/README.md
+!docs/static/img
