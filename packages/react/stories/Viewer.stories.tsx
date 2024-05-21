@@ -46,17 +46,13 @@ const Template = (args, { globals: { labComparison } }) => {
   );
 };
 
-export const Default: Story = {
-  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
-};
+export const Default: Story = Template.bind({});
 Default.args = {
   nbformat: nbformat1,
   outputs: true,
 };
 
-export const ViewerSimple: Story = {
-  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
-};
+export const ViewerSimple: Story = Template.bind({});
 ViewerSimple.args = {
   nbformat: nbformat2,
   outputs: true,
@@ -68,9 +64,7 @@ ViewerPlotly.args = {
   outputs: true
 };
 */
-export const ViewerMatplotlib: Story = {
-  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
-};
+export const ViewerMatplotlib: Story = Template.bind({});
 ViewerMatplotlib.args = {
   nbformatUrl:
     'https://raw.githubusercontent.com/anissa111/matplotlib-tutorial/main/notebooks/01-basic-matplotlib-tutorial.ipynb',

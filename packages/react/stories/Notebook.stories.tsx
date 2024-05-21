@@ -58,9 +58,7 @@ const Template = (args, { globals: { labComparison = true }, ...rest }) => {
   );
 };
 
-export const Default: Story = {
-  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
-};
+export const Default: Story = Template.bind({});
 Default.args = {
   browser: 'false',
   initCode: '',
@@ -180,26 +178,20 @@ const INIT_EXAMPLE = {
   ],
 };
 
-export const IpywidgetsState: Story = {
-  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
-};
+export const IpywidgetsState: Story = Template.bind({});
 IpywidgetsState.args = {
   ...Default.args,
   url: 'https://raw.githubusercontent.com/datalayer/jupyter-ui/main/packages/react/src/examples/notebooks/IPyWidgetsExampleWithState.ipynb.json'
 };
 
-export const LitePython: Story = {
-  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
-};
+export const LitePython: Story = Template.bind({});
 LitePython.args = {
   ...Default.args,
   browser: 'true',
   nbformat: INIT_EXAMPLE,
 };
 
-export const LitePythonInit: Story = {
-  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
-};
+export const LitePythonInit: Story = Template.bind({});
 LitePythonInit.args = {
   ...Default.args,
   browser: 'true',

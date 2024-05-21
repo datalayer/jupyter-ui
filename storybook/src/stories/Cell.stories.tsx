@@ -65,9 +65,7 @@ const Template = (args, { globals: { labComparison } }) => {
   );
 };
 
-export const Default: Story = {
-  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
-};
+export const Default: Story = Template.bind({});
 Default.args = {
   browser: 'false',
   initCode: '',
@@ -75,9 +73,7 @@ Default.args = {
   autoStart: false,
 };
 
-export const Confettis: Story = {
-  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
-};
+export const Confettis: Story = Template.bind({});
 Confettis.args = {
   browser: 'false',
   source: `import ipyreact
@@ -101,9 +97,7 @@ ConfettiWidget()`,
   autoStart: true,
 };
 
-export const Playground: Story = {
-  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
-};
+export const Playground: Story = Template.bind({});
 
 Playground.args = {
   ...Default.args,
@@ -124,9 +118,7 @@ plt.show()`,
   autoStart: true,
 };
 
-export const LitePython: Story = {
-  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
-};
+export const LitePython: Story = Template.bind({});
 LitePython.args = {
   ...Playground.args,
   browser: 'true',
@@ -136,9 +128,7 @@ print(f"{sys.platform=}")
 ${Playground.args.source ?? ''}`,
 };
 
-export const WithInitialization: Story = {
-  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
-};
+export const WithInitialization: Story = Template.bind({});
 WithInitialization.args = {
   ...Default.args,
   browser: 'true',

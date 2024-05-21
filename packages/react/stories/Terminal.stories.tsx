@@ -39,27 +39,21 @@ const Template = (args, { globals: { labComparison } }) => {
   );
 };
 
-export const Default: Story = {
-  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
-};
+export const Default: Story = Template.bind({});
 Default.args = {
   height: '800px',
   colorMode: 'light',
 };
 
-export const Playground: Story = {
-  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
-};
+export const Playground: Story = Template.bind({});
 Playground.args = {
   ...Default.args,
   height: '800px',
   colorMode: 'dark',
 };
 
-export const WithInitialization: Story = {
-  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
-};
+export const WithInitialization: Story = Template.bind({});
 WithInitialization.args = {
   ...Default.args,
-  initCode: 'echo "Hello from shell $0"',
+  initCode: 'echo "Hello from shell $0"\n',
 };

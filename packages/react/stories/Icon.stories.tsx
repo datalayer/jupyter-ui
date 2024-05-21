@@ -42,9 +42,7 @@ const Template = (args, { globals: { labComparison } }) => {
   );
 };
 
-export const Default: Story = {
-  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
-};
+export const Default: Story = Template.bind({});
 Default.args = {
   icon: 'undo',
 };

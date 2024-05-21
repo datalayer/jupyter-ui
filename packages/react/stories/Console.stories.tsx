@@ -68,9 +68,7 @@ const Template = (args, { globals: { labComparison } }) => {
   );
 };
 
-export const Default: Story = {
-  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
-};
+export const Default: Story = Template.bind({});
 
 Default.args = {
   browser: 'false',
@@ -78,17 +76,13 @@ Default.args = {
   code: "print('👋 Hello Jupyter Console')",
 };
 
-export const LitePython: Story = {
-  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
-};
+export const LitePython: Story = Template.bind({});
 LitePython.args = {
   ...Default.args,
   browser: 'true',
 };
 
-export const LiteJavascript: Story = {
-  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
-};
+export const LiteJavascript: Story = Template.bind({});
 LiteJavascript.args = {
   ...Default.args,
   browser: '@jupyterlite/javascript-kernel-extension',
