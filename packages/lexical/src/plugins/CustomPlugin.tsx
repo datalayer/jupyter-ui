@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 import { useEffect } from "react";
 import {  $insertNodes, COMMAND_PRIORITY_EDITOR, createCommand } from "lexical";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";

@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 import { NodeKey } from "lexical";
 import { JupyterCellComponent } from "./../components/JupyterCellComponent";
 
