@@ -84,6 +84,7 @@ header h1 {
   flex: auto;
   position: relative;
   resize: vertical;
+  padding-left: 20px;
   z-index: -1;
 }
 
@@ -91,7 +92,8 @@ header h1 {
   margin: 20px auto 20px auto;
   width: 100%;
 }
-
+/*
+TODO(ECH) this conflicts with the jupyterlab css rules for the output.
 pre {
   line-height: 1.1;
   background: #222;
@@ -102,7 +104,7 @@ pre {
   overflow: auto;
   max-height: 400px;
 }
-
+*/
 .tree-view-output {
   display: block;
   background: #222;

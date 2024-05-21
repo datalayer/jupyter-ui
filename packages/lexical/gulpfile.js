@@ -4,8 +4,8 @@
  * MIT License
  */
 
-const gulp = require("gulp");
-const gap = require("gulp-append-prepend");
+const gulp = require('gulp');
+const gap = require('gulp-append-prepend');
 const watch = require('gulp-watch');
 const filter = require('gulp-filter');
 
@@ -15,38 +15,36 @@ gulp.task('resources-to-lib-watch', function () {
     '!src/**/*.js',
     '!src/**/*.ts',
     '!src/**/*.tsx',
-    '!src/examples/**'
   ]);
-  return watch('src/**/*', { ignoreInitial: false })
-//      .pipe(gulp.dest('build'));
-//    .src('./src/**/*.*')
-    .pipe(f)
-    .pipe(gulp.dest('./lib/'));
+  return (
+    watch('src/**/*', { ignoreInitial: false })
+      //      .pipe(gulp.dest('build'));
+      //    .src('./src/**/*.*')
+      .pipe(f)
+      .pipe(gulp.dest('./lib/'))
+  );
 });
 
-gulp.task("resources-to-lib", async function() {
+gulp.task('resources-to-lib', async function () {
   const f = filter([
     '**',
     '!src/**/*.js',
     '!src/**/*.ts',
     '!src/**/*.tsx',
-    '!src/examples/**'
   ]);
-  gulp.src('./src/**/*.*')
-    .pipe(f)
-    .pipe(gulp.dest('./lib/'));
-    return;
-})
+  gulp.src('./src/**/*.*').pipe(f).pipe(gulp.dest('./lib/'));
+  return;
+});
 
-gulp.task("licenses", async function() {
+gulp.task('licenses', async function () {
   // this is to add Datalayer licenses in the production mode for the minified js
   gulp
-    .src("build/static/js/*chunk.js", { base: "./" })
+    .src('build/static/js/*chunk.js', { base: './' })
     .pipe(
       gap.prependText(`/*!
 
 =========================================================
-* Datalayer - v0.3.0
+* Datalayer
 =========================================================
 
 * Product Page: https://datalayer.io
@@ -58,16 +56,16 @@ gulp.task("licenses", async function() {
 
 */`)
     )
-    .pipe(gulp.dest("./", { overwrite: true }));
+    .pipe(gulp.dest('./', { overwrite: true }));
 
   // this is to add Datalayer licenses in the production mode for the minified html
   gulp
-    .src("build/index.html", { base: "./" })
+    .src('build/index.html', { base: './' })
     .pipe(
       gap.prependText(`<!--
 
 =========================================================
-* Datalayer - v0.3.0
+* Datalayer
 =========================================================
 
 * Product Page: https://datalayer.io
@@ -79,16 +77,16 @@ gulp.task("licenses", async function() {
 
 -->`)
     )
-    .pipe(gulp.dest("./", { overwrite: true }));
+    .pipe(gulp.dest('./', { overwrite: true }));
 
   // this is to add Datalayer licenses in the production mode for the minified css
   gulp
-    .src("build/static/css/*chunk.css", { base: "./" })
+    .src('build/static/css/*chunk.css', { base: './' })
     .pipe(
       gap.prependText(`/*!
 
 =========================================================
-* Datalayer - v0.3.0
+* Datalayer
 =========================================================
 
 * Product Page: https://datalayer.io
@@ -98,6 +96,6 @@ gulp.task("licenses", async function() {
       
 */`)
     )
-    .pipe(gulp.dest("./", { overwrite: true }));
+    .pipe(gulp.dest('./', { overwrite: true }));
   return;
 });

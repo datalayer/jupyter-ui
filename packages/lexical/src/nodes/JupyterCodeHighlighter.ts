@@ -184,7 +184,7 @@ function textNodeTransform(node: TextNode, editor: LexicalEditor): void {
   // Since CodeNode has flat children structure we only need to check
   // if node's parent is a code node and run highlighting if so
   const parentNode = node.getParent();
-  if ($isJupyterCodeNode(parentNode)) {
+  if (parentNode && $isJupyterCodeNode(parentNode)) {
     codeNodeTransform(parentNode, editor);
   } else if ($isJupyterCodeHighlightNode(node)) {
     // When code block converted into paragraph or other element

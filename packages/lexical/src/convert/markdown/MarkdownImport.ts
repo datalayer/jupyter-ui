@@ -12,7 +12,6 @@
  *
  */
 
-import type {JupyterCodeNode} from './../../nodes/JupyterCodeNode';
 import type {
   ElementTransformer,
   TextFormatTransformer,
@@ -21,7 +20,7 @@ import type {
 } from '.';
 import type {LexicalNode, RootNode, TextNode} from 'lexical';
 
-import {$createJupyterCodeNode} from './../../nodes/JupyterCodeNode';
+import {JupyterCodeNode, $createJupyterCodeNode} from './../../nodes/JupyterCodeNode';
 import {$isListItemNode, $isListNode} from '@lexical/list';
 import {$isQuoteNode} from '@lexical/rich-text';
 import {$findMatchingParent} from '@lexical/utils';
@@ -158,7 +157,8 @@ function importBlocks(
       }
 
       if (targetNode != null && targetNode.getTextContentSize() > 0) {
-        targetNode.splice(targetNode.getChildrenSize(), 0, [
+        // TODO(ECH) Do not use "as any"
+        (targetNode as any).splice((targetNode as any).getChildrenSize(), 0, [
           $createLineBreakNode(),
           ...elementNode.getChildren(),
         ]);

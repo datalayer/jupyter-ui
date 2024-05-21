@@ -6,7 +6,7 @@
 
 import { LexicalNode, $isElementNode, $isTextNode, $isParagraphNode } from "lexical";
 import { INotebookContent, ICodeCell, IMarkdownCell } from "@jupyterlab/nbformat";
-import { $isEquationNode } from "./../nodes/EquationNode";
+import EquationNode, { $isEquationNode } from "./../nodes/EquationNode";
 import { $isYouTubeNode } from "./../nodes/YouTubeNode";
 import { $isJupyterCodeNode } from "./../nodes/JupyterCodeNode";
 import { exportTopLevelElements } from "./markdown/MarkdownExport";
@@ -44,7 +44,7 @@ export const lexicalToNbFormat = (nodes: LexicalNode[]) => {
       nb.cells.push(newCodeCell(node.getTextContent()));
     }    
     else if ($isParagraphNode(node) && $isEquationNode(node.getFirstChild())) {
-      const equation = node.getFirstChild()!.getEquation();
+      const equation = (node.getFirstChild() as EquationNode).getEquation();
       nb.cells.push(newMardownCell(`$$${equation}$$`));
     }
     else if ($isYouTubeNode(node)) {

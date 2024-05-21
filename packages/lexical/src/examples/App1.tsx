@@ -9,7 +9,7 @@ import { Box, Button } from "@primer/react";
 import { ThreeBarsIcon } from "@primer/octicons-react"
 import { Jupyter } from "@datalayer/jupyter-react";
 import { useLexical, LexicalProvider } from "./context/LexicalContext";
-import Editor from "./Editor";
+import Editor from "./editor/Editor";
 
 import initialLexicalModel from "./content/Example.lexical.json";
 import initialNbformatModel from "./content/Example.ipynb.json";
@@ -35,13 +35,17 @@ const LexicalEditor = () => {
   )
 }
 
-export default function App() {
+export const App1 = () => {
   return (
     <>
       <div className="App">
         <h1>Jupyter UI ❤️ Lexical</h1>
       </div>
-      <Jupyter>
+      <Jupyter
+        jupyterServerHttpUrl="https://oss.datalayer.run/api/jupyter-kernels"
+        jupyterServerWsUrl="wss://oss.datalayer.run/api/jupyter-kernels"
+        jupyterToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+      >
         <LexicalProvider>
           <LexicalEditor/>
         </LexicalProvider>
@@ -51,14 +55,16 @@ export default function App() {
           <ThreeBarsIcon/>
         </a>
         <h2>
-          © <a href="https://datalayer.io" target="_blank">2022 Datalayer, Inc.</a>
+        Copyright © <a href="https://datalayer.io" target="_blank">2022-2024 Datalayer, Inc.</a>
         </h2>
         <ul>
           <li>
-            <a href="https://github.com/datalayer/jupyter-ui/tree/main/packages/lexical" target="_blank">Jupyter Lexical open-source repository</a>
+            <a href="https://github.com/datalayer/jupyter-ui/tree/main/packages/lexical" target="_blank">Jupyter UI open-source repository</a>
           </li>
         </ul>
       </div>
     </>
   )
 }
+
+export default App1;

@@ -46,26 +46,8 @@ module.exports = {
     port: 3208,
     historyApiFallback: true,
     hot: !IS_PRODUCTION,
-    proxy: {
-      '/build/pypi': {
-        target: 'https://datalayer-assets.s3.us-west-2.amazonaws.com/pypi',
-        pathRewrite: { '^/build/pypi': '' },
-        ws: false,
-        secure: false,
-        changeOrigin: true,
-      },
-      '/api/jupyter-kernels': {
-        target: JUPYTER_HOST,
-        ws: true,
-        secure: false,
-        changeOrigin: true,
-      },
-      '/plotly.js': {
-        target: JUPYTER_HOST + '/api/jupyter-kernels/pool/react',
-        ws: false,
-        secure: false,
-        changeOrigin: false,
-      },
+    client: {
+      overlay: false,
     },
   },
   devtool,
@@ -152,6 +134,12 @@ module.exports = {
           fullySpecified: false
         }
       },
+      // Special webpack rule for the JupyterLab theme style sheets.
+      {
+        test: /style\/theme\.css$/i,
+        loader: 'css-loader',
+        options: { exportType: 'string' },
+      },
       // Ship the JupyterLite service worker.
       {
         resourceQuery: /text/,
@@ -169,7 +157,7 @@ module.exports = {
         },
       },
       {
-        test: /schema\/.*/,
+        test: /pyodide-kernel-extension\/schema\/.*/,
         type: 'asset/resource',
         generator: {
           filename: 'schema/[name][ext][query]',

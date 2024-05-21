@@ -68,8 +68,8 @@ function CodeActionMenuContainer({
       let _lang = '';
       editor.update(() => {
         const maybeCodeNode = $getNearestNodeFromDOMNode(codeDOMNode);
-        if ($isJupyterCodeNode(maybeCodeNode)) {
-          codeNode = maybeCodeNode;
+        if (maybeCodeNode && $isJupyterCodeNode(maybeCodeNode)) {
+          codeNode = maybeCodeNode as JupyterCodeNode;
           _lang = codeNode.getLanguage() || '';
         }
       });

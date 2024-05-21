@@ -8,7 +8,10 @@ import { Cell } from '@datalayer/jupyter-react';
 
 export const JupyterCellComponent = (props: any) => {
   return (
-    <Cell/>
+    <Cell 
+      source="print('hello')"
+      autoStart={true}
+    />
   )
 }
 

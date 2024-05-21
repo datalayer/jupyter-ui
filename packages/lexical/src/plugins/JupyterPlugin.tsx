@@ -13,11 +13,9 @@ import { $insertNodeToNearestRoot } from '@lexical/utils';
 import { OutputAdapter } from '@datalayer/jupyter-react';
 import { UUID } from '@lumino/coreutils';
 import { IOutput } from '@jupyterlab/nbformat';
-import { $createJupyterCodeNode } from "../nodes/JupyterCodeNode";
-import { $isJupyterCodeNode } from "../nodes/JupyterCodeNode";
+import { $createJupyterCodeNode, JupyterCodeNode, $isJupyterCodeNode } from "../nodes/JupyterCodeNode";
 import { registerCodeHighlighting } from "../nodes/JupyterCodeHighlighter";
 import { JupyterOutputNode, $createJupyterOutputNode } from "../nodes/JupyterOutputNode";
-import { JupyterCodeNode } from "../nodes/JupyterCodeNode";
 
 import "./JupyterPlugin.css";
 
@@ -68,9 +66,9 @@ export const JupyterPlugin = () => {
         const node = selection?.getNodes()[0];
         if (node?.__parent) {
           const parentNode = $getNodeByKey(node?.__parent);
-          if ($isJupyterCodeNode(parentNode)) {
+          if (parentNode && $isJupyterCodeNode(parentNode)) {
             const code = parentNode.getTextContent();
-            const codeNodeUuid = parentNode.getCodeNodeUuid();
+            const codeNodeUuid = (parentNode as JupyterCodeNode).getCodeNodeUuid();
             const jupyterOutputNodeKey = CODE_UUID_TO_OUTPUT_KEY.get(codeNodeUuid);
             if (jupyterOutputNodeKey) {
               const jupyterOutputNode = $getNodeByKey(jupyterOutputNodeKey);

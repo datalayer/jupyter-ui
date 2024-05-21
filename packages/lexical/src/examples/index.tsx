@@ -5,7 +5,7 @@
  */
 
 import { createRoot } from "react-dom/client";
-import App from "./App";
+import App from "./App1";
 
 const rootElement = document.getElementById("root");
 

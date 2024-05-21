@@ -26,6 +26,7 @@ export type SerializedJupyterOutputNode = Spread<
 export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
   __code: string;
   __outputs: IOutput[];
+  __autoRun: boolean;
   __outputAdapter: OutputAdapter;
   __codeNodeUuid: string;
   __outputNodeUuid: string;

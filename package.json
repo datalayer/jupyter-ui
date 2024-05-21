@@ -54,7 +54,8 @@
     "examples/lexical",
     "examples/next-js",
     "examples/remix-run",
-    "packages/*"
+    "packages/*",
+    "storybook"
   ],
   "devDependencies": {
     "babel-eslint": "^10.0.1",

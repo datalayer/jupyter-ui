@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { EditorState } from "lexical";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
@@ -30,13 +30,14 @@ import {
   JupyterPlugin, EquationNode, HorizontalRulePlugin,
   ListMaxIndentLevelPlugin, AutoLinkPlugin, ComponentPickerMenuPlugin,
   EquationsPlugin, ImagesPlugin, YouTubePlugin, ImageNode, YouTubeNode,
-  JupyterCodeHighlightNode, JupyterCodeNode, JupyterOutputNode, CodeActionMenuPlugin,
-  AutoEmbedPlugin, NbformatContentPlugin, TableOfContentsPlugin, MarkdownPlugin
-} from "./../index";
-import ExampleTheme from "./themes/Theme";
-import TreeViewPlugin from "./plugins/TreeViewPlugin";
-import ToolbarPlugin from "./plugins/ToolbarPlugin";
-import { useLexical } from "./context/LexicalContext";
+  JupyterCodeHighlightNode, JupyterCodeNode, JupyterOutputNode, CustomNode,
+  CodeActionMenuPlugin, AutoEmbedPlugin, NbformatContentPlugin, TableOfContentsPlugin, MarkdownPlugin, CustomPlugin
+} from "../../index";
+import ExampleTheme from "../themes/Theme";
+import { useLexical } from "../context/LexicalContext";
+import TreeViewPlugin from "../plugins/TreeViewPlugin";
+import ToolbarPlugin from "../plugins/ToolbarPlugin";
+import DraggableBlockPlugin from "./../plugins/DraggableBlockPlugin"
 
 import "./styles/Editor.css";
 import "./styles/Rich.css";
@@ -57,24 +58,25 @@ const initialConfig = {
     throw error;
   },
   nodes: [
-    HeadingNode,
-    ListNode,
-    ListItemNode,
-    QuoteNode,
-    CodeNode,
-    JupyterCodeNode,
-    JupyterCodeHighlightNode,
-    TableNode,
-    TableCellNode,
-    TableRowNode,
     AutoLinkNode,
-    LinkNode,
-    JupyterOutputNode,
+    CodeNode,
+    CustomNode,
     EquationNode,
-    ImageNode,
-    YouTubeNode,
-    HorizontalRuleNode,
     HashtagNode,
+    HeadingNode,
+    HorizontalRuleNode,
+    ImageNode,
+    JupyterCodeHighlightNode,
+    JupyterCodeNode,
+    JupyterOutputNode,
+    LinkNode,
+    ListItemNode,
+    ListNode,
+    QuoteNode,
+    TableCellNode,
+    TableNode,
+    TableRowNode,
+    YouTubeNode,
   ]
 };
 
@@ -90,6 +92,14 @@ const EditorContextPlugin = () => {
 
 export default function Editor(props: Props) {
   const { notebook } = props;
+  const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
+
+  const onRef = (_floatingAnchorElem: HTMLDivElement) => {
+    if (_floatingAnchorElem !== null) {
+      setFloatingAnchorElem(_floatingAnchorElem);
+    }
+  };
+
   function onChange(_editorState: EditorState) {
 //    console.log('---', _editorState.toJSON());
   }
@@ -100,7 +110,13 @@ export default function Editor(props: Props) {
           <ToolbarPlugin />
           <div className="editor-inner">
             <RichTextPlugin
-              contentEditable={<ContentEditable className="editor-input" />}
+              contentEditable={
+                <div className="editor-scroller">
+                  <div className="editor" ref={onRef}>
+                    <ContentEditable className="editor-input" />
+                  </div>
+                </div>
+              }
               placeholder={<Placeholder />}
               ErrorBoundary={LexicalErrorBoundary}
             />
@@ -115,6 +131,7 @@ export default function Editor(props: Props) {
             <AutoLinkPlugin />
             <ListMaxIndentLevelPlugin maxDepth={7} />
             <MarkdownPlugin />
+            <CustomPlugin />
             <JupyterPlugin />
             <ComponentPickerMenuPlugin/>
             <EquationsPlugin/>
@@ -126,6 +143,11 @@ export default function Editor(props: Props) {
             <AutoEmbedPlugin/>
             <EditorContextPlugin/>
             <TableOfContentsPlugin/>
+            {floatingAnchorElem && (
+              <>
+                <DraggableBlockPlugin anchorElem={floatingAnchorElem} />
+              </>
+            )}
           </div>
         </div>
       </div>
