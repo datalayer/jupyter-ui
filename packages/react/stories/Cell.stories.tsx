@@ -6,7 +6,7 @@
 
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Jupyter, Cell } from './../src';
+import { Jupyter, Cell } from '@datalayer/jupyter-react';
 
 const meta: Meta<typeof Cell> = {
   title: 'Components/Cell',
@@ -65,7 +65,9 @@ const Template = (args, { globals: { labComparison } }) => {
   );
 };
 
-export const Default: Story = Template.bind({});
+export const Default: Story = {
+  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
+};
 Default.args = {
   browser: 'false',
   initCode: '',
@@ -73,31 +75,34 @@ Default.args = {
   autoStart: false,
 };
 
-export const Confettis: Story = Template.bind({});
+export const Confettis: Story = {
+  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
+};
 Confettis.args = {
   browser: 'false',
   source: `import ipyreact
-
-class ConfettiWidget(ipyreact.ValueWidget):
+class ConfettiWidget(ipyreact.ReactWidget):
   _esm = """
-  import confetti from "canvas-confetti";
-  import * as React from "react";
-  export default function({value, setValue}) {
-      return <>
-        <h1>Ask anything to Datalayer</h1>
-        <button onClick={() => confetti() && setValue(value + 1)}>
-          CLICK here for some CONFETTIS
-        </button>
-        <h2>You have {value || 0} wishe{ (value > 1) && 's' } so far...</h2>
-        <quote>Powered by 🪐 Jupyter UI</quote>
-      </>
-  };"""
+    import confetti from "canvas-confetti";
+    import * as React from "react";
+    export default function({value, set_value, debug}) {
+        return (
+        <>
+          <h1>Ask anything to Datalayer</h1>
+          <button onClick={() => confetti() && set_value(value + 1)}>
+            CLICK here for some CONFETTIS
+          </button>
+          <h2>You have {value || 0} wishe{ (value > 1) && 's' } so far...</h2>
+          <quote>Powered by Ξ Datalayer</quote>
+        </>
+      )
+    };"""
 ConfettiWidget()`,
   autoStart: true,
 };
 
 export const Playground: Story = {
-  render: Template.bind({}),
+  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
 };
 
 Playground.args = {
@@ -119,7 +124,9 @@ plt.show()`,
   autoStart: true,
 };
 
-export const LitePython: Story = Template.bind({});
+export const LitePython: Story = {
+  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
+};
 LitePython.args = {
   ...Playground.args,
   browser: 'true',
@@ -129,7 +136,9 @@ print(f"{sys.platform=}")
 ${Playground.args.source ?? ''}`,
 };
 
-export const WithInitialization: Story = Template.bind({});
+export const WithInitialization: Story = {
+  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
+};
 WithInitialization.args = {
   ...Default.args,
   browser: 'true',

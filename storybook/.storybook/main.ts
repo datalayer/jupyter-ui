@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2021-2023 Datalayer, Inc.
  *
- * Datalayer License
+ * MIT License
  */
 
 import type { StorybookConfig } from '@storybook/react-webpack5';

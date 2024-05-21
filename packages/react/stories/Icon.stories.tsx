@@ -42,27 +42,29 @@ const Template = (args, { globals: { labComparison } }) => {
   );
 };
 
-export const Default = Template.bind({});
+export const Default: Story = {
+  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
+};
 Default.args = {
   icon: 'undo',
 };
 
 export const Playground: Story = {
-  render: (args, options) => Template.bind({})({ ...args }, options),
+  render: (args, options) => Template.bind({})({ ...args }, { globals: { labComparison: true } }),
 };
 Playground.args = {
   ...Default.args,
 };
 
 export const Copyright: Story = {
-  render: (args, options) => Template.bind({})({ ...args }, options),
+  render: (args, options) => Template.bind({})({ ...args }, { globals: { labComparison: true } }),
 };
 Copyright.args = {
   icon: 'copyright',
 };
 
 export const Undo: Story = {
-  render: (args, options) => Template.bind({})({ ...args }, options),
+  render: (args, options) => Template.bind({})({ ...args }, { globals: { labComparison: true } }),
 };
 Undo.args = {
   icon: 'undo',

@@ -4,11 +4,11 @@
  * MIT License
  */
 
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { InputGroup } from '@jupyterlab/ui-components';
-import { TextInput } from './../src';
-import React from 'react';
-import { getTextInputArgTypes } from './story-helpers';
+import { TextInput } from '@datalayer/jupyter-react';
+import { getTextInputArgTypes } from './_utils/story-helpers';
 
 const meta: Meta<typeof TextInput> = {
   title: 'Components/TextInput',
@@ -38,7 +38,7 @@ export const Default = Template.bind({});
 
 export const Playground: Story = {
   render: (args, options) =>
-    Template.bind({})({ label: 'TextInput', ...args }, options),
+    Template.bind({})({ label: 'TextInput', ...args }, { globals: { labComparison: true } }),
 };
 Playground.args = {
   type: 'text',

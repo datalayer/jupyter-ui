@@ -5,7 +5,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { Jupyter, JupyterProps, Terminal } from './../src';
+import { Jupyter, JupyterProps, Terminal } from '@datalayer/jupyter-react';
 import React from 'react';
 
 const meta: Meta<typeof Terminal> = {
@@ -39,14 +39,16 @@ const Template = (args, { globals: { labComparison } }) => {
   );
 };
 
-export const Default: Story = Template.bind({});
+export const Default: Story = {
+  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
+};
 Default.args = {
   height: '800px',
   colorMode: 'light',
 };
 
 export const Playground: Story = {
-  render: Template.bind({}),
+  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
 };
 Playground.args = {
   ...Default.args,
@@ -55,7 +57,7 @@ Playground.args = {
 };
 
 export const WithInitialization: Story = {
-  render: Template.bind({}),
+  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
 };
 WithInitialization.args = {
   ...Default.args,

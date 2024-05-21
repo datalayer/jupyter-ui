@@ -6,7 +6,7 @@
 
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Jupyter, Console } from './../src';
+import { Jupyter, Console } from '@datalayer/jupyter-react';
 
 const meta: Meta<typeof Console> = {
   title: 'Components/Console',
@@ -68,20 +68,27 @@ const Template = (args, { globals: { labComparison } }) => {
   );
 };
 
-export const Default: Story = Template.bind({});
+export const Default: Story = {
+  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
+};
+
 Default.args = {
   browser: 'false',
   initCode: '',
   code: "print('👋 Hello Jupyter Console')",
 };
 
-export const LitePython: Story = Template.bind({});
+export const LitePython: Story = {
+  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
+};
 LitePython.args = {
   ...Default.args,
   browser: 'true',
 };
 
-export const LiteJavascript: Story = Template.bind({});
+export const LiteJavascript: Story = {
+  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
+};
 LiteJavascript.args = {
   ...Default.args,
   browser: '@jupyterlite/javascript-kernel-extension',

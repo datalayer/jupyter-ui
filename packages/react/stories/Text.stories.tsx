@@ -6,7 +6,6 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import { Text } from '@primer/react';
-import React from 'react';
 
 const meta: Meta<typeof Text> = {
   title: 'Components/Text',
@@ -28,10 +27,12 @@ const Template = (args, { globals: { labComparison } }) => {
   );
 };
 
-export const Default: Story = Template.bind({});
+export const Default: Story = {
+  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
+};
 
 export const Playground: Story = {
-  render: Template.bind({}),
+  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
 };
 
 Playground.args = {

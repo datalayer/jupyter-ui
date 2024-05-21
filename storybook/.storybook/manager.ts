@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2021-2023 Datalayer, Inc.
  *
- * Datalayer License
+ * MIT License
  */
 
 import { addons } from '@storybook/manager-api';

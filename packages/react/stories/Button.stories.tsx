@@ -13,10 +13,8 @@ import {
   HeartIcon,
 } from '@primer/octicons-react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Button } from './../src';
-import React from 'react';
-import { OcticonArgType } from './story-helpers';
-import { createLabButton } from './lab-builders';
+import { Button } from '@datalayer/jupyter-react';
+import { createLabButton } from './_utils/lab-builders';
 
 const meta: Meta<typeof Button> = {
   title: 'Components/Button',
@@ -44,7 +42,7 @@ export const Default = Template.bind({});
 
 export const Playground: Story = {
   render: (args, options) =>
-    Template.bind({})({ label: 'Default', ...args }, options),
+    Template.bind({})({ label: 'Default', ...args }, { globals: { labComparison: true } }),
 };
 Playground.argTypes = {
   size: {
@@ -75,21 +73,21 @@ Playground.argTypes = {
       type: 'boolean',
     },
   },
-  leadingVisual: OcticonArgType([
+  leadingVisual: ([
     EyeClosedIcon,
     EyeIcon,
     SearchIcon,
     XIcon,
     HeartIcon,
   ]),
-  trailingVisual: OcticonArgType([
+  trailingVisual: ([
     EyeClosedIcon,
     EyeIcon,
     SearchIcon,
     XIcon,
     HeartIcon,
   ]),
-  trailingAction: OcticonArgType([TriangleDownIcon]),
+  trailingAction: ([TriangleDownIcon]),
 };
 Playground.args = {
   block: false,
@@ -104,7 +102,7 @@ Playground.args = {
 
 export const Primary: Story = {
   render: (args, options) =>
-    Template.bind({})({ label: 'Primary', ...args }, options),
+    Template.bind({})({ label: 'Primary', ...args }, { globals: { labComparison: true } }),
 };
 Primary.args = {
   block: false,
@@ -119,7 +117,7 @@ Primary.args = {
 
 export const Danger: Story = {
   render: (args, options) =>
-    Template.bind({})({ label: 'Danger', ...args }, options),
+    Template.bind({})({ label: 'Danger', ...args }, { globals: { labComparison: true } }),
 };
 Danger.args = {
   block: false,
@@ -134,7 +132,7 @@ Danger.args = {
 
 export const Invisible: Story = {
   render: (args, options) =>
-    Template.bind({})({ label: 'Invisble', ...args }, options),
+    Template.bind({})({ label: 'Invisble', ...args }, { globals: { labComparison: true } }),
 };
 Invisible.args = {
   block: false,

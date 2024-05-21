@@ -4,12 +4,8 @@
  * MIT License
  */
 
-import React from 'react';
-import { INotebookContent } from "@jupyterlab/nbformat"
-
 import type { Meta, StoryObj } from '@storybook/react';
-
-import { Jupyter, Notebook } from './../src';
+import { Jupyter, Notebook } from '@datalayer/jupyter-react';
 
 const meta: Meta<typeof Notebook> = {
   title: 'Components/Notebook',
@@ -33,7 +29,7 @@ export default meta;
 
 type Story = StoryObj<typeof Notebook | typeof Jupyter | { browser: string }>;
 
-const Template = (args, { globals: { labComparison } }) => {
+const Template = (args, { globals: { labComparison = true }, ...rest }) => {
   const { browser, initCode, ...others } = args;
   const lite = {
     true: true,
@@ -62,7 +58,9 @@ const Template = (args, { globals: { labComparison } }) => {
   );
 };
 
-export const Default: Story = Template.bind({});
+export const Default: Story = {
+  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
+};
 Default.args = {
   browser: 'false',
   initCode: '',
@@ -70,8 +68,8 @@ Default.args = {
   uid: undefined,
   cellMetadataPanel: false,
   cellSidebarMargin: 120,
-  height: '600px',
-  maxHeight: '600px',
+  height: '100vh',
+  maxHeight: '100vh',
   nbgrader: false,
   readOnly: false,
   renderers: [],
@@ -86,57 +84,7 @@ Playground.args = {
   uid: 'uid-1',
 };
 
-const IPYREACT_EXAMPLE: INotebookContent = {
-  cells: [
-    {
-      metadata: {},
-      cell_type: 'code',
-      outputs: [],
-      source: [
-        "import ipyreact\n",
-        "\n",
-        "class ConfettiWidget(ipyreact.ValueWidget):\n",
-        "  _esm = \"\"\"\n",
-        "  import confetti from \"canvas-confetti\";\n",
-        "  import * as React from \"react\";\n",
-        "  export default function({value, setValue}) {\n",
-        "      return <>\n",
-        "        <h1>Ask anything to Datalayer</h1>\n",
-        "        <button onClick={() => confetti() && setValue(value + 1)}>\n",
-        "          CLICK here for some CONFETTIS\n",
-        "        </button>\n",
-        "        <h2>You have {value || 0} wishe{ (value > 1) && 's' } so far...</h2>\n",
-        "        <quote>Powered by 🪐 Jupyter UI</quote>\n",
-        "      </>\n",
-        "  };\"\"\"\n",
-        "ConfettiWidget()"
-       ]
-    },
-  ],
-  metadata: {
-    kernelspec: {
-      display_name: 'Python 3 (ipykernel)',
-      language: 'python',
-      name: 'python3',
-    },
-    language_info: {
-      codemirror_mode: {
-        name: 'ipython',
-        version: 3,
-      },
-      file_extension: '.py',
-      mimetype: 'text/x-python',
-      name: 'python',
-      nbconvert_exporter: 'python',
-      pygments_lexer: 'ipython3',
-      version: '3.11.4',
-    },
-  },
-  nbformat: 4,
-  nbformat_minor: 5,
-};
-
-const WIDGETS_EXAMPLE: INotebookContent = {
+const WIDGETS_EXAMPLE = {
   cells: [
     {
       metadata: {},
@@ -216,7 +164,7 @@ const WIDGETS_EXAMPLE: INotebookContent = {
   nbformat_minor: 5,
 };
 
-const INIT_EXAMPLE: INotebookContent = {
+const INIT_EXAMPLE = {
   ...WIDGETS_EXAMPLE,
   cells: [
     {
@@ -232,26 +180,26 @@ const INIT_EXAMPLE: INotebookContent = {
   ],
 };
 
-export const IpyWidgetsState: Story = Template.bind({});
-IpyWidgetsState.args = {
+export const IpywidgetsState: Story = {
+  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
+};
+IpywidgetsState.args = {
   ...Default.args,
   url: 'https://raw.githubusercontent.com/datalayer/jupyter-ui/main/packages/react/src/examples/notebooks/IPyWidgetsExampleWithState.ipynb.json'
 };
 
-export const IpyReact: Story = Template.bind({});
-IpyReact.args = {
-  ...Default.args,
-  nbformat: IPYREACT_EXAMPLE,
+export const LitePython: Story = {
+  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
 };
-
-export const LitePython: Story = Template.bind({});
 LitePython.args = {
   ...Default.args,
   browser: 'true',
   nbformat: INIT_EXAMPLE,
 };
 
-export const LitePythonInit: Story = Template.bind({});
+export const LitePythonInit: Story = {
+  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
+};
 LitePythonInit.args = {
   ...Default.args,
   browser: 'true',

@@ -4,19 +4,20 @@
   ~ MIT License
 */}
 
-import { Canvas } from '@storybook/blocks';
-
-import * as Notebook from './Notebook.stories';
-import * as CellStories from './Cell.stories';
+import { Canvas, Meta } from '@storybook/blocks';
 import * as ButtonStories from './Button.stories';
+import * as CellStories from './Cell.stories';
+import * as AboutStories from './About.stories';
 
-# Jupyter UI by Datalayer
+import {createLabButton} from './_utils/lab-builders';
 
-React.js components 💯% compatible with 🪐 Jupyter.
+<Meta of={AboutStories} />
 
-## Notebook
+# Datalayer Tech Components
 
-<Canvas of={Notebook.IpyReact} />
+React.js components to build a custom Data Product 💯% compatible with 🪐 Jupyter.
+
+Read more on the <a href="https://datalayer.tech" target="_blank">documentation website</a>.
 
 ## Cell
 
@@ -24,4 +25,4 @@ React.js components 💯% compatible with 🪐 Jupyter.
 
 ## Button
 
-<Canvas of={ButtonStories.Primary} />
+<Canvas of={ButtonStories.Default} />

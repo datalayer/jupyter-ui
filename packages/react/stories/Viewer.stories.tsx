@@ -4,11 +4,10 @@
  * MIT License
  */
 
-import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Jupyter, Viewer } from '../src';
-import nbformat1 from './../src/examples/notebooks/NotebookExample1.ipynb.json';
-import nbformat2 from './../src/examples/notebooks/NotebookExample2.ipynb.json';
+import { Jupyter, Viewer } from '@datalayer/jupyter-react';
+import nbformat1 from './examples/NotebookExample1.ipynb.json';
+import nbformat2 from './examples/NotebookExample2.ipynb.json';
 
 const meta: Meta<typeof Viewer> = {
   title: 'Components/Viewer',
@@ -21,7 +20,8 @@ const meta: Meta<typeof Viewer> = {
       control: 'boolean',
     },
   },
-} as Meta<typeof Viewer>;
+// } as Meta<typeof Viewer>;
+} as any;
 
 export default meta;
 
@@ -46,13 +46,17 @@ const Template = (args, { globals: { labComparison } }) => {
   );
 };
 
-export const Default: Story = Template.bind({});
+export const Default: Story = {
+  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
+};
 Default.args = {
   nbformat: nbformat1,
   outputs: true,
 };
 
-export const ViewerSimple: Story = Template.bind({});
+export const ViewerSimple: Story = {
+  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
+};
 ViewerSimple.args = {
   nbformat: nbformat2,
   outputs: true,
@@ -64,7 +68,9 @@ ViewerPlotly.args = {
   outputs: true
 };
 */
-export const ViewerMatplotlib: Story = Template.bind({});
+export const ViewerMatplotlib: Story = {
+  render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
+};
 ViewerMatplotlib.args = {
   nbformatUrl:
     'https://raw.githubusercontent.com/anissa111/matplotlib-tutorial/main/notebooks/01-basic-matplotlib-tutorial.ipynb',
