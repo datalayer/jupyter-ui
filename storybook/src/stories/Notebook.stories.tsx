@@ -58,7 +58,10 @@ const Template = (args, { globals: { labComparison = true }, ...rest }) => {
   );
 };
 
-export const Default: Story = Template.bind({});
+export const Default: Story = {
+  render: (args, options) =>
+    Template.bind({})(args, { globals: { labComparison: true } }),
+};
 Default.args = {
   browser: 'false',
   initCode: '',
@@ -74,7 +77,8 @@ Default.args = {
 };
 
 export const Playground: Story = {
-  render: Template.bind({}),
+  render: (args, options) =>
+    Template.bind({})(args, { globals: { labComparison: true } }),
 };
 Playground.args = {
   ...Default.args,
@@ -178,20 +182,38 @@ const INIT_EXAMPLE = {
   ],
 };
 
-export const IpywidgetsState: Story = Template.bind({});
+export const IpywidgetsState: Story = {
+  render: (args, options) =>
+    Template.bind({})(args, { globals: { labComparison: true } }),
+};
 IpywidgetsState.args = {
   ...Default.args,
   url: 'https://raw.githubusercontent.com/datalayer/jupyter-ui/main/packages/react/src/examples/notebooks/IPyWidgetsExampleWithState.ipynb.json'
 };
 
-export const LitePython: Story = Template.bind({});
+export const Matplotlib: Story = {
+  render: (args, options) =>
+    Template.bind({})(args, { globals: { labComparison: true } }),
+};
+Matplotlib.args = {
+  ...Default.args,
+  url: 'https://raw.githubusercontent.com/datalayer/jupyter-ui/main/packages/react/src/examples/notebooks/Matplotlib.ipynb.json'
+};
+
+export const LitePython: Story = {
+  render: (args, options) =>
+    Template.bind({})(args, { globals: { labComparison: true } }),
+};
 LitePython.args = {
   ...Default.args,
   browser: 'true',
   nbformat: INIT_EXAMPLE,
 };
 
-export const LitePythonInit: Story = Template.bind({});
+export const LitePythonInit: Story = {
+  render: (args, options) =>
+    Template.bind({})(args, { globals: { labComparison: true } }),
+};
 LitePythonInit.args = {
   ...Default.args,
   browser: 'true',

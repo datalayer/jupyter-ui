@@ -4,8 +4,7 @@
  * MIT License
  */
 
-import React from "react";
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import { Button } from '@datalayer/jupyter-react';
 
 const meta: Meta<typeof Button> = {
@@ -13,8 +12,6 @@ const meta: Meta<typeof Button> = {
 } as Meta<typeof Button>;
 
 export default meta;
-
-type Story = StoryObj<typeof Button>;
 
 const Template = (args, { globals: { labComparison } }) => {
   return (
@@ -25,13 +22,3 @@ const Template = (args, { globals: { labComparison } }) => {
 };
 
 export const Default = Template.bind({});
-
-export const Playground: Story = {
-  render: (args, options) =>
-    Template.bind({})({ label: 'Default', ...args }, { globals: { labComparison: true } }),
-};
-Playground.argTypes = {
-
-};
-Playground.args = {
-};
