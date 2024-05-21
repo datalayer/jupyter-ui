@@ -43,7 +43,7 @@ const Template = (args, { globals: { labComparison = true }, ...rest }) => {
     args.browser === '@jupyterlite/javascript-kernel-extension'
       ? 'javascript'
       : undefined;
-
+  
   return (
     <Jupyter
       lite={lite}
@@ -188,6 +188,8 @@ export const IpywidgetsState: Story = {
 };
 IpywidgetsState.args = {
   ...Default.args,
+  height: '200px',
+  maxHeight: '200px',
   url: 'https://raw.githubusercontent.com/datalayer/jupyter-ui/main/packages/react/src/examples/notebooks/IPyWidgetsExampleWithState.ipynb.json'
 };
 
