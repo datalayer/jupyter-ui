@@ -10,7 +10,7 @@ import { JupyterProps } from './Jupyter';
 /**
  * The URL prefix for the kernel api.
  */
-const API_KERNEL_PREFIX_URL = '/api/jupyter-kernels';
+const API_KERNEL_PREFIX_URL = '/api/jupyter-server';
 
 /**
  * Type of the Jupyter configuration.
@@ -135,7 +135,7 @@ export const loadJupyterConfig = (
     setJupyterServerHttpUrl(
       jupyterServerHttpUrl ??
         config.jupyterServerHttpUrl ??
-        location.protocol + '//' + location.host + '/api/jupyter-kernels'
+        location.protocol + '//' + location.host + '/api/jupyter-server'
     );
     setJupyterServerWsUrl(
       jupyterServerWsUrl ??
@@ -143,7 +143,7 @@ export const loadJupyterConfig = (
         location.protocol.replace(/^http/, 'ws') +
           '//' +
           location.host +
-          '/api/jupyter-kernels'
+          '/api/jupyter-server'
     );
     setJupyterToken(jupyterToken ?? config.jupyterToken ?? '');
   } else {
