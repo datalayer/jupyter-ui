@@ -47,23 +47,17 @@ Default.args = {
   icon: 'undo',
 };
 
-export const Playground: Story = {
-  render: (args, options) => Template.bind({})({ ...args }, { globals: { labComparison: true } }),
-};
+export const Playground: Story = Template.bind({});
 Playground.args = {
   ...Default.args,
 };
 
-export const Copyright: Story = {
-  render: (args, options) => Template.bind({})({ ...args }, { globals: { labComparison: true } }),
-};
+export const Copyright: Story = Template.bind({});
 Copyright.args = {
   icon: 'copyright',
 };
 
-export const Undo: Story = {
-  render: (args, options) => Template.bind({})({ ...args }, { globals: { labComparison: true } }),
-};
+export const Undo: Story = Template.bind({});
 Undo.args = {
   icon: 'undo',
 };
