@@ -76,6 +76,8 @@ const config: StorybookConfig = {
           cacheDirectory: true
         }
       },
+      /*
+      TODO(ECH) Disable for now to show the Lexical SVG icons.
       {
         // In .css files, svg is loaded as a data URI.
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
@@ -85,6 +87,7 @@ const config: StorybookConfig = {
           options: { encoding: 'none', limit: 10000 },
         },
       },
+      */
       {
         // In .ts and .tsx files (both of which compile to .js), svg files
         // must be loaded as a raw string instead of data URIs.
