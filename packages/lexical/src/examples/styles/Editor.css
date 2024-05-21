@@ -84,6 +84,7 @@ header h1 {
   flex: auto;
   position: relative;
   resize: vertical;
+  padding-left: 20px;
   z-index: -1;
 }
 

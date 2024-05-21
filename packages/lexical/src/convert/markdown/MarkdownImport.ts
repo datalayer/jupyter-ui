@@ -157,7 +157,8 @@ function importBlocks(
       }
 
       if (targetNode != null && targetNode.getTextContentSize() > 0) {
-        targetNode.splice(targetNode.getChildrenSize(), 0, [
+        // TODO(ECH) Do not use "as any"
+        (targetNode as any).splice((targetNode as any).getChildrenSize(), 0, [
           $createLineBreakNode(),
           ...elementNode.getChildren(),
         ]);

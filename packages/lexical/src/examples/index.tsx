@@ -5,10 +5,10 @@
  */
 
 import { createRoot } from "react-dom/client";
-import EditorApp from "./EditorApp";
+import App from "./App1";
 
 const rootElement = document.getElementById("root");
 
 createRoot(rootElement!).render(
-  <EditorApp />
+  <App />
 );

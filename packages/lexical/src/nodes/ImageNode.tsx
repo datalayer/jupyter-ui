@@ -17,7 +17,6 @@
   DOMConversionOutput,
   DOMExportOutput,
   EditorConfig,
-  GridSelection,
   LexicalEditor,
   LexicalNode,
   NodeKey,
@@ -162,8 +161,8 @@ function ImageComponent({
     useLexicalNodeSelection(nodeKey);
   const [isResizing, setIsResizing] = useState<boolean>(false);
   const [editor] = useLexicalComposerContext();
-  const [selection, setSelection] = useState<
-    RangeSelection | NodeSelection | GridSelection | null
+  const [selection, ] = useState<
+    RangeSelection | NodeSelection | null
   >(null);
   const activeEditorRef = useRef<LexicalEditor | null>(null);
 
@@ -238,7 +237,8 @@ function ImageComponent({
   useEffect(() => {
     return mergeRegister(
       editor.registerUpdateListener(({editorState}) => {
-        setSelection(editorState.read(() => $getSelection()));
+        // TODO(ECH) Fix this.
+//        setSelection(editorState.read(() => $getSelection()));
       }),
       editor.registerCommand(
         SELECTION_CHANGE_COMMAND,

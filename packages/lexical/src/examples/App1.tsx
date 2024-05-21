@@ -35,7 +35,7 @@ const LexicalEditor = () => {
   )
 }
 
-export default function App() {
+export const App1 = () => {
   return (
     <>
       <div className="App">
@@ -55,14 +55,16 @@ export default function App() {
           <ThreeBarsIcon/>
         </a>
         <h2>
-          © <a href="https://datalayer.io" target="_blank">2022 Datalayer, Inc.</a>
+        Copyright © <a href="https://datalayer.io" target="_blank">2022-2024 Datalayer, Inc.</a>
         </h2>
         <ul>
           <li>
-            <a href="https://github.com/datalayer/jupyter-ui/tree/main/packages/lexical" target="_blank">Jupyter Lexical open-source repository</a>
+            <a href="https://github.com/datalayer/jupyter-ui/tree/main/packages/lexical" target="_blank">Jupyter UI open-source repository</a>
           </li>
         </ul>
       </div>
     </>
   )
 }
+
+export default App1;

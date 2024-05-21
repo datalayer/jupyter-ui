@@ -33,7 +33,7 @@ if (IS_PRODUCTION) {
 }
 
 module.exports = {
-  entry: ['./src/examples/Example'],
+  entry: ['./src/examples/index'],
   mode: mode,
   watchOptions: {
     aggregateTimeout: 300,
