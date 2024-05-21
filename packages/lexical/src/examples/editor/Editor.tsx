@@ -39,9 +39,9 @@ import TreeViewPlugin from "../plugins/TreeViewPlugin";
 import ToolbarPlugin from "../plugins/ToolbarPlugin";
 import DraggableBlockPlugin from "./../plugins/DraggableBlockPlugin"
 
-import "./../styles/Editor.css";
-import "./../styles/Rich.css";
-import "./../styles/Jupyter.css";
+import "./styles/Editor.css";
+import "./styles/Rich.css";
+import "./styles/Jupyter.css";
 
 type Props = {
   notebook?: INotebookContent
