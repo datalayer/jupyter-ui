@@ -26,6 +26,7 @@ import * as darkThemePlugins from '@jupyterlab/theme-dark-extension';
 import * as lightThemePlugins from '@jupyterlab/theme-light-extension';
 import * as ipywidgetsPlugins from '@jupyter-widgets/jupyterlab-manager';
 import * as plotlyPlugins from 'jupyterlab-plotly/lib/jupyterlab-plugin';
+
 import * as plotlyMimeRenderers from 'jupyterlab-plotly/lib/plotly-renderer';
 
 const height = '900px';
@@ -128,7 +129,9 @@ const JupyterLabHeadlessAppExample = () => {
             ipywidgetsPlugins,
             plotlyPlugins,
           ]}
-          mimeRenderers={[plotlyMimeRenderers]}
+          mimeRenderers={[
+            plotlyMimeRenderers
+          ]}
           headless={true}
           onJupyterLab={onJupyterLab}
           pluginId="@jupyterlab/apputils-extension:themes"

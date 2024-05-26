@@ -13,8 +13,9 @@ import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter'
 import * as lightThemePlugins from '@jupyterlab/theme-light-extension';
 import * as ipywidgetsPlugins from '@jupyter-widgets/jupyterlab-manager';
 import * as plotlyPlugins from 'jupyterlab-plotly/lib/jupyterlab-plugin';
-import * as plotlyMimeRenderers from 'jupyterlab-plotly/lib/plotly-renderer';
 import * as reactPlugins from './../jupyter/lab/index';
+
+import * as plotlyMimeRenderers from 'jupyterlab-plotly/lib/plotly-renderer';
 
 const JupyterLabAppExample = () => {
   const onJupyterLab = async (jupyterLabAdapter: JupyterLabAppAdapter) => {
