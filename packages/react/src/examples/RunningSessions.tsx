@@ -21,9 +21,9 @@ import { ColorMode } from '../jupyter/lab/JupyterLabColorMode';
 import JupyterLabApp from '../components/jupyterlab/JupyterLabApp';
 import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter';
 
-import * as darkThemeExtension from '@jupyterlab/theme-dark-extension';
-import * as lightThemeExtension from '@jupyterlab/theme-light-extension';
-import * as runningExtension from '@jupyterlab/running-extension';
+import * as darkThemePlugins from '@jupyterlab/theme-dark-extension';
+import * as lightThemePlugins from '@jupyterlab/theme-light-extension';
+import * as runningPlugins from '@jupyterlab/running-extension';
 
 const RunningSessionsExample = () => {
   const [runningSessions, setRunningSessions] = useState<RunningSessions>();
@@ -99,10 +99,10 @@ const RunningSessionsExample = () => {
         </ThemeProvider>
         {runningSessions && <Lumino height="300px">{runningSessions}</Lumino>}
         <JupyterLabApp
-          extensions={[
-            lightThemeExtension,
-            darkThemeExtension,
-            runningExtension,
+          plugins={[
+            lightThemePlugins,
+            darkThemePlugins,
+            runningPlugins,
           ]}
           headless={true}
           onJupyterLab={onJupyterLab}

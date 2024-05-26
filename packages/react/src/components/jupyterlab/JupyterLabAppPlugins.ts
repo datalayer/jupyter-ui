@@ -91,7 +91,7 @@ export const JupyterLabAppCorePlugins = (collaborative?: boolean) => {
           ({ id }) =>
             !(
               id.includes(':language-server') ||
-              //        id.includes(':toc') ||
+              id.includes(':toc') ||
               //        id.includes(':search') ||
               id.includes(':update-raw-mimetype')
             )

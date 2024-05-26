@@ -78,11 +78,11 @@ export class JupyterLabAppAdapter {
   private async load(props: Props) {
     const {
       hostId,
-      extensions,
-      mimeExtensions,
+      plugins: extensions,
+      mimeRenderers: mimeExtensions,
       splash,
-      extensionPromises,
-      mimeExtensionPromises,
+      pluginPromises: extensionPromises,
+      mimeRendererPromises: mimeExtensionPromises,
       devMode,
       serviceManager,
     } = props;

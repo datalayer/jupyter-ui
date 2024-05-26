@@ -10,11 +10,11 @@ import Jupyter from '../jupyter/Jupyter';
 import JupyterLabApp from '../components/jupyterlab/JupyterLabApp';
 import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter';
 
-import * as lightThemeExtension from '@jupyterlab/theme-light-extension';
-import * as ipywidgetsExtension from '@jupyter-widgets/jupyterlab-manager';
-import * as plotlyExtension from 'jupyterlab-plotly/lib/jupyterlab-plugin';
-import * as mimePlotlyExtension from 'jupyterlab-plotly/lib/plotly-renderer';
-import * as reactExtension from './../jupyter/lab/index';
+import * as lightThemePlugins from '@jupyterlab/theme-light-extension';
+import * as ipywidgetsPlugins from '@jupyter-widgets/jupyterlab-manager';
+import * as plotlyPlugins from 'jupyterlab-plotly/lib/jupyterlab-plugin';
+import * as plotlyMimeRenderers from 'jupyterlab-plotly/lib/plotly-renderer';
+import * as reactPlugins from './../jupyter/lab/index';
 
 const JupyterLabAppExample = () => {
   const onJupyterLab = async (jupyterLabAdapter: JupyterLabAppAdapter) => {
@@ -28,13 +28,13 @@ const JupyterLabAppExample = () => {
   };
   return (
     <JupyterLabApp
-      extensions={[
-        lightThemeExtension,
-        ipywidgetsExtension,
-        plotlyExtension,
-        reactExtension,
+      plugins={[
+        lightThemePlugins,
+        ipywidgetsPlugins,
+        plotlyPlugins,
+        reactPlugins,
       ]}
-      mimeExtensions={[mimePlotlyExtension]}
+      mimeRenderers={[plotlyMimeRenderers]}
       height="calc(100vh - 74px)"
       onJupyterLab={onJupyterLab}
     />

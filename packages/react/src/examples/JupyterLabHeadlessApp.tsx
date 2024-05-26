@@ -22,11 +22,11 @@ import { ColorMode } from '../jupyter/lab/JupyterLabColorMode';
 import JupyterLabApp from '../components/jupyterlab/JupyterLabApp';
 import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter';
 
-import * as darkThemeExtension from '@jupyterlab/theme-dark-extension';
-import * as lightThemeExtension from '@jupyterlab/theme-light-extension';
-import * as ipywidgetsExtension from '@jupyter-widgets/jupyterlab-manager';
-import * as plotlyExtension from 'jupyterlab-plotly/lib/jupyterlab-plugin';
-import * as mimePlotlyExtension from 'jupyterlab-plotly/lib/plotly-renderer';
+import * as darkThemePlugins from '@jupyterlab/theme-dark-extension';
+import * as lightThemePlugins from '@jupyterlab/theme-light-extension';
+import * as ipywidgetsPlugins from '@jupyter-widgets/jupyterlab-manager';
+import * as plotlyPlugins from 'jupyterlab-plotly/lib/jupyterlab-plugin';
+import * as plotlyMimeRenderers from 'jupyterlab-plotly/lib/plotly-renderer';
 
 const height = '900px';
 
@@ -122,13 +122,13 @@ const JupyterLabHeadlessAppExample = () => {
           </div>
         )}
         <JupyterLabApp
-          extensions={[
-            lightThemeExtension,
-            darkThemeExtension,
-            ipywidgetsExtension,
-            plotlyExtension,
+          plugins={[
+            lightThemePlugins,
+            darkThemePlugins,
+            ipywidgetsPlugins,
+            plotlyPlugins,
           ]}
-          mimeExtensions={[mimePlotlyExtension]}
+          mimeRenderers={[plotlyMimeRenderers]}
           headless={true}
           onJupyterLab={onJupyterLab}
           pluginId="@jupyterlab/apputils-extension:themes"
