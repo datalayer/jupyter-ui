@@ -4,19 +4,18 @@
  * MIT License
  */
 
-import { useState, useEffect, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
+import { useState, useEffect } from 'react';
 import { CodeCell } from '@jupyterlab/cells';
 import { KernelMessage } from '@jupyterlab/services';
 import { Box } from '@primer/react';
-import { cellActions, cellReducer } from './CellRedux';
 import CellAdapter from './CellAdapter';
 import Lumino from '../lumino/Lumino';
 import { useJupyter } from './../../jupyter/JupyterContext';
+import { useJupyterReactStore } from './../../state';
 
 export type ICellProps = {
   /**
-   * Code cell source
+   * Code cell source.
    */
   source?: string;
   /**
@@ -27,12 +26,9 @@ export type ICellProps = {
 
 export const Cell = (props: ICellProps) => {
   const { source = '', autoStart } = props;
-  const { serverSettings, injectableStore, defaultKernel } = useJupyter();
-  const dispatch = useDispatch();
+  const { serverSettings, defaultKernel } = useJupyter();
+  const cellStore = useJupyterReactStore().cellStore();
   const [adapter, setAdapter] = useState<CellAdapter>();
-  useMemo(() => {
-    injectableStore.inject('cell', cellReducer);
-  }, []);
   useEffect(() => {
     if (defaultKernel) {
       defaultKernel.ready.then(() => {
@@ -41,16 +37,16 @@ export const Cell = (props: ICellProps) => {
           serverSettings,
           kernel: defaultKernel,
         });
-        dispatch(cellActions.update({ adapter }));
-        dispatch(cellActions.source(props.source!));
+        cellStore.setCellAdapter(adapter);
+        cellStore.setSource(source);
         adapter.codeCell.model.contentChanged.connect(
           (cellModel, changedArgs) => {
-            dispatch(cellActions.source(cellModel.sharedModel.getSource()));
+            cellStore.setSource(cellModel.sharedModel.getSource());
           }
         );
         adapter.codeCell.outputArea.outputLengthChanged.connect(
           (outputArea, outputsCount) => {
-            dispatch(cellActions.outputsCount(outputsCount));
+            cellStore.setOutputsCount(outputsCount);
           }
         );
         adapter.sessionContext.initialize().then(() => {
@@ -60,11 +56,7 @@ export const Cell = (props: ICellProps) => {
               adapter.sessionContext
             );
             execute.then((msg: void | KernelMessage.IExecuteReplyMsg) => {
-              dispatch(
-                cellActions.update({
-                  kernelAvailable: true,
-                })
-              );
+              cellStore.setKernelAvailable(true);
             });
           }
         });
@@ -101,10 +93,14 @@ export const Cell = (props: ICellProps) => {
         },
       }}
     >
-      <Lumino>{adapter.panel}</Lumino>
+      <Lumino>
+        {adapter.panel}
+      </Lumino>
     </Box>
   ) : (
-    <Box>Loading Jupyter Cell...</Box>
+    <Box>
+      Loading Jupyter Cell...
+    </Box>
   );
 };
 

@@ -20,7 +20,7 @@ import Terminal from '../components/terminal/Terminal';
 import CellSidebarNew from '../components/notebook/cell/sidebar/CellSidebarButton';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 import Console from '../components/console/Console';
-import { selectCell, cellActions } from '../components/cell/CellRedux';
+import { cellStore, useCellStore } from '../components/cell/CellZustand';
 import { notebookActions } from '../components/notebook/NotebookRedux';
 
 import notebook from './notebooks/NotebookExample1.ipynb.json';
@@ -51,18 +51,17 @@ widgets.IntSlider(
  )`;
 
 const CellPreview = () => {
-  const cell = selectCell();
+  const { source, kernelAvailable } = useCellStore()
   return (
     <>
-      <>source: {cell.source}</>
-      <>kernel available: {String(cell.kernelAvailable)}</>
+      <>source: {source}</>
+      <>kernel available: {String(kernelAvailable)}</>
     </>
   );
 };
 
 const CellToolbar = () => {
-  const cell = selectCell();
-  const dispatch = useDispatch();
+  const { outputsCount } = useCellStore();
   return (
     <>
       <Box display="flex">
@@ -70,20 +69,20 @@ const CellToolbar = () => {
           <Button
             variant="default"
             size="small"
-            onClick={() => dispatch(cellActions.execute())}
+            onClick={() => cellStore.getState().execute()}
           >
             Run the cell
           </Button>
           <Button
             variant="invisible"
             size="small"
-            onClick={() => dispatch(cellActions.outputsCount(0))}
+            onClick={() => cellStore.getState().setOutputsCount(0)}
           >
             Reset outputs count
           </Button>
         </ButtonGroup>
       </Box>
-      <Box>Outputs count: {cell.outputsCount}</Box>
+      <Box>Outputs count: {outputsCount}</Box>
     </>
   );
 };

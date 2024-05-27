@@ -9,11 +9,6 @@ import { combineEpics } from 'redux-observable';
 import { AnyAction } from 'typescript-fsa';
 import { initInitialState, initReducer } from './InitState';
 import {
-  cellInitialState,
-  cellReducer,
-  ICellState,
-} from '../../components/cell/CellRedux';
-import {
   notebookInitialState,
   notebookEpics,
   notebookReducer,
@@ -34,7 +29,6 @@ import {
 
 export interface IJupyterReactState {
   init: any;
-  cell: ICellState;
   output: IOutputsState;
   notebook: INotebooksState;
   terminal: ITerminalState;
@@ -42,7 +36,6 @@ export interface IJupyterReactState {
 
 export const initialState: IJupyterReactState = {
   init: initInitialState,
-  cell: cellInitialState,
   output: outputInitialState,
   notebook: notebookInitialState,
   terminal: terminalInitialState,
@@ -65,7 +58,6 @@ export const epics = combineEpics<AnyAction, AnyAction, any>(notebookEpics);
 /* Reducers */
 export const reducers = combineReducers<IJupyterReactState>({
   init: initReducer,
-  cell: cellReducer,
   output: outputReducer,
   notebook: notebookReducer,
   terminal: terminalReducer,

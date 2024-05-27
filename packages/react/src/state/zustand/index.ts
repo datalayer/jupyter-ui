@@ -3,3 +3,6 @@
  *
  * MIT License
  */
+
+export * from "./IState";
+export * from "./State";
