@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
 import type { IDatalayerConfig } from './IState';
