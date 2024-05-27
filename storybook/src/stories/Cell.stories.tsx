@@ -4,9 +4,9 @@
  * MIT License
  */
 
-import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Jupyter, Cell } from '@datalayer/jupyter-react';
+import { colorModeFromScheme } from './_utils/story-helpers';
 
 const meta: Meta<typeof Cell> = {
   title: 'Components/Cell',
@@ -36,7 +36,9 @@ export default meta;
 
 type Story = StoryObj<typeof Cell | typeof Jupyter | { browser: string }>;
 
-const Template = (args, { globals: { labComparison } }) => {
+const Template = (args, { globals: { colorScheme } }) => {
+
+  console.log('----', colorScheme)
   const { browser, initCode, ...others } = args;
   const lite = {
     true: true,
@@ -55,6 +57,7 @@ const Template = (args, { globals: { labComparison } }) => {
     <Jupyter
       lite={lite}
       initCode={initCode}
+      colorMode={colorModeFromScheme(colorScheme)}
       defaultKernelName={kernelName}
       jupyterServerHttpUrl="https://oss.datalayer.run/api/jupyter-server"
       jupyterServerWsUrl="wss://oss.datalayer.run/api/jupyter-server"
@@ -65,7 +68,7 @@ const Template = (args, { globals: { labComparison } }) => {
   );
 };
 
-export const Default: Story = Template.bind({});
+export const Default: Story = Template.bind({}) as Story;
 Default.args = {
   browser: 'false',
   initCode: '',
@@ -73,7 +76,7 @@ Default.args = {
   autoStart: false,
 };
 
-export const Confettis: Story = Template.bind({});
+export const Confettis: Story = Template.bind({}) as Story;
 Confettis.args = {
   browser: 'false',
   source: `import ipyreact
@@ -97,7 +100,7 @@ ConfettiWidget()`,
   autoStart: true,
 };
 
-export const Playground: Story = Template.bind({});
+export const Playground: Story = Template.bind({}) as Story;
 
 Playground.args = {
   ...Default.args,
@@ -118,7 +121,7 @@ plt.show()`,
   autoStart: true,
 };
 
-export const LitePython: Story = Template.bind({});
+export const LitePython: Story = Template.bind({}) as Story;
 LitePython.args = {
   ...Playground.args,
   browser: 'true',
@@ -128,7 +131,7 @@ print(f"{sys.platform=}")
 ${Playground.args.source ?? ''}`,
 };
 
-export const WithInitialization: Story = Template.bind({});
+export const WithInitialization: Story = Template.bind({}) as Story;
 WithInitialization.args = {
   ...Default.args,
   browser: 'true',

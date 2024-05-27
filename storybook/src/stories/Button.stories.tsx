@@ -38,7 +38,7 @@ const Template = (args, { globals: { labComparison } }) => {
   );
 };
 
-export const Default = Template.bind({});
+export const Default: Story = Template.bind({}) as Story;
 
 export const Playground: Story = {
   render: (args, options) =>
@@ -100,10 +100,7 @@ Playground.args = {
   trailingAction: null,
 };
 
-export const Primary: Story = {
-  render: (args, options) =>
-    Template.bind({})({ label: 'Primary', ...args }, { globals: { labComparison: true } }),
-};
+export const Primary: Story = Template.bind({}) as Story;
 Primary.args = {
   block: false,
   size: 'medium',
@@ -115,10 +112,7 @@ Primary.args = {
   trailingAction: null,
 };
 
-export const Danger: Story = {
-  render: (args, options) =>
-    Template.bind({})({ label: 'Danger', ...args }, { globals: { labComparison: true } }),
-};
+export const Danger: Story = Template.bind({}) as Story;
 Danger.args = {
   block: false,
   size: 'medium',
@@ -130,10 +124,7 @@ Danger.args = {
   trailingAction: null,
 };
 
-export const Invisible: Story = {
-  render: (args, options) =>
-    Template.bind({})({ label: 'Invisble', ...args }, { globals: { labComparison: true } }),
-};
+export const Invisible: Story = Template.bind({}) as Story;
 Invisible.args = {
   block: false,
   size: 'medium',

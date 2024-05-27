@@ -23,16 +23,16 @@ import JupyterLabAppCss from './JupyterLabAppCss';
 
 export type JupyterLabAppProps = {
   devMode: boolean;
-  extensionPromises?: Array<Promise<JupyterLab.IPluginModule>>;
-  extensions: Array<JupyterLab.IPluginModule>;
   headless: boolean;
-  height: string | number;
-  hostId: string;
-  mimeExtensionPromises?: Array<Promise<IRenderMime.IExtensionModule>>;
-  mimeExtensions: Array<IRenderMime.IExtensionModule>;
-  disabledExtensions: Array<string>;
+  pluginPromises?: Array<Promise<JupyterLab.IPluginModule>>;
+  plugins: Array<JupyterLab.IPluginModule>;
+  disabledPlugins: Array<string>;
+  mimeRendererPromises?: Array<Promise<IRenderMime.IExtensionModule>>;
+  mimeRenderers: Array<IRenderMime.IExtensionModule>;
   onPlugin?: (plugin: any) => void;
   onJupyterLab: (jupyterLabAppdapter: JupyterLabAppAdapter) => void;
+  height: string | number;
+  hostId: string;
   pluginId?: string;
   PluginType?: any;
   position: string;
@@ -41,7 +41,7 @@ export type JupyterLabAppProps = {
   width: string | number;
 };
 
-export const JupyterLabApp = (props: JupyterLabAppProps) => {
+const JupyterLabAppComponent = (props: JupyterLabAppProps) => {
   const {
     hostId,
     position,
@@ -57,24 +57,25 @@ export const JupyterLabApp = (props: JupyterLabAppProps) => {
   const { serviceManager, collaborative } = useJupyter();
   const defaultMimeExtensionPromises = useMemo(
     () =>
-      props.mimeExtensionPromises ??
+      props.mimeRendererPromises ??
       JupyterLabAppCorePlugins(collaborative).mimeExtensionPromises,
     []
   );
   const defaultExtensionPromises = useMemo(
     () =>
-      props.extensionPromises ??
+      props.pluginPromises ??
       JupyterLabAppCorePlugins(collaborative).extensionPromises,
     []
   );
+
   const ref = useRef<HTMLDivElement>(null);
   const [_, setAdapter] = useState<JupyterLabAppAdapter>();
   useEffect(() => {
     if (ref && serviceManager) {
       const adapter = new JupyterLabAppAdapter({
         ...props,
-        mimeExtensionPromises: defaultMimeExtensionPromises,
-        extensionPromises: defaultExtensionPromises,
+        mimeRendererPromises: defaultMimeExtensionPromises,
+        pluginPromises: defaultExtensionPromises,
         collaborative,
         serviceManager,
       });
@@ -107,14 +108,14 @@ export const JupyterLabApp = (props: JupyterLabAppProps) => {
   );
 };
 
-JupyterLabApp.defaultProps = {
+JupyterLabAppComponent.defaultProps = {
   devMode: false,
-  extensions: [],
+  plugins: [],
+  disabledPlugins: [],
+  mimeRenderers: [],
   headless: false,
   height: '100vh',
   hostId: 'app-example-id',
-  mimeExtensions: [],
-  disabledExtensions: [],
   onJupyterLab: (jupyterLabAppAdapter: JupyterLabAppAdapter) => {},
   position: 'relative',
   splash: true,
@@ -122,4 +123,6 @@ JupyterLabApp.defaultProps = {
   width: '100%',
 } as Partial<JupyterLabAppProps>;
 
-export default memo(JupyterLabApp);
+export const JupyterLabApp = memo(JupyterLabAppComponent);
+
+export default JupyterLabApp;

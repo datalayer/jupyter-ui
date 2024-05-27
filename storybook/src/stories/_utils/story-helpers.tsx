@@ -8,7 +8,9 @@ import React from 'react';
 import { ArgTypes } from '@storybook/react';
 import { createGlobalStyle } from 'styled-components';
 import { Icon } from '@primer/octicons-react';
-import { theme, ThemeProvider, themeGet, BaseStyles } from '@primer/react';
+import { ThemeProvider, themeGet, BaseStyles } from '@primer/react';
+// import { theme } from '@primer/react';
+import { jupyterTheme as theme } from '@datalayer/jupyter-react';
 
 // we don't import StoryContext from storybook because of exports that conflict
 // with primer/react more: https://github.com/primer/react/runs/6129115026?check_suite_focus=true
@@ -26,6 +28,10 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
+export const colorModeFromScheme = (colorScheme: string) => {
+  return colorScheme.startsWith('light') ? 'light' : 'dark'
+}
+
 export const withThemeProvider = (
   Story: React.FC<React.PropsWithChildren<StoryContext>>,
   context: StoryContext
@@ -36,7 +42,7 @@ export const withThemeProvider = (
   return (
     <ThemeProvider
       theme={theme}
-      colorMode={colorScheme.startsWith('light') ? 'light' : 'dark'}
+      colorMode={colorModeFromScheme(colorScheme)}
       dayScheme={colorScheme}
       nightScheme={colorScheme}
     >
