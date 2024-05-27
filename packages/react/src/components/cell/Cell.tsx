@@ -37,7 +37,7 @@ export const Cell = (props: ICellProps) => {
           serverSettings,
           kernel: defaultKernel,
         });
-        cellStore.setCellAdapter(adapter);
+        cellStore.setAdapter(adapter);
         cellStore.setSource(source);
         adapter.codeCell.model.contentChanged.connect(
           (cellModel, changedArgs) => {

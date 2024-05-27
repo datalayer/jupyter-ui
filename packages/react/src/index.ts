@@ -56,7 +56,7 @@ export * from './components/commands/Commands';
 
 // Console.
 export * from './components/console/Console';
-export * from './components/console/ConsoleRedux';
+export * from './components/console/ConsoleState';
 
 // Dialog.
 export * from './components/dialog/Dialog';
@@ -114,7 +114,7 @@ export * from './components/settings/Settings';
 
 // Terminal.
 export * from './components/terminal/Terminal';
-export * from './components/terminal/TerminalRedux';
+export * from './components/terminal/TerminalState';
 
 // TextInput
 export * from './components/textinput/TextInput';

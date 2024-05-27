@@ -18,9 +18,9 @@ function shim(regExp) {
 
 const ENTRY =
   // './src/app/App';
-  './src/examples/Cell';
+  // './src/examples/Cell';
   // './src/examples/CellLite';
-  // './src/examples/Console';
+  './src/examples/Console';
   // './src/examples/ConsoleLite';
   // './src/examples/Deno';
   // './src/examples/IPyLeaflet';

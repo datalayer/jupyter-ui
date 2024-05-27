@@ -7,18 +7,12 @@
 import { combineReducers } from 'redux';
 import { combineEpics } from 'redux-observable';
 import { AnyAction } from 'typescript-fsa';
-import { initInitialState, initReducer } from './InitState';
 import {
   notebookInitialState,
   notebookEpics,
   notebookReducer,
   INotebooksState,
 } from '../../components/notebook/NotebookRedux';
-import {
-  terminalInitialState,
-  terminalReducer,
-  ITerminalState,
-} from '../../components/terminal/TerminalRedux';
 import {
   outputInitialState,
   outputReducer,
@@ -28,17 +22,13 @@ import {
 /* State */
 
 export interface IJupyterReactState {
-  init: any;
   output: IOutputsState;
   notebook: INotebooksState;
-  terminal: ITerminalState;
 }
 
 export const initialState: IJupyterReactState = {
-  init: initInitialState,
   output: outputInitialState,
   notebook: notebookInitialState,
-  terminal: terminalInitialState,
 };
 
 /* Actions
@@ -57,8 +47,6 @@ export const epics = combineEpics<AnyAction, AnyAction, any>(notebookEpics);
 
 /* Reducers */
 export const reducers = combineReducers<IJupyterReactState>({
-  init: initReducer,
   output: outputReducer,
   notebook: notebookReducer,
-  terminal: terminalReducer,
 });

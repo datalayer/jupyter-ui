@@ -13,7 +13,7 @@ export type CellZustandState = ICellState & {
   setSource: (source: string) => void;
   setOutputsCount: (outputsCount: number) => void;
   setKernelAvailable: (kernelAvailable: boolean) => void;
-  setCellAdapter: (adapter?: CellAdapter) => void;
+  setAdapter: (adapter?: CellAdapter) => void;
   execute: () => void;
 };
 
@@ -25,7 +25,7 @@ export const cellStore = createStore<CellZustandState>((set, get) => ({
   setSource: (source: string) => set((state: CellZustandState) => ({ source })),
   setOutputsCount: (outputsCount: number) => set((state: CellZustandState) => ({ outputsCount })),
   setKernelAvailable: (kernelAvailable: boolean) => set((state: CellZustandState) => ({ kernelAvailable })),
-  setCellAdapter: (adapter?: CellAdapter) => set((state: CellZustandState) => ({ adapter })),
+  setAdapter: (adapter?: CellAdapter) => set((state: CellZustandState) => ({ adapter })),
   execute: () => { get().adapter?.execute() },
 }));
 

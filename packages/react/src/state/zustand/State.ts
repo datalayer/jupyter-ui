@@ -8,16 +8,17 @@ import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
 import type { IDatalayerConfig } from './IState';
 import useCellStore from '../../components/cell/CellZustand';
+import useConsoleStore from '../../components/console/ConsoleZustand';
+import useTerminalStore from '../../components/terminal/TerminalZustand';
 
 export type JupyterReactState = {
-  tab: number;
-  getIntTab: () => number;
-  setTab: (tab: number) => void;
   configuration?: IDatalayerConfig;
   setConfiguration: (configuration?: IDatalayerConfig) => void;
   version: string;
   setVersion: (version: string) => void;
   cellStore: typeof useCellStore;
+  consoleStore: typeof useConsoleStore;
+  terminalStore: typeof useTerminalStore;
 };
 
 let initialConfiguration: IDatalayerConfig | undefined = undefined;
@@ -32,9 +33,6 @@ try {
 }
 
 export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
-  tab: 0.0,
-  getIntTab: () => Math.floor(get().tab),
-  setTab: (tab: number) => set((state: JupyterReactState) => ({ tab })),
   configuration: initialConfiguration,
   setConfiguration: (configuration?: IDatalayerConfig) => {
     set(state => ({ configuration }));
@@ -46,6 +44,8 @@ export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
     }
   },
   cellStore: useCellStore,
+  consoleStore: useConsoleStore,
+  terminalStore: useTerminalStore,
 }));
 
 export function useJupyterReactStore(): JupyterReactState;

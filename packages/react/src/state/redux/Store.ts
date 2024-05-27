@@ -13,7 +13,6 @@ import {
 } from 'redux';
 import { createEpicMiddleware } from 'redux-observable';
 import { AnyAction, Success } from 'typescript-fsa';
-import { initReducer } from './InitState';
 // import { BehaviorSubject } from "rxjs";
 // import { mergeMap } from 'rxjs/operators';
 
@@ -61,10 +60,9 @@ export const createInjectableStore = (store: Store): InjectableStore => {
 };
 
 export const createReduxEpicStore = () =>
-  createStore(createReducer({ initReducer }), applyMiddleware(epicMiddleware));
+  createStore(createReducer({}), applyMiddleware(epicMiddleware));
 
 const store = createReduxEpicStore();
 const injectableStore = createInjectableStore(store);
-injectableStore.inject('init', initReducer);
 
 export default injectableStore;
