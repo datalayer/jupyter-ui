@@ -60,6 +60,7 @@ type CellMutation = {
   
 export type NotebookZustandState = INotebooksState & {
   setNotebooks: (notebooks: Map<string, INotebookState>) => void;
+  selectNotebook: (uid: string) => INotebookState | undefined;
   selectNotebookModel: (uid: string) => { model: INotebookModel | undefined; changed: any } | undefined;
   selectKernelStatus: (uid: string) => string | undefined;
   selectActiveCell: (uid: string) => Cell<ICellModel> | undefined;

@@ -11,8 +11,6 @@ import {
 } from '@jupyterlab/services';
 import type { JupyterLiteServerPlugin } from '@jupyterlite/server';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Provider as ReduxProvider } from 'react-redux';
-import defaultInjectableStore, { InjectableStore } from '../state/redux/Store';
 import { createLiteServer } from './../jupyter/lite/LiteServer';
 import { getJupyterServerHttpUrl, getJupyterToken } from './JupyterConfig';
 import { requestAPI } from './JupyterHandlers';
@@ -45,7 +43,9 @@ export type JupyterContextType = {
    * be available.
    */
   defaultKernelIsLoading: boolean;
-  injectableStore: InjectableStore;
+  /**
+   * The Kernel Manager.
+   */
   kernelManager?: CoreKernel.IManager;
   /**
    * If `true`, it will load the Pyodide jupyterlite kernel.
@@ -189,7 +189,6 @@ export type JupyterContextProps = React.PropsWithChildren<{
   skeleton?: JSX.Element;
 
   // Advanced properties
-  injectableStore?: InjectableStore;
   useRunningKernelId?: string;
   useRunningKernelIndex?: number;
   variant?: string;
@@ -218,7 +217,6 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
     collaborative = false,
     defaultKernelName = 'python',
     initCode = '',
-    injectableStore = defaultInjectableStore,
     lite = false,
     startDefaultKernel = true,
     useRunningKernelId,
@@ -363,28 +361,25 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
   }, [lite, serviceManager]);
 
   return (
-    <ReduxProvider store={injectableStore}>
-      <JupyterProvider
-        value={{
-          // FIXME we should not expose sub attributes
-          // to promote single source of truth (like URLs come from serverSettings)
-          baseUrl: serviceManager?.serverSettings.baseUrl ?? '',
-          collaborative,
-          defaultKernel: kernel,
-          defaultKernelIsLoading: kernelIsLoading,
-          injectableStore,
-          kernelManager: serviceManager?.kernels,
-          lite: lite,
-          serverSettings:
-            serviceManager?.serverSettings ?? createServerSettings('', ''),
-          serviceManager,
-          setVariant,
-          variant,
-          wsUrl: serviceManager?.serverSettings.wsUrl ?? '',
-        }}
-      >
-        {kernelIsLoading ? skeleton : children}
-      </JupyterProvider>
-    </ReduxProvider>
+    <JupyterProvider
+      value={{
+        // FIXME we should not expose sub attributes
+        // to promote single source of truth (like URLs come from serverSettings)
+        baseUrl: serviceManager?.serverSettings.baseUrl ?? '',
+        collaborative,
+        defaultKernel: kernel,
+        defaultKernelIsLoading: kernelIsLoading,
+        kernelManager: serviceManager?.kernels,
+        lite: lite,
+        serverSettings:
+          serviceManager?.serverSettings ?? createServerSettings('', ''),
+        serviceManager,
+        setVariant,
+        variant,
+        wsUrl: serviceManager?.serverSettings.wsUrl ?? '',
+      }}
+    >
+      {kernelIsLoading ? skeleton : children}
+    </JupyterProvider>
   );
 };

@@ -30,8 +30,7 @@ export * from './jupyter/ipywidgets/classic/manager';
 export * from './jupyter/ipywidgets/lab/manager';
 
 // Jupyter State.
-export * from './state/redux/State';
-export * from './state/redux/Store';
+export * from './state';
 
 /**
  * Components.

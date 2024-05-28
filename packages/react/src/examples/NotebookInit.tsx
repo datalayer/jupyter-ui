@@ -7,32 +7,22 @@
 import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
-  createInjectableStore,
-  createReduxEpicStore,
   useJupyter,
-  notebookActions,
-  selectNotebook,
   CellSidebar,
-  IJupyterReactState,
   Jupyter,
   Kernel,
   Notebook,
 } from '../index';
 import NotebookToolbar from './toolbars/NotebookToolbar';
+import useNotebookStore from '../components/notebook/NotebookZustand';
 
 const NOTEBOOK_ID = 'notebook';
 const NOTEBOOK_WIDTH = '100%';
 const NOTEBOOK_HEIGHT = 500;
+
 const JUPYTER_KERNEL_NAME = 'python';
 
 let IS_INITIALIZED = false;
-
-const jupyterStore = createReduxEpicStore();
-const injectableStore = createInjectableStore(jupyterStore);
-
-injectableStore.inject('init', (state: IJupyterReactState, _action: any) => {
-  return state || {};
-});
 
 const useKernel = () => {
   const { kernelManager, serviceManager } = useJupyter();
@@ -67,7 +57,8 @@ const useKernel = () => {
 
 const NotebookInit: React.FC = () => {
   const kernel = useKernel();
-  const notebook = selectNotebook(NOTEBOOK_ID);
+  const notebookStore = useNotebookStore();
+  const notebook = notebookStore.selectNotebook(NOTEBOOK_ID);
   useEffect(() => {
     if (notebook && !IS_INITIALIZED) {
       notebook.adapter?.notebookPanel?.model?.contentChanged.connect(_ => {
@@ -75,13 +66,11 @@ const NotebookInit: React.FC = () => {
           IS_INITIALIZED = true;
           //          console.log("You can use one of these commands:", notebook.adapter?.commands.listCommands());
           //          notebook.adapter?.commands.execute("notebook:run-all");
-          injectableStore.dispatch(
-            notebookActions.insertAbove.started({
-              uid: NOTEBOOK_ID,
-              cellType: 'code',
-              source: 'print("Hello 🪐 ⚛️ Jupyter React")',
-            })
-          );
+          notebookStore.insertAbove({
+            uid: NOTEBOOK_ID,
+            cellType: 'code',
+            source: 'print("Hello 🪐 ⚛️ Jupyter React")',
+          });
         }
       });
     }
@@ -105,7 +94,7 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <Jupyter injectableStore={injectableStore} startDefaultKernel={false}>
+  <Jupyter startDefaultKernel={false}>
     <div style={{ width: NOTEBOOK_WIDTH, height: NOTEBOOK_HEIGHT }}>
       <NotebookInit />
     </div>

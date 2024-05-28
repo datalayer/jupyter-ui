@@ -77,7 +77,7 @@ export type INotebookProps = {
  * @returns A Notebook React.js component.
  */
 export const Notebook = (props: INotebookProps) => {
-  const { serviceManager, defaultKernel, kernelManager, injectableStore, lite } =
+  const { serviceManager, defaultKernel, kernelManager, lite } =
     useJupyter();
   const {
     path,
@@ -103,7 +103,6 @@ export const Notebook = (props: INotebookProps) => {
             kernel,
             uid,
           },
-          injectableStore,
           serviceManager,
           lite
         );
@@ -151,7 +150,7 @@ export const Notebook = (props: INotebookProps) => {
           );
           /*
           adapter.notebookPanel?.model!.sharedModel.changed.connect((_, notebookChange) => {
-            dispatch(notebookStore.notebookChange({ uid, notebookChange }));
+            notebookStore.notebookChange({ uid, notebookChange });
           });
           adapter.notebookPanel?.content.modelChanged.connect((notebook, _) => {
             dispatÅch(notebookStore.notebookChange({ uid, notebook }));

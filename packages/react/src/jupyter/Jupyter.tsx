@@ -76,7 +76,6 @@ export const Jupyter = (props: JupyterProps) => {
     defaultKernelName,
     disableCssLoading = false,
     initCode = '',
-    injectableStore,
     jupyterServerHttpUrl,
     jupyterServerWsUrl,
     jupyterToken,
@@ -128,7 +127,6 @@ export const Jupyter = (props: JupyterProps) => {
             <JupyterContextProvider
               collaborative={collaborative}
               defaultKernelName={defaultKernelName}
-              injectableStore={injectableStore}
               initCode={initCode}
               lite={lite}
               serverUrls={{
