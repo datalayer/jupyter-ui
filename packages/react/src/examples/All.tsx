@@ -21,7 +21,7 @@ import CellSidebarNew from '../components/notebook/cell/sidebar/CellSidebarButto
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 import Console from '../components/console/Console';
 import { cellStore, useCellStore } from '../components/cell/CellZustand';
-import { notebookActions } from '../components/notebook/NotebookRedux';
+import { notebookActions } from '../components/notebook/NotebookState';
 
 import notebook from './notebooks/NotebookExample1.ipynb.json';
 

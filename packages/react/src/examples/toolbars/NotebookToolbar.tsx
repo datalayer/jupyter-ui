@@ -18,7 +18,7 @@ import {
 import {
   notebookActions,
   selectKernelStatus,
-} from '../../components/notebook/NotebookRedux';
+} from '../../components/notebook/NotebookState';
 
 export const NotebookToolbar = (props: { notebookId: string }) => {
   const { notebookId } = props;

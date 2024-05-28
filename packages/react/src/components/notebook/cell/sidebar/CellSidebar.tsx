@@ -15,7 +15,7 @@ import {
   ChevronDownIcon,
   SquareIcon,
 } from '@primer/octicons-react';
-import { notebookActions, selectActiveCell } from '../../NotebookRedux';
+import { notebookActions, selectActiveCell } from '../../NotebookState';
 import { CellSidebarProps } from './CellSidebarWidget';
 import CellMetadataEditor from '../metadata/CellMetadataEditor';
 

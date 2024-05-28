@@ -22,7 +22,7 @@ import {
   notebookActions,
   selectNotebook,
   selectSaveRequest,
-} from '../../components/notebook/NotebookRedux';
+} from '../../components/notebook/NotebookState';
 
 export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
   const { notebookId } = props;

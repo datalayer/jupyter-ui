@@ -18,7 +18,7 @@ import {
 import {
   notebookActions,
   selectActiveCell,
-} from '../../components/notebook/NotebookRedux';
+} from '../../components/notebook/NotebookState';
 import { CellSidebarProps } from '../../components/notebook/cell/sidebar/CellSidebarWidget';
 import CellMetadataEditor from '../../components/notebook/cell/metadata/CellMetadataEditor';
 

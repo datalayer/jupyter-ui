@@ -15,7 +15,7 @@ import {
   SquareIcon,
   XIcon,
 } from '@primer/octicons-react';
-import { notebookActions, selectActiveCell } from '../../NotebookRedux';
+import { notebookActions, selectActiveCell } from '../../NotebookState';
 import { CellSidebarProps } from './CellSidebarWidget';
 
 import { DATALAYER_CELL_HEADER_CLASS } from './CellSidebarWidget';

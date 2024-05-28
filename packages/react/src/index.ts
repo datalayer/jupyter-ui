@@ -91,7 +91,7 @@ export * from './components/lumino/ReactPortalWidget';
 // Notebook.
 export * from './components/notebook/Notebook';
 export * from './components/notebook/NotebookAdapter';
-export * from './components/notebook/NotebookRedux';
+export * from './components/notebook/NotebookState';
 export * from './components/notebook/content/JupyterReactContentFactory';
 export * from './components/notebook/cell/metadata/CellMetadataEditor';
 export * from './components/notebook/cell/metadata/NbGraderCells';

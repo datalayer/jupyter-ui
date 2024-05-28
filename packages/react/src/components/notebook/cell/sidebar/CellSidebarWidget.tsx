@@ -11,7 +11,7 @@ import { ICellHeader } from '@jupyterlab/cells';
 import { CommandRegistry } from '@lumino/commands';
 import { newUuid } from '../../../../utils/Utils';
 import { ReactPortalWidget } from '../../../lumino/ReactPortalWidget';
-import { notebookActions } from '../../NotebookRedux';
+import { notebookActions } from '../../NotebookState';
 
 export const DATALAYER_CELL_HEADER_CLASS = 'dla-CellHeader-Container';
 

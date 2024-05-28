@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { selectKernelStatus } from '../../components/notebook/NotebookRedux';
+import { selectKernelStatus } from '../../components/notebook/NotebookState';
 
 const NotebookToolbarStatus = (props: { notebookId: string }) => {
   const { notebookId } = props;
