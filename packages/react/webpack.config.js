@@ -34,13 +34,15 @@ const ENTRY =
   // './src/examples/KernelExecResult';
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
-  './src/examples/Notebook';
+  // './src/examples/Notebook';
   // './src/examples/NotebookUrl';
   // './src/examples/NotebookColorMode';
   // './src/examples/NotebookKernelChange';
   // './src/examples/NotebookLite';
   // './src/examples/NotebookNbFormat';
   // './src/examples/NotebookNbFormatChange';
+  './src/examples/NotebookNoContext';
+  // './src/examples/NotebookNoContextNoPrimer';
   // './src/examples/NotebookSkeleton';
   // './src/examples/NotebookTheme';
   // './src/examples/NotebookThemeColorMode';

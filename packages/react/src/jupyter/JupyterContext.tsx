@@ -15,6 +15,16 @@ import { createLiteServer } from './../jupyter/lite/LiteServer';
 import { getJupyterServerHttpUrl, getJupyterToken } from './JupyterConfig';
 import { requestAPI } from './JupyterHandlers';
 import Kernel from './kernel/Kernel';
+import { useJupyterStore } from '../state';
+
+const requireJsScript = document.createElement('script');
+requireJsScript.src =
+  'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js';
+document.body.appendChild(requireJsScript);
+
+const cdnOnlyScript = document.createElement('script');
+cdnOnlyScript.setAttribute('data-jupyter-widgets-cdn-only', 'true');
+document.body.appendChild(cdnOnlyScript);
 
 export type Lite =
   | boolean
@@ -68,12 +78,18 @@ export type JupyterContextType = {
    *
    * This is useless if running an in-browser kernel via {@link lite}.
    */
-  serverSettings: ServerConnection.ISettings;
+  serverSettings?: ServerConnection.ISettings;
   /**
    * Jupyter services manager
    */
   serviceManager?: ServiceManager;
+  /**
+   * TBD Set the variant
+   */
   setVariant: (value: string) => void;
+  /**
+   * TBD The variant
+   */
   variant: string;
   /**
    * Jupyter Server base URL
@@ -99,7 +115,20 @@ export const JupyterContext = createContext<JupyterContextType | undefined>(
 export const useJupyter = (): JupyterContextType => {
   const context = useContext(JupyterContext);
   if (!context) {
-    throw new Error('useContext must be inside a provider with a value.');
+    const { kernel, kernelIsLoading, serviceManager} = useJupyterStore();
+    return {
+      collaborative: false,
+      defaultKernel: kernel,
+      defaultKernelIsLoading: kernelIsLoading,
+      kernelManager: serviceManager?.kernels,
+      lite: false,
+      serverSettings: serviceManager?.serverSettings,
+      serviceManager: serviceManager,
+      setVariant: (value: string) => {},
+      variant: '',
+      baseUrl: '',
+      wsUrl: '',
+    }
   }
   return context;
 };

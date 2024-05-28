@@ -6,7 +6,7 @@
 
 import { createRoot } from 'react-dom/client';
 import { Box, Button } from '@primer/react';
-import { useJupyterReactStore } from './../state';
+import { useJupyterStore } from './../state';
 import Jupyter from '../jupyter/Jupyter';
 import Cell from '../components/cell/Cell';
 
@@ -20,7 +20,7 @@ for i in range(100):
     display('I am a long string which is repeatedly added to the dom in separated divs: %d' % i)`
 
 const CellExample = () => {
-  const cellStore = useJupyterReactStore().cellStore();
+  const cellStore = useJupyterStore().cellStore();
   return (
     <Jupyter>
       <Box as="h1">A Jupyter Cell</Box>

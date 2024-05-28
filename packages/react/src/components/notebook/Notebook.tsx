@@ -19,6 +19,7 @@ import CellMetadataEditor from './cell/metadata/CellMetadataEditor';
 import { newUuid } from '../../utils/Utils';
 import NotebookAdapter from './NotebookAdapter';
 import useNotebookStore from './NotebookZustand';
+import { useJupyterStore } from '../../state';
 
 import './Notebook.css';
 
@@ -89,6 +90,7 @@ export const Notebook = (props: INotebookProps) => {
     nbformat,
     Toolbar,
   } = props;
+
   const notebookStore = useNotebookStore();
   const [uid] = useState(props.uid || newUuid());
   const [adapter, setAdapter] = useState<NotebookAdapter>();
