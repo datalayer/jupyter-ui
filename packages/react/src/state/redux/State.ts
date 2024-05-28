@@ -17,7 +17,7 @@ import {
   outputInitialState,
   outputReducer,
   IOutputsState,
-} from '../../components/output/OutputRedux';
+} from '../../components/output/OutputState';
 
 /* State */
 

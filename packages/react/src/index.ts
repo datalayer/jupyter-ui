@@ -105,7 +105,7 @@ export * from './components/notebook/cell/sidebar/CellSidebarRun';
 // @see https://github.com/datalayer/jupyter-ui/issues/170
 // export * from './components/output/Output';
 export * from './components/output/OutputAdapter';
-export * from './components/output/OutputRedux';
+export * from './components/output/OutputState';
 export * from './components/output/OutputZustand';
 export * from './components/output/OutputIPyWidgets';
 

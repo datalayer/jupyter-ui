@@ -9,6 +9,7 @@ import { useStore } from 'zustand';
 import type { IDatalayerConfig } from './IState';
 import useCellStore from '../../components/cell/CellZustand';
 import useConsoleStore from '../../components/console/ConsoleZustand';
+import useOutputStore from '../../components/output/OutputZustand';
 import useTerminalStore from '../../components/terminal/TerminalZustand';
 
 export type JupyterReactState = {
@@ -18,6 +19,7 @@ export type JupyterReactState = {
   setVersion: (version: string) => void;
   cellStore: typeof useCellStore;
   consoleStore: typeof useConsoleStore;
+  outputStore: typeof useOutputStore;
   terminalStore: typeof useTerminalStore;
 };
 
@@ -45,6 +47,7 @@ export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
   },
   cellStore: useCellStore,
   consoleStore: useConsoleStore,
+  outputStore: useOutputStore,
   terminalStore: useTerminalStore,
 }));
 

@@ -5,7 +5,6 @@
  */
 
 import { useState, useRef, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { basicSetup } from 'codemirror';
 import { EditorState, Compartment } from '@codemirror/state';
 import { keymap, EditorView, ViewUpdate } from '@codemirror/view';
@@ -14,11 +13,7 @@ import Kernel from '../../jupyter/kernel/Kernel';
 import codeMirrorTheme from './CodeMirrorTheme';
 import OutputAdapter from '../output/OutputAdapter';
 import CodeMirrorOutputToolbar from './CodeMirrorOutputToolbar';
-import {
-  selectDataset,
-  selectJupyterSetSource,
-  outputActions,
-} from '../output/OutputRedux';
+import useOutputStore from '../output/OutputZustand';
 
 export const CodeMirrorEditor = (props: {
   code: string;
@@ -42,10 +37,10 @@ export const CodeMirrorEditor = (props: {
     insertText,
     kernel,
   } = props;
-  const dispatch = useDispatch();
+  const outputStore = useOutputStore();
   const [view, setView] = useState<EditorView>();
-  const dataset = selectDataset(sourceId);
-  const setSource = selectJupyterSetSource(sourceId);
+  const dataset = outputStore.selectDataset(sourceId);
+  const setSource = outputStore.selectJupyterSetSource(sourceId);
   const editorDiv = useRef<HTMLDivElement>();
   const setEditorSource = (source: string | undefined) => {
     if (view && source) {
@@ -83,12 +78,10 @@ export const CodeMirrorEditor = (props: {
     return true;
   };
   useEffect(() => {
-    dispatch(
-      outputActions.source({
-        sourceId,
-        source: code,
-      })
-    );
+    outputStore.source({
+      sourceId,
+      source: code,
+    })
     const language = new Compartment();
     const keyBinding = [
       {
@@ -108,12 +101,10 @@ export const CodeMirrorEditor = (props: {
         EditorView.updateListener.of((viewUpdate: ViewUpdate) => {
           if (viewUpdate.docChanged) {
             const source = viewUpdate.state.doc.toString();
-            dispatch(
-              outputActions.source({
-                sourceId,
-                source,
-              })
-            );
+            outputStore.source({
+              sourceId,
+              source,
+            })
           }
         }),
       ],

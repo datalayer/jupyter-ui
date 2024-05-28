@@ -20,7 +20,7 @@ const ENTRY =
   // './src/app/App';
   // './src/examples/Cell';
   // './src/examples/CellLite';
-  './src/examples/Console';
+  // './src/examples/Console';
   // './src/examples/ConsoleLite';
   // './src/examples/Deno';
   // './src/examples/IPyLeaflet';
@@ -45,7 +45,7 @@ const ENTRY =
   // './src/examples/NotebookTheme';
   // './src/examples/NotebookThemeColorMode';
   // './src/examples/ObservableHQ';
-  // './src/examples/Outputs';
+  './src/examples/Outputs';
   // './src/examples/Plotly';
   // './src/examples/RunningSessions';
   // './src/examples/Terminal';
