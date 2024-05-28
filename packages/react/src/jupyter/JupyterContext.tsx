@@ -257,7 +257,8 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
         wsUrl: serviceManager?.serverSettings.wsUrl ?? '',
       }}
     >
-      {kernelIsLoading ? skeleton : children}
+      { kernelIsLoading && skeleton }
+      { children }
     </JupyterProvider>
   );
 };
