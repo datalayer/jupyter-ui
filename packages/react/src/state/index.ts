@@ -4,4 +4,5 @@
  * MIT License
  */
 
-export * from './zustand';
+export * from "./IState";
+export * from "./State";

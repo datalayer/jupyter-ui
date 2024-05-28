@@ -9,16 +9,16 @@ import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
 import { ServiceManager } from '@jupyterlab/services';
 import type { IDatalayerConfig } from './IState';
-import { IJupyterConfig, loadJupyterConfig } from './../../jupyter/JupyterConfig';
-import useCellStore from '../../components/cell/CellZustand';
-import useConsoleStore from '../../components/console/ConsoleZustand';
-import useNotebookStore from '../../components/notebook/NotebookZustand';
-import useOutputStore from '../../components/output/OutputZustand';
-import useTerminalStore from '../../components/terminal/TerminalZustand';
-import { createLiteServer } from './../../jupyter/lite/LiteServer';
-import { getJupyterServerHttpUrl } from './../../jupyter/JupyterConfig';
-import { ensureJupyterAuth, createServerSettings } from './../../jupyter/JupyterContext';
-import Kernel from './../../jupyter/kernel/Kernel';
+import { IJupyterConfig, loadJupyterConfig } from '../jupyter/JupyterConfig';
+import useCellStore from '../components/cell/CellZustand';
+import useConsoleStore from '../components/console/ConsoleZustand';
+import useNotebookStore from '../components/notebook/NotebookZustand';
+import useOutputStore from '../components/output/OutputZustand';
+import useTerminalStore from '../components/terminal/TerminalZustand';
+import { createLiteServer } from '../jupyter/lite/LiteServer';
+import { getJupyterServerHttpUrl } from '../jupyter/JupyterConfig';
+import { ensureJupyterAuth, createServerSettings, JupyterContextProps } from '../jupyter/JupyterContext';
+import Kernel from '../jupyter/kernel/Kernel';
 
 export type JupyterState = {
   datalayerConfig?: IDatalayerConfig;
@@ -70,38 +70,35 @@ export const jupyterStore = createStore<JupyterState>((set, get) => ({
   terminalStore: useTerminalStore,
 }));
 
-// TODO replace the const with props.
-const lite = false;
-const serverUrls = { baseUrl: '', wsUrl: '' };
-const variant = 'default';
-const startDefaultKernel = true;
-const useRunningKernelIndex = -1;
-const defaultKernelName = 'python';
-const useRunningKernelId = undefined;
-const initCode = undefined;
-
 // TODO Reuse code portions from JupyterContext
 export function useJupyterStore(): JupyterState;
 export function useJupyterStore<T>(selector: (state: JupyterState) => T): T;
 export function useJupyterStore<T>(selector?: (state: JupyterState) => T) {
-
+  return useStore(jupyterStore, selector!);
+}
+export function useJupyterStoreFromContext(props: JupyterContextProps): JupyterState;
+export function useJupyterStoreFromContext(props: JupyterContextProps) {
+  const {
+    defaultKernelName = 'python',
+    initCode = '',
+    lite = false,
+    startDefaultKernel = true,
+    useRunningKernelId,
+    useRunningKernelIndex = -1,
+    serverUrls,
+  } = props;
   useMemo<IJupyterConfig>(() => {
     const config = loadJupyterConfig({});
     jupyterStore.getState().jupyterConfig = config;
     return config;
   }, []);
-
-  const { baseUrl, wsUrl } = serverUrls;
-
-  const [_, setVariant] = useState(variant);
-
+  const { baseUrl, wsUrl } = serverUrls ?? {};
   const [serviceManager, setServiceManager] = useState<ServiceManager>();
-  const [__, setKernel] = useState<Kernel>();
-  const [___, setIsLoading] = useState<boolean>(
+  const [_, setKernel] = useState<Kernel>();
+  const [__, setIsLoading] = useState<boolean>(
     startDefaultKernel || useRunningKernelIndex > -1
   );
-
-  // Create a service manager
+  // Create a service manager.
   useEffect(() => {
     if (lite) {
       createLiteServer().then(async liteServer => {
@@ -128,7 +125,6 @@ export function useJupyterStore<T>(selector?: (state: JupyterState) => T) {
             return null;
           }
         });
-
         // Activate the loaded plugins
         await Promise.all(
           pluginIDs.filter(id => id).map(id => liteServer.activatePlugin(id!))
@@ -163,9 +159,7 @@ export function useJupyterStore<T>(selector?: (state: JupyterState) => T) {
         jupyterStore.getState().serviceManager = serviceManager;
       });
     }
-    setVariant(variant);
-  }, [baseUrl, wsUrl, lite, variant]);
-
+  }, [baseUrl, wsUrl, lite]);
   // Create a kernel
   useEffect(() => {
     serviceManager?.kernels.ready.then(async () => {
@@ -231,9 +225,7 @@ export function useJupyterStore<T>(selector?: (state: JupyterState) => T) {
       }
     });
   }, [lite, serviceManager]);
-
-  return useStore(jupyterStore, selector!);
-
+  return useStore(jupyterStore);
 }
 
 export default useJupyterStore;
