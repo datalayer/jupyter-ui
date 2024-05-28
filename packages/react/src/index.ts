@@ -56,6 +56,7 @@ export * from './components/commands/Commands';
 // Console.
 export * from './components/console/Console';
 export * from './components/console/ConsoleState';
+export * from './components/console/ConsoleZustand';
 
 // Dialog.
 export * from './components/dialog/Dialog';
@@ -91,6 +92,7 @@ export * from './components/lumino/ReactPortalWidget';
 export * from './components/notebook/Notebook';
 export * from './components/notebook/NotebookAdapter';
 export * from './components/notebook/NotebookState';
+export * from './components/notebook/NotebookZustand';
 export * from './components/notebook/content/JupyterReactContentFactory';
 export * from './components/notebook/cell/metadata/CellMetadataEditor';
 export * from './components/notebook/cell/metadata/NbGraderCells';
@@ -114,6 +116,7 @@ export * from './components/settings/Settings';
 // Terminal.
 export * from './components/terminal/Terminal';
 export * from './components/terminal/TerminalState';
+export * from './components/terminal/TerminalZustand';
 
 // TextInput
 export * from './components/textinput/TextInput';

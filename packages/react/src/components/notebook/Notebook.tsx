@@ -19,7 +19,6 @@ import CellMetadataEditor from './cell/metadata/CellMetadataEditor';
 import { newUuid } from '../../utils/Utils';
 import NotebookAdapter from './NotebookAdapter';
 import useNotebookStore from './NotebookZustand';
-import { useJupyterStore } from '../../state';
 
 import './Notebook.css';
 

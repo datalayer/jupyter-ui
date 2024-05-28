@@ -18,13 +18,15 @@ export const Terminal = (props: Terminal.ITerminalOptions) => {
   const { serverSettings } = useJupyter();
   const [adapter, setAdapter] = useState<TerminalAdapter>();
   useEffect(() => {
-    const adapter = new TerminalAdapter({
-      serverSettings,
-      ...props,
-    });
-    terminalStore.setAdapter(adapter);
-    setAdapter(adapter);
-  }, []);
+    if (serverSettings) {
+      const adapter = new TerminalAdapter({
+        serverSettings,
+        ...props,
+      });
+      terminalStore.setAdapter(adapter);
+      setAdapter(adapter);  
+    }
+  }, [serverSettings]);
   return adapter ? (
     <Box
       sx={{

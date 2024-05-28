@@ -30,7 +30,7 @@ export const Cell = (props: ICellProps) => {
   const cellStore = useCellStore();
   const [adapter, setAdapter] = useState<CellAdapter>();
   useEffect(() => {
-    if (defaultKernel) {
+    if (defaultKernel && serverSettings) {
       defaultKernel.ready.then(() => {
         const adapter = new CellAdapter({
           source,
@@ -63,7 +63,7 @@ export const Cell = (props: ICellProps) => {
         setAdapter(adapter);
       });
     }
-  }, [source, defaultKernel]);
+  }, [source, defaultKernel, serverSettings]);
   return adapter ? (
     <Box
       sx={{
