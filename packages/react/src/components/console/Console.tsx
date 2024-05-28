@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { useJupyter } from './../../jupyter/JupyterContext';
 import Lumino from '../lumino/Lumino';
 import ConsoleAdapter from './ConsoleAdapter';
+import useConsoleStore from './ConsoleZustand';
 
 import './Console.css';
 
@@ -15,6 +16,7 @@ export const Console = (options: Console.IConsoleOptions) => {
   const { defaultKernel, defaultKernelIsLoading, serviceManager } =
     useJupyter();
   const [adapter, setAdapter] = useState<ConsoleAdapter>();
+  const consoleStore = useConsoleStore();
   useEffect(() => {
     if (serviceManager && !defaultKernelIsLoading) {
       const adapter = new ConsoleAdapter({
@@ -23,6 +25,7 @@ export const Console = (options: Console.IConsoleOptions) => {
         code: options.code,
       });
       setAdapter(adapter);
+      consoleStore.setAdapter(adapter);
     }
   }, [defaultKernel, defaultKernelIsLoading, serviceManager]);
   return adapter ? (

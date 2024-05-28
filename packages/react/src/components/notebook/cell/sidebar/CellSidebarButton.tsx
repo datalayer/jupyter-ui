@@ -5,7 +5,6 @@
  */
 
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { PanelLayout } from '@lumino/widgets';
 import { Box, IconButton } from '@primer/react';
 import {
@@ -15,16 +14,16 @@ import {
   SquareIcon,
   XIcon,
 } from '@primer/octicons-react';
-import { notebookActions, selectActiveCell } from '../../NotebookRedux';
 import { CellSidebarProps } from './CellSidebarWidget';
+import useNotebookStore from '../../NotebookZustand';
 
 import { DATALAYER_CELL_HEADER_CLASS } from './CellSidebarWidget';
 
 export const CellSidebarNew = (props: CellSidebarProps) => {
   const { notebookId, cellId } = props;
+  const notebookStore = useNotebookStore();
   const [visible, setVisible] = useState(false);
-  const dispatch = useDispatch();
-  const activeCell = selectActiveCell(notebookId);
+  const activeCell = notebookStore.selectActiveCell(notebookId);
   const layout = activeCell?.layout;
   if (layout) {
     const cellWidget = (layout as PanelLayout).widgets[0];
@@ -59,7 +58,7 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
           title="Run cell"
           onClick={e => {
             e.preventDefault();
-            dispatch(notebookActions.run.started(notebookId));
+            notebookStore.run(notebookId);
           }}
           icon={PlayIcon}
           variant="invisible"
@@ -73,12 +72,10 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
           title="Add code cell above"
           onClick={e => {
             e.preventDefault();
-            dispatch(
-              notebookActions.insertAbove.started({
-                uid: notebookId,
-                cellType: 'code',
-              })
-            );
+            notebookStore.insertAbove({
+              uid: notebookId,
+              cellType: 'code',
+            });
           }}
           icon={ChevronUpIcon}
           variant="invisible"
@@ -92,12 +89,10 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
           title="Add markdown cell above"
           onClick={e => {
             e.preventDefault();
-            dispatch(
-              notebookActions.insertAbove.started({
-                uid: notebookId,
-                cellType: 'markdown',
-              })
-            );
+            notebookStore.insertAbove({
+              uid: notebookId,
+              cellType: 'markdown',
+            });
           }}
           icon={ChevronUpIcon}
           variant="invisible"
@@ -113,12 +108,10 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
             variant="invisible"
             onClick={e => {
               e.preventDefault();
-              dispatch(
-                notebookActions.changeCellType.started({
-                  uid: notebookId,
-                  cellType: 'markdown',
-                })
-              );
+              notebookStore.changeCellType({
+                uid: notebookId,
+                cellType: 'markdown',
+              });
             }}
           />
         ) : (
@@ -130,12 +123,10 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
             size="small"
             onClick={(e: any) => {
               e.preventDefault();
-              dispatch(
-                notebookActions.changeCellType.started({
-                  uid: notebookId,
-                  cellType: 'code',
-                })
-              );
+              notebookStore.changeCellType({
+                uid: notebookId,
+                cellType: 'code',
+              });
             }}
           />
         )}
@@ -148,12 +139,10 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
           title="Add markdown cell below"
           onClick={e => {
             e.preventDefault();
-            dispatch(
-              notebookActions.insertBelow.started({
-                uid: notebookId,
-                cellType: 'markdown',
-              })
-            );
+            notebookStore.insertBelow({
+              uid: notebookId,
+              cellType: 'markdown',
+            });
           }}
           icon={ChevronDownIcon}
           variant="invisible"
@@ -167,12 +156,10 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
           title="Add code cell above"
           onClick={e => {
             e.preventDefault();
-            dispatch(
-              notebookActions.insertBelow.started({
-                uid: notebookId,
-                cellType: 'code',
-              })
-            );
+            notebookStore.insertBelow({
+              uid: notebookId,
+              cellType: 'code',
+            });
           }}
           icon={ChevronDownIcon}
           variant="invisible"
@@ -186,7 +173,7 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
           title="Delete cell"
           onClick={e => {
             e.preventDefault();
-            dispatch(notebookActions.delete.started(notebookId));
+            notebookStore.delete(notebookId);
           }}
           icon={XIcon}
           variant="invisible"

@@ -4,8 +4,7 @@
  * MIT License
  */
 
-import { useState, useMemo, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useState, useEffect } from 'react';
 import { Box } from '@primer/react';
 import { UUID } from '@lumino/coreutils';
 import { IOutput } from '@jupyterlab/nbformat';
@@ -16,9 +15,9 @@ import Kernel from '../../jupyter/kernel/Kernel';
 import { KernelActionMenu, KernelProgressBar } from './../kernel';
 import Lumino from '../lumino/Lumino';
 import CodeMirrorEditor from '../codemirror/CodeMirrorEditor';
-import { selectExecute, outputActions, outputReducer } from './OutputRedux';
 import OutputAdapter from './OutputAdapter';
 import OutputRenderer from './OutputRenderer';
+import { useOutputStore } from './OutputZustand';
 
 import './Output.css';
 
@@ -43,7 +42,8 @@ export type IOutputProps = {
 };
 
 export const Output = (props: IOutputProps) => {
-  const { injectableStore, defaultKernel: kernel } = useJupyter();
+  const { defaultKernel: kernel } = useJupyter();
+  const outputStore = useOutputStore();
   const {
     adapter: propsAdapter,
     autoRun,
@@ -61,15 +61,11 @@ export const Output = (props: IOutputProps) => {
     sourceId,
     toolbarPosition,
   } = props;
-  const dispatch = useDispatch();
   const [id, setId] = useState<string | undefined>(sourceId);
   const [kernelStatus, setKernelStatus] =
     useState<KernelMessage.Status>('unknown');
   const [outputs, setOutputs] = useState<IOutput[] | undefined>(props.outputs);
   const [adapter, setAdapter] = useState<OutputAdapter>();
-  useMemo(() => {
-    injectableStore.inject('output', outputReducer);
-  }, [sourceId]);
   useEffect(() => {
     if (!id) {
       setId(UUID.uuid4());
@@ -87,12 +83,10 @@ export const Output = (props: IOutputProps) => {
                 const out = val.data['text/html']; // val.data['application/vnd.jupyter.stdout'];
                 if (out) {
                   if ((out as string).indexOf(receipt) > -1) {
-                    dispatch(
-                      outputActions.grade({
-                        sourceId,
-                        success: true,
-                      })
-                    );
+                    outputStore.grade({
+                      sourceId,
+                      success: true,
+                    });
                   }
                 }
               }
@@ -129,7 +123,7 @@ export const Output = (props: IOutputProps) => {
       };
     }
   }, [kernel]);
-  const executeRequest = selectExecute(sourceId);
+  const executeRequest = outputStore.selectExecute(sourceId);
   useEffect(() => {
     if (adapter && executeRequest && executeRequest.sourceId === id) {
       adapter.execute(executeRequest.source);

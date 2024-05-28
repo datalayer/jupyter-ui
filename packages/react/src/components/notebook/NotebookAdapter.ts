@@ -4,7 +4,6 @@
  * MIT License
  */
 
-import { Store } from 'redux';
 import { find } from '@lumino/algorithm';
 import { CommandRegistry } from '@lumino/commands';
 import { BoxPanel, Widget } from '@lumino/widgets';
@@ -83,14 +82,12 @@ export class NotebookAdapter {
   private _renderers: IRenderMime.IRendererFactory[];
   private _rendermime?: RenderMimeRegistry;
   private _serviceManager: ServiceManager;
-  private _store?: Store;
   private _tracker?: NotebookTracker;
   private _uid: string;
   private _CellSidebar?: (props: any) => JSX.Element;
 
   constructor(
     props: INotebookProps,
-    store: any,
     serviceManager: ServiceManager,
     lite?: Lite
   ) {
@@ -107,7 +104,6 @@ export class NotebookAdapter {
 
     this._CellSidebar = props.CellSidebar;
 
-    this._store = store;
     this._serviceManager = serviceManager;
 
     this._boxPanel = new BoxPanel();
@@ -231,7 +227,6 @@ export class NotebookAdapter {
           this._nbgrader,
           this._commandRegistry,
           { editorFactory },
-          this._store
         )
       : new NotebookPanel.ContentFactory({ editorFactory });
 

@@ -22,15 +22,6 @@ import { JupyterContextProps, JupyterContextProvider } from './JupyterContext';
 import { ColorMode } from './lab/JupyterLabColorMode';
 import JupyterLabCss from './lab/JupyterLabCss';
 
-const requireJsScript = document.createElement('script');
-requireJsScript.src =
-  'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js';
-document.body.appendChild(requireJsScript);
-
-const cdnOnlyScript = document.createElement('script');
-cdnOnlyScript.setAttribute('data-jupyter-widgets-cdn-only', 'true');
-document.body.appendChild(cdnOnlyScript);
-
 /**
  * Definition of the properties that can be passed
  * when creating a Jupyter context.
@@ -76,7 +67,6 @@ export const Jupyter = (props: JupyterProps) => {
     defaultKernelName,
     disableCssLoading = false,
     initCode = '',
-    injectableStore,
     jupyterServerHttpUrl,
     jupyterServerWsUrl,
     jupyterToken,
@@ -128,7 +118,6 @@ export const Jupyter = (props: JupyterProps) => {
             <JupyterContextProvider
               collaborative={collaborative}
               defaultKernelName={defaultKernelName}
-              injectableStore={injectableStore}
               initCode={initCode}
               lite={lite}
               serverUrls={{

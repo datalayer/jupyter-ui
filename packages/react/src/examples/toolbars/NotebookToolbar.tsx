@@ -5,7 +5,6 @@
  */
 
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { Box, IconButton, Button, ButtonGroup } from '@primer/react';
 import {
   PlusIcon,
@@ -15,16 +14,13 @@ import {
   ZapIcon,
   PaperAirplaneIcon,
 } from '@primer/octicons-react';
-import {
-  notebookActions,
-  selectKernelStatus,
-} from '../../components/notebook/NotebookRedux';
+import useNotebookStore from '../../components/notebook/NotebookZustand';
 
 export const NotebookToolbar = (props: { notebookId: string }) => {
   const { notebookId } = props;
+  const notebookStore = useNotebookStore();
   const [type, setType] = useState('code');
-  const dispatch = useDispatch();
-  const kernelStatus = selectKernelStatus(notebookId);
+  const kernelStatus = notebookStore.selectKernelStatus(notebookId);
   const handleChangeCellType = (newType: string) => {
     setType(newType);
   };
@@ -56,12 +52,10 @@ export const NotebookToolbar = (props: { notebookId: string }) => {
           title="Save"
           onClick={e => {
             e.preventDefault();
-            dispatch(
-              notebookActions.save.started({
-                uid: notebookId,
-                date: new Date(),
-              })
-            );
+            notebookStore.save({
+              uid: notebookId,
+              date: new Date(),
+            });
           }}
           icon={ZapIcon}
         />
@@ -73,7 +67,7 @@ export const NotebookToolbar = (props: { notebookId: string }) => {
           title="Run cell"
           onClick={e => {
             e.preventDefault();
-            dispatch(notebookActions.run.started(notebookId));
+            notebookStore.run(notebookId);
           }}
           style={{ color: 'grey' }}
           icon={PlayIcon}
@@ -87,7 +81,7 @@ export const NotebookToolbar = (props: { notebookId: string }) => {
           title="Run all cells"
           onClick={e => {
             e.preventDefault();
-            dispatch(notebookActions.runAll.started(notebookId));
+            notebookStore.runAll(notebookId);
           }}
           style={{ color: 'grey' }}
           icon={PaperAirplaneIcon}
@@ -100,7 +94,7 @@ export const NotebookToolbar = (props: { notebookId: string }) => {
           aria-label="Interrupt"
           onClick={e => {
             e.preventDefault();
-            dispatch(notebookActions.interrupt.started(notebookId));
+            notebookStore.interrupt(notebookId);
           }}
           icon={StopIcon}
           disabled={kernelStatus !== 'busy'}
@@ -113,7 +107,7 @@ export const NotebookToolbar = (props: { notebookId: string }) => {
           title="Delete"
           onClick={e => {
             e.preventDefault();
-            dispatch(notebookActions.delete.started(notebookId));
+            notebookStore.delete(notebookId);
           }}
           icon={TrashIcon}
         />
@@ -137,26 +131,20 @@ export const NotebookToolbar = (props: { notebookId: string }) => {
           onClick={e => {
             e.preventDefault();
             if (type === 'raw') {
-              dispatch(
-                notebookActions.insertBelow.started({
-                  uid: notebookId,
-                  cellType: 'raw',
-                })
-              );
+              notebookStore.insertBelow({
+                uid: notebookId,
+                cellType: 'raw',
+              });
             } else if (type === 'code') {
-              dispatch(
-                notebookActions.insertBelow.started({
-                  uid: notebookId,
-                  cellType: 'code',
-                })
-              );
+              notebookStore.insertBelow({
+                uid: notebookId,
+                cellType: 'code',
+              });
             } else if (type === 'markdown') {
-              dispatch(
-                notebookActions.insertBelow.started({
-                  uid: notebookId,
-                  cellType: 'markdown',
-                })
-              );
+              notebookStore.insertBelow({
+                uid: notebookId,
+                cellType: 'markdown',
+              });
             }
           }}
           style={{ color: 'grey' }}

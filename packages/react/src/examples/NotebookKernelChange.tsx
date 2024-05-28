@@ -5,14 +5,13 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import { useDispatch } from 'react-redux';
 import { Box, Button } from '@primer/react';
 import Jupyter from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { Kernel } from '../jupyter/kernel/Kernel';
 import Notebook from '../components/notebook/Notebook';
-import { notebookActions } from '../components/notebook/NotebookRedux';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
+import useNotebookStore from '../components/notebook/NotebookZustand';
 
 const NOTEBOOK_UID = 'notebook-kernel-id';
 
@@ -20,7 +19,7 @@ const NEW_KERNEL_NAME = 'deno';
 
 const NotebookKernelChange = () => {
   const { kernelManager, serviceManager } = useJupyter();
-  const dispatch = useDispatch();
+  const notebookStore = useNotebookStore();
   const changeKernel = () => {
     if (kernelManager && serviceManager) {
       const kernel = new Kernel({
@@ -32,7 +31,7 @@ const NotebookKernelChange = () => {
         sessionManager: serviceManager.sessions,
       });
       kernel.ready.then(() => {
-        dispatch(notebookActions.changeKernel({ uid: NOTEBOOK_UID, kernel }));
+        notebookStore.changeKernel({ uid: NOTEBOOK_UID, kernel });
         alert(
           `The kernel is changed (was python3, now ${NEW_KERNEL_NAME}). Bummer, all your variables are lost!`
         );

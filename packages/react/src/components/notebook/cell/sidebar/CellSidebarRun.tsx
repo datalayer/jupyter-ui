@@ -5,20 +5,19 @@
  */
 
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { PanelLayout } from '@lumino/widgets';
 import { Box, Button } from '@primer/react';
 import { PlayIcon } from '@primer/octicons-react';
-import { notebookActions, selectActiveCell } from '../../NotebookRedux';
 import { CellSidebarProps } from './CellSidebarWidget';
+import useNotebookStore from '../../NotebookZustand';
 
 import { DATALAYER_CELL_HEADER_CLASS } from './CellSidebarWidget';
 
 export const CellSidebarRun = (props: CellSidebarProps) => {
   const { notebookId } = props;
+  const notebookStore = useNotebookStore();
   const [visible, setVisible] = useState(false);
-  const dispatch = useDispatch();
-  const activeCell = selectActiveCell(notebookId);
+  const activeCell = notebookStore.selectActiveCell(notebookId);
   const layout = activeCell?.layout;
   if (layout) {
     const cellWidget = (layout as PanelLayout).widgets[0];
@@ -48,7 +47,7 @@ export const CellSidebarRun = (props: CellSidebarProps) => {
           variant="invisible"
           onClick={(e: any) => {
             e.preventDefault();
-            dispatch(notebookActions.run.started(notebookId));
+            notebookStore.run(notebookId);
           }}
         >
           Run

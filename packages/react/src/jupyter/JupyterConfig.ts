@@ -188,7 +188,7 @@ export const loadJupyterConfig = (
     );
   }
   if (config.insideJupyterLab) {
-    // Bail if running inisde JupyterLab, we don't want to change the existing PageConfig.
+    // Bail if running inside JupyterLab, we don't want to change the existing PageConfig.
     return config;
   }
   PageConfig.setOption('baseUrl', getJupyterServerHttpUrl());

@@ -11,8 +11,8 @@ import { ZapIcon } from '@primer/octicons-react';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import Jupyter from '../jupyter/Jupyter';
 import Notebook from '../components/notebook/Notebook';
-import { selectNotebookModel } from '../components/notebook/NotebookRedux';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
+import { notebookStore } from '../components/notebook/NotebookZustand';
 
 import notebook from './notebooks/NotebookExample1.ipynb.json';
 
@@ -21,7 +21,7 @@ const NOTEBOOK_UID = 'notebook-model-uid';
 const NotebookExternalContent = () => {
   const [nbformat, setNbFormat] = useState<INotebookContent>();
   const [updatedNbFormat, setUpdatedNbFormat] = useState<INotebookContent>();
-  const model = selectNotebookModel(NOTEBOOK_UID)?.model;
+  const model = notebookStore.getState().selectNotebookModel(NOTEBOOK_UID)?.model;
   useEffect(() => {
     // Set nbformat with any content.
     // This may come from an external storage that you fetch in this react effect.

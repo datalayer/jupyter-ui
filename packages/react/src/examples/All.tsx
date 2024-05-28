@@ -5,7 +5,6 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import { useDispatch } from 'react-redux';
 import { IOutput, INotebookContent } from '@jupyterlab/nbformat';
 import { Box, Button, ButtonGroup } from '@primer/react';
 import Jupyter from '../jupyter/Jupyter';
@@ -21,7 +20,7 @@ import CellSidebarNew from '../components/notebook/cell/sidebar/CellSidebarButto
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 import Console from '../components/console/Console';
 import { cellStore, useCellStore } from '../components/cell/CellZustand';
-import { notebookActions } from '../components/notebook/NotebookRedux';
+import useNotebookStore from '../components/notebook/NotebookZustand';
 
 import notebook from './notebooks/NotebookExample1.ipynb.json';
 
@@ -88,7 +87,7 @@ const CellToolbar = () => {
 };
 
 const NotebookToolbar = () => {
-  const dispatch = useDispatch();
+  const notebookStore = useNotebookStore();
   return (
     <Box display="flex">
       <ButtonGroup>
@@ -96,12 +95,10 @@ const NotebookToolbar = () => {
           variant="default"
           size="small"
           onClick={() =>
-            dispatch(
-              notebookActions.save.started({
-                uid: NOTEBOOK_UID_1,
-                date: new Date(),
-              })
-            )
+            notebookStore.save({
+              uid: NOTEBOOK_UID_1,
+              date: new Date(),
+            })
           }
         >
           Save the notebook
@@ -110,7 +107,7 @@ const NotebookToolbar = () => {
           variant="default"
           size="small"
           onClick={() =>
-            dispatch(notebookActions.runAll.started(NOTEBOOK_UID_1))
+            notebookStore.runAll(NOTEBOOK_UID_1)
           }
         >
           Run all
@@ -122,7 +119,7 @@ const NotebookToolbar = () => {
 
 const NotebookKernelChange = () => {
   const { kernelManager, serviceManager } = useJupyter();
-  const dispatch = useDispatch();
+  const notebookStore = useNotebookStore();
   const changeKernel = () => {
     if (serviceManager && kernelManager) {
       const kernel = new Kernel({
@@ -134,7 +131,7 @@ const NotebookKernelChange = () => {
         sessionManager: serviceManager.sessions,
       });
       kernel.ready.then(() => {
-        dispatch(notebookActions.changeKernel({ uid: NOTEBOOK_UID_2, kernel }));
+        notebookStore.changeKernel({ uid: NOTEBOOK_UID_2, kernel });
         alert('Kernel is changed.');
       });
     }

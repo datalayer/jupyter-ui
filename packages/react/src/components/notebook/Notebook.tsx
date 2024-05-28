@@ -6,7 +6,6 @@
 
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { useDispatch } from 'react-redux';
 import { Box } from '@primer/react';
 import { Cell, ICellModel } from '@jupyterlab/cells';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
@@ -19,12 +18,7 @@ import { CellSidebarProps } from './cell/sidebar/CellSidebarWidget';
 import CellMetadataEditor from './cell/metadata/CellMetadataEditor';
 import { newUuid } from '../../utils/Utils';
 import NotebookAdapter from './NotebookAdapter';
-import {
-  notebookActions,
-  selectNotebookPortals,
-  notebookEpics,
-  notebookReducer,
-} from './NotebookRedux';
+import useNotebookStore from './NotebookZustand';
 
 import './Notebook.css';
 
@@ -83,7 +77,7 @@ export type INotebookProps = {
  * @returns A Notebook React.js component.
  */
 export const Notebook = (props: INotebookProps) => {
-  const { serviceManager, defaultKernel, kernelManager, injectableStore, lite } =
+  const { serviceManager, defaultKernel, kernelManager, lite } =
     useJupyter();
   const {
     path,
@@ -95,11 +89,12 @@ export const Notebook = (props: INotebookProps) => {
     nbformat,
     Toolbar,
   } = props;
+
+  const notebookStore = useNotebookStore();
   const [uid] = useState(props.uid || newUuid());
   const [adapter, setAdapter] = useState<NotebookAdapter>();
   const kernel = propsKernel || defaultKernel;
-  const dispatch = useDispatch();
-  const portals = selectNotebookPortals(uid);
+  const portals = notebookStore.selectNotebookPortals(uid);
   const newAdapterState = () => {
     if (uid && serviceManager && kernelManager && kernel) {
       kernel.ready.then(() => {
@@ -109,30 +104,25 @@ export const Notebook = (props: INotebookProps) => {
             kernel,
             uid,
           },
-          injectableStore,
           serviceManager,
           lite
         );
         setAdapter(adapter);
-        dispatch(
-          notebookActions.update({ uid, partialState: { adapter: adapter } })
-        );
+        notebookStore.update({ uid, partialState: { adapter: adapter } })
         adapter.serviceManager.ready.then(() => {
           if (!readOnly) {
             const activeCell = adapter.notebookPanel!.content.activeCell;
             if (activeCell) {
-              dispatch(
-                notebookActions.activeCellChange({
-                  uid,
-                  cellModel: activeCell,
-                })
-              );
+              notebookStore.activeCellChange({
+                uid,
+                cellModel: activeCell,
+              });
             }
             const activeCellChanged$ = asObservable(
               adapter.notebookPanel!.content.activeCellChanged
             );
             activeCellChanged$.subscribe((cellModel: Cell<ICellModel>) => {
-              dispatch(notebookActions.activeCellChange({ uid, cellModel }));
+              notebookStore.activeCellChange({ uid, cellModel });
               const panelDiv = document.getElementById(
                 'right-panel-id'
               ) as HTMLDivElement;
@@ -147,47 +137,41 @@ export const Notebook = (props: INotebookProps) => {
                   </Box>
                 );
                 const portal = createPortal(cellMetadataOptions, panelDiv);
-                dispatch(
-                  notebookActions.setPortalDisplay({
-                    uid,
-                    portalDisplay: { portal, pinned: false },
-                  })
-                );
+                notebookStore.setPortalDisplay({
+                  uid,
+                  portalDisplay: { portal, pinned: false },
+                });
               }
             });
           }
           adapter.notebookPanel?.model?.contentChanged.connect(
             (notebookModel, _) => {
-              dispatch(notebookActions.modelChange({ uid, notebookModel }));
+              notebookStore.modelChange({ uid, notebookModel });
             }
           );
           /*
           adapter.notebookPanel?.model!.sharedModel.changed.connect((_, notebookChange) => {
-            dispatch(notebookActions.notebookChange({ uid, notebookChange }));
+            notebookStore.notebookChange({ uid, notebookChange });
           });
           adapter.notebookPanel?.content.modelChanged.connect((notebook, _) => {
-            dispatÅch(notebookActions.notebookChange({ uid, notebook }));
+            dispatÅch(notebookStore.notebookChange({ uid, notebook }));
           });
           */
           adapter.notebookPanel?.content.activeCellChanged.connect(
             (_, cellModel) => {
               if (cellModel === null) {
-                dispatch(
-                  notebookActions.activeCellChange({
-                    uid,
-                    cellModel: undefined,
-                  })
-                );
+                notebookStore.activeCellChange({
+                  uid,
+                  cellModel: undefined,
+                });
               } else {
-                dispatch(notebookActions.activeCellChange({ uid, cellModel }));
+                notebookStore.activeCellChange({ uid, cellModel });
               }
             }
           );
           adapter.notebookPanel?.sessionContext.statusChanged.connect(
             (_, kernelStatus) => {
-              dispatch(
-                notebookActions.kernelStatusChanged({ uid, kernelStatus })
-              );
+              notebookStore.kernelStatusChanged({ uid, kernelStatus });
             }
           );
         });
@@ -195,18 +179,13 @@ export const Notebook = (props: INotebookProps) => {
     }
   };
   useEffect(() => {
-    injectableStore.inject('notebook', notebookReducer, notebookEpics);
-  }, []);
-  useEffect(() => {
     if (adapter) {
       adapter.dispose();
     }
     newAdapterState();
     return () => {
-      dispatch(
-        notebookActions.setPortalDisplay({ uid, portalDisplay: undefined })
-      );
-      dispatch(notebookActions.dispose(uid));
+      notebookStore.setPortalDisplay({ uid, portalDisplay: undefined });
+      notebookStore.dispose(uid);
     };
   }, [uid, serviceManager, kernelManager, kernel, path]);
   useEffect(() => {

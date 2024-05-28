@@ -5,7 +5,6 @@
  */
 
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { PanelLayout } from '@lumino/widgets';
 import { ActionMenu, Button, Box } from '@primer/react';
 import {
@@ -15,20 +14,17 @@ import {
   ChevronDownIcon,
   SquareIcon,
 } from '@primer/octicons-react';
-import {
-  notebookActions,
-  selectActiveCell,
-} from '../../components/notebook/NotebookRedux';
 import { CellSidebarProps } from '../../components/notebook/cell/sidebar/CellSidebarWidget';
 import CellMetadataEditor from '../../components/notebook/cell/metadata/CellMetadataEditor';
+import useNotebookStore from '../../components/notebook/NotebookZustand';
 
 import { DATALAYER_CELL_HEADER_CLASS } from '../../components/notebook/cell/sidebar/CellSidebarWidget';
 
 export const CellSidebarSource = (props: CellSidebarProps) => {
   const { notebookId, cellId, nbgrader } = props;
+  const notebookStore = useNotebookStore();
   const [visible, setVisible] = useState(false);
-  const dispatch = useDispatch();
-  const activeCell = selectActiveCell(notebookId);
+  const activeCell = notebookStore.selectActiveCell(notebookId);
   const layout = activeCell?.layout;
   if (layout) {
     const cellWidget = (layout as PanelLayout).widgets[0];
@@ -62,7 +58,7 @@ export const CellSidebarSource = (props: CellSidebarProps) => {
           size="small"
           onClick={(e: any) => {
             e.preventDefault();
-            dispatch(notebookActions.run.started(notebookId));
+            notebookStore.run(notebookId);
           }}
         >
           Run
@@ -75,14 +71,12 @@ export const CellSidebarSource = (props: CellSidebarProps) => {
           size="small"
           onClick={(e: any) => {
             e.preventDefault();
-            dispatch(
-              notebookActions.insertAbove.started({
-                uid: notebookId,
-                cellType: 'code',
-                source:
-                  "print('Hello 🪐 ⚛️ Jupyter React, I have been inserted up ⬆️.')",
-              })
-            );
+            notebookStore.insertAbove({
+              uid: notebookId,
+              cellType: 'code',
+              source:
+                "print('Hello 🪐 ⚛️ Jupyter React, I have been inserted up ⬆️.')",
+            });
           }}
         >
           Code (with source)
@@ -95,12 +89,10 @@ export const CellSidebarSource = (props: CellSidebarProps) => {
           size="small"
           onClick={(e: any) => {
             e.preventDefault();
-            dispatch(
-              notebookActions.insertAbove.started({
-                uid: notebookId,
-                cellType: 'markdown',
-              })
-            );
+            notebookStore.insertAbove({
+              uid: notebookId,
+              cellType: 'markdown',
+            });
           }}
         >
           Markdown
@@ -114,12 +106,10 @@ export const CellSidebarSource = (props: CellSidebarProps) => {
             size="small"
             onClick={(e: any) => {
               e.preventDefault();
-              dispatch(
-                notebookActions.changeCellType.started({
-                  uid: notebookId,
-                  cellType: 'markdown',
-                })
-              );
+              notebookStore.changeCellType({
+                uid: notebookId,
+                cellType: 'markdown',
+              });
             }}
           >
             To Markdown
@@ -131,12 +121,10 @@ export const CellSidebarSource = (props: CellSidebarProps) => {
             size="small"
             onClick={(e: any) => {
               e.preventDefault();
-              dispatch(
-                notebookActions.changeCellType.started({
-                  uid: notebookId,
-                  cellType: 'code',
-                })
-              );
+              notebookStore.changeCellType({
+                uid: notebookId,
+                cellType: 'code',
+              });
             }}
           >
             To Code
@@ -150,12 +138,10 @@ export const CellSidebarSource = (props: CellSidebarProps) => {
           size="small"
           onClick={(e: any) => {
             e.preventDefault();
-            dispatch(
-              notebookActions.insertBelow.started({
-                uid: notebookId,
-                cellType: 'markdown',
-              })
-            );
+            notebookStore.insertBelow({
+              uid: notebookId,
+              cellType: 'markdown',
+            });
           }}
         >
           Markdown
@@ -168,14 +154,12 @@ export const CellSidebarSource = (props: CellSidebarProps) => {
           size="small"
           onClick={(e: any) => {
             e.preventDefault();
-            dispatch(
-              notebookActions.insertBelow.started({
-                uid: notebookId,
-                cellType: 'code',
-                source:
-                  "print('Hello 🪐 ⚛️ Jupyter React, I have been inserted down ⬇️.')",
-              })
-            );
+            notebookStore.insertBelow({
+              uid: notebookId,
+              cellType: 'code',
+              source:
+                "print('Hello 🪐 ⚛️ Jupyter React, I have been inserted down ⬇️.')",
+            })
           }}
         >
           Code (with source)
@@ -188,7 +172,7 @@ export const CellSidebarSource = (props: CellSidebarProps) => {
           size="small"
           onClick={(e: any) => {
             e.preventDefault();
-            dispatch(notebookActions.delete.started(notebookId));
+            notebookStore.delete(notebookId);
           }}
         >
           Delete

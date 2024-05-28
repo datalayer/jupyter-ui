@@ -5,7 +5,6 @@
  */
 
 import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { Box, Button, ButtonGroup, IconButton } from '@primer/react';
 import {
   PlusIcon,
@@ -16,24 +15,17 @@ import {
   SyncIcon,
 } from '@primer/octicons-react';
 import { FastForwardIcon } from '@datalayer/icons-react';
-import { IJupyterReactState } from '../../state/redux/State';
 import { cmdIds } from '../../components/notebook/NotebookCommands';
-import {
-  notebookActions,
-  selectNotebook,
-  selectSaveRequest,
-} from '../../components/notebook/NotebookRedux';
+import useNotebookStore from '../../components/notebook/NotebookZustand';
 
 export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
   const { notebookId } = props;
+  const notebookStore = useNotebookStore();
   const [autoSave, setAutoSave] = useState(false);
   const [addType, setAddType] = useState('code');
-  const dispatch = useDispatch();
-  const notebook = selectNotebook(notebookId);
-  const saveRequest = selectSaveRequest(notebookId);
-  const notebookstate = useSelector((state: IJupyterReactState) => {
-    return state.notebook;
-  });
+  const notebook = notebookStore.selectNotebook(notebookId);
+  const saveRequest = notebookStore.selectSaveRequest(notebookId);
+  const notebookstate = notebookStore.notebooks
   useEffect(() => {
     notebook?.adapter?.commands.execute(cmdIds.save);
   }, [saveRequest]);
@@ -64,12 +56,10 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
           title="Save"
           onClick={e => {
             e.preventDefault();
-            dispatch(
-              notebookActions.save.started({
-                uid: notebookId,
-                date: new Date(),
-              })
-            );
+            notebookStore.save({
+              uid: notebookId,
+              date: new Date(),
+            });
           }}
           icon={ZapIcon}
         />
@@ -81,7 +71,7 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
           title="Run cell"
           onClick={e => {
             e.preventDefault();
-            dispatch(notebookActions.run.started(notebookId));
+            notebookStore.run(notebookId);
           }}
           icon={ChevronRightIcon}
         />
@@ -94,7 +84,7 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
             title="Run all cells"
             onClick={e => {
               e.preventDefault();
-              dispatch(notebookActions.runAll.started(notebookId));
+              notebookStore.runAll(notebookId);
             }}
             icon={FastForwardIcon}
           />
@@ -106,7 +96,7 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
             aria-label="Interrupt"
             onClick={e => {
               e.preventDefault();
-              dispatch(notebookActions.interrupt.started(notebookId));
+              notebookStore.interrupt(notebookId);
             }}
             icon={StopIcon}
           />
@@ -119,7 +109,7 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
           title="Delete"
           onClick={e => {
             e.preventDefault();
-            dispatch(notebookActions.delete.started(notebookId));
+            notebookStore.delete(notebookId);
           }}
           icon={TrashIcon}
         />
@@ -154,12 +144,10 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
           title="Insert cell"
           onClick={e => {
             e.preventDefault();
-            dispatch(
-              notebookActions.insertBelow.started({
-                uid: notebookId,
-                cellType: addType,
-              })
-            );
+            notebookStore.insertBelow({
+              uid: notebookId,
+              cellType: addType,
+            });
           }}
           icon={PlusIcon}
         />

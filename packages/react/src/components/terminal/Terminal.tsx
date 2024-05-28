@@ -5,28 +5,28 @@
  */
 
 import { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { Box } from '@primer/react';
 import { ITerminal } from '@jupyterlab/terminal';
 import TerminalAdapter from './TerminalAdapter';
-import { terminalActions, terminalReducer } from './TerminalRedux';
 import { useJupyter } from './../../jupyter/JupyterContext';
 import LuminoBox from '../lumino/LuminoBox';
+import useTerminalStore from './TerminalZustand';
 
 export const Terminal = (props: Terminal.ITerminalOptions) => {
   const { height } = props;
-  const { injectableStore, serverSettings } = useJupyter();
-  const dispatch = useDispatch();
+  const terminalStore = useTerminalStore();
+  const { serverSettings } = useJupyter();
   const [adapter, setAdapter] = useState<TerminalAdapter>();
   useEffect(() => {
-    injectableStore.inject('terminal', terminalReducer);
-    const adapter = new TerminalAdapter({
-      serverSettings,
-      ...props,
-    });
-    dispatch(terminalActions.update({ adapter }));
-    setAdapter(adapter);
-  }, []);
+    if (serverSettings) {
+      const adapter = new TerminalAdapter({
+        serverSettings,
+        ...props,
+      });
+      terminalStore.setAdapter(adapter);
+      setAdapter(adapter);  
+    }
+  }, [serverSettings]);
   return adapter ? (
     <Box
       sx={{

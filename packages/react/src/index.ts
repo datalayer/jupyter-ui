@@ -30,8 +30,7 @@ export * from './jupyter/ipywidgets/classic/manager';
 export * from './jupyter/ipywidgets/lab/manager';
 
 // Jupyter State.
-export * from './state/redux/State';
-export * from './state/redux/Store';
+export * from './state';
 
 /**
  * Components.
@@ -56,7 +55,8 @@ export * from './components/commands/Commands';
 
 // Console.
 export * from './components/console/Console';
-export * from './components/console/ConsoleRedux';
+export * from './components/console/ConsoleState';
+export * from './components/console/ConsoleZustand';
 
 // Dialog.
 export * from './components/dialog/Dialog';
@@ -91,7 +91,8 @@ export * from './components/lumino/ReactPortalWidget';
 // Notebook.
 export * from './components/notebook/Notebook';
 export * from './components/notebook/NotebookAdapter';
-export * from './components/notebook/NotebookRedux';
+export * from './components/notebook/NotebookState';
+export * from './components/notebook/NotebookZustand';
 export * from './components/notebook/content/JupyterReactContentFactory';
 export * from './components/notebook/cell/metadata/CellMetadataEditor';
 export * from './components/notebook/cell/metadata/NbGraderCells';
@@ -105,7 +106,7 @@ export * from './components/notebook/cell/sidebar/CellSidebarRun';
 // @see https://github.com/datalayer/jupyter-ui/issues/170
 // export * from './components/output/Output';
 export * from './components/output/OutputAdapter';
-export * from './components/output/OutputRedux';
+export * from './components/output/OutputState';
 export * from './components/output/OutputZustand';
 export * from './components/output/OutputIPyWidgets';
 
@@ -114,7 +115,8 @@ export * from './components/settings/Settings';
 
 // Terminal.
 export * from './components/terminal/Terminal';
-export * from './components/terminal/TerminalRedux';
+export * from './components/terminal/TerminalState';
+export * from './components/terminal/TerminalZustand';
 
 // TextInput
 export * from './components/textinput/TextInput';

@@ -5,7 +5,6 @@
  */
 
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { PanelLayout } from '@lumino/widgets';
 import { ActionMenu, Button, Box } from '@primer/react';
 import {
@@ -15,17 +14,17 @@ import {
   ChevronDownIcon,
   SquareIcon,
 } from '@primer/octicons-react';
-import { notebookActions, selectActiveCell } from '../../NotebookRedux';
 import { CellSidebarProps } from './CellSidebarWidget';
 import CellMetadataEditor from '../metadata/CellMetadataEditor';
+import useNotebookStore from '../../NotebookZustand';
 
 import { DATALAYER_CELL_HEADER_CLASS } from './CellSidebarWidget';
 
 export const CellSidebar = (props: CellSidebarProps) => {
   const { notebookId, cellId, nbgrader } = props;
   const [visible, setVisible] = useState(false);
-  const dispatch = useDispatch();
-  const activeCell = selectActiveCell(notebookId);
+  const notebookStore = useNotebookStore()
+  const activeCell = notebookStore.selectActiveCell(notebookId);
   const layout = activeCell?.layout;
   if (layout) {
     const cellWidget = (layout as PanelLayout).widgets[0];
@@ -60,7 +59,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
           size="small"
           onClick={(e: any) => {
             e.preventDefault();
-            dispatch(notebookActions.run.started(notebookId));
+            notebookStore.run(notebookId);
           }}
         >
           Run
@@ -74,12 +73,10 @@ export const CellSidebar = (props: CellSidebarProps) => {
           size="small"
           onClick={(e: any) => {
             e.preventDefault();
-            dispatch(
-              notebookActions.insertAbove.started({
+              notebookStore.insertAbove({
                 uid: notebookId,
                 cellType: 'code',
-              })
-            );
+              });
           }}
         >
           Code
@@ -93,12 +90,10 @@ export const CellSidebar = (props: CellSidebarProps) => {
           size="small"
           onClick={(e: any) => {
             e.preventDefault();
-            dispatch(
-              notebookActions.insertAbove.started({
-                uid: notebookId,
-                cellType: 'markdown',
-              })
-            );
+            notebookStore.insertAbove({
+              uid: notebookId,
+              cellType: 'markdown',
+            });
           }}
         >
           Markdown
@@ -113,12 +108,10 @@ export const CellSidebar = (props: CellSidebarProps) => {
             size="small"
             onClick={(e: any) => {
               e.preventDefault();
-              dispatch(
-                notebookActions.changeCellType.started({
-                  uid: notebookId,
-                  cellType: 'markdown',
-                })
-              );
+              notebookStore.changeCellType({
+                uid: notebookId,
+                cellType: 'markdown',
+              });
             }}
           >
             To Markdown
@@ -131,12 +124,10 @@ export const CellSidebar = (props: CellSidebarProps) => {
             size="small"
             onClick={(e: any) => {
               e.preventDefault();
-              dispatch(
-                notebookActions.changeCellType.started({
-                  uid: notebookId,
-                  cellType: 'code',
-                })
-              );
+              notebookStore.changeCellType({
+                uid: notebookId,
+                cellType: 'code',
+              });
             }}
           >
             To Code
@@ -151,12 +142,10 @@ export const CellSidebar = (props: CellSidebarProps) => {
           size="small"
           onClick={(e: any) => {
             e.preventDefault();
-            dispatch(
-              notebookActions.insertBelow.started({
-                uid: notebookId,
-                cellType: 'markdown',
-              })
-            );
+            notebookStore.insertBelow({
+              uid: notebookId,
+              cellType: 'markdown',
+            });
           }}
         >
           Markdown
@@ -170,12 +159,10 @@ export const CellSidebar = (props: CellSidebarProps) => {
           size="small"
           onClick={(e: any) => {
             e.preventDefault();
-            dispatch(
-              notebookActions.insertBelow.started({
-                uid: notebookId,
-                cellType: 'code',
-              })
-            );
+            notebookStore.insertBelow({
+              uid: notebookId,
+              cellType: 'code',
+            });
           }}
         >
           Code
@@ -189,7 +176,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
           size="small"
           onClick={(e: any) => {
             e.preventDefault();
-            dispatch(notebookActions.delete.started(notebookId));
+            notebookStore.delete(notebookId);
           }}
         >
           Delete

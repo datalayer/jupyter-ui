@@ -11,7 +11,7 @@ import { Box } from '@primer/react';
 import CellAdapter from './CellAdapter';
 import Lumino from '../lumino/Lumino';
 import { useJupyter } from './../../jupyter/JupyterContext';
-import { useJupyterReactStore } from './../../state';
+import useCellStore from './CellZustand';
 
 export type ICellProps = {
   /**
@@ -27,17 +27,17 @@ export type ICellProps = {
 export const Cell = (props: ICellProps) => {
   const { source = '', autoStart } = props;
   const { serverSettings, defaultKernel } = useJupyter();
-  const cellStore = useJupyterReactStore().cellStore();
+  const cellStore = useCellStore();
   const [adapter, setAdapter] = useState<CellAdapter>();
   useEffect(() => {
-    if (defaultKernel) {
+    if (defaultKernel && serverSettings) {
       defaultKernel.ready.then(() => {
         const adapter = new CellAdapter({
           source,
           serverSettings,
           kernel: defaultKernel,
         });
-        cellStore.setCellAdapter(adapter);
+        cellStore.setAdapter(adapter);
         cellStore.setSource(source);
         adapter.codeCell.model.contentChanged.connect(
           (cellModel, changedArgs) => {
@@ -63,7 +63,7 @@ export const Cell = (props: ICellProps) => {
         setAdapter(adapter);
       });
     }
-  }, [source, defaultKernel]);
+  }, [source, defaultKernel, serverSettings]);
   return adapter ? (
     <Box
       sx={{

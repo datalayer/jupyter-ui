@@ -6,12 +6,11 @@
 
 import { createElement } from 'react';
 import { createPortal } from 'react-dom';
-import { Store } from 'redux';
 import { ICellHeader } from '@jupyterlab/cells';
 import { CommandRegistry } from '@lumino/commands';
 import { newUuid } from '../../../../utils/Utils';
 import { ReactPortalWidget } from '../../../lumino/ReactPortalWidget';
-import { notebookActions } from '../../NotebookRedux';
+import { notebookStore } from '../../NotebookZustand';
 
 export const DATALAYER_CELL_HEADER_CLASS = 'dla-CellHeader-Container';
 
@@ -32,7 +31,6 @@ export class CellSidebarWidget
     notebookId: string,
     nbgrader: boolean,
     commands: CommandRegistry,
-    store: Store
   ) {
     super();
     this.commands = commands;
@@ -49,12 +47,10 @@ export class CellSidebarWidget
       <div className={DATALAYER_CELL_HEADER_CLASS}>{sidebar}</div>
     );
     const portal = createPortal(portalDiv, this.node);
-    store.dispatch(
-      notebookActions.addPortals({
-        uid: notebookId,
-        portals: [portal],
-      })
-    );
+    notebookStore.getState().addPortals({
+      uid: notebookId,
+      portals: [portal],
+    });
   }
 }
 
