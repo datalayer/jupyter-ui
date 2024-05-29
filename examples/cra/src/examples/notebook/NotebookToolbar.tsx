@@ -5,25 +5,18 @@
  */
 
 import {useState} from 'react';
-import {useDispatch} from 'react-redux';
 import {Button, FormControl, ToggleSwitch} from '@primer/react';
 import {Box, Text} from '@primer/react';
 import {PlusIcon, PlayIcon, FileIcon, StopIcon, CommentDiscussionIcon} from '@primer/octicons-react';
-import {
-  Terminal,
-  notebookActions,
-  selectNotebook,
-} from '@datalayer/jupyter-react';
+import { useNotebookStore, Terminal } from '@datalayer/jupyter-react';
 
 const terminal = <Terminal />;
 
 const NotebookToolbar = (props: {notebookId: string}) => {
   const {notebookId} = props;
-  const [state, setState] = useState({
-    terminal: false,
-  });
-  const dispatch = useDispatch();
-  const notebook = selectNotebook(notebookId);
+  const [state, setState] = useState({ terminal: false });
+  const notebookStore = useNotebookStore();
+  const notebook = notebookStore.selectNotebook(notebookId);
   const onClick = () => {
     setState({...state, terminal: !state.terminal});
   };
@@ -52,12 +45,10 @@ const NotebookToolbar = (props: {notebookId: string}) => {
               leadingVisual={PlusIcon}
               onClick={e => {
                 e.preventDefault();
-                dispatch(
-                  notebookActions.insertBelow.started({
-                    uid: notebookId,
-                    cellType: 'raw',
-                  })
-                );
+                notebookStore.insertBelow({
+                  uid: notebookId,
+                  cellType: 'raw',
+                });
               }}
             >
               Raw
@@ -68,12 +59,10 @@ const NotebookToolbar = (props: {notebookId: string}) => {
               leadingVisual={PlusIcon}
               onClick={e => {
                 e.preventDefault();
-                dispatch(
-                  notebookActions.insertBelow.started({
-                    uid: notebookId,
-                    cellType: 'markdown',
-                  })
-                );
+                notebookStore.insertBelow({
+                  uid: notebookId,
+                  cellType: 'markdown',
+                });
               }}
             >
               Markdown
@@ -84,12 +73,10 @@ const NotebookToolbar = (props: {notebookId: string}) => {
               leadingVisual={PlusIcon}
               onClick={e => {
                 e.preventDefault();
-                dispatch(
-                  notebookActions.insertBelow.started({
-                    uid: notebookId,
-                    cellType: 'code',
-                  })
-                );
+                notebookStore.insertBelow({
+                  uid: notebookId,
+                  cellType: 'code',
+                });
               }}
             >
               Code
@@ -128,12 +115,10 @@ const NotebookToolbar = (props: {notebookId: string}) => {
               color="primary"
               leadingVisual={FileIcon}
               onClick={() =>
-                dispatch(
-                  notebookActions.save.started({
-                    uid: notebookId,
-                    date: new Date(),
-                  })
-                )
+                notebookStore.save({
+                  uid: notebookId,
+                  date: new Date(),
+                })
               }
             >
               Save
@@ -145,7 +130,7 @@ const NotebookToolbar = (props: {notebookId: string}) => {
                 leadingVisual={PlayIcon}
                 onClick={e => {
                   e.preventDefault();
-                  dispatch(notebookActions.runAll.started(notebookId));
+                  notebookStore.runAll(notebookId);
                 }}
               >
                 Run all
@@ -158,7 +143,7 @@ const NotebookToolbar = (props: {notebookId: string}) => {
                 leadingVisual={StopIcon}
                 onClick={e => {
                   e.preventDefault();
-                  dispatch(notebookActions.interrupt.started(notebookId));
+                  notebookStore.interrupt(notebookId);
                 }}
               >
                 Stop

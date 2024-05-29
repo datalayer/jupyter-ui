@@ -4,19 +4,16 @@
  * MIT License
  */
 
-import React, {useState} from 'react';
-import {useDispatch} from 'react-redux';
-import {FormControl, Text, ToggleSwitch} from '@primer/react';
-import {terminalActions} from '@datalayer/jupyter-react';
+import React, { useState } from 'react';
+import { FormControl, Text, ToggleSwitch } from '@primer/react';
+import { useTerminalStore } from '@datalayer/jupyter-react';
 
 const TerminalToolbar: React.FC = () => {
-  const dispatch = useDispatch();
-  const [state, setState] = useState({
-    dark: true,
-  });
+  const terminalStore = useTerminalStore();
+  const [state, setState] = useState({ dark: true });
   const onClick = () => {
-    dispatch(terminalActions.update({dark: !state.dark}));
-    setState({...state, dark: !state.dark});
+    terminalStore.setDark(!state.dark);
+    setState({ ...state, dark: !state.dark });
   };
   return (
     <>

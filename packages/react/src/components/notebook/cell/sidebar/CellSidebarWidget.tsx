@@ -10,7 +10,7 @@ import { ICellHeader } from '@jupyterlab/cells';
 import { CommandRegistry } from '@lumino/commands';
 import { newUuid } from '../../../../utils/Utils';
 import { ReactPortalWidget } from '../../../lumino/ReactPortalWidget';
-import { notebookStore } from '../../NotebookZustand';
+import { notebookStore } from '../../NotebookState';
 
 export const DATALAYER_CELL_HEADER_CLASS = 'dla-CellHeader-Container';
 

@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import useNotebookStore from "../../components/notebook/NotebookZustand";
+import useNotebookStore from '../../components/notebook/NotebookState';
 
 const NotebookToolbarStatus = (props: { notebookId: string }) => {
   const { notebookId } = props;

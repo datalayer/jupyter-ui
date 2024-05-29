@@ -17,7 +17,7 @@ import Lumino from '../lumino/Lumino';
 import CodeMirrorEditor from '../codemirror/CodeMirrorEditor';
 import OutputAdapter from './OutputAdapter';
 import OutputRenderer from './OutputRenderer';
-import { useOutputStore } from './OutputZustand';
+import { useOutputStore } from './OutputState';
 
 import './Output.css';
 

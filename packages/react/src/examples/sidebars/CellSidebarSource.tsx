@@ -16,7 +16,7 @@ import {
 } from '@primer/octicons-react';
 import { CellSidebarProps } from '../../components/notebook/cell/sidebar/CellSidebarWidget';
 import CellMetadataEditor from '../../components/notebook/cell/metadata/CellMetadataEditor';
-import useNotebookStore from '../../components/notebook/NotebookZustand';
+import useNotebookStore from '../../components/notebook/NotebookState';
 
 import { DATALAYER_CELL_HEADER_CLASS } from '../../components/notebook/cell/sidebar/CellSidebarWidget';
 

@@ -13,7 +13,7 @@ import Kernel from '../../jupyter/kernel/Kernel';
 import codeMirrorTheme from './CodeMirrorTheme';
 import OutputAdapter from '../output/OutputAdapter';
 import CodeMirrorOutputToolbar from './CodeMirrorOutputToolbar';
-import useOutputStore from '../output/OutputZustand';
+import useOutputStore from '../output/OutputState';
 
 export const CodeMirrorEditor = (props: {
   code: string;

@@ -11,7 +11,7 @@ import { useJupyter } from '../jupyter/JupyterContext';
 import { Kernel } from '../jupyter/kernel/Kernel';
 import Notebook from '../components/notebook/Notebook';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
-import useNotebookStore from '../components/notebook/NotebookZustand';
+import useNotebookStore from '../components/notebook/NotebookState';
 
 const NOTEBOOK_UID = 'notebook-kernel-id';
 

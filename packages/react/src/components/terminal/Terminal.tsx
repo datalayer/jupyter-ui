@@ -10,7 +10,7 @@ import { ITerminal } from '@jupyterlab/terminal';
 import TerminalAdapter from './TerminalAdapter';
 import { useJupyter } from './../../jupyter/JupyterContext';
 import LuminoBox from '../lumino/LuminoBox';
-import useTerminalStore from './TerminalZustand';
+import useTerminalStore from './TerminalState';
 
 export const Terminal = (props: Terminal.ITerminalOptions) => {
   const { height } = props;
