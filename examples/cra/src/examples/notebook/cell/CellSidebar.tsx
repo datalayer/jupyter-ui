@@ -5,17 +5,16 @@
  */
 
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { PanelLayout } from '@lumino/widgets';
 import { ActionMenu, Button, Box } from "@primer/react";
 import { ChevronRightIcon, XIcon, ChevronUpIcon, ChevronDownIcon, SquareIcon } from "@primer/octicons-react";
-import { notebookActions, selectActiveCell, CellSidebarProps, CellMetadataEditor, DATALAYER_CELL_HEADER_CLASS } from '@datalayer/jupyter-react';
+import { useNotebookStore, CellSidebarProps, CellMetadataEditor, DATALAYER_CELL_HEADER_CLASS } from '@datalayer/jupyter-react';
 
 export const CellSidebar = (props: CellSidebarProps) => {
   const [visible, setVisible] = useState(false);
   const { notebookId, cellId, nbgrader } = props;
-  const dispatch = useDispatch();
-  const activeCell = selectActiveCell(notebookId);
+  const notebookStore = useNotebookStore();
+  const activeCell = notebookStore.selectActiveCell(notebookId);
   const layout = (activeCell?.layout);
   if (layout) {
     const cellWidget = (layout as PanelLayout).widgets[0];
@@ -42,7 +41,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
         <span style={{ display: "flex" }}>
           <Button leadingVisual={ChevronRightIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
-            dispatch(notebookActions.run.started(notebookId));
+            notebookStore.run(notebookId);
           }}>
             Run
           </Button>
@@ -50,7 +49,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
         <span style={{ display: "flex" }}>
           <Button leadingVisual={ChevronUpIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
-            dispatch(notebookActions.insertAbove.started({ uid: notebookId, cellType: "code" }));
+            notebookStore.insertAbove({ uid: notebookId, cellType: "code" });
           }}>
             Code
           </Button>
@@ -58,7 +57,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
         <span style={{ display: "flex" }}>
           <Button leadingVisual={ChevronUpIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
-            dispatch(notebookActions.insertAbove.started({ uid: notebookId, cellType: "markdown" }));
+            notebookStore.insertAbove({ uid: notebookId, cellType: "markdown" });
           }}>
             Markdown
           </Button>
@@ -67,14 +66,14 @@ export const CellSidebar = (props: CellSidebarProps) => {
         { activeCell.model.type === "code" ?
             <Button leadingVisual={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
               e.preventDefault();
-              dispatch(notebookActions.changeCellType.started({ uid: notebookId, cellType: "markdown" }));
+              notebookStore.changeCellType({ uid: notebookId, cellType: "markdown" });
             }}>
               To Mardown
             </Button>
           :
             <Button leadingVisual={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
               e.preventDefault();
-              dispatch(notebookActions.changeCellType.started({ uid: notebookId, cellType: "code" }));
+              notebookStore.changeCellType({ uid: notebookId, cellType: "code" });
             }}>
               To Code
             </Button>
@@ -83,7 +82,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
         <span style={{ display: "flex" }}>
           <Button leadingVisual={ChevronDownIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
-            dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "markdown" }));
+            notebookStore.insertBelow({ uid: notebookId, cellType: "markdown" });
           }}>
             Markdown
           </Button>
@@ -91,7 +90,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
         <span style={{ display: "flex" }}>
           <Button leadingVisual={ChevronDownIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
-            dispatch(notebookActions.insertBelow.started({ uid: notebookId, cellType: "code" }));
+            notebookStore.insertBelow({ uid: notebookId, cellType: "code" });
           }}>
             Code
           </Button>
@@ -99,23 +98,14 @@ export const CellSidebar = (props: CellSidebarProps) => {
         <span style={{ display: "flex" }}>
           <Button leadingVisual={XIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
-            dispatch(notebookActions.delete.started(notebookId));
+            notebookStore.delete(notebookId);
           }}>
             Delete
           </Button>
         </span>
         {nbgrader &&
           <ActionMenu>
-            {/*
-            <ActionMenu.Anchor>
-              <IconButton icon={KebabHorizontalIcon} variant="invisible" aria-label="Open column options" />
-            </ActionMenu.Anchor>
-            <ActionMenu.Overlay>
-            */}
-              <CellMetadataEditor notebookId={notebookId} cell={activeCell} nbgrader={nbgrader}/>
-            {/*
-            </ActionMenu.Overlay>
-            */}
+            <CellMetadataEditor notebookId={notebookId} cell={activeCell} nbgrader={nbgrader}/>
           </ActionMenu>
         }
       </Box>
