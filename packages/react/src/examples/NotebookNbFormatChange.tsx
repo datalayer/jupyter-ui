@@ -11,7 +11,7 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 import Jupyter from '../jupyter/Jupyter';
 import Notebook from '../components/notebook/Notebook';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
-import useNotebookStore from '../components/notebook/NotebookZustand';
+import useNotebookStore from '../components/notebook/NotebookState';
 
 import nbformat1 from './notebooks/NotebookExample1.ipynb.json';
 import nbformat2 from './notebooks/NotebookExample2.ipynb.json';

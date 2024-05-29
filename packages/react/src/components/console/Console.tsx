@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 import { useJupyter } from './../../jupyter/JupyterContext';
 import Lumino from '../lumino/Lumino';
 import ConsoleAdapter from './ConsoleAdapter';
-import useConsoleStore from './ConsoleZustand';
+import useConsoleStore from './ConsoleState';
 
 import './Console.css';
 

@@ -14,7 +14,7 @@ import {
   Notebook,
 } from '../index';
 import NotebookToolbar from './toolbars/NotebookToolbar';
-import useNotebookStore from '../components/notebook/NotebookZustand';
+import useNotebookStore from '../components/notebook/NotebookState';
 
 const NOTEBOOK_ID = 'notebook';
 const NOTEBOOK_WIDTH = '100%';

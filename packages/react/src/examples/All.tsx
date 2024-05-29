@@ -19,8 +19,8 @@ import Terminal from '../components/terminal/Terminal';
 import CellSidebarNew from '../components/notebook/cell/sidebar/CellSidebarButton';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 import Console from '../components/console/Console';
-import { cellStore, useCellStore } from '../components/cell/CellZustand';
-import useNotebookStore from '../components/notebook/NotebookZustand';
+import { cellStore, useCellStore } from '../components/cell/CellState';
+import useNotebookStore from '../components/notebook/NotebookState';
 
 import notebook from './notebooks/NotebookExample1.ipynb.json';
 

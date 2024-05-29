@@ -11,7 +11,7 @@ import { Box } from '@primer/react';
 import CellAdapter from './CellAdapter';
 import Lumino from '../lumino/Lumino';
 import { useJupyter } from './../../jupyter/JupyterContext';
-import useCellStore from './CellZustand';
+import useCellStore from './CellState';
 
 export type ICellProps = {
   /**

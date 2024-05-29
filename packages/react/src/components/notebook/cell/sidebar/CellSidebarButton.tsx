@@ -15,7 +15,7 @@ import {
   XIcon,
 } from '@primer/octicons-react';
 import { CellSidebarProps } from './CellSidebarWidget';
-import useNotebookStore from '../../NotebookZustand';
+import useNotebookStore from '../../NotebookState';
 
 import { DATALAYER_CELL_HEADER_CLASS } from './CellSidebarWidget';
 

@@ -18,7 +18,7 @@ import { CellSidebarProps } from './cell/sidebar/CellSidebarWidget';
 import CellMetadataEditor from './cell/metadata/CellMetadataEditor';
 import { newUuid } from '../../utils/Utils';
 import NotebookAdapter from './NotebookAdapter';
-import useNotebookStore from './NotebookZustand';
+import useNotebookStore from './NotebookState';
 
 import './Notebook.css';
 

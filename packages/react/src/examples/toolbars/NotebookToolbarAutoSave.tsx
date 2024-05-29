@@ -16,7 +16,7 @@ import {
 } from '@primer/octicons-react';
 import { FastForwardIcon } from '@datalayer/icons-react';
 import { cmdIds } from '../../components/notebook/NotebookCommands';
-import useNotebookStore from '../../components/notebook/NotebookZustand';
+import useNotebookStore from '../../components/notebook/NotebookState';
 
 export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
   const { notebookId } = props;
