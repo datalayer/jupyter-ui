@@ -20,23 +20,9 @@ export const JupyterLabAppMinimumPlugins = {
     import('@jupyterlab/mainmenu-extension'),
     import('@jupyterlab/markdownviewer-extension'),
     import('@jupyterlab/markedparser-extension'),
-    import('@jupyterlab/fileeditor-extension').then(plugins =>
-      plugins.default.filter(
-        ({ id }) => !(id.includes(':language-server') || id.includes(':search'))
-      )
-    ),
+    import('@jupyterlab/fileeditor-extension'),
     import('@jupyterlab/launcher-extension'),
-    import('@jupyterlab/notebook-extension').then(plugins => {
-      return plugins.default.filter(
-        ({ id }) =>
-          !(
-            id.includes(':language-server') ||
-            id.includes(':toc') ||
-            id.includes(':update-raw-mimetype') ||
-            id.includes(':search')
-          )
-      );
-    }),
+    import('@jupyterlab/notebook-extension'),
     import('@jupyterlab/rendermime-extension'),
     import('@jupyterlab/shortcuts-extension'),
     import('@jupyterlab/statusbar-extension'),
@@ -60,43 +46,14 @@ export const JupyterLabAppCorePlugins = (collaborative?: boolean) => {
       import('@jupyterlab/console-extension'),
       import('@jupyterlab/docmanager-extension'),
       import('@jupyterlab/documentsearch-extension'),
-      import('@jupyterlab/filebrowser-extension').then(plugins => {
-        if (collaborative) {
-          return plugins.default.filter(
-            ({ id }) =>
-              !(
-                id.includes(':default-file-browser') // For RTC.
-              )
-          );
-        } else {
-          return plugins.default;
-        }
-      }),
+      import('@jupyterlab/filebrowser-extension'),
       import('@jupyterlab/mainmenu-extension'),
       import('@jupyterlab/markdownviewer-extension'),
       import('@jupyterlab/markedparser-extension'),
-      import('@jupyterlab/fileeditor-extension').then(plugins =>
-        plugins.default.filter(
-          ({ id }) =>
-            !(
-              //        id.includes(':search') ||
-              id.includes(':language-server')
-            )
-        )
-      ),
+      import('@jupyterlab/fileeditor-extension'),
       import('@jupyterlab/launcher-extension'),
-      //    import('@jupyterlab/lsp-extension'),
-      import('@jupyterlab/notebook-extension').then(plugins => {
-        return plugins.default.filter(
-          ({ id }) =>
-            !(
-              id.includes(':language-server') ||
-              id.includes(':toc') ||
-              //        id.includes(':search') ||
-              id.includes(':update-raw-mimetype')
-            )
-        );
-      }),
+//    import('@jupyterlab/lsp-extension'),
+      import('@jupyterlab/notebook-extension'),
       import('@jupyterlab/rendermime-extension'),
       import('@jupyterlab/shortcuts-extension'),
       import('@jupyterlab/statusbar-extension'),
