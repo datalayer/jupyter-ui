@@ -89,17 +89,17 @@ export class JupyterLabAppAdapter {
       "@jupyterlab/fileeditor-extension:language-server",
       "@jupyterlab/apputils-extension:sessionDialogs",
     );
-    const disabledPluginsMap = new Map(disabledPlugins.map(p => [p, 1]));
+    const disabledPluginsSet = new Set(disabledPlugins);
     extensionResolved.forEach(ext => {
       if (Array.isArray(ext.default)) {
         ext.default.forEach(plugin => {
-          if (!disabledPluginsMap.get(plugin.id)) {
+          if (!disabledPluginsSet.has(plugin.id)) {
             extensions.push(plugin as any);
           }
         });
       }
       else {
-        if (!disabledPluginsMap.get(ext.default.id)) {
+        if (!disabledPluginsSet.has(ext.default.id)) {
           extensions.push(ext);
         }
       }
