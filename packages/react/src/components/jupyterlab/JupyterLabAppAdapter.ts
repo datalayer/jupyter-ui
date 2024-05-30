@@ -12,35 +12,12 @@ import {
   JupyterFrontEnd,
   LabShell,
 } from '@jupyterlab/application';
-// import { PageConfig } from '@jupyterlab/coreutils';
-// import { Widget } from '@lumino/widgets';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { NotebookPanel } from '@jupyterlab/notebook';
 import { ServiceManager } from '@jupyterlab/services';
 import { JupyterLabAppProps } from './JupyterLabApp';
-/*
-interface IHeadLessLabShell extends ILabShell {
-  set currentWidget(widget: Widget | null);
-}
-class HeadlessLabShell extends LabShell implements IHeadLessLabShell {
-  private _currentWidget: Widget | null;
-  constructor(options?: ILabShell.IOptions) {
-    super(options);
-  }
-  get currentWidget() {
-    return this._currentWidget;
-  }
-  set currentWidget(widget: Widget | null) {
-    this._currentWidget = widget;
-  }
-}
-class HeadLessJupyterLab extends JupyterLab implements JupyterFrontEnd<ILabShell> {
-  constructor(options?: JupyterLab.IOptions) {
-    super(options);
-  }
-}
-*/
+
 type Plugin = JupyterFrontEndPlugin<any, any, any> & {
   service: any;
 };
@@ -77,6 +54,7 @@ export class JupyterLabAppAdapter {
 
   private async load(props: Props) {
     const {
+      disabledPlugins,
       hostId,
       plugins: extensions,
       mimeRenderers: mimeExtensions,
@@ -86,7 +64,6 @@ export class JupyterLabAppAdapter {
       devMode,
       serviceManager,
     } = props;
-    //    PageConfig.setOption("disabledExtensions", '["@jupyterlab/apputils-extension:sessionDialogs"]');
     const mimeExtensionResolved = await Promise.all(mimeExtensionPromises!);
     mimeExtensions.push(...mimeExtensionResolved);
     this._shell = new LabShell();
@@ -96,9 +73,8 @@ export class JupyterLabAppAdapter {
       devMode,
       serviceManager,
       disabled: {
-        // The disabled property is not honoored in JupyterLab core although it is part of the public API...
-        patterns: [],
         matches: [],
+        patterns: [],
       },
       deferred: {
         patterns: [],
@@ -106,7 +82,28 @@ export class JupyterLabAppAdapter {
       },
     });
     const extensionResolved = await Promise.all(extensionPromises!);
-    extensions.push(...extensionResolved);
+    disabledPlugins.push(
+      "@jupyterlab/notebook-extension:language-server",
+//      "@jupyterlab/notebook-extension:toc",
+      "@jupyterlab/notebook-extension:update-raw-mimetype",
+      "@jupyterlab/fileeditor-extension:language-server",
+      "@jupyterlab/apputils-extension:sessionDialogs",
+    );
+    const disabledPluginsSet = new Set(disabledPlugins);
+    extensionResolved.forEach(ext => {
+      if (Array.isArray(ext.default)) {
+        ext.default.forEach(plugin => {
+          if (!disabledPluginsSet.has(plugin.id)) {
+            extensions.push(plugin as any);
+          }
+        });
+      }
+      else {
+        if (!disabledPluginsSet.has(ext.default.id)) {
+          extensions.push(ext);
+        }
+      }
+    });
     this._jupyterLab.registerPluginModules(extensions);
     if (!splash) {
       this._jupyterLab.deregisterPlugin(
