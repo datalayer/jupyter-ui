@@ -90,9 +90,9 @@ export class JupyterLabAppAdapter {
       "@jupyterlab/apputils-extension:sessionDialogs",
     );
     const disabledPluginsMap = new Map(disabledPlugins.map(p => [p, 1]));
-    extensionResolved.map(ext => {
+    extensionResolved.forEach(ext => {
       if (Array.isArray(ext.default)) {
-        ext.default.map(plugin => {
+        ext.default.forEach(plugin => {
           if (!disabledPluginsMap.get(plugin.id)) {
             extensions.push(plugin as any);
           }
