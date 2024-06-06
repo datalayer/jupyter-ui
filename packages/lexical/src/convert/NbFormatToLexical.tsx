@@ -6,7 +6,7 @@
 
 import { LexicalEditor, INSERT_PARAGRAPH_COMMAND } from "lexical";
 import { INotebookContent, IOutput } from "@jupyterlab/nbformat";
-import { INSERT_JUPYTER_CELL_COMMAND } from "../plugins/JupyterPlugin";
+import { INSERT_JUPYTER_COMMAND } from "../plugins/JupyterPlugin";
 import { $convertFromMarkdownString, TRANSFORMERS } from "./markdown";
 
 export const nbformatToLexical = (notebook: INotebookContent, editor: LexicalEditor) => {
@@ -24,7 +24,7 @@ export const nbformatToLexical = (notebook: INotebookContent, editor: LexicalEdi
       }
       if (cell.cell_type === 'code') {
         const outputs = cell.outputs as IOutput[];
-        editor.dispatchCommand(INSERT_JUPYTER_CELL_COMMAND, { code: source, outputs: outputs, loading: "initial" })
+        editor.dispatchCommand(INSERT_JUPYTER_COMMAND, { code: source, outputs: outputs, loading: "initial" })
       }
       editor.dispatchCommand(INSERT_PARAGRAPH_COMMAND, undefined);
     });

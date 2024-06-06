@@ -51,6 +51,24 @@ export const CellSidebar = (props: CellSidebarProps) => {
         },
       }}
     >
+      {nbgrader && (
+        <ActionMenu>
+          {/*
+            <ActionMenu.Anchor>
+              <IconButton icon={KebabHorizontalIcon} variant="invisible" aria-label="Open column options" />
+            </ActionMenu.Anchor>
+            <ActionMenu.Overlay>
+            */}
+          <CellMetadataEditor
+            notebookId={notebookId}
+            cell={activeCell}
+            nbgrader={nbgrader}
+          />
+          {/*
+            </ActionMenu.Overlay>
+            */}
+        </ActionMenu>
+      )}
       <span style={{ display: 'flex' }}>
         <Button
           title="Run cell"
@@ -182,24 +200,6 @@ export const CellSidebar = (props: CellSidebarProps) => {
           Delete
         </Button>
       </span>
-      {nbgrader && (
-        <ActionMenu>
-          {/*
-            <ActionMenu.Anchor>
-              <IconButton icon={KebabHorizontalIcon} variant="invisible" aria-label="Open column options" />
-            </ActionMenu.Anchor>
-            <ActionMenu.Overlay>
-            */}
-          <CellMetadataEditor
-            notebookId={notebookId}
-            cell={activeCell}
-            nbgrader={nbgrader}
-          />
-          {/*
-            </ActionMenu.Overlay>
-            */}
-        </ActionMenu>
-      )}
     </Box>
   ) : (
     <></>

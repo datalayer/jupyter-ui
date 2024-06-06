@@ -16,19 +16,6 @@ import { requestAPI } from './JupyterHandlers';
 import Kernel from './kernel/Kernel';
 import { useJupyterStoreFromContext } from '../state';
 
-const initializeRequireJs = () => {
-  const requireJsScript = document.createElement('script');
-  requireJsScript.src =
-    'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js';
-  document.body.appendChild(requireJsScript);
-  const cdnOnlyScript = document.createElement('script');
-  cdnOnlyScript.setAttribute('data-jupyter-widgets-cdn-only', 'true');
-  document.body.appendChild(cdnOnlyScript);
-}
-
-// Require.js is needed for IPyWidgets.
-initializeRequireJs();
-
 export type Lite =
   | boolean
   | Promise<{ default: JupyterLiteServerPlugin<any>[] }>;

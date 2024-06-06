@@ -14,7 +14,6 @@
 import {DragEvent as ReactDragEvent, useEffect, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
 
-
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import {eventFiles} from '@lexical/rich-text';
 import {calculateZoomLevel, mergeRegister} from '@lexical/utils';
@@ -433,7 +432,7 @@ function useDraggableBlockMenu(
   );
 }
 
-export default function DraggableBlockPlugin({
+export function DraggableBlockPlugin({
   anchorElem = document.body,
 }: {
   anchorElem?: HTMLElement;
@@ -441,3 +440,5 @@ export default function DraggableBlockPlugin({
   const [editor] = useLexicalComposerContext();
   return useDraggableBlockMenu(editor, anchorElem, editor._editable);
 }
+
+export default DraggableBlockPlugin;

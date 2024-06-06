@@ -7,23 +7,23 @@
 import { useEffect } from "react";
 import {  $insertNodes, COMMAND_PRIORITY_EDITOR, createCommand } from "lexical";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { CustomNode, $createCustomNode } from "../nodes/CustomNode";
+import { JupyterCellNode, $createJupyterCellNode } from "../nodes/JupyterCellNode";
 
-export const INSERT_CUSTOM_COMMAND = createCommand();
+export const INSERT_JUPYTER_CELL_COMMAND = createCommand();
 
-export function CustomPlugin() {
+export function JupyterCellPlugin() {
   const [editor] = useLexicalComposerContext();
   useEffect(() => {
-    if (!editor.hasNodes([CustomNode])) {
+    if (!editor.hasNodes([JupyterCellNode])) {
       throw new Error(
         "CustomNode is not registered."
       );
     }
     return editor.registerCommand(
-      INSERT_CUSTOM_COMMAND,
+      INSERT_JUPYTER_CELL_COMMAND,
       () => {
-        const customNode = $createCustomNode();
-        $insertNodes([customNode]);
+        const jupyterNode = $createJupyterCellNode();
+        $insertNodes([jupyterNode]);
         return true;
       },
       COMMAND_PRIORITY_EDITOR
@@ -32,4 +32,4 @@ export function CustomPlugin() {
   return null;
 }
 
-export default CustomPlugin;
+export default JupyterCellPlugin;

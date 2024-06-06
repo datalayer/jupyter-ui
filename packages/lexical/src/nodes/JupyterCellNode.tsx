@@ -8,7 +8,7 @@ import { ReactNode } from "react";
 import { DecoratorNode, EditorConfig, LexicalEditor, LexicalNode, NodeKey, SerializedLexicalNode } from "lexical";
 import CustomComponent from "./CustomComponent";
 
-export class CustomNode extends DecoratorNode<ReactNode> {
+export class JupyterCellNode extends DecoratorNode<ReactNode> {
   private __data: any;
 
   /** @override */
@@ -17,9 +17,9 @@ export class CustomNode extends DecoratorNode<ReactNode> {
   }
 
   /** @override */
-  static clone(node: CustomNode) {
+  static clone(node: JupyterCellNode) {
     console.log(`clone: node.__data: ${node.__data} node.__key: ${node.__key} node: ${JSON.stringify(node, null, 2)}`);
-    return new CustomNode(node.__data, node.__key);
+    return new JupyterCellNode(node.__data, node.__key);
   }
 
   /** @override */
@@ -63,7 +63,7 @@ export class CustomNode extends DecoratorNode<ReactNode> {
 
   /** @override */
   static importJSON(serializedNode: SerializedLexicalNode) {
-    return new CustomNode((serializedNode as unknown as CustomNode).data);
+    return new JupyterCellNode((serializedNode as unknown as JupyterCellNode).data);
   }
 
   /** @override */
@@ -77,10 +77,10 @@ export class CustomNode extends DecoratorNode<ReactNode> {
 
 }
 
-export function $createCustomNode() {
-  return new CustomNode();
+export function $createJupyterCellNode() {
+  return new JupyterCellNode();
 }
 
-export function $isCustomNode(node: LexicalNode) {
-  return node instanceof CustomNode;
+export function $isJupyterCellNode(node: LexicalNode) {
+  return node instanceof JupyterCellNode;
 }
