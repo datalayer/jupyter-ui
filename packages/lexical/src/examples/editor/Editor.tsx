@@ -30,8 +30,8 @@ import {
   JupyterPlugin, EquationNode, HorizontalRulePlugin,
   ListMaxIndentLevelPlugin, AutoLinkPlugin, ComponentPickerMenuPlugin,
   EquationsPlugin, ImagesPlugin, YouTubePlugin, ImageNode, YouTubeNode,
-  JupyterCodeHighlightNode, JupyterCodeNode, JupyterOutputNode, CustomNode,
-  CodeActionMenuPlugin, AutoEmbedPlugin, NbformatContentPlugin, TableOfContentsPlugin, MarkdownPlugin, CustomPlugin
+  JupyterCodeHighlightNode, JupyterCodeNode, JupyterOutputNode, JupyterCellNode,
+  CodeActionMenuPlugin, AutoEmbedPlugin, NbformatContentPlugin, TableOfContentsPlugin, MarkdownPlugin, JupyterCellPlugin
 } from "../../index";
 import ExampleTheme from "../themes/Theme";
 import { useLexical } from "../context/LexicalContext";
@@ -60,7 +60,7 @@ const initialConfig = {
   nodes: [
     AutoLinkNode,
     CodeNode,
-    CustomNode,
+    JupyterCellNode,
     EquationNode,
     HashtagNode,
     HeadingNode,
@@ -131,7 +131,7 @@ export default function Editor(props: Props) {
             <AutoLinkPlugin />
             <ListMaxIndentLevelPlugin maxDepth={7} />
             <MarkdownPlugin />
-            <CustomPlugin />
+            <JupyterCellPlugin />
             <JupyterPlugin />
             <ComponentPickerMenuPlugin/>
             <EquationsPlugin/>

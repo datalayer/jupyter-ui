@@ -44,7 +44,7 @@ export type JupyterOutputProps = {
   loading?: string;
 }
 
-export const INSERT_JUPYTER_CELL_COMMAND = createCommand<JupyterOutputProps>();
+export const INSERT_JUPYTER_COMMAND = createCommand<JupyterOutputProps>();
 
 export const JupyterPlugin = () => {
   const [editor] = useLexicalComposerContext();
@@ -129,7 +129,7 @@ export const JupyterPlugin = () => {
     )
   }, [editor]);
   useEffect(() => {
-    return editor.registerCommand(INSERT_JUPYTER_CELL_COMMAND, (props: JupyterOutputProps) => {
+    return editor.registerCommand(INSERT_JUPYTER_COMMAND, (props: JupyterOutputProps) => {
       const { code, outputs, loading } = props;
       const selection = $getSelection();
       if ($isRangeSelection(selection)) {

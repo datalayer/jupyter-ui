@@ -53,19 +53,28 @@ export abstract class LabWidgetManager
   constructor(rendermime: IRenderMimeRegistry) {
     super();
     this._rendermime = rendermime;
-    (window as any).define('@jupyter-widgets/base', base);
-    (window as any).define('@jupyter-widgets/controls', controls);
-    this._registry = new SemVerCache<ExportData>();
-    this.register({
-      name: '@jupyter-widgets/base',
-      version: base.JUPYTER_WIDGETS_VERSION,
-      exports: () => import('@jupyter-widgets/base') as any,
-    });
-    this.register({
-      name: '@jupyter-widgets/controls',
-      version: controls.JUPYTER_CONTROLS_VERSION,
-      exports: () => import('@jupyter-widgets/controls') as any,
-    });
+    const requireJsScript = document.createElement('script');
+    const cdnOnlyScript = document.createElement('script');
+    cdnOnlyScript.setAttribute('data-jupyter-widgets-cdn-only', 'true');
+    document.body.appendChild(cdnOnlyScript);
+    requireJsScript.src =
+      'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js';
+    document.body.appendChild(requireJsScript);
+    requireJsScript.onload = () => {
+      (window as any).define('@jupyter-widgets/base', base);
+      (window as any).define('@jupyter-widgets/controls', controls);
+      this._registry = new SemVerCache<ExportData>();
+      this.register({
+        name: '@jupyter-widgets/base',
+        version: base.JUPYTER_WIDGETS_VERSION,
+        exports: () => import('@jupyter-widgets/base') as any,
+      });
+      this.register({
+        name: '@jupyter-widgets/controls',
+        version: controls.JUPYTER_CONTROLS_VERSION,
+        exports: () => import('@jupyter-widgets/controls') as any,
+      });
+    };
   }
 
   /**

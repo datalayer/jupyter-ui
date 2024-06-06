@@ -19,8 +19,8 @@ import {
   INSERT_UNORDERED_LIST_COMMAND,
 } from '@lexical/list';
 import {INSERT_EMBED_COMMAND} from '@lexical/react/LexicalAutoEmbedPlugin';
-import { INSERT_JUPYTER_CELL_COMMAND, DEFAULT_INITIAL_OUTPUTS } from './JupyterPlugin';
-import { INSERT_CUSTOM_COMMAND } from './CustomPlugin';
+import { INSERT_JUPYTER_CELL_COMMAND } from './JupyterCellPlugin';
+//import { INSERT_JUPYTER_CELL_COMMAND, DEFAULT_INITIAL_OUTPUTS } from './JupyterPlugin';
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import {INSERT_HORIZONTAL_RULE_COMMAND} from '@lexical/react/LexicalHorizontalRuleNode';
 import {
@@ -169,15 +169,16 @@ export const ComponentPickerMenuPlugin = (): JSX.Element => {
 
   const options = useMemo(() => {
     const baseOptions = [
-      new ComponentPickerOption('Custom', {
+      new ComponentPickerOption('Jupyter Cell', {
         icon: <i className="icon code" />,
         keywords: ['javascript', 'python', 'js', 'codeblock', 'jupyter'],
         onSelect: () => {
 //          const selection = $getSelection();
 //          const code = selection?.getTextContent() || "";
-          editor.dispatchCommand(INSERT_CUSTOM_COMMAND, undefined);
+          editor.dispatchCommand(INSERT_JUPYTER_CELL_COMMAND, undefined);
         }
       }),
+      /*
       new ComponentPickerOption('Jupyter Cell', {
         icon: <i className="icon code" />,
         keywords: ['javascript', 'python', 'js', 'codeblock', 'jupyter'],
@@ -187,6 +188,7 @@ export const ComponentPickerMenuPlugin = (): JSX.Element => {
           editor.dispatchCommand(INSERT_JUPYTER_CELL_COMMAND, { code, outputs: code ? [] : DEFAULT_INITIAL_OUTPUTS });
         }
       }),
+      */
       new ComponentPickerOption('Paragraph', {
         icon: <i className="icon paragraph" />,
         keywords: ['normal', 'paragraph', 'p', 'text'],

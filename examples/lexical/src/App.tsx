@@ -12,7 +12,7 @@ import { $getRoot } from "lexical";
 import styled from "styled-components";
 import { INotebookContent } from "@jupyterlab/nbformat";
 import { INotebookModel } from "@jupyterlab/notebook";
-import { Jupyter, Notebook, CellSidebar, selectNotebook } from "@datalayer/jupyter-react";
+import { Jupyter, Notebook, CellSidebar, useNotebookStore } from "@datalayer/jupyter-react";
 import { lexicalToNbFormat } from "@datalayer/jupyter-lexical";
 import { useLexical, LexicalProvider } from "./context/LexicalContext";
 import Editor from "./Editor";
@@ -34,7 +34,8 @@ const Tabs = () => {
   const { editor } = useLexical();
   const [tab, setTab] = useState<TabType>('editor');
   const [notebookContent, setNotebookContent] = useState<INotebookContent>(initialNbformatModel);
-  const notebook = selectNotebook(NOTEBOOK_UID);
+  const notebooStore = useNotebookStore();
+  const notebook = notebooStore.notebooks.get(NOTEBOOK_UID);
   const goToTab = (e: any, toTab: TabType, notebookModel: INotebookModel | undefined) => {
     e.preventDefault();
     if (tab === 'notebook' && toTab === 'editor') {
