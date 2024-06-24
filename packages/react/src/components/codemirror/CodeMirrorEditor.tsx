@@ -39,8 +39,8 @@ export const CodeMirrorEditor = (props: {
   } = props;
   const outputStore = useOutputStore();
   const [view, setView] = useState<EditorView>();
-  const dataset = outputStore.selectDataset(sourceId);
-  const setSource = outputStore.selectJupyterSetSource(sourceId);
+  const dataset = outputStore.getDataset(sourceId);
+  const source = outputStore.getSource(sourceId);
   const editorDiv = useRef<HTMLDivElement>();
   const setEditorSource = (source: string | undefined) => {
     if (view && source) {
@@ -78,7 +78,7 @@ export const CodeMirrorEditor = (props: {
     return true;
   };
   useEffect(() => {
-    outputStore.source({
+    outputStore.setSource({
       sourceId,
       source: code,
     })
@@ -101,7 +101,7 @@ export const CodeMirrorEditor = (props: {
         EditorView.updateListener.of((viewUpdate: ViewUpdate) => {
           if (viewUpdate.docChanged) {
             const source = viewUpdate.state.doc.toString();
-            outputStore.source({
+            outputStore.setSource({
               sourceId,
               source,
             })
@@ -125,8 +125,8 @@ export const CodeMirrorEditor = (props: {
     doInsertText(dataset?.dataset);
   }, [dataset]);
   useEffect(() => {
-    setEditorSource(setSource?.source);
-  }, [setSource]);
+    setEditorSource(source?.source);
+  }, [source]);
   return (
     <>
       {kernel && toolbarPosition === 'up' && (

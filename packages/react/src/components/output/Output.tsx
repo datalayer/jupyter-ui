@@ -83,7 +83,7 @@ export const Output = (props: IOutputProps) => {
                 const out = val.data['text/html']; // val.data['application/vnd.jupyter.stdout'];
                 if (out) {
                   if ((out as string).indexOf(receipt) > -1) {
-                    outputStore.grade({
+                    outputStore.setGrade({
                       sourceId,
                       success: true,
                     });
@@ -95,6 +95,7 @@ export const Output = (props: IOutputProps) => {
         });
       }
       setAdapter(adapter);
+      outputStore.setAdapter(sourceId, adapter);
       adapter.outputArea.model.changed.connect((outputModel, args) => {
         setOutputs(outputModel.toJSON());
       });
@@ -123,7 +124,7 @@ export const Output = (props: IOutputProps) => {
       };
     }
   }, [kernel]);
-  const executeRequest = outputStore.selectExecute(sourceId);
+  const executeRequest = outputStore.getExecute(sourceId);
   useEffect(() => {
     if (adapter && executeRequest && executeRequest.sourceId === id) {
       adapter.execute(executeRequest.source);
