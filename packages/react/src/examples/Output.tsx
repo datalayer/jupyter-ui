@@ -7,12 +7,13 @@
 import { createRoot } from 'react-dom/client';
 import { IOutput } from '@jupyterlab/nbformat';
 import { Text } from '@primer/react';
-import Jupyter from '../jupyter/Jupyter';
+import { useJupyterStore } from './../state';
 import { useJupyter } from '../jupyter/JupyterContext';
+import Jupyter from '../jupyter/Jupyter';
 import Output from '../components/output/Output';
 
-const SOURCE_1 = '1+1';
-
+const SOURCE_ID_1 = '1';
+// const SOURCE_1 = '1+1';
 const OUTPUTS_1: IOutput[] = [
   {
     data: {
@@ -24,26 +25,48 @@ const OUTPUTS_1: IOutput[] = [
   },
 ];
 
+const SOURCE_ID_2 = '2';
+const SOURCE_2 = '2+2';
+const OUTPUTS_2: IOutput[] = [
+  {
+    data: {
+      'text/plain': ['4'],
+    },
+    execution_count: 1,
+    metadata: {},
+    output_type: 'execute_result',
+  },
+];
+
 const OutputWithoutEditor = () => {
+  const outputStore = useJupyterStore().outputStore();
+  console.log('Outputs 1', outputStore.getAdapter(SOURCE_ID_1)?.outputArea.model.toJSON());
   return (
     <>
-      <Text as="h1">Output without Editor</Text>
-      <Output showEditor={false} outputs={OUTPUTS_1} />
+      <Text as="h1">Output without Code Editor</Text>
+      <Output
+        showEditor={false}
+        sourceId={SOURCE_ID_1}
+        outputs={OUTPUTS_1}
+      />
     </>
   );
 };
 
 const OutputWithEditor = () => {
   const { defaultKernel } = useJupyter();
+  const outputStore = useJupyterStore().outputStore();
+  console.log('Outputs 2', outputStore.getAdapter(SOURCE_ID_2)?.outputArea.model.toJSON());
   return (
     <>
-      <Text as="h1">Output with Editor</Text>
+      <Text as="h1">Output with Code Editor</Text>
       <Output
         showEditor={true}
         autoRun={false}
         kernel={defaultKernel}
-        code={SOURCE_1}
-        outputs={OUTPUTS_1}
+        code={SOURCE_2}
+        sourceId={SOURCE_ID_2} 
+        outputs={OUTPUTS_2}
       />
     </>
   );

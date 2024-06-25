@@ -40,13 +40,14 @@ const ENTRY =
   // './src/examples/NotebookKernelChange';
   // './src/examples/NotebookLite';
   // './src/examples/NotebookNbFormat';
-  // './src/examples/NotebookNbFormatChange';
+  // './src/examples/NotebookNbFormatChange';O
   // './src/examples/NotebookNoContext';
   // './src/examples/NotebookNoContextNoPrimer';
   // './src/examples/NotebookSkeleton';
   // './src/examples/NotebookTheme';
   // './src/examples/NotebookThemeColorMode';
   // './src/examples/ObservableHQ';
+  // './src/examples/Output';
   // './src/examples/Outputs';
   // './src/examples/Plotly';
   // './src/examples/RunningSessions';

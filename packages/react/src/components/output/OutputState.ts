@@ -6,6 +6,7 @@
 
 import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
+import OutputAdapter from './OutputAdapter';
 
 export namespace OutputState {
   export type ISource = {
@@ -31,6 +32,7 @@ export namespace OutputState {
 }
 
 export type IOutputState = {
+  adapter?: OutputAdapter;
   source?: OutputState.ISource;
   dataset?: OutputState.IDataset;
   setSource?: OutputState.ISource;
@@ -44,48 +46,32 @@ export interface IOutputsState {
 
 export type OutputState = IOutputsState & {
   setOutputs: (outputs: Map<string, IOutputState>) => void;
-  selectJupyterSource: (id: string) => OutputState.ISource | undefined;
-  selectJupyterSetSource: (id: string) => OutputState.ISource | undefined;
-  selectDataset: (id: string) => OutputState.IDataset | undefined;
-  selectExecute: (id: string) => OutputState.IExecute | undefined;
-  selectGrade: (id: string) => OutputState.IGrade | undefined;
-  source: (source: OutputState.ISource) => void;
-  dataset: (dataset: OutputState.IDataset) => void;
-  execute: (execute: OutputState.IExecute) => void;
+  setAdapter: (id: string, adapter: OutputAdapter) => void;
+  setDataset: (dataset: OutputState.IDataset) => void;
+  setExecute: (execute: OutputState.IExecute) => void;
   setSource: (source: OutputState.ISource) => void;
-  grade: (grade: OutputState.IGrade) => void;
+  setGrade: (grade: OutputState.IGrade) => void;
+  getAdapter: (id: string) => OutputAdapter | undefined;
+  getSource: (id: string) => OutputState.ISource | undefined;
+  getDataset: (id: string) => OutputState.IDataset | undefined;
+  getExecute: (id: string) => OutputState.IExecute | undefined;
+  getGrade: (id: string) => OutputState.IGrade | undefined;
 };
 
 export const outputStore = createStore<OutputState>((set, get) => ({
   outputs: new Map<string, IOutputState>(),
   setOutputs: (outputs: Map<string, IOutputState>) => set((state: OutputState) => ({ outputs })),
-  selectJupyterSource: (id: string): OutputState.ISource | undefined => {
-    return get().outputs.get(id)?.source;
-  },
-  selectJupyterSetSource: (id: string): OutputState.ISource | undefined => {
-    return get().outputs.get(id)?.setSource;
-  },
-  selectDataset: (id: string): OutputState.IDataset | undefined => {
-    return get().outputs.get(id)?.dataset;
-  },
-  selectExecute: (id: string): OutputState.IExecute | undefined => {
-    return get().outputs.get(id)?.execute;
-  },
-  selectGrade: (id: string): OutputState.IGrade | undefined => {
-    return get().outputs.get(id)?.grade;
-  },
-  source: (source: OutputState.ISource) => {
-    const sourceId = source.sourceId;
+  setAdapter: (id: string, adapter: OutputAdapter) => {
     const outputs = get().outputs;
-    const s = outputs.get(sourceId);
-    if (s) {
-      s.source = source;
+    const d = outputs.get(id);
+    if (d) {
+      d.adapter = adapter;
     } else {
-      outputs.set(sourceId, { source });
+      outputs.set(id, { adapter });
     }
     set((state: OutputState) => ({ outputs }))
   },
-  dataset: (dataset: OutputState.IDataset) => {
+  setDataset: (dataset: OutputState.IDataset) => {
     const sourceId = dataset.sourceId;
     const outputs = get().outputs;
     const d = outputs.get(sourceId);
@@ -96,7 +82,7 @@ export const outputStore = createStore<OutputState>((set, get) => ({
     }
     set((state: OutputState) => ({ outputs }))
   },
-  execute: (execute: OutputState.IExecute) => {
+  setExecute: (execute: OutputState.IExecute) => {
     const sourceId = execute.sourceId;
     const outputs = get().outputs;
     const e = outputs.get(sourceId);
@@ -118,7 +104,7 @@ export const outputStore = createStore<OutputState>((set, get) => ({
     }
     set((state: OutputState) => ({ outputs }))
   },
-  grade: (grade: OutputState.IGrade) => {
+  setGrade: (grade: OutputState.IGrade) => {
     const sourceId = grade.sourceId;
     const outputs = get().outputs;
     const g = outputs.get(sourceId);
@@ -128,6 +114,21 @@ export const outputStore = createStore<OutputState>((set, get) => ({
       outputs.set(sourceId, { grade });
     }
     set((state: OutputState) => ({ outputs }))
+  },
+  getAdapter: (id: string) => {
+    return get().outputs.get(id)?.adapter;
+  },
+  getSource: (id: string): OutputState.ISource | undefined => {
+    return get().outputs.get(id)?.source;
+  },
+  getDataset: (id: string): OutputState.IDataset | undefined => {
+    return get().outputs.get(id)?.dataset;
+  },
+  getExecute: (id: string): OutputState.IExecute | undefined => {
+    return get().outputs.get(id)?.execute;
+  },
+  getGrade: (id: string): OutputState.IGrade | undefined => {
+    return get().outputs.get(id)?.grade;
   },
 }));
 
