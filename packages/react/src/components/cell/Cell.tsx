@@ -15,7 +15,12 @@ import useCellStore from './CellState';
 
 export type ICellProps = {
   /**
-   * Code cell source.
+   * Cell type
+   */
+  type: 'code' | 'markdown' | 'raw';
+
+  /**
+   * Cell source
    */
   source?: string;
   /**
@@ -25,14 +30,35 @@ export type ICellProps = {
 };
 
 export const Cell = (props: ICellProps) => {
-  const { source = '', autoStart } = props;
+  const { type='code', source = '', autoStart } = props;
   const { serverSettings, defaultKernel } = useJupyter();
   const cellStore = useCellStore();
   const [adapter, setAdapter] = useState<CellAdapter>();
+
+  const handleCodeCellState = (adapter: CellAdapter) => {
+    (adapter.codeCell as CodeCell).outputArea.outputLengthChanged?.connect(
+      (outputArea, outputsCount) => {
+        cellStore.setOutputsCount(outputsCount);
+      }
+    );
+    adapter.sessionContext.initialize().then(() => {
+      if (autoStart) {
+        const execute = CodeCell.execute(
+          (adapter.codeCell as CodeCell),
+          adapter.sessionContext
+        );
+        execute.then((msg: void | KernelMessage.IExecuteReplyMsg) => {
+          cellStore.setKernelAvailable(true);
+        });
+      }
+    });
+  }
+
   useEffect(() => {
     if (defaultKernel && serverSettings) {
       defaultKernel.ready.then(() => {
         const adapter = new CellAdapter({
+          type,
           source,
           serverSettings,
           kernel: defaultKernel,
@@ -44,22 +70,10 @@ export const Cell = (props: ICellProps) => {
             cellStore.setSource(cellModel.sharedModel.getSource());
           }
         );
-        adapter.codeCell.outputArea.outputLengthChanged.connect(
-          (outputArea, outputsCount) => {
-            cellStore.setOutputsCount(outputsCount);
-          }
-        );
-        adapter.sessionContext.initialize().then(() => {
-          if (autoStart) {
-            const execute = CodeCell.execute(
-              adapter.codeCell,
-              adapter.sessionContext
-            );
-            execute.then((msg: void | KernelMessage.IExecuteReplyMsg) => {
-              cellStore.setKernelAvailable(true);
-            });
-          }
-        });
+
+        if (type === 'code') {
+          handleCodeCellState(adapter);
+        }
         setAdapter(adapter);
       });
     }
@@ -83,6 +97,11 @@ export const Cell = (props: ICellProps) => {
         },
         '& .jp-CodeCell': {
           height: 'auto !important',
+          position: 'relative',
+        },
+        '& .jp-MarkdownCell': {
+          height: 'auto !important',
+          minHeight: '65px',
           position: 'relative',
         },
         '& .jp-Cell-outputArea': {
