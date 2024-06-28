@@ -13,7 +13,7 @@ import {
   Toolbar,
   ToolbarButton,
 } from '@jupyterlab/apputils';
-import { CodeCellModel, CodeCell, Cell } from '@jupyterlab/cells';
+import { CodeCellModel, CodeCell, Cell, MarkdownCell, RawCell, MarkdownCellModel } from '@jupyterlab/cells';
 import {
   ybinding,
   CodeMirrorMimeTypeService,
@@ -22,6 +22,7 @@ import {
   EditorExtensionRegistry,
   EditorThemeRegistry,
 } from '@jupyterlab/codemirror';
+import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
 import {
   Completer,
   CompleterModel,
@@ -41,7 +42,7 @@ import {
   KernelSpecManager,
 } from '@jupyterlab/services';
 import { runIcon } from '@jupyterlab/ui-components';
-import { createStandaloneCell, YCodeCell, IYText } from '@jupyter/ydoc';
+import { createStandaloneCell, YCodeCell, IYText, YMarkdownCell } from '@jupyter/ydoc';
 import {
   WIDGET_MIMETYPE,
   WidgetRenderer,
@@ -49,24 +50,32 @@ import {
 import { requireLoader as loader } from '../../jupyter/ipywidgets/libembed-amd';
 import ClassicWidgetManager from '../../jupyter/ipywidgets/classic/manager';
 import Kernel from '../../jupyter/kernel/Kernel';
+import getMarked from '../notebook/marked/marked';
 import CellCommands from './CellCommands';
 
+interface BoxOptions {
+  showToolbar?: boolean;
+}
 export class CellAdapter {
-  private _codeCell: CodeCell;
+  private _cell: CodeCell | MarkdownCell | RawCell;
   private _kernel: Kernel;
   private _panel: BoxPanel;
   private _sessionContext: SessionContext;
+  private _type: 'code' | 'markdown' | 'raw'
 
   constructor(options: CellAdapter.ICellAdapterOptions) {
-    const { source, serverSettings, kernel } = options;
+    const { type, source, serverSettings, kernel, boxOptions } = options;
     this._kernel = kernel;
-    this.setupCell(source, serverSettings, kernel);
+    this._type = type;
+    this.setupCell(type, source, serverSettings, kernel, boxOptions);
   }
 
   private setupCell(
+    type = 'code',
     source: string,
     serverSettings: ServerConnection.ISettings,
-    kernel: Kernel
+    kernel: Kernel,
+    boxOptions?: BoxOptions
   ) {
     const kernelManager =
       kernel.kernelManager ??
@@ -184,7 +193,11 @@ export class CellAdapter {
       },
       useCapture
     );
-    const rendermime = new RenderMimeRegistry({ initialFactories });
+    const rendermime = new RenderMimeRegistry({
+      initialFactories,
+      latexTypesetter: new MathJaxTypesetter(),
+      markdownParser: getMarked(languages),
+    });
     const iPyWidgetsClassicManager = new ClassicWidgetManager({ loader });
     rendermime.addFactory(
       {
@@ -200,21 +213,34 @@ export class CellAdapter {
       extensions: editorExtensions(),
       languages,
     });
-    this._codeCell = new CodeCell({
-      rendermime,
-      model: new CodeCellModel({
-        sharedModel: createStandaloneCell({
-          cell_type: 'code',
-          source: source,
-          metadata: {},
-        }) as YCodeCell,
-      }),
-      contentFactory: new Cell.ContentFactory({
-        editorFactory: factoryService.newInlineEditor.bind(factoryService),
-      }),
+
+    const cellModel = createStandaloneCell({
+      cell_type: type,
+      source: source,
+      metadata: {},
     });
-    this._codeCell.addClass('dla-Jupyter-Cell');
-    this._codeCell.initializeState();
+    const contentFactory = new Cell.ContentFactory({
+      editorFactory: factoryService.newInlineEditor.bind(factoryService),
+    });
+    if (type === 'code') {
+      this._cell = new CodeCell({
+        rendermime,
+        model: new CodeCellModel({sharedModel: cellModel as YCodeCell}),
+        contentFactory: contentFactory,
+      });
+    }  else if (type === 'markdown') {
+      this._cell = new MarkdownCell({
+        rendermime,
+        model: new MarkdownCellModel({sharedModel: cellModel as YMarkdownCell}),
+        contentFactory: contentFactory,
+      });
+    }
+    this._cell.addClass('dla-Jupyter-Cell');
+    this._cell.initializeState();
+    if (this._type === 'markdown') {
+      (this._cell as MarkdownCell).rendered = false;
+    }
+
     this._sessionContext.kernelChanged.connect(
       (_, arg: Session.ISessionConnection.IKernelChangedArgs) => {
         const kernelConnection = arg.newValue;
@@ -235,19 +261,21 @@ export class CellAdapter {
     );
     this._sessionContext.kernelChanged.connect(() => {
       void this._sessionContext.session?.kernel?.info.then(info => {
-        const lang = info.language_info;
-        const mimeType = mimeService.getMimeTypeByLanguage(lang);
-        this._codeCell.model.mimeType = mimeType;
+        if (this._type === 'code') {
+          const lang = info.language_info;
+          const mimeType = mimeService.getMimeTypeByLanguage(lang);
+          this._cell.model.mimeType = mimeType;
+        }
       });
     });
-    const editor = this._codeCell.editor;
+    const editor = this._cell.editor;
     const model = new CompleterModel();
     const completer = new Completer({ editor, model });
     const timeout = 1000;
     const provider = new KernelCompleterProvider();
     const reconciliator = new ProviderReconciliator({
       context: {
-        widget: this._codeCell,
+        widget: this._cell,
         editor,
         session: this._sessionContext.session,
       },
@@ -259,7 +287,7 @@ export class CellAdapter {
       const provider = new KernelCompleterProvider();
       handler.reconciliator = new ProviderReconciliator({
         context: {
-          widget: this._codeCell,
+          widget: this._cell,
           editor,
           session: this._sessionContext.session,
         },
@@ -268,7 +296,8 @@ export class CellAdapter {
       });
     });
     handler.editor = editor;
-    CellCommands(commands, this._codeCell!, this._sessionContext, handler);
+
+    CellCommands(commands, this._cell!, this._sessionContext, handler);
     completer.hide();
     completer.addClass('jp-Completer-Cell');
     Widget.attach(completer, document.body);
@@ -277,7 +306,11 @@ export class CellAdapter {
     const runButton = new ToolbarButton({
       icon: runIcon,
       onClick: () => {
-        CodeCell.execute(this._codeCell, this._sessionContext);
+        if (this._type === 'code') {
+          CodeCell.execute(this._cell as CodeCell, this._sessionContext);
+        } else if (this._type === 'markdown') {
+          (this._cell as MarkdownCell).rendered = true;
+        }
       },
       tooltip: 'Run',
     });
@@ -296,16 +329,24 @@ export class CellAdapter {
       Toolbar.createKernelStatusItem(this._sessionContext)
     );
 
-    this._codeCell.outputsScrolled = false;
-    this._codeCell.activate();
+    if (this._type === 'code') {
+      (this._cell as CodeCell).outputsScrolled = false;
+    }
+    this._cell.activate();
 
     this._panel = new BoxPanel();
     this._panel.direction = 'top-to-bottom';
     this._panel.spacing = 0;
-    this._panel.addWidget(toolbar);
-    this._panel.addWidget(this._codeCell);
-    BoxPanel.setStretch(toolbar, 0);
-    BoxPanel.setStretch(this._codeCell, 1);
+
+    if (boxOptions?.showToolbar !== false) {
+      this._panel.addWidget(toolbar);
+    }
+    this._panel.addWidget(this._cell);
+
+    if (boxOptions?.showToolbar !== false) {
+      BoxPanel.setStretch(toolbar, 0);
+    }
+    BoxPanel.setStretch(this._cell, 1);
     window.addEventListener('resize', () => {
       this._panel.update();
     });
@@ -316,8 +357,8 @@ export class CellAdapter {
     return this._panel;
   }
 
-  get codeCell(): CodeCell {
-    return this._codeCell;
+  get cell(): CodeCell | MarkdownCell | RawCell {
+    return this._cell;
   }
 
   get sessionContext(): SessionContext {
@@ -329,15 +370,21 @@ export class CellAdapter {
   }
 
   execute = () => {
-    CodeCell.execute(this._codeCell, this._sessionContext);
+    if (this._type === 'code') {
+      CodeCell.execute((this._cell as CodeCell), this._sessionContext);
+    } else if (this._type === 'markdown') {
+      (this._cell as MarkdownCell).rendered = true;
+    }
   };
 }
 
 export namespace CellAdapter {
   export type ICellAdapterOptions = {
+    type: 'code' | 'markdown' | 'raw';
     source: string;
     serverSettings: ServerConnection.ISettings;
     kernel: Kernel;
+    boxOptions?: BoxOptions;
   };
 }
 
