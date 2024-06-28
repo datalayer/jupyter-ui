@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { selectCell, Cell } from "@datalayer/jupyter-react";
+import { useCellStore, Cell } from "@datalayer/jupyter-react";
 import CellToolbar from './CellToolbar';
 
 const SOURCE_EXAMPLE = `"""
@@ -36,12 +36,12 @@ ax2.set_ylabel('Undamped')
 plt.show()`;
 
 const CellPreview = () => {
-  const cell = selectCell();
+  const cellStore = useCellStore();
   return (
     <>
-      <div>source: {cell.source}</div>
+      <div>source: {cellStore.source}</div>
       <br/>
-      <div>kernel available: {String(cell.kernelAvailable)}</div>
+      <div>kernel available: {String(cellStore.kernelAvailable)}</div>
       <br/>
     </>
   )
