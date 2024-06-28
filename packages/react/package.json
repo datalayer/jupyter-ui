@@ -261,24 +261,7 @@
     "extension": "./lib/jupyter/lab/index.js",
     "outputDir": "jupyter_react/labextension",
     "schemaDir": "schema",
-    "webpackConfig": "./webpack.lab-config.js",
-    "sharedPackages": {
-      "@jupyter/web-components": {
-        "bundled": true,
-        "singleton": true
-      },
-      "@jupyter-notebook/tree": {
-        "singleton": true
-      },
-      "@microsoft/fast-element": {
-        "bundled": true,
-        "singleton": true
-      },
-      "@microsoft/fast-foundation": {
-        "bundled": true,
-        "singleton": true
-      }
-    }
+    "webpackConfig": "./webpack.lab-config.js"
   },
   "jupyter-releaser": {
     "hooks": {
