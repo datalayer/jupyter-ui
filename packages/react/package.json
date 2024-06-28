@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyter-react",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "Jupyter React - React.js components 100% compatible with Jupyter.",
   "license": "MIT",
   "main": "lib/index.js",
@@ -108,6 +108,7 @@
     "@jupyterlab/mathjax-extension": "^4.0.0",
     "@jupyterlab/metadataform": "^4.0.0",
     "@jupyterlab/nbconvert-css": "^4.0.0",
+    "@jupyterlab/nbformat": "^4.0.0",
     "@jupyterlab/notebook": "^4.0.0",
     "@jupyterlab/notebook-extension": "^4.0.0",
     "@jupyterlab/observables": "^5.0.0",
