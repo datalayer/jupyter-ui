@@ -6,7 +6,7 @@
 
 import { CommandRegistry } from '@lumino/commands';
 import { CompletionHandler } from '@jupyterlab/completer';
-import { CodeCell } from '@jupyterlab/cells';
+import { CodeCell, MarkdownCell, RawCell } from '@jupyterlab/cells';
 import { SessionContext } from '@jupyterlab/apputils';
 
 const cmdIds = {
@@ -16,7 +16,7 @@ const cmdIds = {
 
 export const CellCommands = (
   commandRegistry: CommandRegistry,
-  codeCell: CodeCell,
+  cell: CodeCell | MarkdownCell | RawCell,
   sessionContext: SessionContext,
   completerHandler: CompletionHandler
 ): void => {
@@ -29,7 +29,13 @@ export const CellCommands = (
     execute: () => completerHandler.completer.selectActive(),
   });
   commandRegistry.addCommand('run:cell', {
-    execute: () => CodeCell.execute(codeCell, sessionContext),
+    execute: () => {
+      if (cell instanceof CodeCell) {
+        CodeCell.execute(cell, sessionContext)
+      } else if (cell instanceof MarkdownCell) {
+        (cell as MarkdownCell).rendered = true;
+      }
+    },
   });
   commandRegistry.addKeyBinding({
     selector: '.jp-InputArea-editor.jp-mod-completer-enabled',

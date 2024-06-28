@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { CodeCell } from '@jupyterlab/cells';
+import { CodeCell, MarkdownCell } from '@jupyterlab/cells';
 import { KernelMessage } from '@jupyterlab/services';
 import { Box } from '@primer/react';
 import CellAdapter from './CellAdapter';
@@ -27,29 +27,51 @@ export type ICellProps = {
    * Whether to execute directly the code cell or not.
    */
   autoStart?: boolean;
+  /**
+   * Whether to show the toolbar for cell or not
+   */
+  showToolbar?: boolean;
 };
 
 export const Cell = (props: ICellProps) => {
-  const { type='code', source = '', autoStart } = props;
+  const { type='code', source = '', autoStart, showToolbar=true } = props;
   const { serverSettings, defaultKernel } = useJupyter();
   const cellStore = useCellStore();
   const [adapter, setAdapter] = useState<CellAdapter>();
 
-  const handleCodeCellState = (adapter: CellAdapter) => {
-    (adapter.codeCell as CodeCell).outputArea.outputLengthChanged?.connect(
-      (outputArea, outputsCount) => {
-        cellStore.setOutputsCount(outputsCount);
+  const handleCellInitEvents = (adapter: CellAdapter) => {
+    adapter.cell.model.contentChanged.connect(
+      (cellModel, changedArgs) => {
+        cellStore.setSource(cellModel.sharedModel.getSource());
       }
     );
+
+    if (adapter.cell instanceof CodeCell) {
+      adapter.cell.outputArea.outputLengthChanged?.connect(
+        (outputArea, outputsCount) => {
+          cellStore.setOutputsCount(outputsCount);
+        }
+      );
+    }
+
     adapter.sessionContext.initialize().then(() => {
-      if (autoStart) {
+      if (!autoStart) {
+        return
+      }
+
+      // Perform auto-start for code or markdown cells
+      if (adapter.cell instanceof CodeCell) {
         const execute = CodeCell.execute(
-          (adapter.codeCell as CodeCell),
+          adapter.cell,
           adapter.sessionContext
         );
         execute.then((msg: void | KernelMessage.IExecuteReplyMsg) => {
           cellStore.setKernelAvailable(true);
         });
+      }
+
+      if (adapter.cell instanceof MarkdownCell) {
+        adapter.cell.rendered = true;
       }
     });
   }
@@ -62,19 +84,32 @@ export const Cell = (props: ICellProps) => {
           source,
           serverSettings,
           kernel: defaultKernel,
+          boxOptions: {showToolbar}
         });
         cellStore.setAdapter(adapter);
         cellStore.setSource(source);
-        adapter.codeCell.model.contentChanged.connect(
-          (cellModel, changedArgs) => {
-            cellStore.setSource(cellModel.sharedModel.getSource());
-          }
-        );
-
-        if (type === 'code') {
-          handleCodeCellState(adapter);
-        }
+        handleCellInitEvents(adapter);
         setAdapter(adapter);
+
+        const handleDblClick = (event: Event) => {
+          let target = event.target as HTMLElement;
+          /**
+           * Find the DOM searching by the markdown output class (since child elements can be clicked also)
+           * If a rendered markdown was found, then back cell to editor mode
+           */
+          while (target && !target.classList.contains('jp-MarkdownOutput')) {
+            target = target.parentElement as HTMLElement;
+          }
+          if (target && target.classList.contains('jp-MarkdownOutput')) {
+            (adapter.cell as MarkdownCell).rendered = false;
+          }
+        };
+
+        // Adds the event for double click and the removal on component's destroy
+        document.addEventListener('dblclick', handleDblClick);
+        return () => {
+          document.removeEventListener('dblclick', handleDblClick);
+        };
       });
     }
   }, [source, defaultKernel, serverSettings]);

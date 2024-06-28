@@ -53,25 +53,29 @@ import Kernel from '../../jupyter/kernel/Kernel';
 import getMarked from '../notebook/marked/marked';
 import CellCommands from './CellCommands';
 
+interface BoxOptions {
+  showToolbar?: boolean;
+}
 export class CellAdapter {
-  private _codeCell: CodeCell | MarkdownCell | RawCell;
+  private _cell: CodeCell | MarkdownCell | RawCell;
   private _kernel: Kernel;
   private _panel: BoxPanel;
   private _sessionContext: SessionContext;
   private _type: 'code' | 'markdown' | 'raw'
 
   constructor(options: CellAdapter.ICellAdapterOptions) {
-    const { type, source, serverSettings, kernel } = options;
+    const { type, source, serverSettings, kernel, boxOptions } = options;
     this._kernel = kernel;
     this._type = type;
-    this.setupCell(type, source, serverSettings, kernel);
+    this.setupCell(type, source, serverSettings, kernel, boxOptions);
   }
 
   private setupCell(
     type = 'code',
     source: string,
     serverSettings: ServerConnection.ISettings,
-    kernel: Kernel
+    kernel: Kernel,
+    boxOptions?: BoxOptions
   ) {
     const kernelManager =
       kernel.kernelManager ??
@@ -210,41 +214,31 @@ export class CellAdapter {
       languages,
     });
 
+    const cellModel = createStandaloneCell({
+      cell_type: type,
+      source: source,
+      metadata: {},
+    });
+    const contentFactory = new Cell.ContentFactory({
+      editorFactory: factoryService.newInlineEditor.bind(factoryService),
+    });
     if (type === 'code') {
-      this._codeCell = new CodeCell({
+      this._cell = new CodeCell({
         rendermime,
-        model: new CodeCellModel({
-          sharedModel: createStandaloneCell({
-            cell_type: 'code',
-            source: source,
-            metadata: {},
-          }) as YCodeCell,
-        }),
-        contentFactory: new Cell.ContentFactory({
-          editorFactory: factoryService.newInlineEditor.bind(factoryService),
-        }),
+        model: new CodeCellModel({sharedModel: cellModel as YCodeCell}),
+        contentFactory: contentFactory,
       });
     }  else if (type === 'markdown') {
-      this._codeCell = new MarkdownCell({
+      this._cell = new MarkdownCell({
         rendermime,
-        model: new MarkdownCellModel({
-          sharedModel: createStandaloneCell({
-            cell_type: 'markdown',
-            source: source,
-            metadata: {},
-          }) as YMarkdownCell,
-        }),
-        contentFactory: new Cell.ContentFactory({
-          editorFactory: factoryService.newInlineEditor.bind(factoryService),
-        }),
+        model: new MarkdownCellModel({sharedModel: cellModel as YMarkdownCell}),
+        contentFactory: contentFactory,
       });
     }
-
-    this._codeCell.addClass('dla-Jupyter-Cell');
-    this._codeCell.initializeState();
-
+    this._cell.addClass('dla-Jupyter-Cell');
+    this._cell.initializeState();
     if (this._type === 'markdown') {
-      (this._codeCell as MarkdownCell).rendered = false;
+      (this._cell as MarkdownCell).rendered = false;
     }
 
     this._sessionContext.kernelChanged.connect(
@@ -270,18 +264,18 @@ export class CellAdapter {
         if (this._type === 'code') {
           const lang = info.language_info;
           const mimeType = mimeService.getMimeTypeByLanguage(lang);
-          this._codeCell.model.mimeType = mimeType;
+          this._cell.model.mimeType = mimeType;
         }
       });
     });
-    const editor = this._codeCell.editor;
+    const editor = this._cell.editor;
     const model = new CompleterModel();
     const completer = new Completer({ editor, model });
     const timeout = 1000;
     const provider = new KernelCompleterProvider();
     const reconciliator = new ProviderReconciliator({
       context: {
-        widget: this._codeCell,
+        widget: this._cell,
         editor,
         session: this._sessionContext.session,
       },
@@ -293,7 +287,7 @@ export class CellAdapter {
       const provider = new KernelCompleterProvider();
       handler.reconciliator = new ProviderReconciliator({
         context: {
-          widget: this._codeCell,
+          widget: this._cell,
           editor,
           session: this._sessionContext.session,
         },
@@ -303,9 +297,7 @@ export class CellAdapter {
     });
     handler.editor = editor;
 
-    if (this._type === 'code') {
-      CellCommands(commands, (this._codeCell as CodeCell)!, this._sessionContext, handler);
-    }
+    CellCommands(commands, this._cell!, this._sessionContext, handler);
     completer.hide();
     completer.addClass('jp-Completer-Cell');
     Widget.attach(completer, document.body);
@@ -315,9 +307,9 @@ export class CellAdapter {
       icon: runIcon,
       onClick: () => {
         if (this._type === 'code') {
-          CodeCell.execute(this._codeCell as CodeCell, this._sessionContext);
+          CodeCell.execute(this._cell as CodeCell, this._sessionContext);
         } else if (this._type === 'markdown') {
-          (this.codeCell as MarkdownCell).rendered = true;
+          (this._cell as MarkdownCell).rendered = true;
         }
       },
       tooltip: 'Run',
@@ -338,17 +330,23 @@ export class CellAdapter {
     );
 
     if (this._type === 'code') {
-      (this._codeCell as CodeCell).outputsScrolled = false;
+      (this._cell as CodeCell).outputsScrolled = false;
     }
-    this._codeCell.activate();
+    this._cell.activate();
 
     this._panel = new BoxPanel();
     this._panel.direction = 'top-to-bottom';
     this._panel.spacing = 0;
-    this._panel.addWidget(toolbar);
-    this._panel.addWidget(this._codeCell);
-    BoxPanel.setStretch(toolbar, 0);
-    BoxPanel.setStretch(this._codeCell, 1);
+
+    if (boxOptions?.showToolbar !== false) {
+      this._panel.addWidget(toolbar);
+    }
+    this._panel.addWidget(this._cell);
+
+    if (boxOptions?.showToolbar !== false) {
+      BoxPanel.setStretch(toolbar, 0);
+    }
+    BoxPanel.setStretch(this._cell, 1);
     window.addEventListener('resize', () => {
       this._panel.update();
     });
@@ -359,8 +357,8 @@ export class CellAdapter {
     return this._panel;
   }
 
-  get codeCell(): CodeCell | MarkdownCell | RawCell {
-    return this._codeCell;
+  get cell(): CodeCell | MarkdownCell | RawCell {
+    return this._cell;
   }
 
   get sessionContext(): SessionContext {
@@ -373,9 +371,9 @@ export class CellAdapter {
 
   execute = () => {
     if (this._type === 'code') {
-      CodeCell.execute((this._codeCell as CodeCell), this._sessionContext);
+      CodeCell.execute((this._cell as CodeCell), this._sessionContext);
     } else if (this._type === 'markdown') {
-      (this._codeCell as MarkdownCell).rendered = true;
+      (this._cell as MarkdownCell).rendered = true;
     }
   };
 }
@@ -386,6 +384,7 @@ export namespace CellAdapter {
     source: string;
     serverSettings: ServerConnection.ISettings;
     kernel: Kernel;
+    boxOptions?: BoxOptions;
   };
 }
 
