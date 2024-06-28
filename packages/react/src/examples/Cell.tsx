@@ -6,6 +6,7 @@
 
 import { createRoot } from 'react-dom/client';
 import { Box, Button } from '@primer/react';
+import { CodeCell } from '@jupyterlab/cells';
 import { useJupyterStore } from './../state';
 import Jupyter from '../jupyter/Jupyter';
 import Cell from '../components/cell/Cell';
@@ -21,7 +22,7 @@ for i in range(100):
 
 const CellExample = () => {
   const cellStore = useJupyterStore().cellStore();
-  console.log('Cell Outputs', cellStore.adapter?.codeCell.outputArea.model.toJSON());
+  console.log('Cell Outputs', (cellStore.adapter?.cell as CodeCell).outputArea.model.toJSON());
   return (
     <Jupyter>
       <Box as="h1">A Jupyter Cell</Box>
