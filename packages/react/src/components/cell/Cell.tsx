@@ -9,11 +9,13 @@ import { CodeCell, MarkdownCell } from '@jupyterlab/cells';
 import { KernelMessage } from '@jupyterlab/services';
 import { Box } from '@primer/react';
 import CellAdapter from './CellAdapter';
+import { UUID } from '@lumino/coreutils';
 import Lumino from '../lumino/Lumino';
 import { useJupyter } from './../../jupyter/JupyterContext';
 import useCellStore from './CellState';
 
 export type ICellProps = {
+  sourceId?: string;
   /**
    * Cell type
    */
@@ -34,22 +36,33 @@ export type ICellProps = {
 };
 
 export const Cell = (props: ICellProps) => {
-  const { type='code', source = '', autoStart, showToolbar=true } = props;
+  const { sourceId, type='code', source = '', autoStart, showToolbar=true } = props;
   const { serverSettings, defaultKernel } = useJupyter();
+  const [id, setId] = useState<string | undefined>(sourceId);
   const cellStore = useCellStore();
   const [adapter, setAdapter] = useState<CellAdapter>();
 
+  useEffect(() => {
+    if (!id) {
+      setId(UUID.uuid4());
+    }
+  }, []);
+
   const handleCellInitEvents = (adapter: CellAdapter) => {
+    if(!id) {
+      return;
+    }
+
     adapter.cell.model.contentChanged.connect(
       (cellModel, changedArgs) => {
-        cellStore.setSource(cellModel.sharedModel.getSource());
+        cellStore.setSource(id, cellModel.sharedModel.getSource());
       }
     );
 
     if (adapter.cell instanceof CodeCell) {
       adapter.cell.outputArea.outputLengthChanged?.connect(
         (outputArea, outputsCount) => {
-          cellStore.setOutputsCount(outputsCount);
+          cellStore.setOutputsCount(id, outputsCount);
         }
       );
     }
@@ -65,9 +78,9 @@ export const Cell = (props: ICellProps) => {
           adapter.cell,
           adapter.sessionContext
         );
-        execute.then((msg: void | KernelMessage.IExecuteReplyMsg) => {
-          cellStore.setKernelAvailable(true);
-        });
+        // execute.then((msg: void | KernelMessage.IExecuteReplyMsg) => {
+        //   cellStore.setKernelAvailable(true);
+        // });
       }
 
       if (adapter.cell instanceof MarkdownCell) {
@@ -77,7 +90,7 @@ export const Cell = (props: ICellProps) => {
   }
 
   useEffect(() => {
-    if (defaultKernel && serverSettings) {
+    if (id && defaultKernel && serverSettings) {
       defaultKernel.ready.then(() => {
         const adapter = new CellAdapter({
           type,
@@ -86,8 +99,8 @@ export const Cell = (props: ICellProps) => {
           kernel: defaultKernel,
           boxOptions: {showToolbar}
         });
-        cellStore.setAdapter(adapter);
-        cellStore.setSource(source);
+        cellStore.setAdapter(id, adapter);
+        cellStore.setSource(id, source);
         handleCellInitEvents(adapter);
         setAdapter(adapter);
 
