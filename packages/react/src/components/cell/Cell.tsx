@@ -9,18 +9,20 @@ import { CodeCell, MarkdownCell } from '@jupyterlab/cells';
 import { KernelMessage } from '@jupyterlab/services';
 import { Box } from '@primer/react';
 import CellAdapter from './CellAdapter';
-import { UUID } from '@lumino/coreutils';
 import Lumino from '../lumino/Lumino';
 import { useJupyter } from './../../jupyter/JupyterContext';
 import useCellStore from './CellState';
+import { newUuid } from '../../utils';
 
 export type ICellProps = {
-  sourceId?: string;
+  /**
+   * An id that can be provided to identify unique cell
+   */
+  id: string;
   /**
    * Cell type
    */
   type: 'code' | 'markdown' | 'raw';
-
   /**
    * Cell source
    */
@@ -36,23 +38,13 @@ export type ICellProps = {
 };
 
 export const Cell = (props: ICellProps) => {
-  const { sourceId, type='code', source = '', autoStart, showToolbar=true } = props;
+  const { type='code', source = '', autoStart, showToolbar=true } = props;
   const { serverSettings, defaultKernel } = useJupyter();
-  const [id, setId] = useState<string | undefined>(sourceId);
-  const cellStore = useCellStore();
+  const [id] = useState(props.id || newUuid());
   const [adapter, setAdapter] = useState<CellAdapter>();
-
-  useEffect(() => {
-    if (!id) {
-      setId(UUID.uuid4());
-    }
-  }, []);
+  const cellStore = useCellStore();
 
   const handleCellInitEvents = (adapter: CellAdapter) => {
-    if(!id) {
-      return;
-    }
-
     adapter.cell.model.contentChanged.connect(
       (cellModel, changedArgs) => {
         cellStore.setSource(id, cellModel.sharedModel.getSource());
@@ -68,7 +60,7 @@ export const Cell = (props: ICellProps) => {
     }
 
     adapter.sessionContext.initialize().then(() => {
-      if (!autoStart) {
+      if (!autoStart || !adapter.cell.model) {
         return
       }
 
@@ -78,9 +70,9 @@ export const Cell = (props: ICellProps) => {
           adapter.cell,
           adapter.sessionContext
         );
-        // execute.then((msg: void | KernelMessage.IExecuteReplyMsg) => {
-        //   cellStore.setKernelAvailable(true);
-        // });
+        execute.then((msg: void | KernelMessage.IExecuteReplyMsg) => {
+          cellStore.setKernelAvailable(true);
+        });
       }
 
       if (adapter.cell instanceof MarkdownCell) {

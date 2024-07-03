@@ -22,20 +22,22 @@ for i in range(100):
 
 const CellExample = () => {
   const cellStore = useJupyterStore().cellStore();
-  console.log('Cell Outputs', (cellStore.adapter?.cell as CodeCell).outputArea.model.toJSON());
+  const cellId = 'cell-1'
+
+  console.log('Cell Outputs', (cellStore.getAdapter(cellId)?.cell as CodeCell).outputArea.model.toJSON());
   return (
     <Jupyter>
       <Box as="h1">A Jupyter Cell</Box>
       <Box>
-        Outputs Count: {cellStore.outputsCount}
+        Outputs Count: {cellStore.getOutputsCount(cellId)}
       </Box>
       <Box>
-        Source: {cellStore.source}
+        Source: {cellStore.getSource(cellId)}
       </Box>
       <Box>
-        <Button onClick={() => cellStore.execute()}>Run cell</Button>
+        <Button onClick={() => cellStore.execute(cellId)}>Run cell</Button>
       </Box>
-      <Cell source={DEFAULT_SOURCE}/>
+      <Cell source={DEFAULT_SOURCE} id={cellId}/>
     </Jupyter>
   )
 }

@@ -16,17 +16,18 @@ export interface ICellState {
 
 export interface ICellsState {
   cells: Map<string, ICellState>;
-  // kernelAvailable: boolean;
+  kernelAvailable: boolean; // Currently shared between all cells
 }
 
 export type CellState = ICellsState & {
   setCells: (cells: Map<string, ICellState>) => void;
   setSource: (id: string, source: string) => void;
   setOutputsCount: (id: string, outputsCount: number) => void;
-  // setKernelAvailable: (kernelAvailable: boolean) => void;
+  setKernelAvailable: (kernelAvailable: boolean) => void;
   setAdapter: (id: string, adapter?: CellAdapter) => void;
   getAdapter: (id: string) => CellAdapter | undefined;
   getSource: (id: string) => string | undefined;
+  getOutputsCount: (id: string) => number | undefined;
   execute: (id?: string) => void;
 };
 
@@ -37,6 +38,7 @@ export const cellStore = createStore<CellState>((set, get) => ({
   kernelAvailable: false,
   adapter: undefined,
   setCells: (cells: Map<string, ICellState>) => set((cell: CellState) => ({ cells })),
+
   setSource: (id: string, source: string) => {
     const cells = get().cells;
     const cell = cells.get(id);
@@ -55,10 +57,9 @@ export const cellStore = createStore<CellState>((set, get) => ({
     } else {
       cells.set(id, {outputsCount});
     }
-
     set((state: CellState) => ({ cells }))
   },
-  // setKernelAvailable: (kernelAvailable: boolean) => set((state: CellState) => ({ kernelAvailable })),
+  setKernelAvailable: (kernelAvailable: boolean) => set((state: CellState) => ({ kernelAvailable })),
   setAdapter: (id: string, adapter?: CellAdapter) => {
     const cells = get().cells;
     const cell = cells.get(id);
@@ -75,14 +76,17 @@ export const cellStore = createStore<CellState>((set, get) => ({
   getSource: (id: string): string | undefined => {
     return get().cells.get(id)?.source;
   },
+  getOutputsCount: (id: string): number | undefined => {
+    return get().cells.get(id)?.outputsCount;
+  },
   execute: (id: string) => { 
     const cells = get().cells;
     const cell = cells.get(id);
-    if (!cell) {
-      return;
+    if (cell) {
+      cell.adapter?.execute() 
+    } else {
+      get().cells.forEach((cell) => cell.adapter?.execute())
     }
-
-    cell.adapter?.execute() 
   },
 }));
 
