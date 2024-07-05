@@ -12,13 +12,17 @@ import CellAdapter from './CellAdapter';
 import Lumino from '../lumino/Lumino';
 import { useJupyter } from './../../jupyter/JupyterContext';
 import useCellStore from './CellState';
+import { newUuid } from '../../utils';
 
 export type ICellProps = {
+  /**
+   * An id that can be provided to identify unique cell
+   */
+  id: string;
   /**
    * Cell type
    */
   type: 'code' | 'markdown' | 'raw';
-
   /**
    * Cell source
    */
@@ -36,26 +40,27 @@ export type ICellProps = {
 export const Cell = (props: ICellProps) => {
   const { type='code', source = '', autoStart, showToolbar=true } = props;
   const { serverSettings, defaultKernel } = useJupyter();
-  const cellStore = useCellStore();
+  const [id] = useState(props.id || newUuid());
   const [adapter, setAdapter] = useState<CellAdapter>();
+  const cellStore = useCellStore();
 
   const handleCellInitEvents = (adapter: CellAdapter) => {
     adapter.cell.model.contentChanged.connect(
       (cellModel, changedArgs) => {
-        cellStore.setSource(cellModel.sharedModel.getSource());
+        cellStore.setSource(id, cellModel.sharedModel.getSource());
       }
     );
 
     if (adapter.cell instanceof CodeCell) {
       adapter.cell.outputArea.outputLengthChanged?.connect(
         (outputArea, outputsCount) => {
-          cellStore.setOutputsCount(outputsCount);
+          cellStore.setOutputsCount(id, outputsCount);
         }
       );
     }
 
     adapter.sessionContext.initialize().then(() => {
-      if (!autoStart) {
+      if (!autoStart || !adapter.cell.model) {
         return
       }
 
@@ -77,7 +82,7 @@ export const Cell = (props: ICellProps) => {
   }
 
   useEffect(() => {
-    if (defaultKernel && serverSettings) {
+    if (id && defaultKernel && serverSettings) {
       defaultKernel.ready.then(() => {
         const adapter = new CellAdapter({
           type,
@@ -86,8 +91,8 @@ export const Cell = (props: ICellProps) => {
           kernel: defaultKernel,
           boxOptions: {showToolbar}
         });
-        cellStore.setAdapter(adapter);
-        cellStore.setSource(source);
+        cellStore.setAdapter(id, adapter);
+        cellStore.setSource(id, source);
         handleCellInitEvents(adapter);
         setAdapter(adapter);
 

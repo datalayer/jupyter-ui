@@ -19,7 +19,7 @@ import Terminal from '../components/terminal/Terminal';
 import CellSidebarNew from '../components/notebook/cell/sidebar/CellSidebarButton';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 import Console from '../components/console/Console';
-import { cellStore, useCellStore } from '../components/cell/CellState';
+import { useCellStore } from '../components/cell/CellState';
 import useNotebookStore from '../components/notebook/NotebookState';
 
 import notebook from './notebooks/NotebookExample1.ipynb.json';
@@ -49,18 +49,23 @@ widgets.IntSlider(
     step=1
  )`;
 
-const CellPreview = () => {
-  const { source, kernelAvailable } = useCellStore()
+interface ICellToolProps {
+  id: string; // Cell id
+}
+
+const CellPreview = (props: ICellToolProps) => {
+  const cellStore = useCellStore();
   return (
     <>
-      <>source: {source}</>
-      <>kernel available: {String(kernelAvailable)}</>
+      <>source: {cellStore.getSource(props.id)}</>
+      <>kernel available: {String(cellStore.kernelAvailable)}</>
     </>
   );
 };
 
-const CellToolbar = () => {
-  const { outputsCount } = useCellStore();
+const CellToolbar = (props: ICellToolProps) => {
+  const {id} = props;
+  const cellStore = useCellStore();
   return (
     <>
       <Box display="flex">
@@ -68,20 +73,20 @@ const CellToolbar = () => {
           <Button
             variant="default"
             size="small"
-            onClick={() => cellStore.getState().execute()}
+            onClick={() => cellStore.execute(id)}
           >
             Run the cell
           </Button>
           <Button
             variant="invisible"
             size="small"
-            onClick={() => cellStore.getState().setOutputsCount(0)}
+            onClick={() => cellStore.setOutputsCount(id, 0)}
           >
             Reset outputs count
           </Button>
         </ButtonGroup>
       </Box>
-      <Box>Outputs count: {outputsCount}</Box>
+      <Box>Outputs count: {cellStore.getOutputsCount(id)}</Box>
     </>
   );
 };
@@ -184,6 +189,7 @@ const Outputs = () => {
 const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
+const cellId = 'my-cell-1'
 
 root.render(
   <Jupyter terminals={true}>
@@ -198,9 +204,9 @@ root.render(
     <hr />
     <Console />
     <hr />
-    <CellPreview />
-    <CellToolbar />
-    <Cell />
+    <CellPreview id={cellId} />
+    <CellToolbar id={cellId}/>
+    <Cell id={cellId}/>
     <hr />
     <Outputs />
     <hr />

@@ -189,7 +189,11 @@ export class CellAdapter {
     document.addEventListener(
       'keydown',
       event => {
-        commands.processKeydownEvent(event);
+        // Trigger and process event only in current focused cell
+        const activeElement = document.activeElement;
+        if (activeElement && activeElement.closest('.dla-Jupyter-Cell') === this._cell.node) {
+          commands.processKeydownEvent(event);
+        }
       },
       useCapture
     );
