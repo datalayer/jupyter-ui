@@ -51,18 +51,16 @@ The available properties for the Notebook component are available on this [TypeD
 
 ```jsx
 <Jupyter
-    jupyterServerHttpUrl="https://oss.datalayer.run/api/jupyter-server"
-    jupyterServerWsUrl="wss://oss.datalayer.run/api/jupyter-server"
-    jupyterToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+    jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
+    jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
 >
     <Notebook />
 </Jupyter>
 ```
 
 You can set the following props to connect it to a running Jupyter Server:
-- `jupyterServerHttpUrl`: The server URL
-- `jupyterServerWsUrl`: The server websocket URL
-- `jupyterToken`: The server authentication token
+- `jupyterServerUrl`: The server URL
+- `jupyterServerToken`: The server authentication token
 
 > Your server will likely need to accept connection from external client.
 

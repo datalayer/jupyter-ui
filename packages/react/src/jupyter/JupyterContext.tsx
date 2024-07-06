@@ -11,7 +11,7 @@ import {
 } from '@jupyterlab/services';
 import type { JupyterLiteServerPlugin } from '@jupyterlite/server';
 import React, { createContext, useContext } from 'react';
-import { getJupyterToken } from './JupyterConfig';
+import { getJupyterServerToken } from './JupyterConfig';
 import { requestAPI } from './JupyterHandlers';
 import Kernel from './kernel/Kernel';
 import { useJupyterStoreFromContext } from '../state';
@@ -207,11 +207,11 @@ export type JupyterContextProps = React.PropsWithChildren<{
   useRunningKernelIndex?: number;
 }>;
 
-export const createServerSettings = (baseUrl: string, wsUrl: string) => {
+export const createServerSettings = (baseUrl: string) => {
   return ServerConnection.makeSettings({
     baseUrl,
-    wsUrl,
-    token: getJupyterToken(),
+    wsUrl: baseUrl.replace(/^http/, 'ws'),
+    token: getJupyterServerToken(),
     appendToken: true,
     init: {
       mode: 'cors',
@@ -239,7 +239,7 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
         kernelManager: serviceManager?.kernels,
         lite: lite,
         serverSettings:
-          serviceManager?.serverSettings ?? createServerSettings('', ''),
+          serviceManager?.serverSettings ?? createServerSettings(''),
         serviceManager,
         wsUrl: serviceManager?.serverSettings.wsUrl ?? '',
       }}

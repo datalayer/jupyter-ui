@@ -10,9 +10,8 @@ Those properties can be provided in the [Jupyter Context](/docs/components/conte
 <head>
   <script id="datalayer-config-data" type="application/json">
     {
-      "jupyterServerHttpUrl": "http://localhost:8686/api/jupyter-server",
-      "jupyterServerWsUrl": "ws://localhost:8686/api/jupyter-server",
-      "jupyterToken": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+      "jupyterServerUrl": "http://localhost:8686/api/jupyter-server",
+      "jupyterServerToken": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
     }
   </script>
 </head>
@@ -23,9 +22,8 @@ The values defined in the host HTML are taking precedence on the values set in t
 
 ```ts
 <Jupyter
-  "jupyterServerHttpUrl": "http://localhost:8686/api/jupyter-server"
-  "jupyterServerWsUrl": "ws://localhost:8686/api/jupyter-server"
-  "jupyterToken": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+  "jupyterServerUrl": "http://localhost:8686/api/jupyter-server"
+  "jupyterServerToken": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
 >
   <Notebook/>
 </Jupyter>
