@@ -8,8 +8,14 @@ import React from 'react';
 import BrowserOnly from '@docusaurus/core/lib/client/exports/BrowserOnly';
 import { ContentLoader } from '@datalayer/primer-addons';
 
-const JupyterCell = (props: any) => {
-  const { token, serverHttpUrl, serverWsUrl, source } = props;
+type JupyterCellProps = {
+  jupyterServerUrl: string;
+  jupyterServerToken: string;
+  source: string;
+}
+
+const JupyterCell = (props: JupyterCellProps) => {
+  const { jupyterServerUrl, jupyterServerToken, source } = props;
   return (
     <BrowserOnly
       fallback={<div>Jupyter Cell fallback content for prerendering.</div>}>
@@ -20,8 +26,8 @@ const JupyterCell = (props: any) => {
         return (
           <>
             <Jupyter
-              jupyterServerToken={token}
-              jupyterServerUrl={serverHttpUrl}
+              jupyterServerUrl={jupyterServerUrl}
+              jupyterServerToken={jupyterServerToken}
               disableCssLoading={true}
               skeleton={<ContentLoader/>}
             >
