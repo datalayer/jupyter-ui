@@ -21,7 +21,7 @@ export const CellComponent = (props: CellComponentProps) => {
       <div style={{fontSize: 20}}>Jupyter Cell in Next.js</div>
       <Jupyter
         jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
-          jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+        jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
         colorMode={colorMode}
         theme={theme}
       >
