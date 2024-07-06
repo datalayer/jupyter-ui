@@ -25,7 +25,7 @@ class CellView implements NodeView {
       startDefaultKernel: true,
       defaultKernelName: "python",
     });
-    const serverSettings = createServerSettings(config.jupyterServerHttpUrl, config.jupyterServerWsUrl);
+    const serverSettings = createServerSettings(config.jupyterServerUrl);
     const widget = new CellAdapter({
       source: "print('hello')",
       serverSettings,

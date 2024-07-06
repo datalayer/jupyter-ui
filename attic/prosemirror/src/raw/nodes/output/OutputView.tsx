@@ -27,8 +27,7 @@ class OutputView implements NodeView {
       defaultKernelName: "python",
     });
     const serverSettings = createServerSettings(
-      config.jupyterServerHttpUrl,
-      config.jupyterServerWsUrl,
+      config.jupyterServerUrl,
       );
     const kernelManager = new KernelManager({
       serverSettings,

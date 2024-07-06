@@ -20,9 +20,8 @@ const JupyterCell = (props: any) => {
         return (
           <>
             <Jupyter
-              jupyterToken={token}
-              jupyterServerHttpUrl={serverHttpUrl}
-              jupyterServerWsUrl={serverWsUrl}
+              jupyterServerToken={token}
+              jupyterServerUrl={serverHttpUrl}
               disableCssLoading={true}
               skeleton={<ContentLoader/>}
             >

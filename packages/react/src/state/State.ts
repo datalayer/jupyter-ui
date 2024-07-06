@@ -16,7 +16,7 @@ import useNotebookStore from '../components/notebook/NotebookState';
 import useOutputStore from '../components/output/OutputState';
 import useTerminalStore from '../components/terminal/TerminalState';
 import { createLiteServer } from '../jupyter/lite/LiteServer';
-import { getJupyterServerHttpUrl } from '../jupyter/JupyterConfig';
+import { getJupyterServerUrl } from '../jupyter/JupyterConfig';
 import { ensureJupyterAuth, createServerSettings, JupyterContextProps } from '../jupyter/JupyterContext';
 import Kernel from '../jupyter/kernel/Kernel';
 
@@ -133,11 +133,11 @@ export function useJupyterStoreFromContext(props: JupyterContextProps) {
         jupyterStore.getState().serviceManager = liteServer.serviceManager;
       });
     } else {
-      const serverSettings = createServerSettings(baseUrl ?? '', wsUrl ?? '');
+      const serverSettings = createServerSettings(baseUrl ?? '');
       ensureJupyterAuth(serverSettings).then(isAuth => {
         if (!isAuth) {
           const loginUrl =
-            getJupyterServerHttpUrl() + '/login?next=' + window.location;
+            getJupyterServerUrl() + '/login?next=' + window.location;
           console.warn('Redirecting to Jupyter Server login URL', loginUrl);
           window.location.replace(loginUrl);
         }

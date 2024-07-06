@@ -14,8 +14,7 @@ import { Theme } from '@primer/react/lib/ThemeProvider';
 import { useMemo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import {
-  getJupyterServerHttpUrl,
-  getJupyterServerWsUrl,
+  getJupyterServerUrl,
   loadJupyterConfig,
 } from './JupyterConfig';
 import { JupyterContextProps, JupyterContextProvider } from './JupyterContext';
@@ -32,9 +31,8 @@ export type JupyterProps = Omit<
 > & {
   colorMode?: ColorMode;
   disableCssLoading?: boolean;
-  jupyterServerHttpUrl?: string;
-  jupyterServerWsUrl?: string;
-  jupyterToken?: string;
+  jupyterServerUrl?: string;
+  jupyterServerToken?: string;
   theme?: Theme;
   terminals?: boolean;
 };
@@ -67,9 +65,8 @@ export const Jupyter = (props: JupyterProps) => {
     defaultKernelName,
     disableCssLoading = false,
     initCode = '',
-    jupyterServerHttpUrl,
-    jupyterServerWsUrl,
-    jupyterToken,
+    jupyterServerUrl,
+    jupyterServerToken,
     lite,
     startDefaultKernel,
     skeleton,
@@ -82,17 +79,15 @@ export const Jupyter = (props: JupyterProps) => {
   const config = useMemo(() => {
     return loadJupyterConfig({
       collaborative,
-      jupyterServerHttpUrl,
-      jupyterServerWsUrl,
-      jupyterToken,
+      jupyterServerUrl,
+      jupyterServerToken,
       lite,
       terminals,
     });
   }, [
     collaborative,
-    jupyterServerHttpUrl,
-    jupyterServerWsUrl,
-    jupyterToken,
+    jupyterServerUrl,
+    jupyterServerToken,
     lite,
     terminals,
   ]);
@@ -121,8 +116,8 @@ export const Jupyter = (props: JupyterProps) => {
               initCode={initCode}
               lite={lite}
               serverUrls={{
-                baseUrl: getJupyterServerHttpUrl(),
-                wsUrl: getJupyterServerWsUrl(),
+                baseUrl: getJupyterServerUrl(),
+                wsUrl: getJupyterServerUrl().replace(/^http/, 'ws'),
               }}
               skeleton={skeleton}
               startDefaultKernel={startDefaultKernel}

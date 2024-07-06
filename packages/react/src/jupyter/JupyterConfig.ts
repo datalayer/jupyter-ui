@@ -16,9 +16,8 @@ const API_KERNEL_PREFIX_URL = '/api/jupyter-server';
  * Type of the Jupyter configuration.
  */
 export type IJupyterConfig = {
-  jupyterServerHttpUrl: string;
-  jupyterServerWsUrl: string;
-  jupyterToken: string;
+  jupyterServerUrl: string;
+  jupyterServerToken: string;
   insideJupyterLab: boolean;
   insideJupyterHub: boolean;
 };
@@ -27,9 +26,8 @@ export type IJupyterConfig = {
  * The default Jupyter configuration.
  */
 let config: IJupyterConfig = {
-  jupyterServerHttpUrl: '',
-  jupyterServerWsUrl: '',
-  jupyterToken: '',
+  jupyterServerUrl: '',
+  jupyterServerToken: '',
   insideJupyterLab: false,
   insideJupyterHub: false,
 };
@@ -45,37 +43,27 @@ let datalayerConfigLoaded = false;
 let jupyterConfigLoaded = false;
 
 /**
- * Setter for jupyterServerHttpUrl.
+ * Setter for jupyterServerUrl.
  */
-export const setJupyterServerHttpUrl = (jupyterServerHttpUrl: string) => {
-  config.jupyterServerHttpUrl = jupyterServerHttpUrl;
+export const setJupyterServerUrl = (jupyterServerUrl: string) => {
+  config.jupyterServerUrl = jupyterServerUrl;
 };
 /**
- * Getter for jupyterServerHttpUrl.
+ * Getter for jupyterServerUrl.
  */
-export const getJupyterServerHttpUrl = () => config.jupyterServerHttpUrl;
+export const getJupyterServerUrl = () => config.jupyterServerUrl;
+
 
 /**
- * Setter for jupyterServerWsUrl.
+ * Setter for jupyterServerToken.
  */
-export const setJupyterServerWsUrl = (jupyterServerWsUrl: string) => {
-  config.jupyterServerWsUrl = jupyterServerWsUrl;
+export const setJupyterServerToken = (jupyterServerToken: string) => {
+  config.jupyterServerToken = jupyterServerToken;
 };
 /**
- * Getter for jupyterServerWsUrl.
+ * Getter for jupyterServerToken.
  */
-export const getJupyterServerWsUrl = () => config.jupyterServerWsUrl;
-
-/**
- * Setter for jupyterToken.
- */
-export const setJupyterToken = (jupyterToken: string) => {
-  config.jupyterToken = jupyterToken;
-};
-/**
- * Getter for jupyterToken.
- */
-export const getJupyterToken = () => config.jupyterToken;
+export const getJupyterServerToken = () => config.jupyterServerToken;
 
 /**
  * Get the datalayer configuration fully or for a particular parameter.
@@ -109,20 +97,18 @@ export const loadJupyterConfig = (
   props: Pick<
     JupyterProps,
     | 'lite'
-    | 'jupyterServerHttpUrl'
-    | 'jupyterServerWsUrl'
+    | 'jupyterServerUrl'
     | 'collaborative'
     | 'terminals'
-    | 'jupyterToken'
+    | 'jupyterServerToken'
   >
 ) => {
   const {
     lite,
-    jupyterServerHttpUrl,
-    jupyterServerWsUrl,
+    jupyterServerUrl,
     collaborative,
     terminals,
-    jupyterToken,
+    jupyterServerToken,
   } = props;
   if (jupyterConfigLoaded) {
     // Bail, the Jupyter config is already loaded.
@@ -132,68 +118,45 @@ export const loadJupyterConfig = (
   getDatalayerConfig();
   if (datalayerConfigLoaded) {
     // There is a Datalayer config, rely on that.
-    setJupyterServerHttpUrl(
-      jupyterServerHttpUrl ??
-        config.jupyterServerHttpUrl ??
+    setJupyterServerUrl(
+      jupyterServerUrl ??
+        config.jupyterServerUrl ??
         location.protocol + '//' + location.host + '/api/jupyter-server'
     );
-    setJupyterServerWsUrl(
-      jupyterServerWsUrl ??
-        config.jupyterServerWsUrl ??
-        location.protocol.replace(/^http/, 'ws') +
-          '//' +
-          location.host +
-          '/api/jupyter-server'
-    );
-    setJupyterToken(jupyterToken ?? config.jupyterToken ?? '');
+    setJupyterServerToken(jupyterServerToken ?? config.jupyterServerToken ?? '');
   } else {
     // No Datalayer config, look for a Jupyter config.
     const jupyterConfigData = document.getElementById('jupyter-config-data');
     if (jupyterConfigData) {
       const jupyterConfig = JSON.parse(jupyterConfigData.textContent || '');
-      setJupyterServerHttpUrl(
-        jupyterServerHttpUrl ??
+      setJupyterServerUrl(
+        jupyterServerUrl ??
           location.protocol + '//' + location.host + jupyterConfig.baseUrl
       );
-      setJupyterServerWsUrl(
-        jupyterServerWsUrl ?? getJupyterServerHttpUrl().replace(/^http/, 'ws')
-      );
-      setJupyterToken(jupyterToken ?? jupyterConfig.token);
+      setJupyterServerToken(jupyterServerToken ?? jupyterConfig.token);
       config.insideJupyterLab = jupyterConfig.appName === 'JupyterLab';
       // Hub related information ('hubHost' 'hubPrefix' 'hubUser' ,'hubServerName').
       config.insideJupyterHub = PageConfig.getOption('hubHost') !== '';
     } else {
       // No Datalayer and no Jupyter config, rely on location...
-      setJupyterServerHttpUrl(
-        jupyterServerHttpUrl ??
+      setJupyterServerUrl(
+        jupyterServerUrl ??
           location.protocol + '//' + location.host + API_KERNEL_PREFIX_URL
       );
-      setJupyterServerWsUrl(
-        jupyterServerWsUrl ??
-          location.protocol.replace(/^http/, 'ws') +
-            '//' +
-            location.host +
-            API_KERNEL_PREFIX_URL
-      );
-      setJupyterToken(jupyterToken ?? '');
+      setJupyterServerToken(jupyterServerToken ?? '');
     }
   }
   jupyterConfigLoaded = true;
   if (lite) {
-    setJupyterServerHttpUrl(location.protocol + '//' + location.host);
-    setJupyterServerWsUrl(
-      location.protocol === 'https:'
-        ? 'wss://' + location.host
-        : 'ws://' + location.host
-    );
+    setJupyterServerUrl(location.protocol + '//' + location.host);
   }
   if (config.insideJupyterLab) {
     // Bail if running inside JupyterLab, we don't want to change the existing PageConfig.
     return config;
   }
-  PageConfig.setOption('baseUrl', getJupyterServerHttpUrl());
-  PageConfig.setOption('wsUrl', getJupyterServerWsUrl());
-  PageConfig.setOption('token', getJupyterToken());
+  PageConfig.setOption('baseUrl', getJupyterServerUrl());
+  PageConfig.setOption('wsUrl', getJupyterServerUrl().replace(/^http/, 'ws'));
+  PageConfig.setOption('token', getJupyterServerToken());
   PageConfig.setOption('collaborative', String(collaborative));
   PageConfig.setOption('disableRTC', String(!collaborative));
   PageConfig.setOption('terminalsAvailable', String(terminals));
