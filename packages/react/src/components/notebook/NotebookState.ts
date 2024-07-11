@@ -227,7 +227,11 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
   },
   dispose: (uid: string): void => {
     const notebooks = get().notebooks;
-    notebooks.delete(uid);
+    const notebook = notebooks.get(uid);
+    if(notebook){
+      notebook.adapter?.dispose();
+      notebooks.delete(uid);
+    }
     set((state: NotebookState) => ({ notebooks }));
   },
   setPortals: (portalsUid: ReactPortalsMutation) => {
