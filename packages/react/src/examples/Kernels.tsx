@@ -89,10 +89,10 @@ export const KernelExecResultView = () => {
 const KernelComponents = () => {
   const { defaultKernel } = useJupyter();
   const selectKernel = (kernelModel: IModel) => {
-    console.log('---', kernelModel);
+    console.log('Kernel model', kernelModel);
   };
   const selectKernelSpec = (specModel: ISpecModel) => {
-    console.log('---', specModel);
+    console.log('Spec model', specModel);
   };
   return (
     <>

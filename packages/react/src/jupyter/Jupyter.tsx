@@ -13,10 +13,7 @@ import {
 import { Theme } from '@primer/react/lib/ThemeProvider';
 import { useMemo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import {
-  getJupyterServerUrl,
-  loadJupyterConfig,
-} from './JupyterConfig';
+import { loadJupyterConfig } from './JupyterConfig';
 import { JupyterContextProps, JupyterContextProvider } from './JupyterContext';
 import { ColorMode } from './lab/JupyterLabColorMode';
 import JupyterLabCss from './lab/JupyterLabCss';
@@ -27,12 +24,10 @@ import JupyterLabCss from './lab/JupyterLabCss';
  */
 export type JupyterProps = Omit<
   JupyterContextProps,
-  'serverUrls' | 'variant'
+  'variant'
 > & {
   colorMode?: ColorMode;
   disableCssLoading?: boolean;
-  jupyterServerUrl?: string;
-  jupyterServerToken?: string;
   theme?: Theme;
   terminals?: boolean;
 };
@@ -54,8 +49,7 @@ const ErrorFallback = ({ error, resetErrorBoundary }: any) => {
 
 /**
  * The Jupyter context. This handles the needed initialization
- * and ensure the Redux and the Material UI theme providers
- * are available.
+ * and ensure the Primer theme providers is available.
  */
 export const Jupyter = (props: JupyterProps) => {
   const {
@@ -75,7 +69,6 @@ export const Jupyter = (props: JupyterProps) => {
     useRunningKernelId,
     useRunningKernelIndex,
   } = props;
-
   const config = useMemo(() => {
     return loadJupyterConfig({
       collaborative,
@@ -91,7 +84,6 @@ export const Jupyter = (props: JupyterProps) => {
     lite,
     terminals,
   ]);
-
   return (
     <ErrorBoundary
       FallbackComponent={ErrorFallback}
@@ -115,10 +107,6 @@ export const Jupyter = (props: JupyterProps) => {
               defaultKernelName={defaultKernelName}
               initCode={initCode}
               lite={lite}
-              serverUrls={{
-                baseUrl: getJupyterServerUrl(),
-                wsUrl: getJupyterServerUrl().replace(/^http/, 'ws'),
-              }}
               skeleton={skeleton}
               startDefaultKernel={startDefaultKernel}
               useRunningKernelId={useRunningKernelId}

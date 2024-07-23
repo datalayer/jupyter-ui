@@ -19,7 +19,7 @@ export async function requestAPI<T>(
   serverSettings: ServerConnection.ISettings,
   namespace = 'api',
   endPoint = '',
-  init: RequestInit = {}
+  init: RequestInit = {},
 ): Promise<T> {
   // Make request to the Jupyter API.
   const requestUrl = URLExt.join(serverSettings.baseUrl, namespace, endPoint);
@@ -28,7 +28,7 @@ export async function requestAPI<T>(
     response = await ServerConnection.makeRequest(
       requestUrl,
       init,
-      serverSettings
+      serverSettings,
     );
     if (response.status === 403) {
       throw new JupyterAuthError();

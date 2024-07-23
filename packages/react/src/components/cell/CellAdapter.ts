@@ -248,7 +248,7 @@ export class CellAdapter {
     this._sessionContext.kernelChanged.connect(
       (_, arg: Session.ISessionConnection.IKernelChangedArgs) => {
         const kernelConnection = arg.newValue;
-        console.log('Current Kernel Connection', kernelConnection);
+        console.log('Current Kernel connection', kernelConnection);
         if (kernelConnection && !kernelConnection.handleComms) {
           console.warn(
             'Kernel Connection does not handle Comms',
