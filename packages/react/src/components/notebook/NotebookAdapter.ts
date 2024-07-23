@@ -341,9 +341,9 @@ export class NotebookAdapter {
       };
 
     this._context.sessionContext.kernelChanged.connect((_, args) => {
-      console.log('Previous Kernel Connection', args.oldValue);
+      console.log('Previous Kernel connection', args.oldValue);
       const kernelConnection = args.newValue;
-      console.log('Current Kernel Connection', kernelConnection);
+      console.log('Current Kernel connection', kernelConnection);
       if (kernelConnection && !kernelConnection.handleComms) {
         console.warn(
           'The current Kernel Connection does not handle Comms',

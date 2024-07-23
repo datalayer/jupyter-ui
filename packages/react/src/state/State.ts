@@ -17,23 +17,23 @@ import useOutputStore from '../components/output/OutputState';
 import useTerminalStore from '../components/terminal/TerminalState';
 import { createLiteServer } from '../jupyter/lite/LiteServer';
 import { getJupyterServerUrl } from '../jupyter/JupyterConfig';
-import { ensureJupyterAuth, createServerSettings, JupyterContextProps } from '../jupyter/JupyterContext';
+import { ensureJupyterAuth, createServerSettings, JupyterContextPropsType } from '../jupyter/JupyterContext';
 import Kernel from '../jupyter/kernel/Kernel';
 
 export type JupyterState = {
-  datalayerConfig?: IDatalayerConfig;
-  setDatalayerConfig: (configuration?: IDatalayerConfig) => void;
-  version: string;
-  setVersion: (version: string) => void;
-  jupyterConfig?: IJupyterConfig;
-  kernelIsLoading: boolean;
-  kernel?: Kernel;
-  serviceManager?: ServiceManager;
   cellStore: typeof useCellStore;
   consoleStore: typeof useConsoleStore;
+  datalayerConfig?: IDatalayerConfig;
+  jupyterConfig?: IJupyterConfig;
+  kernel?: Kernel;
+  kernelIsLoading: boolean;
   notebookStore: typeof useNotebookStore;
   outputStore: typeof useOutputStore;
+  serviceManager?: ServiceManager;
+  setDatalayerConfig: (configuration?: IDatalayerConfig) => void;
+  setVersion: (version: string) => void;
   terminalStore: typeof useTerminalStore;
+  version: string;
 };
 
 let initialConfiguration: IDatalayerConfig | undefined = undefined;
@@ -76,23 +76,31 @@ export function useJupyterStore<T>(selector: (state: JupyterState) => T): T;
 export function useJupyterStore<T>(selector?: (state: JupyterState) => T) {
   return useStore(jupyterStore, selector!);
 }
-export function useJupyterStoreFromContext(props: JupyterContextProps): JupyterState;
-export function useJupyterStoreFromContext(props: JupyterContextProps) {
+export function useJupyterStoreFromContext(props: JupyterContextPropsType): JupyterState;
+export function useJupyterStoreFromContext(props: JupyterContextPropsType): JupyterState {
   const {
+    collaborative = false,
     defaultKernelName = 'python',
     initCode = '',
+    jupyterServerToken = '60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6',
+    jupyterServerUrl = 'https://oss.datalayer.run/api/jupyter-server',
     lite = false,
     startDefaultKernel = true,
+    terminals = false,
     useRunningKernelId,
     useRunningKernelIndex = -1,
-    serverUrls,
   } = props;
-  useMemo<IJupyterConfig>(() => {
-    const config = loadJupyterConfig({});
+  const config = useMemo<IJupyterConfig>(() => {
+    const config = loadJupyterConfig({
+      lite,
+      jupyterServerUrl,
+      jupyterServerToken,
+      collaborative,
+      terminals,
+    });
     jupyterStore.getState().jupyterConfig = config;
     return config;
   }, []);
-  const { baseUrl, wsUrl } = serverUrls ?? {};
   const [serviceManager, setServiceManager] = useState<ServiceManager>();
   const [_, setKernel] = useState<Kernel>();
   const [__, setIsLoading] = useState<boolean>(
@@ -133,13 +141,16 @@ export function useJupyterStoreFromContext(props: JupyterContextProps) {
         jupyterStore.getState().serviceManager = liteServer.serviceManager;
       });
     } else {
-      const serverSettings = createServerSettings(baseUrl ?? '');
+      const serverSettings = createServerSettings(
+        config.jupyterServerUrl,
+        config.jupyterServerToken,
+      );
       ensureJupyterAuth(serverSettings).then(isAuth => {
         if (!isAuth) {
           const loginUrl =
             getJupyterServerUrl() + '/login?next=' + window.location;
-          console.warn('Redirecting to Jupyter Server login URL', loginUrl);
-          window.location.replace(loginUrl);
+          console.warn('You need to authenticate on the Jupyter Server URL', loginUrl);
+//          window.location.replace(loginUrl);
         }
         if (useRunningKernelId && useRunningKernelIndex > -1) {
           throw new Error(
@@ -159,12 +170,12 @@ export function useJupyterStoreFromContext(props: JupyterContextProps) {
         jupyterStore.getState().serviceManager = serviceManager;
       });
     }
-  }, [baseUrl, wsUrl, lite]);
+  }, [jupyterServerUrl, lite]);
   // Create a kernel
   useEffect(() => {
     serviceManager?.kernels.ready.then(async () => {
       const kernelManager = serviceManager.kernels;
-      console.log('Kernel Manager is Ready', kernelManager);
+      console.log('Kernel Manager is ready', kernelManager);
       if (useRunningKernelIndex > -1) {
         const running = kernelManager.running();
         let kernel = running.next();
@@ -199,7 +210,7 @@ export function useJupyterStoreFromContext(props: JupyterContextProps) {
         setIsLoading(false);
         jupyterStore.getState().kernelIsLoading = false;
       } else if (startDefaultKernel) {
-        console.log('Starting Kernel Name:', defaultKernelName);
+        console.log('Starting Kernel name:', defaultKernelName);
         const defaultKernel = new Kernel({
           kernelManager,
           kernelName: defaultKernelName,
@@ -216,7 +227,7 @@ export function useJupyterStoreFromContext(props: JupyterContextProps) {
               console.error('Failed to execute the initial code', error);
             }
           }
-          console.log('Kernel is Ready', defaultKernel);
+          console.log('Kernel is ready', defaultKernel);
           setKernel(defaultKernel);
           jupyterStore.getState().kernel = defaultKernel;
           setIsLoading(false);

@@ -23,14 +23,9 @@ export type IJupyterConfig = {
 };
 
 /**
- * The default Jupyter configuration.
+ * The current Jupyter configuration.
  */
-let config: IJupyterConfig = {
-  jupyterServerUrl: '',
-  jupyterServerToken: '',
-  insideJupyterLab: false,
-  insideJupyterHub: false,
-};
+let config: IJupyterConfig | undefined = undefined;
 
 /**
  * Datalayer configuration is loaded.
@@ -38,32 +33,43 @@ let config: IJupyterConfig = {
 let datalayerConfigLoaded = false;
 
 /**
- * Jupyter configuration is loaded.
- */
-let jupyterConfigLoaded = false;
-
-/**
  * Setter for jupyterServerUrl.
  */
-export const setJupyterServerUrl = (jupyterServerUrl: string) => {
+const setJupyterServerUrl = (jupyterServerUrl: string) => {
+  if (!config) {
+    throw new Error("Jupyter React Config must be loaded first.")
+  }
   config.jupyterServerUrl = jupyterServerUrl;
 };
 /**
  * Getter for jupyterServerUrl.
  */
-export const getJupyterServerUrl = () => config.jupyterServerUrl;
+export const getJupyterServerUrl = () => {
+  if (!config) {
+    throw new Error("Jupyter React Config must be loaded first.")
+  }
+  return config.jupyterServerUrl;
+}
 
 
 /**
  * Setter for jupyterServerToken.
  */
-export const setJupyterServerToken = (jupyterServerToken: string) => {
+const setJupyterServerToken = (jupyterServerToken: string) => {
+  if (!config) {
+    throw new Error("Jupyter React Config must be loaded first.")
+  }
   config.jupyterServerToken = jupyterServerToken;
 };
 /**
  * Getter for jupyterServerToken.
  */
-export const getJupyterServerToken = () => config.jupyterServerToken;
+export const getJupyterServerToken = () => {
+  if (!config) {
+    throw new Error("Jupyter React Config must be loaded first.")
+  }
+  return config.jupyterServerToken;
+}
 
 /**
  * Get the datalayer configuration fully or for a particular parameter.
@@ -71,20 +77,27 @@ export const getJupyterServerToken = () => config.jupyterServerToken;
  * @param name The parameter name
  * @returns The parameter value if {@link name} is specified, otherwise the full configuration.
  */
-export function getDatalayerConfig(name?: string): any {
+function loadDatalayerConfig(name?: string): any {
   if (!datalayerConfigLoaded) {
     const datalayerConfigData = document.getElementById(
       'datalayer-config-data'
     );
     if (datalayerConfigData?.textContent) {
+      console.log('Found Datalayer config data in host page', datalayerConfigData);
       try {
-        config = { ...config, ...JSON.parse(datalayerConfigData.textContent) };
+        config = {
+          ...config,
+          ...JSON.parse(datalayerConfigData.textContent)
+        };
         datalayerConfigLoaded = true;
       } catch (error) {
         console.error('Failed to parse the Datalayer configuration.', error);
       }
     }
-  }
+    else {
+      console.log('No Datalayer config data found in host page');
+    }
+}
   // @ts-expect-error IJupyterConfig does not have index signature
   return name ? config[name] : config;
 }
@@ -96,34 +109,44 @@ export function getDatalayerConfig(name?: string): any {
 export const loadJupyterConfig = (
   props: Pick<
     JupyterProps,
-    | 'lite'
-    | 'jupyterServerUrl'
     | 'collaborative'
-    | 'terminals'
     | 'jupyterServerToken'
+    | 'jupyterServerUrl'
+    | 'lite'
+    | 'terminals'
   >
-) => {
+): IJupyterConfig => {
   const {
-    lite,
-    jupyterServerUrl,
     collaborative,
-    terminals,
     jupyterServerToken,
+    jupyterServerUrl,
+    lite,
+    terminals,
   } = props;
-  if (jupyterConfigLoaded) {
-    // Bail, the Jupyter config is already loaded.
+  if (config) {
+    console.log('Returning existing Jupyter React config', config);
     return config;
   }
+  config = {
+    jupyterServerToken: '',
+    jupyterServerUrl: '',
+    insideJupyterLab: false,
+    insideJupyterHub: false,
+  }
   // Load the Datalayer config.
-  getDatalayerConfig();
+  loadDatalayerConfig();
   if (datalayerConfigLoaded) {
-    // There is a Datalayer config, rely on that.
+    // There is a Datalayer config, mix the configs...
     setJupyterServerUrl(
       jupyterServerUrl ??
         config.jupyterServerUrl ??
-        location.protocol + '//' + location.host + '/api/jupyter-server'
+          location.protocol + '//' + location.host + '/api/jupyter-server'
     );
-    setJupyterServerToken(jupyterServerToken ?? config.jupyterServerToken ?? '');
+    setJupyterServerToken(
+      jupyterServerToken ?? 
+        config.jupyterServerToken ?? 
+          ''
+    );
   } else {
     // No Datalayer config, look for a Jupyter config.
     const jupyterConfigData = document.getElementById('jupyter-config-data');
@@ -131,9 +154,14 @@ export const loadJupyterConfig = (
       const jupyterConfig = JSON.parse(jupyterConfigData.textContent || '');
       setJupyterServerUrl(
         jupyterServerUrl ??
-          location.protocol + '//' + location.host + jupyterConfig.baseUrl
+          jupyterConfig.jupyterServerUrl ??
+            location.protocol + '//' + location.host + jupyterConfig.baseUrl
       );
-      setJupyterServerToken(jupyterServerToken ?? jupyterConfig.token);
+      setJupyterServerToken(
+        jupyterServerToken ?? 
+          jupyterConfig.token ??
+            ''
+      );
       config.insideJupyterLab = jupyterConfig.appName === 'JupyterLab';
       // Hub related information ('hubHost' 'hubPrefix' 'hubUser' ,'hubServerName').
       config.insideJupyterHub = PageConfig.getOption('hubHost') !== '';
@@ -141,29 +169,33 @@ export const loadJupyterConfig = (
       // No Datalayer and no Jupyter config, rely on location...
       setJupyterServerUrl(
         jupyterServerUrl ??
-          location.protocol + '//' + location.host + API_KERNEL_PREFIX_URL
+          config.jupyterServerUrl ?? 
+            location.protocol + '//' + location.host + API_KERNEL_PREFIX_URL
       );
-      setJupyterServerToken(jupyterServerToken ?? '');
+      setJupyterServerToken(
+        jupyterServerToken ??
+          config.jupyterServerToken ?? 
+            ''
+      );
     }
   }
-  jupyterConfigLoaded = true;
   if (lite) {
     setJupyterServerUrl(location.protocol + '//' + location.host);
   }
-  if (config.insideJupyterLab) {
-    // Bail if running inside JupyterLab, we don't want to change the existing PageConfig.
-    return config;
+  if (! config.insideJupyterLab) {
+    // If not inside JupyterLab, mimick JupyerLab behavior...
+    PageConfig.setOption('baseUrl', getJupyterServerUrl());
+    PageConfig.setOption('wsUrl', getJupyterServerUrl().replace(/^http/, 'ws'));
+    PageConfig.setOption('token', getJupyterServerToken());
+    PageConfig.setOption('collaborative', String(collaborative));
+    PageConfig.setOption('disableRTC', String(!collaborative));
+    PageConfig.setOption('terminalsAvailable', String(terminals));
+    PageConfig.setOption(
+      'mathjaxUrl',
+      'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js'
+    );
+    PageConfig.setOption('mathjaxConfig', 'TeX-AMS_CHTML-full,Safe');
   }
-  PageConfig.setOption('baseUrl', getJupyterServerUrl());
-  PageConfig.setOption('wsUrl', getJupyterServerUrl().replace(/^http/, 'ws'));
-  PageConfig.setOption('token', getJupyterServerToken());
-  PageConfig.setOption('collaborative', String(collaborative));
-  PageConfig.setOption('disableRTC', String(!collaborative));
-  PageConfig.setOption('terminalsAvailable', String(terminals));
-  PageConfig.setOption(
-    'mathjaxUrl',
-    'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js'
-  );
-  PageConfig.setOption('mathjaxConfig', 'TeX-AMS_CHTML-full,Safe');
+  console.log('Created config for Jupyter React', config)
   return config;
-};
+}

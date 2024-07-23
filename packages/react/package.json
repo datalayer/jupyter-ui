@@ -131,7 +131,7 @@
     "@jupyterlite/server": "^0.2.2",
     "@jupyterlite/server-extension": "^0.2.2",
     "@lumino/default-theme": "^2.0.0",
-    "@primer/react": "^36.6.0",
+    "@primer/react": "^36.25.0",
     "assert": "^2.0.0",
     "bufferutil": "^4.0.8",
     "codemirror": "^6.0.1",

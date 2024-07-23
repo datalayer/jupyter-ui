@@ -38,7 +38,6 @@ type Story = StoryObj<typeof Cell | typeof Jupyter | { browser: string }>;
 
 const Template = (args, { globals: { colorScheme } }) => {
 
-  console.log('----', colorScheme)
   const { browser, initCode, ...others } = args;
   const lite = {
     true: true,

@@ -11,7 +11,6 @@ import {
 } from '@jupyterlab/services';
 import type { JupyterLiteServerPlugin } from '@jupyterlite/server';
 import React, { createContext, useContext } from 'react';
-import { getJupyterServerToken } from './JupyterConfig';
 import { requestAPI } from './JupyterHandlers';
 import Kernel from './kernel/Kernel';
 import { useJupyterStoreFromContext } from '../state';
@@ -33,6 +32,10 @@ export type JupyterContextType = {
    */
   defaultKernel?: Kernel;
   /**
+   * Kernel
+   */
+  kernel?: Kernel;
+  /**
    * Will be true while waiting for the default kernel.
    *
    * If `true`, it does not ensure a default kernel will
@@ -43,6 +46,10 @@ export type JupyterContextType = {
    * be available.
    */
   defaultKernelIsLoading: boolean;
+  /**
+   * Kernel
+   */
+  kernelIsLoading: boolean;
   /**
    * The Kernel Manager.
    */
@@ -78,13 +85,7 @@ export type JupyterContextType = {
    *
    * Useless if running an in-browser kernel.
    */
-  baseUrl: string;
-  /**
-   * Jupyter Server websocket URL
-   *
-   * Useless if running an in-browser kernel.
-   */
-  wsUrl: string;
+  jupyterServerUrl: string;
 };
 
 /**
@@ -94,22 +95,29 @@ export const JupyterContext = createContext<JupyterContextType | undefined>(
   undefined
 );
 
-export const useJupyter = (props?: JupyterContextProps): JupyterContextType => {
+export const useJupyter = (props?: JupyterContextPropsType): JupyterContextType => {
   const context = useContext(JupyterContext);
   if (context) {
+    console.debug('Within a Jupyter context.');
     return context;
   }
-  const { kernel, kernelIsLoading, serviceManager} = useJupyterStoreFromContext(props ?? {});
+  const {
+    kernel,
+    kernelIsLoading,
+    serviceManager,
+    jupyterConfig,
+  } = useJupyterStoreFromContext(props ?? {});
   const contextFromStore: JupyterContextType = {
     collaborative: false,
     defaultKernel: kernel,
     defaultKernelIsLoading: kernelIsLoading,
+    jupyterServerUrl: jupyterConfig!.jupyterServerUrl,
+    kernel,
+    kernelIsLoading,
     kernelManager: serviceManager?.kernels,
     lite: false,
     serverSettings: serviceManager?.serverSettings,
-    serviceManager: serviceManager,
-    baseUrl: '',
-    wsUrl: '',
+    serviceManager,
   }
   return contextFromStore;
 };
@@ -125,8 +133,8 @@ export const JupyterContextConsumer = JupyterContext.Consumer;
 const JupyterProvider = JupyterContext.Provider;
 
 /**
- * Utility method to ensure the Jupyter context is authenticated
- * with the Jupyter server.
+ * Utility method to ensure the Jupyter context
+ * is authenticated with the Jupyter server.
  */
 export const ensureJupyterAuth = async (
   serverSettings: ServerConnection.ISettings
@@ -140,24 +148,7 @@ export const ensureJupyterAuth = async (
   }
 };
 
-/**
- * Jupyter Server URLs
- */
-export interface IServerUrls {
-  /**
-   * The base url of the server.
-   */
-  readonly baseUrl: string;
-  /**
-   * The base ws url of the server.
-   */
-  readonly wsUrl: string;
-}
-
-/**
- * The Jupyter context properties type.
- */
-export type JupyterContextProps = React.PropsWithChildren<{
+export type JupyterContextPropsType = {
   /**
    * Whether the component is collaborative or not.
    */
@@ -183,12 +174,14 @@ export type JupyterContextProps = React.PropsWithChildren<{
    * https://cdn.jsdelivr.net/npm/@jupyterlite/pyodide-kernel-extension
    */
   lite?: Lite;
-  /**
-   * Jupyter Server URLs to connect to.
+  /*
    *
-   * It will be ignored if a {@link lite} is provided.
    */
-  serverUrls?: IServerUrls;
+  jupyterServerUrl?: string;
+  /*
+   *
+   */
+  jupyterServerToken?: string;
   /**
    * Whether to start the default kernel or not.
    */
@@ -205,13 +198,22 @@ export type JupyterContextProps = React.PropsWithChildren<{
    * The index (aka position) of the Kernel to use in the list of kernels.
    */
   useRunningKernelIndex?: number;
-}>;
+  /*
+   *
+   */
+  terminals?: boolean;
+}
 
-export const createServerSettings = (baseUrl: string) => {
+/**
+ * The Jupyter context properties type.
+ */
+export type JupyterContextProps = React.PropsWithChildren<JupyterContextPropsType>;
+
+export const createServerSettings = (jupyterServerUrl: string, jupyterServerToken: string) => {
   return ServerConnection.makeSettings({
-    baseUrl,
-    wsUrl: baseUrl.replace(/^http/, 'ws'),
-    token: getJupyterServerToken(),
+    baseUrl: jupyterServerUrl,
+    wsUrl: jupyterServerUrl.replace(/^http/, 'ws'),
+    token: jupyterServerToken,
     appendToken: true,
     init: {
       mode: 'cors',
@@ -224,28 +226,39 @@ export const createServerSettings = (baseUrl: string) => {
 /**
  * The Jupyter context provider.
  */
-export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
-  const { collaborative, lite, skeleton, children } = props;
-  const { serviceManager, kernel, kernelIsLoading,} = useJupyterStoreFromContext(props);
+export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => {
+  const {
+    children,
+    skeleton,
+  } = props;
+  const {
+    collaborative,
+    jupyterServerUrl,
+    kernel,
+    kernelIsLoading,
+    lite,
+    serverSettings,
+    serviceManager,
+  } = useJupyter(props);
   return (
     <JupyterProvider
       value={{
-        // FIXME we should not expose sub attributes
-        // to promote single source of truth (like URLs come from serverSettings)
-        baseUrl: serviceManager?.serverSettings.baseUrl ?? '',
         collaborative,
         defaultKernel: kernel,
         defaultKernelIsLoading: kernelIsLoading,
+        // FIXME we should not expose sub attributes to promote single source of truth
+        // (like URLs come from serverSettings)
+        jupyterServerUrl,
+        kernel,
+        kernelIsLoading,
         kernelManager: serviceManager?.kernels,
-        lite: lite,
-        serverSettings:
-          serviceManager?.serverSettings ?? createServerSettings(''),
+        lite,
+        serverSettings,
         serviceManager,
-        wsUrl: serviceManager?.serverSettings.wsUrl ?? '',
       }}
     >
       { kernelIsLoading && skeleton }
       { children }
     </JupyterProvider>
   );
-};
+}
