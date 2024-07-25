@@ -59,25 +59,28 @@ export const Cell = (props: ICellProps) => {
     }
 
     adapter.sessionContext.initialize().then(() => {
-      if (!adapter.cell.model) {
+      if (!autoStart || !adapter.cell.model) {
         return;
       }
-      // Set that session/kernel is ready for that cell
-      cellStore.setKernelAvailable(id, true);
     
       // Perform auto-start for code or markdown cells
-      if (autoStart) {
-        if (adapter.cell instanceof CodeCell) {
-          CodeCell.execute(
-            adapter.cell,
-            adapter.sessionContext
-          );
-        }
-
-        if (adapter.cell instanceof MarkdownCell) {
-          adapter.cell.rendered = true;
-        }
+      if (adapter.cell instanceof CodeCell) {
+        CodeCell.execute(
+          adapter.cell,
+          adapter.sessionContext
+        );
       }
+
+      if (adapter.cell instanceof MarkdownCell) {
+        adapter.cell.rendered = true;
+      }
+    });
+
+    adapter.sessionContext.kernelChanged.connect(() => {
+      void adapter.sessionContext.session?.kernel?.info.then(info => {
+        // Set that session/kernel is ready for this cell when the kernel is guaranteed to be connected 
+        cellStore.setKernelAvailable(id, true);
+      })
     });
   }
 
