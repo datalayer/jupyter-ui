@@ -15,7 +15,7 @@ const GeoJson = () => (
   <Jupyter>
     <Notebook
       path="renderers/geojson-1.ipynb"
-      uid="notebook-geojson-uid"
+      id="notebook-geojson-id"
       renderers={[geojsonRenderer]}
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       CellSidebar={CellSidebarNew}

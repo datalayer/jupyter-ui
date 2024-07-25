@@ -68,7 +68,7 @@ export const Output = (props: IOutputProps) => {
   const [adapter, setAdapter] = useState<OutputAdapter>();
   useEffect(() => {
     if (!id) {
-      setId(UUID.uuid4());
+      setId(UUID.uid4());
     }
   }, []);
   useEffect(() => {

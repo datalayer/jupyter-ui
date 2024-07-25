@@ -73,7 +73,7 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
           onClick={e => {
             e.preventDefault();
             notebookStore.insertAbove({
-              uid: notebookId,
+              id: notebookId,
               cellType: 'code',
             });
           }}
@@ -90,7 +90,7 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
           onClick={e => {
             e.preventDefault();
             notebookStore.insertAbove({
-              uid: notebookId,
+              id: notebookId,
               cellType: 'markdown',
             });
           }}
@@ -109,7 +109,7 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
             onClick={e => {
               e.preventDefault();
               notebookStore.changeCellType({
-                uid: notebookId,
+                id: notebookId,
                 cellType: 'markdown',
               });
             }}
@@ -124,7 +124,7 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
             onClick={(e: any) => {
               e.preventDefault();
               notebookStore.changeCellType({
-                uid: notebookId,
+                id: notebookId,
                 cellType: 'code',
               });
             }}
@@ -140,7 +140,7 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
           onClick={e => {
             e.preventDefault();
             notebookStore.insertBelow({
-              uid: notebookId,
+              id: notebookId,
               cellType: 'markdown',
             });
           }}
@@ -157,7 +157,7 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
           onClick={e => {
             e.preventDefault();
             notebookStore.insertBelow({
-              uid: notebookId,
+              id: notebookId,
               cellType: 'code',
             });
           }}

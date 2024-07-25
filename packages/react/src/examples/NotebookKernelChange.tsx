@@ -13,7 +13,7 @@ import Notebook from '../components/notebook/Notebook';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 import useNotebookStore from '../components/notebook/NotebookState';
 
-const NOTEBOOK_UID = 'notebook-kernel-id';
+const NOTEBOOK_ID = 'notebook-kernel-id';
 
 const NEW_KERNEL_NAME = 'deno';
 
@@ -31,7 +31,7 @@ const NotebookKernelChange = () => {
         sessionManager: serviceManager.sessions,
       });
       kernel.ready.then(() => {
-        notebookStore.changeKernel({ uid: NOTEBOOK_UID, kernel });
+        notebookStore.changeKernel({ id: NOTEBOOK_ID, kernel });
         alert(
           `The kernel is changed (was python3, now ${NEW_KERNEL_NAME}). Bummer, all your variables are lost!`
         );
@@ -48,7 +48,7 @@ const NotebookKernelChange = () => {
       <Notebook
         path="test.ipynb"
         height="500px"
-        uid={NOTEBOOK_UID}
+        id={NOTEBOOK_ID}
         CellSidebar={CellSidebar}
       />
     </>

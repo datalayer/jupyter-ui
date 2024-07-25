@@ -36,217 +36,217 @@ export interface INotebooksState {
   notebooks: Map<string, INotebookState>;
 }
 
-type UpdateUid = {
-  uid: string;
+type UpdateId = {
+  id: string;
   partialState: Partial<INotebookState>;
 };
-type NotebookChangeUid = {
-  uid: string;
+type NotebookChangeId = {
+  id: string;
   notebookChange: NotebookChange;
 };
-type NotebookModelUid = {
-  uid: string;
+type NotebookModelId = {
+  id: string;
   notebookModel: INotebookModel;
 };
-type CellModelUid = {
-  uid: string;
+type CellModelId = {
+  id: string;
   cellModel?: Cell<ICellModel>;
 };
 type KernelStatusMutation = {
-  uid: string;
+  id: string;
   kernelStatus: JupyterKernel.Status;
 };
 type KernelChangeMutation = {
-  uid: string;
+  id: string;
   kernel: Kernel;
 };
 type ReactPortalsMutation = {
-  uid: string;
+  id: string;
   portals: ReactPortal[];
 };
 type PortalDisplayMutation = {
-  uid: string;
+  id: string;
   portalDisplay: PortalDisplay | undefined;
 };
 type DateMutation = {
-  uid: string;
+  id: string;
   date: Date | undefined;
 };
 type CellMutation = {
-  uid: string;
+  id: string;
   cellType: nbformat.CellType;
   source?: string;
 };
   
 export type NotebookState = INotebooksState & {
   setNotebooks: (notebooks: Map<string, INotebookState>) => void;
-  selectNotebook: (uid: string) => INotebookState | undefined;
-  selectNotebookModel: (uid: string) => { model: INotebookModel | undefined; changed: any } | undefined;
-  selectKernelStatus: (uid: string) => string | undefined;
-  selectActiveCell: (uid: string) => Cell<ICellModel> | undefined;
-  selectNotebookPortals: (uid: string) => React.ReactPortal[] | undefined;
-  selectSaveRequest: (uid: string) => Date | undefined;
-  selectNotebookPortalDisplay: (uid: string) => PortalDisplay | undefined;
-  run: (uid: string) => void;
-  runAll: (uid: string) => void;
-  interrupt: (uid: string) => void;
+  selectNotebook: (id: string) => INotebookState | undefined;
+  selectNotebookModel: (id: string) => { model: INotebookModel | undefined; changed: any } | undefined;
+  selectKernelStatus: (id: string) => string | undefined;
+  selectActiveCell: (id: string) => Cell<ICellModel> | undefined;
+  selectNotebookPortals: (id: string) => React.ReactPortal[] | undefined;
+  selectSaveRequest: (id: string) => Date | undefined;
+  selectNotebookPortalDisplay: (id: string) => PortalDisplay | undefined;
+  run: (id: string) => void;
+  runAll: (id: string) => void;
+  interrupt: (id: string) => void;
   insertAbove: (mutation: CellMutation) => void;
   insertBelow: (mutation: CellMutation) => void;
-  delete: (uid: string) => void;
+  delete: (id: string) => void;
   changeCellType: (mutation: CellMutation) => void;
   save: (mutation: DateMutation) => void;
   reset: () => void;
-  update: (update: UpdateUid) => void;
-  activeCellChange: (cellModelUid: CellModelUid) => void;
-  modelChange: (notebookModelUid: NotebookModelUid) => void;
-  notebookChange: (notebookChangeUid: NotebookChangeUid) => void;
-  kernelStatusChanged: (kernelStatusUid: KernelStatusMutation) => void;
+  update: (update: UpdateId) => void;
+  activeCellChange: (cellModelId: CellModelId) => void;
+  modelChange: (notebookModelId: NotebookModelId) => void;
+  notebookChange: (notebookChangeId: NotebookChangeId) => void;
+  kernelStatusChanged: (kernelStatusId: KernelStatusMutation) => void;
   changeKernel: (kernelChange: KernelChangeMutation) => void;
-  addPortals: (portalsUid: ReactPortalsMutation) => void;
-  dispose: (uid: string) => void;
-  setPortals: (portalsUid: ReactPortalsMutation) => void;
-  setPortalDisplay: (portalDisplayUid: PortalDisplayMutation) => void;
+  addPortals: (portalsId: ReactPortalsMutation) => void;
+  dispose: (id: string) => void;
+  setPortals: (portalsId: ReactPortalsMutation) => void;
+  setPortalDisplay: (portalDisplayId: PortalDisplayMutation) => void;
 };
 
 export const notebookStore = createStore<NotebookState>((set, get) => ({
   notebooks: new Map<string, INotebookState>(),
   setNotebooks: (notebooks: Map<string, INotebookState>) => set((state: NotebookState) => ({ notebooks })),
-  selectNotebook: (uid: string): INotebookState | undefined => {
-    return get().notebooks.get(uid);
+  selectNotebook: (id: string): INotebookState | undefined => {
+    return get().notebooks.get(id);
   },
-  selectNotebookModel: (uid: string): { model: INotebookModel | undefined; changed: any } | undefined => {
-    if (get().notebooks.get(uid)) {
+  selectNotebookModel: (id: string): { model: INotebookModel | undefined; changed: any } | undefined => {
+    if (get().notebooks.get(id)) {
       return {
-        model: get().notebooks.get(uid)?.model,
-        changed: get().notebooks.get(uid)?.model?.contentChanged,
+        model: get().notebooks.get(id)?.model,
+        changed: get().notebooks.get(id)?.model?.contentChanged,
       };    
     }
     return undefined;
   },
-  selectKernelStatus: (uid: string): string | undefined => {
-    return get().notebooks.get(uid)?.kernelStatus;
+  selectKernelStatus: (id: string): string | undefined => {
+    return get().notebooks.get(id)?.kernelStatus;
   },
-  selectActiveCell: (uid: string): Cell<ICellModel> | undefined => {
-    return get().notebooks.get(uid)?.activeCell;
+  selectActiveCell: (id: string): Cell<ICellModel> | undefined => {
+    return get().notebooks.get(id)?.activeCell;
   },
-  selectNotebookPortals: (uid: string): React.ReactPortal[] | undefined => {
-    return get().notebooks.get(uid)?.portals;
+  selectNotebookPortals: (id: string): React.ReactPortal[] | undefined => {
+    return get().notebooks.get(id)?.portals;
   },
-  selectSaveRequest: (uid: string): Date | undefined => {
-    return get().notebooks.get(uid)?.saveRequest;
+  selectSaveRequest: (id: string): Date | undefined => {
+    return get().notebooks.get(id)?.saveRequest;
   },
-  selectNotebookPortalDisplay: (uid: string): PortalDisplay | undefined => {
-    return get().notebooks.get(uid)?.portalDisplay;
+  selectNotebookPortalDisplay: (id: string): PortalDisplay | undefined => {
+    return get().notebooks.get(id)?.portalDisplay;
   },
-  run: (uid: string): void => { get().notebooks.get(uid)?.adapter?.commands.execute(cmdIds.run); },
-  runAll: (uid: string): void => { get().notebooks.get(uid)?.adapter?.commands.execute(cmdIds.runAll); },
-  interrupt: (uid: string): void => { get().notebooks.get(uid)?.adapter?.commands.execute(cmdIds.interrupt); },
+  run: (id: string): void => { get().notebooks.get(id)?.adapter?.commands.execute(cmdIds.run); },
+  runAll: (id: string): void => { get().notebooks.get(id)?.adapter?.commands.execute(cmdIds.runAll); },
+  interrupt: (id: string): void => { get().notebooks.get(id)?.adapter?.commands.execute(cmdIds.interrupt); },
   insertAbove: (mutation: CellMutation) => {
-    get().notebooks.get(mutation.uid)?.adapter?.setDefaultCellType(mutation.cellType);
-    get().notebooks.get(mutation.uid)?.adapter?.insertAbove(mutation.source);
+    get().notebooks.get(mutation.id)?.adapter?.setDefaultCellType(mutation.cellType);
+    get().notebooks.get(mutation.id)?.adapter?.insertAbove(mutation.source);
   },
   insertBelow: (mutation: CellMutation) => {
-    get().notebooks.get(mutation.uid)?.adapter?.setDefaultCellType(mutation.cellType);
-    get().notebooks.get(mutation.uid)?.adapter?.insertBelow(mutation.source);
+    get().notebooks.get(mutation.id)?.adapter?.setDefaultCellType(mutation.cellType);
+    get().notebooks.get(mutation.id)?.adapter?.insertBelow(mutation.source);
   },
-  delete: (uid: string): void => { get().notebooks.get(uid)?.adapter?.commands.execute(cmdIds.deleteCells); },
+  delete: (id: string): void => { get().notebooks.get(id)?.adapter?.commands.execute(cmdIds.deleteCells); },
   changeCellType: (mutation: CellMutation) => {
-    get().notebooks.get(mutation.uid)?.adapter?.changeCellType(mutation.cellType);
+    get().notebooks.get(mutation.id)?.adapter?.changeCellType(mutation.cellType);
   },
   save: (mutation: DateMutation) => {
-    get().notebooks.get(mutation.uid)?.adapter?.commands.execute(cmdIds.save);
+    get().notebooks.get(mutation.id)?.adapter?.commands.execute(cmdIds.save);
     const notebooks = get().notebooks;
-    const notebook = notebooks.get(mutation.uid);
+    const notebook = notebooks.get(mutation.id);
     if (notebook) {
       notebook.saveRequest = mutation.date;
       set((state: NotebookState) => ({ notebooks }));
     }
   },
   reset: () =>  set((state: NotebookState) => ({ notebooks: new Map<string, INotebookState>() })),
-  update: (update: UpdateUid) => {
+  update: (update: UpdateId) => {
     const notebooks = get().notebooks;
-    let notebook = notebooks.get(update.uid);
+    let notebook = notebooks.get(update.id);
     if (notebook) {
       notebook = { ...notebook, ...update.partialState };
       set((state: NotebookState) => ({ notebooks }));
     } else {
-      notebooks.set(update.uid, {
+      notebooks.set(update.id, {
         adapter: update.partialState.adapter,
         portals: [],
       });    
       set((state: NotebookState) => ({ notebooks }));
     }
   },
-  activeCellChange: (cellModelUid: CellModelUid) => {
+  activeCellChange: (cellModelId: CellModelId) => {
     const notebooks = get().notebooks;
-    const notebook = notebooks.get(cellModelUid.uid);
+    const notebook = notebooks.get(cellModelId.id);
     if (notebook) {
-      notebook.activeCell = cellModelUid.cellModel;
+      notebook.activeCell = cellModelId.cellModel;
       set((state: NotebookState) => ({ notebooks }));
     }
   },
-  modelChange: (notebookModelUid: NotebookModelUid) => {
+  modelChange: (notebookModelId: NotebookModelId) => {
     const notebooks = get().notebooks;
-    const notebook = notebooks.get(notebookModelUid.uid);
+    const notebook = notebooks.get(notebookModelId.id);
     if (notebook) {
-      notebook.model = notebookModelUid.notebookModel;
+      notebook.model = notebookModelId.notebookModel;
       set((state: NotebookState) => ({ notebooks }));
     }
   },
-  notebookChange: (notebookChangeUid: NotebookChangeUid) => {
+  notebookChange: (notebookChangeId: NotebookChangeId) => {
     const notebooks = get().notebooks;
-    const notebook = notebooks.get(notebookChangeUid.uid);
+    const notebook = notebooks.get(notebookChangeId.id);
     if (notebook) {
-      notebook.notebookChange = notebookChangeUid.notebookChange;
+      notebook.notebookChange = notebookChangeId.notebookChange;
       set((state: NotebookState) => ({ notebooks }));
     }
   },
-  kernelStatusChanged: (kernelStatusUid: KernelStatusMutation) => {
+  kernelStatusChanged: (kernelStatusId: KernelStatusMutation) => {
     const notebooks = get().notebooks;
-    const notebook = notebooks.get(kernelStatusUid.uid);
+    const notebook = notebooks.get(kernelStatusId.id);
     if (notebook) {
-      notebook.kernelStatus = kernelStatusUid.kernelStatus;
+      notebook.kernelStatus = kernelStatusId.kernelStatus;
       set((state: NotebookState) => ({ notebooks }));
     }
   },
   changeKernel: (kernelChange: KernelChangeMutation) => {
     const notebooks = get().notebooks;
-    const notebook = notebooks.get(kernelChange.uid);
+    const notebook = notebooks.get(kernelChange.id);
     if (notebook) {
       notebook.adapter?.assignKernel(kernelChange.kernel);
       set((state: NotebookState) => ({ notebooks }));
     }
   },
-  addPortals: (portalsUid: ReactPortalsMutation) => {
+  addPortals: (portalsId: ReactPortalsMutation) => {
     const notebooks = get().notebooks;
-    const notebook = notebooks.get(portalsUid.uid);
+    const notebook = notebooks.get(portalsId.id);
     if (notebook) {
-      notebook.portals = notebook.portals.concat(portalsUid.portals);
+      notebook.portals = notebook.portals.concat(portalsId.portals);
       set((state: NotebookState) => ({ notebooks }));
     }
   },
-  dispose: (uid: string): void => {
+  dispose: (id: string): void => {
     const notebooks = get().notebooks;
-    const notebook = notebooks.get(uid);
+    const notebook = notebooks.get(id);
     if(notebook){
       notebook.adapter?.dispose();
-      notebooks.delete(uid);
+      notebooks.delete(id);
     }
     set((state: NotebookState) => ({ notebooks }));
   },
-  setPortals: (portalsUid: ReactPortalsMutation) => {
+  setPortals: (portalsId: ReactPortalsMutation) => {
     const notebooks = get().notebooks;
-    const notebook = notebooks.get(portalsUid.uid);
+    const notebook = notebooks.get(portalsId.id);
     if (notebook) {
-      notebook.portals = portalsUid.portals;
+      notebook.portals = portalsId.portals;
       set((state: NotebookState) => ({ notebooks }));
     }
   },
-  setPortalDisplay: (portalDisplayUid: PortalDisplayMutation) => {
+  setPortalDisplay: (portalDisplayId: PortalDisplayMutation) => {
     const notebooks = get().notebooks;
-    const notebook = notebooks.get(portalDisplayUid.uid);
+    const notebook = notebooks.get(portalDisplayId.id);
     if (notebook) {
-      notebook.portalDisplay = portalDisplayUid.portalDisplay;
+      notebook.portalDisplay = portalDisplayId.portalDisplay;
       set((state: NotebookState) => ({ notebooks }));
     }
   },

@@ -10,13 +10,13 @@ import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from './toolbars/NotebookToolbar';
 import CellSidebarNew from '../components/notebook/cell/sidebar/CellSidebarButton';
 
-const NOTEBOOK_UID = 'notebook-uid';
+const NOTEBOOK_ID = 'notebook-id';
 
 const NotebookPath = () => (
   <Jupyter>
     <Notebook
       path="ipywidgets.ipynb"
-      uid={NOTEBOOK_UID}
+      id={NOTEBOOK_ID}
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       cellSidebarMargin={60}
       CellSidebar={CellSidebarNew}

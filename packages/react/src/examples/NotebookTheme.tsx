@@ -55,7 +55,7 @@ const NotebookTheme = () => {
         />
         <Notebook
           nbformat={nbformat as INotebookContent}
-          uid="notebook-model-uid"
+          id="notebook-model-id"
           height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
           cellSidebarMargin={120}
           CellSidebar={CellSidebar}

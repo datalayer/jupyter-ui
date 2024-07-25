@@ -53,7 +53,7 @@ export const NotebookToolbar = (props: { notebookId: string }) => {
           onClick={e => {
             e.preventDefault();
             notebookStore.save({
-              uid: notebookId,
+              id: notebookId,
               date: new Date(),
             });
           }}
@@ -132,17 +132,17 @@ export const NotebookToolbar = (props: { notebookId: string }) => {
             e.preventDefault();
             if (type === 'raw') {
               notebookStore.insertBelow({
-                uid: notebookId,
+                id: notebookId,
                 cellType: 'raw',
               });
             } else if (type === 'code') {
               notebookStore.insertBelow({
-                uid: notebookId,
+                id: notebookId,
                 cellType: 'code',
               });
             } else if (type === 'markdown') {
               notebookStore.insertBelow({
-                uid: notebookId,
+                id: notebookId,
                 cellType: 'markdown',
               });
             }

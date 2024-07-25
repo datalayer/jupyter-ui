@@ -73,7 +73,7 @@
     "@jupyter-widgets/output": "^6.0.0",
     "@jupyter/collaboration-extension": "^1.0.0",
     "@jupyter/web-components": "^0.15.3",
-    "@jupyter/ydoc": "^1.0.0",
+    "@jupyter/ydoc": "^2.0.1",
     "@jupyterlab/application": "^4.0.0",
     "@jupyterlab/application-extension": "^4.0.0",
     "@jupyterlab/apputils": "^4.0.0",

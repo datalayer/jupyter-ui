@@ -7,17 +7,9 @@
 import { ICell, IOutput } from '@jupyterlab/nbformat';
 import { UUID } from '@lumino/coreutils';
 
-// const MAX = Number.MAX_SAFE_INTEGER;
-// const MAX = 999999;
-
-export const newSourceId = (base: string) => {
-  //  return base + Math.floor(Math.random() * MAX).toString();
-  return base;
-};
-
 export const newUuid = () => {
   return UUID.uuid4();
-};
+}
 
 export const cellSourceAsString = (cell: ICell) => {
   let source = cell.source;
@@ -25,7 +17,7 @@ export const cellSourceAsString = (cell: ICell) => {
     source = (source as []).join('\n');
   }
   return source;
-};
+}
 
 export const outputsAsString = (outputs: IOutput[]) => {
   let result = '';
@@ -89,4 +81,4 @@ export const getCookie = (name: string): string | null => {
         return decodeURIComponent(cookie.substring(nameLenPlus));
       })[0] || null
   );
-};
+}

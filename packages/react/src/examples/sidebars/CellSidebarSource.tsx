@@ -72,7 +72,7 @@ export const CellSidebarSource = (props: CellSidebarProps) => {
           onClick={(e: any) => {
             e.preventDefault();
             notebookStore.insertAbove({
-              uid: notebookId,
+              id: notebookId,
               cellType: 'code',
               source:
                 "print('Hello 🪐 ⚛️ Jupyter React, I have been inserted up ⬆️.')",
@@ -90,7 +90,7 @@ export const CellSidebarSource = (props: CellSidebarProps) => {
           onClick={(e: any) => {
             e.preventDefault();
             notebookStore.insertAbove({
-              uid: notebookId,
+              id: notebookId,
               cellType: 'markdown',
             });
           }}
@@ -107,7 +107,7 @@ export const CellSidebarSource = (props: CellSidebarProps) => {
             onClick={(e: any) => {
               e.preventDefault();
               notebookStore.changeCellType({
-                uid: notebookId,
+                id: notebookId,
                 cellType: 'markdown',
               });
             }}
@@ -122,7 +122,7 @@ export const CellSidebarSource = (props: CellSidebarProps) => {
             onClick={(e: any) => {
               e.preventDefault();
               notebookStore.changeCellType({
-                uid: notebookId,
+                id: notebookId,
                 cellType: 'code',
               });
             }}
@@ -139,7 +139,7 @@ export const CellSidebarSource = (props: CellSidebarProps) => {
           onClick={(e: any) => {
             e.preventDefault();
             notebookStore.insertBelow({
-              uid: notebookId,
+              id: notebookId,
               cellType: 'markdown',
             });
           }}
@@ -155,7 +155,7 @@ export const CellSidebarSource = (props: CellSidebarProps) => {
           onClick={(e: any) => {
             e.preventDefault();
             notebookStore.insertBelow({
-              uid: notebookId,
+              id: notebookId,
               cellType: 'code',
               source:
                 "print('Hello 🪐 ⚛️ Jupyter React, I have been inserted down ⬇️.')",

@@ -53,7 +53,7 @@ const NotebookUnmount = () => {
           </Box>
           <Notebook
             nbformat={notebook as INotebookContent}
-            uid="notebook-unmount-id"
+            id="notebook-unmount-id"
             //                kernel={kernel}
             height="700px"
             CellSidebar={CellSidebar}

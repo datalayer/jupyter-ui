@@ -104,7 +104,7 @@ export const CodeMirrorEditor = (props: {
             outputStore.setSource({
               sourceId,
               source,
-            })
+            });
           }
         }),
       ],
