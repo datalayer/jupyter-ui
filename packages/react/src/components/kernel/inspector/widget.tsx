@@ -127,7 +127,7 @@ namespace Message {
 export class MessageLogView extends VDomRenderer<KernelSpyModel> {
   constructor(model: KernelSpyModel) {
     super(model);
-    this.id = `kernelspy-messagelog-${UUID.uid4()}`;
+    this.id = `kernelspy-messagelog-${UUID.uuid4()}`;
     this.addClass('dla-KernelInspector-messagelog');
   }
 
@@ -216,7 +216,7 @@ export class KernelSpyView extends Widget {
     super();
     this._model = new KernelSpyModel(kernel);
     this.addClass('dla-KernelInspector-view');
-    this.id = `kernelspy-${UUID.uid4()}`;
+    this.id = `kernelspy-${UUID.uuid4()}`;
     this.title.label = 'Kernel spy';
     this.title.closable = true;
     this.title.icon = jsonIcon;

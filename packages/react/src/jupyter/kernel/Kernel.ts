@@ -80,7 +80,7 @@ export class Kernel {
     } else {
       let path = getCookie(this.cookieName);
       if (!path) {
-        path = 'kernel-' + UUID.uid4();
+        path = 'kernel-' + UUID.uuid4();
         document.cookie = this.cookieName + '=' + path;
       }
       this._path = path;
