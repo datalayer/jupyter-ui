@@ -12,22 +12,23 @@ export interface ICellState {
   source?: string;
   outputsCount?: number;
   adapter?: CellAdapter;
+  kernelAvailable?: boolean;
 }
 
 export interface ICellsState {
   cells: Map<string, ICellState>;
-  kernelAvailable: boolean; // Currently shared between all cells
 }
 
 export type CellState = ICellsState & {
   setCells: (cells: Map<string, ICellState>) => void;
   setSource: (id: string, source: string) => void;
   setOutputsCount: (id: string, outputsCount: number) => void;
-  setKernelAvailable: (kernelAvailable: boolean) => void;
+  setKernelAvailable: (id: string, kernelAvailable: boolean) => void;
   setAdapter: (id: string, adapter?: CellAdapter) => void;
   getAdapter: (id: string) => CellAdapter | undefined;
   getSource: (id: string) => string | undefined;
   getOutputsCount: (id: string) => number | undefined;
+  getIsKernelAvaiable: (id: string) => boolean | undefined;
   execute: (id?: string) => void;
 };
 
@@ -59,7 +60,16 @@ export const cellStore = createStore<CellState>((set, get) => ({
     }
     set((state: CellState) => ({ cells }))
   },
-  setKernelAvailable: (kernelAvailable: boolean) => set((state: CellState) => ({ kernelAvailable })),
+  setKernelAvailable: (id: string, kernelAvailable: boolean) => {
+    const cells = get().cells;
+    const cell = cells.get(id);
+    if (cell) {
+      cell.kernelAvailable = kernelAvailable;
+    } else {
+      cells.set(id, {kernelAvailable});
+    }
+    set((cell: CellState) => ({ cells }))
+  },
   setAdapter: (id: string, adapter?: CellAdapter) => {
     const cells = get().cells;
     const cell = cells.get(id);
@@ -78,6 +88,9 @@ export const cellStore = createStore<CellState>((set, get) => ({
   },
   getOutputsCount: (id: string): number | undefined => {
     return get().cells.get(id)?.outputsCount;
+  },
+  getIsKernelAvaiable: (id: string): boolean | undefined => {
+    return get().cells.get(id)?.kernelAvailable;
   },
   execute: (id: string) => { 
     const cells = get().cells;

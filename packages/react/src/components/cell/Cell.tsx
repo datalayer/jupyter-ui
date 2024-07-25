@@ -6,7 +6,6 @@
 
 import { useState, useEffect } from 'react';
 import { CodeCell, MarkdownCell } from '@jupyterlab/cells';
-import { KernelMessage } from '@jupyterlab/services';
 import { Box } from '@primer/react';
 import CellAdapter from './CellAdapter';
 import Lumino from '../lumino/Lumino';
@@ -60,23 +59,24 @@ export const Cell = (props: ICellProps) => {
     }
 
     adapter.sessionContext.initialize().then(() => {
-      if (!autoStart || !adapter.cell.model) {
-        return
+      if (!adapter.cell.model) {
+        return;
       }
-
+      // Set that session/kernel is ready for that cell
+      cellStore.setKernelAvailable(id, true);
+    
       // Perform auto-start for code or markdown cells
-      if (adapter.cell instanceof CodeCell) {
-        const execute = CodeCell.execute(
-          adapter.cell,
-          adapter.sessionContext
-        );
-        execute.then((msg: void | KernelMessage.IExecuteReplyMsg) => {
-          cellStore.setKernelAvailable(true);
-        });
-      }
+      if (autoStart) {
+        if (adapter.cell instanceof CodeCell) {
+          CodeCell.execute(
+            adapter.cell,
+            adapter.sessionContext
+          );
+        }
 
-      if (adapter.cell instanceof MarkdownCell) {
-        adapter.cell.rendered = true;
+        if (adapter.cell instanceof MarkdownCell) {
+          adapter.cell.rendered = true;
+        }
       }
     });
   }

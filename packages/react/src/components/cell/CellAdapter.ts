@@ -268,7 +268,9 @@ export class CellAdapter {
         if (this._type === 'code') {
           const lang = info.language_info;
           const mimeType = mimeService.getMimeTypeByLanguage(lang);
-          this._cell.model.mimeType = mimeType;
+          if (this._cell.model) {
+            this._cell.model.mimeType = mimeType;
+          } 
         }
       });
     });

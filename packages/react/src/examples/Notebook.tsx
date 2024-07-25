@@ -3,7 +3,6 @@
  *
  * MIT License
  */
-
 import { createRoot } from 'react-dom/client';
 import Jupyter from '../jupyter/Jupyter';
 import Notebook from '../components/notebook/Notebook';
