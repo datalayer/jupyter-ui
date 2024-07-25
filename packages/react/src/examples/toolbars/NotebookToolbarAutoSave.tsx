@@ -57,7 +57,7 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
           onClick={e => {
             e.preventDefault();
             notebookStore.save({
-              uid: notebookId,
+              id: notebookId,
               date: new Date(),
             });
           }}
@@ -145,7 +145,7 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
           onClick={e => {
             e.preventDefault();
             notebookStore.insertBelow({
-              uid: notebookId,
+              id: notebookId,
               cellType: addType,
             });
           }}

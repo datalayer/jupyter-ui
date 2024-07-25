@@ -35,7 +35,6 @@ export type IOutputState = {
   adapter?: OutputAdapter;
   source?: OutputState.ISource;
   dataset?: OutputState.IDataset;
-  setSource?: OutputState.ISource;
   execute?: OutputState.IExecute;
   grade?: OutputState.IGrade;
 };
@@ -93,16 +92,19 @@ export const outputStore = createStore<OutputState>((set, get) => ({
     }
     set((state: OutputState) => ({ outputs }))
   },
-  setSource: (setSource: OutputState.ISource) => {
-    const sourceId = setSource.sourceId;
+  setSource: (sourceState: OutputState.ISource) => {
     const outputs = get().outputs;
-    const s = outputs.get(sourceId);
-    if (s) {
-      s.setSource = setSource;
-    } else {
-      outputs.set(sourceId, { setSource });
+    const output = outputs.get(sourceState.sourceId);
+    if (output?.source?.source === sourceState.source) {
+      return;
     }
-    set((state: OutputState) => ({ outputs }))
+    outputs.set(sourceState.sourceId, {
+      source: {
+        sourceId: sourceState.sourceId,
+        source: sourceState.source
+      }
+    });
+    get().setOutputs(outputs);
   },
   setGrade: (grade: OutputState.IGrade) => {
     const sourceId = grade.sourceId;
@@ -111,7 +113,7 @@ export const outputStore = createStore<OutputState>((set, get) => ({
     if (g) {
       g.grade = grade;
     } else {
-      outputs.set(sourceId, { grade });
+      outputs.set(sourceId, { grade: grade });
     }
     set((state: OutputState) => ({ outputs }))
   },

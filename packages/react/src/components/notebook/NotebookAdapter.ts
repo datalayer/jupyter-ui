@@ -83,7 +83,7 @@ export class NotebookAdapter {
   private _rendermime?: RenderMimeRegistry;
   private _serviceManager: ServiceManager;
   private _tracker?: NotebookTracker;
-  private _uid: string;
+  private _id: string;
   private _CellSidebar?: (props: any) => JSX.Element;
 
   constructor(
@@ -100,7 +100,7 @@ export class NotebookAdapter {
     this._path = props.path;
     this._readOnly = props.readOnly;
     this._renderers = props.renderers;
-    this._uid = props.uid;
+    this._id = props.id;
 
     this._CellSidebar = props.CellSidebar;
 
@@ -223,14 +223,14 @@ export class NotebookAdapter {
     const contentFactory = this._CellSidebar
       ? new JupyterReactContentFactory(
           this._CellSidebar,
-          this._uid,
+          this._id,
           this._nbgrader,
           this._commandRegistry,
           { editorFactory },
         )
       : new NotebookPanel.ContentFactory({ editorFactory });
 
-    this._tracker = new NotebookTracker({ namespace: this._uid });
+    this._tracker = new NotebookTracker({ namespace: this._id });
 
     const notebookWidgetFactory = new NotebookWidgetFactory({
       name: 'Notebook',
@@ -418,8 +418,8 @@ export class NotebookAdapter {
         (this._context as Context<INotebookModel>).model.dirty = false;
         const now = new Date().toISOString();
         const model: Contents.IModel = {
-          path: this._uid,
-          name: this._uid,
+          path: this._id,
+          name: this._id,
           type: 'notebook',
           content: undefined,
           writable: true,
@@ -492,8 +492,8 @@ export class NotebookAdapter {
     });
   }
 
-  get uid(): string {
-    return this._uid;
+  get id(): string {
+    return this._id;
   }
 
   get notebookPanel(): NotebookPanel | undefined {

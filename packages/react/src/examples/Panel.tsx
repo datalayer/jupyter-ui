@@ -15,7 +15,7 @@ const Panel = () => {
     <Jupyter>
       <Notebook
         path="panel.ipynb"
-        uid="notebook-panel-uid"
+        id="notebook-panel-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         CellSidebar={CellSidebarNew}
         Toolbar={NotebookToolbar}

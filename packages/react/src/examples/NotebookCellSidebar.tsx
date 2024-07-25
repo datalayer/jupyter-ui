@@ -17,7 +17,7 @@ const NotebookCellSidebar = () => (
   <Jupyter>
     <Notebook
       nbformat={nbformat as INotebookContent}
-      uid="notebook-sidebar-uid"
+      id="notebook-sidebar-id"
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       cellSidebarMargin={160}
       CellSidebar={CellSidebarSource}

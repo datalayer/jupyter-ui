@@ -13,7 +13,6 @@ import Jupyter from '../jupyter/Jupyter';
 import Output from '../components/output/Output';
 
 const SOURCE_ID_1 = '1';
-// const SOURCE_1 = '1+1';
 const OUTPUTS_1: IOutput[] = [
   {
     data: {
@@ -40,7 +39,11 @@ const OUTPUTS_2: IOutput[] = [
 
 const OutputWithoutEditor = () => {
   const outputStore = useJupyterStore().outputStore();
-  console.log('Outputs 1', outputStore.getAdapter(SOURCE_ID_1)?.outputArea.model.toJSON());
+  console.log(
+    'Outputs 1',
+    outputStore.getAdapter(SOURCE_ID_1)?.outputArea.model.toJSON(),
+    outputStore.getSource(SOURCE_ID_1),
+  );
   return (
     <>
       <Text as="h1">Output without Code Editor</Text>
@@ -56,7 +59,11 @@ const OutputWithoutEditor = () => {
 const OutputWithEditor = () => {
   const { defaultKernel } = useJupyter();
   const outputStore = useJupyterStore().outputStore();
-  console.log('Outputs 2', outputStore.getAdapter(SOURCE_ID_2)?.outputArea.model.toJSON());
+  console.log(
+    'Outputs 2',
+    outputStore.getAdapter(SOURCE_ID_2)?.outputArea.model.toJSON(),
+    outputStore.getSource(SOURCE_ID_2),
+  );
   return (
     <>
       <Text as="h1">Output with Code Editor</Text>

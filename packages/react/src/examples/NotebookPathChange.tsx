@@ -36,7 +36,7 @@ const NotebookPathChange = () => {
       </Box>
       <Notebook
         path={path}
-        uid="notebook-path-change-id"
+        id="notebook-path-change-id"
         CellSidebar={CellSidebar}
       />
     </>

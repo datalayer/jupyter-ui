@@ -14,7 +14,7 @@ const Plotly = () => (
   <Jupyter>
     <Notebook
       path="plotly.ipynb"
-      uid="notebook-plotly-uid"
+      id="notebook-plotly-id"
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       cellSidebarMargin={120}
       CellSidebar={CellSidebar}

@@ -26,9 +26,9 @@ import notebook from './notebooks/NotebookExample1.ipynb.json';
 
 const SOURCE_1 = '1+1';
 
-const NOTEBOOK_UID_1 = 'notebook-1-uid';
-const NOTEBOOK_UID_2 = 'notebook-2-uid';
-const NOTEBOOK_UID_3 = 'notebook-3-uid';
+const NOTEBOOK_ID_1 = 'notebook-1-id';
+const NOTEBOOK_ID_2 = 'notebook-2-id';
+const NOTEBOOK_ID_3 = 'notebook-3-id';
 
 const SOURCE_1_OUTPUTS: IOutput[] = [
   {
@@ -101,7 +101,7 @@ const NotebookToolbar = () => {
           size="small"
           onClick={() =>
             notebookStore.save({
-              uid: NOTEBOOK_UID_1,
+              id: NOTEBOOK_ID_1,
               date: new Date(),
             })
           }
@@ -112,7 +112,7 @@ const NotebookToolbar = () => {
           variant="default"
           size="small"
           onClick={() =>
-            notebookStore.runAll(NOTEBOOK_UID_1)
+            notebookStore.runAll(NOTEBOOK_ID_1)
           }
         >
           Run all
@@ -136,7 +136,7 @@ const NotebookKernelChange = () => {
         sessionManager: serviceManager.sessions,
       });
       kernel.ready.then(() => {
-        notebookStore.changeKernel({ uid: NOTEBOOK_UID_2, kernel });
+        notebookStore.changeKernel({ id: NOTEBOOK_ID_2, kernel });
         alert('Kernel is changed.');
       });
     }
@@ -153,7 +153,7 @@ const NotebookKernelChange = () => {
       <Notebook
         path="test.ipynb"
         CellSidebar={CellSidebar}
-        uid={NOTEBOOK_UID_2}
+        id={NOTEBOOK_ID_2}
       />
     </>
   );
@@ -195,7 +195,7 @@ root.render(
   <Jupyter terminals={true}>
     <Notebook
       nbformat={notebook as INotebookContent}
-      uid={NOTEBOOK_UID_3}
+      id={NOTEBOOK_ID_3}
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       cellSidebarMargin={60}
       CellSidebar={CellSidebarNew}
@@ -214,7 +214,7 @@ root.render(
     <Notebook
       path="ipywidgets.ipynb"
       CellSidebar={CellSidebar}
-      uid={NOTEBOOK_UID_1}
+      id={NOTEBOOK_ID_1}
     />
     <hr />
     <NotebookKernelChange />
