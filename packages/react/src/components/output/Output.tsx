@@ -37,6 +37,7 @@ export type IOutputProps = {
   receipt?: string;
   showControl?: boolean;
   showEditor: boolean;
+  showKernelProgressBar?: boolean;
   sourceId: string;
   toolbarPosition: 'up' | 'middle' | 'none';
 };
@@ -58,6 +59,7 @@ export const Output = (props: IOutputProps) => {
     receipt,
     showControl,
     showEditor,
+    showKernelProgressBar,
     sourceId,
     toolbarPosition,
   } = props;
@@ -166,7 +168,7 @@ export const Output = (props: IOutputProps) => {
       {adapter && (
         <Box display="flex">
           <Box flexGrow={1}>
-            {kernelStatus !== 'idle' && <KernelProgressBar />}
+            {kernelStatus !== 'idle' && showKernelProgressBar && <KernelProgressBar />}
           </Box>
           {showControl && (
             <Box style={{ marginTop: '-13px' }}>
