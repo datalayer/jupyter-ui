@@ -59,7 +59,7 @@ export const Output = (props: IOutputProps) => {
     receipt,
     showControl,
     showEditor,
-    showKernelProgressBar,
+    showKernelProgressBar = true,
     sourceId,
     toolbarPosition,
   } = props;
