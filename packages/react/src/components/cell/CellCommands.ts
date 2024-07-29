@@ -8,6 +8,7 @@ import { CommandRegistry } from '@lumino/commands';
 import { CompletionHandler } from '@jupyterlab/completer';
 import { CodeCell, MarkdownCell, RawCell } from '@jupyterlab/cells';
 import { SessionContext } from '@jupyterlab/apputils';
+import { cellStore } from './CellState';
 
 const cmdIds = {
   invoke: 'completer:invoke',
@@ -15,10 +16,11 @@ const cmdIds = {
 };
 
 export const CellCommands = (
+  cellId: string,
   commandRegistry: CommandRegistry,
   cell: CodeCell | MarkdownCell | RawCell,
   sessionContext: SessionContext,
-  completerHandler: CompletionHandler
+  completerHandler: CompletionHandler,
 ): void => {
   commandRegistry.addCommand(cmdIds.invoke, {
     label: 'Completer: Invoke',
@@ -30,10 +32,16 @@ export const CellCommands = (
   });
   commandRegistry.addCommand('run:cell', {
     execute: () => {
+      cellStore.getState().setIsExecuting(cellId, true);
       if (cell instanceof CodeCell) {
-        CodeCell.execute(cell, sessionContext)
+        CodeCell
+          .execute(cell, sessionContext)
+          .then(() => {
+            cellStore.getState().setIsExecuting(cellId, false);
+          })
       } else if (cell instanceof MarkdownCell) {
         (cell as MarkdownCell).rendered = true;
+        cellStore.getState().setIsExecuting(cellId, false);
       }
     },
   });

@@ -64,15 +64,18 @@ export const Cell = (props: ICellProps) => {
       }
     
       // Perform auto-start for code or markdown cells
+      cellStore.setIsExecuting(id, true);
       if (adapter.cell instanceof CodeCell) {
-        CodeCell.execute(
-          adapter.cell,
-          adapter.sessionContext
-        );
+        CodeCell
+          .execute(adapter.cell, adapter.sessionContext)
+          .then(() => {
+            cellStore.setIsExecuting(id, false);
+          });
       }
 
       if (adapter.cell instanceof MarkdownCell) {
         adapter.cell.rendered = true;
+        cellStore.setIsExecuting(id, false);
       }
     });
 
@@ -88,6 +91,7 @@ export const Cell = (props: ICellProps) => {
     if (id && defaultKernel && serverSettings) {
       defaultKernel.ready.then(() => {
         const adapter = new CellAdapter({
+          id,
           type,
           source,
           serverSettings,

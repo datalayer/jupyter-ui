@@ -52,11 +52,13 @@ import ClassicWidgetManager from '../../jupyter/ipywidgets/classic/manager';
 import Kernel from '../../jupyter/kernel/Kernel';
 import getMarked from '../notebook/marked/marked';
 import CellCommands from './CellCommands';
+import { cellStore } from './CellState';
 
 interface BoxOptions {
   showToolbar?: boolean;
 }
 export class CellAdapter {
+  private _id: string;
   private _cell: CodeCell | MarkdownCell | RawCell;
   private _kernel: Kernel;
   private _panel: BoxPanel;
@@ -64,7 +66,8 @@ export class CellAdapter {
   private _type: 'code' | 'markdown' | 'raw'
 
   constructor(options: CellAdapter.ICellAdapterOptions) {
-    const { type, source, serverSettings, kernel, boxOptions } = options;
+    const { id, type, source, serverSettings, kernel, boxOptions } = options;
+    this._id = id;
     this._kernel = kernel;
     this._type = type;
     this.setupCell(type, source, serverSettings, kernel, boxOptions);
@@ -303,7 +306,9 @@ export class CellAdapter {
     });
     handler.editor = editor;
 
-    CellCommands(commands, this._cell!, this._sessionContext, handler);
+    // Init general commands/complete for the cell
+    CellCommands(this._id, commands, this._cell!, this._sessionContext, handler);
+
     completer.hide();
     completer.addClass('jp-Completer-Cell');
     Widget.attach(completer, document.body);
@@ -312,10 +317,16 @@ export class CellAdapter {
     const runButton = new ToolbarButton({
       icon: runIcon,
       onClick: () => {
-        if (this._type === 'code') {
-          CodeCell.execute(this._cell as CodeCell, this._sessionContext);
+        cellStore.getState().setIsExecuting(this._id, true);
+        if (this._cell instanceof CodeCell) {
+          CodeCell
+            .execute(this._cell, this._sessionContext)
+            .then(() => {
+              cellStore.getState().setIsExecuting(this._id, false);
+            });
         } else if (this._type === 'markdown') {
           (this._cell as MarkdownCell).rendered = true;
+          cellStore.getState().setIsExecuting(this._id, false);
         }
       },
       tooltip: 'Run',
@@ -376,16 +387,23 @@ export class CellAdapter {
   }
 
   execute = () => {
+    cellStore.getState().setIsExecuting(this._id, true);
     if (this._type === 'code') {
-      CodeCell.execute((this._cell as CodeCell), this._sessionContext);
+      CodeCell
+        .execute((this._cell as CodeCell), this._sessionContext)
+        .then(() => {
+          cellStore.getState().setIsExecuting(this._id, false);
+        });
     } else if (this._type === 'markdown') {
       (this._cell as MarkdownCell).rendered = true;
+      cellStore.getState().setIsExecuting(this._id, false);
     }
   };
 }
 
 export namespace CellAdapter {
   export type ICellAdapterOptions = {
+    id: string;
     type: 'code' | 'markdown' | 'raw';
     source: string;
     serverSettings: ServerConnection.ISettings;
