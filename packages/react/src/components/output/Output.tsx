@@ -6,10 +6,10 @@
 
 import { useState, useEffect } from 'react';
 import { Box } from '@primer/react';
-import { UUID } from '@lumino/coreutils';
 import { IOutput } from '@jupyterlab/nbformat';
 import { IOutputAreaModel } from '@jupyterlab/outputarea';
 import { KernelMessage } from '@jupyterlab/services';
+import { newUuid } from '../../utils';
 import { useJupyter } from '../../jupyter/JupyterContext';
 import Kernel from '../../jupyter/kernel/Kernel';
 import { KernelActionMenu, KernelProgressBar } from './../kernel';
@@ -70,7 +70,7 @@ export const Output = (props: IOutputProps) => {
   const [adapter, setAdapter] = useState<OutputAdapter>();
   useEffect(() => {
     if (!id) {
-      setId(UUID.uuid4());
+      setId(newUuid());
     }
   }, []);
   useEffect(() => {

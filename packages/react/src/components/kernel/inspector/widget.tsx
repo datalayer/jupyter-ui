@@ -12,7 +12,6 @@ import {
   closeIcon,
   jsonIcon,
 } from '@jupyterlab/ui-components';
-import { UUID } from '@lumino/coreutils';
 import { Message as luminoMessage } from '@lumino/messaging';
 import { Widget, BoxLayout } from '@lumino/widgets';
 import {
@@ -20,6 +19,7 @@ import {
   ObjectLabel,
   InspectorNodeParams,
 } from 'react-inspector';
+import { newUuid } from '../../../utils';
 import { KernelSpyModel, ThreadIterator } from './model';
 
 import './kernelinspector.css';
@@ -127,7 +127,7 @@ namespace Message {
 export class MessageLogView extends VDomRenderer<KernelSpyModel> {
   constructor(model: KernelSpyModel) {
     super(model);
-    this.id = `kernelspy-messagelog-${UUID.uuid4()}`;
+    this.id = `kernelspy-messagelog-${newUuid()}`;
     this.addClass('dla-KernelInspector-messagelog');
   }
 
@@ -216,7 +216,7 @@ export class KernelSpyView extends Widget {
     super();
     this._model = new KernelSpyModel(kernel);
     this.addClass('dla-KernelInspector-view');
-    this.id = `kernelspy-${UUID.uuid4()}`;
+    this.id = `kernelspy-${newUuid()}`;
     this.title.label = 'Kernel spy';
     this.title.closable = true;
     this.title.icon = jsonIcon;

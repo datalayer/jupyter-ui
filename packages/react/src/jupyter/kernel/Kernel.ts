@@ -5,7 +5,7 @@
  */
 
 import { find } from '@lumino/algorithm';
-import { PromiseDelegate, UUID } from '@lumino/coreutils';
+import { PromiseDelegate } from '@lumino/coreutils';
 import {
   Kernel as JupyterKernel,
   KernelMessage,
@@ -14,7 +14,7 @@ import {
 } from '@jupyterlab/services';
 import { ISessionConnection } from '@jupyterlab/services/lib/session/session';
 import { ConnectionStatus } from '@jupyterlab/services/lib/kernel/kernel';
-import { getCookie } from '../../utils/Utils';
+import { getCookie, newUuid } from '../../utils/Utils';
 import KernelExecutor, {
   IOPubMessageHook,
   ShellMessageHook,
@@ -80,7 +80,7 @@ export class Kernel {
     } else {
       let path = getCookie(this.cookieName);
       if (!path) {
-        path = 'kernel-' + UUID.uuid4();
+        path = 'kernel-' + newUuid();
         document.cookie = this.cookieName + '=' + path;
       }
       this._path = path;

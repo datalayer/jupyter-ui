@@ -5,7 +5,12 @@
  */
 
 import { ICell, IOutput } from '@jupyterlab/nbformat';
+import { ulid } from 'ulid';
 import { UUID } from '@lumino/coreutils';
+
+export const newUlid = () => {
+  return ulid()
+}
 
 export const newUuid = () => {
   return UUID.uuid4();
