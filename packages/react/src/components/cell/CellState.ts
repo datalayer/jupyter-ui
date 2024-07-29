@@ -12,33 +12,33 @@ export interface ICellState {
   source?: string;
   outputsCount?: number;
   adapter?: CellAdapter;
-  kernelAvailable?: boolean;
+  isKernelSessionAvailable?: boolean; // Individual, for cell
 }
 
 export interface ICellsState {
   cells: Map<string, ICellState>;
-  areAllCellsReady: boolean;
+  areAllKernelSessionsReady: boolean; // Control the state for all cells
 }
 
 export type CellState = ICellsState & {
   setCells: (cells: Map<string, ICellState>) => void;
   setSource: (id: string, source: string) => void;
   setOutputsCount: (id: string, outputsCount: number) => void;
-  setKernelAvailable: (id: string, kernelAvailable: boolean) => void;
+  setIsKernelSessionAvailable: (id: string, kernelAvailable: boolean) => void;
   setAdapter: (id: string, adapter?: CellAdapter) => void;
   getAdapter: (id: string) => CellAdapter | undefined;
   getSource: (id: string) => string | undefined;
   getOutputsCount: (id: string) => number | undefined;
-  getIsKernelAvailable: (id: string) => boolean | undefined;
+  getIsKernelSessionAvailable: (id: string) => boolean | undefined;
   execute: (id?: string) => void;
 };
 
 /**
  * Iterate over all cells map and check if all cells/sessions are ready
  */
-const areAllSessionsAvailable = (cells: Map<string, ICellState>): boolean => {
+const areAllKernelSessionsAvailable = (cells: Map<string, ICellState>): boolean => {
   for (const cell of cells.values()) {
-    if (!cell.kernelAvailable) {
+    if (!cell.isKernelSessionAvailable) {
       return false;
     }
   }
@@ -49,8 +49,8 @@ export const cellStore = createStore<CellState>((set, get) => ({
   cells: new Map<string, ICellState>(),
   source: '',
   outputsCount: 0,
-  kernelAvailable: false,
-  areAllCellsReady: false,
+  isKernelSessionAvailable: false,
+  areAllKernelSessionsReady: false,
   adapter: undefined,
   setCells: (cells: Map<string, ICellState>) => set((cell: CellState) => ({ cells })),
 
@@ -74,16 +74,16 @@ export const cellStore = createStore<CellState>((set, get) => ({
     }
     set((state: CellState) => ({ cells }))
   },
-  setKernelAvailable: (id: string, kernelAvailable: boolean) => {
+  setIsKernelSessionAvailable: (id: string, isKernelSessionAvailable: boolean) => {
     const cells = get().cells;
     const cell = cells.get(id);
     if (cell) {
-      cell.kernelAvailable = kernelAvailable;
+      cell.isKernelSessionAvailable = isKernelSessionAvailable;
     } else {
-      cells.set(id, {kernelAvailable});
+      cells.set(id, {isKernelSessionAvailable});
     }
-    const areAllCellsReady = areAllSessionsAvailable(cells);
-    set((cell: CellState) => ({ cells, areAllCellsReady }));
+    const areAllKernelSessionsReady = areAllKernelSessionsAvailable(cells);
+    set((cell: CellState) => ({ cells, areAllKernelSessionsReady }));
   },
   setAdapter: (id: string, adapter?: CellAdapter) => {
     const cells = get().cells;
@@ -104,8 +104,8 @@ export const cellStore = createStore<CellState>((set, get) => ({
   getOutputsCount: (id: string): number | undefined => {
     return get().cells.get(id)?.outputsCount;
   },
-  getIsKernelAvailable: (id: string): boolean | undefined => {
-    return get().cells.get(id)?.kernelAvailable;
+  getIsKernelSessionAvailable: (id: string): boolean | undefined => {
+    return get().cells.get(id)?.isKernelSessionAvailable;
   },
   execute: (id: string) => { 
     const cells = get().cells;

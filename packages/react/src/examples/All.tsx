@@ -58,7 +58,7 @@ const CellPreview = (props: ICellToolProps) => {
   return (
     <>
       <>source: {cellStore.getSource(props.id)}</>
-      <>kernel available: {String(cellStore.getIsKernelAvailable(props.id))}</>
+      <>kernel available: {String(cellStore.getIsKernelSessionAvailable(props.id))}</>
     </>
   );
 };

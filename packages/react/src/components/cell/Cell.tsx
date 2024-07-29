@@ -79,7 +79,7 @@ export const Cell = (props: ICellProps) => {
     adapter.sessionContext.kernelChanged.connect(() => {
       void adapter.sessionContext.session?.kernel?.info.then(info => {
         // Set that session/kernel is ready for this cell when the kernel is guaranteed to be connected 
-        cellStore.setKernelAvailable(id, true);
+        cellStore.setIsKernelSessionAvailable(id, true);
       })
     });
   }
