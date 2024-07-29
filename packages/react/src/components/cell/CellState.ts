@@ -131,15 +131,12 @@ export const cellStore = createStore<CellState>((set, get) => ({
     const cell = cells.get(id);
     if (cell) {
       cell.adapter?.execute();
-      cell.isExecuting = true;
     } else {
       get().cells.forEach((cell) => {
         cell.adapter?.execute();
-        cell.isExecuting = true;
       });
     }
-    const isAnyCellExecuting = isAnyCellRunning(cells);
-    set((state: CellState) => ({ cells, isAnyCellExecuting }));
+    set((state: CellState) => ({ cells }));
   },
   setIsExecuting: (id: string, isExecuting: boolean) => {
     /**

@@ -318,9 +318,9 @@ export class CellAdapter {
       icon: runIcon,
       onClick: () => {
         cellStore.getState().setIsExecuting(this._id, true);
-        if (this._cell instanceof CodeCell) {
+        if (this._type === 'code') {
           CodeCell
-            .execute(this._cell, this._sessionContext)
+            .execute((this._cell as CodeCell), this._sessionContext)
             .then(() => {
               cellStore.getState().setIsExecuting(this._id, false);
             });
