@@ -36,14 +36,14 @@ const KernelExecutorView = () => {
         msg: KernelMessage.IIOPubMessage
       ) => {
         // Do something with the IOPub message.
-        console.debug('---iopubMessage', msg);
+        console.log('---iopubMessage', msg);
         return true;
       };
       const shellMessageHook: ShellMessageHook = (
         msg: KernelMessage.IShellControlMessage
       ) => {
-        // Do something with the IOPub message.
-        console.debug('---shellMessage', msg);
+        // Do something with the Shell message.
+        console.log('---shellMessage', msg);
         return true;
       };
       const kernelExecutor = defaultKernel.execute(CODE, {

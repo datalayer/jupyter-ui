@@ -19,7 +19,7 @@ import Terminal from '../components/terminal/Terminal';
 import CellSidebarNew from '../components/notebook/cell/sidebar/CellSidebarButton';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 import Console from '../components/console/Console';
-import { useCellStore } from '../components/cell/CellState';
+import { useCellsStore } from '../components/cell/CellState';
 import useNotebookStore from '../components/notebook/NotebookState';
 
 import notebook from './notebooks/NotebookExample1.ipynb.json';
@@ -54,18 +54,18 @@ interface ICellToolProps {
 }
 
 const CellPreview = (props: ICellToolProps) => {
-  const cellStore = useCellStore();
+  const cellsStore = useCellsStore();
   return (
     <>
-      <>source: {cellStore.getSource(props.id)}</>
-      <>kernel available: {String(cellStore.getIsKernelSessionAvailable(props.id))}</>
+      <>source: {cellsStore.getSource(props.id)}</>
+      <>kernel available: {String(cellsStore.isKernelSessionAvailable(props.id))}</>
     </>
   );
 };
 
 const CellToolbar = (props: ICellToolProps) => {
   const {id} = props;
-  const cellStore = useCellStore();
+  const cellsStore = useCellsStore();
   return (
     <>
       <Box display="flex">
@@ -73,20 +73,20 @@ const CellToolbar = (props: ICellToolProps) => {
           <Button
             variant="default"
             size="small"
-            onClick={() => cellStore.execute(id)}
+            onClick={() => cellsStore.execute(id)}
           >
             Run the cell
           </Button>
           <Button
             variant="invisible"
             size="small"
-            onClick={() => cellStore.setOutputsCount(id, 0)}
+            onClick={() => cellsStore.setOutputsCount(id, 0)}
           >
             Reset outputs count
           </Button>
         </ButtonGroup>
       </Box>
-      <Box>Outputs count: {cellStore.getOutputsCount(id)}</Box>
+      <Box>Outputs count: {cellsStore.getOutputsCount(id)}</Box>
     </>
   );
 };

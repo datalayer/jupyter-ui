@@ -20,16 +20,16 @@ export interface ICellsState {
   areAllKernelSessionsReady: boolean; // Control the state for all cells
 }
 
-export type CellState = ICellsState & {
+export type CellsState = ICellsState & {
   setCells: (cells: Map<string, ICellState>) => void;
   setSource: (id: string, source: string) => void;
   setOutputsCount: (id: string, outputsCount: number) => void;
-  setIsKernelSessionAvailable: (id: string, kernelAvailable: boolean) => void;
+  setKernelSessionAvailable: (id: string, kernelAvailable: boolean) => void;
   setAdapter: (id: string, adapter?: CellAdapter) => void;
   getAdapter: (id: string) => CellAdapter | undefined;
   getSource: (id: string) => string | undefined;
   getOutputsCount: (id: string) => number | undefined;
-  getIsKernelSessionAvailable: (id: string) => boolean | undefined;
+  isKernelSessionAvailable: (id: string) => boolean | undefined;
   execute: (id?: string) => void;
 };
 
@@ -45,24 +45,22 @@ const areAllKernelSessionsAvailable = (cells: Map<string, ICellState>): boolean 
   return true;
 };
 
-export const cellStore = createStore<CellState>((set, get) => ({
+export const cellsStore = createStore<CellsState>((set, get) => ({
   cells: new Map<string, ICellState>(),
   source: '',
   outputsCount: 0,
-  isKernelSessionAvailable: false,
   areAllKernelSessionsReady: false,
   adapter: undefined,
-  setCells: (cells: Map<string, ICellState>) => set((cell: CellState) => ({ cells })),
-
+  setCells: (cells: Map<string, ICellState>) => set((cell: CellsState) => ({ cells })),
   setSource: (id: string, source: string) => {
     const cells = get().cells;
     const cell = cells.get(id);
     if (cell) {
       cell.source = source;
     } else {
-      cells.set(id, {source});
+      cells.set(id, { source });
     }
-    set((cell: CellState) => ({ cells }))
+    set((cell: CellsState) => ({ cells }))
   },
   setOutputsCount: (id: string, outputsCount: number) => {
     const cells = get().cells;
@@ -70,11 +68,11 @@ export const cellStore = createStore<CellState>((set, get) => ({
     if (cell) {
       cell.outputsCount = outputsCount;
     } else {
-      cells.set(id, {outputsCount});
+      cells.set(id, { outputsCount });
     }
-    set((state: CellState) => ({ cells }))
+    set((state: CellsState) => ({ cells }));
   },
-  setIsKernelSessionAvailable: (id: string, isKernelSessionAvailable: boolean) => {
+  setKernelSessionAvailable: (id: string, isKernelSessionAvailable: boolean) => {
     const cells = get().cells;
     const cell = cells.get(id);
     if (cell) {
@@ -83,7 +81,7 @@ export const cellStore = createStore<CellState>((set, get) => ({
       cells.set(id, {isKernelSessionAvailable});
     }
     const areAllKernelSessionsReady = areAllKernelSessionsAvailable(cells);
-    set((cell: CellState) => ({ cells, areAllKernelSessionsReady }));
+    set((cell: CellsState) => ({ cells, areAllKernelSessionsReady }));
   },
   setAdapter: (id: string, adapter?: CellAdapter) => {
     const cells = get().cells;
@@ -93,7 +91,7 @@ export const cellStore = createStore<CellState>((set, get) => ({
     } else {
       cells.set(id, { adapter });
     }
-    set((cell: CellState) => ({ cells }))
+    set((cell: CellsState) => ({ cells }))
   },
   getAdapter: (id: string) => {
     return get().cells.get(id)?.adapter;
@@ -104,24 +102,24 @@ export const cellStore = createStore<CellState>((set, get) => ({
   getOutputsCount: (id: string): number | undefined => {
     return get().cells.get(id)?.outputsCount;
   },
-  getIsKernelSessionAvailable: (id: string): boolean | undefined => {
+  isKernelSessionAvailable: (id: string): boolean | undefined => {
     return get().cells.get(id)?.isKernelSessionAvailable;
   },
   execute: (id: string) => { 
     const cells = get().cells;
     const cell = cells.get(id);
     if (cell) {
-      cell.adapter?.execute() 
+      cell.adapter?.execute();
     } else {
-      get().cells.forEach((cell) => cell.adapter?.execute())
+      get().cells.forEach((cell) => cell.adapter?.execute());
     }
   },
 }));
 
-export function useCellStore(): CellState;
-export function useCellStore<T>(selector: (state: CellState) => T): T;
-export function useCellStore<T>(selector?: (state: CellState) => T) {
-  return useStore(cellStore, selector!);
+export function useCellsStore(): CellsState;
+export function useCellsStore<T>(selector: (state: CellsState) => T): T;
+export function useCellsStore<T>(selector?: (state: CellsState) => T) {
+  return useStore(cellsStore, selector!);
 }
 
-export default useCellStore;
+export default useCellsStore;

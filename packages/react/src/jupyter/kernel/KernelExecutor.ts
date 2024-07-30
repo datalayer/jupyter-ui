@@ -30,7 +30,7 @@ export type ShellMessageHook = (
 /**
  * KernelExecutor options
  */
-export interface IKernelExecutorOptions {
+export type IKernelExecutorOptions = {
   /**
    * Kernel connection
    */
@@ -42,23 +42,23 @@ export interface IKernelExecutorOptions {
 }
 
 export class KernelExecutor {
+  private _executed: PromiseDelegate<IOutputAreaModel>;
   private _kernelConnection: Kernel.IKernelConnection;
-  private _outputs: IOutput[];
-  private _outputsChanged = new Signal<KernelExecutor, IOutput[]>(this);
   private _model: IOutputAreaModel;
   private _modelChanged = new Signal<KernelExecutor, IOutputAreaModel>(this);
+  private _outputs: IOutput[];
+  private _outputsChanged = new Signal<KernelExecutor, IOutput[]>(this);
   private _future?: Kernel.IFuture<
     KernelMessage.IExecuteRequestMsg,
     KernelMessage.IExecuteReplyMsg
   >;
   private _shellMessageHooks = new Array<ShellMessageHook>();
-  private _executed: PromiseDelegate<IOutputAreaModel>;
 
   constructor({ connection, model }: IKernelExecutorOptions) {
-    this._kernelConnection = connection;
-    this._outputs = [];
-    this._model = model ?? new OutputAreaModel();
     this._executed = new PromiseDelegate<IOutputAreaModel>();
+    this._kernelConnection = connection;
+    this._model = model ?? new OutputAreaModel();
+    this._outputs = [];
   }
 
   /**
@@ -84,34 +84,34 @@ export class KernelExecutor {
       silent = false,
       stopOnError = false,
       storeHistory = true,
+      allowStdin = false,
     }: {
       iopubMessageHooks?: IOPubMessageHook[];
       shellMessageHooks?: ShellMessageHook[];
       silent?: boolean;
       stopOnError?: boolean;
       storeHistory?: boolean;
+      allowStdin?: boolean;
     } = {}
   ): Promise<IOutputAreaModel> {
     this._shellMessageHooks = shellMessageHooks;
     this._future = this._kernelConnection.requestExecute({
       code,
-      allow_stdin: false,
+      allow_stdin: allowStdin,
       silent,
       stop_on_error: stopOnError,
       store_history: storeHistory,
     });
-    iopubMessageHooks.forEach(hook => this._future!.registerMessageHook(hook));
     this._future.onIOPub = this._onIOPub;
     this._future.onReply = this._onReply;
-    /*
-    FIXME Handle stdin. It will require updating the `allow_stdin` param aboove  .
-    future.onStdin = msg => {
+    iopubMessageHooks.forEach(hook => this._future!.registerMessageHook(hook));
+    this._future.onStdin = msg => {
       if (KernelMessage.isInputRequestMsg(msg)) {
-        this.onInputRequest(msg, value);
+        // FIXME Implement this.
+        // this.onInputRequest(msg, value);
       }
     };
-    */
-    // Wait for future to be done before resolving.
+    // Wait for future to be done before resolving the exectud promise.
     this._future.done.then(() => {
       this._executed.resolve(this._model);
     });
@@ -127,7 +127,68 @@ export class KernelExecutor {
     this._model.clear();
   }
 
+  registerIOPubMessageHook = (msg: IOPubMessageHook) => {
+    this._future?.registerMessageHook(msg);
+  };
+
+  /**
+   * 
+   */
+  get future(): Kernel.IFuture<
+      KernelMessage.IExecuteRequestMsg,
+      KernelMessage.IExecuteReplyMsg
+    > | undefined {
+    return this._future;
+  }
+
+  /**
+   * Promise that resolves when the execution is done.
+   */
+  get done(): Promise<void> {
+    return this._executed.promise.then(() => {
+      return;
+    });
+  }
+
+  /**
+   * Code execution result as serialized JSON
+   */
+  get result(): Promise<string> {
+    return this._executed.promise.then(model => {
+      return outputsAsString(model.toJSON());
+    });
+  }
+
+  /**
+   * Kernel outputs emitted.
+   */
+  get outputs(): IOutput[] {
+    return this._outputs;
+  }
+
+  /**
+   * Kernel outputs wrapped in a model.
+   */
+  get model(): IOutputAreaModel {
+    return this._model;
+  }
+
+  /**
+   * Signal emitted when the outputs list changes.
+   */
+  get outputsChanged(): ISignal<KernelExecutor, IOutput[]> {0
+    return this._outputsChanged;
+  }
+
+  /**
+   * Signal emitted when the outputs model changes.
+   */
+  get modelChanged(): ISignal<KernelExecutor, IOutputAreaModel> {
+    return this._modelChanged;
+  }
+
   private _onIOPub = (message: KernelMessage.IIOPubMessage): void => {
+    console.log('---IOPub', message);
     if (this._future?.msg.header.msg_id !== message.parent_header.msg_id) {
       return;
     }
@@ -175,6 +236,7 @@ export class KernelExecutor {
   };
 
   private _onReply = (message: KernelMessage.IExecuteReplyMsg): void => {
+    console.log('---Reply', message);
     if (this._future?.msg.header.msg_id !== message.parent_header.msg_id) {
       return;
     }
@@ -218,56 +280,6 @@ export class KernelExecutor {
       }
     }
   };
-
-  registerIOPubMessageHook = (msg: IOPubMessageHook) => {
-    this._future?.registerMessageHook(msg);
-  };
-
-  /**
-   * Promise that resolves when the execution is done.
-   */
-  get done(): Promise<void> {
-    return this._executed.promise.then(() => {
-      return;
-    });
-  }
-
-  /**
-   * Code execution result as serialized JSON
-   */
-  get result(): Promise<string> {
-    return this._executed.promise.then(model => {
-      return outputsAsString(model.toJSON());
-    });
-  }
-
-  /**
-   * Kernel outputs emitted.
-   */
-  get outputs(): IOutput[] {
-    return this._outputs;
-  }
-
-  /**
-   * Kernel outputs wrapped in a model.
-   */
-  get model(): IOutputAreaModel {
-    return this._model;
-  }
-
-  /**
-   * Signal emitted when the outputs list changes.
-   */
-  get outputsChanged(): ISignal<KernelExecutor, IOutput[]> {0
-    return this._outputsChanged;
-  }
-
-  /**
-   * Signal emitted when the outputs model changes.
-   */
-  get modelChanged(): ISignal<KernelExecutor, IOutputAreaModel> {
-    return this._modelChanged;
-  }
 
 }
 

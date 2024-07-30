@@ -185,19 +185,21 @@ export class Kernel {
   execute(
     code: string,
     {
+      model,
       iopubMessageHooks = [],
       shellMessageHooks = [],
-      model,
       silent,
       stopOnError,
       storeHistory,
+      allowStdin,
     }: {
+      model?: IOutputAreaModel;
       iopubMessageHooks?: IOPubMessageHook[];
       shellMessageHooks?: ShellMessageHook[];
-      model?: IOutputAreaModel;
       silent?: boolean;
       stopOnError?: boolean;
       storeHistory?: boolean;
+      allowStdin?: boolean;
     } = {}
   ): KernelExecutor | undefined {
     if (this._kernelConnection) {
@@ -211,6 +213,7 @@ export class Kernel {
         silent,
         stopOnError,
         storeHistory,
+        allowStdin,
       });
       return kernelExecutor;
     }

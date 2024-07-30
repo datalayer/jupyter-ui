@@ -10,7 +10,7 @@ import { useStore } from 'zustand';
 import { ServiceManager } from '@jupyterlab/services';
 import type { IDatalayerConfig } from './IState';
 import { IJupyterConfig, loadJupyterConfig } from '../jupyter/JupyterConfig';
-import useCellStore from '../components/cell/CellState';
+import { cellsStore } from '../components/cell/CellState';
 import useConsoleStore from '../components/console/ConsoleState';
 import useNotebookStore from '../components/notebook/NotebookState';
 import useOutputStore from '../components/output/OutputState';
@@ -21,7 +21,7 @@ import { ensureJupyterAuth, createServerSettings, JupyterContextPropsType } from
 import Kernel from '../jupyter/kernel/Kernel';
 
 export type JupyterState = {
-  cellStore: typeof useCellStore;
+  cellsStore: typeof cellsStore.getState;
   consoleStore: typeof useConsoleStore;
   datalayerConfig?: IDatalayerConfig;
   jupyterConfig?: IJupyterConfig;
@@ -63,7 +63,7 @@ export const jupyterStore = createStore<JupyterState>((set, get) => ({
   kernel: undefined,
   serviceManager: undefined,
   serverSettings: undefined,
-  cellStore: useCellStore,
+  cellsStore: cellsStore.getState,
   consoleStore: useConsoleStore,
   notebookStore: useNotebookStore,
   outputStore: useOutputStore,

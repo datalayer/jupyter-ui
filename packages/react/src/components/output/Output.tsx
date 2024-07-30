@@ -30,7 +30,7 @@ export type IOutputProps = {
   disableRun: boolean;
   executeTrigger: number;
   insertText?: (payload?: any) => string;
-  kernel: Kernel;
+  kernel?: Kernel;
   lumino: boolean;
   model?: IOutputAreaModel;
   outputs?: IOutput[];
@@ -43,7 +43,7 @@ export type IOutputProps = {
 };
 
 export const Output = (props: IOutputProps) => {
-  const { defaultKernel: kernel } = useJupyter();
+  const { defaultKernel } = useJupyter();
   const outputStore = useOutputStore();
   const {
     adapter: propsAdapter,
@@ -54,6 +54,7 @@ export const Output = (props: IOutputProps) => {
     disableRun,
     executeTrigger,
     insertText,
+    kernel,
     lumino,
     model,
     receipt,
@@ -63,6 +64,7 @@ export const Output = (props: IOutputProps) => {
     sourceId,
     toolbarPosition,
   } = props;
+  const outputKernel = kernel ?? defaultKernel;
   const [id, setId] = useState<string | undefined>(sourceId);
   const [kernelStatus, setKernelStatus] =
     useState<KernelMessage.Status>('unknown');
@@ -74,9 +76,9 @@ export const Output = (props: IOutputProps) => {
     }
   }, []);
   useEffect(() => {
-    if (id && kernel) {
+    if (id && outputKernel) {
       const adapter =
-        propsAdapter ?? new OutputAdapter(kernel, outputs ?? [], model);
+        propsAdapter ?? new OutputAdapter(outputKernel, outputs ?? [], model);
       if (receipt) {
         adapter.outputArea.model.changed.connect((sender, change) => {
           if (change.type === 'add') {
@@ -102,11 +104,11 @@ export const Output = (props: IOutputProps) => {
         setOutputs(outputModel.toJSON());
       });
     }
-  }, [id, kernel]);
+  }, [id, outputKernel]);
   useEffect(() => {
     if (adapter) {
       if (!adapter.kernel) {
-        adapter.kernel = kernel;
+        adapter.kernel = outputKernel;
       }
       if (autoRun) {
         adapter.execute(code);
@@ -114,10 +116,10 @@ export const Output = (props: IOutputProps) => {
     }
   }, [adapter]);
   useEffect(() => {
-    if (kernel) {
-      kernel.ready.then(() => {
-        setKernelStatus(kernel.connection!.status);
-        kernel.connection!.statusChanged.connect((kernelConnection, status) => {
+    if (outputKernel) {
+      outputKernel.ready.then(() => {
+        setKernelStatus(outputKernel.connection!.status);
+        outputKernel.connection!.statusChanged.connect((kernelConnection, status) => {
           setKernelStatus(status);
         });
       });
@@ -125,7 +127,7 @@ export const Output = (props: IOutputProps) => {
         //        kernel.connection.then(k => k.shutdown().then(() => console.log(`Kernel ${k.id} is terminated.`)));
       };
     }
-  }, [kernel]);
+  }, [outputKernel]);
   const executeRequest = outputStore.getExecute(sourceId);
   useEffect(() => {
     if (adapter && executeRequest && executeRequest.sourceId === id) {
@@ -158,7 +160,7 @@ export const Output = (props: IOutputProps) => {
             codePre={codePre}
             disableRun={disableRun}
             insertText={insertText}
-            kernel={kernel}
+            kernel={outputKernel}
             outputAdapter={adapter}
             sourceId={id}
             toolbarPosition={toolbarPosition}
@@ -172,7 +174,7 @@ export const Output = (props: IOutputProps) => {
           </Box>
           {showControl && (
             <Box style={{ marginTop: '-13px' }}>
-              <KernelActionMenu kernel={kernel} outputAdapter={adapter} />
+              <KernelActionMenu kernel={outputKernel} outputAdapter={adapter} />
             </Box>
           )}
         </Box>

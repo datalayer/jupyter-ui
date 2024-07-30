@@ -11,7 +11,7 @@ import Jupyter from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
 import KernelProgressBar from './../components/kernel/KernelProgressBar';
 
-export const KernelExecResultView = () => {
+export const KernelExecuteView = () => {
   const { defaultKernel } = useJupyter();
   const [running, setRunning] = useState(false);
   const [code, setCode] = useState('');
@@ -72,10 +72,10 @@ export const KernelExecResultView = () => {
   );
 };
 
-const KernelExecResult = () => {
+const KernelExecute = () => {
   return (
     <Jupyter>
-      <KernelExecResultView />
+      <KernelExecuteView />
     </Jupyter>
   );
 };
@@ -84,4 +84,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<KernelExecResult />);
+root.render(<KernelExecute />);
