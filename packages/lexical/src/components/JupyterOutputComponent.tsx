@@ -27,7 +27,7 @@ export const JupyterOutputComponent = (props: Props) => {
       adapter={outputAdapter}
       showEditor={false}
       autoRun={autoRun}
-      sourceId={outputNodeUuid}
+      id={outputNodeUuid}
       executeTrigger={executeTrigger}
       lumino={false}
       />

@@ -10,7 +10,7 @@ import { $getNodeByKey, $createNodeSelection, $setSelection } from "lexical";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { $setBlocksType } from "@lexical/selection";
 import { $insertNodeToNearestRoot } from '@lexical/utils';
-import { OutputAdapter } from '@datalayer/jupyter-react';
+import { OutputAdapter, newUuid } from '@datalayer/jupyter-react';
 import { UUID } from '@lumino/coreutils';
 import { IOutput } from '@jupyterlab/nbformat';
 import { $createJupyterCodeNode, JupyterCodeNode, $isJupyterCodeNode } from "../nodes/JupyterCodeNode";
@@ -77,7 +77,7 @@ export const JupyterPlugin = () => {
                 return true;
               }
             }
-            const jupyterOutputNode = $createJupyterOutputNode(code, new OutputAdapter(undefined, []), [], true, codeNodeUuid, UUID.uuid4());
+            const jupyterOutputNode = $createJupyterOutputNode(code, new OutputAdapter(newUuid(), undefined, []), [], true, codeNodeUuid, UUID.uuid4());
             $insertNodeToNearestRoot(jupyterOutputNode);
             const nodeSelection = $createNodeSelection();
             nodeSelection.add(parentNode.__key);
@@ -163,7 +163,7 @@ export const JupyterPlugin = () => {
         } else {
           selection.insertNodes([jupyterCodeNode]);
         }
-        const outputAdapter = new OutputAdapter(undefined, outputs);
+        const outputAdapter = new OutputAdapter(newUuid(), undefined, outputs);
         const jupyterOutputNode = $createJupyterOutputNode(code, outputAdapter, outputs || [], false, jupyterCodeNode.getCodeNodeUuid(), UUID.uuid4()) ;
         outputAdapter.outputArea.model.changed.connect((outputModel, args) => {
           editor.update(() => {
