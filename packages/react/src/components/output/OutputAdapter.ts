@@ -16,6 +16,7 @@ import { Kernel } from '../../jupyter/kernel/Kernel';
 import { execute } from './OutputExecutor';
 
 export class OutputAdapter {
+  private _id: string;
   private _kernel?: Kernel;
   private _renderers: IRenderMime.IRendererFactory[];
   private _outputArea: OutputArea;
@@ -23,10 +24,12 @@ export class OutputAdapter {
   private _iPyWidgetsClassicManager: ClassicWidgetManager;
 
   public constructor(
+    id: string,
     kernel?: Kernel,
     outputs?: IOutput[],
     outputAreaModel?: IOutputAreaModel
   ) {
+    this._id = id;
     this._kernel = kernel;
     this._renderers = standardRendererFactories.filter(
       factory => factory.mimeTypes[0] !== 'text/javascript'
@@ -79,7 +82,7 @@ export class OutputAdapter {
   public async execute(code: string) {
     if (this._kernel) {
       this.clear();
-      const done = execute(code, this._outputArea, this._kernel);
+      const done = execute(this._id, code, this._outputArea, this._kernel);
       await done;
     }
   }

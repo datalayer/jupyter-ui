@@ -61,14 +61,16 @@ interface BoxOptions {
 }
 
 export class CellAdapter {
+  private _id: string;
   private _cell: CodeCell | MarkdownCell | RawCell;
   private _kernel: Kernel;
   private _panel: BoxPanel;
   private _sessionContext: SessionContext;
   private _type: 'code' | 'markdown' | 'raw';
 
-  constructor(options: CellAdapter.ICellAdapterOptions) {
-    const { type, source, serverSettings, kernel, boxOptions } = options;
+  public constructor(options: CellAdapter.ICellAdapterOptions) {
+    const { id, type, source, serverSettings, kernel, boxOptions } = options;
+    this._id = id;
     this._kernel = kernel;
     this._type = type;
     this.setupCell(type, source, serverSettings, kernel, boxOptions);
@@ -420,6 +422,7 @@ export class CellAdapter {
       | undefined;
     try {
       const kernelMessagePromise = OutputExecutor.execute(
+        this._id,
         code,
         cell.outputArea,
         this._kernel,

@@ -23,22 +23,7 @@ import { KernelMessage } from '@jupyterlab/services';
 import { ConnectionStatus, IKernelConnection } from '@jupyterlab/services/lib/kernel/kernel';
 import { Environment } from '../environment/Environment';
 
-/*
-export enum ExecutionState {
- 'busy',
- 'connecting',
- 'dead',
- 'disconnected',
- 'idle',
- 'initializing',
- 'restarting',
- 'starting',
- 'terminating',
- 'unknown',
-}
-*/
-
-export type KernelState = 
+export type ExecutionState = 
   'connecting' |
   'connected-unknown' |
   'connected-starting' |
@@ -70,7 +55,7 @@ export type KernelState =
  *
  * Status = 'unknown' | 'starting' | 'idle' | 'busy' | 'terminating' | 'restarting' | 'autorestarting' | 'dead';
  */
-export const KERNEL_STATES: Map<KernelState, ReactElement> = new Map([
+export const KERNEL_STATES: Map<ExecutionState, ReactElement> = new Map([
   ['connecting', <CircleBlackIcon />],
   ['connected-unknown', <CircledMIcon />],
   ['connected-starting', <CircleYellowIcon />],
@@ -87,14 +72,14 @@ export const KERNEL_STATES: Map<KernelState, ReactElement> = new Map([
 export const toKernelState = (
   connectionStatus: ConnectionStatus,
   status: KernelMessage.Status
-): KernelState => {
+): ExecutionState => {
   if (
     connectionStatus === 'connecting' ||
     connectionStatus === 'disconnected'
   ) {
-    return connectionStatus as KernelState;
+    return connectionStatus as ExecutionState;
   }
-  return connectionStatus + '-' + status as KernelState;
+  return connectionStatus + '-' + status as ExecutionState;
 };
 
 type KernelIndicatorProps = {

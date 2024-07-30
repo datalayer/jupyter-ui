@@ -13,6 +13,7 @@ import { Kernel } from './../../jupyter/kernel/Kernel';
  * Execute code on an output area.
  */
 export async function execute(
+  id: string,
   code: string,
   output: OutputArea,
   kernel: Kernel,
@@ -38,9 +39,9 @@ export async function execute(
     }
   );
   const future = kernelExecutor!.future;
-  // TODO review this if possible in upstream JupyterLab.
+  // TODO fix in upstream jupyterlab if possible...
   (output as any)._onIOPub = future!.onIOPub;
   (output as any)._onExecuteReply = future!.onReply;
   output.future = future!;
-  return future!.done;
+  return future?.done;
 }

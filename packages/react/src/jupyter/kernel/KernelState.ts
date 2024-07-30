@@ -6,11 +6,18 @@
 
 import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
-import {KernelState } from './../../components/kernel/Kernelndicator';
+import {ExecutionState } from './../../components/kernel/Kernelndicator';
+
+export enum ExecutionPhase {
+  ready_to_run = 'READY_TO_RUN',
+  running = 'RUNNING',
+  completed = 'COMPLETED',
+}
 
 export type IKernelState = {
   id: string;
-  kernelState?: KernelState;
+  executionState?: ExecutionState;
+  executionPhase?: ExecutionPhase;
 };
 
 export interface IKernelsState {
@@ -18,24 +25,42 @@ export interface IKernelsState {
 }
 
 export type KernelsState = IKernelsState & {
-  getExecutionState: (id: string) => KernelState | undefined;
-  setExecutionState: (id: string, executionState: KernelState) => void;
+  getExecutionState: (id: string) => ExecutionState | undefined;
+  setExecutionState: (id: string, executionState: ExecutionState) => void;
+  getExecutionPhase: (id: string) => ExecutionPhase | undefined;
+  setExecutionPhase: (id: string, executionState: ExecutionPhase) => void;
 };
 
 export const kernelsStore = createStore<KernelsState>((set, get) => ({
   kernels: new Map<string, IKernelState>(),
   getExecutionState: (id: string) => {
-    return get().kernels.get(id)?.kernelState;
+    return get().kernels.get(id)?.executionState;
   },
-  setExecutionState: (id: string, executionState: KernelState) => {
+  setExecutionState: (id: string, executionState: ExecutionState) => {
     const kernels = get().kernels;
     const k = kernels.get(id);
     if (k) {
-      k.kernelState = executionState;
+      k.executionState = executionState;
     } else {
       kernels.set(id, {
         id,
-        kernelState: executionState
+        executionState: executionState
+      });
+    }
+    set((state: KernelsState) => ({ kernels }))
+  },
+  getExecutionPhase: (id: string) => {
+    return get().kernels.get(id)?.executionPhase;
+  },
+  setExecutionPhase: (id: string, executionPhase: ExecutionPhase) => {
+    const kernels = get().kernels;
+    const k = kernels.get(id);
+    if (k) {
+      k.executionPhase = executionPhase;
+    } else {
+      kernels.set(id, {
+        id,
+        executionPhase,
       });
     }
     set((state: KernelsState) => ({ kernels }))

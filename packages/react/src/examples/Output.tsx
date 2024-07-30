@@ -127,7 +127,10 @@ const OutputWithEmptyOutput = () => {
       { kernel &&
         <>
           <Box>
-            Kernel Execution State: {kernelsStore.getExecutionState(kernel.id)}
+            Kernel State: {kernelsStore.getExecutionState(kernel.id)}
+          </Box>
+          <Box>
+            Kernel Phase: {kernelsStore.getExecutionPhase(kernel.id)}
           </Box>
           <Box>
             <KernelIndicator kernel={kernel.connection}/>

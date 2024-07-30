@@ -10,6 +10,7 @@ import { CodeCell } from '@jupyterlab/cells';
 import { Jupyter } from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { Cell } from '../components/cell/Cell';
+import { KernelIndicator } from '../components/kernel/Kernelndicator';
 import { useKernelsStore } from '../jupyter/kernel/KernelState';
 import { useCellsStore } from '../components/cell/CellState';
 
@@ -34,9 +35,15 @@ const CellExample = () => {
       <Box>
         Outputs Count: {cellsStore.getOutputsCount(CELL_ID)}
       </Box>
-      <>
-        Kernel Execution State: {defaultKernel && kernelsStore.getExecutionState(defaultKernel.id)}
-      </>
+      <Box>defaultKernel
+        Kernel State: {defaultKernel && kernelsStore.getExecutionState(defaultKernel.id)}
+      </Box>
+      <Box>
+        Kernel Phase: {defaultKernel && kernelsStore.getExecutionPhase(defaultKernel.id)}
+      </Box>
+      <Box>
+        <KernelIndicator kernel={defaultKernel && defaultKernel.connection}/>
+      </Box>
       <Box>
         <Button onClick={() => cellsStore.execute(CELL_ID)}>Run cell</Button>
       </Box>

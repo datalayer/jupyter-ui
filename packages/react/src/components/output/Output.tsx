@@ -77,7 +77,7 @@ export const Output = (props: IOutputProps) => {
   }, []);
   useEffect(() => {
     if (id && kernel) {
-      const adapter = propsAdapter ?? new OutputAdapter(kernel, outputs ?? [], model);
+      const adapter = propsAdapter ?? new OutputAdapter(id, kernel, outputs ?? [], model);
       setAdapter(adapter);
       outputStore.setAdapter(id, adapter);
       if (model) {
