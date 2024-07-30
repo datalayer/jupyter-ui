@@ -67,7 +67,7 @@ export const Cell = (props: ICellProps) => {
 
     adapter.sessionContext.initialize().then(() => {
       if (autoStart && adapter.cell.model) {
-        // Perform auto-start for code or markdown cells
+        // Perform auto-start for code or markdown cells.
         adapter.execute();
       }
     });
