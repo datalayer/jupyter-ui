@@ -14,7 +14,7 @@ export type IOutputState = {
   model?: IOutputAreaModel;
   input?: string;
   dataset?: any;
-  executeId?: string;
+  code?: string;
   gradeSuccess?: boolean;
 };
 
@@ -25,13 +25,13 @@ export interface IOutputsState {
 export type OutputState = IOutputsState & {
   getAdapter: (id: string) => OutputAdapter | undefined;
   getDataset: (id: string) => any | undefined;
-  getExecuteRequestId: (id: string) => string | undefined;
+  getExecuteRequest: (id: string) => string | undefined;
   getGradeSuccess: (id: string) => boolean | undefined;
   getInput: (id: string) => string | undefined;
   getModel: (id: string) => IOutputAreaModel | undefined;
   setAdapter: (id: string, adapter: OutputAdapter) => void;
   setDataset: (id: string, dataset: any) => void;
-  setExecuteRequestId: (id: string, executeId: string) => void;
+  setExecuteRequest: (id: string, code: string) => void;
   setGradeSuccess: (id: string, gradeSuccess: boolean) => void;
   setInput: (id: string, source: string) => void;
   setModel: (id: string, output: IOutputAreaModel) => void;
@@ -52,8 +52,8 @@ export const outputsStore = createStore<OutputState>((set, get) => ({
   getDataset: (id: string): any | undefined => {
     return get().outputs.get(id)?.dataset;
   },
-  getExecuteRequestId: (id: string): string | undefined => {
-    return get().outputs.get(id)?.executeId;
+  getExecuteRequest: (id: string): string | undefined => {
+    return get().outputs.get(id)?.code;
   },
   getGradeSuccess: (id: string): boolean | undefined => {
     return get().outputs.get(id)?.gradeSuccess;
@@ -79,13 +79,13 @@ export const outputsStore = createStore<OutputState>((set, get) => ({
     }
     set((state: OutputState) => ({ outputs }))
   },
-  setExecuteRequestId: (id: string, executeId: string) => {
+  setExecuteRequest: (id: string, code: string) => {
     const outputs = get().outputs;
     const e = outputs.get(id);
     if (e) {
-      e.executeId = executeId;
+      e.code = code;
     } else {
-      outputs.set(id, { executeId });
+      outputs.set(id, { code });
     }
     set((state: OutputState) => ({ outputs }))
   },

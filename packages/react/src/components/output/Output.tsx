@@ -128,7 +128,7 @@ export const Output = (props: IOutputProps) => {
       };
     }
   }, [kernel]);
-  const executeRequest = outputStore.getExecuteRequestId(sourceId);
+  const executeRequest = outputStore.getExecuteRequest(sourceId);
   useEffect(() => {
     if (adapter && executeRequest && executeRequest === id) {
       adapter.execute(code);
