@@ -7,8 +7,10 @@
 import { createRoot } from 'react-dom/client';
 import { Box, Button } from '@primer/react';
 import { CodeCell } from '@jupyterlab/cells';
-import Jupyter from '../jupyter/Jupyter';
-import Cell from '../components/cell/Cell';
+import { Jupyter } from '../jupyter/Jupyter';
+import { useJupyter } from '../jupyter/JupyterContext';
+import { Cell } from '../components/cell/Cell';
+import { useKernelsStore } from '../jupyter/kernel/KernelState';
 import { useCellsStore } from '../components/cell/CellState';
 
 const CELL_ID = 'cell-example-1';
@@ -19,7 +21,9 @@ for i in range(10):
     display('I am a long string which is repeatedly added to the dom in separated divs: %d' % i)`;
 
 const CellExample = () => {
+  const { defaultKernel } = useJupyter();
   const cellsStore = useCellsStore();
+  const kernelsStore = useKernelsStore();
   console.log('Cell Outputs', (cellsStore.getAdapter(CELL_ID)?.cell as CodeCell)?.outputArea.model.toJSON());
   return (
     <Jupyter>
@@ -30,6 +34,9 @@ const CellExample = () => {
       <Box>
         Outputs Count: {cellsStore.getOutputsCount(CELL_ID)}
       </Box>
+      <>
+        Kernel Execution State: {defaultKernel && kernelsStore.getExecutionState(defaultKernel.id)}
+      </>
       <Box>
         <Button onClick={() => cellsStore.execute(CELL_ID)}>Run cell</Button>
       </Box>

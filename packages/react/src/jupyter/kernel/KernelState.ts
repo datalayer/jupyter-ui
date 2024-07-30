@@ -6,23 +6,11 @@
 
 import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
-
-export enum ExecutionState {
- 'busy',
- 'connecting',
- 'dead',
- 'disconnected',
- 'idle',
- 'initializing',
- 'restarting',
- 'starting',
- 'terminating',
- 'unknown',
-}
+import {KernelState } from './../../components/kernel/Kernelndicator';
 
 export type IKernelState = {
   id: string;
-  executionState?: ExecutionState;
+  kernelState?: KernelState;
 };
 
 export interface IKernelsState {
@@ -30,24 +18,24 @@ export interface IKernelsState {
 }
 
 export type KernelsState = IKernelsState & {
-  getExecutionState: (id: string) => ExecutionState | undefined;
-  setExecutionState: (id: string, executionState: ExecutionState) => void;
+  getExecutionState: (id: string) => KernelState | undefined;
+  setExecutionState: (id: string, executionState: KernelState) => void;
 };
 
 export const kernelsStore = createStore<KernelsState>((set, get) => ({
   kernels: new Map<string, IKernelState>(),
   getExecutionState: (id: string) => {
-    return get().kernels.get(id)?.executionState;
+    return get().kernels.get(id)?.kernelState;
   },
-  setExecutionState: (id: string, executionState: ExecutionState) => {
+  setExecutionState: (id: string, executionState: KernelState) => {
     const kernels = get().kernels;
     const k = kernels.get(id);
     if (k) {
-      k.executionState = executionState;
+      k.kernelState = executionState;
     } else {
       kernels.set(id, {
         id,
-        executionState
+        kernelState: executionState
       });
     }
     set((state: KernelsState) => ({ kernels }))

@@ -6,7 +6,7 @@
 
 import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
-import CellAdapter from './CellAdapter';
+import { CellAdapter } from './CellAdapter';
 
 export interface ICellState {
   source?: string;

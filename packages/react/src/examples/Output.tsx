@@ -7,12 +7,13 @@
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { IOutput } from '@jupyterlab/nbformat';
-import { Text } from '@primer/react';
+import { Box, Text } from '@primer/react';
 import { useOutputsStore } from './../components/output/OutputState';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { Jupyter } from '../jupyter/Jupyter';
 import { Kernel } from '../jupyter/kernel/Kernel';
-import { kernelsStore } from '../jupyter/kernel/KernelState';
+import { useKernelsStore } from '../jupyter/kernel/KernelState';
+import { KernelIndicator } from '../components/kernel/Kernelndicator';
 import { newUuid } from '../utils/Utils';
 import { Output } from '../components/output/Output';
 
@@ -99,6 +100,8 @@ const OutputWithEditor = () => {
 
 const OutputWithEmptyOutput = () => {
   const { kernelManager, serviceManager } = useJupyter();
+  const outputStore = useOutputsStore();
+  const kernelsStore = useKernelsStore();
   const [kernel, setKernel] = useState<Kernel>();
   useEffect( () => {
     if (serviceManager && kernelManager) {
@@ -113,7 +116,6 @@ const OutputWithEmptyOutput = () => {
       setKernel(kernel);
     }
   }, [serviceManager, kernelManager]);
-  const outputStore = useOutputsStore();
   console.log(
     'Outputs 3',
     outputStore.getModel(SOURCE_ID_3)?.toJSON(),
@@ -124,17 +126,22 @@ const OutputWithEmptyOutput = () => {
       <Text as="h1">Output with empty Output</Text>
       { kernel &&
         <>
-          <>
-            Kernel Execution State: {kernelsStore.getState().getExecutionState(kernel.id)}
-          </>
-          <Output
-            autoRun={false}
-            code={SOURCE_3}
-            id={SOURCE_ID_3}
-            kernel={kernel}
-            outputs={OUTPUTS_3}
-            showEditor={true}
-          />
+          <Box>
+            Kernel Execution State: {kernelsStore.getExecutionState(kernel.id)}
+          </Box>
+          <Box>
+            <KernelIndicator kernel={kernel.connection}/>
+          </Box>
+          <Box>
+            <Output
+              autoRun={false}
+              code={SOURCE_3}
+              id={SOURCE_ID_3}
+              kernel={kernel}
+              outputs={OUTPUTS_3}
+              showEditor={true}
+            />
+          </Box>
         </>
       }
     </>

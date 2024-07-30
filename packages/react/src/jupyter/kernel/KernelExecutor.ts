@@ -20,6 +20,7 @@ import { IClearOutputMsg } from '@jupyterlab/services/lib/kernel/messages';
 import { outputsAsString } from '../../utils/Utils';
 import { Kernel } from './Kernel';
 import { KernelsState, kernelsStore } from './KernelState';
+import { toKernelState } from '../../components/kernel';
 
 export type IOPubMessageHook = (
   msg: KernelMessage.IIOPubMessage
@@ -236,9 +237,11 @@ export class KernelExecutor {
         this._modelChanged.emit(this._model);
         break;
       case 'status':
-        const executionState = (message.content as any).execution_state;
-        this._kernelState.setExecutionState(this._kernel.id, executionState);
-        executionState;
+        const executionState = (message.content as any).execution_state as KernelMessage.Status;
+        const connectionStatus = this._kernel.connection?.connectionStatus;
+        const kernelState = toKernelState(connectionStatus!, executionState);
+        console.log('---', kernelState)
+        this._kernelState.setExecutionState(this._kernel.id, kernelState);
         break;
       default:
         break;
