@@ -12,6 +12,7 @@ export enum ExecutionPhase {
   ready_to_run = 'READY_TO_RUN',
   running = 'RUNNING',
   completed = 'COMPLETED',
+  completed_with_error = 'COMPLETED_WITH_ERROR',
 }
 
 export type IKernelState = {

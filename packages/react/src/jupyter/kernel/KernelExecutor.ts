@@ -219,7 +219,7 @@ export class KernelExecutor {
         this._model.add(output);
         this._modelChanged.emit(this._model);
         if (this._stopOnError) {
-          kernelsStore.getState().setExecutionPhase(this._kernelConnection.id, ExecutionPhase.completed);
+          kernelsStore.getState().setExecutionPhase(this._kernelConnection.id, ExecutionPhase.completed_with_error);
         }
         break;
       case 'clear_output':
