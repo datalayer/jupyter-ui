@@ -17,7 +17,7 @@ import { Lumino } from '../lumino/Lumino';
 import { CodeMirrorEditor } from '../codemirror/CodeMirrorEditor';
 import { OutputAdapter } from './OutputAdapter';
 import { OutputRenderer } from './OutputRenderer';
-import { useOutputStore } from './OutputState';
+import { useOutputsStore } from './OutputState';
 
 import './Output.css';
 
@@ -44,7 +44,7 @@ export type IOutputProps = {
 
 export const Output = (props: IOutputProps) => {
   const { defaultKernel } = useJupyter();
-  const outputStore = useOutputStore();
+  const outputStore = useOutputsStore();
   const {
     adapter: propsAdapter,
     autoRun,
@@ -81,23 +81,14 @@ export const Output = (props: IOutputProps) => {
       setAdapter(adapter);
       outputStore.setAdapter(id, adapter);
       if (model) {
-        outputStore.setOutput({
-          id,
-          model: model,
-        })
+        outputStore.setModel(id, model);
       }
       if (code) {
-        outputStore.setInput({
-          id,
-          input: code,
-        })
+        outputStore.setInput(id,code);
       }
       adapter.outputArea.model.changed.connect((model, change) => {
         setOutputs(model.toJSON());
-        outputStore.setOutput({
-          id,
-          model,
-        });
+        outputStore.setModel(id, model);
       });
       if (receipt) {
         adapter.outputArea.model.changed.connect((sender, change) => {
@@ -107,10 +98,7 @@ export const Output = (props: IOutputProps) => {
                 const out = val.data['text/html']; // val.data['application/vnd.jupyter.stdout'];
                 if (out) {
                   if ((out as string).indexOf(receipt) > -1) {
-                    outputStore.setGrade({
-                      id: sourceId,
-                      success: true,
-                    });
+                    outputStore.setGradeSuccess(sourceId, true)
                   }
                 }
               }
@@ -140,10 +128,10 @@ export const Output = (props: IOutputProps) => {
       };
     }
   }, [kernel]);
-  const executeRequest = outputStore.getExecute(sourceId);
+  const executeRequest = outputStore.getExecuteRequestId(sourceId);
   useEffect(() => {
-    if (adapter && executeRequest && executeRequest.id === id) {
-      adapter.execute(executeRequest.source);
+    if (adapter && executeRequest && executeRequest === id) {
+      adapter.execute(code);
     }
   }, [executeRequest, adapter]);
   useEffect(() => {

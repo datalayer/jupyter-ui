@@ -8,10 +8,11 @@ import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { IOutput } from '@jupyterlab/nbformat';
 import { Text } from '@primer/react';
-import { useOutputStore } from './../components/output/OutputState';
+import { useOutputsStore } from './../components/output/OutputState';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { Jupyter } from '../jupyter/Jupyter';
 import { Kernel } from '../jupyter/kernel/Kernel';
+import { kernelsStore } from '../jupyter/kernel/KernelState';
 import { newUuid } from '../utils/Utils';
 import { Output } from '../components/output/Output';
 
@@ -54,10 +55,10 @@ const OUTPUTS_3: IOutput[] = [
 ];
 
 const OutputWithoutEditor = () => {
-  const outputStore = useOutputStore();
+  const outputStore = useOutputsStore();
   console.log(
     'Outputs 1',
-    outputStore.getOutput(SOURCE_ID_1)?.model.toJSON(),
+    outputStore.getModel(SOURCE_ID_1)?.toJSON(),
     outputStore.getInput(SOURCE_ID_1),
   );
   return (
@@ -75,10 +76,10 @@ const OutputWithoutEditor = () => {
 
 const OutputWithEditor = () => {
   const { defaultKernel } = useJupyter();
-  const outputStore = useOutputStore();
+  const outputStore = useOutputsStore();
   console.log(
     'Outputs 2',
-    outputStore.getOutput(SOURCE_ID_2)?.model.toJSON(),
+    outputStore.getModel(SOURCE_ID_2)?.toJSON(),
     outputStore.getInput(SOURCE_ID_2),
   );
   return (
@@ -99,7 +100,7 @@ const OutputWithEditor = () => {
 const OutputWithEmptyOutput = () => {
   const { kernelManager, serviceManager } = useJupyter();
   const [kernel, setKernel] = useState<Kernel>();
-  useEffect(() => {
+  useEffect( () => {
     if (serviceManager && kernelManager) {
       const kernel = new Kernel({
         kernelManager,
@@ -112,24 +113,29 @@ const OutputWithEmptyOutput = () => {
       setKernel(kernel);
     }
   }, [serviceManager, kernelManager]);
-  const outputStore = useOutputStore();
+  const outputStore = useOutputsStore();
   console.log(
     'Outputs 3',
-    outputStore.getOutput(SOURCE_ID_3)?.model.toJSON(),
+    outputStore.getModel(SOURCE_ID_3)?.toJSON(),
     outputStore.getInput(SOURCE_ID_3),
   );
   return (
     <>
       <Text as="h1">Output with empty Output</Text>
       { kernel &&
-        <Output
-          autoRun={false}
-          code={SOURCE_3}
-          id={SOURCE_ID_3}
-          kernel={kernel}
-          outputs={OUTPUTS_3}
-          showEditor={true}
-        />
+        <>
+          <>
+            Kernel Execution State: {kernelsStore.getState().getExecutionState(kernel.id)}
+          </>
+          <Output
+            autoRun={false}
+            code={SOURCE_3}
+            id={SOURCE_ID_3}
+            kernel={kernel}
+            outputs={OUTPUTS_3}
+            showEditor={true}
+          />
+        </>
       }
     </>
   );

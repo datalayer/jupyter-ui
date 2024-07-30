@@ -13,7 +13,7 @@ import { IJupyterConfig, loadJupyterConfig } from '../jupyter/JupyterConfig';
 import { cellsStore, CellsState } from '../components/cell/CellState';
 import { consoleStore, ConsoleState } from '../components/console/ConsoleState';
 import { notebookStore, NotebookState } from '../components/notebook/NotebookState';
-import { outputStore, OutputState } from '../components/output/OutputState';
+import { outputsStore, OutputState } from '../components/output/OutputState';
 import { terminalStore, TerminalState } from '../components/terminal/TerminalState';
 import { createLiteServer } from '../jupyter/lite/LiteServer';
 import { getJupyterServerUrl } from '../jupyter/JupyterConfig';
@@ -66,7 +66,7 @@ export const jupyterStore = createStore<JupyterState>((set, get) => ({
   cellsStore: cellsStore.getState(),
   consoleStore: consoleStore.getState(),
   notebookStore: notebookStore.getState(),
-  outputStore: outputStore.getState(),
+  outputStore: outputsStore.getState(),
   terminalStore: terminalStore.getState(),
 }));
 

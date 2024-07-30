@@ -15,9 +15,11 @@ import {
   IMimeBundle,
 } from '@jupyterlab/nbformat';
 import { IOutputAreaModel, OutputAreaModel } from '@jupyterlab/outputarea';
-import { Kernel, KernelMessage } from '@jupyterlab/services';
+import { Kernel as JupyterKernel, KernelMessage } from '@jupyterlab/services';
 import { IClearOutputMsg } from '@jupyterlab/services/lib/kernel/messages';
 import { outputsAsString } from '../../utils/Utils';
+import { Kernel } from './Kernel';
+import { KernelsState, kernelsStore } from './KernelState';
 
 export type IOPubMessageHook = (
   msg: KernelMessage.IIOPubMessage
@@ -32,9 +34,13 @@ export type ShellMessageHook = (
  */
 export type IKernelExecutorOptions = {
   /**
+   * Kernel
+   */
+  kernel: Kernel;
+  /**
    * Kernel connection
    */
-  connection: Kernel.IKernelConnection;
+  connection: JupyterKernel.IKernelConnection;
   /**
    * Outputs model to populate with the execution results.
    */
@@ -43,22 +49,26 @@ export type IKernelExecutorOptions = {
 
 export class KernelExecutor {
   private _executed: PromiseDelegate<IOutputAreaModel>;
-  private _kernelConnection: Kernel.IKernelConnection;
+  private _kernelConnection: JupyterKernel.IKernelConnection;
+  private _kernel: Kernel;
+  private _kernelState: KernelsState;
   private _model: IOutputAreaModel;
   private _modelChanged = new Signal<KernelExecutor, IOutputAreaModel>(this);
   private _outputs: IOutput[];
   private _outputsChanged = new Signal<KernelExecutor, IOutput[]>(this);
-  private _future?: Kernel.IFuture<
+  private _future?: JupyterKernel.IFuture<
     KernelMessage.IExecuteRequestMsg,
     KernelMessage.IExecuteReplyMsg
   >;
   private _shellMessageHooks = new Array<ShellMessageHook>();
 
-  constructor({ connection, model }: IKernelExecutorOptions) {
+  constructor({ kernel, connection, model }: IKernelExecutorOptions) {
     this._executed = new PromiseDelegate<IOutputAreaModel>();
+    this._kernel = kernel;
     this._kernelConnection = connection;
     this._model = model ?? new OutputAreaModel();
     this._outputs = [];
+    this._kernelState = kernelsStore.getState();
   }
 
   /**
@@ -134,7 +144,7 @@ export class KernelExecutor {
   /**
    * 
    */
-  get future(): Kernel.IFuture<
+  get future(): JupyterKernel.IFuture<
       KernelMessage.IExecuteRequestMsg,
       KernelMessage.IExecuteReplyMsg
     > | undefined {
@@ -226,8 +236,8 @@ export class KernelExecutor {
         this._modelChanged.emit(this._model);
         break;
       case 'status':
-        // execution_state: 'busy' 'starting' 'terminating' 'restarting' 'initializing' 'connecting' 'disconnected' 'dead' 'unknown' 'idle'
         const executionState = (message.content as any).execution_state;
+        this._kernelState.setExecutionState(this._kernel.id, executionState);
         executionState;
         break;
       default:

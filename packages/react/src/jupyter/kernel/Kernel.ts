@@ -206,6 +206,7 @@ export class Kernel {
   ): KernelExecutor | undefined {
     if (this._kernelConnection) {
       const kernelExecutor = new KernelExecutor({
+        kernel: this,
         connection: this._kernelConnection,
         model,
       });
