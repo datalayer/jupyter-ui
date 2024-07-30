@@ -18,7 +18,6 @@ import { IOutputAreaModel, OutputAreaModel } from '@jupyterlab/outputarea';
 import { Kernel as JupyterKernel, KernelMessage } from '@jupyterlab/services';
 import { IClearOutputMsg } from '@jupyterlab/services/lib/kernel/messages';
 import { outputsAsString } from '../../utils/Utils';
-import { Kernel } from './Kernel';
 import { ExecutionPhase, KernelsState, kernelsStore } from './KernelState';
 import { toKernelState } from '../../components/kernel';
 
@@ -35,10 +34,6 @@ export type ShellMessageHook = (
  */
 export type IKernelExecutorOptions = {
   /**
-   * Kernel
-   */
-  kernel: Kernel;
-  /**
    * Kernel connection
    */
   connection: JupyterKernel.IKernelConnection;
@@ -51,7 +46,6 @@ export type IKernelExecutorOptions = {
 export class KernelExecutor {
   private _executed: PromiseDelegate<IOutputAreaModel>;
   private _kernelConnection: JupyterKernel.IKernelConnection;
-  private _kernel: Kernel;
   private _kernelState: KernelsState;
   private _model: IOutputAreaModel;
   private _modelChanged = new Signal<KernelExecutor, IOutputAreaModel>(this);
@@ -61,9 +55,8 @@ export class KernelExecutor {
   private _future?: JupyterKernel.IFuture<KernelMessage.IExecuteRequestMsg, KernelMessage.IExecuteReplyMsg>;
   private _shellMessageHooks = new Array<ShellMessageHook>();
 
-  constructor({ kernel, connection, model }: IKernelExecutorOptions) {
+  public constructor({ connection, model }: IKernelExecutorOptions) {
     this._executed = new PromiseDelegate<IOutputAreaModel>();
-    this._kernel = kernel;
     this._kernelConnection = connection;
     this._model = model ?? new OutputAreaModel();
     this._outputs = [];
@@ -105,7 +98,7 @@ export class KernelExecutor {
   ): Promise<IOutputAreaModel> {
     this._stopOnError = stopOnError;
     this._shellMessageHooks = shellMessageHooks;
-    kernelsStore.getState().setExecutionPhase(this._kernel.id, ExecutionPhase.running);
+    kernelsStore.getState().setExecutionPhase(this._kernelConnection.id, ExecutionPhase.running);
     this._future = this._kernelConnection.requestExecute({
       code,
       allow_stdin: allowStdin,
@@ -124,8 +117,7 @@ export class KernelExecutor {
     };
     // Wait for future to be done before resolving the exectud promise.
     this._future.done.then(() => {
-      console.log('---- DONE')
-      kernelsStore.getState().setExecutionPhase(this._kernel.id, ExecutionPhase.completed);
+      kernelsStore.getState().setExecutionPhase(this._kernelConnection.id, ExecutionPhase.completed);
       this._executed.resolve(this._model);
     });
     return this._executed.promise;
@@ -227,7 +219,7 @@ export class KernelExecutor {
         this._model.add(output);
         this._modelChanged.emit(this._model);
         if (this._stopOnError) {
-          kernelsStore.getState().setExecutionPhase(this._kernel.id, ExecutionPhase.completed);
+          kernelsStore.getState().setExecutionPhase(this._kernelConnection.id, ExecutionPhase.completed);
         }
         break;
       case 'clear_output':
@@ -243,9 +235,9 @@ export class KernelExecutor {
         break;
       case 'status':
         const executionState = (message.content as any).execution_state as KernelMessage.Status;
-        const connectionStatus = this._kernel.connection?.connectionStatus;
+        const connectionStatus = this._kernelConnection.connectionStatus;
         const kernelState = toKernelState(connectionStatus!, executionState);
-        this._kernelState.setExecutionState(this._kernel.id, kernelState);
+        this._kernelState.setExecutionState(this._kernelConnection.id, kernelState);
         break;
       default:
         break;
