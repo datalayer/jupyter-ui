@@ -36,7 +36,7 @@ import {
   RenderMimeRegistry,
   standardRendererFactories as initialFactories,
 } from '@jupyterlab/rendermime';
-import * as OutputExecutor from './../output/OutputExecutor';
+import { execute as executeOutput } from './../output/OutputExecutor';
 import {
   Session,
   ServerConnection,
@@ -383,7 +383,7 @@ export class CellAdapter {
 
   execute = () => {
     if (this._type === 'code') {
-      this._execute((this._cell as CodeCell));
+      this._execute(this._cell as CodeCell);
     } else if (this._type === 'markdown') {
       (this._cell as MarkdownCell).rendered = true;
     }
@@ -421,7 +421,7 @@ export class CellAdapter {
         >
       | undefined;
     try {
-      const kernelMessagePromise = OutputExecutor.execute(
+      const kernelMessagePromise = executeOutput(
         this._id,
         code,
         cell.outputArea,

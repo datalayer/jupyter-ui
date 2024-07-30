@@ -28,9 +28,6 @@ export async function execute(
   ) {
     stopOnError = false;
   }
-  if (!kernel) {
-    throw new Error('No kernel avaiable.');
-  }
   const kernelExecutor = kernel.execute(
     code,
     {

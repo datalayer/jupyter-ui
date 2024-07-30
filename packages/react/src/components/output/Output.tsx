@@ -76,6 +76,26 @@ export const Output = (props: IOutputProps) => {
     }
   }, []);
   useEffect(() => {
+    const outputsCallback = (model: IOutputAreaModel, change: IOutputAreaModel.ChangedArgs) => {
+      setOutputs(model.toJSON());
+      if (id) {
+        outputStore.setModel(id, model);
+      }
+    };
+    const receiptCallback = (model: IOutputAreaModel, change: IOutputAreaModel.ChangedArgs) => {
+      if (receipt && change.type === 'add') {
+        change.newValues.map(val => {
+          if (val && val.data) {
+            const out = val.data['text/html']; // val.data['application/vnd.jupyter.stdout'];
+            if (out) {
+              if ((out as string).indexOf(receipt) > -1) {
+                outputStore.setGradeSuccess(sourceId, true)
+              }
+            }
+          }
+        });
+      }
+    };
     if (id && kernel) {
       const adapter = propsAdapter ?? new OutputAdapter(id, kernel, outputs ?? [], model);
       setAdapter(adapter);
@@ -86,25 +106,15 @@ export const Output = (props: IOutputProps) => {
       if (code) {
         outputStore.setInput(id,code);
       }
-      adapter.outputArea.model.changed.connect((model, change) => {
-        setOutputs(model.toJSON());
-        outputStore.setModel(id, model);
-      });
+      adapter.outputArea.model.changed.connect(outputsCallback);
       if (receipt) {
-        adapter.outputArea.model.changed.connect((sender, change) => {
-          if (change.type === 'add') {
-            change.newValues.map(val => {
-              if (val && val.data) {
-                const out = val.data['text/html']; // val.data['application/vnd.jupyter.stdout'];
-                if (out) {
-                  if ((out as string).indexOf(receipt) > -1) {
-                    outputStore.setGradeSuccess(sourceId, true)
-                  }
-                }
-              }
-            });
-          }
-        });
+        adapter.outputArea.model.changed.connect(receiptCallback)
+      }
+    }
+    return () => {
+      if (adapter) {
+        adapter.outputArea.model.changed.connect(outputsCallback);
+        adapter.outputArea.model.changed.connect(receiptCallback)
       }
     }
   }, [id, kernel]);
