@@ -40,7 +40,7 @@ export const CodeMirrorEditor = (props: {
   const outputStore = useOutputStore();
   const [view, setView] = useState<EditorView>();
   const dataset = outputStore.getDataset(sourceId);
-  const source = outputStore.getSource(sourceId);
+  const source = outputStore.getInput(sourceId);
   const editorDiv = useRef<HTMLDivElement>();
   const setEditorSource = (source: string | undefined) => {
     if (view && source) {
@@ -78,9 +78,9 @@ export const CodeMirrorEditor = (props: {
     return true;
   };
   useEffect(() => {
-    outputStore.setSource({
-      sourceId,
-      source: code,
+    outputStore.setInput({
+      id: sourceId,
+      input: code,
     })
     const language = new Compartment();
     const keyBinding = [
@@ -101,9 +101,9 @@ export const CodeMirrorEditor = (props: {
         EditorView.updateListener.of((viewUpdate: ViewUpdate) => {
           if (viewUpdate.docChanged) {
             const source = viewUpdate.state.doc.toString();
-            outputStore.setSource({
-              sourceId,
-              source,
+            outputStore.setInput({
+              id: sourceId,
+              input: source,
             });
           }
         }),
@@ -125,7 +125,7 @@ export const CodeMirrorEditor = (props: {
     doInsertText(dataset?.dataset);
   }, [dataset]);
   useEffect(() => {
-    setEditorSource(source?.source);
+    setEditorSource(source?.input);
   }, [source]);
   return (
     <>

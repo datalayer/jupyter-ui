@@ -37,7 +37,6 @@ const useKernel = () => {
         kernelManager,
         kernelName: JUPYTER_KERNEL_NAME,
         kernelSpecName: JUPYTER_KERNEL_NAME,
-        kernelType: 'notebook',
         kernelspecsManager: serviceManager.kernelspecs,
         sessionManager: serviceManager.sessions,
       });

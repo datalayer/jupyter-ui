@@ -51,20 +51,22 @@ export class Kernel {
       kernelspecsManager,
       kernelSpecName,
       kernelModel,
+      path,
       sessionManager,
     } = props;
     this._kernelSpecManager = kernelspecsManager;
     this._kernelManager = kernelManager;
     this._kernelName = kernelName;
-    this._kernelType = kernelType;
+    this._kernelType = kernelType ?? 'notebook';
     this._kernelSpecName = kernelSpecName;
     this._sessionManager = sessionManager;
     this._ready = new PromiseDelegate();
-    this.requestKernel(kernelModel);
+    this.requestKernel(kernelModel, path);
   }
 
   private async requestKernel(
-    kernelModel?: JupyterKernel.IModel
+    kernelModel?: JupyterKernel.IModel,
+    propsPath?: string,
   ): Promise<void> {
     await this._kernelManager.ready;
     await this._sessionManager.ready;
@@ -78,7 +80,7 @@ export class Kernel {
         this._session = this._sessionManager.connectTo({ model });
       }
     } else {
-      let path = getCookie(this.cookieName);
+      let path = propsPath ?? getCookie(this.cookieName);
       if (!path) {
         path = 'kernel-' + newUuid();
         document.cookie = this.cookieName + '=' + path;
@@ -268,6 +270,10 @@ export namespace Kernel {
    */
   export type IKernelProps = {
     /**
+     * A path
+     */
+    path?: string;
+    /**
      * Kernel manager
      */
     kernelManager: JupyterKernel.IManager;
@@ -286,7 +292,7 @@ export namespace Kernel {
     /**
      * Kernel type
      */
-    kernelType: 'notebook' | 'file';
+    kernelType?: 'notebook' | 'file' | undefined;
     /**
      * Session manager
      */

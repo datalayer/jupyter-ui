@@ -54,28 +54,22 @@ import { requireLoader as loader } from '../../jupyter/ipywidgets/libembed-amd';
 import ClassicWidgetManager from '../../jupyter/ipywidgets/classic/manager';
 import Kernel from '../../jupyter/kernel/Kernel';
 import getMarked from '../notebook/marked/marked';
-import { jupyterStore } from '../../state';
 import CellCommands from './CellCommands';
-import { CellsState } from './CellState';
 
 interface BoxOptions {
   showToolbar?: boolean;
 }
 
 export class CellAdapter {
-  private _id: string;
   private _cell: CodeCell | MarkdownCell | RawCell;
-  private _cellStore: CellsState;
   private _kernel: Kernel;
   private _panel: BoxPanel;
   private _sessionContext: SessionContext;
   private _type: 'code' | 'markdown' | 'raw';
 
   constructor(options: CellAdapter.ICellAdapterOptions) {
-    const { id, type, source, serverSettings, kernel, boxOptions } = options;
-    this._id = id;
+    const { type, source, serverSettings, kernel, boxOptions } = options;
     this._kernel = kernel;
-    this._cellStore = jupyterStore.getState().cellsStore();
     this._type = type;
     this.setupCell(type, source, serverSettings, kernel, boxOptions);
   }

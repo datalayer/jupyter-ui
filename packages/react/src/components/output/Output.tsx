@@ -11,12 +11,12 @@ import { IOutputAreaModel } from '@jupyterlab/outputarea';
 import { KernelMessage } from '@jupyterlab/services';
 import { newUuid } from '../../utils';
 import { useJupyter } from '../../jupyter/JupyterContext';
-import Kernel from '../../jupyter/kernel/Kernel';
+import { Kernel } from '../../jupyter/kernel/Kernel';
 import { KernelActionMenu, KernelProgressBar } from './../kernel';
-import Lumino from '../lumino/Lumino';
-import CodeMirrorEditor from '../codemirror/CodeMirrorEditor';
-import OutputAdapter from './OutputAdapter';
-import OutputRenderer from './OutputRenderer';
+import { Lumino } from '../lumino/Lumino';
+import { CodeMirrorEditor } from '../codemirror/CodeMirrorEditor';
+import { OutputAdapter } from './OutputAdapter';
+import { OutputRenderer } from './OutputRenderer';
 import { useOutputStore } from './OutputState';
 
 import './Output.css';
@@ -29,6 +29,7 @@ export type IOutputProps = {
   codePre?: string;
   disableRun: boolean;
   executeTrigger: number;
+  id: string;
   insertText?: (payload?: any) => string;
   kernel?: Kernel;
   lumino: boolean;
@@ -38,7 +39,6 @@ export type IOutputProps = {
   showControl?: boolean;
   showEditor: boolean;
   showKernelProgressBar?: boolean;
-  sourceId: string;
   toolbarPosition: 'up' | 'middle' | 'none';
 };
 
@@ -54,21 +54,21 @@ export const Output = (props: IOutputProps) => {
     disableRun,
     executeTrigger,
     insertText,
-    kernel,
+    kernel: propsKernel,
     lumino,
     model,
+    outputs: propsOutputs,
     receipt,
     showControl,
     showEditor,
     showKernelProgressBar = true,
-    sourceId,
+    id: sourceId,
     toolbarPosition,
   } = props;
-  const outputKernel = kernel ?? defaultKernel;
+  const kernel = propsKernel ?? defaultKernel;
   const [id, setId] = useState<string | undefined>(sourceId);
-  const [kernelStatus, setKernelStatus] =
-    useState<KernelMessage.Status>('unknown');
-  const [outputs, setOutputs] = useState<IOutput[] | undefined>(props.outputs);
+  const [kernelStatus, setKernelStatus] = useState<KernelMessage.Status>('unknown');
+  const [outputs, setOutputs] = useState<IOutput[] | undefined>(propsOutputs);
   const [adapter, setAdapter] = useState<OutputAdapter>();
   useEffect(() => {
     if (!id) {
@@ -76,9 +76,29 @@ export const Output = (props: IOutputProps) => {
     }
   }, []);
   useEffect(() => {
-    if (id && outputKernel) {
-      const adapter =
-        propsAdapter ?? new OutputAdapter(outputKernel, outputs ?? [], model);
+    if (id && kernel) {
+      const adapter = propsAdapter ?? new OutputAdapter(kernel, outputs ?? [], model);
+      setAdapter(adapter);
+      outputStore.setAdapter(id, adapter);
+      if (model) {
+        outputStore.setOutput({
+          id,
+          model: model,
+        })
+      }
+      if (code) {
+        outputStore.setInput({
+          id,
+          input: code,
+        })
+      }
+      adapter.outputArea.model.changed.connect((model, change) => {
+        setOutputs(model.toJSON());
+        outputStore.setOutput({
+          id,
+          model,
+        });
+      });
       if (receipt) {
         adapter.outputArea.model.changed.connect((sender, change) => {
           if (change.type === 'add') {
@@ -88,7 +108,7 @@ export const Output = (props: IOutputProps) => {
                 if (out) {
                   if ((out as string).indexOf(receipt) > -1) {
                     outputStore.setGrade({
-                      sourceId,
+                      id: sourceId,
                       success: true,
                     });
                   }
@@ -98,28 +118,20 @@ export const Output = (props: IOutputProps) => {
           }
         });
       }
-      setAdapter(adapter);
-      outputStore.setAdapter(sourceId, adapter);
-      adapter.outputArea.model.changed.connect((outputModel, args) => {
-        setOutputs(outputModel.toJSON());
-      });
     }
-  }, [id, outputKernel]);
+  }, [id, kernel]);
   useEffect(() => {
     if (adapter) {
-      if (!adapter.kernel) {
-        adapter.kernel = outputKernel;
-      }
       if (autoRun) {
         adapter.execute(code);
       }
     }
   }, [adapter]);
   useEffect(() => {
-    if (outputKernel) {
-      outputKernel.ready.then(() => {
-        setKernelStatus(outputKernel.connection!.status);
-        outputKernel.connection!.statusChanged.connect((kernelConnection, status) => {
+    if (kernel) {
+      kernel.ready.then(() => {
+        setKernelStatus(kernel.connection!.status);
+        kernel.connection!.statusChanged.connect((kernelConnection, status) => {
           setKernelStatus(status);
         });
       });
@@ -127,10 +139,10 @@ export const Output = (props: IOutputProps) => {
         //        kernel.connection.then(k => k.shutdown().then(() => console.log(`Kernel ${k.id} is terminated.`)));
       };
     }
-  }, [outputKernel]);
+  }, [kernel]);
   const executeRequest = outputStore.getExecute(sourceId);
   useEffect(() => {
-    if (adapter && executeRequest && executeRequest.sourceId === id) {
+    if (adapter && executeRequest && executeRequest.id === id) {
       adapter.execute(executeRequest.source);
     }
   }, [executeRequest, adapter]);
@@ -160,7 +172,7 @@ export const Output = (props: IOutputProps) => {
             codePre={codePre}
             disableRun={disableRun}
             insertText={insertText}
-            kernel={outputKernel}
+            kernel={kernel}
             outputAdapter={adapter}
             sourceId={id}
             toolbarPosition={toolbarPosition}
@@ -174,7 +186,7 @@ export const Output = (props: IOutputProps) => {
           </Box>
           {showControl && (
             <Box style={{ marginTop: '-13px' }}>
-              <KernelActionMenu kernel={outputKernel} outputAdapter={adapter} />
+              <KernelActionMenu kernel={kernel} outputAdapter={adapter} />
             </Box>
           )}
         </Box>
@@ -216,6 +228,7 @@ export const Output = (props: IOutputProps) => {
 };
 
 Output.defaultProps = {
+  autoRun: false,
   clearTrigger: 0,
   disableRun: false,
   executeTrigger: 0,

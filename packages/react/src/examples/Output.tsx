@@ -4,15 +4,18 @@
  * MIT License
  */
 
+import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { IOutput } from '@jupyterlab/nbformat';
 import { Text } from '@primer/react';
-import { useJupyterStore } from './../state';
+import { useOutputStore } from './../components/output/OutputState';
 import { useJupyter } from '../jupyter/JupyterContext';
-import Jupyter from '../jupyter/Jupyter';
-import Output from '../components/output/Output';
+import { Jupyter } from '../jupyter/Jupyter';
+import { Kernel } from '../jupyter/kernel/Kernel';
+import { newUuid } from '../utils/Utils';
+import { Output } from '../components/output/Output';
 
-const SOURCE_ID_1 = '1';
+const SOURCE_ID_1 = 'output-id-1';
 const OUTPUTS_1: IOutput[] = [
   {
     data: {
@@ -24,7 +27,7 @@ const OUTPUTS_1: IOutput[] = [
   },
 ];
 
-const SOURCE_ID_2 = '2';
+const SOURCE_ID_2 = 'output-id-2';
 const SOURCE_2 = '2+2';
 const OUTPUTS_2: IOutput[] = [
   {
@@ -37,20 +40,34 @@ const OUTPUTS_2: IOutput[] = [
   },
 ];
 
+const SOURCE_ID_3 = 'output-id-3';
+const SOURCE_3 = 'x=2';
+const OUTPUTS_3: IOutput[] = [
+  {
+    data: {
+      'text/plain': ['2'],
+    },
+    execution_count: 1,
+    metadata: {},
+    output_type: 'execute_result',
+  },
+];
+
 const OutputWithoutEditor = () => {
-  const outputStore = useJupyterStore().outputStore();
+  const outputStore = useOutputStore();
   console.log(
     'Outputs 1',
-    outputStore.getAdapter(SOURCE_ID_1)?.outputArea.model.toJSON(),
-    outputStore.getSource(SOURCE_ID_1),
+    outputStore.getOutput(SOURCE_ID_1)?.model.toJSON(),
+    outputStore.getInput(SOURCE_ID_1),
   );
   return (
     <>
       <Text as="h1">Output without Code Editor</Text>
       <Output
-        showEditor={false}
-        sourceId={SOURCE_ID_1}
+        autoRun={false}
+        id={SOURCE_ID_1}
         outputs={OUTPUTS_1}
+        showEditor={false}
       />
     </>
   );
@@ -58,23 +75,62 @@ const OutputWithoutEditor = () => {
 
 const OutputWithEditor = () => {
   const { defaultKernel } = useJupyter();
-  const outputStore = useJupyterStore().outputStore();
+  const outputStore = useOutputStore();
   console.log(
     'Outputs 2',
-    outputStore.getAdapter(SOURCE_ID_2)?.outputArea.model.toJSON(),
-    outputStore.getSource(SOURCE_ID_2),
+    outputStore.getOutput(SOURCE_ID_2)?.model.toJSON(),
+    outputStore.getInput(SOURCE_ID_2),
   );
   return (
     <>
       <Text as="h1">Output with Code Editor</Text>
       <Output
-        showEditor={true}
         autoRun={false}
-        kernel={defaultKernel}
         code={SOURCE_2}
-        sourceId={SOURCE_ID_2} 
+        id={SOURCE_ID_2} 
+        kernel={defaultKernel}
         outputs={OUTPUTS_2}
+        showEditor={true}
       />
+    </>
+  );
+};
+
+const OutputWithEmptyOutput = () => {
+  const { kernelManager, serviceManager } = useJupyter();
+  const [kernel, setKernel] = useState<Kernel>();
+  useEffect(() => {
+    if (serviceManager && kernelManager) {
+      const kernel = new Kernel({
+        kernelManager,
+        kernelName: 'kernel-example',
+        kernelSpecName: 'python',
+        kernelspecsManager: serviceManager.kernelspecs,
+        path: newUuid(),
+        sessionManager: serviceManager.sessions,
+      });
+      setKernel(kernel);
+    }
+  }, [serviceManager, kernelManager]);
+  const outputStore = useOutputStore();
+  console.log(
+    'Outputs 3',
+    outputStore.getOutput(SOURCE_ID_3)?.model.toJSON(),
+    outputStore.getInput(SOURCE_ID_3),
+  );
+  return (
+    <>
+      <Text as="h1">Output with empty Output</Text>
+      { kernel &&
+        <Output
+          autoRun={false}
+          code={SOURCE_3}
+          id={SOURCE_ID_3}
+          kernel={kernel}
+          outputs={OUTPUTS_3}
+          showEditor={true}
+        />
+      }
     </>
   );
 };
@@ -87,5 +143,6 @@ root.render(
   <Jupyter>
     <OutputWithoutEditor />
     <OutputWithEditor />
+    <OutputWithEmptyOutput />
   </Jupyter>
 );

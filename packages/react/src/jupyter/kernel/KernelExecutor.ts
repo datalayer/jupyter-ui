@@ -188,10 +188,10 @@ export class KernelExecutor {
   }
 
   private _onIOPub = (message: KernelMessage.IIOPubMessage): void => {
-    console.log('---IOPub', message);
     if (this._future?.msg.header.msg_id !== message.parent_header.msg_id) {
       return;
     }
+    console.debug('Kernel IOPub message', message);
     const messageType: KernelMessage.IOPubMessageType = message.header.msg_type;
     const output = { ...message.content, output_type: messageType };
     switch (messageType) {
@@ -236,10 +236,10 @@ export class KernelExecutor {
   };
 
   private _onReply = (message: KernelMessage.IExecuteReplyMsg): void => {
-    console.log('---Reply', message);
     if (this._future?.msg.header.msg_id !== message.parent_header.msg_id) {
       return;
     }
+    console.debug('Kernel Reply message', message);
     this._shellMessageHooks.forEach(hook => hook(message));
     const content = message.content;
     if (content.status !== 'ok') {

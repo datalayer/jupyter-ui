@@ -26,7 +26,6 @@ const NotebookKernelChange = () => {
         kernelManager,
         kernelName: NEW_KERNEL_NAME,
         kernelSpecName: NEW_KERNEL_NAME,
-        kernelType: 'notebook',
         kernelspecsManager: serviceManager.kernelspecs,
         sessionManager: serviceManager.sessions,
       });

@@ -5,25 +5,15 @@
  */
 
 import { IOutput } from '@jupyterlab/nbformat';
-import {
-  IOutputAreaModel,
-  OutputArea,
-  OutputAreaModel,
-} from '@jupyterlab/outputarea';
-import {
-  IRenderMime,
-  RenderMimeRegistry,
-  standardRendererFactories,
-} from '@jupyterlab/rendermime';
+import { IOutputAreaModel, OutputArea, OutputAreaModel } from '@jupyterlab/outputarea';
+import { IRenderMime, RenderMimeRegistry, standardRendererFactories } from '@jupyterlab/rendermime';
 import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
-import {
-  WIDGET_MIMETYPE,
-  WidgetRenderer,
-} from '@jupyter-widgets/html-manager/lib/output_renderers';
+import { WIDGET_MIMETYPE, WidgetRenderer } from '@jupyter-widgets/html-manager/lib/output_renderers';
 import { requireLoader as loader } from '../../jupyter/ipywidgets/libembed-amd';
 import { ClassicWidgetManager } from '../../jupyter/ipywidgets/classic/manager';
-import Kernel from '../../jupyter/kernel/Kernel';
+import { Kernel } from '../../jupyter/kernel/Kernel';
+import { execute } from './OutputExecutor';
 
 export class OutputAdapter {
   private _kernel?: Kernel;
@@ -89,8 +79,8 @@ export class OutputAdapter {
   public async execute(code: string) {
     if (this._kernel) {
       this.clear();
-      await this._kernel?.execute(code, { model: this._outputArea.model })
-        ?.done;
+      const done = execute(code, this._outputArea, this._kernel);
+      await done;
     }
   }
 

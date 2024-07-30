@@ -131,7 +131,6 @@ const NotebookKernelChange = () => {
         kernelManager,
         kernelName: 'defaultKernel',
         kernelSpecName: 'python',
-        kernelType: 'notebook',
         kernelspecsManager: serviceManager.kernelspecs,
         sessionManager: serviceManager.sessions,
       });

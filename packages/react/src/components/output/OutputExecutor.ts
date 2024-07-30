@@ -30,12 +30,6 @@ export async function execute(
   if (!kernel) {
     throw new Error('No kernel avaiable.');
   }
-  /*
-  const content: KernelMessage.IExecuteRequestMsg['content'] = {
-    code,
-    stop_on_error: stopOnError
-  };
-  */
   const kernelExecutor = kernel.execute(
     code,
     {
@@ -44,6 +38,7 @@ export async function execute(
     }
   );
   const future = kernelExecutor!.future;
+  // TODO review this if possible in upstream JupyterLab.
   (output as any)._onIOPub = future!.onIOPub;
   (output as any)._onExecuteReply = future!.onReply;
   output.future = future!;
