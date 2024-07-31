@@ -113,8 +113,8 @@ export const Output = (props: IOutputProps) => {
     }
     return () => {
       if (adapter) {
-        adapter.outputArea.model.changed.connect(outputsCallback);
-        adapter.outputArea.model.changed.connect(receiptCallback)
+        adapter.outputArea.model.changed.disconnect(outputsCallback);
+        adapter.outputArea.model.changed.disconnect(receiptCallback)
       }
     }
   }, [id, kernel]);
