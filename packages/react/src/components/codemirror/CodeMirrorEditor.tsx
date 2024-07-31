@@ -13,7 +13,7 @@ import Kernel from '../../jupyter/kernel/Kernel';
 import codeMirrorTheme from './CodeMirrorTheme';
 import OutputAdapter from '../output/OutputAdapter';
 import CodeMirrorOutputToolbar from './CodeMirrorOutputToolbar';
-import useOutputStore from '../output/OutputState';
+import useOutputsStore from '../output/OutputState';
 
 export const CodeMirrorEditor = (props: {
   code: string;
@@ -37,10 +37,10 @@ export const CodeMirrorEditor = (props: {
     insertText,
     kernel,
   } = props;
-  const outputStore = useOutputStore();
+  const outputStore = useOutputsStore();
   const [view, setView] = useState<EditorView>();
   const dataset = outputStore.getDataset(sourceId);
-  const source = outputStore.getSource(sourceId);
+  const source = outputStore.getInput(sourceId);
   const editorDiv = useRef<HTMLDivElement>();
   const setEditorSource = (source: string | undefined) => {
     if (view && source) {
@@ -78,10 +78,7 @@ export const CodeMirrorEditor = (props: {
     return true;
   };
   useEffect(() => {
-    outputStore.setSource({
-      sourceId,
-      source: code,
-    })
+    outputStore.setInput(sourceId, code);
     const language = new Compartment();
     const keyBinding = [
       {
@@ -101,10 +98,7 @@ export const CodeMirrorEditor = (props: {
         EditorView.updateListener.of((viewUpdate: ViewUpdate) => {
           if (viewUpdate.docChanged) {
             const source = viewUpdate.state.doc.toString();
-            outputStore.setSource({
-              sourceId,
-              source,
-            })
+            outputStore.setInput(sourceId, source);
           }
         }),
       ],
@@ -122,10 +116,10 @@ export const CodeMirrorEditor = (props: {
     };
   }, [code]);
   useEffect(() => {
-    doInsertText(dataset?.dataset);
+    doInsertText(dataset);
   }, [dataset]);
   useEffect(() => {
-    setEditorSource(source?.source);
+    setEditorSource(source);
   }, [source]);
   return (
     <>

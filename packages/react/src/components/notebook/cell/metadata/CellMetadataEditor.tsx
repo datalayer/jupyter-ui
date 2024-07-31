@@ -4,11 +4,12 @@
  * MIT License
  */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ActionList, TextInput } from '@primer/react';
 import { CheckIcon } from '@primer/octicons-react';
 import { Cell, ICellModel } from '@jupyterlab/cells';
 import NbGraderType, { getNbGraderType } from './NbGraderCells';
+import { newUlid } from '../../../../utils';
 
 type Props = {
   notebookId: string;
@@ -19,17 +20,23 @@ type Props = {
 export const CellMetadataEditor = (props: Props) => {
   const { cell } = props;
   const [cellGradeType, setCellGradeType] = useState(getNbGraderType(cell));
-  const [nbg, setNbg] = useState(
-    cell.model.getMetadata('nbgrader') || { grade_id: '', points: 0 }
+  const [nbGrade, setNbGrade] = useState<{grade_id: string; points: number}>(
+    cell.model.getMetadata('nbgrader') ?? { grade_id: newUlid(), points: 1 }
   );
+  useEffect(() => {
+    setNbGrade({
+      grade_id: nbGrade.grade_id ?? newUlid(),
+      points: nbGrade.points ?? 1,
+    });
+  }, [nbGrade]);
   const handleGradeIdChange = (cell: Cell<ICellModel>, gradeId: string) => {
     const nbgrader = cell.model.getMetadata('nbgrader') as any;
     cell.model.setMetadata('nbgrader', {
       ...nbgrader,
       grade_id: gradeId,
     });
-    setNbg({
-      ...nbg,
+    setNbGrade({
+      ...nbGrade,
       grade_id: gradeId,
     });
   };
@@ -41,8 +48,8 @@ export const CellMetadataEditor = (props: Props) => {
         ...nbgrader,
         points: points_number,
       });
-      setNbg({
-        ...nbg,
+      setNbGrade({
+        ...nbGrade,
         points: points_number,
       });
     }
@@ -65,6 +72,8 @@ export const CellMetadataEditor = (props: Props) => {
           solution: true,
           locked: false,
           task: false,
+          grade_id: newUlid(),
+          points: 1,
         });
         setCellGradeType(NbGraderType.AutogradedAnswer);
         break;
@@ -77,6 +86,8 @@ export const CellMetadataEditor = (props: Props) => {
           solution: false,
           locked: false,
           task: false,
+          grade_id: newUlid(),
+          points: 1,
         });
         setCellGradeType(NbGraderType.AutogradedTest);
         break;
@@ -89,6 +100,8 @@ export const CellMetadataEditor = (props: Props) => {
           solution: true,
           locked: false,
           task: false,
+          grade_id: newUlid(),
+          points: 1,
         });
         setCellGradeType(NbGraderType.ManuallyGradedAnswer);
         break;
@@ -102,6 +115,8 @@ export const CellMetadataEditor = (props: Props) => {
           solution: false,
           locked: true,
           task: true,
+          grade_id: newUlid(),
+          points: 1,
         });
         setCellGradeType(NbGraderType.ManuallyGradedTask);
         break;
@@ -217,7 +232,7 @@ export const CellMetadataEditor = (props: Props) => {
             {
               <TextInput
                 block
-                value={nbg.grade_id}
+                value={nbGrade.grade_id}
                 onChange={e => {
                   e.preventDefault();
                   handleGradeIdChange(cell, e.target.value);
@@ -230,7 +245,7 @@ export const CellMetadataEditor = (props: Props) => {
             {
               <TextInput
                 block
-                value={nbg.points}
+                value={nbGrade.points}
                 onChange={e => {
                   e.preventDefault();
                   handlePointsChange(cell, e.target.value);

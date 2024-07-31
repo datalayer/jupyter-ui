@@ -7,10 +7,10 @@
 import { useState, useEffect } from 'react';
 import { CodeCell, MarkdownCell } from '@jupyterlab/cells';
 import { Box } from '@primer/react';
-import CellAdapter from './CellAdapter';
 import Lumino from '../lumino/Lumino';
 import { useJupyter } from './../../jupyter/JupyterContext';
-import useCellStore from './CellState';
+import CellAdapter from './CellAdapter';
+import useCellsStore from './CellState';
 import { newUuid } from '../../utils';
 
 export type ICellProps = {
@@ -37,49 +37,45 @@ export type ICellProps = {
 };
 
 export const Cell = (props: ICellProps) => {
-  const { type='code', source = '', autoStart, showToolbar=true } = props;
-  const { serverSettings, defaultKernel } = useJupyter();
+  const {
+    autoStart,
+    showToolbar=true,
+    source = '',
+    type='code',
+  } = props;
+  const { defaultKernel, serverSettings } = useJupyter();
+
   const [id] = useState(props.id || newUuid());
   const [adapter, setAdapter] = useState<CellAdapter>();
-  const cellStore = useCellStore();
+
+  const cellsStore = useCellsStore();
 
   const handleCellInitEvents = (adapter: CellAdapter) => {
     adapter.cell.model.contentChanged.connect(
       (cellModel, changedArgs) => {
-        cellStore.setSource(id, cellModel.sharedModel.getSource());
+        cellsStore.setSource(id, cellModel.sharedModel.getSource());
       }
     );
 
     if (adapter.cell instanceof CodeCell) {
       adapter.cell.outputArea.outputLengthChanged?.connect(
         (outputArea, outputsCount) => {
-          cellStore.setOutputsCount(id, outputsCount);
+          cellsStore.setOutputsCount(id, outputsCount);
         }
       );
     }
 
     adapter.sessionContext.initialize().then(() => {
-      if (!autoStart || !adapter.cell.model) {
-        return;
-      }
-    
-      // Perform auto-start for code or markdown cells
-      if (adapter.cell instanceof CodeCell) {
-        CodeCell.execute(
-          adapter.cell,
-          adapter.sessionContext
-        );
-      }
-
-      if (adapter.cell instanceof MarkdownCell) {
-        adapter.cell.rendered = true;
+      if (autoStart && adapter.cell.model) {
+        // Perform auto-start for code or markdown cells.
+        adapter.execute();
       }
     });
 
     adapter.sessionContext.kernelChanged.connect(() => {
       void adapter.sessionContext.session?.kernel?.info.then(info => {
         // Set that session/kernel is ready for this cell when the kernel is guaranteed to be connected 
-        cellStore.setIsKernelSessionAvailable(id, true);
+        cellsStore.setKernelSessionAvailable(id, true);
       })
     });
   }
@@ -88,14 +84,15 @@ export const Cell = (props: ICellProps) => {
     if (id && defaultKernel && serverSettings) {
       defaultKernel.ready.then(() => {
         const adapter = new CellAdapter({
+          id,
           type,
           source,
           serverSettings,
           kernel: defaultKernel,
           boxOptions: {showToolbar}
         });
-        cellStore.setAdapter(id, adapter);
-        cellStore.setSource(id, source);
+        cellsStore.setAdapter(id, adapter);
+        cellsStore.setSource(id, source);
         handleCellInitEvents(adapter);
         setAdapter(adapter);
 

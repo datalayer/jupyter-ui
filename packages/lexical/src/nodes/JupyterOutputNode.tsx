@@ -8,7 +8,7 @@ import { LexicalEditor, EditorConfig, DecoratorNode, LexicalNode, NodeKey, Sprea
 import { UUID } from '@lumino/coreutils';
 import { IOutput } from '@jupyterlab/nbformat';
 import { OUTPUT_UUID_TO_CODE_UUID, CODE_UUID_TO_OUTPUT_KEY, CODE_UUID_TO_OUTPUT_UUID, OUTPUT_UUID_TO_OUTPUT_KEY } from "../plugins/JupyterPlugin";
-import { OutputAdapter } from "@datalayer/jupyter-react";
+import { OutputAdapter, newUuid } from "@datalayer/jupyter-react";
 import JupyterOutputComponent from "../components/JupyterOutputComponent";
 
 export type SerializedJupyterOutputNode = Spread<
@@ -52,7 +52,7 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
 
   /** @override */
   static importJSON(serializedNode: SerializedJupyterOutputNode): JupyterOutputNode {
-    return $createJupyterOutputNode(serializedNode.source, new OutputAdapter(undefined, []), serializedNode.outputs, false, serializedNode.codeNodeUuid, serializedNode.outputNodeUuid);
+    return $createJupyterOutputNode(serializedNode.source, new OutputAdapter(newUuid(), undefined, []), serializedNode.outputs, false, serializedNode.codeNodeUuid, serializedNode.outputNodeUuid);
   }
 
   /** @override */

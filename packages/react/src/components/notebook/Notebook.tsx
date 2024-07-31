@@ -63,7 +63,7 @@ export type INotebookProps = {
   path?: string;
   readOnly: boolean;
   renderers: IRenderMime.IRendererFactory[];
-  uid: string;
+  id: string;
   url?: string;
   CellSidebar?: (props: CellSidebarProps) => JSX.Element;
   Toolbar?: (props: any) => JSX.Element;
@@ -91,30 +91,30 @@ export const Notebook = (props: INotebookProps) => {
   } = props;
 
   const notebookStore = useNotebookStore();
-  const [uid] = useState(props.uid || newUuid());
+  const [id] = useState(props.id || newUuid());
   const [adapter, setAdapter] = useState<NotebookAdapter>();
   const kernel = propsKernel || defaultKernel;
-  const portals = notebookStore.selectNotebookPortals(uid);
+  const portals = notebookStore.selectNotebookPortals(id);
   const newAdapterState = () => {
-    if (uid && serviceManager && kernelManager && kernel) {
+    if (id && serviceManager && kernelManager && kernel) {
       kernel.ready.then(() => {
         const adapter = new NotebookAdapter(
           {
             ...props,
             kernel,
-            uid,
+            id,
           },
           serviceManager,
           lite
         );
         setAdapter(adapter);
-        notebookStore.update({ uid, partialState: { adapter: adapter } })
+        notebookStore.update({ id, partialState: { adapter: adapter } })
         adapter.serviceManager.ready.then(() => {
           if (!readOnly) {
             const activeCell = adapter.notebookPanel!.content.activeCell;
             if (activeCell) {
               notebookStore.activeCellChange({
-                uid,
+                id,
                 cellModel: activeCell,
               });
             }
@@ -122,7 +122,7 @@ export const Notebook = (props: INotebookProps) => {
               adapter.notebookPanel!.content.activeCellChanged
             );
             activeCellChanged$.subscribe((cellModel: Cell<ICellModel>) => {
-              notebookStore.activeCellChange({ uid, cellModel });
+              notebookStore.activeCellChange({ id, cellModel });
               const panelDiv = document.getElementById(
                 'right-panel-id'
               ) as HTMLDivElement;
@@ -130,7 +130,7 @@ export const Notebook = (props: INotebookProps) => {
                 const cellMetadataOptions = (
                   <Box mt={3}>
                     <CellMetadataEditor
-                      notebookId={uid}
+                      notebookId={id}
                       cell={cellModel}
                       nbgrader={nbgrader}
                     />
@@ -138,7 +138,7 @@ export const Notebook = (props: INotebookProps) => {
                 );
                 const portal = createPortal(cellMetadataOptions, panelDiv);
                 notebookStore.setPortalDisplay({
-                  uid,
+                  id,
                   portalDisplay: { portal, pinned: false },
                 });
               }
@@ -146,32 +146,32 @@ export const Notebook = (props: INotebookProps) => {
           }
           adapter.notebookPanel?.model?.contentChanged.connect(
             (notebookModel, _) => {
-              notebookStore.modelChange({ uid, notebookModel });
+              notebookStore.modelChange({ id, notebookModel });
             }
           );
           /*
           adapter.notebookPanel?.model!.sharedModel.changed.connect((_, notebookChange) => {
-            notebookStore.notebookChange({ uid, notebookChange });
+            notebookStore.notebookChange({ id, notebookChange });
           });
           adapter.notebookPanel?.content.modelChanged.connect((notebook, _) => {
-            dispatÅch(notebookStore.notebookChange({ uid, notebook }));
+            dispatÅch(notebookStore.notebookChange({ id, notebook }));
           });
           */
           adapter.notebookPanel?.content.activeCellChanged.connect(
             (_, cellModel) => {
               if (cellModel === null) {
                 notebookStore.activeCellChange({
-                  uid,
+                  id,
                   cellModel: undefined,
                 });
               } else {
-                notebookStore.activeCellChange({ uid, cellModel });
+                notebookStore.activeCellChange({ id, cellModel });
               }
             }
           );
           adapter.notebookPanel?.sessionContext.statusChanged.connect(
             (_, kernelStatus) => {
-              notebookStore.kernelStatusChanged({ uid, kernelStatus });
+              notebookStore.kernelStatusChanged({ id, kernelStatus });
             }
           );
         });
@@ -184,10 +184,10 @@ export const Notebook = (props: INotebookProps) => {
     }
     newAdapterState();
     return () => {
-      notebookStore.setPortalDisplay({ uid, portalDisplay: undefined });
-      notebookStore.dispose(uid);
+      notebookStore.setPortalDisplay({ id, portalDisplay: undefined });
+      notebookStore.dispose(id);
     };
-  }, [uid, serviceManager, kernelManager, kernel, path]);
+  }, [id, serviceManager, kernelManager, kernel, path]);
   useEffect(() => {
     if (adapter && nbformat) {
       adapter.setNbformat(nbformat);
@@ -198,7 +198,7 @@ export const Notebook = (props: INotebookProps) => {
       style={{ height, width: '100%', position: 'relative' }}
       id="dla-Jupyter-Notebook"
     >
-      {Toolbar && <Toolbar notebookId={props.uid} />}
+      {Toolbar && <Toolbar notebookId={props.id} />}
       <Box
         className="dla-Box-Notebook"
         sx={{

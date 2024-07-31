@@ -5,7 +5,7 @@
  */
 
 import { find } from '@lumino/algorithm';
-import { PromiseDelegate, UUID } from '@lumino/coreutils';
+import { PromiseDelegate } from '@lumino/coreutils';
 import {
   Kernel as JupyterKernel,
   KernelMessage,
@@ -14,7 +14,7 @@ import {
 } from '@jupyterlab/services';
 import { ISessionConnection } from '@jupyterlab/services/lib/session/session';
 import { ConnectionStatus } from '@jupyterlab/services/lib/kernel/kernel';
-import { getCookie } from '../../utils/Utils';
+import { getCookie, newUuid } from '../../utils/Utils';
 import KernelExecutor, {
   IOPubMessageHook,
   ShellMessageHook,
@@ -51,20 +51,22 @@ export class Kernel {
       kernelspecsManager,
       kernelSpecName,
       kernelModel,
+      path,
       sessionManager,
     } = props;
     this._kernelSpecManager = kernelspecsManager;
     this._kernelManager = kernelManager;
     this._kernelName = kernelName;
-    this._kernelType = kernelType;
+    this._kernelType = kernelType ?? 'notebook';
     this._kernelSpecName = kernelSpecName;
     this._sessionManager = sessionManager;
     this._ready = new PromiseDelegate();
-    this.requestKernel(kernelModel);
+    this.requestKernel(kernelModel, path);
   }
 
   private async requestKernel(
-    kernelModel?: JupyterKernel.IModel
+    kernelModel?: JupyterKernel.IModel,
+    propsPath?: string,
   ): Promise<void> {
     await this._kernelManager.ready;
     await this._sessionManager.ready;
@@ -78,9 +80,9 @@ export class Kernel {
         this._session = this._sessionManager.connectTo({ model });
       }
     } else {
-      let path = getCookie(this.cookieName);
+      let path = propsPath ?? getCookie(this.cookieName);
       if (!path) {
-        path = 'kernel-' + UUID.uuid4();
+        path = 'kernel-' + newUuid();
         document.cookie = this.cookieName + '=' + path;
       }
       this._path = path;
@@ -185,19 +187,21 @@ export class Kernel {
   execute(
     code: string,
     {
+      model,
       iopubMessageHooks = [],
       shellMessageHooks = [],
-      model,
       silent,
       stopOnError,
       storeHistory,
+      allowStdin,
     }: {
+      model?: IOutputAreaModel;
       iopubMessageHooks?: IOPubMessageHook[];
       shellMessageHooks?: ShellMessageHook[];
-      model?: IOutputAreaModel;
       silent?: boolean;
       stopOnError?: boolean;
       storeHistory?: boolean;
+      allowStdin?: boolean;
     } = {}
   ): KernelExecutor | undefined {
     if (this._kernelConnection) {
@@ -211,6 +215,7 @@ export class Kernel {
         silent,
         stopOnError,
         storeHistory,
+        allowStdin,
       });
       return kernelExecutor;
     }
@@ -265,6 +270,10 @@ export namespace Kernel {
    */
   export type IKernelProps = {
     /**
+     * A path
+     */
+    path?: string;
+    /**
      * Kernel manager
      */
     kernelManager: JupyterKernel.IManager;
@@ -283,7 +292,7 @@ export namespace Kernel {
     /**
      * Kernel type
      */
-    kernelType: 'notebook' | 'file';
+    kernelType?: 'notebook' | 'file' | undefined;
     /**
      * Session manager
      */

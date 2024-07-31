@@ -16,12 +16,12 @@ import { notebookStore } from '../components/notebook/NotebookState';
 
 import notebook from './notebooks/NotebookExample1.ipynb.json';
 
-const NOTEBOOK_UID = 'notebook-model-uid';
+const NOTEBOOK_ID = 'notebook-model-id';
 
 const NotebookExternalContent = () => {
   const [nbformat, setNbFormat] = useState<INotebookContent>();
   const [updatedNbFormat, setUpdatedNbFormat] = useState<INotebookContent>();
-  const model = notebookStore.getState().selectNotebookModel(NOTEBOOK_UID)?.model;
+  const model = notebookStore.getState().selectNotebookModel(NOTEBOOK_ID)?.model;
   useEffect(() => {
     // Set nbformat with any content.
     // This may come from an external storage that you fetch in this react effect.
@@ -58,7 +58,7 @@ const NotebookExternalContent = () => {
       </Box>
       <Notebook
         nbformat={nbformat}
-        uid={NOTEBOOK_UID}
+        id={NOTEBOOK_ID}
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         cellSidebarMargin={120}
         CellSidebar={CellSidebar}

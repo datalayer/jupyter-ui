@@ -90,7 +90,7 @@ const Tabs = () => {
         <StyledNotebook>
           <Box mb={3}>
             <Notebook
-              uid={NOTEBOOK_UID}
+              id={NOTEBOOK_UID}
               nbformat={notebookContent}
               CellSidebar={CellSidebar}
               />

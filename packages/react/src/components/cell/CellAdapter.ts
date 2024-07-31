@@ -7,6 +7,7 @@
 import { BoxPanel, Widget } from '@lumino/widgets';
 import { find } from '@lumino/algorithm';
 import { CommandRegistry } from '@lumino/commands';
+import { JSONObject } from '@lumino/coreutils';
 import {
   SessionContext,
   ISessionContext,
@@ -14,6 +15,7 @@ import {
   ToolbarButton,
 } from '@jupyterlab/apputils';
 import { CodeCellModel, CodeCell, Cell, MarkdownCell, RawCell, MarkdownCellModel } from '@jupyterlab/cells';
+import { Kernel as JupyterKernel, KernelMessage } from '@jupyterlab/services';
 import {
   ybinding,
   CodeMirrorMimeTypeService,
@@ -34,6 +36,7 @@ import {
   RenderMimeRegistry,
   standardRendererFactories as initialFactories,
 } from '@jupyterlab/rendermime';
+import { execute as executeOutput } from './../output/OutputExecutor';
 import {
   Session,
   ServerConnection,
@@ -56,15 +59,18 @@ import CellCommands from './CellCommands';
 interface BoxOptions {
   showToolbar?: boolean;
 }
+
 export class CellAdapter {
+  private _id: string;
   private _cell: CodeCell | MarkdownCell | RawCell;
   private _kernel: Kernel;
   private _panel: BoxPanel;
   private _sessionContext: SessionContext;
-  private _type: 'code' | 'markdown' | 'raw'
+  private _type: 'code' | 'markdown' | 'raw';
 
-  constructor(options: CellAdapter.ICellAdapterOptions) {
-    const { type, source, serverSettings, kernel, boxOptions } = options;
+  public constructor(options: CellAdapter.ICellAdapterOptions) {
+    const { id, type, source, serverSettings, kernel, boxOptions } = options;
+    this._id = id;
     this._kernel = kernel;
     this._type = type;
     this.setupCell(type, source, serverSettings, kernel, boxOptions);
@@ -303,7 +309,7 @@ export class CellAdapter {
     });
     handler.editor = editor;
 
-    CellCommands(commands, this._cell!, this._sessionContext, handler);
+    CellCommands(commands, this._cell!, handler, this);
     completer.hide();
     completer.addClass('jp-Completer-Cell');
     Widget.attach(completer, document.body);
@@ -313,7 +319,7 @@ export class CellAdapter {
       icon: runIcon,
       onClick: () => {
         if (this._type === 'code') {
-          CodeCell.execute(this._cell as CodeCell, this._sessionContext);
+          this.execute();
         } else if (this._type === 'markdown') {
           (this._cell as MarkdownCell).rendered = true;
         }
@@ -377,15 +383,126 @@ export class CellAdapter {
 
   execute = () => {
     if (this._type === 'code') {
-      CodeCell.execute((this._cell as CodeCell), this._sessionContext);
+      this._execute(this._cell as CodeCell);
     } else if (this._type === 'markdown') {
       (this._cell as MarkdownCell).rendered = true;
     }
-  };
+  }
+
+  private async _execute(
+    cell: CodeCell,
+    metadata?: JSONObject
+  ): Promise<KernelMessage.IExecuteReplyMsg | void> {
+    const model = cell.model;
+    const code = model.sharedModel.getSource();
+    if (!code.trim() || !this.kernel) {
+      model.sharedModel.transact(() => {
+        model.clearExecution();
+      }, false);
+      return new Promise(() => {});
+    }
+    const cellId = { cellId: model.sharedModel.getId() };
+    metadata = {
+      ...model.metadata,
+      ...metadata,
+      ...cellId
+    };
+    const { recordTiming } = metadata;
+    model.sharedModel.transact(() => {
+      model.clearExecution();
+      cell.outputHidden = false;
+    }, false);
+    cell.setPrompt('*');
+    model.trusted = true;
+    let future:
+      | JupyterKernel.IFuture<
+          KernelMessage.IExecuteRequestMsg,
+          KernelMessage.IExecuteReplyMsg
+        >
+      | undefined;
+    try {
+      const kernelMessagePromise = executeOutput(
+        this._id,
+        code,
+        cell.outputArea,
+        this._kernel,
+        metadata
+      );
+      // cell.outputArea.future assigned synchronously in `execute`.
+      if (recordTiming) {
+        const recordTimingHook = (msg: KernelMessage.IIOPubMessage) => {
+          let label: string;
+          switch (msg.header.msg_type) {
+            case 'status':
+              label = `status.${
+                (msg as KernelMessage.IStatusMsg).content.execution_state
+              }`;
+              break;
+            case 'execute_input':
+              label = 'execute_input';
+              break;
+            default:
+              return true;
+          }
+          // If the data is missing, estimate it to now
+          // Date was added in 5.1: https://jupyter-client.readthedocs.io/en/stable/messaging.html#message-header
+          const value = msg.header.date || new Date().toISOString();
+          const timingInfo: any = Object.assign(
+            {},
+            model.getMetadata('execution')
+          );
+          timingInfo[`iopub.${label}`] = value;
+          model.setMetadata('execution', timingInfo);
+          return true;
+        };
+        cell.outputArea.future.registerMessageHook(recordTimingHook);
+      } else {
+        model.deleteMetadata('execution');
+      }
+      // Save this execution's future so we can compare in the catch below.
+      future = cell.outputArea.future;
+      const executeReplyMessage = (await kernelMessagePromise)!;
+      model.executionCount = executeReplyMessage.content.execution_count;
+      if (recordTiming) {
+        const timingInfo = Object.assign(
+          {},
+          model.getMetadata('execution') as any
+        );
+        const started = executeReplyMessage.metadata.started as string;
+        // Started is not in the API, but metadata IPyKernel sends
+        if (started) {
+          timingInfo['shell.execute_reply.started'] = started;
+        }
+        // Per above, the 5.0 spec does not assume date, so we estimate is required
+        const finished = executeReplyMessage.header.date as string;
+        timingInfo['shell.execute_reply'] =
+          finished || new Date().toISOString();
+        model.setMetadata('execution', timingInfo);
+      }
+      return executeReplyMessage;
+    } catch (e) {
+      // If we started executing, and the cell is still indicating this execution, clear the prompt.
+      if (future && !cell.isDisposed && cell.outputArea.future === future) {
+        cell.setPrompt('');
+        if (recordTiming && future.isDisposed) {
+          // Record the time when the cell execution was aborted
+          const timingInfo: any = Object.assign(
+            {},
+            model.getMetadata('execution')
+          );
+          timingInfo['execution_failed'] = new Date().toISOString();
+          model.setMetadata('execution', timingInfo);
+        }
+      }
+      throw e;
+    }
+  }
+
 }
 
 export namespace CellAdapter {
   export type ICellAdapterOptions = {
+    id: string;
     type: 'code' | 'markdown' | 'raw';
     source: string;
     serverSettings: ServerConnection.ISettings;

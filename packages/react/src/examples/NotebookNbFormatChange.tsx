@@ -16,7 +16,7 @@ import useNotebookStore from '../components/notebook/NotebookState';
 import nbformat1 from './notebooks/NotebookExample1.ipynb.json';
 import nbformat2 from './notebooks/NotebookExample2.ipynb.json';
 
-const NOTEBOOK_UID = 'notebook-model-change-id';
+const NOTEBOOK_ID = 'notebook-model-change-id';
 
 const NotebookNbFormatChange = () => {
   const notebookStore = useNotebookStore();
@@ -24,7 +24,7 @@ const NotebookNbFormatChange = () => {
   const changeModel = () => {
     console.log(
       'Notebook NbFormat from store',
-      notebookStore.notebooks.get(NOTEBOOK_UID)?.model?.toJSON() as INotebookContent
+      notebookStore.notebooks.get(NOTEBOOK_ID)?.model?.toJSON() as INotebookContent
     );
     nbformat === nbformat1 ? setNbformat(nbformat2) : setNbformat(nbformat1);
   };
@@ -38,7 +38,7 @@ const NotebookNbFormatChange = () => {
         </ButtonGroup>
       </Box>
       <Notebook
-        uid={NOTEBOOK_UID}
+        id={NOTEBOOK_ID}
         nbformat={nbformat}
         height="700px"
         CellSidebar={CellSidebar}

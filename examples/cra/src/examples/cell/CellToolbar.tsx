@@ -7,10 +7,10 @@
 import React from 'react';
 import { Box, IconButton, Text, Tooltip } from '@primer/react';
 import { PlayIcon, ReplyIcon, ThreeBarsIcon } from '@primer/octicons-react';
-import { useCellStore } from '@datalayer/jupyter-react';
+import { useCellsStore } from '@datalayer/jupyter-react';
 
 const CellToolbar: React.FC = () => {
-  const cellStore = useCellStore();
+  const cellStore = useCellsStore();
   const outputsCount = cellStore.outputsCount;
   return (
     <>

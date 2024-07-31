@@ -14,7 +14,7 @@ const IPyLeaflet = () => (
   <Jupyter>
     <Notebook
       path="ipyleaflet.ipynb"
-      uid="notebook-ipyleaflet-uid"
+      id="notebook-ipyleaflet-id"
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       cellSidebarMargin={120}
       CellSidebar={CellSidebar}

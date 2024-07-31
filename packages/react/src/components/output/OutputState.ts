@@ -6,38 +6,16 @@
 
 import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
-import OutputAdapter from './OutputAdapter';
-
-export namespace OutputState {
-  export type ISource = {
-    sourceId: string;
-    source: string;
-    increment?: number;
-  };
-  export type IDataset = {
-    sourceId: string;
-    dataset: any;
-    increment?: number;
-  };
-  export type IExecute = {
-    sourceId: string;
-    source: string;
-    increment?: number;
-  };
-  export type IGrade = {
-    sourceId: string;
-    success: boolean;
-    increment?: number;
-  };
-}
+import { IOutputAreaModel } from '@jupyterlab/outputarea';
+import { OutputAdapter } from './OutputAdapter';
 
 export type IOutputState = {
   adapter?: OutputAdapter;
-  source?: OutputState.ISource;
-  dataset?: OutputState.IDataset;
-  setSource?: OutputState.ISource;
-  execute?: OutputState.IExecute;
-  grade?: OutputState.IGrade;
+  model?: IOutputAreaModel;
+  input?: string;
+  dataset?: any;
+  code?: string;
+  gradeSuccess?: boolean;
 };
 
 export interface IOutputsState {
@@ -45,22 +23,42 @@ export interface IOutputsState {
 }
 
 export type OutputState = IOutputsState & {
-  setOutputs: (outputs: Map<string, IOutputState>) => void;
-  setAdapter: (id: string, adapter: OutputAdapter) => void;
-  setDataset: (dataset: OutputState.IDataset) => void;
-  setExecute: (execute: OutputState.IExecute) => void;
-  setSource: (source: OutputState.ISource) => void;
-  setGrade: (grade: OutputState.IGrade) => void;
   getAdapter: (id: string) => OutputAdapter | undefined;
-  getSource: (id: string) => OutputState.ISource | undefined;
-  getDataset: (id: string) => OutputState.IDataset | undefined;
-  getExecute: (id: string) => OutputState.IExecute | undefined;
-  getGrade: (id: string) => OutputState.IGrade | undefined;
+  getDataset: (id: string) => any | undefined;
+  getExecuteRequest: (id: string) => string | undefined;
+  getGradeSuccess: (id: string) => boolean | undefined;
+  getInput: (id: string) => string | undefined;
+  getModel: (id: string) => IOutputAreaModel | undefined;
+  setAdapter: (id: string, adapter: OutputAdapter) => void;
+  setDataset: (id: string, dataset: any) => void;
+  setExecuteRequest: (id: string, code: string) => void;
+  setGradeSuccess: (id: string, gradeSuccess: boolean) => void;
+  setInput: (id: string, source: string) => void;
+  setModel: (id: string, output: IOutputAreaModel) => void;
+  setOutputs: (id: string, outputs: Map<string, IOutputState>) => void;
 };
 
-export const outputStore = createStore<OutputState>((set, get) => ({
+export const outputsStore = createStore<OutputState>((set, get) => ({
   outputs: new Map<string, IOutputState>(),
-  setOutputs: (outputs: Map<string, IOutputState>) => set((state: OutputState) => ({ outputs })),
+  getAdapter: (id: string) => {
+    return get().outputs.get(id)?.adapter;
+  },
+  getInput: (id: string): string | undefined => {
+    return get().outputs.get(id)?.input;
+  },
+  getModel: (id: string): IOutputAreaModel | undefined => {
+    return get().outputs.get(id)?.model;
+  },
+  getDataset: (id: string): any | undefined => {
+    return get().outputs.get(id)?.dataset;
+  },
+  getExecuteRequest: (id: string): string | undefined => {
+    return get().outputs.get(id)?.code;
+  },
+  getGradeSuccess: (id: string): boolean | undefined => {
+    return get().outputs.get(id)?.gradeSuccess;
+  },
+  setOutputs: (id: string, outputs: Map<string, IOutputState>) => set((state: OutputState) => ({ outputs })),
   setAdapter: (id: string, adapter: OutputAdapter) => {
     const outputs = get().outputs;
     const d = outputs.get(id);
@@ -71,71 +69,62 @@ export const outputStore = createStore<OutputState>((set, get) => ({
     }
     set((state: OutputState) => ({ outputs }))
   },
-  setDataset: (dataset: OutputState.IDataset) => {
-    const sourceId = dataset.sourceId;
+  setDataset: (id: string, dataset: string) => {
     const outputs = get().outputs;
-    const d = outputs.get(sourceId);
+    const d = outputs.get(id);
     if (d) {
       d.dataset = dataset;
     } else {
-      outputs.set(sourceId, { dataset });
+      outputs.set(id, { dataset });
     }
     set((state: OutputState) => ({ outputs }))
   },
-  setExecute: (execute: OutputState.IExecute) => {
-    const sourceId = execute.sourceId;
+  setExecuteRequest: (id: string, code: string) => {
     const outputs = get().outputs;
-    const e = outputs.get(sourceId);
+    const e = outputs.get(id);
     if (e) {
-      e.execute = execute;
+      e.code = code;
     } else {
-      outputs.set(sourceId, { execute });
+      outputs.set(id, { code });
     }
     set((state: OutputState) => ({ outputs }))
   },
-  setSource: (setSource: OutputState.ISource) => {
-    const sourceId = setSource.sourceId;
+  setModel: (id: string, model: IOutputAreaModel) => {
     const outputs = get().outputs;
-    const s = outputs.get(sourceId);
-    if (s) {
-      s.setSource = setSource;
+    const e = outputs.get(id);
+    if (e) {
+      e.model = model;
     } else {
-      outputs.set(sourceId, { setSource });
+      outputs.set(id, { model });
     }
     set((state: OutputState) => ({ outputs }))
   },
-  setGrade: (grade: OutputState.IGrade) => {
-    const sourceId = grade.sourceId;
+  setInput: (id: string, input: string) => {
     const outputs = get().outputs;
-    const g = outputs.get(sourceId);
-    if (g) {
-      g.grade = grade;
+    const e = outputs.get(id);
+    if (e) {
+      e.input = input;
     } else {
-      outputs.set(sourceId, { grade });
+      outputs.set(id, { input });
     }
     set((state: OutputState) => ({ outputs }))
   },
-  getAdapter: (id: string) => {
-    return get().outputs.get(id)?.adapter;
-  },
-  getSource: (id: string): OutputState.ISource | undefined => {
-    return get().outputs.get(id)?.source;
-  },
-  getDataset: (id: string): OutputState.IDataset | undefined => {
-    return get().outputs.get(id)?.dataset;
-  },
-  getExecute: (id: string): OutputState.IExecute | undefined => {
-    return get().outputs.get(id)?.execute;
-  },
-  getGrade: (id: string): OutputState.IGrade | undefined => {
-    return get().outputs.get(id)?.grade;
+  setGradeSuccess: (id: string, gradeSuccess: boolean) => {
+    const outputs = get().outputs;
+    const e = outputs.get(id);
+    if (e) {
+      e.gradeSuccess = gradeSuccess;
+    } else {
+      outputs.set(id, { gradeSuccess });
+    }
+    set((state: OutputState) => ({ outputs }))
   },
 }));
 
-export function useOutputStore(): OutputState;
-export function useOutputStore<T>(selector: (state: OutputState) => T): T;
-export function useOutputStore<T>(selector?: (state: OutputState) => T) {
-  return useStore(outputStore, selector!);
+export function useOutputsStore(): OutputState;
+export function useOutputsStore<T>(selector: (state: OutputState) => T): T;
+export function useOutputsStore<T>(selector?: (state: OutputState) => T) {
+  return useStore(outputsStore, selector!);
 }
 
-export default useOutputStore;
+export default useOutputsStore;

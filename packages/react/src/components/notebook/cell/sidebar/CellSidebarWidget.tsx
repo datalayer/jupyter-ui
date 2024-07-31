@@ -48,7 +48,7 @@ export class CellSidebarWidget
     );
     const portal = createPortal(portalDiv, this.node);
     notebookStore.getState().addPortals({
-      uid: notebookId,
+      id: notebookId,
       portals: [portal],
     });
   }

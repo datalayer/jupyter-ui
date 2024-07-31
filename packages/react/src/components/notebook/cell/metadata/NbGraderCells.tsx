@@ -84,13 +84,13 @@ export const getNbGraderType = (cell: Cell<ICellModel>) => {
   if (!grade && solution && !locked) {
     return NbGraderType.AutogradedAnswer;
   }
-  // Autograded test (only for code cells) { grade: true, solution: false, locked: false, points: ... }
-  if (grade && !solution && !locked) {
-    return NbGraderType.AutogradedTest;
-  }
   // Manually graded task { grade: false, solution: false, locked: true, task: true, points: ... }
   if (!grade && !solution && locked && task) {
     return NbGraderType.ManuallyGradedTask;
+  }
+  // Autograded test (only for code cells) { grade: true, solution: false, locked: true, points: ... }
+  if (grade && !solution && locked) {
+    return NbGraderType.AutogradedTest;
   }
   // Manually graded answer { grade: true, solution: true, locked: false, points: ... }
   if (grade && solution && !locked) {

@@ -19,16 +19,16 @@ import Terminal from '../components/terminal/Terminal';
 import CellSidebarNew from '../components/notebook/cell/sidebar/CellSidebarButton';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 import Console from '../components/console/Console';
-import { useCellStore } from '../components/cell/CellState';
+import { useCellsStore } from '../components/cell/CellState';
 import useNotebookStore from '../components/notebook/NotebookState';
 
 import notebook from './notebooks/NotebookExample1.ipynb.json';
 
 const SOURCE_1 = '1+1';
 
-const NOTEBOOK_UID_1 = 'notebook-1-uid';
-const NOTEBOOK_UID_2 = 'notebook-2-uid';
-const NOTEBOOK_UID_3 = 'notebook-3-uid';
+const NOTEBOOK_ID_1 = 'notebook-1-id';
+const NOTEBOOK_ID_2 = 'notebook-2-id';
+const NOTEBOOK_ID_3 = 'notebook-3-id';
 
 const SOURCE_1_OUTPUTS: IOutput[] = [
   {
@@ -54,18 +54,18 @@ interface ICellToolProps {
 }
 
 const CellPreview = (props: ICellToolProps) => {
-  const cellStore = useCellStore();
+  const cellsStore = useCellsStore();
   return (
     <>
-      <>source: {cellStore.getSource(props.id)}</>
-      <>kernel available: {String(cellStore.getIsKernelSessionAvailable(props.id))}</>
+      <>source: {cellsStore.getSource(props.id)}</>
+      <>kernel available: {String(cellsStore.isKernelSessionAvailable(props.id))}</>
     </>
   );
 };
 
 const CellToolbar = (props: ICellToolProps) => {
   const {id} = props;
-  const cellStore = useCellStore();
+  const cellsStore = useCellsStore();
   return (
     <>
       <Box display="flex">
@@ -73,20 +73,20 @@ const CellToolbar = (props: ICellToolProps) => {
           <Button
             variant="default"
             size="small"
-            onClick={() => cellStore.execute(id)}
+            onClick={() => cellsStore.execute(id)}
           >
             Run the cell
           </Button>
           <Button
             variant="invisible"
             size="small"
-            onClick={() => cellStore.setOutputsCount(id, 0)}
+            onClick={() => cellsStore.setOutputsCount(id, 0)}
           >
             Reset outputs count
           </Button>
         </ButtonGroup>
       </Box>
-      <Box>Outputs count: {cellStore.getOutputsCount(id)}</Box>
+      <Box>Outputs count: {cellsStore.getOutputsCount(id)}</Box>
     </>
   );
 };
@@ -101,7 +101,7 @@ const NotebookToolbar = () => {
           size="small"
           onClick={() =>
             notebookStore.save({
-              uid: NOTEBOOK_UID_1,
+              id: NOTEBOOK_ID_1,
               date: new Date(),
             })
           }
@@ -112,7 +112,7 @@ const NotebookToolbar = () => {
           variant="default"
           size="small"
           onClick={() =>
-            notebookStore.runAll(NOTEBOOK_UID_1)
+            notebookStore.runAll(NOTEBOOK_ID_1)
           }
         >
           Run all
@@ -131,12 +131,11 @@ const NotebookKernelChange = () => {
         kernelManager,
         kernelName: 'defaultKernel',
         kernelSpecName: 'python',
-        kernelType: 'notebook',
         kernelspecsManager: serviceManager.kernelspecs,
         sessionManager: serviceManager.sessions,
       });
       kernel.ready.then(() => {
-        notebookStore.changeKernel({ uid: NOTEBOOK_UID_2, kernel });
+        notebookStore.changeKernel({ id: NOTEBOOK_ID_2, kernel });
         alert('Kernel is changed.');
       });
     }
@@ -153,7 +152,7 @@ const NotebookKernelChange = () => {
       <Notebook
         path="test.ipynb"
         CellSidebar={CellSidebar}
-        uid={NOTEBOOK_UID_2}
+        id={NOTEBOOK_ID_2}
       />
     </>
   );
@@ -195,7 +194,7 @@ root.render(
   <Jupyter terminals={true}>
     <Notebook
       nbformat={notebook as INotebookContent}
-      uid={NOTEBOOK_UID_3}
+      id={NOTEBOOK_ID_3}
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       cellSidebarMargin={60}
       CellSidebar={CellSidebarNew}
@@ -214,7 +213,7 @@ root.render(
     <Notebook
       path="ipywidgets.ipynb"
       CellSidebar={CellSidebar}
-      uid={NOTEBOOK_UID_1}
+      id={NOTEBOOK_ID_1}
     />
     <hr />
     <NotebookKernelChange />

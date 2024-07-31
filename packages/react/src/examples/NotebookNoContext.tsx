@@ -15,7 +15,7 @@ import NotebookToolbar from './toolbars/NotebookToolbar';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebarButton';
 import JupyterLabCss from './../jupyter/lab/JupyterLabCss';
 
-const NOTEBOOK_UID = 'notebook-uid';
+const NOTEBOOK_ID = 'notebook-id';
 
 const div = document.createElement('div');
 document.body.appendChild(div);
@@ -35,7 +35,7 @@ root.render(
       <BaseStyles>
         <Notebook
           path="ipywidgets.ipynb"
-          uid={NOTEBOOK_UID}
+          id={NOTEBOOK_ID}
           height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
           cellSidebarMargin={60}
           CellSidebar={CellSidebar}

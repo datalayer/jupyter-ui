@@ -7,7 +7,7 @@
 import { CommandRegistry } from '@lumino/commands';
 import { CompletionHandler } from '@jupyterlab/completer';
 import { CodeCell, MarkdownCell, RawCell } from '@jupyterlab/cells';
-import { SessionContext } from '@jupyterlab/apputils';
+import CellAdapter from './CellAdapter';
 
 const cmdIds = {
   invoke: 'completer:invoke',
@@ -17,8 +17,8 @@ const cmdIds = {
 export const CellCommands = (
   commandRegistry: CommandRegistry,
   cell: CodeCell | MarkdownCell | RawCell,
-  sessionContext: SessionContext,
-  completerHandler: CompletionHandler
+  completerHandler: CompletionHandler,
+  cellAdapter: CellAdapter,
 ): void => {
   commandRegistry.addCommand(cmdIds.invoke, {
     label: 'Completer: Invoke',
@@ -31,7 +31,7 @@ export const CellCommands = (
   commandRegistry.addCommand('run:cell', {
     execute: () => {
       if (cell instanceof CodeCell) {
-        CodeCell.execute(cell, sessionContext)
+        cellAdapter.execute();
       } else if (cell instanceof MarkdownCell) {
         (cell as MarkdownCell).rendered = true;
       }

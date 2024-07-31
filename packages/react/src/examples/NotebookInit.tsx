@@ -37,7 +37,6 @@ const useKernel = () => {
         kernelManager,
         kernelName: JUPYTER_KERNEL_NAME,
         kernelSpecName: JUPYTER_KERNEL_NAME,
-        kernelType: 'notebook',
         kernelspecsManager: serviceManager.kernelspecs,
         sessionManager: serviceManager.sessions,
       });
@@ -67,7 +66,7 @@ const NotebookInit: React.FC = () => {
           //          console.log("You can use one of these commands:", notebook.adapter?.commands.listCommands());
           //          notebook.adapter?.commands.execute("notebook:run-all");
           notebookStore.insertAbove({
-            uid: NOTEBOOK_ID,
+            id: NOTEBOOK_ID,
             cellType: 'code',
             source: 'print("Hello 🪐 ⚛️ Jupyter React")',
           });
@@ -78,7 +77,7 @@ const NotebookInit: React.FC = () => {
   return kernel ? (
     <Notebook
       path="ipywidgets.ipynb"
-      uid={NOTEBOOK_ID}
+      id={NOTEBOOK_ID}
       kernel={kernel}
       height={`calc(${NOTEBOOK_HEIGHT}px - 2.6rem)`}
       CellSidebar={CellSidebar}

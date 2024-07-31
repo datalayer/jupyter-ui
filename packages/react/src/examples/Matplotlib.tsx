@@ -19,7 +19,7 @@ const Matplotlib = () => (
     <JupyterLabCss colorMode="light" />
     <Notebook
       nbformat={notebook as INotebookContent}
-      uid="notebook-matplotlib-uid"
+      id="notebook-matplotlib-id"
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       cellSidebarMargin={120}
       CellSidebar={CellSidebar}

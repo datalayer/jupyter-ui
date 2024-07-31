@@ -19,6 +19,7 @@ function shim(regExp) {
 const ENTRY =
   // './src/app/App';
   // './src/examples/Cell';
+  // './src/examples/Cells';
   // './src/examples/CellLite';
   // './src/examples/Console';
   // './src/examples/ConsoleLite';
@@ -30,8 +31,8 @@ const ENTRY =
   // './src/examples/JupyterLabApp';
   // './src/examples/JupyterLabHeadlessApp';
   // './src/examples/Kernels';
+  // './src/examples/KernelExecute';
   // './src/examples/KernelExecutor';
-  // './src/examples/KernelExecResult';
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
   './src/examples/Notebook';

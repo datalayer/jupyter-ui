@@ -17,7 +17,7 @@ const Dashboard = () => (
   <Jupyter>
     <Notebook
       nbformat={notebook as INotebookContent}
-      uid="notebook-uid"
+      id="notebook-id"
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       cellSidebarMargin={120}
       CellSidebar={CellSidebar}

@@ -14,7 +14,7 @@ const Bokeh = () => (
   <Jupyter>
     <Notebook
       path="bokeh.ipynb"
-      uid="notebook-bokeh-uid"
+      id="notebook-bokeh-id"
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       cellSidebarMargin={120}
       CellSidebar={CellSidebar}

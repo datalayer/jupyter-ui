@@ -6,18 +6,18 @@
 
 import { useState, useEffect } from 'react';
 import { Box } from '@primer/react';
-import { UUID } from '@lumino/coreutils';
 import { IOutput } from '@jupyterlab/nbformat';
 import { IOutputAreaModel } from '@jupyterlab/outputarea';
 import { KernelMessage } from '@jupyterlab/services';
+import { newUuid } from '../../utils';
 import { useJupyter } from '../../jupyter/JupyterContext';
-import Kernel from '../../jupyter/kernel/Kernel';
+import { Kernel } from '../../jupyter/kernel/Kernel';
 import { KernelActionMenu, KernelProgressBar } from './../kernel';
-import Lumino from '../lumino/Lumino';
-import CodeMirrorEditor from '../codemirror/CodeMirrorEditor';
-import OutputAdapter from './OutputAdapter';
-import OutputRenderer from './OutputRenderer';
-import { useOutputStore } from './OutputState';
+import { Lumino } from '../lumino/Lumino';
+import { CodeMirrorEditor } from '../codemirror/CodeMirrorEditor';
+import { OutputAdapter } from './OutputAdapter';
+import { OutputRenderer } from './OutputRenderer';
+import { useOutputsStore } from './OutputState';
 
 import './Output.css';
 
@@ -29,8 +29,9 @@ export type IOutputProps = {
   codePre?: string;
   disableRun: boolean;
   executeTrigger: number;
+  id: string;
   insertText?: (payload?: any) => string;
-  kernel: Kernel;
+  kernel?: Kernel;
   lumino: boolean;
   model?: IOutputAreaModel;
   outputs?: IOutput[];
@@ -38,13 +39,12 @@ export type IOutputProps = {
   showControl?: boolean;
   showEditor: boolean;
   showKernelProgressBar?: boolean;
-  sourceId: string;
   toolbarPosition: 'up' | 'middle' | 'none';
 };
 
 export const Output = (props: IOutputProps) => {
-  const { defaultKernel: kernel } = useJupyter();
-  const outputStore = useOutputStore();
+  const { defaultKernel } = useJupyter();
+  const outputStore = useOutputsStore();
   const {
     adapter: propsAdapter,
     autoRun,
@@ -54,60 +54,72 @@ export const Output = (props: IOutputProps) => {
     disableRun,
     executeTrigger,
     insertText,
+    kernel: propsKernel,
     lumino,
     model,
+    outputs: propsOutputs,
     receipt,
     showControl,
     showEditor,
     showKernelProgressBar = true,
-    sourceId,
+    id: sourceId,
     toolbarPosition,
   } = props;
+  const kernel = propsKernel ?? defaultKernel;
   const [id, setId] = useState<string | undefined>(sourceId);
-  const [kernelStatus, setKernelStatus] =
-    useState<KernelMessage.Status>('unknown');
-  const [outputs, setOutputs] = useState<IOutput[] | undefined>(props.outputs);
+  const [kernelStatus, setKernelStatus] = useState<KernelMessage.Status>('unknown');
+  const [outputs, setOutputs] = useState<IOutput[] | undefined>(propsOutputs);
   const [adapter, setAdapter] = useState<OutputAdapter>();
   useEffect(() => {
     if (!id) {
-      setId(UUID.uuid4());
+      setId(newUuid());
     }
   }, []);
   useEffect(() => {
-    if (id && kernel) {
-      const adapter =
-        propsAdapter ?? new OutputAdapter(kernel, outputs ?? [], model);
-      if (receipt) {
-        adapter.outputArea.model.changed.connect((sender, change) => {
-          if (change.type === 'add') {
-            change.newValues.map(val => {
-              if (val && val.data) {
-                const out = val.data['text/html']; // val.data['application/vnd.jupyter.stdout'];
-                if (out) {
-                  if ((out as string).indexOf(receipt) > -1) {
-                    outputStore.setGrade({
-                      sourceId,
-                      success: true,
-                    });
-                  }
-                }
+    const outputsCallback = (model: IOutputAreaModel, change: IOutputAreaModel.ChangedArgs) => {
+      setOutputs(model.toJSON());
+      if (id) {
+        outputStore.setModel(id, model);
+      }
+    };
+    const receiptCallback = (model: IOutputAreaModel, change: IOutputAreaModel.ChangedArgs) => {
+      if (receipt && change.type === 'add') {
+        change.newValues.map(val => {
+          if (val && val.data) {
+            const out = val.data['text/html']; // val.data['application/vnd.jupyter.stdout'];
+            if (out) {
+              if ((out as string).indexOf(receipt) > -1) {
+                outputStore.setGradeSuccess(sourceId, true)
               }
-            });
+            }
           }
         });
       }
+    };
+    if (id && kernel) {
+      const adapter = propsAdapter ?? new OutputAdapter(id, kernel, outputs ?? [], model);
       setAdapter(adapter);
-      outputStore.setAdapter(sourceId, adapter);
-      adapter.outputArea.model.changed.connect((outputModel, args) => {
-        setOutputs(outputModel.toJSON());
-      });
+      outputStore.setAdapter(id, adapter);
+      if (model) {
+        outputStore.setModel(id, model);
+      }
+      if (code) {
+        outputStore.setInput(id,code);
+      }
+      adapter.outputArea.model.changed.connect(outputsCallback);
+      if (receipt) {
+        adapter.outputArea.model.changed.connect(receiptCallback)
+      }
+    }
+    return () => {
+      if (adapter) {
+        adapter.outputArea.model.changed.disconnect(outputsCallback);
+        adapter.outputArea.model.changed.disconnect(receiptCallback)
+      }
     }
   }, [id, kernel]);
   useEffect(() => {
     if (adapter) {
-      if (!adapter.kernel) {
-        adapter.kernel = kernel;
-      }
       if (autoRun) {
         adapter.execute(code);
       }
@@ -126,10 +138,10 @@ export const Output = (props: IOutputProps) => {
       };
     }
   }, [kernel]);
-  const executeRequest = outputStore.getExecute(sourceId);
+  const executeRequest = outputStore.getExecuteRequest(sourceId);
   useEffect(() => {
-    if (adapter && executeRequest && executeRequest.sourceId === id) {
-      adapter.execute(executeRequest.source);
+    if (adapter && executeRequest && executeRequest === id) {
+      adapter.execute(code);
     }
   }, [executeRequest, adapter]);
   useEffect(() => {
@@ -214,6 +226,7 @@ export const Output = (props: IOutputProps) => {
 };
 
 Output.defaultProps = {
+  autoRun: false,
   clearTrigger: 0,
   disableRun: false,
   executeTrigger: 0,

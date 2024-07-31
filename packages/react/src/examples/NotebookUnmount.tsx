@@ -26,7 +26,6 @@ const NotebookUnmount = () => {
         kernelManager,
         kernelName: 'defaultKernel',
         kernelSpecName: 'python',
-        kernelType: 'notebook',
         kernelspecsManager: serviceManager.kernelspecs,
         sessionManager: serviceManager.sessions,
       });
@@ -53,7 +52,7 @@ const NotebookUnmount = () => {
           </Box>
           <Notebook
             nbformat={notebook as INotebookContent}
-            uid="notebook-unmount-id"
+            id="notebook-unmount-id"
             //                kernel={kernel}
             height="700px"
             CellSidebar={CellSidebar}

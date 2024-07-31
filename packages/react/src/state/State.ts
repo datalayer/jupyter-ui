@@ -10,29 +10,29 @@ import { useStore } from 'zustand';
 import { ServiceManager } from '@jupyterlab/services';
 import type { IDatalayerConfig } from './IState';
 import { IJupyterConfig, loadJupyterConfig } from '../jupyter/JupyterConfig';
-import useCellStore from '../components/cell/CellState';
-import useConsoleStore from '../components/console/ConsoleState';
-import useNotebookStore from '../components/notebook/NotebookState';
-import useOutputStore from '../components/output/OutputState';
-import useTerminalStore from '../components/terminal/TerminalState';
+import { cellsStore, CellsState } from '../components/cell/CellState';
+import { consoleStore, ConsoleState } from '../components/console/ConsoleState';
+import { notebookStore, NotebookState } from '../components/notebook/NotebookState';
+import { outputsStore, OutputState } from '../components/output/OutputState';
+import { terminalStore, TerminalState } from '../components/terminal/TerminalState';
 import { createLiteServer } from '../jupyter/lite/LiteServer';
 import { getJupyterServerUrl } from '../jupyter/JupyterConfig';
 import { ensureJupyterAuth, createServerSettings, JupyterContextPropsType } from '../jupyter/JupyterContext';
 import Kernel from '../jupyter/kernel/Kernel';
 
 export type JupyterState = {
-  cellStore: typeof useCellStore;
-  consoleStore: typeof useConsoleStore;
+  cellsStore: CellsState;
+  consoleStore: ConsoleState;
   datalayerConfig?: IDatalayerConfig;
   jupyterConfig?: IJupyterConfig;
   kernel?: Kernel;
   kernelIsLoading: boolean;
-  notebookStore: typeof useNotebookStore;
-  outputStore: typeof useOutputStore;
+  notebookStore: NotebookState;
+  outputStore: OutputState;
   serviceManager?: ServiceManager;
   setDatalayerConfig: (configuration?: IDatalayerConfig) => void;
   setVersion: (version: string) => void;
-  terminalStore: typeof useTerminalStore;
+  terminalStore: TerminalState;
   version: string;
 };
 
@@ -63,11 +63,11 @@ export const jupyterStore = createStore<JupyterState>((set, get) => ({
   kernel: undefined,
   serviceManager: undefined,
   serverSettings: undefined,
-  cellStore: useCellStore,
-  consoleStore: useConsoleStore,
-  notebookStore: useNotebookStore,
-  outputStore: useOutputStore,
-  terminalStore: useTerminalStore,
+  cellsStore: cellsStore.getState(),
+  consoleStore: consoleStore.getState(),
+  notebookStore: notebookStore.getState(),
+  outputStore: outputsStore.getState(),
+  terminalStore: terminalStore.getState(),
 }));
 
 // TODO Reuse code portions from JupyterContext
@@ -187,7 +187,6 @@ export function useJupyterStoreFromContext(props: JupyterContextPropsType): Jupy
               kernelName: defaultKernelName,
               kernelSpecName: defaultKernelName,
               kernelModel: kernel.value,
-              kernelType: 'notebook',
               kernelspecsManager: serviceManager.kernelspecs,
               sessionManager: serviceManager.sessions,
             });
@@ -215,7 +214,6 @@ export function useJupyterStoreFromContext(props: JupyterContextPropsType): Jupy
           kernelManager,
           kernelName: defaultKernelName,
           kernelSpecName: defaultKernelName,
-          kernelType: 'notebook',
           kernelspecsManager: serviceManager.kernelspecs,
           sessionManager: serviceManager.sessions,
         });

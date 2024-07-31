@@ -15,7 +15,7 @@ const Vega = () => (
   <Jupyter>
     <Notebook
       path="vega/Vega.ipynb"
-      uid="notebook-vega-uid"
+      id="notebook-vega-id"
       renderers={[vega3Renderer]}
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       CellSidebar={CellSidebarNew}
