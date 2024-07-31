@@ -55,6 +55,7 @@ import ClassicWidgetManager from '../../jupyter/ipywidgets/classic/manager';
 import Kernel from '../../jupyter/kernel/Kernel';
 import getMarked from '../notebook/marked/marked';
 import CellCommands from './CellCommands';
+import { cellsStore } from './CellState';
 
 interface BoxOptions {
   showToolbar?: boolean;
@@ -393,12 +394,14 @@ export class CellAdapter {
     cell: CodeCell,
     metadata?: JSONObject
   ): Promise<KernelMessage.IExecuteReplyMsg | void> {
+    cellsStore.getState().setIsExecuting(this._id, true);
     const model = cell.model;
     const code = model.sharedModel.getSource();
     if (!code.trim() || !this.kernel) {
       model.sharedModel.transact(() => {
         model.clearExecution();
       }, false);
+      cellsStore.getState().setIsExecuting(this._id, false);
       return new Promise(() => {});
     }
     const cellId = { cellId: model.sharedModel.getId() };
@@ -479,6 +482,7 @@ export class CellAdapter {
           finished || new Date().toISOString();
         model.setMetadata('execution', timingInfo);
       }
+      cellsStore.getState().setIsExecuting(this._id, false);
       return executeReplyMessage;
     } catch (e) {
       // If we started executing, and the cell is still indicating this execution, clear the prompt.
@@ -494,6 +498,7 @@ export class CellAdapter {
           model.setMetadata('execution', timingInfo);
         }
       }
+      cellsStore.getState().setIsExecuting(this._id, false);
       throw e;
     }
   }

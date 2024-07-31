@@ -8,16 +8,20 @@ import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
 import { CellAdapter } from './CellAdapter';
 
+// Individual, for cell
 export interface ICellState {
   source?: string;
   outputsCount?: number;
   adapter?: CellAdapter;
-  isKernelSessionAvailable?: boolean; // Individual, for cell
+  isKernelSessionAvailable?: boolean;
+  isExecuting?: boolean;
 }
 
+// For all cells
 export interface ICellsState {
   cells: Map<string, ICellState>;
-  areAllKernelSessionsReady: boolean; // Control the state for all cells
+  areAllKernelSessionsReady: boolean;
+  isAnyCellExecuting: boolean;
 }
 
 export type CellsState = ICellsState & {
@@ -31,6 +35,7 @@ export type CellsState = ICellsState & {
   getOutputsCount: (id: string) => number | undefined;
   isKernelSessionAvailable: (id: string) => boolean | undefined;
   execute: (id?: string) => void;
+  setIsExecuting: (id: string, isExecuting: boolean) => void;
 };
 
 /**
@@ -45,12 +50,26 @@ const areAllKernelSessionsAvailable = (cells: Map<string, ICellState>): boolean 
   return true;
 };
 
+/**
+ * Check if any cell is currently executing
+ */
+export const isAnyCellRunning = (cells: Map<string, ICellState>): boolean => {
+  for (const cell of cells.values()) {
+    if (cell.isExecuting) {
+      return true;
+    }
+  }
+  return false;
+};
+
+
 export const cellsStore = createStore<CellsState>((set, get) => ({
   cells: new Map<string, ICellState>(),
   source: '',
   outputsCount: 0,
-  areAllKernelSessionsReady: false,
   adapter: undefined,
+  areAllKernelSessionsReady: false, // prop refers to all cells
+  isAnyCellExecuting: false, // prop refers to all cells,
   setCells: (cells: Map<string, ICellState>) => set((cell: CellsState) => ({ cells })),
   setSource: (id: string, source: string) => {
     const cells = get().cells;
@@ -113,6 +132,20 @@ export const cellsStore = createStore<CellsState>((set, get) => ({
     } else {
       get().cells.forEach((cell) => cell.adapter?.execute());
     }
+  },
+  setIsExecuting: (id: string, isExecuting: boolean) => {
+    const cells = get().cells;
+    const cell = cells.get(id);
+    if (cell) {
+      cell.isExecuting = isExecuting;
+    } else {
+      get().cells.forEach((cell) => cell.adapter?.execute())
+      cells.set(id, { isExecuting });
+    }
+
+    // Also update isAnyCellRunning state (for all cells)
+    const isAnyCellExecuting = isAnyCellRunning(cells);
+    set((state: CellsState) => ({ cells, isAnyCellExecuting }));
   },
 }));
 
