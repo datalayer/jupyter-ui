@@ -518,7 +518,7 @@ export class NotebookAdapter {
   setNbformat(nbformat: INotebookContent) {
     if (nbformat === null) {
       throw new Error(
-        'The nbformat should first be set via the constructor of NotebookAdapater'
+        'The nbformat should first be set via the constructor of NotebookAdapter'
       );
     }
     this._nbformat = nbformat;
