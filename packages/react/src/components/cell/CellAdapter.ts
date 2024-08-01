@@ -485,6 +485,7 @@ export class CellAdapter {
       cellsStore.getState().setIsExecuting(this._id, false);
       return executeReplyMessage;
     } catch (e) {
+      cellsStore.getState().setIsExecuting(this._id, false);
       // If we started executing, and the cell is still indicating this execution, clear the prompt.
       if (future && !cell.isDisposed && cell.outputArea.future === future) {
         cell.setPrompt('');
@@ -498,7 +499,6 @@ export class CellAdapter {
           model.setMetadata('execution', timingInfo);
         }
       }
-      cellsStore.getState().setIsExecuting(this._id, false);
       throw e;
     }
   }

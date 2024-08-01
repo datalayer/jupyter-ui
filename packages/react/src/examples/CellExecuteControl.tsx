@@ -22,10 +22,7 @@ const btnStyle = {
     marginTop: '20px'
 }
 
-const CELL_CODE = `
-import time
-time.sleep(10)
-`
+const CELL_CODE = `import time\ntime.sleep(3)`
 
 const CellExecuteControl = () => {
   const [executionDisable, setExecutionDisable] = React.useState(false);
@@ -50,13 +47,13 @@ const CellExecuteControl = () => {
       <Box style={{marginTop: '20px'}}>
         <Cell 
           id='1' 
-          type={'code'} 
+          type='code'
           source={CELL_CODE} 
           autoStart={false} 
           showToolbar={false} />
         <Cell 
           id='2' 
-          type={'code'} 
+          type='code'
           autoStart={false} 
           showToolbar={false} />
         <Button 
