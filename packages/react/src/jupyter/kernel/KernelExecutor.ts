@@ -258,9 +258,7 @@ export class KernelExecutor {
           break;
         case 'error':
           {
-            const { ename, evalue, traceback } = (
-              content as any as KernelMessage.IErrorMsg
-            ).content;
+            const { ename, evalue, traceback } = content as KernelMessage.IReplyErrorContent;
             this._executed.reject(
               `${ename}: ${evalue}\n${(traceback ?? []).join('\n')}`
             );
