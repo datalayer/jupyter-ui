@@ -258,13 +258,9 @@ export class KernelExecutor {
           break;
         case 'error':
           {
-            // NOTE: This block that was here previously cannot extract the properties consistently, 
-            //causing the Promise to never be rejected in case of an execution error.
-            // const { ename, evalue, traceback } = (
-            //   content as any as KernelMessage.IErrorMsg
-            // ).content;
+            const { ename, evalue, traceback } = content as KernelMessage.IReplyErrorContent;
             this._executed.reject(
-              `${content.ename}: ${content.evalue}\n${(content.traceback ?? []).join('\n')}`
+              `${ename}: ${evalue}\n${(traceback ?? []).join('\n')}`
             );
           }
           break;
