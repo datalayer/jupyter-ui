@@ -17,7 +17,8 @@ export async function execute(
   code: string,
   output: OutputArea,
   kernel: Kernel,
-  metadata?: JSONObject
+  metadata?: JSONObject,
+  notifyOnComplete? : boolean
 ): Promise<KernelMessage.IExecuteReplyMsg | undefined> {
   // Override the default for `stop_on_error`.
   let stopOnError = true;
@@ -33,6 +34,7 @@ export async function execute(
     {
       model: output.model,
       stopOnError,
+      notifyOnComplete : notifyOnComplete
     }
   );
   const future = kernelExecutor!.future;

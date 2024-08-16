@@ -40,6 +40,7 @@ export type IOutputProps = {
   showEditor: boolean;
   showKernelProgressBar?: boolean;
   toolbarPosition: 'up' | 'middle' | 'none';
+  notifyOnComplete? : boolean;
 };
 
 export const Output = (props: IOutputProps) => {
@@ -62,6 +63,7 @@ export const Output = (props: IOutputProps) => {
     showControl,
     showEditor,
     showKernelProgressBar = true,
+    notifyOnComplete = false,
     id: sourceId,
     toolbarPosition,
   } = props;
@@ -121,7 +123,7 @@ export const Output = (props: IOutputProps) => {
   useEffect(() => {
     if (adapter) {
       if (autoRun) {
-        adapter.execute(code);
+        adapter.execute(code, notifyOnComplete);
       }
     }
   }, [adapter]);
@@ -141,12 +143,12 @@ export const Output = (props: IOutputProps) => {
   const executeRequest = outputStore.getExecuteRequest(sourceId);
   useEffect(() => {
     if (adapter && executeRequest && executeRequest === id) {
-      adapter.execute(code);
+      adapter.execute(code, notifyOnComplete);
     }
   }, [executeRequest, adapter]);
   useEffect(() => {
     if (adapter && executeTrigger > 0) {
-      adapter.execute(code);
+      adapter.execute(code, notifyOnComplete);
     }
   }, [executeTrigger]);
   useEffect(() => {
@@ -244,6 +246,7 @@ Output.defaultProps = {
       metadata: {},
     },
   ],
+  notifyOnComplete : false,
   toolbarPosition: 'up',
 } as Partial<IOutputProps>;
 

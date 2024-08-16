@@ -79,10 +79,10 @@ export class OutputAdapter {
     this.initKernel();
   }
 
-  public async execute(code: string) {
+  public async execute(code: string, notifyOnComplete? : boolean) {
     if (this._kernel) {
       this.clear();
-      const done = execute(this._id, code, this._outputArea, this._kernel);
+      const done = execute(this._id, code, this._outputArea, this._kernel, notifyOnComplete);
       await done;
     }
   }
