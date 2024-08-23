@@ -44,7 +44,7 @@
     "@jupyterlab/running-extension": "^4.0.0",
     "@jupyterlab/testutils": "^4.0.0",
     "@jupyterlab/vega3-extension": "^3.3.0",
-    "@jupyterlite/javascript-kernel-extension": "^0.2.2",
+    "@jupyterlite/javascript-kernel-extension": "^0.3.0",
     "@mermaid-js/mermaid-zenuml": "0.2.0",
     "@playwright/test": "^1.40.1",
     "@primer/octicons-react": "^19.8.0",
