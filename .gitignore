@@ -40,6 +40,8 @@ node_modules/
 # Version file is handled by hatchling
 **/jupyter_react/_version.py
 
+**/jupyter_react/static
+
 # Integration tests
 test-results/
 playwright-report/
@@ -169,3 +171,4 @@ packages/*/content
 !.licenserc.yaml
 !**/static/README.md
 !docs/static/img
+!**/jupyter_react/static/README.md

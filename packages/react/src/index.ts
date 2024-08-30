@@ -44,11 +44,6 @@ export * from './components/cell/Cell';
 export * from './components/cell/CellAdapter';
 export * from './components/cell/CellState';
 
-// CodeMirror Editor.
-// @todo CodeMirrorEditor breaks the JupyterLab extension loading.
-// @see https://github.com/datalayer/jupyter-ui/issues/170
-// export * from './components/codemirror/CodeMirrorEditor';
-
 // Commands.
 export * from './components/commands/Commands';
 
@@ -75,6 +70,9 @@ export * from './components/jupyterlab/JupyterLabAppAdapter';
 export * from './components/jupyterlab/JupyterLabAppPlugins';
 export * from './components/jupyterlab/JupyterLabAppCss';
 
+// CodeMirrorEditor.
+export * from './components/codemirror/CodeMirrorEditor';
+
 // Kernel.
 export * from './components/kernel';
 
@@ -98,9 +96,6 @@ export * from './components/notebook/cell/sidebar/CellSidebarWidget';
 export * from './components/notebook/cell/sidebar/CellSidebar';
 export * from './components/notebook/cell/sidebar/CellSidebarRun';
 
-// Outputs.
-// @todo CodeMirrorEditor imported by Output breaks the JupyterLab extension loading.
-// @see https://github.com/datalayer/jupyter-ui/issues/170
 export * from './components/output/Output';
 export * from './components/output/OutputAdapter';
 export * from './components/output/OutputState';
