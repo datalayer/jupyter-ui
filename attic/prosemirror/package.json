@@ -75,7 +75,7 @@
     "typescript": "5.0.3",
     "url-loader": "~3.0.0",
     "watch": "~1.0.2",
-    "webpack": "5.76.0",
+    "webpack": "5.94.0",
     "webpack-cli": "4.10.0",
     "webpack-dev-server": "4.9.3"
   }
