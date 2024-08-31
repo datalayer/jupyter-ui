@@ -29,7 +29,7 @@ export type JupyterState = {
   kernelIsLoading: boolean;
   notebookStore: NotebookState;
   outputStore: OutputState;
-  serviceManager?: ServiceManager;
+  serviceManager?: ServiceManager.IManager;
   setDatalayerConfig: (configuration?: IDatalayerConfig) => void;
   setVersion: (version: string) => void;
   terminalStore: TerminalState;
@@ -85,6 +85,7 @@ export function useJupyterStoreFromContext(props: JupyterContextPropsType): Jupy
     jupyterServerToken = '60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6',
     jupyterServerUrl = 'https://oss.datalayer.run/api/jupyter-server',
     lite = false,
+    serviceManager: propsServiceManager,
     startDefaultKernel = true,
     terminals = false,
     useRunningKernelId,
@@ -101,76 +102,82 @@ export function useJupyterStoreFromContext(props: JupyterContextPropsType): Jupy
     jupyterStore.getState().jupyterConfig = config;
     return config;
   }, []);
-  const [serviceManager, setServiceManager] = useState<ServiceManager>();
+  const [serviceManager, setServiceManager] = useState<ServiceManager.IManager | undefined>(propsServiceManager);
   const [_, setKernel] = useState<Kernel>();
-  const [__, setIsLoading] = useState<boolean>(
-    startDefaultKernel || useRunningKernelIndex > -1
-  );
+  const [__, setIsLoading] = useState<boolean>(startDefaultKernel || useRunningKernelIndex > -1);
+  useEffect(() => {
+    if (propsServiceManager) {
+      setServiceManager(propsServiceManager);
+      jupyterStore.getState().serviceManager = propsServiceManager;
+    }
+  }, [propsServiceManager])
   // Create a service manager.
   useEffect(() => {
-    if (lite) {
-      createLiteServer().then(async liteServer => {
-        // Load the browser kernel
-        const mod =
-          typeof lite === 'boolean'
-            ? await import('@jupyterlite/pyodide-kernel-extension')
-            : await lite;
-        // Load the module manually to get the list of plugin IDs
-        let data = mod.default;
-        // Handle commonjs exports.
-        if (!Object.prototype.hasOwnProperty.call(mod, '__esModule')) {
-          data = mod as any;
-        }
-        if (!Array.isArray(data)) {
-          data = [data];
-        }
-        const pluginIDs = data.map(item => {
-          try {
-            liteServer.registerPlugin(item);
-            return item.id;
-          } catch (error) {
-            console.error(error);
-            return null;
+    if (!serviceManager) {
+      if (lite) {
+        createLiteServer().then(async liteServer => {
+          // Load the browser kernel
+          const mod =
+            typeof lite === 'boolean'
+              ? await import('@jupyterlite/pyodide-kernel-extension')
+              : await lite;
+          // Load the module manually to get the list of plugin IDs
+          let data = mod.default;
+          // Handle commonjs exports.
+          if (!Object.prototype.hasOwnProperty.call(mod, '__esModule')) {
+            data = mod as any;
           }
+          if (!Array.isArray(data)) {
+            data = [data];
+          }
+          const pluginIDs = data.map(item => {
+            try {
+              liteServer.registerPlugin(item);
+              return item.id;
+            } catch (error) {
+              console.error(error);
+              return null;
+            }
+          });
+          // Activate the loaded plugins
+          await Promise.all(
+            pluginIDs.filter(id => id).map(id => liteServer.activatePlugin(id!))
+          );
+          setServiceManager(liteServer.serviceManager);
+          jupyterStore.getState().serviceManager = liteServer.serviceManager;
         });
-        // Activate the loaded plugins
-        await Promise.all(
-          pluginIDs.filter(id => id).map(id => liteServer.activatePlugin(id!))
+      } else {
+        const serverSettings = createServerSettings(
+          config.jupyterServerUrl,
+          config.jupyterServerToken,
         );
-        setServiceManager(liteServer.serviceManager);
-        jupyterStore.getState().serviceManager = liteServer.serviceManager;
-      });
-    } else {
-      const serverSettings = createServerSettings(
-        config.jupyterServerUrl,
-        config.jupyterServerToken,
-      );
-      ensureJupyterAuth(serverSettings).then(isAuth => {
-        if (!isAuth) {
-          const loginUrl =
-            getJupyterServerUrl() + '/login?next=' + window.location;
-          console.warn('You need to authenticate on the Jupyter Server URL', loginUrl);
-//          window.location.replace(loginUrl);
-        }
-        if (useRunningKernelId && useRunningKernelIndex > -1) {
-          throw new Error(
-            'You can not ask for useRunningKernelId and useRunningKernelIndex at the same time.'
-          );
-        }
-        if (
-          startDefaultKernel &&
-          (useRunningKernelId || useRunningKernelIndex > -1)
-        ) {
-          throw new Error(
-            'You can not ask for startDefaultKernel and (useRunningKernelId or useRunningKernelIndex) at the same time.'
-          );
-        }
-        const serviceManager = new ServiceManager({ serverSettings });
-        setServiceManager(serviceManager);
-        jupyterStore.getState().serviceManager = serviceManager;
-      });
+        ensureJupyterAuth(serverSettings).then(isAuth => {
+          if (!isAuth) {
+            const loginUrl =
+              getJupyterServerUrl() + '/login?next=' + window.location;
+            console.warn('You need to authenticate on the Jupyter Server URL', loginUrl);
+  //          window.location.replace(loginUrl);
+          }
+          if (useRunningKernelId && useRunningKernelIndex > -1) {
+            throw new Error(
+              'You can not ask for useRunningKernelId and useRunningKernelIndex at the same time.'
+            );
+          }
+          if (
+            startDefaultKernel &&
+            (useRunningKernelId || useRunningKernelIndex > -1)
+          ) {
+            throw new Error(
+              'You can not ask for startDefaultKernel and (useRunningKernelId or useRunningKernelIndex) at the same time.'
+            );
+          }
+          const serviceManager = new ServiceManager({ serverSettings });
+          setServiceManager(serviceManager);
+          jupyterStore.getState().serviceManager = serviceManager;
+        });
+      }
     }
-  }, [jupyterServerUrl, lite]);
+  }, [serviceManager, jupyterServerUrl, lite]);
   // Create a kernel
   useEffect(() => {
     serviceManager?.kernels.ready.then(async () => {

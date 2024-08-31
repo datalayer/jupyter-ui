@@ -81,14 +81,14 @@ export class NotebookAdapter {
   private _readOnly: boolean;
   private _renderers: IRenderMime.IRendererFactory[];
   private _rendermime?: RenderMimeRegistry;
-  private _serviceManager: ServiceManager;
+  private _serviceManager: ServiceManager.IManager;
   private _tracker?: NotebookTracker;
   private _id: string;
   private _CellSidebar?: (props: any) => JSX.Element;
 
   constructor(
     props: INotebookProps,
-    serviceManager: ServiceManager,
+    serviceManager: ServiceManager.IManager,
     lite?: Lite
   ) {
 //    this._bundledIPyWidgets = props.bundledIPyWidgets;
@@ -508,7 +508,7 @@ export class NotebookAdapter {
     return this._boxPanel;
   }
 
-  get serviceManager(): ServiceManager {
+  get serviceManager(): ServiceManager.IManager {
     return this._serviceManager;
   }
 

@@ -9,6 +9,7 @@ import { Box } from '@primer/react';
 import { JupyterLab } from '@jupyterlab/application';
 import { PageConfig } from '@jupyterlab/coreutils';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
+import { ServiceManager } from '@jupyterlab/services';
 import { useJupyter } from '../../jupyter/JupyterContext';
 import { ColorMode } from '../../jupyter/lab/JupyterLabColorMode';
 import { JupyterLabAppCorePlugins } from './JupyterLabAppPlugins';
@@ -22,39 +23,46 @@ import JupyterLabAppCss from './JupyterLabAppCss';
   PageConfig.getOption('fullStaticUrl') + '/';
 
 export type JupyterLabAppProps = {
+  PluginType?: any;
   devMode: boolean;
-  headless: boolean;
-  pluginPromises?: Array<Promise<JupyterLab.IPluginModule>>;
-  plugins: Array<JupyterLab.IPluginModule>;
   disabledPlugins: Array<string>;
-  mimeRendererPromises?: Array<Promise<IRenderMime.IExtensionModule>>;
-  mimeRenderers: Array<IRenderMime.IExtensionModule>;
-  onPlugin?: (plugin: any) => void;
-  onJupyterLab: (jupyterLabAppdapter: JupyterLabAppAdapter) => void;
+  headless: boolean;
   height: string | number;
   hostId: string;
+  mimeRendererPromises?: Array<Promise<IRenderMime.IExtensionModule>>;
+  mimeRenderers: Array<IRenderMime.IExtensionModule>;
+  onJupyterLab: (jupyterLabAppdapter: JupyterLabAppAdapter) => void;
+  onPlugin?: (plugin: any) => void;
   pluginId?: string;
-  PluginType?: any;
+  pluginPromises?: Array<Promise<JupyterLab.IPluginModule>>;
+  plugins: Array<JupyterLab.IPluginModule>;
   position: string;
+  serviceManager: ServiceManager.IManager;
   splash: boolean;
+  startDefaultKernel: boolean;
   theme: ColorMode;
   width: string | number;
 };
 
 const JupyterLabAppComponent = (props: JupyterLabAppProps) => {
   const {
-    hostId,
-    position,
-    height,
-    width,
-    headless,
-    theme,
-    onJupyterLab,
-    pluginId,
     PluginType,
+    headless,
+    height,
+    hostId,
+    onJupyterLab,
     onPlugin,
+    pluginId,
+    position,
+    serviceManager: propsServiceManager,
+    startDefaultKernel,
+    theme,
+    width,
   } = props;
-  const { serviceManager, collaborative } = useJupyter();
+  const { serviceManager, collaborative } = useJupyter({
+    serviceManager: propsServiceManager,
+    startDefaultKernel,
+  });
   const defaultMimeExtensionPromises = useMemo(
     () =>
       props.mimeRendererPromises ??
@@ -110,15 +118,16 @@ const JupyterLabAppComponent = (props: JupyterLabAppProps) => {
 
 JupyterLabAppComponent.defaultProps = {
   devMode: false,
-  plugins: [],
   disabledPlugins: [],
-  mimeRenderers: [],
   headless: false,
   height: '100vh',
   hostId: 'app-example-id',
-  onJupyterLab: (jupyterLabAppAdapter: JupyterLabAppAdapter) => {},
+  mimeRenderers: [],
+  onJupyterLab: (_: JupyterLabAppAdapter) => {},
+  plugins: [],
   position: 'relative',
   splash: true,
+  startDefaultKernel: false,
   theme: 'light',
   width: '100%',
 } as Partial<JupyterLabAppProps>;

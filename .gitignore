@@ -169,6 +169,5 @@ packages/*/content
 !.storybook
 !.vscode
 !.licenserc.yaml
-!**/static/README.md
+!packages/react/jupyter_react/static/README.md
 !docs/static/img
-!**/jupyter_react/static/README.md

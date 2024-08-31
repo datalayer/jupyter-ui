@@ -25,7 +25,7 @@ type Plugin = JupyterFrontEndPlugin<any, any, any> & {
 type Plugins = Map<string, Plugin>;
 
 type Props = JupyterLabAppProps & {
-  serviceManager: ServiceManager;
+  serviceManager: ServiceManager.IManager;
   collaborative?: boolean;
 };
 

@@ -79,7 +79,7 @@ export type JupyterContextType = {
   /**
    * Jupyter services manager
    */
-  serviceManager?: ServiceManager;
+  serviceManager?: ServiceManager.IManager;
   /**
    * Jupyter Server base URL
    *
@@ -149,6 +149,10 @@ export const ensureJupyterAuth = async (
 };
 
 export type JupyterContextPropsType = {
+  /**
+   * Optional service manager.
+   */
+  serviceManager?: ServiceManager.IManager;
   /**
    * Whether the component is collaborative or not.
    */
