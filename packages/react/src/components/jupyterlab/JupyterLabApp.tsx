@@ -17,10 +17,8 @@ import JupyterLabAppAdapter from './JupyterLabAppAdapter';
 import JupyterLabAppCss from './JupyterLabAppCss';
 
 // The webpack public path needs to be set before loading the CSS assets.
-(globalThis as any).__webpack_public_path__ =
-  PageConfig.getOption('fullStaticUrl') + '/';
-(window as any).__webpack_public_path__ =
-  PageConfig.getOption('fullStaticUrl') + '/';
+(globalThis as any).__webpack_public_path__ = PageConfig.getOption('fullStaticUrl') + '/';
+(window as any).__webpack_public_path__ = PageConfig.getOption('fullStaticUrl') + '/';
 
 export type JupyterLabAppProps = {
   PluginType?: any;
@@ -31,14 +29,15 @@ export type JupyterLabAppProps = {
   hostId: string;
   mimeRendererPromises?: Array<Promise<IRenderMime.IExtensionModule>>;
   mimeRenderers: Array<IRenderMime.IExtensionModule>;
+  nosplash: boolean;
   onJupyterLab: (jupyterLabAppdapter: JupyterLabAppAdapter) => void;
   onPlugin?: (plugin: any) => void;
   pluginId?: string;
   pluginPromises?: Array<Promise<JupyterLab.IPluginModule>>;
   plugins: Array<JupyterLab.IPluginModule>;
   position: string;
+  serverless: boolean;
   serviceManager: ServiceManager.IManager;
-  splash: boolean;
   startDefaultKernel: boolean;
   theme: ColorMode;
   width: string | number;
@@ -54,12 +53,14 @@ const JupyterLabAppComponent = (props: JupyterLabAppProps) => {
     onPlugin,
     pluginId,
     position,
+    serverless,
     serviceManager: propsServiceManager,
     startDefaultKernel,
     theme,
     width,
   } = props;
   const { serviceManager, collaborative } = useJupyter({
+    serverless,
     serviceManager: propsServiceManager,
     startDefaultKernel,
   });
@@ -75,7 +76,6 @@ const JupyterLabAppComponent = (props: JupyterLabAppProps) => {
       JupyterLabAppCorePlugins(collaborative).extensionPromises,
     []
   );
-
   const ref = useRef<HTMLDivElement>(null);
   const [_, setAdapter] = useState<JupyterLabAppAdapter>();
   useEffect(() => {
@@ -126,7 +126,8 @@ JupyterLabAppComponent.defaultProps = {
   onJupyterLab: (_: JupyterLabAppAdapter) => {},
   plugins: [],
   position: 'relative',
-  splash: true,
+  nosplash: true,
+  serverless: false,
   startDefaultKernel: false,
   theme: 'light',
   width: '100%',

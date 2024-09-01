@@ -71,7 +71,7 @@ export class Kernel {
     await this._kernelManager.ready;
     await this._sessionManager.ready;
     if (kernelModel) {
-      console.log('Reusing a pre-existing kernel model.');
+      console.log('Reusing a pre-existing Jupyter Kernel model.');
       await this._sessionManager.refreshRunning();
       const model = find(this._sessionManager.running(), item => {
         return item.path === this._path;

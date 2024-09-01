@@ -58,7 +58,7 @@ export class JupyterLabAppAdapter {
       hostId,
       plugins: extensions,
       mimeRenderers: mimeExtensions,
-      splash,
+      nosplash,
       pluginPromises: extensionPromises,
       mimeRendererPromises: mimeExtensionPromises,
       devMode,
@@ -105,7 +105,7 @@ export class JupyterLabAppAdapter {
       }
     });
     this._jupyterLab.registerPluginModules(extensions);
-    if (!splash) {
+    if (nosplash) {
       this._jupyterLab.deregisterPlugin(
         '@jupyterlab/apputils-extension:splash',
         true

@@ -5,15 +5,10 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import {
-  BaseStyles,
-  ThemeProvider,
-  theme,
-} from '@primer/react';
+import { JupyterLabTheme } from '../jupyter/lab/JupyterLabTheme';
 import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from './toolbars/NotebookToolbar';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebarButton';
-import JupyterLabCss from './../jupyter/lab/JupyterLabCss';
 
 const NOTEBOOK_ID = 'notebook-id';
 
@@ -25,23 +20,15 @@ const colorMode = 'light';
 
 root.render(
   <>
-    <JupyterLabCss colorMode={colorMode} />
-    <ThemeProvider
-      theme={theme}
-      colorMode={colorMode === 'light' ? 'day' : 'night'}
-      dayScheme="light"
-      nightScheme="dark"
-    >
-      <BaseStyles>
-        <Notebook
-          path="ipywidgets.ipynb"
-          id={NOTEBOOK_ID}
-          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-          cellSidebarMargin={60}
-          CellSidebar={CellSidebar}
-          Toolbar={NotebookToolbar}
-        />
-      </BaseStyles>
-    </ThemeProvider>
+    <JupyterLabTheme colorMode={colorMode}>
+      <Notebook
+        path="ipywidgets.ipynb"
+        id={NOTEBOOK_ID}
+        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+        cellSidebarMargin={60}
+        CellSidebar={CellSidebar}
+        Toolbar={NotebookToolbar}
+      />
+    </JupyterLabTheme>
   </>
 );

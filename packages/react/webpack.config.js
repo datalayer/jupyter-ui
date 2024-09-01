@@ -30,6 +30,7 @@ const ENTRY =
   // './src/examples/IPyWidgetsWithState';
   // './src/examples/JupyterLabApp';
   // './src/examples/JupyterLabHeadlessApp';
+  // './src/examples/JupyterLabServerlessApp';
   // './src/examples/Kernels';
   // './src/examples/KernelExecute';
   // './src/examples/KernelExecutor';
@@ -41,7 +42,7 @@ const ENTRY =
   // './src/examples/NotebookKernelChange';
   // './src/examples/NotebookLite';
   // './src/examples/NotebookNbFormat';
-  // './src/examples/NotebookNbFormatChange';O
+  // './src/examples/NotebookNbFormatChange';
   // './src/examples/NotebookNoContext';
   // './src/examples/NotebookNoContextNoPrimer';
   // './src/examples/NotebookSkeleton';

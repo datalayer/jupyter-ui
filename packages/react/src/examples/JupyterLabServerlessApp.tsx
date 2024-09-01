@@ -5,8 +5,7 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import { NotebookPanel } from '@jupyterlab/notebook';
-import Jupyter from '../jupyter/Jupyter';
+import { JupyterLabTheme } from '../jupyter/lab/JupyterLabTheme';
 import JupyterLabApp from '../components/jupyterlab/JupyterLabApp';
 import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter';
 
@@ -21,14 +20,10 @@ const JupyterLabAppExample = () => {
   const onJupyterLab = async (jupyterLabAdapter: JupyterLabAppAdapter) => {
     const jupyterLab = jupyterLabAdapter.jupyterLab;
     console.log('JupyterLab is ready', jupyterLab);
-    jupyterLab.commands
-      .execute('notebook:create-new', { kernelName: 'python3' })
-      .then((notebookPanel: NotebookPanel) => {
-        console.log('Jupyter Notebook Panel', notebookPanel);
-      });
   };
   return (
     <JupyterLabApp
+      serverless
       plugins={[
         lightThemePlugins,
         ipywidgetsPlugins,
@@ -47,8 +42,8 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <Jupyter startDefaultKernel={false} disableCssLoading>
-    <h1>JupyterLab Application</h1>
+  <JupyterLabTheme>
+    <h1>JupyterLab Serverless Application</h1>
     <JupyterLabAppExample />
-  </Jupyter>
+  </JupyterLabTheme>
 );

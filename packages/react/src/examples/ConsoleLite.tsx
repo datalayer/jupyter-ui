@@ -14,7 +14,7 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <Jupyter lite={true}>
+  <Jupyter lite>
     <Box as="h1">A Jupyter Console with a Lite Kernel</Box>
     <Console
       code={`import piplite
