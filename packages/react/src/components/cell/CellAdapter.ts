@@ -255,15 +255,15 @@ export class CellAdapter {
     this._sessionContext.kernelChanged.connect(
       (_, arg: Session.ISessionConnection.IKernelChangedArgs) => {
         const kernelConnection = arg.newValue;
-        console.log('Current Kernel connection', kernelConnection);
+        console.log('Current Jupyter Kernel connection', kernelConnection);
         if (kernelConnection && !kernelConnection.handleComms) {
           console.warn(
-            'Kernel Connection does not handle Comms',
+            'Jupyter Kernel Connection does not handle Comms',
             kernelConnection.id
           );
           (kernelConnection as any).handleComms = true;
           console.log(
-            'Kernel Connection is updated to enforce Comms support',
+            'Jupyter Kernel Connection is updated to enforce Comms support',
             kernelConnection.handleComms
           );
         }

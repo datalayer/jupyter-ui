@@ -79,7 +79,7 @@ export const FileBrowser = () => {
   };
   useEffect(() => {
     if (serviceManager) {
-      const services = new Services(serviceManager!);
+      const services = new Services(serviceManager);
       loadPath(services, initialTree, []);
     }
   }, [serviceManager]);

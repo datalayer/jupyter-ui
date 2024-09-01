@@ -41,7 +41,7 @@ class ConsoleAdapter {
     });
   }
 
-  protected setupConsole(serviceManager: ServiceManager, kernel?: Kernel) {
+  protected setupConsole(serviceManager: ServiceManager.IManager, kernel?: Kernel) {
     // Set up a command registry.
     const commands = new CommandRegistry();
     this._panel.node.addEventListener('keydown', event => {
@@ -184,7 +184,7 @@ export namespace ConsoleAdapter {
     /**
      * Application service manager
      */
-    serviceManager: ServiceManager;
+    serviceManager: ServiceManager.IManager;
     /**
      * Initial code to run.
      */

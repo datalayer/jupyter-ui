@@ -15,7 +15,7 @@ import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 import notebook from './notebooks/Matplotlib.ipynb.json';
 
 const Matplotlib = () => (
-  <Jupyter disableCssLoading={true}>
+  <Jupyter disableCssLoading>
     <JupyterLabCss colorMode="light" />
     <Notebook
       nbformat={notebook as INotebookContent}

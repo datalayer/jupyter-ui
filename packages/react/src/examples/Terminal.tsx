@@ -13,7 +13,7 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <Jupyter startDefaultKernel={false} terminals={true}>
+  <Jupyter startDefaultKernel={false} terminals>
     <Terminal colorMode="dark" height="800px" />
   </Jupyter>
 );

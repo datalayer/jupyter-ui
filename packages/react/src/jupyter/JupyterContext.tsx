@@ -4,13 +4,9 @@
  * MIT License
  */
 
-import {
-  Kernel as CoreKernel,
-  ServerConnection,
-  ServiceManager,
-} from '@jupyterlab/services';
-import type { JupyterLiteServerPlugin } from '@jupyterlite/server';
 import React, { createContext, useContext } from 'react';
+import { Kernel as JupyterKernel, ServerConnection, ServiceManager } from '@jupyterlab/services';
+import type { JupyterLiteServerPlugin } from '@jupyterlite/server';
 import { requestAPI } from './JupyterHandlers';
 import Kernel from './kernel/Kernel';
 import { useJupyterStoreFromContext } from '../state';
@@ -20,135 +16,9 @@ export type Lite =
   | Promise<{ default: JupyterLiteServerPlugin<any>[] }>;
 
 /**
- * The type for the Jupyter context.
+ * The type for Jupyter props.
  */
-export type JupyterContextType = {
-  /**
-   * Whether the component is collaborative or not.
-   */
-  collaborative?: boolean;
-  /**
-   * Default kernel
-   */
-  defaultKernel?: Kernel;
-  /**
-   * Kernel
-   */
-  kernel?: Kernel;
-  /**
-   * Will be true while waiting for the default kernel.
-   *
-   * If `true`, it does not ensure a default kernel will
-   * be created successfully.
-   *
-   * This is useful to not mount to quickly a Lumino Widget
-   * to be unmount right away when the default kernel will
-   * be available.
-   */
-  defaultKernelIsLoading: boolean;
-  /**
-   * Kernel
-   */
-  kernelIsLoading: boolean;
-  /**
-   * The Kernel Manager.
-   */
-  kernelManager?: CoreKernel.IManager;
-  /**
-   * If `true`, it will load the Pyodide jupyterlite kernel.
-   *
-   * You can also set it to dynamically import any jupyterlite
-   * kernel package.
-   *
-   * If defined, {@link serverUrls} and {@link defaultKernelName}
-   * will be ignored and the component will run this in-browser
-   * kernel.
-   *
-   * @example
-   * `lite: true` => Load dynamically the package @jupyterlite/pyodide-kernel-extension
-   *
-   * `lite: import('@jupyterlite/javascript-kernel-extension')` => Load dynamically
-   */
-  lite?: Lite;
-  /**
-   * Jupyter Server settings
-   *
-   * This is useless if running an in-browser kernel via {@link lite}.
-   */
-  serverSettings?: ServerConnection.ISettings;
-  /**
-   * Jupyter services manager
-   */
-  serviceManager?: ServiceManager;
-  /**
-   * Jupyter Server base URL
-   *
-   * Useless if running an in-browser kernel.
-   */
-  jupyterServerUrl: string;
-};
-
-/**
- * The instance for the Jupyter context.
- */
-export const JupyterContext = createContext<JupyterContextType | undefined>(
-  undefined
-);
-
-export const useJupyter = (props?: JupyterContextPropsType): JupyterContextType => {
-  const context = useContext(JupyterContext);
-  if (context) {
-    console.debug('Within a Jupyter context.');
-    return context;
-  }
-  const {
-    kernel,
-    kernelIsLoading,
-    serviceManager,
-    jupyterConfig,
-  } = useJupyterStoreFromContext(props ?? {});
-  const contextFromStore: JupyterContextType = {
-    collaborative: false,
-    defaultKernel: kernel,
-    defaultKernelIsLoading: kernelIsLoading,
-    jupyterServerUrl: jupyterConfig!.jupyterServerUrl,
-    kernel,
-    kernelIsLoading,
-    kernelManager: serviceManager?.kernels,
-    lite: false,
-    serverSettings: serviceManager?.serverSettings,
-    serviceManager,
-  }
-  return contextFromStore;
-};
-
-/**
- * The type for the Jupyter context consumer.
- */
-export const JupyterContextConsumer = JupyterContext.Consumer;
-
-/**
- * The type for the Jupyter context provider.
- */
-const JupyterProvider = JupyterContext.Provider;
-
-/**
- * Utility method to ensure the Jupyter context
- * is authenticated with the Jupyter server.
- */
-export const ensureJupyterAuth = async (
-  serverSettings: ServerConnection.ISettings
-): Promise<boolean> => {
-  try {
-    await requestAPI<any>(serverSettings, 'api', '');
-    return true;
-  } catch (reason) {
-    console.log('The Jupyter Server API has failed with reason', reason);
-    return false;
-  }
-};
-
-export type JupyterContextPropsType = {
+export type JupyterPropsType = {
   /**
    * Whether the component is collaborative or not.
    */
@@ -171,17 +41,30 @@ export type JupyterContextPropsType = {
    * kernel.
    *
    * @example
+   * 
    * https://cdn.jsdelivr.net/npm/@jupyterlite/pyodide-kernel-extension
    */
   lite?: Lite;
   /*
+   * Jupyter Server base URL.
    *
+   * Useless if running an in-browser kernel.
    */
   jupyterServerUrl?: string;
   /*
-   *
+   * Jupyter Server Token.
    */
   jupyterServerToken?: string;
+  /*
+   * Create a serveless Jupyter.
+   */
+  serverless?: boolean
+  /**
+   * Jupyter Server settings
+   *
+   * This is useless if running an in-browser kernel via {@link lite}.
+   */
+  serviceManager?: ServiceManager.IManager;
   /**
    * Whether to start the default kernel or not.
    */
@@ -199,16 +82,153 @@ export type JupyterContextPropsType = {
    */
   useRunningKernelIndex?: number;
   /*
-   *
+   * Allow the terminal usage.
    */
   terminals?: boolean;
 }
 
 /**
+ * The type for Jupyter context.
+ */
+export type JupyterContextType =  {
+  /**
+   * Whether the component is collaborative or not.
+   */
+  collaborative?: boolean;
+  /**
+   * Default kernel
+   */
+  defaultKernel?: Kernel;
+  /**
+   * Will be true while waiting for the default kernel.
+   *
+   * If `true`, it does not ensure a default kernel will
+   * be created successfully.
+   *
+   * This is useful to not mount to quickly a Lumino Widget
+   * to be unmount right away when the default kernel will
+   * be available.
+   */
+  defaultKernelIsLoading: boolean;
+  /**
+   * Jupyter Server base URL
+   *
+   * Useless if running an in-browser kernel.
+   */
+  jupyterServerUrl: string;
+  /**
+   * Kernel
+   */
+  kernel?: Kernel;
+  /**
+   * Kernel
+   */
+  kernelIsLoading: boolean;
+  /**
+   * The Kernel Manager.
+   */
+  kernelManager?: JupyterKernel.IManager;
+  /**
+   * If `true`, it will load the Pyodide jupyterlite kernel.
+   *
+   * You can also set it to dynamically import any jupyterlite
+   * kernel package.
+   *
+   * If defined, {@link serverUrls} and {@link defaultKernelName}
+   * will be ignored and the component will run this in-browser
+   * kernel.
+   *
+   * @example
+   * 
+   * `lite: true` => Load dynamically the package @jupyterlite/pyodide-kernel-extension
+   *
+   * `lite: import('@jupyterlite/javascript-kernel-extension')` => Load dynamically
+   */
+  lite?: Lite;
+  /**
+   * Jupyter services manager
+   */
+  serviceManager?: ServiceManager.IManager;
+  /**
+   * Jupyter Server settings
+   *
+   * This is useless if running an in-browser kernel via {@link lite}.
+   */
+  serverSettings?: ServerConnection.ISettings;
+};
+
+/**
  * The Jupyter context properties type.
  */
-export type JupyterContextProps = React.PropsWithChildren<JupyterContextPropsType>;
+export type JupyterContextProps = React.PropsWithChildren<JupyterPropsType>;
 
+/**
+ * The instance for the Jupyter context.
+ */
+export const JupyterContext = createContext<JupyterContextType | undefined>(
+  undefined
+);
+
+/**
+ * The type for the Jupyter context consumer.
+ */
+export const JupyterContextConsumer = JupyterContext.Consumer;
+
+/**
+ * The type for the Jupyter context provider.
+ */
+const JupyterProvider = JupyterContext.Provider;
+
+/*
+ *
+ */
+export const useJupyter = (props?: JupyterPropsType): JupyterContextType => {
+  const context = useContext(JupyterContext);
+  if (context) {
+    // We are with in a Jupyter context.
+    return context;
+  }
+  // We are not within a Jupyter context, so create it from the store.
+  const {
+    kernel,
+    kernelIsLoading,
+    serviceManager,
+    jupyterConfig,
+  } = useJupyterStoreFromContext(props ?? {});
+  const storeContext: JupyterContextType = {
+    collaborative: false,
+    defaultKernel: kernel,
+    defaultKernelIsLoading: kernelIsLoading,
+    jupyterServerUrl: jupyterConfig!.jupyterServerUrl,
+    kernel,
+    kernelIsLoading,
+    kernelManager: serviceManager?.kernels,
+    lite: false,
+    serverSettings: serviceManager?.serverSettings,
+    serviceManager,
+  }
+  return storeContext;
+};
+
+/**
+ * Utility method to ensure the Jupyter context
+ * is authenticated with the Jupyter server.
+ */
+export const ensureJupyterAuth = async (
+  serverSettings: ServerConnection.ISettings
+): Promise<boolean> => {
+  try {
+    await requestAPI<any>(serverSettings, 'api', '');
+    return true;
+  } catch (reason) {
+    console.log('The Jupyter Server API has failed with reason', reason);
+    return false;
+  }
+};
+
+/*
+ *
+ */
 export const createServerSettings = (jupyterServerUrl: string, jupyterServerToken: string) => {
   return ServerConnection.makeSettings({
     baseUrl: jupyterServerUrl,
@@ -261,4 +281,5 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
       { children }
     </JupyterProvider>
   );
+
 }

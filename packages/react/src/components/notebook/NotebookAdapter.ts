@@ -81,14 +81,14 @@ export class NotebookAdapter {
   private _readOnly: boolean;
   private _renderers: IRenderMime.IRendererFactory[];
   private _rendermime?: RenderMimeRegistry;
-  private _serviceManager: ServiceManager;
+  private _serviceManager: ServiceManager.IManager;
   private _tracker?: NotebookTracker;
   private _id: string;
   private _CellSidebar?: (props: any) => JSX.Element;
 
   constructor(
     props: INotebookProps,
-    serviceManager: ServiceManager,
+    serviceManager: ServiceManager.IManager,
     lite?: Lite
   ) {
 //    this._bundledIPyWidgets = props.bundledIPyWidgets;
@@ -341,9 +341,9 @@ export class NotebookAdapter {
       };
 
     this._context.sessionContext.kernelChanged.connect((_, args) => {
-      console.log('Previous Kernel connection', args.oldValue);
+      console.log('Previous Jupyter Kernel connection', args.oldValue);
       const kernelConnection = args.newValue;
-      console.log('Current Kernel connection', kernelConnection);
+      console.log('Current Jupyter Kernel connection', kernelConnection);
       if (kernelConnection && !kernelConnection.handleComms) {
         console.warn(
           'The current Kernel Connection does not handle Comms',
@@ -508,7 +508,7 @@ export class NotebookAdapter {
     return this._boxPanel;
   }
 
-  get serviceManager(): ServiceManager {
+  get serviceManager(): ServiceManager.IManager {
     return this._serviceManager;
   }
 

@@ -60,7 +60,7 @@ const RunningSessionsExample = () => {
     <>
       <Jupyter
         startDefaultKernel={false}
-        disableCssLoading={true}
+        disableCssLoading
         colorMode="light"
       >
         <ThemeProvider
@@ -104,7 +104,7 @@ const RunningSessionsExample = () => {
             darkThemePlugins,
             runningPlugins,
           ]}
-          headless={true}
+          headless
           onJupyterLab={onJupyterLab}
           pluginId="@jupyterlab/apputils-extension:themes"
           PluginType={ThemeManager}

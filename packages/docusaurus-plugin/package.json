@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyter-docusaurus-plugin",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Docusaurus Plugin for Jupyter",
   "main": "lib/index.js",
   "license": "MIT",
@@ -22,9 +22,9 @@
     "directory": "packages/docusaurus-plugin"
   },
   "dependencies": {
-    "@datalayer/icons-react": "^0.3.0",
-    "@datalayer/jupyter-react": "^0.15.0",
-    "@datalayer/primer-addons": "0.3.0",
+    "@datalayer/icons-react": "^0.3.2",
+    "@datalayer/jupyter-react": "^0.17.0",
+    "@datalayer/primer-addons": "^0.3.1",
     "@docusaurus/core": "^2.4.0",
     "@docusaurus/types": "^2.1.0"
   },

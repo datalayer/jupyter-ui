@@ -16,7 +16,7 @@ import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookLite = () => (
   <Jupyter
-    lite={true}
+    lite
   >
     <Box as="h1">A Jupyter Notebook with a Lite Kernel</Box>
     <Notebook

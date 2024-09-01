@@ -25,7 +25,7 @@ const CellExample = () => {
   const { defaultKernel } = useJupyter();
   const cellsStore = useCellsStore();
   const kernelsStore = useKernelsStore();
-  console.log('Cell Outputs', (cellsStore.getAdapter(CELL_ID)?.cell as CodeCell)?.outputArea.model.toJSON());
+  console.log('Jupyter Cell Outputs', (cellsStore.getAdapter(CELL_ID)?.cell as CodeCell)?.outputArea.model.toJSON());
   return (
     <Jupyter>
       <Box as="h1">A Jupyter Cell</Box>

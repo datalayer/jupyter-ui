@@ -16,7 +16,7 @@ const ViewerFile = () => {
     <>
       <Box m={3}>
         <Jupyter>
-          <Viewer nbformat={nbformat} outputs={true} />
+          <Viewer nbformat={nbformat} outputs />
         </Jupyter>
       </Box>
     </>

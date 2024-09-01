@@ -163,21 +163,21 @@ const Outputs = () => {
   return (
     <>
       <Output
-        showEditor={true}
+        showEditor
         autoRun={false}
         kernel={defaultKernel}
         code={SOURCE_1}
         outputs={SOURCE_1_OUTPUTS}
       />
       <Output
-        showEditor={true}
+        showEditor
         autoRun={false}
         kernel={defaultKernel}
         code={SOURCE_2}
       />
       <Output
-        showEditor={true}
-        autoRun={true}
+        showEditor
+        autoRun
         kernel={defaultKernel}
         code={SOURCE_2}
       />
@@ -191,7 +191,7 @@ const root = createRoot(div);
 const cellId = 'my-cell-1'
 
 root.render(
-  <Jupyter terminals={true}>
+  <Jupyter terminals>
     <Notebook
       nbformat={notebook as INotebookContent}
       id={NOTEBOOK_ID_3}

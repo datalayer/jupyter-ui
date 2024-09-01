@@ -83,7 +83,7 @@ function loadDatalayerConfig(name?: string): any {
       'datalayer-config-data'
     );
     if (datalayerConfigData?.textContent) {
-      console.log('Found Datalayer config data in host page', datalayerConfigData);
+      console.log('Found Datalayer config data in page', datalayerConfigData);
       try {
         config = {
           ...config,
@@ -95,7 +95,7 @@ function loadDatalayerConfig(name?: string): any {
       }
     }
     else {
-      console.log('No Datalayer config data found in host page');
+      console.log('No Datalayer config data found in page');
     }
 }
   // @ts-expect-error IJupyterConfig does not have index signature

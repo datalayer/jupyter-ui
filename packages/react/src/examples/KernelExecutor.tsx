@@ -36,14 +36,14 @@ const KernelExecutorView = () => {
         msg: KernelMessage.IIOPubMessage
       ) => {
         // Do something with the IOPub message.
-        console.log('---iopubMessage', msg);
+        console.log('Jupyter Kernel iopub message', msg);
         return true;
       };
       const shellMessageHook: ShellMessageHook = (
         msg: KernelMessage.IShellControlMessage
       ) => {
         // Do something with the Shell message.
-        console.log('---shellMessage', msg);
+        console.log('Jupyter Kernel shell message', msg);
         return true;
       };
       const kernelExecutor = defaultKernel.execute(CODE, {

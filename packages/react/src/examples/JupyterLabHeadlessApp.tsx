@@ -68,7 +68,7 @@ const JupyterLabHeadlessAppExample = () => {
     <>
       <Jupyter
         startDefaultKernel={false}
-        disableCssLoading={true}
+        disableCssLoading
         colorMode="light"
       >
         <ThemeProvider
@@ -132,7 +132,8 @@ const JupyterLabHeadlessAppExample = () => {
           mimeRenderers={[
             plotlyMimeRenderers
           ]}
-          headless={true}
+          headless
+          nosplash={false}
           onJupyterLab={onJupyterLab}
           pluginId="@jupyterlab/apputils-extension:themes"
           PluginType={ThemeManager}

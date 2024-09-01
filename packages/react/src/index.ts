@@ -4,89 +4,65 @@
  * MIT License
  */
 
-/**
- * Jupyter.
- */
-
 // Jupyter.
 export * from './jupyter/Jupyter';
-export * from './jupyter/theme';
 export * from './jupyter/JupyterContext';
 export * from './jupyter/JupyterConfig';
-export * from './jupyter/lab/JupyterLabCss';
-export * from './jupyter/lab/JupyterLabColorMode';
-
 // Jupyter Services.
-export * from './jupyter/services/Services';
-
+export * from './jupyter/services';
 // Jupyter Kernel.
 export * from './jupyter/kernel';
-
+// Jupyter Lab.
+export * from './jupyter/lab/JupyterLabCss';
+export * from './jupyter/lab/JupyterLabColorMode';
+export * from './jupyter/lab/JupyterLabTheme';
+// Jupyter Theme.
+export * from './jupyter/theme';
 // Jupyter Lite
 export * from './jupyter/lite/LiteServer';
-
 // Jupyter IPyWidgets.
 export * from './jupyter/ipywidgets/classic/manager';
 export * from './jupyter/ipywidgets/lab/manager';
-
 // Jupyter State.
 export * from './state';
 
-/**
- * Components.
- */
-
-// Button
+// Button Components.
 export * from './components/button/Button';
-
-// Cell.
+// Cell Components.
 export * from './components/cell/Cell';
 export * from './components/cell/CellAdapter';
 export * from './components/cell/CellState';
-
-// CodeMirror Editor.
-// @todo CodeMirrorEditor breaks the JupyterLab extension loading.
-// @see https://github.com/datalayer/jupyter-ui/issues/170
-// export * from './components/codemirror/CodeMirrorEditor';
-
-// Commands.
+// Commands Components.
 export * from './components/commands/Commands';
-
-// Console.
+// Console Components.
 export * from './components/console/Console';
 export * from './components/console/ConsoleState';
-
-// Dialog.
+// Dialog Components.
 export * from './components/dialog/Dialog';
-
-// File Browser.
+// File Browser Components.
 export * from './components/filebrowser/FileBrowser';
-
-// File Manager - JupyterLab variant.
+// File Manager  Component (JupyterLab variant).
 export * from './components/filemanager/FileManagerJupyterLab';
-
-// IPyWidgets.
+// IPyWidgets Components.
 export * from './components/output/ipywidgets/IPyWidgetsAttached';
 export * from './components/output/ipywidgets/IPyWidgetsViewManager';
-
-// JupyterLab.
+// JupyterLab Components.
 export * from './components/jupyterlab/JupyterLabApp';
 export * from './components/jupyterlab/JupyterLabAppAdapter';
 export * from './components/jupyterlab/JupyterLabAppPlugins';
 export * from './components/jupyterlab/JupyterLabAppCss';
-
-// Kernel.
+// CodeMirrorEditor Components.
+export * from './components/codemirror/CodeMirrorEditor';
+// Kernel Components.
 export * from './components/kernel';
-
-// Lumino
+// Lumino Components.
 export * from './components/lumino/Lumino';
 export * from './components/lumino/LuminoBox';
 export * from './components/lumino/LuminoDetached';
 export * from './components/lumino/LuminoObservable';
 export * from './components/lumino/LuminoRedux';
 export * from './components/lumino/ReactPortalWidget';
-
-// Notebook.
+// Notebook Components.
 export * from './components/notebook/Notebook';
 export * from './components/notebook/NotebookAdapter';
 export * from './components/notebook/NotebookState';
@@ -97,33 +73,22 @@ export * from './components/notebook/cell/prompt/CountdownInputPrompt';
 export * from './components/notebook/cell/sidebar/CellSidebarWidget';
 export * from './components/notebook/cell/sidebar/CellSidebar';
 export * from './components/notebook/cell/sidebar/CellSidebarRun';
-
-// Outputs.
-// @todo CodeMirrorEditor imported by Output breaks the JupyterLab extension loading.
-// @see https://github.com/datalayer/jupyter-ui/issues/170
+// Output Components.
 export * from './components/output/Output';
 export * from './components/output/OutputAdapter';
 export * from './components/output/OutputState';
 export * from './components/output/OutputIPyWidgets';
-
-// Settings.
+// Settings Components.
 export * from './components/settings/Settings';
-
-// Terminal.
+// Terminal Components.
 export * from './components/terminal/Terminal';
 export * from './components/terminal/TerminalState';
-
-// TextInput
+// TextInput Components.
 export * from './components/textinput/TextInput';
-
-// Viewer.
+// Viewer Components.
 export * from './components/viewer/Viewer';
 export * from './components/viewer/input/InputViewer';
 export * from './components/viewer/output/OutputViewer';
-
-/**
- * Utils.
- */
 
 // Utils
 export * from './utils';

@@ -92,7 +92,7 @@ const OutputWithEditor = () => {
         id={SOURCE_ID_2} 
         kernel={defaultKernel}
         outputs={OUTPUTS_2}
-        showEditor={true}
+        showEditor
       />
     </>
   );
@@ -142,7 +142,7 @@ const OutputWithEmptyOutput = () => {
               id={SOURCE_ID_3}
               kernel={kernel}
               outputs={OUTPUTS_3}
-              showEditor={true}
+              showEditor
             />
           </Box>
         </>
