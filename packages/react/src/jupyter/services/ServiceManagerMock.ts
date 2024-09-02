@@ -10,11 +10,14 @@
  * Datalayer License
  */
 
-import { Builder, Contents, Event, IManager, NbConvert, NbConvertManager, ServerConnection, ServiceManager, Setting, User, Workspace } from '@jupyterlab/services';
+import {
+  Builder, Contents, Event, IManager, NbConvert, NbConvertManager,
+  ServerConnection, ServiceManager, Setting, User, Workspace
+} from '@jupyterlab/services';
 import { BuildManager } from '@jupyterlab/services/lib/builder';
 import { IKernelConnection, IManager as IKernelManager, IModel } from '@jupyterlab/services/lib/kernel/kernel';
 import { IManager as IKernelspecManager, ISpecModels} from '@jupyterlab/services/lib/kernelspec/kernelspec';
-import { IModel as ISessionModel, ISessionConnection, IManager as ISessionManager, ISessionOptions } from '@jupyterlab/services/lib/session/session';
+import {IModel as ISessionModel, ISessionConnection, IManager as ISessionManager, ISessionOptions } from '@jupyterlab/services/lib/session/session';
 import { IModel as ITerminalModel, IManager as ITerminaManager, ITerminal, ITerminalConnection } from '@jupyterlab/services/lib/terminal/terminal';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { PromiseDelegate, ReadonlyJSONObject } from '@lumino/coreutils';
@@ -26,35 +29,34 @@ export class TerminalManagerMock implements ITerminaManager {
   isReady: boolean = true;
   ready: Promise<void> = Promise.resolve(void 0);
   serverSettings: ServerConnection.ISettings;
-  isActive: boolean = false;
+  isActive: boolean = true;
   disposed: ISignal<this, void> = new Signal(this);
   isDisposed: boolean = false;
   constructor(serverSettings: ServerConnection.ISettings) {
     this.serverSettings = serverSettings;
   }
   isAvailable(): boolean {
-    throw new Error('Method not implemented.');
+    return true;
   }
   running(): IterableIterator<ISessionModel> {
-    throw new Error('Method not implemented.');
+    return [] as unknown as IterableIterator<ISessionModel>;
   }
   startNew(options?: ITerminal.IOptions | undefined): Promise<ITerminalConnection> {
-    throw new Error('Method not implemented.');
+    return Promise.resolve({} as unknown as ITerminalConnection);
   }
   connectTo(options: Omit<ITerminalConnection.IOptions, 'serverSettings'>): ITerminalConnection {
-    throw new Error('Method not implemented.');
+    return {} as unknown as ITerminalConnection;
   }
   shutdown(name: string): Promise<void> {
-    throw new Error('Method not implemented.');
+    return Promise.resolve(void 0);
   }
   shutdownAll(): Promise<void> {
-    throw new Error('Method not implemented.');
+    return Promise.resolve(void 0);
   }
   refreshRunning(): Promise<void> {
-    throw new Error('Method not implemented.');
+    return Promise.resolve(void 0);
   }
   dispose(): void {
-    throw new Error('Method not implemented.');
   }
 }
 
@@ -66,58 +68,56 @@ export class ContentsManagerMock implements Contents.IManager {
     this.serverSettings = serverSettings;
   }
   addDrive(drive: Contents.IDrive): void {
-    throw new Error('Method not implemented.');
   }
   localPath(path: string): string {
-    throw new Error('Method not implemented.');
+    return path;
   }
   normalize(path: string): string {
-    throw new Error('Method not implemented.');
+    return path;
   }
   resolvePath(root: string, path: string): string {
-    throw new Error('Method not implemented.');
+    return root + path;
   }
   driveName(path: string): string {
-    throw new Error('Method not implemented.');
+    return "";
   }
   getSharedModelFactory(path: string): Contents.ISharedFactory | null {
-    throw new Error('Method not implemented.');
+    return null;
   }
   get(path: string, options?: Contents.IFetchOptions | undefined): Promise<Contents.IModel> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   getDownloadUrl(path: string): Promise<string> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   newUntitled(options?: Contents.ICreateOptions | undefined): Promise<Contents.IModel> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   delete(path: string): Promise<void> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   rename(path: string, newPath: string): Promise<Contents.IModel> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   save(path: string, options?: Partial<Contents.IModel> | undefined): Promise<Contents.IModel> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   copy(path: string, toDir: string): Promise<Contents.IModel> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   createCheckpoint(path: string): Promise<Contents.ICheckpointModel> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   listCheckpoints(path: string): Promise<Contents.ICheckpointModel[]> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   restoreCheckpoint(path: string, checkpointID: string): Promise<void> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   deleteCheckpoint(path: string, checkpointID: string): Promise<void> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   dispose(): void {
-    throw new Error('Method not implemented.');
   }
 
 }
@@ -128,35 +128,34 @@ export class KernelsManagerMock implements IKernelManager {
   isReady: boolean = true;
   ready: Promise<void> = Promise.resolve(void 0);
   serverSettings: ServerConnection.ISettings;
-  isActive: boolean = false;
+  isActive: boolean = true;
   disposed: ISignal<this, void> = new Signal(this);
   isDisposed: boolean = false;
   constructor(serverSettings: ServerConnection.ISettings) {
     this.serverSettings = serverSettings;
   }
   running(): IterableIterator<IModel> {
-    throw new Error('Method not implemented.');
+    return [] as any;
   }
   refreshRunning(): Promise<void> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   startNew(createOptions?: Partial<Pick<IModel, 'name'>> | undefined, connectOptions?: Omit<IKernelConnection.IOptions, 'serverSettings' | 'model'> | undefined): Promise<IKernelConnection> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   findById(id: string): Promise<IModel | undefined> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   connectTo(options: IKernelConnection.IOptions): IKernelConnection {
-    throw new Error('Method not implemented.');
+    return "" as any;
   }
   shutdown(id: string): Promise<void> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   shutdownAll(): Promise<void> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   dispose(): void {
-    throw new Error('Method not implemented.');
   }
 }
 
@@ -167,17 +166,16 @@ export class KernelspecManagerMock implements IKernelspecManager {
   serverSettings: ServerConnection.ISettings;
   isReady: boolean = true;
   ready: Promise<void> = Promise.resolve(void 0);
-  isActive: boolean = false;
+  isActive: boolean = true;
   disposed: ISignal<this, void> = new Signal(this);
   isDisposed: boolean = false;
   constructor(serverSettings: ServerConnection.ISettings) {
     this.serverSettings = serverSettings;
   }
   refreshSpecs(): Promise<void> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   dispose(): void {
-    throw new Error('Method not implemented.');
   }
 }
 
@@ -192,34 +190,33 @@ export class SessionManagerMock implements ISessionManager {
     this.serverSettings = serverSettings;
   }
   running(): IterableIterator<ISessionModel> {
-    throw new Error('Method not implemented.');
+    return [] as any;
   }
   startNew(createOptions: ISessionOptions, connectOptions?: Omit<ISessionConnection.IOptions, 'serverSettings' | 'model' | 'connectToKernel'> | undefined): Promise<ISessionConnection> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   findById(id: string): Promise<ISessionModel | undefined> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   findByPath(path: string): Promise<ISessionModel | undefined> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   connectTo(options: Omit<ISessionConnection.IOptions, 'serverSettings' | 'connectToKernel'>): ISessionConnection {
-    throw new Error('Method not implemented.');
+    return "" as any;
   }
   shutdown(id: string): Promise<void> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   shutdownAll(): Promise<void> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   refreshRunning(): Promise<void> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   stopIfNeeded(path: string): Promise<void> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   dispose(): void {
-    throw new Error('Method not implemented.');
   }
 }
 
@@ -229,19 +226,19 @@ export class BuilderManagerMock {
     this.serverSettings = serverSettings;
   }
   get isAvailable(): boolean {
-    throw new Error('Method not implemented.');
+    return true
   }
   get shouldCheck(): boolean {
-    throw new Error('Method not implemented.');
+    return false;
   }
   getStatus(): Promise<BuildManager.IStatus> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   build(): Promise<void> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   cancel(): Promise<void> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
 }
 
@@ -251,16 +248,16 @@ export class SettingManagerMock implements Setting.IManager {
     this.serverSettings = serverSettings;
   }
   fetch(id: string): Promise<ISettingRegistry.IPlugin> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   list(query?: 'ids' | undefined): Promise<{ ids: string[]; values: ISettingRegistry.IPlugin[]; }> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   save(id: string, raw: string): Promise<void> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   remove(id: string): Promise<any> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
 }
 
@@ -271,7 +268,7 @@ export class UserManagerMock implements User.IManager {
   connectionFailure: ISignal<IManager, ServerConnection.NetworkError> = new Signal(this);
   isReady: boolean = true;
   ready: Promise<void> = Promise.resolve(void 0);
-  isActive: boolean = false;
+  isActive: boolean = true;
   disposed: ISignal<this, void> = new Signal(this);
   isDisposed: boolean = false;
   serverSettings: ServerConnection.ISettings;
@@ -279,10 +276,9 @@ export class UserManagerMock implements User.IManager {
     this.serverSettings = serverSettings;
   }
   refreshUser(): Promise<void> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   dispose(): void {
-    throw new Error('Method not implemented.');
   }
 }
 
@@ -294,10 +290,9 @@ export class EventsManagerMock implements Event.IManager {
     this.serverSettings = serverSettings;
   }
   emit(event: Event.Request): Promise<void> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   dispose(): void {
-    throw new Error('Method not implemented.');
   }
 }
 
@@ -307,16 +302,16 @@ export class WorkspaceManagerMock implements Workspace.IManager {
     this.serverSettings = serverSettings;
   }
   fetch(id: string): Promise<Workspace.IWorkspace> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   list(): Promise<{ ids: string[]; values: Workspace.IWorkspace[]; }> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   remove(id: string): Promise<void> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   save(id: string, workspace: Workspace.IWorkspace): Promise<void> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
 }
 
@@ -328,10 +323,10 @@ export class NbConvertManagerMock {
     this.serverSettings = serverSettings;
   }
   protected fetchExportFormats(): Promise<NbConvertManager.IExportFormats> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
   protected getExportFormats(force?: boolean | undefined): Promise<NbConvertManager.IExportFormats> {
-    throw new Error('Method not implemented.');
+    return new Promise(() => {});
   }
 }
 
@@ -354,6 +349,22 @@ export class JupyterServiceManagerMock implements ServiceManager.IManager {
   nbconvert: NbConvert.IManager;
   constructor(serverSettings: ServerConnection.ISettings = ServerConnection.makeSettings()) {
     this.serverSettings = serverSettings;
+    /*
+    const serviceManager = new ServiceManager({
+      serverSettings,
+    })
+    this.terminals = serviceManager.terminals;
+    this.builder = serviceManager.builder;
+    this.contents = serviceManager.contents;
+    this.events = serviceManager.events;
+    this.sessions = serviceManager.sessions;
+    this.kernels = serviceManager.kernels;
+    this.kernelspecs = serviceManager.kernelspecs;
+    this.settings = serviceManager.settings;
+    this.user = serviceManager.user;
+    this.workspaces = serviceManager.workspaces;
+    this.nbconvert = serviceManager.nbconvert;
+    */
     this.terminals = new TerminalManagerMock(serverSettings);
     this.builder = new BuilderManagerMock(serverSettings) as Builder.IManager;
     this.contents = new ContentsManagerMock(serverSettings);
@@ -366,7 +377,8 @@ export class JupyterServiceManagerMock implements ServiceManager.IManager {
     this.workspaces = new WorkspaceManagerMock(serverSettings);
     this.nbconvert = new NbConvertManagerMock(serverSettings) as unknown as NbConvert.IManager;
   }
-  dispose(): void {}
+  dispose(): void {
+  }
 }
 
 export default JupyterServiceManagerMock;

@@ -19,7 +19,8 @@ root.render(
     <Console
       code={`import piplite
 await piplite.install('numpy')
-print('👋 Hello Jupyter Console')`}
+import numpy
+print(f'👋 Hello Jupyter Console with a Lite Kernel and numpy {numpy.__version__}')`}
     />
   </Jupyter>
 );

@@ -6,13 +6,7 @@
 
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import {
-  Box,
-  Text,
-  ToggleSwitch,
-  ThemeProvider,
-  useTheme,
-} from '@primer/react';
+import { Box, Text, ToggleSwitch, ThemeProvider, useTheme } from '@primer/react';
 import { BoxPanel } from '@lumino/widgets';
 import { ThemeManager } from '@jupyterlab/apputils';
 // import { NotebookTracker } from '@jupyterlab/notebook';
@@ -35,7 +29,7 @@ const PATHS = ['ipywidgets.ipynb', 'plotly.ipynb'];
 
 const PATH_INDEX = 1;
 
-const JupyterLabHeadlessAppExample = () => {
+const JupyterLabAppHeadlessServerless = () => {
   const [notebookBoxPanel, setNotebookBoxPanel] = useState<BoxPanel>();
   const [theme, setTheme] = useState<ColorMode>('light');
   const [jupyterLabAdapter, setJupyterlabAdapter] =
@@ -123,6 +117,7 @@ const JupyterLabHeadlessAppExample = () => {
           </div>
         )}
         <JupyterLabApp
+          serverless
           plugins={[
             lightThemePlugins,
             darkThemePlugins,
@@ -148,4 +143,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<JupyterLabHeadlessAppExample />);
+root.render(<JupyterLabAppHeadlessServerless />);

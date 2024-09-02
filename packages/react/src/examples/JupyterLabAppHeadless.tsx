@@ -7,8 +7,9 @@
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Box, Text, ToggleSwitch, ThemeProvider, useTheme } from '@primer/react';
+import { BoxPanel } from '@lumino/widgets';
 import { ThemeManager } from '@jupyterlab/apputils';
-import { RunningSessions } from '@jupyterlab/running';
+// import { NotebookTracker } from '@jupyterlab/notebook';
 import Jupyter from '../jupyter/Jupyter';
 import Lumino from '../components/lumino/Lumino';
 import { ColorMode } from '../jupyter/lab/JupyterLabColorMode';
@@ -17,13 +18,21 @@ import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter'
 
 import * as darkThemePlugins from '@jupyterlab/theme-dark-extension';
 import * as lightThemePlugins from '@jupyterlab/theme-light-extension';
-import * as runningPlugins from '@jupyterlab/running-extension';
+import * as ipywidgetsPlugins from '@jupyter-widgets/jupyterlab-manager';
+import * as plotlyPlugins from 'jupyterlab-plotly/lib/jupyterlab-plugin';
 
-const RunningSessionsExample = () => {
-  const [runningSessions, setRunningSessions] = useState<RunningSessions>();
+import * as plotlyMimeRenderers from 'jupyterlab-plotly/lib/plotly-renderer';
+
+const height = '900px';
+
+const PATHS = ['ipywidgets.ipynb', 'plotly.ipynb'];
+
+const PATH_INDEX = 1;
+
+const JupyterLabAppHeadless = () => {
+  const [notebookBoxPanel, setNotebookBoxPanel] = useState<BoxPanel>();
   const [theme, setTheme] = useState<ColorMode>('light');
-  const [jupyterLabAdapter, setJupyterlabAdapter] =
-    useState<JupyterLabAppAdapter>();
+  const [jupyterLabAdapter, setJupyterlabAdapter] = useState<JupyterLabAppAdapter>();
   const { setColorMode } = useTheme();
   const [isDark, setDark] = useState(false);
   const onSwitchClick = async () => {
@@ -41,13 +50,11 @@ const RunningSessionsExample = () => {
   };
   const onJupyterLab = async (jupyterLabAdapter: JupyterLabAppAdapter) => {
     setJupyterlabAdapter(jupyterLabAdapter);
-    const runningSessionManagers = jupyterLabAdapter.service(
-      '@jupyterlab/running-extension:plugin'
-    );
-    const runningSessions = new RunningSessions(runningSessionManagers);
-    setRunningSessions(runningSessions);
+    const boxPanel = await jupyterLabAdapter.notebook(PATHS[PATH_INDEX]);
+    setNotebookBoxPanel(boxPanel);
   };
   const onPlugin = (themeManager: ThemeManager) => {
+    // const notebookTracker = jupyterlabAdapter.service("@jupyterlab/notebook-extension:tracker") as NotebookTracker;
     console.log('Current theme', themeManager.theme);
   };
   return (
@@ -91,14 +98,35 @@ const RunningSessionsExample = () => {
             </Box>
           </Box>
         </ThemeProvider>
-        {runningSessions && <Lumino height="300px">{runningSessions}</Lumino>}
+        {notebookBoxPanel && (
+          <div style={{ position: 'relative' }}>
+            <Box
+              className="jp-LabShell"
+              sx={{
+                position: 'relative',
+                '& .dla-Jupyter-Notebook': {
+                  height,
+                  maxHeight: height,
+                  width: '100%',
+                },
+              }}
+            >
+              <Lumino>{notebookBoxPanel}</Lumino>
+            </Box>
+          </div>
+        )}
         <JupyterLabApp
           plugins={[
             lightThemePlugins,
             darkThemePlugins,
-            runningPlugins,
+            ipywidgetsPlugins,
+            plotlyPlugins,
+          ]}
+          mimeRenderers={[
+            plotlyMimeRenderers
           ]}
           headless
+          nosplash={false}
           onJupyterLab={onJupyterLab}
           pluginId="@jupyterlab/apputils-extension:themes"
           PluginType={ThemeManager}
@@ -113,4 +141,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<RunningSessionsExample />);
+root.render(<JupyterLabAppHeadless />);

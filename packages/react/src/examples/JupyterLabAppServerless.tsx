@@ -16,7 +16,7 @@ import * as reactPlugins from './../jupyter/lab/index';
 
 import * as plotlyMimeRenderers from 'jupyterlab-plotly/lib/plotly-renderer';
 
-const JupyterLabAppExample = () => {
+const JupyterLabAppSeverless = () => {
   const onJupyterLab = async (jupyterLabAdapter: JupyterLabAppAdapter) => {
     const jupyterLab = jupyterLabAdapter.jupyterLab;
     console.log('JupyterLab is ready', jupyterLab);
@@ -30,7 +30,13 @@ const JupyterLabAppExample = () => {
         plotlyPlugins,
         reactPlugins,
       ]}
-      mimeRenderers={[plotlyMimeRenderers]}
+      disabledPlugins={[
+//        "@jupyterlab/apputils-extension:themes",
+//        "@jupyterlab/apputils-extension:themes-palette-menu",
+      ]}
+      mimeRenderers={[
+        plotlyMimeRenderers
+      ]}
       height="calc(100vh - 74px)"
       onJupyterLab={onJupyterLab}
     />
@@ -44,6 +50,6 @@ const root = createRoot(div);
 root.render(
   <JupyterLabTheme>
     <h1>JupyterLab Serverless Application</h1>
-    <JupyterLabAppExample />
+    <JupyterLabAppSeverless />
   </JupyterLabTheme>
 );

@@ -35,7 +35,9 @@ const JupyterLabAppExample = () => {
         plotlyPlugins,
         reactPlugins,
       ]}
-      mimeRenderers={[plotlyMimeRenderers]}
+      mimeRenderers={[
+        plotlyMimeRenderers
+      ]}
       height="calc(100vh - 74px)"
       onJupyterLab={onJupyterLab}
     />

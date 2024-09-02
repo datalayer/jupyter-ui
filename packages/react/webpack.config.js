@@ -20,6 +20,7 @@ const ENTRY =
   // './src/app/App';
   // './src/examples/Cell';
   // './src/examples/Cells';
+  // './src/examples/CellsExecute';
   // './src/examples/CellLite';
   // './src/examples/Console';
   // './src/examples/ConsoleLite';
@@ -29,14 +30,15 @@ const ENTRY =
   // './src/examples/IPyWidgets';
   // './src/examples/IPyWidgetsWithState';
   // './src/examples/JupyterLabApp';
-  // './src/examples/JupyterLabHeadlessApp';
-  // './src/examples/JupyterLabServerlessApp';
-  // './src/examples/Kernels';
+  // './src/examples/JupyterLabAppHeadless';
+  // './src/examples/JupyterLabAppHeadlessServerless';
+  // './src/examples/JupyterLabAppServerless';
+  './src/examples/Kernels';
   // './src/examples/KernelExecute';
   // './src/examples/KernelExecutor';
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
-  './src/examples/Notebook';
+  // './src/examples/Notebook';
   // './src/examples/NotebookUrl';
   // './src/examples/NotebookColorMode';
   // './src/examples/NotebookKernelChange';
