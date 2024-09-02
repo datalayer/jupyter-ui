@@ -31,8 +31,8 @@ const ENTRY =
   // './src/examples/IPyWidgetsWithState';
   // './src/examples/JupyterLabApp';
   // './src/examples/JupyterLabAppHeadless';
-  './src/examples/JupyterLabAppHeadlessServerless';
-  // './src/examples/JupyterLabAppServerless';
+  // './src/examples/JupyterLabAppHeadlessServerless';
+  './src/examples/JupyterLabAppServerless';
   // './src/examples/JupyterLabAppServiceManager';
   // './src/examples/Kernels';
   // './src/examples/KernelExecute';

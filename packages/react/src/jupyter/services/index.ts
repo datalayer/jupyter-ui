@@ -4,11 +4,5 @@
  * MIT License
  */
 
-/*
- * Copyright (c) 2021-2024 Datalayer, Inc.
- *
- * Datalayer License
- */
-
-export * from './JupyterServiceManagerMock';
+export * from './JupyterServiceManagerLess';
 export * from './JupyterServices';

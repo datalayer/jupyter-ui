@@ -84,7 +84,6 @@ export class JupyterLabAppAdapter {
     const extensionResolved = await Promise.all(extensionPromises!);
     disabledPlugins.push(
       "@jupyterlab/notebook-extension:language-server",
-//      "@jupyterlab/notebook-extension:toc",
       "@jupyterlab/notebook-extension:update-raw-mimetype",
       "@jupyterlab/fileeditor-extension:language-server",
       "@jupyterlab/apputils-extension:sessionDialogs",
@@ -118,8 +117,13 @@ export class JupyterLabAppAdapter {
     */
     this._jupyterLab.start({
       hostID: hostId,
-      startPlugins: [], // How is this used in JupyterLab core?
-      ignorePlugins: [], // How is this used in JupyterLab core?
+      startPlugins: [
+      ], // How is this used in JupyterLab core?
+      ignorePlugins: [        
+      ], // How is this used in JupyterLab core?
+    }).then(() => {
+//      this._plugins = (this._jupyterLab as any)['_plugins'];
+//      this._readyResolve();
     });
     this._jupyterLab.restored.then(() => {
       this._plugins = (this._jupyterLab as any)['_plugins'];

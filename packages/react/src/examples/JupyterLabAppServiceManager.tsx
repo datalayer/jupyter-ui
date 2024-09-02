@@ -9,7 +9,7 @@ import { createRoot } from 'react-dom/client';
 import JupyterLabTheme from '../jupyter/lab/JupyterLabTheme';
 import JupyterLabApp from '../components/jupyterlab/JupyterLabApp';
 import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter';
-import JupyterServiceManagerMock from '../jupyter/services/JupyterServiceManagerMock';
+import JupyterServiceManagerLess from '../jupyter/services/JupyterServiceManagerLess';
 
 import * as lightThemePlugins from '@jupyterlab/theme-light-extension';
 import * as ipywidgetsPlugins from '@jupyter-widgets/jupyterlab-manager';
@@ -19,7 +19,7 @@ import * as plotlyPlugins from 'jupyterlab-plotly/lib/jupyterlab-plugin';
 import * as plotlyMimeRenderers from 'jupyterlab-plotly/lib/plotly-renderer';
 
 const JupyterLabAppServiceManager = () => {
-  const [serviceManager, _] = useState(new JupyterServiceManagerMock());
+  const [serviceManager, _] = useState(new JupyterServiceManagerLess());
   const onJupyterLab = async (jupyterLabAdapter: JupyterLabAppAdapter) => {
     const jupyterLab = jupyterLabAdapter.jupyterLab;
     console.log('JupyterLab is ready', jupyterLab);

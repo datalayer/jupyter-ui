@@ -19,7 +19,7 @@ import { createLiteServer } from '../jupyter/lite/LiteServer';
 import { getJupyterServerUrl } from '../jupyter/JupyterConfig';
 import { ensureJupyterAuth, createServerSettings, JupyterPropsType } from '../jupyter/JupyterContext';
 import Kernel from '../jupyter/kernel/Kernel';
-import { JupyterServiceManagerMock } from '../jupyter/services';
+import { JupyterServiceManagerLess } from '../jupyter/services';
 
 export type JupyterReactState = {
   cellsStore: CellsState;
@@ -124,7 +124,7 @@ export function useJupyterReactStoreFromProps(props: JupyterPropsType): JupyterR
   // Setup a service manager if needed.
   useEffect(() => {
     if (serverless) {
-      const serviceManager = new JupyterServiceManagerMock();
+      const serviceManager = new JupyterServiceManagerLess();
       setServiceManager(serviceManager);
       jupyterReactStore.getState().setServiceManager(serviceManager);
       return;
