@@ -10,5 +10,5 @@
  * Datalayer License
  */
 
-export * from './Services';
-export * from './ServiceManagerMock';
+export * from './JupyterServiceManagerMock';
+export * from './JupyterServices';

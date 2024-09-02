@@ -33,7 +33,8 @@ const ENTRY =
   // './src/examples/JupyterLabAppHeadless';
   // './src/examples/JupyterLabAppHeadlessServerless';
   // './src/examples/JupyterLabAppServerless';
-  './src/examples/Kernels';
+  './src/examples/JupyterLabAppServiceManager';
+  // './src/examples/Kernels';
   // './src/examples/KernelExecute';
   // './src/examples/KernelExecutor';
   // './src/examples/Lumino';

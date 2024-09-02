@@ -4,12 +4,6 @@
  * MIT License
  */
 
-/*
- * Copyright (c) 2021-2024 Datalayer, Inc.
- *
- * Datalayer License
- */
-
 import {
   Builder, Contents, Event, IManager, NbConvert, NbConvertManager,
   ServerConnection, ServiceManager, Setting, User, Workspace
@@ -39,7 +33,7 @@ export class TerminalManagerMock implements ITerminaManager {
     return true;
   }
   running(): IterableIterator<ISessionModel> {
-    return [] as unknown as IterableIterator<ISessionModel>;
+    return [].values();
   }
   startNew(options?: ITerminal.IOptions | undefined): Promise<ITerminalConnection> {
     return Promise.resolve({} as unknown as ITerminalConnection);
@@ -135,7 +129,7 @@ export class KernelsManagerMock implements IKernelManager {
     this.serverSettings = serverSettings;
   }
   running(): IterableIterator<IModel> {
-    return [] as any;
+    return [].values();
   }
   refreshRunning(): Promise<void> {
     return new Promise(() => {});
@@ -190,7 +184,7 @@ export class SessionManagerMock implements ISessionManager {
     this.serverSettings = serverSettings;
   }
   running(): IterableIterator<ISessionModel> {
-    return [] as any;
+    return [].values();
   }
   startNew(createOptions: ISessionOptions, connectOptions?: Omit<ISessionConnection.IOptions, 'serverSettings' | 'model' | 'connectToKernel'> | undefined): Promise<ISessionConnection> {
     return new Promise(() => {});
@@ -349,22 +343,6 @@ export class JupyterServiceManagerMock implements ServiceManager.IManager {
   nbconvert: NbConvert.IManager;
   constructor(serverSettings: ServerConnection.ISettings = ServerConnection.makeSettings()) {
     this.serverSettings = serverSettings;
-    /*
-    const serviceManager = new ServiceManager({
-      serverSettings,
-    })
-    this.terminals = serviceManager.terminals;
-    this.builder = serviceManager.builder;
-    this.contents = serviceManager.contents;
-    this.events = serviceManager.events;
-    this.sessions = serviceManager.sessions;
-    this.kernels = serviceManager.kernels;
-    this.kernelspecs = serviceManager.kernelspecs;
-    this.settings = serviceManager.settings;
-    this.user = serviceManager.user;
-    this.workspaces = serviceManager.workspaces;
-    this.nbconvert = serviceManager.nbconvert;
-    */
     this.terminals = new TerminalManagerMock(serverSettings);
     this.builder = new BuilderManagerMock(serverSettings) as Builder.IManager;
     this.contents = new ContentsManagerMock(serverSettings);
@@ -376,6 +354,22 @@ export class JupyterServiceManagerMock implements ServiceManager.IManager {
     this.user = new UserManagerMock(serverSettings)
     this.workspaces = new WorkspaceManagerMock(serverSettings);
     this.nbconvert = new NbConvertManagerMock(serverSettings) as unknown as NbConvert.IManager;
+    /*
+    const serviceManager = new ServiceManager({
+      serverSettings,
+    })
+    this.settings = serviceManager.settings;
+    this.terminals = serviceManager.terminals;
+    this.builder = serviceManager.builder;
+    this.contents = serviceManager.contents;
+    this.events = serviceManager.events;
+    this.sessions = serviceManager.sessions;
+    this.kernels = serviceManager.kernels;
+    this.kernelspecs = serviceManager.kernelspecs;
+    this.user = serviceManager.user;
+    this.workspaces = serviceManager.workspaces;
+    this.nbconvert = serviceManager.nbconvert;
+    */
   }
   dispose(): void {
   }

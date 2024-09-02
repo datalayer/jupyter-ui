@@ -8,7 +8,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
 import { ServiceManager } from '@jupyterlab/services';
-import type { IDatalayerConfig } from './IState';
+import type { IJupyterReactState } from './IJupyterReactState';
 import { IJupyterConfig, loadJupyterConfig } from '../jupyter/JupyterConfig';
 import { cellsStore, CellsState } from '../components/cell/CellState';
 import { consoleStore, ConsoleState } from '../components/console/ConsoleState';
@@ -21,10 +21,10 @@ import { ensureJupyterAuth, createServerSettings, JupyterPropsType } from '../ju
 import Kernel from '../jupyter/kernel/Kernel';
 import { JupyterServiceManagerMock } from '../jupyter/services';
 
-export type JupyterState = {
+export type JupyterReactState = {
   cellsStore: CellsState;
   consoleStore: ConsoleState;
-  datalayerConfig?: IDatalayerConfig;
+  datalayerConfig?: IJupyterReactState;
   jupyterConfig?: IJupyterConfig;
   kernel?: Kernel;
   kernelIsLoading: boolean;
@@ -33,11 +33,11 @@ export type JupyterState = {
   serviceManager?: ServiceManager.IManager;
   terminalStore: TerminalState;
   version: string;
-  setDatalayerConfig: (configuration?: IDatalayerConfig) => void;
+  setDatalayerConfig: (configuration?: IJupyterReactState) => void;
   setVersion: (version: string) => void;
 };
 
-let initialConfiguration: IDatalayerConfig | undefined = undefined;
+let initialConfiguration: IJupyterReactState | undefined = undefined;
 
 try {
   const pageConfig = document.getElementById('datalayer-config-data');
@@ -48,7 +48,7 @@ try {
   console.debug('Issue with page configuration.', error);
 }
 
-export const jupyterStore = createStore<JupyterState>((set, get) => ({
+export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
   datalayerConfig: initialConfiguration,
   version: '',
   jupyterConfig: undefined,
@@ -61,7 +61,7 @@ export const jupyterStore = createStore<JupyterState>((set, get) => ({
   notebookStore: notebookStore.getState(),
   outputStore: outputsStore.getState(),
   terminalStore: terminalStore.getState(),
-  setDatalayerConfig: (configuration?: IDatalayerConfig) => {
+  setDatalayerConfig: (configuration?: IJupyterReactState) => {
     set(state => ({ datalayerConfig: configuration }));
   },
   setVersion: version => {
@@ -72,13 +72,13 @@ export const jupyterStore = createStore<JupyterState>((set, get) => ({
 }));
 
 // TODO Reuse code portions from JupyterContext
-export function useJupyterStore(): JupyterState;
-export function useJupyterStore<T>(selector: (state: JupyterState) => T): T;
-export function useJupyterStore<T>(selector?: (state: JupyterState) => T) {
-  return useStore(jupyterStore, selector!);
+export function useJupyterReactStore(): JupyterReactState;
+export function useJupyterReactStore<T>(selector: (state: JupyterReactState) => T): T;
+export function useJupyterReactStore<T>(selector?: (state: JupyterReactState) => T) {
+  return useStore(jupyterReactStore, selector!);
 }
-export function useJupyterStoreFromContext(props: JupyterPropsType): JupyterState;
-export function useJupyterStoreFromContext(props: JupyterPropsType): JupyterState {
+export function useJupyterReactStoreFromContext(props: JupyterPropsType): JupyterReactState;
+export function useJupyterReactStoreFromContext(props: JupyterPropsType): JupyterReactState {
   const {
     collaborative = false,
     defaultKernelName = 'python',
@@ -101,7 +101,7 @@ export function useJupyterStoreFromContext(props: JupyterPropsType): JupyterStat
       collaborative,
       terminals,
     });
-    jupyterStore.getState().jupyterConfig = config;
+    jupyterReactStore.getState().jupyterConfig = config;
     return config;
   }, []);
   const [serviceManager, setServiceManager] = useState<ServiceManager.IManager | undefined>(propsServiceManager);
@@ -111,13 +111,13 @@ export function useJupyterStoreFromContext(props: JupyterPropsType): JupyterStat
   useEffect(() => {
     if (propsServiceManager) {
       setServiceManager(propsServiceManager);
-      jupyterStore.getState().serviceManager = propsServiceManager;
+      jupyterReactStore.getState().serviceManager = propsServiceManager;
       return;
     }
     if (serverless) {
       const serviceManager = new JupyterServiceManagerMock();
       setServiceManager(serviceManager);
-      jupyterStore.getState().serviceManager = serviceManager;
+      jupyterReactStore.getState().serviceManager = serviceManager;
       return;
     }
     if (!serviceManager) {
@@ -151,7 +151,7 @@ export function useJupyterStoreFromContext(props: JupyterPropsType): JupyterStat
             pluginIDs.filter(id => id).map(id => liteServer.activatePlugin(id!))
           );
           setServiceManager(liteServer.serviceManager);
-          jupyterStore.getState().serviceManager = liteServer.serviceManager;
+          jupyterReactStore.getState().serviceManager = liteServer.serviceManager;
         });
         return;
       }
@@ -178,7 +178,7 @@ export function useJupyterStoreFromContext(props: JupyterPropsType): JupyterStat
         }
         const serviceManager = new ServiceManager({ serverSettings });
         setServiceManager(serviceManager);
-        jupyterStore.getState().serviceManager = serviceManager;
+        jupyterReactStore.getState().serviceManager = serviceManager;
       });
     }
   }, [propsServiceManager, jupyterServerUrl, lite, serverless]);
@@ -209,16 +209,16 @@ export function useJupyterStoreFromContext(props: JupyterPropsType): JupyterStat
               }
             }
             setKernel(wrappedKernel);
-            jupyterStore.getState().kernel = wrappedKernel;
+            jupyterReactStore.getState().kernel = wrappedKernel;
             setIsLoading(false);
-            jupyterStore.getState().kernelIsLoading = false;
+            jupyterReactStore.getState().kernelIsLoading = false;
             break;
           }
           kernel = running.next();
           i++;
         }
         setIsLoading(false);
-        jupyterStore.getState().kernelIsLoading = false;
+        jupyterReactStore.getState().kernelIsLoading = false;
       } else if (startDefaultKernel) {
         console.log('Starting Jupyter Kernel:', defaultKernelName);
         const defaultKernel = new Kernel({
@@ -238,14 +238,14 @@ export function useJupyterStoreFromContext(props: JupyterPropsType): JupyterStat
           }
           console.log('Jupyter Kernel is ready', defaultKernel);
           setKernel(defaultKernel);
-          jupyterStore.getState().kernel = defaultKernel;
+          jupyterReactStore.getState().kernel = defaultKernel;
           setIsLoading(false);
-          jupyterStore.getState().kernelIsLoading = false;
+          jupyterReactStore.getState().kernelIsLoading = false;
         });
       }
     });
   }, [lite, serviceManager]);
-  return useStore(jupyterStore);
+  return useStore(jupyterReactStore);
 }
 
-export default useJupyterStore;
+export default useJupyterReactStore;

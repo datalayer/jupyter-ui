@@ -4,10 +4,12 @@
  * MIT License
  */
 
+import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { JupyterLabTheme } from '../jupyter/lab/JupyterLabTheme';
+import JupyterLabTheme from '../jupyter/lab/JupyterLabTheme';
 import JupyterLabApp from '../components/jupyterlab/JupyterLabApp';
 import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter';
+import JupyterServiceManagerMock from '../jupyter/services/JupyterServiceManagerMock';
 
 import * as lightThemePlugins from '@jupyterlab/theme-light-extension';
 import * as ipywidgetsPlugins from '@jupyter-widgets/jupyterlab-manager';
@@ -16,24 +18,20 @@ import * as reactPlugins from './../jupyter/lab/index';
 
 import * as plotlyMimeRenderers from 'jupyterlab-plotly/lib/plotly-renderer';
 
-const JupyterLabAppSeverless = () => {
+const JupyterLabAppServiceManager = () => {
+  const [serviceManager, _] = useState(new JupyterServiceManagerMock());
   const onJupyterLab = async (jupyterLabAdapter: JupyterLabAppAdapter) => {
     const jupyterLab = jupyterLabAdapter.jupyterLab;
     console.log('JupyterLab is ready', jupyterLab);
   };
   return (
     <JupyterLabApp
-      serverless
-      nosplash={false}
+      serviceManager={serviceManager}
       plugins={[
         lightThemePlugins,
         ipywidgetsPlugins,
         plotlyPlugins,
         reactPlugins,
-      ]}
-      disabledPlugins={[
-//        "@jupyterlab/apputils-extension:themes",
-//        "@jupyterlab/apputils-extension:themes-palette-menu",
       ]}
       mimeRenderers={[
         plotlyMimeRenderers
@@ -50,7 +48,7 @@ const root = createRoot(div);
 
 root.render(
   <JupyterLabTheme>
-    <h1>JupyterLab Serverless Application</h1>
-    <JupyterLabAppSeverless />
+    <h1>JupyterLab Application with Service Manager property</h1>
+    <JupyterLabAppServiceManager />
   </JupyterLabTheme>
 );

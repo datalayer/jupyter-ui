@@ -117,7 +117,9 @@ const JupyterLabAppHeadlessServerless = () => {
           </div>
         )}
         <JupyterLabApp
+          headless
           serverless
+          nosplash={false}
           plugins={[
             lightThemePlugins,
             darkThemePlugins,
@@ -127,8 +129,6 @@ const JupyterLabAppHeadlessServerless = () => {
           mimeRenderers={[
             plotlyMimeRenderers
           ]}
-          headless
-          nosplash={false}
           onJupyterLab={onJupyterLab}
           pluginId="@jupyterlab/apputils-extension:themes"
           PluginType={ThemeManager}

@@ -4,7 +4,7 @@
  * MIT License
  */
 
-export type IDatalayerConfig = {
+export type IJupyterReactState = {
   /**
    * Cloud API URL
    */

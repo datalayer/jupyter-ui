@@ -9,7 +9,7 @@ import { IManager as IKernelspecManager} from '@jupyterlab/services/lib/kernelsp
 import { IManager as ISessionManager } from '@jupyterlab/services/lib/session/session';
 import { IManager as ITerminaManager } from '@jupyterlab/services/lib/terminal/terminal';
 
-export class Services {
+export class JupyterServices {
   private _serviceManager: ServiceManager.IManager;
 
   public constructor(services: ServiceManager.IManager) {
@@ -61,4 +61,4 @@ export class Services {
   }
 }
 
-export default Services;
+export default JupyterServices;
