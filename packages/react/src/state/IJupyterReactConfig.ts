@@ -4,9 +4,9 @@
  * MIT License
  */
 
-export type IJupyterReactState = {
+export type IJupyterReactConfig = {
   /**
-   * Cloud API URL
+   * Datalayer RUN URL
    */
-  apiServerUrl: string;
+  runUrl: string;
 };

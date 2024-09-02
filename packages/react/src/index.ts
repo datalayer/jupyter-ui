@@ -16,8 +16,8 @@ export * from './jupyter/kernel';
 export * from './jupyter/lab/JupyterLabCss';
 export * from './jupyter/lab/JupyterLabColorMode';
 export * from './jupyter/lab/JupyterLabTheme';
-// Jupyter Theme.
-export * from './jupyter/theme';
+// Jupyter Themes.
+export * from './themes/primerTheme';
 // Jupyter Lite
 export * from './jupyter/lite/LiteServer';
 // Jupyter IPyWidgets.

@@ -14,7 +14,7 @@ import JupyterServiceManagerMock from '../jupyter/services/JupyterServiceManager
 import * as lightThemePlugins from '@jupyterlab/theme-light-extension';
 import * as ipywidgetsPlugins from '@jupyter-widgets/jupyterlab-manager';
 import * as plotlyPlugins from 'jupyterlab-plotly/lib/jupyterlab-plugin';
-import * as reactPlugins from './../jupyter/lab/index';
+// import * as reactPlugins from './../jupyter/lab/index';
 
 import * as plotlyMimeRenderers from 'jupyterlab-plotly/lib/plotly-renderer';
 
@@ -31,7 +31,7 @@ const JupyterLabAppServiceManager = () => {
         lightThemePlugins,
         ipywidgetsPlugins,
         plotlyPlugins,
-        reactPlugins,
+//        reactPlugins,
       ]}
       mimeRenderers={[
         plotlyMimeRenderers

@@ -343,32 +343,32 @@ export class JupyterServiceManagerMock implements ServiceManager.IManager {
   nbconvert: NbConvert.IManager;
   constructor(serverSettings: ServerConnection.ISettings = ServerConnection.makeSettings()) {
     this.serverSettings = serverSettings;
-    this.terminals = new TerminalManagerMock(serverSettings);
     this.builder = new BuilderManagerMock(serverSettings) as Builder.IManager;
     this.contents = new ContentsManagerMock(serverSettings);
     this.events = new EventsManagerMock(serverSettings);
-    this.sessions = new SessionManagerMock(serverSettings);
     this.kernels = new KernelsManagerMock(serverSettings);
     this.kernelspecs = new KernelspecManagerMock(serverSettings);
+    this.nbconvert = new NbConvertManagerMock(serverSettings) as unknown as NbConvert.IManager;
+    this.sessions = new SessionManagerMock(serverSettings);
     this.settings = new SettingManagerMock(serverSettings)
+    this.terminals = new TerminalManagerMock(serverSettings);
     this.user = new UserManagerMock(serverSettings)
     this.workspaces = new WorkspaceManagerMock(serverSettings);
-    this.nbconvert = new NbConvertManagerMock(serverSettings) as unknown as NbConvert.IManager;
     /*
     const serviceManager = new ServiceManager({
       serverSettings,
     })
     this.settings = serviceManager.settings;
-    this.terminals = serviceManager.terminals;
     this.builder = serviceManager.builder;
     this.contents = serviceManager.contents;
     this.events = serviceManager.events;
-    this.sessions = serviceManager.sessions;
     this.kernels = serviceManager.kernels;
     this.kernelspecs = serviceManager.kernelspecs;
+    this.nbconvert = serviceManager.nbconvert;
+    this.sessions = serviceManager.sessions;
+    this.terminals = serviceManager.terminals;
     this.user = serviceManager.user;
     this.workspaces = serviceManager.workspaces;
-    this.nbconvert = serviceManager.nbconvert;
     */
   }
   dispose(): void {

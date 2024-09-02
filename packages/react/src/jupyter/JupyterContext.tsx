@@ -9,7 +9,7 @@ import { Kernel as JupyterKernel, ServerConnection, ServiceManager } from '@jupy
 import type { JupyterLiteServerPlugin } from '@jupyterlite/server';
 import { requestAPI } from './JupyterHandlers';
 import Kernel from './kernel/Kernel';
-import { useJupyterReactStoreFromContext } from '../state';
+import { useJupyterReactStoreFromProps } from '../state';
 
 export type Lite =
   | boolean
@@ -185,7 +185,7 @@ const JupyterProvider = JupyterContext.Provider;
 export const useJupyter = (props?: JupyterPropsType): JupyterContextType => {
   const context = useContext(JupyterContext);
   if (context) {
-    // We are with in a Jupyter context.
+    // We are with in a Jupyter context, returning fast the context.
     return context;
   }
   // We are not within a Jupyter context, so create it from the store.
@@ -194,7 +194,7 @@ export const useJupyter = (props?: JupyterPropsType): JupyterContextType => {
     kernelIsLoading,
     serviceManager,
     jupyterConfig,
-  } = useJupyterReactStoreFromContext(props ?? {});
+  } = useJupyterReactStoreFromProps(props ?? {});
   const storeContext: JupyterContextType = {
     collaborative: false,
     defaultKernel: kernel,

@@ -12,11 +12,11 @@ import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter'
 import * as lightThemePlugins from '@jupyterlab/theme-light-extension';
 import * as ipywidgetsPlugins from '@jupyter-widgets/jupyterlab-manager';
 import * as plotlyPlugins from 'jupyterlab-plotly/lib/jupyterlab-plugin';
-import * as reactPlugins from './../jupyter/lab/index';
+// import * as reactPlugins from './../jupyter/lab/index';
 
 import * as plotlyMimeRenderers from 'jupyterlab-plotly/lib/plotly-renderer';
 
-const JupyterLabAppSeverless = () => {
+const JupyterLabAppServerless = () => {
   const onJupyterLab = async (jupyterLabAdapter: JupyterLabAppAdapter) => {
     const jupyterLab = jupyterLabAdapter.jupyterLab;
     console.log('JupyterLab is ready', jupyterLab);
@@ -24,12 +24,11 @@ const JupyterLabAppSeverless = () => {
   return (
     <JupyterLabApp
       serverless
-      nosplash={false}
       plugins={[
         lightThemePlugins,
         ipywidgetsPlugins,
         plotlyPlugins,
-        reactPlugins,
+//        reactPlugins,
       ]}
       disabledPlugins={[
 //        "@jupyterlab/apputils-extension:themes",
@@ -51,6 +50,6 @@ const root = createRoot(div);
 root.render(
   <JupyterLabTheme>
     <h1>JupyterLab Serverless Application</h1>
-    <JupyterLabAppSeverless />
+    <JupyterLabAppServerless />
   </JupyterLabTheme>
 );
