@@ -32,7 +32,7 @@ const ENTRY =
   // './src/examples/JupyterLabApp';
   // './src/examples/JupyterLabAppHeadless';
   // './src/examples/JupyterLabAppHeadlessServerless';
-  './src/examples/JupyterLabAppServerless';
+  // './src/examples/JupyterLabAppServerless';
   // './src/examples/JupyterLabAppServiceManager';
   // './src/examples/Kernels';
   // './src/examples/KernelExecute';
@@ -42,12 +42,13 @@ const ENTRY =
   // './src/examples/Notebook';
   // './src/examples/NotebookUrl';
   // './src/examples/NotebookColorMode';
-  // './src/examples/NotebookKernelChange';
+//   './src/examples/NotebookKernelChange';
   // './src/examples/NotebookLite';
   // './src/examples/NotebookNbFormat';
   // './src/examples/NotebookNbFormatChange';
   // './src/examples/NotebookNoContext';
   // './src/examples/NotebookNoContextNoPrimer';
+  './src/examples/NotebookServiceManager';
   // './src/examples/NotebookSkeleton';
   // './src/examples/NotebookTheme';
   // './src/examples/NotebookThemeColorMode';

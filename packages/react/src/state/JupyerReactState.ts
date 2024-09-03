@@ -18,8 +18,8 @@ import { terminalStore, TerminalState } from '../components/terminal/TerminalSta
 import { createLiteServer } from '../jupyter/lite/LiteServer';
 import { getJupyterServerUrl } from '../jupyter/JupyterConfig';
 import { ensureJupyterAuth, createServerSettings, JupyterPropsType } from '../jupyter/JupyterContext';
-import Kernel from '../jupyter/kernel/Kernel';
 import { JupyterServiceManagerLess } from '../jupyter/services';
+import Kernel from '../jupyter/kernel/Kernel';
 
 export type JupyterReactState = {
   cellsStore: CellsState;
@@ -175,9 +175,7 @@ export function useJupyterReactStoreFromProps(props: JupyterPropsType): JupyterR
 //          window.location.replace(loginUrl);
         }
         if (useRunningKernelId && useRunningKernelIndex > -1) {
-          throw new Error(
-            'You can not ask for useRunningKernelId and useRunningKernelIndex at the same time.'
-          );
+          throw new Error('You can not ask for useRunningKernelId and useRunningKernelIndex at the same time.');
         }
         if (
           startDefaultKernel &&

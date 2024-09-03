@@ -20,10 +20,14 @@ const JupyterLabAppServerless = () => {
   const onJupyterLab = async (jupyterLabAdapter: JupyterLabAppAdapter) => {
     const jupyterLab = jupyterLabAdapter.jupyterLab;
     console.log('JupyterLab is ready', jupyterLab);
+    jupyterLab.commands.execute('apputils:activate-command-palette');
+    jupyterLab.commands.execute('apputils:display-notifications');
+    jupyterLab.commands.execute('toc:show-panel');
   };
   return (
     <JupyterLabApp
       serverless
+//      nosplash
       plugins={[
         lightThemePlugins,
         ipywidgetsPlugins,

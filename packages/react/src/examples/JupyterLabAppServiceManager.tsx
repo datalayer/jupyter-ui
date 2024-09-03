@@ -6,6 +6,7 @@
 
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { NotebookPanel } from '@jupyterlab/notebook';
 import JupyterLabTheme from '../jupyter/lab/JupyterLabTheme';
 import JupyterLabApp from '../components/jupyterlab/JupyterLabApp';
 import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter';
@@ -23,6 +24,14 @@ const JupyterLabAppServiceManager = () => {
   const onJupyterLab = async (jupyterLabAdapter: JupyterLabAppAdapter) => {
     const jupyterLab = jupyterLabAdapter.jupyterLab;
     console.log('JupyterLab is ready', jupyterLab);
+    jupyterLab.commands.execute('apputils:activate-command-palette');
+    jupyterLab.commands.execute('apputils:display-notifications');
+    jupyterLab.commands.execute('toc:show-panel');
+    jupyterLab.commands
+      .execute('notebook:create-new', { kernelName: 'python3' })
+      .then((notebookPanel: NotebookPanel) => {
+        console.log('Jupyter Notebook Panel', notebookPanel);
+      });
   };
   return (
     <JupyterLabApp

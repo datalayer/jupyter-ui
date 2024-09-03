@@ -31,9 +31,7 @@ const NotebookKernelChange = () => {
       });
       kernel.ready.then(() => {
         notebookStore.changeKernel({ id: NOTEBOOK_ID, kernel });
-        alert(
-          `The kernel is changed (was python3, now ${NEW_KERNEL_NAME}). Bummer, all your variables are lost!`
-        );
+        alert(`The kernel is changed (was python3, now ${NEW_KERNEL_NAME}). Bummer, all your variables are lost!`);
       });
     }
   };

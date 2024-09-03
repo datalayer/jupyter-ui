@@ -25,7 +25,10 @@ import * as plotlyMimeRenderers from 'jupyterlab-plotly/lib/plotly-renderer';
 
 const height = '900px';
 
-const PATHS = ['ipywidgets.ipynb', 'plotly.ipynb'];
+const PATHS = [
+  'ipywidgets.ipynb',
+  'plotly.ipynb',
+];
 
 const PATH_INDEX = 1;
 
@@ -48,9 +51,10 @@ const JupyterLabAppHeadless = () => {
   const handleSwitchChange = (dark: boolean) => {
     setDark(dark);
   };
-  const onJupyterLab = async (jupyterLabAdapter: JupyterLabAppAdapter) => {
-    setJupyterlabAdapter(jupyterLabAdapter);
-    const boxPanel = await jupyterLabAdapter.notebook(PATHS[PATH_INDEX]);
+  const onJupyterLab = async (jupyterLab: JupyterLabAppAdapter) => {
+    setJupyterlabAdapter(jupyterLab);
+    console.log('JupyterLab is ready', jupyterLab);
+    const boxPanel = await jupyterLab.notebook(PATHS[PATH_INDEX]);
     setNotebookBoxPanel(boxPanel);
   };
   const onPlugin = (themeManager: ThemeManager) => {
@@ -116,6 +120,7 @@ const JupyterLabAppHeadless = () => {
           </div>
         )}
         <JupyterLabApp
+          headless
           plugins={[
             lightThemePlugins,
             darkThemePlugins,
@@ -125,8 +130,6 @@ const JupyterLabAppHeadless = () => {
           mimeRenderers={[
             plotlyMimeRenderers
           ]}
-          headless
-          nosplash={false}
           onJupyterLab={onJupyterLab}
           pluginId="@jupyterlab/apputils-extension:themes"
           PluginType={ThemeManager}

@@ -7,9 +7,9 @@
 import React, { createContext, useContext } from 'react';
 import { Kernel as JupyterKernel, ServerConnection, ServiceManager } from '@jupyterlab/services';
 import type { JupyterLiteServerPlugin } from '@jupyterlite/server';
+import { useJupyterReactStoreFromProps } from '../state';
 import { requestAPI } from './JupyterHandlers';
 import Kernel from './kernel/Kernel';
-import { useJupyterReactStoreFromProps } from '../state';
 
 export type Lite =
   | boolean
@@ -60,9 +60,7 @@ export type JupyterPropsType = {
    */
   serverless?: boolean
   /**
-   * Jupyter Server settings
-   *
-   * This is useless if running an in-browser kernel via {@link lite}.
+   * Jupyter Service Manager.
    */
   serviceManager?: ServiceManager.IManager;
   /**
@@ -146,7 +144,7 @@ export type JupyterContextType =  {
    */
   lite?: Lite;
   /**
-   * Jupyter services manager
+   * Jupyter service manager
    */
   serviceManager?: ServiceManager.IManager;
   /**
