@@ -6,13 +6,7 @@
 
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import {
-  Box,
-  Text,
-  ToggleSwitch,
-  ThemeProvider,
-  useTheme,
-} from '@primer/react';
+import { Box, Text, ToggleSwitch, ThemeProvider, useTheme } from '@primer/react';
 import { BoxPanel } from '@lumino/widgets';
 import { ThemeManager } from '@jupyterlab/apputils';
 // import { NotebookTracker } from '@jupyterlab/notebook';
@@ -31,15 +25,17 @@ import * as plotlyMimeRenderers from 'jupyterlab-plotly/lib/plotly-renderer';
 
 const height = '900px';
 
-const PATHS = ['ipywidgets.ipynb', 'plotly.ipynb'];
+const PATHS = [
+  'ipywidgets.ipynb',
+  'plotly.ipynb',
+];
 
 const PATH_INDEX = 1;
 
-const JupyterLabHeadlessAppExample = () => {
+const JupyterLabAppHeadless = () => {
   const [notebookBoxPanel, setNotebookBoxPanel] = useState<BoxPanel>();
   const [theme, setTheme] = useState<ColorMode>('light');
-  const [jupyterLabAdapter, setJupyterlabAdapter] =
-    useState<JupyterLabAppAdapter>();
+  const [jupyterLabAdapter, setJupyterlabAdapter] = useState<JupyterLabAppAdapter>();
   const { setColorMode } = useTheme();
   const [isDark, setDark] = useState(false);
   const onSwitchClick = async () => {
@@ -55,9 +51,10 @@ const JupyterLabHeadlessAppExample = () => {
   const handleSwitchChange = (dark: boolean) => {
     setDark(dark);
   };
-  const onJupyterLab = async (jupyterLabAdapter: JupyterLabAppAdapter) => {
-    setJupyterlabAdapter(jupyterLabAdapter);
-    const boxPanel = await jupyterLabAdapter.notebook(PATHS[PATH_INDEX]);
+  const onJupyterLab = async (jupyterLab: JupyterLabAppAdapter) => {
+    setJupyterlabAdapter(jupyterLab);
+    console.log('JupyterLab is ready', jupyterLab);
+    const boxPanel = await jupyterLab.notebook(PATHS[PATH_INDEX]);
     setNotebookBoxPanel(boxPanel);
   };
   const onPlugin = (themeManager: ThemeManager) => {
@@ -123,6 +120,7 @@ const JupyterLabHeadlessAppExample = () => {
           </div>
         )}
         <JupyterLabApp
+          headless
           plugins={[
             lightThemePlugins,
             darkThemePlugins,
@@ -132,8 +130,6 @@ const JupyterLabHeadlessAppExample = () => {
           mimeRenderers={[
             plotlyMimeRenderers
           ]}
-          headless
-          nosplash={false}
           onJupyterLab={onJupyterLab}
           pluginId="@jupyterlab/apputils-extension:themes"
           PluginType={ThemeManager}
@@ -148,4 +144,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<JupyterLabHeadlessAppExample />);
+root.render(<JupyterLabAppHeadless />);

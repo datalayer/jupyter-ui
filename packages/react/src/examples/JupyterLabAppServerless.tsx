@@ -5,35 +5,38 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import { NotebookPanel } from '@jupyterlab/notebook';
-import Jupyter from '../jupyter/Jupyter';
+import { JupyterLabTheme } from '../jupyter/lab/JupyterLabTheme';
 import JupyterLabApp from '../components/jupyterlab/JupyterLabApp';
 import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter';
 
 import * as lightThemePlugins from '@jupyterlab/theme-light-extension';
 import * as ipywidgetsPlugins from '@jupyter-widgets/jupyterlab-manager';
 import * as plotlyPlugins from 'jupyterlab-plotly/lib/jupyterlab-plugin';
-import * as reactPlugins from './../jupyter/lab/index';
+// import * as reactPlugins from './../jupyter/lab/index';
 
 import * as plotlyMimeRenderers from 'jupyterlab-plotly/lib/plotly-renderer';
 
-const JupyterLabAppExample = () => {
+const JupyterLabAppServerless = () => {
   const onJupyterLab = async (jupyterLabAdapter: JupyterLabAppAdapter) => {
     const jupyterLab = jupyterLabAdapter.jupyterLab;
     console.log('JupyterLab is ready', jupyterLab);
-    jupyterLab.commands
-      .execute('notebook:create-new', { kernelName: 'python3' })
-      .then((notebookPanel: NotebookPanel) => {
-        console.log('Jupyter Notebook Panel', notebookPanel);
-      });
+    jupyterLab.commands.execute('apputils:activate-command-palette');
+    jupyterLab.commands.execute('apputils:display-notifications');
+    jupyterLab.commands.execute('toc:show-panel');
   };
   return (
     <JupyterLabApp
+      serverless
+//      nosplash
       plugins={[
         lightThemePlugins,
         ipywidgetsPlugins,
         plotlyPlugins,
-        reactPlugins,
+//        reactPlugins,
+      ]}
+      disabledPlugins={[
+//        "@jupyterlab/apputils-extension:themes",
+//        "@jupyterlab/apputils-extension:themes-palette-menu",
       ]}
       mimeRenderers={[
         plotlyMimeRenderers
@@ -49,8 +52,8 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <Jupyter startDefaultKernel={false} disableCssLoading>
-    <h1>JupyterLab Application</h1>
-    <JupyterLabAppExample />
-  </Jupyter>
+  <JupyterLabTheme>
+    <h1>JupyterLab Serverless Application</h1>
+    <JupyterLabAppServerless />
+  </JupyterLabTheme>
 );

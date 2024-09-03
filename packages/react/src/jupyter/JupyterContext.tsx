@@ -7,9 +7,9 @@
 import React, { createContext, useContext } from 'react';
 import { Kernel as JupyterKernel, ServerConnection, ServiceManager } from '@jupyterlab/services';
 import type { JupyterLiteServerPlugin } from '@jupyterlite/server';
+import { useJupyterReactStoreFromProps } from '../state';
 import { requestAPI } from './JupyterHandlers';
 import Kernel from './kernel/Kernel';
-import { useJupyterStoreFromContext } from '../state';
 
 export type Lite =
   | boolean
@@ -60,9 +60,7 @@ export type JupyterPropsType = {
    */
   serverless?: boolean
   /**
-   * Jupyter Server settings
-   *
-   * This is useless if running an in-browser kernel via {@link lite}.
+   * Jupyter Service Manager.
    */
   serviceManager?: ServiceManager.IManager;
   /**
@@ -146,7 +144,7 @@ export type JupyterContextType =  {
    */
   lite?: Lite;
   /**
-   * Jupyter services manager
+   * Jupyter service manager
    */
   serviceManager?: ServiceManager.IManager;
   /**
@@ -185,7 +183,7 @@ const JupyterProvider = JupyterContext.Provider;
 export const useJupyter = (props?: JupyterPropsType): JupyterContextType => {
   const context = useContext(JupyterContext);
   if (context) {
-    // We are with in a Jupyter context.
+    // We are with in a Jupyter context, returning fast the context.
     return context;
   }
   // We are not within a Jupyter context, so create it from the store.
@@ -194,7 +192,7 @@ export const useJupyter = (props?: JupyterPropsType): JupyterContextType => {
     kernelIsLoading,
     serviceManager,
     jupyterConfig,
-  } = useJupyterStoreFromContext(props ?? {});
+  } = useJupyterReactStoreFromProps(props ?? {});
   const storeContext: JupyterContextType = {
     collaborative: false,
     defaultKernel: kernel,

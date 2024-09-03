@@ -4,12 +4,7 @@
  * MIT License
  */
 
-import {
-  BaseStyles,
-  Box,
-  ThemeProvider,
-  theme as primerTheme,
-} from '@primer/react';
+import { BaseStyles, Box, ThemeProvider, theme as primerTheme } from '@primer/react';
 import { Theme } from '@primer/react/lib/ThemeProvider';
 import { useMemo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -62,6 +57,8 @@ export const Jupyter = (props: JupyterProps) => {
     jupyterServerUrl,
     jupyterServerToken,
     lite,
+    serverless,
+    serviceManager,
     startDefaultKernel,
     skeleton,
     terminals = false,
@@ -107,6 +104,8 @@ export const Jupyter = (props: JupyterProps) => {
               defaultKernelName={defaultKernelName}
               initCode={initCode}
               lite={lite}
+              serverless={serverless}
+              serviceManager={serviceManager}
               skeleton={skeleton}
               startDefaultKernel={startDefaultKernel}
               useRunningKernelId={useRunningKernelId}

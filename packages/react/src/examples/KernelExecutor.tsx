@@ -18,7 +18,7 @@ import {
 } from '../jupyter/kernel/KernelExecutor';
 
 const CODE = `from time import sleep
-for i in range(0, 3):
+for i in range(0, 15):
       sleep(1)
       print("👉 " + str(i))
 
@@ -27,8 +27,7 @@ print("🔁 I am done with looping!")`;
 const KernelExecutorView = () => {
   const { defaultKernel } = useJupyter();
   const [outputAreaModel, setOutputAreaModel] = useState<IOutputAreaModel>();
-  const [finalOutputAreaModel, setFinalOutputAreaModel] =
-    useState<IOutputAreaModel>();
+  const [finalOutputAreaModel, setFinalOutputAreaModel] = useState<IOutputAreaModel>();
   const [done, setDone] = useState(false);
   useEffect(() => {
     if (defaultKernel?.connection) {

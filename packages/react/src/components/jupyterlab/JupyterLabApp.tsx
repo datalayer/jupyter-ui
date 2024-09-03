@@ -126,7 +126,7 @@ JupyterLabAppComponent.defaultProps = {
   onJupyterLab: (_: JupyterLabAppAdapter) => {},
   plugins: [],
   position: 'relative',
-  nosplash: true,
+  nosplash: false,
   serverless: false,
   startDefaultKernel: false,
   theme: 'light',

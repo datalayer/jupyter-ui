@@ -26,23 +26,32 @@ import {
 } from './../components/kernel';
 
 export const KernelExecResultView = () => {
-  const { defaultKernel } = useJupyter();
+  const { defaultKernel: kernel } = useJupyter();
   const [running, setRunning] = useState(false);
   const [code, setCode] = useState('');
   const [result, setResult] = useState<string>();
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setCode(event.target.value);
   };
-  const exec = async () => {
+  const exec = () => {
     setRunning(true);
     setResult('');
-    const kernelExecutor = defaultKernel?.execute(code);
-    const result = await kernelExecutor?.result;
-    setResult(result);
-    setRunning(false);
+    const kernelExecutor = kernel?.execute(code);
+    kernelExecutor?.result
+      .then((result: string) => {
+        setResult(result);
+      })
+      .catch((error: string) => {
+        console.log('Error', error);
+        setResult(error);
+      })
+      .finally(() => {
+        setRunning(false);  
+      }
+    );
   };
   const interrupt = () => {
-    defaultKernel?.interrupt();
+    kernel?.interrupt();
   };
   return (
     <Box m={3}>
@@ -55,9 +64,9 @@ export const KernelExecResultView = () => {
         <Box mt={3} display="flex">
           <Box>
             <Button
-              disabled={!defaultKernel || running}
+              disabled={!kernel || running}
               onClick={exec}
-              variant={!defaultKernel || running ? 'default' : 'primary'}
+              variant={!kernel || running ? 'default' : 'primary'}
             >
               Execute
             </Button>
@@ -87,7 +96,7 @@ export const KernelExecResultView = () => {
 };
 
 const KernelComponents = () => {
-  const { defaultKernel } = useJupyter();
+  const { kernel } = useJupyter();
   const selectKernel = (kernelModel: IModel) => {
     console.log('Jupyter Kernel model', kernelModel);
   };
@@ -116,7 +125,7 @@ const KernelComponents = () => {
               </Text>
             </Box>
             <Box ml={3}>
-              <KernelIndicator kernel={defaultKernel?.connection} />
+              <KernelIndicator kernel={kernel?.connection} />
             </Box>
             <Box ml={3}>
               {Array.from(KERNEL_STATES.entries()).map(entry => {
@@ -154,7 +163,7 @@ const KernelComponents = () => {
               ml={3}
               style={{ verticalAlign: 'middle', display: 'inline-flex' }}
             >
-              <KernelActionMenu kernel={defaultKernel} />
+              <KernelActionMenu kernel={kernel} />
             </Box>
           </Box>
           <Box display="flex" mt={3}>
@@ -235,7 +244,7 @@ const KernelComponents = () => {
           </Text>
         </Box>
         <Box ml={3}>
-          <KernelUsage kernel={defaultKernel} />
+          <KernelUsage kernel={kernel} />
         </Box>
       </Box>
       <Box mt={3}>
@@ -248,7 +257,7 @@ const KernelComponents = () => {
           </Text>
         </Box>
         <Box ml={3}>
-          <KernelVariables kernel={defaultKernel} />
+          <KernelVariables kernel={kernel} />
         </Box>
       </Box>
       <Box mt={3}>
@@ -274,7 +283,7 @@ const KernelComponents = () => {
           </Text>
         </Box>
         <Box>
-          <KernelInspector kernel={defaultKernel} />
+          <KernelInspector kernel={kernel} />
         </Box>
       </Box>
     </>

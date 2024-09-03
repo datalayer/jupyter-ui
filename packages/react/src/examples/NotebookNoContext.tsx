@@ -19,16 +19,14 @@ const root = createRoot(div);
 const colorMode = 'light';
 
 root.render(
-  <>
-    <JupyterLabTheme colorMode={colorMode}>
-      <Notebook
-        path="ipywidgets.ipynb"
-        id={NOTEBOOK_ID}
-        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        cellSidebarMargin={60}
-        CellSidebar={CellSidebar}
-        Toolbar={NotebookToolbar}
-      />
-    </JupyterLabTheme>
-  </>
+  <JupyterLabTheme colorMode={colorMode}>
+    <Notebook
+      path="ipywidgets.ipynb"
+      id={NOTEBOOK_ID}
+      height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+      cellSidebarMargin={60}
+      CellSidebar={CellSidebar}
+      Toolbar={NotebookToolbar}
+    />
+  </JupyterLabTheme>
 );

@@ -7,9 +7,10 @@
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Box, Text, ToggleSwitch, ThemeProvider, useTheme } from '@primer/react';
+import { BoxPanel } from '@lumino/widgets';
 import { ThemeManager } from '@jupyterlab/apputils';
-import { RunningSessions } from '@jupyterlab/running';
-import Jupyter from '../jupyter/Jupyter';
+// import { NotebookTracker } from '@jupyterlab/notebook';
+import JupyterLabTheme from '../jupyter/lab/JupyterLabTheme';
 import Lumino from '../components/lumino/Lumino';
 import { ColorMode } from '../jupyter/lab/JupyterLabColorMode';
 import JupyterLabApp from '../components/jupyterlab/JupyterLabApp';
@@ -17,13 +18,24 @@ import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter'
 
 import * as darkThemePlugins from '@jupyterlab/theme-dark-extension';
 import * as lightThemePlugins from '@jupyterlab/theme-light-extension';
-import * as runningPlugins from '@jupyterlab/running-extension';
+import * as ipywidgetsPlugins from '@jupyter-widgets/jupyterlab-manager';
+import * as plotlyPlugins from 'jupyterlab-plotly/lib/jupyterlab-plugin';
 
-const RunningSessionsExample = () => {
-  const [runningSessions, setRunningSessions] = useState<RunningSessions>();
+import * as plotlyMimeRenderers from 'jupyterlab-plotly/lib/plotly-renderer';
+
+const height = '900px';
+
+const PATHS = [
+  'ipywidgets.ipynb',
+  'plotly.ipynb',
+];
+
+const PATH_INDEX = 1;
+
+const JupyterLabAppHeadless = () => {
+  const [notebookBoxPanel, setNotebookBoxPanel] = useState<BoxPanel>();
   const [theme, setTheme] = useState<ColorMode>('light');
-  const [jupyterLabAdapter, setJupyterlabAdapter] =
-    useState<JupyterLabAppAdapter>();
+  const [jupyterLabAdapter, setJupyterlabAdapter] = useState<JupyterLabAppAdapter>();
   const { setColorMode } = useTheme();
   const [isDark, setDark] = useState(false);
   const onSwitchClick = async () => {
@@ -39,24 +51,19 @@ const RunningSessionsExample = () => {
   const handleSwitchChange = (dark: boolean) => {
     setDark(dark);
   };
-  const onJupyterLab = async (jupyterLabAdapter: JupyterLabAppAdapter) => {
-    setJupyterlabAdapter(jupyterLabAdapter);
-    const runningSessionManagers = jupyterLabAdapter.service(
-      '@jupyterlab/running-extension:plugin'
-    );
-    const runningSessions = new RunningSessions(runningSessionManagers);
-    setRunningSessions(runningSessions);
+  const onJupyterLab = async (jupyterLab: JupyterLabAppAdapter) => {
+    setJupyterlabAdapter(jupyterLab);
+    console.log('JupyterLab is ready', jupyterLab);
+    const boxPanel = await jupyterLab.notebook(PATHS[PATH_INDEX]);
+    setNotebookBoxPanel(boxPanel);
   };
   const onPlugin = (themeManager: ThemeManager) => {
+    // const notebookTracker = jupyterlabAdapter.service("@jupyterlab/notebook-extension:tracker") as NotebookTracker;
     console.log('Current theme', themeManager.theme);
   };
   return (
     <>
-      <Jupyter
-        startDefaultKernel={false}
-        disableCssLoading
-        colorMode="light"
-      >
+      <JupyterLabTheme>
         <ThemeProvider
           colorMode={theme === 'light' ? 'day' : 'night'}
           dayScheme="light"
@@ -64,7 +71,7 @@ const RunningSessionsExample = () => {
         >
           <Box display="flex" color="fg.default" bg="canvas.default">
             <Box mr={3}>
-              <Text as="h2">JupyterLab Headless Application</Text>
+              <Text as="h2">JupyterLab Headless Serverless Application</Text>
             </Box>
             <Box>
               <Box>
@@ -91,20 +98,41 @@ const RunningSessionsExample = () => {
             </Box>
           </Box>
         </ThemeProvider>
-        {runningSessions && <Lumino height="300px">{runningSessions}</Lumino>}
+        {notebookBoxPanel && (
+          <div style={{ position: 'relative' }}>
+            <Box
+              className="jp-LabShell"
+              sx={{
+                position: 'relative',
+                '& .dla-Jupyter-Notebook': {
+                  height,
+                  maxHeight: height,
+                  width: '100%',
+                },
+              }}
+            >
+              <Lumino>{notebookBoxPanel}</Lumino>
+            </Box>
+          </div>
+        )}
         <JupyterLabApp
+          headless
+          serverless
           plugins={[
             lightThemePlugins,
             darkThemePlugins,
-            runningPlugins,
+            ipywidgetsPlugins,
+            plotlyPlugins,
           ]}
-          headless
+          mimeRenderers={[
+            plotlyMimeRenderers
+          ]}
           onJupyterLab={onJupyterLab}
           pluginId="@jupyterlab/apputils-extension:themes"
           PluginType={ThemeManager}
           onPlugin={onPlugin}
         />
-      </Jupyter>
+      </JupyterLabTheme>
     </>
   );
 };
@@ -113,4 +141,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<RunningSessionsExample />);
+root.render(<JupyterLabAppHeadless />);
