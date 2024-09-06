@@ -194,6 +194,7 @@ export class Kernel {
       stopOnError,
       storeHistory,
       allowStdin,
+      notifyOnComplete = false
     }: {
       model?: IOutputAreaModel;
       iopubMessageHooks?: IOPubMessageHook[];
@@ -202,12 +203,14 @@ export class Kernel {
       stopOnError?: boolean;
       storeHistory?: boolean;
       allowStdin?: boolean;
+      notifyOnComplete? : boolean
     } = {}
   ): KernelExecutor | undefined {
     if (this._kernelConnection) {
       const kernelExecutor = new KernelExecutor({
         connection: this._kernelConnection,
         model,
+        notifyOnComplete,
       });
       kernelExecutor.execute(code, {
         iopubMessageHooks,

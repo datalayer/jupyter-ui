@@ -41,6 +41,11 @@ export type IKernelExecutorOptions = {
    * Outputs model to populate with the execution results.
    */
   model?: IOutputAreaModel;
+  /**
+   * Flag defining if notification about model changes
+   * must only be made when execution complete
+   */
+  notifyOnComplete? : boolean;
 }
 
 export class KernelExecutor {
@@ -54,13 +59,15 @@ export class KernelExecutor {
   private _outputsChanged = new Signal<KernelExecutor, IOutput[]>(this);
   private _future?: JupyterKernel.IFuture<KernelMessage.IExecuteRequestMsg, KernelMessage.IExecuteReplyMsg>;
   private _shellMessageHooks = new Array<ShellMessageHook>();
+  private _notifyOnComplete : boolean = false;
 
-  public constructor({ connection, model }: IKernelExecutorOptions) {
+  public constructor({ connection, model, notifyOnComplete }: IKernelExecutorOptions) {
     this._executed = new PromiseDelegate<IOutputAreaModel>();
     this._kernelConnection = connection;
     this._model = model ?? new OutputAreaModel();
     this._outputs = [];
     this._kernelState = kernelsStore.getState();
+    this._notifyOnComplete = !!notifyOnComplete;
   }
 
   /**
@@ -118,6 +125,10 @@ export class KernelExecutor {
     // Wait for future to be done before resolving the exectud promise.
     this._future.done.then(() => {
       kernelsStore.getState().setExecutionPhase(this._kernelConnection.id, ExecutionPhase.completed);
+      // We emit model changes only when execution completed
+      if (this._notifyOnComplete) {
+        this._modelChanged.emit(this._model);
+      }    
       this._executed.resolve(this._model);
     });
     return this._executed.promise;
@@ -205,13 +216,17 @@ export class KernelExecutor {
         this._outputs.push(message.content as IExecuteResult);
         this._outputsChanged.emit(this._outputs);
         this._model.add(output);
-        this._modelChanged.emit(this._model);
+        if (!this._notifyOnComplete) {
+          this._modelChanged.emit(this._model);
+        }
         break;
       case 'display_data':
         this._outputs.push(message.content as IDisplayData);
         this._outputsChanged.emit(this._outputs);
         this._model.add(output);
-        this._modelChanged.emit(this._model);
+        if (!this._notifyOnComplete) {
+          this._modelChanged.emit(this._model);
+        }
         break;
       case 'stream':
       case 'error':
@@ -232,7 +247,9 @@ export class KernelExecutor {
         this._outputsChanged.emit(this._outputs);
         // FIXME this needs more advanced analysis see OutputArea
         this._model.add(output);
-        this._modelChanged.emit(this._model);
+        if (!this._notifyOnComplete) {
+          this._modelChanged.emit(this._model);
+        }
         break;
       case 'status':
         const executionState = (message.content as any).execution_state as KernelMessage.Status;
