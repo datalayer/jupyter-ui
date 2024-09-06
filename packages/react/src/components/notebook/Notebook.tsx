@@ -77,8 +77,7 @@ export type INotebookProps = {
  * @returns A Notebook React.js component.
  */
 export const Notebook = (props: INotebookProps) => {
-  const { serviceManager, defaultKernel, kernelManager, lite } =
-    useJupyter();
+  const { serviceManager, defaultKernel, kernelManager, lite } = useJupyter();
   const {
     path,
     kernel: propsKernel,
@@ -97,6 +96,7 @@ export const Notebook = (props: INotebookProps) => {
   const portals = notebookStore.selectNotebookPortals(id);
   const newAdapterState = () => {
     if (id && serviceManager && kernelManager && kernel) {
+      console.log('---', serviceManager, kernelManager, kernel)
       kernel.ready.then(() => {
         const adapter = new NotebookAdapter(
           {

@@ -91,7 +91,7 @@ export class KernelExecutor {
       iopubMessageHooks = [],
       shellMessageHooks = [],
       silent = false,
-      stopOnError = false,
+      stopOnError = true,
       storeHistory = true,
       allowStdin = false,
     }: {
@@ -118,7 +118,7 @@ export class KernelExecutor {
     iopubMessageHooks.forEach(hook => this._future!.registerMessageHook(hook));
     this._future.onStdin = msg => {
       if (KernelMessage.isInputRequestMsg(msg)) {
-        // FIXME Implement this.
+        // FIXME Implement this...
         // this.onInputRequest(msg, value);
       }
     };
@@ -171,6 +171,7 @@ export class KernelExecutor {
    */
   get result(): Promise<string> {
     return this._executed.promise.then(model => {
+      console.log('---', model)
       return outputsAsString(model.toJSON());
     });
   }
@@ -276,17 +277,14 @@ export class KernelExecutor {
         case 'error':
           {
             const { ename, evalue, traceback } = content as KernelMessage.IReplyErrorContent;
-            this._executed.reject(
-              `${ename}: ${evalue}\n${(traceback ?? []).join('\n')}`
-            );
+            this._executed.reject(`${ename}: ${evalue}\n${(traceback ?? []).join('\n')}`);
           }
           break;
       }
       return;
     }
     // API responses that contain a pager are special cased and their type
-    // is overridden from 'execute_reply' to 'display_data' in order to
-    // render output.
+    // is overridden from 'execute_reply' to 'display_data' in order to render output.
     const payload = content?.payload;
     if (payload?.length) {
       const pages = payload.filter((i: any) => i.source === 'page');

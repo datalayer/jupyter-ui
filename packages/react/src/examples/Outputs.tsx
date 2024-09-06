@@ -22,7 +22,7 @@ const Outputs = () => {
           <>
             {cell.outputs && (
               <Output
-                showEditor={true}
+                showEditor
                 autoRun={false}
                 code={cellSourceAsString(cell)}
                 outputs={cell.outputs as IOutput[]}

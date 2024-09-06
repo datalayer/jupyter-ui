@@ -8,7 +8,7 @@ import { useState, useEffect, useReducer } from 'react';
 import { TreeView } from '@primer/react';
 import { FileIcon } from '@primer/octicons-react';
 import { useJupyter } from './../../jupyter/JupyterContext';
-import Services from './../../jupyter/services/Services';
+import JupyterServices from './../../jupyter/services/JupyterServices';
 
 interface RenderTree {
   id: string;
@@ -26,12 +26,12 @@ export const FileBrowser = () => {
   const [, forceUpdate] = useReducer(x => x + 1, 0);
   const { serviceManager } = useJupyter();
   const loadPath = (
-    services: Services,
+    services: JupyterServices,
     subTree: RenderTree,
     path: string[]
   ) => {
     const loadFolderItems = (
-      services: Services,
+      services: JupyterServices,
       path: string[]
     ): Promise<RenderTree[]> => {
       const folderItems = services
@@ -79,7 +79,7 @@ export const FileBrowser = () => {
   };
   useEffect(() => {
     if (serviceManager) {
-      const services = new Services(serviceManager!);
+      const services = new JupyterServices(serviceManager);
       loadPath(services, initialTree, []);
     }
   }, [serviceManager]);

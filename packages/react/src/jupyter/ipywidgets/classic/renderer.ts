@@ -28,9 +28,9 @@ export class WidgetRenderer extends Widget implements IRenderMime.IRenderer {
       const wView = await this._manager.create_view(wModel);
       Widget.attach(wView.luminoWidget, this.node);
     } catch (err) {
-      console.log('Error displaying widget');
+      console.log('Error displaying Lumino Widget');
       console.log(err);
-      this.node.textContent = 'Error displaying widget';
+      this.node.textContent = 'Error displaying Lumino Widget';
       this.addClass('jupyter-widgets');
     }
   }

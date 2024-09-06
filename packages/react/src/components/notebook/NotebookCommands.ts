@@ -20,6 +20,7 @@ import {
 } from '@jupyterlab/documentsearch';
 import { Widget } from '@lumino/widgets';
 import { nullTranslator } from '@jupyterlab/translation';
+import { IYText } from '@jupyter/ydoc';
 
 /**
  * The map of command ids used by the notebook.
@@ -274,13 +275,38 @@ export const NotebookCommands = (
     execute: () => NotebookActions.splitCell(notebookPanel.content),
   });
   commandRegistry.addCommand(cmdIds.undo, {
-    label: 'Undo',
-    execute: () => NotebookActions.undo(notebookPanel.content),
-  });
-  commandRegistry.addCommand(cmdIds.redo, {
-    label: 'Redo',
-    execute: () => NotebookActions.redo(notebookPanel.content),
-  });
+		label: 'Undo',
+		execute: () => {
+			const activeCell = notebookPanel.content.activeCell;
+			if (activeCell) {
+				const sharedModel = activeCell.model
+					.sharedModel as any as IYText;
+				if (sharedModel.undoManager) {
+					sharedModel.undoManager.undo();
+				} else {
+					// Fallback to default undo if Yjs undo manager is not available
+					NotebookActions.undo(notebookPanel.content);
+				}
+			}
+		},
+	});
+
+	commandRegistry.addCommand(cmdIds.redo, {
+		label: 'Redo',
+		execute: () => {
+			const activeCell = notebookPanel.content.activeCell;
+			if (activeCell) {
+				const sharedModel = activeCell.model
+					.sharedModel as any as IYText;
+				if (sharedModel.undoManager) {
+					sharedModel.undoManager.redo();
+				} else {
+					// Fallback to default redo if Yjs undo manager is not available
+					NotebookActions.redo(notebookPanel.content);
+				}
+			}
+		},
+	});
   commandRegistry.addCommand(cmdIds.changeCellTypeToCode, {
     label: 'Change Cell Type to Code',
     execute: args =>
@@ -426,16 +452,16 @@ export const NotebookCommands = (
       keys: ['Shift J'],
       command: cmdIds.extendBelow,
     },
-    {
-      selector: '.jp-Notebook.jp-mod-commandMode:focus',
-      keys: ['Ctrl Z'],
-      command: cmdIds.undo,
-    },
-    {
-      selector: '.jp-Notebook.jp-mod-commandMode:focus',
-      keys: ['Ctrl Y'],
-      command: cmdIds.redo,
-    },
+{
+			selector: '.jp-Notebook',
+			keys: ['Ctrl Z'],
+			command: cmdIds.undo,
+		},
+		{
+			selector: '.jp-Notebook',
+			keys: ['Ctrl Y'],
+			command: cmdIds.redo,
+		},
     {
       selector: '.jp-Notebook:focus',
       keys: ['M'],

@@ -26,7 +26,7 @@ import './FileManagerAdapter.css';
 class FileBrowserAdapter {
   private _fileBrowserPanel: SplitPanel;
 
-  constructor(serviceManager: ServiceManager) {
+  constructor(serviceManager: ServiceManager.IManager) {
     this._fileBrowserPanel = new SplitPanel();
     this._fileBrowserPanel.id = 'dla-jlab-FleBrowser';
     this._fileBrowserPanel.orientation = 'horizontal';

@@ -5,15 +5,18 @@
  */
 
 import { ServiceManager } from '@jupyterlab/services';
+import { IManager as IKernelspecManager} from '@jupyterlab/services/lib/kernelspec/kernelspec';
+import { IManager as ISessionManager } from '@jupyterlab/services/lib/session/session';
+import { IManager as ITerminaManager } from '@jupyterlab/services/lib/terminal/terminal';
 
-export class Services {
-  private _serviceManager: ServiceManager;
+export class JupyterServices {
+  private _serviceManager: ServiceManager.IManager;
 
-  public constructor(services: ServiceManager) {
+  public constructor(services: ServiceManager.IManager) {
     this._serviceManager = services;
   }
 
-  public kernelspecs() {
+  public kernelspecs(): IKernelspecManager {
     return this._serviceManager.kernelspecs;
   }
 
@@ -25,7 +28,7 @@ export class Services {
     return this._serviceManager.nbconvert;
   }
 
-  public sessions() {
+  public sessions(): ISessionManager {
     return this._serviceManager.sessions;
   }
 
@@ -33,7 +36,7 @@ export class Services {
     return this._serviceManager.settings;
   }
 
-  public terminals() {
+  public terminals(): ITerminaManager {
     return this._serviceManager.terminals;
   }
 
@@ -58,4 +61,4 @@ export class Services {
   }
 }
 
-export default Services;
+export default JupyterServices;

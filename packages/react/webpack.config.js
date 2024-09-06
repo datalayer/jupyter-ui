@@ -20,6 +20,7 @@ const ENTRY =
   // './src/app/App';
   // './src/examples/Cell';
   // './src/examples/Cells';
+  // './src/examples/CellsExecute';
   // './src/examples/CellLite';
   // './src/examples/Console';
   // './src/examples/ConsoleLite';
@@ -29,21 +30,25 @@ const ENTRY =
   // './src/examples/IPyWidgets';
   // './src/examples/IPyWidgetsWithState';
   // './src/examples/JupyterLabApp';
-  // './src/examples/JupyterLabHeadlessApp';
+  // './src/examples/JupyterLabAppHeadless';
+  // './src/examples/JupyterLabAppHeadlessServerless';
+  // './src/examples/JupyterLabAppServerless';
+  // './src/examples/JupyterLabAppServiceManager';
   // './src/examples/Kernels';
   // './src/examples/KernelExecute';
   // './src/examples/KernelExecutor';
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
-  './src/examples/Notebook';
+  // './src/examples/Notebook';
   // './src/examples/NotebookUrl';
   // './src/examples/NotebookColorMode';
-  // './src/examples/NotebookKernelChange';
+//   './src/examples/NotebookKernelChange';
   // './src/examples/NotebookLite';
   // './src/examples/NotebookNbFormat';
-  // './src/examples/NotebookNbFormatChange';O
+  // './src/examples/NotebookNbFormatChange';
   // './src/examples/NotebookNoContext';
   // './src/examples/NotebookNoContextNoPrimer';
+  './src/examples/NotebookServiceManager';
   // './src/examples/NotebookSkeleton';
   // './src/examples/NotebookTheme';
   // './src/examples/NotebookThemeColorMode';

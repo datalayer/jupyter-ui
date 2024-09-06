@@ -14,12 +14,13 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <Jupyter lite={true}>
+  <Jupyter lite>
     <Box as="h1">A Jupyter Console with a Lite Kernel</Box>
     <Console
       code={`import piplite
 await piplite.install('numpy')
-print('👋 Hello Jupyter Console')`}
+import numpy
+print(f'👋 Hello Jupyter Console with a Lite Kernel and numpy {numpy.__version__}')`}
     />
   </Jupyter>
 );
