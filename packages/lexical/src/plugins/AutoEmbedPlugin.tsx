@@ -29,7 +29,7 @@ interface PlaygroundEmbedConfig extends EmbedConfig {
   // Icon for display.
   icon?: JSX.Element;
 
-  // An example of a matching url https://twitter.com/jack/status/20
+  // An example of a matching url https://x.com/jack/status/20
   exampleUrl: string;
 
   // For extra searching.

@@ -123,7 +123,7 @@ module.exports = {
           'aria-label': 'Linkedin',
         },
         {
-          href: 'https://twitter.com/DatalayerIO',
+          href: 'https://x.com/DatalayerIO',
           position: 'right',
           className: 'header-twitter-link',
           'aria-label': 'Twitter',
@@ -154,7 +154,7 @@ module.exports = {
             },
             {
               label: 'Twitter',
-              href: 'https://twitter.com/datalayerio',
+              href: 'https://x.com/datalayerio',
             },
             {
               label: 'Linkedin',
