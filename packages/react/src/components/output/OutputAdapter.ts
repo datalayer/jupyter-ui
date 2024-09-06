@@ -83,7 +83,7 @@ export class OutputAdapter {
   public async execute(code: string, notifyOnComplete? : boolean) {
     if (this._kernel) {
       this.clear();
-      const metadata : JSONObject = new JSONObject();
+      const metadata : JSONObject = {};
       const done = execute(this._id, code, this._outputArea, this._kernel, metadata, notifyOnComplete);
       await done;
     }
