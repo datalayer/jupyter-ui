@@ -5,6 +5,7 @@
  */
 
 import { IOutput } from '@jupyterlab/nbformat';
+import { JSONObject } from '@lumino/coreutils';
 import { IOutputAreaModel, OutputArea, OutputAreaModel } from '@jupyterlab/outputarea';
 import { IRenderMime, RenderMimeRegistry, standardRendererFactories } from '@jupyterlab/rendermime';
 import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
@@ -82,7 +83,8 @@ export class OutputAdapter {
   public async execute(code: string, notifyOnComplete? : boolean) {
     if (this._kernel) {
       this.clear();
-      const done = execute(this._id, code, this._outputArea, this._kernel, notifyOnComplete);
+      const metadata : JSONObject = new JSONObject();
+      const done = execute(this._id, code, this._outputArea, this._kernel, metadata, notifyOnComplete);
       await done;
     }
   }
