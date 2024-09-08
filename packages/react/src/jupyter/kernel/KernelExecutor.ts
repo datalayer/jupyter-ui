@@ -171,7 +171,6 @@ export class KernelExecutor {
    */
   get result(): Promise<string> {
     return this._executed.promise.then(model => {
-      console.log('---', model)
       return outputsAsString(model.toJSON());
     });
   }
