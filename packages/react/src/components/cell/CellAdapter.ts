@@ -224,7 +224,7 @@ export class CellAdapter {
       extensions: editorExtensions(),
       languages,
     });
-
+    //
     const cellModel = createStandaloneCell({
       cell_type: type,
       source: source,
@@ -251,7 +251,7 @@ export class CellAdapter {
     if (this._type === 'markdown') {
       (this._cell as MarkdownCell).rendered = false;
     }
-
+    //
     this._sessionContext.kernelChanged.connect(
       (_, arg: Session.ISessionConnection.IKernelChangedArgs) => {
         const kernelConnection = arg.newValue;
@@ -281,6 +281,7 @@ export class CellAdapter {
         }
       });
     });
+    // Completer.
     const editor = this._cell.editor;
     const model = new CompleterModel();
     const completer = new Completer({ editor, model });
@@ -308,8 +309,10 @@ export class CellAdapter {
         timeout,
       });
     });
-    handler.editor = editor;
-
+    this._cell.ready.then(() => {
+      handler.editor = this._cell && this._cell.editor;
+    });
+    //
     CellCommands(commands, this._cell!, handler, this);
     completer.hide();
     completer.addClass('jp-Completer-Cell');

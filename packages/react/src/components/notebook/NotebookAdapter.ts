@@ -447,9 +447,9 @@ export class NotebookAdapter {
       notebookPanel.content.activeCell &&
       notebookPanel.content.activeCell.editor;
     const sessionContext = notebookPanel.context.sessionContext;
-    const completerModel = new CompleterModel();
-    const completer = new Completer({ editor, model: completerModel });
-    const completerTimeout = 1000;
+    const model = new CompleterModel();
+    const completer = new Completer({ editor, model });
+    const timeout = 1000;
     const provider = new KernelCompleterProvider();
     const reconciliator = new ProviderReconciliator({
       context: {
@@ -458,7 +458,7 @@ export class NotebookAdapter {
         session: sessionContext.session,
       },
       providers: [provider],
-      timeout: completerTimeout,
+      timeout,
     });
     const handler = new CompletionHandler({ completer, reconciliator });
     void sessionContext.ready.then(() => {
@@ -470,14 +470,16 @@ export class NotebookAdapter {
           session: sessionContext.session,
         },
         providers: [provider],
-        timeout: completerTimeout,
+        timeout: timeout,
       });
       handler.reconciliator = reconciliator;
     });
     handler.editor = editor;
     notebookPanel.content.activeCellChanged.connect(
-      (sender: any, snippet: Cell<ICellModel>) => {
-        handler.editor = snippet && snippet.editor;
+      (sender: any, cell: Cell<ICellModel>) => {
+        cell.ready.then(() => {
+          handler.editor = cell && cell.editor;
+        });
       }
     );
     completer.hide();

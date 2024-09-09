@@ -96,7 +96,6 @@ export const Notebook = (props: INotebookProps) => {
   const portals = notebookStore.selectNotebookPortals(id);
   const newAdapterState = () => {
     if (id && serviceManager && kernelManager && kernel) {
-      console.log('---', serviceManager, kernelManager, kernel)
       kernel.ready.then(() => {
         const adapter = new NotebookAdapter(
           {
