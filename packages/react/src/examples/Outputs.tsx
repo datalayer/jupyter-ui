@@ -11,7 +11,7 @@ import Jupyter from '../jupyter/Jupyter';
 import Output from '../components/output/Output';
 import { cellSourceAsString } from './../utils/Utils';
 
-import nbformat from './notebooks/NotebookExample1.ipynb.json';
+import nbformat from './notebooks/NotebookOutputs.ipynb.json';
 
 const Outputs = () => {
   return (
