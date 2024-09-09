@@ -5,7 +5,7 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import { Box, Button } from '@primer/react';
+import { Box, Button, Label } from '@primer/react';
 import { CodeCell } from '@jupyterlab/cells';
 import { Jupyter } from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
@@ -36,13 +36,18 @@ const CellExample = () => {
         Outputs Count: {cellsStore.getOutputsCount(CELL_ID)}
       </Box>
       <Box>defaultKernel
-        Kernel State: {defaultKernel && kernelsStore.getExecutionState(defaultKernel.id)}
+        Kernel State: <Label>{defaultKernel && kernelsStore.getExecutionState(defaultKernel.id)}</Label>
       </Box>
       <Box>
-        Kernel Phase: {defaultKernel && kernelsStore.getExecutionPhase(defaultKernel.id)}
+        Kernel Phase: <Label>{defaultKernel && kernelsStore.getExecutionPhase(defaultKernel.id)}</Label>
       </Box>
-      <Box>
-        <KernelIndicator kernel={defaultKernel && defaultKernel.connection}/>
+      <Box display="flex">
+        <Box>
+          Kernel Indicator:
+        </Box>
+        <Box ml={3}>
+          <KernelIndicator kernel={defaultKernel && defaultKernel.connection}/>
+        </Box>
       </Box>
       <Box>
         <Button onClick={() => cellsStore.execute(CELL_ID)}>Run cell</Button>
