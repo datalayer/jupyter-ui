@@ -18,7 +18,7 @@ function shim(regExp) {
 
 const ENTRY =
   // './src/app/App';
-  // './src/examples/Cell';
+  './src/examples/Cell';
   // './src/examples/Cells';
   // './src/examples/CellsExecute';
   // './src/examples/CellLite';
@@ -39,7 +39,7 @@ const ENTRY =
   // './src/examples/KernelExecutor';
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
-  './src/examples/Notebook';
+  // './src/examples/Notebook';
   // './src/examples/NotebookUrl';
   // './src/examples/NotebookColorMode';
   // './src/examples/NotebookKernelChange';
