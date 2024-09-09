@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /*
  * Copyright (c) 2021-2023 Datalayer, Inc.
  *
@@ -40,7 +41,8 @@ export type IOutputProps = {
   showEditor: boolean;
   showKernelProgressBar?: boolean;
   toolbarPosition: 'up' | 'middle' | 'none';
-  notifyOnComplete? : boolean;
+  notifyOnComplete?: boolean;
+  onCodeExecutionError?: (err : any) => void;
 };
 
 export const Output = (props: IOutputProps) => {
@@ -64,6 +66,7 @@ export const Output = (props: IOutputProps) => {
     showEditor,
     showKernelProgressBar = true,
     notifyOnComplete = false,
+    onCodeExecutionError,
     id: sourceId,
     toolbarPosition,
   } = props;
@@ -123,7 +126,7 @@ export const Output = (props: IOutputProps) => {
   useEffect(() => {
     if (adapter) {
       if (autoRun) {
-        adapter.execute(code, notifyOnComplete);
+        adapter.execute(code, notifyOnComplete,onCodeExecutionError);
       }
     }
   }, [adapter]);
@@ -143,12 +146,12 @@ export const Output = (props: IOutputProps) => {
   const executeRequest = outputStore.getExecuteRequest(sourceId);
   useEffect(() => {
     if (adapter && executeRequest && executeRequest === id) {
-      adapter.execute(code, notifyOnComplete);
+      adapter.execute(code, notifyOnComplete,onCodeExecutionError);
     }
   }, [executeRequest, adapter]);
   useEffect(() => {
     if (adapter && executeTrigger > 0) {
-      adapter.execute(code, notifyOnComplete);
+      adapter.execute(code, notifyOnComplete,onCodeExecutionError);
     }
   }, [executeTrigger]);
   useEffect(() => {
