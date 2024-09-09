@@ -68,7 +68,7 @@ module.exports = {
               href: 'https://discordapp.com/invite/docusaurus',
             },
             {
-              label: 'Twitter',
+              label: 'X',
               href: 'https://x.com/docusaurus',
             },
           ],
