@@ -105,15 +105,10 @@ export class OutputAdapter {
         this._outputArea,
         this._kernel,
         metadata,
-        notifyOnComplete
+        notifyOnComplete,
+        onCodeExecutionError
       );
-      if (onCodeExecutionError) {
-        await done.catch(onCodeExecutionError);
-      } else {
-        await done.catch(err => {
-          console.error(err);
-        });
-      }
+      await done;
     }
   }
 
