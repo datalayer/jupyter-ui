@@ -18,7 +18,7 @@ export async function execute(
   output: OutputArea,
   kernel: Kernel,
   metadata?: JSONObject,
-  notifyOnComplete? : boolean
+  notifyOnComplete?: boolean
 ): Promise<KernelMessage.IExecuteReplyMsg | undefined> {
   // Override the default for `stop_on_error`.
   let stopOnError = true;
@@ -29,14 +29,11 @@ export async function execute(
   ) {
     stopOnError = false;
   }
-  const kernelExecutor = kernel.execute(
-    code,
-    {
-      model: output.model,
-      stopOnError,
-      notifyOnComplete : notifyOnComplete
-    }
-  );
+  const kernelExecutor = kernel.execute(code, {
+    model: output.model,
+    stopOnError,
+    notifyOnComplete: notifyOnComplete,
+  });
   const future = kernelExecutor!.future;
   // TODO fix in upstream jupyterlab if possible...
   (output as any)._onIOPub = future!.onIOPub;
