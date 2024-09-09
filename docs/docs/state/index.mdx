@@ -7,6 +7,10 @@ sidebar_position: 1
 
 As an application developer, you may already have a Redux store. You can simply inject the Jupyter UI store in your own store.
 
-For now, we support [Redux](/docs/state/redux) to manage the application state.
+For now, we support [Zustand](/docs/state/zustand) to manage the application state.
 
-We are considering other stores like `Mobx` or `Zustand`, please share thoughts and requirements on [this issue](https://github.com/datalayer/jupyter-ui/issues/50).
+## Deprecated Redux
+
+We have been considering other stores like `Mobx`, please share thoughts and requirements on [this issue](https://github.com/datalayer/jupyter-ui/issues/50).
+
+Redux was harder to play with, see e.g. the [Notebook Injectable Redux Store example](https://github.com/datalayer/jupyter-ui/tree/14e45c0928f724d2899d0f031e1d9451886df624/packages/react/src/examples/NotebookInjectableReduxStore.tsx) to inject your own Redux state, reducers and epics in the Jupyter React Redux store.

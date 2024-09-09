@@ -2,9 +2,30 @@
 description: The Context component.
 ---
 
-# 🪐 Jupyter Context
+# 🪐 Context
 
-Every component must be wrapped inside a Jupyter Context.
+Every component should be wrapped inside a Context to get the needed CSS.
+
+```tsx
+root.render(
+  <JupyterLabTheme>
+    <Cell />
+  </Jupyter>
+);
+```
+
+If you prefer to not wrap in a Context, you can just use the JupyterLabCss component.
+
+```tsx
+root.render(
+  <>
+    <JupyterLabCss colorMode='dark' />
+    <Cell />
+  </>
+);
+```
+
+We also have a more evolved Context that allows you to specify behaviour for the kernels.
 
 ```tsx
 root.render(
@@ -30,10 +51,11 @@ The Jupyter Context has the following properties.
 
 - `collaborative`
 - `defaultKernelName`
-- `injectableStore`: Read more about the [State](/docs/state)
+- `injectableStore` - Read more about the [State](/docs/state)
 - `jupyterServerUrl` - Read also [Deployment](/docs/deployments/jupyter-server)
 - `jupyterServerToken` - Read also [Deployment](/docs/deployments/jupyter-server)
-- `lite`
+- `initCode` - The code to run on the Kernel when it is ready.
+- `lite` - Use a pyodide (in browser) Kernel.
 - `loadJupyterCss`
 - `startDefaultKernel`
 - `terminals`

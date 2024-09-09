@@ -123,10 +123,10 @@ module.exports = {
           'aria-label': 'Linkedin',
         },
         {
-          href: 'https://twitter.com/DatalayerIO',
+          href: 'https://x.com/DatalayerIO',
           position: 'right',
-          className: 'header-twitter-link',
-          'aria-label': 'Twitter',
+          className: 'header-x-link',
+          'aria-label': 'X',
         },
         {
           href: 'https://github.com/datalayer/jupyter-ui',
@@ -153,8 +153,8 @@ module.exports = {
               href: 'https://github.com/datalayer',
             },
             {
-              label: 'Twitter',
-              href: 'https://twitter.com/datalayerio',
+              label: 'X',
+              href: 'https://x.com/datalayerio',
             },
             {
               label: 'Linkedin',
@@ -166,7 +166,7 @@ module.exports = {
           title: 'More',
           items: [
             {
-              label: 'Datalayer IO',
+              label: 'Datalayer',
               href: 'https://datalayer.io',
             },
             {
@@ -174,14 +174,14 @@ module.exports = {
               href: 'https://datalayer.tech',
             },
             {
-              label: 'Clouder',
-              href: 'https://clouder.sh',
+              label: 'Datalayer Guide',
+              href: 'https://datalayer.guide',
             },
             {
               label: 'Datalayer Blog',
               href: 'https://datalayer.blog',
             },
-          ],
+           ],
         }
       ],
       copyright: `Copyright © ${new Date().getFullYear()} Datalayer, Inc.`,
