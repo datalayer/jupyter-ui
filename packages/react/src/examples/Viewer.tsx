@@ -11,7 +11,7 @@ import Viewer from '../components/viewer/Viewer';
 
 import matplotlib from './notebooks/Matplotlib.ipynb.json';
 
-const JuptyerViewerExample = () => {
+const JupyterViewerExample = () => {
   return (
     <>
       <Box m={3}>
