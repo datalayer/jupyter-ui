@@ -5,18 +5,27 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import { Box } from '@primer/react';
+import { Box, Text } from '@primer/react';
 import Jupyter from '../jupyter/Jupyter';
 import Viewer from '../components/viewer/Viewer';
 
-import nbformat from './notebooks/Matplotlib.ipynb.json';
+import matplotlib from './notebooks/Matplotlib.ipynb.json';
 
-const ViewerFile = () => {
+const JuptyerViewerExample = () => {
   return (
     <>
       <Box m={3}>
-        <Jupyter>
-          <Viewer nbformat={nbformat} outputs />
+        <Jupyter serverless={true}>
+          <Text as="h1">Jupyter Viewer with Plotly outputs</Text>
+          <Viewer
+            nbformatUrl="https://raw.githubusercontent.com/datalayer-examples/notebooks/main/daily-stock.ipynb"
+            outputs
+          />
+          <Text as="h1">Jupyter Viewer without outputs</Text>
+          <Viewer
+            nbformat={matplotlib}
+            outputs={false}
+          />
         </Jupyter>
       </Box>
     </>
@@ -27,4 +36,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<ViewerFile />);
+root.render(<JuptyerViewerExample />);
