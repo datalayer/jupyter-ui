@@ -172,16 +172,6 @@ export class KernelExecutor {
     return this._executed.promise.then(() => {
       return;
     })
-    .catch(
-      (err: any) => {
-        if (this._onCodeExecutionError) {
-          this._onCodeExecutionError(err);
-        } 
-        else {
-          throw err;
-        }
-      }
-    );
   }
 
   /**
@@ -191,17 +181,6 @@ export class KernelExecutor {
     return this._executed.promise.then(model => {
       return outputsAsString(model.toJSON());
     })
-    .catch(
-      (err: any) => {
-        if (this._onCodeExecutionError) {
-          this._onCodeExecutionError(err);
-          return "";
-        } 
-        else {
-          throw err;
-        }
-      }
-    );
   }
 
   /**
@@ -305,6 +284,11 @@ export class KernelExecutor {
         case 'error':
           {
             const { ename, evalue, traceback } = content as KernelMessage.IReplyErrorContent;
+            if (this._onCodeExecutionError) {
+              this._executed.promise.catch(
+                (err) => this._onCodeExecutionError && this._onCodeExecutionError(err)
+              )
+            }
             this._executed.reject(`${ename}: ${evalue}\n${(traceback ?? []).join('\n')}`);
           }
           break;

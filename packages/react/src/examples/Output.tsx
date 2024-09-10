@@ -7,7 +7,7 @@
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { IOutput } from '@jupyterlab/nbformat';
-import { Box, Text } from '@primer/react';
+import { Box, Button, Text } from '@primer/react';
 import { useOutputsStore } from './../components/output/OutputState';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { Jupyter } from '../jupyter/Jupyter';
@@ -30,7 +30,7 @@ const OUTPUTS_1: IOutput[] = [
 ];
 
 const SOURCE_ID_2 = 'output-id-2';
-const SOURCE_2 = '2+2';
+const SOURCE_2 = 'fail';
 const OUTPUTS_2: IOutput[] = [
   {
     data: {
@@ -62,6 +62,7 @@ const OutputWithoutEditor = () => {
     outputStore.getModel(SOURCE_ID_1)?.toJSON(),
     outputStore.getInput(SOURCE_ID_1),
   );
+
   return (
     <>
       <Text as="h1">Output without Code Editor</Text>
@@ -78,14 +79,22 @@ const OutputWithoutEditor = () => {
 const OutputWithEditor = () => {
   const { defaultKernel } = useJupyter();
   const outputStore = useOutputsStore();
+  const [execTrigger, setExecTrigger] = useState(0);
+
   console.log(
     'Outputs 2',
     outputStore.getModel(SOURCE_ID_2)?.toJSON(),
     outputStore.getInput(SOURCE_ID_2),
   );
+
+  const handleExecutionError = (err : any) => {
+    alert('Execution error - ' + err);
+  }
+
   return (
     <>
       <Text as="h1">Output with Code Editor</Text>
+      <Button onClick={() => setExecTrigger(execTrigger => execTrigger+1)}>Execute with error handler</Button>
       <Output
         autoRun={false}
         code={SOURCE_2}
@@ -93,6 +102,8 @@ const OutputWithEditor = () => {
         kernel={defaultKernel}
         outputs={OUTPUTS_2}
         showEditor
+        executeTrigger={execTrigger}
+        onCodeExecutionError={handleExecutionError}
       />
     </>
   );
