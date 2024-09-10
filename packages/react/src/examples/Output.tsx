@@ -4,18 +4,18 @@
  * MIT License
  */
 
+import { IOutput } from '@jupyterlab/nbformat';
+import { Box, Text } from '@primer/react';
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { IOutput } from '@jupyterlab/nbformat';
-import { Box, Button, Text } from '@primer/react';
-import { useOutputsStore } from './../components/output/OutputState';
-import { useJupyter } from '../jupyter/JupyterContext';
+import { KernelIndicator } from '../components/kernel/Kernelndicator';
+import { Output } from '../components/output/Output';
 import { Jupyter } from '../jupyter/Jupyter';
+import { useJupyter } from '../jupyter/JupyterContext';
 import { Kernel } from '../jupyter/kernel/Kernel';
 import { useKernelsStore } from '../jupyter/kernel/KernelState';
-import { KernelIndicator } from '../components/kernel/Kernelndicator';
 import { newUuid } from '../utils/Utils';
-import { Output } from '../components/output/Output';
+import { useOutputsStore } from './../components/output/OutputState';
 
 const SOURCE_ID_1 = 'output-id-1';
 const OUTPUTS_1: IOutput[] = [
@@ -30,7 +30,7 @@ const OUTPUTS_1: IOutput[] = [
 ];
 
 const SOURCE_ID_2 = 'output-id-2';
-const SOURCE_2 = 'fail';
+const SOURCE_2 = '2+2';
 const OUTPUTS_2: IOutput[] = [
   {
     data: {
@@ -79,7 +79,6 @@ const OutputWithoutEditor = () => {
 const OutputWithEditor = () => {
   const { defaultKernel } = useJupyter();
   const outputStore = useOutputsStore();
-  const [execTrigger, setExecTrigger] = useState(0);
 
   console.log(
     'Outputs 2',
@@ -87,14 +86,9 @@ const OutputWithEditor = () => {
     outputStore.getInput(SOURCE_ID_2),
   );
 
-  const handleExecutionError = (err : any) => {
-    alert('Execution error - ' + err);
-  }
-
   return (
     <>
       <Text as="h1">Output with Code Editor</Text>
-      <Button onClick={() => setExecTrigger(execTrigger => execTrigger+1)}>Execute with error handler</Button>
       <Output
         autoRun={false}
         code={SOURCE_2}
@@ -102,8 +96,6 @@ const OutputWithEditor = () => {
         kernel={defaultKernel}
         outputs={OUTPUTS_2}
         showEditor
-        executeTrigger={execTrigger}
-        onCodeExecutionError={handleExecutionError}
       />
     </>
   );
