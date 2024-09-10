@@ -18,7 +18,8 @@ export async function execute(
   output: OutputArea,
   kernel: Kernel,
   metadata?: JSONObject,
-  notifyOnComplete?: boolean
+  notifyOnComplete?: boolean,
+  onCodeExecutionError?: (err: any) => void
 ): Promise<KernelMessage.IExecuteReplyMsg | undefined> {
   // Override the default for `stop_on_error`.
   let stopOnError = true;
@@ -32,7 +33,8 @@ export async function execute(
   const kernelExecutor = kernel.execute(code, {
     model: output.model,
     stopOnError,
-    notifyOnComplete: notifyOnComplete,
+    notifyOnComplete,
+    onCodeExecutionError,
   });
   const future = kernelExecutor!.future;
   // TODO fix in upstream jupyterlab if possible...

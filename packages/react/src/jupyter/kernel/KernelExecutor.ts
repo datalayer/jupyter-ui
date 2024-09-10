@@ -46,6 +46,12 @@ export type IKernelExecutorOptions = {
    * must only be made when execution complete
    */
   notifyOnComplete? : boolean;
+  /**
+   * Handler for code execution error
+   * @param err Error data
+   * @returns 
+   */
+  onCodeExecutionError?: (err: any) => void;
 }
 
 export class KernelExecutor {
@@ -60,14 +66,16 @@ export class KernelExecutor {
   private _future?: JupyterKernel.IFuture<KernelMessage.IExecuteRequestMsg, KernelMessage.IExecuteReplyMsg>;
   private _shellMessageHooks = new Array<ShellMessageHook>();
   private _notifyOnComplete : boolean = false;
+  private _onCodeExecutionError?: (err: any) => void;
 
-  public constructor({ connection, model, notifyOnComplete }: IKernelExecutorOptions) {
+  public constructor({ connection, model, notifyOnComplete, onCodeExecutionError }: IKernelExecutorOptions) {
     this._executed = new PromiseDelegate<IOutputAreaModel>();
     this._kernelConnection = connection;
     this._model = model ?? new OutputAreaModel();
     this._outputs = [];
     this._kernelState = kernelsStore.getState();
     this._notifyOnComplete = !!notifyOnComplete;
+    this._onCodeExecutionError = onCodeExecutionError;
   }
 
   /**
@@ -163,7 +171,17 @@ export class KernelExecutor {
   get done(): Promise<void> {
     return this._executed.promise.then(() => {
       return;
-    });
+    })
+    .catch(
+      (err: any) => {
+        if (this._onCodeExecutionError) {
+          this._onCodeExecutionError(err);
+        } 
+        else {
+          throw err;
+        }
+      }
+    );
   }
 
   /**
@@ -172,7 +190,18 @@ export class KernelExecutor {
   get result(): Promise<string> {
     return this._executed.promise.then(model => {
       return outputsAsString(model.toJSON());
-    });
+    })
+    .catch(
+      (err: any) => {
+        if (this._onCodeExecutionError) {
+          this._onCodeExecutionError(err);
+          return "";
+        } 
+        else {
+          throw err;
+        }
+      }
+    );
   }
 
   /**
