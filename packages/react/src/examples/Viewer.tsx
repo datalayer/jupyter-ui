@@ -15,7 +15,7 @@ const JuptyerViewerExample = () => {
   return (
     <>
       <Box m={3}>
-        <Jupyter serverless={true}>
+        <Jupyter serverless>
           <Text as="h1">Jupyter Viewer with Plotly outputs</Text>
           <Viewer
             nbformatUrl="https://raw.githubusercontent.com/datalayer-examples/notebooks/main/daily-stock.ipynb"
