@@ -174,9 +174,12 @@ export class KernelExecutor {
     })
     .catch(
       (err: any) => {
-        this._onCodeExecutionError 
-          ? this._onCodeExecutionError(err)
-          : console.error('Code execution error :' + err);
+        if (this._onCodeExecutionError) {
+          this._onCodeExecutionError(err);
+        } 
+        else {
+          throw err;
+        }
       }
     );
   }
@@ -190,10 +193,13 @@ export class KernelExecutor {
     })
     .catch(
       (err: any) => {
-        this._onCodeExecutionError 
-          ? this._onCodeExecutionError(err)
-          : console.error('Code execution error :' + err);
-        return "";
+        if (this._onCodeExecutionError) {
+          this._onCodeExecutionError(err);
+          return "";
+        } 
+        else {
+          throw err;
+        }
       }
     );
   }
