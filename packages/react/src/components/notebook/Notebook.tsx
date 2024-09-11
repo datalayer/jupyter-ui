@@ -10,7 +10,8 @@ import { Box } from '@primer/react';
 import { Cell, ICellModel } from '@jupyterlab/cells';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { useJupyter } from './../../jupyter/JupyterContext';
+import { ServiceManager } from '@jupyterlab/services';
+import { useJupyter, Lite } from './../../jupyter/JupyterContext';
 import { Kernel } from '../../jupyter/kernel/Kernel';
 import Lumino from '../lumino/Lumino';
 import { asObservable } from '../lumino/LuminoObservable';
@@ -32,9 +33,8 @@ export type BundledIPyWidgets = ExternalIPyWidgets & {
 };
 
 export type INotebookProps = {
-  cellMetadataPanel: boolean;
-  cellSidebarMargin: number;
-  height?: string;
+  CellSidebar?: (props: CellSidebarProps) => JSX.Element;
+  Toolbar?: (props: any) => JSX.Element;
   /*
   Example:
     bundledIPyWidgets={[
@@ -44,8 +44,10 @@ export type INotebookProps = {
         module: require('jupyter-matplotlib'),
       },
     ]}
-  */
   bundledIPyWidgets?: BundledIPyWidgets[];
+  */
+  cellMetadataPanel: boolean;
+  cellSidebarMargin: number;
   /*
   Example:
     externalIPyWidgets={[
@@ -54,19 +56,20 @@ export type INotebookProps = {
       { name: 'jupyter-leaflet', version: '0.18.0' },
       { name: 'jupyter-matplotlib', version: '0.11.3' },
     ]}
-  */
   externalIPyWidgets?: ExternalIPyWidgets[];
+  */
+  height?: string;
+  id: string;
+  lite?: Lite;
   kernel?: Kernel;
   maxHeight?: string;
   nbformat?: INotebookContent;
   nbgrader: boolean;
   path?: string;
-  readOnly: boolean;
+  readonly: boolean;
   renderers: IRenderMime.IRendererFactory[];
-  id: string;
+  serviceManager?: ServiceManager.IManager,
   url?: string;
-  CellSidebar?: (props: CellSidebarProps) => JSX.Element;
-  Toolbar?: (props: any) => JSX.Element;
 };
 
 /**
@@ -79,14 +82,16 @@ export type INotebookProps = {
 export const Notebook = (props: INotebookProps) => {
   const { serviceManager, defaultKernel, kernelManager, lite } = useJupyter();
   const {
-    path,
-    kernel: propsKernel,
-    readOnly,
-    nbgrader,
+    Toolbar,
     height,
+    kernel: propsKernel,
+    lite: propsLite,
     maxHeight,
     nbformat,
-    Toolbar,
+    nbgrader,
+    path,
+    readonly,
+    serviceManager: propsServiceManager,
   } = props;
 
   const notebookStore = useNotebookStore();
@@ -94,22 +99,25 @@ export const Notebook = (props: INotebookProps) => {
   const [adapter, setAdapter] = useState<NotebookAdapter>();
   const kernel = propsKernel || defaultKernel;
   const portals = notebookStore.selectNotebookPortals(id);
-  const newAdapterState = () => {
+  const createAdapter = () => {
     if (id && serviceManager && kernelManager && kernel) {
       kernel.ready.then(() => {
         const adapter = new NotebookAdapter(
           {
             ...props,
-            kernel,
             id,
+            lite: lite ?? propsLite,
+            kernel,
+            serviceManager: serviceManager ?? propsServiceManager,
           },
-          serviceManager,
-          lite
         );
         setAdapter(adapter);
-        notebookStore.update({ id, partialState: { adapter: adapter } })
+        notebookStore.update({
+          id,
+          partialState: { adapter: adapter }
+        });
         adapter.serviceManager.ready.then(() => {
-          if (!readOnly) {
+          if (!readonly) {
             const activeCell = adapter.notebookPanel!.content.activeCell;
             if (activeCell) {
               notebookStore.activeCellChange({
@@ -181,7 +189,7 @@ export const Notebook = (props: INotebookProps) => {
     if (adapter) {
       adapter.dispose();
     }
-    newAdapterState();
+    createAdapter();
     return () => {
       notebookStore.setPortalDisplay({ id, portalDisplay: undefined });
       notebookStore.dispose(id);
@@ -270,7 +278,7 @@ Notebook.defaultProps = {
   height: '100vh',
   maxHeight: '100vh',
   nbgrader: false,
-  readOnly: false,
+  readonly: false,
   renderers: [],
 } as Partial<INotebookProps>;
 

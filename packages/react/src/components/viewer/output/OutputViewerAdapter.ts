@@ -14,7 +14,7 @@ import {
 import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
 
-export class OutputAdapter {
+export class OutputViewerAdapter {
   private _renderers: IRenderMime.IRendererFactory[];
   private _outputArea: OutputArea;
   private _rendermime: RenderMimeRegistry;
@@ -58,4 +58,4 @@ export class OutputAdapter {
   }
 }
 
-export default OutputAdapter;
+export default OutputViewerAdapter;

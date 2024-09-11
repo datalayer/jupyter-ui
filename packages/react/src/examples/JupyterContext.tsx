@@ -185,43 +185,50 @@ const Outputs = () => {
   );
 };
 
+const JuptyerContextExample = () => {
+
+  return (
+    <Jupyter
+      terminals
+    >
+      <Notebook
+        nbformat={notebook as INotebookContent}
+        id={NOTEBOOK_ID_3}
+        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+        cellSidebarMargin={60}
+        CellSidebar={CellSidebarNew}
+        Toolbar={NotebookToolbar}
+      />
+      <hr />
+      <Console />
+      <hr />
+      <CellPreview id={cellId} />
+      <CellToolbar id={cellId}/>
+      <Cell id={cellId}/>
+      <hr />
+      <Outputs />
+      <hr />
+      <NotebookToolbar />
+      <Notebook
+        path="ipywidgets.ipynb"
+        CellSidebar={CellSidebar}
+        id={NOTEBOOK_ID_1}
+      />
+      <hr />
+      <NotebookKernelChange />
+      <hr />
+      <FileManagerJupyterLab />
+      <hr />
+      <FileBrowser />
+      <hr />
+      <Terminal />
+    </Jupyter>
+  );
+}
+
 const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 const cellId = 'my-cell-1'
 
-root.render(
-  <Jupyter terminals>
-    <Notebook
-      nbformat={notebook as INotebookContent}
-      id={NOTEBOOK_ID_3}
-      height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-      cellSidebarMargin={60}
-      CellSidebar={CellSidebarNew}
-      Toolbar={NotebookToolbar}
-    />
-    <hr />
-    <Console />
-    <hr />
-    <CellPreview id={cellId} />
-    <CellToolbar id={cellId}/>
-    <Cell id={cellId}/>
-    <hr />
-    <Outputs />
-    <hr />
-    <NotebookToolbar />
-    <Notebook
-      path="ipywidgets.ipynb"
-      CellSidebar={CellSidebar}
-      id={NOTEBOOK_ID_1}
-    />
-    <hr />
-    <NotebookKernelChange />
-    <hr />
-    <FileManagerJupyterLab />
-    <hr />
-    <FileBrowser />
-    <hr />
-    <Terminal />
-  </Jupyter>
-);
+root.render(<JuptyerContextExample/>);

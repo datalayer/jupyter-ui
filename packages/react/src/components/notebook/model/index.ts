@@ -4,4 +4,4 @@
  * MIT License
  */
 
-export * from './plotly';
+export * from './JupyterReactNotebookModelFactory';

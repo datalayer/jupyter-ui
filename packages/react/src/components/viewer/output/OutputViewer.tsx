@@ -6,7 +6,7 @@
 
 import { ICell, IOutput } from '@jupyterlab/nbformat';
 import Lumino from '../../lumino/Lumino';
-import OutputAdapter from './OutputAdapter';
+import OutputViewerAdapter from './OutputViewerAdapter';
 
 type Props = {
   cell: ICell;
@@ -16,7 +16,7 @@ type Props = {
 export const OutputViewer = (props: Props) => {
   const { cell, adaptPlotly } = props;
   const outputs = cell.outputs ? (cell.outputs as IOutput[]) : undefined;
-  const outputAdapter = new OutputAdapter(adaptPlotly, outputs);
+  const outputAdapter = new OutputViewerAdapter(adaptPlotly, outputs);
   switch (cell.cell_type) {
     case 'code': {
       return (

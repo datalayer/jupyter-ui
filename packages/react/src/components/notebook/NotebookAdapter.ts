@@ -53,17 +53,13 @@ import { Lite } from '../../jupyter/JupyterContext';
 import { Kernel } from '../../jupyter/kernel/Kernel';
 import JupyterReactContentFactory from './content/JupyterReactContentFactory';
 import JupyterReactNotebookModelFactory from './model/JupyterReactNotebookModelFactory';
-import {
-  INotebookProps,
-//  ExternalIPyWidgets,
-//  BundledIPyWidgets,
-} from './Notebook';
+import { INotebookProps } from './Notebook';
 import { NotebookCommands } from './NotebookCommands';
 import getMarked from './marked/marked';
 import { WidgetManager } from '../../jupyter/ipywidgets/lab/manager';
 import { WidgetRenderer } from '../../jupyter/ipywidgets/lab/renderer';
 
-const FALLBACK_PATH = 'ping.ipynb';
+const FALLBACK_NOTEBOOK_PATH = 'ping.ipynb';
 
 export class NotebookAdapter {
   private _boxPanel: BoxPanel;
@@ -78,7 +74,7 @@ export class NotebookAdapter {
   private _nbgrader: boolean;
   private _notebookPanel?: NotebookPanel;
   private _path?: string;
-  private _readOnly: boolean;
+  private _readonly: boolean;
   private _renderers: IRenderMime.IRendererFactory[];
   private _rendermime?: RenderMimeRegistry;
   private _serviceManager: ServiceManager.IManager;
@@ -86,25 +82,19 @@ export class NotebookAdapter {
   private _id: string;
   private _CellSidebar?: (props: any) => JSX.Element;
 
-  constructor(
-    props: INotebookProps,
-    serviceManager: ServiceManager.IManager,
-    lite?: Lite
-  ) {
+  constructor(props: INotebookProps) {
 //    this._bundledIPyWidgets = props.bundledIPyWidgets;
 //    this._externalIPyWidgets = props.externalIPyWidgets;
+    this._id = props.id;
     this._kernel = props.kernel!;
-    this._lite = lite;
+    this._lite = props.lite;
     this._nbformat = props.nbformat;
     this._nbgrader = props.nbgrader;
     this._path = props.path;
-    this._readOnly = props.readOnly;
+    this._readonly = props.readonly;
     this._renderers = props.renderers;
-    this._id = props.id;
-
+    this._serviceManager = props.serviceManager!;
     this._CellSidebar = props.CellSidebar;
-
-    this._serviceManager = serviceManager;
 
     this._boxPanel = new BoxPanel();
     this._boxPanel.addClass('dla-Jupyter-Notebook');
@@ -255,14 +245,14 @@ export class NotebookAdapter {
 
     const notebookModelFactory = new JupyterReactNotebookModelFactory({
       nbformat: this._nbformat,
-      readOnly: this._readOnly,
+      readonly: this._readonly,
     });
     documentRegistry.addModelFactory(notebookModelFactory);
 
     this._context = new Context({
       manager: this._serviceManager,
       factory: notebookModelFactory,
-      path: this._path ?? FALLBACK_PATH,
+      path: this._path ?? FALLBACK_NOTEBOOK_PATH,
       kernelPreference: {
         id: this._kernel.id,
         shouldStart: false,

@@ -29,6 +29,7 @@ const ENTRY =
   // './src/examples/IPyReact';
   // './src/examples/IPyWidgets';
   // './src/examples/IPyWidgetsWithState';
+  './src/examples/JupyterContext';
   // './src/examples/JupyterLabApp';
   // './src/examples/JupyterLabAppHeadless';
   // './src/examples/JupyterLabAppHeadlessServerless';
@@ -39,7 +40,8 @@ const ENTRY =
   // './src/examples/KernelExecutor';
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
-   './src/examples/Notebook';
+  // './src/examples/Notebook';
+  // './src/examples/NotebookReadonly';
   // './src/examples/NotebookUrl';
   // './src/examples/NotebookColorMode';
   // './src/examples/NotebookKernelChange';

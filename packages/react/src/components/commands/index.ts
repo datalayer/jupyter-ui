@@ -4,4 +4,5 @@
  * MIT License
  */
 
-export * from './plotly';
+export * from './Commands';
+export * from './CommandsAdapter';

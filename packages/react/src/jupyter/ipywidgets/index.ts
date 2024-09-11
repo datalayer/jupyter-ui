@@ -4,4 +4,5 @@
  * MIT License
  */
 
-export * from './plotly';
+export * from './libembed-amd';
+export * from './mimetypes';
