@@ -39,7 +39,7 @@ const ENTRY =
   // './src/examples/KernelExecutor';
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
-  './src/examples/Notebook';
+   './src/examples/Notebook';
   // './src/examples/NotebookUrl';
   // './src/examples/NotebookColorMode';
   // './src/examples/NotebookKernelChange';
@@ -54,6 +54,7 @@ const ENTRY =
   // './src/examples/NotebookThemeColorMode';
   // './src/examples/ObservableHQ';
   // './src/examples/Output';
+  // './src/examples/OutputWithErrorHandle';
   // './src/examples/Outputs';
   // './src/examples/Plotly';
   // './src/examples/RunningSessions';

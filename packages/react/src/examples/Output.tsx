@@ -4,18 +4,18 @@
  * MIT License
  */
 
-import { useEffect, useState } from 'react';
-import { createRoot } from 'react-dom/client';
 import { IOutput } from '@jupyterlab/nbformat';
 import { Box, Text } from '@primer/react';
-import { useOutputsStore } from './../components/output/OutputState';
-import { useJupyter } from '../jupyter/JupyterContext';
+import { useEffect, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import { KernelIndicator } from '../components/kernel/Kernelndicator';
+import { Output } from '../components/output/Output';
 import { Jupyter } from '../jupyter/Jupyter';
+import { useJupyter } from '../jupyter/JupyterContext';
 import { Kernel } from '../jupyter/kernel/Kernel';
 import { useKernelsStore } from '../jupyter/kernel/KernelState';
-import { KernelIndicator } from '../components/kernel/Kernelndicator';
 import { newUuid } from '../utils/Utils';
-import { Output } from '../components/output/Output';
+import { useOutputsStore } from './../components/output/OutputState';
 
 const SOURCE_ID_1 = 'output-id-1';
 const OUTPUTS_1: IOutput[] = [
@@ -62,6 +62,7 @@ const OutputWithoutEditor = () => {
     outputStore.getModel(SOURCE_ID_1)?.toJSON(),
     outputStore.getInput(SOURCE_ID_1),
   );
+
   return (
     <>
       <Text as="h1">Output without Code Editor</Text>
@@ -78,11 +79,13 @@ const OutputWithoutEditor = () => {
 const OutputWithEditor = () => {
   const { defaultKernel } = useJupyter();
   const outputStore = useOutputsStore();
+
   console.log(
     'Outputs 2',
     outputStore.getModel(SOURCE_ID_2)?.toJSON(),
     outputStore.getInput(SOURCE_ID_2),
   );
+
   return (
     <>
       <Text as="h1">Output with Code Editor</Text>
