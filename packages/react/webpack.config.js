@@ -18,7 +18,8 @@ function shim(regExp) {
 
 const ENTRY =
   // './src/app/App';
-  // './src/examples/Cell';
+  // './src/examples/Bokeh';
+  './src/examples/Cell';
   // './src/examples/Cells';
   // './src/examples/CellsExecute';
   // './src/examples/CellLite';
@@ -29,7 +30,7 @@ const ENTRY =
   // './src/examples/IPyReact';
   // './src/examples/IPyWidgets';
   // './src/examples/IPyWidgetsWithState';
-  './src/examples/JupyterContext';
+  // './src/examples/JupyterContext';
   // './src/examples/JupyterLabApp';
   // './src/examples/JupyterLabAppHeadless';
   // './src/examples/JupyterLabAppHeadlessServerless';
@@ -49,7 +50,7 @@ const ENTRY =
   // './src/examples/NotebookNbFormat';
   // './src/examples/NotebookNbFormatChange';
   // './src/examples/NotebookNoContext';
-  // './src/examples/NotebookNoContextNoPrimer';
+  // './src/examples/NotebookNoPrimer';
   // './src/examples/NotebookServiceManager';
   // './src/examples/NotebookSkeleton';
   // './src/examples/NotebookTheme';

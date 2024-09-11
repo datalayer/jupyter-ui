@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Box, Button } from '@primer/react';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import Jupyter from '../jupyter/Jupyter';
+import JupyterLabTheme from '../jupyter/lab/JupyterLabTheme';
 import { useJupyter } from '../jupyter/JupyterContext';
 import Kernel from '../jupyter/kernel/Kernel';
 import Notebook from '../components/notebook/Notebook';
@@ -76,7 +76,7 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <Jupyter>
+  <JupyterLabTheme>
     <NotebookUnmount />
-  </Jupyter>
+  </JupyterLabTheme>
 );

@@ -57,7 +57,7 @@ import { INotebookProps } from './Notebook';
 import { NotebookCommands } from './NotebookCommands';
 import getMarked from './marked/marked';
 import { WidgetManager } from '../../jupyter/ipywidgets/lab/manager';
-import { WidgetRenderer } from '../../jupyter/ipywidgets/lab/renderer';
+import { WidgetLabRenderer } from '../../jupyter/ipywidgets/lab/renderer';
 
 const FALLBACK_NOTEBOOK_PATH = 'ping.ipynb';
 
@@ -140,7 +140,7 @@ export class NotebookAdapter {
       mimeTypes: [WIDGET_MIMETYPE],
       defaultRank: 1,
       createRenderer: options =>
-        new WidgetRenderer(options, this._iPyWidgetsManager!),
+        new WidgetLabRenderer(options, this._iPyWidgetsManager!),
     };
 
     initialFactories.push(ipywidgetsRendererFactory);

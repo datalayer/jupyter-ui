@@ -14,7 +14,7 @@ import { DOMWidgetModel } from '@jupyter-widgets/base';
 /**
  * A renderer for widgets.
  */
-export class WidgetRenderer
+export class WidgetLabRenderer
   extends Panel
   implements IRenderMime.IRenderer, IDisposable
 {

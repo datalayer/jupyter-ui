@@ -7,7 +7,7 @@
 import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import Jupyter from '../jupyter/Jupyter';
+import JupyterLabTheme from '../jupyter/lab/JupyterLabTheme';
 import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from './toolbars/NotebookToolbar';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
@@ -24,7 +24,7 @@ const NotebookReadonly = () => {
     setContent(exampleNotebook);
   }, []);
   return (
-    <Jupyter>
+    <JupyterLabTheme>
       <Notebook
         nbformat={content}
         id="notebook-model-id"
@@ -33,7 +33,7 @@ const NotebookReadonly = () => {
         CellSidebar={CellSidebar}
         Toolbar={NotebookToolbar}
       />
-    </Jupyter>
+    </JupyterLabTheme>
   );
 }
 

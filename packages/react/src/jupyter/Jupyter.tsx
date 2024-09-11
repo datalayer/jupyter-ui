@@ -74,19 +74,11 @@ export const Jupyter = (props: JupyterProps) => {
       lite,
       terminals,
     });
-  }, [
-    collaborative,
-    jupyterServerUrl,
-    jupyterServerToken,
-    lite,
-    terminals,
-  ]);
+  }, [props]);
   return (
     <ErrorBoundary
       FallbackComponent={ErrorFallback}
-      onReset={() => {
-        console.log('Error Boundary reset has been invoked...');
-      }}
+      onReset={() => {console.log('Error Boundary reset has been invoked...');}}
     >
       <ThemeProvider
         theme={theme}

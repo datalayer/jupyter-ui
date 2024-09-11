@@ -6,7 +6,7 @@
 
 import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import Jupyter from '../jupyter/Jupyter';
+import JupyterLabTheme from '../jupyter/lab/JupyterLabTheme';
 import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from './toolbars/NotebookToolbar';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
@@ -14,7 +14,7 @@ import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 import notebook from './notebooks/IPyWidgetsExample.ipynb.json';
 
 const IPyWidgets = () => (
-  <Jupyter>
+  <JupyterLabTheme>
     <Notebook
       nbformat={notebook as INotebookContent}
       id="notebook-id"
@@ -23,7 +23,7 @@ const IPyWidgets = () => (
       CellSidebar={CellSidebar}
       Toolbar={NotebookToolbar}
     />
-  </Jupyter>
+  </JupyterLabTheme>
 );
 
 const div = document.createElement('div');

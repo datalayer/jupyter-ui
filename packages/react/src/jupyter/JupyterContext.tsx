@@ -143,6 +143,10 @@ export type JupyterContextType =  {
    * `lite: import('@jupyterlite/javascript-kernel-extension')` => Load dynamically
    */
   lite?: Lite;
+  /*
+   * Create a serveless Jupyter.
+   */
+  serverless: boolean
   /**
    * Jupyter service manager
    */
@@ -202,6 +206,7 @@ export const useJupyter = (props?: JupyterPropsType): JupyterContextType => {
     kernelIsLoading,
     kernelManager: serviceManager?.kernels,
     lite: false,
+    serverless: props?.serverless ?? false,
     serverSettings: serviceManager?.serverSettings,
     serviceManager,
   }
@@ -264,14 +269,14 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
         collaborative,
         defaultKernel: kernel,
         defaultKernelIsLoading: kernelIsLoading,
-        // FIXME we should not expose sub attributes to promote single source of truth
-        // (like URLs come from serverSettings)
+        // FIXME we should not expose sub attributes to promote single source of truth (like URLs coming from serverSettings).
         jupyterServerUrl,
         kernel,
         kernelIsLoading,
         kernelManager: serviceManager?.kernels,
         lite,
         serverSettings,
+        serverless: props.serverless ?? false,
         serviceManager,
       }}
     >

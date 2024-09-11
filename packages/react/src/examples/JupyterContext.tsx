@@ -4,9 +4,10 @@
  * MIT License
  */
 
+import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { IOutput, INotebookContent } from '@jupyterlab/nbformat';
-import { Box, Button, ButtonGroup } from '@primer/react';
+import { Box, Button, ButtonGroup, SegmentedControl } from '@primer/react';
 import Jupyter from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { Kernel } from '../jupyter/kernel/Kernel';
@@ -186,43 +187,51 @@ const Outputs = () => {
 };
 
 const JuptyerContextExample = () => {
-
+  const [index, setIndex] = useState(0);
   return (
-    <Jupyter
-      terminals
-    >
-      <Notebook
-        nbformat={notebook as INotebookContent}
-        id={NOTEBOOK_ID_3}
-        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        cellSidebarMargin={60}
-        CellSidebar={CellSidebarNew}
-        Toolbar={NotebookToolbar}
-      />
-      <hr />
-      <Console />
-      <hr />
-      <CellPreview id={cellId} />
-      <CellToolbar id={cellId}/>
-      <Cell id={cellId}/>
-      <hr />
-      <Outputs />
-      <hr />
-      <NotebookToolbar />
-      <Notebook
-        path="ipywidgets.ipynb"
-        CellSidebar={CellSidebar}
-        id={NOTEBOOK_ID_1}
-      />
-      <hr />
-      <NotebookKernelChange />
-      <hr />
-      <FileManagerJupyterLab />
-      <hr />
-      <FileBrowser />
-      <hr />
-      <Terminal />
-    </Jupyter>
+    <>
+      <Jupyter
+        terminals
+        serverless={index === 0}
+      >
+        <SegmentedControl onChange={index => setIndex(index)}>
+          <SegmentedControl.Button defaultSelected={index === 0}>Serverless</SegmentedControl.Button>
+          <SegmentedControl.Button defaultSelected={index === 1}>Server</SegmentedControl.Button>
+        </SegmentedControl>
+        <hr />
+        <CellPreview id={cellId} />
+        <CellToolbar id={cellId}/>
+        <Cell id={cellId}/>
+        <hr />
+        <Notebook
+          nbformat={notebook as INotebookContent}
+          id={NOTEBOOK_ID_3}
+          height="300px"
+          cellSidebarMargin={60}
+          CellSidebar={CellSidebarNew}
+          Toolbar={NotebookToolbar}
+        />
+        <hr />
+        <Console />
+        <hr />
+        <Outputs />
+        <hr />
+        <NotebookToolbar />
+        <Notebook
+          path="ipywidgets.ipynb"
+          CellSidebar={CellSidebar}
+          id={NOTEBOOK_ID_1}
+        />
+        <hr />
+        <NotebookKernelChange />
+        <hr />
+        <FileManagerJupyterLab />
+        <hr />
+        <FileBrowser />
+        <hr />
+        <Terminal />
+      </Jupyter>
+    </>
   );
 }
 

@@ -129,65 +129,63 @@ export function useJupyterReactStoreFromProps(props: JupyterPropsType): JupyterR
       jupyterReactStore.getState().setServiceManager(serviceManager);
       return;
     }
-    if (!serviceManager) {
-      if (lite) {
-        createLiteServer().then(async liteServer => {
-          // Load the browser kernel
-          const mod =
-            typeof lite === 'boolean'
-              ? await import('@jupyterlite/pyodide-kernel-extension')
-              : await lite;
-          // Load the module manually to get the list of plugin IDs
-          let data = mod.default;
-          // Handle commonjs exports.
-          if (!Object.prototype.hasOwnProperty.call(mod, '__esModule')) {
-            data = mod as any;
+    if (lite) {
+      createLiteServer().then(async liteServer => {
+        // Load the browser kernel
+        const mod =
+          typeof lite === 'boolean'
+            ? await import('@jupyterlite/pyodide-kernel-extension')
+            : await lite;
+        // Load the module manually to get the list of plugin IDs
+        let data = mod.default;
+        // Handle commonjs exports.
+        if (!Object.prototype.hasOwnProperty.call(mod, '__esModule')) {
+          data = mod as any;
+        }
+        if (!Array.isArray(data)) {
+          data = [data];
+        }
+        const pluginIDs = data.map(item => {
+          try {
+            liteServer.registerPlugin(item);
+            return item.id;
+          } catch (error) {
+            console.error(error);
+            return null;
           }
-          if (!Array.isArray(data)) {
-            data = [data];
-          }
-          const pluginIDs = data.map(item => {
-            try {
-              liteServer.registerPlugin(item);
-              return item.id;
-            } catch (error) {
-              console.error(error);
-              return null;
-            }
-          });
-          // Activate the loaded plugins
-          await Promise.all(
-            pluginIDs.filter(id => id).map(id => liteServer.activatePlugin(id!))
-          );
-          setServiceManager(liteServer.serviceManager);
-          jupyterReactStore.getState().setServiceManager(liteServer.serviceManager);
         });
-        return;
-      }
-      const serverSettings = createServerSettings(
-        config.jupyterServerUrl,
-        config.jupyterServerToken,
-      );
-      ensureJupyterAuth(serverSettings).then(isAuth => {
-        if (!isAuth) {
-          const loginUrl = getJupyterServerUrl() + '/login?next=' + window.location;
-          console.warn('You need to authenticate on the Jupyter Server URL', loginUrl);
-//          window.location.replace(loginUrl);
-        }
-        if (useRunningKernelId && useRunningKernelIndex > -1) {
-          throw new Error('You can not ask for useRunningKernelId and useRunningKernelIndex at the same time.');
-        }
-        if (
-          startDefaultKernel &&
-          (useRunningKernelId || useRunningKernelIndex > -1)
-        ) {
-          throw new Error('You can not ask for startDefaultKernel and (useRunningKernelId or useRunningKernelIndex) at the same time.');
-        }
-        const serviceManager = new ServiceManager({ serverSettings });
-        setServiceManager(serviceManager);
-        jupyterReactStore.getState().setServiceManager(serviceManager);
+        // Activate the loaded plugins
+        await Promise.all(
+          pluginIDs.filter(id => id).map(id => liteServer.activatePlugin(id!))
+        );
+        setServiceManager(liteServer.serviceManager);
+        jupyterReactStore.getState().setServiceManager(liteServer.serviceManager);
       });
+      return;
     }
+    const serverSettings = createServerSettings(
+      config.jupyterServerUrl,
+      config.jupyterServerToken,
+    );
+    ensureJupyterAuth(serverSettings).then(isAuth => {
+      if (!isAuth) {
+        const loginUrl = getJupyterServerUrl() + '/login?next=' + window.location;
+        console.warn('You need to authenticate on the Jupyter Server URL', loginUrl);
+//          window.location.replace(loginUrl);
+      }
+      if (useRunningKernelId && useRunningKernelIndex > -1) {
+        throw new Error('You can not ask for useRunningKernelId and useRunningKernelIndex at the same time.');
+      }
+      if (
+        startDefaultKernel &&
+        (useRunningKernelId || useRunningKernelIndex > -1)
+      ) {
+        throw new Error('You can not ask for startDefaultKernel and (useRunningKernelId or useRunningKernelIndex) at the same time.');
+      }
+      const serviceManager = new ServiceManager({ serverSettings });
+      setServiceManager(serviceManager);
+      jupyterReactStore.getState().setServiceManager(serviceManager);
+    });
   }, [lite, serverless, jupyterServerUrl]);
 
   // Setup a kernel if needed.
