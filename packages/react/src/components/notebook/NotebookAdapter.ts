@@ -114,7 +114,6 @@ export class NotebookAdapter {
     return fetch(url).then(response => {
       return response.text();
     }).then(nb => {
-//      const nbformat = nb.replaceAll('\\n', '');
       return JSON.parse(nb);
     });
   }

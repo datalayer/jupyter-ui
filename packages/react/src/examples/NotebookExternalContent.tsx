@@ -19,13 +19,13 @@ import notebook from './notebooks/NotebookExample1.ipynb.json';
 const NOTEBOOK_ID = 'notebook-model-id';
 
 const NotebookExternalContent = () => {
-  const [nbformat, setNbFormat] = useState<INotebookContent>();
+  const [nbformat, setNbformat] = useState<INotebookContent>();
   const [updatedNbFormat, setUpdatedNbFormat] = useState<INotebookContent>();
   const model = notebookStore.getState().selectNotebookModel(NOTEBOOK_ID)?.model;
   useEffect(() => {
     // Set nbformat with any content.
     // This may come from an external storage that you fetch in this react effect.
-    setNbFormat(notebook);
+    setNbformat(notebook);
   }, []);
   useEffect(() => {
     if (model) {

@@ -13,8 +13,7 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 import { ServiceManager } from '@jupyterlab/services';
 import { useJupyter, Lite } from './../../jupyter/JupyterContext';
 import { Kernel } from '../../jupyter/kernel/Kernel';
-import Lumino from '../lumino/Lumino';
-import { asObservable } from '../lumino/LuminoObservable';
+import { asObservable, Lumino } from '../lumino';
 import { CellSidebarProps } from './cell/sidebar/CellSidebarWidget';
 import CellMetadataEditor from './cell/metadata/CellMetadataEditor';
 import { newUuid } from '../../utils/Utils';
@@ -47,6 +46,7 @@ export type INotebookProps = {
   path?: string;
   readonly: boolean;
   renderers: IRenderMime.IRendererFactory[];
+  serverless: boolean,
   serviceManager?: ServiceManager.IManager,
   url?: string;
 };
@@ -59,23 +59,24 @@ export type INotebookProps = {
  * @returns A Notebook React.js component.
  */
 export const Notebook = (props: INotebookProps) => {
-  const { serviceManager, defaultKernel, kernelManager, lite } = useJupyter();
+  const { serviceManager, defaultKernel, kernelManager, lite } = useJupyter({
+    serverless: props.serverless,
+    serviceManager: props.serviceManager,
+    lite: props.lite,
+  });
   const {
     Toolbar,
     height,
-    kernel: propsKernel,
-    lite: propsLite,
     maxHeight,
     nbformat,
     nbgrader,
     path,
     readonly,
-    serviceManager: propsServiceManager,
   } = props;
   const notebookStore = useNotebookStore();
   const [id, _] = useState(props.id ?? newUuid());
   const [adapter, setAdapter] = useState<NotebookAdapter>();
-  const kernel = propsKernel ?? defaultKernel;
+  const kernel = props.kernel ?? defaultKernel;
   const portals = notebookStore.selectNotebookPortals(id);
   const createAdapter = () => {
     if (id && serviceManager && kernelManager && kernel) {
@@ -84,9 +85,9 @@ export const Notebook = (props: INotebookProps) => {
           {
             ...props,
             id,
-            lite: lite ?? propsLite,
+            lite: lite || props.lite,
             kernel,
-            serviceManager: serviceManager ?? propsServiceManager,
+            serviceManager: serviceManager ?? props.serviceManager,
           },
         );
         setAdapter(adapter);
@@ -164,15 +165,18 @@ export const Notebook = (props: INotebookProps) => {
     }
   };
   useEffect(() => {
+    /*
     if (adapter) {
       adapter.dispose();
     }
+    */
     createAdapter();
     return () => {
+//      adapter?.dispose();
       notebookStore.setPortalDisplay({ id, portalDisplay: undefined });
       notebookStore.dispose(id);
     };
-  }, [id, serviceManager, kernelManager, kernel, path]);
+  }, [id, serviceManager, kernelManager, kernel, path, lite, readonly]);
   useEffect(() => {
     if (adapter && nbformat) {
       adapter.setNbformat(nbformat);
@@ -258,6 +262,7 @@ Notebook.defaultProps = {
   nbgrader: false,
   readonly: false,
   renderers: [],
+  serverless: false,
 } as Partial<INotebookProps>;
 
 export default Notebook;

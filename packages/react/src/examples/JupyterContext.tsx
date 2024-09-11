@@ -194,7 +194,7 @@ const JuptyerContextExample = () => {
         terminals
         serverless={index === 0}
       >
-        <SegmentedControl onChange={index => setIndex(index)}>
+        <SegmentedControl onChange={index => setIndex(index)} aria-label="jupyter-react-example">
           <SegmentedControl.Button defaultSelected={index === 0}>Serverless</SegmentedControl.Button>
           <SegmentedControl.Button defaultSelected={index === 1}>Server</SegmentedControl.Button>
         </SegmentedControl>

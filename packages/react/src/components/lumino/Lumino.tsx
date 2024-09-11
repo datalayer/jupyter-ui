@@ -33,7 +33,7 @@ export const Lumino = (props: LuminoProps) => {
           }
         } catch (e) {
           // no-op.
-          //          console.debug('Exception while detaching Lumino widget.', e);
+          // console.debug('Exception while detaching Lumino widget.', e);
         }
       };
     }
