@@ -65,8 +65,6 @@ export class NotebookAdapter {
   private _boxPanel: BoxPanel;
   private _commandRegistry: CommandRegistry;
   private _context?: Context<INotebookModel>;
-//  private _bundledIPyWidgets?: BundledIPyWidgets[];
-//  private _externalIPyWidgets?: ExternalIPyWidgets[];
   private _iPyWidgetsManager?: WidgetManager;
   private _kernel: Kernel;
   private _lite?: Lite;
@@ -83,8 +81,6 @@ export class NotebookAdapter {
   private _CellSidebar?: (props: any) => JSX.Element;
 
   constructor(props: INotebookProps) {
-//    this._bundledIPyWidgets = props.bundledIPyWidgets;
-//    this._externalIPyWidgets = props.externalIPyWidgets;
     this._id = props.id;
     this._kernel = props.kernel!;
     this._lite = props.lite;
@@ -94,6 +90,7 @@ export class NotebookAdapter {
     this._readonly = props.readonly;
     this._renderers = props.renderers;
     this._serviceManager = props.serviceManager!;
+
     this._CellSidebar = props.CellSidebar;
 
     this._boxPanel = new BoxPanel();
@@ -284,18 +281,6 @@ export class NotebookAdapter {
           this._kernel.connection
         );
       });
-    */
-    /*
-    if (this._bundledIPyWidgets) {
-      this._iPyWidgetsManager.loadBundledIPyWidgets(
-        this._bundledIPyWidgets
-      );
-    }
-    if (this._externalIPyWidgets) {
-      this._iPyWidgetsManager.loadExternalIPyWidgets(
-        this._externalIPyWidgets
-      );
-    }
     */
     // These are fixes to have more control on the kernel launch.
     (this._context.sessionContext as any)._initialize =

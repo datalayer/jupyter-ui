@@ -7,7 +7,7 @@
 import { createRoot } from 'react-dom/client';
 import { INotebookContent, IOutput } from '@jupyterlab/nbformat';
 import { Text } from '@primer/react';
-import JupyterLabTheme from '../jupyter/lab/JupyterLabTheme';
+import JupyterReactTheme from '../themes/JupyterReactTheme';
 import Output from '../components/output/Output';
 import { cellSourceAsString } from './../utils/Utils';
 
@@ -41,7 +41,7 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <JupyterLabTheme>
+  <JupyterReactTheme>
     <Outputs />
-  </JupyterLabTheme>
+  </JupyterReactTheme>
 );

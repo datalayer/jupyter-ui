@@ -9,7 +9,7 @@ import { createRoot } from 'react-dom/client';
 import { Box, IconButton } from '@primer/react';
 import { ZapIcon } from '@primer/octicons-react';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import JupyterLabTheme from '../jupyter/lab/JupyterLabTheme';
+import JupyterReactTheme from '../themes/JupyterReactTheme';
 import Notebook from '../components/notebook/Notebook';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 import { notebookStore } from '../components/notebook/NotebookState';
@@ -74,7 +74,7 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <JupyterLabTheme>
+  <JupyterReactTheme>
     <NotebookExternalContent />
-  </JupyterLabTheme>
+  </JupyterReactTheme>
 );

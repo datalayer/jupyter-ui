@@ -5,7 +5,7 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import { JupyterLabTheme } from '../jupyter/lab/JupyterLabTheme';
+import { JupyterReactTheme } from '../themes/JupyterReactTheme';
 import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from './toolbars/NotebookToolbar';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebarButton';
@@ -19,7 +19,7 @@ const root = createRoot(div);
 const colorMode = 'light';
 
 root.render(
-  <JupyterLabTheme colorMode={colorMode}>
+  <JupyterReactTheme colorMode={colorMode}>
     <Notebook
       path="ipywidgets.ipynb"
       id={NOTEBOOK_ID}
@@ -28,5 +28,5 @@ root.render(
       CellSidebar={CellSidebar}
       Toolbar={NotebookToolbar}
     />
-  </JupyterLabTheme>
+  </JupyterReactTheme>
 );

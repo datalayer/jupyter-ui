@@ -9,7 +9,7 @@ import { createRoot } from 'react-dom/client';
 import { Box, Heading } from '@primer/react';
 import { IOutputAreaModel } from '@jupyterlab/outputarea';
 import { KernelMessage } from '@jupyterlab/services';
-import JupyterLabTheme from '../jupyter/lab/JupyterLabTheme';
+import JupyterReactTheme from '../themes/JupyterReactTheme';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { Output } from '../components/output/Output';
 import {
@@ -83,9 +83,9 @@ const KernelExecutorView = () => {
 
 const KernelExecutor = () => {
   return (
-    <JupyterLabTheme>
+    <JupyterReactTheme>
       <KernelExecutorView />
-    </JupyterLabTheme>
+    </JupyterReactTheme>
   );
 };
 

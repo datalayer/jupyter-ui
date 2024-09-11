@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Button, Box } from '@primer/react';
 import { cellsStore, ICellsState } from '../components/cell/CellState';
-import JupyterLabTheme from '../jupyter/lab/JupyterLabTheme';
+import JupyterReactTheme from '../themes/JupyterReactTheme';
 import Cell from '../components/cell/Cell';
 
 const CODE_CELL_1 = `import time
@@ -33,7 +33,7 @@ const CellsExecute = () => {
     cellsStore.getState().execute();
   }
   return (
-    <JupyterLabTheme>
+    <JupyterReactTheme>
       <Box style={{marginTop: '20px'}}>
         <Cell
           id='1'
@@ -60,7 +60,7 @@ const CellsExecute = () => {
           Execute all
         </Button>
       </Box>
-    </JupyterLabTheme>
+    </JupyterReactTheme>
   )
 };
 

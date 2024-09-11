@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Box, Heading, Textarea, Button } from '@primer/react';
 import { useJupyter } from '../jupyter/JupyterContext';
-import JupyterLabTheme from '../jupyter/lab/JupyterLabTheme';
+import JupyterReactTheme from '../themes/JupyterReactTheme';
 import KernelProgressBar from './../components/kernel/KernelProgressBar';
 
 export const KernelExecuteView = () => {
@@ -83,9 +83,9 @@ export const KernelExecuteView = () => {
 
 const KernelExecute = () => {
   return (
-    <JupyterLabTheme>
+    <JupyterReactTheme>
       <KernelExecuteView />
-    </JupyterLabTheme>
+    </JupyterReactTheme>
   );
 }
 

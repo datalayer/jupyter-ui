@@ -7,7 +7,7 @@
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Box, Button, Text } from '@primer/react';
-import JupyterLabTheme from '../jupyter/lab/JupyterLabTheme';
+import JupyterReactTheme from '../themes/JupyterReactTheme';
 import Notebook from '../components/notebook/Notebook';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 
@@ -48,7 +48,7 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <JupyterLabTheme>
+  <JupyterReactTheme>
     <NotebookPathChange />
-  </JupyterLabTheme>
+  </JupyterReactTheme>
 );

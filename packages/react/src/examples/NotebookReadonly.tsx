@@ -4,36 +4,27 @@
  * MIT License
  */
 
-import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { INotebookContent } from '@jupyterlab/nbformat';
-import JupyterLabTheme from '../jupyter/lab/JupyterLabTheme';
+import JupyterReactTheme from '../themes/JupyterReactTheme';
 import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from './toolbars/NotebookToolbar';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
 
-import nbformatExample from './notebooks/NotebookExample1.ipynb.json';
+import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookReadonly = () => {
-  const [content, setContent] = useState<INotebookContent>()
-  useEffect(() => {
-    const exampleNotebook = nbformatExample as INotebookContent;
-    exampleNotebook.cells.forEach(cell => {
-      cell.metadata['editable'] = false;
-    })
-    setContent(exampleNotebook);
-  }, []);
   return (
-    <JupyterLabTheme>
+    <JupyterReactTheme>
       <Notebook
-        nbformat={content}
+        readonly
+        nbformat={nbformat}
         id="notebook-model-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         cellSidebarMargin={120}
         CellSidebar={CellSidebar}
         Toolbar={NotebookToolbar}
       />
-    </JupyterLabTheme>
+    </JupyterReactTheme>
   );
 }
 

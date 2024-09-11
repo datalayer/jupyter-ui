@@ -6,13 +6,13 @@
 
 import { createRoot } from 'react-dom/client';
 import { rendererFactory as vega3Renderer } from '@jupyterlab/vega3-extension';
-import JupyterLabTheme from '../jupyter/lab/JupyterLabTheme';
+import JupyterReactTheme from '../themes/JupyterReactTheme';
 import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from './toolbars/NotebookToolbar';
 import CellSidebarNew from '../components/notebook/cell/sidebar/CellSidebarButton';
 
 const Vega = () => (
-  <JupyterLabTheme>
+  <JupyterReactTheme>
     <Notebook
       path="vega/Vega.ipynb"
       id="notebook-vega-id"
@@ -21,7 +21,7 @@ const Vega = () => (
       CellSidebar={CellSidebarNew}
       Toolbar={NotebookToolbar}
     />
-  </JupyterLabTheme>
+  </JupyterReactTheme>
 );
 
 const div = document.createElement('div');

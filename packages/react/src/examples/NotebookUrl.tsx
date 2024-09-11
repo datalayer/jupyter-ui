@@ -5,7 +5,7 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import JupyterLabTheme from '../jupyter/lab/JupyterLabTheme';
+import JupyterReactTheme from '../themes/JupyterReactTheme';
 import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from './toolbars/NotebookToolbar';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebarButton';
@@ -17,7 +17,7 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <JupyterLabTheme>
+  <JupyterReactTheme>
     <Notebook
       url="https://raw.githubusercontent.com/datalayer/jupyter-ui/main/packages/react/src/examples/notebooks/IPyWidgetsExampleWithState.ipynb.json"
       id={NOTEBOOK_ID}
@@ -26,5 +26,5 @@ root.render(
       CellSidebar={CellSidebar}
       Toolbar={NotebookToolbar}
     />
-  </JupyterLabTheme>
+  </JupyterReactTheme>
 );

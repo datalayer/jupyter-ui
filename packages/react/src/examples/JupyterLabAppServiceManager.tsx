@@ -7,7 +7,7 @@
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { NotebookPanel } from '@jupyterlab/notebook';
-import JupyterLabTheme from '../jupyter/lab/JupyterLabTheme';
+import JupyterReactTheme from '../themes/JupyterReactTheme';
 import JupyterLabApp from '../components/jupyterlab/JupyterLabApp';
 import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter';
 import JupyterServiceManagerLess from '../jupyter/services/JupyterServiceManagerLess';
@@ -49,15 +49,15 @@ const JupyterLabAppServiceManager = () => {
       onJupyterLab={onJupyterLab}
     />
   );
-};
+}
 
 const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <JupyterLabTheme>
-    <h1>JupyterLab Application with Service Manager property</h1>
+  <JupyterReactTheme>
+    <h1>JupyterLab Application with Service Manager</h1>
     <JupyterLabAppServiceManager />
-  </JupyterLabTheme>
+  </JupyterReactTheme>
 );

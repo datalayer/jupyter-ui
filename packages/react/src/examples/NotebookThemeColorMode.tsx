@@ -11,7 +11,7 @@ import { Theme } from '@primer/react/lib/ThemeProvider';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { ColorMode } from '../jupyter/lab/JupyterLabColorMode';
 import Jupyter from '../jupyter/Jupyter';
-import { jupyterTheme } from '../themes/primerTheme';
+import { jupyterTheme } from '../themes/JupyterPrimerTheme';
 import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from './toolbars/NotebookToolbar';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';

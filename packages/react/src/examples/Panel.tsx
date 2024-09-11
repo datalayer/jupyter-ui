@@ -5,14 +5,14 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import JupyterLabTheme from '../jupyter/lab/JupyterLabTheme';
+import JupyterReactTheme from '../themes/JupyterReactTheme';
 import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from './toolbars/NotebookToolbar';
 import CellSidebarNew from '../components/notebook/cell/sidebar/CellSidebarButton';
 
 const Panel = () => {
   return (
-    <JupyterLabTheme>
+    <JupyterReactTheme>
       <Notebook
         path="panel.ipynb"
         id="notebook-panel-id"
@@ -20,7 +20,7 @@ const Panel = () => {
         CellSidebar={CellSidebarNew}
         Toolbar={NotebookToolbar}
       />
-    </JupyterLabTheme>
+    </JupyterReactTheme>
   );
 };
 

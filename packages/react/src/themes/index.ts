@@ -4,4 +4,5 @@
  * MIT License
  */
 
-export * from './primerTheme';
+export * from './JupyterPrimerTheme';
+export * from './JupyterReactTheme';

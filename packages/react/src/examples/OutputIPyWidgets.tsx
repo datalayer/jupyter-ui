@@ -6,7 +6,7 @@
 
 import { render } from 'react-dom';
 import { Text } from '@primer/react';
-import JupyterLabTheme from '../jupyter/lab/JupyterLabTheme';
+import JupyterReactTheme from '../themes/JupyterReactTheme';
 import OutputIPyWidgets from '../components/output/OutputIPyWidgets';
 
 import { view, state } from './notebooks/OutputIPyWidgetsExample';
@@ -24,8 +24,8 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 
 render(
-  <JupyterLabTheme>
+  <JupyterReactTheme>
     <OutputIPyWidgetsExample />
-  </JupyterLabTheme>,
+  </JupyterReactTheme>,
   div
 );

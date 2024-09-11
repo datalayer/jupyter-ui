@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { Box, Heading, Textarea, Button, Pagehead, Text } from '@primer/react';
 import { IModel } from '@jupyterlab/services/lib/kernel/kernel';
 import { ISpecModel } from '@jupyterlab/services/lib/kernelspec/kernelspec';
-import JupyterLabTheme from '../jupyter/lab/JupyterLabTheme';
+import JupyterReactTheme from '../themes/JupyterReactTheme';
 import { useJupyter } from '../jupyter/JupyterContext';
 import {
   KERNEL_STATES,
@@ -295,8 +295,8 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <JupyterLabTheme>
+  <JupyterReactTheme>
     <Pagehead>The Kernel Components</Pagehead>
     <KernelComponents />
-  </JupyterLabTheme>
+  </JupyterReactTheme>
 );

@@ -6,13 +6,13 @@
 
 import { createRoot } from 'react-dom/client';
 import { rendererFactory as geojsonRenderer } from '@jupyterlab/geojson-extension';
-import JupyterLabTheme from '../jupyter/lab/JupyterLabTheme';
+import JupyterReactTheme from '../themes/JupyterReactTheme';
 import Notebook from '../components/notebook/Notebook';
 import NotebookToolbar from './toolbars/NotebookToolbar';
 import CellSidebarNew from '../components/notebook/cell/sidebar/CellSidebarButton';
 
 const GeoJson = () => (
-  <JupyterLabTheme>
+  <JupyterReactTheme>
     <Notebook
       path="renderers/geojson-1.ipynb"
       id="notebook-geojson-id"
@@ -21,7 +21,7 @@ const GeoJson = () => (
       CellSidebar={CellSidebarNew}
       Toolbar={NotebookToolbar}
     />
-  </JupyterLabTheme>
+  </JupyterReactTheme>
 );
 
 const div = document.createElement('div');

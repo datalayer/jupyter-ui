@@ -5,7 +5,7 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import JupyterLabTheme from '../jupyter/lab/JupyterLabTheme';
+import JupyterReactTheme from '../themes/JupyterReactTheme';
 import FileBrowser from '../components/filebrowser/FileBrowser';
 
 const div = document.createElement('div');
@@ -13,7 +13,7 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <JupyterLabTheme>
+  <JupyterReactTheme>
     <FileBrowser />
-  </JupyterLabTheme>
+  </JupyterReactTheme>
 );

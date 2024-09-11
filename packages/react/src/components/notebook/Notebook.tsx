@@ -35,29 +35,8 @@ export type BundledIPyWidgets = ExternalIPyWidgets & {
 export type INotebookProps = {
   CellSidebar?: (props: CellSidebarProps) => JSX.Element;
   Toolbar?: (props: any) => JSX.Element;
-  /*
-  Example:
-    bundledIPyWidgets={[
-      {
-        name: 'jupyter-matplotlib',
-        version: '0.11.3',
-        module: require('jupyter-matplotlib'),
-      },
-    ]}
-  bundledIPyWidgets?: BundledIPyWidgets[];
-  */
   cellMetadataPanel: boolean;
   cellSidebarMargin: number;
-  /*
-  Example:
-    externalIPyWidgets={[
-      { name: '@widgetti/jupyter-react', version: '0.3.0' },
-      { name: 'bqplot', version: '0.5.42' },
-      { name: 'jupyter-leaflet', version: '0.18.0' },
-      { name: 'jupyter-matplotlib', version: '0.11.3' },
-    ]}
-  externalIPyWidgets?: ExternalIPyWidgets[];
-  */
   height?: string;
   id: string;
   lite?: Lite;
@@ -93,11 +72,10 @@ export const Notebook = (props: INotebookProps) => {
     readonly,
     serviceManager: propsServiceManager,
   } = props;
-
   const notebookStore = useNotebookStore();
-  const [id] = useState(props.id || newUuid());
+  const [id, _] = useState(props.id ?? newUuid());
   const [adapter, setAdapter] = useState<NotebookAdapter>();
-  const kernel = propsKernel || defaultKernel;
+  const kernel = propsKernel ?? defaultKernel;
   const portals = notebookStore.selectNotebookPortals(id);
   const createAdapter = () => {
     if (id && serviceManager && kernelManager && kernel) {
