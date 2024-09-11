@@ -4,22 +4,23 @@
  * MIT License
  */
 
-import { find } from '@lumino/algorithm';
-import { PromiseDelegate } from '@lumino/coreutils';
+import { IOutputAreaModel } from '@jupyterlab/outputarea';
 import {
   Kernel as JupyterKernel,
   KernelMessage,
   KernelSpec,
   Session,
 } from '@jupyterlab/services';
-import { ISessionConnection } from '@jupyterlab/services/lib/session/session';
 import { ConnectionStatus } from '@jupyterlab/services/lib/kernel/kernel';
+import { ISessionConnection } from '@jupyterlab/services/lib/session/session';
+import { find } from '@lumino/algorithm';
+import { PromiseDelegate } from '@lumino/coreutils';
 import { getCookie, newUuid } from '../../utils/Utils';
 import KernelExecutor, {
+  IExecutionPhaseOutput,
   IOPubMessageHook,
   ShellMessageHook,
 } from './KernelExecutor';
-import { IOutputAreaModel } from '@jupyterlab/outputarea';
 
 const JUPYTER_REACT_PATH_COOKIE_NAME = 'jupyter-react-kernel-path';
 
@@ -194,8 +195,8 @@ export class Kernel {
       stopOnError,
       storeHistory,
       allowStdin,
-      notifyOnComplete = false,
-      onCodeExecutionError
+      suppressCodeExecutionErrors = false,
+      onExecutionPhaseChanged,
     }: {
       model?: IOutputAreaModel;
       iopubMessageHooks?: IOPubMessageHook[];
@@ -204,16 +205,15 @@ export class Kernel {
       stopOnError?: boolean;
       storeHistory?: boolean;
       allowStdin?: boolean;
-      notifyOnComplete?: boolean
-      onCodeExecutionError?: (err:any) => void;
+      suppressCodeExecutionErrors?: boolean;
+      onExecutionPhaseChanged?: (phaseOutput: IExecutionPhaseOutput) => void;
     } = {}
   ): KernelExecutor | undefined {
     if (this._kernelConnection) {
       const kernelExecutor = new KernelExecutor({
         connection: this._kernelConnection,
         model,
-        notifyOnComplete,
-        onCodeExecutionError
+        onExecutionPhaseChanged,
       });
       kernelExecutor.execute(code, {
         iopubMessageHooks,
@@ -222,6 +222,7 @@ export class Kernel {
         stopOnError,
         storeHistory,
         allowStdin,
+        suppressCodeExecutionErrors,
       });
       return kernelExecutor;
     }

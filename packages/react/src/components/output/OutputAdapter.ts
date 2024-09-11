@@ -4,8 +4,13 @@
  * MIT License
  */
 
+import {
+  WIDGET_MIMETYPE,
+  WidgetRenderer,
+} from '@jupyter-widgets/html-manager/lib/output_renderers';
+import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
+import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
 import { IOutput } from '@jupyterlab/nbformat';
-import { JSONObject } from '@lumino/coreutils';
 import {
   IOutputAreaModel,
   OutputArea,
@@ -16,14 +21,10 @@ import {
   RenderMimeRegistry,
   standardRendererFactories,
 } from '@jupyterlab/rendermime';
-import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
-import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
-import {
-  WIDGET_MIMETYPE,
-  WidgetRenderer,
-} from '@jupyter-widgets/html-manager/lib/output_renderers';
-import { requireLoader as loader } from '../../jupyter/ipywidgets/libembed-amd';
+import { JSONObject } from '@lumino/coreutils';
 import { ClassicWidgetManager } from '../../jupyter/ipywidgets/classic/manager';
+import { requireLoader as loader } from '../../jupyter/ipywidgets/libembed-amd';
+import { IExecutionPhaseOutput } from '../../jupyter/kernel';
 import { Kernel } from '../../jupyter/kernel/Kernel';
 import { execute } from './OutputExecutor';
 
@@ -34,15 +35,18 @@ export class OutputAdapter {
   private _outputArea: OutputArea;
   private _rendermime: RenderMimeRegistry;
   private _iPyWidgetsClassicManager: ClassicWidgetManager;
+  private _suppressCodeExecutionErrors: boolean;
 
   public constructor(
     id: string,
     kernel?: Kernel,
     outputs?: IOutput[],
-    outputAreaModel?: IOutputAreaModel
+    outputAreaModel?: IOutputAreaModel,
+    suppressCodeExecutionErrors: boolean = false
   ) {
     this._id = id;
     this._kernel = kernel;
+    this._suppressCodeExecutionErrors = suppressCodeExecutionErrors;
     this._renderers = standardRendererFactories.filter(
       factory => factory.mimeTypes[0] !== 'text/javascript'
     );
@@ -93,8 +97,7 @@ export class OutputAdapter {
 
   public async execute(
     code: string,
-    notifyOnComplete?: boolean,
-    onCodeExecutionError?: (err: any) => void
+    onExecutionPhaseChanged?: (phaseOutput: IExecutionPhaseOutput) => void
   ) {
     if (this._kernel) {
       this.clear();
@@ -105,8 +108,8 @@ export class OutputAdapter {
         this._outputArea,
         this._kernel,
         metadata,
-        notifyOnComplete,
-        onCodeExecutionError
+        this._suppressCodeExecutionErrors,
+        onExecutionPhaseChanged
       );
       await done;
     }

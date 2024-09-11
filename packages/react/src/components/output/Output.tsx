@@ -5,21 +5,22 @@
  * MIT License
  */
 
-import { useState, useEffect } from 'react';
-import { Box } from '@primer/react';
 import { IOutput } from '@jupyterlab/nbformat';
 import { IOutputAreaModel } from '@jupyterlab/outputarea';
 import { KernelMessage } from '@jupyterlab/services';
-import { newUuid } from '../../utils';
+import { Box } from '@primer/react';
+import { useEffect, useState } from 'react';
 import { useJupyter } from '../../jupyter/JupyterContext';
 import { Kernel } from '../../jupyter/kernel/Kernel';
-import { KernelActionMenu, KernelProgressBar } from './../kernel';
-import { Lumino } from '../lumino/Lumino';
+import { newUuid } from '../../utils';
 import { CodeMirrorEditor } from '../codemirror/CodeMirrorEditor';
+import { Lumino } from '../lumino/Lumino';
+import { KernelActionMenu, KernelProgressBar } from './../kernel';
 import { OutputAdapter } from './OutputAdapter';
 import { OutputRenderer } from './OutputRenderer';
 import { useOutputsStore } from './OutputState';
 
+import { IExecutionPhaseOutput } from '../../jupyter/kernel';
 import './Output.css';
 
 export type IOutputProps = {
@@ -40,9 +41,9 @@ export type IOutputProps = {
   showControl?: boolean;
   showEditor: boolean;
   showKernelProgressBar?: boolean;
+  suppressCodeExecutionErrors?: boolean;
   toolbarPosition: 'up' | 'middle' | 'none';
-  notifyOnComplete?: boolean;
-  onCodeExecutionError?: (err : any) => void;
+  onExecutionPhaseChanged? : (phaseOutput : IExecutionPhaseOutput) => void
 };
 
 export const Output = (props: IOutputProps) => {
@@ -65,8 +66,8 @@ export const Output = (props: IOutputProps) => {
     showControl,
     showEditor,
     showKernelProgressBar = true,
-    notifyOnComplete = false,
-    onCodeExecutionError,
+    suppressCodeExecutionErrors = false,
+    onExecutionPhaseChanged,
     id: sourceId,
     toolbarPosition,
   } = props;
@@ -102,7 +103,7 @@ export const Output = (props: IOutputProps) => {
       }
     };
     if (id && kernel) {
-      const adapter = propsAdapter ?? new OutputAdapter(id, kernel, outputs ?? [], model);
+      const adapter = propsAdapter ?? new OutputAdapter(id, kernel, outputs ?? [], model,suppressCodeExecutionErrors);
       setAdapter(adapter);
       outputStore.setAdapter(id, adapter);
       if (model) {
@@ -126,7 +127,7 @@ export const Output = (props: IOutputProps) => {
   useEffect(() => {
     if (adapter) {
       if (autoRun) {
-        adapter.execute(code, notifyOnComplete,onCodeExecutionError);
+        adapter.execute(code,onExecutionPhaseChanged);
       }
     }
   }, [adapter]);
@@ -146,12 +147,12 @@ export const Output = (props: IOutputProps) => {
   const executeRequest = outputStore.getExecuteRequest(sourceId);
   useEffect(() => {
     if (adapter && executeRequest && executeRequest === id) {
-      adapter.execute(code, notifyOnComplete,onCodeExecutionError);
+      adapter.execute(code,onExecutionPhaseChanged);
     }
   }, [executeRequest, adapter]);
   useEffect(() => {
     if (adapter && executeTrigger > 0) {
-      adapter.execute(code, notifyOnComplete,onCodeExecutionError);
+      adapter.execute(code,onExecutionPhaseChanged);
     }
   }, [executeTrigger]);
   useEffect(() => {

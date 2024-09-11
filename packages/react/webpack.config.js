@@ -59,7 +59,7 @@ const ENTRY =
   // './src/examples/NotebookURL';
   // './src/examples/ObservableHQ';
   // './src/examples/Output';
-  // './src/examples/OutputWithErrorHandle';
+   './src/examples/OutputWithMonitoring';
   // './src/examples/Outputs';
   // './src/examples/Plotly';
   // './src/examples/RunningSessions';

@@ -4,9 +4,10 @@
  * MIT License
  */
 
-import { JSONObject } from '@lumino/coreutils';
-import { KernelMessage } from '@jupyterlab/services';
 import { OutputArea } from '@jupyterlab/outputarea';
+import { KernelMessage } from '@jupyterlab/services';
+import { JSONObject } from '@lumino/coreutils';
+import { IExecutionPhaseOutput } from '../../jupyter/kernel';
 import { Kernel } from './../../jupyter/kernel/Kernel';
 
 /**
@@ -18,8 +19,8 @@ export async function execute(
   output: OutputArea,
   kernel: Kernel,
   metadata?: JSONObject,
-  notifyOnComplete?: boolean,
-  onCodeExecutionError?: (err: any) => void
+  suppressCodeExecutionErrors: boolean = false,
+  onExecutionPhaseChanged?: (phaseOutput: IExecutionPhaseOutput) => void
 ): Promise<KernelMessage.IExecuteReplyMsg | undefined> {
   // Override the default for `stop_on_error`.
   let stopOnError = true;
@@ -33,9 +34,10 @@ export async function execute(
   const kernelExecutor = kernel.execute(code, {
     model: output.model,
     stopOnError,
-    notifyOnComplete,
-    onCodeExecutionError,
+    suppressCodeExecutionErrors,
+    onExecutionPhaseChanged,
   });
+
   const future = kernelExecutor!.future;
   // TODO fix in upstream jupyterlab if possible...
   (output as any)._onIOPub = future!.onIOPub;
