@@ -98,9 +98,7 @@ export class NotebookAdapter {
     this._serverless = props.serverless;
     this._renderers = props.renderers;
     this._serviceManager = props.serviceManager!;
-
     this._CellSidebar = props.CellSidebar;
-
     this._boxPanel = new BoxPanel();
     this._boxPanel.addClass('dla-Jupyter-Notebook');
     this._boxPanel.spacing = 0;

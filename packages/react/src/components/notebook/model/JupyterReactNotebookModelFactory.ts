@@ -25,15 +25,11 @@ export class JupyterReactNotebookModelFactory extends NotebookModelFactory {
   }
 
   /** @override */
-  createNew(
-    options: DocumentRegistry.IModelOptions<ISharedNotebook>
-  ): INotebookModel {
+  createNew(options: DocumentRegistry.IModelOptions<ISharedNotebook>): INotebookModel {
     if (this._nbformat) {
-      if (this._readonly) {
-        this._nbformat.cells.forEach(cell => {
-          cell.metadata['editable'] = false;
-        });
-      }
+      this._nbformat.cells.forEach(cell => {
+        cell.metadata['editable'] = !this._readonly;
+      });
       const notebookModel = new NotebookModel();
       notebookModel.fromJSON(this._nbformat);
       return notebookModel;

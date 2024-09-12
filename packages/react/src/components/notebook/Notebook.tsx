@@ -185,6 +185,9 @@ export const Notebook = (props: INotebookProps) => {
   }, []);
   useEffect(() => {
     if (id && serviceManager && kernelManager && (kernel || serverless)) {
+      if (adapter) {
+        disposeAdapter();
+      }
       createAdapter(kernel);
     }
   }, [id, serviceManager, kernelManager, kernel, lite, serverless]);
@@ -192,34 +195,23 @@ export const Notebook = (props: INotebookProps) => {
     if (adapter && nbformat && adapter.nbformat !== nbformat) {
       adapter.setNbformat(nbformat);
     }
-    return () => {
-//      disposeAdapter();
-    }
   }, [nbformat]);
   useEffect(() => {
     if (adapter && path && adapter.path !== path) {
       disposeAdapter();
       createAdapter();
     }
-    return () => {
-//      disposeAdapter();
-    }
   }, [path]);
   useEffect(() => {
     if (adapter && url && adapter.url !== url) {
+      disposeAdapter();
       createAdapter();
-    }
-    return () => {
-//      disposeAdapter();
     }
   }, [url]);
   useEffect(() => {
     if (adapter && url && adapter.readonly !== readonly) {
       adapter.setReadonly(readonly);
     }
-    return () => {
-//      disposeAdapter();
-      }
     }, [readonly]);
   return (
     <Box
