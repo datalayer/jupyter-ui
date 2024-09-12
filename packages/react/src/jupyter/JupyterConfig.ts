@@ -6,6 +6,7 @@
 
 import { PageConfig } from '@jupyterlab/coreutils';
 import { JupyterProps } from './Jupyter';
+import { DEFAULT_JUPYTER_SERVER_URL, DEFAULT_JUPYTER_SERVER_TOKEN } from './JupyterDefaults';
 
 /**
  * The URL prefix for the kernel api.
@@ -128,8 +129,8 @@ export const loadJupyterConfig = (
     return config;
   }
   config = {
-    jupyterServerToken: jupyterServerToken ?? '',
-    jupyterServerUrl: jupyterServerUrl ?? '',
+    jupyterServerUrl: jupyterServerUrl ?? DEFAULT_JUPYTER_SERVER_TOKEN,
+    jupyterServerToken: jupyterServerToken ?? DEFAULT_JUPYTER_SERVER_URL,
     insideJupyterLab: false,
     insideJupyterHub: false,
   }
@@ -138,14 +139,15 @@ export const loadJupyterConfig = (
   if (datalayerConfigLoaded) {
     // There is a Datalayer config, mix the configs...
     setJupyterServerUrl(
-      jupyterServerUrl ??
-        config.jupyterServerUrl ??
-          location.protocol + '//' + location.host + '/api/jupyter-server'
+      jupyterServerUrl ||
+        config.jupyterServerUrl
+//          location.protocol + '//' + location.host + '/api/jupyter-server'
+          
     );
     setJupyterServerToken(
-      jupyterServerToken ?? 
-        config.jupyterServerToken ?? 
-          ''
+      jupyterServerToken || 
+        config.jupyterServerToken
+//          ''
     );
   } else {
     // No Datalayer config, look for a Jupyter config.

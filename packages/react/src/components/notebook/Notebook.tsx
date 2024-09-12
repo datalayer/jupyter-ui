@@ -72,15 +72,15 @@ export const Notebook = (props: INotebookProps) => {
     nbgrader,
     path,
     readonly,
+    url,
     serverless,
   } = props;
   const notebookStore = useNotebookStore();
-  const [id, _] = useState(props.id ?? newUuid());
+  const [id, _] = useState(props.id || newUuid());
   const [adapter, setAdapter] = useState<NotebookAdapter>();
   const kernel = props.kernel ?? defaultKernel;
-//  const notebook = notebookStore.selectNotebook(id);
   const portals = notebookStore.selectNotebookPortals(id);
-  const createAdapter = () => {
+  const bootstrapAdapter = () => {
     const adapter = new NotebookAdapter(
       {
         ...props,
@@ -163,12 +163,12 @@ export const Notebook = (props: INotebookProps) => {
       );
     });
   }
-  const initAdapter = (kernel?: Kernel) => {
+  const createAdapter = (kernel?: Kernel) => {
     if (!kernel) {
-      createAdapter();
+      bootstrapAdapter();
     } else {
       kernel.ready.then(() => {
-        createAdapter();
+        bootstrapAdapter();
       });
     }
   }
@@ -179,27 +179,48 @@ export const Notebook = (props: INotebookProps) => {
     }
   }
   useEffect(() => {
-    if (id && serviceManager && kernelManager && (kernel || serverless)) {
-      initAdapter(kernel);
-    }
     return () => {
       disposeAdapter();
-    };
+    }
+  }, []);
+  useEffect(() => {
+    if (id && serviceManager && kernelManager && (kernel || serverless)) {
+      createAdapter(kernel);
+    }
   }, [id, serviceManager, kernelManager, kernel, lite, serverless]);
   useEffect(() => {
-    if (adapter && nbformat) {
+    if (adapter && nbformat && adapter.nbformat !== nbformat) {
       adapter.setNbformat(nbformat);
     }
-  }, [adapter, nbformat]);
-  useEffect(() => {
-    if (adapter) {
+    return () => {
+//      disposeAdapter();
     }
-  }, [adapter, path]);
+  }, [nbformat]);
   useEffect(() => {
-    if (adapter) {
+    if (adapter && path && adapter.path !== path) {
+      disposeAdapter();
+      createAdapter();
+    }
+    return () => {
+//      disposeAdapter();
+    }
+  }, [path]);
+  useEffect(() => {
+    if (adapter && url && adapter.url !== url) {
+      createAdapter();
+    }
+    return () => {
+//      disposeAdapter();
+    }
+  }, [url]);
+  useEffect(() => {
+    if (adapter && url && adapter.readonly !== readonly) {
       adapter.setReadonly(readonly);
     }
-  }, [adapter, readonly]);
+    return () => {
+//      disposeAdapter();
+      }
+    }, [readonly]);
   return (
     <Box
       style={{ height, width: '100%', position: 'relative' }}
@@ -269,7 +290,13 @@ export const Notebook = (props: INotebookProps) => {
           {portals?.map((portal: React.ReactPortal) => portal)}
         </>
         <Box>
-          {adapter && <Lumino id={path}>{adapter.panel}</Lumino>}
+          {adapter &&
+            (
+              <Lumino id={id}>
+                {adapter.panel}
+              </Lumino>
+            )
+          }
         </Box>
       </Box>
     </Box>

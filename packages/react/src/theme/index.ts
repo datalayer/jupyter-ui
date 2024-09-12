@@ -6,6 +6,6 @@
 
 export * from './JupyterLabColormode';
 export * from './JupyterLabCss';
-export * from './JupyterLabCssImports';
+// export * from './JupyterLabCssImports'; // Leave this commented otherwise webpack may break in consumers.
 export * from './JupyterPrimerTheme';
 export * from './JupyterReactTheme';

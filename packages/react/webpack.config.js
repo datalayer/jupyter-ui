@@ -50,11 +50,12 @@ const ENTRY =
   // './src/examples/NotebookNbformatChange';
   // './src/examples/NotebookNoContext';
   // './src/examples/NotebookNoPrimer';
+  // './src/examples/NotebookPathChange';
   // './src/examples/NotebookReadonly';
   // './src/examples/NotebookServiceManager';
   // './src/examples/NotebookSkeleton';
   // './src/examples/NotebookTheme';
-  // './src/examples/NotebookThemeColorMode';
+  // './src/examples/NotebookThemeColormode';
   // './src/examples/NotebookUrl';
   // './src/examples/ObservableHQ';
   // './src/examples/Output';

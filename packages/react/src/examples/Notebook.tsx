@@ -5,8 +5,7 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import { Jupyter } from '../jupyter/Jupyter';
-import { DEFAULT_JUPYTER_SERVER_URL, DEFAULT_JUPYTER_SERVER_TOKEN } from '../jupyter';
+import { JupyterReactTheme } from '../theme';
 import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
@@ -18,10 +17,7 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <Jupyter
-    jupyterServerUrl={DEFAULT_JUPYTER_SERVER_URL}
-    jupyterServerToken={DEFAULT_JUPYTER_SERVER_TOKEN}
-  >
+  <JupyterReactTheme>
     <Notebook
       path="ipywidgets.ipynb"
       id={NOTEBOOK_ID}
@@ -30,5 +26,5 @@ root.render(
       CellSidebar={CellSidebarButton}
       Toolbar={NotebookToolbar}
     />
-  </Jupyter>
+  </JupyterReactTheme>
 );

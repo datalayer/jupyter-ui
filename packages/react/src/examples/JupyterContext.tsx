@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { IOutput, INotebookContent } from '@jupyterlab/nbformat';
 import { Box, Button, ButtonGroup, SegmentedControl } from '@primer/react';
+import { DEFAULT_JUPYTER_SERVER_URL, DEFAULT_JUPYTER_SERVER_TOKEN } from '../jupyter';
 import { Jupyter } from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { Kernel } from '../jupyter/kernel/Kernel';
@@ -187,12 +188,14 @@ const Outputs = () => {
 };
 
 const JuptyerContextExample = () => {
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(1);
   return (
     <>
       <Jupyter
-        terminals
+        jupyterServerUrl={DEFAULT_JUPYTER_SERVER_URL}
+        jupyterServerToken={DEFAULT_JUPYTER_SERVER_TOKEN}      
         serverless={index === 0}
+        terminals
       >
         <SegmentedControl onChange={index => setIndex(index)} aria-label="jupyter-react-example">
           <SegmentedControl.Button defaultSelected={index === 0}>Serverless</SegmentedControl.Button>
