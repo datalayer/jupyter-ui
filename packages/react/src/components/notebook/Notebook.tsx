@@ -16,7 +16,7 @@ import { asObservable, Lumino } from '../lumino';
 import { CellMetadataEditor } from './cell/metadata/CellMetadataEditor';
 import { ICellSidebarProps } from './cell/sidebar/CellSidebarWidget';
 import { INotebookToolbarProps } from './toolbar/NotebookToolbar';
-import { newUuid } from '../../utils/Utils';
+import { newUuid } from '../../utils';
 import { useNotebookStore } from './NotebookState';
 import { NotebookAdapter } from './NotebookAdapter';
 
@@ -52,7 +52,7 @@ export type INotebookProps = {
 };
 
 /**
- * This component creates a Notebook as a collection of snippets
+ * This component creates a Notebook as a collection of cells
  * with sidebars.
  *
  * @param props The notebook properties.
@@ -60,9 +60,9 @@ export type INotebookProps = {
  */
 export const Notebook = (props: INotebookProps) => {
   const { serviceManager, defaultKernel, kernelManager, lite } = useJupyter({
+    lite: props.lite,
     serverless: props.serverless,
     serviceManager: props.serviceManager,
-    lite: props.lite,
   });
   const {
     Toolbar,
@@ -80,7 +80,7 @@ export const Notebook = (props: INotebookProps) => {
   const kernel = props.kernel ?? defaultKernel;
 //  const notebook = notebookStore.selectNotebook(id);
   const portals = notebookStore.selectNotebookPortals(id);
-  const initAdapter = () => {
+  const createAdapter = () => {
     const adapter = new NotebookAdapter(
       {
         ...props,
@@ -90,6 +90,7 @@ export const Notebook = (props: INotebookProps) => {
         serviceManager: serviceManager ?? props.serviceManager,
       },
     );
+    console.log('Created Notebook Adapter', adapter);
     setAdapter(adapter);
     notebookStore.update({
       id,
@@ -162,12 +163,12 @@ export const Notebook = (props: INotebookProps) => {
       );
     });
   }
-  const createAdapter = (kernel?: Kernel) => {
+  const initAdapter = (kernel?: Kernel) => {
     if (!kernel) {
-      initAdapter();
+      createAdapter();
     } else {
       kernel.ready.then(() => {
-        initAdapter();
+        createAdapter();
       });
     }
   }
@@ -179,7 +180,7 @@ export const Notebook = (props: INotebookProps) => {
   }
   useEffect(() => {
     if (id && serviceManager && kernelManager && (kernel || serverless)) {
-      createAdapter(kernel);
+      initAdapter(kernel);
     }
     return () => {
       disposeAdapter();

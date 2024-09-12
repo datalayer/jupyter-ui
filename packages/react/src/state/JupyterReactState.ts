@@ -121,6 +121,7 @@ export function useJupyterReactStoreFromProps(props: JupyterPropsType): JupyterR
 
   useEffect(() => {
     if (propsServiceManager) {
+      console.log('Setting service manager from props', propsServiceManager);
       setServiceManager(propsServiceManager);
       jupyterReactStore.getState().setServiceManager(propsServiceManager);
     }

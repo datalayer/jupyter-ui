@@ -39,7 +39,10 @@ const NotebookMutations = () => {
         setReadonly(false);
         setServerless(true);
         setLite(true);
-        createServiceManagerLite().then(serviceManager => setServiceManager(serviceManager));
+        createServiceManagerLite().then(serviceManager => {
+          console.log('Created Service Manager Lite', serviceManager);
+          setServiceManager(serviceManager);
+        });
         break;
       }
       case 2: {
@@ -83,12 +86,12 @@ const NotebookMutations = () => {
         </Box>
       </Box>
       <Notebook
+        id={NOTEBOOK_ID}
+        lite={lite}
+        nbformat={nbformat as INotebookContent}
         readonly={readonly}
         serverless={serverless}
-        lite={lite}
         serviceManager={serviceManager}
-        nbformat={nbformat as INotebookContent}
-        id={NOTEBOOK_ID}
         height="calc(100vh - 2.6rem)"
       />
     </JupyterReactTheme>

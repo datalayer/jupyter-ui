@@ -41,13 +41,17 @@ export const Lumino = (props: LuminoProps) => {
     }
   }, [ref, children]);
   return (
-    <div ref={ref} id={id} style={{ height: height, minHeight: height }}></div>
+    <div
+      id={id}
+      ref={ref}
+      style={{ height: height, minHeight: height }}
+    />
   );
-};
+}
 
 Lumino.defaultProps = {
   id: 'lumino-id',
   height: '100%',
-};
+}
 
 export default Lumino;
