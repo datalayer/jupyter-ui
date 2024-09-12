@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 /*
  * Copyright (c) 2021-2023 Datalayer, Inc.
  *
@@ -5,21 +6,22 @@
  */
 
 import { IOutput } from '@jupyterlab/nbformat';
-import { IOutputAreaModel } from '@jupyterlab/outputarea';
-import { Text } from '@primer/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Button, Text } from '@primer/react';
+import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Output } from '../components/output/Output';
-import OutputAdapter from '../components/output/OutputAdapter';
 import { useOutputsStore } from '../components/output/OutputState';
 import { Jupyter } from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
-import useKernelsStore, { ExecutionPhase } from '../jupyter/kernel/KernelState';
+import { IExecutionPhaseOutput } from '../jupyter/kernel';
+import { ExecutionPhase } from '../jupyter/kernel/KernelState';
 
+const SOURCE_ID_1 = 'output-id-1';
+const SOURCE_1 = 'fail';
 
-const SOURCE_ID = 'output-id-2';
-const SOURCE = '2+2';
-const OUTPUTS: IOutput[] = [
+const SOURCE_ID_2 = 'output-id-2';
+const SOURCE_2 = '2+2';
+const OUTPUTS_2: IOutput[] = [
   {
     data: {
       'text/plain': ['4'],
@@ -30,102 +32,96 @@ const OUTPUTS: IOutput[] = [
   },
 ];
 
-const OutputWithMonitoring = () => {
+const SOURCE_ID_3 = 'output-id-3';
+const SOURCE_3 = 'a = 5';
+
+const OutputWithMonitoring = ({
+  title,
+  id,
+  code,
+  output,
+}: {
+  title: string,
+  id: string;
+  code: string;
+  output?: IOutput[];
+}) => {
   const { defaultKernel } = useJupyter();
   const outputStore = useOutputsStore();
-  const kernelsStore = useKernelsStore();
-  const outputAdapter = outputStore.getAdapter(SOURCE_ID)
-  const [outputReceived, setOutputReceived] = useState(false);
-
-  // We save function output listener function state to ref to be able to unsubscribe
-  const connectedListenerRef = useRef<(source : IOutputAreaModel, changedArgs : IOutputAreaModel.ChangedArgs) => void | undefined>();
-
-    const handleOutputStateChanged =  useCallback( (source : IOutputAreaModel, changedArgs : IOutputAreaModel.ChangedArgs) => {
-        let kernelExecutionPhase : ExecutionPhase | undefined;
-        if (defaultKernel?.id) {
-            kernelExecutionPhase = kernelsStore.getExecutionPhase(defaultKernel?.id);
-        }
-        console.log(`Got new output in phase=${kernelExecutionPhase}`);
-        if (changedArgs.type !== 'remove') {            
-            if (changedArgs.newValues.length > 0) {
-                const outputValue = changedArgs.newValues[0];
-                if (outputValue.type === 'error') {
-                    if (outputValue.data && outputValue.data['application/vnd.jupyter.error']) {
-                        const errObject : any = outputValue.data['application/vnd.jupyter.error'];
-                        if (errObject.ename && errObject.evalue) {
-                            console.log(`Cell execution finished with error of type :${errObject.ename} and message: ${errObject.evalue}`)                            
-                        }
-                    } 
-                    else {
-                        console.log(`Cell execution finished with error : ${outputValue.data}`)
-                    }
-                }
-                else if (outputValue.type === 'stream' && outputValue.data['application/vnd.jupyter.stderr']) {
-                    // In fact it's a warning with successful execution
-                    console.log(`Cell execution generated warning : ${outputValue.data['application/vnd.jupyter.stderr']}`)
-                }
-                else if (outputValue.type === 'display_data' || outputValue.type === 'stream') {
-                    console.log(`Cell execution finished successfully : ${outputValue.toJSON()}`)    
-                }
-            }
-        }
-        else {            
-            console.log(`Got remove message`);
-        }    
-    },[defaultKernel?.id])
-
-
-  useEffect(() => {    
-
-    function disconnectOutputAdapter(this:any, outputAdapter : OutputAdapter | undefined) {
-        if (outputAdapter && connectedListenerRef.current) {
-            const disconnected = outputAdapter.outputArea.model.changed
-                                        .disconnect(connectedListenerRef.current)
-            if (disconnected) {
-                console.log(`Disconnected from output`);                                
-            }
-        }
-    }
-
-    function connectOutputAdapter(this:any, outputAdapter : OutputAdapter | undefined) {
-        if (outputAdapter) {
-            connectedListenerRef.current = handleOutputStateChanged;
-            const connected = outputAdapter.outputArea.model.changed.connect(handleOutputStateChanged);
-            if (connected) {
-                console.log(`Connected to output`)
-            }
-        }
-    }
-    if (outputAdapter) {
-      if (outputReceived) {
-        disconnectOutputAdapter()
-      }
-    }
-},[outputReceived, outputAdapter])
-
+  const [execTrigger, setExecTrigger] = useState(0);
+  const [executionLog, setExecutionLog] = useState<string[]>([]);
 
   console.log(
     'Outputs',
-    outputStore.getModel(SOURCE_ID)?.toJSON(),
-    outputStore.getInput(SOURCE_ID),
+    outputStore.getModel(id)?.toJSON(),
+    outputStore.getInput(id)
   );
+
+  const handleExecutionPhaseChanged = (phaseOutput: IExecutionPhaseOutput) => {
+    switch (phaseOutput.executionPhase) {
+      case ExecutionPhase.running:
+        const log = [new Date().toISOString() + ' EXECUTION PHASE - RUNNING'];
+        setExecutionLog(log);
+        break;
+      case ExecutionPhase.completed:
+        setExecutionLog(executionLog => [
+          ...executionLog,
+          new Date().toISOString() +
+            ' EXECUTION PHASE - COMPLETED and output ' +
+            JSON.stringify(phaseOutput.outputModel?.toJSON()),
+        ]);
+        break;
+      case ExecutionPhase.completed_with_error:
+        setExecutionLog(executionLog => [
+          ...executionLog,
+          new Date().toISOString() +
+            ' EXECUTION PHASE - COMPLETED_WITH_ERROR and output ' +
+            JSON.stringify(phaseOutput.outputModel?.toJSON()),
+        ]);
+        break;
+    }
+  };
 
   return (
     <>
-      <Text as="h1">Output with Code Editor</Text>
+      <Text as="h1">{title}</Text>
+      <Button onClick={() => setExecTrigger(execTrigger => execTrigger + 1)}>
+        Execute with monitoring
+      </Button>
+      <div
+        style={{
+          padding: '10px',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <span style={{ fontWeight: '600' }}>Execution log</span>
+        <div>
+          {executionLog.map((logEntry, index) => {
+            return (
+              <p key={index} style={{ textAlign: 'left' }}>
+                {logEntry}
+              </p>
+            );
+          })}
+        </div>
+      </div>
+
       <Output
         autoRun={false}
-        code={SOURCE}
-        id={SOURCE_ID} 
+        code={code}
+        id={id}
         kernel={defaultKernel}
-        outputs={OUTPUTS}
-        notifyOnComplete={true}
+        executeTrigger={execTrigger}
+        outputs={output ? output : []}
+        onExecutionPhaseChanged={handleExecutionPhaseChanged}
+        suppressCodeExecutionErrors={true}
         showEditor
       />
     </>
   );
 };
-
 
 const div = document.createElement('div');
 document.body.appendChild(div);
@@ -133,6 +129,26 @@ const root = createRoot(div);
 
 root.render(
   <Jupyter>
-    <OutputWithMonitoring />
+    <OutputWithMonitoring
+      title="Output with error code"
+      key="1"
+      id={SOURCE_ID_1}
+      code={SOURCE_1}
+    />
+
+    <OutputWithMonitoring
+      title="Output with correct code"
+      key="2"
+      id={SOURCE_ID_2}
+      code={SOURCE_2}
+      output={OUTPUTS_2}
+    />
+
+    <OutputWithMonitoring
+      title="Code with no output"
+      key="3"
+      id={SOURCE_ID_3}
+      code={SOURCE_3}
+    />
   </Jupyter>
 );
