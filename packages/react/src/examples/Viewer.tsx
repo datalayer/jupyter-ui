@@ -36,4 +36,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<JuptyerViewerExample />);
+root.render(<JupyterViewerExample />);
