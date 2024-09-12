@@ -6,14 +6,10 @@
 
 import React, { createContext, useContext } from 'react';
 import { Kernel as JupyterKernel, ServerConnection, ServiceManager } from '@jupyterlab/services';
-import type { JupyterLiteServerPlugin } from '@jupyterlite/server';
 import { useJupyterReactStoreFromProps } from '../state';
 import { requestAPI } from './JupyterHandlers';
-import Kernel from './kernel/Kernel';
-
-export type Lite =
-  | boolean
-  | Promise<{ default: JupyterLiteServerPlugin<any>[] }>;
+import { Lite } from './lite';
+import { Kernel } from './kernel';
 
 /**
  * The type for Jupyter props.
@@ -148,11 +144,11 @@ export type JupyterContextType =  {
    */
   serverless: boolean
   /**
-   * Jupyter service manager
+   * Jupyter service manager.
    */
   serviceManager?: ServiceManager.IManager;
   /**
-   * Jupyter Server settings
+   * Jupyter Server settings.
    *
    * This is useless if running an in-browser kernel via {@link lite}.
    */
@@ -182,7 +178,7 @@ export const JupyterContextConsumer = JupyterContext.Consumer;
 const JupyterProvider = JupyterContext.Provider;
 
 /*
- *
+ * User Jupyter hook.
  */
 export const useJupyter = (props?: JupyterPropsType): JupyterContextType => {
   const context = useContext(JupyterContext);

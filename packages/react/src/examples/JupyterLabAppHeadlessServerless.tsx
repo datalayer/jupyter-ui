@@ -11,8 +11,8 @@ import { BoxPanel } from '@lumino/widgets';
 import { ThemeManager } from '@jupyterlab/apputils';
 // import { NotebookTracker } from '@jupyterlab/notebook';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
-import Lumino from '../components/lumino/Lumino';
 import { Colormode } from '../theme/JupyterLabColormode';
+import Lumino from '../components/lumino/Lumino';
 import JupyterLabApp from '../components/jupyterlab/JupyterLabApp';
 import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter';
 

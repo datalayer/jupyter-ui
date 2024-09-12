@@ -8,6 +8,7 @@ export * from './Jupyter';
 export * from './JupyterAuthError';
 export * from './JupyterConfig';
 export * from './JupyterContext';
+export * from './JupyterDefaults';
 export * from './JupyterHandlers';
 export * from './Jupyter';
 export * from './ipywidgets';

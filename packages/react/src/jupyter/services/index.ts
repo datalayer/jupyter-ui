@@ -4,5 +4,6 @@
  * MIT License
  */
 
-export * from './JupyterServiceManagerLess';
 export * from './JupyterServices';
+export * from './ServiceManagerLite';
+export * from './ServiceManagerLess';

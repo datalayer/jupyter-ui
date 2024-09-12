@@ -9,10 +9,9 @@ import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { ServiceManager } from '@jupyterlab/services';
 import { Box, SegmentedControl } from '@primer/react';
-import { getJupyterServerUrl, getJupyterServerToken, createServerSettings, JupyterServiceManagerLess } from '../jupyter';
-import { Notebook } from '../components/notebook/Notebook';
-import { useNotebookStore } from './../components';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { createServiceManagerLite, createServerSettings, getJupyterServerUrl, getJupyterServerToken, ServiceManagerLess } from '../jupyter';
+import { useNotebookStore, Notebook} from './../components';
+import { JupyterReactTheme } from '../theme';
 
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
@@ -21,33 +20,35 @@ const NOTEBOOK_ID = 'notebook-mutations-id';
 const NotebookMutations = () => {
   const [index, setIndex] = useState(0);
   const [readonly, setReadonly] = useState(true);
+  const [serverless, setServerless] = useState(true);
   const [lite, setLite] = useState(false);
+  const [serviceManager, setServiceManager] = useState(new ServiceManagerLess());
   const notebookStore = useNotebookStore();
   const notebook = notebookStore.selectNotebook(NOTEBOOK_ID);
-  const [serviceManager, setServiceManager] = useState(new JupyterServiceManagerLess());
   const changeIndex = (index: number) => {
     setIndex(index);
     switch(index) {
       case 0: {
         setReadonly(true);
+        setServerless(true);
         setLite(false);
-//        setServiceManager(new JupyterServiceManagerLess());
+        setServiceManager(new ServiceManagerLess());
         break;
       }
       case 1: {
         setReadonly(false);
+        setServerless(true);
         setLite(true);
-//        setServiceManager(new JupyterServiceManagerLess());
+        createServiceManagerLite().then(serviceManager => setServiceManager(serviceManager));
         break;
       }
       case 2: {
         setReadonly(false);
+        setServerless(false);
         setLite(false);
-        /*
         const serverSettings = createServerSettings(getJupyterServerUrl(), getJupyterServerToken());
         const serviceManager = new ServiceManager({ serverSettings });
         setServiceManager(serviceManager);
-        */
         break;
       }
     }
@@ -66,17 +67,24 @@ const NotebookMutations = () => {
           Readonly: {String(notebook?.adapter?.readonly)}
         </Box>
         <Box ml={3}>
+          Serverless: {String(notebook?.adapter?.serverless)}
+        </Box>
+        <Box ml={3}>
           Lite: {String(notebook?.adapter?.lite)}
         </Box>
         <Box ml={3}>
-          Kernel ID: {notebook?.adapter?.kernel.id}
+          Kernel ID: {notebook?.adapter?.kernel?.id}
         </Box>
         <Box ml={3}>
-          Service Manager: {notebook?.adapter?.serviceManager.serverSettings.baseUrl}
+          Service Manager Ready: {String(notebook?.adapter?.serviceManager.isReady)}
+        </Box>
+        <Box ml={3}>
+          Service Manager URL: {notebook?.adapter?.serviceManager.serverSettings.baseUrl}
         </Box>
       </Box>
       <Notebook
         readonly={readonly}
+        serverless={serverless}
         lite={lite}
         serviceManager={serviceManager}
         nbformat={nbformat as INotebookContent}

@@ -5,7 +5,7 @@
  */
 
 import { useRef, useEffect } from 'react';
-// import { unmountComponentAtNode } from 'react-dom';
+import { unmountComponentAtNode } from 'react-dom';
 import { Widget } from '@lumino/widgets';
 
 type LuminoProps = {
@@ -26,8 +26,8 @@ export const Lumino = (props: LuminoProps) => {
       }
       return () => {
         try {
-          /*
           unmountComponentAtNode(children.node);
+          /*
           if (children.isAttached || children.node.isConnected) {
             children.dispose();
             Widget.detach(children);

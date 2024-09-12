@@ -386,7 +386,7 @@ export class NbConvertManagerLess {
   }
 }
 
-export class JupyterServiceManagerLess implements ServiceManager.IManager {
+export class ServiceManagerLess implements ServiceManager.IManager {
   isReady: boolean = true;
   ready: Promise<void> = Promise.resolve(void 0);
   isDisposed: boolean = false;
@@ -403,19 +403,22 @@ export class JupyterServiceManagerLess implements ServiceManager.IManager {
   user: User.IManager;
   workspaces: Workspace.IManager;
   nbconvert: NbConvert.IManager;
-  constructor(serverSettings: ServerConnection.ISettings = ServerConnection.makeSettings()) {
-    this.serverSettings = serverSettings;
-    this.builder = new BuilderManagerLess(serverSettings) as Builder.IManager;
-    this.contents = new ContentsManagerLess(serverSettings);
-    this.events = new EventsManagerLess(serverSettings);
-    this.kernels = new KernelsManagerLess(serverSettings);
-    this.kernelspecs = new KernelspecManagerLess(serverSettings);
-    this.nbconvert = new NbConvertManagerLess(serverSettings) as unknown as NbConvert.IManager;
-    this.sessions = new SessionManagerLess(serverSettings);
-    this.settings = new SettingManagerLess(serverSettings)
-    this.terminals = new TerminalManagerLess(serverSettings);
-    this.user = new UserManagerLess(serverSettings)
-    this.workspaces = new WorkspaceManagerLess(serverSettings);
+  constructor(serverSettings?: ServerConnection.ISettings) {
+    this.serverSettings = serverSettings ?? ServerConnection.makeSettings({
+//      baseUrl: 'https://',
+//      wsUrl: 'wss://',
+    });
+    this.builder = new BuilderManagerLess(this.serverSettings) as Builder.IManager;
+    this.contents = new ContentsManagerLess(this.serverSettings);
+    this.events = new EventsManagerLess(this.serverSettings);
+    this.kernels = new KernelsManagerLess(this.serverSettings);
+    this.kernelspecs = new KernelspecManagerLess(this.serverSettings);
+    this.nbconvert = new NbConvertManagerLess(this.serverSettings) as unknown as NbConvert.IManager;
+    this.sessions = new SessionManagerLess(this.serverSettings);
+    this.settings = new SettingManagerLess(this.serverSettings)
+    this.terminals = new TerminalManagerLess(this.serverSettings);
+    this.user = new UserManagerLess(this.serverSettings)
+    this.workspaces = new WorkspaceManagerLess(this.serverSettings);
     /*
     const serviceManager = new ServiceManager({
       serverSettings,
@@ -437,4 +440,4 @@ export class JupyterServiceManagerLess implements ServiceManager.IManager {
   }
 }
 
-export default JupyterServiceManagerLess;
+export default ServiceManagerLess;

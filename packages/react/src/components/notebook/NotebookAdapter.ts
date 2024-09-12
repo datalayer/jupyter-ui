@@ -50,8 +50,8 @@ import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
 import { INotebookContent, CellType, IAttachments } from '@jupyterlab/nbformat';
 import { ISharedAttachmentsCell, IYText } from '@jupyter/ydoc';
 import { WIDGET_MIMETYPE } from '@jupyter-widgets/html-manager/lib/output_renderers';
-import { Lite } from '../../jupyter/JupyterContext';
-import { Kernel } from '../../jupyter/kernel/Kernel';
+import { Lite } from '../../jupyter/lite';
+import { Kernel } from '../../jupyter/kernel';
 import { ICellSidebarProps } from './cell/sidebar/CellSidebarWidget';
 import JupyterReactContentFactory from './content/JupyterReactContentFactory';
 import JupyterReactNotebookModelFactory from './model/JupyterReactNotebookModelFactory';
@@ -68,13 +68,14 @@ export class NotebookAdapter {
   private _commandRegistry: CommandRegistry;
   private _context?: Context<INotebookModel>;
   private _iPyWidgetsManager?: WidgetManager;
-  private _kernel: Kernel;
+  private _kernel?: Kernel;
   private _lite?: Lite;
   private _nbformat?: INotebookContent;
   private _nbgrader: boolean;
   private _notebookPanel?: NotebookPanel;
   private _path?: string;
   private _readonly: boolean;
+  private _serverless: boolean;
   private _renderers: IRenderMime.IRendererFactory[];
   private _rendermime?: RenderMimeRegistry;
   private _serviceManager: ServiceManager.IManager;
@@ -84,12 +85,13 @@ export class NotebookAdapter {
 
   constructor(props: INotebookProps) {
     this._id = props.id;
-    this._kernel = props.kernel!;
+    this._kernel = props.kernel;
     this._lite = props.lite;
     this._nbformat = props.nbformat;
     this._nbgrader = props.nbgrader;
     this._path = props.path;
     this._readonly = props.readonly;
+    this._serverless = props.serverless;
     this._renderers = props.renderers;
     this._serviceManager = props.serviceManager!;
 
@@ -252,7 +254,7 @@ export class NotebookAdapter {
       factory: notebookModelFactory,
       path: this._path ?? FALLBACK_NOTEBOOK_PATH,
       kernelPreference: {
-        id: this._kernel.id,
+        id: this._kernel?.id,
         shouldStart: false,
         canStart: false,
         autoStartDefault: false,
@@ -291,7 +293,7 @@ export class NotebookAdapter {
         await manager.ready;
         await manager.refreshRunning();
         const model = find(manager.running(), model => {
-          return model.kernel?.id === this._kernel.id;
+          return model.kernel?.id === this._kernel?.id;
         });
         if (model) {
           try {
@@ -352,9 +354,11 @@ export class NotebookAdapter {
       .getWidgetFactory('Notebook')
       ?.createNew(this._context) as NotebookPanel;
 
-    this._iPyWidgetsManager?.registerWithKernel(
-      this._kernel.connection
-    );
+    if (this._kernel) {
+      this._iPyWidgetsManager?.registerWithKernel(
+        this._kernel.connection
+      );  
+    }
 
     this._notebookPanel!.sessionContext.kernelChanged.connect(
       (
@@ -480,11 +484,15 @@ export class NotebookAdapter {
     return this._readonly;
   }
 
+  get serverless(): boolean {
+    return this._serverless;
+  }
+
   get lite(): Lite | undefined {
     return this._lite;
   }
 
-  get kernel(): Kernel {
+  get kernel(): Kernel | undefined {
     return this._kernel;
   }
 
@@ -604,9 +612,9 @@ export class NotebookAdapter {
 
   dispose = () => {
     document.removeEventListener('keydown', this.notebookKeydownListener, true);
-//    this._notebookPanel?.dispose();
-//    this._boxPanel.dispose();
-//    this._context?.dispose();
+    this._context?.dispose();
+    this._notebookPanel?.dispose();
+    this._boxPanel.dispose();
   };
 }
 

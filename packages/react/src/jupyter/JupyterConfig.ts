@@ -128,8 +128,8 @@ export const loadJupyterConfig = (
     return config;
   }
   config = {
-    jupyterServerToken: '',
-    jupyterServerUrl: '',
+    jupyterServerToken: jupyterServerToken ?? '',
+    jupyterServerUrl: jupyterServerUrl ?? '',
     insideJupyterLab: false,
     insideJupyterHub: false,
   }

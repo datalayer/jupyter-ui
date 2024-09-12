@@ -12,7 +12,7 @@ import { Jupyter } from '../jupyter/Jupyter';
 import { createServerSettings } from '../jupyter/JupyterContext';
 import { getJupyterServerUrl, getJupyterServerToken } from '../jupyter/JupyterConfig';
 import { Kernel } from '../jupyter/kernel/Kernel';
-import JupyterServiceManagerLess from '../jupyter/services/JupyterServiceManagerLess';
+import ServiceManagerLess from '../jupyter/services/ServiceManagerLess';
 import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
@@ -22,7 +22,7 @@ import nbformat from './notebooks/NotebookExample1.ipynb.json';
 const KERNEL_NAME = 'python3';
 
 const NotebookServiceManager = () => {
-  const [serviceManagerLess, _] = useState(new JupyterServiceManagerLess());
+  const [serviceManagerLess, _] = useState(new ServiceManagerLess());
   const [kernel, setKernel] = useState<Kernel>();
   useEffect(() => {
     const serverSettings = createServerSettings(getJupyterServerUrl(), getJupyterServerToken());

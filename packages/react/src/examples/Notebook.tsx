@@ -6,6 +6,7 @@
 
 import { createRoot } from 'react-dom/client';
 import { Jupyter } from '../jupyter/Jupyter';
+import { DEFAULT_JUPYTER_SERVER_URL, DEFAULT_JUPYTER_SERVER_TOKEN } from '../jupyter';
 import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
@@ -18,8 +19,8 @@ const root = createRoot(div);
 
 root.render(
   <Jupyter
-    jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
-    jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+    jupyterServerUrl={DEFAULT_JUPYTER_SERVER_URL}
+    jupyterServerToken={DEFAULT_JUPYTER_SERVER_TOKEN}
   >
     <Notebook
       path="ipywidgets.ipynb"

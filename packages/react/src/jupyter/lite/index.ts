@@ -4,4 +4,5 @@
  * MIT License
  */
 
+export * from './Lite';
 export * from './LiteServer';
