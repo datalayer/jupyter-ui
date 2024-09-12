@@ -26,11 +26,13 @@ export const Lumino = (props: LuminoProps) => {
       }
       return () => {
         try {
+          /*
           unmountComponentAtNode(children.node);
           if (children.isAttached || children.node.isConnected) {
             children.dispose();
             Widget.detach(children);
           }
+          */
         } catch (e) {
           // no-op.
           // console.debug('Exception while detaching Lumino widget.', e);

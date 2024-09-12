@@ -7,11 +7,12 @@
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Box, Button, Text } from '@primer/react';
-import JupyterReactTheme from '../themes/JupyterReactTheme';
-import Notebook from '../components/notebook/Notebook';
-import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
+import { JupyterReactTheme } from '../themes/JupyterReactTheme';
+import { Notebook } from '../components/notebook/Notebook';
+import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
 
 const PATH_1 = 'ipywidgets.ipynb';
+
 const PATH_2 = 'matplotlib.ipynb';
 
 const NotebookPathChange = () => {

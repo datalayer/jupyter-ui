@@ -4,51 +4,75 @@
  * MIT License
  */
 
+import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Box, Button } from '@primer/react';
-import Jupyter from '../jupyter/Jupyter';
+import { Box, Button, Flash } from '@primer/react';
+import { Jupyter } from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { Kernel } from '../jupyter/kernel/Kernel';
-import Notebook from '../components/notebook/Notebook';
-import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
+import { Notebook } from '../components/notebook/Notebook';
+import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
 import useNotebookStore from '../components/notebook/NotebookState';
 
-const NOTEBOOK_ID = 'notebook-kernel-id';
+const NOTEBOOK_ID = 'notebook-kernel-change-id';
 
-const NEW_KERNEL_NAME = 'deno';
+const PYTHON_KERNEL_NAME = 'python';
+
+const DENO_KERNEL_NAME = 'deno';
 
 const NotebookKernelChange = () => {
-  const { kernelManager, serviceManager } = useJupyter();
+  const { kernelManager, serviceManager, kernel } = useJupyter();
+  const [message, setMessage] = useState("");
   const notebookStore = useNotebookStore();
+  const notebook = notebookStore.selectNotebook(NOTEBOOK_ID);
   const changeKernel = () => {
     if (kernelManager && serviceManager) {
-      const kernel = new Kernel({
+      const newKernel = new Kernel({
         kernelManager,
-        kernelName: NEW_KERNEL_NAME,
-        kernelSpecName: NEW_KERNEL_NAME,
+        kernelName: DENO_KERNEL_NAME,
+        kernelSpecName: DENO_KERNEL_NAME,
         kernelspecsManager: serviceManager.kernelspecs,
         sessionManager: serviceManager.sessions,
       });
-      kernel.ready.then(() => {
-        notebookStore.changeKernel({ id: NOTEBOOK_ID, kernel });
-        alert(`The kernel is changed (was python3, now ${NEW_KERNEL_NAME}). Bummer, all your variables are lost!`);
+      newKernel.ready.then(() => {
+        notebookStore.changeKernel({ id: NOTEBOOK_ID, kernel: newKernel });
+        setMessage(`🥺 Bummer, all your variables are lost! The kernel was ${PYTHON_KERNEL_NAME} and is now ${DENO_KERNEL_NAME}). Try with: import pl from "npm:nodejs-polars";`);
       });
     }
   };
   return (
-    <>
+    <Jupyter defaultKernelName={PYTHON_KERNEL_NAME}>
       <Box display="flex">
-        <Button variant="default" size="small" onClick={changeKernel}>
-          Assign a new Kernel
-        </Button>
+        <Box>
+          <Button variant="default" size="small" onClick={changeKernel}>
+            Assign another Kernel
+          </Button>
+        </Box>
+        <Box ml={3}>
+          Kernel ID: {kernel?.id}
+        </Box>
+        <Box ml={3}>
+          Kernel Client ID: {notebook?.adapter?.kernel?.clientId}
+        </Box>
+        <Box ml={3}>
+          Kernel Session ID: {notebook?.adapter?.kernel?.session.id}
+        </Box>
+        <Box ml={3}>
+          Kernel Info: {notebook?.adapter?.kernel?.info?.language_info.name}
+        </Box>
       </Box>
+      {message &&
+        <Box>
+          <Flash>{message}</Flash>
+        </Box>
+      }
       <Notebook
+        id={NOTEBOOK_ID}
         path="test.ipynb"
         height="500px"
-        id={NOTEBOOK_ID}
         CellSidebar={CellSidebar}
       />
-    </>
+    </Jupyter>
   );
 };
 
@@ -57,7 +81,5 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <Jupyter defaultKernelName="python">
     <NotebookKernelChange />
-  </Jupyter>
 );

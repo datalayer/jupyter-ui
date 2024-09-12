@@ -6,10 +6,10 @@
 
 import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import JupyterReactTheme from '../themes/JupyterReactTheme';
-import Notebook from '../components/notebook/Notebook';
-import NotebookToolbar from './../components/notebook/toolbar/NotebookToolbar';
-import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
+import { JupyterReactTheme } from '../themes/JupyterReactTheme';
+import { Notebook } from '../components/notebook/Notebook';
+import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
+import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
 
 import notebook from './notebooks/IPyWidgetsExample.ipynb.json';
 

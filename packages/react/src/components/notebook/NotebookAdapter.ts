@@ -24,6 +24,7 @@ import {
 import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
 import {
+  Notebook,
   NotebookPanel,
   NotebookWidgetFactory,
   NotebookTracker,
@@ -51,6 +52,7 @@ import { ISharedAttachmentsCell, IYText } from '@jupyter/ydoc';
 import { WIDGET_MIMETYPE } from '@jupyter-widgets/html-manager/lib/output_renderers';
 import { Lite } from '../../jupyter/JupyterContext';
 import { Kernel } from '../../jupyter/kernel/Kernel';
+import { ICellSidebarProps } from './cell/sidebar/CellSidebarWidget';
 import JupyterReactContentFactory from './content/JupyterReactContentFactory';
 import JupyterReactNotebookModelFactory from './model/JupyterReactNotebookModelFactory';
 import { INotebookProps } from './Notebook';
@@ -78,7 +80,7 @@ export class NotebookAdapter {
   private _serviceManager: ServiceManager.IManager;
   private _tracker?: NotebookTracker;
   private _id: string;
-  private _CellSidebar?: (props: any) => JSX.Element;
+  private _CellSidebar?: (props: ICellSidebarProps) => JSX.Element;
 
   constructor(props: INotebookProps) {
     this._id = props.id;
@@ -450,10 +452,12 @@ export class NotebookAdapter {
     });
     handler.editor = editor;
     notebookPanel.content.activeCellChanged.connect(
-      (sender: any, cell: Cell<ICellModel>) => {
-        cell.ready.then(() => {
-          handler.editor = cell && cell.editor;
-        });
+      (notebook: Notebook, cell: Cell<ICellModel> | null) => {
+        if (cell) {
+          cell.ready.then(() => {
+            handler.editor = cell && cell.editor;
+          });  
+        }
       }
     );
     completer.hide();
@@ -472,16 +476,28 @@ export class NotebookAdapter {
     return this._id;
   }
 
+  get readonly(): boolean {
+    return this._readonly;
+  }
+
+  get lite(): Lite | undefined {
+    return this._lite;
+  }
+
+  get kernel(): Kernel {
+    return this._kernel;
+  }
+
   get notebookPanel(): NotebookPanel | undefined {
     return this._notebookPanel;
   }
 
-  get commands(): CommandRegistry {
-    return this._commandRegistry;
-  }
-
   get panel(): BoxPanel {
     return this._boxPanel;
+  }
+
+  get commands(): CommandRegistry {
+    return this._commandRegistry;
   }
 
   get serviceManager(): ServiceManager.IManager {
@@ -588,9 +604,9 @@ export class NotebookAdapter {
 
   dispose = () => {
     document.removeEventListener('keydown', this.notebookKeydownListener, true);
-    //    this._boxPanel.dispose();
-    //    this._notebookPanel?.dispose();
-    //    this._context?.dispose();
+//    this._notebookPanel?.dispose();
+//    this._boxPanel.dispose();
+//    this._context?.dispose();
   };
 }
 

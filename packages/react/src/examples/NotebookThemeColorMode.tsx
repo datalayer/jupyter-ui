@@ -10,11 +10,11 @@ import { Text, ToggleSwitch, theme as primerTheme, Box } from '@primer/react';
 import { Theme } from '@primer/react/lib/ThemeProvider';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { ColorMode } from '../jupyter/lab/JupyterLabColorMode';
-import Jupyter from '../jupyter/Jupyter';
+import { Jupyter } from '../jupyter/Jupyter';
 import { jupyterTheme } from '../themes/JupyterPrimerTheme';
-import Notebook from '../components/notebook/Notebook';
-import NotebookToolbar from './../components/notebook/toolbar/NotebookToolbar';
-import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
+import { Notebook } from '../components/notebook/Notebook';
+import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
+import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
 
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 

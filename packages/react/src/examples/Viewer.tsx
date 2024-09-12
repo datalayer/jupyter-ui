@@ -6,7 +6,7 @@
 
 import { createRoot } from 'react-dom/client';
 import { Box, Text } from '@primer/react';
-import Jupyter from '../jupyter/Jupyter';
+import { Jupyter } from '../jupyter/Jupyter';
 import Viewer from '../components/viewer/Viewer';
 
 import matplotlib from './notebooks/Matplotlib.ipynb.json';

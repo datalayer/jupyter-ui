@@ -8,11 +8,11 @@ import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Box, Button } from '@primer/react';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import JupyterReactTheme from '../themes/JupyterReactTheme';
+import { JupyterReactTheme } from '../themes/JupyterReactTheme';
 import { useJupyter } from '../jupyter/JupyterContext';
 import Kernel from '../jupyter/kernel/Kernel';
-import Notebook from '../components/notebook/Notebook';
-import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
+import { Notebook } from '../components/notebook/Notebook';
+import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
 
 import notebook from './notebooks/NotebookExample1.ipynb.json';
 

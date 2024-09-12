@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Button, Box } from '@primer/react';
 import { cellsStore, ICellsState } from '../components/cell/CellState';
-import JupyterReactTheme from '../themes/JupyterReactTheme';
+import { JupyterReactTheme } from '../themes/JupyterReactTheme';
 import Cell from '../components/cell/Cell';
 
 const CODE_CELL_1 = `import time

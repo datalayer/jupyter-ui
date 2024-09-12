@@ -14,11 +14,11 @@ import { ServiceManager } from '@jupyterlab/services';
 import { useJupyter, Lite } from './../../jupyter/JupyterContext';
 import { Kernel } from '../../jupyter/kernel/Kernel';
 import { asObservable, Lumino } from '../lumino';
+import { CellMetadataEditor } from './cell/metadata/CellMetadataEditor';
 import { ICellSidebarProps } from './cell/sidebar/CellSidebarWidget';
 import { INotebookToolbarProps } from './toolbar/NotebookToolbar';
 import { newUuid } from '../../utils/Utils';
 import { useNotebookStore } from './NotebookState';
-import { CellMetadataEditor } from './cell/metadata/CellMetadataEditor';
 import { NotebookAdapter } from './NotebookAdapter';
 
 import './Notebook.css';
@@ -164,34 +164,27 @@ export const Notebook = (props: INotebookProps) => {
       });
     });
   };
-  const clearAdapter = () => {
-    adapter?.dispose();
-    notebookStore.setPortalDisplay({ id, portalDisplay: undefined });
-    notebookStore.dispose(id);
-    setAdapter(undefined);
+  const disposeAdapter = () => {
+    if (adapter) {
+      notebookStore.dispose(id);
+    }
   }
   useEffect(() => {
     if (id && serviceManager && kernelManager && kernel) {
       createAdapter(kernel);
     }
     return () => {
-      clearAdapter();
+      disposeAdapter();
     };
   }, [id, serviceManager, kernelManager, kernel, lite]);
   useEffect(() => {
     if (adapter && nbformat) {
       adapter.setNbformat(nbformat);
     }
-    return () => {
-      clearAdapter();
-    };
   }, [adapter, nbformat]);
   useEffect(() => {
     if (adapter) {
     }
-    return () => {
-      clearAdapter();
-    };
   }, [adapter, path]);
   useEffect(() => {
     if (adapter) {

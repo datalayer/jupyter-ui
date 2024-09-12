@@ -12,7 +12,7 @@ import { Box, SegmentedControl } from '@primer/react';
 import { getJupyterServerUrl, getJupyterServerToken, createServerSettings, JupyterServiceManagerLess } from '../jupyter';
 import { Notebook } from '../components/notebook/Notebook';
 import { useNotebookStore } from './../components';
-import JupyterReactTheme from '../themes/JupyterReactTheme';
+import { JupyterReactTheme } from '../themes/JupyterReactTheme';
 
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
@@ -31,21 +31,23 @@ const NotebookMutations = () => {
       case 0: {
         setReadonly(true);
         setLite(false);
-        setServiceManager(new JupyterServiceManagerLess());
+//        setServiceManager(new JupyterServiceManagerLess());
         break;
       }
       case 1: {
         setReadonly(false);
         setLite(true);
-        setServiceManager(new JupyterServiceManagerLess());
+//        setServiceManager(new JupyterServiceManagerLess());
         break;
       }
       case 2: {
         setReadonly(false);
         setLite(false);
+        /*
         const serverSettings = createServerSettings(getJupyterServerUrl(), getJupyterServerToken());
         const serviceManager = new ServiceManager({ serverSettings });
         setServiceManager(serviceManager);
+        */
         break;
       }
     }
@@ -61,7 +63,16 @@ const NotebookMutations = () => {
           </SegmentedControl>
         </Box>
         <Box ml={3}>
-          Lite: {String(notebook?.adapter?.id)}
+          Readonly: {String(notebook?.adapter?.readonly)}
+        </Box>
+        <Box ml={3}>
+          Lite: {String(notebook?.adapter?.lite)}
+        </Box>
+        <Box ml={3}>
+          Kernel ID: {notebook?.adapter?.kernel.id}
+        </Box>
+        <Box ml={3}>
+          Service Manager: {notebook?.adapter?.serviceManager.serverSettings.baseUrl}
         </Box>
       </Box>
       <Notebook

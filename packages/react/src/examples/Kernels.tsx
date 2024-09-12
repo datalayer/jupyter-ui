@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { Box, Heading, Textarea, Button, Pagehead, Text } from '@primer/react';
 import { IModel } from '@jupyterlab/services/lib/kernel/kernel';
 import { ISpecModel } from '@jupyterlab/services/lib/kernelspec/kernelspec';
-import JupyterReactTheme from '../themes/JupyterReactTheme';
+import { JupyterReactTheme } from '../themes/JupyterReactTheme';
 import { useJupyter } from '../jupyter/JupyterContext';
 import {
   KERNEL_STATES,

@@ -8,17 +8,17 @@ import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { IOutput, INotebookContent } from '@jupyterlab/nbformat';
 import { Box, Button, ButtonGroup, SegmentedControl } from '@primer/react';
-import Jupyter from '../jupyter/Jupyter';
+import { Jupyter } from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { Kernel } from '../jupyter/kernel/Kernel';
 import Cell from '../components/cell/Cell';
-import Notebook from '../components/notebook/Notebook';
+import { Notebook } from '../components/notebook/Notebook';
 import Output from '../components/output/Output';
 import FileBrowser from '../components/filebrowser/FileBrowser';
 import FileManagerJupyterLab from '../components/filemanager/FileManagerJupyterLab';
 import Terminal from '../components/terminal/Terminal';
-import CellSidebarNew from '../components/notebook/cell/sidebar/CellSidebarButton';
-import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
+import CellSidebarButton from '../components/notebook/cell/sidebar/CellSidebarButton';
+import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
 import Console from '../components/console/Console';
 import { useCellsStore } from '../components/cell/CellState';
 import useNotebookStore from '../components/notebook/NotebookState';
@@ -208,7 +208,7 @@ const JuptyerContextExample = () => {
           id={NOTEBOOK_ID_3}
           height="300px"
           cellSidebarMargin={60}
-          CellSidebar={CellSidebarNew}
+          CellSidebar={CellSidebarButton}
           Toolbar={NotebookToolbar}
         />
         <hr />

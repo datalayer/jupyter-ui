@@ -5,9 +5,9 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import Notebook from '../components/notebook/Notebook';
-import NotebookToolbar from './../components/notebook/toolbar/NotebookToolbar';
-import CellSidebar from '../components/notebook/cell/sidebar/CellSidebarButton';
+import { Notebook } from '../components/notebook/Notebook';
+import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
+import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
 import JupyterLabCss from '../jupyter/lab/JupyterLabCss';
 
 const NOTEBOOK_ID = 'notebook-id';
@@ -24,7 +24,7 @@ root.render(
       id={NOTEBOOK_ID}
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       cellSidebarMargin={60}
-      CellSidebar={CellSidebar}
+      CellSidebar={CellSidebarButton}
       Toolbar={NotebookToolbar}
     />
   </>

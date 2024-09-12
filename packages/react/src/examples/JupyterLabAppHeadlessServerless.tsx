@@ -10,7 +10,7 @@ import { Box, Text, ToggleSwitch, ThemeProvider, useTheme } from '@primer/react'
 import { BoxPanel } from '@lumino/widgets';
 import { ThemeManager } from '@jupyterlab/apputils';
 // import { NotebookTracker } from '@jupyterlab/notebook';
-import JupyterReactTheme from '../themes/JupyterReactTheme';
+import { JupyterReactTheme } from '../themes/JupyterReactTheme';
 import Lumino from '../components/lumino/Lumino';
 import { ColorMode } from '../jupyter/lab/JupyterLabColorMode';
 import JupyterLabApp from '../components/jupyterlab/JupyterLabApp';

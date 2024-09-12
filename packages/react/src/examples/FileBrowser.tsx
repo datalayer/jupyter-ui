@@ -5,7 +5,7 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import JupyterReactTheme from '../themes/JupyterReactTheme';
+import { JupyterReactTheme } from '../themes/JupyterReactTheme';
 import FileBrowser from '../components/filebrowser/FileBrowser';
 
 const div = document.createElement('div');

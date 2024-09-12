@@ -6,9 +6,9 @@
 
 import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import JupyterReactTheme from '../themes/JupyterReactTheme';
-import Notebook from '../components/notebook/Notebook';
-import NotebookToolbar from './../components/notebook/toolbar/NotebookToolbar';
+import { JupyterReactTheme } from '../themes/JupyterReactTheme';
+import { Notebook } from '../components/notebook/Notebook';
+import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import CellSidebarSource from './sidebars/CellSidebarSource';
 
 import nbformat from './notebooks/NotebookExample1.ipynb.json';

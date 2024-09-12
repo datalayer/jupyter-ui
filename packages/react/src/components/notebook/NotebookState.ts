@@ -204,19 +204,19 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
       set((state: NotebookState) => ({ notebooks }));
     }
   },
-  changeKernelStatus: (kernelStatusId: KernelStatusMutation) => {
-    const notebooks = get().notebooks;
-    const notebook = notebooks.get(kernelStatusId.id);
-    if (notebook) {
-      notebook.kernelStatus = kernelStatusId.kernelStatus;
-      set((state: NotebookState) => ({ notebooks }));
-    }
-  },
   changeKernel: (kernelChange: KernelChangeMutation) => {
     const notebooks = get().notebooks;
     const notebook = notebooks.get(kernelChange.id);
     if (notebook) {
       notebook.adapter?.assignKernel(kernelChange.kernel);
+      set((state: NotebookState) => ({ notebooks }));
+    }
+  },
+  changeKernelStatus: (kernelStatusId: KernelStatusMutation) => {
+    const notebooks = get().notebooks;
+    const notebook = notebooks.get(kernelStatusId.id);
+    if (notebook) {
+      notebook.kernelStatus = kernelStatusId.kernelStatus;
       set((state: NotebookState) => ({ notebooks }));
     }
   },
@@ -229,6 +229,7 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
     }
   },
   dispose: (id: string): void => {
+    get().setPortalDisplay({ id, portalDisplay: undefined });
     const notebooks = get().notebooks;
     const notebook = notebooks.get(id);
     if(notebook){

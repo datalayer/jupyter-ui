@@ -6,11 +6,11 @@
 
 import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import Jupyter from '../jupyter/Jupyter';
+import { Jupyter } from '../jupyter/Jupyter';
 import JupyterLabCss from '../jupyter/lab/JupyterLabCss';
-import Notebook from '../components/notebook/Notebook';
-import NotebookToolbar from './../components/notebook/toolbar/NotebookToolbar';
-import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
+import { Notebook } from '../components/notebook/Notebook';
+import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
+import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
 
 import notebook from './notebooks/Matplotlib.ipynb.json';
 

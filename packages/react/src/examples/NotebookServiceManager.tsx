@@ -8,14 +8,14 @@ import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { ServiceManager } from '@jupyterlab/services';
-import Jupyter from '../jupyter/Jupyter';
+import { Jupyter } from '../jupyter/Jupyter';
 import { createServerSettings } from '../jupyter/JupyterContext';
 import { getJupyterServerUrl, getJupyterServerToken } from '../jupyter/JupyterConfig';
 import { Kernel } from '../jupyter/kernel/Kernel';
 import JupyterServiceManagerLess from '../jupyter/services/JupyterServiceManagerLess';
-import Notebook from '../components/notebook/Notebook';
-import NotebookToolbar from './../components/notebook/toolbar/NotebookToolbar';
-import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
+import { Notebook } from '../components/notebook/Notebook';
+import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
+import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
 
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 

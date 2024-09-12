@@ -5,10 +5,10 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import JupyterReactTheme from '../themes/JupyterReactTheme';
-import Notebook from '../components/notebook/Notebook';
-import NotebookToolbar from './../components/notebook/toolbar/NotebookToolbar';
-import CellSidebarNew from '../components/notebook/cell/sidebar/CellSidebarButton';
+import { JupyterReactTheme } from '../themes/JupyterReactTheme';
+import { Notebook } from '../components/notebook/Notebook';
+import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
+import CellSidebarButton from '../components/notebook/cell/sidebar/CellSidebarButton';
 
 const Panel = () => {
   return (
@@ -17,7 +17,7 @@ const Panel = () => {
         path="panel.ipynb"
         id="notebook-panel-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        CellSidebar={CellSidebarNew}
+        CellSidebar={CellSidebarButton}
         Toolbar={NotebookToolbar}
       />
     </JupyterReactTheme>

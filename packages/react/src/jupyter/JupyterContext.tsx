@@ -194,20 +194,20 @@ export const useJupyter = (props?: JupyterPropsType): JupyterContextType => {
   // We are not within a Jupyter context, so create it
   // from the store based on the provided props.
   const {
+    jupyterConfig,
     kernel,
     kernelIsLoading,
     serviceManager,
-    jupyterConfig,
   } = useJupyterReactStoreFromProps(props ?? {});
   const storeContext: JupyterContextType = {
-    collaborative: false,
+    collaborative: props?.collaborative,
     defaultKernel: kernel,
     defaultKernelIsLoading: kernelIsLoading,
     jupyterServerUrl: jupyterConfig!.jupyterServerUrl,
     kernel,
     kernelIsLoading,
     kernelManager: serviceManager?.kernels,
-    lite: false,
+    lite: props?.lite,
     serverless: props?.serverless ?? false,
     serverSettings: serviceManager?.serverSettings,
     serviceManager,
