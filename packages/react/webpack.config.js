@@ -43,9 +43,9 @@ const ENTRY =
   // './src/examples/Matplotlib';
   // './src/examples/Notebook';
   // './src/examples/NotebookColorMode';
-  './src/examples/NotebookEvolving';
   // './src/examples/NotebookKernelChange';
   // './src/examples/NotebookLite';
+  './src/examples/NotebookMutations';
   // './src/examples/NotebookNbFormat';
   // './src/examples/NotebookNbFormatChange';
   // './src/examples/NotebookNoContext';

@@ -12,3 +12,4 @@ export * from './cell';
 export * from './content';
 export * from './marked';
 export * from './model';
+export * from './toolbar';

@@ -11,13 +11,13 @@ import { Cell, ICellModel } from '@jupyterlab/cells';
 import NbGraderType, { getNbGraderType } from './NbGraderCells';
 import { newUlid } from '../../../../utils';
 
-type Props = {
+type ICellMetadataEditorProps = {
   notebookId: string;
   cell: Cell<ICellModel>;
   nbgrader: boolean;
 };
 
-export const CellMetadataEditor = (props: Props) => {
+export const CellMetadataEditor = (props: ICellMetadataEditorProps) => {
   const { cell } = props;
   const [cellGradeType, setCellGradeType] = useState(getNbGraderType(cell));
   const [nbGrade, setNbGrade] = useState<{grade_id: string; points: number}>(

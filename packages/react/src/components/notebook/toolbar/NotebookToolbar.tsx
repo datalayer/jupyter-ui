@@ -14,9 +14,13 @@ import {
   ZapIcon,
   PaperAirplaneIcon,
 } from '@primer/octicons-react';
-import useNotebookStore from '../../components/notebook/NotebookState';
+import useNotebookStore from '../NotebookState';
 
-export const NotebookToolbar = (props: { notebookId: string }) => {
+export type INotebookToolbarProps = {
+  notebookId: string;
+}
+
+export const NotebookToolbar = (props: INotebookToolbarProps) => {
   const { notebookId } = props;
   const notebookStore = useNotebookStore();
   const [type, setType] = useState('code');

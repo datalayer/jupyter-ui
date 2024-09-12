@@ -187,10 +187,12 @@ const JupyterProvider = JupyterContext.Provider;
 export const useJupyter = (props?: JupyterPropsType): JupyterContextType => {
   const context = useContext(JupyterContext);
   if (context) {
-    // We are with in a Jupyter context, returning fast the context.
+    // We are within a Jupyter context, just return the that context.
+    // The provided props are irrelevant in this case.
     return context;
   }
-  // We are not within a Jupyter context, so create it from the store.
+  // We are not within a Jupyter context, so create it
+  // from the store based on the provided props.
   const {
     kernel,
     kernelIsLoading,

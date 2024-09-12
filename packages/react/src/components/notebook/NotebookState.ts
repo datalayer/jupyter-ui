@@ -4,7 +4,6 @@
  * MIT License
  */
 
-import NotebookAdapter from './NotebookAdapter';
 import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
 import { ReactPortal } from 'react';
@@ -13,8 +12,9 @@ import * as nbformat from '@jupyterlab/nbformat';
 import { Cell, ICellModel } from '@jupyterlab/cells';
 import { NotebookChange } from '@jupyter/ydoc';
 import { Kernel as JupyterKernel } from '@jupyterlab/services';
+import { Kernel } from '../../jupyter/kernel/Kernel';
 import { cmdIds } from './NotebookCommands';
-import Kernel from '../../jupyter/kernel/Kernel';
+import { NotebookAdapter } from './NotebookAdapter';
 
 export type PortalDisplay = {
   portal: ReactPortal;
@@ -36,9 +36,9 @@ export interface INotebooksState {
   notebooks: Map<string, INotebookState>;
 }
 
-type UpdateId = {
+type NotebookUpdate = {
   id: string;
-  partialState: Partial<INotebookState>;
+  state: Partial<INotebookState>;
 };
 type NotebookChangeId = {
   id: string;
@@ -96,11 +96,11 @@ export type NotebookState = INotebooksState & {
   changeCellType: (mutation: CellMutation) => void;
   save: (mutation: DateMutation) => void;
   reset: () => void;
-  update: (update: UpdateId) => void;
+  update: (update: NotebookUpdate) => void;
   activeCellChange: (cellModelId: CellModelId) => void;
-  modelChange: (notebookModelId: NotebookModelId) => void;
-  notebookChange: (notebookChangeId: NotebookChangeId) => void;
-  kernelStatusChanged: (kernelStatusId: KernelStatusMutation) => void;
+  changeModel: (notebookModelId: NotebookModelId) => void;
+  changeNotebook: (notebookChangeId: NotebookChangeId) => void;
+  changeKernelStatus: (kernelStatusId: KernelStatusMutation) => void;
   changeKernel: (kernelChange: KernelChangeMutation) => void;
   addPortals: (portalsId: ReactPortalsMutation) => void;
   dispose: (id: string) => void;
@@ -163,15 +163,18 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
     }
   },
   reset: () =>  set((state: NotebookState) => ({ notebooks: new Map<string, INotebookState>() })),
-  update: (update: UpdateId) => {
+  update: (update: NotebookUpdate) => {
     const notebooks = get().notebooks;
     let notebook = notebooks.get(update.id);
     if (notebook) {
-      notebook = { ...notebook, ...update.partialState };
+      notebook = {
+        ...notebook,
+        ...update.state,
+      };
       set((state: NotebookState) => ({ notebooks }));
     } else {
       notebooks.set(update.id, {
-        adapter: update.partialState.adapter,
+        adapter: update.state.adapter,
         portals: [],
       });    
       set((state: NotebookState) => ({ notebooks }));
@@ -185,7 +188,7 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
       set((state: NotebookState) => ({ notebooks }));
     }
   },
-  modelChange: (notebookModelId: NotebookModelId) => {
+  changeModel: (notebookModelId: NotebookModelId) => {
     const notebooks = get().notebooks;
     const notebook = notebooks.get(notebookModelId.id);
     if (notebook) {
@@ -193,7 +196,7 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
       set((state: NotebookState) => ({ notebooks }));
     }
   },
-  notebookChange: (notebookChangeId: NotebookChangeId) => {
+  changeNotebook: (notebookChangeId: NotebookChangeId) => {
     const notebooks = get().notebooks;
     const notebook = notebooks.get(notebookChangeId.id);
     if (notebook) {
@@ -201,7 +204,7 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
       set((state: NotebookState) => ({ notebooks }));
     }
   },
-  kernelStatusChanged: (kernelStatusId: KernelStatusMutation) => {
+  changeKernelStatus: (kernelStatusId: KernelStatusMutation) => {
     const notebooks = get().notebooks;
     const notebook = notebooks.get(kernelStatusId.id);
     if (notebook) {

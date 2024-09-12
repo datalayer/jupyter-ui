@@ -260,7 +260,7 @@
         }
       }
     },
-    "extension": "./lib/jupyter/lab/index.js",
+    "extension": "./lib/jupyter/lab/plugin.js",
     "outputDir": "jupyter_react/labextension",
     "schemaDir": "schema",
     "webpackConfig": "./webpack.lab-config.js"

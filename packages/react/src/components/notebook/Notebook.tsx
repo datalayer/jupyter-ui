@@ -14,11 +14,12 @@ import { ServiceManager } from '@jupyterlab/services';
 import { useJupyter, Lite } from './../../jupyter/JupyterContext';
 import { Kernel } from '../../jupyter/kernel/Kernel';
 import { asObservable, Lumino } from '../lumino';
-import { CellSidebarProps } from './cell/sidebar/CellSidebarWidget';
-import CellMetadataEditor from './cell/metadata/CellMetadataEditor';
+import { ICellSidebarProps } from './cell/sidebar/CellSidebarWidget';
+import { INotebookToolbarProps } from './toolbar/NotebookToolbar';
 import { newUuid } from '../../utils/Utils';
-import NotebookAdapter from './NotebookAdapter';
-import useNotebookStore from './NotebookState';
+import { useNotebookStore } from './NotebookState';
+import { CellMetadataEditor } from './cell/metadata/CellMetadataEditor';
+import { NotebookAdapter } from './NotebookAdapter';
 
 import './Notebook.css';
 
@@ -32,8 +33,8 @@ export type BundledIPyWidgets = ExternalIPyWidgets & {
 };
 
 export type INotebookProps = {
-  CellSidebar?: (props: CellSidebarProps) => JSX.Element;
-  Toolbar?: (props: any) => JSX.Element;
+  CellSidebar?: (props: ICellSidebarProps) => JSX.Element;
+  Toolbar?: (props: INotebookToolbarProps) => JSX.Element;
   cellMetadataPanel: boolean;
   cellSidebarMargin: number;
   height?: string;
@@ -77,117 +78,132 @@ export const Notebook = (props: INotebookProps) => {
   const [id, _] = useState(props.id ?? newUuid());
   const [adapter, setAdapter] = useState<NotebookAdapter>();
   const kernel = props.kernel ?? defaultKernel;
+//  const notebook = notebookStore.selectNotebook(id);
   const portals = notebookStore.selectNotebookPortals(id);
-  const createAdapter = () => {
-    if (id && serviceManager && kernelManager && kernel) {
-      kernel.ready.then(() => {
-        const adapter = new NotebookAdapter(
-          {
-            ...props,
-            id,
-            lite: lite || props.lite,
-            kernel,
-            serviceManager: serviceManager ?? props.serviceManager,
-          },
-        );
-        setAdapter(adapter);
-        notebookStore.update({
+  const createAdapter = (kernel: Kernel) => {
+    kernel.ready.then(() => {
+      const adapter = new NotebookAdapter(
+        {
+          ...props,
           id,
-          partialState: { adapter: adapter }
-        });
-        adapter.serviceManager.ready.then(() => {
-          if (!readonly) {
-            const activeCell = adapter.notebookPanel!.content.activeCell;
-            if (activeCell) {
-              notebookStore.activeCellChange({
-                id,
-                cellModel: activeCell,
-              });
-            }
-            const activeCellChanged$ = asObservable(
-              adapter.notebookPanel!.content.activeCellChanged
-            );
-            activeCellChanged$.subscribe((cellModel: Cell<ICellModel>) => {
-              notebookStore.activeCellChange({ id, cellModel });
-              const panelDiv = document.getElementById(
-                'right-panel-id'
-              ) as HTMLDivElement;
-              if (panelDiv) {
-                const cellMetadataOptions = (
-                  <Box mt={3}>
-                    <CellMetadataEditor
-                      notebookId={id}
-                      cell={cellModel}
-                      nbgrader={nbgrader}
-                    />
-                  </Box>
-                );
-                const portal = createPortal(cellMetadataOptions, panelDiv);
-                notebookStore.setPortalDisplay({
-                  id,
-                  portalDisplay: { portal, pinned: false },
-                });
-              }
+          lite: lite || props.lite,
+          kernel,
+          serviceManager: serviceManager ?? props.serviceManager,
+        },
+      );
+      setAdapter(adapter);
+      notebookStore.update({
+        id,
+        state: { adapter }
+      });
+      adapter.serviceManager.ready.then(() => {
+        if (!readonly) {
+          const activeCell = adapter.notebookPanel!.content.activeCell;
+          if (activeCell) {
+            notebookStore.activeCellChange({
+              id,
+              cellModel: activeCell,
             });
           }
-          adapter.notebookPanel?.model?.contentChanged.connect(
-            (notebookModel, _) => {
-              notebookStore.modelChange({ id, notebookModel });
-            }
+          const activeCellChanged$ = asObservable(
+            adapter.notebookPanel!.content.activeCellChanged
           );
-          /*
-          adapter.notebookPanel?.model!.sharedModel.changed.connect((_, notebookChange) => {
-            notebookStore.notebookChange({ id, notebookChange });
+          activeCellChanged$.subscribe((cellModel: Cell<ICellModel>) => {
+            notebookStore.activeCellChange({ id, cellModel });
+            const panelDiv = document.getElementById(
+              'right-panel-id'
+            ) as HTMLDivElement;
+            if (panelDiv) {
+              const cellMetadataOptions = (
+                <Box mt={3}>
+                  <CellMetadataEditor
+                    notebookId={id}
+                    cell={cellModel}
+                    nbgrader={nbgrader}
+                  />
+                </Box>
+              );
+              const portal = createPortal(cellMetadataOptions, panelDiv);
+              notebookStore.setPortalDisplay({
+                id,
+                portalDisplay: { portal, pinned: false },
+              });
+            }
           });
-          adapter.notebookPanel?.content.modelChanged.connect((notebook, _) => {
-            dispatÅch(notebookStore.notebookChange({ id, notebook }));
-          });
-          */
-          adapter.notebookPanel?.content.activeCellChanged.connect(
-            (_, cellModel) => {
-              if (cellModel === null) {
-                notebookStore.activeCellChange({
-                  id,
-                  cellModel: undefined,
-                });
-              } else {
-                notebookStore.activeCellChange({ id, cellModel });
-              }
-            }
-          );
-          adapter.notebookPanel?.sessionContext.statusChanged.connect(
-            (_, kernelStatus) => {
-              notebookStore.kernelStatusChanged({ id, kernelStatus });
-            }
-          );
+        }
+        adapter.notebookPanel?.model?.contentChanged.connect(
+          (notebookModel, _) => {
+            notebookStore.changeModel({ id, notebookModel });
+          }
+        );
+        /*
+        adapter.notebookPanel?.model!.sharedModel.changed.connect((_, notebookChange) => {
+          notebookStore.notebookChange({ id, notebookChange });
         });
+        adapter.notebookPanel?.content.modelChanged.connect((notebook, _) => {
+          dispatÅch(notebookStore.notebookChange({ id, notebook }));
+        });
+        */
+        adapter.notebookPanel?.content.activeCellChanged.connect(
+          (_, cellModel) => {
+            if (cellModel === null) {
+              notebookStore.activeCellChange({
+                id,
+                cellModel: undefined,
+              });
+            } else {
+              notebookStore.activeCellChange({ id, cellModel });
+            }
+          }
+        );
+        adapter.notebookPanel?.sessionContext.statusChanged.connect(
+          (_, kernelStatus) => {
+            notebookStore.changeKernelStatus({ id, kernelStatus });
+          }
+        );
       });
-    }
+    });
   };
+  const clearAdapter = () => {
+    adapter?.dispose();
+    notebookStore.setPortalDisplay({ id, portalDisplay: undefined });
+    notebookStore.dispose(id);
+    setAdapter(undefined);
+  }
   useEffect(() => {
-    /*
-    if (adapter) {
-      adapter.dispose();
+    if (id && serviceManager && kernelManager && kernel) {
+      createAdapter(kernel);
     }
-    */
-    createAdapter();
     return () => {
-//      adapter?.dispose();
-      notebookStore.setPortalDisplay({ id, portalDisplay: undefined });
-      notebookStore.dispose(id);
+      clearAdapter();
     };
-  }, [id, serviceManager, kernelManager, kernel, path, lite, readonly]);
+  }, [id, serviceManager, kernelManager, kernel, lite]);
   useEffect(() => {
     if (adapter && nbformat) {
       adapter.setNbformat(nbformat);
     }
-  }, [nbformat]);
+    return () => {
+      clearAdapter();
+    };
+  }, [adapter, nbformat]);
+  useEffect(() => {
+    if (adapter) {
+    }
+    return () => {
+      clearAdapter();
+    };
+  }, [adapter, path]);
+  useEffect(() => {
+    if (adapter) {
+      adapter.setReadonly(readonly);
+    }
+  }, [adapter, readonly]);
   return (
-    <div
+    <Box
       style={{ height, width: '100%', position: 'relative' }}
       id="dla-Jupyter-Notebook"
     >
-      {Toolbar && <Toolbar notebookId={props.id} />}
+      {Toolbar && <Toolbar notebookId={id} />}
       <Box
         className="dla-Box-Notebook"
         sx={{
@@ -247,10 +263,14 @@ export const Notebook = (props: INotebookProps) => {
           },
         }}
       >
-        <>{portals?.map((portal: React.ReactPortal) => portal)}</>
-        <Box>{adapter && <Lumino id={path}>{adapter.panel}</Lumino>}</Box>
+        <>
+          {portals?.map((portal: React.ReactPortal) => portal)}
+        </>
+        <Box>
+          {adapter && <Lumino id={path}>{adapter.panel}</Lumino>}
+        </Box>
       </Box>
-    </div>
+    </Box>
   );
 };
 

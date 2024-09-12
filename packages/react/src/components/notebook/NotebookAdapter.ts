@@ -356,7 +356,7 @@ export class NotebookAdapter {
 
     this._notebookPanel!.sessionContext.kernelChanged.connect(
       (
-        sender: any,
+        _: any,
         args: IChangedArgs<
           JupyterKernel.IKernelConnection | null,
           JupyterKernel.IKernelConnection | null,
@@ -500,6 +500,13 @@ export class NotebookAdapter {
     this._nbformat = nbformat;
     if (this._nbformat) {
       this._notebookPanel?.model?.fromJSON(nbformat);
+    }
+  }
+
+  setReadonly(readonly: boolean) {
+    if (this._readonly !== readonly) {
+      this._readonly = readonly;
+      Array.from(this._context?.model.cells!).forEach(cell => cell.setMetadata('editable', !readonly));
     }
   }
 

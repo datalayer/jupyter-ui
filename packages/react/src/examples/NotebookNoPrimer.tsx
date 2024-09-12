@@ -6,7 +6,7 @@
 
 import { createRoot } from 'react-dom/client';
 import Notebook from '../components/notebook/Notebook';
-import NotebookToolbar from './toolbars/NotebookToolbar';
+import NotebookToolbar from './../components/notebook/toolbar/NotebookToolbar';
 import CellSidebar from '../components/notebook/cell/sidebar/CellSidebarButton';
 import JupyterLabCss from '../jupyter/lab/JupyterLabCss';
 

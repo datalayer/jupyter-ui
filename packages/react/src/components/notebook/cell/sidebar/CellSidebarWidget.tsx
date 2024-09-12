@@ -14,7 +14,7 @@ import { notebookStore } from '../../NotebookState';
 
 export const DATALAYER_CELL_HEADER_CLASS = 'dla-CellHeader-Container';
 
-export type CellSidebarProps = {
+export type ICellSidebarProps = {
   notebookId: string;
   cellId: string;
   command: CommandRegistry;
@@ -27,7 +27,7 @@ export class CellSidebarWidget
 {
   private readonly commands: CommandRegistry;
   constructor(
-    CellSidebar: (props: CellSidebarProps) => JSX.Element,
+    CellSidebar: (props: ICellSidebarProps) => JSX.Element,
     notebookId: string,
     nbgrader: boolean,
     commands: CommandRegistry,
@@ -36,7 +36,7 @@ export class CellSidebarWidget
     this.commands = commands;
     this.addClass('jp-CellHeader');
     this.id = newUuid();
-    const props: CellSidebarProps = {
+    const props: ICellSidebarProps = {
       notebookId: notebookId,
       cellId: this.id,
       command: this.commands,
