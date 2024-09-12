@@ -6,7 +6,7 @@
 
 import { createRoot } from 'react-dom/client';
 import { rendererFactory as vega3Renderer } from '@jupyterlab/vega3-extension';
-import { JupyterReactTheme } from '../themes/JupyterReactTheme';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import CellSidebarButton from '../components/notebook/cell/sidebar/CellSidebarButton';

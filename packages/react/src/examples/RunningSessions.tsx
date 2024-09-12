@@ -10,8 +10,8 @@ import { Box, Text, ToggleSwitch, ThemeProvider, useTheme } from '@primer/react'
 import { ThemeManager } from '@jupyterlab/apputils';
 import { RunningSessions } from '@jupyterlab/running';
 import { Jupyter } from '../jupyter/Jupyter';
+import { Colormode } from '../theme/JupyterLabColormode';
 import Lumino from '../components/lumino/Lumino';
-import { ColorMode } from '../jupyter/lab/JupyterLabColorMode';
 import JupyterLabApp from '../components/jupyterlab/JupyterLabApp';
 import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter';
 
@@ -21,7 +21,7 @@ import * as runningPlugins from '@jupyterlab/running-extension';
 
 const RunningSessionsExample = () => {
   const [runningSessions, setRunningSessions] = useState<RunningSessions>();
-  const [theme, setTheme] = useState<ColorMode>('light');
+  const [theme, setTheme] = useState<Colormode>('light');
   const [jupyterLabAdapter, setJupyterlabAdapter] =
     useState<JupyterLabAppAdapter>();
   const { setColorMode } = useTheme();
@@ -55,7 +55,7 @@ const RunningSessionsExample = () => {
       <Jupyter
         startDefaultKernel={false}
         disableCssLoading
-        colorMode="light"
+        colormode="light"
       >
         <ThemeProvider
           colorMode={theme === 'light' ? 'day' : 'night'}

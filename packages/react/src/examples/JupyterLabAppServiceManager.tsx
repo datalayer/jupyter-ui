@@ -7,7 +7,7 @@
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { NotebookPanel } from '@jupyterlab/notebook';
-import { JupyterReactTheme } from '../themes/JupyterReactTheme';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import JupyterLabApp from '../components/jupyterlab/JupyterLabApp';
 import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter';
 import JupyterServiceManagerLess from '../jupyter/services/JupyterServiceManagerLess';

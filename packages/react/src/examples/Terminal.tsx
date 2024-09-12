@@ -14,6 +14,6 @@ const root = createRoot(div);
 
 root.render(
   <Jupyter startDefaultKernel={false} terminals>
-    <Terminal colorMode="dark" height="800px" />
+    <Terminal colormode="dark" height="800px" />
   </Jupyter>
 );

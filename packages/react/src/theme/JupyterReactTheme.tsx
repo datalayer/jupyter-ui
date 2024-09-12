@@ -5,20 +5,20 @@
  */
 
 import { BaseStyles, ThemeProvider, theme } from '@primer/react';
-import { ColorMode, JupyterLabCss } from './../jupyter';
+import { Colormode, JupyterLabCss } from './../theme';
 
 type IJupyterLabThemeProps = {
-  colorMode: ColorMode;
+  colormode: Colormode;
 }
 
 export const JupyterReactTheme = (props: React.PropsWithChildren<IJupyterLabThemeProps>) => {
-  const { children, colorMode } = props;
+  const { children, colormode } = props;
   return (
     <>
-      <JupyterLabCss colorMode={colorMode} />
+      <JupyterLabCss colormode={colormode} />
       <ThemeProvider
         theme={theme}
-        colorMode={colorMode === 'light' ? 'day' : 'night'}
+        colorMode={colormode === 'light' ? 'day' : 'night'}
         dayScheme="light"
         nightScheme="dark"
       >
@@ -31,7 +31,7 @@ export const JupyterReactTheme = (props: React.PropsWithChildren<IJupyterLabThem
 }
 
 JupyterReactTheme.defaultProps = {
-  colorMode: 'light',
+  colormode: 'light',
 } as IJupyterLabThemeProps;
 
 export default JupyterReactTheme;

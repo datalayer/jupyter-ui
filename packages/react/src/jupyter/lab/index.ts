@@ -4,7 +4,4 @@
  * MIT License
  */
 
-export * from './JupyterLabColorMode';
-export * from './JupyterLabCss';
-export * from './JupyterLabCssImports';
 export * from './widget';

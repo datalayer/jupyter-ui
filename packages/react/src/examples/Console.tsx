@@ -6,7 +6,7 @@
 
 import { createRoot } from 'react-dom/client';
 import { Box } from '@primer/react';
-import { JupyterReactTheme } from '../themes/JupyterReactTheme';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import Console from '../components/console/Console';
 
 const div = document.createElement('div');

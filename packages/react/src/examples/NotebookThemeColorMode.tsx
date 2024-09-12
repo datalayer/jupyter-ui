@@ -9,19 +9,19 @@ import { createRoot } from 'react-dom/client';
 import { Text, ToggleSwitch, theme as primerTheme, Box } from '@primer/react';
 import { Theme } from '@primer/react/lib/ThemeProvider';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { ColorMode } from '../jupyter/lab/JupyterLabColorMode';
+import { Colormode } from '../theme/JupyterLabColormode';
 import { Jupyter } from '../jupyter/Jupyter';
-import { jupyterTheme } from '../themes/JupyterPrimerTheme';
+import { jupyterTheme } from '../theme/JupyterPrimerTheme';
 import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
 
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
-const NotebookThemeColorMode = () => {
+const NotebookThemeColormode = () => {
   const [theme, setTheme] = useState<Theme>(jupyterTheme);
   const [isThemeOn, setIsThemeOn] = useState(false);
-  const [colorMode, setColorMode] = useState<ColorMode>('light');
+  const [colormode, setColormode] = useState<Colormode>('light');
   const [isOn, setIsOn] = useState(false);
 
   useEffect(() => {
@@ -40,9 +40,9 @@ const NotebookThemeColorMode = () => {
 
   useEffect(() => {
     if (isOn) {
-      setColorMode('dark');
+      setColormode('dark');
     } else {
-      setColorMode('light');
+      setColormode('light');
     }
   }, [isOn]);
   const onClick = useCallback(() => {
@@ -53,7 +53,7 @@ const NotebookThemeColorMode = () => {
   }, []);
   return (
     <>
-      <Jupyter theme={theme} colorMode={colorMode}>
+      <Jupyter theme={theme} colormode={colormode}>
         <Box display="flex">
           <Box mr={3}>
             <Text
@@ -82,7 +82,7 @@ const NotebookThemeColorMode = () => {
               display="block"
               mb={1}
             >
-              { colorMode === 'light' ? 'Light' : 'Dark' } Mode
+              { colormode === 'light' ? 'Light' : 'Dark' } Mode
             </Text>
             <ToggleSwitch
               size="small"
@@ -111,4 +111,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookThemeColorMode />);
+root.render(<NotebookThemeColormode />);

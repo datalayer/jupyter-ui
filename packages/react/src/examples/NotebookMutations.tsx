@@ -12,7 +12,7 @@ import { Box, SegmentedControl } from '@primer/react';
 import { getJupyterServerUrl, getJupyterServerToken, createServerSettings, JupyterServiceManagerLess } from '../jupyter';
 import { Notebook } from '../components/notebook/Notebook';
 import { useNotebookStore } from './../components';
-import { JupyterReactTheme } from '../themes/JupyterReactTheme';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 

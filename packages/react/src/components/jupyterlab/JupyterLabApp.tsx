@@ -11,7 +11,7 @@ import { PageConfig } from '@jupyterlab/coreutils';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { ServiceManager } from '@jupyterlab/services';
 import { useJupyter } from '../../jupyter/JupyterContext';
-import { ColorMode } from '../../jupyter/lab/JupyterLabColorMode';
+import { Colormode } from '../../theme/JupyterLabColormode';
 import { JupyterLabAppCorePlugins } from './JupyterLabAppPlugins';
 import JupyterLabAppAdapter from './JupyterLabAppAdapter';
 import JupyterLabAppCss from './JupyterLabAppCss';
@@ -39,7 +39,7 @@ export type JupyterLabAppProps = {
   serverless: boolean;
   serviceManager: ServiceManager.IManager;
   startDefaultKernel: boolean;
-  theme: ColorMode;
+  theme: Colormode;
   width: string | number;
 };
 

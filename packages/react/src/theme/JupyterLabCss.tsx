@@ -5,12 +5,12 @@
  */
 
 import { useEffect } from 'react';
-import { ColorMode } from './JupyterLabColorMode';
+import { Colormode } from './JupyterLabColormode';
 
 const DATASET_LAB_THEME = 'data-lab-theme';
 
 type Props = {
-  colorMode: ColorMode;
+  colormode: Colormode;
 };
 
 /**
@@ -22,7 +22,7 @@ let isLoaded = false;
  * Components loading the JupyterLab CSS stylesheets.
  */
 export const JupyterLabCss = (props: Props) => {
-  const { colorMode } = props;
+  const { colormode } = props;
   useEffect(() => {
     if (isLoaded) {
       // no-op
@@ -53,7 +53,7 @@ export const JupyterLabCss = (props: Props) => {
     document.body.querySelector(`style[${DATASET_LAB_THEME}]`)?.remove();
 
     let theme;
-    switch (colorMode) {
+    switch (colormode) {
       case 'light': {
         theme = import('!!raw-loader!@jupyterlab/theme-light-extension/style/variables.css');
         break;
@@ -73,18 +73,18 @@ export const JupyterLabCss = (props: Props) => {
       if (module.default) {
         document.body.insertAdjacentHTML(
           'afterbegin',
-          `<style ${DATASET_LAB_THEME}="${colorMode}">
+          `<style ${DATASET_LAB_THEME}="${colormode}">
 ${module.default}
 </style>`
         );
       }
     });
-  }, [colorMode]);
+  }, [colormode]);
   return <div id="dla-JupyterLabCss-id"></div>;
 };
 
 JupyterLabCss.defaultProps = {
-  colorMode: 'light',
+  colormode: 'light',
 };
 
 export default JupyterLabCss;

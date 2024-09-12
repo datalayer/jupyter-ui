@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Box, Button } from '@primer/react';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { JupyterReactTheme } from '../themes/JupyterReactTheme';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { useJupyter } from '../jupyter/JupyterContext';
 import Kernel from '../jupyter/kernel/Kernel';
 import { Notebook } from '../components/notebook/Notebook';

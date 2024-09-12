@@ -6,7 +6,7 @@
 
 import { render } from 'react-dom';
 import { Text } from '@primer/react';
-import { JupyterReactTheme } from '../themes/JupyterReactTheme';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import OutputIPyWidgets from '../components/output/OutputIPyWidgets';
 
 import { view, state } from './notebooks/OutputIPyWidgetsExample';

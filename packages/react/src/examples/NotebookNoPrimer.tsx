@@ -8,7 +8,7 @@ import { createRoot } from 'react-dom/client';
 import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
-import JupyterLabCss from '../jupyter/lab/JupyterLabCss';
+import { JupyterLabCss } from '../theme';
 
 const NOTEBOOK_ID = 'notebook-id';
 
@@ -18,7 +18,7 @@ const root = createRoot(div);
 
 root.render(
   <>
-    <JupyterLabCss colorMode='dark' />
+    <JupyterLabCss colormode='dark' />
     <Notebook
       path="ipywidgets.ipynb"
       id={NOTEBOOK_ID}

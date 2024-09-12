@@ -7,5 +7,5 @@
 export * from './components';
 export * from './jupyter';
 export * from './state';
-export * from './themes';
+export * from './theme';
 export * from './utils';

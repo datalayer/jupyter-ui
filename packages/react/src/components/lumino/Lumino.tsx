@@ -5,7 +5,7 @@
  */
 
 import { useRef, useEffect } from 'react';
-import { unmountComponentAtNode } from 'react-dom';
+// import { unmountComponentAtNode } from 'react-dom';
 import { Widget } from '@lumino/widgets';
 
 type LuminoProps = {

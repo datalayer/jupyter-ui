@@ -12,7 +12,7 @@ import { ThemeManager } from '@jupyterlab/apputils';
 // import { NotebookTracker } from '@jupyterlab/notebook';
 import { Jupyter } from '../jupyter/Jupyter';
 import Lumino from '../components/lumino/Lumino';
-import { ColorMode } from '../jupyter/lab/JupyterLabColorMode';
+import { Colormode } from '../theme/JupyterLabColormode';
 import JupyterLabApp from '../components/jupyterlab/JupyterLabApp';
 import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter';
 
@@ -34,7 +34,7 @@ const PATH_INDEX = 1;
 
 const JupyterLabAppHeadless = () => {
   const [notebookBoxPanel, setNotebookBoxPanel] = useState<BoxPanel>();
-  const [theme, setTheme] = useState<ColorMode>('light');
+  const [theme, setTheme] = useState<Colormode>('light');
   const [jupyterLabAdapter, setJupyterlabAdapter] = useState<JupyterLabAppAdapter>();
   const { setColorMode } = useTheme();
   const [isDark, setDark] = useState(false);
@@ -66,7 +66,7 @@ const JupyterLabAppHeadless = () => {
       <Jupyter
         startDefaultKernel={false}
         disableCssLoading
-        colorMode="light"
+        colormode="light"
       >
         <ThemeProvider
           colorMode={theme === 'light' ? 'day' : 'night'}

@@ -4,4 +4,4 @@
  * MIT License
  */
 
-export type ColorMode = 'light' | 'dark';
+export type Colormode = 'light' | 'dark';
