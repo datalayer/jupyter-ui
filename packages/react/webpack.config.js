@@ -42,7 +42,7 @@ const ENTRY =
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
   // './src/examples/Notebook';
-  // './src/examples/NotebookUrl';
+  // './src/examples/NotebookURL';
   // './src/examples/NotebookColorMode';
   // './src/examples/NotebookKernelChange';
   // './src/examples/NotebookLite';
