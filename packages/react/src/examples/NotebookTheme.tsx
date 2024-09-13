@@ -9,11 +9,11 @@ import { createRoot } from 'react-dom/client';
 import { Text, ToggleSwitch, theme as primerTheme } from '@primer/react';
 import { Theme } from '@primer/react/lib/ThemeProvider';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import Jupyter from '../jupyter/Jupyter';
-import { jupyterTheme } from '../themes/primerTheme';
-import Notebook from '../components/notebook/Notebook';
-import NotebookToolbar from './toolbars/NotebookToolbar';
-import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
+import { Jupyter } from '../jupyter/Jupyter';
+import { jupyterTheme } from '../theme/JupyterPrimerTheme';
+import { Notebook } from '../components/notebook/Notebook';
+import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
+import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
 
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 

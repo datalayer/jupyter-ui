@@ -4,7 +4,6 @@
  * MIT License
  */
 
-import { IOutput } from '@jupyterlab/nbformat';
 import { Button, Text } from '@primer/react';
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';

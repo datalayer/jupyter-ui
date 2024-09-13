@@ -5,15 +5,15 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import Jupyter from '../jupyter/Jupyter';
-import Notebook from '../components/notebook/Notebook';
-import NotebookToolbar from './toolbars/NotebookToolbar';
-import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
+import { Jupyter } from '../jupyter/Jupyter';
+import { Notebook } from '../components/notebook/Notebook';
+import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
+import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
 
 const Deno = () => (
   <Jupyter defaultKernelName="deno">
     <Notebook
-      path="deno/examples/10.2_Polar DataFrames.ipynb"
+      url="https://raw.githubusercontent.com/rgbkrk/denotebooks/f173b472ad5b0169d77818027bf662682c5024ec/10.2_Polar%20DataFrames.ipynb"
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       cellSidebarMargin={120}
       CellSidebar={CellSidebar}

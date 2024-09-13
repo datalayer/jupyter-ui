@@ -8,12 +8,12 @@ import { useState } from 'react';
 import { PanelLayout } from '@lumino/widgets';
 import { Box, Button } from '@primer/react';
 import { PlayIcon } from '@primer/octicons-react';
-import { CellSidebarProps } from './CellSidebarWidget';
+import { ICellSidebarProps } from './CellSidebarWidget';
 import useNotebookStore from '../../NotebookState';
 
 import { DATALAYER_CELL_HEADER_CLASS } from './CellSidebarWidget';
 
-export const CellSidebarRun = (props: CellSidebarProps) => {
+export const CellSidebarRun = (props: ICellSidebarProps) => {
   const { notebookId } = props;
   const notebookStore = useNotebookStore();
   const [visible, setVisible] = useState(false);

@@ -5,4 +5,4 @@
  */
 
 export * from "./IJupyterReactConfig";
-export * from "./JupyerReactState";
+export * from "./JupyterReactState";

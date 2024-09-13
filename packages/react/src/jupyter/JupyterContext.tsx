@@ -6,14 +6,10 @@
 
 import React, { createContext, useContext } from 'react';
 import { Kernel as JupyterKernel, ServerConnection, ServiceManager } from '@jupyterlab/services';
-import type { JupyterLiteServerPlugin } from '@jupyterlite/server';
 import { useJupyterReactStoreFromProps } from '../state';
 import { requestAPI } from './JupyterHandlers';
-import Kernel from './kernel/Kernel';
-
-export type Lite =
-  | boolean
-  | Promise<{ default: JupyterLiteServerPlugin<any>[] }>;
+import { Lite } from './lite';
+import { Kernel } from './kernel';
 
 /**
  * The type for Jupyter props.
@@ -143,12 +139,16 @@ export type JupyterContextType =  {
    * `lite: import('@jupyterlite/javascript-kernel-extension')` => Load dynamically
    */
   lite?: Lite;
+  /*
+   * Create a serveless Jupyter.
+   */
+  serverless: boolean
   /**
-   * Jupyter service manager
+   * Jupyter service manager.
    */
   serviceManager?: ServiceManager.IManager;
   /**
-   * Jupyter Server settings
+   * Jupyter Server settings.
    *
    * This is useless if running an in-browser kernel via {@link lite}.
    */
@@ -178,30 +178,33 @@ export const JupyterContextConsumer = JupyterContext.Consumer;
 const JupyterProvider = JupyterContext.Provider;
 
 /*
- *
+ * User Jupyter hook.
  */
 export const useJupyter = (props?: JupyterPropsType): JupyterContextType => {
   const context = useContext(JupyterContext);
   if (context) {
-    // We are with in a Jupyter context, returning fast the context.
+    // We are within a React Context, just return the JupyterContext.
+    // The provided props are irrelevant in this case.
     return context;
   }
-  // We are not within a Jupyter context, so create it from the store.
+  // We are not within a React Context, so create a JupyterContext
+  // from the store based on the provided props.
   const {
+    jupyterConfig,
     kernel,
     kernelIsLoading,
     serviceManager,
-    jupyterConfig,
   } = useJupyterReactStoreFromProps(props ?? {});
   const storeContext: JupyterContextType = {
-    collaborative: false,
+    collaborative: props?.collaborative,
     defaultKernel: kernel,
     defaultKernelIsLoading: kernelIsLoading,
     jupyterServerUrl: jupyterConfig!.jupyterServerUrl,
     kernel,
     kernelIsLoading,
     kernelManager: serviceManager?.kernels,
-    lite: false,
+    lite: props?.lite,
+    serverless: props?.serverless ?? false,
     serverSettings: serviceManager?.serverSettings,
     serviceManager,
   }
@@ -264,14 +267,14 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
         collaborative,
         defaultKernel: kernel,
         defaultKernelIsLoading: kernelIsLoading,
-        // FIXME we should not expose sub attributes to promote single source of truth
-        // (like URLs come from serverSettings)
+        // FIXME we should not expose sub attributes to promote single source of truth (like URLs coming from serverSettings).
         jupyterServerUrl,
         kernel,
         kernelIsLoading,
         kernelManager: serviceManager?.kernels,
         lite,
         serverSettings,
+        serverless: props.serverless ?? false,
         serviceManager,
       }}
     >

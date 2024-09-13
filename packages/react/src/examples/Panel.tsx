@@ -5,22 +5,22 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import Jupyter from '../jupyter/Jupyter';
-import Notebook from '../components/notebook/Notebook';
-import NotebookToolbar from './toolbars/NotebookToolbar';
-import CellSidebarNew from '../components/notebook/cell/sidebar/CellSidebarButton';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { Notebook } from '../components/notebook/Notebook';
+import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
+import CellSidebarButton from '../components/notebook/cell/sidebar/CellSidebarButton';
 
 const Panel = () => {
   return (
-    <Jupyter>
+    <JupyterReactTheme>
       <Notebook
         path="panel.ipynb"
         id="notebook-panel-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        CellSidebar={CellSidebarNew}
+        CellSidebar={CellSidebarButton}
         Toolbar={NotebookToolbar}
       />
-    </Jupyter>
+    </JupyterReactTheme>
   );
 };
 

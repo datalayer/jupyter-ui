@@ -5,7 +5,7 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import Jupyter from '../jupyter/Jupyter';
+import { Jupyter } from '../jupyter/Jupyter';
 import Terminal from '../components/terminal/Terminal';
 
 const div = document.createElement('div');
@@ -14,6 +14,6 @@ const root = createRoot(div);
 
 root.render(
   <Jupyter startDefaultKernel={false} terminals>
-    <Terminal colorMode="dark" height="800px" />
+    <Terminal colormode="dark" height="800px" />
   </Jupyter>
 );

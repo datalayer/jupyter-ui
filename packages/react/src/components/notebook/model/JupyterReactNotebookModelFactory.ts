@@ -15,26 +15,27 @@ import type { ISharedNotebook } from '@jupyter/ydoc';
 
 export class JupyterReactNotebookModelFactory extends NotebookModelFactory {
   private _nbformat?: INotebookContent;
-  private _readOnly: boolean;
+  private _readonly: boolean;
 
   /** @override */
   constructor(options: DatalayerNotebookModelFactory.IOptions) {
     super(options);
     this._nbformat = options.nbformat;
-    this._readOnly = options.readOnly;
+    this._readonly = options.readonly;
   }
 
   /** @override */
-  createNew(
-    options: DocumentRegistry.IModelOptions<ISharedNotebook>
-  ): INotebookModel {
+  createNew(options: DocumentRegistry.IModelOptions<ISharedNotebook>): INotebookModel {
     if (this._nbformat) {
+      this._nbformat.cells.forEach(cell => {
+        cell.metadata['editable'] = !this._readonly;
+      });
       const notebookModel = new NotebookModel();
       notebookModel.fromJSON(this._nbformat);
       return notebookModel;
     } else {
       const notebookModel = super.createNew(options);
-      notebookModel.readOnly = this._readOnly;
+      notebookModel.readOnly = this._readonly;
       return notebookModel;
     }
   }
@@ -43,7 +44,7 @@ export class JupyterReactNotebookModelFactory extends NotebookModelFactory {
 export declare namespace DatalayerNotebookModelFactory {
   interface IOptions extends NotebookModelFactory.IOptions {
     nbformat?: INotebookContent;
-    readOnly: boolean;
+    readonly: boolean;
   }
 }
 

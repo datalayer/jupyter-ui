@@ -10,8 +10,7 @@ import { useMemo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { loadJupyterConfig } from './JupyterConfig';
 import { JupyterContextProps, JupyterContextProvider } from './JupyterContext';
-import { ColorMode } from './lab/JupyterLabColorMode';
-import JupyterLabCss from './lab/JupyterLabCss';
+import { Colormode, JupyterLabCss } from '../theme';
 
 /**
  * Definition of the properties that can be passed
@@ -21,7 +20,7 @@ export type JupyterProps = Omit<
   JupyterContextProps,
   'variant'
 > & {
-  colorMode?: ColorMode;
+  colormode?: Colormode;
   disableCssLoading?: boolean;
   theme?: Theme;
   terminals?: boolean;
@@ -50,7 +49,7 @@ export const Jupyter = (props: JupyterProps) => {
   const {
     children,
     collaborative,
-    colorMode = 'light',
+    colormode = 'light',
     defaultKernelName,
     disableCssLoading = false,
     initCode = '',
@@ -74,30 +73,22 @@ export const Jupyter = (props: JupyterProps) => {
       lite,
       terminals,
     });
-  }, [
-    collaborative,
-    jupyterServerUrl,
-    jupyterServerToken,
-    lite,
-    terminals,
-  ]);
+  }, [props]);
   return (
     <ErrorBoundary
       FallbackComponent={ErrorFallback}
-      onReset={() => {
-        console.log('Error Boundary reset has been invoked...');
-      }}
+      onReset={() => {console.log('Error Boundary reset has been invoked...');}}
     >
       <ThemeProvider
         theme={theme}
-        colorMode={colorMode === 'light' ? 'day' : 'night'}
+        colorMode={colormode === 'light' ? 'day' : 'night'}
         dayScheme="light"
         nightScheme="dark"
       >
         <BaseStyles>
           <Box color="fg.default" bg="canvas.default">
             {!config.insideJupyterLab && !disableCssLoading && (
-              <JupyterLabCss colorMode={colorMode} />
+              <JupyterLabCss colormode={colormode} />
             )}
             <JupyterContextProvider
               collaborative={collaborative}

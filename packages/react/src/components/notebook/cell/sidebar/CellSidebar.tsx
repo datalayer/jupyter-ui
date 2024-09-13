@@ -14,13 +14,13 @@ import {
   ChevronDownIcon,
   SquareIcon,
 } from '@primer/octicons-react';
-import { CellSidebarProps } from './CellSidebarWidget';
+import { ICellSidebarProps } from './CellSidebarWidget';
 import CellMetadataEditor from '../metadata/CellMetadataEditor';
 import useNotebookStore from '../../NotebookState';
 
 import { DATALAYER_CELL_HEADER_CLASS } from './CellSidebarWidget';
 
-export const CellSidebar = (props: CellSidebarProps) => {
+export const CellSidebar = (props: ICellSidebarProps) => {
   const { notebookId, cellId, nbgrader } = props;
   const [visible, setVisible] = useState(false);
   const notebookStore = useNotebookStore()

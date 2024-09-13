@@ -9,9 +9,9 @@ import { createRoot } from 'react-dom/client';
 import { Box, IconButton } from '@primer/react';
 import { ZapIcon } from '@primer/octicons-react';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import Jupyter from '../jupyter/Jupyter';
-import Notebook from '../components/notebook/Notebook';
-import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { Notebook } from '../components/notebook/Notebook';
+import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
 import { notebookStore } from '../components/notebook/NotebookState';
 
 import notebook from './notebooks/NotebookExample1.ipynb.json';
@@ -19,13 +19,13 @@ import notebook from './notebooks/NotebookExample1.ipynb.json';
 const NOTEBOOK_ID = 'notebook-model-id';
 
 const NotebookExternalContent = () => {
-  const [nbformat, setNbFormat] = useState<INotebookContent>();
+  const [nbformat, setNbformat] = useState<INotebookContent>();
   const [updatedNbFormat, setUpdatedNbFormat] = useState<INotebookContent>();
   const model = notebookStore.getState().selectNotebookModel(NOTEBOOK_ID)?.model;
   useEffect(() => {
     // Set nbformat with any content.
     // This may come from an external storage that you fetch in this react effect.
-    setNbFormat(notebook);
+    setNbformat(notebook);
   }, []);
   useEffect(() => {
     if (model) {
@@ -74,7 +74,7 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <Jupyter>
+  <JupyterReactTheme>
     <NotebookExternalContent />
-  </Jupyter>
+  </JupyterReactTheme>
 );

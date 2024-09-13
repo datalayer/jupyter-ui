@@ -10,6 +10,7 @@
 import * as libembed from '@jupyter-widgets/html-manager/lib/libembed';
 
 let cdn = 'https://cdn.jsdelivr.net/npm/';
+
 let onlyCDN = true;
 
 // find the data-cdn for any script tag, assuming it is only used for embed-amd.js

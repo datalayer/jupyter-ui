@@ -10,9 +10,9 @@ import { Box, Text, ToggleSwitch, ThemeProvider, useTheme } from '@primer/react'
 import { BoxPanel } from '@lumino/widgets';
 import { ThemeManager } from '@jupyterlab/apputils';
 // import { NotebookTracker } from '@jupyterlab/notebook';
-import JupyterLabTheme from '../jupyter/lab/JupyterLabTheme';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { Colormode } from '../theme/JupyterLabColormode';
 import Lumino from '../components/lumino/Lumino';
-import { ColorMode } from '../jupyter/lab/JupyterLabColorMode';
 import JupyterLabApp from '../components/jupyterlab/JupyterLabApp';
 import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter';
 
@@ -34,7 +34,7 @@ const PATH_INDEX = 1;
 
 const JupyterLabAppHeadless = () => {
   const [notebookBoxPanel, setNotebookBoxPanel] = useState<BoxPanel>();
-  const [theme, setTheme] = useState<ColorMode>('light');
+  const [theme, setTheme] = useState<Colormode>('light');
   const [jupyterLabAdapter, setJupyterlabAdapter] = useState<JupyterLabAppAdapter>();
   const { setColorMode } = useTheme();
   const [isDark, setDark] = useState(false);
@@ -63,7 +63,7 @@ const JupyterLabAppHeadless = () => {
   };
   return (
     <>
-      <JupyterLabTheme>
+      <JupyterReactTheme>
         <ThemeProvider
           colorMode={theme === 'light' ? 'day' : 'night'}
           dayScheme="light"
@@ -132,7 +132,7 @@ const JupyterLabAppHeadless = () => {
           PluginType={ThemeManager}
           onPlugin={onPlugin}
         />
-      </JupyterLabTheme>
+      </JupyterReactTheme>
     </>
   );
 };
