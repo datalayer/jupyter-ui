@@ -86,6 +86,7 @@ export class NotebookAdapter {
   private _serverless: boolean;
   private _serviceManager: ServiceManager.IManager;
   private _tracker?: NotebookTracker;
+
   constructor(props: INotebookProps) {
     this._id = props.id;
     this._kernel = props.kernel;
@@ -203,6 +204,7 @@ export class NotebookAdapter {
       1
     );
     */
+
     /*
     // This code block was causing https://github.com/datalayer/jupyter-ui/issues/195
     // TODO Double check there is not side effect.
