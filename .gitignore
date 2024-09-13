@@ -155,6 +155,9 @@ packages/*/content
 # Static
 **/static/*
 
+# VS Code settings
+packages/react/.vscode/launch.json
+
 # Include
 !**/.*ignore
 !**/.*rc

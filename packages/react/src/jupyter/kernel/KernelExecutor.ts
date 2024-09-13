@@ -4,22 +4,22 @@
  * MIT License
  */
 
-import { PromiseDelegate } from '@lumino/coreutils';
-import { Signal, ISignal } from '@lumino/signaling';
 import {
-  IOutput,
-  IStream,
-  IExecuteResult,
   IDisplayData,
   IDisplayUpdate,
+  IExecuteResult,
   IMimeBundle,
+  IOutput,
+  IStream,
 } from '@jupyterlab/nbformat';
 import { IOutputAreaModel, OutputAreaModel } from '@jupyterlab/outputarea';
 import { Kernel as JupyterKernel, KernelMessage } from '@jupyterlab/services';
 import { IClearOutputMsg } from '@jupyterlab/services/lib/kernel/messages';
+import { PromiseDelegate } from '@lumino/coreutils';
+import { ISignal, Signal } from '@lumino/signaling';
+import { toKernelState } from '../../components/kernel';
 import { outputsAsString } from '../../utils/Utils';
 import { ExecutionPhase, KernelsState, kernelsStore } from './KernelState';
-import { toKernelState } from '../../components/kernel';
 
 export type IOPubMessageHook = (
   msg: KernelMessage.IIOPubMessage
@@ -42,17 +42,32 @@ export type IKernelExecutorOptions = {
    */
   model?: IOutputAreaModel;
   /**
-   * Flag defining if notification about model changes
-   * must only be made when execution complete
+   * Flag defining if promise returned by
+   * KernelExecutor must be catched internally
+   * in case of code execution errors
    */
-  notifyOnComplete? : boolean;
+  suppressCodeExecutionErrors?: boolean;
   /**
-   * Handler for code execution error
-   * @param err Error data
-   * @returns 
+   * Handler for monitoring execution phase changes
+   * @param phaseOutput Output for changed phase
+   * @returns
    */
-  onCodeExecutionError?: (err: any) => void;
-}
+  onExecutionPhaseChanged?: (phaseOutput: IExecutionPhaseOutput) => void;
+};
+
+/**
+ * Output result of code execution by kernel
+ */
+export type IExecutionPhaseOutput = {
+  /**
+   * Execution phase
+   */
+  executionPhase: ExecutionPhase;
+  /**
+   * Output model produced as a result of code execution phase
+   */
+  outputModel?: IOutputAreaModel;
+};
 
 export class KernelExecutor {
   private _executed: PromiseDelegate<IOutputAreaModel>;
@@ -60,22 +75,38 @@ export class KernelExecutor {
   private _kernelState: KernelsState;
   private _model: IOutputAreaModel;
   private _modelChanged = new Signal<KernelExecutor, IOutputAreaModel>(this);
+  private _executionPhaseChanged = new Signal<
+    KernelExecutor,
+    IExecutionPhaseOutput
+  >(this);
   private _outputs: IOutput[];
   private _stopOnError: boolean;
   private _outputsChanged = new Signal<KernelExecutor, IOutput[]>(this);
-  private _future?: JupyterKernel.IFuture<KernelMessage.IExecuteRequestMsg, KernelMessage.IExecuteReplyMsg>;
+  private _future?: JupyterKernel.IFuture<
+    KernelMessage.IExecuteRequestMsg,
+    KernelMessage.IExecuteReplyMsg
+  >;
   private _shellMessageHooks = new Array<ShellMessageHook>();
-  private _notifyOnComplete : boolean = false;
-  private _onCodeExecutionError?: (err: any) => void;
+  private _suppressCodeExecutionErrors: boolean = false;
+  private _phaseChangeCallback?: (
+    source: KernelExecutor,
+    phaseOutput: IExecutionPhaseOutput
+  ) => void;
+  private _onExecutionPhaseChanged?: (
+    phaseOutput: IExecutionPhaseOutput
+  ) => void;
 
-  public constructor({ connection, model, notifyOnComplete, onCodeExecutionError }: IKernelExecutorOptions) {
+  public constructor({
+    connection,
+    model,
+    onExecutionPhaseChanged,
+  }: IKernelExecutorOptions) {
     this._executed = new PromiseDelegate<IOutputAreaModel>();
     this._kernelConnection = connection;
     this._model = model ?? new OutputAreaModel();
     this._outputs = [];
     this._kernelState = kernelsStore.getState();
-    this._notifyOnComplete = !!notifyOnComplete;
-    this._onCodeExecutionError = onCodeExecutionError;
+    this._onExecutionPhaseChanged = onExecutionPhaseChanged;
   }
 
   /**
@@ -102,6 +133,7 @@ export class KernelExecutor {
       stopOnError = true,
       storeHistory = true,
       allowStdin = false,
+      suppressCodeExecutionErrors = false,
     }: {
       iopubMessageHooks?: IOPubMessageHook[];
       shellMessageHooks?: ShellMessageHook[];
@@ -109,11 +141,29 @@ export class KernelExecutor {
       stopOnError?: boolean;
       storeHistory?: boolean;
       allowStdin?: boolean;
+      suppressCodeExecutionErrors?: boolean;
     } = {}
   ): Promise<IOutputAreaModel> {
+    if (this._onExecutionPhaseChanged) {
+      this._phaseChangeCallback = (
+        source: KernelExecutor,
+        phaseOutput: IExecutionPhaseOutput
+      ) => {
+        if (this._onExecutionPhaseChanged) {
+          this._onExecutionPhaseChanged(phaseOutput);
+        }
+      };
+      this._executionPhaseChanged.connect(this._phaseChangeCallback);
+    }
     this._stopOnError = stopOnError;
+    this._suppressCodeExecutionErrors = suppressCodeExecutionErrors;
     this._shellMessageHooks = shellMessageHooks;
-    kernelsStore.getState().setExecutionPhase(this._kernelConnection.id, ExecutionPhase.running);
+    kernelsStore
+      .getState()
+      .setExecutionPhase(this._kernelConnection.id, ExecutionPhase.running);
+    this._executionPhaseChanged.emit({
+      executionPhase: ExecutionPhase.running,
+    });
     this._future = this._kernelConnection.requestExecute({
       code,
       allow_stdin: allowStdin,
@@ -132,12 +182,25 @@ export class KernelExecutor {
     };
     // Wait for future to be done before resolving the exectud promise.
     this._future.done.then(() => {
-      kernelsStore.getState().setExecutionPhase(this._kernelConnection.id, ExecutionPhase.completed);
-      // We emit model changes only when execution completed
-      if (this._notifyOnComplete) {
-        this._modelChanged.emit(this._model);
-      }    
+      this._modelChanged.emit(this._model);
       this._executed.resolve(this._model);
+      // We prevent from rewriting execution phase
+      // if it's completed with error previously
+      const currentPhase = kernelsStore
+        .getState()
+        .getExecutionPhase(this._kernelConnection.id);
+      if (currentPhase !== ExecutionPhase.completed_with_error) {
+        kernelsStore
+          .getState()
+          .setExecutionPhase(
+            this._kernelConnection.id,
+            ExecutionPhase.completed
+          );
+        this._executionPhaseChanged.emit({
+          executionPhase: ExecutionPhase.completed,
+          outputModel: this._model,
+        });
+      }
     });
     return this._executed.promise;
   }
@@ -149,6 +212,9 @@ export class KernelExecutor {
     this._shellMessageHooks.length = 0;
     this._outputs.length = 0;
     this._model.clear();
+    if (this._phaseChangeCallback) {
+      this._executionPhaseChanged.disconnect(this._phaseChangeCallback);
+    }
   }
 
   registerIOPubMessageHook = (msg: IOPubMessageHook) => {
@@ -156,12 +222,14 @@ export class KernelExecutor {
   };
 
   /**
-   * 
+   *
    */
-  get future(): JupyterKernel.IFuture<
-      KernelMessage.IExecuteRequestMsg,
-      KernelMessage.IExecuteReplyMsg
-    > | undefined {
+  get future():
+    | JupyterKernel.IFuture<
+        KernelMessage.IExecuteRequestMsg,
+        KernelMessage.IExecuteReplyMsg
+      >
+    | undefined {
     return this._future;
   }
 
@@ -171,7 +239,7 @@ export class KernelExecutor {
   get done(): Promise<void> {
     return this._executed.promise.then(() => {
       return;
-    })
+    });
   }
 
   /**
@@ -180,7 +248,7 @@ export class KernelExecutor {
   get result(): Promise<string> {
     return this._executed.promise.then(model => {
       return outputsAsString(model.toJSON());
-    })
+    });
   }
 
   /**
@@ -200,7 +268,7 @@ export class KernelExecutor {
   /**
    * Signal emitted when the outputs list changes.
    */
-  get outputsChanged(): ISignal<KernelExecutor, IOutput[]> {0
+  get outputsChanged(): ISignal<KernelExecutor, IOutput[]> {
     return this._outputsChanged;
   }
 
@@ -209,6 +277,13 @@ export class KernelExecutor {
    */
   get modelChanged(): ISignal<KernelExecutor, IOutputAreaModel> {
     return this._modelChanged;
+  }
+
+  /**
+   * Signal emitted when execution phase changes.
+   */
+  get executionPhaseChanged(): ISignal<KernelExecutor, IExecutionPhaseOutput> {
+    return this._executionPhaseChanged;
   }
 
   private _onIOPub = (message: KernelMessage.IIOPubMessage): void => {
@@ -223,17 +298,13 @@ export class KernelExecutor {
         this._outputs.push(message.content as IExecuteResult);
         this._outputsChanged.emit(this._outputs);
         this._model.add(output);
-        if (!this._notifyOnComplete) {
-          this._modelChanged.emit(this._model);
-        }
+        this._modelChanged.emit(this._model);
         break;
       case 'display_data':
         this._outputs.push(message.content as IDisplayData);
         this._outputsChanged.emit(this._outputs);
         this._model.add(output);
-        if (!this._notifyOnComplete) {
-          this._modelChanged.emit(this._model);
-        }
+        this._modelChanged.emit(this._model);
         break;
       case 'stream':
       case 'error':
@@ -242,7 +313,16 @@ export class KernelExecutor {
         this._model.add(output);
         this._modelChanged.emit(this._model);
         if (this._stopOnError) {
-          kernelsStore.getState().setExecutionPhase(this._kernelConnection.id, ExecutionPhase.completed_with_error);
+          kernelsStore
+            .getState()
+            .setExecutionPhase(
+              this._kernelConnection.id,
+              ExecutionPhase.completed_with_error
+            );
+          this._executionPhaseChanged.emit({
+            executionPhase: ExecutionPhase.completed_with_error,
+            outputModel: this._model,
+          });
         }
         break;
       case 'clear_output':
@@ -254,15 +334,17 @@ export class KernelExecutor {
         this._outputsChanged.emit(this._outputs);
         // FIXME this needs more advanced analysis see OutputArea
         this._model.add(output);
-        if (!this._notifyOnComplete) {
-          this._modelChanged.emit(this._model);
-        }
+        this._modelChanged.emit(this._model);
         break;
       case 'status':
-        const executionState = (message.content as any).execution_state as KernelMessage.Status;
+        const executionState = (message.content as any)
+          .execution_state as KernelMessage.Status;
         const connectionStatus = this._kernelConnection.connectionStatus;
         const kernelState = toKernelState(connectionStatus!, executionState);
-        this._kernelState.setExecutionState(this._kernelConnection.id, kernelState);
+        this._kernelState.setExecutionState(
+          this._kernelConnection.id,
+          kernelState
+        );
         break;
       default:
         break;
@@ -283,13 +365,16 @@ export class KernelExecutor {
           break;
         case 'error':
           {
-            const { ename, evalue, traceback } = content as KernelMessage.IReplyErrorContent;
-            if (this._onCodeExecutionError) {
-              this._executed.promise.catch(
-                (err) => this._onCodeExecutionError && this._onCodeExecutionError(err)
-              )
+            const { ename, evalue, traceback } =
+              content as KernelMessage.IReplyErrorContent;
+            if (this._suppressCodeExecutionErrors) {
+              this._executed.promise.catch(err =>
+                console.debug('Error executing code : ' + err)
+              );
             }
-            this._executed.reject(`${ename}: ${evalue}\n${(traceback ?? []).join('\n')}`);
+            this._executed.reject(
+              `${ename}: ${evalue}\n${(traceback ?? []).join('\n')}`
+            );
           }
           break;
       }
@@ -314,7 +399,6 @@ export class KernelExecutor {
       }
     }
   };
-
 }
 
 export default KernelExecutor;
