@@ -42,7 +42,8 @@ const ENTRY =
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
   // './src/examples/Notebook';
-  // './src/examples/NotebookColormode';
+  // './src/examples/NotebookUrl';
+  // './src/examples/NotebookColorMode';
   // './src/examples/NotebookKernelChange';
   // './src/examples/NotebookLite';
   './src/examples/NotebookMutations';
@@ -59,7 +60,7 @@ const ENTRY =
   // './src/examples/NotebookURL';
   // './src/examples/ObservableHQ';
   // './src/examples/Output';
-   './src/examples/OutputWithMonitoring';
+  // './src/examples/OutputWithMonitoring';
   // './src/examples/Outputs';
   // './src/examples/Plotly';
   // './src/examples/RunningSessions';
