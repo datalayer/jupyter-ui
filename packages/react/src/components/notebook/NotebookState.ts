@@ -233,7 +233,6 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
     const notebooks = get().notebooks;
     const notebook = notebooks.get(id);
     if(notebook){
-//      notebook.adapter?.dispose();
       notebooks.delete(id);
     }
     set((state: NotebookState) => ({ notebooks }));

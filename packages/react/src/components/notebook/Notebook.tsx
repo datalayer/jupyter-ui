@@ -59,7 +59,7 @@ export type INotebookProps = {
  * @returns A Notebook React.js component.
  */
 export const Notebook = (props: INotebookProps) => {
-  const { serviceManager, defaultKernel, kernelManager, lite } = useJupyter({
+  const { serviceManager, defaultKernel, lite } = useJupyter({
     lite: props.lite,
     serverless: props.serverless,
     serviceManager: props.serviceManager,
@@ -85,34 +85,50 @@ export const Notebook = (props: INotebookProps) => {
       {
         ...props,
         id,
-        lite: lite || props.lite,
+        lite,
         kernel,
-        serviceManager: serviceManager ?? props.serviceManager,
-      },
+        serviceManager,
+      }
     );
-    console.log('Created Notebook Adapter', adapter);
+    console.log('Notebook Adapter is created', adapter);
+    // Update the local state.
     setAdapter(adapter);
-    notebookStore.update({
-      id,
-      state: { adapter }
+    // Update the global state.
+    notebookStore.update({ id, state: { adapter } });
+    // Update the global state based on events.
+    adapter.notebookPanel?.model?.contentChanged.connect(
+      (notebookModel, _) => { notebookStore.changeModel({ id, notebookModel }) }
+    );
+    /*
+    adapter.notebookPanel?.model!.sharedModel.changed.connect((_, notebookChange) => {
+      notebookStore.notebookChange({ id, notebookChange });
     });
+    adapter.notebookPanel?.content.modelChanged.connect((notebook, _) => {
+      dispatÅch(notebookStore.notebookChange({ id, notebook }));
+    });
+    */
+    adapter.notebookPanel?.content.activeCellChanged.connect((_, cellModel) => {
+        if (cellModel === null) {
+          notebookStore.activeCellChange({ id, cellModel: undefined });
+        } else {
+          notebookStore.activeCellChange({ id, cellModel });
+        }
+      }
+    );
+    adapter.notebookPanel?.sessionContext.statusChanged.connect((_, kernelStatus) => {
+      notebookStore.changeKernelStatus({ id, kernelStatus });
+    });
+    // Add more behavior for the UI.
     adapter.serviceManager.ready.then(() => {
       if (!readonly) {
-        const activeCell = adapter.notebookPanel!.content.activeCell;
-        if (activeCell) {
-          notebookStore.activeCellChange({
-            id,
-            cellModel: activeCell,
-          });
+        const cellModel = adapter.notebookPanel!.content.activeCell;
+        if (cellModel) {
+          notebookStore.activeCellChange({ id, cellModel });
         }
-        const activeCellChanged$ = asObservable(
-          adapter.notebookPanel!.content.activeCellChanged
-        );
+        const activeCellChanged$ = asObservable(adapter.notebookPanel!.content.activeCellChanged);
         activeCellChanged$.subscribe((cellModel: Cell<ICellModel>) => {
           notebookStore.activeCellChange({ id, cellModel });
-          const panelDiv = document.getElementById(
-            'right-panel-id'
-          ) as HTMLDivElement;
+          const panelDiv = document.getElementById('right-panel-id') as HTMLDivElement;
           if (panelDiv) {
             const cellMetadataOptions = (
               <Box mt={3}>
@@ -124,43 +140,10 @@ export const Notebook = (props: INotebookProps) => {
               </Box>
             );
             const portal = createPortal(cellMetadataOptions, panelDiv);
-            notebookStore.setPortalDisplay({
-              id,
-              portalDisplay: { portal, pinned: false },
-            });
+            notebookStore.setPortalDisplay({ id, portalDisplay: { portal, pinned: false } });
           }
         });
       }
-      adapter.notebookPanel?.model?.contentChanged.connect(
-        (notebookModel, _) => {
-          notebookStore.changeModel({ id, notebookModel });
-        }
-      );
-      /*
-      adapter.notebookPanel?.model!.sharedModel.changed.connect((_, notebookChange) => {
-        notebookStore.notebookChange({ id, notebookChange });
-      });
-      adapter.notebookPanel?.content.modelChanged.connect((notebook, _) => {
-        dispatÅch(notebookStore.notebookChange({ id, notebook }));
-      });
-      */
-      adapter.notebookPanel?.content.activeCellChanged.connect(
-        (_, cellModel) => {
-          if (cellModel === null) {
-            notebookStore.activeCellChange({
-              id,
-              cellModel: undefined,
-            });
-          } else {
-            notebookStore.activeCellChange({ id, cellModel });
-          }
-        }
-      );
-      adapter.notebookPanel?.sessionContext.statusChanged.connect(
-        (_, kernelStatus) => {
-          notebookStore.changeKernelStatus({ id, kernelStatus });
-        }
-      );
     });
   }
   const createAdapter = (kernel?: Kernel) => {
@@ -184,13 +167,22 @@ export const Notebook = (props: INotebookProps) => {
     }
   }, []);
   useEffect(() => {
-    if (id && serviceManager && kernelManager && (kernel || serverless)) {
+    /*
+    if (adapter && (adapter.lite !== lite || adapter.serviceManager !== serviceManager)) {
+      if (adapter) {
+        adapter.setServiceManager(serviceManager!, lite!);
+      } else {
+        createAdapter(kernel);
+      }
+    } else
+    */
+    if (serviceManager && (kernel || serverless)) {
       if (adapter) {
         disposeAdapter();
       }
       createAdapter(kernel);
     }
-  }, [id, serviceManager, kernelManager, kernel, lite, serverless]);
+  }, [serviceManager, kernel, serverless, lite]);
   useEffect(() => {
     if (adapter && nbformat && adapter.nbformat !== nbformat) {
       adapter.setNbformat(nbformat);
@@ -212,7 +204,7 @@ export const Notebook = (props: INotebookProps) => {
     if (adapter && url && adapter.readonly !== readonly) {
       adapter.setReadonly(readonly);
     }
-    }, [readonly]);
+  }, [readonly]);
   return (
     <Box
       style={{ height, width: '100%', position: 'relative' }}
@@ -293,7 +285,7 @@ export const Notebook = (props: INotebookProps) => {
       </Box>
     </Box>
   );
-};
+}
 
 Notebook.defaultProps = {
   cellMetadataPanel: false,

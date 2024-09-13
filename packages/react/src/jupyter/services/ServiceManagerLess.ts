@@ -407,6 +407,7 @@ export class ServiceManagerLess implements ServiceManager.IManager {
     this.serverSettings = serverSettings ?? ServerConnection.makeSettings({
 //      baseUrl: 'https://',
 //      wsUrl: 'wss://',
+//      token: 'less-token',
     });
     this.builder = new BuilderManagerLess(this.serverSettings) as Builder.IManager;
     this.contents = new ContentsManagerLess(this.serverSettings);

@@ -11,12 +11,14 @@ import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import Cell from '../components/cell/Cell';
 
 const CODE_CELL_1 = `import time
+print("Cell 1 start...")
 time.sleep(3)
-print("Cell 1 done.")`
+print("Cell 1 end.")`
 
 const CODE_CELL_2 = `import time
+print("Cell 2 start...")
 time.sleep(3)
-print("Cell 2 done.")`
+print("Cell 2 end.")`
 
 const CellsExecute = () => {
   const [executionDisable, setExecutionDisable] = useState(false);

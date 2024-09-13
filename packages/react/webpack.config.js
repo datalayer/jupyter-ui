@@ -29,7 +29,7 @@ const ENTRY =
   // './src/examples/IPyLeaflet';
   // './src/examples/IPyReact';
   // './src/examples/IPyWidgets';
-  // './src/examples/IPyWidgetsWithState';
+  // './src/examples/IPyWidgetsState';
   // './src/examples/JupyterContext';
   // './src/examples/JupyterLabApp';
   // './src/examples/JupyterLabAppHeadless';
@@ -56,7 +56,7 @@ const ENTRY =
   // './src/examples/NotebookSkeleton';
   // './src/examples/NotebookTheme';
   // './src/examples/NotebookThemeColormode';
-  // './src/examples/NotebookUrl';
+  // './src/examples/NotebookURL';
   // './src/examples/ObservableHQ';
   // './src/examples/Output';
   // './src/examples/OutputWithErrorHandle';

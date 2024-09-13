@@ -13,7 +13,7 @@ import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
 
 import notebook from './notebooks/IPyWidgetsExampleWithState.ipynb.json';
 
-const IPyWidgetsWithState = () => (
+const IPyWidgetsState = () => (
   <JupyterReactTheme>
     <Notebook
       nbformat={notebook as INotebookContent}
@@ -30,4 +30,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<IPyWidgetsWithState />);
+root.render(<IPyWidgetsState />);

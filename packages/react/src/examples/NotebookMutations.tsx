@@ -63,7 +63,9 @@ const NotebookMutations = () => {
           <SegmentedControl onChange={index => changeIndex(index)} aria-label="jupyter-react-example">
             <SegmentedControl.Button defaultSelected={index === 0}>Readonly</SegmentedControl.Button>
             <SegmentedControl.Button defaultSelected={index === 1}>Browser Kernel</SegmentedControl.Button>
-            <SegmentedControl.Button defaultSelected={index === 2}>CPU Kernel</SegmentedControl.Button>
+            <SegmentedControl.Button defaultSelected={index === 2}>OSS Kernel</SegmentedControl.Button>
+            <SegmentedControl.Button defaultSelected={index === 3} disabled>Datalayer CPU Kernel</SegmentedControl.Button>
+            <SegmentedControl.Button defaultSelected={index === 4} disabled>Datalayer GPU Kernel</SegmentedControl.Button>
           </SegmentedControl>
         </Box>
         <Box ml={3}>
@@ -76,7 +78,7 @@ const NotebookMutations = () => {
           Lite: {String(notebook?.adapter?.lite)}
         </Box>
         <Box ml={3}>
-          Kernel ID: {notebook?.adapter?.kernel?.id}
+          Kernel: {notebook?.adapter?.kernel?.id} ({notebook?.adapter?.kernel?.info?.banner})
         </Box>
         <Box ml={3}>
           Service Manager Ready: {String(notebook?.adapter?.serviceManager.isReady)}

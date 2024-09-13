@@ -121,13 +121,13 @@ export function useJupyterReactStoreFromProps(props: JupyterPropsType): JupyterR
 
   useEffect(() => {
     if (propsServiceManager) {
-      console.log('Setting service manager from props', propsServiceManager);
+      console.log('Setting Service Manager from props', propsServiceManager);
       setServiceManager(propsServiceManager);
       jupyterReactStore.getState().setServiceManager(propsServiceManager);
     }
   }, [propsServiceManager]);
 
-  // Setup a service manager if needed.
+  // Setup a Service Manager if needed.
   useEffect(() => {
     if (serverless) {
       const serviceManager = new ServiceManagerLess();
@@ -169,7 +169,7 @@ export function useJupyterReactStoreFromProps(props: JupyterPropsType): JupyterR
     }
   }, [lite, serverless, jupyterServerUrl]);
 
-  // Setup a kernel if needed.
+  // Setup a Kernel if needed.
   useEffect(() => {
     serviceManager?.kernels.ready.then(async () => {
       const kernelManager = serviceManager.kernels;
