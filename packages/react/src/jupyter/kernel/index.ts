@@ -6,3 +6,4 @@
 
 export * from './Kernel';
 export * from './KernelExecutor';
+export * from './KernelState';

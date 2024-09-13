@@ -6,10 +6,10 @@
 
 import { createRoot } from 'react-dom/client';
 import { ContentLoader } from '@datalayer/primer-addons';
-import Jupyter from '../jupyter/Jupyter';
-import Notebook from '../components/notebook/Notebook';
-import NotebookToolbar from './toolbars/NotebookToolbar';
-import CellSidebar from '../components/notebook/cell/sidebar/CellSidebarButton';
+import { Jupyter } from '../jupyter/Jupyter';
+import { Notebook } from '../components/notebook/Notebook';
+import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
+import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
 
 const NOTEBOOK_ID = 'notebook-id';
 
@@ -24,7 +24,7 @@ root.render(
       id={NOTEBOOK_ID}
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       cellSidebarMargin={60}
-      CellSidebar={CellSidebar}
+      CellSidebar={CellSidebarButton}
       Toolbar={NotebookToolbar}
     />
   </Jupyter>

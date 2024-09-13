@@ -6,12 +6,12 @@
 
 import { render } from 'react-dom';
 import { Text } from '@primer/react';
-import Jupyter from '../jupyter/Jupyter';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import OutputIPyWidgets from '../components/output/OutputIPyWidgets';
 
 import { view, state } from './notebooks/OutputIPyWidgetsExample';
 
-const Example = () => {
+const OutputIPyWidgetsExample = () => {
   return (
     <>
       <Text as="h1">Output IPyWidgets</Text>
@@ -24,8 +24,8 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 
 render(
-  <Jupyter>
-    <Example />
-  </Jupyter>,
+  <JupyterReactTheme>
+    <OutputIPyWidgetsExample />
+  </JupyterReactTheme>,
   div
 );

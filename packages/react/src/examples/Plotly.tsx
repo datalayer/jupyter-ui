@@ -5,13 +5,13 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import Jupyter from '../jupyter/Jupyter';
-import Notebook from '../components/notebook/Notebook';
-import NotebookToolbar from './toolbars/NotebookToolbar';
-import CellSidebar from '../components/notebook/cell/sidebar/CellSidebar';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { Notebook } from '../components/notebook/Notebook';
+import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
+import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
 
 const Plotly = () => (
-  <Jupyter>
+  <JupyterReactTheme>
     <Notebook
       path="plotly.ipynb"
       id="notebook-plotly-id"
@@ -20,7 +20,7 @@ const Plotly = () => (
       CellSidebar={CellSidebar}
       Toolbar={NotebookToolbar}
     />
-  </Jupyter>
+  </JupyterReactTheme>
 );
 
 const div = document.createElement('div');

@@ -13,7 +13,7 @@ import {
   Kernel,
   Notebook,
 } from '../index';
-import NotebookToolbar from './toolbars/NotebookToolbar';
+import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import useNotebookStore from '../components/notebook/NotebookState';
 
 const NOTEBOOK_ID = 'notebook';

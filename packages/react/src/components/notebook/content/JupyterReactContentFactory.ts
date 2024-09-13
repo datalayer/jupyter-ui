@@ -7,10 +7,7 @@
 import { CommandRegistry } from '@lumino/commands';
 import { NotebookPanel } from '@jupyterlab/notebook';
 import { ICellHeader, Cell } from '@jupyterlab/cells';
-import {
-  CellSidebarWidget,
-  CellSidebarProps,
-} from '../cell/sidebar/CellSidebarWidget';
+import { CellSidebarWidget, ICellSidebarProps } from '../cell/sidebar/CellSidebarWidget';
 // import { IInputPrompt } from '@jupyterlab/cells';
 // import { NotebookInputPrompt } from './../cell/InputPrompt';
 
@@ -18,13 +15,13 @@ import {
  * Extend the default implementation NotebookPanel.ContentFactory of `IContentFactory`.
  */
 export class JupyterReactContentFactory extends NotebookPanel.ContentFactory {
-  private readonly CellSidebar: (props: CellSidebarProps) => JSX.Element;
+  private readonly CellSidebar: (props: ICellSidebarProps) => JSX.Element;
   private readonly notebookId: string;
   private readonly nbgrader: boolean;
   private readonly commands: CommandRegistry;
 
   constructor(
-    CellSidebar: (props: CellSidebarProps) => JSX.Element,
+    CellSidebar: (props: ICellSidebarProps) => JSX.Element,
     notebookId: string,
     nbgrader: boolean,
     commands: CommandRegistry,

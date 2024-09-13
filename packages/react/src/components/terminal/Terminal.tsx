@@ -45,7 +45,7 @@ export const Terminal = (props: Terminal.ITerminalOptions) => {
 export namespace Terminal {
   export interface ITerminalOptions {
     height?: string;
-    colorMode?: ITerminal.Theme;
+    colormode?: ITerminal.Theme;
     /**
      * Code to be executed at terminal startup
      */
@@ -55,7 +55,7 @@ export namespace Terminal {
 
 Terminal.defaultProps = {
   height: '100%',
-  colorMode: 'dark',
+  colormode: 'dark',
 } as Partial<Terminal.ITerminalOptions>;
 
 export default Terminal;

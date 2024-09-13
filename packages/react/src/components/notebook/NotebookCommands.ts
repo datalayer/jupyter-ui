@@ -68,6 +68,19 @@ export const NotebookCommands = (
   tracker: NotebookTracker,
   path?: string
 ): void => {
+
+  if (path) {
+    commandRegistry.addCommand(cmdIds.save, {
+      label: 'Save',
+      execute: () => notebookPanel.context.save(),
+    });
+    commandRegistry.addKeyBinding({
+      selector: '.jp-Notebook',
+      keys: ['Accel S'],
+      command: cmdIds.save,
+    });
+  }
+
   // Add commands.
   commandRegistry.addCommand(cmdIds.invoke, {
     label: 'Completer: Invoke',
@@ -93,12 +106,6 @@ export const NotebookCommands = (
       }
     },
   });
-  if (path) {
-    commandRegistry.addCommand(cmdIds.save, {
-      label: 'Save',
-      execute: () => notebookPanel.context.save(),
-    });
-  }
   let searchInstance: SearchDocumentView | undefined;
   commandRegistry.addCommand(cmdIds.startSearch, {
     label: 'Find…',
@@ -452,7 +459,7 @@ export const NotebookCommands = (
       keys: ['Shift J'],
       command: cmdIds.extendBelow,
     },
-{
+    {
 			selector: '.jp-Notebook',
 			keys: ['Ctrl Z'],
 			command: cmdIds.undo,
@@ -480,13 +487,6 @@ export const NotebookCommands = (
   ];
   bindings.map(binding => commandRegistry.addKeyBinding(binding));
 
-  if (path) {
-    commandRegistry.addKeyBinding({
-      selector: '.jp-Notebook',
-      keys: ['Accel S'],
-      command: cmdIds.save,
-    });
-  }
-};
+}
 
 export default NotebookCommands;

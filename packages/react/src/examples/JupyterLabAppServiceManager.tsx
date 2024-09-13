@@ -7,20 +7,19 @@
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { NotebookPanel } from '@jupyterlab/notebook';
-import JupyterLabTheme from '../jupyter/lab/JupyterLabTheme';
-import JupyterLabApp from '../components/jupyterlab/JupyterLabApp';
-import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter';
-import JupyterServiceManagerLess from '../jupyter/services/JupyterServiceManagerLess';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { ServiceManagerLess } from '../jupyter';
+import { JupyterLabApp, JupyterLabAppAdapter } from '../components/jupyterlab';
 
 import * as lightThemePlugins from '@jupyterlab/theme-light-extension';
 import * as ipywidgetsPlugins from '@jupyter-widgets/jupyterlab-manager';
 import * as plotlyPlugins from 'jupyterlab-plotly/lib/jupyterlab-plugin';
-// import * as reactPlugins from './../jupyter/lab/index';
+// import * as reactPlugins from './../jupyter/lab/plugin';
 
 import * as plotlyMimeRenderers from 'jupyterlab-plotly/lib/plotly-renderer';
 
 const JupyterLabAppServiceManager = () => {
-  const [serviceManager, _] = useState(new JupyterServiceManagerLess());
+  const [serviceManager, _] = useState(new ServiceManagerLess());
   const onJupyterLab = async (jupyterLabAdapter: JupyterLabAppAdapter) => {
     const jupyterLab = jupyterLabAdapter.jupyterLab;
     console.log('JupyterLab is ready', jupyterLab);
@@ -49,15 +48,15 @@ const JupyterLabAppServiceManager = () => {
       onJupyterLab={onJupyterLab}
     />
   );
-};
+}
 
 const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <JupyterLabTheme>
-    <h1>JupyterLab Application with Service Manager property</h1>
+  <JupyterReactTheme>
+    <h1>JupyterLab Application with Service Manager</h1>
     <JupyterLabAppServiceManager />
-  </JupyterLabTheme>
+  </JupyterReactTheme>
 );

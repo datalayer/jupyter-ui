@@ -6,14 +6,13 @@
 
 import { createRoot } from 'react-dom/client';
 import { NotebookPanel } from '@jupyterlab/notebook';
-import Jupyter from '../jupyter/Jupyter';
-import JupyterLabApp from '../components/jupyterlab/JupyterLabApp';
-import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter';
+import { Jupyter } from '../jupyter/Jupyter';
+import { JupyterLabApp, JupyterLabAppAdapter } from '../components/jupyterlab';
 
 import * as lightThemePlugins from '@jupyterlab/theme-light-extension';
 import * as ipywidgetsPlugins from '@jupyter-widgets/jupyterlab-manager';
 import * as plotlyPlugins from 'jupyterlab-plotly/lib/jupyterlab-plugin';
-import * as reactPlugins from './../jupyter/lab/index';
+import * as reactPlugins from './../jupyter/lab/plugin';
 
 import * as plotlyMimeRenderers from 'jupyterlab-plotly/lib/plotly-renderer';
 
@@ -42,7 +41,7 @@ const JupyterLabAppExample = () => {
       onJupyterLab={onJupyterLab}
     />
   );
-};
+}
 
 const div = document.createElement('div');
 document.body.appendChild(div);

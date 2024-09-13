@@ -14,12 +14,12 @@ import {
   SquareIcon,
   XIcon,
 } from '@primer/octicons-react';
-import { CellSidebarProps } from './CellSidebarWidget';
+import { ICellSidebarProps } from './CellSidebarWidget';
 import useNotebookStore from '../../NotebookState';
 
 import { DATALAYER_CELL_HEADER_CLASS } from './CellSidebarWidget';
 
-export const CellSidebarNew = (props: CellSidebarProps) => {
+export const CellSidebarButton = (props: ICellSidebarProps) => {
   const { notebookId, cellId } = props;
   const notebookStore = useNotebookStore();
   const [visible, setVisible] = useState(false);
@@ -185,4 +185,4 @@ export const CellSidebarNew = (props: CellSidebarProps) => {
   );
 };
 
-export default CellSidebarNew;
+export default CellSidebarButton;

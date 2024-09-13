@@ -10,13 +10,13 @@ import InputViewer from './input/InputViewer';
 // import OutputViewer from './output/OutputViewer';
 import { newUuid } from '../../utils/Utils';
 
-type Props = {
+type IViewerProps = {
   nbformat?: INotebookContent;
   nbformatUrl?: string;
   outputs: boolean;
 };
 
-export const Viewer = (props: Props) => {
+export const Viewer = (props: IViewerProps) => {
   const { nbformat, nbformatUrl } = props;
   const [model, setModel] = useState<INotebookContent>();
   useEffect(() => {

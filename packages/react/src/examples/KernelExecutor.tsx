@@ -9,13 +9,10 @@ import { createRoot } from 'react-dom/client';
 import { Box, Heading } from '@primer/react';
 import { IOutputAreaModel } from '@jupyterlab/outputarea';
 import { KernelMessage } from '@jupyterlab/services';
-import Jupyter from '../jupyter/Jupyter';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { Output } from '../components/output/Output';
-import {
-  IOPubMessageHook,
-  ShellMessageHook,
-} from '../jupyter/kernel/KernelExecutor';
+import { IOPubMessageHook, ShellMessageHook } from '../jupyter/kernel/KernelExecutor';
 
 const CODE = `from time import sleep
 for i in range(0, 15):
@@ -83,9 +80,9 @@ const KernelExecutorView = () => {
 
 const KernelExecutor = () => {
   return (
-    <Jupyter>
+    <JupyterReactTheme>
       <KernelExecutorView />
-    </Jupyter>
+    </JupyterReactTheme>
   );
 };
 

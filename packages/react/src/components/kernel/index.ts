@@ -14,3 +14,5 @@ export * from './KernelSelector';
 export * from './Kernelndicator';
 export * from './KernelUsage';
 export * from './KernelVariables';
+export * from './inspector';
+export * from './variables';

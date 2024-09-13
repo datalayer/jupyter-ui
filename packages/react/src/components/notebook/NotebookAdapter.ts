@@ -9,102 +9,69 @@ import { CommandRegistry } from '@lumino/commands';
 import { BoxPanel, Widget } from '@lumino/widgets';
 import { IChangedArgs } from '@jupyterlab/coreutils';
 import { Cell, ICellModel, MarkdownCell } from '@jupyterlab/cells';
-import {
-  Contents,
-  ServiceManager,
-  Kernel as JupyterKernel,
-  SessionManager,
-} from '@jupyterlab/services';
+import { Contents, ServiceManager, Kernel as JupyterKernel, SessionManager } from '@jupyterlab/services';
 import { DocumentRegistry, Context } from '@jupyterlab/docregistry';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
-import {
-  standardRendererFactories,
-  RenderMimeRegistry,
-} from '@jupyterlab/rendermime';
+import { standardRendererFactories, RenderMimeRegistry } from '@jupyterlab/rendermime';
 import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
-import {
-  NotebookPanel,
-  NotebookWidgetFactory,
-  NotebookTracker,
-  INotebookModel,
-} from '@jupyterlab/notebook';
-import {
-  CodeMirrorEditorFactory,
-  CodeMirrorMimeTypeService,
-  EditorLanguageRegistry,
-  EditorExtensionRegistry,
-  EditorThemeRegistry,
-  ybinding,
-} from '@jupyterlab/codemirror';
+import { Notebook, NotebookPanel, NotebookWidgetFactory, NotebookTracker, INotebookModel } from '@jupyterlab/notebook';
+import { ybinding, CodeMirrorEditorFactory, CodeMirrorMimeTypeService, EditorLanguageRegistry, EditorExtensionRegistry, EditorThemeRegistry } from '@jupyterlab/codemirror';
 import { IEditorServices } from '@jupyterlab/codeeditor';
-import {
-  Completer,
-  CompleterModel,
-  CompletionHandler,
-  ProviderReconciliator,
-  KernelCompleterProvider,
-} from '@jupyterlab/completer';
+import { Completer, CompleterModel, CompletionHandler, ProviderReconciliator, KernelCompleterProvider } from '@jupyterlab/completer';
 import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
 import { INotebookContent, CellType, IAttachments } from '@jupyterlab/nbformat';
 import { ISharedAttachmentsCell, IYText } from '@jupyter/ydoc';
 import { WIDGET_MIMETYPE } from '@jupyter-widgets/html-manager/lib/output_renderers';
-import { Lite } from '../../jupyter/JupyterContext';
-import { Kernel } from '../../jupyter/kernel/Kernel';
-import JupyterReactContentFactory from './content/JupyterReactContentFactory';
-import JupyterReactNotebookModelFactory from './model/JupyterReactNotebookModelFactory';
-import {
-  INotebookProps,
-//  ExternalIPyWidgets,
-//  BundledIPyWidgets,
-} from './Notebook';
+import { Lite } from '../../jupyter/lite';
+import { Kernel } from '../../jupyter/kernel';
+import { ICellSidebarProps } from './cell/sidebar/CellSidebarWidget';
+import { JupyterReactContentFactory } from './content/JupyterReactContentFactory';
+import { JupyterReactNotebookModelFactory } from './model/JupyterReactNotebookModelFactory';
+import { INotebookProps } from './Notebook';
 import { NotebookCommands } from './NotebookCommands';
-import getMarked from './marked/marked';
-import { WidgetManager } from '../../jupyter/ipywidgets/lab/manager';
-import { WidgetRenderer } from '../../jupyter/ipywidgets/lab/renderer';
+import { getMarked } from './marked/marked';
+import { WidgetManager, WidgetLabRenderer } from '../../jupyter/ipywidgets';
 
-const FALLBACK_PATH = 'ping.ipynb';
+const FALLBACK_NOTEBOOK_PATH = 'ping.ipynb';
 
 export class NotebookAdapter {
+
+  private _CellSidebar?: (props: ICellSidebarProps) => JSX.Element;
   private _boxPanel: BoxPanel;
   private _commandRegistry: CommandRegistry;
   private _context?: Context<INotebookModel>;
-//  private _bundledIPyWidgets?: BundledIPyWidgets[];
-//  private _externalIPyWidgets?: ExternalIPyWidgets[];
+  private _documentRegistry?: DocumentRegistry;
   private _iPyWidgetsManager?: WidgetManager;
-  private _kernel: Kernel;
+  private _id: string;
+  private _kernel?: Kernel;
   private _lite?: Lite;
   private _nbformat?: INotebookContent;
   private _nbgrader: boolean;
+  private _notebookModelFactory?: JupyterReactNotebookModelFactory;
   private _notebookPanel?: NotebookPanel;
+  private _url?: string;
   private _path?: string;
-  private _readOnly: boolean;
+  private _readonly: boolean;
   private _renderers: IRenderMime.IRendererFactory[];
   private _rendermime?: RenderMimeRegistry;
+  private _serverless: boolean;
   private _serviceManager: ServiceManager.IManager;
   private _tracker?: NotebookTracker;
-  private _id: string;
-  private _CellSidebar?: (props: any) => JSX.Element;
 
-  constructor(
-    props: INotebookProps,
-    serviceManager: ServiceManager.IManager,
-    lite?: Lite
-  ) {
-//    this._bundledIPyWidgets = props.bundledIPyWidgets;
-//    this._externalIPyWidgets = props.externalIPyWidgets;
-    this._kernel = props.kernel!;
-    this._lite = lite;
+  constructor(props: INotebookProps) {
+    this._CellSidebar = props.CellSidebar;
+    this._id = props.id;
+    this._kernel = props.kernel;
+    this._lite = props.lite;
     this._nbformat = props.nbformat;
     this._nbgrader = props.nbgrader;
     this._path = props.path;
-    this._readOnly = props.readOnly;
+    this._readonly = props.readonly;
     this._renderers = props.renderers;
-    this._id = props.id;
-
-    this._CellSidebar = props.CellSidebar;
-
-    this._serviceManager = serviceManager;
+    this._serverless = props.serverless;
+    this._serviceManager = props.serviceManager!;
+    this._url = props.url;
 
     this._boxPanel = new BoxPanel();
     this._boxPanel.addClass('dla-Jupyter-Notebook');
@@ -127,7 +94,6 @@ export class NotebookAdapter {
     return fetch(url).then(response => {
       return response.text();
     }).then(nb => {
-//      const nbformat = nb.replaceAll('\\n', '');
       return JSON.parse(nb);
     });
   }
@@ -136,135 +102,61 @@ export class NotebookAdapter {
     this._commandRegistry?.processKeydownEvent(event);
   }
 
-  private setupAdapter(): void {
-    const useCapture = true;
-
-    document.addEventListener( 'keydown', this.notebookKeydownListener, useCapture);
-
-    const initialFactories = standardRendererFactories.filter(
-      factory => factory.mimeTypes[0] !== 'text/javascript'
-    );
-
-    const ipywidgetsRendererFactory: IRenderMime.IRendererFactory =  {
-      safe: true,
-      mimeTypes: [WIDGET_MIMETYPE],
-      defaultRank: 1,
-      createRenderer: options =>
-        new WidgetRenderer(options, this._iPyWidgetsManager!),
-    };
-
-    initialFactories.push(ipywidgetsRendererFactory);
-    initialFactories.push(jsonRendererFactory);
-    initialFactories.push(javascriptRendererFactory);
-
-    this._renderers.map(renderer => initialFactories.push(renderer));
-
-    const languages = new EditorLanguageRegistry();
-    // Register default languages.
-    for (const language of EditorLanguageRegistry.getDefaultLanguages()) {
-      languages.addLanguage(language);
-    }
-    // Add Jupyter Markdown flavor here to support code block highlighting.
-    languages.addLanguage({
-      name: 'ipythongfm',
-      mime: 'text/x-ipythongfm',
-      load: async () => {
-        // TODO: add support for LaTeX.
-        const m = await import('@codemirror/lang-markdown');
-        return m.markdown({
-          codeLanguages: (info: string) => languages.findBest(info) as any,
-        });
+  setupCompleter(notebookPanel: NotebookPanel) {
+    const editor =
+      notebookPanel.content.activeCell &&
+      notebookPanel.content.activeCell.editor;
+    const sessionContext = notebookPanel.context.sessionContext;
+    const model = new CompleterModel();
+    const completer = new Completer({ editor, model });
+    const timeout = 1000;
+    const provider = new KernelCompleterProvider();
+    const reconciliator = new ProviderReconciliator({
+      context: {
+        widget: notebookPanel,
+        editor,
+        session: sessionContext.session,
       },
+      providers: [provider],
+      timeout,
     });
-
-    this._rendermime = new RenderMimeRegistry({
-      initialFactories,
-      latexTypesetter: new MathJaxTypesetter(),
-      markdownParser: getMarked(languages),
-    });
-
-    const documentRegistry = new DocumentRegistry({});
-    const mimeTypeService = new CodeMirrorMimeTypeService(languages);
-
-    const themes = new EditorThemeRegistry();
-    for (const theme of EditorThemeRegistry.getDefaultThemes()) {
-      themes.addTheme(theme);
-    }
-    const editorExtensions = () => {
-      const registry = new EditorExtensionRegistry();
-      for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions(
-        { themes }
-      )) {
-        registry.addExtension(extensionFactory);
-      }
-      registry.addExtension({
-        name: 'shared-model-binding',
-        factory: options => {
-          const sharedModel = options.model.sharedModel as IYText;
-          return EditorExtensionRegistry.createImmutableExtension(
-            ybinding({
-              ytext: sharedModel.ysource,
-              undoManager: sharedModel.undoManager ?? undefined,
-            })
-          );
+    const handler = new CompletionHandler({ completer, reconciliator });
+    void sessionContext.ready.then(() => {
+      const provider = new KernelCompleterProvider();
+      const reconciliator = new ProviderReconciliator({
+        context: {
+          widget: this._notebookPanel!,
+          editor,
+          session: sessionContext.session,
         },
+        providers: [provider],
+        timeout: timeout,
       });
-      return registry;
-    };
-    const factoryService = new CodeMirrorEditorFactory({
-      extensions: editorExtensions(),
-      languages,
+      handler.reconciliator = reconciliator;
     });
-    const editorServices: IEditorServices = {
-      factoryService,
-      mimeTypeService,
-    };
-    const editorFactory = editorServices.factoryService.newInlineEditor;
-    const contentFactory = this._CellSidebar
-      ? new JupyterReactContentFactory(
-          this._CellSidebar,
-          this._id,
-          this._nbgrader,
-          this._commandRegistry,
-          { editorFactory },
-        )
-      : new NotebookPanel.ContentFactory({ editorFactory });
+    handler.editor = editor;
+    notebookPanel.content.activeCellChanged.connect(
+      (notebook: Notebook, cell: Cell<ICellModel> | null) => {
+        if (cell) {
+          cell.ready.then(() => {
+            handler.editor = cell && cell.editor;
+          });  
+        }
+      }
+    );
+    completer.hide();
+    Widget.attach(completer, document.body);
+    return handler;
+  }
 
-    this._tracker = new NotebookTracker({ namespace: this._id });
-
-    const notebookWidgetFactory = new NotebookWidgetFactory({
-      name: 'Notebook',
-      modelName: 'viewer',
-      fileTypes: ['notebook'],
-      defaultFor: ['notebook'],
-      preferKernel: true,
-      autoStartDefault: false,
-      canStartKernel: false,
-      shutdownOnClose: false,
-      rendermime: this._rendermime,
-      contentFactory,
-      mimeTypeService: editorServices.mimeTypeService,
-    });
-    notebookWidgetFactory.widgetCreated.connect((sender, notebookPanel) => {
-      notebookPanel.context.pathChanged.connect(() => {
-        this._tracker?.save(notebookPanel);
-      });
-      this._tracker?.add(notebookPanel);
-    });
-    documentRegistry.addWidgetFactory(notebookWidgetFactory);
-
-    const notebookModelFactory = new JupyterReactNotebookModelFactory({
-      nbformat: this._nbformat,
-      readOnly: this._readOnly,
-    });
-    documentRegistry.addModelFactory(notebookModelFactory);
+  initializeContext() {
 
     this._context = new Context({
       manager: this._serviceManager,
-      factory: notebookModelFactory,
-      path: this._path ?? FALLBACK_PATH,
+      factory: this._notebookModelFactory!,
+      path: this._path ?? FALLBACK_NOTEBOOK_PATH,
       kernelPreference: {
-        id: this._kernel.id,
+        id: this._kernel?.id,
         shouldStart: false,
         canStart: false,
         autoStartDefault: false,
@@ -272,7 +164,8 @@ export class NotebookAdapter {
       },
     });
 
-    this._iPyWidgetsManager = new WidgetManager(this._context, this._rendermime, {saveState: false});
+    this._iPyWidgetsManager = new WidgetManager(this._context, this._rendermime!, {saveState: false});
+
     /*
     this._rendermime!.addFactory(
       {
@@ -284,6 +177,7 @@ export class NotebookAdapter {
       1
     );
     */
+
     /*
     // This code block was causing https://github.com/datalayer/jupyter-ui/issues/195
     // TODO Double check there is not side effect.
@@ -295,18 +189,7 @@ export class NotebookAdapter {
         );
       });
     */
-    /*
-    if (this._bundledIPyWidgets) {
-      this._iPyWidgetsManager.loadBundledIPyWidgets(
-        this._bundledIPyWidgets
-      );
-    }
-    if (this._externalIPyWidgets) {
-      this._iPyWidgetsManager.loadExternalIPyWidgets(
-        this._externalIPyWidgets
-      );
-    }
-    */
+
     // These are fixes to have more control on the kernel launch.
     (this._context.sessionContext as any)._initialize =
       async (): Promise<boolean> => {
@@ -315,7 +198,7 @@ export class NotebookAdapter {
         await manager.ready;
         await manager.refreshRunning();
         const model = find(manager.running(), model => {
-          return model.kernel?.id === this._kernel.id;
+          return model.kernel?.id === this._kernel?.id;
         });
         if (model) {
           try {
@@ -356,6 +239,7 @@ export class NotebookAdapter {
         );
       }
     });
+
     /*
     // Alternative way to create a NotebookPanel.
     const content = new Notebook({
@@ -372,17 +256,18 @@ export class NotebookAdapter {
       content,
     });
     */
-    this._notebookPanel = documentRegistry
-      .getWidgetFactory('Notebook')
-      ?.createNew(this._context) as NotebookPanel;
 
-    this._iPyWidgetsManager?.registerWithKernel(
-      this._kernel.connection
-    );
+    this._notebookPanel = this._documentRegistry?.getWidgetFactory('Notebook')?.createNew(this._context) as NotebookPanel;
 
-    this._notebookPanel!.sessionContext.kernelChanged.connect(
+    if (this._kernel) {
+      this._iPyWidgetsManager?.registerWithKernel(
+        this._kernel.connection
+      );  
+    }
+
+    this._notebookPanel?.sessionContext.kernelChanged.connect(
       (
-        sender: any,
+        _: any,
         args: IChangedArgs<
           JupyterKernel.IKernelConnection | null,
           JupyterKernel.IKernelConnection | null,
@@ -394,27 +279,29 @@ export class NotebookAdapter {
     );
 
     const completerHandler = this.setupCompleter(this._notebookPanel!);
-
-    NotebookCommands(
-      this._commandRegistry,
-      this._notebookPanel,
-      completerHandler,
-      this._tracker,
-      this._path
-    );
+    try {
+      NotebookCommands(
+        this._commandRegistry,
+        this._notebookPanel,
+        completerHandler,
+        this._tracker!,
+        this._path
+      );
+    }
+    catch {
+      // No op - the commands may already be registered.
+    }
 
     this._boxPanel.addWidget(this._notebookPanel);
     BoxPanel.setStretch(this._notebookPanel, 0);
     window.addEventListener('resize', () => {
       this._notebookPanel?.update();
     });
-    const isNbFormat =
-      this._path !== undefined && this._path !== '' ? false : true;
+
+    const isNbFormat = this._path !== undefined && this._path !== '' ? false : true;
     if (isNbFormat && !this._lite) {
       // Fixes if nbformat is provided and we don't want to interact with the content manager.
-      (this._context as any).initialize = async (
-        isNew: boolean
-      ): Promise<void> => {
+      (this._context as any).initialize = async (isNew: boolean): Promise<void> => {
         (this._context as Context<INotebookModel>).model.dirty = false;
         const now = new Date().toISOString();
         const model: Contents.IModel = {
@@ -430,84 +317,187 @@ export class NotebookAdapter {
         };
         (this._context as any)._updateContentsModel(model);
         await (this._context as any)._populate();
-        (
-          this._context as Context<INotebookModel>
-        ).model.sharedModel.clearUndoHistory();
+        (this._context as Context<INotebookModel>).model.sharedModel.clearUndoHistory();
       };
     }
+
     this._context.initialize(isNbFormat).then(() => {
       if (isNbFormat) {
         this._notebookPanel?.model?.fromJSON(this._nbformat!);
       }
     });
+
   }
 
-  setupCompleter(notebookPanel: NotebookPanel) {
-    const editor =
-      notebookPanel.content.activeCell &&
-      notebookPanel.content.activeCell.editor;
-    const sessionContext = notebookPanel.context.sessionContext;
-    const model = new CompleterModel();
-    const completer = new Completer({ editor, model });
-    const timeout = 1000;
-    const provider = new KernelCompleterProvider();
-    const reconciliator = new ProviderReconciliator({
-      context: {
-        widget: notebookPanel,
-        editor,
-        session: sessionContext.session,
-      },
-      providers: [provider],
-      timeout,
-    });
-    const handler = new CompletionHandler({ completer, reconciliator });
-    void sessionContext.ready.then(() => {
-      const provider = new KernelCompleterProvider();
-      const reconciliator = new ProviderReconciliator({
-        context: {
-          widget: this._notebookPanel!,
-          editor,
-          session: sessionContext.session,
-        },
-        providers: [provider],
-        timeout: timeout,
-      });
-      handler.reconciliator = reconciliator;
-    });
-    handler.editor = editor;
-    notebookPanel.content.activeCellChanged.connect(
-      (sender: any, cell: Cell<ICellModel>) => {
-        cell.ready.then(() => {
-          handler.editor = cell && cell.editor;
-        });
-      }
+  private setupAdapter(): void {
+
+    document.addEventListener('keydown', this.notebookKeydownListener, true);
+
+    const initialFactories = standardRendererFactories.filter(
+      factory => factory.mimeTypes[0] !== 'text/javascript'
     );
-    completer.hide();
-    Widget.attach(completer, document.body);
-    return handler;
-  }
 
-  assignKernel(kernel: Kernel) {
-    this._kernel = kernel;
-    this._context?.sessionContext.changeKernel({
-      id: kernel.id,
+    const ipywidgetsRendererFactory: IRenderMime.IRendererFactory =  {
+      safe: true,
+      mimeTypes: [WIDGET_MIMETYPE],
+      defaultRank: 1,
+      createRenderer: options =>
+        new WidgetLabRenderer(options, this._iPyWidgetsManager!),
+    };
+
+    initialFactories.push(ipywidgetsRendererFactory);
+    initialFactories.push(jsonRendererFactory);
+    initialFactories.push(javascriptRendererFactory);
+
+    this._renderers.map(renderer => initialFactories.push(renderer));
+
+    const languages = new EditorLanguageRegistry();
+    // Register default languages.
+    for (const language of EditorLanguageRegistry.getDefaultLanguages()) {
+      languages.addLanguage(language);
+    }
+    // Add Jupyter Markdown flavor here to support code block highlighting.
+    languages.addLanguage({
+      name: 'ipythongfm',
+      mime: 'text/x-ipythongfm',
+      load: async () => {
+        // TODO: add support for LaTeX.
+        const m = await import('@codemirror/lang-markdown');
+        return m.markdown({
+          codeLanguages: (info: string) => languages.findBest(info) as any,
+        });
+      },
     });
+
+    this._rendermime = new RenderMimeRegistry({
+      initialFactories,
+      latexTypesetter: new MathJaxTypesetter(),
+      markdownParser: getMarked(languages),
+    });
+
+    this._documentRegistry = new DocumentRegistry({});
+    const mimeTypeService = new CodeMirrorMimeTypeService(languages);
+
+    const themes = new EditorThemeRegistry();
+    for (const theme of EditorThemeRegistry.getDefaultThemes()) {
+      themes.addTheme(theme);
+    }
+    const editorExtensions = () => {
+      const registry = new EditorExtensionRegistry();
+      for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions(
+        { themes }
+      )) {
+        registry.addExtension(extensionFactory);
+      }
+      registry.addExtension({
+        name: 'shared-model-binding',
+        factory: options => {
+          const sharedModel = options.model.sharedModel as IYText;
+          return EditorExtensionRegistry.createImmutableExtension(
+            ybinding({
+              ytext: sharedModel.ysource,
+              undoManager: sharedModel.undoManager ?? undefined,
+            })
+          );
+        },
+      });
+      return registry;
+    };
+    const factoryService = new CodeMirrorEditorFactory({
+      extensions: editorExtensions(),
+      languages,
+    });
+    const editorServices: IEditorServices = {
+      factoryService,
+      mimeTypeService,
+    };
+    const editorFactory = editorServices.factoryService.newInlineEditor;
+    const contentFactory = this._CellSidebar ?
+      new JupyterReactContentFactory(
+          this._CellSidebar,
+          this._id,
+          this._nbgrader,
+          this._commandRegistry,
+          { editorFactory },
+        )
+    :
+      new NotebookPanel.ContentFactory({ editorFactory });
+
+    this._tracker = new NotebookTracker({ namespace: this._id });
+
+    const notebookWidgetFactory = new NotebookWidgetFactory({
+      name: 'Notebook',
+      modelName: 'viewer',
+      fileTypes: ['notebook'],
+      defaultFor: ['notebook'],
+      preferKernel: true,
+      autoStartDefault: false,
+      canStartKernel: false,
+      shutdownOnClose: false,
+      rendermime: this._rendermime,
+      contentFactory,
+      mimeTypeService: editorServices.mimeTypeService,
+    });
+    notebookWidgetFactory.widgetCreated.connect((sender, notebookPanel) => {
+      notebookPanel.context.pathChanged.connect(() => {
+        this._tracker?.save(notebookPanel);
+      });
+      this._tracker?.add(notebookPanel);
+    });
+    this._documentRegistry.addWidgetFactory(notebookWidgetFactory);
+
+    this._notebookModelFactory = new JupyterReactNotebookModelFactory({
+      nbformat: this._nbformat,
+      readonly: this._readonly,
+    });
+    this._documentRegistry.addModelFactory(this._notebookModelFactory);
+
+    this.initializeContext();
+
   }
 
   get id(): string {
     return this._id;
   }
 
+  get readonly(): boolean {
+    return this._readonly;
+  }
+
+  get serverless(): boolean {
+    return this._serverless;
+  }
+
+  get lite(): Lite | undefined {
+    return this._lite;
+  }
+
+  get path(): string | undefined {
+    return this._path;
+  }
+
+  get url(): string | undefined {
+    return this._url;
+  }
+
+  get nbformat(): INotebookContent | undefined {
+    return this._nbformat;
+  }
+
+  get kernel(): Kernel | undefined {
+    return this._kernel;
+  }
+
   get notebookPanel(): NotebookPanel | undefined {
     return this._notebookPanel;
   }
 
-  get commands(): CommandRegistry {
-    return this._commandRegistry;
-  }
-
   get panel(): BoxPanel {
     return this._boxPanel;
+  }
+
+  get commands(): CommandRegistry {
+    return this._commandRegistry;
   }
 
   get serviceManager(): ServiceManager.IManager {
@@ -515,18 +505,49 @@ export class NotebookAdapter {
   }
 
   /*
-   * Only use this method to change an already existing nbformat.
+   * Only use this method to change an adapter with a nbformat.
    */
   setNbformat(nbformat: INotebookContent) {
     if (nbformat === null) {
-      throw new Error(
-        'The nbformat should first be set via the constructor of NotebookAdapter'
-      );
+      throw new Error('The nbformat should first be set via the constructor of NotebookAdapter');
     }
-    this._nbformat = nbformat;
-    if (this._nbformat) {
+    if (this._nbformat !== nbformat) {
+      this._nbformat = nbformat;
       this._notebookPanel?.model?.fromJSON(nbformat);
     }
+  }
+
+  setServiceManager(serviceManager: ServiceManager.IManager, lite: Lite) {
+    console.log('-------', serviceManager);
+    if (this._lite !== lite) {
+      this._lite = lite;
+    }
+    if (this._serviceManager !== serviceManager) {
+      this._serviceManager = serviceManager;
+    }
+    this._nbformat = this._notebookPanel?.model?.toJSON() as INotebookContent;
+    this.initializeContext();
+  }
+
+  setReadonly(readonly: boolean) {
+    if (this._readonly !== readonly) {
+      this._readonly = readonly;
+      Array.from(this._context?.model.cells!).forEach(cell => cell.setMetadata('editable', !readonly));
+    }
+  }
+
+  setPath(path: string) {
+    if (this._path !== path) {
+      this._path = path;
+      this.initializeContext();
+    }
+  }
+
+  assignKernel(kernel: Kernel) {
+    this._kernel = kernel;
+    this._context?.sessionContext.changeKernel({
+      id: kernel.id,
+    });
   }
 
   setDefaultCellType = (cellType: CellType) => {
@@ -607,10 +628,11 @@ export class NotebookAdapter {
 
   dispose = () => {
     document.removeEventListener('keydown', this.notebookKeydownListener, true);
-    //    this._boxPanel.dispose();
-    //    this._notebookPanel?.dispose();
-    //    this._context?.dispose();
+    this._context?.dispose();
+    this._notebookPanel?.dispose();
+    this._boxPanel.dispose();
   };
+
 }
 
 export default NotebookAdapter;
