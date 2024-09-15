@@ -190,14 +190,26 @@ export class KernelExecutor {
         .getState()
         .getExecutionPhase(this._kernelConnection.id);
       if (currentPhase !== ExecutionPhase.completed_with_error) {
+        // Check if we have warning in output list
+        let hasWarning = false;
+        for (let i = 0; i < this.model.length; i++) {
+          const modelItem = this.model.get(i);
+          if (
+            modelItem.type === 'stream' &&
+            modelItem.toJSON().name === 'stderr'
+          ) {
+            hasWarning = true;
+            break;
+          }
+        }
+        const targetPhase = hasWarning
+          ? ExecutionPhase.completed_with_warning
+          : ExecutionPhase.completed;
         kernelsStore
           .getState()
-          .setExecutionPhase(
-            this._kernelConnection.id,
-            ExecutionPhase.completed
-          );
+          .setExecutionPhase(this._kernelConnection.id, targetPhase);
         this._executionPhaseChanged.emit({
-          executionPhase: ExecutionPhase.completed,
+          executionPhase: targetPhase,
           outputModel: this._model,
         });
       }
@@ -307,6 +319,11 @@ export class KernelExecutor {
         this._modelChanged.emit(this._model);
         break;
       case 'stream':
+        this._outputs.push(message.content as IStream);
+        this._outputsChanged.emit(this._outputs);
+        this._model.add(output);
+        this._modelChanged.emit(this._model);
+        break;
       case 'error':
         this._outputs.push(message.content as IStream);
         this._outputsChanged.emit(this._outputs);
