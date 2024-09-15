@@ -35,13 +35,20 @@ const OUTPUTS_2: IOutput[] = [
 const SOURCE_ID_3 = 'output-id-3';
 const SOURCE_3 = 'a = 5';
 
+const SOURCE_ID_4 = 'output-id-4';
+const SOURCE_4 =
+  "import warnings; warnings.warn('This is a warning message'); print('See warning in output!')";
+
+const SOURCE_ID_5 = 'output-id-5';
+const SOURCE_5 = 'print(2+2)';
+
 const OutputWithMonitoring = ({
   title,
   id,
   code,
   output,
 }: {
-  title: string,
+  title: string;
   id: string;
   code: string;
   output?: IOutput[];
@@ -76,6 +83,14 @@ const OutputWithMonitoring = ({
           ...executionLog,
           new Date().toISOString() +
             ' EXECUTION PHASE - COMPLETED_WITH_ERROR and output ' +
+            JSON.stringify(phaseOutput.outputModel?.toJSON()),
+        ]);
+        break;
+      case ExecutionPhase.completed_with_warning:
+        setExecutionLog(executionLog => [
+          ...executionLog,
+          new Date().toISOString() +
+            ' EXECUTION PHASE - COMPLETED_WITH_WARNING and output ' +
             JSON.stringify(phaseOutput.outputModel?.toJSON()),
         ]);
         break;
@@ -149,6 +164,20 @@ root.render(
       key="3"
       id={SOURCE_ID_3}
       code={SOURCE_3}
+    />
+
+    <OutputWithMonitoring
+      title="Code generating warning"
+      key="4"
+      id={SOURCE_ID_4}
+      code={SOURCE_4}
+    />
+
+    <OutputWithMonitoring
+      title="Code with stream output"
+      key="5"
+      id={SOURCE_ID_5}
+      code={SOURCE_5}
     />
   </Jupyter>
 );
