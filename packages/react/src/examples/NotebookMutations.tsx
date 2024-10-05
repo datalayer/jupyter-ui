@@ -6,9 +6,9 @@
 
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { Box, SegmentedControl, Label } from '@primer/react';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { ServiceManager } from '@jupyterlab/services';
-import { Box, SegmentedControl } from '@primer/react';
 import { createServiceManagerLite, createServerSettings, getJupyterServerUrl, getJupyterServerToken, ServiceManagerLess } from '../jupyter';
 import { useNotebookStore, Notebook} from './../components';
 import { JupyterReactTheme } from '../theme';
@@ -23,8 +23,7 @@ const NotebookMutations = () => {
   const [serverless, setServerless] = useState(true);
   const [lite, setLite] = useState(false);
   const [serviceManager, setServiceManager] = useState(new ServiceManagerLess());
-  const notebookStore = useNotebookStore();
-  const notebook = notebookStore.selectNotebook(NOTEBOOK_ID);
+  const notebook = useNotebookStore().selectNotebook(NOTEBOOK_ID);
   const changeIndex = (index: number) => {
     setIndex(index);
     switch(index) {
@@ -63,28 +62,28 @@ const NotebookMutations = () => {
           <SegmentedControl onChange={index => changeIndex(index)} aria-label="jupyter-react-example">
             <SegmentedControl.Button defaultSelected={index === 0}>Readonly</SegmentedControl.Button>
             <SegmentedControl.Button defaultSelected={index === 1}>Browser Kernel</SegmentedControl.Button>
-            <SegmentedControl.Button defaultSelected={index === 2}>OSS Kernel</SegmentedControl.Button>
-            <SegmentedControl.Button defaultSelected={index === 3} disabled>Datalayer CPU Kernel</SegmentedControl.Button>
-            <SegmentedControl.Button defaultSelected={index === 4} disabled>Datalayer GPU Kernel</SegmentedControl.Button>
+            <SegmentedControl.Button defaultSelected={index === 2}>OSS CPU Kernel</SegmentedControl.Button>
+            <SegmentedControl.Button defaultSelected={index === 3} disabled>Production CPU Kernel</SegmentedControl.Button>
+            <SegmentedControl.Button defaultSelected={index === 4} disabled>Production GPU Kernel</SegmentedControl.Button>
           </SegmentedControl>
         </Box>
         <Box ml={3}>
-          Readonly: {String(notebook?.adapter?.readonly)}
+          <Label>Readonly: {String(notebook?.adapter?.readonly)}</Label>
         </Box>
         <Box ml={3}>
-          Serverless: {String(notebook?.adapter?.serverless)}
+          <Label>Serverless: {String(notebook?.adapter?.serverless)}</Label>
         </Box>
         <Box ml={3}>
-          Lite: {String(notebook?.adapter?.lite)}
+          <Label>Lite: {String(notebook?.adapter?.lite)}</Label>
         </Box>
         <Box ml={3}>
-          Kernel: {notebook?.adapter?.kernel?.id} ({notebook?.adapter?.kernel?.info?.banner})
+          <Label>Kernel: {notebook?.adapter?.kernel?.id} ({notebook?.adapter?.kernel?.info?.banner})</Label>
         </Box>
         <Box ml={3}>
-          Service Manager Ready: {String(notebook?.adapter?.serviceManager.isReady)}
+          <Label>Service Manager Ready: {String(notebook?.adapter?.serviceManager.isReady)}</Label>
         </Box>
         <Box ml={3}>
-          Service Manager URL: {notebook?.adapter?.serviceManager.serverSettings.baseUrl}
+          <Label>Service Manager URL: {notebook?.adapter?.serviceManager.serverSettings.baseUrl}</Label>
         </Box>
       </Box>
       <Notebook
