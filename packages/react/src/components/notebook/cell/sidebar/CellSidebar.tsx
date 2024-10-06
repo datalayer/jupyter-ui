@@ -23,7 +23,7 @@ import { DATALAYER_CELL_HEADER_CLASS } from './CellSidebarWidget';
 export const CellSidebar = (props: ICellSidebarProps) => {
   const { notebookId, cellId, nbgrader } = props;
   const [visible, setVisible] = useState(false);
-  const notebookStore = useNotebookStore()
+  const notebookStore = useNotebookStore();
   const activeCell = notebookStore.selectActiveCell(notebookId);
   const layout = activeCell?.layout;
   if (layout) {
@@ -54,11 +54,11 @@ export const CellSidebar = (props: ICellSidebarProps) => {
       {nbgrader && (
         <ActionMenu>
           {/*
-            <ActionMenu.Anchor>
-              <IconButton icon={KebabHorizontalIcon} variant="invisible" aria-label="Open column options" />
-            </ActionMenu.Anchor>
-            <ActionMenu.Overlay>
-            */}
+          <ActionMenu.Anchor>
+            <IconButton icon={KebabHorizontalIcon} variant="invisible" aria-label="Open column options" />
+          </ActionMenu.Anchor>
+          <ActionMenu.Overlay>
+          */}
           <CellMetadataEditor
             notebookId={notebookId}
             cell={activeCell}

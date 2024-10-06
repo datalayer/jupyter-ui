@@ -8,6 +8,9 @@ import { useEffect, useState, useMemo } from 'react';
 import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
 import { ServiceManager } from '@jupyterlab/services';
+import { getJupyterServerUrl, createServiceManagerLite, ensureJupyterAuth, createServerSettings, JupyterPropsType, DEFAULT_KERNEL_NAME } from '../jupyter';
+import { ServiceManagerLess } from '../jupyter/services';
+import { Kernel } from '../jupyter/kernel/Kernel';
 import type { IJupyterReactConfig } from './IJupyterReactConfig';
 import { IJupyterConfig, loadJupyterConfig } from '../jupyter/JupyterConfig';
 import { cellsStore, CellsState } from '../components/cell/CellState';
@@ -15,10 +18,6 @@ import { consoleStore, ConsoleState } from '../components/console/ConsoleState';
 import { notebookStore, NotebookState } from '../components/notebook/NotebookState';
 import { outputsStore, OutputState } from '../components/output/OutputState';
 import { terminalStore, TerminalState } from '../components/terminal/TerminalState';
-import { getJupyterServerUrl, createServiceManagerLite, ensureJupyterAuth, createServerSettings, JupyterPropsType } from '../jupyter';
-import { DEFAULT_KERNEL_NAME } from '../jupyter';
-import { ServiceManagerLess } from '../jupyter/services';
-import { Kernel } from '../jupyter/kernel/Kernel';
 
 export type JupyterReactState = {
   cellsStore: CellsState;
@@ -78,7 +77,7 @@ export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
   },
 }));
 
-// TODO Reuse code portions from JupyterContext
+// TODO Reuse code portions from JupyterContext.
 export function useJupyterReactStore(): JupyterReactState;
 
 export function useJupyterReactStore<T>(selector: (state: JupyterReactState) => T): T;
@@ -156,10 +155,7 @@ export function useJupyterReactStoreFromProps(props: JupyterPropsType): JupyterR
         if (useRunningKernelId && useRunningKernelIndex > -1) {
           throw new Error('You can not ask for useRunningKernelId and useRunningKernelIndex at the same time.');
         }
-        if (
-          startDefaultKernel &&
-          (useRunningKernelId || useRunningKernelIndex > -1)
-        ) {
+        if (startDefaultKernel && (useRunningKernelId || useRunningKernelIndex > -1)) {
           throw new Error('You can not ask for startDefaultKernel and (useRunningKernelId or useRunningKernelIndex) at the same time.');
         }
         const serviceManager = new ServiceManager({ serverSettings });

@@ -72,33 +72,33 @@ export const Notebook = (props: INotebookProps) => {
     nbgrader,
     path,
     readonly,
-    url,
     serverless,
+    url,
   } = props;
-  const notebookStore = useNotebookStore();
   const [id, _] = useState(props.id || newUuid());
   const [adapter, setAdapter] = useState<NotebookAdapter>();
+  const [flipflop, setFlipflop] = useState(true);
   const kernel = props.kernel ?? defaultKernel;
+  const notebookStore = useNotebookStore();
   const portals = notebookStore.selectNotebookPortals(id);
-  const bootstrapAdapter = () => {
-    const adapter = new NotebookAdapter(
-      {
-        ...props,
-        id,
-        lite,
-        kernel,
-        serviceManager,
-      }
-    );
-    console.log('Notebook Adapter is created', adapter);
+  //
+  const bootstrapAdapter = (serviceManager?: ServiceManager.IManager) => {
+    const adapter = new NotebookAdapter({
+      ...props,
+      id,
+      lite,
+      kernel,
+      serviceManager,
+    });
+    console.log('Notebook Adapter is bootstraping...', adapter.serviceManager);
     // Update the local state.
     setAdapter(adapter);
     // Update the global state.
     notebookStore.update({ id, state: { adapter } });
     // Update the global state based on events.
-    adapter.notebookPanel?.model?.contentChanged.connect(
-      (notebookModel, _) => { notebookStore.changeModel({ id, notebookModel }) }
-    );
+    adapter.notebookPanel?.model?.contentChanged.connect((notebookModel, _) => {
+      notebookStore.changeModel({ id, notebookModel })
+    });
     /*
     adapter.notebookPanel?.model!.sharedModel.changed.connect((_, notebookChange) => {
       notebookStore.notebookChange({ id, notebookChange });
@@ -108,17 +108,16 @@ export const Notebook = (props: INotebookProps) => {
     });
     */
     adapter.notebookPanel?.content.activeCellChanged.connect((_, cellModel) => {
-        if (cellModel === null) {
-          notebookStore.activeCellChange({ id, cellModel: undefined });
-        } else {
-          notebookStore.activeCellChange({ id, cellModel });
-        }
+      if (cellModel === null) {
+        notebookStore.activeCellChange({ id, cellModel: undefined });
+      } else {
+        notebookStore.activeCellChange({ id, cellModel });
       }
-    );
+    });
     adapter.notebookPanel?.sessionContext.statusChanged.connect((_, kernelStatus) => {
       notebookStore.changeKernelStatus({ id, kernelStatus });
     });
-    // Add more behavior for the UI.
+    // Add more UI behavior when the Service Manager is ready...
     adapter.serviceManager.ready.then(() => {
       if (!readonly) {
         const cellModel = adapter.notebookPanel!.content.activeCell;
@@ -146,73 +145,84 @@ export const Notebook = (props: INotebookProps) => {
       }
     });
   }
-  const createAdapter = (kernel?: Kernel) => {
+  //
+  const createAdapter = (serviceManager?: ServiceManager.IManager, kernel?: Kernel) => {
     if (!kernel) {
-      bootstrapAdapter();
+      bootstrapAdapter(serviceManager);
     } else {
       kernel.ready.then(() => {
-        bootstrapAdapter();
+        bootstrapAdapter(serviceManager);
       });
     }
   }
   const disposeAdapter = () => {
-    if (adapter) {
-      notebookStore.dispose(id);
+    adapter?.notebookPanel?.disposed.connect((slot, _) => {
+      if (adapter) {
+        notebookStore.dispose(id);
+        setAdapter(undefined);
+      }
+    });
+    adapter?.notebookPanel?.dispose();
+  }
+  // Mutation Effects.
+  useEffect(() => {
+    if (!adapter && serviceManager) {
+      createAdapter(serviceManager);
+    }
+    else if (adapter && serviceManager) {
+      setFlipflop(false);
       setAdapter(undefined);
     }
-  }
+  }, [serviceManager]);
   useEffect(() => {
-    return () => {
-      disposeAdapter();
+    if (!flipflop) {
+      setFlipflop(true);
+      createAdapter(serviceManager);
     }
-  }, []);
+  }, [flipflop]);
   useEffect(() => {
-    /*
-    if (adapter && (adapter.lite !== lite || adapter.serviceManager !== serviceManager)) {
-      if (adapter) {
-        adapter.setServiceManager(serviceManager!, lite!);
-      } else {
-        createAdapter(kernel);
-      }
-    } else
-    */
-    if (serviceManager && (kernel || serverless)) {
-      if (adapter) {
-        disposeAdapter();
-      }
-      createAdapter(kernel);
+    if (adapter && adapter.kernel !== kernel) {
+      adapter.setKernel(kernel);
     }
-  }, [serviceManager, kernel, serverless, lite]);
+  }, [kernel]);
   useEffect(() => {
-    if (adapter && nbformat && adapter.nbformat !== nbformat) {
+    if (adapter && adapter.readonly !== readonly) {
+      adapter.setReadonly(readonly);
+    }
+  }, [readonly]);
+  useEffect(() => {
+    if (adapter && adapter.serverless !== serverless) {
+      adapter.setServerless(serverless);
+    }
+  }, [serverless]);
+  useEffect(() => {
+    if (adapter && adapter.nbformat !== nbformat) {
       adapter.setNbformat(nbformat);
     }
   }, [nbformat]);
   useEffect(() => {
     if (adapter && path && adapter.path !== path) {
       disposeAdapter();
-      createAdapter();
+      createAdapter(serviceManager);
     }
   }, [path]);
   useEffect(() => {
     if (adapter && url && adapter.url !== url) {
       disposeAdapter();
-      createAdapter();
+      createAdapter(serviceManager);
     }
   }, [url]);
+  // Dispose Effects.
   useEffect(() => {
-    if (adapter && url && adapter.readonly !== readonly) {
-      adapter.setReadonly(readonly);
+    return () => {
+      disposeAdapter();
     }
-  }, [readonly]);
+  }, []);
+  //
   return (
-    <Box
-      style={{ height, width: '100%', position: 'relative' }}
-      id="dla-Jupyter-Notebook"
-    >
+    <Box style={{ height, width: '100%', position: 'relative' }} id="dla-Jupyter-Notebook">
       {Toolbar && <Toolbar notebookId={id} />}
-      <Box
-        className="dla-Box-Notebook"
+      <Box className="dla-Box-Notebook"
         sx={{
           '& .dla-Jupyter-Notebook': {
             height,
@@ -274,12 +284,10 @@ export const Notebook = (props: INotebookProps) => {
           {portals?.map((portal: React.ReactPortal) => portal)}
         </>
         <Box>
-          {adapter &&
-            (
-              <Lumino id={id}>
-                {adapter.panel}
-              </Lumino>
-            )
+          {adapter && flipflop &&
+            <Lumino id={id}>
+              {adapter.panel}
+            </Lumino>
           }
         </Box>
       </Box>

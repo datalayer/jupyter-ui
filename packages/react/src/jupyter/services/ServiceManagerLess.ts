@@ -5,9 +5,8 @@
  */
 
 import {
-  Builder, Contents, Event, IManager, NbConvert, NbConvertManager,
-  ServerConnection, ServiceManager, Setting, User, Workspace,
-  SettingManager, WorkspaceManager,
+  Builder, Contents, Event, IManager, NbConvert, NbConvertManager, ServerConnection,
+  ServiceManager, Setting, User, Workspace, SettingManager, WorkspaceManager,
 } from '@jupyterlab/services';
 import { BuildManager } from '@jupyterlab/services/lib/builder';
 import { IKernelConnection, IManager as IKernelManager, IModel } from '@jupyterlab/services/lib/kernel/kernel';
@@ -18,51 +17,41 @@ import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { PromiseDelegate, ReadonlyJSONObject } from '@lumino/coreutils';
 import { ISignal, Signal } from '@lumino/signaling';
 
-const WORKSPACE = JSON.parse(`{
+const WORKSPACE_JSON = `{
   "data": {
-      "layout-restorer:data": {
-          "main": {
-              "dock": null
-          },
-          "down": {
-              "size": 0,
-              "widgets": []
-          },
-          "left": {
-              "collapsed": false,
-              "visible": true,
-              "current": "filebrowser",
-              "widgets": [
-                  "filebrowser",
-                  "@jupyterlab/toc:plugin"
-              ],
-              "widgetStates": {}
-          },
-          "right": {
-              "collapsed": false,
-              "visible": true,
-              "current": "jp-property-inspector",
-              "widgets": [
-                  "jp-property-inspector"
-              ],
-              "widgetStates": {}
-          },
-          "relativeSizes": [
-              0.39589905362776023,
-              0.20820189274447948,
-              0.39589905362776023
-          ],
-          "top": {
-              "simpleVisibility": true
-          }
+    "layout-restorer:data": {
+      "main": {
+        "dock": null
+      },
+      "down": {
+        "size": 0,
+        "widgets": []
+      },
+      "left": {
+        "collapsed": true,
+        "visible": true,
+        "widgetStates": {}
+      },
+      "right": {
+        "collapsed": true,
+        "visible": true,
+        "widgetStates": {}
+      },
+      "relativeSizes": [
+      ],
+      "top": {
+        "simpleVisibility": true
       }
+    }
   },
   "metadata": {
-      "id": "default",
-      "last_modified": "2024-09-02T18:06:41.834588+00:00",
-      "created": "2024-09-02T18:06:41.834588+00:00"
+    "id": "default",
+    "last_modified": "2024-09-02T18:06:41.834588+00:00",
+    "created": "2024-09-02T18:06:41.834588+00:00"
   }
-}`) as Workspace.IWorkspace;
+}`;
+
+const WORKSPACE = JSON.parse(WORKSPACE_JSON) as Workspace.IWorkspace;
 
 export class TerminalManagerLess implements ITerminaManager {
   runningChanged: ISignal<ITerminaManager, ITerminalModel[]> = new Signal(this);
@@ -97,8 +86,7 @@ export class TerminalManagerLess implements ITerminaManager {
   refreshRunning(): Promise<void> {
     return Promise.resolve(void 0);
   }
-  dispose(): void {
-  }
+  dispose(): void {}
 }
 
 export class ContentsManagerLess implements Contents.IManager {
@@ -158,8 +146,7 @@ export class ContentsManagerLess implements Contents.IManager {
   deleteCheckpoint(path: string, checkpointID: string): Promise<void> {
     return new Promise(() => {});
   }
-  dispose(): void {
-  }
+  dispose(): void {}
 }
 
 export class KernelsManagerLess implements IKernelManager {
@@ -195,8 +182,7 @@ export class KernelsManagerLess implements IKernelManager {
   shutdownAll(): Promise<void> {
     return new Promise(() => {});
   }
-  dispose(): void {
-  }
+  dispose(): void {}
 }
 
 export class KernelspecManagerLess implements IKernelspecManager {
@@ -215,8 +201,7 @@ export class KernelspecManagerLess implements IKernelspecManager {
   refreshSpecs(): Promise<void> {
     return new Promise(() => {});
   }
-  dispose(): void {
-  }
+  dispose(): void {}
 }
 
 export class SessionManagerLess implements ISessionManager {
@@ -256,8 +241,7 @@ export class SessionManagerLess implements ISessionManager {
   stopIfNeeded(path: string): Promise<void> {
     return new Promise(() => {});
   }
-  dispose(): void {
-  }
+  dispose(): void {}
 }
 
 export class BuilderManagerLess {
@@ -289,12 +273,12 @@ export class SettingManagerLess extends SettingManager implements Setting.IManag
     this.serverSettings = serverSettings;
   }
   fetch(id: string): Promise<ISettingRegistry.IPlugin> {
-    return super.fetch(id)
 //    return new Promise(() => {});
+    return super.fetch(id)
   }
   list(query?: 'ids' | undefined): Promise<{ ids: string[]; values: ISettingRegistry.IPlugin[]; }> {
-    return super.list(query)
 //    return new Promise(() => {});
+    return super.list(query)
   }
   save(id: string, raw: string): Promise<void> {
 //    return super.save(id, raw);
@@ -323,8 +307,7 @@ export class UserManagerLess implements User.IManager {
   refreshUser(): Promise<void> {
     return new Promise(() => {});
   }
-  dispose(): void {
-  }
+  dispose(): void {}
 }
 
 export class EventsManagerLess implements Event.IManager {
@@ -337,8 +320,7 @@ export class EventsManagerLess implements Event.IManager {
   emit(event: Event.Request): Promise<void> {
     return new Promise(() => {});
   }
-  dispose(): void {
-  }
+  dispose(): void {}
 }
 
 export class WorkspaceManagerLess extends WorkspaceManager implements Workspace.IManager {
@@ -405,40 +387,23 @@ export class ServiceManagerLess implements ServiceManager.IManager {
   nbconvert: NbConvert.IManager;
   constructor(serverSettings?: ServerConnection.ISettings) {
     this.serverSettings = serverSettings ?? ServerConnection.makeSettings({
-//      baseUrl: 'https://',
-//      wsUrl: 'wss://',
-//      token: 'less-token',
+      baseUrl: 'http://',
+      wsUrl: 'ws://',
+      token: '',
     });
-    this.builder = new BuilderManagerLess(this.serverSettings) as Builder.IManager;
     this.contents = new ContentsManagerLess(this.serverSettings);
-    this.events = new EventsManagerLess(this.serverSettings);
     this.kernels = new KernelsManagerLess(this.serverSettings);
     this.kernelspecs = new KernelspecManagerLess(this.serverSettings);
-    this.nbconvert = new NbConvertManagerLess(this.serverSettings) as unknown as NbConvert.IManager;
     this.sessions = new SessionManagerLess(this.serverSettings);
-    this.settings = new SettingManagerLess(this.serverSettings)
+    this.settings = new SettingManagerLess(this.serverSettings);
     this.terminals = new TerminalManagerLess(this.serverSettings);
     this.user = new UserManagerLess(this.serverSettings)
+    this.builder = new BuilderManagerLess(this.serverSettings) as Builder.IManager;
+    this.events = new EventsManagerLess(this.serverSettings);
     this.workspaces = new WorkspaceManagerLess(this.serverSettings);
-    /*
-    const serviceManager = new ServiceManager({
-      serverSettings,
-    });
-    this.workspaces = serviceManager.workspaces;
-    this.contents = serviceManager.contents;
-    this.settings = serviceManager.settings;
-    this.builder = serviceManager.builder;
-    this.events = serviceManager.events;
-    this.kernels = serviceManager.kernels;
-    this.kernelspecs = serviceManager.kernelspecs;
-    this.nbconvert = serviceManager.nbconvert;
-    this.sessions = serviceManager.sessions;
-    this.terminals = serviceManager.terminals;
-    this.user = serviceManager.user;
-    */
+    this.nbconvert = new NbConvertManagerLess(this.serverSettings) as unknown as NbConvert.IManager;
   }
-  dispose(): void {
-  }
+  dispose(): void {}
 }
 
 export default ServiceManagerLess;

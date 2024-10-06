@@ -117,7 +117,6 @@ export class Kernel {
       updateConnectionStatus();
       this._kernelConnection.connectionStatusChanged.connect(
         (_, connectionStatus) => {
-          //        this.initReady();
           this._connectionStatus = connectionStatus;
           updateConnectionStatus();
         }

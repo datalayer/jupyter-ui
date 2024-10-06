@@ -81,6 +81,7 @@ type CellMutation = {
 export type NotebookState = INotebooksState & {
   setNotebooks: (notebooks: Map<string, INotebookState>) => void;
   selectNotebook: (id: string) => INotebookState | undefined;
+  selectNotebookAdapter: (id: string) => NotebookAdapter | undefined;
   selectNotebookModel: (id: string) => { model: INotebookModel | undefined; changed: any } | undefined;
   selectKernelStatus: (id: string) => string | undefined;
   selectActiveCell: (id: string) => Cell<ICellModel> | undefined;
@@ -113,6 +114,13 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
   setNotebooks: (notebooks: Map<string, INotebookState>) => set((state: NotebookState) => ({ notebooks })),
   selectNotebook: (id: string): INotebookState | undefined => {
     return get().notebooks.get(id);
+  },
+  selectNotebookAdapter: (id: string): NotebookAdapter | undefined => {
+    const notebook = get().notebooks.get(id);
+    if (notebook) {
+      return notebook.adapter;
+    }
+    return undefined;
   },
   selectNotebookModel: (id: string): { model: INotebookModel | undefined; changed: any } | undefined => {
     if (get().notebooks.get(id)) {
@@ -167,18 +175,21 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
     const notebooks = get().notebooks;
     let notebook = notebooks.get(update.id);
     if (notebook) {
+      /*
       notebook = {
         ...notebook,
         ...update.state,
       };
-      set((state: NotebookState) => ({ notebooks }));
+      */
+      // TODO Revisit this...
+      notebook.adapter = update.state.adapter;
     } else {
       notebooks.set(update.id, {
         adapter: update.state.adapter,
         portals: [],
       });    
-      set((state: NotebookState) => ({ notebooks }));
     }
+    set((state: NotebookState) => ({ notebooks }));
   },
   activeCellChange: (cellModelId: CellModelId) => {
     const notebooks = get().notebooks;
