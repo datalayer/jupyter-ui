@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Box, SegmentedControl, Label } from '@primer/react';
 import { INotebookContent } from '@jupyterlab/nbformat';
@@ -13,23 +13,28 @@ import { createServiceManagerLite, createServerSettings, getJupyterServerUrl, ge
 import { useNotebookStore, Notebook} from './../components';
 import { JupyterReactTheme } from '../theme';
 
-import nbformat from './notebooks/NotebookExample1.ipynb.json';
+import nb from './notebooks/NotebookExample1.ipynb.json';
 
 const NOTEBOOK_ID = 'notebook-mutations-id';
 
 loadJupyterConfig({});
+// const SERVICE_MANAGER = new ServiceManagerLess();
+const serverSettings = createServerSettings(getJupyterServerUrl(), getJupyterServerToken());
+const SERVICE_MANAGER = new ServiceManager({ serverSettings });
 
 const NotebookMutations = () => {
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(2);
+  const [nbformat, setNbformat] = useState(nb as INotebookContent);
   const [readonly, setReadonly] = useState(true);
   const [lite, setLite] = useState(false);
-  const [serviceManager, setServiceManager] = useState<ServiceManager.IManager>(new ServiceManagerLess());
+  const [serviceManager, setServiceManager] = useState<ServiceManager.IManager>(SERVICE_MANAGER);
   const notebookStore = useNotebookStore();
   const adapter = notebookStore.selectNotebookAdapter(NOTEBOOK_ID);
   const changeIndex = (index: number) => {
     setIndex(index);
     switch(index) {
       case 0: {
+        setNbformat(adapter?.nbformat!);
         setReadonly(true);
         setLite(false);
         const serviceManager = new ServiceManagerLess();
@@ -37,6 +42,7 @@ const NotebookMutations = () => {
         break;
       }
       case 1: {
+        setNbformat(adapter?.nbformat!);
         setReadonly(false);
         setLite(true);
         createServiceManagerLite().then(listServiceManager => {
@@ -46,6 +52,7 @@ const NotebookMutations = () => {
         break;
       }
       case 2: {
+        setNbformat(adapter?.nbformat!);
         setReadonly(false);
         setLite(false);
         const serverSettings = createServerSettings(getJupyterServerUrl(), getJupyterServerToken());
