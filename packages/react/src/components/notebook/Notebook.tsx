@@ -166,14 +166,18 @@ export const Notebook = (props: INotebookProps) => {
   }
   // Mutation Effects.
   useEffect(() => {
-    if (!adapter && serviceManager) {
-      createAdapter(serviceManager);
+    if (serviceManager) {
+      if (kernel || serverless) {
+        if (!adapter) {
+          createAdapter(serviceManager);
+        }
+        else if (adapter) {
+          setFlipflop(false);
+          setAdapter(undefined);
+        }
+      }
     }
-    else if (adapter && serviceManager) {
-      setFlipflop(false);
-      setAdapter(undefined);
-    }
-  }, [serviceManager]);
+  }, [serviceManager, kernel]);
   useEffect(() => {
     if (!flipflop) {
       setFlipflop(true);

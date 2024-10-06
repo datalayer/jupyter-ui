@@ -268,6 +268,7 @@ export class Kernel {
   toString() {
     return `id:${this.id} - client_id:${this.clientId} - session_id:${this.sessionId} - path:${this._path}`;
   }
+
 }
 
 export namespace Kernel {

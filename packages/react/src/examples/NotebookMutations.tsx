@@ -18,23 +18,25 @@ import nb from './notebooks/NotebookExample1.ipynb.json';
 const NOTEBOOK_ID = 'notebook-mutations-id';
 
 loadJupyterConfig({});
-// const SERVICE_MANAGER = new ServiceManagerLess();
-const serverSettings = createServerSettings(getJupyterServerUrl(), getJupyterServerToken());
-const SERVICE_MANAGER = new ServiceManager({ serverSettings });
+// const serverSettings = createServerSettings(getJupyterServerUrl(), getJupyterServerToken());
+// const SERVICE_MANAGER = new ServiceManager({ serverSettings });
+const SERVICE_MANAGER = new ServiceManagerLess();
 
 const NotebookMutations = () => {
-  const [index, setIndex] = useState(2);
+  const [index, setIndex] = useState(0);
   const [nbformat, setNbformat] = useState(nb as INotebookContent);
   const [readonly, setReadonly] = useState(true);
+  const [serverless, setServerless] = useState(true);
   const [lite, setLite] = useState(false);
   const [serviceManager, setServiceManager] = useState<ServiceManager.IManager>(SERVICE_MANAGER);
   const notebookStore = useNotebookStore();
-  const adapter = notebookStore.selectNotebookAdapter(NOTEBOOK_ID);
+  const notebook = notebookStore.selectNotebook(NOTEBOOK_ID);
   const changeIndex = (index: number) => {
     setIndex(index);
     switch(index) {
       case 0: {
-        setNbformat(adapter?.nbformat!);
+        setNbformat(notebook?.adapter?.notebookPanel?.content.model?.toJSON() as INotebookContent);
+        setServerless(true);
         setReadonly(true);
         setLite(false);
         const serviceManager = new ServiceManagerLess();
@@ -42,7 +44,8 @@ const NotebookMutations = () => {
         break;
       }
       case 1: {
-        setNbformat(adapter?.nbformat!);
+        setNbformat(notebook?.adapter?.notebookPanel?.content.model?.toJSON() as INotebookContent);
+        setServerless(false);
         setReadonly(false);
         setLite(true);
         createServiceManagerLite().then(listServiceManager => {
@@ -52,7 +55,8 @@ const NotebookMutations = () => {
         break;
       }
       case 2: {
-        setNbformat(adapter?.nbformat!);
+        setNbformat(notebook?.adapter?.notebookPanel?.content.model?.toJSON() as INotebookContent);
+        setServerless(false);
         setReadonly(false);
         setLite(false);
         const serverSettings = createServerSettings(getJupyterServerUrl(), getJupyterServerToken());
@@ -75,13 +79,13 @@ const NotebookMutations = () => {
           </SegmentedControl>
         </Box>
         <Box ml={1} mt={1}>
-          <Label>Readonly: {String(adapter?.readonly)}</Label>
-          <Label>Serverless: {String(adapter?.serverless)}</Label>
-          <Label>Lite: {String(adapter?.lite)}</Label>
-          <Label>Service Manager URL: {adapter?.serviceManager.serverSettings.baseUrl}</Label>
-          <Label>Service Manager is ready: {String(adapter?.serviceManager.isReady)}</Label>
-          <Label>Kernel ID: {adapter?.kernel?.id}</Label>
-          <Label>Kernel Banner: {adapter?.kernel?.info?.banner}</Label>
+          <Label>Readonly: {String(notebook?.adapter?.readonly)}</Label>
+          <Label>Serverless: {String(notebook?.adapter?.serverless)}</Label>
+          <Label>Lite: {String(notebook?.adapter?.lite)}</Label>
+          <Label>Service Manager URL: {notebook?.adapter?.serviceManager.serverSettings.baseUrl}</Label>
+          <Label>Service Manager is ready: {String(notebook?.adapter?.serviceManager.isReady)}</Label>
+          <Label>Kernel ID: {notebook?.adapter?.kernel?.id}</Label>
+          <Label>Kernel Banner: {notebook?.adapter?.kernel?.info?.banner}</Label>
         </Box>
       </Box>
       <Notebook
@@ -90,6 +94,7 @@ const NotebookMutations = () => {
         lite={lite}
         nbformat={nbformat as INotebookContent}
         readonly={readonly}
+        serverless={serverless}
         serviceManager={serviceManager}
       />
     </JupyterReactTheme>
