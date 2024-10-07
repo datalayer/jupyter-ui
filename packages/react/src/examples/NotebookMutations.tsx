@@ -9,8 +9,9 @@ import { createRoot } from 'react-dom/client';
 import { Box, SegmentedControl, Label } from '@primer/react';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { ServiceManager } from '@jupyterlab/services';
-import { createServiceManagerLite, createServerSettings, getJupyterServerUrl, getJupyterServerToken, ServiceManagerLess, loadJupyterConfig } from '../jupyter';
-import { useNotebookStore, Notebook} from './../components';
+import { createLiteServiceManager, createServerSettings, setJupyterServerUrl, getJupyterServerUrl, getJupyterServerToken, ServiceManagerLess, loadJupyterConfig } from '../jupyter';
+import { DEFAULT_JUPYTER_SERVER_URL } from '../jupyter';
+import { useNotebookStore, Notebook } from './../components';
 import { JupyterReactTheme } from '../theme';
 
 import nb from './notebooks/NotebookExample1.ipynb.json';
@@ -27,7 +28,7 @@ const NotebookMutations = () => {
   const [nbformat, setNbformat] = useState(nb as INotebookContent);
   const [readonly, setReadonly] = useState(true);
   const [serverless, setServerless] = useState(true);
-  const [lite, setLite] = useState(false);
+//  const [lite, setLite] = useState(false);
   const [serviceManager, setServiceManager] = useState<ServiceManager.IManager>(SERVICE_MANAGER);
   const notebookStore = useNotebookStore();
   const notebook = notebookStore.selectNotebook(NOTEBOOK_ID);
@@ -38,29 +39,32 @@ const NotebookMutations = () => {
         setNbformat(notebook?.adapter?.notebookPanel?.content.model?.toJSON() as INotebookContent);
         setServerless(true);
         setReadonly(true);
-        setLite(false);
-        const serviceManager = new ServiceManagerLess();
-        setServiceManager(serviceManager);
+//        setLite(false);
+        const lessServiceManager = new ServiceManagerLess();
+        setServiceManager(lessServiceManager);
         break;
       }
-      case 1: {
-        setNbformat(notebook?.adapter?.notebookPanel?.content.model?.toJSON() as INotebookContent);
-        setServerless(false);
-        setReadonly(false);
-        setLite(true);
-        createServiceManagerLite().then(listServiceManager => {
-          console.log('Service Manager Lite is created', listServiceManager);
-          setServiceManager(listServiceManager);
+      case 1: { 
+        setJupyterServerUrl(location.protocol + '//' + location.host);
+        createLiteServiceManager().then(liteServiceManager => {
+          console.log('Lite Service Manager is available', liteServiceManager);
+          setServiceManager(liteServiceManager);
+          setNbformat(notebook?.adapter?.notebookPanel?.content.model?.toJSON() as INotebookContent);
+          setServerless(false);
+          setReadonly(false);
+//          setLite(true);
         });
         break;
       }
       case 2: {
+        setJupyterServerUrl(DEFAULT_JUPYTER_SERVER_URL);
         setNbformat(notebook?.adapter?.notebookPanel?.content.model?.toJSON() as INotebookContent);
         setServerless(false);
         setReadonly(false);
-        setLite(false);
+//        setLite(false);
         const serverSettings = createServerSettings(getJupyterServerUrl(), getJupyterServerToken());
         const serviceManager = new ServiceManager({ serverSettings });
+        (serviceManager as any)['__NAME__'] = 'MutatingServiceManager';
         setServiceManager(serviceManager);
         break;
       }
@@ -91,7 +95,7 @@ const NotebookMutations = () => {
       <Notebook
         height="calc(100vh - 2.6rem)"
         id={NOTEBOOK_ID}
-        lite={lite}
+//        lite={lite}
         nbformat={nbformat as INotebookContent}
         readonly={readonly}
         serverless={serverless}

@@ -162,7 +162,11 @@ export class NotebookAdapter {
       },
     });
 
-    this._iPyWidgetsManager = new WidgetManager(this._context, this._rendermime!, {saveState: false});
+    this._iPyWidgetsManager = new WidgetManager(
+      this._context,
+      this._rendermime!,
+      { saveState: false },
+    );
     /*
     this._rendermime!.addFactory(
       {
@@ -275,17 +279,21 @@ export class NotebookAdapter {
     );
 
     const completerHandler = this.setupCompleter(this._notebookPanel!);
-    try {
-      NotebookCommands(
-        this._commandRegistry,
-        this._notebookPanel,
-        completerHandler,
-        this._tracker!,
-        this._path
-      );
-    }
-    catch {
-      // No op - the commands may already be registered...
+
+    if (!this._readonly) {
+      try {
+        NotebookCommands(
+          this._commandRegistry,
+          this._notebookPanel,
+          completerHandler,
+          this._tracker!,
+          this._path
+        );
+      }
+      catch {
+        // no-op.
+        // The commands may already be registered...
+      }  
     }
 
     this._boxPanel.addWidget(this._notebookPanel);
@@ -295,7 +303,8 @@ export class NotebookAdapter {
     });
 
     const isNbFormat = this._path !== undefined && this._path !== '' ? false : true;
-    if (isNbFormat && !this._lite) {
+
+    if (isNbFormat) {
       // Fixes if nbformat is provided and we don't want to interact with the content manager.
       (this._context as any).initialize = async (isNew: boolean): Promise<void> => {
         (this._context as Context<INotebookModel>).model.dirty = false;
@@ -551,7 +560,7 @@ export class NotebookAdapter {
   setServerless(serverless: boolean) {
     if (this._serverless !== serverless) {
       this._serverless = serverless;
-      this.initializeContext();
+//      this.initializeContext();
     }
   }
 

@@ -369,6 +369,7 @@ export class NbConvertManagerLess {
 }
 
 export class ServiceManagerLess implements ServiceManager.IManager {
+  __NAME__ = "LessServiceManager";
   isReady: boolean = true;
   ready: Promise<void> = Promise.resolve(void 0);
   isDisposed: boolean = false;

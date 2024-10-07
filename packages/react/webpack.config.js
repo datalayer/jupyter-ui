@@ -46,6 +46,7 @@ const ENTRY =
   // './src/examples/NotebookColorMode';
   // './src/examples/NotebookKernelChange';
   // './src/examples/NotebookLite';
+  // './src/examples/NotebookLiteContext';
   './src/examples/NotebookMutations';
   // './src/examples/NotebookNbformat';
   // './src/examples/NotebookNbformatChange';

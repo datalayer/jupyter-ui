@@ -7,7 +7,7 @@
 import { createRoot } from 'react-dom/client';
 import { Box } from '@primer/react';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { JupyterReactTheme } from '../theme';
+import { Jupyter } from '../jupyter/Jupyter';
 import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
@@ -15,18 +15,17 @@ import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookLite = () => (
-  <JupyterReactTheme>
-    <Box as="h1">A Jupyter Notebook with a Lite Kernel</Box>
+  <Jupyter lite>
+    <Box as="h1">A Jupyter Notebook with a Lite Kernel (with a Jupyter Context)</Box>
     <Notebook
-      lite={true}
       nbformat={nbformat as INotebookContent}
-      id="notebook-lite-id"
+      id="notebook-lite-context-id"
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       cellSidebarMargin={120}
       CellSidebar={CellSidebar}
       Toolbar={NotebookToolbar}
     />
-  </JupyterReactTheme>
+  </Jupyter>
 );
 
 const div = document.createElement('div');

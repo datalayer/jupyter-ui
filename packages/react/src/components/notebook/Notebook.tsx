@@ -82,7 +82,7 @@ export const Notebook = (props: INotebookProps) => {
   const notebookStore = useNotebookStore();
   const portals = notebookStore.selectNotebookPortals(id);
   //
-  const bootstrapAdapter = (serviceManager?: ServiceManager.IManager) => {
+  const bootstrapAdapter = (serviceManager?: ServiceManager.IManager, kernel?: Kernel) => {
     const adapter = new NotebookAdapter({
       ...props,
       id,
@@ -148,10 +148,10 @@ export const Notebook = (props: INotebookProps) => {
   //
   const createAdapter = (serviceManager?: ServiceManager.IManager, kernel?: Kernel) => {
     if (!kernel) {
-      bootstrapAdapter(serviceManager);
+      bootstrapAdapter(serviceManager, kernel);
     } else {
       kernel.ready.then(() => {
-        bootstrapAdapter(serviceManager);
+        bootstrapAdapter(serviceManager, kernel);
       });
     }
   }
@@ -167,21 +167,21 @@ export const Notebook = (props: INotebookProps) => {
   // Mutation Effects.
   useEffect(() => {
     if (serviceManager) {
-      if (kernel || serverless) {
-        if (!adapter) {
-          createAdapter(serviceManager);
-        }
-        else if (adapter) {
-          setFlipflop(false);
+      if (kernel || serverless || lite) {
+        if (adapter) {
           setAdapter(undefined);
+          setFlipflop(false);
+        }
+        else {
+          createAdapter(serviceManager, kernel);
         }
       }
     }
-  }, [serviceManager, kernel]);
+  }, [serviceManager, kernel, lite]);
   useEffect(() => {
     if (!flipflop) {
       setFlipflop(true);
-      createAdapter(serviceManager);
+      createAdapter(serviceManager, kernel);
     }
   }, [flipflop]);
   useEffect(() => {
