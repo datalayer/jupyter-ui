@@ -14,6 +14,10 @@ export type IDatalayerConfig = {
    */
   token: string;
   /**
+   * Credits.
+   */
+  credits: number;
+  /**
    * CPU Environment.
    */
   cpuEnvironment: string;

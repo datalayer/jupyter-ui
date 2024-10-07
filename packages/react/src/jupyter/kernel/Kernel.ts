@@ -119,7 +119,6 @@ export class Kernel {
     }
     this._kernelConnection = this._session.kernel;
     const updateConnectionStatus = () => {
-      console.log('----------------', this._connectionStatus);
       if (this._connectionStatus === 'connected') {
         this._clientId = this._session.kernel!.clientId;
         this._id = this._session.kernel!.id;

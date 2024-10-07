@@ -33,7 +33,7 @@ export type KernelResponse = {
   }
 }
 
-export const createDatalayerServiceManager = async (environmentName: string) => {
+export const createDatalayerServiceManager = async (environmentName: string, credits: number) => {
   const datalayerConfig = jupyterReactStore.getState().datalayerConfig;
   const token = datalayerConfig?.token || '';
   const runUrl = datalayerConfig?.runUrl || 'https://prod1.datalayer.io';
@@ -47,10 +47,10 @@ export const createDatalayerServiceManager = async (environmentName: string) => 
   headers.set('Content-Type', 'application/json');
   headers.set('Authorization', `Bearer ${token}`);
   const request: KernelRequest = {
-    "kernel_type": "notebook",
-    "kernel_given_name": `Jupyter React Kernel - ${new Date()}`,
-    "credits_limit": 1,
-    "capabilities": [],
+    kernel_type: "notebook",
+    kernel_given_name: `Jupyter React Kernel - ${new Date()}`,
+    credits_limit: credits,
+    capabilities: [],
   };
   const response = await fetch(url, {
     method:'POST',

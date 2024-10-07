@@ -35,7 +35,7 @@ const NotebookMutations = () => {
   const [waiting, setWaiting] = useState(false);
 //  const [lite, setLite] = useState(false);
   const [serviceManager, setServiceManager] = useState<ServiceManager.IManager>(SERVICE_MANAGER_LESS);
-  const jupyterReactStore = useJupyterReactStore();
+  const { datalayerConfig } = useJupyterReactStore();
   const notebookStore = useNotebookStore();
   const notebook = notebookStore.selectNotebook(NOTEBOOK_ID);
   const changeIndex = (index: number) => {
@@ -79,7 +79,10 @@ const NotebookMutations = () => {
       case 3: {
 //        setWaiting(true);
 //        setLite(false);
-        createDatalayerServiceManager(jupyterReactStore.datalayerConfig?.cpuEnvironment || 'python-simple-env').then((serviceManager) => {
+        createDatalayerServiceManager(
+          datalayerConfig?.cpuEnvironment || 'python-simple-env',
+          datalayerConfig?.credits || 1,
+        ).then((serviceManager) => {
           (serviceManager as any)['__NAME__'] = 'DatalayerCPUServiceManager';
           setServiceManager(serviceManager);
           setServerless(false);
@@ -93,7 +96,10 @@ const NotebookMutations = () => {
       case 4: {
         setWaiting(true);
 //        setLite(false);
-        createDatalayerServiceManager(jupyterReactStore.datalayerConfig?.gpuEnvironment || 'pytorch-cuda-env').then((serviceManager) => {
+        createDatalayerServiceManager(
+          datalayerConfig?.gpuEnvironment || 'pytorch-cuda-env',
+          datalayerConfig?.credits || 1,
+        ).then((serviceManager) => {
           setKernelIndex(0);
           (serviceManager as any)['__NAME__'] = 'DatalayerGPUServiceManager';
           setServiceManager(serviceManager);
