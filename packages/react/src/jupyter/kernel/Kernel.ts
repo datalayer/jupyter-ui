@@ -65,20 +65,35 @@ export class Kernel {
     this.requestKernel(kernelModel, path);
   }
 
-  private async requestKernel(
-    kernelModel?: JupyterKernel.IModel,
-    propsPath?: string,
-  ): Promise<void> {
+  private async requestKernel(kernelModel?: JupyterKernel.IModel, propsPath?: string): Promise<void> {
     await this._kernelManager.ready;
     await this._sessionManager.ready;
     if (kernelModel) {
-      console.log('Reusing a pre-existing Jupyter Kernel model.');
-      await this._sessionManager.refreshRunning();
-      const model = find(this._sessionManager.running(), item => {
-        return item.path === this._path;
+      await this._kernelManager.refreshRunning();
+      const runningKernels = Array.from(this.kernelManager.running());
+      const existingKernelModel = find(runningKernels, model => {
+        return kernelModel.id === model.id;
       });
-      if (model) {
-        this._session = this._sessionManager.connectTo({ model });
+      if (existingKernelModel) {
+        console.log('Creating a session to an existing Jupyter Kernel model.', existingKernelModel);
+        const path = 'kernel-' + newUuid();
+        this._path = path;
+        this._session = await this._sessionManager.startNew(
+          {
+            name: existingKernelModel.name,
+            path: path,
+            type: 'notebook',
+            kernel: existingKernelModel as Partial<JupyterKernel.IModel & Omit<JupyterKernel.IKernelOptions, 'kernelType'>>,
+          },
+          {
+            kernelConnectionOptions: {
+              handleComms: true,
+            },
+          }
+        );
+      } else {
+        console.log('Something is wrong... can not find an existing model for', kernelModel);
+        return;
       }
     } else {
       let path = propsPath ?? getCookie(this.cookieName);
@@ -87,8 +102,7 @@ export class Kernel {
         document.cookie = this.cookieName + '=' + path;
       }
       this._path = path;
-      this._session = await this._sessionManager.startNew(
-        {
+      this._session = await this._sessionManager.startNew({
           name: this._kernelName,
           path: this._path,
           type: this._kernelType,
@@ -105,6 +119,7 @@ export class Kernel {
     }
     this._kernelConnection = this._session.kernel;
     const updateConnectionStatus = () => {
+      console.log('----------------', this._connectionStatus);
       if (this._connectionStatus === 'connected') {
         this._clientId = this._session.kernel!.clientId;
         this._id = this._session.kernel!.id;
@@ -115,15 +130,15 @@ export class Kernel {
       this._sessionId = this._session.id;
       this._connectionStatus = this._kernelConnection.connectionStatus;
       updateConnectionStatus();
-      this._kernelConnection.connectionStatusChanged.connect(
-        (_, connectionStatus) => {
-          this._connectionStatus = connectionStatus;
-          updateConnectionStatus();
-        }
-      );
+      this._kernelConnection.connectionStatusChanged.connect((_, connectionStatus) => {
+        this._connectionStatus = connectionStatus;
+        updateConnectionStatus();
+      });
       this._kernelConnection.info.then(info => {
         this._info = info;
-        console.log('Kernel information', this.toJSON());
+        console.log('Kernel information.', info);
+        console.log('Kernel session.', this._session);
+        console.log('Kernel details.', this.toJSON());
       });
     }
   }

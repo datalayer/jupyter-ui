@@ -4,5 +4,5 @@
  * MIT License
  */
 
-export * from "./IJupyterReactConfig";
+export * from "./IDatalayerConfig";
 export * from "./JupyterReactState";

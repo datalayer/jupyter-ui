@@ -11,7 +11,7 @@ import { ServiceManager } from '@jupyterlab/services';
 import { getJupyterServerUrl, createLiteServiceManager, ensureJupyterAuth, createServerSettings, JupyterPropsType, DEFAULT_KERNEL_NAME } from '../jupyter';
 import { ServiceManagerLess } from '../jupyter/services';
 import { Kernel } from '../jupyter/kernel/Kernel';
-import type { IJupyterReactConfig } from './IJupyterReactConfig';
+import type { IDatalayerConfig } from './IDatalayerConfig';
 import { IJupyterConfig, loadJupyterConfig } from '../jupyter/JupyterConfig';
 import { cellsStore, CellsState } from '../components/cell/CellState';
 import { consoleStore, ConsoleState } from '../components/console/ConsoleState';
@@ -22,7 +22,7 @@ import { terminalStore, TerminalState } from '../components/terminal/TerminalSta
 export type JupyterReactState = {
   cellsStore: CellsState;
   consoleStore: ConsoleState;
-  datalayerConfig?: IJupyterReactConfig;
+  datalayerConfig?: IDatalayerConfig;
   jupyterConfig?: IJupyterConfig;
   kernel?: Kernel;
   kernelIsLoading: boolean;
@@ -31,25 +31,25 @@ export type JupyterReactState = {
   serviceManager?: ServiceManager.IManager;
   terminalStore: TerminalState;
   version: string;
-  setDatalayerConfig: (configuration?: IJupyterReactConfig) => void;
+  setDatalayerConfig: (configuration?: IDatalayerConfig) => void;
   setJupyterConfig: (configuration?: IJupyterConfig) => void;
   setServiceManager: (serviceManager?: ServiceManager.IManager) => void;
   setVersion: (version: string) => void;
 };
 
-let initialConfiguration: IJupyterReactConfig | undefined = undefined;
+let initialDatalayerConfig: IDatalayerConfig | undefined = undefined;
 
 try {
   const pageConfig = document.getElementById('datalayer-config-data');
   if (pageConfig?.innerText) {
-    initialConfiguration = JSON.parse(pageConfig?.innerText);
+    initialDatalayerConfig = JSON.parse(pageConfig?.innerText);
   }
 } catch (error) {
   console.debug('Issue with page configuration.', error);
 }
 
 export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
-  datalayerConfig: initialConfiguration,
+  datalayerConfig: initialDatalayerConfig,
   version: '',
   jupyterConfig: undefined,
   kernelIsLoading: true,
@@ -61,7 +61,7 @@ export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
   notebookStore: notebookStore.getState(),
   outputStore: outputsStore.getState(),
   terminalStore: terminalStore.getState(),
-  setDatalayerConfig: (datalayerConfig?: IJupyterReactConfig) => {
+  setDatalayerConfig: (datalayerConfig?: IDatalayerConfig) => {
     set(state => ({ datalayerConfig }));
   },
   setJupyterConfig: (jupyterConfig?: IJupyterConfig) => {
@@ -98,8 +98,8 @@ export function useJupyterReactStoreFromProps(props: JupyterPropsType): JupyterR
     serviceManager: propsServiceManager,
     startDefaultKernel = true,
     terminals = false,
-    useRunningKernelId,
-    useRunningKernelIndex = -1,
+    useRunningKernelId = props.useRunningKernelId,
+    useRunningKernelIndex = props.useRunningKernelIndex || -1,
   } = props;
 
   const jupyterConfig = useMemo<IJupyterConfig>(() => {
@@ -171,40 +171,31 @@ export function useJupyterReactStoreFromProps(props: JupyterPropsType): JupyterR
       const kernelManager = serviceManager.kernels;
       console.log('Jupyter Kernel Manager is ready', kernelManager);
       if (useRunningKernelIndex > -1) {
-        const running = kernelManager.running();
-        let kernel = running.next();
-        let i = 0;
-        while (!kernel.done) {
-          if (i === useRunningKernelIndex) {
-            const wrappedKernel = new Kernel({
-              kernelManager,
-              kernelName: defaultKernelName,
-              kernelSpecName: defaultKernelName,
-              kernelModel: kernel.value,
-              kernelspecsManager: serviceManager.kernelspecs,
-              sessionManager: serviceManager.sessions,
-            });
-            if (initCode) {
-              try {
-                await wrappedKernel.execute(initCode)?.done;
-              } catch (error) {
-                console.error('Failed to execute the initial code', error);
-              }
-            }
-            setKernel(wrappedKernel);
-            jupyterReactStore.getState().kernel = wrappedKernel;
-            setIsLoading(false);
-            jupyterReactStore.getState().kernelIsLoading = false;
-            break;
+        await serviceManager.sessions.refreshRunning();
+        const runnings = Array.from(kernelManager.running());
+        const model = runnings[useRunningKernelIndex]
+        const existingKernel = new Kernel({
+          kernelManager,
+          kernelName: model.name,
+          kernelSpecName: model.name,
+          kernelModel: model,
+          kernelspecsManager: serviceManager.kernelspecs,
+          sessionManager: serviceManager.sessions,
+        });
+        if (initCode) {
+          try {
+            await existingKernel.execute(initCode)?.done;
+          } catch (error) {
+            console.error('Failed to execute the initial code', error);
           }
-          kernel = running.next();
-          i++;
         }
+        setKernel(existingKernel);
+        jupyterReactStore.getState().kernel = existingKernel;
         setIsLoading(false);
         jupyterReactStore.getState().kernelIsLoading = false;
       }
       else if (startDefaultKernel) {
-        console.log('Starting Jupyter Kernel:', defaultKernelName);
+        console.log('Starting a Jupyter Kernel.', defaultKernelName);
         const defaultKernel = new Kernel({
           kernelManager,
           kernelName: defaultKernelName,

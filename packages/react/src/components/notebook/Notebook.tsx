@@ -49,6 +49,14 @@ export type INotebookProps = {
   serverless: boolean,
   serviceManager?: ServiceManager.IManager,
   url?: string;
+  /**
+   * The Kernel Id to use, as defined in the Kernel API
+   */
+  useRunningKernelId?: string;
+  /**
+   * The index (aka position) of the Kernel to use in the list of kernels.
+   */
+  useRunningKernelIndex?: number;
 };
 
 /**
@@ -63,6 +71,8 @@ export const Notebook = (props: INotebookProps) => {
     lite: props.lite,
     serverless: props.serverless,
     serviceManager: props.serviceManager,
+    useRunningKernelId: props.useRunningKernelId,
+    useRunningKernelIndex: props.useRunningKernelIndex,
   });
   const {
     Toolbar,

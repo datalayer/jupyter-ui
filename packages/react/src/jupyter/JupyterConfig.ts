@@ -9,7 +9,7 @@ import { JupyterProps } from './Jupyter';
 import { DEFAULT_JUPYTER_SERVER_URL, DEFAULT_JUPYTER_SERVER_TOKEN, DEFAULT_API_KERNEL_PREFIX_URL } from './JupyterDefaults';
 
 /**
- * Type of the Jupyter configuration.
+ * Type definition for the Jupyter Configuration.
  */
 export type IJupyterConfig = {
   jupyterServerUrl: string;
@@ -72,16 +72,15 @@ export const getJupyterServerToken = () => {
 }
 
 /**
- * Get the datalayer configuration fully or for a particular parameter.
+ * Get the datalayer configuration fully
+ * or for a particular parameter.
  *
  * @param name The parameter name
  * @returns The parameter value if {@link name} is specified, otherwise the full configuration.
  */
 function loadDatalayerConfig(name?: string): any {
   if (!datalayerConfigLoaded) {
-    const datalayerConfigData = document.getElementById(
-      'datalayer-config-data'
-    );
+    const datalayerConfigData = document.getElementById('datalayer-config-data');
     if (datalayerConfigData?.textContent) {
       console.log('Found Datalayer config data in page', datalayerConfigData);
       try {
@@ -103,8 +102,8 @@ function loadDatalayerConfig(name?: string): any {
 }
 
 /**
- * Method to load the Jupyter configuration from the
- * host HTML page.
+ * Method to load the Jupyter configuration
+ * from the host HTML page.
  */
 export const loadJupyterConfig = (
   props: Pick<
@@ -137,17 +136,10 @@ export const loadJupyterConfig = (
   loadDatalayerConfig();
   if (datalayerConfigLoaded) {
     // There is a Datalayer config, mix the configs...
-    setJupyterServerUrl(
-      jupyterServerUrl ||
-        config.jupyterServerUrl
-          
-    );
-    setJupyterServerToken(
-      jupyterServerToken || 
-        config.jupyterServerToken
-    );
+    setJupyterServerUrl(jupyterServerUrl || config.jupyterServerUrl);
+    setJupyterServerToken(jupyterServerToken || config.jupyterServerToken);
   } else {
-    // No Datalayer config, look for a Jupyter config.
+    // No Datalayer config, look for a Jupyter config...
     const jupyterConfigData = document.getElementById('jupyter-config-data');
     if (jupyterConfigData) {
       const jupyterConfig = JSON.parse(jupyterConfigData.textContent || '');
@@ -189,10 +181,7 @@ export const loadJupyterConfig = (
     PageConfig.setOption('collaborative', String(collaborative));
     PageConfig.setOption('disableRTC', String(!collaborative));
     PageConfig.setOption('terminalsAvailable', String(terminals));
-    PageConfig.setOption(
-      'mathjaxUrl',
-      'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js'
-    );
+    PageConfig.setOption('mathjaxUrl', 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js');
     PageConfig.setOption('mathjaxConfig', 'TeX-AMS_CHTML-full,Safe');
   }
   console.log('Created config for Jupyter React', config)
