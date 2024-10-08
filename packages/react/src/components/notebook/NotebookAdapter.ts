@@ -23,15 +23,13 @@ import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
 import { INotebookContent, CellType, IAttachments } from '@jupyterlab/nbformat';
 import { ISharedAttachmentsCell, IYText } from '@jupyter/ydoc';
 import { WIDGET_MIMETYPE } from '@jupyter-widgets/html-manager/lib/output_renderers';
-import { Lite } from '../../jupyter/lite';
-import { Kernel } from '../../jupyter/kernel';
+import { Lite, Kernel, WidgetManager, WidgetLabRenderer } from '../../jupyter';
 import { ICellSidebarProps } from './cell/sidebar/CellSidebarWidget';
 import { JupyterReactContentFactory } from './content/JupyterReactContentFactory';
 import { JupyterReactNotebookModelFactory } from './model/JupyterReactNotebookModelFactory';
+import { getMarked } from './marked/marked';
 import { INotebookProps } from './Notebook';
 import { NotebookCommands } from './NotebookCommands';
-import { getMarked } from './marked/marked';
-import { WidgetManager, WidgetLabRenderer } from '../../jupyter/ipywidgets';
 
 const FALLBACK_NOTEBOOK_PATH = 'ping.ipynb';
 
@@ -164,8 +162,11 @@ export class NotebookAdapter {
       },
     });
 
-    this._iPyWidgetsManager = new WidgetManager(this._context, this._rendermime!, {saveState: false});
-
+    this._iPyWidgetsManager = new WidgetManager(
+      this._context,
+      this._rendermime!,
+      { saveState: false },
+    );
     /*
     this._rendermime!.addFactory(
       {
@@ -177,7 +178,6 @@ export class NotebookAdapter {
       1
     );
     */
-
     /*
     // This code block was causing https://github.com/datalayer/jupyter-ui/issues/195
     // TODO Double check there is not side effect.
@@ -189,7 +189,6 @@ export class NotebookAdapter {
         );
       });
     */
-
     // These are fixes to have more control on the kernel launch.
     (this._context.sessionContext as any)._initialize =
       async (): Promise<boolean> => {
@@ -240,24 +239,25 @@ export class NotebookAdapter {
       }
     });
 
-    /*
-    // Alternative way to create a NotebookPanel.
-    const content = new Notebook({
-      rendermime: this._rendermime!,
-      contentFactory,
-      mimeTypeService,
-      notebookConfig: {
-        ...StaticNotebook.defaultNotebookConfig,
-        windowingMode: 'none'
-      }
-    });
-    this._notebookPanel = new NotebookPanel({
-      context: this._context,
-      content,
-    });
-    */
-
-    this._notebookPanel = this._documentRegistry?.getWidgetFactory('Notebook')?.createNew(this._context) as NotebookPanel;
+    if (!this._notebookPanel) {
+      /*
+      // Alternative way to create a NotebookPanel.
+      const content = new Notebook({
+        rendermime: this._rendermime!,
+        contentFactory,
+        mimeTypeService,
+        notebookConfig: {
+          ...StaticNotebook.defaultNotebookConfig,
+          windowingMode: 'none'
+        }
+      });
+      this._notebookPanel = new NotebookPanel({
+        context: this._context,
+        content,
+      });
+      */
+      this._notebookPanel = this._documentRegistry?.getWidgetFactory('Notebook')?.createNew(this._context) as NotebookPanel;
+    }
 
     if (this._kernel) {
       this._iPyWidgetsManager?.registerWithKernel(
@@ -279,17 +279,21 @@ export class NotebookAdapter {
     );
 
     const completerHandler = this.setupCompleter(this._notebookPanel!);
-    try {
-      NotebookCommands(
-        this._commandRegistry,
-        this._notebookPanel,
-        completerHandler,
-        this._tracker!,
-        this._path
-      );
-    }
-    catch {
-      // No op - the commands may already be registered.
+
+    if (!this._readonly) {
+      try {
+        NotebookCommands(
+          this._commandRegistry,
+          this._notebookPanel,
+          completerHandler,
+          this._tracker!,
+          this._path
+        );
+      }
+      catch {
+        // no-op.
+        // The commands may already be registered...
+      }  
     }
 
     this._boxPanel.addWidget(this._notebookPanel);
@@ -299,7 +303,8 @@ export class NotebookAdapter {
     });
 
     const isNbFormat = this._path !== undefined && this._path !== '' ? false : true;
-    if (isNbFormat && !this._lite) {
+
+    if (isNbFormat) {
       // Fixes if nbformat is provided and we don't want to interact with the content manager.
       (this._context as any).initialize = async (isNew: boolean): Promise<void> => {
         (this._context as Context<INotebookModel>).model.dirty = false;
@@ -492,6 +497,10 @@ export class NotebookAdapter {
     return this._notebookPanel;
   }
 
+  set notebookPanel(notebookPanel: NotebookPanel | undefined) {
+    this._notebookPanel = notebookPanel;
+  }
+
   get panel(): BoxPanel {
     return this._boxPanel;
   }
@@ -507,8 +516,8 @@ export class NotebookAdapter {
   /*
    * Only use this method to change an adapter with a nbformat.
    */
-  setNbformat(nbformat: INotebookContent) {
-    if (nbformat === null) {
+  setNbformat(nbformat?: INotebookContent) {
+    if (!nbformat) {
       throw new Error('The nbformat should first be set via the constructor of NotebookAdapter');
     }
     if (this._nbformat !== nbformat) {
@@ -517,22 +526,41 @@ export class NotebookAdapter {
     }
   }
 
-  setServiceManager(serviceManager: ServiceManager.IManager, lite: Lite) {
-    console.log('-------', serviceManager);
-    if (this._lite !== lite) {
-      this._lite = lite;
-    }
-    if (this._serviceManager !== serviceManager) {
-      this._serviceManager = serviceManager;
-    }
+  setServiceManager(serviceManager: ServiceManager.IManager, lite?: Lite) {
+    this._lite = lite;
+    this._serviceManager = serviceManager;
     this._nbformat = this._notebookPanel?.model?.toJSON() as INotebookContent;
+//    this.initializeContext();
+  }
+
+  setKernel(kernel?: Kernel) {
+    if (this._kernel === kernel) {
+      return;
+    }
+    this._kernel = kernel;
     this.initializeContext();
   }
 
   setReadonly(readonly: boolean) {
     if (this._readonly !== readonly) {
       this._readonly = readonly;
-      Array.from(this._context?.model.cells!).forEach(cell => cell.setMetadata('editable', !readonly));
+      this._notebookPanel?.content.widgets.forEach(cell => {
+        cell.syncEditable = true
+        cell.model.sharedModel.setMetadata('editable', !readonly);
+      });
+      Array.from(this._context?.model.cells!).forEach(cell => {
+        cell.setMetadata('editable', !readonly);
+      });
+      this._notebookPanel?.content.widgets.forEach(cell => {
+        cell.saveEditableState();
+      });
+    }
+  }
+
+  setServerless(serverless: boolean) {
+    if (this._serverless !== serverless) {
+      this._serverless = serverless;
+//      this.initializeContext();
     }
   }
 
@@ -555,7 +583,7 @@ export class NotebookAdapter {
   };
 
   changeCellType = (cellType: CellType) => {
-    //    NotebookActions.changeCellType(this._notebookPanel?.content!, cellType);
+    // NotebookActions.changeCellType(this._notebookPanel?.content!, cellType);
     const notebook = this._notebookPanel!.content!;
     const notebookSharedModel = notebook.model!.sharedModel;
     notebook.widgets.forEach((child, index) => {

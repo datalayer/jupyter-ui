@@ -21,4 +21,5 @@ export * from './output';
 export * from './settings';
 export * from './terminal';
 export * from './textinput';
+export * from './utils';
 export * from './viewer';
