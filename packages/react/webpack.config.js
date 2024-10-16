@@ -47,7 +47,8 @@ const ENTRY =
   // './src/examples/NotebookKernelChange';
   // './src/examples/NotebookLite';
   // './src/examples/NotebookLiteContext';
-  './src/examples/NotebookMutations';
+  './src/examples/NotebookLess';
+  // './src/examples/NotebookMutations';
   // './src/examples/NotebookNbformat';
   // './src/examples/NotebookNbformatChange';
   // './src/examples/NotebookNoContext';
