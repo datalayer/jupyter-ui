@@ -28,7 +28,7 @@ const NotebookServiceManager = () => {
       setReadonly(false);  
       const serverSettings = createServerSettings(getJupyterServerUrl(), getJupyterServerToken());
       const serviceManager = new ServiceManager({ serverSettings });
-      setServiceManager(serviceManager);
+      setServiceManager(serviceManager as any);
     } else {
       setServerless(true);
       setReadonly(true);  

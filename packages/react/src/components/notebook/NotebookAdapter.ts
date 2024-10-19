@@ -31,7 +31,7 @@ import { getMarked } from './marked/marked';
 import { INotebookProps } from './Notebook';
 import { NotebookCommands } from './NotebookCommands';
 
-const FALLBACK_NOTEBOOK_PATH = 'ping.ipynb';
+const FALLBACK_NOTEBOOK_PATH = '.datalayer/ping.ipynb';
 
 export class NotebookAdapter {
 
@@ -302,10 +302,10 @@ export class NotebookAdapter {
       this._notebookPanel?.update();
     });
 
-    const isNbFormat = this._path !== undefined && this._path !== '' ? false : true;
+    const isNbFormat = (this._path !== undefined && this._path !== '') ? false : true;
 
     if (isNbFormat) {
-      // Fixes if nbformat is provided and we don't want to interact with the content manager.
+      // If nbformat is provided and we don't want to interact with the content manager.
       (this._context as any).initialize = async (isNew: boolean): Promise<void> => {
         (this._context as Context<INotebookModel>).model.dirty = false;
         const now = new Date().toISOString();
