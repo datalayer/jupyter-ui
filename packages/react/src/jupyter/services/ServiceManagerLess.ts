@@ -405,6 +405,9 @@ export class ServiceManagerLess implements ServiceManager.IManager {
     this.nbconvert = new NbConvertManagerLess(this.serverSettings) as unknown as NbConvert.IManager;
   }
   dispose(): void {}
+  get_name = () => {
+    return this.__NAME__;
+  }
 }
 
 export default ServiceManagerLess;
