@@ -6,7 +6,7 @@
 
 import { createRoot } from 'react-dom/client';
 import { NotebookPanel } from '@jupyterlab/notebook';
-import { Jupyter } from '../jupyter/Jupyter';
+import { JupyterReactTheme } from '../theme';
 import { JupyterLabApp, JupyterLabAppAdapter } from '../components/jupyterlab';
 
 import * as lightThemePlugins from '@jupyterlab/theme-light-extension';
@@ -48,8 +48,8 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <Jupyter startDefaultKernel={false} disableCssLoading>
+  <JupyterReactTheme>
     <h1>JupyterLab Application</h1>
     <JupyterLabAppExample />
-  </Jupyter>
+  </JupyterReactTheme>
 );

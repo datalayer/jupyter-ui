@@ -41,13 +41,13 @@ const ENTRY =
   // './src/examples/Kernels';
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
-  // './src/examples/Notebook';
+  './src/examples/Notebook';
   // './src/examples/NotebookURL';
   // './src/examples/NotebookColorMode';
   // './src/examples/NotebookKernelChange';
   // './src/examples/NotebookLite';
   // './src/examples/NotebookLiteContext';
-  './src/examples/NotebookLess';
+  // './src/examples/NotebookLess';
   // './src/examples/NotebookMutations';
   // './src/examples/NotebookNbformat';
   // './src/examples/NotebookNbformatChange';

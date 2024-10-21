@@ -22,7 +22,7 @@ import nbformatExample from './notebooks/NotebookExample1.ipynb.json';
 
 const NOTEBOOK_ID = 'notebook-mutations-id';
 
-loadJupyterConfig({});
+loadJupyterConfig();
 
 const SERVICE_MANAGER_LESS = new ServiceManagerLess();
 

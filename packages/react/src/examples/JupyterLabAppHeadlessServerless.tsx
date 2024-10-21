@@ -32,7 +32,7 @@ const PATHS = [
 
 const PATH_INDEX = 1;
 
-const JupyterLabAppHeadless = () => {
+const JupyterLabAppHeadlessServerless = () => {
   const [notebookBoxPanel, setNotebookBoxPanel] = useState<BoxPanel>();
   const [theme, setTheme] = useState<Colormode>('light');
   const [jupyterLabAdapter, setJupyterlabAdapter] = useState<JupyterLabAppAdapter>();
@@ -141,4 +141,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<JupyterLabAppHeadless />);
+root.render(<JupyterLabAppHeadlessServerless />);
