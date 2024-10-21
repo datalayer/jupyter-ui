@@ -29,11 +29,11 @@ export const Viewer = (props: IViewerProps) => {
           return response.text();
         })
         .then(nbformat => {
-          //        const nbformat = nb.replaceAll('\\n', '');
+          // const nbformat = nb.replaceAll('\\n', '');
           setModel(JSON.parse(nbformat));
         });
     }
-  }, [nbformat]);
+  }, [nbformat, nbformatUrl]);
   return (
     <>
       {model?.cells.map(cell => {
