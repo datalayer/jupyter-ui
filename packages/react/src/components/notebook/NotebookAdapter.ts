@@ -8,22 +8,23 @@ import { find } from '@lumino/algorithm';
 import { CommandRegistry } from '@lumino/commands';
 import { BoxPanel, Widget } from '@lumino/widgets';
 import { IChangedArgs } from '@jupyterlab/coreutils';
-import { Cell, ICellModel, MarkdownCell } from '@jupyterlab/cells';
 import { Contents, ServiceManager, Kernel as JupyterKernel, SessionManager } from '@jupyterlab/services';
 import { DocumentRegistry, Context } from '@jupyterlab/docregistry';
-import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
-import { standardRendererFactories, RenderMimeRegistry } from '@jupyterlab/rendermime';
-import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
-import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
-import { Notebook, NotebookPanel, NotebookWidgetFactory, NotebookTracker, INotebookModel } from '@jupyterlab/notebook';
 import { ybinding, CodeMirrorEditorFactory, CodeMirrorMimeTypeService, EditorLanguageRegistry, EditorExtensionRegistry, EditorThemeRegistry } from '@jupyterlab/codemirror';
 import { IEditorServices } from '@jupyterlab/codeeditor';
-import { Completer, CompleterModel, CompletionHandler, ProviderReconciliator, KernelCompleterProvider } from '@jupyterlab/completer';
-import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
-import { INotebookContent, CellType, IAttachments } from '@jupyterlab/nbformat';
+import { standardRendererFactories, RenderMimeRegistry } from '@jupyterlab/rendermime';
+import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { ISharedAttachmentsCell, IYText } from '@jupyter/ydoc';
+import { INotebookContent, CellType, IAttachments } from '@jupyterlab/nbformat';
+import { Completer, CompleterModel, CompletionHandler, ProviderReconciliator, KernelCompleterProvider } from '@jupyterlab/completer';
+import { Notebook, NotebookPanel, NotebookWidgetFactory, NotebookTracker, INotebookModel } from '@jupyterlab/notebook';
+import { Cell, ICellModel, MarkdownCell } from '@jupyterlab/cells';
+import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
+import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
+import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
 import { WIDGET_MIMETYPE } from '@jupyter-widgets/html-manager/lib/output_renderers';
 import { Lite, Kernel, WidgetManager, WidgetLabRenderer } from '../../jupyter';
+import { OnKernelConnection } from '../../state';
 import { ICellSidebarProps } from './cell/sidebar/CellSidebarWidget';
 import { JupyterReactContentFactory } from './content/JupyterReactContentFactory';
 import { JupyterReactNotebookModelFactory } from './model/JupyterReactNotebookModelFactory';
@@ -48,7 +49,7 @@ export class NotebookAdapter {
   private _nbgrader: boolean;
   private _notebookModelFactory?: JupyterReactNotebookModelFactory;
   private _notebookPanel?: NotebookPanel;
-  private _url?: string;
+  private _onKernelConnection?: OnKernelConnection;
   private _path?: string;
   private _readonly: boolean;
   private _renderers: IRenderMime.IRendererFactory[];
@@ -56,9 +57,14 @@ export class NotebookAdapter {
   private _serverless: boolean;
   private _serviceManager: ServiceManager.IManager;
   private _tracker?: NotebookTracker;
+  private _url?: string;
 
   constructor(props: INotebookProps) {
+
+    console.log('A new Notebook Adapter is being created...');
+
     this._CellSidebar = props.CellSidebar;
+
     this._id = props.id;
     this._kernel = props.kernel;
     this._lite = props.lite;
@@ -70,6 +76,8 @@ export class NotebookAdapter {
     this._serverless = props.serverless;
     this._serviceManager = props.serviceManager!;
     this._url = props.url;
+
+    this._onKernelConnection = props.onKernelConnection;
 
     this._boxPanel = new BoxPanel();
     this._boxPanel.addClass('dla-Jupyter-Notebook');
@@ -177,10 +185,7 @@ export class NotebookAdapter {
       },
       1
     );
-    */
-    /*
     // This code block was causing https://github.com/datalayer/jupyter-ui/issues/195
-    // TODO Double check there is not side effect.
     this._context?.sessionContext
       .changeKernel({id: this._kernel.id })
       .then(() => {
@@ -192,8 +197,7 @@ export class NotebookAdapter {
     // These are fixes to have more control on the kernel launch.
     (this._context.sessionContext as any)._initialize =
       async (): Promise<boolean> => {
-        const manager = (this._context!.sessionContext as any)
-          .sessionManager as SessionManager;
+        const manager = (this._context!.sessionContext as any).sessionManager as SessionManager;
         await manager.ready;
         await manager.refreshRunning();
         const model = find(manager.running(), model => {
@@ -222,20 +226,24 @@ export class NotebookAdapter {
         return await (this._context!.sessionContext as any)._startIfNecessary();
       };
 
+    this._context.sessionContext.ready.then(() => {
+      if (this._onKernelConnection) {
+        const kernelConnection = this._context?.sessionContext.session?.kernel;
+        this._onKernelConnection(kernelConnection);
+      }
+    });
+
     this._context.sessionContext.kernelChanged.connect((_, args) => {
-      console.log('Previous Jupyter Kernel connection', args.oldValue);
+      console.log('Previous Jupyter Kernel Connection.', args.oldValue);
       const kernelConnection = args.newValue;
-      console.log('Current Jupyter Kernel connection', kernelConnection);
+      console.log('Current Jupyter Kernel Connection.', kernelConnection);
       if (kernelConnection && !kernelConnection.handleComms) {
-        console.warn(
-          'The current Kernel Connection does not handle Comms',
-          kernelConnection.id
-        );
+        console.warn('The current Kernel Connection does not handle Comms...', kernelConnection.id);
         (kernelConnection as any).handleComms = true;
-        console.log(
-          'The current Kernel Connection is updated to enforce Comms support',
-          kernelConnection.handleComms
-        );
+        console.log('The current Kernel Connection is updated to enforce Comms support!', kernelConnection.handleComms);
+      }
+      if (this._onKernelConnection) {
+        this._onKernelConnection(kernelConnection);
       }
     });
 
@@ -302,7 +310,7 @@ export class NotebookAdapter {
       this._notebookPanel?.update();
     });
 
-    const isNbFormat = (this._path !== undefined && this._path !== '') ? false : true;
+    const isNbFormat = this._path !== undefined && this._path !== '' ? false : true;
 
     if (isNbFormat) {
       // If nbformat is provided and we don't want to interact with the content manager.

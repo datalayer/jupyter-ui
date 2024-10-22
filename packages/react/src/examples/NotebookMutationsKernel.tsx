@@ -26,7 +26,7 @@ loadJupyterConfig();
 
 const SERVICE_MANAGER_LESS = new ServiceManagerLess();
 
-const NotebookMutations = () => {
+const NotebookMutationsServiceKernel = () => {
   const [index, setIndex] = useState(0);
   const [nbformat, setNbformat] = useState(nbformatExample as INotebookContent);
   const [readonly, setReadonly] = useState(true);
@@ -161,4 +161,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookMutations />);
+root.render(<NotebookMutationsServiceKernel />);

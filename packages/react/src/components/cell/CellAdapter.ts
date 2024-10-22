@@ -255,7 +255,7 @@ export class CellAdapter {
     this._sessionContext.kernelChanged.connect(
       (_, arg: Session.ISessionConnection.IKernelChangedArgs) => {
         const kernelConnection = arg.newValue;
-        console.log('Current Jupyter Kernel connection', kernelConnection);
+        console.log('Current Jupyter Kernel Connection', kernelConnection);
         if (kernelConnection && !kernelConnection.handleComms) {
           console.warn(
             'Jupyter Kernel Connection does not handle Comms',

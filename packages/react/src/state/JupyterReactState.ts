@@ -7,7 +7,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
-import { ServiceManager } from '@jupyterlab/services';
+import { ServiceManager, Kernel as JupyterKernel } from '@jupyterlab/services';
 import { getJupyterServerUrl, createLiteServiceManager, ensureJupyterAuth, createServerSettings, JupyterPropsType, DEFAULT_KERNEL_NAME } from '../jupyter';
 import { ServiceManagerLess } from '../jupyter/services';
 import { Kernel } from '../jupyter/kernel/Kernel';
@@ -18,6 +18,8 @@ import { consoleStore, ConsoleState } from '../components/console/ConsoleState';
 import { notebookStore, NotebookState } from '../components/notebook/NotebookState';
 import { outputsStore, OutputState } from '../components/output/OutputState';
 import { terminalStore, TerminalState } from '../components/terminal/TerminalState';
+
+export type OnKernelConnection = (kernelConnection: JupyterKernel.IKernelConnection | null | undefined) => void;
 
 export type JupyterReactState = {
   cellsStore: CellsState;
