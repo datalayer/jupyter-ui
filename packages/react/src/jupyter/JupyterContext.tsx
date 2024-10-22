@@ -187,8 +187,8 @@ export const useJupyter = (props?: JupyterPropsType): JupyterContextType => {
     // The provided props are irrelevant in this case.
     return context;
   }
-  // We are not within a React Context, so create a JupyterContext
-  // from the store based on the provided props.
+  // We are not within a React Context....
+  // so create a JupyterContext from the store based on the provided props.
   const {
     jupyterConfig,
     kernel,

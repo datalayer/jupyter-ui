@@ -273,12 +273,43 @@ export class SettingManagerLess extends SettingManager implements Setting.IManag
     this.serverSettings = serverSettings;
   }
   fetch(id: string): Promise<ISettingRegistry.IPlugin> {
-//    return new Promise(() => {});
-    return super.fetch(id)
+    /*
+    const PLUGIN: ISettingRegistry.IPlugin = {
+      id,
+      data: {
+        composite: {},
+        user: {},
+      },
+      raw: '',
+      schema: {
+        type: 'object',
+      },
+      version: '',
+    };
+    return new Promise<ISettingRegistry.IPlugin>((resolve) => resolve(PLUGIN));
+    */
+    return super.fetch(id);
   }
   list(query?: 'ids' | undefined): Promise<{ ids: string[]; values: ISettingRegistry.IPlugin[]; }> {
-//    return new Promise(() => {});
-    return super.list(query)
+    /*
+    const PLUGIN: ISettingRegistry.IPlugin = {
+      id: 'id',
+      data: {
+        composite: {},
+        user: {},
+      },
+      raw: '',
+      schema: {
+        type: 'object',
+      },
+      version: '',
+    };
+    return new Promise<{ ids: string[]; values: ISettingRegistry.IPlugin[]; }>((resolve) => resolve({
+      ids: [PLUGIN.id],
+      values: [PLUGIN],
+    }));
+    */
+    return super.list(query);
   }
   save(id: string, raw: string): Promise<void> {
 //    return super.save(id, raw);
@@ -390,8 +421,7 @@ export class ServiceManagerLess implements ServiceManager.IManager {
     this.serverSettings = serverSettings ?? ServerConnection.makeSettings({
       baseUrl: 'http://',
       wsUrl: 'ws://',
-      token: '',
-    });
+      token: '',    });
     this.contents = new ContentsManagerLess(this.serverSettings);
     this.kernels = new KernelsManagerLess(this.serverSettings);
     this.kernelspecs = new KernelspecManagerLess(this.serverSettings);

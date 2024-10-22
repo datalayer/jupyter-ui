@@ -34,7 +34,7 @@ export type ShellMessageHook = (
  */
 export type IKernelExecutorOptions = {
   /**
-   * Kernel connection
+   * Kernel Connection
    */
   connection: JupyterKernel.IKernelConnection;
   /**

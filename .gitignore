@@ -172,5 +172,6 @@ packages/react/.vscode/launch.json
 !.storybook
 !.vscode
 !.licenserc.yaml
-!packages/react/jupyter_react/static/README.md
+!dev/notebooks/.datalayer
 !docs/static/img
+!packages/react/jupyter_react/static/README.md

@@ -17,6 +17,7 @@ import { CellMetadataEditor } from './cell/metadata/CellMetadataEditor';
 import { ICellSidebarProps } from './cell/sidebar/CellSidebarWidget';
 import { INotebookToolbarProps } from './toolbar/NotebookToolbar';
 import { newUuid } from '../../utils';
+import { OnKernelConnection } from '../../state';
 import { useNotebookStore } from './NotebookState';
 import { NotebookAdapter } from './NotebookAdapter';
 
@@ -43,6 +44,7 @@ export type INotebookProps = {
   maxHeight?: string;
   nbformat?: INotebookContent;
   nbgrader: boolean;
+  onKernelConnection?: OnKernelConnection;
   path?: string;
   readonly: boolean;
   renderers: IRenderMime.IRendererFactory[];
@@ -50,7 +52,7 @@ export type INotebookProps = {
   serviceManager?: ServiceManager.IManager,
   url?: string;
   /**
-   * The Kernel Id to use, as defined in the Kernel API
+   * The Kernel Id to use, as defined in the Kernel API.
    */
   useRunningKernelId?: string;
   /**
@@ -91,7 +93,7 @@ export const Notebook = (props: INotebookProps) => {
   const kernel = props.kernel ?? defaultKernel;
   const notebookStore = useNotebookStore();
   const portals = notebookStore.selectNotebookPortals(id);
-  //
+  // Bootstrap the Notebook Adapter.
   const bootstrapAdapter = (serviceManager?: ServiceManager.IManager, kernel?: Kernel) => {
     const adapter = new NotebookAdapter({
       ...props,
@@ -100,7 +102,6 @@ export const Notebook = (props: INotebookProps) => {
       kernel,
       serviceManager,
     });
-    console.log('Notebook Adapter is bootstraping...', adapter.serviceManager);
     // Update the local state.
     setAdapter(adapter);
     // Update the global state.

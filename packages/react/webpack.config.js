@@ -47,12 +47,14 @@ const ENTRY =
   // './src/examples/NotebookKernelChange';
   // './src/examples/NotebookLite';
   // './src/examples/NotebookLiteContext';
-  './src/examples/NotebookLess';
-  // './src/examples/NotebookMutations';
+  // './src/examples/NotebookLess';
+  // './src/examples/NotebookMutationsKernel';
+  './src/examples/NotebookMutationsServiceManager';
   // './src/examples/NotebookNbformat';
   // './src/examples/NotebookNbformatChange';
   // './src/examples/NotebookNoContext';
   // './src/examples/NotebookNoPrimer';
+  // './src/examples/NotebookOnKernelConnection';
   // './src/examples/NotebookPathChange';
   // './src/examples/NotebookReadonly';
   // './src/examples/NotebookServiceManager';

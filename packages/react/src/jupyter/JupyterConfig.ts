@@ -113,7 +113,7 @@ export const loadJupyterConfig = (
     | 'jupyterServerUrl'
     | 'lite'
     | 'terminals'
-  >
+  > = {}
 ): IJupyterConfig => {
   const {
     collaborative,

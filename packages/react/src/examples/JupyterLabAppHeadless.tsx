@@ -10,7 +10,7 @@ import { Box, Text, ToggleSwitch, ThemeProvider, useTheme } from '@primer/react'
 import { BoxPanel } from '@lumino/widgets';
 import { ThemeManager } from '@jupyterlab/apputils';
 // import { NotebookTracker } from '@jupyterlab/notebook';
-import { Jupyter } from '../jupyter/Jupyter';
+import { JupyterReactTheme } from '../theme';
 import Lumino from '../components/lumino/Lumino';
 import { Colormode } from '../theme/JupyterLabColormode';
 import JupyterLabApp from '../components/jupyterlab/JupyterLabApp';
@@ -63,11 +63,7 @@ const JupyterLabAppHeadless = () => {
   };
   return (
     <>
-      <Jupyter
-        startDefaultKernel={false}
-        disableCssLoading
-        colormode="light"
-      >
+      <JupyterReactTheme colormode="light">
         <ThemeProvider
           colorMode={theme === 'light' ? 'day' : 'night'}
           dayScheme="light"
@@ -135,7 +131,7 @@ const JupyterLabAppHeadless = () => {
           PluginType={ThemeManager}
           onPlugin={onPlugin}
         />
-      </Jupyter>
+      </JupyterReactTheme>
     </>
   );
 };
