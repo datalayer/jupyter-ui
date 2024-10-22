@@ -34,8 +34,6 @@ import { NotebookCommands } from './NotebookCommands';
 
 const FALLBACK_NOTEBOOK_PATH = '.datalayer/ping.ipynb';
 
-const LITE_FALLBACK_NOTEBOOK_PATH = '.datalayer/ping.ipynb';
-
 export class NotebookAdapter {
 
   private _CellSidebar?: (props: ICellSidebarProps) => JSX.Element;
@@ -164,7 +162,7 @@ export class NotebookAdapter {
     this._context = new Context({
       manager: this._serviceManager,
       factory: this._notebookModelFactory!,
-      path: this._path ?? (this._lite ? LITE_FALLBACK_NOTEBOOK_PATH : FALLBACK_NOTEBOOK_PATH),
+      path: this._path ?? FALLBACK_NOTEBOOK_PATH,
       kernelPreference: {
         id: this._kernel?.id,
         shouldStart: false,

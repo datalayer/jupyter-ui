@@ -84,14 +84,13 @@ const NotebookMutationsServiceManager = () => {
         break;
       }
       case 3: {
-//        setWaiting(true);
-        setLite(false);
         createDatalayerServiceManager(
           datalayerConfig?.cpuEnvironment || 'python-simple-env',
           datalayerConfig?.credits || 1,
         ).then((serviceManager) => {
           (serviceManager as any)['__NAME__'] = 'DatalayerCPUServiceManager';
           setServiceManager(serviceManager);
+          setLite(false);
           setServerless(false);
           setReadonly(false);
           setKernelIndex(0);
@@ -145,12 +144,12 @@ const NotebookMutationsServiceManager = () => {
           </Box>
         </Box>
         <Box>
-          <Text>Kernel Connections:</Text>
+          <Text as="h3">Kernel Connections</Text>
         </Box>
         <Box>
           {kernelConnections.map(kernelConnection => {
             return (
-              <Box>
+              <Box key={kernelConnection.clientId}>
                 Client ID ({kernelConnection.clientId}) - Kernel ID ({kernelConnection.id}) {kernelConnection.name}
               </Box>
             )

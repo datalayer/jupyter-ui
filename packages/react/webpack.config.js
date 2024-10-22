@@ -48,7 +48,7 @@ const ENTRY =
   // './src/examples/NotebookLite';
   // './src/examples/NotebookLiteContext';
   // './src/examples/NotebookLess';
-  // './src/examples/NotebookMutationsServiceManager';
+  // './src/examples/NotebookMutationsKernel';
   './src/examples/NotebookMutationsServiceManager';
   // './src/examples/NotebookNbformat';
   // './src/examples/NotebookNbformatChange';

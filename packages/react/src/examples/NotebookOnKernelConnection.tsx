@@ -27,12 +27,12 @@ const NotebookOnKernelConnection = () => {
     <JupyterReactTheme>
       <Box as="h1">A Jupyter Notebook Listening to Kernel Connections</Box>
       <Box>
-        <Text>Kernel Connections:</Text>
+        <Text as="h3">Kernel Connections</Text>
       </Box>
       <Box>
         {kernelConnections.map(kernelConnection => {
           return (
-            <Box>
+            <Box key={kernelConnection.clientId}>
               Client ID ({kernelConnection.clientId}) - Kernel ID ({kernelConnection.id})
             </Box>
           )
