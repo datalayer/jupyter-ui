@@ -34,6 +34,8 @@ import { NotebookCommands } from './NotebookCommands';
 
 const FALLBACK_NOTEBOOK_PATH = '.datalayer/ping.ipynb';
 
+const LITE_FALLBACK_NOTEBOOK_PATH = '.datalayer/ping.ipynb';
+
 export class NotebookAdapter {
 
   private _CellSidebar?: (props: ICellSidebarProps) => JSX.Element;
@@ -157,10 +159,12 @@ export class NotebookAdapter {
 
   initializeContext() {
 
+    const isNbFormat = this._path !== undefined && this._path !== '' ? false : true;
+
     this._context = new Context({
       manager: this._serviceManager,
       factory: this._notebookModelFactory!,
-      path: this._path ?? FALLBACK_NOTEBOOK_PATH,
+      path: this._path ?? (this._lite ? LITE_FALLBACK_NOTEBOOK_PATH : FALLBACK_NOTEBOOK_PATH),
       kernelPreference: {
         id: this._kernel?.id,
         shouldStart: false,
@@ -185,7 +189,7 @@ export class NotebookAdapter {
       },
       1
     );
-    // This code block was causing https://github.com/datalayer/jupyter-ui/issues/195
+    // This code block is causing https://github.com/datalayer/jupyter-ui/issues/195
     this._context?.sessionContext
       .changeKernel({id: this._kernel.id })
       .then(() => {
@@ -194,37 +198,37 @@ export class NotebookAdapter {
         );
       });
     */
+
     // These are fixes to have more control on the kernel launch.
-    (this._context.sessionContext as any)._initialize =
-      async (): Promise<boolean> => {
-        const manager = (this._context!.sessionContext as any).sessionManager as SessionManager;
-        await manager.ready;
-        await manager.refreshRunning();
-        const model = find(manager.running(), model => {
-          return model.kernel?.id === this._kernel?.id;
-        });
-        if (model) {
-          try {
-            const session = manager.connectTo({
-              model: {
-                ...model,
-                path: this._path ?? model.path,
-                name: this._path ?? model.name,
-              },
-              kernelConnectionOptions: {
-                handleComms: true,
-              },
-            });
-            (this._context!.sessionContext as any)._handleNewSession(session);
-          } catch (err) {
-            void (this._context!.sessionContext as any)._handleSessionError(
-              err
-            );
-            return Promise.reject(err);
-          }
+    (this._context.sessionContext as any)._initialize = async (): Promise<boolean> => {
+      const manager = (this._context!.sessionContext as any).sessionManager as SessionManager;
+      await manager.ready;
+      await manager.refreshRunning();
+      const model = find(manager.running(), model => {
+        return model.kernel?.id === this._kernel?.id;
+      });
+      if (model) {
+        try {
+          const session = manager.connectTo({
+            model: {
+              ...model,
+              path: this._path ?? model.path,
+              name: this._path ?? model.name,
+            },
+            kernelConnectionOptions: {
+              handleComms: true,
+            },
+          });
+          (this._context!.sessionContext as any)._handleNewSession(session);
+        } catch (err) {
+          void (this._context!.sessionContext as any)._handleSessionError(
+            err
+          );
+          return Promise.reject(err);
         }
-        return await (this._context!.sessionContext as any)._startIfNecessary();
-      };
+      }
+      return await (this._context!.sessionContext as any)._startIfNecessary();
+    };
 
     this._context.sessionContext.ready.then(() => {
       if (this._onKernelConnection) {
@@ -310,10 +314,35 @@ export class NotebookAdapter {
       this._notebookPanel?.update();
     });
 
-    const isNbFormat = this._path !== undefined && this._path !== '' ? false : true;
-
     if (isNbFormat) {
       // If nbformat is provided and we don't want to interact with the content manager.
+      (this._context as any)._populate = async (): Promise<void> => {
+        (this._context as any)._isPopulated = true;
+        (this._context as any)._isReady = true;
+        (this._context as any)._populatedPromise.resolve(void 0);
+        // Add a checkpoint if none exists and the file is writable.
+        // Force skip this step for nbformat notebooks.
+        // await (this._context as any)._maybeCheckpoint(false);
+        if ((this._context as any).isDisposed) {
+            return;
+        }
+        // Update the kernel preference.
+        const name = (this._context as any)._model.defaultKernelName ||
+          (this._context as any).sessionContext.kernelPreference.name;
+          (this._context as any).sessionContext.kernelPreference = {
+            ...(this._context as any).sessionContext.kernelPreference,
+            name,
+            language: (this._context as any)._model.defaultKernelLanguage
+        };
+        // Note: we don't wait on the session to initialize
+        // so that the user can be shown the content before
+        // any kernel has started.
+        void (this._context as any).sessionContext.initialize().then((shouldSelect: boolean) => {
+            if (shouldSelect) {
+                void (this._context as any)._dialogs.selectKernel((this._context!.sessionContext as any).sessionContext);
+            }
+        });
+      };  
       (this._context as any).initialize = async (isNew: boolean): Promise<void> => {
         (this._context as Context<INotebookModel>).model.dirty = false;
         const now = new Date().toISOString();

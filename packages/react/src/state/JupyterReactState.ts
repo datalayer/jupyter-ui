@@ -11,8 +11,8 @@ import { ServiceManager, Kernel as JupyterKernel } from '@jupyterlab/services';
 import { getJupyterServerUrl, createLiteServiceManager, ensureJupyterAuth, createServerSettings, JupyterPropsType, DEFAULT_KERNEL_NAME } from '../jupyter';
 import { ServiceManagerLess } from '../jupyter/services';
 import { Kernel } from '../jupyter/kernel/Kernel';
-import type { IDatalayerConfig } from './IDatalayerConfig';
 import { IJupyterConfig, loadJupyterConfig } from '../jupyter/JupyterConfig';
+import type { IDatalayerConfig } from './IDatalayerConfig';
 import { cellsStore, CellsState } from '../components/cell/CellState';
 import { consoleStore, ConsoleState } from '../components/console/ConsoleState';
 import { notebookStore, NotebookState } from '../components/notebook/NotebookState';
@@ -197,7 +197,7 @@ export function useJupyterReactStoreFromProps(props: JupyterPropsType): JupyterR
         jupyterReactStore.getState().kernelIsLoading = false;
       }
       else if (startDefaultKernel) {
-        console.log('Starting a Jupyter Kernel.', defaultKernelName);
+        console.log('Starting a Jupyter Kernel:', defaultKernelName);
         const defaultKernel = new Kernel({
           kernelManager,
           kernelName: defaultKernelName,

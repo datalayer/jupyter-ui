@@ -33,7 +33,7 @@ const NotebookMutationsServiceManager = () => {
   const [serverless, setServerless] = useState(true);
   const [kernelIndex, setKernelIndex] = useState(-1);
   const [waiting, setWaiting] = useState(false);
-//  const [lite, setLite] = useState(false);
+  const [lite, setLite] = useState(false);
   const [serviceManager, setServiceManager] = useState<ServiceManager.IManager>(SERVICE_MANAGER_LESS);
   const [kernelConnections, setKernelConnections] = useState<Array<Kernel.IKernelConnection>>([])
   const { datalayerConfig } = useJupyterReactStore();
@@ -53,7 +53,7 @@ const NotebookMutationsServiceManager = () => {
         setNbformat(notebook?.adapter?.notebookPanel?.content.model?.toJSON() as INotebookContent);
         setServerless(true);
         setReadonly(true);
-//        setLite(false);
+        setLite(false);
         setServiceManager(SERVICE_MANAGER_LESS);
         break;
       }
@@ -66,7 +66,7 @@ const NotebookMutationsServiceManager = () => {
           setNbformat(notebook?.adapter?.notebookPanel?.content.model?.toJSON() as INotebookContent);
           setServerless(false);
           setReadonly(false);
-//          setLite(true);
+          setLite(true);
         });
         break;
       }
@@ -76,7 +76,7 @@ const NotebookMutationsServiceManager = () => {
         setNbformat(notebook?.adapter?.notebookPanel?.content.model?.toJSON() as INotebookContent);
         setServerless(false);
         setReadonly(false);
-//        setLite(false);
+        setLite(false);
         const serverSettings = createServerSettings(getJupyterServerUrl(), getJupyterServerToken());
         const serviceManager = new ServiceManager({ serverSettings });
         (serviceManager as any)['__NAME__'] = 'MutatingServiceManager';
@@ -85,7 +85,7 @@ const NotebookMutationsServiceManager = () => {
       }
       case 3: {
 //        setWaiting(true);
-//        setLite(false);
+        setLite(false);
         createDatalayerServiceManager(
           datalayerConfig?.cpuEnvironment || 'python-simple-env',
           datalayerConfig?.credits || 1,
@@ -102,7 +102,7 @@ const NotebookMutationsServiceManager = () => {
       }
       case 4: {
         setWaiting(true);
-//        setLite(false);
+        setLite(false);
         createDatalayerServiceManager(
           datalayerConfig?.gpuEnvironment || 'pytorch-cuda-env',
           datalayerConfig?.credits || 1,
@@ -151,7 +151,7 @@ const NotebookMutationsServiceManager = () => {
           {kernelConnections.map(kernelConnection => {
             return (
               <Box>
-                Client ID ({kernelConnection.clientId}) - Kernel ID ({kernelConnection.id})
+                Client ID ({kernelConnection.clientId}) - Kernel ID ({kernelConnection.id}) {kernelConnection.name}
               </Box>
             )
           })}
@@ -163,7 +163,7 @@ const NotebookMutationsServiceManager = () => {
           <Notebook
             height="calc(100vh - 2.6rem)"
             id={NOTEBOOK_ID}
-//            lite={lite}
+            lite={lite}
             nbformat={nbformat as INotebookContent}
             onKernelConnection={onKernelConnection}
             readonly={readonly}
