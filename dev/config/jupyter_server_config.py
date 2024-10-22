@@ -76,13 +76,15 @@ c.ServerApp.jpserver_extensions = {
 }
 
 #################
-# Content
+# Contents
 #################
 
-# c.FileContentsManager.delete_to_trash = False
 content_dir = os.path.dirname(os.path.realpath(__file__)) + '/../notebooks'
 c.ServerApp.root_dir = content_dir
 c.ServerApp.preferred_dir = content_dir
+
+# c.FileContentsManager.delete_to_trash = False
+c.ContentsManager.allow_hidden = True
 
 #################
 # URLs

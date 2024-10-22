@@ -135,9 +135,9 @@ export class Kernel {
       });
       this._kernelConnection.info.then(info => {
         this._info = info;
-        console.log('Kernel information.', info);
-        console.log('Kernel session.', this._session);
-        console.log('Kernel details.', this.toJSON());
+        console.log('Kernel Information.', info);
+        console.log('Kernel Session.', this._session);
+        console.log('Kernel Details.', this.toJSON());
       });
     }
   }
