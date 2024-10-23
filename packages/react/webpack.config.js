@@ -26,7 +26,7 @@ const ENTRY =
   // './src/examples/Console';
   // './src/examples/ConsoleLite';
   // './src/examples/Deno';
-  './src/examples/FileBrowser';
+  // './src/examples/FileBrowser';
   // './src/examples/IPyLeaflet';
   // './src/examples/IPyReact';
   // './src/examples/IPyWidgets';
@@ -50,7 +50,7 @@ const ENTRY =
   // './src/examples/NotebookLiteContext';
   // './src/examples/NotebookLess';
   // './src/examples/NotebookMutationsKernel';
-  // './src/examples/NotebookMutationsServiceManager';
+  './src/examples/NotebookMutationsServiceManager';
   // './src/examples/NotebookNbformat';
   // './src/examples/NotebookNbformatChange';
   // './src/examples/NotebookNoContext';
