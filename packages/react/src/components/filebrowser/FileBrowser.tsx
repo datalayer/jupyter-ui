@@ -7,7 +7,7 @@
 import { useState, useEffect, useReducer } from 'react';
 import { TreeView } from '@primer/react';
 import { FileIcon } from '@primer/octicons-react';
-import { useJupyter } from './../../jupyter/JupyterContext';
+import { ServiceManager } from '@jupyterlab/services';
 import JupyterServices from './../../jupyter/services/JupyterServices';
 
 interface RenderTree {
@@ -21,10 +21,14 @@ const initialTree: RenderTree = {
   name: 'File Browser',
 };
 
-export const FileBrowser = () => {
+export type FileBrowserProps = {
+  serviceManager: ServiceManager.IManager;
+}
+
+export const FileBrowser = (props: FileBrowserProps) => {
+  const { serviceManager } = props;
   const [tree, setTree] = useState(initialTree);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
-  const { serviceManager } = useJupyter();
   const loadPath = (
     services: JupyterServices,
     subTree: RenderTree,

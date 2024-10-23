@@ -47,6 +47,7 @@ export type INotebookProps = {
   onKernelConnection?: OnKernelConnection;
   path?: string;
   readonly: boolean;
+  renderId: number;
   renderers: IRenderMime.IRendererFactory[];
   serverless: boolean,
   serviceManager?: ServiceManager.IManager,
@@ -89,7 +90,6 @@ export const Notebook = (props: INotebookProps) => {
   } = props;
   const [id, _] = useState(props.id || newUuid());
   const [adapter, setAdapter] = useState<NotebookAdapter>();
-  const [flipflop, setFlipflop] = useState(true);
   const kernel = props.kernel ?? defaultKernel;
   const notebookStore = useNotebookStore();
   const portals = notebookStore.selectNotebookPortals(id);
@@ -177,24 +177,13 @@ export const Notebook = (props: INotebookProps) => {
   }
   // Mutation Effects.
   useEffect(() => {
-    if (serviceManager) {
-      if (kernel || serverless || lite) {
-        if (adapter) {
-          setAdapter(undefined);
-          setFlipflop(false);
-        }
-        else {
-          createAdapter(serviceManager, kernel);
-        }
-      }
-    }
-  }, [serviceManager, kernel, lite]);
-  useEffect(() => {
-    if (!flipflop) {
-      setFlipflop(true);
+    if (serviceManager && serverless) {
       createAdapter(serviceManager, kernel);
     }
-  }, [flipflop]);
+    else if (serviceManager && kernel) {
+      createAdapter(serviceManager, kernel);
+    }
+  }, [serviceManager, kernel]);
   useEffect(() => {
     if (adapter && adapter.kernel !== kernel) {
       adapter.setKernel(kernel);
@@ -299,7 +288,7 @@ export const Notebook = (props: INotebookProps) => {
           {portals?.map((portal: React.ReactPortal) => portal)}
         </>
         <Box>
-          {adapter && flipflop &&
+          {adapter &&
             <Lumino id={id}>
               {adapter.panel}
             </Lumino>
@@ -317,6 +306,7 @@ Notebook.defaultProps = {
   maxHeight: '100vh',
   nbgrader: false,
   readonly: false,
+  renderId: 0,
   renderers: [],
   serverless: false,
 } as Partial<INotebookProps>;

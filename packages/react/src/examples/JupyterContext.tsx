@@ -189,6 +189,7 @@ const Outputs = () => {
 
 const JuptyerContextExample = () => {
   const [index, setIndex] = useState(1);
+  const { serviceManager } = useJupyter();
   return (
     <>
       <Jupyter
@@ -230,7 +231,7 @@ const JuptyerContextExample = () => {
         <hr />
         <FileManagerJupyterLab />
         <hr />
-        <FileBrowser />
+        { serviceManager && <FileBrowser serviceManager={serviceManager}/> }
         <hr />
         <Terminal />
       </Jupyter>

@@ -6,7 +6,17 @@
 
 import { createRoot } from 'react-dom/client';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { useJupyter } from './../jupyter/JupyterContext';
 import FileBrowser from '../components/filebrowser/FileBrowser';
+
+const FileBrowserExample = () => {
+  const { serviceManager } = useJupyter();
+  return (
+    serviceManager
+      ? <FileBrowser serviceManager={serviceManager}/>
+      : <></>
+  )
+}
 
 const div = document.createElement('div');
 document.body.appendChild(div);
@@ -14,6 +24,6 @@ const root = createRoot(div);
 
 root.render(
   <JupyterReactTheme>
-    <FileBrowser />
+    <FileBrowserExample />
   </JupyterReactTheme>
 );
