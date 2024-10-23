@@ -11,7 +11,8 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 import { Kernel, ServiceManager } from '@jupyterlab/services';
 import {
   createLiteServiceManager, createServerSettings, setJupyterServerUrl, getJupyterServerUrl,
-  getJupyterServerToken, ServiceManagerLess, loadJupyterConfig, DEFAULT_JUPYTER_SERVER_URL,
+  getJupyterServerToken, ServiceManagerLess, loadJupyterConfig,
+  DEFAULT_JUPYTER_SERVER_URL, Lite,
 } from '../jupyter';
 import { useJupyterReactStore, OnKernelConnection } from '../state';
 import { useNotebookStore, Notebook, SpinnerCentered } from './../components';
@@ -33,13 +34,13 @@ const NotebookMutationsServiceManager = () => {
   const [serverless, setServerless] = useState(true);
   const [kernelIndex, setKernelIndex] = useState(-1);
   const [waiting, setWaiting] = useState(false);
-  const [lite, setLite] = useState(false);
+  const [lite, setLite] = useState<Lite>(false);
   const [serviceManager, setServiceManager] = useState<ServiceManager.IManager>(SERVICE_MANAGER_LESS);
   const [kernelConnections, setKernelConnections] = useState<Array<Kernel.IKernelConnection>>([])
   const { datalayerConfig } = useJupyterReactStore();
   const notebookStore = useNotebookStore();
   const notebook = notebookStore.selectNotebook(NOTEBOOK_ID);
-  const onKernelConnection: OnKernelConnection = (kernelConnection: Kernel.IKernelConnection) => {
+  const onKernelConnection: OnKernelConnection = (kernelConnection: Kernel.IKernelConnection | null | undefined) => {
     console.log('Received a Kernel Connection.', kernelConnection);
     if (kernelConnection) {
       setKernelConnections(kernelConnections.concat(kernelConnection));
@@ -60,13 +61,13 @@ const NotebookMutationsServiceManager = () => {
       case 1: {
         setJupyterServerUrl(location.protocol + '//' + location.host);
         createLiteServiceManager().then(liteServiceManager => {
-          setKernelIndex(-1);
           console.log('Lite Service Manager is available', liteServiceManager);
-          setServiceManager(liteServiceManager);
+          setKernelIndex(-1);
           setNbformat(notebook?.adapter?.notebookPanel?.content.model?.toJSON() as INotebookContent);
           setServerless(false);
           setReadonly(false);
           setLite(true);
+          setServiceManager(liteServiceManager);
         });
         break;
       }

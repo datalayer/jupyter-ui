@@ -149,7 +149,7 @@ export class ContentsManagerLess implements Contents.IManager {
   dispose(): void {}
 }
 
-export class KernelsManagerLess implements IKernelManager {
+export class KernelManagerLess implements IKernelManager {
   runningChanged: ISignal<IKernelManager, IModel[]> = new Signal(this);
   connectionFailure: ISignal<IKernelManager, ServerConnection.NetworkError> = new Signal(this);
   isReady: boolean = true;
@@ -419,11 +419,12 @@ export class ServiceManagerLess implements ServiceManager.IManager {
   nbconvert: NbConvert.IManager;
   constructor(serverSettings?: ServerConnection.ISettings) {
     this.serverSettings = serverSettings ?? ServerConnection.makeSettings({
-      baseUrl: 'http://',
-      wsUrl: 'ws://',
-      token: '',    });
+      baseUrl: 'https://oss.datalayer.run/api/jupyter-server',
+      wsUrl: 'wss://oss.datalayer.run/api/jupyter-server',
+      token: '60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6',
+    });
     this.contents = new ContentsManagerLess(this.serverSettings);
-    this.kernels = new KernelsManagerLess(this.serverSettings);
+    this.kernels = new KernelManagerLess(this.serverSettings);
     this.kernelspecs = new KernelspecManagerLess(this.serverSettings);
     this.sessions = new SessionManagerLess(this.serverSettings);
     this.settings = new SettingManagerLess(this.serverSettings);

@@ -169,6 +169,7 @@ export function useJupyterReactStoreFromProps(props: JupyterPropsType): JupyterR
 
   // Setup a Kernel if needed.
   useEffect(() => {
+    console.log('Checking kernels for the new Service Manager:', serviceManager);
     serviceManager?.kernels.ready.then(async () => {
       const kernelManager = serviceManager.kernels;
       console.log('Jupyter Kernel Manager is ready', kernelManager);
@@ -221,7 +222,7 @@ export function useJupyterReactStoreFromProps(props: JupyterPropsType): JupyterR
         });
       }
     });
-  }, [lite, serviceManager]);
+  }, [serviceManager]);
 
   return useStore(jupyterReactStore);
 

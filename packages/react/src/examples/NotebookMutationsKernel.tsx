@@ -39,7 +39,7 @@ const NotebookMutationsKernel = () => {
   const { datalayerConfig } = useJupyterReactStore();
   const notebookStore = useNotebookStore();
   const notebook = notebookStore.selectNotebook(NOTEBOOK_ID);
-  const onKernelConnection: OnKernelConnection = (kernelConnection: Kernel.IKernelConnection) => {
+  const onKernelConnection: OnKernelConnection = (kernelConnection: Kernel.IKernelConnection | null | undefined) => {
     console.log('Received a Kernel Connection.', kernelConnection);
     if (kernelConnection) {
       setKernelConnections(kernelConnections.concat(kernelConnection));

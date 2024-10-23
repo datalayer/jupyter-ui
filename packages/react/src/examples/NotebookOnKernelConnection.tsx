@@ -19,9 +19,11 @@ import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookOnKernelConnection = () => {
   const [kernelConnections, setKernelConnections] = useState<Array<Kernel.IKernelConnection>>([])
-  const onKernelConnection: OnKernelConnection = (kernelConnection: Kernel.IKernelConnection) => {
+  const onKernelConnection: OnKernelConnection = (kernelConnection: Kernel.IKernelConnection | null | undefined) => {
     console.log('Received a Kernel Connection.', kernelConnection);
-    setKernelConnections(kernelConnections.concat(kernelConnection));
+    if (kernelConnection) {
+      setKernelConnections(kernelConnections.concat(kernelConnection));
+    }
   }
   return (
     <JupyterReactTheme>
