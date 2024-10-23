@@ -4,14 +4,16 @@
  * MIT License
  */
 
+import { useJupyter } from './../../../jupyter/JupyterContext';
 import { FileBrowser } from '../../../components/filebrowser/FileBrowser';
 
 const FileBrowserComponent = () => {
+  const { serviceManager } = useJupyter();
   return (
-    <>
-      <FileBrowser />
-    </>
-  );
+    serviceManager
+      ? <FileBrowser serviceManager={serviceManager}/>
+      : <></>
+  )
 };
 
 export default FileBrowserComponent;
