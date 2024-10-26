@@ -9,7 +9,7 @@
   }
 }
 
-.execute-time {
+.dla-ExecTime {
   background-color: var(--jp-cell-editor-background);
   color: var(--jp-mirror-editor-variable-color);
   display: block;
@@ -20,10 +20,10 @@
   padding: 0 2px;
 }
 
-.execute-time-positioning-left {
+.dla-ExecTime-positioning-left {
   text-align: left;
 }
 
-.execute-time-positioning-right {
+.dla-ExecTime-positioning-right {
   text-align: right;
 }

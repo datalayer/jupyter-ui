@@ -12,19 +12,18 @@ import { Cell, CodeCell, ICellModel } from '@jupyterlab/cells';
 import { IMapChange } from '@jupyter/ydoc';
 import { getTimeDiff, getTimeString } from './utils';
 
-const EXECUTE_TIME_CLASS = 'execute-time';
+const EXECUTE_TIME_CLASS = 'dla-ExecTime';
 
 const ANIMATE_TIME_MS = 1000;
 
 const ANIMATE_CSS = `executeHighlight ${ANIMATE_TIME_MS}ms`;
 
-export interface IExecuteTimeSettings {
+export interface IExecTimeSettings {
   highlight: boolean;
   positioning: string;
 }
 
-export class ExecuteTimeWidget extends Widget {
-
+export class ExecTimeWidget extends Widget {
   private _panel: NotebookPanel;
 
   private _cellSlotMap: {
@@ -34,7 +33,7 @@ export class ExecuteTimeWidget extends Widget {
     ) => void;
   } = {};
 
-  private _settings: IExecuteTimeSettings = {
+  private _settings: IExecTimeSettings = {
     highlight: true,
     positioning: 'left'
   };

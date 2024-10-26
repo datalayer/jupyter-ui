@@ -12,10 +12,9 @@ import { CodeCell } from '@jupyterlab/cells';
 import { CodeEditor } from '@jupyterlab/codeeditor';
 // import { CodeMirrorEditor } from '@jupyterlab/codemirror';
 import { IInputPrompt } from '@jupyterlab/cells';
-import { ExecuteTimeWidget } from './../extensions';
 // import { NotebookInputPrompt } from './../cell/InputPrompt';
 
-class DatalayerCell extends CodeCell {
+class DatalayerCodeCell extends CodeCell {
   constructor(options: CodeCell.IOptions) {
     super(options);
   }
@@ -82,7 +81,7 @@ export class JupyterReactContentFactory extends NotebookPanel.ContentFactory {
 
   /** @override */
   createCodeCell(options: CodeCell.IOptions): CodeCell {
-    const cell = new DatalayerCell(options);
+    const cell = new DatalayerCodeCell(options);
     if (cell.inViewport) {
       this._updateEditor(cell);
     }

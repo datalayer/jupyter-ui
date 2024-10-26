@@ -5,5 +5,5 @@
  */
 
 export * from './ExecTimeExtension';
-export * from './ExecuteTimeWidget';
+export * from './ExecTimeWidget';
 export * from './utils';

@@ -9,19 +9,19 @@ import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { Notebook } from '../components/notebook/Notebook';
-import { ExecTimeExtension } from './extensions';
+import { CellToolbarExtension } from './extensions';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
-const NotebookCellToolbar = () => {
-  const [extension, _] = useState(new ExecTimeExtension());
+const NotebookExtension = () => {
+  const [extension, _] = useState(new CellToolbarExtension());
   return (
     <JupyterReactTheme>
       <Notebook
         nbformat={nbformat as INotebookContent}
         extensions={[extension]}
-        id="notebook-cell-toolbar-id"
+        id="notebook-extension-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         cellSidebarMargin={160}
         Toolbar={NotebookToolbar}
@@ -34,4 +34,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookCellToolbar />);
+root.render(<NotebookExtension />);

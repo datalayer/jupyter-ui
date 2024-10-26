@@ -43,6 +43,7 @@ const ENTRY =
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
   // './src/examples/Notebook';
+  // './src/examples/NotebookExtension';
   // './src/examples/NotebookURL';
   // './src/examples/NotebookCellSidebar';
   './src/examples/NotebookCellToolbar';
