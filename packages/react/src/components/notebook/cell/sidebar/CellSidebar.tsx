@@ -18,7 +18,7 @@ import { ICellSidebarProps } from './CellSidebarWidget';
 import CellMetadataEditor from '../metadata/CellMetadataEditor';
 import useNotebookStore from '../../NotebookState';
 
-import { DATALAYER_CELL_HEADER_CLASS } from './CellSidebarWidget';
+import { DATALAYER_CELL_SIDEBAR_CLASS_NAME } from './CellSidebarWidget';
 
 export const CellSidebar = (props: ICellSidebarProps) => {
   const { notebookId, cellId, nbgrader } = props;
@@ -44,7 +44,7 @@ export const CellSidebar = (props: ICellSidebarProps) => {
   }
   return activeCell ? (
     <Box
-      className={DATALAYER_CELL_HEADER_CLASS}
+      className={DATALAYER_CELL_SIDEBAR_CLASS_NAME}
       sx={{
         '& p': {
           marginBottom: '0 !important',

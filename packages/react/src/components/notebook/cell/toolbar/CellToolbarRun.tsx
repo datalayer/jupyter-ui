@@ -8,12 +8,12 @@ import { useState } from 'react';
 import { PanelLayout } from '@lumino/widgets';
 import { Box, Button } from '@primer/react';
 import { PlayIcon } from '@primer/octicons-react';
-import { ICellSidebarProps } from './CellSidebarWidget';
+import { ICellToolbarProps } from './CellToolbarWidget';
 import useNotebookStore from '../../NotebookState';
 
-import { DATALAYER_CELL_SIDEBAR_CLASS_NAME } from './CellSidebarWidget';
+import { DATALAYER_CELL_TOOLBAR_CLASS_NAME } from './CellToolbarWidget';
 
-export const CellSidebarRun = (props: ICellSidebarProps) => {
+export const CellToolbarRun = (props: ICellToolbarProps) => {
   const { notebookId } = props;
   const notebookStore = useNotebookStore();
   const [visible, setVisible] = useState(false);
@@ -33,7 +33,7 @@ export const CellSidebarRun = (props: ICellSidebarProps) => {
   }
   return activeCell ? (
     <Box
-      className={DATALAYER_CELL_SIDEBAR_CLASS_NAME}
+      className={DATALAYER_CELL_TOOLBAR_CLASS_NAME}
       sx={{
         '& p': {
           marginBottom: '0 !important',
@@ -59,4 +59,4 @@ export const CellSidebarRun = (props: ICellSidebarProps) => {
   );
 };
 
-export default CellSidebarRun;
+export default CellToolbarRun;

@@ -12,22 +12,22 @@ import { newUuid } from '../../../../utils/Utils';
 import { ReactPortalWidget } from '../../../lumino/ReactPortalWidget';
 import { notebookStore } from '../../NotebookState';
 
-export const DATALAYER_CELL_SIDEBAR_CLASS_NAME = 'dla-CellSidebar-Container';
+export const DATALAYER_CELL_TOOLBAR_CLASS_NAME = 'dla-CellToolbar-Container';
 
-export type ICellSidebarProps = {
+export type ICellToolbarProps = {
   notebookId: string;
   cellId: string;
   command: CommandRegistry;
   nbgrader: boolean;
 };
 
-export class CellSidebarWidget
+export class CellToolbarWidget
   extends ReactPortalWidget
   implements ICellHeader
 {
   private readonly commands: CommandRegistry;
   constructor(
-    CellSidebar: (props: ICellSidebarProps) => JSX.Element,
+    CellToolbar: (props: ICellToolbarProps) => JSX.Element,
     notebookId: string,
     nbgrader: boolean,
     commands: CommandRegistry,
@@ -36,15 +36,15 @@ export class CellSidebarWidget
     this.commands = commands;
     this.addClass('jp-CellHeader');
     this.id = newUuid();
-    const props: ICellSidebarProps = {
+    const props: ICellToolbarProps = {
       notebookId: notebookId,
       cellId: this.id,
       command: this.commands,
       nbgrader,
     };
-    const sidebar = createElement(CellSidebar, props);
+    const toolbar = createElement(CellToolbar, props);
     const portalDiv = (
-      <div className={DATALAYER_CELL_SIDEBAR_CLASS_NAME}>{sidebar}</div>
+      <div className={DATALAYER_CELL_TOOLBAR_CLASS_NAME}>{toolbar}</div>
     );
     const portal = createPortal(portalDiv, this.node);
     notebookStore.getState().addPortals({
@@ -54,4 +54,4 @@ export class CellSidebarWidget
   }
 }
 
-export default CellSidebarWidget;
+export default CellToolbarWidget;

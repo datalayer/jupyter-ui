@@ -14,12 +14,12 @@ import {
   SquareIcon,
   XIcon,
 } from '@primer/octicons-react';
-import { ICellSidebarProps } from './CellSidebarWidget';
+import { ICellToolbarProps } from './CellToolbarWidget';
 import useNotebookStore from '../../NotebookState';
 
-import { DATALAYER_CELL_SIDEBAR_CLASS_NAME } from './CellSidebarWidget';
+import { DATALAYER_CELL_TOOLBAR_CLASS_NAME } from './CellToolbarWidget';
 
-export const CellSidebarButton = (props: ICellSidebarProps) => {
+export const CellToolbarButton = (props: ICellToolbarProps) => {
   const { notebookId, cellId } = props;
   const notebookStore = useNotebookStore();
   const [visible, setVisible] = useState(false);
@@ -43,7 +43,7 @@ export const CellSidebarButton = (props: ICellSidebarProps) => {
   }
   return activeCell ? (
     <Box
-      className={DATALAYER_CELL_SIDEBAR_CLASS_NAME}
+      className={DATALAYER_CELL_TOOLBAR_CLASS_NAME}
       sx={{
         '& p': {
           marginBottom: '0 !important',
@@ -185,4 +185,4 @@ export const CellSidebarButton = (props: ICellSidebarProps) => {
   );
 };
 
-export default CellSidebarButton;
+export default CellToolbarButton;

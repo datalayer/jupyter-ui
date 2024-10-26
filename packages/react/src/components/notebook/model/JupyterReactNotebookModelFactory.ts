@@ -5,11 +5,7 @@
  */
 
 import { INotebookContent } from '@jupyterlab/nbformat';
-import {
-  INotebookModel,
-  NotebookModelFactory,
-  NotebookModel,
-} from '@jupyterlab/notebook';
+import { INotebookModel, NotebookModelFactory, NotebookModel } from '@jupyterlab/notebook';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import type { ISharedNotebook } from '@jupyter/ydoc';
 

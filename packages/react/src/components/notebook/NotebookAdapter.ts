@@ -17,7 +17,7 @@ import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { ISharedAttachmentsCell, IYText } from '@jupyter/ydoc';
 import { INotebookContent, CellType, IAttachments } from '@jupyterlab/nbformat';
 import { Completer, CompleterModel, CompletionHandler, ProviderReconciliator, KernelCompleterProvider } from '@jupyterlab/completer';
-import { Notebook, NotebookPanel, NotebookWidgetFactory, NotebookTracker, INotebookModel } from '@jupyterlab/notebook';
+import { Notebook, NotebookPanel, NotebookWidgetFactory, NotebookTracker, INotebookModel, StaticNotebook } from '@jupyterlab/notebook';
 import { Cell, ICellModel, MarkdownCell } from '@jupyterlab/cells';
 import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
@@ -58,6 +58,8 @@ export class NotebookAdapter {
   private _serviceManager: ServiceManager.IManager;
   private _tracker?: NotebookTracker;
   private _url?: string;
+  private _contentFactory: JupyterReactContentFactory;
+  private _mimeTypeService: CodeMirrorMimeTypeService;
 
   constructor(props: INotebookProps) {
 
@@ -250,15 +252,16 @@ export class NotebookAdapter {
     });
 
     if (!this._notebookPanel) {
+      // Option 1.
       /*
-      // Alternative way to create a NotebookPanel.
       const content = new Notebook({
         rendermime: this._rendermime!,
-        contentFactory,
-        mimeTypeService,
+        contentFactory: this._contentFactory,
+        mimeTypeService: this._mimeTypeService,
         notebookConfig: {
           ...StaticNotebook.defaultNotebookConfig,
-          windowingMode: 'none'
+          windowingMode: 'none',
+          recordTiming: true,
         }
       });
       this._notebookPanel = new NotebookPanel({
@@ -266,7 +269,10 @@ export class NotebookAdapter {
         content,
       });
       */
-      this._notebookPanel = this._documentRegistry?.getWidgetFactory('Notebook')?.createNew(this._context) as NotebookPanel;
+      // Option 2.
+      const notebookFactory = this._documentRegistry?.getWidgetFactory('Notebook');
+      this._notebookPanel = notebookFactory?.createNew(this._context) as NotebookPanel;
+
     }
 
     if (this._kernel) {
@@ -416,7 +422,7 @@ export class NotebookAdapter {
     });
 
     this._documentRegistry = new DocumentRegistry({});
-    const mimeTypeService = new CodeMirrorMimeTypeService(languages);
+    this._mimeTypeService = new CodeMirrorMimeTypeService(languages);
 
     const themes = new EditorThemeRegistry();
     for (const theme of EditorThemeRegistry.getDefaultThemes()) {
@@ -424,9 +430,7 @@ export class NotebookAdapter {
     }
     const editorExtensions = () => {
       const registry = new EditorExtensionRegistry();
-      for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions(
-        { themes }
-      )) {
+      for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions({ themes })) {
         registry.addExtension(extensionFactory);
       }
       registry.addExtension({
@@ -449,25 +453,23 @@ export class NotebookAdapter {
     });
     const editorServices: IEditorServices = {
       factoryService,
-      mimeTypeService,
+      mimeTypeService: this._mimeTypeService,
     };
     const editorFactory = editorServices.factoryService.newInlineEditor;
-    const contentFactory = this._CellSidebar ?
-      new JupyterReactContentFactory(
-          this._CellSidebar,
-          this._id,
-          this._nbgrader,
-          this._commandRegistry,
-          { editorFactory },
-        )
-    :
-      new NotebookPanel.ContentFactory({ editorFactory });
+    this._contentFactory = new JupyterReactContentFactory(
+      this._id,
+      this._nbgrader,
+      this._commandRegistry,
+      { editorFactory },
+      this._CellSidebar,
+    );
 
     this._tracker = new NotebookTracker({ namespace: this._id });
 
     const notebookWidgetFactory = new NotebookWidgetFactory({
       name: 'Notebook',
-      modelName: 'viewer',
+      label: 'Notebook',
+      modelName: 'notebook',
       fileTypes: ['notebook'],
       defaultFor: ['notebook'],
       preferKernel: true,
@@ -475,8 +477,12 @@ export class NotebookAdapter {
       canStartKernel: false,
       shutdownOnClose: false,
       rendermime: this._rendermime,
-      contentFactory,
+      contentFactory: this._contentFactory,
       mimeTypeService: editorServices.mimeTypeService,
+      notebookConfig: {
+        ...StaticNotebook.defaultNotebookConfig,
+        recordTiming: true,
+      }
     });
     notebookWidgetFactory.widgetCreated.connect((sender, notebookPanel) => {
       notebookPanel.context.pathChanged.connect(() => {
@@ -492,7 +498,7 @@ export class NotebookAdapter {
     });
     this._documentRegistry.addModelFactory(this._notebookModelFactory);
 
-    this.initializeContext();
+    this.initializeContext();    
 
   }
 
@@ -530,6 +536,10 @@ export class NotebookAdapter {
 
   get notebookPanel(): NotebookPanel | undefined {
     return this._notebookPanel;
+  }
+
+  get context(): Context<INotebookModel> | undefined {
+    return this._context;
   }
 
   set notebookPanel(notebookPanel: NotebookPanel | undefined) {

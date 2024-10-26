@@ -7,3 +7,4 @@
 export * from './metadata';
 export * from './prompt';
 export * from './sidebar';
+export * from './toolbar';

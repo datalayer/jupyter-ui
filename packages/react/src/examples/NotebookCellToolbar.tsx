@@ -9,18 +9,18 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-import CellSidebarSource from './sidebars/CellSidebarSource';
+import CellToolbarButton from './../components/notebook/cell/toolbar/CellToolbarButton';
 
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
-const NotebookCellSidebar = () => (
+const NotebookCellToolbar = () => (
   <JupyterReactTheme>
     <Notebook
       nbformat={nbformat as INotebookContent}
-      id="notebook-cell-sidebar-id"
+      id="notebook-cell-toolbar-id"
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       cellSidebarMargin={160}
-      CellSidebar={CellSidebarSource}
+      CellToolbar={CellToolbarButton}
       Toolbar={NotebookToolbar}
     />
   </JupyterReactTheme>
@@ -30,4 +30,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookCellSidebar />);
+root.render(<NotebookCellToolbar />);

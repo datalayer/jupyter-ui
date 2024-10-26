@@ -44,13 +44,15 @@ const ENTRY =
   // './src/examples/Matplotlib';
   // './src/examples/Notebook';
   // './src/examples/NotebookURL';
+  // './src/examples/NotebookCellSidebar';
+  './src/examples/NotebookCellToolbar';
   // './src/examples/NotebookColorMode';
   // './src/examples/NotebookKernelChange';
   // './src/examples/NotebookLite';
   // './src/examples/NotebookLiteContext';
   // './src/examples/NotebookLess';
   // './src/examples/NotebookMutationsKernel';
-  './src/examples/NotebookMutationsServiceManager';
+  // './src/examples/NotebookMutationsServiceManager';
   // './src/examples/NotebookNbformat';
   // './src/examples/NotebookNbformatChange';
   // './src/examples/NotebookNoContext';

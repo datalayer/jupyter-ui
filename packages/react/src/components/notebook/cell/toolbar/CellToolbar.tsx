@@ -6,23 +6,24 @@
 
 import { useState } from 'react';
 import { PanelLayout } from '@lumino/widgets';
-import { Box, IconButton } from '@primer/react';
+import { ActionMenu, Button, Box } from '@primer/react';
 import {
-  PlayIcon,
+  ChevronRightIcon,
+  XIcon,
   ChevronUpIcon,
   ChevronDownIcon,
   SquareIcon,
-  XIcon,
 } from '@primer/octicons-react';
-import { ICellSidebarProps } from './CellSidebarWidget';
+import { ICellToolbarProps } from './CellToolbarWidget';
+import CellMetadataEditor from '../metadata/CellMetadataEditor';
 import useNotebookStore from '../../NotebookState';
 
-import { DATALAYER_CELL_SIDEBAR_CLASS_NAME } from './CellSidebarWidget';
+import { DATALAYER_CELL_TOOLBAR_CLASS_NAME } from './CellToolbarWidget';
 
-export const CellSidebarButton = (props: ICellSidebarProps) => {
-  const { notebookId, cellId } = props;
-  const notebookStore = useNotebookStore();
+export const CellToolbar = (props: ICellToolbarProps) => {
+  const { notebookId, cellId, nbgrader } = props;
   const [visible, setVisible] = useState(false);
+  const notebookStore = useNotebookStore();
   const activeCell = notebookStore.selectActiveCell(notebookId);
   const layout = activeCell?.layout;
   if (layout) {
@@ -43,82 +44,100 @@ export const CellSidebarButton = (props: ICellSidebarProps) => {
   }
   return activeCell ? (
     <Box
-      className={DATALAYER_CELL_SIDEBAR_CLASS_NAME}
+      className={DATALAYER_CELL_TOOLBAR_CLASS_NAME}
       sx={{
         '& p': {
           marginBottom: '0 !important',
         },
       }}
     >
+      {nbgrader && (
+        <ActionMenu>
+          {/*
+          <ActionMenu.Anchor>
+            <IconButton icon={KebabHorizontalIcon} variant="invisible" aria-label="Open column options" />
+          </ActionMenu.Anchor>
+          <ActionMenu.Overlay>
+          */}
+          <CellMetadataEditor
+            notebookId={notebookId}
+            cell={activeCell}
+            nbgrader={nbgrader}
+          />
+          {/*
+            </ActionMenu.Overlay>
+            */}
+        </ActionMenu>
+      )}
       <span style={{ display: 'flex' }}>
-        <IconButton
-          size="small"
-          color="secondary"
-          aria-label="Run cell"
+        <Button
           title="Run cell"
-          onClick={e => {
+          leadingVisual={ChevronRightIcon}
+          variant="invisible"
+          size="small"
+          onClick={(e: any) => {
             e.preventDefault();
             notebookStore.run(notebookId);
           }}
-          icon={PlayIcon}
-          variant="invisible"
-        />
+        >
+          Run
+        </Button>
       </span>
       <span style={{ display: 'flex' }}>
-        <IconButton
+        <Button
+          title="Insert code cell above"
+          leadingVisual={ChevronUpIcon}
+          variant="invisible"
           size="small"
-          color="secondary"
-          aria-label="Add code cell above"
-          title="Add code cell above"
-          onClick={e => {
+          onClick={(e: any) => {
             e.preventDefault();
-            notebookStore.insertAbove({
-              id: notebookId,
-              cellType: 'code',
-            });
+              notebookStore.insertAbove({
+                id: notebookId,
+                cellType: 'code',
+              });
           }}
-          icon={ChevronUpIcon}
-          variant="invisible"
-        />
+        >
+          Code
+        </Button>
       </span>
       <span style={{ display: 'flex' }}>
-        <IconButton
+        <Button
+          title="Insert markdown cell above"
+          leadingVisual={ChevronUpIcon}
+          variant="invisible"
           size="small"
-          color="secondary"
-          aria-label="Add markdown cell above"
-          title="Add markdown cell above"
-          onClick={e => {
+          onClick={(e: any) => {
             e.preventDefault();
             notebookStore.insertAbove({
               id: notebookId,
               cellType: 'markdown',
             });
           }}
-          icon={ChevronUpIcon}
-          variant="invisible"
-        />
+        >
+          Markdown
+        </Button>
       </span>
       <span style={{ display: 'flex' }}>
         {activeCell.model.type === 'code' ? (
-          <IconButton
-            aria-label="Convert to markdow cell"
+          <Button
             title="Convert to markdow cell"
-            icon={SquareIcon}
-            size="small"
+            leadingVisual={SquareIcon}
             variant="invisible"
-            onClick={e => {
+            size="small"
+            onClick={(e: any) => {
               e.preventDefault();
               notebookStore.changeCellType({
                 id: notebookId,
                 cellType: 'markdown',
               });
             }}
-          />
+          >
+            To Markdown
+          </Button>
         ) : (
-          <IconButton
-            aria-label="Convert to code cell"
+          <Button
             title="Convert to code cell"
-            icon={SquareIcon}
+            leadingVisual={SquareIcon}
             variant="invisible"
             size="small"
             onClick={(e: any) => {
@@ -128,56 +147,58 @@ export const CellSidebarButton = (props: ICellSidebarProps) => {
                 cellType: 'code',
               });
             }}
-          />
+          >
+            To Code
+          </Button>
         )}
       </span>
       <span style={{ display: 'flex' }}>
-        <IconButton
+        <Button
+          title="Insert markdown cell below"
+          leadingVisual={ChevronDownIcon}
+          variant="invisible"
           size="small"
-          color="secondary"
-          aria-label="Add markdown cell below"
-          title="Add markdown cell below"
-          onClick={e => {
+          onClick={(e: any) => {
             e.preventDefault();
             notebookStore.insertBelow({
               id: notebookId,
               cellType: 'markdown',
             });
           }}
-          icon={ChevronDownIcon}
-          variant="invisible"
-        />
+        >
+          Markdown
+        </Button>
       </span>
       <span style={{ display: 'flex' }}>
-        <IconButton
+        <Button
+          title="Insert code cell below"
+          leadingVisual={ChevronDownIcon}
+          variant="invisible"
           size="small"
-          color="secondary"
-          aria-label="Add code cell above"
-          title="Add code cell above"
-          onClick={e => {
+          onClick={(e: any) => {
             e.preventDefault();
             notebookStore.insertBelow({
               id: notebookId,
               cellType: 'code',
             });
           }}
-          icon={ChevronDownIcon}
-          variant="invisible"
-        />
+        >
+          Code
+        </Button>
       </span>
       <span style={{ display: 'flex' }}>
-        <IconButton
-          size="small"
-          color="error"
-          aria-label="Delete cell"
+        <Button
           title="Delete cell"
-          onClick={e => {
+          leadingVisual={XIcon}
+          variant="invisible"
+          size="small"
+          onClick={(e: any) => {
             e.preventDefault();
             notebookStore.delete(notebookId);
           }}
-          icon={XIcon}
-          variant="invisible"
-        />
+        >
+          Delete
+        </Button>
       </span>
     </Box>
   ) : (
@@ -185,4 +206,4 @@ export const CellSidebarButton = (props: ICellSidebarProps) => {
   );
 };
 
-export default CellSidebarButton;
+export default CellToolbar;

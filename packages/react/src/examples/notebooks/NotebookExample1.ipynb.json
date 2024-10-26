@@ -19,7 +19,34 @@
     {
       "cell_type": "code",
       "execution_count": 1,
-      "metadata": {},
+      "metadata": {
+        "datalayer": {
+          "sql": true
+        }
+      },
+      "outputs": [
+        {
+          "data": {
+            "text/plain": [""]
+          },
+          "execution_count": 1,
+          "metadata": {},
+          "output_type": "execute_result"
+        }
+      ],
+      "source": [
+        "-- I am a SQL cell.\n",
+        "SELECT * FROM LOGS"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 1,
+      "metadata": {
+        "datalayer": {
+          "_about": "Accelerated and Trusted Jupyter"
+        }
+      },
       "outputs": [
         {
           "data": {
@@ -30,7 +57,10 @@
           "output_type": "execute_result"
         }
       ],
-      "source": ["2+2"]
+      "source": [
+        "# I am a Python cell.\n",
+        "print('2+2')"
+      ]
     },
     {
       "cell_type": "code",
