@@ -4,5 +4,5 @@
  * MIT License
  */
 
+export * from './CellToolbar';
 export * from './CellToolbarExtension';
-export * from './CellToolbarWidget';

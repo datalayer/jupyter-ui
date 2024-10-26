@@ -27,10 +27,7 @@ export class ExecTimeWidget extends Widget {
   private _panel: NotebookPanel;
 
   private _cellSlotMap: {
-    [id: string]: (
-      sender: ICellModel,
-      args: IMapChange
-    ) => void;
+    [id: string]: (sender: ICellModel, args: IMapChange) => void;
   } = {};
 
   private _settings: IExecTimeSettings = {
@@ -99,9 +96,7 @@ export class ExecTimeWidget extends Widget {
   private _removeExecuteNode(cell: CodeCell) {
     if (cell.inputArea) {
       const editorWidget = cell.inputArea.editorWidget;
-      const executionTimeNode = editorWidget.node.querySelector(
-        `.${EXECUTE_TIME_CLASS}`
-      );
+      const executionTimeNode = editorWidget.node.querySelector(`.${EXECUTE_TIME_CLASS}`);
       if (executionTimeNode) {
         executionTimeNode.remove();
       }
@@ -128,9 +123,7 @@ export class ExecTimeWidget extends Widget {
           positioning = 'right';
           break;
         default:
-          console.error(
-            `'${positioning}' is not a valid type for the setting 'positioning'`
-          );
+          console.error(`'${positioning}' is not a valid type for the setting 'positioning'`);
       }
       const positioningClass = `${EXECUTE_TIME_CLASS}-positioning-${this._settings.positioning}`;
       executionTimeNode.className = `${EXECUTE_TIME_CLASS} ${positioningClass}`;

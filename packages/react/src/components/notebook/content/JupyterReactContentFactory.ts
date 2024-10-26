@@ -11,7 +11,7 @@ import { CellSidebarWidget, ICellSidebarProps } from '../cell/sidebar/CellSideba
 import { CodeCell } from '@jupyterlab/cells';
 import { CodeEditor } from '@jupyterlab/codeeditor';
 // import { CodeMirrorEditor } from '@jupyterlab/codemirror';
-import { IInputPrompt } from '@jupyterlab/cells';
+// import { IInputPrompt } from '@jupyterlab/cells';
 // import { NotebookInputPrompt } from './../cell/InputPrompt';
 
 class DatalayerCodeCell extends CodeCell {
@@ -65,7 +65,6 @@ export class JupyterReactContentFactory extends NotebookPanel.ContentFactory {
     return notebook;
   }
 
-
   /** @override */
   createCellHeader(): ICellHeader {
     if (this.CellSidebar) {
@@ -95,10 +94,12 @@ export class JupyterReactContentFactory extends NotebookPanel.ContentFactory {
   }
 
   /** @override */
+  /*
   createInputPrompt(): IInputPrompt {
 //    return new InputPrompt();
     return super.createInputPrompt();
   }
+  */
 
 }
 

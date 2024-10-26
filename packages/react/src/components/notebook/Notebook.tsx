@@ -98,7 +98,7 @@ export const Notebook = (props: INotebookProps) => {
   } = props;
   const [id, _] = useState(props.id || newUuid());
   const [adapter, setAdapter] = useState<NotebookAdapter>();
-  const [extensionComponents, setExtensionWidgets] = useState(new Array<JSX.Element>());
+  const [extensionComponents, setExtensionComponents] = useState(new Array<JSX.Element>());
   const kernel = props.kernel ?? defaultKernel;
   const notebookStore = useNotebookStore();
   const portals = notebookStore.selectNotebookPortals(id);
@@ -115,7 +115,7 @@ export const Notebook = (props: INotebookProps) => {
     setAdapter(adapter);
     extensions.forEach(extension => {
       extension.createNew(adapter.notebookPanel!, adapter.context!);
-      setExtensionWidgets(extensionComponents.concat(extension.component ?? <></>));
+      setExtensionComponents(extensionComponents.concat(extension.component ?? <></>));
     });
     // Update the global state.
     notebookStore.update({ id, state: { adapter } });
@@ -306,18 +306,20 @@ export const Notebook = (props: INotebookProps) => {
           {portals?.map((portal: React.ReactPortal) => portal)}
         </>
         <Box>
-         {adapter &&
-            <Lumino id={id}>
-              {adapter.panel}
-            </Lumino>
-          }
           {extensionComponents.map((extensionComponent, index) => {
             return (
               <Box id={`${extensionComponent}-${index}`}>
                 {extensionComponent}
-            </Box>
+              </Box>
             )}
           )}
+        </Box>
+        <Box>
+          {adapter &&
+            <Lumino id={id}>
+              {adapter.panel}
+            </Lumino>
+          }
         </Box>
       </Box>
     </Box>

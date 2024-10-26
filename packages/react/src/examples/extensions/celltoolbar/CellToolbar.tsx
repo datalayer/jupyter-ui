@@ -5,6 +5,7 @@
  */
 
 import { useState } from 'react';
+import { CommandRegistry } from '@lumino/commands';
 import { PanelLayout } from '@lumino/widgets';
 import { Box, IconButton } from '@primer/react';
 import {
@@ -14,12 +15,17 @@ import {
   SquareIcon,
   XIcon,
 } from '@primer/octicons-react';
-import { ICellSidebarProps } from './CellSidebarWidget';
-import useNotebookStore from '../../NotebookState';
+import { useNotebookStore } from '../../../components';
 
-import { DATALAYER_CELL_SIDEBAR_CLASS_NAME } from './CellSidebarWidget';
+export type ICellToolbarProps = {
+  notebookId: string;
+  cellId: string;
+  command: CommandRegistry;
+};
 
-export const CellSidebarButton = (props: ICellSidebarProps) => {
+const DATALAYER_CELL_SIDEBAR_CLASS_NAME = 'dla-CellSidebar-Container';
+
+export const CellToolbar = (props: ICellToolbarProps) => {
   const { notebookId, cellId } = props;
   const notebookStore = useNotebookStore();
   const [visible, setVisible] = useState(false);
@@ -39,7 +45,7 @@ export const CellSidebarButton = (props: ICellSidebarProps) => {
     }
   }
   if (!visible) {
-    return <></>
+    return <div></div>;
   }
   return activeCell ? (
     <Box
@@ -185,4 +191,4 @@ export const CellSidebarButton = (props: ICellSidebarProps) => {
   );
 };
 
-export default CellSidebarButton;
+export default CellToolbar;
