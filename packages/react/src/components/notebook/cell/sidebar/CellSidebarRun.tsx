@@ -8,9 +8,8 @@ import { useState } from 'react';
 import { PanelLayout } from '@lumino/widgets';
 import { Box, Button } from '@primer/react';
 import { PlayIcon } from '@primer/octicons-react';
-import { ICellSidebarProps } from './CellSidebarWidget';
 import useNotebookStore from '../../NotebookState';
-
+import { ICellSidebarProps } from './CellSidebar';
 import { DATALAYER_CELL_SIDEBAR_CLASS_NAME } from './CellSidebarWidget';
 
 export const CellSidebarRun = (props: ICellSidebarProps) => {

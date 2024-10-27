@@ -14,9 +14,9 @@ import {
   ChevronDownIcon,
   SquareIcon,
 } from '@primer/octicons-react';
-import { ICellSidebarProps } from '../../components/notebook/cell/sidebar/CellSidebarWidget';
-import CellMetadataEditor from '../../components/notebook/cell/metadata/CellMetadataEditor';
-import useNotebookStore from '../../components/notebook/NotebookState';
+import { ICellSidebarProps } from '../../components/notebook/cell/sidebar';
+import { CellMetadataEditor } from '../../components/notebook/cell/metadata';
+import { useNotebookStore } from '../../components/notebook';
 
 import { DATALAYER_CELL_SIDEBAR_CLASS_NAME } from '../../components/notebook/cell/sidebar/CellSidebarWidget';
 
