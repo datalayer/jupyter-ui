@@ -9,6 +9,8 @@ import { CodeCell } from '@jupyterlab/cells';
 import { IDatalayerNotebookExtensionProps } from '../../../components';
 import { CellToolbarComponent } from './CellToolbarComponent';
 
+export const DATALAYER_CELL_TOOLBAR_CLASS = 'dla-CellToolbar-Container';
+
 export class CellToolbar extends ReactWidget {
   private _cell: CodeCell;
   private _props: IDatalayerNotebookExtensionProps;
@@ -17,7 +19,7 @@ export class CellToolbar extends ReactWidget {
     super();
     this._cell = cell;
     this._props = props;
-    this.addClass('dla-Container');
+    this.addClass(DATALAYER_CELL_TOOLBAR_CLASS);
   }
 
   render(): JSX.Element {

@@ -300,11 +300,6 @@ export const Notebook = (props: INotebookProps) => {
             width: `${props.cellSidebarMargin + 10}px`,
             marginLeft: 'auto',
           },
-          '& .jp-Cell .dla-CellToolbar-Container': {
-            padding: '4px 8px',
-            width: `${props.cellSidebarMargin + 10}px`,
-            marginLeft: 'auto',
-          },
           '& .jp-CodeMirrorEditor': {
             cursor: 'text !important',
           },

@@ -4,13 +4,12 @@
  * MIT License
  */
 
-// import { createPortal } from 'react-dom';
 import { Widget, PanelLayout } from '@lumino/widgets';
 import { NotebookPanel } from '@jupyterlab/notebook';
 import { IObservableList } from '@jupyterlab/observables';
 import { Cell, CodeCell, ICellModel } from '@jupyterlab/cells';
 import { IDatalayerNotebookExtensionProps } from '../../../components';
-import { CellToolbar } from './CellToolbar';
+import { CellToolbar, DATALAYER_CELL_TOOLBAR_CLASS } from './CellToolbar';
 
 export interface ICellToolbarSettings {
   highlight: boolean;
@@ -73,7 +72,9 @@ export class CellToolbarWidget extends Widget {
       const layout = cell.layout;
       if (layout) {
         const panelLayout = layout as PanelLayout;
-        panelLayout.insertWidget(1, new CellToolbar(cell, this._props));
+        if (!panelLayout.widgets[1].hasClass(DATALAYER_CELL_TOOLBAR_CLASS)) {
+          panelLayout.insertWidget(1, new CellToolbar(cell, this._props));
+        }
       }
     }
   }
