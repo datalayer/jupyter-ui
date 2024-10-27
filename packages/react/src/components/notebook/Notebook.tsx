@@ -9,14 +9,15 @@ import { createPortal } from 'react-dom';
 import { Box } from '@primer/react';
 import { NotebookPanel, INotebookModel } from '@jupyterlab/notebook';
 import { Cell, ICellModel } from '@jupyterlab/cells';
+import { CommandRegistry } from '@lumino/commands';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { ServiceManager } from '@jupyterlab/services';
 import { useJupyter, Lite, Kernel } from './../../jupyter';
 import { asObservable, Lumino } from '../lumino';
-import { CellMetadataEditor } from './cell/metadata/CellMetadataEditor';
-import { ICellSidebarProps } from './cell/sidebar/CellSidebarWidget';
+import { CellMetadataEditor } from './cell/metadata';
+import { ICellSidebarProps } from './cell/sidebar';
 import { INotebookToolbarProps } from './toolbar/NotebookToolbar';
 import { newUuid } from '../../utils';
 import { OnKernelConnection } from '../../state';
@@ -34,7 +35,13 @@ export type BundledIPyWidgets = ExternalIPyWidgets & {
   module: any;
 }
 
+export type IDatalayerNotebookExtensionProps = {
+  notebookId: string;
+  commands: CommandRegistry;
+};
+
 export type DatalayerNotebookExtension = DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> & {
+  init(props: IDatalayerNotebookExtensionProps): void;
   get component(): JSX.Element | undefined;
 }
 
@@ -114,6 +121,10 @@ export const Notebook = (props: INotebookProps) => {
     // Update the local state.
     setAdapter(adapter);
     extensions.forEach(extension => {
+      extension.init({
+        notebookId: id,
+        commands: adapter.commands,
+      })
       extension.createNew(adapter.notebookPanel!, adapter.context!);
       setExtensionComponents(extensionComponents.concat(extension.component ?? <></>));
     });

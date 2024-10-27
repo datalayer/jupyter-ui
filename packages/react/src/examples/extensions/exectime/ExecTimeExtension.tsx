@@ -6,13 +6,16 @@
 
 import { INotebookModel, NotebookPanel } from '@jupyterlab/notebook';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
-import { DatalayerNotebookExtension  } from '../../../components';
+import { DatalayerNotebookExtension, IDatalayerNotebookExtensionProps } from '../../../components';
 import { ExecTimeWidget } from './ExecTimeWidget';
 
 import './ExecTimeExtension.css';
 
 export class ExecTimeExtension implements DatalayerNotebookExtension {
-  constructor() {}
+
+  /* @override */
+  init(props: IDatalayerNotebookExtensionProps) {
+  }
 
   /* @override */
   createNew(notebookPanel: NotebookPanel, context: DocumentRegistry.IContext<INotebookModel>) {

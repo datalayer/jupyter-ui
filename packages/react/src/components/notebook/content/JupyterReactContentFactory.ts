@@ -7,7 +7,7 @@
 import { CommandRegistry } from '@lumino/commands';
 import { Notebook, NotebookPanel } from '@jupyterlab/notebook';
 import { ICellHeader, Cell } from '@jupyterlab/cells';
-import { CellSidebarWidget, ICellSidebarProps } from '../cell/sidebar/CellSidebarWidget';
+import { CellSidebarWidget, ICellSidebarProps } from '../cell/sidebar';
 import { CodeCell } from '@jupyterlab/cells';
 import { CodeEditor } from '@jupyterlab/codeeditor';
 // import { CodeMirrorEditor } from '@jupyterlab/codemirror';

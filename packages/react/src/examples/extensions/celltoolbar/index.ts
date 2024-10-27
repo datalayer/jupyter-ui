@@ -5,4 +5,6 @@
  */
 
 export * from './CellToolbar';
+export * from './CellToolbarComponent';
 export * from './CellToolbarExtension';
+export * from './CellToolbarWidget';

@@ -14,11 +14,18 @@ import {
   ChevronDownIcon,
   SquareIcon,
 } from '@primer/octicons-react';
-import { ICellSidebarProps } from './CellSidebarWidget';
+import { CommandRegistry } from '@lumino/commands';
 import CellMetadataEditor from '../metadata/CellMetadataEditor';
 import useNotebookStore from '../../NotebookState';
 
 import { DATALAYER_CELL_SIDEBAR_CLASS_NAME } from './CellSidebarWidget';
+
+export type ICellSidebarProps = {
+  notebookId: string;
+  cellId: string;
+  command: CommandRegistry;
+  nbgrader: boolean;
+}
 
 export const CellSidebar = (props: ICellSidebarProps) => {
   const { notebookId, cellId, nbgrader } = props;

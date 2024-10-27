@@ -9,9 +9,8 @@ import { Widget, PanelLayout } from '@lumino/widgets';
 import { NotebookPanel } from '@jupyterlab/notebook';
 import { IObservableList } from '@jupyterlab/observables';
 import { Cell, CodeCell, ICellModel } from '@jupyterlab/cells';
-import { CellToolbar } from './CellToolbar2';
-
-const CELL_TOOLBAR_CLASS = 'dla-CellToolbar';
+import { IDatalayerNotebookExtensionProps } from '../../../components';
+import { CellToolbar } from './CellToolbar';
 
 export interface ICellToolbarSettings {
   highlight: boolean;
@@ -20,10 +19,12 @@ export interface ICellToolbarSettings {
 
 export class CellToolbarWidget extends Widget {
   private _panel: NotebookPanel;
+  private _props: IDatalayerNotebookExtensionProps;
 
-  constructor(panel: NotebookPanel) {
+  constructor(panel: NotebookPanel, props: IDatalayerNotebookExtensionProps) {
     super();
     this._panel = panel;
+    this._props = props;
     this.updateConnectedCell = this.updateConnectedCell.bind(this);
     const cells = this._panel.context.model.cells;
     cells.changed.connect(this.updateConnectedCell);
@@ -72,7 +73,7 @@ export class CellToolbarWidget extends Widget {
       const layout = cell.layout;
       if (layout) {
         const panelLayout = layout as PanelLayout;
-        panelLayout.insertWidget(0, new CellToolbar(cell));
+        panelLayout.insertWidget(1, new CellToolbar(cell, this._props));
       }
     }
   }

@@ -4,8 +4,7 @@
  * MIT License
  */
 
-import { useState } from 'react';
-import { PanelLayout } from '@lumino/widgets';
+import { CodeCell } from '@jupyterlab/cells';
 import { Box, IconButton } from '@primer/react';
 import {
   PlayIcon,
@@ -14,43 +13,26 @@ import {
   SquareIcon,
   XIcon,
 } from '@primer/octicons-react';
-import { ICellSidebarProps } from './CellSidebar';
-import useNotebookStore from '../../NotebookState';
+import { useNotebookStore, IDatalayerNotebookExtensionProps } from '../../../components';
 
-import { DATALAYER_CELL_SIDEBAR_CLASS_NAME } from './CellSidebarWidget';
+type ICellToolbarComponentProps = {
+  cell: CodeCell;
+  extensionProps: IDatalayerNotebookExtensionProps;
+}
 
-export const CellSidebarButton = (props: ICellSidebarProps) => {
-  const { notebookId, cellId } = props;
+export const CellToolbarComponent = (props: ICellToolbarComponentProps) => {
+  const { extensionProps } = props;
+  const notebookId = extensionProps.notebookId;
   const notebookStore = useNotebookStore();
-  const [visible, setVisible] = useState(false);
   const activeCell = notebookStore.selectActiveCell(notebookId);
-  const layout = activeCell?.layout;
-  if (layout) {
-    const cellWidget = (layout as PanelLayout).widgets[0];
-    if (cellWidget?.node.id === cellId) {
-      if (!visible) {
-        setVisible(true);
-      }
-    }
-    if (cellWidget?.node.id !== cellId) {
-      if (visible) {
-        setVisible(false);
-      }
-    }
-  }
-  if (!visible) {
-    return <></>
-  }
   return activeCell ? (
-    <Box
-      className={DATALAYER_CELL_SIDEBAR_CLASS_NAME}
+    <Box 
+      display="flex"
       sx={{
-        '& p': {
-          marginBottom: '0 !important',
-        },
+        marginLeft: 70,
       }}
     >
-      <span style={{ display: 'flex' }}>
+      <Box>
         <IconButton
           size="small"
           color="secondary"
@@ -63,8 +45,8 @@ export const CellSidebarButton = (props: ICellSidebarProps) => {
           icon={PlayIcon}
           variant="invisible"
         />
-      </span>
-      <span style={{ display: 'flex' }}>
+      </Box>
+      <Box>
         <IconButton
           size="small"
           color="secondary"
@@ -80,8 +62,8 @@ export const CellSidebarButton = (props: ICellSidebarProps) => {
           icon={ChevronUpIcon}
           variant="invisible"
         />
-      </span>
-      <span style={{ display: 'flex' }}>
+      </Box>
+      <Box>
         <IconButton
           size="small"
           color="secondary"
@@ -97,8 +79,8 @@ export const CellSidebarButton = (props: ICellSidebarProps) => {
           icon={ChevronUpIcon}
           variant="invisible"
         />
-      </span>
-      <span style={{ display: 'flex' }}>
+      </Box>
+      <Box>
         {activeCell.model.type === 'code' ? (
           <IconButton
             aria-label="Convert to markdow cell"
@@ -130,8 +112,8 @@ export const CellSidebarButton = (props: ICellSidebarProps) => {
             }}
           />
         )}
-      </span>
-      <span style={{ display: 'flex' }}>
+      </Box>
+      <Box>
         <IconButton
           size="small"
           color="secondary"
@@ -147,8 +129,8 @@ export const CellSidebarButton = (props: ICellSidebarProps) => {
           icon={ChevronDownIcon}
           variant="invisible"
         />
-      </span>
-      <span style={{ display: 'flex' }}>
+      </Box>
+      <Box>
         <IconButton
           size="small"
           color="secondary"
@@ -164,8 +146,8 @@ export const CellSidebarButton = (props: ICellSidebarProps) => {
           icon={ChevronDownIcon}
           variant="invisible"
         />
-      </span>
-      <span style={{ display: 'flex' }}>
+      </Box>
+      <Box>
         <IconButton
           size="small"
           color="error"
@@ -178,11 +160,11 @@ export const CellSidebarButton = (props: ICellSidebarProps) => {
           icon={XIcon}
           variant="invisible"
         />
-      </span>
+      </Box>
     </Box>
   ) : (
     <></>
   );
 };
 
-export default CellSidebarButton;
+export default CellToolbarComponent;

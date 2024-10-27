@@ -25,7 +25,7 @@ import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
 import { WIDGET_MIMETYPE } from '@jupyter-widgets/html-manager/lib/output_renderers';
 import { Lite, Kernel, WidgetManager, WidgetLabRenderer } from '../../jupyter';
 import { OnKernelConnection } from '../../state';
-import { ICellSidebarProps } from './cell/sidebar/CellSidebarWidget';
+import { ICellSidebarProps } from './cell/sidebar';
 import { JupyterReactContentFactory } from './content/JupyterReactContentFactory';
 import { JupyterReactNotebookModelFactory } from './model/JupyterReactNotebookModelFactory';
 import { getMarked } from './marked/marked';
