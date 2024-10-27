@@ -4,9 +4,9 @@
  * MIT License
  */
 
+import { JSONObject } from '@lumino/coreutils';
 import { OutputArea } from '@jupyterlab/outputarea';
 import { KernelMessage } from '@jupyterlab/services';
-import { JSONObject } from '@lumino/coreutils';
 import { IExecutionPhaseOutput } from '../../jupyter/kernel';
 import { Kernel } from './../../jupyter/kernel/Kernel';
 

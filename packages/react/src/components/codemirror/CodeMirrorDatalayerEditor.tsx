@@ -7,16 +7,16 @@
 import { useState, useRef, useEffect } from 'react';
 import { basicSetup } from 'codemirror';
 import { EditorState } from '@codemirror/state';
-// import { Compartment } from '@codemirror/state';
+import { Compartment } from '@codemirror/state';
 import { keymap, EditorView, ViewUpdate } from '@codemirror/view';
-// import { python } from '@codemirror/lang-python';
+import { python } from '@codemirror/lang-python';
 import Kernel from '../../jupyter/kernel/Kernel';
 import codeMirrorTheme from './CodeMirrorTheme';
 import OutputAdapter from '../output/OutputAdapter';
 import CodeMirrorOutputToolbar from './CodeMirrorOutputToolbar';
 import useOutputsStore from '../output/OutputState';
 
-export const CodeMirrorEditor = (props: {
+export const CodeMirrorDatalayerEditor = (props: {
   code: string;
   codePre?: string;
   outputAdapter: OutputAdapter;
@@ -80,7 +80,7 @@ export const CodeMirrorEditor = (props: {
   };
   useEffect(() => {
     outputStore.setInput(sourceId, code);
-//    const language = new Compartment();
+    const language = new Compartment();
     const keyBinding = [
       {
         key: 'Shift-Enter',
@@ -92,7 +92,7 @@ export const CodeMirrorEditor = (props: {
       doc: code,
       extensions: [
         basicSetup,
-//        language.of(python()), // TODO CodeMirrorEditor imported by Output breaks the JupyterLab extension loading. https://github.com/datalayer/jupyter-ui/issues/170
+        language.of(python()),
         EditorView.lineWrapping,
         keymap.of([...keyBinding]),
         codeMirrorTheme,
@@ -147,4 +147,4 @@ export const CodeMirrorEditor = (props: {
   );
 };
 
-export default CodeMirrorEditor;
+export default CodeMirrorDatalayerEditor;

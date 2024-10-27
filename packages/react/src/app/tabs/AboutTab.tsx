@@ -23,22 +23,12 @@ const AboutTab = (props: Props): JSX.Element => {
       <Box>
         <Text>React.js components 💯% compatible with 🪐 Jupyter.</Text>
       </Box>
-      <Box mt={3} style={{ width: 350 }}>
-        {!egg ? (
-          <img
-            src="https://assets.datalayer.tech/releases/datalayer-0.3.0-black-snake_1024.png"
-            onClick={e => setEgg(true)}
-          />
-        ) : (
-          <ECharlesIcon size={300} onClick={e => setEgg(false)} />
-        )}
-      </Box>
       <Box>
         <Link
-          href="https://datalayer.tech/docs/releases/0.3.0-black-snake"
+          href="https://datalayer.tech/docs/releases/1.2.0-black-snake"
           target="_blank"
         >
-          <Text as="h4">Datalayer 0.3.0 Black Snake Release</Text>
+          <Text as="h4">Datalayer 1.2.0 Black Snake Release</Text>
         </Link>
       </Box>
       <Box>
@@ -48,6 +38,16 @@ const AboutTab = (props: Props): JSX.Element => {
         >
           <Text as="h4">Source code</Text>
         </Link>
+      </Box>
+      <Box mt={3}>
+        {!egg ? (
+          <img
+            src="https://assets.datalayer.tech/releases/datalayer-1.2.0-black-snake_1024.png"
+            onClick={e => setEgg(true)}
+          />
+        ) : (
+          <ECharlesIcon size={300} onClick={e => setEgg(false)} />
+        )}
       </Box>
     </>
   );

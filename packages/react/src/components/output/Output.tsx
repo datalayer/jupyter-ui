@@ -13,14 +13,14 @@ import { useEffect, useState } from 'react';
 import { useJupyter } from '../../jupyter/JupyterContext';
 import { Kernel } from '../../jupyter/kernel/Kernel';
 import { newUuid } from '../../utils';
-import { CodeMirrorEditor } from '../codemirror/CodeMirrorEditor';
+import { CodeMirrorDatalayerEditor } from '../codemirror';
 import { Lumino } from '../lumino/Lumino';
+import { IExecutionPhaseOutput } from '../../jupyter/kernel';
 import { KernelActionMenu, KernelProgressBar } from './../kernel';
 import { OutputAdapter } from './OutputAdapter';
 import { OutputRenderer } from './OutputRenderer';
 import { useOutputsStore } from './OutputState';
 
-import { IExecutionPhaseOutput } from '../../jupyter/kernel';
 import './Output.css';
 
 export type IOutputProps = {
@@ -170,7 +170,7 @@ export const Output = (props: IOutputProps) => {
             },
           }}
         >
-          <CodeMirrorEditor
+          <CodeMirrorDatalayerEditor
             autoRun={autoRun}
             code={code}
             codePre={codePre}

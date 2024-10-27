@@ -6,11 +6,10 @@
 
 import { useState } from 'react';
 import { Box, NavList } from '@primer/react';
-import { Jupyter } from '../../jupyter/Jupyter';
 import { JupyterFrontEndProps } from '../JupyterReact';
 import FileBrowserComponent from './components/FileBrowserComponent';
-import CellComponent from './components/CellComponent';
-import NotebookComponent from './components/NotebookComponent';
+// import CellComponent from './components/CellComponent';
+// import NotebookComponent from './components/NotebookComponent';
 import IPyWidgetsComponent from './components/IPyWidgetsComponent';
 import ViewerComponent from './components/ViewerComponent';
 
@@ -60,13 +59,13 @@ const MainTab = (props: JupyterFrontEndProps) => {
           </NavList>
         </Box>
         <Box ml={3} sx={{ width: '100%' }}>
-          <Jupyter startDefaultKernel>
             {nav === 1 && <FileBrowserComponent />}
-            {nav === 2 && <CellComponent />}
-            {nav === 3 && <NotebookComponent />}
             {nav === 4 && <IPyWidgetsComponent />}
             {nav === 5 && <ViewerComponent />}
-          </Jupyter>
+            {/*
+            {nav === 2 && <CellComponent />}
+            {nav === 3 && <NotebookComponent />}
+            */}
         </Box>
       </Box>
     </>

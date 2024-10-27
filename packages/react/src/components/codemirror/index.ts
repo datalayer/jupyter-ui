@@ -4,6 +4,6 @@
  * MIT License
  */
 
-export * from './CodeMirrorEditor';
+export * from './CodeMirrorDatalayerEditor';
 export * from './CodeMirrorOutputToolbar';
 export * from './CodeMirrorTheme';

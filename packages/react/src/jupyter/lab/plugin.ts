@@ -72,6 +72,13 @@ const jupyterReactPlugin: JupyterFrontEndPlugin<void> = {
     });
     const category = 'Datalayer';
     palette.addItem({ command, category, args: { origin: 'from palette' } });
+    if (launcher) {
+      launcher.add({
+        command,
+        category,
+        rank: 2.4,
+      });
+    }
     const settingsUpdated = (settings: ISettingRegistry.ISettings) => {
       const showInLauncher = settings.get('showInLauncher')
         .composite as boolean;
