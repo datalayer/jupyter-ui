@@ -10,10 +10,16 @@ import { ICellHeader } from '@jupyterlab/cells';
 import { CommandRegistry } from '@lumino/commands';
 import { newUuid } from '../../../../utils/Utils';
 import { ReactPortalWidget } from '../../../lumino/ReactPortalWidget';
-import { ICellSidebarProps } from './CellSidebar';
 import { notebookStore } from '../../NotebookState';
 
 export const DATALAYER_CELL_SIDEBAR_CLASS_NAME = 'dla-CellSidebar-Container';
+
+export type ICellSidebarProps = {
+  notebookId: string;
+  cellId: string;
+  command: CommandRegistry;
+  nbgrader: boolean;
+}
 
 export class CellSidebarWidget extends ReactPortalWidget implements ICellHeader {
   private readonly _commands: CommandRegistry;

@@ -7,15 +7,9 @@
 import { useState } from 'react';
 import { PanelLayout } from '@lumino/widgets';
 import { Box, IconButton } from '@primer/react';
-import {
-  PlayIcon,
-  ChevronUpIcon,
-  ChevronDownIcon,
-  SquareIcon,
-  XIcon,
-} from '@primer/octicons-react';
-import { ICellSidebarProps } from './CellSidebar';
+import { PlayIcon, ChevronUpIcon, ChevronDownIcon, SquareIcon, XIcon } from '@primer/octicons-react';
 import useNotebookStore from '../../NotebookState';
+import { ICellSidebarProps } from './CellSidebarWidget';
 
 import { DATALAYER_CELL_SIDEBAR_CLASS_NAME } from './CellSidebarWidget';
 

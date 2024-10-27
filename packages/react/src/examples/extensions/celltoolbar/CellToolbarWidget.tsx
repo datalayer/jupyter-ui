@@ -40,7 +40,8 @@ export class CellToolbarWidget extends Widget {
   private _deregisterCellChanges(cellModel: ICellModel) {
   }
 
-  private _registerCellChanges(cellModel: ICellModel, disableHighlight = false) {
+  private _registerCellChanges(cellModel: ICellModel) {
+    const disableHighlight = false;
     const codeCell = this._getCodeCell(cellModel);
     if (codeCell) {
       codeCell.displayChanged.connect(() => {

@@ -12,7 +12,7 @@ import { CellToolbarWidget } from './CellToolbarWidget';
 import './CellToolbarExtension.css';
 
 export class CellToolbarExtension implements DatalayerNotebookExtension {
-  private _props: IDatalayerNotebookExtensionProps;
+  private _props?: IDatalayerNotebookExtensionProps;
 
   /* @override */
   init(props: IDatalayerNotebookExtensionProps) {
@@ -21,7 +21,7 @@ export class CellToolbarExtension implements DatalayerNotebookExtension {
 
   /* @override */
   createNew(notebookPanel: NotebookPanel, context: DocumentRegistry.IContext<INotebookModel>) {
-    new CellToolbarWidget(notebookPanel, this._props);
+    new CellToolbarWidget(notebookPanel, this._props!);
   }
 
   /* @override */

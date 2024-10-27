@@ -7,25 +7,12 @@
 import { useState } from 'react';
 import { PanelLayout } from '@lumino/widgets';
 import { ActionMenu, Button, Box } from '@primer/react';
-import {
-  ChevronRightIcon,
-  XIcon,
-  ChevronUpIcon,
-  ChevronDownIcon,
-  SquareIcon,
-} from '@primer/octicons-react';
-import { CommandRegistry } from '@lumino/commands';
+import { ChevronRightIcon, XIcon, ChevronUpIcon, ChevronDownIcon, SquareIcon } from '@primer/octicons-react';
+import { ICellSidebarProps } from './CellSidebarWidget';
 import CellMetadataEditor from '../metadata/CellMetadataEditor';
 import useNotebookStore from '../../NotebookState';
 
 import { DATALAYER_CELL_SIDEBAR_CLASS_NAME } from './CellSidebarWidget';
-
-export type ICellSidebarProps = {
-  notebookId: string;
-  cellId: string;
-  command: CommandRegistry;
-  nbgrader: boolean;
-}
 
 export const CellSidebar = (props: ICellSidebarProps) => {
   const { notebookId, cellId, nbgrader } = props;
