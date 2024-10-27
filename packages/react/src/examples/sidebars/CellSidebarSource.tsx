@@ -21,19 +21,19 @@ import { useNotebookStore } from '../../components/notebook';
 import { DATALAYER_CELL_SIDEBAR_CLASS_NAME } from '../../components/notebook/cell/sidebar/CellSidebarWidget';
 
 export const CellSidebarSource = (props: ICellSidebarProps) => {
-  const { notebookId, cellId, nbgrader } = props;
+  const { notebookId, cellNodeId, nbgrader } = props;
   const notebookStore = useNotebookStore();
   const [visible, setVisible] = useState(false);
   const activeCell = notebookStore.selectActiveCell(notebookId);
   const layout = activeCell?.layout;
   if (layout) {
     const cellWidget = (layout as PanelLayout).widgets[0];
-    if (cellWidget?.node.id === cellId) {
+    if (cellWidget?.node.id === cellNodeId) {
       if (!visible) {
         setVisible(true);
       }
     }
-    if (cellWidget?.node.id !== cellId) {
+    if (cellWidget?.node.id !== cellNodeId) {
       if (visible) {
         setVisible(false);
       }
@@ -51,7 +51,7 @@ export const CellSidebarSource = (props: ICellSidebarProps) => {
         },
       }}
     >
-      <span style={{ display: 'flex' }}>
+      <Box>
         <Button
           leadingVisual={ChevronRightIcon}
           variant="invisible"
@@ -63,8 +63,8 @@ export const CellSidebarSource = (props: ICellSidebarProps) => {
         >
           Run
         </Button>
-      </span>
-      <span style={{ display: 'flex' }}>
+      </Box>
+      <Box>
         <Button
           leadingVisual={ChevronUpIcon}
           variant="invisible"
@@ -81,8 +81,8 @@ export const CellSidebarSource = (props: ICellSidebarProps) => {
         >
           Code (with source)
         </Button>
-      </span>
-      <span style={{ display: 'flex' }}>
+      </Box>
+      <Box>
         <Button
           leadingVisual={ChevronUpIcon}
           variant="invisible"
@@ -97,8 +97,8 @@ export const CellSidebarSource = (props: ICellSidebarProps) => {
         >
           Markdown
         </Button>
-      </span>
-      <span style={{ display: 'flex' }}>
+      </Box>
+      <Box>
         {activeCell.model.type === 'code' ? (
           <Button
             leadingVisual={SquareIcon}
@@ -130,8 +130,8 @@ export const CellSidebarSource = (props: ICellSidebarProps) => {
             To Code
           </Button>
         )}
-      </span>
-      <span style={{ display: 'flex' }}>
+      </Box>
+      <Box>
         <Button
           leadingVisual={ChevronDownIcon}
           variant="invisible"
@@ -146,8 +146,8 @@ export const CellSidebarSource = (props: ICellSidebarProps) => {
         >
           Markdown
         </Button>
-      </span>
-      <span style={{ display: 'flex' }}>
+      </Box>
+      <Box>
         <Button
           leadingVisual={ChevronDownIcon}
           variant="invisible"
@@ -164,8 +164,8 @@ export const CellSidebarSource = (props: ICellSidebarProps) => {
         >
           Code (with source)
         </Button>
-      </span>
-      <span style={{ display: 'flex' }}>
+      </Box>
+      <Box>
         <Button
           leadingVisual={XIcon}
           variant="invisible"
@@ -177,7 +177,7 @@ export const CellSidebarSource = (props: ICellSidebarProps) => {
         >
           Delete
         </Button>
-      </span>
+      </Box>
       {nbgrader && (
         <ActionMenu>
           {/*

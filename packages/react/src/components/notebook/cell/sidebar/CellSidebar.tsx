@@ -15,19 +15,19 @@ import useNotebookStore from '../../NotebookState';
 import { DATALAYER_CELL_SIDEBAR_CLASS_NAME } from './CellSidebarWidget';
 
 export const CellSidebar = (props: ICellSidebarProps) => {
-  const { notebookId, cellId, nbgrader } = props;
+  const { notebookId, cellNodeId, nbgrader } = props;
   const [visible, setVisible] = useState(false);
   const notebookStore = useNotebookStore();
   const activeCell = notebookStore.selectActiveCell(notebookId);
   const layout = activeCell?.layout;
   if (layout) {
     const cellWidget = (layout as PanelLayout).widgets[0];
-    if (cellWidget?.node.id === cellId) {
+    if (cellWidget?.node.id === cellNodeId) {
       if (!visible) {
         setVisible(true);
       }
     }
-    if (cellWidget?.node.id !== cellId) {
+    if (cellWidget?.node.id !== cellNodeId) {
       if (visible) {
         setVisible(false);
       }
@@ -63,7 +63,7 @@ export const CellSidebar = (props: ICellSidebarProps) => {
             */}
         </ActionMenu>
       )}
-      <span style={{ display: 'flex' }}>
+      <Box>
         <Button
           title="Run cell"
           leadingVisual={ChevronRightIcon}
@@ -76,8 +76,8 @@ export const CellSidebar = (props: ICellSidebarProps) => {
         >
           Run
         </Button>
-      </span>
-      <span style={{ display: 'flex' }}>
+      </Box>
+      <Box>
         <Button
           title="Insert code cell above"
           leadingVisual={ChevronUpIcon}
@@ -93,8 +93,8 @@ export const CellSidebar = (props: ICellSidebarProps) => {
         >
           Code
         </Button>
-      </span>
-      <span style={{ display: 'flex' }}>
+      </Box>
+      <Box>
         <Button
           title="Insert markdown cell above"
           leadingVisual={ChevronUpIcon}
@@ -110,8 +110,8 @@ export const CellSidebar = (props: ICellSidebarProps) => {
         >
           Markdown
         </Button>
-      </span>
-      <span style={{ display: 'flex' }}>
+      </Box>
+      <Box>
         {activeCell.model.type === 'code' ? (
           <Button
             title="Convert to markdow cell"
@@ -145,8 +145,8 @@ export const CellSidebar = (props: ICellSidebarProps) => {
             To Code
           </Button>
         )}
-      </span>
-      <span style={{ display: 'flex' }}>
+      </Box>
+      <Box>
         <Button
           title="Insert markdown cell below"
           leadingVisual={ChevronDownIcon}
@@ -162,8 +162,8 @@ export const CellSidebar = (props: ICellSidebarProps) => {
         >
           Markdown
         </Button>
-      </span>
-      <span style={{ display: 'flex' }}>
+      </Box>
+      <Box>
         <Button
           title="Insert code cell below"
           leadingVisual={ChevronDownIcon}
@@ -179,8 +179,8 @@ export const CellSidebar = (props: ICellSidebarProps) => {
         >
           Code
         </Button>
-      </span>
-      <span style={{ display: 'flex' }}>
+      </Box>
+      <Box>
         <Button
           title="Delete cell"
           leadingVisual={XIcon}
@@ -193,7 +193,7 @@ export const CellSidebar = (props: ICellSidebarProps) => {
         >
           Delete
         </Button>
-      </span>
+      </Box>
     </Box>
   ) : (
     <></>

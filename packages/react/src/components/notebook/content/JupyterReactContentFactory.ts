@@ -14,6 +14,18 @@ import { CodeEditor } from '@jupyterlab/codeeditor';
 // import { IInputPrompt } from '@jupyterlab/cells';
 // import { NotebookInputPrompt } from './../cell/InputPrompt';
 
+export const PYTHON_CELL_MIMETYPE = 'text/x-ipython';
+
+export const SQL_CELL_MIMETYPE = 'application/sql';
+
+export const isSQLCell = (cell: Cell) => {
+  const datalayer = cell.model.getMetadata('datalayer');
+  if (datalayer) {
+    return (datalayer['sql'] === true);
+  }
+  return false;
+}
+
 class DatalayerCodeCell extends CodeCell {
   constructor(options: CodeCell.IOptions) {
     super(options);
@@ -44,9 +56,8 @@ export class JupyterReactContentFactory extends NotebookPanel.ContentFactory {
   }
 
   private _updateSQLEditor = (cell: CodeCell) => {
-    const datalayer = cell.model?.getMetadata('datalayer');
-    if (datalayer && datalayer['sql']) {
-      (cell.editor!.model as CodeEditor.Model).mimeType = 'application/sql';
+    if (isSQLCell(cell)) {
+      (cell.editor!.model as CodeEditor.Model).mimeType = SQL_CELL_MIMETYPE;
     }
   }
 

@@ -14,19 +14,19 @@ import { ICellSidebarProps } from './CellSidebarWidget';
 import { DATALAYER_CELL_SIDEBAR_CLASS_NAME } from './CellSidebarWidget';
 
 export const CellSidebarButton = (props: ICellSidebarProps) => {
-  const { notebookId, cellId } = props;
+  const { notebookId, cellNodeId } = props;
   const notebookStore = useNotebookStore();
   const [visible, setVisible] = useState(false);
   const activeCell = notebookStore.selectActiveCell(notebookId);
   const layout = activeCell?.layout;
   if (layout) {
     const cellWidget = (layout as PanelLayout).widgets[0];
-    if (cellWidget?.node.id === cellId) {
+    if (cellWidget?.node.id === cellNodeId) {
       if (!visible) {
         setVisible(true);
       }
     }
-    if (cellWidget?.node.id !== cellId) {
+    if (cellWidget?.node.id !== cellNodeId) {
       if (visible) {
         setVisible(false);
       }
@@ -44,7 +44,7 @@ export const CellSidebarButton = (props: ICellSidebarProps) => {
         },
       }}
     >
-      <span style={{ display: 'flex' }}>
+      <Box>
         <IconButton
           size="small"
           color="secondary"
@@ -57,8 +57,8 @@ export const CellSidebarButton = (props: ICellSidebarProps) => {
           icon={PlayIcon}
           variant="invisible"
         />
-      </span>
-      <span style={{ display: 'flex' }}>
+      </Box>
+      <Box>
         <IconButton
           size="small"
           color="secondary"
@@ -74,8 +74,8 @@ export const CellSidebarButton = (props: ICellSidebarProps) => {
           icon={ChevronUpIcon}
           variant="invisible"
         />
-      </span>
-      <span style={{ display: 'flex' }}>
+      </Box>
+      <Box>
         <IconButton
           size="small"
           color="secondary"
@@ -91,8 +91,8 @@ export const CellSidebarButton = (props: ICellSidebarProps) => {
           icon={ChevronUpIcon}
           variant="invisible"
         />
-      </span>
-      <span style={{ display: 'flex' }}>
+      </Box>
+      <Box>
         {activeCell.model.type === 'code' ? (
           <IconButton
             aria-label="Convert to markdow cell"
@@ -124,8 +124,8 @@ export const CellSidebarButton = (props: ICellSidebarProps) => {
             }}
           />
         )}
-      </span>
-      <span style={{ display: 'flex' }}>
+      </Box>
+      <Box>
         <IconButton
           size="small"
           color="secondary"
@@ -141,8 +141,8 @@ export const CellSidebarButton = (props: ICellSidebarProps) => {
           icon={ChevronDownIcon}
           variant="invisible"
         />
-      </span>
-      <span style={{ display: 'flex' }}>
+      </Box>
+      <Box>
         <IconButton
           size="small"
           color="secondary"
@@ -158,8 +158,8 @@ export const CellSidebarButton = (props: ICellSidebarProps) => {
           icon={ChevronDownIcon}
           variant="invisible"
         />
-      </span>
-      <span style={{ display: 'flex' }}>
+      </Box>
+      <Box>
         <IconButton
           size="small"
           color="error"
@@ -172,7 +172,7 @@ export const CellSidebarButton = (props: ICellSidebarProps) => {
           icon={XIcon}
           variant="invisible"
         />
-      </span>
+      </Box>
     </Box>
   ) : (
     <></>

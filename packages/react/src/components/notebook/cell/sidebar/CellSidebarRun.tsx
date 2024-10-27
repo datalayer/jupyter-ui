@@ -20,10 +20,10 @@ export const CellSidebarRun = (props: ICellSidebarProps) => {
   const layout = activeCell?.layout;
   if (layout) {
     const cellWidget = (layout as PanelLayout).widgets[0];
-    if (!visible && cellWidget?.node.id === props.cellId) {
+    if (!visible && cellWidget?.node.id === props.cellNodeId) {
       setVisible(true);
     }
-    if (visible && cellWidget?.node.id !== props.cellId) {
+    if (visible && cellWidget?.node.id !== props.cellNodeId) {
       setVisible(false);
     }
   }
@@ -39,7 +39,7 @@ export const CellSidebarRun = (props: ICellSidebarProps) => {
         },
       }}
     >
-      <span style={{ display: 'flex' }}>
+      <Box>
         <Button
           trailingVisual={PlayIcon}
           size="small"
@@ -51,7 +51,7 @@ export const CellSidebarRun = (props: ICellSidebarProps) => {
         >
           Run
         </Button>
-      </span>
+      </Box>
     </Box>
   ) : (
     <></>
