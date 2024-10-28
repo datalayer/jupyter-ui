@@ -314,7 +314,7 @@ export const Notebook = (props: INotebookProps) => {
         <Box>
           {extensionComponents.map((extensionComponent, index) => {
             return (
-              <Box id={`${extensionComponent}-${index}`}>
+              <Box key={`${extensionComponent}-${index}`}>
                 {extensionComponent}
               </Box>
             )}
