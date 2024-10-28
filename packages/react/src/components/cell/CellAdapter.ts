@@ -36,7 +36,6 @@ import {
   RenderMimeRegistry,
   standardRendererFactories as initialFactories,
 } from '@jupyterlab/rendermime';
-import { execute as executeOutput } from './../output/OutputExecutor';
 import {
   Session,
   ServerConnection,
@@ -50,6 +49,7 @@ import {
   WIDGET_MIMETYPE,
   WidgetRenderer,
 } from '@jupyter-widgets/html-manager/lib/output_renderers';
+import { execute as executeOutput } from './../output/OutputExecutor';
 import { requireLoader as loader } from '../../jupyter/ipywidgets/libembed-amd';
 import ClassicWidgetManager from '../../jupyter/ipywidgets/classic/manager';
 import Kernel from '../../jupyter/kernel/Kernel';

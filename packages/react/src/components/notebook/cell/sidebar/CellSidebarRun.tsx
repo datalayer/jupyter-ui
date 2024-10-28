@@ -8,10 +8,9 @@ import { useState } from 'react';
 import { PanelLayout } from '@lumino/widgets';
 import { Box, Button } from '@primer/react';
 import { PlayIcon } from '@primer/octicons-react';
-import { ICellSidebarProps } from './CellSidebarWidget';
 import useNotebookStore from '../../NotebookState';
-
-import { DATALAYER_CELL_HEADER_CLASS } from './CellSidebarWidget';
+import { ICellSidebarProps } from './CellSidebarWidget';
+import { DATALAYER_CELL_SIDEBAR_CLASS_NAME } from './CellSidebarWidget';
 
 export const CellSidebarRun = (props: ICellSidebarProps) => {
   const { notebookId } = props;
@@ -21,10 +20,10 @@ export const CellSidebarRun = (props: ICellSidebarProps) => {
   const layout = activeCell?.layout;
   if (layout) {
     const cellWidget = (layout as PanelLayout).widgets[0];
-    if (!visible && cellWidget?.node.id === props.cellId) {
+    if (!visible && cellWidget?.node.id === props.cellNodeId) {
       setVisible(true);
     }
-    if (visible && cellWidget?.node.id !== props.cellId) {
+    if (visible && cellWidget?.node.id !== props.cellNodeId) {
       setVisible(false);
     }
   }
@@ -33,14 +32,14 @@ export const CellSidebarRun = (props: ICellSidebarProps) => {
   }
   return activeCell ? (
     <Box
-      className={DATALAYER_CELL_HEADER_CLASS}
+      className={DATALAYER_CELL_SIDEBAR_CLASS_NAME}
       sx={{
         '& p': {
           marginBottom: '0 !important',
         },
       }}
     >
-      <span style={{ display: 'flex' }}>
+      <Box>
         <Button
           trailingVisual={PlayIcon}
           size="small"
@@ -52,7 +51,7 @@ export const CellSidebarRun = (props: ICellSidebarProps) => {
         >
           Run
         </Button>
-      </span>
+      </Box>
     </Box>
   ) : (
     <></>

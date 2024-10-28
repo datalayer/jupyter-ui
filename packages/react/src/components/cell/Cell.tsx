@@ -7,11 +7,11 @@
 import { useState, useEffect } from 'react';
 import { CodeCell, MarkdownCell } from '@jupyterlab/cells';
 import { Box } from '@primer/react';
-import Lumino from '../lumino/Lumino';
 import { useJupyter } from './../../jupyter/JupyterContext';
+import { newUuid } from '../../utils';
+import { Lumino } from '../lumino';
 import CellAdapter from './CellAdapter';
 import useCellsStore from './CellState';
-import { newUuid } from '../../utils';
 
 export type ICellProps = {
   /**
@@ -44,19 +44,15 @@ export const Cell = (props: ICellProps) => {
     type='code',
   } = props;
   const { defaultKernel, serverSettings } = useJupyter();
-
   const [id] = useState(props.id || newUuid());
   const [adapter, setAdapter] = useState<CellAdapter>();
-
   const cellsStore = useCellsStore();
-
   const handleCellInitEvents = (adapter: CellAdapter) => {
     adapter.cell.model.contentChanged.connect(
       (cellModel, changedArgs) => {
         cellsStore.setSource(id, cellModel.sharedModel.getSource());
       }
     );
-
     if (adapter.cell instanceof CodeCell) {
       adapter.cell.outputArea.outputLengthChanged?.connect(
         (outputArea, outputsCount) => {
@@ -64,14 +60,12 @@ export const Cell = (props: ICellProps) => {
         }
       );
     }
-
     adapter.sessionContext.initialize().then(() => {
       if (autoStart && adapter.cell.model) {
         // Perform auto-start for code or markdown cells.
         adapter.execute();
       }
     });
-
     adapter.sessionContext.kernelChanged.connect(() => {
       void adapter.sessionContext.session?.kernel?.info.then(info => {
         // Set that session/kernel is ready for this cell when the kernel is guaranteed to be connected 
@@ -79,7 +73,6 @@ export const Cell = (props: ICellProps) => {
       })
     });
   }
-
   useEffect(() => {
     if (id && defaultKernel && serverSettings) {
       defaultKernel.ready.then(() => {
@@ -95,7 +88,6 @@ export const Cell = (props: ICellProps) => {
         cellsStore.setSource(id, source);
         handleCellInitEvents(adapter);
         setAdapter(adapter);
-
         const handleDblClick = (event: Event) => {
           let target = event.target as HTMLElement;
           /**
@@ -109,7 +101,6 @@ export const Cell = (props: ICellProps) => {
             (adapter.cell as MarkdownCell).rendered = false;
           }
         };
-
         // Adds the event for double click and the removal on component's destroy
         document.addEventListener('dblclick', handleDblClick);
         return () => {

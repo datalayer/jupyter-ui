@@ -6,13 +6,14 @@
 
 import { useState, useEffect } from 'react';
 import { JupyterFrontEnd } from '@jupyterlab/application';
-import { ThemeProvider, BaseStyles, Box } from '@primer/react';
+import { Box } from '@primer/react';
 import { UnderlineNav } from '@primer/react';
 import { ReactJsIcon, RingedPlanetIcon } from '@datalayer/icons-react';
 import { ServerConnection } from '@jupyterlab/services';
+import { JupyterReactTheme } from '../theme';
+import { requestAPI } from '../jupyter/JupyterHandlers';
 import AboutTab from './tabs/AboutTab';
 import ComponentsTab from './tabs/ComponentsTab';
-import { requestAPI } from '../jupyter/JupyterHandlers';
 
 export type JupyterFrontEndProps = {
   app?: JupyterFrontEnd;
@@ -35,39 +36,36 @@ const JupyterReact = (props: JupyterFrontEndProps): JSX.Element => {
   });
   return (
     <>
-      <ThemeProvider>
-        <BaseStyles>
-          <Box style={{ maxWidth: 700 }}>
-            <Box mb={3}>
-              <UnderlineNav aria-label="jupyter-react">
-                <UnderlineNav.Item
-                  aria-current="page"
-                  icon={RingedPlanetIcon}
-                  onSelect={e => {
-                    e.preventDefault();
-                    setTab(1);
-                  }}
-                >
-                  Components
-                </UnderlineNav.Item>
-                <UnderlineNav.Item
-                  icon={ReactJsIcon}
-                  onSelect={e => {
-                    e.preventDefault();
-                    setTab(2);
-                  }}
-                >
-                  About
-                </UnderlineNav.Item>
-              </UnderlineNav>
-            </Box>
-            <Box m={3}>
-              {tab === 1 && <ComponentsTab app={app} />}
-              {tab === 2 && <AboutTab version={version} />}
-            </Box>
-          </Box>
-        </BaseStyles>
-      </ThemeProvider>
+      <JupyterReactTheme loadJupyterLabCss={false}>
+        <Box mb={3}>
+          <UnderlineNav aria-label="jupyter-react">
+            <UnderlineNav.Item
+              aria-current={tab === 1 ? "page" : undefined}
+              icon={RingedPlanetIcon}
+              onSelect={e => {
+                e.preventDefault();
+                setTab(1);
+              }}
+            >
+              Components
+            </UnderlineNav.Item>
+            <UnderlineNav.Item
+              aria-current={tab === 2 ? "page" : undefined}
+              icon={ReactJsIcon}
+              onSelect={e => {
+                e.preventDefault();
+                setTab(2);
+              }}
+            >
+              About
+            </UnderlineNav.Item>
+          </UnderlineNav>
+        </Box>
+        <Box m={3}>
+          {tab === 1 && <ComponentsTab app={app} />}
+          {tab === 2 && <AboutTab version={version} />}
+        </Box>
+      </JupyterReactTheme>
     </>
   );
 };

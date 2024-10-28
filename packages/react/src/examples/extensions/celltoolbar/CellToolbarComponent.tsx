@@ -4,44 +4,32 @@
  * MIT License
  */
 
-import { useState } from 'react';
-import { PanelLayout } from '@lumino/widgets';
+import { CodeCell } from '@jupyterlab/cells';
 import { Box, IconButton } from '@primer/react';
-import { PlayIcon, ChevronUpIcon, ChevronDownIcon, SquareIcon, XIcon } from '@primer/octicons-react';
-import useNotebookStore from '../../NotebookState';
-import { ICellSidebarProps } from './CellSidebarWidget';
+import {
+  PlayIcon,
+  ChevronUpIcon,
+  ChevronDownIcon,
+  SquareIcon,
+  XIcon,
+} from '@primer/octicons-react';
+import { useNotebookStore, IDatalayerNotebookExtensionProps } from '../../../components';
 
-import { DATALAYER_CELL_SIDEBAR_CLASS_NAME } from './CellSidebarWidget';
+type ICellToolbarComponentProps = {
+  cell: CodeCell;
+  extensionProps: IDatalayerNotebookExtensionProps;
+}
 
-export const CellSidebarButton = (props: ICellSidebarProps) => {
-  const { notebookId, cellNodeId } = props;
+export const CellToolbarComponent = (props: ICellToolbarComponentProps) => {
+  const { extensionProps } = props;
+  const notebookId = extensionProps.notebookId;
   const notebookStore = useNotebookStore();
-  const [visible, setVisible] = useState(false);
   const activeCell = notebookStore.selectActiveCell(notebookId);
-  const layout = activeCell?.layout;
-  if (layout) {
-    const cellWidget = (layout as PanelLayout).widgets[0];
-    if (cellWidget?.node.id === cellNodeId) {
-      if (!visible) {
-        setVisible(true);
-      }
-    }
-    if (cellWidget?.node.id !== cellNodeId) {
-      if (visible) {
-        setVisible(false);
-      }
-    }
-  }
-  if (!visible) {
-    return <></>
-  }
   return activeCell ? (
-    <Box
-      className={DATALAYER_CELL_SIDEBAR_CLASS_NAME}
+    <Box 
+      display="flex"
       sx={{
-        '& p': {
-          marginBottom: '0 !important',
-        },
+        marginLeft: 70,
       }}
     >
       <Box>
@@ -179,4 +167,4 @@ export const CellSidebarButton = (props: ICellSidebarProps) => {
   );
 };
 
-export default CellSidebarButton;
+export default CellToolbarComponent;

@@ -9,13 +9,14 @@ import { Colormode, JupyterLabCss } from './../theme';
 
 type IJupyterLabThemeProps = {
   colormode: Colormode;
+  loadJupyterLabCss: boolean;
 }
 
 export const JupyterReactTheme = (props: React.PropsWithChildren<IJupyterLabThemeProps>) => {
-  const { children, colormode } = props;
+  const { children, colormode, loadJupyterLabCss } = props;
   return (
     <>
-      <JupyterLabCss colormode={colormode} />
+      { loadJupyterLabCss && <JupyterLabCss colormode={colormode} /> }
       <ThemeProvider
         theme={theme}
         colorMode={colormode === 'light' ? 'day' : 'night'}
@@ -32,6 +33,7 @@ export const JupyterReactTheme = (props: React.PropsWithChildren<IJupyterLabThem
 
 JupyterReactTheme.defaultProps = {
   colormode: 'light',
+  loadJupyterLabCss: true,
 } as IJupyterLabThemeProps;
 
 export default JupyterReactTheme;

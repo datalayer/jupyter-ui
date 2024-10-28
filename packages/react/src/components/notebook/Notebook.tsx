@@ -7,14 +7,17 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Box } from '@primer/react';
+import { NotebookPanel, INotebookModel } from '@jupyterlab/notebook';
 import { Cell, ICellModel } from '@jupyterlab/cells';
+import { CommandRegistry } from '@lumino/commands';
+import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { ServiceManager } from '@jupyterlab/services';
 import { useJupyter, Lite, Kernel } from './../../jupyter';
 import { asObservable, Lumino } from '../lumino';
-import { CellMetadataEditor } from './cell/metadata/CellMetadataEditor';
-import { ICellSidebarProps } from './cell/sidebar/CellSidebarWidget';
+import { CellMetadataEditor } from './cell/metadata';
+import { ICellSidebarProps } from './cell/sidebar';
 import { INotebookToolbarProps } from './toolbar/NotebookToolbar';
 import { newUuid } from '../../utils';
 import { OnKernelConnection } from '../../state';
@@ -26,17 +29,28 @@ import './Notebook.css';
 export type ExternalIPyWidgets = {
   name: string;
   version: string;
-};
+}
 
 export type BundledIPyWidgets = ExternalIPyWidgets & {
   module: any;
+}
+
+export type IDatalayerNotebookExtensionProps = {
+  notebookId: string;
+  commands: CommandRegistry;
 };
+
+export type DatalayerNotebookExtension = DocumentRegistry.IWidgetExtension<NotebookPanel, INotebookModel> & {
+  init(props: IDatalayerNotebookExtensionProps): void;
+  get component(): JSX.Element | undefined;
+}
 
 export type INotebookProps = {
   CellSidebar?: (props: ICellSidebarProps) => JSX.Element;
   Toolbar?: (props: INotebookToolbarProps) => JSX.Element;
   cellMetadataPanel: boolean;
   cellSidebarMargin: number;
+  extensions: DatalayerNotebookExtension[]
   height?: string;
   id: string;
   lite?: Lite;
@@ -79,6 +93,7 @@ export const Notebook = (props: INotebookProps) => {
   });
   const {
     Toolbar,
+    extensions,
     height,
     maxHeight,
     nbformat,
@@ -90,6 +105,7 @@ export const Notebook = (props: INotebookProps) => {
   } = props;
   const [id, _] = useState(props.id || newUuid());
   const [adapter, setAdapter] = useState<NotebookAdapter>();
+  const [extensionComponents, setExtensionComponents] = useState(new Array<JSX.Element>());
   const kernel = props.kernel ?? defaultKernel;
   const notebookStore = useNotebookStore();
   const portals = notebookStore.selectNotebookPortals(id);
@@ -104,6 +120,14 @@ export const Notebook = (props: INotebookProps) => {
     });
     // Update the local state.
     setAdapter(adapter);
+    extensions.forEach(extension => {
+      extension.init({
+        notebookId: id,
+        commands: adapter.commands,
+      })
+      extension.createNew(adapter.notebookPanel!, adapter.context!);
+      setExtensionComponents(extensionComponents.concat(extension.component ?? <></>));
+    });
     // Update the global state.
     notebookStore.update({ id, state: { adapter } });
     // Update the global state based on events.
@@ -271,7 +295,7 @@ export const Notebook = (props: INotebookProps) => {
             left: `${props.cellSidebarMargin + 10}px`,
             height: 'auto',
           },
-          '& .jp-Cell .dla-CellHeader-Container': {
+          '& .jp-Cell .dla-CellSidebar-Container': {
             padding: '4px 8px',
             width: `${props.cellSidebarMargin + 10}px`,
             marginLeft: 'auto',
@@ -288,6 +312,15 @@ export const Notebook = (props: INotebookProps) => {
           {portals?.map((portal: React.ReactPortal) => portal)}
         </>
         <Box>
+          {extensionComponents.map((extensionComponent, index) => {
+            return (
+              <Box key={`${extensionComponent}-${index}`}>
+                {extensionComponent}
+              </Box>
+            )}
+          )}
+        </Box>
+        <Box>
           {adapter &&
             <Lumino id={id}>
               {adapter.panel}
@@ -302,6 +335,7 @@ export const Notebook = (props: INotebookProps) => {
 Notebook.defaultProps = {
   cellMetadataPanel: false,
   cellSidebarMargin: 120,
+  extensions: [],
   height: '100vh',
   maxHeight: '100vh',
   nbgrader: false,

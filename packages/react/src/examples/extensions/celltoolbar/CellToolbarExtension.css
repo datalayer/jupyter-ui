@@ -1,0 +1,35 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
+/* Transition to highlight a cell change */
+@keyframes executeHighlight {
+  from {
+    background-color: #9fccff;
+  }
+
+  to {
+    background-color: var(--jp-cell-editor-background);
+  }
+}
+
+.dla-CellToolbar {
+  background-color: var(--jp-cell-editor-background);
+  color: var(--jp-mirror-editor-variable-color);
+  display: block;
+  margin-top: 2px;
+  font-family: monospace;
+  font-size: 80%;
+  border-top: 1px solid #cfcfcf;
+  padding: 0 2px;
+}
+
+.dla-CellToolbar-positioning-left {
+  text-align: left;
+}
+
+.dla-CellToolbar-positioning-right {
+  text-align: right;
+}
