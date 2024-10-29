@@ -17,7 +17,7 @@ import {
   CircleWhiteIcon,
   CircleYellowIcon,
   CircledMIcon,
-  SquareWhiteLargeIcon
+  PlusCircleIcon
 } from '@datalayer/icons-react';
 import { KernelMessage } from '@jupyterlab/services';
 import { ConnectionStatus, IKernelConnection } from '@jupyterlab/services/lib/kernel/kernel';
@@ -56,7 +56,7 @@ export type ExecutionState =
  * Status = 'unknown' | 'starting' | 'idle' | 'busy' | 'terminating' | 'restarting' | 'autorestarting' | 'dead';
  */
 export const KERNEL_STATES: Map<ExecutionState, ReactElement> = new Map([
-  ['connecting', <CircleBlackIcon />],
+  ['connecting', <PlusCircleIcon />],
   ['connected-unknown', <CircledMIcon />],
   ['connected-starting', <CircleYellowIcon />],
   ['connected-idle', <CircleGreenIcon />],
@@ -66,7 +66,7 @@ export const KERNEL_STATES: Map<ExecutionState, ReactElement> = new Map([
   ['connected-autorestarting', <CircleHollowRedIcon />],
   ['connected-dead', <CircleRedIcon />],
   ['disconnecting', <CircleBrownIcon />],
-  ['undefined', <SquareWhiteLargeIcon />],
+  ['undefined', <CircleBlackIcon />],
 ]);
 
 export const toKernelState = (

@@ -39,12 +39,12 @@ const ENTRY =
   // './src/examples/JupyterLabAppServiceManager';
   // './src/examples/KernelExecute';
   // './src/examples/KernelExecutor';
-  // './src/examples/Kernels';
+  './src/examples/Kernels';
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
   // './src/examples/Notebook';
   // './src/examples/NotebookCellSidebar';
-  './src/examples/NotebookCellToolbar';
+  // './src/examples/NotebookCellToolbar';
   // './src/examples/NotebookColorMode';
   // './src/examples/NotebookExtension';
   // './src/examples/NotebookKernelChange';
