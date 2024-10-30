@@ -63,7 +63,7 @@ export class NotebookAdapter {
 
   constructor(props: INotebookProps) {
 
-    console.log('A new Notebook Adapter is being created...');
+    console.log('Creating a new Notebook Adapter.');
 
     this._CellSidebar = props.CellSidebar;
 
@@ -177,29 +177,19 @@ export class NotebookAdapter {
     this._iPyWidgetsManager = new WidgetManager(
       this._context,
       this._rendermime!,
-      { saveState: false },
+      { saveState: true },
     );
-    /*
-    this._rendermime!.addFactory(
-      {
-        safe: false,
-        mimeTypes: [WIDGET_MIMETYPE],
-        createRenderer: options =>
-          new WidgetRenderer(options, this._iPyWidgetsManager!),
-      },
-      1
-    );
-    // This code block is causing https://github.com/datalayer/jupyter-ui/issues/195
-    this._context?.sessionContext
-      .changeKernel({id: this._kernel.id })
-      .then(() => {
-        this._iPyWidgetsManager?.registerWithKernel(
-          this._kernel.connection
-        );
-      });
-    */
 
-    // These are fixes to have more control on the kernel launch.
+    const ipywidgetsRendererFactory: IRenderMime.IRendererFactory =  {
+      safe: true,
+      mimeTypes: [WIDGET_MIMETYPE],
+      defaultRank: 1,
+      createRenderer: options =>
+        new WidgetLabRenderer(options, this._iPyWidgetsManager!),
+    };
+    this._rendermime!.addFactory(ipywidgetsRendererFactory, 1);
+
+    // These are fixes on the Context and the SessionContext to have more control on the kernel launch.
     (this._context.sessionContext as any)._initialize = async (): Promise<boolean> => {
       const manager = (this._context!.sessionContext as any).sessionManager as SessionManager;
       await manager.ready;
@@ -229,95 +219,6 @@ export class NotebookAdapter {
       }
       return await (this._context!.sessionContext as any)._startIfNecessary();
     };
-
-    this._context.sessionContext.ready.then(() => {
-      if (this._onKernelConnection) {
-        const kernelConnection = this._context?.sessionContext.session?.kernel;
-        this._onKernelConnection(kernelConnection);
-      }
-    });
-
-    this._context.sessionContext.kernelChanged.connect((_, args) => {
-      console.log('Previous Jupyter Kernel Connection.', args.oldValue);
-      const kernelConnection = args.newValue;
-      console.log('Current Jupyter Kernel Connection.', kernelConnection);
-      if (kernelConnection && !kernelConnection.handleComms) {
-        console.warn('The current Kernel Connection does not handle Comms...', kernelConnection.id);
-        (kernelConnection as any).handleComms = true;
-        console.log('The current Kernel Connection is updated to enforce Comms support!', kernelConnection.handleComms);
-      }
-      if (this._onKernelConnection) {
-        this._onKernelConnection(kernelConnection);
-      }
-    });
-
-    if (!this._notebookPanel) {
-      // Option 1.
-      /*
-      const content = new Notebook({
-        rendermime: this._rendermime!,
-        contentFactory: this._contentFactory,
-        mimeTypeService: this._mimeTypeService,
-        notebookConfig: {
-          ...StaticNotebook.defaultNotebookConfig,
-          windowingMode: 'none',
-          recordTiming: true,
-        }
-      });
-      this._notebookPanel = new NotebookPanel({
-        context: this._context,
-        content,
-      });
-      */
-      // Option 2.
-      const notebookFactory = this._documentRegistry?.getWidgetFactory('Notebook');
-      this._notebookPanel = notebookFactory?.createNew(this._context) as NotebookPanel;
-
-    }
-
-    if (this._kernel) {
-      this._iPyWidgetsManager?.registerWithKernel(
-        this._kernel.connection
-      );  
-    }
-
-    this._notebookPanel?.sessionContext.kernelChanged.connect(
-      (
-        _: any,
-        args: IChangedArgs<
-          JupyterKernel.IKernelConnection | null,
-          JupyterKernel.IKernelConnection | null,
-          'kernel'
-        >
-      ) => {
-        this._iPyWidgetsManager?.registerWithKernel(args.newValue);
-      }
-    );
-
-    const completerHandler = this.setupCompleter(this._notebookPanel!);
-
-    if (!this._readonly) {
-      try {
-        NotebookCommands(
-          this._commandRegistry,
-          this._notebookPanel,
-          completerHandler,
-          this._tracker!,
-          this._path
-        );
-      }
-      catch {
-        // no-op.
-        // The commands may already be registered...
-      }  
-    }
-
-    this._boxPanel.addWidget(this._notebookPanel);
-    BoxPanel.setStretch(this._notebookPanel, 0);
-    window.addEventListener('resize', () => {
-      this._notebookPanel?.update();
-    });
-
     if (isNbFormat) {
       // If nbformat is provided and we don't want to interact with the content manager.
       (this._context as any)._populate = async (): Promise<void> => {
@@ -367,6 +268,81 @@ export class NotebookAdapter {
       };
     }
 
+    this._context.sessionContext.ready.then(() => {
+      if (this._onKernelConnection) {
+        const kernelConnection = this._context?.sessionContext.session?.kernel;
+        this._onKernelConnection(kernelConnection);
+      }
+    });
+
+    this._context.sessionContext.kernelChanged.connect((_, args: IChangedArgs<
+      JupyterKernel.IKernelConnection | null,
+      JupyterKernel.IKernelConnection | null,
+      'kernel'
+    >) => {
+      console.log('Previous Jupyter Kernel Connection.', args.oldValue);
+      const kernelConnection = args.newValue;
+      console.log('Current Jupyter Kernel Connection.', kernelConnection);
+      if (kernelConnection && !kernelConnection.handleComms) {
+        console.warn('The current Kernel Connection does not handle Comms...', kernelConnection.id);
+        (kernelConnection as any).handleComms = true;
+        console.log('The current Kernel Connection is updated to enforce Comms support!', kernelConnection.handleComms);
+      }
+      this._iPyWidgetsManager?.registerWithKernel(args.newValue);
+      this._iPyWidgetsManager?.restoreWidgets(this._notebookPanel?.model!)
+      if (this._onKernelConnection) {
+        this._onKernelConnection(kernelConnection);
+      }
+    });
+
+    if (!this._notebookPanel) {
+      /*
+      // Option 1 to create the Notebook Panel.
+      const content = new Notebook({
+        rendermime: this._rendermime!,
+        contentFactory: this._contentFactory,
+        mimeTypeService: this._mimeTypeService,
+        notebookConfig: {
+          ...StaticNotebook.defaultNotebookConfig,
+          windowingMode: 'none',
+          recordTiming: true,
+        }
+      });
+      this._notebookPanel = new NotebookPanel({
+        context: this._context,
+        content,
+      });
+      */
+      // Option 2 to create the Notebook Panel.
+      const notebookFactory = this._documentRegistry?.getWidgetFactory('Notebook');
+      this._notebookPanel = notebookFactory?.createNew(this._context) as NotebookPanel;
+
+    }
+
+    const completerHandler = this.setupCompleter(this._notebookPanel!);
+
+    if (!this._readonly) {
+      try {
+        NotebookCommands(
+          this._commandRegistry,
+          this._notebookPanel,
+          completerHandler,
+          this._tracker!,
+          this._path
+        );
+      }
+      catch {
+        // no-op.
+        // The commands may already be registered...
+      }  
+    }
+
+    this._boxPanel.addWidget(this._notebookPanel);
+    BoxPanel.setStretch(this._notebookPanel, 0);
+    window.addEventListener('resize', () => {
+      this._notebookPanel?.update();
+    });
+
     this._context.initialize(isNbFormat).then(() => {
       if (isNbFormat) {
         this._notebookPanel?.model?.fromJSON(this._nbformat!);
@@ -382,7 +358,7 @@ export class NotebookAdapter {
     const initialFactories = standardRendererFactories.filter(
       factory => factory.mimeTypes[0] !== 'text/javascript'
     );
-
+    /*
     const ipywidgetsRendererFactory: IRenderMime.IRendererFactory =  {
       safe: true,
       mimeTypes: [WIDGET_MIMETYPE],
@@ -390,8 +366,8 @@ export class NotebookAdapter {
       createRenderer: options =>
         new WidgetLabRenderer(options, this._iPyWidgetsManager!),
     };
-
     initialFactories.push(ipywidgetsRendererFactory);
+    */
     initialFactories.push(jsonRendererFactory);
     initialFactories.push(javascriptRendererFactory);
 

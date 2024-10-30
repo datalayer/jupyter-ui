@@ -65,6 +65,7 @@ export type INotebookProps = {
   renderers: IRenderMime.IRendererFactory[];
   serverless: boolean,
   serviceManager?: ServiceManager.IManager,
+  startDefaultKernel?: boolean;
   url?: string;
   /**
    * The Kernel Id to use, as defined in the Kernel API.
@@ -88,6 +89,7 @@ export const Notebook = (props: INotebookProps) => {
     lite: props.lite,
     serverless: props.serverless,
     serviceManager: props.serviceManager,
+    startDefaultKernel: props.startDefaultKernel,
     useRunningKernelId: props.useRunningKernelId,
     useRunningKernelIndex: props.useRunningKernelIndex,
   });
@@ -343,6 +345,7 @@ Notebook.defaultProps = {
   renderId: 0,
   renderers: [],
   serverless: false,
+  startDefaultKernel: false,
 } as Partial<INotebookProps>;
 
 export default Notebook;

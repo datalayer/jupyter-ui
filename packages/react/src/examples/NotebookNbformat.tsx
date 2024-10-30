@@ -17,7 +17,8 @@ const NotebookNbformat = () => (
   <JupyterReactTheme>
     <Notebook
       nbformat={nbformat as INotebookContent}
-      id="notebook-model-id"
+      id="notebook-nbformat-id"
+      startDefaultKernel={true}
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       cellSidebarMargin={120}
       CellSidebar={CellSidebar}

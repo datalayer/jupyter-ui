@@ -32,6 +32,7 @@ const NotebookMutationsServiceManager = () => {
   const [nbformat, setNbformat] = useState(nbformatExample as INotebookContent);
   const [readonly, setReadonly] = useState(true);
   const [serverless, setServerless] = useState(true);
+  const [startDefaultKernel, setStartDefaultKernel] = useState(false);
   const [kernelIndex, setKernelIndex] = useState(-1);
   const [waiting, setWaiting] = useState(false);
   const [lite, setLite] = useState<Lite>(false);
@@ -55,6 +56,7 @@ const NotebookMutationsServiceManager = () => {
         setServerless(true);
         setReadonly(true);
         setLite(false);
+        setStartDefaultKernel(false);
         setServiceManager(SERVICE_MANAGER_LESS);
         break;
       }
@@ -67,6 +69,7 @@ const NotebookMutationsServiceManager = () => {
           setServerless(false);
           setReadonly(false);
           setLite(true);
+          setStartDefaultKernel(true);
           setServiceManager(liteServiceManager);
         });
         break;
@@ -78,6 +81,7 @@ const NotebookMutationsServiceManager = () => {
         setServerless(false);
         setReadonly(false);
         setLite(false);
+        setStartDefaultKernel(true);
         const serverSettings = createServerSettings(getJupyterServerUrl(), getJupyterServerToken());
         const serviceManager = new ServiceManager({ serverSettings });
         (serviceManager as any)['__NAME__'] = 'MutatingServiceManager';
@@ -89,13 +93,14 @@ const NotebookMutationsServiceManager = () => {
           datalayerConfig?.cpuEnvironment || 'python-simple-env',
           datalayerConfig?.credits || 1,
         ).then((serviceManager) => {
-          (serviceManager as any)['__NAME__'] = 'DatalayerCPUServiceManager';
-          setServiceManager(serviceManager);
           setLite(false);
           setServerless(false);
           setReadonly(false);
+          setStartDefaultKernel(false);
           setKernelIndex(0);
           setNbformat(notebook?.adapter?.notebookPanel?.content.model?.toJSON() as INotebookContent);
+          (serviceManager as any)['__NAME__'] = 'DatalayerCPUServiceManager';
+          setServiceManager(serviceManager);
 //          setWaiting(false);  
         });
         break;
@@ -107,13 +112,14 @@ const NotebookMutationsServiceManager = () => {
           datalayerConfig?.gpuEnvironment || 'pytorch-cuda-env',
           datalayerConfig?.credits || 1,
         ).then((serviceManager) => {
-          setKernelIndex(0);
-          (serviceManager as any)['__NAME__'] = 'DatalayerGPUServiceManager';
-          setServiceManager(serviceManager);
           setNbformat(notebook?.adapter?.notebookPanel?.content.model?.toJSON() as INotebookContent);
           setServerless(false);
           setReadonly(false);
+          setStartDefaultKernel(false);
           setWaiting(false);  
+          setKernelIndex(0);
+          (serviceManager as any)['__NAME__'] = 'DatalayerGPUServiceManager';
+          setServiceManager(serviceManager);
         });
         break;
       }
@@ -168,6 +174,7 @@ const NotebookMutationsServiceManager = () => {
             onKernelConnection={onKernelConnection}
             readonly={readonly}
             serverless={serverless}
+            startDefaultKernel={startDefaultKernel}
             serviceManager={serviceManager}
             useRunningKernelIndex={kernelIndex}
           />

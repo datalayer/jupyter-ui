@@ -98,7 +98,7 @@ export function useJupyterReactStoreFromProps(props: JupyterPropsType): JupyterR
     lite = false,
     serverless,
     serviceManager: propsServiceManager,
-    startDefaultKernel = true,
+    startDefaultKernel = false,
     terminals = false,
     useRunningKernelId = props.useRunningKernelId,
     useRunningKernelIndex = props.useRunningKernelIndex || -1,
