@@ -54,11 +54,11 @@ const ENTRY =
   // './src/examples/NotebookLiteContext';
   // './src/examples/NotebookMutationsKernel';
   // './src/examples/NotebookMutationsServiceManager';
-  './src/examples/NotebookNbformat';
+  // './src/examples/NotebookNbformat';
   // './src/examples/NotebookNbformatChange';
   // './src/examples/NotebookNoContext';
   // './src/examples/NotebookNoPrimer';
-  // './src/examples/NotebookOnKernelConnection';
+  './src/examples/NotebookOnSessionConnection';
   // './src/examples/NotebookPathChange';
   // './src/examples/NotebookReadonly';
   // './src/examples/NotebookServiceManager';

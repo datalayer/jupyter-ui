@@ -7,20 +7,20 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Box } from '@primer/react';
-import { NotebookPanel, INotebookModel } from '@jupyterlab/notebook';
 import { Cell, ICellModel } from '@jupyterlab/cells';
+import { NotebookPanel, INotebookModel } from '@jupyterlab/notebook';
 import { CommandRegistry } from '@lumino/commands';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { ServiceManager } from '@jupyterlab/services';
+import { ServiceManager, Kernel as JupyterKernel } from '@jupyterlab/services';
 import { useJupyter, Lite, Kernel } from './../../jupyter';
 import { asObservable, Lumino } from '../lumino';
 import { CellMetadataEditor } from './cell/metadata';
 import { ICellSidebarProps } from './cell/sidebar';
 import { INotebookToolbarProps } from './toolbar/NotebookToolbar';
 import { newUuid } from '../../utils';
-import { OnKernelConnection } from '../../state';
+import { OnSessionConnection } from '../../state';
 import { useNotebookStore } from './NotebookState';
 import { NotebookAdapter } from './NotebookAdapter';
 
@@ -53,12 +53,13 @@ export type INotebookProps = {
   extensions: DatalayerNotebookExtension[]
   height?: string;
   id: string;
-  lite?: Lite;
   kernel?: Kernel;
+  kernelClients?: JupyterKernel.IKernelConnection[];
+  lite?: Lite;
   maxHeight?: string;
   nbformat?: INotebookContent;
   nbgrader: boolean;
-  onKernelConnection?: OnKernelConnection;
+  onSessionConnection?: OnSessionConnection;
   path?: string;
   readonly: boolean;
   renderId: number;
@@ -154,7 +155,7 @@ export const Notebook = (props: INotebookProps) => {
     adapter.notebookPanel?.sessionContext.statusChanged.connect((_, kernelStatus) => {
       notebookStore.changeKernelStatus({ id, kernelStatus });
     });
-    // Add more UI behavior when the Service Manager is ready...
+    // Add more UI behavior when the Service Manager is ready.
     adapter.serviceManager.ready.then(() => {
       if (!readonly) {
         const cellModel = adapter.notebookPanel!.content.activeCell;
@@ -339,6 +340,7 @@ Notebook.defaultProps = {
   cellSidebarMargin: 120,
   extensions: [],
   height: '100vh',
+  kernelClients: [],
   maxHeight: '100vh',
   nbgrader: false,
   readonly: false,

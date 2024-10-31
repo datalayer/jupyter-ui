@@ -5,6 +5,7 @@
  */
 
 export * from './KernelActionMenu';
+export * from './KernelDetective';
 export * from './KernelInspector';
 export * from './KernelLogs';
 export * from './KernelLauncher';
