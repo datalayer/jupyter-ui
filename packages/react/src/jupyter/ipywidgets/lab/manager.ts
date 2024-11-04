@@ -97,8 +97,8 @@ export abstract class LabWidgetManager
     if (kernelConnection) {
       kernelConnection.registerCommTarget(
         this.comm_target_name,
-        this._handleCommOpen
-      );
+        this._handleCommOpen,
+      );  
     }
   }
 
@@ -112,7 +112,6 @@ export abstract class LabWidgetManager
     if (oldValue) {
       oldValue.removeCommTarget(this.comm_target_name, this._handleCommOpen);
     }
-
     if (newValue) {
       newValue.registerCommTarget(this.comm_target_name, this._handleCommOpen);
     }

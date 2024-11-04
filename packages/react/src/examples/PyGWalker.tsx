@@ -11,14 +11,13 @@ import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
 
-import nbformat from './notebooks/NotebookExample1.ipynb.json';
+import nbformat from './notebooks/PyGWalker.ipynb.json';
 
-const NotebookNbformat = () => (
+const PyGWalker = () => (
   <JupyterReactTheme>
     <Notebook
       nbformat={nbformat as INotebookContent}
-      id="notebook-nbformat-id"
-      startDefaultKernel={true}
+      id="notebook-pygwalker-id"
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       cellSidebarMargin={120}
       CellSidebar={CellSidebar}
@@ -31,4 +30,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookNbformat />);
+root.render(<PyGWalker />);

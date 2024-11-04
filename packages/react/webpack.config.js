@@ -19,6 +19,7 @@ function shim(regExp) {
 const ENTRY =
   // './src/app/App';
   // './src/examples/Bokeh';
+  // './src/examples/Bqplot';
   // './src/examples/Cell';
   // './src/examples/CellLite';
   // './src/examples/Cells';
@@ -44,7 +45,7 @@ const ENTRY =
   // './src/examples/Matplotlib';
   // './src/examples/Notebook';
   // './src/examples/NotebookCellSidebar';
-  './src/examples/NotebookCellToolbar';
+  // './src/examples/NotebookCellToolbar';
   // './src/examples/NotebookColorMode';
   // './src/examples/NotebookExtension';
   // './src/examples/NotebookKernelChange';
@@ -57,7 +58,7 @@ const ENTRY =
   // './src/examples/NotebookNbformatChange';
   // './src/examples/NotebookNoContext';
   // './src/examples/NotebookNoPrimer';
-  // './src/examples/NotebookOnKernelConnection';
+  './src/examples/NotebookOnSessionConnection';
   // './src/examples/NotebookPathChange';
   // './src/examples/NotebookReadonly';
   // './src/examples/NotebookServiceManager';
@@ -71,6 +72,7 @@ const ENTRY =
   // './src/examples/OutputWithMonitoring';
   // './src/examples/Outputs';
   // './src/examples/Plotly';
+  // './src/examples/PyGWalker';
   // './src/examples/RunningSessions';
   // './src/examples/Terminal';
   // './src/examples/Viewer';
@@ -149,6 +151,11 @@ module.exports = {
           cacheDirectory: true,
         },
         exclude: /node_modules/,
+      },
+      {
+        test: /\.js$/,
+        enforce: "pre",
+        use: ["source-map-loader"],
       },
       {
         resourceQuery: /raw/,

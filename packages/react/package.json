@@ -216,6 +216,7 @@
     "prettier": "^3.0.0",
     "process": "^0.11.10",
     "rimraf": "^3.0.2",
+    "source-map-loader": "^5.0.0",
     "storybook": "^8.0.10",
     "stream": "^0.0.2",
     "stream-browserify": "^2.0.2",

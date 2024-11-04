@@ -9,15 +9,15 @@
 
 import * as libembed from '@jupyter-widgets/html-manager/lib/libembed';
 
-let cdn = 'https://cdn.jsdelivr.net/npm/';
+let CDN_URL = 'https://cdn.jsdelivr.net/npm/';
 
-let onlyCDN = true;
+let CDN_ONLY = true;
 
 // find the data-cdn for any script tag, assuming it is only used for embed-amd.js
 const scripts = document.getElementsByTagName('script');
 Array.prototype.forEach.call(scripts, (script: HTMLScriptElement) => {
-  cdn = script.getAttribute('data-jupyter-widgets-cdn') || cdn;
-  onlyCDN = onlyCDN || script.hasAttribute('data-jupyter-widgets-cdn-only');
+  CDN_URL = script.getAttribute('data-jupyter-widgets-cdn') || CDN_URL;
+  CDN_ONLY = CDN_ONLY && Boolean(script.getAttribute('data-jupyter-widgets-cdn-only')!);
 });
 
 /**
@@ -52,7 +52,12 @@ function moduleNameToCDNUrl(moduleName: string, moduleVersion: string): string {
     fileName = moduleName.substr(index + 1);
     packageName = moduleName.substr(0, index);
   }
-  return `${cdn}${packageName}@${moduleVersion}/dist/${fileName}`;
+  if (packageName === '@widgetti/jupyter-react') {
+    // @widgetti/jupyter-react:0.4.2 is not published on https://www.jsdelivr.com/package/npm/@widgetti/jupyter-react
+    moduleVersion = moduleVersion.replace('0.4.2', '0.4.1')
+  }
+  // jupyter-react@0.4.1
+  return `${CDN_URL}${packageName}@${moduleVersion}/dist/${fileName}`;
 }
 
 /**
@@ -83,15 +88,15 @@ export function requireLoader(
     require.config(conf);
     return requirePromise([`${moduleName}`]);
   }
-  if (onlyCDN) {
-    console.log(`Loading from ${cdn} for ${moduleName}@${moduleVersion}`);
+  if (CDN_ONLY) {
+    console.log(`Loading from ${CDN_URL} for ${moduleName}@${moduleVersion}`);
     return loadFromCDN();
   }
   return requirePromise([`${moduleName}`]).catch((err) => {
     const failedId = err.requireModules && err.requireModules[0];
     if (failedId) {
       require.undef(failedId);
-      console.log(`Falling back to ${cdn} for ${moduleName}@${moduleVersion}`);
+      console.log(`Falling back to ${CDN_URL} for ${moduleName}@${moduleVersion}`);
       return loadFromCDN();
     }
   });

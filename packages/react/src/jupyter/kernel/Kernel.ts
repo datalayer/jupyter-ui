@@ -76,7 +76,7 @@ export class Kernel {
       });
       if (existingKernelModel) {
         console.log('Creating a session to an existing Jupyter Kernel model.', existingKernelModel);
-        const path = 'kernel-' + newUuid();
+        const path = 'kernel-' + kernelModel.id;
         this._path = path;
         this._session = await this._sessionManager.startNew(
           {
@@ -98,7 +98,7 @@ export class Kernel {
     } else {
       let path = propsPath ?? getCookie(this.cookieName);
       if (!path) {
-        path = 'kernel-' + newUuid();
+        path = 'path-' + newUuid();
         document.cookie = this.cookieName + '=' + path;
       }
       this._path = path;

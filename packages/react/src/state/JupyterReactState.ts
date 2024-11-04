@@ -7,7 +7,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
-import { ServiceManager, Kernel as JupyterKernel } from '@jupyterlab/services';
+import { ServiceManager, Session } from '@jupyterlab/services';
 import { getJupyterServerUrl, createLiteServiceManager, ensureJupyterAuth, createServerSettings, JupyterPropsType, DEFAULT_KERNEL_NAME } from '../jupyter';
 import { ServiceManagerLess } from '../jupyter/services';
 import { Kernel } from '../jupyter/kernel/Kernel';
@@ -19,7 +19,7 @@ import { notebookStore, NotebookState } from '../components/notebook/NotebookSta
 import { outputsStore, OutputState } from '../components/output/OutputState';
 import { terminalStore, TerminalState } from '../components/terminal/TerminalState';
 
-export type OnKernelConnection = (kernelConnection: JupyterKernel.IKernelConnection | null | undefined) => void;
+export type OnSessionConnection = (kernelConnection: Session.ISessionConnection | null | undefined) => void;
 
 export type JupyterReactState = {
   cellsStore: CellsState;
@@ -98,7 +98,7 @@ export function useJupyterReactStoreFromProps(props: JupyterPropsType): JupyterR
     lite = false,
     serverless,
     serviceManager: propsServiceManager,
-    startDefaultKernel = true,
+    startDefaultKernel = false,
     terminals = false,
     useRunningKernelId = props.useRunningKernelId,
     useRunningKernelIndex = props.useRunningKernelIndex || -1,

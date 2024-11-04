@@ -64,6 +64,46 @@
     },
     {
       "cell_type": "code",
+      "execution_count": 1,
+      "metadata": {
+      },
+      "outputs": [
+        {
+          "data": {
+            "text/plain": []
+          },
+          "execution_count": 1,
+          "metadata": {},
+          "output_type": "execute_result"
+        }
+      ],
+      "source": [
+        "from ipywidgets import IntSlider\n",
+        "w = IntSlider()\n",
+        "w"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 1,
+      "metadata": {
+      },
+      "outputs": [
+        {
+          "data": {
+            "text/plain": []
+          },
+          "execution_count": 1,
+          "metadata": {},
+          "output_type": "execute_result"
+        }
+      ],
+      "source": [
+        "w"
+      ]
+    },
+    {
+      "cell_type": "code",
       "execution_count": null,
       "metadata": {},
       "outputs": [],

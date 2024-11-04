@@ -8,13 +8,13 @@ import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Box, SegmentedControl, Label, Text } from '@primer/react';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { Kernel, ServiceManager } from '@jupyterlab/services';
+import { Session, ServiceManager } from '@jupyterlab/services';
 import {
   createLiteServiceManager, createServerSettings, setJupyterServerUrl, getJupyterServerUrl,
   getJupyterServerToken, ServiceManagerLess, loadJupyterConfig,
   DEFAULT_JUPYTER_SERVER_URL, Lite,
 } from '../jupyter';
-import { useJupyterReactStore, OnKernelConnection } from '../state';
+import { useJupyterReactStore, OnSessionConnection } from '../state';
 import { useNotebookStore, Notebook, SpinnerCentered } from './../components';
 import { JupyterReactTheme } from '../theme';
 import { createDatalayerServiceManager } from './../providers';
@@ -32,18 +32,19 @@ const NotebookMutationsServiceManager = () => {
   const [nbformat, setNbformat] = useState(nbformatExample as INotebookContent);
   const [readonly, setReadonly] = useState(true);
   const [serverless, setServerless] = useState(true);
+  const [startDefaultKernel, setStartDefaultKernel] = useState(false);
   const [kernelIndex, setKernelIndex] = useState(-1);
   const [waiting, setWaiting] = useState(false);
   const [lite, setLite] = useState<Lite>(false);
   const [serviceManager, setServiceManager] = useState<ServiceManager.IManager>(SERVICE_MANAGER_LESS);
-  const [kernelConnections, setKernelConnections] = useState<Array<Kernel.IKernelConnection>>([])
+  const [sessions, setSessions] = useState<Array<Session.ISessionConnection>>([])
   const { datalayerConfig } = useJupyterReactStore();
   const notebookStore = useNotebookStore();
   const notebook = notebookStore.selectNotebook(NOTEBOOK_ID);
-  const onKernelConnection: OnKernelConnection = (kernelConnection: Kernel.IKernelConnection | null | undefined) => {
-    console.log('Received a Kernel Connection.', kernelConnection);
-    if (kernelConnection) {
-      setKernelConnections(kernelConnections.concat(kernelConnection));
+  const onSessionConnection: OnSessionConnection = (session: Session.ISessionConnection | null | undefined) => {
+    console.log('Received a Kernel Session.', session);
+    if (session) {
+      setSessions(sessions.concat(session));
     }
   }
   const changeIndex = (index: number) => {
@@ -55,6 +56,7 @@ const NotebookMutationsServiceManager = () => {
         setServerless(true);
         setReadonly(true);
         setLite(false);
+        setStartDefaultKernel(false);
         setServiceManager(SERVICE_MANAGER_LESS);
         break;
       }
@@ -67,6 +69,7 @@ const NotebookMutationsServiceManager = () => {
           setServerless(false);
           setReadonly(false);
           setLite(true);
+          setStartDefaultKernel(true);
           setServiceManager(liteServiceManager);
         });
         break;
@@ -78,6 +81,7 @@ const NotebookMutationsServiceManager = () => {
         setServerless(false);
         setReadonly(false);
         setLite(false);
+        setStartDefaultKernel(true);
         const serverSettings = createServerSettings(getJupyterServerUrl(), getJupyterServerToken());
         const serviceManager = new ServiceManager({ serverSettings });
         (serviceManager as any)['__NAME__'] = 'MutatingServiceManager';
@@ -89,13 +93,14 @@ const NotebookMutationsServiceManager = () => {
           datalayerConfig?.cpuEnvironment || 'python-simple-env',
           datalayerConfig?.credits || 1,
         ).then((serviceManager) => {
-          (serviceManager as any)['__NAME__'] = 'DatalayerCPUServiceManager';
-          setServiceManager(serviceManager);
           setLite(false);
           setServerless(false);
           setReadonly(false);
+          setStartDefaultKernel(false);
           setKernelIndex(0);
           setNbformat(notebook?.adapter?.notebookPanel?.content.model?.toJSON() as INotebookContent);
+          (serviceManager as any)['__NAME__'] = 'DatalayerCPUServiceManager';
+          setServiceManager(serviceManager);
 //          setWaiting(false);  
         });
         break;
@@ -107,13 +112,14 @@ const NotebookMutationsServiceManager = () => {
           datalayerConfig?.gpuEnvironment || 'pytorch-cuda-env',
           datalayerConfig?.credits || 1,
         ).then((serviceManager) => {
-          setKernelIndex(0);
-          (serviceManager as any)['__NAME__'] = 'DatalayerGPUServiceManager';
-          setServiceManager(serviceManager);
           setNbformat(notebook?.adapter?.notebookPanel?.content.model?.toJSON() as INotebookContent);
           setServerless(false);
           setReadonly(false);
+          setStartDefaultKernel(false);
           setWaiting(false);  
+          setKernelIndex(0);
+          (serviceManager as any)['__NAME__'] = 'DatalayerGPUServiceManager';
+          setServiceManager(serviceManager);
         });
         break;
       }
@@ -145,13 +151,13 @@ const NotebookMutationsServiceManager = () => {
           </Box>
         </Box>
         <Box>
-          <Text as="h3">Kernel Connections</Text>
+          <Text as="h3">Kernel Sessions</Text>
         </Box>
         <Box>
-          {kernelConnections.map(kernelConnection => {
+          {sessions.map(session => {
             return (
-              <Box key={kernelConnection.clientId}>
-                Client ID ({kernelConnection.clientId}) - Kernel ID ({kernelConnection.id}) {kernelConnection.name}
+              <Box key={session.id}>
+                <Text>{session.name} {session.id} <Label>Kernel</Label> clientId {session.kernel?.clientId} - id {session.kernel?.id}</Text>
               </Box>
             )
           })}
@@ -165,9 +171,10 @@ const NotebookMutationsServiceManager = () => {
             id={NOTEBOOK_ID}
             lite={lite}
             nbformat={nbformat as INotebookContent}
-            onKernelConnection={onKernelConnection}
+            onSessionConnection={onSessionConnection}
             readonly={readonly}
             serverless={serverless}
+            startDefaultKernel={startDefaultKernel}
             serviceManager={serviceManager}
             useRunningKernelIndex={kernelIndex}
           />

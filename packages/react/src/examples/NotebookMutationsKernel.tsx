@@ -8,12 +8,12 @@ import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Box, SegmentedControl, Label, Text } from '@primer/react';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { Kernel, ServiceManager } from '@jupyterlab/services';
+import { Session, ServiceManager } from '@jupyterlab/services';
 import {
   createLiteServiceManager, createServerSettings, setJupyterServerUrl, getJupyterServerUrl,
   getJupyterServerToken, ServiceManagerLess, loadJupyterConfig, DEFAULT_JUPYTER_SERVER_URL,
 } from '../jupyter';
-import { useJupyterReactStore, OnKernelConnection } from '../state';
+import { useJupyterReactStore, OnSessionConnection } from '../state';
 import { useNotebookStore, Notebook, SpinnerCentered } from './../components';
 import { JupyterReactTheme } from '../theme';
 import { createDatalayerServiceManager } from './../providers';
@@ -35,14 +35,14 @@ const NotebookMutationsKernel = () => {
   const [waiting, setWaiting] = useState(false);
   const [lite, setLite] = useState(false);
   const [serviceManager, setServiceManager] = useState<ServiceManager.IManager>(SERVICE_MANAGER_LESS);
-  const [kernelConnections, setKernelConnections] = useState<Array<Kernel.IKernelConnection>>([])
+  const [sessions, setSessions] = useState<Array<Session.ISessionConnection>>([])
   const { datalayerConfig } = useJupyterReactStore();
   const notebookStore = useNotebookStore();
   const notebook = notebookStore.selectNotebook(NOTEBOOK_ID);
-  const onKernelConnection: OnKernelConnection = (kernelConnection: Kernel.IKernelConnection | null | undefined) => {
-    console.log('Received a Kernel Connection.', kernelConnection);
-    if (kernelConnection) {
-      setKernelConnections(kernelConnections.concat(kernelConnection));
+  const onSessionConnection: OnSessionConnection = (session: Session.ISessionConnection | null | undefined) => {
+    console.log('Received a Kernel Sessoin.', session);
+    if (session) {
+      setSessions(sessions.concat(session));
     }
   }
   const changeIndex = (index: number) => {
@@ -145,13 +145,13 @@ const NotebookMutationsKernel = () => {
           </Box>
         </Box>
         <Box>
-          <Text as="h3">Kernel Connections</Text>
+          <Text as="h3">Kernel Sessions</Text>
         </Box>
         <Box>
-          {kernelConnections.map(kernelConnection => {
+          {sessions.map(session => {
             return (
-              <Box key={kernelConnection.clientId}>
-                Client ID ({kernelConnection.clientId}) - Kernel ID ({kernelConnection.id}) {kernelConnection.name}
+              <Box key={session.id}>
+                <Text>{session.name} {session.id} <Label>Kernel</Label> clientId [{session.kernel?.clientId}) - id {session.kernel?.id}</Text>
               </Box>
             )
           })}
@@ -165,7 +165,7 @@ const NotebookMutationsKernel = () => {
             id={NOTEBOOK_ID}
             lite={lite}
             nbformat={nbformat as INotebookContent}
-            onKernelConnection={onKernelConnection}
+            onSessionConnection={onSessionConnection}
             readonly={readonly}
             serverless={serverless}
             serviceManager={serviceManager}
