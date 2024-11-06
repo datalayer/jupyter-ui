@@ -6,7 +6,7 @@
 
 export * from './button';
 export * from './cell';
-export * from './codemirror';
+// export * from './codemirror';
 export * from './commands';
 export * from './console';
 export * from './dialog';

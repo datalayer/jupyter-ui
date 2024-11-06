@@ -7,14 +7,14 @@
 import { useState, useRef, useEffect } from 'react';
 import { basicSetup } from 'codemirror';
 import { EditorState } from '@codemirror/state';
-import { Compartment } from '@codemirror/state';
 import { keymap, EditorView, ViewUpdate } from '@codemirror/view';
+import { Compartment } from '@codemirror/state';
 import { python } from '@codemirror/lang-python';
 import Kernel from '../../jupyter/kernel/Kernel';
-import codeMirrorTheme from './CodeMirrorTheme';
 import OutputAdapter from '../output/OutputAdapter';
-import CodeMirrorOutputToolbar from './CodeMirrorOutputToolbar';
 import useOutputsStore from '../output/OutputState';
+import codeMirrorTheme from './CodeMirrorTheme';
+import CodeMirrorOutputToolbar from './CodeMirrorOutputToolbar';
 
 export const CodeMirrorDatalayerEditor = (props: {
   code: string;
@@ -80,7 +80,7 @@ export const CodeMirrorDatalayerEditor = (props: {
   };
   useEffect(() => {
     outputStore.setInput(sourceId, code);
-    const language = new Compartment();
+   const language = new Compartment();
     const keyBinding = [
       {
         key: 'Shift-Enter',
@@ -92,10 +92,10 @@ export const CodeMirrorDatalayerEditor = (props: {
       doc: code,
       extensions: [
         basicSetup,
-        language.of(python()),
+       language.of(python()),
         EditorView.lineWrapping,
         keymap.of([...keyBinding]),
-        codeMirrorTheme,
+       codeMirrorTheme,
         EditorView.updateListener.of((viewUpdate: ViewUpdate) => {
           if (viewUpdate.docChanged) {
             const source = viewUpdate.state.doc.toString();
