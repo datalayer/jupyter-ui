@@ -264,6 +264,24 @@
     "extension": "./lib/jupyter/lab/plugin.js",
     "outputDir": "jupyter_react/labextension",
     "schemaDir": "schema",
+    "sharedPackages": {
+      "react": {
+        "bundled": false,
+        "singleton": true
+      },
+      "react-dom": {
+        "bundled": false,
+        "singleton": true
+      },
+      "codemirror": {
+        "bundled": false,
+        "singleton": true
+      },
+      "@codemirror/lang-python": {
+        "bundled": false,
+        "singleton": true
+      }
+    },
     "webpackConfig": "./webpack.lab-config.js"
   },
   "jupyter-releaser": {

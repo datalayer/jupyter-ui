@@ -5,4 +5,4 @@
  */
 
 export * from './FileManagerJupyterLab';
-export * from './lab';
+// export * from './lab';
