@@ -7,12 +7,13 @@
 import Notebook from '../../../components/notebook/Notebook';
 import CellSidebarNew from './../../../components/notebook/cell/sidebar/CellSidebarButton';
 
-import nbformat from './../../..//examples/notebooks/IPyWidgetsExample.ipynb.json';
+import nbformat from './../../..//examples/notebooks/NotebookExample1.ipynb.json';
 
-const NotebookComponent = () => {
+export const NotebookComponent = () => {
   return (
     <>
       <Notebook
+        startDefaultKernel={true}
         nbformat={nbformat}
         id="notebook-id"
         cellSidebarMargin={60}

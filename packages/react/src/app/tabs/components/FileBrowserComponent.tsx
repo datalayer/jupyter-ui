@@ -7,7 +7,7 @@
 import { useJupyter } from './../../../jupyter/JupyterContext';
 import { FileBrowser } from '../../../components/filebrowser/FileBrowser';
 
-const FileBrowserComponent = () => {
+export const FileBrowserComponent = () => {
   const { serviceManager } = useJupyter();
   return (
     serviceManager

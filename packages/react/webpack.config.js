@@ -20,7 +20,7 @@ const ENTRY =
   // './src/app/App';
   // './src/examples/Bokeh';
   // './src/examples/Bqplot';
-  // './src/examples/Cell';
+  './src/examples/Cell';
   // './src/examples/CellLite';
   // './src/examples/Cells';
   // './src/examples/CellsExecute';
@@ -58,7 +58,7 @@ const ENTRY =
   // './src/examples/NotebookNbformatChange';
   // './src/examples/NotebookNoContext';
   // './src/examples/NotebookNoPrimer';
-  './src/examples/NotebookOnSessionConnection';
+  // './src/examples/NotebookOnSessionConnection';
   // './src/examples/NotebookPathChange';
   // './src/examples/NotebookReadonly';
   // './src/examples/NotebookServiceManager';

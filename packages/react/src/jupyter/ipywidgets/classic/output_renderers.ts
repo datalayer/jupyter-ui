@@ -1,14 +1,13 @@
-/*
- * Copyright (c) 2021-2023 Datalayer, Inc.
- *
- * MIT License
- */
+// Copyright (c) Jupyter Development Team.
+// Distributed under the terms of the Modified BSD License.
 
 import { Widget } from '@lumino/widgets';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
-import { HTMLManager } from '@jupyter-widgets/html-manager/lib/htmlmanager';
+import { HTMLManager } from './htmlmanager';
 
-// Renderer to allow the output widget to render sub-widgets
+export const WIDGET_MIMETYPE = 'application/vnd.jupyter.widget-view+json';
+
+// Renderer to allow the output widget to render sub-widgets.
 export class WidgetRenderer extends Widget implements IRenderMime.IRenderer {
   constructor(options: IRenderMime.IRendererOptions, manager: HTMLManager) {
     super();
@@ -28,9 +27,9 @@ export class WidgetRenderer extends Widget implements IRenderMime.IRenderer {
       const wView = await this._manager.create_view(wModel);
       Widget.attach(wView.luminoWidget, this.node);
     } catch (err) {
-      console.log('Error displaying Lumino Widget');
+      console.log('Error displaying widget');
       console.log(err);
-      this.node.textContent = 'Error displaying Lumino Widget';
+      this.node.textContent = 'Error displaying widget';
       this.addClass('jupyter-widgets');
     }
   }

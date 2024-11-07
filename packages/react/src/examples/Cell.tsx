@@ -7,7 +7,7 @@
 import { createRoot } from 'react-dom/client';
 import { Box, Button, Label } from '@primer/react';
 import { CodeCell } from '@jupyterlab/cells';
-import { Jupyter } from '../jupyter/Jupyter';
+import { JupyterReactTheme } from '../theme';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { Cell } from '../components/cell/Cell';
 import { KernelIndicator } from '../components/kernel/Kernelndicator';
@@ -27,7 +27,7 @@ const CellExample = () => {
   const kernelsStore = useKernelsStore();
   console.log('Jupyter Cell Outputs', (cellsStore.getAdapter(CELL_ID)?.cell as CodeCell)?.outputArea.model.toJSON());
   return (
-    <Jupyter>
+    <JupyterReactTheme>
       <Box as="h1">A Jupyter Cell</Box>
       <Box>
         Source: {cellsStore.getSource(CELL_ID)}
@@ -53,7 +53,7 @@ const CellExample = () => {
         <Button onClick={() => cellsStore.execute(CELL_ID)}>Run cell</Button>
       </Box>
       <Cell source={DEFAULT_SOURCE} id={CELL_ID}/>
-    </Jupyter>
+    </JupyterReactTheme>
   )
 }
 

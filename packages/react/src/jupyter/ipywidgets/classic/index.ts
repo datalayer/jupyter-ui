@@ -4,5 +4,6 @@
  * MIT License
  */
 
+export * from './htmlmanager';
 export * from './manager';
-export * from './renderer';
+export * from './output_renderers';

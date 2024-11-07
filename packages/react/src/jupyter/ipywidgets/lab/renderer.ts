@@ -8,8 +8,8 @@ import { PromiseDelegate } from '@lumino/coreutils';
 import { IDisposable } from '@lumino/disposable';
 import { Panel, Widget as LuminoWidget } from '@lumino/widgets';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
-import { LabWidgetManager } from './manager';
 import { DOMWidgetModel } from '@jupyter-widgets/base';
+import { LabWidgetManager } from './manager';
 
 /**
  * A renderer for widgets.
