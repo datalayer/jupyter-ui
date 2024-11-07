@@ -35,7 +35,7 @@ const CellExample = () => {
       <Box>
         Outputs Count: {cellsStore.getOutputsCount(CELL_ID)}
       </Box>
-      <Box>defaultKernel
+      <Box>
         Kernel State: <Label>{defaultKernel && kernelsStore.getExecutionState(defaultKernel.id)}</Label>
       </Box>
       <Box>

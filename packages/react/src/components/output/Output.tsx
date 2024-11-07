@@ -15,7 +15,7 @@ import { useJupyter } from '../../jupyter/JupyterContext';
 import { IExecutionPhaseOutput, Kernel } from '../../jupyter/kernel';
 import { newUuid } from '../../utils';
 import { KernelActionMenu, KernelProgressBar } from '../kernel';
-import { CodeMirrorDatalayerEditor } from '../codemirror';
+// import { CodeMirrorDatalayerEditor } from '../codemirror';
 import { OutputAdapter } from './OutputAdapter';
 import { OutputRenderer } from './OutputRenderer';
 import { useOutputsStore } from './OutputState';
@@ -53,10 +53,10 @@ export const Output = (props: IOutputProps) => {
     autoRun,
     clearTrigger,
     code,
-    codePre,
-    disableRun,
+//    codePre,
+//    disableRun,
     executeTrigger,
-    insertText,
+//    insertText,
     kernel: propsKernel,
     lumino,
     model,
@@ -68,7 +68,7 @@ export const Output = (props: IOutputProps) => {
     suppressCodeExecutionErrors = false,
     onExecutionPhaseChanged,
     id: sourceId,
-    toolbarPosition,
+//    toolbarPosition,
   } = props;
   const kernel = propsKernel ?? defaultKernel;
   const [id, setId] = useState<string | undefined>(sourceId);
@@ -169,6 +169,7 @@ export const Output = (props: IOutputProps) => {
             },
           }}
         >
+          {/*
           <CodeMirrorDatalayerEditor
             autoRun={autoRun}
             code={code}
@@ -180,6 +181,7 @@ export const Output = (props: IOutputProps) => {
             sourceId={id}
             toolbarPosition={toolbarPosition}
           />
+          */}
         </Box>
       )}
       {adapter && (

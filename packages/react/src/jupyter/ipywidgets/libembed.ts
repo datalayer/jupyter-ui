@@ -1,27 +1,29 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
 
 declare let __webpack_public_path__: string;
+__webpack_public_path__ = (window as any).__jupyter_widgets_assets_path__ || __webpack_public_path__;
+
 /*
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import '@fortawesome/fontawesome-free/css/v4-shims.min.css';
 import '@lumino/widgets/style/index.css';
 import '@jupyter-widgets/controls/css/widgets-base.css';
-*/
-__webpack_public_path__ = (window as any).__jupyter_widgets_assets_path__ || __webpack_public_path__;
-
 // If lab variables are not found, we set them (we don't want to reset the variables if they are already defined)
-/*
 if (getComputedStyle(document.documentElement).getPropertyValue('--jp-layout-color0') === '') {
   require('@jupyter-widgets/controls/css/labvariables.css');
 }
 */
-// Used just for the typing. We must not import the javascript because we don't want to include it in the require embedding.
-import { HTMLManager } from './classic/htmlmanager';
-// Load json schema validator
 import Ajv from 'ajv';
-
 import { IManagerState } from '@jupyter-widgets/base-manager';
+import { HTMLManager } from './classic/htmlmanager';
+
 const widget_state_schema = require('@jupyter-widgets/schema').v2.state;
 const widget_view_schema = require('@jupyter-widgets/schema').v2.view;
 /*
@@ -67,7 +69,8 @@ export async function renderWidgets(
  * "application/vnd.jupyter.widget-view+json". Any such script tag containing a
  * model id the manager knows about is replaced with a rendered view.
  * Additionally, if the script tag has a prior img sibling with class
- * 'jupyter-widget', then that img tag is deleted.
+ * 'jupyter-widget', then that img tag is deleted.import { HTMLManager } from './classic/htmlmanager';
+
  */
 async function renderManager(
   element: HTMLElement,
