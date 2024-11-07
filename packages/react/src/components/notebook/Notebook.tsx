@@ -20,7 +20,7 @@ import { CellMetadataEditor } from './cell/metadata';
 import { ICellSidebarProps } from './cell/sidebar';
 import { INotebookToolbarProps } from './toolbar/NotebookToolbar';
 import { newUuid } from '../../utils';
-import { OnSessionConnection } from '../../state';
+import { OnSessionConnection, KernelTransfer } from '../../state';
 import { useNotebookStore } from './NotebookState';
 import { NotebookAdapter } from './NotebookAdapter';
 
@@ -55,6 +55,7 @@ export type INotebookProps = {
   id: string;
   kernel?: Kernel;
   kernelClients?: JupyterKernel.IKernelConnection[];
+  kernelTransfer?: KernelTransfer;
   lite?: Lite;
   maxHeight?: string;
   nbformat?: INotebookContent;

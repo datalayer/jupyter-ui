@@ -24,7 +24,7 @@ import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javasc
 import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
 import { WIDGET_MIMETYPE } from '@jupyter-widgets/html-manager/lib/output_renderers';
 import { Lite, Kernel, WidgetManager, WidgetLabRenderer } from '../../jupyter';
-import { OnSessionConnection } from '../../state';
+import { OnSessionConnection, KernelTransfer } from '../../state';
 import { ICellSidebarProps } from './cell/sidebar';
 import { JupyterReactContentFactory } from './content/JupyterReactContentFactory';
 import { JupyterReactNotebookModelFactory } from './model/JupyterReactNotebookModelFactory';
@@ -45,7 +45,9 @@ export class NotebookAdapter {
   private _iPyWidgetsManager?: WidgetManager;
   private _id: string;
   private _kernel?: Kernel;
+  private _kernelConnection: JupyterKernel.IKernelConnection | null | undefined;
   private _kernelClients?: JupyterKernel.IKernelConnection[];
+  private _kernelTransfer?: KernelTransfer;
   private _lite?: Lite;
   private _mimeTypeService: CodeMirrorMimeTypeService;
   private _nbformat?: INotebookContent;
@@ -81,6 +83,7 @@ export class NotebookAdapter {
     this._serviceManager = props.serviceManager!;
     this._url = props.url;
 
+    this._kernelTransfer = props.kernelTransfer;
     this._onSessionConnection = props.onSessionConnection;
 
     this._boxPanel = new BoxPanel();
@@ -286,12 +289,14 @@ export class NotebookAdapter {
     });
     this._context.sessionContext.kernelChanged.connect((_, args: IChangedArgs<JupyterKernel.IKernelConnection | null, JupyterKernel.IKernelConnection | null, 'kernel'>) => {
       const kernelConnection = args.newValue;
+      this._kernelConnection = kernelConnection;
       console.log('Current Jupyter Kernel Connection.', kernelConnection);
       if (kernelConnection && !kernelConnection.handleComms) {
         console.log('Updating the current Kernel Connection to enforce Comms support.', kernelConnection.handleComms);
         (kernelConnection as any).handleComms = true;
-      }/*
-      this._iPyWidgetsManager?.registerWithKernel(args.newValue);
+      }
+      /*
+      this._iPyWidgetsManager?.registerWithKernel(kernelConnection);
       this._iPyWidgetsManager?.restoreWidgets(this._notebookPanel?.model!)
       if (this._onSessionConnection) {
         this._onSessionConnection(kernelConnection);
@@ -301,7 +306,18 @@ export class NotebookAdapter {
     this._context.sessionContext.ready.then(() => {
       if (this._onSessionConnection) {
         this._onSessionConnection(this._context?.sessionContext.session);
+      }
+      const kernelConnection = this._context?.sessionContext.session?.kernel;
+      this._kernelConnection = kernelConnection;
+      if (this._kernelTransfer) {
+        if (kernelConnection) {
+          kernelConnection.connectionStatusChanged.connect((_, status) => {
+            if (status === 'connected') {
+              this._kernelTransfer!.transfer(kernelConnection);
+            }
+          });
         }
+      }
     });
 
     if (!this._notebookPanel) {
@@ -517,6 +533,10 @@ export class NotebookAdapter {
 
   get kernel(): Kernel | undefined {
     return this._kernel;
+  }
+
+  get kernelConnection(): JupyterKernel.IKernelConnection | null | undefined {
+    return this._kernelConnection;
   }
 
   get notebookPanel(): NotebookPanel | undefined {
