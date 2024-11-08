@@ -12,8 +12,8 @@ import { ReactJsIcon, RingedPlanetIcon } from '@datalayer/icons-react';
 import { ServerConnection } from '@jupyterlab/services';
 import { JupyterReactTheme } from '../theme';
 import { requestAPI } from '../jupyter/JupyterHandlers';
-import AboutTab from './tabs/AboutTab';
-import ComponentsTab from './tabs/ComponentsTab';
+import { AboutTab } from './tabs/AboutTab';
+import { ComponentsTab } from './tabs/ComponentsTab';
 
 export type JupyterFrontEndProps = {
   app?: JupyterFrontEnd;
@@ -37,7 +37,7 @@ const JupyterReact = (props: JupyterFrontEndProps): JSX.Element => {
   return (
     <>
       <JupyterReactTheme loadJupyterLabCss={false}>
-        <Box mb={3}>
+        <Box mb={3} style={{minWidth: 200}}>
           <UnderlineNav aria-label="jupyter-react">
             <UnderlineNav.Item
               aria-current={tab === 1 ? "page" : undefined}

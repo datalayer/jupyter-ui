@@ -7,43 +7,50 @@
 import { useState, useEffect } from 'react';
 import { CodeCell, MarkdownCell } from '@jupyterlab/cells';
 import { Box } from '@primer/react';
-import { useJupyter } from './../../jupyter/JupyterContext';
+import { useJupyter } from './../../jupyter';
 import { newUuid } from '../../utils';
 import { Lumino } from '../lumino';
-import CellAdapter from './CellAdapter';
-import useCellsStore from './CellState';
+import { CellAdapter } from './CellAdapter';
+import { useCellsStore } from './CellState';
 
 export type ICellProps = {
-  /**
-   * An id that can be provided to identify unique cell
-   */
-  id: string;
-  /**
-   * Cell type
-   */
-  type: 'code' | 'markdown' | 'raw';
-  /**
-   * Cell source
-   */
-  source?: string;
   /**
    * Whether to execute directly the code cell or not.
    */
   autoStart?: boolean;
   /**
+   * An id that can be provided to identify unique cell
+   */
+  id: string;
+  /**
+   * Cell source
+   */
+  source?: string;
+  /**
+   * Whether to start the default kernel or not
+   */
+  startDefaultKernel?: boolean;
+  /**
    * Whether to show the toolbar for cell or not
    */
   showToolbar?: boolean;
+  /**
+   * Cell type
+   */
+  type: 'code' | 'markdown' | 'raw';
 };
 
 export const Cell = (props: ICellProps) => {
   const {
     autoStart,
-    showToolbar=true,
+    showToolbar,
     source = '',
-    type='code',
+    startDefaultKernel,
+    type,
   } = props;
-  const { defaultKernel, serverSettings } = useJupyter();
+  const { defaultKernel, serverSettings } = useJupyter({
+    startDefaultKernel,
+  });
   const [id] = useState(props.id || newUuid());
   const [adapter, setAdapter] = useState<CellAdapter>();
   const cellsStore = useCellsStore();
@@ -155,8 +162,10 @@ export const Cell = (props: ICellProps) => {
 };
 
 Cell.defaultProps = {
-  source: '',
   autoStart: true,
+  showToolbar:true,
+  startDefaultKernel: true,
+  type: 'code',
 } as Partial<ICellProps>;
 
 export default Cell;

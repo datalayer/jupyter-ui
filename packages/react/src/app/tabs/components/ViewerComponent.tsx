@@ -6,9 +6,9 @@
 
 import Viewer from '../../../components/viewer/Viewer';
 
-// import nbformat from '../../..//examples/notebooks/IPyWidgetsExample.ipynb.json';
+// import nbformat from '../../../examples/notebooks/IPyWidgetsExample.ipynb.json';
 
-const ViewerComponent = () => {
+export const ViewerComponent = () => {
   return (
     <>
       <Viewer

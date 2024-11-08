@@ -45,13 +45,9 @@ import {
 } from '@jupyterlab/services';
 import { runIcon } from '@jupyterlab/ui-components';
 import { createStandaloneCell, YCodeCell, IYText, YMarkdownCell } from '@jupyter/ydoc';
-import {
-  WIDGET_MIMETYPE,
-  WidgetRenderer,
-} from '@jupyter-widgets/html-manager/lib/output_renderers';
 import { execute as executeOutput } from './../output/OutputExecutor';
+import { ClassicWidgetManager, WIDGET_MIMETYPE, WidgetRenderer } from '../../jupyter/ipywidgets/classic';
 import { requireLoader as loader } from '../../jupyter/ipywidgets/libembed-amd';
-import ClassicWidgetManager from '../../jupyter/ipywidgets/classic/manager';
 import Kernel from '../../jupyter/kernel/Kernel';
 import getMarked from '../notebook/marked/marked';
 import CellCommands from './CellCommands';

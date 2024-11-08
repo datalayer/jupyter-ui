@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyter-react",
-  "version": "0.18.11",
+  "version": "0.18.12",
   "description": "Jupyter React - React.js components 100% compatible with Jupyter.",
   "license": "MIT",
   "main": "lib/index.js",
@@ -264,6 +264,16 @@
     "extension": "./lib/jupyter/lab/plugin.js",
     "outputDir": "jupyter_react/labextension",
     "schemaDir": "schema",
+    "sharedPackages": {
+      "react": {
+        "bundled": false,
+        "singleton": true
+      },
+      "react-dom": {
+        "bundled": false,
+        "singleton": true
+      }
+    },
     "webpackConfig": "./webpack.lab-config.js"
   },
   "jupyter-releaser": {

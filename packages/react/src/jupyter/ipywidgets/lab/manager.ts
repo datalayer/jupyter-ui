@@ -478,23 +478,23 @@ export class WidgetManager extends LabWidgetManager {
     super(rendermime);
     this._context = context;
 
-    context.sessionContext.kernelChanged.connect((sender, args) => {
+    this._context.sessionContext.kernelChanged.connect((sender, args) => {
       this._handleKernelChanged(args);
     });
 
-    context.sessionContext.statusChanged.connect((sender, args) => {
+    this._context.sessionContext.statusChanged.connect((sender, args) => {
       this._handleKernelStatusChange(args);
     });
 
-    context.sessionContext.connectionStatusChanged.connect((sender, args) => {
+    this._context.sessionContext.connectionStatusChanged.connect((sender, args) => {
       this._handleKernelConnectionStatusChange(args);
     });
 
-    if (context.sessionContext.session?.kernel) {
+    if (this._context.sessionContext.session?.kernel) {
       this._handleKernelChanged({
         name: 'kernel',
         oldValue: null,
-        newValue: context.sessionContext.session?.kernel,
+        newValue: this._context.sessionContext.session?.kernel,
       });
     }
 

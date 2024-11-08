@@ -7,13 +7,13 @@
 import { useState } from 'react';
 import { Box, NavList } from '@primer/react';
 import { JupyterFrontEndProps } from '../JupyterReact';
-import FileBrowserComponent from './components/FileBrowserComponent';
-// import CellComponent from './components/CellComponent';
-// import NotebookComponent from './components/NotebookComponent';
-import IPyWidgetsComponent from './components/IPyWidgetsComponent';
-import ViewerComponent from './components/ViewerComponent';
+import { FileBrowserComponent } from './components/FileBrowserComponent';
+import { CellComponent } from './components/CellComponent';
+import { NotebookComponent } from './components/NotebookComponent';
+import { IPyWidgetsComponent } from './components/IPyWidgetsComponent';
+import { ViewerComponent } from './components/ViewerComponent';
 
-const MainTab = (props: JupyterFrontEndProps) => {
+export const ComponentsTab = (props: JupyterFrontEndProps) => {
   const [nav, setNav] = useState(1);
   return (
     <>
@@ -60,16 +60,14 @@ const MainTab = (props: JupyterFrontEndProps) => {
         </Box>
         <Box ml={3} sx={{ width: '100%' }}>
             {nav === 1 && <FileBrowserComponent />}
-            {nav === 4 && <IPyWidgetsComponent />}
-            {nav === 5 && <ViewerComponent />}
-            {/*
             {nav === 2 && <CellComponent />}
             {nav === 3 && <NotebookComponent />}
-            */}
+            {nav === 4 && <IPyWidgetsComponent />}
+            {nav === 5 && <ViewerComponent />}
         </Box>
       </Box>
     </>
   );
 };
 
-export default MainTab;
+export default ComponentsTab;

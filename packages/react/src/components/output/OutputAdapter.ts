@@ -4,10 +4,6 @@
  * MIT License
  */
 
-import {
-  WIDGET_MIMETYPE,
-  WidgetRenderer,
-} from '@jupyter-widgets/html-manager/lib/output_renderers';
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
 import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
 import { IOutput } from '@jupyterlab/nbformat';
@@ -22,10 +18,9 @@ import {
   standardRendererFactories,
 } from '@jupyterlab/rendermime';
 import { JSONObject } from '@lumino/coreutils';
-import { ClassicWidgetManager } from '../../jupyter/ipywidgets/classic/manager';
+import { ClassicWidgetManager, WidgetRenderer, WIDGET_MIMETYPE } from '../../jupyter/ipywidgets/classic';
 import { requireLoader as loader } from '../../jupyter/ipywidgets/libembed-amd';
-import { IExecutionPhaseOutput } from '../../jupyter/kernel';
-import { Kernel } from '../../jupyter/kernel/Kernel';
+import { IExecutionPhaseOutput, Kernel } from '../../jupyter/kernel';
 import { execute } from './OutputExecutor';
 
 export class OutputAdapter {
@@ -34,7 +29,7 @@ export class OutputAdapter {
   private _renderers: IRenderMime.IRendererFactory[];
   private _outputArea: OutputArea;
   private _rendermime: RenderMimeRegistry;
-  private _iPyWidgetsClassicManager: ClassicWidgetManager;
+  private _iPyWidgetsManager: ClassicWidgetManager;
   private _suppressCodeExecutionErrors: boolean;
 
   public constructor(
@@ -55,15 +50,12 @@ export class OutputAdapter {
     this._rendermime = new RenderMimeRegistry({
       initialFactories: this._renderers,
     });
-    this._iPyWidgetsClassicManager = new ClassicWidgetManager({
-      loader,
-    });
+    this._iPyWidgetsManager = new ClassicWidgetManager({ loader });
     this._rendermime.addFactory(
       {
         safe: false,
         mimeTypes: [WIDGET_MIMETYPE],
-        createRenderer: (options: any) =>
-          new WidgetRenderer(options, this._iPyWidgetsClassicManager),
+        createRenderer: (options: any) => new WidgetRenderer(options, this._iPyWidgetsManager),
       },
       0
     );
@@ -140,7 +132,7 @@ export class OutputAdapter {
 
   private initKernel() {
     if (this._kernel) {
-      this._iPyWidgetsClassicManager.registerWithKernel(
+      this._iPyWidgetsManager.registerWithKernel(
         this._kernel.connection
       );
     }

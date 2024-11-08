@@ -4,14 +4,10 @@
  * MIT License
  */
 
-import OutputIPyWidgets from '../../../components/output/OutputIPyWidgets';
+import { OutputIPyWidgets}  from '../../../components/output';
+import { view, state } from './../../../examples/notebooks/OutputIPyWidgetsExample';
 
-import {
-  view,
-  state,
-} from './../../../examples/notebooks/OutputIPyWidgetsExample';
-
-const IPyWidgetsComponent = () => {
+export const IPyWidgetsComponent = () => {
   return (
     <>
       <OutputIPyWidgets view={view} state={state} />

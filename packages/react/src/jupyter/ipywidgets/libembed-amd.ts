@@ -7,7 +7,7 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
 
-import * as libembed from '@jupyter-widgets/html-manager/lib/libembed';
+import * as libembed from './libembed';
 
 let CDN_URL = 'https://cdn.jsdelivr.net/npm/';
 
@@ -116,7 +116,7 @@ export function renderWidgets(
     moduleVersion: string
   ) => Promise<any> = requireLoader
 ): void {
-  requirePromise(['@jupyter-widgets/html-manager']).then((htmlmanager) => {
+  requirePromise(['./classic/htmlmanager']).then((htmlmanager) => {
     const managerFactory = (): any => {
       return new htmlmanager.HTMLManager({ loader: loader });
     };

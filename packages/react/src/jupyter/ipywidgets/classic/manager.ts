@@ -17,22 +17,19 @@ import {
   ExportData,
 } from '@jupyter-widgets/base/lib/registry';
 import { ICallbacks, shims } from '@jupyter-widgets/base/lib/services-shim';
-import { HTMLManager } from '@jupyter-widgets/html-manager/lib/htmlmanager';
 import { valid } from 'semver';
 import { INotebookModel } from '@jupyterlab/notebook';
 import { requireLoader } from './../libembed-amd';
-import {
-  BundledIPyWidgets,
-  ExternalIPyWidgets,
-} from '../../../components/notebook/Notebook';
+// import { BundledIPyWidgets, ExternalIPyWidgets } from '../../../components/notebook/Notebook';
 import { SemVerCache } from '../semvercache';
 import { WIDGET_STATE_MIMETYPE } from './../mimetypes';
+import { HTMLManager } from './htmlmanager';
 
 import * as base from '@jupyter-widgets/base';
 import * as controls from '@jupyter-widgets/controls';
 
 /**
- * The class is responsible for the classic IPyWidget rendering.
+ * The class is responsible for the classic IPyWidgets rendering.
  */
 export class ClassicWidgetManager extends HTMLManager {
   public _kernelConnection: Kernel.IKernelConnection | null;
@@ -48,8 +45,7 @@ export class ClassicWidgetManager extends HTMLManager {
     const cdnOnlyScript = document.createElement('script');
     cdnOnlyScript.setAttribute('data-jupyter-widgets-cdn-only', 'true');
     document.body.appendChild(cdnOnlyScript);
-    requireJsScript.src =
-      'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js';
+    requireJsScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js';
     document.body.appendChild(requireJsScript);
     requireJsScript.onload = () => {
       (window as any).define('@jupyter-widgets/base', base);
@@ -214,7 +210,7 @@ export class ClassicWidgetManager extends HTMLManager {
       target_name: this.comm_target_name,
     }).then((reply: any) => reply.content.comms);
   }
-
+  /*
   public loadBundledIPyWidgets = (ipywidgets: BundledIPyWidgets[]): void => {
     const loadIPyWidget = (name: string, version: string, module: any) => {
       requireLoader(name, version).then(module => {
@@ -236,7 +232,7 @@ export class ClassicWidgetManager extends HTMLManager {
       loadIPyWidget(ipywidget.name, ipywidget.version);
     });
   }
-
+  */
   register(data: IWidgetRegistryData): void {
     this._getRegistry().set(data.name, data.version, data.exports);
   }

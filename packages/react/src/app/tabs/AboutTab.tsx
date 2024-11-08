@@ -12,7 +12,7 @@ type Props = {
   version: string;
 };
 
-const AboutTab = (props: Props): JSX.Element => {
+export const AboutTab = (props: Props): JSX.Element => {
   const { version } = props;
   const [egg, setEgg] = useState(false);
   return (
