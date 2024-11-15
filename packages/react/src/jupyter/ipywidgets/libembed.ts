@@ -93,7 +93,7 @@ async function renderManager(
       if (!valid) {
         throw new Error(`View state has errors: ${view_validate.errors}`);
       }
-      const model_id: string = widgetViewObject.model_id;
+      const model_id: string = (widgetViewObject as any).model_id;
       const model = models.find((item) => item.model_id == model_id);
       if (model !== undefined && viewtag.parentElement !== null) {
         const prev = viewtag.previousElementSibling;
