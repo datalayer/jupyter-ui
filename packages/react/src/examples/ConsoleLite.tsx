@@ -17,8 +17,8 @@ root.render(
   <Jupyter lite>
     <Box as="h1">A Jupyter Console with a Lite Kernel</Box>
     <Console
-      code={`import piplite
-await piplite.install('numpy')
+      code={`import micropip
+await micropip.install('numpy')
 import numpy
 print(f'👋 Hello Jupyter Console with a Lite Kernel and numpy {numpy.__version__}')`}
     />

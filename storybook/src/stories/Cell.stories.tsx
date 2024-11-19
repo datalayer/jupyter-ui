@@ -134,7 +134,7 @@ export const WithInitialization: Story = Template.bind({}) as Story;
 WithInitialization.args = {
   ...Default.args,
   browser: 'true',
-  initCode: 'import piplite\nawait piplite.install("ipywidgets")',
+  initCode: 'import micropip\nawait micropip.install("ipywidgets")',
   source: '# ipywidgets is imported at initialization\nimport ipywidgets',
   autoStart: true,
 };

@@ -55,8 +55,8 @@
         }
       ],
       "source": [
-        "# import piplite\n",
-        "# await piplite.install('ipywidgets')\n",
+        "# import micropip\n",
+        "# await micropip.install('ipywidgets')\n",
         "from ipywidgets import IntSlider\n",
         "w = IntSlider()\n",
         "w"

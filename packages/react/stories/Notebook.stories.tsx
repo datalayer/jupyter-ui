@@ -222,14 +222,14 @@ const INIT_EXAMPLE = {
       },
       outputs: [],
       source:
-      `import piplite
-await piplite.install('ipywidgets')
-await piplite.install('bqplot')
-await piplite.install('ipyleaflet')
-await piplite.install('ipyreact')
-await piplite.install('plotly')
-await piplite.install('nbformat')
-await piplite.install('ipympl')`,
+      `import micropip
+await micropip.install('ipywidgets')
+await micropip.install('bqplot')
+await micropip.install('ipyleaflet')
+await micropip.install('ipyreact')
+await micropip.install('plotly')
+await micropip.install('nbformat')
+await micropip.install('ipympl')`,
     },
     ...WIDGETS_EXAMPLE.cells,
   ],
@@ -273,13 +273,13 @@ LitePythonInit.args = {
   ...Default.args,
   browser: 'true',
   initCode:
-    `import piplite
-await piplite.install('ipywidgets')
-await piplite.install('bqplot')
-await piplite.install('ipyleaflet')
-await piplite.install('ipyreact')
-await piplite.install('plotly')
-await piplite.install('nbformat')
-await piplite.install('ipympl')`,
+    `import micropip
+await micropip.install('ipywidgets')
+await micropip.install('bqplot')
+await micropip.install('ipyleaflet')
+await micropip.install('ipyreact')
+await micropip.install('plotly')
+await micropip.install('nbformat')
+await micropip.install('ipympl')`,
   nbformat: WIDGETS_EXAMPLE,
 };
