@@ -21,29 +21,6 @@
       "execution_count": 1,
       "metadata": {
         "datalayer": {
-          "sql": true
-        }
-      },
-      "outputs": [
-        {
-          "data": {
-            "text/plain": [""]
-          },
-          "execution_count": 1,
-          "metadata": {},
-          "output_type": "execute_result"
-        }
-      ],
-      "source": [
-        "-- I am a SQL cell.\n",
-        "SELECT * FROM LOGS"
-      ]
-    },
-    {
-      "cell_type": "code",
-      "execution_count": 1,
-      "metadata": {
-        "datalayer": {
           "_about": "Accelerated and Trusted Jupyter"
         }
       },
@@ -78,6 +55,8 @@
         }
       ],
       "source": [
+        "# import piplite\n",
+        "# await piplite.install('ipywidgets')\n",
         "from ipywidgets import IntSlider\n",
         "w = IntSlider()\n",
         "w"
@@ -100,6 +79,29 @@
       ],
       "source": [
         "w"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 1,
+      "metadata": {
+        "datalayer": {
+          "sql": true
+        }
+      },
+      "outputs": [
+        {
+          "data": {
+            "text/plain": [""]
+          },
+          "execution_count": 1,
+          "metadata": {},
+          "output_type": "execute_result"
+        }
+      ],
+      "source": [
+        "-- I am a SQL cell.\n",
+        "SELECT * FROM LOGS"
       ]
     },
     {

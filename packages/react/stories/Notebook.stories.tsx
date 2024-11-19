@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Jupyter, Notebook } from '@datalayer/jupyter-react';
 
@@ -65,13 +66,13 @@ Default.args = {
   browser: 'false',
   initCode: '',
   path: undefined,
-  uid: undefined,
+  id: undefined,
   cellMetadataPanel: false,
   cellSidebarMargin: 120,
   height: '100vh',
   maxHeight: '100vh',
   nbgrader: false,
-  readOnly: false,
+  readonly: false,
   renderers: [],
 };
 
@@ -82,7 +83,7 @@ export const Playground: Story = {
 Playground.args = {
   ...Default.args,
   path: 'ipywidgets.ipynb',
-  uid: 'uid-1',
+  id: 'id-1',
 };
 
 const WIDGETS_EXAMPLE = {
@@ -91,55 +92,101 @@ const WIDGETS_EXAMPLE = {
       metadata: {},
       cell_type: 'code',
       outputs: [],
-      source: 'import ipywidgets as widgets\nw = widgets.IntSlider()\nw',
+      source: `import ipywidgets as widgets
+w = widgets.IntSlider()
+w`,
     },
     {
       metadata: {},
       cell_type: 'code',
       outputs: [],
-      source: 'from IPython.display import display\ndisplay(w)',
+      source: `from IPython.display import display
+display(w)`,
     },
     {
       metadata: {},
       cell_type: 'code',
       outputs: [],
-      source:
-        "a = widgets.FloatText()\nb = widgets.FloatSlider()\ndisplay(a,b)\nlink = widgets.jslink((a, 'value'), (b, 'value'))",
-    },
-    {
-      metadata: {},
-      cell_type: 'code',
-      outputs: [],
-      source:
-        'import numpy as np\nimport bqplot.pyplot as plt\nsize = 100\nscale = 100.0\nnp.random.seed(0)\nx_data = np.arange(size)\ny_data = np.cumsum(np.random.randn(size) * scale)\nfig = plt.figure(title="First Example")\nplt.plot(y_data)\nfig',
-    },
-    {
-      metadata: {},
-      cell_type: 'code',
-      outputs: [],
-      source:
-        'from ipyleaflet import Map, Marker\ncenter = (52.204793, 360.121558)\nm = Map(center=center, zoom=15)\nmarker = Marker(location=center, draggable=True)\nm.add(marker)\nmarker.location = (50, 356)\nm',
+      source: `a = widgets.FloatText()
+b = widgets.FloatSlider()
+display(a,b)
+link = widgets.jslink((a, 'value'), (b, 'value'))`,
     },
     {
       metadata: {},
       cell_type: 'code',
       outputs: [],
       source:
-        'import ipyreact\nclass ConfettiWidget(ipyreact.ReactWidget):\n    _esm = """\n    import confetti from "canvas-confetti";\n    import * as React from "react";\n\n    export default function({value, set_value, debug}) {\n        return <button onClick={() => confetti() && set_value(value + 1)}>\n            {value || 0} times confetti\n        </button>\n    };"""\nConfettiWidget()',
+      `import numpy as np
+import bqplot.pyplot as plt
+size = 100
+scale = 100.0
+np.random.seed(0)
+x_data = np.arange(size)
+y_data = np.cumsum(np.random.randn(size) * scale)
+fig = plt.figure(title="First Example")
+plt.plot(y_data)
+fig`,
     },
     {
       metadata: {},
       cell_type: 'code',
       outputs: [],
       source:
-        'import plotly.express as px\ndf = px.data.stocks()\nfig = px.line(df, x="date", y=df.columns,\n              hover_data={"date": "|%B %d, %Y"},\n              title=\'custom tick labels\')\nfig.update_xaxes(\n    dtick="M1",\n    tickformat="%b %Y",\n    range=["2018-01-01", "2018-12-31"])\nfig.show()',
+      `from ipyleaflet import Map, Marker
+center = (52.204793, 360.121558)
+m = Map(center=center, zoom=15)
+marker = Marker(location=center, draggable=True)
+m.add(marker)
+marker.location = (50, 356)
+m`,
     },
     {
       metadata: {},
       cell_type: 'code',
       outputs: [],
       source:
-        'from matplotlib import pyplot as plt\nimport numpy as np\n%matplotlib widget\nx = np.linspace(0, 1, 100)\ny = 0.2+0.4*x**2+0.3*x*np.sin(15*x)+0.05*np.cos(50*x)\nplt.figure(figsize=(6, 6))\nplt.plot(x, y)',
+        `import ipyreact
+class ConfettiWidget(ipyreact.ReactWidget):
+    _esm = """
+    import confetti from "canvas-confetti";
+    import * as React from "react";
+
+    export default function({value, set_value, debug}) {
+        return <button onClick={() => confetti() && set_value(value + 1)}>
+            {value || 0} times confetti
+        </button>
+    };"""
+ConfettiWidget()',
+    },
+    {
+      metadata: {},
+      cell_type: 'code',
+      outputs: [],
+      source:
+        'import plotly.express as px
+df = px.data.stocks()
+fig = px.line(df, x="date", y=df.columns,
+              hover_data={"date": "|%B %d, %Y"},
+              title=\'custom tick labels\')
+fig.update_xaxes(
+    dtick="M1",
+    tickformat="%b %Y",
+    range=["2018-01-01", "2018-12-31"])
+fig.show()`,
+    },
+    {
+      metadata: {},
+      cell_type: 'code',
+      outputs: [],
+      source:
+      `from matplotlib import pyplot as plt
+import numpy as np
+%matplotlib widget
+x = np.linspace(0, 1, 100)
+y = 0.2+0.4*x**2+0.3*x*np.sin(15*x)+0.05*np.cos(50*x)
+plt.figure(figsize=(6, 6))
+plt.plot(x, y)`,
     },
   ],
   metadata: {
@@ -175,7 +222,14 @@ const INIT_EXAMPLE = {
       },
       outputs: [],
       source:
-        "import piplite\nawait piplite.install('ipywidgets')\nawait piplite.install('bqplot')\nawait piplite.install('ipyleaflet')\nawait piplite.install('ipyreact')\nawait piplite.install('plotly')\nawait piplite.install('nbformat')\nawait piplite.install('ipympl')",
+      `import piplite
+await piplite.install('ipywidgets')
+await piplite.install('bqplot')
+await piplite.install('ipyleaflet')
+await piplite.install('ipyreact')
+await piplite.install('plotly')
+await piplite.install('nbformat')
+await piplite.install('ipympl')`,
     },
     ...WIDGETS_EXAMPLE.cells,
   ],
@@ -219,6 +273,13 @@ LitePythonInit.args = {
   ...Default.args,
   browser: 'true',
   initCode:
-    "import piplite\nawait piplite.install('ipywidgets')\nawait piplite.install('bqplot')\nawait piplite.install('ipyleaflet')\nawait piplite.install('ipyreact')\nawait piplite.install('plotly')\nawait piplite.install('nbformat')\nawait piplite.install('ipympl')",
+    `import piplite
+await piplite.install('ipywidgets')
+await piplite.install('bqplot')
+await piplite.install('ipyleaflet')
+await piplite.install('ipyreact')
+await piplite.install('plotly')
+await piplite.install('nbformat')
+await piplite.install('ipympl')`,
   nbformat: WIDGETS_EXAMPLE,
 };

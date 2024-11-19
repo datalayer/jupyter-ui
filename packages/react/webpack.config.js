@@ -20,7 +20,7 @@ const ENTRY =
   // './src/app/App';
   // './src/examples/Bokeh';
   // './src/examples/Bqplot';
-  './src/examples/Cell';
+  // './src/examples/Cell';
   // './src/examples/CellLite';
   // './src/examples/Cells';
   // './src/examples/CellsExecute';
@@ -50,7 +50,7 @@ const ENTRY =
   // './src/examples/NotebookExtension';
   // './src/examples/NotebookKernelChange';
   // './src/examples/NotebookLess';
-  // './src/examples/NotebookLite';
+  './src/examples/NotebookLite';
   // './src/examples/NotebookLiteContext';
   // './src/examples/NotebookMutationsKernel';
   // './src/examples/NotebookMutationsServiceManager';

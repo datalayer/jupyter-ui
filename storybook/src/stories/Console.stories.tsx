@@ -4,7 +4,6 @@
  * MIT License
  */
 
-import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Jupyter, Console } from '@datalayer/jupyter-react';
 
@@ -56,6 +55,7 @@ const Template = (args, { globals: { labComparison } }) => {
 
   return (
     <Jupyter
+      startDefaultKernel={true}
       lite={lite}
       initCode={initCode}
       defaultKernelName={kernelName}
@@ -67,7 +67,7 @@ const Template = (args, { globals: { labComparison } }) => {
   );
 };
 
-export const Default: Story = Template.bind({});
+export const Default: Story = Template.bind({}) as Story;
 
 Default.args = {
   browser: 'false',
@@ -75,13 +75,13 @@ Default.args = {
   code: "print('👋 Hello Jupyter Console')",
 };
 
-export const LitePython: Story = Template.bind({});
+export const LitePython: Story = Template.bind({}) as Story;
 LitePython.args = {
   ...Default.args,
   browser: 'true',
 };
 
-export const LiteJavascript: Story = Template.bind({});
+export const LiteJavascript: Story = Template.bind({}) as Story;
 LiteJavascript.args = {
   ...Default.args,
   browser: '@jupyterlite/javascript-kernel-extension',

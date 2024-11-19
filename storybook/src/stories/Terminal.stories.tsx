@@ -15,7 +15,7 @@ const meta: Meta<typeof Terminal> = {
     // height: {
     //   type: 'string',
     // },
-    colorMode: {
+    colormode: {
       options: ['dark', 'light'],
     },
   },
@@ -28,9 +28,9 @@ type Story = StoryObj<typeof Terminal | typeof Jupyter>;
 const Template = (args, { globals: { labComparison } }) => {
   return (
     <Jupyter
+      startDefaultKernel={false}
       jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
       jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
-      startDefaultKernel={false}
       terminals={true}
     >
       <Terminal {...args} />
@@ -38,20 +38,20 @@ const Template = (args, { globals: { labComparison } }) => {
   );
 };
 
-export const Default: Story = Template.bind({});
+export const Default: Story = Template.bind({}) as Story;
 Default.args = {
   height: '800px',
-  colorMode: 'light',
+  colormode: 'light',
 };
 
-export const Playground: Story = Template.bind({});
+export const Playground: Story = Template.bind({}) as Story;
 Playground.args = {
   ...Default.args,
   height: '800px',
-  colorMode: 'dark',
+  colormode: 'dark',
 };
 
-export const WithInitialization: Story = Template.bind({});
+export const WithInitialization: Story = Template.bind({}) as Story;
 WithInitialization.args = {
   ...Default.args,
   initCode: 'echo "Hello from shell $0"',

@@ -18,6 +18,7 @@ const NotebookLite = () => (
   <JupyterReactTheme>
     <Box as="h1">A Jupyter Notebook with a Lite Kernel</Box>
     <Notebook
+      startDefaultKernel={true}
       lite={true}
       nbformat={nbformat as INotebookContent}
       id="notebook-lite-id"
