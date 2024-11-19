@@ -6,7 +6,7 @@
 
 import { ReactNode } from "react";
 import { DecoratorNode, EditorConfig, LexicalEditor, LexicalNode, NodeKey, SerializedLexicalNode } from "lexical";
-import CustomComponent from "./CustomComponent";
+import JupyterCellNodeComponent from "./JupyterCellNodeComponent";
 
 export class JupyterCellNode extends DecoratorNode<ReactNode> {
   private __data: any;
@@ -48,7 +48,7 @@ export class JupyterCellNode extends DecoratorNode<ReactNode> {
   /** @override */
   decorate(editor: LexicalEditor) {
     console.log(`decorate -> this.getKey(): ${this.getKey()} this.__data: ${this.__data}`);
-    return <CustomComponent nodeKey={this.getKey()} data={this.__data} />;
+    return <JupyterCellNodeComponent nodeKey={this.getKey()} data={this.__data} />;
   }
 
   /** @override */

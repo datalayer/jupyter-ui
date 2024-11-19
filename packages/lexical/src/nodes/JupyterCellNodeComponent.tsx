@@ -12,7 +12,7 @@ type Props = {
   data: any;
 }
 
-export const CustomComponent = ({ nodeKey, data }: Props) => {
+export const JupyterCellNodeComponent = ({ nodeKey, data }: Props) => {
   return (
     <>
       <JupyterCellComponent/>
@@ -20,4 +20,4 @@ export const CustomComponent = ({ nodeKey, data }: Props) => {
   );
 }
 
-export default CustomComponent;
+export default JupyterCellNodeComponent;

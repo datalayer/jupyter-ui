@@ -42,6 +42,7 @@ export const App1 = () => {
         <h1>Jupyter UI ❤️ Lexical</h1>
       </div>
       <Jupyter
+        startDefaultKernel={true}
         jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
         jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
       >
