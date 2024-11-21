@@ -41,7 +41,7 @@ const NotebookMutationsServiceManager = () => {
   const { datalayerConfig } = useJupyterReactStore();
   const notebookStore = useNotebookStore();
   const notebook = notebookStore.selectNotebook(NOTEBOOK_ID);
-  const onSessionConnection: OnSessionConnection = (session: Session.ISessionConnection | null | undefined) => {
+  const onSessionConnection: OnSessionConnection = (session: Session.ISessionConnection | undefined) => {
     console.log('Received a Kernel Session.', session);
     if (session) {
       setSessions(sessions.concat(session));
