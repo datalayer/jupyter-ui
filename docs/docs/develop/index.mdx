@@ -1,0 +1,28 @@
+import DocCardList from '@theme/DocCardList';
+
+# Develop
+
+The Jupyter UI source code is available on [GitHub](https://github.com/datalayer/jupyter-ui). Check out the TypeDoc documentation for [@datalayer/jupyter-react 0.9.0](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.9.0).
+
+:::note
+
+Many developers are reporting issues with their environment (build failures...).
+
+This is inherent to the mixed Python and JavaScript build as dependency on Jupyter toolchain. We are putting this issue at the <b>top of our priority</b> to ease your pain.
+
+1. Pick or `Conda` or `Docker`/`devcontainer` with VS Code based on your pior experience.
+1. Only `Yarn v3` and `Lerna` are supported based on JupyterLab 4 requirements.
+1. `engines` and `os` are enforced in package.json - We **only support** Yarn v3 on macOS and Linux.
+1. We are offering `hosted kernels` so you don't need to run your local Jupyter Server. If you run `yarn start`, you will consume those hosted kernels from the cloud.
+1. The default build should be faster and does not build the examples, please give your opinion on https://github.com/datalayer/jupyter-ui/issues/63.
+1. `Pyodide` kernels are supported for most of the components.
+
+:::
+
+:::success
+
+👉 Please continue reporting any failure and idea on how to make a better experience. ❤️
+
+:::
+
+<DocCardList/>

@@ -305,7 +305,7 @@ export class NotebookAdapter {
     });
     this._context.sessionContext.ready.then(() => {
       if (this._onSessionConnection) {
-        this._onSessionConnection(this._context?.sessionContext.session);
+        this._onSessionConnection(this._context?.sessionContext.session ?? undefined);
       }
       const kernelConnection = this._context?.sessionContext.session?.kernel;
       this._kernelConnection = kernelConnection;

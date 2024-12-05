@@ -16,7 +16,7 @@ The below picture is an example of Notebook into a React.js component.
   alt="Jupyter UI Notebook"
 />
 
-This is what it takes to create a Notebook. In this first example, the Jupyter Server will be fetched for the `test.ipynb` notebook "ipynb" file content.
+In this first example, the Jupyter Server will be fetched for the `test.ipynb` notebook `ipynb` file content.
 
 ```jsx
 <Jupyter terminals={true} collaborative={true}>
@@ -35,13 +35,7 @@ import nbformat from "./NotebookExample.ipynb.json";
 </Jupyter>
 ```
 
-For IPyWidgets, use the following properties:
-
-- `bundledIPyWidgets`: List of module name, version and exports.
-- `externalIPyWidgets`: List of module name and version to be loaded from public CDNs.
-- `ipywidgets`: `lab` or `classic` (deprecated, will be soon removed). Please use `lab`
-
-The available properties for the Notebook component are available on this [TypeDoc page](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.8.1/types/INotebookProps.html).
+The available properties for the Notebook component are listed on the [TypeDoc page](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.9.0/types/INotebookProps.html).
 
 ## With a Jupyter server
 
@@ -62,7 +56,11 @@ You can set the following props to connect it to a running Jupyter Server:
 - `jupyterServerUrl`: The server URL
 - `jupyterServerToken`: The server authentication token
 
-> Your server will likely need to accept connection from external client.
+:::note
+
+Your server will likely to accept connections from external client.
+
+:::
 
 ## With in-browser kernel
 
@@ -88,7 +86,7 @@ you can simply set `lite` to `true`:
             cell_type: 'code',
             outputs: [],
             source:
-              "import piplite\nawait piplite.install('ipywidgets')",
+              "import micropip\nawait micropip.install('ipywidgets')",
           },
           {
             cell_type: 'code',

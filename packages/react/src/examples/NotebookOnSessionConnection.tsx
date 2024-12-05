@@ -19,7 +19,7 @@ import nbformat from './notebooks/NotebookExample1.ipynb.json';
 const NotebookOnSessionConnection = () => {
   const { serviceManager } = useJupyter();
   const [sessions, setSessions] = useState<Array<Session.ISessionConnection>>([]);
-  const onSessionConnection: OnSessionConnection = (session: Session.ISessionConnection | null | undefined) => {
+  const onSessionConnection: OnSessionConnection = (session: Session.ISessionConnection | undefined) => {
     console.log('Received a Kernel Session.', session?.id, session?.kernel?.clientId);
     if (session) {
       setSessions(sessions.concat(session));

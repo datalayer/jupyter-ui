@@ -10,9 +10,7 @@ This component displays a Jupyter Cell.
 
 ## With a Jupyter server
 
-<StorybookView 
-    story='components-cell--default'
-/>
+<StorybookView story='components-cell--default' />
 
 ```jsx
 <Jupyter
@@ -46,19 +44,16 @@ plt.show()
 />
 ```
 
-## With in-browser kernel
+## With in-browser Kernel
 
-You can use an in-browser kernel by setting the `lite` property
-of `Jupyter` component:
+You can use an in-browser kernel by setting the `lite` property of `Jupyter` component:
 
 <StorybookView 
     story='components-cell--lite-python'
 />
 
 ```jsx
-<Jupyter
-    lite={true}
->
+<Jupyter lite={true}>
     <Cell
         source={`import sys
 print(f"{sys.platform=}")

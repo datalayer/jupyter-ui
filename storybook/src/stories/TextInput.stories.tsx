@@ -34,7 +34,7 @@ const Template = (args, { globals: { labComparison } }) => {
   );
 };
 
-export const Default = Template.bind({});
+export const Default = Template.bind({}) as Story;
 
 export const Playground: Story = {
   render: (args, options) =>

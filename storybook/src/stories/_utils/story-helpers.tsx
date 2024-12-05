@@ -28,7 +28,7 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-export const colorModeFromScheme = (colorScheme: string) => {
+export const colormodeFromScheme = (colorScheme: string) => {
   return colorScheme.startsWith('light') ? 'light' : 'dark'
 }
 
@@ -42,7 +42,7 @@ export const withThemeProvider = (
   return (
     <ThemeProvider
       theme={theme}
-      colorMode={colorModeFromScheme(colorScheme)}
+      colorMode={colormodeFromScheme(colorScheme)}
       dayScheme={colorScheme}
       nightScheme={colorScheme}
     >

@@ -14,6 +14,7 @@ import * as ConsoleStories from './Console.stories';
 This component displays a Jupyter Console.
 
 <Canvas of={ConsoleStories.Default} source={{code: `<Jupyter
+    startDefaultKernel={true}
     jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
     jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
 >
@@ -34,6 +35,7 @@ To use the [Pyodide](https://pyodide.org/) Python [kernel](https://github.com/ju
 you can simply set `lite` to `true`:
 
 <Canvas of={ConsoleStories.LitePython} source={{code: `<Jupyter
+    startDefaultKernel={true}
     lite={true}
 >
     <Console />
@@ -43,6 +45,7 @@ But you can also load your own JupyterLite kernel. For example here, the console
 the [JavaScript kernel](https://github.com/jupyterlite/jupyterlite/tree/main/py/jupyterlite-javascript-kernel).
 
 <Canvas of={ConsoleStories.LiteJavascript} source={{code: `<Jupyter
+    startDefaultKernel={true}
     lite={import('@jupyterlite/javascript-kernel-extension')}
     defaultKernelName={'javascript'}
 >

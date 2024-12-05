@@ -1,0 +1,39 @@
+---
+title: Conda Environment
+sidebar_position: 2
+---
+
+# Setup with a Conda environment
+
+Follow the below steps to use and develop Jupyter UI.
+
+You need [Miniconda](https://docs.conda.io/en/latest/miniconda.html) up-and-running on your machine.
+
+:::caution
+
+`macOS` or `Linux` are supported out-of-the-box.
+
+[Cygwin](https://www.cygwin.com) is required on `Windows` and your will need to run the commands from the Cygwin shell.
+
+:::
+
+Clone the `jupyter-ui` repository.
+
+```bash
+git clone https://github.com/datalayer/jupyter-ui.git && \
+  cd jupyter-ui
+```
+
+If you already have created a conda environment named `datalayer`, please remove it.
+
+```bash
+conda deactivate
+conda remove -y --all -n datalayer
+```
+
+Create a new conda environment and activate it.
+
+```bash
+conda env create -f environment.yml
+conda activate datalayer
+```

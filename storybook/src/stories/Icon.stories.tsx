@@ -42,22 +42,22 @@ const Template = (args, { globals: { labComparison } }) => {
   );
 };
 
-export const Default: Story = Template.bind({});
+export const Default: Story = Template.bind({}) as Story;
 Default.args = {
   icon: 'undo',
 };
 
-export const Playground: Story = Template.bind({});
+export const Playground: Story = Template.bind({}) as Story;
 Playground.args = {
   ...Default.args,
 };
 
-export const Copyright: Story = Template.bind({});
+export const Copyright: Story = Template.bind({}) as Story;
 Copyright.args = {
   icon: 'copyright',
 };
 
-export const Undo: Story = Template.bind({});
+export const Undo: Story = Template.bind({}) as Story;
 Undo.args = {
   icon: 'undo',
 };

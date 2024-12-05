@@ -19,7 +19,7 @@ import { notebookStore, NotebookState } from '../components/notebook/NotebookSta
 import { outputsStore, OutputState } from '../components/output/OutputState';
 import { terminalStore, TerminalState } from '../components/terminal/TerminalState';
 
-export type OnSessionConnection = (kernelConnection: Session.ISessionConnection | null | undefined) => void;
+export type OnSessionConnection = (kernelConnection: Session.ISessionConnection | undefined) => void;
 
 export type KernelTransfer = {
   transfer: (to: JupyterKernel.IKernelConnection) => void;

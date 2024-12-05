@@ -6,7 +6,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react';
 import { Jupyter, Cell } from '@datalayer/jupyter-react';
-import { colorModeFromScheme } from './_utils/story-helpers';
+import { colormodeFromScheme } from './_utils/story-helpers';
 
 const meta: Meta<typeof Cell> = {
   title: 'Components/Cell',
@@ -54,9 +54,10 @@ const Template = (args, { globals: { colorScheme } }) => {
 
   return (
     <Jupyter
+      startDefaultKernel={true}
       lite={lite}
       initCode={initCode}
-      colorMode={colorModeFromScheme(colorScheme)}
+      colormode={colormodeFromScheme(colorScheme)}
       defaultKernelName={kernelName}
       jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
       jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
@@ -133,7 +134,7 @@ export const WithInitialization: Story = Template.bind({}) as Story;
 WithInitialization.args = {
   ...Default.args,
   browser: 'true',
-  initCode: 'import piplite\nawait piplite.install("ipywidgets")',
+  initCode: 'import micropip\nawait micropip.install("ipywidgets")',
   source: '# ipywidgets is imported at initialization\nimport ipywidgets',
   autoStart: true,
 };

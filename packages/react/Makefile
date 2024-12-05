@@ -42,19 +42,19 @@ typedoc: ## generate typedoc
 
 publish-typedoc: typedoc ## deploy typedoc
 	aws s3 rm \
-		s3://datalayer-typedoc/datalayer/jupyter-react/0.8.1/ \
+		s3://datalayer-typedoc/datalayer/jupyter-react/0.9.0/ \
 		--recursive \
 		--profile datalayer
 	aws s3 cp \
 		typedoc \
-		s3://datalayer-typedoc/datalayer/jupyter-react/0.8.1/ \
+		s3://datalayer-typedoc/datalayer/jupyter-react/0.9.0/ \
 		--recursive \
 		--profile datalayer
 	aws cloudfront create-invalidation \
 		--distribution-id E1CPG9FNSQJESH \
 		--paths /datalayer/jupyter-react/0.3.0/ \
 		--profile datalayer
-	echo open ✨  https://typedoc.datalayer.tech/datalayer/jupyter-react/0.8.1
+	echo open ✨  https://typedoc.datalayer.tech/datalayer/jupyter-react/0.9.0
 
 start-storybook: ## start-storybook
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \

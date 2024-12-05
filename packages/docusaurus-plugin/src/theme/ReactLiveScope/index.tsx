@@ -13,22 +13,26 @@ const Cell = (props: any) => {
     <BrowserOnly
       fallback={<div>Jupyter Cell fallback content for prerendering.</div>}>
       {() => {
+
         // Keep the import via require in the BrowserOnly code block.
         const { Jupyter } = require('@datalayer/jupyter-react/lib/jupyter/Jupyter');
         const { Cell } = require('@datalayer/jupyter-react/lib/components/cell/Cell');
+        
         return (
           <>
-          <Jupyter
-            jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
-                  jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
-            disableCssLoading={true}
-            skeleton={<ContentLoader/>}
-          >
-            <Cell {...props}/>
-          </Jupyter>
-        </>
+            <Jupyter
+              jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
+              jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+              disableCssLoading={true}
+              startDefaultKernel
+              skeleton={<ContentLoader/>}
+            >
+              <Cell {...props}/>
+            </Jupyter>
+          </>
         )
-     }}
+
+      }}
     </BrowserOnly>
   )
 }

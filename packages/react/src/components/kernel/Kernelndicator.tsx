@@ -16,7 +16,7 @@ import {
   CircleRedIcon,
   CircleWhiteIcon,
   CircleYellowIcon,
-  CircledMIcon,
+  CircleCurrentColorIcon,
   PlusCircleIcon
 } from '@datalayer/icons-react';
 import { KernelMessage } from '@jupyterlab/services';
@@ -57,7 +57,7 @@ export type ExecutionState =
  */
 export const KERNEL_STATES: Map<ExecutionState, ReactElement> = new Map([
   ['connecting', <PlusCircleIcon />],
-  ['connected-unknown', <CircledMIcon />],
+  ['connected-unknown', <CircleCurrentColorIcon color='lightgray' />],
   ['connected-starting', <CircleYellowIcon />],
   ['connected-idle', <CircleGreenIcon />],
   ['connected-busy', <CircleOrangeIcon />],

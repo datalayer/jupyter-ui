@@ -1,0 +1,137 @@
+---
+description: A Create React Application example.
+---
+
+# Create React Application
+
+The source code of an example can be found in the [jupyter-react-cra-example repository](https://github.com/datalayer-examples/jupyter-react-cra-example).
+
+## Create a Project
+
+Create a WEB application skeleton based on `create-react-app`.
+
+```bash
+npx create-react-app jupyter-react-cra-example -y --template typescript && \
+  cd jupyter-react-cra-example
+```
+
+## Resolutions
+
+We need coherent React.js versions otherwise you may hit the `Invalid Hook Call Warning` with `mismatching versions of React and React DOM` as documented on [this page](https://reactjs.org/warnings/invalid-hook-call-warning.html).
+
+JupyerLab is actively developed and we are tracking the latest (pre-)releases as closely as possible. Therefor, we ask to pin the yarn resolutions. Add [this block](https://github.com/datalayer/jupyter-ui/blob/main/package.json#L76-L184) in your package.json.
+
+## Startup Scripts
+
+You will need a Jupyter server up-and-running. We ship the configuration and scripts in the [jupyter-react-cra-example repository](https://github.com/datalayer-examples/jupyter-react-cra-example). Copy from that repository the `dev` folder in your project. This will provide you with the correct Jupyter server configuration and with the `content` folder that contains the `ping.ipynb` notebook as other example notebooks.
+
+Now add in your `package.json` the needed scripts and development dependencies.
+
+```json
+  "scripts": {
+    "start": "run-p -c start:*",
+    "start:jupyter": "./dev/sh/start-jupyter-server.sh",
+    "start:react": "react-scripts start",
+    "kill": "./dev/sh/kill.sh"
+  },
+  "devDependencies": {
+    "npm-run-all": "4.1.5",
+    "buffer": "6.0.3"
+  },
+```
+
+:::note
+
+The need for `buffer` may be removed depending on upstream JupyterLab evolution.
+
+:::
+
+## Dependencies
+
+Add Jupyter React in `package.json`.
+
+```json
+  "dependencies": {
+    "@datalayer/jupyter-react": "0.5.1",
+  },
+```
+
+Time to install the dependencies (this will take time).
+
+```bash
+yarn install
+```
+
+## Metadata
+
+You need to add in the `<head/>` section of `public/index.html` the metadata to indicate where you Jupyter server is running, as the `require` javascript.
+
+```html
+    <script id="datalayer-config-data" type="application/json">
+      {
+        "jupyterServerUrl": "https://oss.datalayer.run/api/jupyter-server",
+        "jupyterServerToken": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+      }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+```
+
+## Dot Env
+
+It looks like the `create-react-app` version 5 does not like sourcemaps pointing to non existing source code. To avoid error messages, please create a `.env` file at the top of your folder/repositoriy and add there `GENERATE_SOURCEMAP=false`.
+
+```dotenv
+// .env
+GENERATE_SOURCEMAP=false
+```
+
+## Application
+
+Update `src/App.tsx` to import the `Jupyter` and `Notebook` component and change the App like this.
+
+```ts
+// App.tsx
+import { Notebook, Jupyter } from "@datalayer/jupyter-react";
+
+function App() {
+  return (
+    <Jupyter>
+      <Notebook path="ping.ipynb" />
+    </Jupyter>
+  )
+}
+
+export default App;
+```
+
+## Strict Mode
+
+We don't support yet [React Strict Mode](https://reactjs.org/docs/strict-mode.html) (can be useful in development mode). Please remove any reference of `StrictMode` in the `./src/index.tsx` file, your call to `render` should look like this.
+
+```ts
+// index.tsx
+root.render(
+  <App />
+);
+```
+
+## Start
+
+:::success
+
+We get there!
+
+:::
+
+Let's get started and enjoy a Notebook in React.js.
+
+```bash
+# echo open http://localhost:3000
+yarn start
+```
+
+:::caution
+
+Run `yarn kill` before restarting as `CTRL-C` may leave ghost servers.
+
+:::

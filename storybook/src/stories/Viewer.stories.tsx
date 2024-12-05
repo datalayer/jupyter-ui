@@ -45,25 +45,25 @@ const Template = (args, { globals: { labComparison } }) => {
   );
 };
 
-export const Default: Story = Template.bind({});
+export const Default: Story = Template.bind({}) as Story;
 Default.args = {
   nbformat: nbformat1,
   outputs: true,
 };
 
-export const ViewerSimple: Story = Template.bind({});
+export const ViewerSimple: Story = Template.bind({}) as Story;
 ViewerSimple.args = {
   nbformat: nbformat2,
   outputs: true,
 };
 /*
-export const ViewerPlotly: Story = Template.bind({});
+export const ViewerPlotly: Story = Template.bind({}) as Story;
 ViewerPlotly.args = {
   nbformatUrl: "https://raw.githubusercontent.com/datalayer-examples/notebooks/main/daily-stock.ipynb",
   outputs: true
 };
 */
-export const ViewerMatplotlib: Story = Template.bind({});
+export const ViewerMatplotlib: Story = Template.bind({}) as Story;
 ViewerMatplotlib.args = {
   nbformatUrl:
     'https://raw.githubusercontent.com/anissa111/matplotlib-tutorial/main/notebooks/01-basic-matplotlib-tutorial.ipynb',

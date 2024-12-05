@@ -35,7 +35,7 @@ test('Lite Python', async ({ page }) => {
     'http://localhost:6006/iframe.html?id=components-notebook--lite-python'
   );
 
-  await page.getByText('import piplite').click();
+  await page.getByText('import micropip').click();
   await page.keyboard.press('Escape');
   await page.keyboard.press('Shift+Enter');
   await page.getByText('[1]:').waitFor();
