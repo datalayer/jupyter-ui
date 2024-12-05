@@ -1,8 +1,19 @@
 # Jupyter Server
 
-To connect to a Jupyter Server, you have to define the URL for HTTP and WebSocket, as the token.
+To connect to a Jupyter Server, you have to define the URL for HTTP and WebSocket, as well as a Token.
 
-Those properties can be provided in the [Jupyter Context](/docs/components/context) or by setting them in the host HTML (index.html) a `script` tag in the head section.
+Those properties can be provided in the [Jupyter Context](/docs/components/context)
+
+```ts
+<Jupyter
+  "jupyterServerUrl": "http://localhost:8686/api/jupyter-server"
+  "jupyterServerToken": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+>
+  <Notebook/>
+</Jupyter>
+```
+
+Alternatively, you can set thoses values in the host HTML (index.html) a `script` tag in the head section.
 
 ```html
 <!DOCTYPE html>
@@ -18,16 +29,19 @@ Those properties can be provided in the [Jupyter Context](/docs/components/conte
 </html>
 ```
 
-The values defined in the host HTML are taking precedence on the values set in the Jupyter context.
+If you are also using a `jupyter-config-data`, ensure you set the correct values over there.
 
-```ts
-<Jupyter
-  "jupyterServerUrl": "http://localhost:8686/api/jupyter-server"
-  "jupyterServerToken": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
->
-  <Notebook/>
-</Jupyter>
+```html
+  <script id="jupyter-config-data" type="application/json">
+    {
+      "baseUrl": "http://localhost:8686/api/jupyter-server",
+      "wsUrl": "ws://localhost:8686/api/jupyter-server",
+      "token": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+    }
+  </script>
 ```
+
+The values defined in the Jupyter context are taking precedence on the values set in the host HTML.
 
 If you are delivering the React.js web application from a different URL than your Jupyter Server, the Jupyter Server should be configured to accept Cross-origin request with for example in the `jupyter_server_config.py` the following traits.
 
@@ -35,9 +49,9 @@ If you are delivering the React.js web application from a different URL than you
 
 Please tune the following example to fit your security requirements, this is in no way production-ready configuration.
 
-Use the following at your own risk!
+<details>
 
-:::caution
+  <summary>Use the following at your own risk!.</summary>
 
 ```py
 #################
@@ -73,3 +87,5 @@ c.IdentityProvider.cookie_options = {
   "Secure": True,
 }
 ```
+
+</details>

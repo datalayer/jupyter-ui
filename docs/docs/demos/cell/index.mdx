@@ -2,21 +2,17 @@
 description: A demonstation of the Cell component.
 ---
 
-# Cell Demo
-
 import JupyterCell from '@theme/JupyterCell';
+
+# Cell Demo
 
 :::tip
 
-Type your code in the below cell and hit `SHIFT+ENTER` to execute your  code.
-
-> ✨ This is fast, isn't it?
+✨ Type your code in the below cell and hit `SHIFT+ENTER` to execute your  code.
 
 :::
 
 <JupyterCell
-  jupyterServerUrl='https://oss.datalayer.run/api/jupyter-server'
-  jupyterServerToken='60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6'
   source= {`import numpy as np
 import matplotlib.pyplot as plt
 x1 = np.linspace(0.0, 5.0)

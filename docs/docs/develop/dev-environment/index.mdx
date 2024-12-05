@@ -1,0 +1,35 @@
+---
+sidebar_position: 1
+---
+
+# Setup
+
+:::caution
+
+🚨 Only Yarn v3 is supported - npm, pnpm, yarn v1... will not work, this is due to JupyterLab requirements.
+
+:::
+
+Choose the way you want to develop Jupyter UI:
+
+1. [With Conda](/docs/develop/setup/conda)
+1. [With VS Code Devcontainers](/docs/develop/setup/devcontainers)
+
+Once you have applied the steps described in one of the above 2 options, you are ready to develop following the next steps.
+
+```bash
+# Install the dependencies. This will take some time, be patient. 👍
+yarn install
+```
+
+```bash
+# Build the source code. This will also take some time, be also patient. 🙂
+yarn build
+```
+
+If you just want to develop the core package `@datalayer/jupyter-react` of the repository, go to the sub folder and work there.
+
+```bash
+cd packages/react
+yarn build
+```

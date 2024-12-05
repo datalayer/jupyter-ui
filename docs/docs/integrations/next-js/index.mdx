@@ -4,21 +4,13 @@ description: Example with Next.js.
 
 import ModalImage from "react-modal-image";
 
-# Example with Next.js
+# Next.js
 
 An example with [Next.js](https://nextjs.org) is available in this [dedicated repository](https://github.com/datalayer-examples/jupyter-nextjs-example) as in this [repository folder](https://github.com/datalayer/jupyter-ui/tree/main/examples/next-js).
 
 There are a couple of configuration and requirement to run Jupyter React in Next.js.
 
-## Yarn V3
-
-You have to build with Yarn V3 (Npm or Pnpm do not work for now).
-
-## Render in client-mode
-
-You need to render in client-mode the Jupyter part.
-
-To achieve this, you can e.g. load your page with external components dynamically loaded.
+You need to render in client-mode the Jupyter part. To achieve this, you can e.g. load your page with external components dynamically loaded.
 
 ```js
 import dynamic from 'next/dynamic'
@@ -49,8 +41,6 @@ import { Jupyter, Notebook, CellSidebar } from '@datalayer/jupyter-react';
 // ...
 ```
 
-## Add Require.js
-
 For IPyWidgets support, you need `requirejs` on the page, so add a `script` tag to your layout to load the script from a CDN `https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js`.
 
 ```js
@@ -80,13 +70,9 @@ export default function RootLayout({
 }
 ```
 
-## CSS
-
 We have seen that Jupyter React components places in the main tag of the default Next.js application are not shown (they have a width of 0).
 
 For now, please place you components outside of the main Next.js CSS.
-
-## Enjoy!
 
 <ModalImage
   small="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-nextjs.png"

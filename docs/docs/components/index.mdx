@@ -1,6 +1,7 @@
+import DocCardList from '@theme/DocCardList';
 import ModalImage from "react-modal-image";
 
-# Usage
+# Components
 
 As a React.js developer, you just write a few lines of code get a live notebook or live cell in your application.
 
@@ -17,3 +18,18 @@ Jupyter UI can be used in any React.js application. Install the latest `@datalay
   large="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-notebook.png"
   alt="Jupyter UI Notebook"
 />
+
+The Jupyter UI components support:
+
+- Predefined Zustand actions.
+- Everything is created in a single React tree to ensure Jupyter UI components can use any context created by the host application.
+- IPyWidgets and Panel interactive widgets are supported.
+- Collaborative RTC is also supported.
+- Plays nice with Primer React, Material-UI, Storybook, Docusaurus, Styled Components, Emotion.js... and many other standard libraries.
+- A React.js context for Authentication, Authorization and Theming.
+- Benefits from current and new JupyterLab development, eg edit mode navigation, colored-collapser, collaborative cursor.
+- Authentication via Jupyter tokens.
+- Theming.
+- Terminals.
+
+<DocCardList/>
