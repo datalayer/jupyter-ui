@@ -93,7 +93,7 @@ const Tabs = () => {
               id={NOTEBOOK_UID}
               nbformat={notebookContent}
               CellSidebar={CellSidebar}
-              />
+            />
             <Button
               onClick={(e: React.MouseEvent) => {
                 e.preventDefault();

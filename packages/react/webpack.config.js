@@ -41,6 +41,7 @@ const ENTRY =
   // './src/examples/KernelExecute';
   // './src/examples/KernelExecutor';
   // './src/examples/Kernels';
+   './src/examples/Localhost';
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
   // './src/examples/Notebook';
@@ -50,7 +51,7 @@ const ENTRY =
   // './src/examples/NotebookExtension';
   // './src/examples/NotebookKernelChange';
   // './src/examples/NotebookLess';
-  './src/examples/NotebookLite';
+  // './src/examples/NotebookLite';
   // './src/examples/NotebookLiteContext';
   // './src/examples/NotebookMutationsKernel';
   // './src/examples/NotebookMutationsServiceManager';
@@ -78,8 +79,14 @@ const ENTRY =
   // './src/examples/Viewer';
 
 const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == 'true';
-// const JUPYTER_HOST = IS_JUPYTER_SERVER_LOCAL ? "http://localhost:8686" : "https://oss.datalayer.run';
-const INDEX_PAGE = IS_JUPYTER_SERVER_LOCAL ? 'index-local.html' : 'index.html';
+const IS_NO_CONFIG = process.env.NO_CONFIG == 'true';
+const INDEX_PAGE = IS_JUPYTER_SERVER_LOCAL ?
+    'index-local.html'
+  : 
+    IS_NO_CONFIG ?
+       'index-noconfig.html'
+    :
+      'index.html';
 const IS_PRODUCTION = process.argv.indexOf('--mode=production') > -1;
 const mode = IS_PRODUCTION ? 'production' : 'development';
 const devtool = IS_PRODUCTION ? false : 'inline-source-map';

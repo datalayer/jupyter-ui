@@ -48,6 +48,7 @@
     "prettier:check": "yarn prettier:base --check",
     "start": "run-p -c 'start:*'",
     "start:webpack": "webpack serve",
+    "start-noconfig": "cross-env NO_CONFIG=true webpack serve",
     "start-local": "run-p -c 'start-local:*'",
     "start-local:webpack": "cross-env LOCAL_JUPYTER_SERVER=true webpack serve",
     "start-local:jupyter-server": "cd ./../.. && make start-jupyter-server",
