@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 /**
  * Creating a sidebar enables you to:
  - create an ordered group of docs
