@@ -8,20 +8,13 @@ Jupyter(Lab) Notebook is a tool that allows Data Scientists to analyse datasets.
 
 We ensure React.js as a first-class citizen in the Jupyter:
 
-- [Components](/docs/category/components): JupyterLab visual as React.js components
-- [Integrations](/docs/category/integrations): Embed Jupyter in Docusaurus.
-- [Themes](/docs/category/themes): Themes for your data analysis.
+- [Components](/docs/components): JupyterLab visual as React.js components
+- [Integrations](/docs/integrations): Integrate Jupyter in Docusaurus, Next.js...
+- [Themes](/docs/themes): Themes for your data analysis.
 
-You can get kick-started with simple [examples](/docs/category/examples)
+## Why?
 
-## Problems with JupyterLab for Web Developers
-
-Jupyter(Lab) user interfaces are built on top of [Lumino](https://github.com/jupyterlab/lumino) widget toolkit, which is an [imperative way](https://en.wikipedia.org/wiki/Imperative_programming) to build user interface and **can not** be consumed by industry standard declarative frameworks like React.js. As a user interface developer, if you want to create a custom [Data Products and Data Platforms](https://datalayer.tech/docs/glossary) on top of Jupyter, you have to stick to Lumino and carry-on the full notebook interface not tailored to your specific needs. This is not what you want. You just want to expose what you need, you want to develop with your favorite [declarative](https://en.wikipedia.org/wiki/Declarative_programming) toolkit (like React.js) and you also want to integrate on a per-component basis the Jupyter functionality in your application.
-
-1. Lumino allows to wrap React components and expose them as Lumino Widgets.
-2. React.js **can not** use Lumino Widgets.
-
-:::caution
+:::info
 
 Although a developer can embed a React.js component into JupyterLab, the reverse is not possible.
 
@@ -29,22 +22,27 @@ Although a developer can embed a React.js component into JupyterLab, the reverse
 
 :::
 
+JupyterLab is not usagble by Web Developers. Jupyter(Lab) user interfaces are built on top of [Lumino](https://github.com/jupyterlab/lumino) widget toolkit, which is an [imperative way](https://en.wikipedia.org/wiki/Imperative_programming) to build user interface and **can not** be consumed by industry standard declarative frameworks like React.js. As a user interface developer, if you want to create a custom [Data Products and Data Platforms](https://datalayer.tech/docs/glossary) on top of Jupyter, you have to stick to Lumino and carry-on the full notebook interface not tailored to your specific needs. This is not what you want. You just want to expose what you need, you want to develop with your favorite [declarative](https://en.wikipedia.org/wiki/Declarative_programming) toolkit (like React.js) and you also want to integrate on a per-component basis the Jupyter functionality in your application.
+
+1. Lumino allows to wrap React components and expose them as Lumino Widgets.
+2. React.js **can not** use Lumino Widgets.
+
 ## Jupyter UI at the Rescue
 
-Jupyter UI provides the foundations to build a modern and flexible [Data Products and Data Platforms](https://datalayer.tech/docs/glossary) user interface. Underneath, it gathers the minimum set of [Lumino](https://github.com/jupyterlab/lumino) and [JupyterLab](https://github.com/jupyterlab/jupyterlab) technologies. We wrap Lumino Widget in a React.js component and expose Redux Observables actions that proxy Lumino Commands. We bind Redux Observables Epics to Lumino Signals. Those bindings convert Lumino Signals to Observable to run the needed actions in the [Observable Epics](https://redux-observable.js.org/docs/basics/Epics.html).
+Jupyter UI provides the foundations to build a modern and flexible [Data Products and Data Platforms](https://datalayer.tech/docs/glossary) user interface. Underneath, it gathers the minimum set of [Lumino](https://github.com/jupyterlab/lumino) and [JupyterLab](https://github.com/jupyterlab/jupyterlab) technologies. We wrap Lumino Widget in a React.js component and expose Zustands actions that proxy Lumino Commands. We bind Zustands Epics to Lumino Signals. Those bindings convert Lumino Signals to Observable to run the needed actions in the [Observable Epics](https://redux-observable.js.org/docs/basics/Epics.html).
 
 - Services to connect to kernels.
 - Extension injection system.
-- Lumino signals and messages integrated with Redux.
+- Lumino signals and messages integrated with Zustand.
 - Lumino commands.
 
-To solve the above issues, Jupyter UI ships components to easily create a React.js [Data Products and Data Platforms](https://datalayer.tech/docs/glossary) compatible with the Jupyter ecosystem. Those components can be used in any React.js application, and also in static websites like Docusaurus, Next.js or Remix. They wrap underneath the JupyterLab code and allow developing React.js applications with code execution capability. State management is based on Redux, and Mobx is to be added.
+To solve the above issues, Jupyter UI ships components to easily create a React.js [Data Products and Data Platforms](https://datalayer.tech/docs/glossary) compatible with the Jupyter ecosystem. Those components can be used in any React.js application, and also in static websites like Docusaurus, Next.js or Remix. They wrap underneath the JupyterLab code and allow developing React.js applications with code execution capability. State management is based on Zustand, and Mobx is to be added.
 
-The Jupyter UI components expose JupyterLab visuals as React.js components and offers a bi-directional communication between React.js/Redux and JupyterLab/Lumino.
+The Jupyter UI components expose JupyterLab visuals as React.js components and offers a bi-directional communication between React.js/Zustand and JupyterLab/Lumino.
 
 ```
-Host application -> Redux Observable Actions -> Jupyter UI -> JupyterLab Commands
-Host application <- Redux State  <- Redux Observable Epics <- Jupyter UI <- JupyterLab Signals
+Host application -> Zustand Actions -> Jupyter UI -> JupyterLab Commands
+Host application <- Redux State <- Jupyter UI <- JupyterLab Signals
 ```
 
 <ModalImage
@@ -59,7 +57,7 @@ You can find more context reading this [abstract](https://fosdem.org/2022/schedu
 
 ## Examples
 
-The below image shows a gallery of the available React.js components ready to be used in you custom application. These open source components are used to build the [online Datalayer platform](https://datalayer.io), a collaborative platform for data analysis.
+The below image shows a gallery of the available React.js components ready to be used in you custom application. These open source components are used to build the [Datalayer SaaS, a collaborative platform for data analysis](https://datalayer.io).
 
 <ModalImage
   small="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-gallery.gif"

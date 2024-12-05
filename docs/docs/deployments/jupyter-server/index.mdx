@@ -1,8 +1,18 @@
 # Jupyter Server
 
-To connect to a Jupyter Server, you have to define the URL for HTTP and WebSocket, as well as a Token.
+To connect to a Jupyter Server, you have to define the URL for the Jupyter Server as well as a the Jupyter Token.
 
-Those properties can be provided in the [Jupyter Context](/docs/components/context)
+Assuming you have Jupyter Server correctly installed on your machine, you can run your local server with the following command.
+
+```bash
+# This will start a Jupyter Server and a Webpack Server.
+# open http://localhost:8686/api/jupyter-server?token=60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6
+# open http://localhost:3208
+cd packages/react
+yarn start-local
+```
+
+The Jupyter Server and the Jupyter Token can be provided in the [Jupyter Context](/docs/components/context)
 
 ```ts
 <Jupyter
@@ -13,7 +23,7 @@ Those properties can be provided in the [Jupyter Context](/docs/components/conte
 </Jupyter>
 ```
 
-Alternatively, you can set thoses values in the host HTML (index.html) a `script` tag in the head section.
+Alternatively, you can to define a `script` tag in the head section your host index HTML page information for your React applicatio with those 2 configurations (see for example the content of this [index-local.html](https://github.com/datalayer/jupyter-ui/blob/main/packages/react/public/index-local.html)).
 
 ```html
 <!DOCTYPE html>
@@ -29,6 +39,8 @@ Alternatively, you can set thoses values in the host HTML (index.html) a `script
 </html>
 ```
 
+:::note
+
 If you are also using a `jupyter-config-data`, ensure you set the correct values over there.
 
 ```html
@@ -41,17 +53,23 @@ If you are also using a `jupyter-config-data`, ensure you set the correct values
   </script>
 ```
 
+:::
+
+:::info
+
 The values defined in the Jupyter context are taking precedence on the values set in the host HTML.
+
+:::
 
 If you are delivering the React.js web application from a different URL than your Jupyter Server, the Jupyter Server should be configured to accept Cross-origin request with for example in the `jupyter_server_config.py` the following traits.
 
-:::caution
+:::info
 
 Please tune the following example to fit your security requirements, this is in no way production-ready configuration.
 
 <details>
 
-  <summary>Use the following at your own risk!.</summary>
+  <summary>⚠️ Use the following at your own risk!.</summary>
 
 ```py
 #################
@@ -89,3 +107,27 @@ c.IdentityProvider.cookie_options = {
 ```
 
 </details>
+
+:::
+
+:::info
+
+If you are using the [JupyterLabApp](/docs/components/jupyterlab-app) component, additional information will be needed (see [index-local.html](https://github.com/datalayer/jupyter-ui/blob/main/packages/react/public/index-local.html))
+
+```html
+  <script id="jupyter-config-data" type="application/json">
+    {
+      "baseUrl": "https://oss.datalayer.run/api/jupyter-server",
+      "wsUrl": "wss://oss.datalayer.run/api/jupyter-server",
+      "token": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6",
+      "appUrl": "/lab",
+      "themesUrl": "/lab/api/themes",
+      "disableRTC": false,
+      "terminalsAvailable": "false",
+      "mathjaxUrl": "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js",
+      "mathjaxConfig": "TeX-AMS_CHTML-full,Safe"
+    }
+  </script>
+```
+
+:::
