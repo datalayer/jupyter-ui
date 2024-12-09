@@ -7,6 +7,7 @@
 import { useState, useEffect } from 'react';
 import { CodeCell, MarkdownCell } from '@jupyterlab/cells';
 import { Box } from '@primer/react';
+import Kernel from '../../jupyter/kernel/Kernel';
 import Lumino from '../lumino/Lumino';
 import { useJupyter } from './../../jupyter/JupyterContext';
 import CellAdapter from './CellAdapter';
@@ -34,6 +35,10 @@ export type ICellProps = {
    * Whether to show the toolbar for cell or not
    */
   showToolbar?: boolean;
+  /**
+   * Custom kernel for the cell. Falls back to the defaultKernel if not provided.
+   */
+   kernel?: Kernel;
 };
 
 export const Cell = (props: ICellProps) => {
@@ -42,6 +47,7 @@ export const Cell = (props: ICellProps) => {
     showToolbar=true,
     source = '',
     type='code',
+    kernel: customKernel,
   } = props;
   const { defaultKernel, serverSettings } = useJupyter();
 
@@ -81,14 +87,16 @@ export const Cell = (props: ICellProps) => {
   }
 
   useEffect(() => {
-    if (id && defaultKernel && serverSettings) {
-      defaultKernel.ready.then(() => {
+    const kernelToUse = customKernel || defaultKernel;
+    if (id && serverSettings && kernelToUse) {
+
+      kernelToUse.ready.then(() => {
         const adapter = new CellAdapter({
           id,
           type,
           source,
           serverSettings,
-          kernel: defaultKernel,
+          kernel: kernelToUse,
           boxOptions: {showToolbar}
         });
         cellsStore.setAdapter(id, adapter);
@@ -117,7 +125,7 @@ export const Cell = (props: ICellProps) => {
         };
       });
     }
-  }, [source, defaultKernel, serverSettings]);
+  }, [source, defaultKernel, customKernel, serverSettings]);
   return adapter ? (
     <Box
       sx={{
