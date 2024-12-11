@@ -1,6 +1,6 @@
 # Jupyter Server
 
-To connect to a Jupyter Server, you have to define the URL for the Jupyter Server as well as a the Jupyter Token.
+To connect to a Jupyter Server, you have to define the URL for the `Jupyter Server` as well as a the `Jupyter Token`.
 
 Assuming you have Jupyter Server correctly installed on your machine, you can run your local server with the following command.
 
@@ -15,12 +15,19 @@ yarn start-local
 The Jupyter Server and the Jupyter Token can be provided in the [Jupyter Context](/docs/components/context)
 
 ```ts
-<Jupyter
-  "jupyterServerUrl": "http://localhost:8686/api/jupyter-server"
-  "jupyterServerToken": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
->
-  <Notebook/>
-</Jupyter>
+const NotebookLocalJupyter = () => (
+  <Jupyter
+    jupyterServerUrl="http://localhost:8686/api/jupyter-server"
+    jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+    startDefaultKernel
+  >
+    <Notebook
+      path="ipywidgets.ipynb"
+      id="notebook-jupyter-id"
+      height="calc(100vh - 250px)" // (Height - Toolbar Height).
+    />
+  </Jupyter>
+)
 ```
 
 Alternatively, you can to define a `script` tag in the head section your host index HTML page information for your React applicatio with those 2 configurations (see for example the content of this [index-local.html](https://github.com/datalayer/jupyter-ui/blob/main/packages/react/public/index-local.html)).
@@ -39,11 +46,32 @@ Alternatively, you can to define a `script` tag in the head section your host in
 </html>
 ```
 
+Optionally, you can use the JupyterReactTheme component
+
+```ts
+const NotebookLocalJupyter = () => {
+  useJupyter({
+    jupyterServerUrl: "http://localhost:8686/api/jupyter-server",
+    jupyterServerToken: "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6",
+  })
+  return (
+    <JupyterReactTheme>
+      <Notebook
+        startDefaultKernel
+        path="ipywidgets.ipynb"
+        id="notebook-jupyter-react-themeid"
+      />
+    </JupyterReactTheme>
+  );
+}
+```
+
 :::note
 
 If you are also using a `jupyter-config-data`, ensure you set the correct values over there.
 
 ```html
+<head>
   <script id="jupyter-config-data" type="application/json">
     {
       "baseUrl": "http://localhost:8686/api/jupyter-server",
@@ -51,6 +79,7 @@ If you are also using a `jupyter-config-data`, ensure you set the correct values
       "token": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
     }
   </script>
+</head>
 ```
 
 :::
@@ -63,7 +92,7 @@ The values defined in the Jupyter context are taking precedence on the values se
 
 If you are delivering the React.js web application from a different URL than your Jupyter Server, the Jupyter Server should be configured to accept Cross-origin request with for example in the `jupyter_server_config.py` the following traits.
 
-:::info
+:::warning
 
 Please tune the following example to fit your security requirements, this is in no way production-ready configuration.
 
