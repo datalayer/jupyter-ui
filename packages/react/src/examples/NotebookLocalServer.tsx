@@ -55,10 +55,8 @@ const root = createRoot(div);
 
 root.render(
   <>
-  {/*
     <Text as="h1">Local Jupyter Server (with a Jupyter Context)</Text>
     <NotebookJupyter/>
-    */}
     <Text as="h1">Local Jupyter Server (with a Jupyter React Theme)</Text>
     <NotebookJupyterReactTheme/>
   </>
