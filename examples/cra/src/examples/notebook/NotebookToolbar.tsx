@@ -46,7 +46,7 @@ const NotebookToolbar = (props: {notebookId: string}) => {
               onClick={e => {
                 e.preventDefault();
                 notebookStore.insertBelow({
-                  uid: notebookId,
+                  id: notebookId,
                   cellType: 'raw',
                 });
               }}
@@ -60,7 +60,7 @@ const NotebookToolbar = (props: {notebookId: string}) => {
               onClick={e => {
                 e.preventDefault();
                 notebookStore.insertBelow({
-                  uid: notebookId,
+                  id: notebookId,
                   cellType: 'markdown',
                 });
               }}
@@ -74,7 +74,7 @@ const NotebookToolbar = (props: {notebookId: string}) => {
               onClick={e => {
                 e.preventDefault();
                 notebookStore.insertBelow({
-                  uid: notebookId,
+                  id: notebookId,
                   cellType: 'code',
                 });
               }}
@@ -116,7 +116,7 @@ const NotebookToolbar = (props: {notebookId: string}) => {
               leadingVisual={FileIcon}
               onClick={() =>
                 notebookStore.save({
-                  uid: notebookId,
+                  id: notebookId,
                   date: new Date(),
                 })
               }

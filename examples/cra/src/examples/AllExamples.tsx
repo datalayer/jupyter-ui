@@ -56,7 +56,9 @@ ax2.set_xlabel('time (s)')
 ax2.set_ylabel('Undamped')
 plt.show()`;
 
-const NOTEBOOK_UID = 'notebook-uid-1';
+const CELL_ID = 'cell-id-1';
+
+const NOTEBOOK_ID = 'notebook-id-1';
 
 /**
  * A simple example for the Jupyter UI.
@@ -99,8 +101,8 @@ const AllExample = () => {
           "print('=> Hello Datalayer again... I am the output of an non-shown editor 👍 <=')"
         }
       />
-      <CellToolbar />
-      <Cell source={source} />
+      <CellToolbar cellId={CELL_ID} />
+      <Cell id={CELL_ID} source={source} />
       <CommandsToolbar />
       <Commands />
       <ConsoleToolbar />
@@ -110,12 +112,10 @@ const AllExample = () => {
       <Dialog />
       */}
       <FileBrowserToolbar />
-      <FileBrowser />
+      {serviceManager && <FileBrowser serviceManager={serviceManager}/> }
       <FileManagerJupyterLab />
-      <NotebookToolbar notebookId={NOTEBOOK_UID} />
-      <Notebook
-         uid={NOTEBOOK_UID} path="ping.ipynb"
-      />
+      <NotebookToolbar notebookId={NOTEBOOK_ID} />
+      <Notebook id={NOTEBOOK_ID} path="ping.ipynb"/>
       <SettingsToolbar />
       <Settings />
       <LuminoComponent />

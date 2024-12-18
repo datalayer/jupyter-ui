@@ -9,9 +9,10 @@ import { Box, IconButton, Text, Tooltip } from '@primer/react';
 import { PlayIcon, ReplyIcon, ThreeBarsIcon } from '@primer/octicons-react';
 import { useCellsStore } from '@datalayer/jupyter-react';
 
-const CellToolbar: React.FC = () => {
+const CellToolbar = (props: {cellId: string}) => {
+  const { cellId } = props;
   const cellStore = useCellsStore();
-  const outputsCount = cellStore.outputsCount;
+  const outputsCount = cellStore.getOutputsCount(cellId);
   return (
     <>
       <Text as="h3">Cell Example</Text>
@@ -44,7 +45,7 @@ const CellToolbar: React.FC = () => {
             variant="invisible"
             icon={ReplyIcon}
             aria-label="Rest the outputcount"
-            onClick={() => cellStore.setOutputsCount(0)}
+            onClick={() => cellStore.setOutputsCount(cellId, 0)}
           />
         </Tooltip>
       </Box>

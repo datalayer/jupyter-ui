@@ -43,7 +43,7 @@ const NotebookToolbarSimple = (props: {notebookId: string}) => {
             variant="invisible"
             icon={FileIcon}
             aria-label="Save"
-            onClick={() => notebookStore.save({uid: notebookId, date: new Date()}) }
+            onClick={() => notebookStore.save({id: notebookId, date: new Date()}) }
           />
         </Tooltip>
       </Box>
