@@ -7,7 +7,7 @@
 'use client'
 
 import { Jupyter, Notebook, CellSidebar } from '@datalayer/jupyter-react';
-import { NotebookToolbar } from '@datalayer/jupyter-react/lib/examples/toolbars/NotebookToolbar';
+import { NotebookToolbar } from '@datalayer/jupyter-react';
 import { Theme } from '@primer/react/lib/ThemeProvider';
 
 type NotebookComponentProps = {
@@ -23,13 +23,15 @@ export const NotebookComponent = (props: NotebookComponentProps) => {
       <Jupyter
         jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
         jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
-        colorMode={colorMode}
+        colormode={colorMode}
         theme={theme}
+        startDefaultKernel
       >
         <Notebook
           path="ipywidgets.ipynb"
-          uid="notebook-nextjs-1"
+          id="notebook-nextjs-1"
           cellSidebarMargin={120}
+          height="500px"
           CellSidebar={CellSidebar}
           Toolbar={NotebookToolbar}
         />

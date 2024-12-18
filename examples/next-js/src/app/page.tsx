@@ -9,10 +9,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { theme as primerTheme, Text, ToggleSwitch, Box } from '@primer/react';
 import { Theme } from '@primer/react/lib/ThemeProvider';
-import { ColorMode } from '@datalayer/jupyter-react/lib/jupyter/lab/JupyterLabColorMode';
-import { jupyterTheme } from '@datalayer/jupyter-react/lib/jupyter/theme';
 import dynamic from 'next/dynamic';
 import { useTheme, ThemeProvider } from "next-themes";
+import { Colormode, jupyterTheme } from '@datalayer/jupyter-react';
 
 const NotebookComponentNoSSR = dynamic(
   () => import('../components/NotebookComponent'),
@@ -25,16 +24,12 @@ const CellComponentNoSSR = dynamic(
 );
 
 const JupyterDemo = () => {
-
   // next theme can be 'light', 'dark' or 'system'.
   const { theme: nextColorMode, setTheme: setNextColorMode } = useTheme();
-
-  const [colorMode, setColorMode] = useState<ColorMode>('light');
+  const [colorMode, setColorMode] = useState<Colormode>('light');
   const [isOn, setIsOn] = useState(false);
-
   const [theme, setTheme] = useState<Theme>(jupyterTheme);
   const [isThemeOn, setIsThemeOn] = useState(false);
-
   useEffect(() => {
     if (isOn) {
       setColorMode('dark');
@@ -50,7 +45,6 @@ const JupyterDemo = () => {
   const handleSwitchChange = useCallback((on: boolean) => {
     setIsOn(on);
   }, []);
-
   useEffect(() => {
     if (isThemeOn) {
       setTheme(primerTheme);
@@ -64,7 +58,6 @@ const JupyterDemo = () => {
   const handleThemeSwitchChange = useCallback((on: boolean) => {
     setIsThemeOn(on);
   }, []);
-
   return (
     <>
       <Box display="flex">
@@ -89,11 +82,11 @@ const JupyterDemo = () => {
         </Box>
         <Box>
           <Text
-          fontSize={2}
-          fontWeight="bold"
-          id="switch-label"
-          display="block"
-          mb={1}
+            fontSize={2}
+            fontWeight="bold"
+            id="switch-label"
+            display="block"
+            mb={1}
           >
             Primer Theme
           </Text>
@@ -107,14 +100,13 @@ const JupyterDemo = () => {
           />
         </Box>
       </Box>
-      <NotebookComponentNoSSR colorMode={colorMode} theme={theme}/>
       <CellComponentNoSSR colorMode={colorMode} theme={theme}/>
+      <NotebookComponentNoSSR colorMode={colorMode} theme={theme}/>
     </>
   )
 }
 
 export default function Home() {
-
   // See https://github.com/pacocoursey/next-themes?tab=readme-ov-file#avoid-hydration-mismatch
   const [mounted, setMounted] = useState(false)
   // useEffect only runs on the client, so now we can safely show the UI
@@ -124,11 +116,9 @@ export default function Home() {
   if (!mounted) {
     return null;
   }
-
   return (
     <ThemeProvider>
       <JupyterDemo/>
     </ThemeProvider>
   )
-
 }
