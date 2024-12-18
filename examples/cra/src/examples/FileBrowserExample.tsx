@@ -4,22 +4,28 @@
  * MIT License
  */
 
-import {render} from 'react-dom';
-import {Jupyter, FileBrowser, FileManagerJupyterLab} from '@datalayer/jupyter-react';
+import { createRoot } from 'react-dom/client';
+import { FileBrowser, useJupyter, JupyterReactTheme } from '@datalayer/jupyter-react';
 import Layers from './../layout/Layers';
 
 import './../App.css';
 
+const FileBrowserExample = () => {
+  const { serviceManager } = useJupyter();
+  return (
+    serviceManager
+      ? <FileBrowser serviceManager={serviceManager}/>
+      : <></>
+  )
+}
+
 const div = document.createElement('div');
 document.body.appendChild(div);
+const root = createRoot(div);
 
-render(
-  <Jupyter collaborative={false} terminals={false}>
-    <Layers />
-    <Jupyter collaborative={false} terminals={true}>
-      <FileBrowser />
-      <FileManagerJupyterLab />
-    </Jupyter>
-  </Jupyter>,
-  div
+root.render(
+  <JupyterReactTheme>
+    <Layers/>
+    <FileBrowserExample />
+  </JupyterReactTheme>
 );

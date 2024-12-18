@@ -19,7 +19,7 @@ export default function NotebookSidebarComponent() {
           <NotebookToolbar notebookId={NOTEBOOK_UID} />
           <Notebook
             path="ping.ipynb"
-            uid={NOTEBOOK_UID}
+            id={NOTEBOOK_UID}
             CellSidebar={CellSidebar}
           />
         </Box>

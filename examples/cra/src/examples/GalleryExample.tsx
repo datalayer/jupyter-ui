@@ -76,7 +76,9 @@ const OUTPUTS: IOutput[] = [
   },
 ];
 
-const NOTEBOOK_UID = 'notebook-id-gallery';
+const CELL_ID = 'cell-id-gallery';
+
+const NOTEBOOK_ID = 'notebook-id-gallery';
 
 const GalleryExample = () => {
   const [tab, setTab] = useState('Notebook');
@@ -221,9 +223,9 @@ const GalleryExample = () => {
       <Box>
         {tab === 'Notebook' && (
           <>
-            <NotebookToolbarSimple notebookId={NOTEBOOK_UID} />
+            <NotebookToolbarSimple notebookId={NOTEBOOK_ID} />
             <Notebook
-              uid={NOTEBOOK_UID}
+              id={NOTEBOOK_ID}
               path="ping.ipynb"
               CellSidebar={CellSidebar}
             />
@@ -231,8 +233,8 @@ const GalleryExample = () => {
         )}
         {tab === 'Cell' && (
           <>
-            <CellToolbar />
-            <Cell source={SOURCE} />
+            <CellToolbar cellId={CELL_ID} />
+            <Cell id={CELL_ID} source={SOURCE} />
           </>
         )}
         {tab === 'LabApp' && (
@@ -288,7 +290,7 @@ const GalleryExample = () => {
             <FileBrowserToolbar />
             <Box display="flex">
               <Box sx={{width: 400}}>
-                <FileBrowser />
+                {serviceManager && <FileBrowser serviceManager={serviceManager}/> }
               </Box>
               <Box ml={3} sx={{width: 400}}>
                 <FileManagerJupyterLab />

@@ -8,20 +8,20 @@ import { useState } from 'react';
 import { PanelLayout } from '@lumino/widgets';
 import { ActionMenu, Button, Box } from "@primer/react";
 import { ChevronRightIcon, XIcon, ChevronUpIcon, ChevronDownIcon, SquareIcon } from "@primer/octicons-react";
-import { useNotebookStore, CellSidebarProps, CellMetadataEditor, DATALAYER_CELL_HEADER_CLASS } from '@datalayer/jupyter-react';
+import { useNotebookStore, ICellSidebarProps, CellMetadataEditor, DATALAYER_CELL_SIDEBAR_CLASS_NAME } from '@datalayer/jupyter-react';
 
-export const CellSidebar = (props: CellSidebarProps) => {
+export const CellSidebar = (props: ICellSidebarProps) => {
   const [visible, setVisible] = useState(false);
-  const { notebookId, cellId, nbgrader } = props;
+  const { notebookId, cellNodeId, nbgrader } = props;
   const notebookStore = useNotebookStore();
   const activeCell = notebookStore.selectActiveCell(notebookId);
   const layout = (activeCell?.layout);
   if (layout) {
     const cellWidget = (layout as PanelLayout).widgets[0];
-    if (!visible && (cellWidget?.node.id === cellId)) {
+    if (!visible && (cellWidget?.node.id === cellNodeId)) {
       setVisible(true);
     }
-    if (visible && (cellWidget?.node.id !== cellId)) {
+    if (visible && (cellWidget?.node.id !== cellNodeId)) {
       setVisible(false);
     }
   }
@@ -31,7 +31,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
   return (
     activeCell ? 
       <Box
-        className={DATALAYER_CELL_HEADER_CLASS}
+        className={DATALAYER_CELL_SIDEBAR_CLASS_NAME}
         sx={{
           '& p': {
             marginBottom: '0 !important',
@@ -49,7 +49,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
         <span style={{ display: "flex" }}>
           <Button leadingVisual={ChevronUpIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
-            notebookStore.insertAbove({ uid: notebookId, cellType: "code" });
+            notebookStore.insertAbove({ id: notebookId, cellType: "code" });
           }}>
             Code
           </Button>
@@ -57,7 +57,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
         <span style={{ display: "flex" }}>
           <Button leadingVisual={ChevronUpIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
-            notebookStore.insertAbove({ uid: notebookId, cellType: "markdown" });
+            notebookStore.insertAbove({ id: notebookId, cellType: "markdown" });
           }}>
             Markdown
           </Button>
@@ -66,14 +66,14 @@ export const CellSidebar = (props: CellSidebarProps) => {
         { activeCell.model.type === "code" ?
             <Button leadingVisual={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
               e.preventDefault();
-              notebookStore.changeCellType({ uid: notebookId, cellType: "markdown" });
+              notebookStore.changeCellType({ id: notebookId, cellType: "markdown" });
             }}>
               To Mardown
             </Button>
           :
             <Button leadingVisual={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
               e.preventDefault();
-              notebookStore.changeCellType({ uid: notebookId, cellType: "code" });
+              notebookStore.changeCellType({ id: notebookId, cellType: "code" });
             }}>
               To Code
             </Button>
@@ -82,7 +82,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
         <span style={{ display: "flex" }}>
           <Button leadingVisual={ChevronDownIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
-            notebookStore.insertBelow({ uid: notebookId, cellType: "markdown" });
+            notebookStore.insertBelow({ id: notebookId, cellType: "markdown" });
           }}>
             Markdown
           </Button>
@@ -90,7 +90,7 @@ export const CellSidebar = (props: CellSidebarProps) => {
         <span style={{ display: "flex" }}>
           <Button leadingVisual={ChevronDownIcon} variant="invisible" size="small" onClick={(e: any) => {
             e.preventDefault();
-            notebookStore.insertBelow({ uid: notebookId, cellType: "code" });
+            notebookStore.insertBelow({ id: notebookId, cellType: "code" });
           }}>
             Code
           </Button>

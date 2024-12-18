@@ -7,6 +7,8 @@
 import { useCellsStore, Cell } from "@datalayer/jupyter-react";
 import CellToolbar from './CellToolbar';
 
+const CELL_ID = "cell-id-1"
+
 const SOURCE_EXAMPLE = `"""
 import ipywidgets as widgets
 widgets.IntSlider(
@@ -39,9 +41,9 @@ const CellPreview = () => {
   const cellStore = useCellsStore();
   return (
     <>
-      <div>source: {cellStore.source}</div>
+      <div>source: {cellStore.getSource(CELL_ID)}</div>
       <br/>
-      <div>kernel available: {String(cellStore.kernelAvailable)}</div>
+      <div>kernel available: {String(cellStore.isKernelSessionAvailable)}</div>
       <br/>
     </>
   )
@@ -50,8 +52,8 @@ const CellPreview = () => {
 const CellComponents = () => (
   <>
     <CellPreview/>
-    <CellToolbar />
-    <Cell source={SOURCE_EXAMPLE} />
+    <CellToolbar cellId={CELL_ID} />
+    <Cell id={CELL_ID} source={SOURCE_EXAMPLE} />
   </>
 )
 
