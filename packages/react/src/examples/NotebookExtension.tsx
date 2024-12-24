@@ -21,7 +21,7 @@ const NotebookExtension = () => {
     <JupyterReactTheme>
       <Notebook
         nbformat={nbformat as INotebookContent}
-        extensions={[extension]}
+        plugins={[extension]}
         id="notebook-extension-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         cellSidebarMargin={160}
