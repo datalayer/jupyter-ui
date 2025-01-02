@@ -33,7 +33,7 @@ build-prod: ## build-prod
 	git clean -fdx
 	python -m build
 
-publish: clean build ## publish
+publish-npm: clean build ## publish
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		npm publish )
 	echo open https://www.npmjs.com/package/@datalayer/jupyter-lexical
