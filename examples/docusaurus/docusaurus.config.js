@@ -68,7 +68,7 @@ module.exports = {
               href: 'https://discordapp.com/invite/docusaurus',
             },
             {
-              label: 'X',
+              label: 'Bluesky',
               href: 'https://x.com/docusaurus',
             },
           ],
