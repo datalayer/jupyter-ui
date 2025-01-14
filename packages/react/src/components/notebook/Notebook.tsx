@@ -139,7 +139,6 @@ export const Notebook = (props: INotebookProps) => {
       extension.createNew(adapter.notebookPanel!, adapter.context!);
       setExtensionComponents(extensionComponents.concat(extension.component ?? <></>));
     });
-    console.log('---------', collaborative)
     if (collaborative) {
       // Setup Collaboration.
       const ydoc = (adapter.notebookPanel?.model?.sharedModel as any).ydoc;

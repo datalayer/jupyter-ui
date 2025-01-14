@@ -8,7 +8,7 @@ import { createRoot } from 'react-dom/client';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
+import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
 
 const NotebookCollaborative = () => {
   return (
@@ -19,8 +19,8 @@ const NotebookCollaborative = () => {
         id="notebook-collaboration-id"
         startDefaultKernel={true}
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        cellSidebarMargin={120}
-        CellSidebar={CellSidebar}
+        cellSidebarMargin={60}
+        CellSidebar={CellSidebarButton}
         Toolbar={NotebookToolbar}
       />
     </JupyterReactTheme>

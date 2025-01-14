@@ -43,11 +43,11 @@ const ENTRY =
   // './src/examples/Kernels';
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
-  // './src/examples/Notebook';
+  './src/examples/Notebook';
   // './src/examples/NotebookCellSidebar';
   // './src/examples/NotebookCellToolbar';
   // './src/examples/NotebookColorMode';
-  './src/examples/NotebookCollaborative';
+  // './src/examples/NotebookCollaborative';
   // './src/examples/NotebookExtension';
   // './src/examples/NotebookKernelChange';
   // './src/examples/NotebookLess';
