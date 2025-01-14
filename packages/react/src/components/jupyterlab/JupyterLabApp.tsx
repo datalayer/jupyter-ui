@@ -59,7 +59,7 @@ const JupyterLabAppComponent = (props: JupyterLabAppProps) => {
     theme,
     width,
   } = props;
-  const { serviceManager, collaborative } = useJupyter({
+  const { serviceManager } = useJupyter({
     serverless,
     serviceManager: propsServiceManager,
     startDefaultKernel,
@@ -67,13 +67,13 @@ const JupyterLabAppComponent = (props: JupyterLabAppProps) => {
   const defaultMimeExtensionPromises = useMemo(
     () =>
       props.mimeRendererPromises ??
-      JupyterLabAppCorePlugins(collaborative).mimeExtensionPromises,
+      JupyterLabAppCorePlugins().mimeExtensionPromises,
     []
   );
   const defaultExtensionPromises = useMemo(
     () =>
       props.pluginPromises ??
-      JupyterLabAppCorePlugins(collaborative).extensionPromises,
+      JupyterLabAppCorePlugins().extensionPromises,
     []
   );
   const ref = useRef<HTMLDivElement>(null);
@@ -84,7 +84,6 @@ const JupyterLabAppComponent = (props: JupyterLabAppProps) => {
         ...props,
         mimeRendererPromises: defaultMimeExtensionPromises,
         pluginPromises: defaultExtensionPromises,
-        collaborative,
         serviceManager,
       });
       adapter.ready.then(() => {

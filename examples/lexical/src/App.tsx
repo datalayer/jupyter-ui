@@ -90,10 +90,10 @@ const Tabs = () => {
         <StyledNotebook>
           <Box mb={3}>
             <Notebook
-              uid={NOTEBOOK_UID}
+              id={NOTEBOOK_UID}
               nbformat={notebookContent}
               CellSidebar={CellSidebar}
-              />
+            />
             <Button
               onClick={(e: React.MouseEvent) => {
                 e.preventDefault();
@@ -119,7 +119,7 @@ export default function App() {
       <div className="App">
         <h1>Jupyter UI ❤️ Lexical</h1>
       </div>
-      <Jupyter>
+      <Jupyter startDefaultKernel>
         <LexicalProvider>
           <Tabs/>
         </LexicalProvider>

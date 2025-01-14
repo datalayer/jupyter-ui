@@ -9,9 +9,9 @@ import { Cell } from '@datalayer/jupyter-react';
 export const JupyterCellComponent = (props: any) => {
   return (
     <Cell
-//      startDefaultKernel={true}
+//      startDefaultKernel
       source="print('Hello Jupyter React')"
-      autoStart={true}
+      autoStart
     />
   )
 }

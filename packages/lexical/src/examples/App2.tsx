@@ -119,7 +119,7 @@ export default function App() {
       <div className="App">
         <h1>Jupyter UI ❤️ Lexical</h1>
       </div>
-      <Jupyter startDefaultKernel={true}>
+      <Jupyter startDefaultKernel>
         <LexicalProvider>
           <Tabs/>
         </LexicalProvider>

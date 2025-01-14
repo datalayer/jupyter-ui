@@ -41,7 +41,7 @@ export const App1 = () => {
       <div className="App">
         <h1>Jupyter UI ❤️ Lexical</h1>
       </div>
-      <Jupyter startDefaultKernel={true}>
+      <Jupyter startDefaultKernel>
         <LexicalProvider>
           <LexicalEditor/>
         </LexicalProvider>

@@ -11,6 +11,7 @@ export * from './JupyterContext';
 export * from './JupyterDefaults';
 export * from './JupyterHandlers';
 export * from './Jupyter';
+export * from './collaboration';
 export * from './ipywidgets';
 export * from './kernel';
 export * from './lab';

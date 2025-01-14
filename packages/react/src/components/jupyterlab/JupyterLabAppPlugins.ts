@@ -35,7 +35,7 @@ export const JupyterLabAppMinimumPlugins = {
   ] as Array<Promise<IRenderMime.IExtensionModule>>,
 };
 
-export const JupyterLabAppCorePlugins = (collaborative?: boolean) => {
+export const JupyterLabAppCorePlugins = () => {
   return {
     extensionPromises: [
       import('@jupyterlab/application-extension'),

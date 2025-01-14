@@ -86,10 +86,6 @@ export type JupyterPropsType = {
  */
 export type JupyterContextType =  {
   /**
-   * Whether the component is collaborative or not.
-   */
-  collaborative?: boolean;
-  /**
    * Default kernel
    */
   defaultKernel?: Kernel;
@@ -196,7 +192,6 @@ export const useJupyter = (props?: JupyterPropsType): JupyterContextType => {
     serviceManager,
   } = useJupyterReactStoreFromProps(props ?? {});
   const storeContext: JupyterContextType = {
-    collaborative: props?.collaborative,
     defaultKernel: kernel,
     defaultKernelIsLoading: kernelIsLoading,
     jupyterServerUrl: jupyterConfig!.jupyterServerUrl,
@@ -248,12 +243,8 @@ export const createServerSettings = (jupyterServerUrl: string, jupyterServerToke
  * The Jupyter context provider.
  */
 export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => {
+  const { children, skeleton } = props;
   const {
-    children,
-    skeleton,
-  } = props;
-  const {
-    collaborative,
     jupyterServerUrl,
     kernel,
     kernelIsLoading,
@@ -264,7 +255,6 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
   return (
     <JupyterProvider
       value={{
-        collaborative,
         defaultKernel: kernel,
         defaultKernelIsLoading: kernelIsLoading,
         // FIXME we should not expose sub attributes to promote single source of truth (like URLs coming from serverSettings).

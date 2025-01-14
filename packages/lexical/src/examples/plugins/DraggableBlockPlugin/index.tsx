@@ -421,7 +421,7 @@ function useDraggableBlockMenu(
       <div
         className="icon draggable-block-menu"
         ref={menuRef}
-        draggable={true}
+        draggable
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}>
         <div className={isEditable ? 'icon' : ''} />

@@ -55,6 +55,7 @@ try {
 }
 
 export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
+  collaborative: false,
   datalayerConfig: initialDatalayerConfig,
   version: '',
   jupyterConfig: undefined,
@@ -94,7 +95,6 @@ export function useJupyterReactStore<T>(selector?: (state: JupyterReactState) =>
 export function useJupyterReactStoreFromProps(props: JupyterPropsType): JupyterReactState;
 export function useJupyterReactStoreFromProps(props: JupyterPropsType): JupyterReactState {
   const {
-    collaborative = false,
     defaultKernelName = DEFAULT_KERNEL_NAME,
     initCode = '',
     jupyterServerToken = props.serviceManager?.serverSettings.token ?? '',
@@ -113,7 +113,6 @@ export function useJupyterReactStoreFromProps(props: JupyterPropsType): JupyterR
       lite,
       jupyterServerUrl,
       jupyterServerToken,
-      collaborative,
       terminals,
     });
     jupyterReactStore.getState().setJupyterConfig(config);

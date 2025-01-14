@@ -102,8 +102,7 @@ function loadDatalayerConfig(name?: string): any {
 }
 
 /**
- * Method to load the Jupyter configuration
- * from the host HTML page.
+ * Method to load the Jupyter configuration from the host HTML page.
  */
 export const loadJupyterConfig = (
   props: Pick<
