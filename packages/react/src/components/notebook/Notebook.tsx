@@ -15,9 +15,8 @@ import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { ServiceManager, Kernel as JupyterKernel } from '@jupyterlab/services';
-import { requestDocSession } from '@jupyter/docprovider';
 import { WebsocketProvider as YWebsocketProvider } from 'y-websocket';
-import { useJupyter, Lite, Kernel } from './../../jupyter';
+import { useJupyter, Lite, Kernel, requestDocSession, COLLABORATION_ROOM_URL_PATH } from './../../jupyter';
 import { asObservable, Lumino } from '../lumino';
 import { newUuid } from '../../utils';
 import { OnSessionConnection, KernelTransfer } from '../../state';
@@ -28,8 +27,6 @@ import { useNotebookStore } from './NotebookState';
 import { NotebookAdapter } from './NotebookAdapter';
 
 import './Notebook.css';
-
-const COLLABORATION_ROM_URL_PATH = 'api/collaboration/room';
 
 export type ExternalIPyWidgets = {
   name: string;
@@ -144,7 +141,7 @@ export const Notebook = (props: INotebookProps) => {
       const ydoc = (adapter.notebookPanel?.model?.sharedModel as any).ydoc;
       const session = await requestDocSession("json", "notebook", path!);
       const yWebsocketProvider = new YWebsocketProvider(
-        URLExt.join(serviceManager?.serverSettings.wsUrl!, COLLABORATION_ROM_URL_PATH),
+        URLExt.join(serviceManager?.serverSettings.wsUrl!, COLLABORATION_ROOM_URL_PATH),
         `${session.format}:${session.type}:${session.fileId}`,
         ydoc,
         {

@@ -72,8 +72,8 @@
     "@jupyter-widgets/html-manager": "^1.0.0",
     "@jupyter-widgets/jupyterlab-manager": "^5.0.0",
     "@jupyter-widgets/output": "^6.0.0",
-    "@jupyter/docprovider": "3.1.0",
     "@jupyter/web-components": "^0.15.3",
+    "@jupyter/ydoc": "1.1.1",
     "@jupyterlab/application": "^4.0.0",
     "@jupyterlab/application-extension": "^4.0.0",
     "@jupyterlab/apputils": "^4.0.0",
@@ -150,6 +150,7 @@
     "usehooks-ts": "^2.9.1",
     "utf-8-validate": "^6.0.3",
     "wildcard-match": "^5.1.2",
+    "y-websocket": "^2.1.0",
     "zustand": "^4.4.1"
   },
   "devDependencies": {
