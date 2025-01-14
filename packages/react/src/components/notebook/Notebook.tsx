@@ -7,24 +7,29 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Box } from '@primer/react';
+import { CommandRegistry } from '@lumino/commands';
+import { URLExt } from '@jupyterlab/coreutils';
 import { Cell, ICellModel } from '@jupyterlab/cells';
 import { NotebookPanel, INotebookModel } from '@jupyterlab/notebook';
-import { CommandRegistry } from '@lumino/commands';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { ServiceManager, Kernel as JupyterKernel } from '@jupyterlab/services';
+import { requestDocSession } from '@jupyter/docprovider';
+import { WebsocketProvider as YWebsocketProvider } from 'y-websocket';
 import { useJupyter, Lite, Kernel } from './../../jupyter';
 import { asObservable, Lumino } from '../lumino';
+import { newUuid } from '../../utils';
+import { OnSessionConnection, KernelTransfer } from '../../state';
 import { CellMetadataEditor } from './cell/metadata';
 import { ICellSidebarProps } from './cell/sidebar';
 import { INotebookToolbarProps } from './toolbar/NotebookToolbar';
-import { newUuid } from '../../utils';
-import { OnSessionConnection, KernelTransfer } from '../../state';
 import { useNotebookStore } from './NotebookState';
 import { NotebookAdapter } from './NotebookAdapter';
 
 import './Notebook.css';
+
+const COLLABORATION_ROM_URL_PATH = 'api/collaboration/room';
 
 export type ExternalIPyWidgets = {
   name: string;
@@ -50,6 +55,7 @@ export type INotebookProps = {
   Toolbar?: (props: INotebookToolbarProps) => JSX.Element;
   cellMetadataPanel: boolean;
   cellSidebarMargin: number;
+  collaborative?: boolean;
   extensions: DatalayerNotebookExtension[]
   height?: string;
   id: string;
@@ -97,6 +103,7 @@ export const Notebook = (props: INotebookProps) => {
   });
   const {
     Toolbar,
+    collaborative,
     extensions,
     height,
     maxHeight,
@@ -114,7 +121,7 @@ export const Notebook = (props: INotebookProps) => {
   const notebookStore = useNotebookStore();
   const portals = notebookStore.selectNotebookPortals(id);
   // Bootstrap the Notebook Adapter.
-  const bootstrapAdapter = (serviceManager?: ServiceManager.IManager, kernel?: Kernel) => {
+  const bootstrapAdapter = async (collaborative: boolean, serviceManager?: ServiceManager.IManager, kernel?: Kernel) => {
     const adapter = new NotebookAdapter({
       ...props,
       id,
@@ -132,18 +139,36 @@ export const Notebook = (props: INotebookProps) => {
       extension.createNew(adapter.notebookPanel!, adapter.context!);
       setExtensionComponents(extensionComponents.concat(extension.component ?? <></>));
     });
-    // Update the global state.
-    notebookStore.update({ id, state: { adapter } });
-    // Update the global state based on events.
-    adapter.notebookPanel?.model?.contentChanged.connect((notebookModel, _) => {
-      notebookStore.changeModel({ id, notebookModel })
+    console.log('---------', collaborative)
+    if (collaborative) {
+      // Setup Collaboration.
+      const ydoc = (adapter.notebookPanel?.model?.sharedModel as any).ydoc;
+      const session = await requestDocSession("json", "notebook", path!);
+      const yWebsocketProvider = new YWebsocketProvider(
+        URLExt.join(serviceManager?.serverSettings.wsUrl!, COLLABORATION_ROM_URL_PATH),
+        `${session.format}:${session.type}:${session.fileId}`,
+        ydoc,
+        {
+          disableBc: true,
+          params: { sessionId: session.sessionId },
+  //       awareness: this._awareness
+        }
+      );
+      console.log('Collaboration is setup with websocket provider.', yWebsocketProvider);
+      // Update the notebook state with the adapter.
+      notebookStore.update({ id, state: { adapter } });
+      // Update the notebook state further to events.
+      adapter.notebookPanel?.model?.contentChanged.connect((notebookModel, _) => {
+        notebookStore.changeModel({ id, notebookModel });
+      });
+    }
+    /*
+    adapter.notebookPanel?.model?.sharedModel.changed.connect((_, notebookChange) => {
+      notebookStore.changeNotebook({ id, notebookChange });
     });
     /*
-    adapter.notebookPanel?.model!.sharedModel.changed.connect((_, notebookChange) => {
-      notebookStore.notebookChange({ id, notebookChange });
-    });
     adapter.notebookPanel?.content.modelChanged.connect((notebook, _) => {
-      dispatÅch(notebookStore.notebookChange({ id, notebook }));
+      notebookStore.changeModel({ id, notebookModel: notebook.model! });
     });
     */
     adapter.notebookPanel?.content.activeCellChanged.connect((_, cellModel) => {
@@ -185,12 +210,12 @@ export const Notebook = (props: INotebookProps) => {
     });
   }
   //
-  const createAdapter = (serviceManager?: ServiceManager.IManager, kernel?: Kernel) => {
+  const createAdapter = (collaborative: boolean, serviceManager?: ServiceManager.IManager, kernel?: Kernel) => {
     if (!kernel) {
-      bootstrapAdapter(serviceManager, kernel);
+      bootstrapAdapter(collaborative, serviceManager, kernel);
     } else {
       kernel.ready.then(() => {
-        bootstrapAdapter(serviceManager, kernel);
+        bootstrapAdapter(collaborative, serviceManager, kernel);
       });
     }
   }
@@ -206,12 +231,12 @@ export const Notebook = (props: INotebookProps) => {
   // Mutation Effects.
   useEffect(() => {
     if (serviceManager && serverless) {
-      createAdapter(serviceManager, kernel);
+      createAdapter(collaborative ?? false, serviceManager, kernel);
     }
     else if (serviceManager && kernel) {
-      createAdapter(serviceManager, kernel);
+      createAdapter(collaborative ?? false, serviceManager, kernel);
     }
-  }, [serviceManager, kernel]);
+  }, [collaborative, serviceManager, kernel]);
   useEffect(() => {
     if (adapter && adapter.kernel !== kernel) {
       adapter.setKernel(kernel);
@@ -235,15 +260,15 @@ export const Notebook = (props: INotebookProps) => {
   useEffect(() => {
     if (adapter && path && adapter.path !== path) {
       disposeAdapter();
-      createAdapter(serviceManager);
+      createAdapter(collaborative ?? false, serviceManager);
     }
   }, [path]);
   useEffect(() => {
     if (adapter && url && adapter.url !== url) {
       disposeAdapter();
-      createAdapter(serviceManager);
+      createAdapter(collaborative ?? false, serviceManager);
     }
-  }, [url]);
+  }, [collaborative, url]);
   // Dispose Effects.
   useEffect(() => {
     return () => {
@@ -339,6 +364,7 @@ export const Notebook = (props: INotebookProps) => {
 Notebook.defaultProps = {
   cellMetadataPanel: false,
   cellSidebarMargin: 120,
+  collaborative: false,
   extensions: [],
   height: '100vh',
   kernelClients: [],

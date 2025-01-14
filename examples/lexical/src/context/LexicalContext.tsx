@@ -7,12 +7,12 @@
 import React, {useState, createContext, useContext} from 'react';
 import { LexicalEditor } from "lexical";
 
-type LexicalCntextType = {
+type LexicalContextType = {
   editor?: LexicalEditor;
   setEditor: (editor?: LexicalEditor) => void;
 };
 
-const context = createContext<LexicalCntextType | undefined>(undefined);
+const context = createContext<LexicalContextType | undefined>(undefined);
 
 export function useLexical() {
   const lexicalContext = useContext(context);
