@@ -138,8 +138,6 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
     return get().notebooks.get(id)?.activeCell;
   },
   selectNotebookPortals: (id: string): React.ReactPortal[] | undefined => {
-    console.log('---', get().notebooks);
-    console.log('---', get().notebooks.get(id));
     return get().notebooks.get(id)?.portals;
   },
   selectSaveRequest: (id: string): Date | undefined => {
@@ -235,7 +233,6 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
   },
   addPortals: (portalsMutation: ReactPortalsMutation) => {
     const notebooks = get().notebooks;
-    console.log('-------------', portalsMutation)
     const notebook = notebooks.get(portalsMutation.id);
     if (notebook) {
       notebook.portals = notebook.portals.concat(portalsMutation.portals);
