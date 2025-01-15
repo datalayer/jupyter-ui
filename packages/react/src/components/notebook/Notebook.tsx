@@ -151,13 +151,13 @@ export const Notebook = (props: INotebookProps) => {
         }
       );
       console.log('Collaboration is setup with websocket provider.', yWebsocketProvider);
-      // Update the notebook state with the adapter.
-      notebookStore.update({ id, state: { adapter } });
-      // Update the notebook state further to events.
-      adapter.notebookPanel?.model?.contentChanged.connect((notebookModel, _) => {
-        notebookStore.changeModel({ id, notebookModel });
-      });
     }
+    // Update the notebook state with the adapter.
+    notebookStore.update({ id, state: { adapter } });
+    // Update the notebook state further to events.
+    adapter.notebookPanel?.model?.contentChanged.connect((notebookModel, _) => {
+      notebookStore.changeModel({ id, notebookModel });
+    });
     /*
     adapter.notebookPanel?.model?.sharedModel.changed.connect((_, notebookChange) => {
       notebookStore.changeNotebook({ id, notebookChange });
