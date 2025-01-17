@@ -96,7 +96,7 @@ function loadDatalayerConfig(name?: string): any {
     else {
       console.log('No Datalayer config data found in page');
     }
-}
+  }
   // @ts-expect-error IJupyterConfig does not have index signature
   return name ? config[name] : config;
 }

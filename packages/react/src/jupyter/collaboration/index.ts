@@ -5,4 +5,5 @@
  */
 
 export * from './DatalayerCollaboration';
+export * from './ICollaborative';
 export * from './JupyterCollaboration';

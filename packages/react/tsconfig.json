@@ -6,6 +6,7 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": "/",
     "rootDir": "./src",
+    "allowJs": false,
     "allowSyntheticDefaultImports": true,
     "composite": true,
     "declaration": true,
