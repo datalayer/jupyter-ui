@@ -147,7 +147,8 @@ export const Notebook = (props: INotebookProps) => {
         {
           disableBc: true,
           params: {
-            sessionId: session.sessionId
+            sessionId: session.sessionId,
+            token: token!,
           },
 //         awareness: this._awareness
         }
@@ -158,13 +159,13 @@ export const Notebook = (props: INotebookProps) => {
       const ydoc = (adapter.notebookPanel?.model?.sharedModel as any).ydoc;
       const token = jupyterReactStore.getState().datalayerConfig?.token;
       const runURL = jupyterReactStore.getState().datalayerConfig?.runUrl;
-      const roomName = `room-${id}`;
+      const roomName = id;
       const roomURL = URLExt.join(runURL!.replace('http', 'ws'), `/api/spacer/v1/rooms`);
       const yWebsocketProvider = new YWebsocketProvider(roomURL, roomName, ydoc,
         {
           disableBc: true,
           params:  {
-            token: token!
+            token: token!,
           }
 //         awareness: this._awareness
         }
