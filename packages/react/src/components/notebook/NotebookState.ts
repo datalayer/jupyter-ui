@@ -231,11 +231,11 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
       set((state: NotebookState) => ({ notebooks }));
     }
   },
-  addPortals: (portalsId: ReactPortalsMutation) => {
+  addPortals: (portalsMutation: ReactPortalsMutation) => {
     const notebooks = get().notebooks;
-    const notebook = notebooks.get(portalsId.id);
+    const notebook = notebooks.get(portalsMutation.id);
     if (notebook) {
-      notebook.portals = notebook.portals.concat(portalsId.portals);
+      notebook.portals = notebook.portals.concat(portalsMutation.portals);
       set((state: NotebookState) => ({ notebooks }));
     }
   },
@@ -248,19 +248,19 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
     }
     set((state: NotebookState) => ({ notebooks }));
   },
-  setPortals: (portalsId: ReactPortalsMutation) => {
+  setPortals: (portalsMutation: ReactPortalsMutation) => {
     const notebooks = get().notebooks;
-    const notebook = notebooks.get(portalsId.id);
+    const notebook = notebooks.get(portalsMutation.id);
     if (notebook) {
-      notebook.portals = portalsId.portals;
+      notebook.portals = portalsMutation.portals;
       set((state: NotebookState) => ({ notebooks }));
     }
   },
-  setPortalDisplay: (portalDisplayId: PortalDisplayMutation) => {
+  setPortalDisplay: (portalDisplayMutation: PortalDisplayMutation) => {
     const notebooks = get().notebooks;
-    const notebook = notebooks.get(portalDisplayId.id);
+    const notebook = notebooks.get(portalDisplayMutation.id);
     if (notebook) {
-      notebook.portalDisplay = portalDisplayId.portalDisplay;
+      notebook.portalDisplay = portalDisplayMutation.portalDisplay;
       set((state: NotebookState) => ({ notebooks }));
     }
   },

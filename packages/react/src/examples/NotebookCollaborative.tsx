@@ -14,7 +14,7 @@ const NotebookCollaborative = () => {
   return (
     <JupyterReactTheme>
       <Notebook
-        collaborative
+        collaborative="datalayer"
         path="collaboration.ipynb"
         id="notebook-collaboration-id"
         startDefaultKernel={true}
