@@ -4,38 +4,44 @@
  * MIT License
  */
 
-import { useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
-import { Box } from '@primer/react';
-import { CommandRegistry } from '@lumino/commands';
-import { URLExt } from '@jupyterlab/coreutils';
+import { YNotebook } from '@jupyter/ydoc';
 import { Cell, ICellModel } from '@jupyterlab/cells';
-import { NotebookPanel, INotebookModel } from '@jupyterlab/notebook';
+import { URLExt } from '@jupyterlab/coreutils';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
-import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { ServiceManager, Kernel as JupyterKernel } from '@jupyterlab/services';
+import {
+  INotebookModel,
+  NotebookModel,
+  NotebookPanel,
+} from '@jupyterlab/notebook';
+import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
+import { Kernel as JupyterKernel, ServiceManager } from '@jupyterlab/services';
+import { CommandRegistry } from '@lumino/commands';
+import { PromiseDelegate } from '@lumino/coreutils';
+import { Box } from '@primer/react';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { WebsocketProvider as YWebsocketProvider } from 'y-websocket';
 import {
-  useJupyter,
-  Lite,
-  Kernel,
-  requestDocSession,
-  ICollaborative,
-  COLLABORATION_ROOM_URL_PATH,
-} from './../../jupyter';
-import { asObservable, Lumino } from '../lumino';
-import { newUuid } from '../../utils';
-import {
-  OnSessionConnection,
-  KernelTransfer,
   jupyterReactStore,
+  KernelTransfer,
+  OnSessionConnection,
 } from '../../state';
+import { newUuid } from '../../utils';
+import { asObservable, Lumino } from '../lumino';
+import {
+  COLLABORATION_ROOM_URL_PATH,
+  ICollaborative,
+  Kernel,
+  Lite,
+  requestDocSession,
+  useJupyter,
+} from './../../jupyter';
 import { CellMetadataEditor } from './cell/metadata';
 import { ICellSidebarProps } from './cell/sidebar';
-import { INotebookToolbarProps } from './toolbar/NotebookToolbar';
-import { useNotebookStore } from './NotebookState';
 import { NotebookAdapter } from './NotebookAdapter';
+import { useNotebookStore } from './NotebookState';
+import { INotebookToolbarProps } from './toolbar/NotebookToolbar';
 
 import './Notebook.css';
 
@@ -161,18 +167,11 @@ export const Notebook = (props: INotebookProps) => {
     // Update the notebook state with the adapter.
     notebookStore.update({ id, state: { adapter } });
     // Update the notebook state further to events.
-    adapter.notebookPanel?.model?.contentChanged.connect((notebookModel, _) => {
-      notebookStore.changeModel({ id, notebookModel });
-    });
-    /*
-    adapter.notebookPanel?.model?.sharedModel.changed.connect((_, notebookChange) => {
-      notebookStore.changeNotebook({ id, notebookChange });
-    });
-    /*
     adapter.notebookPanel?.content.modelChanged.connect((notebook, _) => {
-      notebookStore.changeModel({ id, notebookModel: notebook.model! });
+      if (notebook.model) {
+        notebookStore.changeModel({ id, notebookModel: notebook.model });
+      }
     });
-    */
     adapter.notebookPanel?.content.activeCellChanged.connect((_, cellModel) => {
       if (cellModel === null) {
         notebookStore.activeCellChange({ id, cellModel: undefined });
@@ -253,10 +252,36 @@ export const Notebook = (props: INotebookProps) => {
   }, [collaborative, serviceManager, kernel]);
 
   useEffect(() => {
+    // As the server has the content source of thruth, we
+    // must ensure that the shared model is pristine before
+    // to connect to the server. More over we should ensure,
+    // the connection is disposed in case the server room is
+    // reset for any reason while the client is still alive.
     let provider: YWebsocketProvider | null = null;
+    let ready = new PromiseDelegate();
+
+    const onConnectionClose = (event: any) => {
+      if (event.code > 1000) {
+        console.error(
+          'Connection with the room has been closed unexpectedly.',
+          event
+        );
+
+        // FIXME inform the user.
+      }
+    };
+
+    const onSync = (isSynced: boolean) => {
+      if (isSynced) {
+        provider?.off('sync', onSync);
+        ready.resolve(void 0);
+      }
+    };
+
     (async () => {
-      if (adapter?.notebookPanel?.model?.sharedModel) {
-        const ydoc = (adapter.notebookPanel.model.sharedModel as any).ydoc;
+      if (adapter?.notebookPanel) {
+        const sharedModel = new YNotebook();
+        const { ydoc, awareness } = sharedModel;
         // Setup Collaboration.
         if (collaborative == 'jupyter') {
           const token =
@@ -273,15 +298,9 @@ export const Notebook = (props: INotebookProps) => {
               sessionId: session.sessionId,
               token: token!,
             },
-            //         awareness: this._awareness
+            awareness,
           });
         } else if (collaborative == 'datalayer') {
-          // adapter.notebookPanel?.model?.sharedModel!.fromJSON({
-          //   metadata: {},
-          //   cells: [],
-          //   nbformat: 4,
-          //   nbformat_minor: 5,
-          // });
           const { runUrl: runURL, token } =
             jupyterReactStore.getState().datalayerConfig ?? {};
           const roomName = id;
@@ -294,14 +313,28 @@ export const Notebook = (props: INotebookProps) => {
             params: {
               token: token!,
             },
-            // awareness: this._awareness
+            awareness,
           });
         }
         if (provider) {
+          provider.on('sync', onSync);
+          provider.on('connection-close', onConnectionClose);
           console.log(
             'Collaboration is setup with websocket provider.',
             provider
           );
+          if (!provider.synced) {
+            await ready.promise;
+          }
+          // Create a new model using the one synchronize with the collaboration room
+          const model = new NotebookModel({
+            collaborationEnabled: true,
+            disableDocumentWideUndoRedo: true,
+            sharedModel,
+          });
+          const oldModel = adapter.notebookPanel.content.model;
+          adapter.notebookPanel.content.model = model;
+          oldModel?.dispose();
         }
       }
     })().catch(error => {
@@ -309,10 +342,12 @@ export const Notebook = (props: INotebookProps) => {
     });
 
     return () => {
+      provider?.off('sync', onSync);
+      provider?.off('connection-close', onConnectionClose);
       provider?.disconnect();
       provider?.destroy();
     };
-  }, [adapter?.notebookPanel?.model?.sharedModel, collaborative]);
+  }, [adapter?.notebookPanel, collaborative]);
 
   useEffect(() => {
     if (adapter && adapter.kernel !== kernel) {
