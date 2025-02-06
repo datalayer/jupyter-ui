@@ -1,10 +1,4 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
- *
- * MIT License
- */
-
-/*
  * Copyright (c) 2021-2024 Datalayer, Inc.
  *
  * MIT License
@@ -12,7 +6,7 @@
 
 import { Box, Spinner } from "@primer/react";
 
-export const SpinnerCentered = () => {
+export function SpinnerCentered(): JSX.Element {
   return (
     <Box
       sx={{

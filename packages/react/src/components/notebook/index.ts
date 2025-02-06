@@ -4,6 +4,7 @@
  * MIT License
  */
 
+export * from './BaseNotebook';
 export * from './Notebook';
 export * from './NotebookAdapter';
 export * from './NotebookCommands';

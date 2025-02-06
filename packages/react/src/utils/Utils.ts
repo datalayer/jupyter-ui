@@ -5,16 +5,16 @@
  */
 
 import { ICell, IOutput } from '@jupyterlab/nbformat';
-import { ulid } from 'ulid';
 import { UUID } from '@lumino/coreutils';
+import { ulid } from 'ulid';
 
 export const newUlid = () => {
-  return ulid()
-}
+  return ulid();
+};
 
 export const newUuid = () => {
   return UUID.uuid4();
-}
+};
 
 export const cellSourceAsString = (cell: ICell) => {
   let source = cell.source;
@@ -22,7 +22,7 @@ export const cellSourceAsString = (cell: ICell) => {
     source = (source as []).join('\n');
   }
   return source;
-}
+};
 
 export const outputsAsString = (outputs: IOutput[]) => {
   let result = '';
@@ -86,4 +86,13 @@ export const getCookie = (name: string): string | null => {
         return decodeURIComponent(cookie.substring(nameLenPlus));
       })[0] || null
   );
+};
+
+/**
+ * Promise resolving after a delay.
+ *
+ * @param ms Delay in milliseconds
+ */
+export async function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }

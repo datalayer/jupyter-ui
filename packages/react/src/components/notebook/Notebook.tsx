@@ -27,10 +27,11 @@ import {
   KernelTransfer,
   OnSessionConnection,
 } from '../../state';
-import { newUuid } from '../../utils';
+import { newUuid, sleep } from '../../utils';
 import { asObservable, Lumino } from '../lumino';
 import {
   COLLABORATION_ROOM_URL_PATH,
+  fetchSessionId,
   ICollaborative,
   Kernel,
   Lite,
@@ -44,6 +45,7 @@ import { useNotebookStore } from './NotebookState';
 import { INotebookToolbarProps } from './toolbar/NotebookToolbar';
 
 import './Notebook.css';
+import { Loader } from '../utils';
 
 export type ExternalIPyWidgets = {
   name: string;
@@ -139,6 +141,10 @@ export const Notebook = (props: INotebookProps) => {
   const kernel = props.kernel ?? defaultKernel;
   const notebookStore = useNotebookStore();
   const portals = notebookStore.selectNotebookPortals(id);
+
+  const [isLoading, setIsLoading] = useState(false);
+  console.log(isLoading);
+
   // Bootstrap the Notebook Adapter.
   const bootstrapAdapter = async (
     collaborative: ICollaborative,
@@ -259,6 +265,8 @@ export const Notebook = (props: INotebookProps) => {
     // reset for any reason while the client is still alive.
     let provider: YWebsocketProvider | null = null;
     let ready = new PromiseDelegate();
+    let isMounted = true;
+    let sharedModel: YNotebook | null =  null
 
     const onConnectionClose = (event: any) => {
       if (event.code > 1000) {
@@ -266,6 +274,30 @@ export const Notebook = (props: INotebookProps) => {
           'Connection with the room has been closed unexpectedly.',
           event
         );
+
+        provider?.disconnect();
+
+        // If sessionId has expired - reset the client model
+        if (event.code === 4002) {
+          provider?.destroy();
+          ready.reject('Connection closed.');
+          ready = new PromiseDelegate()
+          if (isMounted) {
+            setIsLoading(true);
+            Promise.all([connect(), ready.promise, sleep(500)])
+              .catch(error => {
+                console.error(
+                  'Failed to setup collaboration connection.',
+                  error
+                );
+              })
+              .finally(() => {
+                if (isMounted) {
+                  setIsLoading(false);
+                }
+              });
+          }
+        }
 
         // FIXME inform the user.
       }
@@ -278,9 +310,9 @@ export const Notebook = (props: INotebookProps) => {
       }
     };
 
-    (async () => {
-      if (adapter?.notebookPanel) {
-        const sharedModel = new YNotebook();
+    const connect = async () => {
+      if (adapter?.notebookPanel && isMounted) {
+        sharedModel = new YNotebook();
         const { ydoc, awareness } = sharedModel;
         // Setup Collaboration.
         if (collaborative == 'jupyter') {
@@ -301,31 +333,34 @@ export const Notebook = (props: INotebookProps) => {
             awareness,
           });
         } else if (collaborative == 'datalayer') {
-          const { runUrl: runURL, token } =
+          const { runUrl, token } =
             jupyterReactStore.getState().datalayerConfig ?? {};
           const roomName = id;
-          const roomURL = URLExt.join(
-            runURL!.replace(/^http/, 'ws'),
-            `/api/spacer/v1/rooms`
-          );
-          provider = new YWebsocketProvider(roomURL, roomName, ydoc, {
-            disableBc: true,
-            params: {
-              token: token!,
-            },
-            awareness,
+          const roomURL = URLExt.join(runUrl!, `/api/spacer/v1/rooms`);
+
+          const sessionId = await fetchSessionId({
+            url: URLExt.join(roomURL, roomName),
+            token,
           });
+
+          provider = new YWebsocketProvider(
+            roomURL.replace(/^http/, 'ws'),
+            roomName,
+            ydoc,
+            {
+              disableBc: true,
+              params: {
+                sessionId,
+                token: token!,
+              },
+              awareness,
+            }
+          );
         }
         if (provider) {
           provider.on('sync', onSync);
           provider.on('connection-close', onConnectionClose);
-          console.log(
-            'Collaboration is setup with websocket provider.',
-            provider
-          );
-          if (!provider.synced) {
-            await ready.promise;
-          }
+          console.log('Collaboration is setup with websocket provider.');
           // Create a new model using the one synchronize with the collaboration room
           const model = new NotebookModel({
             collaborationEnabled: true,
@@ -334,18 +369,36 @@ export const Notebook = (props: INotebookProps) => {
           });
           const oldModel = adapter.notebookPanel.content.model;
           adapter.notebookPanel.content.model = model;
+          // We must dispose the old model after setting the new one.
           oldModel?.dispose();
         }
       }
-    })().catch(error => {
-      console.error('Failed to setup collaboration connection.', error);
-    });
+    };
+
+    if (collaborative) {
+      setIsLoading(true);
+      Promise.all([connect(), ready.promise, sleep(500)])
+        .catch(error => {
+          console.error('Failed to setup collaboration connection.', error);
+        })
+        .finally(() => {
+          if (isMounted) {
+            setIsLoading(false);
+          }
+        });
+    }
 
     return () => {
-      provider?.off('sync', onSync);
-      provider?.off('connection-close', onConnectionClose);
-      provider?.disconnect();
-      provider?.destroy();
+      isMounted = false;
+      if (provider) {
+        (provider.synced ? Promise.resolve() : ready.promise).finally(() => {
+          provider?.off('sync', onSync);
+          provider?.off('connection-close', onConnectionClose);
+          provider?.disconnect();
+          provider?.destroy();
+        });
+      }
+      sharedModel?.dispose()
     };
   }, [adapter?.notebookPanel, collaborative]);
 
@@ -463,6 +516,12 @@ export const Notebook = (props: INotebookProps) => {
             );
           })}
         </Box>
+        {/* {isLoading ? (
+          <Loader />
+        ) : (
+          <Box>{adapter && <Lumino id={id}>{adapter.panel}</Lumino>}</Box>
+        )} */}
+        <Loader />
         <Box>{adapter && <Lumino id={id}>{adapter.panel}</Lumino>}</Box>
       </Box>
     </Box>

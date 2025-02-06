@@ -4,4 +4,5 @@
  * MIT License
  */
 
+export * from './Loader';
 export * from './SpinnerCentered';
