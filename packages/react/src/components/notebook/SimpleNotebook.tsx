@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 import { YNotebook } from '@jupyter/ydoc';
 import { URLExt } from '@jupyterlab/coreutils';
 import type { INotebookContent } from '@jupyterlab/nbformat';
