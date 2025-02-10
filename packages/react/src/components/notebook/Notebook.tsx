@@ -72,10 +72,10 @@ export type DatalayerNotebookExtension = DocumentRegistry.IWidgetExtension<
 export type INotebookProps = {
   CellSidebar?: (props: ICellSidebarProps) => JSX.Element;
   Toolbar?: (props: INotebookToolbarProps) => JSX.Element;
-  cellMetadataPanel: boolean;
-  cellSidebarMargin: number;
+  cellMetadataPanel?: boolean;
+  cellSidebarMargin?: number;
   collaborative?: ICollaborative;
-  extensions: DatalayerNotebookExtension[];
+  extensions?: DatalayerNotebookExtension[];
   height?: string;
   id: string;
   kernel?: Kernel;
@@ -84,12 +84,12 @@ export type INotebookProps = {
   lite?: Lite;
   maxHeight?: string;
   nbformat?: INotebookContent;
-  nbgrader: boolean;
+  nbgrader?: boolean;
   onSessionConnection?: OnSessionConnection;
   path?: string;
-  readonly: boolean;
-  renderId: number;
-  renderers: IRenderMime.IRendererFactory[];
+  readonly?: boolean;
+  renderId?: number;
+  renderers?: IRenderMime.IRendererFactory[];
   serverless: boolean;
   serviceManager?: ServiceManager.IManager;
   startDefaultKernel?: boolean;
@@ -160,7 +160,7 @@ export const Notebook = (props: INotebookProps) => {
     });
     // Update the local state.
     setAdapter(adapter);
-    extensions.forEach(extension => {
+    extensions!.forEach(extension => {
       extension.init({
         notebookId: id,
         commands: adapter.commands,
@@ -211,7 +211,7 @@ export const Notebook = (props: INotebookProps) => {
                 <CellMetadataEditor
                   notebookId={id}
                   cell={cellModel}
-                  nbgrader={nbgrader}
+                  nbgrader={nbgrader!}
                 />
               </Box>
             );
@@ -409,7 +409,7 @@ export const Notebook = (props: INotebookProps) => {
   }, [kernel]);
   useEffect(() => {
     if (adapter && adapter.readonly !== readonly) {
-      adapter.setReadonly(readonly);
+      adapter.setReadonly(readonly!);
     }
   }, [readonly]);
   useEffect(() => {
@@ -482,20 +482,20 @@ export const Notebook = (props: INotebookProps) => {
             display: 'none',
           },
           '& .jp-Cell': {
-            width: `calc(100% - ${props.cellSidebarMargin}px)`,
+            width: `calc(100% - ${props.cellSidebarMargin!}px)`,
           },
           '& .jp-Notebook-footer': {
-            width: `calc(100% - ${props.cellSidebarMargin + 82}px)`,
+            width: `calc(100% - ${props.cellSidebarMargin! + 82}px)`,
           },
           '& .jp-Cell .jp-CellHeader': {
             position: 'absolute',
             top: '-5px',
-            left: `${props.cellSidebarMargin + 10}px`,
+            left: `${props.cellSidebarMargin! + 10}px`,
             height: 'auto',
           },
           '& .jp-Cell .dla-CellSidebar-Container': {
             padding: '4px 8px',
-            width: `${props.cellSidebarMargin + 10}px`,
+            width: `${props.cellSidebarMargin! + 10}px`,
             marginLeft: 'auto',
           },
           '& .jp-CodeMirrorEditor': {

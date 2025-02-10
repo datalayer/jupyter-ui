@@ -25,7 +25,9 @@ import { BaseNotebook } from './BaseNotebook';
 import type { INotebookProps } from './Notebook';
 import useNotebookStore from './NotebookState';
 
-
+/**
+ * Simple notebook component without adapter
+ */
 export function SimpleNotebook(props: INotebookProps): JSX.Element {
   const {
     Toolbar,
@@ -35,9 +37,9 @@ export function SimpleNotebook(props: INotebookProps): JSX.Element {
     height = '100vh',
     maxHeight = '100vh',
     nbformat,
-    nbgrader,
+    nbgrader = false,
     path,
-    readonly,
+    readonly = false,
     serverless = false,
     startDefaultKernel = false,
     url,

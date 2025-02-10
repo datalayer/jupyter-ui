@@ -75,10 +75,10 @@ export class NotebookAdapter {
     this._kernelClients = props.kernelClients;
     this._lite = props.lite;
     this._nbformat = props.nbformat;
-    this._nbgrader = props.nbgrader;
+    this._nbgrader = props.nbgrader!;
     this._path = props.path;
-    this._readonly = props.readonly;
-    this._renderers = props.renderers;
+    this._readonly = props.readonly!;
+    this._renderers = props.renderers!;
     this._serverless = props.serverless;
     this._serviceManager = props.serviceManager!;
     this._url = props.url;
