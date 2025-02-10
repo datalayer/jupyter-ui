@@ -39,12 +39,18 @@ import type {
 } from '@jupyterlab/services';
 import { find } from '@lumino/algorithm';
 import { CommandRegistry } from '@lumino/commands';
+import { Signal } from '@lumino/signaling';
 import { Banner } from '@primer/react/experimental';
 import { useEffect, useMemo, useState } from 'react';
 import { newUuid } from '../../utils';
 import { Lumino } from '../lumino';
 import { Loader } from '../utils';
 import { JupyterReactContentFactory } from './content';
+import { Box } from '@primer/react';
+import useNotebookStore from './NotebookState';
+import type { DatalayerNotebookExtension } from './Notebook';
+import { createPortal } from 'react-dom';
+import { CellMetadataEditor } from './cell';
 
 const FALLBACK_NOTEBOOK_PATH = '.datalayer/ping.ipynb';
 
@@ -57,19 +63,30 @@ export interface IBaseNotebookProps {
    */
   id: string;
   /**
+   * Notebook extensions
+   */
+  extensions: DatalayerNotebookExtension[];
+  /**
    * Kernel ID to connect to
    */
   kernelId?: string;
   /**
    * Service manager
    */
-  manager: ServiceManager.IManager;
+  serviceManager: ServiceManager.IManager;
   /**
    * Notebook content model
    */
   model: NotebookModel;
   /**
+   * Whether nbgrader mode is activated or not.
+   */
+  nbgrader: boolean;
+  /**
    * Notebook path
+   *
+   * Set this only if you use Jupyter Server to fetch
+   * and save the content.
    */
   path?: string;
 }
@@ -81,8 +98,14 @@ export interface IBaseNotebookProps {
  * this component.
  */
 export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
-  const { kernelId, manager, model } = props;
+  const { extensions, kernelId, serviceManager, model, nbgrader } = props;
+
   const [isLoading, setIsLoading] = useState(true);
+  const [extensionComponents, setExtensionComponents] = useState(
+    new Array<JSX.Element>()
+  );
+
+  const notebookStore = useNotebookStore();
 
   const id = useMemo(() => props.id || newUuid(), [props.id]);
   const path = useMemo(
@@ -92,22 +115,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
   // Features are not disposable
   const features = useMemo(() => new CommonFeatures(), []);
 
-  // tracker is disposable
-  const [tracker, setTracker] = useState<NotebookTracker | null>(null);
-  useEffect(() => {
-    const thisTracker = new NotebookTracker({ namespace: id });
-    setTracker(thisTracker);
-
-    // FIXME add commands
-
-    return () => {
-      // FIXME remove commands
-
-      thisTracker.dispose();
-      setTracker(tracker => (tracker === thisTracker ? null : tracker));
-    };
-  }, [id]);
-
+  // Content factory
   const contentFactory = useMemo(
     () =>
       // FIXME missing nbgrader and CellSidebar
@@ -117,43 +125,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
     [id, features]
   );
 
-  const [context, setContext] = useState<Context<NotebookModel> | null>(null);
-  useEffect(() => {
-    const factory = new DummyModelFactory(model);
-    const thisContext = new Context<NotebookModel>({
-      factory,
-      manager,
-      path,
-      kernelPreference: {
-        shouldStart: false,
-        canStart: false,
-        autoStartDefault: false,
-        shutdownOnDispose: false,
-      },
-    });
-
-    initializeContext(
-      thisContext,
-      id,
-      // Initialization must not trigger revert in case we set up the model content
-      path !== FALLBACK_NOTEBOOK_PATH ? path : undefined
-    );
-
-    setContext(thisContext);
-
-    return () => {
-      thisContext.dispose();
-      factory.dispose();
-      setContext(context => (context === thisContext ? null : context));
-    };
-  }, [id, manager, model, path]);
-
-  useEffect(() => {
-    if (context && kernelId) {
-      context.sessionContext.changeKernel({ id: kernelId });
-    }
-  }, [context, kernelId]);
-
+  // Widget factory
   const [widgetFactory, setWidgetFactory] =
     useState<NotebookWidgetFactory | null>(null);
   useEffect(() => {
@@ -183,25 +155,134 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
     };
   }, [contentFactory, features]);
 
+  // Tracker
+  const [tracker, setTracker] = useState<NotebookTracker | null>(null);
+  useEffect(() => {
+    const thisTracker = new NotebookTracker({ namespace: id });
+    setTracker(thisTracker);
+
+    // FIXME add commands
+
+    return () => {
+      // FIXME remove commands
+
+      thisTracker.dispose();
+      setTracker(tracker => (tracker === thisTracker ? null : tracker));
+    };
+  }, [id]);
+
+  // Context
+  const [context, setContext] = useState<Context<NotebookModel> | null>(null);
+  useEffect(() => {
+    const factory = new DummyModelFactory(model);
+    const thisContext = new Context<NotebookModel>({
+      factory,
+      manager: serviceManager,
+      path,
+      kernelPreference: {
+        shouldStart: false,
+        canStart: false,
+        autoStartDefault: false,
+        shutdownOnDispose: false,
+      },
+    });
+
+    initializeContext(
+      thisContext,
+      id,
+      // Initialization must not trigger revert in case we set up the model content
+      path !== FALLBACK_NOTEBOOK_PATH ? path : undefined
+    );
+
+    setContext(thisContext);
+
+    return () => {
+      thisContext.dispose();
+      factory.dispose();
+      setContext(context => (context === thisContext ? null : context));
+    };
+  }, [id, serviceManager, model, path]);
+
+  // Set kernel
+  useEffect(() => {
+    if (context && kernelId) {
+      context.sessionContext.changeKernel({ id: kernelId });
+    }
+  }, [context, kernelId]);
+
+  // Notebook
   const [panel, setPanel] = useState<NotebookPanel | null>(null);
   useEffect(() => {
     let thisPanel: NotebookPanel | null = null;
     if (context) {
       thisPanel = widgetFactory?.createNew(context) ?? null;
-      setPanel(thisPanel);
       if (thisPanel) {
+        // Update the notebook state further to events.
+        thisPanel.content.modelChanged.connect((notebook, _) => {
+          if (notebook.model) {
+            notebookStore.changeModel({ id, notebookModel: notebook.model });
+          }
+        });
+        thisPanel.content.activeCellChanged.connect((_, cellModel) => {
+          if (cellModel === null) {
+            notebookStore.activeCellChange({ id, cellModel: undefined });
+          } else {
+            notebookStore.activeCellChange({ id, cellModel });
+            if (!context.model.readOnly) {
+              // FIXME this should be moved to a Notebook extension
+              const panelDiv = document.getElementById(
+                'right-panel-id'
+              ) as HTMLDivElement;
+              if (panelDiv) {
+                const cellMetadataOptions = (
+                  <Box mt={3}>
+                    <CellMetadataEditor
+                      notebookId={id}
+                      cell={cellModel}
+                      nbgrader={nbgrader}
+                    />
+                  </Box>
+                );
+                const portal = createPortal(cellMetadataOptions, panelDiv);
+                notebookStore.setPortalDisplay({
+                  id,
+                  portalDisplay: { portal, pinned: false },
+                });
+              }
+            }
+          }
+        });
+        thisPanel.sessionContext.statusChanged.connect((_, kernelStatus) => {
+          notebookStore.changeKernelStatus({ id, kernelStatus });
+        });
+
+        setExtensionComponents(
+          extensions.map(extension => {
+            extension.init({
+              notebookId: id,
+              commands: features.commandRegistry,
+            });
+            extension.createNew(thisPanel!, context);
+
+            return extension.component ?? <></>;
+          })
+        );
         setIsLoading(false);
       }
-    } else {
-      setPanel(null);
     }
+
+    setPanel(thisPanel);
+    if (!thisPanel) {
+      setExtensionComponents([]);
+    }
+
     return () => {
       try {
         thisPanel?.dispose();
       } catch (reason) {}
       setPanel(panel => (panel === thisPanel ? null : panel));
     };
-  }, [widgetFactory, context, features]);
+  }, [context, extensions, features, nbgrader, notebookStore, widgetFactory]);
 
   useEffect(() => {
     if (panel && tracker) {
@@ -217,16 +298,28 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
   // - add ipywidgets
   // - connect signals - see adapter
 
-  return isLoading ? (
-    <Loader />
-  ) : panel ? (
-    <Lumino id={id}>{panel}</Lumino>
-  ) : (
-    <Banner
-      variant="critical"
-      description="Unable to create the notebook view."
-      hideTitle={true}
-    />
+  return (
+    <>
+      {extensionComponents.map((extensionComponent, index) => {
+        return (
+          <Box key={`${extensionComponent}-${index}`}>{extensionComponent}</Box>
+        );
+      })}
+      {isLoading ? (
+        <Loader key="notebook-loader" />
+      ) : panel ? (
+        <Lumino id={id} key="notebook-container">
+          {panel}
+        </Lumino>
+      ) : (
+        <Banner
+          key="notebook-error"
+          variant="critical"
+          description="Unable to create the notebook view."
+          hideTitle={true}
+        />
+      )}
+    </>
   );
 }
 
@@ -343,6 +436,7 @@ class DummyModelFactory extends NotebookModelFactory {
 function initializeContext(context: Context, id: string, path?: string) {
   const shuntContentManager = path ? false : true;
 
+  // TODO we should implement our own thing rather this ugly Javascript patch.
   // These are fixes on the Context and the SessionContext to have more control on the kernel launch.
   (context.sessionContext as any)._initialize = async (): Promise<boolean> => {
     const manager = context.sessionContext.sessionManager as SessionManager;
@@ -375,6 +469,17 @@ function initializeContext(context: Context, id: string, path?: string) {
       }
     }
     return await (context!.sessionContext as any)._startIfNecessary();
+  };
+
+  // Custom dispose that does not dispose the model
+  (context as any).dispose = (): void => {
+    if (context.isDisposed) {
+      return;
+    }
+    (context as any)._isDisposed = true;
+    context.sessionContext.dispose();
+    (context as any)._disposed.emit(void 0);
+    Signal.clearData(this);
   };
 
   if (shuntContentManager) {
@@ -413,7 +518,7 @@ function initializeContext(context: Context, id: string, path?: string) {
       (context as Context<INotebookModel>).model.dirty = false;
       const now = new Date().toISOString();
       const model: Contents.IModel = {
-        path: path ?? FALLBACK_NOTEBOOK_PATH,
+        path: id,
         name: id,
         type: 'notebook',
         content: undefined,
