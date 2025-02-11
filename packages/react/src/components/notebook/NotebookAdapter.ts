@@ -30,7 +30,7 @@ import { JupyterReactContentFactory } from './content/JupyterReactContentFactory
 import { JupyterReactNotebookModelFactory } from './model/JupyterReactNotebookModelFactory';
 import { getMarked } from './marked/marked';
 import { INotebookProps } from './Notebook';
-import { NotebookCommands } from './NotebookCommands';
+import { addNotebookCommands } from './NotebookCommands';
 
 const FALLBACK_NOTEBOOK_PATH = '.datalayer/ping.ipynb';
 
@@ -348,9 +348,8 @@ export class NotebookAdapter {
 
     if (!this._readonly) {
       try {
-        NotebookCommands(
+        addNotebookCommands(
           this._commandRegistry,
-          this._notebookPanel,
           completerHandler,
           this._tracker!,
           this._path

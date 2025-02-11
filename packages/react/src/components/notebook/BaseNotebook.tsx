@@ -27,6 +27,7 @@ import {
   NotebookWidgetFactory,
   StaticNotebook,
   type INotebookModel,
+  type Notebook,
 } from '@jupyterlab/notebook';
 import {
   RenderMimeRegistry,
@@ -34,14 +35,17 @@ import {
 } from '@jupyterlab/rendermime';
 import type {
   Contents,
+  Kernel,
   ServiceManager,
+  Session,
   SessionManager,
 } from '@jupyterlab/services';
 import { find } from '@lumino/algorithm';
 import { CommandRegistry } from '@lumino/commands';
 import { Signal } from '@lumino/signaling';
+import { Widget } from '@lumino/widgets';
 import { Banner } from '@primer/react/experimental';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { newUuid } from '../../utils';
 import { Lumino } from '../lumino';
 import { Loader } from '../utils';
@@ -51,7 +55,19 @@ import useNotebookStore from './NotebookState';
 import type { DatalayerNotebookExtension } from './Notebook';
 import { createPortal } from 'react-dom';
 import { CellMetadataEditor } from './cell';
+import type { OnSessionConnection } from '../../state';
+import type { IChangedArgs } from '@jupyterlab/coreutils';
+import addNotebookCommands from './NotebookCommands';
+import {
+  Completer,
+  CompleterModel,
+  CompletionHandler,
+  KernelCompleterProvider,
+  ProviderReconciliator,
+} from '@jupyterlab/completer';
+import type { Cell, ICellModel } from '@jupyterlab/cells';
 
+const COMPLETER_TIMEOUT_MILLISECONDS = 1000;
 const FALLBACK_NOTEBOOK_PATH = '.datalayer/ping.ipynb';
 
 /**
@@ -83,6 +99,10 @@ export interface IBaseNotebookProps {
    */
   nbgrader: boolean;
   /**
+   * Callback on session connection changed
+   */
+  onSessionConnection?: OnSessionConnection;
+  /**
    * Notebook path
    *
    * Set this only if you use Jupyter Server to fetch
@@ -98,7 +118,14 @@ export interface IBaseNotebookProps {
  * this component.
  */
 export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
-  const { extensions, kernelId, serviceManager, model, nbgrader } = props;
+  const {
+    extensions,
+    kernelId,
+    serviceManager,
+    model,
+    nbgrader,
+    onSessionConnection,
+  } = props;
 
   const [isLoading, setIsLoading] = useState(true);
   const [extensionComponents, setExtensionComponents] = useState(
@@ -112,7 +139,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
     () => props.path || FALLBACK_NOTEBOOK_PATH,
     [props.path]
   );
-  // Features are not disposable
+  // Features
   const features = useMemo(() => new CommonFeatures(), []);
 
   // Content factory
@@ -124,6 +151,32 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
       }),
     [id, features]
   );
+
+  // Completer
+  const [completer, setCompleter] = useState<CompletionHandler | null>(null);
+  useEffect(() => {
+    const completer = new Completer({ model: new CompleterModel() });
+    // Dummy widget to initialize
+    const widget = new Widget();
+    const reconciliator = new ProviderReconciliator({
+      context: {
+        widget,
+      },
+      providers: [new KernelCompleterProvider()],
+      timeout: COMPLETER_TIMEOUT_MILLISECONDS,
+    });
+    const handler = new CompletionHandler({ completer, reconciliator });
+    completer.hide();
+    Widget.attach(completer, document.body);
+
+    setCompleter(handler);
+
+    return () => {
+      handler.dispose();
+      completer.dispose();
+      widget.dispose();
+    };
+  }, []);
 
   // Widget factory
   const [widgetFactory, setWidgetFactory] =
@@ -155,21 +208,28 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
     };
   }, [contentFactory, features]);
 
-  // Tracker
+  // Tracker & commands
   const [tracker, setTracker] = useState<NotebookTracker | null>(null);
   useEffect(() => {
-    const thisTracker = new NotebookTracker({ namespace: id });
+    const thisTracker = completer
+      ? new NotebookTracker({ namespace: id })
+      : null;
+    const commands = completer
+      ? addNotebookCommands(
+          features.commandRegistry,
+          completer,
+          thisTracker!,
+          props.path
+        )
+      : null;
     setTracker(thisTracker);
 
-    // FIXME add commands
-
     return () => {
-      // FIXME remove commands
-
-      thisTracker.dispose();
+      commands?.dispose();
+      thisTracker?.dispose();
       setTracker(tracker => (tracker === thisTracker ? null : tracker));
     };
-  }, [id]);
+  }, [completer, id, features.commandRegistry, props.path]);
 
   // Context
   const [context, setContext] = useState<Context<NotebookModel> | null>(null);
@@ -191,7 +251,8 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
       thisContext,
       id,
       // Initialization must not trigger revert in case we set up the model content
-      path !== FALLBACK_NOTEBOOK_PATH ? path : undefined
+      path !== FALLBACK_NOTEBOOK_PATH ? path : undefined,
+      onSessionConnection
     );
 
     setContext(thisContext);
@@ -201,7 +262,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
       factory.dispose();
       setContext(context => (context === thisContext ? null : context));
     };
-  }, [id, serviceManager, model, path]);
+  }, [id, serviceManager, model, onSessionConnection, path]);
 
   // Set kernel
   useEffect(() => {
@@ -229,7 +290,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
           } else {
             notebookStore.activeCellChange({ id, cellModel });
             if (!context.model.readOnly) {
-              // FIXME this should be moved to a Notebook extension
+              // FIXME this should be moved to a Notebook extension to drop notebookStore usage
               const panelDiv = document.getElementById(
                 'right-panel-id'
               ) as HTMLDivElement;
@@ -282,21 +343,85 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
       } catch (reason) {}
       setPanel(panel => (panel === thisPanel ? null : panel));
     };
-  }, [context, extensions, features, nbgrader, notebookStore, widgetFactory]);
+  }, [
+    context,
+    completer,
+    extensions,
+    features,
+    nbgrader,
+    notebookStore,
+    widgetFactory,
+  ]);
 
   useEffect(() => {
-    if (panel && tracker) {
-      tracker.add(panel).catch(reason => {
-        console.error(`Failed to track the notebook panel '${id}'.`);
-      });
+    let isMounted = true;
+    if (panel) {
+      if (tracker) {
+        if (!tracker.has(panel)) {
+          tracker.add(panel).catch(reason => {
+            console.error(`Failed to track the notebook panel '${id}'.`);
+          });
+        }
+      }
+
+      if (completer) {
+        // Setup the completer here as it requires the panel
+        panel.context.sessionContext.ready.then(() => {
+          if (!isMounted) {
+            return;
+          }
+          const editor = panel.content.activeCell?.editor;
+          const provider = new KernelCompleterProvider();
+          const reconciliator = new ProviderReconciliator({
+            context: {
+              widget: panel,
+              editor,
+              session: panel.context.sessionContext.session,
+            },
+            providers: [provider],
+            timeout: COMPLETER_TIMEOUT_MILLISECONDS,
+          });
+          completer.editor = editor;
+          completer.reconciliator = reconciliator;
+          panel.content.activeCellChanged.connect(
+            (notebook: Notebook, cell: Cell<ICellModel> | null) => {
+              if (cell) {
+                cell.ready.then(() => {
+                  completer.editor = cell?.editor;
+                });
+              }
+            }
+          );
+        });
+      }
     }
-  }, [panel, tracker]);
+
+    return () => {
+      isMounted = false;
+      // Reset the completer
+      if (completer) {
+        completer.editor = null;
+        completer.reconciliator = new ProviderReconciliator({
+          context: {
+            widget: new Widget(),
+          },
+          providers: [new KernelCompleterProvider()],
+          timeout: COMPLETER_TIMEOUT_MILLISECONDS,
+        });
+      }
+    };
+  }, [completer, panel, tracker]);
+
+  const onKeyDown = useCallback(
+    (event: any) => {
+      features.commandRegistry.processKeydownEvent(event);
+    },
+    [features.commandRegistry]
+  );
 
   // FIXME
-  // - add the completer
-  // - add keyboard shortcut listener
   // - add ipywidgets
-  // - connect signals - see adapter
+  // - connect signals - see adapter - fix ipywidget and kernel transfer
 
   return (
     <>
@@ -308,9 +433,11 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
       {isLoading ? (
         <Loader key="notebook-loader" />
       ) : panel ? (
-        <Lumino id={id} key="notebook-container">
-          {panel}
-        </Lumino>
+        <Box onKeyDownCapture={onKeyDown}>
+          <Lumino id={id} key="notebook-container">
+            {panel}
+          </Lumino>
+        </Box>
       ) : (
         <Banner
           key="notebook-error"
@@ -433,7 +560,12 @@ class DummyModelFactory extends NotebookModelFactory {
   }
 }
 
-function initializeContext(context: Context, id: string, path?: string) {
+function initializeContext(
+  context: Context,
+  id: string,
+  path?: string,
+  onSessionConnection?: OnSessionConnection
+) {
   const shuntContentManager = path ? false : true;
 
   // TODO we should implement our own thing rather this ugly Javascript patch.
@@ -533,5 +665,62 @@ function initializeContext(context: Context, id: string, path?: string) {
       (context as Context<INotebookModel>).model.sharedModel.clearUndoHistory();
     };
   }
+
+  // Connect signals
+  context.sessionContext.sessionChanged.connect(
+    (
+      _,
+      args: IChangedArgs<
+        Session.ISessionConnection | null,
+        Session.ISessionConnection | null,
+        'session'
+      >
+    ) => {
+      const session = args.newValue;
+      console.log('Current Jupyter Session Connection.', session);
+      onSessionConnection?.(session ?? undefined);
+      // FIXME
+      // if (session) {
+      //   this._iPyWidgetsManager?.registerWithKernel(session.kernel);
+      //   this._iPyWidgetsManager?.restoreWidgets(this._notebookPanel?.model!);
+      // }
+    }
+  );
+  context.sessionContext.kernelChanged.connect(
+    (
+      _,
+      args: IChangedArgs<
+        Kernel.IKernelConnection | null,
+        Kernel.IKernelConnection | null,
+        'kernel'
+      >
+    ) => {
+      const kernelConnection = args.newValue;
+      console.log('Current Jupyter Kernel Connection.', kernelConnection);
+      if (kernelConnection && !kernelConnection.handleComms) {
+        console.log(
+          'Updating the current Kernel Connection to enforce Comms support.',
+          kernelConnection.handleComms
+        );
+        (kernelConnection as any).handleComms = true;
+      }
+    }
+  );
+  context.sessionContext.ready.then(() => {
+    onSessionConnection?.(context?.sessionContext.session ?? undefined);
+    // FIXME
+    // const kernelConnection = context?.sessionContext.session?.kernel;
+    // if (this._kernelTransfer) {
+    //   if (kernelConnection) {
+    //     kernelConnection.connectionStatusChanged.connect((_, status) => {
+    //       if (status === 'connected') {
+    //         this._kernelTransfer!.transfer(kernelConnection);
+    //       }
+    //     });
+    //   }
+    // }
+  });
+
+  // Initialize the context
   context.initialize(path ? false : true);
 }
