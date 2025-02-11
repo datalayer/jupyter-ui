@@ -19,7 +19,8 @@ export const PYTHON_CELL_MIMETYPE = 'text/x-ipython';
 export const SQL_CELL_MIMETYPE = 'application/sql';
 
 export const isSQLCell = (cell: Cell) => {
-  const datalayer = cell.model.getMetadata('datalayer');
+  // Note: sometimes model is null
+  const datalayer = cell.model?.getMetadata('datalayer');
   if (datalayer) {
     return (datalayer['sql'] === true);
   }

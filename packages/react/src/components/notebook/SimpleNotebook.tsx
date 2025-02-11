@@ -8,6 +8,7 @@ import { YNotebook } from '@jupyter/ydoc';
 import { URLExt } from '@jupyterlab/coreutils';
 import type { INotebookContent } from '@jupyterlab/nbformat';
 import { NotebookModel } from '@jupyterlab/notebook';
+import type { Kernel, ServiceManager } from '@jupyterlab/services';
 import { PromiseDelegate } from '@lumino/coreutils';
 import { DisposableSet } from '@lumino/disposable';
 import { Box } from '@primer/react';
@@ -17,22 +18,66 @@ import {
   COLLABORATION_ROOM_URL_PATH,
   fetchSessionId,
   requestDocSession,
-  useJupyter,
 } from '../../jupyter';
-import { jupyterReactStore } from '../../state';
 import { newUuid, sleep } from '../../utils';
 import { BaseNotebook } from './BaseNotebook';
 import type { INotebookProps } from './Notebook';
-import useNotebookStore from './NotebookState';
+
+import './Notebook.css';
+
+export interface ISimpleNotebookProps
+  extends Omit<
+    INotebookProps,
+    | 'collaborative'
+    | 'kernel'
+    | 'lite'
+    | 'serverless'
+    | 'useRunningKernelId'
+    | 'useRunningKernelIndex'
+  > {
+  /**
+   * Collaboration server providing the document rooms
+   */
+  collaborationServer:
+    | {
+        /**
+         * Base server URL
+         */
+        baseURL: string;
+        /**
+         * JWT token
+         */
+        token: string;
+        /**
+         * Server type
+         */
+        type: 'datalayer';
+      }
+    | {
+        /**
+         * Server type
+         */
+        type: 'jupyter';
+      };
+  kernelId?: string;
+  serviceManager: ServiceManager.IManager;
+}
 
 /**
- * Simple notebook component without adapter
+ * Simple notebook component without adapter and stores.
+ *
+ * Notes:
+ * - You must provide the appropriate service manager
+ * - You can specified the kernel id to use; if it is not defined or empty and startDefaultKernel is true, a new kernel will be started.
  */
-export function SimpleNotebook(props: INotebookProps): JSX.Element {
+export function SimpleNotebook(
+  props: React.PropsWithChildren<ISimpleNotebookProps>
+): JSX.Element {
   const {
     Toolbar,
     cellSidebarMargin = 120,
-    collaborative,
+    children,
+    collaborationServer,
     extensions = [],
     height = '100vh',
     maxHeight = '100vh',
@@ -40,24 +85,52 @@ export function SimpleNotebook(props: INotebookProps): JSX.Element {
     nbgrader = false,
     path,
     readonly = false,
-    serverless = false,
+    serviceManager,
     startDefaultKernel = false,
     url,
   } = props;
 
-  const { serviceManager, defaultKernel } = useJupyter({
-    lite: props.lite,
-    serverless,
-    serviceManager: props.serviceManager,
-    startDefaultKernel,
-    useRunningKernelId: props.useRunningKernelId,
-    useRunningKernelIndex: props.useRunningKernelIndex,
-  });
-
   const id = useMemo(() => props.id || newUuid(), [props.id]);
-  const kernel = props.kernel ?? defaultKernel;
-  const notebookStore = useNotebookStore();
-  const portals = notebookStore.selectNotebookPortals(id);
+
+  // Define the kernel to be used.
+  // - Check the provided kernel id exists
+  // - If no kernel found, start a new one if required
+  const [kernelId, setKernelId] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    let isMounted = true;
+    let connection: Kernel.IKernelConnection | undefined;
+    (async () => {
+      let newKernelId: string | undefined;
+      await serviceManager.kernels.ready;
+      if (props.kernelId) {
+        for (const model of serviceManager.kernels.running()) {
+          if (model.id === props.kernelId) {
+            newKernelId = props.kernelId;
+            break;
+          }
+        }
+      }
+
+      if (!newKernelId && startDefaultKernel && isMounted) {
+        console.log('Starting new kernel.');
+        connection = await serviceManager.kernels.startNew();
+        if (isMounted) {
+          newKernelId = connection.id;
+        } else {
+          connection.dispose();
+        }
+      }
+
+      if (isMounted) {
+        setKernelId(newKernelId);
+      }
+    })();
+
+    return () => {
+      isMounted = false;
+      connection?.dispose();
+    };
+  }, [props.kernelId, serviceManager.kernels, startDefaultKernel]);
 
   // Generate the notebook model
   // There are three posibilities (by priority order):
@@ -69,7 +142,7 @@ export function SimpleNotebook(props: INotebookProps): JSX.Element {
     let isMounted = true;
     const disposable = new DisposableSet();
 
-    if (collaborative) {
+    if (collaborationServer) {
       // As the server has the content source of thruth, we
       // must ensure that the shared model is pristine before
       // to connect to the server. More over we should ensure,
@@ -120,50 +193,46 @@ export function SimpleNotebook(props: INotebookProps): JSX.Element {
       const connect = async () => {
         sharedModel = new YNotebook();
         const { ydoc, awareness } = sharedModel;
+        let roomURL = '';
+        let roomName = '';
+        const params: Record<string, string> = {};
+
         // Setup Collaboration
-        if (collaborative == 'jupyter') {
-          const token =
-            jupyterReactStore.getState().jupyterConfig?.jupyterServerToken;
-          const session = await requestDocSession('json', 'notebook', path!);
-          const roomURL = URLExt.join(
+        if (collaborationServer.type == 'jupyter') {
+          const session = await requestDocSession(
+            'json',
+            'notebook',
+            path!,
+            serviceManager.serverSettings
+          );
+          roomURL = URLExt.join(
             serviceManager?.serverSettings.wsUrl!,
             COLLABORATION_ROOM_URL_PATH
           );
-          const roomName = `${session.format}:${session.type}:${session.fileId}`;
-          provider = new WebsocketProvider(roomURL, roomName, ydoc, {
-            disableBc: true,
-            params: {
-              sessionId: session.sessionId,
-              token: token!,
-            },
-            awareness,
-          });
-        } else if (collaborative == 'datalayer') {
-          const { runUrl, token } =
-            jupyterReactStore.getState().datalayerConfig ?? {};
-          const roomName = id;
-          const roomURL = URLExt.join(runUrl!, `/api/spacer/v1/rooms`);
+          roomName = `${session.format}:${session.type}:${session.fileId}`;
+          params.sessionId = session.sessionId;
+          if (serviceManager.serverSettings.token) {
+            params.token = serviceManager.serverSettings.token;
+          }
+        } else if (collaborationServer.type == 'datalayer') {
+          const { baseURL, token } = collaborationServer;
+          roomName = id;
+          const serverURL = URLExt.join(baseURL, `/api/spacer/v1/rooms`);
+          roomURL = serverURL.replace(/^http/, 'ws');
 
-          const sessionId = await fetchSessionId({
-            url: URLExt.join(roomURL, roomName),
+          params.sessionId = await fetchSessionId({
+            url: URLExt.join(serverURL, roomName),
             token,
           });
-
-          provider = new WebsocketProvider(
-            roomURL.replace(/^http/, 'ws'),
-            roomName,
-            ydoc,
-            {
-              disableBc: true,
-              params: {
-                sessionId,
-                token: token!,
-              },
-              awareness,
-            }
-          );
+          params.token = token;
         }
-        if (provider) {
+
+        if (params.sessionId) {
+          provider = new WebsocketProvider(roomURL, roomName, ydoc, {
+            disableBc: true,
+            params,
+            awareness,
+          });
           provider.on('sync', onSync);
           provider.on('connection-close', onConnectionClose);
           console.log('Collaboration is setup with websocket provider.');
@@ -229,7 +298,7 @@ export function SimpleNotebook(props: INotebookProps): JSX.Element {
       isMounted = false;
       disposable.dispose();
     };
-  }, [collaborative, path, readonly, url]);
+  }, [collaborationServer, path, readonly, url]);
 
   return (
     <Box
@@ -240,12 +309,10 @@ export function SimpleNotebook(props: INotebookProps): JSX.Element {
       <Box
         className="dla-Box-Notebook"
         sx={{
-          '& .dla-Jupyter-Notebook': {
-            height,
-            maxHeight,
-            width: '100%',
-            overflowY: 'hidden',
-          },
+          height,
+          maxHeight,
+          width: '100%',
+          overflowY: 'hidden',
           '& .datalayer-NotebookPanel-header': {
             minHeight: '50px',
           },
@@ -296,7 +363,7 @@ export function SimpleNotebook(props: INotebookProps): JSX.Element {
           },
         }}
       >
-        <>{portals?.map((portal: React.ReactPortal) => portal)}</>
+        {children}
         {model && serviceManager && (
           <BaseNotebook
             id={id}
@@ -304,7 +371,7 @@ export function SimpleNotebook(props: INotebookProps): JSX.Element {
             model={model}
             nbgrader={nbgrader}
             serviceManager={serviceManager}
-            kernelId={kernel?.id}
+            kernelId={kernelId}
             path={path}
           />
         )}

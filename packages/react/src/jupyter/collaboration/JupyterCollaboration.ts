@@ -36,9 +36,10 @@ export interface ISessionModel {
 export async function requestDocSession(
   format: string,
   type: string,
-  path: string
+  path: string,
+  serverSettings?: ServerConnection.ISettings
 ): Promise<ISessionModel> {
-  const settings = ServerConnection.makeSettings();
+  const settings = serverSettings ?? ServerConnection.makeSettings();
   const url = URLExt.join(
     settings.baseUrl,
     COLLABORATION_SESSION_URL_PATH,
@@ -46,7 +47,7 @@ export async function requestDocSession(
   );
   const body = {
     method: 'PUT',
-    body: JSON.stringify({ format, type })
+    body: JSON.stringify({ format, type }),
   };
   let response: Response;
   try {
