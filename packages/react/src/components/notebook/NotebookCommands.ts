@@ -26,7 +26,7 @@ import { IYText } from '@jupyter/ydoc';
 /**
  * The map of command ids used by the notebook.
  */
-export const cmdIds = {
+export const NotebookCommandIds = {
   changeCellType: 'notebook-cell:change-cell-type',
   changeCellTypeToCode: 'notebook-cell:change-cell-to-code',
   changeCellTypeToMarkdown: 'notebook-cell:change-cell-to-markdown',
@@ -82,7 +82,7 @@ export function addNotebookCommands(
   // Add commands.
   if (path) {
     allCommands.add(
-      commandRegistry.addCommand(cmdIds.save, {
+      commandRegistry.addCommand(NotebookCommandIds.save, {
         label: 'Save',
         execute: () => {
           tracker.currentWidget?.context.save();
@@ -93,46 +93,46 @@ export function addNotebookCommands(
       commandRegistry.addKeyBinding({
         selector: '.jp-Notebook',
         keys: ['Accel S'],
-        command: cmdIds.save,
+        command: NotebookCommandIds.save,
       })
     );
   }
 
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.invoke, {
+    commandRegistry.addCommand(NotebookCommandIds.invoke, {
       label: 'Completer: Invoke',
       execute: () => completerHandler.invoke(),
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.select, {
+    commandRegistry.addCommand(NotebookCommandIds.select, {
       label: 'Completer: Select',
       execute: () => completerHandler.completer.selectActive(),
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.invokeNotebook, {
+    commandRegistry.addCommand(NotebookCommandIds.invokeNotebook, {
       label: 'Invoke Notebook',
       execute: () => {
         if (tracker.currentWidget?.content.activeCell?.model.type === 'code') {
-          return commandRegistry.execute(cmdIds.invoke);
+          return commandRegistry.execute(NotebookCommandIds.invoke);
         }
       },
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.selectNotebook, {
+    commandRegistry.addCommand(NotebookCommandIds.selectNotebook, {
       label: 'Select Notebook',
       execute: () => {
         if (tracker.currentWidget?.content.activeCell?.model.type === 'code') {
-          return commandRegistry.execute(cmdIds.select);
+          return commandRegistry.execute(NotebookCommandIds.select);
         }
       },
     })
   );
   let searchInstance: SearchDocumentView | undefined;
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.startSearch, {
+    commandRegistry.addCommand(NotebookCommandIds.startSearch, {
       label: 'Find…',
       execute: () => {
         if (!tracker.currentWidget) {
@@ -188,7 +188,7 @@ export function addNotebookCommands(
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.findNext, {
+    commandRegistry.addCommand(NotebookCommandIds.findNext, {
       label: 'Find Next',
       isEnabled: () => !!searchInstance,
       execute: async () => {
@@ -200,7 +200,7 @@ export function addNotebookCommands(
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.findPrevious, {
+    commandRegistry.addCommand(NotebookCommandIds.findPrevious, {
       label: 'Find Previous',
       isEnabled: () => !!searchInstance,
       execute: async () => {
@@ -212,7 +212,7 @@ export function addNotebookCommands(
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.interrupt, {
+    commandRegistry.addCommand(NotebookCommandIds.interrupt, {
       label: 'Interrupt',
       execute: async () =>
         tracker.currentWidget?.context.sessionContext.session?.kernel?.interrupt(),
@@ -220,7 +220,7 @@ export function addNotebookCommands(
   );
   const sessionContextDialogs = new SessionContextDialogs();
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.restart, {
+    commandRegistry.addCommand(NotebookCommandIds.restart, {
       label: 'Restart Kernel',
       execute: () => {
         if (tracker.currentWidget) {
@@ -232,7 +232,7 @@ export function addNotebookCommands(
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.switchKernel, {
+    commandRegistry.addCommand(NotebookCommandIds.switchKernel, {
       label: 'Switch Kernel',
       execute: () => {
         if (tracker.currentWidget) {
@@ -244,7 +244,7 @@ export function addNotebookCommands(
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.runAndAdvance, {
+    commandRegistry.addCommand(NotebookCommandIds.runAndAdvance, {
       label: 'Run and Advance',
       execute: () => {
         return tracker.currentWidget
@@ -257,7 +257,7 @@ export function addNotebookCommands(
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.run, {
+    commandRegistry.addCommand(NotebookCommandIds.run, {
       label: 'Run',
       execute: () => {
         return tracker.currentWidget
@@ -270,7 +270,7 @@ export function addNotebookCommands(
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.runAll, {
+    commandRegistry.addCommand(NotebookCommandIds.runAll, {
       label: 'Run all',
       execute: () => {
         return tracker.currentWidget
@@ -283,7 +283,7 @@ export function addNotebookCommands(
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.deleteCells, {
+    commandRegistry.addCommand(NotebookCommandIds.deleteCells, {
       label: 'Delete Cells',
       execute: () => {
         return tracker.currentWidget
@@ -293,7 +293,7 @@ export function addNotebookCommands(
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.insertAbove, {
+    commandRegistry.addCommand(NotebookCommandIds.insertAbove, {
       label: 'Insert Above',
       execute: () => {
         return tracker.currentWidget
@@ -303,7 +303,7 @@ export function addNotebookCommands(
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.insertBelow, {
+    commandRegistry.addCommand(NotebookCommandIds.insertBelow, {
       label: 'Insert Below',
       execute: () => {
         return tracker.currentWidget
@@ -313,7 +313,7 @@ export function addNotebookCommands(
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.editMode, {
+    commandRegistry.addCommand(NotebookCommandIds.editMode, {
       label: 'Edit Mode',
       execute: () => {
         if (tracker.currentWidget) {
@@ -323,7 +323,7 @@ export function addNotebookCommands(
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.commandMode, {
+    commandRegistry.addCommand(NotebookCommandIds.commandMode, {
       label: 'Command Mode',
       execute: () => {
         if (tracker.currentWidget) {
@@ -333,7 +333,7 @@ export function addNotebookCommands(
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.selectBelow, {
+    commandRegistry.addCommand(NotebookCommandIds.selectBelow, {
       label: 'Select Below',
       execute: () =>
         tracker.currentWidget
@@ -342,7 +342,7 @@ export function addNotebookCommands(
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.selectAbove, {
+    commandRegistry.addCommand(NotebookCommandIds.selectAbove, {
       label: 'Select Above',
       execute: () =>
         tracker.currentWidget
@@ -351,7 +351,7 @@ export function addNotebookCommands(
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.extendAbove, {
+    commandRegistry.addCommand(NotebookCommandIds.extendAbove, {
       label: 'Extend Above',
       execute: () =>
         tracker.currentWidget
@@ -360,7 +360,7 @@ export function addNotebookCommands(
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.extendTop, {
+    commandRegistry.addCommand(NotebookCommandIds.extendTop, {
       label: 'Extend to Top',
       execute: () =>
         tracker.currentWidget
@@ -372,7 +372,7 @@ export function addNotebookCommands(
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.extendBelow, {
+    commandRegistry.addCommand(NotebookCommandIds.extendBelow, {
       label: 'Extend Below',
       execute: () =>
         tracker.currentWidget
@@ -381,7 +381,7 @@ export function addNotebookCommands(
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.extendBottom, {
+    commandRegistry.addCommand(NotebookCommandIds.extendBottom, {
       label: 'Extend to Bottom',
       execute: () =>
         tracker.currentWidget
@@ -393,7 +393,7 @@ export function addNotebookCommands(
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.merge, {
+    commandRegistry.addCommand(NotebookCommandIds.merge, {
       label: 'Merge Cells',
       execute: () =>
         tracker.currentWidget
@@ -402,7 +402,7 @@ export function addNotebookCommands(
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.split, {
+    commandRegistry.addCommand(NotebookCommandIds.split, {
       label: 'Split Cell',
       execute: () =>
         tracker.currentWidget
@@ -411,7 +411,7 @@ export function addNotebookCommands(
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.undo, {
+    commandRegistry.addCommand(NotebookCommandIds.undo, {
       label: 'Undo',
       execute: () => {
         const activeCell = tracker.currentWidget?.content.activeCell;
@@ -429,7 +429,7 @@ export function addNotebookCommands(
   );
 
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.redo, {
+    commandRegistry.addCommand(NotebookCommandIds.redo, {
       label: 'Redo',
       execute: () => {
         const activeCell = tracker.currentWidget?.content.activeCell;
@@ -446,7 +446,7 @@ export function addNotebookCommands(
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.changeCellTypeToCode, {
+    commandRegistry.addCommand(NotebookCommandIds.changeCellTypeToCode, {
       label: 'Change Cell Type to Code',
       execute: args =>
         tracker.currentWidget
@@ -458,7 +458,7 @@ export function addNotebookCommands(
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.changeCellTypeToMarkdown, {
+    commandRegistry.addCommand(NotebookCommandIds.changeCellTypeToMarkdown, {
       label: 'Change Cell Type to Markdown',
       execute: args =>
         tracker.currentWidget
@@ -470,7 +470,7 @@ export function addNotebookCommands(
     })
   );
   allCommands.add(
-    commandRegistry.addCommand(cmdIds.changeCellTypeToRaw, {
+    commandRegistry.addCommand(NotebookCommandIds.changeCellTypeToRaw, {
       label: 'Change Cell Type to Raw',
       execute: args =>
         tracker.currentWidget
@@ -503,137 +503,137 @@ export function addNotebookCommands(
     {
       selector: '.jp-Notebook.jp-mod-editMode .jp-mod-completer-enabled',
       keys: ['Tab'],
-      command: cmdIds.invokeNotebook,
+      command: NotebookCommandIds.invokeNotebook,
     },
     {
       selector: '.jp-mod-completer-active',
       keys: ['Enter'],
-      command: cmdIds.selectNotebook,
+      command: NotebookCommandIds.selectNotebook,
     },
     {
       selector: '.jp-Notebook',
       keys: ['Ctrl Enter'],
-      command: cmdIds.run,
+      command: NotebookCommandIds.run,
     },
     {
       selector: '.jp-Notebook',
       keys: ['Shift Enter'],
-      command: cmdIds.runAndAdvance,
+      command: NotebookCommandIds.runAndAdvance,
     },
     {
       selector: '.jp-Notebook',
       keys: ['Accel F'],
-      command: cmdIds.startSearch,
+      command: NotebookCommandIds.startSearch,
     },
     {
       selector: '.jp-Notebook:focus',
       keys: ['D', 'D'],
-      command: cmdIds.deleteCells,
+      command: NotebookCommandIds.deleteCells,
     },
     {
       selector: '.jp-Notebook',
       keys: ['Accel G'],
-      command: cmdIds.findNext,
+      command: NotebookCommandIds.findNext,
     },
     {
       selector: '.jp-Notebook',
       keys: ['Accel Shift G'],
-      command: cmdIds.findPrevious,
+      command: NotebookCommandIds.findPrevious,
     },
     {
       selector: '.jp-Notebook.jp-mod-commandMode :focus:not(:read-write)',
       keys: ['I', 'I'],
-      command: cmdIds.interrupt,
+      command: NotebookCommandIds.interrupt,
     },
     {
       selector: '.jp-Notebook.jp-mod-commandMode :focus:not(:read-write)',
       keys: ['0', '0'],
-      command: cmdIds.restart,
+      command: NotebookCommandIds.restart,
     },
     {
       selector: '.jp-Notebook.jp-mod-commandMode :focus:not(:read-write)',
       keys: ['Enter'],
-      command: cmdIds.editMode,
+      command: NotebookCommandIds.editMode,
     },
     {
       selector: '.jp-Notebook.jp-mod-editMode',
       keys: ['Escape'],
-      command: cmdIds.commandMode,
+      command: NotebookCommandIds.commandMode,
     },
     {
       selector: '.jp-Notebook.jp-mod-commandMode :focus:not(:read-write)',
       keys: ['Shift M'],
-      command: cmdIds.merge,
+      command: NotebookCommandIds.merge,
     },
     {
       selector: '.jp-Notebook.jp-mod-editMode',
       keys: ['Ctrl Shift -'],
-      command: cmdIds.split,
+      command: NotebookCommandIds.split,
     },
     {
       selector: '.jp-Notebook.jp-mod-commandMode :focus:not(:read-write)',
       keys: ['J'],
-      command: cmdIds.selectBelow,
+      command: NotebookCommandIds.selectBelow,
     },
     {
       selector: '.jp-Notebook.jp-mod-commandMode :focus:not(:read-write)',
       keys: ['ArrowDown'],
-      command: cmdIds.selectBelow,
+      command: NotebookCommandIds.selectBelow,
     },
     {
       selector: '.jp-Notebook.jp-mod-commandMode :focus:not(:read-write)',
       keys: ['A'],
-      command: cmdIds.insertAbove,
+      command: NotebookCommandIds.insertAbove,
     },
     {
       selector: '.jp-Notebook.jp-mod-commandMode :focus:not(:read-write)',
       keys: ['B'],
-      command: cmdIds.insertBelow,
+      command: NotebookCommandIds.insertBelow,
     },
     {
       selector: '.jp-Notebook.jp-mod-commandMode :focus:not(:read-write)',
       keys: ['K'],
-      command: cmdIds.selectAbove,
+      command: NotebookCommandIds.selectAbove,
     },
     {
       selector: '.jp-Notebook.jp-mod-commandMode :focus:not(:read-write)',
       keys: ['ArrowUp'],
-      command: cmdIds.selectAbove,
+      command: NotebookCommandIds.selectAbove,
     },
     {
       selector: '.jp-Notebook.jp-mod-commandMode :focus:not(:read-write)',
       keys: ['Shift K'],
-      command: cmdIds.extendAbove,
+      command: NotebookCommandIds.extendAbove,
     },
     {
       selector: '.jp-Notebook.jp-mod-commandMode :focus:not(:read-write)',
       keys: ['Shift J'],
-      command: cmdIds.extendBelow,
+      command: NotebookCommandIds.extendBelow,
     },
     {
       selector: '.jp-Notebook',
       keys: ['Ctrl Z'],
-      command: cmdIds.undo,
+      command: NotebookCommandIds.undo,
     },
     {
       selector: '.jp-Notebook',
       keys: ['Ctrl Y'],
-      command: cmdIds.redo,
+      command: NotebookCommandIds.redo,
     },
     {
       selector: '.jp-Notebook:focus',
       keys: ['M'],
-      command: cmdIds.changeCellTypeToMarkdown,
+      command: NotebookCommandIds.changeCellTypeToMarkdown,
     },
     {
       selector: '.jp-Notebook:focus',
       keys: ['R'],
-      command: cmdIds.changeCellTypeToRaw,
+      command: NotebookCommandIds.changeCellTypeToRaw,
     },
     {
       selector: '.jp-Notebook:focus',
       keys: ['Y'],
-      command: cmdIds.changeCellTypeToCode,
+      command: NotebookCommandIds.changeCellTypeToCode,
     },
   ];
   bindings.forEach(binding =>

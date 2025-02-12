@@ -76,14 +76,6 @@ import { JupyterReactContentFactory } from './content';
 import type { DatalayerNotebookExtension } from './Notebook';
 import addNotebookCommands from './NotebookCommands';
 import useNotebookStore from './NotebookState';
-import {
-  Completer,
-  CompleterModel,
-  CompletionHandler,
-  KernelCompleterProvider,
-  ProviderReconciliator,
-} from '@jupyterlab/completer';
-import type { Cell, ICellModel } from '@jupyterlab/cells';
 
 const COMPLETER_TIMEOUT_MILLISECONDS = 1000;
 const DEFAULT_EXTENSIONS = new Array<DatalayerNotebookExtension>();
@@ -171,7 +163,10 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
     [props.path]
   );
   // Features
-  const features = useMemo(() => new CommonFeatures(), [commandRegistry]);
+  const features = useMemo(
+    () => new CommonFeatures({ commandRegistry }),
+    [commandRegistry]
+  );
 
   // Content factory
   const contentFactory = useMemo(
@@ -309,6 +304,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
 
   // Notebook
   const [panel, setPanel] = useState<NotebookPanel | null>(null);
+
   useEffect(() => {
     let thisPanel: NotebookPanel | null = null;
     if (context) {
@@ -811,8 +807,8 @@ class CommonFeatures {
   protected _editorServices: IEditorServices;
   protected _rendermime: RenderMimeRegistry;
 
-  constructor() {
-    this._commandRegistry = new CommandRegistry();
+  constructor(options: { commandRegistry?: CommandRegistry } = {}) {
+    this._commandRegistry = options.commandRegistry ?? new CommandRegistry();
 
     const languages = new EditorLanguageRegistry();
     // Register default languages.

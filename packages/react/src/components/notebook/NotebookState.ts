@@ -13,7 +13,7 @@ import { Cell, ICellModel } from '@jupyterlab/cells';
 import { NotebookChange } from '@jupyter/ydoc';
 import { Kernel as JupyterKernel } from '@jupyterlab/services';
 import { Kernel } from '../../jupyter/kernel/Kernel';
-import { cmdIds } from './NotebookCommands';
+import { NotebookCommandIds } from './NotebookCommands';
 import { NotebookAdapter } from './NotebookAdapter';
 
 export type PortalDisplay = {
@@ -146,9 +146,9 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
   selectNotebookPortalDisplay: (id: string): PortalDisplay | undefined => {
     return get().notebooks.get(id)?.portalDisplay;
   },
-  run: (id: string): void => { get().notebooks.get(id)?.adapter?.commands.execute(cmdIds.run); },
-  runAll: (id: string): void => { get().notebooks.get(id)?.adapter?.commands.execute(cmdIds.runAll); },
-  interrupt: (id: string): void => { get().notebooks.get(id)?.adapter?.commands.execute(cmdIds.interrupt); },
+  run: (id: string): void => { get().notebooks.get(id)?.adapter?.commands.execute(NotebookCommandIds.run); },
+  runAll: (id: string): void => { get().notebooks.get(id)?.adapter?.commands.execute(NotebookCommandIds.runAll); },
+  interrupt: (id: string): void => { get().notebooks.get(id)?.adapter?.commands.execute(NotebookCommandIds.interrupt); },
   insertAbove: (mutation: CellMutation) => {
     get().notebooks.get(mutation.id)?.adapter?.setDefaultCellType(mutation.cellType);
     get().notebooks.get(mutation.id)?.adapter?.insertAbove(mutation.source);
@@ -157,12 +157,12 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
     get().notebooks.get(mutation.id)?.adapter?.setDefaultCellType(mutation.cellType);
     get().notebooks.get(mutation.id)?.adapter?.insertBelow(mutation.source);
   },
-  delete: (id: string): void => { get().notebooks.get(id)?.adapter?.commands.execute(cmdIds.deleteCells); },
+  delete: (id: string): void => { get().notebooks.get(id)?.adapter?.commands.execute(NotebookCommandIds.deleteCells); },
   changeCellType: (mutation: CellMutation) => {
     get().notebooks.get(mutation.id)?.adapter?.changeCellType(mutation.cellType);
   },
   save: (mutation: DateMutation) => {
-    get().notebooks.get(mutation.id)?.adapter?.commands.execute(cmdIds.save);
+    get().notebooks.get(mutation.id)?.adapter?.commands.execute(NotebookCommandIds.save);
     const notebooks = get().notebooks;
     const notebook = notebooks.get(mutation.id);
     if (notebook) {

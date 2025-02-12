@@ -17,6 +17,7 @@ import type { INotebookProps } from './Notebook';
 
 import './Notebook.css';
 import type { NotebookModel } from '@jupyterlab/notebook';
+import type { CommandRegistry } from '@lumino/commands';
 
 export interface ISimpleNotebookProps
   extends Omit<
@@ -35,6 +36,13 @@ export interface ISimpleNotebookProps
    * Collaboration server providing the document rooms
    */
   collaborationServer: CollaborationServer;
+  /**
+   * Custom command registry.
+   *
+   * Note:
+   * Providing it allows to command the component from an higher level.
+   */
+  commandRegistry?: CommandRegistry;
   kernelId?: string;
   serviceManager: ServiceManager.IManager;
   /**
@@ -59,6 +67,7 @@ export function SimpleNotebook(
     cellSidebarMargin = 120,
     children,
     collaborationServer,
+    commandRegistry,
     extensions,
     height = '100vh',
     maxHeight = '100vh',
@@ -158,6 +167,7 @@ export function SimpleNotebook(
         {model && serviceManager && (
           <BaseNotebook
             CellSidebar={CellSidebar}
+            commandRegistry={commandRegistry}
             id={id}
             extensions={extensions}
             model={model}

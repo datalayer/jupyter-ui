@@ -15,7 +15,7 @@ import {
   SyncIcon,
 } from '@primer/octicons-react';
 import { FastForwardIcon } from '@datalayer/icons-react';
-import { cmdIds } from '../../components/notebook/NotebookCommands';
+import { NotebookCommandIds } from '../../components/notebook/NotebookCommands';
 import useNotebookStore from '../../components/notebook/NotebookState';
 
 export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
@@ -27,11 +27,11 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
   const saveRequest = notebookStore.selectSaveRequest(notebookId);
   const notebookstate = notebookStore.notebooks
   useEffect(() => {
-    notebook?.adapter?.commands.execute(cmdIds.save);
+    notebook?.adapter?.commands.execute(NotebookCommandIds.save);
   }, [saveRequest]);
   useEffect(() => {
     if (autoSave) {
-      notebook?.adapter?.commands.execute(cmdIds.save);
+      notebook?.adapter?.commands.execute(NotebookCommandIds.save);
     }
   }, [notebookstate]);
   const handleChangeCellType = (newType: string) => {
