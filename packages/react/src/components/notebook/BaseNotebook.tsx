@@ -433,7 +433,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
       {isLoading ? (
         <Loader key="notebook-loader" />
       ) : panel ? (
-        <Box onKeyDownCapture={onKeyDown}>
+        <Box sx={{ height: '100%' }} onKeyDownCapture={onKeyDown}>
           <Lumino id={id} key="notebook-container">
             {panel}
           </Lumino>
