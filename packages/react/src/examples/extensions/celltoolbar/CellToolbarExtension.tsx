@@ -25,8 +25,8 @@ export class CellToolbarExtension implements DatalayerNotebookExtension {
   }
 
   /* @override */
-  get component(): JSX.Element | undefined {
-    return <></>
+  get component(): JSX.Element | null {
+    return null
   }
 
 }

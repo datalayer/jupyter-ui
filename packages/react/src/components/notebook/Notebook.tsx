@@ -59,6 +59,7 @@ export type BundledIPyWidgets = ExternalIPyWidgets & {
 export type IDatalayerNotebookExtensionProps = {
   notebookId: string;
   commands: CommandRegistry;
+  panel: NotebookPanel;
 };
 
 export type DatalayerNotebookExtension = DocumentRegistry.IWidgetExtension<
@@ -66,7 +67,7 @@ export type DatalayerNotebookExtension = DocumentRegistry.IWidgetExtension<
   INotebookModel
 > & {
   init(props: IDatalayerNotebookExtensionProps): void;
-  get component(): JSX.Element | undefined;
+  get component(): JSX.Element | null;
 };
 
 export type INotebookProps = {
@@ -164,6 +165,7 @@ export const Notebook = (props: INotebookProps) => {
       extension.init({
         notebookId: id,
         commands: adapter.commands,
+        panel: adapter.notebookPanel!,
       });
       extension.createNew(adapter.notebookPanel!, adapter.context!);
       setExtensionComponents(
@@ -266,7 +268,7 @@ export const Notebook = (props: INotebookProps) => {
     let provider: YWebsocketProvider | null = null;
     let ready = new PromiseDelegate();
     let isMounted = true;
-    let sharedModel: YNotebook | null =  null
+    let sharedModel: YNotebook | null = null;
 
     const onConnectionClose = (event: any) => {
       if (event.code > 1000) {
@@ -281,7 +283,7 @@ export const Notebook = (props: INotebookProps) => {
         if (event.code === 4002) {
           provider?.destroy();
           ready.reject('Connection closed.');
-          ready = new PromiseDelegate()
+          ready = new PromiseDelegate();
           if (isMounted) {
             setIsLoading(true);
             Promise.all([connect(), ready.promise, sleep(500)])
@@ -398,7 +400,7 @@ export const Notebook = (props: INotebookProps) => {
           provider?.destroy();
         });
       }
-      sharedModel?.dispose()
+      sharedModel?.dispose();
     };
   }, [adapter?.notebookPanel, collaborative]);
 

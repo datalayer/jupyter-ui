@@ -23,8 +23,8 @@ export class ExecTimeExtension implements DatalayerNotebookExtension {
   }
 
   /* @override */
-  get component(): JSX.Element | undefined {
-    return undefined
+  get component(): JSX.Element | null {
+    return null
   }
 
 }

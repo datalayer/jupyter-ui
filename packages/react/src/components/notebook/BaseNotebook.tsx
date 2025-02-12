@@ -354,6 +354,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
             extension.init({
               notebookId: id,
               commands: features.commandRegistry,
+              panel: thisPanel!,
             });
             extension.createNew(thisPanel!, context);
 
