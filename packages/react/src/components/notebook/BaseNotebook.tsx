@@ -4,7 +4,8 @@
  * MIT License
  */
 
-import type { ISharedNotebook, IYText } from '@jupyter/ydoc';
+import { ISharedNotebook, IYText, YNotebook } from '@jupyter/ydoc';
+import type { Cell, ICellModel } from '@jupyterlab/cells';
 import { type IEditorServices } from '@jupyterlab/codeeditor';
 import {
   CodeMirrorEditorFactory,
@@ -14,11 +15,20 @@ import {
   EditorThemeRegistry,
   ybinding,
 } from '@jupyterlab/codemirror';
+import {
+  Completer,
+  CompleterModel,
+  CompletionHandler,
+  KernelCompleterProvider,
+  ProviderReconciliator,
+} from '@jupyterlab/completer';
+import { URLExt, type IChangedArgs } from '@jupyterlab/coreutils';
 import { Context, type DocumentRegistry } from '@jupyterlab/docregistry';
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
 import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
 import { createMarkdownParser } from '@jupyterlab/markedparser-extension';
 import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
+import type { INotebookContent } from '@jupyterlab/nbformat';
 import {
   NotebookModel,
   NotebookModelFactory,
@@ -36,28 +46,36 @@ import {
 import type {
   Contents,
   Kernel,
+  ServerConnection,
   ServiceManager,
   Session,
   SessionManager,
 } from '@jupyterlab/services';
 import { find } from '@lumino/algorithm';
 import { CommandRegistry } from '@lumino/commands';
+import { PromiseDelegate } from '@lumino/coreutils';
+import { DisposableSet } from '@lumino/disposable';
 import { Signal } from '@lumino/signaling';
 import { Widget } from '@lumino/widgets';
+import { Box } from '@primer/react';
 import { Banner } from '@primer/react/experimental';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { newUuid } from '../../utils';
+import { createPortal } from 'react-dom';
+import { WebsocketProvider } from 'y-websocket';
+import {
+  COLLABORATION_ROOM_URL_PATH,
+  fetchSessionId,
+  requestDocSession,
+} from '../../jupyter';
+import type { OnSessionConnection } from '../../state';
+import { newUuid, sleep } from '../../utils';
 import { Lumino } from '../lumino';
 import { Loader } from '../utils';
+import { CellMetadataEditor, type ICellSidebarProps } from './cell';
 import { JupyterReactContentFactory } from './content';
-import { Box } from '@primer/react';
-import useNotebookStore from './NotebookState';
 import type { DatalayerNotebookExtension } from './Notebook';
-import { createPortal } from 'react-dom';
-import { CellMetadataEditor } from './cell';
-import type { OnSessionConnection } from '../../state';
-import type { IChangedArgs } from '@jupyterlab/coreutils';
 import addNotebookCommands from './NotebookCommands';
+import useNotebookStore from './NotebookState';
 import {
   Completer,
   CompleterModel,
@@ -68,20 +86,30 @@ import {
 import type { Cell, ICellModel } from '@jupyterlab/cells';
 
 const COMPLETER_TIMEOUT_MILLISECONDS = 1000;
+const DEFAULT_EXTENSIONS = new Array<DatalayerNotebookExtension>();
 const FALLBACK_NOTEBOOK_PATH = '.datalayer/ping.ipynb';
 
 /**
  * Base notebook component properties
  */
 export interface IBaseNotebookProps {
+  // FIXME this should be an extension
+  CellSidebar?: (props: ICellSidebarProps) => JSX.Element;
+  /**
+   * Custom command registry.
+   *
+   * Note:
+   * Providing it allows to command the component from an higher level.
+   */
+  commandRegistry?: CommandRegistry;
   /**
    * Notebook ID
    */
-  id: string;
+  id?: string;
   /**
    * Notebook extensions
    */
-  extensions: DatalayerNotebookExtension[];
+  extensions?: DatalayerNotebookExtension[];
   /**
    * Kernel ID to connect to
    */
@@ -97,11 +125,12 @@ export interface IBaseNotebookProps {
   /**
    * Whether nbgrader mode is activated or not.
    */
+  // FIXME this should be an extension
   nbgrader: boolean;
   /**
    * Callback on session connection changed
    */
-  onSessionConnection?: OnSessionConnection;
+  onSessionConnectionChanged?: OnSessionConnection;
   /**
    * Notebook path
    *
@@ -119,12 +148,14 @@ export interface IBaseNotebookProps {
  */
 export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
   const {
-    extensions,
+    CellSidebar,
+    commandRegistry,
+    extensions = DEFAULT_EXTENSIONS,
     kernelId,
     serviceManager,
     model,
     nbgrader,
-    onSessionConnection,
+    onSessionConnectionChanged,
   } = props;
 
   const [isLoading, setIsLoading] = useState(true);
@@ -140,16 +171,21 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
     [props.path]
   );
   // Features
-  const features = useMemo(() => new CommonFeatures(), []);
+  const features = useMemo(() => new CommonFeatures(), [commandRegistry]);
 
   // Content factory
   const contentFactory = useMemo(
     () =>
-      // FIXME missing nbgrader and CellSidebar
-      new JupyterReactContentFactory(id, false, features.commandRegistry, {
-        editorFactory: features.editorServices.factoryService.newInlineEditor,
-      }),
-    [id, features]
+      new JupyterReactContentFactory(
+        id,
+        nbgrader,
+        features.commandRegistry,
+        {
+          editorFactory: features.editorServices.factoryService.newInlineEditor,
+        },
+        CellSidebar
+      ),
+    [CellSidebar, id, features, nbgrader]
   );
 
   // Completer
@@ -252,7 +288,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
       id,
       // Initialization must not trigger revert in case we set up the model content
       path !== FALLBACK_NOTEBOOK_PATH ? path : undefined,
-      onSessionConnection
+      onSessionConnectionChanged
     );
 
     setContext(thisContext);
@@ -262,7 +298,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
       factory.dispose();
       setContext(context => (context === thisContext ? null : context));
     };
-  }, [id, serviceManager, model, onSessionConnection, path]);
+  }, [id, serviceManager, model, onSessionConnectionChanged, path]);
 
   // Set kernel
   useEffect(() => {
@@ -347,7 +383,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
     context,
     completer,
     extensions,
-    features,
+    features.commandRegistry,
     nbgrader,
     notebookStore,
     widgetFactory,
@@ -448,6 +484,323 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
       )}
     </>
   );
+}
+
+/**
+ * Get the kernel ID to connect to.
+ *
+ * Steps:
+ * - Check the requested kernel ID exists
+ * - If no kernel found, start a new one if required
+ */
+export function useKernelId(options: {
+  /**
+   * Kernels manager
+   */
+  kernels: Kernel.IManager;
+  /**
+   * Kernel ID to connect to
+   *
+   * If the kernel does not exist and {@link startDefaultKernel} is `true`,
+   * another kernel will be started.
+   */
+  requestedKernelId?: string;
+  /**
+   * Whether or not to start a default kernel.
+   *
+   * Default: false
+   */
+  startDefaultKernel?: boolean;
+}): string | undefined {
+  const { kernels, requestedKernelId, startDefaultKernel = false } = options;
+
+  // Define the kernel to be used.
+  // - Check the provided kernel id exists
+  // - If no kernel found, start a new one if required
+  const [kernelId, setKernelId] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    let isMounted = true;
+    let connection: Kernel.IKernelConnection | undefined;
+    (async () => {
+      let newKernelId: string | undefined;
+      await kernels.ready;
+      if (requestedKernelId) {
+        for (const model of kernels.running()) {
+          if (model.id === requestedKernelId) {
+            newKernelId = requestedKernelId;
+            break;
+          }
+        }
+      }
+
+      if (!newKernelId && startDefaultKernel && isMounted) {
+        console.log('Starting new kernel.');
+        connection = await kernels.startNew();
+        if (isMounted) {
+          newKernelId = connection.id;
+        } else {
+          connection.dispose();
+        }
+      }
+
+      if (isMounted) {
+        setKernelId(newKernelId);
+      }
+    })();
+
+    return () => {
+      isMounted = false;
+      connection?.dispose();
+    };
+  }, [kernels, requestedKernelId, startDefaultKernel]);
+
+  return kernelId;
+}
+
+export type CollaborationServer =
+  | {
+      /**
+       * Base server URL
+       */
+      baseURL: string;
+      /**
+       * Notebook room name to connect to.
+       */
+      roomName: string;
+      /**
+       * JWT token
+       */
+      token: string;
+      /**
+       * Server type
+       */
+      type: 'datalayer';
+    }
+  | {
+      /**
+       * Notebook path
+       */
+      path: string;
+      /**
+       * Jupyter server settings
+       */
+      serverSettings: ServerConnection.ISettings;
+      /**
+       * Server type
+       */
+      type: 'jupyter';
+    };
+
+/**
+ * Hook to handle a notebook model.
+ *
+ * The notebook content may come from 3 sources:
+ * - {@link nbformat}: The notebook content
+ * - {@link url}: A URL to fetch the notebook content from
+ * - {@link collaborationServer}: Parameters to connect to a collaboration server
+ */
+export function useNotebookModel(options: {
+  /**
+   * Collaboration server providing the document rooms
+   */
+  collaborationServer?: CollaborationServer;
+  /**
+   * Notebook content.
+   */
+  nbformat?: INotebookContent;
+  /**
+   * Whether the model is read-only or not.
+   *
+   * Default: false
+   */
+  readonly?: boolean;
+  /**
+   * URL to fetch the notebook content from.
+   */
+  url?: string;
+}): NotebookModel | null {
+  const { collaborationServer, nbformat, readonly = false, url } = options;
+
+  // Generate the notebook model
+  // There are three posibilities (by priority order):
+  // - Connection to a collaborative room
+  // - Provided notebook content
+  // - Provided URL to fetch notebook content from
+  const [model, setModel] = useState<NotebookModel | null>(null);
+  useEffect(() => {
+    let isMounted = true;
+    const disposable = new DisposableSet();
+
+    if (collaborationServer) {
+      // As the server has the content source of thruth, we
+      // must ensure that the shared model is pristine before
+      // to connect to the server. More over we should ensure,
+      // the connection is disposed in case the server room is
+      // reset for any reason while the client is still alive.
+      let provider: WebsocketProvider | null = null;
+      let ready = new PromiseDelegate();
+      let isMounted = true;
+      let sharedModel: YNotebook | null = null;
+
+      const onConnectionClose = (event: any) => {
+        if (event.code > 1000) {
+          console.error(
+            'Connection with the room has been closed unexpectedly.',
+            event
+          );
+
+          provider?.disconnect();
+
+          // If sessionId has expired - reset the client model
+          if (event.code === 4002) {
+            provider?.destroy();
+            ready.reject('Connection closed.');
+            ready = new PromiseDelegate();
+            if (isMounted) {
+              Promise.all([connect(), ready.promise, sleep(500)]).catch(
+                error => {
+                  console.error(
+                    'Failed to setup collaboration connection.',
+                    error
+                  );
+                }
+              );
+            }
+          }
+
+          // FIXME inform the user.
+        }
+      };
+
+      const onSync = (isSynced: boolean) => {
+        if (isSynced) {
+          provider?.off('sync', onSync);
+          ready.resolve(void 0);
+        }
+      };
+
+      const connect = async () => {
+        sharedModel = new YNotebook();
+        const { ydoc, awareness } = sharedModel;
+        let roomURL = '';
+        let roomName = '';
+        const params: Record<string, string> = {};
+
+        // Setup Collaboration
+        if (collaborationServer.type == 'jupyter') {
+          const { path, serverSettings } = collaborationServer;
+          const session = await requestDocSession(
+            'json',
+            'notebook',
+            path,
+            serverSettings
+          );
+          roomURL = URLExt.join(
+            serverSettings.wsUrl,
+            COLLABORATION_ROOM_URL_PATH
+          );
+          roomName = `${session.format}:${session.type}:${session.fileId}`;
+          params.sessionId = session.sessionId;
+          if (serverSettings.token) {
+            params.token = serverSettings.token;
+          }
+        } else if (collaborationServer.type == 'datalayer') {
+          const { baseURL, roomName: roomName_, token } = collaborationServer;
+          roomName = roomName_; // Set non local variable
+          const serverURL = URLExt.join(baseURL, `/api/spacer/v1/rooms`);
+          roomURL = serverURL.replace(/^http/, 'ws');
+
+          params.sessionId = await fetchSessionId({
+            url: URLExt.join(serverURL, roomName),
+            token,
+          });
+          params.token = token;
+        }
+
+        if (params.sessionId) {
+          provider = new WebsocketProvider(roomURL, roomName, ydoc, {
+            disableBc: true,
+            params,
+            awareness,
+          });
+          provider.on('sync', onSync);
+          provider.on('connection-close', onConnectionClose);
+          console.log('Collaboration is setup with websocket provider.');
+          // Create a new model using the one synchronize with the collaboration room
+          const model = new NotebookModel({
+            collaborationEnabled: true,
+            disableDocumentWideUndoRedo: true,
+            sharedModel,
+          });
+          model.readOnly = readonly;
+          setModel(model);
+        }
+      };
+
+      Promise.all([connect(), ready.promise])
+        .then(() => {
+          if (provider) {
+            const dispose = () => {
+              (provider!.synced ? Promise.resolve() : ready.promise).finally(
+                () => {
+                  provider!.off('sync', onSync);
+                  provider!.off('connection-close', onConnectionClose);
+                  provider!.disconnect();
+                  provider!.destroy();
+                }
+              );
+            };
+            if (isMounted) {
+              disposable.add(Object.freeze({ dispose, isDisposed: false }));
+            } else {
+              dispose();
+            }
+          }
+        })
+        .catch(error => {
+          console.error('Failed to setup collaboration connection.', error);
+        });
+    } else {
+      const createModel = (nbformat: INotebookContent | undefined) => {
+        const model = new NotebookModel();
+        if (nbformat) {
+          nbformat.cells.forEach(cell => {
+            cell.metadata['editable'] = !readonly;
+          });
+          model.fromJSON(nbformat);
+        }
+        model.readOnly = readonly;
+        setModel(model);
+      };
+
+      if (!nbformat && url) {
+        loadFromUrl(url).then(nbformat => {
+          if (isMounted) {
+            createModel(nbformat);
+          }
+        });
+      } else {
+        createModel(nbformat);
+      }
+    }
+
+    return () => {
+      isMounted = false;
+      disposable.dispose();
+    };
+  }, [collaborationServer, nbformat, readonly, url]);
+
+  return model;
+}
+
+async function loadFromUrl(url: string) {
+  return fetch(url)
+    .then(response => {
+      return response.text();
+    })
+    .then(nb => {
+      return JSON.parse(nb);
+    });
 }
 
 /**
