@@ -12,7 +12,7 @@
 
 import { Box, Spinner } from "@primer/react";
 
-export const SpinnerCentered = () => {
+export function SpinnerCentered(): JSX.Element {
   return (
     <Box
       sx={{
