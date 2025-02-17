@@ -51,7 +51,7 @@ const ENTRY =
   // './src/examples/NotebookExtension';
   // './src/examples/NotebookKernelChange';
   // './src/examples/NotebookLess';
-  // './src/examples/NotebookLite';
+  './src/examples/NotebookLite';
   // './src/examples/NotebookLiteContext';
   // './src/examples/NotebookLocalServer';
   // './src/examples/NotebookMutationsKernel';
@@ -64,7 +64,7 @@ const ENTRY =
   // './src/examples/NotebookPathChange';
   // './src/examples/NotebookReadonly';
   // './src/examples/NotebookServiceManager';
-  './src/examples/NotebookSimple';
+  // './src/examples/NotebookSimple';
   // './src/examples/NotebookSkeleton';
   // './src/examples/NotebookTheme';
   // './src/examples/NotebookThemeColormode';

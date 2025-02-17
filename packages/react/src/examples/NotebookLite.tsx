@@ -15,7 +15,7 @@ import { Notebook, KernelIndicator } from '../components';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
 
-import nbformat from './notebooks/NotebookExample1.ipynb.json';
+import nbformat from './notebooks/Lite.ipynb.json';
 
 const NotebookLite = () => {
   const [session, setSession] = useState<Session.ISessionConnection>();
@@ -27,7 +27,9 @@ const NotebookLite = () => {
     <JupyterReactTheme>
       <Box as="h1">A Jupyter Notebook with a Lite Kernel</Box>
       <Box display="flex">
-        <Box><Text>Kernel Indicator</Text></Box>
+        <Box>
+          <Text>Kernel Indicator</Text>
+        </Box>
         <Box ml={3}>
           <KernelIndicator kernel={session?.kernel}/>
         </Box>
