@@ -35,8 +35,8 @@ const NotebookLite = () => {
         </Box>
       </Box>
       <Notebook
-        startDefaultKernel={true}
-        lite={true}
+        startDefaultKernel
+        lite
         nbformat={nbformat as INotebookContent}
         id="notebook-lite-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-2024 Datalayer, Inc.
  *
  * MIT License
  */
@@ -16,24 +16,27 @@ import nbformat from './notebooks/NotebookExample1.ipynb.json';
 const Notebook = () => {
   const { serviceManager } = useJupyter();
   return (
-    serviceManager && <JupyterReactTheme>
-      <SimpleNotebook
-        nbformat={nbformat as INotebookContent}
-        id="notebook-nbformat-id"
-        startDefaultKernel={true}
-        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        cellSidebarMargin={120}
-        CellSidebar={CellSidebar}
-        Toolbar={NotebookToolbar}
-        collaborationServer={{
-          baseURL: 'https://prod1.datalayer.run',
-          token: '',
-          roomName: '',
-          type: 'datalayer'
-        }}
-        serviceManager={serviceManager}
-      />
-    </JupyterReactTheme>
+    serviceManager ?
+      <JupyterReactTheme>
+        <SimpleNotebook
+          nbformat={nbformat as INotebookContent}
+          id="notebook-nbformat-id"
+          startDefaultKernel={true}
+          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+          cellSidebarMargin={120}
+          CellSidebar={CellSidebar}
+          Toolbar={NotebookToolbar}
+          collaborationServer={{
+            baseURL: 'https://prod1.datalayer.run',
+            token: '',
+            roomName: '',
+            type: 'datalayer'
+          }}
+          serviceManager={serviceManager}
+        />
+      </JupyterReactTheme>
+    :
+      <></>
   )
 };
 
