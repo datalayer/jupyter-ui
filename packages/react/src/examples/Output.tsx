@@ -156,7 +156,7 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <Jupyter>
+  <Jupyter startDefaultKernel>
     <OutputWithoutEditor />
     <OutputWithEditor />
     <OutputWithEmptyOutput />

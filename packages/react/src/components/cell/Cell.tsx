@@ -54,7 +54,7 @@ export const Cell = (props: ICellProps) => {
     type,
     kernel: customKernel,
   } = props;
-  const { defaultKernel, serverSettings } = useJupyter({
+  const { defaultKernel, serverSettings, kernelIsLoading } = useJupyter({
     startDefaultKernel,
   });
   const [id] = useState(props.id || newUuid());
@@ -123,7 +123,7 @@ export const Cell = (props: ICellProps) => {
       });
     }
   }, [source, defaultKernel, customKernel, serverSettings]);
-  return adapter ? (
+  return adapter && !kernelIsLoading ? (
     <Box
       sx={{
         '& .dla-Jupyter-Cell': {

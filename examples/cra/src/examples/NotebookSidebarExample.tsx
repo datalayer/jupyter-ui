@@ -13,12 +13,12 @@ const NOTEBOOK_UID = 'notebook-id-simple';
 
 export default function NotebookSidebarComponent() {
   return (
-    <Jupyter collaborative={false} terminals={true}>
+    <Jupyter startDefaultKernel collaborative={false} terminals>
       <div style={{padding: '2rem'}}>
         <Box sx={{width: '100%'}}>
           <NotebookToolbar notebookId={NOTEBOOK_UID} />
           <Notebook
-            path="ping.ipynb"
+            path=".datalayer/ping.ipynb"
             id={NOTEBOOK_UID}
             CellSidebar={CellSidebar}
           />

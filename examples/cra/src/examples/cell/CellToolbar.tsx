@@ -4,7 +4,6 @@
  * MIT License
  */
 
-import React from 'react';
 import { Box, IconButton, Text, Tooltip } from '@primer/react';
 import { PlayIcon, ReplyIcon, ThreeBarsIcon } from '@primer/octicons-react';
 import { useCellsStore } from '@datalayer/jupyter-react';
@@ -39,12 +38,12 @@ const CellToolbar = (props: {cellId: string}) => {
             onClick={() => cellStore.execute()}
           />
         </Tooltip>
-        <Tooltip aria-label="Run the cell">
+        <Tooltip aria-label="Reset output count">
           <IconButton
             size="small"
             variant="invisible"
             icon={ReplyIcon}
-            aria-label="Rest the outputcount"
+            aria-label="Reset the output count"
             onClick={() => cellStore.setOutputsCount(cellId, 0)}
           />
         </Tooltip>

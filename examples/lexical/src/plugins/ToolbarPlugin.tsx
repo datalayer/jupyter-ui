@@ -228,7 +228,7 @@ function FloatingLinkEditor({ editor }: any) {
 function Select({ onChange, className, options, value }: any) {
   return (
     <select className={className} onChange={onChange} value={value}>
-      <option hidden={true} value="" />
+      <option hidden value="" />
       {options.map((option: string) => (
         <option key={option} value={option}>
           {option}
