@@ -7,7 +7,7 @@
       "outputs": [
         {
           "data": {
-            "text/plain": ["Emscripten"]
+            "text/plain": ["'Emscripten'"]
           },
           "execution_count": 1,
           "metadata": {},
@@ -36,6 +36,24 @@
       "source": [
         "import sys\n",
         "sys.platform"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 1,
+      "metadata": {},
+      "outputs": [
+        {
+          "data": {
+            "text/plain": ["<pyodide_kernel.interpreter.Interpreter at 0x22906f0>"]
+          },
+          "execution_count": 1,
+          "metadata": {},
+          "output_type": "execute_result"
+        }
+      ],
+      "source": [
+        "get_ipython()"
       ]
     },
     {

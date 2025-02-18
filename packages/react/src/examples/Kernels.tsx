@@ -26,7 +26,7 @@ import {
 } from './../components/kernel';
 
 export const KernelExecResultView = () => {
-  const { defaultKernel: kernel } = useJupyter();
+  const { defaultKernel: kernel } = useJupyter({ startDefaultKernel: true });
   const [running, setRunning] = useState(false);
   const [code, setCode] = useState('');
   const [result, setResult] = useState<string>();

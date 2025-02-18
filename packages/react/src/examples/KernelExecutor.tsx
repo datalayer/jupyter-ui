@@ -22,7 +22,7 @@ for i in range(0, 15):
 print("🔁 I am done with looping!")`;
 
 const KernelExecutorView = () => {
-  const { defaultKernel } = useJupyter();
+  const { defaultKernel } = useJupyter( { startDefaultKernel: true });
   const [outputAreaModel, setOutputAreaModel] = useState<IOutputAreaModel>();
   const [finalOutputAreaModel, setFinalOutputAreaModel] = useState<IOutputAreaModel>();
   const [done, setDone] = useState(false);
