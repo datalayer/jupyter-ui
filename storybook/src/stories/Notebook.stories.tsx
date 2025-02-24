@@ -11,7 +11,7 @@ const meta: Meta<typeof Notebook> = {
   title: 'Components/Notebook',
   component: Notebook,
   argTypes: {
-    browser: {
+    lite: {
       control: 'radio',
       options: ['true', 'false', '@jupyterlite/javascript-kernel-extension'],
       table: {
@@ -27,7 +27,7 @@ const meta: Meta<typeof Notebook> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Notebook | typeof Jupyter | { browser: string }>;
+type Story = StoryObj<typeof Notebook | { initCode?: string}>;
 
 const Template = (args, { globals: { labComparison = true }, ...rest }) => {
   const { browser, initCode, ...others } = args;
@@ -63,7 +63,7 @@ export const Default: Story = {
     Template.bind({})(args, { globals: { labComparison: true } }),
 };
 Default.args = {
-  browser: 'false',
+  lite: false,
   initCode: '',
   path: undefined,
   id: undefined,
@@ -255,7 +255,7 @@ export const LitePython: Story = {
 };
 LitePython.args = {
   ...Default.args,
-  browser: 'true',
+  lite: true,
   nbformat: INIT_EXAMPLE,
 };
 
@@ -265,7 +265,7 @@ export const LitePythonInit: Story = {
 };
 LitePythonInit.args = {
   ...Default.args,
-  browser: 'true',
+  lite: true,
   initCode: `import micropip
 await micropip.install('ipywidgets')
 await micropip.install('bqplot')

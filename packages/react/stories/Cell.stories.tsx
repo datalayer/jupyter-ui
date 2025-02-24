@@ -12,7 +12,7 @@ const meta: Meta<typeof Cell> = {
   title: 'Components/Cell',
   component: Cell,
   argTypes: {
-    browser: {
+    lite: {
       control: 'radio',
       options: ['true', 'false', '@jupyterlite/javascript-kernel-extension'],
       table: {
@@ -34,7 +34,7 @@ const meta: Meta<typeof Cell> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Cell | typeof Jupyter | { browser: string }>;
+type Story = StoryObj<typeof Cell | typeof Jupyter | { lite: string }>;
 
 const Template = (args, { globals: { labComparison } }) => {
   const { browser, initCode, ...others } = args;
@@ -53,6 +53,7 @@ const Template = (args, { globals: { labComparison } }) => {
 
   return (
     <Jupyter
+      startDefaultKernel
       lite={lite}
       initCode={initCode}
       defaultKernelName={kernelName}
@@ -66,7 +67,7 @@ const Template = (args, { globals: { labComparison } }) => {
 
 export const Default: Story = Template.bind({});
 Default.args = {
-  browser: 'false',
+  lite: 'false',
   initCode: '',
   source: '',
   autoStart: false,
@@ -74,7 +75,7 @@ Default.args = {
 
 export const Confettis: Story = Template.bind({});
 Confettis.args = {
-  browser: 'false',
+  lite: 'false',
   source: `import ipyreact
 class ConfettiWidget(ipyreact.ReactWidget):
   _esm = """
@@ -120,7 +121,7 @@ plt.show()`,
 export const LitePython: Story = Template.bind({});
 LitePython.args = {
   ...Playground.args,
-  browser: 'true',
+  lite: 'true',
   source: `import sys
 print(f"{sys.platform=}")
 
@@ -130,7 +131,7 @@ ${Playground.args.source ?? ''}`,
 export const WithInitialization: Story = Template.bind({});
 WithInitialization.args = {
   ...Default.args,
-  browser: 'true',
+  lite: 'true',
   initCode: 'import micropip\nawait micropip.install("ipywidgets")',
   source: '# ipywidgets is imported at initialization\nimport ipywidgets',
   autoStart: true,

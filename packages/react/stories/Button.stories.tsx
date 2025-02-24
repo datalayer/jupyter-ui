@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import React from 'react';
 import {
   EyeClosedIcon,
   EyeIcon,
