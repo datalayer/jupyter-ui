@@ -20,6 +20,7 @@ const NotebookCellToolbar = () => {
   return (
     <JupyterReactTheme>
       <Notebook
+        startDefaultKernel
         nbformat={nbformat as INotebookContent}
         extensions={[extension]}
         id="notebook-cell-toolbar-id"

@@ -34,7 +34,7 @@ const NotebookColormode = () => {
   }, []);
   return (
     <>
-      <Jupyter colormode={colormode}>
+      <Jupyter startDefaultKernel colormode={colormode}>
         <Text
           fontSize={2}
           fontWeight="bold"

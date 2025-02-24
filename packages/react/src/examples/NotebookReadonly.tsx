@@ -17,6 +17,7 @@ const NotebookReadonly = () => {
     <JupyterReactTheme>
       <Notebook
         readonly
+        serverless
         nbformat={nbformat}
         id="notebook-model-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).

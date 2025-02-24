@@ -16,6 +16,7 @@ import nbformat from './notebooks/NotebookExample1.ipynb.json';
 const NotebookCellSidebar = () => (
   <JupyterReactTheme>
     <Notebook
+      startDefaultKernel
       nbformat={nbformat as INotebookContent}
       id="notebook-cell-sidebar-id"
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
