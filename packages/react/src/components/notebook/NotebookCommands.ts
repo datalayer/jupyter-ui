@@ -621,17 +621,17 @@ export function addNotebookCommands(
       command: NotebookCommandIds.redo,
     },
     {
-      selector: '.jp-Notebook :focus',
+      selector: '.jp-Notebook.jp-mod-commandMode :focus',
       keys: ['M'],
       command: NotebookCommandIds.changeCellTypeToMarkdown,
     },
     {
-      selector: '.jp-Notebook :focus',
+      selector: '.jp-Notebook.jp-mod-commandMode :focus',
       keys: ['R'],
       command: NotebookCommandIds.changeCellTypeToRaw,
     },
     {
-      selector: '.jp-Notebook :focus',
+      selector: '.jp-Notebook.jp-mod-commandMode :focus',
       keys: ['Y'],
       command: NotebookCommandIds.changeCellTypeToCode,
     },
