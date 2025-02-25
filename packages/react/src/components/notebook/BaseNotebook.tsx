@@ -466,7 +466,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
       {isLoading ? (
         <Loader key="notebook-loader" />
       ) : panel ? (
-        <Box sx={{ height: '100%' }} onKeyDownCapture={onKeyDown}>
+        <Box sx={{ height: '100%' }} onKeyDown={onKeyDown}>
           <Lumino id={id} key="notebook-container">
             {panel}
           </Lumino>
@@ -489,6 +489,9 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
  * Steps:
  * - Check the requested kernel ID exists
  * - If no kernel found, start a new one if required
+ *
+ * Note
+ * If the hook starts the kernel, it will shut it down when unmounting.
  */
 export function useKernelId(options: {
   /**
@@ -547,7 +550,20 @@ export function useKernelId(options: {
 
     return () => {
       isMounted = false;
-      connection?.dispose();
+      if (connection) {
+        // A new kernel was started
+        connection
+          .shutdown()
+          .catch(reason => {
+            console.warn(
+              `Failed to shutdown kernel '${connection?.id}'.`,
+              reason
+            );
+          })
+          .finally(() => {
+            connection?.dispose();
+          });
+      }
     };
   }, [kernels, requestedKernelId, startDefaultKernel]);
 
