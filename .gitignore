@@ -40,7 +40,8 @@ node_modules/
 # Version file is handled by hatchling
 **/jupyter_react/_version.py
 
-**/jupyter_react/static
+**/jupyter_react/static/*.js
+**/jupyter_react/static/*.css
 
 # Integration tests
 test-results/
@@ -174,4 +175,4 @@ packages/react/.vscode/launch.json
 !.licenserc.yaml
 !dev/notebooks/.datalayer
 !docs/static/img
-!packages/react/jupyter_react/static/README.md
+!**/static/README.md
