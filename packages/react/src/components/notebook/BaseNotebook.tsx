@@ -5,6 +5,7 @@
  */
 
 import { ISharedNotebook, IYText, YNotebook } from '@jupyter/ydoc';
+import type { ISessionContext } from '@jupyterlab/apputils';
 import type { Cell, ICellModel } from '@jupyterlab/cells';
 import { type IEditorServices } from '@jupyterlab/codeeditor';
 import {
@@ -51,6 +52,7 @@ import type {
   Session,
   SessionManager,
 } from '@jupyterlab/services';
+import type { ISessionConnection } from '@jupyterlab/services/lib/session/session';
 import { find } from '@lumino/algorithm';
 import { CommandRegistry } from '@lumino/commands';
 import { PromiseDelegate } from '@lumino/coreutils';
@@ -297,8 +299,10 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
 
   // Set kernel
   useEffect(() => {
-    if (context && kernelId) {
-      context.sessionContext.changeKernel({ id: kernelId });
+    if (context && kernelId && !context.sessionContext.isDisposed) {
+      context.sessionContext.changeKernel({ id: kernelId }).catch(reason => {
+        console.error('Failed to change kernel model.', reason);
+      });
     }
   }, [context, kernelId]);
 
@@ -371,14 +375,16 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
     }
 
     return () => {
-      try {
-        thisPanel?.dispose();
-      } catch (reason) {}
+      if (thisPanel) {
+        if (thisPanel.content) Signal.clearData(thisPanel.content);
+        try {
+          thisPanel.dispose();
+        } catch (reason) {}
+      }
       setPanel(panel => (panel === thisPanel ? null : panel));
     };
   }, [
     context,
-    completer,
     extensions,
     features.commandRegistry,
     nbgrader,
@@ -388,6 +394,19 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
 
   useEffect(() => {
     let isMounted = true;
+    let onActiveCellChanged:
+      | ((notebook: Notebook, cell: Cell<ICellModel> | null) => void)
+      | null = null;
+    let onSessionChanged:
+      | ((
+          _: ISessionContext,
+          changes: IChangedArgs<
+            ISessionConnection | null,
+            ISessionConnection | null,
+            'session'
+          >
+        ) => void)
+      | null = null;
     if (panel) {
       if (tracker) {
         if (!tracker.has(panel)) {
@@ -399,7 +418,26 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
 
       if (completer) {
         // Setup the completer here as it requires the panel
-        panel.context.sessionContext.ready.then(() => {
+
+        onActiveCellChanged = (
+          notebook: Notebook,
+          cell: Cell<ICellModel> | null
+        ) => {
+          if (cell) {
+            cell.ready.then(() => {
+              completer.editor = cell?.editor;
+            });
+          }
+        };
+
+        onSessionChanged = (
+          _: ISessionContext,
+          changes: IChangedArgs<
+            ISessionConnection | null,
+            ISessionConnection | null,
+            'session'
+          >
+        ) => {
           if (!isMounted) {
             return;
           }
@@ -409,23 +447,24 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
             context: {
               widget: panel,
               editor,
-              session: panel.context.sessionContext.session,
+              session: changes.newValue,
             },
             providers: [provider],
             timeout: COMPLETER_TIMEOUT_MILLISECONDS,
           });
           completer.editor = editor;
           completer.reconciliator = reconciliator;
-          panel.content.activeCellChanged.connect(
-            (notebook: Notebook, cell: Cell<ICellModel> | null) => {
-              if (cell) {
-                cell.ready.then(() => {
-                  completer.editor = cell?.editor;
-                });
-              }
-            }
-          );
+        };
+
+        panel.context.sessionContext.sessionChanged.connect(onSessionChanged);
+        panel.context.sessionContext.ready.then(() => {
+          onSessionChanged?.(panel.context.sessionContext, {
+            name: 'session',
+            oldValue: null,
+            newValue: panel.context.sessionContext.session,
+          });
         });
+        panel.content.activeCellChanged.connect(onActiveCellChanged);
       }
     }
 
@@ -433,6 +472,13 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
       isMounted = false;
       // Reset the completer
       if (completer) {
+        if (onActiveCellChanged)
+          panel?.content.activeCellChanged.disconnect(onActiveCellChanged);
+        if (onSessionChanged)
+          panel?.context.sessionContext.sessionChanged.connect(
+            onSessionChanged
+          );
+
         completer.editor = null;
         completer.reconciliator = new ProviderReconciliator({
           context: {
@@ -552,6 +598,7 @@ export function useKernelId(options: {
       isMounted = false;
       if (connection) {
         // A new kernel was started
+        console.log(`Shutting down kernel '${connection.id}'.`);
         connection
           .shutdown()
           .catch(reason => {
