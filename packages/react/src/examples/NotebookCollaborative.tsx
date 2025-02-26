@@ -4,13 +4,19 @@
  * MIT License
  */
 
+import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
-import { Notebook } from '../components/notebook/Notebook';
-import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
+import { CellSidebarExtension } from '../components';
 import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
+import { Notebook } from '../components/notebook/Notebook';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 const NotebookCollaborative = () => {
+  const extensions = useMemo(
+    () => [new CellSidebarExtension({ factory: CellSidebarButton })],
+    []
+  );
   return (
     <JupyterReactTheme>
       <Notebook
@@ -19,13 +25,12 @@ const NotebookCollaborative = () => {
         id="notebook-collaboration-id"
         startDefaultKernel={true}
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        cellSidebarMargin={60}
-        CellSidebar={CellSidebarButton}
+        extensions={extensions}
         Toolbar={NotebookToolbar}
       />
     </JupyterReactTheme>
   );
-}
+};
 
 const div = document.createElement('div');
 document.body.appendChild(div);

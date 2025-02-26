@@ -10,7 +10,8 @@ import type {
   DatalayerNotebookExtension,
   IDatalayerNotebookExtensionProps,
 } from '../../Notebook';
-import { CellSidebar } from './CellSidebar';
+import { CellSidebar, type ICellSidebarProps } from './CellSidebar';
+import type React from 'react';
 
 class CellSidebarFactory implements IDisposable {
   private _isDisposed = false;
@@ -106,16 +107,28 @@ class CellSidebarFactory implements IDisposable {
  * Cell sidebar extension for notebook panels.
  */
 export class CellSidebarExtension implements DatalayerNotebookExtension {
+  protected factory: React.JSXElementConstructor<ICellSidebarProps>;
+  protected commands?: CommandRegistry;
+  protected nbgrader: boolean;
+
   /**
    * Constructor
    *
    * @param commands Command registry
+   * @param factory Cell sidebar React component factory
    * @param nbgrader Whether to activate nbgrader feature or not.
    */
   constructor(
-    protected commands?: CommandRegistry,
-    protected nbgrader: boolean = false
-  ) {}
+    options: {
+      commands?: CommandRegistry;
+      factory?: React.JSXElementConstructor<ICellSidebarProps>;
+      nbgrader?: boolean;
+    } = {}
+  ) {
+    this.factory = options.factory ?? CellSidebar;
+    this.commands = options.commands;
+    this.nbgrader = options.nbgrader ?? false;
+  }
 
   readonly component: null;
 
@@ -123,7 +136,11 @@ export class CellSidebarExtension implements DatalayerNotebookExtension {
     // We assume the extension was either created within JupyterLab passing
     // the app commands registry or through Datalayer workflow that set it
     // when calling `init`.
-    const sidebar = new CellSidebarFactory(panel, this.commands!, this.nbgrader);
+    const sidebar = new CellSidebarFactory(
+      panel,
+      this.commands!,
+      this.nbgrader
+    );
     return sidebar;
   }
 

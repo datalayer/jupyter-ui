@@ -14,10 +14,10 @@ import {
   type CollaborationServer,
 } from './BaseNotebook';
 import type { INotebookProps } from './Notebook';
-
-import './Notebook.css';
 import type { NotebookModel } from '@jupyterlab/notebook';
 import type { CommandRegistry } from '@lumino/commands';
+
+import './Notebook.css';
 
 export interface ISimpleNotebookProps
   extends Omit<

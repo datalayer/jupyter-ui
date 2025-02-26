@@ -7,5 +7,4 @@
 export * from './CellSidebar';
 export * from './CellSidebarButton';
 export * from './CellSidebarRun';
-export * from './CellSidebarWidget';
 export * from './extension';

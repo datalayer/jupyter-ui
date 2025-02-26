@@ -4,31 +4,30 @@
  * MIT License
  */
 
+import { WIDGET_MIMETYPE } from '@jupyter-widgets/html-manager/lib/output_renderers';
+import { ISharedAttachmentsCell, IYText } from '@jupyter/ydoc';
+import { Cell, ICellModel, MarkdownCell } from '@jupyterlab/cells';
+import { IEditorServices } from '@jupyterlab/codeeditor';
+import { CodeMirrorEditorFactory, CodeMirrorMimeTypeService, EditorExtensionRegistry, EditorLanguageRegistry, EditorThemeRegistry, ybinding } from '@jupyterlab/codemirror';
+import { Completer, CompleterModel, CompletionHandler, KernelCompleterProvider, ProviderReconciliator } from '@jupyterlab/completer';
+import { IChangedArgs } from '@jupyterlab/coreutils';
+import { Context, DocumentRegistry } from '@jupyterlab/docregistry';
+import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
+import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
+import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
+import { CellType, IAttachments, INotebookContent } from '@jupyterlab/nbformat';
+import { INotebookModel, Notebook, NotebookPanel, NotebookTracker, NotebookWidgetFactory, StaticNotebook } from '@jupyterlab/notebook';
+import { RenderMimeRegistry, standardRendererFactories } from '@jupyterlab/rendermime';
+import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
+import { Contents, Kernel as JupyterKernel, ServiceManager, Session, SessionManager } from '@jupyterlab/services';
 import { find } from '@lumino/algorithm';
 import { CommandRegistry } from '@lumino/commands';
 import { BoxPanel, Widget } from '@lumino/widgets';
-import { IChangedArgs } from '@jupyterlab/coreutils';
-import { Contents, ServiceManager, Kernel as JupyterKernel, SessionManager, Session } from '@jupyterlab/services';
-import { DocumentRegistry, Context } from '@jupyterlab/docregistry';
-import { ybinding, CodeMirrorEditorFactory, CodeMirrorMimeTypeService, EditorLanguageRegistry, EditorExtensionRegistry, EditorThemeRegistry } from '@jupyterlab/codemirror';
-import { IEditorServices } from '@jupyterlab/codeeditor';
-import { standardRendererFactories, RenderMimeRegistry } from '@jupyterlab/rendermime';
-import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
-import { ISharedAttachmentsCell, IYText } from '@jupyter/ydoc';
-import { INotebookContent, CellType, IAttachments } from '@jupyterlab/nbformat';
-import { Completer, CompleterModel, CompletionHandler, ProviderReconciliator, KernelCompleterProvider } from '@jupyterlab/completer';
-import { Cell, ICellModel, MarkdownCell } from '@jupyterlab/cells';
-import { Notebook, NotebookPanel, NotebookWidgetFactory, NotebookTracker, INotebookModel, StaticNotebook } from '@jupyterlab/notebook';
-import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
-import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
-import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
-import { WIDGET_MIMETYPE } from '@jupyter-widgets/html-manager/lib/output_renderers';
-import { Lite, Kernel, WidgetManager, WidgetLabRenderer } from '../../jupyter';
-import { OnSessionConnection, KernelTransfer } from '../../state';
-import { ICellSidebarProps } from './cell/sidebar';
+import { Kernel, Lite, WidgetLabRenderer, WidgetManager } from '../../jupyter';
+import { KernelTransfer, OnSessionConnection } from '../../state';
 import { JupyterReactContentFactory } from './content/JupyterReactContentFactory';
-import { JupyterReactNotebookModelFactory } from './model/JupyterReactNotebookModelFactory';
 import { getMarked } from './marked/marked';
+import { JupyterReactNotebookModelFactory } from './model/JupyterReactNotebookModelFactory';
 import { INotebookProps } from './Notebook';
 import { addNotebookCommands } from './NotebookCommands';
 
@@ -36,7 +35,6 @@ const FALLBACK_NOTEBOOK_PATH = '.datalayer/ping.ipynb';
 
 export class NotebookAdapter {
 
-  private _CellSidebar?: (props: ICellSidebarProps) => JSX.Element;
   private _boxPanel: BoxPanel;
   private _commands: CommandRegistry;
   private _contentFactory: JupyterReactContentFactory;
@@ -51,7 +49,6 @@ export class NotebookAdapter {
   private _lite?: Lite;
   private _mimeTypeService: CodeMirrorMimeTypeService;
   private _nbformat?: INotebookContent;
-  private _nbgrader: boolean;
   private _notebookModelFactory?: JupyterReactNotebookModelFactory;
   private _notebookPanel?: NotebookPanel;
   private _onSessionConnection?: OnSessionConnection;
@@ -68,14 +65,11 @@ export class NotebookAdapter {
 
     console.log('Creating a new Notebook Adapter.');
 
-    this._CellSidebar = props.CellSidebar;
-
     this._id = props.id;
     this._kernel = props.kernel;
     this._kernelClients = props.kernelClients;
     this._lite = props.lite;
     this._nbformat = props.nbformat;
-    this._nbgrader = props.nbgrader!;
     this._path = props.path;
     this._readonly = props.readonly!;
     this._renderers = props.renderers!;
@@ -457,11 +451,7 @@ export class NotebookAdapter {
     };
     const editorFactory = editorServices.factoryService.newInlineEditor;
     this._contentFactory = new JupyterReactContentFactory(
-      this._id,
-      this._nbgrader,
-      this._commands,
       { editorFactory },
-      this._CellSidebar,
     );
 
     this._tracker = new NotebookTracker({ namespace: this._id });

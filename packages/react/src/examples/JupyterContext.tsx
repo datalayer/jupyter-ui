@@ -156,11 +156,7 @@ const NotebookKernelChange = () => {
           </Button>
         </ButtonGroup>
       </Box>
-      <Notebook
-        path="test.ipynb"
-        extensions={extensions}
-        id={NOTEBOOK_ID_2}
-      />
+      <Notebook path="test.ipynb" extensions={extensions} id={NOTEBOOK_ID_2} />
     </>
   );
 };
@@ -190,6 +186,10 @@ const Outputs = () => {
 const JupyterContextExample = () => {
   const [index, setIndex] = useState(1);
   const { serviceManager } = useJupyter();
+  const extensionsButton = useMemo(
+    () => [new CellSidebarExtension({ factory: CellSidebarButton })],
+    []
+  );
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
     <>
@@ -219,8 +219,7 @@ const JupyterContextExample = () => {
           nbformat={notebook as INotebookContent}
           id={NOTEBOOK_ID_3}
           height="300px"
-          cellSidebarMargin={60}
-          CellSidebar={CellSidebarButton}
+          extensions={extensionsButton}
           Toolbar={NotebookToolbar}
         />
         <hr />

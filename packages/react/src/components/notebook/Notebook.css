@@ -21,3 +21,11 @@
   background-color: rgba(128, 128, 128, 0.374);
   border-radius: 10px;
 }
+
+.dla-Box-Notebook .jp-Cell.jp-mod-active .dla-CellSidebar-Container {
+  visibility: hidden;
+}
+
+.dla-Box-Notebook .jp-Cell.jp-mod-active .dla-CellSidebar-Container {
+  visibility: visible;
+}

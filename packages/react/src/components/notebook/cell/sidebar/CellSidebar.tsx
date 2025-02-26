@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import { type CommandRegistry } from '@lumino/commands';
 import {
   ChevronDownIcon,
   ChevronRightIcon,
@@ -12,27 +13,37 @@ import {
   XIcon,
 } from '@primer/octicons-react';
 import { ActionMenu, Box, Button } from '@primer/react';
-import CellMetadataEditor from '../metadata/CellMetadataEditor';
-import { ICellSidebarProps } from './CellSidebarWidget';
-
-import { DATALAYER_CELL_SIDEBAR_CLASS_NAME } from './CellSidebarWidget';
-import type { ICellModel } from '@jupyterlab/cells';
 import { NotebookCommandIds } from '../../NotebookCommands';
+import CellMetadataEditor from '../metadata/CellMetadataEditor';
+import type { ICellModel } from '@jupyterlab/cells';
 
 /**
- * Cell sidebar component
+ * Cell sidebar class name.
  */
-export type ICellSidebarOptions = {
+export const DATALAYER_CELL_SIDEBAR_CLASS_NAME = 'dla-CellSidebar-Container';
+
+/**
+ * Cell sidebar properties
+ */
+export type ICellSidebarProps = {
+  /**
+   * Notebook command registry
+   */
+  commands: CommandRegistry;
   /**
    * Cell model
    */
   model: ICellModel;
-} & Pick<ICellSidebarProps, 'commands' | 'nbgrader'>;
+  /**
+   * Whether to display nbgrader features or not.
+   */
+  nbgrader: boolean;
+};
 
 /**
  * Cell sidebar component
  */
-export function CellSidebar(props: ICellSidebarOptions): JSX.Element {
+export function CellSidebar(props: ICellSidebarProps): JSX.Element {
   const { commands, model, nbgrader } = props;
 
   return (

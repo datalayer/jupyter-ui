@@ -39,7 +39,6 @@ import {
   useJupyter,
 } from './../../jupyter';
 import { CellMetadataEditor } from './cell/metadata';
-import { ICellSidebarProps } from './cell/sidebar';
 import { NotebookAdapter } from './NotebookAdapter';
 import { useNotebookStore } from './NotebookState';
 import { INotebookToolbarProps } from './toolbar/NotebookToolbar';
@@ -71,7 +70,6 @@ export type DatalayerNotebookExtension = DocumentRegistry.IWidgetExtension<
 };
 
 export type INotebookProps = {
-  CellSidebar?: (props: ICellSidebarProps) => JSX.Element;
   Toolbar?: (props: INotebookToolbarProps) => JSX.Element;
   cellMetadataPanel?: boolean;
   cellSidebarMargin?: number;
@@ -85,7 +83,6 @@ export type INotebookProps = {
   lite?: Lite;
   maxHeight?: string;
   nbformat?: INotebookContent;
-  nbgrader?: boolean;
   onSessionConnection?: OnSessionConnection;
   path?: string;
   readonly?: boolean;
