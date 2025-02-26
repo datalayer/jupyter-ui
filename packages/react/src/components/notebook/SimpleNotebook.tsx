@@ -45,7 +45,7 @@ export interface ISimpleNotebookProps
    * Note:
    * Providing it allows to command the component from an higher level.
    */
-  commandRegistry?: CommandRegistry;
+  commands?: CommandRegistry;
   /**
    * Kernel ID to connect to.
    */
@@ -74,7 +74,7 @@ export function SimpleNotebook(
     Toolbar,
     children,
     collaborationServer,
-    commandRegistry,
+    commands,
     extensions,
     height = '100vh',
     maxHeight = '100vh',
@@ -174,7 +174,7 @@ export function SimpleNotebook(
         {children}
         {model && serviceManager && (
           <BaseNotebook
-            commandRegistry={commandRegistry}
+            commands={commands}
             id={id}
             extensions={extensions}
             model={model}

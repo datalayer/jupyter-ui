@@ -89,7 +89,7 @@ export interface IBaseNotebookProps {
    * Note:
    * Providing it allows to command the component from an higher level.
    */
-  commandRegistry?: CommandRegistry;
+  commands?: CommandRegistry;
   /**
    * Notebook ID
    */
@@ -134,7 +134,7 @@ export interface IBaseNotebookProps {
  */
 export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
   const {
-    commandRegistry,
+    commands,
     extensions = DEFAULT_EXTENSIONS,
     kernelId,
     serviceManager,
@@ -154,8 +154,8 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
   );
   // Features
   const features = useMemo(
-    () => new CommonFeatures({ commandRegistry }),
-    [commandRegistry]
+    () => new CommonFeatures({ commands }),
+    [commands]
   );
 
   // Content factory
@@ -231,7 +231,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
       : null;
     const commands = completer
       ? addNotebookCommands(
-          features.commandRegistry,
+          features.commands,
           completer,
           thisTracker!,
           props.path
@@ -244,7 +244,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
       thisTracker?.dispose();
       setTracker(tracker => (tracker === thisTracker ? null : tracker));
     };
-  }, [completer, id, features.commandRegistry, props.path]);
+  }, [completer, id, features.commands, props.path]);
 
   // Context
   const [context, setContext] = useState<Context<NotebookModel> | null>(null);
@@ -300,7 +300,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
           extensions.map(extension => {
             extension.init({
               notebookId: id,
-              commands: features.commandRegistry,
+              commands: features.commands,
               panel: thisPanel!,
             });
             extension.createNew(thisPanel!, context);
@@ -326,7 +326,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
       }
       setPanel(panel => (panel === thisPanel ? null : panel));
     };
-  }, [context, extensions, features.commandRegistry, widgetFactory]);
+  }, [context, extensions, features.commands, widgetFactory]);
 
   useEffect(() => {
     let isMounted = true;
@@ -429,9 +429,9 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
 
   const onKeyDown = useCallback(
     (event: any) => {
-      features.commandRegistry.processKeydownEvent(event);
+      features.commands.processKeydownEvent(event);
     },
-    [features.commandRegistry]
+    [features.commands]
   );
 
   // FIXME
@@ -803,12 +803,12 @@ async function loadFromUrl(url: string) {
  * Common immutable JupyterLab features required for the notebook panel.
  */
 class CommonFeatures {
-  protected _commandRegistry: CommandRegistry;
+  protected _commands: CommandRegistry;
   protected _editorServices: IEditorServices;
   protected _rendermime: RenderMimeRegistry;
 
-  constructor(options: { commandRegistry?: CommandRegistry } = {}) {
-    this._commandRegistry = options.commandRegistry ?? new CommandRegistry();
+  constructor(options: { commands?: CommandRegistry } = {}) {
+    this._commands = options.commands ?? new CommandRegistry();
 
     const languages = new EditorLanguageRegistry();
     // Register default languages.
@@ -879,8 +879,8 @@ class CommonFeatures {
     };
   }
 
-  get commandRegistry(): CommandRegistry {
-    return this._commandRegistry;
+  get commands(): CommandRegistry {
+    return this._commands;
   }
 
   get editorServices(): IEditorServices {

@@ -27,13 +27,13 @@ export type ICellSidebarOptions = {
    * Cell model
    */
   model: ICellModel;
-} & Pick<ICellSidebarProps, 'command' | 'nbgrader'>;
+} & Pick<ICellSidebarProps, 'commands' | 'nbgrader'>;
 
 /**
  * Cell sidebar component
  */
 export function CellSidebar(props: ICellSidebarOptions): JSX.Element {
-  const { command, model, nbgrader } = props;
+  const { commands, model, nbgrader } = props;
 
   return (
     <Box
@@ -65,7 +65,7 @@ export function CellSidebar(props: ICellSidebarOptions): JSX.Element {
         size="small"
         onClick={(e: any) => {
           e.preventDefault();
-          command.execute(NotebookCommandIds.run).catch(reason => {
+          commands.execute(NotebookCommandIds.run).catch(reason => {
             console.error('Failed to run cell.', reason);
           });
         }}
@@ -79,7 +79,7 @@ export function CellSidebar(props: ICellSidebarOptions): JSX.Element {
         size="small"
         onClick={(e: any) => {
           e.preventDefault();
-          command.execute(NotebookCommandIds.insertAbove).catch(reason => {
+          commands.execute(NotebookCommandIds.insertAbove).catch(reason => {
             console.error('Failed to insert code cell above.', reason);
           });
         }}
@@ -93,7 +93,7 @@ export function CellSidebar(props: ICellSidebarOptions): JSX.Element {
         size="small"
         onClick={(e: any) => {
           e.preventDefault();
-          command
+          commands
             .execute(NotebookCommandIds.insertAbove, { cellType: 'markdown' })
             .catch(reason => {
               console.error('Failed to insert markdown cell above.', reason);
@@ -110,7 +110,7 @@ export function CellSidebar(props: ICellSidebarOptions): JSX.Element {
           size="small"
           onClick={(e: any) => {
             e.preventDefault();
-            command
+            commands
               .execute(NotebookCommandIds.changeCellTypeToMarkdown)
               .catch(reason => {
                 console.error(
@@ -130,7 +130,7 @@ export function CellSidebar(props: ICellSidebarOptions): JSX.Element {
           size="small"
           onClick={(e: any) => {
             e.preventDefault();
-            command
+            commands
               .execute(NotebookCommandIds.changeCellTypeToCode)
               .catch(reason => {
                 console.error('Failed to change cell type to code.', reason);
@@ -147,7 +147,7 @@ export function CellSidebar(props: ICellSidebarOptions): JSX.Element {
         size="small"
         onClick={(e: any) => {
           e.preventDefault();
-          command
+          commands
             .execute(NotebookCommandIds.insertBelow, { cellType: 'markdown' })
             .catch(reason => {
               console.error('Failed to insert markdown cell below.', reason);
@@ -163,7 +163,7 @@ export function CellSidebar(props: ICellSidebarOptions): JSX.Element {
         size="small"
         onClick={(e: any) => {
           e.preventDefault();
-          command.execute(NotebookCommandIds.insertBelow).catch(reason => {
+          commands.execute(NotebookCommandIds.insertBelow).catch(reason => {
             console.error('Failed to insert code cell below.', reason);
           });
         }}
@@ -177,7 +177,7 @@ export function CellSidebar(props: ICellSidebarOptions): JSX.Element {
         size="small"
         onClick={(e: any) => {
           e.preventDefault();
-          command.execute(NotebookCommandIds.deleteCells).catch(reason => {
+          commands.execute(NotebookCommandIds.deleteCells).catch(reason => {
             console.error('Failed to delete cells.', reason);
           });
         }}

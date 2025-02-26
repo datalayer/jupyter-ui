@@ -38,7 +38,7 @@ export class NotebookAdapter {
 
   private _CellSidebar?: (props: ICellSidebarProps) => JSX.Element;
   private _boxPanel: BoxPanel;
-  private _commandRegistry: CommandRegistry;
+  private _commands: CommandRegistry;
   private _contentFactory: JupyterReactContentFactory;
   private _context?: Context<INotebookModel>;
   private _documentRegistry?: DocumentRegistry;
@@ -90,7 +90,7 @@ export class NotebookAdapter {
     this._boxPanel.addClass('dla-Jupyter-Notebook');
     this._boxPanel.spacing = 0;
 
-    this._commandRegistry = new CommandRegistry();
+    this._commands = new CommandRegistry();
 
     if (props.url) {
       this.loadFromUrl(props.url).then((nbformat) => {
@@ -112,7 +112,7 @@ export class NotebookAdapter {
   }
 
   notebookKeydownListener = (event: KeyboardEvent) => {
-    this._commandRegistry?.processKeydownEvent(event);
+    this._commands?.processKeydownEvent(event);
   }
 
   setupCompleter(notebookPanel: NotebookPanel) {
@@ -349,7 +349,7 @@ export class NotebookAdapter {
     if (!this._readonly) {
       try {
         addNotebookCommands(
-          this._commandRegistry,
+          this._commands,
           completerHandler,
           this._tracker!,
           this._path
@@ -459,7 +459,7 @@ export class NotebookAdapter {
     this._contentFactory = new JupyterReactContentFactory(
       this._id,
       this._nbgrader,
-      this._commandRegistry,
+      this._commands,
       { editorFactory },
       this._CellSidebar,
     );
@@ -555,7 +555,7 @@ export class NotebookAdapter {
   }
 
   get commands(): CommandRegistry {
-    return this._commandRegistry;
+    return this._commands;
   }
 
   get serviceManager(): ServiceManager.IManager {

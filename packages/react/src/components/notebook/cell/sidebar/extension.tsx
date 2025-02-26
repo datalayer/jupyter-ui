@@ -17,7 +17,7 @@ class CellSidebarFactory implements IDisposable {
   private _sidebars = new WeakMap<ICellModel, Widget>();
 
   /**
-   * SQL toolbar factory.
+   * Cell sidebar factory.
    *
    * @param panel The notebook panel
    * @param commands Command registry
@@ -55,7 +55,7 @@ class CellSidebarFactory implements IDisposable {
     if (cell) {
       const sidebar = ReactWidget.create(
         <CellSidebar
-          command={this.commands}
+          commands={this.commands}
           model={model}
           nbgrader={this.nbgrader}
         />

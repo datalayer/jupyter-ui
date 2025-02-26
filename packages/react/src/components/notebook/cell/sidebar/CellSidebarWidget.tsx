@@ -17,7 +17,7 @@ export const DATALAYER_CELL_SIDEBAR_CLASS_NAME = 'dla-CellSidebar-Container';
 export type ICellSidebarProps = {
   notebookId: string;
   cellNodeId: string;
-  command: CommandRegistry;
+  commands: CommandRegistry;
   nbgrader: boolean;
 }
 
@@ -37,7 +37,7 @@ export class CellSidebarWidget extends ReactPortalWidget implements ICellHeader 
     const props: ICellSidebarProps = {
       notebookId: notebookId,
       cellNodeId,
-      command: this._commands,
+      commands: this._commands,
       nbgrader,
     };
     const sidebar = createElement(CellSidebar, props);
