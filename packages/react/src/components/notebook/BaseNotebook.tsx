@@ -62,7 +62,6 @@ import { Widget } from '@lumino/widgets';
 import { Box } from '@primer/react';
 import { Banner } from '@primer/react/experimental';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { createPortal } from 'react-dom';
 import { WebsocketProvider } from 'y-websocket';
 import {
   COLLABORATION_ROOM_URL_PATH,
@@ -73,11 +72,8 @@ import type { OnSessionConnection } from '../../state';
 import { newUuid, sleep } from '../../utils';
 import { Lumino } from '../lumino';
 import { Loader } from '../utils';
-import { CellMetadataEditor, type ICellSidebarProps } from './cell';
-import { JupyterReactContentFactory } from './content';
 import type { DatalayerNotebookExtension } from './Notebook';
 import addNotebookCommands from './NotebookCommands';
-import useNotebookStore from './NotebookState';
 
 const COMPLETER_TIMEOUT_MILLISECONDS = 1000;
 const DEFAULT_EXTENSIONS = new Array<DatalayerNotebookExtension>();
@@ -87,8 +83,6 @@ const FALLBACK_NOTEBOOK_PATH = '.datalayer/ping.ipynb';
  * Base notebook component properties
  */
 export interface IBaseNotebookProps {
-  // FIXME this should be an extension
-  CellSidebar?: (props: ICellSidebarProps) => JSX.Element;
   /**
    * Custom command registry.
    *
@@ -117,11 +111,6 @@ export interface IBaseNotebookProps {
    */
   model: NotebookModel;
   /**
-   * Whether nbgrader mode is activated or not.
-   */
-  // FIXME this should be an extension
-  nbgrader: boolean;
-  /**
    * Callback on session connection changed
    */
   onSessionConnectionChanged?: OnSessionConnection;
@@ -139,16 +128,17 @@ export interface IBaseNotebookProps {
  *
  * The notebook model and kernel lifecycle is not handled by
  * this component.
+ * 
+ * Important
+ * This component is not connected to the notebookStore.
  */
 export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
   const {
-    CellSidebar,
     commandRegistry,
     extensions = DEFAULT_EXTENSIONS,
     kernelId,
     serviceManager,
     model,
-    nbgrader,
     onSessionConnectionChanged,
   } = props;
 
@@ -156,8 +146,6 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
   const [extensionComponents, setExtensionComponents] = useState(
     new Array<JSX.Element>()
   );
-
-  const notebookStore = useNotebookStore();
 
   const id = useMemo(() => props.id || newUuid(), [props.id]);
   const path = useMemo(
@@ -173,16 +161,10 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
   // Content factory
   const contentFactory = useMemo(
     () =>
-      new JupyterReactContentFactory(
-        id,
-        nbgrader,
-        features.commandRegistry,
-        {
-          editorFactory: features.editorServices.factoryService.newInlineEditor,
-        },
-        CellSidebar
-      ),
-    [CellSidebar, id, features, nbgrader]
+      new NotebookPanel.ContentFactory({
+        editorFactory: features.editorServices.factoryService.newInlineEditor,
+      }),
+    [features.editorServices.factoryService.newInlineEditor]
   );
 
   // Completer
@@ -314,45 +296,6 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
     if (context) {
       thisPanel = widgetFactory?.createNew(context) ?? null;
       if (thisPanel) {
-        // Update the notebook state further to events.
-        thisPanel.content.modelChanged.connect((notebook, _) => {
-          if (notebook.model) {
-            notebookStore.changeModel({ id, notebookModel: notebook.model });
-          }
-        });
-        thisPanel.content.activeCellChanged.connect((_, cellModel) => {
-          if (cellModel === null) {
-            notebookStore.activeCellChange({ id, cellModel: undefined });
-          } else {
-            notebookStore.activeCellChange({ id, cellModel });
-            if (!context.model.readOnly) {
-              // FIXME this should be moved to a Notebook extension to drop notebookStore usage
-              const panelDiv = document.getElementById(
-                'right-panel-id'
-              ) as HTMLDivElement;
-              if (panelDiv) {
-                const cellMetadataOptions = (
-                  <Box mt={3}>
-                    <CellMetadataEditor
-                      notebookId={id}
-                      cell={cellModel}
-                      nbgrader={nbgrader}
-                    />
-                  </Box>
-                );
-                const portal = createPortal(cellMetadataOptions, panelDiv);
-                notebookStore.setPortalDisplay({
-                  id,
-                  portalDisplay: { portal, pinned: false },
-                });
-              }
-            }
-          }
-        });
-        thisPanel.sessionContext.statusChanged.connect((_, kernelStatus) => {
-          notebookStore.changeKernelStatus({ id, kernelStatus });
-        });
-
         setExtensionComponents(
           extensions.map(extension => {
             extension.init({
@@ -383,14 +326,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
       }
       setPanel(panel => (panel === thisPanel ? null : panel));
     };
-  }, [
-    context,
-    extensions,
-    features.commandRegistry,
-    nbgrader,
-    notebookStore,
-    widgetFactory,
-  ]);
+  }, [context, extensions, features.commandRegistry, widgetFactory]);
 
   useEffect(() => {
     let isMounted = true;

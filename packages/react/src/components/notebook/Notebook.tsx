@@ -44,8 +44,8 @@ import { NotebookAdapter } from './NotebookAdapter';
 import { useNotebookStore } from './NotebookState';
 import { INotebookToolbarProps } from './toolbar/NotebookToolbar';
 
-import './Notebook.css';
 import { Loader } from '../utils';
+import './Notebook.css';
 
 export type ExternalIPyWidgets = {
   name: string;
@@ -128,7 +128,6 @@ export const Notebook = (props: INotebookProps) => {
     height,
     maxHeight,
     nbformat,
-    nbgrader,
     path,
     readonly,
     serverless,
@@ -211,9 +210,7 @@ export const Notebook = (props: INotebookProps) => {
             const cellMetadataOptions = (
               <Box mt={3}>
                 <CellMetadataEditor
-                  notebookId={id}
-                  cell={cellModel}
-                  nbgrader={nbgrader!}
+                  cellModel={cellModel.model}
                 />
               </Box>
             );

@@ -159,7 +159,7 @@ export const CellSidebarSource = (props: ICellSidebarProps) => {
               cellType: 'code',
               source:
                 "print('Hello 🪐 ⚛️ Jupyter React, I have been inserted down ⬇️.')",
-            })
+            });
           }}
         >
           Code (with source)
@@ -186,11 +186,7 @@ export const CellSidebarSource = (props: ICellSidebarProps) => {
             </ActionMenu.Anchor>
             <ActionMenu.Overlay>
             */}
-          <CellMetadataEditor
-            notebookId={notebookId}
-            cell={activeCell}
-            nbgrader={nbgrader}
-          />
+          <CellMetadataEditor cellModel={activeCell.model} />
           {/*
             </ActionMenu.Overlay>
             */}

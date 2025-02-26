@@ -295,20 +295,30 @@ export function addNotebookCommands(
   allCommands.add(
     commandRegistry.addCommand(NotebookCommandIds.insertAbove, {
       label: 'Insert Above',
-      execute: () => {
-        return tracker.currentWidget
-          ? NotebookActions.insertAbove(tracker.currentWidget.content)
-          : undefined;
+      execute: args => {
+        const { cellType } = (args ?? {}) as any;
+        const notebook = tracker.currentWidget?.content;
+        if (notebook) {
+          NotebookActions.insertAbove(notebook);
+          if (cellType) {
+            NotebookActions.changeCellType(notebook, cellType);
+          }
+        }
       },
     })
   );
   allCommands.add(
     commandRegistry.addCommand(NotebookCommandIds.insertBelow, {
       label: 'Insert Below',
-      execute: () => {
-        return tracker.currentWidget
-          ? NotebookActions.insertBelow(tracker.currentWidget.content)
-          : undefined;
+      execute: args => {
+        const { cellType } = (args ?? {}) as any;
+        const notebook = tracker.currentWidget?.content;
+        if (notebook) {
+          NotebookActions.insertBelow(notebook);
+          if (cellType) {
+            NotebookActions.changeCellType(notebook, cellType);
+          }
+        }
       },
     })
   );

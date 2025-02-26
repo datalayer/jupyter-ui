@@ -22,10 +22,13 @@ import type { CommandRegistry } from '@lumino/commands';
 export interface ISimpleNotebookProps
   extends Omit<
     INotebookProps,
+    | 'CellSidebar'
+    | 'cellSidebarMargin'
     | 'cellMetadataPanel'
     | 'collaborative'
     | 'kernel'
     | 'lite'
+    | 'nbgrader'
     | 'serverless'
     | 'useRunningKernelId'
     | 'useRunningKernelIndex'
@@ -43,7 +46,13 @@ export interface ISimpleNotebookProps
    * Providing it allows to command the component from an higher level.
    */
   commandRegistry?: CommandRegistry;
+  /**
+   * Kernel ID to connect to.
+   */
   kernelId?: string;
+  /**
+   * Jupyter service manager.
+   */
   serviceManager: ServiceManager.IManager;
   /**
    * Callback on notebook model changed
@@ -62,9 +71,7 @@ export function SimpleNotebook(
   props: React.PropsWithChildren<ISimpleNotebookProps>
 ): JSX.Element {
   const {
-    CellSidebar,
     Toolbar,
-    cellSidebarMargin = 120,
     children,
     collaborationServer,
     commandRegistry,
@@ -73,7 +80,6 @@ export function SimpleNotebook(
     maxHeight = '100vh',
     id,
     nbformat,
-    nbgrader = false,
     onNotebookModelChanged,
     onSessionConnection,
     path,
@@ -138,6 +144,7 @@ export function SimpleNotebook(
           '& .jp-Toolbar-kernelName': {
             display: 'none',
           },
+          /*
           '& .jp-Cell': {
             width: `calc(100% - ${cellSidebarMargin}px)`,
           },
@@ -155,6 +162,7 @@ export function SimpleNotebook(
             width: `${cellSidebarMargin + 10}px`,
             marginLeft: 'auto',
           },
+          */
           '& .jp-CodeMirrorEditor': {
             cursor: 'text !important',
           },
@@ -166,12 +174,10 @@ export function SimpleNotebook(
         {children}
         {model && serviceManager && (
           <BaseNotebook
-            CellSidebar={CellSidebar}
             commandRegistry={commandRegistry}
             id={id}
             extensions={extensions}
             model={model}
-            nbgrader={nbgrader}
             serviceManager={serviceManager}
             kernelId={kernelId}
             onSessionConnectionChanged={onSessionConnection}
