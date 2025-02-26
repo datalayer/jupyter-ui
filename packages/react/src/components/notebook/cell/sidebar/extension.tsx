@@ -27,7 +27,8 @@ class CellSidebarFactory implements IDisposable {
   constructor(
     protected panel: NotebookPanel,
     protected commands: CommandRegistry,
-    protected nbgrader: boolean = false
+    protected nbgrader: boolean = false,
+    protected sidebarWidth: number = 130
   ) {
     this._onModelChanged(panel.content);
     panel.content.modelChanged.connect(this._onModelChanged, this);
@@ -61,6 +62,10 @@ class CellSidebarFactory implements IDisposable {
           nbgrader={this.nbgrader}
         />
       );
+      sidebar.node.style.position = 'absolute';
+      sidebar.node.style.right = `-${this.sidebarWidth}px`;
+      // Ensure to not capture event when the sidebar is hidden
+      sidebar.node.style.pointerEvents = 'none';
       (cell.layout as PanelLayout).insertWidget(0, sidebar);
       this._sidebars.set(model, sidebar);
       const removeSidebar = () => {
@@ -109,7 +114,8 @@ class CellSidebarFactory implements IDisposable {
 export class CellSidebarExtension implements DatalayerNotebookExtension {
   protected factory: React.JSXElementConstructor<ICellSidebarProps>;
   protected commands?: CommandRegistry;
-  protected nbgrader: boolean;
+  protected nbgrader?: boolean;
+  protected sidebarWidth?: number;
 
   /**
    * Constructor
@@ -123,11 +129,13 @@ export class CellSidebarExtension implements DatalayerNotebookExtension {
       commands?: CommandRegistry;
       factory?: React.JSXElementConstructor<ICellSidebarProps>;
       nbgrader?: boolean;
+      sidebarWidth?: number;
     } = {}
   ) {
     this.factory = options.factory ?? CellSidebar;
     this.commands = options.commands;
-    this.nbgrader = options.nbgrader ?? false;
+    this.nbgrader = options.nbgrader;
+    this.sidebarWidth = options.sidebarWidth;
   }
 
   readonly component: null;
@@ -139,7 +147,8 @@ export class CellSidebarExtension implements DatalayerNotebookExtension {
     const sidebar = new CellSidebarFactory(
       panel,
       this.commands!,
-      this.nbgrader
+      this.nbgrader,
+      this.sidebarWidth
     );
     return sidebar;
   }

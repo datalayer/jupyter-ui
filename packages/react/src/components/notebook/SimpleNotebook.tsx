@@ -23,7 +23,6 @@ export interface ISimpleNotebookProps
   extends Omit<
     INotebookProps,
     | 'CellSidebar'
-    | 'cellSidebarMargin'
     | 'cellMetadataPanel'
     | 'collaborative'
     | 'kernel'
@@ -73,6 +72,7 @@ export function SimpleNotebook(
   const {
     Toolbar,
     children,
+    cellSidebarMargin = 130,
     collaborationServer,
     commands,
     extensions,
@@ -144,25 +144,12 @@ export function SimpleNotebook(
           '& .jp-Toolbar-kernelName': {
             display: 'none',
           },
-          /*
           '& .jp-Cell': {
             width: `calc(100% - ${cellSidebarMargin}px)`,
           },
           '& .jp-Notebook-footer': {
             width: `calc(100% - ${cellSidebarMargin + 82}px)`,
           },
-          '& .jp-Cell .jp-CellHeader': {
-            position: 'absolute',
-            top: '-5px',
-            left: `${cellSidebarMargin + 10}px`,
-            height: 'auto',
-          },
-          '& .jp-Cell .dla-CellSidebar-Container': {
-            padding: '4px 8px',
-            width: `${cellSidebarMargin + 10}px`,
-            marginLeft: 'auto',
-          },
-          */
           '& .jp-CodeMirrorEditor': {
             cursor: 'text !important',
           },

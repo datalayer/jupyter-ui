@@ -483,17 +483,6 @@ export const Notebook = (props: INotebookProps) => {
           '& .jp-Notebook-footer': {
             width: `calc(100% - ${props.cellSidebarMargin! + 82}px)`,
           },
-          '& .jp-Cell .jp-CellHeader': {
-            position: 'absolute',
-            top: '-5px',
-            left: `${props.cellSidebarMargin! + 10}px`,
-            height: 'auto',
-          },
-          '& .jp-Cell .dla-CellSidebar-Container': {
-            padding: '4px 8px',
-            width: `${props.cellSidebarMargin! + 10}px`,
-            marginLeft: 'auto',
-          },
           '& .jp-CodeMirrorEditor': {
             cursor: 'text !important',
           },
@@ -526,7 +515,7 @@ export const Notebook = (props: INotebookProps) => {
 
 Notebook.defaultProps = {
   cellMetadataPanel: false,
-  cellSidebarMargin: 120,
+  cellSidebarMargin: 130,
   collaborative: undefined,
   extensions: [],
   height: '100vh',
