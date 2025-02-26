@@ -4,34 +4,43 @@
  * MIT License
  */
 
-import { useState } from 'react';
-import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { ServiceManager } from '@jupyterlab/services';
-import { Button , Box } from '@primer/react';
-import { JupyterReactTheme } from '../theme';
-import { createServerSettings } from '../jupyter/JupyterContext';
-import { getJupyterServerUrl, getJupyterServerToken, ServiceManagerLess } from '../jupyter';
+import { Box, Button } from '@primer/react';
+import { useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
+import {
+  getJupyterServerToken,
+  getJupyterServerUrl,
+  ServiceManagerLess,
+} from '../jupyter';
+import { createServerSettings } from '../jupyter/JupyterContext';
+import { JupyterReactTheme } from '../theme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
-
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookServiceManager = () => {
   const [serverless, setServerless] = useState(true);
   const [readonly, setReadonly] = useState(true);
-  const [serviceManager, setServiceManager] = useState(new ServiceManagerLess());
+  const [serviceManager, setServiceManager] = useState(
+    new ServiceManagerLess()
+  );
+  const extensions = useMemo(() => [new CellSidebarExtension()], []);
   const changeServiceManager = () => {
     if (serverless) {
       setServerless(false);
-      setReadonly(false);  
-      const serverSettings = createServerSettings(getJupyterServerUrl(), getJupyterServerToken());
+      setReadonly(false);
+      const serverSettings = createServerSettings(
+        getJupyterServerUrl(),
+        getJupyterServerToken()
+      );
       const serviceManager = new ServiceManager({ serverSettings });
       setServiceManager(serviceManager as any);
     } else {
       setServerless(true);
-      setReadonly(true);  
+      setReadonly(true);
       const serviceManager = new ServiceManagerLess();
       setServiceManager(serviceManager);
     }
@@ -44,24 +53,21 @@ const NotebookServiceManager = () => {
             Change the Service Manager
           </Button>
         </Box>
-        <Box ml={3}>
-          Token: {serviceManager.serverSettings.token}
-        </Box>
+        <Box ml={3}>Token: {serviceManager.serverSettings.token}</Box>
       </Box>
       <Notebook
+        extensions={extensions}
         nbformat={nbformat as INotebookContent}
         serviceManager={serviceManager}
         serverless={serverless}
         readonly={readonly}
         id="notebook-model-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        cellSidebarMargin={120}
-        CellSidebar={CellSidebar}
         Toolbar={NotebookToolbar}
       />
     </JupyterReactTheme>
   );
-}
+};
 
 const div = document.createElement('div');
 document.body.appendChild(div);

@@ -4,22 +4,24 @@
  * MIT License
  */
 
-import { useEffect, useState } from 'react';
-import { createRoot } from 'react-dom/client';
-import { Box, Button } from '@primer/react';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { Box, Button } from '@primer/react';
+import { useEffect, useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import { CellSidebarExtension } from '../components';
+import { Notebook } from '../components/notebook/Notebook';
 import { useJupyter } from '../jupyter/JupyterContext';
 import Kernel from '../jupyter/kernel/Kernel';
-import { Notebook } from '../components/notebook/Notebook';
-import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
-
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import notebook from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookUnmount = () => {
   const { kernelManager, serviceManager } = useJupyter();
   const [showNotebook, setShowNotebook] = useState(false);
   const [kernel, setKernel] = useState<Kernel>();
+
+  const extensions = useMemo(() => [new CellSidebarExtension()], []);
+
   useEffect(() => {
     if (serviceManager && kernelManager) {
       const kernel = new Kernel({
@@ -55,7 +57,7 @@ const NotebookUnmount = () => {
             id="notebook-unmount-id"
             //                kernel={kernel}
             height="700px"
-            CellSidebar={CellSidebar}
+            extensions={extensions}
           />
         </>
       ) : (

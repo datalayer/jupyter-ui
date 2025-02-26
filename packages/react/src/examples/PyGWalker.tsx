@@ -4,27 +4,29 @@
  * MIT License
  */
 
-import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { useMemo } from 'react';
+import { createRoot } from 'react-dom/client';
+import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
-
 import nbformat from './notebooks/PyGWalker.ipynb.json';
 
-const PyGWalker = () => (
-  <JupyterReactTheme>
-    <Notebook
-      nbformat={nbformat as INotebookContent}
-      id="notebook-pygwalker-id"
-      height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-      cellSidebarMargin={120}
-      CellSidebar={CellSidebar}
-      Toolbar={NotebookToolbar}
-    />
-  </JupyterReactTheme>
-);
+const PyGWalker = () => {
+  const extensions = useMemo(() => [new CellSidebarExtension()], []);
+  return (
+    <JupyterReactTheme>
+      <Notebook
+        nbformat={nbformat as INotebookContent}
+        id="notebook-pygwalker-id"
+        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+        extensions={extensions}
+        Toolbar={NotebookToolbar}
+      />
+    </JupyterReactTheme>
+  );
+};
 
 const div = document.createElement('div');
 document.body.appendChild(div);

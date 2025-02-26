@@ -4,26 +4,29 @@
  * MIT License
  */
 
-import { useState } from 'react';
-import { createRoot } from 'react-dom/client';
-import { IOutput, INotebookContent } from '@jupyterlab/nbformat';
+import { INotebookContent, IOutput } from '@jupyterlab/nbformat';
 import { Box, Button, ButtonGroup, SegmentedControl } from '@primer/react';
-import { DEFAULT_JUPYTER_SERVER_URL, DEFAULT_JUPYTER_SERVER_TOKEN } from '../jupyter';
+import { useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import Cell from '../components/cell/Cell';
+import { useCellsStore } from '../components/cell/CellState';
+import Console from '../components/console/Console';
+import FileBrowser from '../components/filebrowser/FileBrowser';
+import FileManagerJupyterLab from '../components/filemanager/FileManagerJupyterLab';
+import CellSidebarButton from '../components/notebook/cell/sidebar/CellSidebarButton';
+import { Notebook } from '../components/notebook/Notebook';
+import useNotebookStore from '../components/notebook/NotebookState';
+import Output from '../components/output/Output';
+import Terminal from '../components/terminal/Terminal';
+import {
+  DEFAULT_JUPYTER_SERVER_TOKEN,
+  DEFAULT_JUPYTER_SERVER_URL,
+} from '../jupyter';
 import { Jupyter } from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { Kernel } from '../jupyter/kernel/Kernel';
-import Cell from '../components/cell/Cell';
-import { Notebook } from '../components/notebook/Notebook';
-import Output from '../components/output/Output';
-import FileBrowser from '../components/filebrowser/FileBrowser';
-import FileManagerJupyterLab from '../components/filemanager/FileManagerJupyterLab';
-import Terminal from '../components/terminal/Terminal';
-import CellSidebarButton from '../components/notebook/cell/sidebar/CellSidebarButton';
-import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
-import Console from '../components/console/Console';
-import { useCellsStore } from '../components/cell/CellState';
-import useNotebookStore from '../components/notebook/NotebookState';
 
+import { CellSidebarExtension } from '../components';
 import notebook from './notebooks/NotebookExample1.ipynb.json';
 
 const SOURCE_1 = '1+1';
@@ -60,13 +63,16 @@ const CellPreview = (props: ICellToolProps) => {
   return (
     <>
       <>source: {cellsStore.getSource(props.id)}</>
-      <>kernel available: {String(cellsStore.isKernelSessionAvailable(props.id))}</>
+      <>
+        kernel available:{' '}
+        {String(cellsStore.isKernelSessionAvailable(props.id))}
+      </>
     </>
   );
 };
 
 const CellToolbar = (props: ICellToolProps) => {
-  const {id} = props;
+  const { id } = props;
   const cellsStore = useCellsStore();
   return (
     <>
@@ -113,9 +119,7 @@ const NotebookToolbar = () => {
         <Button
           variant="default"
           size="small"
-          onClick={() =>
-            notebookStore.runAll(NOTEBOOK_ID_1)
-          }
+          onClick={() => notebookStore.runAll(NOTEBOOK_ID_1)}
         >
           Run all
         </Button>
@@ -127,6 +131,7 @@ const NotebookToolbar = () => {
 const NotebookKernelChange = () => {
   const { kernelManager, serviceManager } = useJupyter();
   const notebookStore = useNotebookStore();
+  const extensions = useMemo(() => [new CellSidebarExtension()], []);
   const changeKernel = () => {
     if (serviceManager && kernelManager) {
       const kernel = new Kernel({
@@ -153,7 +158,7 @@ const NotebookKernelChange = () => {
       </Box>
       <Notebook
         path="test.ipynb"
-        CellSidebar={CellSidebar}
+        extensions={extensions}
         id={NOTEBOOK_ID_2}
       />
     </>
@@ -177,35 +182,38 @@ const Outputs = () => {
         kernel={defaultKernel}
         code={SOURCE_2}
       />
-      <Output
-        showEditor
-        autoRun
-        kernel={defaultKernel}
-        code={SOURCE_2}
-      />
+      <Output showEditor autoRun kernel={defaultKernel} code={SOURCE_2} />
     </>
   );
 };
 
-const JuptyerContextExample = () => {
+const JupyterContextExample = () => {
   const [index, setIndex] = useState(1);
   const { serviceManager } = useJupyter();
+  const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
     <>
       <Jupyter
         jupyterServerUrl={DEFAULT_JUPYTER_SERVER_URL}
-        jupyterServerToken={DEFAULT_JUPYTER_SERVER_TOKEN}      
+        jupyterServerToken={DEFAULT_JUPYTER_SERVER_TOKEN}
         serverless={index === 0}
         terminals
       >
-        <SegmentedControl onChange={index => setIndex(index)} aria-label="jupyter-react-example">
-          <SegmentedControl.Button defaultSelected={index === 0}>Serverless</SegmentedControl.Button>
-          <SegmentedControl.Button defaultSelected={index === 1}>Server</SegmentedControl.Button>
+        <SegmentedControl
+          onChange={index => setIndex(index)}
+          aria-label="jupyter-react-example"
+        >
+          <SegmentedControl.Button defaultSelected={index === 0}>
+            Serverless
+          </SegmentedControl.Button>
+          <SegmentedControl.Button defaultSelected={index === 1}>
+            Server
+          </SegmentedControl.Button>
         </SegmentedControl>
         <hr />
         <CellPreview id={cellId} />
-        <CellToolbar id={cellId}/>
-        <Cell id={cellId}/>
+        <CellToolbar id={cellId} />
+        <Cell id={cellId} />
         <hr />
         <Notebook
           nbformat={notebook as INotebookContent}
@@ -223,7 +231,7 @@ const JuptyerContextExample = () => {
         <NotebookToolbar />
         <Notebook
           path="ipywidgets.ipynb"
-          CellSidebar={CellSidebar}
+          extensions={extensions}
           id={NOTEBOOK_ID_1}
         />
         <hr />
@@ -231,17 +239,17 @@ const JuptyerContextExample = () => {
         <hr />
         <FileManagerJupyterLab />
         <hr />
-        { serviceManager && <FileBrowser serviceManager={serviceManager}/> }
+        {serviceManager && <FileBrowser serviceManager={serviceManager} />}
         <hr />
         <Terminal />
       </Jupyter>
     </>
   );
-}
+};
 
 const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
-const cellId = 'my-cell-1'
+const cellId = 'my-cell-1';
 
-root.render(<JuptyerContextExample/>);
+root.render(<JupyterContextExample />);
