@@ -4,24 +4,35 @@
  * MIT License
  */
 
-import { useEffect, useState } from 'react';
-import { ActionList, TextInput } from '@primer/react';
+import { ICellModel } from '@jupyterlab/cells';
 import { CheckIcon } from '@primer/octicons-react';
-import { Cell, ICellModel } from '@jupyterlab/cells';
-import NbGraderType, { getNbGraderType } from './NbGraderCells';
+import { ActionList, TextInput } from '@primer/react';
+import { useCallback, useEffect, useState } from 'react';
 import { newUlid } from '../../../../utils';
+import NbGraderType, { getNbGraderType } from './NbGraderCells';
 
-type ICellMetadataEditorProps = {
-  notebookId: string;
-  cell: Cell<ICellModel>;
-  nbgrader: boolean;
+/**
+ * Cell metadata editor properties
+ */
+export type ICellMetadataEditorProps = {
+  /**
+   * Cell model
+   */
+  cellModel: ICellModel;
 };
 
-export const CellMetadataEditor = (props: ICellMetadataEditorProps) => {
-  const { cell } = props;
-  const [cellGradeType, setCellGradeType] = useState(getNbGraderType(cell));
-  const [nbGrade, setNbGrade] = useState<{grade_id: string; points: number}>(
-    cell.model.getMetadata('nbgrader') ?? { grade_id: newUlid(), points: 1 }
+/**
+ * Cell metadata editor component
+ */
+export function CellMetadataEditor(
+  props: ICellMetadataEditorProps
+): JSX.Element {
+  const { cellModel } = props;
+  const [cellGradeType, setCellGradeType] = useState(
+    getNbGraderType(cellModel)
+  );
+  const [nbGrade, setNbGrade] = useState<{ grade_id: string; points: number }>(
+    cellModel.getMetadata('nbgrader') ?? { grade_id: newUlid(), points: 1 }
   );
   useEffect(() => {
     setNbGrade({
@@ -29,118 +40,124 @@ export const CellMetadataEditor = (props: ICellMetadataEditorProps) => {
       points: nbGrade.points ?? 1,
     });
   }, [nbGrade]);
-  const handleGradeIdChange = (cell: Cell<ICellModel>, gradeId: string) => {
-    const nbgrader = cell.model.getMetadata('nbgrader') as any;
-    cell.model.setMetadata('nbgrader', {
-      ...nbgrader,
-      grade_id: gradeId,
-    });
-    setNbGrade({
-      ...nbGrade,
-      grade_id: gradeId,
-    });
-  };
-  const handlePointsChange = (cell: Cell<ICellModel>, points: string) => {
-    const points_number: number = +points;
-    if (!isNaN(points_number)) {
-      const nbgrader = cell.model.getMetadata('nbgrader') as any;
-      cell.model.setMetadata('nbgrader', {
+  const handleGradeIdChange = useCallback(
+    (cellModel: ICellModel, gradeId: string) => {
+      const nbgrader = cellModel.getMetadata('nbgrader') as any;
+      cellModel.setMetadata('nbgrader', {
         ...nbgrader,
-        points: points_number,
+        grade_id: gradeId,
       });
       setNbGrade({
         ...nbGrade,
-        points: points_number,
+        grade_id: gradeId,
       });
-    }
-  };
-  const assignCellGradeType = (
-    cell: Cell<ICellModel>,
-    cellGradeType: NbGraderType
-  ) => {
-    switch (cellGradeType) {
-      case NbGraderType.NotGraded: {
-        cell.model.deleteMetadata('nbgrader');
-        setCellGradeType(NbGraderType.NotGraded);
-        break;
-      }
-      case NbGraderType.AutogradedAnswer: {
-        const nbgrader = cell.model.getMetadata('nbgrader') as any;
-        cell.model.setMetadata('nbgrader', {
+    },
+    []
+  );
+  const handlePointsChange = useCallback(
+    (cellModel: ICellModel, points: string) => {
+      const points_number: number = +points;
+      if (!isNaN(points_number)) {
+        const nbgrader = cellModel.getMetadata('nbgrader') as any;
+        cellModel.setMetadata('nbgrader', {
           ...nbgrader,
-          grade: false,
-          solution: true,
-          locked: false,
-          task: false,
-          grade_id: newUlid(),
-          points: 1,
+          points: points_number,
         });
-        setCellGradeType(NbGraderType.AutogradedAnswer);
-        break;
-      }
-      case NbGraderType.AutogradedTest: {
-        const nbgrader = cell.model.getMetadata('nbgrader') as any;
-        cell.model.setMetadata('nbgrader', {
-          ...nbgrader,
-          grade: true,
-          solution: false,
-          locked: false,
-          task: false,
-          grade_id: newUlid(),
-          points: 1,
+        setNbGrade({
+          ...nbGrade,
+          points: points_number,
         });
-        setCellGradeType(NbGraderType.AutogradedTest);
-        break;
       }
-      case NbGraderType.ManuallyGradedAnswer: {
-        const nbgrader = cell.model.getMetadata('nbgrader') as any;
-        cell.model.setMetadata('nbgrader', {
-          ...nbgrader,
-          grade: true,
-          solution: true,
-          locked: false,
-          task: false,
-          grade_id: newUlid(),
-          points: 1,
-        });
-        setCellGradeType(NbGraderType.ManuallyGradedAnswer);
-        break;
+    },
+    []
+  );
+  const assignCellGradeType = useCallback(
+    (cellModel: ICellModel, cellGradeType: NbGraderType) => {
+      switch (cellGradeType) {
+        case NbGraderType.NotGraded: {
+          cellModel.deleteMetadata('nbgrader');
+          setCellGradeType(NbGraderType.NotGraded);
+          break;
+        }
+        case NbGraderType.AutogradedAnswer: {
+          const nbgrader = cellModel.getMetadata('nbgrader') as any;
+          cellModel.setMetadata('nbgrader', {
+            ...nbgrader,
+            grade: false,
+            solution: true,
+            locked: false,
+            task: false,
+            grade_id: newUlid(),
+            points: 1,
+          });
+          setCellGradeType(NbGraderType.AutogradedAnswer);
+          break;
+        }
+        case NbGraderType.AutogradedTest: {
+          const nbgrader = cellModel.getMetadata('nbgrader') as any;
+          cellModel.setMetadata('nbgrader', {
+            ...nbgrader,
+            grade: true,
+            solution: false,
+            locked: false,
+            task: false,
+            grade_id: newUlid(),
+            points: 1,
+          });
+          setCellGradeType(NbGraderType.AutogradedTest);
+          break;
+        }
+        case NbGraderType.ManuallyGradedAnswer: {
+          const nbgrader = cellModel.getMetadata('nbgrader') as any;
+          cellModel.setMetadata('nbgrader', {
+            ...nbgrader,
+            grade: true,
+            solution: true,
+            locked: false,
+            task: false,
+            grade_id: newUlid(),
+            points: 1,
+          });
+          setCellGradeType(NbGraderType.ManuallyGradedAnswer);
+          break;
+        }
+        case NbGraderType.ManuallyGradedTask: {
+          const nbgrader = cellModel.getMetadata('nbgrader') as any;
+          cellModel.setMetadata('nbgrader', {
+            ...nbgrader,
+            //        "points": 1,
+            grade: false,
+            solution: false,
+            locked: true,
+            task: true,
+            grade_id: newUlid(),
+            points: 1,
+          });
+          setCellGradeType(NbGraderType.ManuallyGradedTask);
+          break;
+        }
+        case NbGraderType.ReadonlyGraded: {
+          const nbgrader = cellModel.getMetadata('nbgrader') as any;
+          cellModel.setMetadata('nbgrader', {
+            ...nbgrader,
+            grade: false,
+            solution: false,
+            locked: true,
+            task: false,
+          });
+          setCellGradeType(NbGraderType.ReadonlyGraded);
+          break;
+        }
       }
-      case NbGraderType.ManuallyGradedTask: {
-        const nbgrader = cell.model.getMetadata('nbgrader') as any;
-        cell.model.setMetadata('nbgrader', {
-          ...nbgrader,
-          //        "points": 1,
-          grade: false,
-          solution: false,
-          locked: true,
-          task: true,
-          grade_id: newUlid(),
-          points: 1,
-        });
-        setCellGradeType(NbGraderType.ManuallyGradedTask);
-        break;
-      }
-      case NbGraderType.ReadonlyGraded: {
-        const nbgrader = cell.model.getMetadata('nbgrader') as any;
-        cell.model.setMetadata('nbgrader', {
-          ...nbgrader,
-          grade: false,
-          solution: false,
-          locked: true,
-          task: false,
-        });
-        setCellGradeType(NbGraderType.ReadonlyGraded);
-        break;
-      }
-    }
-  };
+    },
+    []
+  );
   return (
     <ActionList showDividers>
       <ActionList.Divider />
       <ActionList.Group title="NbGrader Cell Type" variant="subtle">
         <ActionList.Item
-          onSelect={e => assignCellGradeType(cell, NbGraderType.NotGraded)}
+          onSelect={e => assignCellGradeType(cellModel, NbGraderType.NotGraded)}
         >
           {cellGradeType === NbGraderType.NotGraded && (
             <ActionList.LeadingVisual>
@@ -154,7 +171,7 @@ export const CellMetadataEditor = (props: ICellMetadataEditorProps) => {
         </ActionList.Item>
         <ActionList.Item
           onSelect={e =>
-            assignCellGradeType(cell, NbGraderType.AutogradedAnswer)
+            assignCellGradeType(cellModel, NbGraderType.AutogradedAnswer)
           }
         >
           {cellGradeType === NbGraderType.AutogradedAnswer && (
@@ -169,7 +186,9 @@ export const CellMetadataEditor = (props: ICellMetadataEditorProps) => {
         </ActionList.Item>
         <ActionList.Item
           role="listitem"
-          onClick={e => assignCellGradeType(cell, NbGraderType.AutogradedTest)}
+          onClick={e =>
+            assignCellGradeType(cellModel, NbGraderType.AutogradedTest)
+          }
         >
           {cellGradeType === NbGraderType.AutogradedTest && (
             <ActionList.LeadingVisual>
@@ -183,7 +202,7 @@ export const CellMetadataEditor = (props: ICellMetadataEditorProps) => {
         </ActionList.Item>
         <ActionList.Item
           onSelect={e =>
-            assignCellGradeType(cell, NbGraderType.ManuallyGradedTask)
+            assignCellGradeType(cellModel, NbGraderType.ManuallyGradedTask)
           }
         >
           {cellGradeType === NbGraderType.ManuallyGradedTask && (
@@ -198,7 +217,7 @@ export const CellMetadataEditor = (props: ICellMetadataEditorProps) => {
         </ActionList.Item>
         <ActionList.Item
           onSelect={e =>
-            assignCellGradeType(cell, NbGraderType.ManuallyGradedAnswer)
+            assignCellGradeType(cellModel, NbGraderType.ManuallyGradedAnswer)
           }
         >
           {cellGradeType === NbGraderType.ManuallyGradedAnswer && (
@@ -212,7 +231,9 @@ export const CellMetadataEditor = (props: ICellMetadataEditorProps) => {
           </ActionList.Description>
         </ActionList.Item>
         <ActionList.Item
-          onSelect={e => assignCellGradeType(cell, NbGraderType.ReadonlyGraded)}
+          onSelect={e =>
+            assignCellGradeType(cellModel, NbGraderType.ReadonlyGraded)
+          }
         >
           {cellGradeType === NbGraderType.ReadonlyGraded && (
             <ActionList.LeadingVisual>
@@ -235,7 +256,7 @@ export const CellMetadataEditor = (props: ICellMetadataEditorProps) => {
                 value={nbGrade.grade_id}
                 onChange={e => {
                   e.preventDefault();
-                  handleGradeIdChange(cell, e.target.value);
+                  handleGradeIdChange(cellModel, e.target.value);
                 }}
               />
             }
@@ -248,7 +269,7 @@ export const CellMetadataEditor = (props: ICellMetadataEditorProps) => {
                 value={nbGrade.points}
                 onChange={e => {
                   e.preventDefault();
-                  handlePointsChange(cell, e.target.value);
+                  handlePointsChange(cellModel, e.target.value);
                 }}
               />
             }
@@ -264,6 +285,6 @@ export const CellMetadataEditor = (props: ICellMetadataEditorProps) => {
 */}
     </ActionList>
   );
-};
+}
 
 export default CellMetadataEditor;

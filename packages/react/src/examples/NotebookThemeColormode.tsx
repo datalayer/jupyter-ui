@@ -4,18 +4,17 @@
  * MIT License
  */
 
-import { useCallback, useEffect, useState } from 'react';
-import { createRoot } from 'react-dom/client';
-import { Text, ToggleSwitch, theme as primerTheme, Box } from '@primer/react';
-import { Theme } from '@primer/react/lib/ThemeProvider';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { Colormode } from '../theme/JupyterLabColormode';
-import { Jupyter } from '../jupyter/Jupyter';
-import { jupyterTheme } from '../theme/JupyterPrimerTheme';
+import { Box, Text, ToggleSwitch, theme as primerTheme } from '@primer/react';
+import { Theme } from '@primer/react/lib/ThemeProvider';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
+import { Jupyter } from '../jupyter/Jupyter';
+import { Colormode } from '../theme/JupyterLabColormode';
+import { jupyterTheme } from '../theme/JupyterPrimerTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
-
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookThemeColormode = () => {
@@ -23,6 +22,7 @@ const NotebookThemeColormode = () => {
   const [isThemeOn, setIsThemeOn] = useState(false);
   const [colormode, setColormode] = useState<Colormode>('light');
   const [isOn, setIsOn] = useState(false);
+  const extensions = useMemo(() => [new CellSidebarExtension()], []);
 
   useEffect(() => {
     if (isThemeOn) {
@@ -57,11 +57,11 @@ const NotebookThemeColormode = () => {
         <Box display="flex">
           <Box mr={3}>
             <Text
-            fontSize={2}
-            fontWeight="bold"
-            id="switch-label"
-            display="block"
-            mb={1}
+              fontSize={2}
+              fontWeight="bold"
+              id="switch-label"
+              display="block"
+              mb={1}
             >
               Primer Theme
             </Text>
@@ -82,7 +82,7 @@ const NotebookThemeColormode = () => {
               display="block"
               mb={1}
             >
-              { colormode === 'light' ? 'Light' : 'Dark' } Mode
+              {colormode === 'light' ? 'Light' : 'Dark'} Mode
             </Text>
             <ToggleSwitch
               size="small"
@@ -98,8 +98,7 @@ const NotebookThemeColormode = () => {
           nbformat={nbformat as INotebookContent}
           id="notebook-model-id"
           height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-          cellSidebarMargin={120}
-          CellSidebar={CellSidebar}
+          extensions={extensions}
           Toolbar={NotebookToolbar}
         />
       </Jupyter>

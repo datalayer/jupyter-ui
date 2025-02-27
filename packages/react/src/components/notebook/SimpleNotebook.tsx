@@ -14,18 +14,20 @@ import {
   type CollaborationServer,
 } from './BaseNotebook';
 import type { INotebookProps } from './Notebook';
-
-import './Notebook.css';
 import type { NotebookModel } from '@jupyterlab/notebook';
 import type { CommandRegistry } from '@lumino/commands';
+
+import './Notebook.css';
 
 export interface ISimpleNotebookProps
   extends Omit<
     INotebookProps,
+    | 'CellSidebar'
     | 'cellMetadataPanel'
     | 'collaborative'
     | 'kernel'
     | 'lite'
+    | 'nbgrader'
     | 'serverless'
     | 'useRunningKernelId'
     | 'useRunningKernelIndex'
@@ -42,8 +44,14 @@ export interface ISimpleNotebookProps
    * Note:
    * Providing it allows to command the component from an higher level.
    */
-  commandRegistry?: CommandRegistry;
+  commands?: CommandRegistry;
+  /**
+   * Kernel ID to connect to.
+   */
   kernelId?: string;
+  /**
+   * Jupyter service manager.
+   */
   serviceManager: ServiceManager.IManager;
   /**
    * Callback on notebook model changed
@@ -62,18 +70,16 @@ export function SimpleNotebook(
   props: React.PropsWithChildren<ISimpleNotebookProps>
 ): JSX.Element {
   const {
-    CellSidebar,
     Toolbar,
-    cellSidebarMargin = 120,
     children,
+    cellSidebarMargin = 120,
     collaborationServer,
-    commandRegistry,
+    commands,
     extensions,
     height = '100vh',
     maxHeight = '100vh',
     id,
     nbformat,
-    nbgrader = false,
     onNotebookModelChanged,
     onSessionConnection,
     path,
@@ -144,17 +150,6 @@ export function SimpleNotebook(
           '& .jp-Notebook-footer': {
             width: `calc(100% - ${cellSidebarMargin + 82}px)`,
           },
-          '& .jp-Cell .jp-CellHeader': {
-            position: 'absolute',
-            top: '-5px',
-            left: `${cellSidebarMargin + 10}px`,
-            height: 'auto',
-          },
-          '& .jp-Cell .dla-CellSidebar-Container': {
-            padding: '4px 8px',
-            width: `${cellSidebarMargin + 10}px`,
-            marginLeft: 'auto',
-          },
           '& .jp-CodeMirrorEditor': {
             cursor: 'text !important',
           },
@@ -166,12 +161,10 @@ export function SimpleNotebook(
         {children}
         {model && serviceManager && (
           <BaseNotebook
-            CellSidebar={CellSidebar}
-            commandRegistry={commandRegistry}
+            commands={commands}
             id={id}
             extensions={extensions}
             model={model}
-            nbgrader={nbgrader}
             serviceManager={serviceManager}
             kernelId={kernelId}
             onSessionConnectionChanged={onSessionConnection}

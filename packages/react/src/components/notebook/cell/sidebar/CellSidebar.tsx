@@ -4,39 +4,49 @@
  * MIT License
  */
 
-import { useState } from 'react';
-import { PanelLayout } from '@lumino/widgets';
-import { ActionMenu, Button, Box } from '@primer/react';
-import { ChevronRightIcon, XIcon, ChevronUpIcon, ChevronDownIcon, SquareIcon } from '@primer/octicons-react';
-import { ICellSidebarProps } from './CellSidebarWidget';
+import { type CommandRegistry } from '@lumino/commands';
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+  SquareIcon,
+  XIcon,
+} from '@primer/octicons-react';
+import { ActionMenu, Box, Button } from '@primer/react';
+import { NotebookCommandIds } from '../../NotebookCommands';
 import CellMetadataEditor from '../metadata/CellMetadataEditor';
-import useNotebookStore from '../../NotebookState';
+import type { ICellModel } from '@jupyterlab/cells';
 
-import { DATALAYER_CELL_SIDEBAR_CLASS_NAME } from './CellSidebarWidget';
+/**
+ * Cell sidebar class name.
+ */
+export const DATALAYER_CELL_SIDEBAR_CLASS_NAME = 'dla-CellSidebar-Container';
 
-export const CellSidebar = (props: ICellSidebarProps) => {
-  const { notebookId, cellNodeId, nbgrader } = props;
-  const [visible, setVisible] = useState(false);
-  const notebookStore = useNotebookStore();
-  const activeCell = notebookStore.selectActiveCell(notebookId);
-  const layout = activeCell?.layout;
-  if (layout) {
-    const cellWidget = (layout as PanelLayout).widgets[0];
-    if (cellWidget?.node.id === cellNodeId) {
-      if (!visible) {
-        setVisible(true);
-      }
-    }
-    if (cellWidget?.node.id !== cellNodeId) {
-      if (visible) {
-        setVisible(false);
-      }
-    }
-  }
-  if (!visible) {
-    return <div></div>;
-  }
-  return activeCell ? (
+/**
+ * Cell sidebar properties
+ */
+export type ICellSidebarProps = {
+  /**
+   * Notebook command registry
+   */
+  commands: CommandRegistry;
+  /**
+   * Cell model
+   */
+  model: ICellModel;
+  /**
+   * Whether to display nbgrader features or not.
+   */
+  nbgrader: boolean;
+};
+
+/**
+ * Cell sidebar component
+ */
+export function CellSidebar(props: ICellSidebarProps): JSX.Element {
+  const { commands, model, nbgrader } = props;
+
+  return (
     <Box
       className={DATALAYER_CELL_SIDEBAR_CLASS_NAME}
       sx={{
@@ -53,151 +63,140 @@ export const CellSidebar = (props: ICellSidebarProps) => {
           </ActionMenu.Anchor>
           <ActionMenu.Overlay>
           */}
-          <CellMetadataEditor
-            notebookId={notebookId}
-            cell={activeCell}
-            nbgrader={nbgrader}
-          />
+          <CellMetadataEditor cellModel={model} />
           {/*
             </ActionMenu.Overlay>
             */}
         </ActionMenu>
       )}
-      <Box>
+      <Button
+        title="Run cell"
+        leadingVisual={ChevronRightIcon}
+        variant="invisible"
+        size="small"
+        onClick={(e: any) => {
+          e.preventDefault();
+          commands.execute(NotebookCommandIds.run).catch(reason => {
+            console.error('Failed to run cell.', reason);
+          });
+        }}
+      >
+        Run
+      </Button>
+      <Button
+        title="Insert code cell above"
+        leadingVisual={ChevronUpIcon}
+        variant="invisible"
+        size="small"
+        onClick={(e: any) => {
+          e.preventDefault();
+          commands.execute(NotebookCommandIds.insertAbove).catch(reason => {
+            console.error('Failed to insert code cell above.', reason);
+          });
+        }}
+      >
+        Code
+      </Button>
+      <Button
+        title="Insert markdown cell above"
+        leadingVisual={ChevronUpIcon}
+        variant="invisible"
+        size="small"
+        onClick={(e: any) => {
+          e.preventDefault();
+          commands
+            .execute(NotebookCommandIds.insertAbove, { cellType: 'markdown' })
+            .catch(reason => {
+              console.error('Failed to insert markdown cell above.', reason);
+            });
+        }}
+      >
+        Markdown
+      </Button>
+      {model.type === 'code' ? (
         <Button
-          title="Run cell"
-          leadingVisual={ChevronRightIcon}
+          title="Convert to markdow cell"
+          leadingVisual={SquareIcon}
           variant="invisible"
           size="small"
           onClick={(e: any) => {
             e.preventDefault();
-            notebookStore.run(notebookId);
-          }}
-        >
-          Run
-        </Button>
-      </Box>
-      <Box>
-        <Button
-          title="Insert code cell above"
-          leadingVisual={ChevronUpIcon}
-          variant="invisible"
-          size="small"
-          onClick={(e: any) => {
-            e.preventDefault();
-              notebookStore.insertAbove({
-                id: notebookId,
-                cellType: 'code',
+            commands
+              .execute(NotebookCommandIds.changeCellTypeToMarkdown)
+              .catch(reason => {
+                console.error(
+                  'Failed to change cell type to markdown.',
+                  reason
+                );
               });
           }}
         >
-          Code
+          To Markdown
         </Button>
-      </Box>
-      <Box>
+      ) : (
         <Button
-          title="Insert markdown cell above"
-          leadingVisual={ChevronUpIcon}
+          title="Convert to code cell"
+          leadingVisual={SquareIcon}
           variant="invisible"
           size="small"
           onClick={(e: any) => {
             e.preventDefault();
-            notebookStore.insertAbove({
-              id: notebookId,
-              cellType: 'markdown',
-            });
-          }}
-        >
-          Markdown
-        </Button>
-      </Box>
-      <Box>
-        {activeCell.model.type === 'code' ? (
-          <Button
-            title="Convert to markdow cell"
-            leadingVisual={SquareIcon}
-            variant="invisible"
-            size="small"
-            onClick={(e: any) => {
-              e.preventDefault();
-              notebookStore.changeCellType({
-                id: notebookId,
-                cellType: 'markdown',
+            commands
+              .execute(NotebookCommandIds.changeCellTypeToCode)
+              .catch(reason => {
+                console.error('Failed to change cell type to code.', reason);
               });
-            }}
-          >
-            To Markdown
-          </Button>
-        ) : (
-          <Button
-            title="Convert to code cell"
-            leadingVisual={SquareIcon}
-            variant="invisible"
-            size="small"
-            onClick={(e: any) => {
-              e.preventDefault();
-              notebookStore.changeCellType({
-                id: notebookId,
-                cellType: 'code',
-              });
-            }}
-          >
-            To Code
-          </Button>
-        )}
-      </Box>
-      <Box>
-        <Button
-          title="Insert markdown cell below"
-          leadingVisual={ChevronDownIcon}
-          variant="invisible"
-          size="small"
-          onClick={(e: any) => {
-            e.preventDefault();
-            notebookStore.insertBelow({
-              id: notebookId,
-              cellType: 'markdown',
+          }}
+        >
+          To Code
+        </Button>
+      )}
+      <Button
+        title="Insert markdown cell below"
+        leadingVisual={ChevronDownIcon}
+        variant="invisible"
+        size="small"
+        onClick={(e: any) => {
+          e.preventDefault();
+          commands
+            .execute(NotebookCommandIds.insertBelow, { cellType: 'markdown' })
+            .catch(reason => {
+              console.error('Failed to insert markdown cell below.', reason);
             });
-          }}
-        >
-          Markdown
-        </Button>
-      </Box>
-      <Box>
-        <Button
-          title="Insert code cell below"
-          leadingVisual={ChevronDownIcon}
-          variant="invisible"
-          size="small"
-          onClick={(e: any) => {
-            e.preventDefault();
-            notebookStore.insertBelow({
-              id: notebookId,
-              cellType: 'code',
-            });
-          }}
-        >
-          Code
-        </Button>
-      </Box>
-      <Box>
-        <Button
-          title="Delete cell"
-          leadingVisual={XIcon}
-          variant="invisible"
-          size="small"
-          onClick={(e: any) => {
-            e.preventDefault();
-            notebookStore.delete(notebookId);
-          }}
-        >
-          Delete
-        </Button>
-      </Box>
+        }}
+      >
+        Markdown
+      </Button>
+      <Button
+        title="Insert code cell below"
+        leadingVisual={ChevronDownIcon}
+        variant="invisible"
+        size="small"
+        onClick={(e: any) => {
+          e.preventDefault();
+          commands.execute(NotebookCommandIds.insertBelow).catch(reason => {
+            console.error('Failed to insert code cell below.', reason);
+          });
+        }}
+      >
+        Code
+      </Button>
+      <Button
+        title="Delete cell"
+        leadingVisual={XIcon}
+        variant="invisible"
+        size="small"
+        onClick={(e: any) => {
+          e.preventDefault();
+          commands.execute(NotebookCommandIds.deleteCells).catch(reason => {
+            console.error('Failed to delete cells.', reason);
+          });
+        }}
+      >
+        Delete
+      </Button>
     </Box>
-  ) : (
-    <></>
   );
-};
+}
 
 export default CellSidebar;

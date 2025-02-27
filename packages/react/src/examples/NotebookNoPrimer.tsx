@@ -5,10 +5,11 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import { Notebook } from '../components/notebook/Notebook';
-import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
+import { CellSidebarExtension } from '../components';
 import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
+import { Notebook } from '../components/notebook/Notebook';
 import { JupyterLabCss } from '../theme';
+import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 const NOTEBOOK_ID = 'notebook-id';
 
@@ -18,13 +19,12 @@ const root = createRoot(div);
 
 root.render(
   <>
-    <JupyterLabCss colormode='dark' />
+    <JupyterLabCss colormode="dark" />
     <Notebook
       path="ipywidgets.ipynb"
       id={NOTEBOOK_ID}
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-      cellSidebarMargin={60}
-      CellSidebar={CellSidebarButton}
+      extensions={[new CellSidebarExtension({ factory: CellSidebarButton })]}
       Toolbar={NotebookToolbar}
     />
   </>

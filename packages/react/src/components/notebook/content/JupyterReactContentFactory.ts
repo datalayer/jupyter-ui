@@ -4,12 +4,9 @@
  * MIT License
  */
 
-import { CommandRegistry } from '@lumino/commands';
-import { Notebook, NotebookPanel } from '@jupyterlab/notebook';
-import { ICellHeader, Cell } from '@jupyterlab/cells';
-import { CellSidebarWidget, ICellSidebarProps } from '../cell/sidebar';
-import { CodeCell } from '@jupyterlab/cells';
+import { Cell, CodeCell } from '@jupyterlab/cells';
 import { CodeEditor } from '@jupyterlab/codeeditor';
+import { Notebook, NotebookPanel } from '@jupyterlab/notebook';
 // import { CodeMirrorEditor } from '@jupyterlab/codemirror';
 // import { IInputPrompt } from '@jupyterlab/cells';
 // import { NotebookInputPrompt } from './../cell/InputPrompt';
@@ -22,10 +19,10 @@ export const isSQLCell = (cell: Cell) => {
   // Note: sometimes model is null
   const datalayer = cell.model?.getMetadata('datalayer');
   if (datalayer) {
-    return (datalayer['sql'] === true);
+    return datalayer['sql'] === true;
   }
   return false;
-}
+};
 
 class DatalayerCodeCell extends CodeCell {
   constructor(options: CodeCell.IOptions) {
@@ -37,30 +34,11 @@ class DatalayerCodeCell extends CodeCell {
  * Extend the default implementation NotebookPanel.ContentFactory of `IContentFactory`.
  */
 export class JupyterReactContentFactory extends NotebookPanel.ContentFactory {
-  private readonly CellSidebar?: (props: ICellSidebarProps) => JSX.Element;
-  private readonly notebookId: string;
-  private readonly nbgrader: boolean;
-  private readonly commands: CommandRegistry;
-
-  constructor(
-    notebookId: string,
-    nbgrader: boolean,
-    commands: CommandRegistry,
-    options: Cell.ContentFactory.IOptions,
-    CellSidebar?: (props: ICellSidebarProps) => JSX.Element,
-  ) {
-    super(options);
-    this.CellSidebar = CellSidebar;
-    this.notebookId = notebookId;
-    this.nbgrader = nbgrader;
-    this.commands = commands;
-  }
-
   private _updateSQLEditor = (cell: CodeCell) => {
     if (isSQLCell(cell)) {
       (cell.editor!.model as CodeEditor.Model).mimeType = SQL_CELL_MIMETYPE;
     }
-  }
+  };
 
   private _updateEditor = (cell: CodeCell) => {
     if (cell.editor) {
@@ -69,25 +47,12 @@ export class JupyterReactContentFactory extends NotebookPanel.ContentFactory {
       });
       this._updateSQLEditor(cell);
     }
-  }
+  };
 
   /** @override */
   createNotebook(options: Notebook.IOptions): Notebook {
     const notebook = super.createNotebook(options);
     return notebook;
-  }
-
-  /** @override */
-  createCellHeader(): ICellHeader {
-    if (this.CellSidebar) {
-      return new CellSidebarWidget(
-        this.CellSidebar,
-        this.notebookId,
-        this.nbgrader,
-        this.commands,
-      );  
-    }
-    return super.createCellHeader();
   }
 
   /** @override */
@@ -112,7 +77,6 @@ export class JupyterReactContentFactory extends NotebookPanel.ContentFactory {
     return super.createInputPrompt();
   }
   */
-
 }
 
 export default JupyterReactContentFactory;

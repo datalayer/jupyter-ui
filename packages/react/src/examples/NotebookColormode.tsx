@@ -4,21 +4,21 @@
  * MIT License
  */
 
-import { useCallback, useEffect, useState } from 'react';
-import { createRoot } from 'react-dom/client';
-import { Text, ToggleSwitch } from '@primer/react';
 import { INotebookContent } from '@jupyterlab/nbformat';
+import { Text, ToggleSwitch } from '@primer/react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import { CellSidebarExtension } from '../components';
+import { Notebook } from '../components/notebook/Notebook';
 import { Jupyter } from '../jupyter/Jupyter';
 import { Colormode } from '../theme/JupyterLabColormode';
-import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
-
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookColormode = () => {
   const [colormode, setColormode] = useState<Colormode>('light');
   const [isOn, setIsOn] = useState(false);
+    const extensions = useMemo(() => [new CellSidebarExtension()], []);
   useEffect(() => {
     if (isOn) {
       setColormode('dark');
@@ -56,8 +56,7 @@ const NotebookColormode = () => {
           nbformat={nbformat as INotebookContent}
           id="notebook-model-id"
           height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-          cellSidebarMargin={120}
-          CellSidebar={CellSidebar}
+          extensions={extensions}
           Toolbar={NotebookToolbar}
         />
       </Jupyter>

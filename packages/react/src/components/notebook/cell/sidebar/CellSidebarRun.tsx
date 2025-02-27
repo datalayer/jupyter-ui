@@ -4,33 +4,17 @@
  * MIT License
  */
 
-import { useState } from 'react';
-import { PanelLayout } from '@lumino/widgets';
-import { Box, Button } from '@primer/react';
 import { PlayIcon } from '@primer/octicons-react';
-import useNotebookStore from '../../NotebookState';
-import { ICellSidebarProps } from './CellSidebarWidget';
-import { DATALAYER_CELL_SIDEBAR_CLASS_NAME } from './CellSidebarWidget';
+import { Box, Button } from '@primer/react';
+import { NotebookCommandIds } from '../../NotebookCommands';
+import {
+  DATALAYER_CELL_SIDEBAR_CLASS_NAME,
+  ICellSidebarProps,
+} from './CellSidebar';
 
-export const CellSidebarRun = (props: ICellSidebarProps) => {
-  const { notebookId } = props;
-  const notebookStore = useNotebookStore();
-  const [visible, setVisible] = useState(false);
-  const activeCell = notebookStore.selectActiveCell(notebookId);
-  const layout = activeCell?.layout;
-  if (layout) {
-    const cellWidget = (layout as PanelLayout).widgets[0];
-    if (!visible && cellWidget?.node.id === props.cellNodeId) {
-      setVisible(true);
-    }
-    if (visible && cellWidget?.node.id !== props.cellNodeId) {
-      setVisible(false);
-    }
-  }
-  if (!visible) {
-    return <div></div>;
-  }
-  return activeCell ? (
+export function CellSidebarRun(props: ICellSidebarProps): JSX.Element {
+  const { commands } = props;
+  return (
     <Box
       className={DATALAYER_CELL_SIDEBAR_CLASS_NAME}
       sx={{
@@ -39,23 +23,21 @@ export const CellSidebarRun = (props: ICellSidebarProps) => {
         },
       }}
     >
-      <Box>
-        <Button
-          trailingVisual={PlayIcon}
-          size="small"
-          variant="invisible"
-          onClick={(e: any) => {
-            e.preventDefault();
-            notebookStore.run(notebookId);
-          }}
-        >
-          Run
-        </Button>
-      </Box>
+      <Button
+        trailingVisual={PlayIcon}
+        size="small"
+        variant="invisible"
+        onClick={(e: any) => {
+          e.preventDefault();
+          commands.execute(NotebookCommandIds.run).catch(reason => {
+            console.error('Failed to run cell.', reason);
+          });
+        }}
+      >
+        Run
+      </Button>
     </Box>
-  ) : (
-    <></>
   );
-};
+}
 
 export default CellSidebarRun;

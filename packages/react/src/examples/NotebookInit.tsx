@@ -4,17 +4,17 @@
  * MIT License
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import useNotebookStore from '../components/notebook/NotebookState';
 import {
-  useJupyter,
-  CellSidebar,
+  CellSidebarExtension,
   Jupyter,
   Kernel,
   Notebook,
+  useJupyter,
 } from '../index';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-import useNotebookStore from '../components/notebook/NotebookState';
 
 const NOTEBOOK_ID = 'notebook';
 const NOTEBOOK_WIDTH = '100%';
@@ -58,6 +58,9 @@ const NotebookInit: React.FC = () => {
   const kernel = useKernel();
   const notebookStore = useNotebookStore();
   const notebook = notebookStore.selectNotebook(NOTEBOOK_ID);
+  
+  const extensions = useMemo(() => [new CellSidebarExtension()], []);
+
   useEffect(() => {
     if (notebook && !IS_INITIALIZED) {
       notebook.adapter?.notebookPanel?.model?.contentChanged.connect(_ => {
@@ -80,7 +83,7 @@ const NotebookInit: React.FC = () => {
       id={NOTEBOOK_ID}
       kernel={kernel}
       height={`calc(${NOTEBOOK_HEIGHT}px - 2.6rem)`}
-      CellSidebar={CellSidebar}
+      extensions={extensions}
       Toolbar={NotebookToolbar}
     />
   ) : (

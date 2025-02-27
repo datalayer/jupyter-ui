@@ -4,24 +4,27 @@
  * MIT License
  */
 
+import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
 
-const Bokeh = () => (
-  <JupyterReactTheme>
-    <Notebook
-      path="bokeh.ipynb"
-      id="notebook-bokeh-id"
-      height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-      cellSidebarMargin={120}
-      CellSidebar={CellSidebar}
-      Toolbar={NotebookToolbar}
-    />
-  </JupyterReactTheme>
-);
+const Bokeh = () => {
+  const extensions = useMemo(() => [new CellSidebarExtension()], []);
+  return (
+    <JupyterReactTheme>
+      <Notebook
+        path="bokeh.ipynb"
+        id="notebook-bokeh-id"
+        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+        extensions={extensions}
+        Toolbar={NotebookToolbar}
+      />
+    </JupyterReactTheme>
+  );
+};
 
 const div = document.createElement('div');
 document.body.appendChild(div);
