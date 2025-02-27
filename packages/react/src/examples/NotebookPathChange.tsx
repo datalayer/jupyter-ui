@@ -4,12 +4,12 @@
  * MIT License
  */
 
-import { useState } from 'react';
-import { createRoot } from 'react-dom/client';
 import { Box, Button, Text } from '@primer/react';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
-import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 
 const PATH_1 = 'ipywidgets.ipynb';
 
@@ -17,7 +17,10 @@ const PATH_2 = 'matplotlib.ipynb';
 
 const NotebookPathChange = () => {
   const [path, setPath] = useState<string>(PATH_1);
-  const changePath = () => { path === PATH_1 ? setPath(PATH_2) : setPath(PATH_1) };
+  const extensions = useMemo(() => [new CellSidebarExtension()], []);
+  const changePath = () => {
+    path === PATH_1 ? setPath(PATH_2) : setPath(PATH_1);
+  };
   return (
     <JupyterReactTheme>
       <Box display="flex">
@@ -37,11 +40,11 @@ const NotebookPathChange = () => {
         path={path}
         id="notebook-path-change-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        CellSidebar={CellSidebar}
+        extensions={extensions}
       />
     </JupyterReactTheme>
   );
-}
+};
 
 const div = document.createElement('div');
 document.body.appendChild(div);

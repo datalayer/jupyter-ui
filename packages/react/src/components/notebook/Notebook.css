@@ -21,3 +21,16 @@
   background-color: rgba(128, 128, 128, 0.374);
   border-radius: 10px;
 }
+
+.dla-CellSidebar-Container {
+  position: relative;
+  margin-left: auto;
+}
+
+.dla-Box-Notebook .jp-Cell .dla-CellSidebar-Container {
+  display: none;
+}
+
+.dla-Box-Notebook .jp-Cell.jp-mod-active .dla-CellSidebar-Container {
+  display: block;
+}

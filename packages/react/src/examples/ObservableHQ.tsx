@@ -4,23 +4,26 @@
  * MIT License
  */
 
+import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Jupyter } from '../jupyter/Jupyter';
+import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
+import { Jupyter } from '../jupyter/Jupyter';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
 
-const ObservableHQ = () => (
-  <Jupyter defaultKernelName="deno">
-    <Notebook
-      path="deno/display-js/Observable Plot.ipynb"
-      height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-      cellSidebarMargin={120}
-      CellSidebar={CellSidebar}
-      Toolbar={NotebookToolbar}
-    />
-  </Jupyter>
-);
+const ObservableHQ = () => {
+  const extensions = useMemo(() => [new CellSidebarExtension()], []);
+  return (
+    <Jupyter defaultKernelName="deno">
+      <Notebook
+        path="deno/display-js/Observable Plot.ipynb"
+        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+        Toolbar={NotebookToolbar}
+        extensions={extensions}
+      />
+    </Jupyter>
+  );
+};
 
 const div = document.createElement('div');
 document.body.appendChild(div);

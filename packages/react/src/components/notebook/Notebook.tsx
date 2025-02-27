@@ -39,13 +39,12 @@ import {
   useJupyter,
 } from './../../jupyter';
 import { CellMetadataEditor } from './cell/metadata';
-import { ICellSidebarProps } from './cell/sidebar';
 import { NotebookAdapter } from './NotebookAdapter';
 import { useNotebookStore } from './NotebookState';
 import { INotebookToolbarProps } from './toolbar/NotebookToolbar';
 
-import './Notebook.css';
 import { Loader } from '../utils';
+import './Notebook.css';
 
 export type ExternalIPyWidgets = {
   name: string;
@@ -71,7 +70,6 @@ export type DatalayerNotebookExtension = DocumentRegistry.IWidgetExtension<
 };
 
 export type INotebookProps = {
-  CellSidebar?: (props: ICellSidebarProps) => JSX.Element;
   Toolbar?: (props: INotebookToolbarProps) => JSX.Element;
   cellMetadataPanel?: boolean;
   cellSidebarMargin?: number;
@@ -85,7 +83,6 @@ export type INotebookProps = {
   lite?: Lite;
   maxHeight?: string;
   nbformat?: INotebookContent;
-  nbgrader?: boolean;
   onSessionConnection?: OnSessionConnection;
   path?: string;
   readonly?: boolean;
@@ -128,7 +125,6 @@ export const Notebook = (props: INotebookProps) => {
     height,
     maxHeight,
     nbformat,
-    nbgrader,
     path,
     readonly,
     serverless,
@@ -211,9 +207,7 @@ export const Notebook = (props: INotebookProps) => {
             const cellMetadataOptions = (
               <Box mt={3}>
                 <CellMetadataEditor
-                  notebookId={id}
-                  cell={cellModel}
-                  nbgrader={nbgrader!}
+                  cellModel={cellModel.model}
                 />
               </Box>
             );
@@ -488,17 +482,6 @@ export const Notebook = (props: INotebookProps) => {
           },
           '& .jp-Notebook-footer': {
             width: `calc(100% - ${props.cellSidebarMargin! + 82}px)`,
-          },
-          '& .jp-Cell .jp-CellHeader': {
-            position: 'absolute',
-            top: '-5px',
-            left: `${props.cellSidebarMargin! + 10}px`,
-            height: 'auto',
-          },
-          '& .jp-Cell .dla-CellSidebar-Container': {
-            padding: '4px 8px',
-            width: `${props.cellSidebarMargin! + 10}px`,
-            marginLeft: 'auto',
           },
           '& .jp-CodeMirrorEditor': {
             cursor: 'text !important',

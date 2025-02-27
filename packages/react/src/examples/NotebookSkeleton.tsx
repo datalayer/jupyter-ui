@@ -4,12 +4,13 @@
  * MIT License
  */
 
-import { createRoot } from 'react-dom/client';
 import { ContentLoader } from '@datalayer/primer-addons';
-import { Jupyter } from '../jupyter/Jupyter';
-import { Notebook } from '../components/notebook/Notebook';
-import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
+import { createRoot } from 'react-dom/client';
+import { CellSidebarExtension } from '../components';
 import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
+import { Notebook } from '../components/notebook/Notebook';
+import { Jupyter } from '../jupyter/Jupyter';
+import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 const NOTEBOOK_ID = 'notebook-id';
 
@@ -23,8 +24,7 @@ root.render(
       path="ipywidgets.ipynb"
       id={NOTEBOOK_ID}
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-      cellSidebarMargin={60}
-      CellSidebar={CellSidebarButton}
+      extensions={[new CellSidebarExtension({ factory: CellSidebarButton })]}
       Toolbar={NotebookToolbar}
     />
   </Jupyter>

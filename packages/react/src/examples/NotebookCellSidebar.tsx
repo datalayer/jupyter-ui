@@ -4,14 +4,14 @@
  * MIT License
  */
 
-import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { createRoot } from 'react-dom/client';
+import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-import CellSidebarSource from './sidebars/CellSidebarSource';
-
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
+import CellSidebarSource from './sidebars/CellSidebarSource';
 
 const NotebookCellSidebar = () => (
   <JupyterReactTheme>
@@ -20,7 +20,7 @@ const NotebookCellSidebar = () => (
       id="notebook-cell-sidebar-id"
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       cellSidebarMargin={160}
-      CellSidebar={CellSidebarSource}
+      extensions={[new CellSidebarExtension({ factory: CellSidebarSource })]}
       Toolbar={NotebookToolbar}
     />
   </JupyterReactTheme>

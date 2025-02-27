@@ -4,33 +4,37 @@
  * MIT License
  */
 
-import { useState } from 'react';
-import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
-import { Notebook } from '../components/notebook/Notebook';
-import { CellToolbarExtension } from './extensions';
+import { useMemo } from 'react';
+import { createRoot } from 'react-dom/client';
+import { CellSidebarExtension } from '../components';
 import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
+import { Notebook } from '../components/notebook/Notebook';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-
+import { CellToolbarExtension } from './extensions';
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookCellToolbar = () => {
-  const [extension, _] = useState(new CellToolbarExtension());
+  const extensions = useMemo(
+    () => [
+      new CellToolbarExtension(),
+      new CellSidebarExtension({ factory: CellSidebarButton }),
+    ],
+    []
+  );
   return (
     <JupyterReactTheme>
       <Notebook
         nbformat={nbformat as INotebookContent}
-        extensions={[extension]}
+        extensions={extensions}
         id="notebook-cell-toolbar-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        cellSidebarMargin={160}
-        CellSidebar={CellSidebarButton}
         Toolbar={NotebookToolbar}
       />
     </JupyterReactTheme>
-  )
-}
+  );
+};
 
 const div = document.createElement('div');
 document.body.appendChild(div);

@@ -4,15 +4,15 @@
  * MIT License
  */
 
-import { useState } from 'react';
-import { createRoot } from 'react-dom/client';
 import { Box, Button, Flash } from '@primer/react';
+import { useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import { CellSidebarExtension } from '../components';
+import { Notebook } from '../components/notebook/Notebook';
+import useNotebookStore from '../components/notebook/NotebookState';
 import { Jupyter } from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { Kernel } from '../jupyter/kernel/Kernel';
-import { Notebook } from '../components/notebook/Notebook';
-import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
-import useNotebookStore from '../components/notebook/NotebookState';
 
 const NOTEBOOK_ID = 'notebook-kernel-change-id';
 
@@ -25,6 +25,9 @@ const NotebookKernelChange = () => {
   const [message, setMessage] = useState("");
   const notebookStore = useNotebookStore();
   const notebook = notebookStore.selectNotebook(NOTEBOOK_ID);
+
+    const extensions = useMemo(() => [new CellSidebarExtension()], []);
+
   const changeKernel = () => {
     if (kernelManager && serviceManager) {
       const newKernel = new Kernel({
@@ -70,7 +73,7 @@ const NotebookKernelChange = () => {
         id={NOTEBOOK_ID}
         path="test.ipynb"
         height="500px"
-        CellSidebar={CellSidebar}
+        extensions={extensions}
       />
     </Jupyter>
   );

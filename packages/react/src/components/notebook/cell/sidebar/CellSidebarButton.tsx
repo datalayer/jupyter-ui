@@ -4,38 +4,23 @@
  * MIT License
  */
 
-import { useState } from 'react';
-import { PanelLayout } from '@lumino/widgets';
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  PlayIcon,
+  SquareIcon,
+  XIcon,
+} from '@primer/octicons-react';
 import { Box, IconButton } from '@primer/react';
-import { PlayIcon, ChevronUpIcon, ChevronDownIcon, SquareIcon, XIcon } from '@primer/octicons-react';
-import useNotebookStore from '../../NotebookState';
-import { ICellSidebarProps } from './CellSidebarWidget';
+import { NotebookCommandIds } from '../../NotebookCommands';
+import {
+  DATALAYER_CELL_SIDEBAR_CLASS_NAME,
+  ICellSidebarProps,
+} from './CellSidebar';
 
-import { DATALAYER_CELL_SIDEBAR_CLASS_NAME } from './CellSidebarWidget';
-
-export const CellSidebarButton = (props: ICellSidebarProps) => {
-  const { notebookId, cellNodeId } = props;
-  const notebookStore = useNotebookStore();
-  const [visible, setVisible] = useState(false);
-  const activeCell = notebookStore.selectActiveCell(notebookId);
-  const layout = activeCell?.layout;
-  if (layout) {
-    const cellWidget = (layout as PanelLayout).widgets[0];
-    if (cellWidget?.node.id === cellNodeId) {
-      if (!visible) {
-        setVisible(true);
-      }
-    }
-    if (cellWidget?.node.id !== cellNodeId) {
-      if (visible) {
-        setVisible(false);
-      }
-    }
-  }
-  if (!visible) {
-    return <></>
-  }
-  return activeCell ? (
+export function CellSidebarButton(props: ICellSidebarProps): JSX.Element {
+  const { commands, model } = props;
+  return (
     <Box
       className={DATALAYER_CELL_SIDEBAR_CLASS_NAME}
       sx={{
@@ -44,139 +29,132 @@ export const CellSidebarButton = (props: ICellSidebarProps) => {
         },
       }}
     >
-      <Box>
-        <IconButton
-          size="small"
-          color="secondary"
-          aria-label="Run cell"
-          title="Run cell"
-          onClick={e => {
-            e.preventDefault();
-            notebookStore.run(notebookId);
-          }}
-          icon={PlayIcon}
-          variant="invisible"
-        />
-      </Box>
-      <Box>
-        <IconButton
-          size="small"
-          color="secondary"
-          aria-label="Add code cell above"
-          title="Add code cell above"
-          onClick={e => {
-            e.preventDefault();
-            notebookStore.insertAbove({
-              id: notebookId,
-              cellType: 'code',
+      <IconButton
+        size="small"
+        color="secondary"
+        aria-label="Run cell"
+        title="Run cell"
+        onClick={e => {
+          e.preventDefault();
+          commands.execute(NotebookCommandIds.run).catch(reason => {
+            console.error('Failed to run cell.', reason);
+          });
+        }}
+        icon={PlayIcon}
+        variant="invisible"
+      />
+      <IconButton
+        size="small"
+        color="secondary"
+        aria-label="Add code cell above"
+        title="Add code cell above"
+        onClick={e => {
+          e.preventDefault();
+          commands.execute(NotebookCommandIds.insertAbove).catch(reason => {
+            console.error('Failed to insert code cell above.', reason);
+          });
+        }}
+        icon={ChevronUpIcon}
+        variant="invisible"
+      />
+      <IconButton
+        size="small"
+        color="secondary"
+        aria-label="Add markdown cell above"
+        title="Add markdown cell above"
+        onClick={e => {
+          e.preventDefault();
+          commands
+            .execute(NotebookCommandIds.insertAbove, { cellType: 'markdown' })
+            .catch(reason => {
+              console.error('Failed to insert markdown cell above.', reason);
             });
-          }}
-          icon={ChevronUpIcon}
-          variant="invisible"
-        />
-      </Box>
-      <Box>
+        }}
+        icon={ChevronUpIcon}
+        variant="invisible"
+      />
+      {model.type === 'code' ? (
         <IconButton
+          aria-label="Convert to markdow cell"
+          title="Convert to markdow cell"
+          icon={SquareIcon}
           size="small"
-          color="secondary"
-          aria-label="Add markdown cell above"
-          title="Add markdown cell above"
+          variant="invisible"
           onClick={e => {
             e.preventDefault();
-            notebookStore.insertAbove({
-              id: notebookId,
-              cellType: 'markdown',
-            });
-          }}
-          icon={ChevronUpIcon}
-          variant="invisible"
-        />
-      </Box>
-      <Box>
-        {activeCell.model.type === 'code' ? (
-          <IconButton
-            aria-label="Convert to markdow cell"
-            title="Convert to markdow cell"
-            icon={SquareIcon}
-            size="small"
-            variant="invisible"
-            onClick={e => {
-              e.preventDefault();
-              notebookStore.changeCellType({
-                id: notebookId,
-                cellType: 'markdown',
+            commands
+              .execute(NotebookCommandIds.changeCellTypeToMarkdown)
+              .catch(reason => {
+                console.error(
+                  'Failed to change cell type to markdown.',
+                  reason
+                );
               });
-            }}
-          />
-        ) : (
-          <IconButton
-            aria-label="Convert to code cell"
-            title="Convert to code cell"
-            icon={SquareIcon}
-            variant="invisible"
-            size="small"
-            onClick={(e: any) => {
-              e.preventDefault();
-              notebookStore.changeCellType({
-                id: notebookId,
-                cellType: 'code',
+          }}
+        />
+      ) : (
+        <IconButton
+          aria-label="Convert to code cell"
+          title="Convert to code cell"
+          icon={SquareIcon}
+          variant="invisible"
+          size="small"
+          onClick={(e: any) => {
+            e.preventDefault();
+            commands
+              .execute(NotebookCommandIds.changeCellTypeToCode)
+              .catch(reason => {
+                console.error('Failed to change cell type to code.', reason);
               });
-            }}
-          />
-        )}
-      </Box>
-      <Box>
-        <IconButton
-          size="small"
-          color="secondary"
-          aria-label="Add markdown cell below"
-          title="Add markdown cell below"
-          onClick={e => {
-            e.preventDefault();
-            notebookStore.insertBelow({
-              id: notebookId,
-              cellType: 'markdown',
+          }}
+        />
+      )}
+      <IconButton
+        size="small"
+        color="secondary"
+        aria-label="Add markdown cell below"
+        title="Add markdown cell below"
+        onClick={e => {
+          e.preventDefault();
+          commands
+            .execute(NotebookCommandIds.insertBelow, { cellType: 'markdown' })
+            .catch(reason => {
+              console.error('Failed to insert markdown cell below.', reason);
             });
-          }}
-          icon={ChevronDownIcon}
-          variant="invisible"
-        />
-      </Box>
-      <Box>
-        <IconButton
-          size="small"
-          color="secondary"
-          aria-label="Add code cell above"
-          title="Add code cell above"
-          onClick={e => {
-            e.preventDefault();
-            notebookStore.insertBelow({
-              id: notebookId,
-              cellType: 'code',
-            });
-          }}
-          icon={ChevronDownIcon}
-          variant="invisible"
-        />
-      </Box>
-      <Box>
-        <IconButton
-          size="small"
-          color="error"
-          aria-label="Delete cell"
-          title="Delete cell"
-          onClick={e => {
-            e.preventDefault();
-            notebookStore.delete(notebookId);
-          }}
-          icon={XIcon}
-          variant="invisible"
-        />
-      </Box>
+        }}
+        icon={ChevronDownIcon}
+        variant="invisible"
+      />
+      <IconButton
+        size="small"
+        color="secondary"
+        aria-label="Add code cell above"
+        title="Add code cell above"
+        onClick={e => {
+          e.preventDefault();
+          commands.execute(NotebookCommandIds.insertBelow).catch(reason => {
+            console.error('Failed to insert code cell below.', reason);
+          });
+        }}
+        icon={ChevronDownIcon}
+        variant="invisible"
+      />
+      <IconButton
+        size="small"
+        color="error"
+        aria-label="Delete cell"
+        title="Delete cell"
+        onClick={e => {
+          e.preventDefault();
+          commands.execute(NotebookCommandIds.deleteCells).catch(reason => {
+            console.error('Failed to delete cells.', reason);
+          });
+        }}
+        icon={XIcon}
+        variant="invisible"
+      />
     </Box>
-  ) : (
-    <></>
   );
-};
+}
 
 export default CellSidebarButton;

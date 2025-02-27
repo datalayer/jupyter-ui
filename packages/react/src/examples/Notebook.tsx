@@ -5,10 +5,11 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import { JupyterReactTheme } from '../theme';
-import { Notebook } from '../components/notebook/Notebook';
-import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
+import { CellSidebarExtension } from '../components';
 import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
+import { Notebook } from '../components/notebook/Notebook';
+import { JupyterReactTheme } from '../theme';
+import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 const div = document.createElement('div');
 document.body.appendChild(div);
@@ -21,8 +22,7 @@ root.render(
       id="notebook-id"
       startDefaultKernel={true}
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-      cellSidebarMargin={60}
-      CellSidebar={CellSidebarButton}
+      extensions={[new CellSidebarExtension({ factory: CellSidebarButton })]}
       Toolbar={NotebookToolbar}
     />
   </JupyterReactTheme>

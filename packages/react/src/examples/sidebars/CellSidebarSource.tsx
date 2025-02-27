@@ -4,45 +4,26 @@
  * MIT License
  */
 
-import { useState } from 'react';
-import { PanelLayout } from '@lumino/widgets';
-import { ActionMenu, Button, Box } from '@primer/react';
 import {
-  ChevronRightIcon,
-  XIcon,
-  ChevronUpIcon,
   ChevronDownIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
   SquareIcon,
+  XIcon,
 } from '@primer/octicons-react';
-import { ICellSidebarProps } from '../../components/notebook/cell/sidebar';
+import { ActionMenu, Box, Button } from '@primer/react';
+import {
+  NotebookCommandIds
+} from '../../components/notebook';
 import { CellMetadataEditor } from '../../components/notebook/cell/metadata';
-import { useNotebookStore } from '../../components/notebook';
-
-import { DATALAYER_CELL_SIDEBAR_CLASS_NAME } from '../../components/notebook/cell/sidebar/CellSidebarWidget';
+import {
+  DATALAYER_CELL_SIDEBAR_CLASS_NAME,
+  ICellSidebarProps,
+} from '../../components/notebook/cell/sidebar';
 
 export const CellSidebarSource = (props: ICellSidebarProps) => {
-  const { notebookId, cellNodeId, nbgrader } = props;
-  const notebookStore = useNotebookStore();
-  const [visible, setVisible] = useState(false);
-  const activeCell = notebookStore.selectActiveCell(notebookId);
-  const layout = activeCell?.layout;
-  if (layout) {
-    const cellWidget = (layout as PanelLayout).widgets[0];
-    if (cellWidget?.node.id === cellNodeId) {
-      if (!visible) {
-        setVisible(true);
-      }
-    }
-    if (cellWidget?.node.id !== cellNodeId) {
-      if (visible) {
-        setVisible(false);
-      }
-    }
-  }
-  if (!visible) {
-    return <div></div>;
-  }
-  return activeCell ? (
+  const { commands, model, nbgrader } = props;
+  return (
     <Box
       className={DATALAYER_CELL_SIDEBAR_CLASS_NAME}
       sx={{
@@ -51,133 +32,124 @@ export const CellSidebarSource = (props: ICellSidebarProps) => {
         },
       }}
     >
-      <Box>
-        <Button
-          leadingVisual={ChevronRightIcon}
-          variant="invisible"
-          size="small"
-          onClick={(e: any) => {
-            e.preventDefault();
-            notebookStore.run(notebookId);
-          }}
-        >
-          Run
-        </Button>
-      </Box>
-      <Box>
-        <Button
-          leadingVisual={ChevronUpIcon}
-          variant="invisible"
-          size="small"
-          onClick={(e: any) => {
-            e.preventDefault();
-            notebookStore.insertAbove({
-              id: notebookId,
-              cellType: 'code',
-              source:
-                "print('Hello 🪐 ⚛️ Jupyter React, I have been inserted up ⬆️.')",
+      <Button
+        leadingVisual={ChevronRightIcon}
+        variant="invisible"
+        size="small"
+        onClick={(e: any) => {
+          e.preventDefault();
+          commands.execute(NotebookCommandIds.run).catch(reason => {
+            console.error('Failed to run cell.', reason);
+          });
+        }}
+      >
+        Run
+      </Button>
+      <Button
+        leadingVisual={ChevronUpIcon}
+        variant="invisible"
+        size="small"
+        onClick={(e: any) => {
+          e.preventDefault();
+          commands.execute(NotebookCommandIds.insertAbove).catch(reason => {
+            console.error('Failed to insert code cell above.', reason);
+          });
+        }}
+      >
+        Code (with source)
+      </Button>
+      <Button
+        leadingVisual={ChevronUpIcon}
+        variant="invisible"
+        size="small"
+        onClick={(e: any) => {
+          e.preventDefault();
+          commands
+            .execute(NotebookCommandIds.insertAbove, { cellType: 'markdown' })
+            .catch(reason => {
+              console.error('Failed to insert markdown cell above.', reason);
             });
-          }}
-        >
-          Code (with source)
-        </Button>
-      </Box>
-      <Box>
+        }}
+      >
+        Markdown
+      </Button>
+      {model.type === 'code' ? (
         <Button
-          leadingVisual={ChevronUpIcon}
+          leadingVisual={SquareIcon}
           variant="invisible"
           size="small"
           onClick={(e: any) => {
             e.preventDefault();
-            notebookStore.insertAbove({
-              id: notebookId,
-              cellType: 'markdown',
-            });
-          }}
-        >
-          Markdown
-        </Button>
-      </Box>
-      <Box>
-        {activeCell.model.type === 'code' ? (
-          <Button
-            leadingVisual={SquareIcon}
-            variant="invisible"
-            size="small"
-            onClick={(e: any) => {
-              e.preventDefault();
-              notebookStore.changeCellType({
-                id: notebookId,
-                cellType: 'markdown',
+            commands
+              .execute(NotebookCommandIds.changeCellTypeToMarkdown)
+              .catch(reason => {
+                console.error(
+                  'Failed to change cell type to markdown.',
+                  reason
+                );
               });
-            }}
-          >
-            To Markdown
-          </Button>
-        ) : (
-          <Button
-            leadingVisual={SquareIcon}
-            variant="invisible"
-            size="small"
-            onClick={(e: any) => {
-              e.preventDefault();
-              notebookStore.changeCellType({
-                id: notebookId,
-                cellType: 'code',
+          }}
+        >
+          To Markdown
+        </Button>
+      ) : (
+        <Button
+          leadingVisual={SquareIcon}
+          variant="invisible"
+          size="small"
+          onClick={(e: any) => {
+            e.preventDefault();
+            commands
+              .execute(NotebookCommandIds.changeCellTypeToCode)
+              .catch(reason => {
+                console.error('Failed to change cell type to code.', reason);
               });
-            }}
-          >
-            To Code
-          </Button>
-        )}
-      </Box>
-      <Box>
-        <Button
-          leadingVisual={ChevronDownIcon}
-          variant="invisible"
-          size="small"
-          onClick={(e: any) => {
-            e.preventDefault();
-            notebookStore.insertBelow({
-              id: notebookId,
-              cellType: 'markdown',
+          }}
+        >
+          To Code
+        </Button>
+      )}
+      <Button
+        leadingVisual={ChevronDownIcon}
+        variant="invisible"
+        size="small"
+        onClick={(e: any) => {
+          e.preventDefault();
+          commands
+            .execute(NotebookCommandIds.insertBelow, { cellType: 'markdown' })
+            .catch(reason => {
+              console.error('Failed to insert markdown cell below.', reason);
             });
-          }}
-        >
-          Markdown
-        </Button>
-      </Box>
-      <Box>
-        <Button
-          leadingVisual={ChevronDownIcon}
-          variant="invisible"
-          size="small"
-          onClick={(e: any) => {
-            e.preventDefault();
-            notebookStore.insertBelow({
-              id: notebookId,
-              cellType: 'code',
-              source:
-                "print('Hello 🪐 ⚛️ Jupyter React, I have been inserted down ⬇️.')",
-            })
-          }}
-        >
-          Code (with source)
-        </Button>
-      </Box>
-      <Box>
-        <Button
-          leadingVisual={XIcon}
-          variant="invisible"
-          size="small"
-          onClick={(e: any) => {
-            e.preventDefault();
-            notebookStore.delete(notebookId);
-          }}
-        >
-          Delete
-        </Button>
-      </Box>
+        }}
+      >
+        Markdown
+      </Button>
+      <Button
+        leadingVisual={ChevronDownIcon}
+        variant="invisible"
+        size="small"
+        onClick={(e: any) => {
+          e.preventDefault();
+          commands.execute(NotebookCommandIds.insertBelow).catch(reason => {
+            console.error('Failed to insert code cell below.', reason);
+          });
+        }}
+      >
+        Code (with source)
+      </Button>
+      <Button
+        leadingVisual={XIcon}
+        variant="invisible"
+        size="small"
+        onClick={(e: any) => {
+          e.preventDefault();
+          commands.execute(NotebookCommandIds.deleteCells).catch(reason => {
+            console.error('Failed to delete cells.', reason);
+          });
+        }}
+      >
+        Delete
+      </Button>
       {nbgrader && (
         <ActionMenu>
           {/*
@@ -186,19 +158,13 @@ export const CellSidebarSource = (props: ICellSidebarProps) => {
             </ActionMenu.Anchor>
             <ActionMenu.Overlay>
             */}
-          <CellMetadataEditor
-            notebookId={notebookId}
-            cell={activeCell}
-            nbgrader={nbgrader}
-          />
+          <CellMetadataEditor cellModel={model} />
           {/*
             </ActionMenu.Overlay>
             */}
         </ActionMenu>
       )}
     </Box>
-  ) : (
-    <></>
   );
 };
 

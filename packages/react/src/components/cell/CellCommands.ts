@@ -15,20 +15,20 @@ const cmdIds = {
 };
 
 export const CellCommands = (
-  commandRegistry: CommandRegistry,
+  commands: CommandRegistry,
   cell: CodeCell | MarkdownCell | RawCell,
   completerHandler: CompletionHandler,
   cellAdapter: CellAdapter,
 ): void => {
-  commandRegistry.addCommand(cmdIds.invoke, {
+  commands.addCommand(cmdIds.invoke, {
     label: 'Completer: Invoke',
     execute: () => completerHandler.invoke(),
   });
-  commandRegistry.addCommand(cmdIds.select, {
+  commands.addCommand(cmdIds.select, {
     label: 'Completer: Select',
     execute: () => completerHandler.completer.selectActive(),
   });
-  commandRegistry.addCommand('run:cell', {
+  commands.addCommand('run:cell', {
     execute: () => {
       if (cell instanceof CodeCell) {
         cellAdapter.execute();
@@ -37,12 +37,12 @@ export const CellCommands = (
       }
     },
   });
-  commandRegistry.addKeyBinding({
+  commands.addKeyBinding({
     selector: '.jp-InputArea-editor.jp-mod-completer-enabled',
     keys: ['Tab'],
     command: cmdIds.invoke,
   });
-  commandRegistry.addKeyBinding({
+  commands.addKeyBinding({
     selector: '.jp-InputArea-editor',
     keys: ['Shift Enter'],
     command: 'run:cell',
@@ -54,7 +54,7 @@ export const CellCommands = (
       command: cmdIds.select,
     },
   ];
-  bindings.map(binding => commandRegistry.addKeyBinding(binding));
+  bindings.map(binding => commands.addKeyBinding(binding));
 };
 
 export default CellCommands;

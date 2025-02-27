@@ -4,10 +4,10 @@
  * MIT License
  */
 
+import { CellSidebarExtension } from '../../../components';
 import Notebook from '../../../components/notebook/Notebook';
-import CellSidebarNew from './../../../components/notebook/cell/sidebar/CellSidebarButton';
-
 import nbformat from './../../..//examples/notebooks/NotebookExample1.ipynb.json';
+import CellSidebarNew from './../../../components/notebook/cell/sidebar/CellSidebarButton';
 
 export const NotebookComponent = () => {
   return (
@@ -18,7 +18,7 @@ export const NotebookComponent = () => {
         id="notebook-id"
         cellSidebarMargin={60}
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        CellSidebar={CellSidebarNew}
+        extensions={[new CellSidebarExtension({ factory: CellSidebarNew })]}
       />
     </>
   );
