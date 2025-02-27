@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 import { ReactWidget } from '@jupyterlab/apputils';
 import type { Cell, ICellModel } from '@jupyterlab/cells';
 import type { CellList, Notebook, NotebookPanel } from '@jupyterlab/notebook';
