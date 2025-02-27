@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Jupyter, Viewer } from '@datalayer/jupyter-react';
 import nbformat1 from './examples/NotebookExample1.ipynb.json';
@@ -31,9 +32,9 @@ const Template = (args, { globals: { labComparison } }) => {
   const { nbformat, nbformatUrl, outputs, ...others } = args;
   return (
     <Jupyter
+      startDefaultKernel={false}
       jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
       jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
-      startDefaultKernel={false}
     >
       <Viewer
         nbformat={nbformat}

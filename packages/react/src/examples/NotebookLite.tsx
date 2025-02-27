@@ -14,7 +14,7 @@ import { OnSessionConnection } from '../state';
 import { JupyterReactTheme } from '../theme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
-import nbformat from './notebooks/NotebookExample1.ipynb.json';
+import nbformat from './notebooks/Lite.ipynb.json';
 
 const NotebookLite = () => {
   const [session, setSession] = useState<Session.ISessionConnection>();
@@ -42,8 +42,8 @@ const NotebookLite = () => {
         </Box>
       </Box>
       <Notebook
-        startDefaultKernel={true}
-        lite={true}
+        startDefaultKernel
+        lite
         nbformat={nbformat as INotebookContent}
         id="notebook-lite-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).

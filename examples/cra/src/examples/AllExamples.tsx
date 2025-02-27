@@ -83,7 +83,7 @@ const AllExample = () => {
     <>
       <OutputToolbar />
       <Output
-        showEditor={true}
+        showEditor
         autoRun={false}
         kernel={kernel}
         code={"print('Hello Datalayer 👍')"}
@@ -93,16 +93,20 @@ const AllExample = () => {
         kernel={kernel}
         code={"print('Hello Datalayer 👍')"}
       />
-      <Output autoRun={true} kernel={kernel} code={source} />
+      <Output autoRun kernel={kernel} code={source} />
       <Output
-        autoRun={true}
+        autoRun
         kernel={kernel}
         code={
           "print('=> Hello Datalayer again... I am the output of an non-shown editor 👍 <=')"
         }
       />
       <CellToolbar cellId={CELL_ID} />
-      <Cell id={CELL_ID} source={source} />
+      <Cell
+        id={CELL_ID}
+        kernel={kernel}
+        source={source}
+      />
       <CommandsToolbar />
       <Commands />
       <ConsoleToolbar />
@@ -115,7 +119,7 @@ const AllExample = () => {
       {serviceManager && <FileBrowser serviceManager={serviceManager}/> }
       <FileManagerJupyterLab />
       <NotebookToolbar notebookId={NOTEBOOK_ID} />
-      <Notebook id={NOTEBOOK_ID} path="ping.ipynb"/>
+      <Notebook id={NOTEBOOK_ID} path=".datalayer/ping.ipynb"/>
       <SettingsToolbar />
       <Settings />
       <LuminoComponent />
@@ -129,7 +133,7 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 
 render(
-  <Jupyter collaborative={true} terminals={true}>
+  <Jupyter startDefaultKernel collaborative terminals>
     <AllExample />
   </Jupyter>,
   div

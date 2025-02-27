@@ -102,7 +102,7 @@ export const Output = (props: IOutputProps) => {
       }
     };
     if (id && kernel) {
-      const adapter = propsAdapter ?? new OutputAdapter(id, kernel, outputs ?? [], model,suppressCodeExecutionErrors);
+      const adapter = propsAdapter ?? new OutputAdapter(id, kernel, outputs ?? [], model, suppressCodeExecutionErrors);
       setAdapter(adapter);
       outputStore.setAdapter(id, adapter);
       if (model) {
@@ -139,7 +139,7 @@ export const Output = (props: IOutputProps) => {
         });
       });
       return () => {
-        //        kernel.connection.then(k => k.shutdown().then(() => console.log(`Kernel ${k.id} is terminated.`)));
+        // kernel.connection.then(k => k.shutdown().then(() => console.log(`Kernel ${k.id} is terminated.`)));
       };
     }
   }, [kernel]);
@@ -170,17 +170,17 @@ export const Output = (props: IOutputProps) => {
           }}
         >
           {/*
-          <CodeMirrorDatalayerEditor
-            autoRun={autoRun}
-            code={code}
-            codePre={codePre}
-            disableRun={disableRun}
-            insertText={insertText}
-            kernel={kernel}
-            outputAdapter={adapter}
-            sourceId={id}
-            toolbarPosition={toolbarPosition}
-          />
+            <CodeMirrorDatalayerEditor
+              autoRun={autoRun}
+              code={code}
+              codePre={codePre}
+              disableRun={disableRun}
+              insertText={insertText}
+              kernel={kernel}
+              outputAdapter={adapter}
+              sourceId={id}
+              toolbarPosition={toolbarPosition}
+            />
           */}
         </Box>
       )}

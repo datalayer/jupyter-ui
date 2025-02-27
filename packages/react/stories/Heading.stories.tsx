@@ -4,9 +4,9 @@
  * MIT License
  */
 
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Heading } from '@primer/react';
-import React from 'react';
 
 const meta: Meta<typeof Heading> = {
   title: 'Components/Heading',

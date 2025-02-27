@@ -4,9 +4,9 @@
  * MIT License
  */
 
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Jupyter, Terminal } from '@datalayer/jupyter-react';
-import React from 'react';
 
 const meta: Meta<typeof Terminal> = {
   title: 'Components/Terminal',
@@ -28,10 +28,10 @@ type Story = StoryObj<typeof Terminal | typeof Jupyter>;
 const Template = (args, { globals: { labComparison } }) => {
   return (
     <Jupyter
-      jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
-      jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
       startDefaultKernel={false}
       terminals={true}
+      jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
+      jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
     >
       <Terminal {...args} />
     </Jupyter>

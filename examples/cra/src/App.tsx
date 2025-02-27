@@ -14,7 +14,7 @@ const App = () => {
   return (
     <>
       <Layers/>
-      <Jupyter startDefaultKernel={true} terminals={true}>
+      <Jupyter startDefaultKernel terminals>
         <GalleryExample/>
       </Jupyter>
     </>

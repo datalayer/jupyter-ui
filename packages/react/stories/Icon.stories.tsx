@@ -4,12 +4,10 @@
  * MIT License
  */
 
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import * as dtIcons from '@datalayer/icons-react';
-
 import * as jpIcons from '@jupyterlab/ui-components';
-
-import React from 'react';
 
 const meta: Meta = {
   title: 'Components/Icon',

@@ -90,17 +90,6 @@ export type JupyterContextType =  {
    */
   defaultKernel?: Kernel;
   /**
-   * Will be true while waiting for the default kernel.
-   *
-   * If `true`, it does not ensure a default kernel will
-   * be created successfully.
-   *
-   * This is useful to not mount to quickly a Lumino Widget
-   * to be unmount right away when the default kernel will
-   * be available.
-   */
-  defaultKernelIsLoading: boolean;
-  /**
    * Jupyter Server base URL
    *
    * Useless if running an in-browser kernel.
@@ -193,7 +182,6 @@ export const useJupyter = (props?: JupyterPropsType): JupyterContextType => {
   } = useJupyterReactStoreFromProps(props ?? {});
   const storeContext: JupyterContextType = {
     defaultKernel: kernel,
-    defaultKernelIsLoading: kernelIsLoading,
     jupyterServerUrl: jupyterConfig!.jupyterServerUrl,
     kernel,
     kernelIsLoading,
@@ -256,7 +244,6 @@ export const JupyterContextProvider: React.FC<JupyterContextProps> = (props) => 
     <JupyterProvider
       value={{
         defaultKernel: kernel,
-        defaultKernelIsLoading: kernelIsLoading,
         // FIXME we should not expose sub attributes to promote single source of truth (like URLs coming from serverSettings).
         jupyterServerUrl,
         kernel,

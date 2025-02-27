@@ -53,7 +53,7 @@ export const JupyterLabHeadlessAppExample = () => {
   }
   return (
     <>
-      <Jupyter startDefaultKernel={false} disableCssLoading={true} colormode="light">
+      <Jupyter startDefaultKernel={false} disableCssLoading colormode="light">
         { boxPanel &&
           <div style={{ position: "relative" }}>
             <Box className="jp-LabShell"
@@ -79,7 +79,7 @@ export const JupyterLabHeadlessAppExample = () => {
           mimeRenderers={[
             mimePlotlyExtension,
           ]}
-          headless={true}
+          headless
           onJupyterLab={onJupyterLab}
           pluginId="@jupyterlab/apputils-extension:themes"
           PluginType={ThemeManager}

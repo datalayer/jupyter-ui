@@ -12,7 +12,7 @@ import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import KernelProgressBar from './../components/kernel/KernelProgressBar';
 
 export const KernelExecuteView = () => {
-  const { defaultKernel: kernel } = useJupyter();
+  const { defaultKernel: kernel } = useJupyter({ startDefaultKernel: true });
   const [running, setRunning] = useState(false);
   const [code, setCode] = useState('');
   const [result, setResult] = useState<string>();

@@ -13,21 +13,20 @@ import useConsoleStore from './ConsoleState';
 import './Console.css';
 
 export const Console = (options: Console.IConsoleOptions) => {
-  const { defaultKernel, defaultKernelIsLoading, serviceManager } =
-    useJupyter();
+  const { defaultKernel, serviceManager } = useJupyter();
   const [adapter, setAdapter] = useState<ConsoleAdapter>();
-  const consoleStore = useConsoleStore();
+  const store = useConsoleStore();
   useEffect(() => {
-    if (serviceManager && !defaultKernelIsLoading) {
+    if (serviceManager) {
       const adapter = new ConsoleAdapter({
         kernel: defaultKernel,
         serviceManager,
         code: options.code,
       });
       setAdapter(adapter);
-      consoleStore.setAdapter(adapter);
+      store.setAdapter(adapter);
     }
-  }, [defaultKernel, defaultKernelIsLoading, serviceManager]);
+  }, [defaultKernel, serviceManager]);
   return adapter ? (
     <Lumino>{adapter.panel}</Lumino>
   ) : (

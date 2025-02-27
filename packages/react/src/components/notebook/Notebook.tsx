@@ -41,9 +41,9 @@ import {
 import { CellMetadataEditor } from './cell/metadata';
 import { NotebookAdapter } from './NotebookAdapter';
 import { useNotebookStore } from './NotebookState';
-import { INotebookToolbarProps } from './toolbar/NotebookToolbar';
-
+import { INotebookToolbarProps } from './toolbar';
 import { Loader } from '../utils';
+
 import './Notebook.css';
 
 export type ExternalIPyWidgets = {
@@ -140,11 +140,9 @@ export const Notebook = (props: INotebookProps) => {
   const portals = notebookStore.selectNotebookPortals(id);
 
   const [isLoading, setIsLoading] = useState(false);
-  console.log(isLoading);
 
   // Bootstrap the Notebook Adapter.
   const bootstrapAdapter = async (
-    collaborative: ICollaborative,
     serviceManager?: ServiceManager.IManager,
     kernel?: Kernel
   ) => {
@@ -228,10 +226,10 @@ export const Notebook = (props: INotebookProps) => {
     kernel?: Kernel
   ) => {
     if (!kernel) {
-      bootstrapAdapter(collaborative, serviceManager, kernel);
+      bootstrapAdapter(serviceManager, kernel);
     } else {
       kernel.ready.then(() => {
-        bootstrapAdapter(collaborative, serviceManager, kernel);
+        bootstrapAdapter(serviceManager, kernel);
       });
     }
   };
@@ -254,7 +252,7 @@ export const Notebook = (props: INotebookProps) => {
   }, [collaborative, serviceManager, kernel]);
 
   useEffect(() => {
-    // As the server has the content source of thruth, we
+    // As the server has the content source of truth, we
     // must ensure that the shared model is pristine before
     // to connect to the server. More over we should ensure,
     // the connection is disposed in case the server room is
@@ -294,7 +292,6 @@ export const Notebook = (props: INotebookProps) => {
               });
           }
         }
-
         // FIXME inform the user.
       }
     };
@@ -396,6 +393,7 @@ export const Notebook = (props: INotebookProps) => {
       }
       sharedModel?.dispose();
     };
+
   }, [adapter?.notebookPanel, collaborative]);
 
   useEffect(() => {
@@ -501,13 +499,11 @@ export const Notebook = (props: INotebookProps) => {
             );
           })}
         </Box>
-        {/* {isLoading ? (
+        {isLoading ? (
           <Loader />
         ) : (
           <Box>{adapter && <Lumino id={id}>{adapter.panel}</Lumino>}</Box>
-        )} */}
-        <Loader />
-        <Box>{adapter && <Lumino id={id}>{adapter.panel}</Lumino>}</Box>
+        )}
       </Box>
     </Box>
   );

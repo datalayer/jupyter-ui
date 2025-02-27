@@ -15,7 +15,7 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 
 render(
-  <Jupyter collaborative={false} terminals={true}>
+  <Jupyter startDefaultKernel collaborative={false} terminals>
     <Layers />
     <TerminalToolbar />
     <Terminal height="500px" />

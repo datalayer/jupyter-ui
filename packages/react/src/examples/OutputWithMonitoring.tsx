@@ -143,7 +143,7 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <Jupyter>
+  <Jupyter startDefaultKernel>
     <OutputWithMonitoring
       title="Output with error code"
       key="1"

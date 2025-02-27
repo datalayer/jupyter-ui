@@ -11,7 +11,7 @@ const meta: Meta<typeof Console> = {
   title: 'Components/Console',
   component: Console,
   argTypes: {
-    browser: {
+    lite: {
       control: 'radio',
       options: ['true', 'false', '@jupyterlite/javascript-kernel-extension'],
       table: {
@@ -35,7 +35,7 @@ const meta: Meta<typeof Console> = {
 export default meta;
 
 type Story = StoryObj<
-  typeof Console | typeof Jupyter | { browser: string; code: string }
+  typeof Console | typeof Jupyter | { lite: string; code: string }
 >;
 
 const Template = (args, { globals: { labComparison } }) => {
@@ -70,7 +70,7 @@ const Template = (args, { globals: { labComparison } }) => {
 export const Default: Story = Template.bind({}) as Story;
 
 Default.args = {
-  browser: 'false',
+  lite: 'false',
   initCode: '',
   code: "print('👋 Hello Jupyter Console')",
 };
@@ -78,12 +78,12 @@ Default.args = {
 export const LitePython: Story = Template.bind({}) as Story;
 LitePython.args = {
   ...Default.args,
-  browser: 'true',
+  lite: 'true',
 };
 
 export const LiteJavascript: Story = Template.bind({}) as Story;
 LiteJavascript.args = {
   ...Default.args,
-  browser: '@jupyterlite/javascript-kernel-extension',
+  lite: '@jupyterlite/javascript-kernel-extension',
   code: "a = 'hello';\nArray(4).fill(`${a} the world`);",
 };

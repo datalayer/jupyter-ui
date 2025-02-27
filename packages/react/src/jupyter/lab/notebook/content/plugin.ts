@@ -4,18 +4,15 @@
  * MIT License
  */
 
-import {
-  JupyterFrontEnd,
-  JupyterFrontEndPlugin,
-} from '@jupyterlab/application';
+import { JupyterFrontEnd, JupyterFrontEndPlugin } from '@jupyterlab/application';
 import { NotebookPanel } from '@jupyterlab/notebook';
 import { IEditorServices } from '@jupyterlab/codeeditor';
-import CountdownPromptContentFactory from './CountdownContentFactory';
+import { CountdownPromptContentFactory } from './CountdownContentFactory';
 
 /**
  * The notebook cell factory provider.
  */
-const contentFactoryPlugin: JupyterFrontEndPlugin<NotebookPanel.IContentFactory> =
+export const contentFactoryPlugin: JupyterFrontEndPlugin<NotebookPanel.IContentFactory> =
   {
     id: '@datalayer/jupyter-react:notebook-content-factory',
     description: 'Provides the notebook cell factory.',

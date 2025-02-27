@@ -62,7 +62,6 @@ const OutputWithoutEditor = () => {
     outputStore.getModel(SOURCE_ID_1)?.toJSON(),
     outputStore.getInput(SOURCE_ID_1),
   );
-
   return (
     <>
       <Text as="h1">Output without Code Editor</Text>
@@ -79,13 +78,11 @@ const OutputWithoutEditor = () => {
 const OutputWithEditor = () => {
   const { defaultKernel } = useJupyter();
   const outputStore = useOutputsStore();
-
   console.log(
     'Outputs 2',
     outputStore.getModel(SOURCE_ID_2)?.toJSON(),
     outputStore.getInput(SOURCE_ID_2),
   );
-
   return (
     <>
       <Text as="h1">Output with Code Editor</Text>
@@ -109,11 +106,11 @@ const OutputWithEmptyOutput = () => {
   useEffect( () => {
     if (serviceManager && kernelManager) {
       const kernel = new Kernel({
-        kernelManager,
+        path: newUuid(),
         kernelName: 'kernel-example',
         kernelSpecName: 'python',
+        kernelManager,
         kernelspecsManager: serviceManager.kernelspecs,
-        path: newUuid(),
         sessionManager: serviceManager.sessions,
       });
       setKernel(kernel);
@@ -159,7 +156,7 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <Jupyter>
+  <Jupyter startDefaultKernel>
     <OutputWithoutEditor />
     <OutputWithEditor />
     <OutputWithEmptyOutput />

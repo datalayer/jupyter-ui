@@ -14,11 +14,11 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <Jupyter lite>
+  <Jupyter startDefaultKernel lite>
     <Box as="h1">A Jupyter Cell with a Lite Kernel</Box>
     <Cell
       source={`import sys
-print(f"👋 Hello Jupyter UI Lite {sys.platform} {get_ipython()}")`}
+print(f"👋 Hello Jupyter UI Lite - Platform: {sys.platform} - IPython: {get_ipython()}")`}
     />
   </Jupyter>
 );

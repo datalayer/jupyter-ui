@@ -59,8 +59,8 @@ export class OutputAdapter {
       },
       0
     );
-    //    const widgetRegistry = activateWidgetExtension(this._rendermime);
-    //    activatePlotlyWidgetExtension(widgetRegistry);
+    // const widgetRegistry = activateWidgetExtension(this._rendermime);
+    // activatePlotlyWidgetExtension(widgetRegistry);
     const model =
       outputAreaModel ??
       new OutputAreaModel({

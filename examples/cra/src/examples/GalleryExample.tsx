@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { UnderlineNav } from '@primer/react';
 import { Box } from '@primer/react';
 import {
@@ -82,10 +82,11 @@ const NOTEBOOK_ID = 'notebook-id-gallery';
 
 const GalleryExample = () => {
   const [tab, setTab] = useState('Notebook');
+  const [kernel, setKernel] = useState<Kernel>();
   const { kernelManager, serviceManager } = useJupyter();
-  const kernel = useMemo(() => {
-    if (serviceManager && kernelManager)
-      return new Kernel({
+  useEffect(() => {
+    if (serviceManager && kernelManager) {
+      const kernel = new Kernel({
         kernelManager,
         kernelName: 'python',
         kernelSpecName: 'python',
@@ -93,6 +94,8 @@ const GalleryExample = () => {
         kernelspecsManager: serviceManager.kernelspecs,
         sessionManager: serviceManager.sessions,
       });
+      setKernel(kernel);
+    }
   }, [kernelManager, serviceManager]);
   return (
     <Box>
@@ -220,97 +223,114 @@ const GalleryExample = () => {
           </UnderlineNav.Item>
         </UnderlineNav>
       </Box>
-      <Box>
-        {tab === 'Notebook' && (
-          <>
-            <NotebookToolbarSimple notebookId={NOTEBOOK_ID} />
-            <Notebook
-              id={NOTEBOOK_ID}
-              path="ping.ipynb"
-              CellSidebar={CellSidebar}
-            />
-          </>
-        )}
-        {tab === 'Cell' && (
-          <>
-            <CellToolbar cellId={CELL_ID} />
-            <Cell id={CELL_ID} source={SOURCE} />
-          </>
-        )}
-        {tab === 'LabApp' && (
-          <>
-            <JupyterLabHeadlessAppExample />
-          </>
-        )}
-        {tab === 'Outputs' && (
-          <>
-            <OutputToolbar />
-            <Output outputs={OUTPUTS} autoRun={false} kernel={kernel} />
-            <Output
-              autoRun={false}
-              kernel={kernel}
-              code={"print('Hello Datalayer 👍')"}
-            />
-            <Output autoRun={true} kernel={kernel} code={SOURCE} />
-          </>
-        )}
-        {tab === 'IPyWidgets' && (
-          <>
-            <IPyWidgetsToolbar />
-            <OutputIPyWidgets state={state} view={view} />
-          </>
-        )}
-        {tab === 'Terminal' && (
-          <>
-            <TerminalToolbar />
-            <Terminal height='500px' />
-          </>
-        )}
-        {tab === 'Console' && (
-          <>
-            <ConsoleToolbar />
-            <Console />
-          </>
-        )}
-        {tab === 'Commands' && (
-          <>
-            <CommandsToolbar />
-            <Commands />
-          </>
-        )}
-        {tab === 'Dialog' && (
-          <>
-            <DialogToolbar />
-            <Dialog />
-          </>
-        )}
-
-        {tab === 'File Browser' && (
-          <>
-            <FileBrowserToolbar />
-            <Box display="flex">
-              <Box sx={{width: 400}}>
-                {serviceManager && <FileBrowser serviceManager={serviceManager}/> }
+      { kernel && <>
+        <Box>
+          {tab === 'Notebook' && (
+            <>
+              <NotebookToolbarSimple notebookId={NOTEBOOK_ID} />
+              <Notebook
+                id={NOTEBOOK_ID}
+                path=".datalayer/ping.ipynb"
+                CellSidebar={CellSidebar}
+              />
+            </>
+          )}
+          {tab === 'Cell' && (
+            <>
+              <CellToolbar cellId={CELL_ID} />
+              <Cell
+                id={CELL_ID}
+                kernel={kernel}
+                source={SOURCE}
+              />
+            </>
+          )}
+          {tab === 'LabApp' && (
+            <>
+              <JupyterLabHeadlessAppExample />
+            </>
+          )}
+          {tab === 'Outputs' && (
+            <>
+              <OutputToolbar />
+              <Output
+                autoRun={false}
+                kernel={kernel}
+                outputs={OUTPUTS}
+              />
+              <Output
+                autoRun={false}
+                kernel={kernel}
+                code={"print('Hello Datalayer 👍')"}
+              />
+              <Output
+                autoRun
+                kernel={kernel}
+                code={SOURCE}
+              />
+            </>
+          )}
+          {tab === 'IPyWidgets' && (
+            <>
+              <IPyWidgetsToolbar />
+              <OutputIPyWidgets
+                state={state}
+                view={view}
+              />
+            </>
+          )}
+          {tab === 'Terminal' && (
+            <>
+              <TerminalToolbar />
+              <Terminal height='500px' />
+            </>
+          )}
+          {tab === 'Console' && (
+            <>
+              <ConsoleToolbar />
+              <Console />
+            </>
+          )}
+          {tab === 'Commands' && (
+            <>
+              <CommandsToolbar />
+              <Commands />
+            </>
+          )}
+          {tab === 'Dialog' && (
+            <>
+              <DialogToolbar />
+              <Dialog />
+            </>
+          )}
+          {tab === 'File Browser' && (
+            <>
+              <FileBrowserToolbar />
+              <Box display="flex">
+                <Box sx={{width: 400}}>
+                  {serviceManager && <FileBrowser serviceManager={serviceManager}/> }
+                </Box>
+                <Box ml={3} sx={{width: 400}}>
+                  <FileManagerJupyterLab />
+                </Box>
               </Box>
-              <Box ml={3} sx={{width: 400}}>
-                <FileManagerJupyterLab />
-              </Box>
-            </Box>
-          </>
-        )}
-        {tab === 'Lumino' && (
-          <>
-            <LuminoToolbar />
-            <LuminoComponent />
-          </>
-        )}
-        {tab === 'Settings' && (
-          <>
-            <SettingsToolbar />
-            <Settings />
-          </>
-        )}
-      </Box>
+            </>
+          )}
+          {tab === 'Lumino' && (
+            <>
+              <LuminoToolbar />
+              <LuminoComponent />
+            </>
+          )}
+          {tab === 'Settings' && (
+            <>
+              <SettingsToolbar />
+              <Settings />
+            </>
+          )}
+        </Box>
+      </>
+    }
     </Box>
   );
 };
