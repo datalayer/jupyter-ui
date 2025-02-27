@@ -6,7 +6,7 @@
 
 import { ISharedNotebook, IYText, YNotebook } from '@jupyter/ydoc';
 import type { ISessionContext } from '@jupyterlab/apputils';
-import type { Cell, ICellModel } from '@jupyterlab/cells';
+import type { Cell, CodeCell, ICellModel } from '@jupyterlab/cells';
 import { type IEditorServices } from '@jupyterlab/codeeditor';
 import {
   CodeMirrorEditorFactory,
@@ -67,6 +67,9 @@ import {
   COLLABORATION_ROOM_URL_PATH,
   fetchSessionId,
   requestDocSession,
+  WIDGET_MIMETYPE,
+  WidgetLabRenderer,
+  WidgetManager,
 } from '../../jupyter';
 import type { OnSessionConnection } from '../../state';
 import { newUuid, sleep } from '../../utils';
@@ -128,7 +131,7 @@ export interface IBaseNotebookProps {
  *
  * The notebook model and kernel lifecycle is not handled by
  * this component.
- * 
+ *
  * Important
  * This component is not connected to the notebookStore.
  */
@@ -153,10 +156,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
     [props.path]
   );
   // Features
-  const features = useMemo(
-    () => new CommonFeatures({ commands }),
-    [commands]
-  );
+  const features = useMemo(() => new CommonFeatures({ commands }), [commands]);
 
   // Content factory
   const contentFactory = useMemo(
@@ -293,6 +293,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
 
   useEffect(() => {
     let thisPanel: NotebookPanel | null = null;
+    let widgetsManager: WidgetManager | null = null;
     if (context) {
       thisPanel = widgetFactory?.createNew(context) ?? null;
       if (thisPanel) {
@@ -308,6 +309,35 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
             return extension.component ?? <></>;
           })
         );
+
+        //-- Add ipywidgets renderer
+        const notebookRenderers = thisPanel.content.rendermime;
+        widgetsManager = new WidgetManager(context, notebookRenderers, {
+          saveState: false,
+        });
+        notebookRenderers.addFactory(
+          {
+            safe: true,
+            mimeTypes: [WIDGET_MIMETYPE],
+            defaultRank: 1,
+            createRenderer: options =>
+              new WidgetLabRenderer(options, widgetsManager!),
+          },
+          1
+        );
+        for (const cell of thisPanel.content.widgets) {
+          if (cell.model.type === 'code') {
+            for (const codecell of (cell as CodeCell).outputArea.widgets) {
+              for (const output of Array.from(codecell.children())) {
+                if (output instanceof WidgetLabRenderer) {
+                  output.manager = widgetsManager;
+                }
+              }
+            }
+          }
+        }
+        //--
+
         setIsLoading(false);
       }
     }
@@ -318,6 +348,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
     }
 
     return () => {
+      widgetsManager?.dispose();
       if (thisPanel) {
         if (thisPanel.content) Signal.clearData(thisPanel.content);
         try {
@@ -448,7 +479,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
       {isLoading ? (
         <Loader key="notebook-loader" />
       ) : panel ? (
-        <Box sx={{ height: '100%' }} onKeyDown={onKeyDown}>
+        <Box sx={{ height: '100%' }} onKeyDownCapture={onKeyDown}>
           <Lumino id={id} key="notebook-container">
             {panel}
           </Lumino>
