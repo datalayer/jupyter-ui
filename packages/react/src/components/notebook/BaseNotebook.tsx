@@ -133,7 +133,7 @@ export interface IBaseNotebookProps {
  * this component.
  *
  * Important
- * This component is not connected to the notebookStore.
+ * This component is not connected to any React stores.
  */
 export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
   const {
@@ -466,8 +466,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
   );
 
   // FIXME
-  // - add ipywidgets
-  // - connect signals - see adapter - fix ipywidget and kernel transfer
+  // - connect signals - see adapter - fix kernel transfer
 
   return (
     <>
@@ -1059,11 +1058,6 @@ function initializeContext(
       const session = args.newValue;
       console.log('Current Jupyter Session Connection.', session);
       onSessionConnection?.(session ?? undefined);
-      // FIXME
-      // if (session) {
-      //   this._iPyWidgetsManager?.registerWithKernel(session.kernel);
-      //   this._iPyWidgetsManager?.restoreWidgets(this._notebookPanel?.model!);
-      // }
     }
   );
   context.sessionContext.kernelChanged.connect(
