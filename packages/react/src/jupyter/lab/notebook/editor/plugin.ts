@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 import { JupyterFrontEndPlugin, JupyterFrontEnd } from '@jupyterlab/application';
 import { ISessionContextDialogs, IToolbarWidgetRegistry } from '@jupyterlab/apputils';
 import { NotebookPanel, NotebookWidgetFactory, INotebookWidgetFactory, StaticNotebook } from '@jupyterlab/notebook';
