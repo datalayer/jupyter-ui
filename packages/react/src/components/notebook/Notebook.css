@@ -23,18 +23,14 @@
 }
 
 .dla-CellSidebar-Container {
-  padding: 4px 8px;
   position: relative;
   margin-left: auto;
-  width: max-content;
 }
 
 .dla-Box-Notebook .jp-Cell .dla-CellSidebar-Container {
-  pointer-events: none;
-  visibility: hidden;
+  display: none;
 }
 
 .dla-Box-Notebook .jp-Cell.jp-mod-active .dla-CellSidebar-Container {
-  pointer-events: auto;
-  visibility: visible;
+  display: block;
 }

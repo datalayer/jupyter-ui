@@ -72,7 +72,7 @@ export function SimpleNotebook(
   const {
     Toolbar,
     children,
-    cellSidebarMargin = 130,
+    cellSidebarMargin = 120,
     collaborationServer,
     commands,
     extensions,

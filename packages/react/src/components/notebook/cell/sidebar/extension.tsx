@@ -6,12 +6,13 @@ import type { CommandRegistry } from '@lumino/commands';
 import type { IDisposable } from '@lumino/disposable';
 import { Signal } from '@lumino/signaling';
 import type { PanelLayout, Widget } from '@lumino/widgets';
+import type React from 'react';
+import { JupyterReactTheme } from '../../../../theme';
 import type {
   DatalayerNotebookExtension,
   IDatalayerNotebookExtensionProps,
 } from '../../Notebook';
 import { CellSidebar, type ICellSidebarProps } from './CellSidebar';
-import type React from 'react';
 
 class CellSidebarFactory implements IDisposable {
   private _isDisposed = false;
@@ -28,7 +29,7 @@ class CellSidebarFactory implements IDisposable {
     protected panel: NotebookPanel,
     protected commands: CommandRegistry,
     protected nbgrader: boolean = false,
-    protected sidebarWidth: number = 130
+    protected sidebarWidth: number = 120
   ) {
     this._onModelChanged(panel.content);
     panel.content.modelChanged.connect(this._onModelChanged, this);
@@ -56,16 +57,19 @@ class CellSidebarFactory implements IDisposable {
     const cell = this._getCell(model);
     if (cell) {
       const sidebar = ReactWidget.create(
-        <CellSidebar
-          commands={this.commands}
-          model={model}
-          nbgrader={this.nbgrader}
-        />
+        <JupyterReactTheme>
+          <CellSidebar
+            commands={this.commands}
+            model={model}
+            nbgrader={this.nbgrader}
+          />
+        </JupyterReactTheme>
       );
+      // Position sidebar wrapper
+      sidebar.node.style.width = `${this.sidebarWidth}px`;
       sidebar.node.style.position = 'absolute';
       sidebar.node.style.right = `-${this.sidebarWidth}px`;
-      // Ensure to not capture event when the sidebar is hidden
-      sidebar.node.style.pointerEvents = 'none';
+      sidebar.node.style.top = '0';
       (cell.layout as PanelLayout).insertWidget(0, sidebar);
       this._sidebars.set(model, sidebar);
       const removeSidebar = () => {

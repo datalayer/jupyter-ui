@@ -515,7 +515,7 @@ export const Notebook = (props: INotebookProps) => {
 
 Notebook.defaultProps = {
   cellMetadataPanel: false,
-  cellSidebarMargin: 130,
+  cellSidebarMargin: 120,
   collaborative: undefined,
   extensions: [],
   height: '100vh',
