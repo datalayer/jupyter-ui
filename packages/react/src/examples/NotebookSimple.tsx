@@ -14,7 +14,6 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { SimpleNotebook } from '../components/notebook/SimpleNotebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-import { CellSidebar } from '../components/notebook/cell/sidebar/CellSidebar';
 import { useJupyter } from '../jupyter';
 
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
@@ -30,7 +29,6 @@ const Notebook = () => {
           startDefaultKernel={true}
           height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
           cellSidebarMargin={120}
-          CellSidebar={CellSidebar}
           Toolbar={NotebookToolbar}
           collaborationServer={{
             baseURL: 'https://prod1.datalayer.run',

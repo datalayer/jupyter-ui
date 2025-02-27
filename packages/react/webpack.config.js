@@ -33,7 +33,7 @@ const ENTRY =
   // './src/examples/IPyWidgets';
   // './src/examples/IPyWidgetsState';
   // './src/examples/JupyterContext';
-  './src/examples/JupyterLabApp';
+  // './src/examples/JupyterLabApp';
   // './src/examples/JupyterLabAppHeadless';
   // './src/examples/JupyterLabAppHeadlessServerless';
   // './src/examples/JupyterLabAppServerless';
@@ -43,7 +43,7 @@ const ENTRY =
   // './src/examples/Kernels';
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
-  // './src/examples/Notebook';
+  './src/examples/Notebook';
   // './src/examples/NotebookCellSidebar';
   // './src/examples/NotebookCellToolbar';
   // './src/examples/NotebookColorMode';
