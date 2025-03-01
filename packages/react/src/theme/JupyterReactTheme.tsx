@@ -4,9 +4,9 @@
  * MIT License
  */
 
-import { BaseStyles, ThemeProvider, theme as primerTheme } from '@primer/react';
+import { BaseStyles, ThemeProvider } from '@primer/react';
 import { Theme } from '@primer/react/lib/ThemeProvider';
-import { Colormode, JupyterLabCss } from './../theme';
+import { Colormode, JupyterLabCss, jupyterTheme } from './../theme';
 
 type IJupyterLabThemeProps = {
   colormode: Colormode;
@@ -36,7 +36,7 @@ export const JupyterReactTheme = (props: React.PropsWithChildren<IJupyterLabThem
 JupyterReactTheme.defaultProps = {
   colormode: 'light',
   loadJupyterLabCss: true,
-  theme: primerTheme,
+  theme: jupyterTheme,
 } as IJupyterLabThemeProps;
 
 export default JupyterReactTheme;
