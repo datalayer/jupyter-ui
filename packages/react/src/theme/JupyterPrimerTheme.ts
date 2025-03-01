@@ -1158,8 +1158,7 @@ const jupyterThemeDefs = {
 const { colorSchemes: primerSchemes, ...primerOthers } = cloneDeep(primerTheme);
 const { colorSchemes: jupyterSchemes, ...jupyterOthers } = jupyterThemeDefs;
 
-// Merge with the light theme to ensure all variables are defined (although
-// the style may be ugly)
+// Merge with the light theme to ensure all variables are defined (although the style may be ugly).
 const theme = merge(primerOthers, jupyterOthers, {
   colorSchemes: { light: {}, dark: {} },
 });

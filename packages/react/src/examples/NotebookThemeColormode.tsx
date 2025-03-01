@@ -53,7 +53,7 @@ const NotebookThemeColormode = () => {
   }, []);
   return (
     <>
-      <Jupyter theme={theme} colormode={colormode}>
+      <Jupyter theme={theme} colormode={colormode} startDefaultKernel>
         <Box display="flex">
           <Box mr={3}>
             <Text
