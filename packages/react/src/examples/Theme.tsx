@@ -4,64 +4,315 @@
  * MIT License
  */
 
+import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Box, Button, Heading, Text, Link, PageLayout, PageHeader } from '@primer/react';
+import { 
+  Box, Button, Heading, Text, Link, PageLayout, PageHeader, RadioGroup, Radio, FormControl, RelativeTime,
+  TextInput, TextInputWithTokens, Timeline, Octicon, ToggleSwitch, SegmentedControl, Label, LabelGroup,
+} from '@primer/react';
+import { DataTable, Table } from '@primer/react/experimental';
+import { GitCommitIcon } from '@primer/octicons-react';
+import {SkeletonBox} from '@primer/react/experimental'
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 
-const Theme = () => (
-  <JupyterReactTheme>
-    <Heading>Jupyter Theme</Heading>
-    <Box>
-      <Text as="h1">Heading 1</Text>
-      <Text as="h2">Heading 2</Text>
-      <Text as="h3">Heading 3</Text>
-      <Text>This is a text.</Text>
-      <br/>
-      <Link href="https://datalayer.io" target="_blank">This is a link.</Link>
-      <br/>
-      <Text as="h3"><Link href="https://datalayer.io" target="_blank">This is a heading 3 link</Link></Text>
-    </Box>
-    <Box>
-      <Button variant="default">Default</Button>
-      <Button variant="primary">Primary</Button>
-      <Button variant="invisible">Invisible</Button>
-      <Button variant="danger">Danger</Button>
-    </Box>
-    <PageLayout containerWidth="full" padding="normal">
-      <PageLayout.Header>
-        <PageHeader>
-          <PageHeader.TitleArea variant="large">
-            <PageHeader.Title>
-              Documentation
-            </PageHeader.Title>
-          </PageHeader.TitleArea>
-          <PageHeader.Description>
-            <Text sx={{
-              fontSize: 1,
-              color: 'fg.muted'
-            }}>
-              Usefull links...
+const mockTokens = [
+  {text: 'zero', id: 0},
+  {text: 'one', id: 1},
+  {text: 'two', id: 2},
+  {text: 'three', id: 3},
+  {text: 'four', id: 4},
+  {text: 'five', id: 5},
+  {text: 'six', id: 6},
+  {text: 'seven', id: 7},
+]
+
+const now = Date.now()
+const Second = 1000
+const Minute = 60 * Second
+const Hour = 60 * Minute
+const Day = 24 * Hour
+const Week = 7 * Day
+const Month = 4 * Week
+
+interface Repo {
+  id: number
+  name: string
+  type: 'public' | 'internal'
+  updatedAt: number
+  securityFeatures: {
+    dependabot: Array<string>
+    codeScanning: Array<string>
+  }
+}
+
+const data: Array<Repo> = [
+  {
+    id: 1,
+    name: 'codeql-dca-worker',
+    type: 'internal',
+    updatedAt: now,
+    securityFeatures: {
+      dependabot: ['alerts', 'security updates'],
+      codeScanning: ['report secrets'],
+    },
+  },
+  {
+    id: 2,
+    name: 'aegir',
+    type: 'public',
+    updatedAt: now - 5 * Minute,
+    securityFeatures: {
+      dependabot: ['alerts'],
+      codeScanning: ['report secrets'],
+    },
+  },
+  {
+    id: 3,
+    name: 'strapi',
+    type: 'public',
+    updatedAt: now - 1 * Hour,
+    securityFeatures: {
+      dependabot: [],
+      codeScanning: [],
+    },
+  },
+  {
+    id: 4,
+    name: 'codeql-ci-nightlies',
+    type: 'public',
+    updatedAt: now - 6 * Hour,
+    securityFeatures: {
+      dependabot: ['alerts'],
+      codeScanning: [],
+    },
+  },
+  {
+    id: 5,
+    name: 'dependabot-updates',
+    type: 'public',
+    updatedAt: now - 1 * Day,
+    securityFeatures: {
+      dependabot: [],
+      codeScanning: [],
+    },
+  },
+  {
+    id: 6,
+    name: 'tsx-create-react-app',
+    type: 'public',
+    updatedAt: now - 1 * Week,
+    securityFeatures: {
+      dependabot: [],
+      codeScanning: [],
+    },
+  },
+  {
+    id: 7,
+    name: 'bootstrap',
+    type: 'public',
+    updatedAt: now - 1 * Month,
+    securityFeatures: {
+      dependabot: ['alerts'],
+      codeScanning: [],
+    },
+  },
+  {
+    id: 8,
+    name: 'docker-templates',
+    type: 'public',
+    updatedAt: now - 3 * Month,
+    securityFeatures: {
+      dependabot: ['alerts'],
+      codeScanning: [],
+    },
+  },
+]
+
+const Theme = () => {
+  const [tokens, setTokens] = useState([...mockTokens].slice(0, 3))
+  const onTokenRemove: (tokenId: string | number) => void = (tokenId) => {
+    setTokens(tokens.filter((token) => token.id !== tokenId))
+  }
+  return (
+    <JupyterReactTheme>
+      <PageLayout containerWidth="full" padding="normal">
+        <PageLayout.Header>
+          <PageHeader>
+            <PageHeader.TitleArea variant="large">
+              <PageHeader.Title>
+                JupyterLab Theme
+              </PageHeader.Title>
+            </PageHeader.TitleArea>
+            <PageHeader.Description>
+              <Text sx={{
+                fontSize: 1,
+                color: 'fg.muted'
+              }}>
+                Useful examples...
+              </Text>
+            </PageHeader.Description>
+          </PageHeader>
+        </PageLayout.Header>
+        <PageLayout.Content>
+          <Heading>Heading</Heading>
+          <Box>
+            <Text as="h1">Heading 1</Text>
+            <Text as="h2">Heading 2</Text>
+            <Text as="h3">Heading 3</Text>
+            <Text>This is a text.</Text>
+            <br/>
+            <Link href="https://datalayer.io" target="_blank">This is a link.</Link>
+            <br/>
+            <Text as="h3"><Link href="https://datalayer.io" target="_blank">This is a heading 3 link</Link></Text>
+          </Box>
+          <Box>
+            <Button variant="default">Default</Button>
+            <Button variant="primary">Primary</Button>
+            <Button variant="invisible">Invisible</Button>
+            <Button variant="danger">Danger</Button>
+          </Box>
+          <Box as="form">
+            <RadioGroup name="defaultRadioGroup">
+              <RadioGroup.Label>Choices</RadioGroup.Label>
+              <FormControl>
+                <Radio value="one" defaultChecked />
+                <FormControl.Label>Choice one</FormControl.Label>
+              </FormControl>
+              <FormControl>
+                <Radio value="two" />
+                <FormControl.Label>Choice two</FormControl.Label>
+              </FormControl>
+              <FormControl>
+                <Radio value="three" />
+                <FormControl.Label>Choice three</FormControl.Label>
+              </FormControl>
+            </RadioGroup>
+          </Box>
+          <Box as="form">
+            <FormControl>
+              <FormControl.Label>Default label</FormControl.Label>
+              <FormControl.Caption>This is a caption</FormControl.Caption>
+              <TextInput />
+            </FormControl>
+          </Box>
+          <Box>
+            <FormControl>
+              <FormControl.Label>Default label</FormControl.Label>
+              <TextInputWithTokens tokens={tokens} onTokenRemove={onTokenRemove} />
+            </FormControl>
+          </Box>
+          <Box>
+            <SkeletonBox height="4rem" />
+          </Box>
+          <Box>
+            <Text id="toggle" fontWeight="bold" fontSize={1}>
+              Toggle label
             </Text>
-          </PageHeader.Description>
-        </PageHeader>
-      </PageLayout.Header>
-      <PageLayout.Content>
-        <Box>
-          <Text as="h3"><Link href="https://datalayer.io" target="_blank">User Guide</Link></Text>
-        </Box>
-        <Box>
-          <Text as="h3"><Link href="https://datalayer.io" target="_blank">Pricing</Link></Text>
-        </Box>
-        <Box>
-          <Text as="h3"><Link href="https://datalayer.io" target="_blank">Privacy</Link></Text>
-        </Box>
-        <Box>
-          <Text as="h3"><Link href="https://datalayer.io" target="_blank">Terms and conditions</Link></Text>
-        </Box>
-      </PageLayout.Content>
-    </PageLayout>
-  </JupyterReactTheme>
-);
+            <ToggleSwitch aria-labelledby="toggle" />
+          </Box>
+          <Box>
+            <SegmentedControl aria-label="File view">
+              <SegmentedControl.Button defaultSelected>Preview</SegmentedControl.Button>
+              <SegmentedControl.Button>Raw</SegmentedControl.Button>
+              <SegmentedControl.Button>Blame</SegmentedControl.Button>
+            </SegmentedControl>
+          </Box>
+          <Box>
+            <Timeline>
+            <Timeline.Item>
+              <Timeline.Badge>
+                <Octicon icon={GitCommitIcon} aria-label="Commit" />
+              </Timeline.Badge>
+              <Timeline.Body>This is a message</Timeline.Body>
+            </Timeline.Item>
+            <Timeline.Item>
+              <Timeline.Badge>
+                <Octicon icon={GitCommitIcon} aria-label="Commit" />
+              </Timeline.Badge>
+              <Timeline.Body>This is a message</Timeline.Body>
+            </Timeline.Item>
+          </Timeline>
+          </Box>
+          <Box>
+            <Table.Container>
+              <Table.Title as="h2" id="repositories">
+                Repositories
+              </Table.Title>
+              <Table.Subtitle as="p" id="repositories-subtitle">
+                A subtitle could appear here to give extra context to the data.
+              </Table.Subtitle>
+              <DataTable
+                aria-labelledby="repositories"
+                aria-describedby="repositories-subtitle"
+                data={data}
+                columns={[
+                // @ts-ignore
+                  {
+                    header: 'Repository',
+                    field: 'name',
+                    rowHeader: true,
+                  },
+                  {
+                    header: 'Type',
+                    field: 'type',
+                    renderCell: (row) => {
+                      return <Label>{row.type}</Label>
+                    },
+                  },
+                  {
+                    header: 'Updated',
+                    field: 'updatedAt',
+                    renderCell: (row) => {
+                      return <RelativeTime date={new Date(row.updatedAt)} />
+                    },
+                  },
+                  {
+                    header: 'Dependabot',
+                    field: 'securityFeatures.dependabot',
+                    renderCell: (row) => {
+                      return row.securityFeatures.dependabot.length > 0 ? (
+                        <LabelGroup>
+                          {row.securityFeatures.dependabot.map((feature) => {
+                            return <Label key={feature}>{feature}</Label>
+                          })}
+                        </LabelGroup>
+                      ) : null
+                    },
+                  },
+                  {
+                    header: 'Code scanning',
+                    field: 'securityFeatures.codeScanning',
+                    renderCell: (row) => {
+                      return row.securityFeatures.codeScanning.length > 0 ? (
+                        <LabelGroup>
+                          {row.securityFeatures.codeScanning.map((feature) => {
+                            return <Label variant="danger" key={feature}>{feature}</Label>
+                          })}
+                        </LabelGroup>
+                      ) : null
+                    },
+                  },
+                ]}
+              />
+            </Table.Container>
+          </Box>
+          <Box>
+            <Text as="h3"><Link href="https://datalayer.io" target="_blank">User Guide</Link></Text>
+          </Box>
+          <Box>
+            <Text as="h3"><Link href="https://datalayer.io" target="_blank">Pricing</Link></Text>
+          </Box>
+          <Box>
+            <Text as="h3"><Link href="https://datalayer.io" target="_blank">Privacy</Link></Text>
+          </Box>
+          <Box>
+            <Text as="h3"><Link href="https://datalayer.io" target="_blank">Terms and conditions</Link></Text>
+          </Box>
+        </PageLayout.Content>
+      </PageLayout>
+    </JupyterReactTheme>
+  );
+}
 
 const div = document.createElement('div');
 document.body.appendChild(div);

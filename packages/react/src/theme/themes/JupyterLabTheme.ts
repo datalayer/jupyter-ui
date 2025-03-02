@@ -476,8 +476,7 @@ const jupyterLabThemeDefs = {
           default: 'var(--jp-ui-font-color1, rgba(0, 0, 0, 0.87))',
           muted: 'var(--jp-ui-font-color1, rgba(0, 0, 0, 0.54))',
           subtle: 'var(--jp-ui-font-color1, rgba(0, 0, 0, 0.38))',
-          onEmphasis:
-            'var(--jp-ui-inverse-font-color1, rgba(255, 255, 255, 1))',
+          onEmphasis: 'var(--jp-ui-inverse-font-color1, rgba(255, 255, 255, 1))',
         },
         canvas: {
           default: 'var(--jp-layout-color1, white)',
@@ -492,7 +491,7 @@ const jupyterLabThemeDefs = {
         },
         neutral: {
           emphasisPlus: 'var(--jp-layout-color2, #eee)',
-          emphasis: 'var(--jp-layout-color1, white)',
+          emphasis: 'var(--jp-layout-color3, #bdbdbd)',
           muted: 'var(--jp-layout-color0, white)',
           subtle: 'var(--jp-layout-color3, #bdbdbd)',
         },
