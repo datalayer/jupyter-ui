@@ -4,8 +4,8 @@
  * MIT License
  */
 
+export * from './themes';
 // export * from './JupyterLabCssImports'; // Leave this commented otherwise webpack may break in consumers.
 export * from './JupyterLabColormode';
 export * from './JupyterLabCss';
-export * from './JupyterPrimerTheme';
 export * from './JupyterReactTheme';

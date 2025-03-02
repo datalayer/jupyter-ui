@@ -6,7 +6,7 @@
 
 import { BaseStyles, ThemeProvider } from '@primer/react';
 import { Theme } from '@primer/react/lib/ThemeProvider';
-import { Colormode, JupyterLabCss, jupyterTheme } from './../theme';
+import { Colormode, JupyterLabCss, jupyterLabTheme } from './../theme';
 
 type IJupyterLabThemeProps = {
   colormode: Colormode;
@@ -36,7 +36,7 @@ export const JupyterReactTheme = (props: React.PropsWithChildren<IJupyterLabThem
 JupyterReactTheme.defaultProps = {
   colormode: 'light',
   loadJupyterLabCss: true,
-  theme: jupyterTheme,
+  theme: jupyterLabTheme,
 } as IJupyterLabThemeProps;
 
 export default JupyterReactTheme;

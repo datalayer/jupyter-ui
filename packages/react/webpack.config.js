@@ -34,7 +34,7 @@ const ENTRY =
   // './src/examples/IPyWidgetsState';
   // './src/examples/JupyterContext';
   // './src/examples/JupyterLabApp';
-  './src/examples/JupyterLabAppHeadless';
+  // './src/examples/JupyterLabAppHeadless';
   // './src/examples/JupyterLabAppHeadlessServerless';
   // './src/examples/JupyterLabAppServerless';
   // './src/examples/JupyterLabAppServiceManager';
@@ -77,6 +77,7 @@ const ENTRY =
   // './src/examples/PyGWalker';
   // './src/examples/RunningSessions';
   // './src/examples/Terminal';
+  './src/examples/Theme';
   // './src/examples/Viewer';
 
 const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == 'true';

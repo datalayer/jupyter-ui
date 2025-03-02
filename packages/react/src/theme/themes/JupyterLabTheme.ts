@@ -15,7 +15,7 @@ import merge from 'lodash/merge.js';
  * properties with a fallback in case no JupyterLab theme is
  * is provided to the page.
  */
-const jupyterThemeDefs = {
+const jupyterLabThemeDefs = {
   animation: {
     easeOutCubic: 'cubic-bezier(0.33, 1, 0.68, 1)',
   },
@@ -1156,19 +1156,19 @@ const jupyterThemeDefs = {
 };
 
 const { colorSchemes: primerSchemes, ...primerOthers } = cloneDeep(primerTheme);
-const { colorSchemes: jupyterSchemes, ...jupyterOthers } = jupyterThemeDefs;
+const { colorSchemes: jupyterSchemes, ...jupyterOthers } = jupyterLabThemeDefs;
 
 // Merge with the light theme to ensure all variables are defined (although the style may be ugly).
-const theme = merge(primerOthers, jupyterOthers, {
+const jupyterLabTheme = merge(primerOthers, jupyterOthers, {
   colorSchemes: { light: {}, dark: {} },
 });
-theme.colorSchemes.light = {
+jupyterLabTheme.colorSchemes.light = {
   colors: merge(primerSchemes.light.colors, jupyterSchemes.light.colors),
   shadows: merge(primerSchemes.light.shadows, jupyterSchemes.light.shadows),
 };
-theme.colorSchemes.dark = {
+jupyterLabTheme.colorSchemes.dark = {
   colors: merge(primerSchemes.dark.colors, jupyterSchemes.dark.colors),
   shadows: merge(primerSchemes.dark.shadows, jupyterSchemes.dark.shadows),
 };
 
-export { theme as jupyterTheme };
+export { jupyterLabTheme };

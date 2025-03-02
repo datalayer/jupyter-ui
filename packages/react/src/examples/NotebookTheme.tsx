@@ -11,12 +11,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
-import { jupyterTheme, JupyterReactTheme } from '../theme';
+import { jupyterLabTheme, JupyterReactTheme } from '../theme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookTheme = () => {
-  const [theme, setTheme] = useState<Theme>(jupyterTheme);
+  const [theme, setTheme] = useState<Theme>(jupyterLabTheme);
   const [isOn, setIsOn] = useState(false);
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   const onClick = useCallback(() => {
@@ -26,7 +26,7 @@ const NotebookTheme = () => {
     if (isOn) {
       setTheme(primerTheme);
     } else {
-      setTheme(jupyterTheme);
+      setTheme(jupyterLabTheme);
     }
   }, [isOn]);
   const handleSwitchChange = useCallback((on: boolean) => {
