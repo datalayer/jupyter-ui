@@ -19,7 +19,7 @@ type StoryContext = Record<string, unknown> & {
   parameters: Record<string, unknown>;
 };
 
-// set global theme styles for each stGlobalStyleory
+// set global theme styles for each story
 const GlobalStyle = createGlobalStyle`
   body,
   .docs-story {

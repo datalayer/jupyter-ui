@@ -9,7 +9,7 @@ import cloneDeep from 'lodash/cloneDeep.js';
 import merge from 'lodash/merge.js';
 
 /**
- * Theme for Primer React based on JupyterLab theme.
+ * Theme for Primer React theme based on JupyterLab.
  *
  * It sets the Primer theme tokens using the JupyterLab CSS
  * properties with a fallback in case no JupyterLab theme is
@@ -25,8 +25,7 @@ const jupyterLabThemeDefs = {
     normal: 'var(--jp-ui-font-family, sans-serif)',
     mono: 'var(--jp-code-font-family, monospace)',
   },
-  // Don't use other font-size props as it is a very bad practice
-  // to use em unit
+  // Don't use other font-size props as it is a very bad practice to use em unit
   fontSizes: [
     '10.833px',
     'var(--jp-ui-font-size1, 13px)',
