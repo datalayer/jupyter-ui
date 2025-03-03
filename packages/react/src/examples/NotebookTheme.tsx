@@ -11,13 +11,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
-import { Jupyter } from '../jupyter/Jupyter';
-import { jupyterTheme } from '../theme/JupyterPrimerTheme';
+import { jupyterLabTheme, JupyterReactTheme } from '../theme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookTheme = () => {
-  const [theme, setTheme] = useState<Theme>(jupyterTheme);
+  const [theme, setTheme] = useState<Theme>(jupyterLabTheme);
   const [isOn, setIsOn] = useState(false);
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   const onClick = useCallback(() => {
@@ -27,7 +26,7 @@ const NotebookTheme = () => {
     if (isOn) {
       setTheme(primerTheme);
     } else {
-      setTheme(jupyterTheme);
+      setTheme(jupyterLabTheme);
     }
   }, [isOn]);
   const handleSwitchChange = useCallback((on: boolean) => {
@@ -35,7 +34,7 @@ const NotebookTheme = () => {
   }, []);
   return (
     <>
-      <Jupyter theme={theme}>
+      <JupyterReactTheme theme={theme}>
         <Text
           fontSize={2}
           fontWeight="bold"
@@ -59,8 +58,9 @@ const NotebookTheme = () => {
           height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
           extensions={extensions}
           Toolbar={NotebookToolbar}
+          startDefaultKernel
         />
-      </Jupyter>
+      </JupyterReactTheme>
     </>
   );
 };

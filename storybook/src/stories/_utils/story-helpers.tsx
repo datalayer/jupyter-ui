@@ -10,7 +10,7 @@ import { createGlobalStyle } from 'styled-components';
 import { Icon } from '@primer/octicons-react';
 import { ThemeProvider, themeGet, BaseStyles } from '@primer/react';
 // import { theme } from '@primer/react';
-import { jupyterTheme as theme } from '@datalayer/jupyter-react';
+import { jupyterLabTheme as theme } from '@datalayer/jupyter-react';
 
 // we don't import StoryContext from storybook because of exports that conflict
 // with primer/react more: https://github.com/primer/react/runs/6129115026?check_suite_focus=true
@@ -19,7 +19,7 @@ type StoryContext = Record<string, unknown> & {
   parameters: Record<string, unknown>;
 };
 
-// set global theme styles for each stGlobalStyleory
+// set global theme styles for each story
 const GlobalStyle = createGlobalStyle`
   body,
   .docs-story {

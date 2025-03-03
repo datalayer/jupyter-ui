@@ -47,7 +47,7 @@ const ENTRY =
   // './src/examples/NotebookCellSidebar';
   // './src/examples/NotebookCellToolbar';
   // './src/examples/NotebookColorMode';
-  './src/examples/NotebookCollaborative';
+  // './src/examples/NotebookCollaborative';
   // './src/examples/NotebookExtension';
   // './src/examples/NotebookKernelChange';
   // './src/examples/NotebookLess';
@@ -77,6 +77,7 @@ const ENTRY =
   // './src/examples/PyGWalker';
   // './src/examples/RunningSessions';
   // './src/examples/Terminal';
+  './src/examples/Theme';
   // './src/examples/Viewer';
 
 const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == 'true';

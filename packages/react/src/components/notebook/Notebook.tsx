@@ -501,13 +501,11 @@ export const Notebook = (props: INotebookProps) => {
             );
           })}
         </Box>
-        {/* {isLoading ? (
+        {isLoading ?
           <Loader />
-        ) : (
+        :
           <Box>{adapter && <Lumino id={id}>{adapter.panel}</Lumino>}</Box>
-        )} */}
-        <Loader />
-        <Box>{adapter && <Lumino id={id}>{adapter.panel}</Lumino>}</Box>
+        }
       </Box>
     </Box>
   );

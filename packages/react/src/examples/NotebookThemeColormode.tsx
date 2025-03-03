@@ -12,13 +12,12 @@ import { createRoot } from 'react-dom/client';
 import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
 import { Jupyter } from '../jupyter/Jupyter';
-import { Colormode } from '../theme/JupyterLabColormode';
-import { jupyterTheme } from '../theme/JupyterPrimerTheme';
+import { jupyterLabTheme, Colormode } from '../theme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookThemeColormode = () => {
-  const [theme, setTheme] = useState<Theme>(jupyterTheme);
+  const [theme, setTheme] = useState<Theme>(jupyterLabTheme);
   const [isThemeOn, setIsThemeOn] = useState(false);
   const [colormode, setColormode] = useState<Colormode>('light');
   const [isOn, setIsOn] = useState(false);
@@ -28,7 +27,7 @@ const NotebookThemeColormode = () => {
     if (isThemeOn) {
       setTheme(primerTheme);
     } else {
-      setTheme(jupyterTheme);
+      setTheme(jupyterLabTheme);
     }
   }, [isThemeOn]);
   const onThemeClick = useCallback(() => {
@@ -53,7 +52,7 @@ const NotebookThemeColormode = () => {
   }, []);
   return (
     <>
-      <Jupyter theme={theme} colormode={colormode}>
+      <Jupyter theme={theme} colormode={colormode} startDefaultKernel>
         <Box display="flex">
           <Box mr={3}>
             <Text
