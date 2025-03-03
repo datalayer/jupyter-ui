@@ -485,7 +485,7 @@ const jupyterLabThemeDefs = {
           subtle: 'var(--jp-layout-color1, white)',
         },
         border: {
-          default: 'var(--md-grey-300, #e0e0e0)',
+          default: 'var(--md-grey-200, #e0e0e0)',
           muted: 'var(--jp-border-color2, #e0e0e0)',
           subtle: 'var(--jp-border-color3, #eee)',
         },
