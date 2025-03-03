@@ -467,12 +467,20 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
     };
   }, [completer, panel, tracker]);
 
-  const onKeyDown = useCallback(
-    (event: any) => {
+  useEffect(() => {
+    const onKeyDown = (event: any) => {
       features.commands.processKeydownEvent(event);
-    },
-    [features.commands]
-  );
+    };
+
+    // FIXME It would be better to add the listener to the Box wrapping the panel
+    // but this requires the use of the latest version of JupyterLab/Lumino that
+    // capture event at bubbling phase for keyboard shortcuts rather than at capture phase.
+    document.addEventListener('keydown', onKeyDown, true);
+
+    return () => {
+      document.removeEventListener('keydown', onKeyDown, true);
+    };
+  }, [features.commands]);
 
   return (
     <>
@@ -484,7 +492,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
       {isLoading ? (
         <Loader key="notebook-loader" />
       ) : panel ? (
-        <Box sx={{ height: '100%' }} onKeyDownCapture={onKeyDown}>
+        <Box sx={{ height: '100%' }}>
           <Lumino id={id} key="notebook-container">
             {panel}
           </Lumino>
