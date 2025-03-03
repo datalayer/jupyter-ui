@@ -14,7 +14,7 @@ CONDA_REMOVE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda remove 
 
 ENV_NAME=datalayer
 
-.PHONY: help typedoc typedoc-publish
+.PHONY: help
 
 help: ## display this help
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
@@ -29,7 +29,7 @@ build-storybook: ## build-storybook
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 	  yarn build:storybook )
 
-publish-storybook: build-storybook ## publish to s3
+deploy: build-storybook ## publish to s3
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		mkdir -p ./storybook-static/api/contents && \
 		cp ./storybook-static/pypi/all.json ./storybook-static/api/contents/all.json && \
