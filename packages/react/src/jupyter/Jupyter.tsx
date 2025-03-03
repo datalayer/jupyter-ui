@@ -4,13 +4,13 @@
  * MIT License
  */
 
-import { BaseStyles, Box, ThemeProvider, theme as primerTheme } from '@primer/react';
+import { BaseStyles, Box, ThemeProvider } from '@primer/react';
 import { Theme } from '@primer/react/lib/ThemeProvider';
 import { useMemo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { loadJupyterConfig } from './JupyterConfig';
 import { JupyterContextProps, JupyterContextProvider } from './JupyterContext';
-import { Colormode, JupyterLabCss } from '../theme';
+import { jupyterLabTheme, Colormode, JupyterLabCss } from '../theme';
 
 /**
  * Definition of the properties that can be passed
@@ -49,10 +49,10 @@ export const Jupyter = (props: JupyterProps) => {
   const {
     children,
     collaborative,
-    colormode = 'light',
+    colormode,
     defaultKernelName,
     disableCssLoading = false,
-    initCode = '',
+    initCode,
     jupyterServerUrl,
     jupyterServerToken,
     lite,
@@ -60,8 +60,8 @@ export const Jupyter = (props: JupyterProps) => {
     serviceManager,
     startDefaultKernel,
     skeleton,
-    terminals = false,
-    theme = primerTheme,
+    terminals,
+    theme,
     useRunningKernelId,
     useRunningKernelIndex,
   } = props;
@@ -110,5 +110,12 @@ export const Jupyter = (props: JupyterProps) => {
     </ErrorBoundary>
   );
 };
+
+Jupyter.defaultProps = {
+  colormode: 'light',
+  disableCssLoading: false,
+  terminals: false,
+  theme: jupyterLabTheme,
+}
 
 export default Jupyter;
