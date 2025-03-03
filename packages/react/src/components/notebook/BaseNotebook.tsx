@@ -62,7 +62,7 @@ import { Signal } from '@lumino/signaling';
 import { Widget } from '@lumino/widgets';
 import { Box } from '@primer/react';
 import { Banner } from '@primer/react/experimental';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { WebsocketProvider } from 'y-websocket';
 import {
   COLLABORATION_ROOM_URL_PATH,
