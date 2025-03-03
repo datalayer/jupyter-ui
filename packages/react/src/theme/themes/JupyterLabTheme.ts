@@ -452,12 +452,12 @@ const jupyterLabThemeDefs = {
         segmentedControl: {
           bg: 'var(--jp-layout-color2, #eee)',
           button: {
-            bg: 'var(--jp-inverse-layout-color1, #212121)',
+            bg: 'var(--jp-layout-color1, #212121)',
             hover: {
-              bg: 'var(--jp-inverse-layout-color2, #424242)',
+              bg: 'var(--jp-layout-color2, #424242)',
             },
             active: {
-              bg: 'var(--jp-inverse-layout-color3, #616161)',
+              bg: 'var(--jp-layout-color3, #616161)',
             },
             selected: {
               border: 'var(--jp-border-color3, #eee)',
@@ -485,7 +485,7 @@ const jupyterLabThemeDefs = {
           subtle: 'var(--jp-layout-color1, white)',
         },
         border: {
-          default: 'var(--jp-border-color1, #bdbdbd)',
+          default: 'var(--md-grey-300, #e0e0e0)',
           muted: 'var(--jp-border-color2, #e0e0e0)',
           subtle: 'var(--jp-border-color3, #eee)',
         },
