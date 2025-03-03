@@ -4,38 +4,32 @@
  * MIT License
  */
 
+import type { INotebookContent } from '@jupyterlab/nbformat';
+import type { NotebookModel } from '@jupyterlab/notebook';
+import type { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import type { ServiceManager } from '@jupyterlab/services';
+import type { CommandRegistry } from '@lumino/commands';
 import { Box } from '@primer/react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import type { OnSessionConnection } from '../../state';
+import { Loader } from '../utils';
 import {
   BaseNotebook,
   useKernelId,
   useNotebookModel,
   type CollaborationServer,
 } from './BaseNotebook';
-import type { INotebookProps } from './Notebook';
-import type { NotebookModel } from '@jupyterlab/notebook';
-import type { CommandRegistry } from '@lumino/commands';
+import type { DatalayerNotebookExtension } from './Notebook';
+import type { INotebookToolbarProps } from './toolbar';
 
 import './Notebook.css';
 
-export interface ISimpleNotebookProps
-  extends Omit<
-    INotebookProps,
-    | 'CellSidebar'
-    | 'cellMetadataPanel'
-    | 'collaborative'
-    | 'kernel'
-    | 'lite'
-    | 'nbgrader'
-    | 'serverless'
-    | 'useRunningKernelId'
-    | 'useRunningKernelIndex'
-    | 'kernelClients' // FIXME
-    | 'kernelTransfer' // FIXME
-  > {
+/**
+ * Simple notebook component properties
+ */
+export interface ISimpleNotebookProps {
   /**
-   * Collaboration server providing the document rooms
+   * Collaboration server providing the document rooms.
    */
   collaborationServer: CollaborationServer;
   /**
@@ -46,17 +40,71 @@ export interface ISimpleNotebookProps
    */
   commands?: CommandRegistry;
   /**
+   * Notebook extensions.
+   */
+  extensions?: DatalayerNotebookExtension[];
+  /**
+   * Notebook ID.
+   */
+  id: string;
+  /**
    * Kernel ID to connect to.
    */
   kernelId?: string;
+  /**
+   * Notebook initial content.
+   */
+  nbformat?: INotebookContent;
+  /**
+   * Notebook file path.
+   */
+  path?: string;
+  /**
+   * Whether the notebook is read-only or not.
+   */
+  readonly?: boolean;
+  /**
+   * Additional cell output renderers.
+   */
+  renderers?: IRenderMime.IRendererFactory[];
   /**
    * Jupyter service manager.
    */
   serviceManager: ServiceManager.IManager;
   /**
-   * Callback on notebook model changed
+   * Whether to start a default kernel or not.
+   */
+  startDefaultKernel?: boolean;
+  /**
+   * React toolbar component factory.
+   */
+  Toolbar?: React.JSXElementConstructor<INotebookToolbarProps>;
+  /**
+   * URL to fetch the notebook content from.
+   */
+  url?: string;
+  /**
+   * Margin in pixels on the right side of cells.
+   *
+   * This is typically needed when cell sidebar is injected as extension.
+   */
+  cellSidebarMargin?: number;
+  /**
+   * CSS height of the component.
+   */
+  height?: string;
+  /**
+   * CSS max-height of the component.
+   */
+  maxHeight?: string;
+  /**
+   * Callback on notebook model changed.
    */
   onNotebookModelChanged?: (model: NotebookModel | null) => void;
+  /**
+   * Callback on session connection changed.
+   */
+  onSessionConnection?: OnSessionConnection;
 }
 
 /**
@@ -84,10 +132,13 @@ export function SimpleNotebook(
     onSessionConnection,
     path,
     readonly = false,
+    renderers,
     serviceManager,
     startDefaultKernel = false,
     url,
   } = props;
+
+  const [isLoading, setIsLoading] = useState(true);
 
   const kernelId = useKernelId({
     requestedKernelId: props.kernelId,
@@ -103,10 +154,14 @@ export function SimpleNotebook(
   });
 
   useEffect(() => {
+    if (model) setIsLoading(false);
+
     onNotebookModelChanged?.(model);
   }, [model, onNotebookModelChanged]);
 
-  return (
+  return isLoading ? (
+    <Loader key="notebook-loader" />
+  ) : (
     <Box
       style={{ height, width: '100%', position: 'relative' }}
       id="dla-Jupyter-Notebook"
@@ -164,11 +219,12 @@ export function SimpleNotebook(
             commands={commands}
             id={id}
             extensions={extensions}
-            model={model}
-            serviceManager={serviceManager}
             kernelId={kernelId}
-            onSessionConnectionChanged={onSessionConnection}
+            model={model}
             path={path}
+            renderers={renderers}
+            serviceManager={serviceManager}
+            onSessionConnectionChanged={onSessionConnection}
           />
         )}
       </Box>

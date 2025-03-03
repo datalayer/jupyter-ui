@@ -43,6 +43,7 @@ import {
 import {
   RenderMimeRegistry,
   standardRendererFactories,
+  type IRenderMime,
 } from '@jupyterlab/rendermime';
 import type {
   Contents,
@@ -72,7 +73,7 @@ import {
   WidgetManager,
 } from '../../jupyter';
 import type { OnSessionConnection } from '../../state';
-import { newUuid, sleep } from '../../utils';
+import { newUuid } from '../../utils';
 import { Lumino } from '../lumino';
 import { Loader } from '../utils';
 import type { DatalayerNotebookExtension } from './Notebook';
@@ -105,6 +106,10 @@ export interface IBaseNotebookProps {
    * Kernel ID to connect to
    */
   kernelId?: string;
+  /**
+   * Additional cell output renderers.
+   */
+  renderers?: IRenderMime.IRendererFactory[];
   /**
    * Service manager
    */
@@ -140,6 +145,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
     commands,
     extensions = DEFAULT_EXTENSIONS,
     kernelId,
+    renderers,
     serviceManager,
     model,
     onSessionConnectionChanged,
@@ -156,7 +162,10 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
     [props.path]
   );
   // Features
-  const features = useMemo(() => new CommonFeatures({ commands }), [commands]);
+  const features = useMemo(
+    () => new CommonFeatures({ commands, renderers }),
+    [commands, renderers]
+  );
 
   // Content factory
   const contentFactory = useMemo(
@@ -458,15 +467,20 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
     };
   }, [completer, panel, tracker]);
 
-  const onKeyDown = useCallback(
-    (event: any) => {
+  useEffect(() => {
+    const onKeyDown = (event: any) => {
       features.commands.processKeydownEvent(event);
-    },
-    [features.commands]
-  );
+    };
 
-  // FIXME
-  // - connect signals - see adapter - fix kernel transfer
+    // FIXME It would be better to add the listener to the Box wrapping the panel
+    // but this requires the use of the latest version of JupyterLab/Lumino that
+    // capture event at bubbling phase for keyboard shortcuts rather than at capture phase.
+    document.addEventListener('keydown', onKeyDown, true);
+
+    return () => {
+      document.removeEventListener('keydown', onKeyDown, true);
+    };
+  }, [features.commands]);
 
   return (
     <>
@@ -478,7 +492,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
       {isLoading ? (
         <Loader key="notebook-loader" />
       ) : panel ? (
-        <Box sx={{ height: '100%' }} onKeyDownCapture={onKeyDown}>
+        <Box sx={{ height: '100%' }}>
           <Lumino id={id} key="notebook-container">
             {panel}
           </Lumino>
@@ -489,6 +503,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
           variant="critical"
           description="Unable to create the notebook view."
           hideTitle={true}
+          title="Error"
         />
       )}
     </>
@@ -679,18 +694,15 @@ export function useNotebookModel(options: {
 
           // If sessionId has expired - reset the client model
           if (event.code === 4002) {
+            disposable.clear();
             provider?.destroy();
-            ready.reject('Connection closed.');
-            ready = new PromiseDelegate();
             if (isMounted) {
-              Promise.all([connect(), ready.promise, sleep(500)]).catch(
-                error => {
-                  console.error(
-                    'Failed to setup collaboration connection.',
-                    error
-                  );
-                }
-              );
+              connect().catch(error => {
+                console.error(
+                  'Failed to setup collaboration connection.',
+                  error
+                );
+              });
             }
           }
 
@@ -706,6 +718,9 @@ export function useNotebookModel(options: {
       };
 
       const connect = async () => {
+        ready.reject('Connection closed.');
+        ready = new PromiseDelegate();
+
         sharedModel = new YNotebook();
         const { ydoc, awareness } = sharedModel;
         let roomURL = '';
@@ -752,40 +767,35 @@ export function useNotebookModel(options: {
           provider.on('sync', onSync);
           provider.on('connection-close', onConnectionClose);
           console.log('Collaboration is setup with websocket provider.');
-          // Create a new model using the one synchronize with the collaboration room
-          const model = new NotebookModel({
-            collaborationEnabled: true,
-            disableDocumentWideUndoRedo: true,
-            sharedModel,
-          });
-          model.readOnly = readonly;
-          setModel(model);
+
+          await ready.promise;
+          const dispose = () => {
+            provider?.off('sync', onSync);
+            provider?.off('connection-close', onConnectionClose);
+            provider?.disconnect();
+            provider?.destroy();
+          };
+
+          if (isMounted) {
+            // Create a new model using the one synchronized with the collaboration room
+            const model = new NotebookModel({
+              collaborationEnabled: true,
+              disableDocumentWideUndoRedo: true,
+              sharedModel,
+            });
+            model.readOnly = readonly;
+            setModel(model);
+
+            disposable.add(Object.freeze({ dispose, isDisposed: false }));
+          } else {
+            dispose();
+          }
         }
       };
 
-      Promise.all([connect(), ready.promise])
-        .then(() => {
-          if (provider) {
-            const dispose = () => {
-              (provider!.synced ? Promise.resolve() : ready.promise).finally(
-                () => {
-                  provider!.off('sync', onSync);
-                  provider!.off('connection-close', onConnectionClose);
-                  provider!.disconnect();
-                  provider!.destroy();
-                }
-              );
-            };
-            if (isMounted) {
-              disposable.add(Object.freeze({ dispose, isDisposed: false }));
-            } else {
-              dispose();
-            }
-          }
-        })
-        .catch(error => {
-          console.error('Failed to setup collaboration connection.', error);
-        });
+      connect().catch(error => {
+        console.error('Failed to setup collaboration connection.', error);
+      });
     } else {
       const createModel = (nbformat: INotebookContent | undefined) => {
         const model = new NotebookModel();
@@ -837,7 +847,12 @@ class CommonFeatures {
   protected _editorServices: IEditorServices;
   protected _rendermime: RenderMimeRegistry;
 
-  constructor(options: { commands?: CommandRegistry } = {}) {
+  constructor(
+    options: {
+      commands?: CommandRegistry;
+      renderers?: IRenderMime.IRendererFactory[];
+    } = {}
+  ) {
     this._commands = options.commands ?? new CommandRegistry();
 
     const languages = new EditorLanguageRegistry();
@@ -858,11 +873,10 @@ class CommonFeatures {
       },
     });
 
-    const initialFactories = standardRendererFactories.filter(
-      factory => factory.mimeTypes[0] !== 'text/javascript'
-    );
-    initialFactories.push(jsonRendererFactory);
-    initialFactories.push(javascriptRendererFactory);
+    const initialFactories = standardRendererFactories
+      .filter(factory => factory.mimeTypes[0] !== 'text/javascript')
+      .concat([jsonRendererFactory, javascriptRendererFactory])
+      .concat(options.renderers ?? []);
 
     this._rendermime = new RenderMimeRegistry({
       initialFactories,
@@ -1082,17 +1096,6 @@ function initializeContext(
   );
   context.sessionContext.ready.then(() => {
     onSessionConnection?.(context?.sessionContext.session ?? undefined);
-    // FIXME
-    // const kernelConnection = context?.sessionContext.session?.kernel;
-    // if (this._kernelTransfer) {
-    //   if (kernelConnection) {
-    //     kernelConnection.connectionStatusChanged.connect((_, status) => {
-    //       if (status === 'connected') {
-    //         this._kernelTransfer!.transfer(kernelConnection);
-    //       }
-    //     });
-    //   }
-    // }
   });
 
   // Initialize the context
