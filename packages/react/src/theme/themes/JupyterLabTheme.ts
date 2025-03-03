@@ -490,7 +490,7 @@ const jupyterLabThemeDefs = {
           subtle: 'var(--jp-border-color3, #eee)',
         },
         neutral: {
-          emphasisPlus: 'var(--jp-layout-color2, #eee)',
+          emphasisPlus: 'var(--jp-layout-color4, #757575)',
           emphasis: 'var(--jp-layout-color3, #bdbdbd)',
           muted: 'var(--jp-layout-color0, white)',
           subtle: 'var(--jp-layout-color3, #bdbdbd)',

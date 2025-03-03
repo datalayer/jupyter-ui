@@ -87,9 +87,9 @@ export const Jupyter = (props: JupyterProps) => {
       >
         <BaseStyles>
           <Box color="fg.default" bg="canvas.default">
-            {!config.insideJupyterLab && !disableCssLoading && (
+            {!config.insideJupyterLab && !disableCssLoading &&
               <JupyterLabCss colormode={colormode} />
-            )}
+            }
             <JupyterContextProvider
               collaborative={collaborative}
               defaultKernelName={defaultKernelName}
