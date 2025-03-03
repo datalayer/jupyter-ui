@@ -4,16 +4,18 @@
  * MIT License
  */
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
 import { 
   Box, Button, Heading, Text, Link, PageLayout, PageHeader, RadioGroup, Radio, FormControl, RelativeTime,
   TextInput, TextInputWithTokens, Timeline, Octicon, ToggleSwitch, SegmentedControl, Label, LabelGroup,
+//  theme,
 } from '@primer/react';
-import { DataTable, Table } from '@primer/react/experimental';
+import { DataTable, Table, SkeletonBox } from '@primer/react/experimental';
 import { GitCommitIcon } from '@primer/octicons-react';
-import {SkeletonBox} from '@primer/react/experimental'
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { Jupyter } from '../jupyter/Jupyter';
+import { Colormode } from '../theme/JupyterLabColormode';
+import { jupyterLabTheme as theme } from '../theme/themes';
 
 const mockTokens = [
   {text: 'zero', id: 0},
@@ -128,13 +130,28 @@ const data: Array<Repo> = [
   },
 ]
 
-const Theme = () => {
+const JupyterLabTheme = () => {
+  const [colormode, setColormode] = useState<Colormode>('light');
   const [tokens, setTokens] = useState([...mockTokens].slice(0, 3))
+  const [isOn, setIsOn] = useState(false);
+  useEffect(() => {
+    if (isOn) {
+      setColormode('dark');
+    } else {
+      setColormode('light');
+    }
+  }, [isOn]);
+  const onClick = useCallback(() => {
+    setIsOn(!isOn);
+  }, [isOn]);
+  const handleSwitchChange = useCallback((on: boolean) => {
+    setIsOn(on);
+  }, []);
   const onTokenRemove: (tokenId: string | number) => void = (tokenId) => {
     setTokens(tokens.filter((token) => token.id !== tokenId))
   }
   return (
-    <JupyterReactTheme>
+    <Jupyter theme={theme} colormode={colormode} startDefaultKernel>
       <PageLayout containerWidth="full" padding="normal">
         <PageLayout.Header>
           <PageHeader>
@@ -151,87 +168,112 @@ const Theme = () => {
                 Useful examples...
               </Text>
             </PageHeader.Description>
+            <PageHeader.Actions>
+              <Text
+                fontSize={2}
+                fontWeight="bold"
+                id="switch-label"
+                display="block"
+                mb={1}
+              >
+                { colormode === 'light' ? 'Light' : 'Dark' } Mode
+              </Text>
+              <ToggleSwitch
+                size="small"
+                onClick={onClick}
+                onChange={handleSwitchChange}
+                checked={isOn}
+                statusLabelPosition="end"
+                aria-labelledby="switch-label"
+              />
+            </PageHeader.Actions>
           </PageHeader>
         </PageLayout.Header>
         <PageLayout.Content>
-          <Heading>Heading</Heading>
-          <Box>
-            <Text as="h1">Heading 1</Text>
-            <Text as="h2">Heading 2</Text>
-            <Text as="h3">Heading 3</Text>
-            <Text>This is a text.</Text>
-            <br/>
-            <Link href="https://datalayer.io" target="_blank">This is a link.</Link>
-            <br/>
-            <Text as="h3"><Link href="https://datalayer.io" target="_blank">This is a heading 3 link</Link></Text>
-          </Box>
-          <Box>
-            <Button variant="default">Default</Button>
-            <Button variant="primary">Primary</Button>
-            <Button variant="invisible">Invisible</Button>
-            <Button variant="danger">Danger</Button>
-          </Box>
-          <Box as="form">
-            <RadioGroup name="defaultRadioGroup">
-              <RadioGroup.Label>Choices</RadioGroup.Label>
-              <FormControl>
-                <Radio value="one" defaultChecked />
-                <FormControl.Label>Choice one</FormControl.Label>
-              </FormControl>
-              <FormControl>
-                <Radio value="two" />
-                <FormControl.Label>Choice two</FormControl.Label>
-              </FormControl>
-              <FormControl>
-                <Radio value="three" />
-                <FormControl.Label>Choice three</FormControl.Label>
-              </FormControl>
-            </RadioGroup>
-          </Box>
-          <Box as="form">
-            <FormControl>
-              <FormControl.Label>Default label</FormControl.Label>
-              <FormControl.Caption>This is a caption</FormControl.Caption>
-              <TextInput />
-            </FormControl>
-          </Box>
-          <Box>
-            <FormControl>
-              <FormControl.Label>Default label</FormControl.Label>
-              <TextInputWithTokens tokens={tokens} onTokenRemove={onTokenRemove} />
-            </FormControl>
-          </Box>
-          <Box>
-            <SkeletonBox height="4rem" />
-          </Box>
-          <Box>
-            <Text id="toggle" fontWeight="bold" fontSize={1}>
-              Toggle label
-            </Text>
-            <ToggleSwitch aria-labelledby="toggle" />
-          </Box>
-          <Box>
-            <SegmentedControl aria-label="File view">
-              <SegmentedControl.Button defaultSelected>Preview</SegmentedControl.Button>
-              <SegmentedControl.Button>Raw</SegmentedControl.Button>
-              <SegmentedControl.Button>Blame</SegmentedControl.Button>
-            </SegmentedControl>
-          </Box>
-          <Box>
-            <Timeline>
-            <Timeline.Item>
-              <Timeline.Badge>
-                <Octicon icon={GitCommitIcon} aria-label="Commit" />
-              </Timeline.Badge>
-              <Timeline.Body>This is a message</Timeline.Body>
-            </Timeline.Item>
-            <Timeline.Item>
-              <Timeline.Badge>
-                <Octicon icon={GitCommitIcon} aria-label="Commit" />
-              </Timeline.Badge>
-              <Timeline.Body>This is a message</Timeline.Body>
-            </Timeline.Item>
-          </Timeline>
+          <Box display="flex">
+            <Box sx={{ width: "100%" }}>
+              <Heading>Heading</Heading>
+              <Box>
+                <Text as="h1">Heading 1</Text>
+                <Text as="h2">Heading 2</Text>
+                <Text as="h3">Heading 3</Text>
+                <Text>This is a text.</Text>
+                <br/>
+                <Link href="https://datalayer.io" target="_blank">This is a link.</Link>
+                <br/>
+                <Text as="h3"><Link href="https://datalayer.io" target="_blank">This is a heading 3 link</Link></Text>
+              </Box>
+              <Box>
+                <Button variant="default">Default</Button>
+                <Button variant="primary">Primary</Button>
+                <Button variant="invisible">Invisible</Button>
+                <Button variant="danger">Danger</Button>
+              </Box>
+            </Box>
+            <Box sx={{ width: "100%" }}>
+              <Box as="form">
+                <RadioGroup name="defaultRadioGroup">
+                  <RadioGroup.Label>Choices</RadioGroup.Label>
+                  <FormControl>
+                    <Radio value="one" defaultChecked />
+                    <FormControl.Label>Choice one</FormControl.Label>
+                  </FormControl>
+                  <FormControl>
+                    <Radio value="two" />
+                    <FormControl.Label>Choice two</FormControl.Label>
+                  </FormControl>
+                  <FormControl>
+                    <Radio value="three" />
+                    <FormControl.Label>Choice three</FormControl.Label>
+                  </FormControl>
+                </RadioGroup>
+              </Box>
+              <Box as="form">
+                <FormControl>
+                  <FormControl.Label>Default label</FormControl.Label>
+                  <FormControl.Caption>This is a caption</FormControl.Caption>
+                  <TextInput />
+                </FormControl>
+              </Box>
+              <Box>
+                <FormControl>
+                  <FormControl.Label>Default label</FormControl.Label>
+                  <TextInputWithTokens tokens={tokens} onTokenRemove={onTokenRemove} />
+                </FormControl>
+              </Box>
+              <Box>
+                <SkeletonBox height="4rem" />
+              </Box>
+              <Box>
+                <Text id="toggle" fontWeight="bold" fontSize={1}>
+                  Toggle label
+                </Text>
+                <ToggleSwitch aria-labelledby="toggle" />
+              </Box>
+              <Box>
+                <SegmentedControl aria-label="File view">
+                  <SegmentedControl.Button defaultSelected>Preview</SegmentedControl.Button>
+                  <SegmentedControl.Button>Raw</SegmentedControl.Button>
+                  <SegmentedControl.Button>Blame</SegmentedControl.Button>
+                </SegmentedControl>
+              </Box>
+              <Box>
+                <Timeline>
+                  <Timeline.Item>
+                    <Timeline.Badge>
+                      <Octicon icon={GitCommitIcon} aria-label="Commit" />
+                    </Timeline.Badge>
+                    <Timeline.Body>This is a message</Timeline.Body>
+                  </Timeline.Item>
+                  <Timeline.Item>
+                    <Timeline.Badge>
+                      <Octicon icon={GitCommitIcon} aria-label="Commit" />
+                    </Timeline.Badge>
+                    <Timeline.Body>This is a message</Timeline.Body>
+                  </Timeline.Item>
+                </Timeline>
+              </Box>
+            </Box>
           </Box>
           <Box>
             <Table.Container>
@@ -310,7 +352,7 @@ const Theme = () => {
           </Box>
         </PageLayout.Content>
       </PageLayout>
-    </JupyterReactTheme>
+    </Jupyter>
   );
 }
 
@@ -318,4 +360,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<Theme />);
+root.render(<JupyterLabTheme />);

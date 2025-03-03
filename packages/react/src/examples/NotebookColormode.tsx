@@ -4,10 +4,10 @@
  * MIT License
  */
 
-import { INotebookContent } from '@jupyterlab/nbformat';
-import { Text, ToggleSwitch } from '@primer/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { INotebookContent } from '@jupyterlab/nbformat';
+import { Text, ToggleSwitch } from '@primer/react';
 import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
 import { Jupyter } from '../jupyter/Jupyter';
@@ -18,7 +18,7 @@ import nbformat from './notebooks/NotebookExample1.ipynb.json';
 const NotebookColormode = () => {
   const [colormode, setColormode] = useState<Colormode>('light');
   const [isOn, setIsOn] = useState(false);
-    const extensions = useMemo(() => [new CellSidebarExtension()], []);
+  const extensions = useMemo(() => [new CellSidebarExtension()], []);
   useEffect(() => {
     if (isOn) {
       setColormode('dark');
@@ -34,7 +34,7 @@ const NotebookColormode = () => {
   }, []);
   return (
     <>
-      <Jupyter colormode={colormode}>
+      <Jupyter colormode={colormode} startDefaultKernel>
         <Text
           fontSize={2}
           fontWeight="bold"

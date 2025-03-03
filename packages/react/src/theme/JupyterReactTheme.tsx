@@ -25,7 +25,13 @@ export const JupyterReactTheme = (props: React.PropsWithChildren<IJupyterLabThem
         dayScheme="light"
         nightScheme="dark"
       >
-        <BaseStyles>
+        <BaseStyles
+          style={{
+            backgroundColor: 'var(--bgColor-default)',
+            color: 'var(--fgColor-default)',
+            fontSize: 'var(--text-body-size-medium)',
+          }}
+        >
           {children}
         </BaseStyles>
       </ThemeProvider>

@@ -38,6 +38,7 @@ const ENTRY =
   // './src/examples/JupyterLabAppHeadlessServerless';
   // './src/examples/JupyterLabAppServerless';
   // './src/examples/JupyterLabAppServiceManager';
+  './src/examples/JupyterLabTheme';
   // './src/examples/KernelExecute';
   // './src/examples/KernelExecutor';
   // './src/examples/Kernels';
@@ -46,7 +47,7 @@ const ENTRY =
   // './src/examples/Notebook';
   // './src/examples/NotebookCellSidebar';
   // './src/examples/NotebookCellToolbar';
-  // './src/examples/NotebookColorMode';
+  // './src/examples/NotebookColormode';
   // './src/examples/NotebookCollaborative';
   // './src/examples/NotebookExtension';
   // './src/examples/NotebookKernelChange';
@@ -77,7 +78,6 @@ const ENTRY =
   // './src/examples/PyGWalker';
   // './src/examples/RunningSessions';
   // './src/examples/Terminal';
-  './src/examples/Theme';
   // './src/examples/Viewer';
 
 const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == 'true';
