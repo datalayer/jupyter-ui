@@ -4,17 +4,11 @@
  * MIT License
  */
 
-import {
-  ActionList,
-  Avatar,
-  ActionMenu,
-  ProgressBar,
-  Box,
-} from '@primer/react';
+import { ActionList, Avatar, ActionMenu, ProgressBar, Box } from '@primer/react';
 import { LinkIcon, AlertIcon } from '@primer/octicons-react';
 import { DaskIcon, PyTorchIcon, TensorFlowIcon } from "@datalayer/icons-react";
 
-const MockTab1 = (): JSX.Element => {
+export const MockTab1 = (): JSX.Element => {
   return (
     <>
       <ActionMenu>

@@ -4,6 +4,4 @@
  * MIT License
  */
 
-@import url('base.css');
-
-@import url('lexical/index.css');
+export * from "./useModal";

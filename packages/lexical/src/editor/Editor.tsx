@@ -32,16 +32,14 @@ import {
   EquationsPlugin, ImagesPlugin, YouTubePlugin, ImageNode, YouTubeNode,
   JupyterCodeHighlightNode, JupyterCodeNode, JupyterOutputNode, JupyterCellNode,
   CodeActionMenuPlugin, AutoEmbedPlugin, NbformatContentPlugin, TableOfContentsPlugin, MarkdownPlugin, JupyterCellPlugin
-} from "../../index";
+} from "./..";
 import ExampleTheme from "../themes/Theme";
 import { useLexical } from "../context/LexicalContext";
 import TreeViewPlugin from "../plugins/TreeViewPlugin";
 import ToolbarPlugin from "../plugins/ToolbarPlugin";
-import DraggableBlockPlugin from "./../plugins/DraggableBlockPlugin"
+import DraggableBlockPlugin from "../plugins/DraggableBlockPlugin"
 
-import "./styles/Editor.css";
-import "./styles/Rich.css";
-import "./styles/Jupyter.css";
+import "./../../style/index.css";
 
 type Props = {
   notebook?: INotebookContent
@@ -90,7 +88,7 @@ const EditorContextPlugin = () => {
   return null;
 }
 
-export default function Editor(props: Props) {
+export function Editor(props: Props) {
   const { notebook } = props;
   const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
 
@@ -154,3 +152,5 @@ export default function Editor(props: Props) {
     </LexicalComposer>
   );
 }
+
+export default Editor;

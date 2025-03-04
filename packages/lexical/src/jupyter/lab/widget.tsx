@@ -5,8 +5,7 @@
  */
 
 import { ReactWidget } from '@jupyterlab/apputils';
-
-import MockComponent from './component/MockComponent';
+import MockComponent from './components/MockComponent';
 
 export class DatalayerWidget extends ReactWidget {
   constructor() {
@@ -17,4 +16,5 @@ export class DatalayerWidget extends ReactWidget {
   render(): JSX.Element {
     return <MockComponent/>;
   }
+
 }

@@ -8,23 +8,23 @@ import React from "react";
 import { Box, Button } from "@primer/react";
 import { ThreeBarsIcon } from "@primer/octicons-react"
 import { Jupyter } from "@datalayer/jupyter-react";
-import { useLexical, LexicalProvider } from "./context/LexicalContext";
-import Editor from "./editor/Editor";
+import { useLexical, Editor, LexicalProvider } from "..";
 
-import initialLexicalModel from "./content/Example.lexical.json";
-import initialNbformatModel from "./content/Example.ipynb.json";
+import INITIAL_LEXICAL_MODEL from "./content/Example.lexical.json";
+
+import INITIAL_NBFORMAT_MODEL from "./content/Example.ipynb.json";
 
 const LexicalEditor = () => {
   const { editor } = useLexical();
   return (
     <Box className="center">
       <Box>
-        <Editor notebook={initialNbformatModel} />
+        <Editor notebook={INITIAL_NBFORMAT_MODEL} />
         <Button
           onClick={(e: React.MouseEvent) => {
             e.preventDefault();
             if (editor) {
-              const editorState = editor.parseEditorState(initialLexicalModel as any);
+              const editorState = editor.parseEditorState(INITIAL_LEXICAL_MODEL as any);
               editor.setEditorState(editorState);  
             }
           }}>
@@ -35,7 +35,7 @@ const LexicalEditor = () => {
   )
 }
 
-export const App1 = () => {
+export const App = () => {
   return (
     <>
       <div className="App">
@@ -63,4 +63,4 @@ export const App1 = () => {
   )
 }
 
-export default App1;
+export default App;
