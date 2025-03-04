@@ -5,7 +5,6 @@
  */
 
 import { URLExt } from '@jupyterlab/coreutils';
-
 import { ServerConnection } from '@jupyterlab/services';
 
 /**

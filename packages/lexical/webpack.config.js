@@ -54,7 +54,7 @@ module.exports = {
   },
   output: {
     publicPath: "http://localhost:3208/",
-    filename: '[name].[contenthash].jupyterReactLexicalExample.js',
+    filename: '[name].[contenthash].jupyter-lexical.js',
   },
   resolve: {
     extensions: [ '.tsx', '.ts', 'jsx', '.js' ],

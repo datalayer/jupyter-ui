@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
   CAN_REDO_COMMAND,
@@ -29,9 +29,9 @@ import { INSERT_ORDERED_LIST_COMMAND, INSERT_UNORDERED_LIST_COMMAND, REMOVE_LIST
 import { $createHeadingNode, $createQuoteNode, $isHeadingNode } from "@lexical/rich-text";
 import {
   $isJupyterCodeNode, DropDownItem, DropDown, getDefaultCodeLanguage,
-  getCodeLanguages, getLanguageFriendlyName, CODE_LANGUAGE_FRIENDLY_NAME_MAP,
+  getLanguageFriendlyName, CODE_LANGUAGE_FRIENDLY_NAME_MAP,
   $createYouTubeNode, INSERT_EQUATION_COMMAND, INSERT_JUPYTER_CELL_COMMAND, DEFAULT_INITIAL_OUTPUTS
-} from "@datalayer/jupyter-lexical";
+} from "../index";
 
 import './ToolbarPlugin.css';
 
@@ -224,11 +224,11 @@ function FloatingLinkEditor({ editor }: any) {
     </div>
   );
 }
-
+/*
 function Select({ onChange, className, options, value }: any) {
   return (
     <select className={className} onChange={onChange} value={value}>
-      <option hidden={true} value="" />
+      <option hidden value="" />
       {options.map((option: string) => (
         <option key={option} value={option}>
           {option}
@@ -237,7 +237,7 @@ function Select({ onChange, className, options, value }: any) {
     </select>
   );
 }
-
+*/
 function getSelectedNode(selection: RangeSelection) {
   const anchor = selection.anchor;
   const focus = selection.focus;
@@ -439,7 +439,7 @@ function BlockOptionsDropdownList({
 
 export default function ToolbarPlugin() {
   const [editor] = useLexicalComposerContext();
-  const [activeEditor, setActiveEditor] = useState(editor);
+  const [activeEditor, _] = useState(editor);
   const toolbarRef = useRef(null);
   const [canUndo, setCanUndo] = useState<boolean>(false);
   const [canRedo, setCanRedo] = useState<boolean>(false);
@@ -447,7 +447,7 @@ export default function ToolbarPlugin() {
   const [selectedElementKey, setSelectedElementKey] = useState<any>(null);
   const [showBlockOptionsDropDown, setShowBlockOptionsDropDown] = useState(false);
   const [codeLanguage, setCodeLanguage] = useState("");
-  const [isRTL, setIsRTL] = useState(false);
+  const [__, setIsRTL] = useState(false);
   const [isLink, setIsLink] = useState(false);
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
@@ -530,7 +530,7 @@ export default function ToolbarPlugin() {
       )
     );
   }, [editor, updateToolbar]);
-  const codeLanguges = useMemo(() => getCodeLanguages(), []);
+//  const codeLanguges = useMemo(() => getCodeLanguages(), []);
   const onCodeLanguageSelect = useCallback(
     (value: string) => {
       activeEditor.update(() => {

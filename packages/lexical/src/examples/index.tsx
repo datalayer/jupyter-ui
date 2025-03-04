@@ -5,10 +5,9 @@
  */
 
 import { createRoot } from "react-dom/client";
-import App from "./App2";
+import App from "./App";
+// import App from "./AppNbformat";
 
 const rootElement = document.getElementById("root");
 
-createRoot(rootElement!).render(
-  <App />
-);
+createRoot(rootElement!).render(<App />);

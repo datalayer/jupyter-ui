@@ -17,13 +17,13 @@ class JupyterLexicalHandler(APIHandler):
     @tornado.web.authenticated
     def get(self):
         self.finish(json.dumps({
-            "data": "This is /jupyter_lexical/get_example endpoint!"
+            "data": "This is /jupyter_lexical/config endpoint!"
         }))
 
 
 def setup_handlers(web_app):
     host_pattern = ".*$"
     base_url = web_app.settings["base_url"]
-    route_pattern = url_path_join(base_url, "jupyter_lexical", "get_example")
+    route_pattern = url_path_join(base_url, "jupyter_lexical", "config")
     handlers = [(route_pattern, JupyterLexicalHandler)]
     web_app.add_handlers(host_pattern, handlers)
