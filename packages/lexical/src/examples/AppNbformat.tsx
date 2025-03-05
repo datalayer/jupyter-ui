@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { $getRoot } from "lexical";
 import styled from "styled-components";
 import { useNotebookStore, Jupyter, Notebook, CellSidebar, CellSidebarExtension } from "@datalayer/jupyter-react";
@@ -34,9 +34,6 @@ const StyledNotebook = styled.div`
 const Tabs = () => {
   const { editor } = useLexical();
   const notebookStore = useNotebookStore();
-  const cellSidebarExtension = useMemo(() => {
-    return new CellSidebarExtension({ factory: CellSidebar })
-  }, []);
   const [tab, setTab] = useState<TabType>('editor');
   const [nbformat, setNbformat] = useState<INotebookContent>(INITIAL_NBFORMAT_MODEL);
   const notebook = notebookStore.selectNotebook(NOTEBOOK_UID);
@@ -96,7 +93,7 @@ const Tabs = () => {
             <Notebook
               id={NOTEBOOK_UID}
               nbformat={INITIAL_NBFORMAT_MODEL}
-              extensions={[cellSidebarExtension]}
+              extensions={[new CellSidebarExtension({ factory: CellSidebar })]}
             />
             <Button
               onClick={(e: React.MouseEvent) => {

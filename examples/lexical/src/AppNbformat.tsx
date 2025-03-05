@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { $getRoot } from "lexical";
 import styled from "styled-components";
 import { lexicalToNbformat,useLexical, LexicalProvider, Editor } from "@datalayer/jupyter-lexical";
@@ -25,7 +25,9 @@ import INITIAL_NBFORMAT_MODEL from "./content/Example.ipynb.json";
 
 const NOTEBOOK_UID = 'notebook-uid-lexical';
 
-type TabType = 'editor' | 'notebook' | 'nbformat';
+type TabType = 'editor'
+  | 'notebook'
+  | 'nbformat';
 
 const StyledNotebook = styled.div`
   &[style] {
@@ -35,9 +37,6 @@ const StyledNotebook = styled.div`
 
 const Tabs = () => {
   const { editor } = useLexical();
-  const cellSidebarExtension = useMemo(() => {
-    return new CellSidebarExtension({ factory: CellSidebar })
-  }, []);
   const notebookStore = useNotebookStore();
   const [tab, setTab] = useState<TabType>('editor');
   const [notebookContent, setNotebookContent] = useState<INotebookContent>(INITIAL_NBFORMAT_MODEL);
@@ -98,7 +97,7 @@ const Tabs = () => {
             <Notebook
               id={NOTEBOOK_UID}
               nbformat={notebookContent}
-//              extensions={[cellSidebarExtension]}
+              extensions={[new CellSidebarExtension({ factory: CellSidebar })]}
             />
             <Button
               onClick={(e: React.MouseEvent) => {

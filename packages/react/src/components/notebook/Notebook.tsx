@@ -10,11 +10,7 @@ import { URLExt } from '@jupyterlab/coreutils';
 import { createGlobalStyle } from 'styled-components';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import {
-  INotebookModel,
-  NotebookModel,
-  NotebookPanel,
-} from '@jupyterlab/notebook';
+import { INotebookModel, NotebookModel, NotebookPanel } from '@jupyterlab/notebook';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { Kernel as JupyterKernel, ServiceManager } from '@jupyterlab/services';
 import { CommandRegistry } from '@lumino/commands';
@@ -155,7 +151,7 @@ export const Notebook = (props: INotebookProps) => {
 
   // Bootstrap the Notebook Adapter.
   const bootstrapAdapter = async (
-    collaborative: ICollaborative,
+//    collaborative: ICollaborative,
     serviceManager?: ServiceManager.IManager,
     kernel?: Kernel
   ) => {
@@ -234,15 +230,14 @@ export const Notebook = (props: INotebookProps) => {
   };
   //
   const createAdapter = (
-    collaborative: ICollaborative,
     serviceManager?: ServiceManager.IManager,
     kernel?: Kernel
   ) => {
     if (!kernel) {
-      bootstrapAdapter(collaborative, serviceManager, kernel);
+      bootstrapAdapter(serviceManager, kernel);
     } else {
       kernel.ready.then(() => {
-        bootstrapAdapter(collaborative, serviceManager, kernel);
+        bootstrapAdapter(serviceManager, kernel);
       });
     }
   };
@@ -258,11 +253,11 @@ export const Notebook = (props: INotebookProps) => {
   // Mutation Effects.
   useEffect(() => {
     if (serviceManager && serverless) {
-      createAdapter(collaborative, serviceManager, kernel);
+      createAdapter(serviceManager, kernel);
     } else if (serviceManager && kernel) {
-      createAdapter(collaborative, serviceManager, kernel);
+      createAdapter(serviceManager, kernel);
     }
-  }, [collaborative, serviceManager, kernel]);
+  }, [serviceManager, kernel]);
 
   useEffect(() => {
     // As the server has the content source of thruth, we
@@ -432,15 +427,15 @@ export const Notebook = (props: INotebookProps) => {
   useEffect(() => {
     if (adapter && path && adapter.path !== path) {
       disposeAdapter();
-      createAdapter(collaborative, serviceManager);
+      createAdapter(serviceManager);
     }
   }, [path]);
   useEffect(() => {
     if (adapter && url && adapter.url !== url) {
       disposeAdapter();
-      createAdapter(collaborative, serviceManager);
+      createAdapter(serviceManager);
     }
-  }, [collaborative, url]);
+  }, [url]);
   // Dispose Effects.
   useEffect(() => {
     return () => {
