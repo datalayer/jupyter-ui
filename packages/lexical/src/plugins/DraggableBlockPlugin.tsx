@@ -6,17 +6,15 @@
 
 import {DragEvent as ReactDragEvent, useEffect, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
-import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
-import {eventFiles} from '@lexical/rich-text';
-import {calculateZoomLevel, mergeRegister} from '@lexical/utils';
 import {
   $getNearestNodeFromDOMNode, $getNodeByKey, $getRoot,
   COMMAND_PRIORITY_HIGH, COMMAND_PRIORITY_LOW, DRAGOVER_COMMAND, DROP_COMMAND,
   LexicalEditor,
 } from 'lexical';
-import {isHTMLElement} from './utils/guard';
-import {Point} from './utils/point';
-import {Rect} from './utils/rect';
+import {eventFiles} from '@lexical/rich-text';
+import {calculateZoomLevel, mergeRegister} from '@lexical/utils';
+import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
+import { isHTMLElement, Point, Rect } from '../utils';
 
 import './../../style/lexical/DraggableBlockPlugin.css';
 

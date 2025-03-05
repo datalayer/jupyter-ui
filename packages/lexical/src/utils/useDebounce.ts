@@ -8,7 +8,6 @@ export function useDebounce<T extends (...args: never[]) => void>(
 ) {
   const funcRef = useRef<T | null>(null);
   funcRef.current = fn;
-
   return useMemo(
     () =>
       debounce(

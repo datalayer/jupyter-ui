@@ -4,11 +4,15 @@
  * MIT License
  */
 
-export * from "./selection";
-export * from "./join";
 export * from "./canUseDOM";
-export * from "./useLayoutEffect";
 export * from './getDOMRangeRect';
 export * from './getSelectedNode';
+export * from './guard';
+export * from './invariant';
+export * from "./join";
+export * from "./point";
+export * from "./rect";
+export * from "./selection";
 export * from './setFloatingElemPosition';
 export * from './useDebounce';
+export * from "./useLayoutEffect";
