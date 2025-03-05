@@ -69,6 +69,7 @@
     "@jupyter-widgets/html-manager": "^1.0.0",
     "@jupyter-widgets/jupyterlab-manager": "^5.0.0",
     "@jupyter-widgets/output": "^6.0.0",
+    "@jupyter/collaboration": "^3.1.0",
     "@jupyter/web-components": "^0.15.3",
     "@jupyter/ydoc": "3.0.2",
     "@jupyterlab/application": "^4.0.0",
