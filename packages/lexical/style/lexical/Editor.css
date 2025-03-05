@@ -4,36 +4,42 @@
  * MIT License
  */
 
-body {
+[contenteditable] {
+  outline: 0px solid transparent;
+}
+
+body .editor-shell {
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, '.SFNSText-Regular', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+/*
   background: #eee;
   padding: 0 20px;
+*/
 }
-/*
-header {
+
+.editor-shell header {
   max-width: 580px;
   margin: auto;
   position: relative;
   display: flex;
   justify-content: center;
 }
-*/
-header a {
+
+.editor-shell header a {
   max-width: 220px;
   margin: 20px 0 0 0;
   display: block;
 }
 
-header img {
+.editor-shell header img {
   display: block;
   height: 100%;
   width: 100%;
 }
 
-header h1 {
+.editor-shell header h1 {
   text-align: left;
   color: #333;
   display: inline-block;

@@ -23,6 +23,7 @@ import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
 import { ListItemNode, ListNode } from "@lexical/list";
+import { MarkNode } from '@lexical/mark';
 import { AutoLinkNode, LinkNode } from "@lexical/link";
 import { CodeNode } from '@lexical/code';
 import { INotebookContent } from "@jupyterlab/nbformat";
@@ -31,9 +32,10 @@ import {
   ListMaxIndentLevelPlugin, AutoLinkPlugin, ComponentPickerMenuPlugin,
   EquationsPlugin, ImagesPlugin, YouTubePlugin, ImageNode, YouTubeNode,
   JupyterCodeHighlightNode, JupyterCodeNode, JupyterOutputNode, JupyterCellNode,
-  CodeActionMenuPlugin, AutoEmbedPlugin, NbformatContentPlugin, TableOfContentsPlugin, MarkdownPlugin, JupyterCellPlugin
+  CodeActionMenuPlugin, AutoEmbedPlugin, NbformatContentPlugin, TableOfContentsPlugin, MarkdownPlugin, JupyterCellPlugin,
+  CommentPlugin, FloatingTextFormatToolbarPlugin,
 } from "./..";
-import ExampleTheme from "../themes/Theme";
+import { commentTheme } from "../themes";
 import { useLexical } from "../context/LexicalContext";
 import TreeViewPlugin from "../plugins/TreeViewPlugin";
 import ToolbarPlugin from "../plugins/ToolbarPlugin";
@@ -51,7 +53,7 @@ function Placeholder() {
 
 const initialConfig = {
   namespace: 'Jupyter Lexical Lexical example',
-  theme: ExampleTheme,
+  theme: commentTheme,
   onError(error: Error) {
     throw error;
   },
@@ -71,6 +73,7 @@ const initialConfig = {
     ListItemNode,
     ListNode,
     QuoteNode,
+    MarkNode,
     TableCellNode,
     TableNode,
     TableRowNode,
@@ -141,11 +144,13 @@ export function Editor(props: Props) {
             <AutoEmbedPlugin/>
             <EditorContextPlugin/>
             <TableOfContentsPlugin/>
-            {floatingAnchorElem && (
+            <CommentPlugin providerFactory={undefined}/>
+            {floatingAnchorElem &&
               <>
                 <DraggableBlockPlugin anchorElem={floatingAnchorElem} />
+                <FloatingTextFormatToolbarPlugin anchorElem={floatingAnchorElem} />
               </>
-            )}
+            }
           </div>
         </div>
       </div>

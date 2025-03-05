@@ -437,7 +437,7 @@ function BlockOptionsDropdownList({
   );
 }
 
-export default function ToolbarPlugin() {
+export function ToolbarPlugin() {
   const [editor] = useLexicalComposerContext();
   const [activeEditor, _] = useState(editor);
   const toolbarRef = useRef(null);
@@ -720,3 +720,5 @@ export default function ToolbarPlugin() {
     </div>
   );
 }
+
+export default ToolbarPlugin;

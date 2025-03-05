@@ -4,4 +4,5 @@
  * MIT License
  */
 
+export * from "./CommentEditorTheme";
 export * from "./Theme";
