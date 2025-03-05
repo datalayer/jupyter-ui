@@ -5,6 +5,7 @@
  */
 
 .floating-text-format-popup {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, '.SFNSText-Regular', sans-serif;
   display: flex;
   background: #fff;
   padding: 4px;

@@ -354,6 +354,7 @@ pre::-webkit-scrollbar-thumb {
 }
 
 .component-picker-menu {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, '.SFNSText-Regular', sans-serif;
   width: 200px;
 }
 
