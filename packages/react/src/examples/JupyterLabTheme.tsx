@@ -215,9 +215,13 @@ const JupyterLabTheme = () => {
               </Box>
               <Box>
                 <Button variant="default">Default</Button>
+                <Button variant="default" leadingVisual={RocketIcon}>Icon</Button>
                 <Button variant="primary">Primary</Button>
+                <Button variant="primary" leadingVisual={RocketIcon}>Icon</Button>
                 <Button variant="invisible">Invisible</Button>
+                <Button variant="invisible" leadingVisual={RocketIcon}>Icon</Button>
                 <Button variant="danger">Danger</Button>
+                <Button variant="danger" leadingVisual={RocketIcon}>Icon</Button>
               </Box>
               <Box>
                 <NavList>
