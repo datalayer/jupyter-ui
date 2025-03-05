@@ -4,17 +4,9 @@
  * MIT License
  */
 
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
 import {ReactNode} from 'react';
 
-import './Placeholder.css';
+import './../../style/lexical/Placeholder.css';
 
 export const Placeholder = ({
   children,

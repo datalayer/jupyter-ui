@@ -14,7 +14,7 @@
 import type {HeadingTagType} from '@lexical/rich-text';
 import type {NodeKey} from 'lexical';
 
-import './TableOfContentsPlugin.css';
+import './../../style/lexical/TableOfContentsPlugin.css';
 
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import LexicalTableOfContents from '@lexical/react/LexicalTableOfContents';

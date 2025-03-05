@@ -4,13 +4,6 @@
  * MIT License
  */
 
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
 import * as React from 'react';
 import {useEffect, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
@@ -25,7 +18,7 @@ import {CopyButton} from '../ui/CopyButton';
 // import {canBePrettier, PrettierButton} from '../ui/PrettierButton';
 import {useDebounce} from '../utils/debouncer';
 
-import './CodeActionMenuPlugin.css';
+import './../../style/lexical/CodeActionMenuPlugin.css';
 
 const CODE_PADDING = 0;
 

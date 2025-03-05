@@ -4,17 +4,10 @@
  * MIT License
  */
 
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
 import {ReactNode, useEffect, useRef} from 'react';
 import {createPortal} from 'react-dom';
 
-import './Modal.css';
+import './../../style/lexical/Modal.css';
 
 function PortalImpl({
   onClose,

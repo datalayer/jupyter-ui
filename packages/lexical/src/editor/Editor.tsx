@@ -39,7 +39,7 @@ import TreeViewPlugin from "../plugins/TreeViewPlugin";
 import ToolbarPlugin from "../plugins/ToolbarPlugin";
 import DraggableBlockPlugin from "../plugins/DraggableBlockPlugin"
 
-import "./../../style/index.css";
+import './../../style/index.css';
 
 type Props = {
   notebook?: INotebookContent

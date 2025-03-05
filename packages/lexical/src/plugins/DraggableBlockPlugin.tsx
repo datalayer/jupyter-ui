@@ -25,7 +25,7 @@ import {isHTMLElement} from './utils/guard';
 import {Point} from './utils/point';
 import {Rect} from './utils/rect';
 
-import './index.css';
+import './../../style/lexical/DraggableBlockPlugin.css';
 
 const SPACE = 4;
 const TARGET_LINE_HALF_HEIGHT = 2;

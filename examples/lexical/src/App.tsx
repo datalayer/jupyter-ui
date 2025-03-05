@@ -15,6 +15,10 @@ import { JSONTree } from "react-json-tree";
 import { INotebookContent } from "@jupyterlab/nbformat";
 import { INotebookModel } from "@jupyterlab/notebook";
 
+import './../style/index.css';
+
+import '@datalayer/jupyter-lexical/style/index';
+
 import INITIAL_LEXICAL_MODEL from "./content/Example.lexical.json";
 
 import INITIAL_NBFORMAT_MODEL from "./content/Example.ipynb.json";
@@ -127,6 +131,7 @@ export function AppNbformat() {
         </LexicalProvider>
       </Jupyter>
       <div className="other App">
+        <br/>
         <a href="https://datalayer.io" target="_blank">
           <ThreeBarsIcon/>
         </a>

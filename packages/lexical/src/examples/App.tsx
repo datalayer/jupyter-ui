@@ -47,6 +47,7 @@ export const App = () => {
         </LexicalProvider>
       </Jupyter>
       <div className="other App">
+        <br/>
         <a href="https://datalayer.io" target="_blank">
           <ThreeBarsIcon/>
         </a>

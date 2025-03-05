@@ -4,15 +4,8 @@
  * MIT License
  */
 
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- */
-
- import type {
+import {Suspense, useCallback, useEffect, useRef, useState} from 'react';
+import type {
   DOMConversionMap,
   DOMConversionOutput,
   DOMExportOutput,
@@ -26,9 +19,6 @@
   SerializedLexicalNode,
   Spread,
 } from 'lexical';
-
-import './ImageNode.css';
-
 import {AutoFocusPlugin} from '@lexical/react/LexicalAutoFocusPlugin';
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import {HashtagPlugin} from '@lexical/react/LexicalHashtagPlugin';
@@ -56,14 +46,13 @@ import {
   KEY_ESCAPE_COMMAND,
   SELECTION_CHANGE_COMMAND,
 } from 'lexical';
-import {Suspense, useCallback, useEffect, useRef, useState} from 'react';
 
 import ImagesPlugin from '../plugins/ImagesPlugin';
 import ContentEditable from '../ui/ContentEditable';
 import ImageResizer from '../ui/ImageResizer';
 import Placeholder from '../ui/Placeholder';
 
-import './ImageNode.css';
+import './../../style/lexical/ImageNode.css';
 
 export interface ImagePayload {
   altText: string;
