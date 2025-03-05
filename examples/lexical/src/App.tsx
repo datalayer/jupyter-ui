@@ -7,7 +7,7 @@
 import { useMemo, useState } from "react";
 import { $getRoot } from "lexical";
 import styled from "styled-components";
-import { lexicalToNbFormat,useLexical, LexicalProvider, Editor } from "@datalayer/jupyter-lexical";
+import { lexicalToNbformat,useLexical, LexicalProvider, Editor } from "@datalayer/jupyter-lexical";
 import { useNotebookStore, Jupyter, Notebook, CellSidebar, CellSidebarExtension } from "@datalayer/jupyter-react";
 import { Box, TabNav, Button } from "@primer/react";
 import { ThreeBarsIcon } from "@primer/octicons-react"
@@ -53,7 +53,7 @@ const Tabs = () => {
       editor?.update(() => {
         const root = $getRoot();
         const children = root.getChildren();
-        const nb = lexicalToNbFormat(children);
+        const nb = lexicalToNbformat(children);
         setNotebookContent(nb);
       });
     }

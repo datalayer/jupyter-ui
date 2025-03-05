@@ -38,13 +38,13 @@ const ENTRY =
   // './src/examples/JupyterLabAppHeadlessServerless';
   // './src/examples/JupyterLabAppServerless';
   // './src/examples/JupyterLabAppServiceManager';
-  './src/examples/JupyterLabTheme';
+  // './src/examples/JupyterLabTheme';
   // './src/examples/KernelExecute';
   // './src/examples/KernelExecutor';
   // './src/examples/Kernels';
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
-  // './src/examples/Notebook';
+  './src/examples/Notebook';
   // './src/examples/NotebookCellSidebar';
   // './src/examples/NotebookCellToolbar';
   // './src/examples/NotebookColormode';

@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import React, { useState } from "react";
+import { useMemo, useState } from "react";
 import { $getRoot } from "lexical";
 import styled from "styled-components";
 import { useNotebookStore, Jupyter, Notebook, CellSidebar, CellSidebarExtension } from "@datalayer/jupyter-react";
@@ -13,7 +13,7 @@ import { ThreeBarsIcon } from "@primer/octicons-react"
 import { JSONTree } from "react-json-tree";
 import { INotebookContent } from "@jupyterlab/nbformat";
 import { INotebookModel } from "@jupyterlab/notebook";
-import { lexicalToNbFormat,useLexical, LexicalProvider, Editor } from "./..";
+import { lexicalToNbformat,useLexical, LexicalProvider, Editor } from "./..";
 
 import INITIAL_LEXICAL_MODEL from "./content/Example.lexical.json";
 
@@ -21,7 +21,9 @@ import INITIAL_NBFORMAT_MODEL from "./content/Example.ipynb.json";
 
 const NOTEBOOK_UID = 'notebook-uid-lexical';
 
-type TabType = 'editor' | 'notebook' | 'nbformat';
+type TabType = 'editor'
+  | 'notebook'
+  | 'nbformat';
 
 const StyledNotebook = styled.div`
   &[style] {
@@ -32,27 +34,30 @@ const StyledNotebook = styled.div`
 const Tabs = () => {
   const { editor } = useLexical();
   const notebookStore = useNotebookStore();
+  const cellSidebarExtension = useMemo(() => {
+    return new CellSidebarExtension({ factory: CellSidebar })
+  }, []);
   const [tab, setTab] = useState<TabType>('editor');
-  const [notebookContent, setNotebookContent] = useState<INotebookContent>(INITIAL_NBFORMAT_MODEL);
+  const [nbformat, setNbformat] = useState<INotebookContent>(INITIAL_NBFORMAT_MODEL);
   const notebook = notebookStore.selectNotebook(NOTEBOOK_UID);
   const goToTab = (e: any, toTab: TabType, notebookModel: INotebookModel | undefined) => {
     e.preventDefault();
     if (tab === 'notebook' && toTab === 'editor') {
       if (notebookModel && editor) {
-        setNotebookContent(notebookModel.toJSON() as INotebookContent);
+        setNbformat(notebookModel.toJSON() as INotebookContent);
       }
     }
     if (tab === 'editor' && toTab === "notebook") {
       editor?.update(() => {
         const root = $getRoot();
         const children = root.getChildren();
-        const nb = lexicalToNbFormat(children);
-        setNotebookContent(nb);
+        const nbformat = lexicalToNbformat(children);
+        setNbformat(nbformat);
       });
     }
     if (tab === 'notebook' && toTab === 'nbformat') {
       if (notebookModel && editor) {
-        setNotebookContent(notebookModel.toJSON() as INotebookContent);
+        setNbformat(notebookModel.toJSON() as INotebookContent);
       }
     }
     setTab(toTab);
@@ -72,7 +77,7 @@ const Tabs = () => {
       </TabNav>
       { tab === 'editor' &&
         <Box>
-          <Editor notebook={notebookContent} />
+          <Editor notebook={nbformat} />
           <Button
             onClick={(e: React.MouseEvent) => {
               e.preventDefault();
@@ -90,13 +95,13 @@ const Tabs = () => {
           <Box mb={3}>
             <Notebook
               id={NOTEBOOK_UID}
-              nbformat={notebookContent}
-              extensions={[new CellSidebarExtension({ factory: CellSidebar })]}
+              nbformat={INITIAL_NBFORMAT_MODEL}
+              extensions={[cellSidebarExtension]}
             />
             <Button
               onClick={(e: React.MouseEvent) => {
                 e.preventDefault();
-                setNotebookContent(INITIAL_NBFORMAT_MODEL);
+                setNbformat(INITIAL_NBFORMAT_MODEL);
               }}>
                 Reset Nbformat
             </Button>
@@ -105,7 +110,7 @@ const Tabs = () => {
       }
       { tab === 'nbformat' &&
         <Box>
-          <JSONTree data={notebookContent}/>;
+          <JSONTree data={nbformat}/>;
         </Box>
       }
     </Box>

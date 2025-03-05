@@ -9,7 +9,7 @@ import { UnderlineNav } from '@primer/react';
 import { Box } from '@primer/react';
 import {
   useJupyter, Cell, Commands, Console, Dialog, FileBrowser, FileManagerJupyterLab,
-  OutputIPyWidgets, Notebook, Kernel, Settings, Terminal,
+  OutputIPyWidgets, Notebook, Kernel, Settings, Terminal, CellSidebarExtension,
 } from '@datalayer/jupyter-react';
 import { Output } from '@datalayer/jupyter-react/lib/components/output/Output';
 import { IOutput } from '@jupyterlab/nbformat';
@@ -227,7 +227,7 @@ const GalleryExample = () => {
             <Notebook
               id={NOTEBOOK_ID}
               path="ping.ipynb"
-              CellSidebar={CellSidebar}
+              extensions={[new CellSidebarExtension({ factory: CellSidebar })]}
             />
           </>
         )}

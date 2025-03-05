@@ -14,12 +14,12 @@ import {
 import { ActionMenu, Box, Button } from '@primer/react';
 import {
   NotebookCommandIds
-} from '../../components/notebook';
-import { CellMetadataEditor } from '../../components/notebook/cell/metadata';
+} from '../../../components/notebook';
+import { CellMetadataEditor } from '../../../components/notebook/cell/metadata';
 import {
   DATALAYER_CELL_SIDEBAR_CLASS_NAME,
   ICellSidebarProps,
-} from '../../components/notebook/cell/sidebar';
+} from '../../../components/notebook/cell/sidebar';
 
 export const CellSidebarSource = (props: ICellSidebarProps) => {
   const { commands, model, nbgrader } = props;

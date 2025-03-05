@@ -4,15 +4,15 @@
  * MIT License
  */
 
-import React, {useState, createContext, useContext} from 'react';
+import {useState, createContext, useContext} from 'react';
 import { LexicalEditor } from "lexical";
 
-type LexicalCntextType = {
+type LexicalContextType = {
   editor?: LexicalEditor;
   setEditor: (editor?: LexicalEditor) => void;
 };
 
-const context = createContext<LexicalCntextType | undefined>(undefined);
+const context = createContext<LexicalContextType | undefined>(undefined);
 
 export function useLexical() {
   const lexicalContext = useContext(context);
@@ -27,15 +27,13 @@ export const LexicalContextConsumer = context.Consumer;
 
 type Props = {
   children: React.ReactNode;
-};
+}
 
-export const LexicalProvider: React.FC<{
-  children: React.ReactNode;
-}> = ({children}: Props) => {
+export const LexicalProvider: React.FC<{ children: React.ReactNode }> = ({children}: Props) => {
   const [editor, setEditor] = useState<LexicalEditor>();
   return (
     <LexicalContextProvider value={{editor, setEditor}}>
       {children}
     </LexicalContextProvider>
   );
-};
+}

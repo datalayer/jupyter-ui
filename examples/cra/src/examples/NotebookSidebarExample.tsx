@@ -4,8 +4,8 @@
  * MIT License
  */
 
-import {Jupyter, Notebook} from '@datalayer/jupyter-react';
-import {Box} from '@primer/react';
+import { Jupyter, Notebook, CellSidebarExtension } from "@datalayer/jupyter-react";
+import { Box } from '@primer/react';
 import NotebookToolbar from './notebook/NotebookToolbar';
 import CellSidebar from './notebook/cell/CellSidebar';
 
@@ -20,7 +20,7 @@ export default function NotebookSidebarComponent() {
           <Notebook
             path="ping.ipynb"
             id={NOTEBOOK_UID}
-            CellSidebar={CellSidebar}
+            extensions={[new CellSidebarExtension({ factory: CellSidebar })]}
           />
         </Box>
       </div>

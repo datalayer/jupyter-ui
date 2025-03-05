@@ -7,10 +7,10 @@
 import { useEffect } from "react";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { INotebookContent } from "@jupyterlab/nbformat";
-import { nbformatToLexical } from "../convert/NbFormatToLexical";
+import { nbformatToLexical } from "../convert";
 
 type Props = {
-  notebook?: INotebookContent
+  notebook?: INotebookContent;
 }
 
 export const NbformatContentPlugin = (props: Props) => {

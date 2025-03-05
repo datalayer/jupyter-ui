@@ -13,7 +13,7 @@ import { exportTopLevelElements } from "./markdown/MarkdownExport";
 import { transformersByType } from './markdown/utils';
 import { TRANSFORMERS } from './markdown/index';
 
-export const lexicalToNbFormat = (nodes: LexicalNode[]) => {
+export const lexicalToNbformat = (nodes: LexicalNode[]) => {
   const nb: INotebookContent = {
     nbformat: 4,
     nbformat_minor: 5,
@@ -118,4 +118,4 @@ function createMarkdownExport(
   };
 }
 
-export default lexicalToNbFormat;
+export default lexicalToNbformat;

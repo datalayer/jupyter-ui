@@ -6,5 +6,5 @@
 
 export * from './CellSidebar';
 export * from './CellSidebarButton';
+export * from './CellSidebarExtension';
 export * from './CellSidebarRun';
-export * from './extension';

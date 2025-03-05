@@ -4,17 +4,15 @@
  * MIT License
  */
 
-
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, '.SFNSText-Regular',
-    sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, '.SFNSText-Regular', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: #eee;
   padding: 0 20px;
 }
-
+/*
 header {
   max-width: 580px;
   margin: auto;
@@ -22,7 +20,7 @@ header {
   display: flex;
   justify-content: center;
 }
-
+*/
 header a {
   max-width: 220px;
   margin: 20px 0 0 0;
@@ -93,7 +91,7 @@ header h1 {
   width: 100%;
 }
 /*
-TODO(ECH) this conflicts with the jupyterlab css rules for the output.
+TODO(ECH) this conflicts with the JupyterLab CSS rules for the outputs.
 pre {
   line-height: 1.1;
   background: #222;

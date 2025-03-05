@@ -4,5 +4,6 @@
  * MIT License
  */
 
+export * from './cellsidebars';
 export * from './celltoolbar';
 export * from './exectime';

@@ -11,7 +11,7 @@ import { Notebook } from '../components/notebook/Notebook';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
-import CellSidebarSource from './sidebars/CellSidebarSource';
+import CellSidebarSource from './extensions/cellsidebars/CellSidebarSource';
 
 const NotebookCellSidebar = () => (
   <JupyterReactTheme>

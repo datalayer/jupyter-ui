@@ -4,6 +4,4 @@
  * MIT License
  */
 
-.dla-Jupyter-Notebook {
-  min-height: 900px !important;
-}
+export * from './CellSidebarSource';

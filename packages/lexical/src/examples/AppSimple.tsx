@@ -4,7 +4,6 @@
  * MIT License
  */
 
-import React from "react";
 import { Box, Button } from "@primer/react";
 import { ThreeBarsIcon } from "@primer/octicons-react"
 import { Jupyter } from "@datalayer/jupyter-react";
@@ -35,7 +34,7 @@ const LexicalEditor = () => {
   )
 }
 
-export const App = () => {
+export const AppSimple = () => {
   return (
     <>
       <div className="App">
@@ -64,4 +63,4 @@ export const App = () => {
   )
 }
 
-export default App;
+export default AppSimple;

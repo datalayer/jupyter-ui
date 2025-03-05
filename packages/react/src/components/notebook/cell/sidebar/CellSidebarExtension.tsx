@@ -14,10 +14,7 @@ import { Signal } from '@lumino/signaling';
 import type { PanelLayout, Widget } from '@lumino/widgets';
 import type React from 'react';
 import { JupyterReactTheme } from '../../../../theme';
-import type {
-  DatalayerNotebookExtension,
-  IDatalayerNotebookExtensionProps,
-} from '../../Notebook';
+import type { DatalayerNotebookExtension, IDatalayerNotebookExtensionProps } from '../../Notebook';
 import { CellSidebar, type ICellSidebarProps } from './CellSidebar';
 
 class CellSidebarFactory implements IDisposable {
@@ -167,3 +164,5 @@ export class CellSidebarExtension implements DatalayerNotebookExtension {
     this.commands = props.commands;
   }
 }
+
+export default CellSidebarExtension;
