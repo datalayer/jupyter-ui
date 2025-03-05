@@ -4,23 +4,26 @@
  * MIT License
  */
 
-import * as React from 'react';
+import type {JSX} from 'react';
+
+import {
+  $isCodeNode,
+  CodeNode,
+  getLanguageFriendlyName,
+  normalizeCodeLang,
+} from '@lexical/code';
+import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
+import {$getNearestNodeFromDOMNode, isHTMLElement} from 'lexical';
 import {useEffect, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
-import {$getNearestNodeFromDOMNode} from 'lexical';
-import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
-import { $isJupyterCodeNode, JupyterCodeNode } from '../nodes/JupyterCodeNode';
-import { 
-  getLanguageFriendlyName,
-//  normalizeCodeLang,
-} from '../nodes/JupyterCodeHighlightNode';
+
 import {CopyButton} from '../components/CopyButton';
-// import {canBePrettier, PrettierButton} from '../components/PrettierButton';
-import {useDebounce} from '../utils/debouncer';
+import {canBePrettier, PrettierButton} from '../components/PrettierButton';
+import {useDebounce} from './../utils';
 
 import './../../style/lexical/CodeActionMenuPlugin.css';
 
-const CODE_PADDING = 0;
+const CODE_PADDING = 8;
 
 interface Position {
   top: string;
@@ -33,6 +36,7 @@ function CodeActionMenuContainer({
   anchorElem: HTMLElement;
 }): JSX.Element {
   const [editor] = useLexicalComposerContext();
+
   const [lang, setLang] = useState('');
   const [isShown, setShown] = useState<boolean>(false);
   const [shouldListenMouseMove, setShouldListenMouseMove] =
@@ -43,9 +47,11 @@ function CodeActionMenuContainer({
   });
   const codeSetRef = useRef<Set<string>>(new Set());
   const codeDOMNodeRef = useRef<HTMLElement | null>(null);
+
   function getCodeDOMNode(): HTMLElement | null {
     return codeDOMNodeRef.current;
   }
+
   const debouncedOnMouseMove = useDebounce(
     (event: MouseEvent) => {
       const {codeDOMNode, isOutside} = getMouseInfo(event);
@@ -53,19 +59,25 @@ function CodeActionMenuContainer({
         setShown(false);
         return;
       }
+
       if (!codeDOMNode) {
         return;
       }
+
       codeDOMNodeRef.current = codeDOMNode;
-      let codeNode: JupyterCodeNode | null = null;
+
+      let codeNode: CodeNode | null = null;
       let _lang = '';
+
       editor.update(() => {
         const maybeCodeNode = $getNearestNodeFromDOMNode(codeDOMNode);
-        if (maybeCodeNode && $isJupyterCodeNode(maybeCodeNode)) {
-          codeNode = maybeCodeNode as JupyterCodeNode;
+
+        if ($isCodeNode(maybeCodeNode)) {
+          codeNode = maybeCodeNode;
           _lang = codeNode.getLanguage() || '';
         }
       });
+
       if (codeNode) {
         const {y: editorElemY, right: editorElemRight} =
           anchorElem.getBoundingClientRect();
@@ -74,18 +86,21 @@ function CodeActionMenuContainer({
         setShown(true);
         setPosition({
           right: `${editorElemRight - right + CODE_PADDING}px`,
-          top: `${y - editorElemY + 10}px`,
+          top: `${y - editorElemY}px`,
         });
       }
     },
     50,
     1000,
   );
+
   useEffect(() => {
     if (!shouldListenMouseMove) {
       return;
     }
+
     document.addEventListener('mousemove', debouncedOnMouseMove);
+
     return () => {
       setShown(false);
       debouncedOnMouseMove.cancel();
@@ -93,33 +108,41 @@ function CodeActionMenuContainer({
     };
   }, [shouldListenMouseMove, debouncedOnMouseMove]);
 
-  editor.registerMutationListener(JupyterCodeNode, (mutations) => {
-    editor.getEditorState().read(() => {
-      for (const [key, type] of mutations) {
-        switch (type) {
-          case 'created':
-            codeSetRef.current.add(key);
-            setShouldListenMouseMove(codeSetRef.current.size > 0);
-            break;
-          case 'destroyed':
-            codeSetRef.current.delete(key);
-            setShouldListenMouseMove(codeSetRef.current.size > 0);
-            break;
-          default:
-            break;
-        }
-      }
-    });
-  });
-//  const normalizedLang = normalizeCodeLang(lang);
+  useEffect(() => {
+    return editor.registerMutationListener(
+      CodeNode,
+      (mutations) => {
+        editor.getEditorState().read(() => {
+          for (const [key, type] of mutations) {
+            switch (type) {
+              case 'created':
+                codeSetRef.current.add(key);
+                break;
+
+              case 'destroyed':
+                codeSetRef.current.delete(key);
+                break;
+
+              default:
+                break;
+            }
+          }
+        });
+        setShouldListenMouseMove(codeSetRef.current.size > 0);
+      },
+      {skipInitialization: false},
+    );
+  }, [editor]);
+
+  const normalizedLang = normalizeCodeLang(lang);
   const codeFriendlyName = getLanguageFriendlyName(lang);
+
   return (
     <>
       {isShown ? (
         <div className="code-action-menu-container" style={{...position}}>
           <div className="code-highlight-language">{codeFriendlyName}</div>
           <CopyButton editor={editor} getCodeDOMNode={getCodeDOMNode} />
-          {/*
           {canBePrettier(normalizedLang) ? (
             <PrettierButton
               editor={editor}
@@ -127,7 +150,6 @@ function CodeActionMenuContainer({
               lang={normalizedLang}
             />
           ) : null}
-          */}
         </div>
       ) : null}
     </>
@@ -139,7 +161,8 @@ function getMouseInfo(event: MouseEvent): {
   isOutside: boolean;
 } {
   const target = event.target;
-  if (target && target instanceof HTMLElement) {
+
+  if (isHTMLElement(target)) {
     const codeDOMNode = target.closest<HTMLElement>(
       'code.PlaygroundEditorTheme__code',
     );
@@ -154,11 +177,11 @@ function getMouseInfo(event: MouseEvent): {
   }
 }
 
-export const CodeActionMenuPlugin = ({
+export function CodeActionMenuPlugin({
   anchorElem = document.body,
 }: {
   anchorElem?: HTMLElement;
-}): React.ReactPortal | null => {
+}): React.ReactPortal | null {
   return createPortal(
     <CodeActionMenuContainer anchorElem={anchorElem} />,
     anchorElem,

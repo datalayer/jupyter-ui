@@ -1,9 +1,3 @@
-/*
- * Copyright (c) 2021-2023 Datalayer, Inc.
- *
- * MIT License
- */
-
 import {debounce} from 'lodash-es';
 import {useMemo, useRef} from 'react';
 
@@ -14,6 +8,7 @@ export function useDebounce<T extends (...args: never[]) => void>(
 ) {
   const funcRef = useRef<T | null>(null);
   funcRef.current = fn;
+
   return useMemo(
     () =>
       debounce(
@@ -28,3 +23,5 @@ export function useDebounce<T extends (...args: never[]) => void>(
     [ms, maxWait],
   );
 }
+
+export default useDebounce;

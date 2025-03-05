@@ -11,4 +11,4 @@ export * from "./useLayoutEffect";
 export * from './getDOMRangeRect';
 export * from './getSelectedNode';
 export * from './setFloatingElemPosition';
-
+export * from './useDebounce';

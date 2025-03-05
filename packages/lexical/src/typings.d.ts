@@ -23,3 +23,8 @@ declare module "*.svg" {
   const value: any;
   export default value;
 }
+
+declare module "prettier/*" {
+  const value: any;
+  export default value;
+}

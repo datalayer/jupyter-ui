@@ -19,4 +19,5 @@ export * from "./KatexEquationAlterer";
 export * from "./KatexRenderer";
 export * from "./Modal";
 export * from "./Placeholder";
+export * from "./PrettierButton";
 export * from "./TextInput";

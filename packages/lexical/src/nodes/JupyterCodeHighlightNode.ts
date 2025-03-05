@@ -132,7 +132,7 @@ export class JupyterCodeHighlightNode extends TextNode {
   }
 
   updateDOM(
-    prevNode: JupyterCodeHighlightNode,
+    prevNode: this,
     dom: HTMLElement,
     config: EditorConfig,
   ): boolean {
