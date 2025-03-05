@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { ISharedNotebook, IYText, YNotebook } from '@jupyter/ydoc';
+import { type ISharedNotebook, type IYText, YNotebook } from '@jupyter/ydoc';
 import type { ISessionContext } from '@jupyterlab/apputils';
 import type { Cell, CodeCell, ICellModel } from '@jupyterlab/cells';
 import { type IEditorServices } from '@jupyterlab/codeeditor';
@@ -78,6 +78,7 @@ import { Lumino } from '../lumino';
 import { Loader } from '../utils';
 import type { DatalayerNotebookExtension } from './Notebook';
 import addNotebookCommands from './NotebookCommands';
+import { remoteUserCursors } from '@jupyter/collaboration';
 
 const COMPLETER_TIMEOUT_MILLISECONDS = 1000;
 const DEFAULT_EXTENSIONS = new Array<DatalayerNotebookExtension>();
@@ -891,30 +892,36 @@ class CommonFeatures {
       themes.addTheme(theme);
     }
 
-    const editorExtensions = () => {
-      const registry = new EditorExtensionRegistry();
-      for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions(
-        { themes }
-      )) {
-        registry.addExtension(extensionFactory);
+    const editorExtensions = new EditorExtensionRegistry();
+    for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions(
+      { themes }
+    )) {
+      editorExtensions.addExtension(extensionFactory);
+    }
+    editorExtensions.addExtension({
+      name: 'shared-model-binding',
+      factory: options => {
+        const sharedModel = options.model.sharedModel as IYText;
+        return EditorExtensionRegistry.createImmutableExtension(
+          ybinding({
+            ytext: sharedModel.ysource,
+            undoManager: sharedModel.undoManager ?? undefined,
+          })
+        );
+      },
+    });
+    editorExtensions.addExtension({
+      name: 'remote-user-cursors',
+      factory(options) {
+        const { awareness, ysource: ytext } = options.model.sharedModel as any;
+        return EditorExtensionRegistry.createImmutableExtension(
+          remoteUserCursors({ awareness, ytext })
+        );
       }
-      registry.addExtension({
-        name: 'shared-model-binding',
-        factory: options => {
-          const sharedModel = options.model.sharedModel as IYText;
-          return EditorExtensionRegistry.createImmutableExtension(
-            ybinding({
-              ytext: sharedModel.ysource,
-              undoManager: sharedModel.undoManager ?? undefined,
-            })
-          );
-        },
-      });
-      return registry;
-    };
+    })
 
     const factoryService = new CodeMirrorEditorFactory({
-      extensions: editorExtensions(),
+      extensions: editorExtensions,
       languages: languages,
     });
     this._editorServices = {

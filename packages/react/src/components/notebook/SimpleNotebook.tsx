@@ -31,7 +31,7 @@ export interface ISimpleNotebookProps {
   /**
    * Collaboration server providing the document rooms.
    */
-  collaborationServer: CollaborationServer;
+  collaborationServer?: CollaborationServer;
   /**
    * Custom command registry.
    *
@@ -154,10 +154,32 @@ export function SimpleNotebook(
   });
 
   useEffect(() => {
-    if (model) setIsLoading(false);
+    if (model) {
+      setIsLoading(false);
+    }
 
     onNotebookModelChanged?.(model);
   }, [model, onNotebookModelChanged]);
+
+  useEffect(() => {
+    // Set user identity if collaborating using Jupyter collaboration
+    const setUserIdentity = () => {
+      if (collaborationServer?.type === 'jupyter' && model) {
+        // Yjs details are hidden from the interface
+        (model.sharedModel as any).awareness.setLocalStateField(
+          'user',
+          serviceManager.user.identity
+        );
+      }
+    };
+
+    setUserIdentity();
+    serviceManager.user.userChanged.connect(setUserIdentity);
+
+    return () => {
+      serviceManager.user.userChanged.disconnect(setUserIdentity);
+    };
+  }, [collaborationServer, model, serviceManager]);
 
   return isLoading ? (
     <Loader key="notebook-loader" />
