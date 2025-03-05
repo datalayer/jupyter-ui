@@ -37,8 +37,7 @@ import {
 } from "./..";
 import { commentTheme } from "../themes";
 import { useLexical } from "../context/LexicalContext";
-import TreeViewPlugin from "../plugins/TreeViewPlugin";
-import ToolbarPlugin from "../plugins/ToolbarPlugin";
+import { TreeViewPlugin, ToolbarPlugin } from "../plugins";
 import DraggableBlockPlugin from "../plugins/DraggableBlockPlugin"
 
 import './../../style/index.css';
@@ -52,7 +51,7 @@ function Placeholder() {
 }
 
 const initialConfig = {
-  namespace: 'Jupyter Lexical Lexical example',
+  namespace: 'Jupyter Lexical example',
   theme: commentTheme,
   onError(error: Error) {
     throw error;

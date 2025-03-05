@@ -6,7 +6,7 @@ import {
   LexicalEditor,
 } from 'lexical';
 import {$isCodeNode} from '@lexical/code';
-import {useDebounce} from '../utils';
+import {useDebounce} from '../hooks';
 
 interface Props {
   editor: LexicalEditor;

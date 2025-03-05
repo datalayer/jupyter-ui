@@ -4,39 +4,27 @@
  * MIT License
  */
 
-import type {JSX} from 'react';
-
-import {
-  $isCodeNode,
-  CodeNode,
-  getLanguageFriendlyName,
-  normalizeCodeLang,
-} from '@lexical/code';
-import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
-import {$getNearestNodeFromDOMNode, isHTMLElement} from 'lexical';
-import {useEffect, useRef, useState} from 'react';
-import {createPortal} from 'react-dom';
-
-import {CopyButton} from '../components/CopyButton';
-import {canBePrettier, PrettierButton} from '../components/PrettierButton';
-import {useDebounce} from './../utils';
+import { useEffect, useRef, useState } from 'react';
+import type { JSX } from 'react';
+import { createPortal } from 'react-dom';
+import { $isCodeNode, CodeNode, getLanguageFriendlyName, normalizeCodeLang } from '@lexical/code';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { $getNearestNodeFromDOMNode, isHTMLElement } from 'lexical';
+import { CopyButton } from '../components/CopyButton';
+import { canBePrettier, PrettierButton } from '../components/PrettierButton';
+import { useDebounce } from './../hooks';
 
 import './../../style/lexical/CodeActionMenuPlugin.css';
 
 const CODE_PADDING = 8;
 
-interface Position {
+interface Position { 
   top: string;
   right: string;
 }
 
-function CodeActionMenuContainer({
-  anchorElem,
-}: {
-  anchorElem: HTMLElement;
-}): JSX.Element {
+function CodeActionMenuContainer({ anchorElem }: { anchorElem: HTMLElement; }): JSX.Element { 
   const [editor] = useLexicalComposerContext();
-
   const [lang, setLang] = useState('');
   const [isShown, setShown] = useState<boolean>(false);
   const [shouldListenMouseMove, setShouldListenMouseMove] =
@@ -48,19 +36,19 @@ function CodeActionMenuContainer({
   const codeSetRef = useRef<Set<string>>(new Set());
   const codeDOMNodeRef = useRef<HTMLElement | null>(null);
 
-  function getCodeDOMNode(): HTMLElement | null {
+  function getCodeDOMNode(): HTMLElement | null { 
     return codeDOMNodeRef.current;
   }
 
   const debouncedOnMouseMove = useDebounce(
-    (event: MouseEvent) => {
-      const {codeDOMNode, isOutside} = getMouseInfo(event);
-      if (isOutside) {
+    (event: MouseEvent) => { 
+      const { codeDOMNode, isOutside } = getMouseInfo(event);
+      if (isOutside) { 
         setShown(false);
         return;
       }
 
-      if (!codeDOMNode) {
+      if (!codeDOMNode) { 
         return;
       }
 
@@ -69,19 +57,19 @@ function CodeActionMenuContainer({
       let codeNode: CodeNode | null = null;
       let _lang = '';
 
-      editor.update(() => {
+      editor.update(() => { 
         const maybeCodeNode = $getNearestNodeFromDOMNode(codeDOMNode);
 
-        if ($isCodeNode(maybeCodeNode)) {
+        if ($isCodeNode(maybeCodeNode)) { 
           codeNode = maybeCodeNode;
           _lang = codeNode.getLanguage() || '';
         }
       });
 
-      if (codeNode) {
-        const {y: editorElemY, right: editorElemRight} =
+      if (codeNode) { 
+        const { y: editorElemY, right: editorElemRight } =
           anchorElem.getBoundingClientRect();
-        const {y, right} = codeDOMNode.getBoundingClientRect();
+        const { y, right } = codeDOMNode.getBoundingClientRect();
         setLang(_lang);
         setShown(true);
         setPosition({
@@ -94,27 +82,27 @@ function CodeActionMenuContainer({
     1000,
   );
 
-  useEffect(() => {
-    if (!shouldListenMouseMove) {
+  useEffect(() => { 
+    if (!shouldListenMouseMove) { 
       return;
     }
 
     document.addEventListener('mousemove', debouncedOnMouseMove);
 
-    return () => {
+    return () => { 
       setShown(false);
       debouncedOnMouseMove.cancel();
       document.removeEventListener('mousemove', debouncedOnMouseMove);
     };
   }, [shouldListenMouseMove, debouncedOnMouseMove]);
 
-  useEffect(() => {
+  useEffect(() => { 
     return editor.registerMutationListener(
       CodeNode,
-      (mutations) => {
-        editor.getEditorState().read(() => {
-          for (const [key, type] of mutations) {
-            switch (type) {
+      (mutations) => { 
+        editor.getEditorState().read(() => { 
+          for (const [key, type] of mutations) { 
+            switch (type) { 
               case 'created':
                 codeSetRef.current.add(key);
                 break;
@@ -130,7 +118,7 @@ function CodeActionMenuContainer({
         });
         setShouldListenMouseMove(codeSetRef.current.size > 0);
       },
-      {skipInitialization: false},
+      { skipInitialization: false},
     );
   }, [editor]);
 
@@ -139,11 +127,11 @@ function CodeActionMenuContainer({
 
   return (
     <>
-      {isShown ? (
+      { isShown ? (
         <div className="code-action-menu-container" style={{...position}}>
           <div className="code-highlight-language">{codeFriendlyName}</div>
-          <CopyButton editor={editor} getCodeDOMNode={getCodeDOMNode} />
-          {canBePrettier(normalizedLang) ? (
+          <CopyButton editor={editor } getCodeDOMNode={getCodeDOMNode } />
+          { canBePrettier(normalizedLang) ? (
             <PrettierButton
               editor={editor}
               getCodeDOMNode={getCodeDOMNode}
@@ -156,13 +144,13 @@ function CodeActionMenuContainer({
   );
 }
 
-function getMouseInfo(event: MouseEvent): {
+function getMouseInfo(event: MouseEvent): { 
   codeDOMNode: HTMLElement | null;
   isOutside: boolean;
-} {
+ } { 
   const target = event.target;
 
-  if (isHTMLElement(target)) {
+  if (isHTMLElement(target)) { 
     const codeDOMNode = target.closest<HTMLElement>(
       'code.PlaygroundEditorTheme__code',
     );
@@ -171,19 +159,19 @@ function getMouseInfo(event: MouseEvent): {
       target.closest<HTMLElement>('div.code-action-menu-container')
     );
 
-    return {codeDOMNode, isOutside};
-  } else {
-    return {codeDOMNode: null, isOutside: true};
+    return { codeDOMNode, isOutside};
+   } else { 
+    return { codeDOMNode: null, isOutside: true};
   }
 }
 
 export function CodeActionMenuPlugin({
   anchorElem = document.body,
-}: {
+}: { 
   anchorElem?: HTMLElement;
-}): React.ReactPortal | null {
+}): React.ReactPortal | null { 
   return createPortal(
-    <CodeActionMenuContainer anchorElem={anchorElem} />,
+    <CodeActionMenuContainer anchorElem={anchorElem } />,
     anchorElem,
   );
 }

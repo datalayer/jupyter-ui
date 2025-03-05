@@ -4,8 +4,8 @@
  * MIT License
  */
 
-import {useEffect, useLayoutEffect} from 'react';
-import {CAN_USE_DOM} from './canUseDOM';
+import { useEffect, useLayoutEffect } from 'react';
+import { CAN_USE_DOM } from './../utils';
 
 export const useLayoutEffectImpl: typeof useLayoutEffect = CAN_USE_DOM
   ? useLayoutEffect

@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import {useState, createContext, useContext} from 'react';
+import { useState, createContext, useContext } from 'react';
 import { LexicalEditor } from "lexical";
 
 type LexicalContextType = {
