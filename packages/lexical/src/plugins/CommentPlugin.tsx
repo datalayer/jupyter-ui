@@ -52,7 +52,7 @@ import {
   createThread,
   Thread,
   useCommentStore,
-} from '../commenting';
+} from '../components';
 import CommentEditorTheme from '../themes/CommentEditorTheme';
 import { useModal, Button, LexicalContentEditable as ContentEditable, Placeholder } from '..';
 import {useLayoutEffectImpl as useLayoutEffect} from '..';
@@ -171,7 +171,7 @@ function PlainTextEditor({
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
-      <div className="CommentPlugin_CommentInputBox_EditorContainer">
+      <div className="CommentPlugin CommentPlugin_CommentInputBox_EditorContainer">
         <PlainTextPlugin
           contentEditable={<ContentEditable className={className} />}
           placeholder={<Placeholder>{placeholder}</Placeholder>}
@@ -663,7 +663,7 @@ function CommentsPanel({
   const isEmpty = comments.length === 0;
 
   return (
-    <div className="CommentPlugin_CommentsPanel">
+    <div className="CommentPlugin CommentPlugin_CommentsPanel">
       <h2 className="CommentPlugin_CommentsPanel_Heading">Comments</h2>
       {isEmpty ? (
         <div className="CommentPlugin_CommentsPanel_Empty">No Comments</div>

@@ -23,8 +23,8 @@ import {
   SELECTION_CHANGE_COMMAND,
 } from 'lexical';
 import {useCallback, useEffect, useRef, useState} from 'react';
-import EquationEditor from '../ui/EquationEditor';
-import KatexRenderer from '../ui/KatexRenderer';
+import EquationEditor from '../components/EquationEditor';
+import KatexRenderer from '../components/KatexRenderer';
 
 type EquationComponentProps = {
   equation: string;

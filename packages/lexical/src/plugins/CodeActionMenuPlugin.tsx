@@ -14,8 +14,8 @@ import {
   getLanguageFriendlyName,
 //  normalizeCodeLang,
 } from '../nodes/JupyterCodeHighlightNode';
-import {CopyButton} from '../ui/CopyButton';
-// import {canBePrettier, PrettierButton} from '../ui/PrettierButton';
+import {CopyButton} from '../components/CopyButton';
+// import {canBePrettier, PrettierButton} from '../components/PrettierButton';
 import {useDebounce} from '../utils/debouncer';
 
 import './../../style/lexical/CodeActionMenuPlugin.css';

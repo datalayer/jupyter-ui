@@ -41,10 +41,10 @@ import {
   ImageNode,
   ImagePayload,
 } from '../nodes/ImageNode';
-import Button from '../ui/Button';
-import {DialogActions, DialogButtonsList} from '../ui/Dialog';
-import FileInput from '../ui/FileInput';
-import TextInput from '../ui/TextInput';
+import Button from '../components/Button';
+import {DialogActions, DialogButtonsList} from '../components/Dialog';
+import FileInput from '../components/FileInput';
+import TextInput from '../components/TextInput';
 
 export type InsertImagePayload = Readonly<ImagePayload>;
 

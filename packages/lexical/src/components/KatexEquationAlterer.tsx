@@ -5,7 +5,7 @@
  */
 
 import {useCallback, useState} from 'react';
-import Button from '../ui/Button';
+import Button from '../components/Button';
 import KatexRenderer from './KatexRenderer';
 
 import './../../style/lexical/KatexEquationAlterer.css';

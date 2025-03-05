@@ -4,6 +4,10 @@
  * Datalayer License
  */
 
+.CommentPlugin {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, '.SFNSText-Regular', sans-serif;
+}
+
 .CommentPlugin_AddCommentBox {
   display: block;
   position: fixed;

@@ -48,9 +48,9 @@ import {
 } from 'lexical';
 
 import ImagesPlugin from '../plugins/ImagesPlugin';
-import ContentEditable from '../ui/ContentEditable';
-import ImageResizer from '../ui/ImageResizer';
-import Placeholder from '../ui/Placeholder';
+import ContentEditable from '../components/ContentEditable';
+import ImageResizer from '../components/ImageResizer';
+import Placeholder from '../components/Placeholder';
 
 import './../../style/lexical/ImageNode.css';
 
