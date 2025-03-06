@@ -499,11 +499,19 @@ export const Notebook = (props: INotebookProps) => {
             );
           })}
         </Box>
+<<<<<<< HEAD
         {isLoading ? (
+=======
+        {isLoading ?
+>>>>>>> main
           <Loader />
-        ) : (
+        :
           <Box>{adapter && <Lumino id={id}>{adapter.panel}</Lumino>}</Box>
+<<<<<<< HEAD
         )}
+=======
+        }
+>>>>>>> main
       </Box>
     </Box>
   );

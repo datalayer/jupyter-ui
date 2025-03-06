@@ -4,16 +4,18 @@
  * MIT License
  */
 
-import { BaseStyles, ThemeProvider, theme } from '@primer/react';
-import { Colormode, JupyterLabCss } from './../theme';
+import { BaseStyles, ThemeProvider } from '@primer/react';
+import { Theme } from '@primer/react/lib/ThemeProvider';
+import { Colormode, JupyterLabCss, jupyterLabTheme } from './../theme';
 
 type IJupyterLabThemeProps = {
   colormode: Colormode;
   loadJupyterLabCss: boolean;
+  theme?: Theme;
 }
 
 export const JupyterReactTheme = (props: React.PropsWithChildren<IJupyterLabThemeProps>) => {
-  const { children, colormode, loadJupyterLabCss } = props;
+  const { children, colormode, loadJupyterLabCss, theme } = props;
   return (
     <>
       { loadJupyterLabCss && <JupyterLabCss colormode={colormode} /> }
@@ -23,7 +25,13 @@ export const JupyterReactTheme = (props: React.PropsWithChildren<IJupyterLabThem
         dayScheme="light"
         nightScheme="dark"
       >
-        <BaseStyles>
+        <BaseStyles
+          style={{
+            backgroundColor: 'var(--bgColor-default)',
+            color: 'var(--fgColor-default)',
+            fontSize: 'var(--text-body-size-medium)',
+          }}
+        >
           {children}
         </BaseStyles>
       </ThemeProvider>
@@ -34,6 +42,7 @@ export const JupyterReactTheme = (props: React.PropsWithChildren<IJupyterLabThem
 JupyterReactTheme.defaultProps = {
   colormode: 'light',
   loadJupyterLabCss: true,
+  theme: jupyterLabTheme,
 } as IJupyterLabThemeProps;
 
 export default JupyterReactTheme;

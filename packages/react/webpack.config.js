@@ -38,6 +38,7 @@ const ENTRY =
   // './src/examples/JupyterLabAppHeadlessServerless';
   // './src/examples/JupyterLabAppServerless';
   // './src/examples/JupyterLabAppServiceManager';
+  './src/examples/JupyterLabTheme';
   // './src/examples/KernelExecute';
   // './src/examples/KernelExecutor';
   // './src/examples/Kernels';
@@ -46,7 +47,11 @@ const ENTRY =
   './src/examples/Notebook';
   // './src/examples/NotebookCellSidebar';
   // './src/examples/NotebookCellToolbar';
+<<<<<<< HEAD
   // './src/examples/NotebookColorMode';
+=======
+  // './src/examples/NotebookColormode';
+>>>>>>> main
   // './src/examples/NotebookCollaborative';
   // './src/examples/NotebookExtension';
   // './src/examples/NotebookKernelChange';

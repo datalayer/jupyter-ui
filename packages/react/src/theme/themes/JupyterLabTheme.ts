@@ -9,13 +9,13 @@ import cloneDeep from 'lodash/cloneDeep.js';
 import merge from 'lodash/merge.js';
 
 /**
- * Theme for Primer React based on JupyterLab theme.
+ * Theme for Primer React theme based on JupyterLab.
  *
  * It sets the Primer theme tokens using the JupyterLab CSS
  * properties with a fallback in case no JupyterLab theme is
  * is provided to the page.
  */
-const jupyterThemeDefs = {
+const jupyterLabThemeDefs = {
   animation: {
     easeOutCubic: 'cubic-bezier(0.33, 1, 0.68, 1)',
   },
@@ -25,8 +25,7 @@ const jupyterThemeDefs = {
     normal: 'var(--jp-ui-font-family, sans-serif)',
     mono: 'var(--jp-code-font-family, monospace)',
   },
-  // Don't use other font-size props as it is a very bad practice
-  // to use em unit
+  // Don't use other font-size props as it is a very bad practice to use em unit
   fontSizes: [
     '10.833px',
     'var(--jp-ui-font-size1, 13px)',
@@ -453,12 +452,12 @@ const jupyterThemeDefs = {
         segmentedControl: {
           bg: 'var(--jp-layout-color2, #eee)',
           button: {
-            bg: 'var(--jp-inverse-layout-color1, #212121)',
+            bg: 'var(--jp-layout-color1, #212121)',
             hover: {
-              bg: 'var(--jp-inverse-layout-color2, #424242)',
+              bg: 'var(--jp-layout-color2, #424242)',
             },
             active: {
-              bg: 'var(--jp-inverse-layout-color3, #616161)',
+              bg: 'var(--jp-layout-color3, #616161)',
             },
             selected: {
               border: 'var(--jp-border-color3, #eee)',
@@ -477,8 +476,7 @@ const jupyterThemeDefs = {
           default: 'var(--jp-ui-font-color1, rgba(0, 0, 0, 0.87))',
           muted: 'var(--jp-ui-font-color1, rgba(0, 0, 0, 0.54))',
           subtle: 'var(--jp-ui-font-color1, rgba(0, 0, 0, 0.38))',
-          onEmphasis:
-            'var(--jp-ui-inverse-font-color1, rgba(255, 255, 255, 1))',
+          onEmphasis: 'var(--jp-ui-inverse-font-color1, rgba(255, 255, 255, 1))',
         },
         canvas: {
           default: 'var(--jp-layout-color1, white)',
@@ -487,13 +485,13 @@ const jupyterThemeDefs = {
           subtle: 'var(--jp-layout-color1, white)',
         },
         border: {
-          default: 'var(--jp-border-color1, #bdbdbd)',
+          default: 'var(--jp-border-color1, #616161)',
           muted: 'var(--jp-border-color2, #e0e0e0)',
           subtle: 'var(--jp-border-color3, #eee)',
         },
         neutral: {
           emphasisPlus: 'var(--jp-layout-color2, #eee)',
-          emphasis: 'var(--jp-layout-color1, white)',
+          emphasis: 'var(--jp-layout-color3, #bdbdbd)',
           muted: 'var(--jp-layout-color0, white)',
           subtle: 'var(--jp-layout-color3, #bdbdbd)',
         },
@@ -614,8 +612,8 @@ const jupyterThemeDefs = {
         primer: {
           shadow: {
             highlight: 'inset 0 1px 0 rgba(255,255,255,0.25)',
-            inset:
-              'inset 0 0 0 var(--jp-border-width) var(--jp-input-border-color)',
+//            inset: 'inset 0 0 0 var(--jp-border-width) var(--jp-input-border-color)',
+            inset: 'inset 0 0 0 0 var(--jp-input-border-color)',
           },
         },
       },
@@ -986,7 +984,7 @@ const jupyterThemeDefs = {
         segmentedControl: {
           bg: 'var(--jp-layout-color2, #424242)',
           button: {
-            bg: 'var(--jp-inverse-layout-color1)',
+            bg: 'var(--jp-inverse-layout-color4)',
             hover: {
               bg: 'var(--jp-inverse-layout-color2)',
             },
@@ -1146,8 +1144,8 @@ const jupyterThemeDefs = {
         primer: {
           shadow: {
             highlight: '0 0 transparent',
-            inset:
-              'inset 0 0 0 var(--jp-border-width) var(--jp-input-border-color)',
+//            inset: 'inset 0 0 0 var(--jp-border-width) var(--jp-input-border-color)',
+            inset: 'inset 0 0 0 0 var(--jp-input-border-color)',
           },
         },
       },
@@ -1156,20 +1154,19 @@ const jupyterThemeDefs = {
 };
 
 const { colorSchemes: primerSchemes, ...primerOthers } = cloneDeep(primerTheme);
-const { colorSchemes: jupyterSchemes, ...jupyterOthers } = jupyterThemeDefs;
+const { colorSchemes: jupyterSchemes, ...jupyterOthers } = jupyterLabThemeDefs;
 
-// Merge with the light theme to ensure all variables are defined (although
-// the style may be ugly)
-const theme = merge(primerOthers, jupyterOthers, {
+// Merge with the light theme to ensure all variables are defined (although the style may be ugly).
+const jupyterLabTheme = merge(primerOthers, jupyterOthers, {
   colorSchemes: { light: {}, dark: {} },
 });
-theme.colorSchemes.light = {
+jupyterLabTheme.colorSchemes.light = {
   colors: merge(primerSchemes.light.colors, jupyterSchemes.light.colors),
   shadows: merge(primerSchemes.light.shadows, jupyterSchemes.light.shadows),
 };
-theme.colorSchemes.dark = {
+jupyterLabTheme.colorSchemes.dark = {
   colors: merge(primerSchemes.dark.colors, jupyterSchemes.dark.colors),
   shadows: merge(primerSchemes.dark.shadows, jupyterSchemes.dark.shadows),
 };
 
-export { theme as jupyterTheme };
+export { jupyterLabTheme };
