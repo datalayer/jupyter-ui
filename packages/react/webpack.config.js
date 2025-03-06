@@ -37,7 +37,7 @@ const ENTRY =
   // './src/examples/JupyterLabAppHeadless';
   // './src/examples/JupyterLabAppHeadlessServerless';
   // './src/examples/JupyterLabAppServerless';
-  // './src/examples/JupyterLabAppServiceManager';/home/echarles/Content/datalayer-osp/src/tech/jupyter/ui
+  // './src/examples/JupyterLabAppServiceManager';
   // './src/examples/JupyterLabTheme';
   // './src/examples/KernelExecute';
   // './src/examples/KernelExecutor';
