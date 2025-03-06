@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 import {debounce} from 'lodash-es';
 import {useMemo, useRef} from 'react';
 
