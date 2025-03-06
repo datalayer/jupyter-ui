@@ -6,9 +6,9 @@
 
 import { useState } from "react";
 import { LexicalEditor } from "lexical";
-import { Button } from './../ui/Button';
-import { TextInput } from './../ui/TextInput';
-import { FileInput } from './../ui/FileInput';
+import { Button } from './../components/Button';
+import { TextInput } from './../components/TextInput';
+import { FileInput } from './../components/FileInput';
 import { INSERT_IMAGE_COMMAND } from './../plugins/ImagesPlugin';
 import { InsertImagePayload } from './../plugins/ImagesPlugin';
 import yellowFlowerImage from '../images/yellow-flower-small.jpg';

@@ -4,23 +4,16 @@
  * MIT License
  */
 
-import {
-  JupyterFrontEnd,
-  JupyterFrontEndPlugin,
-  ILayoutRestorer,
-} from '@jupyterlab/application';
-import {
-  MainAreaWidget,
-  ICommandPalette,
-  WidgetTracker,
-} from '@jupyterlab/apputils';
+import { JupyterFrontEnd, JupyterFrontEndPlugin, ILayoutRestorer } from '@jupyterlab/application';
+import { MainAreaWidget, ICommandPalette, WidgetTracker } from '@jupyterlab/apputils';
 import { ILauncher } from '@jupyterlab/launcher';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { ServerConnection } from '@jupyterlab/services';
 import icon from '@datalayer/icons-react/data2/AtomSymbolIconJupyterLab';
 import { requestAPI } from './../JupyterHandlers';
 import { JupyterReactWidget } from './widget';
-import notebookContentFactoryPlugin from './notebook/content/plugin';
+import { contentFactoryPlugin as notebookContentFactoryPlugin } from './notebook/content/plugin';
+import { widgetFactoryPlugin as notebookWidgetFactoryPlugin } from './notebook/editor/plugin';
 
 import '../../../style/index.css';
 
@@ -123,5 +116,6 @@ const jupyterReactPlugin: JupyterFrontEndPlugin<void> = {
 
 export default [
   jupyterReactPlugin,
-  notebookContentFactoryPlugin
+  notebookContentFactoryPlugin,
+  notebookWidgetFactoryPlugin,
 ];

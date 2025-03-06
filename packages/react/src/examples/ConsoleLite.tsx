@@ -14,13 +14,13 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <Jupyter lite>
+  <Jupyter startDefaultKernel lite>
     <Box as="h1">A Jupyter Console with a Lite Kernel</Box>
     <Console
       code={`import micropip
 await micropip.install('numpy')
 import numpy
-print(f'👋 Hello Jupyter Console with a Lite Kernel and numpy {numpy.__version__}')`}
+print(f'👋 Hello Jupyter Console with a Lite Kernel - Platform: {sys.platform} - IPython: {get_ipython()}") - numpy {numpy.__version__}')`}
     />
   </Jupyter>
 );

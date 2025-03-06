@@ -64,14 +64,6 @@
     "plt.ylabel('y=x')\n",
     "plt.show()"
    ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "id": "8c7e5a40-5092-4ae7-98ea-e140da4f4328",
-   "metadata": {},
-   "outputs": [],
-   "source": []
   }
  ],
  "metadata": {

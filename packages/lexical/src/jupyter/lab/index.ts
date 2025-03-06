@@ -5,17 +5,11 @@
  */
 
 import { JupyterFrontEnd, JupyterFrontEndPlugin } from '@jupyterlab/application';
-
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
-
 import { MainAreaWidget, ICommandPalette } from '@jupyterlab/apputils';
-
 import { ILauncher } from '@jupyterlab/launcher';
-
 import { reactIcon } from '@jupyterlab/ui-components';
-
 import { requestAPI } from './handler';
-
 import { DatalayerWidget } from './widget';
 
 import '../../../style/index.css';
@@ -75,9 +69,9 @@ const plugin: JupyterFrontEndPlugin<void> = {
           console.error('Failed to load settings for @datalayer/jupyter-lexical.', reason);
         });
     }
-    requestAPI<any>('get_example')
+    requestAPI<any>('config')
       .then(data => {
-        console.log(data);
+        console.log('Jupyter Lexical configuration', data);
       })
       .catch(reason => {
         console.error(

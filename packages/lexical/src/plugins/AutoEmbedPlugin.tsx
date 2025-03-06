@@ -18,8 +18,8 @@ import {useMemo, useState} from 'react';
 import * as ReactDOM from 'react-dom';
 
 import useModal from '../hooks/useModal';
-import Button from '../ui/Button';
-import {DialogActions} from '../ui/Dialog';
+import Button from '../components/Button';
+import {DialogActions} from '../components/Dialog';
 import {INSERT_YOUTUBE_COMMAND} from './YouTubePlugin';
 
 interface PlaygroundEmbedConfig extends EmbedConfig {

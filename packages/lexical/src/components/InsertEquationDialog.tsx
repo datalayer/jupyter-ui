@@ -6,7 +6,7 @@
 
 import { useCallback } from "react";
 import { LexicalEditor } from "lexical";
-import { KatexEquationAlterer } from './../ui/KatexEquationAlterer';
+import { KatexEquationAlterer } from './../components/KatexEquationAlterer';
 import { INSERT_EQUATION_COMMAND } from './../plugins/EquationsPlugin';
 
 export function InsertEquationDialog({

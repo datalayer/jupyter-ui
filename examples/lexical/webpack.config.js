@@ -32,8 +32,6 @@ if (IS_PRODUCTION) {
   minimize = true;
 }
 
-const JUPYTER_HOST = 'http://127.0.0.1:8686';
-
 module.exports = {
   entry: ['./src/index'],
   mode: mode,

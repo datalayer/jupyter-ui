@@ -4,114 +4,161 @@
  * MIT License
  */
 
-import { useState } from 'react';
-import { PanelLayout } from '@lumino/widgets';
-import { ActionMenu, Button, Box } from "@primer/react";
-import { ChevronRightIcon, XIcon, ChevronUpIcon, ChevronDownIcon, SquareIcon } from "@primer/octicons-react";
-import { useNotebookStore, ICellSidebarProps, CellMetadataEditor, DATALAYER_CELL_SIDEBAR_CLASS_NAME } from '@datalayer/jupyter-react';
+import { ICellSidebarProps, NotebookCommandIds, CellMetadataEditor, DATALAYER_CELL_SIDEBAR_CLASS_NAME } from '@datalayer/jupyter-react';
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+  SquareIcon,
+  XIcon,
+} from '@primer/octicons-react';
+import { ActionMenu, Box, Button } from '@primer/react';
 
-export const CellSidebar = (props: ICellSidebarProps) => {
-  const [visible, setVisible] = useState(false);
-  const { notebookId, cellNodeId, nbgrader } = props;
-  const notebookStore = useNotebookStore();
-  const activeCell = notebookStore.selectActiveCell(notebookId);
-  const layout = (activeCell?.layout);
-  if (layout) {
-    const cellWidget = (layout as PanelLayout).widgets[0];
-    if (!visible && (cellWidget?.node.id === cellNodeId)) {
-      setVisible(true);
-    }
-    if (visible && (cellWidget?.node.id !== cellNodeId)) {
-      setVisible(false);
-    }
-  }
-  if (!visible) {
-    return <div></div>
-  }
+export const CellSidebarSource = (props: ICellSidebarProps) => {
+  const { commands, model, nbgrader } = props;
   return (
-    activeCell ? 
-      <Box
-        className={DATALAYER_CELL_SIDEBAR_CLASS_NAME}
-        sx={{
-          '& p': {
-            marginBottom: '0 !important',
-          }
+    <Box
+      className={DATALAYER_CELL_SIDEBAR_CLASS_NAME}
+      sx={{
+        '& p': {
+          marginBottom: '0 !important',
+        },
+      }}
+    >
+      <Button
+        leadingVisual={ChevronRightIcon}
+        variant="invisible"
+        size="small"
+        onClick={(e: any) => {
+          e.preventDefault();
+          commands.execute(NotebookCommandIds.run).catch(reason => {
+            console.error('Failed to run cell.', reason);
+          });
         }}
       >
-        <span style={{ display: "flex" }}>
-          <Button leadingVisual={ChevronRightIcon} variant="invisible" size="small" onClick={(e: any) => {
+        Run
+      </Button>
+      <Button
+        leadingVisual={ChevronUpIcon}
+        variant="invisible"
+        size="small"
+        onClick={(e: any) => {
+          e.preventDefault();
+          commands.execute(NotebookCommandIds.insertAbove).catch(reason => {
+            console.error('Failed to insert code cell above.', reason);
+          });
+        }}
+      >
+        Code (with source)
+      </Button>
+      <Button
+        leadingVisual={ChevronUpIcon}
+        variant="invisible"
+        size="small"
+        onClick={(e: any) => {
+          e.preventDefault();
+          commands
+            .execute(NotebookCommandIds.insertAbove, { cellType: 'markdown' })
+            .catch(reason => {
+              console.error('Failed to insert markdown cell above.', reason);
+            });
+        }}
+      >
+        Markdown
+      </Button>
+      {model.type === 'code' ? (
+        <Button
+          leadingVisual={SquareIcon}
+          variant="invisible"
+          size="small"
+          onClick={(e: any) => {
             e.preventDefault();
-            notebookStore.run(notebookId);
-          }}>
-            Run
-          </Button>
-        </span>
-        <span style={{ display: "flex" }}>
-          <Button leadingVisual={ChevronUpIcon} variant="invisible" size="small" onClick={(e: any) => {
+            commands
+              .execute(NotebookCommandIds.changeCellTypeToMarkdown)
+              .catch(reason => {
+                console.error(
+                  'Failed to change cell type to markdown.',
+                  reason
+                );
+              });
+          }}
+        >
+          To Markdown
+        </Button>
+      ) : (
+        <Button
+          leadingVisual={SquareIcon}
+          variant="invisible"
+          size="small"
+          onClick={(e: any) => {
             e.preventDefault();
-            notebookStore.insertAbove({ id: notebookId, cellType: "code" });
-          }}>
-            Code
-          </Button>
-        </span>
-        <span style={{ display: "flex" }}>
-          <Button leadingVisual={ChevronUpIcon} variant="invisible" size="small" onClick={(e: any) => {
-            e.preventDefault();
-            notebookStore.insertAbove({ id: notebookId, cellType: "markdown" });
-          }}>
-            Markdown
-          </Button>
-        </span>
-        <span style={{ display: "flex" }}>
-        { activeCell.model.type === "code" ?
-            <Button leadingVisual={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
-              e.preventDefault();
-              notebookStore.changeCellType({ id: notebookId, cellType: "markdown" });
-            }}>
-              To Mardown
-            </Button>
-          :
-            <Button leadingVisual={SquareIcon} variant="invisible" size="small" onClick={(e: any) => {
-              e.preventDefault();
-              notebookStore.changeCellType({ id: notebookId, cellType: "code" });
-            }}>
-              To Code
-            </Button>
-        }
-        </span>
-        <span style={{ display: "flex" }}>
-          <Button leadingVisual={ChevronDownIcon} variant="invisible" size="small" onClick={(e: any) => {
-            e.preventDefault();
-            notebookStore.insertBelow({ id: notebookId, cellType: "markdown" });
-          }}>
-            Markdown
-          </Button>
-        </span>
-        <span style={{ display: "flex" }}>
-          <Button leadingVisual={ChevronDownIcon} variant="invisible" size="small" onClick={(e: any) => {
-            e.preventDefault();
-            notebookStore.insertBelow({ id: notebookId, cellType: "code" });
-          }}>
-            Code
-          </Button>
-        </span>
-        <span style={{ display: "flex" }}>
-          <Button leadingVisual={XIcon} variant="invisible" size="small" onClick={(e: any) => {
-            e.preventDefault();
-            notebookStore.delete(notebookId);
-          }}>
-            Delete
-          </Button>
-        </span>
-        {nbgrader &&
-          <ActionMenu>
-            <CellMetadataEditor notebookId={notebookId} cell={activeCell} nbgrader={nbgrader}/>
-          </ActionMenu>
-        }
-      </Box>
-    :
-      <></>
-  )
-}
+            commands
+              .execute(NotebookCommandIds.changeCellTypeToCode)
+              .catch(reason => {
+                console.error('Failed to change cell type to code.', reason);
+              });
+          }}
+        >
+          To Code
+        </Button>
+      )}
+      <Button
+        leadingVisual={ChevronDownIcon}
+        variant="invisible"
+        size="small"
+        onClick={(e: any) => {
+          e.preventDefault();
+          commands
+            .execute(NotebookCommandIds.insertBelow, { cellType: 'markdown' })
+            .catch(reason => {
+              console.error('Failed to insert markdown cell below.', reason);
+            });
+        }}
+      >
+        Markdown
+      </Button>
+      <Button
+        leadingVisual={ChevronDownIcon}
+        variant="invisible"
+        size="small"
+        onClick={(e: any) => {
+          e.preventDefault();
+          commands.execute(NotebookCommandIds.insertBelow).catch(reason => {
+            console.error('Failed to insert code cell below.', reason);
+          });
+        }}
+      >
+        Code (with source)
+      </Button>
+      <Button
+        leadingVisual={XIcon}
+        variant="invisible"
+        size="small"
+        onClick={(e: any) => {
+          e.preventDefault();
+          commands.execute(NotebookCommandIds.deleteCells).catch(reason => {
+            console.error('Failed to delete cells.', reason);
+          });
+        }}
+      >
+        Delete
+      </Button>
+      {nbgrader && (
+        <ActionMenu>
+          {/*
+            <ActionMenu.Anchor>
+              <IconButton icon={KebabHorizontalIcon} variant="invisible" aria-label="Open column options" />
+            </ActionMenu.Anchor>
+            <ActionMenu.Overlay>
+            */}
+          <CellMetadataEditor cellModel={model} />
+          {/*
+            </ActionMenu.Overlay>
+            */}
+        </ActionMenu>
+      )}
+    </Box>
+  );
+};
 
-export default CellSidebar;
+export default CellSidebarSource;

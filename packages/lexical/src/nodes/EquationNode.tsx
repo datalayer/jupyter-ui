@@ -4,13 +4,6 @@
  * MIT License
  */
 
-/**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
 import type {
   EditorConfig,
   LexicalNode,
@@ -30,8 +23,8 @@ import {
   SELECTION_CHANGE_COMMAND,
 } from 'lexical';
 import {useCallback, useEffect, useRef, useState} from 'react';
-import EquationEditor from '../ui/EquationEditor';
-import KatexRenderer from '../ui/KatexRenderer';
+import EquationEditor from '../components/EquationEditor';
+import KatexRenderer from '../components/KatexRenderer';
 
 type EquationComponentProps = {
   equation: string;

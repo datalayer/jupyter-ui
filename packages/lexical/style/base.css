@@ -4,6 +4,8 @@
  * MIT License
  */
 
+@import url('lexical/index.css');
+ 
 html {
   box-sizing: content-box !important;
 }

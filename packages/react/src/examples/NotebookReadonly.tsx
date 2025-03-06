@@ -18,6 +18,7 @@ const NotebookReadonly = () => {
     <JupyterReactTheme>
       <Notebook
         readonly
+        serverless
         nbformat={nbformat}
         extensions={extensions}
         id="notebook-model-id"

@@ -9,10 +9,11 @@ import { createRoot } from 'react-dom/client';
 import { 
   Box, Button, Heading, Text, Link, PageLayout, PageHeader, RadioGroup, Radio, FormControl, RelativeTime,
   TextInput, TextInputWithTokens, Timeline, Octicon, ToggleSwitch, SegmentedControl, Label, LabelGroup,
+  NavList, IconButton, CircleBadge, CircleOcticon, Tooltip,
 //  theme,
 } from '@primer/react';
-import { DataTable, Table, SkeletonBox } from '@primer/react/experimental';
-import { GitCommitIcon } from '@primer/octicons-react';
+import { DataTable, Table, SkeletonBox, Banner } from '@primer/react/experimental';
+import { GitCommitIcon, HeartIcon, RocketIcon, CheckIcon } from '@primer/octicons-react';
 import { Jupyter } from '../jupyter/Jupyter';
 import { Colormode } from '../theme/JupyterLabColormode';
 import { jupyterLabTheme as theme } from '../theme/themes';
@@ -165,10 +166,11 @@ const JupyterLabTheme = () => {
                 fontSize: 1,
                 color: 'fg.muted'
               }}>
-                Useful examples...
+                Relevant examples to create a data driven user interface with Datalayer.
               </Text>
             </PageHeader.Description>
             <PageHeader.Actions>
+              {/* Column 1 */}
               <Text
                 fontSize={2}
                 fontWeight="bold"
@@ -190,6 +192,14 @@ const JupyterLabTheme = () => {
           </PageHeader>
         </PageLayout.Header>
         <PageLayout.Content>
+          <Box>
+            <Box>
+              <Banner
+                title="Info"
+                description="Datalayer users are now required to enable two-factor authentication as an additional security measure."
+              />
+            </Box>
+          </Box>
           <Box display="flex">
             <Box sx={{ width: "100%" }}>
               <Heading>Heading</Heading>
@@ -205,11 +215,40 @@ const JupyterLabTheme = () => {
               </Box>
               <Box>
                 <Button variant="default">Default</Button>
+                <Button variant="default" leadingVisual={RocketIcon}>Icon</Button>
                 <Button variant="primary">Primary</Button>
+                <Button variant="primary" leadingVisual={RocketIcon}>Icon</Button>
                 <Button variant="invisible">Invisible</Button>
+                <Button variant="invisible" leadingVisual={RocketIcon}>Icon</Button>
                 <Button variant="danger">Danger</Button>
+                <Button variant="danger" leadingVisual={RocketIcon}>Icon</Button>
+              </Box>
+              <Box>
+                <NavList>
+                  <NavList.Item href="#" aria-current="page">
+                    Item 1
+                  </NavList.Item>
+                  <NavList.Item href="#">Item 2</NavList.Item>
+                  <NavList.Item href="#">Item 3</NavList.Item>
+                </NavList>
+              </Box>
+              <Box>
+                <IconButton icon={HeartIcon} aria-label="Favorite" />
+              </Box>
+              <Box>
+                <CircleOcticon
+                  icon={CheckIcon}
+                  sx={{backgroundColor: 'success.emphasis', color: 'fg.onEmphasis'}}
+                  aria-label="Changes approved"
+                />
+              </Box>
+              <Box>
+                <CircleBadge>
+                  <CircleBadge.Icon icon={RocketIcon} aria-label="Launch badge" />
+                </CircleBadge>
               </Box>
             </Box>
+            {/* Column 2 */}
             <Box sx={{ width: "100%" }}>
               <Box as="form">
                 <RadioGroup name="defaultRadioGroup">
@@ -272,6 +311,63 @@ const JupyterLabTheme = () => {
                     <Timeline.Body>This is a message</Timeline.Body>
                   </Timeline.Item>
                 </Timeline>
+              </Box>
+              <Box>
+                <Tooltip text="This is a tooltip">
+                  <Button variant="default">Hover me</Button>
+                </Tooltip>
+              </Box>
+              <Box>
+                <p>Trunacte after 5 labels</p>
+                <LabelGroup visibleChildCount={5}>
+                  <Label>One</Label>
+                  <Label>Two</Label>
+                  <Label>Three</Label>
+                  <Label>Four</Label>
+                  <Label>Five</Label>
+                  <Label>Six</Label>
+                  <Label>Seven</Label>
+                  <Label>Eight</Label>
+                  <Label>Nine</Label>
+                  <Label>Ten</Label>
+                  <Label>Eleven</Label>
+                  <Label>Twelve</Label>
+                  <Label>Thirteen</Label>
+                  <Label>Fourteen</Label>
+                  <Label>Fifteen</Label>
+                  <Label>Sixteen</Label>
+                </LabelGroup>
+                <p>Truncate labels based on container size</p>
+                {/* The `Box` wrapper is just to demonstrate the behavior of `visibleChildCount="auto"` */}
+                <Box
+                  sx={{
+                    outline: '1px solid',
+                    outlineColor: 'border.default',
+                    overflow: 'auto',
+                    padding: '0.25rem',
+                    resize: 'horizontal',
+                    width: '600px',
+                  }}
+                >
+                  <LabelGroup visibleChildCount="auto">
+                    <Label variant="default">One</Label>
+                    <Label variant="accent">Two</Label>
+                    <Label variant="attention">Three</Label>
+                    <Label variant="danger">Four</Label>
+                    <Label variant="done">Five</Label>
+                    <Label variant="primary">Six</Label>
+                    <Label variant="secondary">Seven</Label>
+                    <Label variant="severe">Eight</Label>
+                    <Label variant="sponsors">Nine</Label>
+                    <Label variant="success">Ten</Label>
+                    <Label>Eleven</Label>
+                    <Label>Twelve</Label>
+                    <Label>Thirteen</Label>
+                    <Label>Fourteen</Label>
+                    <Label>Fifteen</Label>
+                    <Label>Sixteen</Label>
+                  </LabelGroup>
+                </Box>
               </Box>
             </Box>
           </Box>
@@ -339,16 +435,18 @@ const JupyterLabTheme = () => {
             </Table.Container>
           </Box>
           <Box>
-            <Text as="h3"><Link href="https://datalayer.io" target="_blank">User Guide</Link></Text>
-          </Box>
-          <Box>
-            <Text as="h3"><Link href="https://datalayer.io" target="_blank">Pricing</Link></Text>
-          </Box>
-          <Box>
-            <Text as="h3"><Link href="https://datalayer.io" target="_blank">Privacy</Link></Text>
-          </Box>
-          <Box>
-            <Text as="h3"><Link href="https://datalayer.io" target="_blank">Terms and conditions</Link></Text>
+            <Box>
+              <Text as="h3"><Link href="https://datalayer.io" target="_blank">User Guide</Link></Text>
+            </Box>
+            <Box>
+              <Text as="h3"><Link href="https://datalayer.io" target="_blank">Pricing</Link></Text>
+            </Box>
+            <Box>
+              <Text as="h3"><Link href="https://datalayer.io" target="_blank">Privacy</Link></Text>
+            </Box>
+            <Box>
+              <Text as="h3"><Link href="https://datalayer.io" target="_blank">Terms and conditions</Link></Text>
+            </Box>
           </Box>
         </PageLayout.Content>
       </PageLayout>

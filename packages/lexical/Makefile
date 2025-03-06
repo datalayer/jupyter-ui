@@ -58,4 +58,4 @@ typedoc-publish: typedoc ## deploy typedoc
 		--distribution-id E1CPG9FNSQJESH \
 		--paths "/*" \
 		--profile datalayer
-	echo open ✨  https://typedoc.datalayer.tech/datalayer/jupyter-lexical/0.0.1
+	echo open ✨  https://typedoc.datalayer.tech/datalayer/jupyter-lexical/0.1.1
