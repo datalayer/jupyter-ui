@@ -16,6 +16,7 @@ import CellSidebarSource from './extensions/cellsidebars/CellSidebarSource';
 const NotebookCellSidebar = () => (
   <JupyterReactTheme>
     <Notebook
+      startDefaultKernel
       nbformat={nbformat as INotebookContent}
       id="notebook-cell-sidebar-id"
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).

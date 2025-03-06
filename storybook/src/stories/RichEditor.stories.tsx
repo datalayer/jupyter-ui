@@ -26,5 +26,4 @@ const Template = (args, { globals: { labComparison } }) => {
 };
 
 export const Default: Story = Template.bind({}) as Story;
-Default.args = {
-};
+Default.args = {};

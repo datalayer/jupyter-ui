@@ -82,3 +82,11 @@ publish-storybook: build-storybook ## publish to s3
 		--paths "/*" \
 		--profile datalayer && \
 	echo open ✨ https://jupyter-ui-storybook.datalayer.tech )
+
+publish-pypi: # publish the pypi package
+	git clean -fdx && \
+		python -m build
+	@exec echo
+	@exec echo twine upload ./dist/*-py3-none-any.whl
+	@exec echo
+	@exec echo https://pypi.org/project/jupyter-react/#history

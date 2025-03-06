@@ -18,10 +18,10 @@ const NOTEBOOK_UID = 'notebook-uid-example';
  */
 const Example = () => {
   return (
-    <Jupyter collaborative={false} terminals={false}>
+    <Jupyter startDefaultKernel collaborative={false} terminals={false}>
       <Layers />
       <NotebookSimpleToolbar notebookId={NOTEBOOK_UID} />
-      <Notebook id={NOTEBOOK_UID} path="ping.ipynb" />
+      <Notebook id={NOTEBOOK_UID} path=".datalayer/ping.ipynb" />
     </Jupyter>
   );
 };
