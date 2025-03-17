@@ -15,7 +15,7 @@ export * from "./FloatingTextFormatToolbarPlugin";
 export * from "./HorizontalRulePlugin";
 export * from "./ImagesPlugin";
 export * from "./JupyterCellPlugin";
-export * from "./JupyterPlugin";
+export * from "./JupyterCellOutputPlugin";
 export * from "./ListMaxIndentLevelPlugin";
 export * from "./MardownPlugin";
 export * from "./NbformatContentPlugin";

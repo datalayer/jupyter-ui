@@ -27,7 +27,7 @@ import {addClassNamesToElement} from '@lexical/utils';
 import { UUID } from '@lumino/coreutils';
 import type {JupyterCodeHighlightNode} from './JupyterCodeHighlightNode';
 import { $createJupyterCodeHighlightNode, getFirstJupyterCodeHighlightNodeOfLine } from './JupyterCodeHighlightNode';
-import { CODE_UUID_TO_CODE_KEY } from "../plugins/JupyterPlugin";
+import { CODE_UUID_TO_CODE_KEY } from "../plugins/JupyterCellOutputPlugin";
 
 import * as Prism from 'prismjs';
 import 'prismjs/components/prism-clike';

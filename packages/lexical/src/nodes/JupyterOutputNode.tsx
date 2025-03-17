@@ -7,7 +7,7 @@
 import { LexicalEditor, EditorConfig, DecoratorNode, LexicalNode, NodeKey, Spread, SerializedLexicalNode } from "lexical";
 import { UUID } from '@lumino/coreutils';
 import { IOutput } from '@jupyterlab/nbformat';
-import { OUTPUT_UUID_TO_CODE_UUID, CODE_UUID_TO_OUTPUT_KEY, CODE_UUID_TO_OUTPUT_UUID, OUTPUT_UUID_TO_OUTPUT_KEY } from "../plugins/JupyterPlugin";
+import { OUTPUT_UUID_TO_CODE_UUID, CODE_UUID_TO_OUTPUT_KEY, CODE_UUID_TO_OUTPUT_UUID, OUTPUT_UUID_TO_OUTPUT_KEY } from "../plugins/JupyterCellOutputPlugin";
 import { OutputAdapter, newUuid } from "@datalayer/jupyter-react";
 import JupyterOutputComponent from "../components/JupyterOutputComponent";
 

@@ -4,14 +4,24 @@
  * MIT License
  */
 
+import { IOutput } from '@jupyterlab/nbformat';
 import { Cell } from '@datalayer/jupyter-react';
 
-export const JupyterCellComponent = (props: any) => {
+type IJupyterCellComponentProps = {
+  code: string;
+  outputs: IOutput[];
+  loading: string;
+  autoStart: boolean;
+}
+
+export const JupyterCellComponent = (props: IJupyterCellComponentProps) => {
+  const { autoStart, code, outputs } = props;
   return (
     <Cell
 //      startDefaultKernel
-      source="print('Hello Jupyter React')"
-      autoStart
+      source={code}      
+      autoStart={autoStart}
+      outputs={outputs}
     />
   )
 }

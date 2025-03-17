@@ -5,17 +5,28 @@
  */
 
 import { NodeKey } from "lexical";
+import { IOutput } from '@jupyterlab/nbformat';
 import { JupyterCellComponent } from "./../components/JupyterCellComponent";
 
-type Props = {
+type IJupyterCellNodeComponentProps = {
   nodeKey: NodeKey;
+  code: string;
+  outputs: IOutput[];
+  loading: string;
+  autoStart: boolean;
   data: any;
 }
 
-export const JupyterCellNodeComponent = ({ nodeKey, data }: Props) => {
+export const JupyterCellNodeComponent = (props: IJupyterCellNodeComponentProps) => {
+  const { code, outputs, loading, autoStart } = props;
   return (
     <>
-      <JupyterCellComponent/>
+      <JupyterCellComponent
+        code={code}
+        outputs={outputs}
+        loading={loading}
+        autoStart={autoStart}
+      />
     </>
   );
 }

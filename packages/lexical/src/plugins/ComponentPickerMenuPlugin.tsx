@@ -167,7 +167,12 @@ export const ComponentPickerMenuPlugin = (): JSX.Element => {
         onSelect: () => {
 //          const selection = $getSelection();
 //          const code = selection?.getTextContent() || "";
-          editor.dispatchCommand(INSERT_JUPYTER_CELL_COMMAND, undefined);
+          editor.dispatchCommand(INSERT_JUPYTER_CELL_COMMAND, {
+            code: "print('Hello Jupyter UI')",
+            outputs: [],
+            loading: "Loading...",
+            autoStart: false,
+          });
         }
       }),
       /*

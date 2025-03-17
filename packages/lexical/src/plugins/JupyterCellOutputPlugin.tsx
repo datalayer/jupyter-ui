@@ -38,15 +38,15 @@ export const DEFAULT_INITIAL_OUTPUTS: IOutput[] = [
   }
 ];
 
-export type JupyterOutputProps = {
+export type JupyterCellOutputProps = {
   code: string;
   outputs?: IOutput[];
   loading?: string;
 }
 
-export const INSERT_JUPYTER_COMMAND = createCommand<JupyterOutputProps>();
+export const INSERT_JUPYTER_CELL_OUTPUT_COMMAND = createCommand<JupyterCellOutputProps>();
 
-export const JupyterPlugin = () => {
+export const JupyterCellOutputPlugin = () => {
   const [editor] = useLexicalComposerContext();
   useEffect(() => {
     return registerCodeHighlighting(editor);
@@ -54,7 +54,7 @@ export const JupyterPlugin = () => {
   useEffect(() => {
     if (!editor.hasNodes([JupyterOutputNode])) {
       throw new Error(
-        "JupyterPlugin: JupyterOutputNode not registered on editor"
+        "JupyterCellOutputPlugin: JupyterOutputNode not registered on editor"
       );
     }
   }, [editor]);
@@ -129,7 +129,7 @@ export const JupyterPlugin = () => {
     )
   }, [editor]);
   useEffect(() => {
-    return editor.registerCommand(INSERT_JUPYTER_COMMAND, (props: JupyterOutputProps) => {
+    return editor.registerCommand(INSERT_JUPYTER_CELL_OUTPUT_COMMAND, (props: JupyterCellOutputProps) => {
       const { code, outputs, loading } = props;
       const selection = $getSelection();
       if ($isRangeSelection(selection)) {
@@ -187,4 +187,4 @@ export const JupyterPlugin = () => {
   return null;
 }
 
-export default JupyterPlugin;
+export default JupyterCellOutputPlugin;

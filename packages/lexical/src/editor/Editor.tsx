@@ -28,7 +28,7 @@ import { AutoLinkNode, LinkNode } from "@lexical/link";
 import { CodeNode } from '@lexical/code';
 import { INotebookContent } from "@jupyterlab/nbformat";
 import {
-  JupyterPlugin, EquationNode, HorizontalRulePlugin,
+  JupyterCellOutputPlugin, EquationNode, HorizontalRulePlugin,
   ListMaxIndentLevelPlugin, AutoLinkPlugin, ComponentPickerMenuPlugin,
   EquationsPlugin, ImagesPlugin, YouTubePlugin, ImageNode, YouTubeNode,
   JupyterCodeHighlightNode, JupyterCodeNode, JupyterOutputNode, JupyterCellNode,
@@ -132,7 +132,7 @@ export function Editor(props: Props) {
             <ListMaxIndentLevelPlugin maxDepth={7} />
             <MarkdownPlugin />
             <JupyterCellPlugin />
-            <JupyterPlugin />
+            <JupyterCellOutputPlugin />
             <ComponentPickerMenuPlugin/>
             <EquationsPlugin/>
             <ImagesPlugin/>
