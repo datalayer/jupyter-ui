@@ -171,7 +171,7 @@ export const ComponentPickerMenuPlugin = (): JSX.Element => {
             code: "print('Hello Jupyter UI')",
             outputs: [],
             loading: "Loading...",
-            autoStart: false,
+            autoStart: true,
           });
         }
       }),
