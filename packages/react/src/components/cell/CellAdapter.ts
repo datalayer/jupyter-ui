@@ -224,7 +224,6 @@ export class CellAdapter {
       languages,
     });
     //
-    console.log('-------', this._outputs)
     const cellModel = createStandaloneCell({
       cell_type: type,
       source: source,
