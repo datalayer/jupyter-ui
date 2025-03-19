@@ -1,5 +1,6 @@
 import {
   BaseNotebook,
+  JupyterReactTheme,
   Loader,
   useNotebookModel,
 } from '@datalayer/jupyter-react';
@@ -56,8 +57,7 @@ function App(): JSX.Element {
             setNbformat({} as any);
             return;
           } else {
-            const rawContent = new TextDecoder().decode(body.value);
-            setNbformat(JSON.parse(rawContent));
+            setNbformat(loadFromBytes(body.value));
             return;
           }
         }
@@ -115,7 +115,6 @@ function App(): JSX.Element {
           '& .jp-Notebook': {
             flex: '1 1 auto !important',
             height: '100%',
-            overflowY: 'scroll',
           },
           '& .jp-NotebookPanel': {
             height: '100% !important',
@@ -163,5 +162,25 @@ function App(): JSX.Element {
 // Main function that gets executed once the webview DOM loads
 export function main() {
   const root = createRoot(document.getElementById('notebook-editor')!);
-  root.render(<App />);
+  root.render(
+    <JupyterReactTheme>
+      <App />
+    </JupyterReactTheme>
+  );
+}
+
+function loadFromBytes(raw: Uint8Array): any {
+  const rawContent = new TextDecoder().decode(raw);
+  const parsed = JSON.parse(rawContent);
+  // Inline html output to fix an issue seen in JupyterLab 4 (prior to 4.2)
+  for (const cell of parsed.cells) {
+    if (cell.outputs) {
+      for (const output of cell.outputs) {
+        if (Array.isArray(output.data?.['text/html'])) {
+          output.data['text/html'] = output.data['text/html'].join('');
+        }
+      }
+    }
+  }
+  return parsed;
 }

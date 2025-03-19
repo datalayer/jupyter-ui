@@ -62,6 +62,7 @@ import { Signal } from '@lumino/signaling';
 import { Widget } from '@lumino/widgets';
 import { Box } from '@primer/react';
 import { Banner } from '@primer/react/experimental';
+import { EditorView } from 'codemirror';
 import { useEffect, useMemo, useState } from 'react';
 import { WebsocketProvider } from 'y-websocket';
 import {
@@ -919,6 +920,18 @@ class CommonFeatures {
         );
       },
     });
+    // Fix to deal with Content Security Policy
+    const nonce = getNonce();
+    if (nonce) {
+      editorExtensions.addExtension({
+        name: 'csp-nonce',
+        factory() {
+          return EditorExtensionRegistry.createImmutableExtension(
+            EditorView.cspNonce.of(nonce)
+          );
+        },
+      });
+    }
 
     const factoryService = new CodeMirrorEditorFactory({
       extensions: editorExtensions,
@@ -1154,6 +1167,20 @@ class NoServiceManager {
     ready: new Promise(() => {}),
   });
 
-  // Ever hanging promise.
-  readonly ready = new Promise(() => {});
+  // Always ready otherwise the spinner in the MainAreaWidget won't be discarded.
+  readonly ready = Promise.resolve();
+}
+
+/**
+ * Returns the nonce used in the page, if any.
+ *
+ * Based on https://github.com/cssinjs/jss/blob/master/packages/jss/src/DomRenderer.js
+ */
+function getNonce() {
+  const node = document.querySelector('meta[property="csp-nonce"]');
+  if (node) {
+    return node.getAttribute('content');
+  } else {
+    return null;
+  }
 }

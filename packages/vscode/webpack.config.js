@@ -4,6 +4,7 @@
 
 const path = require('path');
 const webpack = require('webpack');
+const miniSVGDataURI = require('mini-svg-data-uri');
 
 //@ts-check
 /** @typedef {import('webpack').Configuration} WebpackConfig **/
@@ -78,20 +79,33 @@ const webviewConfig = {
           },
         },
       },
+      { test: /\.raw\.css$/, type: 'asset/source' },
       {
-        test: /\.css/,
-        use: ['style-loader', 'css-loader'],
-      },
-      {
-        test: /\.svg/,
-        use: ['svg-inline-loader'],
+        test: /(?<!\.raw)\.css$/,
+        use: [require.resolve('style-loader'), require.resolve('css-loader')],
       },
       {
         test: /\.(jpe?g|png|gif|ico|eot|ttf|map|woff2?)(\?v=\d+\.\d+\.\d+)?$/i,
         type: 'asset/resource',
       },
       {
-        test: /\.m?js/,
+        // In .css files, svg is loaded as a data URI.
+        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+        issuer: /\.css$/,
+        type: 'asset',
+        generator: {
+          dataUrl: content => miniSVGDataURI(content.toString()),
+        },
+      },
+      {
+        // In .ts and .tsx files (both of which compile to .js), svg files
+        // must be loaded as a raw string instead of data URIs.
+        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+        issuer: /\.js$/,
+        type: 'asset/source',
+      },
+      {
+        test: /\.(c|m)?js/,
         resolve: {
           fullySpecified: false,
         },

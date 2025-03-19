@@ -394,6 +394,11 @@ export class NotebookEditorProvider
     // Use a nonce to whitelist which scripts can be run
     const nonce = getNonce();
 
+    /* 
+      FIXME we use very ligth Content Security Policy;
+      - any inline style are allowed
+      - any data: image are allowed
+     */
     return /* html */ `
 			<!DOCTYPE html>
 			<html lang="en">
@@ -404,19 +409,20 @@ export class NotebookEditorProvider
 				Use a content security policy to only allow loading images from https or from our extension directory,
 				and only allow scripts that have a specific nonce.
 				-->
-				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} blob:; style-src ${webview.cspSource} 'nonce-${nonce}'; script-src 'nonce-${nonce}';">
-
+				<!-- meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} blob: data:; style-src ${webview.cspSource} 'nonce-${nonce}'; script-src 'nonce-${nonce}';" -->
+				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} blob: data:; style-src 'unsafe-inline'; script-src 'nonce-${nonce}';">
+        <meta property="csp-nonce" content="${nonce}" />
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 				<title>Datalayer Notebook</title>
+        <!-- 
+          Workaround for injected typestyle 
+          Xref: https://github.com/typestyle/typestyle/pull/267#issuecomment-390408796
+        -->
+        <style id="typestyle-stylesheet" nonce="${nonce}"></style>
 			</head>
 			<body>
 				<div id="notebook-editor"></div>
-
-        <script type="text/javascript" nonce="${nonce}">
-          // Trick to set nonce on styled-components styles
-          window.nonce = "${nonce}";
-        </script>
 				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
 			</html>`;
