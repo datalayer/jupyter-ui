@@ -6,25 +6,37 @@
 
 import { ReactNode } from "react";
 import { DecoratorNode, EditorConfig, LexicalEditor, LexicalNode, NodeKey, SerializedLexicalNode } from "lexical";
+import { IOutput } from "@jupyterlab/nbformat";
+import { JupyterCellProps } from "./../plugins/JupyterCellPlugin";
 import JupyterCellNodeComponent from "./JupyterCellNodeComponent";
 
+const TYPE = "jupyter-cell";
+
 export class JupyterCellNode extends DecoratorNode<ReactNode> {
+  private __code: string;
+  private __outputs: IOutput[];
+  private __loading: string;
+  private __autoStart: boolean;
   private __data: any;
 
   /** @override */
   static getType() {
-    return "custom";
+    return TYPE;
   }
 
   /** @override */
   static clone(node: JupyterCellNode) {
-    console.log(`clone: node.__data: ${node.__data} node.__key: ${node.__key} node: ${JSON.stringify(node, null, 2)}`);
-    return new JupyterCellNode(node.__data, node.__key);
+    console.debug(`clone: node: ${JSON.stringify(node, null, 2)}`);
+    return new JupyterCellNode(node.__code, node.__outputs, node.__loading, node.__autoStart, node.__data, node.__key);
   }
 
   /** @override */
-  constructor(data = "[]", key?: NodeKey) {
+  constructor(code: string, outputs: IOutput[], loading: string, autoStart: boolean, data = "[]", key?: NodeKey) {
     super(key);
+    this.__code = code;
+    this.__outputs = outputs;
+    this.__loading = loading;
+    this.__autoStart = autoStart;
     this.__data = data;
   }
 
@@ -47,8 +59,47 @@ export class JupyterCellNode extends DecoratorNode<ReactNode> {
 
   /** @override */
   decorate(editor: LexicalEditor) {
-    console.log(`decorate -> this.getKey(): ${this.getKey()} this.__data: ${this.__data}`);
-    return <JupyterCellNodeComponent nodeKey={this.getKey()} data={this.__data} />;
+    console.log(`decorate -> key: ${this.getKey()} outputs: ${this.__outputs} data: ${this.__data}`);
+    return <JupyterCellNodeComponent
+      nodeKey={this.getKey()}
+      code={this.__code}
+      outputs={this.__outputs}
+      loading={this.__loading}
+      autoStart={this.__autoStart}
+      data={this.__data}
+    />
+  }
+
+  setCode(code: string) {
+    const self = this.getWritable();
+    self.__code = code;
+  }
+  get code() {
+    return this.__code;
+  }
+
+  setOutputs(outputs: IOutput[]) {
+    const self = this.getWritable();
+    self.__outputs = outputs;
+  }
+  get outputs() {
+    return this.__outputs;
+  }
+
+  setLoading(loading: string) {
+    const self = this.getWritable();
+    self.__loading = loading;
+  }
+  get loading() {
+    return this.__loading;
+  }
+
+  setAutostart(autoStart: boolean) {
+    const self = this.getWritable();
+    self.__autoStart = autoStart;
+  }
+  get autoStart() {
+    return this.__autoStart;
   }
 
   /** @override */
@@ -56,29 +107,34 @@ export class JupyterCellNode extends DecoratorNode<ReactNode> {
     const self = this.getWritable();
     self.__data = data;
   }
-
   get data() {
     return this.__data;
   }
 
   /** @override */
   static importJSON(serializedNode: SerializedLexicalNode) {
-    return new JupyterCellNode((serializedNode as unknown as JupyterCellNode).data);
+    const n = serializedNode as unknown as JupyterCellNode;
+    return new JupyterCellNode(n.code, n.outputs, n.loading, n.autoStart, n.data);
   }
 
   /** @override */
   exportJSON() {
     return {
+      code: this.__code,
+      outputs: this.__outputs,
+      loading: this.__loading,
+      autoStart: this.__autoStart,
       data: this.__data,
-      type: 'custom',
+      type: TYPE,
       version: 1,
     };
   }
 
 }
 
-export function $createJupyterCellNode() {
-  return new JupyterCellNode();
+export function $createJupyterCellNode(props: JupyterCellProps) {
+  const { code, outputs, loading, autoStart } = props;
+  return new JupyterCellNode(code, outputs, loading, autoStart);
 }
 
 export function $isJupyterCellNode(node: LexicalNode) {

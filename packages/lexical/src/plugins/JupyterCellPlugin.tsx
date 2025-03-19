@@ -5,24 +5,30 @@
  */
 
 import { useEffect } from "react";
-import {  $insertNodes, COMMAND_PRIORITY_EDITOR, createCommand } from "lexical";
+import { $insertNodes, COMMAND_PRIORITY_EDITOR, createCommand } from "lexical";
+import { IOutput } from '@jupyterlab/nbformat';
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { JupyterCellNode, $createJupyterCellNode } from "../nodes/JupyterCellNode";
 
-export const INSERT_JUPYTER_CELL_COMMAND = createCommand();
+export type JupyterCellProps = {
+  code: string;
+  outputs: IOutput[];
+  loading: string;
+  autoStart: boolean;
+}
+
+export const INSERT_JUPYTER_CELL_COMMAND = createCommand<JupyterCellProps>();
 
 export function JupyterCellPlugin() {
   const [editor] = useLexicalComposerContext();
   useEffect(() => {
     if (!editor.hasNodes([JupyterCellNode])) {
       throw new Error(
-        "CustomNode is not registered."
+        "JupyterCellNode is not registered."
       );
     }
-    return editor.registerCommand(
-      INSERT_JUPYTER_CELL_COMMAND,
-      () => {
-        const jupyterNode = $createJupyterCellNode();
+    return editor.registerCommand(INSERT_JUPYTER_CELL_COMMAND, (props: JupyterCellProps) => {
+        const jupyterNode = $createJupyterCellNode(props);
         $insertNodes([jupyterNode]);
         return true;
       },

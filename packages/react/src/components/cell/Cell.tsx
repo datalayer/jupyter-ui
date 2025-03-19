@@ -6,6 +6,7 @@
 
 import { useState, useEffect } from 'react';
 import { CodeCell, MarkdownCell } from '@jupyterlab/cells';
+import { IOutput } from '@jupyterlab/nbformat';
 import { Box } from '@primer/react';
 import { useJupyter } from './../../jupyter';
 import Kernel from '../../jupyter/kernel/Kernel';
@@ -28,6 +29,10 @@ export type ICellProps = {
    */
   source?: string;
   /**
+   * Initial Outputs
+   */
+  outputs?: IOutput[];
+  /**
    * Whether to start the default kernel or not
    */
   startDefaultKernel?: boolean;
@@ -48,11 +53,12 @@ export type ICellProps = {
 export const Cell = (props: ICellProps) => {
   const {
     autoStart,
+    outputs = [],
     showToolbar,
     source = '',
     startDefaultKernel,
     type,
-    kernel: customKernel,
+    kernel: kernelProps,
   } = props;
   const { defaultKernel, serverSettings } = useJupyter({
     startDefaultKernel,
@@ -87,13 +93,14 @@ export const Cell = (props: ICellProps) => {
     });
   }
   useEffect(() => {
-    const kernelToUse = customKernel || defaultKernel;
+    const kernelToUse = kernelProps || defaultKernel;
     if (id && serverSettings && kernelToUse) {
       kernelToUse.ready.then(() => {
         const adapter = new CellAdapter({
           id,
           type,
           source,
+          outputs,
           serverSettings,
           kernel: kernelToUse,
           boxOptions: {showToolbar}
@@ -122,7 +129,7 @@ export const Cell = (props: ICellProps) => {
         };
       });
     }
-  }, [source, defaultKernel, customKernel, serverSettings]);
+  }, [source, defaultKernel, kernelProps, serverSettings]);
   return adapter ? (
     <Box
       sx={{
@@ -170,6 +177,8 @@ export const Cell = (props: ICellProps) => {
 
 Cell.defaultProps = {
   autoStart: true,
+  source: '',
+  outputs: [],
   showToolbar:true,
   startDefaultKernel: true,
   type: 'code',

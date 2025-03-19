@@ -15,6 +15,7 @@ import {
   ToolbarButton,
 } from '@jupyterlab/apputils';
 import { CodeCellModel, CodeCell, Cell, MarkdownCell, RawCell, MarkdownCellModel } from '@jupyterlab/cells';
+import { IOutput } from '@jupyterlab/nbformat';
 import { Kernel as JupyterKernel, KernelMessage } from '@jupyterlab/services';
 import {
   ybinding,
@@ -59,6 +60,7 @@ interface BoxOptions {
 
 export class CellAdapter {
   private _id: string;
+  private _outputs: IOutput[];
   private _cell: CodeCell | MarkdownCell | RawCell;
   private _kernel: Kernel;
   private _panel: BoxPanel;
@@ -66,8 +68,9 @@ export class CellAdapter {
   private _type: 'code' | 'markdown' | 'raw';
 
   public constructor(options: CellAdapter.ICellAdapterOptions) {
-    const { id, type, source, serverSettings, kernel, boxOptions } = options;
+    const { id, type, source, outputs, serverSettings, kernel, boxOptions } = options;
     this._id = id;
+    this._outputs = outputs;
     this._kernel = kernel;
     this._type = type;
     this.setupCell(type, source, serverSettings, kernel, boxOptions);
@@ -224,6 +227,7 @@ export class CellAdapter {
     const cellModel = createStandaloneCell({
       cell_type: type,
       source: source,
+      outputs: this._outputs,
       metadata: {},
     });
     const contentFactory = new Cell.ContentFactory({
@@ -509,6 +513,7 @@ export namespace CellAdapter {
     id: string;
     type: 'code' | 'markdown' | 'raw';
     source: string;
+    outputs: IOutput[];
     serverSettings: ServerConnection.ISettings;
     kernel: Kernel;
     boxOptions?: BoxOptions;

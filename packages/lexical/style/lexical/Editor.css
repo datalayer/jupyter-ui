@@ -497,6 +497,10 @@ i.justify-align {
   background-image: url(images/icons/justify.svg);
 }
 
+i.sparkle {
+  background-image: url(images/icons/sparkle.svg);
+}
+
 i.indent {
   background-image: url(images/icons/indent.svg);
 }
