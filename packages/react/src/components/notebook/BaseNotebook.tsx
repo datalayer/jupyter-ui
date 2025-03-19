@@ -6,7 +6,7 @@
 
 import { YNotebook, type ISharedNotebook, type IYText } from '@jupyter/ydoc';
 import type { ISessionContext } from '@jupyterlab/apputils';
-import type { Cell, CodeCell, ICellModel } from '@jupyterlab/cells';
+import type { Cell, ICellModel } from '@jupyterlab/cells';
 import { type IEditorServices } from '@jupyterlab/codeeditor';
 import {
   CodeMirrorEditorFactory,
@@ -23,7 +23,7 @@ import {
   KernelCompleterProvider,
   ProviderReconciliator,
 } from '@jupyterlab/completer';
-import { URLExt, type IChangedArgs } from '@jupyterlab/coreutils';
+import { PathExt, URLExt, type IChangedArgs } from '@jupyterlab/coreutils';
 import { Context, type DocumentRegistry } from '@jupyterlab/docregistry';
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
 import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
@@ -68,9 +68,9 @@ import {
   COLLABORATION_ROOM_URL_PATH,
   fetchSessionId,
   requestDocSession,
-  WIDGET_MIMETYPE,
-  WidgetLabRenderer,
-  WidgetManager,
+  // WIDGET_MIMETYPE,
+  // WidgetLabRenderer,
+  // WidgetManager,
 } from '../../jupyter';
 import type { OnSessionConnection } from '../../state';
 import { newUuid, remoteUserCursors } from '../../utils';
@@ -113,7 +113,7 @@ export interface IBaseNotebookProps {
   /**
    * Service manager
    */
-  serviceManager: ServiceManager.IManager;
+  serviceManager?: ServiceManager.IManager;
   /**
    * Notebook content model
    */
@@ -261,7 +261,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
     const factory = new DummyModelFactory(model);
     const thisContext = new Context<NotebookModel>({
       factory,
-      manager: serviceManager,
+      manager: serviceManager ?? (new NoServiceManager() as any),
       path,
       kernelPreference: {
         shouldStart: false,
@@ -276,7 +276,8 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
       id,
       // Initialization must not trigger revert in case we set up the model content
       path !== FALLBACK_NOTEBOOK_PATH ? path : undefined,
-      onSessionConnectionChanged
+      onSessionConnectionChanged,
+      !serviceManager
     );
 
     setContext(thisContext);
@@ -302,7 +303,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
 
   useEffect(() => {
     let thisPanel: NotebookPanel | null = null;
-    let widgetsManager: WidgetManager | null = null;
+    // let widgetsManager: WidgetManager | null = null;
     if (context) {
       thisPanel = widgetFactory?.createNew(context) ?? null;
       if (thisPanel) {
@@ -320,31 +321,31 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
         );
 
         //-- Add ipywidgets renderer
-        const notebookRenderers = thisPanel.content.rendermime;
-        widgetsManager = new WidgetManager(context, notebookRenderers, {
-          saveState: false,
-        });
-        notebookRenderers.addFactory(
-          {
-            safe: true,
-            mimeTypes: [WIDGET_MIMETYPE],
-            defaultRank: 1,
-            createRenderer: options =>
-              new WidgetLabRenderer(options, widgetsManager!),
-          },
-          1
-        );
-        for (const cell of thisPanel.content.widgets) {
-          if (cell.model.type === 'code') {
-            for (const codecell of (cell as CodeCell).outputArea.widgets) {
-              for (const output of Array.from(codecell.children())) {
-                if (output instanceof WidgetLabRenderer) {
-                  output.manager = widgetsManager;
-                }
-              }
-            }
-          }
-        }
+        // const notebookRenderers = thisPanel.content.rendermime;
+        // widgetsManager = new WidgetManager(context, notebookRenderers, {
+        //   saveState: false,
+        // });
+        // notebookRenderers.addFactory(
+        //   {
+        //     safe: true,
+        //     mimeTypes: [WIDGET_MIMETYPE],
+        //     defaultRank: 1,
+        //     createRenderer: options =>
+        //       new WidgetLabRenderer(options, widgetsManager!),
+        //   },
+        //   1
+        // );
+        // for (const cell of thisPanel.content.widgets) {
+        //   if (cell.model.type === 'code') {
+        //     for (const codecell of (cell as CodeCell).outputArea.widgets) {
+        //       for (const output of Array.from(codecell.children())) {
+        //         if (output instanceof WidgetLabRenderer) {
+        //           output.manager = widgetsManager;
+        //         }
+        //       }
+        //     }
+        //   }
+        // }
         //--
 
         setIsLoading(false);
@@ -357,7 +358,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
     }
 
     return () => {
-      widgetsManager?.dispose();
+      // widgetsManager?.dispose();
       if (thisPanel) {
         if (thisPanel.content) Signal.clearData(thisPanel.content);
         try {
@@ -963,7 +964,8 @@ function initializeContext(
   context: Context,
   id: string,
   path?: string,
-  onSessionConnection?: OnSessionConnection
+  onSessionConnection?: OnSessionConnection,
+  serverLess: boolean = false
 ) {
   const shuntContentManager = path ? false : true;
 
@@ -1034,16 +1036,21 @@ function initializeContext(
         name,
         language: (context as any)._model.defaultKernelLanguage,
       };
-      // Note: we don't wait on the session to initialize
-      // so that the user can be shown the content before
-      // any kernel has started.
-      void context.sessionContext.initialize().then((shouldSelect: boolean) => {
-        if (shouldSelect) {
-          void (context as any)._dialogs.selectKernel(
-            (context!.sessionContext as any).sessionContext
-          );
-        }
-      });
+
+      if (!serverLess) {
+        // Note: we don't wait on the session to initialize
+        // so that the user can be shown the content before
+        // any kernel has started.
+        void context.sessionContext
+          .initialize()
+          .then((shouldSelect: boolean) => {
+            if (shouldSelect) {
+              void (context as any)._dialogs.selectKernel(
+                (context!.sessionContext as any).sessionContext
+              );
+            }
+          });
+      }
     };
     (context as any).initialize = async (isNew: boolean): Promise<void> => {
       (context as Context<INotebookModel>).model.dirty = false;
@@ -1106,4 +1113,47 @@ function initializeContext(
 
   // Initialize the context
   context.initialize(path ? false : true);
+}
+
+/**
+ * Service manager facade for missing manager.
+ */
+class NoServiceManager {
+  readonly contents = Object.freeze({
+    fileChanged: { connect: () => {} },
+    getSharedModelFactory(path: string): null {
+      return null;
+    },
+    localPath(path: string): string {
+      const parts = path.split('/');
+      const firstParts = parts[0].split(':');
+      if (
+        firstParts.length === 1 ||
+        !this._additionalDrives.has(firstParts[0])
+      ) {
+        return PathExt.removeSlash(path);
+      }
+      return PathExt.join(firstParts.slice(1).join(':'), ...parts.slice(1));
+    },
+    normalize(path: string): string {
+      const parts = path.split(':');
+      if (parts.length === 1) {
+        return PathExt.normalize(path);
+      }
+      return `${parts[0]}:${PathExt.normalize(parts.slice(1).join(':'))}`;
+    },
+  });
+
+  readonly kernelspecs = Object.freeze({
+    // Ever hanging promise.
+    ready: new Promise(() => {}),
+  });
+
+  readonly sessions = Object.freeze({
+    // Ever hanging promise.
+    ready: new Promise(() => {}),
+  });
+
+  // Ever hanging promise.
+  readonly ready = new Promise(() => {});
 }
