@@ -104,6 +104,10 @@ export interface IBaseNotebookProps {
    */
   extensions?: DatalayerNotebookExtension[];
   /**
+   * Kernel clients already existing.
+   */
+  kernelClients?: Kernel.IKernelConnection[];
+  /**
    * Kernel ID to connect to
    */
   kernelId?: string;
@@ -145,6 +149,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
   const {
     commands,
     extensions = DEFAULT_EXTENSIONS,
+    kernelClients = [],
     kernelId,
     renderers,
     serviceManager,
@@ -325,6 +330,9 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
         widgetsManager = new WidgetManager(context, notebookRenderers, {
           saveState: false,
         });
+        kernelClients.forEach(kernelClient => {
+          widgetsManager?.registerWithKernel(kernelClient);
+        });    
         notebookRenderers.addFactory(
           {
             safe: true,

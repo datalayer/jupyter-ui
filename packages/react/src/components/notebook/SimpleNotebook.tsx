@@ -7,7 +7,7 @@
 import type { INotebookContent } from '@jupyterlab/nbformat';
 import type { NotebookModel } from '@jupyterlab/notebook';
 import type { IRenderMime } from '@jupyterlab/rendermime-interfaces';
-import type { ServiceManager } from '@jupyterlab/services';
+import type { Kernel, ServiceManager } from '@jupyterlab/services';
 import type { CommandRegistry } from '@lumino/commands';
 import { Box } from '@primer/react';
 import React, { useEffect, useState } from 'react';
@@ -47,6 +47,10 @@ export interface ISimpleNotebookProps {
    * Notebook ID.
    */
   id: string;
+  /**
+   * Kernel clients already existing.
+   */
+  kernelClients?: Kernel.IKernelConnection[];
   /**
    * Kernel ID to connect to.
    */
@@ -127,6 +131,7 @@ export function SimpleNotebook(
     height = '100vh',
     maxHeight = '100vh',
     id,
+    kernelClients = [],
     nbformat,
     onNotebookModelChanged,
     onSessionConnection,
@@ -241,6 +246,7 @@ export function SimpleNotebook(
             commands={commands}
             id={id}
             extensions={extensions}
+            kernelClients={kernelClients}
             kernelId={kernelId}
             model={model}
             path={path}
