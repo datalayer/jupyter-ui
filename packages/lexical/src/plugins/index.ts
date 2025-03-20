@@ -17,7 +17,7 @@ export * from "./ImagesPlugin";
 export * from "./JupyterCellPlugin";
 export * from "./JupyterCellOutputPlugin";
 export * from "./ListMaxIndentLevelPlugin";
-export * from "./MardownPlugin";
+export * from "./MarkdownPlugin";
 export * from "./NbformatContentPlugin";
 export * from "./TableOfContentsPlugin";
 export * from "./ToolbarPlugin";
