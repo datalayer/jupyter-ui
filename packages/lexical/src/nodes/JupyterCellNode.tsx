@@ -26,7 +26,6 @@ export class JupyterCellNode extends DecoratorNode<ReactNode> {
 
   /** @override */
   static clone(node: JupyterCellNode) {
-    console.debug(`clone: node: ${JSON.stringify(node, null, 2)}`);
     return new JupyterCellNode(node.__code, node.__outputs, node.__loading, node.__autoStart, node.__data, node.__key);
   }
 
