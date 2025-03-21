@@ -522,25 +522,29 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
  * Note
  * If the hook starts the kernel, it will shut it down when unmounting.
  */
-export function useKernelId(options: {
-  /**
-   * Kernels manager
-   */
-  kernels: Kernel.IManager;
-  /**
-   * Kernel ID to connect to
-   *
-   * If the kernel does not exist and {@link startDefaultKernel} is `true`,
-   * another kernel will be started.
-   */
-  requestedKernelId?: string;
-  /**
-   * Whether or not to start a default kernel.
-   *
-   * Default: false
-   */
-  startDefaultKernel?: boolean;
-}): string | undefined {
+export function useKernelId(
+  options:
+    | {
+        /**
+         * Kernels manager
+         */
+        kernels?: Kernel.IManager;
+        /**
+         * Kernel ID to connect to
+         *
+         * If the kernel does not exist and {@link startDefaultKernel} is `true`,
+         * another kernel will be started.
+         */
+        requestedKernelId?: string;
+        /**
+         * Whether or not to start a default kernel.
+         *
+         * Default: false
+         */
+        startDefaultKernel?: boolean;
+      }
+    | undefined = {}
+): string | undefined {
   const { kernels, requestedKernelId, startDefaultKernel = false } = options;
 
   // Define the kernel to be used.
@@ -550,32 +554,34 @@ export function useKernelId(options: {
   useEffect(() => {
     let isMounted = true;
     let connection: Kernel.IKernelConnection | undefined;
-    (async () => {
-      let newKernelId: string | undefined;
-      await kernels.ready;
-      if (requestedKernelId) {
-        for (const model of kernels.running()) {
-          if (model.id === requestedKernelId) {
-            newKernelId = requestedKernelId;
-            break;
+    if (kernels) {
+      (async () => {
+        let newKernelId: string | undefined;
+        await kernels.ready;
+        if (requestedKernelId) {
+          for (const model of kernels.running()) {
+            if (model.id === requestedKernelId) {
+              newKernelId = requestedKernelId;
+              break;
+            }
           }
         }
-      }
 
-      if (!newKernelId && startDefaultKernel && isMounted) {
-        console.log('Starting new kernel.');
-        connection = await kernels.startNew();
-        if (isMounted) {
-          newKernelId = connection.id;
-        } else {
-          connection.dispose();
+        if (!newKernelId && startDefaultKernel && isMounted) {
+          console.log('Starting new kernel.');
+          connection = await kernels.startNew();
+          if (isMounted) {
+            newKernelId = connection.id;
+          } else {
+            connection.dispose();
+          }
         }
-      }
 
-      if (isMounted) {
-        setKernelId(newKernelId);
-      }
-    })();
+        if (isMounted) {
+          setKernelId(newKernelId);
+        }
+      })();
+    }
 
     return () => {
       isMounted = false;

@@ -2,18 +2,13 @@ import {
   BaseNotebook,
   JupyterReactTheme,
   Loader,
+  useKernelId,
   useNotebookModel,
 } from '@datalayer/jupyter-react';
 import { ServiceManager } from '@jupyterlab/services';
-import { Box } from '@primer/react';
+import { Box, Button } from '@primer/react';
 import { WebSocket } from 'mock-socket';
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { MessageHandlerContext, type ExtensionMessage } from './messageHandler';
 import { fetch } from './serviceManager';
@@ -27,13 +22,14 @@ function App(): JSX.Element {
   const [isLoading, setIsLoading] = useState(true);
   const [nbformat, setNbformat] = useState(undefined);
   const [readonly, setReadonly] = useState(true);
+  const [serviceManager, setServiceManager] = useState<
+    ServiceManager | undefined
+  >();
 
-  // const kernelId = useKernelId({
-  //   requestedKernelId: props.kernelId,
-  //   kernels: serviceManager.kernels,
-  //   startDefaultKernel,
-  // });
-  const kernelId = undefined;
+  const kernelId = useKernelId({
+    kernels: serviceManager?.kernels,
+    startDefaultKernel: true,
+  });
 
   const model = useNotebookModel({
     nbformat,
@@ -95,6 +91,30 @@ function App(): JSX.Element {
     };
   }, [messageHandler, handler]);
 
+  const selectRuntime = useCallback(async () => {
+    const reply = await messageHandler.postRequest({ type: 'select-runtime' });
+    const { baseUrl, token } = reply.body ?? {};
+    setServiceManager(
+      new ServiceManager({
+        serverSettings: {
+          appendToken: true,
+          baseUrl,
+          appUrl: '',
+          fetch: fetch,
+          Headers: Headers,
+          init: {
+            cache: 'no-store',
+            // credentials: 'same-origin',
+          } as any,
+          Request: Request,
+          token,
+          WebSocket: WebSocket,
+          wsUrl: baseUrl.replace(/^http/, 'ws'),
+        },
+      })
+    );
+  }, [messageHandler]);
+
   return isLoading ? (
     <Loader key="notebook-loader" />
   ) : (
@@ -102,6 +122,14 @@ function App(): JSX.Element {
       style={{ height, width: '100%', position: 'relative' }}
       id="dla-Jupyter-Notebook"
     >
+      <Box sx={{ display: 'flex' }}>
+        <Button
+          title="Select a runtime for the current notebook."
+          onClick={selectRuntime}
+        >
+          Select Runtime
+        </Button>
+      </Box>
       <Box
         className="dla-Box-Notebook"
         sx={{

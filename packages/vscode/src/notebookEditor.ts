@@ -1,6 +1,11 @@
 import * as vscode from 'vscode';
 import { Disposable, disposeAll } from './dispose';
 import { getNonce } from './util';
+import { ServiceManager } from '@jupyterlab/services';
+import { setRuntime } from './runtimePicker';
+
+import * as WebSocket from 'ws';
+import type { ExtensionMessage } from './messages';
 
 /**
  * Define the type of edits used in notebook files.
@@ -250,6 +255,15 @@ export class NotebookEditorProvider
    */
   private readonly webviews = new WebviewCollection();
 
+  /**
+   * Tracks all runtime
+   */
+  private readonly runtimes = new Set<ServiceManager>();
+  private readonly runtimeMap = new WeakMap<
+    vscode.WebviewPanel,
+    ServiceManager
+  >();
+
   constructor(private readonly _context: vscode.ExtensionContext) {}
 
   async openCustomDocument(
@@ -322,7 +336,9 @@ export class NotebookEditorProvider
     };
     webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview);
 
-    webviewPanel.webview.onDidReceiveMessage(e => this.onMessage(document, e));
+    webviewPanel.webview.onDidReceiveMessage(e =>
+      this.onMessage(webviewPanel, document, e)
+    );
 
     // Wait for the webview to be properly ready before we init
     webviewPanel.webview.onDidReceiveMessage(e => {
@@ -429,14 +445,14 @@ export class NotebookEditorProvider
   }
 
   private _requestId = 1;
-  private readonly _callbacks = new Map<number, (response: any) => void>();
+  private readonly _callbacks = new Map<string, (response: any) => void>();
 
   private postMessageWithResponse<R = unknown>(
     panel: vscode.WebviewPanel,
     type: string,
     body: any
   ): Promise<R> {
-    const requestId = this._requestId++;
+    const requestId = (this._requestId++).toString();
     const p = new Promise<R>(resolve =>
       this._callbacks.set(requestId, resolve)
     );
@@ -447,23 +463,95 @@ export class NotebookEditorProvider
   private postMessage(
     panel: vscode.WebviewPanel,
     type: string,
-    body: any
+    body: any,
+    requestId?: string
   ): void {
-    panel.webview.postMessage({ type, body });
+    panel.webview.postMessage({ type, body, requestId });
   }
 
-  private onMessage(document: NotebookDocument, message: any) {
+  private onMessage(
+    webview: vscode.WebviewPanel,
+    document: NotebookDocument,
+    message: ExtensionMessage
+  ) {
     switch (message.type) {
-      // case 'stroke':
-      //   // document.makeEdit(message as NotebookEdit);
-      //   return;
+      case 'select-runtime': {
+        setRuntime()
+          .then(baseURL => {
+            if (baseURL) {
+              const parsedURL = new URL(baseURL);
+              const token = parsedURL.searchParams.get('token') ?? '';
+              parsedURL.search = '';
+              const baseUrl = parsedURL.toString();
+              const services = new ServiceManager({
+                serverSettings: {
+                  appendToken: true,
+                  baseUrl,
+                  appUrl: '',
+                  fetch: fetch,
+                  Headers: Headers,
+                  init: {
+                    cache: 'no-store',
+                    // credentials: 'same-origin',
+                  } as any,
+                  Request: Request,
+                  token,
+                  WebSocket: WebSocket,
+                  wsUrl: baseUrl.replace(/^http/, 'ws'),
+                },
+              });
+              this.runtimes.add(services);
+              this.runtimeMap.set(webview, services);
+              webview.onDidDispose(() => {
+                this.runtimeMap.delete(webview);
+              });
 
-      case 'request': {
+              this.postMessage(
+                webview,
+                'set-runtime',
+                {
+                  baseUrl,
+                  token,
+                },
+                message.requestId
+              );
+            }
+          })
+          .catch(reason => {
+            console.error('Failed to get a server URL.');
+          });
+      }
+
+      case 'http-request': {
+        const { body, requestId } = message;
+        fetch(body.url, {
+          body: !['GET', 'HEAD'].includes(body.method) ? body.body : undefined,
+          headers: body.headers,
+          method: body.method,
+        }).then(async reply => {
+          const headers: Record<string, string> = [...reply.headers].reduce(
+            (agg, pair) => ({ ...agg, [pair[0]]: pair[1] }),
+            {}
+          );
+          const rawBody =
+            body.method !== 'DELETE' ? await reply.text() : undefined; // FIXME likely unsafe
+          this.postMessage(
+            webview,
+            'http-response',
+            {
+              headers,
+              body: rawBody,
+              status: reply.status,
+              statusText: reply.statusText,
+            },
+            requestId
+          );
+        });
         return;
       }
 
       case 'response': {
-        const callback = this._callbacks.get(message.requestId);
+        const callback = this._callbacks.get(message.requestId!);
         callback?.(message.body);
         return;
       }

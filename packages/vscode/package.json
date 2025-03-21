@@ -14,10 +14,6 @@
   "contributes": {
     "commands": [
       {
-        "command": "datalayer-notebook.helloWorld",
-        "title": "Hello World"
-      },
-      {
         "command": "datalayer.notebook.new",
         "title": "Create new Datalayer Notebook",
         "category": "Notebook"
