@@ -525,7 +525,7 @@ export class NotebookEditorProvider
       case 'http-request': {
         const { body, requestId } = message;
         fetch(body.url, {
-          body: !['GET', 'HEAD'].includes(body.method) ? body.body : undefined,
+          body: body.body,
           headers: body.headers,
           method: body.method,
         }).then(async reply => {
@@ -534,7 +534,7 @@ export class NotebookEditorProvider
             {}
           );
           const rawBody =
-            body.method !== 'DELETE' ? await reply.text() : undefined; // FIXME likely unsafe
+            body.method !== 'DELETE' ? await reply.arrayBuffer() : undefined;
           this.postMessage(
             webview,
             'http-response',

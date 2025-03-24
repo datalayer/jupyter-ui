@@ -7,11 +7,10 @@ import {
 } from '@datalayer/jupyter-react';
 import { ServiceManager } from '@jupyterlab/services';
 import { Box, Button } from '@primer/react';
-import { WebSocket } from 'mock-socket';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { MessageHandlerContext, type ExtensionMessage } from './messageHandler';
-import { fetch } from './serviceManager';
+import { createServiceManager } from './serviceManager';
 
 function App(): JSX.Element {
   const height = '100vh';
@@ -94,25 +93,7 @@ function App(): JSX.Element {
   const selectRuntime = useCallback(async () => {
     const reply = await messageHandler.postRequest({ type: 'select-runtime' });
     const { baseUrl, token } = reply.body ?? {};
-    setServiceManager(
-      new ServiceManager({
-        serverSettings: {
-          appendToken: true,
-          baseUrl,
-          appUrl: '',
-          fetch: fetch,
-          Headers: Headers,
-          init: {
-            cache: 'no-store',
-            // credentials: 'same-origin',
-          } as any,
-          Request: Request,
-          token,
-          WebSocket: WebSocket,
-          wsUrl: baseUrl.replace(/^http/, 'ws'),
-        },
-      })
-    );
+    setServiceManager(createServiceManager(baseUrl, token));
   }, [messageHandler]);
 
   return isLoading ? (

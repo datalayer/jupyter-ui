@@ -90,7 +90,6 @@ export class MessageHandler {
 
   private _handleMessage(event: MessageEvent<ExtensionMessage>): void {
     const message = event.data;
-
     if (message.requestId) {
       const pendingReply = this._pendingReplies.get(message.requestId);
       if (pendingReply) {
