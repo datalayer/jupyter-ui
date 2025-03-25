@@ -7,11 +7,7 @@
 import * as vscode from 'vscode';
 import { Disposable, disposeAll } from './dispose';
 import { getNonce } from './util';
-import { ServiceManager } from '@jupyterlab/services';
-import {
-  serialize,
-  deserialize,
-} from '@jupyterlab/services/lib/kernel/serialize';
+import { ServerConnection, ServiceManager } from '@jupyterlab/services';
 import { setRuntime } from './runtimePicker';
 
 import * as WebSocket from 'ws';
@@ -493,19 +489,18 @@ export class NotebookEditorProvider
               const token = parsedURL.searchParams.get('token') ?? '';
               parsedURL.search = '';
               const baseUrl = parsedURL.toString();
+              const refSettings = ServerConnection.makeSettings();
               const services = new ServiceManager({
                 serverSettings: {
+                  ...refSettings,
                   appendToken: true,
                   baseUrl,
                   appUrl: '',
                   fetch: fetch,
-                  Headers: Headers,
                   init: {
                     cache: 'no-store',
                     // credentials: 'same-origin',
                   } as any,
-                  Request: Request,
-                  serializer: { serialize, deserialize },
                   token,
                   WebSocket: WebSocket,
                   wsUrl: baseUrl.replace(/^http/, 'ws'),

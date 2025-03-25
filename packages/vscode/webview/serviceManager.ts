@@ -11,7 +11,7 @@
  * The fake WebSocket is largely copied from mock-server licensed under MIT License.
  */
 
-import { ServiceManager } from '@jupyterlab/services';
+import { ServiceManager, ServerConnection } from '@jupyterlab/services';
 import { MessageHandler, type ExtensionMessage } from './messageHandler';
 
 /**
@@ -52,18 +52,18 @@ export function createServiceManager(
   baseUrl: string,
   token: string = ''
 ): ServiceManager {
+  const refSettings = ServerConnection.makeSettings();
   return new ServiceManager({
     serverSettings: {
+      ...refSettings,
       appendToken: true,
       baseUrl,
       appUrl: '',
       fetch: fetch,
-      Headers: Headers,
       init: {
         cache: 'no-store',
         // credentials: 'same-origin',
       } as any,
-      Request: Request,
       token,
       WebSocket: WebSocket as any,
       wsUrl: baseUrl.replace(/^http/, 'ws'),
