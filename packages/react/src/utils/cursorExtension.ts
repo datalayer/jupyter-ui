@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 // Display remote peer cursors
 //
 // This is a slightly modified version of https://github.com/jupyterlab/jupyter-collaboration/blob/main/packages/collaboration/src/cursors.ts
