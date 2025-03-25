@@ -62,13 +62,12 @@
     "webpack-cli": "^6.0.1"
   },
   "dependencies": {
-    "@datalayer/jupyter-react": "workspace:^",
+    "@datalayer/jupyter-react": "^0.19.9",
     "@jupyterlab/services": "^4.0.0",
     "@lumino/coreutils": "^2.0.0",
     "@primer/react": "^36.27.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "typestyle": "^2.0.4",
-    "url-parse": "^1.5.2"
+    "typestyle": "^2.0.4"
   }
 }
