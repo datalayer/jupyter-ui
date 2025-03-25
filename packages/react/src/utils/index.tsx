@@ -4,4 +4,5 @@
  * MIT License
  */
 
+export * from './cursorExtension';
 export * from './Utils';

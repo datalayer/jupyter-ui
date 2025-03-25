@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { type ISharedNotebook, type IYText, YNotebook } from '@jupyter/ydoc';
+import { YNotebook, type ISharedNotebook, type IYText } from '@jupyter/ydoc';
 import type { ISessionContext } from '@jupyterlab/apputils';
 import type { Cell, CodeCell, ICellModel } from '@jupyterlab/cells';
 import { type IEditorServices } from '@jupyterlab/codeeditor';
@@ -73,12 +73,11 @@ import {
   WidgetManager,
 } from '../../jupyter';
 import type { OnSessionConnection } from '../../state';
-import { newUuid } from '../../utils';
+import { newUuid, remoteUserCursors } from '../../utils';
 import { Lumino } from '../lumino';
 import { Loader } from '../utils';
 import type { DatalayerNotebookExtension } from './Notebook';
 import addNotebookCommands from './NotebookCommands';
-import { remoteUserCursors } from '@jupyter/collaboration';
 
 const COMPLETER_TIMEOUT_MILLISECONDS = 1000;
 const DEFAULT_EXTENSIONS = new Array<DatalayerNotebookExtension>();
@@ -917,8 +916,8 @@ class CommonFeatures {
         return EditorExtensionRegistry.createImmutableExtension(
           remoteUserCursors({ awareness, ytext })
         );
-      }
-    })
+      },
+    });
 
     const factoryService = new CodeMirrorEditorFactory({
       extensions: editorExtensions,
