@@ -1,23 +1,26 @@
-// Display user cursors
+// Display remote peer cursors
 //
-// This is derived from https://github.com/jupyterlab/jupyter-collaboration/blob/b9ccca66f30fbc4d5cd10eeec32ab5ca83f25f91/packages/collaboration/src/cursors.ts
-// Copyright (c) Jupyter Development Team.
-// Distributed under the terms of the Modified BSD License.
+// This is a slightly modified version of https://github.com/jupyterlab/jupyter-collaboration/blob/main/packages/collaboration/src/cursors.ts
+// licenced under Copyright (c) Jupyter Development Team and distributed under the terms of the Modified BSD License.
 
 import {
   Annotation,
   EditorSelection,
   Extension,
   Facet,
+  StateField,
+  type EditorState,
 } from '@codemirror/state';
 import {
   EditorView,
   layer,
   LayerMarker,
   RectangleMarker,
+  showTooltip,
+  tooltips,
   ViewPlugin,
   ViewUpdate,
-  hoverTooltip
+  type Tooltip
 } from '@codemirror/view';
 import { User } from '@jupyterlab/services';
 import { JSONExt } from '@lumino/coreutils';
@@ -109,15 +112,15 @@ const remoteSelectionTheme = EditorView.baseTheme({
   '.jp-remote-cursor.jp-mod-primary': {
     borderLeftWidth: '2px',
   },
-  '.jp-remote-cursor .jp-remote-userInfo': {
-    position: 'relative',
-    top: '-15px',
-    left: '-2px',
-    color: 'var(--jp-ui-inverse-font-color0)',
-    padding: '0px 2px',
-  },
   '.jp-remote-selection': {
     opacity: 0.5,
+  },
+  '.cm-tooltip': {
+    border: 'none',
+  },
+  '.cm-tooltip.jp-remote-userInfo': {
+    color: 'var(--jp-ui-inverse-font-color0)',
+    padding: '0px 2px',
   },
 });
 
@@ -131,42 +134,33 @@ class RemoteMarker implements LayerMarker {
   /**
    * Constructor
    *
-   * @param color Specific user color to be applied on the marker element
-   * @param displayName User display name
+   * @param style Specific user style to be applied on the marker element
    * @param marker {@link RectangleMarker} to wrap
    */
   constructor(
-    private color: string,
-    private displayName: string,
+    private style: Record<string, string>,
     private marker: RectangleMarker
   ) {}
 
   draw(): HTMLDivElement {
     const elt = this.marker.draw();
-    elt.style.borderLeftColor = this.color;
-
-    const span = document.createElement('span');
-    span.classList.add('jp-remote-userInfo');
-    span.style.backgroundColor = this.color;
-    span.textContent = this.displayName;
-    elt.append(span);
+    for (const [key, value] of Object.entries(this.style)) {
+      // @ts-expect-error Unknown key
+      elt.style[key] = value;
+    }
     return elt;
   }
 
   eq(other: RemoteMarker): boolean {
     return (
-      this.marker.eq(other.marker) &&
-      this.color == other.color &&
-      this.displayName == other.displayName
+      this.marker.eq(other.marker) && JSONExt.deepEqual(this.style, other.style)
     );
   }
 
   update(dom: HTMLElement, oldMarker: RemoteMarker): boolean {
-    dom.style.borderLeftColor = this.color;
-    const span = dom.querySelector('span');
-    if (span) {
-      span.style.backgroundColor = this.color;
-      span.textContent = this.displayName;
+    for (const [key, value] of Object.entries(this.style)) {
+      // @ts-expect-error Unknown key
+      dom.style[key] = value;
     }
     return this.marker.update(dom, oldMarker.marker);
   }
@@ -220,8 +214,7 @@ const remoteCursorsLayer = layer({
           // Wrap the rectangle marker to set the user color
           cursors.push(
             new RemoteMarker(
-              state.user?.color ?? 'darkgrey',
-              state.user?.display_name ?? 'Anonymous',
+              { borderLeftColor: state.user?.color ?? 'black' },
               piece
             )
           );
@@ -236,6 +229,63 @@ const remoteCursorsLayer = layer({
     );
   },
   class: 'jp-remote-cursors',
+});
+
+/**
+ * Tooltip extension to display user display name at cursor position
+ */
+function getCursorTooltips(state: EditorState): readonly Tooltip[] {
+  const tooltips = new Array<Tooltip>();
+
+  const { awareness, ytext } = state.facet(editorAwarenessFacet);
+  const ydoc = ytext.doc!;
+
+  for (const [clientID, state] of awareness.getStates()) {
+    if (clientID === awareness.doc.clientID) {
+      continue;
+    }
+
+    for (const cursor of state.cursors ?? []) {
+      if (!cursor?.head) {
+        continue;
+      }
+      const head = createAbsolutePositionFromRelativePosition(
+        cursor.head,
+        ydoc
+      );
+      if (head?.type !== ytext) {
+        continue;
+      }
+
+      tooltips.push({
+        pos: head.index,
+        above: true,
+        create: () => {
+          const dom = document.createElement('div');
+          dom.classList.add('jp-remote-userInfo');
+          dom.style.backgroundColor = state.user?.color ?? 'darkgrey';
+          dom.textContent =
+            (state as IAwarenessState).user?.display_name ?? 'Anonymous';
+          return { dom };
+        },
+      });
+    }
+  }
+
+  return tooltips;
+}
+
+const remoteCursorTooltipField = StateField.define<readonly Tooltip[]>({
+  create: getCursorTooltips,
+
+  update(tooltips: Tooltip[], tr) {
+    if (!tr.annotation(remoteSelectionsAnnotation)) return tooltips;
+    return getCursorTooltips(tr.state);
+  },
+
+  provide(field: StateField<readonly Tooltip[]>) {
+    return showTooltip.computeN([field], state => state.field(field));
+  },
 });
 
 /**
@@ -279,8 +329,7 @@ const remoteSelectionLayer = layer({
           // Wrap the rectangle marker to set the user color
           cursors.push(
             new RemoteMarker(
-              state.user?.color ?? 'darkgrey',
-              state.user?.display_name ?? 'Anonymous',
+              { backgroundColor: state.user?.color ?? 'black' },
               piece
             )
           );
@@ -390,6 +439,10 @@ const showCollaborators = ViewPlugin.fromClass(
         remoteSelectionTheme,
         remoteCursorsLayer,
         remoteSelectionLayer,
+        remoteCursorTooltipField,
+        // As we use relative positioning of widget, the tooltip must be positioned absolutely
+        // And we attach the tooltip to the body to avoid overflow rules
+        tooltips({ position: 'absolute', parent: document.body }),
       ];
     },
   }
