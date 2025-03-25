@@ -8,14 +8,11 @@
 dist
 build
 lib
-*.lock
 *.sqlite
 *.tsbuildinfo
 *.egg-info
-*-lock.json
 *-error.log
 *.log
-*.lock
 *.tsbuildinfo
 *-lock.yaml
 *.code-workspace
