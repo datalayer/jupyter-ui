@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import * as vscode from 'vscode';
+import type * as vscode from 'vscode';
 import { NotebookEditorProvider } from './notebookEditor';
 
 /**

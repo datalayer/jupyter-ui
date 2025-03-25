@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import * as vscode from 'vscode';
+import type * as vscode from 'vscode';
 
 export function disposeAll(disposables: vscode.Disposable[]): void {
 	while (disposables.length) {
