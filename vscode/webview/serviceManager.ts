@@ -165,7 +165,9 @@ function protocolVerification(protocols?: string | string[]): string[] {
   protocols = protocols ?? new Array<string>();
   if (!Array.isArray(protocols) && typeof protocols !== 'string') {
     throw new SyntaxError(
-      `${ERROR_PREFIX.CONSTRUCTOR_ERROR} The subprotocol '${(protocols as string | string[]).toString()}' is invalid.`
+      `${ERROR_PREFIX.CONSTRUCTOR_ERROR} The subprotocol '${(
+        protocols as string | string[]
+      ).toString()}' is invalid.`
     );
   }
 
@@ -207,7 +209,9 @@ function urlVerification(url: string | URL) {
 
   if (protocol === '') {
     throw new SyntaxError(
-      `${ERROR_PREFIX.CONSTRUCTOR_ERROR} The URL '${urlRecord.toString()}' is invalid.`
+      `${
+        ERROR_PREFIX.CONSTRUCTOR_ERROR
+      } The URL '${urlRecord.toString()}' is invalid.`
     );
   }
 
@@ -219,9 +223,7 @@ function urlVerification(url: string | URL) {
 
   if (hash !== '') {
     throw new SyntaxError(
-      `${
-        ERROR_PREFIX.CONSTRUCTOR_ERROR
-      } The URL contains a fragment identifier ('${hash}'). Fragment identifiers are not allowed in WebSocket URLs.`
+      `${ERROR_PREFIX.CONSTRUCTOR_ERROR} The URL contains a fragment identifier ('${hash}'). Fragment identifiers are not allowed in WebSocket URLs.`
     );
   }
 
@@ -302,7 +304,7 @@ class WebSocket extends EventTarget {
   constructor(url: string | URL, protocols: string | string[] = []) {
     super();
 
-    this.clientId = WebSocket._clientCounter++;
+    this.clientId = (WebSocket._clientCounter++).toString();
     this.url = urlVerification(url);
     protocols = protocolVerification(protocols);
     this.protocol = protocols[0] || '';
@@ -313,6 +315,8 @@ class WebSocket extends EventTarget {
     this._disposable = MessageHandler.instance.registerCallback(
       this._onExtensionMessage.bind(this)
     );
+
+    this._open();
   }
 
   private _readyState: number;
@@ -323,7 +327,7 @@ class WebSocket extends EventTarget {
   readonly CLOSING: 2;
   readonly CLOSED: 3;
 
-  readonly clientId: number;
+  readonly clientId: string;
   readonly url: string;
   readonly bufferedAmount: number;
   readonly extensions: string;
@@ -411,8 +415,8 @@ class WebSocket extends EventTarget {
     setTimeout(() => {
       MessageHandler.instance.postMessage({
         type: 'websocket-close',
+        id: this.clientId,
         body: {
-          clientId: this.clientId,
           origin: this.url,
         },
       });
@@ -439,8 +443,8 @@ class WebSocket extends EventTarget {
     // TODO: handle bufferedAmount
     MessageHandler.instance.postMessage({
       type: 'websocket-message',
+      id: this.clientId,
       body: {
-        clientId: this.clientId,
         origin: this.url,
         data: normalizeSendData(data),
       },
@@ -448,9 +452,31 @@ class WebSocket extends EventTarget {
   }
 
   private _onExtensionMessage(message: ExtensionMessage): void {
-    const { type, body } = message;
-    if (type === 'websocket-message' && body.clientId === this.clientId) {
-      this.dispatchEvent(new MessageEvent('message', body));
+    const { type, body, id } = message;
+    if (id === this.clientId) {
+      switch (type) {
+        case 'websocket-message':
+          this.dispatchEvent(new MessageEvent('message', body));
+          break;
+        case 'websocket-open':
+          this._readyState = WebSocket.OPEN;
+          this.dispatchEvent(new Event('open'));
+          break;
+        case 'websocket-close':
+          this.close();
+          break;
+      }
     }
+  }
+
+  private _open(): void {
+    MessageHandler.instance.postMessage({
+      type: 'websocket-open',
+      id: this.clientId,
+      body: {
+        origin: this.url,
+        protocol: this.protocol,
+      },
+    });
   }
 }

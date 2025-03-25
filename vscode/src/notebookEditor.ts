@@ -7,10 +7,9 @@
 import * as vscode from 'vscode';
 import { Disposable, disposeAll } from './dispose';
 import { getNonce } from './util';
-import { ServerConnection, ServiceManager } from '@jupyterlab/services';
 import { setRuntime } from './runtimePicker';
 
-import * as WebSocket from 'ws';
+import { WebSocket, RawData } from 'ws';
 import type { ExtensionMessage } from './messages';
 
 /**
@@ -262,13 +261,12 @@ export class NotebookEditorProvider
   private readonly webviews = new WebviewCollection();
 
   /**
-   * Tracks all runtime
+   * Tracks websocket
    */
-  private readonly runtimes = new Set<ServiceManager>();
-  private readonly runtimeMap = new WeakMap<
-    vscode.WebviewPanel,
-    ServiceManager
-  >();
+  private readonly _websockets = new Map<string, WebSocket>();
+
+  private _requestId = 1;
+  private readonly _callbacks = new Map<string, (response: any) => void>();
 
   constructor(private readonly _context: vscode.ExtensionContext) {}
 
@@ -450,9 +448,6 @@ export class NotebookEditorProvider
 			</html>`;
   }
 
-  private _requestId = 1;
-  private readonly _callbacks = new Map<string, (response: any) => void>();
-
   private postMessageWithResponse<R = unknown>(
     panel: vscode.WebviewPanel,
     type: string,
@@ -470,9 +465,9 @@ export class NotebookEditorProvider
     panel: vscode.WebviewPanel,
     type: string,
     body: any,
-    requestId?: string
+    id?: string
   ): void {
-    panel.webview.postMessage({ type, body, requestId });
+    panel.webview.postMessage({ type, body, id });
   }
 
   private onMessage(
@@ -489,28 +484,6 @@ export class NotebookEditorProvider
               const token = parsedURL.searchParams.get('token') ?? '';
               parsedURL.search = '';
               const baseUrl = parsedURL.toString();
-              const refSettings = ServerConnection.makeSettings();
-              const services = new ServiceManager({
-                serverSettings: {
-                  ...refSettings,
-                  appendToken: true,
-                  baseUrl,
-                  appUrl: '',
-                  fetch: fetch,
-                  init: {
-                    cache: 'no-store',
-                    // credentials: 'same-origin',
-                  } as any,
-                  token,
-                  WebSocket: WebSocket,
-                  wsUrl: baseUrl.replace(/^http/, 'ws'),
-                },
-              });
-              this.runtimes.add(services);
-              this.runtimeMap.set(webview, services);
-              webview.onDidDispose(() => {
-                this.runtimeMap.delete(webview);
-              });
 
               this.postMessage(
                 webview,
@@ -519,7 +492,7 @@ export class NotebookEditorProvider
                   baseUrl,
                   token,
                 },
-                message.requestId
+                message.id
               );
             }
           })
@@ -529,7 +502,7 @@ export class NotebookEditorProvider
       }
 
       case 'http-request': {
-        const { body, requestId } = message;
+        const { body, id } = message;
         fetch(body.url, {
           body: body.body,
           headers: body.headers,
@@ -550,18 +523,70 @@ export class NotebookEditorProvider
               status: reply.status,
               statusText: reply.statusText,
             },
-            requestId
+            id
           );
         });
         return;
       }
 
       case 'response': {
-        const callback = this._callbacks.get(message.requestId!);
+        const callback = this._callbacks.get(message.id!);
         callback?.(message.body);
         return;
       }
+
+      case 'websocket-open': {
+        const { body, id } = message;
+        const ws = new WebSocket(body.origin, body.protocol);
+        this._websockets.set(id!, ws);
+        ws.on('open', (socket: WebSocket) => {
+          this.postMessage(webview, 'websocket-open', {}, id);
+        });
+        ws.on(
+          'message',
+          (socket: WebSocket, data: RawData, isBinary: boolean) => {
+            this.postMessage(webview, 'websocket-message', { data }, id);
+          }
+        );
+        ws.on('close', (socket: WebSocket, code: number, reason: Buffer) => {
+          this.postMessage(webview, 'websocket-close', { code, reason }, id);
+        });
+        ws.on('error', (socket: WebSocket, error: Error) => {
+          this.postMessage(
+            webview,
+            'websocket-error',
+            { error: { ...error } },
+            id
+          );
+        });
+        return;
+      }
+
+      case 'websocket-message': {
+        console.log(
+          `Receive websocket message from ${message.id}.`,
+          message.body
+        );
+        const { id } = message;
+        const ws = this._websockets.get(id ?? '');
+        if (!ws) {
+          console.error(
+            'Receive websocket message from editor with no matching websocket.',
+            message
+          );
+        }
+
+        ws!.send(message.body.data);
+        return;
+      }
+
+      case 'websocket-close': {
+        const { id } = message;
+        this._websockets.get(id ?? '')?.close();
+        return;
+      }
     }
+    console.warn(`Unknown message ${message.type}.`, message);
   }
 }
 

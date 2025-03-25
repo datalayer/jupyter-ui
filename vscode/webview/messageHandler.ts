@@ -29,9 +29,12 @@ export type ExtensionMessage = {
    */
   error?: any;
   /**
-   * Message request ID.
+   * Message owner ID.
+   * 
+   * For a HTTP request this is a request ID, for a websocket message
+   * it is the client ID.
    */
-  requestId?: string;
+  id?: string;
 };
 
 /**
@@ -68,7 +71,7 @@ export class MessageHandler {
     const requestId = (MessageHandler._requestCount++).toString();
     const promise = new PromiseDelegate<ExtensionMessage>();
     this._pendingReplies.set(requestId, promise);
-    message.requestId = requestId;
+    message.id = requestId;
     this.postMessage(message);
     return promise.promise;
   }
@@ -96,8 +99,8 @@ export class MessageHandler {
 
   private _handleMessage(event: MessageEvent<ExtensionMessage>): void {
     const message = event.data;
-    if (message.requestId) {
-      const pendingReply = this._pendingReplies.get(message.requestId);
+    if (message.id) {
+      const pendingReply = this._pendingReplies.get(message.id);
       if (pendingReply) {
         if (message.error) {
           pendingReply?.reject(message.error);
