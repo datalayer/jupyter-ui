@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 /**
  * Fake JupyterLab service manager that proxy the requests and websockets
  * through postMessage

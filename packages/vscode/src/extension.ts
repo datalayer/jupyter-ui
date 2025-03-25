@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 import * as vscode from 'vscode';
 import { NotebookEditorProvider } from './notebookEditor';
 

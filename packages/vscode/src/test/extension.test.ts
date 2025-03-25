@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 import * as assert from 'assert';
 
 // You can import and use all API from the 'vscode' module
