@@ -55,11 +55,13 @@ export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
     let theme;
     switch (colormode) {
       case 'light': {
-        theme = import('!!raw-loader!@jupyterlab/theme-light-extension/style/variables.css');
+        // @ts-expect-error unknown module
+        theme = import('@jupyterlab/theme-light-extension/style/variables.css?raw');
         break;
       }
       case 'dark': {
-        theme = import('!!raw-loader!@jupyterlab/theme-dark-extension/style/variables.css');
+        // @ts-expect-error unknown module
+        theme = import('@jupyterlab/theme-dark-extension/style/variables.css?raw');
         break;
       }
     }
