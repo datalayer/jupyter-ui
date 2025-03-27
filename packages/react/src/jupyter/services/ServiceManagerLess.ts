@@ -161,6 +161,7 @@ export class KernelManagerLess implements IKernelManager {
   constructor(serverSettings: ServerConnection.ISettings) {
     this.serverSettings = serverSettings;
   }
+  readonly runningCount = 0;
   running(): IterableIterator<IModel> {
     return [].values();
   }
