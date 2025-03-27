@@ -30,7 +30,7 @@ export type ExtensionMessage = {
   error?: any;
   /**
    * Message owner ID.
-   * 
+   *
    * For a HTTP request this is a request ID, for a websocket message
    * it is the client ID.
    */
@@ -42,8 +42,10 @@ export type ExtensionMessage = {
  */
 export class MessageHandler {
   private _callbackCount = 0;
-  private _messageCallbacks: Map<number, (message: ExtensionMessage) => void> =
-    new Map();
+  private _messageCallbacks: Map<
+    number,
+    (message: ExtensionMessage) => void
+  > = new Map();
   private static _requestCount = 0;
   private _pendingReplies: Map<string, PromiseDelegate<ExtensionMessage>> =
     new Map();
@@ -68,7 +70,7 @@ export class MessageHandler {
    * @returns Reply
    */
   async postRequest(message: ExtensionMessage): Promise<ExtensionMessage> {
-    const requestId = (MessageHandler._requestCount++).toString();
+    const requestId = 'request-' + (MessageHandler._requestCount++).toString();
     const promise = new PromiseDelegate<ExtensionMessage>();
     this._pendingReplies.set(requestId, promise);
     message.id = requestId;
@@ -78,14 +80,16 @@ export class MessageHandler {
 
   /**
    * Register a callback on incoming messages.
-   * 
+   *
    * Note:
    * The callback won't be called when the message is a reply to a request.
    *
    * @param handler Incoming message handler
    * @returns Unregister handler
    */
-  registerCallback(handler: (message: ExtensionMessage) => void): {
+  registerCallback(
+    handler: (message: ExtensionMessage) => void
+  ): {
     dispose: () => void;
   } {
     const index = this._callbackCount++;
@@ -111,13 +115,13 @@ export class MessageHandler {
       }
     }
 
-    this._messageCallbacks.forEach(handler => {
+    for (const handler of this._messageCallbacks.values()) {
       try {
-        handler(message);
+        handler(message)
       } catch (reason) {
-        console.error('Failed to handle message: ', message);
+        console.error('Failed to handle message: ', reason);
       }
-    });
+    }
   }
 
   /**

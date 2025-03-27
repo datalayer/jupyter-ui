@@ -151,6 +151,8 @@ function lengthInUtf8Bytes(str: string): number {
 }
 
 function normalizeSendData(data) {
+  // FIXME this does not work -> JupyterLab fails to serialize the data
+  // when the protocol is v1.kernel.websocket.jupyter.org
   if (
     Object.prototype.toString.call(data) !== '[object Blob]' &&
     !(data instanceof ArrayBuffer)
@@ -190,7 +192,7 @@ function protocolVerification(protocols?: string | string[]): string[] {
     );
   }
 
-  return protocols;
+  return protocols.filter(p => p !== 'v1.kernel.websocket.jupyter.org');
 }
 
 function urlVerification(url: string | URL) {
@@ -295,16 +297,16 @@ class EventTarget {
 }
 
 class WebSocket extends EventTarget {
-  static readonly CONNECTING: 0;
-  static readonly OPEN: 1;
-  static readonly CLOSING: 2;
-  static readonly CLOSED: 3;
+  static readonly CONNECTING = 0;
+  static readonly OPEN = 1;
+  static readonly CLOSING = 2;
+  static readonly CLOSED = 3;
   private static _clientCounter = 0;
 
   constructor(url: string | URL, protocols: string | string[] = []) {
     super();
 
-    this.clientId = (WebSocket._clientCounter++).toString();
+    this.clientId = 'ws-' + (WebSocket._clientCounter++).toString();
     this.url = urlVerification(url);
     protocols = protocolVerification(protocols);
     this.protocol = protocols[0] || '';
@@ -322,10 +324,10 @@ class WebSocket extends EventTarget {
   private _readyState: number;
   private _disposable: { dispose(): void };
 
-  readonly CONNECTING: 0;
-  readonly OPEN: 1;
-  readonly CLOSING: 2;
-  readonly CLOSED: 3;
+  readonly CONNECTING = 0;
+  readonly OPEN = 1;
+  readonly CLOSING = 2;
+  readonly CLOSED = 3;
 
   readonly clientId: string;
   readonly url: string;
@@ -451,11 +453,19 @@ class WebSocket extends EventTarget {
     });
   }
 
-  private _onExtensionMessage(message: ExtensionMessage): void {
+  private _onExtensionMessage(message: ExtensionMessage): boolean {
     const { type, body, id } = message;
     if (id === this.clientId) {
       switch (type) {
         case 'websocket-message':
+          // FIXME this does not work -> JupyterLab fails to deserialize the array
+          // when the protocol is v1.kernel.websocket.jupyter.org
+          // A part of the fix probably lies in the need to convert the binaryType
+          // to 'arraybuffer' for kernel websocket (in the extension side!!):
+          // https://github.com/jupyterlab/jupyterlab/blob/85c82eba1caa7e28a0d818c0840e13756c1b1256/packages/services/src/kernel/default.ts#L1468
+          if (body.data.type === 'Buffer' && body.data.data) {
+            body.data = new ArrayBuffer(body.data.data);
+          }
           this.dispatchEvent(new MessageEvent('message', body));
           break;
         case 'websocket-open':
@@ -466,7 +476,9 @@ class WebSocket extends EventTarget {
           this.close();
           break;
       }
+      return true;
     }
+    return false;
   }
 
   private _open(): void {

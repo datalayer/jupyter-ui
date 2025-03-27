@@ -49,7 +49,7 @@ function App(): JSX.Element {
 
   const handler = useCallback(
     async (message: ExtensionMessage) => {
-      const { type, body, requestId } = message;
+      const { type, body, id } = message;
       switch (type) {
         case 'init': {
           // FIXME
@@ -166,7 +166,7 @@ function App(): JSX.Element {
           <BaseNotebook
             kernelId={kernelId}
             model={model}
-            // serviceManager={serviceManager}
+            serviceManager={serviceManager}
           />
         )}
       </Box>
@@ -178,7 +178,7 @@ function App(): JSX.Element {
 export function main() {
   const root = createRoot(document.getElementById('notebook-editor')!);
   root.render(
-    <JupyterReactTheme>
+    <JupyterReactTheme colormode="dark">
       <App />
     </JupyterReactTheme>
   );

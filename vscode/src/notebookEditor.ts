@@ -476,6 +476,9 @@ export class NotebookEditorProvider
     message: ExtensionMessage
   ) {
     switch (message.type) {
+      case 'ready':
+        // Handle in resolveCustomEditor
+        return;
       case 'select-runtime': {
         setRuntime()
           .then(baseURL => {
@@ -499,33 +502,11 @@ export class NotebookEditorProvider
           .catch(reason => {
             console.error('Failed to get a server URL.');
           });
+        return;
       }
 
       case 'http-request': {
-        const { body, id } = message;
-        fetch(body.url, {
-          body: body.body,
-          headers: body.headers,
-          method: body.method,
-        }).then(async reply => {
-          const headers: Record<string, string> = [...reply.headers].reduce(
-            (agg, pair) => ({ ...agg, [pair[0]]: pair[1] }),
-            {}
-          );
-          const rawBody =
-            body.method !== 'DELETE' ? await reply.arrayBuffer() : undefined;
-          this.postMessage(
-            webview,
-            'http-response',
-            {
-              headers,
-              body: rawBody,
-              status: reply.status,
-              statusText: reply.statusText,
-            },
-            id
-          );
-        });
+        this._forwardRequest(message, webview);
         return;
       }
 
@@ -536,42 +517,20 @@ export class NotebookEditorProvider
       }
 
       case 'websocket-open': {
-        const { body, id } = message;
-        const ws = new WebSocket(body.origin, body.protocol);
-        this._websockets.set(id!, ws);
-        ws.on('open', (socket: WebSocket) => {
-          this.postMessage(webview, 'websocket-open', {}, id);
-        });
-        ws.on(
-          'message',
-          (socket: WebSocket, data: RawData, isBinary: boolean) => {
-            this.postMessage(webview, 'websocket-message', { data }, id);
-          }
-        );
-        ws.on('close', (socket: WebSocket, code: number, reason: Buffer) => {
-          this.postMessage(webview, 'websocket-close', { code, reason }, id);
-        });
-        ws.on('error', (socket: WebSocket, error: Error) => {
-          this.postMessage(
-            webview,
-            'websocket-error',
-            { error: { ...error } },
-            id
-          );
-        });
+        this._openWebsocket(message, webview);
         return;
       }
 
       case 'websocket-message': {
         console.log(
-          `Receive websocket message from ${message.id}.`,
+          `Sending websocket message from ${message.id}.`,
           message.body
         );
         const { id } = message;
         const ws = this._websockets.get(id ?? '');
         if (!ws) {
           console.error(
-            'Receive websocket message from editor with no matching websocket.',
+            'Failed to send websocket message from editor with no matching websocket.',
             message
           );
         }
@@ -587,6 +546,81 @@ export class NotebookEditorProvider
       }
     }
     console.warn(`Unknown message ${message.type}.`, message);
+  }
+
+  private _forwardRequest(
+    message: ExtensionMessage,
+    webview: vscode.WebviewPanel
+  ) {
+    const { body, id } = message;
+    fetch(body.url, {
+      body: body.body,
+      headers: body.headers,
+      method: body.method,
+    }).then(async reply => {
+      const headers: Record<string, string> = [...reply.headers].reduce(
+        (agg, pair) => ({ ...agg, [pair[0]]: pair[1] }),
+        {}
+      );
+      const rawBody =
+        body.method !== 'DELETE' ? await reply.arrayBuffer() : undefined;
+      this.postMessage(
+        webview,
+        'http-response',
+        {
+          headers,
+          body: rawBody,
+          status: reply.status,
+          statusText: reply.statusText,
+        },
+        id
+      );
+    });
+  }
+
+  private _openWebsocket(
+    message: ExtensionMessage,
+    webview: vscode.WebviewPanel
+  ) {
+    const { body, id } = message;
+    const wsURL = new URL(body.origin);
+    if (wsURL.searchParams.has('token')) {
+      wsURL.searchParams.set('token', 'xxxxx');
+    }
+    const protocol = body.protocol || undefined;
+    console.debug(
+      `Opening websocket to ${wsURL.toString()} with protocol '${protocol}'.`
+    );
+    const ws = new WebSocket(body.origin, protocol);
+    this._websockets.set(id!, ws);
+    webview.onDidDispose(() => {
+      this._websockets.delete(id!);
+      ws.close();
+    });
+    ws.onopen = event => {
+      console.log(`Websocket to ${body.origin} opened.`);
+      this.postMessage(webview, 'websocket-open', {}, id);
+    };
+    ws.onmessage = event => {
+      const { data } = event;
+      console.debug(`Message on ${wsURL.toString()}:`, { data });
+      this.postMessage(webview, 'websocket-message', { data }, id);
+    };
+    ws.onclose = event => {
+      console.log(`Websocket to ${wsURL.toString()} closed.`);
+      const { code, reason, wasClean } = event;
+      this.postMessage(
+        webview,
+        'websocket-close',
+        { code, reason, wasClean },
+        id
+      );
+    };
+    ws.onerror = event => {
+      console.debug(`Error on ${wsURL.toString()}:`, event);
+      const { error, message } = event;
+      this.postMessage(webview, 'websocket-error', { error, message }, id);
+    };
   }
 }
 
