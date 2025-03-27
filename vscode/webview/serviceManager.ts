@@ -408,7 +408,7 @@ class WebSocket extends EventTarget {
     this._disposable.dispose();
     const closeEvent = createCloseEvent({
       type: 'close',
-      target: context,
+      target: this,
       code,
       reason,
     });
@@ -424,7 +424,7 @@ class WebSocket extends EventTarget {
       if (wasConnecting) {
         const errorEvent = createEvent({
           type: 'error',
-          target: context,
+          target: this,
         });
         this.dispatchEvent(errorEvent);
       }
