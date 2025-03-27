@@ -12,7 +12,7 @@ SHELL=/bin/bash
 all: typedoc typedoc-deploy
 
 typedoc: ## generate typedoc
-	yarn typedoc
+	npm typedoc
 
 typedoc-deploy: ## deploy typedoc
 	aws s3 cp \

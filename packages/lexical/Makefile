@@ -23,11 +23,11 @@ default: help ## default target is help
 
 clean: ## clean
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		yarn clean )
+		npm clean )
 
 build: ## build
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		yarn build )
+		npm run build )
 
 build-prod: ## build-prod
 	git clean -fdx
@@ -41,7 +41,7 @@ publish-npm: clean build ## publish
 typedoc: ## generate typedoc
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		rm -fr typedoc && \
-		yarn typedoc --tsconfig ./tsconfig.json && \
+		npm typedoc --tsconfig ./tsconfig.json && \
 		open typedoc/index.html )
 
 typedoc-publish: typedoc ## deploy typedoc

@@ -19,7 +19,7 @@ Read more on the [Datalayer documentation website](https://jupyter-ui.datalayer.
 First, run the development server:
 
 ```bash
-yarn dev
+npm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
@@ -29,7 +29,7 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 You can create a static version of the application that you will find under the `out` folder.
 
 ```bash
-yarn build
+npm run build
 ```
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.

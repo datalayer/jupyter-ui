@@ -15,12 +15,8 @@
     "datalayer"
   ],
   "engines": {
-    "node": ">= 18.0.0",
-    "npm": "please-use-yarn",
-    "pnpm": "please-use-yarn",
-    "yarn": ">= 3.5.0"
+    "node": ">= 18.0.0"
   },
-  "packageManager": "yarn@3.5.0",
   "os": [
     "darwin",
     "linux"
@@ -45,7 +41,7 @@
     "jupyter:ui:slate": "lerna run --parallel --scope @datalayer/jupyter-slate-example start",
     "storybook": "lerna run --scope @datalayer/jupyter-ui-storybook storybook",
     "test": "lerna run test",
-    "postinstall": "patch-package --use-yarn"
+    "postinstall": "patch-package"
   },
   "workspaces": [
     "docs",

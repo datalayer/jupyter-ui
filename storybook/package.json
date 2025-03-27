@@ -19,7 +19,6 @@
     "url": "https://github.com/datalayer/jupyter-ui.git",
     "directory": "storybook"
   },
-  "packageManager": "yarn@3.5.0",
   "scripts": {
     "start": "storybook dev -p 6006",
     "storybook": "storybook dev -p 6006",
@@ -27,7 +26,7 @@
     "build:storybook": "storybook build"
   },
   "dependencies": {
-    "@datalayer/jupyter-lexical": "^0.1.0",
+    "@datalayer/jupyter-lexical": "^0.2.0",
     "@datalayer/jupyter-react": "^0.18.12",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

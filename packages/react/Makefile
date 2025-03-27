@@ -23,11 +23,11 @@ default: help ## default target is help
 
 clean: ## clean
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		yarn clean )
+		npm clean )
 
 build: ## build
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		yarn build )
+		npm run build )
 
 publish-npm: clean build ## publish
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
@@ -37,7 +37,7 @@ publish-npm: clean build ## publish
 typedoc: ## generate typedoc
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		rm -fr typedoc && \
-		yarn typedoc --tsconfig ./tsconfig.json && \
+		npm typedoc --tsconfig ./tsconfig.json && \
 		open typedoc/index.html )
 
 publish-typedoc: typedoc ## deploy typedoc
@@ -58,11 +58,11 @@ publish-typedoc: typedoc ## deploy typedoc
 
 start-storybook: ## start-storybook
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-	  yarn storybook )
+	  npm storybook )
 
 build-storybook: ## build-storybook
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-	  yarn build:storybook )
+	  npm run build:storybook )
 
 publish-storybook: build-storybook ## publish to s3
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \

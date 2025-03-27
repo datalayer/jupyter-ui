@@ -15,7 +15,7 @@ See an example in [this repository](https://github.com/datalayer/jupyter-ui/tree
 ## Installation
 
 ```sh
-yarn add @datalayer/jupyter-docusaurus-plugin
+npm add @datalayer/jupyter-docusaurus-plugin
 ```
 
 Modify your `docusaurus.config.js`
