@@ -36,7 +36,7 @@ jupyter nbextension enable --py [--sys-prefix|--user|--system] ipyscript
 
 Create a dev environment:
 ```bash
-conda create -n ipyscript-dev -c conda-forge nodejs yarn python jupyterlab
+conda create -n ipyscript-dev -c conda-forge nodejs npm python jupyterlab
 conda activate ipyscript-dev
 ```
 
@@ -50,7 +50,7 @@ notebook / lab frontend. For lab, this is done by the command:
 
 ```
 jupyter labextension develop --overwrite .
-yarn run build
+npm run build
 ```
 
 For classic notebook, you need to run:
@@ -72,7 +72,7 @@ terminals to watch for changes in the extension's source and automatically rebui
 
 ```bash
 # Watch the source directory in one terminal, automatically rebuilding when needed
-yarn run watch
+npm run watch
 # Run JupyterLab in another terminal
 jupyter lab
 ```

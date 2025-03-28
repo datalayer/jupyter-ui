@@ -2,7 +2,7 @@
 
 :::caution
 
-🚨 Only Yarn v3 is supported - npm, pnpm, yarn v1... will not work, this is due to JupyterLab requirements.
+🚨 Only Yarn v3 is supported - npm, pnpm, npm v1... will not work, this is due to JupyterLab requirements.
 
 Create a `.yarnrc.yml` file in the root of your project to use `node_modules`.
 
@@ -36,17 +36,17 @@ Once you have applied the steps described in one of the above 2 options, you are
 
 ```bash
 # Install the dependencies. This will take some time, be patient. 👍
-yarn install
+npm install
 ```
 
 ```bash
 # Build the source code. This will also take some time, be also patient. 🙂
-yarn build
+npm run build
 ```
 
 If you just want to develop the core package `@datalayer/jupyter-react` of the repository, go to the sub folder and work there.
 
 ```bash
 cd packages/react
-yarn build
+npm run build
 ```

@@ -37,11 +37,11 @@ frontend:
     preBuild:
       commands:
         - corepack enable
-        - yarn set version stable
-        - yarn install
+        - npm set version stable
+        - npm install
     build:
       commands:
-        - yarn run build
+        - npm run build
   artifacts:
     baseDirectory: .next
     files:
