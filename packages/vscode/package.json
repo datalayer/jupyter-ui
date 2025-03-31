@@ -2,8 +2,9 @@
   "name": "datalayer-jupyter-vscode",
   "displayName": "Datalayer Notebook",
   "description": "A Jupyter Notebook Editor for VS Code",
-  "publisher": "datalayer",
+  "publisher": "Datalayer",
   "version": "0.0.1",
+  "icon": "images/datalayer-logo.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/datalayer/jupyter-ui.git",

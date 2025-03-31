@@ -6,23 +6,10 @@
 
 import { YNotebook, type ISharedNotebook, type IYText } from '@jupyter/ydoc';
 import type { ISessionContext } from '@jupyterlab/apputils';
-import type { Cell, ICellModel } from '@jupyterlab/cells';
+import type { Cell, CodeCell, ICellModel } from '@jupyterlab/cells';
 import { type IEditorServices } from '@jupyterlab/codeeditor';
-import {
-  CodeMirrorEditorFactory,
-  CodeMirrorMimeTypeService,
-  EditorExtensionRegistry,
-  EditorLanguageRegistry,
-  EditorThemeRegistry,
-  ybinding,
-} from '@jupyterlab/codemirror';
-import {
-  Completer,
-  CompleterModel,
-  CompletionHandler,
-  KernelCompleterProvider,
-  ProviderReconciliator,
-} from '@jupyterlab/completer';
+import { CodeMirrorEditorFactory, CodeMirrorMimeTypeService, EditorExtensionRegistry, EditorLanguageRegistry, EditorThemeRegistry, ybinding } from '@jupyterlab/codemirror';
+import { Completer, CompleterModel, CompletionHandler, KernelCompleterProvider, ProviderReconciliator } from '@jupyterlab/completer';
 import { PathExt, URLExt, type IChangedArgs } from '@jupyterlab/coreutils';
 import { Context, type DocumentRegistry } from '@jupyterlab/docregistry';
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
@@ -30,29 +17,11 @@ import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extensi
 import { createMarkdownParser } from '@jupyterlab/markedparser-extension';
 import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
 import type { INotebookContent } from '@jupyterlab/nbformat';
-import {
-  NotebookModel,
-  NotebookModelFactory,
-  NotebookPanel,
-  NotebookTracker,
-  NotebookWidgetFactory,
-  StaticNotebook,
-  type INotebookModel,
-  type Notebook,
+import { NotebookModel, NotebookModelFactory, NotebookPanel, NotebookTracker, NotebookWidgetFactory, StaticNotebook, type INotebookModel,  type Notebook,
 } from '@jupyterlab/notebook';
-import {
-  RenderMimeRegistry,
-  standardRendererFactories,
-  type IRenderMime,
+import { RenderMimeRegistry, standardRendererFactories, type IRenderMime,
 } from '@jupyterlab/rendermime';
-import type {
-  Contents,
-  Kernel,
-  ServerConnection,
-  ServiceManager,
-  Session,
-  SessionManager,
-} from '@jupyterlab/services';
+import type { Contents, Kernel, ServerConnection, ServiceManager, Session, SessionManager } from '@jupyterlab/services';
 import type { ISessionConnection } from '@jupyterlab/services/lib/session/session';
 import { find } from '@lumino/algorithm';
 import { CommandRegistry } from '@lumino/commands';
@@ -65,14 +34,7 @@ import { Banner } from '@primer/react/experimental';
 import { EditorView } from 'codemirror';
 import { useEffect, useMemo, useState } from 'react';
 import { WebsocketProvider } from 'y-websocket';
-import {
-  COLLABORATION_ROOM_URL_PATH,
-  fetchSessionId,
-  requestDocSession,
-  // WIDGET_MIMETYPE,
-  // WidgetLabRenderer,
-  // WidgetManager,
-} from '../../jupyter';
+import { COLLABORATION_ROOM_URL_PATH, fetchSessionId, requestDocSession, WIDGET_MIMETYPE, WidgetLabRenderer, WidgetManager } from '../../jupyter';
 import type { OnSessionConnection } from '../../state';
 import { newUuid, remoteUserCursors } from '../../utils';
 import { Lumino } from '../lumino';
@@ -81,7 +43,9 @@ import type { DatalayerNotebookExtension } from './Notebook';
 import addNotebookCommands from './NotebookCommands';
 
 const COMPLETER_TIMEOUT_MILLISECONDS = 1000;
+
 const DEFAULT_EXTENSIONS = new Array<DatalayerNotebookExtension>();
+
 const FALLBACK_NOTEBOOK_PATH = '.datalayer/ping.ipynb';
 
 /**
@@ -304,7 +268,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
 
   useEffect(() => {
     let thisPanel: NotebookPanel | null = null;
-    // let widgetsManager: WidgetManager | null = null;
+    let widgetsManager: WidgetManager | null = null;
     if (context) {
       thisPanel = widgetFactory?.createNew(context) ?? null;
       if (thisPanel) {
@@ -322,32 +286,31 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
         );
 
         //-- Add ipywidgets renderer
-        // const notebookRenderers = thisPanel.content.rendermime;
-        // widgetsManager = new WidgetManager(context, notebookRenderers, {
-        //   saveState: false,
-        // });
-        // notebookRenderers.addFactory(
-        //   {
-        //     safe: true,
-        //     mimeTypes: [WIDGET_MIMETYPE],
-        //     defaultRank: 1,
-        //     createRenderer: options =>
-        //       new WidgetLabRenderer(options, widgetsManager!),
-        //   },
-        //   1
-        // );
-        // for (const cell of thisPanel.content.widgets) {
-        //   if (cell.model.type === 'code') {
-        //     for (const codecell of (cell as CodeCell).outputArea.widgets) {
-        //       for (const output of Array.from(codecell.children())) {
-        //         if (output instanceof WidgetLabRenderer) {
-        //           output.manager = widgetsManager;
-        //         }
-        //       }
-        //     }
-        //   }
-        // }
-        //--
+        const notebookRenderers = thisPanel.content.rendermime;
+        widgetsManager = new WidgetManager(context, notebookRenderers, {
+          saveState: false,
+        });
+        notebookRenderers.addFactory(
+          {
+            safe: true,
+            mimeTypes: [WIDGET_MIMETYPE],
+            defaultRank: 1,
+            createRenderer: options =>
+              new WidgetLabRenderer(options, widgetsManager!),
+          },
+          1
+        );
+        for (const cell of thisPanel.content.widgets) {
+          if (cell.model.type === 'code') {
+            for (const codecell of (cell as CodeCell).outputArea.widgets) {
+              for (const output of Array.from(codecell.children())) {
+                if (output instanceof WidgetLabRenderer) {
+                  output.manager = widgetsManager;
+                }
+              }
+            }
+          }
+        }
 
         setIsLoading(false);
       }
@@ -359,7 +322,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
     }
 
     return () => {
-      // widgetsManager?.dispose();
+      widgetsManager?.dispose();
       if (thisPanel) {
         if (thisPanel.content) Signal.clearData(thisPanel.content);
         try {
