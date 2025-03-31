@@ -4,6 +4,7 @@
 
 # Jupyter UI for Visual Studio Code
 
+
 This is the README for your extension "datalayer-notebook". After writing up a brief description, we recommend including the following sections.
 
 ## Features
