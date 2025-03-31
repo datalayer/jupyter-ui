@@ -4,4 +4,33 @@
 
 # Jupyter UI for Visual Studio Code
 
-This is the README for the `datalayer-notebook` extension.
+The `datalayer-notebook` extension for VS Code allows you to edit Jupyer Notebooks files (`ipynb` extensions).
+
+Available in the [Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=datalayer.datalayer-jupyter-vscode).
+
+<img src="https://jupyter-examples.datalayer.tech/jupyter-react-vscode.gif" />
+
+## Working Features
+
+- Load a Notebook.
+- Display a Notebook.
+- Connect to a Jupyter Server by providing its URL with auth token; transfer http request and websocket messages.
+- Run code.
+- IPyWidgets support.
+
+## Not Implemented
+
+- Save the Notebook.
+- Notifying of updates to have a UI feedback the document is in dirty state.
+
+## Known Limitations
+
+Styling
+- No connection between dark/light vs code theme and notebook theme
+- No resizing with the panel
+- Button to select the runtime is not displayed in a toolbar that stays visible  - No connection between dark/light vs code theme and notebook theme
+  - No resizing with the panel
+  - Button to select the runtime is not displayed in a toolbar that stays visible
+
+
+Websocket binary support: for now we forbid the usage of the newer protocol v1.kernel.websocket.jupyter.org. When using it, the message data are failing to be serialized to be transferred from the webview to the extension. And when receiving it, the deserialization fails. The deserialization error may be related to an incorrect binaryType that is not handle in the current code; but in JupyterLab it is forced to 'arraybuffer' for kernel websocket.
