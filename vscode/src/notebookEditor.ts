@@ -422,36 +422,39 @@ export class NotebookEditorProvider
     return /* html */ `
 			<!DOCTYPE html>
 			<html lang="en">
-			<head>
-				<meta charset="UTF-8">
 
-				<!--
-				Use a content security policy to only allow loading images from https or from our extension directory, and only allow scripts that have a specific nonce.
-				-->
-				<!--
-        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} blob: data:; style-src ${webview.cspSource} 'nonce-${nonce}'; script-src 'nonce-${nonce}';" />
-        -->
-				<!--
-				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} blob: data:; style-src 'unsafe-inline'; script-src 'nonce-${nonce}';" />
-        <meta property="csp-nonce" content="${nonce}" />
-        -->
+        <head>
 
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <meta charset="UTF-8">
 
-				<title>Datalayer Notebook</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <!--
-          Workaround for injected typestyle 
-          Xref: https://github.com/typestyle/typestyle/pull/267#issuecomment-390408796
-        -->
-        <style id="typestyle-stylesheet" nonce="${nonce}"></style>
+          <title>Datalayer Notebook</title>
 
-      </head>
+          <!--
+            Workaround for injected typestyle 
+            Xref: https://github.com/typestyle/typestyle/pull/267#issuecomment-390408796
+          -->
+          <style id="typestyle-stylesheet" nonce="${nonce}"></style>
 
-      <body>
-				<div id="notebook-editor"></div>
-				<script nonce="${nonce}" src="${scriptUri}"></script>
-			</body>
+          <meta property="csp-nonce" content="${nonce}" />
+
+          <!--
+          Use a content security policy to only allow loading images from https or from our extension directory, and only allow scripts that have a specific nonce.
+          -->
+          <!--
+          <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} blob: data:; style-src ${webview.cspSource} 'nonce-${nonce}'; script-src 'nonce-${nonce}';" />
+          -->
+          <!--
+          <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} blob: data:; style-src 'unsafe-inline'; script-src 'nonce-${nonce}';" />
+          -->
+
+        </head>
+
+        <body>
+          <div id="notebook-editor"></div>
+          <script nonce="${nonce}" src="${scriptUri}"></script>
+        </body>
 
       </html>`;
   }
@@ -561,11 +564,12 @@ export class NotebookEditorProvider
     webview: vscode.WebviewPanel
   ) {
     const { body, id } = message;
+    // @ts-ignore
     fetch(body.url, {
       body: body.body,
       headers: body.headers,
       method: body.method,
-    }).then(async reply => {
+    }).then(async (reply: any) => {
       const headers: Record<string, string> = [...reply.headers].reduce(
         (agg, pair) => ({ ...agg, [pair[0]]: pair[1] }),
         {}

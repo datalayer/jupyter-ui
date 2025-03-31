@@ -17,7 +17,6 @@ export function disposeAll(disposables: vscode.Disposable[]): void {
 
 export abstract class Disposable {
 	private _isDisposed = false;
-
 	protected _disposables: vscode.Disposable[] = [];
 
 	public dispose() {
