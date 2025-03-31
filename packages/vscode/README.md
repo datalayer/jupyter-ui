@@ -2,11 +2,9 @@
 
 [![Become a Sponsor](https://img.shields.io/static/v1?label=Become%20a%20Sponsor&message=%E2%9D%A4&logo=GitHub&style=flat&color=1ABC9C)](https://github.com/sponsors/datalayer)
 
-# Jupyter UI for Visual Studio Code
+# Jupyter Notebook for Visual Studio Code
 
-The `datalayer-notebook` extension for VS Code allows you to edit Jupyer Notebooks files (`ipynb` extensions).
-
-Available in the [Visual Studio Code Marketplace](https://marketplace.visualstudio.com/items?itemName=datalayer.datalayer-jupyter-vscode).
+This [Visual Studio Code](https://code.visualstudio.com) extension allows you to edit [Jupyter](https://jupyter.org) Notebooks files (`ipynb` extensions) and is publically available in the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=datalayer.datalayer-jupyter-vscode).
 
 <img src="https://jupyter-examples.datalayer.tech/jupyter-react-vscode.gif" />
 

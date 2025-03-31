@@ -219,7 +219,7 @@ export class NotebookEditorProvider
   private static newNotebookFileId = 1;
 
   public static register(context: vscode.ExtensionContext): vscode.Disposable {
-    vscode.commands.registerCommand('datalayer.notebook.new', () => {
+    vscode.commands.registerCommand('datalayer.jupyter-notebook-new', () => {
       const workspaceFolders = vscode.workspace.workspaceFolders;
       if (!workspaceFolders) {
         vscode.window.showErrorMessage(
@@ -252,7 +252,7 @@ export class NotebookEditorProvider
     );
   }
 
-  private static readonly viewType = 'datalayer.notebook';
+  private static readonly viewType = 'datalayer.jupyter-notebook';
 
   /**
    * Tracks all known webviews

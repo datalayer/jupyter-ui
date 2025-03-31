@@ -3,8 +3,15 @@
   "displayName": "Datalayer Notebook",
   "description": "A Jupyter Notebook Editor for VS Code",
   "publisher": "Datalayer",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "icon": "images/datalayer-logo.png",
+  "categories": [
+    "AI",
+    "Data Science",
+    "Machine Learning",
+    "Notebooks",
+    "Visualization"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/datalayer/jupyter-ui.git",
@@ -13,22 +20,19 @@
   "engines": {
     "vscode": "^1.98.0"
   },
-  "categories": [
-    "Data Science"
-  ],
-  "activationEvents": [],
   "main": "./dist/extension.js",
+  "activationEvents": [],
   "contributes": {
     "commands": [
       {
-        "command": "datalayer.notebook.new",
+        "command": "datalayer.jupyter-notebook-new",
         "title": "Create new Datalayer Notebook",
         "category": "Notebook"
       }
     ],
     "customEditors": [
       {
-        "viewType": "datalayer.notebook",
+        "viewType": "datalayer.jupyter-notebook",
         "displayName": "Datalayer Notebook",
         "selector": [
           {
