@@ -74,10 +74,14 @@ npm run package
 ## Publish
 
 ```bash
-npm run vsix
 # npx @vscode/vsce package
-# datalayer.vsix generated
+npm run vsix
+# DONE  Packaged: .../ui/packages/vscode/datalayer-jupyter-vscode-0.0.1.vsix (17 files, 1.37 MB)
 ```
+
+Go to https://marketplace.visualstudio.com/manage/publishers/datalayer and upload the `vsix` file.
+
+Optionally, run via CLI.
 
 ```bash
 $ vsce publish

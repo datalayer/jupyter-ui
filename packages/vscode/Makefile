@@ -2,9 +2,6 @@
 #
 # MIT License
 
-# Copyright (c) Datalayer, Inc. https://datalayer.io
-# Distributed under the terms of the MIT License.
-
 SHELL=/bin/bash
 
 .PHONY: help
