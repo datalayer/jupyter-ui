@@ -5,11 +5,10 @@
  */
 
 import * as vscode from 'vscode';
+import { WebSocket, RawData } from 'ws';
 import { Disposable, disposeAll } from './dispose';
 import { getNonce } from './util';
 import { setRuntime } from './runtimePicker';
-
-import { WebSocket, RawData } from 'ws';
 import type { ExtensionMessage } from './messages';
 
 /**
@@ -406,6 +405,7 @@ export class NotebookEditorProvider
    * Get the static HTML used for in our editor's webviews.
    */
   private getHtmlForWebview(webview: vscode.Webview): string {
+
     // Local path to script and css for the webview
     const scriptUri = webview.asWebviewUri(
       vscode.Uri.joinPath(this._context.extensionUri, 'dist', 'webview.js')
@@ -415,7 +415,7 @@ export class NotebookEditorProvider
     const nonce = getNonce();
 
     /* 
-      FIXME we use very ligth Content Security Policy;
+      FIXME we use very light Content Security Policy;
       - any inline style are allowed
       - any data: image are allowed
      */
@@ -426,26 +426,34 @@ export class NotebookEditorProvider
 				<meta charset="UTF-8">
 
 				<!--
-				Use a content security policy to only allow loading images from https or from our extension directory,
-				and only allow scripts that have a specific nonce.
+				Use a content security policy to only allow loading images from https or from our extension directory, and only allow scripts that have a specific nonce.
 				-->
-				<!-- meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} blob: data:; style-src ${webview.cspSource} 'nonce-${nonce}'; script-src 'nonce-${nonce}';" -->
-				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} blob: data:; style-src 'unsafe-inline'; script-src 'nonce-${nonce}';">
+				<!--
+        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} blob: data:; style-src ${webview.cspSource} 'nonce-${nonce}'; script-src 'nonce-${nonce}';" />
+        -->
+				<!--
+				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} blob: data:; style-src 'unsafe-inline'; script-src 'nonce-${nonce}';" />
         <meta property="csp-nonce" content="${nonce}" />
-				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        -->
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 				<title>Datalayer Notebook</title>
-        <!-- 
+
+        <!--
           Workaround for injected typestyle 
           Xref: https://github.com/typestyle/typestyle/pull/267#issuecomment-390408796
         -->
         <style id="typestyle-stylesheet" nonce="${nonce}"></style>
-			</head>
-			<body>
+
+      </head>
+
+      <body>
 				<div id="notebook-editor"></div>
 				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
-			</html>`;
+
+      </html>`;
   }
 
   private postMessageWithResponse<R = unknown>(

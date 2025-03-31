@@ -6,7 +6,7 @@
 
 import { YNotebook, type ISharedNotebook, type IYText } from '@jupyter/ydoc';
 import type { ISessionContext } from '@jupyterlab/apputils';
-import type { Cell, CodeCell, ICellModel } from '@jupyterlab/cells';
+import type { Cell, ICellModel } from '@jupyterlab/cells';
 import { type IEditorServices } from '@jupyterlab/codeeditor';
 import {
   CodeMirrorEditorFactory,
@@ -23,7 +23,7 @@ import {
   KernelCompleterProvider,
   ProviderReconciliator,
 } from '@jupyterlab/completer';
-import { URLExt, type IChangedArgs } from '@jupyterlab/coreutils';
+import { PathExt, URLExt, type IChangedArgs } from '@jupyterlab/coreutils';
 import { Context, type DocumentRegistry } from '@jupyterlab/docregistry';
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
 import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
@@ -62,15 +62,16 @@ import { Signal } from '@lumino/signaling';
 import { Widget } from '@lumino/widgets';
 import { Box } from '@primer/react';
 import { Banner } from '@primer/react/experimental';
+import { EditorView } from 'codemirror';
 import { useEffect, useMemo, useState } from 'react';
 import { WebsocketProvider } from 'y-websocket';
 import {
   COLLABORATION_ROOM_URL_PATH,
   fetchSessionId,
   requestDocSession,
-  WIDGET_MIMETYPE,
-  WidgetLabRenderer,
-  WidgetManager,
+  // WIDGET_MIMETYPE,
+  // WidgetLabRenderer,
+  // WidgetManager,
 } from '../../jupyter';
 import type { OnSessionConnection } from '../../state';
 import { newUuid, remoteUserCursors } from '../../utils';
@@ -113,7 +114,7 @@ export interface IBaseNotebookProps {
   /**
    * Service manager
    */
-  serviceManager: ServiceManager.IManager;
+  serviceManager?: ServiceManager.IManager;
   /**
    * Notebook content model
    */
@@ -261,7 +262,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
     const factory = new DummyModelFactory(model);
     const thisContext = new Context<NotebookModel>({
       factory,
-      manager: serviceManager,
+      manager: serviceManager ?? (new NoServiceManager() as any),
       path,
       kernelPreference: {
         shouldStart: false,
@@ -276,7 +277,8 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
       id,
       // Initialization must not trigger revert in case we set up the model content
       path !== FALLBACK_NOTEBOOK_PATH ? path : undefined,
-      onSessionConnectionChanged
+      onSessionConnectionChanged,
+      !serviceManager
     );
 
     setContext(thisContext);
@@ -302,7 +304,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
 
   useEffect(() => {
     let thisPanel: NotebookPanel | null = null;
-    let widgetsManager: WidgetManager | null = null;
+    // let widgetsManager: WidgetManager | null = null;
     if (context) {
       thisPanel = widgetFactory?.createNew(context) ?? null;
       if (thisPanel) {
@@ -320,31 +322,31 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
         );
 
         //-- Add ipywidgets renderer
-        const notebookRenderers = thisPanel.content.rendermime;
-        widgetsManager = new WidgetManager(context, notebookRenderers, {
-          saveState: false,
-        });
-        notebookRenderers.addFactory(
-          {
-            safe: true,
-            mimeTypes: [WIDGET_MIMETYPE],
-            defaultRank: 1,
-            createRenderer: options =>
-              new WidgetLabRenderer(options, widgetsManager!),
-          },
-          1
-        );
-        for (const cell of thisPanel.content.widgets) {
-          if (cell.model.type === 'code') {
-            for (const codecell of (cell as CodeCell).outputArea.widgets) {
-              for (const output of Array.from(codecell.children())) {
-                if (output instanceof WidgetLabRenderer) {
-                  output.manager = widgetsManager;
-                }
-              }
-            }
-          }
-        }
+        // const notebookRenderers = thisPanel.content.rendermime;
+        // widgetsManager = new WidgetManager(context, notebookRenderers, {
+        //   saveState: false,
+        // });
+        // notebookRenderers.addFactory(
+        //   {
+        //     safe: true,
+        //     mimeTypes: [WIDGET_MIMETYPE],
+        //     defaultRank: 1,
+        //     createRenderer: options =>
+        //       new WidgetLabRenderer(options, widgetsManager!),
+        //   },
+        //   1
+        // );
+        // for (const cell of thisPanel.content.widgets) {
+        //   if (cell.model.type === 'code') {
+        //     for (const codecell of (cell as CodeCell).outputArea.widgets) {
+        //       for (const output of Array.from(codecell.children())) {
+        //         if (output instanceof WidgetLabRenderer) {
+        //           output.manager = widgetsManager;
+        //         }
+        //       }
+        //     }
+        //   }
+        // }
         //--
 
         setIsLoading(false);
@@ -357,7 +359,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
     }
 
     return () => {
-      widgetsManager?.dispose();
+      // widgetsManager?.dispose();
       if (thisPanel) {
         if (thisPanel.content) Signal.clearData(thisPanel.content);
         try {
@@ -520,25 +522,29 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
  * Note
  * If the hook starts the kernel, it will shut it down when unmounting.
  */
-export function useKernelId(options: {
-  /**
-   * Kernels manager
-   */
-  kernels: Kernel.IManager;
-  /**
-   * Kernel ID to connect to
-   *
-   * If the kernel does not exist and {@link startDefaultKernel} is `true`,
-   * another kernel will be started.
-   */
-  requestedKernelId?: string;
-  /**
-   * Whether or not to start a default kernel.
-   *
-   * Default: false
-   */
-  startDefaultKernel?: boolean;
-}): string | undefined {
+export function useKernelId(
+  options:
+    | {
+        /**
+         * Kernels manager
+         */
+        kernels?: Kernel.IManager;
+        /**
+         * Kernel ID to connect to
+         *
+         * If the kernel does not exist and {@link startDefaultKernel} is `true`,
+         * another kernel will be started.
+         */
+        requestedKernelId?: string;
+        /**
+         * Whether or not to start a default kernel.
+         *
+         * Default: false
+         */
+        startDefaultKernel?: boolean;
+      }
+    | undefined = {}
+): string | undefined {
   const { kernels, requestedKernelId, startDefaultKernel = false } = options;
 
   // Define the kernel to be used.
@@ -548,32 +554,34 @@ export function useKernelId(options: {
   useEffect(() => {
     let isMounted = true;
     let connection: Kernel.IKernelConnection | undefined;
-    (async () => {
-      let newKernelId: string | undefined;
-      await kernels.ready;
-      if (requestedKernelId) {
-        for (const model of kernels.running()) {
-          if (model.id === requestedKernelId) {
-            newKernelId = requestedKernelId;
-            break;
+    if (kernels) {
+      (async () => {
+        let newKernelId: string | undefined;
+        await kernels.ready;
+        if (requestedKernelId) {
+          for (const model of kernels.running()) {
+            if (model.id === requestedKernelId) {
+              newKernelId = requestedKernelId;
+              break;
+            }
           }
         }
-      }
 
-      if (!newKernelId && startDefaultKernel && isMounted) {
-        console.log('Starting new kernel.');
-        connection = await kernels.startNew();
-        if (isMounted) {
-          newKernelId = connection.id;
-        } else {
-          connection.dispose();
+        if (!newKernelId && startDefaultKernel && isMounted) {
+          console.log('Starting new kernel.');
+          connection = await kernels.startNew();
+          if (isMounted) {
+            newKernelId = connection.id;
+          } else {
+            connection.dispose();
+          }
         }
-      }
 
-      if (isMounted) {
-        setKernelId(newKernelId);
-      }
-    })();
+        if (isMounted) {
+          setKernelId(newKernelId);
+        }
+      })();
+    }
 
     return () => {
       isMounted = false;
@@ -918,6 +926,18 @@ class CommonFeatures {
         );
       },
     });
+    // Fix to deal with Content Security Policy
+    const nonce = getNonce();
+    if (nonce) {
+      editorExtensions.addExtension({
+        name: 'csp-nonce',
+        factory() {
+          return EditorExtensionRegistry.createImmutableExtension(
+            EditorView.cspNonce.of(nonce)
+          );
+        },
+      });
+    }
 
     const factoryService = new CodeMirrorEditorFactory({
       extensions: editorExtensions,
@@ -963,7 +983,8 @@ function initializeContext(
   context: Context,
   id: string,
   path?: string,
-  onSessionConnection?: OnSessionConnection
+  onSessionConnection?: OnSessionConnection,
+  serverLess: boolean = false
 ) {
   const shuntContentManager = path ? false : true;
 
@@ -1034,16 +1055,21 @@ function initializeContext(
         name,
         language: (context as any)._model.defaultKernelLanguage,
       };
-      // Note: we don't wait on the session to initialize
-      // so that the user can be shown the content before
-      // any kernel has started.
-      void context.sessionContext.initialize().then((shouldSelect: boolean) => {
-        if (shouldSelect) {
-          void (context as any)._dialogs.selectKernel(
-            (context!.sessionContext as any).sessionContext
-          );
-        }
-      });
+
+      if (!serverLess) {
+        // Note: we don't wait on the session to initialize
+        // so that the user can be shown the content before
+        // any kernel has started.
+        void context.sessionContext
+          .initialize()
+          .then((shouldSelect: boolean) => {
+            if (shouldSelect) {
+              void (context as any)._dialogs.selectKernel(
+                (context!.sessionContext as any).sessionContext
+              );
+            }
+          });
+      }
     };
     (context as any).initialize = async (isNew: boolean): Promise<void> => {
       (context as Context<INotebookModel>).model.dirty = false;
@@ -1106,4 +1132,61 @@ function initializeContext(
 
   // Initialize the context
   context.initialize(path ? false : true);
+}
+
+/**
+ * Service manager facade for missing manager.
+ */
+class NoServiceManager {
+  readonly contents = Object.freeze({
+    fileChanged: { connect: () => {} },
+    getSharedModelFactory(path: string): null {
+      return null;
+    },
+    localPath(path: string): string {
+      const parts = path.split('/');
+      const firstParts = parts[0].split(':');
+      if (
+        firstParts.length === 1 ||
+        !this._additionalDrives.has(firstParts[0])
+      ) {
+        return PathExt.removeSlash(path);
+      }
+      return PathExt.join(firstParts.slice(1).join(':'), ...parts.slice(1));
+    },
+    normalize(path: string): string {
+      const parts = path.split(':');
+      if (parts.length === 1) {
+        return PathExt.normalize(path);
+      }
+      return `${parts[0]}:${PathExt.normalize(parts.slice(1).join(':'))}`;
+    },
+  });
+
+  readonly kernelspecs = Object.freeze({
+    // Ever hanging promise.
+    ready: new Promise(() => {}),
+  });
+
+  readonly sessions = Object.freeze({
+    // Ever hanging promise.
+    ready: new Promise(() => {}),
+  });
+
+  // Always ready otherwise the spinner in the MainAreaWidget won't be discarded.
+  readonly ready = Promise.resolve();
+}
+
+/**
+ * Returns the nonce used in the page, if any.
+ *
+ * Based on https://github.com/cssinjs/jss/blob/master/packages/jss/src/DomRenderer.js
+ */
+function getNonce() {
+  const node = document.querySelector('meta[property="csp-nonce"]');
+  if (node) {
+    return node.getAttribute('content');
+  } else {
+    return null;
+  }
 }

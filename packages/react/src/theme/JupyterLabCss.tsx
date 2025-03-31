@@ -9,8 +9,8 @@ import { Colormode } from './JupyterLabColormode';
 
 const DATASET_LAB_THEME = 'data-lab-theme';
 
-type Props = {
-  colormode: Colormode;
+type JupyterLabCssProps = {
+  colormode?: Colormode;
 };
 
 /**
@@ -21,8 +21,8 @@ let isLoaded = false;
 /**
  * Components loading the JupyterLab CSS stylesheets.
  */
-export const JupyterLabCss = (props: Props) => {
-  const { colormode } = props;
+export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
+  const { colormode = 'light' } = props;
   useEffect(() => {
     if (isLoaded) {
       // no-op
@@ -55,11 +55,13 @@ export const JupyterLabCss = (props: Props) => {
     let theme;
     switch (colormode) {
       case 'light': {
-        theme = import('!!raw-loader!@jupyterlab/theme-light-extension/style/variables.css');
+        // @ts-expect-error unknown module
+        theme = import('@jupyterlab/theme-light-extension/style/variables.css?raw');
         break;
       }
       case 'dark': {
-        theme = import('!!raw-loader!@jupyterlab/theme-dark-extension/style/variables.css');
+        // @ts-expect-error unknown module
+        theme = import('@jupyterlab/theme-dark-extension/style/variables.css?raw');
         break;
       }
     }
@@ -81,10 +83,6 @@ ${module.default}
     });
   }, [colormode]);
   return <div id="dla-JupyterLabCss-id"></div>;
-};
-
-JupyterLabCss.defaultProps = {
-  colormode: 'light',
 };
 
 export default JupyterLabCss;
