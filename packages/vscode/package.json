@@ -4,6 +4,11 @@
   "description": "A Jupyter Notebook Editor for VS Code",
   "publisher": "datalayer",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/datalayer/jupyter-ui.git",
+    "directory": "packages/vscode"
+  },
   "engines": {
     "vscode": "^1.98.0"
   },
