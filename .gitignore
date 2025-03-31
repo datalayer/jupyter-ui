@@ -25,6 +25,8 @@ coverage
 typedoc
 storybook-static
 
+**/*.vsix
+
 *.exclude.*
 
 yarn.lock

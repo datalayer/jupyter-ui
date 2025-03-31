@@ -9,7 +9,7 @@ import os
 from jupyter_server.utils import url_path_join
 from jupyter_server.extension.application import ExtensionApp, ExtensionAppJinjaMixin
 
-from ._version import __version__
+from .__version__ import __version__
 
 from .handlers.index.handler import IndexHandler
 from .handlers.config.handler import ConfigHandler

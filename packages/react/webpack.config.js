@@ -20,7 +20,7 @@ const ENTRY =
   // './src/app/App';
   // './src/examples/Bokeh';
   // './src/examples/Bqplot';
-  './src/examples/Cell';
+  // './src/examples/Cell';
   // './src/examples/CellLite';
   // './src/examples/Cells';
   // './src/examples/CellsExecute';
@@ -44,7 +44,7 @@ const ENTRY =
   // './src/examples/Kernels';
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
-  // './src/examples/Notebook';
+  './src/examples/Notebook';
   // './src/examples/NotebookCellSidebar';
   // './src/examples/NotebookCellToolbar';
   // './src/examples/NotebookColormode';
@@ -84,12 +84,12 @@ const ENTRY =
 const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == 'true';
 const IS_NO_CONFIG = process.env.NO_CONFIG == 'true';
 const INDEX_PAGE = IS_JUPYTER_SERVER_LOCAL ?
-    'index-local.html'
-  : 
-    IS_NO_CONFIG ?
-       'index-noconfig.html'
+  'index-local.html'
+  :
+  IS_NO_CONFIG ?
+    'index-noconfig.html'
     :
-      'index.html';
+    'index.html';
 const IS_PRODUCTION = process.argv.indexOf('--mode=production') > -1;
 const mode = IS_PRODUCTION ? 'production' : 'development';
 const devtool = IS_PRODUCTION ? false : 'inline-source-map';
@@ -167,10 +167,6 @@ module.exports = {
         enforce: "pre",
         use: ["source-map-loader"],
       },
-      {
-        resourceQuery: /raw/,
-        type: 'asset/source',
-      },
       // just keep the woff2 fonts from fontawesome
       {
         test: /fontawesome-free.*\.(svg|eot|ttf|woff)$/,
@@ -182,7 +178,15 @@ module.exports = {
       },
       // We must escape the JupyterLab theme style sheets to apply specific rules
       // this is only needed in stand-alone mode
-      { test: /(?<!style\/theme)\.css$/, use: ['style-loader', 'css-loader'] },
+      {
+        oneOf: [
+          {
+            resourceQuery: /raw/,
+            type: 'asset/source',
+          },
+          { test: /(?<!style\/theme)\.css$/, use: ['style-loader', 'css-loader'] },
+        ]
+      },
       { test: /\.md$/, type: 'asset/source' },
       { test: /\.js.map$/, type: 'asset/resource' },
       {
