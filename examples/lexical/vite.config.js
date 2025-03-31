@@ -14,13 +14,14 @@
 
 import {defineConfig} from 'vite';
 import react from '@vitejs/plugin-react';
-import {replaceCodePlugin} from 'vite-plugin-replace';
+// import {replaceCodePlugin} from 'vite-plugin-replace';
 import babel from '@rollup/plugin-babel';
 import * as path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
+    /*
     replaceCodePlugin({
       replacements: [
         {
@@ -29,6 +30,7 @@ export default defineConfig({
         },
       ],
     }),
+    */
     babel({
       babelHelpers: 'bundled',
       babelrc: false,

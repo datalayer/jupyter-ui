@@ -7,9 +7,9 @@
 This example is built using [Docusaurus](https://docusaurus.io), a modern static website generator, and allows you to add a live cell in the Docusaurus site.
 
 ```bash
-yarn install &&
+npm install &&
   echo open http://localhost:3000/docs/intro && \
-  yarn start
+  npm run start
 ```
 
 <div align="center" style="text-align: center">
@@ -17,9 +17,9 @@ yarn install &&
 </div>
 
 ```bash
-yarn build:docusaurus &&
+npm run build:docusaurus &&
   echo open http://localhost:3000 && \
-  yarn serve
+  npm serve
 ```
 
 ## Usage

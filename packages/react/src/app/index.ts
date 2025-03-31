@@ -3,3 +3,5 @@
  *
  * MIT License
  */
+
+export * from './JupyterReact';

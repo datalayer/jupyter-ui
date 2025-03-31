@@ -8,9 +8,9 @@ Integrate Jupyter cells in a [Slate](https://www.slatejs.org) document.
 
 
 ```base
-yarn install &&
+npm install &&
   echo open http://localhost:3266 && \
-  yarn start
+  npm run start
 ```
 
 <div align="center" style="text-align: center">

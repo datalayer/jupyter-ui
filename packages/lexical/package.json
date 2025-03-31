@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyter-lexical",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Jupyter UI for Lexical",
   "license": "MIT",
   "main": "lib/index.js",
@@ -21,12 +21,19 @@
     "url": "https://github.com/datalayer/jupyter-ui.git",
     "directory": "packages/lexical"
   },
+  "sideEffects": [
+    "style/*.css",
+    "src/**/*.css",
+    "style/index.js"
+  ],
+  "styleModule": "style/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "build": "gulp resources-to-lib && tsc && webpack && yarn build:lib && (yarn build:labextension:dev || true)",
-    "build:labextension": "jupyter labextension build .",
-    "build:labextension:dev": "jupyter labextension build --development True .",
+    "build": "gulp resources-to-lib && tsc && webpack && npm run build:lib",
     "build:lib": "tsc",
-    "build:prod": "gulp resources-to-lib && tsc && jlpm clean && jlpm build:lib && jlpm build:labextension",
+    "build:prod": "gulp resources-to-lib && tsc && jlpm clean && jlpm build:lib",
     "build:tsc:watch": "run-p 'build:tsc:watch:*'",
     "build:tsc:watch:res": "gulp resources-to-lib-watch",
     "build:tsc:watch:tsc": "tsc --watch",
@@ -38,9 +45,6 @@
     "eslint": "jlpm eslint:check --fix",
     "eslint:check": "eslint . --cache --ext .ts,.tsx",
     "install:extension": "jlpm build",
-    "jupyterlab": "run-p -c 'jupyterlab:*'",
-    "jupyterlab:start": "jupyter lab --watch --config=./dev/config/jupyter_server_config.py",
-    "jupyterlab:watch": "run-p -c watch:src watch:labextension",
     "kill": "./../../dev/sh/kill.sh || true",
     "lint": "jlpm stylelint && jlpm prettier && jlpm eslint",
     "lint:check": "jlpm stylelint:check && jlpm prettier:check && jlpm eslint:check",
@@ -54,8 +58,7 @@
     "stylelint:check": "stylelint --cache \"style/**/*.css\"",
     "test": "jest --coverage",
     "typedoc": "typedoc ./src",
-    "watch": "run-p watch:src watch:labextension",
-    "watch:labextension": "jupyter labextension watch .",
+    "watch": "run-p watch:src",
     "watch:src": "tsc -w"
   },
   "dependencies": {
@@ -120,7 +123,7 @@
     "jest": "^29.4.3",
     "mkdirp": "^1.0.3",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.1.1",
+    "prettier": "3.3.2",
     "process": "^0.11.10",
     "raw-loader": "^4.0.2",
     "rimraf": "^3.0.2",
@@ -134,47 +137,11 @@
     "stylelint-prettier": "^2.0.0",
     "svg-url-loader": "^7.1.1",
     "typedoc": "^0.25.7",
-    "typescript": "~5.0.3",
+    "typescript": "^5.0.3",
     "url-loader": "^3.0.0",
     "watch": "^1.0.2",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.9.3"
-  },
-  "sideEffects": [
-    "style/*.css",
-    "src/**/*.css",
-    "style/index.js"
-  ],
-  "styleModule": "style/index.js",
-  "publishConfig": {
-    "access": "public"
-  },
-  "jupyterlab": {
-    "discovery": {
-      "server": {
-        "managers": [
-          "pip"
-        ],
-        "base": {
-          "name": "jupyter_lexical"
-        }
-      }
-    },
-    "extension": "./lib/jupyter/lab/index.js",
-    "outputDir": "jupyter_lexical/labextension",
-    "schemaDir": "schema",
-    "webpackConfig": "./webpack.lab-config.js"
-  },
-  "jupyter-releaser": {
-    "hooks": {
-      "before-build-npm": [
-        "python -m pip install jupyterlab==4.1.0b0",
-        "jlpm"
-      ],
-      "before-build-python": [
-        "jlpm clean:all"
-      ]
-    }
   }
 }

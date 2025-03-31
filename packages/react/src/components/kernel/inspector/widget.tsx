@@ -14,11 +14,7 @@ import {
 } from '@jupyterlab/ui-components';
 import { Message as luminoMessage } from '@lumino/messaging';
 import { Widget, BoxLayout } from '@lumino/widgets';
-import {
-  ObjectInspector,
-  ObjectLabel,
-  InspectorNodeParams,
-} from 'react-inspector';
+import { ObjectInspector, ObjectLabel   } from 'react-inspector';
 import { newUuid } from '../../../utils';
 import { KernelSpyModel, ThreadIterator } from './model';
 
@@ -52,8 +48,14 @@ const theme = {
   TREENODE_PADDING_LEFT: 12,
 };
 
-function msgNodeRenderer(args: InspectorNodeParams) {
-  const { name, depth, isNonenumerable, data } = args;
+// function msgNodeRenderer(args: InspectorNodeParams) {
+function msgNodeRenderer(args: {
+  depth: number;
+  name: string;
+  data: any;
+  isNonenumerable: boolean;
+}) {
+    const { name, depth, isNonenumerable, data } = args;
   if (depth !== 0) {
     return (
       <ObjectLabel

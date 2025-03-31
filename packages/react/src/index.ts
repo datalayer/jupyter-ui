@@ -4,6 +4,7 @@
  * MIT License
  */
 
+export * from './app';
 export * from './components';
 export * from './jupyter';
 export * from './state';

@@ -25,7 +25,7 @@ all: clean install build publish
 
 build: ## build all modules
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		yarn build )
+		npm run build )
 
 kill: ## kill
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
@@ -33,7 +33,7 @@ kill: ## kill
 
 start: ## start
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		yarn start )
+		npm run start )
 
 clean: ## deletes node_modules, lib, build... folders and other generated info, lock, log... files
 	find . -name node_modules | xargs rm -fr {} || true
@@ -55,7 +55,7 @@ env: ## create a conda environment
 
 install: ## install npm dependencies
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		yarn )
+		npm )
 
 start-jupyter-server: ## start the jupyter server
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
@@ -66,7 +66,7 @@ start-jupyter-server: ## start the jupyter server
 define release_package
 	echo $1
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		cd $1 && rm tsconfig.tsbuildinfo && yarn build && npm publish --access public )
+		cd $1 && rm tsconfig.tsbuildinfo && npm run build && npm publish --access public )
 endef
 
 publish: # publish the npm packages

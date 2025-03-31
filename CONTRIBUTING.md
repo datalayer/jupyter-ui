@@ -18,10 +18,10 @@ To install it in dev mode, you first must install:
 Then execute the following commands in the `packages/react` folder:
 
 ```sh
-# Install yarn - https://yarnpkg.com/getting-started/install
+# Install npm - https://yarnpkg.com/getting-started/install
 corepack enable
-yarn install
-yarn build
+npm install
+npm run build
 ```
 
 ### Code changes
@@ -31,7 +31,7 @@ interact with an isolated component.
 To start it, execute
 
 ```sh
-yarn storybook
+npm run storybook
 ```
 
 It should open a web browser tab pointing to `http://localhost:6006` in which you will
@@ -52,5 +52,5 @@ The code follows some rules for format and prevent bad practices.
 To check that and apply auto fixes, you must execute:
 
 ```sh
-yarn lint
+npm run lint
 ```

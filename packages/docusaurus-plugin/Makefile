@@ -23,11 +23,11 @@ default: help ## default target is help
 
 clean: ## clean
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		yarn clean )
+		npm run clean )
 
 build: ## build
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		yarn build )
+		npm run build )
 
 build-prod: ## build-prod
 	git clean -fdx

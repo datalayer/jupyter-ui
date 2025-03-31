@@ -19,7 +19,7 @@ export type JupyterFrontEndProps = {
   app?: JupyterFrontEnd;
 };
 
-const JupyterReact = (props: JupyterFrontEndProps): JSX.Element => {
+export const JupyterReact = (props: JupyterFrontEndProps): JSX.Element => {
   const { app } = props;
   const [tab, setTab] = useState(1);
   const [version, setVersion] = useState('');

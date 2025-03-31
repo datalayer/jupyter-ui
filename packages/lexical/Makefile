@@ -23,11 +23,11 @@ default: help ## default target is help
 
 clean: ## clean
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		yarn clean )
+		npm run clean )
 
 build: ## build
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		yarn build )
+		npm run build )
 
 build-prod: ## build-prod
 	git clean -fdx
@@ -41,7 +41,7 @@ publish-npm: clean build ## publish
 typedoc: ## generate typedoc
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		rm -fr typedoc && \
-		yarn typedoc --tsconfig ./tsconfig.json && \
+		npm run typedoc --tsconfig ./tsconfig.json && \
 		open typedoc/index.html )
 
 typedoc-publish: typedoc ## deploy typedoc
@@ -59,3 +59,11 @@ typedoc-publish: typedoc ## deploy typedoc
 		--paths "/*" \
 		--profile datalayer
 	echo open ✨  https://typedoc.datalayer.tech/datalayer/jupyter-lexical/0.1.1
+
+publish-pypi: # publish the pypi package
+	git clean -fdx && \
+		python -m build
+	@exec echo
+	@exec echo twine upload ./dist/*-py3-none-any.whl
+	@exec echo
+	@exec echo https://pypi.org/project/jupyter-lexical/#history

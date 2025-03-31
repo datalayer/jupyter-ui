@@ -23,11 +23,11 @@ default: help ## default target is help
 
 start-storybook: ## start-storybook
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-	  yarn storybook )
+	  npm storybook )
 
 build-storybook: ## build-storybook
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-	  yarn build:storybook )
+	  npm run build:storybook )
 
 deploy: build-storybook ## publish to s3
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
