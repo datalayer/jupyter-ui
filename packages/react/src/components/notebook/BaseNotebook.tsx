@@ -4,7 +4,6 @@
  * MIT License
  */
 
-import { YNotebook, type ISharedNotebook, type IYText } from '@jupyter/ydoc';
 import type { ISessionContext } from '@jupyterlab/apputils';
 import type { Cell, CodeCell, ICellModel } from '@jupyterlab/cells';
 import { type IEditorServices } from '@jupyterlab/codeeditor';
@@ -17,12 +16,11 @@ import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extensi
 import { createMarkdownParser } from '@jupyterlab/markedparser-extension';
 import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
 import type { INotebookContent } from '@jupyterlab/nbformat';
-import { NotebookModel, NotebookModelFactory, NotebookPanel, NotebookTracker, NotebookWidgetFactory, StaticNotebook, type INotebookModel,  type Notebook,
-} from '@jupyterlab/notebook';
-import { RenderMimeRegistry, standardRendererFactories, type IRenderMime,
-} from '@jupyterlab/rendermime';
+import { NotebookModel, NotebookModelFactory, NotebookPanel, NotebookTracker, NotebookWidgetFactory, StaticNotebook, type INotebookModel,  type Notebook } from '@jupyterlab/notebook';
+import { RenderMimeRegistry, standardRendererFactories, type IRenderMime } from '@jupyterlab/rendermime';
 import type { Contents, Kernel, ServerConnection, ServiceManager, Session, SessionManager } from '@jupyterlab/services';
 import type { ISessionConnection } from '@jupyterlab/services/lib/session/session';
+import { YNotebook, type ISharedNotebook, type IYText } from '@jupyter/ydoc';
 import { find } from '@lumino/algorithm';
 import { CommandRegistry } from '@lumino/commands';
 import { PromiseDelegate } from '@lumino/coreutils';

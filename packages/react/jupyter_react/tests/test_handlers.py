@@ -4,7 +4,7 @@
 
 import json
 
-from .._version import __version__
+from ..__version__ import __version__
 
 
 async def test_config(jp_fetch):

@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { InputBoxValidationSeverity, window } from 'vscode';
+import { window, InputBoxValidationSeverity } from 'vscode';
 
 /**
  * Prompt the user to enter an Jupyter Server URL.
