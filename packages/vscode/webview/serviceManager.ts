@@ -105,13 +105,11 @@ interface ICloseEventConfiguration extends IEventConfiguration {
 function createEvent(config: IEventConfiguration) {
   const { type, target } = config;
   const eventObject = new Event(type);
-
   if (target) {
     (eventObject as any).target = target;
     (eventObject as any).srcElement = target;
     (eventObject as any).currentTarget = target;
   }
-
   return eventObject;
 }
 
@@ -124,23 +122,19 @@ function createEvent(config: IEventConfiguration) {
 function createCloseEvent(config: ICloseEventConfiguration) {
   const { code, reason, type, target } = config;
   let { wasClean } = config;
-
   if (!wasClean) {
     wasClean = code === 1000;
   }
-
   const closeEvent = new CloseEvent(type, {
     code,
     reason,
     wasClean,
   });
-
   if (target) {
     (closeEvent as any).target = target;
     (closeEvent as any).srcElement = target;
     (closeEvent as any).currentTarget = target;
   }
-
   return closeEvent;
 }
 
@@ -159,7 +153,6 @@ function normalizeSendData(data) {
   ) {
     data = String(data);
   }
-
   return data;
 }
 
@@ -172,43 +165,35 @@ function protocolVerification(protocols?: string | string[]): string[] {
       ).toString()}' is invalid.`
     );
   }
-
   if (typeof protocols === 'string') {
     protocols = [protocols];
   }
-
   const uniq = protocols
     .map(p => ({ count: 1, protocol: p }))
     .reduce((a, b) => {
       a[b.protocol] = (a[b.protocol] || 0) + b.count;
       return a;
     }, {});
-
   const duplicates = Object.keys(uniq).filter(a => uniq[a] > 1);
-
   if (duplicates.length > 0) {
     throw new SyntaxError(
       `${ERROR_PREFIX.CONSTRUCTOR_ERROR} The subprotocol '${duplicates[0]}' is duplicated.`
     );
   }
-
   return protocols.filter(p => p !== 'v1.kernel.websocket.jupyter.org');
 }
 
 function urlVerification(url: string | URL) {
   const urlRecord = new URL(url);
   const { pathname, protocol, hash } = urlRecord;
-
   if (!url) {
     throw new TypeError(
       `${ERROR_PREFIX.CONSTRUCTOR_ERROR} 1 argument required, but only 0 present.`
     );
   }
-
   if (!pathname) {
     urlRecord.pathname = '/';
   }
-
   if (protocol === '') {
     throw new SyntaxError(
       `${
@@ -216,19 +201,16 @@ function urlVerification(url: string | URL) {
       } The URL '${urlRecord.toString()}' is invalid.`
     );
   }
-
   if (protocol !== 'ws:' && protocol !== 'wss:') {
     throw new SyntaxError(
       `${ERROR_PREFIX.CONSTRUCTOR_ERROR} The URL's scheme must be either 'ws' or 'wss'. '${protocol}' is not allowed.`
     );
   }
-
   if (hash !== '') {
     throw new SyntaxError(
       `${ERROR_PREFIX.CONSTRUCTOR_ERROR} The URL contains a fragment identifier ('${hash}'). Fragment identifiers are not allowed in WebSocket URLs.`
     );
   }
-
   return urlRecord.toString();
 }
 
@@ -279,11 +261,9 @@ class EventTarget {
   dispatchEvent(event: Event, ...customArguments) {
     const eventName = event.type;
     const listeners = this.listeners.get(eventName);
-
     if (!listeners) {
       return false;
     }
-
     listeners.forEach(listener => {
       if (customArguments.length > 0) {
         listener.apply(this, customArguments);
@@ -291,7 +271,6 @@ class EventTarget {
         listener.call(this, event);
       }
     });
-
     return true;
   }
 }
@@ -305,19 +284,15 @@ class WebSocket extends EventTarget {
 
   constructor(url: string | URL, protocols: string | string[] = []) {
     super();
-
     this.clientId = 'ws-' + (WebSocket._clientCounter++).toString();
     this.url = urlVerification(url);
     protocols = protocolVerification(protocols);
     this.protocol = protocols[0] || '';
-
     this.binaryType = 'blob';
     this._readyState = WebSocket.CONNECTING;
-
     this._disposable = MessageHandler.instance.registerCallback(
       this._onExtensionMessage.bind(this)
     );
-
     this._open();
   }
 

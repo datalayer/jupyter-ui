@@ -18,3 +18,7 @@ package: ## package
 
 vsix: ## vsix
 	npm run vsix
+
+jupyter-server: ## start the jupyter server
+	./../../dev/sh/kill.sh || true
+	cd ./../../dev/sh && ./start-jupyter-server.sh

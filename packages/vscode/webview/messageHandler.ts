@@ -8,8 +8,8 @@ import { PromiseDelegate } from '@lumino/coreutils';
 import { createContext } from 'react';
 
 declare let acquireVsCodeApi: any;
-// Get access to the VS Code API from within the webview context
-// - this can only be called once.
+
+// Get access to the VS Code API from within the webview context. !!! this can only be called once.
 const vscode = acquireVsCodeApi();
 
 /**

@@ -53,7 +53,7 @@ install: ## install npm dependencies
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		npm )
 
-start-jupyter-server: ## start the jupyter server
+jupyter-server: ## start the jupyter server
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		./dev/sh/kill.sh || true )
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \

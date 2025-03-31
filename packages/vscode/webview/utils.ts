@@ -19,3 +19,18 @@ export function loadFromBytes(raw: Uint8Array): any {
   }
   return parsed;
 }
+
+/**
+ * Returns the nonce used in the page, if any.
+ *
+ * Based on https://github.com/cssinjs/jss/blob/master/packages/jss/src/DomRenderer.js
+ * Used by @microsoft/fast design system
+ */
+export function getNonce() {
+  const node = document.querySelector('meta[property="csp-nonce"]');
+  if (node) {
+    return node.getAttribute('content');
+  } else {
+    return null;
+  }
+}
