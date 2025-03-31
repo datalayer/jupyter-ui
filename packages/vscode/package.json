@@ -1,6 +1,6 @@
 {
   "name": "datalayer-jupyter-vscode",
-  "displayName": "Datalayer Notebook",
+  "displayName": "Datalayer Jupyter Notebook",
   "description": "A Jupyter Notebook Editor for VS Code",
   "publisher": "Datalayer",
   "version": "0.0.2",
