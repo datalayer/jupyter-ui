@@ -1,7 +1,3 @@
-# Copyright (c) 2021-2023 Datalayer, Inc.
-#
-# MIT License
-
 # Copyright (c) Datalayer, Inc. https://datalayer.io
 # Distributed under the terms of the MIT License.
 

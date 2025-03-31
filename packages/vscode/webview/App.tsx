@@ -4,49 +4,33 @@
  * MIT License
  */
 
-import {
-  BaseNotebook,
-  JupyterReactTheme,
-  Loader,
-  useKernelId,
-  useNotebookModel,
-} from '@datalayer/jupyter-react';
-import { ServiceManager } from '@jupyterlab/services';
-import { Box, Button } from '@primer/react';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { ServiceManager } from '@jupyterlab/services';
+import { Box, Button } from '@primer/react';
+import { useKernelId, useNotebookModel, BaseNotebook, JupyterReactTheme, Loader } from '@datalayer/jupyter-react';
 import { MessageHandlerContext, type ExtensionMessage } from './messageHandler';
 import { createServiceManager } from './serviceManager';
+import { loadFromBytes } from './utils';
 
-function App(): JSX.Element {
+function NotebookVSCode(): JSX.Element {
   const height = '100vh';
   const maxHeight = '100vh';
   const cellSidebarMargin = '120px';
   const messageHandler = useContext(MessageHandlerContext);
-
   const [isLoading, setIsLoading] = useState(true);
   const [nbformat, setNbformat] = useState(undefined);
-  const [readonly, setReadonly] = useState(true);
-  const [serviceManager, setServiceManager] = useState<
-    ServiceManager | undefined
-  >();
-
+  const [serviceManager, setServiceManager] = useState<ServiceManager | undefined>();
   const kernelId = useKernelId({
     kernels: serviceManager?.kernels,
     startDefaultKernel: true,
   });
-
-  const model = useNotebookModel({
-    nbformat,
-    readonly,
-  });
-
+  const model = useNotebookModel({ nbformat });
   useEffect(() => {
     if (model) {
       setIsLoading(false);
     }
   }, [model]);
-
   const handler = useCallback(
     async (message: ExtensionMessage) => {
       const { type, body, id } = message;
@@ -84,31 +68,24 @@ function App(): JSX.Element {
     },
     [messageHandler]
   );
-
   useEffect(() => {
     const disposable = messageHandler.registerCallback(handler);
-
     // Signal to VS Code that the webview is initialized.
     messageHandler.postMessage({ type: 'ready' });
-
     return () => {
       disposable.dispose();
     };
   }, [messageHandler, handler]);
-
   const selectRuntime = useCallback(async () => {
     const reply = await messageHandler.postRequest({ type: 'select-runtime' });
     const { baseUrl, token } = reply.body ?? {};
     setServiceManager(createServiceManager(baseUrl, token));
   }, [messageHandler]);
-
-  return isLoading ? (
+  return isLoading
+  ?
     <Loader key="notebook-loader" />
-  ) : (
-    <Box
-      style={{ height, width: '100%', position: 'relative' }}
-      id="dla-Jupyter-Notebook"
-    >
+  :
+    <Box style={{ height, width: '100%', position: 'relative' }} id="dla-Jupyter-Notebook">
       <Box sx={{ display: 'flex' }}>
         <Button
           title="Select a runtime for the current notebook."
@@ -171,7 +148,6 @@ function App(): JSX.Element {
         )}
       </Box>
     </Box>
-  );
 }
 
 // Main function that gets executed once the webview DOM loads
@@ -179,23 +155,7 @@ export function main() {
   const root = createRoot(document.getElementById('notebook-editor')!);
   root.render(
     <JupyterReactTheme colormode="dark">
-      <App />
+      <NotebookVSCode />
     </JupyterReactTheme>
   );
-}
-
-function loadFromBytes(raw: Uint8Array): any {
-  const rawContent = new TextDecoder().decode(raw);
-  const parsed = JSON.parse(rawContent);
-  // Inline html output to fix an issue seen in JupyterLab 4 (prior to 4.2)
-  for (const cell of parsed.cells) {
-    if (cell.outputs) {
-      for (const output of cell.outputs) {
-        if (Array.isArray(output.data?.['text/html'])) {
-          output.data['text/html'] = output.data['text/html'].join('');
-        }
-      }
-    }
-  }
-  return parsed;
 }
