@@ -21,6 +21,15 @@
     "url": "https://github.com/datalayer/jupyter-ui.git",
     "directory": "packages/lexical"
   },
+  "sideEffects": [
+    "style/*.css",
+    "src/**/*.css",
+    "style/index.js"
+  ],
+  "styleModule": "style/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "gulp resources-to-lib && tsc && webpack && npm run build:lib && (npm run build:labextension:dev || true)",
     "build:labextension": "jupyter labextension build .",
@@ -140,41 +149,5 @@
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.9.3"
-  },
-  "sideEffects": [
-    "style/*.css",
-    "src/**/*.css",
-    "style/index.js"
-  ],
-  "styleModule": "style/index.js",
-  "publishConfig": {
-    "access": "public"
-  },
-  "jupyterlab": {
-    "discovery": {
-      "server": {
-        "managers": [
-          "pip"
-        ],
-        "base": {
-          "name": "jupyter_lexical"
-        }
-      }
-    },
-    "extension": "./lib/jupyter/lab/index.js",
-    "outputDir": "jupyter_lexical/labextension",
-    "schemaDir": "schema",
-    "webpackConfig": "./webpack.lab-config.js"
-  },
-  "jupyter-releaser": {
-    "hooks": {
-      "before-build-npm": [
-        "python -m pip install jupyterlab==4.1.0b0",
-        "jlpm"
-      ],
-      "before-build-python": [
-        "jlpm clean:all"
-      ]
-    }
   }
 }

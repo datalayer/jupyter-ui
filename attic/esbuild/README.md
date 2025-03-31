@@ -6,5 +6,5 @@
 
 ```bash
 echo open http://localhost:4003
-npm start
+npm run start
 ```

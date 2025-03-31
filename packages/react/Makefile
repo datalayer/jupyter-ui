@@ -37,7 +37,7 @@ publish-npm: clean build ## publish
 typedoc: ## generate typedoc
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		rm -fr typedoc && \
-		npm typedoc --tsconfig ./tsconfig.json && \
+		npm run typedoc --tsconfig ./tsconfig.json && \
 		open typedoc/index.html )
 
 publish-typedoc: typedoc ## deploy typedoc

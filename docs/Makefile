@@ -34,7 +34,7 @@ install: ## install
 
 start: ## start
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-	  npm start )
+	  npm run start )
 
 build: ## build
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \

@@ -31,7 +31,7 @@ interact with an isolated component.
 To start it, execute
 
 ```sh
-npm storybook
+npm run storybook
 ```
 
 It should open a web browser tab pointing to `http://localhost:6006` in which you will
@@ -52,5 +52,5 @@ The code follows some rules for format and prevent bad practices.
 To check that and apply auto fixes, you must execute:
 
 ```sh
-npm lint
+npm run lint
 ```

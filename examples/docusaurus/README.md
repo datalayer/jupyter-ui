@@ -9,7 +9,7 @@ This example is built using [Docusaurus](https://docusaurus.io), a modern static
 ```bash
 npm install &&
   echo open http://localhost:3000/docs/intro && \
-  npm start
+  npm run start
 ```
 
 <div align="center" style="text-align: center">

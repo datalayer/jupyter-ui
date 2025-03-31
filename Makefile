@@ -33,7 +33,7 @@ kill: ## kill
 
 start: ## start
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		npm start )
+		npm run start )
 
 clean: ## deletes node_modules, lib, build... folders and other generated info, lock, log... files
 	find . -name node_modules | xargs rm -fr {} || true
