@@ -23,7 +23,7 @@ default: help ## default target is help
 
 clean: ## clean
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		npm clean )
+		npm run clean )
 
 build: ## build
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
@@ -59,3 +59,11 @@ typedoc-publish: typedoc ## deploy typedoc
 		--paths "/*" \
 		--profile datalayer
 	echo open ✨  https://typedoc.datalayer.tech/datalayer/jupyter-lexical/0.1.1
+
+publish-pypi: # publish the pypi package
+	git clean -fdx && \
+		python -m build
+	@exec echo
+	@exec echo twine upload ./dist/*-py3-none-any.whl
+	@exec echo
+	@exec echo https://pypi.org/project/jupyter-lexical/#history

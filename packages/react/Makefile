@@ -23,7 +23,7 @@ default: help ## default target is help
 
 clean: ## clean
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		npm clean )
+		npm run clean )
 
 build: ## build
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
