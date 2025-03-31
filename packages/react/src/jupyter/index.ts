@@ -14,7 +14,6 @@ export * from './Jupyter';
 export * from './collaboration';
 export * from './ipywidgets';
 export * from './kernel';
-export * from './lab';
 export * from './lite';
 export * from './renderers';
 export * from './services';

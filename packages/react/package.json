@@ -12,7 +12,6 @@
   "keywords": [
     "jupyter",
     "jupyterlab",
-    "jupyterlab-extension",
     "react"
   ],
   "repository": {
@@ -30,11 +29,9 @@
     "access": "public"
   },
   "scripts": {
-    "build": "gulp resources-to-lib && tsc && webpack && (npm run build:labextension:dev || true)",
-    "build:labextension": "jupyter labextension build .",
-    "build:labextension:dev": "jupyter labextension build --development True .",
+    "build": "gulp resources-to-lib && tsc && webpack",
     "build:lib": "tsc",
-    "build:prod": "gulp resources-to-lib && tsc && npm clean && npm run build:lib && npm run build:labextension",
+    "build:prod": "gulp resources-to-lib && tsc && npm clean && npm run build:lib",
     "build:tsc:watch:res": "gulp resources-to-lib-watch",
     "build:tsc:watch:tsc": "tsc --watch",
     "build:webpack": "cross-env BUILD_APP=true webpack-cli build",
@@ -46,9 +43,6 @@
     "eslint": "npm eslint:check --fix",
     "eslint:check": "eslint . --cache --ext .ts,.tsx",
     "install:extension": "npm run build",
-    "jupyterlab": "run-p -c 'jupyterlab:*'",
-    "jupyterlab:start": "jupyter lab --watch --config=./../../dev/config/jupyter_server_config.py",
-    "jupyterlab:watch": "run-p -c watch:src watch:labextension",
     "kill": "./../../dev/sh/kill.sh || true",
     "lint": "npm stylelint && npm prettier && npm eslint",
     "lint:check": "npm stylelint:check && npm prettier:check && npm eslint:check",
@@ -66,8 +60,7 @@
     "test": "jest --coverage",
     "test:visual": "playwright test",
     "typedoc": "typedoc ./src",
-    "watch": "run-p watch:src watch:labextension",
-    "watch:labextension": "jupyter labextension watch .",
+    "watch": "run-p watch:src",
     "watch:src": "tsc -w"
   },
   "dependencies": {

@@ -31,11 +31,9 @@
     "access": "public"
   },
   "scripts": {
-    "build": "gulp resources-to-lib && tsc && webpack && npm run build:lib && (npm run build:labextension:dev || true)",
-    "build:labextension": "jupyter labextension build .",
-    "build:labextension:dev": "jupyter labextension build --development True .",
+    "build": "gulp resources-to-lib && tsc && webpack && npm run build:lib",
     "build:lib": "tsc",
-    "build:prod": "gulp resources-to-lib && tsc && jlpm clean && jlpm build:lib && jlpm build:labextension",
+    "build:prod": "gulp resources-to-lib && tsc && jlpm clean && jlpm build:lib",
     "build:tsc:watch": "run-p 'build:tsc:watch:*'",
     "build:tsc:watch:res": "gulp resources-to-lib-watch",
     "build:tsc:watch:tsc": "tsc --watch",
@@ -47,9 +45,6 @@
     "eslint": "jlpm eslint:check --fix",
     "eslint:check": "eslint . --cache --ext .ts,.tsx",
     "install:extension": "jlpm build",
-    "jupyterlab": "run-p -c 'jupyterlab:*'",
-    "jupyterlab:start": "jupyter lab --watch --config=./dev/config/jupyter_server_config.py",
-    "jupyterlab:watch": "run-p -c watch:src watch:labextension",
     "kill": "./../../dev/sh/kill.sh || true",
     "lint": "jlpm stylelint && jlpm prettier && jlpm eslint",
     "lint:check": "jlpm stylelint:check && jlpm prettier:check && jlpm eslint:check",
@@ -63,8 +58,7 @@
     "stylelint:check": "stylelint --cache \"style/**/*.css\"",
     "test": "jest --coverage",
     "typedoc": "typedoc ./src",
-    "watch": "run-p watch:src watch:labextension",
-    "watch:labextension": "jupyter labextension watch .",
+    "watch": "run-p watch:src",
     "watch:src": "tsc -w"
   },
   "dependencies": {

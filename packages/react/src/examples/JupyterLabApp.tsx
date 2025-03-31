@@ -12,7 +12,6 @@ import { JupyterLabApp, JupyterLabAppAdapter } from '../components/jupyterlab';
 import * as lightThemePlugins from '@jupyterlab/theme-light-extension';
 import * as ipywidgetsPlugins from '@jupyter-widgets/jupyterlab-manager';
 import * as plotlyPlugins from 'jupyterlab-plotly/lib/jupyterlab-plugin';
-import * as reactPlugins from './../jupyter/lab/plugin';
 
 import * as plotlyMimeRenderers from 'jupyterlab-plotly/lib/plotly-renderer';
 
@@ -32,7 +31,6 @@ const JupyterLabAppExample = () => {
         lightThemePlugins,
         ipywidgetsPlugins,
         plotlyPlugins,
-        reactPlugins,
       ]}
       mimeRenderers={[
         plotlyMimeRenderers
