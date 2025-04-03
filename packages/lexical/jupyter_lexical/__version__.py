@@ -2,8 +2,4 @@
 #
 # MIT License
 
-# Copyright (c) 2023-2024 Datalayer, Inc.
-#
-# Datalayer License
-
-__version__ = '0.0.2'
+__version__ = '0.0.3'
