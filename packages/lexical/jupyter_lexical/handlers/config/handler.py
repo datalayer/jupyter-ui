@@ -11,7 +11,7 @@ import tornado
 from jupyter_server.base.handlers import APIHandler
 from jupyter_server.extension.handler import ExtensionHandlerMixin
 
-from jupyter_react.__version__ import __version__
+from jupyter_lexical.__version__ import __version__
 
 
 class ConfigHandler(ExtensionHandlerMixin, APIHandler):

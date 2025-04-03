@@ -2,7 +2,7 @@
 #
 # MIT License
 
-"""The Jupyter React Server application."""
+"""The Jupyter Lexical Server application."""
 
 import os
 
@@ -12,10 +12,10 @@ from traitlets.config import Configurable
 from jupyter_server.utils import url_path_join
 from jupyter_server.extension.application import ExtensionApp, ExtensionAppJinjaMixin
 
-from jupyter_react.__version__ import __version__
+from jupyter_lexical.__version__ import __version__
 
-from jupyter_react.handlers.index.handler import IndexHandler
-from jupyter_react.handlers.config.handler import ConfigHandler
+from jupyter_lexical.handlers.index.handler import IndexHandler
+from jupyter_lexical.handlers.config.handler import ConfigHandler
 
 
 DEFAULT_STATIC_FILES_PATH = os.path.join(os.path.dirname(__file__), "./static")
@@ -23,12 +23,12 @@ DEFAULT_STATIC_FILES_PATH = os.path.join(os.path.dirname(__file__), "./static")
 DEFAULT_TEMPLATE_FILES_PATH = os.path.join(os.path.dirname(__file__), "./templates")
 
 
-class JupyterReactExtensionApp(ExtensionAppJinjaMixin, ExtensionApp):
-    """The Jupyter React Server extension."""
+class JupyterLexicalExtensionApp(ExtensionAppJinjaMixin, ExtensionApp):
+    """The Jupyter Lexical Server extension."""
 
-    name = "jupyter_react"
+    name = "jupyter_lexical"
 
-    extension_url = "/jupyter_react"
+    extension_url = "/jupyter_lexical"
 
     load_other_extensions = True
 
@@ -38,7 +38,7 @@ class JupyterReactExtensionApp(ExtensionAppJinjaMixin, ExtensionApp):
 
 
     class Launcher(Configurable):
-        """Jupyter React launcher configuration"""
+        """Jupyter Lexical launcher configuration"""
 
         def to_dict(self):
             return {
@@ -77,20 +77,20 @@ class JupyterReactExtensionApp(ExtensionAppJinjaMixin, ExtensionApp):
 
     @default("launcher")
     def _default_launcher(self):
-        return JupyterReactExtensionApp.Launcher(parent=self, config=self.config)
+        return JupyterLexicalExtensionApp.Launcher(parent=self, config=self.config)
 
 
     def initialize_settings(self):
-        self.log.debug("Jupyter React Config {}".format(self.config))
+        self.log.debug("Jupyter Lexical Config {}".format(self.config))
 
     def initialize_templates(self):
-        self.serverapp.jinja_template_vars.update({"jupyter_react_version" : __version__})
+        self.serverapp.jinja_template_vars.update({"jupyter_lexical_version" : __version__})
 
     def initialize_handlers(self):
-        self.log.debug("Jupyter React Config {}".format(self.settings['jupyter_react_jinja2_env']))
+        self.log.debug("Jupyter Lexical Config {}".format(self.settings['jupyter_lexical_jinja2_env']))
         handlers = [
-            ("jupyter_react", IndexHandler),
-            (url_path_join("jupyter_react", "config"), ConfigHandler),
+            ("jupyter_lexical", IndexHandler),
+            (url_path_join("jupyter_lexical", "config"), ConfigHandler),
         ]
         self.handlers.extend(handlers)
 
@@ -99,4 +99,4 @@ class JupyterReactExtensionApp(ExtensionAppJinjaMixin, ExtensionApp):
 # Main entry point
 # -----------------------------------------------------------------------------
 
-main = launch_new_instance = JupyterReactExtensionApp.launch_instance
+main = launch_new_instance = JupyterLexicalExtensionApp.launch_instance
