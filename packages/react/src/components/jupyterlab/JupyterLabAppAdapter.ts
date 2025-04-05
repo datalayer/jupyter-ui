@@ -6,12 +6,7 @@
 
 import { CommandRegistry } from '@lumino/commands';
 import { BoxPanel, Widget, FocusTracker } from '@lumino/widgets';
-import {
-  JupyterLab,
-  JupyterFrontEndPlugin,
-  JupyterFrontEnd,
-  LabShell,
-} from '@jupyterlab/application';
+import { JupyterLab, JupyterFrontEndPlugin, JupyterFrontEnd, LabShell } from '@jupyterlab/application';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { NotebookPanel } from '@jupyterlab/notebook';
