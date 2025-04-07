@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import { useEffect, useMemo, useState } from 'react';
 import type { ISessionContext } from '@jupyterlab/apputils';
 import type { Cell, CodeCell, ICellModel } from '@jupyterlab/cells';
 import { type IEditorServices } from '@jupyterlab/codeeditor';
@@ -30,7 +31,6 @@ import { Widget } from '@lumino/widgets';
 import { Box } from '@primer/react';
 import { Banner } from '@primer/react/experimental';
 import { EditorView } from 'codemirror';
-import { useEffect, useMemo, useState } from 'react';
 import { WebsocketProvider } from 'y-websocket';
 import { COLLABORATION_ROOM_URL_PATH, fetchSessionId, requestDocSession, WIDGET_MIMETYPE, WidgetLabRenderer, WidgetManager } from '../../jupyter';
 import type { OnSessionConnection } from '../../state';
@@ -38,7 +38,7 @@ import { newUuid, remoteUserCursors } from '../../utils';
 import { Lumino } from '../lumino';
 import { Loader } from '../utils';
 import type { DatalayerNotebookExtension } from './Notebook';
-import addNotebookCommands from './NotebookCommands';
+import { addNotebookCommands } from './NotebookCommands';
 
 const COMPLETER_TIMEOUT_MILLISECONDS = 1000;
 
@@ -166,8 +166,8 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
   }, []);
 
   // Widget factory
-  const [widgetFactory, setWidgetFactory] =
-    useState<NotebookWidgetFactory | null>(null);
+  const [widgetFactory, setWidgetFactory] = useState<NotebookWidgetFactory | null>(null);
+
   useEffect(() => {
     const thisFactory = new NotebookWidgetFactory({
       name: 'Notebook',
@@ -188,7 +188,6 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
       },
     });
     setWidgetFactory(thisFactory);
-
     return () => {
       thisFactory.dispose();
       setWidgetFactory(factory => (factory === thisFactory ? null : factory));
@@ -278,7 +277,6 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
               panel: thisPanel!,
             });
             extension.createNew(thisPanel!, context);
-
             return extension.component ?? <></>;
           })
         );
@@ -322,10 +320,14 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
     return () => {
       widgetsManager?.dispose();
       if (thisPanel) {
-        if (thisPanel.content) Signal.clearData(thisPanel.content);
+        if (thisPanel.content) {
+          Signal.clearData(thisPanel.content);
+        }
         try {
           thisPanel.dispose();
-        } catch (reason) {}
+        } catch (reason) {
+          // No-op
+        }
       }
       setPanel(panel => (panel === thisPanel ? null : panel));
     };
@@ -411,13 +413,14 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
       isMounted = false;
       // Reset the completer
       if (completer) {
-        if (onActiveCellChanged)
+        if (onActiveCellChanged) {
           panel?.content.activeCellChanged.disconnect(onActiveCellChanged);
-        if (onSessionChanged)
+        }
+        if (onSessionChanged) {
           panel?.context.sessionContext.sessionChanged.connect(
             onSessionChanged
           );
-
+        }
         completer.editor = null;
         completer.reconciliator = new ProviderReconciliator({
           context: {
@@ -649,7 +652,7 @@ export function useNotebookModel(options: {
       // reset for any reason while the client is still alive.
       let provider: WebsocketProvider | null = null;
       let ready = new PromiseDelegate();
-      let isMounted = true;
+      const isMounted = true;
       let sharedModel: YNotebook | null = null;
 
       const onConnectionClose = (event: any) => {
@@ -697,7 +700,7 @@ export function useNotebookModel(options: {
         const params: Record<string, string> = {};
 
         // Setup Collaboration
-        if (collaborationServer.type == 'jupyter') {
+        if (collaborationServer.type === 'jupyter') {
           const { path, serverSettings } = collaborationServer;
           const session = await requestDocSession(
             'json',
@@ -714,10 +717,10 @@ export function useNotebookModel(options: {
           if (serverSettings.token) {
             params.token = serverSettings.token;
           }
-        } else if (collaborationServer.type == 'datalayer') {
+        } else if (collaborationServer.type === 'datalayer') {
           const { baseURL, roomName: roomName_, token } = collaborationServer;
           roomName = roomName_; // Set non local variable
-          const serverURL = URLExt.join(baseURL, `/api/spacer/v1/rooms`);
+          const serverURL = URLExt.join(baseURL, '/api/spacer/v1/rooms');
           roomURL = serverURL.replace(/^http/, 'ws');
 
           params.sessionId = await fetchSessionId({

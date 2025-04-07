@@ -9,16 +9,8 @@ import { CommandRegistry } from '@lumino/commands';
 import { DisposableSet } from '@lumino/disposable';
 import { SessionContextDialogs } from '@jupyterlab/apputils';
 import { CompletionHandler } from '@jupyterlab/completer';
-import {
-  NotebookActions,
-  NotebookPanel,
-  NotebookSearchProvider,
-  NotebookTracker,
-} from '@jupyterlab/notebook';
-import {
-  SearchDocumentModel,
-  SearchDocumentView,
-} from '@jupyterlab/documentsearch';
+import { NotebookActions, NotebookPanel, NotebookSearchProvider, NotebookTracker, } from '@jupyterlab/notebook';
+import { SearchDocumentModel, SearchDocumentView } from '@jupyterlab/documentsearch';
 import { Widget } from '@lumino/widgets';
 import { nullTranslator } from '@jupyterlab/translation';
 import { IYText } from '@jupyter/ydoc';

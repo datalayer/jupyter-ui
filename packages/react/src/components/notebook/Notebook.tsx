@@ -19,22 +19,10 @@ import { Box } from '@primer/react';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { WebsocketProvider as YWebsocketProvider } from 'y-websocket';
-import {
-  jupyterReactStore,
-  KernelTransfer,
-  OnSessionConnection,
-} from '../../state';
+import { jupyterReactStore, KernelTransfer, OnSessionConnection, } from '../../state';
 import { newUuid, sleep } from '../../utils';
 import { asObservable, Lumino } from '../lumino';
-import {
-  COLLABORATION_ROOM_URL_PATH,
-  fetchSessionId,
-  ICollaborative,
-  Kernel,
-  Lite,
-  requestDocSession,
-  useJupyter,
-} from './../../jupyter';
+import { COLLABORATION_ROOM_URL_PATH, fetchSessionId, ICollaborative, Kernel, Lite, requestDocSession, useJupyter } from './../../jupyter';
 import { CellMetadataEditor } from './cell/metadata';
 import { NotebookAdapter } from './NotebookAdapter';
 import { useNotebookStore } from './NotebookState';
@@ -172,9 +160,7 @@ export const Notebook = (props: INotebookProps) => {
         adapter,
       });
       extension.createNew(adapter.notebookPanel!, adapter.context!);
-      setExtensionComponents(
-        extensionComponents.concat(extension.component ?? <></>)
-      );
+      setExtensionComponents(extensionComponents.concat(extension.component ?? <></>));
     });
     // Update the notebook state with the adapter.
     notebookStore.update({ id, state: { adapter } });
