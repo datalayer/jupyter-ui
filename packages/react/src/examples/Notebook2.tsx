@@ -12,7 +12,7 @@
 import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
-import { SimpleNotebook } from '../components/notebook/SimpleNotebook';
+import { Notebook2 } from '../components/notebook/Notebook2';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import { useJupyter } from '../jupyter';
 
@@ -23,7 +23,7 @@ const Notebook = () => {
   return (
     serviceManager ?
       <JupyterReactTheme>
-        <SimpleNotebook
+        <Notebook2
           nbformat={nbformat as INotebookContent}
           id="notebook-nbformat-id"
           startDefaultKernel={true}
