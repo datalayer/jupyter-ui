@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@datalayer/icons-react": "^1.0.0",
-    "@datalayer/jupyter-react": "^0.18.12",
+    "@datalayer/jupyter-react": "^0.21.0",
     "@datalayer/primer-addons": "^0.3.2",
     "jupyterlab-plotly": "^5.17.0",
     "plotly.js": "^2.26.2",

@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@datalayer/icons-react": "^1.0.0",
-    "@datalayer/jupyter-react": "^0.18.12",
+    "@datalayer/jupyter-react": "^0.21.0",
     "@datalayer/primer-addons": "^0.3.2",
     "autoprefixer": "^10.4.14",
     "eslint": "^8.40.0",
