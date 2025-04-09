@@ -32,7 +32,8 @@ class CellSidebarFactory implements IDisposable {
     protected panel: NotebookPanel,
     protected commands: CommandRegistry,
     protected nbgrader: boolean = false,
-    protected sidebarWidth: number = 120
+    protected sidebarWidth: number = 120,
+    protected factory: React.JSXElementConstructor<ICellSidebarProps> = CellSidebar
   ) {
     this._onModelChanged(panel.content);
     panel.content.modelChanged.connect(this._onModelChanged, this);
@@ -59,9 +60,10 @@ class CellSidebarFactory implements IDisposable {
   private _addSidebar(model: ICellModel): void {
     const cell = this._getCell(model);
     if (cell) {
+      const Element = this.factory;
       const sidebar = ReactWidget.create(
         <JupyterReactTheme>
-          <CellSidebar
+          <Element
             commands={this.commands}
             model={model}
             nbgrader={this.nbgrader}
@@ -155,7 +157,8 @@ export class CellSidebarExtension implements DatalayerNotebookExtension {
       panel,
       this.commands!,
       this.nbgrader,
-      this.sidebarWidth
+      this.sidebarWidth,
+      this.factory
     );
     return sidebar;
   }
