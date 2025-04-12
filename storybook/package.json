@@ -26,7 +26,7 @@
     "build:storybook": "storybook build"
   },
   "dependencies": {
-    "@datalayer/jupyter-lexical": "^0.2.0",
+    "@datalayer/jupyter-lexical": "^0.2.2",
     "@datalayer/jupyter-react": "^0.21.2",
     "react": "18.2.0",
     "react-dom": "18.2.0"
