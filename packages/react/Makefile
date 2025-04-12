@@ -29,7 +29,7 @@ build: ## build
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		npm run build )
 
-publish-npm: clean build ## publish
+publish-npm: clean build ## publish-npm
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		npm publish )
 	echo open https://www.npmjs.com/package/@datalayer/jupyter-react
