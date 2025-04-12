@@ -23,16 +23,16 @@
   },
   "dependencies": {
     "@datalayer/icons-react": "^1.0.0",
-    "@datalayer/jupyter-react": "^0.17.0",
+    "@datalayer/jupyter-react": "^0.21.2",
     "@datalayer/primer-addons": "^0.3.2",
-    "@docusaurus/core": "3.5.2",
-    "@docusaurus/types": "3.5.2"
+    "@docusaurus/core": "^3.5.2",
+    "@docusaurus/types": "^3.5.2"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@babel/preset-env": "^7.19.4",
     "@babel/preset-react": "^7.18.6",
-    "@types/react": "^18.2.12",
+    "@types/react": "18.2.12",
     "assert": "^2.0.0",
     "babel-loader": "^9.1.2",
     "css-loader": "^6.9.1",
@@ -40,7 +40,7 @@
     "fs-extra": "^9.1.0",
     "process": "^0.11.10",
     "raw-loader": "^4.0.2",
-    "rimraf": "^3.0.2",
+    "rimraf": "^6.0.1",
     "stream-browserify": "^2.0.2",
     "style-loader": "^2.0.0",
     "svg-url-loader": "^7.1.1",
@@ -51,7 +51,7 @@
     "webpack": "^5.74.0"
   },
   "peerDependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
   }
 }

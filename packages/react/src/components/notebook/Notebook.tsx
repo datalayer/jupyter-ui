@@ -321,16 +321,13 @@ export const Notebook = (props: INotebookProps) => {
             awareness,
           });
         } else if (collaborative == 'datalayer') {
-          const { runUrl, token } =
-            jupyterReactStore.getState().datalayerConfig ?? {};
+          const { runUrl, token } = jupyterReactStore.getState().datalayerConfig ?? {};
           const roomName = id;
           const roomURL = URLExt.join(runUrl!, `/api/spacer/v1/rooms`);
-
           const sessionId = await fetchSessionId({
             url: URLExt.join(roomURL, roomName),
             token,
           });
-
           provider = new YWebsocketProvider(
             roomURL.replace(/^http/, 'ws'),
             roomName,

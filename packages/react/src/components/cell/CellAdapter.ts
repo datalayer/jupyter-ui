@@ -8,42 +8,15 @@ import { BoxPanel, Widget } from '@lumino/widgets';
 import { find } from '@lumino/algorithm';
 import { CommandRegistry } from '@lumino/commands';
 import { JSONObject } from '@lumino/coreutils';
-import {
-  SessionContext,
-  ISessionContext,
-  Toolbar,
-  ToolbarButton,
-} from '@jupyterlab/apputils';
+import { SessionContext, ISessionContext, Toolbar, ToolbarButton } from '@jupyterlab/apputils';
 import { CodeCellModel, CodeCell, Cell, MarkdownCell, RawCell, MarkdownCellModel } from '@jupyterlab/cells';
 import { IOutput } from '@jupyterlab/nbformat';
 import { Kernel as JupyterKernel, KernelMessage } from '@jupyterlab/services';
-import {
-  ybinding,
-  CodeMirrorMimeTypeService,
-  EditorLanguageRegistry,
-  CodeMirrorEditorFactory,
-  EditorExtensionRegistry,
-  EditorThemeRegistry,
-} from '@jupyterlab/codemirror';
+import { ybinding, CodeMirrorMimeTypeService, EditorLanguageRegistry, CodeMirrorEditorFactory, EditorExtensionRegistry, EditorThemeRegistry } from '@jupyterlab/codemirror';
 import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
-import {
-  Completer,
-  CompleterModel,
-  CompletionHandler,
-  ProviderReconciliator,
-  KernelCompleterProvider,
-} from '@jupyterlab/completer';
-import {
-  RenderMimeRegistry,
-  standardRendererFactories as initialFactories,
-} from '@jupyterlab/rendermime';
-import {
-  Session,
-  ServerConnection,
-  SessionManager,
-  KernelManager,
-  KernelSpecManager,
-} from '@jupyterlab/services';
+import { Completer, CompleterModel, CompletionHandler, ProviderReconciliator, KernelCompleterProvider } from '@jupyterlab/completer';
+import { RenderMimeRegistry, standardRendererFactories as initialFactories } from '@jupyterlab/rendermime';
+import { Session, ServerConnection, SessionManager, KernelManager, KernelSpecManager } from '@jupyterlab/services';
 import { runIcon } from '@jupyterlab/ui-components';
 import { createStandaloneCell, YCodeCell, IYText, YMarkdownCell } from '@jupyter/ydoc';
 import { execute as executeOutput } from './../output/OutputExecutor';
