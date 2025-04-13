@@ -34,7 +34,7 @@
     "react-router-dom": "^6.22.3"
   },
   "devDependencies": {
-    "@types/node": "^22.14.1",
+    "@types/node": "18.15.3",
     "assert": "^2.0.0",
     "buffer": "^6.0.3",
     "bufferutil": "^4.0.8",
