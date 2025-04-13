@@ -21,7 +21,7 @@
     "@docusaurus/theme-live-codeblock": "^3.5.2",
     "@docusaurus/theme-mermaid": "^3.5.2",
     "@mdx-js/react": "^3.0.1",
-    "@primer/react-brand": "^0.44.1",
+    "@primer/react-brand": "^0.51.0",
     "clsx": "^2.1.1",
     "docusaurus-lunr-search": "^3.5.0",
     "docusaurus-plugin-typedoc": "^0.17.5",
@@ -35,7 +35,7 @@
     "@docusaurus/module-type-aliases": "^3.5.0",
     "@tsconfig/docusaurus": "^2.0.3",
     "cross-env": "^7.0.3",
-    "typescript": "^5.0.3"
+    "typescript": "5.0.3"
   },
   "browserslist": {
     "production": [

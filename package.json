@@ -83,7 +83,6 @@
   },
   "overrides": {
     "@jupyterlab/services": "^7.0.0",
-    "@primer/react": "^36.27.0",
     "@types/react": "18.2.12",
     "@types/react-dom": "18.3.0",
     "react": "18.2.0",
