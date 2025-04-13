@@ -4,14 +4,13 @@
  * MIT License
  */
 
+import {useEffect, useRef, useState} from 'react';
 import type {HeadingTagType} from '@lexical/rich-text';
 import type {NodeKey} from 'lexical';
+import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
+import {TableOfContentsPlugin as LexicalTableOfContentsPlugin} from '@lexical/react/LexicalTableOfContentsPlugin';
 
 import './../../style/lexical/TableOfContentsPlugin.css';
-
-import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
-import LexicalTableOfContents from '@lexical/react/LexicalTableOfContents';
-import {useEffect, useRef, useState} from 'react';
 
 function indent(tagName: HeadingTagType) {
   if (tagName === 'h2') {
@@ -179,11 +178,11 @@ function TableOfContentsList({
 
 export const TableOfContentsPlugin = () => {
   return (
-    <LexicalTableOfContents>
-      {(tableOfContents) => {
+    <LexicalTableOfContentsPlugin>
+      {(tableOfContents: any) => {
         return <TableOfContentsList tableOfContents={tableOfContents} />;
       }}
-    </LexicalTableOfContents>
+    </LexicalTableOfContentsPlugin>
   );
 }
 
