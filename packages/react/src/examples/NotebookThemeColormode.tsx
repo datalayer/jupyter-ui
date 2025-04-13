@@ -4,9 +4,9 @@
  * MIT License
  */
 
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { Box, Text, ToggleSwitch, theme as primerTheme } from '@primer/react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';

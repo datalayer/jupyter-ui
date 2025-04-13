@@ -7,6 +7,16 @@
 import { useEffect } from 'react';
 import { Colormode } from './JupyterLabColormode';
 
+import "@primer/primitives/dist/css/base/typography/typography.css";
+import "@primer/primitives/dist/css/functional/themes/light.css";
+import "@primer/primitives/dist/css/functional/size/border.css";
+import "@primer/primitives/dist/css/functional/size/breakpoints.css";
+import "@primer/primitives/dist/css/functional/size/size-coarse.css";
+import "@primer/primitives/dist/css/functional/size/size-fine.css";
+import "@primer/primitives/dist/css/functional/size/size.css";
+import "@primer/primitives/dist/css/functional/size/viewport.css";
+import "@primer/primitives/dist/css/functional/typography/typography.css";
+
 const DATASET_LAB_THEME = 'data-lab-theme';
 
 type JupyterLabCssProps = {
@@ -51,7 +61,6 @@ export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
 
   useEffect(() => {
     document.body.querySelector(`style[${DATASET_LAB_THEME}]`)?.remove();
-
     let theme;
     switch (colormode) {
       case 'light': {
@@ -67,11 +76,9 @@ export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
     }
 
     // Inject the JupyterLab theme stylesheet in a retrievable node
-    // ! webpack should be configured to load the theme style sheets
-    //   with css-loader as string - this is available in css-loader v6.3.0 or later:
+    // ! webpack should be configured to load the theme style sheets with css-loader as string - this is available in css-loader v6.3.0 or later:
     //   { test: /style\/theme\.css$/i, loader: 'css-loader', options: {exportType: 'string'} }
     theme?.then(module => {
-
       if (module.default) {
         document.body.insertAdjacentHTML(
           'afterbegin',

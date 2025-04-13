@@ -10,7 +10,6 @@ import { ContentLoader } from '@datalayer/primer-addons';
 
 const Cell = (props: any) => {
   return (
-    // @ts-ignore
     <BrowserOnly
       fallback={<div>Jupyter Cell fallback content for prerendering.</div>}>
       {() => {
@@ -40,6 +39,6 @@ const ReactLiveScope = {
   React,
   ...React,
   Cell,
-};
+} as any;
 
 export default ReactLiveScope;

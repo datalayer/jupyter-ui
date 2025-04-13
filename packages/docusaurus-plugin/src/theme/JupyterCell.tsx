@@ -16,7 +16,6 @@ type JupyterCellProps = {
 
 const JupyterCell = (props: JupyterCellProps) => {
   return (
-    // @ts-ignore
     <BrowserOnly
       fallback={<div>Jupyter Cell fallback content for prerendering.</div>}>
       {() => {
