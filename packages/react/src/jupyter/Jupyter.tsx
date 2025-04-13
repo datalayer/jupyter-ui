@@ -5,7 +5,6 @@
  */
 
 import { BaseStyles, Box, ThemeProvider } from '@primer/react';
-import { Theme } from '@primer/react/lib/ThemeProvider';
 import { useMemo } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { loadJupyterConfig } from './JupyterConfig';
@@ -22,7 +21,7 @@ export type JupyterProps = Omit<
 > & {
   colormode?: Colormode;
   disableCssLoading?: boolean;
-  theme?: Theme;
+  theme?: any;
   terminals?: boolean;
 };
 

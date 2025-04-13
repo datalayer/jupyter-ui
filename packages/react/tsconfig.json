@@ -15,7 +15,7 @@
     "jsx": "react-jsx",
     "jsxImportSource": "react",
     "module": "ES2022",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "noEmitOnError": true,
     "noImplicitAny": true,
     "noUnusedLocals": true,
