@@ -29,12 +29,12 @@
     "@mdx-js/react": "^3.0.1",
     "clsx": "^2.1.1",
     "prism-react-renderer": "^1.2.1",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "react-router-dom": "^6.22.3"
   },
   "devDependencies": {
-    "@types/node": "18.15.3",
+    "@types/node": "^22.14.1",
     "assert": "^2.0.0",
     "buffer": "^6.0.3",
     "bufferutil": "^4.0.8",

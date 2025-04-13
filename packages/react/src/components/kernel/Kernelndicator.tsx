@@ -106,11 +106,11 @@ export const KernelIndicator = (props: KernelIndicatorProps) => {
     }
   }, [kernel]);
   return connectionStatus && status ? (
-    <Tooltip aria-label={`${connectionStatus} - ${status} - ${env?.display_name}`}>
+    <Tooltip text={`${connectionStatus} - ${status} - ${env?.display_name}`}>
       {KERNEL_STATES.get(toKernelState(connectionStatus, status))}
     </Tooltip>
   ) : (
-    <Tooltip aria-label="Undefined state">
+    <Tooltip text="Undefined state">
       {KERNEL_STATES.get('undefined')}
     </Tooltip>
   );

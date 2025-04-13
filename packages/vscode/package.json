@@ -58,17 +58,17 @@
     "@datalayer/jupyter-react": "^0.20.2",
     "@jupyterlab/services": "^7.0.0",
     "@lumino/coreutils": "^2.1.1",
-    "@primer/react": "^36.27.0",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
+    "@primer/react": "^37.19.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "typestyle": "^2.0.4",
     "ws": "^8.18.1"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
-    "@types/node": "18.15.3",
-    "@types/react": "18.2.12",
-    "@types/react-dom": "18.3.0",
+    "@types/node": "^22.14.1",
+    "@types/react": "18.3.20",
+    "@types/react-dom": "18.3.6",
     "@types/vscode": "^1.98.0",
     "@typescript-eslint/eslint-plugin": "^8.29.1",
     "@typescript-eslint/parser": "^8.29.1",
@@ -82,7 +82,7 @@
     "style-loader": "^2.0.0",
     "svg-inline-loader": "^0.8.2",
     "ts-loader": "^9.5.2",
-    "typescript": "5.0.3",
+    "typescript": "^5.8.3",
     "webpack": "^5.98.0",
     "webpack-cli": "^6.0.1"
   }

@@ -75,17 +75,17 @@
   },
   "resolutions": {
     "@jupyterlab/services": "^7.0.0",
-    "@primer/react": "^36.27.0",
-    "@types/react": "18.2.12",
-    "@types/react-dom": "18.3.0",
-    "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "@primer/react": "^37.19.0",
+    "@types/react": "18.3.20",
+    "@types/react-dom": "18.3.6",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   },
   "overrides": {
     "@jupyterlab/services": "^7.0.0",
-    "@types/react": "18.2.12",
-    "@types/react-dom": "18.3.0",
-    "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "@types/react": "18.3.20",
+    "@types/react-dom": "18.3.6",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   }
 }
