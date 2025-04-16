@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect, ReactElement } from 'react';
-import { Tooltip } from '@primer/react';
+import { Button, Tooltip } from '@primer/react';
 import {
   CircleBlackIcon,
   CircleBrownIcon,
@@ -69,10 +69,7 @@ export const KERNEL_STATES: Map<ExecutionState, ReactElement> = new Map([
   ['undefined', <CircleBlackIcon />],
 ]);
 
-export const toKernelState = (
-  connectionStatus: ConnectionStatus,
-  status: KernelMessage.Status
-): ExecutionState => {
+export const toKernelState = (connectionStatus: ConnectionStatus, status: KernelMessage.Status): ExecutionState => {
   if (
     connectionStatus === 'connecting' ||
     connectionStatus === 'disconnected'
@@ -107,11 +104,15 @@ export const KernelIndicator = (props: KernelIndicatorProps) => {
   }, [kernel]);
   return connectionStatus && status ? (
     <Tooltip text={`${connectionStatus} - ${status} - ${env?.display_name}`}>
-      {KERNEL_STATES.get(toKernelState(connectionStatus, status))}
+      <Button variant="invisible">
+        {KERNEL_STATES.get(toKernelState(connectionStatus, status)) ?? <></>}
+      </Button>
     </Tooltip>
   ) : (
     <Tooltip text="Undefined state">
-      {KERNEL_STATES.get('undefined')}
+      <Button variant="invisible">
+        {KERNEL_STATES.get('undefined') ?? <></>}
+      </Button>
     </Tooltip>
   );
 };

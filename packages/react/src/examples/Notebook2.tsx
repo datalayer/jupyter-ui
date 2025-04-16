@@ -4,17 +4,12 @@
  * MIT License
  */
 
-/*
- * Copyright (c) 2021-2024 Datalayer, Inc.
- *
- * MIT License
- */
 import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
-import { Notebook2 } from '../components/notebook/Notebook2';
-import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import { useJupyter } from '../jupyter';
+import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
+import { Notebook2 } from '../components/notebook/Notebook2';
 
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
@@ -30,12 +25,14 @@ const Notebook = () => {
           height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
           cellSidebarMargin={120}
           Toolbar={NotebookToolbar}
+          /*
           collaborationServer={{
             baseURL: 'https://prod1.datalayer.run',
             token: '',
             roomName: '',
             type: 'datalayer'
           }}
+          */
           serviceManager={serviceManager}
         />
       </JupyterReactTheme>

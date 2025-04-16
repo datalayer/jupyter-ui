@@ -45,6 +45,7 @@ const ENTRY =
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
   // './src/examples/Notebook';
+  './src/examples/Notebook2';
   // './src/examples/NotebookCellSidebar';
   // './src/examples/NotebookCellToolbar';
   // './src/examples/NotebookColormode';
@@ -68,7 +69,7 @@ const ENTRY =
   // './src/examples/NotebookSimple';
   // './src/examples/NotebookSkeleton';
   // './src/examples/NotebookTheme';
-  './src/examples/NotebookThemeColormode';
+  // './src/examples/NotebookThemeColormode';
   // './src/examples/NotebookURL';
   // './src/examples/NotebookURL';
   // './src/examples/ObservableHQ';
