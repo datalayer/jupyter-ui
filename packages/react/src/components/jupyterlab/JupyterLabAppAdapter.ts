@@ -100,10 +100,7 @@ export class JupyterLabAppAdapter {
     });
     this._jupyterLab.registerPluginModules(extensions);
     if (nosplash) {
-      this._jupyterLab.deregisterPlugin(
-        '@jupyterlab/apputils-extension:splash',
-        true
-      );
+      this._jupyterLab.deregisterPlugin('@jupyterlab/apputils-extension:splash', true);
     }
     /*
     if (collaborative) {
@@ -112,10 +109,9 @@ export class JupyterLabAppAdapter {
     */
     this._jupyterLab.start({
       hostID: hostId,
-      startPlugins: [
-      ], // How is this used in JupyterLab core?
-      ignorePlugins: [        
-      ], // How is this used in JupyterLab core?
+      bubblingKeydown: true,
+      startPlugins: [], // How is this used in JupyterLab core?
+      ignorePlugins: [], // How is this used in JupyterLab core?
     }).then(() => {
 //      this._plugins = (this._jupyterLab as any)['_plugins'];
 //      this._readyResolve();

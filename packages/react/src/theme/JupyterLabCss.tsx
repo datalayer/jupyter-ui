@@ -5,6 +5,7 @@
  */
 
 import { useEffect } from 'react';
+import { createGlobalStyle } from 'styled-components';
 import { Colormode } from './JupyterLabColormode';
 
 import "@primer/primitives/dist/css/base/typography/typography.css";
@@ -18,6 +19,14 @@ import "@primer/primitives/dist/css/functional/size/viewport.css";
 import "@primer/primitives/dist/css/functional/typography/typography.css";
 
 const DATASET_LAB_THEME = 'data-lab-theme';
+
+const GlobalStyle = createGlobalStyle<any>`
+  .jp-ThemedContainer button {
+    --button-primary-bgColor-active: var(--jp-brand-color0, #0d47a1) !important;
+    --button-primary-bgColor-hover: var(--jp-brand-color0, #0d47a1) !important;
+    --button-primary-bgColor-rest: var(--jp-brand-color1, #1976d2) !important;
+  }
+`
 
 type JupyterLabCssProps = {
   colormode?: Colormode;
@@ -75,7 +84,7 @@ export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
       }
     }
 
-    // Inject the JupyterLab theme stylesheet in a retrievable node
+    // Inject the JupyterLab theme stylesheet in a retrievable node.
     // ! webpack should be configured to load the theme style sheets with css-loader as string - this is available in css-loader v6.3.0 or later:
     //   { test: /style\/theme\.css$/i, loader: 'css-loader', options: {exportType: 'string'} }
     theme?.then(module => {
@@ -89,7 +98,11 @@ ${module.default}
       }
     });
   }, [colormode]);
-  return <div id="dla-JupyterLabCss-id"></div>;
-};
+  return (
+    <div id="dla-JupyterLabCss-id">
+      <GlobalStyle/>
+    </div>
+  )
+}
 
 export default JupyterLabCss;

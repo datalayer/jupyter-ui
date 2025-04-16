@@ -19,15 +19,10 @@ import nbformat from './notebooks/Lite.ipynb.json';
 const NotebookLite = () => {
   const [session, setSession] = useState<Session.ISessionConnection>();
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
-
   const onSessionConnection: OnSessionConnection = (
     session: Session.ISessionConnection | undefined
   ) => {
-    console.log(
-      'Received a Kernel Session.',
-      session?.id,
-      session?.kernel?.clientId
-    );
+    console.log('Received a Kernel Session.', session?.id, session?.kernel?.clientId);
     setSession(session);
   };
   return (

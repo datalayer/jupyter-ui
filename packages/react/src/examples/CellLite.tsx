@@ -6,8 +6,8 @@
 
 import { createRoot } from 'react-dom/client';
 import { Box } from '@primer/react';
-import { Jupyter } from '../jupyter/Jupyter';
-import Cell from '../components/cell/Cell';
+import { Jupyter } from '../jupyter';
+import { Cell } from '../components/cell/Cell';
 
 const div = document.createElement('div');
 document.body.appendChild(div);

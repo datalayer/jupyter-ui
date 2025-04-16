@@ -74,18 +74,39 @@
     "vercel": "^21.3.3"
   },
   "resolutions": {
+    "@atlassiansox/analytics-web-client": "npm:empty-npm-package@1.0.0",
+    "@microsoft/fast-colors": "5.3.1",
+    "@microsoft/fast-components": "2.30.6",
+    "@microsoft/fast-element": "1.13.0",
+    "@microsoft/fast-foundation": "2.49.6",
+    "@microsoft/fast-react-wrapper": "0.3.24",
+    "@microsoft/fast-web-utilities": "5.4.1",
+    "@microsoft/load-themed-styles": "1.10.295",
     "@jupyterlab/services": "^7.0.0",
-    "@primer/react": "^37.19.0",
     "@types/react": "18.3.20",
     "@types/react-dom": "18.3.6",
+    "crypto": "npm:empty-npm-package@1.0.0",
+    "pyodide": "^0.27.5",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "typescript": "^5.8.3"
   },
   "overrides": {
+    "@atlassiansox/analytics-web-client": "npm:empty-npm-package@1.0.0",
+    "@microsoft/fast-colors": "5.3.1",
+    "@microsoft/fast-components": "2.30.6",
+    "@microsoft/fast-element": "1.13.0",
+    "@microsoft/fast-foundation": "2.49.6",
+    "@microsoft/fast-react-wrapper": "0.3.24",
+    "@microsoft/fast-web-utilities": "5.4.1",
+    "@microsoft/load-themed-styles": "1.10.295",
     "@jupyterlab/services": "^7.0.0",
     "@types/react": "18.3.20",
     "@types/react-dom": "18.3.6",
+    "crypto": "npm:empty-npm-package@1.0.0",
+    "pyodide": "^0.27.5",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "typescript": "^5.8.3"
   }
 }
