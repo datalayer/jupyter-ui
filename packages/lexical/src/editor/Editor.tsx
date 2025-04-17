@@ -19,7 +19,7 @@ import { HashtagNode } from '@lexical/hashtag';
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { CheckListPlugin } from "@lexical/react/LexicalCheckListPlugin";
 import { HorizontalRuleNode } from "@lexical/react/LexicalHorizontalRuleNode";
-import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
+import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
 import { ListItemNode, ListNode } from "@lexical/list";

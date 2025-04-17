@@ -4,10 +4,9 @@
  * MIT License
  */
 
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { Box, Text, ToggleSwitch, theme as primerTheme } from '@primer/react';
-import { Theme } from '@primer/react/lib/ThemeProvider';
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
@@ -17,12 +16,11 @@ import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolba
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookThemeColormode = () => {
-  const [theme, setTheme] = useState<Theme>(jupyterLabTheme);
+  const [theme, setTheme] = useState<any>(jupyterLabTheme);
   const [isThemeOn, setIsThemeOn] = useState(false);
   const [colormode, setColormode] = useState<Colormode>('light');
   const [isOn, setIsOn] = useState(false);
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
-
   useEffect(() => {
     if (isThemeOn) {
       setTheme(primerTheme);
@@ -36,7 +34,6 @@ const NotebookThemeColormode = () => {
   const handleThemeSwitchChange = useCallback((on: boolean) => {
     setIsThemeOn(on);
   }, []);
-
   useEffect(() => {
     if (isOn) {
       setColormode('dark');

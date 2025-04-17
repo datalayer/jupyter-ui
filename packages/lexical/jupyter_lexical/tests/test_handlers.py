@@ -4,14 +4,16 @@
 
 import json
 
+from ..__version__ import __version__
 
-async def test_get_example(jp_fetch):
+
+async def test_config(jp_fetch):
     # When
     response = await jp_fetch("jupyter_lexical", "get_example")
-
     # Then
     assert response.code == 200
     payload = json.loads(response.body)
     assert payload == {
-        "data": "This is /jupyter_lexical/get_example endpoint!"
+        "extension": "jupyter_lexical",
+        "version": __version__
     }

@@ -5,7 +5,7 @@
  */
 
 import { useState } from 'react';
-import { Pagehead, Label, Text, Link, Box } from '@primer/react';
+import { PageHeader, Label, Text, Link, Box } from '@primer/react';
 import { ECharlesIcon } from '@datalayer/icons-react/eggs';
 
 type Props = {
@@ -17,9 +17,9 @@ export const AboutTab = (props: Props): JSX.Element => {
   const [egg, setEgg] = useState(false);
   return (
     <>
-      <Pagehead as="h2">
+      <PageHeader as="h2">
         🪐 ⚛️ Jupyter React<Label sx={{ marginLeft: 1 }}>{version}</Label>
-      </Pagehead>
+      </PageHeader>
       <Box>
         <Text>React.js components 💯% compatible with 🪐 Jupyter.</Text>
       </Box>

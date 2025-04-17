@@ -31,9 +31,10 @@ import {
   $isJupyterCodeNode, DropDownItem, DropDown, getDefaultCodeLanguage,
   getLanguageFriendlyName, CODE_LANGUAGE_FRIENDLY_NAME_MAP,
   $createYouTubeNode, INSERT_EQUATION_COMMAND, INSERT_JUPYTER_CELL_COMMAND, DEFAULT_INITIAL_OUTPUTS
-} from "../index";
+} from "../";
 
 import './../../style/lexical/ToolbarPlugin.css';
+import { JupyterCodeNode } from "../nodes";
 
 const LowPriority = 1;
 
@@ -42,7 +43,7 @@ function getCodeLanguageOptions(): [string, string][] {
   for (const [lang, friendlyName] of Object.entries(
     CODE_LANGUAGE_FRIENDLY_NAME_MAP,
   )) {
-    options.push([lang, friendlyName]);
+    options.push([lang, friendlyName as string]);
   }
   return options;
 }
@@ -476,7 +477,7 @@ export function ToolbarPlugin() {
             : element.getType();
           setBlockType(type);
           if ($isJupyterCodeNode(element)) {
-            setCodeLanguage(element.getLanguage() || getDefaultCodeLanguage());
+            setCodeLanguage((element as JupyterCodeNode).getLanguage() || getDefaultCodeLanguage());
           }
         }
       }
@@ -536,8 +537,8 @@ export function ToolbarPlugin() {
       activeEditor.update(() => {
         if (selectedElementKey !== null) {
           const node = $getNodeByKey(selectedElementKey);
-          if ($isJupyterCodeNode(node)) {
-            node.setLanguage(value);
+          if (node && $isJupyterCodeNode(node)) {
+            (node as JupyterCodeNode).setLanguage(value);              
           }
         }
       });

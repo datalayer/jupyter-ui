@@ -13,11 +13,9 @@ const Cell = (props: any) => {
     <BrowserOnly
       fallback={<div>Jupyter Cell fallback content for prerendering.</div>}>
       {() => {
-
         // Keep the import via require in the BrowserOnly code block.
         const { Jupyter } = require('@datalayer/jupyter-react/lib/jupyter/Jupyter');
         const { Cell } = require('@datalayer/jupyter-react/lib/components/cell/Cell');
-        
         return (
           <>
             <Jupyter
@@ -30,8 +28,7 @@ const Cell = (props: any) => {
               <Cell {...props}/>
             </Jupyter>
           </>
-        )
-
+        );
       }}
     </BrowserOnly>
   )
@@ -42,6 +39,6 @@ const ReactLiveScope = {
   React,
   ...React,
   Cell,
-};
+} as any;
 
 export default ReactLiveScope;
