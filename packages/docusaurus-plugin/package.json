@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@datalayer/icons-react": "^1.0.0",
-    "@datalayer/jupyter-react": "^1.0.0",
+    "@datalayer/jupyter-react": "^1.0.1",
     "@datalayer/primer-addons": "^1.0.0",
     "@docusaurus/core": "^3.5.2",
     "@docusaurus/types": "^3.5.2"
