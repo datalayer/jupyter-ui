@@ -4,24 +4,12 @@
  * MIT License
  */
 
-/*
- * Copyright (c) 2021-2024 Datalayer, Inc.
- *
- * Datalayer License
- */
-
+import {useEffect, useState} from 'react';
 import type {LexicalEditor} from 'lexical';
 import {TOGGLE_CONNECT_COMMAND} from '@lexical/yjs';
 import {COMMAND_PRIORITY_LOW} from 'lexical';
-import {useEffect, useState} from 'react';
 import {WebsocketProvider} from 'y-websocket';
-import {
-  Array as YArray,
-  Map as YMap,
-  Transaction,
-  YArrayEvent,
-  YEvent,
-} from 'yjs';
+import { Array as YArray, Map as YMap, Transaction, YArrayEvent, YEvent } from 'yjs';
 
 export type Comment = {
   author: string;
@@ -135,7 +123,6 @@ export class CommentStore {
     // The YJS types explicitly use `any` as well.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sharedCommentsArray: YArray<any> | null = this._getCollabComments();
-
     if (thread !== undefined && commentOrThread.type === 'comment') {
       for (let i = 0; i < nextComments.length; i++) {
         const comment = nextComments[i];
@@ -180,7 +167,6 @@ export class CommentStore {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sharedCommentsArray: YArray<any> | null = this._getCollabComments();
     let commentIndex: number | null = null;
-
     if (thread !== undefined) {
       for (let i = 0; i < nextComments.length; i++) {
         const nextComment = nextComments[i];
@@ -250,19 +236,16 @@ export class CommentStore {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   _getCollabComments(): null | YArray<any> {
     const provider = this._collabProvider;
     if (provider !== null) {
-      // @ts-ignore doc does exist
       const doc = provider.doc;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return doc.get('comments', YArray) as YArray<any>;
+//      return doc.get('comments', YArray) as YArray<any>;
+      return doc.get('comments') as YArray<any>;
     }
     return null;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   _createCollabSharedMap(commentOrThread: Comment | Thread): YMap<any> {
     const sharedMap = new YMap();
     const type = commentOrThread.type;
@@ -333,12 +316,10 @@ export class CommentStore {
       if (transaction.origin !== this) {
         for (let i = 0; i < events.length; i++) {
           const event = events[i];
-
           if (event instanceof YArrayEvent) {
             const target = event.target;
             const deltas = event.delta;
             let offset = 0;
-
             for (let s = 0; s < deltas.length; s++) {
               const delta = deltas[s];
               const insert = delta.insert;
@@ -354,11 +335,9 @@ export class CommentStore {
                       | undefined);
 
               if (Array.isArray(insert)) {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 insert.forEach((map: YMap<any>) => {
                   const id = map.get('id');
                   const type = map.get('type');
-
                   const commentOrThread =
                     type === 'thread'
                       ? createThread(
@@ -366,7 +345,6 @@ export class CommentStore {
                           map
                             .get('comments')
                             .toArray()
-                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             .map(
                               (
                                 innerComment: Map<
@@ -442,12 +420,10 @@ export function useCommentStore(commentStore: CommentStore): Comments {
   const [comments, setComments] = useState<Comments>(
     commentStore.getComments(),
   );
-
   useEffect(() => {
     return commentStore.registerOnChange(() => {
       setComments(commentStore.getComments());
     });
   }, [commentStore]);
-
   return comments;
 }

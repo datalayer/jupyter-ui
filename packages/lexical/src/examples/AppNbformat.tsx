@@ -8,7 +8,7 @@ import { useState } from "react";
 import { $getRoot } from "lexical";
 import styled from "styled-components";
 import { useNotebookStore, Jupyter, Notebook, CellSidebar, CellSidebarExtension } from "@datalayer/jupyter-react";
-import { Box, TabNav, Button } from "@primer/react";
+import { Box, UnderlineNav, Button } from "@primer/react";
 import { ThreeBarsIcon } from "@primer/octicons-react"
 import { JSONTree } from "react-json-tree";
 import { INotebookContent } from "@jupyterlab/nbformat";
@@ -61,17 +61,17 @@ const Tabs = () => {
   }
   return (
     <Box className="center">
-      <TabNav>
-        <TabNav.Link href="" selected={tab === 'editor'} onClick={e => goToTab(e, 'editor', notebook?.model)}>
+      <UnderlineNav>
+        <UnderlineNav.Item href="" aria-current={tab === 'editor'} onClick={e => goToTab(e, 'editor', notebook?.model)}>
           Editor
-        </TabNav.Link>
-        <TabNav.Link href="" selected={tab === 'notebook'} onClick={e => goToTab(e, 'notebook', notebook?.model)}>
+        </UnderlineNav.Item>
+        <UnderlineNav.Item href="" aria-current={tab === 'notebook'} onClick={e => goToTab(e, 'notebook', notebook?.model)}>
           Notebook
-        </TabNav.Link>
-        <TabNav.Link href="" selected={tab === 'nbformat'} onClick={e => goToTab(e, 'nbformat', notebook?.model)}>
+        </UnderlineNav.Item>
+        <UnderlineNav.Item href="" aria-current={tab === 'nbformat'} onClick={e => goToTab(e, 'nbformat', notebook?.model)}>
           NbFormat
-        </TabNav.Link>
-      </TabNav>
+        </UnderlineNav.Item>
+      </UnderlineNav>
       { tab === 'editor' &&
         <Box>
           <Editor notebook={nbformat} />

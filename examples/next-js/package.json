@@ -11,24 +11,24 @@
   },
   "dependencies": {
     "@datalayer/icons-react": "^1.0.0",
-    "@datalayer/jupyter-react": "^0.18.12",
-    "@datalayer/primer-addons": "^0.3.2",
+    "@datalayer/jupyter-react": "^1.0.1",
+    "@datalayer/primer-addons": "^1.0.0",
     "autoprefixer": "^10.4.14",
-    "eslint": "^8.40.0",
-    "eslint-config-next": "^13.4.1",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^15.3.0",
     "next": "^14.2.3",
     "next-themes": "^0.2.1",
     "postcss": "^8.4.23",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "svg-url-loader": "^7.1.1",
     "tailwindcss": "^3.3.2"
   },
   "devDependencies": {
-    "@types/node": "^18.15.3",
-    "@types/react": "^18.2.12",
-    "@types/react-dom": "^18.2.5",
+    "@types/node": "^22.14.1",
+    "@types/react": "18.3.20",
+    "@types/react-dom": "18.3.6",
     "raw-loader": "^4.0.2",
-    "typescript": "^5.0.3"
+    "typescript": "^5.8.3"
   }
 }

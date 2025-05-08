@@ -5,7 +5,7 @@
  */
 
 import { TextInput as BaseTextInput, TextInputProps } from '@primer/react';
-import type { BetterSystemStyleObject } from '@primer/react/lib/sx';
+import type { BetterSystemStyleObject } from '@primer/react';
 import type { FC } from 'react';
 
 /**
