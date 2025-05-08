@@ -15,6 +15,10 @@ export function CellSidebarButton(props: ICellSidebarProps): JSX.Element {
     <Box
       className={DATALAYER_CELL_SIDEBAR_CLASS_NAME}
       sx={{
+        width: 16,
+        position: "relative",
+        marginTop: 4,
+        marginLeft: "16px !important",
         '& p': {
           marginBottom: '0 !important',
         },
