@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 import { TableOfContents, TableOfContentsTree } from '@jupyterlab/toc';
 import { useEffect, useState } from 'react';
 import { useNotebookStore } from '../../../components';

@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';

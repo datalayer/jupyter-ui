@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 import { NotebookPanel } from '@jupyterlab/notebook';
 import { TocLayoutFactory } from './TocExtension';
 import { TableOfContents, TableOfContentsPanel } from '@jupyterlab/toc';
