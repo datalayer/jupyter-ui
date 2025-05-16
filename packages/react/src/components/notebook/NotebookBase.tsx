@@ -115,32 +115,16 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
   } = props;
 
   const [isLoading, setIsLoading] = useState(true);
-  const [extensionComponents, setExtensionComponents] = useState(
-    new Array<JSX.Element>()
-  );
+  const [extensionComponents, setExtensionComponents] = useState(new Array<JSX.Element>());
+  const [completer, setCompleter] = useState<CompletionHandler | null>(null);
 
   const id = useMemo(() => props.id || newUuid(), [props.id]);
-  const path = useMemo(
-    () => props.path || FALLBACK_NOTEBOOK_PATH,
-    [props.path]
-  );
-  // Features
-  const features = useMemo(
-    () => new CommonFeatures({ commands, renderers }),
-    [commands, renderers]
-  );
+  const path = useMemo(() => props.path || FALLBACK_NOTEBOOK_PATH, [props.path]);
+  const features = useMemo(() => new CommonFeatures({ commands, renderers }), [commands, renderers]);
+  const contentFactory = useMemo(() => new NotebookPanel.ContentFactory(
+    {editorFactory: features.editorServices.factoryService.newInlineEditor}
+  ),[features.editorServices.factoryService.newInlineEditor]);
 
-  // Content factory
-  const contentFactory = useMemo(
-    () =>
-      new NotebookPanel.ContentFactory({
-        editorFactory: features.editorServices.factoryService.newInlineEditor,
-      }),
-    [features.editorServices.factoryService.newInlineEditor]
-  );
-
-  // Completer
-  const [completer, setCompleter] = useState<CompletionHandler | null>(null);
   useEffect(() => {
     const completer = new Completer({ model: new CompleterModel() });
     // Dummy widget to initialize
@@ -155,9 +139,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
     const handler = new CompletionHandler({ completer, reconciliator });
     completer.hide();
     Widget.attach(completer, document.body);
-
     setCompleter(handler);
-
     return () => {
       handler.dispose();
       completer.dispose();
@@ -165,7 +147,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
     };
   }, []);
 
-  // Widget factory
+  // Widget factory.
   const [widgetFactory, setWidgetFactory] = useState<NotebookWidgetFactory | null>(null);
 
   useEffect(() => {
@@ -194,22 +176,20 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
     };
   }, [contentFactory, features]);
 
-  // Tracker & commands
+  // Tracker & commands.
   const [tracker, setTracker] = useState<NotebookTracker | null>(null);
   useEffect(() => {
-    const thisTracker = completer
-      ? new NotebookTracker({ namespace: id })
-      : null;
-    const commands = completer
-      ? addNotebookCommands(
+    const thisTracker = completer ? new NotebookTracker({ namespace: id }) : null;
+    const commands = completer ?
+      addNotebookCommands(
           features.commands,
           completer,
           thisTracker!,
-          props.path
+          props.path,
         )
-      : null;
+    :
+      null;
     setTracker(thisTracker);
-
     return () => {
       commands?.dispose();
       thisTracker?.dispose();
@@ -232,7 +212,6 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
         shutdownOnDispose: false,
       },
     });
-
     initializeContext(
       thisContext,
       id,
@@ -241,9 +220,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
       onSessionConnectionChanged,
       !serviceManager
     );
-
     setContext(thisContext);
-
     return () => {
       thisContext.dispose();
       factory.dispose();
@@ -262,7 +239,6 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
 
   // Notebook
   const [panel, setPanel] = useState<NotebookPanel | null>(null);
-
   useEffect(() => {
     let thisPanel: NotebookPanel | null = null;
     let widgetsManager: WidgetManager | null = null;
@@ -311,7 +287,6 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
         setIsLoading(false);
       }
     }
-
     setPanel(thisPanel);
     if (!thisPanel) {
       setExtensionComponents([]);
@@ -331,6 +306,7 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
       }
       setPanel(panel => (panel === thisPanel ? null : panel));
     };
+
   }, [context, extensions, features.commands, widgetFactory]);
 
   useEffect(() => {
@@ -359,7 +335,6 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
 
       if (completer) {
         // Setup the completer here as it requires the panel
-
         onActiveCellChanged = (
           notebook: Notebook,
           cell: Cell<ICellModel> | null
@@ -370,7 +345,6 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
             });
           }
         };
-
         onSessionChanged = (
           _: ISessionContext,
           changes: IChangedArgs<
@@ -396,7 +370,6 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
           completer.editor = editor;
           completer.reconciliator = reconciliator;
         };
-
         panel.context.sessionContext.sessionChanged.connect(onSessionChanged);
         panel.context.sessionContext.ready.then(() => {
           onSessionChanged?.(panel.context.sessionContext, {
@@ -437,12 +410,10 @@ export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
     const onKeyDown = (event: any) => {
       features.commands.processKeydownEvent(event);
     };
-
     // FIXME It would be better to add the listener to the Box wrapping the panel
     // but this requires the use of the latest version of JupyterLab/Lumino that
     // capture event at bubbling phase for keyboard shortcuts rather than at capture phase.
     document.addEventListener('keydown', onKeyDown, true);
-
     return () => {
       document.removeEventListener('keydown', onKeyDown, true);
     };

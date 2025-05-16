@@ -150,7 +150,6 @@ export function Notebook2(props: React.PropsWithChildren<INotebook2Props>): JSX.
     if (model) {
       setIsLoading(false);
     }
-
     onNotebookModelChanged?.(model);
   }, [model, onNotebookModelChanged]);
 
@@ -229,7 +228,7 @@ export function Notebook2(props: React.PropsWithChildren<INotebook2Props>): JSX.
         }}
       >
         {children}
-        {model && serviceManager && (
+        {model && serviceManager &&
           <BaseNotebook
             commands={commands}
             id={id}
@@ -241,7 +240,7 @@ export function Notebook2(props: React.PropsWithChildren<INotebook2Props>): JSX.
             serviceManager={serviceManager}
             onSessionConnectionChanged={onSessionConnection}
           />
-        )}
+        }
       </Box>
     </Box>
   );
