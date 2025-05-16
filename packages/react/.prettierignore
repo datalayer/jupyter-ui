@@ -4,3 +4,5 @@ node_modules
 **/lib
 **/package.json
 jupyter_react/
+
+**/src

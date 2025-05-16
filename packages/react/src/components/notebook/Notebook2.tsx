@@ -4,21 +4,16 @@
  * MIT License
  */
 
+import React, { useEffect, useState } from 'react';
 import type { INotebookContent } from '@jupyterlab/nbformat';
 import type { NotebookModel } from '@jupyterlab/notebook';
 import type { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import type { ServiceManager } from '@jupyterlab/services';
 import type { CommandRegistry } from '@lumino/commands';
 import { Box } from '@primer/react';
-import React, { useEffect, useState } from 'react';
 import type { OnSessionConnection } from '../../state';
 import { Loader } from '../utils';
-import {
-  BaseNotebook,
-  useKernelId,
-  useNotebookModel,
-  type CollaborationServer,
-} from './BaseNotebook';
+import { BaseNotebook, useKernelId, useNotebookModel, type CollaborationServer } from './NotebookBase';
 import type { DatalayerNotebookExtension } from './Notebook';
 import type { INotebookToolbarProps } from './toolbar';
 
@@ -27,7 +22,7 @@ import './Notebook.css';
 /**
  * Simple notebook component properties
  */
-export interface ISimpleNotebookProps {
+export interface INotebook2Props {
   /**
    * Collaboration server providing the document rooms.
    */
@@ -114,9 +109,7 @@ export interface ISimpleNotebookProps {
  * - You must provide the appropriate service manager
  * - You can specified the kernel id to use; if it is not defined or empty and startDefaultKernel is true, a new kernel will be started.
  */
-export function SimpleNotebook(
-  props: React.PropsWithChildren<ISimpleNotebookProps>
-): JSX.Element {
+export function Notebook2(props: React.PropsWithChildren<INotebook2Props>): JSX.Element {
   const {
     Toolbar,
     children,
@@ -157,7 +150,6 @@ export function SimpleNotebook(
     if (model) {
       setIsLoading(false);
     }
-
     onNotebookModelChanged?.(model);
   }, [model, onNotebookModelChanged]);
 
@@ -236,7 +228,7 @@ export function SimpleNotebook(
         }}
       >
         {children}
-        {model && serviceManager && (
+        {model && serviceManager &&
           <BaseNotebook
             commands={commands}
             id={id}
@@ -248,7 +240,7 @@ export function SimpleNotebook(
             serviceManager={serviceManager}
             onSessionConnectionChanged={onSessionConnection}
           />
-        )}
+        }
       </Box>
     </Box>
   );
