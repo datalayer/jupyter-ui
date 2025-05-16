@@ -9,6 +9,7 @@ import { useStore } from 'zustand';
 import { ReactPortal } from 'react';
 import { INotebookModel } from '@jupyterlab/notebook';
 import * as nbformat from '@jupyterlab/nbformat';
+import { TableOfContents } from '@jupyterlab/toc';
 import { Cell, ICellModel } from '@jupyterlab/cells';
 import { NotebookChange } from '@jupyter/ydoc';
 import { Kernel as JupyterKernel } from '@jupyterlab/services';
@@ -23,6 +24,7 @@ export type PortalDisplay = {
 
 export type INotebookState = {
   model?: INotebookModel;
+  tocModel?: TableOfContents.Model;
   adapter?: NotebookAdapter;
   saveRequest?: Date;
   activeCell?: Cell<ICellModel>;
@@ -47,6 +49,10 @@ type NotebookChangeId = {
 type NotebookModelId = {
   id: string;
   notebookModel: INotebookModel;
+};
+type TocModelId = {
+  id: string;
+  tocModel: TableOfContents.Model;
 };
 type CellModelId = {
   id: string;
@@ -83,6 +89,7 @@ export type NotebookState = INotebooksState & {
   selectNotebook: (id: string) => INotebookState | undefined;
   selectNotebookAdapter: (id: string) => NotebookAdapter | undefined;
   selectNotebookModel: (id: string) => { model: INotebookModel | undefined; changed: any } | undefined;
+  selectTocModel: (id: string) => TableOfContents.Model | undefined;
   selectKernelStatus: (id: string) => string | undefined;
   selectActiveCell: (id: string) => Cell<ICellModel> | undefined;
   selectNotebookPortals: (id: string) => React.ReactPortal[] | undefined;
@@ -100,6 +107,7 @@ export type NotebookState = INotebooksState & {
   update: (update: NotebookUpdate) => void;
   activeCellChange: (cellModelId: CellModelId) => void;
   changeModel: (notebookModelId: NotebookModelId) => void;
+  changeTocModel: (tocModelId: TocModelId) => void;
   changeNotebook: (notebookChangeId: NotebookChangeId) => void;
   changeKernelStatus: (kernelStatusId: KernelStatusMutation) => void;
   changeKernel: (kernelChange: KernelChangeMutation) => void;
@@ -130,6 +138,9 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
       };    
     }
     return undefined;
+  },
+  selectTocModel: (id: string): TableOfContents.Model | undefined => {
+    return get().notebooks.get(id)?.tocModel;
   },
   selectKernelStatus: (id: string): string | undefined => {
     return get().notebooks.get(id)?.kernelStatus;
@@ -207,9 +218,16 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
       set((state: NotebookState) => ({ notebooks }));
     }
   },
+  changeTocModel: (tocModelId: TocModelId) => {
+    const notebooks = get().notebooks;
+    const notebook = notebooks.get(tocModelId.id);
+    if (notebook) {
+      notebook.tocModel = tocModelId.tocModel;
+      set((state: NotebookState) => ({ notebooks }));
+    }
+  },
   changeNotebook: (notebookChangeId: NotebookChangeId) => {
     const notebooks = get().notebooks;
-    const notebook = notebooks.get(notebookChangeId.id);
     if (notebook) {
       notebook.notebookChange = notebookChangeId.notebookChange;
       set((state: NotebookState) => ({ notebooks }));

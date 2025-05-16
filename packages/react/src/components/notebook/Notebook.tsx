@@ -56,6 +56,7 @@ export type IDatalayerNotebookExtensionProps = {
   notebookId: string;
   commands: CommandRegistry;
   panel: NotebookPanel;
+  adapter: NotebookAdapter;
 };
 
 export type DatalayerNotebookExtension = DocumentRegistry.IWidgetExtension<
@@ -168,6 +169,7 @@ export const Notebook = (props: INotebookProps) => {
         notebookId: id,
         commands: adapter.commands,
         panel: adapter.notebookPanel!,
+        adapter,
       });
       extension.createNew(adapter.notebookPanel!, adapter.context!);
       setExtensionComponents(
