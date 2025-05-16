@@ -109,7 +109,7 @@ export class JupyterLabAppAdapter {
     */
     this._jupyterLab.start({
       hostID: hostId,
-      bubblingKeydown: true,
+      bubblingKeydown: true, // TODO Check this prop.
       startPlugins: [], // How is this used in JupyterLab core?
       ignorePlugins: [], // How is this used in JupyterLab core?
     }).then(() => {
