@@ -6,7 +6,7 @@
 
 import { createRoot } from 'react-dom/client';
 import { useState } from 'react';
-import { Box, Heading, Textarea, Button, Pagehead, Text } from '@primer/react';
+import { Box, Heading, Textarea, Button, PageHeader, Text } from '@primer/react';
 import { IModel } from '@jupyterlab/services/lib/kernel/kernel';
 import { ISpecModel } from '@jupyterlab/services/lib/kernelspec/kernelspec';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
@@ -296,7 +296,7 @@ const root = createRoot(div);
 
 root.render(
   <JupyterReactTheme>
-    <Pagehead>The Kernel Components</Pagehead>
+    <PageHeader>The Kernel Components</PageHeader>
     <KernelComponents />
   </JupyterReactTheme>
 );

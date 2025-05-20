@@ -228,6 +228,7 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
   },
   changeNotebook: (notebookChangeId: NotebookChangeId) => {
     const notebooks = get().notebooks;
+    const notebook = notebooks.get(notebookChangeId.id);
     if (notebook) {
       notebook.notebookChange = notebookChangeId.notebookChange;
       set((state: NotebookState) => ({ notebooks }));

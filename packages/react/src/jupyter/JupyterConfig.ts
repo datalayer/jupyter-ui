@@ -131,6 +131,15 @@ export const loadJupyterConfig = (
     insideJupyterLab: false,
     insideJupyterHub: false,
   }
+  // JupyterLab
+  const jupyterConfigData = document.getElementById('jupyter-config-data');
+  let jupyterConfig = undefined;
+  if (jupyterConfigData) {
+    jupyterConfig = JSON.parse(jupyterConfigData.textContent || '');
+    config.insideJupyterLab = jupyterConfig.appName === 'JupyterLab';
+  }
+  // Hub related information ('hubHost' 'hubPrefix' 'hubUser' ,'hubServerName').
+  config.insideJupyterHub = PageConfig.getOption('hubHost') !== '';
   // Load the Datalayer config.
   loadDatalayerConfig();
   if (datalayerConfigLoaded) {
@@ -139,9 +148,7 @@ export const loadJupyterConfig = (
     setJupyterServerToken(jupyterServerToken || config.jupyterServerToken);
   } else {
     // No Datalayer config, look for a Jupyter config...
-    const jupyterConfigData = document.getElementById('jupyter-config-data');
-    if (jupyterConfigData) {
-      const jupyterConfig = JSON.parse(jupyterConfigData.textContent || '');
+    if (jupyterConfig) {
       setJupyterServerUrl(
         jupyterServerUrl ??
           jupyterConfig.jupyterServerUrl ??
@@ -152,9 +159,6 @@ export const loadJupyterConfig = (
           jupyterConfig.token ??
             ''
       );
-      config.insideJupyterLab = jupyterConfig.appName === 'JupyterLab';
-      // Hub related information ('hubHost' 'hubPrefix' 'hubUser' ,'hubServerName').
-      config.insideJupyterHub = PageConfig.getOption('hubHost') !== '';
     } else {
       // No Datalayer and no Jupyter config, rely on location...
       setJupyterServerUrl(

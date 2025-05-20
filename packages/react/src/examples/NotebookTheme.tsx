@@ -6,7 +6,6 @@
 
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { Text, ToggleSwitch, theme as primerTheme } from '@primer/react';
-import { Theme } from '@primer/react/lib/ThemeProvider';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { CellSidebarExtension } from '../components';
@@ -16,7 +15,7 @@ import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolba
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookTheme = () => {
-  const [theme, setTheme] = useState<Theme>(jupyterLabTheme);
+  const [theme, setTheme] = useState<any>(jupyterLabTheme);
   const [isOn, setIsOn] = useState(false);
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   const onClick = useCallback(() => {
