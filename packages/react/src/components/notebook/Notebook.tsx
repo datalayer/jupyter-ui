@@ -44,7 +44,7 @@ export type IDatalayerNotebookExtensionProps = {
   notebookId: string;
   commands: CommandRegistry;
   panel: NotebookPanel;
-  adapter: NotebookAdapter;
+  adapter?: NotebookAdapter;
 };
 
 export type DatalayerNotebookExtension = DocumentRegistry.IWidgetExtension<

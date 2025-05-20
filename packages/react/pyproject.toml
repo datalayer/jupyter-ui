@@ -25,7 +25,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "datalayer_core>=1.0.0",
+    "datalayer_core",
     "jupyter_server>=2.10,<3",
 ]
 dynamic = ["version"]
