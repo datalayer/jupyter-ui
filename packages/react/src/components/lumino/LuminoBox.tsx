@@ -5,7 +5,6 @@
  */
 
 import { useRef, useEffect } from 'react';
-import { unmountComponentAtNode } from 'react-dom';
 import { Widget, BoxPanel } from '@lumino/widgets';
 import { Box } from '@primer/react';
 
@@ -30,7 +29,6 @@ export const LuminoBox = (props: LuminoBoxProps) => {
       }
       return () => {
         try {
-          unmountComponentAtNode(boxPanel.node);
           if (boxPanel.isAttached || boxPanel.node.isConnected) {
             boxPanel.dispose();
             Widget.detach(boxPanel);

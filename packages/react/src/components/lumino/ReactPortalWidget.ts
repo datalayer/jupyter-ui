@@ -54,11 +54,6 @@ export abstract class ReactPortalWidget extends Widget {
    */
   protected onBeforeDetach(msg: Message): void {
     // Unmount the component so it can tear down.
-    // TODO unmountComponentAtNode or not?
-    // console.js:213 Warning: unmountComponentAtNode():
-    // The node you're attempting to unmount was rendered by React and is not a top-level container.
-    // Instead, have the parent component update its state and rerender in order to remove this component.
-    //    ReactDOM.unmountComponentAtNode(this.node);
   }
 
   /**
