@@ -1,5 +1,9 @@
 {
-  "entryPoints": ["./src/index.ts"],
+  "entryPoints": [
+    "./src/index.ts"
+],
   "out": "typedoc",
-  "exclude": "src/examples"
+  "exclude": [
+    "src/examples"
+  ]
 }

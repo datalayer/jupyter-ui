@@ -131,6 +131,7 @@
     "@jupyterlab/ui-components-extension": "^4.0.0",
     "@jupyterlite/licenses": "^0.5.1",
     "@jupyterlite/localforage": "^0.5.1",
+    "@jupyterlite/kernel": "^0.5.1",
     "@jupyterlite/pyodide-kernel": "^0.5.1",
     "@jupyterlite/pyodide-kernel-extension": "^0.5.1",
     "@jupyterlite/server": "^0.5.1",

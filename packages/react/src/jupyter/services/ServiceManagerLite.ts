@@ -8,7 +8,7 @@ import { ServiceManager } from '@jupyterlab/services';
 import { createLiteServer, Lite } from '../lite';
 
 export const createLiteServiceManager = (lite: Lite = true): Promise<ServiceManager.IManager> => {
-  return createLiteServer().then(async liteServer => {
+  const liteServiceManager = createLiteServer().then(async liteServer => {
     // Load the browser kernel.
     const mod = typeof lite === 'boolean'
         ? await import('@jupyterlite/pyodide-kernel-extension')
@@ -40,4 +40,6 @@ export const createLiteServiceManager = (lite: Lite = true): Promise<ServiceMana
     console.log("Lite Service Manager is created", liteServiceManager);
     return liteServiceManager;
   });
+  // TODO remove `as any` once we bump to jupyterlite 0.6.x.
+  return liteServiceManager as any;
 }
