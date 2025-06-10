@@ -32,7 +32,13 @@
     "skipLibCheck": true,
     "strictNullChecks": true,
     "target": "ESNext",
-    "types": ["jest", "node"],
-    "lib": ["ESNext", "DOM"]
+    "types": [
+      "jest",
+      "node"
+    ],
+    "lib": [
+      "ESNext",
+      "DOM"
+    ]
   }
 }
