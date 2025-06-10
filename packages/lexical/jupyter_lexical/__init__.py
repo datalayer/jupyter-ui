@@ -5,26 +5,11 @@
 from typing import Any, Dict, List
 
 from .__version__ import __version__
-from .handlers import setup_handlers
+from .serverapplication import JupyterLexicalExtensionApp
 
 
 def _jupyter_server_extension_points() -> List[Dict[str, Any]]:
     return [{
-        "module": "jupyter_lexical"
+        "module": "jupyter_react",
+        "app": JupyterLexicalExtensionApp,
     }]
-
-
-def _load_jupyter_server_extension(server_app):
-    """Registers the API handler to receive HTTP requests from the frontend extension.
-
-    Parameters
-    ----------
-    server_app: jupyter_server.serverapp.ServerApp
-    """
-    setup_handlers(server_app.web_app)
-    name = "jupyter_lexical"
-    server_app.log.info(f"Registered {name} server extension")
-
-
-# For backward compatibility with notebook server - useful for Binder/JupyterHub
-load_jupyter_server_extension = _load_jupyter_server_extension

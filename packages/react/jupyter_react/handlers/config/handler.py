@@ -11,10 +11,9 @@ import tornado
 from jupyter_server.base.handlers import APIHandler
 from jupyter_server.extension.handler import ExtensionHandlerMixin
 
-from ...__version__ import __version__
+from jupyter_react.__version__ import __version__
 
 
-# pylint: disable=W0223
 class ConfigHandler(ExtensionHandlerMixin, APIHandler):
     """The handler for configurations."""
 
@@ -22,7 +21,10 @@ class ConfigHandler(ExtensionHandlerMixin, APIHandler):
     def get(self):
         """Returns the configurations of the server extensions."""
         res = json.dumps({
-            "extension": "jupyter_react",
-            "version": __version__
+            "extension": self.name,
+            "version": __version__,
+            "configuration": {
+                "launcher": self.config["launcher"].to_dict()
+            }
         })
         self.finish(res)

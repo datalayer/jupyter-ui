@@ -1,7 +1,13 @@
 {
   "$schema": "http://json.schemastore.org/tsconfig",
-  "include": ["./src/**/*", "./src/**/*.json"],
-  "exclude": ["node_modules", "src/example"],
+  "include": [
+    "./src/**/*",
+    "./src/**/*.json"
+  ],
+  "exclude": [
+    "node_modules",
+    "src/example"
+  ],
   "compilerOptions": {
     "forceConsistentCasingInFileNames": true,
     "baseUrl": "/",
@@ -15,7 +21,7 @@
     "jsx": "react-jsx",
     "jsxImportSource": "react",
     "module": "ES2022",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "noEmitOnError": true,
     "noImplicitAny": true,
     "noUnusedLocals": true,

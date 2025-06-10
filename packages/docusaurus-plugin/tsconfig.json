@@ -4,8 +4,8 @@
     "incremental": true,
     "rootDir": "src",
     "outDir": "lib",
-    "target": "ES2022",
-    "module": "commonjs",
+    "target": "ESNext",
+    "module": "ESNext",
     "lib": [
       "ESNext",
       "DOM"

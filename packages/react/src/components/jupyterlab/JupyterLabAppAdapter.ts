@@ -6,12 +6,7 @@
 
 import { CommandRegistry } from '@lumino/commands';
 import { BoxPanel, Widget, FocusTracker } from '@lumino/widgets';
-import {
-  JupyterLab,
-  JupyterFrontEndPlugin,
-  JupyterFrontEnd,
-  LabShell,
-} from '@jupyterlab/application';
+import { JupyterLab, JupyterFrontEndPlugin, JupyterFrontEnd, LabShell } from '@jupyterlab/application';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { NotebookPanel } from '@jupyterlab/notebook';
@@ -105,10 +100,7 @@ export class JupyterLabAppAdapter {
     });
     this._jupyterLab.registerPluginModules(extensions);
     if (nosplash) {
-      this._jupyterLab.deregisterPlugin(
-        '@jupyterlab/apputils-extension:splash',
-        true
-      );
+      this._jupyterLab.deregisterPlugin('@jupyterlab/apputils-extension:splash', true);
     }
     /*
     if (collaborative) {
@@ -117,10 +109,9 @@ export class JupyterLabAppAdapter {
     */
     this._jupyterLab.start({
       hostID: hostId,
-      startPlugins: [
-      ], // How is this used in JupyterLab core?
-      ignorePlugins: [        
-      ], // How is this used in JupyterLab core?
+      bubblingKeydown: true, // TODO Check this prop.
+      startPlugins: [], // How is this used in JupyterLab core?
+      ignorePlugins: [], // How is this used in JupyterLab core?
     }).then(() => {
 //      this._plugins = (this._jupyterLab as any)['_plugins'];
 //      this._readyResolve();

@@ -26,10 +26,10 @@
     "build:storybook": "storybook build"
   },
   "dependencies": {
-    "@datalayer/jupyter-lexical": "^0.2.0",
-    "@datalayer/jupyter-react": "^0.18.12",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "@datalayer/jupyter-lexical": "^1.0.0",
+    "@datalayer/jupyter-react": "^1.0.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",
@@ -45,9 +45,9 @@
     "@jupyterlab/testutils": "^4.0.0",
     "@jupyterlab/vega3-extension": "^3.3.0",
     "@jupyterlite/javascript-kernel-extension": "^0.3.0",
-    "@mermaid-js/mermaid-zenuml": "0.2.0",
+    "@mermaid-js/mermaid-zenuml": "^0.2.0",
     "@playwright/test": "^1.40.1",
-    "@primer/octicons-react": "^19.8.0",
+    "@primer/octicons-react": "^19.15.1",
     "@storybook/addon-essentials": "^8.0.10",
     "@storybook/addon-interactions": "^8.0.10",
     "@storybook/addon-links": "^8.0.10",
@@ -58,8 +58,8 @@
     "@storybook/react": "^8.0.10",
     "@storybook/react-webpack5": "^8.0.10",
     "@storybook/test": "^8.0.10",
-    "@types/react": "^18.2.12",
-    "@types/react-dom": "^18.2.5",
+    "@types/react": "18.3.20",
+    "@types/react-dom": "18.3.6",
     "mdx-mermaid": "^2.0.0",
     "mermaid": "^10.9.0",
     "storybook": "^8.0.10",

@@ -4,19 +4,10 @@
  * MIT License
  */
 
-import {
-  ChevronDownIcon,
-  ChevronUpIcon,
-  PlayIcon,
-  SquareIcon,
-  XIcon,
-} from '@primer/octicons-react';
+import { ChevronDownIcon, ChevronUpIcon, PlayIcon, SquareIcon, XIcon } from '@primer/octicons-react';
 import { Box, IconButton } from '@primer/react';
 import { NotebookCommandIds } from '../../NotebookCommands';
-import {
-  DATALAYER_CELL_SIDEBAR_CLASS_NAME,
-  ICellSidebarProps,
-} from './CellSidebar';
+import { DATALAYER_CELL_SIDEBAR_CLASS_NAME, ICellSidebarProps } from './CellSidebar';
 
 export function CellSidebarButton(props: ICellSidebarProps): JSX.Element {
   const { commands, model } = props;
@@ -24,6 +15,10 @@ export function CellSidebarButton(props: ICellSidebarProps): JSX.Element {
     <Box
       className={DATALAYER_CELL_SIDEBAR_CLASS_NAME}
       sx={{
+        width: 16,
+        position: "relative",
+        marginTop: 4,
+        marginLeft: "16px !important",
         '& p': {
           marginBottom: '0 !important',
         },

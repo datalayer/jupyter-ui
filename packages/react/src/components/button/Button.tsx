@@ -5,7 +5,7 @@
  */
 
 import { Button as BaseButton, ButtonProps } from '@primer/react';
-import type { BetterCssProperties } from '@primer/react/lib/sx';
+import type { BetterCssProperties } from '@primer/react';
 import type { FC } from 'react';
 
 /**

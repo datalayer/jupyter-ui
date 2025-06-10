@@ -5,18 +5,26 @@
  */
 
 import { NotebookPanel, NotebookToCFactory } from '@jupyterlab/notebook';
-import {
-  DatalayerNotebookExtension,
-  IDatalayerNotebookExtensionProps,
-  notebookStore,
-} from '../../../components';
-import {
-  TableOfContents,
-  TableOfContentsRegistry,
-  TableOfContentsTracker,
-} from '@jupyterlab/toc';
+import { TableOfContents, TableOfContentsRegistry, TableOfContentsTracker } from '@jupyterlab/toc';
 import { BoxPanel } from '@lumino/widgets';
+import { DatalayerNotebookExtension, IDatalayerNotebookExtensionProps, notebookStore } from '../../../components';
 import { JupyterLayoutFactory } from './JupyterLayoutFactory';
+
+/**
+ * A factory to layout ToC Panel
+ */
+export interface TocLayoutFactory {
+  /** layout ToC Panel */
+  layout(
+    boxPanel: BoxPanel,
+    notebookPanel: NotebookPanel,
+    notebookId: string
+  ): JSX.Element | null;
+  /** set model to ToC Panel */
+  setModel(model: TableOfContents.Model): void;
+  /** dispose ToC Panel */
+  dispose(): void;
+}
 
 export interface TocExtensionOptions {
   /** layout factory */
@@ -46,8 +54,8 @@ export class TocExtension implements DatalayerNotebookExtension {
     this._notebookPanel = notebookPanel;
     const adapter = this._props.adapter;
     // create factory
-    const tracker = adapter['_tracker'];
-    const rendermime = adapter['_rendermime'];
+    const tracker = adapter!['_tracker'];
+    const rendermime = adapter!['_rendermime'];
     const nbTocFactory = new NotebookToCFactory(
       tracker!,
       rendermime!.markdownParser,
@@ -85,7 +93,7 @@ export class TocExtension implements DatalayerNotebookExtension {
 
   get component(): JSX.Element | null {
     return this._layoutFactory.layout(
-      this._props.adapter.panel,
+      this._props.adapter!.panel,
       this._notebookPanel,
       this._props.notebookId
     );
@@ -93,19 +101,3 @@ export class TocExtension implements DatalayerNotebookExtension {
 }
 
 export default TocExtension;
-
-/**
- * A factory to layout ToC Panel
- */
-export interface TocLayoutFactory {
-  /** layout ToC Panel */
-  layout(
-    boxPanel: BoxPanel,
-    notebookPanel: NotebookPanel,
-    notebookId: string
-  ): JSX.Element | null;
-  /** set model to ToC Panel */
-  setModel(model: TableOfContents.Model): void;
-  /** dispose ToC Panel */
-  dispose(): void;
-}

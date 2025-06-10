@@ -7,10 +7,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
 import { 
-  Box, Button, Heading, Text, Link, PageLayout, PageHeader, RadioGroup, Radio, FormControl, RelativeTime,
-  TextInput, TextInputWithTokens, Timeline, Octicon, ToggleSwitch, SegmentedControl, Label, LabelGroup,
-  NavList, IconButton, CircleBadge, CircleOcticon, Tooltip,
-//  theme,
+  Box, Button, Heading, Text, Link, PageLayout, PageHeader, RadioGroup, Radio, FormControl, RelativeTime, TextInput, TextInputWithTokens, Timeline, ToggleSwitch, SegmentedControl, Label, LabelGroup, NavList, IconButton, CircleBadge, CircleOcticon, Tooltip,
 } from '@primer/react';
 import { DataTable, Table, SkeletonBox, Banner } from '@primer/react/experimental';
 import { GitCommitIcon, HeartIcon, RocketIcon, CheckIcon } from '@primer/octicons-react';
@@ -300,13 +297,13 @@ const JupyterLabTheme = () => {
                 <Timeline>
                   <Timeline.Item>
                     <Timeline.Badge>
-                      <Octicon icon={GitCommitIcon} aria-label="Commit" />
+                      <CircleOcticon icon={GitCommitIcon} aria-label="Commit" />
                     </Timeline.Badge>
                     <Timeline.Body>This is a message</Timeline.Body>
                   </Timeline.Item>
                   <Timeline.Item>
                     <Timeline.Badge>
-                      <Octicon icon={GitCommitIcon} aria-label="Commit" />
+                      <CircleOcticon icon={GitCommitIcon} aria-label="Commit" />
                     </Timeline.Badge>
                     <Timeline.Body>This is a message</Timeline.Body>
                   </Timeline.Item>
