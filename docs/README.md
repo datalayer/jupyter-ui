@@ -15,7 +15,7 @@ npm install
 # Local Development: This command starts a local development server and opens up a browser window.
 # Most changes are reflected live without having to restart the server.
 echo open http://localhost:3000
-npm run start
+npm start
 ```
 
 ```bash
