@@ -77,15 +77,15 @@ module.exports = {
           },
           {
             type: 'doc',
-            docId: 'deployments/index',
-            position: 'left',
-            label: 'Deployments',
-          },
-          {
-            type: 'doc',
             docId: 'integrations/index',
             position: 'left',
             label: 'Integrations',
+          },
+          {
+            type: 'doc',
+            docId: 'deployments/index',
+            position: 'left',
+            label: 'Deployments',
           },
           {
             type: 'doc',

@@ -4,7 +4,9 @@
 
 # 🪐 ⚛️ Jupyter Create React App Example
 
-> Create React App is depreacted - https://react.dev/blog/2025/02/14/sunsetting-create-react-app#how-to-migrate-to-a-framework
+> Create React App is [deprecated](https://react.dev/blog/2025/02/14/sunsetting-create-react-app#how-to-migrate-to-a-framework).
+>
+> We recommend to use [Vite.js](https://vitejs.dev) instead.
 
 Example to showcase [Jupyter UI](https://github.com/datalayer/jupyter-ui) usage in a [Create React](https://reactjs.org/docs/create-a-new-react-app.html) application.
 

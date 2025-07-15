@@ -8,35 +8,6 @@ import ModalImage from "react-modal-image";
 
 # 🪐 Notebook Component
 
-The below picture is an example of Notebook into a React.js component.
-
-<ModalImage
-  small="https://jupyter-examples.datalayer.tech/jupyter-react-notebook.png"
-  large="https://jupyter-examples.datalayer.tech/jupyter-react-notebook.png"
-  alt="Jupyter UI Notebook"
-/>
-
-In this first example, the Jupyter Server will be fetched for the `test.ipynb` notebook `ipynb` file content.
-
-```jsx
-<Jupyter terminals={true} collaborative={true}>
-  <Notebook path="test.ipynb" />
-</Jupyter>
-```
-
-Alternatively, you can get a notebook "ipynb" content from any JSON file compatible with the `INotebookContent` interface.
-
-```jsx
-import { INotebookContent } from '@jupyterlab/nbformat';
-import nbformat from "./NotebookExample.ipynb.json";
-
-<Jupyter terminals={true} collaborative={true}>
-  <Notebook nbformat={nbformat as INotebookContent} />
-</Jupyter>
-```
-
-The available properties for the Notebook component are listed on the [TypeDoc page](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.9.0/types/INotebookProps.html).
-
 ## With a Jupyter server
 
 <StorybookView 
@@ -107,3 +78,34 @@ you can simply set `lite` to `true`:
     />
 </Jupyter>
 ```
+
+## More Examples
+
+The below picture is an example of Notebook into a React.js component.
+
+<ModalImage
+  small="https://jupyter-examples.datalayer.tech/jupyter-react-notebook.png"
+  large="https://jupyter-examples.datalayer.tech/jupyter-react-notebook.png"
+  alt="Jupyter UI Notebook"
+/>
+
+In this first example, the Jupyter Server will be fetched for the `test.ipynb` notebook `ipynb` file content.
+
+```jsx
+<Jupyter terminals={true} collaborative={true}>
+  <Notebook path="test.ipynb" />
+</Jupyter>
+```
+
+Alternatively, you can get a notebook "ipynb" content from any JSON file compatible with the `INotebookContent` interface.
+
+```jsx
+import { INotebookContent } from '@jupyterlab/nbformat';
+import nbformat from "./NotebookExample.ipynb.json";
+
+<Jupyter terminals={true} collaborative={true}>
+  <Notebook nbformat={nbformat as INotebookContent} />
+</Jupyter>
+```
+
+The available properties for the Notebook component are listed on the [TypeDoc page](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.9.0/types/INotebookProps.html).

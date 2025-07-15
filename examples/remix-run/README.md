@@ -5,3 +5,5 @@
 # Jupyter UI for Remix Run
 
 Placeholder for Jupyter UI running on the [Remix Run](https://remix.run) framework.
+
+See feature request on https://github.com/datalayer/jupyter-ui/issues/238.

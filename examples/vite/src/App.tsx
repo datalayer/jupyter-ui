@@ -1,8 +1,19 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import CellExample from "./examples/CellExample";
 
-// import "./App.css";
+// Fix for controls version failing to load in Vite.
+// import * as controls from "@jupyter-widgets/controls/lib/index";
+// const c = { ...controls }
+// c.version = "0.1.0";
+
+import "./App.css";
 
 function App() {
   const [count, setCount] = useState(0);

@@ -4,6 +4,8 @@ import { treatAsCommonjs } from "vite-plugin-treat-umd-as-commonjs";
 
 export default defineConfig({
   plugins: [
+    react(),
+    treatAsCommonjs(),
     {
       name: 'raw-css-as-string',
       enforce: 'pre',
@@ -17,10 +19,6 @@ export default defineConfig({
         return null;
       }
     },
-    react(),
-    treatAsCommonjs({
-      enforce: "post",
-    }),
     {
       name: "fix-text-query",
       enforce: "pre",
@@ -38,12 +36,6 @@ export default defineConfig({
     },
   ],
   assetsInclude: ["**/*.whl", "**/*.raw.css"],
-  css: {
-    modules: {
-      // Exclude .raw.css files from CSS modules handling
-      exclude: /\.raw\.css$/,
-    },
-  },
   resolve: {
     alias: [
       {

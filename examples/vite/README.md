@@ -4,16 +4,16 @@
 
 # 🪐 ⚛️ Jupyter React Vite Example
 
-Example to showcase [Jupyter React](https://github.com/datalayer/jupyter-ui/tree/main/packages/react) usage in a [Vite.js](https://vitejs.dev) Web application.
+Example to run [Jupyter React](https://github.com/datalayer/jupyter-ui/tree/main/packages/react) in a [Vite.js](https://vitejs.dev) Web application.
 
 ```bash
 npm i
 npm run dev
 ```
 
-Ensure to add the following script in your HTML if you want to support .
+Ensure to add the following script in the head of your HTML.
 
-```js
+```html
     <!-- Needed for ipywidgets -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script type="module">
@@ -22,10 +22,11 @@ Ensure to add the following script in your HTML if you want to support .
 ```
 
 ```bash
+# make run
 npm run build
 cd dist
 python -m http.server 8675 # Or any other local server.
-open http://localhost:8675 # Throws error, see you devtool console - require.min.js:1 Uncaught (in promise) Error: Module name "../package.json" has not been loaded yet for context: _. Use require([]) http://requirejs.org/docs/errors.html#notloaded
+open http://localhost:8675
 ```
 
 <div align="center" style="text-align: center">
@@ -36,4 +37,4 @@ open http://localhost:8675 # Throws error, see you devtool console - require.min
 
 Copyright (c) 2025 Datalayer, Inc.
 
-Released under the terms of the MIT license (see [LICENSE](./LICENSE)).
+Released under the terms of the MIT license (see [LICENSE](https://github.com/datalayer/jupyter-ui/blob/main/LICENSE).

@@ -1,5 +1,5 @@
 {
-  "name": "@datalayer/jupyter-react-vite-example",
+  "name": "@datalayer/jupyter-vite-example",
   "private": true,
   "version": "0.1.0",
   "type": "module",
