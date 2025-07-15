@@ -4,4 +4,8 @@
 
 # Jupyter UI Lexical Example
 
-Integrate Jupyter cells in a [Lexical](https://lexical.dev) document.
+Integrate Jupyter in a [Lexical](https://lexical.dev) document.
+
+<div align="center" style="text-align: center">
+  <img alt="Jupyter UI Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-slate.gif" />
+</div>

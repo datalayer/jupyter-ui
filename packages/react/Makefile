@@ -58,7 +58,7 @@ publish-typedoc: typedoc ## deploy typedoc
 
 start-storybook: ## start-storybook
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-	  npm storybook )
+	  npm run storybook )
 
 build-storybook: ## build-storybook
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \

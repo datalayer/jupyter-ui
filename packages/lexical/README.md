@@ -5,3 +5,7 @@
 # 🪐 ✍️ Jupyter Lexical
 
 > A literate Jupyter for accessible and reproducible data analysis.
+
+<div align="center" style="text-align: center">
+  <img alt="Jupyter UI Slate" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-slate.gif" />
+</div>

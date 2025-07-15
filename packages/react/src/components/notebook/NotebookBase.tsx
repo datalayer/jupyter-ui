@@ -720,7 +720,7 @@ export function useNotebookModel(options: {
           };
 
           if (isMounted) {
-            // Create a new model using the one synchronized with the collaboration room
+            // Create a new model using the one synchronized with the collaboration room.
             const model = new NotebookModel({
               collaborationEnabled: true,
               disableDocumentWideUndoRedo: true,

@@ -6,11 +6,10 @@
 
 Integrate Jupyter cells in a [Slate](https://www.slatejs.org) document.
 
-
-```base
+```bash
 npm install &&
   echo open http://localhost:3266 && \
-  npm run start
+  npm start
 ```
 
 <div align="center" style="text-align: center">
