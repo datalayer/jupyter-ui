@@ -21,6 +21,35 @@ Ensure to add the following script in the head of your HTML.
     </script>
 ```
 
+To create a production build, you first need to patch `@jupyter-widgets/controls` to avoid issues with early loadings via `require.js`.
+
+```patch
+diff --git a/node_modules/@jupyter-widgets/controls/lib/index.js b/node_modules/@jupyter-widgets/controls/lib/index.js
+index 0063f69..ade0862 100644
+--- a/node_modules/@jupyter-widgets/controls/lib/index.js
++++ b/node_modules/@jupyter-widgets/controls/lib/index.js
+@@ -22,5 +22,5 @@ export * from './widget_tagsinput';
+ export * from './widget_string';
+ export * from './widget_description';
+ export * from './widget_upload';
+-export const version = require('../package.json').version;
++export const version = "0.1.0";
+ //# sourceMappingURL=index.js.map
+\ No newline at end of file
+diff --git a/node_modules/@jupyter-widgets/controls/src/index.ts b/node_modules/@jupyter-widgets/controls/src/index.ts
+index 912458d..5edaa11 100644
+--- a/node_modules/@jupyter-widgets/controls/src/index.ts
++++ b/node_modules/@jupyter-widgets/controls/src/index.ts
+@@ -24,4 +24,4 @@ export * from './widget_string';
+ export * from './widget_description';
+ export * from './widget_upload';
+ 
+-export const version = (require('../package.json') as any).version;
++export const version = "5.0.12";
+```
+
+Then run the following command to build and test the artifacts in the `dist` folder.
+
 ```bash
 # make run
 npm run build
