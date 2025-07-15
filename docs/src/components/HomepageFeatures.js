@@ -14,7 +14,7 @@ const FeatureList = [
     Svg: require('../../static/img/target.svg').default,
     description: (
       <>
-        Jupyter UI lets you focus on your work, and we&apos;ll do the chores. Check the <a href="https://datalayer.tech/docs/services/support" target="_blank" style={{ textDecoration: "underline" }}>support options</a>.
+        Jupyter UI lets you focus on your work, and we&apos;ll do the chores. Check the <a href="https://jupyter-ui.datalayer.tech/docs/support" target="_blank" style={{ textDecoration: "underline" }}>support options</a>.
       </>
     ),
   },
