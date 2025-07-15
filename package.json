@@ -45,11 +45,7 @@
   },
   "workspaces": [
     "docs",
-    "examples/cra",
-    "examples/docusaurus",
-    "examples/lexical",
-    "examples/next-js",
-    "examples/remix-run",
+    "examples/*",
     "packages/*",
     "storybook"
   ],

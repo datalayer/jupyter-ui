@@ -24,8 +24,8 @@ import Ajv from 'ajv';
 import { IManagerState } from '@jupyter-widgets/base-manager';
 import { HTMLManager } from './classic/htmlmanager';
 
-const widget_state_schema = require('@jupyter-widgets/schema').v2.state;
-const widget_view_schema = require('@jupyter-widgets/schema').v2.view;
+import * as widget_state_schema from '@jupyter-widgets/schema/v2/state.schema.json';
+import * as widget_view_schema from '@jupyter-widgets/schema/v2/view.schema.json';
 /*
 interface IViewState {
   version_major: number;
