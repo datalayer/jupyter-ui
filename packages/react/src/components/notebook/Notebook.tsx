@@ -64,7 +64,6 @@ const GlobalStyle = createGlobalStyle<any>`
   }
 `
 
-
 export type INotebookProps = {
   Toolbar?: (props: INotebookToolbarProps) => JSX.Element;
   cellMetadataPanel?: boolean;

@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "clean": "rimraf node_modules lib dist build tsconfig.tsbuildinfo",
-    "build:prod": "next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -13,22 +12,19 @@
     "@datalayer/icons-react": "^1.0.0",
     "@datalayer/jupyter-react": "^1.0.1",
     "@datalayer/primer-addons": "^1.0.0",
-    "autoprefixer": "^10.4.14",
-    "eslint": "^9.0.0",
-    "eslint-config-next": "^15.3.0",
-    "next": "^14.2.3",
-    "next-themes": "^0.2.1",
-    "postcss": "^8.4.23",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "svg-url-loader": "^7.1.1",
-    "tailwindcss": "^3.3.2"
+    "next": "^15.4.1",
+    "next-themes": "^0.4.6",
+    "react": "^18.2.0",
+    "react-dom": "^18",
+    "svg-url-loader": "^8.0.0"
   },
   "devDependencies": {
-    "@types/node": "^22.14.1",
-    "@types/react": "18.3.20",
-    "@types/react-dom": "18.3.6",
-    "raw-loader": "^4.0.2",
-    "typescript": "^5.8.3"
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "buffer": "^6.0.3",
+    "tailwindcss": "^4",
+    "typescript": "^5"
   }
 }

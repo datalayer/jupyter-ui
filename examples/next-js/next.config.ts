@@ -4,10 +4,44 @@
  * MIT License
  */
 
+const webpack = require('webpack');
+const path = require('path');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+
   reactStrictMode: false,
-  webpack: (config, options) => {
+
+  transpilePackages: ['@jupyterlab/settingregistry', '@jupyterlite/settings'],
+
+  webpack: (config: any, options: any) => {
+
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      buffer: require.resolve('buffer/'),
+    };
+    config.plugins.push(
+      new webpack.ProvidePlugin({
+        Buffer: ['buffer', 'Buffer'],
+      })
+    );
+
+    // Fix json5 import issue for JupyterLab packages
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      'json5': require.resolve('json5/lib/index.js'),
+      '~': path.resolve(__dirname, 'node_modules'),
+    };
+
+    // Add a plugin to strip `~` from import paths
+    config.plugins.push(
+      new webpack.NormalModuleReplacementPlugin(
+        /^~(.*)/,
+        (resource: any) => {
+          resource.request = resource.request.replace(/^~/, '');
+        },
+      ),
+    );    
     config.module.rules.push(
       { test: /\.js.map$/, type: 'asset/resource' },
       {
@@ -42,6 +76,14 @@ const nextConfig = {
           filename: 'pypi/[name][ext][query]',
         },
       },
+      // Rule for Python wheel files
+      {
+        test: /\.whl$/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'pypi/[name][ext][query]',
+        },
+      },
       {
         test: /pyodide-kernel-extension\/schema\/.*/,
         type: 'asset/resource',
@@ -54,4 +96,4 @@ const nextConfig = {
   },
 }
 
-module.exports = nextConfig
+module.exports = nextConfig;
