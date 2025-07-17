@@ -9,13 +9,9 @@ const path = require('path');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-
   reactStrictMode: false,
-
   transpilePackages: ['@jupyterlab/settingregistry', '@jupyterlite/settings'],
-
   webpack: (config: any, options: any) => {
-
     config.resolve.fallback = {
       ...config.resolve.fallback,
       buffer: require.resolve('buffer/'),
@@ -25,14 +21,12 @@ const nextConfig = {
         Buffer: ['buffer', 'Buffer'],
       })
     );
-
     // Fix json5 import issue for JupyterLab packages
     config.resolve.alias = {
       ...config.resolve.alias,
       'json5': require.resolve('json5/lib/index.js'),
       '~': path.resolve(__dirname, 'node_modules'),
     };
-
     // Add a plugin to strip `~` from import paths
     config.plugins.push(
       new webpack.NormalModuleReplacementPlugin(
