@@ -6,13 +6,13 @@
 
 'use client'
 
-import { Jupyter, Notebook, CellSidebar } from '@datalayer/jupyter-react';
+import { JupyterReactTheme, Notebook, CellSidebarExtension, CellSidebarButton } from '@datalayer/jupyter-react';
 import { NotebookToolbar } from '@datalayer/jupyter-react';
-import { Theme } from '@primer/react/lib/ThemeProvider';
+import { PrimerTheme } from './PrimerTheme';
 
 type NotebookComponentProps = {
-  colorMode: 'light' | 'dark';
-  theme: Theme;
+  colorMode?: 'light' | 'dark';
+  theme?: PrimerTheme;
 }
 
 export const NotebookComponent = (props: NotebookComponentProps) => {
@@ -20,24 +20,23 @@ export const NotebookComponent = (props: NotebookComponentProps) => {
   return (
     <>
       <div style={{fontSize: 20}}>Jupyter Notebook in Next.js</div>
-      <Jupyter
-        jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
-        jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
-        colormode={colorMode}
-        theme={theme}
-        startDefaultKernel
-      >
+      <JupyterReactTheme>
         <Notebook
           path="ipywidgets.ipynb"
           id="notebook-nextjs-1"
           cellSidebarMargin={120}
           height="500px"
-          CellSidebar={CellSidebar}
+          extensions={[new CellSidebarExtension({ factory: CellSidebarButton })]}
           Toolbar={NotebookToolbar}
         />
-    </Jupyter>
+    </JupyterReactTheme>
   </>
   )
 }
+
+NotebookComponent.defaultProps = {
+  colorMode: 'light' as 'light' | 'dark',
+  theme: undefined,
+};
 
 export default NotebookComponent;

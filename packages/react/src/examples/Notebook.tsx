@@ -20,7 +20,7 @@ root.render(
     <Notebook
       path="ipywidgets.ipynb"
       id="notebook-id"
-      startDefaultKernel={true}
+      startDefaultKernel
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       extensions={[new CellSidebarExtension({ factory: CellSidebarButton })]}
       Toolbar={NotebookToolbar}

@@ -4,6 +4,8 @@
 
 # 🪐 ⚛️ Jupyter React Vite Example
 
+> Live example on https://jupyter-react-vite-example.vercel.app
+
 Example to run [Jupyter React](https://github.com/datalayer/jupyter-ui/tree/main/packages/react) in a [Vite.js](https://vitejs.dev) Web application.
 
 ```bash
