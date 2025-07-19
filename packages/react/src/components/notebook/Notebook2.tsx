@@ -13,7 +13,7 @@ import type { CommandRegistry } from '@lumino/commands';
 import { Box } from '@primer/react';
 import type { OnSessionConnection } from '../../state';
 import { Loader } from '../utils';
-import { BaseNotebook, useKernelId, useNotebookModel, type CollaborationServer } from './NotebookBase';
+import { useKernelId, useNotebookModel, Notebook2Base, type CollaborationServer } from './Notebook2Base';
 import type { DatalayerNotebookExtension } from './Notebook';
 import type { INotebookToolbarProps } from './toolbar';
 
@@ -107,7 +107,7 @@ export interface INotebook2Props {
  *
  * Notes:
  * - You must provide the appropriate service manager
- * - You can specified the kernel id to use; if it is not defined or empty and startDefaultKernel is true, a new kernel will be started.
+ * - You can specify the kernel id to use; if it is not defined or empty and startDefaultKernel is true, a new kernel will be started.
  */
 export function Notebook2(props: React.PropsWithChildren<INotebook2Props>): JSX.Element {
   const {
@@ -164,10 +164,8 @@ export function Notebook2(props: React.PropsWithChildren<INotebook2Props>): JSX.
         );
       }
     };
-
     setUserIdentity();
     serviceManager.user.userChanged.connect(setUserIdentity);
-
     return () => {
       serviceManager.user.userChanged.disconnect(setUserIdentity);
     };
@@ -229,7 +227,7 @@ export function Notebook2(props: React.PropsWithChildren<INotebook2Props>): JSX.
       >
         {children}
         {model && serviceManager &&
-          <BaseNotebook
+          <Notebook2Base
             commands={commands}
             id={id}
             extensions={extensions}

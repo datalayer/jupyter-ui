@@ -6,8 +6,8 @@
 
 export * from './Notebook';
 export * from './Notebook2';
+export * from './Notebook2Base';
 export * from './NotebookAdapter';
-export * from './NotebookBase';
 export * from './NotebookCommands';
 export * from './NotebookState';
 export * from './cell';

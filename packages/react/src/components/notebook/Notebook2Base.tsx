@@ -49,7 +49,7 @@ const FALLBACK_NOTEBOOK_PATH = '.datalayer/ping.ipynb';
 /**
  * Base notebook component properties
  */
-export interface IBaseNotebookProps {
+export interface INotebook2BaseProps {
   /**
    * Custom command registry.
    *
@@ -103,7 +103,7 @@ export interface IBaseNotebookProps {
  * Important
  * This component is not connected to any React stores.
  */
-export function BaseNotebook(props: IBaseNotebookProps): JSX.Element {
+export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
   const {
     commands,
     extensions = DEFAULT_EXTENSIONS,
