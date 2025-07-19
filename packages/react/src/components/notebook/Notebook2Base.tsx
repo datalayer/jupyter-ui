@@ -439,7 +439,7 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
           key="notebook-error"
           variant="critical"
           description="Unable to create the notebook view."
-          hideTitle={true}
+          hideTitle
           title="Error"
         />
       )}

@@ -13,7 +13,7 @@ export const NotebookComponent = () => {
   return (
     <>
       <Notebook
-        startDefaultKernel={true}
+        startDefaultKernel
         nbformat={nbformat}
         id="notebook-id"
         cellSidebarMargin={60}

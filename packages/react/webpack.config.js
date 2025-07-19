@@ -51,7 +51,7 @@ const ENTRY =
   // './src/examples/NotebookColormode';
   // './src/examples/NotebookCollaborative';
   // './src/examples/NotebookExtension';
-  './src/examples/NotebookKernel';
+  // './src/examples/NotebookKernel';
   // './src/examples/NotebookKernelChange';
   // './src/examples/NotebookLess';
   // './src/examples/NotebookLite';
@@ -75,7 +75,7 @@ const ENTRY =
   // './src/examples/NotebookURL';
   // './src/examples/NotebookURL';
   // './src/examples/ObservableHQ';
-  // './src/examples/Output';
+  './src/examples/Output';
   // './src/examples/OutputWithMonitoring';
   // './src/examples/Outputs';
   // './src/examples/Plotly';

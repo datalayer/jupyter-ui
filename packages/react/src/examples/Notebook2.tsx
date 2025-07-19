@@ -21,7 +21,7 @@ const Notebook = () => {
         <Notebook2
           nbformat={nbformat as INotebookContent}
           id="notebook-nbformat-id"
-          startDefaultKernel={true}
+          startDefaultKernel
           height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
           cellSidebarMargin={120}
           Toolbar={NotebookToolbar}

@@ -17,6 +17,15 @@ import { useKernelsStore } from '../jupyter/kernel/KernelState';
 import { newUuid } from '../utils/Utils';
 import { useOutputsStore } from './../components/output/OutputState';
 
+const SOURCE_ID_0 = 'output-id-0';
+const CODE_O = `import ipywidgets as widgets
+widgets.IntSlider(
+value=7,
+min=0,
+max=10,
+step=1,
+)`;
+
 const SOURCE_ID_1 = 'output-id-1';
 const OUTPUTS_1: IOutput[] = [
   {
@@ -54,6 +63,26 @@ const OUTPUTS_3: IOutput[] = [
     output_type: 'execute_result',
   },
 ];
+
+const OutputFromCode = () => {
+  const outputStore = useOutputsStore();
+  console.log(
+    'Outputs from Code',
+    outputStore.getModel(SOURCE_ID_0)?.toJSON(),
+    outputStore.getInput(SOURCE_ID_0),
+  );
+  return (
+    <>
+      <Text as="h1">Output without Code Editor</Text>
+      <Output
+        autoRun
+        id={SOURCE_ID_0}
+        code={CODE_O}
+        showEditor={false}
+      />
+    </>
+  );
+};
 
 const OutputWithoutEditor = () => {
   const outputStore = useOutputsStore();
@@ -157,6 +186,7 @@ const root = createRoot(div);
 
 root.render(
   <Jupyter startDefaultKernel>
+    <OutputFromCode/>
     <OutputWithoutEditor />
     <OutputWithEditor />
     <OutputWithEmptyOutput />

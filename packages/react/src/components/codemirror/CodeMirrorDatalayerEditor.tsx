@@ -80,7 +80,7 @@ export const CodeMirrorDatalayerEditor = (props: {
   };
   useEffect(() => {
     outputStore.setInput(sourceId, code);
-   const language = new Compartment();
+    const language = new Compartment();
     const keyBinding = [
       {
         key: 'Shift-Enter',
@@ -92,10 +92,10 @@ export const CodeMirrorDatalayerEditor = (props: {
       doc: code,
       extensions: [
         basicSetup,
-       language.of(python()),
+        language.of(python()),
         EditorView.lineWrapping,
         keymap.of([...keyBinding]),
-       codeMirrorTheme,
+        codeMirrorTheme,
         EditorView.updateListener.of((viewUpdate: ViewUpdate) => {
           if (viewUpdate.docChanged) {
             const source = viewUpdate.state.doc.toString();
