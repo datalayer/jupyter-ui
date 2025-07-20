@@ -29,7 +29,7 @@ export const NotebookExample = (props: INotebookExampleProps) => {
         id={NOTEBOOK_ID}
         serviceManager={serviceManager}
         kernelId={kernel.id}
-//        extensions={extensions}
+        extensions={extensions}
         Toolbar={NotebookToolbar}
       />
     </>

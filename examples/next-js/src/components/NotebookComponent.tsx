@@ -55,7 +55,7 @@ export const NotebookComponent = (props: INotebookComponentProps) => {
               height="500px"
               kernelId={defaultKernel.id}
               serviceManager={serviceManager}
-//              extensions={extensions}
+              extensions={extensions}
               Toolbar={NotebookToolbar}
             />
           </Box>
