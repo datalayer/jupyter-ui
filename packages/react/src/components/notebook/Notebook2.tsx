@@ -5,6 +5,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
+import { createGlobalStyle } from 'styled-components';
 import type { INotebookContent } from '@jupyterlab/nbformat';
 import type { NotebookModel } from '@jupyterlab/notebook';
 import type { IRenderMime } from '@jupyterlab/rendermime-interfaces';
@@ -18,6 +19,15 @@ import type { DatalayerNotebookExtension } from './Notebook';
 import type { INotebookToolbarProps } from './toolbar';
 
 import './Notebook.css';
+
+const GlobalStyle = createGlobalStyle<any>`
+  .dla-Box-Notebook .jp-Cell .dla-CellSidebar-Container {
+    display: none;
+  }
+  .dla-Box-Notebook .jp-Cell.jp-mod-active .dla-CellSidebar-Container {
+    display: block;
+  }
+`
 
 /**
  * Simple notebook component properties
@@ -226,6 +236,7 @@ export function Notebook2(props: React.PropsWithChildren<INotebook2Props>): JSX.
         }}
       >
         {children}
+        <GlobalStyle/>
         {model && serviceManager &&
           <Notebook2Base
             commands={commands}

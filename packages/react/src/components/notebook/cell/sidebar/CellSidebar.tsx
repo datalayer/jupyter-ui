@@ -66,7 +66,7 @@ export function CellSidebar(props: ICellSidebarProps): JSX.Element {
           <CellMetadataEditor cellModel={model} />
           {/*
             </ActionMenu.Overlay>
-            */}
+          */}
         </ActionMenu>
       )}
       <Button

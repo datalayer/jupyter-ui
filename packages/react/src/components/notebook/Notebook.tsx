@@ -47,10 +47,7 @@ export type IDatalayerNotebookExtensionProps = {
   adapter?: NotebookAdapter;
 };
 
-export type DatalayerNotebookExtension = DocumentRegistry.IWidgetExtension<
-  NotebookPanel,
-  INotebookModel
-> & {
+export type DatalayerNotebookExtension = DocumentRegistry.IWidgetExtension<NotebookPanel,INotebookModel> & {
   init(props: IDatalayerNotebookExtensionProps): void;
   get component(): JSX.Element | null;
 };

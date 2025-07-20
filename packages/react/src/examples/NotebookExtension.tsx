@@ -4,16 +4,13 @@
  * MIT License
  */
 
-import { INotebookContent } from '@jupyterlab/nbformat';
 import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
-import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
-import { Notebook } from '../components/notebook/Notebook';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
-import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
+import { INotebookContent } from '@jupyterlab/nbformat';
+import { Notebook, CellSidebarExtension, CellSidebarButton, NotebookToolbar } from '../components';
+import { JupyterReactTheme } from '../theme';
 import { ExecTimeExtension } from './extensions';
 
-import { CellSidebarExtension } from '../components';
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookExtension = () => {
