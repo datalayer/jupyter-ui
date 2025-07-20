@@ -195,8 +195,8 @@ export function Notebook2(props: React.PropsWithChildren<INotebook2Props>): JSX.
             overflowY: 'scroll',
           },
           '& .jp-NotebookPanel': {
-            height: '100% !important',
-            width: '100% !important',
+//            height: '100% !important',
+//            width: '100% !important',
           },
           '& .jp-Toolbar': {
             display: 'none',
