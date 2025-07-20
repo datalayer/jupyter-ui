@@ -9,6 +9,7 @@
 import { useJupyter, JupyterReactTheme, Notebook2, NotebookToolbar, CellSidebarExtension, CellSidebarButton } from '@datalayer/jupyter-react';
 import { Box } from '@primer/react';
 import { PrimerTheme } from './PrimerTheme';
+import { useMemo } from 'react';
 
 type INotebookComponentProps = {
   colorMode?: 'light' | 'dark';
@@ -22,6 +23,9 @@ export const NotebookComponent = (props: INotebookComponentProps) => {
     jupyterServerToken: "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6",
     startDefaultKernel: true,
   });
+  const extensions = useMemo(() => [
+    new CellSidebarExtension({ factory: CellSidebarButton })
+  ], []);
   return (
     <>
      { defaultKernel && serviceManager ?
@@ -51,7 +55,7 @@ export const NotebookComponent = (props: INotebookComponentProps) => {
               height="500px"
               kernelId={defaultKernel.id}
               serviceManager={serviceManager}
-              extensions={[new CellSidebarExtension({ factory: CellSidebarButton })]}
+//              extensions={extensions}
               Toolbar={NotebookToolbar}
             />
           </Box>

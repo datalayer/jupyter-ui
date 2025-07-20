@@ -125,6 +125,7 @@ export class CellSidebarExtension implements DatalayerNotebookExtension {
   protected commands?: CommandRegistry;
   protected nbgrader?: boolean;
   protected sidebarWidth?: number;
+  readonly component: null;
 
   /**
    * Constructor
@@ -146,8 +147,6 @@ export class CellSidebarExtension implements DatalayerNotebookExtension {
     this.nbgrader = options.nbgrader;
     this.sidebarWidth = options.sidebarWidth;
   }
-
-  readonly component: null;
 
   createNew(panel: NotebookPanel): IDisposable {
     // We assume the extension was either created within JupyterLab passing
