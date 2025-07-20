@@ -27,7 +27,7 @@ const ENTRY =
   // './src/examples/Console';
   // './src/examples/ConsoleLite';
   // './src/examples/Deno';
-  // './src/examples/FileBrowser';
+  './src/examples/FileBrowser';
   // './src/examples/IPyLeaflet';
   // './src/examples/IPyReact';
   // './src/examples/IPyWidgets';
@@ -75,7 +75,7 @@ const ENTRY =
   // './src/examples/NotebookURL';
   // './src/examples/NotebookURL';
   // './src/examples/ObservableHQ';
-  './src/examples/Output';
+  // './src/examples/Output';
   // './src/examples/OutputWithMonitoring';
   // './src/examples/Outputs';
   // './src/examples/Plotly';
