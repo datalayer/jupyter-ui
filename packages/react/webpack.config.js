@@ -20,14 +20,14 @@ const ENTRY =
   // './src/app/App';
   // './src/examples/Bokeh';
   // './src/examples/Bqplot';
-  // './src/examples/Cell';
+  './src/examples/Cell';
   // './src/examples/CellLite';
   // './src/examples/Cells';
   // './src/examples/CellsExecute';
   // './src/examples/Console';
   // './src/examples/ConsoleLite';
   // './src/examples/Deno';
-  './src/examples/FileBrowser';
+  // './src/examples/FileBrowser';
   // './src/examples/IPyLeaflet';
   // './src/examples/IPyReact';
   // './src/examples/IPyWidgets';
