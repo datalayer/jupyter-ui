@@ -23,11 +23,11 @@ const NotebookLess = () => {
     <JupyterReactTheme>
       <Box as="h1">A Jupyter Notebook with a Less Service Manager</Box>
       <Notebook
-        serverless={true}
+        serverless
         nbformat={nbformat as INotebookContent}
         id="notebook-less-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        readonly={true}
+        readonly
         serviceManager={serviceManager}
         extensions={extensions}
         Toolbar={NotebookToolbar}

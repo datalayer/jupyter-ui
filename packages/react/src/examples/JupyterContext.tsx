@@ -198,6 +198,7 @@ const JupyterContextExample = () => {
         jupyterServerToken={DEFAULT_JUPYTER_SERVER_TOKEN}
         serverless={index === 0}
         terminals
+        startDefaultKernel
       >
         <SegmentedControl
           onChange={index => setIndex(index)}

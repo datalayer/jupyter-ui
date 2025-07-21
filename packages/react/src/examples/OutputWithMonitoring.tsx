@@ -131,7 +131,7 @@ const OutputWithMonitoring = ({
         executeTrigger={execTrigger}
         outputs={output ? output : []}
         onExecutionPhaseChanged={handleExecutionPhaseChanged}
-        suppressCodeExecutionErrors={true}
+        suppressCodeExecutionErrors
         showEditor
       />
     </>

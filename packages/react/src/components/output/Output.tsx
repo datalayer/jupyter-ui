@@ -21,6 +21,7 @@ import { OutputRenderer } from './OutputRenderer';
 import { useOutputsStore } from './OutputState';
 
 import './Output.css';
+import { CodeMirrorDatalayerEditor } from '../codemirror';
 
 export type IOutputProps = {
   adapter?: OutputAdapter;
@@ -53,10 +54,10 @@ export const Output = (props: IOutputProps) => {
     autoRun,
     clearTrigger,
     code,
-//    codePre,
-//    disableRun,
+    codePre,
+    disableRun,
     executeTrigger,
-//    insertText,
+    insertText,
     kernel: propsKernel,
     lumino,
     model,
@@ -68,7 +69,7 @@ export const Output = (props: IOutputProps) => {
     suppressCodeExecutionErrors = false,
     onExecutionPhaseChanged,
     id: sourceId,
-//    toolbarPosition,
+    toolbarPosition,
   } = props;
   const kernel = propsKernel ?? defaultKernel;
   const [id, setId] = useState<string | undefined>(sourceId);
@@ -169,7 +170,6 @@ export const Output = (props: IOutputProps) => {
             },
           }}
         >
-          {/*
             <CodeMirrorDatalayerEditor
               autoRun={autoRun}
               code={code}
@@ -181,7 +181,6 @@ export const Output = (props: IOutputProps) => {
               sourceId={id}
               toolbarPosition={toolbarPosition}
             />
-          */}
         </Box>
       )}
       {adapter && (

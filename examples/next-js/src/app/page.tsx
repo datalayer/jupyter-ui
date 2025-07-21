@@ -4,7 +4,7 @@ import Image from "next/image";
 import dynamic from 'next/dynamic';
 
 const JupyterComponentNoSSR = dynamic(
-  () => import('../components/CellComponent'),
+  () => import('../components/NotebookComponent'),
   { 
     ssr: false,
     loading: () => <p>Loading Jupyter Component...</p>

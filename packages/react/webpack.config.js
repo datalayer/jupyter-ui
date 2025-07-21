@@ -44,13 +44,14 @@ const ENTRY =
   // './src/examples/Kernels';
   // './src/examples/Lumino';
   // './src/examples/Matplotlib';
-  './src/examples/Notebook';
-  // './src/examples/Notebook2';
+  // './src/examples/Notebook';
+  './src/examples/Notebook2';
   // './src/examples/NotebookCellSidebar';
   // './src/examples/NotebookCellToolbar';
   // './src/examples/NotebookColormode';
   // './src/examples/NotebookCollaborative';
   // './src/examples/NotebookExtension';
+  // './src/examples/NotebookKernel';
   // './src/examples/NotebookKernelChange';
   // './src/examples/NotebookLess';
   // './src/examples/NotebookLite';

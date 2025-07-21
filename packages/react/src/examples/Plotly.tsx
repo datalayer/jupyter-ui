@@ -20,6 +20,7 @@ const Plotly = () => {
         id="notebook-plotly-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         extensions={extensions}
+        startDefaultKernel
         Toolbar={NotebookToolbar}
       />
     </JupyterReactTheme>

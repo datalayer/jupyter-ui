@@ -52,7 +52,11 @@ const CellExample = () => {
       <Box>
         <Button onClick={() => cellsStore.execute(CELL_ID)}>Run cell</Button>
       </Box>
-      <Cell source={DEFAULT_SOURCE} id={CELL_ID}/>
+      <Cell
+        source={DEFAULT_SOURCE}
+        id={CELL_ID}
+        kernel={defaultKernel}
+      />
     </JupyterReactTheme>
   )
 }

@@ -12,9 +12,13 @@ import FileBrowser from '../components/filebrowser/FileBrowser';
 const FileBrowserExample = () => {
   const { serviceManager } = useJupyter();
   return (
-    serviceManager
-      ? <FileBrowser serviceManager={serviceManager}/>
-      : <></>
+    serviceManager ?
+      <>
+        <h1>Jupyter React - File Browser Example</h1>
+        <FileBrowser serviceManager={serviceManager}/>
+      </>
+    :
+      <></>
   )
 }
 

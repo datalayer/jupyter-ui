@@ -23,7 +23,7 @@ const NotebookCollaborative = () => {
         collaborative="jupyter"
         path="collaboration.ipynb"
         id="notebook-collaboration-id"
-        startDefaultKernel={true}
+        startDefaultKernel
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         extensions={extensions}
         Toolbar={NotebookToolbar}

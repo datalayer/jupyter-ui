@@ -65,7 +65,7 @@ const NotebookOnSessionConnection = () => {
         id="notebook-on-kernel-connection-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         onSessionConnection={onSessionConnection}
-        startDefaultKernel={true}
+        startDefaultKernel
         extensions={extensions}
         Toolbar={NotebookToolbar}
       />
