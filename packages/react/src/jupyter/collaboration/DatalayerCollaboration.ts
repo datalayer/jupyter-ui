@@ -4,7 +4,7 @@
  * MIT License
  */
 
-type IfetchSessionId = {
+type IFetchSessionId = {
   url: string;
   token?: string;
 }
@@ -12,7 +12,7 @@ type IfetchSessionId = {
 /**
  * Fetch the session ID of a collaborative rooms from Datalayer.
  */
-export async function fetchSessionId({ url, token }: IfetchSessionId): Promise<string> {
+export async function fetchDatalayerRoomSessionId({ url, token }: IFetchSessionId): Promise<string> {
   const headers: HeadersInit = {
     Accept: 'application/json',
   };

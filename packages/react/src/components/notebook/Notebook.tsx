@@ -22,7 +22,7 @@ import { WebsocketProvider as YWebsocketProvider } from 'y-websocket';
 import { jupyterReactStore, KernelTransfer, OnSessionConnection, } from '../../state';
 import { newUuid, sleep } from '../../utils';
 import { asObservable, Lumino } from '../lumino';
-import { COLLABORATION_ROOM_URL_PATH, fetchSessionId, ICollaborative, Kernel, Lite, requestDocSession, useJupyter } from './../../jupyter';
+import { COLLABORATION_ROOM_URL_PATH, fetchDatalayerRoomSessionId, ICollaborative, Kernel, Lite, requestJupyterDocSession, useJupyter } from './../../jupyter';
 import { CellMetadataEditor } from './cell/metadata';
 import { NotebookAdapter } from './NotebookAdapter';
 import { useNotebookStore } from './NotebookState';
@@ -302,7 +302,7 @@ export const Notebook = (props: INotebookProps) => {
         if (collaborative == 'jupyter') {
           const token =
             jupyterReactStore.getState().jupyterConfig?.jupyterServerToken;
-          const session = await requestDocSession('json', 'notebook', path!);
+          const session = await requestJupyterDocSession('json', 'notebook', path!);
           const roomURL = URLExt.join(
             serviceManager?.serverSettings.wsUrl!,
             COLLABORATION_ROOM_URL_PATH
@@ -320,7 +320,7 @@ export const Notebook = (props: INotebookProps) => {
           const { runUrl, token } = jupyterReactStore.getState().datalayerConfig ?? {};
           const roomName = id;
           const roomURL = URLExt.join(runUrl!, `/api/spacer/v1/rooms`);
-          const sessionId = await fetchSessionId({
+          const sessionId = await fetchDatalayerRoomSessionId({
             url: URLExt.join(roomURL, roomName),
             token,
           });

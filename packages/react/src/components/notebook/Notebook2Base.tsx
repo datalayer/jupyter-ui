@@ -32,7 +32,7 @@ import { Box } from '@primer/react';
 import { Banner } from '@primer/react/experimental';
 import { EditorView } from 'codemirror';
 import { WebsocketProvider } from 'y-websocket';
-import { COLLABORATION_ROOM_URL_PATH, fetchSessionId, requestDocSession, WIDGET_MIMETYPE, WidgetLabRenderer, WidgetManager } from '../../jupyter';
+import { COLLABORATION_ROOM_URL_PATH, fetchDatalayerRoomSessionId, requestJupyterDocSession, WIDGET_MIMETYPE, WidgetLabRenderer, WidgetManager } from '../../jupyter';
 import type { OnSessionConnection } from '../../state';
 import { newUuid, remoteUserCursors } from '../../utils';
 import { Lumino } from '../lumino';
@@ -670,19 +670,16 @@ export function useNotebookModel(options: {
         let roomName = '';
         const params: Record<string, string> = {};
 
-        // Setup Collaboration
+        // Setup Collaboration.
         if (collaborationServer.type === 'jupyter') {
           const { path, serverSettings } = collaborationServer;
-          const session = await requestDocSession(
+          const session = await requestJupyterDocSession(
             'json',
             'notebook',
             path,
             serverSettings
           );
-          roomURL = URLExt.join(
-            serverSettings.wsUrl,
-            COLLABORATION_ROOM_URL_PATH
-          );
+          roomURL = URLExt.join(serverSettings.wsUrl, COLLABORATION_ROOM_URL_PATH);
           roomName = `${session.format}:${session.type}:${session.fileId}`;
           params.sessionId = session.sessionId;
           if (serverSettings.token) {
@@ -690,11 +687,10 @@ export function useNotebookModel(options: {
           }
         } else if (collaborationServer.type === 'datalayer') {
           const { baseURL, roomName: roomName_, token } = collaborationServer;
-          roomName = roomName_; // Set non local variable
+          roomName = roomName_; // Set non local variable.
           const serverURL = URLExt.join(baseURL, '/api/spacer/v1/rooms');
           roomURL = serverURL.replace(/^http/, 'ws');
-
-          params.sessionId = await fetchSessionId({
+          params.sessionId = await fetchDatalayerRoomSessionId({
             url: URLExt.join(serverURL, roomName),
             token,
           });
