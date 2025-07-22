@@ -33,7 +33,7 @@ export interface ISessionModel {
   sessionId: string;
 }
 
-export async function requestDocSession(
+export async function requestJupyterDocSession(
   format: string,
   type: string,
   path: string,

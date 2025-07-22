@@ -8,6 +8,8 @@ import { createRoot } from "react-dom/client";
 // import App from "./AppSimple";
 import App from "./AppNbformat";
 
-const rootElement = document.getElementById("root");
+const div = document.createElement('div');
+document.body.appendChild(div);
+const root = createRoot(div)
 
-createRoot(rootElement!).render(<App />);
+root.render(<App />);
