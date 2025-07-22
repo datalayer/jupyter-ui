@@ -9,7 +9,7 @@ import { $getRoot } from "lexical";
 import styled from "styled-components";
 import { lexicalToNbformat,useLexical, LexicalProvider, Editor } from "@datalayer/jupyter-lexical";
 import { useNotebookStore, Jupyter, Notebook, CellSidebar, CellSidebarExtension } from "@datalayer/jupyter-react";
-import { Box, TabNav, Button } from "@primer/react";
+import { Box, Button, UnderlineNav } from "@primer/react";
 import { ThreeBarsIcon } from "@primer/octicons-react"
 import { JSONTree } from "react-json-tree";
 import { INotebookContent } from "@jupyterlab/nbformat";
@@ -65,17 +65,17 @@ const Tabs = () => {
   }
   return (
     <Box className="center">
-      <TabNav>
-        <TabNav.Link href="" selected={tab === 'editor'} onClick={e => goToTab(e, 'editor', notebook?.model)}>
+      <UnderlineNav aria-label="Underline navigation">
+        <UnderlineNav.Item href="" aria-current={tab === 'editor' ? 'page' : undefined} onClick={(e: any) => goToTab(e, 'editor', notebook?.model)}>
           Editor
-        </TabNav.Link>
-        <TabNav.Link href="" selected={tab === 'notebook'} onClick={e => goToTab(e, 'notebook', notebook?.model)}>
+        </UnderlineNav.Item>
+        <UnderlineNav.Item href="" aria-current={tab === 'notebook' ? 'page' : undefined} onClick={(e: any) => goToTab(e, 'notebook', notebook?.model)}>
           Notebook
-        </TabNav.Link>
-        <TabNav.Link href="" selected={tab === 'nbformat'} onClick={e => goToTab(e, 'nbformat', notebook?.model)}>
+        </UnderlineNav.Item>
+        <UnderlineNav.Item href="" aria-current={tab === 'nbformat' ? 'page' : undefined} onClick={(e: any) => goToTab(e, 'nbformat', notebook?.model)}>
           NbFormat
-        </TabNav.Link>
-      </TabNav>
+        </UnderlineNav.Item>
+      </UnderlineNav>
       { tab === 'editor' &&
         <Box>
           <Editor notebook={notebookContent} />
@@ -131,11 +131,11 @@ export function AppNbformat() {
       </Jupyter>
       <div className="other App">
         <br/>
-        <a href="https://datalayer.io" target="_blank">
+        <a href="https://datalayer.ai" target="_blank">
           <ThreeBarsIcon/>
         </a>
         <h2>
-          copyright © <a href="https://datalayer.io" target="_blank">2022-2024 Datalayer, Inc.</a>
+          Copyright © <a href="https://datalayer.ai" target="_blank">2022 Datalayer, Inc.</a>
         </h2>
         <ul>
           <li>

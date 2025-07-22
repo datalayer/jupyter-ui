@@ -6,9 +6,11 @@
 
 import { useEffect } from "react";
 import { $insertNodes, COMMAND_PRIORITY_EDITOR, createCommand } from "lexical";
-import { IOutput } from '@jupyterlab/nbformat';
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { IOutput } from '@jupyterlab/nbformat';
 import { JupyterCellNode, $createJupyterCellNode } from "../nodes/JupyterCellNode";
+
+import '@jupyterlab/theme-light-extension/style/variables.css';
 
 export type JupyterCellProps = {
   code: string;
