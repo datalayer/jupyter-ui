@@ -12,9 +12,9 @@ export type IJupyterCollaborationServer = {
    */
   baseURL: string;
   /**
-   * Notebook room name to connect to.
+   * Notebook document name to connect to.
    */
-  roomName: string;
+  documentName: string;
   /**
    * JWT token
    */

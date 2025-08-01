@@ -35,7 +35,7 @@ const GlobalStyle = createGlobalStyle<any>`
  */
 export interface INotebook2Props {
   /**
-   * Collaboration server providing the document rooms.
+   * Collaboration server providing the document documents.
    */
   collaborationServer?: ICollaborationServer;
   /**

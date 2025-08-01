@@ -233,7 +233,7 @@ export const Notebook = (props: INotebookProps) => {
     // As the server has the content source of truth, we
     // must ensure that the shared model is pristine before
     // to connect to the server. More over we should ensure,
-    // the connection is disposed in case the server room is
+    // the connection is disposed in case the server document is
     // reset for any reason while the client is still alive.
     let provider: YWebsocketProvider | null = null;
     let ready = new PromiseDelegate();
@@ -243,7 +243,7 @@ export const Notebook = (props: INotebookProps) => {
     const onConnectionClose = (event: any) => {
       if (event.code > 1000) {
         console.error(
-          'Connection with the room has been closed unexpectedly.',
+          'Connection with the document has been closed unexpectedly.',
           event
         );
 
@@ -290,12 +290,12 @@ export const Notebook = (props: INotebookProps) => {
           const token =
             jupyterReactStore.getState().jupyterConfig?.jupyterServerToken;
           const session = await requestJupyterCollaborationSession('json', 'notebook', path!);
-          const roomURL = URLExt.join(
+          const documentURL = URLExt.join(
             serviceManager?.serverSettings.wsUrl!,
             COLLABORATION_ROOM_URL_PATH
           );
-          const roomName = `${session.format}:${session.type}:${session.fileId}`;
-          provider = new YWebsocketProvider(roomURL, roomName, ydoc, {
+          const documentName = `${session.format}:${session.type}:${session.fileId}`;
+          provider = new YWebsocketProvider(documentURL, documentName, ydoc, {
             disableBc: true,
             params: {
               sessionId: session.sessionId,
@@ -305,15 +305,15 @@ export const Notebook = (props: INotebookProps) => {
           });
         } else if (collaborative == 'datalayer') {
           const { runUrl, token } = jupyterReactStore.getState().datalayerConfig ?? {};
-          const roomName = id;
-          const roomURL = URLExt.join(runUrl!, `/api/spacer/v1/documents`);
+          const documentName = id;
+          const documentURL = URLExt.join(runUrl!, `/api/spacer/v1/documents`);
           const sessionId = await requestDatalayerollaborationSessionId({
-            url: URLExt.join(roomURL, roomName),
+            url: URLExt.join(documentURL, documentName),
             token,
           });
           provider = new YWebsocketProvider(
-            roomURL.replace(/^http/, 'ws'),
-            roomName,
+            documentURL.replace(/^http/, 'ws'),
+            documentName,
             ydoc,
             {
               disableBc: true,
@@ -329,7 +329,7 @@ export const Notebook = (props: INotebookProps) => {
           provider.on('sync', onSync);
           provider.on('connection-close', onConnectionClose);
           console.log('Collaboration is setup with websocket provider.');
-          // Create a new model using the one synchronize with the collaboration room
+          // Create a new model using the one synchronize with the collaboration document
           const model = new NotebookModel({
             collaborationEnabled: true,
             disableDocumentWideUndoRedo: true,

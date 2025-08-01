@@ -10,7 +10,7 @@ type IFetchSessionId = {
 }
 
 /**
- * Fetch the session ID of a collaborative rooms from Datalayer.
+ * Fetch the session ID of a collaborative documents from Datalayer.
  */
 export async function requestDatalayerollaborationSessionId({ url, token }: IFetchSessionId): Promise<string> {
   const headers: HeadersInit = {

@@ -543,7 +543,7 @@ export function useKernelId(
 
 type IOptions = {
   /**
-   * Collaboration server providing the document rooms
+   * Collaboration server providing the document documents
    */
   collaborationServer?: ICollaborationServer;
   /**
@@ -576,7 +576,7 @@ export function useNotebookModel(options: IOptions): NotebookModel | null {
 
   // Generate the notebook model
   // There are three posibilities (by priority order):
-  // - Connection to a collaborative room
+  // - Connection to a collaborative document
   // - Provided notebook content
   // - Provided URL to fetch notebook content from
   const [model, setModel] = useState<NotebookModel | null>(null);
@@ -589,7 +589,7 @@ export function useNotebookModel(options: IOptions): NotebookModel | null {
       // As the server has the content source of thruth, we
       // must ensure that the shared model is pristine before
       // to connect to the server. More over we should ensure,
-      // the connection is disposed in case the server room is
+      // the connection is disposed in case the server document is
       // reset for any reason while the client is still alive.
       let provider: WebsocketProvider | null = null;
       let ready = new PromiseDelegate();
@@ -599,7 +599,7 @@ export function useNotebookModel(options: IOptions): NotebookModel | null {
       const onConnectionClose = (event: any) => {
         if (event.code > 1000) {
           console.error(
-            'Connection with the room has been closed unexpectedly.',
+            'Connection with the document has been closed unexpectedly.',
             event
           );
 
@@ -635,8 +635,8 @@ export function useNotebookModel(options: IOptions): NotebookModel | null {
 
         sharedModel = new YNotebook();
         const { ydoc, awareness } = sharedModel;
-        let roomURL = '';
-        let roomName = '';
+        let documentURL = '';
+        let documentName = '';
         const params: Record<string, string> = {};
 
         // Setup Collaboration.
@@ -648,26 +648,26 @@ export function useNotebookModel(options: IOptions): NotebookModel | null {
             path,
             serverSettings
           );
-          roomURL = URLExt.join(serverSettings.wsUrl, COLLABORATION_ROOM_URL_PATH);
-          roomName = `${session.format}:${session.type}:${session.fileId}`;
+          documentURL = URLExt.join(serverSettings.wsUrl, COLLABORATION_ROOM_URL_PATH);
+          documentName = `${session.format}:${session.type}:${session.fileId}`;
           params.sessionId = session.sessionId;
           if (serverSettings.token) {
             params.token = serverSettings.token;
           }
         } else if (collaborationServer.type === 'datalayer') {
-          const { baseURL, roomName: roomName_, token } = collaborationServer;
-          roomName = roomName_; // Set non local variable.
+          const { baseURL, documentName: documentName_, token } = collaborationServer;
+          documentName = documentName_; // Set non local variable.
           const serverURL = URLExt.join(baseURL, '/api/spacer/v1/documents');
-          roomURL = serverURL.replace(/^http/, 'ws');
+          documentURL = serverURL.replace(/^http/, 'ws');
           params.sessionId = await requestDatalayerollaborationSessionId({
-            url: URLExt.join(serverURL, roomName),
+            url: URLExt.join(serverURL, documentName),
             token,
           });
           params.token = token;
         }
 
         if (params.sessionId) {
-          provider = new WebsocketProvider(roomURL, roomName, ydoc, {
+          provider = new WebsocketProvider(documentURL, documentName, ydoc, {
             disableBc: true,
             params,
             awareness,
@@ -685,7 +685,7 @@ export function useNotebookModel(options: IOptions): NotebookModel | null {
           };
 
           if (isMounted) {
-            // Create a new model using the one synchronized with the collaboration room.
+            // Create a new model using the one synchronized with the collaboration document.
             const model = new NotebookModel({
               collaborationEnabled: true,
               disableDocumentWideUndoRedo: true,

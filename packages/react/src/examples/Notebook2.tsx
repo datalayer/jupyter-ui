@@ -34,7 +34,7 @@ const Notebook2Example = () => {
           collaborationServer={{
             baseURL: 'https://prod1.datalayer.run',
             token: '',
-            roomName: '',
+            documentName: '',
             type: 'datalayer'
           }}
           */
