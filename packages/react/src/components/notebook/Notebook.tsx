@@ -8,12 +8,10 @@ import { YNotebook } from '@jupyter/ydoc';
 import { Cell, ICellModel } from '@jupyterlab/cells';
 import { URLExt } from '@jupyterlab/coreutils';
 import { createGlobalStyle } from 'styled-components';
-import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { INotebookModel, NotebookModel, NotebookPanel } from '@jupyterlab/notebook';
+import { NotebookModel } from '@jupyterlab/notebook';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { Kernel as JupyterKernel, ServiceManager } from '@jupyterlab/services';
-import { CommandRegistry } from '@lumino/commands';
 import { PromiseDelegate } from '@lumino/coreutils';
 import { Box } from '@primer/react';
 import { useEffect, useState } from 'react';
@@ -22,7 +20,7 @@ import { WebsocketProvider as YWebsocketProvider } from 'y-websocket';
 import { jupyterReactStore, KernelTransfer, OnSessionConnection, } from '../../state';
 import { newUuid, sleep } from '../../utils';
 import { asObservable, Lumino } from '../lumino';
-import { COLLABORATION_ROOM_URL_PATH, fetchDatalayerRoomSessionId, ICollaborative, Kernel, Lite, requestJupyterDocSession, useJupyter } from './../../jupyter';
+import { COLLABORATION_ROOM_URL_PATH, requestDatalayerollaborationSessionId, ICollaborationProvider, Kernel, Lite, requestJupyterCollaborationSession, useJupyter } from './../../jupyter';
 import { CellMetadataEditor } from './cell/metadata';
 import { NotebookAdapter } from './NotebookAdapter';
 import { useNotebookStore } from './NotebookState';
@@ -30,6 +28,7 @@ import { INotebookToolbarProps } from './toolbar';
 import { Loader } from '../utils';
 
 import './Notebook.css';
+import { DatalayerNotebookExtension } from './NotebookExtensions';
 
 export type ExternalIPyWidgets = {
   name: string;
@@ -38,18 +37,6 @@ export type ExternalIPyWidgets = {
 
 export type BundledIPyWidgets = ExternalIPyWidgets & {
   module: any;
-};
-
-export type IDatalayerNotebookExtensionProps = {
-  notebookId: string;
-  commands: CommandRegistry;
-  panel: NotebookPanel;
-  adapter?: NotebookAdapter;
-};
-
-export type DatalayerNotebookExtension = DocumentRegistry.IWidgetExtension<NotebookPanel,INotebookModel> & {
-  init(props: IDatalayerNotebookExtensionProps): void;
-  get component(): JSX.Element | null;
 };
 
 const GlobalStyle = createGlobalStyle<any>`
@@ -65,7 +52,7 @@ export type INotebookProps = {
   Toolbar?: (props: INotebookToolbarProps) => JSX.Element;
   cellMetadataPanel?: boolean;
   cellSidebarMargin?: number;
-  collaborative?: ICollaborative;
+  collaborative?: ICollaborationProvider;
   extensions?: DatalayerNotebookExtension[];
   height?: string;
   id: string;
@@ -302,7 +289,7 @@ export const Notebook = (props: INotebookProps) => {
         if (collaborative == 'jupyter') {
           const token =
             jupyterReactStore.getState().jupyterConfig?.jupyterServerToken;
-          const session = await requestJupyterDocSession('json', 'notebook', path!);
+          const session = await requestJupyterCollaborationSession('json', 'notebook', path!);
           const roomURL = URLExt.join(
             serviceManager?.serverSettings.wsUrl!,
             COLLABORATION_ROOM_URL_PATH
@@ -319,8 +306,8 @@ export const Notebook = (props: INotebookProps) => {
         } else if (collaborative == 'datalayer') {
           const { runUrl, token } = jupyterReactStore.getState().datalayerConfig ?? {};
           const roomName = id;
-          const roomURL = URLExt.join(runUrl!, `/api/spacer/v1/rooms`);
-          const sessionId = await fetchDatalayerRoomSessionId({
+          const roomURL = URLExt.join(runUrl!, `/api/spacer/v1/documents`);
+          const sessionId = await requestDatalayerollaborationSessionId({
             url: URLExt.join(roomURL, roomName),
             token,
           });

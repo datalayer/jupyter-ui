@@ -14,11 +14,12 @@ import type { CommandRegistry } from '@lumino/commands';
 import { Box } from '@primer/react';
 import type { OnSessionConnection } from '../../state';
 import { Loader } from '../utils';
-import { useKernelId, useNotebookModel, Notebook2Base, type CollaborationServer } from './Notebook2Base';
-import type { DatalayerNotebookExtension } from './Notebook';
+import { useKernelId, useNotebookModel, Notebook2Base } from './Notebook2Base';
+import type { DatalayerNotebookExtension } from './NotebookExtensions';
 import type { INotebookToolbarProps } from './toolbar';
 
 import './Notebook.css';
+import { ICollaborationServer } from '../../jupyter';
 
 const GlobalStyle = createGlobalStyle<any>`
   .dla-Box-Notebook .jp-Cell .dla-CellSidebar-Container {
@@ -36,7 +37,7 @@ export interface INotebook2Props {
   /**
    * Collaboration server providing the document rooms.
    */
-  collaborationServer?: CollaborationServer;
+  collaborationServer?: ICollaborationServer;
   /**
    * Custom command registry.
    *
