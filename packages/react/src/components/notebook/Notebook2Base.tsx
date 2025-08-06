@@ -543,7 +543,7 @@ export function useKernelId(
 
 type IOptions = {
   /**
-   * Collaboration server providing the document documents
+   * Collaboration server providing the documents
    */
   collaborationServer?: ICollaborationServer;
   /**
