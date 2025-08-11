@@ -55,7 +55,7 @@
     "vsix": "npx @vscode/vsce package --no-yarn --no-dependencies"
   },
   "dependencies": {
-    "@datalayer/jupyter-react": "^1.0.1",
+    "@datalayer/jupyter-react": "^1.0.7",
     "@jupyterlab/services": "^7.0.0",
     "@lumino/coreutils": "^2.1.1",
     "@primer/react": "^37.19.0",
