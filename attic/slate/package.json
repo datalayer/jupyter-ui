@@ -24,8 +24,8 @@
   },
   "dependencies": {
     "@datalayer/icons-react": "^1.0.0",
-    "@datalayer/jupyter-react": "^1.0.1",
-    "@datalayer/primer-addons": "^1.0.0",
+    "@datalayer/jupyter-react": "^1.0.7",
+    "@datalayer/primer-addons": "^1.0.3",
     "@emotion/css": "^11.1.3",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",

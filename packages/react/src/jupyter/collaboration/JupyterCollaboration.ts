@@ -7,7 +7,7 @@
 import { URLExt } from '@jupyterlab/coreutils';
 import { Contents, ServerConnection } from '@jupyterlab/services';
 
-export const COLLABORATION_ROOM_URL_PATH = 'api/collaboration/room';
+export const COLLABORATION_ROOM_URL_PATH = 'api/collaboration/document';
 
 export const COLLABORATION_SESSION_URL_PATH = 'api/collaboration/session';
 
@@ -33,7 +33,7 @@ export interface ISessionModel {
   sessionId: string;
 }
 
-export async function requestDocSession(
+export async function requestJupyterCollaborationSession(
   format: string,
   type: string,
   path: string,

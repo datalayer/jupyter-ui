@@ -4,18 +4,18 @@
  * MIT License
  */
 
+import type React from 'react';
 import { ReactWidget } from '@jupyterlab/apputils';
 import type { Cell, ICellModel } from '@jupyterlab/cells';
 import type { CellList, Notebook, NotebookPanel } from '@jupyterlab/notebook';
 import type { IObservableList } from '@jupyterlab/observables';
 import type { CommandRegistry } from '@lumino/commands';
 import type { IDisposable } from '@lumino/disposable';
-import { Signal } from '@lumino/signaling';
 import type { PanelLayout, Widget } from '@lumino/widgets';
-import type React from 'react';
+import { Signal } from '@lumino/signaling';
 import { JupyterReactTheme } from '../../../../theme';
-import type { DatalayerNotebookExtension, IDatalayerNotebookExtensionProps } from '../../Notebook';
 import { CellSidebar, type ICellSidebarProps } from './CellSidebar';
+import { DatalayerNotebookExtension, IDatalayerNotebookExtensionProps } from '../../NotebookExtensions';
 
 class CellSidebarFactory implements IDisposable {
   private _isDisposed = false;

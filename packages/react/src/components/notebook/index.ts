@@ -9,6 +9,7 @@ export * from './Notebook2';
 export * from './Notebook2Base';
 export * from './NotebookAdapter';
 export * from './NotebookCommands';
+export * from './NotebookExtensions';
 export * from './NotebookState';
 export * from './cell';
 export * from './content';

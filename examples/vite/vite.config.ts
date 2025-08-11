@@ -44,6 +44,10 @@ export default defineConfig({
       },
     ],
   },
+  define: {
+    global: 'globalThis',
+    __webpack_public_path__: '""',
+  },
   build: {
     rollupOptions: {
       output: {

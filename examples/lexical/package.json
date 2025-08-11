@@ -28,8 +28,8 @@
     "kill": "./../../dev/sh/kill.sh || true"
   },
   "dependencies": {
-    "@datalayer/jupyter-lexical": "^1.0.0",
-    "@datalayer/primer-addons": "^1.0.0",
+    "@datalayer/jupyter-lexical": "^1.0.2",
+    "@datalayer/primer-addons": "^1.0.3",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-json-tree": "^0.17.0"

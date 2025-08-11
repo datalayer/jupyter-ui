@@ -19,7 +19,7 @@ import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
 import type { INotebookContent } from '@jupyterlab/nbformat';
 import { NotebookModel, NotebookModelFactory, NotebookPanel, NotebookTracker, NotebookWidgetFactory, StaticNotebook, type INotebookModel,  type Notebook } from '@jupyterlab/notebook';
 import { RenderMimeRegistry, standardRendererFactories, type IRenderMime } from '@jupyterlab/rendermime';
-import type { Contents, Kernel, ServerConnection, ServiceManager, Session, SessionManager } from '@jupyterlab/services';
+import type { Contents, Kernel, ServiceManager, Session, SessionManager } from '@jupyterlab/services';
 import type { ISessionConnection } from '@jupyterlab/services/lib/session/session';
 import { YNotebook, type ISharedNotebook, type IYText } from '@jupyter/ydoc';
 import { find } from '@lumino/algorithm';
@@ -32,12 +32,12 @@ import { Box } from '@primer/react';
 import { Banner } from '@primer/react/experimental';
 import { EditorView } from 'codemirror';
 import { WebsocketProvider } from 'y-websocket';
-import { COLLABORATION_ROOM_URL_PATH, fetchSessionId, requestDocSession, WIDGET_MIMETYPE, WidgetLabRenderer, WidgetManager } from '../../jupyter';
+import { COLLABORATION_ROOM_URL_PATH, ICollaborationServer, requestDatalayerollaborationSessionId, requestJupyterCollaborationSession, WIDGET_MIMETYPE, WidgetLabRenderer, WidgetManager } from '../../jupyter';
 import type { OnSessionConnection } from '../../state';
 import { newUuid, remoteUserCursors } from '../../utils';
 import { Lumino } from '../lumino';
 import { Loader } from '../utils';
-import type { DatalayerNotebookExtension } from './Notebook';
+import type { DatalayerNotebookExtension } from './NotebookExtensions';
 import { addNotebookCommands } from './NotebookCommands';
 
 const COMPLETER_TIMEOUT_MILLISECONDS = 1000;
@@ -541,53 +541,11 @@ export function useKernelId(
   return kernelId;
 }
 
-export type CollaborationServer =
-  | {
-      /**
-       * Base server URL
-       */
-      baseURL: string;
-      /**
-       * Notebook room name to connect to.
-       */
-      roomName: string;
-      /**
-       * JWT token
-       */
-      token: string;
-      /**
-       * Server type
-       */
-      type: 'datalayer';
-    }
-  | {
-      /**
-       * Notebook path
-       */
-      path: string;
-      /**
-       * Jupyter server settings
-       */
-      serverSettings: ServerConnection.ISettings;
-      /**
-       * Server type
-       */
-      type: 'jupyter';
-    };
-
-/**
- * Hook to handle a notebook model.
- *
- * The notebook content may come from 3 sources:
- * - {@link nbformat}: The notebook content
- * - {@link url}: A URL to fetch the notebook content from
- * - {@link collaborationServer}: Parameters to connect to a collaboration server
- */
-export function useNotebookModel(options: {
+type IOptions = {
   /**
-   * Collaboration server providing the document rooms
+   * Collaboration server providing the documents
    */
-  collaborationServer?: CollaborationServer;
+  collaborationServer?: ICollaborationServer;
   /**
    * Notebook content.
    */
@@ -602,15 +560,27 @@ export function useNotebookModel(options: {
    * URL to fetch the notebook content from.
    */
   url?: string;
-}): NotebookModel | null {
+}
+
+/**
+ * Hook to handle a notebook model.
+ *
+ * The notebook content may come from 3 sources:
+ * - {@link nbformat}: The notebook content
+ * - {@link url}: A URL to fetch the notebook content from
+ * - {@link collaborationServer}: Parameters to connect to a collaboration server
+ */
+export function useNotebookModel(options: IOptions): NotebookModel | null {
+
   const { collaborationServer, nbformat, readonly = false, url } = options;
 
   // Generate the notebook model
   // There are three posibilities (by priority order):
-  // - Connection to a collaborative room
+  // - Connection to a collaborative document
   // - Provided notebook content
   // - Provided URL to fetch notebook content from
   const [model, setModel] = useState<NotebookModel | null>(null);
+
   useEffect(() => {
     let isMounted = true;
     const disposable = new DisposableSet();
@@ -619,7 +589,7 @@ export function useNotebookModel(options: {
       // As the server has the content source of thruth, we
       // must ensure that the shared model is pristine before
       // to connect to the server. More over we should ensure,
-      // the connection is disposed in case the server room is
+      // the connection is disposed in case the server document is
       // reset for any reason while the client is still alive.
       let provider: WebsocketProvider | null = null;
       let ready = new PromiseDelegate();
@@ -629,7 +599,7 @@ export function useNotebookModel(options: {
       const onConnectionClose = (event: any) => {
         if (event.code > 1000) {
           console.error(
-            'Connection with the room has been closed unexpectedly.',
+            'Connection with the document has been closed unexpectedly.',
             event
           );
 
@@ -648,7 +618,6 @@ export function useNotebookModel(options: {
               });
             }
           }
-
           // FIXME inform the user.
         }
       };
@@ -666,43 +635,39 @@ export function useNotebookModel(options: {
 
         sharedModel = new YNotebook();
         const { ydoc, awareness } = sharedModel;
-        let roomURL = '';
-        let roomName = '';
+        let documentURL = '';
+        let documentName = '';
         const params: Record<string, string> = {};
 
-        // Setup Collaboration
+        // Setup Collaboration.
         if (collaborationServer.type === 'jupyter') {
           const { path, serverSettings } = collaborationServer;
-          const session = await requestDocSession(
+          const session = await requestJupyterCollaborationSession(
             'json',
             'notebook',
             path,
             serverSettings
           );
-          roomURL = URLExt.join(
-            serverSettings.wsUrl,
-            COLLABORATION_ROOM_URL_PATH
-          );
-          roomName = `${session.format}:${session.type}:${session.fileId}`;
+          documentURL = URLExt.join(serverSettings.wsUrl, COLLABORATION_ROOM_URL_PATH);
+          documentName = `${session.format}:${session.type}:${session.fileId}`;
           params.sessionId = session.sessionId;
           if (serverSettings.token) {
             params.token = serverSettings.token;
           }
         } else if (collaborationServer.type === 'datalayer') {
-          const { baseURL, roomName: roomName_, token } = collaborationServer;
-          roomName = roomName_; // Set non local variable
-          const serverURL = URLExt.join(baseURL, '/api/spacer/v1/rooms');
-          roomURL = serverURL.replace(/^http/, 'ws');
-
-          params.sessionId = await fetchSessionId({
-            url: URLExt.join(serverURL, roomName),
+          const { baseURL, documentName: documentName_, token } = collaborationServer;
+          documentName = documentName_; // Set non local variable.
+          const serverURL = URLExt.join(baseURL, '/api/spacer/v1/documents');
+          documentURL = serverURL.replace(/^http/, 'ws');
+          params.sessionId = await requestDatalayerollaborationSessionId({
+            url: URLExt.join(serverURL, documentName),
             token,
           });
           params.token = token;
         }
 
         if (params.sessionId) {
-          provider = new WebsocketProvider(roomURL, roomName, ydoc, {
+          provider = new WebsocketProvider(documentURL, documentName, ydoc, {
             disableBc: true,
             params,
             awareness,
@@ -720,7 +685,7 @@ export function useNotebookModel(options: {
           };
 
           if (isMounted) {
-            // Create a new model using the one synchronized with the collaboration room.
+            // Create a new model using the one synchronized with the collaboration document.
             const model = new NotebookModel({
               collaborationEnabled: true,
               disableDocumentWideUndoRedo: true,

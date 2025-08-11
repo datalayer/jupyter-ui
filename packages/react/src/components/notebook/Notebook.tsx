@@ -8,12 +8,10 @@ import { YNotebook } from '@jupyter/ydoc';
 import { Cell, ICellModel } from '@jupyterlab/cells';
 import { URLExt } from '@jupyterlab/coreutils';
 import { createGlobalStyle } from 'styled-components';
-import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { INotebookModel, NotebookModel, NotebookPanel } from '@jupyterlab/notebook';
+import { NotebookModel } from '@jupyterlab/notebook';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { Kernel as JupyterKernel, ServiceManager } from '@jupyterlab/services';
-import { CommandRegistry } from '@lumino/commands';
 import { PromiseDelegate } from '@lumino/coreutils';
 import { Box } from '@primer/react';
 import { useEffect, useState } from 'react';
@@ -22,7 +20,7 @@ import { WebsocketProvider as YWebsocketProvider } from 'y-websocket';
 import { jupyterReactStore, KernelTransfer, OnSessionConnection, } from '../../state';
 import { newUuid, sleep } from '../../utils';
 import { asObservable, Lumino } from '../lumino';
-import { COLLABORATION_ROOM_URL_PATH, fetchSessionId, ICollaborative, Kernel, Lite, requestDocSession, useJupyter } from './../../jupyter';
+import { COLLABORATION_ROOM_URL_PATH, requestDatalayerollaborationSessionId, ICollaborationProvider, Kernel, Lite, requestJupyterCollaborationSession, useJupyter } from './../../jupyter';
 import { CellMetadataEditor } from './cell/metadata';
 import { NotebookAdapter } from './NotebookAdapter';
 import { useNotebookStore } from './NotebookState';
@@ -30,6 +28,7 @@ import { INotebookToolbarProps } from './toolbar';
 import { Loader } from '../utils';
 
 import './Notebook.css';
+import { DatalayerNotebookExtension } from './NotebookExtensions';
 
 export type ExternalIPyWidgets = {
   name: string;
@@ -38,18 +37,6 @@ export type ExternalIPyWidgets = {
 
 export type BundledIPyWidgets = ExternalIPyWidgets & {
   module: any;
-};
-
-export type IDatalayerNotebookExtensionProps = {
-  notebookId: string;
-  commands: CommandRegistry;
-  panel: NotebookPanel;
-  adapter?: NotebookAdapter;
-};
-
-export type DatalayerNotebookExtension = DocumentRegistry.IWidgetExtension<NotebookPanel,INotebookModel> & {
-  init(props: IDatalayerNotebookExtensionProps): void;
-  get component(): JSX.Element | null;
 };
 
 const GlobalStyle = createGlobalStyle<any>`
@@ -65,7 +52,7 @@ export type INotebookProps = {
   Toolbar?: (props: INotebookToolbarProps) => JSX.Element;
   cellMetadataPanel?: boolean;
   cellSidebarMargin?: number;
-  collaborative?: ICollaborative;
+  collaborative?: ICollaborationProvider;
   extensions?: DatalayerNotebookExtension[];
   height?: string;
   id: string;
@@ -246,7 +233,7 @@ export const Notebook = (props: INotebookProps) => {
     // As the server has the content source of truth, we
     // must ensure that the shared model is pristine before
     // to connect to the server. More over we should ensure,
-    // the connection is disposed in case the server room is
+    // the connection is disposed in case the server document is
     // reset for any reason while the client is still alive.
     let provider: YWebsocketProvider | null = null;
     let ready = new PromiseDelegate();
@@ -256,7 +243,7 @@ export const Notebook = (props: INotebookProps) => {
     const onConnectionClose = (event: any) => {
       if (event.code > 1000) {
         console.error(
-          'Connection with the room has been closed unexpectedly.',
+          'Connection with the document has been closed unexpectedly.',
           event
         );
 
@@ -302,13 +289,13 @@ export const Notebook = (props: INotebookProps) => {
         if (collaborative == 'jupyter') {
           const token =
             jupyterReactStore.getState().jupyterConfig?.jupyterServerToken;
-          const session = await requestDocSession('json', 'notebook', path!);
-          const roomURL = URLExt.join(
+          const session = await requestJupyterCollaborationSession('json', 'notebook', path!);
+          const documentURL = URLExt.join(
             serviceManager?.serverSettings.wsUrl!,
             COLLABORATION_ROOM_URL_PATH
           );
-          const roomName = `${session.format}:${session.type}:${session.fileId}`;
-          provider = new YWebsocketProvider(roomURL, roomName, ydoc, {
+          const documentName = `${session.format}:${session.type}:${session.fileId}`;
+          provider = new YWebsocketProvider(documentURL, documentName, ydoc, {
             disableBc: true,
             params: {
               sessionId: session.sessionId,
@@ -318,15 +305,15 @@ export const Notebook = (props: INotebookProps) => {
           });
         } else if (collaborative == 'datalayer') {
           const { runUrl, token } = jupyterReactStore.getState().datalayerConfig ?? {};
-          const roomName = id;
-          const roomURL = URLExt.join(runUrl!, `/api/spacer/v1/rooms`);
-          const sessionId = await fetchSessionId({
-            url: URLExt.join(roomURL, roomName),
+          const documentName = id;
+          const documentURL = URLExt.join(runUrl!, `/api/spacer/v1/documents`);
+          const sessionId = await requestDatalayerollaborationSessionId({
+            url: URLExt.join(documentURL, documentName),
             token,
           });
           provider = new YWebsocketProvider(
-            roomURL.replace(/^http/, 'ws'),
-            roomName,
+            documentURL.replace(/^http/, 'ws'),
+            documentName,
             ydoc,
             {
               disableBc: true,
@@ -342,7 +329,7 @@ export const Notebook = (props: INotebookProps) => {
           provider.on('sync', onSync);
           provider.on('connection-close', onConnectionClose);
           console.log('Collaboration is setup with websocket provider.');
-          // Create a new model using the one synchronize with the collaboration room
+          // Create a new model using the one synchronize with the collaboration document
           const model = new NotebookModel({
             collaborationEnabled: true,
             disableDocumentWideUndoRedo: true,

@@ -4,26 +4,27 @@
  * MIT License
  */
 
-import { Box, Button } from "@primer/react";
+import { Button } from "@primer/react";
+import { Box } from "@datalayer/primer-addons";
 import { ThreeBarsIcon } from "@primer/octicons-react"
 import { Jupyter } from "@datalayer/jupyter-react";
 import { useLexical, Editor, LexicalProvider } from "..";
 
-import INITIAL_LEXICAL_MODEL from "./content/Example.lexical.json";
+import LEXICAL_MODEL from "./content/Example.lexical.json";
 
-import INITIAL_NBFORMAT_MODEL from "./content/Example.ipynb.json";
+import NBFORMAT_MODEL from "./content/Example.ipynb.json";
 
 const LexicalEditor = () => {
   const { editor } = useLexical();
   return (
     <Box className="center">
       <Box>
-        <Editor notebook={INITIAL_NBFORMAT_MODEL} />
+        <Editor notebook={NBFORMAT_MODEL} />
         <Button
           onClick={(e: React.MouseEvent) => {
             e.preventDefault();
             if (editor) {
-              const editorState = editor.parseEditorState(INITIAL_LEXICAL_MODEL as any);
+              const editorState = editor.parseEditorState(LEXICAL_MODEL as any);
               editor.setEditorState(editorState);  
             }
           }}>
@@ -47,11 +48,11 @@ export const AppSimple = () => {
       </Jupyter>
       <div className="other App">
         <br/>
-        <a href="https://datalayer.io" target="_blank">
+        <a href="https://datalayer.ai" target="_blank">
           <ThreeBarsIcon/>
         </a>
         <h2>
-        Copyright © <a href="https://datalayer.io" target="_blank">2022-2024 Datalayer, Inc.</a>
+        Copyright © <a href="https://datalayer.ai" target="_blank">2022 Datalayer, Inc.</a>
         </h2>
         <ul>
           <li>

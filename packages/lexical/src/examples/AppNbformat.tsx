@@ -61,14 +61,14 @@ const Tabs = () => {
   }
   return (
     <Box className="center">
-      <UnderlineNav>
-        <UnderlineNav.Item href="" aria-current={tab === 'editor'} onClick={e => goToTab(e, 'editor', notebook?.model)}>
+      <UnderlineNav aria-label="Underline Navigation">
+        <UnderlineNav.Item href="" aria-current={tab === 'editor' ? 'page' : undefined} onClick={e => goToTab(e, 'editor', notebook?.model)}>
           Editor
         </UnderlineNav.Item>
-        <UnderlineNav.Item href="" aria-current={tab === 'notebook'} onClick={e => goToTab(e, 'notebook', notebook?.model)}>
+        <UnderlineNav.Item href="" aria-current={tab === 'notebook' ? 'page' : undefined} onClick={e => goToTab(e, 'notebook', notebook?.model)}>
           Notebook
         </UnderlineNav.Item>
-        <UnderlineNav.Item href="" aria-current={tab === 'nbformat'} onClick={e => goToTab(e, 'nbformat', notebook?.model)}>
+        <UnderlineNav.Item href="" aria-current={tab === 'nbformat' ? 'page' : undefined} onClick={e => goToTab(e, 'nbformat', notebook?.model)}>
           NbFormat
         </UnderlineNav.Item>
       </UnderlineNav>
