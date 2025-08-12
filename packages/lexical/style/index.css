@@ -5,14 +5,11 @@
  */
 
 /* Import base styles */
-@import url('base.css');
+@import url("base.css");
 
-/* Tailwind v4 theme configuration - CSS variables for theming */
-:root {
-  --font-family-system: system-ui, -apple-system, BlinkMacSystemFont, '.SFNSText-Regular', sans-serif;
-  --color-gray-light: #eee;
-  --color-gray-medium: #ddd;
-  --color-gray-dark: #333;
+/* Custom base styles */
+[contenteditable] {
+  outline: 0px solid transparent;
 }
 
 /* Import tailwind.css which now contains all the Tailwind v4 compatible styles */
