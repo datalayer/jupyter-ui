@@ -126,6 +126,19 @@ export function AppNbformat() {
         </LexicalProvider>
       </Jupyter>
       <div className="other App">
+        <br/>
+        <a href="https://datalayer.io" target="_blank">
+          <ThreeBarsIcon/>
+        </a>
+        <h2>
+          copyright © <a href="https://datalayer.io" target="_blank">2022-2024 Datalayer, Inc.</a>
+        </h2>
+        <ul>
+          <li>
+            <a href="https://github.com/datalayer/jupyter-ui" target="_blank">Jupyter UI open-source repository</a>
+          </li>
+        </ul>
+      </div>
         {/* Tailwind v4 Button - Pure Utility Classes */}
         <div className="flex flex-col items-center gap-4 my-8">
           <button 
@@ -141,19 +154,6 @@ export function AppNbformat() {
             </span>
           </div>
         </div>
-        <br/>
-        <a href="https://datalayer.io" target="_blank">
-          <ThreeBarsIcon/>
-        </a>
-        <h2>
-          copyright © <a href="https://datalayer.io" target="_blank">2022-2024 Datalayer, Inc.</a>
-        </h2>
-        <ul>
-          <li>
-            <a href="https://github.com/datalayer/jupyter-ui" target="_blank">Jupyter UI open-source repository</a>
-          </li>
-        </ul>
-      </div>
     </>
   )
 }
