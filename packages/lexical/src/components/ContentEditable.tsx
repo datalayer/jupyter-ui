@@ -6,8 +6,6 @@
 
 import {ContentEditable} from '@lexical/react/LexicalContentEditable';
 
-import './../../style/lexical/ContentEditable.css';
-
 export const LexicalContentEditable = ({
   className,
 }: {

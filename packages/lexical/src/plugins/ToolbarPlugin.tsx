@@ -33,7 +33,6 @@ import {
   $createYouTubeNode, INSERT_EQUATION_COMMAND, INSERT_JUPYTER_CELL_COMMAND, DEFAULT_INITIAL_OUTPUTS
 } from "../";
 
-import './../../style/lexical/ToolbarPlugin.css';
 import { JupyterCodeNode } from "../nodes";
 
 const LowPriority = 1;

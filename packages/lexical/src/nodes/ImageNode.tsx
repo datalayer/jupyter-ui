@@ -52,7 +52,6 @@ import ContentEditable from '../components/ContentEditable';
 import ImageResizer from '../components/ImageResizer';
 import Placeholder from '../components/Placeholder';
 
-import './../../style/lexical/ImageNode.css';
 
 export interface ImagePayload {
   altText: string;

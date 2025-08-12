@@ -8,7 +8,6 @@ import {useCallback, useState} from 'react';
 import Button from '../components/Button';
 import KatexRenderer from './KatexRenderer';
 
-import './../../style/lexical/KatexEquationAlterer.css';
 
 type Props = {
   initialEquation?: string;

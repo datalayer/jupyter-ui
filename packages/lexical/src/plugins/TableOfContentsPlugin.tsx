@@ -10,7 +10,6 @@ import type {NodeKey} from 'lexical';
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import {TableOfContentsPlugin as LexicalTableOfContentsPlugin} from '@lexical/react/LexicalTableOfContentsPlugin';
 
-import './../../style/lexical/TableOfContentsPlugin.css';
 
 function indent(tagName: HeadingTagType) {
   if (tagName === 'h2') {

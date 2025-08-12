@@ -12,7 +12,6 @@
 
 import type {EditorThemeClasses} from 'lexical';
 
-import './../../style/lexical/CommentEditorTheme.css';
 
 import baseTheme from './Theme';
 

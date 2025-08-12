@@ -31,7 +31,6 @@ import {getSelectedNode} from '../utils';
 import {setFloatingElemPosition} from '../utils';
 import {INSERT_INLINE_COMMAND} from './CommentPlugin';
 
-import '././../../style/lexical/FloatingTextFormatToolbarPlugin.css';
 
 function TextFormatFloatingToolbar({
   editor,
