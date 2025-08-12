@@ -4,62 +4,21 @@
  * MIT License
  */
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 /* Import base styles */
 @import url('base.css');
 
-/* Import all lexical component styles */
-@import url('lexical/Button.css');
-@import url('lexical/CodeActionMenuPlugin.css');
-@import url('lexical/CommentEditorTheme.css');
-@import url('lexical/CommentPlugin.css');
-@import url('lexical/ContentEditable.css');
-@import url('lexical/Dialog.css');
-@import url('lexical/DraggableBlockPlugin.css');
-@import url('lexical/Editor.css');
-@import url('lexical/EquationEditor.css');
-@import url('lexical/FloatingTextFormatToolbarPlugin.css');
-@import url('lexical/ImageNode.css');
-@import url('lexical/Input.css');
-@import url('lexical/Jupyter.css');
-@import url('lexical/JupyterPlugin.css');
-@import url('lexical/KatexEquationAlterer.css');
-@import url('lexical/Modal.css');
-@import url('lexical/Placeholder.css');
-@import url('lexical/PrettierButton.css');
-@import url('lexical/Rich.css');
-@import url('lexical/TableOfContentsPlugin.css');
-@import url('lexical/Theme.css');
-@import url('lexical/ToolbarPlugin.css');
+/* Tailwind v4 theme configuration - CSS variables for theming */
+:root {
+  --font-family-system: system-ui, -apple-system, BlinkMacSystemFont, '.SFNSText-Regular', sans-serif;
+  --color-gray-light: #eee;
+  --color-gray-medium: #ddd;
+  --color-gray-dark: #333;
+}
+
+/* Import tailwind.css which now contains all the Tailwind v4 compatible styles */
+@import url('tailwind.css');
 
 /* Custom base styles */
 [contenteditable] {
   outline: 0px solid transparent;
-}
-
-/* Custom component styles */
-@layer components {
-  /* Button styles */
-  .Button__root {
-    @apply py-2.5 px-4 border-0 bg-gray-200 rounded cursor-pointer text-sm;
-  }
-  
-  .Button__root:hover {
-    @apply bg-gray-300;
-  }
-  
-  .Button__small {
-    @apply py-1.5 px-2.5 text-xs;
-  }
-  
-  .Button__disabled {
-    @apply cursor-not-allowed;
-  }
-  
-  .Button__disabled:hover {
-    @apply bg-gray-200;
-  }
 }
