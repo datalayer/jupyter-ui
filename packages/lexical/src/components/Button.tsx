@@ -29,8 +29,8 @@ export const Button = ({
       disabled={disabled}
       className={joinClasses(
         'Button__root',
-        disabled && 'Button__disabled',
         small && 'Button__small',
+        disabled && 'Button__disabled',
         className,
       )}
       onClick={onClick}

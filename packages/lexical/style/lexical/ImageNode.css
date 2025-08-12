@@ -4,7 +4,7 @@
  * MIT License
  */
 
- .ImageNode__contentEditable {
+.ImageNode__contentEditable {
   min-height: 20px;
   border: 0px;
   resize: none;

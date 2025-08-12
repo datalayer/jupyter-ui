@@ -4,6 +4,8 @@
  * MIT License
  */
 
+import "../../style/index.css";
+
 import { createRoot } from "react-dom/client";
 // import App from "./AppSimple";
 import App from "./AppNbformat";

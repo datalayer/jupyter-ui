@@ -8,6 +8,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Test to ensure CSS is loading */
+.test-css-loading {
+  background-color: purple !important;
+  color: white !important;
+  padding: 20px !important;
+  border: 5px solid orange !important;
+}
+
 /* Custom base styles */
 [contenteditable] {
   outline: 0px solid transparent;
@@ -182,7 +190,7 @@
 
   .draggable-block-menu .icon {
     @apply w-4 h-4 opacity-30;
-    background-image: url(./lexical/images/icons/draggable-block-menu.svg);
+    background-image: url(./lexical/icons/draggable-block-menu.svg);
   }
 
   .draggable-block-menu:active {
@@ -402,5 +410,503 @@
 
   .editor-shell header h1 {
     @apply text-left text-gray-dark inline-block mt-5 mb-0 mx-0;
+  }
+
+  /* CommentPlugin styles */
+  .CommentPlugin {
+    @apply font-system;
+  }
+
+  .CommentPlugin_AddCommentBox {
+    @apply block fixed rounded-full bg-white w-10 h-16 z-10;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+  }
+
+  .CommentPlugin_AddCommentBox_button {
+    @apply rounded-full border-0 bg-transparent w-10 h-16 absolute top-0 left-0 cursor-pointer;
+  }
+
+  .CommentPlugin_AddCommentBox_button:hover {
+    @apply bg-gray-50;
+  }
+
+  i.add-comment {
+    @apply inline-block h-5 w-5;
+    background-size: contain;
+    vertical-align: -10px;
+    background-image: url(./lexical/icons/chat-left-text.svg);
+  }
+
+  .CommentPlugin_CommentInputBox {
+    @apply block fixed w-[250px];
+  }
+
+  .CommentPlugin_CommentInputBox_EditorContainer {
+    @apply block bg-white rounded border;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  }
+
+  .CommentPlugin_CommentInputBox_Editor {
+    @apply block relative outline-0 p-2 text-sm;
+  }
+
+  .CommentPlugin_CommentInputBox_Actions {
+    @apply flex justify-end p-2 border-t border-gray-200;
+  }
+
+  .CommentPlugin_CommentInputBox_Button {
+    @apply px-3 py-1 mx-1 text-xs rounded cursor-pointer;
+  }
+
+  .CommentPlugin_CommentInputBox_Button.primary {
+    @apply bg-blue-500 text-white;
+  }
+
+  .CommentPlugin_CommentInputBox_Button.outline {
+    @apply border border-gray-300 bg-transparent text-gray-700;
+  }
+
+  .CommentPlugin_CommentInputBox_Button:hover {
+    @apply opacity-80;
+  }
+
+  /* TableOfContentsPlugin styles */
+  .table-of-contents .heading2 {
+    @apply ml-2.5;
+  }
+
+  .table-of-contents .heading3 {
+    @apply ml-5;
+  }
+
+  .selected-heading {
+    @apply text-blue-600 relative;
+  }
+
+  .selected-heading-wrapper::before {
+    @apply absolute inline-block left-[-30px] top-1 z-10 h-1 w-1 bg-blue-600 border-4 border-white rounded-full;
+    content: ' ';
+  }
+
+  .normal-heading {
+    @apply cursor-pointer;
+    line-height: 20px;
+    font-size: 16px;
+  }
+
+  .table-of-contents {
+    @apply text-gray-600 fixed top-[100px] right-0 p-2.5 w-[250px] flex flex-row justify-start;
+  }
+
+  /* Rich editor styles */
+  .other h2 {
+    @apply text-lg text-gray-600 mb-2;
+  }
+
+  .other a {
+    @apply text-gray-500 underline text-sm;
+  }
+
+  .other ul {
+    @apply p-0 m-0 list-none;
+  }
+
+  .App {
+    @apply font-sans text-center;
+  }
+
+  h1 {
+    @apply text-2xl text-gray-700;
+  }
+
+  .ltr {
+    @apply text-left;
+  }
+
+  .rtl {
+    @apply text-right;
+  }
+
+  .editor-container {
+    @apply my-5 mx-auto rounded-sm max-w-full text-black relative font-normal;
+    line-height: 20px;
+  }
+
+  /* PlaygroundEditorTheme styles */
+  .PlaygroundEditorTheme__ltr {
+    @apply text-left;
+  }
+
+  .PlaygroundEditorTheme__rtl {
+    @apply text-right;
+  }
+
+  .PlaygroundEditorTheme__paragraph {
+    @apply m-0 mb-2 relative;
+  }
+
+  .PlaygroundEditorTheme__paragraph:last-child {
+    @apply mb-0;
+  }
+
+  .PlaygroundEditorTheme__quote {
+    @apply m-0 ml-5 mb-2.5 text-base border-l-4 pl-4;
+    color: rgb(101, 103, 107);
+    border-left-color: rgb(206, 208, 212);
+  }
+
+  .PlaygroundEditorTheme__h1 {
+    @apply text-2xl font-normal m-0 mb-3 p-0;
+    color: rgb(5, 5, 5);
+  }
+
+  .PlaygroundEditorTheme__h2 {
+    @apply text-base font-bold m-0 mt-2.5 p-0 uppercase;
+    color: rgb(101, 103, 107);
+  }
+
+  .PlaygroundEditorTheme__h3 {
+    @apply text-xs font-normal m-0 mt-2.5 p-0 uppercase;
+    color: rgb(101, 103, 107);
+  }
+
+  .PlaygroundEditorTheme__h4 {
+    @apply text-xs font-normal m-0 mt-2.5 p-0 uppercase;
+    color: rgb(101, 103, 107);
+  }
+
+  .PlaygroundEditorTheme__h5 {
+    @apply text-xs font-normal m-0 mt-2.5 p-0 uppercase;
+    color: rgb(101, 103, 107);
+  }
+
+  .PlaygroundEditorTheme__h6 {
+    @apply text-xs font-normal m-0 mt-2.5 p-0 uppercase;
+    color: rgb(101, 103, 107);
+  }
+
+  .PlaygroundEditorTheme__textBold {
+    @apply font-bold;
+  }
+
+  .PlaygroundEditorTheme__textItalic {
+    @apply italic;
+  }
+
+  .PlaygroundEditorTheme__textUnderline {
+    @apply underline;
+  }
+
+  .PlaygroundEditorTheme__textStrikethrough {
+    @apply line-through;
+  }
+
+  .PlaygroundEditorTheme__textUnderlineStrikethrough {
+    @apply underline line-through;
+  }
+
+  .PlaygroundEditorTheme__textSubscript {
+    @apply text-xs;
+    vertical-align: sub;
+  }
+
+  .PlaygroundEditorTheme__textSuperscript {
+    @apply text-xs;
+    vertical-align: super;
+  }
+
+  .PlaygroundEditorTheme__textCode {
+    @apply bg-gray-100 px-1 py-1 text-sm font-mono;
+    font-size: 94%;
+    color: rgb(5, 5, 5);
+  }
+
+  .PlaygroundEditorTheme__link {
+    @apply text-blue-600 no-underline;
+  }
+
+  .PlaygroundEditorTheme__link:hover {
+    @apply underline cursor-pointer;
+  }
+
+  .PlaygroundEditorTheme__code {
+    @apply bg-gray-100 font-mono block;
+    font-size: 13px;
+    margin: 8px 0;
+    padding: 8px 8px 8px 52px;
+    line-height: 1.53;
+    tab-size: 2;
+    overflow-x: auto;
+    position: relative;
+  }
+
+  .PlaygroundEditorTheme__mark {
+    @apply bg-yellow-200;
+  }
+
+  .PlaygroundEditorTheme__markOverlap {
+    @apply bg-yellow-300;
+  }
+
+  .PlaygroundEditorTheme__hashtag {
+    @apply bg-yellow-200;
+    border-bottom: 1px solid rgb(255, 212, 0);
+  }
+
+  .PlaygroundEditorTheme__ol {
+    @apply p-0 m-0 ml-4;
+  }
+
+  .PlaygroundEditorTheme__ul {
+    @apply p-0 m-0 ml-4;
+  }
+
+  .PlaygroundEditorTheme__listItem {
+    @apply m-0 mb-2;
+  }
+
+  .PlaygroundEditorTheme__listItemChecked,
+  .PlaygroundEditorTheme__listItemUnchecked {
+    @apply relative list-none ml-6 p-0 outline-0;
+  }
+
+  .PlaygroundEditorTheme__listItemChecked {
+    @apply line-through;
+  }
+
+  .PlaygroundEditorTheme__listItemUnchecked:before,
+  .PlaygroundEditorTheme__listItemChecked:before {
+    @apply absolute left-[-24px] top-[-2px] w-4 h-4 cursor-pointer;
+    content: '';
+    background-size: cover;
+  }
+
+  .PlaygroundEditorTheme__listItemUnchecked:before {
+    background-image: url(./lexical/icons/square.svg);
+  }
+
+  .PlaygroundEditorTheme__listItemChecked:before {
+    background-image: url(./lexical/icons/square-check.svg);
+  }
+
+  .PlaygroundEditorTheme__nestedListItem {
+    @apply list-none;
+  }
+
+  .PlaygroundEditorTheme__tokenComment {
+    @apply text-gray-500;
+  }
+
+  .PlaygroundEditorTheme__tokenPunctuation {
+    @apply text-gray-700;
+  }
+
+  .PlaygroundEditorTheme__tokenProperty {
+    @apply text-blue-600;
+  }
+
+  .PlaygroundEditorTheme__tokenSelector {
+    @apply text-green-600;
+  }
+
+  .PlaygroundEditorTheme__tokenOperator {
+    @apply text-red-600;
+  }
+
+  .PlaygroundEditorTheme__tokenAttr {
+    @apply text-purple-600;
+  }
+
+  .PlaygroundEditorTheme__tokenVariable {
+    @apply text-orange-600;
+  }
+
+  .PlaygroundEditorTheme__tokenFunction {
+    @apply text-blue-800;
+  }
+
+  /* PrettierButton styles */
+  .code-action-menu-container .prettier-wrapper {
+    @apply relative;
+  }
+
+  .code-action-menu-container .prettier-wrapper .code-error-tips {
+    @apply p-1.5 rounded text-white bg-gray-800 mt-1 absolute top-[26px] right-0;
+  }
+
+  /* CommentEditorTheme styles */
+  .CommentEditorTheme__paragraph {
+    @apply m-0 relative;
+  }
+
+  /* Jupyter styles */
+  .dla-Jupyter-Notebook {
+    min-height: 900px !important;
+  }
+
+  /* JupyterPlugin styles */
+  .jp-OutputArea {
+    @apply outline-0;
+  }
+
+  /* Additional Rich editor styles */
+  .toolbar {
+    @apply flex items-center space-x-2 p-2 border-b border-gray-200 bg-gray-50;
+  }
+
+  .toolbar button {
+    @apply px-3 py-1 text-sm border border-gray-300 rounded bg-white hover:bg-gray-50;
+  }
+
+  .toolbar button.active {
+    @apply bg-blue-500 text-white border-blue-500;
+  }
+
+  .toolbar select {
+    @apply px-2 py-1 text-sm border border-gray-300 rounded bg-white;
+  }
+
+  .dropdown {
+    @apply relative inline-block;
+  }
+
+  .dropdown-content {
+    @apply absolute bg-white min-w-[160px] shadow-lg z-10 rounded border;
+  }
+
+  .dropdown-content a {
+    @apply block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100;
+  }
+
+  .divider {
+    @apply h-5 w-px bg-gray-300 mx-2;
+  }
+
+  /* Table styles */
+  .PlaygroundEditorTheme__table {
+    @apply border-collapse border border-gray-300 w-full my-5;
+  }
+
+  .PlaygroundEditorTheme__tableCell {
+    @apply border border-gray-300 min-w-[75px] min-h-[20px] text-left align-top;
+    outline: none;
+    position: relative;
+    user-select: text;
+    white-space: pre-wrap;
+    word-break: normal;
+  }
+
+  .PlaygroundEditorTheme__tableCellHeader {
+    @apply bg-gray-100 text-left font-bold;
+  }
+
+  .PlaygroundEditorTheme__tableSelection *::selection {
+    background-color: transparent;
+  }
+
+  .PlaygroundEditorTheme__tableSelected {
+    outline: 2px solid rgb(60, 132, 244);
+  }
+
+  .PlaygroundEditorTheme__tableCellResizer {
+    @apply absolute right-[-4px] top-0 w-1 cursor-col-resize select-none bg-blue-500 opacity-0 h-full;
+  }
+
+  .PlaygroundEditorTheme__tableCellHeader .PlaygroundEditorTheme__tableCellResizer {
+    @apply bg-gray-400;
+  }
+
+  .PlaygroundEditorTheme__tableCell:hover .PlaygroundEditorTheme__tableCellResizer {
+    @apply opacity-100;
+  }
+
+  .PlaygroundEditorTheme__tableCellResizer:hover {
+    @apply opacity-100;
+  }
+
+  .PlaygroundEditorTheme__tableCellResizer.dragging {
+    @apply opacity-100;
+  }
+
+  /* Image styles */
+  .editor-image {
+    @apply cursor-default;
+  }
+
+  .editor-image img {
+    @apply max-w-full cursor-pointer;
+  }
+
+  .editor-image .image-caption-container {
+    @apply block relative;
+  }
+
+  .editor-image .image-caption-button {
+    @apply absolute bottom-1 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 transition-opacity;
+  }
+
+  .editor-image:hover .image-caption-button {
+    @apply opacity-100;
+  }
+
+  .editor-image .image-edit-button {
+    @apply absolute top-3 right-3 w-8 h-8 rounded-full bg-gray-800 text-white flex items-center justify-center opacity-0 transition-opacity cursor-pointer;
+  }
+
+  .editor-image:hover .image-edit-button {
+    @apply opacity-100;
+  }
+
+  .editor-image .image-resizer {
+    @apply absolute block bg-blue-500 border border-white;
+    user-select: none;
+  }
+
+  .editor-image .image-resizer.image-resizer-n {
+    @apply top-[-6px] left-1/2 transform -translate-x-1/2 cursor-n-resize;
+    height: 6px;
+    width: 12px;
+  }
+
+  .editor-image .image-resizer.image-resizer-ne {
+    @apply top-[-6px] right-[-6px] cursor-ne-resize;
+    height: 6px;
+    width: 6px;
+  }
+
+  .editor-image .image-resizer.image-resizer-e {
+    @apply top-1/2 right-[-6px] transform -translate-y-1/2 cursor-e-resize;
+    height: 12px;
+    width: 6px;
+  }
+
+  .editor-image .image-resizer.image-resizer-se {
+    @apply bottom-[-6px] right-[-6px] cursor-se-resize;
+    height: 6px;
+    width: 6px;
+  }
+
+  .editor-image .image-resizer.image-resizer-s {
+    @apply bottom-[-6px] left-1/2 transform -translate-x-1/2 cursor-s-resize;
+    height: 6px;
+    width: 12px;
+  }
+
+  .editor-image .image-resizer.image-resizer-sw {
+    @apply bottom-[-6px] left-[-6px] cursor-sw-resize;
+    height: 6px;
+    width: 6px;
+  }
+
+  .editor-image .image-resizer.image-resizer-w {
+    @apply top-1/2 left-[-6px] transform -translate-y-1/2 cursor-w-resize;
+    height: 12px;
+    width: 6px;
+  }
+
+  .editor-image .image-resizer.image-resizer-nw {
+    @apply top-[-6px] left-[-6px] cursor-nw-resize;
+    height: 6px;
+    width: 6px;
   }
 }
