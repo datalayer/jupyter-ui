@@ -94,6 +94,7 @@
     "@babel/preset-env": "^7.20.2",
     "@babel/preset-react": "^7.18.6",
     "@babel/preset-typescript": "^7.21.0",
+    "@tailwindcss/postcss": "^4.1.11",
     "@types/codemirror": "^5.60.4",
     "@types/katex": "^0.14.0",
     "@types/lodash-es": "^4.17.6",
