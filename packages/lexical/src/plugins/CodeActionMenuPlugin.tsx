@@ -14,7 +14,6 @@ import { CopyButton } from '../components/CopyButton';
 import { canBePrettier, PrettierButton } from '../components/PrettierButton';
 import { useDebounce } from './../hooks';
 
-import './../../style/lexical/CodeActionMenuPlugin.css';
 
 const CODE_PADDING = 8;
 

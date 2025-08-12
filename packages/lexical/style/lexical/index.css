@@ -4,28 +4,25 @@
  * MIT License
  */
 
+@import url('Button.css');
+@import url('CodeActionMenuPlugin.css');
+@import url('CommentEditorTheme.css');
+@import url('CommentPlugin.css');
 @import url('ContentEditable.css');
-@import url('Rich.css');
-@import url('Theme.css');
+@import url('Dialog.css');
+@import url('DraggableBlockPlugin.css');
 @import url('Editor.css');
 @import url('EquationEditor.css');
-
-@import url('CommentEditorTheme.css');
-
-@import url('Modal.css');
-@import url('KatexEquationAlterer.css');
+@import url('FloatingTextFormatToolbarPlugin.css');
 @import url('ImageNode.css');
-@import url('Jupyter.css');
 @import url('Input.css');
-@import url('Dialog.css');
+@import url('Jupyter.css');
+@import url('JupyterPlugin.css');
+@import url('KatexEquationAlterer.css');
+@import url('Modal.css');
 @import url('Placeholder.css');
 @import url('PrettierButton.css');
-@import url('Button.css');
-
-@import url('ToolbarPlugin.css');
-@import url('FloatingTextFormatToolbarPlugin.css');
-@import url('CommentPlugin.css');
-@import url('JupyterPlugin.css');
+@import url('Rich.css');
 @import url('TableOfContentsPlugin.css');
-@import url('CodeActionMenuPlugin.css');
-@import url('DraggableBlockPlugin.css');
+@import url('Theme.css');
+@import url('ToolbarPlugin.css');

@@ -63,7 +63,6 @@ import CommentEditorTheme from '../themes/CommentEditorTheme';
 import { useModal, Button, LexicalContentEditable as ContentEditable, Placeholder } from '..';
 import {useLayoutEffectImpl as useLayoutEffect} from '..';
 
-import './../../style/lexical/CommentPlugin.css';
 
 export const INSERT_INLINE_COMMAND: LexicalCommand<void> = createCommand();
 

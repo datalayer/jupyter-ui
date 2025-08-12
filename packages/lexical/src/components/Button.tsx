@@ -7,8 +7,6 @@
 import {ReactNode} from 'react';
 import joinClasses from '../utils/join';
 
-import './../../style/lexical/Button.css';
-
 export const Button = ({
   'data-test-id': dataTestId,
   children,
@@ -31,8 +29,8 @@ export const Button = ({
       disabled={disabled}
       className={joinClasses(
         'Button__root',
-        disabled && 'Button__disabled',
         small && 'Button__small',
+        disabled && 'Button__disabled',
         className,
       )}
       onClick={onClick}

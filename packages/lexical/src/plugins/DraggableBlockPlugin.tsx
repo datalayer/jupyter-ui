@@ -16,7 +16,6 @@ import {calculateZoomLevel, mergeRegister} from '@lexical/utils';
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import { isHTMLElement, Point, Rect } from '../utils';
 
-import './../../style/lexical/DraggableBlockPlugin.css';
 
 const SPACE = 4;
 const TARGET_LINE_HALF_HEIGHT = 2;

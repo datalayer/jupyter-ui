@@ -126,6 +126,21 @@ export function AppNbformat() {
         </LexicalProvider>
       </Jupyter>
       <div className="other App">
+        {/* Tailwind v4 Button - Using Tailwind Utility Classes */}
+        <div className="flex flex-col items-center gap-4 my-8">
+          <button 
+            className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition duration-300 ease-in-out"
+            onClick={() => alert('Tailwind CSS v4 is working correctly!')}
+          >
+            Tailwind v4 Button
+          </button>
+          {/* Custom class from tailwind.css */}
+          <div className="mt-4 text-center">
+            <span className="tailwind-demo-badge">
+              Tailwind v4 Custom Component
+            </span>
+          </div>
+        </div>
         <br/>
         <a href="https://datalayer.io" target="_blank">
           <ThreeBarsIcon/>

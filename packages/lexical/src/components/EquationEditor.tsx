@@ -4,7 +4,6 @@
  * MIT License
  */
 
-import './../../style/lexical/EquationEditor.css';
 
 import {ChangeEvent, RefObject} from 'react';
 

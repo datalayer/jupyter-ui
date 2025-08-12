@@ -4,8 +4,6 @@
  * MIT License
  */
 
-import './../../style/lexical/Dialog.css';
-
 import {ReactNode} from 'react';
 
 type Props = Readonly<{

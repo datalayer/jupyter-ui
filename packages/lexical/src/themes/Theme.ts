@@ -6,7 +6,6 @@
 
 import type {EditorThemeClasses} from 'lexical';
 
-import './../../style/lexical/Theme.css';
  
 const theme: EditorThemeClasses = {
   characterLimit: 'PlaygroundEditorTheme__characterLimit',

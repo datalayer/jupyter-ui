@@ -4,4 +4,15 @@
  * MIT License
  */
 
-@import url('base.css');
+@import "tailwindcss";
+
+ /* Import base styles */
+@import url("base.css");
+
+/* Import tailwind.css which contains custom components */
+@import url('tailwind.css');
+
+/* Custom base styles */
+[contenteditable] {
+  outline: 0px solid transparent;
+}

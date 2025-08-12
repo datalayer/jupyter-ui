@@ -4,7 +4,6 @@
  * MIT License
  */
 
-import './../../style/lexical/Input.css';
 
 type Props = Readonly<{
   'data-test-id'?: string;

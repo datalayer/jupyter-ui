@@ -9,7 +9,6 @@ import {$getNearestNodeFromDOMNode, LexicalEditor} from 'lexical';
 import {Options} from 'prettier';
 import {useState} from 'react';
 
-import './../../style/lexical/PrettierButton.css';
 
 interface Props {
   lang: string;

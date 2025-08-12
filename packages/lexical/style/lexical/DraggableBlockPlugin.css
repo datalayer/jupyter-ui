@@ -19,7 +19,7 @@
   width: 16px;
   height: 16px;
   opacity: 0.3;
-  background-image: url(./images/icons/draggable-block-menu.svg);
+  background-image: url(./icons/draggable-block-menu.svg);
 }
 
 .draggable-block-menu:active {

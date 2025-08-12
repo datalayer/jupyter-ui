@@ -17,7 +17,6 @@ import { $createJupyterCodeNode, JupyterCodeNode, $isJupyterCodeNode } from "../
 import { registerCodeHighlighting } from "../nodes/JupyterCodeHighlighter";
 import { JupyterOutputNode, $createJupyterOutputNode } from "../nodes/JupyterOutputNode";
 
-import "./../../style/lexical/JupyterPlugin.css";
 
 export const CODE_UUID_TO_OUTPUT_KEY = new Map<string, NodeKey | undefined>();
 export const CODE_UUID_TO_CODE_KEY = new Map<string, NodeKey | undefined>();

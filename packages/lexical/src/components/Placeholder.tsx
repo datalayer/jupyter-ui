@@ -6,7 +6,6 @@
 
 import {ReactNode} from 'react';
 
-import './../../style/lexical/Placeholder.css';
 
 export const Placeholder = ({
   children,
