@@ -6,10 +6,10 @@
 
 @import "tailwindcss";
 
-/* Import base styles */
+ /* Import base styles */
 @import url("base.css");
 
-/* Import tailwind.css which now contains all the Tailwind v4 compatible styles */
+/* Import tailwind.css which contains custom components */
 @import url('tailwind.css');
 
 /* Custom base styles */

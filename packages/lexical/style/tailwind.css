@@ -4,6 +4,9 @@
  * MIT License
  */
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @import url('./lexical/index.css');
 
