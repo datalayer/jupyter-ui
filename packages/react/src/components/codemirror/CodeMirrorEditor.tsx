@@ -16,7 +16,7 @@ import useOutputsStore from '../output/OutputState';
 import codeMirrorTheme from './CodeMirrorTheme';
 import CodeMirrorOutputToolbar from './CodeMirrorOutputToolbar';
 
-export const CodeMirrorDatalayerEditor = (props: {
+export const CodeMirrorEditor = (props: {
   code: string;
   codePre?: string;
   outputAdapter: OutputAdapter;
@@ -147,4 +147,4 @@ export const CodeMirrorDatalayerEditor = (props: {
   );
 };
 
-export default CodeMirrorDatalayerEditor;
+export default CodeMirrorEditor;

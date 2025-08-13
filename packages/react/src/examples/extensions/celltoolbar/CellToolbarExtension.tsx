@@ -6,16 +6,16 @@
 
 import { INotebookModel, NotebookPanel } from '@jupyterlab/notebook';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
-import { DatalayerNotebookExtension, IDatalayerNotebookExtensionProps } from '../../../components';
+import { NotebookExtension, INotebookExtensionProps } from '../../../components';
 import { CellToolbarWidget } from './CellToolbarWidget';
 
 import './CellToolbarExtension.css';
 
-export class CellToolbarExtension implements DatalayerNotebookExtension {
-  private _props?: IDatalayerNotebookExtensionProps;
+export class CellToolbarExtension implements NotebookExtension {
+  private _props?: INotebookExtensionProps;
 
   /* @override */
-  init(props: IDatalayerNotebookExtensionProps) {
+  init(props: INotebookExtensionProps) {
     this._props = props;
   }
 

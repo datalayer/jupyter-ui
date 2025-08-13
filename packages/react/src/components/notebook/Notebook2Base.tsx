@@ -37,12 +37,12 @@ import type { OnSessionConnection } from '../../state';
 import { newUuid, remoteUserCursors } from '../../utils';
 import { Lumino } from '../lumino';
 import { Loader } from '../utils';
-import type { DatalayerNotebookExtension } from './NotebookExtensions';
+import type { NotebookExtension } from './NotebookExtensions';
 import { addNotebookCommands } from './NotebookCommands';
 
 const COMPLETER_TIMEOUT_MILLISECONDS = 1000;
 
-const DEFAULT_EXTENSIONS = new Array<DatalayerNotebookExtension>();
+const DEFAULT_EXTENSIONS = new Array<NotebookExtension>();
 
 const FALLBACK_NOTEBOOK_PATH = '.datalayer/ping.ipynb';
 
@@ -64,7 +64,7 @@ export interface INotebook2BaseProps {
   /**
    * Notebook extensions
    */
-  extensions?: DatalayerNotebookExtension[];
+  extensions?: NotebookExtension[];
   /**
    * Kernel ID to connect to
    */

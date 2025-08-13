@@ -6,7 +6,6 @@
 
 import { YNotebook } from '@jupyter/ydoc';
 import { Cell, ICellModel } from '@jupyterlab/cells';
-import { URLExt } from '@jupyterlab/coreutils';
 import { createGlobalStyle } from 'styled-components';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { NotebookModel } from '@jupyterlab/notebook';
@@ -20,7 +19,9 @@ import { WebsocketProvider as YWebsocketProvider } from 'y-websocket';
 import { jupyterReactStore, KernelTransfer, OnSessionConnection, } from '../../state';
 import { newUuid, sleep } from '../../utils';
 import { asObservable, Lumino } from '../lumino';
-import { COLLABORATION_ROOM_URL_PATH, ICollaborationProvider, Kernel, Lite, requestJupyterCollaborationSession, useJupyter } from './../../jupyter';
+import { collaborationProviderRegistry, ICollaborationProvider, Kernel, Lite, useJupyter } from './../../jupyter';
+// Import to register built-in providers
+import './../../jupyter/collaboration/registerBuiltinProviders';
 import { CellMetadataEditor } from './cell/metadata';
 import { NotebookAdapter } from './NotebookAdapter';
 import { useNotebookStore } from './NotebookState';
@@ -28,7 +29,7 @@ import { INotebookToolbarProps } from './toolbar';
 import { Loader } from '../utils';
 
 import './Notebook.css';
-import { DatalayerNotebookExtension } from './NotebookExtensions';
+import { NotebookExtension } from './NotebookExtensions';
 
 export type ExternalIPyWidgets = {
   name: string;
@@ -53,7 +54,7 @@ export type INotebookProps = {
   cellMetadataPanel?: boolean;
   cellSidebarMargin?: number;
   collaborative?: ICollaborationProvider;
-  extensions?: DatalayerNotebookExtension[];
+  extensions?: NotebookExtension[];
   height?: string;
   id: string;
   kernel?: Kernel;
@@ -285,32 +286,25 @@ export const Notebook = (props: INotebookProps) => {
       if (adapter?.notebookPanel && isMounted) {
         sharedModel = new YNotebook();
         const { ydoc, awareness } = sharedModel;
-        // Setup Collaboration.
-        if (collaborative == 'jupyter') {
-          const token =
-            jupyterReactStore.getState().jupyterConfig?.jupyterServerToken;
-          const session = await requestJupyterCollaborationSession('json', 'notebook', path!);
-          const documentURL = URLExt.join(
-            serviceManager?.serverSettings.wsUrl!,
-            COLLABORATION_ROOM_URL_PATH
-          );
-          const documentName = `${session.format}:${session.type}:${session.fileId}`;
-          provider = new YWebsocketProvider(documentURL, documentName, ydoc, {
-            disableBc: true,
-            params: {
-              sessionId: session.sessionId,
-              token: token!,
-            },
+        // Setup Collaboration using the provider registry.
+        try {
+          const token = jupyterReactStore.getState().jupyterConfig?.jupyterServerToken;
+          provider = await collaborationProviderRegistry.createProvider(collaborative!, {
+            ydoc,
             awareness,
+            path: path!,
+            serviceManager,
+            token,
           });
-        } else {
-          // Other collaboration types can be handled by extensions
-          console.warn(`Unsupported collaboration type: ${collaborative}`);
+        } catch (error) {
+          console.error(`Failed to create collaboration provider '${collaborative}':`, error);
+          return;
         }
+        
         if (provider) {
           provider.on('sync', onSync);
           provider.on('connection-close', onConnectionClose);
-          console.log('Collaboration is setup with websocket provider.');
+          console.log(`Collaboration is setup with '${collaborative}' provider.`);
           // Create a new model using the one synchronize with the collaboration document
           const model = new NotebookModel({
             collaborationEnabled: true,

@@ -7,7 +7,7 @@
 import { NotebookPanel, NotebookToCFactory } from '@jupyterlab/notebook';
 import { TableOfContents, TableOfContentsRegistry, TableOfContentsTracker } from '@jupyterlab/toc';
 import { BoxPanel } from '@lumino/widgets';
-import { DatalayerNotebookExtension, IDatalayerNotebookExtensionProps, notebookStore } from '../../../components';
+import { NotebookExtension, INotebookExtensionProps, notebookStore } from '../../../components';
 import { JupyterLayoutFactory } from './JupyterLayoutFactory';
 
 /**
@@ -32,8 +32,8 @@ export interface TocExtensionOptions {
 }
 
 /** Table of Contents Extension */
-export class TocExtension implements DatalayerNotebookExtension {
-  private _props: IDatalayerNotebookExtensionProps;
+export class TocExtension implements NotebookExtension {
+  private _props: INotebookExtensionProps;
   private _tocRegistry: TableOfContentsRegistry;
   private _tocTracker: TableOfContentsTracker;
   private _layoutFactory: TocLayoutFactory;
@@ -43,7 +43,7 @@ export class TocExtension implements DatalayerNotebookExtension {
     this._layoutFactory = options.factory ?? new JupyterLayoutFactory();
   }
 
-  init(props: IDatalayerNotebookExtensionProps) {
+  init(props: INotebookExtensionProps) {
     this._props = props;
 
     this._tocRegistry = new TableOfContentsRegistry();
