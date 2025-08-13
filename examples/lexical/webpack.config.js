@@ -57,7 +57,7 @@ module.exports = {
     filename: '[name].[contenthash].jupyterReactLexicalExample.js',
   },
   resolve: {
-    extensions: [ '.tsx', '.ts', 'jsx', '.js' ],
+    extensions: [ '.tsx', '.ts', '.jsx', '.js', '.css' ],
     alias: { 
       "stream": "stream-browserify",
     },

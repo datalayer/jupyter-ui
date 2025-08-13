@@ -32,7 +32,7 @@ import { Box } from '@primer/react';
 import { Banner } from '@primer/react/experimental';
 import { EditorView } from 'codemirror';
 import { WebsocketProvider } from 'y-websocket';
-import { COLLABORATION_ROOM_URL_PATH, ICollaborationServer, requestDatalayerollaborationSessionId, requestJupyterCollaborationSession, WIDGET_MIMETYPE, WidgetLabRenderer, WidgetManager } from '../../jupyter';
+import { COLLABORATION_ROOM_URL_PATH, ICollaborationServer, requestJupyterCollaborationSession, WIDGET_MIMETYPE, WidgetLabRenderer, WidgetManager } from '../../jupyter';
 import type { OnSessionConnection } from '../../state';
 import { newUuid, remoteUserCursors } from '../../utils';
 import { Lumino } from '../lumino';
@@ -654,16 +654,9 @@ export function useNotebookModel(options: IOptions): NotebookModel | null {
           if (serverSettings.token) {
             params.token = serverSettings.token;
           }
-        } else if (collaborationServer.type === 'datalayer') {
-          const { baseURL, documentName: documentName_, token } = collaborationServer;
-          documentName = documentName_; // Set non local variable.
-          const serverURL = URLExt.join(baseURL, '/api/spacer/v1/documents');
-          documentURL = serverURL.replace(/^http/, 'ws');
-          params.sessionId = await requestDatalayerollaborationSessionId({
-            url: URLExt.join(serverURL, documentName),
-            token,
-          });
-          params.token = token;
+        } else {
+          // Other collaboration types can be handled by extensions
+          console.warn(`Unsupported collaboration type: ${collaborationServer.type}`);
         }
 
         if (params.sessionId) {

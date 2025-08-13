@@ -4,4 +4,4 @@
  * MIT License
  */
 
-export * from './DatalayerKernels';
+// DatalayerKernels has been moved to @datalayer/core

@@ -4,4 +4,5 @@
  * MIT License
  */
 
-export * from './kernels';
+export * from './ServiceManagerProvider';
+export * from './createServiceManagers';

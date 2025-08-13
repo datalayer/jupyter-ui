@@ -20,7 +20,7 @@ import { WebsocketProvider as YWebsocketProvider } from 'y-websocket';
 import { jupyterReactStore, KernelTransfer, OnSessionConnection, } from '../../state';
 import { newUuid, sleep } from '../../utils';
 import { asObservable, Lumino } from '../lumino';
-import { COLLABORATION_ROOM_URL_PATH, requestDatalayerollaborationSessionId, ICollaborationProvider, Kernel, Lite, requestJupyterCollaborationSession, useJupyter } from './../../jupyter';
+import { COLLABORATION_ROOM_URL_PATH, ICollaborationProvider, Kernel, Lite, requestJupyterCollaborationSession, useJupyter } from './../../jupyter';
 import { CellMetadataEditor } from './cell/metadata';
 import { NotebookAdapter } from './NotebookAdapter';
 import { useNotebookStore } from './NotebookState';
@@ -303,27 +303,9 @@ export const Notebook = (props: INotebookProps) => {
             },
             awareness,
           });
-        } else if (collaborative == 'datalayer') {
-          const { runUrl, token } = jupyterReactStore.getState().datalayerConfig ?? {};
-          const documentName = id;
-          const documentURL = URLExt.join(runUrl!, `/api/spacer/v1/documents`);
-          const sessionId = await requestDatalayerollaborationSessionId({
-            url: URLExt.join(documentURL, documentName),
-            token,
-          });
-          provider = new YWebsocketProvider(
-            documentURL.replace(/^http/, 'ws'),
-            documentName,
-            ydoc,
-            {
-              disableBc: true,
-              params: {
-                sessionId,
-                token: token!,
-              },
-              awareness,
-            }
-          );
+        } else {
+          // Other collaboration types can be handled by extensions
+          console.warn(`Unsupported collaboration type: ${collaborative}`);
         }
         if (provider) {
           provider.on('sync', onSync);
