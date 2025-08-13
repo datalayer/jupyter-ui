@@ -86,6 +86,7 @@
     "react-dom": "18.3.1",
     "react-json-tree": "^0.19.0",
     "styled-components": "^5.3.10",
+    "tailwindcss": "^4.1.11",
     "yjs": "^13.6.24"
   },
   "devDependencies": {
@@ -138,7 +139,6 @@
     "stylelint-config-standard": "^24.0.0",
     "stylelint-prettier": "^2.0.0",
     "svg-url-loader": "^7.1.1",
-    "tailwindcss": "^4.1.11",
     "typedoc": "^0.28.2",
     "typescript": "^5.8.3",
     "url-loader": "^3.0.0",
