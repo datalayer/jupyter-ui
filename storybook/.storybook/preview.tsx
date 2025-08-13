@@ -5,11 +5,11 @@
  */
 
 import React from "react";
-import { CodeOrSourceMdx } from "@storybook/addon-docs";
+// import { CodeOrSourceMdx } from "@storybook/addon-docs"; // Removed in Storybook v9
 import { Mermaid } from "mdx-mermaid/lib/Mermaid"
 import mermaid from 'mermaid';
 import zenuml from '@mermaid-js/mermaid-zenuml';
-import type { Preview } from '@storybook/react';
+import type { Preview } from '@storybook/react-webpack5';
 import { toolbarTypes, withThemeProvider } from '../src/stories/_utils/story-helpers';
 
 import '@jupyterlab/apputils/style/materialcolors.css';
@@ -29,11 +29,11 @@ const preview: Preview = {
     docs: {
       components: {
         code: props => {
-          return props.className?.includes("mermaid")
-            ? 
-              <Mermaid chart={props.children} />
-            :
-              <CodeOrSourceMdx {...props} />
+          if (props.className?.includes("mermaid")) {
+            return <Mermaid chart={props.children} />;
+          }
+          // Default code block rendering
+          return <pre {...props} />;
         }
       },
     },

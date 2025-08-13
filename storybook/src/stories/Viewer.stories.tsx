@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-webpack5';
 import { Jupyter, Viewer } from '@datalayer/jupyter-react';
 import nbformat1 from './examples/NotebookExample1.ipynb.json';
 import nbformat2 from './examples/NotebookExample2.ipynb.json';

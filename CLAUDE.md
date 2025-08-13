@@ -25,34 +25,35 @@ Jupyter React UI - Generic React components and utilities for building Jupyter-b
 - **Collaboration system**: Extensible plugin-based collaboration with built-in Jupyter provider
 - **JupyterLab integration**: Support for extensions and themes
 
-## Collaboration System
+## Extension Architecture
 
-**Plugin-based extensible architecture:**
-- `CollaborationProviderRegistry` - Global registry for collaboration providers
-- `ICollaborationProviderImpl` - Interface all providers must implement
-- `JupyterCollaborationProvider` - Built-in provider for Jupyter Lab/Server collaboration
-- Built-in providers auto-registered on import
+**Generic Provider Pattern**: `ICollaborationProvider = string | undefined` - accepts any provider name
+- `CollaborationProviderRegistry` - Global registry validates providers at runtime  
+- `JupyterCollaborationProvider` - Built-in for Jupyter Lab/Server collaboration
+- Extensions auto-register providers on import
 
-**Usage:**
 ```typescript
-// Use built-in Jupyter collaboration
+// Built-in provider  
 <Notebook collaborative="jupyter" ... />
 
-// Extensions can register custom providers
-collaborationProviderRegistry.register('custom', new CustomProvider());
-<Notebook collaborative="custom" ... />
+// Extensions register custom providers automatically
+import '@datalayer/core'; // Auto-registers 'datalayer' provider
+<Notebook collaborative="datalayer" ... />
 ```
 
-## Migration Notes
+## Migration Status
 
-**Completed Migration (v1.0.7):**
-1. ✅ Removed all Datalayer-specific configuration from JupyterConfig
-2. ✅ Made JupyterReactState completely generic (no datalayerConfig)
-3. ✅ Moved DatalayerCollaboration to core package
-4. ✅ Created extensible collaboration system with plugin pattern
-5. ✅ Removed hardcoded collaboration logic from Notebook component
+**✅ Complete (v1.0.7)**: 100% generic, no Datalayer dependencies  
+- Generic collaboration types (`ICollaborationProvider = string | undefined`)
+- Extensible state management (`JupyterReactState`)  
+- Plugin-based collaboration system
+- Generic component naming (CodeMirrorEditor, NotebookExtension)
+- One-way dependency: extensions → jupyter-ui (never reverse)
 
-**Extension Points:**
-- Core can extend JupyterReactState with DatalayerReactState
-- Core can register additional collaboration providers
-- Core can extend ServiceManagerLess with Datalayer-specific managers
+## Recent Updates (Session 2025-08-13)
+
+- Fixed collaboration interface types (IJupyterCollaborationServer correctly has type: 'jupyter')
+- Made ICollaborationProvider truly generic accepting any string provider name
+- Created CollaborationProviderRegistry with runtime validation
+- Added comprehensive generic examples in `src/examples/generic/`
+- Renamed components to generic names (CodeMirrorEditor, NotebookExtension)

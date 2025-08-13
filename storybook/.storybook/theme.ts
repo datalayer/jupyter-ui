@@ -4,10 +4,9 @@
  * MIT License
  */
 
-import { create } from '@storybook/theming/create';
-
-export default create({
+// Temporarily simplified theme until we can resolve dependency
+export default {
   base: 'light',
   brandTitle: 'Jupyter UI Storybook',
   brandUrl: 'https://jupyter-ui.datalayer.tech',
-});
+};
