@@ -12,7 +12,6 @@ import { getJupyterServerUrl, createLiteServiceManager, ensureJupyterAuth, creat
 import { ServiceManagerLess } from '../jupyter/services';
 import { Kernel } from '../jupyter/kernel/Kernel';
 import { IJupyterConfig, loadJupyterConfig } from '../jupyter/JupyterConfig';
-import type { IDatalayerConfig } from './IDatalayerConfig';
 import { cellsStore, CellsState } from '../components/cell/CellState';
 import { consoleStore, ConsoleState } from '../components/console/ConsoleState';
 import { notebookStore, NotebookState } from '../components/notebook/NotebookState';
@@ -28,7 +27,6 @@ export type KernelTransfer = {
 export type JupyterReactState = {
   cellsStore: CellsState;
   consoleStore: ConsoleState;
-  datalayerConfig?: IDatalayerConfig;
   jupyterConfig?: IJupyterConfig;
   kernel?: Kernel;
   kernelIsLoading: boolean;
@@ -37,26 +35,13 @@ export type JupyterReactState = {
   serviceManager?: ServiceManager.IManager;
   terminalStore: TerminalState;
   version: string;
-  setDatalayerConfig: (configuration?: IDatalayerConfig) => void;
   setJupyterConfig: (configuration?: IJupyterConfig) => void;
   setServiceManager: (serviceManager?: ServiceManager.IManager) => void;
   setVersion: (version: string) => void;
 };
 
-let initialDatalayerConfig: IDatalayerConfig | undefined = undefined;
-
-try {
-  const pageConfig = document.getElementById('datalayer-config-data');
-  if (pageConfig?.innerText) {
-    initialDatalayerConfig = JSON.parse(pageConfig?.innerText);
-  }
-} catch (error) {
-  console.debug('Issue with page configuration.', error);
-}
-
 export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
   collaborative: false,
-  datalayerConfig: initialDatalayerConfig,
   version: '',
   jupyterConfig: undefined,
   kernelIsLoading: true,
@@ -68,18 +53,15 @@ export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
   notebookStore: notebookStore.getState(),
   outputStore: outputsStore.getState(),
   terminalStore: terminalStore.getState(),
-  setDatalayerConfig: (datalayerConfig?: IDatalayerConfig) => {
-    set(state => ({ datalayerConfig }));
-  },
   setJupyterConfig: (jupyterConfig?: IJupyterConfig) => {
-    set(state => ({ jupyterConfig }));
+    set(() => ({ jupyterConfig }));
   },
   setServiceManager: (serviceManager?: ServiceManager.IManager) => {
-    set(state => ({ serviceManager }));
+    set(() => ({ serviceManager }));
   },
   setVersion: version => {
     if (version && !get().version) {
-      set(state => ({ version }));
+      set(() => ({ version }));
     }
   },
 }));

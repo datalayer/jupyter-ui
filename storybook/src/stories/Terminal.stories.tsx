@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-webpack5';
 import { Jupyter, JupyterProps, Terminal } from '@datalayer/jupyter-react';
 import React from 'react';
 

@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-webpack5';
 import { Jupyter, Notebook } from '@datalayer/jupyter-react';
 
 const meta: Meta<typeof Notebook> = {
@@ -13,7 +13,7 @@ const meta: Meta<typeof Notebook> = {
   argTypes: {
     lite: {
       control: 'radio',
-      options: ['true', 'false', '@jupyterlite/javascript-kernel-extension'],
+      options: ['true', 'false'], // Temporarily disabled: '@jupyterlite/javascript-kernel-extension'
       table: {
         // Switching live does not work
         disable: true,
@@ -34,9 +34,10 @@ const Template = (args, { globals: { labComparison = true }, ...rest }) => {
   const lite = {
     true: true,
     false: false,
-    '@jupyterlite/javascript-kernel-extension': import(
-      '@jupyterlite/javascript-kernel-extension'
-    ),
+    // Temporarily disabled due to missing icons
+    // '@jupyterlite/javascript-kernel-extension': import(
+    //   '@jupyterlite/javascript-kernel-extension'
+    // ),
   }[args.browser];
 
   const kernelName =

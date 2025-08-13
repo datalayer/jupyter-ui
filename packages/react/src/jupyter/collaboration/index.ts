@@ -4,6 +4,9 @@
  * MIT License
  */
 
-export * from './DatalayerCollaboration';
 export * from './ICollaborative';
 export * from './JupyterCollaboration';
+export * from './ICollaborationProvider';
+export * from './CollaborationProviderRegistry';
+export * from './JupyterCollaborationProvider';
+export * from './registerBuiltinProviders';

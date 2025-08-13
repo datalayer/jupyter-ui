@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-webpack5';
 import { Jupyter, Console } from '@datalayer/jupyter-react';
 
 const meta: Meta<typeof Console> = {
@@ -13,7 +13,7 @@ const meta: Meta<typeof Console> = {
   argTypes: {
     lite: {
       control: 'radio',
-      options: ['true', 'false', '@jupyterlite/javascript-kernel-extension'],
+      options: ['true', 'false'], // Temporarily disabled: '@jupyterlite/javascript-kernel-extension',
       table: {
         // Switching live does not work
         disable: true,
@@ -43,9 +43,10 @@ const Template = (args, { globals: { labComparison } }) => {
   const lite = {
     true: true,
     false: false,
-    '@jupyterlite/javascript-kernel-extension': import(
-      '@jupyterlite/javascript-kernel-extension'
-    ),
+    // Temporarily disabled due to missing icons
+    // '@jupyterlite/javascript-kernel-extension': import(
+    //   '@jupyterlite/javascript-kernel-extension'
+    // ),
   }[args.browser];
 
   const kernelName =
@@ -84,6 +85,6 @@ LitePython.args = {
 export const LiteJavascript: Story = Template.bind({}) as Story;
 LiteJavascript.args = {
   ...Default.args,
-  lite: '@jupyterlite/javascript-kernel-extension',
+  lite: true, // Was: '@jupyterlite/javascript-kernel-extension',
   code: "a = 'hello';\nArray(4).fill(`${a} the world`);",
 };

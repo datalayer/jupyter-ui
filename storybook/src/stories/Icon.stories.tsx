@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-webpack5';
 import * as dtIcons from '@datalayer/icons-react';
 
 import * as jpIcons from '@jupyterlab/ui-components';

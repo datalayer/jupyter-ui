@@ -6,26 +6,10 @@
 
 import { ServerConnection } from "@jupyterlab/services";
 
+/**
+ * Generic Jupyter collaboration server configuration
+ */
 export type IJupyterCollaborationServer = {
-  /**
-   * Base server URL
-   */
-  baseURL: string;
-  /**
-   * Notebook document name to connect to.
-   */
-  documentName: string;
-  /**
-   * JWT token
-   */
-  token: string;
-  /**
-   * Server type
-   */
-  type: 'datalayer';
-}
-
-export type IDatalayerCollaborationServer = {
   /**
    * Notebook path
    */
@@ -40,8 +24,25 @@ export type IDatalayerCollaborationServer = {
   type: 'jupyter';
 }
 
-export type ICollaborationServer = IJupyterCollaborationServer | IDatalayerCollaborationServer;
+/**
+ * Generic collaboration server type (jupyter-ui only supports Jupyter by default)
+ * Extensions can provide additional collaboration types via the provider registry
+ */
+export type ICollaborationServer = IJupyterCollaborationServer;
 
-export type ICollaborationProvider = 'jupyter' | 'datalayer' | undefined;
+/**
+ * Generic collaboration provider type - accepts any provider name.
+ * The CollaborationProviderRegistry validates provider availability at runtime.
+ * 
+ * Built-in providers:
+ * - 'jupyter': Default Jupyter collaboration via JupyterLab collaboration server
+ * 
+ * Extensions can register additional providers via:
+ * ```typescript
+ * import { collaborationProviderRegistry } from '@datalayer/jupyter-react';
+ * collaborationProviderRegistry.register('my-provider', new MyCollaborationProvider());
+ * ```
+ */
+export type ICollaborationProvider = string | undefined;
 
 export default ICollaborationProvider;

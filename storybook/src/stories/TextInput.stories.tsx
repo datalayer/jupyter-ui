@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-webpack5';
 import { InputGroup } from '@jupyterlab/ui-components';
 import { TextInput } from '@datalayer/jupyter-react';
 import { getTextInputArgTypes } from './_utils/story-helpers';

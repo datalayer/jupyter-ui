@@ -15,7 +15,7 @@ import { Box } from '@primer/react';
 import type { OnSessionConnection } from '../../state';
 import { Loader } from '../utils';
 import { useKernelId, useNotebookModel, Notebook2Base } from './Notebook2Base';
-import type { DatalayerNotebookExtension } from './NotebookExtensions';
+import type { NotebookExtension } from './NotebookExtensions';
 import type { INotebookToolbarProps } from './toolbar';
 
 import './Notebook.css';
@@ -48,7 +48,7 @@ export interface INotebook2Props {
   /**
    * Notebook extensions.
    */
-  extensions?: DatalayerNotebookExtension[];
+  extensions?: NotebookExtension[];
   /**
    * Notebook ID.
    */

@@ -12,7 +12,7 @@ import {
   XIcon,
   HeartIcon,
 } from '@primer/octicons-react';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-webpack5';
 import { Button } from '@datalayer/jupyter-react';
 import { createLabButton } from './_utils/lab-builders';
 

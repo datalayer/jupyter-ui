@@ -1,0 +1,84 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
+// DISABLED: The lexical example App1 is not available
+// This file has been renamed to .disabled to prevent storybook compilation errors
+
+import type { Meta, StoryObj } from '@storybook/react-webpack5';
+import RichEditor from '@datalayer/jupyter-lexical/lib/examples/App1';
+
+const meta: Meta<typeof RichEditor> = {
+  title: 'Components/RichEditor',
+  component: RichEditor,
+  argTypes: {
+  },
+} as Meta<typeof RichEditor>;
+
+export default meta;
+
+type Story = StoryObj<typeof RichEditor>;
+
+export const Default: Story = {
+  args: {
+  },
+};
+
+const RICH_EDITOR_CODE = `
+{
+  "root": {
+    "children": [
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "Welcome to the playground",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "heading",
+        "version": 1,
+        "tag": "h1"
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "In case you were wondering what the black box at the bottom is – it's the debug view, showing the current state of editor. You can type here to see how it is being updated. You can turn it on/off from the settings control in the bottom-left of your screen.",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "paragraph",
+        "version": 1
+      }
+    ],
+    "direction": "ltr",
+    "format": "",
+    "indent": 0,
+    "type": "root",
+    "version": 1
+  }
+}
+`;
+
+export const Initial: Story = {
+  args: {
+    initialState: RICH_EDITOR_CODE,
+  },
+};

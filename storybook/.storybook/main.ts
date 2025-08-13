@@ -20,16 +20,12 @@ const config: StorybookConfig = {
     '../src/stories/**/*.mdx',
     '../src/stories/**/*.stories.@(js|jsx|mjs|ts|tsx)',
   ],
+
   addons: [
     getAbsolutePath('@storybook/addon-links'),
-    {
-      name: getAbsolutePath('@storybook/addon-essentials'),
-      options: {
-        backgrounds: false,
-      },
-    },
-    getAbsolutePath('@storybook/addon-interactions'),
+    getAbsolutePath("@storybook/addon-docs")
   ],
+
   framework: {
     name: getAbsolutePath('@storybook/react-webpack5'),
     options: {
@@ -38,6 +34,7 @@ const config: StorybookConfig = {
       },
     },
   },
+
   webpackFinal: config => {
     config.module?.rules?.push(
       {
@@ -132,9 +129,10 @@ const config: StorybookConfig = {
     );
     return config;
   },
-  docs: {
-    autodocs: 'tag',
-  },
+
+  features: {
+    backgrounds: false
+  }
 };
 
 export default config;

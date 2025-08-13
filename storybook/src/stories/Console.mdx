@@ -4,7 +4,7 @@
   ~ MIT License
 */}
 
-import {Canvas, Meta} from '@storybook/blocks';
+import {Canvas, Meta} from '@storybook/addon-docs/blocks';
 import * as ConsoleStories from './Console.stories';
 
 <Meta of={ConsoleStories} />
@@ -46,8 +46,8 @@ the [JavaScript kernel](https://github.com/jupyterlite/jupyterlite/tree/main/py/
 
 <Canvas of={ConsoleStories.LiteJavascript} source={{code: `<Jupyter
     startDefaultKernel={true}
-    lite={import('@jupyterlite/javascript-kernel-extension')}
-    defaultKernelName={'javascript'}
+    lite={true}
+    defaultKernelName={'python'}
 >
     <Console />
 </Jupyter>`}} />

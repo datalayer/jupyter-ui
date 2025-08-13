@@ -8,7 +8,7 @@ import { Widget, PanelLayout } from '@lumino/widgets';
 import { NotebookPanel } from '@jupyterlab/notebook';
 import { IObservableList } from '@jupyterlab/observables';
 import { Cell, CodeCell, ICellModel } from '@jupyterlab/cells';
-import { IDatalayerNotebookExtensionProps } from '../../../components';
+import { INotebookExtensionProps } from '../../../components';
 import { CellToolbar, DATALAYER_CELL_TOOLBAR_CLASS } from './CellToolbar';
 
 export interface ICellToolbarSettings {
@@ -18,9 +18,9 @@ export interface ICellToolbarSettings {
 
 export class CellToolbarWidget extends Widget {
   private _panel: NotebookPanel;
-  private _props: IDatalayerNotebookExtensionProps;
+  private _props: INotebookExtensionProps;
 
-  constructor(panel: NotebookPanel, props: IDatalayerNotebookExtensionProps) {
+  constructor(panel: NotebookPanel, props: INotebookExtensionProps) {
     super();
     this._panel = panel;
     this._props = props;
