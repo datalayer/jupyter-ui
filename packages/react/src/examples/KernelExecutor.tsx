@@ -12,7 +12,10 @@ import { KernelMessage } from '@jupyterlab/services';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { Output } from '../components/output/Output';
-import { IOPubMessageHook, ShellMessageHook } from '../jupyter/kernel/KernelExecutor';
+import {
+  IOPubMessageHook,
+  ShellMessageHook,
+} from '../jupyter/kernel/KernelExecutor';
 
 const CODE = `from time import sleep
 for i in range(0, 15):
@@ -22,9 +25,10 @@ for i in range(0, 15):
 print("🔁 I am done with looping!")`;
 
 const KernelExecutorView = () => {
-  const { defaultKernel } = useJupyter( { startDefaultKernel: true });
+  const { defaultKernel } = useJupyter({ startDefaultKernel: true });
   const [outputAreaModel, setOutputAreaModel] = useState<IOutputAreaModel>();
-  const [finalOutputAreaModel, setFinalOutputAreaModel] = useState<IOutputAreaModel>();
+  const [finalOutputAreaModel, setFinalOutputAreaModel] =
+    useState<IOutputAreaModel>();
   const [done, setDone] = useState(false);
   useEffect(() => {
     if (defaultKernel?.connection) {

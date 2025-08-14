@@ -10,8 +10,16 @@ import { DisposableSet } from '@lumino/disposable';
 import { Widget } from '@lumino/widgets';
 import { SessionContextDialogs } from '@jupyterlab/apputils';
 import { CompletionHandler } from '@jupyterlab/completer';
-import { SearchDocumentModel, SearchDocumentView } from '@jupyterlab/documentsearch';
-import { NotebookActions, NotebookPanel, NotebookSearchProvider, NotebookTracker, } from '@jupyterlab/notebook';
+import {
+  SearchDocumentModel,
+  SearchDocumentView,
+} from '@jupyterlab/documentsearch';
+import {
+  NotebookActions,
+  NotebookPanel,
+  NotebookSearchProvider,
+  NotebookTracker,
+} from '@jupyterlab/notebook';
 import { nullTranslator } from '@jupyterlab/translation';
 import { IYText } from '@jupyter/ydoc';
 
@@ -638,9 +646,7 @@ export function addNotebookCommands(
       command: NotebookCommandIds.changeCellTypeToCode,
     },
   ];
-  bindings.forEach(binding =>
-    allCommands.add(commands.addKeyBinding(binding))
-  );
+  bindings.forEach(binding => allCommands.add(commands.addKeyBinding(binding)));
 
   return allCommands;
 }

@@ -27,19 +27,13 @@ const JupyterLabAppExample = () => {
   };
   return (
     <JupyterLabApp
-      plugins={[
-        lightThemePlugins,
-        ipywidgetsPlugins,
-        plotlyPlugins,
-      ]}
-      mimeRenderers={[
-        plotlyMimeRenderers
-      ]}
+      plugins={[lightThemePlugins, ipywidgetsPlugins, plotlyPlugins]}
+      mimeRenderers={[plotlyMimeRenderers]}
       height="calc(100vh - 74px)"
       onJupyterLab={onJupyterLab}
     />
   );
-}
+};
 
 const div = document.createElement('div');
 document.body.appendChild(div);

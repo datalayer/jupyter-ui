@@ -1,58 +1,53 @@
 {
-	"name": "Jupyter UI",
-	"build": {
-		"dockerfile": "Dockerfile",
-		"context": "../",
-		"target": "dev"
-	},
-	"remoteUser": "mambauser",
-	"postStartCommand": "yarn install",
-	"hostRequirements": {
-		"memory": "2gb",
-		"cpus": 2
-	},
-	"portsAttributes": {
-		"8686": {
-			"label": "Jupyter Server",
-			"onAutoForward": "notify"
-		},
-		"3208": {
-			"label": "Webpack Application",
-			"onAutoForward": "notify"
-		},
-		"3000": {
-			"label": "CRA, Docusaurus, Next.js... ",
-			"onAutoForward": "notify"
-		}
-	},
-	"customizations": {
-		"vscode": {
-			"settings": { 
-				"terminal.integrated.profiles.linux": {
-					"bash": {
-						"path": "/bin/bash"
-					}
-				},
-				"python.defaultInterpreterPath": "/usr/local/bin/python",
-				"python.languageServer": "Default",
-				"pylinting.enabled": true,
-				"pylinting.pylintEnabled": true,
-				"autopep8.path": [
-					"/usr/local/py-utils/bin/autopep8"
-				],
-				"autopep8.blackPath": "/usr/local/py-utils/bin/black",
-				"autopep8.yapfPath": "/usr/local/py-utils/bin/yapf",
-				"pylinting.banditPath": "/usr/local/py-utils/bin/bandit",
-				"pylinting.flake8Path": "/usr/local/py-utils/bin/flake8",
-				"pylinting.mypyPath": "/usr/local/py-utils/bin/mypy",
-				"pylinting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
-				"pylinting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
-				"pylinting.pylintPath": "/usr/local/py-utils/bin/pylint"
-			},
-			"extensions": [
-				"ms-python.python",
-				"ms-python.vscode-pylance"
-			]
-		}
-	}
+  "name": "Jupyter UI",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "../",
+    "target": "dev"
+  },
+  "remoteUser": "mambauser",
+  "postStartCommand": "yarn install",
+  "hostRequirements": {
+    "memory": "2gb",
+    "cpus": 2
+  },
+  "portsAttributes": {
+    "8686": {
+      "label": "Jupyter Server",
+      "onAutoForward": "notify"
+    },
+    "3208": {
+      "label": "Webpack Application",
+      "onAutoForward": "notify"
+    },
+    "3000": {
+      "label": "CRA, Docusaurus, Next.js... ",
+      "onAutoForward": "notify"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.profiles.linux": {
+          "bash": {
+            "path": "/bin/bash"
+          }
+        },
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.languageServer": "Default",
+        "pylinting.enabled": true,
+        "pylinting.pylintEnabled": true,
+        "autopep8.path": ["/usr/local/py-utils/bin/autopep8"],
+        "autopep8.blackPath": "/usr/local/py-utils/bin/black",
+        "autopep8.yapfPath": "/usr/local/py-utils/bin/yapf",
+        "pylinting.banditPath": "/usr/local/py-utils/bin/bandit",
+        "pylinting.flake8Path": "/usr/local/py-utils/bin/flake8",
+        "pylinting.mypyPath": "/usr/local/py-utils/bin/mypy",
+        "pylinting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
+        "pylinting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
+        "pylinting.pylintPath": "/usr/local/py-utils/bin/pylint"
+      },
+      "extensions": ["ms-python.python", "ms-python.vscode-pylance"]
+    }
+  }
 }

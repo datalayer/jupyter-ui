@@ -4,8 +4,8 @@
  * MIT License
  */
 
-import { useCallback } from "react";
-import { LexicalEditor } from "lexical";
+import { useCallback } from 'react';
+import { LexicalEditor } from 'lexical';
 import { KatexEquationAlterer } from './../components/KatexEquationAlterer';
 import { INSERT_EQUATION_COMMAND } from './../plugins/EquationsPlugin';
 
@@ -18,7 +18,10 @@ export function InsertEquationDialog({
 }): JSX.Element {
   const onEquationConfirm = useCallback(
     (equation: string, inline: boolean) => {
-      activeEditor.dispatchCommand(INSERT_EQUATION_COMMAND, {equation, inline});
+      activeEditor.dispatchCommand(INSERT_EQUATION_COMMAND, {
+        equation,
+        inline,
+      });
       onClose();
     },
     [activeEditor, onClose],

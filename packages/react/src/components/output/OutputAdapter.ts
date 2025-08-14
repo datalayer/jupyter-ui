@@ -18,7 +18,11 @@ import {
   standardRendererFactories,
 } from '@jupyterlab/rendermime';
 import { JSONObject } from '@lumino/coreutils';
-import { ClassicWidgetManager, WidgetRenderer, WIDGET_MIMETYPE } from '../../jupyter/ipywidgets/classic';
+import {
+  ClassicWidgetManager,
+  WidgetRenderer,
+  WIDGET_MIMETYPE,
+} from '../../jupyter/ipywidgets/classic';
 import { requireLoader as loader } from '../../jupyter/ipywidgets/libembed-amd';
 import { IExecutionPhaseOutput, Kernel } from '../../jupyter/kernel';
 import { execute } from './OutputExecutor';
@@ -55,7 +59,8 @@ export class OutputAdapter {
       {
         safe: false,
         mimeTypes: [WIDGET_MIMETYPE],
-        createRenderer: (options: any) => new WidgetRenderer(options, this._iPyWidgetsManager),
+        createRenderer: (options: any) =>
+          new WidgetRenderer(options, this._iPyWidgetsManager),
       },
       0
     );
@@ -132,9 +137,7 @@ export class OutputAdapter {
 
   private initKernel() {
     if (this._kernel) {
-      this._iPyWidgetsManager.registerWithKernel(
-        this._kernel.connection
-      );
+      this._iPyWidgetsManager.registerWithKernel(this._kernel.connection);
     }
   }
 }

@@ -9,7 +9,7 @@ import type {
   TextMatchTransformer,
   Transformer,
 } from './../markdown';
-import type {ElementNode, LexicalNode} from 'lexical';
+import type { ElementNode, LexicalNode } from 'lexical';
 
 import {
   CHECK_LIST,
@@ -46,7 +46,11 @@ import {
   $isEquationNode,
   EquationNode,
 } from '../../nodes/EquationNode';
-import {$createImageNode, $isImageNode, ImageNode} from '../../nodes/ImageNode';
+import {
+  $createImageNode,
+  $isImageNode,
+  ImageNode,
+} from '../../nodes/ImageNode';
 
 export const HR: ElementTransformer = {
   dependencies: [HorizontalRuleNode],
@@ -241,7 +245,7 @@ const mapToTableCells = (textContent: string): Array<TableCellNode> | null => {
     return null;
   }
 
-  return match[1].split('|').map((text) => createTableCell(text));
+  return match[1].split('|').map(text => createTableCell(text));
 };
 
 export const PLAYGROUND_TRANSFORMERS: Array<Transformer> = [

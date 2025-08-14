@@ -1,21 +1,14 @@
 {
-	"extends": "./tsconfig.base.json",
-	"compilerOptions": {
-		"jsx": "react",
-		"jsxFactory": "vscpp",
-		"jsxFragmentFactory": "vscppf",
-		"module": "Node16",
-		"strictNullChecks": true,
-		"types": [
-			"node",
-			"mocha"
-		]
-	},
-	"include": [
-		"src"
-	],
-	"exclude": [
-		"node_modules",
-		"webview"
-	]
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react",
+    "jsxFactory": "vscpp",
+    "jsxFragmentFactory": "vscppf",
+    "module": "Node16",
+    "strictNullChecks": true,
+    "types": ["node", "mocha"],
+    "skipLibCheck": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "webview"]
 }

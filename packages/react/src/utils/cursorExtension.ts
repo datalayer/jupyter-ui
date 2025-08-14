@@ -26,7 +26,7 @@ import {
   tooltips,
   ViewPlugin,
   ViewUpdate,
-  type Tooltip
+  type Tooltip,
 } from '@codemirror/view';
 import { User } from '@jupyterlab/services';
 import { JSONExt } from '@lumino/coreutils';
@@ -205,7 +205,7 @@ const remoteCursorsLayer = layer({
         }
 
         const className =
-          cursor.primary ?? true
+          (cursor.primary ?? true)
             ? 'jp-remote-cursor jp-mod-primary'
             : 'jp-remote-cursor';
         const cursor_ = EditorSelection.cursor(

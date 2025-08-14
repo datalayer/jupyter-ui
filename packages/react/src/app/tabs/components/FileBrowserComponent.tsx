@@ -9,11 +9,11 @@ import { FileBrowser } from '../../../components/filebrowser/FileBrowser';
 
 export const FileBrowserComponent = () => {
   const { serviceManager } = useJupyter();
-  return (
-    serviceManager
-      ? <FileBrowser serviceManager={serviceManager}/>
-      : <></>
-  )
+  return serviceManager ? (
+    <FileBrowser serviceManager={serviceManager} />
+  ) : (
+    <></>
+  );
 };
 
 export default FileBrowserComponent;

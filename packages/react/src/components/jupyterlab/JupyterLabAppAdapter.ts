@@ -6,7 +6,12 @@
 
 import { CommandRegistry } from '@lumino/commands';
 import { BoxPanel, Widget, FocusTracker } from '@lumino/widgets';
-import { JupyterLab, JupyterFrontEndPlugin, JupyterFrontEnd, LabShell } from '@jupyterlab/application';
+import {
+  JupyterLab,
+  JupyterFrontEndPlugin,
+  JupyterFrontEnd,
+  LabShell,
+} from '@jupyterlab/application';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { NotebookPanel } from '@jupyterlab/notebook';
@@ -78,10 +83,10 @@ export class JupyterLabAppAdapter {
     });
     const extensionResolved = await Promise.all(extensionPromises!);
     disabledPlugins.push(
-      "@jupyterlab/notebook-extension:language-server",
-      "@jupyterlab/notebook-extension:update-raw-mimetype",
-      "@jupyterlab/fileeditor-extension:language-server",
-      "@jupyterlab/apputils-extension:sessionDialogs",
+      '@jupyterlab/notebook-extension:language-server',
+      '@jupyterlab/notebook-extension:update-raw-mimetype',
+      '@jupyterlab/fileeditor-extension:language-server',
+      '@jupyterlab/apputils-extension:sessionDialogs'
     );
     const disabledPluginsSet = new Set(disabledPlugins);
     extensionResolved.forEach(ext => {
@@ -91,8 +96,7 @@ export class JupyterLabAppAdapter {
             extensions.push(plugin as any);
           }
         });
-      }
-      else {
+      } else {
         if (!disabledPluginsSet.has(ext.default.id)) {
           extensions.push(ext);
         }
@@ -100,22 +104,27 @@ export class JupyterLabAppAdapter {
     });
     this._jupyterLab.registerPluginModules(extensions);
     if (nosplash) {
-      this._jupyterLab.deregisterPlugin('@jupyterlab/apputils-extension:splash', true);
+      this._jupyterLab.deregisterPlugin(
+        '@jupyterlab/apputils-extension:splash',
+        true
+      );
     }
     /*
     if (collaborative) {
       this._jupyterLab.deregisterPlugin("@jupyterlab/filebrowser-extension:default-file-browser", true);
     }
     */
-    this._jupyterLab.start({
-      hostID: hostId,
-      bubblingKeydown: true, // TODO Check this prop.
-      startPlugins: [], // How is this used in JupyterLab core?
-      ignorePlugins: [], // How is this used in JupyterLab core?
-    }).then(() => {
-//      this._plugins = (this._jupyterLab as any)['_plugins'];
-//      this._readyResolve();
-    });
+    this._jupyterLab
+      .start({
+        hostID: hostId,
+        bubblingKeydown: true, // TODO Check this prop.
+        startPlugins: [], // How is this used in JupyterLab core?
+        ignorePlugins: [], // How is this used in JupyterLab core?
+      })
+      .then(() => {
+        //      this._plugins = (this._jupyterLab as any)['_plugins'];
+        //      this._readyResolve();
+      });
     this._jupyterLab.restored.then(() => {
       this._plugins = (this._jupyterLab as any)['_plugins'];
       this._readyResolve();

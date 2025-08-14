@@ -19,7 +19,11 @@ const NotebookPathChange = () => {
   const [path, setPath] = useState<string>(PATH_1);
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   const changePath = () => {
-    path === PATH_1 ? setPath(PATH_2) : setPath(PATH_1);
+    if (path === PATH_1) {
+      setPath(PATH_2);
+    } else {
+      setPath(PATH_1);
+    }
   };
   return (
     <JupyterReactTheme>

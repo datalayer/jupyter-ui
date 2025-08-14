@@ -18,7 +18,7 @@ export const CellCommands = (
   commands: CommandRegistry,
   cell: CodeCell | MarkdownCell | RawCell,
   completerHandler: CompletionHandler,
-  cellAdapter: CellAdapter,
+  cellAdapter: CellAdapter
 ): void => {
   commands.addCommand(cmdIds.invoke, {
     label: 'Completer: Invoke',

@@ -27,20 +27,20 @@ const JupyterLabAppServerless = () => {
   return (
     <JupyterLabApp
       serverless
-//      nosplash
+      //      nosplash
       plugins={[
         lightThemePlugins,
         ipywidgetsPlugins,
         plotlyPlugins,
-//        reactPlugins,
+        //        reactPlugins,
       ]}
-      disabledPlugins={[
-//        "@jupyterlab/apputils-extension:themes",
-//        "@jupyterlab/apputils-extension:themes-palette-menu",
-      ]}
-      mimeRenderers={[
-        plotlyMimeRenderers
-      ]}
+      disabledPlugins={
+        [
+          //        "@jupyterlab/apputils-extension:themes",
+          //        "@jupyterlab/apputils-extension:themes-palette-menu",
+        ]
+      }
+      mimeRenderers={[plotlyMimeRenderers]}
       height="calc(100vh - 74px)"
       onJupyterLab={onJupyterLab}
     />

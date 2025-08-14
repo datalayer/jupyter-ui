@@ -1,6 +1,6 @@
-import ModalImage from "react-modal-image";
+import ModalImage from 'react-modal-image';
 
-# AWS Amplify 
+# AWS Amplify
 
 To use jupyter-react in Amplify, you need to make some changes to the build process and the Node versions.
 
@@ -12,20 +12,21 @@ To use jupyter-react in Amplify, you need to make some changes to the build proc
 
 After setting up your repository, follow these steps:
 
-1.	In your repository's App Settings, navigate to the Build settings tab.
-	<ModalImage
-		small="https://datalayer-jupyter-examples.s3.us-east-1.amazonaws.com/deploy/amplify-settings.png"
-		large="https://datalayer-jupyter-examples.s3.us-east-1.amazonaws.com/deploy/amplify-settings.png"
-		alt="Tab Settings"
-	/>
-2.	Locate the App build specification section, which contains the amplify.yml file editor. This file manages the build settings.
-	<ModalImage
-		small="https://datalayer-jupyter-examples.s3.us-east-1.amazonaws.com/deploy/amplify-app-build-spec.png"
-		large="https://datalayer-jupyter-examples.s3.us-east-1.amazonaws.com/deploy/amplify-app-build-spec.png"
-		alt="App build specification"
-	/>
-3.	Click the Edit button to modify the amplify.yml file.
-4.	Replace the existing content with the following code to use Yarn v3 instead of npm:
+1. In your repository's App Settings, navigate to the Build settings tab.
+   <ModalImage
+     small="https://datalayer-jupyter-examples.s3.us-east-1.amazonaws.com/deploy/amplify-settings.png"
+     large="https://datalayer-jupyter-examples.s3.us-east-1.amazonaws.com/deploy/amplify-settings.png"
+     alt="Tab Settings"
+   />
+2. Locate the App build specification section, which contains the amplify.yml file editor. This file manages the build settings.
+   <ModalImage
+     small="https://datalayer-jupyter-examples.s3.us-east-1.amazonaws.com/deploy/amplify-app-build-spec.png"
+     large="https://datalayer-jupyter-examples.s3.us-east-1.amazonaws.com/deploy/amplify-app-build-spec.png"
+     alt="App build specification"
+   />
+3. Click the Edit button to modify the amplify.yml file.
+4. Replace the existing content with the following code to use Yarn v3 instead of npm:
+
 ```yaml
 version: 1
 frontend:
@@ -46,14 +47,15 @@ frontend:
     paths:
       - node_modules/**/*
 ```
-5.	Save the changes to the amplify.yml file.            
-6.	Scroll down to the Edit build image settings section and click Edit.
-	<ModalImage
-		small="https://datalayer-jupyter-examples.s3.us-east-1.amazonaws.com/deploy/amplify-settings-build-image.png"
-		large="https://datalayer-jupyter-examples.s3.us-east-1.amazonaws.com/deploy/amplify-settings-build-image.png"
-		alt="Build image settings"
-	/>
-7.	By default, it uses Node version 16.0, which may not work correctly. Set the build image to node:18.17.3 (or your preferred Node version).
-8.	Save the changes.
+
+5. Save the changes to the amplify.yml file.
+6. Scroll down to the Edit build image settings section and click Edit.
+   <ModalImage
+     small="https://datalayer-jupyter-examples.s3.us-east-1.amazonaws.com/deploy/amplify-settings-build-image.png"
+     large="https://datalayer-jupyter-examples.s3.us-east-1.amazonaws.com/deploy/amplify-settings-build-image.png"
+     alt="Build image settings"
+   />
+7. By default, it uses Node version 16.0, which may not work correctly. Set the build image to node:18.17.3 (or your preferred Node version).
+8. Save the changes.
 
 Once you've completed these steps, the next time you push to the main branch or the branch you've configured in Amplify, it will use these updated build settings. Your Amplify setup should work as expected.

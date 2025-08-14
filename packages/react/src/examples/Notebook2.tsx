@@ -9,28 +9,34 @@ import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { useJupyter } from '../jupyter';
-import { Notebook2, CellSidebarExtension, CellSidebarButton } from '../components';
+import {
+  Notebook2,
+  CellSidebarExtension,
+  CellSidebarButton,
+} from '../components';
 import { CellToolbarExtension } from './extensions';
 
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
 const Notebook2Example = () => {
   const { serviceManager } = useJupyter();
-  const extensions = useMemo(() => [
-    new CellToolbarExtension(),
-    new CellSidebarExtension({ factory: CellSidebarButton })
-  ], []);
-  return (
-    serviceManager ?
-      <JupyterReactTheme>
-        <Notebook2
-          nbformat={nbformat as INotebookContent}
-          id="notebook-nbformat-id"
-          startDefaultKernel
-          serviceManager={serviceManager}
-          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-          extensions={extensions}
-          /*
+  const extensions = useMemo(
+    () => [
+      new CellToolbarExtension(),
+      new CellSidebarExtension({ factory: CellSidebarButton }),
+    ],
+    []
+  );
+  return serviceManager ? (
+    <JupyterReactTheme>
+      <Notebook2
+        nbformat={nbformat as INotebookContent}
+        id="notebook-nbformat-id"
+        startDefaultKernel
+        serviceManager={serviceManager}
+        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+        extensions={extensions}
+        /*
           collaborationServer={{
             baseURL: 'https://prod1.datalayer.run',
             token: '',
@@ -38,11 +44,11 @@ const Notebook2Example = () => {
             type: 'datalayer'
           }}
           */
-        />
-      </JupyterReactTheme>
-    :
-      <></>
-  )
+      />
+    </JupyterReactTheme>
+  ) : (
+    <></>
+  );
 };
 
 const div = document.createElement('div');

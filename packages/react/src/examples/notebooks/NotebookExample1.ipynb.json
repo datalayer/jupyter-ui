@@ -34,16 +34,12 @@
           "output_type": "execute_result"
         }
       ],
-      "source": [
-        "# I am a Python cell.\n",
-        "print('2+2')"
-      ]
+      "source": ["# I am a Python cell.\n", "print('2+2')"]
     },
     {
       "cell_type": "code",
       "execution_count": 1,
-      "metadata": {
-      },
+      "metadata": {},
       "outputs": [
         {
           "data": {
@@ -65,8 +61,7 @@
     {
       "cell_type": "code",
       "execution_count": 1,
-      "metadata": {
-      },
+      "metadata": {},
       "outputs": [
         {
           "data": {
@@ -77,9 +72,7 @@
           "output_type": "execute_result"
         }
       ],
-      "source": [
-        "w"
-      ]
+      "source": ["w"]
     },
     {
       "cell_type": "code",
@@ -99,10 +92,7 @@
           "output_type": "execute_result"
         }
       ],
-      "source": [
-        "-- I am a SQL cell.\n",
-        "SELECT * FROM LOGS"
-      ]
+      "source": ["-- I am a SQL cell.\n", "SELECT * FROM LOGS"]
     },
     {
       "cell_type": "code",

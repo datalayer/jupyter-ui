@@ -2,16 +2,16 @@ name: Publish package to GitHub Packages
 on:
   push:
     branches:
-        - main
+      - main
   release:
     types: [published]
   # FIXME workflow_dispatch should not be needed
-  workflow_dispatch: 
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
-    
+
 jobs:
   publish:
     # Forbid manual execution on non-main branches
@@ -23,19 +23,16 @@ jobs:
     env:
       NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      -
-        uses: actions/checkout@v4
-      -
-        # Setup .npmrc file to publish to GitHub Packages
+      - uses: actions/checkout@v4
+      - # Setup .npmrc file to publish to GitHub Packages
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           registry-url: 'https://npm.pkg.github.com'
           # Defaults to the user or organization that owns the workflow file
           scope: '@datalayer'
-      -
-        run: |
-            corepack enable
+      - run: |
+          corepack enable
 
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
@@ -48,30 +45,26 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/package.json') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      
-      -
-        run: |
-            yarn install
-            yarn run build
-      -
-        if: github.event_name == 'push'
+
+      - run: |
+          yarn install
+          yarn run build
+      - if: github.event_name == 'push'
         # Bump the version
         run: |
-            npm version --preid dev --no-git-tag-version prerelease \
-              --workspace ./packages/react
+          npm version --preid dev --no-git-tag-version prerelease \
+            --workspace ./packages/react
 
-            git config --global user.name "github-actions[bot]"
-            git config --global user.email "github-actions[bot]@users.noreply.github.com"
-            git commit -a -m "Bump dev version"
-      -
-        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -a -m "Bump dev version"
+      - run: |
           npm publish --access public --tag next \
             --workspace ./packages/react
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      -
-        if: github.event_name == 'push'
+      - if: github.event_name == 'push'
         # Push version bump
         run: |
           git push
@@ -84,4 +77,4 @@ jobs:
           package-name: 'jupyter-react'
           package-type: 'npm'
           min-versions-to-keep: 3
-          delete-only-pre-release-versions: "true"
+          delete-only-pre-release-versions: 'true'

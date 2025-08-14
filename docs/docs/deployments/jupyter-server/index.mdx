@@ -35,14 +35,14 @@ Alternatively, you can to define a `script` tag in the head section your host in
 ```html
 <!DOCTYPE html>
 <html>
-<head>
-  <script id="datalayer-config-data" type="application/json">
-    {
-      "jupyterServerUrl": "http://localhost:8686/api/jupyter-server",
-      "jupyterServerToken": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
-    }
-  </script>
-</head>
+  <head>
+    <script id="datalayer-config-data" type="application/json">
+      {
+        "jupyterServerUrl": "http://localhost:8686/api/jupyter-server",
+        "jupyterServerToken": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+      }
+    </script>
+  </head>
 </html>
 ```
 
@@ -98,7 +98,7 @@ Please tune the following example to fit your security requirements, this is in 
 
 <details>
 
-  <summary>⚠️ Use the following at your own risk!.</summary>
+<summary>⚠️ Use the following at your own risk!.</summary>
 
 ```py
 #################
@@ -144,19 +144,19 @@ c.IdentityProvider.cookie_options = {
 If you are using the [JupyterLabApp](/docs/components/jupyterlab-app) component, additional information will be needed (see [index-local.html](https://github.com/datalayer/jupyter-ui/blob/main/packages/react/public/index-local.html))
 
 ```html
-  <script id="jupyter-config-data" type="application/json">
-    {
-      "baseUrl": "https://oss.datalayer.run/api/jupyter-server",
-      "wsUrl": "wss://oss.datalayer.run/api/jupyter-server",
-      "token": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6",
-      "appUrl": "/lab",
-      "themesUrl": "/lab/api/themes",
-      "disableRTC": false,
-      "terminalsAvailable": "false",
-      "mathjaxUrl": "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js",
-      "mathjaxConfig": "TeX-AMS_CHTML-full,Safe"
-    }
-  </script>
+<script id="jupyter-config-data" type="application/json">
+  {
+    "baseUrl": "https://oss.datalayer.run/api/jupyter-server",
+    "wsUrl": "wss://oss.datalayer.run/api/jupyter-server",
+    "token": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6",
+    "appUrl": "/lab",
+    "themesUrl": "/lab/api/themes",
+    "disableRTC": false,
+    "terminalsAvailable": "false",
+    "mathjaxUrl": "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js",
+    "mathjaxConfig": "TeX-AMS_CHTML-full,Safe"
+  }
+</script>
 ```
 
 :::

@@ -4,10 +4,9 @@
  * MIT License
  */
 
-import {useCallback, useState} from 'react';
+import { useCallback, useState } from 'react';
 import Button from '../components/Button';
 import KatexRenderer from './KatexRenderer';
-
 
 type Props = {
   initialEquation?: string;
@@ -36,7 +35,7 @@ export const KatexEquationAlterer = ({
       <div className="KatexEquationAlterer_centerRow">
         {inline ? (
           <input
-            onChange={(event) => {
+            onChange={event => {
               setEquation(event.target.value);
             }}
             value={equation}
@@ -44,7 +43,7 @@ export const KatexEquationAlterer = ({
           />
         ) : (
           <textarea
-            onChange={(event) => {
+            onChange={event => {
               setEquation(event.target.value);
             }}
             value={equation}
@@ -65,6 +64,6 @@ export const KatexEquationAlterer = ({
       </div>
     </>
   );
-}
+};
 
 export default KatexEquationAlterer;

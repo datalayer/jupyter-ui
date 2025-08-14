@@ -20,7 +20,7 @@ const meta: Meta<typeof Viewer> = {
       control: 'boolean',
     },
   },
-// } as Meta<typeof Viewer>;
+  // } as Meta<typeof Viewer>;
 } as any;
 
 export default meta;

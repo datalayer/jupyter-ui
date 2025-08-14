@@ -6,7 +6,7 @@
 
 import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
-import {ExecutionState } from './../../components/kernel/Kernelndicator';
+import { ExecutionState } from './../../components/kernel/Kernelndicator';
 
 export enum ExecutionPhase {
   ready_to_run = 'READY_TO_RUN',
@@ -46,10 +46,10 @@ export const kernelsStore = createStore<KernelsState>((set, get) => ({
     } else {
       kernels.set(id, {
         id,
-        executionState: executionState
+        executionState: executionState,
       });
     }
-    set((state: KernelsState) => ({ kernels }))
+    set((state: KernelsState) => ({ kernels }));
   },
   getExecutionPhase: (id: string) => {
     return get().kernels.get(id)?.executionPhase;
@@ -65,7 +65,7 @@ export const kernelsStore = createStore<KernelsState>((set, get) => ({
         executionPhase,
       });
     }
-    set((state: KernelsState) => ({ kernels }))
+    set((state: KernelsState) => ({ kernels }));
   },
 }));
 

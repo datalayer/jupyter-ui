@@ -1,18 +1,9 @@
 {
-	"extends": "./tsconfig.base.json",
-	"compilerOptions": {
-		"jsx": "react",
-		"lib": [
-			"dom",
-			"dom.iterable",
-			"es2019"
-		]
-	},
-	"include": [
-		"webview"
-	],
-	"exclude": [
-		"node_modules",
-		"src"
-	]
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react",
+    "lib": ["dom", "dom.iterable", "es2019"]
+  },
+  "include": ["webview"],
+  "exclude": ["node_modules", "src"]
 }

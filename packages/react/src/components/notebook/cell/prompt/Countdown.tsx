@@ -18,4 +18,4 @@ export const Countdown = (props: { count: number }) => {
     return () => clearInterval(intervalRef.current);
   }, []);
   return <>[{count}]</>;
-}
+};

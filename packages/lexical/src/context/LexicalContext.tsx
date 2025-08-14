@@ -5,7 +5,7 @@
  */
 
 import { useState, createContext, useContext } from 'react';
-import { LexicalEditor } from "lexical";
+import { LexicalEditor } from 'lexical';
 
 type LexicalContextType = {
   editor?: LexicalEditor;
@@ -27,13 +27,15 @@ export const LexicalContextConsumer = context.Consumer;
 
 type Props = {
   children: React.ReactNode;
-}
+};
 
-export const LexicalProvider: React.FC<{ children: React.ReactNode }> = ({children}: Props) => {
+export const LexicalProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}: Props) => {
   const [editor, setEditor] = useState<LexicalEditor>();
   return (
-    <LexicalContextProvider value={{editor, setEditor}}>
+    <LexicalContextProvider value={{ editor, setEditor }}>
       {children}
     </LexicalContextProvider>
   );
-}
+};

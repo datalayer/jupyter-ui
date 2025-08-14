@@ -21,7 +21,6 @@ export async function setRuntime(): Promise<string | undefined> {
       try {
         const url = new URL(text);
         url.pathname = url.pathname.replace(/\/?$/, '') + '/api/';
-        // @ts-ignore
         await fetch(url);
         return null;
       } catch (reason) {

@@ -4,12 +4,15 @@
  * MIT License
  */
 
-import React from "react";
-import { Mermaid } from "mdx-mermaid/lib/Mermaid"
+import React from 'react';
+import { Mermaid } from 'mdx-mermaid/lib/Mermaid';
 import mermaid from 'mermaid';
 import zenuml from '@mermaid-js/mermaid-zenuml';
 import type { Preview } from '@storybook/react';
-import { toolbarTypes, withThemeProvider } from '../src/stories/_utils/story-helpers';
+import {
+  toolbarTypes,
+  withThemeProvider,
+} from '../src/stories/_utils/story-helpers';
 
 import '@jupyterlab/apputils/style/materialcolors.css';
 import '@jupyterlab/application/style/buttons.css';
@@ -28,12 +31,12 @@ const preview: Preview = {
     docs: {
       components: {
         code: props => {
-          return props.className?.includes("mermaid")
-            ? 
-              <Mermaid chart={props.children} />
-            :
-              <code {...props} />
-        }
+          return props.className?.includes('mermaid') ? (
+            <Mermaid chart={props.children} />
+          ) : (
+            <code {...props} />
+          );
+        },
       },
     },
     actions: { argTypesRegex: '^on[A-Z].*' },
@@ -58,10 +61,10 @@ const preview: Preview = {
     */
     options: {
       storySort: {
-          method: 'alphabetical',
-          order: [ 'Welcome', '*'],
-          locales: 'en-US',
-      }
+        method: 'alphabetical',
+        order: ['Welcome', '*'],
+        locales: 'en-US',
+      },
     },
   },
 };

@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { Text } from '@primer/react';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import OutputIPyWidgets from '../components/output/OutputIPyWidgets';
@@ -23,9 +23,9 @@ const OutputIPyWidgetsExample = () => {
 const div = document.createElement('div');
 document.body.appendChild(div);
 
-render(
+const root = createRoot(div);
+root.render(
   <JupyterReactTheme>
     <OutputIPyWidgetsExample />
-  </JupyterReactTheme>,
-  div
+  </JupyterReactTheme>
 );

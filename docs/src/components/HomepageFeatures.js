@@ -7,20 +7,31 @@
 import React from 'react';
 import clsx from 'clsx';
 import styles from './HomepageFeatures.module.css';
+import TargetSvg from '../../static/img/target.svg';
 
 const FeatureList = [
   {
     title: 'Professional support',
-    Svg: require('../../static/img/target.svg').default,
+    Svg: TargetSvg,
     description: (
       <>
-        Jupyter UI lets you focus on your work, and we&apos;ll do the chores. Check the <a href="https://jupyter-ui.datalayer.tech/docs/support" target="_blank" style={{ textDecoration: "underline" }}>support options</a>.
+        Jupyter UI lets you focus on your work, and we&apos;ll do the chores.
+        Check the{' '}
+        <a
+          href="https://jupyter-ui.datalayer.tech/docs/support"
+          target="_blank"
+          rel="noreferrer"
+          style={{ textDecoration: 'underline' }}
+        >
+          support options
+        </a>
+        .
       </>
     ),
   },
 ];
 
-function Feature({Svg, title, description}) {
+function Feature({ Svg, title, description }) {
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">

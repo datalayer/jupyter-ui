@@ -4,8 +4,8 @@
  * MIT License
  */
 
-import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
-import {$wrapNodeInElement, mergeRegister} from '@lexical/utils';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { $wrapNodeInElement, mergeRegister } from '@lexical/utils';
 import {
   $createParagraphNode,
   $createRangeSelection,
@@ -24,8 +24,8 @@ import {
   LexicalCommand,
   LexicalEditor,
 } from 'lexical';
-import {useEffect, useRef, useState} from 'react';
-import {CAN_USE_DOM} from './../utils/canUseDOM';
+import { useEffect, useRef, useState } from 'react';
+import { CAN_USE_DOM } from './../utils/canUseDOM';
 
 import yellowFlowerImage from '../images/yellow-flower-small.jpg';
 import {
@@ -35,7 +35,7 @@ import {
   ImagePayload,
 } from '../nodes/ImageNode';
 import Button from '../components/Button';
-import {DialogActions, DialogButtonsList} from '../components/Dialog';
+import { DialogActions, DialogButtonsList } from '../components/Dialog';
 import FileInput from '../components/FileInput';
 import TextInput from '../components/TextInput';
 
@@ -77,7 +77,8 @@ export function InsertImageUriDialogBody({
         <Button
           data-test-id="image-modal-confirm-btn"
           disabled={isDisabled}
-          onClick={() => onClick({altText, src})}>
+          onClick={() => onClick({ altText, src })}
+        >
           Confirm
         </Button>
       </DialogActions>
@@ -127,7 +128,8 @@ export function InsertImageUploadedDialogBody({
         <Button
           data-test-id="image-modal-file-upload-btn"
           disabled={isDisabled}
-          onClick={() => onClick({altText, src})}>
+          onClick={() => onClick({ altText, src })}
+        >
           Confirm
         </Button>
       </DialogActions>
@@ -173,24 +175,27 @@ export function InsertImageDialog({
                   ? {
                       altText:
                         'Daylight fir trees forest glacier green high ice landscape',
-                        src: yellowFlowerImage,
+                      src: yellowFlowerImage,
                     }
                   : {
                       altText: 'Yellow flower in tilt shift lens',
                       src: yellowFlowerImage,
                     },
               )
-            }>
+            }
+          >
             Sample
           </Button>
           <Button
             data-test-id="image-modal-option-url"
-            onClick={() => setMode('url')}>
+            onClick={() => setMode('url')}
+          >
             URL
           </Button>
           <Button
             data-test-id="image-modal-option-file"
-            onClick={() => setMode('file')}>
+            onClick={() => setMode('file')}
+          >
             File
           </Button>
         </DialogButtonsList>
@@ -216,7 +221,7 @@ export const ImagesPlugin = ({
     return mergeRegister(
       editor.registerCommand<InsertImagePayload>(
         INSERT_IMAGE_COMMAND,
-        (payload) => {
+        payload => {
           const imageNode = $createImageNode(payload);
           $insertNodes([imageNode]);
           if ($isRootOrShadowRoot(imageNode.getParentOrThrow())) {
@@ -228,21 +233,21 @@ export const ImagesPlugin = ({
       ),
       editor.registerCommand<DragEvent>(
         DRAGSTART_COMMAND,
-        (event) => {
+        event => {
           return onDragStart(event);
         },
         COMMAND_PRIORITY_HIGH,
       ),
       editor.registerCommand<DragEvent>(
         DRAGOVER_COMMAND,
-        (event) => {
+        event => {
           return onDragover(event);
         },
         COMMAND_PRIORITY_LOW,
       ),
       editor.registerCommand<DragEvent>(
         DROP_COMMAND,
-        (event) => {
+        event => {
           return onDrop(event, editor);
         },
         COMMAND_PRIORITY_HIGH,
@@ -251,7 +256,7 @@ export const ImagesPlugin = ({
   }, [captionsEnabled, editor]);
 
   return null;
-}
+};
 
 const TRANSPARENT_IMAGE =
   'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
@@ -338,7 +343,7 @@ function getDragImageData(event: DragEvent): null | InsertImagePayload {
   if (!dragData) {
     return null;
   }
-  const {type, data} = JSON.parse(dragData);
+  const { type, data } = JSON.parse(dragData);
   if (type !== 'image') {
     return null;
   }
@@ -371,8 +376,8 @@ function getDragSelection(event: DragEvent): Range | null | undefined {
     target == null
       ? null
       : target.nodeType === 9
-      ? (target as Document).defaultView
-      : (target as Element).ownerDocument.defaultView;
+        ? (target as Document).defaultView
+        : (target as Element).ownerDocument.defaultView;
   const domSelection = getDOMSelection(targetWindow);
   if (document.caretRangeFromPoint) {
     range = document.caretRangeFromPoint(event.clientX, event.clientY);

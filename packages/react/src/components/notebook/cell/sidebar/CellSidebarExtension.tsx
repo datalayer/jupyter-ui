@@ -15,7 +15,10 @@ import type { PanelLayout, Widget } from '@lumino/widgets';
 import { Signal } from '@lumino/signaling';
 import { JupyterReactTheme } from '../../../../theme';
 import { CellSidebar, type ICellSidebarProps } from './CellSidebar';
-import { DatalayerNotebookExtension, IDatalayerNotebookExtensionProps } from '../../NotebookExtensions';
+import {
+  DatalayerNotebookExtension,
+  IDatalayerNotebookExtensionProps,
+} from '../../NotebookExtensions';
 
 class CellSidebarFactory implements IDisposable {
   private _isDisposed = false;
@@ -122,7 +125,7 @@ type ICellSidebarExtensionOptions = {
   factory?: React.JSXElementConstructor<ICellSidebarProps>;
   nbgrader?: boolean;
   sidebarWidth?: number;
-}
+};
 
 /**
  * Cell sidebar extension for notebook panels.

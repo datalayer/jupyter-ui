@@ -4,7 +4,6 @@
  * MIT License
  */
 
-// eslint-disable-next-line simple-import-sort/imports
 import type {
   DOMConversionMap,
   DOMConversionOutput,
@@ -23,11 +22,14 @@ import {
   $isRangeSelection,
   ElementNode,
 } from 'lexical';
-import {addClassNamesToElement} from '@lexical/utils';
+import { addClassNamesToElement } from '@lexical/utils';
 import { UUID } from '@lumino/coreutils';
-import type {JupyterCodeHighlightNode} from './JupyterCodeHighlightNode';
-import { $createJupyterCodeHighlightNode, getFirstJupyterCodeHighlightNodeOfLine } from './JupyterCodeHighlightNode';
-import { CODE_UUID_TO_CODE_KEY } from "../plugins/JupyterCellOutputPlugin";
+import type { JupyterCodeHighlightNode } from './JupyterCodeHighlightNode';
+import {
+  $createJupyterCodeHighlightNode,
+  getFirstJupyterCodeHighlightNodeOfLine,
+} from './JupyterCodeHighlightNode';
+import { CODE_UUID_TO_CODE_KEY } from '../plugins/JupyterCellOutputPlugin';
 
 import * as Prism from 'prismjs';
 import 'prismjs/components/prism-clike';
@@ -73,10 +75,18 @@ export class JupyterCodeNode extends ElementNode {
   }
 
   static clone(node: JupyterCodeNode): JupyterCodeNode {
-    return new JupyterCodeNode(node.__language, node.__codeNodeUuid, node.__key);
+    return new JupyterCodeNode(
+      node.__language,
+      node.__codeNodeUuid,
+      node.__key,
+    );
   }
 
-  constructor(language?: string | null | undefined, codeNodeUuid? :string, key?: NodeKey) {
+  constructor(
+    language?: string | null | undefined,
+    codeNodeUuid?: string,
+    key?: NodeKey,
+  ) {
     super(key);
     this.__language = mapToPrismLanguage(language);
     this.__codeNodeUuid = codeNodeUuid || UUID.uuid4();
@@ -188,7 +198,10 @@ export class JupyterCodeNode extends ElementNode {
   }
 
   static importJSON(serializedNode: SerializedCodeNode): JupyterCodeNode {
-    const node = $createJupyterCodeNode(serializedNode.language, serializedNode.codeNodeUuid);
+    const node = $createJupyterCodeNode(
+      serializedNode.language,
+      serializedNode.codeNodeUuid,
+    );
     node.setFormat(serializedNode.format);
     node.setIndent(serializedNode.indent);
     node.setDirection(serializedNode.direction);
@@ -266,7 +279,7 @@ export class JupyterCodeNode extends ElementNode {
   collapseAtStart(): true {
     const paragraph = $createParagraphNode();
     const children = this.getChildren();
-    children.forEach((child) => paragraph.append(child));
+    children.forEach(child => paragraph.append(child));
     this.replace(paragraph);
     return true;
   }
@@ -283,7 +296,7 @@ export class JupyterCodeNode extends ElementNode {
 
 export function $createJupyterCodeNode(
   language?: string | null | undefined,
-  codeNodeUuid?: string
+  codeNodeUuid?: string,
 ): JupyterCodeNode {
   return new JupyterCodeNode(language, codeNodeUuid);
 }
@@ -295,30 +308,30 @@ export function $isJupyterCodeNode(
 }
 
 function convertPreElement(domNode: Node): DOMConversionOutput {
-  return {node: $createJupyterCodeNode("python")};
+  return { node: $createJupyterCodeNode('python') };
 }
 
 function convertDivElement(domNode: Node): DOMConversionOutput {
   // domNode is a <div> since we matched it by nodeName
   const div = domNode as HTMLDivElement;
   return {
-    after: (childLexicalNodes) => {
+    after: childLexicalNodes => {
       const domParent = domNode.parentNode;
       if (domParent != null && domNode !== domParent.lastChild) {
         childLexicalNodes.push($createLineBreakNode());
       }
       return childLexicalNodes;
     },
-    node: isCodeElement(div) ? $createJupyterCodeNode("python") : null,
+    node: isCodeElement(div) ? $createJupyterCodeNode('python') : null,
   };
 }
 
 function convertTableElement(): DOMConversionOutput {
-  return {node: $createJupyterCodeNode("python")};
+  return { node: $createJupyterCodeNode('python') };
 }
 
 function convertCodeNoop(): DOMConversionOutput {
-  return {node: null};
+  return { node: null };
 }
 
 function convertTableCellElement(domNode: Node): DOMConversionOutput {
@@ -326,7 +339,7 @@ function convertTableCellElement(domNode: Node): DOMConversionOutput {
   const cell = domNode as HTMLTableCellElement;
 
   return {
-    after: (childLexicalNodes) => {
+    after: childLexicalNodes => {
       if (cell.parentNode && cell.parentNode.nextSibling) {
         // Append newline between code lines
         childLexicalNodes.push($createLineBreakNode());

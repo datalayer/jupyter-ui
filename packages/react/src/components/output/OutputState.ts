@@ -58,7 +58,8 @@ export const outputsStore = createStore<OutputState>((set, get) => ({
   getGradeSuccess: (id: string): boolean | undefined => {
     return get().outputs.get(id)?.gradeSuccess;
   },
-  setOutputs: (id: string, outputs: Map<string, IOutputState>) => set((state: OutputState) => ({ outputs })),
+  setOutputs: (id: string, outputs: Map<string, IOutputState>) =>
+    set((state: OutputState) => ({ outputs })),
   setAdapter: (id: string, adapter: OutputAdapter) => {
     const outputs = get().outputs;
     const d = outputs.get(id);
@@ -67,7 +68,7 @@ export const outputsStore = createStore<OutputState>((set, get) => ({
     } else {
       outputs.set(id, { adapter });
     }
-    set((state: OutputState) => ({ outputs }))
+    set((state: OutputState) => ({ outputs }));
   },
   setDataset: (id: string, dataset: string) => {
     const outputs = get().outputs;
@@ -77,7 +78,7 @@ export const outputsStore = createStore<OutputState>((set, get) => ({
     } else {
       outputs.set(id, { dataset });
     }
-    set((state: OutputState) => ({ outputs }))
+    set((state: OutputState) => ({ outputs }));
   },
   setExecuteRequest: (id: string, code: string) => {
     const outputs = get().outputs;
@@ -87,7 +88,7 @@ export const outputsStore = createStore<OutputState>((set, get) => ({
     } else {
       outputs.set(id, { code });
     }
-    set((state: OutputState) => ({ outputs }))
+    set((state: OutputState) => ({ outputs }));
   },
   setModel: (id: string, model: IOutputAreaModel) => {
     const outputs = get().outputs;
@@ -97,7 +98,7 @@ export const outputsStore = createStore<OutputState>((set, get) => ({
     } else {
       outputs.set(id, { model });
     }
-    set((state: OutputState) => ({ outputs }))
+    set((state: OutputState) => ({ outputs }));
   },
   setInput: (id: string, input: string) => {
     const outputs = get().outputs;
@@ -107,7 +108,7 @@ export const outputsStore = createStore<OutputState>((set, get) => ({
     } else {
       outputs.set(id, { input });
     }
-    set((state: OutputState) => ({ outputs }))
+    set((state: OutputState) => ({ outputs }));
   },
   setGradeSuccess: (id: string, gradeSuccess: boolean) => {
     const outputs = get().outputs;
@@ -117,7 +118,7 @@ export const outputsStore = createStore<OutputState>((set, get) => ({
     } else {
       outputs.set(id, { gradeSuccess });
     }
-    set((state: OutputState) => ({ outputs }))
+    set((state: OutputState) => ({ outputs }));
   },
 }));
 

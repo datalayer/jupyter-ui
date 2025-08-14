@@ -35,14 +35,14 @@ Add the following in any Markdown file.
 ```jsx
 import JupyterCell from '@theme/JupyterCell';
 
-<JupyterCell 
+<JupyterCell
   source={`print('Hello world')
 for i in range(10):
   print(i)
 `}
-  jupyterServerUrl='http://localhost:8686/api/jupyter-server'
-  jupyterServerToken='60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6'
-/>
+  jupyterServerUrl="http://localhost:8686/api/jupyter-server"
+  jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+/>;
 ```
 
 ## ⚖️ License

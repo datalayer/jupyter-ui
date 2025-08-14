@@ -5,8 +5,8 @@
  */
 
 import * as React from 'react';
-import {useRef} from 'react';
-import type {LexicalEditor} from 'lexical';
+import { useRef } from 'react';
+import type { LexicalEditor } from 'lexical';
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
@@ -30,8 +30,8 @@ export const ImageResizer = ({
   setShowCaption,
 }: {
   editor: LexicalEditor;
-  buttonRef: {current: null | HTMLButtonElement};
-  imageRef: {current: null | HTMLElement};
+  buttonRef: { current: null | HTMLButtonElement };
+  imageRef: { current: null | HTMLElement };
   maxWidth?: number;
   onResizeEnd: (width: 'inherit' | number, height: 'inherit' | number) => void;
   onResizeStart: () => void;
@@ -69,8 +69,8 @@ export const ImageResizer = ({
   const maxWidthContainer = maxWidth
     ? maxWidth
     : editorRootElement !== null
-    ? editorRootElement.getBoundingClientRect().width - 20
-    : 100;
+      ? editorRootElement.getBoundingClientRect().width - 20
+      : 100;
   const maxHeightContainer =
     editorRootElement !== null
       ? editorRootElement.getBoundingClientRect().height - 20
@@ -137,7 +137,7 @@ export const ImageResizer = ({
     const controlWrapper = controlWrapperRef.current;
 
     if (image !== null && controlWrapper !== null) {
-      const {width, height} = image.getBoundingClientRect();
+      const { width, height } = image.getBoundingClientRect();
       const positioning = positioningRef.current;
       positioning.startWidth = width;
       positioning.startHeight = height;
@@ -246,60 +246,61 @@ export const ImageResizer = ({
           ref={buttonRef}
           onClick={() => {
             setShowCaption(!showCaption);
-          }}>
+          }}
+        >
           Add Caption
         </button>
       )}
       <div
         className="image-resizer image-resizer-n"
-        onPointerDown={(event) => {
+        onPointerDown={event => {
           handlePointerDown(event, Direction.north);
         }}
       />
       <div
         className="image-resizer image-resizer-ne"
-        onPointerDown={(event) => {
+        onPointerDown={event => {
           handlePointerDown(event, Direction.north | Direction.east);
         }}
       />
       <div
         className="image-resizer image-resizer-e"
-        onPointerDown={(event) => {
+        onPointerDown={event => {
           handlePointerDown(event, Direction.east);
         }}
       />
       <div
         className="image-resizer image-resizer-se"
-        onPointerDown={(event) => {
+        onPointerDown={event => {
           handlePointerDown(event, Direction.south | Direction.east);
         }}
       />
       <div
         className="image-resizer image-resizer-s"
-        onPointerDown={(event) => {
+        onPointerDown={event => {
           handlePointerDown(event, Direction.south);
         }}
       />
       <div
         className="image-resizer image-resizer-sw"
-        onPointerDown={(event) => {
+        onPointerDown={event => {
           handlePointerDown(event, Direction.south | Direction.west);
         }}
       />
       <div
         className="image-resizer image-resizer-w"
-        onPointerDown={(event) => {
+        onPointerDown={event => {
           handlePointerDown(event, Direction.west);
         }}
       />
       <div
         className="image-resizer image-resizer-nw"
-        onPointerDown={(event) => {
+        onPointerDown={event => {
           handlePointerDown(event, Direction.north | Direction.west);
         }}
       />
     </div>
   );
-}
+};
 
 export default ImageResizer;

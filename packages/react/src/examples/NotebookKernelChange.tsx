@@ -22,11 +22,11 @@ const DENO_KERNEL_NAME = 'deno';
 
 const NotebookKernelChange = () => {
   const { kernelManager, serviceManager, kernel } = useJupyter();
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
   const notebookStore = useNotebookStore();
   const notebook = notebookStore.selectNotebook(NOTEBOOK_ID);
 
-    const extensions = useMemo(() => [new CellSidebarExtension()], []);
+  const extensions = useMemo(() => [new CellSidebarExtension()], []);
 
   const changeKernel = () => {
     if (kernelManager && serviceManager) {
@@ -39,7 +39,9 @@ const NotebookKernelChange = () => {
       });
       newKernel.ready.then(() => {
         notebookStore.changeKernel({ id: NOTEBOOK_ID, kernel: newKernel });
-        setMessage(`🥺 Bummer, all your variables are lost! The kernel was ${PYTHON_KERNEL_NAME} and is now ${DENO_KERNEL_NAME}). Try with: import pl from "npm:nodejs-polars";`);
+        setMessage(
+          `🥺 Bummer, all your variables are lost! The kernel was ${PYTHON_KERNEL_NAME} and is now ${DENO_KERNEL_NAME}). Try with: import pl from "npm:nodejs-polars";`
+        );
       });
     }
   };
@@ -51,9 +53,7 @@ const NotebookKernelChange = () => {
             Assign another Kernel
           </Button>
         </Box>
-        <Box ml={3}>
-          Kernel ID: {kernel?.id}
-        </Box>
+        <Box ml={3}>Kernel ID: {kernel?.id}</Box>
         <Box ml={3}>
           Kernel Client ID: {notebook?.adapter?.kernel?.clientId}
         </Box>
@@ -64,11 +64,11 @@ const NotebookKernelChange = () => {
           Kernel Info: {notebook?.adapter?.kernel?.info?.language_info.name}
         </Box>
       </Box>
-      {message &&
+      {message && (
         <Box>
           <Flash>{message}</Flash>
         </Box>
-      }
+      )}
       <Notebook
         id={NOTEBOOK_ID}
         path="test.ipynb"
@@ -83,6 +83,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(
-    <NotebookKernelChange />
-);
+root.render(<NotebookKernelChange />);

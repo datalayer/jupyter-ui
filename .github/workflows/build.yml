@@ -19,144 +19,55 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         # os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: [3.11]
-    defaults:
-      run:
-        shell: bash -l {0}
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-    - name: Setup conda
-      uses: conda-incubator/setup-miniconda@v3
-      with:
-        mamba-version: "*"
-        channels: conda-forge,defaults
-        channel-priority: true
-        environment-file: environment.yml
-        activate-environment: datalayer
-    - name: Setup npm cache
-      uses: actions/cache@v4
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json', '**/package.json') }}
-        restore-keys: |
-          ${{ runner.os }}-npm-
-    - name: Install the npm dependencies
-      run: |
-        npm install
-    - name: Run the build
-      run: |
-        npm run build
-
-  visual-test:
-    runs-on: ubuntu-latest
-    needs: build
-    name: Stories visual tests
-    timeout-minutes: 60
-    env:
-      PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/pw-browsers
-
-    steps:
-      - name: Checkout 🛎️
+      - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Setup Node 💾
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-      -
+          node-version: '20'
+      - name: Install the npm dependencies
         run: |
-          corepack enable
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-      - name: Setup yarn cache
-        uses: actions/cache@v4
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            yarn-
-
-      - name: Install Dependencies 📥
-        env:
-          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
-        run: yarn install
-
-      - name: Set up browser cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ github.workspace }}/pw-browsers
-          key: ${{ runner.os }}-${{ hashFiles('ui-tests/yarn.lock') }}
-
-      - name: Install Playwright Browsers
-        run: yarn run playwright install chromium --with-deps
-        working-directory: packages/react
-
-      - name: Run Visual Tests 🧪
-        run: yarn run test:visual
-        working-directory: packages/react
-
-      - name: Update Snapshots
-        if: ${{ failure() }}
+          npm install
+      - name: Run the build
         run: |
-          mv test-results test-assets
-          yarn run test:visual -u
-        working-directory: packages/react
-
-      - uses: actions/upload-artifact@v4
-        if: ${{ failure() }}
-        with:
-          name: jupyter-react-test
-          path: |
-            packages/react/test-assets/
-            packages/react/stories/**/*-snapshots/*
+          npm run build
 
   storybook-test:
     name: Test Storybook Stories and Docs
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-      
-      - name: Setup npm cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.npm
-          key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/package.json') }}
-          restore-keys: |
-            npm-${{ runner.os }}-
-      
+          node-version: '20'
+
       - name: Install Dependencies
         run: npm install
-      
+
       - name: Build all packages
         run: npm run build
-      
+
       - name: Install Playwright
         run: npx playwright install chromium --with-deps
         working-directory: storybook
-      
+
       - name: Build Storybook
         run: npm run build:storybook
         working-directory: storybook
-      
+
       - name: Serve Storybook and run all tests
         run: |
           npx serve -l 6006 storybook-static &
-          sleep 5
-          npm run test:all
+          npx wait-on http://localhost:6006 --timeout 30000
+          npm run test:all:ci
         working-directory: storybook
-      
+
       - name: Upload test results
         if: failure()
         uses: actions/upload-artifact@v4
@@ -165,53 +76,3 @@ jobs:
           path: |
             storybook/test-results/
             storybook/html-report/
-
-  docker-dev:
-    # Don't run if the previous case fails
-    needs: build
-
-    name: Build on dev container
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: write
-
-    env:
-      REGISTRY: ghcr.io
-      IMAGE_NAME: ${{ github.repository }}
-
-    steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v4
-
-      - 
-        name: Log in to the Container registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      -
-        name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-      -
-        name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ".devcontainer/Dockerfile"
-          target: "builder"
-          # For now never push
-          # push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}

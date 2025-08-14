@@ -10,7 +10,7 @@
  * MIT License
  */
 
-import { Box, Spinner } from "@primer/react";
+import { Box, Spinner } from '@primer/react';
 
 export function SpinnerCentered(): JSX.Element {
   return (
@@ -19,13 +19,12 @@ export function SpinnerCentered(): JSX.Element {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        minHeight: '40px'
+        minHeight: '40px',
       }}
     >
       <Spinner />
     </Box>
-  )
+  );
 }
-  
+
 export default SpinnerCentered;
-  

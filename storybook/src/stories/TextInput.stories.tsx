@@ -38,7 +38,10 @@ export const Default = Template.bind({}) as Story;
 
 export const Playground: Story = {
   render: (args, options) =>
-    Template.bind({})({ label: 'TextInput', ...args }, { globals: { labComparison: true } }),
+    Template.bind({})(
+      { label: 'TextInput', ...args },
+      { globals: { labComparison: true } },
+    ),
 };
 Playground.args = {
   type: 'text',

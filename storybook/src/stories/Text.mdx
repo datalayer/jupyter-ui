@@ -1,10 +1,10 @@
-{/*
-  ~ Copyright (c) 2021-2023 Datalayer, Inc.
-  ~
-  ~ MIT License
-*/}
+{/**
+~ Copyright (c) 2021-2023 Datalayer, Inc.
+~
+~ MIT License
+**/}
 
-import {Canvas, Meta} from '@storybook/addon-docs/blocks';
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
 import * as TextStories from './Text.stories';
 
 <Meta of={TextStories} />
@@ -24,11 +24,13 @@ This component displays a text with any kind of html tag. By default it is a `sp
 > You can display the JupyterLab equivalent component through the toolbar.
 
 In JupyterLab, you can use the font family CSS properties:
+
 - `--jp-content-font-family`
 - `--jp-ui-font-family`
 - `--jp-code-font-family`
 
 And for the font size:
+
 - `--jp-content-font-size#` (range from 0 to 5)
 - `--jp-ui-font-size#` (range from 0 to 3)
 - `--jp-code-font-size` (unique value)
@@ -54,9 +56,9 @@ And for the font size:
     fontSize: 'var(--jp-content-font-size1)',
   }}
 >
-  <span style={{fontSize: 'var(--jp-content-font-size3)'}}>
+  <span style={{ fontSize: 'var(--jp-content-font-size3)' }}>
     {'Expected change'}
-    <span style={{fontSize: 'var(--jp-content-font-size3)'}}>
+    <span style={{ fontSize: 'var(--jp-content-font-size3)' }}>
       {'Unexpected'}
     </span>
   </span>
@@ -69,9 +71,9 @@ And for the font size:
     fontSize: 'var(--jp-content-font-size1)',
   }}
 >
-  <span style={{fontSize: 'var(--jp-content-font-size3)'}}>
+  <span style={{ fontSize: 'var(--jp-content-font-size3)' }}>
     {'Expected change'}
-    <span style={{fontSize: 'var(--jp-content-font-size3)'}}>
+    <span style={{ fontSize: 'var(--jp-content-font-size3)' }}>
       {'Unexpected'}
     </span>
   </span>

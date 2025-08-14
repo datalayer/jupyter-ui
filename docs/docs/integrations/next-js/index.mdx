@@ -2,7 +2,7 @@
 description: Example with Next.js.
 ---
 
-import ModalImage from "react-modal-image";
+import ModalImage from 'react-modal-image';
 
 # Next.js
 
@@ -13,28 +13,27 @@ There are a couple of configuration and requirement to run Jupyter React in Next
 You need to render in client-mode the Jupyter part. To achieve this, you can e.g. load your page with external components dynamically loaded.
 
 ```js
-import dynamic from 'next/dynamic'
+import dynamic from 'next/dynamic';
 
-const HomePageNoSSR = dynamic(
-  () => import('../components/HomeComponent'),
-  { ssr: false }
-);
+const HomePageNoSSR = dynamic(() => import('../components/HomeComponent'), {
+  ssr: false,
+});
 
 function Home() {
   return (
     <>
       <HomePageNoSSR />
     </>
-  )
+  );
 }
 
-export default Home
+export default Home;
 ```
 
 The components should ideally reside outside of the `app` folder. Add `'use client'` at the top of your React.js components.
 
 ```js
-'use client'
+'use client';
 
 import { Jupyter, Notebook, CellSidebar } from '@datalayer/jupyter-react';
 

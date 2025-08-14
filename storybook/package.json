@@ -27,7 +27,8 @@
     "test:storybook": "test-storybook",
     "test:storybook:ci": "test-storybook --ci --maxWorkers=2",
     "test:mdx": "node test-storybook.js",
-    "test:all": "test-storybook --ci --maxWorkers=2 && node test-storybook.js"
+    "test:all": "test-storybook --ci --maxWorkers=2 && node test-storybook.js",
+    "test:all:ci": "test-storybook --ci --maxWorkers=2 --url http://localhost:6006 && node test-storybook.js"
   },
   "dependencies": {
     "@datalayer/jupyter-lexical": "^1.0.0",

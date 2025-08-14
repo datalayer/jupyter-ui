@@ -4,4 +4,4 @@
  * MIT License
  */
 
-export * from "./LexicalContext";
+export * from './LexicalContext';

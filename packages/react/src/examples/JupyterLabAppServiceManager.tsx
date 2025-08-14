@@ -39,16 +39,14 @@ const JupyterLabAppServiceManager = () => {
         lightThemePlugins,
         ipywidgetsPlugins,
         plotlyPlugins,
-//        reactPlugins,
+        //        reactPlugins,
       ]}
-      mimeRenderers={[
-        plotlyMimeRenderers
-      ]}
+      mimeRenderers={[plotlyMimeRenderers]}
       height="calc(100vh - 74px)"
       onJupyterLab={onJupyterLab}
     />
   );
-}
+};
 
 const div = document.createElement('div');
 document.body.appendChild(div);

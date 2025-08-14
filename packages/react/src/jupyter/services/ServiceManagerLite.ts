@@ -7,20 +7,23 @@
 import { ServiceManager } from '@jupyterlab/services';
 import { createLiteServer, Lite } from '../lite';
 
-export const createLiteServiceManager = (lite: Lite = true): Promise<ServiceManager.IManager> => {
+export const createLiteServiceManager = (
+  lite: Lite = true
+): Promise<ServiceManager.IManager> => {
   const liteServiceManager = createLiteServer().then(async liteServer => {
     // Load the browser kernel.
-    const mod = typeof lite === 'boolean'
+    const mod =
+      typeof lite === 'boolean'
         ? await import('@jupyterlite/pyodide-kernel-extension')
         : await lite;
     // Load the module manually to get the list of plugin IDs.
     let data = mod.default;
     // Handle commonjs exports.
     if (!Object.prototype.hasOwnProperty.call(mod, '__esModule')) {
-        data = mod as any;
+      data = mod as any;
     }
     if (!Array.isArray(data)) {
-        data = [data];
+      data = [data];
     }
     const pluginIDs = data.map(item => {
       try {
@@ -33,13 +36,13 @@ export const createLiteServiceManager = (lite: Lite = true): Promise<ServiceMana
     });
     // Activate the loaded plugins.
     await Promise.all(
-        pluginIDs.filter(id => id).map(id => liteServer.activatePlugin(id!))
+      pluginIDs.filter(id => id).map(id => liteServer.activatePlugin(id!))
     );
     const liteServiceManager = liteServer.serviceManager;
-    (liteServiceManager as any)["__NAME__"] = "LiteServiceManager"
-    console.log("Lite Service Manager is created", liteServiceManager);
+    (liteServiceManager as any)['__NAME__'] = 'LiteServiceManager';
+    console.log('Lite Service Manager is created', liteServiceManager);
     return liteServiceManager;
   });
   // TODO remove `as any` once we bump to jupyterlite 0.6.x.
   return liteServiceManager as any;
-}
+};

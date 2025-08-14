@@ -4,9 +4,9 @@
  * MIT License
  */
 
-import { NodeKey } from "lexical";
+import { NodeKey } from 'lexical';
 import { IOutput } from '@jupyterlab/nbformat';
-import { JupyterCellComponent } from "./../components/JupyterCellComponent";
+import { JupyterCellComponent } from './../components/JupyterCellComponent';
 
 type IJupyterCellNodeComponentProps = {
   nodeKey: NodeKey;
@@ -15,9 +15,11 @@ type IJupyterCellNodeComponentProps = {
   loading: string;
   autoStart: boolean;
   data: any;
-}
+};
 
-export const JupyterCellNodeComponent = (props: IJupyterCellNodeComponentProps) => {
+export const JupyterCellNodeComponent = (
+  props: IJupyterCellNodeComponentProps,
+) => {
   const { code, outputs, loading, autoStart } = props;
   return (
     <>
@@ -29,6 +31,6 @@ export const JupyterCellNodeComponent = (props: IJupyterCellNodeComponentProps) 
       />
     </>
   );
-}
+};
 
 export default JupyterCellNodeComponent;

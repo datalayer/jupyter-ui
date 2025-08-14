@@ -4,22 +4,22 @@
  * MIT License
  */
 
-import {useState} from 'react';
+import { useState } from 'react';
 import {
   $getNearestNodeFromDOMNode,
   $getSelection,
   $setSelection,
   LexicalEditor,
 } from 'lexical';
-import {$isCodeNode} from '@lexical/code';
-import {useDebounce} from '../hooks';
+import { $isCodeNode } from '@lexical/code';
+import { useDebounce } from '../hooks';
 
 interface Props {
   editor: LexicalEditor;
   getCodeDOMNode: () => HTMLElement | null;
 }
 
-export function CopyButton({editor, getCodeDOMNode}: Props) {
+export function CopyButton({ editor, getCodeDOMNode }: Props) {
   const [isCopyCompleted, setCopyCompleted] = useState<boolean>(false);
 
   const removeSuccessIcon = useDebounce(() => {

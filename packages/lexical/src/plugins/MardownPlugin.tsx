@@ -9,6 +9,6 @@ import { PLAYGROUND_TRANSFORMERS } from '../convert/transformers/MarkdownTransfo
 
 export const MarkdownPlugin = (): JSX.Element => {
   return <MarkdownShortcutPlugin transformers={PLAYGROUND_TRANSFORMERS} />;
-}
+};
 
 export default MarkdownPlugin;

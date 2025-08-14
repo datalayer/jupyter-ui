@@ -2,17 +2,8 @@
   "name": "@datalayer/ipyscript",
   "version": "0.1.0",
   "description": "A Custom Jupyter Widget Library",
-  "keywords": [
-    "jupyter",
-    "jupyterlab",
-    "jupyterlab-extension",
-    "widgets"
-  ],
-  "files": [
-    "lib/**/*.js",
-    "dist/*.js",
-    "css/*.css"
-  ],
+  "keywords": ["jupyter", "jupyterlab", "jupyterlab-extension", "widgets"],
+  "files": ["lib/**/*.js", "dist/*.js", "css/*.css"],
   "homepage": "https://github.com/datalayer/ipyscript",
   "bugs": {
     "url": "https://github.com/datalayer/ipyscript/issues"

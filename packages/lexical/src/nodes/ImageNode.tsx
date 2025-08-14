@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import {Suspense, useCallback, useEffect, useRef, useState} from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import type {
   DOMConversionMap,
   DOMConversionOutput,
@@ -19,17 +19,17 @@ import type {
   SerializedLexicalNode,
   Spread,
 } from 'lexical';
-import {AutoFocusPlugin} from '@lexical/react/LexicalAutoFocusPlugin';
-import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
-import {HashtagPlugin} from '@lexical/react/LexicalHashtagPlugin';
-import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
-import {LinkPlugin} from '@lexical/react/LexicalLinkPlugin';
-import {LexicalNestedComposer} from '@lexical/react/LexicalNestedComposer';
-import {RichTextPlugin} from '@lexical/react/LexicalRichTextPlugin';
-import {TablePlugin} from '@lexical/react/LexicalTablePlugin';
-import {useLexicalNodeSelection} from '@lexical/react/useLexicalNodeSelection';
+import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { HashtagPlugin } from '@lexical/react/LexicalHashtagPlugin';
+import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
+import { LexicalNestedComposer } from '@lexical/react/LexicalNestedComposer';
+import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
+import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
+import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
-import {mergeRegister} from '@lexical/utils';
+import { mergeRegister } from '@lexical/utils';
 import {
   $createNodeSelection,
   $getNodeByKey,
@@ -52,7 +52,6 @@ import ContentEditable from '../components/ContentEditable';
 import ImageResizer from '../components/ImageResizer';
 import Placeholder from '../components/Placeholder';
 
-
 export interface ImagePayload {
   altText: string;
   caption?: LexicalEditor;
@@ -68,7 +67,7 @@ const imageCache = new Set();
 
 function useSuspenseImage(src: string) {
   if (!imageCache.has(src)) {
-    throw new Promise((resolve) => {
+    throw new Promise(resolve => {
       const img = new Image();
       img.src = src;
       img.onload = () => {
@@ -81,9 +80,9 @@ function useSuspenseImage(src: string) {
 
 function convertImageElement(domNode: Node): null | DOMConversionOutput {
   if (domNode instanceof HTMLImageElement) {
-    const {alt: altText, src} = domNode;
-    const node = $createImageNode({altText, src});
-    return {node};
+    const { alt: altText, src } = domNode;
+    const node = $createImageNode({ altText, src });
+    return { node };
   }
   return null;
 }
@@ -100,7 +99,7 @@ function LazyImage({
   altText: string;
   className: string | null;
   height: 'inherit' | number;
-  imageRef: {current: null | HTMLImageElement};
+  imageRef: { current: null | HTMLImageElement };
   maxWidth: number;
   src: string;
   width: 'inherit' | number;
@@ -149,9 +148,7 @@ function ImageComponent({
     useLexicalNodeSelection(nodeKey);
   const [isResizing, setIsResizing] = useState<boolean>(false);
   const [editor] = useLexicalComposerContext();
-  const [selection, ] = useState<
-    RangeSelection | NodeSelection | null
-  >(null);
+  const [selection] = useState<RangeSelection | NodeSelection | null>(null);
   const activeEditorRef = useRef<LexicalEditor | null>(null);
 
   const onDelete = useCallback(
@@ -224,9 +221,9 @@ function ImageComponent({
 
   useEffect(() => {
     return mergeRegister(
-      editor.registerUpdateListener(({editorState}) => {
+      editor.registerUpdateListener(({ editorState }) => {
         // TODO(ECH) Fix this.
-//        setSelection(editorState.read(() => $getSelection()));
+        //        setSelection(editorState.read(() => $getSelection()));
       }),
       editor.registerCommand(
         SELECTION_CHANGE_COMMAND,
@@ -238,7 +235,7 @@ function ImageComponent({
       ),
       editor.registerCommand<MouseEvent>(
         CLICK_COMMAND,
-        (payload) => {
+        payload => {
           const event = payload;
 
           if (isResizing) {
@@ -418,7 +415,7 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
   }
 
   static importJSON(serializedNode: SerializedImageNode): ImageNode {
-    const {altText, height, width, maxWidth, caption, src, showCaption} =
+    const { altText, height, width, maxWidth, caption, src, showCaption } =
       serializedNode;
     const node = $createImageNode({
       altText,
@@ -440,7 +437,7 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     const element = document.createElement('img');
     element.setAttribute('src', this.__src);
     element.setAttribute('alt', this.__altText);
-    return {element};
+    return { element };
   }
 
   static importDOM(): DOMConversionMap | null {

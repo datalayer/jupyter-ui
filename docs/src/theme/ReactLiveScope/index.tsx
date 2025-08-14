@@ -11,11 +11,16 @@ import { ContentLoader } from '@datalayer/primer-addons';
 const Cell = (props: any) => {
   return (
     <BrowserOnly
-      fallback={<div>Jupyter Cell fallback content for prerendering.</div>}>
+      fallback={<div>Jupyter Cell fallback content for prerendering.</div>}
+    >
       {() => {
         // Keep the import via require in the BrowserOnly code block.
-        const { Jupyter } = require('@datalayer/jupyter-react/lib/jupyter/Jupyter');
-        const { Cell } = require('@datalayer/jupyter-react/lib/components/cell/Cell');
+        const {
+          Jupyter,
+        } = require('@datalayer/jupyter-react/lib/jupyter/Jupyter');
+        const {
+          Cell,
+        } = require('@datalayer/jupyter-react/lib/components/cell/Cell');
         return (
           <>
             <Jupyter
@@ -23,16 +28,16 @@ const Cell = (props: any) => {
               jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
               disableCssLoading={true}
               starDefaultKernel
-              skeleton={<ContentLoader/>}
+              skeleton={<ContentLoader />}
             >
-              <Cell {...props}/>
+              <Cell {...props} />
             </Jupyter>
           </>
-        )
-     }}
+        );
+      }}
     </BrowserOnly>
-  )
-}
+  );
+};
 
 // Add react-live imports you need here
 const ReactLiveScope = {

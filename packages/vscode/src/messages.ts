@@ -22,7 +22,7 @@ export type ExtensionMessage = {
   error?: any;
   /**
    * Message owner ID.
-   * 
+   *
    * For a HTTP request this is a request ID, for a websocket message
    * it is the client ID.
    */

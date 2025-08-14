@@ -97,8 +97,8 @@ export abstract class LabWidgetManager
     if (kernelConnection) {
       kernelConnection.registerCommTarget(
         this.comm_target_name,
-        this._handleCommOpen,
-      );  
+        this._handleCommOpen
+      );
     }
   }
 
@@ -324,7 +324,7 @@ export abstract class LabWidgetManager
     super.register_model(model_id, modelPromise);
 
     // Update the synchronous model map
-    modelPromise.then((model) => {
+    modelPromise.then(model => {
       this._modelsSync.set(model_id, model);
       model.once('comm:close', () => {
         this._modelsSync.delete(model_id);
@@ -413,7 +413,6 @@ export class KernelWidgetManager extends LabWidgetManager {
     });
 
     this.restoreWidgets();
-
   }
 
   _handleKernelConnectionStatusChange(status: Kernel.ConnectionStatus): void {
@@ -486,9 +485,11 @@ export class WidgetManager extends LabWidgetManager {
       this._handleKernelStatusChange(args);
     });
 
-    this._context.sessionContext.connectionStatusChanged.connect((sender, args) => {
-      this._handleKernelConnectionStatusChange(args);
-    });
+    this._context.sessionContext.connectionStatusChanged.connect(
+      (sender, args) => {
+        this._handleKernelConnectionStatusChange(args);
+      }
+    );
 
     if (this._context.sessionContext.session?.kernel) {
       this._handleKernelChanged({
@@ -545,11 +546,9 @@ export class WidgetManager extends LabWidgetManager {
     notebook: INotebookModel,
     { loadKernel, loadNotebook } = { loadKernel: true, loadNotebook: true }
   ): Promise<void> {
-
-   await this.context.sessionContext.ready;
+    await this.context.sessionContext.ready;
 
     try {
-
       if (loadKernel) {
         try {
           this._kernelRestoreInProgress = true;

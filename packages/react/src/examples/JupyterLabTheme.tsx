@@ -6,43 +6,75 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
-import { 
-  Box, Button, Heading, Text, Link, PageLayout, PageHeader, RadioGroup, Radio, FormControl, RelativeTime, TextInput, TextInputWithTokens, Timeline, ToggleSwitch, SegmentedControl, Label, LabelGroup, NavList, IconButton, CircleBadge, CircleOcticon, Tooltip,
+import {
+  Box,
+  Button,
+  Heading,
+  Text,
+  Link,
+  PageLayout,
+  PageHeader,
+  RadioGroup,
+  Radio,
+  FormControl,
+  RelativeTime,
+  TextInput,
+  TextInputWithTokens,
+  Timeline,
+  ToggleSwitch,
+  SegmentedControl,
+  Label,
+  LabelGroup,
+  NavList,
+  IconButton,
+  CircleBadge,
+  CircleOcticon,
+  Tooltip,
 } from '@primer/react';
-import { DataTable, Table, SkeletonBox, Banner } from '@primer/react/experimental';
-import { GitCommitIcon, HeartIcon, RocketIcon, CheckIcon } from '@primer/octicons-react';
+import {
+  DataTable,
+  Table,
+  SkeletonBox,
+  Banner,
+} from '@primer/react/experimental';
+import {
+  GitCommitIcon,
+  HeartIcon,
+  RocketIcon,
+  CheckIcon,
+} from '@primer/octicons-react';
 import { Jupyter } from '../jupyter/Jupyter';
 import { Colormode } from '../theme/JupyterLabColormode';
 import { jupyterLabTheme as theme } from '../theme/themes';
 
 const mockTokens = [
-  {text: 'zero', id: 0},
-  {text: 'one', id: 1},
-  {text: 'two', id: 2},
-  {text: 'three', id: 3},
-  {text: 'four', id: 4},
-  {text: 'five', id: 5},
-  {text: 'six', id: 6},
-  {text: 'seven', id: 7},
-]
+  { text: 'zero', id: 0 },
+  { text: 'one', id: 1 },
+  { text: 'two', id: 2 },
+  { text: 'three', id: 3 },
+  { text: 'four', id: 4 },
+  { text: 'five', id: 5 },
+  { text: 'six', id: 6 },
+  { text: 'seven', id: 7 },
+];
 
-const now = Date.now()
-const Second = 1000
-const Minute = 60 * Second
-const Hour = 60 * Minute
-const Day = 24 * Hour
-const Week = 7 * Day
-const Month = 4 * Week
+const now = Date.now();
+const Second = 1000;
+const Minute = 60 * Second;
+const Hour = 60 * Minute;
+const Day = 24 * Hour;
+const Week = 7 * Day;
+const Month = 4 * Week;
 
 interface Repo {
-  id: number
-  name: string
-  type: 'public' | 'internal'
-  updatedAt: number
+  id: number;
+  name: string;
+  type: 'public' | 'internal';
+  updatedAt: number;
   securityFeatures: {
-    dependabot: Array<string>
-    codeScanning: Array<string>
-  }
+    dependabot: Array<string>;
+    codeScanning: Array<string>;
+  };
 }
 
 const data: Array<Repo> = [
@@ -126,11 +158,11 @@ const data: Array<Repo> = [
       codeScanning: [],
     },
   },
-]
+];
 
 const JupyterLabTheme = () => {
   const [colormode, setColormode] = useState<Colormode>('light');
-  const [tokens, setTokens] = useState([...mockTokens].slice(0, 3))
+  const [tokens, setTokens] = useState([...mockTokens].slice(0, 3));
   const [isOn, setIsOn] = useState(false);
   useEffect(() => {
     if (isOn) {
@@ -145,25 +177,26 @@ const JupyterLabTheme = () => {
   const handleSwitchChange = useCallback((on: boolean) => {
     setIsOn(on);
   }, []);
-  const onTokenRemove: (tokenId: string | number) => void = (tokenId) => {
-    setTokens(tokens.filter((token) => token.id !== tokenId))
-  }
+  const onTokenRemove: (tokenId: string | number) => void = tokenId => {
+    setTokens(tokens.filter(token => token.id !== tokenId));
+  };
   return (
     <Jupyter theme={theme} colormode={colormode} startDefaultKernel>
       <PageLayout containerWidth="full" padding="normal">
         <PageLayout.Header>
           <PageHeader>
             <PageHeader.TitleArea variant="large">
-              <PageHeader.Title>
-                JupyterLab Theme
-              </PageHeader.Title>
+              <PageHeader.Title>JupyterLab Theme</PageHeader.Title>
             </PageHeader.TitleArea>
             <PageHeader.Description>
-              <Text sx={{
-                fontSize: 1,
-                color: 'fg.muted'
-              }}>
-                Relevant examples to create a data driven user interface with Datalayer.
+              <Text
+                sx={{
+                  fontSize: 1,
+                  color: 'fg.muted',
+                }}
+              >
+                Relevant examples to create a data driven user interface with
+                Datalayer.
               </Text>
             </PageHeader.Description>
             <PageHeader.Actions>
@@ -175,7 +208,7 @@ const JupyterLabTheme = () => {
                 display="block"
                 mb={1}
               >
-                { colormode === 'light' ? 'Light' : 'Dark' } Mode
+                {colormode === 'light' ? 'Light' : 'Dark'} Mode
               </Text>
               <ToggleSwitch
                 size="small"
@@ -198,27 +231,41 @@ const JupyterLabTheme = () => {
             </Box>
           </Box>
           <Box display="flex">
-            <Box sx={{ width: "100%" }}>
+            <Box sx={{ width: '100%' }}>
               <Heading>Heading</Heading>
               <Box>
                 <Text as="h1">Heading 1</Text>
                 <Text as="h2">Heading 2</Text>
                 <Text as="h3">Heading 3</Text>
                 <Text>This is a text.</Text>
-                <br/>
-                <Link href="https://datalayer.io" target="_blank">This is a link.</Link>
-                <br/>
-                <Text as="h3"><Link href="https://datalayer.io" target="_blank">This is a heading 3 link</Link></Text>
+                <br />
+                <Link href="https://datalayer.io" target="_blank">
+                  This is a link.
+                </Link>
+                <br />
+                <Text as="h3">
+                  <Link href="https://datalayer.io" target="_blank">
+                    This is a heading 3 link
+                  </Link>
+                </Text>
               </Box>
               <Box>
                 <Button variant="default">Default</Button>
-                <Button variant="default" leadingVisual={RocketIcon}>Icon</Button>
+                <Button variant="default" leadingVisual={RocketIcon}>
+                  Icon
+                </Button>
                 <Button variant="primary">Primary</Button>
-                <Button variant="primary" leadingVisual={RocketIcon}>Icon</Button>
+                <Button variant="primary" leadingVisual={RocketIcon}>
+                  Icon
+                </Button>
                 <Button variant="invisible">Invisible</Button>
-                <Button variant="invisible" leadingVisual={RocketIcon}>Icon</Button>
+                <Button variant="invisible" leadingVisual={RocketIcon}>
+                  Icon
+                </Button>
                 <Button variant="danger">Danger</Button>
-                <Button variant="danger" leadingVisual={RocketIcon}>Icon</Button>
+                <Button variant="danger" leadingVisual={RocketIcon}>
+                  Icon
+                </Button>
               </Box>
               <Box>
                 <NavList>
@@ -235,18 +282,24 @@ const JupyterLabTheme = () => {
               <Box>
                 <CircleOcticon
                   icon={CheckIcon}
-                  sx={{backgroundColor: 'success.emphasis', color: 'fg.onEmphasis'}}
+                  sx={{
+                    backgroundColor: 'success.emphasis',
+                    color: 'fg.onEmphasis',
+                  }}
                   aria-label="Changes approved"
                 />
               </Box>
               <Box>
                 <CircleBadge>
-                  <CircleBadge.Icon icon={RocketIcon} aria-label="Launch badge" />
+                  <CircleBadge.Icon
+                    icon={RocketIcon}
+                    aria-label="Launch badge"
+                  />
                 </CircleBadge>
               </Box>
             </Box>
             {/* Column 2 */}
-            <Box sx={{ width: "100%" }}>
+            <Box sx={{ width: '100%' }}>
               <Box as="form">
                 <RadioGroup name="defaultRadioGroup">
                   <RadioGroup.Label>Choices</RadioGroup.Label>
@@ -274,7 +327,10 @@ const JupyterLabTheme = () => {
               <Box>
                 <FormControl>
                   <FormControl.Label>Default label</FormControl.Label>
-                  <TextInputWithTokens tokens={tokens} onTokenRemove={onTokenRemove} />
+                  <TextInputWithTokens
+                    tokens={tokens}
+                    onTokenRemove={onTokenRemove}
+                  />
                 </FormControl>
               </Box>
               <Box>
@@ -288,7 +344,9 @@ const JupyterLabTheme = () => {
               </Box>
               <Box>
                 <SegmentedControl aria-label="File view">
-                  <SegmentedControl.Button defaultSelected>Preview</SegmentedControl.Button>
+                  <SegmentedControl.Button defaultSelected>
+                    Preview
+                  </SegmentedControl.Button>
                   <SegmentedControl.Button>Raw</SegmentedControl.Button>
                   <SegmentedControl.Button>Blame</SegmentedControl.Button>
                 </SegmentedControl>
@@ -381,7 +439,6 @@ const JupyterLabTheme = () => {
                 aria-describedby="repositories-subtitle"
                 data={data}
                 columns={[
-                // @ts-ignore
                   {
                     header: 'Repository',
                     field: 'name',
@@ -390,41 +447,45 @@ const JupyterLabTheme = () => {
                   {
                     header: 'Type',
                     field: 'type',
-                    renderCell: (row) => {
-                      return <Label>{row.type}</Label>
+                    renderCell: row => {
+                      return <Label>{row.type}</Label>;
                     },
                   },
                   {
                     header: 'Updated',
                     field: 'updatedAt',
-                    renderCell: (row) => {
-                      return <RelativeTime date={new Date(row.updatedAt)} />
+                    renderCell: row => {
+                      return <RelativeTime date={new Date(row.updatedAt)} />;
                     },
                   },
                   {
                     header: 'Dependabot',
                     field: 'securityFeatures.dependabot',
-                    renderCell: (row) => {
+                    renderCell: row => {
                       return row.securityFeatures.dependabot.length > 0 ? (
                         <LabelGroup>
-                          {row.securityFeatures.dependabot.map((feature) => {
-                            return <Label key={feature}>{feature}</Label>
+                          {row.securityFeatures.dependabot.map(feature => {
+                            return <Label key={feature}>{feature}</Label>;
                           })}
                         </LabelGroup>
-                      ) : null
+                      ) : null;
                     },
                   },
                   {
                     header: 'Code scanning',
                     field: 'securityFeatures.codeScanning',
-                    renderCell: (row) => {
+                    renderCell: row => {
                       return row.securityFeatures.codeScanning.length > 0 ? (
                         <LabelGroup>
-                          {row.securityFeatures.codeScanning.map((feature) => {
-                            return <Label variant="danger" key={feature}>{feature}</Label>
+                          {row.securityFeatures.codeScanning.map(feature => {
+                            return (
+                              <Label variant="danger" key={feature}>
+                                {feature}
+                              </Label>
+                            );
                           })}
                         </LabelGroup>
-                      ) : null
+                      ) : null;
                     },
                   },
                 ]}
@@ -433,23 +494,39 @@ const JupyterLabTheme = () => {
           </Box>
           <Box>
             <Box>
-              <Text as="h3"><Link href="https://datalayer.io" target="_blank">User Guide</Link></Text>
+              <Text as="h3">
+                <Link href="https://datalayer.io" target="_blank">
+                  User Guide
+                </Link>
+              </Text>
             </Box>
             <Box>
-              <Text as="h3"><Link href="https://datalayer.io" target="_blank">Pricing</Link></Text>
+              <Text as="h3">
+                <Link href="https://datalayer.io" target="_blank">
+                  Pricing
+                </Link>
+              </Text>
             </Box>
             <Box>
-              <Text as="h3"><Link href="https://datalayer.io" target="_blank">Privacy</Link></Text>
+              <Text as="h3">
+                <Link href="https://datalayer.io" target="_blank">
+                  Privacy
+                </Link>
+              </Text>
             </Box>
             <Box>
-              <Text as="h3"><Link href="https://datalayer.io" target="_blank">Terms and conditions</Link></Text>
+              <Text as="h3">
+                <Link href="https://datalayer.io" target="_blank">
+                  Terms and conditions
+                </Link>
+              </Text>
             </Box>
           </Box>
         </PageLayout.Content>
       </PageLayout>
     </Jupyter>
   );
-}
+};
 
 const div = document.createElement('div');
 document.body.appendChild(div);

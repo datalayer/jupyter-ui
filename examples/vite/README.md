@@ -16,11 +16,11 @@ npm run dev
 Ensure to add the following script in the head of your HTML.
 
 ```html
-    <!-- Needed for ipywidgets -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script type="module">
-      globalThis.__webpack_public_path__ = "";
-    </script>
+<!-- Needed for ipywidgets -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+<script type="module">
+  globalThis.__webpack_public_path__ = '';
+</script>
 ```
 
 To create a production build, you first need to patch `@jupyter-widgets/controls` to avoid issues with early loadings via `require.js`.
@@ -45,7 +45,7 @@ index 912458d..5edaa11 100644
 @@ -24,4 +24,4 @@ export * from './widget_string';
  export * from './widget_description';
  export * from './widget_upload';
- 
+
 -export const version = (require('../package.json') as any).version;
 +export const version = "5.0.12";
 ```

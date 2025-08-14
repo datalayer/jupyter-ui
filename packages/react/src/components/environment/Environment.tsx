@@ -4,6 +4,6 @@
  * MIT License
  */
 
-import { ISpecModel  } from '@jupyterlab/services/lib/kernelspec/kernelspec';
+import { ISpecModel } from '@jupyterlab/services/lib/kernelspec/kernelspec';
 
 export type Environment = ISpecModel;

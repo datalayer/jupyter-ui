@@ -4,9 +4,9 @@
  * MIT License
  */
 
-import { createRoot } from "react-dom/client";
-import { AppNbformat } from "./AppNbformat";
+import { createRoot } from 'react-dom/client';
+import { AppNbformat } from './AppNbformat';
 
-const rootElement = document.getElementById("root");
+const rootElement = document.getElementById('root');
 
 createRoot(rootElement!).render(<AppNbformat />);

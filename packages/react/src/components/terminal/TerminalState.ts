@@ -24,7 +24,8 @@ export const terminalStore = createStore<TerminalState>((set, get) => ({
   dark: false,
   adapter: undefined,
   setDark: (dark: boolean) => set((state: TerminalState) => ({ dark })),
-  setAdapter: (adapter?: TerminalAdapter) => set((state: TerminalState) => ({ adapter })),
+  setAdapter: (adapter?: TerminalAdapter) =>
+    set((state: TerminalState) => ({ adapter })),
 }));
 
 export function useTerminalStore(): TerminalState;

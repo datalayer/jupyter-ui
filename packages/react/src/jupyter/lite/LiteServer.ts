@@ -4,13 +4,18 @@
  * MIT License
  */
 
-import { JupyterLiteServer, JupyterLiteServerPlugin } from '@jupyterlite/server';
+import {
+  JupyterLiteServer,
+  JupyterLiteServerPlugin,
+} from '@jupyterlite/server';
 import { PageConfig } from '@jupyterlab/coreutils';
 
 /**
  * Iterate over active plugins in an extension.
  */
-function* activePlugins(extension: any): Generator<JupyterLiteServerPlugin<any>> {
+function* activePlugins(
+  extension: any
+): Generator<JupyterLiteServerPlugin<any>> {
   // Handle commonjs or es2015 modules.
   let exports;
   // eslint-disable-next-line no-prototype-builtins

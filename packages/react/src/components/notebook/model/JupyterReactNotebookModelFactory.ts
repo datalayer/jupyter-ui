@@ -5,7 +5,11 @@
  */
 
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { INotebookModel, NotebookModelFactory, NotebookModel } from '@jupyterlab/notebook';
+import {
+  INotebookModel,
+  NotebookModelFactory,
+  NotebookModel,
+} from '@jupyterlab/notebook';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import type { ISharedNotebook } from '@jupyter/ydoc';
 
@@ -21,7 +25,9 @@ export class JupyterReactNotebookModelFactory extends NotebookModelFactory {
   }
 
   /** @override */
-  createNew(options: DocumentRegistry.IModelOptions<ISharedNotebook>): INotebookModel {
+  createNew(
+    options: DocumentRegistry.IModelOptions<ISharedNotebook>
+  ): INotebookModel {
     if (this._nbformat) {
       this._nbformat.cells.forEach(cell => {
         cell.metadata['editable'] = !this._readonly;

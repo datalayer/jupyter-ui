@@ -17,25 +17,27 @@ import {
   CircleWhiteIcon,
   CircleYellowIcon,
   CircleCurrentColorIcon,
-  PlusCircleIcon
+  PlusCircleIcon,
 } from '@datalayer/icons-react';
 import { KernelMessage } from '@jupyterlab/services';
-import { ConnectionStatus, IKernelConnection } from '@jupyterlab/services/lib/kernel/kernel';
+import {
+  ConnectionStatus,
+  IKernelConnection,
+} from '@jupyterlab/services/lib/kernel/kernel';
 import { Environment } from '../environment/Environment';
 
-export type ExecutionState = 
-  'connecting' |
-  'connected-unknown' |
-  'connected-starting' |
-  'connected-idle' |
-  'connected-busy' |
-  'connected-terminating' |
-  'connected-restarting' |
-  'connected-autorestarting' |
-  'connected-dead' |
-  'disconnecting' | 
-  'undefined'
-  ;
+export type ExecutionState =
+  | 'connecting'
+  | 'connected-unknown'
+  | 'connected-starting'
+  | 'connected-idle'
+  | 'connected-busy'
+  | 'connected-terminating'
+  | 'connected-restarting'
+  | 'connected-autorestarting'
+  | 'connected-dead'
+  | 'disconnecting'
+  | 'undefined';
 
 /**
  * The valid kernel connection states.
@@ -55,9 +57,10 @@ export type ExecutionState =
  *
  * Status = 'unknown' | 'starting' | 'idle' | 'busy' | 'terminating' | 'restarting' | 'autorestarting' | 'dead';
  */
+/* eslint-disable react/jsx-key */
 export const KERNEL_STATES: Map<ExecutionState, ReactElement> = new Map([
   ['connecting', <PlusCircleIcon />],
-  ['connected-unknown', <CircleCurrentColorIcon color='lightgray' />],
+  ['connected-unknown', <CircleCurrentColorIcon color="lightgray" />],
   ['connected-starting', <CircleYellowIcon />],
   ['connected-idle', <CircleGreenIcon />],
   ['connected-busy', <CircleOrangeIcon />],
@@ -68,15 +71,19 @@ export const KERNEL_STATES: Map<ExecutionState, ReactElement> = new Map([
   ['disconnecting', <CircleBrownIcon />],
   ['undefined', <CircleBlackIcon />],
 ]);
+/* eslint-enable react/jsx-key */
 
-export const toKernelState = (connectionStatus: ConnectionStatus, status: KernelMessage.Status): ExecutionState => {
+export const toKernelState = (
+  connectionStatus: ConnectionStatus,
+  status: KernelMessage.Status
+): ExecutionState => {
   if (
     connectionStatus === 'connecting' ||
     connectionStatus === 'disconnected'
   ) {
     return connectionStatus as ExecutionState;
   }
-  return connectionStatus + '-' + status as ExecutionState;
+  return (connectionStatus + '-' + status) as ExecutionState;
 };
 
 type KernelIndicatorProps = {
@@ -92,11 +99,9 @@ export const KernelIndicator = (props: KernelIndicatorProps) => {
     if (kernel) {
       setConnectionStatus(kernel?.connectionStatus);
       setStatus(kernel?.status);
-      kernel.connectionStatusChanged.connect(
-        (_, connectionStatus) => {
-          setConnectionStatus(connectionStatus);
-        }
-      );
+      kernel.connectionStatusChanged.connect((_, connectionStatus) => {
+        setConnectionStatus(connectionStatus);
+      });
       kernel.statusChanged.connect((_, status) => {
         setStatus(status);
       });

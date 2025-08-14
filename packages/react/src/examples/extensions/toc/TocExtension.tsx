@@ -5,9 +5,17 @@
  */
 
 import { NotebookPanel, NotebookToCFactory } from '@jupyterlab/notebook';
-import { TableOfContents, TableOfContentsRegistry, TableOfContentsTracker } from '@jupyterlab/toc';
+import {
+  TableOfContents,
+  TableOfContentsRegistry,
+  TableOfContentsTracker,
+} from '@jupyterlab/toc';
 import { BoxPanel } from '@lumino/widgets';
-import { DatalayerNotebookExtension, IDatalayerNotebookExtensionProps, notebookStore } from '../../../components';
+import {
+  DatalayerNotebookExtension,
+  IDatalayerNotebookExtensionProps,
+  notebookStore,
+} from '../../../components';
 import { JupyterLayoutFactory } from './JupyterLayoutFactory';
 
 /**

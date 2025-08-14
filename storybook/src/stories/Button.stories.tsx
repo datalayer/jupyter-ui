@@ -42,7 +42,10 @@ export const Default: Story = Template.bind({}) as Story;
 
 export const Playground: Story = {
   render: (args, options) =>
-    Template.bind({})({ label: 'Default', ...args }, { globals: { labComparison: true } }),
+    Template.bind({})(
+      { label: 'Default', ...args },
+      { globals: { labComparison: true } },
+    ),
 };
 Playground.argTypes = {
   size: {
@@ -73,21 +76,9 @@ Playground.argTypes = {
       type: 'boolean',
     },
   },
-  leadingVisual: ([
-    EyeClosedIcon,
-    EyeIcon,
-    SearchIcon,
-    XIcon,
-    HeartIcon,
-  ]),
-  trailingVisual: ([
-    EyeClosedIcon,
-    EyeIcon,
-    SearchIcon,
-    XIcon,
-    HeartIcon,
-  ]),
-  trailingAction: ([TriangleDownIcon]),
+  leadingVisual: [EyeClosedIcon, EyeIcon, SearchIcon, XIcon, HeartIcon],
+  trailingVisual: [EyeClosedIcon, EyeIcon, SearchIcon, XIcon, HeartIcon],
+  trailingAction: [TriangleDownIcon],
 };
 Playground.args = {
   block: false,

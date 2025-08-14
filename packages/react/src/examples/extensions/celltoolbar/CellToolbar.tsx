@@ -27,7 +27,6 @@ export class CellToolbar extends ReactWidget {
       <>
         <CellToolbarComponent cell={this._cell} extensionProps={this._props} />
       </>
-    )
+    );
   }
-
 }

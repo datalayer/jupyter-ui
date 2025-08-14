@@ -15,7 +15,7 @@
     "datalayer"
   ],
   "engines": {
-    "node": ">= 18.0.0"
+    "node": ">= 20.0.0"
   },
   "os": [
     "darwin",
@@ -39,7 +39,15 @@
     "jupyter:ui:slate": "lerna run --parallel --scope @datalayer/jupyter-slate-example start",
     "storybook": "lerna run --scope @datalayer/jupyter-ui-storybook storybook",
     "test": "lerna run test",
-    "postinstall": "patch-package"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx --quiet",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md,mdx,yml,yaml,css,html}\"",
+    "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,md,mdx,yml,yaml,css,html}\"",
+    "type-check": "tsc --build --noEmit",
+    "check": "npm run format:check && npm run lint && npm run type-check",
+    "check:fix": "npm run format && npm run lint:fix && npm run type-check",
+    "postinstall": "patch-package",
+    "prepare": "husky"
   },
   "workspaces": [
     "docs",
@@ -48,24 +56,37 @@
     "storybook"
   ],
   "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@eslint/js": "^9.33.0",
+    "@typescript-eslint/eslint-plugin": "^8.39.1",
+    "@typescript-eslint/parser": "^8.39.1",
     "concurrently": "^6.2.0",
+    "eslint": "^9.33.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
     "fkill-cli": "^7.1.0",
+    "husky": "^9.1.7",
     "lerna": "^6.6.2",
+    "lint-staged": "^16.1.5",
     "npm-run-all": "^4.1.5",
-    "patch-package": "^8.0.0"
+    "patch-package": "^8.0.0",
+    "typescript-eslint": "^8.39.1"
   },
   "resolutions": {
-    "@types/react": "18.3.20",
-    "@types/react-dom": "18.3.6",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
+    "@types/react": "^18.3.20",
+    "@types/react-dom": "^18.3.6",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "typescript": "^5.8.3"
   },
   "overrides": {
-    "@types/react": "18.3.20",
-    "@types/react-dom": "18.3.6",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
+    "@types/react": "^18.3.20",
+    "@types/react-dom": "^18.3.6",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "typescript": "^5.8.3"
   }
 }

@@ -10,20 +10,19 @@ This component displays a Jupyter Console.
 
 ## With a Jupyter server
 
-<StorybookView 
-    story='components-console--default'
-/>
+<StorybookView story="components-console--default" />
 
 ```jsx
 <Jupyter
-    jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
-    jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+  jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
+  jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
 >
-    <Console />
+  <Console />
 </Jupyter>
 ```
 
 You can set the following props to connect it to a running Jupyter Server:
+
 - `jupyterServerUrl`: The server URL
 - `jupyterServerToken`: The server authentication token
 
@@ -36,34 +35,29 @@ It supports in-browser kernel (using [JupyterLite kernels](https://jupyterlite.r
 To use the [Pyodide](https://pyodide.org/) Python [kernel](https://github.com/jupyterlite/pyodide-kernel),
 you can simply set `lite` to `true`:
 
-<StorybookView 
-    story='components-console--lite-python'
-/>
+<StorybookView story="components-console--lite-python" />
 
 ```jsx
-<Jupyter
-    lite={true}
->
-    <Console />
+<Jupyter lite={true}>
+  <Console />
 </Jupyter>
 ```
 
 But you can also load your own JupyterLite kernel. For example here, the console loads
 the [JavaScript kernel](https://github.com/jupyterlite/jupyterlite/tree/main/py/jupyterlite-javascript-kernel).
 
-<StorybookView 
-    story='components-console--lite-javascript'
-/>
+<StorybookView story="components-console--lite-javascript" />
 
 ```jsx
 <Jupyter
-    lite={import('@jupyterlite/javascript-kernel-extension')}
-    defaultKernelName={'javascript'}
+  lite={import('@jupyterlite/javascript-kernel-extension')}
+  defaultKernelName={'javascript'}
 >
-    <Console />
+  <Console />
 </Jupyter>
 ```
 
 To do so, you will need to specify two props:
+
 - `lite`: Should be set with the dynamic import of the kernel NPM package
 - `defaultKernelName`: Should match the name of the dynamically imported kernel

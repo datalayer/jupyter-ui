@@ -21,7 +21,7 @@ const NotebookKernel = () => {
         kernelManager,
         kernelName: 'python3',
         kernelSpecName: 'python3',
-        kernelType: "notebook",
+        kernelType: 'notebook',
         kernelspecsManager: serviceManager.kernelspecs,
         sessionManager: serviceManager.sessions,
       });
@@ -39,10 +39,10 @@ const NotebookKernel = () => {
       />
     </JupyterReactTheme>
   );
-}
+};
 
 const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookKernel/>);
+root.render(<NotebookKernel />);

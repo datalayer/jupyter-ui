@@ -10,12 +10,15 @@ import type {
   TextMatchTransformer,
   Transformer,
 } from '.';
-import type {LexicalNode, RootNode, TextNode} from 'lexical';
+import type { LexicalNode, RootNode, TextNode } from 'lexical';
 
-import {JupyterCodeNode, $createJupyterCodeNode} from './../../nodes/JupyterCodeNode';
-import {$isListItemNode, $isListNode} from '@lexical/list';
-import {$isQuoteNode} from '@lexical/rich-text';
-import {$findMatchingParent} from '@lexical/utils';
+import {
+  JupyterCodeNode,
+  $createJupyterCodeNode,
+} from './../../nodes/JupyterCodeNode';
+import { $isListItemNode, $isListNode } from '@lexical/list';
+import { $isQuoteNode } from '@lexical/rich-text';
+import { $findMatchingParent } from '@lexical/utils';
 import {
   $createLineBreakNode,
   $createParagraphNode,
@@ -25,7 +28,7 @@ import {
   $isTextNode,
 } from 'lexical';
 
-import {PUNCTUATION_OR_SPACE, transformersByType} from './utils';
+import { PUNCTUATION_OR_SPACE, transformersByType } from './utils';
 
 const MARKDOWN_EMPTY_LINE_REG_EXP = /^\s{0,3}$/;
 const CODE_BLOCK_REG_EXP = /^```(\w{1,10})?\s?$/;
@@ -47,7 +50,7 @@ export function createMarkdownImport(
     const lines = markdownString.split('\n');
     const linesLength = lines.length;
     const root = $getRoot();
-//    root.clear();
+    //    root.clear();
 
     for (let i = 0; i < linesLength; i++) {
       const lineText = lines[i];
@@ -111,7 +114,7 @@ function importBlocks(
   elementNode.append(textNode);
   rootNode.append(elementNode);
 
-  for (const {regExp, replace} of elementTransformers) {
+  for (const { regExp, replace } of elementTransformers) {
     const match = lineText.match(regExp);
 
     if (match) {
@@ -331,7 +334,7 @@ function findOutermostMatch(
 
       // For non-intraword transformers checking if it's within a word
       // or surrounded with space/punctuation/newline
-      const {index = 0} = fullMatch;
+      const { index = 0 } = fullMatch;
       const beforeChar = textContent[index - 1];
       const afterChar = textContent[index + fullMatch[0].length];
 
@@ -355,7 +358,7 @@ function createTextFormatTransformersIndex(
   const openTagsRegExp = [];
 
   for (const transformer of textTransformers) {
-    const {tag} = transformer;
+    const { tag } = transformer;
     transformersByTag[tag] = transformer;
     const tagRegExp = tag.replace(/(\*|\^)/g, '\\$1');
     openTagsRegExp.push(tagRegExp);

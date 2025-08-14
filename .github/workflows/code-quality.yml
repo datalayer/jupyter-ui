@@ -1,0 +1,53 @@
+name: Code Quality
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['*']
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  code-quality:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Lint Checks
+        run: |
+          echo "::group::Running Lint Checks"
+          echo "Running ESLint..."
+          npm run lint
+          echo "✓ ESLint passed"
+          echo ""
+          echo "::endgroup::"
+
+      - name: Run Format Checks
+        run: |
+          echo "::group::Running Format Checks"
+          npm run format:check
+          echo "✓ Prettier passed"
+          echo ""
+          echo "::endgroup::"
+      - name: Build project
+        run: npm run build
+      - name: Run Type Checks
+        run: |
+          echo "::group::Running Type Checks"
+          npm run type-check
+          echo "✓ TypeScript passed"
+          echo "::endgroup::"

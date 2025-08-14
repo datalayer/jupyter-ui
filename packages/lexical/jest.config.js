@@ -21,7 +21,7 @@ const esModules = [
   'vscode\\-ws\\-jsonrpc',
   'y\\-protocols',
   'y\\-websocket',
-  'yjs'
+  'yjs',
 ].join('|');
 
 const {
@@ -31,11 +31,11 @@ const {
   setupFilesAfterEnv,
   setupFiles,
   testPathIgnorePatterns,
-  transform
+  transform,
 } = jlabConfig;
 
 module.exports = {
-/*
+  /*
   ...jlabConfig,
   moduleFileExtensions,
   moduleNameMapper,
@@ -46,12 +46,12 @@ module.exports = {
   transform,
   automock: false,
 */
-//  collectCoverageFrom: [
-//    'src/**/*.{ts,tsx}',
-//    '!src/**/*.d.ts',
-//    '!src/**/.ipynb_checkpoints/*'
-//  ],
-/*
+  //  collectCoverageFrom: [
+  //    'src/**/*.{ts,tsx}',
+  //    '!src/**/*.d.ts',
+  //    '!src/**/.ipynb_checkpoints/*'
+  //  ],
+  /*
   coverageDirectory: 'coverage',
   coverageReporters: ['lcov', 'text'],
   globals: {
@@ -62,5 +62,5 @@ module.exports = {
 */
   testRegex: '(/src/__tests__/.*|(\\./src)(test|spec))\\.[jt]sx?$',
   transformIgnorePatterns: [`/node_modules/(?!${esModules}).+`],
-  preset: "jest-puppeteer",
-}
+  preset: 'jest-puppeteer',
+};

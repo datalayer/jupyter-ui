@@ -11,7 +11,10 @@ import { Widget } from '@lumino/widgets';
 import { MessageLoop } from '@lumino/messaging';
 import { WidgetModel, WidgetView, DOMWidgetView } from '@jupyter-widgets/base';
 import { ManagerBase } from '@jupyter-widgets/base-manager';
-import { RenderMimeRegistry, standardRendererFactories } from '@jupyterlab/rendermime';
+import {
+  RenderMimeRegistry,
+  standardRendererFactories,
+} from '@jupyterlab/rendermime';
 import { WidgetRenderer, WIDGET_MIMETYPE } from './output_renderers';
 
 import * as widgets from '@jupyter-widgets/controls';
@@ -33,7 +36,7 @@ export class HTMLManager extends ManagerBase {
       {
         safe: false,
         mimeTypes: [WIDGET_MIMETYPE],
-        createRenderer: (options) => new WidgetRenderer(options, this),
+        createRenderer: options => new WidgetRenderer(options, this),
       },
       0
     );
@@ -41,14 +44,13 @@ export class HTMLManager extends ManagerBase {
     this._viewList = new Set<DOMWidgetView>();
 
     window.addEventListener('resize', () => {
-      this._viewList.forEach((view) => {
+      this._viewList.forEach(view => {
         MessageLoop.postMessage(
           view.luminoWidget,
           Widget.ResizeMessage.UnknownSize
         );
       });
     });
-
   }
 
   /**
@@ -78,13 +80,12 @@ export class HTMLManager extends ManagerBase {
     v.once('remove', () => {
       this._viewList.delete(v);
     });
-
   }
 
   /**
    * Placeholder implementation for _get_comm_info.
    */
-  _get_comm_info(): Promise<{}> {
+  _get_comm_info(): Promise<Record<string, unknown>> {
     return Promise.resolve({});
   }
 
@@ -131,7 +132,7 @@ export class HTMLManager extends ManagerBase {
       } else {
         reject(`Could not load module ${moduleName}@${moduleVersion}`);
       }
-    }).then((module) => {
+    }).then(module => {
       if ((module as any)[className]) {
         return (module as any)[className];
       } else {
@@ -155,5 +156,4 @@ export class HTMLManager extends ManagerBase {
   loader:
     | ((moduleName: string, moduleVersion: string) => Promise<any>)
     | undefined;
-
 }

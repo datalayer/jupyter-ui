@@ -8,7 +8,13 @@ import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ServiceManager } from '@jupyterlab/services';
 import { Box, Button } from '@primer/react';
-import { useKernelId, useNotebookModel, BaseNotebook, JupyterReactTheme, Loader } from '@datalayer/jupyter-react';
+import {
+  useKernelId,
+  useNotebookModel,
+  BaseNotebook,
+  JupyterReactTheme,
+  Loader,
+} from '@datalayer/jupyter-react';
 import { MessageHandlerContext, type ExtensionMessage } from './messageHandler';
 import { createServiceManager } from './serviceManager';
 import { loadFromBytes } from './utils';
@@ -20,7 +26,9 @@ function NotebookVSCode(): JSX.Element {
   const messageHandler = useContext(MessageHandlerContext);
   const [isLoading, setIsLoading] = useState(true);
   const [nbformat, setNbformat] = useState(undefined);
-  const [serviceManager, setServiceManager] = useState<ServiceManager | undefined>();
+  const [serviceManager, setServiceManager] = useState<
+    ServiceManager | undefined
+  >();
   const kernelId = useKernelId({
     kernels: serviceManager?.kernels,
     startDefaultKernel: true,
@@ -66,7 +74,7 @@ function NotebookVSCode(): JSX.Element {
         }
       }
     },
-    [messageHandler]
+    [messageHandler],
   );
   useEffect(() => {
     const disposable = messageHandler.registerCallback(handler);
@@ -81,11 +89,13 @@ function NotebookVSCode(): JSX.Element {
     const { baseUrl, token } = reply.body ?? {};
     setServiceManager(createServiceManager(baseUrl, token));
   }, [messageHandler]);
-  return isLoading
-  ?
+  return isLoading ? (
     <Loader key="notebook-loader" />
-  :
-    <Box style={{ height, width: '100%', position: 'relative' }} id="dla-Jupyter-Notebook">
+  ) : (
+    <Box
+      style={{ height, width: '100%', position: 'relative' }}
+      id="dla-Jupyter-Notebook"
+    >
       <Box sx={{ display: 'flex' }}>
         <Button
           title="Select a runtime for the current notebook."
@@ -148,6 +158,7 @@ function NotebookVSCode(): JSX.Element {
         )}
       </Box>
     </Box>
+  );
 }
 
 // Main function that gets executed once the webview DOM loads
@@ -156,6 +167,6 @@ export function main() {
   root.render(
     <JupyterReactTheme colormode="dark">
       <NotebookVSCode />
-    </JupyterReactTheme>
+    </JupyterReactTheme>,
   );
 }

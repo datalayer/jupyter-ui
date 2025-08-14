@@ -4,7 +4,6 @@
  * MIT License
  */
 
-
 type Props = Readonly<{
   'data-test-id'?: string;
   label: string;
@@ -28,13 +27,13 @@ export const TextInput = ({
         className="Input__input"
         placeholder={placeholder}
         value={value}
-        onChange={(e) => {
+        onChange={e => {
           onChange(e.target.value);
         }}
         data-test-id={dataTestId}
       />
     </div>
   );
-}
+};
 
 export default TextInput;

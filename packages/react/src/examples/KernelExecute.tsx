@@ -22,8 +22,9 @@ export const KernelExecuteView = () => {
   const exec = () => {
     setRunning(true);
     setResult('');
-    kernel?.execute(code)?.result
-      .then((result: string) => {
+    kernel
+      ?.execute(code)
+      ?.result.then((result: string) => {
         setResult(result);
       })
       .catch((error: string) => {
@@ -31,9 +32,8 @@ export const KernelExecuteView = () => {
         setResult(error);
       })
       .finally(() => {
-        setRunning(false);  
-      }
-    );
+        setRunning(false);
+      });
   };
   const interrupt = () => {
     kernel?.interrupt();
@@ -79,7 +79,7 @@ export const KernelExecuteView = () => {
       )}
     </Box>
   );
-}
+};
 
 const KernelExecute = () => {
   return (
@@ -87,7 +87,7 @@ const KernelExecute = () => {
       <KernelExecuteView />
     </JupyterReactTheme>
   );
-}
+};
 
 const div = document.createElement('div');
 document.body.appendChild(div);

@@ -5,18 +5,24 @@
  */
 
 import { useState, useEffect } from 'react';
-import { ServerConnection, ServiceManager, Session, Kernel } from "@jupyterlab/services";
+import {
+  ServerConnection,
+  ServiceManager,
+  Session,
+  Kernel,
+} from '@jupyterlab/services';
 import { Box, Text, Label, Button } from '@primer/react';
 
 type IKernelDetectiveProps = {
   serviceManager?: ServiceManager.IManager;
-}
+};
 
 export const KernelDetective = (props: IKernelDetectiveProps) => {
   const { serviceManager } = props;
-  const [ serverSettings, setServerSettings ] = useState<ServerConnection.ISettings>(); 
-  const [ sessions, setSessions ] = useState<Session.IModel[]>([]); 
-  const [ kernels, setKernels ] = useState<Kernel.IModel[]>([]); 
+  const [serverSettings, setServerSettings] =
+    useState<ServerConnection.ISettings>();
+  const [sessions, setSessions] = useState<Session.IModel[]>([]);
+  const [kernels, setKernels] = useState<Kernel.IModel[]>([]);
   const refresh = () => {
     if (serviceManager) {
       setServerSettings(serviceManager.serverSettings);
@@ -33,13 +39,13 @@ export const KernelDetective = (props: IKernelDetectiveProps) => {
         });
       });
     }
-  }
+  };
   useEffect(() => {
     refresh();
   }, [serviceManager]);
   return (
     <>
-      { serviceManager &&
+      {serviceManager && (
         <>
           <Box mb={3}>
             <Button onClick={refresh}>Refresh</Button>
@@ -51,32 +57,42 @@ export const KernelDetective = (props: IKernelDetectiveProps) => {
           </Box>
           <Box>
             <Text as="h3">Kernels</Text>
-            { kernels.map(kernel => {
+            {kernels.map(kernel => {
               return (
                 <Box key={kernel.id}>
                   <Label>Kernel</Label>
-                  <Text> {kernel.name} - {kernel.id} - {kernel.connections} connections</Text>
+                  <Text>
+                    {' '}
+                    {kernel.name} - {kernel.id} - {kernel.connections}{' '}
+                    connections
+                  </Text>
                 </Box>
-              )}
-            )}
+              );
+            })}
           </Box>
           <Box>
             <Text as="h3">Sessions</Text>
-            { sessions.map(session => {
+            {sessions.map(session => {
               return (
                 <Box key={session.id}>
                   <Label>Kernel</Label>
-                  <Text> {session.kernel?.name} - {session.kernel?.id}</Text>
+                  <Text>
+                    {' '}
+                    {session.kernel?.name} - {session.kernel?.id}
+                  </Text>
                   <Label style={{ marginLeft: 10 }}>Session</Label>
-                  <Text> {session.name} - {session.path} - {session.type}</Text>
+                  <Text>
+                    {' '}
+                    {session.name} - {session.path} - {session.type}
+                  </Text>
                 </Box>
-              )}
-            )}
+              );
+            })}
           </Box>
         </>
-      }
+      )}
     </>
   );
-}
+};
 
 export default KernelDetective;

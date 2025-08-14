@@ -4,8 +4,8 @@
  * MIT License
  */
 
-import { IOutput } from "@jupyterlab/nbformat";
-import { Output } from "@datalayer/jupyter-react/lib/components/output/Output";
+import { IOutput } from '@jupyterlab/nbformat';
+import { Output } from '@datalayer/jupyter-react/lib/components/output/Output';
 import { OutputAdapter } from '@datalayer/jupyter-react';
 
 type Props = {
@@ -16,10 +16,17 @@ type Props = {
   codeNodeUuid: string;
   outputNodeUuid: string;
   executeTrigger: number;
-}
+};
 
 export const JupyterOutputComponent = (props: Props) => {
-  const { outputNodeUuid, code, outputs, executeTrigger, autoRun, outputAdapter } = props;
+  const {
+    outputNodeUuid,
+    code,
+    outputs,
+    executeTrigger,
+    autoRun,
+    outputAdapter,
+  } = props;
   return (
     <Output
       code={code}
@@ -30,8 +37,8 @@ export const JupyterOutputComponent = (props: Props) => {
       id={outputNodeUuid}
       executeTrigger={executeTrigger}
       lumino={false}
-      />
-  )
-}
+    />
+  );
+};
 
 export default JupyterOutputComponent;

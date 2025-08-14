@@ -6,8 +6,8 @@
 
 import 'katex/dist/katex.css';
 
-import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
-import {$wrapNodeInElement} from '@lexical/utils';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { $wrapNodeInElement } from '@lexical/utils';
 import {
   $createParagraphNode,
   $insertNodes,
@@ -17,9 +17,9 @@ import {
   LexicalCommand,
   LexicalEditor,
 } from 'lexical';
-import {useCallback, useEffect} from 'react';
+import { useCallback, useEffect } from 'react';
 
-import {$createEquationNode, EquationNode} from '../nodes/EquationNode';
+import { $createEquationNode, EquationNode } from '../nodes/EquationNode';
 import KatexEquationAlterer from '../components/KatexEquationAlterer';
 
 type CommandPayload = {
@@ -39,7 +39,10 @@ export function InsertEquationDialog({
 }): JSX.Element {
   const onEquationConfirm = useCallback(
     (equation: string, inline: boolean) => {
-      activeEditor.dispatchCommand(INSERT_EQUATION_COMMAND, {equation, inline});
+      activeEditor.dispatchCommand(INSERT_EQUATION_COMMAND, {
+        equation,
+        inline,
+      });
       onClose();
     },
     [activeEditor, onClose],
@@ -60,8 +63,8 @@ export const EquationsPlugin = (): JSX.Element | null => {
 
     return editor.registerCommand<CommandPayload>(
       INSERT_EQUATION_COMMAND,
-      (payload) => {
-        const {equation, inline} = payload;
+      payload => {
+        const { equation, inline } = payload;
         const equationNode = $createEquationNode(equation, inline);
 
         $insertNodes([equationNode]);
@@ -76,6 +79,6 @@ export const EquationsPlugin = (): JSX.Element | null => {
   }, [editor]);
 
   return null;
-}
+};
 
 export default EquationsPlugin;

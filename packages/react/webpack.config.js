@@ -55,44 +55,42 @@ const ENTRY =
   // './src/examples/NotebookKernelChange';
   // './src/examples/NotebookLess';
   './src/examples/NotebookLite';
-  // './src/examples/NotebookLiteContext';
-  // './src/examples/NotebookLocalServer';
-  // './src/examples/NotebookMutationsKernel';
-  // './src/examples/NotebookMutationsServiceManager';
-  // './src/examples/NotebookNbformat';
-  // './src/examples/NotebookNbformatChange';
-  // './src/examples/NotebookNoContext';
-  // './src/examples/NotebookNoPrimer';
-  // './src/examples/NotebookOnSessionConnection';
-  // './src/examples/NotebookPathChange';
-  // './src/examples/NotebookReadonly';
-  // './src/examples/NotebookServiceManager';
-  // './src/examples/NotebookSimple';
-  // './src/examples/NotebookSkeleton';
-  // './src/examples/NotebookTheme';
-  // './src/examples/NotebookThemeColormode';
-  // './src/examples/NotebookToc';
-  // './src/examples/NotebookURL';
-  // './src/examples/NotebookURL';
-  // './src/examples/ObservableHQ';
-  // './src/examples/Output';
-  // './src/examples/OutputWithMonitoring';
-  // './src/examples/Outputs';
-  // './src/examples/Plotly';
-  // './src/examples/PyGWalker';
-  // './src/examples/RunningSessions';
-  // './src/examples/Terminal';
-  // './src/examples/Viewer';
+// './src/examples/NotebookLiteContext';
+// './src/examples/NotebookLocalServer';
+// './src/examples/NotebookMutationsKernel';
+// './src/examples/NotebookMutationsServiceManager';
+// './src/examples/NotebookNbformat';
+// './src/examples/NotebookNbformatChange';
+// './src/examples/NotebookNoContext';
+// './src/examples/NotebookNoPrimer';
+// './src/examples/NotebookOnSessionConnection';
+// './src/examples/NotebookPathChange';
+// './src/examples/NotebookReadonly';
+// './src/examples/NotebookServiceManager';
+// './src/examples/NotebookSimple';
+// './src/examples/NotebookSkeleton';
+// './src/examples/NotebookTheme';
+// './src/examples/NotebookThemeColormode';
+// './src/examples/NotebookToc';
+// './src/examples/NotebookURL';
+// './src/examples/NotebookURL';
+// './src/examples/ObservableHQ';
+// './src/examples/Output';
+// './src/examples/OutputWithMonitoring';
+// './src/examples/Outputs';
+// './src/examples/Plotly';
+// './src/examples/PyGWalker';
+// './src/examples/RunningSessions';
+// './src/examples/Terminal';
+// './src/examples/Viewer';
 
 const IS_JUPYTER_SERVER_LOCAL = process.env.LOCAL_JUPYTER_SERVER == 'true';
 const IS_NO_CONFIG = process.env.NO_CONFIG == 'true';
-const INDEX_PAGE = IS_JUPYTER_SERVER_LOCAL ?
-  'index-local.html'
-  :
-  IS_NO_CONFIG ?
-    'index-noconfig.html'
-    :
-    'index.html';
+const INDEX_PAGE = IS_JUPYTER_SERVER_LOCAL
+  ? 'index-local.html'
+  : IS_NO_CONFIG
+    ? 'index-noconfig.html'
+    : 'index.html';
 const IS_PRODUCTION = process.argv.indexOf('--mode=production') > -1;
 const mode = IS_PRODUCTION ? 'production' : 'development';
 const devtool = IS_PRODUCTION ? false : 'inline-source-map';
@@ -167,8 +165,15 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        enforce: "pre",
-        use: ["source-map-loader"],
+        enforce: 'pre',
+        use: ['source-map-loader'],
+        exclude: [
+          // Exclude packages with missing or broken source maps
+          /node_modules\/@plotly\/mapbox-gl/,
+          /node_modules\/vscode-jsonrpc/,
+          /node_modules\/langium/,
+          /node_modules\/@mermaid-js\/parser/,
+        ],
       },
       // just keep the woff2 fonts from fontawesome
       {
@@ -187,8 +192,11 @@ module.exports = {
             resourceQuery: /raw/,
             type: 'asset/source',
           },
-          { test: /(?<!style\/theme)\.css$/, use: ['style-loader', 'css-loader'] },
-        ]
+          {
+            test: /(?<!style\/theme)\.css$/,
+            use: ['style-loader', 'css-loader'],
+          },
+        ],
       },
       { test: /\.md$/, type: 'asset/source' },
       { test: /\.js.map$/, type: 'asset/resource' },

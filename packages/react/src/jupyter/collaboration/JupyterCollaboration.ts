@@ -40,7 +40,11 @@ export async function requestJupyterCollaborationSession(
   serverSettings?: ServerConnection.ISettings
 ): Promise<ISessionModel> {
   const settings = serverSettings ?? ServerConnection.makeSettings();
-  const url = URLExt.join(settings.baseUrl, COLLABORATION_SESSION_URL_PATH, encodeURIComponent(path));
+  const url = URLExt.join(
+    settings.baseUrl,
+    COLLABORATION_SESSION_URL_PATH,
+    encodeURIComponent(path)
+  );
   const body = {
     method: 'PUT',
     body: JSON.stringify({ format, type }),

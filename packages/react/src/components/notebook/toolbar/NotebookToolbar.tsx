@@ -18,7 +18,7 @@ import useNotebookStore from '../NotebookState';
 
 export type INotebookToolbarProps = {
   notebookId: string;
-}
+};
 
 export const NotebookToolbar = (props: INotebookToolbarProps) => {
   const { notebookId } = props;

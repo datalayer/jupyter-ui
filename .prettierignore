@@ -1,6 +1,59 @@
-node_modules
-**/node_modules
-**/dist
-**/lib
-**/package.json
+# Attic folder - excluded from formatting
+attic/
+
+# Dependencies
+node_modules/
+**/node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+**/dist/
+build/
+lib/
+**/lib/
+*.min.js
+*.bundle.js
+coverage/
+
+# Next.js
+.next/
+out/
+
+# Storybook  
+storybook-static/
+
+# Cache
+.cache/
+.turbo/
+
+# Logs
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
 **/jupyter_react/
+
+# Package files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Generated files
+*.generated.*
+
+# Patches
+patches/
+
+# Data files
+*.csv
+*.xml
+
+# Markdown files with specific formatting
+CHANGELOG.md

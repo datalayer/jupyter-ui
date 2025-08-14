@@ -6,7 +6,13 @@
 
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Box, Text, ToggleSwitch, ThemeProvider, useTheme } from '@primer/react';
+import {
+  Box,
+  Text,
+  ToggleSwitch,
+  ThemeProvider,
+  useTheme,
+} from '@primer/react';
 import { ThemeManager } from '@jupyterlab/apputils';
 import { RunningSessions } from '@jupyterlab/running';
 import { Jupyter } from '../jupyter/Jupyter';
@@ -52,11 +58,7 @@ const RunningSessionsExample = () => {
   };
   return (
     <>
-      <Jupyter
-        startDefaultKernel={false}
-        disableCssLoading
-        colormode="light"
-      >
+      <Jupyter startDefaultKernel={false} disableCssLoading colormode="light">
         <ThemeProvider
           colorMode={theme === 'light' ? 'day' : 'night'}
           dayScheme="light"
@@ -93,11 +95,7 @@ const RunningSessionsExample = () => {
         </ThemeProvider>
         {runningSessions && <Lumino height="300px">{runningSessions}</Lumino>}
         <JupyterLabApp
-          plugins={[
-            lightThemePlugins,
-            darkThemePlugins,
-            runningPlugins,
-          ]}
+          plugins={[lightThemePlugins, darkThemePlugins, runningPlugins]}
           headless
           onJupyterLab={onJupyterLab}
           pluginId="@jupyterlab/apputils-extension:themes"

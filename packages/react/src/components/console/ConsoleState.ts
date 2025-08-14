@@ -26,7 +26,8 @@ export const consoleStore = createStore<ConsoleState>((set, get) => ({
   adapter: undefined,
   execute: () => {},
   setOutputs: (outputs: number) => set((state: ConsoleState) => ({ outputs })),
-  setAdapter: (adapter?: ConsoleAdapter) => set((state: ConsoleState) => ({ adapter })),
+  setAdapter: (adapter?: ConsoleAdapter) =>
+    set((state: ConsoleState) => ({ adapter })),
 }));
 
 export function useConsoleStore(): ConsoleState;

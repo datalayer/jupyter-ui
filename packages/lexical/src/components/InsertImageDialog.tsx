@@ -4,8 +4,8 @@
  * MIT License
  */
 
-import { useState } from "react";
-import { LexicalEditor } from "lexical";
+import { useState } from 'react';
+import { LexicalEditor } from 'lexical';
 import { Button } from './../components/Button';
 import { TextInput } from './../components/TextInput';
 import { FileInput } from './../components/FileInput';
@@ -41,7 +41,8 @@ export function InsertImageUriDialogBody({
         <Button
           data-test-id="image-modal-confirm-btn"
           disabled={isDisabled}
-          onClick={() => onClick({altText, src})}>
+          onClick={() => onClick({ altText, src })}
+        >
           Confirm
         </Button>
       </div>
@@ -91,7 +92,8 @@ export function InsertImageUploadedDialogBody({
         <Button
           data-test-id="image-modal-file-upload-btn"
           disabled={isDisabled}
-          onClick={() => onClick({altText, src})}>
+          onClick={() => onClick({ altText, src })}
+        >
           Confirm
         </Button>
       </div>
@@ -122,17 +124,20 @@ export function InsertImageDialog({
                 altText: 'Yellow flower in tilt shift lens',
                 src: yellowFlowerImage,
               })
-            }>
+            }
+          >
             Sample
           </Button>
           <Button
             data-test-id="image-modal-option-url"
-            onClick={() => setMode('url')}>
+            onClick={() => setMode('url')}
+          >
             URL
           </Button>
           <Button
             data-test-id="image-modal-option-file"
-            onClick={() => setMode('file')}>
+            onClick={() => setMode('file')}
+          >
             File
           </Button>
         </div>

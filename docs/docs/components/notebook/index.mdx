@@ -4,26 +4,25 @@ description: The Notebook component.
 
 import { StorybookView } from '@theme/StorybookView';
 
-import ModalImage from "react-modal-image";
+import ModalImage from 'react-modal-image';
 
 # 🪐 Notebook Component
 
 ## With a Jupyter server
 
-<StorybookView 
-    story='components-notebook--default'
-/>
+<StorybookView story="components-notebook--default" />
 
 ```jsx
 <Jupyter
-    jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
-    jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+  jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
+  jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
 >
-    <Notebook />
+  <Notebook />
 </Jupyter>
 ```
 
 You can set the following props to connect it to a running Jupyter Server:
+
 - `jupyterServerUrl`: The server URL
 - `jupyterServerToken`: The server authentication token
 
@@ -40,9 +39,7 @@ It supports in-browser kernel (using [JupyterLite kernels](https://jupyterlite.r
 To use the [Pyodide](https://pyodide.org/) Python [kernel](https://github.com/jupyterlite/pyodide-kernel),
 you can simply set `lite` to `true`:
 
-<StorybookView 
-    story='components-notebook--lite-python'
-/>
+<StorybookView story="components-notebook--lite-python" />
 
 ```jsx
 <Jupyter
@@ -64,7 +61,7 @@ you can simply set `lite` to `true`:
             outputs: [],
             source: 'import ipywidgets as widgets\nw = widgets.IntSlider()\nw',
           }
-        ],  
+        ],
         metadata: {
           kernelspec: {
             display_name: 'Python 3 (ipykernel)',

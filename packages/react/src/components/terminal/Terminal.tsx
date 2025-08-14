@@ -24,7 +24,7 @@ export const Terminal = (props: Terminal.ITerminalOptions) => {
         ...props,
       });
       terminalStore.setAdapter(adapter);
-      setAdapter(adapter);  
+      setAdapter(adapter);
     }
   }, [serverSettings]);
   return adapter ? (

@@ -20,7 +20,7 @@
         "\n",
         "df = pd.read_csv(\"https://kanaries-app.s3.ap-northeast-1.amazonaws.com/public-datasets/bike_sharing_dc.csv\")\n",
         "\n",
-        "walker = pyg.walk(df)"    
+        "walker = pyg.walk(df)"
       ]
     },
     {

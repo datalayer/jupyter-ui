@@ -4,14 +4,14 @@
  * MIT License
  */
 
-import { useEffect } from "react";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { INotebookContent } from "@jupyterlab/nbformat";
-import { nbformatToLexical } from "../convert";
+import { useEffect } from 'react';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { INotebookContent } from '@jupyterlab/nbformat';
+import { nbformatToLexical } from '../convert';
 
 type Props = {
   notebook?: INotebookContent;
-}
+};
 
 export const NbformatContentPlugin = (props: Props) => {
   const { notebook } = props;
@@ -20,8 +20,8 @@ export const NbformatContentPlugin = (props: Props) => {
     if (notebook) {
       nbformatToLexical(notebook, editor);
     }
-  }, [editor, notebook])
+  }, [editor, notebook]);
   return null;
-}
+};
 
 export default NbformatContentPlugin;

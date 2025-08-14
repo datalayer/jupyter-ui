@@ -32,7 +32,7 @@ export class ExecTimeWidget extends Widget {
 
   private _settings: IExecTimeSettings = {
     highlight: true,
-    positioning: 'left'
+    positioning: 'left',
   };
 
   constructor(panel: NotebookPanel) {
@@ -46,7 +46,10 @@ export class ExecTimeWidget extends Widget {
     }
   }
 
-  private updateConnectedCell(cells: any, changed: IObservableList.IChangedArgs<ICellModel>) {
+  private updateConnectedCell(
+    cells: any,
+    changed: IObservableList.IChangedArgs<ICellModel>
+  ) {
     changed.oldValues.forEach(this._deregisterMetadataChanges.bind(this));
     changed.newValues.forEach(this._registerMetadataChanges.bind(this));
   }
@@ -72,7 +75,10 @@ export class ExecTimeWidget extends Widget {
     delete this._cellSlotMap[cellModel.id];
   }
 
-  private _cellMetadataChanged(cellModel: ICellModel, disableHighlight = false) {
+  private _cellMetadataChanged(
+    cellModel: ICellModel,
+    disableHighlight = false
+  ) {
     const codeCell = this._getCodeCell(cellModel);
     if (codeCell) {
       this._updateCodeCell(codeCell, disableHighlight);
@@ -96,7 +102,9 @@ export class ExecTimeWidget extends Widget {
   private _removeExecuteNode(cell: CodeCell) {
     if (cell.inputArea) {
       const editorWidget = cell.inputArea.editorWidget;
-      const executionTimeNode = editorWidget.node.querySelector(`.${EXECUTE_TIME_CLASS}`);
+      const executionTimeNode = editorWidget.node.querySelector(
+        `.${EXECUTE_TIME_CLASS}`
+      );
       if (executionTimeNode) {
         executionTimeNode.remove();
       }
@@ -107,9 +115,8 @@ export class ExecTimeWidget extends Widget {
     const executionMetadata = cell.model.getMetadata('execution') as JSONObject;
     if (executionMetadata && JSONExt.isObject(executionMetadata)) {
       const editorWidget = cell.inputArea!.editorWidget;
-      let executionTimeNode: HTMLDivElement | null = editorWidget.node.querySelector(
-        `.${EXECUTE_TIME_CLASS}`
-      );
+      let executionTimeNode: HTMLDivElement | null =
+        editorWidget.node.querySelector(`.${EXECUTE_TIME_CLASS}`);
       if (!executionTimeNode) {
         executionTimeNode = document.createElement('div') as HTMLDivElement;
         editorWidget.node.append(executionTimeNode);
@@ -123,7 +130,9 @@ export class ExecTimeWidget extends Widget {
           positioning = 'right';
           break;
         default:
-          console.error(`'${positioning}' is not a valid type for the setting 'positioning'`);
+          console.error(
+            `'${positioning}' is not a valid type for the setting 'positioning'`
+          );
       }
       const positioningClass = `${EXECUTE_TIME_CLASS}-positioning-${this._settings.positioning}`;
       executionTimeNode.className = `${EXECUTE_TIME_CLASS} ${positioningClass}`;
@@ -163,5 +172,4 @@ export class ExecTimeWidget extends Widget {
       this._removeExecuteNode(cell);
     }
   }
-
 }

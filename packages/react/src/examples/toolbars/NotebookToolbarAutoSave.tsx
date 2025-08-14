@@ -25,7 +25,7 @@ export const NotebookToolbarAutoSave = (props: { notebookId: string }) => {
   const [addType, setAddType] = useState('code');
   const notebook = notebookStore.selectNotebook(notebookId);
   const saveRequest = notebookStore.selectSaveRequest(notebookId);
-  const notebookstate = notebookStore.notebooks
+  const notebookstate = notebookStore.notebooks;
   useEffect(() => {
     notebook?.adapter?.commands.execute(NotebookCommandIds.save);
   }, [saveRequest]);

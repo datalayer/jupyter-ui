@@ -12,8 +12,11 @@ import type {
   NodeKey,
   Spread,
 } from 'lexical';
-import {BlockWithAlignableContents} from '@lexical/react/LexicalBlockWithAlignableContents';
-import { DecoratorBlockNode, SerializedDecoratorBlockNode } from '@lexical/react/LexicalDecoratorBlockNode';
+import { BlockWithAlignableContents } from '@lexical/react/LexicalBlockWithAlignableContents';
+import {
+  DecoratorBlockNode,
+  SerializedDecoratorBlockNode,
+} from '@lexical/react/LexicalDecoratorBlockNode';
 
 type YouTubeComponentProps = Readonly<{
   className: Readonly<{
@@ -35,7 +38,8 @@ function YouTubeComponent({
     <BlockWithAlignableContents
       className={className}
       format={format}
-      nodeKey={nodeKey}>
+      nodeKey={nodeKey}
+    >
       <iframe
         width="560"
         height="315"

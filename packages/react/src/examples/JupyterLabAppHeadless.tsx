@@ -6,7 +6,13 @@
 
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Box, Text, ToggleSwitch, ThemeProvider, useTheme } from '@primer/react';
+import {
+  Box,
+  Text,
+  ToggleSwitch,
+  ThemeProvider,
+  useTheme,
+} from '@primer/react';
 import { BoxPanel } from '@lumino/widgets';
 import { ThemeManager } from '@jupyterlab/apputils';
 // import { NotebookTracker } from '@jupyterlab/notebook';
@@ -25,17 +31,15 @@ import * as plotlyMimeRenderers from 'jupyterlab-plotly/lib/plotly-renderer';
 
 const height = '900px';
 
-const PATHS = [
-  'ipywidgets.ipynb',
-  'plotly.ipynb',
-];
+const PATHS = ['ipywidgets.ipynb', 'plotly.ipynb'];
 
 const PATH_INDEX = 1;
 
 const JupyterLabAppHeadless = () => {
   const [notebookBoxPanel, setNotebookBoxPanel] = useState<BoxPanel>();
   const [theme, setTheme] = useState<Colormode>('light');
-  const [jupyterLabAdapter, setJupyterlabAdapter] = useState<JupyterLabAppAdapter>();
+  const [jupyterLabAdapter, setJupyterlabAdapter] =
+    useState<JupyterLabAppAdapter>();
   const { setColorMode } = useTheme();
   const [isDark, setDark] = useState(false);
   const onSwitchClick = async () => {
@@ -123,9 +127,7 @@ const JupyterLabAppHeadless = () => {
             ipywidgetsPlugins,
             plotlyPlugins,
           ]}
-          mimeRenderers={[
-            plotlyMimeRenderers
-          ]}
+          mimeRenderers={[plotlyMimeRenderers]}
           onJupyterLab={onJupyterLab}
           pluginId="@jupyterlab/apputils-extension:themes"
           PluginType={ThemeManager}

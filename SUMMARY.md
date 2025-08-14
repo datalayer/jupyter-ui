@@ -7,6 +7,7 @@ Jupyter UI is an open-source React.js component library that bridges the gap bet
 ### Core Problem Solved
 
 Traditional JupyterLab uses the Lumino widget toolkit, an imperative UI framework that isn't compatible with modern declarative frameworks like React. This forces developers to either:
+
 - Use iframes to embed Jupyter notebooks (limiting integration)
 - Work within the rigid extension system of JupyterLab
 - Build entirely from scratch
@@ -44,6 +45,7 @@ jupyter-ui/
 The main package providing React components for Jupyter functionality.
 
 **Key Components:**
+
 - **Notebook Components**: Full notebook interface with cells, outputs, toolbar
 - **Cell Components**: Individual code/markdown cells with execution
 - **Console**: Interactive Jupyter console
@@ -53,12 +55,14 @@ The main package providing React components for Jupyter functionality.
 - **Output Rendering**: Display of execution results, plots, widgets
 
 **Architecture:**
+
 - Uses JupyterLab's underlying services (kernels, sessions, contents)
 - Provides React context providers for state management
 - Supports both local and remote Jupyter servers
 - Implements WebSocket communication for real-time updates
 
 **Key Files:**
+
 - `src/jupyter/JupyterContext.tsx` - Core context provider
 - `src/components/notebook/Notebook.tsx` - Main notebook component
 - `src/providers/ServiceManagerProvider.tsx` - Service management
@@ -68,6 +72,7 @@ The main package providing React components for Jupyter functionality.
 Integration with Meta's Lexical framework for rich text editing in notebooks.
 
 **Features:**
+
 - Rich text editing with Jupyter cell support
 - Code highlighting and syntax support
 - Equation rendering (KaTeX)
@@ -76,6 +81,7 @@ Integration with Meta's Lexical framework for rich text editing in notebooks.
 - Conversion between Lexical and nbformat
 
 **Components:**
+
 - Custom Lexical nodes for Jupyter cells
 - Plugins for Jupyter-specific functionality
 - Toolbar and formatting controls
@@ -86,6 +92,7 @@ Integration with Meta's Lexical framework for rich text editing in notebooks.
 Plugin enabling Jupyter notebook integration in Docusaurus documentation sites.
 
 **Capabilities:**
+
 - Embed live notebooks in documentation
 - Interactive code execution
 - Syntax highlighting
@@ -96,6 +103,7 @@ Plugin enabling Jupyter notebook integration in Docusaurus documentation sites.
 VS Code extension for notebook editing using the Jupyter UI components.
 
 **Features:**
+
 - Custom notebook editor
 - Kernel management within VS Code
 - Runtime picker
@@ -106,21 +114,49 @@ VS Code extension for notebook editing using the Jupyter UI components.
 ### Build System
 
 **Technologies:**
+
 - TypeScript for type safety
 - Webpack for bundling
 - Gulp for resource management
 - Babel for transpilation
 - Lerna for monorepo management
+- npm workspaces for dependency management
 
 **Build Process:**
+
 1. Resource copying via Gulp
 2. TypeScript compilation
 3. Webpack bundling
 4. Package-specific builds
 
+### Code Quality & Linting
+
+**Pre-commit Hooks (Husky + lint-staged):**
+
+- ESLint for code quality (v9 flat config)
+- Prettier for code formatting
+- TypeScript type checking
+- Conventional commit messages (commitlint)
+
+**Linting Stack:**
+
+- ESLint with TypeScript support
+- React and React Hooks plugins
+- Prettier integration
+- Custom rules for JupyterLab compatibility
+
+**Available Scripts:**
+
+- `npm run lint` - Check for linting issues
+- `npm run lint:fix` - Auto-fix linting issues
+- `npm run format` - Format all files with Prettier
+- `npm run format:check` - Check formatting
+- `npm run type-check` - TypeScript type checking
+
 ### Development Server
 
 **Jupyter Server Configuration:**
+
 - Port: 8686
 - Token authentication enabled
 - CORS configured for development
@@ -128,11 +164,28 @@ VS Code extension for notebook editing using the Jupyter UI components.
 - Terminal support enabled
 
 **Frontend Development:**
+
 - Hot module replacement
 - Port: 3208 (varies by example)
 - Proxy configuration for API calls
 
 ### Testing Infrastructure
+
+### Storybook Testing
+
+- **@storybook/test-runner** for automated story testing
+- Custom MDX documentation testing with Playwright
+- 38 component stories with smoke tests
+- 13 MDX documentation files verified
+- CI integration with GitHub Actions
+
+### Test Commands
+
+- `npm run test:storybook` - Test all stories
+- `npm run test:mdx` - Test MDX documentation
+- `npm run test:all` - Run both test suites
+
+### Other Testing
 
 - Jest for unit testing
 - Playwright for UI testing
@@ -142,6 +195,7 @@ VS Code extension for notebook editing using the Jupyter UI components.
 ## Key Technologies & Dependencies
 
 ### Frontend Stack
+
 - **React 18.3.1** - UI framework
 - **TypeScript 5.8.3** - Type safety
 - **JupyterLab packages** - Core Jupyter functionality
@@ -150,12 +204,14 @@ VS Code extension for notebook editing using the Jupyter UI components.
 - **IPyWidgets** - Interactive widget support
 
 ### Styling & Theming
+
 - CSS modules
 - JupyterLab themes
 - Tailwind CSS (v4 in lexical package)
 - Custom theme providers
 
 ### Communication Layer
+
 - WebSocket for kernel communication
 - REST API for server operations
 - Service Manager pattern
@@ -176,7 +232,7 @@ function App() {
   });
 
   return (
-    <Notebook 
+    <Notebook
       kernel={defaultKernel}
       serviceManager={serviceManager}
     />
@@ -220,13 +276,14 @@ Developers can register custom output renderers:
 ```typescript
 registerRenderer({
   mimeType: 'application/custom',
-  renderer: CustomComponent
+  renderer: CustomComponent,
 });
 ```
 
 ### Plugin System
 
 The Lexical package supports plugins for:
+
 - Custom cell types
 - Toolbar extensions
 - Keyboard shortcuts
@@ -235,17 +292,20 @@ The Lexical package supports plugins for:
 ## Deployment Scenarios
 
 ### 1. Static Sites
+
 - Build-time notebook rendering
 - Client-side kernel execution (Pyodide)
 - No server required
 
 ### 2. Server-Based
+
 - Full Jupyter server backend
 - Multi-user support
 - Persistent storage
 - Real-time collaboration
 
 ### 3. Hybrid
+
 - Static content with on-demand execution
 - Serverless function backends
 - Edge computing scenarios
@@ -266,19 +326,117 @@ The Lexical package supports plugins for:
 - Sandboxed iframe execution
 - Content Security Policy support
 
+## CI/CD Pipeline
+
+### GitHub Actions Workflows
+
+**build.yml:**
+
+- Runs on main branch and PRs
+- Build verification across packages
+- Visual testing with Playwright
+- Storybook story and MDX testing
+- Docker container builds
+- Uses npm instead of yarn
+- TypeScript type checking
+- ESLint error checking (no warnings)
+- Prettier formatting validation
+
+**Key Jobs:**
+
+1. **build** - Compiles all packages
+2. **visual-test** - Playwright visual regression tests
+3. **storybook-test** - Tests all stories and documentation
+4. **docker-dev** - Dev container verification
+
+**Other Workflows:**
+
+- `fix-license-header.yml` - Automatic license header corrections
+- `publish-dev.yml` - Publishes dev versions to GitHub Packages
+
+## Recent Improvements (2024-2025)
+
+### Configuration Modernization
+
+- **ESLint v9 Flat Config**: Migrated from deprecated .eslintignore to modern flat config format
+- **Prettier JSON Config**: Replaced CommonJS config with .prettierrc.json
+- **Line Endings**: Enforced LF line endings for cross-platform consistency
+- **Trailing Commas**: Added support for better TypeScript compatibility
+- **Node.js 20+**: Updated minimum requirement from Node 18 to Node 20
+- **NVM Support**: Added .nvmrc file for consistent Node version management
+
+### Code Quality Fixes
+
+- **React 18 Migration**: Fixed deprecated ReactDOM.render usage
+- **TypeScript Strictness**: Replaced @ts-ignore with @ts-expect-error
+- **React Best Practices**: Added missing key props in list renderings
+- **Security**: Added rel="noreferrer" to external links
+- **Hook Rules**: Fixed conditional hook calls
+
+### Storybook Fixes
+
+- **MDX Comment Syntax**: Fixed malformed comments in 13 MDX files from `{/_` to `{/** **/}`
+- **Prettier Exclusion**: Added MDX files to .prettierignore to prevent comment corruption
+- **Missing Logo Files**: Created patch for @jupyterlite/javascript-kernel-extension to fix missing logo references
+
+### Build & CI Improvements
+
+- **Webpack Warnings**: Reduced source map warnings from 7 to 2 by excluding problematic packages
+- **Patch-Package**: Added automatic patching of third-party modules during npm install
+- **GitHub Actions**: Updated all workflows to use Node 20
+- **Build Stability**: Fixed CI build failures in Storybook
+- **Storybook CI Testing**: Fixed test runner connection issues with wait-on and explicit URL configuration
+- **Terminal Component**: Fixed BoxPanel initialization error with proper direction setting and delayed widget addition
+
+### Testing Infrastructure
+
+- **Storybook Test Runner**: Automated testing for all component stories
+- **MDX Documentation Testing**: Verification of documentation examples
+- **CI Integration**: Full test suite runs on every PR
+
+## Latest Session Updates (Aug 15, 2025)
+
+### Storybook CI Test Fixes
+
+- **Problem**: Test runner couldn't connect to Storybook static server (127.0.0.1 vs localhost mismatch)
+- **Solution**:
+  - Created `test:all:ci` script with explicit `--url http://localhost:6006`
+  - Added `npx wait-on` to ensure server is ready before tests
+  - Removed fixed sleep duration for more reliable CI runs
+
+### Terminal Component Fixes
+
+- **Problem**: `TypeError: Cannot read properties of null (reading 'addWidget')` in BoxPanel
+- **Solution**:
+  - Added `direction = 'top-to-bottom'` to BoxPanel initialization
+  - Added defensive check in `setTheme` method
+  - Implemented delayed widget addition with error handling
+  - Added error logging for better debugging
+
+### Files Modified in Latest Session
+
+- `.github/workflows/build.yml` - Updated Storybook test runner configuration
+- `storybook/package.json` - Added test:all:ci script
+- `packages/react/src/components/terminal/TerminalAdapter.ts` - Fixed BoxPanel initialization
+
 ## Notable Features
 
 ### IPyWidgets Support
+
 Full support for interactive widgets with two-way communication between Python and JavaScript.
 
 ### Collaborative Editing
+
 Real-time collaboration using Y.js for conflict-free replicated data types.
 
 ### Multiple Kernel Support
+
 Simultaneous connections to different kernels (Python, R, Julia, etc.).
 
 ### Extensible Output System
+
 Support for various output types including:
+
 - Plain text/HTML/Markdown
 - Images (PNG, JPEG, SVG)
 - Plots (Matplotlib, Plotly, Bokeh)

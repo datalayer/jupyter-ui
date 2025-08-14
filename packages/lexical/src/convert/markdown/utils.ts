@@ -4,18 +4,18 @@
  * MIT License
  */
 
-import type {ListNode} from '@lexical/list';
+import type { ListNode } from '@lexical/list';
 import type {
   ElementTransformer,
   TextFormatTransformer,
   TextMatchTransformer,
   Transformer,
 } from '.';
-import type {ElementNode, LexicalNode, TextFormatType} from 'lexical';
+import type { ElementNode, LexicalNode, TextFormatType } from 'lexical';
 
-import {$isJupyterCodeNode} from './../../nodes/JupyterCodeNode';
-import {$isListItemNode, $isListNode} from '@lexical/list';
-import {$isHeadingNode, $isQuoteNode} from '@lexical/rich-text';
+import { $isJupyterCodeNode } from './../../nodes/JupyterCodeNode';
+import { $isListItemNode, $isListNode } from '@lexical/list';
+import { $isHeadingNode, $isQuoteNode } from '@lexical/rich-text';
 
 type MarkdownFormatKind =
   | 'noTransformation'
@@ -417,7 +417,7 @@ export function transformersByType(transformers: Array<Transformer>): Readonly<{
   textFormat: Array<TextFormatTransformer>;
   textMatch: Array<TextMatchTransformer>;
 }> {
-  const byType = indexBy(transformers, (t) => t.type);
+  const byType = indexBy(transformers, t => t.type);
 
   return {
     element: (byType.element || []) as Array<ElementTransformer>,

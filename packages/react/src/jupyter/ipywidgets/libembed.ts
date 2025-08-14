@@ -8,7 +8,8 @@
 // Distributed under the terms of the Modified BSD License.
 
 declare let __webpack_public_path__: string;
-__webpack_public_path__ = (window as any).__jupyter_widgets_assets_path__ || __webpack_public_path__;
+__webpack_public_path__ =
+  (window as any).__jupyter_widgets_assets_path__ || __webpack_public_path__;
 
 /*
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -51,7 +52,7 @@ export async function renderWidgets(
     'script[type="application/vnd.jupyter.widget-state+json"]'
   );
   await Promise.all(
-    Array.from(tags).map(async (t) =>
+    Array.from(tags).map(async t =>
       renderManager(element, JSON.parse(t.innerHTML), managerFactory)
     )
   );
@@ -87,14 +88,14 @@ async function renderManager(
     'script[type="application/vnd.jupyter.widget-view+json"]'
   );
   await Promise.all(
-    Array.from(tags).map(async (viewtag) => {
+    Array.from(tags).map(async viewtag => {
       const widgetViewObject = JSON.parse(viewtag.innerHTML);
       const valid = view_validate(widgetViewObject);
       if (!valid) {
         throw new Error(`View state has errors: ${view_validate.errors}`);
       }
       const model_id: string = (widgetViewObject as any).model_id;
-      const model = models.find((item) => item.model_id == model_id);
+      const model = models.find(item => item.model_id == model_id);
       if (model !== undefined && viewtag.parentElement !== null) {
         const prev = viewtag.previousElementSibling;
         if (
