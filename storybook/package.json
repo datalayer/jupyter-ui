@@ -48,6 +48,7 @@
     "@mermaid-js/mermaid-zenuml": "^0.2.0",
     "@playwright/test": "^1.40.1",
     "@primer/octicons-react": "^19.15.1",
+    "@storybook/addon-docs": "^9.1.2",
     "@storybook/addon-links": "^9.1.2",
     "@storybook/addon-onboarding": "^9.1.2",
     "@storybook/addon-themes": "^9.1.2",
