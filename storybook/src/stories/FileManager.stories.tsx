@@ -4,20 +4,32 @@
  * MIT License
  */
 
-import type { Meta, StoryObj } from '@storybook/react-webpack5';
+import type { Meta, StoryObj } from '@storybook/react';
 import { Jupyter, FileManagerJupyterLab, FileBrowser } from '@datalayer/jupyter-react';
 import React from 'react';
 
-const meta: Meta<typeof FileBrowser> = {
+const meta = {
+  component: FileBrowser,
   title: 'Components/FileManager',
-} as Meta<typeof FileBrowser>;
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        component: 'File browser component for managing Jupyter files.',
+      },
+    },
+  },
+  argTypes: {
+    // Add any specific argTypes for FileBrowser here if needed
+  },
+} satisfies Meta<typeof FileBrowser>;
 
 export default meta;
 
-type Story = StoryObj<typeof FileBrowser>;
+type Story = StoryObj<typeof meta>;
 
-const Template = (args, { globals: { labComparison } }) => {
-  const Tag = `${(args.as as string) ?? 'span'}` as keyof JSX.IntrinsicElements;
+const renderWithJupyter = (args, { globals }) => {
+  const { labComparison } = globals || {};
   return (
     <Jupyter
       jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
@@ -29,10 +41,19 @@ const Template = (args, { globals: { labComparison } }) => {
   );
 };
 
-export const Default: Story = Template.bind({}) as Story;
+export const Default: Story = {
+  args: {},
+  render: renderWithJupyter,
+};
 
 export const Playground: Story = {
-    render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
+  args: {},
+  render: renderWithJupyter,
+  parameters: {
+    docs: {
+      description: {
+        story: 'Interactive file browser with JupyterLab comparison.',
+      },
+    },
+  },
 };
-Playground.args = {};
-Playground.argTypes = {};

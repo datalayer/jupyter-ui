@@ -4,31 +4,44 @@
  * MIT License
  */
 
-import type { Meta, StoryObj } from '@storybook/react-webpack5';
+import type { Meta, StoryObj } from '@storybook/react';
 import { Jupyter, Viewer } from '@datalayer/jupyter-react';
 import nbformat1 from './examples/NotebookExample1.ipynb.json';
 import nbformat2 from './examples/NotebookExample2.ipynb.json';
 
-const meta: Meta<typeof Viewer> = {
-  title: 'Components/Viewer',
+const meta = {
   component: Viewer,
+  title: 'Components/Viewer',
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        component: 'Notebook viewer component for displaying static notebooks.',
+      },
+    },
+  },
   argTypes: {
     nbformatUrl: {
-      control: 'string',
+      control: 'text',
+      description: 'URL to load notebook from',
     },
     outputs: {
       control: 'boolean',
+      description: 'Whether to display cell outputs',
+    },
+    nbformat: {
+      control: 'object',
+      description: 'Notebook format object to display',
     },
   },
-// } as Meta<typeof Viewer>;
-} as any;
+} satisfies Meta<typeof Viewer>;
 
 export default meta;
 
-type Story = StoryObj<typeof Viewer | typeof Jupyter | { nbformatUrl: string }>;
+type Story = StoryObj<typeof meta>;
 
-const Template = (args, { globals: { labComparison } }) => {
-  const { nbformat, nbformatUrl, outputs, ...others } = args;
+const renderWithJupyter = (args, { globals }) => {
+  const { nbformat, nbformatUrl, outputs, ...viewerProps } = args;
   return (
     <Jupyter
       jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
@@ -39,22 +52,33 @@ const Template = (args, { globals: { labComparison } }) => {
         nbformat={nbformat}
         nbformatUrl={nbformatUrl}
         outputs={outputs}
-        {...others}
+        {...viewerProps}
       />
     </Jupyter>
   );
 };
 
-export const Default: Story = Template.bind({}) as Story;
-Default.args = {
-  nbformat: nbformat1,
-  outputs: true,
+export const Default: Story = {
+  args: {
+    nbformat: nbformat1,
+    outputs: true,
+  },
+  render: renderWithJupyter,
 };
 
-export const ViewerSimple: Story = Template.bind({}) as Story;
-ViewerSimple.args = {
-  nbformat: nbformat2,
-  outputs: true,
+export const ViewerSimple: Story = {
+  args: {
+    nbformat: nbformat2,
+    outputs: true,
+  },
+  render: renderWithJupyter,
+  parameters: {
+    docs: {
+      description: {
+        story: 'Simple notebook viewer example with basic content.',
+      },
+    },
+  },
 };
 /*
 export const ViewerPlotly: Story = Template.bind({}) as Story;
@@ -63,9 +87,18 @@ ViewerPlotly.args = {
   outputs: true
 };
 */
-export const ViewerMatplotlib: Story = Template.bind({}) as Story;
-ViewerMatplotlib.args = {
-  nbformatUrl:
-    'https://raw.githubusercontent.com/anissa111/matplotlib-tutorial/main/notebooks/01-basic-matplotlib-tutorial.ipynb',
-  outputs: true,
+export const ViewerMatplotlib: Story = {
+  args: {
+    nbformatUrl:
+      'https://raw.githubusercontent.com/anissa111/matplotlib-tutorial/main/notebooks/01-basic-matplotlib-tutorial.ipynb',
+    outputs: true,
+  },
+  render: renderWithJupyter,
+  parameters: {
+    docs: {
+      description: {
+        story: 'Viewer displaying a matplotlib tutorial notebook from external URL.',
+      },
+    },
+  },
 };

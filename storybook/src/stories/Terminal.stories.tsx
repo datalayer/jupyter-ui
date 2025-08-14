@@ -4,28 +4,43 @@
  * MIT License
  */
 
-import type { Meta, StoryObj } from '@storybook/react-webpack5';
+import type { Meta, StoryObj } from '@storybook/react';
 import { Jupyter, JupyterProps, Terminal } from '@datalayer/jupyter-react';
 import React from 'react';
 
-const meta: Meta<typeof Terminal> = {
-  title: 'Components/Terminal',
+const meta = {
   component: Terminal,
-  argTypes: {
-    // height: {
-    //   type: 'string',
-    // },
-    colormode: {
-      options: ['dark', 'light'],
+  title: 'Components/Terminal',
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        component: 'Interactive terminal component for running shell commands.',
+      },
     },
   },
-} as Meta<typeof Terminal>;
+  argTypes: {
+    height: {
+      control: 'text',
+      description: 'Height of the terminal container',
+    },
+    colormode: {
+      control: 'radio',
+      options: ['dark', 'light'],
+      description: 'Color theme for the terminal',
+    },
+    initCode: {
+      control: 'text',
+      description: 'Initial command to run when terminal starts',
+    },
+  },
+} satisfies Meta<typeof Terminal>;
 
 export default meta;
 
-type Story = StoryObj<typeof Terminal | typeof Jupyter>;
+type Story = StoryObj<typeof meta>;
 
-const Template = (args, { globals: { labComparison } }) => {
+const renderWithJupyter = (args, { globals }) => {
   return (
     <Jupyter
       startDefaultKernel={false}
@@ -38,21 +53,41 @@ const Template = (args, { globals: { labComparison } }) => {
   );
 };
 
-export const Default: Story = Template.bind({}) as Story;
-Default.args = {
-  height: '800px',
-  colormode: 'light',
+export const Default: Story = {
+  args: {
+    height: '800px',
+    colormode: 'light',
+  },
+  render: renderWithJupyter,
 };
 
-export const Playground: Story = Template.bind({}) as Story;
-Playground.args = {
-  ...Default.args,
-  height: '800px',
-  colormode: 'dark',
+export const Playground: Story = {
+  args: {
+    ...Default.args,
+    height: '800px',
+    colormode: 'dark',
+  },
+  render: renderWithJupyter,
+  parameters: {
+    docs: {
+      description: {
+        story: 'Interactive terminal with dark theme.',
+      },
+    },
+  },
 };
 
-export const WithInitialization: Story = Template.bind({}) as Story;
-WithInitialization.args = {
-  ...Default.args,
-  initCode: 'echo "Hello from shell $0"',
+export const WithInitialization: Story = {
+  args: {
+    ...Default.args,
+    initCode: 'echo "Hello from shell $0"',
+  },
+  render: renderWithJupyter,
+  parameters: {
+    docs: {
+      description: {
+        story: 'Terminal that runs initialization code on startup.',
+      },
+    },
+  },
 };

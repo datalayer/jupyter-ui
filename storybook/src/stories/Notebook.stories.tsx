@@ -4,16 +4,25 @@
  * MIT License
  */
 
-import type { Meta, StoryObj } from '@storybook/react-webpack5';
+import type { Meta, StoryObj } from '@storybook/react';
 import { Jupyter, Notebook } from '@datalayer/jupyter-react';
 
-const meta: Meta<typeof Notebook> = {
-  title: 'Components/Notebook',
+const meta = {
   component: Notebook,
+  title: 'Components/Notebook',
+  parameters: {
+    layout: 'fullscreen',
+    docs: {
+      description: {
+        component: 'Interactive Jupyter Notebook component for displaying and editing notebooks.',
+      },
+    },
+  },
   argTypes: {
     lite: {
       control: 'radio',
       options: ['true', 'false', '@jupyterlite/javascript-kernel-extension'],
+      description: 'Kernel type to use (remote server, lite Python, or lite JavaScript)',
       table: {
         // Switching live does not work
         disable: true,
@@ -21,26 +30,40 @@ const meta: Meta<typeof Notebook> = {
     },
     initCode: {
       control: 'text',
+      description: 'Initialization code to run before notebook loads',
+    },
+    path: {
+      control: 'text',
+      description: 'Path to the notebook file',
+    },
+    readonly: {
+      control: 'boolean',
+      description: 'Whether the notebook is read-only',
+    },
+    height: {
+      control: 'text',
+      description: 'Height of the notebook container',
     },
   },
-} as Meta<typeof Notebook>;
+} satisfies Meta<typeof Notebook>;
 
 export default meta;
 
-type Story = StoryObj<typeof Notebook | { initCode?: string}>;
+type Story = StoryObj<typeof meta>;
 
-const Template = (args, { globals: { labComparison = true }, ...rest }) => {
-  const { browser, initCode, ...others } = args;
+const renderWithJupyter = (args, { globals }) => {
+  const { lite: liteOption, initCode, ...notebookProps } = args;
+  
   const lite = {
     true: true,
     false: false,
     '@jupyterlite/javascript-kernel-extension': import(
       '@jupyterlite/javascript-kernel-extension'
     ),
-  }[args.browser];
+  }[liteOption];
 
   const kernelName =
-    args.browser === '@jupyterlite/javascript-kernel-extension'
+    liteOption === '@jupyterlite/javascript-kernel-extension'
       ? 'javascript'
       : undefined;
   
@@ -53,37 +76,42 @@ const Template = (args, { globals: { labComparison = true }, ...rest }) => {
       jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
       jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
     >
-      <Notebook {...others} />
+      <Notebook {...notebookProps} />
     </Jupyter>
   );
 };
 
 export const Default: Story = {
-  render: (args, options) =>
-    Template.bind({})(args, { globals: { labComparison: true } }),
-};
-Default.args = {
-  lite: false,
-  initCode: '',
-  path: undefined,
-  id: undefined,
-  cellMetadataPanel: false,
-  cellSidebarMargin: 120,
-  height: '100vh',
-  maxHeight: '100vh',
-  nbgrader: false,
-  readonly: false,
-  renderers: [],
+  args: {
+    lite: false,
+    initCode: '',
+    path: undefined,
+    id: undefined,
+    cellMetadataPanel: false,
+    cellSidebarMargin: 120,
+    height: '100vh',
+    maxHeight: '100vh',
+    nbgrader: false,
+    readonly: false,
+    renderers: [],
+  },
+  render: renderWithJupyter,
 };
 
 export const Playground: Story = {
-  render: (args, options) =>
-    Template.bind({})(args, { globals: { labComparison: true } }),
-};
-Playground.args = {
-  ...Default.args,
-  path: 'ipywidgets.ipynb',
-  id: 'id-1',
+  args: {
+    ...Default.args,
+    path: 'ipywidgets.ipynb',
+    id: 'id-1',
+  },
+  render: renderWithJupyter,
+  parameters: {
+    docs: {
+      description: {
+        story: 'Interactive playground for testing notebook functionality.',
+      },
+    },
+  },
 };
 
 const WIDGETS_EXAMPLE = {
@@ -230,43 +258,58 @@ await micropip.install('ipympl')`,
 };
 
 export const IpywidgetsState: Story = {
-  render: (args, options) =>
-    Template.bind({})(args, { globals: { labComparison: true } }),
-};
-IpywidgetsState.args = {
-  ...Default.args,
-  height: '200px',
-  maxHeight: '200px',
-  url: 'https://raw.githubusercontent.com/datalayer/jupyter-ui/main/packages/react/src/examples/notebooks/IPyWidgetsExampleWithState.ipynb.json'
+  args: {
+    ...Default.args,
+    height: '200px',
+    maxHeight: '200px',
+    url: 'https://raw.githubusercontent.com/datalayer/jupyter-ui/main/packages/react/src/examples/notebooks/IPyWidgetsExampleWithState.ipynb.json'
+  },
+  render: renderWithJupyter,
+  parameters: {
+    docs: {
+      description: {
+        story: 'Notebook example demonstrating IPyWidgets state management.',
+      },
+    },
+  },
 };
 
 export const Matplotlib: Story = {
-  render: (args, options) =>
-    Template.bind({})(args, { globals: { labComparison: true } }),
-};
-Matplotlib.args = {
-  ...Default.args,
-  url: 'https://raw.githubusercontent.com/datalayer/jupyter-ui/main/packages/react/src/examples/notebooks/Matplotlib.ipynb.json'
+  args: {
+    ...Default.args,
+    url: 'https://raw.githubusercontent.com/datalayer/jupyter-ui/main/packages/react/src/examples/notebooks/Matplotlib.ipynb.json'
+  },
+  render: renderWithJupyter,
+  parameters: {
+    docs: {
+      description: {
+        story: 'Notebook example showcasing matplotlib plotting capabilities.',
+      },
+    },
+  },
 };
 
 export const LitePython: Story = {
-  render: (args, options) =>
-    Template.bind({})(args, { globals: { labComparison: true } }),
-};
-LitePython.args = {
-  ...Default.args,
-  lite: true,
-  nbformat: INIT_EXAMPLE,
+  args: {
+    ...Default.args,
+    lite: true,
+    nbformat: INIT_EXAMPLE,
+  },
+  render: renderWithJupyter,
+  parameters: {
+    docs: {
+      description: {
+        story: 'Notebook running with JupyterLite Python kernel in the browser.',
+      },
+    },
+  },
 };
 
 export const LitePythonInit: Story = {
-  render: (args, options) =>
-    Template.bind({})(args, { globals: { labComparison: true } }),
-};
-LitePythonInit.args = {
-  ...Default.args,
-  lite: true,
-  initCode: `import micropip
+  args: {
+    ...Default.args,
+    lite: true,
+    initCode: `import micropip
 await micropip.install('ipywidgets')
 await micropip.install('bqplot')
 await micropip.install('ipyleaflet')
@@ -274,5 +317,14 @@ await micropip.install('ipyreact')
 await micropip.install('plotly')
 await micropip.install('nbformat')
 await micropip.install('ipympl')`,
-  nbformat: WIDGETS_EXAMPLE,
+    nbformat: WIDGETS_EXAMPLE,
+  },
+  render: renderWithJupyter,
+  parameters: {
+    docs: {
+      description: {
+        story: 'JupyterLite notebook with initialization code to install packages.',
+      },
+    },
+  },
 };
