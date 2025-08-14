@@ -5,11 +5,10 @@
  */
 
 import React from "react";
-import { CodeOrSourceMdx } from "@storybook/addon-docs";
 import { Mermaid } from "mdx-mermaid/lib/Mermaid"
 import mermaid from 'mermaid';
 import zenuml from '@mermaid-js/mermaid-zenuml';
-import type { Preview } from '@storybook/react';
+import type { Preview } from '@storybook/react-webpack5';
 import { toolbarTypes, withThemeProvider } from '../src/stories/_utils/story-helpers';
 
 import '@jupyterlab/apputils/style/materialcolors.css';
@@ -33,7 +32,7 @@ const preview: Preview = {
             ? 
               <Mermaid chart={props.children} />
             :
-              <CodeOrSourceMdx {...props} />
+              <code {...props} />
         }
       },
     },

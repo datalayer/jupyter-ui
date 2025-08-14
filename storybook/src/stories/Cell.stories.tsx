@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-webpack5';
 import { Jupyter, Cell } from '@datalayer/jupyter-react';
 import { colormodeFromScheme } from './_utils/story-helpers';
 

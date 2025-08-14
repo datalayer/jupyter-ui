@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-webpack5';
 import { Jupyter, Console } from '@datalayer/jupyter-react';
 
 const meta: Meta<typeof Console> = {

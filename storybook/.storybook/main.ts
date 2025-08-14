@@ -17,18 +17,12 @@ function getAbsolutePath(value: string): any {
 
 const config: StorybookConfig = {
   stories: [
-    '../src/stories/**/*.mdx',
     '../src/stories/**/*.stories.@(js|jsx|mjs|ts|tsx)',
   ],
   addons: [
     getAbsolutePath('@storybook/addon-links'),
-    {
-      name: getAbsolutePath('@storybook/addon-essentials'),
-      options: {
-        backgrounds: false,
-      },
-    },
-    getAbsolutePath('@storybook/addon-interactions'),
+    getAbsolutePath('@storybook/addon-onboarding'),
+    getAbsolutePath('@storybook/addon-themes'),
   ],
   framework: {
     name: getAbsolutePath('@storybook/react-webpack5'),
@@ -131,9 +125,6 @@ const config: StorybookConfig = {
       }
     );
     return config;
-  },
-  docs: {
-    autodocs: 'tag',
   },
 };
 
