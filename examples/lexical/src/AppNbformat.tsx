@@ -17,7 +17,7 @@ import { INotebookModel } from "@jupyterlab/notebook";
 
 import './../style/index.css';
 
-import '@datalayer/jupyter-lexical/style/index';
+import '@datalayer/jupyter-lexical/style/index.css';
 
 import INITIAL_LEXICAL_MODEL from "./content/Example.lexical.json";
 

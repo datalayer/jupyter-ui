@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { treatAsCommonjs } from "vite-plugin-treat-umd-as-commonjs";
