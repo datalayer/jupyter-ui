@@ -34,23 +34,19 @@ jobs:
         channel-priority: true
         environment-file: environment.yml
         activate-environment: datalayer
-    - name: Get yarn cache directory path
-      id: yarn-cache-dir-path
-      run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-    
-    - uses: actions/cache@v3
-      id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+    - name: Setup npm cache
+      uses: actions/cache@v3
       with:
-        path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-        key: ${{ runner.os }}-yarn-${{ hashFiles('**/package.json') }}
+        path: ~/.npm
+        key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json', '**/package.json') }}
         restore-keys: |
-          ${{ runner.os }}-yarn-
+          ${{ runner.os }}-npm-
     - name: Install the npm dependencies
       run: |
-        yarn install
+        npm ci || npm install
     - name: Run the build
       run: |
-        yarn build
+        npm run build
 
   visual-test:
     runs-on: ubuntu-latest
@@ -117,6 +113,59 @@ jobs:
           path: |
             packages/react/test-assets/
             packages/react/stories/**/*-snapshots/*
+
+  storybook-test:
+    name: Test Storybook Stories and Docs
+    runs-on: ubuntu-latest
+    needs: build
+    timeout-minutes: 30
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Setup npm cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json', '**/package.json') }}
+          restore-keys: |
+            npm-${{ runner.os }}-
+      
+      - name: Install Dependencies
+        run: npm ci || npm install
+      
+      - name: Build all packages
+        run: npm run build
+      
+      - name: Install Playwright
+        run: npx playwright install chromium --with-deps
+        working-directory: storybook
+      
+      - name: Build Storybook
+        run: npm run build:storybook
+        working-directory: storybook
+      
+      - name: Serve Storybook and run all tests
+        run: |
+          npx serve -l 6006 storybook-static &
+          sleep 5
+          npm run test:all
+        working-directory: storybook
+      
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: storybook-test-results
+          path: |
+            storybook/test-results/
+            storybook/html-report/
 
   docker-dev:
     # Don't run if the previous case fails

@@ -5,23 +5,23 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import RichEditor from '@datalayer/jupyter-lexical/lib/examples/App1';
+import RichEditorMock from './RichEditorMock';
 
-const meta: Meta<typeof RichEditor> = {
+const meta: Meta<typeof RichEditorMock> = {
   title: 'Components/RichEditor',
-  component: RichEditor,
+  component: RichEditorMock,
   argTypes: {
   },
-} as Meta<typeof RichEditor>;
+} as Meta<typeof RichEditorMock>;
 
 export default meta;
 
-type Story = StoryObj<typeof RichEditor>;
+type Story = StoryObj<typeof RichEditorMock>;
 
 const Template = (args, { globals: { labComparison } }) => {
   const { nbformat, nbformatUrl, outputs, ...others } = args;
   return (
-    <RichEditor/>
+    <RichEditorMock/>
   );
 };
 

@@ -22,13 +22,7 @@ const config: StorybookConfig = {
   ],
   addons: [
     getAbsolutePath('@storybook/addon-links'),
-    {
-      name: getAbsolutePath('@storybook/addon-essentials'),
-      options: {
-        backgrounds: false,
-      },
-    },
-    getAbsolutePath('@storybook/addon-interactions'),
+    getAbsolutePath('@storybook/addon-docs'),
   ],
   framework: {
     name: getAbsolutePath('@storybook/react-webpack5'),

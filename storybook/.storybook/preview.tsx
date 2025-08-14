@@ -5,7 +5,6 @@
  */
 
 import React from "react";
-import { CodeOrSourceMdx } from "@storybook/addon-docs";
 import { Mermaid } from "mdx-mermaid/lib/Mermaid"
 import mermaid from 'mermaid';
 import zenuml from '@mermaid-js/mermaid-zenuml';
@@ -33,7 +32,7 @@ const preview: Preview = {
             ? 
               <Mermaid chart={props.children} />
             :
-              <CodeOrSourceMdx {...props} />
+              <code {...props} />
         }
       },
     },
