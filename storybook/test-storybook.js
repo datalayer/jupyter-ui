@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
