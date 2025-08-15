@@ -4,11 +4,10 @@
  * MIT License
  */
 
-import {$isCodeNode} from '@lexical/code';
-import {$getNearestNodeFromDOMNode, LexicalEditor} from 'lexical';
-import {Options} from 'prettier';
-import {useState} from 'react';
-
+import { $isCodeNode } from '@lexical/code';
+import { $getNearestNodeFromDOMNode, LexicalEditor } from 'lexical';
+import { Options } from 'prettier';
+import { useState } from 'react';
 
 interface Props {
   lang: string;
@@ -35,22 +34,22 @@ type LanguagesType = keyof typeof PRETTIER_PARSER_MODULES;
 async function loadPrettierParserByLang(lang: string) {
   const dynamicImports = PRETTIER_PARSER_MODULES[lang as LanguagesType];
   const modules = await Promise.all(
-    dynamicImports.map((dynamicImport) => dynamicImport()),
+    dynamicImports.map(dynamicImport => dynamicImport()),
   );
   return modules;
 }
 
 async function loadPrettierFormat() {
-  const {format} = await import('prettier/standalone');
+  const { format } = await import('prettier/standalone');
   return format;
 }
 
 const PRETTIER_OPTIONS_BY_LANG: Record<string, Options> = {
-  css: {parser: 'css'},
-  html: {parser: 'html'},
-  js: {parser: 'babel'},
-  markdown: {parser: 'markdown'},
-  typescript: {parser: 'typescript'},
+  css: { parser: 'css' },
+  html: { parser: 'html' },
+  js: { parser: 'babel' },
+  markdown: { parser: 'markdown' },
+  typescript: { parser: 'typescript' },
 };
 
 const LANG_CAN_BE_PRETTIER = Object.keys(PRETTIER_OPTIONS_BY_LANG);
@@ -70,7 +69,7 @@ function getPrettierOptions(lang: string): Options {
   return options;
 }
 
-export function PrettierButton({lang, editor, getCodeDOMNode}: Props) {
+export function PrettierButton({ lang, editor, getCodeDOMNode }: Props) {
   const [syntaxError, setSyntaxError] = useState<string>('');
   const [tipsVisible, setTipsVisible] = useState<boolean>(false);
 
@@ -95,9 +94,7 @@ export function PrettierButton({lang, editor, getCodeDOMNode}: Props) {
       const format = await loadPrettierFormat();
       const options = getPrettierOptions(lang);
       const prettierParsers = await loadPrettierParserByLang(lang);
-      options.plugins = prettierParsers.map(
-        (parser) => parser.default || parser,
-      );
+      options.plugins = prettierParsers.map(parser => parser.default || parser);
       const formattedCode = await format(content, options);
 
       editor.update(() => {
@@ -142,7 +139,8 @@ export function PrettierButton({lang, editor, getCodeDOMNode}: Props) {
         onClick={handleClick}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        aria-label="prettier">
+        aria-label="prettier"
+      >
         {syntaxError ? (
           <i className="format prettier-error" />
         ) : (

@@ -5,7 +5,12 @@
  */
 
 .CommentPlugin {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, '.SFNSText-Regular', sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    '.SFNSText-Regular',
+    sans-serif;
 }
 
 .CommentPlugin_AddCommentBox {

@@ -8,8 +8,21 @@ import { useEffect, useMemo, useState } from 'react';
 import type { ISessionContext } from '@jupyterlab/apputils';
 import type { Cell, CodeCell, ICellModel } from '@jupyterlab/cells';
 import { type IEditorServices } from '@jupyterlab/codeeditor';
-import { CodeMirrorEditorFactory, CodeMirrorMimeTypeService, EditorExtensionRegistry, EditorLanguageRegistry, EditorThemeRegistry, ybinding } from '@jupyterlab/codemirror';
-import { Completer, CompleterModel, CompletionHandler, KernelCompleterProvider, ProviderReconciliator } from '@jupyterlab/completer';
+import {
+  CodeMirrorEditorFactory,
+  CodeMirrorMimeTypeService,
+  EditorExtensionRegistry,
+  EditorLanguageRegistry,
+  EditorThemeRegistry,
+  ybinding,
+} from '@jupyterlab/codemirror';
+import {
+  Completer,
+  CompleterModel,
+  CompletionHandler,
+  KernelCompleterProvider,
+  ProviderReconciliator,
+} from '@jupyterlab/completer';
 import { PathExt, URLExt, type IChangedArgs } from '@jupyterlab/coreutils';
 import { Context, type DocumentRegistry } from '@jupyterlab/docregistry';
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
@@ -17,9 +30,28 @@ import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extensi
 import { createMarkdownParser } from '@jupyterlab/markedparser-extension';
 import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
 import type { INotebookContent } from '@jupyterlab/nbformat';
-import { NotebookModel, NotebookModelFactory, NotebookPanel, NotebookTracker, NotebookWidgetFactory, StaticNotebook, type INotebookModel,  type Notebook } from '@jupyterlab/notebook';
-import { RenderMimeRegistry, standardRendererFactories, type IRenderMime } from '@jupyterlab/rendermime';
-import type { Contents, Kernel, ServiceManager, Session, SessionManager } from '@jupyterlab/services';
+import {
+  NotebookModel,
+  NotebookModelFactory,
+  NotebookPanel,
+  NotebookTracker,
+  NotebookWidgetFactory,
+  StaticNotebook,
+  type INotebookModel,
+  type Notebook,
+} from '@jupyterlab/notebook';
+import {
+  RenderMimeRegistry,
+  standardRendererFactories,
+  type IRenderMime,
+} from '@jupyterlab/rendermime';
+import type {
+  Contents,
+  Kernel,
+  ServiceManager,
+  Session,
+  SessionManager,
+} from '@jupyterlab/services';
 import type { ISessionConnection } from '@jupyterlab/services/lib/session/session';
 import { YNotebook, type ISharedNotebook, type IYText } from '@jupyter/ydoc';
 import { find } from '@lumino/algorithm';
@@ -32,7 +64,15 @@ import { Box } from '@primer/react';
 import { Banner } from '@primer/react/experimental';
 import { EditorView } from 'codemirror';
 import { WebsocketProvider } from 'y-websocket';
-import { COLLABORATION_ROOM_URL_PATH, ICollaborationServer, requestDatalayerollaborationSessionId, requestJupyterCollaborationSession, WIDGET_MIMETYPE, WidgetLabRenderer, WidgetManager } from '../../jupyter';
+import {
+  COLLABORATION_ROOM_URL_PATH,
+  ICollaborationServer,
+  requestDatalayerollaborationSessionId,
+  requestJupyterCollaborationSession,
+  WIDGET_MIMETYPE,
+  WidgetLabRenderer,
+  WidgetManager,
+} from '../../jupyter';
 import type { OnSessionConnection } from '../../state';
 import { newUuid, remoteUserCursors } from '../../utils';
 import { Lumino } from '../lumino';
@@ -115,15 +155,27 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
   } = props;
 
   const [isLoading, setIsLoading] = useState(true);
-  const [extensionComponents, setExtensionComponents] = useState(new Array<JSX.Element>());
+  const [extensionComponents, setExtensionComponents] = useState(
+    new Array<JSX.Element>()
+  );
   const [completer, setCompleter] = useState<CompletionHandler | null>(null);
 
   const id = useMemo(() => props.id || newUuid(), [props.id]);
-  const path = useMemo(() => props.path || FALLBACK_NOTEBOOK_PATH, [props.path]);
-  const features = useMemo(() => new CommonFeatures({ commands, renderers }), [commands, renderers]);
-  const contentFactory = useMemo(() => new NotebookPanel.ContentFactory(
-    {editorFactory: features.editorServices.factoryService.newInlineEditor}
-  ),[features.editorServices.factoryService.newInlineEditor]);
+  const path = useMemo(
+    () => props.path || FALLBACK_NOTEBOOK_PATH,
+    [props.path]
+  );
+  const features = useMemo(
+    () => new CommonFeatures({ commands, renderers }),
+    [commands, renderers]
+  );
+  const contentFactory = useMemo(
+    () =>
+      new NotebookPanel.ContentFactory({
+        editorFactory: features.editorServices.factoryService.newInlineEditor,
+      }),
+    [features.editorServices.factoryService.newInlineEditor]
+  );
 
   useEffect(() => {
     const completer = new Completer({ model: new CompleterModel() });
@@ -148,7 +200,8 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
   }, []);
 
   // Widget factory.
-  const [widgetFactory, setWidgetFactory] = useState<NotebookWidgetFactory | null>(null);
+  const [widgetFactory, setWidgetFactory] =
+    useState<NotebookWidgetFactory | null>(null);
 
   useEffect(() => {
     const thisFactory = new NotebookWidgetFactory({
@@ -179,16 +232,17 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
   // Tracker & commands.
   const [tracker, setTracker] = useState<NotebookTracker | null>(null);
   useEffect(() => {
-    const thisTracker = completer ? new NotebookTracker({ namespace: id }) : null;
-    const commands = completer ?
-      addNotebookCommands(
+    const thisTracker = completer
+      ? new NotebookTracker({ namespace: id })
+      : null;
+    const commands = completer
+      ? addNotebookCommands(
           features.commands,
           completer,
           thisTracker!,
-          props.path,
+          props.path
         )
-    :
-      null;
+      : null;
     setTracker(thisTracker);
     return () => {
       commands?.dispose();
@@ -306,7 +360,6 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
       }
       setPanel(panel => (panel === thisPanel ? null : panel));
     };
-
   }, [context, extensions, features.commands, widgetFactory]);
 
   useEffect(() => {
@@ -560,7 +613,7 @@ type IOptions = {
    * URL to fetch the notebook content from.
    */
   url?: string;
-}
+};
 
 /**
  * Hook to handle a notebook model.
@@ -571,7 +624,6 @@ type IOptions = {
  * - {@link collaborationServer}: Parameters to connect to a collaboration server
  */
 export function useNotebookModel(options: IOptions): NotebookModel | null {
-
   const { collaborationServer, nbformat, readonly = false, url } = options;
 
   // Generate the notebook model
@@ -648,14 +700,21 @@ export function useNotebookModel(options: IOptions): NotebookModel | null {
             path,
             serverSettings
           );
-          documentURL = URLExt.join(serverSettings.wsUrl, COLLABORATION_ROOM_URL_PATH);
+          documentURL = URLExt.join(
+            serverSettings.wsUrl,
+            COLLABORATION_ROOM_URL_PATH
+          );
           documentName = `${session.format}:${session.type}:${session.fileId}`;
           params.sessionId = session.sessionId;
           if (serverSettings.token) {
             params.token = serverSettings.token;
           }
         } else if (collaborationServer.type === 'datalayer') {
-          const { baseURL, documentName: documentName_, token } = collaborationServer;
+          const {
+            baseURL,
+            documentName: documentName_,
+            token,
+          } = collaborationServer;
           documentName = documentName_; // Set non local variable.
           const serverURL = URLExt.join(baseURL, '/api/spacer/v1/documents');
           documentURL = serverURL.replace(/^http/, 'ws');

@@ -19,9 +19,9 @@ If you prefer to not wrap in a Context, you can just use the JupyterLabCss compo
 ```tsx
 root.render(
   <>
-    <JupyterLabCss colorMode='dark' />
+    <JupyterLabCss colorMode="dark" />
     <Cell />
-  </>
+  </>,
 );
 ```
 
@@ -39,11 +39,11 @@ root.render(
       nbformat={notebookExample1 as INotebookContent}
       CellSidebar={CellSidebar}
       Toolbar={NotebookToolbar}
-      height='calc(100vh - 2.6rem)' // (Height - Toolbar Height).
+      height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       cellSidebarMargin={120}
       uid="notebook-uid"
     />
-  </Jupyter>
+  </Jupyter>,
 );
 ```
 

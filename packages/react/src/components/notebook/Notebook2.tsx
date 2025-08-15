@@ -28,7 +28,7 @@ const GlobalStyle = createGlobalStyle<any>`
   .dla-Box-Notebook .jp-Cell.jp-mod-active .dla-CellSidebar-Container {
     display: block;
   }
-`
+`;
 
 /**
  * Simple notebook component properties
@@ -120,7 +120,9 @@ export interface INotebook2Props {
  * - You must provide the appropriate service manager
  * - You can specify the kernel id to use; if it is not defined or empty and startDefaultKernel is true, a new kernel will be started.
  */
-export function Notebook2(props: React.PropsWithChildren<INotebook2Props>): JSX.Element {
+export function Notebook2(
+  props: React.PropsWithChildren<INotebook2Props>
+): JSX.Element {
   const {
     Toolbar,
     children,
@@ -206,8 +208,8 @@ export function Notebook2(props: React.PropsWithChildren<INotebook2Props>): JSX.
             overflowY: 'scroll',
           },
           '& .jp-NotebookPanel': {
-//            height: '100% !important',
-//            width: '100% !important',
+            //            height: '100% !important',
+            //            width: '100% !important',
           },
           '& .jp-Toolbar': {
             display: 'none',
@@ -237,8 +239,8 @@ export function Notebook2(props: React.PropsWithChildren<INotebook2Props>): JSX.
         }}
       >
         {children}
-        <GlobalStyle/>
-        {model && serviceManager &&
+        <GlobalStyle />
+        {model && serviceManager && (
           <Notebook2Base
             commands={commands}
             id={id}
@@ -250,7 +252,7 @@ export function Notebook2(props: React.PropsWithChildren<INotebook2Props>): JSX.
             serviceManager={serviceManager}
             onSessionConnectionChanged={onSessionConnection}
           />
-        }
+        )}
       </Box>
     </Box>
   );

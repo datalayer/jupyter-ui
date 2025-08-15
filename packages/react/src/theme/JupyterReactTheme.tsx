@@ -13,7 +13,9 @@ type IJupyterLabThemeProps = {
   theme?: Record<string, any>;
 };
 
-export function JupyterReactTheme(props: React.PropsWithChildren<IJupyterLabThemeProps>): JSX.Element {
+export function JupyterReactTheme(
+  props: React.PropsWithChildren<IJupyterLabThemeProps>
+): JSX.Element {
   const {
     children,
     colormode = 'light',

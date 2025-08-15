@@ -30,7 +30,11 @@ const NotebookNbformatChange = () => {
         .get(NOTEBOOK_ID)
         ?.model?.toJSON() as INotebookContent
     );
-    nbformat === NBFORMAT_1 ? setNbformat(NBFORMAT_2) : setNbformat(NBFORMAT_1);
+    if (nbformat === NBFORMAT_1) {
+      setNbformat(NBFORMAT_2);
+    } else {
+      setNbformat(NBFORMAT_1);
+    }
   };
   return (
     <>

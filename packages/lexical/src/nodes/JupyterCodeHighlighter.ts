@@ -4,8 +4,7 @@
  * MIT License
  */
 
-// eslint-disable-next-line simple-import-sort/imports
-import type {LexicalCommand, LexicalEditor, LexicalNode} from 'lexical';
+import type { LexicalCommand, LexicalEditor, LexicalNode } from 'lexical';
 import * as Prism from 'prismjs';
 import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-javascript';
@@ -18,7 +17,7 @@ import 'prismjs/components/prism-sql';
 import 'prismjs/components/prism-python';
 import 'prismjs/components/prism-rust';
 import 'prismjs/components/prism-swift';
-import {mergeRegister} from '@lexical/utils';
+import { mergeRegister } from '@lexical/utils';
 import {
   $createLineBreakNode,
   $createTextNode,
@@ -44,7 +43,7 @@ import {
   getFirstJupyterCodeHighlightNodeOfLine,
   getLastJupyterCodeHighlightNodeOfLine,
 } from './JupyterCodeHighlightNode';
-import {$isJupyterCodeNode, JupyterCodeNode} from './JupyterCodeNode';
+import { $isJupyterCodeNode, JupyterCodeNode } from './JupyterCodeNode';
 
 function isSpaceOrTabChar(char: string): boolean {
   return char === ' ' || char === '\t';
@@ -193,12 +192,12 @@ function updateCodeGutter(node: JupyterCodeNode, editor: LexicalEditor): void {
   }
   const children = node.getChildren();
   const childrenLength = children.length;
-  // @ts-ignore: internal field
+  // @ts-expect-error: internal field
   if (childrenLength === codeElement.__cachedChildrenLength) {
     // Avoid updating the attribute if the children length hasn't changed.
     return;
   }
-  // @ts-ignore:: internal field
+  // @ts-expect-error: internal field
   codeElement.__cachedChildrenLength = childrenLength;
   let gutter = '1';
   let count = 1;
@@ -242,7 +241,7 @@ function codeNodeTransform(node: JupyterCodeNode, editor: LexicalEditor) {
         );
         const highlightNodes = getHighlightNodes(tokens);
         const diffRange = getDiffRange(node.getChildren(), highlightNodes);
-        const {from, to, nodesForReplacement} = diffRange;
+        const { from, to, nodesForReplacement } = diffRange;
         if (from !== to || nodesForReplacement.length) {
           node.splice(from, to - from, nodesForReplacement);
           return true;
@@ -264,7 +263,7 @@ function getHighlightNodes(
 ): Array<LexicalNode> {
   const nodes: LexicalNode[] = [];
 
-  tokens.forEach((token) => {
+  tokens.forEach(token => {
     if (typeof token === 'string') {
       const partials = token.split('\n');
       for (let i = 0; i < partials.length; i++) {
@@ -277,7 +276,7 @@ function getHighlightNodes(
         }
       }
     } else {
-      const {content} = token;
+      const { content } = token;
       if (typeof content === 'string') {
         nodes.push($createJupyterCodeHighlightNode(content, token.type));
       } else if (
@@ -339,7 +338,7 @@ function updateAndRetainSelection(
 
   // If it was non-element anchor then we walk through child nodes
   // and looking for a position of original text offset
-  node.getChildren().some((_node) => {
+  node.getChildren().some(_node => {
     if ($isTextNode(_node)) {
       const textContentSize = _node.getTextContentSize();
       if (textContentSize >= textOffset) {
@@ -405,7 +404,10 @@ function getDiffRange(
 function isEqual(nodeA: LexicalNode, nodeB: LexicalNode): boolean {
   // Only checking for code higlight nodes and linebreaks. If it's regular text node
   // returning false so that it's transformed into code highlight node
-  if ($isJupyterCodeHighlightNode(nodeA) && $isJupyterCodeHighlightNode(nodeB)) {
+  if (
+    $isJupyterCodeHighlightNode(nodeA) &&
+    $isJupyterCodeHighlightNode(nodeB)
+  ) {
     return (
       nodeA.__text === nodeB.__text &&
       nodeA.__highlightType === nodeB.__highlightType
@@ -484,14 +486,17 @@ function handleShiftLines(
   }
   // I'm not quite sure why, but it seems like calling anchor.getNode() collapses the selection here
   // So first, get the anchor and the focus, then get their nodes
-  const {anchor, focus} = selection;
+  const { anchor, focus } = selection;
   const anchorOffset = anchor.offset;
   const focusOffset = focus.offset;
   const anchorNode = anchor.getNode();
   const focusNode = focus.getNode();
   const arrowIsUp = type === KEY_ARROW_UP_COMMAND;
   // Ensure the selection is within the codeblock
-  if (!$isJupyterCodeHighlightNode(anchorNode) || !$isJupyterCodeHighlightNode(focusNode)) {
+  if (
+    !$isJupyterCodeHighlightNode(anchorNode) ||
+    !$isJupyterCodeHighlightNode(focusNode)
+  ) {
     return false;
   }
   if (!event.altKey) {
@@ -560,14 +565,14 @@ function handleShiftLines(
   let insertionPoint =
     maybeInsertionPoint != null ? maybeInsertionPoint : sibling;
   linebreak.remove();
-  range.forEach((node) => node.remove());
+  range.forEach(node => node.remove());
   if (type === KEY_ARROW_UP_COMMAND) {
-    range.forEach((node) => insertionPoint.insertBefore(node));
+    range.forEach(node => insertionPoint.insertBefore(node));
     insertionPoint.insertBefore(linebreak);
   } else {
     insertionPoint.insertAfter(linebreak);
     insertionPoint = linebreak;
-    range.forEach((node) => {
+    range.forEach(node => {
       insertionPoint.insertAfter(node);
       insertionPoint = node;
     });
@@ -584,19 +589,22 @@ function handleMoveTo(
   if (!$isRangeSelection(selection)) {
     return false;
   }
-  const {anchor, focus} = selection;
+  const { anchor, focus } = selection;
   const anchorNode = anchor.getNode();
   const focusNode = focus.getNode();
   const isMoveToStart = type === MOVE_TO_START;
-  if (!$isJupyterCodeHighlightNode(anchorNode) || !$isJupyterCodeHighlightNode(focusNode)) {
+  if (
+    !$isJupyterCodeHighlightNode(anchorNode) ||
+    !$isJupyterCodeHighlightNode(focusNode)
+  ) {
     return false;
   }
   let node;
   let offset;
   if (isMoveToStart) {
-    ({node, offset} = getStartOfCodeInLine(focusNode));
+    ({ node, offset } = getStartOfCodeInLine(focusNode));
   } else {
-    ({node, offset} = getEndOfJupyterCodeInLine(focusNode));
+    ({ node, offset } = getEndOfJupyterCodeInLine(focusNode));
   }
   if (node !== null && offset !== -1) {
     selection.setTextNodeRange(node, offset, node, offset);
@@ -613,7 +621,7 @@ export function registerCodeHighlighting(editor: LexicalEditor): () => void {
     );
   }
   return mergeRegister(
-    editor.registerMutationListener(JupyterCodeNode, (mutations) => {
+    editor.registerMutationListener(JupyterCodeNode, mutations => {
       editor.update(() => {
         for (const [key, type] of mutations) {
           if (type !== 'destroyed') {
@@ -625,13 +633,13 @@ export function registerCodeHighlighting(editor: LexicalEditor): () => void {
         }
       });
     }),
-    editor.registerNodeTransform(JupyterCodeNode, (node) =>
+    editor.registerNodeTransform(JupyterCodeNode, node =>
       codeNodeTransform(node, editor),
     ),
-    editor.registerNodeTransform(TextNode, (node) =>
+    editor.registerNodeTransform(TextNode, node =>
       textNodeTransform(node, editor),
     ),
-    editor.registerNodeTransform(JupyterCodeHighlightNode, (node) =>
+    editor.registerNodeTransform(JupyterCodeHighlightNode, node =>
       textNodeTransform(node, editor),
     ),
     editor.registerCommand(

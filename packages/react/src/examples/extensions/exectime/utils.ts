@@ -5,11 +5,13 @@
  */
 
 export const getTimeString = (date: Date): string => {
-  return date.toLocaleDateString(
-    'en-us',
-    { weekday:"long", year:"numeric", month:"short", day:"numeric"},  
-  );
-}
+  return date.toLocaleDateString('en-us', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+};
 
 export const getTimeDiff = (end: Date, start: Date): string => {
   const MS_IN_SEC = 1000;
@@ -44,4 +46,4 @@ export const getTimeDiff = (end: Date, start: Date): string => {
     timeDiff += `${secs.toFixed(hours ? 0 : 2)}s`;
   }
   return timeDiff.trim();
-}
+};

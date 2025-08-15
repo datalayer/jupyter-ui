@@ -23,7 +23,7 @@ const initialTree: RenderTree = {
 
 export type FileBrowserProps = {
   serviceManager: ServiceManager.IManager;
-}
+};
 
 export const FileBrowser = (props: FileBrowserProps) => {
   const { serviceManager } = props;
@@ -89,7 +89,7 @@ export const FileBrowser = (props: FileBrowserProps) => {
   }, [serviceManager]);
   const renderTree = (nodes: RenderTree[]) => {
     return nodes.map((node: RenderTree) => (
-      <TreeView.Item id={node.id}>
+      <TreeView.Item key={node.id} id={node.id}>
         <TreeView.LeadingVisual>
           {Array.isArray(node.children) ? (
             <TreeView.DirectoryIcon />

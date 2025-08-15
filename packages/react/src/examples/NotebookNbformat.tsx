@@ -8,7 +8,11 @@ import { useMemo } from 'react';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { createRoot } from 'react-dom/client';
 import { useJupyter } from '../jupyter';
-import { Notebook2, CellSidebarExtension, NotebookToolbar } from '../components';
+import {
+  Notebook2,
+  CellSidebarExtension,
+  NotebookToolbar,
+} from '../components';
 import { JupyterReactTheme } from '../theme';
 
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
@@ -18,7 +22,7 @@ const NotebookNbformat = () => {
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
     <JupyterReactTheme>
-      {serviceManager ?
+      {serviceManager ? (
         <Notebook2
           nbformat={nbformat as INotebookContent}
           id="notebook-nbformat-id"
@@ -28,9 +32,9 @@ const NotebookNbformat = () => {
           extensions={extensions}
           Toolbar={NotebookToolbar}
         />
-      :
+      ) : (
         <></>
-      }
+      )}
     </JupyterReactTheme>
   );
 };

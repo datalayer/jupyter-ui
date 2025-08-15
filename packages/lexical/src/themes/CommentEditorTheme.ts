@@ -10,8 +10,7 @@
  * Datalayer License
  */
 
-import type {EditorThemeClasses} from 'lexical';
-
+import type { EditorThemeClasses } from 'lexical';
 
 import baseTheme from './Theme';
 

@@ -24,11 +24,11 @@ This [Visual Studio Code](https://code.visualstudio.com) extension allows you to
 ## Known Limitations
 
 Styling
+
 - No connection between dark/light vs code theme and notebook theme
 - No resizing with the panel
-- Button to select the runtime is not displayed in a toolbar that stays visible  - No connection between dark/light vs code theme and notebook theme
+- Button to select the runtime is not displayed in a toolbar that stays visible - No connection between dark/light vs code theme and notebook theme
   - No resizing with the panel
   - Button to select the runtime is not displayed in a toolbar that stays visible
-
 
 Websocket binary support: for now we forbid the usage of the newer protocol v1.kernel.websocket.jupyter.org. When using it, the message data are failing to be serialized to be transferred from the webview to the extension. And when receiving it, the deserialization fails. The deserialization error may be related to an incorrect binaryType that is not handle in the current code; but in JupyterLab it is forced to 'arraybuffer' for kernel websocket.

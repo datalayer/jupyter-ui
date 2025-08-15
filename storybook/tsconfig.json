@@ -1,14 +1,7 @@
 {
   "$schema": "http://json.schemastore.org/tsconfig",
-  "include": [
-    "src/**/*.js",
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.json"
-  ],
-  "exclude": [
-    "**/node_modules"
-  ],
+  "include": ["src/**/*.js", "src/**/*.ts", "src/**/*.tsx", "src/**/*.json"],
+  "exclude": ["**/node_modules"],
   "compilerOptions": {
     "baseUrl": "./",
     "allowSyntheticDefaultImports": true,
@@ -29,9 +22,7 @@
     "strict": true,
     "strictNullChecks": true,
     "target": "ES2022",
-    "types": [
-      "node",
-      "jest"
-    ]
+    "types": ["node", "jest"],
+    "skipLibCheck": true
   }
 }

@@ -1,11 +1,11 @@
-{/*
-  ~ Copyright (c) 2021-2023 Datalayer, Inc.
-  ~
-  ~ MIT License
-*/}
+{/**
+~ Copyright (c) 2021-2023 Datalayer, Inc.
+~
+~ MIT License
+**/}
 
 import { Canvas, Meta } from '@storybook/addon-docs/blocks';
-import {createLabButton} from './_utils/lab-builders';
+import { createLabButton } from './_utils/lab-builders';
 import * as ButtonStories from './Button.stories';
 
 <Meta of={ButtonStories} />
@@ -36,6 +36,7 @@ Four button variants are available.
 
 The JupyterLab button are the one visible in the dialogs. Their CSS rules
 is spread between 3 CSS stylesheets (in addition to the theme):
+
 - `@jupyterlab/application/style/buttons.css`
 - `@jupyterlab/ui-components/style/styling.css`
 - `@jupyterlab/apputils/style/dialog.css`
@@ -44,4 +45,12 @@ And they required to add manually the class `jp-mod-styled`. Otherwise,
 the button will not be styled; here is an example of the primary button
 missing that class:
 
-<div dangerouslySetInnerHTML={{__html: createLabButton({label: 'Unstyled', variant: 'primary', noModStyled: true })}}></div>
+<div
+  dangerouslySetInnerHTML={{
+    __html: createLabButton({
+      label: 'Unstyled',
+      variant: 'primary',
+      noModStyled: true,
+    }),
+  }}
+></div>

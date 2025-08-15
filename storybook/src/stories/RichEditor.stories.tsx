@@ -10,8 +10,7 @@ import RichEditorMock from './RichEditorMock';
 const meta: Meta<typeof RichEditorMock> = {
   title: 'Components/RichEditor',
   component: RichEditorMock,
-  argTypes: {
-  },
+  argTypes: {},
 } as Meta<typeof RichEditorMock>;
 
 export default meta;
@@ -20,9 +19,7 @@ type Story = StoryObj<typeof RichEditorMock>;
 
 const Template = (args, { globals: { labComparison } }) => {
   const { nbformat, nbformatUrl, outputs, ...others } = args;
-  return (
-    <RichEditorMock/>
-  );
+  return <RichEditorMock />;
 };
 
 export const Default: Story = Template.bind({}) as Story;

@@ -4,12 +4,18 @@
  * MIT License
  */
 
-import {useEffect, useState} from 'react';
-import type {LexicalEditor} from 'lexical';
-import {TOGGLE_CONNECT_COMMAND} from '@lexical/yjs';
-import {COMMAND_PRIORITY_LOW} from 'lexical';
-import {WebsocketProvider} from 'y-websocket';
-import { Array as YArray, Map as YMap, Transaction, YArrayEvent, YEvent } from 'yjs';
+import { useEffect, useState } from 'react';
+import type { LexicalEditor } from 'lexical';
+import { TOGGLE_CONNECT_COMMAND } from '@lexical/yjs';
+import { COMMAND_PRIORITY_LOW } from 'lexical';
+import { WebsocketProvider } from 'y-websocket';
+import {
+  Array as YArray,
+  Map as YMap,
+  Transaction,
+  YArrayEvent,
+  YEvent,
+} from 'yjs';
 
 export type Comment = {
   author: string;
@@ -161,7 +167,7 @@ export class CommentStore {
   deleteCommentOrThread(
     commentOrThread: Comment | Thread,
     thread?: Thread,
-  ): {markedComment: Comment; index: number} | null {
+  ): { markedComment: Comment; index: number } | null {
     const nextComments = Array.from(this._comments);
     // The YJS types explicitly use `any` as well.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -220,7 +226,6 @@ export class CommentStore {
   _withRemoteTransaction(fn: () => void): void {
     const provider = this._collabProvider;
     if (provider !== null) {
-      // @ts-ignore doc does exist
       const doc = provider.doc;
       doc.transact(fn, this);
     }
@@ -240,7 +245,7 @@ export class CommentStore {
     const provider = this._collabProvider;
     if (provider !== null) {
       const doc = provider.doc;
-//      return doc.get('comments', YArray) as YArray<any>;
+      //      return doc.get('comments', YArray) as YArray<any>;
       return doc.get('comments') as YArray<any>;
     }
     return null;
@@ -287,7 +292,7 @@ export class CommentStore {
 
     const unsubscribe = this._editor.registerCommand(
       TOGGLE_CONNECT_COMMAND,
-      (payload) => {
+      payload => {
         if (connect !== undefined && disconnect !== undefined) {
           const shouldConnect = payload;
 
@@ -330,7 +335,7 @@ export class CommentStore {
                 target === sharedCommentsArray
                   ? undefined
                   : parent instanceof YMap &&
-                    (this._comments.find((t) => t.id === parent.get('id')) as
+                    (this._comments.find(t => t.id === parent.get('id')) as
                       | Thread
                       | undefined);
 

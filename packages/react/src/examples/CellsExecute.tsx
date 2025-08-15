@@ -13,12 +13,12 @@ import Cell from '../components/cell/Cell';
 const CODE_CELL_1 = `import time
 print("Cell 1 start...")
 time.sleep(3)
-print("Cell 1 end.")`
+print("Cell 1 end.")`;
 
 const CODE_CELL_2 = `import time
 print("Cell 2 start...")
 time.sleep(3)
-print("Cell 2 end.")`
+print("Cell 2 end.")`;
 
 const CellsExecute = () => {
   const [executionDisable, setExecutionDisable] = useState(false);
@@ -33,41 +33,41 @@ const CellsExecute = () => {
   }, []);
   const onExecuteClick = () => {
     cellsStore.getState().execute();
-  }
+  };
   return (
     <JupyterReactTheme>
-      <Box style={{marginTop: '20px'}}>
+      <Box style={{ marginTop: '20px' }}>
         <Cell
-          id='1'
-          type='code'
-          source={CODE_CELL_1} 
+          id="1"
+          type="code"
+          source={CODE_CELL_1}
           autoStart={false}
           showToolbar={false}
         />
         <Cell
-          id='2'
-          type='code'
+          id="2"
+          type="code"
           source={CODE_CELL_2}
           autoStart={false}
           showToolbar={false}
         />
         <Button
-          onClick={onExecuteClick} 
-          disabled={executionDisable} 
+          onClick={onExecuteClick}
+          disabled={executionDisable}
           style={{
             marginLeft: '50px',
-            marginTop: '20px'
+            marginTop: '20px',
           }}
         >
           Execute all
         </Button>
       </Box>
     </JupyterReactTheme>
-  )
+  );
 };
 
 const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<CellsExecute/>);
+root.render(<CellsExecute />);

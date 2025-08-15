@@ -5,14 +5,42 @@
  */
 
 import {
-  Builder, Contents, Event, IManager, NbConvert, NbConvertManager, ServerConnection,
-  ServiceManager, Setting, User, Workspace, SettingManager, WorkspaceManager,
+  Builder,
+  Contents,
+  Event,
+  IManager,
+  NbConvert,
+  NbConvertManager,
+  ServerConnection,
+  ServiceManager,
+  Setting,
+  User,
+  Workspace,
+  SettingManager,
+  WorkspaceManager,
 } from '@jupyterlab/services';
 import { BuildManager } from '@jupyterlab/services/lib/builder';
-import { IKernelConnection, IManager as IKernelManager, IModel } from '@jupyterlab/services/lib/kernel/kernel';
-import { IManager as IKernelspecManager, ISpecModels} from '@jupyterlab/services/lib/kernelspec/kernelspec';
-import {IModel as ISessionModel, ISessionConnection, IManager as ISessionManager, ISessionOptions } from '@jupyterlab/services/lib/session/session';
-import { IModel as ITerminalModel, IManager as ITerminaManager, ITerminal, ITerminalConnection } from '@jupyterlab/services/lib/terminal/terminal';
+import {
+  IKernelConnection,
+  IManager as IKernelManager,
+  IModel,
+} from '@jupyterlab/services/lib/kernel/kernel';
+import {
+  IManager as IKernelspecManager,
+  ISpecModels,
+} from '@jupyterlab/services/lib/kernelspec/kernelspec';
+import {
+  IModel as ISessionModel,
+  ISessionConnection,
+  IManager as ISessionManager,
+  ISessionOptions,
+} from '@jupyterlab/services/lib/session/session';
+import {
+  IModel as ITerminalModel,
+  IManager as ITerminaManager,
+  ITerminal,
+  ITerminalConnection,
+} from '@jupyterlab/services/lib/terminal/terminal';
 import { ISettingRegistry } from '@jupyterlab/settingregistry';
 import { PromiseDelegate, ReadonlyJSONObject } from '@lumino/coreutils';
 import { ISignal, Signal } from '@lumino/signaling';
@@ -55,7 +83,8 @@ const WORKSPACE = JSON.parse(WORKSPACE_JSON) as Workspace.IWorkspace;
 
 export class TerminalManagerLess implements ITerminaManager {
   runningChanged: ISignal<ITerminaManager, ITerminalModel[]> = new Signal(this);
-  connectionFailure: ISignal<ITerminaManager, ServerConnection.NetworkError> = new Signal(this);
+  connectionFailure: ISignal<ITerminaManager, ServerConnection.NetworkError> =
+    new Signal(this);
   isReady: boolean = true;
   ready: Promise<void> = Promise.resolve(void 0);
   serverSettings: ServerConnection.ISettings;
@@ -71,10 +100,14 @@ export class TerminalManagerLess implements ITerminaManager {
   running(): IterableIterator<ISessionModel> {
     return [].values();
   }
-  startNew(options?: ITerminal.IOptions | undefined): Promise<ITerminalConnection> {
+  startNew(
+    options?: ITerminal.IOptions | undefined
+  ): Promise<ITerminalConnection> {
     return Promise.resolve({} as unknown as ITerminalConnection);
   }
-  connectTo(options: Omit<ITerminalConnection.IOptions, 'serverSettings'>): ITerminalConnection {
+  connectTo(
+    options: Omit<ITerminalConnection.IOptions, 'serverSettings'>
+  ): ITerminalConnection {
     return {} as unknown as ITerminalConnection;
   }
   shutdown(name: string): Promise<void> {
@@ -90,14 +123,15 @@ export class TerminalManagerLess implements ITerminaManager {
 }
 
 export class ContentsManagerLess implements Contents.IManager {
-  fileChanged: ISignal<Contents.IManager, Contents.IChangedArgs> = new Signal(this);
+  fileChanged: ISignal<Contents.IManager, Contents.IChangedArgs> = new Signal(
+    this
+  );
   isDisposed: boolean = false;
   serverSettings: ServerConnection.ISettings;
   constructor(serverSettings: ServerConnection.ISettings) {
     this.serverSettings = serverSettings;
   }
-  addDrive(drive: Contents.IDrive): void {
-  }
+  addDrive(drive: Contents.IDrive): void {}
   localPath(path: string): string {
     return path;
   }
@@ -108,18 +142,23 @@ export class ContentsManagerLess implements Contents.IManager {
     return root + path;
   }
   driveName(path: string): string {
-    return "";
+    return '';
   }
   getSharedModelFactory(path: string): Contents.ISharedFactory | null {
     return null;
   }
-  get(path: string, options?: Contents.IFetchOptions | undefined): Promise<Contents.IModel> {
+  get(
+    path: string,
+    options?: Contents.IFetchOptions | undefined
+  ): Promise<Contents.IModel> {
     return new Promise(() => {});
   }
   getDownloadUrl(path: string): Promise<string> {
     return new Promise(() => {});
   }
-  newUntitled(options?: Contents.ICreateOptions | undefined): Promise<Contents.IModel> {
+  newUntitled(
+    options?: Contents.ICreateOptions | undefined
+  ): Promise<Contents.IModel> {
     return new Promise(() => {});
   }
   delete(path: string): Promise<void> {
@@ -128,7 +167,10 @@ export class ContentsManagerLess implements Contents.IManager {
   rename(path: string, newPath: string): Promise<Contents.IModel> {
     return new Promise(() => {});
   }
-  save(path: string, options?: Partial<Contents.IModel> | undefined): Promise<Contents.IModel> {
+  save(
+    path: string,
+    options?: Partial<Contents.IModel> | undefined
+  ): Promise<Contents.IModel> {
     return new Promise(() => {});
   }
   copy(path: string, toDir: string): Promise<Contents.IModel> {
@@ -151,7 +193,8 @@ export class ContentsManagerLess implements Contents.IManager {
 
 export class KernelManagerLess implements IKernelManager {
   runningChanged: ISignal<IKernelManager, IModel[]> = new Signal(this);
-  connectionFailure: ISignal<IKernelManager, ServerConnection.NetworkError> = new Signal(this);
+  connectionFailure: ISignal<IKernelManager, ServerConnection.NetworkError> =
+    new Signal(this);
   isReady: boolean = true;
   ready: Promise<void> = Promise.resolve(void 0);
   serverSettings: ServerConnection.ISettings;
@@ -168,14 +211,19 @@ export class KernelManagerLess implements IKernelManager {
   refreshRunning(): Promise<void> {
     return new Promise(() => {});
   }
-  startNew(createOptions?: Partial<Pick<IModel, 'name'>> | undefined, connectOptions?: Omit<IKernelConnection.IOptions, 'serverSettings' | 'model'> | undefined): Promise<IKernelConnection> {
+  startNew(
+    createOptions?: Partial<Pick<IModel, 'name'>> | undefined,
+    connectOptions?:
+      | Omit<IKernelConnection.IOptions, 'serverSettings' | 'model'>
+      | undefined
+  ): Promise<IKernelConnection> {
     return new Promise(() => {});
   }
   findById(id: string): Promise<IModel | undefined> {
     return new Promise(() => {});
   }
   connectTo(options: IKernelConnection.IOptions): IKernelConnection {
-    return "" as any;
+    return '' as any;
   }
   shutdown(id: string): Promise<void> {
     return new Promise(() => {});
@@ -189,7 +237,8 @@ export class KernelManagerLess implements IKernelManager {
 export class KernelspecManagerLess implements IKernelspecManager {
   specsChanged: ISignal<IKernelspecManager, ISpecModels> = new Signal(this);
   specs: ISpecModels | null = null;
-  connectionFailure: ISignal<IManager, ServerConnection.NetworkError> = new Signal(this);
+  connectionFailure: ISignal<IManager, ServerConnection.NetworkError> =
+    new Signal(this);
   serverSettings: ServerConnection.ISettings;
   isReady: boolean = true;
   ready: Promise<void> = Promise.resolve(void 0);
@@ -207,7 +256,8 @@ export class KernelspecManagerLess implements IKernelspecManager {
 
 export class SessionManagerLess implements ISessionManager {
   runningChanged: ISignal<this, ISessionModel[]> = new Signal(this);
-  connectionFailure: ISignal<ISessionManager, ServerConnection.NetworkError> = new Signal(this);
+  connectionFailure: ISignal<ISessionManager, ServerConnection.NetworkError> =
+    new Signal(this);
   serverSettings?: ServerConnection.ISettings | undefined;
   isReady: boolean = true;
   isDisposed: boolean = false;
@@ -218,7 +268,15 @@ export class SessionManagerLess implements ISessionManager {
   running(): IterableIterator<ISessionModel> {
     return [].values();
   }
-  startNew(createOptions: ISessionOptions, connectOptions?: Omit<ISessionConnection.IOptions, 'serverSettings' | 'model' | 'connectToKernel'> | undefined): Promise<ISessionConnection> {
+  startNew(
+    createOptions: ISessionOptions,
+    connectOptions?:
+      | Omit<
+          ISessionConnection.IOptions,
+          'serverSettings' | 'model' | 'connectToKernel'
+        >
+      | undefined
+  ): Promise<ISessionConnection> {
     return new Promise(() => {});
   }
   findById(id: string): Promise<ISessionModel | undefined> {
@@ -227,8 +285,13 @@ export class SessionManagerLess implements ISessionManager {
   findByPath(path: string): Promise<ISessionModel | undefined> {
     return new Promise(() => {});
   }
-  connectTo(options: Omit<ISessionConnection.IOptions, 'serverSettings' | 'connectToKernel'>): ISessionConnection {
-    return "" as any;
+  connectTo(
+    options: Omit<
+      ISessionConnection.IOptions,
+      'serverSettings' | 'connectToKernel'
+    >
+  ): ISessionConnection {
+    return '' as any;
   }
   shutdown(id: string): Promise<void> {
     return new Promise(() => {});
@@ -251,7 +314,7 @@ export class BuilderManagerLess {
     this.serverSettings = serverSettings;
   }
   get isAvailable(): boolean {
-    return true
+    return true;
   }
   get shouldCheck(): boolean {
     return false;
@@ -267,7 +330,10 @@ export class BuilderManagerLess {
   }
 }
 
-export class SettingManagerLess extends SettingManager implements Setting.IManager {
+export class SettingManagerLess
+  extends SettingManager
+  implements Setting.IManager
+{
   serverSettings: ServerConnection.ISettings;
   constructor(serverSettings: ServerConnection.ISettings) {
     super({ serverSettings });
@@ -291,7 +357,9 @@ export class SettingManagerLess extends SettingManager implements Setting.IManag
     */
     return super.fetch(id);
   }
-  list(query?: 'ids' | undefined): Promise<{ ids: string[]; values: ISettingRegistry.IPlugin[]; }> {
+  list(
+    query?: 'ids' | undefined
+  ): Promise<{ ids: string[]; values: ISettingRegistry.IPlugin[] }> {
     /*
     const PLUGIN: ISettingRegistry.IPlugin = {
       id: 'id',
@@ -313,11 +381,11 @@ export class SettingManagerLess extends SettingManager implements Setting.IManag
     return super.list(query);
   }
   save(id: string, raw: string): Promise<void> {
-//    return super.save(id, raw);
+    //    return super.save(id, raw);
     return new Promise(() => {});
   }
   remove(id: string): Promise<any> {
-//    return super.remove(id);
+    //    return super.remove(id);
     return new Promise(() => {});
   }
 }
@@ -326,7 +394,8 @@ export class UserManagerLess implements User.IManager {
   userChanged: ISignal<this, User.IUser> = new Signal(this);
   identity: User.IIdentity | null = null;
   permissions: ReadonlyJSONObject | null = null;
-  connectionFailure: ISignal<IManager, ServerConnection.NetworkError> = new Signal(this);
+  connectionFailure: ISignal<IManager, ServerConnection.NetworkError> =
+    new Signal(this);
   isReady: boolean = true;
   ready: Promise<void> = Promise.resolve(void 0);
   isActive: boolean = true;
@@ -355,39 +424,45 @@ export class EventsManagerLess implements Event.IManager {
   dispose(): void {}
 }
 
-export class WorkspaceManagerLess extends WorkspaceManager implements Workspace.IManager {
+export class WorkspaceManagerLess
+  extends WorkspaceManager
+  implements Workspace.IManager
+{
   serverSettings: ServerConnection.ISettings;
   constructor(serverSettings: ServerConnection.ISettings) {
     super({ serverSettings });
     this.serverSettings = serverSettings;
   }
   fetch(id: string): Promise<Workspace.IWorkspace> {
-//    return new Promise(() => {});
-//    return super.fetch(id);
-    return new Promise<Workspace.IWorkspace>((resolve) => resolve(WORKSPACE));
-}
-  list(): Promise<{ ids: string[]; values: Workspace.IWorkspace[]; }> {
-//    return new Promise(() => {});
-//    return super.list()
+    //    return new Promise(() => {});
+    //    return super.fetch(id);
+    return new Promise<Workspace.IWorkspace>(resolve => resolve(WORKSPACE));
+  }
+  list(): Promise<{ ids: string[]; values: Workspace.IWorkspace[] }> {
+    //    return new Promise(() => {});
+    //    return super.list()
     const w = {
-      ids: ["1"],
+      ids: ['1'],
       values: [WORKSPACE],
-    }
-    return new Promise<{ ids: string[]; values: Workspace.IWorkspace[]; }>((resolve) => resolve(w));
+    };
+    return new Promise<{ ids: string[]; values: Workspace.IWorkspace[] }>(
+      resolve => resolve(w)
+    );
   }
   remove(id: string): Promise<void> {
-//    return new Promise(() => {});
+    //    return new Promise(() => {});
     return super.remove(id);
   }
   save(id: string, workspace: Workspace.IWorkspace): Promise<void> {
-//    return new Promise(() => {});
+    //    return new Promise(() => {});
     return super.save(id, workspace);
   }
 }
 
 export class NbConvertManagerLess {
   serverSettings: ServerConnection.ISettings;
-  protected _requestingFormats: PromiseDelegate<NbConvertManager.IExportFormats> | null = null;
+  protected _requestingFormats: PromiseDelegate<NbConvertManager.IExportFormats> | null =
+    null;
   protected _exportFormats: NbConvertManager.IExportFormats | null = null;
   constructor(serverSettings: ServerConnection.ISettings) {
     this.serverSettings = serverSettings;
@@ -395,13 +470,15 @@ export class NbConvertManagerLess {
   protected fetchExportFormats(): Promise<NbConvertManager.IExportFormats> {
     return new Promise(() => {});
   }
-  protected getExportFormats(force?: boolean | undefined): Promise<NbConvertManager.IExportFormats> {
+  protected getExportFormats(
+    force?: boolean | undefined
+  ): Promise<NbConvertManager.IExportFormats> {
     return new Promise(() => {});
   }
 }
 
 export class ServiceManagerLess implements ServiceManager.IManager {
-  __NAME__ = "LessServiceManager";
+  __NAME__ = 'LessServiceManager';
   isReady: boolean = true;
   ready: Promise<void> = Promise.resolve(void 0);
   isDisposed: boolean = false;
@@ -419,27 +496,34 @@ export class ServiceManagerLess implements ServiceManager.IManager {
   workspaces: Workspace.IManager;
   nbconvert: NbConvert.IManager;
   constructor(serverSettings?: ServerConnection.ISettings) {
-    this.serverSettings = serverSettings ?? ServerConnection.makeSettings({
-      baseUrl: 'https://oss.datalayer.run/api/jupyter-server',
-      wsUrl: 'wss://oss.datalayer.run/api/jupyter-server',
-      token: '60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6',
-    });
+    this.serverSettings =
+      serverSettings ??
+      ServerConnection.makeSettings({
+        baseUrl: 'https://oss.datalayer.run/api/jupyter-server',
+        wsUrl: 'wss://oss.datalayer.run/api/jupyter-server',
+        token:
+          '60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6',
+      });
     this.contents = new ContentsManagerLess(this.serverSettings);
     this.kernels = new KernelManagerLess(this.serverSettings);
     this.kernelspecs = new KernelspecManagerLess(this.serverSettings);
     this.sessions = new SessionManagerLess(this.serverSettings);
     this.settings = new SettingManagerLess(this.serverSettings);
     this.terminals = new TerminalManagerLess(this.serverSettings);
-    this.user = new UserManagerLess(this.serverSettings)
-    this.builder = new BuilderManagerLess(this.serverSettings) as Builder.IManager;
+    this.user = new UserManagerLess(this.serverSettings);
+    this.builder = new BuilderManagerLess(
+      this.serverSettings
+    ) as Builder.IManager;
     this.events = new EventsManagerLess(this.serverSettings);
     this.workspaces = new WorkspaceManagerLess(this.serverSettings);
-    this.nbconvert = new NbConvertManagerLess(this.serverSettings) as unknown as NbConvert.IManager;
+    this.nbconvert = new NbConvertManagerLess(
+      this.serverSettings
+    ) as unknown as NbConvert.IManager;
   }
   dispose(): void {}
   get_name = () => {
     return this.__NAME__;
-  }
+  };
 }
 
 export default ServiceManagerLess;

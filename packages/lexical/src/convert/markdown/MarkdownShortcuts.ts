@@ -10,9 +10,9 @@ import type {
   TextMatchTransformer,
   Transformer,
 } from '.';
-import type {ElementNode, LexicalEditor, TextNode} from 'lexical';
+import type { ElementNode, LexicalEditor, TextNode } from 'lexical';
 
-import {$isJupyterCodeNode} from './../../nodes/JupyterCodeNode';
+import { $isJupyterCodeNode } from './../../nodes/JupyterCodeNode';
 import {
   $createRangeSelection,
   $getSelection,
@@ -24,8 +24,8 @@ import {
 } from 'lexical';
 import invariant from '../../utils/invariant';
 
-import {TRANSFORMERS} from '.';
-import {indexBy, PUNCTUATION_OR_SPACE, transformersByType} from './utils';
+import { TRANSFORMERS } from '.';
+import { indexBy, PUNCTUATION_OR_SPACE, transformersByType } from './utils';
 
 function runElementTransformers(
   parentNode: ElementNode,
@@ -54,7 +54,7 @@ function runElementTransformers(
     return false;
   }
 
-  for (const {regExp, replace} of elementTransformers) {
+  for (const { regExp, replace } of elementTransformers) {
     const match = textContent.match(regExp);
 
     if (match && match[0].length === anchorOffset) {
@@ -134,7 +134,7 @@ function runTextFormatTransformers(
   }
 
   for (const matcher of matchers) {
-    const {tag} = matcher;
+    const { tag } = matcher;
     const tagLength = tag.length;
     const closeTagStartIndex = closeTagEndIndex - tagLength + 1;
 
@@ -325,11 +325,11 @@ export function registerMarkdownShortcuts(
   const byType = transformersByType(transformers);
   const textFormatTransformersIndex = indexBy(
     byType.textFormat,
-    ({tag}) => tag[tag.length - 1],
+    ({ tag }) => tag[tag.length - 1],
   );
   const textMatchTransformersIndex = indexBy(
     byType.textMatch,
-    ({trigger}) => trigger,
+    ({ trigger }) => trigger,
   );
 
   for (const transformer of transformers) {
@@ -379,7 +379,7 @@ export function registerMarkdownShortcuts(
   };
 
   return editor.registerUpdateListener(
-    ({tags, dirtyLeaves, editorState, prevEditorState}) => {
+    ({ tags, dirtyLeaves, editorState, prevEditorState }) => {
       // Ignore updates from undo/redo (as changes already calculated)
       if (tags.has('historic')) {
         return;

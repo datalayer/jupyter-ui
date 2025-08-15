@@ -7,7 +7,12 @@
 import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { Notebook, CellSidebarExtension, CellSidebarButton, NotebookToolbar } from '../components';
+import {
+  Notebook,
+  CellSidebarExtension,
+  CellSidebarButton,
+  NotebookToolbar,
+} from '../components';
 import { JupyterReactTheme } from '../theme';
 import { ExecTimeExtension } from './extensions';
 

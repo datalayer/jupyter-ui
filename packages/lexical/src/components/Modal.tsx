@@ -4,8 +4,8 @@
  * MIT License
  */
 
-import {ReactNode, useEffect, useRef} from 'react';
-import {createPortal} from 'react-dom';
+import { ReactNode, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 
 function PortalImpl({
   onClose,
@@ -63,7 +63,8 @@ function PortalImpl({
           className="Modal__closeButton"
           aria-label="Close modal"
           type="button"
-          onClick={onClose}>
+          onClick={onClose}
+        >
           X
         </button>
         <div className="Modal__content">{children}</div>
@@ -87,11 +88,12 @@ export const Modal = ({
     <PortalImpl
       onClose={onClose}
       title={title}
-      closeOnClickOutside={closeOnClickOutside}>
+      closeOnClickOutside={closeOnClickOutside}
+    >
       {children}
     </PortalImpl>,
     document.body,
   );
-}
+};
 
 export default Modal;

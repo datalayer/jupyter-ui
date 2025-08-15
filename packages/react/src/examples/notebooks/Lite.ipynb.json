@@ -14,10 +14,7 @@
           "output_type": "execute_result"
         }
       ],
-      "source": [
-        "import platform\n",
-        "platform.system()"
-      ]
+      "source": ["import platform\n", "platform.system()"]
     },
     {
       "cell_type": "code",
@@ -33,10 +30,7 @@
           "output_type": "execute_result"
         }
       ],
-      "source": [
-        "import sys\n",
-        "sys.platform"
-      ]
+      "source": ["import sys\n", "sys.platform"]
     },
     {
       "cell_type": "code",
@@ -45,16 +39,16 @@
       "outputs": [
         {
           "data": {
-            "text/plain": ["<pyodide_kernel.interpreter.Interpreter at 0x22906f0>"]
+            "text/plain": [
+              "<pyodide_kernel.interpreter.Interpreter at 0x22906f0>"
+            ]
           },
           "execution_count": 1,
           "metadata": {},
           "output_type": "execute_result"
         }
       ],
-      "source": [
-        "get_ipython()"
-      ]
+      "source": ["get_ipython()"]
     },
     {
       "cell_type": "code",
@@ -70,16 +64,12 @@
           "output_type": "execute_result"
         }
       ],
-      "source": [
-        "# I am a Python cell.\n",
-        "print('2+2')"
-      ]
+      "source": ["# I am a Python cell.\n", "print('2+2')"]
     },
     {
       "cell_type": "code",
       "execution_count": 1,
-      "metadata": {
-      },
+      "metadata": {},
       "outputs": [
         {
           "data": {
@@ -90,16 +80,12 @@
           "output_type": "execute_result"
         }
       ],
-      "source": [
-        "import micropip\n",
-        "await micropip.install('ipywidgets')"
-      ]
+      "source": ["import micropip\n", "await micropip.install('ipywidgets')"]
     },
     {
       "cell_type": "code",
       "execution_count": 1,
-      "metadata": {
-      },
+      "metadata": {},
       "outputs": [
         {
           "data": {
@@ -110,17 +96,12 @@
           "output_type": "execute_result"
         }
       ],
-      "source": [
-        "from ipywidgets import IntSlider\n",
-        "w = IntSlider()\n",
-        "w"
-      ]
+      "source": ["from ipywidgets import IntSlider\n", "w = IntSlider()\n", "w"]
     },
     {
       "cell_type": "code",
       "execution_count": 1,
-      "metadata": {
-      },
+      "metadata": {},
       "outputs": [
         {
           "data": {
@@ -131,9 +112,7 @@
           "output_type": "execute_result"
         }
       ],
-      "source": [
-        "w"
-      ]
+      "source": ["w"]
     },
     {
       "cell_type": "code",

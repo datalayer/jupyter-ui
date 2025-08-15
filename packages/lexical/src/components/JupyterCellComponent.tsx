@@ -12,18 +12,18 @@ type IJupyterCellComponentProps = {
   outputs: IOutput[];
   loading: string;
   autoStart: boolean;
-}
+};
 
 export const JupyterCellComponent = (props: IJupyterCellComponentProps) => {
   const { autoStart, code, outputs } = props;
   return (
-      <Cell
-  //      startDefaultKernel
-        source={code}      
-        autoStart={autoStart}
-        outputs={outputs}
-      />
-  )
-}
+    <Cell
+      //      startDefaultKernel
+      source={code}
+      autoStart={autoStart}
+      outputs={outputs}
+    />
+  );
+};
 
 export default JupyterCellComponent;

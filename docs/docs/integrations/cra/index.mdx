@@ -75,13 +75,13 @@ npm install
 You need to add in the `<head/>` section of `public/index.html` the metadata to indicate where you Jupyter server is running, as the `require` javascript.
 
 ```html
-    <script id="datalayer-config-data" type="application/json">
-      {
-        "jupyterServerUrl": "https://oss.datalayer.run/api/jupyter-server",
-        "jupyterServerToken": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
-      }
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+<script id="datalayer-config-data" type="application/json">
+  {
+    "jupyterServerUrl": "https://oss.datalayer.run/api/jupyter-server",
+    "jupyterServerToken": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+  }
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
 ```
 
 ## Dot Env

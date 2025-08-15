@@ -12,7 +12,6 @@ lib
 *.sqlite
 *.tsbuildinfo
 *.egg-info
-*-lock.json
 *-error.log
 *.log
 *.lock
@@ -178,3 +177,4 @@ packages/react/.vscode/launch.json
 !dev/notebooks/.datalayer
 !docs/static/img
 !**/static/README.md
+*-lock.json

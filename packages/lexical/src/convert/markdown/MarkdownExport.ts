@@ -10,11 +10,21 @@ import type {
   TextMatchTransformer,
   Transformer,
 } from '.';
-import type {ElementNode, LexicalNode, TextFormatType, TextNode} from 'lexical';
+import type {
+  ElementNode,
+  LexicalNode,
+  TextFormatType,
+  TextNode,
+} from 'lexical';
 
-import {$getRoot, $isElementNode, $isLineBreakNode, $isTextNode} from 'lexical';
+import {
+  $getRoot,
+  $isElementNode,
+  $isLineBreakNode,
+  $isTextNode,
+} from 'lexical';
 
-import {transformersByType} from './utils';
+import { transformersByType } from './utils';
 
 export function createMarkdownExport(
   transformers: Array<Transformer>,
@@ -24,7 +34,7 @@ export function createMarkdownExport(
   // Export only uses text formats that are responsible for single format
   // e.g. it will filter out *** (bold, italic) and instead use separate ** and *
   const textFormatTransformers = byType.textFormat.filter(
-    (transformer) => transformer.format.length === 1,
+    transformer => transformer.format.length === 1,
   );
 
   return () => {
@@ -55,7 +65,7 @@ export function exportTopLevelElements(
   textMatchTransformers: Array<TextMatchTransformer>,
 ): string | null {
   for (const transformer of elementTransformers) {
-    const result = transformer.export(node, (_node) =>
+    const result = transformer.export(node, _node =>
       exportChildren(_node, textTransformersIndex, textMatchTransformers),
     );
 
@@ -81,7 +91,7 @@ function exportChildren(
     for (const transformer of textMatchTransformers) {
       const result = transformer.export(
         child,
-        (parentNode) =>
+        parentNode =>
           exportChildren(
             parentNode,
             textTransformersIndex,

@@ -7,23 +7,42 @@
 import { useEffect, useState, useMemo } from 'react';
 import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
-import { ServiceManager, Kernel as JupyterKernel, Session } from '@jupyterlab/services';
-import { getJupyterServerUrl, createLiteServiceManager, ensureJupyterAuth, createServerSettings, JupyterPropsType, DEFAULT_KERNEL_NAME } from '../jupyter';
+import {
+  ServiceManager,
+  Kernel as JupyterKernel,
+  Session,
+} from '@jupyterlab/services';
+import {
+  getJupyterServerUrl,
+  createLiteServiceManager,
+  ensureJupyterAuth,
+  createServerSettings,
+  JupyterPropsType,
+  DEFAULT_KERNEL_NAME,
+} from '../jupyter';
 import { ServiceManagerLess } from '../jupyter/services';
 import { Kernel } from '../jupyter/kernel/Kernel';
 import { IJupyterConfig, loadJupyterConfig } from '../jupyter/JupyterConfig';
 import type { IDatalayerConfig } from './IDatalayerConfig';
 import { cellsStore, CellsState } from '../components/cell/CellState';
 import { consoleStore, ConsoleState } from '../components/console/ConsoleState';
-import { notebookStore, NotebookState } from '../components/notebook/NotebookState';
+import {
+  notebookStore,
+  NotebookState,
+} from '../components/notebook/NotebookState';
 import { outputsStore, OutputState } from '../components/output/OutputState';
-import { terminalStore, TerminalState } from '../components/terminal/TerminalState';
+import {
+  terminalStore,
+  TerminalState,
+} from '../components/terminal/TerminalState';
 
-export type OnSessionConnection = (kernelConnection: Session.ISessionConnection | undefined) => void;
+export type OnSessionConnection = (
+  kernelConnection: Session.ISessionConnection | undefined
+) => void;
 
 export type KernelTransfer = {
   transfer: (to: JupyterKernel.IKernelConnection) => void;
-}
+};
 
 export type JupyterReactState = {
   cellsStore: CellsState;
@@ -87,13 +106,21 @@ export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
 // TODO Reuse code portions from JupyterContext.
 export function useJupyterReactStore(): JupyterReactState;
 
-export function useJupyterReactStore<T>(selector: (state: JupyterReactState) => T): T;
-export function useJupyterReactStore<T>(selector?: (state: JupyterReactState) => T) {
+export function useJupyterReactStore<T>(
+  selector: (state: JupyterReactState) => T
+): T;
+export function useJupyterReactStore<T>(
+  selector?: (state: JupyterReactState) => T
+) {
   return useStore(jupyterReactStore, selector!);
 }
 
-export function useJupyterReactStoreFromProps(props: JupyterPropsType): JupyterReactState;
-export function useJupyterReactStoreFromProps(props: JupyterPropsType): JupyterReactState {
+export function useJupyterReactStoreFromProps(
+  props: JupyterPropsType
+): JupyterReactState;
+export function useJupyterReactStoreFromProps(
+  props: JupyterPropsType
+): JupyterReactState {
   const {
     defaultKernelName = DEFAULT_KERNEL_NAME,
     initCode = '',
@@ -119,9 +146,13 @@ export function useJupyterReactStoreFromProps(props: JupyterPropsType): JupyterR
     return config;
   }, []);
 
-  const [serviceManager, setServiceManager] = useState<ServiceManager.IManager | undefined>(propsServiceManager);
+  const [serviceManager, setServiceManager] = useState<
+    ServiceManager.IManager | undefined
+  >(propsServiceManager);
   const [_, setKernel] = useState<Kernel>();
-  const [__, setIsLoading] = useState<boolean>(startDefaultKernel || useRunningKernelIndex > -1);
+  const [__, setIsLoading] = useState<boolean>(
+    startDefaultKernel || useRunningKernelIndex > -1
+  );
 
   useEffect(() => {
     if (propsServiceManager) {
@@ -149,37 +180,51 @@ export function useJupyterReactStoreFromProps(props: JupyterPropsType): JupyterR
       }
       const serverSettings = createServerSettings(
         jupyterConfig.jupyterServerUrl,
-        jupyterConfig.jupyterServerToken,
+        jupyterConfig.jupyterServerToken
       );
       ensureJupyterAuth(serverSettings).then(isAuth => {
         if (!isAuth) {
-          const loginUrl = getJupyterServerUrl() + '/login?next=' + window.location;
-          console.warn('You need to authenticate on the Jupyter Server URL', loginUrl);
-  //          window.location.replace(loginUrl);
+          const loginUrl =
+            getJupyterServerUrl() + '/login?next=' + window.location;
+          console.warn(
+            'You need to authenticate on the Jupyter Server URL',
+            loginUrl
+          );
+          //          window.location.replace(loginUrl);
         }
         if (useRunningKernelId && useRunningKernelIndex > -1) {
-          throw new Error('You can not ask for useRunningKernelId and useRunningKernelIndex at the same time.');
+          throw new Error(
+            'You can not ask for useRunningKernelId and useRunningKernelIndex at the same time.'
+          );
         }
-        if (startDefaultKernel && (useRunningKernelId || useRunningKernelIndex > -1)) {
-          throw new Error('You can not ask for startDefaultKernel and (useRunningKernelId or useRunningKernelIndex) at the same time.');
+        if (
+          startDefaultKernel &&
+          (useRunningKernelId || useRunningKernelIndex > -1)
+        ) {
+          throw new Error(
+            'You can not ask for startDefaultKernel and (useRunningKernelId or useRunningKernelIndex) at the same time.'
+          );
         }
         const serviceManager = new ServiceManager({ serverSettings });
         setServiceManager(serviceManager);
         jupyterReactStore.getState().setServiceManager(serviceManager);
-      });  
+      });
     }
   }, [lite, serverless, jupyterServerUrl]);
 
   // Setup a Kernel if needed.
   useEffect(() => {
-    console.log('Checking kernels for the new Service Manager:', serviceManager);
+    console.log(
+      'Checking kernels for the new Service Manager:',
+      serviceManager
+    );
     serviceManager?.kernels.ready.then(async () => {
       const kernelManager = serviceManager.kernels;
       console.log('Jupyter Kernel Manager is ready', kernelManager);
       if (useRunningKernelIndex > -1) {
         await serviceManager.sessions.refreshRunning();
         const runnings = Array.from(kernelManager.running());
-        const model = runnings[useRunningKernelIndex]
+        const model = runnings[useRunningKernelIndex];
         const existingKernel = new Kernel({
           kernelManager,
           kernelName: model.name,
@@ -199,8 +244,7 @@ export function useJupyterReactStoreFromProps(props: JupyterPropsType): JupyterR
         jupyterReactStore.getState().kernel = existingKernel;
         setIsLoading(false);
         jupyterReactStore.getState().kernelIsLoading = false;
-      }
-      else if (startDefaultKernel) {
+      } else if (startDefaultKernel) {
         console.log('Starting a Jupyter Kernel:', defaultKernelName);
         const defaultKernel = new Kernel({
           kernelManager,
@@ -228,7 +272,6 @@ export function useJupyterReactStoreFromProps(props: JupyterPropsType): JupyterR
   }, [serviceManager]);
 
   return useStore(jupyterReactStore);
-
 }
 
 export default useJupyterReactStore;

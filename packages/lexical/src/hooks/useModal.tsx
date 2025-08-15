@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import {useCallback, useMemo, useState} from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import Modal from '../components/Modal';
 
 export const useModal = (): [
@@ -23,12 +23,13 @@ export const useModal = (): [
     if (modalContent === null) {
       return null;
     }
-    const {title, content, closeOnClickOutside} = modalContent;
+    const { title, content, closeOnClickOutside } = modalContent;
     return (
       <Modal
         onClose={onClose}
         title={title}
-        closeOnClickOutside={closeOnClickOutside}>
+        closeOnClickOutside={closeOnClickOutside}
+      >
         {content}
       </Modal>
     );
@@ -36,7 +37,7 @@ export const useModal = (): [
   const showModal = useCallback(
     (
       title: string,
-      // eslint-disable-next-line no-shadow
+
       getContent: (onClose: () => void) => JSX.Element,
       closeOnClickOutside = false,
     ) => {
@@ -49,6 +50,6 @@ export const useModal = (): [
     [onClose],
   );
   return [modal, showModal];
-}
+};
 
 export default useModal;

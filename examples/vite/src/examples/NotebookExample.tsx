@@ -6,7 +6,13 @@
 
 import { useMemo } from 'react';
 import { Box } from '@primer/react';
-import { Notebook2, Kernel, NotebookToolbar, CellSidebarExtension, CellSidebarButton } from '@datalayer/jupyter-react';
+import {
+  Notebook2,
+  Kernel,
+  NotebookToolbar,
+  CellSidebarExtension,
+  CellSidebarButton,
+} from '@datalayer/jupyter-react';
 import { ServiceManager } from '@jupyterlab/services';
 
 const NOTEBOOK_ID = 'notebook-example-1';
@@ -14,13 +20,14 @@ const NOTEBOOK_ID = 'notebook-example-1';
 type INotebookExampleProps = {
   kernel: Kernel;
   serviceManager: ServiceManager.IManager;
-}
+};
 
 export const NotebookExample = (props: INotebookExampleProps) => {
   const { kernel, serviceManager } = props;
-  const extensions = useMemo(() => [
-    new CellSidebarExtension({ factory: CellSidebarButton })
-  ], []);
+  const extensions = useMemo(
+    () => [new CellSidebarExtension({ factory: CellSidebarButton })],
+    [],
+  );
   return (
     <>
       <Box as="h1">A Jupyter Notebook</Box>
@@ -33,7 +40,7 @@ export const NotebookExample = (props: INotebookExampleProps) => {
         Toolbar={NotebookToolbar}
       />
     </>
-  )
-}
+  );
+};
 
 export default NotebookExample;

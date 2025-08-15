@@ -6,7 +6,14 @@
 
 import { createRoot } from 'react-dom/client';
 import { useState } from 'react';
-import { Box, Heading, Textarea, Button, PageHeader, Text } from '@primer/react';
+import {
+  Box,
+  Heading,
+  Textarea,
+  Button,
+  PageHeader,
+  Text,
+} from '@primer/react';
 import { IModel } from '@jupyterlab/services/lib/kernel/kernel';
 import { ISpecModel } from '@jupyterlab/services/lib/kernelspec/kernelspec';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
@@ -46,9 +53,8 @@ export const KernelExecResultView = () => {
         setResult(error);
       })
       .finally(() => {
-        setRunning(false);  
-      }
-    );
+        setRunning(false);
+      });
   };
   const interrupt = () => {
     kernel?.interrupt();
@@ -130,7 +136,7 @@ const KernelComponents = () => {
             <Box ml={3}>
               {Array.from(KERNEL_STATES.entries()).map(entry => {
                 return (
-                  <Box display="flex">
+                  <Box key={entry[0]} display="flex">
                     <Box
                       style={{
                         verticalAlign: 'middle',

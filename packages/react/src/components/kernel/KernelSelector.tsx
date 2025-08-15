@@ -56,10 +56,11 @@ export const KernelSelector = (props: Props) => {
           <ActionList showDividers>
             {kernels && (
               <ActionList.Group title="Connect to a running Kernel">
-                {kernels.map(kernel => {
+                {kernels.map((kernel, index) => {
                   return (
                     <ActionList.Item
-                      onSelect={e => {
+                      key={kernel?.id || index}
+                      onSelect={_e => {
                         selectKernel(kernel!);
                       }}
                     >
@@ -77,10 +78,11 @@ export const KernelSelector = (props: Props) => {
             )}
             <ActionList.Group title="Launch a new Kernel">
               {kernelSpecs &&
-                Object.values(kernelSpecs).map(specModel => {
+                Object.values(kernelSpecs).map((specModel, index) => {
                   return (
                     <ActionList.Item
-                      onSelect={e => {
+                      key={specModel?.name || index}
+                      onSelect={_e => {
                         selectKernelSpec(specModel!);
                       }}
                     >

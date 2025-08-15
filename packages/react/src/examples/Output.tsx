@@ -69,17 +69,12 @@ const OutputFromCode = () => {
   console.log(
     'Outputs from Code',
     outputStore.getModel(SOURCE_ID_0)?.toJSON(),
-    outputStore.getInput(SOURCE_ID_0),
+    outputStore.getInput(SOURCE_ID_0)
   );
   return (
     <>
       <Text as="h1">Output without Code Editor</Text>
-      <Output
-        autoRun
-        id={SOURCE_ID_0}
-        code={CODE_O}
-        showEditor={false}
-      />
+      <Output autoRun id={SOURCE_ID_0} code={CODE_O} showEditor={false} />
     </>
   );
 };
@@ -89,7 +84,7 @@ const OutputWithoutEditor = () => {
   console.log(
     'Outputs 1',
     outputStore.getModel(SOURCE_ID_1)?.toJSON(),
-    outputStore.getInput(SOURCE_ID_1),
+    outputStore.getInput(SOURCE_ID_1)
   );
   return (
     <>
@@ -110,7 +105,7 @@ const OutputWithEditor = () => {
   console.log(
     'Outputs 2',
     outputStore.getModel(SOURCE_ID_2)?.toJSON(),
-    outputStore.getInput(SOURCE_ID_2),
+    outputStore.getInput(SOURCE_ID_2)
   );
   return (
     <>
@@ -118,7 +113,7 @@ const OutputWithEditor = () => {
       <Output
         autoRun={false}
         code={SOURCE_2}
-        id={SOURCE_ID_2} 
+        id={SOURCE_ID_2}
         kernel={defaultKernel}
         outputs={OUTPUTS_2}
         showEditor
@@ -132,7 +127,7 @@ const OutputWithEmptyOutput = () => {
   const outputStore = useOutputsStore();
   const kernelsStore = useKernelsStore();
   const [kernel, setKernel] = useState<Kernel>();
-  useEffect( () => {
+  useEffect(() => {
     if (serviceManager && kernelManager) {
       const kernel = new Kernel({
         path: newUuid(),
@@ -148,21 +143,17 @@ const OutputWithEmptyOutput = () => {
   console.log(
     'Outputs 3',
     outputStore.getModel(SOURCE_ID_3)?.toJSON(),
-    outputStore.getInput(SOURCE_ID_3),
+    outputStore.getInput(SOURCE_ID_3)
   );
   return (
     <>
       <Text as="h1">Output with empty Output</Text>
-      { kernel &&
+      {kernel && (
         <>
+          <Box>Kernel State: {kernelsStore.getExecutionState(kernel.id)}</Box>
+          <Box>Kernel Phase: {kernelsStore.getExecutionPhase(kernel.id)}</Box>
           <Box>
-            Kernel State: {kernelsStore.getExecutionState(kernel.id)}
-          </Box>
-          <Box>
-            Kernel Phase: {kernelsStore.getExecutionPhase(kernel.id)}
-          </Box>
-          <Box>
-            <KernelIndicator kernel={kernel.connection}/>
+            <KernelIndicator kernel={kernel.connection} />
           </Box>
           <Box>
             <Output
@@ -175,7 +166,7 @@ const OutputWithEmptyOutput = () => {
             />
           </Box>
         </>
-      }
+      )}
     </>
   );
 };
@@ -186,7 +177,7 @@ const root = createRoot(div);
 
 root.render(
   <Jupyter startDefaultKernel>
-    <OutputFromCode/>
+    <OutputFromCode />
     <OutputWithoutEditor />
     <OutputWithEditor />
     <OutputWithEmptyOutput />

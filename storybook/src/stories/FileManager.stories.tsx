@@ -5,7 +5,11 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { Jupyter, FileManagerJupyterLab, FileBrowser } from '@datalayer/jupyter-react';
+import {
+  Jupyter,
+  FileManagerJupyterLab,
+  FileBrowser,
+} from '@datalayer/jupyter-react';
 import React from 'react';
 
 const meta: Meta<typeof FileBrowser> = {
@@ -32,7 +36,8 @@ const Template = (args, { globals: { labComparison } }) => {
 export const Default: Story = Template.bind({}) as Story;
 
 export const Playground: Story = {
-    render: (args, options) => Template.bind({})({ }, { globals: { labComparison: true } }),
+  render: (args, options) =>
+    Template.bind({})({}, { globals: { labComparison: true } }),
 };
 Playground.args = {};
 Playground.argTypes = {};

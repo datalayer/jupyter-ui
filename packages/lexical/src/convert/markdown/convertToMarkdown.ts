@@ -4,10 +4,20 @@
  * MIT License
  */
 
-import type {ElementNode, LexicalNode, TextFormatType, TextNode} from 'lexical';
+import type {
+  ElementNode,
+  LexicalNode,
+  TextFormatType,
+  TextNode,
+} from 'lexical';
 
-import {$isLinkNode} from '@lexical/link';
-import {$getRoot, $isElementNode, $isLineBreakNode, $isTextNode} from 'lexical';
+import { $isLinkNode } from '@lexical/link';
+import {
+  $getRoot,
+  $isElementNode,
+  $isLineBreakNode,
+  $isTextNode,
+} from 'lexical';
 
 import {
   getAllMarkdownCriteriaForParagraphs,
@@ -34,7 +44,7 @@ function exportTopLevelElementOrDecorator(node: LexicalNode): string | null {
 
   for (const transformer of elementTransformers) {
     if (transformer.export != null) {
-      const result = transformer.export(node, (_node) => exportChildren(_node));
+      const result = transformer.export(node, _node => exportChildren(_node));
 
       if (result != null) {
         return result;

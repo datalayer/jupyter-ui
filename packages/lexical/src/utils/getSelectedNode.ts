@@ -10,8 +10,8 @@
  * Datalayer License
  */
 
-import {$isAtNodeEnd} from '@lexical/selection';
-import {ElementNode, RangeSelection, TextNode} from 'lexical';
+import { $isAtNodeEnd } from '@lexical/selection';
+import { ElementNode, RangeSelection, TextNode } from 'lexical';
 
 export function getSelectedNode(
   selection: RangeSelection,

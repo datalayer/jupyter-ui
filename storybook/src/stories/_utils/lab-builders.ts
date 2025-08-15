@@ -15,7 +15,7 @@ export function createLabButton(args): string {
       label: args.label ?? 'Default',
       displayType: args.variant === 'danger' ? 'warn' : undefined,
       accept: args.variant === 'primary' ? true : false,
-    })
+    }),
   );
   if (!args.noModStyled) {
     labButton.classList.add('jp-mod-styled');

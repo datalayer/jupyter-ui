@@ -83,12 +83,14 @@ type CellMutation = {
   cellType: nbformat.CellType;
   source?: string;
 };
-  
+
 export type NotebookState = INotebooksState & {
   setNotebooks: (notebooks: Map<string, INotebookState>) => void;
   selectNotebook: (id: string) => INotebookState | undefined;
   selectNotebookAdapter: (id: string) => NotebookAdapter | undefined;
-  selectNotebookModel: (id: string) => { model: INotebookModel | undefined; changed: any } | undefined;
+  selectNotebookModel: (
+    id: string
+  ) => { model: INotebookModel | undefined; changed: any } | undefined;
   selectTocModel: (id: string) => TableOfContents.Model | undefined;
   selectKernelStatus: (id: string) => string | undefined;
   selectActiveCell: (id: string) => Cell<ICellModel> | undefined;
@@ -119,7 +121,8 @@ export type NotebookState = INotebooksState & {
 
 export const notebookStore = createStore<NotebookState>((set, get) => ({
   notebooks: new Map<string, INotebookState>(),
-  setNotebooks: (notebooks: Map<string, INotebookState>) => set((state: NotebookState) => ({ notebooks })),
+  setNotebooks: (notebooks: Map<string, INotebookState>) =>
+    set((state: NotebookState) => ({ notebooks })),
   selectNotebook: (id: string): INotebookState | undefined => {
     return get().notebooks.get(id);
   },
@@ -130,12 +133,14 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
     }
     return undefined;
   },
-  selectNotebookModel: (id: string): { model: INotebookModel | undefined; changed: any } | undefined => {
+  selectNotebookModel: (
+    id: string
+  ): { model: INotebookModel | undefined; changed: any } | undefined => {
     if (get().notebooks.get(id)) {
       return {
         model: get().notebooks.get(id)?.model,
         changed: get().notebooks.get(id)?.model?.contentChanged,
-      };    
+      };
     }
     return undefined;
   },
@@ -157,23 +162,45 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
   selectNotebookPortalDisplay: (id: string): PortalDisplay | undefined => {
     return get().notebooks.get(id)?.portalDisplay;
   },
-  run: (id: string): void => { get().notebooks.get(id)?.adapter?.commands.execute(NotebookCommandIds.run); },
-  runAll: (id: string): void => { get().notebooks.get(id)?.adapter?.commands.execute(NotebookCommandIds.runAll); },
-  interrupt: (id: string): void => { get().notebooks.get(id)?.adapter?.commands.execute(NotebookCommandIds.interrupt); },
+  run: (id: string): void => {
+    get().notebooks.get(id)?.adapter?.commands.execute(NotebookCommandIds.run);
+  },
+  runAll: (id: string): void => {
+    get()
+      .notebooks.get(id)
+      ?.adapter?.commands.execute(NotebookCommandIds.runAll);
+  },
+  interrupt: (id: string): void => {
+    get()
+      .notebooks.get(id)
+      ?.adapter?.commands.execute(NotebookCommandIds.interrupt);
+  },
   insertAbove: (mutation: CellMutation) => {
-    get().notebooks.get(mutation.id)?.adapter?.setDefaultCellType(mutation.cellType);
+    get()
+      .notebooks.get(mutation.id)
+      ?.adapter?.setDefaultCellType(mutation.cellType);
     get().notebooks.get(mutation.id)?.adapter?.insertAbove(mutation.source);
   },
   insertBelow: (mutation: CellMutation) => {
-    get().notebooks.get(mutation.id)?.adapter?.setDefaultCellType(mutation.cellType);
+    get()
+      .notebooks.get(mutation.id)
+      ?.adapter?.setDefaultCellType(mutation.cellType);
     get().notebooks.get(mutation.id)?.adapter?.insertBelow(mutation.source);
   },
-  delete: (id: string): void => { get().notebooks.get(id)?.adapter?.commands.execute(NotebookCommandIds.deleteCells); },
+  delete: (id: string): void => {
+    get()
+      .notebooks.get(id)
+      ?.adapter?.commands.execute(NotebookCommandIds.deleteCells);
+  },
   changeCellType: (mutation: CellMutation) => {
-    get().notebooks.get(mutation.id)?.adapter?.changeCellType(mutation.cellType);
+    get()
+      .notebooks.get(mutation.id)
+      ?.adapter?.changeCellType(mutation.cellType);
   },
   save: (mutation: DateMutation) => {
-    get().notebooks.get(mutation.id)?.adapter?.commands.execute(NotebookCommandIds.save);
+    get()
+      .notebooks.get(mutation.id)
+      ?.adapter?.commands.execute(NotebookCommandIds.save);
     const notebooks = get().notebooks;
     const notebook = notebooks.get(mutation.id);
     if (notebook) {
@@ -181,10 +208,13 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
       set((state: NotebookState) => ({ notebooks }));
     }
   },
-  reset: () =>  set((state: NotebookState) => ({ notebooks: new Map<string, INotebookState>() })),
+  reset: () =>
+    set((state: NotebookState) => ({
+      notebooks: new Map<string, INotebookState>(),
+    })),
   update: (update: NotebookUpdate) => {
     const notebooks = get().notebooks;
-    let notebook = notebooks.get(update.id);
+    const notebook = notebooks.get(update.id);
     if (notebook) {
       /*
       notebook = {
@@ -198,7 +228,7 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
       notebooks.set(update.id, {
         adapter: update.state.adapter,
         portals: [],
-      });    
+      });
     }
     set((state: NotebookState) => ({ notebooks }));
   },
@@ -262,7 +292,7 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
     get().setPortalDisplay({ id, portalDisplay: undefined });
     const notebooks = get().notebooks;
     const notebook = notebooks.get(id);
-    if(notebook){
+    if (notebook) {
       notebooks.delete(id);
     }
     set((state: NotebookState) => ({ notebooks }));

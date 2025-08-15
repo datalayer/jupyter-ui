@@ -17,7 +17,8 @@ let CDN_ONLY = true;
 const scripts = document.getElementsByTagName('script');
 Array.prototype.forEach.call(scripts, (script: HTMLScriptElement) => {
   CDN_URL = script.getAttribute('data-jupyter-widgets-cdn') || CDN_URL;
-  CDN_ONLY = CDN_ONLY && Boolean(script.getAttribute('data-jupyter-widgets-cdn-only')!);
+  CDN_ONLY =
+    CDN_ONLY && Boolean(script.getAttribute('data-jupyter-widgets-cdn-only')!);
 });
 
 /**
@@ -54,7 +55,7 @@ function moduleNameToCDNUrl(moduleName: string, moduleVersion: string): string {
   }
   if (packageName === '@widgetti/jupyter-react') {
     // @widgetti/jupyter-react:0.4.2 is not published on https://www.jsdelivr.com/package/npm/@widgetti/jupyter-react
-    moduleVersion = moduleVersion.replace('0.4.2', '0.4.1')
+    moduleVersion = moduleVersion.replace('0.4.2', '0.4.1');
   }
   // jupyter-react@0.4.1
   return `${CDN_URL}${packageName}@${moduleVersion}/dist/${fileName}`;
@@ -92,11 +93,13 @@ export function requireLoader(
     console.log(`Loading from ${CDN_URL} for ${moduleName}@${moduleVersion}`);
     return loadFromCDN();
   }
-  return requirePromise([`${moduleName}`]).catch((err) => {
+  return requirePromise([`${moduleName}`]).catch(err => {
     const failedId = err.requireModules && err.requireModules[0];
     if (failedId) {
       require.undef(failedId);
-      console.log(`Falling back to ${CDN_URL} for ${moduleName}@${moduleVersion}`);
+      console.log(
+        `Falling back to ${CDN_URL} for ${moduleName}@${moduleVersion}`
+      );
       return loadFromCDN();
     }
   });
@@ -116,7 +119,7 @@ export function renderWidgets(
     moduleVersion: string
   ) => Promise<any> = requireLoader
 ): void {
-  requirePromise(['./classic/htmlmanager']).then((htmlmanager) => {
+  requirePromise(['./classic/htmlmanager']).then(htmlmanager => {
     const managerFactory = (): any => {
       return new htmlmanager.HTMLManager({ loader: loader });
     };

@@ -14,4 +14,4 @@ dependencies:
   - build
   - hatch
   - pip:
-    - jupyterlab==4.1.0
+      - jupyterlab==4.1.0

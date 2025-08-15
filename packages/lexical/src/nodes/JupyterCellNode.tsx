@@ -4,13 +4,20 @@
  * MIT License
  */
 
-import { ReactNode } from "react";
-import { DecoratorNode, EditorConfig, LexicalEditor, LexicalNode, NodeKey, SerializedLexicalNode } from "lexical";
-import { IOutput } from "@jupyterlab/nbformat";
-import { JupyterCellProps } from "./../plugins/JupyterCellPlugin";
-import JupyterCellNodeComponent from "./JupyterCellNodeComponent";
+import { ReactNode } from 'react';
+import {
+  DecoratorNode,
+  EditorConfig,
+  LexicalEditor,
+  LexicalNode,
+  NodeKey,
+  SerializedLexicalNode,
+} from 'lexical';
+import { IOutput } from '@jupyterlab/nbformat';
+import { JupyterCellProps } from './../plugins/JupyterCellPlugin';
+import JupyterCellNodeComponent from './JupyterCellNodeComponent';
 
-const TYPE = "jupyter-cell";
+const TYPE = 'jupyter-cell';
 
 export class JupyterCellNode extends DecoratorNode<ReactNode> {
   private __code: string;
@@ -27,11 +34,25 @@ export class JupyterCellNode extends DecoratorNode<ReactNode> {
   /** @override */
   static clone(node: JupyterCellNode) {
     console.debug(`clone: node: ${JSON.stringify(node, null, 2)}`);
-    return new JupyterCellNode(node.__code, node.__outputs, node.__loading, node.__autoStart, node.__data, node.__key);
+    return new JupyterCellNode(
+      node.__code,
+      node.__outputs,
+      node.__loading,
+      node.__autoStart,
+      node.__data,
+      node.__key,
+    );
   }
 
   /** @override */
-  constructor(code: string, outputs: IOutput[], loading: string, autoStart: boolean, data = "[]", key?: NodeKey) {
+  constructor(
+    code: string,
+    outputs: IOutput[],
+    loading: string,
+    autoStart: boolean,
+    data = '[]',
+    key?: NodeKey,
+  ) {
     super(key);
     this.__code = code;
     this.__outputs = outputs;
@@ -42,13 +63,13 @@ export class JupyterCellNode extends DecoratorNode<ReactNode> {
 
   /** @override */
   createDOM(config: EditorConfig) {
-    const div = document.createElement("div");
+    const div = document.createElement('div');
     const theme = config.theme;
     const className = theme.image;
     if (className !== undefined) {
       div.className = className;
     }
-    console.log("createDOM", div);
+    console.log('createDOM', div);
     return div;
   }
 
@@ -59,15 +80,19 @@ export class JupyterCellNode extends DecoratorNode<ReactNode> {
 
   /** @override */
   decorate(editor: LexicalEditor) {
-    console.log(`decorate -> key: ${this.getKey()} outputs: ${this.__outputs} data: ${this.__data}`);
-    return <JupyterCellNodeComponent
-      nodeKey={this.getKey()}
-      code={this.__code}
-      outputs={this.__outputs}
-      loading={this.__loading}
-      autoStart={this.__autoStart}
-      data={this.__data}
-    />
+    console.log(
+      `decorate -> key: ${this.getKey()} outputs: ${this.__outputs} data: ${this.__data}`,
+    );
+    return (
+      <JupyterCellNodeComponent
+        nodeKey={this.getKey()}
+        code={this.__code}
+        outputs={this.__outputs}
+        loading={this.__loading}
+        autoStart={this.__autoStart}
+        data={this.__data}
+      />
+    );
   }
 
   setCode(code: string) {
@@ -114,7 +139,13 @@ export class JupyterCellNode extends DecoratorNode<ReactNode> {
   /** @override */
   static importJSON(serializedNode: SerializedLexicalNode) {
     const n = serializedNode as unknown as JupyterCellNode;
-    return new JupyterCellNode(n.code, n.outputs, n.loading, n.autoStart, n.data);
+    return new JupyterCellNode(
+      n.code,
+      n.outputs,
+      n.loading,
+      n.autoStart,
+      n.data,
+    );
   }
 
   /** @override */
@@ -129,7 +160,6 @@ export class JupyterCellNode extends DecoratorNode<ReactNode> {
       version: 1,
     };
   }
-
 }
 
 export function $createJupyterCellNode(props: JupyterCellProps) {

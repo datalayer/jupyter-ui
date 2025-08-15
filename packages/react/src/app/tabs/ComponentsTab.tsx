@@ -59,11 +59,11 @@ export const ComponentsTab = (props: JupyterFrontEndProps) => {
           </NavList>
         </Box>
         <Box ml={3} sx={{ width: '100%' }}>
-            {nav === 1 && <FileBrowserComponent />}
-            {nav === 2 && <CellComponent />}
-            {nav === 3 && <NotebookComponent />}
-            {nav === 4 && <IPyWidgetsComponent />}
-            {nav === 5 && <ViewerComponent />}
+          {nav === 1 && <FileBrowserComponent />}
+          {nav === 2 && <CellComponent />}
+          {nav === 3 && <NotebookComponent />}
+          {nav === 4 && <IPyWidgetsComponent />}
+          {nav === 5 && <ViewerComponent />}
         </Box>
       </Box>
     </>

@@ -11,9 +11,9 @@ import type {
   Transformer,
 } from './MarkdownTransformers';
 
-import {createMarkdownExport} from './MarkdownExport';
-import {createMarkdownImport} from './MarkdownImport';
-import {registerMarkdownShortcuts} from './MarkdownShortcuts';
+import { createMarkdownExport } from './MarkdownExport';
+import { createMarkdownImport } from './MarkdownImport';
+import { registerMarkdownShortcuts } from './MarkdownShortcuts';
 import {
   BOLD_ITALIC_STAR,
   BOLD_ITALIC_UNDERSCORE,

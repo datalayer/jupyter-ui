@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import {ReactNode} from 'react';
+import { ReactNode } from 'react';
 import joinClasses from '../utils/join';
 
 export const Button = ({
@@ -36,10 +36,11 @@ export const Button = ({
       onClick={onClick}
       title={title}
       aria-label={title}
-      {...(dataTestId && {'data-test-id': dataTestId})}>
+      {...(dataTestId && { 'data-test-id': dataTestId })}
+    >
       {children}
     </button>
   );
-}
+};
 
 export default Button;

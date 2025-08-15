@@ -17,8 +17,10 @@ import JupyterLabAppAdapter from './JupyterLabAppAdapter';
 import JupyterLabAppCss from './JupyterLabAppCss';
 
 // The webpack public path needs to be set before loading the CSS assets.
-(globalThis as any).__webpack_public_path__ = PageConfig.getOption('fullStaticUrl') + '/';
-(window as any).__webpack_public_path__ = PageConfig.getOption('fullStaticUrl') + '/';
+(globalThis as any).__webpack_public_path__ =
+  PageConfig.getOption('fullStaticUrl') + '/';
+(window as any).__webpack_public_path__ =
+  PageConfig.getOption('fullStaticUrl') + '/';
 
 export type JupyterLabAppProps = {
   PluginType?: any;
@@ -71,9 +73,7 @@ const JupyterLabAppComponent = (props: JupyterLabAppProps) => {
     []
   );
   const defaultExtensionPromises = useMemo(
-    () =>
-      props.pluginPromises ??
-      JupyterLabAppCorePlugins().extensionPromises,
+    () => props.pluginPromises ?? JupyterLabAppCorePlugins().extensionPromises,
     []
   );
   const ref = useRef<HTMLDivElement>(null);

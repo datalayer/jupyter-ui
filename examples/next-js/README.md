@@ -51,7 +51,7 @@ index 912458d..5edaa11 100644
 @@ -24,4 +24,4 @@ export * from './widget_string';
  export * from './widget_description';
  export * from './widget_upload';
- 
+
 -export const version = (require('../package.json') as any).version;
 +export const version = "5.0.12";
 ```

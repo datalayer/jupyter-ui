@@ -4,47 +4,64 @@
  * MIT License
  */
 
-import { useState, useEffect } from "react";
-import { EditorState } from "lexical";
-import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
-import { LexicalComposer } from "@lexical/react/LexicalComposer";
-import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
-import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
-import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
+import { useState, useEffect } from 'react';
+import { EditorState } from 'lexical';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
+import { ContentEditable } from '@lexical/react/LexicalContentEditable';
+import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
-import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
-import { ListPlugin } from "@lexical/react/LexicalListPlugin";
+import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
+import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { HashtagNode } from '@lexical/hashtag';
-import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { CheckListPlugin } from "@lexical/react/LexicalCheckListPlugin";
-import { HorizontalRuleNode } from "@lexical/react/LexicalHorizontalRuleNode";
+import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
+import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
+import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
-import { HeadingNode, QuoteNode } from "@lexical/rich-text";
-import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
-import { ListItemNode, ListNode } from "@lexical/list";
+import { HeadingNode, QuoteNode } from '@lexical/rich-text';
+import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
+import { ListItemNode, ListNode } from '@lexical/list';
 import { MarkNode } from '@lexical/mark';
-import { AutoLinkNode, LinkNode } from "@lexical/link";
+import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { CodeNode } from '@lexical/code';
-import { INotebookContent } from "@jupyterlab/nbformat";
+import { INotebookContent } from '@jupyterlab/nbformat';
 import {
-  JupyterCellOutputPlugin, EquationNode, HorizontalRulePlugin,
-  ListMaxIndentLevelPlugin, AutoLinkPlugin, ComponentPickerMenuPlugin,
-  EquationsPlugin, ImagesPlugin, YouTubePlugin, ImageNode, YouTubeNode,
-  JupyterCodeHighlightNode, JupyterCodeNode, JupyterOutputNode, JupyterCellNode,
-  CodeActionMenuPlugin, AutoEmbedPlugin, NbformatContentPlugin, TableOfContentsPlugin, MarkdownPlugin, JupyterCellPlugin,
-  CommentPlugin, FloatingTextFormatToolbarPlugin,
-} from "./..";
-import { commentTheme } from "../themes";
-import { useLexical } from "../context/LexicalContext";
-import { TreeViewPlugin, ToolbarPlugin } from "../plugins";
-import DraggableBlockPlugin from "../plugins/DraggableBlockPlugin"
+  JupyterCellOutputPlugin,
+  EquationNode,
+  HorizontalRulePlugin,
+  ListMaxIndentLevelPlugin,
+  AutoLinkPlugin,
+  ComponentPickerMenuPlugin,
+  EquationsPlugin,
+  ImagesPlugin,
+  YouTubePlugin,
+  ImageNode,
+  YouTubeNode,
+  JupyterCodeHighlightNode,
+  JupyterCodeNode,
+  JupyterOutputNode,
+  JupyterCellNode,
+  CodeActionMenuPlugin,
+  AutoEmbedPlugin,
+  NbformatContentPlugin,
+  TableOfContentsPlugin,
+  MarkdownPlugin,
+  JupyterCellPlugin,
+  CommentPlugin,
+  FloatingTextFormatToolbarPlugin,
+} from './..';
+import { commentTheme } from '../themes';
+import { useLexical } from '../context/LexicalContext';
+import { TreeViewPlugin, ToolbarPlugin } from '../plugins';
+import DraggableBlockPlugin from '../plugins/DraggableBlockPlugin';
 
 import './../../style/index.css';
 
 type Props = {
-  notebook?: INotebookContent
-}
+  notebook?: INotebookContent;
+};
 
 function Placeholder() {
   return <div className="editor-placeholder">Code and analyse data.</div>;
@@ -77,7 +94,7 @@ const initialConfig = {
     TableNode,
     TableRowNode,
     YouTubeNode,
-  ]
+  ],
 };
 
 const EditorContextPlugin = () => {
@@ -85,14 +102,15 @@ const EditorContextPlugin = () => {
   const [editor] = useLexicalComposerContext();
   useEffect(() => {
     setEditor(editor);
-//    return () => setEditor(undefined);
+    //    return () => setEditor(undefined);
   }, [editor]);
   return null;
-}
+};
 
 export function Editor(props: Props) {
   const { notebook } = props;
-  const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
+  const [floatingAnchorElem, setFloatingAnchorElem] =
+    useState<HTMLDivElement | null>(null);
 
   const onRef = (_floatingAnchorElem: HTMLDivElement) => {
     if (_floatingAnchorElem !== null) {
@@ -101,7 +119,7 @@ export function Editor(props: Props) {
   };
 
   function onChange(_editorState: EditorState) {
-//    console.log('---', _editorState.toJSON());
+    //    console.log('---', _editorState.toJSON());
   }
   return (
     <LexicalComposer initialConfig={initialConfig}>
@@ -126,30 +144,32 @@ export function Editor(props: Props) {
             <AutoFocusPlugin />
             <TablePlugin />
             <ListPlugin />
-            <CheckListPlugin/>
+            <CheckListPlugin />
             <LinkPlugin />
             <AutoLinkPlugin />
             <ListMaxIndentLevelPlugin maxDepth={7} />
             <MarkdownPlugin />
             <JupyterCellPlugin />
             <JupyterCellOutputPlugin />
-            <ComponentPickerMenuPlugin/>
-            <EquationsPlugin/>
-            <ImagesPlugin/>
-            <HorizontalRulePlugin/>
-            <YouTubePlugin/>
-            <NbformatContentPlugin notebook={notebook}/>
-            <CodeActionMenuPlugin/>
-            <AutoEmbedPlugin/>
-            <EditorContextPlugin/>
-            <TableOfContentsPlugin/>
-            <CommentPlugin providerFactory={undefined}/>
-            {floatingAnchorElem &&
+            <ComponentPickerMenuPlugin />
+            <EquationsPlugin />
+            <ImagesPlugin />
+            <HorizontalRulePlugin />
+            <YouTubePlugin />
+            <NbformatContentPlugin notebook={notebook} />
+            <CodeActionMenuPlugin />
+            <AutoEmbedPlugin />
+            <EditorContextPlugin />
+            <TableOfContentsPlugin />
+            <CommentPlugin providerFactory={undefined} />
+            {floatingAnchorElem && (
               <>
                 <DraggableBlockPlugin anchorElem={floatingAnchorElem} />
-                <FloatingTextFormatToolbarPlugin anchorElem={floatingAnchorElem} />
+                <FloatingTextFormatToolbarPlugin
+                  anchorElem={floatingAnchorElem}
+                />
               </>
-            }
+            )}
           </div>
         </div>
       </div>

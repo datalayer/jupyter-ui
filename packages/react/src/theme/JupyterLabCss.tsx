@@ -8,15 +8,15 @@ import { useEffect } from 'react';
 import { createGlobalStyle } from 'styled-components';
 import { Colormode } from './JupyterLabColormode';
 
-import "@primer/primitives/dist/css/base/typography/typography.css";
-import "@primer/primitives/dist/css/functional/themes/light.css";
-import "@primer/primitives/dist/css/functional/size/border.css";
-import "@primer/primitives/dist/css/functional/size/breakpoints.css";
-import "@primer/primitives/dist/css/functional/size/size-coarse.css";
-import "@primer/primitives/dist/css/functional/size/size-fine.css";
-import "@primer/primitives/dist/css/functional/size/size.css";
-import "@primer/primitives/dist/css/functional/size/viewport.css";
-import "@primer/primitives/dist/css/functional/typography/typography.css";
+import '@primer/primitives/dist/css/base/typography/typography.css';
+import '@primer/primitives/dist/css/functional/themes/light.css';
+import '@primer/primitives/dist/css/functional/size/border.css';
+import '@primer/primitives/dist/css/functional/size/breakpoints.css';
+import '@primer/primitives/dist/css/functional/size/size-coarse.css';
+import '@primer/primitives/dist/css/functional/size/size-fine.css';
+import '@primer/primitives/dist/css/functional/size/size.css';
+import '@primer/primitives/dist/css/functional/size/viewport.css';
+import '@primer/primitives/dist/css/functional/typography/typography.css';
 
 const DATASET_LAB_THEME = 'data-lab-theme';
 
@@ -26,7 +26,7 @@ const GlobalStyle = createGlobalStyle<any>`
     --button-primary-bgColor-hover: var(--jp-brand-color0, #0d47a1) !important;
     --button-primary-bgColor-rest: var(--jp-brand-color1, #1976d2) !important;
   }
-`
+`;
 
 type JupyterLabCssProps = {
   colormode?: Colormode;
@@ -73,13 +73,15 @@ export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
     let theme;
     switch (colormode) {
       case 'light': {
-        // @ts-expect-error unknown module
-        theme = import('@jupyterlab/theme-light-extension/style/variables.css?raw');
+        theme = import(
+          '@jupyterlab/theme-light-extension/style/variables.css?raw'
+        );
         break;
       }
       case 'dark': {
-        // @ts-expect-error unknown module
-        theme = import('@jupyterlab/theme-dark-extension/style/variables.css?raw');
+        theme = import(
+          '@jupyterlab/theme-dark-extension/style/variables.css?raw'
+        );
         break;
       }
     }
@@ -100,9 +102,9 @@ ${module.default}
   }, [colormode]);
   return (
     <div id="dla-JupyterLabCss-id">
-      <GlobalStyle/>
+      <GlobalStyle />
     </div>
-  )
+  );
 }
 
 export default JupyterLabCss;

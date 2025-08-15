@@ -4,4 +4,4 @@
  * MIT License
  */
 
-export * from "./Editor";
+export * from './Editor';

@@ -4,10 +4,10 @@
  * MIT License
  */
 
-@import "tailwindcss";
+@import 'tailwindcss';
 
- /* Import base styles */
-@import url("base.css");
+/* Import base styles */
+@import url('base.css');
 
 /* Import tailwind.css which contains custom components */
 @import url('tailwind.css');

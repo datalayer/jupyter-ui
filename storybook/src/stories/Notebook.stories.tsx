@@ -27,7 +27,7 @@ const meta: Meta<typeof Notebook> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Notebook | { initCode?: string}>;
+type Story = StoryObj<typeof Notebook | { initCode?: string }>;
 
 const Template = (args, { globals: { labComparison = true }, ...rest }) => {
   const { browser, initCode, ...others } = args;
@@ -43,7 +43,7 @@ const Template = (args, { globals: { labComparison = true }, ...rest }) => {
     args.browser === '@jupyterlite/javascript-kernel-extension'
       ? 'javascript'
       : undefined;
-  
+
   return (
     <Jupyter
       startDefaultKernel={true}
@@ -71,7 +71,6 @@ Default.args = {
   cellSidebarMargin: 120,
   height: '100vh',
   maxHeight: '100vh',
-  nbgrader: false,
   readonly: false,
   renderers: [],
 };
@@ -164,7 +163,7 @@ ConfettiWidget()`,
 df = px.data.stocks()
 fig = px.line(df, x="date", y=df.columns,
               hover_data={"date": "|%B %d, %Y"},
-              title=\'custom tick labels\')
+              title='custom tick labels')
 fig.update_xaxes(
     dtick="M1",
     tickformat="%b %Y",
@@ -237,7 +236,7 @@ IpywidgetsState.args = {
   ...Default.args,
   height: '200px',
   maxHeight: '200px',
-  url: 'https://raw.githubusercontent.com/datalayer/jupyter-ui/main/packages/react/src/examples/notebooks/IPyWidgetsExampleWithState.ipynb.json'
+  url: 'https://raw.githubusercontent.com/datalayer/jupyter-ui/main/packages/react/src/examples/notebooks/IPyWidgetsExampleWithState.ipynb.json',
 };
 
 export const Matplotlib: Story = {
@@ -246,7 +245,7 @@ export const Matplotlib: Story = {
 };
 Matplotlib.args = {
   ...Default.args,
-  url: 'https://raw.githubusercontent.com/datalayer/jupyter-ui/main/packages/react/src/examples/notebooks/Matplotlib.ipynb.json'
+  url: 'https://raw.githubusercontent.com/datalayer/jupyter-ui/main/packages/react/src/examples/notebooks/Matplotlib.ipynb.json',
 };
 
 export const LitePython: Story = {

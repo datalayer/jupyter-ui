@@ -8,18 +8,47 @@ import { WIDGET_MIMETYPE } from '@jupyter-widgets/html-manager/lib/output_render
 import { ISharedAttachmentsCell, IYText } from '@jupyter/ydoc';
 import { Cell, ICellModel, MarkdownCell } from '@jupyterlab/cells';
 import { IEditorServices } from '@jupyterlab/codeeditor';
-import { CodeMirrorEditorFactory, CodeMirrorMimeTypeService, EditorExtensionRegistry, EditorLanguageRegistry, EditorThemeRegistry, ybinding } from '@jupyterlab/codemirror';
-import { Completer, CompleterModel, CompletionHandler, KernelCompleterProvider, ProviderReconciliator } from '@jupyterlab/completer';
+import {
+  CodeMirrorEditorFactory,
+  CodeMirrorMimeTypeService,
+  EditorExtensionRegistry,
+  EditorLanguageRegistry,
+  EditorThemeRegistry,
+  ybinding,
+} from '@jupyterlab/codemirror';
+import {
+  Completer,
+  CompleterModel,
+  CompletionHandler,
+  KernelCompleterProvider,
+  ProviderReconciliator,
+} from '@jupyterlab/completer';
 import { IChangedArgs } from '@jupyterlab/coreutils';
 import { Context, DocumentRegistry } from '@jupyterlab/docregistry';
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
 import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
 import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
 import { CellType, IAttachments, INotebookContent } from '@jupyterlab/nbformat';
-import { INotebookModel, Notebook, NotebookPanel, NotebookTracker, NotebookWidgetFactory, StaticNotebook } from '@jupyterlab/notebook';
-import { RenderMimeRegistry, standardRendererFactories } from '@jupyterlab/rendermime';
+import {
+  INotebookModel,
+  Notebook,
+  NotebookPanel,
+  NotebookTracker,
+  NotebookWidgetFactory,
+  StaticNotebook,
+} from '@jupyterlab/notebook';
+import {
+  RenderMimeRegistry,
+  standardRendererFactories,
+} from '@jupyterlab/rendermime';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
-import { Contents, Kernel as JupyterKernel, ServiceManager, Session, SessionManager } from '@jupyterlab/services';
+import {
+  Contents,
+  Kernel as JupyterKernel,
+  ServiceManager,
+  Session,
+  SessionManager,
+} from '@jupyterlab/services';
 import { find } from '@lumino/algorithm';
 import { CommandRegistry } from '@lumino/commands';
 import { BoxPanel, Widget } from '@lumino/widgets';
@@ -34,7 +63,6 @@ import { addNotebookCommands } from './NotebookCommands';
 const FALLBACK_NOTEBOOK_PATH = '.datalayer/ping.ipynb';
 
 export class NotebookAdapter {
-
   private _boxPanel: BoxPanel;
   private _commands: CommandRegistry;
   private _contentFactory: JupyterReactContentFactory;
@@ -62,7 +90,6 @@ export class NotebookAdapter {
   private _url?: string;
 
   constructor(props: INotebookProps) {
-
     console.log('Creating a new Notebook Adapter.');
 
     this._id = props.id;
@@ -87,27 +114,28 @@ export class NotebookAdapter {
     this._commands = new CommandRegistry();
 
     if (props.url) {
-      this.loadFromUrl(props.url).then((nbformat) => {
+      this.loadFromUrl(props.url).then(nbformat => {
         this._nbformat = nbformat;
         this.setupAdapter();
-      })
-    }
-    else {
+      });
+    } else {
       this.setupAdapter();
     }
   }
 
   async loadFromUrl(url: string) {
-    return fetch(url).then(response => {
-      return response.text();
-    }).then(nb => {
-      return JSON.parse(nb);
-    });
+    return fetch(url)
+      .then(response => {
+        return response.text();
+      })
+      .then(nb => {
+        return JSON.parse(nb);
+      });
   }
 
   notebookKeydownListener = (event: KeyboardEvent) => {
     this._commands?.processKeydownEvent(event);
-  }
+  };
 
   setupCompleter(notebookPanel: NotebookPanel) {
     const editor =
@@ -148,7 +176,7 @@ export class NotebookAdapter {
         if (cell) {
           cell.ready.then(() => {
             handler.editor = cell && cell.editor;
-          });  
+          });
         }
       }
     );
@@ -158,8 +186,8 @@ export class NotebookAdapter {
   }
 
   initializeContext() {
-
-    const isNbFormat = this._path !== undefined && this._path !== '' ? false : true;
+    const isNbFormat =
+      this._path !== undefined && this._path !== '' ? false : true;
 
     this._context = new Context({
       manager: this._serviceManager,
@@ -177,13 +205,14 @@ export class NotebookAdapter {
     this._iPyWidgetsManager = new WidgetManager(
       this._context,
       this._rendermime!,
-      { saveState: false },
+      { saveState: false }
     );
     const ipywidgetsRendererFactory: IRenderMime.IRendererFactory = {
       safe: true,
       mimeTypes: [WIDGET_MIMETYPE],
       defaultRank: 1,
-      createRenderer: options => new WidgetLabRenderer(options, this._iPyWidgetsManager),
+      createRenderer: options =>
+        new WidgetLabRenderer(options, this._iPyWidgetsManager),
     };
     this._rendermime!.addFactory(ipywidgetsRendererFactory, 1);
     this._kernelClients?.map(kernelClient => {
@@ -191,35 +220,39 @@ export class NotebookAdapter {
     });
 
     // These are fixes on the Context and the SessionContext to have more control on the kernel launch.
-    (this._context.sessionContext as any)._initialize = async (): Promise<boolean> => {
-      const manager = (this._context!.sessionContext as any).sessionManager as SessionManager;
-      await manager.ready;
-      await manager.refreshRunning();
-      const model = find(manager.running(), model => {
-        return model.kernel?.id === this._kernel?.id;
-      });
-      if (model) {
-        try {
-          const session = manager.connectTo({
-            model: {
-              ...model,
-              path: this._path ?? model.path,
-              name: this._path ?? model.name,
-            },
-            kernelConnectionOptions: {
-              handleComms: true,
-            },
-          });
-          (this._context!.sessionContext as any)._handleNewSession(session);
-          // Dispose the previous KernelConnection to avoid errors with Comms.
-          this._kernel?.connection?.dispose();
-        } catch (err) {
-          void (this._context!.sessionContext as any)._handleSessionError(err);
-          return Promise.reject(err);
+    (this._context.sessionContext as any)._initialize =
+      async (): Promise<boolean> => {
+        const manager = (this._context!.sessionContext as any)
+          .sessionManager as SessionManager;
+        await manager.ready;
+        await manager.refreshRunning();
+        const model = find(manager.running(), model => {
+          return model.kernel?.id === this._kernel?.id;
+        });
+        if (model) {
+          try {
+            const session = manager.connectTo({
+              model: {
+                ...model,
+                path: this._path ?? model.path,
+                name: this._path ?? model.name,
+              },
+              kernelConnectionOptions: {
+                handleComms: true,
+              },
+            });
+            (this._context!.sessionContext as any)._handleNewSession(session);
+            // Dispose the previous KernelConnection to avoid errors with Comms.
+            this._kernel?.connection?.dispose();
+          } catch (err) {
+            void (this._context!.sessionContext as any)._handleSessionError(
+              err
+            );
+            return Promise.reject(err);
+          }
         }
-      }
-      return await (this._context!.sessionContext as any)._startIfNecessary();
-    };
+        return await (this._context!.sessionContext as any)._startIfNecessary();
+      };
     if (isNbFormat) {
       // If nbformat is provided and we don't want to interact with the Content Manager.
       (this._context as any)._populate = async (): Promise<void> => {
@@ -230,26 +263,33 @@ export class NotebookAdapter {
         // Force skip this step for nbformat notebooks.
         // await (this._context as any)._maybeCheckpoint(false);
         if ((this._context as any).isDisposed) {
-            return;
+          return;
         }
         // Update the kernel preference.
-        const name = (this._context as any)._model.defaultKernelName ||
+        const name =
+          (this._context as any)._model.defaultKernelName ||
           (this._context as any).sessionContext.kernelPreference.name;
-          (this._context as any).sessionContext.kernelPreference = {
-            ...(this._context as any).sessionContext.kernelPreference,
-            name,
-            language: (this._context as any)._model.defaultKernelLanguage
+        (this._context as any).sessionContext.kernelPreference = {
+          ...(this._context as any).sessionContext.kernelPreference,
+          name,
+          language: (this._context as any)._model.defaultKernelLanguage,
         };
         // Note: we don't wait on the session to initialize
         // so that the user can be shown the content before
         // any kernel has started.
-        void (this._context as any).sessionContext.initialize().then((shouldSelect: boolean) => {
+        void (this._context as any).sessionContext
+          .initialize()
+          .then((shouldSelect: boolean) => {
             if (shouldSelect) {
-                void (this._context as any)._dialogs.selectKernel((this._context!.sessionContext as any).sessionContext);
+              void (this._context as any)._dialogs.selectKernel(
+                (this._context!.sessionContext as any).sessionContext
+              );
             }
-        });
-      };  
-      (this._context as any).initialize = async (isNew: boolean): Promise<void> => {
+          });
+      };
+      (this._context as any).initialize = async (
+        isNew: boolean
+      ): Promise<void> => {
         (this._context as Context<INotebookModel>).model.dirty = false;
         const now = new Date().toISOString();
         const model: Contents.IModel = {
@@ -265,41 +305,69 @@ export class NotebookAdapter {
         };
         (this._context as any)._updateContentsModel(model);
         await (this._context as any)._populate();
-        (this._context as Context<INotebookModel>).model.sharedModel.clearUndoHistory();
+        (
+          this._context as Context<INotebookModel>
+        ).model.sharedModel.clearUndoHistory();
       };
     }
 
     // Setup the context listeners.
-    this._context.sessionContext.sessionChanged.connect((_, args: IChangedArgs<Session.ISessionConnection | null, Session.ISessionConnection | null, 'session'>) => {
-      const session = args.newValue;
-      console.log('Current Jupyter Session Connection.', session);
-      if (this._onSessionConnection) {
-        if (session) {
-          this._onSessionConnection(session);
-          this._iPyWidgetsManager?.registerWithKernel(session.kernel);
-          this._iPyWidgetsManager?.restoreWidgets(this._notebookPanel?.model!);
+    this._context.sessionContext.sessionChanged.connect(
+      (
+        _,
+        args: IChangedArgs<
+          Session.ISessionConnection | null,
+          Session.ISessionConnection | null,
+          'session'
+        >
+      ) => {
+        const session = args.newValue;
+        console.log('Current Jupyter Session Connection.', session);
+        if (this._onSessionConnection) {
+          if (session) {
+            this._onSessionConnection(session);
+            this._iPyWidgetsManager?.registerWithKernel(session.kernel);
+            const model = this._notebookPanel?.model;
+            if (model) {
+              this._iPyWidgetsManager?.restoreWidgets(model);
+            }
+          }
         }
       }
-    });
-    this._context.sessionContext.kernelChanged.connect((_, args: IChangedArgs<JupyterKernel.IKernelConnection | null, JupyterKernel.IKernelConnection | null, 'kernel'>) => {
-      const kernelConnection = args.newValue;
-      this._kernelConnection = kernelConnection;
-      console.log('Current Jupyter Kernel Connection.', kernelConnection);
-      if (kernelConnection && !kernelConnection.handleComms) {
-        console.log('Updating the current Kernel Connection to enforce Comms support.', kernelConnection.handleComms);
-        (kernelConnection as any).handleComms = true;
-      }
-      /*
+    );
+    this._context.sessionContext.kernelChanged.connect(
+      (
+        _,
+        args: IChangedArgs<
+          JupyterKernel.IKernelConnection | null,
+          JupyterKernel.IKernelConnection | null,
+          'kernel'
+        >
+      ) => {
+        const kernelConnection = args.newValue;
+        this._kernelConnection = kernelConnection;
+        console.log('Current Jupyter Kernel Connection.', kernelConnection);
+        if (kernelConnection && !kernelConnection.handleComms) {
+          console.log(
+            'Updating the current Kernel Connection to enforce Comms support.',
+            kernelConnection.handleComms
+          );
+          (kernelConnection as any).handleComms = true;
+        }
+        /*
       this._iPyWidgetsManager?.registerWithKernel(kernelConnection);
       this._iPyWidgetsManager?.restoreWidgets(this._notebookPanel?.model!)
       if (this._onSessionConnection) {
         this._onSessionConnection(kernelConnection);
       }
       */
-    });
+      }
+    );
     this._context.sessionContext.ready.then(() => {
       if (this._onSessionConnection) {
-        this._onSessionConnection(this._context?.sessionContext.session ?? undefined);
+        this._onSessionConnection(
+          this._context?.sessionContext.session ?? undefined
+        );
       }
       const kernelConnection = this._context?.sessionContext.session?.kernel;
       this._kernelConnection = kernelConnection;
@@ -334,8 +402,11 @@ export class NotebookAdapter {
       });
       */
       // Option 2 to create the Notebook Panel.
-      const notebookFactory = this._documentRegistry?.getWidgetFactory('Notebook');
-      this._notebookPanel = notebookFactory?.createNew(this._context) as NotebookPanel;
+      const notebookFactory =
+        this._documentRegistry?.getWidgetFactory('Notebook');
+      this._notebookPanel = notebookFactory?.createNew(
+        this._context
+      ) as NotebookPanel;
     }
 
     const completerHandler = this.setupCompleter(this._notebookPanel!);
@@ -348,11 +419,10 @@ export class NotebookAdapter {
           this._tracker!,
           this._path
         );
-      }
-      catch {
+      } catch {
         // no-op.
         // The commands may already be registered...
-      }  
+      }
     }
 
     this._boxPanel.addWidget(this._notebookPanel);
@@ -366,11 +436,9 @@ export class NotebookAdapter {
         this._notebookPanel?.model?.fromJSON(this._nbformat!);
       }
     });
-
   }
 
   private setupAdapter(): void {
-
     document.addEventListener('keydown', this.notebookKeydownListener, true);
 
     const initialFactories = standardRendererFactories.filter(
@@ -424,7 +492,9 @@ export class NotebookAdapter {
     }
     const editorExtensions = () => {
       const registry = new EditorExtensionRegistry();
-      for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions({ themes })) {
+      for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions(
+        { themes }
+      )) {
         registry.addExtension(extensionFactory);
       }
       registry.addExtension({
@@ -450,9 +520,7 @@ export class NotebookAdapter {
       mimeTypeService: this._mimeTypeService,
     };
     const editorFactory = editorServices.factoryService.newInlineEditor;
-    this._contentFactory = new JupyterReactContentFactory(
-      { editorFactory },
-    );
+    this._contentFactory = new JupyterReactContentFactory({ editorFactory });
 
     this._tracker = new NotebookTracker({ namespace: this._id });
 
@@ -472,7 +540,7 @@ export class NotebookAdapter {
       notebookConfig: {
         ...StaticNotebook.defaultNotebookConfig,
         recordTiming: true,
-      }
+      },
     });
     notebookWidgetFactory.widgetCreated.connect((sender, notebookPanel) => {
       notebookPanel.context.pathChanged.connect(() => {
@@ -488,8 +556,7 @@ export class NotebookAdapter {
     });
     this._documentRegistry.addModelFactory(this._notebookModelFactory);
 
-    this.initializeContext();    
-
+    this.initializeContext();
   }
 
   get id(): string {
@@ -557,7 +624,9 @@ export class NotebookAdapter {
    */
   setNbformat(nbformat?: INotebookContent) {
     if (!nbformat) {
-      throw new Error('The nbformat should first be set via the constructor of NotebookAdapter');
+      throw new Error(
+        'The nbformat should first be set via the constructor of NotebookAdapter'
+      );
     }
     if (this._nbformat !== nbformat) {
       this._nbformat = nbformat;
@@ -569,7 +638,7 @@ export class NotebookAdapter {
     this._lite = lite;
     this._serviceManager = serviceManager;
     this._nbformat = this._notebookPanel?.model?.toJSON() as INotebookContent;
-//    this.initializeContext();
+    //    this.initializeContext();
   }
 
   setKernel(kernel?: Kernel) {
@@ -584,12 +653,15 @@ export class NotebookAdapter {
     if (this._readonly !== readonly) {
       this._readonly = readonly;
       this._notebookPanel?.content.widgets.forEach(cell => {
-        cell.syncEditable = true
+        cell.syncEditable = true;
         cell.model.sharedModel.setMetadata('editable', !readonly);
       });
-      Array.from(this._context?.model.cells!).forEach(cell => {
-        cell.setMetadata('editable', !readonly);
-      });
+      const cells = this._context?.model.cells;
+      if (cells) {
+        Array.from(cells).forEach(cell => {
+          cell.setMetadata('editable', !readonly);
+        });
+      }
       this._notebookPanel?.content.widgets.forEach(cell => {
         cell.saveEditableState();
       });
@@ -599,7 +671,7 @@ export class NotebookAdapter {
   setServerless(serverless: boolean) {
     if (this._serverless !== serverless) {
       this._serverless = serverless;
-//      this.initializeContext();
+      //      this.initializeContext();
     }
   }
 
@@ -699,7 +771,6 @@ export class NotebookAdapter {
     this._notebookPanel?.dispose();
     this._boxPanel.dispose();
   };
-
 }
 
 export default NotebookAdapter;

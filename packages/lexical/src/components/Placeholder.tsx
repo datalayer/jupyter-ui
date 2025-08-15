@@ -4,8 +4,7 @@
  * MIT License
  */
 
-import {ReactNode} from 'react';
-
+import { ReactNode } from 'react';
 
 export const Placeholder = ({
   children,
@@ -15,6 +14,6 @@ export const Placeholder = ({
   className?: string;
 }): JSX.Element => {
   return <div className={className || 'Placeholder__root'}>{children}</div>;
-}
+};
 
 export default Placeholder;

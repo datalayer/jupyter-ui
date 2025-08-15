@@ -4,8 +4,8 @@
  * MIT License
  */
 
-import type {ListType} from '@lexical/list';
-import type {HeadingTagType} from '@lexical/rich-text';
+import type { ListType } from '@lexical/list';
+import type { HeadingTagType } from '@lexical/rich-text';
 import type {
   ElementNode,
   Klass,
@@ -14,8 +14,12 @@ import type {
   TextNode,
 } from 'lexical';
 
-import {$createJupyterCodeNode, $isJupyterCodeNode, JupyterCodeNode} from './../../nodes/JupyterCodeNode';
-import {$createLinkNode, $isLinkNode, LinkNode} from '@lexical/link';
+import {
+  $createJupyterCodeNode,
+  $isJupyterCodeNode,
+  JupyterCodeNode,
+} from './../../nodes/JupyterCodeNode';
+import { $createLinkNode, $isLinkNode, LinkNode } from '@lexical/link';
 import {
   $createListItemNode,
   $createListNode,
@@ -32,7 +36,7 @@ import {
   HeadingNode,
   QuoteNode,
 } from '@lexical/rich-text';
-import {$createLineBreakNode, $createTextNode, $isTextNode} from 'lexical';
+import { $createLineBreakNode, $createTextNode, $isTextNode } from 'lexical';
 
 export type Transformer =
   | ElementTransformer
@@ -43,7 +47,7 @@ export type ElementTransformer = {
   dependencies: Array<Klass<LexicalNode>>;
   export: (
     node: LexicalNode,
-    // eslint-disable-next-line no-shadow
+
     traverseChildren: (node: ElementNode) => string,
   ) => string | null;
   regExp: RegExp;
@@ -67,9 +71,9 @@ export type TextMatchTransformer = Readonly<{
   dependencies: Array<Klass<LexicalNode>>;
   export: (
     node: LexicalNode,
-    // eslint-disable-next-line no-shadow
+
     exportChildren: (node: ElementNode) => string,
-    // eslint-disable-next-line no-shadow
+
     exportFormat: (node: TextNode, textContent: string) => string,
   ) => string | null;
   importRegExp: RegExp;
@@ -143,8 +147,8 @@ const listExport = (
         listType === 'number'
           ? `${listNode.getStart() + index}. `
           : listType === 'check'
-          ? `- [${listItemNode.getChecked() ? 'x' : ' '}] `
-          : '- ';
+            ? `- [${listItemNode.getChecked() ? 'x' : ' '}] `
+            : '- ';
       output.push(indent + prefix + exportChildren(listItemNode));
       index++;
     }
@@ -163,7 +167,7 @@ export const HEADING: ElementTransformer = {
     return '#'.repeat(level) + ' ' + exportChildren(node);
   },
   regExp: /^(#{1,6})\s/,
-  replace: replaceWithBlock((match) => {
+  replace: replaceWithBlock(match => {
     const tag = ('h' + match[1].length) as HeadingTagType;
     return $createHeadingNode(tag);
   }),
@@ -223,7 +227,7 @@ export const CODE: ElementTransformer = {
     );
   },
   regExp: /^```(\w{1,10})?\s/,
-  replace: replaceWithBlock((match) => {
+  replace: replaceWithBlock(match => {
     return $createJupyterCodeNode(match ? match[1] : undefined);
   }),
   type: 'element',

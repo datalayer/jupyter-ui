@@ -32,13 +32,15 @@ export class CellToolbarWidget extends Widget {
     }
   }
 
-  private updateConnectedCell(cells: any, changed: IObservableList.IChangedArgs<ICellModel>) {
+  private updateConnectedCell(
+    cells: any,
+    changed: IObservableList.IChangedArgs<ICellModel>
+  ) {
     changed.oldValues.forEach(this._deregisterCellChanges.bind(this));
     changed.newValues.forEach(this._registerCellChanges.bind(this));
   }
 
-  private _deregisterCellChanges(cellModel: ICellModel) {
-  }
+  private _deregisterCellChanges(cellModel: ICellModel) {}
 
   private _registerCellChanges(cellModel: ICellModel) {
     const disableHighlight = false;
@@ -79,5 +81,4 @@ export class CellToolbarWidget extends Widget {
       }
     }
   }
-
 }

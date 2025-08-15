@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { ServerConnection } from "@jupyterlab/services";
+import { ServerConnection } from '@jupyterlab/services';
 
 export type IJupyterCollaborationServer = {
   /**
@@ -23,7 +23,7 @@ export type IJupyterCollaborationServer = {
    * Server type
    */
   type: 'datalayer';
-}
+};
 
 export type IDatalayerCollaborationServer = {
   /**
@@ -38,9 +38,11 @@ export type IDatalayerCollaborationServer = {
    * Server type
    */
   type: 'jupyter';
-}
+};
 
-export type ICollaborationServer = IJupyterCollaborationServer | IDatalayerCollaborationServer;
+export type ICollaborationServer =
+  | IJupyterCollaborationServer
+  | IDatalayerCollaborationServer;
 
 export type ICollaborationProvider = 'jupyter' | 'datalayer' | undefined;
 

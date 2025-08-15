@@ -11,8 +11,8 @@ import type {
   SerializedLexicalNode,
   Spread,
 } from 'lexical';
-import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
-import {mergeRegister} from '@lexical/utils';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { mergeRegister } from '@lexical/utils';
 import {
   $getNodeByKey,
   $getSelection,
@@ -22,7 +22,7 @@ import {
   KEY_ESCAPE_COMMAND,
   SELECTION_CHANGE_COMMAND,
 } from 'lexical';
-import {useCallback, useEffect, useRef, useState} from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import EquationEditor from '../components/EquationEditor';
 import KatexRenderer from '../components/KatexRenderer';
 
@@ -66,7 +66,7 @@ function EquationComponent({
       return mergeRegister(
         editor.registerCommand(
           SELECTION_CHANGE_COMMAND,
-          (payload) => {
+          payload => {
             const activeElement = document.activeElement;
             const inputElem = inputRef.current;
             if (inputElem !== activeElement) {
@@ -78,7 +78,7 @@ function EquationComponent({
         ),
         editor.registerCommand(
           KEY_ESCAPE_COMMAND,
-          (payload) => {
+          payload => {
             const activeElement = document.activeElement;
             const inputElem = inputRef.current;
             if (inputElem === activeElement) {
@@ -91,7 +91,7 @@ function EquationComponent({
         ),
       );
     } else {
-      return editor.registerUpdateListener(({editorState}) => {
+      return editor.registerUpdateListener(({ editorState }) => {
         const isSelected = editorState.read(() => {
           const selection = $getSelection();
           return (

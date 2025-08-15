@@ -4,15 +4,15 @@
  * MIT License
  */
 
-import { Button } from "@primer/react";
-import { Box } from "@datalayer/primer-addons";
-import { ThreeBarsIcon } from "@primer/octicons-react"
-import { Jupyter } from "@datalayer/jupyter-react";
-import { useLexical, Editor, LexicalProvider } from "..";
+import { Button } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
+import { ThreeBarsIcon } from '@primer/octicons-react';
+import { Jupyter } from '@datalayer/jupyter-react';
+import { useLexical, Editor, LexicalProvider } from '..';
 
-import LEXICAL_MODEL from "./content/Example.lexical.json";
+import LEXICAL_MODEL from './content/Example.lexical.json';
 
-import NBFORMAT_MODEL from "./content/Example.ipynb.json";
+import NBFORMAT_MODEL from './content/Example.ipynb.json';
 
 const LexicalEditor = () => {
   const { editor } = useLexical();
@@ -25,15 +25,16 @@ const LexicalEditor = () => {
             e.preventDefault();
             if (editor) {
               const editorState = editor.parseEditorState(LEXICAL_MODEL as any);
-              editor.setEditorState(editorState);  
+              editor.setEditorState(editorState);
             }
-          }}>
-            Load Lexical Model
+          }}
+        >
+          Load Lexical Model
         </Button>
       </Box>
     </Box>
-  )
-}
+  );
+};
 
 export const AppSimple = () => {
   return (
@@ -43,25 +44,34 @@ export const AppSimple = () => {
       </div>
       <Jupyter startDefaultKernel>
         <LexicalProvider>
-          <LexicalEditor/>
+          <LexicalEditor />
         </LexicalProvider>
       </Jupyter>
       <div className="other App">
-        <br/>
-        <a href="https://datalayer.ai" target="_blank">
-          <ThreeBarsIcon/>
+        <br />
+        <a href="https://datalayer.ai" target="_blank" rel="noreferrer">
+          <ThreeBarsIcon />
         </a>
         <h2>
-        Copyright © <a href="https://datalayer.ai" target="_blank">2022 Datalayer, Inc.</a>
+          Copyright ©{' '}
+          <a href="https://datalayer.ai" target="_blank" rel="noreferrer">
+            2022 Datalayer, Inc.
+          </a>
         </h2>
         <ul>
           <li>
-            <a href="https://github.com/datalayer/jupyter-ui/tree/main/packages/lexical" target="_blank">Jupyter UI open-source repository</a>
+            <a
+              href="https://github.com/datalayer/jupyter-ui/tree/main/packages/lexical"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Jupyter UI open-source repository
+            </a>
           </li>
         </ul>
       </div>
     </>
-  )
-}
+  );
+};
 
 export default AppSimple;

@@ -38,7 +38,7 @@ export default examplePlugin;
  */
 function activateWidgetExtension(
   app: Application<Widget>,
-  registry: IJupyterWidgetRegistry
+  registry: IJupyterWidgetRegistry,
 ): void {
   registry.registerWidget({
     name: MODULE_NAME,

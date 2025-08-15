@@ -7,7 +7,11 @@
 import { useState, useEffect } from 'react';
 import { Table, DataTable, Blankslate } from '@primer/react/experimental';
 import { Box, Text, IconButton, Spinner } from '@primer/react';
-import { CrossMarkIcon, JupyterIcon, NotebookIcon } from '@datalayer/icons-react';
+import {
+  CrossMarkIcon,
+  JupyterIcon,
+  NotebookIcon,
+} from '@datalayer/icons-react';
 import { ServiceManager } from '@jupyterlab/services';
 import { JSONExt } from '@lumino/coreutils';
 import { IModel } from '@jupyterlab/services/lib/kernel/kernel';

@@ -342,18 +342,20 @@ export class KernelExecutor {
           });
         }
         break;
-      case 'clear_output':
+      case 'clear_output': {
         const wait = (message as IClearOutputMsg).content.wait;
         this._model.clear(wait);
         break;
-      case 'update_display_data':
+      }
+      case 'update_display_data': {
         this._outputs.push(message.content as IDisplayUpdate);
         this._outputsChanged.emit(this._outputs);
         // FIXME this needs more advanced analysis see OutputArea
         this._model.add(output);
         this._modelChanged.emit(this._model);
         break;
-      case 'status':
+      }
+      case 'status': {
         const executionState = (message.content as any)
           .execution_state as KernelMessage.Status;
         const connectionStatus = this._kernelConnection.connectionStatus;
@@ -363,6 +365,7 @@ export class KernelExecutor {
           kernelState
         );
         break;
+      }
       default:
         break;
     }

@@ -28,7 +28,7 @@ const config: StorybookConfig = {
     name: getAbsolutePath('@storybook/react-webpack5'),
     options: {
       builder: {
-//        useSWC: true,
+        //        useSWC: true,
       },
     },
   },
@@ -66,8 +66,8 @@ const config: StorybookConfig = {
         loader: 'babel-loader',
         options: {
           presets: ['@babel/preset-react'],
-          cacheDirectory: true
-        }
+          cacheDirectory: true,
+        },
       },
       /*
       TODO(ECH) Disable for now to show the Lexical SVG icons.
@@ -122,7 +122,7 @@ const config: StorybookConfig = {
         generator: {
           filename: 'schema/[name][ext][query]',
         },
-      }
+      },
     );
     return config;
   },

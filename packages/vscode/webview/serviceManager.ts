@@ -23,7 +23,7 @@ import { MessageHandler, type ExtensionMessage } from './messageHandler';
  */
 async function fetch(
   request: RequestInfo,
-  init?: RequestInit | null
+  init?: RequestInit | null,
 ): Promise<Response> {
   const r = new Request(request, init ?? undefined);
   const body = !['GET', 'HEAD'].includes(r.method)
@@ -31,7 +31,7 @@ async function fetch(
     : undefined;
   const headers: Record<string, string> = [...r.headers].reduce(
     (agg, pair) => ({ ...agg, [pair[0]]: pair[1] }),
-    {}
+    {},
   );
   const reply = await MessageHandler.instance.postRequest({
     type: 'http-request',
@@ -50,7 +50,7 @@ async function fetch(
 
 export function createServiceManager(
   baseUrl: string,
-  token: string = ''
+  token: string = '',
 ): ServiceManager {
   const refSettings = ServerConnection.makeSettings();
   return new ServiceManager({
@@ -162,7 +162,7 @@ function protocolVerification(protocols?: string | string[]): string[] {
     throw new SyntaxError(
       `${ERROR_PREFIX.CONSTRUCTOR_ERROR} The subprotocol '${(
         protocols as string | string[]
-      ).toString()}' is invalid.`
+      ).toString()}' is invalid.`,
     );
   }
   if (typeof protocols === 'string') {
@@ -177,7 +177,7 @@ function protocolVerification(protocols?: string | string[]): string[] {
   const duplicates = Object.keys(uniq).filter(a => uniq[a] > 1);
   if (duplicates.length > 0) {
     throw new SyntaxError(
-      `${ERROR_PREFIX.CONSTRUCTOR_ERROR} The subprotocol '${duplicates[0]}' is duplicated.`
+      `${ERROR_PREFIX.CONSTRUCTOR_ERROR} The subprotocol '${duplicates[0]}' is duplicated.`,
     );
   }
   return protocols.filter(p => p !== 'v1.kernel.websocket.jupyter.org');
@@ -188,7 +188,7 @@ function urlVerification(url: string | URL) {
   const { pathname, protocol, hash } = urlRecord;
   if (!url) {
     throw new TypeError(
-      `${ERROR_PREFIX.CONSTRUCTOR_ERROR} 1 argument required, but only 0 present.`
+      `${ERROR_PREFIX.CONSTRUCTOR_ERROR} 1 argument required, but only 0 present.`,
     );
   }
   if (!pathname) {
@@ -198,17 +198,17 @@ function urlVerification(url: string | URL) {
     throw new SyntaxError(
       `${
         ERROR_PREFIX.CONSTRUCTOR_ERROR
-      } The URL '${urlRecord.toString()}' is invalid.`
+      } The URL '${urlRecord.toString()}' is invalid.`,
     );
   }
   if (protocol !== 'ws:' && protocol !== 'wss:') {
     throw new SyntaxError(
-      `${ERROR_PREFIX.CONSTRUCTOR_ERROR} The URL's scheme must be either 'ws' or 'wss'. '${protocol}' is not allowed.`
+      `${ERROR_PREFIX.CONSTRUCTOR_ERROR} The URL's scheme must be either 'ws' or 'wss'. '${protocol}' is not allowed.`,
     );
   }
   if (hash !== '') {
     throw new SyntaxError(
-      `${ERROR_PREFIX.CONSTRUCTOR_ERROR} The URL contains a fragment identifier ('${hash}'). Fragment identifiers are not allowed in WebSocket URLs.`
+      `${ERROR_PREFIX.CONSTRUCTOR_ERROR} The URL contains a fragment identifier ('${hash}'). Fragment identifiers are not allowed in WebSocket URLs.`,
     );
   }
   return urlRecord.toString();
@@ -221,7 +221,7 @@ function urlVerification(url: string | URL) {
  * https://developer.mozilla.org/en-US/docs/Web/API/EventTarget
  */
 class EventTarget {
-  protected listeners: Map<string, Set<Function>> = new Map();
+  protected listeners: Map<string, Set<(...args: any[]) => void>> = new Map();
 
   /*
    * Ties a listener function to an event type which can later be invoked via the
@@ -231,7 +231,10 @@ class EventTarget {
    * @param {function} listener - callback function to invoke when an event is dispatched matching the type
    * @param {boolean} useCapture - N/A TODO: implement useCapture functionality
    */
-  addEventListener(type: string, listener: Function /* , useCapture */) {
+  addEventListener(
+    type: string,
+    listener: (...args: any[]) => void /* , useCapture */,
+  ) {
     if (typeof listener === 'function') {
       if (!this.listeners.has(type)) {
         this.listeners.set(type, new Set());
@@ -248,7 +251,10 @@ class EventTarget {
    * @param {function} listener - callback function to invoke when an event is dispatched matching the type
    * @param {boolean} useCapture - N/A TODO: implement useCapture functionality
    */
-  removeEventListener(type: string, listener: Function /* , useCapture */) {
+  removeEventListener(
+    type: string,
+    listener: (...args: any[]) => void /* , useCapture */,
+  ) {
     this.listeners.get(type)?.delete(listener);
   }
 
@@ -291,7 +297,7 @@ class WebSocket extends EventTarget {
     this.binaryType = 'blob';
     this._readyState = WebSocket.CONNECTING;
     this._disposable = MessageHandler.instance.registerCallback(
-      this._onExtensionMessage.bind(this)
+      this._onExtensionMessage.bind(this),
     );
     this._open();
   }
@@ -331,22 +337,22 @@ class WebSocket extends EventTarget {
     return this.listeners.get('error') as any;
   }
 
-  set onopen(listener: Function) {
+  set onopen(listener: (...args: any[]) => void) {
     this.listeners.delete('open');
     this.addEventListener('open', listener);
   }
 
-  set onmessage(listener: Function) {
+  set onmessage(listener: (...args: any[]) => void) {
     this.listeners.delete('message');
     this.addEventListener('message', listener);
   }
 
-  set onclose(listener: Function) {
+  set onclose(listener: (...args: any[]) => void) {
     this.listeners.delete('close');
     this.addEventListener('close', listener);
   }
 
-  set onerror(listener: Function) {
+  set onerror(listener: (...args: any[]) => void) {
     this.listeners.delete('error');
     this.addEventListener('error', listener);
   }
@@ -358,7 +364,7 @@ class WebSocket extends EventTarget {
         (code !== 1000 && (code < 3000 || code > 4999))
       ) {
         throw new TypeError(
-          `${ERROR_PREFIX.CLOSE_ERROR} The code must be either 1000, or between 3000 and 4999. ${code} is neither.`
+          `${ERROR_PREFIX.CLOSE_ERROR} The code must be either 1000, or between 3000 and 4999. ${code} is neither.`,
         );
       }
     }
@@ -368,7 +374,7 @@ class WebSocket extends EventTarget {
 
       if (length > 123) {
         throw new SyntaxError(
-          `${ERROR_PREFIX.CLOSE_ERROR} The message must not be greater than 123 bytes.`
+          `${ERROR_PREFIX.CLOSE_ERROR} The message must not be greater than 123 bytes.`,
         );
       }
     }

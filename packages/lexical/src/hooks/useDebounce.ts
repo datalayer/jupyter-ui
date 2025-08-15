@@ -4,8 +4,8 @@
  * MIT License
  */
 
-import {debounce} from 'lodash-es';
-import {useMemo, useRef} from 'react';
+import { debounce } from 'lodash-es';
+import { useMemo, useRef } from 'react';
 
 export function useDebounce<T extends (...args: never[]) => void>(
   fn: T,
@@ -23,7 +23,7 @@ export function useDebounce<T extends (...args: never[]) => void>(
           }
         },
         ms,
-        {maxWait},
+        { maxWait },
       ),
     [ms, maxWait],
   );

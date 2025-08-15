@@ -42,10 +42,8 @@ export type ExtensionMessage = {
  */
 export class MessageHandler {
   private _callbackCount = 0;
-  private _messageCallbacks: Map<
-    number,
-    (message: ExtensionMessage) => void
-  > = new Map();
+  private _messageCallbacks: Map<number, (message: ExtensionMessage) => void> =
+    new Map();
   private static _requestCount = 0;
   private _pendingReplies: Map<string, PromiseDelegate<ExtensionMessage>> =
     new Map();
@@ -87,9 +85,7 @@ export class MessageHandler {
    * @param handler Incoming message handler
    * @returns Unregister handler
    */
-  registerCallback(
-    handler: (message: ExtensionMessage) => void
-  ): {
+  registerCallback(handler: (message: ExtensionMessage) => void): {
     dispose: () => void;
   } {
     const index = this._callbackCount++;
@@ -117,7 +113,7 @@ export class MessageHandler {
 
     for (const handler of this._messageCallbacks.values()) {
       try {
-        handler(message)
+        handler(message);
       } catch (reason) {
         console.error('Failed to handle message: ', reason);
       }
@@ -134,5 +130,5 @@ export class MessageHandler {
  * Singleton {@link MessageHandler} instance as React context.
  */
 export const MessageHandlerContext = createContext<MessageHandler>(
-  MessageHandler.instance
+  MessageHandler.instance,
 );

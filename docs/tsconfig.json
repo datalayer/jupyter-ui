@@ -6,10 +6,7 @@
     "outDir": "lib",
     "target": "ES2022",
     "module": "commonjs",
-    "lib": [
-      "ESNext",
-      "DOM"
-    ],
+    "lib": ["ESNext", "DOM"],
     "declaration": true,
     "declarationMap": false,
     "jsx": "react",
@@ -33,9 +30,5 @@
     "importHelpers": true,
     "noEmitHelpers": true
   },
-  "exclude": [
-    "node_modules", 
-    "**/__tests__/**/*", 
-    "**/lib/**/*"
-  ]
+  "exclude": ["node_modules", "**/__tests__/**/*", "**/lib/**/*"]
 }

@@ -25,44 +25,45 @@ const CellExample = () => {
   const { defaultKernel } = useJupyter();
   const cellsStore = useCellsStore();
   const kernelsStore = useKernelsStore();
-  console.log('Jupyter Cell Outputs', (cellsStore.getAdapter(CELL_ID)?.cell as CodeCell)?.outputArea.model.toJSON());
+  console.log(
+    'Jupyter Cell Outputs',
+    (
+      cellsStore.getAdapter(CELL_ID)?.cell as CodeCell
+    )?.outputArea.model.toJSON()
+  );
   return (
     <JupyterReactTheme>
       <Box as="h1">A Jupyter Cell</Box>
+      <Box>Source: {cellsStore.getSource(CELL_ID)}</Box>
+      <Box>Outputs Count: {cellsStore.getOutputsCount(CELL_ID)}</Box>
       <Box>
-        Source: {cellsStore.getSource(CELL_ID)}
+        Kernel State:{' '}
+        <Label>
+          {defaultKernel && kernelsStore.getExecutionState(defaultKernel.id)}
+        </Label>
       </Box>
       <Box>
-        Outputs Count: {cellsStore.getOutputsCount(CELL_ID)}
-      </Box>
-      <Box>
-        Kernel State: <Label>{defaultKernel && kernelsStore.getExecutionState(defaultKernel.id)}</Label>
-      </Box>
-      <Box>
-        Kernel Phase: <Label>{defaultKernel && kernelsStore.getExecutionPhase(defaultKernel.id)}</Label>
+        Kernel Phase:{' '}
+        <Label>
+          {defaultKernel && kernelsStore.getExecutionPhase(defaultKernel.id)}
+        </Label>
       </Box>
       <Box display="flex">
-        <Box>
-          Kernel Indicator:
-        </Box>
+        <Box>Kernel Indicator:</Box>
         <Box ml={3}>
-          <KernelIndicator kernel={defaultKernel && defaultKernel.connection}/>
+          <KernelIndicator kernel={defaultKernel && defaultKernel.connection} />
         </Box>
       </Box>
       <Box>
         <Button onClick={() => cellsStore.execute(CELL_ID)}>Run cell</Button>
       </Box>
-      <Cell
-        source={DEFAULT_SOURCE}
-        id={CELL_ID}
-        kernel={defaultKernel}
-      />
+      <Cell source={DEFAULT_SOURCE} id={CELL_ID} kernel={defaultKernel} />
     </JupyterReactTheme>
-  )
-}
+  );
+};
 
 const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<CellExample/>);
+root.render(<CellExample />);

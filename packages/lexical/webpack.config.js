@@ -4,25 +4,25 @@
  * MIT License
  */
 
-const webpack = require("webpack");
-const path = require("path");
+const webpack = require('webpack');
+const path = require('path');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
 
-const shimJS = path.resolve(__dirname, "src", "emptyshim.js");
+const shimJS = path.resolve(__dirname, 'src', 'emptyshim.js');
 
 function shim(regExp) {
   return new webpack.NormalModuleReplacementPlugin(regExp, shimJS);
 }
 
 const IS_PRODUCTION = process.argv.indexOf('--mode=production') > -1;
-let mode = "development";
+let mode = 'development';
 if (IS_PRODUCTION) {
-  mode = "production";
+  mode = 'production';
 }
 
-let devtool = "inline-source-map";
+let devtool = 'inline-source-map';
 if (IS_PRODUCTION) {
   devtool = false;
 }
@@ -38,7 +38,7 @@ module.exports = {
   watchOptions: {
     aggregateTimeout: 300,
     poll: 5000, // Seems to stabilise HMR file change detection.
-    ignored: "/node_modules/"
+    ignored: '/node_modules/',
   },
   devServer: {
     port: 3208,
@@ -53,36 +53,36 @@ module.exports = {
     minimize,
   },
   output: {
-    publicPath: "http://localhost:3208/",
+    publicPath: 'http://localhost:3208/',
     filename: '[name].[contenthash].jupyter-lexical.js',
   },
   resolve: {
-    extensions: [ '.tsx', '.ts', 'jsx', '.js' ],
-    alias: { 
-      "stream": "stream-browserify",
+    extensions: ['.tsx', '.ts', 'jsx', '.js'],
+    alias: {
+      stream: 'stream-browserify',
     },
-    fallback: { 
-      "assert": require.resolve("assert/"),
-    }
+    fallback: {
+      assert: require.resolve('assert/'),
+    },
   },
   module: {
     rules: [
       {
         test: /\.tsx?$/,
-        loader: "babel-loader",
+        loader: 'babel-loader',
         options: {
-          plugins: [
-            "@babel/plugin-proposal-class-properties",
-          ],
+          plugins: ['@babel/plugin-proposal-class-properties'],
           presets: [
-            ["@babel/preset-react", {
+            [
+              '@babel/preset-react',
+              {
                 runtime: 'automatic',
-                importSource: 'react'
+                importSource: 'react',
               },
             ],
-            "@babel/preset-typescript",
+            '@babel/preset-typescript',
           ],
-          cacheDirectory: true
+          cacheDirectory: true,
         },
         exclude: /node_modules/,
       },
@@ -99,13 +99,9 @@ module.exports = {
         test: /\.(jpe?g|png|gif|ico|eot|ttf|map|woff2?)(\?v=\d+\.\d+\.\d+)?$/i,
         type: 'asset/resource',
       },
-      { 
-        test: /\.css$/, 
-        use: [
-          'style-loader', 
-          'css-loader',
-          'postcss-loader'
-        ] 
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
       },
       { test: /\.md$/, use: 'raw-loader' },
       { test: /\.js.map$/, use: 'file-loader' },
@@ -130,14 +126,14 @@ module.exports = {
       {
         test: /\.m?js/,
         resolve: {
-          fullySpecified: false
-        }
+          fullySpecified: false,
+        },
       },
       {
         test: /\.c?js/,
         resolve: {
-          fullySpecified: false
-        }
+          fullySpecified: false,
+        },
       },
       // Special webpack rule for the JupyterLab theme style sheets.
       {
@@ -168,16 +164,16 @@ module.exports = {
           filename: 'schema/[name][ext][query]',
         },
       },
-    ]
+    ],
   },
   plugins: [
     shim(/@fortawesome/),
     new webpack.ProvidePlugin({
-      process: 'process/browser'
+      process: 'process/browser',
     }),
     new HtmlWebpackPlugin({
       title: 'Jupyter Lexical',
-      template : 'public/index.html'
+      template: 'public/index.html',
     }),
     new HtmlWebpackTagsPlugin({
       links: [
@@ -185,10 +181,10 @@ module.exports = {
         'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap',
       ],
       tags: [
-//        'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js'
+        //        'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js'
       ],
-      append: false, 
-      publicPath: false
+      append: false,
+      publicPath: false,
     }),
-  ]
+  ],
 };

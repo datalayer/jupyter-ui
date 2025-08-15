@@ -4,8 +4,8 @@
  * MIT License
  */
 
-import { DocumentRegistry } from "@jupyterlab/docregistry";
-import { INotebookModel, NotebookPanel } from "@jupyterlab/notebook";
+import { DocumentRegistry } from '@jupyterlab/docregistry';
+import { INotebookModel, NotebookPanel } from '@jupyterlab/notebook';
 import { CommandRegistry } from '@lumino/commands';
 import { NotebookAdapter } from './NotebookAdapter';
 
@@ -16,7 +16,10 @@ export type IDatalayerNotebookExtensionProps = {
   adapter?: NotebookAdapter;
 };
 
-export type DatalayerNotebookExtension = DocumentRegistry.IWidgetExtension<NotebookPanel,INotebookModel> & {
+export type DatalayerNotebookExtension = DocumentRegistry.IWidgetExtension<
+  NotebookPanel,
+  INotebookModel
+> & {
   init(props: IDatalayerNotebookExtensionProps): void;
   get component(): JSX.Element | null;
 };

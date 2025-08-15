@@ -39,6 +39,11 @@ declare module '*/variables.css' {
   export default value;
 }
 
+declare module '*/variables.css?raw' {
+  const value: string;
+  export default value;
+}
+
 declare module '*/theme.css' {
   const value: any;
   export default value;

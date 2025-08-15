@@ -14,7 +14,7 @@ import HomepageFeatures from '../components/HomepageFeatures';
 import HomepageProducts from '../components/HomepageProducts';
 
 function HomepageHeader() {
-  const {siteConfig} = useDocusaurusContext();
+  const { siteConfig } = useDocusaurusContext();
   return (
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
@@ -23,7 +23,8 @@ function HomepageHeader() {
         <div className={styles.buttons}>
           <Link
             className="button button--secondary button--lg"
-            to="/docs/about">
+            to="/docs/about"
+          >
             🚀 Get Started
           </Link>
         </div>
@@ -33,14 +34,15 @@ function HomepageHeader() {
 }
 
 export default function Home() {
-  const {siteConfig} = useDocusaurusContext();
+  const { siteConfig } = useDocusaurusContext();
   return (
     <Layout
       title={`${siteConfig.title}`}
-      description="Jupyter UI, by Datalayer">
+      description="Jupyter UI, by Datalayer"
+    >
       <HomepageHeader />
       <main>
-        <br/>
+        <br />
         <HomepageProducts />
         <HomepageFeatures />
       </main>

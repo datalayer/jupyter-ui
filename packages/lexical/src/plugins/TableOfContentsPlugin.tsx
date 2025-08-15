@@ -4,12 +4,11 @@
  * MIT License
  */
 
-import {useEffect, useRef, useState} from 'react';
-import type {HeadingTagType} from '@lexical/rich-text';
-import type {NodeKey} from 'lexical';
-import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
-import {TableOfContentsPlugin as LexicalTableOfContentsPlugin} from '@lexical/react/LexicalTableOfContentsPlugin';
-
+import { useEffect, useRef, useState } from 'react';
+import type { HeadingTagType } from '@lexical/rich-text';
+import type { NodeKey } from 'lexical';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { TableOfContentsPlugin as LexicalTableOfContentsPlugin } from '@lexical/react/LexicalTableOfContentsPlugin';
 
 function indent(tagName: HeadingTagType) {
   if (tagName === 'h2') {
@@ -130,13 +129,13 @@ function TableOfContentsList({
         {tableOfContents.map(([key, text, tag], index) => {
           if (index === 0) {
             return (
-              <div className="normal-heading-wrapper">
+              <div key={key} className="normal-heading-wrapper">
                 <div
                   className="first-heading"
-                  key={key}
                   onClick={() => scrollToNode(key, index)}
                   role="button"
-                  tabIndex={0}>
+                  tabIndex={0}
+                >
                   {('' + text).length > 20
                     ? text.substring(0, 20) + '...'
                     : text}
@@ -147,20 +146,24 @@ function TableOfContentsList({
           } else {
             return (
               <div
+                key={key}
                 className={`normal-heading-wrapper ${
                   selectedKey === key ? 'selected-heading-wrapper' : ''
-                }`}>
+                }`}
+              >
                 <div
                   key={key}
                   onClick={() => scrollToNode(key, index)}
                   role="button"
                   className={indent(tag)}
-                  tabIndex={0}>
+                  tabIndex={0}
+                >
                   <li
                     className={`normal-heading ${
                       selectedKey === key ? 'selected-heading' : ''
                     }
-                    `}>
+                    `}
+                  >
                     {('' + text).length > 27
                       ? text.substring(0, 27) + '...'
                       : text}
@@ -183,6 +186,6 @@ export const TableOfContentsPlugin = () => {
       }}
     </LexicalTableOfContentsPlugin>
   );
-}
+};
 
 export default TableOfContentsPlugin;

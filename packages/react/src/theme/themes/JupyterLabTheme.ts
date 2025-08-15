@@ -476,7 +476,8 @@ const jupyterLabThemeDefs = {
           default: 'var(--jp-ui-font-color1, rgba(0, 0, 0, 0.87))',
           muted: 'var(--jp-ui-font-color1, rgba(0, 0, 0, 0.54))',
           subtle: 'var(--jp-ui-font-color1, rgba(0, 0, 0, 0.38))',
-          onEmphasis: 'var(--jp-ui-inverse-font-color1, rgba(255, 255, 255, 1))',
+          onEmphasis:
+            'var(--jp-ui-inverse-font-color1, rgba(255, 255, 255, 1))',
         },
         canvas: {
           default: 'var(--jp-layout-color1, white)',
@@ -612,7 +613,7 @@ const jupyterLabThemeDefs = {
         primer: {
           shadow: {
             highlight: 'inset 0 1px 0 rgba(255,255,255,0.25)',
-//            inset: 'inset 0 0 0 var(--jp-border-width) var(--jp-input-border-color)',
+            //            inset: 'inset 0 0 0 var(--jp-border-width) var(--jp-input-border-color)',
             inset: 'inset 0 0 0 0 var(--jp-input-border-color)',
           },
         },
@@ -1144,7 +1145,7 @@ const jupyterLabThemeDefs = {
         primer: {
           shadow: {
             highlight: '0 0 transparent',
-//            inset: 'inset 0 0 0 var(--jp-border-width) var(--jp-input-border-color)',
+            //            inset: 'inset 0 0 0 var(--jp-border-width) var(--jp-input-border-color)',
             inset: 'inset 0 0 0 0 var(--jp-input-border-color)',
           },
         },

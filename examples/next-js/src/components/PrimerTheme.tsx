@@ -4,10 +4,10 @@
  * MIT License
  */
 
-'use client'
+'use client';
 
 export type PrimerTheme = {
-    [key: string]: any;
+  [key: string]: any;
 };
 
 export default PrimerTheme;

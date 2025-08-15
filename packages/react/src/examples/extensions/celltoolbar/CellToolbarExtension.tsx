@@ -6,7 +6,10 @@
 
 import { INotebookModel, NotebookPanel } from '@jupyterlab/notebook';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
-import { DatalayerNotebookExtension, IDatalayerNotebookExtensionProps } from '../../../components';
+import {
+  DatalayerNotebookExtension,
+  IDatalayerNotebookExtensionProps,
+} from '../../../components';
 import { CellToolbarWidget } from './CellToolbarWidget';
 
 import './CellToolbarExtension.css';
@@ -20,15 +23,17 @@ export class CellToolbarExtension implements DatalayerNotebookExtension {
   }
 
   /* @override */
-  createNew(notebookPanel: NotebookPanel, context: DocumentRegistry.IContext<INotebookModel>) {
+  createNew(
+    notebookPanel: NotebookPanel,
+    context: DocumentRegistry.IContext<INotebookModel>
+  ) {
     new CellToolbarWidget(notebookPanel, this._props!);
   }
 
   /* @override */
   get component(): JSX.Element | null {
-    return null
+    return null;
   }
-
 }
 
 export default CellToolbarExtension;

@@ -37,10 +37,10 @@ export const JupyterReact = (props: JupyterFrontEndProps): JSX.Element => {
   return (
     <>
       <JupyterReactTheme loadJupyterLabCss={false}>
-        <Box mb={3} style={{minWidth: 200}}>
+        <Box mb={3} style={{ minWidth: 200 }}>
           <UnderlineNav aria-label="jupyter-react">
             <UnderlineNav.Item
-              aria-current={tab === 1 ? "page" : undefined}
+              aria-current={tab === 1 ? 'page' : undefined}
               icon={RingedPlanetIcon}
               onSelect={e => {
                 e.preventDefault();
@@ -50,7 +50,7 @@ export const JupyterReact = (props: JupyterFrontEndProps): JSX.Element => {
               Components
             </UnderlineNav.Item>
             <UnderlineNav.Item
-              aria-current={tab === 2 ? "page" : undefined}
+              aria-current={tab === 2 ? 'page' : undefined}
               icon={ReactJsIcon}
               onSelect={e => {
                 e.preventDefault();

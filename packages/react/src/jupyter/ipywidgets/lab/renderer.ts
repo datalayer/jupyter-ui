@@ -38,7 +38,6 @@ export class WidgetLabRenderer
   }
 
   async renderModel(model: IRenderMime.IMimeModel): Promise<void> {
-
     const source: any = model.data[this.mimeType];
 
     // Let's be optimistic, and hope the widget state will come later.
@@ -58,8 +57,9 @@ export class WidgetLabRenderer
     } catch (err) {
       if (manager.restoredStatus) {
         // The manager has been restored, so this error won't be going away.
-//        this.node.textContent = 'Error displaying widget: model not found';
-        this.node.textContent = 'Please run the cell to display the IPyWidgets.';
+        //        this.node.textContent = 'Error displaying widget: model not found';
+        this.node.textContent =
+          'Please run the cell to display the IPyWidgets.';
         this.addClass('jupyter-widgets');
         console.error(err);
         return;

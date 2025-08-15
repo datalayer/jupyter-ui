@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import {
   $createHorizontalRuleNode,
   INSERT_HORIZONTAL_RULE_COMMAND,
@@ -14,7 +14,7 @@ import {
   $isRangeSelection,
   COMMAND_PRIORITY_EDITOR,
 } from 'lexical';
-import {useEffect} from 'react';
+import { useEffect } from 'react';
 
 export const HorizontalRulePlugin = (): null => {
   const [editor] = useLexicalComposerContext();
@@ -22,7 +22,7 @@ export const HorizontalRulePlugin = (): null => {
   useEffect(() => {
     return editor.registerCommand(
       INSERT_HORIZONTAL_RULE_COMMAND,
-      (type) => {
+      type => {
         const selection = $getSelection();
         if (!$isRangeSelection(selection)) {
           return false;
@@ -42,6 +42,6 @@ export const HorizontalRulePlugin = (): null => {
     );
   }, [editor]);
   return null;
-}
+};
 
 export default HorizontalRulePlugin;

@@ -1,58 +1,66 @@
 # Jupyter UI - AI Assistant Guide
 
 ## Quick Overview
-React component library for building Jupyter-compatible applications. Monorepo with Lerna managing 4 main packages and multiple examples.
+
+React component library for Jupyter notebooks. Monorepo with 4 packages managed by Lerna.
 
 ## Core Packages
-- `@datalayer/jupyter-react` - Main React components for notebooks, cells, terminals
-- `@datalayer/jupyter-lexical` - Rich text editor with Lexical framework integration  
-- `@datalayer/jupyter-docusaurus-plugin` - Plugin for Docusaurus sites
-- `datalayer-jupyter-vscode` - VS Code extension for notebooks
 
-## Key Commands
+- `@datalayer/jupyter-react` - React components for notebooks, cells, terminals
+- `@datalayer/jupyter-lexical` - Rich text editor integration
+- `@datalayer/jupyter-docusaurus-plugin` - Docusaurus plugin
+- `datalayer-jupyter-vscode` - VS Code extension
+
+## Essential Commands
+
 ```bash
-# Install dependencies
-npm install
-
-# Build all packages
-npm run build
-
-# Start Jupyter server (required for development)
-npm run jupyter:server
-
-# Run specific examples
-npm run jupyter:ui:vite       # Vite example
-npm run jupyter:ui:nextjs     # Next.js example
-npm run jupyter:ui:lexical    # Lexical editor example
-
-# Run tests
-npm test
-
-# Lint and format
-npm run lint
-
-# Storybook
-npm run storybook
+npm install                   # Install dependencies
+npm run build                 # Build all packages
+npm run jupyter:server        # Start Jupyter server (port 8686)
+npm run storybook            # Start Storybook (port 6006)
+npm run lint                 # Check errors only (--quiet)
+npm run lint:fix             # Auto-fix issues
+npm run format               # Format code
+npm run type-check           # TypeScript checking
+npm run check                # Run all checks (format, lint, type)
+npm run check:fix            # Auto-fix and check all
+npm test                     # Run tests
 ```
 
-## Development Setup
-1. Requires Node.js >= 18.0.0
-2. Uses port 8686 for Jupyter server, 3208 for frontend
-3. Server token: `60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6`
+## Requirements
 
-## Architecture Notes
-- Components wrap JupyterLab functionality in React declarative API
-- Supports IPyWidgets, kernels, outputs, file browser
-- Server communication via ServiceManager
-- Uses Lumino widgets under the hood but exposes React interface
+- Node.js >= 20.0.0 (use .nvmrc)
+- npm (not yarn)
+- Server token: `60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6`
 
-## Common Tasks
-- Adding components: Create in `packages/react/src/components/`
-- Testing examples: Use `examples/` folders with various frameworks
-- Documentation: Update in `docs/` (Docusaurus site)
-- Storybook: Components showcased in `storybook/`
+## Key Files
 
-## Important Files
-- `lerna.json` - Monorepo configuration
-- `dev/config/jupyter_server_config.py` - Server settings
-- `packages/react/src/jupyter/JupyterContext.tsx` - Core context provider
+- `eslint.config.js` - ESLint v9 flat config
+- `.prettierrc.json` - Formatter config
+- `.prettierignore` - Excludes MDX files
+- `patches/` - Third-party fixes (auto-applied)
+- `packages/react/webpack.config.js` - Build config
+
+## Recent Fixes (2024)
+
+- MDX comments: `{/_` → `{/** **/}` in 13 files
+- Node requirement: 18 → 20+
+- Webpack warnings: 7 → 2 (source-map exclusions)
+- @jupyterlite patch for missing logos
+- ESLint v9 flat config migration
+- React 18 deprecations fixed
+- Storybook CI: Added wait-on and --url for test reliability
+- Terminal component: Fixed BoxPanel initialization issue
+
+## Common Issues
+
+1. **Storybook errors**: Check MDX syntax, run `npx patch-package`
+2. **Node version**: Use Node 20+ (`nvm use`)
+3. **Lint errors**: Run `npm run lint:fix`
+4. **Build fails**: Run `npm run type-check`
+
+## AI Assistant Notes
+
+- Always use npm, not yarn
+- Prefer editing over creating files
+- Run lint/type checks before committing

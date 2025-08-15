@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import {ContentEditable} from '@lexical/react/LexicalContentEditable';
+import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 
 export const LexicalContentEditable = ({
   className,
@@ -12,6 +12,6 @@ export const LexicalContentEditable = ({
   className?: string;
 }): JSX.Element => {
   return <ContentEditable className={className || 'ContentEditable__root'} />;
-}
+};
 
 export default LexicalContentEditable;

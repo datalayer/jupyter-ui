@@ -19,23 +19,20 @@ const nextConfig = {
     config.plugins.push(
       new webpack.ProvidePlugin({
         Buffer: ['buffer', 'Buffer'],
-      })
+      }),
     );
     // Fix json5 import issue for JupyterLab packages
     config.resolve.alias = {
       ...config.resolve.alias,
-      'json5': require.resolve('json5/lib/index.js'),
+      json5: require.resolve('json5/lib/index.js'),
       '~': path.resolve(__dirname, 'node_modules'),
     };
     // Add a plugin to strip `~` from import paths
     config.plugins.push(
-      new webpack.NormalModuleReplacementPlugin(
-        /^~(.*)/,
-        (resource: any) => {
-          resource.request = resource.request.replace(/^~/, '');
-        },
-      ),
-    );    
+      new webpack.NormalModuleReplacementPlugin(/^~(.*)/, (resource: any) => {
+        resource.request = resource.request.replace(/^~/, '');
+      }),
+    );
     config.module.rules.push(
       { test: /\.js.map$/, type: 'asset/resource' },
       {
@@ -85,9 +82,9 @@ const nextConfig = {
           filename: 'schema/[name][ext][query]',
         },
       },
-    )
-    return config
+    );
+    return config;
   },
-}
+};
 
 module.exports = nextConfig;

@@ -58,7 +58,7 @@ const NotebookInit: React.FC = () => {
   const kernel = useKernel();
   const notebookStore = useNotebookStore();
   const notebook = notebookStore.selectNotebook(NOTEBOOK_ID);
-  
+
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
 
   useEffect(() => {

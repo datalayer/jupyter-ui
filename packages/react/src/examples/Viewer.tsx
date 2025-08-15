@@ -22,10 +22,7 @@ const JupyterViewerExample = () => {
             outputs
           />
           <Text as="h1">Jupyter Viewer without outputs</Text>
-          <Viewer
-            nbformat={matplotlib}
-            outputs={false}
-          />
+          <Viewer nbformat={matplotlib} outputs={false} />
         </Jupyter>
       </Box>
     </>

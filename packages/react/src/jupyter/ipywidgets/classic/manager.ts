@@ -45,7 +45,8 @@ export class ClassicWidgetManager extends HTMLManager {
     const cdnOnlyScript = document.createElement('script');
     cdnOnlyScript.setAttribute('data-jupyter-widgets-cdn-only', 'true');
     document.body.appendChild(cdnOnlyScript);
-    requireJsScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js';
+    requireJsScript.src =
+      'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js';
     document.body.appendChild(requireJsScript);
     requireJsScript.onload = () => {
       (window as any).define('@jupyter-widgets/base', base);
@@ -65,7 +66,7 @@ export class ClassicWidgetManager extends HTMLManager {
         version: controls.JUPYTER_CONTROLS_VERSION,
         exports: () => import('@jupyter-widgets/controls') as any,
       });
-    };  
+    };
   }
 
   /**

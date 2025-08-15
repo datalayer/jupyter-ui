@@ -22,7 +22,11 @@ const NotebookLite = () => {
   const onSessionConnection: OnSessionConnection = (
     session: Session.ISessionConnection | undefined
   ) => {
-    console.log('Received a Kernel Session.', session?.id, session?.kernel?.clientId);
+    console.log(
+      'Received a Kernel Session.',
+      session?.id,
+      session?.kernel?.clientId
+    );
     setSession(session);
   };
   return (

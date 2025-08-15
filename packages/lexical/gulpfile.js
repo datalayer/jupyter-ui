@@ -10,12 +10,7 @@ const watch = require('gulp-watch');
 const filter = require('gulp-filter');
 
 gulp.task('resources-to-lib-watch', function () {
-  const f = filter([
-    '**',
-    '!src/**/*.js',
-    '!src/**/*.ts',
-    '!src/**/*.tsx',
-  ]);
+  const f = filter(['**', '!src/**/*.js', '!src/**/*.ts', '!src/**/*.tsx']);
   return (
     watch('src/**/*', { ignoreInitial: false })
       //      .pipe(gulp.dest('build'));
@@ -26,12 +21,7 @@ gulp.task('resources-to-lib-watch', function () {
 });
 
 gulp.task('resources-to-lib', async function () {
-  const f = filter([
-    '**',
-    '!src/**/*.js',
-    '!src/**/*.ts',
-    '!src/**/*.tsx',
-  ]);
+  const f = filter(['**', '!src/**/*.js', '!src/**/*.ts', '!src/**/*.tsx']);
   gulp.src('./src/**/*.*').pipe(f).pipe(gulp.dest('./lib/'));
   return;
 });
@@ -54,7 +44,7 @@ gulp.task('licenses', async function () {
 
 =========================================================
 
-*/`)
+*/`),
     )
     .pipe(gulp.dest('./', { overwrite: true }));
 
@@ -75,7 +65,7 @@ gulp.task('licenses', async function () {
 
 =========================================================
 
--->`)
+-->`),
     )
     .pipe(gulp.dest('./', { overwrite: true }));
 
@@ -94,7 +84,7 @@ gulp.task('licenses', async function () {
 
 * Coded by Datalayer
       
-*/`)
+*/`),
     )
     .pipe(gulp.dest('./', { overwrite: true }));
   return;

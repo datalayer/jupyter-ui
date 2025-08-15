@@ -41,7 +41,9 @@ export type CellsState = ICellsState & {
 /**
  * Iterate over all cells map and check if all cells/sessions are ready
  */
-const areAllKernelSessionsAvailable = (cells: Map<string, ICellState>): boolean => {
+const areAllKernelSessionsAvailable = (
+  cells: Map<string, ICellState>
+): boolean => {
   for (const cell of cells.values()) {
     if (!cell.isKernelSessionAvailable) {
       return false;
@@ -62,7 +64,6 @@ export const isAnyCellRunning = (cells: Map<string, ICellState>): boolean => {
   return false;
 };
 
-
 export const cellsStore = createStore<CellsState>((set, get) => ({
   cells: new Map<string, ICellState>(),
   source: '',
@@ -70,7 +71,8 @@ export const cellsStore = createStore<CellsState>((set, get) => ({
   adapter: undefined,
   areAllKernelSessionsReady: false, // prop refers to all cells
   isAnyCellExecuting: false, // prop refers to all cells,
-  setCells: (cells: Map<string, ICellState>) => set((cell: CellsState) => ({ cells })),
+  setCells: (cells: Map<string, ICellState>) =>
+    set((cell: CellsState) => ({ cells })),
   setSource: (id: string, source: string) => {
     const cells = get().cells;
     const cell = cells.get(id);
@@ -79,7 +81,7 @@ export const cellsStore = createStore<CellsState>((set, get) => ({
     } else {
       cells.set(id, { source });
     }
-    set((cell: CellsState) => ({ cells }))
+    set((cell: CellsState) => ({ cells }));
   },
   setOutputsCount: (id: string, outputsCount: number) => {
     const cells = get().cells;
@@ -91,13 +93,16 @@ export const cellsStore = createStore<CellsState>((set, get) => ({
     }
     set((state: CellsState) => ({ cells }));
   },
-  setKernelSessionAvailable: (id: string, isKernelSessionAvailable: boolean) => {
+  setKernelSessionAvailable: (
+    id: string,
+    isKernelSessionAvailable: boolean
+  ) => {
     const cells = get().cells;
     const cell = cells.get(id);
     if (cell) {
       cell.isKernelSessionAvailable = isKernelSessionAvailable;
     } else {
-      cells.set(id, {isKernelSessionAvailable});
+      cells.set(id, { isKernelSessionAvailable });
     }
     const areAllKernelSessionsReady = areAllKernelSessionsAvailable(cells);
     set((cell: CellsState) => ({ cells, areAllKernelSessionsReady }));
@@ -110,7 +115,7 @@ export const cellsStore = createStore<CellsState>((set, get) => ({
     } else {
       cells.set(id, { adapter });
     }
-    set((cell: CellsState) => ({ cells }))
+    set((cell: CellsState) => ({ cells }));
   },
   getAdapter: (id: string) => {
     return get().cells.get(id)?.adapter;
@@ -124,13 +129,13 @@ export const cellsStore = createStore<CellsState>((set, get) => ({
   isKernelSessionAvailable: (id: string): boolean | undefined => {
     return get().cells.get(id)?.isKernelSessionAvailable;
   },
-  execute: (id: string) => { 
+  execute: (id: string) => {
     const cells = get().cells;
     const cell = cells.get(id);
     if (cell) {
       cell.adapter?.execute();
     } else {
-      get().cells.forEach((cell) => cell.adapter?.execute());
+      get().cells.forEach(cell => cell.adapter?.execute());
     }
   },
   setIsExecuting: (id: string, isExecuting: boolean) => {
@@ -139,7 +144,7 @@ export const cellsStore = createStore<CellsState>((set, get) => ({
     if (cell) {
       cell.isExecuting = isExecuting;
     } else {
-      get().cells.forEach((cell) => cell.adapter?.execute())
+      get().cells.forEach(cell => cell.adapter?.execute());
       cells.set(id, { isExecuting });
     }
 

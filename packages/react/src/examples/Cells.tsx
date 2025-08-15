@@ -18,7 +18,9 @@ root.render(
     <Box as="h1">Jupyter Cells wrapped in a single Jupyter Context</Box>
     <Cell id="cell-1" source="x=1" />
     <Cell id="cell-2" source="print(x)" />
-    <Cell id="cell-3" source={`import random
+    <Cell
+      id="cell-3"
+      source={`import random
 
 r = random.randint(0,9)`}
     />

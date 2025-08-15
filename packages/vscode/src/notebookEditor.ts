@@ -30,7 +30,7 @@ class NotebookDocument extends Disposable implements vscode.CustomDocument {
   static async create(
     uri: vscode.Uri,
     backupId: string | undefined,
-    delegate: NotebookDocumentDelegate
+    delegate: NotebookDocumentDelegate,
   ): Promise<NotebookDocument | PromiseLike<NotebookDocument>> {
     // If we have a backup, read that. Otherwise read the resource from the workspace
     const dataFile =
@@ -57,7 +57,7 @@ class NotebookDocument extends Disposable implements vscode.CustomDocument {
   private constructor(
     uri: vscode.Uri,
     initialContent: Uint8Array,
-    delegate: NotebookDocumentDelegate
+    delegate: NotebookDocumentDelegate,
   ) {
     super();
     this._uri = uri;
@@ -74,7 +74,7 @@ class NotebookDocument extends Disposable implements vscode.CustomDocument {
   }
 
   private readonly _onDidDispose = this._register(
-    new vscode.EventEmitter<void>()
+    new vscode.EventEmitter<void>(),
   );
   /**
    * Fired when the document is disposed of.
@@ -85,7 +85,7 @@ class NotebookDocument extends Disposable implements vscode.CustomDocument {
     new vscode.EventEmitter<{
       readonly content?: Uint8Array;
       readonly edits: readonly NotebookEdit[];
-    }>()
+    }>(),
   );
   /**
    * Fired to notify webviews that the document has changed.
@@ -97,7 +97,7 @@ class NotebookDocument extends Disposable implements vscode.CustomDocument {
       readonly label: string;
       undo(): void;
       redo(): void;
-    }>()
+    }>(),
   );
   /**
    * Fired to tell VS Code that an edit has occurred in the document.
@@ -154,7 +154,7 @@ class NotebookDocument extends Disposable implements vscode.CustomDocument {
    */
   async saveAs(
     targetResource: vscode.Uri,
-    cancellation: vscode.CancellationToken
+    cancellation: vscode.CancellationToken,
   ): Promise<void> {
     const fileData = await this._delegate.getFileData();
     if (cancellation.isCancellationRequested) {
@@ -183,7 +183,7 @@ class NotebookDocument extends Disposable implements vscode.CustomDocument {
    */
   async backup(
     destination: vscode.Uri,
-    cancellation: vscode.CancellationToken
+    cancellation: vscode.CancellationToken,
   ): Promise<vscode.CustomDocumentBackup> {
     await this.saveAs(destination, cancellation);
 
@@ -223,20 +223,20 @@ export class NotebookEditorProvider
       const workspaceFolders = vscode.workspace.workspaceFolders;
       if (!workspaceFolders) {
         vscode.window.showErrorMessage(
-          'Creating new Datalayer notebook files currently requires opening a workspace'
+          'Creating new Datalayer notebook files currently requires opening a workspace',
         );
         return;
       }
 
       const uri = vscode.Uri.joinPath(
         workspaceFolders[0].uri,
-        `new-${NotebookEditorProvider.newNotebookFileId++}.ipynb`
+        `new-${NotebookEditorProvider.newNotebookFileId++}.ipynb`,
       ).with({ scheme: 'untitled' });
 
       vscode.commands.executeCommand(
         'vscode.openWith',
         uri,
-        NotebookEditorProvider.viewType
+        NotebookEditorProvider.viewType,
       );
     });
 
@@ -248,7 +248,7 @@ export class NotebookEditorProvider
           retainContextWhenHidden: false,
         },
         supportsMultipleEditorsPerDocument: false,
-      }
+      },
     );
   }
 
@@ -272,7 +272,7 @@ export class NotebookEditorProvider
   async openCustomDocument(
     uri: vscode.Uri,
     openContext: { backupId?: string },
-    _token: vscode.CancellationToken
+    _token: vscode.CancellationToken,
   ): Promise<NotebookDocument> {
     const document: NotebookDocument = await NotebookDocument.create(
       uri,
@@ -280,7 +280,7 @@ export class NotebookEditorProvider
       {
         getFileData: async () => {
           const webviewsForDocument = Array.from(
-            this.webviews.get(document.uri)
+            this.webviews.get(document.uri),
           );
           if (!webviewsForDocument.length) {
             throw new Error('Could not find webview to save for');
@@ -289,11 +289,11 @@ export class NotebookEditorProvider
           const response = await this.postMessageWithResponse<number[]>(
             panel,
             'getFileData',
-            {}
+            {},
           );
           return new Uint8Array(response);
         },
-      }
+      },
     );
 
     const listeners: vscode.Disposable[] = [];
@@ -305,7 +305,7 @@ export class NotebookEditorProvider
           document,
           ...e,
         });
-      })
+      }),
     );
 
     listeners.push(
@@ -317,7 +317,7 @@ export class NotebookEditorProvider
             content: e.content,
           });
         }
-      })
+      }),
     );
 
     document.onDidDispose(() => disposeAll(listeners));
@@ -328,7 +328,7 @@ export class NotebookEditorProvider
   async resolveCustomEditor(
     document: NotebookDocument,
     webviewPanel: vscode.WebviewPanel,
-    _token: vscode.CancellationToken
+    _token: vscode.CancellationToken,
   ): Promise<void> {
     // Add the webview to our internal set of active webviews
     this.webviews.add(document.uri, webviewPanel);
@@ -340,7 +340,7 @@ export class NotebookEditorProvider
     webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview);
 
     webviewPanel.webview.onDidReceiveMessage(e =>
-      this.onMessage(webviewPanel, document, e)
+      this.onMessage(webviewPanel, document, e),
     );
 
     // Wait for the webview to be properly ready before we init
@@ -353,7 +353,7 @@ export class NotebookEditorProvider
           });
         } else {
           const editable = vscode.workspace.fs.isWritableFileSystem(
-            document.uri.scheme
+            document.uri.scheme,
           );
 
           this.postMessage(webviewPanel, 'init', {
@@ -373,7 +373,7 @@ export class NotebookEditorProvider
 
   public saveCustomDocument(
     document: NotebookDocument,
-    cancellation: vscode.CancellationToken
+    cancellation: vscode.CancellationToken,
   ): Thenable<void> {
     return document.save(cancellation);
   }
@@ -381,14 +381,14 @@ export class NotebookEditorProvider
   public saveCustomDocumentAs(
     document: NotebookDocument,
     destination: vscode.Uri,
-    cancellation: vscode.CancellationToken
+    cancellation: vscode.CancellationToken,
   ): Thenable<void> {
     return document.saveAs(destination, cancellation);
   }
 
   public revertCustomDocument(
     document: NotebookDocument,
-    cancellation: vscode.CancellationToken
+    cancellation: vscode.CancellationToken,
   ): Thenable<void> {
     return document.revert(cancellation);
   }
@@ -396,7 +396,7 @@ export class NotebookEditorProvider
   public backupCustomDocument(
     document: NotebookDocument,
     context: vscode.CustomDocumentBackupContext,
-    cancellation: vscode.CancellationToken
+    cancellation: vscode.CancellationToken,
   ): Thenable<vscode.CustomDocumentBackup> {
     return document.backup(context.destination, cancellation);
   }
@@ -405,10 +405,9 @@ export class NotebookEditorProvider
    * Get the static HTML used for in our editor's webviews.
    */
   private getHtmlForWebview(webview: vscode.Webview): string {
-
     // Local path to script and css for the webview
     const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._context.extensionUri, 'dist', 'webview.js')
+      vscode.Uri.joinPath(this._context.extensionUri, 'dist', 'webview.js'),
     );
 
     // Use a nonce to whitelist which scripts can be run
@@ -462,11 +461,11 @@ export class NotebookEditorProvider
   private postMessageWithResponse<R = unknown>(
     panel: vscode.WebviewPanel,
     type: string,
-    body: any
+    body: any,
   ): Promise<R> {
     const requestId = (this._requestId++).toString();
     const p = new Promise<R>(resolve =>
-      this._callbacks.set(requestId, resolve)
+      this._callbacks.set(requestId, resolve),
     );
     panel.webview.postMessage({ type, requestId, body });
     return p;
@@ -476,7 +475,7 @@ export class NotebookEditorProvider
     panel: vscode.WebviewPanel,
     type: string,
     body: any,
-    id?: string
+    id?: string,
   ): void {
     panel.webview.postMessage({ type, body, id });
   }
@@ -484,7 +483,7 @@ export class NotebookEditorProvider
   private onMessage(
     webview: vscode.WebviewPanel,
     document: NotebookDocument,
-    message: ExtensionMessage
+    message: ExtensionMessage,
   ) {
     switch (message.type) {
       case 'ready':
@@ -506,7 +505,7 @@ export class NotebookEditorProvider
                   baseUrl,
                   token,
                 },
-                message.id
+                message.id,
               );
             }
           })
@@ -535,14 +534,14 @@ export class NotebookEditorProvider
       case 'websocket-message': {
         console.log(
           `Sending websocket message from ${message.id}.`,
-          message.body
+          message.body,
         );
         const { id } = message;
         const ws = this._websockets.get(id ?? '');
         if (!ws) {
           console.error(
             'Failed to send websocket message from editor with no matching websocket.',
-            message
+            message,
           );
         }
 
@@ -561,10 +560,9 @@ export class NotebookEditorProvider
 
   private _forwardRequest(
     message: ExtensionMessage,
-    webview: vscode.WebviewPanel
+    webview: vscode.WebviewPanel,
   ) {
     const { body, id } = message;
-    // @ts-ignore
     fetch(body.url, {
       body: body.body,
       headers: body.headers,
@@ -572,7 +570,7 @@ export class NotebookEditorProvider
     }).then(async (reply: any) => {
       const headers: Record<string, string> = [...reply.headers].reduce(
         (agg, pair) => ({ ...agg, [pair[0]]: pair[1] }),
-        {}
+        {},
       );
       const rawBody =
         body.method !== 'DELETE' ? await reply.arrayBuffer() : undefined;
@@ -585,14 +583,14 @@ export class NotebookEditorProvider
           status: reply.status,
           statusText: reply.statusText,
         },
-        id
+        id,
       );
     });
   }
 
   private _openWebsocket(
     message: ExtensionMessage,
-    webview: vscode.WebviewPanel
+    webview: vscode.WebviewPanel,
   ) {
     const { body, id } = message;
     const wsURL = new URL(body.origin);
@@ -601,7 +599,7 @@ export class NotebookEditorProvider
     }
     const protocol = body.protocol || undefined;
     console.debug(
-      `Opening websocket to ${wsURL.toString()} with protocol '${protocol}'.`
+      `Opening websocket to ${wsURL.toString()} with protocol '${protocol}'.`,
     );
     const ws = new WebSocket(body.origin, protocol);
     this._websockets.set(id!, ws);
@@ -625,7 +623,7 @@ export class NotebookEditorProvider
         webview,
         'websocket-close',
         { code, reason, wasClean },
-        id
+        id,
       );
     };
     ws.onerror = event => {

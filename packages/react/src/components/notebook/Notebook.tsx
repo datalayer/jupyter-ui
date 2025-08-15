@@ -17,10 +17,22 @@ import { Box } from '@primer/react';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { WebsocketProvider as YWebsocketProvider } from 'y-websocket';
-import { jupyterReactStore, KernelTransfer, OnSessionConnection, } from '../../state';
+import {
+  jupyterReactStore,
+  KernelTransfer,
+  OnSessionConnection,
+} from '../../state';
 import { newUuid, sleep } from '../../utils';
 import { asObservable, Lumino } from '../lumino';
-import { COLLABORATION_ROOM_URL_PATH, requestDatalayerollaborationSessionId, ICollaborationProvider, Kernel, Lite, requestJupyterCollaborationSession, useJupyter } from './../../jupyter';
+import {
+  COLLABORATION_ROOM_URL_PATH,
+  requestDatalayerollaborationSessionId,
+  ICollaborationProvider,
+  Kernel,
+  Lite,
+  requestJupyterCollaborationSession,
+  useJupyter,
+} from './../../jupyter';
 import { CellMetadataEditor } from './cell/metadata';
 import { NotebookAdapter } from './NotebookAdapter';
 import { useNotebookStore } from './NotebookState';
@@ -46,7 +58,7 @@ const GlobalStyle = createGlobalStyle<any>`
   .dla-Box-Notebook .jp-Cell.jp-mod-active .dla-CellSidebar-Container {
     display: block;
   }
-`
+`;
 
 export type INotebookProps = {
   Toolbar?: (props: INotebookToolbarProps) => JSX.Element;
@@ -122,7 +134,7 @@ export const Notebook = (props: INotebookProps) => {
 
   // Bootstrap the Notebook Adapter.
   const bootstrapAdapter = async (
-//    collaborative: ICollaborative,
+    //    collaborative: ICollaborative,
     serviceManager?: ServiceManager.IManager,
     kernel?: Kernel
   ) => {
@@ -143,7 +155,9 @@ export const Notebook = (props: INotebookProps) => {
         adapter,
       });
       extension.createNew(adapter.notebookPanel!, adapter.context!);
-      setExtensionComponents(extensionComponents.concat(extension.component ?? <></>));
+      setExtensionComponents(
+        extensionComponents.concat(extension.component ?? <></>)
+      );
     });
     // Update the notebook state with the adapter.
     notebookStore.update({ id, state: { adapter } });
@@ -183,9 +197,7 @@ export const Notebook = (props: INotebookProps) => {
           if (panelDiv) {
             const cellMetadataOptions = (
               <Box mt={3}>
-                <CellMetadataEditor
-                  cellModel={cellModel.model}
-                />
+                <CellMetadataEditor cellModel={cellModel.model} />
               </Box>
             );
             const portal = createPortal(cellMetadataOptions, panelDiv);
@@ -289,11 +301,16 @@ export const Notebook = (props: INotebookProps) => {
         if (collaborative == 'jupyter') {
           const token =
             jupyterReactStore.getState().jupyterConfig?.jupyterServerToken;
-          const session = await requestJupyterCollaborationSession('json', 'notebook', path!);
-          const documentURL = URLExt.join(
-            serviceManager?.serverSettings.wsUrl!,
-            COLLABORATION_ROOM_URL_PATH
+          const session = await requestJupyterCollaborationSession(
+            'json',
+            'notebook',
+            path!
           );
+          const wsUrl = serviceManager?.serverSettings.wsUrl;
+          if (!wsUrl) {
+            throw new Error('WebSocket URL is not available');
+          }
+          const documentURL = URLExt.join(wsUrl, COLLABORATION_ROOM_URL_PATH);
           const documentName = `${session.format}:${session.type}:${session.fileId}`;
           provider = new YWebsocketProvider(documentURL, documentName, ydoc, {
             disableBc: true,
@@ -304,7 +321,8 @@ export const Notebook = (props: INotebookProps) => {
             awareness,
           });
         } else if (collaborative == 'datalayer') {
-          const { runUrl, token } = jupyterReactStore.getState().datalayerConfig ?? {};
+          const { runUrl, token } =
+            jupyterReactStore.getState().datalayerConfig ?? {};
           const documentName = id;
           const documentURL = URLExt.join(runUrl!, `/api/spacer/v1/documents`);
           const sessionId = await requestDatalayerollaborationSessionId({
@@ -368,7 +386,6 @@ export const Notebook = (props: INotebookProps) => {
       }
       sharedModel?.dispose();
     };
-
   }, [adapter?.notebookPanel, collaborative]);
 
   useEffect(() => {
@@ -464,10 +481,8 @@ export const Notebook = (props: INotebookProps) => {
           },
         }}
       >
-        <>
-          {portals?.map((portal: React.ReactPortal) => portal)}
-        </>
-        <GlobalStyle/>
+        <>{portals?.map((portal: React.ReactPortal) => portal)}</>
+        <GlobalStyle />
         <Box>
           {extensionComponents.map((extensionComponent, index) => {
             return (
@@ -477,11 +492,11 @@ export const Notebook = (props: INotebookProps) => {
             );
           })}
         </Box>
-        {isLoading ?
+        {isLoading ? (
           <Loader />
-        :
+        ) : (
           <Box>{adapter && <Lumino id={id}>{adapter.panel}</Lumino>}</Box>
-        }
+        )}
       </Box>
     </Box>
   );

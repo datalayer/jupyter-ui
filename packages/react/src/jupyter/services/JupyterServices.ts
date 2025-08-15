@@ -5,7 +5,7 @@
  */
 
 import { ServiceManager } from '@jupyterlab/services';
-import { IManager as IKernelspecManager} from '@jupyterlab/services/lib/kernelspec/kernelspec';
+import { IManager as IKernelspecManager } from '@jupyterlab/services/lib/kernelspec/kernelspec';
 import { IManager as ISessionManager } from '@jupyterlab/services/lib/session/session';
 import { IManager as ITerminaManager } from '@jupyterlab/services/lib/terminal/terminal';
 

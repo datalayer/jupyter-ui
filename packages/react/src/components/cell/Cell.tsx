@@ -67,11 +67,9 @@ export const Cell = (props: ICellProps) => {
   const [adapter, setAdapter] = useState<CellAdapter>();
   const cellsStore = useCellsStore();
   const handleCellInitEvents = (adapter: CellAdapter) => {
-    adapter.cell.model.contentChanged.connect(
-      (cellModel, changedArgs) => {
-        cellsStore.setSource(id, cellModel.sharedModel.getSource());
-      }
-    );
+    adapter.cell.model.contentChanged.connect((cellModel, changedArgs) => {
+      cellsStore.setSource(id, cellModel.sharedModel.getSource());
+    });
     if (adapter.cell instanceof CodeCell) {
       adapter.cell.outputArea.outputLengthChanged?.connect(
         (outputArea, outputsCount) => {
@@ -87,11 +85,11 @@ export const Cell = (props: ICellProps) => {
     });
     adapter.sessionContext.kernelChanged.connect(() => {
       void adapter.sessionContext.session?.kernel?.info.then(info => {
-        // Set that session/kernel is ready for this cell when the kernel is guaranteed to be connected 
+        // Set that session/kernel is ready for this cell when the kernel is guaranteed to be connected
         cellsStore.setKernelSessionAvailable(id, true);
-      })
+      });
     });
-  }
+  };
   useEffect(() => {
     const kernelToUse = kernelProps || defaultKernel;
     if (id && serverSettings && kernelToUse) {
@@ -103,7 +101,7 @@ export const Cell = (props: ICellProps) => {
           outputs,
           serverSettings,
           kernel: kernelToUse,
-          boxOptions: {showToolbar}
+          boxOptions: { showToolbar },
         });
         cellsStore.setAdapter(id, adapter);
         cellsStore.setSource(id, source);
@@ -164,14 +162,10 @@ export const Cell = (props: ICellProps) => {
         },
       }}
     >
-      <Lumino>
-        {adapter.panel}
-      </Lumino>
+      <Lumino>{adapter.panel}</Lumino>
     </Box>
   ) : (
-    <Box>
-      Loading Jupyter Cell...
-    </Box>
+    <Box>Loading Jupyter Cell...</Box>
   );
 };
 
@@ -179,7 +173,7 @@ Cell.defaultProps = {
   autoStart: true,
   source: '',
   outputs: [],
-  showToolbar:true,
+  showToolbar: true,
   startDefaultKernel: true,
   type: 'code',
 } as Partial<ICellProps>;

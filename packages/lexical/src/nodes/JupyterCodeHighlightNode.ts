@@ -4,7 +4,6 @@
  * MIT License
  */
 
-// eslint-disable-next-line simple-import-sort/imports
 import {
   $isLineBreakNode,
   EditorConfig,
@@ -86,7 +85,7 @@ export const getCodeLanguages = (): Array<string> =>
     .filter(
       // Prism has several language helpers mixed into languages object
       // so filtering them out here to get langs list
-      (language) => typeof Prism.languages[language] !== 'function',
+      language => typeof Prism.languages[language] !== 'function',
     )
     .sort();
 
@@ -131,11 +130,7 @@ export class JupyterCodeHighlightNode extends TextNode {
     return element;
   }
 
-  updateDOM(
-    prevNode: this,
-    dom: HTMLElement,
-    config: EditorConfig,
-  ): boolean {
+  updateDOM(prevNode: this, dom: HTMLElement, config: EditorConfig): boolean {
     const update = super.updateDOM(prevNode, dom, config);
     const prevClassName = getHighlightThemeClass(
       config.theme,
