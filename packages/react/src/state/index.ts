@@ -4,5 +4,4 @@
  * MIT License
  */
 
-export * from './IDatalayerConfig';
 export * from './JupyterReactState';

@@ -16,8 +16,8 @@ import { Signal } from '@lumino/signaling';
 import { JupyterReactTheme } from '../../../../theme';
 import { CellSidebar, type ICellSidebarProps } from './CellSidebar';
 import {
-  DatalayerNotebookExtension,
-  IDatalayerNotebookExtensionProps,
+  NotebookExtension,
+  INotebookExtensionProps,
 } from '../../NotebookExtensions';
 
 class CellSidebarFactory implements IDisposable {
@@ -130,7 +130,7 @@ type ICellSidebarExtensionOptions = {
 /**
  * Cell sidebar extension for notebook panels.
  */
-export class CellSidebarExtension implements DatalayerNotebookExtension {
+export class CellSidebarExtension implements NotebookExtension {
   protected factory: React.JSXElementConstructor<ICellSidebarProps>;
   protected commands?: CommandRegistry;
   protected nbgrader?: boolean;
@@ -165,7 +165,7 @@ export class CellSidebarExtension implements DatalayerNotebookExtension {
     return sidebar;
   }
 
-  init(props: IDatalayerNotebookExtensionProps): void {
+  init(props: INotebookExtensionProps): void {
     this.commands = props.commands;
   }
 }

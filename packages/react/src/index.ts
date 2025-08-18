@@ -8,6 +8,5 @@ export * from './app';
 export * from './components';
 export * from './jupyter';
 export * from './state';
-export * from './providers';
 export * from './theme';
 export * from './utils';

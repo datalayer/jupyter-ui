@@ -4,6 +4,15 @@
 
 Jupyter UI is an open-source React.js component library that bridges the gap between the Jupyter ecosystem and modern web development frameworks. It provides React components that are 100% compatible with Jupyter, allowing developers to build custom data products without being constrained by the traditional JupyterLab interface.
 
+## Recent Updates (January 2025)
+
+### Collaboration Provider System
+
+- Implemented plugin-based architecture for extensible collaboration
+- Built-in providers: `JupyterCollaborationProvider`, `NoOpCollaborationProvider`
+- Direct instantiation pattern for simplicity
+- Added collaboration support to `Notebook2` component
+
 ### Core Problem Solved
 
 Traditional JupyterLab uses the Lumino widget toolkit, an imperative UI framework that isn't compatible with modern declarative frameworks like React. This forces developers to either:
@@ -23,7 +32,7 @@ The project uses Lerna to manage a monorepo structure with the following organiz
 ```
 jupyter-ui/
 ├── packages/           # Core library packages
-│   ├── react/         # Main React component library
+│   ├── react/         # Main React component library (generic)
 │   ├── lexical/       # Rich text editor integration
 │   ├── docusaurus-plugin/  # Docusaurus integration
 │   └── vscode/        # VS Code extension
@@ -60,12 +69,15 @@ The main package providing React components for Jupyter functionality.
 - Provides React context providers for state management
 - Supports both local and remote Jupyter servers
 - Implements WebSocket communication for real-time updates
+- Plugin-based collaboration provider system
+- Extensible without platform-specific code
 
 **Key Files:**
 
 - `src/jupyter/JupyterContext.tsx` - Core context provider
-- `src/components/notebook/Notebook.tsx` - Main notebook component
+- `src/components/notebook/Notebook.tsx` - Main notebook component (accepts collaborationProvider)
 - `src/providers/ServiceManagerProvider.tsx` - Service management
+- `src/jupyter/collaboration/ICollaborationProvider.ts` - Provider interface
 
 ### 2. @datalayer/jupyter-lexical (v1.0.3)
 
@@ -454,11 +466,11 @@ The repository includes several example implementations:
 
 ## Community & Ecosystem
 
-- Active development by Datalayer, Inc.
 - MIT licensed
 - Integration with major React frameworks
 - Storybook for component documentation
 - Comprehensive documentation site
+- Active development by Datalayer, Inc.
 
 ## Future Roadmap (Based on Code Structure)
 

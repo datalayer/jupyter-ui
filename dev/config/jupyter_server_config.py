@@ -106,4 +106,4 @@ c.ZMQChannelsWebsocketConnection.kernel_ws_protocol = None # None or ''
 # JupyterLab
 #################
 
-c.LabApp.collaborative = False
+c.LabApp.collaborative = True

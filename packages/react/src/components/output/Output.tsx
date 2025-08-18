@@ -14,13 +14,12 @@ import { useJupyter } from '../../jupyter/JupyterContext';
 import { IExecutionPhaseOutput, Kernel } from '../../jupyter/kernel';
 import { newUuid } from '../../utils';
 import { KernelActionMenu, KernelProgressBar } from '../kernel';
-// import { CodeMirrorDatalayerEditor } from '../codemirror';
+import { CodeMirrorEditor } from '../codemirror';
 import { OutputAdapter } from './OutputAdapter';
 import { OutputRenderer } from './OutputRenderer';
 import { useOutputsStore } from './OutputState';
 
 import './Output.css';
-import { CodeMirrorDatalayerEditor } from '../codemirror';
 
 export type IOutputProps = {
   adapter?: OutputAdapter;
@@ -184,7 +183,7 @@ export const Output = (props: IOutputProps) => {
             },
           }}
         >
-          <CodeMirrorDatalayerEditor
+          <CodeMirrorEditor
             autoRun={autoRun}
             code={code}
             codePre={codePre}

@@ -20,12 +20,12 @@ Jupyter UI is a set of [React.js](https://react.dev) components that allow a fro
 
 ## 📦 Packages
 
-| Package                                                              | Version                                                                                                                                                                                         | Description                                   |
-| -------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
-| [@datalayer/jupyter-react](./packages/react)                         | [![npm](https://img.shields.io/npm/v/@datalayer/jupyter-react)](https://www.npmjs.com/package/@datalayer/jupyter-react)                                                                         | Core React components for Jupyter integration |
-| [@datalayer/jupyter-lexical](./packages/lexical)                     | [![npm](https://img.shields.io/npm/v/@datalayer/jupyter-lexical)](https://www.npmjs.com/package/@datalayer/jupyter-lexical)                                                                     | Rich text editor with Lexical framework       |
-| [@datalayer/jupyter-docusaurus-plugin](./packages/docusaurus-plugin) | [![npm](https://img.shields.io/npm/v/@datalayer/jupyter-docusaurus-plugin)](https://www.npmjs.com/package/@datalayer/jupyter-docusaurus-plugin)                                                 | Docusaurus plugin for Jupyter notebooks       |
-| [datalayer-jupyter-vscode](./packages/vscode)                        | [![marketplace](https://img.shields.io/visual-studio-marketplace/v/datalayer.datalayer-jupyter-vscode)](https://marketplace.visualstudio.com/items?itemName=datalayer.datalayer-jupyter-vscode) | VS Code extension                             |
+| Package                                                              | Version                                                                                                                                                                                         | Description                             |
+| -------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| [@datalayer/jupyter-react](./packages/react)                         | [![npm](https://img.shields.io/npm/v/@datalayer/jupyter-react)](https://www.npmjs.com/package/@datalayer/jupyter-react)                                                                         | Generic React components for Jupyter    |
+| [@datalayer/jupyter-lexical](./packages/lexical)                     | [![npm](https://img.shields.io/npm/v/@datalayer/jupyter-lexical)](https://www.npmjs.com/package/@datalayer/jupyter-lexical)                                                                     | Rich text editor with Lexical framework |
+| [@datalayer/jupyter-docusaurus-plugin](./packages/docusaurus-plugin) | [![npm](https://img.shields.io/npm/v/@datalayer/jupyter-docusaurus-plugin)](https://www.npmjs.com/package/@datalayer/jupyter-docusaurus-plugin)                                                 | Docusaurus plugin for Jupyter notebooks |
+| [datalayer-jupyter-vscode](./packages/vscode)                        | [![marketplace](https://img.shields.io/visual-studio-marketplace/v/datalayer.datalayer-jupyter-vscode)](https://marketplace.visualstudio.com/items?itemName=datalayer.datalayer-jupyter-vscode) | VS Code extension                       |
 
 ## 🚀 Quick Start
 
@@ -38,19 +38,63 @@ npm install @datalayer/jupyter-react
 ### Basic Usage
 
 ```tsx
-import { Jupyter, Notebook } from '@datalayer/jupyter-react';
+import { JupyterReactTheme, Notebook } from '@datalayer/jupyter-react';
 
 function App() {
   return (
-    <Jupyter
-      jupyterServerUrl="http://localhost:8686"
-      jupyterServerToken="your-token"
-      startDefaultKernel
-    >
-      <Notebook />
-    </Jupyter>
+    <JupyterReactTheme>
+      <Notebook path="notebook.ipynb" id="notebook-id" startDefaultKernel />
+    </JupyterReactTheme>
   );
 }
+```
+
+### Collaborative Editing
+
+Jupyter UI supports real-time collaboration through a pluggable provider system:
+
+```tsx
+import {
+  Notebook,
+  JupyterCollaborationProvider,
+} from '@datalayer/jupyter-react';
+
+function CollaborativeNotebook() {
+  const collaborationProvider = new JupyterCollaborationProvider();
+
+  return (
+    <Notebook
+      path="notebook.ipynb"
+      collaborationProvider={collaborationProvider}
+    />
+  );
+}
+```
+
+#### Creating Custom Collaboration Providers
+
+You can create your own collaboration provider by extending `CollaborationProviderBase`:
+
+```tsx
+import { CollaborationProviderBase } from '@datalayer/jupyter-react';
+
+class MyCustomProvider extends CollaborationProviderBase {
+  constructor(config) {
+    super('my-provider-type');
+    // Initialize your provider
+  }
+
+  async connect(sharedModel, documentId, options) {
+    // Implement your connection logic
+    // Set up WebSocket, authenticate, etc.
+  }
+}
+
+// Use it with any Notebook component
+const provider = new MyCustomProvider({
+  /* config */
+});
+<Notebook collaborationProvider={provider} path="notebook.ipynb" />;
 ```
 
 ### Development Setup
@@ -100,11 +144,20 @@ We host a Storybook on ✨ https://jupyter-ui-storybook.datalayer.tech that show
 ### Advanced Features
 
 - **🔌 IPyWidgets Support** - Full support for interactive widgets
-- **👥 Collaborative Editing** - Real-time collaboration using Y.js
+- **👥 Collaborative Editing** - Pluggable provider system supporting:
+  - Jupyter collaboration (WebSocket-based with Y.js)
+  - Custom providers via `ICollaborationProvider` interface
 - **🎨 Theming** - JupyterLab theme support with dark/light modes
 - **🔧 Extensible** - Plugin system for custom functionality
 - **🚀 Performance** - Virtual scrolling, lazy loading, and optimizations
 - **🔒 Security** - Token authentication, CORS, XSS protection
+
+### Architecture Highlights
+
+- **🏗️ Clean Architecture** - Modular, composable components with clear interfaces
+- **🔄 Composition Pattern** - Components compose rather than inherit for maximum flexibility
+- **🔌 Provider System** - Pluggable collaboration providers for different backends
+- **📦 One-way Dependencies** - Core depends on jupyter-react, not vice versa
 
 <div align="center" style="text-align: center">
   <img alt="Jupyter UI Gallery" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-gallery.gif" />
@@ -151,7 +204,7 @@ We maintain a plugin for [Docusaurus](https://docusaurus.io) in the [docusaurus-
 
 ## 📋 Requirements
 
-- **Node.js** >= 18.0.0
+- **Node.js** >= 20.0.0
 - **npm** >= 8.0.0
 - **Python** >= 3.8 (for Jupyter server)
 - **JupyterLab** >= 4.0.0

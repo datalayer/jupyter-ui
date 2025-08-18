@@ -9,17 +9,17 @@ import { INotebookModel, NotebookPanel } from '@jupyterlab/notebook';
 import { CommandRegistry } from '@lumino/commands';
 import { NotebookAdapter } from './NotebookAdapter';
 
-export type IDatalayerNotebookExtensionProps = {
+export type INotebookExtensionProps = {
   notebookId: string;
   commands: CommandRegistry;
   panel: NotebookPanel;
   adapter?: NotebookAdapter;
 };
 
-export type DatalayerNotebookExtension = DocumentRegistry.IWidgetExtension<
+export type NotebookExtension = DocumentRegistry.IWidgetExtension<
   NotebookPanel,
   INotebookModel
 > & {
-  init(props: IDatalayerNotebookExtensionProps): void;
+  init(props: INotebookExtensionProps): void;
   get component(): JSX.Element | null;
 };

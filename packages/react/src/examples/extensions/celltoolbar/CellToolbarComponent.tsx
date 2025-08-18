@@ -13,14 +13,11 @@ import {
   SquareIcon,
   XIcon,
 } from '@primer/octicons-react';
-import {
-  useNotebookStore,
-  IDatalayerNotebookExtensionProps,
-} from '../../../components';
+import { useNotebookStore, INotebookExtensionProps } from '../../../components';
 
 type ICellToolbarComponentProps = {
   cell: CodeCell;
-  extensionProps: IDatalayerNotebookExtensionProps;
+  extensionProps: INotebookExtensionProps;
 };
 
 export const CellToolbarComponent = (props: ICellToolbarComponentProps) => {
