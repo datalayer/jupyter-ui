@@ -15,11 +15,11 @@ import { Box } from '@primer/react';
 import type { OnSessionConnection } from '../../state';
 import { Loader } from '../utils';
 import { useKernelId, useNotebookModel, Notebook2Base } from './Notebook2Base';
-import type { DatalayerNotebookExtension } from './NotebookExtensions';
+import type { NotebookExtension } from './NotebookExtensions';
 import type { INotebookToolbarProps } from './toolbar';
 
 import './Notebook.css';
-import { ICollaborationServer } from '../../jupyter';
+import { ICollaborationProvider } from '../../jupyter';
 
 const GlobalStyle = createGlobalStyle<any>`
   .dla-Box-Notebook .jp-Cell .dla-CellSidebar-Container {
@@ -35,9 +35,9 @@ const GlobalStyle = createGlobalStyle<any>`
  */
 export interface INotebook2Props {
   /**
-   * Collaboration server providing the document documents.
+   * Collaboration provider instance.
    */
-  collaborationServer?: ICollaborationServer;
+  collaborationProvider?: ICollaborationProvider;
   /**
    * Custom command registry.
    *
@@ -48,7 +48,7 @@ export interface INotebook2Props {
   /**
    * Notebook extensions.
    */
-  extensions?: DatalayerNotebookExtension[];
+  extensions?: NotebookExtension[];
   /**
    * Notebook ID.
    */
@@ -127,7 +127,7 @@ export function Notebook2(
     Toolbar,
     children,
     cellSidebarMargin = 120,
-    collaborationServer,
+    collaborationProvider,
     commands,
     extensions,
     height = '100vh',
@@ -153,10 +153,13 @@ export function Notebook2(
   });
 
   const model = useNotebookModel({
-    collaborationServer,
+    collaborationProvider,
     nbformat,
     readonly,
     url,
+    path,
+    serviceManager,
+    id,
   });
 
   useEffect(() => {
@@ -169,7 +172,7 @@ export function Notebook2(
   useEffect(() => {
     // Set user identity if collaborating using Jupyter collaboration
     const setUserIdentity = () => {
-      if (collaborationServer?.type === 'jupyter' && model) {
+      if (collaborationProvider && model) {
         // Yjs details are hidden from the interface
         (model.sharedModel as any).awareness.setLocalStateField(
           'user',
@@ -182,7 +185,7 @@ export function Notebook2(
     return () => {
       serviceManager.user.userChanged.disconnect(setUserIdentity);
     };
-  }, [collaborationServer, model, serviceManager]);
+  }, [collaborationProvider, model, serviceManager]);
 
   return isLoading ? (
     <Loader key="notebook-loader" />

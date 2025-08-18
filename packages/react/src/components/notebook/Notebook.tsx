@@ -6,31 +6,22 @@
 
 import { YNotebook } from '@jupyter/ydoc';
 import { Cell, ICellModel } from '@jupyterlab/cells';
-import { URLExt } from '@jupyterlab/coreutils';
 import { createGlobalStyle } from 'styled-components';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { NotebookModel } from '@jupyterlab/notebook';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { Kernel as JupyterKernel, ServiceManager } from '@jupyterlab/services';
-import { PromiseDelegate } from '@lumino/coreutils';
 import { Box } from '@primer/react';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { WebsocketProvider as YWebsocketProvider } from 'y-websocket';
-import {
-  jupyterReactStore,
-  KernelTransfer,
-  OnSessionConnection,
-} from '../../state';
-import { newUuid, sleep } from '../../utils';
+import { KernelTransfer, OnSessionConnection } from '../../state';
+import { newUuid } from '../../utils';
 import { asObservable, Lumino } from '../lumino';
 import {
-  COLLABORATION_ROOM_URL_PATH,
-  requestDatalayerollaborationSessionId,
   ICollaborationProvider,
+  CollaborationStatus,
   Kernel,
   Lite,
-  requestJupyterCollaborationSession,
   useJupyter,
 } from './../../jupyter';
 import { CellMetadataEditor } from './cell/metadata';
@@ -40,7 +31,7 @@ import { INotebookToolbarProps } from './toolbar';
 import { Loader } from '../utils';
 
 import './Notebook.css';
-import { DatalayerNotebookExtension } from './NotebookExtensions';
+import { NotebookExtension } from './NotebookExtensions';
 
 export type ExternalIPyWidgets = {
   name: string;
@@ -64,8 +55,8 @@ export type INotebookProps = {
   Toolbar?: (props: INotebookToolbarProps) => JSX.Element;
   cellMetadataPanel?: boolean;
   cellSidebarMargin?: number;
-  collaborative?: ICollaborationProvider;
-  extensions?: DatalayerNotebookExtension[];
+  collaborationProvider?: ICollaborationProvider;
+  extensions?: NotebookExtension[];
   height?: string;
   id: string;
   kernel?: Kernel;
@@ -111,7 +102,7 @@ export const Notebook = (props: INotebookProps) => {
   });
   const {
     Toolbar,
-    collaborative,
+    collaborationProvider: collaborationProviderProp,
     extensions,
     height,
     maxHeight,
@@ -123,6 +114,7 @@ export const Notebook = (props: INotebookProps) => {
   } = props;
   const [id, _] = useState(props.id || newUuid());
   const [adapter, setAdapter] = useState<NotebookAdapter>();
+  const [isLoading, setIsLoading] = useState(false);
   const [extensionComponents, setExtensionComponents] = useState(
     new Array<JSX.Element>()
   );
@@ -130,7 +122,14 @@ export const Notebook = (props: INotebookProps) => {
   const notebookStore = useNotebookStore();
   const portals = notebookStore.selectNotebookPortals(id);
 
-  const [isLoading, setIsLoading] = useState(false);
+  console.log(
+    'Notebook render - adapter:',
+    adapter,
+    'isLoading:',
+    isLoading,
+    'adapter.panel:',
+    adapter?.panel
+  );
 
   // Bootstrap the Notebook Adapter.
   const bootstrapAdapter = async (
@@ -138,6 +137,7 @@ export const Notebook = (props: INotebookProps) => {
     serviceManager?: ServiceManager.IManager,
     kernel?: Kernel
   ) => {
+    console.log('bootstrapAdapter called with kernel:', kernel);
     const adapter = new NotebookAdapter({
       ...props,
       id,
@@ -145,6 +145,7 @@ export const Notebook = (props: INotebookProps) => {
       kernel,
       serviceManager,
     });
+    console.log('Created adapter:', adapter);
     // Update the local state.
     setAdapter(adapter);
     extensions!.forEach(extension => {
@@ -242,151 +243,129 @@ export const Notebook = (props: INotebookProps) => {
   }, [serviceManager, kernel]);
 
   useEffect(() => {
-    // As the server has the content source of truth, we
-    // must ensure that the shared model is pristine before
-    // to connect to the server. More over we should ensure,
-    // the connection is disposed in case the server document is
-    // reset for any reason while the client is still alive.
-    let provider: YWebsocketProvider | null = null;
-    let ready = new PromiseDelegate();
+    // Set up collaboration using the new provider system
+    let collaborationProvider: ICollaborationProvider | null = null;
     let isMounted = true;
     let sharedModel: YNotebook | null = null;
 
-    const onConnectionClose = (event: any) => {
-      if (event.code > 1000) {
-        console.error(
-          'Connection with the document has been closed unexpectedly.',
-          event
-        );
-
-        provider?.disconnect();
-
-        // If sessionId has expired - reset the client model
-        if (event.code === 4002) {
-          provider?.destroy();
-          ready.reject('Connection closed.');
-          ready = new PromiseDelegate();
-          if (isMounted) {
-            setIsLoading(true);
-            Promise.all([connect(), ready.promise, sleep(500)])
-              .catch(error => {
-                console.error(
-                  'Failed to setup collaboration connection.',
-                  error
-                );
-              })
-              .finally(() => {
-                if (isMounted) {
-                  setIsLoading(false);
-                }
-              });
-          }
-        }
-        // FIXME inform the user.
-      }
-    };
-
-    const onSync = (isSynced: boolean) => {
-      if (isSynced) {
-        provider?.off('sync', onSync);
-        ready.resolve(void 0);
-      }
-    };
-
     const connect = async () => {
-      if (adapter?.notebookPanel && isMounted) {
+      if (!adapter?.notebookPanel || !isMounted) {
+        return;
+      }
+
+      // Use the provided collaboration provider
+      if (collaborationProviderProp) {
+        collaborationProvider = collaborationProviderProp;
+      }
+
+      if (!collaborationProvider) {
+        return;
+      }
+
+      try {
         sharedModel = new YNotebook();
-        const { ydoc, awareness } = sharedModel;
-        // Setup Collaboration.
-        if (collaborative == 'jupyter') {
-          const token =
-            jupyterReactStore.getState().jupyterConfig?.jupyterServerToken;
-          const session = await requestJupyterCollaborationSession(
-            'json',
-            'notebook',
-            path!
-          );
-          const wsUrl = serviceManager?.serverSettings.wsUrl;
-          if (!wsUrl) {
-            throw new Error('WebSocket URL is not available');
-          }
-          const documentURL = URLExt.join(wsUrl, COLLABORATION_ROOM_URL_PATH);
-          const documentName = `${session.format}:${session.type}:${session.fileId}`;
-          provider = new YWebsocketProvider(documentURL, documentName, ydoc, {
-            disableBc: true,
-            params: {
-              sessionId: session.sessionId,
-              token: token!,
-            },
-            awareness,
-          });
-        } else if (collaborative == 'datalayer') {
-          const { runUrl, token } =
-            jupyterReactStore.getState().datalayerConfig ?? {};
-          const documentName = id;
-          const documentURL = URLExt.join(runUrl!, `/api/spacer/v1/documents`);
-          const sessionId = await requestDatalayerollaborationSessionId({
-            url: URLExt.join(documentURL, documentName),
-            token,
-          });
-          provider = new YWebsocketProvider(
-            documentURL.replace(/^http/, 'ws'),
-            documentName,
-            ydoc,
-            {
-              disableBc: true,
-              params: {
-                sessionId,
-                token: token!,
-              },
-              awareness,
+
+        // Set up event handlers
+        const handleStatusChange = (
+          _: ICollaborationProvider,
+          status: CollaborationStatus
+        ) => {
+          if (
+            status === CollaborationStatus.Connected &&
+            adapter?.notebookPanel
+          ) {
+            // Create a new model using the synchronized shared model
+            const model = new NotebookModel({
+              collaborationEnabled: true,
+              disableDocumentWideUndoRedo: true,
+              sharedModel: sharedModel!,
+            });
+
+            // Store the old model for disposal
+            const oldModel = adapter.notebookPanel.content.model;
+
+            // Safely update the model
+            try {
+              // Update the model without triggering widget reattachment
+              adapter.notebookPanel.content.model = model;
+
+              // Update the notebook store with the new model
+              notebookStore.changeModel({ id, notebookModel: model });
+
+              // Force the notebook panel to update its content
+              adapter.notebookPanel.update();
+
+              // Dispose the old model after successful update
+              if (oldModel && oldModel !== model) {
+                oldModel.dispose();
+              }
+
+              console.log(
+                'Notebook model updated with collaboration. Cell count:',
+                model.cells?.length
+              );
+            } catch (error) {
+              console.error('Error updating notebook model:', error);
+              // Restore the old model if update fails
+              if (oldModel && !oldModel.isDisposed) {
+                adapter.notebookPanel.content.model = oldModel;
+              }
             }
-          );
-        }
-        if (provider) {
-          provider.on('sync', onSync);
-          provider.on('connection-close', onConnectionClose);
-          console.log('Collaboration is setup with websocket provider.');
-          // Create a new model using the one synchronize with the collaboration document
-          const model = new NotebookModel({
-            collaborationEnabled: true,
-            disableDocumentWideUndoRedo: true,
-            sharedModel,
-          });
-          const oldModel = adapter.notebookPanel.content.model;
-          adapter.notebookPanel.content.model = model;
-          // We must dispose the old model after setting the new one.
-          oldModel?.dispose();
-        }
+          }
+        };
+
+        const handleError = (_: ICollaborationProvider, error: Error) => {
+          console.error('Collaboration error:', error);
+          // Handle collaboration errors
+          if (error.message.includes('session expired')) {
+            // Attempt to reconnect
+            if (isMounted && collaborationProvider && sharedModel) {
+              collaborationProvider
+                .connect(sharedModel, id)
+                .catch(console.error);
+            }
+          }
+        };
+
+        collaborationProvider.events.statusChanged.connect(handleStatusChange);
+        collaborationProvider.events.errorOccurred.connect(handleError);
+
+        // Connect to collaboration service
+        await collaborationProvider.connect(sharedModel, id, {
+          serviceManager,
+          path: props.path, // Pass the notebook's path to the collaboration provider
+        });
+
+        console.log(
+          'Collaboration is setup with provider:',
+          collaborationProvider.type
+        );
+      } catch (error) {
+        console.error('Failed to setup collaboration:', error);
+        setIsLoading(false);
       }
     };
 
-    if (collaborative) {
-      setIsLoading(true);
-      Promise.all([connect(), ready.promise, sleep(500)])
+    if (collaborationProviderProp) {
+      // Don't set isLoading to true here as it causes the Lumino widget to unmount
+      // setIsLoading(true);
+      connect()
         .catch(error => {
           console.error('Failed to setup collaboration connection.', error);
         })
         .finally(() => {
           if (isMounted) {
-            setIsLoading(false);
+            // setIsLoading(false);
           }
         });
     }
 
     return () => {
       isMounted = false;
-      if (provider) {
-        (provider.synced ? Promise.resolve() : ready.promise).finally(() => {
-          provider?.off('sync', onSync);
-          provider?.off('connection-close', onConnectionClose);
-          provider?.disconnect();
-          provider?.destroy();
-        });
-      }
+      collaborationProvider?.dispose();
       sharedModel?.dispose();
     };
-  }, [adapter?.notebookPanel, collaborative]);
+  }, [adapter?.notebookPanel, collaborationProviderProp]);
 
   useEffect(() => {
     if (adapter && adapter.kernel !== kernel) {
@@ -495,7 +474,13 @@ export const Notebook = (props: INotebookProps) => {
         {isLoading ? (
           <Loader />
         ) : (
-          <Box>{adapter && <Lumino id={id}>{adapter.panel}</Lumino>}</Box>
+          <Box>
+            {adapter ? (
+              <Lumino id={id}>{adapter.panel}</Lumino>
+            ) : (
+              <div>No adapter available</div>
+            )}
+          </Box>
         )}
       </Box>
     </Box>

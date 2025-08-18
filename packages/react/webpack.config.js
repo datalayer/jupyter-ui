@@ -50,11 +50,12 @@ const ENTRY =
   // './src/examples/NotebookCellToolbar';
   // './src/examples/NotebookColormode';
   // './src/examples/NotebookCollaborative';
-  // './src/examples/NotebookExtension';
-  // './src/examples/NotebookKernel';
-  // './src/examples/NotebookKernelChange';
-  // './src/examples/NotebookLess';
-  './src/examples/NotebookLite';
+  './src/examples/Notebook2Collaborative';
+// './src/examples/NotebookExtension';
+// './src/examples/NotebookKernel';
+// './src/examples/NotebookKernelChange';
+// './src/examples/NotebookLess';
+// './src/examples/NotebookLite';
 // './src/examples/NotebookLiteContext';
 // './src/examples/NotebookLocalServer';
 // './src/examples/NotebookMutationsKernel';

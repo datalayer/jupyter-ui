@@ -6,37 +6,40 @@
 
 import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
-import { CellSidebarExtension } from '../components';
-import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
-import { Notebook } from '../components/notebook/Notebook';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
-import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-import { JupyterCollaborationProvider } from '../jupyter/collaboration/providers/JupyterCollaborationProvider';
+import { useJupyter, JupyterCollaborationProvider } from '../jupyter';
+import {
+  Notebook2,
+  CellSidebarExtension,
+  CellSidebarButton,
+} from '../components';
 
-const NotebookCollaborative = () => {
+const Notebook2Collaborative = () => {
+  const { serviceManager } = useJupyter();
   const extensions = useMemo(
     () => [new CellSidebarExtension({ factory: CellSidebarButton })],
     []
   );
 
-  // Create a Jupyter collaboration provider
   const collaborationProvider = useMemo(
     () => new JupyterCollaborationProvider(),
     []
   );
 
-  return (
+  return serviceManager ? (
     <JupyterReactTheme>
-      <Notebook
-        collaborationProvider={collaborationProvider}
+      <Notebook2
         path="collaboration.ipynb"
-        id="notebook-collaboration-id"
+        id="notebook2-collaboration-id"
         startDefaultKernel
+        serviceManager={serviceManager}
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         extensions={extensions}
-        Toolbar={NotebookToolbar}
+        collaborationProvider={collaborationProvider}
       />
     </JupyterReactTheme>
+  ) : (
+    <></>
   );
 };
 
@@ -44,4 +47,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookCollaborative />);
+root.render(<Notebook2Collaborative />);

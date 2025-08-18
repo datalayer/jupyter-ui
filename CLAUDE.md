@@ -1,66 +1,66 @@
-# Jupyter UI - AI Assistant Guide
+# Jupyter UI - Quick Reference
 
-## Quick Overview
+## Overview
 
-React component library for Jupyter notebooks. Monorepo with 4 packages managed by Lerna.
+React component library for Jupyter notebooks. Monorepo with 4 main packages.
 
-## Core Packages
-
-- `@datalayer/jupyter-react` - React components for notebooks, cells, terminals
-- `@datalayer/jupyter-lexical` - Rich text editor integration
-- `@datalayer/jupyter-docusaurus-plugin` - Docusaurus plugin
-- `datalayer-jupyter-vscode` - VS Code extension
-
-## Essential Commands
+## Commands
 
 ```bash
-npm install                   # Install dependencies
-npm run build                 # Build all packages
-npm run jupyter:server        # Start Jupyter server (port 8686)
-npm run storybook            # Start Storybook (port 6006)
-npm run lint                 # Check errors only (--quiet)
-npm run lint:fix             # Auto-fix issues
-npm run format               # Format code
-npm run type-check           # TypeScript checking
-npm run check                # Run all checks (format, lint, type)
-npm run check:fix            # Auto-fix and check all
-npm test                     # Run tests
+# Setup
+npm install
+npm run build
+
+# Development
+npm run jupyter:server       # Start Jupyter (port 8686)
+npm run storybook           # Start Storybook (port 6006)
+
+# React package dev (cd packages/react)
+npm run start               # Remote server config
+npm run start-local         # Local server (webpack + jupyter)
+npm run start-local:webpack # Only webpack
+
+# Code quality
+npm run check               # Format, lint, type-check
+npm run check:fix          # Auto-fix and check
 ```
 
-## Requirements
+## Key Info
 
-- Node.js >= 20.0.0 (use .nvmrc)
-- npm (not yarn)
-- Server token: `60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6`
+- **Node.js**: >= 20.0.0 (use .nvmrc)
+- **Server token**: `60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6`
+- **Webpack entry**: Edit `packages/react/webpack.config.js` → `ENTRY` variable
+- **Jupyter config**: `dev/config/jupyter_server_config.py`
 
-## Key Files
+## Collaboration Setup
 
-- `eslint.config.js` - ESLint v9 flat config
-- `.prettierrc.json` - Formatter config
-- `.prettierignore` - Excludes MDX files
-- `patches/` - Third-party fixes (auto-applied)
-- `packages/react/webpack.config.js` - Build config
+1. Install: `pip install jupyter-collaboration jupyterlab`
+2. Enable: Set `c.LabApp.collaborative = True` in jupyter config
+3. Test: Open http://localhost:3208/ in multiple windows
 
-## Recent Fixes (2024)
+## Collaboration Providers
 
-- MDX comments: `{/_` → `{/** **/}` in 13 files
-- Node requirement: 18 → 20+
-- Webpack warnings: 7 → 2 (source-map exclusions)
-- @jupyterlite patch for missing logos
-- ESLint v9 flat config migration
-- React 18 deprecations fixed
-- Storybook CI: Added wait-on and --url for test reliability
-- Terminal component: Fixed BoxPanel initialization issue
+```tsx
+// Basic usage
+const provider = new JupyterCollaborationProvider();
+<Notebook collaborationProvider={provider} path="notebook.ipynb" />;
 
-## Common Issues
+// With config
+const provider = new JupyterCollaborationProvider({
+  path: 'notebook.ipynb',
+  serverSettings: mySettings,
+});
+```
 
-1. **Storybook errors**: Check MDX syntax, run `npx patch-package`
-2. **Node version**: Use Node 20+ (`nvm use`)
-3. **Lint errors**: Run `npm run lint:fix`
-4. **Build fails**: Run `npm run type-check`
+## Troubleshooting
 
-## AI Assistant Notes
+- **Build fails**: Run `npm run type-check`
+- **Lint errors**: Run `npm run lint:fix`
+- **Node version**: Use Node 20+ (`nvm use`)
+- **Collaboration issues**: Check WebSocket connections and jupyter-collaboration installation
 
-- Always use npm, not yarn
+## Development Tips
+
+- Use npm, not yarn
 - Prefer editing over creating files
-- Run lint/type checks before committing
+- Run checks after changes: `npm run check:fix`

@@ -28,11 +28,6 @@ export type IJupyterConfig = {
 let config: IJupyterConfig | undefined = undefined;
 
 /**
- * Datalayer configuration is loaded.
- */
-let datalayerConfigLoaded = false;
-
-/**
  * Setter for jupyterServerUrl.
  */
 export const setJupyterServerUrl = (jupyterServerUrl: string) => {
@@ -76,37 +71,6 @@ export const getJupyterServerToken = () => {
 };
 
 /**
- * Get the datalayer configuration fully
- * or for a particular parameter.
- *
- * @param name The parameter name
- * @returns The parameter value if {@link name} is specified, otherwise the full configuration.
- */
-function loadDatalayerConfig(name?: string): any {
-  if (!datalayerConfigLoaded) {
-    const datalayerConfigData = document.getElementById(
-      'datalayer-config-data'
-    );
-    if (datalayerConfigData?.textContent) {
-      console.log('Found Datalayer config data in page', datalayerConfigData);
-      try {
-        config = {
-          ...config,
-          ...JSON.parse(datalayerConfigData.textContent),
-        };
-        datalayerConfigLoaded = true;
-      } catch (error) {
-        console.error('Failed to parse the Datalayer configuration.', error);
-      }
-    } else {
-      console.log('No Datalayer config data found in page');
-    }
-  }
-  // @ts-expect-error IJupyterConfig does not have index signature
-  return name ? config[name] : config;
-}
-
-/**
  * Method to load the Jupyter configuration from the host HTML page.
  */
 export const loadJupyterConfig = (
@@ -145,35 +109,24 @@ export const loadJupyterConfig = (
   }
   // Hub related information ('hubHost' 'hubPrefix' 'hubUser' ,'hubServerName').
   config.insideJupyterHub = PageConfig.getOption('hubHost') !== '';
-  // Load the Datalayer config.
-  loadDatalayerConfig();
-  if (datalayerConfigLoaded) {
-    // There is a Datalayer config, mix the configs...
-    setJupyterServerUrl(jupyterServerUrl || config.jupyterServerUrl);
-    setJupyterServerToken(jupyterServerToken || config.jupyterServerToken);
+  // Look for a Jupyter config...
+  if (jupyterConfig) {
+    setJupyterServerUrl(
+      jupyterServerUrl ??
+        jupyterConfig.baseUrl ??
+        location.protocol + '//' + location.host + jupyterConfig.baseUrl
+    );
+    setJupyterServerToken(jupyterServerToken ?? jupyterConfig.token ?? '');
   } else {
-    // No Datalayer config, look for a Jupyter config...
-    if (jupyterConfig) {
-      setJupyterServerUrl(
-        jupyterServerUrl ??
-          jupyterConfig.jupyterServerUrl ??
-          location.protocol + '//' + location.host + jupyterConfig.baseUrl
-      );
-      setJupyterServerToken(jupyterServerToken ?? jupyterConfig.token ?? '');
-    } else {
-      // No Datalayer and no Jupyter config, rely on location...
-      setJupyterServerUrl(
-        jupyterServerUrl ??
-          config.jupyterServerUrl ??
-          location.protocol +
-            '//' +
-            location.host +
-            DEFAULT_API_KERNEL_PREFIX_URL
-      );
-      setJupyterServerToken(
-        jupyterServerToken ?? config.jupyterServerToken ?? ''
-      );
-    }
+    // No Jupyter config, rely on location...
+    setJupyterServerUrl(
+      jupyterServerUrl ??
+        config.jupyterServerUrl ??
+        location.protocol + '//' + location.host + DEFAULT_API_KERNEL_PREFIX_URL
+    );
+    setJupyterServerToken(
+      jupyterServerToken ?? config.jupyterServerToken ?? ''
+    );
   }
   if (lite) {
     setJupyterServerUrl(location.protocol + '//' + location.host);

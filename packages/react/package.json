@@ -54,7 +54,7 @@
     "start-noconfig": "cross-env NO_CONFIG=true webpack serve",
     "start-local": "run-p -c 'start-local:*'",
     "start-local:webpack": "cross-env LOCAL_JUPYTER_SERVER=true webpack serve",
-    "start-local:jupyter-server": "cd ./../.. && make start-jupyter-server",
+    "start-local:jupyter-server": "cd ./../.. && npm run jupyter:server",
     "stylelint": "npm stylelint:check --fix",
     "stylelint:check": "stylelint --cache \"style/**/*.css\"",
     "test": "jest --coverage",
