@@ -4,11 +4,11 @@
  * MIT License
  */
 
-import '../../style/index.css';
-
 import { createRoot } from 'react-dom/client';
 // import App from "./AppSimple";
 import App from './AppNbformat';
+
+import '../../style/index.css';
 
 const div = document.createElement('div');
 document.body.appendChild(div);

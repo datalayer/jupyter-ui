@@ -148,6 +148,7 @@
   padding: 0;
   margin: 0;
   margin-left: 16px;
+  list-style-type: numeric;
   list-style-position: inside;
 }
 .PlaygroundEditorTheme__ol2 {
@@ -182,6 +183,7 @@
   padding: 0;
   margin: 0;
   margin-left: 16px;
+  list-style-type: disc;
   list-style-position: inside;
 }
 .PlaygroundEditorTheme__listItem {

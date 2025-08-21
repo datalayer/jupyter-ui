@@ -8,8 +8,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('./lexical/index.css');
-
 /* Custom variables for compatibility */
 :root {
   --font-family-system:

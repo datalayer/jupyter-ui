@@ -42,13 +42,13 @@ import {
   JupyterCodeHighlightNode,
   JupyterCodeNode,
   JupyterOutputNode,
-  JupyterCellNode,
+  // JupyterCellNode,
   CodeActionMenuPlugin,
   AutoEmbedPlugin,
   NbformatContentPlugin,
   TableOfContentsPlugin,
   MarkdownPlugin,
-  JupyterCellPlugin,
+  // JupyterCellPlugin,
   CommentPlugin,
   FloatingTextFormatToolbarPlugin,
 } from './..';
@@ -81,7 +81,7 @@ const initialConfig = {
     HeadingNode,
     HorizontalRuleNode,
     ImageNode,
-    JupyterCellNode,
+    // JupyterCellNode,
     JupyterCodeHighlightNode,
     JupyterCodeNode,
     JupyterOutputNode,
@@ -103,7 +103,7 @@ const EditorContextPlugin = () => {
   useEffect(() => {
     setEditor(editor);
     //    return () => setEditor(undefined);
-  }, [editor]);
+  }, [editor, setEditor]);
   return null;
 };
 
@@ -149,7 +149,9 @@ export function Editor(props: Props) {
             <AutoLinkPlugin />
             <ListMaxIndentLevelPlugin maxDepth={7} />
             <MarkdownPlugin />
+            {/*
             <JupyterCellPlugin />
+            */}
             <JupyterCellOutputPlugin />
             <ComponentPickerMenuPlugin />
             <EquationsPlugin />

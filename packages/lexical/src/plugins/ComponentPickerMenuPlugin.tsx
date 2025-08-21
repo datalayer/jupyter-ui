@@ -11,8 +11,11 @@ import {
   INSERT_UNORDERED_LIST_COMMAND,
 } from '@lexical/list';
 import { INSERT_EMBED_COMMAND } from '@lexical/react/LexicalAutoEmbedPlugin';
-import { INSERT_JUPYTER_CELL_COMMAND } from './JupyterCellPlugin';
-//import { INSERT_JUPYTER_CELL_COMMAND, DEFAULT_INITIAL_OUTPUTS } from './JupyterPlugin';
+// import { INSERT_JUPYTER_CELL_COMMAND } from './JupyINSERT_JUPYTER_CELL_COMMANDterCellPlugin';
+import {
+  INSERT_JUPYTER_CELL_OUTPUT_COMMAND,
+  DEFAULT_INITIAL_OUTPUTS,
+} from './JupyterCellOutputPlugin';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { INSERT_HORIZONTAL_RULE_COMMAND } from '@lexical/react/LexicalHorizontalRuleNode';
 import {
@@ -166,13 +169,20 @@ export const ComponentPickerMenuPlugin = (): JSX.Element => {
         icon: <i className="icon code" />,
         keywords: ['javascript', 'python', 'js', 'codeblock', 'jupyter'],
         onSelect: () => {
-          //          const selection = $getSelection();
-          //          const code = selection?.getTextContent() || "";
+          // const selection = $getSelection();
+          // const code = selection?.getTextContent() || "";
+          /*
           editor.dispatchCommand(INSERT_JUPYTER_CELL_COMMAND, {
             code: "print('Hello Jupyter UI')",
             outputs: [],
             loading: 'Loading...',
             autoStart: true,
+          });
+          */
+          editor.dispatchCommand(INSERT_JUPYTER_CELL_OUTPUT_COMMAND, {
+            code: "print('Hello Jupyter UI')",
+            outputs: DEFAULT_INITIAL_OUTPUTS,
+            loading: 'Loading...',
           });
         },
       }),
