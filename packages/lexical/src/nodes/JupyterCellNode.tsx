@@ -15,7 +15,7 @@ import {
 } from 'lexical';
 import { IOutput } from '@jupyterlab/nbformat';
 import { JupyterCellProps } from './../plugins/JupyterCellPlugin';
-import JupyterCellNodeComponent from './JupyterCellNodeComponent';
+import { Cell } from '@datalayer/jupyter-react';
 
 const TYPE = 'jupyter-cell';
 
@@ -84,9 +84,8 @@ export class JupyterCellNode extends DecoratorNode<ReactNode> {
       `decorate -> key: ${this.getKey()} outputs: ${this.__outputs} data: ${this.__data}`,
     );
     return (
-      <JupyterCellNodeComponent
-        nodeKey={this.getKey()}
-        code={this.__code}
+      <Cell
+        source={this.__code}
         outputs={this.__outputs}
         autoStart={this.__autoStart}
       />
