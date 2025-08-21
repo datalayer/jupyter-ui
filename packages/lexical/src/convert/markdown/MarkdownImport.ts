@@ -13,9 +13,9 @@ import type {
 import type { LexicalNode, RootNode, TextNode } from 'lexical';
 
 import {
-  JupyterCodeNode,
-  $createJupyterCodeNode,
-} from './../../nodes/JupyterCodeNode';
+  JupyterInputNode,
+  $createJupyterInputNode,
+} from './../../nodes/JupyterInputNode';
 import { $isListItemNode, $isListNode } from '@lexical/list';
 import { $isQuoteNode } from '@lexical/rich-text';
 import { $findMatchingParent } from '@lexical/utils';
@@ -167,7 +167,7 @@ function importCodeBlock(
   lines: Array<string>,
   startLineIndex: number,
   rootNode: RootNode,
-): [JupyterCodeNode | null, number] {
+): [JupyterInputNode | null, number] {
   const openMatch = lines[startLineIndex].match(CODE_BLOCK_REG_EXP);
 
   if (openMatch) {
@@ -178,7 +178,7 @@ function importCodeBlock(
       const closeMatch = lines[endLineIndex].match(CODE_BLOCK_REG_EXP);
 
       if (closeMatch) {
-        const codeBlockNode = $createJupyterCodeNode(openMatch[1]);
+        const codeBlockNode = $createJupyterInputNode(openMatch[1]);
         const textNode = $createTextNode(
           lines.slice(startLineIndex + 1, endLineIndex).join('\n'),
         );

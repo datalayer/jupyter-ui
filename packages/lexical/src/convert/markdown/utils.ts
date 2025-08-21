@@ -13,7 +13,7 @@ import type {
 } from '.';
 import type { ElementNode, LexicalNode, TextFormatType } from 'lexical';
 
-import { $isJupyterCodeNode } from './../../nodes/JupyterCodeNode';
+import { $isJupyterInputNode } from './../../nodes/JupyterInputNode';
 import { $isListItemNode, $isListNode } from '@lexical/list';
 import { $isHeadingNode, $isQuoteNode } from '@lexical/rich-text';
 
@@ -379,7 +379,7 @@ function blockQuoteExport(
 }
 
 function codeBlockExport(node: LexicalNode) {
-  if (!$isJupyterCodeNode(node)) {
+  if (!$isJupyterInputNode(node)) {
     return null;
   }
 

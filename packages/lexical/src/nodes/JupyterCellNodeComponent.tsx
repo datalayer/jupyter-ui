@@ -6,29 +6,22 @@
 
 import { NodeKey } from 'lexical';
 import { IOutput } from '@jupyterlab/nbformat';
-import { JupyterCellComponent } from './../components/JupyterCellComponent';
+import { Cell } from '@datalayer/jupyter-react';
 
 type IJupyterCellNodeComponentProps = {
   nodeKey: NodeKey;
   code: string;
   outputs: IOutput[];
-  loading: string;
   autoStart: boolean;
-  data: any;
 };
 
 export const JupyterCellNodeComponent = (
   props: IJupyterCellNodeComponentProps,
 ) => {
-  const { code, outputs, loading, autoStart } = props;
+  const { code, outputs, autoStart } = props;
   return (
     <>
-      <JupyterCellComponent
-        code={code}
-        outputs={outputs}
-        loading={loading}
-        autoStart={autoStart}
-      />
+      <Cell source={code} outputs={outputs} autoStart={autoStart} />
     </>
   );
 };

@@ -17,7 +17,7 @@ import {
 } from '@jupyterlab/nbformat';
 import EquationNode, { $isEquationNode } from './../nodes/EquationNode';
 import { $isYouTubeNode } from './../nodes/YouTubeNode';
-import { $isJupyterCodeNode } from './../nodes/JupyterCodeNode';
+import { $isJupyterInputNode } from './../nodes/JupyterInputNode';
 import { exportTopLevelElements } from './markdown/MarkdownExport';
 import { transformersByType } from './markdown/utils';
 import { TRANSFORMERS } from './markdown/index';
@@ -49,7 +49,7 @@ export const lexicalToNbformat = (nodes: LexicalNode[]) => {
     cells: [],
   };
   nodes.map(node => {
-    if ($isJupyterCodeNode(node)) {
+    if ($isJupyterInputNode(node)) {
       nb.cells.push(newCodeCell(node.getTextContent()));
     } else if (
       $isParagraphNode(node) &&

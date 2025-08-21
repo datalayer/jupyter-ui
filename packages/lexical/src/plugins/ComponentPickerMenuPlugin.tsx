@@ -13,9 +13,9 @@ import {
 import { INSERT_EMBED_COMMAND } from '@lexical/react/LexicalAutoEmbedPlugin';
 // import { INSERT_JUPYTER_CELL_COMMAND } from './JupyINSERT_JUPYTER_CELL_COMMANDterCellPlugin';
 import {
-  INSERT_JUPYTER_CELL_OUTPUT_COMMAND,
+  INSERT_JUPYTER_INPUT_OUTPUT_COMMAND,
   DEFAULT_INITIAL_OUTPUTS,
-} from './JupyterCellOutputPlugin';
+} from './JupyterInputOutputPlugin';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { INSERT_HORIZONTAL_RULE_COMMAND } from '@lexical/react/LexicalHorizontalRuleNode';
 import {
@@ -179,7 +179,7 @@ export const ComponentPickerMenuPlugin = (): JSX.Element => {
             autoStart: true,
           });
           */
-          editor.dispatchCommand(INSERT_JUPYTER_CELL_OUTPUT_COMMAND, {
+          editor.dispatchCommand(INSERT_JUPYTER_INPUT_OUTPUT_COMMAND, {
             code: "print('Hello Jupyter UI')",
             outputs: DEFAULT_INITIAL_OUTPUTS,
             loading: 'Loading...',

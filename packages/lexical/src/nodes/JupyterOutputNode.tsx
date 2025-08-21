@@ -17,20 +17,19 @@ import { UUID } from '@lumino/coreutils';
 import { IOutput } from '@jupyterlab/nbformat';
 import {
   OUTPUT_UUID_TO_CODE_UUID,
-  CODE_UUID_TO_OUTPUT_KEY,
-  CODE_UUID_TO_OUTPUT_UUID,
+  INPUT_UUID_TO_OUTPUT_KEY,
+  INPUT_UUID_TO_OUTPUT_UUID,
   OUTPUT_UUID_TO_OUTPUT_KEY,
-} from '../plugins/JupyterCellOutputPlugin';
-import { OutputAdapter, newUuid } from '@datalayer/jupyter-react';
-import JupyterOutputComponent from '../components/JupyterOutputComponent';
+} from '../plugins/JupyterInputOutputPlugin';
+import { Output, OutputAdapter, newUuid } from '@datalayer/jupyter-react';
 
 export type SerializedJupyterOutputNode = Spread<
   {
     type: 'jupyter-output';
     source: string;
     outputs: IOutput[];
-    codeNodeUuid: string;
-    outputNodeUuid: string;
+    jupyterInputNodeUuid: string;
+    jupyterOutputNodeUuid: string;
     version: 1;
   },
   SerializedLexicalNode
@@ -41,8 +40,8 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
   __outputs: IOutput[];
   __autoRun: boolean;
   __outputAdapter: OutputAdapter;
-  __codeNodeUuid: string;
-  __outputNodeUuid: string;
+  __jupyterInputNodeUuid: string;
+  __jupyterOutputNodeUuid: string;
   __executeTrigger: number;
 
   /** @override */
@@ -53,12 +52,12 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
   /** @override */
   static clone(node: JupyterOutputNode) {
     return new JupyterOutputNode(
-      node.getCode(),
+      node.getJupyterInput(),
       node.__outputAdapter,
       node.__outputs,
       node.__autoRun,
-      node.__codeNodeUuid,
-      node.__outputNodeUuid,
+      node.__jupyterInputNodeUuid,
+      node.__jupyterOutputNodeUuid,
       node.__key,
     );
   }
@@ -72,8 +71,8 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
       new OutputAdapter(newUuid(), undefined, []),
       serializedNode.outputs,
       false,
-      serializedNode.codeNodeUuid,
-      serializedNode.outputNodeUuid,
+      serializedNode.jupyterInputNodeUuid,
+      serializedNode.jupyterOutputNodeUuid,
     );
   }
 
@@ -83,52 +82,58 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
     outputAdapter: OutputAdapter,
     outputs: IOutput[],
     autoRun: boolean,
-    codeNodeUuid?: string,
-    outputNodeUuid?: string,
+    jupyterInputNodeUuid?: string,
+    jupyterOutputNodeUuid?: string,
     key?: NodeKey,
   ) {
     super(key);
-    this.__codeNodeUuid = codeNodeUuid || UUID.uuid4();
-    this.__outputNodeUuid = outputNodeUuid || UUID.uuid4();
+    this.__jupyterInputNodeUuid = jupyterInputNodeUuid || UUID.uuid4();
+    this.__jupyterOutputNodeUuid = jupyterOutputNodeUuid || UUID.uuid4();
     this.__code = source;
     this.__outputs = outputs;
     this.__outputAdapter = outputAdapter;
     this.__executeTrigger = 0;
     this.__autoRun = autoRun;
-    OUTPUT_UUID_TO_CODE_UUID.set(this.__outputNodeUuid, codeNodeUuid);
-    CODE_UUID_TO_OUTPUT_KEY.set(this.__codeNodeUuid, this.__key);
-    CODE_UUID_TO_OUTPUT_UUID.set(this.__codeNodeUuid, this.__outputNodeUuid);
-    OUTPUT_UUID_TO_OUTPUT_KEY.set(this.__outputNodeUuid, this.__key);
+    OUTPUT_UUID_TO_CODE_UUID.set(
+      this.__jupyterOutputNodeUuid,
+      jupyterInputNodeUuid,
+    );
+    INPUT_UUID_TO_OUTPUT_KEY.set(this.__jupyterInputNodeUuid, this.__key);
+    INPUT_UUID_TO_OUTPUT_UUID.set(
+      this.__jupyterInputNodeUuid,
+      this.__jupyterOutputNodeUuid,
+    );
+    OUTPUT_UUID_TO_OUTPUT_KEY.set(this.__jupyterOutputNodeUuid, this.__key);
   }
 
-  setCode(code: string) {
+  setJupyterInput(code: string) {
     const self = this.getWritable();
     self.__code = code;
   }
 
-  getCode(): string {
+  getJupyterInput(): string {
     const self = this.getLatest();
     return self.__code;
   }
 
-  setCodeNodeUuid(codeNodeUuid: string) {
+  setJupyterInputNodeUuid(jupyterInputNodeUuid: string) {
     const self = this.getWritable();
-    self.__codeNodeUuid = codeNodeUuid;
+    self.__jupyterInputNodeUuid = jupyterInputNodeUuid;
   }
 
-  getCodeNodeUuid(): string {
+  getJupyterInputNodeUuid(): string {
     const self = this.getLatest();
-    return self.__codeNodeUuid;
+    return self.__jupyterInputNodeUuid;
   }
 
-  setOutputNodeUuid(outputNodeUuid: string) {
+  setJupyterOutputNodeUuid(jupyterOutputNodeUuid: string) {
     const self = this.getWritable();
-    self.__outputNodeUuid = outputNodeUuid;
+    self.__jupyterOutputNodeUuid = jupyterOutputNodeUuid;
   }
 
-  getOutputNodeUuid(): string {
+  getJupyterOutputNodeUuid(): string {
     const self = this.getLatest();
-    return self.__outputNodeUuid;
+    return self.__jupyterOutputNodeUuid;
   }
 
   setExecuteTrigger(executeTrigger: number) {
@@ -184,12 +189,11 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
   /** @override */
   decorate(_editor: LexicalEditor, _config: EditorConfig) {
     return (
-      <JupyterOutputComponent
-        code={this.getCode()}
+      <Output
+        code={this.getJupyterInput()}
         outputs={this.__outputs}
-        outputAdapter={this.__outputAdapter}
-        codeNodeUuid={this.__codeNodeUuid}
-        outputNodeUuid={this.__outputNodeUuid}
+        adapter={this.__outputAdapter}
+        id={this.__jupyterOutputNodeUuid}
         executeTrigger={this.getExecuteTrigger()}
         autoRun={this.__autoRun}
       />
@@ -200,10 +204,10 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
   exportJSON(): SerializedJupyterOutputNode {
     return {
       type: 'jupyter-output',
-      source: this.getCode(),
+      source: this.getJupyterInput(),
       outputs: this.__outputAdapter.outputArea.model.toJSON(),
-      codeNodeUuid: this.getCodeNodeUuid(),
-      outputNodeUuid: this.getOutputNodeUuid(),
+      jupyterInputNodeUuid: this.getJupyterInputNodeUuid(),
+      jupyterOutputNodeUuid: this.getJupyterOutputNodeUuid(),
       version: 1,
     };
   }
@@ -218,9 +222,9 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
   }
 
   public executeCode(code: string) {
-    this.setCode(code);
+    this.setJupyterInput(code);
     this.__outputAdapter.execute(code);
-    //    this.setExecuteTrigger(this.getExecuteTrigger() + 1);
+    this.setExecuteTrigger(this.getExecuteTrigger() + 1);
   }
 }
 
@@ -229,16 +233,16 @@ export function $createJupyterOutputNode(
   outputAdapter: OutputAdapter,
   outputs: IOutput[],
   autoRun: boolean,
-  codeNodeUuid: string,
-  outputNodeUuid: string,
+  jupyterInputNodeUuid: string,
+  jupyterOutputNodeUuid: string,
 ): JupyterOutputNode {
   return new JupyterOutputNode(
     code,
     outputAdapter,
     outputs,
     autoRun,
-    codeNodeUuid,
-    outputNodeUuid,
+    jupyterInputNodeUuid,
+    jupyterOutputNodeUuid,
   );
 }
 

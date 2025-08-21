@@ -28,7 +28,7 @@ import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { CodeNode } from '@lexical/code';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import {
-  JupyterCellOutputPlugin,
+  JupyterInputOutputPlugin,
   EquationNode,
   HorizontalRulePlugin,
   ListMaxIndentLevelPlugin,
@@ -39,8 +39,8 @@ import {
   YouTubePlugin,
   ImageNode,
   YouTubeNode,
-  JupyterCodeHighlightNode,
-  JupyterCodeNode,
+  JupyterInputHighlightNode,
+  JupyterInputNode,
   JupyterOutputNode,
   // JupyterCellNode,
   CodeActionMenuPlugin,
@@ -82,8 +82,8 @@ const initialConfig = {
     HorizontalRuleNode,
     ImageNode,
     // JupyterCellNode,
-    JupyterCodeHighlightNode,
-    JupyterCodeNode,
+    JupyterInputHighlightNode,
+    JupyterInputNode,
     JupyterOutputNode,
     LinkNode,
     ListItemNode,
@@ -152,7 +152,7 @@ export function Editor(props: Props) {
             {/*
             <JupyterCellPlugin />
             */}
-            <JupyterCellOutputPlugin />
+            <JupyterInputOutputPlugin />
             <ComponentPickerMenuPlugin />
             <EquationsPlugin />
             <ImagesPlugin />

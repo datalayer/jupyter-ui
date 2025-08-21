@@ -15,10 +15,10 @@ import type {
 } from 'lexical';
 
 import {
-  $createJupyterCodeNode,
-  $isJupyterCodeNode,
-  JupyterCodeNode,
-} from './../../nodes/JupyterCodeNode';
+  $createJupyterInputNode,
+  $isJupyterInputNode,
+  JupyterInputNode,
+} from './../../nodes/JupyterInputNode';
 import { $createLinkNode, $isLinkNode, LinkNode } from '@lexical/link';
 import {
   $createListItemNode,
@@ -212,9 +212,9 @@ export const QUOTE: ElementTransformer = {
 };
 
 export const CODE: ElementTransformer = {
-  dependencies: [JupyterCodeNode],
+  dependencies: [JupyterInputNode],
   export: (node: LexicalNode) => {
-    if (!$isJupyterCodeNode(node)) {
+    if (!$isJupyterInputNode(node)) {
       return null;
     }
     const textContent = node.getTextContent();
@@ -228,7 +228,7 @@ export const CODE: ElementTransformer = {
   },
   regExp: /^```(\w{1,10})?\s/,
   replace: replaceWithBlock(match => {
-    return $createJupyterCodeNode(match ? match[1] : undefined);
+    return $createJupyterInputNode(match ? match[1] : undefined);
   }),
   type: 'element',
 };

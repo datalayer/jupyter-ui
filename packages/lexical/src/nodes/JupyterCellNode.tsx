@@ -88,9 +88,7 @@ export class JupyterCellNode extends DecoratorNode<ReactNode> {
         nodeKey={this.getKey()}
         code={this.__code}
         outputs={this.__outputs}
-        loading={this.__loading}
         autoStart={this.__autoStart}
-        data={this.__data}
       />
     );
   }
