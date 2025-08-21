@@ -18,6 +18,9 @@ import {
   $isElementNode,
   $insertNodes,
   $createParagraphNode,
+  KEY_ENTER_COMMAND,
+  COMMAND_PRIORITY_LOW,
+  $createLineBreakNode,
 } from 'lexical';
 import { $getNodeByKey, $createNodeSelection, $setSelection } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -78,43 +81,107 @@ export const JupyterInputOutputPlugin = () => {
   useEffect(() => {
     return editor.registerCommand<boolean>(
       INSERT_LINE_BREAK_COMMAND,
-      event => {
+      _event => {
+        console.warn('🔵 INSERT_LINE_BREAK_COMMAND triggered');
         const selection = $getSelection();
         const node = selection?.getNodes()[0];
+        console.warn('🔵 Selection node:', node);
         if (node?.__parent) {
           const parentNode = $getNodeByKey(node?.__parent);
+          console.warn(
+            '🔵 Parent node:',
+            parentNode,
+            'Type:',
+            parentNode?.getType(),
+          );
           if (parentNode && $isJupyterInputNode(parentNode)) {
-            const code = parentNode.getTextContent();
-            const jupyterInputNodeUuid = (
-              parentNode as JupyterInputNode
-            ).getJupyterInputNodeUuid();
-            const jupyterOutputNodeKey =
-              INPUT_UUID_TO_OUTPUT_KEY.get(jupyterInputNodeUuid);
-            if (jupyterOutputNodeKey) {
-              const jupyterOutputNode = $getNodeByKey(jupyterOutputNodeKey);
-              if (jupyterOutputNode) {
-                (jupyterOutputNode as JupyterOutputNode).executeCode(code);
-                return true;
-              }
-            }
-            const jupyterOutputNode = $createJupyterOutputNode(
-              code,
-              new OutputAdapter(newUuid(), undefined, []),
-              [],
-              true,
-              jupyterInputNodeUuid,
-              UUID.uuid4(),
+            console.warn(
+              '🔵 Inside JupyterInputNode - allowing line break (returning false)',
             );
-            $insertNodeToNearestRoot(jupyterOutputNode);
-            const nodeSelection = $createNodeSelection();
-            nodeSelection.add(parentNode.__key);
-            $setSelection(nodeSelection);
-            return true;
+            // Allow normal Enter for line breaks in JupyterInputNode
+            // Execution will be handled by KEY_ENTER_COMMAND with Shift modifier
+            return false;
           }
         }
+        console.warn('🔵 Not in JupyterInputNode - returning false');
         return false;
       },
-      COMMAND_PRIORITY_HIGH,
+      COMMAND_PRIORITY_HIGH, // Changed to HIGH so it can handle line breaks
+    );
+  }, [editor]);
+
+  // Handle Enter key - distinguish between Enter and Shift+Enter
+  useEffect(() => {
+    return editor.registerCommand<KeyboardEvent>(
+      KEY_ENTER_COMMAND,
+      event => {
+        console.warn('🟢 KEY_ENTER_COMMAND triggered', {
+          key: event.key,
+          shiftKey: event.shiftKey,
+          ctrlKey: event.ctrlKey,
+          altKey: event.altKey,
+        });
+        const selection = $getSelection();
+        const node = selection?.getNodes()[0];
+        console.warn('🟢 Selection node:', node);
+        if (node?.__parent) {
+          const parentNode = $getNodeByKey(node?.__parent);
+          console.warn(
+            '🟢 Parent node:',
+            parentNode,
+            'Type:',
+            parentNode?.getType(),
+          );
+          if (parentNode && $isJupyterInputNode(parentNode)) {
+            if (event.shiftKey) {
+              console.warn('🟢 Shift+Enter detected - executing code');
+              // Shift+Enter: Execute code
+              event.preventDefault();
+              const code = parentNode.getTextContent();
+              const jupyterInputNodeUuid = (
+                parentNode as JupyterInputNode
+              ).getJupyterInputNodeUuid();
+              const jupyterOutputNodeKey =
+                INPUT_UUID_TO_OUTPUT_KEY.get(jupyterInputNodeUuid);
+              if (jupyterOutputNodeKey) {
+                const jupyterOutputNode = $getNodeByKey(jupyterOutputNodeKey);
+                if (jupyterOutputNode) {
+                  (jupyterOutputNode as JupyterOutputNode).executeCode(code);
+                  return true;
+                }
+              }
+              const jupyterOutputNode = $createJupyterOutputNode(
+                code,
+                new OutputAdapter(newUuid(), undefined, []),
+                [],
+                true,
+                jupyterInputNodeUuid,
+                UUID.uuid4(),
+              );
+              $insertNodeToNearestRoot(jupyterOutputNode);
+              const nodeSelection = $createNodeSelection();
+              nodeSelection.add(parentNode.__key);
+              $setSelection(nodeSelection);
+              return true;
+            }
+            console.warn(
+              '🟢 Regular Enter in JupyterInputNode - inserting line break',
+            );
+            // Regular Enter: Insert a line break directly
+            const selection = $getSelection();
+            if ($isRangeSelection(selection)) {
+              const lineBreak = $createLineBreakNode();
+              selection.insertNodes([lineBreak]);
+              event.preventDefault();
+              return true;
+            }
+            return false;
+          }
+        }
+        console.warn('🟢 Not in JupyterInputNode - returning false');
+        return false;
+      },
+      COMMAND_PRIORITY_LOW, // Changed to LOW so INSERT_LINE_BREAK_COMMAND can handle regular Enter
     );
   }, [editor]);
   useEffect(() => {
