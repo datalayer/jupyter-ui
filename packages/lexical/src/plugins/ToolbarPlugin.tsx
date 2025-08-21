@@ -54,7 +54,7 @@ import {
   CODE_LANGUAGE_FRIENDLY_NAME_MAP,
   $createYouTubeNode,
   INSERT_EQUATION_COMMAND,
-  INSERT_JUPYTER_CELL_COMMAND,
+  INSERT_JUPYTER_CELL_OUTPUT_COMMAND,
   DEFAULT_INITIAL_OUTPUTS,
 } from '../';
 
@@ -375,12 +375,12 @@ function BlockOptionsDropdownList({
     }
     setShowBlockOptionsDropDown(false);
   };
-  const formatJupyterOutput = () => {
-    if (blockType !== 'jupyter-output') {
+  const formatJupyterCode = () => {
+    if (blockType !== 'jupyter-code') {
       editor.update(() => {
         const selection = $getSelection();
         const code = selection?.getTextContent() || '';
-        editor.dispatchCommand(INSERT_JUPYTER_CELL_COMMAND, {
+        editor.dispatchCommand(INSERT_JUPYTER_CELL_OUTPUT_COMMAND, {
           code,
           outputs: code ? [] : DEFAULT_INITIAL_OUTPUTS,
         });
@@ -421,10 +421,10 @@ function BlockOptionsDropdownList({
   };
   return (
     <div className="dropdown" ref={dropDownRef}>
-      <button className="item" onClick={formatJupyterOutput}>
+      <button className="item" onClick={formatJupyterCode}>
         <span className="icon code" />
         <span className="text">Jupyter Cell</span>
-        {blockType === 'jupyter' && <span className="active" />}
+        {blockType === 'jupyter-code' && <span className="active" />}
       </button>
       <button className="item" onClick={formatParagraph}>
         <span className="icon paragraph" />
