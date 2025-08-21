@@ -6,8 +6,8 @@
 
 import { LexicalEditor, INSERT_PARAGRAPH_COMMAND } from 'lexical';
 import { INotebookContent, IOutput } from '@jupyterlab/nbformat';
-// import { INSERT_JUPYTER_CELL_OUTPUT_COMMAND } from "../plugins/JupyterCellOutputPlugin";
-import { INSERT_JUPYTER_CELL_COMMAND } from '../plugins/JupyterCellPlugin';
+// import { INSERT_JUPYTER_CELL_COMMAND } from '../plugins/JupyterCellPlugin';
+import { INSERT_JUPYTER_CELL_OUTPUT_COMMAND } from '../plugins/JupyterCellOutputPlugin';
 import { $convertFromMarkdownString, TRANSFORMERS } from './markdown';
 
 export const nbformatToLexical = (
@@ -28,11 +28,11 @@ export const nbformatToLexical = (
       }
       if (cell.cell_type === 'code') {
         const outputs = cell.outputs as IOutput[];
-        editor.dispatchCommand(INSERT_JUPYTER_CELL_COMMAND, {
+        editor.dispatchCommand(INSERT_JUPYTER_CELL_OUTPUT_COMMAND, {
           code,
           outputs,
           loading: 'Loading...',
-          autoStart: false,
+          // autoStart: false,
         });
       }
       editor.dispatchCommand(INSERT_PARAGRAPH_COMMAND, undefined);
