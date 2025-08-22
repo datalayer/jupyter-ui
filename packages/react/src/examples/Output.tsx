@@ -102,7 +102,6 @@ const OutputWithoutEditorNoAutorun = () => {
 };
 
 const OutputWithoutEditorAutorun = () => {
-  const outputStore = useOutputsStore();
   const { defaultKernel } = useJupyter({ startDefaultKernel: true });
   return (
     <>
