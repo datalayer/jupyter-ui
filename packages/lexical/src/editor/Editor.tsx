@@ -27,6 +27,7 @@ import { MarkNode } from '@lexical/mark';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { CodeNode } from '@lexical/code';
 import { INotebookContent } from '@jupyterlab/nbformat';
+import { useJupyter } from '@datalayer/jupyter-react';
 import {
   JupyterInputOutputPlugin,
   EquationNode,
@@ -43,12 +44,12 @@ import {
   JupyterInputNode,
   JupyterOutputNode,
   // JupyterCellNode,
+  // JupyterCellPlugin,
   CodeActionMenuPlugin,
   AutoEmbedPlugin,
   NbformatContentPlugin,
   TableOfContentsPlugin,
   MarkdownPlugin,
-  // JupyterCellPlugin,
   CommentPlugin,
   FloatingTextFormatToolbarPlugin,
 } from './..';
@@ -58,6 +59,7 @@ import { TreeViewPlugin, ToolbarPlugin } from '../plugins';
 import DraggableBlockPlugin from '../plugins/DraggableBlockPlugin';
 
 import './../../style/index.css';
+import { CounterNode } from '../nodes/CounterNode';
 
 type Props = {
   notebook?: INotebookContent;
@@ -94,6 +96,7 @@ const initialConfig = {
     TableNode,
     TableRowNode,
     YouTubeNode,
+    CounterNode,
   ],
 };
 
@@ -109,6 +112,7 @@ const EditorContextPlugin = () => {
 
 export function Editor(props: Props) {
   const { notebook } = props;
+  const { defaultKernel } = useJupyter();
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
 
@@ -149,10 +153,10 @@ export function Editor(props: Props) {
             <AutoLinkPlugin />
             <ListMaxIndentLevelPlugin maxDepth={7} />
             <MarkdownPlugin />
-            {/*
-            <JupyterCellPlugin />
-            */}
-            <JupyterInputOutputPlugin />
+            {/* <JupyterCellPlugin /> */}
+            {defaultKernel && (
+              <JupyterInputOutputPlugin kernel={defaultKernel} />
+            )}
             <ComponentPickerMenuPlugin />
             <EquationsPlugin />
             <ImagesPlugin />

@@ -6,7 +6,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { basicSetup } from 'codemirror';
-import { EditorState } from '@codemirror/state';
+import { EditorState, Prec } from '@codemirror/state';
 import { keymap, EditorView, ViewUpdate } from '@codemirror/view';
 import { Compartment } from '@codemirror/state';
 import { python } from '@codemirror/lang-python';
@@ -81,20 +81,24 @@ export const CodeMirrorEditor = (props: {
   useEffect(() => {
     outputStore.setInput(sourceId, code);
     const language = new Compartment();
-    const keyBinding = [
-      {
-        key: 'Shift-Enter',
-        run: () => executeCode(editorView),
-        preventDefault: true,
-      },
-    ];
+
     const state = EditorState.create({
       doc: code,
       extensions: [
+        Prec.highest(
+          keymap.of([
+            {
+              key: 'Shift-Enter',
+              run: (view: EditorView) => {
+                return executeCode(view);
+              },
+              preventDefault: true,
+            },
+          ])
+        ),
         basicSetup,
         language.of(python()),
         EditorView.lineWrapping,
-        keymap.of([...keyBinding]),
         codeMirrorTheme,
         EditorView.updateListener.of((viewUpdate: ViewUpdate) => {
           if (viewUpdate.docChanged) {

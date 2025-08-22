@@ -38,6 +38,8 @@ const OUTPUTS_1: IOutput[] = [
   },
 ];
 
+const SOURCE_ID_1_1 = 'output-id-1-1';
+
 const SOURCE_ID_2 = 'output-id-2';
 const SOURCE_2 = '2+2';
 const OUTPUTS_2: IOutput[] = [
@@ -64,10 +66,10 @@ const OUTPUTS_3: IOutput[] = [
   },
 ];
 
-const OutputFromCode = () => {
+const OutputFromCodeIPyWidgets = () => {
   const outputStore = useOutputsStore();
   console.log(
-    'Outputs from Code',
+    'Outputs from Code IPyWidgets',
     outputStore.getModel(SOURCE_ID_0)?.toJSON(),
     outputStore.getInput(SOURCE_ID_0)
   );
@@ -79,7 +81,7 @@ const OutputFromCode = () => {
   );
 };
 
-const OutputWithoutEditor = () => {
+const OutputWithoutEditorNoAutorun = () => {
   const outputStore = useOutputsStore();
   console.log(
     'Outputs 1',
@@ -88,11 +90,28 @@ const OutputWithoutEditor = () => {
   );
   return (
     <>
-      <Text as="h1">Output without Code Editor</Text>
+      <Text as="h1">Output without Code Editor without Autorun</Text>
       <Output
         autoRun={false}
         id={SOURCE_ID_1}
         outputs={OUTPUTS_1}
+        showEditor={false}
+      />
+    </>
+  );
+};
+
+const OutputWithoutEditorAutorun = () => {
+  const outputStore = useOutputsStore();
+  const { defaultKernel } = useJupyter({ startDefaultKernel: true });
+  return (
+    <>
+      <Text as="h1">Output without Code Editor with Autorun</Text>
+      <Output
+        autoRun
+        code="1+1"
+        id={SOURCE_ID_1_1}
+        kernel={defaultKernel}
         showEditor={false}
       />
     </>
@@ -177,8 +196,9 @@ const root = createRoot(div);
 
 root.render(
   <Jupyter startDefaultKernel>
-    <OutputFromCode />
-    <OutputWithoutEditor />
+    <OutputWithoutEditorNoAutorun />
+    <OutputWithoutEditorAutorun />
+    <OutputFromCodeIPyWidgets />
     <OutputWithEditor />
     <OutputWithEmptyOutput />
   </Jupyter>

@@ -40,6 +40,7 @@
     "clean:labextension": "rimraf datalayer/labextension",
     "clean:lib": "rimraf lib tsconfig.tsbuildinfo",
     "clean:lintcache": "rimraf .eslintcache .stylelintcache",
+    "dev": "run-p -c 'start:*'",
     "eslint": "npm eslint:check --fix",
     "eslint:check": "eslint . --cache --ext .ts,.tsx",
     "install:extension": "npm run build",

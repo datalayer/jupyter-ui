@@ -26,7 +26,7 @@ import { $getNodeByKey, $createNodeSelection, $setSelection } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $setBlocksType } from '@lexical/selection';
 import { $insertNodeToNearestRoot } from '@lexical/utils';
-import { OutputAdapter, newUuid } from '@datalayer/jupyter-react';
+import { OutputAdapter, newUuid, Kernel } from '@datalayer/jupyter-react';
 import { UUID } from '@lumino/coreutils';
 import { IOutput } from '@jupyterlab/nbformat';
 import {
@@ -39,6 +39,7 @@ import {
   JupyterOutputNode,
   $createJupyterOutputNode,
 } from '../nodes/JupyterOutputNode';
+import { $createCounterNode } from '../nodes/CounterNode';
 
 export const INPUT_UUID_TO_OUTPUT_KEY = new Map<string, NodeKey | undefined>();
 export const INPUT_UUID_TO_CODE_KEY = new Map<string, NodeKey | undefined>();
@@ -63,10 +64,17 @@ export type JupyterInputOutputProps = {
   loading?: string;
 };
 
+export type JupyterInputOutputPluginProps = {
+  kernel?: Kernel;
+};
+
 export const INSERT_JUPYTER_INPUT_OUTPUT_COMMAND =
   createCommand<JupyterInputOutputProps>();
 
-export const JupyterInputOutputPlugin = () => {
+export const JupyterInputOutputPlugin = (
+  props?: JupyterInputOutputPluginProps,
+) => {
+  const { kernel } = props || {};
   const [editor] = useLexicalComposerContext();
   useEffect(() => {
     return registerCodeHighlighting(editor);
@@ -138,30 +146,58 @@ export const JupyterInputOutputPlugin = () => {
               // Shift+Enter: Execute code
               event.preventDefault();
               const code = parentNode.getTextContent();
+              console.warn('🟢 Code to execute:', code);
               const jupyterInputNodeUuid = (
                 parentNode as JupyterInputNode
               ).getJupyterInputNodeUuid();
+              console.warn('🟢 Input node UUID:', jupyterInputNodeUuid);
               const jupyterOutputNodeKey =
                 INPUT_UUID_TO_OUTPUT_KEY.get(jupyterInputNodeUuid);
+              console.warn(
+                '🟢 Existing output node key:',
+                jupyterOutputNodeKey,
+              );
               if (jupyterOutputNodeKey) {
                 const jupyterOutputNode = $getNodeByKey(jupyterOutputNodeKey);
+                console.warn(
+                  '🟢 Found existing output node:',
+                  jupyterOutputNode,
+                );
                 if (jupyterOutputNode) {
+                  console.warn('🟢 Executing code on existing output node');
+                  console.warn(
+                    '🟢 Output adapter:',
+                    (jupyterOutputNode as JupyterOutputNode).__outputAdapter,
+                  );
+                  console.warn(
+                    '🟢 Output adapter kernel:',
+                    (jupyterOutputNode as JupyterOutputNode).__outputAdapter
+                      ?.kernel,
+                  );
                   (jupyterOutputNode as JupyterOutputNode).executeCode(code);
                   return true;
                 }
               }
+              console.warn('🟢 Creating new output node');
+              console.warn('🟢 Available kernel:', kernel);
+              /*
               const jupyterOutputNode = $createJupyterOutputNode(
-                code,
-                new OutputAdapter(newUuid(), undefined, []),
+//                code,
+                '1+1',
+                new OutputAdapter(newUuid(), kernel, []),
                 [],
                 true,
                 jupyterInputNodeUuid,
                 UUID.uuid4(),
-              );
+              );*/
+              const jupyterOutputNode = $createCounterNode();
+              console.warn('🟢 Created output node:', jupyterOutputNode);
               $insertNodeToNearestRoot(jupyterOutputNode);
+              console.warn('🟢 Inserted output node to root');
               const nodeSelection = $createNodeSelection();
               nodeSelection.add(parentNode.__key);
               $setSelection(nodeSelection);
+              console.warn('🟢 Code execution completed');
               return true;
             }
             console.warn(
@@ -183,7 +219,7 @@ export const JupyterInputOutputPlugin = () => {
       },
       COMMAND_PRIORITY_LOW, // Changed to LOW so INSERT_LINE_BREAK_COMMAND can handle regular Enter
     );
-  }, [editor]);
+  }, [editor, kernel]);
   useEffect(() => {
     return editor.registerMutationListener(
       JupyterInputNode,
@@ -264,11 +300,7 @@ export const JupyterInputOutputPlugin = () => {
           } else {
             selection.insertNodes([jupyterCodeNode]);
           }
-          const outputAdapter = new OutputAdapter(
-            newUuid(),
-            undefined,
-            outputs,
-          );
+          const outputAdapter = new OutputAdapter(newUuid(), kernel, outputs);
           const jupyterOutputNode = $createJupyterOutputNode(
             code,
             outputAdapter,
@@ -297,7 +329,7 @@ export const JupyterInputOutputPlugin = () => {
       },
       COMMAND_PRIORITY_EDITOR,
     );
-  }, [editor]);
+  }, [editor, kernel]);
   return null;
 };
 
