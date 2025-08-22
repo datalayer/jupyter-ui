@@ -21,6 +21,7 @@ import {
   KEY_ENTER_COMMAND,
   COMMAND_PRIORITY_LOW,
   $createLineBreakNode,
+  LexicalNode,
 } from 'lexical';
 import { $getNodeByKey, $createNodeSelection, $setSelection } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -277,7 +278,7 @@ export const JupyterInputOutputPlugin = (
     return editor.registerCommand(
       INSERT_JUPYTER_INPUT_OUTPUT_COMMAND,
       (props: JupyterInputOutputProps) => {
-        const { code, outputs, loading } = props;
+        const { code, outputs } = props;
         const selection = $getSelection();
         if ($isRangeSelection(selection)) {
           selection.removeText();
@@ -299,7 +300,7 @@ export const JupyterInputOutputPlugin = (
             const anchorNode = selection.anchor.getNode();
             if (anchorNode && $isElementNode(anchorNode)) {
               const nodes = anchorNode.getChildren();
-              nodes.map((node: any) => {
+              nodes.map((node: LexicalNode) => {
                 if ($isLineBreakNode(node)) {
                   node.remove();
                 }
@@ -320,7 +321,7 @@ export const JupyterInputOutputPlugin = (
             UUID.uuid4(),
           );
           outputAdapter.outputArea.model.changed.connect(
-            (outputModel, args) => {
+            (outputModel, _args) => {
               editor.update(() => {
                 jupyterOutputNode.setOutputs(outputModel.toJSON());
               });
@@ -330,10 +331,8 @@ export const JupyterInputOutputPlugin = (
           $insertNodes([tmpParagraph]);
           $insertNodeToNearestRoot(jupyterOutputNode);
           tmpParagraph.remove();
-          if (!loading) {
-            jupyterCodeNode.selectEnd();
-            //          selection.insertRawText(code);
-          }
+          // Position cursor at the beginning of the jupyter-input node
+          jupyterCodeNode.selectStart();
         }
         return true;
       },
