@@ -14,19 +14,12 @@ import {
   INSERT_LINE_BREAK_COMMAND,
   COMMAND_PRIORITY_HIGH,
   NodeMutation,
-  $isLineBreakNode,
-  $isElementNode,
-  $insertNodes,
-  $createParagraphNode,
   KEY_ENTER_COMMAND,
   COMMAND_PRIORITY_LOW,
   $createLineBreakNode,
-  LexicalNode,
 } from 'lexical';
 import { $getNodeByKey, $createNodeSelection, $setSelection } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { $setBlocksType } from '@lexical/selection';
-import { $insertNodeToNearestRoot } from '@lexical/utils';
 import { OutputAdapter, newUuid, Kernel } from '@datalayer/jupyter-react';
 import { UUID } from '@lumino/coreutils';
 import { IOutput } from '@jupyterlab/nbformat';
@@ -40,7 +33,6 @@ import {
   JupyterOutputNode,
   $createJupyterOutputNode,
 } from '../nodes/JupyterOutputNode';
-import { $createCounterNode } from '../nodes/CounterNode';
 
 type UUID = string;
 
@@ -79,6 +71,10 @@ export const JupyterInputOutputPlugin = (
 ) => {
   const { kernel } = props || {};
   const [editor] = useLexicalComposerContext();
+
+  // Flag to prevent infinite recursion when moving output nodes
+  const isMovingOutputNode = { current: false };
+
   useEffect(() => {
     return registerCodeHighlighting(editor);
   }, [editor]);
@@ -189,20 +185,20 @@ export const JupyterInputOutputPlugin = (
               }
               console.warn('🟢 Creating new output node');
               console.warn('🟢 Available kernel:', kernel);
-              /*
+              const outputAdapter = new OutputAdapter(newUuid(), kernel, []);
               const jupyterOutputNode = $createJupyterOutputNode(
-//                code,
-                '1+1',
-                new OutputAdapter(newUuid(), kernel, []),
+                code,
+                outputAdapter,
                 [],
                 true,
                 jupyterInputNodeUuid,
                 UUID.uuid4(),
-              );*/
-              const jupyterOutputNode = $createCounterNode();
+              );
+
               console.warn('🟢 Created output node:', jupyterOutputNode);
-              $insertNodeToNearestRoot(jupyterOutputNode);
-              console.warn('🟢 Inserted output node to root');
+              // Insert the output node immediately after the input node
+              parentNode.insertAfter(jupyterOutputNode);
+              console.warn('🟢 Inserted output node after input node');
               const nodeSelection = $createNodeSelection();
               nodeSelection.add(parentNode.__key);
               $setSelection(nodeSelection);
@@ -237,19 +233,22 @@ export const JupyterInputOutputPlugin = (
         for (const [nodeKey, mutation] of mutatedNodes) {
           if (mutation === 'destroyed') {
             editor.update(() => {
-              //              let jupyterInputNodeUuid: string | undefined;
+              let jupyterInputNodeUuid: string | undefined;
               let jupyterOutputNodeUuid: string | undefined;
-              // TODO Do not use forEach...
+
+              // Find the UUID for the destroyed input node
               INPUT_UUID_TO_CODE_KEY.forEach(
                 (codeKey: NodeKey, codeUuid: UUID) => {
                   if (codeKey === nodeKey) {
-                    //                  jupyterInputNodeUuid = codeUuid;
+                    jupyterInputNodeUuid = codeUuid;
                     jupyterOutputNodeUuid =
                       INPUT_UUID_TO_OUTPUT_UUID.get(codeUuid);
                   }
                 },
               );
-              if (jupyterOutputNodeUuid) {
+
+              if (jupyterInputNodeUuid && jupyterOutputNodeUuid) {
+                // Remove the corresponding output node
                 const outputNodeKey = OUTPUT_UUID_TO_OUTPUT_KEY.get(
                   jupyterOutputNodeUuid,
                 );
@@ -260,12 +259,87 @@ export const JupyterInputOutputPlugin = (
                     (outputNode as JupyterOutputNode).removeForce();
                   }
                 }
-                //                CODE_UUID_TO_OUTPUT_UUID.delete(jupyterInputNodeUuid);
-                //                CODE_UUID_TO_OUTPUT_KEY.delete(jupyterInputNodeUuid);
-                //                CODE_UUID_TO_CODE_KEY.delete(jupyterInputNodeUuid);
+
+                // Clean up all map entries
+                INPUT_UUID_TO_CODE_KEY.delete(jupyterInputNodeUuid);
+                INPUT_UUID_TO_OUTPUT_KEY.delete(jupyterInputNodeUuid);
+                INPUT_UUID_TO_OUTPUT_UUID.delete(jupyterInputNodeUuid);
+                OUTPUT_UUID_TO_CODE_UUID.delete(jupyterOutputNodeUuid);
+                OUTPUT_UUID_TO_OUTPUT_KEY.delete(jupyterOutputNodeUuid);
               }
-              if (jupyterOutputNodeUuid) {
-                //                OUTPUT_UUID_TO_CODE_UUID.delete(jupyterOutputNodeUuid);
+            });
+          } else if (mutation === 'updated') {
+            // Skip if we're currently moving an output node to prevent recursion
+            if (isMovingOutputNode.current) {
+              return;
+            }
+
+            editor.update(() => {
+              const inputNode = $getNodeByKey(nodeKey);
+              if (inputNode && $isJupyterInputNode(inputNode)) {
+                const inputUuid = inputNode.getJupyterInputNodeUuid();
+                const outputKey = INPUT_UUID_TO_OUTPUT_KEY.get(inputUuid);
+
+                if (outputKey) {
+                  const outputNode = $getNodeByKey(outputKey);
+                  if (outputNode) {
+                    const inputNextSibling = inputNode.getNextSibling();
+
+                    // If the output node is not immediately after the input node, move it
+                    if (inputNextSibling !== outputNode) {
+                      isMovingOutputNode.current = true;
+                      try {
+                        outputNode.remove(false);
+                        inputNode.insertAfter(outputNode);
+                      } finally {
+                        isMovingOutputNode.current = false;
+                      }
+                    }
+                  }
+                }
+              }
+            });
+          }
+        }
+      },
+    );
+  }, [editor]);
+
+  // Add a mutation listener for output nodes to ensure they stay with their input nodes
+  useEffect(() => {
+    return editor.registerMutationListener(
+      JupyterOutputNode,
+      (mutatedNodes: Map<NodeKey, NodeMutation>) => {
+        for (const [nodeKey, mutation] of mutatedNodes) {
+          if (mutation === 'updated' && !isMovingOutputNode.current) {
+            editor.update(() => {
+              const outputNode = $getNodeByKey(nodeKey);
+              if (outputNode) {
+                const outputUuid = (
+                  outputNode as JupyterOutputNode
+                ).getJupyterOutputNodeUuid();
+                const inputUuid = OUTPUT_UUID_TO_CODE_UUID.get(outputUuid);
+
+                if (inputUuid) {
+                  const inputKey = INPUT_UUID_TO_CODE_KEY.get(inputUuid);
+                  if (inputKey) {
+                    const inputNode = $getNodeByKey(inputKey);
+                    if (inputNode) {
+                      const inputNextSibling = inputNode.getNextSibling();
+
+                      // If this output node is not immediately after its input node, move it
+                      if (inputNextSibling !== outputNode) {
+                        isMovingOutputNode.current = true;
+                        try {
+                          outputNode.remove(false);
+                          inputNode.insertAfter(outputNode);
+                        } finally {
+                          isMovingOutputNode.current = false;
+                        }
+                      }
+                    }
+                  }
+                }
               }
             });
           }
@@ -281,36 +355,19 @@ export const JupyterInputOutputPlugin = (
         const { code, outputs } = props;
         const selection = $getSelection();
         if ($isRangeSelection(selection)) {
+          // Clear any existing selection content
           selection.removeText();
+
+          // Create the input node with the code content
           const jupyterCodeNode = $createJupyterInputNode('python');
-          /*
-        if (selection.isCollapsed()) {
-          const paragraphNode = $createParagraphNode();
-          const textNode = $createTextNode(code || "");
-          paragraphNode.append(textNode);
-          selection.insertNodes([paragraphNode]);
-          $wrapNodes(selection, () => codeNode);
-        } else {
-          const textContent = selection.getTextContent();
-          selection.insertNodes([codeNode]);
-          selection.insertRawText(textContent);
-        }
-        */
-          if (selection.isCollapsed()) {
-            const anchorNode = selection.anchor.getNode();
-            if (anchorNode && $isElementNode(anchorNode)) {
-              const nodes = anchorNode.getChildren();
-              nodes.map((node: LexicalNode) => {
-                if ($isLineBreakNode(node)) {
-                  node.remove();
-                }
-              });
-            }
+          selection.insertNodes([jupyterCodeNode]);
+
+          // Add the code content to the input node
+          if (code) {
             selection.insertRawText(code);
-            $setBlocksType(selection, () => jupyterCodeNode);
-          } else {
-            selection.insertNodes([jupyterCodeNode]);
           }
+
+          // Create the output node
           const outputAdapter = new OutputAdapter(newUuid(), kernel, outputs);
           const jupyterOutputNode = $createJupyterOutputNode(
             code,
@@ -320,6 +377,7 @@ export const JupyterInputOutputPlugin = (
             jupyterCodeNode.getJupyterInputNodeUuid(),
             UUID.uuid4(),
           );
+
           outputAdapter.outputArea.model.changed.connect(
             (outputModel, _args) => {
               editor.update(() => {
@@ -327,10 +385,10 @@ export const JupyterInputOutputPlugin = (
               });
             },
           );
-          const tmpParagraph = $createParagraphNode();
-          $insertNodes([tmpParagraph]);
-          $insertNodeToNearestRoot(jupyterOutputNode);
-          tmpParagraph.remove();
+
+          // Insert the output node immediately after the input node
+          jupyterCodeNode.insertAfter(jupyterOutputNode);
+
           // Position cursor at the beginning of the jupyter-input node
           jupyterCodeNode.selectStart();
         }

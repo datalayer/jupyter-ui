@@ -96,7 +96,7 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
     this.__autoRun = autoRun;
     OUTPUT_UUID_TO_CODE_UUID.set(
       this.__jupyterOutputNodeUuid,
-      jupyterInputNodeUuid,
+      this.__jupyterInputNodeUuid,
     );
     INPUT_UUID_TO_OUTPUT_KEY.set(this.__jupyterInputNodeUuid, this.__key);
     INPUT_UUID_TO_OUTPUT_UUID.set(
