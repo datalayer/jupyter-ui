@@ -14,7 +14,8 @@ import {
   CellSidebar,
   CellSidebarExtension,
 } from '@datalayer/jupyter-react';
-import { Box, UnderlineNav, Button } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
+import { UnderlineNav, Button } from '@primer/react';
 import { ThreeBarsIcon } from '@primer/octicons-react';
 import { JSONTree } from 'react-json-tree';
 import { INotebookContent } from '@jupyterlab/nbformat';
@@ -168,12 +169,12 @@ export function AppNbformat() {
           </div>
         </div>
         <br />
-        <a href="https://datalayer.io" target="_blank" rel="noreferrer">
+        <a href="https://datalayer.ai" target="_blank" rel="noreferrer">
           <ThreeBarsIcon />
         </a>
         <h2>
           copyright ©{' '}
-          <a href="https://datalayer.io" target="_blank" rel="noreferrer">
+          <a href="https://datalayer.ai" target="_blank" rel="noreferrer">
             2022-2024 Datalayer, Inc.
           </a>
         </h2>

@@ -9,7 +9,7 @@
             "mode": "normal",
             "style": "",
             "text": "print",
-            "type": "jupyter-code-highlight",
+            "type": "jupyter-input-highlight",
             "version": 1,
             "highlightType": "keyword"
           },
@@ -19,7 +19,7 @@
             "mode": "normal",
             "style": "",
             "text": "(",
-            "type": "jupyter-code-highlight",
+            "type": "jupyter-input-highlight",
             "version": 1,
             "highlightType": "punctuation"
           },
@@ -29,7 +29,7 @@
             "mode": "normal",
             "style": "",
             "text": "'Cell 1'",
-            "type": "jupyter-code-highlight",
+            "type": "jupyter-input-highlight",
             "version": 1,
             "highlightType": "string"
           }
@@ -37,10 +37,10 @@
         "direction": "ltr",
         "format": "",
         "indent": 0,
-        "type": "jupyter-code",
+        "type": "jupyter-input",
         "version": 1,
         "language": "python",
-        "codeNodeUuid": "63cf52e9-1bff-4309-945b-68527dbb1c27"
+        "jupyterInputNodeUuid": "63cf52e9-1bff-4309-945b-68527dbb1c27"
       },
       {
         "format": "",
@@ -54,8 +54,8 @@
             "output_type": "stream"
           }
         ],
-        "codeNodeUuid": "63cf52e9-1bff-4309-945b-68527dbb1c27",
-        "outputNodeUuid": "25e7cca4-6f6a-4bbc-8a32-c3760b90dc2f"
+        "jupyterInputNodeUuid": "63cf52e9-1bff-4309-945b-68527dbb1c27",
+        "jupyterOutputNodeUuid": "25e7cca4-6f6a-4bbc-8a32-c3760b90dc2f"
       },
       {
         "children": [
@@ -83,7 +83,7 @@
             "mode": "normal",
             "style": "",
             "text": "print",
-            "type": "jupyter-code-highlight",
+            "type": "jupyter-input-highlight",
             "version": 1,
             "highlightType": "keyword"
           },
@@ -93,7 +93,7 @@
             "mode": "normal",
             "style": "",
             "text": "(",
-            "type": "jupyter-code-highlight",
+            "type": "jupyter-input-highlight",
             "version": 1,
             "highlightType": "punctuation"
           },
@@ -103,7 +103,7 @@
             "mode": "normal",
             "style": "",
             "text": "'Cell 2'",
-            "type": "jupyter-code-highlight",
+            "type": "jupyter-input-highlight",
             "version": 1,
             "highlightType": "string"
           },
@@ -113,7 +113,7 @@
             "mode": "normal",
             "style": "",
             "text": ")",
-            "type": "jupyter-code-highlight",
+            "type": "jupyter-input-highlight",
             "version": 1,
             "highlightType": "punctuation"
           }
@@ -121,10 +121,10 @@
         "direction": "ltr",
         "format": "",
         "indent": 0,
-        "type": "jupyter-code",
+        "type": "jupyter-input",
         "version": 1,
         "language": "python",
-        "codeNodeUuid": "1465bc96-0fbc-4327-9557-02b627ae6b23"
+        "jupyterInputNodeUuid": "1465bc96-0fbc-4327-9557-02b627ae6b23"
       },
       {
         "format": "",
@@ -138,8 +138,8 @@
             "output_type": "stream"
           }
         ],
-        "codeNodeUuid": "1465bc96-0fbc-4327-9557-02b627ae6b23",
-        "outputNodeUuid": "9c0d20d7-42a8-482f-80fa-31fd6f9c234b"
+        "jupyterInputNodeUuid": "1465bc96-0fbc-4327-9557-02b627ae6b23",
+        "jupyterOutputNodeUuid": "9c0d20d7-42a8-482f-80fa-31fd6f9c234b"
       },
       {
         "children": [
@@ -167,7 +167,7 @@
             "mode": "normal",
             "style": "",
             "text": "print",
-            "type": "jupyter-code-highlight",
+            "type": "jupyter-input-highlight",
             "version": 1,
             "highlightType": "keyword"
           },
@@ -177,7 +177,7 @@
             "mode": "normal",
             "style": "",
             "text": "(",
-            "type": "jupyter-code-highlight",
+            "type": "jupyter-input-highlight",
             "version": 1,
             "highlightType": "punctuation"
           },
@@ -187,7 +187,7 @@
             "mode": "normal",
             "style": "",
             "text": "'Cell 3'",
-            "type": "jupyter-code-highlight",
+            "type": "jupyter-input-highlight",
             "version": 1,
             "highlightType": "string"
           },
@@ -197,7 +197,7 @@
             "mode": "normal",
             "style": "",
             "text": ")",
-            "type": "jupyter-code-highlight",
+            "type": "jupyter-input-highlight",
             "version": 1,
             "highlightType": "punctuation"
           }
@@ -205,10 +205,10 @@
         "direction": "ltr",
         "format": "",
         "indent": 0,
-        "type": "jupyter-code",
+        "type": "jupyter-input",
         "version": 1,
         "language": "python",
-        "codeNodeUuid": "d792c092-60df-4fec-ad16-dd36a0213159"
+        "jupyterInputNodeUuid": "d792c092-60df-4fec-ad16-dd36a0213159"
       },
       {
         "format": "",
@@ -222,8 +222,8 @@
             "output_type": "stream"
           }
         ],
-        "codeNodeUuid": "d792c092-60df-4fec-ad16-dd36a0213159",
-        "outputNodeUuid": "fc0cb97b-b295-4e5c-a70b-dab9222b3a78"
+        "jupyterInputNodeUuid": "d792c092-60df-4fec-ad16-dd36a0213159",
+        "jupyterOutputNodeUuid": "fc0cb97b-b295-4e5c-a70b-dab9222b3a78"
       },
       {
         "children": [

@@ -7,7 +7,7 @@
 import { IOutput } from '@jupyterlab/nbformat';
 import { IOutputAreaModel } from '@jupyterlab/outputarea';
 import { KernelMessage } from '@jupyterlab/services';
-import { Box } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { useEffect, useState } from 'react';
 import { Lumino } from '../lumino/Lumino';
 import { useJupyter } from '../../jupyter/JupyterContext';
@@ -79,11 +79,11 @@ export const Output = (props: IOutputProps) => {
     if (!id) {
       setId(newUuid());
     }
-  }, []);
+  }, [id]);
   useEffect(() => {
     const outputsCallback = (
       model: IOutputAreaModel,
-      change: IOutputAreaModel.ChangedArgs
+      _: IOutputAreaModel.ChangedArgs
     ) => {
       setOutputs(model.toJSON());
       if (id) {

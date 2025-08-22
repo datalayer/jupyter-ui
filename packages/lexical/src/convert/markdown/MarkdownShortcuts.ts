@@ -12,7 +12,7 @@ import type {
 } from '.';
 import type { ElementNode, LexicalEditor, TextNode } from 'lexical';
 
-import { $isJupyterCodeNode } from './../../nodes/JupyterCodeNode';
+import { $isJupyterInputNode } from './../../nodes/JupyterInputNode';
 import {
   $createRangeSelection,
   $getSelection,
@@ -417,7 +417,7 @@ export function registerMarkdownShortcuts(
 
         const parentNode = anchorNode.getParent();
 
-        if (parentNode === null || $isJupyterCodeNode(parentNode)) {
+        if (parentNode === null || $isJupyterInputNode(parentNode)) {
           return;
         }
 

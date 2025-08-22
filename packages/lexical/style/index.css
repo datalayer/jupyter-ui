@@ -9,6 +9,8 @@
 /* Import base styles */
 @import url('base.css');
 
+@import url('./lexical/index.css');
+
 /* Import tailwind.css which contains custom components */
 @import url('tailwind.css');
 

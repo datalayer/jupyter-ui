@@ -13,7 +13,6 @@ export * from './DropDown';
 export * from './EquationEditor';
 export * from './FileInput';
 export * from './ImageResizer';
-export * from './JupyterOutputComponent';
 export * from './KatexEquationAlterer';
 export * from './KatexEquationAlterer';
 export * from './KatexRenderer';

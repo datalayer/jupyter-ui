@@ -5,22 +5,30 @@
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { INotebookContent } from '@jupyterlab/nbformat';
-import { Box, Text, ToggleSwitch, theme as primerTheme } from '@primer/react';
 import { createRoot } from 'react-dom/client';
-import { CellSidebarExtension } from '../components';
-import { Notebook } from '../components/notebook/Notebook';
-import { Jupyter } from '../jupyter/Jupyter';
-import { jupyterLabTheme, Colormode } from '../theme';
-import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
+import { INotebookContent } from '@jupyterlab/nbformat';
+import { Text, ToggleSwitch, theme as primerTheme } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
+import { useJupyter } from '../jupyter';
+import {
+  CellSidebarExtension,
+  Notebook2,
+  NotebookToolbar,
+} from '../components';
+import { jupyterLabTheme, JupyterReactTheme, Colormode } from '../theme';
+
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookThemeColormode = () => {
+  const { serviceManager } = useJupyter();
   const [theme, setTheme] = useState<any>(jupyterLabTheme);
   const [isThemeOn, setIsThemeOn] = useState(false);
   const [colormode, setColormode] = useState<Colormode>('light');
   const [isOn, setIsOn] = useState(false);
-  const extensions = useMemo(() => [new CellSidebarExtension()], []);
+  const extensions = useMemo(
+    () => [new CellSidebarExtension({ colormode })],
+    [colormode]
+  );
   useEffect(() => {
     if (isThemeOn) {
       setTheme(primerTheme);
@@ -49,7 +57,7 @@ const NotebookThemeColormode = () => {
   }, []);
   return (
     <>
-      <Jupyter theme={theme} colormode={colormode} startDefaultKernel>
+      <JupyterReactTheme theme={theme} colormode={colormode}>
         <Box display="flex">
           <Box mr={3}>
             <Text
@@ -90,14 +98,18 @@ const NotebookThemeColormode = () => {
             />
           </Box>
         </Box>
-        <Notebook
-          nbformat={nbformat as INotebookContent}
-          id="notebook-model-id"
-          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-          extensions={extensions}
-          Toolbar={NotebookToolbar}
-        />
-      </Jupyter>
+        {serviceManager && (
+          <Notebook2
+            nbformat={nbformat as INotebookContent}
+            serviceManager={serviceManager}
+            startDefaultKernel
+            id="notebook-model-id"
+            height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+            extensions={extensions}
+            Toolbar={NotebookToolbar}
+          />
+        )}
+      </JupyterReactTheme>
     </>
   );
 };

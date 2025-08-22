@@ -6,9 +6,9 @@
 
 export * from './EquationNode';
 export * from './ImageNode';
-export * from './JupyterCodeHighlightNode';
-export * from './JupyterCodeHighlighter';
-export * from './JupyterCodeNode';
+export * from './JupyterInputHighlightNode';
+export * from './JupyterInputHighlighter';
+export * from './JupyterInputNode';
 export * from './JupyterOutputNode';
 export * from './JupyterCellNode';
 export * from './YouTubeNode';

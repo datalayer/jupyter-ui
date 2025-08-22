@@ -46,7 +46,7 @@ import {
   $isHeadingNode,
 } from '@lexical/rich-text';
 import {
-  $isJupyterCodeNode,
+  $isJupyterInputNode,
   DropDownItem,
   DropDown,
   getDefaultCodeLanguage,
@@ -54,11 +54,11 @@ import {
   CODE_LANGUAGE_FRIENDLY_NAME_MAP,
   $createYouTubeNode,
   INSERT_EQUATION_COMMAND,
-  INSERT_JUPYTER_CELL_COMMAND,
+  INSERT_JUPYTER_INPUT_OUTPUT_COMMAND,
   DEFAULT_INITIAL_OUTPUTS,
 } from '../';
 
-import { JupyterCodeNode } from '../nodes';
+import { JupyterInputNode } from '../nodes';
 
 const LowPriority = 1;
 
@@ -375,12 +375,12 @@ function BlockOptionsDropdownList({
     }
     setShowBlockOptionsDropDown(false);
   };
-  const formatJupyterOutput = () => {
-    if (blockType !== 'jupyter-output') {
+  const formatJupyterInput = () => {
+    if (blockType !== 'jupyter-input') {
       editor.update(() => {
         const selection = $getSelection();
         const code = selection?.getTextContent() || '';
-        editor.dispatchCommand(INSERT_JUPYTER_CELL_COMMAND, {
+        editor.dispatchCommand(INSERT_JUPYTER_INPUT_OUTPUT_COMMAND, {
           code,
           outputs: code ? [] : DEFAULT_INITIAL_OUTPUTS,
         });
@@ -421,10 +421,10 @@ function BlockOptionsDropdownList({
   };
   return (
     <div className="dropdown" ref={dropDownRef}>
-      <button className="item" onClick={formatJupyterOutput}>
+      <button className="item" onClick={formatJupyterInput}>
         <span className="icon code" />
         <span className="text">Jupyter Cell</span>
-        {blockType === 'jupyter' && <span className="active" />}
+        {blockType === 'jupyter-input' && <span className="active" />}
       </button>
       <button className="item" onClick={formatParagraph}>
         <span className="icon paragraph" />
@@ -509,9 +509,9 @@ export function ToolbarPlugin() {
             ? element.getTag()
             : element.getType();
           setBlockType(type);
-          if ($isJupyterCodeNode(element)) {
+          if ($isJupyterInputNode(element)) {
             setCodeLanguage(
-              (element as JupyterCodeNode).getLanguage() ||
+              (element as JupyterInputNode).getLanguage() ||
                 getDefaultCodeLanguage(),
             );
           }
@@ -573,8 +573,8 @@ export function ToolbarPlugin() {
       activeEditor.update(() => {
         if (selectedElementKey !== null) {
           const node = $getNodeByKey(selectedElementKey);
-          if (node && $isJupyterCodeNode(node)) {
-            (node as JupyterCodeNode).setLanguage(value);
+          if (node && $isJupyterInputNode(node)) {
+            (node as JupyterInputNode).setLanguage(value);
           }
         }
       });
@@ -639,7 +639,7 @@ export function ToolbarPlugin() {
           <Divider />
         </>
       )}
-      {blockType === 'jupyter-code' ? (
+      {blockType === 'jupyter-input' ? (
         <>
           <DropDown
             buttonClassName="toolbar-item code-language"

@@ -39,7 +39,7 @@ export const DEFAULT_CODE_LANGUAGE = 'javascript';
 type SerializedCodeHighlightNode = Spread<
   {
     highlightType: string | null | undefined;
-    type: 'jupyter-code-highlight';
+    type: 'jupyter-input-highlight';
     version: 1;
   },
   SerializedTextNode
@@ -90,7 +90,7 @@ export const getCodeLanguages = (): Array<string> =>
     .sort();
 
 /** @noInheritDoc */
-export class JupyterCodeHighlightNode extends TextNode {
+export class JupyterInputHighlightNode extends TextNode {
   /** @internal */
   __highlightType: string | null | undefined;
 
@@ -104,11 +104,11 @@ export class JupyterCodeHighlightNode extends TextNode {
   }
 
   static getType(): string {
-    return 'jupyter-code-highlight';
+    return 'jupyter-input-highlight';
   }
 
-  static clone(node: JupyterCodeHighlightNode): JupyterCodeHighlightNode {
-    return new JupyterCodeHighlightNode(
+  static clone(node: JupyterInputHighlightNode): JupyterInputHighlightNode {
+    return new JupyterInputHighlightNode(
       node.__text,
       node.__highlightType || undefined,
       node.__key,
@@ -153,8 +153,8 @@ export class JupyterCodeHighlightNode extends TextNode {
 
   static importJSON(
     serializedNode: SerializedCodeHighlightNode,
-  ): JupyterCodeHighlightNode {
-    const node = $createJupyterCodeHighlightNode(
+  ): JupyterInputHighlightNode {
+    const node = $createJupyterInputHighlightNode(
       serializedNode.text,
       serializedNode.highlightType,
     );
@@ -169,7 +169,7 @@ export class JupyterCodeHighlightNode extends TextNode {
     return {
       ...super.exportJSON(),
       highlightType: this.getHighlightType(),
-      type: 'jupyter-code-highlight',
+      type: 'jupyter-input-highlight',
       version: 1,
     };
   }
@@ -192,28 +192,28 @@ function getHighlightThemeClass(
   );
 }
 
-export function $createJupyterCodeHighlightNode(
+export function $createJupyterInputHighlightNode(
   text: string,
   highlightType?: string | null | undefined,
-): JupyterCodeHighlightNode {
-  return new JupyterCodeHighlightNode(text, highlightType);
+): JupyterInputHighlightNode {
+  return new JupyterInputHighlightNode(text, highlightType);
 }
 
-export function $isJupyterCodeHighlightNode(
-  node: LexicalNode | JupyterCodeHighlightNode | null | undefined,
-): node is JupyterCodeHighlightNode {
-  return node instanceof JupyterCodeHighlightNode;
+export function $isJupyterInputHighlightNode(
+  node: LexicalNode | JupyterInputHighlightNode | null | undefined,
+): node is JupyterInputHighlightNode {
+  return node instanceof JupyterInputHighlightNode;
 }
 
-export function getFirstJupyterCodeHighlightNodeOfLine(
+export function getFirstJupyterInputHighlightNodeOfLine(
   anchor: LexicalNode,
-): JupyterCodeHighlightNode | null | undefined {
+): JupyterInputHighlightNode | null | undefined {
   let currentNode = null;
   const previousSiblings = anchor.getPreviousSiblings();
   previousSiblings.push(anchor);
   while (previousSiblings.length > 0) {
     const node = previousSiblings.pop();
-    if ($isJupyterCodeHighlightNode(node)) {
+    if ($isJupyterInputHighlightNode(node)) {
       currentNode = node;
     }
     if ($isLineBreakNode(node)) {
@@ -224,15 +224,15 @@ export function getFirstJupyterCodeHighlightNodeOfLine(
   return currentNode;
 }
 
-export function getLastJupyterCodeHighlightNodeOfLine(
+export function getLastJupyterInputHighlightNodeOfLine(
   anchor: LexicalNode,
-): JupyterCodeHighlightNode | null | undefined {
+): JupyterInputHighlightNode | null | undefined {
   let currentNode = null;
   const nextSiblings = anchor.getNextSiblings();
   nextSiblings.unshift(anchor);
   while (nextSiblings.length > 0) {
     const node = nextSiblings.shift();
-    if ($isJupyterCodeHighlightNode(node)) {
+    if ($isJupyterInputHighlightNode(node)) {
       currentNode = node;
     }
     if ($isLineBreakNode(node)) {

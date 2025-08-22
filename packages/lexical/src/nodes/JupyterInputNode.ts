@@ -24,12 +24,12 @@ import {
 } from 'lexical';
 import { addClassNamesToElement } from '@lexical/utils';
 import { UUID } from '@lumino/coreutils';
-import type { JupyterCodeHighlightNode } from './JupyterCodeHighlightNode';
+import type { JupyterInputHighlightNode } from './JupyterInputHighlightNode';
 import {
-  $createJupyterCodeHighlightNode,
-  getFirstJupyterCodeHighlightNodeOfLine,
-} from './JupyterCodeHighlightNode';
-import { CODE_UUID_TO_CODE_KEY } from '../plugins/JupyterCellOutputPlugin';
+  $createJupyterInputHighlightNode,
+  getFirstJupyterInputHighlightNodeOfLine,
+} from './JupyterInputHighlightNode';
+import { INPUT_UUID_TO_CODE_KEY } from '../plugins/JupyterInputOutputPlugin';
 
 import * as Prism from 'prismjs';
 import 'prismjs/components/prism-clike';
@@ -47,8 +47,8 @@ import 'prismjs/components/prism-swift';
 type SerializedCodeNode = Spread<
   {
     language: string | null | undefined;
-    type: 'jupyter-code';
-    codeNodeUuid: string;
+    type: 'jupyter-input';
+    jupyterInputNodeUuid: string;
     version: 1;
   },
   SerializedElementNode
@@ -65,42 +65,42 @@ const mapToPrismLanguage = (
 
 const LANGUAGE_DATA_ATTRIBUTE = 'data-highlight-language';
 
-export class JupyterCodeNode extends ElementNode {
+export class JupyterInputNode extends ElementNode {
   /** @internal */
   __language: string | null | undefined;
-  __codeNodeUuid: string;
+  __jupyterInputNodeUuid: string;
 
   static getType(): string {
-    return 'jupyter-code';
+    return 'jupyter-input';
   }
 
-  static clone(node: JupyterCodeNode): JupyterCodeNode {
-    return new JupyterCodeNode(
+  static clone(node: JupyterInputNode): JupyterInputNode {
+    return new JupyterInputNode(
       node.__language,
-      node.__codeNodeUuid,
+      node.__jupyterInputNodeUuid,
       node.__key,
     );
   }
 
   constructor(
     language?: string | null | undefined,
-    codeNodeUuid?: string,
+    jupyterInputNodeUuid?: string,
     key?: NodeKey,
   ) {
     super(key);
     this.__language = mapToPrismLanguage(language);
-    this.__codeNodeUuid = codeNodeUuid || UUID.uuid4();
-    CODE_UUID_TO_CODE_KEY.set(this.__codeNodeUuid, this.__key);
+    this.__jupyterInputNodeUuid = jupyterInputNodeUuid || UUID.uuid4();
+    INPUT_UUID_TO_CODE_KEY.set(this.__jupyterInputNodeUuid, this.__key);
   }
 
-  setCodeNodeUuid(codeNodeUuid: string) {
+  setJupyterInputNodeUuid(jupyterInputNodeUuid: string) {
     const self = this.getWritable();
-    self.__codeNodeUuid = codeNodeUuid;
+    self.__jupyterInputNodeUuid = jupyterInputNodeUuid;
   }
 
-  getCodeNodeUuid(): string {
+  getJupyterInputNodeUuid(): string {
     const self = this.getLatest();
-    return self.__codeNodeUuid;
+    return self.__jupyterInputNodeUuid;
   }
 
   // View
@@ -115,7 +115,7 @@ export class JupyterCodeNode extends ElementNode {
     return element;
   }
 
-  updateDOM(prevNode: JupyterCodeNode, dom: HTMLElement): boolean {
+  updateDOM(prevNode: JupyterInputNode, dom: HTMLElement): boolean {
     const language = this.__language;
     const prevLanguage = prevNode.__language;
     if (language) {
@@ -197,10 +197,10 @@ export class JupyterCodeNode extends ElementNode {
     };
   }
 
-  static importJSON(serializedNode: SerializedCodeNode): JupyterCodeNode {
-    const node = $createJupyterCodeNode(
+  static importJSON(serializedNode: SerializedCodeNode): JupyterInputNode {
+    const node = $createJupyterInputNode(
       serializedNode.language,
-      serializedNode.codeNodeUuid,
+      serializedNode.jupyterInputNodeUuid,
     );
     node.setFormat(serializedNode.format);
     node.setIndent(serializedNode.indent);
@@ -211,9 +211,9 @@ export class JupyterCodeNode extends ElementNode {
   exportJSON(): SerializedCodeNode {
     return {
       ...super.exportJSON(),
-      type: 'jupyter-code',
+      type: 'jupyter-input',
       language: this.getLanguage(),
-      codeNodeUuid: this.getCodeNodeUuid(),
+      jupyterInputNodeUuid: this.getJupyterInputNodeUuid(),
       version: 1,
     };
   }
@@ -221,7 +221,7 @@ export class JupyterCodeNode extends ElementNode {
   // Mutation
   insertNewAfter(
     selection: RangeSelection,
-  ): null | ParagraphNode | JupyterCodeHighlightNode {
+  ): null | ParagraphNode | JupyterInputHighlightNode {
     const children = this.getChildren();
     const childrenLength = children.length;
     if (
@@ -242,7 +242,7 @@ export class JupyterCodeNode extends ElementNode {
     // spaces of the current line. Create a new line that has all those
     // tabs and spaces, such that leading indentation is preserved.
     const anchor = selection.anchor.getNode();
-    const firstNode = getFirstJupyterCodeHighlightNodeOfLine(anchor);
+    const firstNode = getFirstJupyterInputHighlightNodeOfLine(anchor);
     if (firstNode != null) {
       let leadingWhitespace = 0;
       const firstNodeText = firstNode.getTextContent();
@@ -254,7 +254,7 @@ export class JupyterCodeNode extends ElementNode {
       }
       if (leadingWhitespace > 0) {
         const whitespace = firstNodeText.substring(0, leadingWhitespace);
-        const indentedChild = $createJupyterCodeHighlightNode(whitespace);
+        const indentedChild = $createJupyterInputHighlightNode(whitespace);
         anchor.insertAfter(indentedChild);
         selection.insertNodes([$createLineBreakNode()]);
         indentedChild.select();
@@ -294,21 +294,21 @@ export class JupyterCodeNode extends ElementNode {
   }
 }
 
-export function $createJupyterCodeNode(
+export function $createJupyterInputNode(
   language?: string | null | undefined,
-  codeNodeUuid?: string,
-): JupyterCodeNode {
-  return new JupyterCodeNode(language, codeNodeUuid);
+  jupyterInputNodeUuid?: string,
+): JupyterInputNode {
+  return new JupyterInputNode(language, jupyterInputNodeUuid);
 }
 
-export function $isJupyterCodeNode(
+export function $isJupyterInputNode(
   node: LexicalNode | null | undefined,
-): node is JupyterCodeNode {
-  return node instanceof JupyterCodeNode;
+): node is JupyterInputNode {
+  return node instanceof JupyterInputNode;
 }
 
 function convertPreElement(domNode: Node): DOMConversionOutput {
-  return { node: $createJupyterCodeNode('python') };
+  return { node: $createJupyterInputNode('python') };
 }
 
 function convertDivElement(domNode: Node): DOMConversionOutput {
@@ -322,12 +322,12 @@ function convertDivElement(domNode: Node): DOMConversionOutput {
       }
       return childLexicalNodes;
     },
-    node: isCodeElement(div) ? $createJupyterCodeNode('python') : null,
+    node: isCodeElement(div) ? $createJupyterInputNode('python') : null,
   };
 }
 
 function convertTableElement(): DOMConversionOutput {
-  return { node: $createJupyterCodeNode('python') };
+  return { node: $createJupyterInputNode('python') };
 }
 
 function convertCodeNoop(): DOMConversionOutput {
