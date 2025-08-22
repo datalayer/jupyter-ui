@@ -13,7 +13,7 @@ import type { CommandRegistry } from '@lumino/commands';
 import type { IDisposable } from '@lumino/disposable';
 import type { PanelLayout, Widget } from '@lumino/widgets';
 import { Signal } from '@lumino/signaling';
-import { JupyterReactTheme } from '../../../../theme';
+import { JupyterReactTheme, Colormode } from '../../../../theme';
 import { CellSidebar, type ICellSidebarProps } from './CellSidebar';
 import {
   NotebookExtension,
@@ -30,13 +30,17 @@ class CellSidebarFactory implements IDisposable {
    * @param panel The notebook panel
    * @param commands Command registry
    * @param ngrader Whether to activate nbgrader feature or not.
+   * @param sidebarWidth Width of the sidebar
+   * @param factory React component factory
+   * @param colormode Color mode for the theme
    */
   constructor(
     protected panel: NotebookPanel,
     protected commands: CommandRegistry,
     protected nbgrader: boolean = false,
     protected sidebarWidth: number = 120,
-    protected factory: React.JSXElementConstructor<ICellSidebarProps> = CellSidebar
+    protected factory: React.JSXElementConstructor<ICellSidebarProps> = CellSidebar,
+    protected colormode: Colormode = 'light'
   ) {
     this._onModelChanged(panel.content);
     panel.content.modelChanged.connect(this._onModelChanged, this);
@@ -65,7 +69,7 @@ class CellSidebarFactory implements IDisposable {
     if (cell) {
       const SidebarFactory = this.factory;
       const sidebar = ReactWidget.create(
-        <JupyterReactTheme>
+        <JupyterReactTheme colormode={this.colormode}>
           <SidebarFactory
             commands={this.commands}
             model={model}
@@ -125,6 +129,7 @@ type ICellSidebarExtensionOptions = {
   factory?: React.JSXElementConstructor<ICellSidebarProps>;
   nbgrader?: boolean;
   sidebarWidth?: number;
+  colormode?: Colormode;
 };
 
 /**
@@ -135,6 +140,7 @@ export class CellSidebarExtension implements NotebookExtension {
   protected commands?: CommandRegistry;
   protected nbgrader?: boolean;
   protected sidebarWidth?: number;
+  protected colormode?: Colormode;
   readonly component: null;
 
   /**
@@ -149,6 +155,7 @@ export class CellSidebarExtension implements NotebookExtension {
     this.commands = options.commands;
     this.nbgrader = options.nbgrader;
     this.sidebarWidth = options.sidebarWidth;
+    this.colormode = options.colormode ?? 'light';
   }
 
   createNew(panel: NotebookPanel): IDisposable {
@@ -160,7 +167,8 @@ export class CellSidebarExtension implements NotebookExtension {
       this.commands!,
       this.nbgrader,
       this.sidebarWidth,
-      this.factory
+      this.factory,
+      this.colormode
     );
     return sidebar;
   }

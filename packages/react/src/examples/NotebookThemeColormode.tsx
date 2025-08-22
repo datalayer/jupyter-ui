@@ -25,7 +25,10 @@ const NotebookThemeColormode = () => {
   const [isThemeOn, setIsThemeOn] = useState(false);
   const [colormode, setColormode] = useState<Colormode>('light');
   const [isOn, setIsOn] = useState(false);
-  const extensions = useMemo(() => [new CellSidebarExtension()], []);
+  const extensions = useMemo(
+    () => [new CellSidebarExtension({ colormode })],
+    [colormode]
+  );
   useEffect(() => {
     if (isThemeOn) {
       setTheme(primerTheme);
