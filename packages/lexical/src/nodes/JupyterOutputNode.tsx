@@ -224,7 +224,7 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
   public executeCode(code: string) {
     this.setJupyterInput(code);
     this.__outputAdapter.execute(code);
-    this.setExecuteTrigger(this.getExecuteTrigger() + 1);
+    // this.setExecuteTrigger(this.getExecuteTrigger() + 1);
   }
 }
 

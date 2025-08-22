@@ -41,11 +41,13 @@ import {
 } from '../nodes/JupyterOutputNode';
 import { $createCounterNode } from '../nodes/CounterNode';
 
-export const INPUT_UUID_TO_OUTPUT_KEY = new Map<string, NodeKey | undefined>();
-export const INPUT_UUID_TO_CODE_KEY = new Map<string, NodeKey | undefined>();
-export const INPUT_UUID_TO_OUTPUT_UUID = new Map<string, string | undefined>();
-export const OUTPUT_UUID_TO_CODE_UUID = new Map<string, string | undefined>();
-export const OUTPUT_UUID_TO_OUTPUT_KEY = new Map<string, NodeKey | undefined>();
+type UUID = string;
+
+export const INPUT_UUID_TO_OUTPUT_KEY = new Map<UUID, NodeKey | undefined>();
+export const INPUT_UUID_TO_CODE_KEY = new Map<UUID, NodeKey | undefined>();
+export const INPUT_UUID_TO_OUTPUT_UUID = new Map<UUID, UUID | undefined>();
+export const OUTPUT_UUID_TO_CODE_UUID = new Map<UUID, UUID | undefined>();
+export const OUTPUT_UUID_TO_OUTPUT_KEY = new Map<UUID, NodeKey | undefined>();
 
 export const DEFAULT_INITIAL_OUTPUTS: IOutput[] = [
   {
@@ -82,10 +84,16 @@ export const JupyterInputOutputPlugin = (
   useEffect(() => {
     if (!editor.hasNodes([JupyterOutputNode])) {
       throw new Error(
-        'JupyterCellOutputPlugin: JupyterOutputNode not registered on editor',
+        'JupyterInputOutputPlugin: JupyterOutputNode not registered on editor',
+      );
+    }
+    if (!editor.hasNodes([JupyterInputNode])) {
+      throw new Error(
+        'JupyterInputOutputPlugin: JupyterInputNode not registered on editor',
       );
     }
   }, [editor]);
+
   useEffect(() => {
     return editor.registerCommand<boolean>(
       INSERT_LINE_BREAK_COMMAND,
@@ -220,6 +228,7 @@ export const JupyterInputOutputPlugin = (
       COMMAND_PRIORITY_LOW, // Changed to LOW so INSERT_LINE_BREAK_COMMAND can handle regular Enter
     );
   }, [editor, kernel]);
+
   useEffect(() => {
     return editor.registerMutationListener(
       JupyterInputNode,
@@ -231,7 +240,7 @@ export const JupyterInputOutputPlugin = (
               let jupyterOutputNodeUuid: string | undefined;
               // TODO Do not use forEach...
               INPUT_UUID_TO_CODE_KEY.forEach(
-                (codeKey: NodeKey, codeUuid: string) => {
+                (codeKey: NodeKey, codeUuid: UUID) => {
                   if (codeKey === nodeKey) {
                     //                  jupyterInputNodeUuid = codeUuid;
                     jupyterOutputNodeUuid =
@@ -263,6 +272,7 @@ export const JupyterInputOutputPlugin = (
       },
     );
   }, [editor]);
+
   useEffect(() => {
     return editor.registerCommand(
       INSERT_JUPYTER_INPUT_OUTPUT_COMMAND,
@@ -305,7 +315,7 @@ export const JupyterInputOutputPlugin = (
             code,
             outputAdapter,
             outputs || [],
-            false,
+            true,
             jupyterCodeNode.getJupyterInputNodeUuid(),
             UUID.uuid4(),
           );
@@ -330,6 +340,7 @@ export const JupyterInputOutputPlugin = (
       COMMAND_PRIORITY_EDITOR,
     );
   }, [editor, kernel]);
+
   return null;
 };
 
