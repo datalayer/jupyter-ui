@@ -8,21 +8,11 @@ import { useEffect } from 'react';
 import { createGlobalStyle } from 'styled-components';
 import { Colormode } from './JupyterLabColormode';
 
-import '@primer/primitives/dist/css/base/typography/typography.css';
-import '@primer/primitives/dist/css/functional/themes/light.css';
-import '@primer/primitives/dist/css/functional/size/border.css';
-import '@primer/primitives/dist/css/functional/size/breakpoints.css';
-import '@primer/primitives/dist/css/functional/size/size-coarse.css';
-import '@primer/primitives/dist/css/functional/size/size-fine.css';
-import '@primer/primitives/dist/css/functional/size/size.css';
-import '@primer/primitives/dist/css/functional/size/viewport.css';
-import '@primer/primitives/dist/css/functional/typography/typography.css';
-
-const DATASET_LAB_THEME = 'data-lab-theme';
+const DATA_JUPYTERLAB_THEME = 'data-jupyterlab-theme';
 
 const GlobalStyle = createGlobalStyle<any>`
   .jp-ThemedContainer button {
-    --button-primary-bgColor-active: var(--jp-brand-color0, #0d47a1) !important;
+    --button-primary-bgColor-active: var(--jp-brand-color0, #3a4047ff) !important;
     --button-primary-bgColor-hover: var(--jp-brand-color0, #0d47a1) !important;
     --button-primary-bgColor-rest: var(--jp-brand-color1, #1976d2) !important;
   }
@@ -66,10 +56,9 @@ export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
     // ipywidgets.
     import('@jupyter-widgets/base/css/index.css');
     import('@jupyter-widgets/controls/css/widgets-base.css');
-  }, []);
+  }, [colormode]);
 
   useEffect(() => {
-    document.body.querySelector(`style[${DATASET_LAB_THEME}]`)?.remove();
     let theme;
     switch (colormode) {
       case 'light': {
@@ -91,9 +80,12 @@ export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
     //   { test: /style\/theme\.css$/i, loader: 'css-loader', options: {exportType: 'string'} }
     theme?.then(module => {
       if (module.default) {
+        document.body
+          .querySelector(`style[${DATA_JUPYTERLAB_THEME}]`)
+          ?.remove();
         document.body.insertAdjacentHTML(
           'afterbegin',
-          `<style ${DATASET_LAB_THEME}="${colormode}">
+          `<style ${DATA_JUPYTERLAB_THEME}="${colormode}">
 ${module.default}
 </style>`
         );

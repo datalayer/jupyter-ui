@@ -39,11 +39,11 @@ export const JupyterLabAppCss = (props: Props) => {
   useEffect(() => {
     switch (theme) {
       case 'light': {
-        //        import('@jupyterlab/theme-light-extension/style/theme.css');
+        // import('@jupyterlab/theme-light-extension/style/theme.css');
         break;
       }
       case 'dark': {
-        //        import('@jupyterlab/theme-dark-extension/style/theme.css');
+        // import('@jupyterlab/theme-dark-extension/style/theme.css');
         break;
       }
     }

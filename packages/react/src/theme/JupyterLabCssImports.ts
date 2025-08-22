@@ -20,9 +20,10 @@ import '@jupyterlab/cells/style/index.js';
 import '@jupyterlab/notebook/style/index.js';
 import '@jupyterlab/filebrowser/style/index.js';
 import '@jupyterlab/terminal/style/index.js';
-import '@jupyterlab/theme-light-extension/style/theme.css';
-import '@jupyterlab/theme-light-extension/style/variables.css';
 import '@jupyterlab/ui-components/style/index.js';
+
+// import '@jupyterlab/theme-light-extension/style/theme.css';
+// import '@jupyterlab/theme-light-extension/style/variables.css';
 
 import '@jupyter-widgets/base/css/index.css';
 import '@jupyter-widgets/controls/css/widgets-base.css';

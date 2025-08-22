@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyter-react",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Jupyter React - React.js components 100% compatible with Jupyter.",
   "license": "MIT",
   "main": "lib/index.js",
@@ -43,6 +43,7 @@
     "dev": "run-p -c 'start:*'",
     "eslint": "npm eslint:check --fix",
     "eslint:check": "eslint . --cache --ext .ts,.tsx",
+    "example": "run-p -c 'start:*'",
     "install:extension": "npm run build",
     "kill": "./../../dev/sh/kill.sh || true",
     "lint": "npm stylelint && npm prettier && npm eslint",
