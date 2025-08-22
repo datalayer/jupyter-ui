@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import React, { createContext, useContext } from 'react';
 import { BaseStyles, ThemeProvider } from '@primer/react';
 import { Colormode, JupyterLabCss, jupyterLabTheme } from '../theme';
 
@@ -18,6 +19,22 @@ import '@primer/primitives/dist/css/functional/size/size-fine.css';
 import '@primer/primitives/dist/css/functional/size/size.css';
 import '@primer/primitives/dist/css/functional/size/viewport.css';
 import '@primer/primitives/dist/css/functional/typography/typography.css';
+
+// Create context for colormode
+const JupyterReactColormodeContext = createContext<Colormode | undefined>(
+  undefined
+);
+
+// Hook to access the colormode from the context
+export function useJupyterReactColormode(): Colormode {
+  const colormode = useContext(JupyterReactColormodeContext);
+  if (colormode === undefined) {
+    throw new Error(
+      'useJupyterReactColormode must be used within a JupyterReactTheme provider'
+    );
+  }
+  return colormode;
+}
 
 type IJupyterLabThemeProps = {
   colormode?: Colormode;
@@ -35,7 +52,7 @@ export function JupyterReactTheme(
     theme = jupyterLabTheme,
   } = props;
   return (
-    <>
+    <JupyterReactColormodeContext.Provider value={colormode}>
       {loadJupyterLabCss && <JupyterLabCss colormode={colormode} />}
       <ThemeProvider
         theme={theme}
@@ -53,7 +70,7 @@ export function JupyterReactTheme(
           {children}
         </BaseStyles>
       </ThemeProvider>
-    </>
+    </JupyterReactColormodeContext.Provider>
   );
 }
 
