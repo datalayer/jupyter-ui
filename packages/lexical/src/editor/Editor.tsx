@@ -156,9 +156,7 @@ export function Editor(props: Props) {
             <ListMaxIndentLevelPlugin maxDepth={7} />
             <MarkdownPlugin />
             {/* <JupyterCellPlugin /> */}
-            {defaultKernel && (
-              <JupyterInputOutputPlugin kernel={defaultKernel} />
-            )}
+            <JupyterInputOutputPlugin kernel={defaultKernel} />
             <ComponentPickerMenuPlugin />
             <EquationsPlugin />
             <ImagesPlugin />

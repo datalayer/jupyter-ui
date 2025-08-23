@@ -17,6 +17,8 @@ import {
   KEY_ENTER_COMMAND,
   COMMAND_PRIORITY_LOW,
   $createLineBreakNode,
+  $createParagraphNode,
+  $createTextNode,
 } from 'lexical';
 import { $getNodeByKey, $createNodeSelection, $setSelection } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -355,6 +357,21 @@ export const JupyterInputOutputPlugin = (
         const { code, outputs } = props;
         const selection = $getSelection();
         if ($isRangeSelection(selection)) {
+          // Check if kernel is undefined
+          if (!kernel) {
+            // Clear any existing selection content
+            selection.removeText();
+
+            // Create a paragraph with the message
+            const paragraph = $createParagraphNode();
+            const textNode = $createTextNode(
+              'A runtime is needed to insert Jupyter Cells',
+            );
+            paragraph.append(textNode);
+            selection.insertNodes([paragraph]);
+            return true;
+          }
+
           // Clear any existing selection content
           selection.removeText();
 
