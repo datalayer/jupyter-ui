@@ -4,6 +4,7 @@
  * MIT License
  */
 
+export * from './CounterNode';
 export * from './EquationNode';
 export * from './ImageNode';
 export * from './JupyterInputHighlightNode';

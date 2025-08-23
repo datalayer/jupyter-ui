@@ -29,37 +29,39 @@ import { CodeNode } from '@lexical/code';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { useJupyter } from '@datalayer/jupyter-react';
 import {
-  JupyterInputOutputPlugin,
+  CounterNode,
   EquationNode,
-  HorizontalRulePlugin,
-  ListMaxIndentLevelPlugin,
-  AutoLinkPlugin,
-  ComponentPickerMenuPlugin,
-  EquationsPlugin,
-  ImagesPlugin,
-  YouTubePlugin,
   ImageNode,
-  YouTubeNode,
   JupyterInputHighlightNode,
   JupyterInputNode,
   JupyterOutputNode,
   // JupyterCellNode,
-  // JupyterCellPlugin,
-  CodeActionMenuPlugin,
+  YouTubeNode,
+} from '../nodes';
+import {
   AutoEmbedPlugin,
+  AutoLinkPlugin,
+  CodeActionMenuPlugin,
+  CommentPlugin,
+  ComponentPickerMenuPlugin,
+  DraggableBlockPlugin,
+  EquationsPlugin,
+  FloatingTextFormatToolbarPlugin,
+  HorizontalRulePlugin,
+  ImagesPlugin,
+  // JupyterCellPlugin,
+  JupyterInputOutputPlugin,
+  ListMaxIndentLevelPlugin,
+  MarkdownPlugin,
   NbformatContentPlugin,
   TableOfContentsPlugin,
-  MarkdownPlugin,
-  CommentPlugin,
-  FloatingTextFormatToolbarPlugin,
+  YouTubePlugin,
 } from './..';
 import { commentTheme } from '../themes';
 import { useLexical } from '../context/LexicalContext';
 import { TreeViewPlugin, ToolbarPlugin } from '../plugins';
-import DraggableBlockPlugin from '../plugins/DraggableBlockPlugin';
 
 import './../../style/index.css';
-import { CounterNode } from '../nodes/CounterNode';
 
 type Props = {
   notebook?: INotebookContent;
