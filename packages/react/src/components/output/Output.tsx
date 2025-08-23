@@ -34,6 +34,7 @@ export type IOutputProps = {
   kernel?: Kernel;
   lumino: boolean;
   model?: IOutputAreaModel;
+  onExecutionPhaseChanged?: (phaseOutput: IExecutionPhaseOutput) => void;
   outputs?: IOutput[];
   receipt?: string;
   showControl?: boolean;
@@ -41,12 +42,9 @@ export type IOutputProps = {
   showKernelProgressBar?: boolean;
   suppressCodeExecutionErrors?: boolean;
   toolbarPosition: 'up' | 'middle' | 'none';
-  onExecutionPhaseChanged?: (phaseOutput: IExecutionPhaseOutput) => void;
 };
 
 export const Output = (props: IOutputProps) => {
-  const { defaultKernel } = useJupyter();
-  const outputStore = useOutputsStore();
   const {
     adapter: propsAdapter,
     autoRun,
@@ -55,21 +53,23 @@ export const Output = (props: IOutputProps) => {
     codePre,
     disableRun,
     executeTrigger,
+    id: sourceId,
     insertText,
     kernel: propsKernel,
     lumino,
     model,
+    onExecutionPhaseChanged,
     outputs: propsOutputs,
     receipt,
     showControl,
     showEditor,
     showKernelProgressBar = true,
     suppressCodeExecutionErrors = false,
-    onExecutionPhaseChanged,
-    id: sourceId,
     toolbarPosition,
   } = props;
-  const kernel = propsKernel ?? defaultKernel;
+  const { defaultKernel } = useJupyter();
+  const outputStore = useOutputsStore();
+  const kernel = propsKernel ?? propsAdapter?.kernel ?? defaultKernel;
   const [id, setId] = useState<string | undefined>(sourceId);
   const [kernelStatus, setKernelStatus] =
     useState<KernelMessage.Status>('unknown');

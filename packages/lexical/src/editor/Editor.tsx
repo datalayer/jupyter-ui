@@ -58,7 +58,7 @@ import {
   YouTubePlugin,
 } from './..';
 import { commentTheme } from '../themes';
-import { useLexical } from '../context/LexicalContext';
+import { useLexical } from '../context';
 import { TreeViewPlugin, ToolbarPlugin } from '../plugins';
 
 import './../../style/index.css';
@@ -80,6 +80,7 @@ const initialConfig = {
   nodes: [
     AutoLinkNode,
     CodeNode,
+    CounterNode,
     EquationNode,
     HashtagNode,
     HeadingNode,
@@ -98,7 +99,6 @@ const initialConfig = {
     TableNode,
     TableRowNode,
     YouTubeNode,
-    CounterNode,
   ],
 };
 
