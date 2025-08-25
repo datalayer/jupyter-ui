@@ -21,7 +21,12 @@ import {
   INPUT_UUID_TO_OUTPUT_UUID,
   OUTPUT_UUID_TO_OUTPUT_KEY,
 } from '../plugins/JupyterInputOutputPlugin';
-import { Output, OutputAdapter, newUuid } from '@datalayer/jupyter-react';
+import {
+  Output,
+  OutputAdapter,
+  newUuid,
+  Kernel,
+} from '@datalayer/jupyter-react';
 
 export type SerializedJupyterOutputNode = Spread<
   {
@@ -225,6 +230,11 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
     this.setJupyterInput(code);
     this.__outputAdapter.execute(code);
     // this.setExecuteTrigger(this.getExecuteTrigger() + 1);
+  }
+
+  public updateKernel(kernel: Kernel | undefined) {
+    const self = this.getWritable();
+    self.__outputAdapter.kernel = kernel;
   }
 }
 

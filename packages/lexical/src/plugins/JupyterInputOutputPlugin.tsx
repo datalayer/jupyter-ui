@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import {
   $getSelection,
   $isRangeSelection,
@@ -76,6 +76,43 @@ export const JupyterInputOutputPlugin = (
 
   // Flag to prevent infinite recursion when moving output nodes
   const isMovingOutputNode = { current: false };
+
+  // Function to update all existing output nodes with the current kernel
+  const updateAllOutputNodesWithKernel = useCallback(() => {
+    if (!kernel) return;
+
+    editor.update(() => {
+      editor.getEditorState()._nodeMap.forEach(node => {
+        if (node instanceof JupyterOutputNode) {
+          // Update the kernel for this output node
+          node.updateKernel(kernel);
+        }
+      });
+    });
+  }, [kernel, editor]);
+
+  // Update output nodes when kernel becomes available
+  useEffect(() => {
+    if (kernel) {
+      updateAllOutputNodesWithKernel();
+    }
+  }, [kernel, updateAllOutputNodesWithKernel]);
+
+  // Also update nodes when editor state changes (e.g., when loading a model)
+  useEffect(() => {
+    const removeListener = editor.registerUpdateListener(
+      ({ editorState: _editorState }) => {
+        if (kernel) {
+          // Small delay to ensure the nodes are fully loaded
+          setTimeout(() => {
+            updateAllOutputNodesWithKernel();
+          }, 100);
+        }
+      },
+    );
+
+    return removeListener;
+  }, [editor, kernel, updateAllOutputNodesWithKernel]);
 
   useEffect(() => {
     return registerCodeHighlighting(editor);
