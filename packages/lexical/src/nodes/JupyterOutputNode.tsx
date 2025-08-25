@@ -73,7 +73,7 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
   ): JupyterOutputNode {
     return $createJupyterOutputNode(
       serializedNode.source,
-      new OutputAdapter(newUuid(), undefined, []),
+      new OutputAdapter(newUuid(), undefined, serializedNode.outputs),
       serializedNode.outputs,
       false,
       serializedNode.jupyterInputNodeUuid,
@@ -235,6 +235,8 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
   public updateKernel(kernel: Kernel | undefined) {
     const self = this.getWritable();
     self.__outputAdapter.kernel = kernel;
+    // Force a re-render by updating a dummy property
+    // Note: We don't increment executeTrigger as that would cause re-execution
   }
 }
 
