@@ -132,6 +132,9 @@ export const JupyterInputOutputPlugin = (
     if (kernel) {
       onSessionConnection(kernel.session);
       if (kernel.session) {
+        kernel.session.statusChanged.connect((sessionConnection, args) => {
+          onSessionConnection(sessionConnection);
+        });
         kernel.session.connectionStatusChanged.connect(
           (sessionConnection, args) => {
             onSessionConnection(sessionConnection);
@@ -142,7 +145,7 @@ export const JupyterInputOutputPlugin = (
       // Call with undefined when no kernel is available
       onSessionConnection(undefined);
     }
-  }, [kernel, onSessionConnection]);
+  }, [kernel, kernel?.session, onSessionConnection]);
 
   useEffect(() => {
     return registerCodeHighlighting(editor);
