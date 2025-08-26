@@ -32,9 +32,11 @@ import {
   $isRangeSelection,
   FORMAT_ELEMENT_COMMAND,
   TextNode,
+  $createTextNode,
 } from 'lexical';
 import { useCallback, useMemo, useState } from 'react';
 import * as ReactDOM from 'react-dom';
+import { Kernel } from '@datalayer/jupyter-react';
 
 import useModal from '../hooks/useModal';
 import catTypingGif from '../images/yellow-flower-small.jpg';
@@ -107,7 +109,13 @@ function ComponentPickerMenuItem({
   );
 }
 
-export const ComponentPickerMenuPlugin = (): JSX.Element => {
+export interface ComponentPickerMenuPluginProps {
+  kernel?: Kernel;
+}
+
+export const ComponentPickerMenuPlugin = ({
+  kernel,
+}: ComponentPickerMenuPluginProps = {}): JSX.Element => {
   const [editor] = useLexicalComposerContext();
   const [modal, showModal] = useModal();
   const [queryString, setQueryString] = useState<string | null>(null);
@@ -169,16 +177,24 @@ export const ComponentPickerMenuPlugin = (): JSX.Element => {
         icon: <i className="icon code" />,
         keywords: ['javascript', 'python', 'js', 'codeblock', 'jupyter'],
         onSelect: () => {
-          // const selection = $getSelection();
-          // const code = selection?.getTextContent() || "";
-          /*
-          editor.dispatchCommand(INSERT_JUPYTER_CELL_COMMAND, {
-            code: "print('Hello Jupyter UI')",
-            outputs: [],
-            loading: 'Loading...',
-            autoStart: true,
-          });
-          */
+          // Check if kernel is undefined
+          if (!kernel) {
+            // Clear any existing selection content
+            const selection = $getSelection();
+            if ($isRangeSelection(selection)) {
+              selection.removeText();
+              // Create a paragraph with the message
+              const paragraph = $createParagraphNode();
+              const textNode = $createTextNode(
+                'A runtime is needed to insert Jupyter Cells',
+              );
+              paragraph.append(textNode);
+              selection.insertNodes([paragraph]);
+            }
+            return;
+          }
+
+          // Original logic when kernel is available
           editor.dispatchCommand(INSERT_JUPYTER_INPUT_OUTPUT_COMMAND, {
             code: "print('Hello Jupyter UI')",
             outputs: DEFAULT_INITIAL_OUTPUTS,
@@ -341,7 +357,7 @@ export const ComponentPickerMenuPlugin = (): JSX.Element => {
           }),
         ]
       : baseOptions;
-  }, [editor, getDynamicOptions, queryString, showModal]);
+  }, [editor, getDynamicOptions, queryString, showModal, kernel]);
 
   const onSelectOption = useCallback(
     (

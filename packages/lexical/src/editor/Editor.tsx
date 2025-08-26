@@ -157,7 +157,7 @@ export function Editor(props: Props) {
             <MarkdownPlugin />
             {/* <JupyterCellPlugin /> */}
             <JupyterInputOutputPlugin kernel={defaultKernel} />
-            <ComponentPickerMenuPlugin />
+            <ComponentPickerMenuPlugin kernel={defaultKernel} />
             <EquationsPlugin />
             <ImagesPlugin />
             <HorizontalRulePlugin />
