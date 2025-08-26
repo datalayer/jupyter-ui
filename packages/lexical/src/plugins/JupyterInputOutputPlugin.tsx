@@ -259,11 +259,11 @@ export const JupyterInputOutputPlugin = (
     if (kernel) {
       onSessionConnection(kernel.session);
       if (kernel.session) {
-        kernel.session.statusChanged.connect((sessionConnection, args) => {
+        kernel.session.statusChanged.connect((sessionConnection, _) => {
           onSessionConnection(sessionConnection);
         });
         kernel.session.connectionStatusChanged.connect(
-          (sessionConnection, args) => {
+          (sessionConnection, _) => {
             onSessionConnection(sessionConnection);
           },
         );

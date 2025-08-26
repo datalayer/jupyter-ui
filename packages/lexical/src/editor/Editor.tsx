@@ -74,7 +74,7 @@ function Placeholder() {
 }
 
 const initialConfig = {
-  namespace: 'Jupyter Lexical example',
+  namespace: 'Jupyter Lexical Example',
   theme: commentTheme,
   onError(error: Error) {
     throw error;
