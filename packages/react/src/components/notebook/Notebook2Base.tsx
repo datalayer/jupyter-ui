@@ -119,7 +119,7 @@ export interface INotebook2BaseProps {
   /**
    * Callback on session connection changed
    */
-  onSessionConnectionChanged?: OnSessionConnection;
+  onSessionConnection?: OnSessionConnection;
   /**
    * Notebook path
    *
@@ -146,7 +146,7 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
     renderers,
     serviceManager,
     model,
-    onSessionConnectionChanged,
+    onSessionConnection,
   } = props;
 
   const [isLoading, setIsLoading] = useState(true);
@@ -266,7 +266,7 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
       id,
       // Initialization must not trigger revert in case we set up the model content
       path !== FALLBACK_NOTEBOOK_PATH ? path : undefined,
-      onSessionConnectionChanged,
+      onSessionConnection,
       !serviceManager
     );
     setContext(thisContext);
@@ -275,7 +275,7 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
       factory.dispose();
       setContext(context => (context === thisContext ? null : context));
     };
-  }, [id, serviceManager, model, onSessionConnectionChanged, path]);
+  }, [id, serviceManager, model, onSessionConnection, path]);
 
   // Set kernel
   useEffect(() => {

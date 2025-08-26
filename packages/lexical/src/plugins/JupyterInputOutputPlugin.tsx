@@ -128,8 +128,16 @@ export const JupyterInputOutputPlugin = (
     if (!onSessionConnection) return;
 
     // Call the callback with the current session when kernel becomes available or changes
+    // Initial call
     if (kernel) {
       onSessionConnection(kernel.session);
+      if (kernel.session) {
+        kernel.session.connectionStatusChanged.connect(
+          (sessionConnection, args) => {
+            onSessionConnection(sessionConnection);
+          },
+        );
+      }
     } else {
       // Call with undefined when no kernel is available
       onSessionConnection(undefined);

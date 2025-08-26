@@ -253,7 +253,7 @@ export function Notebook2(
             path={path}
             renderers={renderers}
             serviceManager={serviceManager}
-            onSessionConnectionChanged={onSessionConnection}
+            onSessionConnection={onSessionConnection}
           />
         )}
       </Box>
