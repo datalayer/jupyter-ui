@@ -259,9 +259,11 @@ export const JupyterInputOutputPlugin = (
     if (kernel) {
       onSessionConnection(kernel.session);
       if (kernel.session) {
+        /*
         kernel.session.statusChanged.connect((sessionConnection, args) => {
           onSessionConnection(sessionConnection);
         });
+        */
         kernel.session.connectionStatusChanged.connect(
           (sessionConnection, args) => {
             onSessionConnection(sessionConnection);
@@ -322,23 +324,63 @@ export const JupyterInputOutputPlugin = (
           if (parentNode && $isJupyterInputNode(parentNode)) {
             if (event.shiftKey) {
               // Shift+Enter: Execute code
+              console.warn('🚀 Shift+Enter detected, starting execution flow');
               event.preventDefault();
               const code = parentNode.getTextContent();
+              console.warn('🔍 Code to execute:', code.slice(0, 100));
               const jupyterInputNodeUuid = (
                 parentNode as JupyterInputNode
               ).getJupyterInputNodeUuid();
+              console.warn('🆔 Input UUID:', jupyterInputNodeUuid);
+
+              // Check if kernel is available
+              console.warn('🔧 Plugin kernel available:', !!kernel);
+              if (kernel) {
+                console.warn('🔧 Kernel details:', {
+                  id: kernel.id,
+                  session: !!kernel.session,
+                });
+              }
+
               const jupyterOutputNodeKey =
                 INPUT_UUID_TO_OUTPUT_KEY.get(jupyterInputNodeUuid);
+              console.warn(
+                '🔗 Found existing output key:',
+                jupyterOutputNodeKey,
+              );
+
               if (jupyterOutputNodeKey) {
                 const jupyterOutputNode = $getNodeByKey(jupyterOutputNodeKey);
                 if (jupyterOutputNode) {
-                  // Execute code on existing output node without excessive logging
+                  console.warn('♻️ Executing on existing output node');
+                  // Check the existing output node's adapter kernel
+                  const existingAdapter = (
+                    jupyterOutputNode as JupyterOutputNode
+                  ).__outputAdapter;
+                  console.warn(
+                    '🔧 Existing OutputAdapter kernel:',
+                    !!existingAdapter.kernel,
+                  );
+                  if (!existingAdapter.kernel && kernel) {
+                    console.warn(
+                      '🔄 Updating existing OutputAdapter with kernel',
+                    );
+                    // Update kernel directly without triggering render
+                    existingAdapter.kernel = kernel;
+                    console.warn('✅ Kernel updated directly on adapter');
+                  }
+                  // Execute code on existing output node
                   (jupyterOutputNode as JupyterOutputNode).executeCode(code);
                   return true;
                 }
               }
+              console.warn('🆕 Creating new output node');
               // Create new output node
               const outputAdapter = new OutputAdapter(newUuid(), kernel, []);
+              console.warn(
+                '🔧 New OutputAdapter kernel:',
+                !!outputAdapter.kernel,
+              );
               const jupyterOutputNode = $createJupyterOutputNode(
                 code,
                 outputAdapter,
