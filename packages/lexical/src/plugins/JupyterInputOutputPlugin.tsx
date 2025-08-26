@@ -23,6 +23,7 @@ import {
   $getNodeByKey,
   $createNodeSelection,
   $setSelection,
+  SELECT_ALL_COMMAND,
 } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import {
@@ -377,328 +378,123 @@ export const JupyterInputOutputPlugin = (
   }, [editor, kernel]);
 
   // Handle Ctrl+A to select all content within a Jupyter input cell
+  // Use Lexical command system with HIGH priority to intercept before default behavior
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // Check for Ctrl+A (or Cmd+A on Mac)
-      if ((event.ctrlKey || event.metaKey) && event.key === 'a') {
-        const eventTarget = event.target as HTMLElement;
+    return editor.registerCommand<KeyboardEvent>(
+      SELECT_ALL_COMMAND,
+      (event: KeyboardEvent) => {
+        console.log(
+          '🎯 SELECT_ALL_COMMAND intercepted before default behavior',
+        );
 
-        editor.update(() => {
-          const selection = $getSelection();
-          if (!$isRangeSelection(selection)) {
-            return;
-          }
+        const selection = $getSelection();
+        if (!$isRangeSelection(selection)) {
+          console.log('❌ No range selection available');
+          return false; // Let default behavior handle it
+        }
 
-          let jupyterInputNode: JupyterInputNode | null = null;
+        // Debug: Log current selection details BEFORE default Ctrl+A
+        console.log('📍 Current selection details (BEFORE default Ctrl+A):', {
+          anchorKey: selection.anchor.key,
+          anchorOffset: selection.anchor.offset,
+          anchorType: selection.anchor.type,
+          focusKey: selection.focus.key,
+          focusOffset: selection.focus.offset,
+          focusType: selection.focus.type,
+        });
 
-          // Method 1: Traverse up the tree hierarchy from anchor node
-          const anchorNode = selection.anchor.getNode();
-          let currentNode: LexicalNode | null = anchorNode;
-          let depth = 0;
+        // Start from the anchor node and traverse up the hierarchy
+        const anchorNode = selection.anchor.getNode();
+        console.log('🔍 Anchor node details (BEFORE default Ctrl+A):', {
+          type: anchorNode.getType(),
+          key: anchorNode.getKey(),
+          textContent: anchorNode.getTextContent?.()?.slice(0, 50) || 'N/A',
+          parent: anchorNode.getParent()?.getType() || 'No parent',
+        });
 
-          console.log(`🔍 Starting hierarchy traversal from anchor node:`, {
-            type: anchorNode.getType(),
-            key: anchorNode.getKey(),
-            parent: anchorNode.__parent,
-            textContent: anchorNode.getTextContent?.() || 'N/A',
+        // Also check the focus node in case it's different
+        const focusNode = selection.focus.getNode();
+        if (focusNode !== anchorNode) {
+          console.log('🔍 Focus node (different from anchor):', {
+            type: focusNode.getType(),
+            key: focusNode.getKey(),
+            textContent: focusNode.getTextContent?.()?.slice(0, 50) || 'N/A',
+            parent: focusNode.getParent()?.getType() || 'No parent',
           });
+        }
 
-          // Traverse up the parent hierarchy to find JupyterInputNode or JupyterInputHighlightNode
-          while (currentNode && depth < 15) {
-            const parentKey = currentNode.__parent;
-            console.log(`🔍 Depth ${depth}:`, {
-              type: currentNode.getType(),
-              key: currentNode.getKey(),
-              parentKey: parentKey,
-              hasParent: !!parentKey,
-              isJupyterInput: $isJupyterInputNode(currentNode),
-              isJupyterHighlight: $isJupyterInputHighlightNode(currentNode),
-              textContent: currentNode.getTextContent?.() || 'N/A',
-            });
+        let currentNode: LexicalNode | null = anchorNode;
+        let jupyterInputNode: JupyterInputNode | null = null;
+        let depth = 0;
+        const maxDepth = 20; // Prevent infinite loops
 
-            // Check if current node is a JupyterInputNode
-            if ($isJupyterInputNode(currentNode)) {
-              jupyterInputNode = currentNode as JupyterInputNode;
-              console.log(
-                `🎯 SUCCESS: Found JupyterInputNode at depth ${depth}`,
-              );
-              break;
-            }
-
-            // Check if current node is a JupyterInputHighlightNode - then look for its JupyterInputNode parent
-            if ($isJupyterInputHighlightNode(currentNode)) {
-              console.log(
-                `🔍 Found JupyterInputHighlightNode at depth ${depth}, checking its parent chain...`,
-              );
-
-              // Look for JupyterInputNode parent of the highlight node
-              let parentNode: LexicalNode | null = currentNode;
-              let parentDepth = 0;
-
-              while (parentNode && parentDepth < 5) {
-                if (parentNode.__parent) {
-                  const nextParent: LexicalNode | null = $getNodeByKey(
-                    parentNode.__parent,
-                  );
-                  parentDepth++;
-
-                  if (nextParent) {
-                    console.log(`🔍   Parent chain depth ${parentDepth}:`, {
-                      type: nextParent.getType(),
-                      key: nextParent.getKey(),
-                      parentKey: nextParent.__parent,
-                      isJupyterInput: $isJupyterInputNode(nextParent),
-                      isJupyterHighlight:
-                        $isJupyterInputHighlightNode(nextParent),
-                    });
-
-                    if ($isJupyterInputNode(nextParent)) {
-                      jupyterInputNode = nextParent as JupyterInputNode;
-                      console.log(
-                        `🎯 SUCCESS: Found JupyterInputNode parent at parent depth ${parentDepth}`,
-                      );
-                      break;
-                    }
-                    parentNode = nextParent;
-                  } else {
-                    console.log(
-                      `🔍   Parent chain depth ${parentDepth}: null parent`,
-                    );
-                    break;
-                  }
-                } else {
-                  console.log(
-                    `🔍   Parent chain depth ${parentDepth}: no parent key`,
-                  );
-                  break;
-                }
-              }
-
-              if (jupyterInputNode) break;
-            }
-
-            // Move to parent for next iteration
-            if (currentNode.__parent) {
-              const nextParent: LexicalNode | null = $getNodeByKey(
-                currentNode.__parent,
-              );
-              if (nextParent) {
-                console.log(`🔍 Moving to parent at depth ${depth + 1}:`, {
-                  fromType: currentNode.getType(),
-                  toType: nextParent.getType(),
-                  fromKey: currentNode.getKey(),
-                  toKey: nextParent.getKey(),
-                });
-                currentNode = nextParent;
-              } else {
-                console.log(
-                  `🔍 Parent key exists but $getNodeByKey returned null at depth ${depth}`,
-                );
-                currentNode = null;
-              }
-            } else {
-              console.log(
-                `🔍 No parent key at depth ${depth}, stopping traversal`,
-              );
-              currentNode = null;
-            }
-            depth++;
-          }
-
-          // Method 2: DOM-based fallback - check if event target is inside a Jupyter input container
-          if (!jupyterInputNode && eventTarget) {
-            console.log('🔍 Trying DOM-based detection...');
-
-            // Look for common Jupyter input container patterns
-            const jupyterContainer = eventTarget.closest(
-              '.jupyter-input, [data-jupyter-input], .CodeMirror, .monaco-editor, pre[data-language]',
-            );
-
-            if (jupyterContainer) {
-              console.log('🔍 Found potential Jupyter container via DOM');
-
-              // Find any Jupyter input node in the editor state
-              const nodeMap = (editor.getEditorState() as any)._nodeMap as Map<
-                string,
-                LexicalNode
-              >;
-              for (const [, node] of nodeMap) {
-                if ($isJupyterInputNode(node)) {
-                  jupyterInputNode = node as JupyterInputNode;
-                  console.log(
-                    '🎯 Found JupyterInputNode via DOM container fallback',
-                  );
-                  break;
-                }
-              }
-            }
-          }
-
-          if (jupyterInputNode) {
-            event.preventDefault();
-
-            // Create a new range selection that covers all content in the Jupyter input node
-            const rangeSelection = $createRangeSelection();
-            rangeSelection.anchor.set(jupyterInputNode.getKey(), 0, 'element');
-            rangeSelection.focus.set(
-              jupyterInputNode.getKey(),
-              jupyterInputNode.getChildrenSize(),
-              'element',
-            );
-            $setSelection(rangeSelection);
-
-            console.warn(
-              '🎯 SUCCESS: Ctrl+A in Jupyter input cell - selected all content within cell',
-            );
-            return;
-          }
+        // Traverse up the tree hierarchy
+        while (currentNode && depth < maxDepth) {
+          const nodeType = currentNode.getType();
+          const nodeKey = currentNode.getKey();
+          const isJupyterInput = $isJupyterInputNode(currentNode);
+          const isJupyterHighlight = $isJupyterInputHighlightNode(currentNode);
 
           console.log(
-            '❌ No JupyterInputNode found - allowing default Ctrl+A behavior',
+            `🔍 Depth ${depth}: ${nodeType} (${nodeKey}) - isJupyterInput: ${isJupyterInput}, isJupyterHighlight: ${isJupyterHighlight}`,
           );
-        });
-      }
-    };
 
-    // Add event listener to the editor's root element
-    const rootElement = editor.getRootElement();
-    if (rootElement) {
-      rootElement.addEventListener('keydown', handleKeyDown);
+          // Direct check: Is this node a JupyterInputNode?
+          if (isJupyterInput) {
+            jupyterInputNode = currentNode as JupyterInputNode;
+            console.log(`🎯 SUCCESS: Found JupyterInputNode at depth ${depth}`);
+            break;
+          }
 
-      return () => {
-        rootElement.removeEventListener('keydown', handleKeyDown);
-      };
-    }
-  }, [editor]);
+          // If this is a JupyterInputHighlightNode, continue traversing up
+          // (the parent should be a JupyterInputNode)
+          if (isJupyterHighlight) {
+            console.log(
+              `🔍 Found JupyterInputHighlightNode at depth ${depth}, continuing traversal...`,
+            );
+          }
 
-  // TEMPORARILY DISABLED - Mutation listener causing infinite loop
-  // TODO: Fix the infinite loop issue
-  /*
-  useEffect(() => {
-    return editor.registerMutationListener(
-      JupyterInputNode,
-      (mutatedNodes: Map<NodeKey, NodeMutation>) => {
-        for (const [nodeKey, mutation] of mutatedNodes) {
-          if (mutation === 'destroyed') {
-            editor.update(() => {
-              let jupyterInputNodeUuid: string | undefined;
-              let jupyterOutputNodeUuid: string | undefined;
-
-              // Find the UUID for the destroyed input node
-              INPUT_UUID_TO_CODE_KEY.forEach(
-                (codeKey: NodeKey, codeUuid: UUID) => {
-                  if (codeKey === nodeKey) {
-                    jupyterInputNodeUuid = codeUuid;
-                    jupyterOutputNodeUuid =
-                      INPUT_UUID_TO_OUTPUT_UUID.get(codeUuid);
-                  }
-                },
-              );
-
-              if (jupyterInputNodeUuid && jupyterOutputNodeUuid) {
-                // Remove the corresponding output node
-                const outputNodeKey = OUTPUT_UUID_TO_OUTPUT_KEY.get(
-                  jupyterOutputNodeUuid,
-                );
-                if (outputNodeKey) {
-                  const outputNode = $getNodeByKey(outputNodeKey);
-                  if (outputNode) {
-                    outputNode.markDirty();
-                    (outputNode as JupyterOutputNode).removeForce();
-                  }
-                }
-
-                // Clean up all map entries
-                INPUT_UUID_TO_CODE_KEY.delete(jupyterInputNodeUuid);
-                INPUT_UUID_TO_OUTPUT_KEY.delete(jupyterInputNodeUuid);
-                INPUT_UUID_TO_OUTPUT_UUID.delete(jupyterInputNodeUuid);
-                OUTPUT_UUID_TO_CODE_UUID.delete(jupyterOutputNodeUuid);
-                OUTPUT_UUID_TO_OUTPUT_KEY.delete(jupyterOutputNodeUuid);
-              }
-            });
-          } else if (mutation === 'updated') {
-            // Skip if we're currently moving an output node to prevent recursion
-            if (isMovingOutputNode.current) {
-              return;
-            }
-
-            editor.update(() => {
-              const inputNode = $getNodeByKey(nodeKey);
-              if (inputNode && $isJupyterInputNode(inputNode)) {
-                const inputUuid = inputNode.getJupyterInputNodeUuid();
-                const outputKey = INPUT_UUID_TO_OUTPUT_KEY.get(inputUuid);
-
-                if (outputKey) {
-                  const outputNode = $getNodeByKey(outputKey);
-                  if (outputNode) {
-                    const inputNextSibling = inputNode.getNextSibling();
-
-                    // If the output node is not immediately after the input node, move it
-                    if (inputNextSibling !== outputNode) {
-                      isMovingOutputNode.current = true;
-                      try {
-                        outputNode.remove(false);
-                        inputNode.insertAfter(outputNode);
-                      } finally {
-                        isMovingOutputNode.current = false;
-                      }
-                    }
-                  }
-                }
-              }
-            }, { discrete: true }); // Use discrete to avoid undo stack pollution
+          // Move to parent
+          const parentNode: LexicalNode | null = currentNode.getParent();
+          if (parentNode) {
+            currentNode = parentNode;
+            depth++;
+          } else {
+            console.log(`🔍 No parent at depth ${depth}, reached root`);
+            break;
           }
         }
-      },
-    );
-  }, [editor]);
-  */
 
-  // TEMPORARILY DISABLED - Output mutation listener also causing infinite loop
-  /*
-  // Add a mutation listener for output nodes to ensure they stay with their input nodes
-  useEffect(() => {
-    return editor.registerMutationListener(
-      JupyterOutputNode,
-      (mutatedNodes: Map<NodeKey, NodeMutation>) => {
-        for (const [nodeKey, mutation] of mutatedNodes) {
-          if (mutation === 'updated' && !isMovingOutputNode.current) {
-            editor.update(() => {
-              const outputNode = $getNodeByKey(nodeKey);
-              if (outputNode) {
-                const outputUuid = (
-                  outputNode as JupyterOutputNode
-                ).getJupyterOutputNodeUuid();
-                const inputUuid = OUTPUT_UUID_TO_CODE_UUID.get(outputUuid);
-
-                if (inputUuid) {
-                  const inputKey = INPUT_UUID_TO_CODE_KEY.get(inputUuid);
-                  if (inputKey) {
-                    const inputNode = $getNodeByKey(inputKey);
-                    if (inputNode) {
-                      const inputNextSibling = inputNode.getNextSibling();
-
-                      // If this output node is not immediately after its input node, move it
-                      if (inputNextSibling !== outputNode) {
-                        isMovingOutputNode.current = true;
-                        try {
-                          outputNode.remove(false);
-                          inputNode.insertAfter(outputNode);
-                        } finally {
-                          isMovingOutputNode.current = false;
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }, { discrete: true }); // Use discrete to avoid undo stack pollution
-          }
+        if (depth >= maxDepth) {
+          console.warn(`🔍 Max depth ${maxDepth} reached, stopping traversal`);
         }
+
+        if (jupyterInputNode) {
+          console.log(
+            '🎯 SUCCESS: Found JupyterInputNode, selecting all content within cell',
+          );
+
+          // Select all content within the Jupyter input node
+          const rangeSelection = $createRangeSelection();
+          rangeSelection.anchor.set(jupyterInputNode.getKey(), 0, 'element');
+          rangeSelection.focus.set(
+            jupyterInputNode.getKey(),
+            jupyterInputNode.getChildrenSize(),
+            'element',
+          );
+          $setSelection(rangeSelection);
+
+          return true; // Prevent default Ctrl+A behavior
+        }
+
+        console.log(
+          '❌ No JupyterInputNode found in hierarchy - allowing default Ctrl+A',
+        );
+        return false; // Let default behavior handle it
       },
+      COMMAND_PRIORITY_HIGH, // HIGH priority to intercept before default behavior
     );
   }, [editor]);
-  */
 
   useEffect(() => {
     return editor.registerCommand(
