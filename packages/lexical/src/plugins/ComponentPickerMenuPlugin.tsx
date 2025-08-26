@@ -32,7 +32,6 @@ import {
   $isRangeSelection,
   FORMAT_ELEMENT_COMMAND,
   TextNode,
-  $createTextNode,
 } from 'lexical';
 import { useCallback, useMemo, useState } from 'react';
 import * as ReactDOM from 'react-dom';
@@ -55,6 +54,8 @@ class ComponentPickerOption extends MenuOption {
   keyboardShortcut?: string;
   // What happens when you select this option?
   onSelect: (queryString: string) => void;
+  // Whether this option is disabled
+  disabled?: boolean;
 
   constructor(
     title: string,
@@ -63,6 +64,7 @@ class ComponentPickerOption extends MenuOption {
       keywords?: Array<string>;
       keyboardShortcut?: string;
       onSelect: (queryString: string) => void;
+      disabled?: boolean;
     },
   ) {
     super(title);
@@ -71,6 +73,7 @@ class ComponentPickerOption extends MenuOption {
     this.icon = options.icon;
     this.keyboardShortcut = options.keyboardShortcut;
     this.onSelect = options.onSelect.bind(this);
+    this.disabled = options.disabled || false;
   }
 }
 
@@ -88,20 +91,31 @@ function ComponentPickerMenuItem({
   option: ComponentPickerOption;
 }) {
   let className = 'item';
-  if (isSelected) {
+  if (isSelected && !option.disabled) {
     className += ' selected';
   }
+  if (option.disabled) {
+    className += ' disabled';
+  }
+
+  const handleClick = option.disabled ? undefined : onClick;
+  const handleMouseEnter = option.disabled ? undefined : onMouseEnter;
+
   return (
     <li
       key={option.key}
-      tabIndex={-1}
+      tabIndex={option.disabled ? -1 : -1}
       className={className}
       ref={option.setRefElement}
       role="option"
-      aria-selected={isSelected}
+      aria-selected={isSelected && !option.disabled}
+      aria-disabled={option.disabled}
       id={'typeahead-item-' + index}
-      onMouseEnter={onMouseEnter}
-      onClick={onClick}
+      onMouseEnter={handleMouseEnter}
+      onClick={handleClick}
+      style={
+        option.disabled ? { opacity: 0.5, cursor: 'not-allowed' } : undefined
+      }
     >
       {option.icon}
       <span className="text">{option.title}</span>
@@ -176,25 +190,13 @@ export const ComponentPickerMenuPlugin = ({
       new ComponentPickerOption('Jupyter Cell', {
         icon: <i className="icon code" />,
         keywords: ['javascript', 'python', 'js', 'codeblock', 'jupyter'],
+        disabled: !kernel, // Disable if no kernel is available
         onSelect: () => {
-          // Check if kernel is undefined
+          // Only execute if kernel is available (should not be called if disabled)
           if (!kernel) {
-            // Clear any existing selection content
-            const selection = $getSelection();
-            if ($isRangeSelection(selection)) {
-              selection.removeText();
-              // Create a paragraph with the message
-              const paragraph = $createParagraphNode();
-              const textNode = $createTextNode(
-                'A runtime is needed to insert Jupyter Cells',
-              );
-              paragraph.append(textNode);
-              selection.insertNodes([paragraph]);
-            }
             return;
           }
 
-          // Original logic when kernel is available
           editor.dispatchCommand(INSERT_JUPYTER_INPUT_OUTPUT_COMMAND, {
             code: "print('Hello Jupyter UI')",
             outputs: DEFAULT_INITIAL_OUTPUTS,
@@ -366,6 +368,11 @@ export const ComponentPickerMenuPlugin = ({
       closeMenu: () => void,
       matchingString: string,
     ) => {
+      // Don't allow selection of disabled options
+      if (selectedOption.disabled) {
+        return;
+      }
+
       editor.update(() => {
         if (nodeToRemove) {
           nodeToRemove.remove();
@@ -398,11 +405,15 @@ export const ComponentPickerMenuPlugin = ({
                         index={i}
                         isSelected={selectedIndex === i}
                         onClick={() => {
-                          setHighlightedIndex(i);
-                          selectOptionAndCleanUp(option);
+                          if (!option.disabled) {
+                            setHighlightedIndex(i);
+                            selectOptionAndCleanUp(option);
+                          }
                         }}
                         onMouseEnter={() => {
-                          setHighlightedIndex(i);
+                          if (!option.disabled) {
+                            setHighlightedIndex(i);
+                          }
                         }}
                         key={option.key}
                         option={option}
