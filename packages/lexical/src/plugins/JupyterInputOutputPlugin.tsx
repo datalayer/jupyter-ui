@@ -22,7 +22,12 @@ import {
 } from 'lexical';
 import { $getNodeByKey, $createNodeSelection, $setSelection } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { OutputAdapter, newUuid, Kernel } from '@datalayer/jupyter-react';
+import {
+  OutputAdapter,
+  newUuid,
+  Kernel,
+  OnSessionConnection,
+} from '@datalayer/jupyter-react';
 import { UUID } from '@lumino/coreutils';
 import { IOutput } from '@jupyterlab/nbformat';
 import {
@@ -63,6 +68,10 @@ export type JupyterInputOutputProps = {
 
 export type JupyterInputOutputPluginProps = {
   kernel?: Kernel;
+  /**
+   * Callback on session connection changed.
+   */
+  onSessionConnection?: OnSessionConnection;
 };
 
 export const INSERT_JUPYTER_INPUT_OUTPUT_COMMAND =
@@ -71,7 +80,7 @@ export const INSERT_JUPYTER_INPUT_OUTPUT_COMMAND =
 export const JupyterInputOutputPlugin = (
   props?: JupyterInputOutputPluginProps,
 ) => {
-  const { kernel } = props || {};
+  const { kernel, onSessionConnection } = props || {};
   const [editor] = useLexicalComposerContext();
 
   // Flag to prevent infinite recursion when moving output nodes
@@ -113,6 +122,19 @@ export const JupyterInputOutputPlugin = (
 
     return removeListener;
   }, [editor, kernel, updateAllOutputNodesWithKernel]);
+
+  // Listen for session changes and call onSessionConnection callback
+  useEffect(() => {
+    if (!onSessionConnection) return;
+
+    // Call the callback with the current session when kernel becomes available or changes
+    if (kernel) {
+      onSessionConnection(kernel.session);
+    } else {
+      // Call with undefined when no kernel is available
+      onSessionConnection(undefined);
+    }
+  }, [kernel, onSessionConnection]);
 
   useEffect(() => {
     return registerCodeHighlighting(editor);

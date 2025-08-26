@@ -97,7 +97,12 @@ const Tabs = () => {
       </UnderlineNav>
       {tab === 'editor' && (
         <Box>
-          <Editor notebook={nbformat} />
+          <Editor
+            notebook={nbformat}
+            onSessionConnection={session => {
+              console.log('Session changed:', session);
+            }}
+          />
           <Button
             onClick={(e: React.MouseEvent) => {
               e.preventDefault();

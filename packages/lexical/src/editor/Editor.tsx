@@ -60,11 +60,13 @@ import {
 import { commentTheme } from '../themes';
 import { useLexical } from '../context';
 import { TreeViewPlugin, ToolbarPlugin } from '../plugins';
+import { OnSessionConnection } from '@datalayer/jupyter-react';
 
 import './../../style/index.css';
 
 type Props = {
   notebook?: INotebookContent;
+  onSessionConnection?: OnSessionConnection;
 };
 
 function Placeholder() {
@@ -113,7 +115,7 @@ const EditorContextPlugin = () => {
 };
 
 export function Editor(props: Props) {
-  const { notebook } = props;
+  const { notebook, onSessionConnection } = props;
   const { defaultKernel } = useJupyter();
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
@@ -156,7 +158,10 @@ export function Editor(props: Props) {
             <ListMaxIndentLevelPlugin maxDepth={7} />
             <MarkdownPlugin />
             {/* <JupyterCellPlugin /> */}
-            <JupyterInputOutputPlugin kernel={defaultKernel} />
+            <JupyterInputOutputPlugin
+              kernel={defaultKernel}
+              onSessionConnection={onSessionConnection}
+            />
             <ComponentPickerMenuPlugin kernel={defaultKernel} />
             <EquationsPlugin />
             <ImagesPlugin />
