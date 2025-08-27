@@ -125,10 +125,12 @@ function ComponentPickerMenuItem({
 
 export interface ComponentPickerMenuPluginProps {
   kernel?: Kernel;
+  initCode?: string;
 }
 
 export const ComponentPickerMenuPlugin = ({
   kernel,
+  initCode = "print('Hello Jupyter UI')",
 }: ComponentPickerMenuPluginProps = {}): JSX.Element => {
   const [editor] = useLexicalComposerContext();
   const [modal, showModal] = useModal();
@@ -198,7 +200,7 @@ export const ComponentPickerMenuPlugin = ({
           }
 
           editor.dispatchCommand(INSERT_JUPYTER_INPUT_OUTPUT_COMMAND, {
-            code: "print('Hello Jupyter UI')",
+            code: initCode,
             outputs: DEFAULT_INITIAL_OUTPUTS,
             loading: 'Loading...',
           });
@@ -359,7 +361,7 @@ export const ComponentPickerMenuPlugin = ({
           }),
         ]
       : baseOptions;
-  }, [editor, getDynamicOptions, queryString, showModal, kernel]);
+  }, [editor, getDynamicOptions, queryString, showModal, kernel, initCode]);
 
   const onSelectOption = useCallback(
     (
