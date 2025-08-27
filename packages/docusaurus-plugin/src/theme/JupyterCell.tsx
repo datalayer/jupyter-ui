@@ -21,14 +21,9 @@ const JupyterCell = (props: JupyterCellProps) => {
     >
       {() => {
         // Keep the import via require and keep it into the BrowserOnly code block..
-        // const { JupyterReactTheme } = require('@datalayer/jupyter-react/lib/theme');
-        // const { useJupyter } = require('@datalayer/jupyter-react/lib/jupyter/JupyterContext');
-        const {
-          Jupyter,
-        } = require('@datalayer/jupyter-react/lib/jupyter/Jupyter');
-        const {
-          Cell,
-        } = require('@datalayer/jupyter-react/lib/components/cell/Cell');
+        // const { JupyterReactTheme } = require('@datalayer/jupyter-react');
+        // const { useJupyter } = require('@datalayer/jupyter-react');
+        const { Jupyter, Cell } = require('@datalayer/jupyter-react');
         const {
           jupyterServerUrl = 'https://oss.datalayer.run/api/jupyter-server',
           jupyterServerToken = '60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6',
