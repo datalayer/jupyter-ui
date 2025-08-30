@@ -82,6 +82,7 @@ export class CellAdapter {
   private _panel: BoxPanel;
   private _sessionContext: SessionContext;
   private _type: 'code' | 'markdown' | 'raw';
+  private _iPyWidgetsClassicManager?: ClassicWidgetManager;
 
   public constructor(options: CellAdapter.ICellAdapterOptions) {
     const { id, type, source, outputs, serverSettings, kernel, boxOptions } =
@@ -157,6 +158,11 @@ export class CellAdapter {
               handleComms: true,
             },
           });
+          // Force handleComms to true as we know the kernel supports it
+          if (session.kernel && !session.kernel.handleComms) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (session.kernel as any).handleComms = true;
+          }
           (this._sessionContext as any)._handleNewSession(session);
         } catch (err) {
           void (this._sessionContext as any)._handleSessionError(err);
@@ -228,17 +234,20 @@ export class CellAdapter {
       latexTypesetter: new MathJaxTypesetter(),
       markdownParser: getMarked(languages),
     });
-    const iPyWidgetsClassicManager = new ClassicWidgetManager({ loader });
+    this._iPyWidgetsClassicManager = new ClassicWidgetManager({ loader });
     rendermime.addFactory(
       {
         safe: false,
         mimeTypes: [WIDGET_MIMETYPE],
         createRenderer: options =>
-          new WidgetRenderer(options, iPyWidgetsClassicManager),
+          new WidgetRenderer(
+            options,
+            this._iPyWidgetsClassicManager as ClassicWidgetManager
+          ),
       },
       0
     );
-    iPyWidgetsClassicManager.registerWithKernel(kernel.connection);
+    // Don't register immediately - wait for session context to be ready
     const factoryService = new CodeMirrorEditorFactory({
       extensions: editorExtensions(),
       languages,
@@ -274,22 +283,79 @@ export class CellAdapter {
       (this._cell as MarkdownCell).rendered = false;
     }
     //
+    let widgetManagerRegistered = false;
+    let registeredKernelId: string | null = null;
+
+    const registerWidgetManager = async (
+      kernelConnection: JupyterKernel.IKernelConnection | null
+    ) => {
+      if (
+        kernelConnection &&
+        (!widgetManagerRegistered || registeredKernelId !== kernelConnection.id)
+      ) {
+        try {
+          // Ensure handleComms is enabled before registering
+          if (!kernelConnection.handleComms) {
+            console.warn(
+              'Kernel connection does not handle Comms, enabling it',
+              kernelConnection.id
+            );
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (kernelConnection as any).handleComms = true;
+          }
+
+          widgetManagerRegistered = true;
+          registeredKernelId = kernelConnection.id;
+
+          // Wait for kernel info to ensure it's fully ready
+          await kernelConnection.info;
+
+          // Double-check that kernel is still connected after waiting for info.
+          if (kernelConnection.connectionStatus === 'connected') {
+            // Register the widget manager with the properly configured kernel.
+            this._iPyWidgetsClassicManager?.registerWithKernel(
+              kernelConnection
+            );
+          } else {
+            console.log(
+              'Kernel disconnected while waiting for info, will retry on next connection...'
+            );
+          }
+        } catch (error) {
+          console.error(
+            'Error getting kernel info or registering widget manager:',
+            error
+          );
+          widgetManagerRegistered = false;
+          registeredKernelId = null;
+          // Fallback: try registering anyway after a delay
+          setTimeout(() => {
+            if (
+              kernelConnection.connectionStatus === 'connected' &&
+              registeredKernelId !== kernelConnection.id
+            ) {
+              this._iPyWidgetsClassicManager?.registerWithKernel(
+                kernelConnection
+              );
+              widgetManagerRegistered = true;
+              registeredKernelId = kernelConnection.id;
+            }
+          }, 1000);
+        }
+      } else if (!kernelConnection && widgetManagerRegistered) {
+        // Unregister if kernel is null
+        this._iPyWidgetsClassicManager?.registerWithKernel(null);
+        widgetManagerRegistered = false;
+        registeredKernelId = null;
+      }
+    };
+
     this._sessionContext.kernelChanged.connect(
       (_, arg: Session.ISessionConnection.IKernelChangedArgs) => {
         const kernelConnection = arg.newValue;
-        console.log('Current Jupyter Kernel Connection', kernelConnection);
-        if (kernelConnection && !kernelConnection.handleComms) {
-          console.warn(
-            'Jupyter Kernel Connection does not handle Comms',
-            kernelConnection.id
-          );
-          (kernelConnection as any).handleComms = true;
-          console.log(
-            'Jupyter Kernel Connection is updated to enforce Comms support',
-            kernelConnection.handleComms
-          );
-        }
-        iPyWidgetsClassicManager.registerWithKernel(kernelConnection);
+        widgetManagerRegistered = false; // Reset flag on kernel change
+        registeredKernelId = null; // Reset kernel ID
+        registerWidgetManager(kernelConnection);
       }
     );
     this._sessionContext.kernelChanged.connect(() => {
@@ -303,6 +369,13 @@ export class CellAdapter {
         }
       });
     });
+
+    // Initial registration when session context is ready
+    this._sessionContext.ready.then(() => {
+      const kernelConnection = this._sessionContext.session?.kernel;
+      registerWidgetManager(kernelConnection || null);
+    });
+
     // Completer.
     const editor = this._cell.editor;
     const model = new CompleterModel();
@@ -409,6 +482,9 @@ export class CellAdapter {
 
   execute = () => {
     if (this._type === 'code') {
+      this._iPyWidgetsClassicManager?.registerWithKernel(
+        this._kernel.connection
+      );
       this._execute(this._cell as CodeCell);
     } else if (this._type === 'markdown') {
       (this._cell as MarkdownCell).rendered = true;

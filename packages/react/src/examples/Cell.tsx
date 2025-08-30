@@ -5,7 +5,8 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import { Box, Button, Label } from '@primer/react';
+import { Button, Label } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { CodeCell } from '@jupyterlab/cells';
 import { JupyterReactTheme } from '../theme';
 import { useJupyter } from '../jupyter/JupyterContext';
@@ -22,7 +23,7 @@ for i in range(10):
     display('I am a long string which is repeatedly added to the dom in separated divs: %d' % i)`;
 
 const CellExample = () => {
-  const { defaultKernel } = useJupyter();
+  const { defaultKernel } = useJupyter({ startDefaultKernel: true });
   const cellsStore = useCellsStore();
   const kernelsStore = useKernelsStore();
   console.log(

@@ -7,7 +7,7 @@
 import { useState, useEffect } from 'react';
 import { CodeCell, MarkdownCell } from '@jupyterlab/cells';
 import { IOutput } from '@jupyterlab/nbformat';
-import { Box } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { useJupyter } from './../../jupyter';
 import Kernel from '../../jupyter/kernel/Kernel';
 import { newUuid } from '../../utils';
@@ -56,7 +56,7 @@ export const Cell = (props: ICellProps) => {
     outputs = [],
     showToolbar,
     source = '',
-    startDefaultKernel,
+    startDefaultKernel = false,
     type,
     kernel: kernelProps,
   } = props;
@@ -67,7 +67,7 @@ export const Cell = (props: ICellProps) => {
   const [adapter, setAdapter] = useState<CellAdapter>();
   const cellsStore = useCellsStore();
   const handleCellInitEvents = (adapter: CellAdapter) => {
-    adapter.cell.model.contentChanged.connect((cellModel, changedArgs) => {
+    adapter.cell.model.contentChanged.connect((cellModel, _) => {
       cellsStore.setSource(id, cellModel.sharedModel.getSource());
     });
     if (adapter.cell instanceof CodeCell) {
@@ -92,7 +92,7 @@ export const Cell = (props: ICellProps) => {
   };
   useEffect(() => {
     const kernelToUse = kernelProps || defaultKernel;
-    if (id && serverSettings && kernelToUse) {
+    if (id && serverSettings && kernelToUse && !adapter) {
       kernelToUse.ready.then(() => {
         const adapter = new CellAdapter({
           id,
@@ -103,10 +103,11 @@ export const Cell = (props: ICellProps) => {
           kernel: kernelToUse,
           boxOptions: { showToolbar },
         });
+        console.log('-------DLA', adapter);
+        setAdapter(adapter);
         cellsStore.setAdapter(id, adapter);
         cellsStore.setSource(id, source);
         handleCellInitEvents(adapter);
-        setAdapter(adapter);
         const handleDblClick = (event: Event) => {
           let target = event.target as HTMLElement;
           /**
@@ -127,7 +128,7 @@ export const Cell = (props: ICellProps) => {
         };
       });
     }
-  }, [source, defaultKernel, kernelProps, serverSettings]);
+  }, [source, kernelProps, serverSettings]);
   return adapter ? (
     <Box
       sx={{
