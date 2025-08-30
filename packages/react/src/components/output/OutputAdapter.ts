@@ -99,16 +99,20 @@ export class OutputAdapter {
     if (this._kernel) {
       this.clear();
       const metadata: JSONObject = {};
-      const done = execute(
-        this._id,
-        code,
-        this._outputArea,
-        this._kernel,
-        metadata,
-        this._suppressCodeExecutionErrors,
-        onExecutionPhaseChanged
-      );
-      await done;
+      await this._iPyWidgetsManager.ready.promise;
+      if (this._kernel) {
+        this._iPyWidgetsManager.registerWithKernel(this._kernel.connection);
+        const done = execute(
+          this._id,
+          code,
+          this._outputArea,
+          this._kernel,
+          metadata,
+          this._suppressCodeExecutionErrors,
+          onExecutionPhaseChanged
+        );
+        await done;
+      }
     }
   }
 
@@ -135,7 +139,8 @@ export class OutputAdapter {
     return this._outputArea;
   }
 
-  private initKernel() {
+  private async initKernel() {
+    await this._iPyWidgetsManager.ready.promise;
     if (this._kernel) {
       this._iPyWidgetsManager.registerWithKernel(this._kernel.connection);
     }

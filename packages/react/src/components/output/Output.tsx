@@ -140,7 +140,9 @@ export const Output = (props: IOutputProps) => {
   useEffect(() => {
     if (adapter) {
       if (autoRun) {
-        adapter.execute(code, onExecutionPhaseChanged);
+        adapter.kernel?.ready.then(() => {
+          adapter.execute(code, onExecutionPhaseChanged);
+        });
       }
     }
   }, [adapter]);

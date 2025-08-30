@@ -17,9 +17,10 @@ import {
   ExportData,
 } from '@jupyter-widgets/base/lib/registry';
 import { ICallbacks, shims } from '@jupyter-widgets/base/lib/services-shim';
-import { valid } from 'semver';
+import { PromiseDelegate } from '@lumino/coreutils';
 import { INotebookModel } from '@jupyterlab/notebook';
 import { requireLoader } from './../libembed-amd';
+import { valid } from 'semver';
 // import { BundledIPyWidgets, ExternalIPyWidgets } from '../../../components/notebook/Notebook';
 import { SemVerCache } from '../semvercache';
 import { WIDGET_STATE_MIMETYPE } from './../mimetypes';
@@ -36,19 +37,18 @@ export class ClassicWidgetManager extends HTMLManager {
   private _commRegistration: any;
   private _onError: any;
   private _registry: SemVerCache<ExportData>;
+  private _ready = new PromiseDelegate<boolean>();
 
   constructor(options?: {
     loader?: (moduleName: string, moduleVersion: string) => Promise<any>;
   }) {
     super(options);
-    const requireJsScript = document.createElement('script');
-    const cdnOnlyScript = document.createElement('script');
-    cdnOnlyScript.setAttribute('data-jupyter-widgets-cdn-only', 'true');
-    document.body.appendChild(cdnOnlyScript);
-    requireJsScript.src =
-      'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js';
-    document.body.appendChild(requireJsScript);
-    requireJsScript.onload = () => {
+
+    // Explicitly set the comm target name for widget communication
+    (this as any).comm_target_name = 'jupyter.widget';
+
+    const initializeManager = () => {
+      console.warn('ClassicWidgetManager: Initializing widget manager');
       (window as any).define('@jupyter-widgets/base', base);
       (window as any).define('@jupyter-widgets/controls', controls);
       this._registry = new SemVerCache<ExportData>();
@@ -66,7 +66,41 @@ export class ClassicWidgetManager extends HTMLManager {
         version: controls.JUPYTER_CONTROLS_VERSION,
         exports: () => import('@jupyter-widgets/controls') as any,
       });
+      console.warn(
+        'ClassicWidgetManager: Widget manager initialized, resolving ready promise'
+      );
+      this._ready.resolve(true);
     };
+
+    // Check if RequireJS is already available
+    if ((window as any).require && (window as any).define) {
+      console.warn(
+        'ClassicWidgetManager: RequireJS already available, initializing immediately'
+      );
+      initializeManager();
+    } else {
+      console.warn('ClassicWidgetManager: Loading RequireJS');
+      const requireJsScript = document.createElement('script');
+      const cdnOnlyScript = document.createElement('script');
+      cdnOnlyScript.setAttribute('data-jupyter-widgets-cdn-only', 'true');
+      document.body.appendChild(cdnOnlyScript);
+      requireJsScript.src =
+        'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js';
+      document.body.appendChild(requireJsScript);
+      requireJsScript.onload = () => {
+        console.warn('ClassicWidgetManager: RequireJS loaded, initializing');
+        initializeManager();
+      };
+      requireJsScript.onerror = error => {
+        console.error('ClassicWidgetManager: Failed to load RequireJS', error);
+        // Try to initialize anyway
+        initializeManager();
+      };
+    }
+  }
+
+  get ready() {
+    return this._ready;
   }
 
   /**
@@ -84,14 +118,30 @@ export class ClassicWidgetManager extends HTMLManager {
 
   public registerWithKernel(kernelConnection: Kernel.IKernelConnection | null) {
     this._kernelConnection = kernelConnection;
+    // Set the kernel property that ManagerBase expects.
+    (this as any).kernel = kernelConnection;
     if (this._commRegistration) {
       this._commRegistration.dispose();
     }
     if (kernelConnection) {
-      kernelConnection.registerCommTarget(
-        this.comm_target_name,
+      // Ensure the manager is fully initialized before registering.
+      if (!this._registry) {
+        console.error(
+          'ClassicWidgetManager: Registry not initialized when registering with kernel.'
+        );
+        return;
+      }
+      console.log(
+        `ClassicWidgetManager: Registering comm target with kernel for ${(this as any).comm_target_name}`
+      );
+      this._commRegistration = kernelConnection.registerCommTarget(
+        (this as any).comm_target_name,
         this._handleCommOpen
       );
+      console.log('ClassicWidgetManager: Successfully registered comm target.');
+    } else {
+      // Clear kernel when disconnecting
+      (this as any).kernel = null;
     }
   }
 
@@ -99,8 +149,21 @@ export class ClassicWidgetManager extends HTMLManager {
     comm: Kernel.IComm,
     message: KernelMessage.ICommOpenMsg
   ): Promise<void> {
-    const classicComm = new shims.services.Comm(comm);
-    await this.handle_comm_open(classicComm, message);
+    try {
+      console.log(
+        'ClassicWidgetManager: Handling comm open for',
+        message.content.target_name,
+        'with comm_id',
+        message.content.comm_id
+      );
+      const classicComm = new shims.services.Comm(comm);
+      console.log('ClassicWidgetManager: Created classic comm wrapper');
+      await this.handle_comm_open(classicComm, message);
+      console.log('ClassicWidgetManager: Successfully handled comm open');
+    } catch (error) {
+      console.error('ClassicWidgetManager: Error in _handleCommOpen:', error);
+      throw error;
+    }
   }
 
   private _getRegistry() {
