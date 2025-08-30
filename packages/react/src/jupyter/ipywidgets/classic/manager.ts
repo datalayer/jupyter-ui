@@ -17,9 +17,10 @@ import {
   ExportData,
 } from '@jupyter-widgets/base/lib/registry';
 import { ICallbacks, shims } from '@jupyter-widgets/base/lib/services-shim';
-import { valid } from 'semver';
+import { PromiseDelegate } from '@lumino/coreutils';
 import { INotebookModel } from '@jupyterlab/notebook';
 import { requireLoader } from './../libembed-amd';
+import { valid } from 'semver';
 // import { BundledIPyWidgets, ExternalIPyWidgets } from '../../../components/notebook/Notebook';
 import { SemVerCache } from '../semvercache';
 import { WIDGET_STATE_MIMETYPE } from './../mimetypes';
@@ -36,6 +37,7 @@ export class ClassicWidgetManager extends HTMLManager {
   private _commRegistration: any;
   private _onError: any;
   private _registry: SemVerCache<ExportData>;
+  private _ready = new PromiseDelegate<boolean>();
 
   constructor(options?: {
     loader?: (moduleName: string, moduleVersion: string) => Promise<any>;
@@ -45,14 +47,8 @@ export class ClassicWidgetManager extends HTMLManager {
     // Explicitly set the comm target name for widget communication
     (this as any).comm_target_name = 'jupyter.widget';
 
-    const requireJsScript = document.createElement('script');
-    const cdnOnlyScript = document.createElement('script');
-    cdnOnlyScript.setAttribute('data-jupyter-widgets-cdn-only', 'true');
-    document.body.appendChild(cdnOnlyScript);
-    requireJsScript.src =
-      'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js';
-    document.body.appendChild(requireJsScript);
-    requireJsScript.onload = () => {
+    const initializeManager = () => {
+      console.warn('ClassicWidgetManager: Initializing widget manager');
       (window as any).define('@jupyter-widgets/base', base);
       (window as any).define('@jupyter-widgets/controls', controls);
       this._registry = new SemVerCache<ExportData>();
@@ -70,7 +66,41 @@ export class ClassicWidgetManager extends HTMLManager {
         version: controls.JUPYTER_CONTROLS_VERSION,
         exports: () => import('@jupyter-widgets/controls') as any,
       });
+      console.warn(
+        'ClassicWidgetManager: Widget manager initialized, resolving ready promise'
+      );
+      this._ready.resolve(true);
     };
+
+    // Check if RequireJS is already available
+    if ((window as any).require && (window as any).define) {
+      console.warn(
+        'ClassicWidgetManager: RequireJS already available, initializing immediately'
+      );
+      initializeManager();
+    } else {
+      console.warn('ClassicWidgetManager: Loading RequireJS');
+      const requireJsScript = document.createElement('script');
+      const cdnOnlyScript = document.createElement('script');
+      cdnOnlyScript.setAttribute('data-jupyter-widgets-cdn-only', 'true');
+      document.body.appendChild(cdnOnlyScript);
+      requireJsScript.src =
+        'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js';
+      document.body.appendChild(requireJsScript);
+      requireJsScript.onload = () => {
+        console.warn('ClassicWidgetManager: RequireJS loaded, initializing');
+        initializeManager();
+      };
+      requireJsScript.onerror = error => {
+        console.error('ClassicWidgetManager: Failed to load RequireJS', error);
+        // Try to initialize anyway
+        initializeManager();
+      };
+    }
+  }
+
+  get ready() {
+    return this._ready;
   }
 
   /**

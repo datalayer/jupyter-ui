@@ -19,13 +19,9 @@ import { newUuid } from '../utils/Utils';
 import { useOutputsStore } from './../components/output/OutputState';
 
 const SOURCE_ID_0 = 'output-id-0';
-const CODE_O = `import ipywidgets as widgets
-widgets.IntSlider(
-value=7,
-min=0,
-max=10,
-step=1,
-)`;
+const CODE_O = `from ipywidgets import IntSlider
+IntSlider(value=7, min=0, max=10, step=1,)
+`;
 
 const SOURCE_ID_1 = 'output-id-1';
 const OUTPUTS_1: IOutput[] = [
@@ -213,10 +209,5 @@ const root = createRoot(div);
 root.render(
   <Jupyter startDefaultKernel>
     <OutputIPyWidgets />
-    <OutputNoEditorNoAutorun />
-    <OutputNoEditor />
-    <OutputNoEditorError />
-    <OutputEditor />
-    <OutputEmpty />
   </Jupyter>
 );
