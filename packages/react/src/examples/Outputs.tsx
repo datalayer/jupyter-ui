@@ -209,5 +209,10 @@ const root = createRoot(div);
 root.render(
   <Jupyter startDefaultKernel>
     <OutputIPyWidgets />
+    <OutputNoEditorNoAutorun />
+    <OutputNoEditor />
+    <OutputNoEditorError />
+    <OutputEditor />
+    <OutputEmpty />
   </Jupyter>
 );
