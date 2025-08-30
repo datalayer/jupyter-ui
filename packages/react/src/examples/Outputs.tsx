@@ -76,7 +76,7 @@ const OutputIPyWidgets = () => {
   );
   return (
     <>
-      <Text as="h1">Output without Code Editor</Text>
+      <Text as="h1">Output without Code Editor and IPyWidgets</Text>
       <Output autoRun id={SOURCE_ID_0} code={CODE_O} showEditor={false} />
     </>
   );
@@ -212,10 +212,10 @@ const root = createRoot(div);
 
 root.render(
   <Jupyter startDefaultKernel>
+    <OutputIPyWidgets />
     <OutputNoEditorNoAutorun />
     <OutputNoEditor />
     <OutputNoEditorError />
-    <OutputIPyWidgets />
     <OutputEditor />
     <OutputEmpty />
   </Jupyter>
