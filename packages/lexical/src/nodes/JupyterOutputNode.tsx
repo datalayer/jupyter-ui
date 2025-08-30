@@ -21,7 +21,12 @@ import {
   INPUT_UUID_TO_OUTPUT_UUID,
   OUTPUT_UUID_TO_OUTPUT_KEY,
 } from '../plugins/JupyterInputOutputPlugin';
-import { Output, OutputAdapter, newUuid } from '@datalayer/jupyter-react';
+import {
+  Output,
+  OutputAdapter,
+  newUuid,
+  Kernel,
+} from '@datalayer/jupyter-react';
 
 export type SerializedJupyterOutputNode = Spread<
   {
@@ -43,6 +48,7 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
   __jupyterInputNodeUuid: string;
   __jupyterOutputNodeUuid: string;
   __executeTrigger: number;
+  __renderTrigger: number;
 
   /** @override */
   static getType() {
@@ -68,7 +74,7 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
   ): JupyterOutputNode {
     return $createJupyterOutputNode(
       serializedNode.source,
-      new OutputAdapter(newUuid(), undefined, []),
+      new OutputAdapter(newUuid(), undefined, serializedNode.outputs),
       serializedNode.outputs,
       false,
       serializedNode.jupyterInputNodeUuid,
@@ -93,10 +99,11 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
     this.__outputs = outputs;
     this.__outputAdapter = outputAdapter;
     this.__executeTrigger = 0;
+    this.__renderTrigger = 0;
     this.__autoRun = autoRun;
     OUTPUT_UUID_TO_CODE_UUID.set(
       this.__jupyterOutputNodeUuid,
-      jupyterInputNodeUuid,
+      this.__jupyterInputNodeUuid,
     );
     INPUT_UUID_TO_OUTPUT_KEY.set(this.__jupyterInputNodeUuid, this.__key);
     INPUT_UUID_TO_OUTPUT_UUID.set(
@@ -194,7 +201,7 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
         outputs={this.__outputs}
         adapter={this.__outputAdapter}
         id={this.__jupyterOutputNodeUuid}
-        executeTrigger={this.getExecuteTrigger()}
+        executeTrigger={this.getExecuteTrigger() + this.__renderTrigger}
         autoRun={this.__autoRun}
       />
     );
@@ -222,9 +229,41 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
   }
 
   public executeCode(code: string) {
+    console.warn(
+      '🎯 JupyterOutputNode.executeCode called with:',
+      code.slice(0, 50),
+    );
+    console.warn(
+      '🔧 OutputAdapter kernel available:',
+      !!this.__outputAdapter.kernel,
+    );
+
     this.setJupyterInput(code);
+
+    if (!this.__outputAdapter.kernel) {
+      console.error('❌ OutputAdapter has no kernel - cannot execute!');
+      return;
+    }
+
+    console.warn('✅ Calling OutputAdapter.execute()');
     this.__outputAdapter.execute(code);
-    this.setExecuteTrigger(this.getExecuteTrigger() + 1);
+    console.warn('✅ OutputAdapter.execute() completed');
+    // this.setExecuteTrigger(this.getExecuteTrigger() + 1);
+  }
+
+  public updateKernel(kernel: Kernel | undefined) {
+    console.warn('🔄 JupyterOutputNode.updateKernel called with:', !!kernel);
+    console.warn('🔧 Previous kernel:', !!this.__outputAdapter.kernel);
+
+    const self = this.getWritable();
+    self.__outputAdapter.kernel = kernel;
+    // Don't increment renderTrigger immediately - let execution complete first
+    // The renderTrigger will be incremented after execution if needed
+
+    console.warn(
+      '✅ Kernel updated, new kernel:',
+      !!self.__outputAdapter.kernel,
+    );
   }
 }
 

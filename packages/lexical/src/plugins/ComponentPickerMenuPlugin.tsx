@@ -35,6 +35,7 @@ import {
 } from 'lexical';
 import { useCallback, useMemo, useState } from 'react';
 import * as ReactDOM from 'react-dom';
+import { Kernel } from '@datalayer/jupyter-react';
 
 import useModal from '../hooks/useModal';
 import catTypingGif from '../images/yellow-flower-small.jpg';
@@ -53,6 +54,8 @@ class ComponentPickerOption extends MenuOption {
   keyboardShortcut?: string;
   // What happens when you select this option?
   onSelect: (queryString: string) => void;
+  // Whether this option is disabled
+  disabled?: boolean;
 
   constructor(
     title: string,
@@ -61,6 +64,7 @@ class ComponentPickerOption extends MenuOption {
       keywords?: Array<string>;
       keyboardShortcut?: string;
       onSelect: (queryString: string) => void;
+      disabled?: boolean;
     },
   ) {
     super(title);
@@ -69,6 +73,7 @@ class ComponentPickerOption extends MenuOption {
     this.icon = options.icon;
     this.keyboardShortcut = options.keyboardShortcut;
     this.onSelect = options.onSelect.bind(this);
+    this.disabled = options.disabled || false;
   }
 }
 
@@ -86,20 +91,31 @@ function ComponentPickerMenuItem({
   option: ComponentPickerOption;
 }) {
   let className = 'item';
-  if (isSelected) {
+  if (isSelected && !option.disabled) {
     className += ' selected';
   }
+  if (option.disabled) {
+    className += ' disabled';
+  }
+
+  const handleClick = option.disabled ? undefined : onClick;
+  const handleMouseEnter = option.disabled ? undefined : onMouseEnter;
+
   return (
     <li
       key={option.key}
-      tabIndex={-1}
+      tabIndex={option.disabled ? -1 : -1}
       className={className}
       ref={option.setRefElement}
       role="option"
-      aria-selected={isSelected}
+      aria-selected={isSelected && !option.disabled}
+      aria-disabled={option.disabled}
       id={'typeahead-item-' + index}
-      onMouseEnter={onMouseEnter}
-      onClick={onClick}
+      onMouseEnter={handleMouseEnter}
+      onClick={handleClick}
+      style={
+        option.disabled ? { opacity: 0.5, cursor: 'not-allowed' } : undefined
+      }
     >
       {option.icon}
       <span className="text">{option.title}</span>
@@ -107,7 +123,15 @@ function ComponentPickerMenuItem({
   );
 }
 
-export const ComponentPickerMenuPlugin = (): JSX.Element => {
+export interface ComponentPickerMenuPluginProps {
+  kernel?: Kernel;
+  initCode?: string;
+}
+
+export const ComponentPickerMenuPlugin = ({
+  kernel,
+  initCode = "print('Hello Jupyter UI')",
+}: ComponentPickerMenuPluginProps = {}): JSX.Element => {
   const [editor] = useLexicalComposerContext();
   const [modal, showModal] = useModal();
   const [queryString, setQueryString] = useState<string | null>(null);
@@ -168,19 +192,15 @@ export const ComponentPickerMenuPlugin = (): JSX.Element => {
       new ComponentPickerOption('Jupyter Cell', {
         icon: <i className="icon code" />,
         keywords: ['javascript', 'python', 'js', 'codeblock', 'jupyter'],
+        disabled: !kernel, // Disable if no kernel is available
         onSelect: () => {
-          // const selection = $getSelection();
-          // const code = selection?.getTextContent() || "";
-          /*
-          editor.dispatchCommand(INSERT_JUPYTER_CELL_COMMAND, {
-            code: "print('Hello Jupyter UI')",
-            outputs: [],
-            loading: 'Loading...',
-            autoStart: true,
-          });
-          */
+          // Only execute if kernel is available (should not be called if disabled)
+          if (!kernel) {
+            return;
+          }
+
           editor.dispatchCommand(INSERT_JUPYTER_INPUT_OUTPUT_COMMAND, {
-            code: "print('Hello Jupyter UI')",
+            code: initCode,
             outputs: DEFAULT_INITIAL_OUTPUTS,
             loading: 'Loading...',
           });
@@ -341,7 +361,7 @@ export const ComponentPickerMenuPlugin = (): JSX.Element => {
           }),
         ]
       : baseOptions;
-  }, [editor, getDynamicOptions, queryString, showModal]);
+  }, [editor, getDynamicOptions, queryString, showModal, kernel, initCode]);
 
   const onSelectOption = useCallback(
     (
@@ -350,6 +370,11 @@ export const ComponentPickerMenuPlugin = (): JSX.Element => {
       closeMenu: () => void,
       matchingString: string,
     ) => {
+      // Don't allow selection of disabled options
+      if (selectedOption.disabled) {
+        return;
+      }
+
       editor.update(() => {
         if (nodeToRemove) {
           nodeToRemove.remove();
@@ -382,11 +407,15 @@ export const ComponentPickerMenuPlugin = (): JSX.Element => {
                         index={i}
                         isSelected={selectedIndex === i}
                         onClick={() => {
-                          setHighlightedIndex(i);
-                          selectOptionAndCleanUp(option);
+                          if (!option.disabled) {
+                            setHighlightedIndex(i);
+                            selectOptionAndCleanUp(option);
+                          }
                         }}
                         onMouseEnter={() => {
-                          setHighlightedIndex(i);
+                          if (!option.disabled) {
+                            setHighlightedIndex(i);
+                          }
                         }}
                         key={option.key}
                         option={option}

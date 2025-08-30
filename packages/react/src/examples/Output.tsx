@@ -5,7 +5,8 @@
  */
 
 import { IOutput } from '@jupyterlab/nbformat';
-import { Box, Text } from '@primer/react';
+import { Text } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { KernelIndicator } from '../components/kernel/Kernelndicator';
@@ -66,7 +67,7 @@ const OUTPUTS_3: IOutput[] = [
   },
 ];
 
-const OutputFromCodeIPyWidgets = () => {
+const OutputIPyWidgets = () => {
   const outputStore = useOutputsStore();
   console.log(
     'Outputs from Code IPyWidgets',
@@ -81,7 +82,7 @@ const OutputFromCodeIPyWidgets = () => {
   );
 };
 
-const OutputWithoutEditorNoAutorun = () => {
+const OutputNoEditorNoAutorun = () => {
   const outputStore = useOutputsStore();
   console.log(
     'Outputs 1',
@@ -101,11 +102,11 @@ const OutputWithoutEditorNoAutorun = () => {
   );
 };
 
-const OutputWithoutEditorAutorun = () => {
+const OutputNoEditor = () => {
   const { defaultKernel } = useJupyter({ startDefaultKernel: true });
   return (
     <>
-      <Text as="h1">Output without Code Editor with Autorun</Text>
+      <Text as="h1">Output without Code Editor</Text>
       <Output
         autoRun
         code="1+1"
@@ -117,7 +118,23 @@ const OutputWithoutEditorAutorun = () => {
   );
 };
 
-const OutputWithEditor = () => {
+const OutputNoEditorError = () => {
+  const { defaultKernel } = useJupyter({ startDefaultKernel: true });
+  return (
+    <>
+      <Text as="h1">Output without Code Editor and Error</Text>
+      <Output
+        autoRun
+        code="error"
+        id={SOURCE_ID_1_1}
+        kernel={defaultKernel}
+        showEditor={false}
+      />
+    </>
+  );
+};
+
+const OutputEditor = () => {
   const { defaultKernel } = useJupyter();
   const outputStore = useOutputsStore();
   console.log(
@@ -140,7 +157,7 @@ const OutputWithEditor = () => {
   );
 };
 
-const OutputWithEmptyOutput = () => {
+const OutputEmpty = () => {
   const { kernelManager, serviceManager } = useJupyter();
   const outputStore = useOutputsStore();
   const kernelsStore = useKernelsStore();
@@ -195,10 +212,11 @@ const root = createRoot(div);
 
 root.render(
   <Jupyter startDefaultKernel>
-    <OutputWithoutEditorNoAutorun />
-    <OutputWithoutEditorAutorun />
-    <OutputFromCodeIPyWidgets />
-    <OutputWithEditor />
-    <OutputWithEmptyOutput />
+    <OutputNoEditorNoAutorun />
+    <OutputNoEditor />
+    <OutputNoEditorError />
+    <OutputIPyWidgets />
+    <OutputEditor />
+    <OutputEmpty />
   </Jupyter>
 );

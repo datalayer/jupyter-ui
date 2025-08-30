@@ -19,7 +19,12 @@ const LexicalEditor = () => {
   return (
     <Box className="center">
       <Box>
-        <Editor notebook={NBFORMAT_MODEL} />
+        <Editor
+          notebook={NBFORMAT_MODEL}
+          onSessionConnection={session => {
+            console.log('Session changed:', session);
+          }}
+        />
         <Button
           onClick={(e: React.MouseEvent) => {
             e.preventDefault();

@@ -96,7 +96,6 @@ export class OutputAdapter {
     code: string,
     onExecutionPhaseChanged?: (phaseOutput: IExecutionPhaseOutput) => void
   ) {
-    console.log('--------DLA', code);
     if (this._kernel) {
       this.clear();
       const metadata: JSONObject = {};
@@ -110,7 +109,6 @@ export class OutputAdapter {
         onExecutionPhaseChanged
       );
       await done;
-      console.log('--------DLA done', code);
     }
   }
 

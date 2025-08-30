@@ -15,7 +15,7 @@ export const nbformatToLexical = (
   editor: LexicalEditor,
 ) => {
   editor.update(() => {
-    notebook.cells.map(cell => {
+    notebook.cells.map((cell, index) => {
       let code = '';
       if (typeof cell.source === 'object') {
         code = (cell.source as string[]).join('\n');
@@ -35,7 +35,10 @@ export const nbformatToLexical = (
           // autoStart: false,
         });
       }
-      editor.dispatchCommand(INSERT_PARAGRAPH_COMMAND, undefined);
+      // Only add paragraph between cells, not after the last cell
+      if (index < notebook.cells.length - 1) {
+        editor.dispatchCommand(INSERT_PARAGRAPH_COMMAND, undefined);
+      }
     });
   });
 };

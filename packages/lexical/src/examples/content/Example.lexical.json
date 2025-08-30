@@ -32,6 +32,16 @@
             "type": "jupyter-input-highlight",
             "version": 1,
             "highlightType": "string"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": ")",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "punctuation"
           }
         ],
         "direction": "ltr",

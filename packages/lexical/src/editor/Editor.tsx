@@ -29,40 +29,44 @@ import { CodeNode } from '@lexical/code';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { useJupyter } from '@datalayer/jupyter-react';
 import {
-  JupyterInputOutputPlugin,
+  CounterNode,
   EquationNode,
-  HorizontalRulePlugin,
-  ListMaxIndentLevelPlugin,
-  AutoLinkPlugin,
-  ComponentPickerMenuPlugin,
-  EquationsPlugin,
-  ImagesPlugin,
-  YouTubePlugin,
   ImageNode,
-  YouTubeNode,
   JupyterInputHighlightNode,
   JupyterInputNode,
   JupyterOutputNode,
   // JupyterCellNode,
-  // JupyterCellPlugin,
-  CodeActionMenuPlugin,
+  YouTubeNode,
+} from '../nodes';
+import {
   AutoEmbedPlugin,
+  AutoLinkPlugin,
+  CodeActionMenuPlugin,
+  CommentPlugin,
+  ComponentPickerMenuPlugin,
+  DraggableBlockPlugin,
+  EquationsPlugin,
+  FloatingTextFormatToolbarPlugin,
+  HorizontalRulePlugin,
+  ImagesPlugin,
+  // JupyterCellPlugin,
+  JupyterInputOutputPlugin,
+  ListMaxIndentLevelPlugin,
+  MarkdownPlugin,
   NbformatContentPlugin,
   TableOfContentsPlugin,
-  MarkdownPlugin,
-  CommentPlugin,
-  FloatingTextFormatToolbarPlugin,
+  YouTubePlugin,
 } from './..';
 import { commentTheme } from '../themes';
-import { useLexical } from '../context/LexicalContext';
+import { useLexical } from '../context';
 import { TreeViewPlugin, ToolbarPlugin } from '../plugins';
-import DraggableBlockPlugin from '../plugins/DraggableBlockPlugin';
+import { OnSessionConnection } from '@datalayer/jupyter-react';
 
 import './../../style/index.css';
-import { CounterNode } from '../nodes/CounterNode';
 
 type Props = {
   notebook?: INotebookContent;
+  onSessionConnection?: OnSessionConnection;
 };
 
 function Placeholder() {
@@ -70,7 +74,7 @@ function Placeholder() {
 }
 
 const initialConfig = {
-  namespace: 'Jupyter Lexical example',
+  namespace: 'Jupyter Lexical Example',
   theme: commentTheme,
   onError(error: Error) {
     throw error;
@@ -78,6 +82,7 @@ const initialConfig = {
   nodes: [
     AutoLinkNode,
     CodeNode,
+    CounterNode,
     EquationNode,
     HashtagNode,
     HeadingNode,
@@ -96,7 +101,6 @@ const initialConfig = {
     TableNode,
     TableRowNode,
     YouTubeNode,
-    CounterNode,
   ],
 };
 
@@ -111,7 +115,7 @@ const EditorContextPlugin = () => {
 };
 
 export function Editor(props: Props) {
-  const { notebook } = props;
+  const { notebook, onSessionConnection } = props;
   const { defaultKernel } = useJupyter();
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
@@ -154,10 +158,11 @@ export function Editor(props: Props) {
             <ListMaxIndentLevelPlugin maxDepth={7} />
             <MarkdownPlugin />
             {/* <JupyterCellPlugin /> */}
-            {defaultKernel && (
-              <JupyterInputOutputPlugin kernel={defaultKernel} />
-            )}
-            <ComponentPickerMenuPlugin />
+            <JupyterInputOutputPlugin
+              kernel={defaultKernel}
+              onSessionConnection={onSessionConnection}
+            />
+            <ComponentPickerMenuPlugin kernel={defaultKernel} />
             <EquationsPlugin />
             <ImagesPlugin />
             <HorizontalRulePlugin />

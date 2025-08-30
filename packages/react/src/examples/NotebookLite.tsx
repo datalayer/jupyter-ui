@@ -6,7 +6,8 @@
 
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { Session } from '@jupyterlab/services';
-import { Box, Text } from '@primer/react';
+import { Text } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { CellSidebarExtension, KernelIndicator, Notebook } from '../components';

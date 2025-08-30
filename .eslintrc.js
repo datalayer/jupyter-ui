@@ -13,6 +13,9 @@ module.exports = {
     ecmaFeatures: {
       jsx: true,
     },
+    // Explicitly set tsconfigRootDir and project to resolve multiple candidate TSConfigRootDirs error
+    tsconfigRootDir: __dirname,
+    project: './tsconfig.eslint.json',
   },
   settings: {
     react: {

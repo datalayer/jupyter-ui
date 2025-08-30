@@ -41,7 +41,7 @@ module.exports = {
     ignored: '/node_modules/',
   },
   devServer: {
-    port: 3208,
+    port: 3211,
     historyApiFallback: true,
     hot: !IS_PRODUCTION,
     client: {
@@ -53,7 +53,7 @@ module.exports = {
     minimize,
   },
   output: {
-    publicPath: 'http://localhost:3208/',
+    publicPath: 'http://localhost:3211/',
     filename: '[name].[contenthash].jupyter-lexical.js',
   },
   resolve: {
