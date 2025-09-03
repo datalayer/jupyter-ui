@@ -173,27 +173,36 @@ export function AppNbformat() {
             </span>
           </div>
         </div>
-        <br />
-        <a href="https://datalayer.ai" target="_blank" rel="noreferrer">
-          <ThreeBarsIcon />
-        </a>
-        <h2>
-          copyright ©{' '}
-          <a href="https://datalayer.ai" target="_blank" rel="noreferrer">
-            2022-2024 Datalayer, Inc.
-          </a>
-        </h2>
-        <ul>
-          <li>
-            <a
-              href="https://github.com/datalayer/jupyter-ui"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Jupyter UI open-source repository
+        <div className="other App">
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+            }}
+          >
+            <a href="https://datalayer.ai" target="_blank" rel="noreferrer">
+              <ThreeBarsIcon />
             </a>
-          </li>
-        </ul>
+          </div>
+          <h2>
+            <a href="https://datalayer.ai" target="_blank" rel="noreferrer">
+              Copyright © 2025 Datalayer, Inc.
+            </a>
+          </h2>
+          <ul>
+            <li>
+              <a
+                href="https://github.com/datalayer/jupyter-ui"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Jupyter UI open-source repository
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
     </>
   );
