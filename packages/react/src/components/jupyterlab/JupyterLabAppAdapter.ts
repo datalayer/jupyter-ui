@@ -42,7 +42,7 @@ export class JupyterLabAppAdapter {
       this._ready = new Promise((resolve, _) => {
         this._readyResolve = resolve;
       });
-      this._plugins = (this._jupyterLab as any)['_plugins'];
+      this._plugins = (this._jupyterLab as any)['pluginRegistry']['_plugins'];
       this._readyResolve();
       return;
     }

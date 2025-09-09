@@ -15,15 +15,16 @@ import {
   Notebook2,
   NotebookToolbar,
 } from '../components';
-import { jupyterLabTheme, JupyterReactTheme, Colormode } from '../theme';
+import { useJupyterReactStore } from '../state';
+import { jupyterLabTheme, JupyterReactTheme } from '../theme';
 
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookThemeColormode = () => {
   const { serviceManager } = useJupyter();
+  const { colormode, setColormode } = useJupyterReactStore();
   const [theme, setTheme] = useState<any>(jupyterLabTheme);
   const [isThemeOn, setIsThemeOn] = useState(false);
-  const [colormode, setColormode] = useState<Colormode>('light');
   const [isOn, setIsOn] = useState(false);
   const extensions = useMemo(
     () => [new CellSidebarExtension({ colormode })],

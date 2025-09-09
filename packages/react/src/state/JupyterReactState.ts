@@ -34,6 +34,7 @@ import {
   terminalStore,
   TerminalState,
 } from '../components/terminal/TerminalState';
+import { Colormode } from '../theme';
 
 export type OnSessionConnection = (
   kernelConnection: Session.ISessionConnection | undefined
@@ -54,9 +55,11 @@ export type JupyterReactState = {
   serviceManager?: ServiceManager.IManager;
   terminalStore: TerminalState;
   version: string;
+  colormode: Colormode;
   setJupyterConfig: (configuration?: IJupyterConfig) => void;
   setServiceManager: (serviceManager?: ServiceManager.IManager) => void;
   setVersion: (version: string) => void;
+  setColormode: (colormode: Colormode) => void;
 };
 
 export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
@@ -72,6 +75,7 @@ export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
   notebookStore: notebookStore.getState(),
   outputStore: outputsStore.getState(),
   terminalStore: terminalStore.getState(),
+  colormode: 'light',
   setJupyterConfig: (jupyterConfig?: IJupyterConfig) => {
     set(state => ({ jupyterConfig }));
   },
@@ -82,6 +86,9 @@ export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
     if (version && !get().version) {
       set(state => ({ version }));
     }
+  },
+  setColormode: colormode => {
+    set(state => ({ colormode }));
   },
 }));
 
