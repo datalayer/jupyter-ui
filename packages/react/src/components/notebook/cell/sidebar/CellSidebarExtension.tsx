@@ -13,12 +13,12 @@ import type { CommandRegistry } from '@lumino/commands';
 import type { IDisposable } from '@lumino/disposable';
 import type { PanelLayout, Widget } from '@lumino/widgets';
 import { Signal } from '@lumino/signaling';
-import { JupyterReactTheme, Colormode } from '../../../../theme';
 import { CellSidebar, type ICellSidebarProps } from './CellSidebar';
 import {
   NotebookExtension,
   INotebookExtensionProps,
 } from '../../NotebookExtensions';
+import { JupyterReactTheme, Colormode } from '../../../../theme';
 
 class CellSidebarFactory implements IDisposable {
   private _isDisposed = false;
@@ -54,7 +54,6 @@ class CellSidebarFactory implements IDisposable {
     if (this._isDisposed) {
       return;
     }
-
     this._isDisposed = true;
     this.panel.content.model?.cells.changed.disconnect(
       this._onCellsChanged,

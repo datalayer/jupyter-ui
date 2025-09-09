@@ -72,12 +72,12 @@ const ENTRY =
   // './src/examples/NotebookSimple';
   // './src/examples/NotebookSkeleton';
   // './src/examples/NotebookTheme';
-  // './src/examples/NotebookThemeColormode';
-  // './src/examples/NotebookToc';
-  // './src/examples/NotebookURL';
-  // './src/examples/NotebookURL';
-  // './src/examples/ObservableHQ';
-  './src/examples/Outputs';
+  './src/examples/NotebookThemeColormode';
+// './src/examples/NotebookToc';
+// './src/examples/NotebookURL';
+// './src/examples/NotebookURL';
+// './src/examples/ObservableHQ';
+// './src/examples/Outputs';
 // './src/examples/OutputIpynb';
 // './src/examples/OutputWithMonitoring';
 // './src/examples/Plotly';

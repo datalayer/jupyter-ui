@@ -64,6 +64,11 @@ declare module '*/widgets-base.css' {
   export default value;
 }
 
+declare module '@primer/primitives/dist/css/*' {
+  const value: any;
+  export default value;
+}
+
 declare module 'jupyterlab-plotly/lib/jupyterlab-plugin' {
   const value: any;
   export default value;

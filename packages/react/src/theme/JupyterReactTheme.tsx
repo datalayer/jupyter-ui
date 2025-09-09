@@ -4,9 +4,10 @@
  * MIT License
  */
 
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { BaseStyles, ThemeProvider } from '@primer/react';
 import { Colormode, JupyterLabCss, jupyterLabTheme } from '../theme';
+import { useJupyterReactStore } from '../state';
 
 import '@primer/primitives/dist/css/functional/themes/light.css';
 import '@primer/primitives/dist/css/functional/themes/dark.css';
@@ -47,10 +48,18 @@ export function JupyterReactTheme(
 ): JSX.Element {
   const {
     children,
-    colormode = 'light',
+    colormode: colormodeProps = 'light',
     loadJupyterLabCss = true,
     theme = jupyterLabTheme,
   } = props;
+  const [colormode, setColormode] = useState<Colormode>(colormodeProps);
+  const { colormode: colormodeFromStore } = useJupyterReactStore();
+  useEffect(() => {
+    setColormode(colormodeProps);
+  }, [colormodeProps]);
+  useEffect(() => {
+    setColormode(colormodeFromStore);
+  }, [colormodeFromStore]);
   return (
     <JupyterReactColormodeContext.Provider value={colormode}>
       {loadJupyterLabCss && <JupyterLabCss colormode={colormode} />}
