@@ -12,6 +12,7 @@ import {
   Kernel as JupyterKernel,
   Session,
 } from '@jupyterlab/services';
+import { setupPrimerPortals } from '@datalayer/primer-addons';
 import {
   getJupyterServerUrl,
   createLiteServiceManager,
@@ -21,6 +22,7 @@ import {
   DEFAULT_KERNEL_NAME,
 } from '../jupyter';
 import { ServiceManagerLess } from '../jupyter/services';
+import { JupyterLabAppAdapter } from '../components/jupyterlab';
 import { Kernel } from '../jupyter/kernel/Kernel';
 import { IJupyterConfig, loadJupyterConfig } from '../jupyter/JupyterConfig';
 import { cellsStore, CellsState } from '../components/cell/CellState';
@@ -56,6 +58,14 @@ export type JupyterReactState = {
   terminalStore: TerminalState;
   version: string;
   colormode: Colormode;
+  /**
+   * JupyterLabApp adapter.
+   */
+  jupyterLabAdapter?: JupyterLabAppAdapter;
+  /**
+   * Set the JupyterLabAdapter.
+   */
+  setJupyterLabAdapter: (jupyterLabAdapter: JupyterLabAppAdapter) => void;
   setJupyterConfig: (configuration?: IJupyterConfig) => void;
   setServiceManager: (serviceManager?: ServiceManager.IManager) => void;
   setVersion: (version: string) => void;
@@ -65,6 +75,7 @@ export type JupyterReactState = {
 export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
   collaborative: false,
   version: '',
+  jupyterLabAdapter: undefined,
   jupyterConfig: undefined,
   kernelIsLoading: true,
   kernel: undefined,
@@ -76,6 +87,9 @@ export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
   outputStore: outputsStore.getState(),
   terminalStore: terminalStore.getState(),
   colormode: 'light',
+  setJupyterLabAdapter: (jupyterLabAdapter: JupyterLabAppAdapter) => {
+    set(state => ({ jupyterLabAdapter }));
+  },
   setJupyterConfig: (jupyterConfig?: IJupyterConfig) => {
     set(state => ({ jupyterConfig }));
   },
@@ -88,6 +102,7 @@ export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
     }
   },
   setColormode: colormode => {
+    setupPrimerPortals(colormode);
     set(state => ({ colormode }));
   },
 }));

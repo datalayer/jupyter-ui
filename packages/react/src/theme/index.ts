@@ -5,7 +5,12 @@
  */
 
 export * from './themes';
-// export * from './JupyterLabCssImports'; // Leave this commented otherwise webpack may break in consumers.
+
 export * from './JupyterLabColormode';
 export * from './JupyterLabCss';
+export * from './JupyterPalette';
 export * from './JupyterReactTheme';
+
+// Do NOT export JupyterLabCssImports here...
+// !!! Leave this export commented otherwise webpack may break in consumers
+// export * from './JupyterLabCssImports';
