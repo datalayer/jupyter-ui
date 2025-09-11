@@ -69,7 +69,7 @@
     "@codemirror/lang-python": "^6.0.1",
     "@codemirror/state": "^6.2.0",
     "@codemirror/view": "^6.7.0",
-    "@datalayer/primer-addons": "^1.0.3",
+    "@datalayer/primer-addons": "^1.0.4",
     "@jupyter-widgets/base": "^6.0.0",
     "@jupyter-widgets/controls": "^5.0.0",
     "@jupyter-widgets/html-manager": "^1.0.0",

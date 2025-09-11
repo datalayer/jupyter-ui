@@ -13,12 +13,8 @@ import React, {
 } from 'react';
 import { BaseStyles, ThemeProvider } from '@primer/react';
 import { IThemeManager } from '@jupyterlab/apputils';
-import {
-  Colormode,
-  JupyterLabCss,
-  jupyterLabTheme,
-  setupPrimerPortals,
-} from '../theme';
+import { setupPrimerPortals } from '@datalayer/primer-addons';
+import { Colormode, JupyterLabCss, jupyterLabTheme } from '../theme';
 import { loadJupyterConfig } from '../jupyter';
 import { useJupyterReactStore } from '../state';
 

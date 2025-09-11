@@ -12,6 +12,7 @@ import {
   Kernel as JupyterKernel,
   Session,
 } from '@jupyterlab/services';
+import { setupPrimerPortals } from '@datalayer/primer-addons';
 import {
   getJupyterServerUrl,
   createLiteServiceManager,
@@ -35,7 +36,7 @@ import {
   terminalStore,
   TerminalState,
 } from '../components/terminal/TerminalState';
-import { setupPrimerPortals, Colormode } from '../theme';
+import { Colormode } from '../theme';
 
 export type OnSessionConnection = (
   kernelConnection: Session.ISessionConnection | undefined
