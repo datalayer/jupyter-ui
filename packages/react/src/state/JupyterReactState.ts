@@ -35,7 +35,7 @@ import {
   terminalStore,
   TerminalState,
 } from '../components/terminal/TerminalState';
-import { Colormode } from '../theme';
+import { setupPrimerPortals, Colormode } from '../theme';
 
 export type OnSessionConnection = (
   kernelConnection: Session.ISessionConnection | undefined
@@ -101,6 +101,7 @@ export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
     }
   },
   setColormode: colormode => {
+    setupPrimerPortals(colormode);
     set(state => ({ colormode }));
   },
 }));

@@ -12,7 +12,14 @@ import React, {
   useState,
 } from 'react';
 import { BaseStyles, ThemeProvider } from '@primer/react';
-import { Colormode, JupyterLabCss, jupyterLabTheme } from '../theme';
+import { IThemeManager } from '@jupyterlab/apputils';
+import {
+  Colormode,
+  JupyterLabCss,
+  jupyterLabTheme,
+  setupPrimerPortals,
+} from '../theme';
+import { loadJupyterConfig } from '../jupyter';
 import { useJupyterReactStore } from '../state';
 
 import '@primer/primitives/dist/css/functional/themes/light.css';
@@ -26,8 +33,6 @@ import '@primer/primitives/dist/css/functional/size/size-fine.css';
 import '@primer/primitives/dist/css/functional/size/size.css';
 import '@primer/primitives/dist/css/functional/size/viewport.css';
 import '@primer/primitives/dist/css/functional/typography/typography.css';
-import { IThemeManager } from '@jupyterlab/apputils';
-import { loadJupyterConfig } from '../jupyter';
 
 // Create context for colormode
 const JupyterReactColormodeContext = createContext<Colormode | undefined>(
@@ -89,14 +94,17 @@ export function JupyterReactTheme(
   useEffect(() => {
     if (inJupyterLab !== undefined) {
       function colorSchemeFromMedia({ matches }: { matches: boolean }) {
-        setColormode(matches ? 'dark' : 'light');
+        const colormode = matches ? 'dark' : 'light';
+        setColormode(colormode);
+        setupPrimerPortals(colormode);
       }
       function updateColorMode(themeManager: IThemeManager) {
-        setColormode(
+        const colormode =
           themeManager.theme && !themeManager.isLight(themeManager.theme)
             ? 'dark'
-            : 'light'
-        );
+            : 'light';
+        setColormode(colormode);
+        setupPrimerPortals(colormode);
       }
       if (inJupyterLab) {
         const themeManager = jupyterLabAdapter?.service(
