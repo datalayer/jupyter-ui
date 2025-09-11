@@ -76,7 +76,7 @@ export function JupyterReactTheme(
   } = props;
   const { colormode: colormodeFromStore, jupyterLabAdapter } =
     useJupyterReactStore();
-  const [colormode, setColormode] = useState(colormodeProps ?? 'light');
+  const [colormode, setColormode] = useState(colormodeProps);
   const [inJupyterLab, setInJupterLab] = useState<boolean | undefined>(
     undefined
   );
@@ -87,16 +87,17 @@ export function JupyterReactTheme(
   useEffect(() => {
     if (colormodeFromStore !== colormode) {
       setColormode(colormodeFromStore);
-    } else if (colormodeProps !== colormode) {
-      setColormode(colormodeProps);
     }
-  }, [colormodeProps, colormodeFromStore, inJupyterLab]);
+  }, [colormodeFromStore, inJupyterLab]);
   useEffect(() => {
     if (inJupyterLab !== undefined) {
       function colorSchemeFromMedia({ matches }: { matches: boolean }) {
+        /*
+        // TODO manage the case where user change the colormode
         const colormode = matches ? 'dark' : 'light';
         setColormode(colormode);
         setupPrimerPortals(colormode);
+        */
       }
       function updateColorMode(themeManager: IThemeManager) {
         const colormode =
@@ -136,7 +137,7 @@ export function JupyterReactTheme(
     <JupyterReactColormodeContext.Provider value={colormode}>
       {loadJupyterLabCss && <JupyterLabCss colormode={colormode} />}
       <ThemeProvider
-        colorMode={colormode === 'light' ? 'day' : 'night'}
+        colorMode={colormode}
         theme={theme}
         dayScheme="light"
         nightScheme="dark"

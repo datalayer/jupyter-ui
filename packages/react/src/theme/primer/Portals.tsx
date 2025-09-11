@@ -23,7 +23,6 @@ const PRIMER_PORTAL_ROOT_ID = '__primerPortalRoot__';
  *  @see https://github.com/primer/react/blob/030fe020b48b7f12c2994c6614e5d4191fe764ee/src/Portal/Portal.tsx#L33
  */
 export const setupPrimerPortals = (colormode: Colormode = 'light') => {
-  console.log('-------------------------DLA', colormode);
   const body = document.body;
   body.dataset['portalRoot'] = 'true';
   body.dataset['colorMode'] = colormode;

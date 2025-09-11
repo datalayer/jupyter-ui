@@ -26,10 +26,7 @@ const NotebookThemeColormode = () => {
   const [theme, setTheme] = useState<any>(jupyterLabTheme);
   const [isThemeOn, setIsThemeOn] = useState(false);
   const [isOn, setIsOn] = useState(false);
-  const extensions = useMemo(
-    () => [new CellSidebarExtension({ colormode })],
-    [colormode]
-  );
+  const extensions = useMemo(() => [new CellSidebarExtension()], [colormode]);
   useEffect(() => {
     if (isThemeOn) {
       setTheme(primerTheme);
@@ -58,7 +55,7 @@ const NotebookThemeColormode = () => {
   }, []);
   return (
     <>
-      <JupyterReactTheme theme={theme} colormode={colormode}>
+      <JupyterReactTheme theme={theme}>
         <Box display="flex">
           <Box mr={3}>
             <Text
