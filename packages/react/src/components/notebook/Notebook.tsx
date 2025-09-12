@@ -235,6 +235,11 @@ export const Notebook = (props: INotebookProps) => {
   };
   // Mutation Effects.
   useEffect(() => {
+    // fix: issue-396 When `serviceManager` changes, the `Notebook` component will recreate the `NotebookAdapter` instance. The old `NotebookAdapter` is not properly disposed, causing shortcut key listener conflicts.
+    if (adapter) {
+      adapter.dispose();
+      setAdapter(undefined);
+    }
     if (serviceManager && serverless) {
       createAdapter(serviceManager, kernel);
     } else if (serviceManager && kernel) {
