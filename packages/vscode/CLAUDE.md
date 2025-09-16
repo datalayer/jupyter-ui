@@ -2,13 +2,14 @@
 
 ## Project Overview
 
-This is a VS Code extension that provides a custom Jupyter Notebook editor with integrated Datalayer platform authentication. It uses the `@datalayer/jupyter-react` component library and supports both local Jupyter servers and the Datalayer cloud platform.
+This is a VS Code extension that provides a custom Jupyter Notebook editor with integrated Datalayer platform authentication and a Spaces tree view for managing cloud documents. It uses the `@datalayer/jupyter-react` component library and supports both local Jupyter servers and the Datalayer cloud platform.
 
 ## Architecture
 
 - **Extension Code** (`src/`): Runs in VS Code's Node.js context, handles authentication and server communication
 - **Webview Code** (`webview/`): Runs in an iframe, contains the React-based notebook editor
 - **Authentication System** (`src/auth/`): Token-based authentication with GitHub profile enrichment
+- **Spaces Tree View** (`src/spaces/`): Explorer sidebar for browsing Datalayer spaces and documents
 - **Communication**: Message passing between extension and webview with JWT token injection
 
 ## Development Setup
@@ -20,11 +21,25 @@ This is a VS Code extension that provides a custom Jupyter Notebook editor with 
 
 ## Key Components
 
+### Core Extension
+
 - `src/extension.ts`: Main extension entry point with auth command registration
+- `src/notebookEditor.ts`: Custom editor provider with authenticated connections
+
+### Authentication System
+
 - `src/auth/authService.ts`: Authentication service with secure token storage
 - `src/auth/githubService.ts`: GitHub profile enrichment service
 - `src/auth/tokenProvider.ts`: User interface for authentication flows
-- `src/notebookEditor.ts`: Custom editor provider with authenticated connections
+
+### Spaces Tree View
+
+- `src/spaces/spacesTreeProvider.ts`: Tree data provider for Datalayer spaces
+- `src/spaces/spacerApiService.ts`: API service for fetching spaces and documents
+- `src/spaces/spaceItem.ts`: Data models for tree items
+
+### Webview
+
 - `webview/NotebookVSCode.tsx`: React component for the notebook UI
 - `webview/serviceManager.ts`: Handles Jupyter service connections with JWT tokens
 
@@ -70,6 +85,9 @@ This is a VS Code extension that provides a custom Jupyter Notebook editor with 
 - `datalayer.login`: Authenticate with Datalayer platform
 - `datalayer.logout`: Sign out and clear credentials
 - `datalayer.showAuthStatus`: View authentication status
+- `datalayer.refreshSpaces`: Refresh the Spaces tree view
+- `datalayer.openDocument`: Open a document from the Spaces tree
+- `datalayer.createNotebookInSpace`: Create a new notebook in a selected space
 
 ## Configuration
 
@@ -89,3 +107,35 @@ This is a VS Code extension that provides a custom Jupyter Notebook editor with 
 
 - View Type: `datalayer.jupyter-notebook`
 - File Pattern: `*.ipynb`
+
+## Spaces Tree View
+
+The extension includes a tree view in the Explorer sidebar that displays:
+
+- User's Datalayer spaces (with default space marked)
+- Documents within each space:
+  - Notebooks (`.ipynb` files)
+  - Lexical documents (`.lexical` files)
+  - Exercises and other document types
+- Real-time sync with the Datalayer platform
+- Context menu actions for creating new notebooks
+
+### API Endpoints Used
+
+- `/api/spacer/v1/spaces/users/me` - Get user's spaces
+- `/api/spacer/v1/spaces/{id}/items` - Get items in a space
+- `/api/spacer/v1/notebooks` - Create new notebooks
+
+## Directory Structure
+
+```
+src/
+├── auth/           # Authentication services
+├── spaces/         # Spaces tree view implementation
+├── test/           # Test files
+├── extension.ts    # Main extension entry
+└── notebookEditor.ts # Notebook editor provider
+
+webview/           # React-based notebook UI
+dist/              # Webpack build output
+```

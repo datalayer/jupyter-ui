@@ -43,8 +43,59 @@
         "command": "datalayer.showAuthStatus",
         "title": "Show Authentication Status",
         "category": "Datalayer"
+      },
+      {
+        "command": "datalayer.refreshSpaces",
+        "title": "Refresh Spaces",
+        "category": "Datalayer",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "datalayer.openDocument",
+        "title": "Open Document",
+        "category": "Datalayer"
+      },
+      {
+        "command": "datalayer.createNotebookInSpace",
+        "title": "Create Notebook in Space",
+        "category": "Datalayer",
+        "icon": "$(add)"
       }
     ],
+    "views": {
+      "explorer": [
+        {
+          "id": "datalayerSpaces",
+          "name": "Datalayer Spaces",
+          "icon": "$(menu)",
+          "contextualTitle": "Datalayer Spaces",
+          "when": "true"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "datalayerSpaces",
+        "contents": "Welcome to Datalayer Spaces.\n[Login to Datalayer](command:datalayer.login) to view your spaces and documents.",
+        "when": "!datalayer.authenticated"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "datalayer.refreshSpaces",
+          "when": "view == datalayerSpaces",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "datalayer.createNotebookInSpace",
+          "when": "view == datalayerSpaces && viewItem == space",
+          "group": "inline"
+        }
+      ]
+    },
     "configuration": {
       "title": "Datalayer",
       "properties": {

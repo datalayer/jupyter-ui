@@ -16,6 +16,34 @@ This [Visual Studio Code](https://code.visualstudio.com) extension allows you to
 - **Real-time Execution**: Run code cells with live output and error display
 - **IPyWidgets Support**: Full interactive widget support
 - **Status Bar Integration**: View connection status and user profile
+- **Spaces Tree View**: Browse and manage documents across all your Datalayer spaces
+
+## Spaces Tree View
+
+The extension provides a tree view in the Explorer sidebar that displays all your Datalayer spaces and documents:
+
+### Features
+
+- **Hierarchical Display**: Shows "Datalayer (@username)" as root, with spaces as folders containing documents
+- **Document Types**: Displays notebooks with `.ipynb` extension and documents with `.lexical` extension
+- **Default Space**: Marks your default space with "(Default)" label
+- **Real-time Updates**: Refreshes when authentication state changes
+- **Error Handling**: Shows helpful messages when not authenticated or when spaces are empty
+
+### Tree Structure
+
+```
+Datalayer (@username)
+├── My Library (Default)
+│   ├── notebook1.ipynb
+│   ├── document1.lexical
+│   └── notebook2.ipynb
+├── Project Space
+│   ├── analysis.ipynb
+│   └── notes.lexical
+└── Shared Space
+    └── collaboration.ipynb
+```
 
 ## Authentication
 
@@ -32,6 +60,9 @@ The extension supports authentication with the Datalayer platform:
 - `Datalayer: Logout from Datalayer` - Sign out and clear stored credentials
 - `Datalayer: Show Authentication Status` - View current authentication status
 - `Datalayer: Create new Datalayer Notebook` - Create a new notebook file
+- `Datalayer: Refresh Spaces` - Refresh the spaces tree view
+- `Datalayer: Open Document` - Open a document from the tree view (automatic on click)
+- `Datalayer: Create Notebook in Space` - Create a new notebook in a selected space
 
 ### Configuration
 
