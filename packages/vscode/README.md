@@ -4,17 +4,38 @@
 
 # Jupyter Notebook for Visual Studio Code
 
-This [Visual Studio Code](https://code.visualstudio.com) extension allows you to edit [Jupyter](https://jupyter.org) Notebooks files (`ipynb` extensions) and is publically available in the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=datalayer.datalayer-jupyter-vscode).
+This [Visual Studio Code](https://code.visualstudio.com) extension allows you to edit [Jupyter](https://jupyter.org) Notebooks files (`ipynb` extensions) with seamless integration to the [Datalayer](https://datalayer.io) platform. The extension is publicly available in the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=datalayer.datalayer-jupyter-vscode).
 
 <img src="https://jupyter-examples.datalayer.tech/jupyter-react-vscode.gif" />
 
 ## Working Features
 
-- Load a Notebook.
-- Display a Notebook.
-- Connect to a Jupyter Server by providing its URL with auth token; transfer http request and websocket messages.
-- Run code.
-- IPyWidgets support.
+- **Notebook Operations**: Load, display, and run Jupyter Notebooks
+- **Datalayer Authentication**: Token-based authentication with automatic GitHub profile enrichment
+- **Server Connectivity**: Connect to Jupyter servers or Datalayer cloud platform
+- **Real-time Execution**: Run code cells with live output and error display
+- **IPyWidgets Support**: Full interactive widget support
+- **Status Bar Integration**: View connection status and user profile
+
+## Authentication
+
+The extension supports authentication with the Datalayer platform:
+
+1. **Login**: Use Command Palette (`Cmd+Shift+P`) → "Datalayer: Login to Datalayer"
+2. **Token Input**: Paste your Datalayer access token when prompted
+3. **Auto-enrichment**: If authenticated via GitHub, your profile information is automatically fetched
+4. **Status Display**: View connection status in the status bar with Datalayer icon
+
+### Commands
+
+- `Datalayer: Login to Datalayer` - Authenticate with your Datalayer token
+- `Datalayer: Logout from Datalayer` - Sign out and clear stored credentials
+- `Datalayer: Show Authentication Status` - View current authentication status
+- `Datalayer: Create new Datalayer Notebook` - Create a new notebook file
+
+### Configuration
+
+- `datalayer.serverUrl` - Datalayer server URL (default: https://prod1.datalayer.run)
 
 ## Not Implemented
 

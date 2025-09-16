@@ -10,6 +10,7 @@ import { Disposable, disposeAll } from './dispose';
 import { getNonce } from './util';
 import { setRuntime } from './runtimePicker';
 import type { ExtensionMessage } from './messages';
+import { AuthService } from './auth/authService';
 
 /**
  * Define the type of edits used in notebook files.
@@ -490,28 +491,46 @@ export class NotebookEditorProvider
         // Handle in resolveCustomEditor
         return;
       case 'select-runtime': {
-        setRuntime()
-          .then(baseURL => {
-            if (baseURL) {
-              const parsedURL = new URL(baseURL);
-              const token = parsedURL.searchParams.get('token') ?? '';
-              parsedURL.search = '';
-              const baseUrl = parsedURL.toString();
+        const authService = AuthService.getInstance();
+        const authState = authService.getAuthState();
 
-              this.postMessage(
-                webview,
-                'set-runtime',
-                {
-                  baseUrl,
-                  token,
-                },
-                message.id,
-              );
-            }
-          })
-          .catch(reason => {
-            console.error('Failed to get a server URL.');
-          });
+        if (authState.isAuthenticated) {
+          const baseUrl = authState.serverUrl + '/';
+          const token = authState.token ?? '';
+
+          this.postMessage(
+            webview,
+            'set-runtime',
+            {
+              baseUrl,
+              token,
+            },
+            message.id,
+          );
+        } else {
+          setRuntime()
+            .then(baseURL => {
+              if (baseURL) {
+                const parsedURL = new URL(baseURL);
+                const token = parsedURL.searchParams.get('token') ?? '';
+                parsedURL.search = '';
+                const baseUrl = parsedURL.toString();
+
+                this.postMessage(
+                  webview,
+                  'set-runtime',
+                  {
+                    baseUrl,
+                    token,
+                  },
+                  message.id,
+                );
+              }
+            })
+            .catch(reason => {
+              console.error('Failed to get a server URL.');
+            });
+        }
         return;
       }
 
@@ -563,12 +582,20 @@ export class NotebookEditorProvider
     webview: vscode.WebviewPanel,
   ) {
     const { body, id } = message;
+    const authService = AuthService.getInstance();
+    const token = authService.getToken();
+
+    const headers = { ...body.headers };
+    if (token && !headers['Authorization']) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     fetch(body.url, {
       body: body.body,
-      headers: body.headers,
+      headers,
       method: body.method,
     }).then(async (reply: any) => {
-      const headers: Record<string, string> = [...reply.headers].reduce(
+      const responseHeaders: Record<string, string> = [...reply.headers].reduce(
         (agg, pair) => ({ ...agg, [pair[0]]: pair[1] }),
         {},
       );
@@ -578,7 +605,7 @@ export class NotebookEditorProvider
         webview,
         'http-response',
         {
-          headers,
+          headers: responseHeaders,
           body: rawBody,
           status: reply.status,
           statusText: reply.statusText,
@@ -593,9 +620,12 @@ export class NotebookEditorProvider
     webview: vscode.WebviewPanel,
   ) {
     const { body, id } = message;
+    const authService = AuthService.getInstance();
+    const token = authService.getToken();
     const wsURL = new URL(body.origin);
-    if (wsURL.searchParams.has('token')) {
-      wsURL.searchParams.set('token', 'xxxxx');
+
+    if (token) {
+      wsURL.searchParams.set('token', token);
     }
     const protocol = body.protocol || undefined;
     console.debug(

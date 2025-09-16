@@ -28,8 +28,33 @@
         "command": "datalayer.jupyter-notebook-new",
         "title": "Create new Datalayer Notebook",
         "category": "Notebook"
+      },
+      {
+        "command": "datalayer.login",
+        "title": "Login to Datalayer",
+        "category": "Datalayer"
+      },
+      {
+        "command": "datalayer.logout",
+        "title": "Logout from Datalayer",
+        "category": "Datalayer"
+      },
+      {
+        "command": "datalayer.showAuthStatus",
+        "title": "Show Authentication Status",
+        "category": "Datalayer"
       }
     ],
+    "configuration": {
+      "title": "Datalayer",
+      "properties": {
+        "datalayer.serverUrl": {
+          "type": "string",
+          "default": "https://prod1.datalayer.run",
+          "description": "Datalayer server URL"
+        }
+      }
+    },
     "customEditors": [
       {
         "viewType": "datalayer.jupyter-notebook",

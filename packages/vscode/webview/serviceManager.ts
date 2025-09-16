@@ -56,13 +56,13 @@ export function createServiceManager(
   return new ServiceManager({
     serverSettings: {
       ...refSettings,
-      appendToken: true,
+      appendToken: !!token,
       baseUrl,
       appUrl: '',
       fetch: fetch,
       init: {
         cache: 'no-store',
-        // credentials: 'same-origin',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
       } as any,
       token,
       WebSocket: WebSocket as any,
