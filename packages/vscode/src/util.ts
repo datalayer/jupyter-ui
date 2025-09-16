@@ -4,6 +4,12 @@
  * MIT License
  */
 
+/**
+ * @module util
+ * @description General utility functions for the extension.
+ * Provides helper functions used throughout the extension codebase.
+ */
+
 export function getNonce() {
   let text = '';
   const possible =

@@ -4,17 +4,43 @@
  * MIT License
  */
 
+/**
+ * @module githubService
+ * @description Service for enriching user profiles with GitHub information.
+ * Fetches GitHub user data when users authenticate via GitHub OAuth.
+ */
+
 import type { GitHubUser } from './authService';
 
+/**
+ * Static service class for GitHub user data enrichment.
+ * Provides methods to parse GitHub handles and fetch user profiles from the GitHub API.
+ *
+ * @class GitHubService
+ *
+ * @example
+ * ```typescript
+ * const githubId = GitHubService.parseGitHubHandle('urn:dla:iam:ext::github:123456');
+ * const userData = await GitHubService.fetchGitHubUser(githubId);
+ * ```
+ */
 export class GitHubService {
   private static readonly GITHUB_API_BASE = 'https://api.github.com';
   private static readonly GITHUB_HANDLE_PATTERN =
     /^urn:dla:iam:ext::github:(\d+)$/;
 
   /**
-   * Parse GitHub user ID from handle_s string
-   * @param handle_s String like "urn:dla:iam:ext::github:3627835"
-   * @returns GitHub user ID or null if not a GitHub handle
+   * Parses GitHub user ID from a Datalayer handle string.
+   *
+   * @static
+   * @param {string | undefined} handle_s - Handle string like "urn:dla:iam:ext::github:3627835"
+   * @returns {string | null} GitHub user ID or null if not a GitHub handle
+   *
+   * @example
+   * ```typescript
+   * const id = GitHubService.parseGitHubHandle('urn:dla:iam:ext::github:3627835');
+   * // Returns: '3627835'
+   * ```
    */
   static parseGitHubHandle(handle_s: string | undefined): string | null {
     if (!handle_s) {
@@ -35,9 +61,16 @@ export class GitHubService {
   }
 
   /**
-   * Fetch GitHub user information by user ID
-   * @param userId GitHub user ID
-   * @returns GitHub user data or null if fetch fails
+   * Fetches GitHub user information from the GitHub API.
+   *
+   * @static
+   * @async
+   * @param {string} userId - GitHub user ID
+   * @returns {Promise<GitHubUser | null>} GitHub user data or null if fetch fails
+   *
+   * @remarks
+   * Uses the GitHub REST API v3 without authentication.
+   * May be subject to rate limiting (60 requests per hour for unauthenticated requests).
    */
   static async fetchGitHubUser(userId: string): Promise<GitHubUser | null> {
     try {
@@ -87,10 +120,22 @@ export class GitHubService {
   }
 
   /**
-   * Enrich user data with GitHub information
-   * @param user Original user data from Datalayer
-   * @param handle_s The handle_s string from authentication response
-   * @returns User data enriched with GitHub information
+   * Enriches user data with GitHub profile information.
+   * Merges GitHub user data with the existing Datalayer user object.
+   *
+   * @static
+   * @async
+   * @param {any} user - Original user data from Datalayer
+   * @param {string | undefined} handle_s - The handle_s string from authentication response
+   * @returns {Promise<any>} User data enriched with GitHub information
+   *
+   * @example
+   * ```typescript
+   * const enrichedUser = await GitHubService.enrichUserWithGitHub(
+   *   datalayerUser,
+   *   'urn:dla:iam:ext::github:3627835'
+   * );
+   * ```
    */
   static async enrichUserWithGitHub(
     user: any,

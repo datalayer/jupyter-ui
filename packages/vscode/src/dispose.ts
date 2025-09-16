@@ -4,6 +4,12 @@
  * MIT License
  */
 
+/**
+ * @module dispose
+ * @description Disposable utility classes for resource management.
+ * Implements the disposable pattern for proper cleanup of resources.
+ */
+
 import type * as vscode from 'vscode';
 
 export function disposeAll(disposables: vscode.Disposable[]): void {

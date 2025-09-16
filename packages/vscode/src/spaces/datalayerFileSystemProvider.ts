@@ -1,0 +1,225 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
+/**
+ * @module datalayerFileSystemProvider
+ * @description Virtual file system provider for Datalayer documents.
+ * Enables seamless integration of remote documents with VS Code's file system.
+ */
+
+import * as vscode from 'vscode';
+import * as fs from 'fs';
+import * as path from 'path';
+
+/**
+ * A virtual file system provider that maps Datalayer documents to a cleaner URI scheme
+ * This allows us to show "datalayer://Space Name/Notebook.ipynb" instead of temp paths
+ */
+export class DatalayerFileSystemProvider implements vscode.FileSystemProvider {
+  private static instance: DatalayerFileSystemProvider;
+
+  // Maps virtual URIs to real file paths
+  private virtualToReal: Map<string, string> = new Map();
+  // Maps real file paths to virtual URIs
+  private realToVirtual: Map<string, vscode.Uri> = new Map();
+
+  private _emitter = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
+  readonly onDidChangeFile: vscode.Event<vscode.FileChangeEvent[]> =
+    this._emitter.event;
+
+  private constructor() {}
+
+  static getInstance(): DatalayerFileSystemProvider {
+    if (!DatalayerFileSystemProvider.instance) {
+      DatalayerFileSystemProvider.instance = new DatalayerFileSystemProvider();
+    }
+    return DatalayerFileSystemProvider.instance;
+  }
+
+  /**
+   * Register a mapping between a virtual URI and a real file path
+   */
+  registerMapping(virtualPath: string, realPath: string): vscode.Uri {
+    // Create a virtual URI with the datalayer scheme
+    const virtualUri = vscode.Uri.parse(`datalayer:/${virtualPath}`);
+    const key = virtualUri.toString();
+
+    this.virtualToReal.set(key, realPath);
+    this.realToVirtual.set(realPath, virtualUri);
+
+    return virtualUri;
+  }
+
+  /**
+   * Get the real file path for a virtual URI
+   */
+  getRealPath(uri: vscode.Uri): string | undefined {
+    return this.virtualToReal.get(uri.toString());
+  }
+
+  /**
+   * Get the virtual URI for a real file path
+   */
+  getVirtualUri(realPath: string): vscode.Uri | undefined {
+    return this.realToVirtual.get(realPath);
+  }
+
+  // FileSystemProvider implementation
+
+  watch(uri: vscode.Uri): vscode.Disposable {
+    // We don't need to watch for changes as documents are in collaborative mode
+    return new vscode.Disposable(() => {});
+  }
+
+  stat(uri: vscode.Uri): vscode.FileStat {
+    const realPath = this.getRealPath(uri);
+    if (!realPath || !fs.existsSync(realPath)) {
+      throw vscode.FileSystemError.FileNotFound(uri);
+    }
+
+    const stats = fs.statSync(realPath);
+    return {
+      type: stats.isDirectory()
+        ? vscode.FileType.Directory
+        : vscode.FileType.File,
+      ctime: stats.ctimeMs,
+      mtime: stats.mtimeMs,
+      size: stats.size,
+    };
+  }
+
+  readDirectory(uri: vscode.Uri): [string, vscode.FileType][] {
+    const realPath = this.getRealPath(uri);
+    if (!realPath || !fs.existsSync(realPath)) {
+      throw vscode.FileSystemError.FileNotFound(uri);
+    }
+
+    const entries = fs.readdirSync(realPath);
+    const result: [string, vscode.FileType][] = [];
+
+    for (const entry of entries) {
+      const entryPath = path.join(realPath, entry);
+      const stats = fs.statSync(entryPath);
+      result.push([
+        entry,
+        stats.isDirectory() ? vscode.FileType.Directory : vscode.FileType.File,
+      ]);
+    }
+
+    return result;
+  }
+
+  createDirectory(uri: vscode.Uri): void {
+    const realPath = this.getRealPath(uri);
+    if (!realPath) {
+      throw vscode.FileSystemError.FileNotFound(uri);
+    }
+
+    if (!fs.existsSync(realPath)) {
+      fs.mkdirSync(realPath, { recursive: true });
+    }
+  }
+
+  readFile(uri: vscode.Uri): Uint8Array {
+    const realPath = this.getRealPath(uri);
+    if (!realPath || !fs.existsSync(realPath)) {
+      throw vscode.FileSystemError.FileNotFound(uri);
+    }
+
+    return new Uint8Array(fs.readFileSync(realPath));
+  }
+
+  writeFile(
+    uri: vscode.Uri,
+    content: Uint8Array,
+    options: { create: boolean; overwrite: boolean },
+  ): void {
+    const realPath = this.getRealPath(uri);
+    if (!realPath) {
+      throw vscode.FileSystemError.FileNotFound(uri);
+    }
+
+    if (!options.create && !fs.existsSync(realPath)) {
+      throw vscode.FileSystemError.FileNotFound(uri);
+    }
+
+    if (!options.overwrite && fs.existsSync(realPath)) {
+      throw vscode.FileSystemError.FileExists(uri);
+    }
+
+    const dirPath = path.dirname(realPath);
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true });
+    }
+
+    fs.writeFileSync(realPath, content);
+    this._emitter.fire([{ type: vscode.FileChangeType.Changed, uri }]);
+  }
+
+  delete(uri: vscode.Uri, options: { recursive: boolean }): void {
+    const realPath = this.getRealPath(uri);
+    if (!realPath || !fs.existsSync(realPath)) {
+      throw vscode.FileSystemError.FileNotFound(uri);
+    }
+
+    const stats = fs.statSync(realPath);
+    if (stats.isDirectory()) {
+      if (options.recursive) {
+        fs.rmSync(realPath, { recursive: true, force: true });
+      } else {
+        fs.rmdirSync(realPath);
+      }
+    } else {
+      fs.unlinkSync(realPath);
+    }
+
+    this.virtualToReal.delete(uri.toString());
+    this.realToVirtual.delete(realPath);
+    this._emitter.fire([{ type: vscode.FileChangeType.Deleted, uri }]);
+  }
+
+  rename(
+    oldUri: vscode.Uri,
+    newUri: vscode.Uri,
+    options: { overwrite: boolean },
+  ): void {
+    const oldRealPath = this.getRealPath(oldUri);
+    const newRealPath = this.getRealPath(newUri);
+
+    if (!oldRealPath || !fs.existsSync(oldRealPath)) {
+      throw vscode.FileSystemError.FileNotFound(oldUri);
+    }
+
+    if (!newRealPath) {
+      throw vscode.FileSystemError.FileNotFound(newUri);
+    }
+
+    if (!options.overwrite && fs.existsSync(newRealPath)) {
+      throw vscode.FileSystemError.FileExists(newUri);
+    }
+
+    fs.renameSync(oldRealPath, newRealPath);
+
+    // Update mappings
+    this.virtualToReal.delete(oldUri.toString());
+    this.realToVirtual.delete(oldRealPath);
+    this.virtualToReal.set(newUri.toString(), newRealPath);
+    this.realToVirtual.set(newRealPath, newUri);
+
+    this._emitter.fire([
+      { type: vscode.FileChangeType.Deleted, uri: oldUri },
+      { type: vscode.FileChangeType.Created, uri: newUri },
+    ]);
+  }
+
+  /**
+   * Clean up all mappings
+   */
+  dispose(): void {
+    this.virtualToReal.clear();
+    this.realToVirtual.clear();
+  }
+}

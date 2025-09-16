@@ -4,6 +4,12 @@
  * MIT License
  */
 
+/**
+ * @module spaceItem
+ * @description Data models and interfaces for spaces and documents.
+ * Defines the structure of items displayed in the spaces tree view.
+ */
+
 import * as vscode from 'vscode';
 import * as path from 'path';
 
@@ -67,6 +73,7 @@ export interface SpaceItemData {
   error?: string;
   username?: string;
   githubLogin?: string;
+  spaceName?: string;
 }
 
 export class SpaceItem extends vscode.TreeItem {
@@ -183,13 +190,19 @@ export class SpaceItem extends vscode.TreeItem {
       return {
         command: 'datalayer.openDocument',
         title: 'Open Notebook',
-        arguments: [this.data.document],
+        arguments: [this.data.document, this.data.spaceName],
       };
     } else if (this.data.type === ItemType.DOCUMENT && this.data.document) {
       return {
         command: 'datalayer.openDocument',
         title: 'Open Document',
-        arguments: [this.data.document],
+        arguments: [this.data.document, this.data.spaceName],
+      };
+    } else if (this.data.type === ItemType.CELL && this.data.document) {
+      return {
+        command: 'datalayer.openDocument',
+        title: 'Open Cell',
+        arguments: [this.data.document, this.data.spaceName],
       };
     } else if (this.data.type === ItemType.ERROR) {
       return {

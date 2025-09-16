@@ -5,6 +5,12 @@
  */
 
 /**
+ * @module messages
+ * @description Message type definitions for extension-webview communication.
+ * Defines the protocol for messages exchanged between the extension and webview.
+ */
+
+/**
  * Extension message
  */
 export type ExtensionMessage = {

@@ -4,6 +4,12 @@
  * MIT License
  */
 
+/**
+ * @module spacesTreeProvider
+ * @description Tree data provider for the Datalayer spaces view.
+ * Displays user's spaces and documents in a hierarchical tree structure.
+ */
+
 import * as vscode from 'vscode';
 import {
   SpaceItem,
@@ -254,6 +260,7 @@ export class SpacesTreeProvider implements vscode.TreeDataProvider<SpaceItem> {
           new SpaceItem(displayName, vscode.TreeItemCollapsibleState.None, {
             type: ItemType.NOTEBOOK,
             document: notebook,
+            spaceName: space.name_t || 'Unnamed Space',
           }),
         );
       });
@@ -269,6 +276,7 @@ export class SpacesTreeProvider implements vscode.TreeDataProvider<SpaceItem> {
           new SpaceItem(displayName, vscode.TreeItemCollapsibleState.None, {
             type: ItemType.DOCUMENT,
             document: doc,
+            spaceName: space.name_t || 'Unnamed Space',
           }),
         );
       });
@@ -280,6 +288,7 @@ export class SpacesTreeProvider implements vscode.TreeDataProvider<SpaceItem> {
           new SpaceItem(cellName, vscode.TreeItemCollapsibleState.None, {
             type: ItemType.CELL,
             document: cell,
+            spaceName: space.name_t || 'Unnamed Space',
           }),
         );
       });

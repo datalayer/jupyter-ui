@@ -4,6 +4,17 @@
  * MIT License
  */
 
+/**
+ * @module extension
+ * @description Main extension module for the Datalayer VS Code extension.
+ * This module provides integration with the Datalayer platform, including:
+ * - Authentication with the Datalayer platform
+ * - Custom notebook editor for Jupyter notebooks
+ * - Spaces tree view for browsing platform resources
+ * - Runtime management for notebook execution
+ * - Document synchronization and collaboration features
+ */
+
 import * as vscode from 'vscode';
 import { NotebookEditorProvider } from './notebookEditor';
 import { AuthService } from './auth/authService';
@@ -11,13 +22,46 @@ import { TokenProvider } from './auth/tokenProvider';
 import { SpacesTreeProvider } from './spaces/spacesTreeProvider';
 import { SpacerApiService } from './spaces/spacerApiService';
 import { Document } from './spaces/spaceItem';
+import { DocumentBridge } from './spaces/documentBridge';
+import { DatalayerFileSystemProvider } from './spaces/datalayerFileSystemProvider';
 
 /**
- * Activate the extension
+ * Activates the Datalayer VS Code extension.
+ * This function is called when the extension is activated by VS Code.
+ * It initializes all services, registers commands, and sets up the UI components.
+ *
+ * @param {vscode.ExtensionContext} context - The extension context provided by VS Code
+ * @returns {void}
+ *
+ * @remarks
+ * The activation process includes:
+ * - Initializing authentication services
+ * - Registering the virtual file system provider
+ * - Setting up the custom notebook editor
+ * - Creating the spaces tree view
+ * - Registering all extension commands
+ *
+ * @example
+ * // This function is automatically called by VS Code when the extension activates
+ * // based on the activation events defined in package.json
  */
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: vscode.ExtensionContext): void {
   const authService = AuthService.getInstance(context);
   const spacerApiService = SpacerApiService.getInstance();
+  const documentBridge = DocumentBridge.getInstance();
+  const fileSystemProvider = DatalayerFileSystemProvider.getInstance();
+
+  // Register the virtual file system provider for cleaner paths
+  context.subscriptions.push(
+    vscode.workspace.registerFileSystemProvider(
+      'datalayer',
+      fileSystemProvider,
+      {
+        isCaseSensitive: true,
+        isReadonly: false,
+      },
+    ),
+  );
 
   // Register the notebook editor provider
   context.subscriptions.push(NotebookEditorProvider.register(context));
@@ -30,8 +74,15 @@ export function activate(context: vscode.ExtensionContext) {
   });
   context.subscriptions.push(treeView);
 
-  // Helper function to update authentication state
-  const updateAuthState = () => {
+  /**
+   * Updates the authentication state in VS Code's context.
+   * This helper function synchronizes the authentication status with the UI,
+   * updating context variables and refreshing the spaces tree view.
+   *
+   * @private
+   * @returns {void}
+   */
+  const updateAuthState = (): void => {
     vscode.commands.executeCommand(
       'setContext',
       'datalayer.authenticated',
@@ -84,33 +135,142 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand(
       'datalayer.openDocument',
-      async (document: Document) => {
+      async (document: Document, spaceName?: string) => {
         try {
           if (!document) {
             vscode.window.showErrorMessage('No document selected');
             return;
           }
 
-          // For notebooks, we can open them with our custom editor
-          const docName = document.name_t || 'Untitled';
+          const docName =
+            document.name_t ||
+            document.notebook_name_s ||
+            document.document_name_s ||
+            'Untitled';
           const isNotebook =
             document.type_s === 'notebook' ||
             document.notebook_extension_s === 'ipynb';
+          const isLexical =
+            document.document_format_s === 'lexical' ||
+            document.document_extension_s === 'lexical';
+          const isCell = document.type_s === 'cell';
 
           if (isNotebook) {
-            // Create a temporary URI or download the notebook
-            // This would need implementation based on how documents are accessed
-            vscode.window.showInformationMessage(
-              `Opening notebook: ${docName} (ID: ${document.uid})`,
+            // Show progress while downloading notebook
+            vscode.window.withProgress(
+              {
+                location: vscode.ProgressLocation.Notification,
+                title: `Opening notebook: ${docName}`,
+                cancellable: false,
+              },
+              async progress => {
+                progress.report({
+                  increment: 0,
+                  message: 'Downloading notebook content...',
+                });
+
+                // Use DocumentBridge to handle the download and caching
+                const uri = await documentBridge.openDocument(
+                  document,
+                  undefined,
+                  spaceName,
+                );
+
+                progress.report({
+                  increment: 40,
+                  message: 'Setting up runtime environment...',
+                });
+
+                try {
+                  // Ensure we have a runtime for this notebook
+                  const runtime = await documentBridge.ensureRuntime(
+                    document.uid,
+                  );
+
+                  if (runtime && runtime.ingress && runtime.token) {
+                    // Store runtime info in global state for the webview to access
+                    const runtimeInfo = {
+                      baseUrl: runtime.ingress,
+                      token: runtime.token,
+                      podName: runtime.pod_name,
+                    };
+                    await context.globalState.update(
+                      'currentRuntime',
+                      runtimeInfo,
+                    );
+                    console.log(
+                      '[Datalayer] Runtime ready and stored in global state:',
+                    );
+                    console.log('  - Pod Name:', runtime.pod_name);
+                    console.log('  - Base URL:', runtime.ingress);
+                    console.log('  - Token exists:', !!runtime.token);
+                    console.log('  - Status:', runtime.status);
+                  } else if (runtime) {
+                    console.warn(
+                      '[Datalayer] Runtime created but missing URL/token, may need to wait for initialization',
+                    );
+                    console.warn(
+                      '[Datalayer] Runtime details:',
+                      JSON.stringify(runtime, null, 2),
+                    );
+                  } else {
+                    console.error(
+                      '[Datalayer] Failed to create or get runtime',
+                    );
+                  }
+                } catch (runtimeError) {
+                  console.error(
+                    '[Datalayer] Failed to create/get runtime:',
+                    runtimeError,
+                  );
+                  vscode.window.showWarningMessage(
+                    'Failed to create runtime. Opening notebook in read-only mode.',
+                  );
+                }
+
+                progress.report({
+                  increment: 75,
+                  message: 'Opening notebook editor...',
+                });
+
+                // Open the notebook with our custom editor
+                // The notebook will connect to the runtime in collaborative mode
+                // which provides automatic saving
+                await vscode.commands.executeCommand(
+                  'vscode.openWith',
+                  uri,
+                  'datalayer.jupyter-notebook',
+                );
+
+                // Set a better tab title after opening
+                // The tab will show the document name and space
+                const cleanName = docName.endsWith('.ipynb')
+                  ? docName
+                  : `${docName}.ipynb`;
+                const tabLabel = spaceName
+                  ? `${cleanName} (${spaceName})`
+                  : cleanName;
+
+                // Unfortunately VS Code doesn't allow changing tab labels directly
+                // The title will be based on the filename, but at least it won't have the UID
+
+                progress.report({ increment: 100, message: 'Done!' });
+              },
             );
-            // TODO: Implement actual notebook opening logic
-            // This might involve downloading the notebook content from the API
-            // and opening it with the NotebookEditorProvider
+          } else if (isLexical) {
+            vscode.window.showInformationMessage(
+              `Lexical document support coming soon: ${docName}`,
+            );
+            // TODO: Implement lexical document viewer
+          } else if (isCell) {
+            vscode.window.showInformationMessage(
+              `Cell viewer coming soon: ${docName}`,
+            );
+            // TODO: Implement cell viewer
           } else {
             vscode.window.showInformationMessage(
-              `Opening document: ${docName} (ID: ${document.uid})`,
+              `Document type not supported: ${docName}`,
             );
-            // TODO: Implement opening logic for other document types
           }
         } catch (error) {
           console.error('[Datalayer] Error opening document:', error);
@@ -198,9 +358,26 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(authService);
+
+  // Clean up document bridge on deactivation
+  context.subscriptions.push({
+    dispose: () => {
+      documentBridge.dispose();
+    },
+  });
 }
 
 /**
- * Deactivate the extension and clear its resources.
+ * Deactivates the extension and cleans up resources.
+ * This function is called when the extension is deactivated or VS Code is closing.
+ * All disposables are automatically cleaned up through the context.subscriptions array.
+ *
+ * @returns {void}
+ *
+ * @remarks
+ * The cleanup process is handled automatically by VS Code's disposal mechanism.
+ * All services and UI components registered in context.subscriptions are disposed.
  */
-export function deactivate() {}
+export function deactivate(): void {
+  // Cleanup is handled by the disposables in context.subscriptions
+}

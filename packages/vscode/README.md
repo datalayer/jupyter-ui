@@ -17,6 +17,8 @@ This [Visual Studio Code](https://code.visualstudio.com) extension allows you to
 - **IPyWidgets Support**: Full interactive widget support
 - **Status Bar Integration**: View connection status and user profile
 - **Spaces Tree View**: Browse and manage documents across all your Datalayer spaces
+- **Runtime Management**: Automatic creation and reuse of Datalayer runtimes with configurable environments
+- **Document Bridge**: Seamless document downloading and local caching for offline viewing
 
 ## Spaces Tree View
 
@@ -67,6 +69,18 @@ The extension supports authentication with the Datalayer platform:
 ### Configuration
 
 - `datalayer.serverUrl` - Datalayer server URL (default: https://prod1.datalayer.run)
+- `datalayer.runtime.environment` - Default runtime environment for notebooks (`python-cpu-env` or `ai-env`, default: `python-cpu-env`)
+- `datalayer.runtime.creditsLimit` - Default credits limit for new runtimes (minimum: 1, default: 10)
+
+## Runtime Management
+
+The extension automatically manages Datalayer runtimes for notebook execution:
+
+- **Automatic Creation**: Runtimes are created on-demand when opening notebooks
+- **Runtime Reuse**: Existing active runtimes are reused to conserve credits
+- **Environment Selection**: Choose between `python-cpu-env` (standard scientific libraries) or `ai-env` (ML frameworks)
+- **Credits Management**: Configure default credits limit for new runtimes
+- **Health Verification**: Automatic verification of runtime availability before reuse
 
 ## Not Implemented
 
@@ -84,3 +98,70 @@ Styling
   - Button to select the runtime is not displayed in a toolbar that stays visible
 
 Websocket binary support: for now we forbid the usage of the newer protocol v1.kernel.websocket.jupyter.org. When using it, the message data are failing to be serialized to be transferred from the webview to the extension. And when receiving it, the deserialization fails. The deserialization error may be related to an incorrect binaryType that is not handle in the current code; but in JupyterLab it is forced to 'arraybuffer' for kernel websocket.
+
+## Documentation
+
+The codebase is fully documented using TypeDoc. To generate documentation:
+
+```bash
+# Generate HTML documentation
+npm run doc
+
+# Generate markdown documentation
+npm run doc:markdown
+
+# Watch mode for development
+npm run doc:watch
+```
+
+Documentation is generated in the `docs/` folder (HTML) or `docs-markdown/` folder (Markdown).
+
+## Development
+
+### Prerequisites
+
+- Node.js >= 20.0.0
+- VS Code >= 1.98.0
+- npm (not yarn)
+
+### Setup
+
+```bash
+# Install dependencies
+npm install
+
+# Watch for changes (development)
+npm run watch
+
+# Run linting
+npm run lint
+
+# Build extension
+npm run compile
+
+# Package extension
+npm run package
+
+# Create VSIX package
+npm run vsix
+```
+
+### Testing
+
+```bash
+# Run tests
+npm test
+
+# Compile tests
+npm run compile-tests
+
+# Watch tests
+npm run watch-tests
+```
+
+### Debugging
+
+1. Open the project in VS Code
+2. Run `npm run watch` in terminal
+3. Press `F5` to launch Extension Development Host
+4. Open any `.ipynb` file to test the extension

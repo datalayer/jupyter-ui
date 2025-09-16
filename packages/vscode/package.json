@@ -103,6 +103,25 @@
           "type": "string",
           "default": "https://prod1.datalayer.run",
           "description": "Datalayer server URL"
+        },
+        "datalayer.runtime.environment": {
+          "type": "string",
+          "default": "python-cpu-env",
+          "enum": [
+            "python-cpu-env",
+            "ai-env"
+          ],
+          "enumDescriptions": [
+            "Python CPU environment with standard scientific libraries",
+            "AI environment with machine learning frameworks"
+          ],
+          "description": "Default runtime environment for notebooks"
+        },
+        "datalayer.runtime.creditsLimit": {
+          "type": "number",
+          "default": 10,
+          "minimum": 1,
+          "description": "Default credits limit for new runtimes"
         }
       }
     },
@@ -128,7 +147,10 @@
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "lint": "eslint src",
     "test": "vscode-test",
-    "vsix": "npx @vscode/vsce package --no-yarn --no-dependencies"
+    "vsix": "npx @vscode/vsce package --no-yarn --no-dependencies",
+    "doc": "typedoc",
+    "doc:watch": "typedoc --watch",
+    "doc:markdown": "typedoc --plugin typedoc-plugin-markdown --out docs-markdown"
   },
   "dependencies": {
     "@datalayer/jupyter-react": "^1.0.7",
@@ -158,6 +180,8 @@
     "style-loader": "^2.0.0",
     "svg-inline-loader": "^0.8.2",
     "ts-loader": "^9.5.2",
+    "typedoc": "^0.28.13",
+    "typedoc-plugin-markdown": "^4.8.1",
     "typescript": "^5.8.3",
     "webpack": "^5.98.0",
     "webpack-cli": "^6.0.1"

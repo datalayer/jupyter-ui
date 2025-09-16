@@ -92,6 +92,8 @@ This is a VS Code extension that provides a custom Jupyter Notebook editor with 
 ## Configuration
 
 - `datalayer.serverUrl`: Datalayer server URL (default: https://prod1.datalayer.run)
+- `datalayer.runtime.environment`: Default runtime environment for notebooks (`python-cpu-env` or `ai-env`, default: `python-cpu-env`)
+- `datalayer.runtime.creditsLimit`: Default credits limit for new runtimes (minimum: 1, default: 10)
 
 ## Authentication Flow
 
@@ -120,22 +122,108 @@ The extension includes a tree view in the Explorer sidebar that displays:
 - Real-time sync with the Datalayer platform
 - Context menu actions for creating new notebooks
 
+## Runtime Management
+
+The extension automatically manages Datalayer runtimes for notebook execution:
+
+### Runtime Lifecycle
+
+1. **Runtime Creation**: When opening a notebook, the extension checks for existing runtimes
+2. **Runtime Reuse**: If an active runtime exists, it's reused to conserve credits
+3. **Health Verification**: Runtime status is verified before reuse
+4. **Configuration**: Uses settings for environment type and credits limit
+
+### API Response Handling
+
+The Spacer API returns wrapped responses with the following structure:
+
+```json
+{
+  "success": true,
+  "message": "Success message",
+  "runtimes": [...] // or "kernel" for single runtime fetches
+}
+```
+
+Important field mappings:
+
+- Runtime URL: Use `ingress` field (not `jupyter_base_url`)
+- Runtime token: Use `token` field (not `jupyter_token`)
+- Single runtime responses: Check `kernel` field (not `runtime`)
+
 ### API Endpoints Used
 
 - `/api/spacer/v1/spaces/users/me` - Get user's spaces
 - `/api/spacer/v1/spaces/{id}/items` - Get items in a space
 - `/api/spacer/v1/notebooks` - Create new notebooks
+- `/api/ceres/v1/runtime/get` - Get list of user's runtimes
+- `/api/ceres/v1/runtime/get/{pod_name}` - Get specific runtime details
+- `/api/ceres/v1/runtime/create` - Create new runtime
 
 ## Directory Structure
 
 ```
 src/
-├── auth/           # Authentication services
-├── spaces/         # Spaces tree view implementation
-├── test/           # Test files
-├── extension.ts    # Main extension entry
-└── notebookEditor.ts # Notebook editor provider
+├── auth/                        # Authentication services
+│   ├── authService.ts          # Token management and validation
+│   ├── githubService.ts        # GitHub profile enrichment
+│   └── tokenProvider.ts        # User authentication flows
+├── spaces/                      # Spaces tree view implementation
+│   ├── spacesTreeProvider.ts   # Tree data provider
+│   ├── spacerApiService.ts     # Datalayer API client
+│   ├── spaceItem.ts            # Data models
+│   ├── documentBridge.ts       # Document download/cache manager
+│   └── datalayerFileSystemProvider.ts # Virtual filesystem provider
+├── test/                        # Test files
+├── extension.ts                 # Main extension entry
+└── notebookEditor.ts           # Notebook editor provider
 
-webview/           # React-based notebook UI
-dist/              # Webpack build output
+webview/                         # React-based notebook UI
+├── NotebookVSCode.tsx          # Main notebook component
+├── serviceManager.ts           # Jupyter service connections
+├── messageHandler.ts           # Extension-webview communication
+└── utils.ts                    # Utility functions
+
+dist/                           # Webpack build output
+docs/                           # Generated HTML documentation (gitignored)
+docs-markdown/                  # Generated markdown documentation (gitignored)
 ```
+
+## Documentation
+
+The codebase is fully documented using TypeDoc with JSDoc comments:
+
+```bash
+# Generate HTML documentation
+npm run doc
+
+# Generate markdown documentation
+npm run doc:markdown
+
+# Watch mode for development
+npm run doc:watch
+```
+
+All TypeScript files include:
+
+- Module-level JSDoc comments with `@module` and `@description` tags
+- Method documentation with parameter and return descriptions
+- Type definitions with clear descriptions
+- Example usage where appropriate
+
+## Code Quality
+
+Run checks before committing:
+
+```bash
+npm run lint        # Run ESLint
+npm run compile     # Build with webpack
+```
+
+## Important Development Guidelines
+
+- **NO EMOJIS**: NEVER use emojis anywhere in the codebase - not in code, not in logging, not in testing, not in comments, not in documentation. This is a professional codebase.
+- **API Field Names**: Always use the actual API field names (e.g., `ingress` not `jupyter_base_url`)
+- **Error Handling**: Log errors with context for debugging, handle API wrapper responses
+- **Runtime Reuse**: Always check for existing runtimes before creating new ones
+- **Documentation**: Maintain JSDoc comments for all exported functions and classes

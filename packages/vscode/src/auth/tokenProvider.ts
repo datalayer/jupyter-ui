@@ -4,6 +4,12 @@
  * MIT License
  */
 
+/**
+ * @module tokenProvider
+ * @description User interface provider for authentication flows.
+ * Handles token input, validation, and status display through VS Code UI components.
+ */
+
 import * as vscode from 'vscode';
 import { AuthService } from './authService';
 

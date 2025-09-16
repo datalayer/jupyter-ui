@@ -4,6 +4,12 @@
  * MIT License
  */
 
+/**
+ * @module main
+ * @description Entry point for the webview application.
+ * Initializes the React-based notebook editor in the webview context.
+ */
+
 import { setStylesTarget } from 'typestyle';
 import { main } from './NotebookVSCode';
 import { getNonce } from './utils';

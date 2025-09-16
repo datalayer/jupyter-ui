@@ -4,9 +4,20 @@
  * MIT License
  */
 
+/**
+ * @module authService
+ * @description Authentication service for the Datalayer VS Code extension.
+ * Manages user sessions, JWT tokens, and secure credential storage using VS Code's SecretStorage API.
+ * Supports GitHub OAuth integration for enhanced user profiles.
+ */
+
 import * as vscode from 'vscode';
 import { GitHubService } from './githubService';
 
+/**
+ * GitHub user profile information.
+ * @interface GitHubUser
+ */
 export interface GitHubUser {
   login: string;
   id: number;
@@ -19,6 +30,10 @@ export interface GitHubUser {
   html_url: string;
 }
 
+/**
+ * Response structure from the Datalayer login API.
+ * @interface LoginResponse
+ */
 export interface LoginResponse {
   user: {
     id: string;
@@ -31,6 +46,10 @@ export interface LoginResponse {
   handle_s?: string; // May be at root level
 }
 
+/**
+ * Current authentication state of the extension.
+ * @interface AuthState
+ */
 export interface AuthState {
   isAuthenticated: boolean;
   token?: string;
@@ -38,7 +57,21 @@ export interface AuthState {
   serverUrl: string;
 }
 
-export class AuthService {
+/**
+ * Singleton service for managing authentication with the Datalayer platform.
+ * Handles login/logout, token storage, and status bar updates.
+ *
+ * @class AuthService
+ * @implements {vscode.Disposable}
+ *
+ * @example
+ * ```typescript
+ * const authService = AuthService.getInstance(context);
+ * await authService.login('user-token');
+ * const state = authService.getAuthState();
+ * ```
+ */
+export class AuthService implements vscode.Disposable {
   private static instance: AuthService;
   private context: vscode.ExtensionContext;
   private statusBarItem: vscode.StatusBarItem;
@@ -56,6 +89,14 @@ export class AuthService {
     this.initialize();
   }
 
+  /**
+   * Gets or creates the singleton AuthService instance.
+   *
+   * @static
+   * @param {vscode.ExtensionContext} [context] - Extension context (required on first call)
+   * @returns {AuthService} The AuthService singleton instance
+   * @throws {Error} If context is not provided on first call
+   */
   static getInstance(context?: vscode.ExtensionContext): AuthService {
     if (!AuthService.instance) {
       if (!context) {
@@ -66,7 +107,15 @@ export class AuthService {
     return AuthService.instance;
   }
 
-  private async initialize() {
+  /**
+   * Initializes the authentication service.
+   * Loads stored credentials and updates the status bar.
+   *
+   * @private
+   * @async
+   * @returns {Promise<void>}
+   */
+  private async initialize(): Promise<void> {
     const serverUrl = vscode.workspace
       .getConfiguration('datalayer')
       .get<string>('serverUrl', 'https://prod1.datalayer.run');
@@ -101,7 +150,14 @@ export class AuthService {
     this.updateStatusBar();
   }
 
-  private updateStatusBar() {
+  /**
+   * Updates the status bar item with current authentication state.
+   * Shows user information when authenticated or login prompt when not.
+   *
+   * @private
+   * @returns {void}
+   */
+  private updateStatusBar(): void {
     if (this.authState.isAuthenticated) {
       const user = this.authState.user as any;
       const displayName = user?.githubLogin
@@ -119,6 +175,16 @@ export class AuthService {
     this.statusBarItem.show();
   }
 
+  /**
+   * Authenticates the user with the Datalayer platform.
+   * Validates the token, enriches user data with GitHub info if available,
+   * and stores credentials securely.
+   *
+   * @async
+   * @param {string} token - User's authentication token
+   * @returns {Promise<void>}
+   * @throws {Error} If login fails or token is invalid
+   */
   async login(token: string): Promise<void> {
     try {
       const loginUrl = `${this.authState.serverUrl}/api/iam/v1/login`;
@@ -231,6 +297,13 @@ export class AuthService {
     }
   }
 
+  /**
+   * Logs out the current user.
+   * Clears stored credentials and resets authentication state.
+   *
+   * @async
+   * @returns {Promise<void>}
+   */
   async logout(): Promise<void> {
     try {
       if (this.authState.token) {
@@ -262,18 +335,41 @@ export class AuthService {
     }
   }
 
+  /**
+   * Gets a copy of the current authentication state.
+   *
+   * @returns {AuthState} Current authentication state
+   */
   getAuthState(): AuthState {
     return { ...this.authState };
   }
 
+  /**
+   * Gets the current authentication token.
+   *
+   * @returns {string | undefined} JWT token if authenticated, undefined otherwise
+   */
   getToken(): string | undefined {
     return this.authState.token;
   }
 
+  /**
+   * Gets the current Datalayer server URL.
+   *
+   * @returns {string} Server URL
+   */
   getServerUrl(): string {
     return this.authState.serverUrl;
   }
 
+  /**
+   * Updates the Datalayer server URL.
+   * If authenticated, logs out the user and prompts for re-authentication.
+   *
+   * @async
+   * @param {string} url - New server URL
+   * @returns {Promise<void>}
+   */
   async updateServerUrl(url: string): Promise<void> {
     await vscode.workspace
       .getConfiguration('datalayer')
@@ -287,7 +383,13 @@ export class AuthService {
     }
   }
 
-  dispose() {
+  /**
+   * Disposes of the authentication service.
+   * Cleans up the status bar item.
+   *
+   * @returns {void}
+   */
+  dispose(): void {
     this.statusBarItem.dispose();
   }
 }

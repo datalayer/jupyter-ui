@@ -4,6 +4,12 @@
  * MIT License
  */
 
+/**
+ * @module messageHandler
+ * @description Message handling service for webview-extension communication.
+ * Manages bidirectional message passing between the webview and VS Code extension.
+ */
+
 import { PromiseDelegate } from '@lumino/coreutils';
 import { createContext } from 'react';
 
