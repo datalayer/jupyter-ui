@@ -11,7 +11,7 @@ import { Box, Button } from '@primer/react';
 import {
   useKernelId,
   useNotebookModel,
-  BaseNotebook,
+  Notebook2Base,
   JupyterReactTheme,
   Loader,
 } from '@datalayer/jupyter-react';
@@ -150,7 +150,7 @@ function NotebookVSCode(): JSX.Element {
         }}
       >
         {model && (
-          <BaseNotebook
+          <Notebook2Base
             kernelId={kernelId}
             model={model}
             serviceManager={serviceManager}
