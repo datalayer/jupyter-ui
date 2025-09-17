@@ -12,9 +12,9 @@
  */
 
 import * as vscode from 'vscode';
-import { Disposable, disposeAll } from './dispose';
-import { getNonce } from './util';
-import { DocumentBridge } from './spaces/documentBridge';
+import { Disposable, disposeAll } from '../dispose';
+import { getNonce } from '../util';
+import { DocumentBridge } from '../spaces/documentBridge';
 
 /**
  * Delegate interface for lexical document operations.

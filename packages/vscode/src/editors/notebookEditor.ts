@@ -13,11 +13,11 @@
 
 import * as vscode from 'vscode';
 import { WebSocket, RawData } from 'ws';
-import { Disposable, disposeAll } from './dispose';
-import { getNonce } from './util';
-import { setRuntime } from './runtimePicker';
-import type { ExtensionMessage } from './messages';
-import { AuthService } from './auth/authService';
+import { Disposable, disposeAll } from '../dispose';
+import { getNonce } from '../util';
+import { setRuntime } from '../runtimes/runtimePicker';
+import type { ExtensionMessage } from '../messages';
+import { AuthService } from '../auth/authService';
 
 /**
  * Represents an edit operation in a notebook file.

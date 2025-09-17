@@ -16,7 +16,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import { Document } from './spaceItem';
-import { SpacerApiService, RuntimeResponse } from './spacerApiService';
+import { SpacerApiService } from './spacerApiService';
+import {
+  RuntimesApiService,
+  RuntimeResponse,
+} from '../runtimes/runtimesApiService';
 import { DatalayerFileSystemProvider } from './datalayerFileSystemProvider';
 
 export interface DocumentMetadata {
@@ -31,12 +35,14 @@ export interface DocumentMetadata {
 export class DocumentBridge {
   private static instance: DocumentBridge;
   private apiService: SpacerApiService;
+  private runtimesApiService: RuntimesApiService;
   private documentMetadata: Map<string, DocumentMetadata> = new Map();
   private tempDir: string;
   private activeRuntimes: Set<string> = new Set();
 
   private constructor() {
     this.apiService = SpacerApiService.getInstance();
+    this.runtimesApiService = RuntimesApiService.getInstance();
     // Create a temp directory for Datalayer documents
     this.tempDir = path.join(os.tmpdir(), 'datalayer-vscode');
     if (!fs.existsSync(this.tempDir)) {
@@ -265,7 +271,7 @@ export class DocumentBridge {
 
       try {
         // Verify the runtime still exists and is running
-        const currentRuntime = await this.apiService.getRuntime(
+        const currentRuntime = await this.runtimesApiService.getRuntime(
           metadata.runtime.pod_name,
         );
 
@@ -308,7 +314,7 @@ export class DocumentBridge {
     }
 
     // Create or get a runtime
-    const runtime = await this.apiService.ensureRuntime();
+    const runtime = await this.runtimesApiService.ensureRuntime();
 
     // Store the runtime with the document metadata
     if (runtime && metadata) {
