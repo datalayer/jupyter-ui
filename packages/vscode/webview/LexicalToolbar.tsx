@@ -316,7 +316,6 @@ export function LexicalToolbar({ disabled = false }: LexicalToolbarProps = {}) {
         display: 'flex',
         alignItems: 'center',
         padding: '8px',
-        borderBottom: '1px solid var(--vscode-panel-border)',
         backgroundColor: 'var(--vscode-editor-background)',
         flexWrap: 'wrap',
         gap: '4px',

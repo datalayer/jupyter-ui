@@ -244,48 +244,87 @@ export function LexicalEditor({
   return (
     <div className={`lexical-editor-container ${className}`}>
       <LexicalComposer initialConfig={editorConfig}>
-        {!editable && !collaboration?.enabled && (
+        {(showToolbar || collaboration?.enabled) && (
           <div
             style={{
-              padding: '8px 12px',
-              backgroundColor: 'var(--vscode-editorWarning-background)',
-              color: 'var(--vscode-editorWarning-foreground)',
-              borderBottom: '1px solid var(--vscode-panel-border)',
-              fontSize: '13px',
-              fontFamily: 'var(--vscode-editor-font-family)',
-            }}
-          >
-            Read-only mode
-          </div>
-        )}
-        {collaboration?.enabled && (
-          <div
-            style={{
-              padding: '8px 12px',
-              backgroundColor: 'var(--vscode-textCodeBlock-background)',
-              color: 'var(--vscode-editor-foreground)',
-              borderBottom: '1px solid var(--vscode-panel-border)',
-              fontSize: '12px',
-              fontFamily: 'var(--vscode-editor-font-family)',
               display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
+              alignItems: 'flex-start',
+              justifyContent: 'space-between',
+              borderBottom: '1px solid var(--vscode-panel-border)',
+              backgroundColor: 'var(--vscode-editor-background)',
             }}
           >
-            <span
-              style={{
-                width: '8px',
-                height: '8px',
-                backgroundColor: '#4CAF50',
-                borderRadius: '50%',
-                display: 'inline-block',
-              }}
-            ></span>
-            Collaborative editing enabled •{' '}
-            {collaboration.username || 'Anonymous'}
+            {showToolbar && <LexicalToolbar disabled={!editable} />}
+            {collaboration?.enabled && (
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '16px',
+                  margin: '8px 24px 8px 0',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    fontSize: '13px',
+                    fontFamily: 'var(--vscode-font-family)',
+                    color: 'var(--vscode-editor-foreground)',
+                  }}
+                >
+                  <span
+                    style={{
+                      width: '8px',
+                      height: '8px',
+                      backgroundColor:
+                        'var(--vscode-debugIcon-startForeground, var(--vscode-terminal-ansiGreen, var(--vscode-charts-green)))',
+                      borderRadius: '50%',
+                      display: 'inline-block',
+                    }}
+                  ></span>
+                  <span>Collaborative</span>
+                </div>
+                <button
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: 'var(--vscode-editor-foreground)',
+                    border:
+                      '1px solid var(--vscode-button-border, transparent)',
+                    padding: '4px 12px',
+                    borderRadius: '2px',
+                    fontSize: '13px',
+                    fontFamily: 'var(--vscode-font-family)',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    transition: 'background-color 0.1s, border-color 0.1s',
+                    height: '28px',
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0,
+                    marginRight: '4px',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.backgroundColor =
+                      'var(--vscode-toolbar-hoverBackground)';
+                    e.currentTarget.style.borderColor =
+                      'var(--vscode-button-border, var(--vscode-contrastBorder, transparent))';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.borderColor =
+                      'var(--vscode-button-border, transparent)';
+                  }}
+                  title="Select a runtime for code execution"
+                >
+                  <span>Select Runtime</span>
+                </button>
+              </div>
+            )}
           </div>
         )}
-        {showToolbar && <LexicalToolbar disabled={!editable} />}
         <div className="lexical-editor-inner">
           <RichTextPlugin
             contentEditable={
@@ -310,9 +349,6 @@ export function LexicalEditor({
               <LoroCollaborativePlugin
                 websocketUrl={collaboration.websocketUrl}
                 docId={collaboration.sessionId || collaboration.documentId}
-                username={collaboration.username || 'Anonymous'}
-                userColor={collaboration.userColor}
-                debug={false}
               />
             )}
         </div>

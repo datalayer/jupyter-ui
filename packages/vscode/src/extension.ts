@@ -330,11 +330,6 @@ export function activate(context: vscode.ExtensionContext): void {
                   'datalayer.lexical-editor',
                 );
 
-                // Show info that it's read-only
-                vscode.window.showInformationMessage(
-                  `Opened "${docName}" in read-only mode. Full editing support coming soon!`,
-                );
-
                 progress.report({ increment: 100, message: 'Done!' });
               },
             );
