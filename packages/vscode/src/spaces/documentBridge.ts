@@ -240,6 +240,27 @@ export class DocumentBridge {
   }
 
   /**
+   * Get document metadata by URI
+   */
+  getDocumentMetadata(uri: vscode.Uri): DocumentMetadata | undefined {
+    // Try to find metadata by matching the localPath
+    for (const [id, metadata] of this.documentMetadata.entries()) {
+      // Check if the URI matches the local path
+      if (uri.fsPath === metadata.localPath) {
+        return metadata;
+      }
+      // Also check for virtual URIs
+      if (uri.scheme === 'datalayer') {
+        // Virtual URIs may have been mapped, check if this document ID matches
+        if (metadata.document.uid === id) {
+          return metadata;
+        }
+      }
+    }
+    return undefined;
+  }
+
+  /**
    * Clear cached document
    */
   clearDocument(documentId: string): void {

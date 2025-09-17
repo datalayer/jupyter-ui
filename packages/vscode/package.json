@@ -124,6 +124,11 @@
           "default": "https://prod1.datalayer.run",
           "description": "Datalayer server URL"
         },
+        "datalayer.spacerWsUrl": {
+          "type": "string",
+          "default": "wss://prod1.datalayer.run",
+          "description": "Datalayer spacer WebSocket URL for collaboration"
+        },
         "datalayer.runtime.environment": {
           "type": "string",
           "default": "python-cpu-env",
@@ -209,6 +214,7 @@
   },
   "dependencies": {
     "@datalayer/jupyter-react": "^1.0.7",
+    "@datalayer/lexical-loro": "^0.0.7",
     "@jupyter/ydoc": "^2.0.0",
     "@jupyterlab/services": "^7.0.0",
     "@lexical/code": "^0.33.1",

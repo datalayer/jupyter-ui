@@ -30,6 +30,21 @@ import { LinkNode, AutoLinkNode } from '@lexical/link';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import { LexicalToolbar } from './LexicalToolbar';
+import { LoroCollaborativePlugin } from '@datalayer/lexical-loro';
+
+/**
+ * Collaboration configuration for Lexical documents
+ *
+ * @interface CollaborationConfig
+ */
+interface CollaborationConfig {
+  enabled: boolean;
+  websocketUrl?: string;
+  documentId?: string;
+  sessionId?: string;
+  username?: string;
+  userColor?: string;
+}
 
 /**
  * Properties for the LexicalEditor component.
@@ -41,6 +56,7 @@ import { LexicalToolbar } from './LexicalToolbar';
  * @property {string} [className] - Additional CSS class names
  * @property {boolean} [showToolbar=true] - Whether to show the formatting toolbar
  * @property {boolean} [editable=true] - Whether the editor should be editable or read-only
+ * @property {CollaborationConfig} [collaboration] - Collaboration configuration
  */
 interface LexicalEditorProps {
   initialContent?: string;
@@ -49,6 +65,7 @@ interface LexicalEditorProps {
   className?: string;
   showToolbar?: boolean;
   editable?: boolean;
+  collaboration?: CollaborationConfig;
 }
 
 /**
@@ -102,11 +119,6 @@ function LoadContentPlugin({ content }: { content?: string }) {
     if (content && isFirstRender.current) {
       isFirstRender.current = false;
       try {
-        console.log(
-          '[LoadContentPlugin] Attempting to parse content:',
-          content.substring(0, 200),
-        );
-
         // First try to parse as JSON to validate format
         const parsed = JSON.parse(content);
 
@@ -117,21 +129,11 @@ function LoadContentPlugin({ content }: { content?: string }) {
           editor.setEditorState(editorState, {
             tag: 'history-merge',
           });
-          console.log('[LoadContentPlugin] Successfully loaded editor state');
         } else {
           throw new Error('Invalid Lexical editor state format');
         }
       } catch (error) {
-        console.error(
-          '[LoadContentPlugin] Failed to parse editor state, using default:',
-          error,
-        );
-        console.log(
-          '[LoadContentPlugin] Content that failed to parse:',
-          content,
-        );
-
-        // Create a default empty state
+        // Create a default empty state if parsing fails
         editor.update(
           () => {
             const root = $getRoot();
@@ -177,6 +179,7 @@ export function LexicalEditor({
   className = '',
   showToolbar = true,
   editable = true,
+  collaboration,
 }: LexicalEditorProps) {
   const editorConfig = {
     namespace: 'VSCodeLexicalEditor',
@@ -241,7 +244,7 @@ export function LexicalEditor({
   return (
     <div className={`lexical-editor-container ${className}`}>
       <LexicalComposer initialConfig={editorConfig}>
-        {!editable && (
+        {!editable && !collaboration?.enabled && (
           <div
             style={{
               padding: '8px 12px',
@@ -252,7 +255,34 @@ export function LexicalEditor({
               fontFamily: 'var(--vscode-editor-font-family)',
             }}
           >
-            Read-only mode - This document is from Datalayer spaces
+            Read-only mode
+          </div>
+        )}
+        {collaboration?.enabled && (
+          <div
+            style={{
+              padding: '8px 12px',
+              backgroundColor: 'var(--vscode-textCodeBlock-background)',
+              color: 'var(--vscode-editor-foreground)',
+              borderBottom: '1px solid var(--vscode-panel-border)',
+              fontSize: '12px',
+              fontFamily: 'var(--vscode-editor-font-family)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+          >
+            <span
+              style={{
+                width: '8px',
+                height: '8px',
+                backgroundColor: '#4CAF50',
+                borderRadius: '50%',
+                display: 'inline-block',
+              }}
+            ></span>
+            Collaborative editing enabled •{' '}
+            {collaboration.username || 'Anonymous'}
           </div>
         )}
         {showToolbar && <LexicalToolbar disabled={!editable} />}
@@ -274,6 +304,17 @@ export function LexicalEditor({
           <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
           <SavePlugin onSave={editable ? onSave : undefined} />
           <LoadContentPlugin content={initialContent} />
+          {collaboration?.enabled &&
+            collaboration.websocketUrl &&
+            collaboration.documentId && (
+              <LoroCollaborativePlugin
+                websocketUrl={collaboration.websocketUrl}
+                docId={collaboration.sessionId || collaboration.documentId}
+                username={collaboration.username || 'Anonymous'}
+                userColor={collaboration.userColor}
+                debug={false}
+              />
+            )}
         </div>
       </LexicalComposer>
     </div>

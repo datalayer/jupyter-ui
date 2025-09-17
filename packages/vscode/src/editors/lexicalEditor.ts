@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-2025 Datalayer, Inc.
  *
  * MIT License
  */
@@ -7,24 +7,34 @@
 /**
  * @module lexicalEditor
  * @description Custom editor provider for Lexical document files (.lexical).
- * This module implements a webview-based Lexical editor with full rich text functionality,
- * including save/load operations, VS Code theme integration, and editor state management.
+ *
+ * This module provides:
+ * - Rich text editing with Lexical framework
+ * - Collaboration support for Datalayer Spaces documents
+ * - VS Code theme integration
+ * - Virtual file system support for remote documents
+ *
+ * @packageDocumentation
  */
 
 import * as vscode from 'vscode';
+import * as fs from 'fs';
 import { Disposable, disposeAll } from '../dispose';
 import { getNonce } from '../util';
 import { DocumentBridge } from '../spaces/documentBridge';
+import { AuthService } from '../auth/authService';
+import { SpacerApiService } from '../spaces/spacerApiService';
 
 /**
  * Delegate interface for lexical document operations.
- * Provides methods for retrieving document data from the webview.
  *
  * @interface LexicalDocumentDelegate
+ * @internal
  */
 interface LexicalDocumentDelegate {
   /**
    * Retrieves the current file data from the webview.
+   *
    * @returns {Promise<Uint8Array>} The lexical file content as a byte array
    */
   getFileData(): Promise<Uint8Array>;
@@ -32,11 +42,14 @@ interface LexicalDocumentDelegate {
 
 /**
  * Represents a lexical document in the editor.
- * Manages the document's lifecycle, content, and edit history.
+ *
+ * Manages document lifecycle, content state, and collaboration mode.
+ * Handles both local and remote (Datalayer) documents.
  *
  * @class LexicalDocument
  * @extends {Disposable}
  * @implements {vscode.CustomDocument}
+ * @internal
  */
 class LexicalDocument extends Disposable implements vscode.CustomDocument {
   static async create(
@@ -85,7 +98,45 @@ class LexicalDocument extends Disposable implements vscode.CustomDocument {
       };
       return new TextEncoder().encode(JSON.stringify(defaultState));
     }
-    console.log('[LexicalDocument] Reading file:', uri.toString());
+
+    // For Datalayer documents, the file should already be downloaded
+    // and the virtual mapping should exist
+    if (uri.scheme === 'datalayer') {
+      // Try to get the document metadata from DocumentBridge
+      const documentBridge = DocumentBridge.getInstance();
+      const metadata = documentBridge.getDocumentMetadata(uri);
+
+      if (metadata && metadata.localPath) {
+        // Read directly from the local path
+        if (fs.existsSync(metadata.localPath)) {
+          return new Uint8Array(fs.readFileSync(metadata.localPath));
+        }
+      }
+
+      // Fallback to trying the virtual file system
+      try {
+        return new Uint8Array(await vscode.workspace.fs.readFile(uri));
+      } catch (error) {
+        console.error(
+          '[LexicalDocument] Failed to read Datalayer file:',
+          error,
+        );
+        // Return empty default state if file can't be read
+        return new TextEncoder().encode(
+          JSON.stringify({
+            root: {
+              children: [],
+              direction: 'ltr',
+              format: '',
+              indent: 0,
+              type: 'root',
+              version: 1,
+            },
+          }),
+        );
+      }
+    }
+
     return new Uint8Array(await vscode.workspace.fs.readFile(uri));
   }
 
@@ -93,6 +144,7 @@ class LexicalDocument extends Disposable implements vscode.CustomDocument {
   private _documentData: Uint8Array;
   private _isDirty: boolean = false;
   private readonly _delegate: LexicalDocumentDelegate;
+  private _isCollaborative: boolean = false;
 
   private constructor(
     uri: vscode.Uri,
@@ -114,7 +166,16 @@ class LexicalDocument extends Disposable implements vscode.CustomDocument {
   }
 
   public get isDirty(): boolean {
-    return this._isDirty;
+    // Collaborative documents are never dirty as changes are saved automatically
+    return this._isCollaborative ? false : this._isDirty;
+  }
+
+  public setCollaborative(isCollaborative: boolean): void {
+    this._isCollaborative = isCollaborative;
+    if (isCollaborative) {
+      // Clear dirty state when entering collaborative mode
+      this._isDirty = false;
+    }
   }
 
   private readonly _onDidDispose = this._register(
@@ -135,11 +196,21 @@ class LexicalDocument extends Disposable implements vscode.CustomDocument {
   public readonly onDidChange = this._onDidChange.event;
 
   makeEdit(edit: any) {
-    this._isDirty = true;
+    // Only mark as dirty if not in collaborative mode
+    // Collaborative documents save automatically through WebSocket
+    if (!this._isCollaborative) {
+      this._isDirty = true;
+    }
     this._onDidChange.fire();
   }
 
   async save(cancellation: vscode.CancellationToken): Promise<void> {
+    // Skip saving for collaborative documents as they save automatically
+    if (this._isCollaborative) {
+      // Collaborative documents auto-save through WebSocket
+      return;
+    }
+
     const fileData = await this._delegate.getFileData();
     if (cancellation.isCancellationRequested) {
       return;
@@ -194,21 +265,32 @@ class LexicalDocument extends Disposable implements vscode.CustomDocument {
 
 /**
  * Provider for Lexical document custom editors.
- * Handles the creation, management, and lifecycle of Lexical editor webviews.
+ *
+ * Handles:
+ * - Webview lifecycle management
+ * - Document state synchronization
+ * - Collaboration setup for Datalayer documents
+ * - VS Code integration (save, undo, etc.)
  *
  * @class LexicalEditorProvider
  * @implements {vscode.CustomEditorProvider<LexicalDocument>}
+ * @public
  */
 export class LexicalEditorProvider
   implements vscode.CustomEditorProvider<LexicalDocument>
 {
   /**
    * Registers the Lexical editor provider with VS Code.
-   * Sets up the custom editor and the command to create new Lexical documents.
+   *
+   * Sets up:
+   * - Custom editor provider for .lexical files
+   * - Command to create new Lexical documents
+   * - Webview options for optimal performance
    *
    * @static
-   * @param {vscode.ExtensionContext} context - The extension context
-   * @returns {vscode.Disposable} Disposable for cleanup
+   * @param {vscode.ExtensionContext} context - The VS Code extension context
+   * @returns {vscode.Disposable} Registration disposable for cleanup
+   * @public
    */
   public static register(context: vscode.ExtensionContext): vscode.Disposable {
     vscode.commands.registerCommand('datalayer.lexical-editor-new', () => {
@@ -248,10 +330,7 @@ export class LexicalEditorProvider
 
   /**
    * Map of currently active webviews keyed by document URI.
-   * Used to track and manage multiple editor instances.
-   *
    * @private
-   * @readonly
    */
   private readonly webviews = new Map<
     string,
@@ -334,42 +413,101 @@ export class LexicalEditorProvider
 
     webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview);
 
-    webviewPanel.webview.onDidReceiveMessage(e => this.onMessage(document, e));
+    // Store a flag to track when webview is ready
+    let webviewReady = false;
 
-    // Send initial content immediately after setting HTML
-    setTimeout(() => {
-      console.log('[Lexical] Sending initial content to webview');
+    webviewPanel.webview.onDidReceiveMessage(e => {
+      if (e.type === 'ready' && !webviewReady) {
+        webviewReady = true;
+        // Send content when webview signals it's ready
+        sendInitialContent();
+      } else {
+        this.onMessage(document, e);
+      }
+    });
 
+    // Cleanup when panel is disposed
+    webviewPanel.onDidDispose(() => {
+      this.webviews.delete(document.uri.toString());
+    });
+
+    // Function to send initial content
+    const sendInitialContent = async () => {
       // Check if this file is from Datalayer spaces
       const isFromDatalayer = document.uri.scheme === 'datalayer';
 
-      console.log(
-        '[Lexical] File from Datalayer:',
-        isFromDatalayer,
-        'URI:',
-        document.uri.toString(),
-      );
+      // Set collaborative mode for Datalayer documents
+      if (isFromDatalayer) {
+        document.setCollaborative(true);
+      }
 
+      // Send full content even for collaborative documents
+      // The LoroCollaborativePlugin needs initial content to establish baseline
       const contentArray = Array.from(document.documentData);
-      console.log(
-        '[Lexical] Sending content array length:',
-        contentArray.length,
-      );
 
-      // Convert to string to check what we're sending
-      const decoder = new TextDecoder();
-      const contentString = decoder.decode(document.documentData);
-      console.log(
-        '[Lexical] Content string preview:',
-        contentString.substring(0, 200),
-      );
+      // Prepare collaboration configuration if this is a Datalayer document
+      let collaborationConfig = undefined;
+      if (isFromDatalayer) {
+        try {
+          const authService = AuthService.getInstance();
+          const authState = authService.getAuthState();
+
+          if (authState.isAuthenticated && authState.token) {
+            // Get document metadata from DocumentBridge
+            const documentBridge = DocumentBridge.getInstance();
+            const metadata = documentBridge.getDocumentMetadata(document.uri);
+
+            if (metadata && metadata.document) {
+              const apiService = SpacerApiService.getInstance();
+
+              // Get collaboration session ID for lexical documents
+              const sessionResult =
+                await apiService.getLexicalCollaborationSessionId(
+                  metadata.document.uid,
+                );
+
+              if (sessionResult.success && sessionResult.sessionId) {
+                // Get user information for collaboration
+                const user = authState.user as any;
+                const username = user?.githubLogin
+                  ? `@${user.githubLogin}`
+                  : user?.name || user?.email || 'Anonymous';
+
+                // Get spacerWsUrl configuration
+                const config = vscode.workspace.getConfiguration('datalayer');
+                const spacerWsUrl = config.get<string>(
+                  'spacerWsUrl',
+                  'wss://prod1.datalayer.run',
+                );
+
+                // Construct WebSocket URL for collaboration
+                const websocketUrl = `${spacerWsUrl}/api/spacer/v1/lexical/ws/${sessionResult.sessionId}?token=${authState.token}`;
+
+                // Simple collaboration config for the webview with direct WebSocket URL
+                collaborationConfig = {
+                  enabled: true,
+                  websocketUrl,
+                  documentId: metadata.document.uid,
+                  sessionId: sessionResult.sessionId,
+                  username,
+                  userColor:
+                    '#' + Math.floor(Math.random() * 16777215).toString(16), // Random color
+                };
+              }
+            }
+          }
+        } catch (error) {
+          console.error('[Lexical] Failed to setup collaboration:', error);
+        }
+      }
 
       webviewPanel.webview.postMessage({
         type: 'update',
         content: contentArray,
-        editable: !isFromDatalayer, // Read-only for Datalayer files
+        editable: true,
+        collaboration: collaborationConfig,
       });
-    }, 100);
+    };
   }
 
   private readonly _onDidChangeCustomDocument = new vscode.EventEmitter<
@@ -410,11 +548,10 @@ export class LexicalEditorProvider
 
   /**
    * Generates the HTML content for the Lexical editor webview.
-   * Includes all necessary scripts, styles, and VS Code theme integration.
    *
    * @private
    * @param {vscode.Webview} webview - The webview to generate HTML for
-   * @returns {string} Complete HTML document for the Lexical editor
+   * @returns {string} Complete HTML document with scripts and styles
    */
   private getHtmlForWebview(webview: vscode.Webview): string {
     const scriptUri = webview.asWebviewUri(
@@ -431,6 +568,10 @@ export class LexicalEditorProvider
         'LexicalEditor.css',
       ),
     );
+    // Get base URI for loading additional resources like WASM
+    const distUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._context.extensionUri, 'dist'),
+    );
     const nonce = getNonce();
 
     return /* html */ `
@@ -438,10 +579,15 @@ export class LexicalEditorProvider
       <html lang="en">
       <head>
         <meta charset="UTF-8">
-        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} blob:; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}';">
+        <base href="${distUri}/">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} blob:; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}' 'wasm-unsafe-eval' 'unsafe-eval'; connect-src ${webview.cspSource} https: wss: ws: data:; worker-src ${webview.cspSource} blob:;">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="${styleUri}" rel="stylesheet">
         <title>Datalayer Lexical Editor</title>
+        <script nonce="${nonce}">
+          // Set webpack public path for dynamic imports and WASM loading
+          window.__webpack_public_path__ = '${distUri}/';
+        </script>
       </head>
       <body>
         <div id="root"></div>
@@ -485,23 +631,21 @@ export class LexicalEditorProvider
         return;
       }
       case 'contentChanged': {
-        // Content changed in the editor, only mark as dirty if not from Datalayer
+        // Mark as dirty only for local files (not Datalayer)
         if (!isFromDatalayer) {
           document.makeEdit(message);
         }
         return;
       }
       case 'save': {
-        // Explicit save from the editor (Cmd/Ctrl+S)
-        // Only allow saving if not from Datalayer (read-only)
+        // Handle save command (Cmd/Ctrl+S)
         if (!isFromDatalayer) {
           vscode.commands.executeCommand('workbench.action.files.save');
         }
         return;
       }
       case 'ready': {
-        // Editor is ready - initial content is already sent by resolveCustomEditor
-        console.log('[Lexical] Webview ready, content already sent');
+        // Handled in the message listener above
         return;
       }
     }

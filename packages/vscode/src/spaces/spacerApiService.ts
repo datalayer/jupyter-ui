@@ -410,6 +410,27 @@ export class SpacerApiService {
   }
 
   /**
+   * Get collaboration session ID for lexical documents
+   * For lexical documents, the document UID is used directly as the session ID
+   * Note: This is different from notebooks which may have a separate session endpoint
+   */
+  async getLexicalCollaborationSessionId(documentId: string): Promise<{
+    success: boolean;
+    sessionId?: string;
+    error?: string;
+  }> {
+    // For Lexical documents in Datalayer, the document UID IS the session ID
+    console.log(
+      `[SpacerAPI] Using document UID as lexical collaboration session ID: ${documentId}`,
+    );
+
+    return {
+      success: true,
+      sessionId: documentId,
+    };
+  }
+
+  /**
    * Create a new notebook in a space
    */
   async createNotebook(
