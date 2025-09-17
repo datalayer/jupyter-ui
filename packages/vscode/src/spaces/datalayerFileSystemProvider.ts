@@ -125,10 +125,30 @@ export class DatalayerFileSystemProvider implements vscode.FileSystemProvider {
 
   readFile(uri: vscode.Uri): Uint8Array {
     const realPath = this.getRealPath(uri);
-    if (!realPath || !fs.existsSync(realPath)) {
+    console.log(
+      '[DatalayerFS] Reading virtual file:',
+      uri.toString(),
+      '-> real path:',
+      realPath,
+    );
+
+    if (!realPath) {
+      console.error(
+        '[DatalayerFS] No real path found for virtual URI:',
+        uri.toString(),
+      );
       throw vscode.FileSystemError.FileNotFound(uri);
     }
 
+    if (!fs.existsSync(realPath)) {
+      console.error('[DatalayerFS] Real file does not exist:', realPath);
+      throw vscode.FileSystemError.FileNotFound(uri);
+    }
+
+    console.log(
+      '[DatalayerFS] Successfully reading file, size:',
+      fs.statSync(realPath).size,
+    );
     return new Uint8Array(fs.readFileSync(realPath));
   }
 

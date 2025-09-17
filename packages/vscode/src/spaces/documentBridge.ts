@@ -105,7 +105,37 @@ export class DocumentBridge {
             '[DocumentBridge] Document already cached:',
             metadata.localPath,
           );
-          return vscode.Uri.file(metadata.localPath);
+
+          // Return the virtual URI, not the real file path
+          const fileSystemProvider = DatalayerFileSystemProvider.getInstance();
+          const existingVirtualUri = fileSystemProvider.getVirtualUri(
+            metadata.localPath,
+          );
+
+          if (existingVirtualUri) {
+            console.log(
+              '[DocumentBridge] Returning existing virtual URI:',
+              existingVirtualUri.toString(),
+            );
+            return existingVirtualUri;
+          } else {
+            // If for some reason the virtual mapping is lost, recreate it
+            const cleanName = docName.replace(/\.[^/.]+$/, '');
+            const virtualPath = metadata.spaceName
+              ? `${metadata.spaceName}/${cleanName}${extension}`
+              : `${cleanName}${extension}`;
+
+            const virtualUri = fileSystemProvider.registerMapping(
+              virtualPath,
+              metadata.localPath,
+            );
+
+            console.log(
+              '[DocumentBridge] Recreated virtual URI for cached file:',
+              virtualUri.toString(),
+            );
+            return virtualUri;
+          }
         }
       }
 
@@ -121,9 +151,17 @@ export class DocumentBridge {
         fs.writeFileSync(localPath, JSON.stringify(content, null, 2));
       }
 
-      // Verify the file was written successfully
+      // Verify the file was written successfully and wait a bit for filesystem
       if (!fs.existsSync(localPath)) {
         throw new Error(`Failed to write file to ${localPath}`);
+      }
+
+      // Small delay to ensure file system operations are complete
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // Double-check the file exists after the delay
+      if (!fs.existsSync(localPath)) {
+        throw new Error(`File disappeared after writing: ${localPath}`);
       }
 
       // Store metadata
@@ -138,6 +176,7 @@ export class DocumentBridge {
 
       console.log('[DocumentBridge] Document downloaded to:', localPath);
       console.log('[DocumentBridge] File exists:', fs.existsSync(localPath));
+      console.log('[DocumentBridge] File size:', fs.statSync(localPath).size);
 
       // Create a virtual URI that shows clean path structure
       const virtualPath = spaceName

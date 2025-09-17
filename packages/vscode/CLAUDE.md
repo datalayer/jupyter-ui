@@ -51,6 +51,26 @@ This is a VS Code extension that provides a custom Jupyter Notebook editor with 
 - **Secure Storage**: JWT tokens stored using VS Code's SecretStorage API
 - **Auto-reconnection**: Authenticated sessions persist across VS Code restarts
 
+### Status Bar UI
+
+The extension provides visual feedback through the status bar:
+
+**When NOT authenticated:**
+
+- Text: `$(menu) Datalayer: Not Connected`
+- Colors: Warning theme colors (orange/yellow background)
+- Tooltip: "Click to login"
+- Action: Opens login dialog
+
+**When authenticated:**
+
+- Text: `$(menu) Datalayer` (compact display)
+- Colors: Default theme colors
+- Tooltip: "Connected as @username" (or email)
+- Action: Shows authentication status dialog
+
+This design saves status bar space while using VS Code's warning colors to clearly indicate when authentication is needed.
+
 ## Build & Package
 
 - Development: `npm run watch`
@@ -167,6 +187,8 @@ The extension uses a virtual file system for Datalayer documents:
 - **File System Provider**: Maps virtual URIs to real temp file locations
 - **Clean User Experience**: Users see logical paths matching the tree structure
 - **Transparent Operations**: All file operations work seamlessly through the virtual layer
+- **Race Condition Protection**: File writing includes verification delays and double-checking
+- **Cached Document Handling**: Subsequent opens return virtual URIs maintaining clean paths
 
 ### Editor Configuration
 

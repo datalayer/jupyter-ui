@@ -164,13 +164,23 @@ export class AuthService implements vscode.Disposable {
         ? `@${user.githubLogin}`
         : user?.email || 'User';
       // Using menu icon (three horizontal lines) as a visual representation of Datalayer's stacked bars logo
-      this.statusBarItem.text = `$(menu) Datalayer: ${displayName}`;
-      this.statusBarItem.tooltip = undefined; // No tooltip when authenticated
+      this.statusBarItem.text = `$(menu) Datalayer`;
+      this.statusBarItem.tooltip = `Connected as ${displayName}`;
       this.statusBarItem.command = 'datalayer.showAuthStatus';
+      // Reset colors to default when authenticated
+      this.statusBarItem.color = undefined;
+      this.statusBarItem.backgroundColor = undefined;
     } else {
       this.statusBarItem.text = '$(menu) Datalayer: Not Connected';
       this.statusBarItem.tooltip = 'Click to login';
       this.statusBarItem.command = 'datalayer.login';
+      // Use warning theme colors when not connected
+      this.statusBarItem.color = new vscode.ThemeColor(
+        'statusBarItem.warningForeground',
+      );
+      this.statusBarItem.backgroundColor = new vscode.ThemeColor(
+        'statusBarItem.warningBackground',
+      );
     }
     this.statusBarItem.show();
   }

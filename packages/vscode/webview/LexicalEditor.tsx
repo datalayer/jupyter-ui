@@ -102,13 +102,36 @@ function LoadContentPlugin({ content }: { content?: string }) {
     if (content && isFirstRender.current) {
       isFirstRender.current = false;
       try {
-        const editorState = editor.parseEditorState(content);
-        // Use setEditorState with skipHistoryPush option to avoid adding to undo stack
-        editor.setEditorState(editorState, {
-          tag: 'history-merge',
-        });
+        console.log(
+          '[LoadContentPlugin] Attempting to parse content:',
+          content.substring(0, 200),
+        );
+
+        // First try to parse as JSON to validate format
+        const parsed = JSON.parse(content);
+
+        // Check if it's a valid Lexical editor state
+        if (parsed && typeof parsed === 'object' && parsed.root) {
+          const editorState = editor.parseEditorState(content);
+          // Use setEditorState with skipHistoryPush option to avoid adding to undo stack
+          editor.setEditorState(editorState, {
+            tag: 'history-merge',
+          });
+          console.log('[LoadContentPlugin] Successfully loaded editor state');
+        } else {
+          throw new Error('Invalid Lexical editor state format');
+        }
       } catch (error) {
-        console.error('Failed to parse editor state, using default:', error);
+        console.error(
+          '[LoadContentPlugin] Failed to parse editor state, using default:',
+          error,
+        );
+        console.log(
+          '[LoadContentPlugin] Content that failed to parse:',
+          content,
+        );
+
+        // Create a default empty state
         editor.update(
           () => {
             const root = $getRoot();

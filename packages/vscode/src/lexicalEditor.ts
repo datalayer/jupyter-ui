@@ -350,9 +350,23 @@ export class LexicalEditorProvider
         document.uri.toString(),
       );
 
+      const contentArray = Array.from(document.documentData);
+      console.log(
+        '[Lexical] Sending content array length:',
+        contentArray.length,
+      );
+
+      // Convert to string to check what we're sending
+      const decoder = new TextDecoder();
+      const contentString = decoder.decode(document.documentData);
+      console.log(
+        '[Lexical] Content string preview:',
+        contentString.substring(0, 200),
+      );
+
       webviewPanel.webview.postMessage({
         type: 'update',
-        content: Array.from(document.documentData),
+        content: contentArray,
         editable: !isFromDatalayer, // Read-only for Datalayer files
       });
     }, 100);
