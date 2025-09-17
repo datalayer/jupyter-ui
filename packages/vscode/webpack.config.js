@@ -151,4 +151,14 @@ const webviewConfig = {
   ],
 };
 
-module.exports = [extensionConfig, webviewConfig];
+// Config for Lexical editor webview
+const lexicalWebviewConfig = {
+  ...webviewConfig,
+  entry: './webview/lexicalWebview.tsx',
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'lexicalWebview.js',
+  },
+};
+
+module.exports = [extensionConfig, webviewConfig, lexicalWebviewConfig];

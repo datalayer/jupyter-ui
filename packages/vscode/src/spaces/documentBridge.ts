@@ -121,6 +121,11 @@ export class DocumentBridge {
         fs.writeFileSync(localPath, JSON.stringify(content, null, 2));
       }
 
+      // Verify the file was written successfully
+      if (!fs.existsSync(localPath)) {
+        throw new Error(`Failed to write file to ${localPath}`);
+      }
+
       // Store metadata
       const metadata: DocumentMetadata = {
         document,
@@ -132,8 +137,26 @@ export class DocumentBridge {
       this.documentMetadata.set(document.uid, metadata);
 
       console.log('[DocumentBridge] Document downloaded to:', localPath);
+      console.log('[DocumentBridge] File exists:', fs.existsSync(localPath));
 
-      return vscode.Uri.file(localPath);
+      // Create a virtual URI that shows clean path structure
+      const virtualPath = spaceName
+        ? `${spaceName}/${cleanName}${extension}`
+        : `${cleanName}${extension}`;
+
+      // Register the mapping with the file system provider
+      const fileSystemProvider = DatalayerFileSystemProvider.getInstance();
+      const virtualUri = fileSystemProvider.registerMapping(
+        virtualPath,
+        localPath,
+      );
+
+      console.log(
+        '[DocumentBridge] Virtual URI created:',
+        virtualUri.toString(),
+      );
+
+      return virtualUri;
     } catch (error) {
       console.error('[DocumentBridge] Error opening document:', error);
       throw error;
@@ -141,11 +164,23 @@ export class DocumentBridge {
   }
 
   /**
-   * Get metadata for a document by its local path
+   * Get metadata for a document by its path (virtual or real)
    */
-  getMetadataByPath(localPath: string): DocumentMetadata | undefined {
+  getMetadataByPath(inputPath: string): DocumentMetadata | undefined {
+    let realPath = inputPath;
+
+    // If this looks like a virtual URI path, resolve it to real path
+    if (inputPath.startsWith('datalayer:/')) {
+      const fileSystemProvider = DatalayerFileSystemProvider.getInstance();
+      const virtualUri = vscode.Uri.parse(inputPath);
+      const resolved = fileSystemProvider.getRealPath(virtualUri);
+      if (resolved) {
+        realPath = resolved;
+      }
+    }
+
     for (const metadata of this.documentMetadata.values()) {
-      if (metadata.localPath === localPath) {
+      if (metadata.localPath === realPath) {
         return metadata;
       }
     }

@@ -30,6 +30,11 @@
         "category": "Notebook"
       },
       {
+        "command": "datalayer.lexical-editor-new",
+        "title": "Create new Datalayer Lexical Document",
+        "category": "Datalayer"
+      },
+      {
         "command": "datalayer.login",
         "title": "Login to Datalayer",
         "category": "Datalayer"
@@ -134,6 +139,15 @@
             "filenamePattern": "*.ipynb"
           }
         ]
+      },
+      {
+        "viewType": "datalayer.lexical-editor",
+        "displayName": "Datalayer Lexical Editor",
+        "selector": [
+          {
+            "filenamePattern": "*.lexical"
+          }
+        ]
       }
     ]
   },
@@ -155,8 +169,18 @@
   "dependencies": {
     "@datalayer/jupyter-react": "^1.0.7",
     "@jupyterlab/services": "^7.0.0",
+    "@lexical/code": "^0.33.1",
+    "@lexical/html": "^0.33.1",
+    "@lexical/link": "^0.33.1",
+    "@lexical/list": "^0.33.1",
+    "@lexical/markdown": "^0.33.1",
+    "@lexical/react": "^0.33.1",
+    "@lexical/rich-text": "^0.33.1",
+    "@lexical/selection": "^0.33.1",
+    "@lexical/utils": "^0.33.1",
     "@lumino/coreutils": "^2.1.1",
     "@primer/react": "^37.19.0",
+    "lexical": "^0.33.1",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "typestyle": "^2.0.4",

@@ -17,6 +17,7 @@
 
 import * as vscode from 'vscode';
 import { NotebookEditorProvider } from './notebookEditor';
+import { LexicalEditorProvider } from './lexicalEditor';
 import { AuthService } from './auth/authService';
 import { TokenProvider } from './auth/tokenProvider';
 import { SpacesTreeProvider } from './spaces/spacesTreeProvider';
@@ -65,6 +66,9 @@ export function activate(context: vscode.ExtensionContext): void {
 
   // Register the notebook editor provider
   context.subscriptions.push(NotebookEditorProvider.register(context));
+
+  // Register the lexical editor provider
+  context.subscriptions.push(LexicalEditorProvider.register(context));
 
   // Create and register the spaces tree provider
   const spacesTreeProvider = new SpacesTreeProvider(context);
@@ -258,10 +262,46 @@ export function activate(context: vscode.ExtensionContext): void {
               },
             );
           } else if (isLexical) {
-            vscode.window.showInformationMessage(
-              `Lexical document support coming soon: ${docName}`,
+            // Show progress while downloading lexical document
+            vscode.window.withProgress(
+              {
+                location: vscode.ProgressLocation.Notification,
+                title: `Opening lexical document: ${docName}`,
+                cancellable: false,
+              },
+              async progress => {
+                progress.report({
+                  increment: 0,
+                  message: 'Downloading document content...',
+                });
+
+                // Use DocumentBridge to handle the download and caching
+                const uri = await documentBridge.openDocument(
+                  document,
+                  undefined,
+                  spaceName,
+                );
+
+                progress.report({
+                  increment: 50,
+                  message: 'Opening document in read-only mode...',
+                });
+
+                // Open the lexical document with our custom editor in read-only mode
+                await vscode.commands.executeCommand(
+                  'vscode.openWith',
+                  uri,
+                  'datalayer.lexical-editor',
+                );
+
+                // Show info that it's read-only
+                vscode.window.showInformationMessage(
+                  `Opened "${docName}" in read-only mode. Full editing support coming soon!`,
+                );
+
+                progress.report({ increment: 100, message: 'Done!' });
+              },
             );
-            // TODO: Implement lexical document viewer
           } else if (isCell) {
             vscode.window.showInformationMessage(
               `Cell viewer coming soon: ${docName}`,

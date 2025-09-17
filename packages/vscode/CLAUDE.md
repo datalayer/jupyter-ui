@@ -82,6 +82,7 @@ This is a VS Code extension that provides a custom Jupyter Notebook editor with 
 ## Commands
 
 - `datalayer.jupyter-notebook-new`: Create new Datalayer Notebook
+- `datalayer.lexical-editor-new`: Create new Datalayer Lexical Document
 - `datalayer.login`: Authenticate with Datalayer platform
 - `datalayer.logout`: Sign out and clear credentials
 - `datalayer.showAuthStatus`: View authentication status
@@ -105,10 +106,17 @@ This is a VS Code extension that provides a custom Jupyter Notebook editor with 
 6. Status bar updated with connection status
 7. All notebook operations use authenticated connection
 
-## Custom Editor
+## Custom Editors
+
+### Jupyter Notebook Editor
 
 - View Type: `datalayer.jupyter-notebook`
 - File Pattern: `*.ipynb`
+
+### Lexical Editor
+
+- View Type: `datalayer.lexical-editor`
+- File Pattern: `*.lexical`
 
 ## Spaces Tree View
 
@@ -121,6 +129,64 @@ The extension includes a tree view in the Explorer sidebar that displays:
   - Exercises and other document types
 - Real-time sync with the Datalayer platform
 - Context menu actions for creating new notebooks
+
+## Lexical Editor Implementation
+
+The extension includes a comprehensive rich text editor for `.lexical` documents built on the Lexical framework:
+
+### Architecture
+
+- **lexicalEditor.ts**: Custom editor provider that handles file operations and webview management
+- **LexicalEditor.tsx**: Main React component with full rich text functionality
+- **LexicalToolbar.tsx**: Formatting toolbar with VS Code theme integration
+- **lexicalWebview.tsx**: Webview entry point that bridges VS Code and React components
+
+### Key Features
+
+- **Rich Text Editing**: Full support for bold, italic, underline, strikethrough, inline code
+- **Structured Content**: Headings (H1, H2, H3), bullet lists, numbered lists
+- **Text Alignment**: Left, center, right alignment options
+- **Markdown Shortcuts**: Quick formatting using markdown syntax
+- **History Management**: Undo/redo with proper state management
+- **VS Code Integration**: Theme-aware styling and consistent UI
+
+### Read-only Mode for Datalayer Documents
+
+Lexical documents from Datalayer spaces open in read-only mode:
+
+- **Virtual File System**: Uses `DatalayerFileSystemProvider` for clean virtual paths
+- **Read-only Detection**: Automatically detects Datalayer documents via URI scheme (`datalayer:`)
+- **Disabled Interactions**: Toolbar buttons disabled, no dirty state tracking
+- **Visual Indicators**: Clear read-only banner and grayed-out controls
+
+### Virtual File System
+
+The extension uses a virtual file system for Datalayer documents:
+
+- **Virtual URIs**: `datalayer:/Space Name/document.lexical` instead of temp paths
+- **File System Provider**: Maps virtual URIs to real temp file locations
+- **Clean User Experience**: Users see logical paths matching the tree structure
+- **Transparent Operations**: All file operations work seamlessly through the virtual layer
+
+### Editor Configuration
+
+```json
+{
+  "namespace": "VSCodeLexicalEditor",
+  "editable": true/false,
+  "nodes": [
+    "HeadingNode", "QuoteNode", "ListNode", "ListItemNode",
+    "CodeNode", "CodeHighlightNode", "LinkNode", "AutoLinkNode"
+  ]
+}
+```
+
+### Save and Load Process
+
+- **JSON Serialization**: Editor state saved as JSON for consistency
+- **History Management**: Initial content load bypasses undo history
+- **Dirty State**: Only tracked for editable local files
+- **Auto-save Integration**: Hooks into VS Code's save system (Cmd/Ctrl+S)
 
 ## Runtime Management
 
@@ -176,10 +242,14 @@ src/
 │   └── datalayerFileSystemProvider.ts # Virtual filesystem provider
 ├── test/                        # Test files
 ├── extension.ts                 # Main extension entry
-└── notebookEditor.ts           # Notebook editor provider
+├── notebookEditor.ts           # Notebook editor provider
+└── lexicalEditor.ts            # Lexical editor provider
 
-webview/                         # React-based notebook UI
+webview/                         # React-based UI components
 ├── NotebookVSCode.tsx          # Main notebook component
+├── LexicalEditor.tsx           # Lexical rich text editor
+├── LexicalToolbar.tsx          # Formatting toolbar for lexical editor
+├── lexicalWebview.tsx          # Lexical editor webview entry point
 ├── serviceManager.ts           # Jupyter service connections
 ├── messageHandler.ts           # Extension-webview communication
 └── utils.ts                    # Utility functions

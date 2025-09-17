@@ -11,6 +11,7 @@ This [Visual Studio Code](https://code.visualstudio.com) extension allows you to
 ## Working Features
 
 - **Notebook Operations**: Load, display, and run Jupyter Notebooks
+- **Lexical Editor**: Rich text editor with full formatting support for `.lexical` documents
 - **Datalayer Authentication**: Token-based authentication with automatic GitHub profile enrichment
 - **Server Connectivity**: Connect to Jupyter servers or Datalayer cloud platform
 - **Real-time Execution**: Run code cells with live output and error display
@@ -19,6 +20,7 @@ This [Visual Studio Code](https://code.visualstudio.com) extension allows you to
 - **Spaces Tree View**: Browse and manage documents across all your Datalayer spaces
 - **Runtime Management**: Automatic creation and reuse of Datalayer runtimes with configurable environments
 - **Document Bridge**: Seamless document downloading and local caching for offline viewing
+- **Virtual File System**: Clean virtual paths for Datalayer documents (e.g., `datalayer:/Space Name/document.lexical`)
 
 ## Spaces Tree View
 
@@ -47,6 +49,37 @@ Datalayer (@username)
     └── collaboration.ipynb
 ```
 
+## Lexical Editor
+
+The extension includes a rich text editor for `.lexical` documents with full formatting capabilities:
+
+### Features
+
+- **Rich Text Formatting**: Bold, italic, underline, strikethrough, and inline code
+- **Headings**: H1, H2, H3 support with proper styling
+- **Lists**: Bullet points and numbered lists
+- **Text Alignment**: Left, center, right alignment options
+- **Markdown Shortcuts**: Type markdown syntax for quick formatting
+- **Undo/Redo**: Full history management
+- **Read-only Mode**: Datalayer documents open in read-only mode for safe viewing
+- **VS Code Theme Integration**: Seamlessly matches your VS Code theme
+
+### Document Types
+
+- **Local Files**: Create and edit `.lexical` files locally with full editing capabilities
+- **Datalayer Documents**: View lexical documents from Datalayer spaces in read-only mode
+- **Virtual Paths**: Datalayer documents show clean paths like `datalayer:/Space Name/document.lexical`
+
+### Commands
+
+- `Datalayer: Create new Datalayer Lexical Document` - Create a new lexical document in your workspace
+
+### Usage
+
+1. **Create New**: Use Command Palette → "Datalayer: Create new Datalayer Lexical Document"
+2. **Open from Spaces**: Click any `.lexical` document in the Datalayer Spaces tree view
+3. **Local Files**: Open any `.lexical` file from your workspace
+
 ## Authentication
 
 The extension supports authentication with the Datalayer platform:
@@ -62,6 +95,7 @@ The extension supports authentication with the Datalayer platform:
 - `Datalayer: Logout from Datalayer` - Sign out and clear stored credentials
 - `Datalayer: Show Authentication Status` - View current authentication status
 - `Datalayer: Create new Datalayer Notebook` - Create a new notebook file
+- `Datalayer: Create new Datalayer Lexical Document` - Create a new lexical document
 - `Datalayer: Refresh Spaces` - Refresh the spaces tree view
 - `Datalayer: Open Document` - Open a document from the tree view (automatic on click)
 - `Datalayer: Create Notebook in Space` - Create a new notebook in a selected space
