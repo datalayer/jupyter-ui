@@ -4,12 +4,6 @@
  * MIT License
  */
 
-/**
- * @module NotebookVSCode
- * @description React component for the Jupyter notebook editor.
- * Provides the main UI for viewing and editing Jupyter notebooks with full kernel support.
- */
-
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ServiceManager } from '@jupyterlab/services';
@@ -35,17 +29,16 @@ function NotebookVSCode(): JSX.Element {
   const [serviceManager, setServiceManager] = useState<
     ServiceManager | undefined
   >();
-  const [runtimeReady, setRuntimeReady] = useState(false);
   const kernelId = useKernelId({
     kernels: serviceManager?.kernels,
-    startDefaultKernel: runtimeReady,
+    startDefaultKernel: true,
   });
   const model = useNotebookModel({ nbformat });
   useEffect(() => {
-    if (model && serviceManager) {
+    if (model) {
       setIsLoading(false);
     }
-  }, [model, serviceManager]);
+  }, [model]);
   const handler = useCallback(
     async (message: ExtensionMessage) => {
       const { type, body, id } = message;
@@ -53,30 +46,6 @@ function NotebookVSCode(): JSX.Element {
         case 'init': {
           // FIXME
           // editor.setEditable(body.editable);
-
-          // Initialize runtime if provided
-          if (body.runtime) {
-            const { baseUrl, token } = body.runtime;
-            if (baseUrl && token) {
-              console.log(
-                '[NotebookVSCode] Initializing with runtime:',
-                baseUrl,
-              );
-              const manager = createServiceManager(baseUrl, token);
-              setServiceManager(manager);
-              setRuntimeReady(true);
-            } else {
-              console.warn(
-                '[NotebookVSCode] Runtime info incomplete:',
-                body.runtime,
-              );
-            }
-          } else {
-            console.log(
-              '[NotebookVSCode] No runtime info provided in init message',
-            );
-          }
-
           if (body.untitled) {
             setNbformat({} as any);
             return;
@@ -115,32 +84,26 @@ function NotebookVSCode(): JSX.Element {
       disposable.dispose();
     };
   }, [messageHandler, handler]);
-  // Don't render the notebook until we have both model and service manager
-  if (isLoading || !model) {
-    return <Loader key="notebook-loader" />;
-  }
-
-  if (!serviceManager) {
-    return (
-      <Box
-        style={{ height, width: '100%', position: 'relative', padding: '20px' }}
-        id="dla-Jupyter-Notebook"
-      >
-        <Box sx={{ textAlign: 'center' }}>
-          <div>Waiting for runtime initialization...</div>
-          <div style={{ fontSize: '12px', marginTop: '10px', color: '#666' }}>
-            The notebook requires a runtime to execute code.
-          </div>
-        </Box>
-      </Box>
-    );
-  }
-
-  return (
+  const selectRuntime = useCallback(async () => {
+    const reply = await messageHandler.postRequest({ type: 'select-runtime' });
+    const { baseUrl, token } = reply.body ?? {};
+    setServiceManager(createServiceManager(baseUrl, token));
+  }, [messageHandler]);
+  return isLoading ? (
+    <Loader key="notebook-loader" />
+  ) : (
     <Box
       style={{ height, width: '100%', position: 'relative' }}
       id="dla-Jupyter-Notebook"
     >
+      <Box sx={{ display: 'flex' }}>
+        <Button
+          title="Select a runtime for the current notebook."
+          onClick={selectRuntime}
+        >
+          Select Runtime
+        </Button>
+      </Box>
       <Box
         className="dla-Box-Notebook"
         sx={{
