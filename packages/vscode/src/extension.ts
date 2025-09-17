@@ -18,6 +18,7 @@
 import * as vscode from 'vscode';
 import { NotebookEditorProvider } from './notebookEditor';
 import { LexicalEditorProvider } from './lexicalEditor';
+import { RuntimeControllerManager } from './runtimeControllerManager';
 import { AuthService } from './auth/authService';
 import { TokenProvider } from './auth/tokenProvider';
 import { SpacesTreeProvider } from './spaces/spacesTreeProvider';
@@ -70,6 +71,16 @@ export function activate(context: vscode.ExtensionContext): void {
   // Register the lexical editor provider
   context.subscriptions.push(LexicalEditorProvider.register(context));
 
+  // Initialize the runtime controller manager for dynamic kernel picker integration
+  const runtimeControllerManager = new RuntimeControllerManager(context);
+  context.subscriptions.push(runtimeControllerManager);
+
+  // Initialize controllers (this will create initial controllers based on available runtimes)
+  runtimeControllerManager.initialize().catch(error => {
+    console.error('[Extension] Failed to initialize runtime controller manager:', error);
+  });
+  console.log('[Extension] Runtime controller manager initialized');
+
   // Create and register the spaces tree provider
   const spacesTreeProvider = new SpacesTreeProvider(context);
   const treeView = vscode.window.createTreeView('datalayerSpaces', {
@@ -93,6 +104,11 @@ export function activate(context: vscode.ExtensionContext): void {
       authService.getAuthState().isAuthenticated,
     );
     spacesTreeProvider.refresh();
+
+    // Refresh runtime controllers when authentication state changes
+    runtimeControllerManager.forceRefresh().catch(error => {
+      console.error('[Extension] Failed to refresh runtime controllers on auth state change:', error);
+    });
   };
 
   // Refresh tree and context when authentication status changes
@@ -388,6 +404,141 @@ export function activate(context: vscode.ExtensionContext): void {
         }
       },
     ),
+  );
+
+  // Register notebook controller status commands
+  context.subscriptions.push(
+    vscode.commands.registerCommand('datalayer.showNotebookControllerStatus', () => {
+      const controllers = runtimeControllerManager.getActiveControllers();
+
+      if (controllers.length === 0) {
+        vscode.window.showInformationMessage(
+          'No active Datalayer runtime controllers. Login to see available runtimes.'
+        );
+        return;
+      }
+
+      // Show status for all active controllers
+      let statusMessage = `Active Datalayer Controllers (${controllers.length}):\n\n`;
+
+      for (const controller of controllers) {
+        const config = controller.config;
+        const runtime = controller.activeRuntime;
+
+        statusMessage += `• ${config.displayName}\n`;
+
+        if (runtime) {
+          statusMessage += `  Pod: ${runtime.pod_name || 'N/A'}\n`;
+          statusMessage += `  Status: ${runtime.status || 'Unknown'}\n`;
+          statusMessage += `  Environment: ${runtime.environment_name || runtime.environment_title || 'default'}\n`;
+          if (runtime.credits_used !== undefined && runtime.credits_limit) {
+            statusMessage += `  Credits: ${runtime.credits_used}/${runtime.credits_limit}\n`;
+          }
+        } else {
+          statusMessage += `  Type: ${config.type}\n`;
+          if (config.environmentName) {
+            statusMessage += `  Environment: ${config.environmentName}\n`;
+          }
+        }
+        statusMessage += '\n';
+      }
+
+      vscode.window.showInformationMessage(statusMessage);
+    }),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('datalayer.restartNotebookRuntime', async () => {
+      try {
+        if (runtimeControllerManager) {
+          const controllers = runtimeControllerManager.getActiveControllers();
+          const runtimeControllers = controllers.filter(c => c.activeRuntime);
+
+          if (runtimeControllers.length === 0) {
+            vscode.window.showInformationMessage(
+              'No active runtimes to restart.'
+            );
+            return;
+          }
+
+          // If only one runtime, restart it directly
+          if (runtimeControllers.length === 1) {
+            const controller = runtimeControllers[0];
+            const runtime = controller.activeRuntime!;
+
+            const restart = await vscode.window.showWarningMessage(
+              `Restart runtime "${runtime.pod_name || runtime.uid}"? This will interrupt any running executions.`,
+              'Restart',
+              'Cancel'
+            );
+
+            if (restart === 'Restart') {
+              // Dispose the controller to force reconnection
+              controller.dispose();
+
+              // Refresh controllers to recreate them
+              await runtimeControllerManager.forceRefresh();
+
+              vscode.window.showInformationMessage(
+                'Runtime restarted. Controllers have been refreshed.'
+              );
+            }
+          } else {
+            // Multiple runtimes - show picker
+            const runtimeNames = runtimeControllers.map(c => {
+              const runtime = c.activeRuntime!;
+              return runtime.pod_name || runtime.uid;
+            });
+
+            const selectedRuntime = await vscode.window.showQuickPick(runtimeNames, {
+              placeHolder: 'Select runtime to restart'
+            });
+
+            if (selectedRuntime) {
+              const controller = runtimeControllers.find(c =>
+                (c.activeRuntime!.pod_name || c.activeRuntime!.uid) === selectedRuntime
+              );
+
+              if (controller) {
+                const restart = await vscode.window.showWarningMessage(
+                  `Restart runtime "${selectedRuntime}"? This will interrupt any running executions.`,
+                  'Restart',
+                  'Cancel'
+                );
+
+                if (restart === 'Restart') {
+                  controller.dispose();
+                  await runtimeControllerManager.forceRefresh();
+
+                  vscode.window.showInformationMessage(
+                    `Runtime "${selectedRuntime}" restarted. Controllers have been refreshed.`
+                  );
+                }
+              }
+            }
+          }
+        } else {
+          vscode.window.showInformationMessage(
+            'No active runtimes to restart.'
+          );
+        }
+      } catch (error) {
+        vscode.window.showErrorMessage(`Failed to restart runtime: ${error}`);
+      }
+    }),
+  );
+
+  // Register command to manually refresh runtime controllers
+  context.subscriptions.push(
+    vscode.commands.registerCommand('datalayer.refreshRuntimeControllers', async () => {
+      try {
+        await runtimeControllerManager.forceRefresh();
+        vscode.window.showInformationMessage('Runtime controllers refreshed successfully.');
+      } catch (error) {
+        console.error('[Extension] Failed to refresh runtime controllers:', error);
+        vscode.window.showErrorMessage(`Failed to refresh runtime controllers: ${error}`);
+      }
+    }),
   );
 
   // Set initial authentication context for viewsWelcome

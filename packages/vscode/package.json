@@ -65,6 +65,21 @@
         "title": "Create Notebook in Space",
         "category": "Datalayer",
         "icon": "$(add)"
+      },
+      {
+        "command": "datalayer.showNotebookControllerStatus",
+        "title": "Show Notebook Controller Status",
+        "category": "Datalayer"
+      },
+      {
+        "command": "datalayer.restartNotebookRuntime",
+        "title": "Restart Datalayer Notebook Runtime",
+        "category": "Datalayer"
+      },
+      {
+        "command": "datalayer.refreshRuntimeControllers",
+        "title": "Refresh Runtime Controllers",
+        "category": "Datalayer"
       }
     ],
     "views": {
@@ -127,13 +142,39 @@
           "default": 10,
           "minimum": 1,
           "description": "Default credits limit for new runtimes"
+        },
+        "datalayer.notebook.enableKernelPicker": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable 'Datalayer Runtime...' option in VS Code kernel picker"
+        },
+        "datalayer.notebook.autoConnectRuntime": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically connect to Datalayer runtime when executing cells"
+        },
+        "datalayer.notebook.showRuntimeStatus": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show runtime status messages during cell execution"
+        },
+        "datalayer.notebook.refreshInterval": {
+          "type": "number",
+          "default": 30000,
+          "minimum": 0,
+          "description": "How often to refresh runtime status in milliseconds (0 to disable automatic refresh)"
+        },
+        "datalayer.notebook.showRuntimeDetails": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show runtime details like credits and environment in controller names"
         }
       }
     },
     "customEditors": [
       {
         "viewType": "datalayer.jupyter-notebook",
-        "displayName": "Datalayer Notebook",
+        "displayName": "Datalayer Runtime...",
         "selector": [
           {
             "filenamePattern": "*.ipynb"
@@ -184,6 +225,7 @@
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "typestyle": "^2.0.4",
+    "uuid": "^8.3.2",
     "ws": "^8.18.1"
   },
   "devDependencies": {
@@ -191,6 +233,7 @@
     "@types/node": "^22.14.1",
     "@types/react": "18.3.20",
     "@types/react-dom": "18.3.6",
+    "@types/uuid": "^8.3.4",
     "@types/vscode": "^1.98.0",
     "@typescript-eslint/eslint-plugin": "^8.29.1",
     "@typescript-eslint/parser": "^8.29.1",

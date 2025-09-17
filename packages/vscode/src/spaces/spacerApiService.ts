@@ -493,7 +493,7 @@ export class SpacerApiService {
    */
   async listRuntimes(): Promise<RuntimeResponse[]> {
     const serverUrl = this.authService.getServerUrl();
-    const url = `${serverUrl}/api/runtimes/v1/runtimes`;
+    const url = `${serverUrl}/api/ceres/v1/runtime/get`;
 
     console.log('[SpacerAPI] Fetching runtimes from:', url);
 
@@ -541,7 +541,7 @@ export class SpacerApiService {
     environmentName?: string,
   ): Promise<RuntimeResponse | undefined> {
     const serverUrl = this.authService.getServerUrl();
-    const url = `${serverUrl}/api/runtimes/v1/runtimes`;
+    const url = `${serverUrl}/api/ceres/v1/runtime/create`;
 
     console.log('[SpacerAPI] Creating runtime at:', url);
 
@@ -607,7 +607,7 @@ export class SpacerApiService {
    */
   async getRuntime(podName: string): Promise<RuntimeResponse | undefined> {
     const serverUrl = this.authService.getServerUrl();
-    const url = `${serverUrl}/api/runtimes/v1/runtimes/${podName}`;
+    const url = `${serverUrl}/api/ceres/v1/runtime/get/${podName}`;
 
     console.log('[SpacerAPI] Fetching runtime from:', url);
 
