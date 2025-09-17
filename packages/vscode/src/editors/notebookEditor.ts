@@ -4,53 +4,27 @@
  * MIT License
  */
 
-/**
- * @module notebookEditor
- * @description Custom editor provider for Jupyter notebook files (.ipynb).
- * This module implements a webview-based notebook editor with full Jupyter functionality,
- * including kernel execution, real-time collaboration, and WebSocket communication.
- */
-
 import * as vscode from 'vscode';
 import { WebSocket, RawData } from 'ws';
 import { Disposable, disposeAll } from '../dispose';
 import { getNonce } from '../util';
 import { setRuntime } from '../runtimes/runtimePicker';
 import type { ExtensionMessage } from '../messages';
-import { AuthService } from '../auth/authService';
 
 /**
- * Represents an edit operation in a notebook file.
- * Used for tracking changes and implementing undo/redo functionality.
- *
- * @interface NotebookEdit
+ * Define the type of edits used in notebook files.
  */
 interface NotebookEdit {
   readonly color: string;
   readonly stroke: ReadonlyArray<[number, number]>;
 }
 
-/**
- * Delegate interface for notebook document operations.
- * Provides methods for retrieving document data from the webview.
- *
- * @interface NotebookDocumentDelegate
- */
 interface NotebookDocumentDelegate {
-  /**
-   * Retrieves the current file data from the webview.
-   * @returns {Promise<Uint8Array>} The notebook file content as a byte array
-   */
   getFileData(): Promise<Uint8Array>;
 }
 
 /**
- * Represents a notebook document in the editor.
- * Manages the document's lifecycle, content, and edit history.
- *
- * @class NotebookDocument
- * @extends {Disposable}
- * @implements {vscode.CustomDocument}
+ * Define the document (the data model) used for notebook files.
  */
 class NotebookDocument extends Disposable implements vscode.CustomDocument {
   static async create(
@@ -227,40 +201,23 @@ class NotebookDocument extends Disposable implements vscode.CustomDocument {
 }
 
 /**
- * Custom editor provider for Jupyter notebook files.
- * Manages the lifecycle of notebook editor instances and handles
- * communication between VS Code and the webview-based editor.
+ * Provider for notebook editors.
  *
- * @class NotebookEditorProvider
- * @implements {vscode.CustomEditorProvider<NotebookDocument>}
+ * This provider demonstrates:
  *
- * @remarks
- * This provider:
- * - Creates webview-based editors for .ipynb files
- * - Manages WebSocket connections for kernel communication
- * - Handles HTTP request forwarding with authentication
- * - Implements document saving and backup
- * - Supports multiple editor instances per document
- *
- * @example
- * ```typescript
- * // Register the provider in the extension activation
- * const provider = NotebookEditorProvider.register(context);
- * ```
+ * - How to implement a custom editor for binary files.
+ * - Setting up the initial webview for a custom editor.
+ * - Loading scripts and styles in a custom editor.
+ * - Communication between VS Code and the custom editor.
+ * - Using CustomDocuments to store information that is shared between multiple custom editors.
+ * - Implementing save, undo, redo, and revert.
+ * - Backing up a custom editor.
  */
 export class NotebookEditorProvider
   implements vscode.CustomEditorProvider<NotebookDocument>
 {
   private static newNotebookFileId = 1;
 
-  /**
-   * Registers the notebook editor provider with VS Code.
-   * Sets up the custom editor for .ipynb files and registers associated commands.
-   *
-   * @static
-   * @param {vscode.ExtensionContext} context - The extension context
-   * @returns {vscode.Disposable} A disposable that unregisters the provider
-   */
   public static register(context: vscode.ExtensionContext): vscode.Disposable {
     vscode.commands.registerCommand('datalayer.jupyter-notebook-new', () => {
       const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -298,18 +255,12 @@ export class NotebookEditorProvider
   private static readonly viewType = 'datalayer.jupyter-notebook';
 
   /**
-   * Collection of all active webview panels.
-   * Tracks webviews by their associated document URI.
-   * @private
-   * @readonly
+   * Tracks all known webviews
    */
   private readonly webviews = new WebviewCollection();
 
   /**
-   * Map of active WebSocket connections indexed by connection ID.
-   * Used for kernel communication and real-time collaboration.
-   * @private
-   * @readonly
+   * Tracks websocket
    */
   private readonly _websockets = new Map<string, WebSocket>();
 
@@ -318,16 +269,6 @@ export class NotebookEditorProvider
 
   constructor(private readonly _context: vscode.ExtensionContext) {}
 
-  /**
-   * Opens a custom document for editing.
-   * Creates or restores a NotebookDocument instance for the given URI.
-   *
-   * @param {vscode.Uri} uri - The URI of the document to open
-   * @param {Object} openContext - Context information for opening the document
-   * @param {string} [openContext.backupId] - Optional backup ID for document restoration
-   * @param {vscode.CancellationToken} _token - Cancellation token (unused)
-   * @returns {Promise<NotebookDocument>} The opened notebook document
-   */
   async openCustomDocument(
     uri: vscode.Uri,
     openContext: { backupId?: string },
@@ -358,25 +299,32 @@ export class NotebookEditorProvider
     const listeners: vscode.Disposable[] = [];
 
     listeners.push(
-      document.onDidChange(e => {
-        // Tell VS Code that the document has been edited by the user.
-        this._onDidChangeCustomDocument.fire({
-          document,
-          ...e,
-        });
-      }),
+      document.onDidChange(
+        (e: { readonly label: string; undo(): void; redo(): void }) => {
+          // Tell VS Code that the document has been edited by the user.
+          this._onDidChangeCustomDocument.fire({
+            document,
+            ...e,
+          });
+        },
+      ),
     );
 
     listeners.push(
-      document.onDidChangeContent(e => {
-        // Update all webviews when the document changes
-        for (const webviewPanel of this.webviews.get(document.uri)) {
-          this.postMessage(webviewPanel, 'update', {
-            edits: e.edits,
-            content: e.content,
-          });
-        }
-      }),
+      document.onDidChangeContent(
+        (e: {
+          readonly content?: Uint8Array;
+          readonly edits: readonly NotebookEdit[];
+        }) => {
+          // Update all webviews when the document changes
+          for (const webviewPanel of this.webviews.get(document.uri)) {
+            this.postMessage(webviewPanel, 'update', {
+              edits: e.edits,
+              content: e.content,
+            });
+          }
+        },
+      ),
     );
 
     document.onDidDispose(() => disposeAll(listeners));
@@ -384,15 +332,6 @@ export class NotebookEditorProvider
     return document;
   }
 
-  /**
-   * Resolves and initializes a custom editor for a document.
-   * Sets up the webview panel with the notebook UI and establishes communication channels.
-   *
-   * @param {NotebookDocument} document - The notebook document to edit
-   * @param {vscode.WebviewPanel} webviewPanel - The webview panel to render in
-   * @param {vscode.CancellationToken} _token - Cancellation token (unused)
-   * @returns {Promise<void>}
-   */
   async resolveCustomEditor(
     document: NotebookDocument,
     webviewPanel: vscode.WebviewPanel,
@@ -412,30 +351,12 @@ export class NotebookEditorProvider
     );
 
     // Wait for the webview to be properly ready before we init
-    webviewPanel.webview.onDidReceiveMessage(async e => {
+    webviewPanel.webview.onDidReceiveMessage(e => {
       if (e.type === 'ready') {
-        // Get runtime info from global state
-        const runtimeInfo = this._context.globalState.get<{
-          baseUrl: string;
-          token: string;
-          podName?: string;
-        }>('currentRuntime');
-
-        console.log(
-          '[NotebookEditor] Webview ready, sending init with runtime info:',
-        );
-        console.log('  - Runtime exists:', !!runtimeInfo);
-        if (runtimeInfo) {
-          console.log('  - Base URL:', runtimeInfo.baseUrl);
-          console.log('  - Token exists:', !!runtimeInfo.token);
-          console.log('  - Pod Name:', runtimeInfo.podName);
-        }
-
         if (document.uri.scheme === 'untitled') {
           this.postMessage(webviewPanel, 'init', {
             untitled: true,
             editable: true,
-            runtime: runtimeInfo,
           });
         } else {
           const editable = vscode.workspace.fs.isWritableFileSystem(
@@ -445,7 +366,6 @@ export class NotebookEditorProvider
           this.postMessage(webviewPanel, 'init', {
             value: document.documentData,
             editable,
-            runtime: runtimeInfo,
           });
         }
       }
@@ -489,12 +409,7 @@ export class NotebookEditorProvider
   }
 
   /**
-   * Generates the HTML content for the webview editor.
-   * Includes the React-based notebook UI with proper CSP and nonce handling.
-   *
-   * @private
-   * @param {vscode.Webview} webview - The webview to generate HTML for
-   * @returns {string} The complete HTML document string
+   * Get the static HTML used for in our editor's webviews.
    */
   private getHtmlForWebview(webview: vscode.Webview): string {
     // Local path to script and css for the webview
@@ -520,7 +435,7 @@ export class NotebookEditorProvider
 
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-          <title>Datalayer Runtime</title>
+          <title>Datalayer Notebook</title>
 
           <!--
             Workaround for injected typestyle 
@@ -582,46 +497,28 @@ export class NotebookEditorProvider
         // Handle in resolveCustomEditor
         return;
       case 'select-runtime': {
-        const authService = AuthService.getInstance();
-        const authState = authService.getAuthState();
+        setRuntime()
+          .then((baseURL: string | undefined) => {
+            if (baseURL) {
+              const parsedURL = new URL(baseURL);
+              const token = parsedURL.searchParams.get('token') ?? '';
+              parsedURL.search = '';
+              const baseUrl = parsedURL.toString();
 
-        if (authState.isAuthenticated) {
-          const baseUrl = authState.serverUrl + '/';
-          const token = authState.token ?? '';
-
-          this.postMessage(
-            webview,
-            'set-runtime',
-            {
-              baseUrl,
-              token,
-            },
-            message.id,
-          );
-        } else {
-          setRuntime()
-            .then(baseURL => {
-              if (baseURL) {
-                const parsedURL = new URL(baseURL);
-                const token = parsedURL.searchParams.get('token') ?? '';
-                parsedURL.search = '';
-                const baseUrl = parsedURL.toString();
-
-                this.postMessage(
-                  webview,
-                  'set-runtime',
-                  {
-                    baseUrl,
-                    token,
-                  },
-                  message.id,
-                );
-              }
-            })
-            .catch(reason => {
-              console.error('Failed to get a server URL.');
-            });
-        }
+              this.postMessage(
+                webview,
+                'set-runtime',
+                {
+                  baseUrl,
+                  token,
+                },
+                message.id,
+              );
+            }
+          })
+          .catch((reason: any) => {
+            console.error('Failed to get a server URL.');
+          });
         return;
       }
 
@@ -673,20 +570,12 @@ export class NotebookEditorProvider
     webview: vscode.WebviewPanel,
   ) {
     const { body, id } = message;
-    const authService = AuthService.getInstance();
-    const token = authService.getToken();
-
-    const headers = { ...body.headers };
-    if (token && !headers['Authorization']) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
     fetch(body.url, {
       body: body.body,
-      headers,
+      headers: body.headers,
       method: body.method,
     }).then(async (reply: any) => {
-      const responseHeaders: Record<string, string> = [...reply.headers].reduce(
+      const headers: Record<string, string> = [...reply.headers].reduce(
         (agg, pair) => ({ ...agg, [pair[0]]: pair[1] }),
         {},
       );
@@ -696,7 +585,7 @@ export class NotebookEditorProvider
         webview,
         'http-response',
         {
-          headers: responseHeaders,
+          headers,
           body: rawBody,
           status: reply.status,
           statusText: reply.statusText,
@@ -711,12 +600,9 @@ export class NotebookEditorProvider
     webview: vscode.WebviewPanel,
   ) {
     const { body, id } = message;
-    const authService = AuthService.getInstance();
-    const token = authService.getToken();
     const wsURL = new URL(body.origin);
-
-    if (token) {
-      wsURL.searchParams.set('token', token);
+    if (wsURL.searchParams.has('token')) {
+      wsURL.searchParams.set('token', 'xxxxx');
     }
     const protocol = body.protocol || undefined;
     console.debug(
@@ -756,11 +642,7 @@ export class NotebookEditorProvider
 }
 
 /**
- * Collection class for managing multiple webview panels.
- * Tracks webviews associated with their document URIs and handles cleanup.
- *
- * @class WebviewCollection
- * @private
+ * Tracks all webviews.
  */
 class WebviewCollection {
   private readonly _webviews = new Set<{
@@ -769,11 +651,7 @@ class WebviewCollection {
   }>();
 
   /**
-   * Gets all webview panels associated with a document URI.
-   *
-   * @param {vscode.Uri} uri - The document URI
-   * @returns {Iterable<vscode.WebviewPanel>} Iterator of webview panels for the document
-   * @generator
+   * Get all known webviews for a given uri.
    */
   public *get(uri: vscode.Uri): Iterable<vscode.WebviewPanel> {
     const key = uri.toString();
@@ -785,14 +663,9 @@ class WebviewCollection {
   }
 
   /**
-   * Adds a new webview panel to the collection.
-   * Automatically removes the panel when it's disposed.
-   *
-   * @param {vscode.Uri} uri - The document URI
-   * @param {vscode.WebviewPanel} webviewPanel - The webview panel to add
-   * @returns {void}
+   * Add a new webview to the collection.
    */
-  public add(uri: vscode.Uri, webviewPanel: vscode.WebviewPanel): void {
+  public add(uri: vscode.Uri, webviewPanel: vscode.WebviewPanel) {
     const entry = { resource: uri.toString(), webviewPanel };
     this._webviews.add(entry);
 
