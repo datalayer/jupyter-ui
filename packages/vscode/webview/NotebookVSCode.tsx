@@ -26,6 +26,8 @@ import { DatalayerCollaborationProvider } from '@datalayer/core/lib/collaboratio
 import { MessageHandlerContext, type ExtensionMessage } from './messageHandler';
 import { loadFromBytes, saveToBytes } from './utils';
 import { createMockServiceManager } from './mockServiceManager';
+// Import the enhanced theme system
+import { EnhancedJupyterReactTheme } from './theme';
 
 interface NotebookVSCodeInnerProps {
   nbformat: any;
@@ -517,8 +519,8 @@ function LocalNotebook({
   );
 }
 
-// Main component that handles theming
-function NotebookVSCode(): JSX.Element {
+// Inner component that uses the Jupyter context
+function NotebookVSCodeWithJupyter(): JSX.Element {
   const messageHandler = useContext(MessageHandlerContext);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [isInitialized, setIsInitialized] = useState(false);
@@ -547,7 +549,7 @@ function NotebookVSCode(): JSX.Element {
         if (body.theme) {
           console.log('[NotebookVSCode] Setting initial theme:', body.theme);
           setTheme(body.theme);
-          setColormode(body.theme);
+          // The colormode will be synced via the useEffect
         }
 
         // Handle notebook data
@@ -587,13 +589,16 @@ function NotebookVSCode(): JSX.Element {
         console.log('[NotebookVSCode] Initialization complete');
       } else if (type === 'theme-change' && body.theme) {
         console.log(
-          '[NotebookVSCode] Theme changed from',
+          '[NotebookVSCode] Theme change detected. Current:',
           theme,
-          'to:',
+          'New:',
           body.theme,
         );
-        setTheme(body.theme);
-        setColormode(body.theme);
+        if (body.theme !== theme) {
+          console.log('[NotebookVSCode] Applying theme change to:', body.theme);
+          setTheme(body.theme);
+          // The colormode will be synced via the useEffect
+        }
       }
     };
 
@@ -604,21 +609,19 @@ function NotebookVSCode(): JSX.Element {
     };
   }, [messageHandler, setColormode, theme]);
 
-  // Ensure store is synced with theme
+  // Sync colormode with theme changes
   useEffect(() => {
-    console.log('[NotebookVSCode] Setting store colormode to:', theme);
+    console.log('[NotebookVSCode] Syncing colormode with theme:', theme);
     setColormode(theme);
   }, [theme, setColormode]);
 
-  // Use a stable key that only changes when we need to force a full re-render
-  // This happens when the component is first initialized or when theme changes after initialization
-  const themeKey = isInitialized ? `initialized-${theme}` : 'loading';
-
+  // Use the enhanced theme system for VS Code theme support
   return (
-    <JupyterReactTheme
-      key={themeKey}
-      colormode={theme}
+    <EnhancedJupyterReactTheme
+      provider="vscode"
+      colorMode={theme === 'dark' ? 'dark' : 'light'}
       loadJupyterLabCss={true}
+      injectCSSVariables={true}
     >
       <NotebookVSCodeInner
         nbformat={nbformat}
@@ -628,7 +631,16 @@ function NotebookVSCode(): JSX.Element {
         token={token}
         isInitialized={isInitialized}
       />
-    </JupyterReactTheme>
+    </EnhancedJupyterReactTheme>
+  );
+}
+
+// Main component that provides the Jupyter context
+function NotebookVSCode(): JSX.Element {
+  return (
+    <Jupyter>
+      <NotebookVSCodeWithJupyter />
+    </Jupyter>
   );
 }
 
