@@ -33,4 +33,8 @@ export type ExtensionMessage = {
    * it is the client ID.
    */
   id?: string;
+  /**
+   * Request ID for matching responses to requests.
+   */
+  requestId?: string;
 };

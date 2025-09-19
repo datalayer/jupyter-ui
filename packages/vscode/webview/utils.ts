@@ -26,6 +26,11 @@ export function loadFromBytes(raw: Uint8Array): any {
   return parsed;
 }
 
+export function saveToBytes(notebook: any): Uint8Array {
+  const stringData = JSON.stringify(notebook, null, 2);
+  return new TextEncoder().encode(stringData);
+}
+
 /**
  * Returns the nonce used in the page, if any.
  *

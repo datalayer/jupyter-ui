@@ -216,57 +216,12 @@ export function activate(context: vscode.ExtensionContext): void {
                   spaceName,
                 );
 
-                progress.report({
-                  increment: 40,
-                  message: 'Setting up runtime environment...',
-                });
-
-                try {
-                  // Ensure we have a runtime for this notebook
-                  const runtime = await documentBridge.ensureRuntime(
-                    document.uid,
-                  );
-
-                  if (runtime && runtime.ingress && runtime.token) {
-                    // Store runtime info in global state for the webview to access
-                    const runtimeInfo = {
-                      baseUrl: runtime.ingress,
-                      token: runtime.token,
-                      podName: runtime.pod_name,
-                    };
-                    await context.globalState.update(
-                      'currentRuntime',
-                      runtimeInfo,
-                    );
-                    console.log(
-                      '[Datalayer] Runtime ready and stored in global state:',
-                    );
-                    console.log('  - Pod Name:', runtime.pod_name);
-                    console.log('  - Base URL:', runtime.ingress);
-                    console.log('  - Token exists:', !!runtime.token);
-                    console.log('  - Status:', runtime.status);
-                  } else if (runtime) {
-                    console.warn(
-                      '[Datalayer] Runtime created but missing URL/token, may need to wait for initialization',
-                    );
-                    console.warn(
-                      '[Datalayer] Runtime details:',
-                      JSON.stringify(runtime, null, 2),
-                    );
-                  } else {
-                    console.error(
-                      '[Datalayer] Failed to create or get runtime',
-                    );
-                  }
-                } catch (runtimeError) {
-                  console.error(
-                    '[Datalayer] Failed to create/get runtime:',
-                    runtimeError,
-                  );
-                  vscode.window.showWarningMessage(
-                    'Failed to create runtime. Opening notebook in read-only mode.',
-                  );
-                }
+                // For Datalayer notebooks, we don't create a runtime automatically
+                // The notebook will use collaboration with the document UID
+                console.log(
+                  '[Datalayer] Opening notebook with collaboration - document ID:',
+                  document.uid || document.id,
+                );
 
                 progress.report({
                   increment: 75,

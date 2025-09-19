@@ -15,12 +15,13 @@ import type { ExtensionMessage } from '../messages';
  * Define the type of edits used in notebook files.
  */
 interface NotebookEdit {
-  readonly color: string;
-  readonly stroke: ReadonlyArray<[number, number]>;
+  readonly type: 'content-update';
+  readonly content: Uint8Array;
 }
 
 interface NotebookDocumentDelegate {
   getFileData(): Promise<Uint8Array>;
+  getWebviewPanel?: () => vscode.WebviewPanel | undefined;
 }
 
 /**
@@ -124,20 +125,42 @@ class NotebookDocument extends Disposable implements vscode.CustomDocument {
   makeEdit(edit: NotebookEdit) {
     this._edits.push(edit);
 
+    // Update the document data if it's a content update
+    if (edit.type === 'content-update') {
+      this._documentData = edit.content;
+    }
+
     this._onDidChange.fire({
-      label: 'Stroke',
+      label: 'Edit',
       undo: async () => {
         this._edits.pop();
+        // Restore previous content if available
+        if (this._edits.length > 0) {
+          const lastEdit = this._edits[this._edits.length - 1];
+          if (lastEdit.type === 'content-update') {
+            this._documentData = lastEdit.content;
+          }
+        }
         this._onDidChangeDocument.fire({
           edits: this._edits,
+          content: this._documentData,
         });
       },
       redo: async () => {
         this._edits.push(edit);
+        if (edit.type === 'content-update') {
+          this._documentData = edit.content;
+        }
         this._onDidChangeDocument.fire({
           edits: this._edits,
+          content: this._documentData,
         });
       },
+    });
+
+    this._onDidChangeDocument.fire({
+      edits: this._edits,
+      content: this._documentData,
     });
   }
 
@@ -156,11 +179,34 @@ class NotebookDocument extends Disposable implements vscode.CustomDocument {
     targetResource: vscode.Uri,
     cancellation: vscode.CancellationToken,
   ): Promise<void> {
-    const fileData = await this._delegate.getFileData();
-    if (cancellation.isCancellationRequested) {
+    // For Datalayer notebooks, always use original data (read-only)
+    if (this.uri.scheme === 'datalayer') {
+      const fileData = this._documentData;
+      if (cancellation.isCancellationRequested) {
+        return;
+      }
+      await vscode.workspace.fs.writeFile(targetResource, fileData);
       return;
     }
-    await vscode.workspace.fs.writeFile(targetResource, fileData);
+
+    // For local notebooks, get current data from the delegate (webview)
+    try {
+      const fileData = await this._delegate.getFileData();
+      if (cancellation.isCancellationRequested) {
+        return;
+      }
+      await vscode.workspace.fs.writeFile(targetResource, fileData);
+
+      // Update our local copy of the data
+      this._documentData = fileData;
+
+      // Clear the edits after successful save
+      this._savedEdits = Array.from(this._edits);
+      this._edits = [];
+    } catch (error) {
+      console.error('[NotebookDocument] Error saving document:', error);
+      throw error;
+    }
   }
 
   /**
@@ -266,8 +312,11 @@ export class NotebookEditorProvider
 
   private _requestId = 1;
   private readonly _callbacks = new Map<string, (response: any) => void>();
+  private readonly _context: vscode.ExtensionContext;
 
-  constructor(private readonly _context: vscode.ExtensionContext) {}
+  constructor(context: vscode.ExtensionContext) {
+    this._context = context;
+  }
 
   async openCustomDocument(
     uri: vscode.Uri,
@@ -350,22 +399,99 @@ export class NotebookEditorProvider
       this.onMessage(webviewPanel, document, e),
     );
 
+    // Listen for theme changes
+    const themeChangeDisposable = vscode.window.onDidChangeActiveColorTheme(
+      () => {
+        const theme =
+          vscode.window.activeColorTheme.kind === vscode.ColorThemeKind.Dark
+            ? 'dark'
+            : 'light';
+        this.postMessage(webviewPanel, 'theme-change', { theme });
+      },
+    );
+
+    webviewPanel.onDidDispose(() => {
+      themeChangeDisposable.dispose();
+    });
+
     // Wait for the webview to be properly ready before we init
-    webviewPanel.webview.onDidReceiveMessage(e => {
+    webviewPanel.webview.onDidReceiveMessage(async e => {
       if (e.type === 'ready') {
+        // Detect VS Code theme
+        const theme =
+          vscode.window.activeColorTheme.kind === vscode.ColorThemeKind.Dark
+            ? 'dark'
+            : 'light';
+
         if (document.uri.scheme === 'untitled') {
           this.postMessage(webviewPanel, 'init', {
             untitled: true,
             editable: true,
+            theme,
           });
         } else {
           const editable = vscode.workspace.fs.isWritableFileSystem(
             document.uri.scheme,
           );
 
+          // Check if this is a Datalayer notebook (from spaces)
+          const isDatalayerNotebook = document.uri.scheme === 'datalayer';
+
+          // Get document ID and server info for Datalayer notebooks
+          let documentId: string | undefined;
+          let serverUrl: string | undefined;
+          let token: string | undefined;
+
+          if (isDatalayerNotebook) {
+            // Get the Datalayer server configuration
+            const config = vscode.workspace.getConfiguration('datalayer');
+            serverUrl = config.get<string>(
+              'serverUrl',
+              'https://prod1.datalayer.run',
+            );
+
+            // Get the authentication token
+            const AuthService = await import('../auth/authService');
+            const authService = AuthService.AuthService.getInstance();
+            const jwtToken = await authService.getToken();
+            if (jwtToken) {
+              token = jwtToken;
+            }
+
+            // First try to get metadata from document bridge
+            const DocumentBridge = await import('../spaces/documentBridge');
+            const documentBridge = DocumentBridge.DocumentBridge.getInstance();
+            const metadata = documentBridge.getDocumentMetadata(document.uri);
+
+            if (metadata && metadata.document.uid) {
+              documentId = metadata.document.uid;
+              console.log(
+                '[NotebookEditor] Got document ID from metadata:',
+                documentId,
+              );
+            } else {
+              // Fallback: try to extract document ID from the filename
+              const filename = document.uri.path.split('/').pop() || '';
+              const match = filename.match(/_([a-zA-Z0-9-]+)\.ipynb$/);
+              documentId = match ? match[1] : undefined;
+
+              if (documentId) {
+                console.log(
+                  '[NotebookEditor] Got document ID from filename fallback:',
+                  documentId,
+                );
+              }
+            }
+          }
+
           this.postMessage(webviewPanel, 'init', {
             value: document.documentData,
             editable,
+            isDatalayerNotebook,
+            theme,
+            documentId,
+            serverUrl,
+            token,
           });
         }
       }
@@ -528,8 +654,16 @@ export class NotebookEditorProvider
       }
 
       case 'response': {
-        const callback = this._callbacks.get(message.id!);
-        callback?.(message.body);
+        const callback = this._callbacks.get(message.requestId!);
+        if (callback) {
+          callback(message.body);
+          this._callbacks.delete(message.requestId!);
+        } else {
+          console.warn(
+            '[NotebookEditor] No callback found for requestId:',
+            message.requestId,
+          );
+        }
         return;
       }
 
@@ -559,6 +693,62 @@ export class NotebookEditorProvider
       case 'websocket-close': {
         const { id } = message;
         this._websockets.get(id ?? '')?.close();
+        return;
+      }
+
+      case 'notebook-content-changed': {
+        // Only track changes for local notebooks, not Datalayer space notebooks
+        const isDatalayerNotebook = document.uri.scheme === 'datalayer';
+        console.log('[NotebookEditor] notebook-content-changed received', {
+          isDatalayerNotebook,
+          scheme: document.uri.scheme,
+          hasContent: !!message.body?.content,
+          contentType: message.body?.content?.constructor?.name,
+          contentLength: message.body?.content?.length,
+        });
+
+        if (!isDatalayerNotebook) {
+          console.log(
+            '[NotebookEditor] Processing content change for local notebook',
+          );
+
+          // Ensure content is a Uint8Array
+          let content: Uint8Array;
+          if (message.body.content instanceof Uint8Array) {
+            content = message.body.content;
+          } else if (Array.isArray(message.body.content)) {
+            // Convert array to Uint8Array if needed
+            content = new Uint8Array(message.body.content);
+          } else {
+            console.error(
+              '[NotebookEditor] Invalid content type:',
+              typeof message.body.content,
+            );
+            return;
+          }
+
+          console.log(
+            '[NotebookEditor] Making edit with content size:',
+            content.length,
+          );
+          document.makeEdit({
+            type: 'content-update',
+            content: content,
+          });
+          console.log(
+            '[NotebookEditor] Edit made, document should be marked dirty',
+          );
+        } else {
+          console.log(
+            '[NotebookEditor] Skipping content change for Datalayer notebook',
+          );
+        }
+        return;
+      }
+
+      // This case should not happen as getFileData is handled differently
+      case 'getFileData': {
+        console.warn('[NotebookEditor] Unexpected getFileData message');
         return;
       }
     }

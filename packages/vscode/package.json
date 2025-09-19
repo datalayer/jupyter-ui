@@ -241,7 +241,7 @@
     "customEditors": [
       {
         "viewType": "datalayer.jupyter-notebook",
-        "displayName": "Datalayer Runtime...",
+        "displayName": "Datalayer Notebook...",
         "selector": [
           {
             "filenamePattern": "*.ipynb"
@@ -275,6 +275,7 @@
     "doc:markdown": "typedoc --plugin typedoc-plugin-markdown --out docs-markdown"
   },
   "dependencies": {
+    "@datalayer/core": "^0.0.10",
     "@datalayer/jupyter-react": "^1.0.7",
     "@datalayer/lexical-loro": "^0.0.7",
     "@jupyter/ydoc": "^2.0.0",

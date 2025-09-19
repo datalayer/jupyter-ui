@@ -4,111 +4,463 @@
  * MIT License
  */
 
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  useRef,
+} from 'react';
 import { createRoot } from 'react-dom/client';
-import { ServiceManager } from '@jupyterlab/services';
-import { Box, Button } from '@primer/react';
+import { Box } from '@primer/react';
 import {
-  useKernelId,
-  useNotebookModel,
-  Notebook2Base,
+  Notebook2,
   JupyterReactTheme,
-  Loader,
+  type ICollaborationProvider,
+  useJupyterReactStore,
+  Jupyter,
+  useJupyter,
 } from '@datalayer/jupyter-react';
+import { DatalayerCollaborationProvider } from '@datalayer/core/lib/collaboration';
 import { MessageHandlerContext, type ExtensionMessage } from './messageHandler';
-import { createServiceManager } from './serviceManager';
-import { loadFromBytes } from './utils';
+import { loadFromBytes, saveToBytes } from './utils';
+import { createMockServiceManager } from './mockServiceManager';
 
-function NotebookVSCode(): JSX.Element {
-  const height = '100vh';
-  const maxHeight = '100vh';
-  const cellSidebarMargin = '120px';
+interface NotebookVSCodeInnerProps {
+  nbformat: any;
+  isDatalayerNotebook: boolean;
+  documentId?: string;
+  serverUrl?: string;
+  token?: string;
+  isInitialized: boolean;
+}
+
+function NotebookVSCodeInner({
+  nbformat,
+  isDatalayerNotebook,
+  documentId,
+  serverUrl,
+  token,
+  isInitialized,
+}: NotebookVSCodeInnerProps): JSX.Element {
   const messageHandler = useContext(MessageHandlerContext);
-  const [isLoading, setIsLoading] = useState(true);
-  const [nbformat, setNbformat] = useState(undefined);
-  const [serviceManager, setServiceManager] = useState<
-    ServiceManager | undefined
-  >();
-  const kernelId = useKernelId({
-    kernels: serviceManager?.kernels,
-    startDefaultKernel: true,
-  });
-  const model = useNotebookModel({ nbformat });
-  useEffect(() => {
-    if (model) {
-      setIsLoading(false);
+  const currentNotebookModel = useRef<any>(null);
+  const lastSavedContent = useRef<Uint8Array | null>(null);
+  const contentChangeHandler = useRef<(() => void) | null>(null);
+
+  // Create collaboration provider for Datalayer notebooks
+  const collaborationProvider = useMemo(() => {
+    if (isDatalayerNotebook && serverUrl && token && documentId) {
+      console.log(
+        '[NotebookVSCode] Creating Datalayer collaboration provider for document:',
+        documentId,
+      );
+      // Create Datalayer-specific collaboration provider
+      // Cast to ICollaborationProvider to handle @jupyter/ydoc version mismatch
+      return new DatalayerCollaborationProvider({
+        runUrl: serverUrl,
+        token: token,
+      }) as unknown as ICollaborationProvider;
     }
-  }, [model]);
-  const handler = useCallback(
-    async (message: ExtensionMessage) => {
-      const { type, body, id } = message;
-      switch (type) {
-        case 'init': {
-          // FIXME
-          // editor.setEditable(body.editable);
-          if (body.untitled) {
-            setNbformat({} as any);
-            return;
-          } else {
-            setNbformat(loadFromBytes(body.value));
-            return;
+    return undefined;
+  }, [isDatalayerNotebook, serverUrl, token, documentId]);
+
+  // Create the appropriate service manager
+  const serviceManager = useMemo(() => {
+    if (isDatalayerNotebook) {
+      console.log(
+        '[NotebookVSCode] Using mock service manager for Datalayer notebook',
+      );
+      return createMockServiceManager();
+    }
+    // For local notebooks, we'll get the service manager from the Jupyter context
+    return undefined;
+  }, [isDatalayerNotebook]);
+
+  // Handle notebook model changes for local notebooks only
+  const handleNotebookModelChanged = useCallback(
+    (notebookModel: any) => {
+      console.log('[NotebookVSCode] handleNotebookModelChanged called', {
+        isDatalayerNotebook,
+        hasModel: !!notebookModel,
+        modelType: notebookModel?.constructor?.name,
+        isDirty: notebookModel?.dirty,
+        hasStateChanged: !!notebookModel?.stateChanged,
+        hasContentChanged: !!notebookModel?.contentChanged,
+        modelKeys: notebookModel ? Object.keys(notebookModel) : [],
+      });
+
+      // Only track changes for local notebooks
+      if (!isDatalayerNotebook && notebookModel) {
+        console.log(
+          '[NotebookVSCode] Setting up notebook model for local notebook',
+        );
+        currentNotebookModel.current = notebookModel;
+
+        // Disconnect any previous listeners
+        if (contentChangeHandler.current) {
+          try {
+            // Try to disconnect from stateChanged signal
+            if (currentNotebookModel.current?.stateChanged) {
+              currentNotebookModel.current.stateChanged.disconnect(
+                contentChangeHandler.current,
+              );
+              console.log(
+                '[NotebookVSCode] Disconnected previous stateChanged listener',
+              );
+            }
+          } catch (e) {
+            // Ignore if not connected
           }
         }
-        case 'update': {
-          // const strokes = body.edits.map(
-          //   edit => new Stroke(edit.color, edit.stroke)
-          // );
-          // await editor.reset(body.content, strokes);
-          return;
+
+        // Try both contentChanged and stateChanged signals
+        let connectedSignal = false;
+
+        // First try contentChanged signal (more direct for content changes)
+        if (notebookModel.contentChanged) {
+          console.log('[NotebookVSCode] Connecting to contentChanged signal');
+
+          const handleContentChange = () => {
+            console.log('[NotebookVSCode] Content changed signal fired!');
+            try {
+              // Get the notebook content as JSON
+              const notebookData = notebookModel.toJSON();
+              const bytes = saveToBytes(notebookData);
+
+              console.log(
+                '[NotebookVSCode] Sending content change to extension, size:',
+                bytes.length,
+              );
+
+              // Notify the extension about the change
+              messageHandler.postMessage({
+                type: 'notebook-content-changed',
+                body: { content: bytes },
+              });
+              lastSavedContent.current = bytes;
+            } catch (error) {
+              console.error(
+                '[NotebookVSCode] Error processing content change:',
+                error,
+              );
+            }
+          };
+
+          // Store and connect the handler
+          contentChangeHandler.current = handleContentChange;
+          notebookModel.contentChanged.connect(handleContentChange);
+          connectedSignal = true;
+          console.log(
+            '[NotebookVSCode] Successfully connected to contentChanged signal',
+          );
         }
-        case 'getFileData': {
-          // Get the image data for the canvas and post it back to the extension.
-          // editor.getImageData().then(data => {
-          //   messageHandler.postMessage({
-          //     type: 'response',
-          //     requestId,
-          //     body: Array.from(data),
-          //   });
-          // });
-          return;
+
+        // Also try stateChanged as a fallback
+        if (notebookModel.stateChanged && !connectedSignal) {
+          console.log(
+            '[NotebookVSCode] Connecting to stateChanged signal as fallback',
+          );
+
+          const handleStateChange = (sender: any, args: any) => {
+            console.log('[NotebookVSCode] State changed signal received', {
+              isDirty: notebookModel.dirty,
+              changeType: args?.name,
+              oldValue: args?.oldValue,
+              newValue: args?.newValue,
+            });
+
+            // For any state change, check if content might have changed
+            try {
+              const notebookData = notebookModel.toJSON();
+              const bytes = saveToBytes(notebookData);
+
+              // Only send if content actually changed
+              if (
+                !lastSavedContent.current ||
+                bytes.length !== lastSavedContent.current.length ||
+                !bytes.every((v, i) => v === lastSavedContent.current![i])
+              ) {
+                console.log(
+                  '[NotebookVSCode] Content has changed, notifying extension',
+                );
+                messageHandler.postMessage({
+                  type: 'notebook-content-changed',
+                  body: { content: bytes },
+                });
+                lastSavedContent.current = bytes;
+              }
+            } catch (error) {
+              console.error(
+                '[NotebookVSCode] Error processing state change:',
+                error,
+              );
+            }
+          };
+
+          contentChangeHandler.current = handleStateChange;
+          notebookModel.stateChanged.connect(handleStateChange);
+          connectedSignal = true;
+          console.log(
+            '[NotebookVSCode] Connected to stateChanged signal as fallback',
+          );
+
+          // Store initial content and check initial dirty state
+          try {
+            const initialData = notebookModel.toJSON();
+            const initialBytes = saveToBytes(initialData);
+            lastSavedContent.current = initialBytes;
+            console.log('[NotebookVSCode] Initial state:', {
+              contentSize: initialBytes.length,
+              isDirty: notebookModel.dirty,
+            });
+
+            // If notebook is already dirty on load, notify extension
+            if (notebookModel.dirty) {
+              console.log(
+                '[NotebookVSCode] Notebook is dirty on load, notifying extension',
+              );
+              messageHandler.postMessage({
+                type: 'notebook-content-changed',
+                body: { content: initialBytes },
+              });
+            }
+          } catch (error) {
+            console.error(
+              '[NotebookVSCode] Error storing initial content:',
+              error,
+            );
+          }
+        } else {
+          console.warn(
+            '[NotebookVSCode] Notebook model does not have stateChanged signal',
+          );
         }
+      } else if (isDatalayerNotebook) {
+        console.log(
+          '[NotebookVSCode] Skipping change tracking for Datalayer notebook',
+        );
       }
     },
-    [messageHandler],
+    [isDatalayerNotebook, messageHandler],
   );
+
+  // Handle messages from the extension for save operations
   useEffect(() => {
-    const disposable = messageHandler.registerCallback(handler);
-    // Signal to VS Code that the webview is initialized.
-    messageHandler.postMessage({ type: 'ready' });
-    return () => {
-      disposable.dispose();
-    };
-  }, [messageHandler, handler]);
-  const selectRuntime = useCallback(async () => {
-    const reply = await messageHandler.postRequest({ type: 'select-runtime' });
-    const { baseUrl, token } = reply.body ?? {};
-    setServiceManager(createServiceManager(baseUrl, token));
-  }, [messageHandler]);
-  return isLoading ? (
-    <Loader key="notebook-loader" />
-  ) : (
+    if (!isDatalayerNotebook) {
+      const handleMessage = (message: ExtensionMessage) => {
+        if (message.type === 'getFileData') {
+          console.log(
+            '[NotebookVSCode] Extension requested file data for save, requestId:',
+            message.requestId,
+          );
+          // Get the current notebook content
+          let bytes: Uint8Array;
+
+          if (currentNotebookModel.current) {
+            try {
+              const notebookData = currentNotebookModel.current.toJSON();
+              bytes = saveToBytes(notebookData);
+              console.log(
+                '[NotebookVSCode] Got current notebook data, size:',
+                bytes.length,
+              );
+            } catch (error) {
+              console.error(
+                '[NotebookVSCode] Error getting notebook data:',
+                error,
+              );
+              // Fallback to original nbformat
+              bytes = saveToBytes(nbformat);
+            }
+          } else {
+            // Fallback to original nbformat if model not available yet
+            console.log(
+              '[NotebookVSCode] No model available, using original nbformat',
+            );
+            bytes = saveToBytes(nbformat);
+          }
+
+          // Convert Uint8Array to regular array for message passing
+          const arrayData = Array.from(bytes);
+
+          // Send response with the requestId
+          messageHandler.postMessage({
+            type: 'response',
+            requestId: message.requestId,
+            body: arrayData,
+          });
+          console.log(
+            '[NotebookVSCode] Sent notebook data to extension, array length:',
+            arrayData.length,
+          );
+
+          // Mark the notebook as clean after save
+          if (
+            currentNotebookModel.current &&
+            currentNotebookModel.current.dirty
+          ) {
+            console.log(
+              '[NotebookVSCode] Marking notebook as clean after save',
+            );
+            currentNotebookModel.current.dirty = false;
+          }
+        } else if (message.type === 'saved') {
+          // Handle saved notification from extension
+          console.log('[NotebookVSCode] Notebook saved successfully');
+          if (
+            currentNotebookModel.current &&
+            currentNotebookModel.current.dirty
+          ) {
+            console.log(
+              '[NotebookVSCode] Marking notebook as clean after successful save',
+            );
+            currentNotebookModel.current.dirty = false;
+          }
+        }
+      };
+
+      const disposable = messageHandler.registerCallback(handleMessage);
+      return () => disposable.dispose();
+    }
+  }, [isDatalayerNotebook, messageHandler, nbformat]);
+
+  // Following the Notebook2Collaborative pattern
+  // For Datalayer notebooks: use collaboration only (no path prop)
+  // For local notebooks: use service manager with kernel support
+  console.log(
+    '[NotebookVSCodeInner] Render check - isInitialized:',
+    isInitialized,
+    'nbformat:',
+    nbformat,
+    'isDatalayerNotebook:',
+    isDatalayerNotebook,
+  );
+  if (!isInitialized || !nbformat) {
+    return (
+      <Box
+        style={{
+          height: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <div>Loading notebook...</div>
+      </Box>
+    );
+  }
+
+  const height = '100vh';
+  const cellSidebarMargin = 120;
+
+  // For Datalayer notebooks, render directly with the mock service manager
+  if (isDatalayerNotebook && serviceManager) {
+    return (
+      <Box
+        style={{ height, width: '100%', position: 'relative' }}
+        id="dla-Jupyter-Notebook"
+      >
+        <Box
+          className="dla-Box-Notebook"
+          sx={{
+            height,
+            width: '100%',
+            overflowY: 'hidden',
+            '& .datalayer-NotebookPanel-header': {
+              minHeight: '50px',
+            },
+            '& .jp-Notebook': {
+              flex: '1 1 auto !important',
+              height: '100%',
+            },
+            '& .jp-NotebookPanel': {
+              height: '100% !important',
+              width: '100% !important',
+            },
+            '& .jp-Toolbar': {
+              display: 'none',
+              zIndex: 0,
+            },
+            '& .jp-Toolbar .jp-HTMLSelect.jp-DefaultStyle select': {
+              fontSize: '14px',
+            },
+            '& .jp-Toolbar > .jp-Toolbar-responsive-opener': {
+              display: 'none',
+            },
+            '& .jp-Toolbar-kernelName': {
+              display: 'none',
+            },
+            '& .jp-Cell': {
+              width: `calc(100% - ${cellSidebarMargin}px)`,
+            },
+            '& .jp-Notebook-footer': {
+              width: `calc(100% - ${cellSidebarMargin + 82}px)`,
+            },
+            '& .jp-CodeMirrorEditor': {
+              cursor: 'text !important',
+            },
+            '.dla-Box-Notebook': {
+              position: 'relative',
+            },
+            '.dla-Jupyter-Notebook .dla-Notebook-Container': {
+              width: '100%',
+            },
+          }}
+        >
+          <Notebook2
+            nbformat={nbformat}
+            id={documentId!}
+            serviceManager={serviceManager}
+            collaborationProvider={collaborationProvider}
+            height={height}
+            onNotebookModelChanged={
+              !isDatalayerNotebook ? handleNotebookModelChanged : undefined
+            }
+          />
+        </Box>
+      </Box>
+    );
+  }
+
+  // For local notebooks, wrap in Jupyter provider to get the real service manager
+  return (
+    <Jupyter>
+      <LocalNotebook
+        nbformat={nbformat}
+        height={height}
+        cellSidebarMargin={cellSidebarMargin}
+        onNotebookModelChanged={handleNotebookModelChanged}
+      />
+    </Jupyter>
+  );
+}
+
+// Separate component for local notebooks that uses the Jupyter context
+function LocalNotebook({
+  nbformat,
+  height,
+  cellSidebarMargin,
+  onNotebookModelChanged,
+}: any) {
+  const { serviceManager } = useJupyter();
+
+  if (!serviceManager) {
+    return (
+      <Box style={{ padding: '20px' }}>Waiting for service manager...</Box>
+    );
+  }
+
+  return (
     <Box
       style={{ height, width: '100%', position: 'relative' }}
       id="dla-Jupyter-Notebook"
     >
-      <Box sx={{ display: 'flex' }}>
-        <Button
-          title="Select a runtime for the current notebook."
-          onClick={selectRuntime}
-        >
-          Select Runtime
-        </Button>
-      </Box>
       <Box
         className="dla-Box-Notebook"
         sx={{
           height,
-          maxHeight,
           width: '100%',
           overflowY: 'hidden',
           '& .datalayer-NotebookPanel-header': {
@@ -147,26 +499,142 @@ function NotebookVSCode(): JSX.Element {
           '.dla-Box-Notebook': {
             position: 'relative',
           },
+          '.dla-Jupyter-Notebook .dla-Notebook-Container': {
+            width: '100%',
+          },
         }}
       >
-        {model && (
-          <Notebook2Base
-            kernelId={kernelId}
-            model={model}
-            serviceManager={serviceManager}
-          />
-        )}
+        <Notebook2
+          nbformat={nbformat}
+          id="local-notebook"
+          serviceManager={serviceManager}
+          startDefaultKernel
+          height={height}
+          onNotebookModelChanged={onNotebookModelChanged}
+        />
       </Box>
     </Box>
   );
 }
 
-// Main function that gets executed once the webview DOM loads
-export function main() {
-  const root = createRoot(document.getElementById('notebook-editor')!);
-  root.render(
-    <JupyterReactTheme colormode="dark">
-      <NotebookVSCode />
-    </JupyterReactTheme>,
+// Main component that handles theming
+function NotebookVSCode(): JSX.Element {
+  const messageHandler = useContext(MessageHandlerContext);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [isInitialized, setIsInitialized] = useState(false);
+  const { setColormode } = useJupyterReactStore();
+
+  // Lift notebook-related state up to parent to prevent state loss
+  const [nbformat, setNbformat] = useState(undefined);
+  const [isDatalayerNotebook, setIsDatalayerNotebook] = useState(false);
+  const [documentId, setDocumentId] = useState<string | undefined>();
+  const [serverUrl, setServerUrl] = useState<string | undefined>();
+  const [token, setToken] = useState<string | undefined>();
+
+  // Signal ready immediately when component mounts
+  useEffect(() => {
+    messageHandler.postMessage({ type: 'ready' });
+  }, [messageHandler]);
+
+  // Handle all messages in the parent
+  useEffect(() => {
+    const handleMessage = (message: ExtensionMessage) => {
+      const { type, body } = message;
+      console.log('[NotebookVSCode] Parent received message:', type, body);
+
+      if (type === 'init') {
+        // Handle theme
+        if (body.theme) {
+          console.log('[NotebookVSCode] Setting initial theme:', body.theme);
+          setTheme(body.theme);
+          setColormode(body.theme);
+        }
+
+        // Handle notebook data
+        console.log('[NotebookVSCode] Processing init message');
+
+        if (body.isDatalayerNotebook) {
+          setIsDatalayerNotebook(true);
+        }
+
+        if (body.documentId) {
+          setDocumentId(body.documentId);
+          console.log('[NotebookVSCode] Got document ID:', body.documentId);
+        }
+
+        if (body.serverUrl) {
+          setServerUrl(body.serverUrl);
+          console.log('[NotebookVSCode] Got server URL:', body.serverUrl);
+        }
+
+        if (body.token) {
+          setToken(body.token);
+          console.log('[NotebookVSCode] Got authentication token');
+        }
+
+        if (body.untitled) {
+          console.log(
+            '[NotebookVSCode] Setting empty nbformat for untitled notebook',
+          );
+          setNbformat({} as any);
+        } else {
+          const loadedNbformat = loadFromBytes(body.value);
+          console.log('[NotebookVSCode] Loaded nbformat:', loadedNbformat);
+          setNbformat(loadedNbformat);
+        }
+
+        setIsInitialized(true);
+        console.log('[NotebookVSCode] Initialization complete');
+      } else if (type === 'theme-change' && body.theme) {
+        console.log(
+          '[NotebookVSCode] Theme changed from',
+          theme,
+          'to:',
+          body.theme,
+        );
+        setTheme(body.theme);
+        setColormode(body.theme);
+      }
+    };
+
+    const disposable = messageHandler.registerCallback(handleMessage);
+
+    return () => {
+      disposable.dispose();
+    };
+  }, [messageHandler, setColormode, theme]);
+
+  // Ensure store is synced with theme
+  useEffect(() => {
+    console.log('[NotebookVSCode] Setting store colormode to:', theme);
+    setColormode(theme);
+  }, [theme, setColormode]);
+
+  // Use a stable key that only changes when we need to force a full re-render
+  // This happens when the component is first initialized or when theme changes after initialization
+  const themeKey = isInitialized ? `initialized-${theme}` : 'loading';
+
+  return (
+    <JupyterReactTheme
+      key={themeKey}
+      colormode={theme}
+      loadJupyterLabCss={true}
+    >
+      <NotebookVSCodeInner
+        nbformat={nbformat}
+        isDatalayerNotebook={isDatalayerNotebook}
+        documentId={documentId}
+        serverUrl={serverUrl}
+        token={token}
+        isInitialized={isInitialized}
+      />
+    </JupyterReactTheme>
   );
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const root = createRoot(
+    document.getElementById('notebook-editor') ?? document.body,
+  );
+  root.render(<NotebookVSCode />);
+});
