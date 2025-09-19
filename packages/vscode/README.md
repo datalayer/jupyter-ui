@@ -33,21 +33,43 @@ The extension provides a tree view in the Explorer sidebar that displays all you
 - **Default Space**: Marks your default space with "(Default)" label
 - **Real-time Updates**: Refreshes when authentication state changes
 - **Error Handling**: Shows helpful messages when not authenticated or when spaces are empty
+- **Space Management**: Create new spaces directly from the tree view
+- **Document Creation**: Create notebooks and lexical documents within any space
+- **Item Management**: Rename and delete documents with API synchronization
 
 ### Tree Structure
 
 ```
-Datalayer (@username)
-├── My Library (Default)
+Datalayer (@username) [+]
+├── My Library (Default) [📓] [📄]
 │   ├── notebook1.ipynb
 │   ├── document1.lexical
 │   └── notebook2.ipynb
-├── Project Space
+├── Project Space [📓] [📄]
 │   ├── analysis.ipynb
 │   └── notes.lexical
-└── Shared Space
+└── Shared Space [📓] [📄]
     └── collaboration.ipynb
 ```
+
+**Legend:**
+
+- `[+]` - Create new space
+- `[📓]` - Create new notebook
+- `[📄]` - Create new lexical document
+
+### Context Menu Actions
+
+**For Documents:**
+
+- **Open** - Open the document in the editor
+- **Rename...** - Change the document name
+- **Delete** - Remove the document from the space
+
+**For Spaces:**
+
+- **New Datalayer Notebook...** - Create a new notebook in the space
+- **New Lexical Document...** - Create a new lexical document in the space
 
 ## Lexical Editor
 
@@ -98,7 +120,11 @@ The extension supports authentication with the Datalayer platform:
 - `Datalayer: Create new Datalayer Lexical Document` - Create a new lexical document
 - `Datalayer: Refresh Spaces` - Refresh the spaces tree view
 - `Datalayer: Open Document` - Open a document from the tree view (automatic on click)
-- `Datalayer: Create Notebook in Space` - Create a new notebook in a selected space
+- `Datalayer: New Datalayer Notebook...` - Create a new notebook in a selected space
+- `Datalayer: New Lexical Document...` - Create a new lexical document in a selected space
+- `Datalayer: Create New Space` - Create a new Datalayer space
+- `Datalayer: Rename...` - Rename a notebook or lexical document
+- `Datalayer: Delete` - Delete a notebook or lexical document
 
 ### Configuration
 

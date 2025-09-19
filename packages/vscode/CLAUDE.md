@@ -109,6 +109,10 @@ This design saves status bar space while using VS Code's warning colors to clear
 - `datalayer.refreshSpaces`: Refresh the Spaces tree view
 - `datalayer.openDocument`: Open a document from the Spaces tree
 - `datalayer.createNotebookInSpace`: Create a new notebook in a selected space
+- `datalayer.createLexicalInSpace`: Create a new lexical document in a selected space
+- `datalayer.createSpace`: Create a new Datalayer space
+- `datalayer.renameItem`: Rename a notebook or lexical document
+- `datalayer.deleteItem`: Delete a notebook or lexical document from a space
 
 ## Configuration
 
@@ -148,7 +152,16 @@ The extension includes a tree view in the Explorer sidebar that displays:
   - Lexical documents (`.lexical` files)
   - Exercises and other document types
 - Real-time sync with the Datalayer platform
-- Context menu actions for creating new notebooks
+- Context menu actions for managing spaces and documents
+
+### Tree View Features
+
+- **Create New Spaces**: Click the plus icon on the root "Datalayer" item
+- **Create Documents**: Click inline icons on spaces to create notebooks or lexical documents
+- **Context Menus**: Right-click items for actions:
+  - Documents: Open, Rename..., Delete
+  - Spaces: New Datalayer Notebook..., New Lexical Document...
+- **Automatic Refresh**: Tree updates automatically after create/rename/delete operations
 
 ## Lexical Editor Implementation
 
@@ -241,9 +254,19 @@ Important field mappings:
 
 ### API Endpoints Used
 
-- `/api/spacer/v1/spaces/users/me` - Get user's spaces
+#### Spacer API (Document Management)
+
+- `/api/spacer/v1/spaces/users/me` - Get user's spaces with items
+- `/api/spacer/v1/spaces` - Create new space
 - `/api/spacer/v1/spaces/{id}/items` - Get items in a space
-- `/api/spacer/v1/notebooks` - Create new notebooks
+- `/api/spacer/v1/spaces/items/{id}` - Delete an item from a space
+- `/api/spacer/v1/notebooks` - Create new notebooks (multipart/form-data)
+- `/api/spacer/v1/notebooks/{id}` - Update notebook metadata
+- `/api/spacer/v1/lexicals` - Create lexical documents (multipart/form-data)
+- `/api/spacer/v1/lexicals/{id}` - Update lexical document metadata
+
+#### Ceres API (Runtime Management)
+
 - `/api/ceres/v1/runtime/get` - Get list of user's runtimes
 - `/api/ceres/v1/runtime/get/{pod_name}` - Get specific runtime details
 - `/api/ceres/v1/runtime/create` - Create new runtime
@@ -319,3 +342,6 @@ npm run compile     # Build with webpack
 - **Error Handling**: Log errors with context for debugging, handle API wrapper responses
 - **Runtime Reuse**: Always check for existing runtimes before creating new ones
 - **Documentation**: Maintain JSDoc comments for all exported functions and classes
+- **API Content Types**: Use FormData for notebook/lexical creation, JSON for other endpoints
+- **Space Handles**: Generate from name using lowercase with hyphens: `name.toLowerCase().replace(/\s+/g, '-')`
+- **Tree Refresh**: Always refresh space after document operations to show changes immediately

@@ -284,13 +284,6 @@ export function activate(context: vscode.ExtensionContext): void {
 
                 // Set a better tab title after opening
                 // The tab will show the document name and space
-                const cleanName = docName.endsWith('.ipynb')
-                  ? docName
-                  : `${docName}.ipynb`;
-                const tabLabel = spaceName
-                  ? `${cleanName} (${spaceName})`
-                  : cleanName;
-
                 // Unfortunately VS Code doesn't allow changing tab labels directly
                 // The title will be based on the filename, but at least it won't have the UID
 
@@ -353,6 +346,81 @@ export function activate(context: vscode.ExtensionContext): void {
     ),
   );
 
+  // Create Space command
+  context.subscriptions.push(
+    vscode.commands.registerCommand('datalayer.createSpace', async () => {
+      try {
+        // Prompt for space name
+        const name = await vscode.window.showInputBox({
+          prompt: 'Enter space name',
+          placeHolder: 'My Space',
+          validateInput: value => {
+            if (!value || value.trim().length === 0) {
+              return 'Space name is required';
+            }
+            return null;
+          },
+        });
+
+        if (!name) {
+          return;
+        }
+
+        // Prompt for description (optional)
+        const description = await vscode.window.showInputBox({
+          prompt: 'Enter space description (optional)',
+          placeHolder: 'A brief description of the space',
+        });
+
+        // Ask if the space should be public
+        const visibility = await vscode.window.showQuickPick(
+          ['Private', 'Public'],
+          {
+            placeHolder: 'Select space visibility',
+            title: 'Space Visibility',
+          },
+        );
+
+        if (!visibility) {
+          return;
+        }
+
+        const isPublic = visibility === 'Public';
+
+        // Create the space
+        await vscode.window.withProgress(
+          {
+            location: vscode.ProgressLocation.Notification,
+            title: `Creating ${visibility.toLowerCase()} space "${name}"...`,
+            cancellable: false,
+          },
+          async () => {
+            const space = await spacerApiService.createSpace(
+              name,
+              description,
+              isPublic,
+            );
+
+            if (space) {
+              vscode.window.showInformationMessage(
+                `Successfully created ${visibility.toLowerCase()} space "${name}"`,
+              );
+              spacesTreeProvider.refresh();
+            } else {
+              throw new Error('Failed to create space');
+            }
+          },
+        );
+      } catch (error) {
+        console.error('[Datalayer] Error creating space:', error);
+        vscode.window.showErrorMessage(
+          `Failed to create space: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        );
+      }
+    }),
+  );
+
+  // Create Notebook in Space command
   context.subscriptions.push(
     vscode.commands.registerCommand(
       'datalayer.createNotebookInSpace',
@@ -388,7 +456,7 @@ export function activate(context: vscode.ExtensionContext): void {
           });
 
           // Create the notebook
-          vscode.window.withProgress(
+          await vscode.window.withProgress(
             {
               location: vscode.ProgressLocation.Notification,
               title: `Creating notebook "${name}" in space "${space.name_t}"...`,
@@ -415,6 +483,217 @@ export function activate(context: vscode.ExtensionContext): void {
           console.error('[Datalayer] Error creating notebook:', error);
           vscode.window.showErrorMessage(
             `Failed to create notebook: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          );
+        }
+      },
+    ),
+  );
+
+  // Create Lexical Document in Space command
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      'datalayer.createLexicalInSpace',
+      async spaceItem => {
+        try {
+          if (!spaceItem?.data?.space) {
+            vscode.window.showErrorMessage('Please select a space');
+            return;
+          }
+
+          const space = spaceItem.data.space;
+
+          // Prompt for document name
+          const name = await vscode.window.showInputBox({
+            prompt: 'Enter document name',
+            placeHolder: 'My Document',
+            validateInput: value => {
+              if (!value || value.trim().length === 0) {
+                return 'Document name is required';
+              }
+              return null;
+            },
+          });
+
+          if (!name) {
+            return;
+          }
+
+          // Prompt for description (optional)
+          const description = await vscode.window.showInputBox({
+            prompt: 'Enter document description (optional)',
+            placeHolder: 'A brief description of the document',
+          });
+
+          // Create the lexical document
+          await vscode.window.withProgress(
+            {
+              location: vscode.ProgressLocation.Notification,
+              title: `Creating lexical document "${name}" in space "${space.name_t}"...`,
+              cancellable: false,
+            },
+            async () => {
+              const document = await spacerApiService.createLexicalDocument(
+                space.uid,
+                name,
+                description,
+              );
+
+              if (document) {
+                vscode.window.showInformationMessage(
+                  `Successfully created lexical document "${name}"`,
+                );
+                spacesTreeProvider.refreshSpace(space.uid);
+              } else {
+                throw new Error('Failed to create lexical document');
+              }
+            },
+          );
+        } catch (error) {
+          console.error('[Datalayer] Error creating lexical document:', error);
+          vscode.window.showErrorMessage(
+            `Failed to create lexical document: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          );
+        }
+      },
+    ),
+  );
+
+  // Rename Item command
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      'datalayer.renameItem',
+      async (item: any) => {
+        try {
+          if (!item?.data?.document) {
+            vscode.window.showErrorMessage(
+              'Please select a document to rename',
+            );
+            return;
+          }
+
+          const document = item.data.document;
+          const currentName =
+            document.name_t ||
+            document.notebook_name_s ||
+            document.document_name_s ||
+            'Untitled';
+
+          // Prompt for new name
+          const newName = await vscode.window.showInputBox({
+            prompt: 'Enter new name',
+            value: currentName,
+            validateInput: value => {
+              if (!value || value.trim().length === 0) {
+                return 'Name is required';
+              }
+              return null;
+            },
+          });
+
+          if (!newName || newName === currentName) {
+            return;
+          }
+
+          // Determine item type
+          const isNotebook =
+            document.type_s === 'notebook' ||
+            document.notebook_extension_s === 'ipynb';
+          const itemType = isNotebook ? 'notebook' : 'document';
+
+          // Rename the item
+          await vscode.window.withProgress(
+            {
+              location: vscode.ProgressLocation.Notification,
+              title: `Renaming "${currentName}" to "${newName}"...`,
+              cancellable: false,
+            },
+            async () => {
+              // Pass the existing description or empty string
+              const existingDescription = document.description_t || '';
+              const success = await spacerApiService.updateItemName(
+                document.uid,
+                itemType,
+                newName,
+                existingDescription,
+              );
+
+              if (success) {
+                vscode.window.showInformationMessage(
+                  `Successfully renamed to "${newName}"`,
+                );
+                // Refresh the parent space
+                spacesTreeProvider.refresh();
+              } else {
+                throw new Error('Failed to rename item');
+              }
+            },
+          );
+        } catch (error) {
+          console.error('[Datalayer] Error renaming item:', error);
+          vscode.window.showErrorMessage(
+            `Failed to rename item: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          );
+        }
+      },
+    ),
+  );
+
+  // Delete Item command
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      'datalayer.deleteItem',
+      async (item: any) => {
+        try {
+          if (!item?.data?.document) {
+            vscode.window.showErrorMessage(
+              'Please select a document to delete',
+            );
+            return;
+          }
+
+          const document = item.data.document;
+          const itemName =
+            document.name_t ||
+            document.notebook_name_s ||
+            document.document_name_s ||
+            'Untitled';
+
+          // Confirm deletion
+          const confirmation = await vscode.window.showWarningMessage(
+            `Are you sure you want to delete "${itemName}"?`,
+            'Delete',
+            'Cancel',
+          );
+
+          if (confirmation !== 'Delete') {
+            return;
+          }
+
+          // Delete the item
+          await vscode.window.withProgress(
+            {
+              location: vscode.ProgressLocation.Notification,
+              title: `Deleting "${itemName}"...`,
+              cancellable: false,
+            },
+            async () => {
+              const success = await spacerApiService.deleteItem(document.uid);
+
+              if (success) {
+                vscode.window.showInformationMessage(
+                  `Successfully deleted "${itemName}"`,
+                );
+                // Refresh the tree
+                spacesTreeProvider.refresh();
+              } else {
+                throw new Error('Failed to delete item');
+              }
+            },
+          );
+        } catch (error) {
+          console.error('[Datalayer] Error deleting item:', error);
+          vscode.window.showErrorMessage(
+            `Failed to delete item: ${error instanceof Error ? error.message : 'Unknown error'}`,
           );
         }
       },

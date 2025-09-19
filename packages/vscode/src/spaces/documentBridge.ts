@@ -150,6 +150,16 @@ export class DocumentBridge {
         ? await this.apiService.getNotebookContent(document)
         : await this.apiService.getDocumentContent(document);
 
+      console.log('[DocumentBridge] Raw content fetched:', content);
+      console.log('[DocumentBridge] Content type:', typeof content);
+      if (typeof content === 'object') {
+        console.log('[DocumentBridge] Content keys:', Object.keys(content));
+        console.log(
+          '[DocumentBridge] Content stringified preview:',
+          JSON.stringify(content).substring(0, 500),
+        );
+      }
+
       // Write to local file
       if (typeof content === 'string') {
         fs.writeFileSync(localPath, content);

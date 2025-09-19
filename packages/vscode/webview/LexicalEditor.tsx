@@ -116,19 +116,27 @@ function LoadContentPlugin({ content }: { content?: string }) {
   const isFirstRender = useRef(true);
 
   useEffect(() => {
+    console.log('[InitialStatePlugin] Effect triggered');
+    console.log('[InitialStatePlugin] content:', content?.substring(0, 200));
+    console.log('[InitialStatePlugin] isFirstRender:', isFirstRender.current);
     if (content && isFirstRender.current) {
       isFirstRender.current = false;
       try {
         // First try to parse as JSON to validate format
         const parsed = JSON.parse(content);
+        console.log('[InitialStatePlugin] Parsed content:', parsed);
 
         // Check if it's a valid Lexical editor state
         if (parsed && typeof parsed === 'object' && parsed.root) {
           const editorState = editor.parseEditorState(content);
+          console.log(
+            '[InitialStatePlugin] Setting editor state from initial content',
+          );
           // Use setEditorState with skipHistoryPush option to avoid adding to undo stack
           editor.setEditorState(editorState, {
             tag: 'history-merge',
           });
+          console.log('[InitialStatePlugin] Editor state set successfully');
         } else {
           throw new Error('Invalid Lexical editor state format');
         }
@@ -181,6 +189,20 @@ export function LexicalEditor({
   editable = true,
   collaboration,
 }: LexicalEditorProps) {
+  // Debug logging to understand content flow
+  React.useEffect(() => {
+    console.log('[LexicalEditor] Component mounted/updated');
+    console.log('[LexicalEditor] Has initial content:', !!initialContent);
+    console.log(
+      '[LexicalEditor] Initial content preview:',
+      initialContent?.substring(0, 500),
+    );
+    console.log(
+      '[LexicalEditor] Collaboration enabled:',
+      collaboration?.enabled,
+    );
+    console.log('[LexicalEditor] Collaboration config:', collaboration);
+  }, [initialContent, collaboration]);
   const editorConfig = {
     namespace: 'VSCodeLexicalEditor',
     editable,

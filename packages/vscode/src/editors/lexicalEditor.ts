@@ -109,7 +109,17 @@ class LexicalDocument extends Disposable implements vscode.CustomDocument {
       if (metadata && metadata.localPath) {
         // Read directly from the local path
         if (fs.existsSync(metadata.localPath)) {
-          return new Uint8Array(fs.readFileSync(metadata.localPath));
+          const fileContent = fs.readFileSync(metadata.localPath);
+          console.log(
+            '[LexicalDocument] Reading file from:',
+            metadata.localPath,
+          );
+          console.log('[LexicalDocument] File size:', fileContent.length);
+          console.log(
+            '[LexicalDocument] File content preview:',
+            fileContent.toString('utf8').substring(0, 500),
+          );
+          return new Uint8Array(fileContent);
         }
       }
 
@@ -444,6 +454,15 @@ export class LexicalEditorProvider
       // Send full content even for collaborative documents
       // The LoroCollaborativePlugin needs initial content to establish baseline
       const contentArray = Array.from(document.documentData);
+
+      console.log('[LexicalEditor] Sending initial content to webview');
+      console.log('[LexicalEditor] Content length:', contentArray.length);
+      console.log(
+        '[LexicalEditor] Content as string:',
+        new TextDecoder()
+          .decode(new Uint8Array(contentArray))
+          .substring(0, 500),
+      );
 
       // Prepare collaboration configuration if this is a Datalayer document
       let collaborationConfig = undefined;

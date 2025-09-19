@@ -48,7 +48,9 @@ export class SpacesTreeProvider implements vscode.TreeDataProvider<SpaceItem> {
 
   refreshSpace(spaceId: string): void {
     console.log(`[SpacesTree] Refreshing space: ${spaceId}`);
+    // Clear both the items cache and spaces cache to ensure fresh data
     this.itemsCache.delete(spaceId);
+    this.spacesCache.clear(); // Clear spaces cache to get fresh items data
     this._onDidChangeTreeData.fire();
   }
 

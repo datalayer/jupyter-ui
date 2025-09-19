@@ -62,9 +62,31 @@
       },
       {
         "command": "datalayer.createNotebookInSpace",
-        "title": "Create Notebook in Space",
+        "title": "New Datalayer Notebook...",
+        "category": "Datalayer",
+        "icon": "$(notebook)"
+      },
+      {
+        "command": "datalayer.createLexicalInSpace",
+        "title": "New Lexical Document...",
+        "category": "Datalayer",
+        "icon": "$(file-text)"
+      },
+      {
+        "command": "datalayer.createSpace",
+        "title": "Create New Space",
         "category": "Datalayer",
         "icon": "$(add)"
+      },
+      {
+        "command": "datalayer.renameItem",
+        "title": "Rename...",
+        "category": "Datalayer"
+      },
+      {
+        "command": "datalayer.deleteItem",
+        "title": "Delete",
+        "category": "Datalayer"
       },
       {
         "command": "datalayer.showNotebookControllerStatus",
@@ -105,14 +127,54 @@
         {
           "command": "datalayer.refreshSpaces",
           "when": "view == datalayerSpaces",
-          "group": "navigation"
+          "group": "navigation@1"
+        },
+        {
+          "command": "datalayer.createSpace",
+          "when": "view == datalayerSpaces",
+          "group": "navigation@2"
         }
       ],
       "view/item/context": [
         {
+          "command": "datalayer.openDocument",
+          "when": "view == datalayerSpaces && (viewItem == notebook || viewItem == document)",
+          "group": "1_open"
+        },
+        {
+          "command": "datalayer.renameItem",
+          "when": "view == datalayerSpaces && (viewItem == notebook || viewItem == document)",
+          "group": "2_edit@1"
+        },
+        {
+          "command": "datalayer.deleteItem",
+          "when": "view == datalayerSpaces && (viewItem == notebook || viewItem == document)",
+          "group": "2_edit@2"
+        },
+        {
           "command": "datalayer.createNotebookInSpace",
           "when": "view == datalayerSpaces && viewItem == space",
+          "group": "1_create"
+        },
+        {
+          "command": "datalayer.createLexicalInSpace",
+          "when": "view == datalayerSpaces && viewItem == space",
+          "group": "1_create"
+        },
+        {
+          "command": "datalayer.createSpace",
+          "when": "view == datalayerSpaces && viewItem == root",
           "group": "inline"
+        },
+        {
+          "command": "datalayer.createNotebookInSpace",
+          "when": "view == datalayerSpaces && viewItem == space",
+          "group": "inline@1"
+        },
+        {
+          "command": "datalayer.createLexicalInSpace",
+          "when": "view == datalayerSpaces && viewItem == space",
+          "group": "inline@2"
         }
       ]
     },

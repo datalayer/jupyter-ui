@@ -61,10 +61,16 @@ export class SpacerApiService {
 
   private async fetchWithAuth(url: string, options?: any): Promise<Response> {
     try {
+      // Don't set Content-Type if body is FormData
+      const headers = { ...this.getAuthHeaders() };
+      if (options?.body instanceof FormData) {
+        delete headers['Content-Type']; // Let browser set it with boundary
+      }
+
       const response = await fetch(url, {
         ...options,
         headers: {
-          ...this.getAuthHeaders(),
+          ...headers,
           ...options?.headers,
         },
       });
@@ -440,19 +446,22 @@ export class SpacerApiService {
     notebookType: string = 'jupyter',
   ): Promise<Document | undefined> {
     const serverUrl = this.authService.getServerUrl();
+    // Using the notebooks endpoint with spaceId parameter
     const url = `${serverUrl}/api/spacer/v1/notebooks`;
 
     console.log('[SpacerAPI] Creating notebook at:', url);
 
     try {
+      // Create FormData for multipart/form-data request
+      const formData = new FormData();
+      formData.append('spaceId', spaceId); // Changed from space_uid to spaceId
+      formData.append('name', name);
+      formData.append('notebookType', 'jupyter'); // Required field - type of notebook
+      formData.append('description', description || ''); // Required field - can be empty
+
       const response = await this.fetchWithAuth(url, {
         method: 'POST',
-        body: JSON.stringify({
-          spaceId,
-          name,
-          description: description || '',
-          notebookType,
-        }),
+        body: formData,
       });
 
       if (!response.ok) {
@@ -465,16 +474,211 @@ export class SpacerApiService {
         throw new Error(`Failed to create notebook: ${response.status}`);
       }
 
-      const data = (await response.json()) as NotebookResponse;
+      const data = (await response.json()) as any;
       console.log('[SpacerAPI] Create notebook response:', data);
 
-      if (!data.success) {
+      if (data.success === false) {
         throw new Error(data.message || 'Failed to create notebook');
       }
 
-      return data.data;
+      return data.notebook || data.data || data;
     } catch (error) {
       console.error('[SpacerAPI] Error creating notebook:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Create a new space
+   */
+  async createSpace(
+    name: string,
+    description?: string,
+    isPublic: boolean = false,
+  ): Promise<Space | undefined> {
+    const serverUrl = this.authService.getServerUrl();
+    const url = `${serverUrl}/api/spacer/v1/spaces`;
+
+    console.log('[SpacerAPI] Creating space at:', url);
+
+    // Generate a handle from the name (lowercase with spaces as hyphens)
+    const spaceHandle = name.toLowerCase().replace(/\s+/g, '-');
+
+    try {
+      // Spaces endpoint expects application/json
+      const response = await this.fetchWithAuth(url, {
+        method: 'POST',
+        body: JSON.stringify({
+          name: name,
+          spaceHandle: spaceHandle,
+          description: description || '',
+          public: isPublic,
+          variant: 'standard', // Required field - typically 'standard' for user-created spaces
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(
+          '[SpacerAPI] Failed to create space:',
+          response.status,
+          errorText,
+        );
+        throw new Error(`Failed to create space: ${response.status}`);
+      }
+
+      const data = (await response.json()) as any;
+      console.log('[SpacerAPI] Create space response:', data);
+
+      if (data.success === false) {
+        throw new Error(data.message || 'Failed to create space');
+      }
+
+      return data.space || data.data || data;
+    } catch (error) {
+      console.error('[SpacerAPI] Error creating space:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Create a new lexical document in a space
+   */
+  async createLexicalDocument(
+    spaceId: string,
+    name: string,
+    description?: string,
+  ): Promise<Document | undefined> {
+    const serverUrl = this.authService.getServerUrl();
+    // Using the lexicals endpoint
+    const url = `${serverUrl}/api/spacer/v1/lexicals`;
+
+    console.log('[SpacerAPI] Creating lexical document at:', url);
+
+    try {
+      // Create FormData for multipart/form-data request
+      const formData = new FormData();
+      formData.append('spaceId', spaceId); // Changed from space_uid to spaceId
+      formData.append('name', name);
+      formData.append('documentType', 'lexical'); // Required field for lexical documents
+      formData.append('description', description || ''); // Required field - can be empty
+
+      const response = await this.fetchWithAuth(url, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(
+          '[SpacerAPI] Failed to create lexical document:',
+          response.status,
+          errorText,
+        );
+        throw new Error(
+          `Failed to create lexical document: ${response.status}`,
+        );
+      }
+
+      const data = (await response.json()) as any;
+      console.log('[SpacerAPI] Create lexical document response:', data);
+
+      if (data.success === false) {
+        throw new Error(data.message || 'Failed to create lexical document');
+      }
+
+      return data.lexical || data.document || data.data || data;
+    } catch (error) {
+      console.error('[SpacerAPI] Error creating lexical document:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Update an item's name
+   */
+  async updateItemName(
+    itemId: string,
+    itemType: 'notebook' | 'document',
+    newName: string,
+    description?: string,
+  ): Promise<boolean> {
+    const serverUrl = this.authService.getServerUrl();
+    // Use 'notebooks' for notebooks and 'lexicals' for lexical documents
+    const endpoint = itemType === 'notebook' ? 'notebooks' : 'lexicals';
+    const url = `${serverUrl}/api/spacer/v1/${endpoint}/${itemId}`;
+
+    console.log('[SpacerAPI] Updating item name at:', url);
+
+    try {
+      // Use PUT method for updates
+      const response = await this.fetchWithAuth(url, {
+        method: 'PUT',
+        body: JSON.stringify({
+          name: newName,
+          description: description || '', // API requires description field
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(
+          '[SpacerAPI] Failed to update item name:',
+          response.status,
+          errorText,
+        );
+        throw new Error(`Failed to update item name: ${response.status}`);
+      }
+
+      const data = (await response.json()) as any;
+      console.log('[SpacerAPI] Update item name response:', data);
+
+      return data.success !== false;
+    } catch (error) {
+      console.error('[SpacerAPI] Error updating item name:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Delete an item from a space
+   */
+  async deleteItem(itemId: string): Promise<boolean> {
+    const serverUrl = this.authService.getServerUrl();
+    // Use the spaces/items endpoint for deleting items
+    const url = `${serverUrl}/api/spacer/v1/spaces/items/${itemId}`;
+
+    console.log('[SpacerAPI] Deleting item at:', url);
+
+    try {
+      const response = await this.fetchWithAuth(url, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(
+          '[SpacerAPI] Failed to delete item:',
+          response.status,
+          errorText,
+        );
+        throw new Error(`Failed to delete item: ${response.status}`);
+      }
+
+      // DELETE might return empty response
+      if (
+        response.headers.get('content-length') === '0' ||
+        response.status === 204
+      ) {
+        return true;
+      }
+
+      const data = (await response.json()) as any;
+      console.log('[SpacerAPI] Delete item response:', data);
+
+      return data.success !== false;
+    } catch (error) {
+      console.error('[SpacerAPI] Error deleting item:', error);
       throw error;
     }
   }
