@@ -4,6 +4,12 @@
  * MIT License
  */
 
+/**
+ * @module utils
+ * @description Utility functions for the webview application.
+ * Provides helper functions for notebook data manipulation.
+ */
+
 export function loadFromBytes(raw: Uint8Array): any {
   const rawContent = new TextDecoder().decode(raw);
   const parsed = JSON.parse(rawContent);
@@ -18,6 +24,11 @@ export function loadFromBytes(raw: Uint8Array): any {
     }
   }
   return parsed;
+}
+
+export function saveToBytes(notebook: any): Uint8Array {
+  const stringData = JSON.stringify(notebook, null, 2);
+  return new TextEncoder().encode(stringData);
 }
 
 /**

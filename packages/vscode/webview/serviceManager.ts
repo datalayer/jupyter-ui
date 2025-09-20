@@ -5,6 +5,13 @@
  */
 
 /**
+ * @module serviceManager
+ * @description Service manager for Jupyter kernel communication.
+ * Creates a fake JupyterLab service manager that proxies requests through postMessage.
+ * Implements WebSocket proxying for real-time kernel communication.
+ */
+
+/**
  * Fake JupyterLab service manager that proxy the requests and websockets
  * through postMessage
  *
@@ -56,13 +63,13 @@ export function createServiceManager(
   return new ServiceManager({
     serverSettings: {
       ...refSettings,
-      appendToken: true,
+      appendToken: !!token,
       baseUrl,
       appUrl: '',
       fetch: fetch,
       init: {
         cache: 'no-store',
-        // credentials: 'same-origin',
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
       } as any,
       token,
       WebSocket: WebSocket as any,

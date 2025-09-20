@@ -4,6 +4,12 @@
  * MIT License
  */
 
+/**
+ * @module messageHandler
+ * @description Message handling service for webview-extension communication.
+ * Manages bidirectional message passing between the webview and VS Code extension.
+ */
+
 import { PromiseDelegate } from '@lumino/coreutils';
 import { createContext } from 'react';
 
@@ -35,6 +41,10 @@ export type ExtensionMessage = {
    * it is the client ID.
    */
   id?: string;
+  /**
+   * Request ID for matching responses to requests.
+   */
+  requestId?: string;
 };
 
 /**
@@ -58,6 +68,12 @@ export class MessageHandler {
    * @param message Message to send
    */
   postMessage(message: ExtensionMessage) {
+    console.log('[MessageHandler] Sending message to extension:', {
+      type: message.type,
+      hasBody: !!message.body,
+      bodyKeys: message.body ? Object.keys(message.body) : undefined,
+      id: message.id,
+    });
     vscode.postMessage(message);
   }
 
