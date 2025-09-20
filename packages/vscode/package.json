@@ -275,6 +275,9 @@
     "doc:markdown": "typedoc --plugin typedoc-plugin-markdown --out docs-markdown"
   },
   "dependencies": {
+    "@codemirror/language": "^6.11.3",
+    "@codemirror/state": "^6.5.2",
+    "@codemirror/view": "^6.38.2",
     "@datalayer/core": "^0.0.10",
     "@datalayer/jupyter-react": "^1.0.7",
     "@datalayer/lexical-loro": "^0.0.7",
@@ -289,6 +292,7 @@
     "@lexical/rich-text": "^0.33.1",
     "@lexical/selection": "^0.33.1",
     "@lexical/utils": "^0.33.1",
+    "@lezer/highlight": "^1.2.1",
     "@lumino/coreutils": "^2.1.1",
     "@lumino/disposable": "^2.1.1",
     "@lumino/signaling": "^2.1.1",

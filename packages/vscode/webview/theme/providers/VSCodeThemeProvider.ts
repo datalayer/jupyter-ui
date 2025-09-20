@@ -71,6 +71,9 @@ export class VSCodeThemeProvider extends BaseThemeProvider {
     const allVSCodeVars = [
       '--vscode-editor-background',
       '--vscode-editor-foreground',
+      '--vscode-editorCodeLens-foreground',
+      '--vscode-editorLineNumber-foreground',
+      '--vscode-editorLineNumber-activeForeground',
       '--vscode-editorWidget-background',
       '--vscode-editorWidget-foreground',
       '--vscode-editorWidget-border',
@@ -144,6 +147,55 @@ export class VSCodeThemeProvider extends BaseThemeProvider {
       '--vscode-notificationsErrorIcon-foreground',
       '--vscode-notificationsWarningIcon-foreground',
       '--vscode-notificationsInfoIcon-foreground',
+      // TextMate token colors for syntax highlighting
+      '--vscode-textmate-keyword-foreground',
+      '--vscode-textmate-string-foreground',
+      '--vscode-textmate-comment-foreground',
+      '--vscode-textmate-function-foreground',
+      '--vscode-textmate-variable-foreground',
+      '--vscode-textmate-constant-foreground',
+      '--vscode-textmate-type-foreground',
+      '--vscode-textmate-class-foreground',
+      '--vscode-textmate-number-foreground',
+      '--vscode-textmate-regexp-foreground',
+      '--vscode-textmate-operator-foreground',
+      // Token colors used by VS Code
+      '--vscode-editor-foreground',
+      '--vscode-editor-selectionForeground',
+      '--vscode-editor-inactiveSelectionForeground',
+      '--vscode-editor-findMatchForeground',
+      '--vscode-editor-findRangeHighlightForeground',
+      '--vscode-editor-hoverHighlightForeground',
+      '--vscode-editor-lineHighlightForeground',
+      '--vscode-editor-rangeHighlightForeground',
+      '--vscode-editor-symbolHighlightForeground',
+      '--vscode-editor-wordHighlightForeground',
+      '--vscode-editor-wordHighlightStrongForeground',
+      '--vscode-editorBracketMatch-foreground',
+      '--vscode-editorCodeLens-foreground',
+      '--vscode-editorLink-activeForeground',
+      '--vscode-editorWhitespace-foreground',
+      // Notebook specific colors
+      '--vscode-notebook-cellBorderColor',
+      '--vscode-notebook-cellInsertionIndicator',
+      '--vscode-notebook-cellStatusBarItemHoverBackground',
+      '--vscode-notebook-cellToolbarSeparator',
+      '--vscode-notebook-cellHoverBackground',
+      '--vscode-notebook-selectedCellBackground',
+      '--vscode-notebook-selectedCellBorder',
+      '--vscode-notebook-focusedEditorBorder',
+      '--vscode-notebook-inactiveFocusedCellBorder',
+      '--vscode-notebook-inactiveSelectedCellBorder',
+      '--vscode-notebook-outputContainerBackgroundColor',
+      '--vscode-notebook-outputContainerBorderColor',
+      '--vscode-notebook-cellEditorBackground',
+      '--vscode-notebook-editorBackground',
+      // Additional VS Code variables that might be used for cell borders
+      '--vscode-notebook-focusedCellBorder',
+      '--vscode-notebook-cellBorderColorFocused',
+      '--vscode-notebookScrollbarSlider-activeBackground',
+      '--vscode-notebookScrollbarSlider-background',
+      '--vscode-notebookScrollbarSlider-hoverBackground',
     ];
 
     allVSCodeVars.forEach(varName => {
@@ -214,7 +266,10 @@ export class VSCodeThemeProvider extends BaseThemeProvider {
     console.log('[VSCodeThemeProvider] Force refresh triggered');
     this.detectVSCodeColors();
     this.detectColorModeChange();
-    this.notifyListeners();
+    // Force syntax color extraction after a delay to ensure Monaco has loaded
+    setTimeout(() => {
+      this.notifyListeners();
+    }, 100);
   }
 
   /**
@@ -274,6 +329,103 @@ export class VSCodeThemeProvider extends BaseThemeProvider {
     return null;
   }
 
+  /**
+   * Lighten or darken a color by a percentage
+   */
+  private lightenDarkenColor(color: string, amount: number): string {
+    const rgb = this.parseColor(color);
+    if (!rgb) return color;
+
+    // Adjust each component
+    const adjust = (value: number) => {
+      if (amount > 0) {
+        // Lighten
+        return Math.min(255, value + (255 - value) * (amount / 100));
+      } else {
+        // Darken
+        return Math.max(0, value + value * (amount / 100));
+      }
+    };
+
+    const r = Math.round(adjust(rgb.r));
+    const g = Math.round(adjust(rgb.g));
+    const b = Math.round(adjust(rgb.b));
+
+    // Return as hex
+    const toHex = (n: number) => n.toString(16).padStart(2, '0');
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+  }
+
+  /**
+   * Extract syntax highlighting colors from VS Code theme
+   * Uses VS Code's actual syntax colors when available, falls back to defaults
+   */
+  private extractSyntaxColors(): Map<string, string> {
+    const syntaxColors = new Map<string, string>();
+    const isDark = this._colorMode === 'dark';
+
+    // Try to extract actual syntax colors from VS Code CSS variables
+    // These are theme-specific and will work with ANY VS Code theme
+    const tokenColorMappings = [
+      { key: 'keyword', vscodeVar: '--vscode-textmate-keyword-foreground' },
+      { key: 'string', vscodeVar: '--vscode-textmate-string-foreground' },
+      { key: 'comment', vscodeVar: '--vscode-textmate-comment-foreground' },
+      { key: 'function', vscodeVar: '--vscode-textmate-function-foreground' },
+      { key: 'number', vscodeVar: '--vscode-textmate-number-foreground' },
+      { key: 'variable', vscodeVar: '--vscode-textmate-variable-foreground' },
+      { key: 'type', vscodeVar: '--vscode-textmate-type-foreground' },
+      { key: 'class', vscodeVar: '--vscode-textmate-class-foreground' },
+      { key: 'constant', vscodeVar: '--vscode-textmate-constant-foreground' },
+      { key: 'operator', vscodeVar: '--vscode-textmate-operator-foreground' },
+    ];
+
+    // Extract colors from VS Code variables
+    tokenColorMappings.forEach(({ key, vscodeVar }) => {
+      const color = this._vscodeColors.get(vscodeVar);
+      if (color) {
+        syntaxColors.set(key, color);
+      }
+    });
+
+    // Provide sensible defaults for any missing colors
+    const defaults = isDark
+      ? {
+          keyword: '#C586C0',
+          string: '#CE9178',
+          comment: '#6A9955',
+          function: '#DCDCAA',
+          number: '#B5CEA8',
+          variable: '#9CDCFE',
+          type: '#4EC9B0',
+          class: '#4EC9B0',
+          constant: '#569CD6',
+          operator: '#D4D4D4',
+          default: '#D4D4D4',
+        }
+      : {
+          keyword: '#0000FF',
+          string: '#A31515',
+          comment: '#008000',
+          function: '#795E26',
+          number: '#098658',
+          variable: '#001080',
+          type: '#267F99',
+          class: '#267F99',
+          constant: '#0070C1',
+          operator: '#000000',
+          default: '#000000',
+        };
+
+    // Apply defaults for any missing colors
+    Object.entries(defaults).forEach(([key, value]) => {
+      if (!syntaxColors.has(key)) {
+        syntaxColors.set(key, value);
+      }
+    });
+
+    console.log('[VSCodeThemeProvider] Extracted syntax colors:', syntaxColors);
+    return syntaxColors;
+  }
   /**
    * Get VS Code color or fallback
    */
@@ -418,6 +570,10 @@ export class VSCodeThemeProvider extends BaseThemeProvider {
     variables['--jp-border-color1'] = colors['border.default'] || '';
     variables['--jp-border-color2'] = colors['border.muted'] || '';
 
+    // IMPORTANT: Also set the base CodeMirror colors
+    variables['--jp-content-font-color1'] =
+      colors['editor.foreground'] || colors['text.primary'] || '';
+
     // Typography
     variables['--jp-ui-font-family'] = this.getVSCodeColor(
       '--vscode-editor-font-family',
@@ -432,7 +588,495 @@ export class VSCodeThemeProvider extends BaseThemeProvider {
       '13px',
     );
 
+    // Extract syntax highlighting colors from VS Code
+    const syntaxColors = this.extractSyntaxColors();
+
+    // CodeMirror specific colors - map them correctly to VS Code's syntax highlighting
+    // The mapping is critical for matching VS Code's appearance
+
+    // Keywords (import, def, class, if, for, etc.) - usually purple in dark themes
+    variables['--jp-mirror-editor-keyword-color'] =
+      syntaxColors.get('keyword') ||
+      (this._colorMode === 'dark' ? '#C586C0' : '#0000FF');
+
+    // Strings - usually orange/brown in dark themes
+    variables['--jp-mirror-editor-string-color'] =
+      syntaxColors.get('string') ||
+      (this._colorMode === 'dark' ? '#CE9178' : '#A31515');
+
+    // String 2 (template strings, regex)
+    variables['--jp-mirror-editor-string-2-color'] =
+      syntaxColors.get('string.regexp') ||
+      syntaxColors.get('string') ||
+      (this._colorMode === 'dark' ? '#D16969' : '#811F3F');
+
+    // Comments - usually green in dark themes
+    variables['--jp-mirror-editor-comment-color'] =
+      syntaxColors.get('comment') ||
+      (this._colorMode === 'dark' ? '#6A9955' : '#008000');
+
+    // Numbers - usually light green in dark themes
+    variables['--jp-mirror-editor-number-color'] =
+      syntaxColors.get('number') ||
+      (this._colorMode === 'dark' ? '#B5CEA8' : '#098658');
+
+    // Functions and methods (print, node, system) - usually yellow in dark themes
+    variables['--jp-mirror-editor-def-color'] =
+      syntaxColors.get('function') ||
+      (this._colorMode === 'dark' ? '#DCDCAA' : '#795E26');
+
+    // Variables and identifiers
+    variables['--jp-mirror-editor-variable-color'] =
+      syntaxColors.get('variable') ||
+      (this._colorMode === 'dark' ? '#9CDCFE' : '#001080');
+
+    // Variable 2 (special variables, this, self)
+    variables['--jp-mirror-editor-variable-2-color'] =
+      syntaxColors.get('variable') ||
+      (this._colorMode === 'dark' ? '#9CDCFE' : '#001080');
+
+    // Variable 3 (types, classes when used as types)
+    variables['--jp-mirror-editor-variable-3-color'] =
+      syntaxColors.get('type') ||
+      syntaxColors.get('class') ||
+      (this._colorMode === 'dark' ? '#4EC9B0' : '#267F99');
+
+    // Operators
+    variables['--jp-mirror-editor-operator-color'] =
+      syntaxColors.get('operator') ||
+      colors['editor.foreground'] ||
+      (this._colorMode === 'dark' ? '#D4D4D4' : '#000000');
+
+    // Builtins (True, False, None, built-in functions)
+    variables['--jp-mirror-editor-builtin-color'] =
+      syntaxColors.get('constant') ||
+      (this._colorMode === 'dark' ? '#569CD6' : '#0000FF');
+
+    // Atoms (booleans, null, undefined)
+    variables['--jp-mirror-editor-atom-color'] =
+      syntaxColors.get('constant') ||
+      (this._colorMode === 'dark' ? '#569CD6' : '#0070C1');
+
+    // Meta (decorators, annotations)
+    variables['--jp-mirror-editor-meta-color'] =
+      syntaxColors.get('namespace') ||
+      (this._colorMode === 'dark' ? '#C586C0' : '#795E26');
+
+    // Qualifiers (module names in imports)
+    variables['--jp-mirror-editor-qualifier-color'] =
+      syntaxColors.get('namespace') ||
+      syntaxColors.get('type') ||
+      (this._colorMode === 'dark' ? '#4EC9B0' : '#267F99');
+
+    // Tags (HTML/XML tags)
+    variables['--jp-mirror-editor-tag-color'] =
+      syntaxColors.get('function') ||
+      (this._colorMode === 'dark' ? '#569CD6' : '#800000');
+
+    // Attributes (HTML attributes, object properties)
+    variables['--jp-mirror-editor-attribute-color'] =
+      syntaxColors.get('member') ||
+      syntaxColors.get('variable') ||
+      (this._colorMode === 'dark' ? '#9CDCFE' : '#001080');
+
+    // Properties (object properties, methods)
+    variables['--jp-mirror-editor-property-color'] =
+      syntaxColors.get('member') ||
+      syntaxColors.get('function') ||
+      (this._colorMode === 'dark' ? '#DCDCAA' : '#795E26');
+
+    // Headers (markdown headers)
+    variables['--jp-mirror-editor-header-color'] =
+      syntaxColors.get('macro') ||
+      (this._colorMode === 'dark' ? '#569CD6' : '#0000FF');
+
+    // Quotes (blockquotes)
+    variables['--jp-mirror-editor-quote-color'] =
+      syntaxColors.get('string') ||
+      (this._colorMode === 'dark' ? '#CE9178' : '#098658');
+
+    // Links
+    variables['--jp-mirror-editor-link-color'] =
+      colors['text.link'] ||
+      (this._colorMode === 'dark' ? '#61AFEF' : '#0366D6');
+
+    // Errors
+    variables['--jp-mirror-editor-error-color'] =
+      colors['status.error'] ||
+      (this._colorMode === 'dark' ? '#F44747' : '#CD3131');
+
+    // Horizontal rules
+    variables['--jp-mirror-editor-hr-color'] =
+      colors['border.default'] ||
+      (this._colorMode === 'dark' ? '#555555' : '#999999');
+
+    // Brackets
+    variables['--jp-mirror-editor-bracket-color'] =
+      syntaxColors.get('operator') ||
+      colors['editor.foreground'] ||
+      (this._colorMode === 'dark' ? '#FFD700' : '#000000');
+
+    // Additional critical editor colors
+    variables['--jp-cell-editor-background'] =
+      colors['editor.background'] || '#ffffff';
+    variables['--jp-cell-editor-border-color'] =
+      colors['border.default'] || '#e0e0e0';
+    variables['--jp-cell-editor-active-background'] = this.getVSCodeColor(
+      '--vscode-editor-lineHighlightBackground',
+      '#f0f0f0',
+    );
+
+    // Code cell specific
+    variables['--jp-code-font-color'] =
+      colors['editor.foreground'] || colors['text.primary'] || '#000000';
+    variables['--jp-code-cursor-color'] = colors['editor.cursor'] || '#000000';
+
+    // Notebook cell styling - match VS Code notebook appearance
+    const notebookBg = this.getVSCodeColor(
+      '--vscode-notebook-editorBackground',
+      colors['background.primary'] || '#ffffff',
+    );
+    const cellBg = this.getVSCodeColor(
+      '--vscode-notebook-cellEditorBackground',
+      colors['editor.background'] || '#ffffff',
+    );
+
+    // Extract the actual notebook border colors from VS Code
+    // VS Code uses the focusedEditorBorder for active cells, which often matches the theme accent color
+    let cellBorder = this.getVSCodeColor(
+      '--vscode-notebook-cellBorderColor',
+      '',
+    );
+    const focusedCellBorder = this.getVSCodeColor(
+      '--vscode-notebook-focusedEditorBorder',
+      this.getVSCodeColor(
+        '--vscode-focusBorder',
+        colors['interactive.focus'] || '#0366d6',
+      ),
+    );
+
+    // For the red theme, the border should be red - use the focused border as the main border
+    if (!cellBorder || cellBorder === 'transparent' || cellBorder === '') {
+      // Try to get the focus border color which usually matches the theme
+      cellBorder = this.getVSCodeColor(
+        '--vscode-notebook-focusedCellBorder',
+        '',
+      );
+      if (!cellBorder || cellBorder === 'transparent' || cellBorder === '') {
+        // Use the focus border as the cell border for themed appearance
+        cellBorder = focusedCellBorder;
+      }
+    }
+
+    const selectedCellBg = this.getVSCodeColor(
+      '--vscode-notebook-selectedCellBackground',
+      'rgba(0, 0, 0, 0.04)',
+    );
+    const cellHoverBg = this.getVSCodeColor(
+      '--vscode-notebook-cellHoverBackground',
+      'rgba(0, 0, 0, 0.02)',
+    );
+    const inactiveCellBorder = this.getVSCodeColor(
+      '--vscode-notebook-inactiveSelectedCellBorder',
+      cellBorder,
+    );
+
+    // Apply notebook-specific colors
+    variables['--jp-notebook-background'] = notebookBg;
+    variables['--jp-layout-color0'] = notebookBg; // Main background
+
+    // Cell backgrounds - VS Code uses the editor background for cells
+    variables['--jp-cell-background'] = cellBg;
+    variables['--jp-layout-color1'] = cellBg; // Cell background
+
+    // Make cells blend better with the background
+    if (this._colorMode === 'dark') {
+      // Dark theme adjustments
+      variables['--jp-cell-editor-background'] = this.getVSCodeColor(
+        '--vscode-notebook-cellEditorBackground',
+        this.getVSCodeColor('--vscode-editor-background', '#1e1e1e'),
+      );
+      variables['--jp-layout-color2'] = this.lightenDarkenColor(notebookBg, 10); // Slightly lighter
+      variables['--jp-layout-color3'] = this.lightenDarkenColor(notebookBg, 20); // Even lighter
+    } else {
+      // Light theme adjustments
+      variables['--jp-cell-editor-background'] = this.getVSCodeColor(
+        '--vscode-notebook-cellEditorBackground',
+        this.getVSCodeColor('--vscode-editor-background', '#ffffff'),
+      );
+      variables['--jp-layout-color2'] = this.lightenDarkenColor(notebookBg, -5); // Slightly darker
+      variables['--jp-layout-color3'] = this.lightenDarkenColor(
+        notebookBg,
+        -10,
+      ); // Even darker
+    }
+
+    // Border colors - make them very subtle like VS Code
+    variables['--jp-cell-border-color'] = cellBorder;
+    variables['--jp-border-color0'] = cellBorder;
+    variables['--jp-border-color1'] = cellBorder;
+    variables['--jp-border-color2'] = 'transparent'; // Even more subtle
+    variables['--jp-border-color3'] = 'transparent'; // Most subtle
+
+    // Cell states
+    variables['--jp-cell-selected-background'] = selectedCellBg;
+    variables['--jp-cell-focused-border-color'] = focusedCellBorder;
+    variables['--jp-notebook-multiselected-color'] = selectedCellBg;
+
+    // Cell prompt area - make it match VS Code style
+    variables['--jp-cell-prompt-width'] = '64px';
+    variables['--jp-cell-prompt-font-family'] =
+      variables['--jp-code-font-family'] || 'monospace';
+    variables['--jp-cell-prompt-letter-spacing'] = '0px';
+    variables['--jp-cell-prompt-opacity'] = '0.5';
+    variables['--jp-cell-prompt-not-active-opacity'] = '0.3';
+
+    // Input/output area styling
+    variables['--jp-input-area-background'] = cellBg;
+    variables['--jp-input-area-border-color'] = 'transparent';
+    variables['--jp-input-active-background'] = cellBg;
+    variables['--jp-input-hover-background'] = cellHoverBg;
+    variables['--jp-input-active-border-color'] = focusedCellBorder;
+
+    // Output area colors
+    variables['--jp-output-area-background'] = this.getVSCodeColor(
+      '--vscode-notebook-outputContainerBackgroundColor',
+      colors['background.primary'] || '#ffffff',
+    );
+
+    // Cell collapse button and other interactive elements - use theme accent color
+    const accentColor = this.getVSCodeColor(
+      '--vscode-button-background',
+      this.getVSCodeColor(
+        '--vscode-focusBorder',
+        colors['interactive.focus'] || '#0366d6',
+      ),
+    );
+
+    // For Monokai, use the characteristic yellow/green color for buttons
+    const isMonokai =
+      colors['editor.background'] === '#272822' ||
+      this.getVSCodeColor('--vscode-editor-background', '') === '#272822';
+    const buttonColor = isMonokai ? '#A6E22E' : accentColor;
+
+    variables['--jp-brand-color0'] = buttonColor;
+    variables['--jp-brand-color1'] = buttonColor;
+    variables['--jp-brand-color2'] = this.lightenDarkenColor(buttonColor, 10);
+    variables['--jp-brand-color3'] = this.lightenDarkenColor(buttonColor, 20);
+    variables['--jp-brand-color4'] = this.lightenDarkenColor(buttonColor, 30);
+
+    // Inverse brand colors (for text on brand background)
+    variables['--jp-inverse-layout-color0'] =
+      this._colorMode === 'dark' ? '#ffffff' : '#000000';
+    variables['--jp-inverse-layout-color1'] =
+      this._colorMode === 'dark' ? '#ffffff' : '#000000';
+    variables['--jp-inverse-layout-color2'] =
+      this._colorMode === 'dark' ? '#ffffff' : '#000000';
+    variables['--jp-inverse-layout-color3'] =
+      this._colorMode === 'dark' ? '#ffffff' : '#000000';
+    variables['--jp-inverse-layout-color4'] =
+      this._colorMode === 'dark' ? '#ffffff' : '#000000';
+
+    // Accent colors for UI elements
+    variables['--jp-accent-color0'] = buttonColor;
+    variables['--jp-accent-color1'] = buttonColor;
+    variables['--jp-accent-color2'] = this.lightenDarkenColor(buttonColor, 10);
+    variables['--jp-accent-color3'] = this.lightenDarkenColor(buttonColor, 20);
+
+    // Ensure button styles follow theme
+    variables['--jp-ui-button-color'] = buttonColor;
+    variables['--jp-ui-button-hover-color'] = this.lightenDarkenColor(
+      buttonColor,
+      10,
+    );
+
     return variables;
+  }
+
+  /**
+   * Generate CodeMirror-specific CSS for syntax highlighting
+   */
+  public getCodeMirrorCSS(): string {
+    const syntaxColors = this.extractSyntaxColors();
+    const isDark = this._colorMode === 'dark';
+
+    // Build CSS rules for CodeMirror classes
+    const rules: string[] = [];
+
+    // Get theme colors - check if it's Monokai
+    const editorBg = this.getVSCodeColor('--vscode-editor-background', '');
+    const isMonokai = editorBg === '#272822' || editorBg === 'rgb(39, 40, 34)';
+
+    // Monokai specific colors
+    const monokaiColors = {
+      keyword: '#F92672', // Pink/Red
+      string: '#E6DB74', // Yellow
+      comment: '#75715E', // Gray
+      function: '#A6E22E', // Green
+      number: '#AE81FF', // Purple
+      variable: '#F8F8F2', // White
+      type: '#66D9EF', // Cyan
+      constant: '#AE81FF', // Purple
+      operator: '#F92672', // Pink
+    };
+
+    // Default colors for dark theme (VS Code Dark+)
+    const darkDefaults = {
+      keyword: '#C586C0',
+      string: '#CE9178',
+      comment: '#6A9955',
+      function: '#DCDCAA',
+      number: '#B5CEA8',
+      variable: '#9CDCFE',
+      type: '#4EC9B0',
+      constant: '#569CD6',
+      operator: '#D4D4D4',
+    };
+
+    // Default colors for light theme
+    const lightDefaults = {
+      keyword: '#0000FF',
+      string: '#A31515',
+      comment: '#008000',
+      function: '#795E26',
+      number: '#098658',
+      variable: '#001080',
+      type: '#267F99',
+      constant: '#0070C1',
+      operator: '#000000',
+    };
+
+    // Choose defaults based on theme
+    const defaults = isMonokai
+      ? monokaiColors
+      : isDark
+        ? darkDefaults
+        : lightDefaults;
+
+    // First, ensure base text color is set
+    const baseTextColor = this.getVSCodeColor(
+      '--vscode-editor-foreground',
+      isDark ? '#F8F8F2' : '#000000',
+    );
+
+    // Set base CodeMirror text color
+    rules.push(`.CodeMirror { color: ${baseTextColor} !important; }`);
+    rules.push(`.CodeMirror-line { color: ${baseTextColor} !important; }`);
+    rules.push(`.CodeMirror pre { color: ${baseTextColor} !important; }`);
+    rules.push(`.CodeMirror-code { color: ${baseTextColor} !important; }`);
+
+    // CodeMirror token classes mapping with more specific selectors
+    rules.push(
+      `.CodeMirror .cm-keyword { color: ${syntaxColors.get('keyword') || defaults.keyword} !important; }`,
+    );
+    rules.push(
+      `.CodeMirror .cm-string { color: ${syntaxColors.get('string') || defaults.string} !important; }`,
+    );
+    rules.push(
+      `.CodeMirror .cm-comment { color: ${syntaxColors.get('comment') || defaults.comment} !important; }`,
+    );
+    rules.push(
+      `.CodeMirror .cm-def { color: ${syntaxColors.get('function') || defaults.function} !important; }`,
+    );
+    rules.push(
+      `.CodeMirror .cm-number { color: ${syntaxColors.get('number') || defaults.number} !important; }`,
+    );
+    rules.push(
+      `.CodeMirror .cm-variable { color: ${syntaxColors.get('variable') || defaults.variable} !important; }`,
+    );
+    rules.push(
+      `.CodeMirror .cm-variable-2 { color: ${syntaxColors.get('variable') || defaults.variable} !important; }`,
+    );
+    rules.push(
+      `.CodeMirror .cm-variable-3 { color: ${syntaxColors.get('type') || defaults.type} !important; }`,
+    );
+    rules.push(
+      `.CodeMirror .cm-type { color: ${syntaxColors.get('type') || defaults.type} !important; }`,
+    );
+    rules.push(
+      `.CodeMirror .cm-builtin { color: ${syntaxColors.get('constant') || defaults.constant} !important; }`,
+    );
+    rules.push(
+      `.CodeMirror .cm-atom { color: ${syntaxColors.get('constant') || defaults.constant} !important; }`,
+    );
+    rules.push(
+      `.CodeMirror .cm-operator { color: ${syntaxColors.get('operator') || defaults.operator} !important; }`,
+    );
+    rules.push(
+      `.CodeMirror .cm-property { color: ${syntaxColors.get('member') || syntaxColors.get('function') || defaults.function} !important; }`,
+    );
+    rules.push(
+      `.CodeMirror .cm-meta { color: ${syntaxColors.get('namespace') || defaults.keyword} !important; }`,
+    );
+    rules.push(
+      `.CodeMirror .cm-qualifier { color: ${syntaxColors.get('namespace') || defaults.type} !important; }`,
+    );
+    rules.push(
+      `.CodeMirror .cm-tag { color: ${syntaxColors.get('function') || defaults.function} !important; }`,
+    );
+    rules.push(
+      `.CodeMirror .cm-attribute { color: ${syntaxColors.get('variable') || defaults.variable} !important; }`,
+    );
+
+    // Python specific with Jupyter theme
+    rules.push(
+      `.cm-s-jupyter .CodeMirror-line { color: ${baseTextColor} !important; }`,
+    );
+    rules.push(
+      `.cm-s-jupyter .cm-keyword { color: ${syntaxColors.get('keyword') || defaults.keyword} !important; }`,
+    );
+    rules.push(
+      `.cm-s-jupyter .cm-string { color: ${syntaxColors.get('string') || defaults.string} !important; }`,
+    );
+    rules.push(
+      `.cm-s-jupyter .cm-comment { color: ${syntaxColors.get('comment') || defaults.comment} !important; }`,
+    );
+    rules.push(
+      `.cm-s-jupyter .cm-def { color: ${syntaxColors.get('function') || defaults.function} !important; }`,
+    );
+    rules.push(
+      `.cm-s-jupyter .cm-number { color: ${syntaxColors.get('number') || defaults.number} !important; }`,
+    );
+    rules.push(
+      `.cm-s-jupyter .cm-variable { color: ${syntaxColors.get('variable') || defaults.variable} !important; }`,
+    );
+    rules.push(
+      `.cm-s-jupyter .cm-builtin { color: ${syntaxColors.get('constant') || defaults.constant} !important; }`,
+    );
+    rules.push(
+      `.cm-s-jupyter .cm-operator { color: ${syntaxColors.get('operator') || defaults.operator} !important; }`,
+    );
+    rules.push(
+      `.cm-s-jupyter .cm-variable-2 { color: ${syntaxColors.get('variable') || defaults.variable} !important; }`,
+    );
+    rules.push(
+      `.cm-s-jupyter .cm-variable-3 { color: ${syntaxColors.get('type') || defaults.type} !important; }`,
+    );
+    rules.push(
+      `.cm-s-jupyter .cm-property { color: ${syntaxColors.get('member') || syntaxColors.get('function') || defaults.function} !important; }`,
+    );
+
+    // Ensure text in spans is visible
+    rules.push(`.CodeMirror span { color: inherit !important; }`);
+    rules.push(
+      `.CodeMirror pre.CodeMirror-line > span { color: inherit !important; }`,
+    );
+
+    // Fix for when no syntax class is applied
+    rules.push(
+      `.CodeMirror .CodeMirror-line > span:not([class*="cm-"]) { color: ${baseTextColor} !important; }`,
+    );
+
+    console.log(
+      '[VSCodeThemeProvider] Generated CodeMirror CSS with base color:',
+      baseTextColor,
+    );
+    console.log(
+      '[VSCodeThemeProvider] Using theme defaults:',
+      isMonokai ? 'Monokai' : isDark ? 'Dark+' : 'Light',
+    );
+
+    return rules.join('\n');
   }
 
   /**

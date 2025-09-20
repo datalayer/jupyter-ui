@@ -28,6 +28,7 @@ import {
 } from '../types';
 import { VSCodeThemeProvider } from '../providers/VSCodeThemeProvider';
 import { UniversalColorMapper } from '../mapping/UniversalColorMapper';
+import { CodeMirrorThemeInjector } from './CodeMirrorThemeInjector';
 
 /**
  * Theme context for accessing theme state
@@ -88,15 +89,17 @@ interface IEnhancedJupyterReactThemeProps {
 }
 
 /**
- * CSS variable injector component
+ * CSS variable and style injector component
  */
 function CSSVariableInjector({
   variables,
+  provider,
 }: {
   variables: Record<string, string>;
+  provider: IThemeProvider | null;
 }) {
   useEffect(() => {
-    // Create or update style element
+    // Create or update style element for variables
     let styleEl = document.getElementById(
       'enhanced-theme-variables',
     ) as HTMLStyleElement;
@@ -115,14 +118,24 @@ function CSSVariableInjector({
       })
       .join('\n  ');
 
-    styleEl.textContent = `:root {\n  ${cssContent}\n}`;
+    let fullCSS = `:root {\n  ${cssContent}\n}`;
+
+    // Add CodeMirror-specific CSS if provider supports it
+    if (provider && 'getCodeMirrorCSS' in provider) {
+      const codeMirrorCSS = (provider as any).getCodeMirrorCSS();
+      if (codeMirrorCSS) {
+        fullCSS += `\n\n/* CodeMirror Syntax Highlighting */\n${codeMirrorCSS}`;
+      }
+    }
+
+    styleEl.textContent = fullCSS;
 
     return () => {
       if (styleEl && styleEl.parentNode) {
         styleEl.parentNode.removeChild(styleEl);
       }
     };
-  }, [variables]);
+  }, [variables, provider]);
 
   return null;
 }
@@ -266,7 +279,13 @@ export function EnhancedJupyterReactTheme({
   return (
     <ThemeContext.Provider value={contextValue}>
       {injectCSSVariables && Object.keys(cssVariables).length > 0 && (
-        <CSSVariableInjector variables={cssVariables} />
+        <>
+          <CSSVariableInjector
+            variables={cssVariables}
+            provider={themeProvider}
+          />
+          <CodeMirrorThemeInjector provider={themeProvider} />
+        </>
       )}
       <JupyterReactTheme
         colormode={colorMode === 'dark' ? 'dark' : 'light'}

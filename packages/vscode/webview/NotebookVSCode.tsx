@@ -328,6 +328,53 @@ function NotebookVSCodeInner({
     }
   }, [isDatalayerNotebook, messageHandler, nbformat]);
 
+  // Set up ResizeObserver for the notebook
+  React.useEffect(() => {
+    let resizeObserver: ResizeObserver | null = null;
+    let retryCount = 0;
+    const maxRetries = 10;
+
+    const setupNotebookResize = () => {
+      const notebookElement = document.querySelector('.jp-Notebook');
+      const notebookPanel = document.querySelector('.jp-NotebookPanel');
+
+      if (notebookElement || notebookPanel) {
+        resizeObserver = new ResizeObserver(() => {
+          // Force a window resize event which JupyterLab components listen to
+          window.dispatchEvent(new Event('resize'));
+
+          // Also dispatch to the specific elements
+          if (notebookElement) {
+            notebookElement.dispatchEvent(new Event('resize'));
+          }
+          if (notebookPanel) {
+            notebookPanel.dispatchEvent(new Event('resize'));
+          }
+        });
+
+        if (notebookPanel && notebookPanel.parentElement) {
+          resizeObserver.observe(notebookPanel.parentElement);
+        } else if (notebookElement && notebookElement.parentElement) {
+          resizeObserver.observe(notebookElement.parentElement);
+        }
+      } else if (retryCount < maxRetries) {
+        // Retry if elements not found yet
+        retryCount++;
+        setTimeout(setupNotebookResize, 200);
+      }
+    };
+
+    // Start setup after a delay
+    const timeoutId = setTimeout(setupNotebookResize, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+    };
+  }, []);
+
   // Following the Notebook2Collaborative pattern
   // For Datalayer notebooks: use collaboration only (no path prop)
   // For local notebooks: use service manager with kernel support
@@ -361,7 +408,12 @@ function NotebookVSCodeInner({
   if (isDatalayerNotebook && serviceManager) {
     return (
       <Box
-        style={{ height, width: '100%', position: 'relative' }}
+        style={{
+          height,
+          width: '100%',
+          position: 'relative',
+          backgroundColor: 'transparent',
+        }}
         id="dla-Jupyter-Notebook"
       >
         <Box
@@ -370,16 +422,35 @@ function NotebookVSCodeInner({
             height,
             width: '100%',
             overflowY: 'hidden',
+            fontSize: 'var(--vscode-editor-font-size, 13px)',
+            fontFamily:
+              'var(--vscode-editor-font-family, "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace)',
             '& .datalayer-NotebookPanel-header': {
               minHeight: '50px',
             },
             '& .jp-Notebook': {
               flex: '1 1 auto !important',
               height: '100%',
+              fontSize: 'var(--vscode-editor-font-size, 13px)',
             },
             '& .jp-NotebookPanel': {
               height: '100% !important',
               width: '100% !important',
+            },
+            '& .jp-Cell': {
+              fontSize: 'var(--vscode-editor-font-size, 13px)',
+            },
+            '& .jp-InputArea-editor': {
+              fontSize: 'var(--vscode-editor-font-size, 13px)',
+            },
+            '& .jp-OutputArea': {
+              fontSize: 'var(--vscode-editor-font-size, 13px)',
+            },
+            '& .CodeMirror': {
+              fontSize: 'var(--vscode-editor-font-size, 13px) !important',
+            },
+            '& .cm-editor': {
+              fontSize: 'var(--vscode-editor-font-size, 13px) !important',
             },
             '& .jp-Toolbar': {
               display: 'none',
@@ -448,6 +519,53 @@ function LocalNotebook({
 }: any) {
   const { serviceManager } = useJupyter();
 
+  // Set up ResizeObserver specifically for this notebook
+  React.useEffect(() => {
+    let resizeObserver: ResizeObserver | null = null;
+    let retryCount = 0;
+    const maxRetries = 10;
+
+    const setupNotebookResize = () => {
+      const notebookElement = document.querySelector('.jp-Notebook');
+      const notebookPanel = document.querySelector('.jp-NotebookPanel');
+
+      if (notebookElement || notebookPanel) {
+        resizeObserver = new ResizeObserver(() => {
+          // Force a window resize event which JupyterLab components listen to
+          window.dispatchEvent(new Event('resize'));
+
+          // Also dispatch to the specific elements
+          if (notebookElement) {
+            notebookElement.dispatchEvent(new Event('resize'));
+          }
+          if (notebookPanel) {
+            notebookPanel.dispatchEvent(new Event('resize'));
+          }
+        });
+
+        if (notebookPanel && notebookPanel.parentElement) {
+          resizeObserver.observe(notebookPanel.parentElement);
+        } else if (notebookElement && notebookElement.parentElement) {
+          resizeObserver.observe(notebookElement.parentElement);
+        }
+      } else if (retryCount < maxRetries) {
+        // Retry if elements not found yet
+        retryCount++;
+        setTimeout(setupNotebookResize, 200);
+      }
+    };
+
+    // Start setup after a delay
+    const timeoutId = setTimeout(setupNotebookResize, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+    };
+  }, []);
+
   if (!serviceManager) {
     return (
       <Box style={{ padding: '20px' }}>Waiting for service manager...</Box>
@@ -456,7 +574,12 @@ function LocalNotebook({
 
   return (
     <Box
-      style={{ height, width: '100%', position: 'relative' }}
+      style={{
+        height,
+        width: '100%',
+        position: 'relative',
+        backgroundColor: 'transparent',
+      }}
       id="dla-Jupyter-Notebook"
     >
       <Box
@@ -465,16 +588,35 @@ function LocalNotebook({
           height,
           width: '100%',
           overflowY: 'hidden',
+          fontSize: 'var(--vscode-editor-font-size, 13px)',
+          fontFamily:
+            'var(--vscode-editor-font-family, "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace)',
           '& .datalayer-NotebookPanel-header': {
             minHeight: '50px',
           },
           '& .jp-Notebook': {
             flex: '1 1 auto !important',
             height: '100%',
+            fontSize: 'var(--vscode-editor-font-size, 13px)',
           },
           '& .jp-NotebookPanel': {
             height: '100% !important',
             width: '100% !important',
+          },
+          '& .jp-Cell': {
+            fontSize: 'var(--vscode-editor-font-size, 13px)',
+          },
+          '& .jp-InputArea-editor': {
+            fontSize: 'var(--vscode-editor-font-size, 13px)',
+          },
+          '& .jp-OutputArea': {
+            fontSize: 'var(--vscode-editor-font-size, 13px)',
+          },
+          '& .CodeMirror': {
+            fontSize: 'var(--vscode-editor-font-size, 13px) !important',
+          },
+          '& .cm-editor': {
+            fontSize: 'var(--vscode-editor-font-size, 13px) !important',
           },
           '& .jp-Toolbar': {
             display: 'none',
@@ -537,6 +679,20 @@ function NotebookVSCodeWithJupyter(): JSX.Element {
   useEffect(() => {
     messageHandler.postMessage({ type: 'ready' });
   }, [messageHandler]);
+
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      // Just dispatch resize event which JupyterLab components listen to
+      window.dispatchEvent(new Event('resize'));
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   // Handle all messages in the parent
   useEffect(() => {
@@ -615,23 +771,57 @@ function NotebookVSCodeWithJupyter(): JSX.Element {
     setColormode(theme);
   }, [theme, setColormode]);
 
+  // Get VS Code background color for consistent background
+  const vscodeBackground = React.useMemo(() => {
+    const bg =
+      getComputedStyle(document.documentElement).getPropertyValue(
+        '--vscode-editor-background',
+      ) ||
+      document.documentElement.style.getPropertyValue(
+        '--vscode-editor-background',
+      ) ||
+      (theme === 'dark' ? '#1e1e1e' : '#ffffff');
+    return bg;
+  }, [theme]);
+
+  // Apply background to body element as well
+  React.useEffect(() => {
+    document.body.style.backgroundColor = vscodeBackground;
+    document.body.style.margin = '0';
+    document.body.style.padding = '0';
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.backgroundColor = '';
+    };
+  }, [vscodeBackground]);
+
   // Use the enhanced theme system for VS Code theme support
   return (
-    <EnhancedJupyterReactTheme
-      provider="vscode"
-      colorMode={theme === 'dark' ? 'dark' : 'light'}
-      loadJupyterLabCss={true}
-      injectCSSVariables={true}
+    <div
+      style={{
+        width: '100%',
+        height: '100vh',
+        backgroundColor: vscodeBackground,
+        overflow: 'hidden',
+        position: 'relative',
+      }}
     >
-      <NotebookVSCodeInner
-        nbformat={nbformat}
-        isDatalayerNotebook={isDatalayerNotebook}
-        documentId={documentId}
-        serverUrl={serverUrl}
-        token={token}
-        isInitialized={isInitialized}
-      />
-    </EnhancedJupyterReactTheme>
+      <EnhancedJupyterReactTheme
+        provider="vscode"
+        colorMode={theme === 'dark' ? 'dark' : 'light'}
+        loadJupyterLabCss={true}
+        injectCSSVariables={true}
+      >
+        <NotebookVSCodeInner
+          nbformat={nbformat}
+          isDatalayerNotebook={isDatalayerNotebook}
+          documentId={documentId}
+          serverUrl={serverUrl}
+          token={token}
+          isInitialized={isInitialized}
+        />
+      </EnhancedJupyterReactTheme>
+    </div>
   );
 }
 
