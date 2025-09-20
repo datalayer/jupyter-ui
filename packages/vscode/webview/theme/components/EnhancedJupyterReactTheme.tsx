@@ -90,6 +90,13 @@ interface IEnhancedJupyterReactThemeProps {
 
 /**
  * CSS variable and style injector component
+ *
+ * @description Injects CSS variables and VS Code theme fixes into the document head.
+ * For VS Code themes, automatically applies background color fixes to prevent black
+ * background gaps in the notebook interface.
+ *
+ * @param variables - CSS variables to inject as :root styles
+ * @param provider - Theme provider instance for additional CSS generation
  */
 function CSSVariableInjector({
   variables,
@@ -119,6 +126,35 @@ function CSSVariableInjector({
       .join('\n  ');
 
     let fullCSS = `:root {\n  ${cssContent}\n}`;
+
+    // Force root elements to use VS Code editor background
+    // This fixes black background gaps that appear between VS Code interface and notebook
+    if (provider && provider.id === 'vscode-theme') {
+      const vscodeColors = (provider as any)._vscodeColors as Map<
+        string,
+        string
+      >;
+      const editorBg =
+        vscodeColors.get('--vscode-editor-background') ||
+        variables['--theme-editor-background'] ||
+        '#1e1e1e';
+
+      // Use VS Code notebook cell background for CodeMirror editors (darker than main editor)
+      const cellBg =
+        vscodeColors.get('--vscode-notebook-cellEditorBackground') ||
+        vscodeColors.get('--vscode-editor-background') ||
+        variables['--theme-editor-background'] ||
+        '#1e1e1e';
+
+      fullCSS += `\n\n/* VS Code Root Background Fix - Eliminates black background gaps */\n`;
+      fullCSS += `html, body, #notebook-editor { background-color: ${editorBg} !important; }\n`;
+      fullCSS += `/* Fix Primer BaseStyles dark backgrounds that don't inherit VS Code theme */\n`;
+      fullCSS += `.prc-src-BaseStyles-dl-St { background-color: ${editorBg} !important; }\n`;
+      fullCSS += `/* Fix JupyterLab elements to match VS Code editor background */\n`;
+      fullCSS += `.jp-Notebook, .jp-WindowedPanel { background-color: ${editorBg} !important; }\n`;
+      fullCSS += `/* Use VS Code notebook cell background for CodeMirror editors */\n`;
+      fullCSS += `.jp-CodeMirrorEditor, .cm-editor, .cm-content, .cm-focused { background-color: ${cellBg} !important; }\n`;
+    }
 
     // Add CodeMirror-specific CSS if provider supports it
     if (provider && 'getCodeMirrorCSS' in provider) {

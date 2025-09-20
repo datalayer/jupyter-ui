@@ -89,6 +89,8 @@ export class NotebookAdapter {
   private _tracker?: NotebookTracker;
   private _url?: string;
 
+  private _useVSCodeTheme: boolean;
+
   constructor(props: INotebookProps) {
     console.log('Creating a new Notebook Adapter.');
 
@@ -103,6 +105,7 @@ export class NotebookAdapter {
     this._serverless = props.serverless;
     this._serviceManager = props.serviceManager!;
     this._url = props.url;
+    this._useVSCodeTheme = props.useVSCodeTheme ?? true; // Default to true for backwards compatibility
 
     this._kernelTransfer = props.kernelTransfer;
     this._onSessionConnection = props.onSessionConnection;
@@ -489,6 +492,10 @@ export class NotebookAdapter {
     const themes = new EditorThemeRegistry();
     for (const theme of EditorThemeRegistry.getDefaultThemes()) {
       themes.addTheme(theme);
+    }
+    // Store useVSCodeTheme flag on window for the patch to access
+    if (typeof window !== 'undefined') {
+      (window as any).__useVSCodeTheme = this._useVSCodeTheme;
     }
     const editorExtensions = () => {
       const registry = new EditorExtensionRegistry();

@@ -107,23 +107,16 @@ export function CodeMirrorThemeInjector({
       };
 
       console.log(
-        '[CodeMirrorThemeInjector] Applying theme with colors:',
+        '[CodeMirrorThemeInjector] Prepared theme colors:',
         themeColors,
       );
 
-      // Apply the theme to all CodeMirror editors
-      applyVSCodeThemeToEditors(themeColors, isDark);
+      // We don't need to apply the theme dynamically anymore
+      // The CSS injection from VSCodeThemeProvider.getCodeMirrorCSS() handles it
     };
 
-    // Apply theme immediately
+    // Apply theme once
     applyTheme();
-
-    // Re-apply periodically to catch dynamically created editors
-    const interval = setInterval(applyTheme, 1000);
-
-    return () => {
-      clearInterval(interval);
-    };
   }, [provider]);
 
   return null;

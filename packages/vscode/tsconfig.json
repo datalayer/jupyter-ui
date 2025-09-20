@@ -4,7 +4,8 @@
     "jsx": "react",
     "jsxFactory": "vscpp",
     "jsxFragmentFactory": "vscppf",
-    "module": "Node16",
+    "module": "ESNext",
+    "moduleResolution": "node",
     "strictNullChecks": true,
     "types": ["node", "mocha"],
     "skipLibCheck": true

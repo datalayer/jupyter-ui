@@ -177,6 +177,11 @@ export function applyVSCodeThemeToEditors(
   // Find all CodeMirror instances
   const editors = document.querySelectorAll('.cm-editor');
 
+  if (editors.length === 0) {
+    // No editors found yet, they might not be rendered
+    return;
+  }
+
   editors.forEach(editorElement => {
     // Try to access the CodeMirror view instance
     // CodeMirror 6 stores the view instance on the DOM element
@@ -199,9 +204,8 @@ export function applyVSCodeThemeToEditors(
         console.error('[CodeMirror Theme] Failed to apply theme:', error);
       }
     } else {
-      console.warn(
-        '[CodeMirror Theme] Could not find CodeMirror view instance on element',
-      );
+      // Don't log warnings for elements that might not be initialized yet
+      // This is normal during initial render
     }
   });
 }

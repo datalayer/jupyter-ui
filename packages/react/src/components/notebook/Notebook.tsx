@@ -74,6 +74,7 @@ export type INotebookProps = {
   serviceManager?: ServiceManager.IManager;
   startDefaultKernel?: boolean;
   url?: string;
+  useVSCodeTheme?: boolean; // Enable VS Code theme integration when available
   /**
    * The Kernel Id to use, as defined in the Kernel API.
    */

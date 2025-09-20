@@ -543,6 +543,20 @@ export class NotebookEditorProvider
       vscode.Uri.joinPath(this._context.extensionUri, 'dist', 'webview.js'),
     );
 
+    // Get the codicon font file from node_modules
+    const codiconFontUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this._context.extensionUri,
+        '..',
+        '..',
+        'node_modules',
+        '@vscode',
+        'codicons',
+        'dist',
+        'codicon.ttf',
+      ),
+    );
+
     // Use a nonce to whitelist which scripts can be run
     const nonce = getNonce();
 
@@ -564,10 +578,78 @@ export class NotebookEditorProvider
           <title>Datalayer Notebook</title>
 
           <!--
-            Workaround for injected typestyle 
+            Workaround for injected typestyle
             Xref: https://github.com/typestyle/typestyle/pull/267#issuecomment-390408796
           -->
           <style id="typestyle-stylesheet" nonce="${nonce}"></style>
+
+          <!-- Custom styles for animated icons and codicons -->
+          <style nonce="${nonce}">
+            /* Load the codicon font */
+            @font-face {
+              font-family: 'codicon';
+              src: url('${codiconFontUri}') format('truetype');
+              font-weight: normal;
+              font-style: normal;
+            }
+
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+
+            .codicon-modifier-spin {
+              animation: spin 1s linear infinite;
+            }
+
+            /* Use VS Code's built-in codicons */
+            .codicon {
+              font-family: 'codicon';
+              display: inline-block;
+              font-style: normal;
+              font-weight: normal;
+              text-decoration: none;
+              text-rendering: auto;
+              text-align: center;
+              -webkit-font-smoothing: antialiased;
+              -moz-osx-font-smoothing: grayscale;
+              user-select: none;
+              -webkit-user-select: none;
+            }
+
+            /* Icon definitions */
+            .codicon-run:before { content: '\\eb9d' }
+            .codicon-run-above:before { content: '\\ec06' }
+            .codicon-run-below:before { content: '\\ec07' }
+            .codicon-add:before { content: '\\ea60' }
+            .codicon-clear-all:before { content: '\\ebaa' }
+            .codicon-debug-restart:before { content: '\\ebb0' }
+            .codicon-debug-stop:before { content: '\\ead5' }
+            .codicon-circle-filled:before { content: '\\ea71' }
+            .codicon-loading:before { content: '\\eb19' }
+            .codicon-circle-slash:before { content: '\\eabd' }
+            .codicon-circle-outline:before { content: '\\eabc' }
+            .codicon-chevron-down:before { content: '\\eab4' }
+
+            /* Fix body and html background */
+            html, body {
+              margin: 0;
+              padding: 0;
+              height: 100%;
+              width: 100%;
+              background-color: var(--vscode-editor-background);
+              overflow: hidden;
+            }
+
+            /* Ensure notebook container fills the viewport */
+            #notebook-editor {
+              height: 100vh;
+              width: 100vw;
+              background-color: var(--vscode-editor-background);
+              margin: 0;
+              padding: 0;
+            }
+          </style>
 
           <meta property="csp-nonce" content="${nonce}" />
 

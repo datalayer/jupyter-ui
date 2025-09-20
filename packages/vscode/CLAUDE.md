@@ -4,6 +4,28 @@
 
 This is a VS Code extension that provides a custom Jupyter Notebook editor with integrated Datalayer platform authentication and a Spaces tree view for managing cloud documents. It uses the `@datalayer/jupyter-react` component library and supports both local Jupyter servers and the Datalayer cloud platform.
 
+## Recent Fixes (September 2025)
+
+### ✅ VS Code Theme Integration & Black Background Fix
+
+- **Fixed**: Codicon icons now render properly in notebook toolbar (resolved font loading from `@vscode/codicons`)
+- **Fixed**: CodeMirror syntax highlighting now matches VS Code themes exactly using CodeMirror 6 API
+- **Fixed**: Eliminated black background gaps between toolbar and notebook cells via enhanced theme provider
+- **Implementation**: Enhanced theme provider automatically injects CSS overrides for seamless VS Code integration
+
+### ✅ Post-Build Patching System for Syntax Highlighting
+
+- **Added**: `packages/react/scripts/patch-vscode-highlighting.js` - injects VS Code syntax highlighting into compiled NotebookAdapter
+- **Added**: `useVSCodeTheme` flag in NotebookAdapter for controlling theme integration
+- **Result**: Perfect syntax color matching with VS Code's active theme using Lezer parser tags
+
+### ✅ Enhanced Theme Provider Architecture
+
+- **Enhanced**: `webview/theme/` system with modular VS Code provider
+- **Enhanced**: `VSCodeThemeProvider` with comprehensive color extraction and CSS variable mapping
+- **Enhanced**: Automatic background color fixes for HTML, body, Primer BaseStyles, and JupyterLab elements
+- **Key Fix**: Theme provider injects `!important` CSS overrides to ensure VS Code editor background throughout
+
 ## Architecture
 
 - **Extension Code** (`src/`): Runs in VS Code's Node.js context, handles authentication and server communication

@@ -29,6 +29,11 @@ export class VSCodeThemeProvider extends BaseThemeProvider {
       colorMode,
     );
 
+    // Expose the provider globally for the patch to access
+    if (typeof window !== 'undefined') {
+      (window as any).__vscodeThemeProvider = this;
+    }
+
     // Wait for DOM to be ready
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
@@ -358,30 +363,45 @@ export class VSCodeThemeProvider extends BaseThemeProvider {
 
   /**
    * Extract syntax highlighting colors from VS Code theme
-   * Uses VS Code's actual syntax colors when available, falls back to defaults
+   *
+   * @description Uses VS Code's actual syntax colors when available, falls back to defaults.
+   * Maps VS Code debug token expression colors to CodeMirror syntax highlighting classes.
+   * This ensures the notebook's syntax highlighting matches VS Code's active theme exactly.
+   *
+   * @returns Map of syntax token types to color values (e.g., 'keyword' -> '#C586C0')
+   * @example
+   * ```typescript
+   * const colors = provider.extractSyntaxColors();
+   * console.log(colors.get('keyword')); // '#C586C0' for dark themes
+   * ```
    */
-  private extractSyntaxColors(): Map<string, string> {
+  public extractSyntaxColors(): Map<string, string> {
     const syntaxColors = new Map<string, string>();
     const isDark = this._colorMode === 'dark';
 
     // Try to extract actual syntax colors from VS Code CSS variables
-    // These are theme-specific and will work with ANY VS Code theme
+    // VS Code doesn't directly expose syntax token colors as CSS variables
+    // We need to use the available semantic colors and make educated guesses
     const tokenColorMappings = [
-      { key: 'keyword', vscodeVar: '--vscode-textmate-keyword-foreground' },
-      { key: 'string', vscodeVar: '--vscode-textmate-string-foreground' },
-      { key: 'comment', vscodeVar: '--vscode-textmate-comment-foreground' },
-      { key: 'function', vscodeVar: '--vscode-textmate-function-foreground' },
-      { key: 'number', vscodeVar: '--vscode-textmate-number-foreground' },
-      { key: 'variable', vscodeVar: '--vscode-textmate-variable-foreground' },
-      { key: 'type', vscodeVar: '--vscode-textmate-type-foreground' },
-      { key: 'class', vscodeVar: '--vscode-textmate-class-foreground' },
-      { key: 'constant', vscodeVar: '--vscode-textmate-constant-foreground' },
-      { key: 'operator', vscodeVar: '--vscode-textmate-operator-foreground' },
+      { key: 'keyword', vscodeVar: '--vscode-debugTokenExpression-name' },
+      { key: 'string', vscodeVar: '--vscode-debugTokenExpression-string' },
+      { key: 'comment', vscodeVar: '--vscode-editor-foreground', darken: 40 },
+      { key: 'function', vscodeVar: '--vscode-debugTokenExpression-value' },
+      { key: 'number', vscodeVar: '--vscode-debugTokenExpression-number' },
+      { key: 'variable', vscodeVar: '--vscode-debugTokenExpression-name' },
+      { key: 'type', vscodeVar: '--vscode-debugTokenExpression-type' },
+      { key: 'class', vscodeVar: '--vscode-symbolIcon-classForeground' },
+      { key: 'constant', vscodeVar: '--vscode-symbolIcon-constantForeground' },
+      { key: 'operator', vscodeVar: '--vscode-editor-foreground' },
     ];
 
     // Extract colors from VS Code variables
-    tokenColorMappings.forEach(({ key, vscodeVar }) => {
-      const color = this._vscodeColors.get(vscodeVar);
+    tokenColorMappings.forEach(({ key, vscodeVar, darken }) => {
+      let color = this._vscodeColors.get(vscodeVar);
+      if (color && darken) {
+        // Apply darkening/lightening for certain tokens
+        color = this.lightenDarkenColor(color, isDark ? -darken : darken);
+      }
       if (color) {
         syntaxColors.set(key, color);
       }
@@ -895,6 +915,17 @@ export class VSCodeThemeProvider extends BaseThemeProvider {
 
   /**
    * Generate CodeMirror-specific CSS for syntax highlighting
+   *
+   * @description Creates CSS rules that map CodeMirror 6 token classes to VS Code theme colors.
+   * Uses both unicode-prefixed classes (ͼ2, ͼ4, etc.) and semantic classes (.cm-keyword, .cm-string).
+   * This ensures syntax highlighting in notebook cells matches VS Code's editor exactly.
+   *
+   * @returns CSS string with !important rules for syntax highlighting
+   * @example
+   * ```css
+   * .cm-editor .ͼ2 { color: #C586C0 !important; } // keywords
+   * .cm-editor .ͼ4 { color: #CE9178 !important; } // strings
+   * ```
    */
   public getCodeMirrorCSS(): string {
     const syntaxColors = this.extractSyntaxColors();
@@ -903,168 +934,132 @@ export class VSCodeThemeProvider extends BaseThemeProvider {
     // Build CSS rules for CodeMirror classes
     const rules: string[] = [];
 
-    // Get theme colors - check if it's Monokai
-    const editorBg = this.getVSCodeColor('--vscode-editor-background', '');
-    const isMonokai = editorBg === '#272822' || editorBg === 'rgb(39, 40, 34)';
-
-    // Monokai specific colors
-    const monokaiColors = {
-      keyword: '#F92672', // Pink/Red
-      string: '#E6DB74', // Yellow
-      comment: '#75715E', // Gray
-      function: '#A6E22E', // Green
-      number: '#AE81FF', // Purple
-      variable: '#F8F8F2', // White
-      type: '#66D9EF', // Cyan
-      constant: '#AE81FF', // Purple
-      operator: '#F92672', // Pink
+    // Get colors with defaults
+    const colors = {
+      keyword: syntaxColors.get('keyword') || (isDark ? '#C586C0' : '#0000FF'),
+      string: syntaxColors.get('string') || (isDark ? '#CE9178' : '#A31515'),
+      comment: syntaxColors.get('comment') || (isDark ? '#6A9955' : '#008000'),
+      function:
+        syntaxColors.get('function') || (isDark ? '#DCDCAA' : '#795E26'),
+      number: syntaxColors.get('number') || (isDark ? '#B5CEA8' : '#098658'),
+      variable:
+        syntaxColors.get('variable') || (isDark ? '#9CDCFE' : '#001080'),
+      type: syntaxColors.get('type') || (isDark ? '#4EC9B0' : '#267F99'),
+      constant:
+        syntaxColors.get('constant') || (isDark ? '#569CD6' : '#0070C1'),
+      operator:
+        syntaxColors.get('operator') || (isDark ? '#D4D4D4' : '#000000'),
     };
-
-    // Default colors for dark theme (VS Code Dark+)
-    const darkDefaults = {
-      keyword: '#C586C0',
-      string: '#CE9178',
-      comment: '#6A9955',
-      function: '#DCDCAA',
-      number: '#B5CEA8',
-      variable: '#9CDCFE',
-      type: '#4EC9B0',
-      constant: '#569CD6',
-      operator: '#D4D4D4',
-    };
-
-    // Default colors for light theme
-    const lightDefaults = {
-      keyword: '#0000FF',
-      string: '#A31515',
-      comment: '#008000',
-      function: '#795E26',
-      number: '#098658',
-      variable: '#001080',
-      type: '#267F99',
-      constant: '#0070C1',
-      operator: '#000000',
-    };
-
-    // Choose defaults based on theme
-    const defaults = isMonokai
-      ? monokaiColors
-      : isDark
-        ? darkDefaults
-        : lightDefaults;
 
     // First, ensure base text color is set
     const baseTextColor = this.getVSCodeColor(
       '--vscode-editor-foreground',
-      isDark ? '#F8F8F2' : '#000000',
+      isDark ? '#D4D4D4' : '#000000',
     );
 
-    // Set base CodeMirror text color
-    rules.push(`.CodeMirror { color: ${baseTextColor} !important; }`);
-    rules.push(`.CodeMirror-line { color: ${baseTextColor} !important; }`);
-    rules.push(`.CodeMirror pre { color: ${baseTextColor} !important; }`);
-    rules.push(`.CodeMirror-code { color: ${baseTextColor} !important; }`);
+    // CodeMirror 6 uses class names with unicode prefixes (ͼ)
+    // These are the actual class names used by CodeMirror 6 in JupyterLab
 
-    // CodeMirror token classes mapping with more specific selectors
+    // Base editor styles
+    rules.push(`.cm-editor { color: ${baseTextColor} !important; }`);
+    rules.push(`.cm-content { color: ${baseTextColor} !important; }`);
+    rules.push(`.cm-line { color: ${baseTextColor} !important; }`);
+
+    // CodeMirror 6 token classes with unicode prefix 'ͼ'
+    // These target the actual classes used by CodeMirror 6 in JupyterLab
+
+    // Keywords (if, for, def, class, etc.)
+    rules.push(`.cm-editor .ͼ2 { color: ${colors.keyword} !important; }`);
     rules.push(
-      `.CodeMirror .cm-keyword { color: ${syntaxColors.get('keyword') || defaults.keyword} !important; }`,
-    );
-    rules.push(
-      `.CodeMirror .cm-string { color: ${syntaxColors.get('string') || defaults.string} !important; }`,
-    );
-    rules.push(
-      `.CodeMirror .cm-comment { color: ${syntaxColors.get('comment') || defaults.comment} !important; }`,
-    );
-    rules.push(
-      `.CodeMirror .cm-def { color: ${syntaxColors.get('function') || defaults.function} !important; }`,
-    );
-    rules.push(
-      `.CodeMirror .cm-number { color: ${syntaxColors.get('number') || defaults.number} !important; }`,
-    );
-    rules.push(
-      `.CodeMirror .cm-variable { color: ${syntaxColors.get('variable') || defaults.variable} !important; }`,
-    );
-    rules.push(
-      `.CodeMirror .cm-variable-2 { color: ${syntaxColors.get('variable') || defaults.variable} !important; }`,
-    );
-    rules.push(
-      `.CodeMirror .cm-variable-3 { color: ${syntaxColors.get('type') || defaults.type} !important; }`,
-    );
-    rules.push(
-      `.CodeMirror .cm-type { color: ${syntaxColors.get('type') || defaults.type} !important; }`,
-    );
-    rules.push(
-      `.CodeMirror .cm-builtin { color: ${syntaxColors.get('constant') || defaults.constant} !important; }`,
-    );
-    rules.push(
-      `.CodeMirror .cm-atom { color: ${syntaxColors.get('constant') || defaults.constant} !important; }`,
-    );
-    rules.push(
-      `.CodeMirror .cm-operator { color: ${syntaxColors.get('operator') || defaults.operator} !important; }`,
-    );
-    rules.push(
-      `.CodeMirror .cm-property { color: ${syntaxColors.get('member') || syntaxColors.get('function') || defaults.function} !important; }`,
-    );
-    rules.push(
-      `.CodeMirror .cm-meta { color: ${syntaxColors.get('namespace') || defaults.keyword} !important; }`,
-    );
-    rules.push(
-      `.CodeMirror .cm-qualifier { color: ${syntaxColors.get('namespace') || defaults.type} !important; }`,
-    );
-    rules.push(
-      `.CodeMirror .cm-tag { color: ${syntaxColors.get('function') || defaults.function} !important; }`,
-    );
-    rules.push(
-      `.CodeMirror .cm-attribute { color: ${syntaxColors.get('variable') || defaults.variable} !important; }`,
+      `.cm-editor .cm-keyword { color: ${colors.keyword} !important; }`,
     );
 
-    // Python specific with Jupyter theme
+    // Strings
+    rules.push(`.cm-editor .ͼ4 { color: ${colors.string} !important; }`);
+    rules.push(`.cm-editor .cm-string { color: ${colors.string} !important; }`);
+
+    // Comments
+    rules.push(`.cm-editor .ͼ3 { color: ${colors.comment} !important; }`);
     rules.push(
-      `.cm-s-jupyter .CodeMirror-line { color: ${baseTextColor} !important; }`,
-    );
-    rules.push(
-      `.cm-s-jupyter .cm-keyword { color: ${syntaxColors.get('keyword') || defaults.keyword} !important; }`,
-    );
-    rules.push(
-      `.cm-s-jupyter .cm-string { color: ${syntaxColors.get('string') || defaults.string} !important; }`,
-    );
-    rules.push(
-      `.cm-s-jupyter .cm-comment { color: ${syntaxColors.get('comment') || defaults.comment} !important; }`,
-    );
-    rules.push(
-      `.cm-s-jupyter .cm-def { color: ${syntaxColors.get('function') || defaults.function} !important; }`,
-    );
-    rules.push(
-      `.cm-s-jupyter .cm-number { color: ${syntaxColors.get('number') || defaults.number} !important; }`,
-    );
-    rules.push(
-      `.cm-s-jupyter .cm-variable { color: ${syntaxColors.get('variable') || defaults.variable} !important; }`,
-    );
-    rules.push(
-      `.cm-s-jupyter .cm-builtin { color: ${syntaxColors.get('constant') || defaults.constant} !important; }`,
-    );
-    rules.push(
-      `.cm-s-jupyter .cm-operator { color: ${syntaxColors.get('operator') || defaults.operator} !important; }`,
-    );
-    rules.push(
-      `.cm-s-jupyter .cm-variable-2 { color: ${syntaxColors.get('variable') || defaults.variable} !important; }`,
-    );
-    rules.push(
-      `.cm-s-jupyter .cm-variable-3 { color: ${syntaxColors.get('type') || defaults.type} !important; }`,
-    );
-    rules.push(
-      `.cm-s-jupyter .cm-property { color: ${syntaxColors.get('member') || syntaxColors.get('function') || defaults.function} !important; }`,
+      `.cm-editor .cm-comment { color: ${colors.comment} !important; }`,
     );
 
-    // Ensure text in spans is visible
-    rules.push(`.CodeMirror span { color: inherit !important; }`);
+    // Functions and definitions
+    rules.push(`.cm-editor .ͼ6 { color: ${colors.function} !important; }`);
+    rules.push(`.cm-editor .cm-def { color: ${colors.function} !important; }`);
     rules.push(
-      `.CodeMirror pre.CodeMirror-line > span { color: inherit !important; }`,
+      `.cm-editor .cm-function { color: ${colors.function} !important; }`,
     );
 
-    // Fix for when no syntax class is applied
+    // Numbers
+    rules.push(`.cm-editor .ͼ5 { color: ${colors.number} !important; }`);
+    rules.push(`.cm-editor .cm-number { color: ${colors.number} !important; }`);
+
+    // Variables
+    rules.push(`.cm-editor .ͼ7 { color: ${colors.variable} !important; }`);
     rules.push(
-      `.CodeMirror .CodeMirror-line > span:not([class*="cm-"]) { color: ${baseTextColor} !important; }`,
+      `.cm-editor .cm-variable { color: ${colors.variable} !important; }`,
+    );
+    rules.push(
+      `.cm-editor .cm-variable-2 { color: ${colors.variable} !important; }`,
+    );
+
+    // Types
+    rules.push(`.cm-editor .ͼ8 { color: ${colors.type} !important; }`);
+    rules.push(`.cm-editor .cm-type { color: ${colors.type} !important; }`);
+    rules.push(`.cm-editor .cm-typeName { color: ${colors.type} !important; }`);
+
+    // Constants and built-ins
+    rules.push(`.cm-editor .ͼ9 { color: ${colors.constant} !important; }`);
+    rules.push(`.cm-editor .cm-atom { color: ${colors.constant} !important; }`);
+    rules.push(
+      `.cm-editor .cm-builtin { color: ${colors.constant} !important; }`,
+    );
+    rules.push(`.cm-editor .cm-bool { color: ${colors.constant} !important; }`);
+    rules.push(`.cm-editor .cm-null { color: ${colors.constant} !important; }`);
+
+    // Operators
+    rules.push(`.cm-editor .ͼ1 { color: ${colors.operator} !important; }`);
+    rules.push(
+      `.cm-editor .cm-operator { color: ${colors.operator} !important; }`,
+    );
+    rules.push(
+      `.cm-editor .cm-punctuation { color: ${colors.operator} !important; }`,
+    );
+
+    // Properties and attributes
+    rules.push(
+      `.cm-editor .cm-property { color: ${colors.function} !important; }`,
+    );
+    rules.push(
+      `.cm-editor .cm-propertyName { color: ${colors.variable} !important; }`,
+    );
+    rules.push(
+      `.cm-editor .cm-attribute { color: ${colors.variable} !important; }`,
+    );
+    rules.push(
+      `.cm-editor .cm-attributeName { color: ${colors.variable} !important; }`,
+    );
+
+    // Additional language-specific mappings
+    rules.push(`.cm-editor .cm-meta { color: ${colors.keyword} !important; }`);
+    rules.push(
+      `.cm-editor .cm-qualifier { color: ${colors.type} !important; }`,
+    );
+    rules.push(`.cm-editor .cm-tag { color: ${colors.function} !important; }`);
+    rules.push(
+      `.cm-editor .cm-tagName { color: ${colors.function} !important; }`,
+    );
+
+    // Brackets and delimiters
+    rules.push(
+      `.cm-editor .cm-bracket { color: ${colors.operator} !important; }`,
+    );
+    rules.push(
+      `.cm-editor .cm-brace { color: ${colors.operator} !important; }`,
+    );
+    rules.push(
+      `.cm-editor .cm-paren { color: ${colors.operator} !important; }`,
     );
 
     console.log(
@@ -1072,8 +1067,9 @@ export class VSCodeThemeProvider extends BaseThemeProvider {
       baseTextColor,
     );
     console.log(
-      '[VSCodeThemeProvider] Using theme defaults:',
-      isMonokai ? 'Monokai' : isDark ? 'Dark+' : 'Light',
+      '[VSCodeThemeProvider] Generated CodeMirror CSS for',
+      isDark ? 'dark' : 'light',
+      'theme',
     );
 
     return rules.join('\n');

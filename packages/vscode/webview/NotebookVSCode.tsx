@@ -21,6 +21,7 @@ import {
   useJupyterReactStore,
   Jupyter,
   useJupyter,
+  CellSidebarExtension,
 } from '@datalayer/jupyter-react';
 import { DatalayerCollaborationProvider } from '@datalayer/core/lib/collaboration';
 import { MessageHandlerContext, type ExtensionMessage } from './messageHandler';
@@ -28,6 +29,8 @@ import { loadFromBytes, saveToBytes } from './utils';
 import { createMockServiceManager } from './mockServiceManager';
 // Import the enhanced theme system
 import { EnhancedJupyterReactTheme } from './theme';
+// Import the custom VS Code-style toolbar
+import { NotebookToolbar } from './NotebookToolbar';
 
 interface NotebookVSCodeInnerProps {
   nbformat: any;
@@ -50,6 +53,9 @@ function NotebookVSCodeInner({
   const currentNotebookModel = useRef<any>(null);
   const lastSavedContent = useRef<Uint8Array | null>(null);
   const contentChangeHandler = useRef<(() => void) | null>(null);
+
+  // Create notebook extensions (sidebar)
+  const extensions = useMemo(() => [new CellSidebarExtension({})], []);
 
   // Create collaboration provider for Datalayer notebooks
   const collaborationProvider = useMemo(() => {
@@ -401,99 +407,104 @@ function NotebookVSCodeInner({
     );
   }
 
-  const height = '100vh';
+  const height = 'calc(100vh - 31px)'; // Subtract toolbar height
   const cellSidebarMargin = 120;
 
   // For Datalayer notebooks, render directly with the mock service manager
   if (isDatalayerNotebook && serviceManager) {
     return (
-      <Box
-        style={{
-          height,
-          width: '100%',
-          position: 'relative',
-          backgroundColor: 'transparent',
-        }}
-        id="dla-Jupyter-Notebook"
+      <div
+        style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}
       >
+        <NotebookToolbar notebookId={documentId!} isDatalayerNotebook={true} />
         <Box
-          className="dla-Box-Notebook"
-          sx={{
+          style={{
             height,
             width: '100%',
-            overflowY: 'hidden',
-            fontSize: 'var(--vscode-editor-font-size, 13px)',
-            fontFamily:
-              'var(--vscode-editor-font-family, "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace)',
-            '& .datalayer-NotebookPanel-header': {
-              minHeight: '50px',
-            },
-            '& .jp-Notebook': {
-              flex: '1 1 auto !important',
-              height: '100%',
-              fontSize: 'var(--vscode-editor-font-size, 13px)',
-            },
-            '& .jp-NotebookPanel': {
-              height: '100% !important',
-              width: '100% !important',
-            },
-            '& .jp-Cell': {
-              fontSize: 'var(--vscode-editor-font-size, 13px)',
-            },
-            '& .jp-InputArea-editor': {
-              fontSize: 'var(--vscode-editor-font-size, 13px)',
-            },
-            '& .jp-OutputArea': {
-              fontSize: 'var(--vscode-editor-font-size, 13px)',
-            },
-            '& .CodeMirror': {
-              fontSize: 'var(--vscode-editor-font-size, 13px) !important',
-            },
-            '& .cm-editor': {
-              fontSize: 'var(--vscode-editor-font-size, 13px) !important',
-            },
-            '& .jp-Toolbar': {
-              display: 'none',
-              zIndex: 0,
-            },
-            '& .jp-Toolbar .jp-HTMLSelect.jp-DefaultStyle select': {
-              fontSize: '14px',
-            },
-            '& .jp-Toolbar > .jp-Toolbar-responsive-opener': {
-              display: 'none',
-            },
-            '& .jp-Toolbar-kernelName': {
-              display: 'none',
-            },
-            '& .jp-Cell': {
-              width: `calc(100% - ${cellSidebarMargin}px)`,
-            },
-            '& .jp-Notebook-footer': {
-              width: `calc(100% - ${cellSidebarMargin + 82}px)`,
-            },
-            '& .jp-CodeMirrorEditor': {
-              cursor: 'text !important',
-            },
-            '.dla-Box-Notebook': {
-              position: 'relative',
-            },
-            '.dla-Jupyter-Notebook .dla-Notebook-Container': {
-              width: '100%',
-            },
+            position: 'relative',
           }}
+          id="dla-Jupyter-Notebook"
         >
-          <Notebook2
-            nbformat={nbformat}
-            id={documentId!}
-            serviceManager={serviceManager}
-            collaborationProvider={collaborationProvider}
-            height={height}
-            onNotebookModelChanged={
-              !isDatalayerNotebook ? handleNotebookModelChanged : undefined
-            }
-          />
+          <Box
+            className="dla-Box-Notebook"
+            sx={{
+              height,
+              width: '100%',
+              overflowY: 'hidden',
+              fontSize: 'var(--vscode-editor-font-size, 13px)',
+              fontFamily:
+                'var(--vscode-editor-font-family, "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace)',
+              '& .jp-Notebook': {
+                flex: '1 1 auto !important',
+                height: '100%',
+                fontSize: 'var(--vscode-editor-font-size, 13px)',
+              },
+              '& .jp-NotebookPanel': {
+                height: '100% !important',
+                width: '100% !important',
+              },
+              '& .jp-Cell': {
+                fontSize: 'var(--vscode-editor-font-size, 13px)',
+              },
+              '& .jp-InputArea-editor': {
+                fontSize: 'var(--vscode-editor-font-size, 13px)',
+              },
+              '& .jp-OutputArea': {
+                fontSize: 'var(--vscode-editor-font-size, 13px)',
+              },
+              '& .CodeMirror': {
+                fontSize: 'var(--vscode-editor-font-size, 13px) !important',
+              },
+              '& .cm-editor': {
+                fontSize: 'var(--vscode-editor-font-size, 13px) !important',
+              },
+              '& .jp-Toolbar': {
+                display: 'none',
+              },
+              '& .datalayer-NotebookPanel-header': {
+                display: 'none',
+              },
+              '& .jp-Cell': {
+                // Remove width constraint to allow sidebar
+                width: '100%',
+              },
+              '& .jp-Notebook-footer': {
+                // Remove width constraint to allow sidebar
+                width: '100%',
+              },
+              '& .jp-Notebook-cellSidebar': {
+                display: 'flex',
+                minWidth: '40px',
+              },
+              '& .jp-Cell-Sidebar': {
+                display: 'flex',
+              },
+              '.dla-Box-Notebook': {
+                position: 'relative',
+              },
+              '.dla-Jupyter-Notebook .dla-Notebook-Container': {
+                width: '100%',
+              },
+              '& .jp-CodeMirrorEditor': {
+                cursor: 'text !important',
+              },
+            }}
+          >
+            <Notebook2
+              nbformat={nbformat}
+              id={documentId!}
+              serviceManager={serviceManager}
+              collaborationProvider={collaborationProvider}
+              height={height}
+              cellSidebarMargin={120}
+              extensions={extensions}
+              onNotebookModelChanged={
+                !isDatalayerNotebook ? handleNotebookModelChanged : undefined
+              }
+            />
+          </Box>
         </Box>
-      </Box>
+      </div>
     );
   }
 
@@ -518,6 +529,9 @@ function LocalNotebook({
   onNotebookModelChanged,
 }: any) {
   const { serviceManager } = useJupyter();
+
+  // Create notebook extensions (sidebar)
+  const extensions = useMemo(() => [new CellSidebarExtension({})], []);
 
   // Set up ResizeObserver specifically for this notebook
   React.useEffect(() => {
@@ -573,91 +587,98 @@ function LocalNotebook({
   }
 
   return (
-    <Box
-      style={{
-        height,
-        width: '100%',
-        position: 'relative',
-        backgroundColor: 'transparent',
-      }}
-      id="dla-Jupyter-Notebook"
-    >
+    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <NotebookToolbar
+        notebookId="local-notebook"
+        isDatalayerNotebook={false}
+      />
       <Box
-        className="dla-Box-Notebook"
-        sx={{
+        style={{
           height,
           width: '100%',
-          overflowY: 'hidden',
-          fontSize: 'var(--vscode-editor-font-size, 13px)',
-          fontFamily:
-            'var(--vscode-editor-font-family, "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace)',
-          '& .datalayer-NotebookPanel-header': {
-            minHeight: '50px',
-          },
-          '& .jp-Notebook': {
-            flex: '1 1 auto !important',
-            height: '100%',
-            fontSize: 'var(--vscode-editor-font-size, 13px)',
-          },
-          '& .jp-NotebookPanel': {
-            height: '100% !important',
-            width: '100% !important',
-          },
-          '& .jp-Cell': {
-            fontSize: 'var(--vscode-editor-font-size, 13px)',
-          },
-          '& .jp-InputArea-editor': {
-            fontSize: 'var(--vscode-editor-font-size, 13px)',
-          },
-          '& .jp-OutputArea': {
-            fontSize: 'var(--vscode-editor-font-size, 13px)',
-          },
-          '& .CodeMirror': {
-            fontSize: 'var(--vscode-editor-font-size, 13px) !important',
-          },
-          '& .cm-editor': {
-            fontSize: 'var(--vscode-editor-font-size, 13px) !important',
-          },
-          '& .jp-Toolbar': {
-            display: 'none',
-            zIndex: 0,
-          },
-          '& .jp-Toolbar .jp-HTMLSelect.jp-DefaultStyle select': {
-            fontSize: '14px',
-          },
-          '& .jp-Toolbar > .jp-Toolbar-responsive-opener': {
-            display: 'none',
-          },
-          '& .jp-Toolbar-kernelName': {
-            display: 'none',
-          },
-          '& .jp-Cell': {
-            width: `calc(100% - ${cellSidebarMargin}px)`,
-          },
-          '& .jp-Notebook-footer': {
-            width: `calc(100% - ${cellSidebarMargin + 82}px)`,
-          },
-          '& .jp-CodeMirrorEditor': {
-            cursor: 'text !important',
-          },
-          '.dla-Box-Notebook': {
-            position: 'relative',
-          },
-          '.dla-Jupyter-Notebook .dla-Notebook-Container': {
-            width: '100%',
-          },
+          position: 'relative',
+          flex: 1,
         }}
+        id="dla-Jupyter-Notebook"
       >
-        <Notebook2
-          nbformat={nbformat}
-          id="local-notebook"
-          serviceManager={serviceManager}
-          startDefaultKernel
-          height={height}
-          onNotebookModelChanged={onNotebookModelChanged}
-        />
+        <Box
+          className="dla-Box-Notebook"
+          sx={{
+            height,
+            width: '100%',
+            overflowY: 'hidden',
+            fontSize: 'var(--vscode-editor-font-size, 13px)',
+            fontFamily:
+              'var(--vscode-editor-font-family, "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace)',
+            '& .jp-Notebook': {
+              flex: '1 1 auto !important',
+              height: '100%',
+              fontSize: 'var(--vscode-editor-font-size, 13px)',
+            },
+            '& .jp-NotebookPanel': {
+              height: '100% !important',
+              width: '100% !important',
+            },
+            '& .jp-Cell': {
+              fontSize: 'var(--vscode-editor-font-size, 13px)',
+            },
+            '& .jp-InputArea-editor': {
+              fontSize: 'var(--vscode-editor-font-size, 13px)',
+            },
+            '& .jp-OutputArea': {
+              fontSize: 'var(--vscode-editor-font-size, 13px)',
+            },
+            '& .CodeMirror': {
+              fontSize: 'var(--vscode-editor-font-size, 13px) !important',
+            },
+            '& .cm-editor': {
+              fontSize: 'var(--vscode-editor-font-size, 13px) !important',
+            },
+            '& .jp-Toolbar': {
+              display: 'none',
+            },
+            '& .datalayer-NotebookPanel-header': {
+              display: 'none',
+            },
+            '& .jp-Cell': {
+              // Remove width constraint to allow sidebar
+              width: '100%',
+            },
+            '& .jp-Notebook-footer': {
+              // Remove width constraint to allow sidebar
+              width: '100%',
+            },
+            '& .jp-Notebook-cellSidebar': {
+              display: 'flex',
+              minWidth: '40px',
+            },
+            '& .jp-Cell-Sidebar': {
+              display: 'flex',
+            },
+            '.dla-Box-Notebook': {
+              position: 'relative',
+            },
+            '.dla-Jupyter-Notebook .dla-Notebook-Container': {
+              width: '100%',
+            },
+            '& .jp-CodeMirrorEditor': {
+              cursor: 'text !important',
+            },
+          }}
+        >
+          <Notebook2
+            nbformat={nbformat}
+            id="local-notebook"
+            serviceManager={serviceManager}
+            startDefaultKernel
+            height={height}
+            cellSidebarMargin={120}
+            extensions={extensions}
+            onNotebookModelChanged={onNotebookModelChanged}
+          />
+        </Box>
       </Box>
-    </Box>
+    </div>
   );
 }
 
@@ -771,57 +792,23 @@ function NotebookVSCodeWithJupyter(): JSX.Element {
     setColormode(theme);
   }, [theme, setColormode]);
 
-  // Get VS Code background color for consistent background
-  const vscodeBackground = React.useMemo(() => {
-    const bg =
-      getComputedStyle(document.documentElement).getPropertyValue(
-        '--vscode-editor-background',
-      ) ||
-      document.documentElement.style.getPropertyValue(
-        '--vscode-editor-background',
-      ) ||
-      (theme === 'dark' ? '#1e1e1e' : '#ffffff');
-    return bg;
-  }, [theme]);
-
-  // Apply background to body element as well
-  React.useEffect(() => {
-    document.body.style.backgroundColor = vscodeBackground;
-    document.body.style.margin = '0';
-    document.body.style.padding = '0';
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.backgroundColor = '';
-    };
-  }, [vscodeBackground]);
-
   // Use the enhanced theme system for VS Code theme support
   return (
-    <div
-      style={{
-        width: '100%',
-        height: '100vh',
-        backgroundColor: vscodeBackground,
-        overflow: 'hidden',
-        position: 'relative',
-      }}
+    <EnhancedJupyterReactTheme
+      provider="vscode"
+      colorMode={theme === 'dark' ? 'dark' : 'light'}
+      loadJupyterLabCss={true}
+      injectCSSVariables={true}
     >
-      <EnhancedJupyterReactTheme
-        provider="vscode"
-        colorMode={theme === 'dark' ? 'dark' : 'light'}
-        loadJupyterLabCss={true}
-        injectCSSVariables={true}
-      >
-        <NotebookVSCodeInner
-          nbformat={nbformat}
-          isDatalayerNotebook={isDatalayerNotebook}
-          documentId={documentId}
-          serverUrl={serverUrl}
-          token={token}
-          isInitialized={isInitialized}
-        />
-      </EnhancedJupyterReactTheme>
-    </div>
+      <NotebookVSCodeInner
+        nbformat={nbformat}
+        isDatalayerNotebook={isDatalayerNotebook}
+        documentId={documentId}
+        serverUrl={serverUrl}
+        token={token}
+        isInitialized={isInitialized}
+      />
+    </EnhancedJupyterReactTheme>
   );
 }
 
@@ -833,6 +820,56 @@ function NotebookVSCode(): JSX.Element {
     </Jupyter>
   );
 }
+
+// Add debug function to window at module load time
+declare global {
+  interface Window {
+    debugNotebook: () => any[];
+  }
+}
+
+window.debugNotebook = function () {
+  const all = document.querySelectorAll('*');
+  const results: any[] = [];
+
+  all.forEach((el: Element) => {
+    const style = getComputedStyle(el);
+    const bg = style.backgroundColor;
+
+    // Check for black or near-black backgrounds
+    if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') {
+      const match = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (match) {
+        const [_, r, g, b] = match;
+        if (parseInt(r) < 50 && parseInt(g) < 50 && parseInt(b) < 50) {
+          results.push({
+            element: el,
+            tag: el.tagName,
+            id: el.id,
+            classes: el.className,
+            backgroundColor: bg,
+            parent: el.parentElement?.tagName,
+            parentId: el.parentElement?.id,
+            parentClasses: el.parentElement?.className,
+          });
+        }
+      }
+    }
+  });
+
+  console.log('Dark elements found:', results);
+  results.forEach(r => {
+    console.log(
+      `${r.tag}#${r.id || 'no-id'}.${r.classes || 'no-class'} = ${r.backgroundColor}`,
+    );
+  });
+  return results;
+};
+
+// Log that the debug function is available
+console.log(
+  '[NotebookVSCode] Debug function installed on window.debugNotebook',
+);
 
 document.addEventListener('DOMContentLoaded', () => {
   const root = createRoot(
