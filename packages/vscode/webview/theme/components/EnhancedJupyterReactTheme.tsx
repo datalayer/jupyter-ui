@@ -6,7 +6,7 @@
 
 /**
  * @module theme/components/EnhancedJupyterReactTheme
- * @description Enhanced theme component that supports multiple theme providers.
+ * Enhanced theme component that supports multiple theme providers.
  * Wraps the existing JupyterReactTheme with additional functionality.
  */
 
@@ -50,6 +50,7 @@ export function useTheme(): IThemeContext {
 
 /**
  * Props for enhanced theme component
+ * @hidden
  */
 interface IEnhancedJupyterReactThemeProps {
   /**

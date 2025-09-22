@@ -6,77 +6,150 @@
 
 /**
  * @module spaceItem
- * @description Data models and interfaces for spaces and documents.
+ * Data models and interfaces for spaces and documents.
  * Defines the structure of items displayed in the spaces tree view.
  */
 
 import * as vscode from 'vscode';
 import * as path from 'path';
 
+/**
+ * Types of items that can appear in the spaces tree.
+ * @enum {string}
+ */
 export enum ItemType {
+  /** Root node of the tree */
   ROOT = 'root',
+  /** Space container */
   SPACE = 'space',
+  /** Jupyter notebook document */
   NOTEBOOK = 'notebook',
+  /** Generic document */
   DOCUMENT = 'document',
+  /** Folder container */
   FOLDER = 'folder',
+  /** Notebook cell */
   CELL = 'cell',
+  /** Loading indicator */
   LOADING = 'loading',
+  /** Error state */
   ERROR = 'error',
 }
 
+/**
+ * Represents a Datalayer space.
+ * @interface Space
+ */
 export interface Space {
+  /** Unique identifier */
   uid: string;
+  /** Handle string identifier */
   handle_s: string;
+  /** Space variant (e.g., 'default') */
   variant_s?: string;
+  /** Space name */
   name_t: string;
+  /** Space description */
   description_t?: string;
+  /** Tags associated with the space */
   tags_ss?: string[];
+  /** Documents contained in the space */
   items?: Document[];
+  /** Space members */
   members?: any[];
 }
 
+/**
+ * Represents a document in a Datalayer space.
+ * @interface Document
+ */
 export interface Document {
+  /** Document ID */
   id: string;
+  /** Document UID */
   uid: string;
+  /** Document type */
   type_s: string;
+  /** Document name */
   name_t: string;
+  /** Document description */
   description_t?: string;
+  /** Creator's UID */
   creator_uid?: string;
+  /** Creator's handle */
   creator_handle_s?: string;
+  /** Whether the document is public */
   public_b?: boolean;
 
   // For notebooks
+  /** Notebook file name */
   notebook_name_s?: string;
+  /** Notebook file extension */
   notebook_extension_s?: string;
+  /** Notebook format */
   notebook_format_s?: string;
 
   // For documents
+  /** Document file name */
   document_name_s?: string;
+  /** Document file extension */
   document_extension_s?: string;
+  /** Document format */
   document_format_s?: string;
 
   // Common fields
+  /** Content size in bytes */
   content_length_i?: number;
+  /** Content MIME type */
   content_type_s?: string;
+  /** MIME type */
   mime_type_s?: string;
+  /** S3 storage path */
   s3_path_s?: string;
+  /** S3 URL */
   s3_url_s?: string;
+  /** CDN URL */
   cdn_url_s?: string;
+  /** Creation timestamp */
   creation_ts_dt?: string;
+  /** Last update timestamp */
   last_update_ts_dt?: string;
 }
 
+/**
+ * Data associated with a space tree item.
+ * @interface SpaceItemData
+ */
 export interface SpaceItemData {
+  /** Type of the tree item */
   type: ItemType;
+  /** Space data (for SPACE type) */
   space?: Space;
+  /** Document data (for NOTEBOOK/DOCUMENT types) */
   document?: Document;
+  /** Error message (for ERROR type) */
   error?: string;
+  /** Username of the authenticated user */
   username?: string;
+  /** GitHub login of the authenticated user */
   githubLogin?: string;
+  /** Name of the containing space */
   spaceName?: string;
 }
 
+/**
+ * Tree item representing a space or document in the explorer.
+ * @class SpaceItem
+ * @extends {vscode.TreeItem}
+ */
 export class SpaceItem extends vscode.TreeItem {
+  /**
+   * Creates a new SpaceItem.
+   * @param {string} label - Display label
+   * @param {vscode.TreeItemCollapsibleState} collapsibleState - Collapse state
+   * @param {SpaceItemData} data - Associated data
+   * @param {SpaceItem} [parent] - Parent item
+   */
   constructor(
     public readonly label: string,
     public readonly collapsibleState: vscode.TreeItemCollapsibleState,

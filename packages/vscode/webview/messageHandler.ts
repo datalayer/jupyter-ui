@@ -6,7 +6,7 @@
 
 /**
  * @module messageHandler
- * @description Message handling service for webview-extension communication.
+ * Message handling service for webview-extension communication.
  * Manages bidirectional message passing between the webview and VS Code extension.
  */
 
@@ -51,13 +51,20 @@ export type ExtensionMessage = {
  * Handle message from and to the extension
  */
 export class MessageHandler {
+  /** Counter for generating unique callback IDs */
   private _callbackCount = 0;
+  /** Map of callback ID to message handler functions */
   private _messageCallbacks: Map<number, (message: ExtensionMessage) => void> =
     new Map();
+  /** Counter for generating unique request IDs */
   private static _requestCount = 0;
+  /** Map of pending request IDs to promise delegates */
   private _pendingReplies: Map<string, PromiseDelegate<ExtensionMessage>> =
     new Map();
 
+  /**
+   * Creates a new MessageHandler instance
+   */
   constructor() {
     window.addEventListener('message', this._handleMessage.bind(this));
   }
@@ -99,14 +106,18 @@ export class MessageHandler {
    * The callback won't be called when the message is a reply to a request.
    *
    * @param handler Incoming message handler
-   * @returns Unregister handler
+   * @returns Object with dispose method to unregister the handler
    */
   registerCallback(handler: (message: ExtensionMessage) => void): {
+    /** Unregister the callback handler */
     dispose: () => void;
   } {
     const index = this._callbackCount++;
     this._messageCallbacks.set(index, handler);
     return Object.freeze({
+      /**
+       * Dispose the callback handler
+       */
       dispose: () => {
         this._messageCallbacks.delete(index);
       },

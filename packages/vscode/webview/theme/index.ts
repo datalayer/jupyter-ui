@@ -6,7 +6,7 @@
 
 /**
  * @module theme
- * @description Extensible theme system for Jupyter React in VS Code.
+ * Extensible theme system for Jupyter React in VS Code.
  * Provides support for VS Code themes, JupyterLab themes, and custom themes.
  */
 

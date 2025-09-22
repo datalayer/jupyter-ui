@@ -6,7 +6,7 @@
 
 /**
  * @module githubService
- * @description Service for enriching user profiles with GitHub information.
+ * Service for enriching user profiles with GitHub information.
  * Fetches GitHub user data when users authenticate via GitHub OAuth.
  */
 
@@ -32,7 +32,6 @@ export class GitHubService {
   /**
    * Parses GitHub user ID from a Datalayer handle string.
    *
-   * @static
    * @param {string | undefined} handle_s - Handle string like "urn:dla:iam:ext::github:3627835"
    * @returns {string | null} GitHub user ID or null if not a GitHub handle
    *
@@ -63,8 +62,6 @@ export class GitHubService {
   /**
    * Fetches GitHub user information from the GitHub API.
    *
-   * @static
-   * @async
    * @param {string} userId - GitHub user ID
    * @returns {Promise<GitHubUser | null>} GitHub user data or null if fetch fails
    *
@@ -123,8 +120,6 @@ export class GitHubService {
    * Enriches user data with GitHub profile information.
    * Merges GitHub user data with the existing Datalayer user object.
    *
-   * @static
-   * @async
    * @param {any} user - Original user data from Datalayer
    * @param {string | undefined} handle_s - The handle_s string from authentication response
    * @returns {Promise<any>} User data enriched with GitHub information

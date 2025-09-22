@@ -6,11 +6,14 @@
 
 /**
  * @module theme/components/ThemedLoader
- * @description Loading component that uses VS Code theme colors
+ * Loading component that uses VS Code theme colors
  */
 
 import React, { useEffect, useState } from 'react';
 
+/**
+ * @hidden
+ */
 interface ThemedLoaderProps {
   message?: string;
 }

@@ -41,10 +41,27 @@ jobs:
           npm run build
         working-directory: packages/react
 
+      - name: Check TypeDoc documentation coverage
+        run: |
+          echo "🔍 Checking documentation coverage with TypeDoc..."
+          npm run doc:coverage || true
+        working-directory: packages/vscode
+        continue-on-error: true
+
       - name: Generate TypeDoc HTML documentation
         run: |
-          echo "📚 Generating TypeDoc HTML documentation..."
+          echo "📚 Generating TypeDoc HTML documentation with coverage..."
           npm run doc
+
+          # Display coverage if available
+          if [ -f "docs/coverage.json" ]; then
+            echo "📊 TypeDoc Coverage Report:"
+            cat docs/coverage.json | python3 -m json.tool
+
+            # Extract coverage percentage
+            COVERAGE=$(cat docs/coverage.json | python3 -c "import json, sys; data = json.load(sys.stdin); print(data.get('percent', 0))")
+            echo "Documentation Coverage: ${COVERAGE}%"
+          fi
         working-directory: packages/vscode
 
       - name: Generate TypeDoc Markdown documentation
@@ -92,38 +109,59 @@ jobs:
         run: |
           echo "📊 Analyzing documentation coverage..."
 
-          # Count TypeScript files
-          TS_FILES=$(find packages/vscode/src -name "*.ts" -o -name "*.tsx" | wc -l)
-
-          # Count files with JSDoc comments
-          DOCUMENTED_FILES=$(grep -l "@module\|@description" --include="*.ts" --include="*.tsx" -r packages/vscode/src | wc -l || echo "0")
-
-          # Calculate coverage percentage
-          if [ $TS_FILES -gt 0 ]; then
-            COVERAGE=$((DOCUMENTED_FILES * 100 / TS_FILES))
+          # Get TypeDoc coverage data if available
+          if [ -f "packages/vscode/docs/coverage.json" ]; then
+            echo "Using TypeDoc coverage data..."
+            COVERAGE=$(cat packages/vscode/docs/coverage.json | python3 -c "import json, sys; data = json.load(sys.stdin); print(int(data.get('percent', 0)))")
+            EXPECTED=$(cat packages/vscode/docs/coverage.json | python3 -c "import json, sys; data = json.load(sys.stdin); print(data.get('expected', 0))")
+            ACTUAL=$(cat packages/vscode/docs/coverage.json | python3 -c "import json, sys; data = json.load(sys.stdin); print(data.get('actual', 0))")
+            NOT_DOCUMENTED=$(cat packages/vscode/docs/coverage.json | python3 -c "import json, sys; data = json.load(sys.stdin); print(len(data.get('notDocumented', [])))")
           else
-            COVERAGE=0
+            # Fallback to file counting
+            TS_FILES=$(find packages/vscode/src -name "*.ts" -o -name "*.tsx" | wc -l)
+            DOCUMENTED_FILES=$(grep -l "@module\|@description" --include="*.ts" --include="*.tsx" -r packages/vscode/src | wc -l || echo "0")
+
+            if [ $TS_FILES -gt 0 ]; then
+              COVERAGE=$((DOCUMENTED_FILES * 100 / TS_FILES))
+            else
+              COVERAGE=0
+            fi
+            EXPECTED=$TS_FILES
+            ACTUAL=$DOCUMENTED_FILES
+            NOT_DOCUMENTED=$((TS_FILES - DOCUMENTED_FILES))
           fi
 
-          echo "TypeScript files: $TS_FILES"
-          echo "Documented files: $DOCUMENTED_FILES"
           echo "Documentation coverage: ${COVERAGE}%"
+          echo "Expected items: $EXPECTED"
+          echo "Documented items: $ACTUAL"
+          echo "Missing documentation: $NOT_DOCUMENTED"
 
           # Add to GitHub Step Summary
           echo "## 📚 Documentation Build Report" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Coverage Statistics" >> $GITHUB_STEP_SUMMARY
-          echo "- **TypeScript Files**: $TS_FILES" >> $GITHUB_STEP_SUMMARY
-          echo "- **Documented Files**: $DOCUMENTED_FILES" >> $GITHUB_STEP_SUMMARY
+          echo "### Coverage Statistics (TypeDoc)" >> $GITHUB_STEP_SUMMARY
           echo "- **Coverage**: ${COVERAGE}%" >> $GITHUB_STEP_SUMMARY
+          echo "- **Documented Items**: $ACTUAL / $EXPECTED" >> $GITHUB_STEP_SUMMARY
+          echo "- **Missing Documentation**: $NOT_DOCUMENTED items" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          if [ $COVERAGE -lt 50 ]; then
-            echo "⚠️ **Warning**: Documentation coverage is below 50%" >> $GITHUB_STEP_SUMMARY
-          elif [ $COVERAGE -lt 80 ]; then
-            echo "📈 **Note**: Consider improving documentation coverage to reach 80%" >> $GITHUB_STEP_SUMMARY
+          if [ $COVERAGE -eq 100 ]; then
+            echo "🎉 **Perfect**: 100% documentation coverage!" >> $GITHUB_STEP_SUMMARY
+          elif [ $COVERAGE -ge 90 ]; then
+            echo "✅ **Excellent**: Documentation coverage is above 90%" >> $GITHUB_STEP_SUMMARY
+          elif [ $COVERAGE -ge 80 ]; then
+            echo "✅ **Good**: Documentation coverage is above 80%" >> $GITHUB_STEP_SUMMARY
+          elif [ $COVERAGE -ge 70 ]; then
+            echo "📈 **Fair**: Consider improving documentation coverage to reach 80%" >> $GITHUB_STEP_SUMMARY
           else
-            echo "✅ **Great**: Documentation coverage is above 80%" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ **Warning**: Documentation coverage is below 70%" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Add coverage badge info if available
+          if [ -f "packages/vscode/docs/coverage.svg" ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Coverage Badge" >> $GITHUB_STEP_SUMMARY
+            echo "A coverage badge has been generated and is available in the artifacts." >> $GITHUB_STEP_SUMMARY
           fi
         continue-on-error: true
 
@@ -165,7 +203,8 @@ jobs:
           echo "To generate documentation locally:" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
           echo "cd packages/vscode" >> $GITHUB_STEP_SUMMARY
-          echo "npm run doc         # HTML docs" >> $GITHUB_STEP_SUMMARY
+          echo "npm run doc          # HTML docs with coverage" >> $GITHUB_STEP_SUMMARY
           echo "npm run doc:markdown # Markdown docs" >> $GITHUB_STEP_SUMMARY
-          echo "npm run doc:watch   # Watch mode" >> $GITHUB_STEP_SUMMARY
+          echo "npm run doc:coverage # Check coverage only" >> $GITHUB_STEP_SUMMARY
+          echo "npm run doc:watch    # Watch mode" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

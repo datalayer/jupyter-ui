@@ -6,7 +6,7 @@
 
 /**
  * @module theme/components/CodeMirrorThemeInjector
- * @description Component that injects VS Code theme into CodeMirror 6 editors
+ * Component that injects VS Code theme into CodeMirror 6 editors
  */
 
 import { useEffect } from 'react';
@@ -16,6 +16,9 @@ import {
 } from '../codemirror/createVSCodeTheme';
 import { IThemeProvider } from '../types';
 
+/**
+ * @hidden
+ */
 interface CodeMirrorThemeInjectorProps {
   provider: IThemeProvider | null;
 }

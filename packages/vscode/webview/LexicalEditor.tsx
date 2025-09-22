@@ -6,7 +6,7 @@
 
 /**
  * @module LexicalEditor
- * @description React component for the Lexical rich text editor with VS Code theme integration.
+ * React component for the Lexical rich text editor with VS Code theme integration.
  * Provides a full-featured text editor with support for rich formatting, lists, links,
  * and markdown shortcuts. Includes optional toolbar and automatic saving functionality.
  */
@@ -57,6 +57,7 @@ interface CollaborationConfig {
  * @property {boolean} [showToolbar=true] - Whether to show the formatting toolbar
  * @property {boolean} [editable=true] - Whether the editor should be editable or read-only
  * @property {CollaborationConfig} [collaboration] - Collaboration configuration
+ * @hidden
  */
 interface LexicalEditorProps {
   initialContent?: string;
@@ -73,7 +74,7 @@ interface LexicalEditorProps {
  * Listens for Cmd/Ctrl+S keyboard shortcut and triggers the save callback
  * with the current editor state serialized as JSON.
  *
- * @internal
+ * @hidden
  * @param {object} props - Plugin properties
  * @param {(content: string) => void} [props.onSave] - Callback function when save is triggered
  * @returns {null} This is a React effect-only component
@@ -106,7 +107,7 @@ function SavePlugin({ onSave }: { onSave?: (content: string) => void }) {
  * Falls back to an empty paragraph if parsing fails.
  * Importantly, this does NOT add the initial load to the undo history.
  *
- * @internal
+ * @hidden
  * @param {object} props - Plugin properties
  * @param {string} [props.content] - JSON string representing the initial editor state
  * @returns {null} This is a React effect-only component
@@ -165,7 +166,6 @@ function LoadContentPlugin({ content }: { content?: string }) {
  * Provides a rich text editing experience with support for various formatting options,
  * lists, links, and markdown shortcuts. Includes an optional toolbar for visual formatting.
  *
- * @export
  * @function LexicalEditor
  * @param {LexicalEditorProps} props - Component properties
  * @returns {React.ReactElement} The rendered Lexical editor

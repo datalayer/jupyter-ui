@@ -6,7 +6,7 @@
 
 /**
  * @module authService
- * @description Authentication service for the Datalayer VS Code extension.
+ * Authentication service for the Datalayer VS Code extension.
  * Manages user sessions, JWT tokens, and secure credential storage using VS Code's SecretStorage API.
  * Supports GitHub OAuth integration for enhanced user profiles.
  */
@@ -19,14 +19,23 @@ import { GitHubService } from './githubService';
  * @interface GitHubUser
  */
 export interface GitHubUser {
+  /** GitHub username */
   login: string;
+  /** GitHub user ID */
   id: number;
+  /** URL to the user's avatar image */
   avatar_url: string;
+  /** User's display name */
   name?: string;
+  /** User's bio/description */
   bio?: string;
+  /** User's company */
   company?: string;
+  /** User's location */
   location?: string;
+  /** User's blog URL */
   blog?: string;
+  /** URL to the user's GitHub profile */
   html_url: string;
 }
 
@@ -35,15 +44,23 @@ export interface GitHubUser {
  * @interface LoginResponse
  */
 export interface LoginResponse {
+  /** User information from the authentication response */
   user: {
+    /** User ID */
     id: string;
+    /** User email address */
     email: string;
+    /** User display name */
     name?: string;
-    handle_s?: string; // e.g., "urn:dla:iam:ext::github:3627835"
-    github?: GitHubUser; // Enriched GitHub data
+    /** User handle URN (e.g., "urn:dla:iam:ext::github:3627835") */
+    handle_s?: string;
+    /** Enriched GitHub profile data */
+    github?: GitHubUser;
   };
+  /** JWT authentication token */
   token: string;
-  handle_s?: string; // May be at root level
+  /** User handle URN (may be at root level) */
+  handle_s?: string;
 }
 
 /**
@@ -51,9 +68,13 @@ export interface LoginResponse {
  * @interface AuthState
  */
 export interface AuthState {
+  /** Whether the user is currently authenticated */
   isAuthenticated: boolean;
+  /** JWT authentication token */
   token?: string;
+  /** Current user information */
   user?: LoginResponse['user'];
+  /** Datalayer server URL */
   serverUrl: string;
 }
 
@@ -62,7 +83,6 @@ export interface AuthState {
  * Handles login/logout, token storage, and status bar updates.
  *
  * @class AuthService
- * @implements {vscode.Disposable}
  *
  * @example
  * ```typescript
@@ -92,7 +112,6 @@ export class AuthService implements vscode.Disposable {
   /**
    * Gets or creates the singleton AuthService instance.
    *
-   * @static
    * @param {vscode.ExtensionContext} [context] - Extension context (required on first call)
    * @returns {AuthService} The AuthService singleton instance
    * @throws {Error} If context is not provided on first call
@@ -112,7 +131,6 @@ export class AuthService implements vscode.Disposable {
    * Loads stored credentials and updates the status bar.
    *
    * @private
-   * @async
    * @returns {Promise<void>}
    */
   private async initialize(): Promise<void> {
@@ -190,7 +208,6 @@ export class AuthService implements vscode.Disposable {
    * Validates the token, enriches user data with GitHub info if available,
    * and stores credentials securely.
    *
-   * @async
    * @param {string} token - User's authentication token
    * @returns {Promise<void>}
    * @throws {Error} If login fails or token is invalid
@@ -311,7 +328,6 @@ export class AuthService implements vscode.Disposable {
    * Logs out the current user.
    * Clears stored credentials and resets authentication state.
    *
-   * @async
    * @returns {Promise<void>}
    */
   async logout(): Promise<void> {
@@ -376,7 +392,6 @@ export class AuthService implements vscode.Disposable {
    * Updates the Datalayer server URL.
    * If authenticated, logs out the user and prompts for re-authentication.
    *
-   * @async
    * @param {string} url - New server URL
    * @returns {Promise<void>}
    */

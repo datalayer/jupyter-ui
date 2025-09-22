@@ -6,7 +6,7 @@
 
 /**
  * @module main
- * @description Entry point for the webview application.
+ * Entry point for the webview application.
  * Initializes the React-based notebook editor in the webview context.
  */
 

@@ -6,10 +6,14 @@
 
 /**
  * @module util
- * @description General utility functions for the extension.
+ * General utility functions for the extension.
  * Provides helper functions used throughout the extension codebase.
  */
 
+/**
+ * Generates a cryptographically random nonce string for CSP headers.
+ * @returns {string} A 32-character random string
+ */
 export function getNonce() {
   let text = '';
   const possible =

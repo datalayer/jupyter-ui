@@ -6,7 +6,7 @@
 
 /**
  * @module theme/mapping/UniversalColorMapper
- * @description Universal color mapping system.
+ * Universal color mapping system.
  * Maps semantic color names between different theme systems.
  */
 
@@ -14,6 +14,7 @@ import { ThemeProviderType } from '../types';
 
 /**
  * Color mapping configuration
+ * @hidden
  */
 interface IColorMapping {
   jupyterlab: string;

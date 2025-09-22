@@ -6,7 +6,7 @@
 
 /**
  * @module theme/codemirror/VSCodeCodeMirrorTheme
- * @description CodeMirror 6 theme that matches VS Code's syntax highlighting
+ * CodeMirror 6 theme that matches VS Code's syntax highlighting
  */
 
 import { EditorView } from '@codemirror/view';
@@ -18,23 +18,41 @@ import { tags as t } from '@lezer/highlight';
  * Get VS Code colors for syntax highlighting
  */
 export interface VSCodeColors {
+  /** Editor background color */
   background?: string;
+  /** Default text foreground color */
   foreground?: string;
+  /** Keyword color (if, for, while, etc.) */
   keyword?: string;
+  /** String literal color */
   string?: string;
+  /** Comment color */
   comment?: string;
+  /** Function and method name color */
   function?: string;
+  /** Number literal color */
   number?: string;
+  /** Variable name color */
   variable?: string;
+  /** Type and interface name color */
   type?: string;
+  /** Constant and boolean value color */
   constant?: string;
+  /** Operator color (+, -, *, etc.) */
   operator?: string;
+  /** Class name color */
   className?: string;
+  /** Namespace/module name color */
   namespace?: string;
+  /** Punctuation color (brackets, semicolons, etc.) */
   punctuation?: string;
+  /** Invalid/error syntax color */
   invalid?: string;
+  /** Cursor color */
   cursor?: string;
+  /** Selection background color */
   selection?: string;
+  /** Active line highlight color */
   lineHighlight?: string;
 }
 
@@ -106,6 +124,9 @@ const themeColors: Record<string, VSCodeColors> = {
 
 /**
  * Create a CodeMirror 6 theme that matches VS Code
+ * @param colors Custom color palette for the theme
+ * @param isDark Whether to create a dark or light theme
+ * @returns CodeMirror Extension with theme and syntax highlighting
  */
 export function createVSCodeTheme(
   colors?: VSCodeColors,
@@ -300,6 +321,8 @@ export function createThemeFromVSCode(): Extension {
 
 /**
  * Helper to determine if a color is dark
+ * @param color Color string in hex or rgb format
+ * @returns true if the color is dark (luminance < 0.5)
  */
 function isColorDark(color: string): boolean {
   // Default to dark if we can't determine

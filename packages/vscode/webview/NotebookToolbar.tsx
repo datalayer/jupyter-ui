@@ -6,17 +6,26 @@
 
 /**
  * @module NotebookToolbar
- * @description VS Code-style toolbar for the Jupyter notebook
+ * VS Code-style toolbar for the Jupyter notebook
  */
 
 import React, { useState, useEffect } from 'react';
 import useNotebookStore from '@datalayer/jupyter-react/lib/components/notebook/NotebookState';
 
+/**
+ * Props for the NotebookToolbar component
+ * @hidden
+ */
 interface NotebookToolbarProps {
+  /** ID of the notebook */
   notebookId: string;
+  /** Whether this is a Datalayer cloud notebook */
   isDatalayerNotebook?: boolean;
 }
 
+/**
+ * Toolbar component for Jupyter notebook operations
+ */
 export const NotebookToolbar: React.FC<NotebookToolbarProps> = ({
   notebookId,
   isDatalayerNotebook = false,

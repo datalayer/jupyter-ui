@@ -6,7 +6,7 @@
 
 /**
  * @module messages
- * @description Message type definitions for extension-webview communication.
+ * Message type definitions for extension-webview communication.
  * Defines the protocol for messages exchanged between the extension and webview.
  */
 

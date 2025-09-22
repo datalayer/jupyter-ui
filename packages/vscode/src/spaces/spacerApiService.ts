@@ -6,7 +6,7 @@
 
 /**
  * @module spacerApiService
- * @description API service for interacting with the Datalayer platform.
+ * API service for interacting with the Datalayer platform.
  * Manages spaces, documents, and notebooks.
  * Provides methods for CRUD operations on spaces and their content.
  */
@@ -15,24 +15,49 @@ import * as vscode from 'vscode';
 import { AuthService } from '../auth/authService';
 import { Space, Document } from './spaceItem';
 
+/**
+ * Response structure for spaces API.
+ * @interface SpacesResponse
+ */
 export interface SpacesResponse {
+  /** Whether the request was successful */
   success: boolean;
+  /** Optional message from the API */
   message?: string;
+  /** Array of spaces */
   data?: Space[];
 }
 
+/**
+ * Response structure for space items API.
+ * @interface SpaceItemsResponse
+ */
 export interface SpaceItemsResponse {
+  /** Whether the request was successful */
   success: boolean;
+  /** Optional message from the API */
   message?: string;
+  /** Array of documents in the space */
   data?: Document[];
 }
 
+/**
+ * Response structure for notebook API operations.
+ * @interface NotebookResponse
+ */
 export interface NotebookResponse {
+  /** Whether the request was successful */
   success: boolean;
+  /** Optional message from the API */
   message?: string;
+  /** Document data */
   data?: Document;
 }
 
+/**
+ * API service for interacting with Datalayer spaces.
+ * @class SpacerApiService
+ */
 export class SpacerApiService {
   private static instance: SpacerApiService;
   private authService: AuthService;
@@ -41,6 +66,10 @@ export class SpacerApiService {
     this.authService = AuthService.getInstance();
   }
 
+  /**
+   * Gets the singleton instance of SpacerApiService.
+   * @returns {SpacerApiService} The singleton instance
+   */
   static getInstance(): SpacerApiService {
     if (!SpacerApiService.instance) {
       SpacerApiService.instance = new SpacerApiService();
@@ -421,8 +450,11 @@ export class SpacerApiService {
    * Note: This is different from notebooks which may have a separate session endpoint
    */
   async getLexicalCollaborationSessionId(documentId: string): Promise<{
+    /** Whether the request was successful */
     success: boolean;
+    /** Session ID for collaboration */
     sessionId?: string;
+    /** Error message if failed */
     error?: string;
   }> {
     // For Lexical documents in Datalayer, the document UID IS the session ID

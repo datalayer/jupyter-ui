@@ -6,7 +6,7 @@
 
 /**
  * @module theme/codemirror/patchCodeMirror
- * @description Patches CodeMirror initialization to inject VS Code syntax highlighting
+ * Patches CodeMirror initialization to inject VS Code syntax highlighting
  */
 
 import { tags } from '@lezer/highlight';
@@ -14,6 +14,7 @@ import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
 
 /**
  * VS Code theme colors interface
+ * @hidden
  */
 interface VSCodeColors {
   keyword: string;

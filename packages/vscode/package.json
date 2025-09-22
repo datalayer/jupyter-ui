@@ -272,7 +272,8 @@
     "vsix": "npx @vscode/vsce package --no-yarn --no-dependencies",
     "doc": "typedoc",
     "doc:watch": "typedoc --watch",
-    "doc:markdown": "typedoc --plugin typedoc-plugin-markdown --out docs-markdown"
+    "doc:markdown": "typedoc --plugin typedoc-plugin-markdown --out docs-markdown",
+    "doc:coverage": "typedoc --validation"
   },
   "dependencies": {
     "@codemirror/language": "^6.11.3",
@@ -328,6 +329,7 @@
     "svg-inline-loader": "^0.8.2",
     "ts-loader": "^9.5.2",
     "typedoc": "^0.28.13",
+    "typedoc-plugin-coverage": "^4.0.1",
     "typedoc-plugin-markdown": "^4.8.1",
     "typescript": "^5.8.3",
     "webpack": "^5.98.0",

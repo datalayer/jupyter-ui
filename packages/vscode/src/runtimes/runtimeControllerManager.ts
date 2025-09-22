@@ -6,7 +6,7 @@
 
 /**
  * @module runtimeControllerManager
- * @description Manages multiple NotebookController instances for Datalayer runtimes.
+ * Manages multiple NotebookController instances for Datalayer runtimes.
  * Creates dynamic controllers for existing runtimes and provides options to create new ones.
  * Handles controller lifecycle, real-time updates, and runtime status synchronization.
  */
@@ -19,22 +19,33 @@ import { RuntimeController } from './runtimeController';
 
 /**
  * Types of runtime controllers that can be created.
+ * @enum {string}
  */
 export enum RuntimeControllerType {
+  /** Controller for an existing runtime */
   ExistingRuntime = 'existing',
+  /** Controller for creating a Python CPU runtime */
   CreatePythonCpu = 'create-python-cpu',
+  /** Controller for creating an AI environment runtime */
   CreateAiEnv = 'create-ai-env',
 }
 
 /**
  * Configuration for creating a runtime controller.
+ * @interface RuntimeControllerConfig
  */
 export interface RuntimeControllerConfig {
+  /** Type of controller to create */
   type: RuntimeControllerType;
+  /** Existing runtime information (for ExistingRuntime type) */
   runtime?: RuntimeResponse;
+  /** Environment name for new runtimes */
   environmentName?: string;
+  /** Display name shown in VS Code UI */
   displayName: string;
+  /** Description of the controller's purpose */
   description: string;
+  /** Additional detail information */
   detail: string;
 }
 
@@ -43,7 +54,7 @@ export interface RuntimeControllerConfig {
  * Provides dynamic kernel options in VS Code's kernel picker based on available runtimes.
  *
  * @class RuntimeControllerManager
- * @implements {vscode.Disposable}
+
  */
 export class RuntimeControllerManager implements vscode.Disposable {
   private readonly _context: vscode.ExtensionContext;
@@ -57,7 +68,6 @@ export class RuntimeControllerManager implements vscode.Disposable {
   /**
    * Creates a new RuntimeControllerManager instance.
    *
-   * @constructor
    * @param {vscode.ExtensionContext} context - The extension context
    */
   constructor(context: vscode.ExtensionContext) {
@@ -76,7 +86,7 @@ export class RuntimeControllerManager implements vscode.Disposable {
    * Sets up periodic refresh for runtime status updates.
    *
    * @public
-   * @async
+
    * @returns {Promise<void>}
    */
   public async initialize(): Promise<void> {
@@ -121,7 +131,7 @@ export class RuntimeControllerManager implements vscode.Disposable {
    * Removes controllers for deleted runtimes and creates controllers for new ones.
    *
    * @public
-   * @async
+
    * @returns {Promise<void>}
    */
   public async refreshControllers(): Promise<void> {
@@ -473,7 +483,7 @@ export class RuntimeControllerManager implements vscode.Disposable {
    * Useful for external triggers like runtime lifecycle events.
    *
    * @public
-   * @async
+
    * @param {string} [selectRuntimeUid] - Optional UID of runtime to select after refresh
    * @returns {Promise<RuntimeController | undefined>} The selected controller if found
    */

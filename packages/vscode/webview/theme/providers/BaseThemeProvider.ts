@@ -6,7 +6,7 @@
 
 /**
  * @module theme/providers/BaseThemeProvider
- * @description Base implementation for theme providers.
+ * Base implementation for theme providers.
  * Provides common functionality for all theme provider implementations.
  */
 
@@ -23,13 +23,23 @@ import {
  * Base theme provider implementation
  */
 export abstract class BaseThemeProvider implements IThemeProvider {
+  /** Whether the provider has been disposed */
   protected _disposed = false;
+  /** Set of theme change listeners */
   protected _listeners: Set<() => void> = new Set();
+  /** Current color mode */
   protected _colorMode: ColorMode = 'light';
 
+  /**
+   * Creates a new BaseThemeProvider
+   * @param id Unique identifier for the provider
+   * @param name Display name for the provider
+   * @param providerType Type of theme provider
+   */
   constructor(
     public readonly id: string,
     public readonly name: string,
+    /** Type of theme provider */
     protected readonly providerType: ThemeProviderType,
   ) {}
 

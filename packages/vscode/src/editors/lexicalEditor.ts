@@ -6,7 +6,7 @@
 
 /**
  * @module lexicalEditor
- * @description Custom editor provider for Lexical document files (.lexical).
+ * Custom editor provider for Lexical document files (.lexical).
  *
  * This module provides:
  * - Rich text editing with Lexical framework
@@ -29,7 +29,7 @@ import { SpacerApiService } from '../spaces/spacerApiService';
  * Delegate interface for lexical document operations.
  *
  * @interface LexicalDocumentDelegate
- * @internal
+ * @hidden
  */
 interface LexicalDocumentDelegate {
   /**
@@ -46,10 +46,7 @@ interface LexicalDocumentDelegate {
  * Manages document lifecycle, content state, and collaboration mode.
  * Handles both local and remote (Datalayer) documents.
  *
- * @class LexicalDocument
- * @extends {Disposable}
- * @implements {vscode.CustomDocument}
- * @internal
+ * @hidden
  */
 class LexicalDocument extends Disposable implements vscode.CustomDocument {
   static async create(
@@ -283,7 +280,6 @@ class LexicalDocument extends Disposable implements vscode.CustomDocument {
  * - VS Code integration (save, undo, etc.)
  *
  * @class LexicalEditorProvider
- * @implements {vscode.CustomEditorProvider<LexicalDocument>}
  * @public
  */
 export class LexicalEditorProvider
@@ -297,7 +293,6 @@ export class LexicalEditorProvider
    * - Command to create new Lexical documents
    * - Webview options for optimal performance
    *
-   * @static
    * @param {vscode.ExtensionContext} context - The VS Code extension context
    * @returns {vscode.Disposable} Registration disposable for cleanup
    * @public
@@ -350,6 +345,10 @@ export class LexicalEditorProvider
     }
   >();
 
+  /**
+   * Creates a new LexicalEditorProvider.
+   * @param _context - The VS Code extension context
+   */
   constructor(private readonly _context: vscode.ExtensionContext) {}
 
   async openCustomDocument(

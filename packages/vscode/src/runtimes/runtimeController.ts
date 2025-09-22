@@ -6,7 +6,7 @@
 
 /**
  * @module runtimeController
- * @description Individual runtime controller wrapper for NotebookController instances.
+ * Individual runtime controller wrapper for NotebookController instances.
  * Handles cell execution for specific Datalayer runtimes or runtime creation flows.
  * Provides WebSocket-based Jupyter protocol communication and output handling.
  */
@@ -67,7 +67,7 @@ interface KernelConnection {
  * Handles cell execution for a specific runtime or runtime creation flow.
  *
  * @class RuntimeController
- * @implements {vscode.Disposable}
+
  */
 export class RuntimeController implements vscode.Disposable {
   private readonly _context: vscode.ExtensionContext;
@@ -84,7 +84,6 @@ export class RuntimeController implements vscode.Disposable {
   /**
    * Creates a new RuntimeController instance.
    *
-   * @constructor
    * @param {vscode.ExtensionContext} context - The extension context
    * @param {RuntimeControllerConfig} config - Controller configuration
    * @param {SpacerApiService} spacerApiService - Spacer API service instance
@@ -203,7 +202,7 @@ export class RuntimeController implements vscode.Disposable {
    * This is the main entry point when users execute cells with this controller.
    *
    * @private
-   * @async
+
    * @param {vscode.NotebookCell[]} cells - Array of cells to execute
    * @param {vscode.NotebookDocument} _notebook - The notebook document (unused)
    * @param {vscode.NotebookController} _controller - The controller instance (unused)
@@ -303,7 +302,7 @@ export class RuntimeController implements vscode.Disposable {
    * Prompts for login and provides helpful error messages.
    *
    * @private
-   * @async
+
    * @param {vscode.NotebookCell[]} cells - Array of cells that failed to execute
    * @returns {Promise<void>}
    */
@@ -345,7 +344,7 @@ export class RuntimeController implements vscode.Disposable {
    * Used when the selector controller is selected from kernel picker.
    *
    * @private
-   * @async
+
    * @param {vscode.NotebookDocument} notebook - The notebook document
    * @returns {Promise<void>}
    */
@@ -554,7 +553,7 @@ export class RuntimeController implements vscode.Disposable {
    * Allows users to choose an existing runtime or create a new one.
    *
    * @private
-   * @async
+
    * @param {vscode.NotebookCell[]} cells - Array of cells to execute after selection
    * @returns {Promise<void>}
    */
@@ -899,7 +898,7 @@ export class RuntimeController implements vscode.Disposable {
    * Executes cells with the currently active runtime.
    *
    * @public
-   * @async
+
    * @param {vscode.NotebookCell[]} cells - Array of cells to execute
    * @returns {Promise<void>}
    */
@@ -938,7 +937,7 @@ export class RuntimeController implements vscode.Disposable {
    * Creates a new runtime and executes cells with it.
    *
    * @private
-   * @async
+
    * @param {string} environmentName - Environment name for the new runtime
    * @param {vscode.NotebookCell[]} cells - Array of cells to execute
    * @returns {Promise<string | undefined>} The UID of the created runtime
@@ -1080,7 +1079,7 @@ export class RuntimeController implements vscode.Disposable {
    * Handles WebSocket communication and output capture.
    *
    * @private
-   * @async
+
    * @param {CellExecutionContext} context - Cell execution context
    * @returns {Promise<void>}
    */
@@ -1166,7 +1165,7 @@ export class RuntimeController implements vscode.Disposable {
    * Verifies existing runtime or uses the configured runtime.
    *
    * @private
-   * @async
+
    * @returns {Promise<void>}
    */
   private async _ensureRuntime(): Promise<void> {
@@ -1296,7 +1295,7 @@ export class RuntimeController implements vscode.Disposable {
    * Creates a new connection if needed or reuses an existing one.
    *
    * @private
-   * @async
+
    * @returns {Promise<void>}
    */
   private async _ensureKernelConnection(): Promise<void> {

@@ -6,7 +6,7 @@
 
 /**
  * @module LexicalToolbar
- * @description Toolbar component for the Lexical editor providing formatting controls.
+ * Toolbar component for the Lexical editor providing formatting controls.
  * Includes buttons for text formatting, headings, lists, and alignment options.
  * Automatically syncs with the current editor selection state.
  */
@@ -65,7 +65,7 @@ interface ToolbarButtonProps {
  * Individual toolbar button component with VS Code theme integration.
  * Provides visual feedback for active and hover states.
  *
- * @internal
+ * @hidden
  * @function ToolbarButton
  * @param {ToolbarButtonProps} props - Button properties
  * @returns {React.ReactElement} Styled button element
@@ -122,7 +122,7 @@ function ToolbarButton({
 /**
  * Visual divider component for separating toolbar button groups.
  *
- * @internal
+ * @hidden
  * @function Divider
  * @returns {React.ReactElement} Vertical line divider
  */
@@ -146,6 +146,7 @@ function Divider() {
  *
  * @interface LexicalToolbarProps
  * @property {boolean} [disabled=false] - Whether all toolbar buttons should be disabled
+ * @hidden
  */
 interface LexicalToolbarProps {
   disabled?: boolean;
@@ -157,7 +158,6 @@ interface LexicalToolbarProps {
  * headings, lists, and alignment options. Automatically syncs with the current
  * editor selection to show active formats.
  *
- * @export
  * @function LexicalToolbar
  * @param {LexicalToolbarProps} props - Toolbar properties
  * @returns {React.ReactElement} The rendered toolbar with all formatting controls

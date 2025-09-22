@@ -6,7 +6,7 @@
 
 /**
  * @module theme/codemirror/createVSCodeTheme
- * @description Creates a proper CodeMirror 6 theme from VS Code colors
+ * Creates a proper CodeMirror 6 theme from VS Code colors
  */
 
 import { EditorView } from '@codemirror/view';
@@ -14,21 +14,39 @@ import { Extension } from '@codemirror/state';
 import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
 import { tags } from '@lezer/highlight';
 
+/**
+ * VS Code theme colors for CodeMirror syntax highlighting
+ */
 export interface VSCodeThemeColors {
+  /** Editor background color */
   background: string;
+  /** Default text color */
   foreground: string;
+  /** Keyword syntax color */
   keyword: string;
+  /** String literal color */
   string: string;
+  /** Comment color */
   comment: string;
+  /** Function name color */
   function: string;
+  /** Number literal color */
   number: string;
+  /** Variable name color */
   variable: string;
+  /** Type name color */
   type: string;
+  /** Constant value color */
   constant: string;
+  /** Operator color */
   operator: string;
+  /** Punctuation marks color */
   punctuation?: string;
+  /** Text selection color */
   selection?: string;
+  /** Cursor color */
   cursor?: string;
+  /** Active line background color */
   activeLine?: string;
 }
 

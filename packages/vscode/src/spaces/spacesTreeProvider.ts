@@ -6,7 +6,7 @@
 
 /**
  * @module spacesTreeProvider
- * @description Tree data provider for the Datalayer spaces view.
+ * Tree data provider for the Datalayer spaces view.
  * Displays user's spaces and documents in a hierarchical tree structure.
  */
 
@@ -21,6 +21,9 @@ import {
 import { SpacerApiService } from './spacerApiService';
 import { AuthService } from '../auth/authService';
 
+/**
+ * Tree data provider for the Datalayer Spaces view.
+ */
 export class SpacesTreeProvider implements vscode.TreeDataProvider<SpaceItem> {
   private _onDidChangeTreeData: vscode.EventEmitter<
     SpaceItem | undefined | null | void
@@ -34,11 +37,18 @@ export class SpacesTreeProvider implements vscode.TreeDataProvider<SpaceItem> {
   private spacesCache: Map<string, Space[]> = new Map();
   private itemsCache: Map<string, Document[]> = new Map();
 
+  /**
+   * Creates a new SpacesTreeProvider.
+   * @param {vscode.ExtensionContext} context - Extension context
+   */
   constructor(private context: vscode.ExtensionContext) {
     this.authService = AuthService.getInstance();
     this.apiService = SpacerApiService.getInstance();
   }
 
+  /**
+   * Refreshes the entire tree view.
+   */
   refresh(): void {
     console.log('[SpacesTree] Refreshing tree...');
     this.spacesCache.clear();
@@ -46,6 +56,10 @@ export class SpacesTreeProvider implements vscode.TreeDataProvider<SpaceItem> {
     this._onDidChangeTreeData.fire();
   }
 
+  /**
+   * Refreshes a specific space in the tree.
+   * @param {string} spaceId - ID of the space to refresh
+   */
   refreshSpace(spaceId: string): void {
     console.log(`[SpacesTree] Refreshing space: ${spaceId}`);
     // Clear both the items cache and spaces cache to ensure fresh data

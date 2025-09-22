@@ -6,7 +6,7 @@
 
 /**
  * @module extension
- * @description Main extension module for the Datalayer VS Code extension.
+ * Main extension module for the Datalayer VS Code extension.
  * This module provides integration with the Datalayer platform, including:
  * - Authentication with the Datalayer platform
  * - Custom notebook editor for Jupyter notebooks

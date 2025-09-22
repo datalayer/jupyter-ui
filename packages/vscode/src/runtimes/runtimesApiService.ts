@@ -6,7 +6,7 @@
 
 /**
  * @module runtimesApiService
- * @description API service for managing Datalayer runtime environments.
+ * API service for managing Datalayer runtime environments.
  * Handles runtime creation, listing, monitoring, and lifecycle management.
  * Provides methods for interacting with the Datalayer runtimes API.
  */
@@ -14,33 +14,66 @@
 import * as vscode from 'vscode';
 import { AuthService } from '../auth/authService';
 
+/**
+ * Response structure for a Datalayer runtime.
+ * @interface RuntimeResponse
+ */
 export interface RuntimeResponse {
+  /** Unique identifier for the runtime */
   uid: string;
+  /** User-provided name for the runtime */
   given_name?: string;
+  /** Current status of the runtime (e.g., 'running', 'ready') */
   status?: string;
+  /** Kubernetes pod name */
   pod_name?: string;
-  ingress?: string; // The actual field name from API
-  token?: string; // The actual field name from API
+  /** Runtime ingress URL (actual field name from API) */
+  ingress?: string;
+  /** Runtime authentication token (actual field name from API) */
+  token?: string;
+  /** Maximum credits allocated for this runtime */
   credits_limit?: number;
+  /** Credits consumed so far */
   credits_used?: number;
+  /** Type of runtime (e.g., 'notebook', 'cell') */
   type?: string;
+  /** Environment name (e.g., 'python-cpu-env') */
   environment_name?: string;
+  /** Human-readable environment title */
   environment_title?: string;
+  /** Rate of credit consumption */
   burning_rate?: number;
+  /** Reservation identifier */
   reservation_id?: string;
+  /** Runtime start timestamp */
   started_at?: string;
+  /** Runtime expiration timestamp */
   expired_at?: string;
 }
 
+/**
+ * Response structure for runtime creation API.
+ * @interface CreateRuntimeResponse
+ */
 export interface CreateRuntimeResponse {
+  /** Whether the creation was successful */
   success: boolean;
+  /** Optional message from the API */
   message?: string;
+  /** Created runtime details */
   runtime?: RuntimeResponse;
 }
 
+/**
+ * Response structure for listing runtimes API.
+ * @interface ListRuntimesResponse
+ */
 export interface ListRuntimesResponse {
+  /** Whether the request was successful */
   success: boolean;
+  /** Optional message from the API */
   message?: string;
+  /** Array of available runtimes */
   runtimes?: RuntimeResponse[];
 }
 
@@ -58,6 +91,10 @@ export class RuntimesApiService {
     this.authService = AuthService.getInstance();
   }
 
+  /**
+   * Gets the singleton instance of RuntimesApiService.
+   * @returns {RuntimesApiService} The singleton instance
+   */
   static getInstance(): RuntimesApiService {
     if (!RuntimesApiService.instance) {
       RuntimesApiService.instance = new RuntimesApiService();

@@ -6,7 +6,7 @@
 
 /**
  * @module theme/providers/VSCodeThemeProvider
- * @description VS Code theme provider implementation.
+ * VS Code theme provider implementation.
  * Extracts and maps VS Code theme colors to the unified theme system.
  */
 
@@ -17,9 +17,15 @@ import { ColorMode, IPrimerThemeMapping, IColorPalette } from '../types';
  * VS Code theme provider
  */
 export class VSCodeThemeProvider extends BaseThemeProvider {
+  /** Map of VS Code CSS variables to their values */
   private _vscodeColors: Map<string, string> = new Map();
+  /** Mutation observer for theme changes */
   private _observer: MutationObserver | null = null;
 
+  /**
+   * Creates a new VSCodeThemeProvider
+   * @param colorMode Initial color mode
+   */
   constructor(colorMode: ColorMode = 'light') {
     super('vscode-theme', 'VS Code Theme', 'vscode');
     this._colorMode = colorMode;
@@ -364,7 +370,7 @@ export class VSCodeThemeProvider extends BaseThemeProvider {
   /**
    * Extract syntax highlighting colors from VS Code theme
    *
-   * @description Uses VS Code's actual syntax colors when available, falls back to defaults.
+   * Uses VS Code's actual syntax colors when available, falls back to defaults.
    * Maps VS Code debug token expression colors to CodeMirror syntax highlighting classes.
    * This ensures the notebook's syntax highlighting matches VS Code's active theme exactly.
    *
@@ -916,7 +922,7 @@ export class VSCodeThemeProvider extends BaseThemeProvider {
   /**
    * Generate CodeMirror-specific CSS for syntax highlighting
    *
-   * @description Creates CSS rules that map CodeMirror 6 token classes to VS Code theme colors.
+   * Creates CSS rules that map CodeMirror 6 token classes to VS Code theme colors.
    * Uses both unicode-prefixed classes (ͼ2, ͼ4, etc.) and semantic classes (.cm-keyword, .cm-string).
    * This ensures syntax highlighting in notebook cells matches VS Code's editor exactly.
    *

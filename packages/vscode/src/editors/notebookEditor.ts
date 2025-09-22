@@ -264,6 +264,11 @@ export class NotebookEditorProvider
 {
   private static newNotebookFileId = 1;
 
+  /**
+   * Registers the notebook editor provider
+   * @param context Extension context
+   * @returns Disposable for cleanup
+   */
   public static register(context: vscode.ExtensionContext): vscode.Disposable {
     vscode.commands.registerCommand('datalayer.jupyter-notebook-new', () => {
       const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -314,6 +319,10 @@ export class NotebookEditorProvider
   private readonly _callbacks = new Map<string, (response: any) => void>();
   private readonly _context: vscode.ExtensionContext;
 
+  /**
+   * Creates a new NotebookEditorProvider
+   * @param context Extension context
+   */
   constructor(context: vscode.ExtensionContext) {
     this._context = context;
   }

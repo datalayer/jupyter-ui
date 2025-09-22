@@ -6,14 +6,22 @@
 
 /**
  * @module tokenProvider
- * @description User interface provider for authentication flows.
+ * User interface provider for authentication flows.
  * Handles token input, validation, and status display through VS Code UI components.
  */
 
 import * as vscode from 'vscode';
 import { AuthService } from './authService';
 
+/**
+ * Provides user interface methods for authentication flows.
+ * @class TokenProvider
+ */
 export class TokenProvider {
+  /**
+   * Prompts the user to enter their Datalayer access token.
+   * @returns {Promise<string | undefined>} The trimmed token or undefined if cancelled
+   */
   static async promptForToken(): Promise<string | undefined> {
     const token = await vscode.window.showInputBox({
       title: 'Datalayer Authentication',
@@ -32,6 +40,10 @@ export class TokenProvider {
     return token?.trim();
   }
 
+  /**
+   * Handles the complete login flow with user prompts.
+   * @returns {Promise<void>}
+   */
   static async login(): Promise<void> {
     console.log('[Datalayer Auth] Login command triggered');
     const token = await TokenProvider.promptForToken();
@@ -53,11 +65,19 @@ export class TokenProvider {
     }
   }
 
+  /**
+   * Logs out the current user and clears authentication state.
+   * @returns {Promise<void>}
+   */
   static async logout(): Promise<void> {
     const authService = AuthService.getInstance();
     await authService.logout();
   }
 
+  /**
+   * Shows the current authentication status with options to login or logout.
+   * @returns {Promise<void>}
+   */
   static async showAuthStatus(): Promise<void> {
     const authService = AuthService.getInstance();
     const state = authService.getAuthState();

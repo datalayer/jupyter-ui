@@ -6,7 +6,7 @@
 
 /**
  * @module theme/types
- * @description Type definitions for the extensible theme system.
+ * Type definitions for the extensible theme system.
  * Provides interfaces for theme providers, color palettes, and theme definitions.
  */
 
@@ -31,42 +31,59 @@ export type ThemeProviderType = 'jupyterlab' | 'vscode' | 'custom' | 'auto';
  * Color palette interface for theme colors
  */
 export interface IColorPalette {
-  // Background colors
+  /** Primary background color */
   'background.primary': string;
+  /** Secondary background color for panels */
   'background.secondary': string;
+  /** Tertiary background color for nested elements */
   'background.tertiary': string;
+  /** Overlay background color for popups */
   'background.overlay': string;
 
-  // Text colors
+  /** Primary text color */
   'text.primary': string;
+  /** Secondary text color for descriptions */
   'text.secondary': string;
+  /** Disabled text color */
   'text.disabled': string;
+  /** Link text color */
   'text.link': string;
 
-  // Border colors
+  /** Default border color */
   'border.default': string;
+  /** Muted border color */
   'border.muted': string;
+  /** Subtle border color */
   'border.subtle': string;
 
-  // Status colors
+  /** Error status color */
   'status.error': string;
+  /** Warning status color */
   'status.warning': string;
+  /** Success status color */
   'status.success': string;
+  /** Info status color */
   'status.info': string;
 
-  // Interactive colors
+  /** Hover state color */
   'interactive.hover': string;
+  /** Active state color */
   'interactive.active': string;
+  /** Focus state color */
   'interactive.focus': string;
 
-  // Editor specific
+  /** Editor background color */
   'editor.background': string;
+  /** Editor foreground color */
   'editor.foreground': string;
+  /** Editor selection background color */
   'editor.selectionBackground': string;
+  /** Editor active line highlight color */
   'editor.lineHighlight': string;
+  /** Editor cursor color */
   'editor.cursor': string;
 
-  // Additional semantic colors
+  /** Additional semantic colors */
   [key: string]: string;
 }
 
@@ -74,23 +91,38 @@ export interface IColorPalette {
  * Typography configuration
  */
 export interface ITypography {
+  /** Font family configuration */
   fontFamily: {
+    /** Default font family for UI text */
     default: string;
+    /** Monospace font family for code */
     mono: string;
   };
+  /** Font size configuration */
   fontSize: {
+    /** Small font size */
     small: string;
+    /** Medium font size */
     medium: string;
+    /** Large font size */
     large: string;
   };
+  /** Font weight configuration */
   fontWeight: {
+    /** Normal font weight */
     normal: number;
+    /** Medium font weight */
     medium: number;
+    /** Bold font weight */
     bold: number;
   };
+  /** Line height configuration */
   lineHeight: {
+    /** Condensed line height */
     condensed: number;
+    /** Normal line height */
     normal: number;
+    /** Relaxed line height */
     relaxed: number;
   };
 }
@@ -99,7 +131,9 @@ export interface ITypography {
  * Spacing configuration
  */
 export interface ISpacing {
+  /** Base spacing unit in pixels */
   unit: number;
+  /** Spacing scale array for consistent spacing */
   scale: number[];
 }
 
@@ -107,13 +141,21 @@ export interface ISpacing {
  * Complete theme definition
  */
 export interface IThemeDefinition {
+  /** Unique theme identifier */
   id: string;
+  /** Display name of the theme */
   name: string;
+  /** Color mode of the theme */
   colorMode: ColorMode;
+  /** Theme provider type */
   provider: ThemeProviderType;
+  /** Theme color palette */
   colors: Partial<IColorPalette>;
+  /** Typography configuration */
   typography?: Partial<ITypography>;
+  /** Spacing configuration */
   spacing?: Partial<ISpacing>;
+  /** Custom CSS variables */
   cssVariables?: Record<string, string>;
 }
 
@@ -121,30 +163,50 @@ export interface IThemeDefinition {
  * Primer theme mapping for compatibility with Primer React
  */
 export interface IPrimerThemeMapping {
+  /** Color configuration for Primer */
   colors: {
+    /** Canvas (background) colors */
     canvas: {
+      /** Default canvas color */
       default: string;
+      /** Subtle canvas color */
       subtle: string;
+      /** Inset canvas color */
       inset?: string;
     };
+    /** Foreground (text) colors */
     fg: {
+      /** Default foreground color */
       default: string;
+      /** Muted foreground color */
       muted: string;
+      /** Subtle foreground color */
       subtle?: string;
+      /** Foreground on emphasis color */
       onEmphasis?: string;
     };
+    /** Border colors */
     border: {
+      /** Default border color */
       default: string;
+      /** Muted border color */
       muted?: string;
+      /** Subtle border color */
       subtle?: string;
     };
+    /** Additional color properties */
     [key: string]: any;
   };
+  /** Font configuration */
   fonts?: {
+    /** Normal font family */
     normal: string;
+    /** Monospace font family */
     mono: string;
   };
+  /** Font size scale */
   fontSizes?: string[];
+  /** Spacing scale */
   space?: number[];
 }
 
@@ -197,9 +259,14 @@ export interface IThemeProvider {
  * Theme context value
  */
 export interface IThemeContext {
+  /** Current theme provider */
   provider: IThemeProvider | null;
+  /** Current theme definition */
   theme: IThemeDefinition | null;
+  /** Current color mode */
   colorMode: ColorMode;
+  /** Set the theme provider */
   setProvider: (provider: IThemeProvider) => void;
+  /** Set the color mode */
   setColorMode: (mode: ColorMode) => void;
 }

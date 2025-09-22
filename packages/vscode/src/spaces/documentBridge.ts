@@ -6,7 +6,7 @@
 
 /**
  * @module documentBridge
- * @description Bridge service for document management.
+ * Bridge service for document management.
  * Handles document downloading, caching, and runtime association.
  * Manages the lifecycle of documents opened from the Datalayer platform.
  */
@@ -23,15 +23,29 @@ import {
 } from '../runtimes/runtimesApiService';
 import { DatalayerFileSystemProvider } from './datalayerFileSystemProvider';
 
+/**
+ * Metadata for a downloaded document.
+ * @interface DocumentMetadata
+ */
 export interface DocumentMetadata {
+  /** The document from Datalayer */
   document: Document;
+  /** ID of the containing space */
   spaceId?: string;
+  /** Name of the containing space */
   spaceName?: string;
+  /** Local filesystem path */
   localPath: string;
+  /** When the document was last downloaded */
   lastDownloaded: Date;
+  /** Associated runtime for notebooks */
   runtime?: RuntimeResponse;
 }
 
+/**
+ * Manages document lifecycle between Datalayer platform and local filesystem.
+ * @class DocumentBridge
+ */
 export class DocumentBridge {
   private static instance: DocumentBridge;
   private apiService: SpacerApiService;
@@ -50,6 +64,10 @@ export class DocumentBridge {
     }
   }
 
+  /**
+   * Gets the singleton instance of DocumentBridge.
+   * @returns {DocumentBridge} The singleton instance
+   */
   static getInstance(): DocumentBridge {
     if (!DocumentBridge.instance) {
       DocumentBridge.instance = new DocumentBridge();

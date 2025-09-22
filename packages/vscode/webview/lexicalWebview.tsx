@@ -6,7 +6,7 @@
 
 /**
  * @module lexicalWebview
- * @description Main webview entry point for the Lexical editor in VS Code.
+ * Main webview entry point for the Lexical editor in VS Code.
  *
  * Responsibilities:
  * - VS Code API communication
@@ -37,7 +37,7 @@ if (
 
 /**
  * VS Code API type declarations
- * @internal
+ * @hidden
  */
 declare global {
   interface Window {
@@ -57,7 +57,7 @@ declare global {
 /**
  * Get or acquire VS Code API (singleton pattern)
  * @returns VS Code API instance or null
- * @internal
+ * @hidden
  */
 const getVSCodeAPI = () => {
   if ((window as any).vscode) {

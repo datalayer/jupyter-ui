@@ -6,7 +6,7 @@
 
 /**
  * @module runtimePicker
- * @description Runtime selection utility for notebook execution.
+ * Runtime selection utility for notebook execution.
  * Provides UI for selecting and configuring Jupyter runtime environments.
  */
 
