@@ -1,0 +1,171 @@
+name: VSCode - Documentation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/vscode/**'
+      - '.github/workflows/vscode-documentation.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'packages/vscode/**'
+      - '.github/workflows/vscode-documentation.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-docs:
+    name: Build Documentation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build React package (required for type dependencies)
+        run: |
+          echo "📦 Building React package for type dependencies..."
+          npm run build
+        working-directory: packages/react
+
+      - name: Generate TypeDoc HTML documentation
+        run: |
+          echo "📚 Generating TypeDoc HTML documentation..."
+          npm run doc
+        working-directory: packages/vscode
+
+      - name: Generate TypeDoc Markdown documentation
+        run: |
+          echo "📝 Generating TypeDoc Markdown documentation..."
+          npm run doc:markdown
+        working-directory: packages/vscode
+
+      - name: Verify documentation output
+        run: |
+          echo "🔍 Verifying documentation was generated..."
+          if [ -d "packages/vscode/docs" ]; then
+            echo "✅ HTML documentation generated successfully"
+            echo "Files generated: $(find packages/vscode/docs -type f | wc -l)"
+          else
+            echo "❌ HTML documentation generation failed"
+            exit 1
+          fi
+
+          if [ -d "packages/vscode/docs-markdown" ]; then
+            echo "✅ Markdown documentation generated successfully"
+            echo "Files generated: $(find packages/vscode/docs-markdown -type f | wc -l)"
+          else
+            echo "❌ Markdown documentation generation failed"
+            exit 1
+          fi
+
+      - name: Upload HTML documentation artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vscode-docs-html
+          path: packages/vscode/docs/
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Upload Markdown documentation artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vscode-docs-markdown
+          path: packages/vscode/docs-markdown/
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Generate documentation coverage report
+        run: |
+          echo "📊 Analyzing documentation coverage..."
+
+          # Count TypeScript files
+          TS_FILES=$(find packages/vscode/src -name "*.ts" -o -name "*.tsx" | wc -l)
+
+          # Count files with JSDoc comments
+          DOCUMENTED_FILES=$(grep -l "@module\|@description" --include="*.ts" --include="*.tsx" -r packages/vscode/src | wc -l || echo "0")
+
+          # Calculate coverage percentage
+          if [ $TS_FILES -gt 0 ]; then
+            COVERAGE=$((DOCUMENTED_FILES * 100 / TS_FILES))
+          else
+            COVERAGE=0
+          fi
+
+          echo "TypeScript files: $TS_FILES"
+          echo "Documented files: $DOCUMENTED_FILES"
+          echo "Documentation coverage: ${COVERAGE}%"
+
+          # Add to GitHub Step Summary
+          echo "## 📚 Documentation Build Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Coverage Statistics" >> $GITHUB_STEP_SUMMARY
+          echo "- **TypeScript Files**: $TS_FILES" >> $GITHUB_STEP_SUMMARY
+          echo "- **Documented Files**: $DOCUMENTED_FILES" >> $GITHUB_STEP_SUMMARY
+          echo "- **Coverage**: ${COVERAGE}%" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ $COVERAGE -lt 50 ]; then
+            echo "⚠️ **Warning**: Documentation coverage is below 50%" >> $GITHUB_STEP_SUMMARY
+          elif [ $COVERAGE -lt 80 ]; then
+            echo "📈 **Note**: Consider improving documentation coverage to reach 80%" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ **Great**: Documentation coverage is above 80%" >> $GITHUB_STEP_SUMMARY
+          fi
+        continue-on-error: true
+
+      - name: Check for missing JSDoc comments
+        run: |
+          echo "🔎 Checking for exported functions without JSDoc..."
+
+          # Find exported functions without preceding JSDoc
+          MISSING_DOCS=$(grep -B2 "^export.*function\|^export.*class\|^export.*interface" --include="*.ts" --include="*.tsx" -r packages/vscode/src | \
+            grep -v "/\*\*" | \
+            grep "export" | \
+            head -10 || true)
+
+          if [ -n "$MISSING_DOCS" ]; then
+            echo "⚠️ Found exports potentially missing JSDoc comments:"
+            echo "$MISSING_DOCS"
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### ⚠️ Exports Missing Documentation" >> $GITHUB_STEP_SUMMARY
+            echo "Some exported items may be missing JSDoc comments. Run \`npm run doc\` locally to verify." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ All exports appear to have documentation"
+          fi
+        continue-on-error: true
+
+      - name: Generate documentation summary
+        if: always()
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 Documentation Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "- **HTML Documentation**: Available as \`vscode-docs-html\` artifact" >> $GITHUB_STEP_SUMMARY
+          echo "- **Markdown Documentation**: Available as \`vscode-docs-markdown\` artifact" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 💡 Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "1. Download the documentation artifacts from this workflow run" >> $GITHUB_STEP_SUMMARY
+          echo "2. Review the HTML docs by opening \`index.html\` in a browser" >> $GITHUB_STEP_SUMMARY
+          echo "3. Use the Markdown docs for integration with other documentation systems" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔧 Local Documentation" >> $GITHUB_STEP_SUMMARY
+          echo "To generate documentation locally:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "cd packages/vscode" >> $GITHUB_STEP_SUMMARY
+          echo "npm run doc         # HTML docs" >> $GITHUB_STEP_SUMMARY
+          echo "npm run doc:markdown # Markdown docs" >> $GITHUB_STEP_SUMMARY
+          echo "npm run doc:watch   # Watch mode" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

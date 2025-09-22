@@ -1,369 +1,192 @@
-# Datalayer VS Code Extension - Claude Instructions
+# Datalayer VS Code Extension - Developer Guide
 
-## Project Overview
+## Quick Start
 
-This is a VS Code extension that provides a custom Jupyter Notebook editor with integrated Datalayer platform authentication and a Spaces tree view for managing cloud documents. It uses the `@datalayer/jupyter-react` component library and supports both local Jupyter servers and the Datalayer cloud platform.
+```bash
+# Setup
+npm install
+npm run watch
 
-## Recent Fixes (September 2025)
+# Debug
+Press F5 in VS Code to launch Extension Development Host
 
-### ✅ VS Code Theme Integration & Black Background Fix
+# Build & Package
+npm run compile
+npm run vsix
+```
 
-- **Fixed**: Codicon icons now render properly in notebook toolbar (resolved font loading from `@vscode/codicons`)
-- **Fixed**: CodeMirror syntax highlighting now matches VS Code themes exactly using CodeMirror 6 API
-- **Fixed**: Eliminated black background gaps between toolbar and notebook cells via enhanced theme provider
-- **Implementation**: Enhanced theme provider automatically injects CSS overrides for seamless VS Code integration
+## Architecture Overview
 
-### ✅ Post-Build Patching System for Syntax Highlighting
+- **Extension Context** (`src/`): Node.js environment, handles auth & server communication
+- **Webview** (`webview/`): React-based notebook editor with VS Code theme integration
+- **Message Passing**: JWT token injection between extension and webview
 
-- **Added**: `packages/react/scripts/patch-vscode-highlighting.js` - injects VS Code syntax highlighting into compiled NotebookAdapter
-- **Added**: `useVSCodeTheme` flag in NotebookAdapter for controlling theme integration
-- **Result**: Perfect syntax color matching with VS Code's active theme using Lezer parser tags
+## Key Features
 
-### ✅ Enhanced Theme Provider Architecture
+### 🎨 VS Code Theme Integration
 
-- **Enhanced**: `webview/theme/` system with modular VS Code provider
-- **Enhanced**: `VSCodeThemeProvider` with comprehensive color extraction and CSS variable mapping
-- **Enhanced**: Automatic background color fixes for HTML, body, Primer BaseStyles, and JupyterLab elements
-- **Key Fix**: Theme provider injects `!important` CSS overrides to ensure VS Code editor background throughout
+- **Complete theme matching**: Notebook cells match VS Code colors exactly
+- **Syntax highlighting**: CodeMirror uses VS Code syntax colors via post-build patching
+- **Background harmony**: No visual gaps, proper color inheritance
+- **Native toolbar**: VS Code-style with codicon icons
 
-## Architecture
+**Implementation**: Enhanced theme provider (`webview/theme/`) automatically injects CSS overrides. Post-build script (`packages/react/scripts/patch-vscode-highlighting.js`) patches NotebookAdapter with VS Code syntax highlighting.
 
-- **Extension Code** (`src/`): Runs in VS Code's Node.js context, handles authentication and server communication
-- **Webview Code** (`webview/`): Runs in an iframe, contains the React-based notebook editor
-- **Authentication System** (`src/auth/`): Token-based authentication with GitHub profile enrichment
-- **Spaces Tree View** (`src/spaces/`): Explorer sidebar for browsing Datalayer spaces and documents
-- **Communication**: Message passing between extension and webview with JWT token injection
+### 🔐 Authentication System
 
-## Development Setup
+- Token-based login with Datalayer platform
+- GitHub profile enrichment for OAuth users
+- Secure storage via VS Code SecretStorage API
+- Status bar integration with connection state
 
-1. Run `npm run watch` in terminal for auto-rebuild
-2. Press `F5` to launch the extension in a new VS Code window
-3. Open any `.ipynb` file to test the custom notebook editor
-4. Use Command Palette → "Datalayer: Login to Datalayer" to authenticate
+### 📁 Spaces Tree View
 
-## Key Components
+- Hierarchical display of Datalayer spaces and documents
+- Virtual file system for clean paths (`datalayer:/Space/doc.lexical`)
+- Create, rename, delete documents with API sync
+- Context menu actions for document management
 
-### Core Extension
+### 📝 Lexical Editor
 
-- `src/extension.ts`: Main extension entry point with auth command registration
-- `src/notebookEditor.ts`: Custom editor provider with authenticated connections
+- Rich text editing for `.lexical` documents
+- Full formatting support (bold, italic, lists, headings)
+- Read-only mode for Datalayer documents
+- VS Code theme integration
 
-### Authentication System
+### ⚙️ Runtime Management
 
-- `src/auth/authService.ts`: Authentication service with secure token storage
-- `src/auth/githubService.ts`: GitHub profile enrichment service
-- `src/auth/tokenProvider.ts`: User interface for authentication flows
-
-### Spaces Tree View
-
-- `src/spaces/spacesTreeProvider.ts`: Tree data provider for Datalayer spaces
-- `src/spaces/spacerApiService.ts`: API service for fetching spaces and documents
-- `src/spaces/spaceItem.ts`: Data models for tree items
-
-### Webview
-
-- `webview/NotebookVSCode.tsx`: React component for the notebook UI
-- `webview/serviceManager.ts`: Handles Jupyter service connections with JWT tokens
-
-## Authentication Features
-
-- **Token-based Login**: Secure authentication with Datalayer platform
-- **GitHub Integration**: Automatic profile enrichment for GitHub OAuth users
-- **Status Bar Integration**: Real-time connection status with Datalayer icon
-- **Secure Storage**: JWT tokens stored using VS Code's SecretStorage API
-- **Auto-reconnection**: Authenticated sessions persist across VS Code restarts
-
-### Status Bar UI
-
-The extension provides visual feedback through the status bar:
-
-**When NOT authenticated:**
-
-- Text: `$(menu) Datalayer: Not Connected`
-- Colors: Warning theme colors (orange/yellow background)
-- Tooltip: "Click to login"
-- Action: Opens login dialog
-
-**When authenticated:**
-
-- Text: `$(menu) Datalayer` (compact display)
-- Colors: Default theme colors
-- Tooltip: "Connected as @username" (or email)
-- Action: Shows authentication status dialog
-
-This design saves status bar space while using VS Code's warning colors to clearly indicate when authentication is needed.
-
-## Build & Package
-
-- Development: `npm run watch`
-- Production build: `npm run package`
-- Create VSIX: `npm run vsix`
-- Lint: `npm run lint`
-
-## Testing
-
-- Run tests: `npm test`
-- Tests are located in `src/test/`
-- Use Extension Test Runner in VS Code
-- Test authentication in Extension Development Host
-
-## Important Notes
-
-- The editor runs in an iframe with message-based communication
-- All HTTP requests and WebSocket connections include JWT authentication
-- GitHub profile data is fetched and cached for enhanced user experience
-- Uses webpack with two entry points (extension + webview)
-- Published to VS Code Marketplace under "Datalayer" publisher
-
-## Current Version
-
-- Version: 0.0.2
-- Publisher: Datalayer
-- Requires VS Code: ^1.98.0
-
-## Commands
-
-- `datalayer.jupyter-notebook-new`: Create new Datalayer Notebook
-- `datalayer.lexical-editor-new`: Create new Datalayer Lexical Document
-- `datalayer.login`: Authenticate with Datalayer platform
-- `datalayer.logout`: Sign out and clear credentials
-- `datalayer.showAuthStatus`: View authentication status
-- `datalayer.refreshSpaces`: Refresh the Spaces tree view
-- `datalayer.openDocument`: Open a document from the Spaces tree
-- `datalayer.createNotebookInSpace`: Create a new notebook in a selected space
-- `datalayer.createLexicalInSpace`: Create a new lexical document in a selected space
-- `datalayer.createSpace`: Create a new Datalayer space
-- `datalayer.renameItem`: Rename a notebook or lexical document
-- `datalayer.deleteItem`: Delete a notebook or lexical document from a space
+- Automatic runtime creation and reuse
+- Credits conservation through runtime sharing
+- Health verification before reuse
+- Configurable environments (`python-cpu-env`, `ai-env`)
 
 ## Configuration
 
-- `datalayer.serverUrl`: Datalayer server URL (default: https://prod1.datalayer.run)
-- `datalayer.runtime.environment`: Default runtime environment for notebooks (`python-cpu-env` or `ai-env`, default: `python-cpu-env`)
-- `datalayer.runtime.creditsLimit`: Default credits limit for new runtimes (minimum: 1, default: 10)
-
-## Authentication Flow
-
-1. User runs "Datalayer: Login to Datalayer" command
-2. Extension prompts for Datalayer access token
-3. Token is validated against Datalayer IAM API
-4. If GitHub OAuth user, profile is enriched with GitHub data
-5. JWT token and user data stored securely
-6. Status bar updated with connection status
-7. All notebook operations use authenticated connection
-
-## Custom Editors
-
-### Jupyter Notebook Editor
-
-- View Type: `datalayer.jupyter-notebook`
-- File Pattern: `*.ipynb`
-
-### Lexical Editor
-
-- View Type: `datalayer.lexical-editor`
-- File Pattern: `*.lexical`
-
-## Spaces Tree View
-
-The extension includes a tree view in the Explorer sidebar that displays:
-
-- User's Datalayer spaces (with default space marked)
-- Documents within each space:
-  - Notebooks (`.ipynb` files)
-  - Lexical documents (`.lexical` files)
-  - Exercises and other document types
-- Real-time sync with the Datalayer platform
-- Context menu actions for managing spaces and documents
-
-### Tree View Features
-
-- **Create New Spaces**: Click the plus icon on the root "Datalayer" item
-- **Create Documents**: Click inline icons on spaces to create notebooks or lexical documents
-- **Context Menus**: Right-click items for actions:
-  - Documents: Open, Rename..., Delete
-  - Spaces: New Datalayer Notebook..., New Lexical Document...
-- **Automatic Refresh**: Tree updates automatically after create/rename/delete operations
-
-## Lexical Editor Implementation
-
-The extension includes a comprehensive rich text editor for `.lexical` documents built on the Lexical framework:
-
-### Architecture
-
-- **lexicalEditor.ts**: Custom editor provider that handles file operations and webview management
-- **LexicalEditor.tsx**: Main React component with full rich text functionality
-- **LexicalToolbar.tsx**: Formatting toolbar with VS Code theme integration
-- **lexicalWebview.tsx**: Webview entry point that bridges VS Code and React components
-
-### Key Features
-
-- **Rich Text Editing**: Full support for bold, italic, underline, strikethrough, inline code
-- **Structured Content**: Headings (H1, H2, H3), bullet lists, numbered lists
-- **Text Alignment**: Left, center, right alignment options
-- **Markdown Shortcuts**: Quick formatting using markdown syntax
-- **History Management**: Undo/redo with proper state management
-- **VS Code Integration**: Theme-aware styling and consistent UI
-
-### Read-only Mode for Datalayer Documents
-
-Lexical documents from Datalayer spaces open in read-only mode:
-
-- **Virtual File System**: Uses `DatalayerFileSystemProvider` for clean virtual paths
-- **Read-only Detection**: Automatically detects Datalayer documents via URI scheme (`datalayer:`)
-- **Disabled Interactions**: Toolbar buttons disabled, no dirty state tracking
-- **Visual Indicators**: Clear read-only banner and grayed-out controls
-
-### Virtual File System
-
-The extension uses a virtual file system for Datalayer documents:
-
-- **Virtual URIs**: `datalayer:/Space Name/document.lexical` instead of temp paths
-- **File System Provider**: Maps virtual URIs to real temp file locations
-- **Clean User Experience**: Users see logical paths matching the tree structure
-- **Transparent Operations**: All file operations work seamlessly through the virtual layer
-- **Race Condition Protection**: File writing includes verification delays and double-checking
-- **Cached Document Handling**: Subsequent opens return virtual URIs maintaining clean paths
-
-### Editor Configuration
-
 ```json
 {
-  "namespace": "VSCodeLexicalEditor",
-  "editable": true/false,
-  "nodes": [
-    "HeadingNode", "QuoteNode", "ListNode", "ListItemNode",
-    "CodeNode", "CodeHighlightNode", "LinkNode", "AutoLinkNode"
-  ]
+  "datalayer.serverUrl": "https://prod1.datalayer.run",
+  "datalayer.runtime.environment": "python-cpu-env",
+  "datalayer.runtime.creditsLimit": 10
 }
 ```
 
-### Save and Load Process
+## API Response Handling
 
-- **JSON Serialization**: Editor state saved as JSON for consistency
-- **History Management**: Initial content load bypasses undo history
-- **Dirty State**: Only tracked for editable local files
-- **Auto-save Integration**: Hooks into VS Code's save system (Cmd/Ctrl+S)
-
-## Runtime Management
-
-The extension automatically manages Datalayer runtimes for notebook execution:
-
-### Runtime Lifecycle
-
-1. **Runtime Creation**: When opening a notebook, the extension checks for existing runtimes
-2. **Runtime Reuse**: If an active runtime exists, it's reused to conserve credits
-3. **Health Verification**: Runtime status is verified before reuse
-4. **Configuration**: Uses settings for environment type and credits limit
-
-### API Response Handling
-
-The Spacer API returns wrapped responses with the following structure:
+Spacer API returns wrapped responses:
 
 ```json
 {
   "success": true,
-  "message": "Success message",
-  "runtimes": [...] // or "kernel" for single runtime fetches
+  "message": "...",
+  "runtimes": [...] // or "kernel" for single runtime
 }
 ```
 
-Important field mappings:
+Key field mappings:
 
-- Runtime URL: Use `ingress` field (not `jupyter_base_url`)
-- Runtime token: Use `token` field (not `jupyter_token`)
-- Single runtime responses: Check `kernel` field (not `runtime`)
+- Runtime URL: Use `ingress` (not `jupyter_base_url`)
+- Runtime token: Use `token` (not `jupyter_token`)
+- Single runtime: Check `kernel` field (not `runtime`)
 
-### API Endpoints Used
+## CI/CD Workflows
 
-#### Spacer API (Document Management)
+Four separate GitHub Actions workflows:
 
-- `/api/spacer/v1/spaces/users/me` - Get user's spaces with items
-- `/api/spacer/v1/spaces` - Create new space
-- `/api/spacer/v1/spaces/{id}/items` - Get items in a space
-- `/api/spacer/v1/spaces/items/{id}` - Delete an item from a space
-- `/api/spacer/v1/notebooks` - Create new notebooks (multipart/form-data)
-- `/api/spacer/v1/notebooks/{id}` - Update notebook metadata
-- `/api/spacer/v1/lexicals` - Create lexical documents (multipart/form-data)
-- `/api/spacer/v1/lexicals/{id}` - Update lexical document metadata
+1. **VSCode - Extension Build & Test**: Multi-platform builds with .vsix artifacts
+2. **VSCode - Code Quality**: Linting and formatting checks (Ubuntu only)
+3. **VSCode - Type Check**: TypeScript compilation verification (Ubuntu only)
+4. **VSCode - Documentation**: TypeDoc HTML/Markdown generation
 
-#### Ceres API (Runtime Management)
+All trigger on `/packages/vscode/**` changes to main branch only.
 
-- `/api/ceres/v1/runtime/get` - Get list of user's runtimes
-- `/api/ceres/v1/runtime/get/{pod_name}` - Get specific runtime details
-- `/api/ceres/v1/runtime/create` - Create new runtime
+## Commands
 
-## Directory Structure
+Key commands:
+
+- `datalayer.login`: Authenticate with Datalayer
+- `datalayer.logout`: Sign out
+- `datalayer.showAuthStatus`: View auth status
+- `datalayer.refreshSpaces`: Refresh tree view
+- `datalayer.createNotebookInSpace`: Create notebook in space
+- `datalayer.createLexicalInSpace`: Create lexical doc in space
+- `datalayer.renameItem`: Rename document
+- `datalayer.deleteItem`: Delete document
+
+## API Endpoints
+
+### Spacer API (Documents)
+
+- `/api/spacer/v1/spaces/users/me` - Get user's spaces
+- `/api/spacer/v1/spaces/{id}/items` - Get space items
+- `/api/spacer/v1/notebooks` - Create notebooks (multipart/form-data)
+- `/api/spacer/v1/lexicals` - Create lexical docs (multipart/form-data)
+
+### Ceres API (Runtimes)
+
+- `/api/ceres/v1/runtime/get` - List runtimes
+- `/api/ceres/v1/runtime/create` - Create runtime
+
+## Project Structure
 
 ```
 src/
-├── auth/                        # Authentication services
-│   ├── authService.ts          # Token management and validation
-│   ├── githubService.ts        # GitHub profile enrichment
-│   └── tokenProvider.ts        # User authentication flows
-├── spaces/                      # Spaces tree view implementation
-│   ├── spacesTreeProvider.ts   # Tree data provider
-│   ├── spacerApiService.ts     # Datalayer API client
-│   ├── spaceItem.ts            # Data models
-│   ├── documentBridge.ts       # Document download/cache manager
-│   └── datalayerFileSystemProvider.ts # Virtual filesystem provider
-├── test/                        # Test files
-├── extension.ts                 # Main extension entry
-├── notebookEditor.ts           # Notebook editor provider
-└── lexicalEditor.ts            # Lexical editor provider
+├── auth/           # Authentication services
+├── spaces/         # Spaces tree view & API
+├── editors/        # Custom editors (notebook, lexical)
+└── runtimes/       # Runtime management
 
-webview/                         # React-based UI components
-├── NotebookVSCode.tsx          # Main notebook component
-├── LexicalEditor.tsx           # Lexical rich text editor
-├── LexicalToolbar.tsx          # Formatting toolbar for lexical editor
-├── lexicalWebview.tsx          # Lexical editor webview entry point
-├── serviceManager.ts           # Jupyter service connections
-├── messageHandler.ts           # Extension-webview communication
-└── utils.ts                    # Utility functions
-
-dist/                           # Webpack build output
-docs/                           # Generated HTML documentation (gitignored)
-docs-markdown/                  # Generated markdown documentation (gitignored)
+webview/
+├── theme/          # VS Code theme integration
+├── NotebookVSCode.tsx    # Main notebook component
+├── NotebookToolbar.tsx   # VS Code-style toolbar
+└── LexicalEditor.tsx     # Rich text editor
 ```
 
-## Documentation
+## Development Guidelines
 
-The codebase is fully documented using TypeDoc with JSDoc comments:
+### Code Quality
 
 ```bash
-# Generate HTML documentation
-npm run doc
-
-# Generate markdown documentation
-npm run doc:markdown
-
-# Watch mode for development
-npm run doc:watch
+npm run lint        # ESLint
+npx tsc --noEmit   # Type checking
+npm run doc        # Documentation
 ```
 
-All TypeScript files include:
+### Important Notes
 
-- Module-level JSDoc comments with `@module` and `@description` tags
-- Method documentation with parameter and return descriptions
-- Type definitions with clear descriptions
-- Example usage where appropriate
+- **NO EMOJIS** in code, comments, or documentation
+- Always check for existing runtimes before creating new ones
+- Use actual API field names (e.g., `ingress` not `jupyter_base_url`)
+- Maintain JSDoc comments for all exported functions
+- Use FormData for notebook/lexical creation, JSON for other endpoints
 
-## Code Quality
+## Troubleshooting
 
-Run checks before committing:
+### Common Issues
 
-```bash
-npm run lint        # Run ESLint
-npm run compile     # Build with webpack
-```
+1. **Icons not showing**: Check codicon font loading in notebookEditor.ts
+2. **Theme not matching**: Verify VSCodeThemeProvider is active
+3. **Syntax highlighting missing**: Check patch-vscode-highlighting.js ran during build
+4. **Black backgrounds**: Enhanced theme provider should inject CSS fixes
 
-## Important Development Guidelines
+### Debug Commands
 
-- **NO EMOJIS**: NEVER use emojis anywhere in the codebase - not in code, not in logging, not in testing, not in comments, not in documentation. This is a professional codebase.
-- **API Field Names**: Always use the actual API field names (e.g., `ingress` not `jupyter_base_url`)
-- **Error Handling**: Log errors with context for debugging, handle API wrapper responses
-- **Runtime Reuse**: Always check for existing runtimes before creating new ones
-- **Documentation**: Maintain JSDoc comments for all exported functions and classes
-- **API Content Types**: Use FormData for notebook/lexical creation, JSON for other endpoints
-- **Space Handles**: Generate from name using lowercase with hyphens: `name.toLowerCase().replace(/\s+/g, '-')`
-- **Tree Refresh**: Always refresh space after document operations to show changes immediately
+- View authentication status: "Datalayer: Show Authentication Status"
+- Refresh spaces: "Datalayer: Refresh Spaces"
+- Check console for runtime creation logs
+
+## Recent Improvements
+
+- ✅ Complete VS Code theme integration with syntax highlighting
+- ✅ Native toolbar with codicon icons
+- ✅ Background color harmony (no black gaps)
+- ✅ Cell backgrounds matching VS Code notebook colors
+- ✅ Comprehensive TypeDoc documentation
+- ✅ Four separate CI/CD workflows for quality assurance
+- ✅ Virtual file system for Datalayer documents
+
+## Version
+
+Current: 0.0.2
+VS Code requirement: ^1.98.0
+Node.js: >= 20.0.0

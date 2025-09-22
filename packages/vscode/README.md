@@ -8,9 +8,36 @@ This [Visual Studio Code](https://code.visualstudio.com) extension allows you to
 
 <img src="https://jupyter-examples.datalayer.tech/jupyter-react-vscode.gif" />
 
+## 🎨 VS Code Theme Integration
+
+The extension now features **complete VS Code theme integration** for a native development experience:
+
+### Theme Features
+
+- **🎯 Perfect Theme Matching**: Notebook cells automatically match your VS Code theme colors
+- **🖌️ Syntax Highlighting**: CodeMirror editors use VS Code's exact syntax colors for all languages
+- **🌓 Auto Theme Switching**: Seamlessly adapts when you change VS Code themes
+- **📱 Native Toolbar**: VS Code-style toolbar with codicon icons for notebook operations
+- **🎨 Background Harmony**: Eliminates visual gaps with proper background color inheritance
+- **💾 Cell Backgrounds**: Code cells use VS Code's native notebook cell editor background
+
+### Supported VS Code Themes
+
+Works perfectly with all VS Code themes including:
+
+- Dark+ (default dark)
+- Light+ (default light)
+- Monokai
+- Solarized Dark/Light
+- Dracula
+- One Dark Pro
+- Material Theme variants
+- And all other VS Code themes!
+
 ## Working Features
 
-- **Notebook Operations**: Load, display, and run Jupyter Notebooks
+- **Notebook Operations**: Load, display, and run Jupyter Notebooks with full kernel support
+- **VS Code Theme Integration**: Perfect visual harmony with your VS Code environment
 - **Lexical Editor**: Rich text editor with full formatting support for `.lexical` documents
 - **Datalayer Authentication**: Token-based authentication with automatic GitHub profile enrichment
 - **Server Connectivity**: Connect to Jupyter servers or Datalayer cloud platform
@@ -21,6 +48,26 @@ This [Visual Studio Code](https://code.visualstudio.com) extension allows you to
 - **Runtime Management**: Automatic creation and reuse of Datalayer runtimes with configurable environments
 - **Document Bridge**: Seamless document downloading and local caching for offline viewing
 - **Virtual File System**: Clean virtual paths for Datalayer documents (e.g., `datalayer:/Space Name/document.lexical`)
+
+## Notebook Toolbar
+
+The extension provides a VS Code-native toolbar for notebook operations:
+
+### Toolbar Actions
+
+- **▶️ Run Cell**: Execute the currently selected cell
+- **⏫ Run All Above**: Execute all cells above the current cell
+- **⏬ Run All Below**: Execute all cells below the current cell
+- **➕ Insert Cell**: Add new cells above or below
+- **🗑️ Clear Outputs**: Clear all cell outputs
+- **🔄 Restart Kernel**: Restart the Jupyter kernel
+- **⏹️ Interrupt Kernel**: Stop executing cells
+
+### Kernel Status Indicator
+
+- **🟢 Green**: Kernel idle and ready
+- **🟡 Yellow**: Kernel busy executing
+- **🔴 Red**: Kernel disconnected or error
 
 ## Spaces Tree View
 
@@ -142,6 +189,18 @@ The extension automatically manages Datalayer runtimes for notebook execution:
 - **Credits Management**: Configure default credits limit for new runtimes
 - **Health Verification**: Automatic verification of runtime availability before reuse
 
+## CI/CD & Quality Assurance
+
+The project includes comprehensive GitHub Actions workflows:
+
+### Workflows
+
+- **VSCode - Extension Build & Test**: Multi-platform build (Windows, macOS, Linux) with artifact generation
+- **VSCode - Code Quality**: Automated linting and formatting checks
+- **VSCode - Type Check**: TypeScript compilation and type safety verification
+
+All workflows trigger only on changes to the VS Code extension package for efficient CI/CD.
+
 ## Not Implemented
 
 - Save the Notebook.
@@ -149,15 +208,7 @@ The extension automatically manages Datalayer runtimes for notebook execution:
 
 ## Known Limitations
 
-Styling
-
-- No connection between dark/light vs code theme and notebook theme
-- No resizing with the panel
-- Button to select the runtime is not displayed in a toolbar that stays visible - No connection between dark/light vs code theme and notebook theme
-  - No resizing with the panel
-  - Button to select the runtime is not displayed in a toolbar that stays visible
-
-Websocket binary support: for now we forbid the usage of the newer protocol v1.kernel.websocket.jupyter.org. When using it, the message data are failing to be serialized to be transferred from the webview to the extension. And when receiving it, the deserialization fails. The deserialization error may be related to an incorrect binaryType that is not handle in the current code; but in JupyterLab it is forced to 'arraybuffer' for kernel websocket.
+- Websocket binary support: The extension currently forbids the usage of the newer protocol v1.kernel.websocket.jupyter.org due to serialization issues between the webview and extension.
 
 ## Documentation
 
@@ -225,3 +276,11 @@ npm run watch-tests
 2. Run `npm run watch` in terminal
 3. Press `F5` to launch Extension Development Host
 4. Open any `.ipynb` file to test the extension
+
+## License
+
+MIT License - See [LICENSE](../../LICENSE) file for details.
+
+## Support
+
+For issues, feature requests, or questions, please visit our [GitHub repository](https://github.com/datalayer/jupyter-ui).
