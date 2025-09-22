@@ -56,5 +56,6 @@ header:
     - '.husky/_/prepare-commit-msg'
     - '.husky/pre-commit'
     - '**/*.disabled'
+    - '**/*.lexical'
 
   comment: on-failure
