@@ -1,5 +1,11 @@
 #!/usr/bin/env node
 
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 /* eslint-env node */
 /* global require */
 /* eslint-disable @typescript-eslint/no-require-imports, no-console */

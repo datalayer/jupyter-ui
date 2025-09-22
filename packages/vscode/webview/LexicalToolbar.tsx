@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 /**
  * @module LexicalToolbar
  * @description Toolbar component for the Lexical editor providing formatting controls.

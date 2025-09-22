@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 /**
  * @module lexicalWebview
  * @description Main webview entry point for the Lexical editor in VS Code.
