@@ -159,7 +159,15 @@ const webviewConfig = {
           filename: '[name][ext]',
         },
       },
-      // Rule for pyodide kernel
+      // Rule for pyodide kernel wheel files
+      {
+        test: /\.whl$/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'pypi/[name][ext]',
+        },
+      },
+      // Rule for other pyodide kernel resources
       {
         test: /pypi\/.*/,
         type: 'asset/resource',
