@@ -50,7 +50,7 @@ import { DatalayerFileSystemProvider } from './spaces/datalayerFileSystemProvide
 export function activate(context: vscode.ExtensionContext): void {
   const authService = AuthService.getInstance(context);
   const spacerApiService = SpacerApiService.getInstance();
-  const documentBridge = DocumentBridge.getInstance();
+  const documentBridge = DocumentBridge.getInstance(context);
   const fileSystemProvider = DatalayerFileSystemProvider.getInstance();
 
   // Register the virtual file system provider for cleaner paths

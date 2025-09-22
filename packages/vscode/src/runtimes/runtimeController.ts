@@ -96,7 +96,7 @@ export class RuntimeController implements vscode.Disposable {
     this._context = context;
     this._config = config;
     this._spacerApiService = spacerApiService;
-    this._runtimesApiService = RuntimesApiService.getInstance();
+    this._runtimesApiService = RuntimesApiService.getInstance(context);
     this._authService = AuthService.getInstance(context);
 
     // Set initial runtime if provided

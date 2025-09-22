@@ -87,17 +87,18 @@ export class RuntimesApiService {
   private static instance: RuntimesApiService;
   private authService: AuthService;
 
-  private constructor() {
-    this.authService = AuthService.getInstance();
+  private constructor(context?: vscode.ExtensionContext) {
+    this.authService = AuthService.getInstance(context);
   }
 
   /**
    * Gets the singleton instance of RuntimesApiService.
+   * @param {vscode.ExtensionContext} [context] - Extension context (required on first call)
    * @returns {RuntimesApiService} The singleton instance
    */
-  static getInstance(): RuntimesApiService {
+  static getInstance(context?: vscode.ExtensionContext): RuntimesApiService {
     if (!RuntimesApiService.instance) {
-      RuntimesApiService.instance = new RuntimesApiService();
+      RuntimesApiService.instance = new RuntimesApiService(context);
     }
     return RuntimesApiService.instance;
   }
@@ -105,26 +106,116 @@ export class RuntimesApiService {
   private getAuthHeaders(): Record<string, string> {
     const token = this.authService.getToken();
     if (!token) {
-      throw new Error('Not authenticated');
+      throw new Error('Not authenticated - no token available');
     }
-    return {
+
+    // Log token info for debugging (just first/last few chars for security)
+    const tokenPreview =
+      token.length > 10
+        ? `${token.substring(0, 5)}...${token.substring(token.length - 5)}`
+        : 'short_token';
+    console.log('[RuntimesAPI] Using token:', tokenPreview);
+    console.log('[RuntimesAPI] Token length:', token.length);
+
+    // Check if token looks like a JWT (should have 3 parts separated by dots)
+    const tokenParts = token.split('.');
+    console.log('[RuntimesAPI] Token structure: ', {
+      parts: tokenParts.length,
+      isJWT: tokenParts.length === 3,
+      headerLength: tokenParts[0]?.length,
+      payloadLength: tokenParts[1]?.length,
+      signatureLength: tokenParts[2]?.length,
+    });
+
+    // Try to decode JWT payload to check expiration
+    if (tokenParts.length === 3) {
+      try {
+        const payload = JSON.parse(
+          Buffer.from(tokenParts[1], 'base64').toString(),
+        );
+        const now = Math.floor(Date.now() / 1000);
+        console.log('[RuntimesAPI] Token payload info:', {
+          issued: payload.iat
+            ? new Date(payload.iat * 1000).toISOString()
+            : 'unknown',
+          expires: payload.exp
+            ? new Date(payload.exp * 1000).toISOString()
+            : 'unknown',
+          isExpired: payload.exp ? now > payload.exp : 'unknown',
+          subject: payload.sub || 'unknown',
+        });
+
+        if (payload.exp && now > payload.exp) {
+          console.error('[RuntimesAPI] TOKEN IS EXPIRED!');
+          throw new Error(
+            'Authentication token has expired. Please login again.',
+          );
+        }
+      } catch (e) {
+        console.warn('[RuntimesAPI] Could not decode token payload:', e);
+      }
+    }
+
+    const headers = {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     };
+
+    console.log('[RuntimesAPI] Headers being sent:', {
+      'Content-Type': headers['Content-Type'],
+      Authorization: `Bearer ${tokenPreview}`,
+    });
+
+    return headers;
   }
 
   private async fetchWithAuth(url: string, options?: any): Promise<Response> {
     try {
+      const headers = this.getAuthHeaders();
+      console.log('[RuntimesAPI] Making request to:', url);
+      console.log('[RuntimesAPI] Request method:', options?.method || 'GET');
+
+      const finalHeaders = {
+        ...headers,
+        ...options?.headers,
+      };
+
+      console.log('[RuntimesAPI] Final headers:', Object.keys(finalHeaders));
+
       const response = await fetch(url, {
         ...options,
-        headers: {
-          ...this.getAuthHeaders(),
-          ...options?.headers,
-        },
+        headers: finalHeaders,
+      });
+
+      console.log('[RuntimesAPI] Response status:', response.status);
+      console.log('[RuntimesAPI] Response headers:', {
+        'content-type': response.headers.get('content-type'),
+        'www-authenticate': response.headers.get('www-authenticate'),
       });
 
       if (response.status === 401) {
-        throw new Error('Authentication failed. Please login again.');
+        // Try to get more info from the response
+        let errorDetails = '';
+        try {
+          const errorText = await response.text();
+          console.error('[RuntimesAPI] 401 Error response body:', errorText);
+          errorDetails = ` Details: ${errorText}`;
+
+          // Try to parse as JSON to get more specific error
+          try {
+            const errorJson = JSON.parse(errorText);
+            if (errorJson.message) {
+              errorDetails = ` Server says: ${errorJson.message}`;
+            }
+          } catch {
+            // Ignore JSON parse errors
+          }
+        } catch {
+          // Ignore text extraction errors
+        }
+        throw new Error(
+          `Authentication failed (401).${errorDetails} Please login again.`,
+        );
       }
 
       return response;
@@ -135,9 +226,62 @@ export class RuntimesApiService {
   }
 
   /**
+   * Verify authentication is working
+   */
+  async verifyAuth(): Promise<boolean> {
+    try {
+      const authState = this.authService.getAuthState();
+      console.log('[RuntimesAPI] Auth state check:', {
+        isAuthenticated: authState.isAuthenticated,
+        hasToken: !!authState.token,
+        tokenLength: authState.token?.length,
+        serverUrl: authState.serverUrl,
+        user: authState.user?.email,
+      });
+
+      if (!authState.isAuthenticated || !authState.token) {
+        console.error('[RuntimesAPI] Not authenticated!');
+        return false;
+      }
+
+      // Test with user info endpoint first
+      console.log('[RuntimesAPI] Testing auth with user info endpoint...');
+      const testUrl = `${authState.serverUrl}/api/spacer/v1/spaces/users/me`;
+
+      try {
+        const testResponse = await this.fetchWithAuth(testUrl);
+        if (testResponse.ok) {
+          console.log(
+            '[RuntimesAPI] Auth test successful - user endpoint works!',
+          );
+          return true;
+        } else {
+          console.error(
+            '[RuntimesAPI] Auth test failed with user endpoint:',
+            testResponse.status,
+          );
+          return false;
+        }
+      } catch (testError) {
+        console.error('[RuntimesAPI] Auth test error:', testError);
+        return false;
+      }
+    } catch (error) {
+      console.error('[RuntimesAPI] Auth verification error:', error);
+      return false;
+    }
+  }
+
+  /**
    * List all available runtimes for the user
    */
   async listRuntimes(): Promise<RuntimeResponse[]> {
+    // Verify auth first
+    const isAuth = await this.verifyAuth();
+    if (!isAuth) {
+      throw new Error('Not authenticated. Please login first.');
+    }
+
     const serverUrl = this.authService.getServerUrl();
     const url = `${serverUrl}/api/runtimes/v1/runtimes`;
 

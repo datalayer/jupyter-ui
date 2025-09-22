@@ -9,8 +9,21 @@
  * VS Code-style toolbar for the Jupyter notebook
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import useNotebookStore from '@datalayer/jupyter-react/lib/components/notebook/NotebookState';
+import { MessageHandlerContext } from './messageHandler';
+
+/** Runtime information for Datalayer notebooks */
+interface RuntimeInfo {
+  uid: string;
+  name: string;
+  status?: string;
+  url?: string;
+  token?: string;
+  environment?: string;
+  creditsUsed?: number;
+  creditsLimit?: number;
+}
 
 /**
  * Props for the NotebookToolbar component
@@ -21,6 +34,8 @@ interface NotebookToolbarProps {
   notebookId: string;
   /** Whether this is a Datalayer cloud notebook */
   isDatalayerNotebook?: boolean;
+  /** Selected runtime information for Datalayer notebooks */
+  selectedRuntime?: RuntimeInfo;
 }
 
 /**
@@ -29,70 +44,95 @@ interface NotebookToolbarProps {
 export const NotebookToolbar: React.FC<NotebookToolbarProps> = ({
   notebookId,
   isDatalayerNotebook = false,
+  selectedRuntime,
 }) => {
   const notebookStore = useNotebookStore();
   const notebook = notebookStore.selectNotebook(notebookId);
+  const messageHandler = useContext(MessageHandlerContext);
   const [selectedKernel, setSelectedKernel] = useState<string>('No Kernel');
   const [kernelStatus, setKernelStatus] = useState<string>('disconnected');
+  const [isConnecting, setIsConnecting] = useState<boolean>(false);
 
   useEffect(() => {
-    if (notebook?.adapter?.kernel) {
-      const kernel = notebook.adapter.kernel;
-      const kernelName = kernel.name || 'Unknown Kernel';
-      setSelectedKernel(kernelName);
-      setKernelStatus(kernel.status || 'idle');
-    }
-  }, [notebook]);
+    console.log('[NotebookToolbar] useEffect triggered with:', {
+      isDatalayerNotebook,
+      selectedRuntime,
+      hasKernelConnection: !!notebook?.adapter?.kernel?.connection,
+    });
 
-  const handleRunCell = () => {
-    if (notebook?.adapter?.commands) {
-      notebook.adapter.commands.execute('notebook:run-cell');
+    // For Datalayer notebooks, always show the runtime name
+    if (isDatalayerNotebook && selectedRuntime) {
+      // Format as "Datalayer: Runtime Name"
+      const runtimeName = selectedRuntime.name || 'Select Runtime';
+      const displayName = `Datalayer: ${runtimeName}`;
+      setSelectedKernel(displayName);
+      console.log('[NotebookToolbar] Updated kernel display to:', displayName);
+
+      // Check if we have an active kernel connection to determine status
+      if (notebook?.adapter?.kernel?.connection) {
+        const kernelConnection = notebook.adapter.kernel.connection;
+        setKernelStatus(kernelConnection.status || 'idle');
+        setIsConnecting(false);
+      } else if (selectedRuntime.status === 'connecting') {
+        setKernelStatus('connecting');
+        setIsConnecting(true);
+      } else {
+        setKernelStatus(selectedRuntime.status || 'disconnected');
+        setIsConnecting(false);
+      }
+    } else if (!isDatalayerNotebook && notebook?.adapter?.kernel?.connection) {
+      // For local notebooks, show kernel info
+      const kernelConnection = notebook.adapter.kernel.connection;
+      const displayName = kernelConnection.name || 'Unknown Kernel';
+      setSelectedKernel(displayName);
+      setKernelStatus(kernelConnection.status || 'idle');
+      setIsConnecting(false);
+    } else {
+      // Show "No Kernel" when nothing is selected
+      setSelectedKernel(isDatalayerNotebook ? 'Select Runtime' : 'No Kernel');
+      setKernelStatus('disconnected');
+      setIsConnecting(false);
+      console.log(
+        '[NotebookToolbar] No runtime selected, isDatalayerNotebook:',
+        isDatalayerNotebook,
+      );
+    }
+  }, [notebook, isDatalayerNotebook, selectedRuntime]);
+
+  const handleRunAll = () => {
+    if (notebook?.adapter) {
+      // Use the notebook panel to run all cells
+      const notebookPanel = notebook.adapter.notebookPanel;
+      if (notebookPanel?.content) {
+        // Execute all cells in the notebook
+        const cells = notebookPanel.content.widgets;
+        cells.forEach(cell => {
+          if (cell.model.type === 'code') {
+            notebookPanel.content.activeCellIndex =
+              notebookPanel.content.widgets.indexOf(cell);
+            notebook.adapter.commands.execute('notebook:run-cell');
+          }
+        });
+      }
     }
   };
 
-  const handleRunAllAbove = () => {
-    if (notebook?.adapter?.commands) {
-      notebook.adapter.commands.execute('notebook:run-all-above');
-    }
-  };
-
-  const handleRunAllBelow = () => {
-    if (notebook?.adapter?.commands) {
-      notebook.adapter.commands.execute('notebook:run-all-below');
-    }
-  };
-
-  const handleInsertCellAbove = () => {
-    if (notebook?.adapter?.commands) {
-      notebook.adapter.commands.execute('notebook:insert-cell-above');
-    }
-  };
-
-  const handleInsertCellBelow = () => {
-    if (notebook?.adapter?.commands) {
-      notebook.adapter.commands.execute('notebook:insert-cell-below');
-    }
-  };
-
-  const handleClearOutputs = () => {
-    if (notebook?.adapter?.commands) {
-      notebook.adapter.commands.execute('notebook:clear-all-cell-outputs');
-    }
-  };
-
-  const handleRestartKernel = () => {
-    if (notebook?.adapter?.commands) {
-      notebook.adapter.commands.execute('kernelmenu:restart');
-    }
-  };
-
-  const handleInterruptKernel = () => {
-    if (notebook?.adapter?.commands) {
-      notebook.adapter.commands.execute('kernelmenu:interrupt');
+  const handleSelectRuntime = () => {
+    if (messageHandler) {
+      // Send message to extension to show runtime selection dialog
+      messageHandler.postMessage({
+        type: 'select-runtime',
+        body: {
+          isDatalayerNotebook: isDatalayerNotebook,
+        },
+      });
     }
   };
 
   const getKernelStatusIcon = () => {
+    if (isConnecting) {
+      return 'codicon-loading codicon-modifier-spin';
+    }
     switch (kernelStatus) {
       case 'idle':
         return 'codicon-circle-filled';
@@ -100,12 +140,17 @@ export const NotebookToolbar: React.FC<NotebookToolbarProps> = ({
         return 'codicon-loading codicon-modifier-spin';
       case 'disconnected':
         return 'codicon-circle-slash';
+      case 'connecting':
+        return 'codicon-loading codicon-modifier-spin';
       default:
         return 'codicon-circle-outline';
     }
   };
 
   const getKernelStatusColor = () => {
+    if (isConnecting) {
+      return 'var(--vscode-terminal-ansiYellow)';
+    }
     switch (kernelStatus) {
       case 'idle':
         return 'var(--vscode-terminal-ansiGreen)';
@@ -113,6 +158,8 @@ export const NotebookToolbar: React.FC<NotebookToolbarProps> = ({
         return 'var(--vscode-terminal-ansiYellow)';
       case 'disconnected':
         return 'var(--vscode-errorForeground)';
+      case 'connecting':
+        return 'var(--vscode-terminal-ansiYellow)';
       default:
         return 'var(--vscode-foreground)';
     }
@@ -135,439 +182,111 @@ export const NotebookToolbar: React.FC<NotebookToolbarProps> = ({
     >
       {/* Left side actions */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
-        {/* Run Cell */}
+        {/* Run All button */}
         <button
-          onClick={handleRunCell}
-          title="Run Cell"
+          onClick={handleRunAll}
+          title="Run All Cells"
           style={{
             background: 'transparent',
             border: 'none',
             color: 'var(--vscode-foreground)',
-            cursor: 'pointer',
-            padding: '4px 6px',
-            borderRadius: '3px',
-            display: 'flex',
-            alignItems: 'center',
-            fontSize: '16px',
-          }}
-          onMouseEnter={e =>
-            (e.currentTarget.style.backgroundColor =
-              'var(--vscode-toolbar-hoverBackground)')
-          }
-          onMouseLeave={e =>
-            (e.currentTarget.style.backgroundColor = 'transparent')
-          }
-        >
-          <span className="codicon codicon-run"></span>
-        </button>
-
-        {/* Divider */}
-        <div
-          style={{
-            width: '1px',
-            height: '18px',
-            backgroundColor: 'var(--vscode-widget-border)',
-            margin: '0 4px',
-          }}
-        />
-
-        {/* Run All Cells Above */}
-        <button
-          onClick={handleRunAllAbove}
-          title="Run All Cells Above"
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: 'var(--vscode-foreground)',
-            cursor: 'pointer',
-            padding: '4px 6px',
-            borderRadius: '3px',
-            display: 'flex',
-            alignItems: 'center',
-            fontSize: '16px',
-          }}
-          onMouseEnter={e =>
-            (e.currentTarget.style.backgroundColor =
-              'var(--vscode-toolbar-hoverBackground)')
-          }
-          onMouseLeave={e =>
-            (e.currentTarget.style.backgroundColor = 'transparent')
-          }
-        >
-          <span className="codicon codicon-run-above"></span>
-        </button>
-
-        {/* Run All Cells Below */}
-        <button
-          onClick={handleRunAllBelow}
-          title="Run All Cells Below"
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: 'var(--vscode-foreground)',
-            cursor: 'pointer',
-            padding: '4px 6px',
-            borderRadius: '3px',
-            display: 'flex',
-            alignItems: 'center',
-            fontSize: '16px',
-          }}
-          onMouseEnter={e =>
-            (e.currentTarget.style.backgroundColor =
-              'var(--vscode-toolbar-hoverBackground)')
-          }
-          onMouseLeave={e =>
-            (e.currentTarget.style.backgroundColor = 'transparent')
-          }
-        >
-          <span className="codicon codicon-run-below"></span>
-        </button>
-
-        {/* Divider */}
-        <div
-          style={{
-            width: '1px',
-            height: '18px',
-            backgroundColor: 'var(--vscode-widget-border)',
-            margin: '0 4px',
-          }}
-        />
-
-        {/* Insert Cell Above */}
-        <button
-          onClick={handleInsertCellAbove}
-          title="Insert Cell Above"
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: 'var(--vscode-foreground)',
-            cursor: 'pointer',
-            padding: '4px 6px',
-            borderRadius: '3px',
-            display: 'flex',
-            alignItems: 'center',
-            fontSize: '16px',
-          }}
-          onMouseEnter={e =>
-            (e.currentTarget.style.backgroundColor =
-              'var(--vscode-toolbar-hoverBackground)')
-          }
-          onMouseLeave={e =>
-            (e.currentTarget.style.backgroundColor = 'transparent')
-          }
-        >
-          <span className="codicon codicon-add"></span>
-        </button>
-
-        {/* Insert Cell Below */}
-        <button
-          onClick={handleInsertCellBelow}
-          title="Insert Cell Below"
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: 'var(--vscode-foreground)',
-            cursor: 'pointer',
-            padding: '4px 6px',
-            borderRadius: '3px',
-            display: 'flex',
-            alignItems: 'center',
-            fontSize: '16px',
-          }}
-          onMouseEnter={e =>
-            (e.currentTarget.style.backgroundColor =
-              'var(--vscode-toolbar-hoverBackground)')
-          }
-          onMouseLeave={e =>
-            (e.currentTarget.style.backgroundColor = 'transparent')
-          }
-        >
-          <span className="codicon codicon-add"></span>
-        </button>
-
-        {/* Divider */}
-        <div
-          style={{
-            width: '1px',
-            height: '18px',
-            backgroundColor: 'var(--vscode-widget-border)',
-            margin: '0 4px',
-          }}
-        />
-
-        {/* Clear Outputs */}
-        <button
-          onClick={handleClearOutputs}
-          title="Clear All Outputs"
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: 'var(--vscode-foreground)',
-            cursor: 'pointer',
-            padding: '4px 6px',
-            borderRadius: '3px',
-            display: 'flex',
-            alignItems: 'center',
-            fontSize: '16px',
-          }}
-          onMouseEnter={e =>
-            (e.currentTarget.style.backgroundColor =
-              'var(--vscode-toolbar-hoverBackground)')
-          }
-          onMouseLeave={e =>
-            (e.currentTarget.style.backgroundColor = 'transparent')
-          }
-        >
-          <span className="codicon codicon-clear-all"></span>
-        </button>
-
-        {/* Divider */}
-        <div
-          style={{
-            width: '1px',
-            height: '18px',
-            backgroundColor: 'var(--vscode-widget-border)',
-            margin: '0 4px',
-          }}
-        />
-
-        {/* Restart Kernel */}
-        <button
-          onClick={handleRestartKernel}
-          title="Restart Kernel"
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: 'var(--vscode-foreground)',
-            cursor: 'pointer',
-            padding: '4px 6px',
-            borderRadius: '3px',
-            display: 'flex',
-            alignItems: 'center',
-            fontSize: '16px',
-          }}
-          onMouseEnter={e =>
-            (e.currentTarget.style.backgroundColor =
-              'var(--vscode-toolbar-hoverBackground)')
-          }
-          onMouseLeave={e =>
-            (e.currentTarget.style.backgroundColor = 'transparent')
-          }
-        >
-          <span className="codicon codicon-debug-restart"></span>
-        </button>
-
-        {/* Interrupt Kernel */}
-        <button
-          onClick={handleInterruptKernel}
-          title="Interrupt Kernel"
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: 'var(--vscode-foreground)',
-            cursor: 'pointer',
-            padding: '4px 6px',
-            borderRadius: '3px',
-            display: 'flex',
-            alignItems: 'center',
-            fontSize: '16px',
-          }}
-          onMouseEnter={e =>
-            (e.currentTarget.style.backgroundColor =
-              'var(--vscode-toolbar-hoverBackground)')
-          }
-          onMouseLeave={e =>
-            (e.currentTarget.style.backgroundColor = 'transparent')
-          }
-        >
-          <span className="codicon codicon-debug-stop"></span>
-        </button>
-
-        {/* Divider */}
-        <div
-          style={{
-            width: '1px',
-            height: '18px',
-            backgroundColor: 'var(--vscode-widget-border)',
-            margin: '0 4px',
-          }}
-        />
-
-        {/* Debug Button */}
-        <button
-          onClick={() => {
-            console.log(
-              '=== DEBUG: Searching for black background elements ===',
-            );
-            const all = document.querySelectorAll('*');
-            const results: any[] = [];
-
-            all.forEach((el: Element) => {
-              const style = getComputedStyle(el);
-              const bg = style.backgroundColor;
-
-              // Check for black or near-black backgrounds
-              if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') {
-                const match = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-                if (match) {
-                  const [_, r, g, b] = match;
-                  if (
-                    parseInt(r) < 50 &&
-                    parseInt(g) < 50 &&
-                    parseInt(b) < 50
-                  ) {
-                    results.push({
-                      element: el,
-                      tag: el.tagName,
-                      id: el.id,
-                      classes: el.className,
-                      backgroundColor: bg,
-                      parent: el.parentElement?.tagName,
-                      parentId: el.parentElement?.id,
-                      parentClasses: el.parentElement?.className,
-                    });
-                  }
-                }
-              }
-            });
-
-            console.log('Dark elements found:', results.length);
-            results.forEach(r => {
-              console.log(
-                `${r.tag}#${r.id || 'no-id'}.${r.classes || 'no-class'} = ${r.backgroundColor}`,
-              );
-              console.log(
-                '  Parent:',
-                `${r.parent}#${r.parentId || 'no-id'}.${r.parentClasses || 'no-class'}`,
-              );
-            });
-
-            // Also log the specific containers to identify the source
-            console.log('\n=== Root Elements ===');
-            console.log(
-              'document.documentElement (html) background:',
-              getComputedStyle(document.documentElement).backgroundColor,
-            );
-            console.log(
-              'document.body background:',
-              getComputedStyle(document.body).backgroundColor,
-            );
-
-            const notebookEditor = document.getElementById('notebook-editor');
-            if (notebookEditor) {
-              console.log(
-                'notebook-editor background:',
-                getComputedStyle(notebookEditor).backgroundColor,
-              );
-            }
-
-            console.log('\n=== Notebook Container Elements ===');
-            const notebookEl = document.getElementById('dla-Jupyter-Notebook');
-            if (notebookEl) {
-              console.log(
-                'dla-Jupyter-Notebook background:',
-                getComputedStyle(notebookEl).backgroundColor,
-              );
-            }
-
-            const boxNotebook = document.querySelector('.dla-Box-Notebook');
-            if (boxNotebook) {
-              console.log(
-                'dla-Box-Notebook background:',
-                getComputedStyle(boxNotebook).backgroundColor,
-              );
-            }
-
-            const jpNotebook = document.querySelector('.jp-Notebook');
-            if (jpNotebook) {
-              console.log(
-                'jp-Notebook background:',
-                getComputedStyle(jpNotebook).backgroundColor,
-              );
-            }
-
-            const jpNotebookPanel = document.querySelector('.jp-NotebookPanel');
-            if (jpNotebookPanel) {
-              console.log(
-                'jp-NotebookPanel background:',
-                getComputedStyle(jpNotebookPanel).backgroundColor,
-              );
-            }
-
-            // Check Primer components
-            const primerBoxes = document.querySelectorAll(
-              '.Box-sc-g0xbh4-0, .prc-src-BaseStyles-dl-St',
-            );
-            console.log('\n=== Primer Components ===');
-            primerBoxes.forEach((box, i) => {
-              console.log(
-                `Primer Box ${i}:`,
-                box.className,
-                'background:',
-                getComputedStyle(box).backgroundColor,
-              );
-            });
-
-            return results;
-          }}
-          title="Debug Black Background"
-          style={{
-            background: 'red',
-            border: '2px solid red',
-            color: 'white',
             cursor: 'pointer',
             padding: '4px 8px',
             borderRadius: '3px',
             display: 'flex',
             alignItems: 'center',
-            fontSize: '20px',
-            fontWeight: 'bold',
+            gap: '4px',
+            fontSize: '13px',
           }}
           onMouseEnter={e =>
-            (e.currentTarget.style.backgroundColor = 'darkred')
+            (e.currentTarget.style.backgroundColor =
+              'var(--vscode-toolbar-hoverBackground)')
           }
-          onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'red')}
+          onMouseLeave={e =>
+            (e.currentTarget.style.backgroundColor = 'transparent')
+          }
         >
-          <span className="codicon codicon-bug"></span>
+          <span
+            className="codicon codicon-run-all"
+            style={{ fontSize: '16px' }}
+          ></span>
+          <span>Run All</span>
         </button>
       </div>
 
       {/* Right side - Kernel selector */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <div
+        <button
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '4px',
-            padding: '2px 6px',
+            gap: '6px',
+            padding: '3px 8px',
             borderRadius: '3px',
-            backgroundColor: 'var(--vscode-button-secondaryBackground)',
-            cursor: isDatalayerNotebook ? 'default' : 'pointer',
-            opacity: isDatalayerNotebook ? 0.6 : 1,
+            backgroundColor:
+              kernelStatus === 'disconnected'
+                ? 'var(--vscode-button-secondaryBackground)'
+                : 'transparent',
+            border:
+              '1px solid var(--vscode-button-border, var(--vscode-contrastBorder, transparent))',
+            cursor:
+              kernelStatus === 'disconnected' || !notebook?.adapter?.kernel
+                ? 'pointer'
+                : 'default',
+            color: 'var(--vscode-foreground)',
+            fontSize: 'var(--vscode-editor-font-size, 13px)',
+            fontFamily: 'var(--vscode-font-family)',
+            minWidth: '120px',
+            transition: 'background-color 0.1s ease',
           }}
-          title={
-            isDatalayerNotebook
-              ? 'Kernel managed by Datalayer'
-              : 'Select Kernel'
+          onClick={
+            kernelStatus === 'disconnected' || !notebook?.adapter?.kernel
+              ? handleSelectRuntime
+              : undefined
           }
+          title={
+            notebook?.adapter?.kernel
+              ? `Connected to ${selectedKernel}`
+              : isDatalayerNotebook
+                ? 'Select Datalayer Runtime'
+                : 'Select Kernel'
+          }
+          onMouseEnter={e => {
+            if (kernelStatus === 'disconnected' || !notebook?.adapter?.kernel) {
+              e.currentTarget.style.backgroundColor =
+                'var(--vscode-button-secondaryHoverBackground)';
+            }
+          }}
+          onMouseLeave={e => {
+            if (kernelStatus === 'disconnected' || !notebook?.adapter?.kernel) {
+              e.currentTarget.style.backgroundColor =
+                'var(--vscode-button-secondaryBackground)';
+            } else {
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }
+          }}
         >
           <span
             className={`codicon ${getKernelStatusIcon()}`}
             style={{
               fontSize: '12px',
               color: getKernelStatusColor(),
+              minWidth: '12px',
             }}
           />
-          <span style={{ fontSize: 'var(--vscode-editor-font-size, 13px)' }}>
+          <span
+            style={{
+              flex: 1,
+              textAlign: 'left',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
             {selectedKernel}
           </span>
-          {!isDatalayerNotebook && (
-            <span
-              className="codicon codicon-chevron-down"
-              style={{ fontSize: '12px' }}
-            />
-          )}
-        </div>
+          {/* Never show chevron - this is not a dropdown */}
+        </button>
       </div>
     </div>
   );

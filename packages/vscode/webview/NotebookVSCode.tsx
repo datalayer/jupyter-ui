@@ -19,18 +19,29 @@ import {
   JupyterReactTheme,
   type ICollaborationProvider,
   useJupyterReactStore,
-  Jupyter,
-  useJupyter,
   CellSidebarExtension,
 } from '@datalayer/jupyter-react';
 import { DatalayerCollaborationProvider } from '@datalayer/core/lib/collaboration';
 import { MessageHandlerContext, type ExtensionMessage } from './messageHandler';
 import { loadFromBytes, saveToBytes } from './utils';
 import { createMockServiceManager } from './mockServiceManager';
+import { createServiceManager } from './serviceManager';
+import { ServiceManager } from '@jupyterlab/services';
 // Import the enhanced theme system
 import { EnhancedJupyterReactTheme } from './theme';
 // Import the custom VS Code-style toolbar
 import { NotebookToolbar } from './NotebookToolbar';
+
+interface RuntimeInfo {
+  uid: string;
+  name: string;
+  status?: string;
+  url?: string;
+  token?: string;
+  environment?: string;
+  creditsUsed?: number;
+  creditsLimit?: number;
+}
 
 interface NotebookVSCodeInnerProps {
   nbformat: any;
@@ -39,6 +50,8 @@ interface NotebookVSCodeInnerProps {
   serverUrl?: string;
   token?: string;
   isInitialized: boolean;
+  selectedRuntime?: RuntimeInfo;
+  onRuntimeSelected?: (runtime: RuntimeInfo) => void;
 }
 
 function NotebookVSCodeInner({
@@ -48,6 +61,8 @@ function NotebookVSCodeInner({
   serverUrl,
   token,
   isInitialized,
+  selectedRuntime,
+  onRuntimeSelected,
 }: NotebookVSCodeInnerProps): JSX.Element {
   const messageHandler = useContext(MessageHandlerContext);
   const currentNotebookModel = useRef<any>(null);
@@ -74,17 +89,67 @@ function NotebookVSCodeInner({
     return undefined;
   }, [isDatalayerNotebook, serverUrl, token, documentId]);
 
-  // Create the appropriate service manager
-  const serviceManager = useMemo(() => {
+  // Keep track of current service manager and update it when runtime changes
+  const [serviceManager, setServiceManager] = useState<
+    ServiceManager.IManager | undefined
+  >(() => {
+    // Initial service manager
     if (isDatalayerNotebook) {
       console.log(
-        '[NotebookVSCode] Using mock service manager for Datalayer notebook',
+        '[NotebookVSCode] Initial mock service manager for Datalayer notebook',
       );
       return createMockServiceManager();
     }
-    // For local notebooks, we'll get the service manager from the Jupyter context
     return undefined;
-  }, [isDatalayerNotebook]);
+  });
+
+  // Update service manager when runtime changes
+  useEffect(() => {
+    if (selectedRuntime?.url && selectedRuntime?.token) {
+      console.log(
+        '[NotebookVSCode] Runtime selected, creating real service manager:',
+        selectedRuntime.name,
+        selectedRuntime.url,
+      );
+      const newServiceManager = createServiceManager(
+        selectedRuntime.url,
+        selectedRuntime.token,
+      );
+      setServiceManager(newServiceManager);
+
+      // Store runtime in sessionStorage for persistence
+      if (documentId) {
+        const key = `datalayer_runtime_${documentId}`;
+        sessionStorage.setItem(key, JSON.stringify(selectedRuntime));
+        console.log('[NotebookVSCode] Stored runtime info in sessionStorage');
+      }
+    } else if (isDatalayerNotebook && !serviceManager) {
+      // Only create mock if we don't have any service manager
+      console.log('[NotebookVSCode] No runtime, using mock service manager');
+      setServiceManager(createMockServiceManager());
+    }
+  }, [selectedRuntime, isDatalayerNotebook, documentId]);
+
+  // Restore runtime info on mount
+  useEffect(() => {
+    if (documentId && !selectedRuntime && isDatalayerNotebook) {
+      const key = `datalayer_runtime_${documentId}`;
+      const stored = sessionStorage.getItem(key);
+      if (stored) {
+        try {
+          const runtime = JSON.parse(stored);
+          console.log(
+            '[NotebookVSCode] Restoring runtime from sessionStorage:',
+            runtime,
+          );
+          setSelectedRuntime(runtime);
+        } catch (e) {
+          console.error('[NotebookVSCode] Failed to parse stored runtime:', e);
+          sessionStorage.removeItem(key);
+        }
+      }
+    }
+  }, [documentId, isDatalayerNotebook]);
 
   // Handle notebook model changes for local notebooks only
   const handleNotebookModelChanged = useCallback(
@@ -416,7 +481,11 @@ function NotebookVSCodeInner({
       <div
         style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}
       >
-        <NotebookToolbar notebookId={documentId!} isDatalayerNotebook={true} />
+        <NotebookToolbar
+          notebookId={documentId!}
+          isDatalayerNotebook={true}
+          selectedRuntime={selectedRuntime}
+        />
         <Box
           style={{
             height,
@@ -508,27 +577,41 @@ function NotebookVSCodeInner({
     );
   }
 
-  // For local notebooks, wrap in Jupyter provider to get the real service manager
+  // For local notebooks, don't wrap in Jupyter provider - we'll manage the service manager ourselves
   return (
-    <Jupyter>
-      <LocalNotebook
-        nbformat={nbformat}
-        height={height}
-        cellSidebarMargin={cellSidebarMargin}
-        onNotebookModelChanged={handleNotebookModelChanged}
-      />
-    </Jupyter>
+    <LocalNotebook
+      nbformat={nbformat}
+      height={height}
+      cellSidebarMargin={cellSidebarMargin}
+      onNotebookModelChanged={handleNotebookModelChanged}
+      selectedRuntime={selectedRuntime}
+    />
   );
 }
 
-// Separate component for local notebooks that uses the Jupyter context
+// Separate component for local notebooks
 function LocalNotebook({
   nbformat,
   height,
   cellSidebarMargin,
   onNotebookModelChanged,
+  selectedRuntime,
 }: any) {
-  const { serviceManager } = useJupyter();
+  // Create service manager from selected runtime if available
+  const serviceManager = useMemo(() => {
+    if (selectedRuntime?.url && selectedRuntime?.token !== undefined) {
+      console.log(
+        '[LocalNotebook] Creating service manager from runtime:',
+        selectedRuntime,
+      );
+      return createServiceManager(selectedRuntime.url, selectedRuntime.token);
+    }
+    // Use mock service manager by default (no auto-start kernel)
+    console.log(
+      '[LocalNotebook] Using mock service manager (no kernel selected)',
+    );
+    return createMockServiceManager();
+  }, [selectedRuntime]);
 
   // Create notebook extensions (sidebar)
   const extensions = useMemo(() => [new CellSidebarExtension({})], []);
@@ -591,6 +674,7 @@ function LocalNotebook({
       <NotebookToolbar
         notebookId="local-notebook"
         isDatalayerNotebook={false}
+        selectedRuntime={selectedRuntime}
       />
       <Box
         style={{
@@ -682,7 +766,7 @@ function LocalNotebook({
   );
 }
 
-// Inner component that uses the Jupyter context
+// Inner component that handles the notebook logic
 function NotebookVSCodeWithJupyter(): JSX.Element {
   const messageHandler = useContext(MessageHandlerContext);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
@@ -695,6 +779,9 @@ function NotebookVSCodeWithJupyter(): JSX.Element {
   const [documentId, setDocumentId] = useState<string | undefined>();
   const [serverUrl, setServerUrl] = useState<string | undefined>();
   const [token, setToken] = useState<string | undefined>();
+  const [selectedRuntime, setSelectedRuntime] = useState<
+    RuntimeInfo | undefined
+  >();
 
   // Signal ready immediately when component mounts
   useEffect(() => {
@@ -776,6 +863,29 @@ function NotebookVSCodeWithJupyter(): JSX.Element {
           setTheme(body.theme);
           // The colormode will be synced via the useEffect
         }
+      } else if (type === 'runtime-selected' && body.runtime) {
+        console.log('[NotebookVSCode] Runtime selected:', body.runtime);
+        setSelectedRuntime(body.runtime);
+        // Force a re-render by also updating a dummy state if needed
+        console.log(
+          '[NotebookVSCode] Updated selectedRuntime state to:',
+          body.runtime,
+        );
+      } else if (type === 'set-runtime' && body.baseUrl) {
+        // Handle runtime selection for local notebooks
+        console.log(
+          '[NotebookVSCode] Setting runtime for local notebook:',
+          body.baseUrl,
+        );
+        // Create a runtime info object from the URL
+        const runtimeInfo: RuntimeInfo = {
+          uid: 'local-runtime',
+          name: 'Jupyter Server',
+          url: body.baseUrl,
+          token: body.token || '',
+          status: 'ready',
+        };
+        setSelectedRuntime(runtimeInfo);
       }
     };
 
@@ -807,18 +917,16 @@ function NotebookVSCodeWithJupyter(): JSX.Element {
         serverUrl={serverUrl}
         token={token}
         isInitialized={isInitialized}
+        selectedRuntime={selectedRuntime}
+        onRuntimeSelected={setSelectedRuntime}
       />
     </EnhancedJupyterReactTheme>
   );
 }
 
-// Main component that provides the Jupyter context
+// Main component
 function NotebookVSCode(): JSX.Element {
-  return (
-    <Jupyter>
-      <NotebookVSCodeWithJupyter />
-    </Jupyter>
-  );
+  return <NotebookVSCodeWithJupyter />;
 }
 
 // Add debug function to window at module load time

@@ -66,18 +66,21 @@ export function createServiceManager(
   token: string = '',
 ): ServiceManager {
   const refSettings = ServerConnection.makeSettings();
+
+  // The token will be appended as a query parameter by Jupyter itself
+  // when appendToken is true, so we don't need it in headers
   return new ServiceManager({
     serverSettings: {
       ...refSettings,
-      appendToken: !!token,
+      appendToken: true, // Append token as query parameter
       baseUrl,
       appUrl: '',
       fetch: fetch,
       init: {
         cache: 'no-store',
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        credentials: 'same-origin',
       } as any,
-      token,
+      token, // This is the runtime-specific token, not the JWT auth token
       WebSocket: WebSocket as any,
       wsUrl: baseUrl.replace(/^http/, 'ws'),
     },

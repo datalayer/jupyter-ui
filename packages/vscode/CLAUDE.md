@@ -121,10 +121,10 @@ Key commands:
 - `/api/spacer/v1/notebooks` - Create notebooks (multipart/form-data)
 - `/api/spacer/v1/lexicals` - Create lexical docs (multipart/form-data)
 
-### Ceres API (Runtimes)
+### Runtimes API
 
-- `/api/ceres/v1/runtime/get` - List runtimes
-- `/api/ceres/v1/runtime/create` - Create runtime
+- `/api/runtimes/v1/runtimes` - List runtimes (GET)
+- `/api/runtimes/v1/runtimes` - Create runtime (POST)
 
 ## Project Structure
 

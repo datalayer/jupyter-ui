@@ -74,7 +74,7 @@ export class RuntimeControllerManager implements vscode.Disposable {
     this._context = context;
     this._authService = AuthService.getInstance(context);
     this._spacerApiService = SpacerApiService.getInstance();
-    this._runtimesApiService = RuntimesApiService.getInstance();
+    this._runtimesApiService = RuntimesApiService.getInstance(context);
 
     console.log(
       '[RuntimeControllerManager] Initializing runtime controller manager',

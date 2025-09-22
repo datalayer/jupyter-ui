@@ -54,9 +54,9 @@ export class DocumentBridge {
   private tempDir: string;
   private activeRuntimes: Set<string> = new Set();
 
-  private constructor() {
+  private constructor(context?: vscode.ExtensionContext) {
     this.apiService = SpacerApiService.getInstance();
-    this.runtimesApiService = RuntimesApiService.getInstance();
+    this.runtimesApiService = RuntimesApiService.getInstance(context);
     // Create a temp directory for Datalayer documents
     this.tempDir = path.join(os.tmpdir(), 'datalayer-vscode');
     if (!fs.existsSync(this.tempDir)) {
@@ -66,11 +66,12 @@ export class DocumentBridge {
 
   /**
    * Gets the singleton instance of DocumentBridge.
+   * @param {vscode.ExtensionContext} [context] - Extension context (required on first call)
    * @returns {DocumentBridge} The singleton instance
    */
-  static getInstance(): DocumentBridge {
+  static getInstance(context?: vscode.ExtensionContext): DocumentBridge {
     if (!DocumentBridge.instance) {
-      DocumentBridge.instance = new DocumentBridge();
+      DocumentBridge.instance = new DocumentBridge(context);
     }
     return DocumentBridge.instance;
   }

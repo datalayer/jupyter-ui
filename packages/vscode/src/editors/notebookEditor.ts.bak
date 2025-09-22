@@ -9,10 +9,7 @@ import { WebSocket, RawData } from 'ws';
 import { Disposable, disposeAll } from '../dispose';
 import { getNonce } from '../util';
 import { setRuntime } from '../runtimes/runtimePicker';
-import {
-  RuntimesApiService,
-  type RuntimeResponse,
-} from '../runtimes/runtimesApiService';
+import { RuntimesApiService, type RuntimeResponse } from '../runtimes/runtimesApiService';
 import { AuthService } from '../auth/authService';
 import type { ExtensionMessage } from '../messages';
 
@@ -725,159 +722,127 @@ export class NotebookEditorProvider
       }
 
       // Fetch existing runtimes
-      let runtimes: RuntimeResponse[] = [];
-      try {
-        runtimes = await vscode.window.withProgress(
-          {
-            location: vscode.ProgressLocation.Notification,
-            title: 'Loading runtimes...',
-            cancellable: false,
-          },
-          async () => {
-            return await runtimesApi.listRuntimes();
-          },
-        );
-      } catch (error) {
-        console.error('[NotebookEditor] Error loading runtimes:', error);
+      const runtimesResult = await vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+          title: 'Loading runtimes...',
+          cancellable: false,
+        },
+        async () => {
+          try {
+            const runtimes = await runtimesApi.listRuntimes();
+            return runtimes;
 
-        // Check if it's a token expiration error
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
-        if (errorMessage.includes('expired') || errorMessage.includes('401')) {
-          vscode.window
-            .showErrorMessage(
-              'Authentication expired. Please logout and login again.',
-              'Logout',
-            )
-            .then(selection => {
-              if (selection === 'Logout') {
-                vscode.commands.executeCommand('datalayer.logout');
-              }
+            // Create quick pick items
+            const items: vscode.QuickPickItem[] = [];
+
+            // Add existing runtimes
+            runtimes.forEach(runtime => {
+              const statusIcon = runtime.status === 'running' || runtime.status === 'ready'
+                ? '$(vm-active)'
+                : '$(vm-outline)';
+              const creditsUsed = runtime.credits_used || 0;
+              const creditsLimit = runtime.credits_limit || 10;
+
+              const item: any = {
+                label: `${statusIcon} ${runtime.given_name || runtime.pod_name || 'Runtime'}`,
+                description: `${runtime.status} • ${creditsUsed}/${creditsLimit} credits`,
+                detail: `Environment: ${runtime.environment_name || 'python-cpu-env'}`,
+              };
+              item.runtime = runtime;
+              items.push(item);
             });
-        } else {
-          vscode.window.showErrorMessage(
-            `Failed to load runtimes: ${errorMessage}`,
-          );
-        }
-        return;
-      }
 
-      // Create quick pick items
-      const items: vscode.QuickPickItem[] = [];
+            // Add separator
+            items.push({
+              label: '',
+              kind: vscode.QuickPickItemKind.Separator,
+            } as vscode.QuickPickItem);
 
-      // Add existing runtimes
-      if (runtimes && runtimes.length > 0) {
-        runtimes.forEach(runtime => {
-          const statusIcon =
-            runtime.status === 'running' || runtime.status === 'ready'
-              ? '$(vm-active)'
-              : '$(vm-outline)';
-          const creditsUsed = runtime.credits_used || 0;
-          const creditsLimit = runtime.credits_limit || 10;
+            // Add create options
+            const cpuItem: any = {
+              label: '$(add) Create CPU Runtime',
+              description: 'Python CPU Environment',
+              detail: 'Create a new runtime with CPU resources',
+            };
+            cpuItem.action = 'create-cpu';
+            items.push(cpuItem);
 
-          const item: any = {
-            label: `${statusIcon} ${runtime.given_name || runtime.pod_name || 'Runtime'}`,
-            description: `${runtime.status} • ${creditsUsed}/${creditsLimit} credits`,
-            detail: `Environment: ${runtime.environment_name || 'python-cpu-env'}`,
-          };
-          item.runtime = runtime;
-          items.push(item);
-        });
+            const aiItem: any = {
+              label: '$(add) Create AI Runtime',
+              description: 'Python AI Environment',
+              detail: 'Create a new runtime with GPU resources for AI/ML workloads',
+            };
+            aiItem.action = 'create-ai';
+            items.push(aiItem);
 
-        // Add separator
-        items.push({
-          label: '',
-          kind: vscode.QuickPickItemKind.Separator,
-        } as vscode.QuickPickItem);
-      }
+            // Show quick pick
+            const selected = await vscode.window.showQuickPick(items, {
+              placeHolder: 'Select a runtime or create a new one',
+              title: 'Select Datalayer Runtime',
+            });
 
-      // Add create options
-      const cpuItem: any = {
-        label: '$(add) Create CPU Runtime',
-        description: 'Python CPU Environment',
-        detail: 'Create a new runtime with CPU resources',
-      };
-      cpuItem.action = 'create-cpu';
-      items.push(cpuItem);
+            if (!selected) {
+              return;
+            }
 
-      const aiItem: any = {
-        label: '$(add) Create AI Runtime',
-        description: 'Python AI Environment',
-        detail: 'Create a new runtime with GPU resources for AI/ML workloads',
-      };
-      aiItem.action = 'create-ai';
-      items.push(aiItem);
+            // Handle selection
+            const selectedAny = selected as any;
+            if (selectedAny.runtime) {
+              // Use existing runtime
+              const runtime = selectedAny.runtime as RuntimeResponse;
+              this.sendRuntimeToWebview(webview, runtime);
+            } else if (selectedAny.action) {
+              // Create new runtime
+              const environment = selectedAny.action === 'create-ai'
+                ? 'ai-env'
+                : 'python-cpu-env';
 
-      // Show quick pick
-      const selected = await vscode.window.showQuickPick(items, {
-        placeHolder:
-          runtimes.length === 0
-            ? 'No runtimes found. Create a new one?'
-            : 'Select a runtime or create a new one',
-        title: 'Select Datalayer Runtime',
-      });
+              await vscode.window.withProgress(
+                {
+                  location: vscode.ProgressLocation.Notification,
+                  title: 'Creating runtime...',
+                  cancellable: false,
+                },
+                async () => {
+                  const config = vscode.workspace.getConfiguration('datalayer.runtime');
+                  const creditsLimit = config.get<number>('creditsLimit', 10);
 
-      if (!selected) {
-        return;
-      }
-
-      // Handle selection
-      const selectedAny = selected as any;
-      if (selectedAny.runtime) {
-        // Use existing runtime
-        const runtime = selectedAny.runtime as RuntimeResponse;
-        this.sendRuntimeToWebview(webview, runtime);
-      } else if (selectedAny.action) {
-        // Create new runtime
-        const environment =
-          selectedAny.action === 'create-ai' ? 'ai-env' : 'python-cpu-env';
-
-        await vscode.window.withProgress(
-          {
-            location: vscode.ProgressLocation.Notification,
-            title: 'Creating runtime...',
-            cancellable: false,
-          },
-          async () => {
-            const config =
-              vscode.workspace.getConfiguration('datalayer.runtime');
-            const creditsLimit = config.get<number>('creditsLimit', 10);
-
-            const newRuntime = await runtimesApi.createRuntime(
-              creditsLimit,
-              'notebook',
-              `VSCode ${selectedAny.action === 'create-ai' ? 'AI' : 'CPU'} Runtime`,
-              environment,
-            );
-
-            if (newRuntime) {
-              // Wait for runtime to be ready
-              let retries = 0;
-              const maxRetries = 10;
-              while (retries < maxRetries && newRuntime.pod_name) {
-                await new Promise(resolve => setTimeout(resolve, 3000));
-                const updatedRuntime = await runtimesApi.getRuntime(
-                  newRuntime.pod_name,
-                );
-                if (updatedRuntime?.ingress && updatedRuntime?.token) {
-                  this.sendRuntimeToWebview(webview, updatedRuntime);
-                  vscode.window.showInformationMessage(
-                    'Runtime created successfully',
+                  const newRuntime = await runtimesApi.createRuntime(
+                    creditsLimit,
+                    'notebook',
+                    `VSCode ${selectedAny.action === 'create-ai' ? 'AI' : 'CPU'} Runtime`,
+                    environment
                   );
-                  return;
-                }
-                retries++;
-              }
 
-              // Use whatever we have if not fully ready
-              this.sendRuntimeToWebview(webview, newRuntime);
-              vscode.window.showWarningMessage(
-                'Runtime created but may not be fully ready',
+                  if (newRuntime) {
+                    // Wait for runtime to be ready
+                    let retries = 0;
+                    const maxRetries = 10;
+                    while (retries < maxRetries && newRuntime.pod_name) {
+                      await new Promise(resolve => setTimeout(resolve, 3000));
+                      const updatedRuntime = await runtimesApi.getRuntime(newRuntime.pod_name);
+                      if (updatedRuntime?.ingress && updatedRuntime?.token) {
+                        this.sendRuntimeToWebview(webview, updatedRuntime);
+                        vscode.window.showInformationMessage('Runtime created successfully');
+                        return;
+                      }
+                      retries++;
+                    }
+
+                    // Use whatever we have if not fully ready
+                    this.sendRuntimeToWebview(webview, newRuntime);
+                    vscode.window.showWarningMessage('Runtime created but may not be fully ready');
+                  }
+                }
               );
             }
-          },
-        );
-      }
+          } catch (error) {
+            console.error('[NotebookEditor] Error handling runtime selection:', error);
+            vscode.window.showErrorMessage(`Failed to load runtimes: ${error}`);
+          }
+        }
+      );
     } catch (error) {
       console.error('[NotebookEditor] Error in runtime selection:', error);
       vscode.window.showErrorMessage(`Failed to select runtime: ${error}`);
@@ -941,22 +906,23 @@ export class NotebookEditorProvider
     }
   }
 
-  private sendRuntimeToWebview(
-    webview: vscode.WebviewPanel,
-    runtime: RuntimeResponse,
-  ) {
-    this.postMessage(webview, 'runtime-selected', {
-      runtime: {
-        uid: runtime.uid,
-        name: runtime.given_name || runtime.pod_name,
-        status: runtime.status,
-        url: runtime.ingress,
-        token: runtime.token,
-        environment: runtime.environment_name,
-        creditsUsed: runtime.credits_used,
-        creditsLimit: runtime.credits_limit,
-      },
-    });
+  private sendRuntimeToWebview(webview: vscode.WebviewPanel, runtime: RuntimeResponse) {
+    this.postMessage(
+      webview,
+      'runtime-selected',
+      {
+        runtime: {
+          uid: runtime.uid,
+          name: runtime.given_name || runtime.pod_name,
+          status: runtime.status,
+          url: runtime.ingress,
+          token: runtime.token,
+          environment: runtime.environment_name,
+          creditsUsed: runtime.credits_used,
+          creditsLimit: runtime.credits_limit,
+        }
+      }
+    );
   }
 
   private onMessage(
