@@ -67,7 +67,7 @@
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
-    "fkill-cli": "^7.1.0",
+    "fkill-cli": "^8.0.0",
     "husky": "^9.1.7",
     "lerna": "^6.6.2",
     "lint-staged": "^16.1.5",

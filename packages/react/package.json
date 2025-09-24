@@ -162,7 +162,7 @@
     "utf-8-validate": "^6.0.3",
     "wildcard-match": "^5.1.2",
     "y-protocols": "^1.0.5",
-    "y-websocket": "^3.0.0",
+    "y-websocket": "3.0.0",
     "yjs": "^13.6.24",
     "zustand": "^4.4.1"
   },

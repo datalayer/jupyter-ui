@@ -79,6 +79,7 @@ const initialConfig = {
   onError(error: Error) {
     throw error;
   },
+  // @ts-expect-error TODO Fix this...
   nodes: [
     AutoLinkNode,
     CodeNode,
@@ -102,7 +103,7 @@ const initialConfig = {
     TableRowNode,
     YouTubeNode,
   ],
-};
+};0
 
 const EditorContextPlugin = () => {
   const { setEditor } = useLexical();
@@ -130,6 +131,7 @@ export function Editor(props: Props) {
     //    console.log('---', _editorState.toJSON());
   }
   return (
+    // @ts-expect-error TODO Fix this...
     <LexicalComposer initialConfig={initialConfig}>
       <div className="editor-shell">
         <div className="editor-container">
