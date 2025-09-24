@@ -1,0 +1,145 @@
+name: VSCode - Extension Build & Test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/vscode/**'
+      - 'packages/react/**'
+      - '.github/workflows/vscode-extension.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'packages/vscode/**'
+      - 'packages/react/**'
+      - '.github/workflows/vscode-extension.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build & Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: ['20']
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: |
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            echo "Installing on Windows with --force flag to bypass OS restrictions"
+            npm install --force
+          else
+            npm install
+          fi
+        shell: bash
+
+      - name: Build React package (required dependency)
+        run: npm run build
+        working-directory: packages/react
+
+      - name: Build VS Code extension
+        run: npm run compile
+        working-directory: packages/vscode
+
+      - name: Run TypeScript type checking
+        run: npx tsc --noEmit
+        working-directory: packages/vscode
+
+      - name: Package extension (.vsix)
+        run: npm run vsix
+        working-directory: packages/vscode
+
+      - name: List generated artifacts
+        run: |
+          echo "Generated extension package:"
+          ls -la packages/vscode/*.vsix || echo "No .vsix files found"
+        shell: bash
+
+      - name: Upload VS Code extension artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vscode-extension-${{ matrix.os }}-node${{ matrix.node-version }}
+          path: packages/vscode/*.vsix
+          retention-days: 30
+
+  test-installation:
+    name: Test Extension Installation
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download extension artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: vscode-extension-ubuntu-latest-node20
+          path: ./artifacts
+
+      - name: List downloaded artifacts
+        run: |
+          echo "Downloaded artifacts:"
+          find ./artifacts -name "*.vsix" -type f
+
+      - name: Verify extension package
+        run: |
+          VSIX_FILE=$(find ./artifacts -name "*.vsix" -type f | head -1)
+          if [ -z "$VSIX_FILE" ]; then
+            echo "Error: No .vsix file found in artifacts"
+            exit 1
+          fi
+
+          echo "Found extension package: $VSIX_FILE"
+          echo "File size: $(stat -c%s "$VSIX_FILE") bytes"
+
+          # Verify it's a valid zip file (VSIX is a ZIP)
+          if ! unzip -t "$VSIX_FILE" > /dev/null 2>&1; then
+            echo "Error: Extension package is not a valid ZIP file"
+            exit 1
+          fi
+
+          echo "✅ Extension package validation successful"
+
+  release-summary:
+    name: Release Summary
+    needs: [build-and-test, test-installation]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Summary
+        run: |
+          echo "## VS Code Extension Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Build Status" >> $GITHUB_STEP_SUMMARY
+          echo "- **Ubuntu**: ${{ needs.build-and-test.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Windows**: ${{ needs.build-and-test.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **macOS**: ${{ needs.build-and-test.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Installation Test**: ${{ needs.test-installation.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Artifacts Generated" >> $GITHUB_STEP_SUMMARY
+          echo "- VS Code extension packages (.vsix) for all platforms" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Installation Instructions" >> $GITHUB_STEP_SUMMARY
+          echo "1. Download the .vsix artifact for your platform from this workflow run" >> $GITHUB_STEP_SUMMARY
+          echo "2. In VS Code, press \`Ctrl+Shift+P\` (or \`Cmd+Shift+P\` on Mac)" >> $GITHUB_STEP_SUMMARY
+          echo "3. Type \`Extensions: Install from VSIX...\`" >> $GITHUB_STEP_SUMMARY
+          echo "4. Select the downloaded .vsix file" >> $GITHUB_STEP_SUMMARY
+          echo "5. Reload VS Code when prompted" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Testing the Extension" >> $GITHUB_STEP_SUMMARY
+          echo "- Open any \`.ipynb\` file to test the custom notebook editor" >> $GITHUB_STEP_SUMMARY
+          echo "- Use Command Palette → \"Datalayer: Login to Datalayer\" to test authentication" >> $GITHUB_STEP_SUMMARY
+          echo "- Check the Explorer sidebar for the \"Spaces\" view" >> $GITHUB_STEP_SUMMARY

@@ -5,6 +5,13 @@
  */
 
 /**
+ * @module serviceManager
+ * Service manager for Jupyter kernel communication.
+ * Creates a fake JupyterLab service manager that proxies requests through postMessage.
+ * Implements WebSocket proxying for real-time kernel communication.
+ */
+
+/**
  * Fake JupyterLab service manager that proxy the requests and websockets
  * through postMessage
  *
@@ -48,23 +55,32 @@ async function fetch(
   }
 }
 
+/**
+ * Create a JupyterLab service manager with proxied communication.
+ * @param baseUrl Base URL for the Jupyter server
+ * @param token Authentication token for the server
+ * @returns ServiceManager instance configured for VS Code extension communication
+ */
 export function createServiceManager(
   baseUrl: string,
   token: string = '',
 ): ServiceManager {
   const refSettings = ServerConnection.makeSettings();
+
+  // The token will be appended as a query parameter by Jupyter itself
+  // when appendToken is true, so we don't need it in headers
   return new ServiceManager({
     serverSettings: {
       ...refSettings,
-      appendToken: true,
+      appendToken: true, // Append token as query parameter
       baseUrl,
       appUrl: '',
       fetch: fetch,
       init: {
         cache: 'no-store',
-        // credentials: 'same-origin',
+        credentials: 'same-origin',
       } as any,
-      token,
+      token, // This is the runtime-specific token, not the JWT auth token
       WebSocket: WebSocket as any,
       wsUrl: baseUrl.replace(/^http/, 'ws'),
     },
@@ -85,14 +101,25 @@ const ERROR_PREFIX = {
   },
 };
 
+/**
+ * Configuration for creating Event objects
+ */
 interface IEventConfiguration {
+  /** Event type string */
   type: string;
+  /** Target element for the event */
   target?: any;
 }
 
+/**
+ * Configuration for creating CloseEvent objects
+ */
 interface ICloseEventConfiguration extends IEventConfiguration {
+  /** Close code (1000 for normal closure) */
   code?: number;
+  /** Human-readable close reason */
   reason?: string;
+  /** Whether the connection closed cleanly */
   wasClean?: boolean;
 }
 
@@ -214,13 +241,14 @@ function urlVerification(url: string | URL) {
   return urlRecord.toString();
 }
 
-/*
+/**
  * EventTarget is an interface implemented by objects that can
  * receive events and may have listeners for them.
  *
  * https://developer.mozilla.org/en-US/docs/Web/API/EventTarget
  */
 class EventTarget {
+  /** Map of event type to listener functions */
   protected listeners: Map<string, Set<(...args: any[]) => void>> = new Map();
 
   /*
@@ -281,11 +309,21 @@ class EventTarget {
   }
 }
 
+/**
+ * Fake WebSocket implementation that proxies through postMessage.
+ * Implements the standard WebSocket API but communicates with the VS Code extension
+ * instead of directly connecting to a server.
+ */
 class WebSocket extends EventTarget {
+  /** WebSocket is connecting */
   static readonly CONNECTING = 0;
+  /** WebSocket connection is open and ready */
   static readonly OPEN = 1;
+  /** WebSocket connection is closing */
   static readonly CLOSING = 2;
+  /** WebSocket connection is closed */
   static readonly CLOSED = 3;
+  /** Counter for generating unique client IDs */
   private static _clientCounter = 0;
 
   constructor(url: string | URL, protocols: string | string[] = []) {
@@ -302,19 +340,31 @@ class WebSocket extends EventTarget {
     this._open();
   }
 
+  /** Current connection state */
   private _readyState: number;
+  /** Disposable for cleaning up message handlers */
   private _disposable: { dispose(): void };
 
+  /** WebSocket is connecting */
   readonly CONNECTING = 0;
+  /** WebSocket connection is open and ready */
   readonly OPEN = 1;
+  /** WebSocket connection is closing */
   readonly CLOSING = 2;
+  /** WebSocket connection is closed */
   readonly CLOSED = 3;
 
+  /** Unique identifier for this WebSocket instance */
   readonly clientId: string;
+  /** URL of the WebSocket endpoint */
   readonly url: string;
+  /** Amount of buffered data waiting to be sent */
   readonly bufferedAmount: number;
+  /** Extensions in use */
   readonly extensions: string;
+  /** Subprotocol in use */
   readonly protocol: string;
+  /** Binary data type for received messages */
   binaryType: BinaryType;
 
   get readyState(): number {

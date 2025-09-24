@@ -1,0 +1,307 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
+.lexical-editor-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--vscode-editor-background);
+  color: var(--vscode-editor-foreground);
+  font-family: var(--vscode-editor-font-family);
+  font-size: var(--vscode-editor-font-size);
+  font-weight: var(--vscode-editor-font-weight);
+}
+
+.lexical-editor-inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: auto;
+}
+
+.lexical-editor-content {
+  flex: 1;
+  outline: none;
+  padding: 20px;
+  min-height: 100%;
+  background-color: var(--vscode-editor-background);
+  color: var(--vscode-editor-foreground);
+  caret-color: var(--vscode-editorCursor-foreground);
+  line-height: var(--vscode-editor-lineHeight);
+}
+
+.lexical-editor-content:focus {
+  outline: none;
+}
+
+.lexical-editor-root {
+  position: relative;
+}
+
+.lexical-editor-paragraph {
+  margin: 0 0 8px 0;
+  position: relative;
+}
+
+.lexical-editor-paragraph:last-child {
+  margin-bottom: 0;
+}
+
+.lexical-editor-h1 {
+  font-size: 2em;
+  color: var(--vscode-editor-foreground);
+  margin: 20px 0 16px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--vscode-panel-border);
+  padding-bottom: 8px;
+}
+
+.lexical-editor-h2 {
+  font-size: 1.5em;
+  color: var(--vscode-editor-foreground);
+  margin: 18px 0 14px;
+  font-weight: 600;
+}
+
+.lexical-editor-h3 {
+  font-size: 1.25em;
+  color: var(--vscode-editor-foreground);
+  margin: 16px 0 12px;
+  font-weight: 600;
+}
+
+.lexical-editor-h4 {
+  font-size: 1.1em;
+  color: var(--vscode-editor-foreground);
+  margin: 14px 0 10px;
+  font-weight: 600;
+}
+
+.lexical-editor-h5 {
+  font-size: 1em;
+  color: var(--vscode-editor-foreground);
+  margin: 12px 0 8px;
+  font-weight: 600;
+}
+
+.lexical-editor-h6 {
+  font-size: 0.9em;
+  color: var(--vscode-editor-foreground);
+  margin: 10px 0 6px;
+  font-weight: 600;
+}
+
+.lexical-editor-bold {
+  font-weight: bold;
+  color: var(--vscode-editor-foreground);
+}
+
+.lexical-editor-italic {
+  font-style: italic;
+  color: var(--vscode-editor-foreground);
+}
+
+.lexical-editor-underline {
+  text-decoration: underline;
+  color: var(--vscode-editor-foreground);
+}
+
+.lexical-editor-strikethrough {
+  text-decoration: line-through;
+  color: var(--vscode-descriptionForeground);
+}
+
+.lexical-editor-code {
+  background-color: var(--vscode-textCodeBlock-background);
+  padding: 2px 4px;
+  font-family: var(--vscode-editor-font-family);
+  font-size: 0.9em;
+  border-radius: 3px;
+  color: var(--vscode-textPreformat-foreground);
+}
+
+.lexical-editor-code-block {
+  background-color: var(--vscode-textCodeBlock-background);
+  font-family: var(--vscode-editor-font-family);
+  display: block;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 4px;
+  overflow-x: auto;
+  color: var(--vscode-textPreformat-foreground);
+  border: 1px solid var(--vscode-panel-border);
+}
+
+.lexical-editor-link {
+  color: var(--vscode-textLink-foreground);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.lexical-editor-link:hover {
+  color: var(--vscode-textLink-activeForeground);
+  text-decoration: underline;
+}
+
+.lexical-editor-link:visited {
+  color: var(--vscode-textLink-foreground);
+}
+
+.lexical-editor-quote {
+  margin: 8px 0;
+  padding-left: 16px;
+  border-left: 3px solid var(--vscode-textBlockQuote-border);
+  color: var(--vscode-textBlockQuote-foreground);
+  background-color: var(--vscode-textBlockQuote-background);
+  padding: 8px 16px;
+}
+
+.lexical-editor-ul {
+  padding-left: 20px;
+  margin: 8px 0;
+  list-style-type: disc;
+}
+
+.lexical-editor-ol {
+  padding-left: 20px;
+  margin: 8px 0;
+  list-style-type: decimal;
+}
+
+.lexical-editor-listitem {
+  margin: 4px 0;
+  color: var(--vscode-editor-foreground);
+}
+
+.lexical-editor-nested-listitem {
+  list-style-type: circle;
+}
+
+.lexical-editor-listitem-checked {
+  text-decoration: line-through;
+  color: var(--vscode-descriptionForeground);
+}
+
+.lexical-editor-listitem-unchecked {
+  color: var(--vscode-editor-foreground);
+}
+
+::selection {
+  background-color: var(--vscode-editor-selectionBackground);
+  color: var(--vscode-editor-selectionForeground);
+}
+
+/* Collaborative cursor styles using VS Code theme colors */
+.loro-cursor {
+  position: absolute;
+  width: 2px;
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* Default cursor colors using VS Code theme variables */
+.loro-cursor-0 {
+  background-color: var(--vscode-editorCursor-foreground, #007acc);
+}
+
+.loro-cursor-1 {
+  background-color: var(--vscode-charts-purple, #b180d7);
+}
+
+.loro-cursor-2 {
+  background-color: var(--vscode-charts-green, #89d185);
+}
+
+.loro-cursor-3 {
+  background-color: var(--vscode-charts-orange, #f48771);
+}
+
+.loro-cursor-4 {
+  background-color: var(--vscode-charts-yellow, #f9c74e);
+}
+
+.loro-cursor-5 {
+  background-color: var(--vscode-charts-blue, #75beff);
+}
+
+.loro-cursor-6 {
+  background-color: var(--vscode-charts-red, #f48771);
+}
+
+/* Cursor label styles */
+.loro-cursor-label {
+  position: absolute;
+  top: -20px;
+  left: 0;
+  background-color: var(--vscode-badge-background);
+  color: var(--vscode-badge-foreground);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-family: var(--vscode-font-family);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 101;
+}
+
+/* Selection highlight for collaborative users */
+.loro-selection {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.3;
+  z-index: 99;
+}
+
+.loro-selection-0 {
+  background-color: var(--vscode-editor-selectionBackground, #add6ff);
+}
+
+.loro-selection-1 {
+  background-color: var(--vscode-charts-purple, #b180d7);
+}
+
+.loro-selection-2 {
+  background-color: var(--vscode-charts-green, #89d185);
+}
+
+.loro-selection-3 {
+  background-color: var(--vscode-charts-orange, #f48771);
+}
+
+.loro-selection-4 {
+  background-color: var(--vscode-charts-yellow, #f9c74e);
+}
+
+.loro-selection-5 {
+  background-color: var(--vscode-charts-blue, #75beff);
+}
+
+.loro-selection-6 {
+  background-color: var(--vscode-charts-red, #f48771);
+}
+
+/* Cursor animation */
+@keyframes loro-cursor-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.loro-cursor {
+  animation: loro-cursor-blink 1s infinite;
+}
+
+/* Hover state for cursor labels */
+.loro-cursor-label:hover {
+  opacity: 0.9;
+}

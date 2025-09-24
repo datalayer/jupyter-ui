@@ -1,6 +1,6 @@
 {
   "name": "datalayer-jupyter-vscode",
-  "displayName": "Datalayer Notebook",
+  "displayName": "Datalayer Platform...",
   "description": "A Jupyter Notebook Editor for VS Code",
   "publisher": "Datalayer",
   "version": "0.0.2",
@@ -28,15 +28,232 @@
         "command": "datalayer.jupyter-notebook-new",
         "title": "Create new Datalayer Notebook",
         "category": "Notebook"
+      },
+      {
+        "command": "datalayer.lexical-editor-new",
+        "title": "Create new Datalayer Lexical Document",
+        "category": "Datalayer"
+      },
+      {
+        "command": "datalayer.login",
+        "title": "Login to Datalayer",
+        "category": "Datalayer"
+      },
+      {
+        "command": "datalayer.logout",
+        "title": "Logout from Datalayer",
+        "category": "Datalayer"
+      },
+      {
+        "command": "datalayer.showAuthStatus",
+        "title": "Show Authentication Status",
+        "category": "Datalayer"
+      },
+      {
+        "command": "datalayer.refreshSpaces",
+        "title": "Refresh Spaces",
+        "category": "Datalayer",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "datalayer.openDocument",
+        "title": "Open Document",
+        "category": "Datalayer"
+      },
+      {
+        "command": "datalayer.createNotebookInSpace",
+        "title": "New Datalayer Notebook...",
+        "category": "Datalayer",
+        "icon": "$(notebook)"
+      },
+      {
+        "command": "datalayer.createLexicalInSpace",
+        "title": "New Lexical Document...",
+        "category": "Datalayer",
+        "icon": "$(file-text)"
+      },
+      {
+        "command": "datalayer.createSpace",
+        "title": "Create New Space",
+        "category": "Datalayer",
+        "icon": "$(add)"
+      },
+      {
+        "command": "datalayer.renameItem",
+        "title": "Rename...",
+        "category": "Datalayer"
+      },
+      {
+        "command": "datalayer.deleteItem",
+        "title": "Delete",
+        "category": "Datalayer"
+      },
+      {
+        "command": "datalayer.showNotebookControllerStatus",
+        "title": "Show Notebook Controller Status",
+        "category": "Datalayer"
+      },
+      {
+        "command": "datalayer.restartNotebookRuntime",
+        "title": "Restart Datalayer Notebook Runtime",
+        "category": "Datalayer"
+      },
+      {
+        "command": "datalayer.refreshRuntimeControllers",
+        "title": "Refresh Runtime Controllers",
+        "category": "Datalayer"
       }
     ],
+    "views": {
+      "explorer": [
+        {
+          "id": "datalayerSpaces",
+          "name": "Datalayer Spaces",
+          "icon": "$(menu)",
+          "contextualTitle": "Datalayer Spaces",
+          "when": "true"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "datalayerSpaces",
+        "contents": "Welcome to Datalayer Spaces.\n[Login to Datalayer](command:datalayer.login) to view your spaces and documents.",
+        "when": "!datalayer.authenticated"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "datalayer.refreshSpaces",
+          "when": "view == datalayerSpaces",
+          "group": "navigation@1"
+        },
+        {
+          "command": "datalayer.createSpace",
+          "when": "view == datalayerSpaces",
+          "group": "navigation@2"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "datalayer.openDocument",
+          "when": "view == datalayerSpaces && (viewItem == notebook || viewItem == document)",
+          "group": "1_open"
+        },
+        {
+          "command": "datalayer.renameItem",
+          "when": "view == datalayerSpaces && (viewItem == notebook || viewItem == document)",
+          "group": "2_edit@1"
+        },
+        {
+          "command": "datalayer.deleteItem",
+          "when": "view == datalayerSpaces && (viewItem == notebook || viewItem == document)",
+          "group": "2_edit@2"
+        },
+        {
+          "command": "datalayer.createNotebookInSpace",
+          "when": "view == datalayerSpaces && viewItem == space",
+          "group": "1_create"
+        },
+        {
+          "command": "datalayer.createLexicalInSpace",
+          "when": "view == datalayerSpaces && viewItem == space",
+          "group": "1_create"
+        },
+        {
+          "command": "datalayer.createSpace",
+          "when": "view == datalayerSpaces && viewItem == root",
+          "group": "inline"
+        },
+        {
+          "command": "datalayer.createNotebookInSpace",
+          "when": "view == datalayerSpaces && viewItem == space",
+          "group": "inline@1"
+        },
+        {
+          "command": "datalayer.createLexicalInSpace",
+          "when": "view == datalayerSpaces && viewItem == space",
+          "group": "inline@2"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Datalayer",
+      "properties": {
+        "datalayer.serverUrl": {
+          "type": "string",
+          "default": "https://prod1.datalayer.run",
+          "description": "Datalayer server URL"
+        },
+        "datalayer.spacerWsUrl": {
+          "type": "string",
+          "default": "wss://prod1.datalayer.run",
+          "description": "Datalayer spacer WebSocket URL for collaboration"
+        },
+        "datalayer.runtime.environment": {
+          "type": "string",
+          "default": "python-cpu-env",
+          "enum": [
+            "python-cpu-env",
+            "ai-env"
+          ],
+          "enumDescriptions": [
+            "Python CPU environment with standard scientific libraries",
+            "AI environment with machine learning frameworks"
+          ],
+          "description": "Default runtime environment for notebooks"
+        },
+        "datalayer.runtime.creditsLimit": {
+          "type": "number",
+          "default": 10,
+          "minimum": 1,
+          "description": "Default credits limit for new runtimes"
+        },
+        "datalayer.notebook.enableKernelPicker": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable 'Datalayer Runtime...' option in VS Code kernel picker"
+        },
+        "datalayer.notebook.autoConnectRuntime": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically connect to Datalayer runtime when executing cells"
+        },
+        "datalayer.notebook.showRuntimeStatus": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show runtime status messages during cell execution"
+        },
+        "datalayer.notebook.refreshInterval": {
+          "type": "number",
+          "default": 30000,
+          "minimum": 0,
+          "description": "How often to refresh runtime status in milliseconds (0 to disable automatic refresh)"
+        },
+        "datalayer.notebook.showRuntimeDetails": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show runtime details like credits and environment in controller names"
+        }
+      }
+    },
     "customEditors": [
       {
         "viewType": "datalayer.jupyter-notebook",
-        "displayName": "Datalayer Notebook",
+        "displayName": "Datalayer Notebook...",
         "selector": [
           {
             "filenamePattern": "*.ipynb"
+          }
+        ]
+      },
+      {
+        "viewType": "datalayer.lexical-editor",
+        "displayName": "Datalayer Lexical Editor",
+        "selector": [
+          {
+            "filenamePattern": "*.lexical"
           }
         ]
       }
@@ -52,23 +269,51 @@
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "lint": "eslint src",
     "test": "vscode-test",
-    "vsix": "npx @vscode/vsce package --no-yarn --no-dependencies"
+    "vsix": "npx @vscode/vsce package --no-yarn --no-dependencies",
+    "doc": "typedoc",
+    "doc:watch": "typedoc --watch",
+    "doc:markdown": "typedoc --plugin typedoc-plugin-markdown --out docs-markdown",
+    "doc:coverage": "typedoc --validation"
   },
   "dependencies": {
-    "@datalayer/jupyter-react": "^1.0.7",
+    "@codemirror/language": "^6.11.3",
+    "@codemirror/state": "^6.5.2",
+    "@codemirror/view": "^6.38.2",
+    "@datalayer/core": "^0.0.10",
+    "@datalayer/jupyter-react": "file:../react",
+    "@datalayer/lexical-loro": "^0.0.7",
+    "@jupyter/ydoc": "^2.0.0",
     "@jupyterlab/services": "^7.0.0",
+    "@lexical/code": "^0.33.1",
+    "@lexical/html": "^0.33.1",
+    "@lexical/link": "^0.33.1",
+    "@lexical/list": "^0.33.1",
+    "@lexical/markdown": "^0.33.1",
+    "@lexical/react": "^0.33.1",
+    "@lexical/rich-text": "^0.33.1",
+    "@lexical/selection": "^0.33.1",
+    "@lexical/utils": "^0.33.1",
+    "@lezer/highlight": "^1.2.1",
     "@lumino/coreutils": "^2.1.1",
+    "@lumino/disposable": "^2.1.1",
+    "@lumino/signaling": "^2.1.1",
     "@primer/react": "^37.19.0",
+    "@vscode/codicons": "^0.0.40",
+    "lexical": "^0.33.1",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "typestyle": "^2.0.4",
-    "ws": "^8.18.1"
+    "uuid": "^8.3.2",
+    "ws": "^8.18.1",
+    "y-websocket": "^2.0.4",
+    "yjs": "^13.6.18"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.14.1",
     "@types/react": "18.3.20",
     "@types/react-dom": "18.3.6",
+    "@types/uuid": "^8.3.4",
     "@types/vscode": "^1.98.0",
     "@typescript-eslint/eslint-plugin": "^8.29.1",
     "@typescript-eslint/parser": "^8.29.1",
@@ -78,10 +323,14 @@
     "css-loader": "^5.1.3",
     "eslint": "^9.0.0",
     "mini-svg-data-uri": "^1.4.4",
+    "patch-package": "^8.0.0",
     "process": "^0.11.10",
     "style-loader": "^2.0.0",
     "svg-inline-loader": "^0.8.2",
     "ts-loader": "^9.5.2",
+    "typedoc": "^0.28.13",
+    "typedoc-plugin-coverage": "^4.0.1",
+    "typedoc-plugin-markdown": "^4.8.1",
     "typescript": "^5.8.3",
     "webpack": "^5.98.0",
     "webpack-cli": "^6.0.1"

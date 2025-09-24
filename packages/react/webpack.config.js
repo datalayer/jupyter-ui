@@ -244,7 +244,14 @@ module.exports = {
           filename: '[name][ext]',
         },
       },
-      // Rule for pyodide kernel
+      // Rule for pyodide kernel and Python wheel files
+      {
+        test: /\.whl$/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'pypi/[name][ext][query]',
+        },
+      },
       {
         test: /pypi\/.*/,
         type: 'asset/resource',

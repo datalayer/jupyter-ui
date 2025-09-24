@@ -69,6 +69,41 @@ const webviewConfig = {
     fallback: {
       process: require.resolve('process/browser'),
     },
+    // Deduplicate CodeMirror modules to prevent multiple instances
+    alias: {
+      '@codemirror/state': path.resolve(
+        __dirname,
+        '../../node_modules/@codemirror/state',
+      ),
+      '@codemirror/view': path.resolve(
+        __dirname,
+        '../../node_modules/@codemirror/view',
+      ),
+      '@codemirror/language': path.resolve(
+        __dirname,
+        '../../node_modules/@codemirror/language',
+      ),
+      '@codemirror/commands': path.resolve(
+        __dirname,
+        '../../node_modules/@codemirror/commands',
+      ),
+      '@codemirror/search': path.resolve(
+        __dirname,
+        '../../node_modules/@codemirror/search',
+      ),
+      '@codemirror/autocomplete': path.resolve(
+        __dirname,
+        '../../node_modules/@codemirror/autocomplete',
+      ),
+      '@codemirror/lint': path.resolve(
+        __dirname,
+        '../../node_modules/@codemirror/lint',
+      ),
+      // Also deduplicate yjs to prevent synchronization issues
+      yjs: path.resolve(__dirname, '../../node_modules/yjs'),
+      'y-protocols': path.resolve(__dirname, '../../node_modules/y-protocols'),
+      'y-websocket': path.resolve(__dirname, '../../node_modules/y-websocket'),
+    },
   },
   module: {
     rules: [
@@ -124,7 +159,15 @@ const webviewConfig = {
           filename: '[name][ext]',
         },
       },
-      // Rule for pyodide kernel
+      // Rule for pyodide kernel wheel files
+      {
+        test: /\.whl$/,
+        type: 'asset/resource',
+        generator: {
+          filename: 'pypi/[name][ext]',
+        },
+      },
+      // Rule for other pyodide kernel resources
       {
         test: /pypi\/.*/,
         type: 'asset/resource',
@@ -151,4 +194,110 @@ const webviewConfig = {
   ],
 };
 
-module.exports = [extensionConfig, webviewConfig];
+// Config for Lexical editor webview
+const lexicalWebviewConfig = {
+  ...webviewConfig,
+  entry: './webview/lexicalWebview.tsx',
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'lexicalWebview.js',
+    // This will be overridden at runtime by __webpack_public_path__
+    publicPath: 'auto',
+    webassemblyModuleFilename: '[hash].module.wasm',
+  },
+  experiments: {
+    asyncWebAssembly: true,
+  },
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'ts-loader',
+          options: {
+            configFile: path.join(__dirname, 'tsconfig.webview.json'),
+            experimentalWatchApi: true,
+            transpileOnly: true,
+          },
+        },
+      },
+      { test: /\.raw\.css$/, type: 'asset/source' },
+      {
+        test: /(?<!\.raw)\.css$/,
+        use: [require.resolve('style-loader'), require.resolve('css-loader')],
+      },
+      {
+        test: /\.(jpe?g|png|gif|ico|eot|ttf|map|woff2?)(\?v=\d+\.\d+\.\d+)?$/i,
+        type: 'asset/resource',
+      },
+      {
+        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+        issuer: /\.css$/,
+        type: 'asset',
+        generator: {
+          dataUrl: content => miniSVGDataURI(content.toString()),
+        },
+      },
+      {
+        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+        issuer: /\.js$/,
+        type: 'asset/source',
+      },
+      {
+        test: /\.(c|m)?js/,
+        resolve: {
+          fullySpecified: false,
+        },
+      },
+      {
+        test: /\.wasm$/,
+        type: 'webassembly/async',
+      },
+    ],
+  },
+  resolve: {
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.json', '.svg', '.wasm'],
+    fallback: {
+      process: require.resolve('process/browser'),
+    },
+    // Deduplicate CodeMirror modules to prevent multiple instances
+    alias: {
+      '@codemirror/state': path.resolve(
+        __dirname,
+        '../../node_modules/@codemirror/state',
+      ),
+      '@codemirror/view': path.resolve(
+        __dirname,
+        '../../node_modules/@codemirror/view',
+      ),
+      '@codemirror/language': path.resolve(
+        __dirname,
+        '../../node_modules/@codemirror/language',
+      ),
+      '@codemirror/commands': path.resolve(
+        __dirname,
+        '../../node_modules/@codemirror/commands',
+      ),
+      '@codemirror/search': path.resolve(
+        __dirname,
+        '../../node_modules/@codemirror/search',
+      ),
+      '@codemirror/autocomplete': path.resolve(
+        __dirname,
+        '../../node_modules/@codemirror/autocomplete',
+      ),
+      '@codemirror/lint': path.resolve(
+        __dirname,
+        '../../node_modules/@codemirror/lint',
+      ),
+      // Also deduplicate yjs to prevent synchronization issues
+      yjs: path.resolve(__dirname, '../../node_modules/yjs'),
+      'y-protocols': path.resolve(__dirname, '../../node_modules/y-protocols'),
+      'y-websocket': path.resolve(__dirname, '../../node_modules/y-websocket'),
+    },
+  },
+  plugins: [...webviewConfig.plugins],
+};
+
+module.exports = [extensionConfig, webviewConfig, lexicalWebviewConfig];

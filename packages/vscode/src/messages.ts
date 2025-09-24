@@ -5,6 +5,12 @@
  */
 
 /**
+ * @module messages
+ * Message type definitions for extension-webview communication.
+ * Defines the protocol for messages exchanged between the extension and webview.
+ */
+
+/**
  * Extension message
  */
 export type ExtensionMessage = {
@@ -27,4 +33,8 @@ export type ExtensionMessage = {
    * it is the client ID.
    */
   id?: string;
+  /**
+   * Request ID for matching responses to requests.
+   */
+  requestId?: string;
 };

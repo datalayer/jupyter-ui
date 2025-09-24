@@ -4,6 +4,17 @@
  * MIT License
  */
 
+/**
+ * @module utils
+ * Utility functions for the webview application.
+ * Provides helper functions for notebook data manipulation.
+ */
+
+/**
+ * Loads a notebook from binary data.
+ * @param {Uint8Array} raw - Raw binary data
+ * @returns {any} Parsed notebook object
+ */
 export function loadFromBytes(raw: Uint8Array): any {
   const rawContent = new TextDecoder().decode(raw);
   const parsed = JSON.parse(rawContent);
@@ -18,6 +29,16 @@ export function loadFromBytes(raw: Uint8Array): any {
     }
   }
   return parsed;
+}
+
+/**
+ * Saves a notebook to binary data.
+ * @param {any} notebook - Notebook object
+ * @returns {Uint8Array} Binary representation
+ */
+export function saveToBytes(notebook: any): Uint8Array {
+  const stringData = JSON.stringify(notebook, null, 2);
+  return new TextEncoder().encode(stringData);
 }
 
 /**

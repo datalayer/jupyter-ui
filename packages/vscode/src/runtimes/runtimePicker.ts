@@ -4,6 +4,12 @@
  * MIT License
  */
 
+/**
+ * @module runtimePicker
+ * Runtime selection utility for notebook execution.
+ * Provides UI for selecting and configuring Jupyter runtime environments.
+ */
+
 import { window, InputBoxValidationSeverity } from 'vscode';
 
 /**
