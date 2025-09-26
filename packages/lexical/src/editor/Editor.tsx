@@ -15,7 +15,7 @@ import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
-import { HashtagNode } from '@lexical/hashtag';
+// import { HashtagNode } from '@lexical/hashtag';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
 import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
@@ -59,7 +59,8 @@ import {
 } from './..';
 import { commentTheme } from '../themes';
 import { useLexical } from '../context';
-import { TreeViewPlugin, ToolbarPlugin } from '../plugins';
+import { TreeViewPlugin } from '../plugins';
+// import { ToolbarPlugin } from '../plugins';
 import { OnSessionConnection } from '@datalayer/jupyter-react';
 
 import './../../style/index.css';
@@ -85,11 +86,10 @@ const initialConfig = {
     CodeNode,
     CounterNode,
     EquationNode,
-    HashtagNode,
+    // HashtagNode,
     HeadingNode,
     HorizontalRuleNode,
     ImageNode,
-    // JupyterCellNode,
     JupyterInputHighlightNode,
     JupyterInputNode,
     JupyterOutputNode,
@@ -135,7 +135,9 @@ export function Editor(props: Props) {
     <LexicalComposer initialConfig={initialConfig}>
       <div className="editor-shell">
         <div className="editor-container">
+          {/*
           <ToolbarPlugin />
+          */}
           <div className="editor-inner">
             <RichTextPlugin
               contentEditable={
