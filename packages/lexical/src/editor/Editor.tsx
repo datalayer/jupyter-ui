@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { EditorState } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { HashtagPlugin } from '@lexical/react/LexicalHashtagPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
@@ -15,7 +16,6 @@ import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
-// import { HashtagNode } from '@lexical/hashtag';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
 import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
@@ -23,6 +23,7 @@ import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import { ListItemNode, ListNode } from '@lexical/list';
+import { HashtagNode } from '@lexical/hashtag';
 import { MarkNode } from '@lexical/mark';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { CodeNode } from '@lexical/code';
@@ -35,7 +36,6 @@ import {
   JupyterInputHighlightNode,
   JupyterInputNode,
   JupyterOutputNode,
-  // JupyterCellNode,
   YouTubeNode,
 } from '../nodes';
 import {
@@ -49,7 +49,6 @@ import {
   FloatingTextFormatToolbarPlugin,
   HorizontalRulePlugin,
   ImagesPlugin,
-  // JupyterCellPlugin,
   JupyterInputOutputPlugin,
   ListMaxIndentLevelPlugin,
   MarkdownPlugin,
@@ -60,12 +59,11 @@ import {
 import { commentTheme } from '../themes';
 import { useLexical } from '../context';
 import { TreeViewPlugin } from '../plugins';
-// import { ToolbarPlugin } from '../plugins';
 import { OnSessionConnection } from '@datalayer/jupyter-react';
+import { ToolbarPlugin } from '../plugins/ToolbarPlugin';
+import { ToolbarContext } from '../context/ToolbarContext';
 
 import './../../style/index.css';
-import ToolbarPlugin from '../plugins/ToolbarPlugin';
-import { ToolbarContext } from '../context/ToolbarContext';
 
 type Props = {
   notebook?: INotebookContent;
@@ -87,7 +85,7 @@ const initialConfig = {
     CodeNode,
     CounterNode,
     EquationNode,
-    // HashtagNode,
+    HashtagNode,
     HeadingNode,
     HorizontalRuleNode,
     ImageNode,
@@ -121,7 +119,7 @@ export function EditorContainer(props: Props) {
   const { defaultKernel } = useJupyter();
   const [editor] = useLexicalComposerContext();
   const [activeEditor, setActiveEditor] = useState(editor);
-  const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
+  const [_, setIsLinkEditMode] = useState<boolean>(false);
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
 
@@ -176,6 +174,7 @@ export function EditorContainer(props: Props) {
         />
         <EquationsPlugin />
         <ImagesPlugin />
+        <HashtagPlugin />
         <HorizontalRulePlugin />
         <YouTubePlugin />
         <NbformatContentPlugin notebook={notebook} />
@@ -192,7 +191,7 @@ export function EditorContainer(props: Props) {
         )}
       </div>
     </div>
-  )
+  );
 }
 
 export function Editor(props: Props) {

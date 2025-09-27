@@ -13,7 +13,6 @@
  */
 
 import type { JSX } from 'react';
-
 import {
   $isCodeNode,
   getCodeLanguageOptions as getCodeLanguageOptionsPrism,
@@ -44,7 +43,6 @@ import {
 } from '@lexical/utils';
 import {
   $getNodeByKey,
-  $getRoot,
   $getSelection,
   $isElementNode,
   $isNodeSelection,
@@ -56,7 +54,6 @@ import {
   ElementFormatType,
   FORMAT_ELEMENT_COMMAND,
   FORMAT_TEXT_COMMAND,
-  HISTORIC_TAG,
   INDENT_CONTENT_COMMAND,
   LexicalEditor,
   LexicalNode,
@@ -67,7 +64,6 @@ import {
   UNDO_COMMAND,
 } from 'lexical';
 import { Dispatch, useCallback, useEffect, useState } from 'react';
-
 import { useSettings } from '../../context/SettingsContext';
 import {
   blockTypeToBlockName,
@@ -76,16 +72,6 @@ import {
 import useModal from '../../hooks/useModal';
 import catTypingGif from '../../images/yellow-flower-small.jpg';
 import { DropDown, DropDownItem } from '../..';
-import {
-  $isJupyterInputNode,
-  getDefaultCodeLanguage,
-  getLanguageFriendlyName,
-  CODE_LANGUAGE_FRIENDLY_NAME_MAP,
-  $createYouTubeNode,
-  INSERT_EQUATION_COMMAND,
-  INSERT_JUPYTER_INPUT_OUTPUT_COMMAND,
-  DEFAULT_INITIAL_OUTPUTS,
-} from '../..';
 import { getSelectedNode } from '../../utils/getSelectedNode';
 import {sanitizeUrl} from '../../utils/url';
 import {EmbedConfigs} from '../AutoEmbedPlugin';
@@ -558,7 +544,7 @@ function $findTopLevelElement(node: LexicalNode) {
   return topLevelElement;
 }
 
-export default function ToolbarPlugin({
+export function ToolbarPlugin({
   editor,
   activeEditor,
   setActiveEditor,
@@ -812,35 +798,6 @@ export default function ToolbarPlugin({
       ),
     );
   }, [$updateToolbar, activeEditor, editor, updateToolbarState]);
-
-  const applyStyleText = useCallback(
-    (styles: Record<string, string>, skipHistoryStack?: boolean) => {
-      activeEditor.update(
-        () => {
-          const selection = $getSelection();
-          if (selection !== null) {
-            $patchStyleText(selection, styles);
-          }
-        },
-        skipHistoryStack ? {tag: HISTORIC_TAG} : {},
-      );
-    },
-    [activeEditor],
-  );
-
-  const onFontColorSelect = useCallback(
-    (value: string, skipHistoryStack: boolean) => {
-      applyStyleText({color: value}, skipHistoryStack);
-    },
-    [applyStyleText],
-  );
-
-  const onBgColorSelect = useCallback(
-    (value: string, skipHistoryStack: boolean) => {
-      applyStyleText({'background-color': value}, skipHistoryStack);
-    },
-    [applyStyleText],
-  );
 
   const insertLink = useCallback(() => {
     if (!toolbarState.isLink) {
@@ -1303,3 +1260,5 @@ export default function ToolbarPlugin({
     </div>
   );
 }
+
+export default ToolbarPlugin;
