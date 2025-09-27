@@ -64,6 +64,8 @@ import { TreeViewPlugin } from '../plugins';
 import { OnSessionConnection } from '@datalayer/jupyter-react';
 
 import './../../style/index.css';
+import ToolbarPlugin from '../plugins/ToolbarPlugin';
+import { ToolbarContext } from '../context/ToolbarContext';
 
 type Props = {
   notebook?: INotebookContent;
@@ -114,9 +116,12 @@ const EditorContextPlugin = () => {
   return null;
 };
 
-export function Editor(props: Props) {
+export function EditorContainer(props: Props) {
   const { notebook, onSessionConnection } = props;
   const { defaultKernel } = useJupyter();
+  const [editor] = useLexicalComposerContext();
+  const [activeEditor, setActiveEditor] = useState(editor);
+  const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
 
@@ -130,65 +135,74 @@ export function Editor(props: Props) {
     //    console.log('---', _editorState.toJSON());
   }
   return (
-    <LexicalComposer initialConfig={initialConfig}>
-      <div className="editor-shell">
-        <div className="editor-container">
-          {/*
-          <ToolbarPlugin />
-          */}
-          <div className="editor-inner">
-            <RichTextPlugin
-              contentEditable={
-                <div className="editor-scroller">
-                  <div className="editor" ref={onRef}>
-                    <ContentEditable className="editor-input" />
-                  </div>
-                </div>
-              }
-              placeholder={<Placeholder />}
-              ErrorBoundary={LexicalErrorBoundary}
-            />
-            <OnChangePlugin onChange={onChange} />
-            <HistoryPlugin />
-            <TreeViewPlugin />
-            <AutoFocusPlugin />
-            <TablePlugin />
-            <ListPlugin />
-            <CheckListPlugin />
-            <LinkPlugin />
-            <AutoLinkPlugin />
-            <ListMaxIndentLevelPlugin maxDepth={7} />
-            <MarkdownPlugin />
-            {/* <JupyterCellPlugin /> */}
-            <JupyterInputOutputPlugin
-              kernel={defaultKernel}
-              onSessionConnection={onSessionConnection}
-            />
-            <ComponentPickerMenuPlugin
-              initCode="print('🪐 ⚛️ Hello Jupyter UI')"
-              kernel={defaultKernel}
-            />
-            <EquationsPlugin />
-            <ImagesPlugin />
-            <HorizontalRulePlugin />
-            <YouTubePlugin />
-            <NbformatContentPlugin notebook={notebook} />
-            <CodeActionMenuPlugin />
-            <AutoEmbedPlugin />
-            <EditorContextPlugin />
-            <TableOfContentsPlugin />
-            <CommentPlugin providerFactory={undefined} />
-            {floatingAnchorElem && (
-              <>
-                <DraggableBlockPlugin anchorElem={floatingAnchorElem} />
-                <FloatingTextFormatToolbarPlugin
-                  anchorElem={floatingAnchorElem}
-                />
-              </>
-            )}
-          </div>
-        </div>
+    <div className="editor-container">
+      <ToolbarPlugin
+        editor={editor}
+        activeEditor={activeEditor}
+        setActiveEditor={setActiveEditor}
+        setIsLinkEditMode={setIsLinkEditMode}
+      />
+      <div className="editor-inner">
+        <RichTextPlugin
+          contentEditable={
+            <div className="editor-scroller">
+              <div className="editor" ref={onRef}>
+                <ContentEditable className="editor-input" />
+              </div>
+            </div>
+          }
+          placeholder={<Placeholder />}
+          ErrorBoundary={LexicalErrorBoundary}
+        />
+        <OnChangePlugin onChange={onChange} />
+        <HistoryPlugin />
+        <TreeViewPlugin />
+        <AutoFocusPlugin />
+        <TablePlugin />
+        <ListPlugin />
+        <CheckListPlugin />
+        <LinkPlugin />
+        <AutoLinkPlugin />
+        <ListMaxIndentLevelPlugin maxDepth={7} />
+        <MarkdownPlugin />
+        {/* <JupyterCellPlugin /> */}
+        <JupyterInputOutputPlugin
+          kernel={defaultKernel}
+          onSessionConnection={onSessionConnection}
+        />
+        <ComponentPickerMenuPlugin
+          initCode="print('🪐 ⚛️ Hello Jupyter UI')"
+          kernel={defaultKernel}
+        />
+        <EquationsPlugin />
+        <ImagesPlugin />
+        <HorizontalRulePlugin />
+        <YouTubePlugin />
+        <NbformatContentPlugin notebook={notebook} />
+        <CodeActionMenuPlugin />
+        <AutoEmbedPlugin />
+        <EditorContextPlugin />
+        <TableOfContentsPlugin />
+        <CommentPlugin providerFactory={undefined} />
+        {floatingAnchorElem && (
+          <>
+            <DraggableBlockPlugin anchorElem={floatingAnchorElem} />
+            <FloatingTextFormatToolbarPlugin anchorElem={floatingAnchorElem} />
+          </>
+        )}
       </div>
+    </div>
+  )
+}
+
+export function Editor(props: Props) {
+  return (
+    <LexicalComposer initialConfig={initialConfig}>
+      <ToolbarContext>
+        <div className="editor-shell">
+          <EditorContainer {...props} />
+        </div>
+      </ToolbarContext>
     </LexicalComposer>
   );
 }

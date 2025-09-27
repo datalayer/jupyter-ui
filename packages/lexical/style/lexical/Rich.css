@@ -515,17 +515,15 @@ i.chevron-down {
 #block-controls span.block-type.code {
   background-image: url(icons/code.svg);
 }
-
 .dropdown {
-  z-index: 5;
+  z-index: 100;
   display: block;
-  position: absolute;
+  position: fixed;
   box-shadow:
     0 12px 28px 0 rgba(0, 0, 0, 0.2),
     0 2px 4px 0 rgba(0, 0, 0, 0.1),
     inset 0 0 0 1px rgba(255, 255, 255, 0.5);
   border-radius: 8px;
-  min-width: 100px;
   min-height: 40px;
   background-color: #fff;
 }
@@ -545,7 +543,26 @@ i.chevron-down {
   background-color: #fff;
   border-radius: 8px;
   border: 0;
-  min-width: 268px;
+  max-width: 264px;
+  min-width: 100px;
+}
+
+.dropdown .item.wide {
+  align-items: center;
+  width: 260px;
+}
+
+.dropdown .item.wide .icon-text-container {
+  display: flex;
+
+  .text {
+    min-width: 120px;
+  }
+}
+
+.dropdown .item .shortcut {
+  color: #939393;
+  align-self: flex-end;
 }
 
 .dropdown .item .active {
@@ -571,7 +588,7 @@ i.chevron-down {
   display: flex;
   line-height: 20px;
   flex-grow: 1;
-  width: 200px;
+  min-width: 150px;
 }
 
 .dropdown .item .icon {
@@ -582,6 +599,33 @@ i.chevron-down {
   margin-right: 12px;
   line-height: 16px;
   background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.dropdown .divider {
+  width: auto;
+  background-color: #eee;
+  margin: 4px 8px;
+  height: 1px;
+}
+
+@media screen and (max-width: 1100px) {
+  .dropdown-button-text {
+    display: none !important;
+  }
+
+  .dialog-dropdown > .dropdown-button-text {
+    display: flex !important;
+  }
+
+  .font-size .dropdown-button-text {
+    display: flex !important;
+  }
+
+  .code-language .dropdown-button-text {
+    display: flex !important;
+  }
 }
 
 .link-editor {
