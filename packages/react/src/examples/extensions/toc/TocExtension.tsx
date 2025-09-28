@@ -14,7 +14,7 @@ import { BoxPanel } from '@lumino/widgets';
 import {
   NotebookExtension,
   INotebookExtensionProps,
-  notebookStore,
+  notebookStore2,
 } from '../../../components';
 import { JupyterLayoutFactory } from './JupyterLayoutFactory';
 
@@ -87,7 +87,7 @@ export class TocExtension implements NotebookExtension {
       }
 
       if (model) {
-        notebookStore
+        notebookStore2
           .getState()
           .changeTocModel({ id: this._props.notebookId, tocModel: model });
         this._layoutFactory.setModel(model);

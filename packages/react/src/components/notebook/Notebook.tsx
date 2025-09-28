@@ -29,9 +29,9 @@ import { NotebookAdapter } from './NotebookAdapter';
 import { useNotebookStore } from './NotebookState';
 import { INotebookToolbarProps } from './toolbar';
 import { Loader } from '../utils';
+import { NotebookExtension } from './NotebookExtensions';
 
 import './Notebook.css';
-import { NotebookExtension } from './NotebookExtensions';
 
 export type ExternalIPyWidgets = {
   name: string;

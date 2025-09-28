@@ -6,7 +6,7 @@
 
 import { TableOfContents, TableOfContentsTree } from '@jupyterlab/toc';
 import { useEffect, useState } from 'react';
-import { useNotebookStore } from '../../../components';
+import { useNotebookStore2 } from '../../../components';
 
 export interface TocTreeProps {
   notebookId: string;
@@ -21,7 +21,7 @@ const CustomCssVarStyles = {
 
 /** Table of Contents Tree Component */
 const TocTree = ({ notebookId }: TocTreeProps) => {
-  const model = useNotebookStore(state => state.selectTocModel(notebookId));
+  const model = useNotebookStore2(state => state.selectTocModel(notebookId));
   const [, setCount] = useState(0);
   const update = () => setCount(c => c + 1);
 

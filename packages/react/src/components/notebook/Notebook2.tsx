@@ -11,15 +11,15 @@ import type { NotebookModel } from '@jupyterlab/notebook';
 import type { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import type { ServiceManager } from '@jupyterlab/services';
 import type { CommandRegistry } from '@lumino/commands';
-import { Box } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import type { OnSessionConnection } from '../../state';
 import { Loader } from '../utils';
 import { useKernelId, useNotebookModel, Notebook2Base } from './Notebook2Base';
 import type { NotebookExtension } from './NotebookExtensions';
 import type { INotebookToolbarProps } from './toolbar';
+import { ICollaborationProvider } from '../../jupyter';
 
 import './Notebook.css';
-import { ICollaborationProvider } from '../../jupyter';
 
 const GlobalStyle = createGlobalStyle<any>`
   .dla-Box-Notebook .jp-Cell .dla-CellSidebar-Container {

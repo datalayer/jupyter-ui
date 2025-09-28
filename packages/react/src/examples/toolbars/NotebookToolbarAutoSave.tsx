@@ -5,7 +5,8 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Box, Button, ButtonGroup, IconButton } from '@primer/react';
+import { Button, ButtonGroup, IconButton } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import {
   PlusIcon,
   ChevronRightIcon,
