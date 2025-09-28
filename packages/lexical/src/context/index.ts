@@ -5,3 +5,5 @@
  */
 
 export * from './LexicalContext';
+export * from './SettingsContext';
+export * from './ToolbarContext';

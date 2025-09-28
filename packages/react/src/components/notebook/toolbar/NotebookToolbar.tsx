@@ -5,7 +5,8 @@
  */
 
 import { useState } from 'react';
-import { Box, IconButton, Button, ButtonGroup } from '@primer/react';
+import { IconButton, Button, ButtonGroup } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import {
   PlusIcon,
   PlayIcon,

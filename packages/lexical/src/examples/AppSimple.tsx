@@ -67,7 +67,7 @@ export const AppSimple = () => {
         </div>
         <h2>
           <a href="https://datalayer.ai" target="_blank" rel="noreferrer">
-            Copyright © 2025 Datalayer, Inc.
+            Datalayer, Inc.
           </a>
         </h2>
         <ul>
@@ -77,7 +77,7 @@ export const AppSimple = () => {
               target="_blank"
               rel="noreferrer"
             >
-              Jupyter UI open-source repository
+              Jupyter UI
             </a>
           </li>
         </ul>

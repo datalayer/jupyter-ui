@@ -10,8 +10,17 @@ const reactPlugin = require('eslint-plugin-react');
 const reactHooksPlugin = require('eslint-plugin-react-hooks');
 const prettierPlugin = require('eslint-plugin-prettier');
 const prettierConfig = require('eslint-config-prettier');
+const path = require('path');
 
 module.exports = tseslint.config(
+  {
+    languageOptions: {
+      parserOptions: {
+        tsconfigRootDir: path.resolve(__dirname),
+        projectService: true,
+      },
+    },
+  },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {

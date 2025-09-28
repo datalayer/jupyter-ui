@@ -724,7 +724,7 @@ i.prettier-error {
 }
 
 .dropdown {
-  z-index: 10;
+  z-index: 100;
   display: block;
   position: fixed;
   box-shadow:
@@ -751,13 +751,26 @@ i.prettier-error {
   background-color: #fff;
   border-radius: 8px;
   border: 0;
-  max-width: 250px;
+  max-width: 264px;
   min-width: 100px;
 }
 
-.dropdown .item.fontsize-item,
-.dropdown .item.fontsize-item .text {
-  min-width: unset;
+.dropdown .item.wide {
+  align-items: center;
+  width: 260px;
+}
+
+.dropdown .item.wide .icon-text-container {
+  display: flex;
+
+  .text {
+    min-width: 120px;
+  }
+}
+
+.dropdown .item .shortcut {
+  color: #939393;
+  align-self: flex-end;
 }
 
 .dropdown .item .active {
@@ -803,6 +816,24 @@ i.prettier-error {
   background-color: #eee;
   margin: 4px 8px;
   height: 1px;
+}
+
+@media screen and (max-width: 1100px) {
+  .dropdown-button-text {
+    display: none !important;
+  }
+
+  .dialog-dropdown > .dropdown-button-text {
+    display: flex !important;
+  }
+
+  .font-size .dropdown-button-text {
+    display: flex !important;
+  }
+
+  .code-language .dropdown-button-text {
+    display: flex !important;
+  }
 }
 
 @media screen and (max-width: 1100px) {

@@ -59,7 +59,7 @@ import { CommandRegistry } from '@lumino/commands';
 import { DisposableSet } from '@lumino/disposable';
 import { Signal } from '@lumino/signaling';
 import { Widget } from '@lumino/widgets';
-import { Box } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { Banner } from '@primer/react/experimental';
 import { EditorView } from 'codemirror';
 import {
@@ -74,6 +74,8 @@ import { Lumino } from '../lumino';
 import { Loader } from '../utils';
 import type { NotebookExtension } from './NotebookExtensions';
 import { addNotebookCommands } from './NotebookCommands';
+import { Notebook2Adapter } from './Notebook2Adapter';
+import { notebookStore2 } from './Notebook2State';
 
 const COMPLETER_TIMEOUT_MILLISECONDS = 1000;
 
@@ -154,6 +156,7 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
     new Array<JSX.Element>()
   );
   const [completer, setCompleter] = useState<CompletionHandler | null>(null);
+  const [adapter, setAdapter] = useState<Notebook2Adapter | null>(null);
 
   const id = useMemo(() => props.id || newUuid(), [props.id]);
   const path = useMemo(
@@ -290,10 +293,15 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
   const [panel, setPanel] = useState<NotebookPanel | null>(null);
   useEffect(() => {
     let thisPanel: NotebookPanel | null = null;
+    let thisAdapter: Notebook2Adapter | null = null;
     let widgetsManager: WidgetManager | null = null;
     if (context) {
       thisPanel = widgetFactory?.createNew(context) ?? null;
       if (thisPanel) {
+        // Create the adapter
+        thisAdapter = new Notebook2Adapter(features.commands, thisPanel, context);
+        setAdapter(thisAdapter);
+
         setExtensionComponents(
           extensions.map(extension => {
             extension.init({
@@ -339,10 +347,14 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
     setPanel(thisPanel);
     if (!thisPanel) {
       setExtensionComponents([]);
+      setAdapter(null);
     }
 
     return () => {
       widgetsManager?.dispose();
+      if (thisAdapter) {
+        thisAdapter.dispose();
+      }
       if (thisPanel) {
         if (thisPanel.content) {
           Signal.clearData(thisPanel.content);
@@ -354,8 +366,26 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
         }
       }
       setPanel(panel => (panel === thisPanel ? null : panel));
+      setAdapter(adapter => (adapter === thisAdapter ? null : adapter));
     };
   }, [context, extensions, features.commands, widgetFactory]);
+
+  // Update notebook store when adapter changes
+  useEffect(() => {
+    if (adapter) {
+      const currentNotebooks = notebookStore2.getState().notebooks;
+      const updatedNotebooks = new Map(currentNotebooks);
+      updatedNotebooks.set(id, { adapter });
+      notebookStore2.getState().setNotebooks2(updatedNotebooks);
+    } else {
+      const currentNotebooks = notebookStore2.getState().notebooks;
+      if (currentNotebooks.has(id)) {
+        const updatedNotebooks = new Map(currentNotebooks);
+        updatedNotebooks.delete(id);
+        notebookStore2.getState().setNotebooks2(updatedNotebooks);
+      }
+    }
+  }, [adapter, id]);
 
   useEffect(() => {
     let isMounted = true;
@@ -466,6 +496,18 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
       document.removeEventListener('keydown', onKeyDown, true);
     };
   }, [features.commands]);
+
+  // Cleanup notebook from store on unmount
+  useEffect(() => {
+    return () => {
+      const currentNotebooks = notebookStore2.getState().notebooks;
+      if (currentNotebooks.has(id)) {
+        const updatedNotebooks = new Map(currentNotebooks);
+        updatedNotebooks.delete(id);
+        notebookStore2.getState().setNotebooks2(updatedNotebooks);
+      }
+    };
+  }, [id]);
 
   return (
     <>

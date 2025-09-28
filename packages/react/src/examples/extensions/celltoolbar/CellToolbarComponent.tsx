@@ -5,7 +5,8 @@
  */
 
 import { CodeCell } from '@jupyterlab/cells';
-import { Box, IconButton } from '@primer/react';
+import { IconButton } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import {
   PlayIcon,
   ChevronUpIcon,

@@ -46,12 +46,13 @@ const ENTRY =
   // './src/examples/Matplotlib';
   // './src/examples/Notebook';
   // './src/examples/Notebook2';
+  './src/examples/Notebook2Actions';
+  // './src/examples/Notebook2Collaborative';
+  // './src/examples/Notebook2Lite';
   // './src/examples/NotebookCellSidebar';
   // './src/examples/NotebookCellToolbar';
   // './src/examples/NotebookColormode';
   // './src/examples/NotebookCollaborative';
-  // './src/examples/Notebook2Collaborative';
-  // './src/examples/Notebook2Lite';
   // './src/examples/NotebookExtension';
   // './src/examples/NotebookKernel';
   // './src/examples/NotebookKernelChange';
@@ -72,7 +73,7 @@ const ENTRY =
   // './src/examples/NotebookSimple';
   // './src/examples/NotebookSkeleton';
   // './src/examples/NotebookTheme';
-  './src/examples/NotebookThemeColormode';
+  // './src/examples/NotebookThemeColormode';
 // './src/examples/NotebookToc';
 // './src/examples/NotebookURL';
 // './src/examples/NotebookURL';
