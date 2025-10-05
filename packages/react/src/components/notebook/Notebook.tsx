@@ -123,15 +123,6 @@ export const Notebook = (props: INotebookProps) => {
   const notebookStore = useNotebookStore();
   const portals = notebookStore.selectNotebookPortals(id);
 
-  console.log(
-    'Notebook render - adapter:',
-    adapter,
-    'isLoading:',
-    isLoading,
-    'adapter.panel:',
-    adapter?.panel
-  );
-
   // Bootstrap the Notebook Adapter.
   const bootstrapAdapter = async (
     //    collaborative: ICollaborative,

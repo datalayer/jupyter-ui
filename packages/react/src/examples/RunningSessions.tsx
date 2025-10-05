@@ -21,8 +21,8 @@ import Lumino from '../components/lumino/Lumino';
 import JupyterLabApp from '../components/jupyterlab/JupyterLabApp';
 import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter';
 
-import * as darkThemePlugins from '@jupyterlab/theme-dark-extension';
 import * as lightThemePlugins from '@jupyterlab/theme-light-extension';
+import * as darkThemePlugins from '@jupyterlab/theme-dark-extension';
 import * as runningPlugins from '@jupyterlab/running-extension';
 
 const RunningSessionsExample = () => {

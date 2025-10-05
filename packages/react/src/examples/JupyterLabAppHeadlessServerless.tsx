@@ -22,8 +22,8 @@ import Lumino from '../components/lumino/Lumino';
 import JupyterLabApp from '../components/jupyterlab/JupyterLabApp';
 import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter';
 
-import * as darkThemePlugins from '@jupyterlab/theme-dark-extension';
 import * as lightThemePlugins from '@jupyterlab/theme-light-extension';
+import * as darkThemePlugins from '@jupyterlab/theme-dark-extension';
 import * as ipywidgetsPlugins from '@jupyter-widgets/jupyterlab-manager';
 import * as plotlyPlugins from 'jupyterlab-plotly/lib/jupyterlab-plugin';
 
