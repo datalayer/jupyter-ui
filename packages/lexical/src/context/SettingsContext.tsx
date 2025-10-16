@@ -12,8 +12,8 @@
  *
  */
 
-import type {SettingName} from '../appSettings';
-import type {JSX} from 'react';
+import type { SettingName } from '../appSettings';
+import type { JSX } from 'react';
 
 import * as React from 'react';
 import {
@@ -25,7 +25,7 @@ import {
   useState,
 } from 'react';
 
-import {DEFAULT_SETTINGS, INITIAL_SETTINGS} from '../appSettings';
+import { DEFAULT_SETTINGS, INITIAL_SETTINGS } from '../appSettings';
 
 type SettingsContextShape = {
   setOption: (name: SettingName, value: boolean) => void;
@@ -47,7 +47,7 @@ export const SettingsContext = ({
   const [settings, setSettings] = useState(INITIAL_SETTINGS);
 
   const setOption = useCallback((setting: SettingName, value: boolean) => {
-    setSettings((options) => ({
+    setSettings(options => ({
       ...options,
       [setting]: value,
     }));
@@ -55,7 +55,7 @@ export const SettingsContext = ({
   }, []);
 
   const contextValue = useMemo(() => {
-    return {setOption, settings};
+    return { setOption, settings };
   }, [setOption, settings]);
 
   return <Context.Provider value={contextValue}>{children}</Context.Provider>;

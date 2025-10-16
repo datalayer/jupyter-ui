@@ -34,6 +34,8 @@ import {
 } from '@datalayer/jupyter-react';
 import { UUID } from '@lumino/coreutils';
 import { IOutput } from '@jupyterlab/nbformat';
+import type { IOutputAreaModel } from '@jupyterlab/outputarea';
+import { Session } from '@jupyterlab/services';
 import {
   $createJupyterInputNode,
   JupyterInputNode,
@@ -259,11 +261,16 @@ export const JupyterInputOutputPlugin = (
     if (kernel) {
       onSessionConnection(kernel.session);
       if (kernel.session) {
-        kernel.session.statusChanged.connect((sessionConnection, _) => {
-          onSessionConnection(sessionConnection);
-        });
+        kernel.session.statusChanged.connect(
+          (sessionConnection: Session.ISessionConnection, _status: string) => {
+            onSessionConnection(sessionConnection);
+          },
+        );
         kernel.session.connectionStatusChanged.connect(
-          (sessionConnection, _) => {
+          (
+            sessionConnection: Session.ISessionConnection,
+            _connectionStatus: string,
+          ) => {
             onSessionConnection(sessionConnection);
           },
         );
@@ -582,7 +589,10 @@ export const JupyterInputOutputPlugin = (
           );
 
           outputAdapter.outputArea.model.changed.connect(
-            (outputModel, _args) => {
+            (
+              outputModel: IOutputAreaModel,
+              _args: IOutputAreaModel.ChangedArgs,
+            ) => {
               editor.update(
                 () => {
                   jupyterOutputNode.setOutputs(outputModel.toJSON());

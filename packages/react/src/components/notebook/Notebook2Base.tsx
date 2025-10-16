@@ -299,7 +299,11 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
       thisPanel = widgetFactory?.createNew(context) ?? null;
       if (thisPanel) {
         // Create the adapter
-        thisAdapter = new Notebook2Adapter(features.commands, thisPanel, context);
+        thisAdapter = new Notebook2Adapter(
+          features.commands,
+          thisPanel,
+          context
+        );
         setAdapter(thisAdapter);
 
         setExtensionComponents(

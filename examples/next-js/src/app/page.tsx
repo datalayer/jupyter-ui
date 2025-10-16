@@ -7,9 +7,12 @@
 'use client';
 
 import Image from 'next/image';
-import dynamic from 'next/dynamic';
+import dynamicImport from 'next/dynamic';
 
-const JupyterComponentNoSSR = dynamic(
+// Force dynamic rendering to avoid static generation errors with Jupyter components
+export const dynamic = 'force-dynamic';
+
+const JupyterComponentNoSSR = dynamicImport(
   () => import('../components/NotebookComponent'),
   {
     ssr: false,

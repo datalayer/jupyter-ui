@@ -143,6 +143,7 @@
     "@jupyterlite/translation": "^0.5.1",
     "@lumino/default-theme": "^2.0.0",
     "@primer/react": "^37.19.0",
+    "@primer/react-brand": "^0.58.2",
     "assert": "^2.0.0",
     "bufferutil": "^4.0.8",
     "codemirror": "^6.0.1",

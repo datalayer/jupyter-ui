@@ -7,7 +7,11 @@
 import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ActionBar } from '@primer/react/experimental';
-import { ChevronDownIcon, ChevronUpIcon, PlayIcon } from '@primer/octicons-react';
+import {
+  ChevronDownIcon,
+  ChevronUpIcon,
+  PlayIcon,
+} from '@primer/octicons-react';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { useJupyter } from '../jupyter';
@@ -26,7 +30,7 @@ const NOTEBOOK_ID = 'notebook-nbformat-id';
 const Notebook2Example = () => {
   const { serviceManager } = useJupyter();
   const runStore2 = useNotebookStore2();
-  
+
   const extensions = useMemo(
     () => [
       new CellToolbarExtension(),
@@ -38,10 +42,26 @@ const Notebook2Example = () => {
   return serviceManager ? (
     <>
       <ActionBar aria-label="Toolbar">
-        <ActionBar.IconButton icon={PlayIcon} aria-label="Run" onClick={() => runStore2.run(NOTEBOOK_ID)}></ActionBar.IconButton>
+        <ActionBar.IconButton
+          icon={PlayIcon}
+          aria-label="Run"
+          onClick={() => runStore2.run(NOTEBOOK_ID)}
+        ></ActionBar.IconButton>
         <ActionBar.Divider />
-        <ActionBar.IconButton icon={ChevronUpIcon} aria-label="Insert Code" onClick={() => runStore2.insertAbove({id: NOTEBOOK_ID, cellType: 'code'})}></ActionBar.IconButton>
-        <ActionBar.IconButton icon={ChevronDownIcon} aria-label="Insert Code" onClick={() => runStore2.insertBelow({id: NOTEBOOK_ID, cellType: 'code'})}></ActionBar.IconButton>
+        <ActionBar.IconButton
+          icon={ChevronUpIcon}
+          aria-label="Insert Code"
+          onClick={() =>
+            runStore2.insertAbove({ id: NOTEBOOK_ID, cellType: 'code' })
+          }
+        ></ActionBar.IconButton>
+        <ActionBar.IconButton
+          icon={ChevronDownIcon}
+          aria-label="Insert Code"
+          onClick={() =>
+            runStore2.insertBelow({ id: NOTEBOOK_ID, cellType: 'code' })
+          }
+        ></ActionBar.IconButton>
       </ActionBar>
       <JupyterReactTheme>
         <Notebook2

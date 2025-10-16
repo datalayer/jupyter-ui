@@ -186,7 +186,11 @@ export default tseslint.config(
   },
   // Config files (Node.js environment)
   {
-    files: ['*.config.{js,mjs,cjs}', 'gulpfile.{js,mjs,cjs}', 'scripts/**/*.js'],
+    files: [
+      '*.config.{js,mjs,cjs}',
+      'gulpfile.{js,mjs,cjs}',
+      'scripts/**/*.js',
+    ],
     languageOptions: {
       ecmaVersion: 2020,
       sourceType: 'module',
