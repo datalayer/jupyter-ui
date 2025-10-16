@@ -57,10 +57,8 @@ export class IPyWidgetsViewManager extends ManagerBase {
     });
   }
   async display_view(view: any) {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
-    const that = this;
     return Promise.resolve(view).then(view => {
-      Widget.attach(view.luminoWidget, that.el);
+      Widget.attach(view.luminoWidget, this.el);
       return view;
     });
   }

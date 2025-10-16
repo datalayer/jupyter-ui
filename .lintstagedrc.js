@@ -8,8 +8,21 @@ module.exports = {
   // TypeScript and TSX files
   '*.{ts,tsx}': ['eslint --fix', 'prettier --write'],
 
-  // JavaScript and JSX files
-  '*.{js,jsx}': ['eslint --fix', 'prettier --write'],
+  // JavaScript and JSX files (exclude config files)
+  '*.{js,jsx}': filenames => {
+    const filtered = filenames.filter(
+      file =>
+        !file.endsWith('.config.js') &&
+        !file.includes('gulpfile') &&
+        !file.includes('/scripts/'),
+    );
+    return filtered.length > 0
+      ? [
+          `eslint --fix ${filtered.join(' ')}`,
+          `prettier --write ${filtered.join(' ')}`,
+        ]
+      : [];
+  },
 
   // JSON files
   '*.json': ['prettier --write'],

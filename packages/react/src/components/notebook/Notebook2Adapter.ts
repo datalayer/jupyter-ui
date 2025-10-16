@@ -5,7 +5,11 @@
  */
 
 import { CommandRegistry } from '@lumino/commands';
-import { NotebookPanel, NotebookActions, type Notebook } from '@jupyterlab/notebook';
+import {
+  NotebookPanel,
+  NotebookActions,
+  type Notebook,
+} from '@jupyterlab/notebook';
 import { Context } from '@jupyterlab/docregistry';
 import { NotebookModel } from '@jupyterlab/notebook';
 import * as nbformat from '@jupyterlab/nbformat';
@@ -75,20 +79,20 @@ export class Notebook2Adapter {
    */
   insertAbove(source?: string): void {
     const notebook = this._notebook;
-    
+
     // Insert above using NotebookActions
     NotebookActions.insertAbove(notebook);
-    
+
     // Set the cell type if different from default
     if (this._defaultCellType !== 'code') {
       NotebookActions.changeCellType(notebook, this._defaultCellType);
     }
-    
+
     // Set the source if provided
     if (source && notebook.activeCell) {
       notebook.activeCell.model.sharedModel.setSource(source);
     }
-    
+
     // Enter edit mode
     notebook.mode = 'edit';
   }
@@ -98,20 +102,20 @@ export class Notebook2Adapter {
    */
   insertBelow(source?: string): void {
     const notebook = this._notebook;
-    
+
     // Insert below using NotebookActions
     NotebookActions.insertBelow(notebook);
-    
+
     // Set the cell type if different from default
     if (this._defaultCellType !== 'code') {
       NotebookActions.changeCellType(notebook, this._defaultCellType);
     }
-    
+
     // Set the source if provided
     if (source && notebook.activeCell) {
       notebook.activeCell.model.sharedModel.setSource(source);
     }
-    
+
     // Enter edit mode
     notebook.mode = 'edit';
   }
@@ -121,7 +125,7 @@ export class Notebook2Adapter {
    */
   changeCellType(cellType: nbformat.CellType): void {
     const notebook = this._notebook;
-    
+
     if (notebook.activeCell && notebook.activeCell.model.type !== cellType) {
       NotebookActions.changeCellType(notebook, cellType);
     }
@@ -140,6 +144,20 @@ export class Notebook2Adapter {
    */
   get model(): NotebookModel | null {
     return this._context.model;
+  }
+
+  /**
+   * Undo the last change in the notebook.
+   */
+  undo(): void {
+    NotebookActions.undo(this._notebook);
+  }
+
+  /**
+   * Redo the last undone change in the notebook.
+   */
+  redo(): void {
+    NotebookActions.redo(this._notebook);
   }
 
   /**

@@ -7,8 +7,7 @@
  */
 
 /* eslint-env node */
-/* global require */
-/* eslint-disable @typescript-eslint/no-require-imports, no-console */
+/* eslint-disable no-console */
 
 /**
  * Post-build script to patch NotebookAdapter with VS Code syntax highlighting support

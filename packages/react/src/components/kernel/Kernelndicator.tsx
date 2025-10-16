@@ -57,21 +57,26 @@ export type ExecutionState =
  *
  * Status = 'unknown' | 'starting' | 'idle' | 'busy' | 'terminating' | 'restarting' | 'autorestarting' | 'dead';
  */
-/* eslint-disable react/jsx-key */
+
 export const KERNEL_STATES: Map<ExecutionState, ReactElement> = new Map([
-  ['connecting', <PlusCircleIcon />],
-  ['connected-unknown', <CircleCurrentColorIcon color="lightgray" />],
-  ['connected-starting', <CircleYellowIcon />],
-  ['connected-idle', <CircleGreenIcon />],
-  ['connected-busy', <CircleOrangeIcon />],
-  ['connected-terminating', <CircleWhiteIcon />],
-  ['connected-restarting', <CirclePurpleIcon />],
-  ['connected-autorestarting', <CircleHollowRedIcon />],
-  ['connected-dead', <CircleRedIcon />],
-  ['disconnecting', <CircleBrownIcon />],
-  ['undefined', <CircleBlackIcon />],
+  ['connecting', <PlusCircleIcon key="connecting" />],
+  [
+    'connected-unknown',
+    <CircleCurrentColorIcon key="connected-unknown" color="lightgray" />,
+  ],
+  ['connected-starting', <CircleYellowIcon key="connected-starting" />],
+  ['connected-idle', <CircleGreenIcon key="connected-idle" />],
+  ['connected-busy', <CircleOrangeIcon key="connected-busy" />],
+  ['connected-terminating', <CircleWhiteIcon key="connected-terminating" />],
+  ['connected-restarting', <CirclePurpleIcon key="connected-restarting" />],
+  [
+    'connected-autorestarting',
+    <CircleHollowRedIcon key="connected-autorestarting" />,
+  ],
+  ['connected-dead', <CircleRedIcon key="connected-dead" />],
+  ['disconnecting', <CircleBrownIcon key="disconnecting" />],
+  ['undefined', <CircleBlackIcon key="undefined" />],
 ]);
-/* eslint-enable react/jsx-key */
 
 export const toKernelState = (
   connectionStatus: ConnectionStatus,

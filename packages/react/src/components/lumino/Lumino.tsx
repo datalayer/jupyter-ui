@@ -13,9 +13,12 @@ type LuminoProps = {
   children: Widget;
 };
 
-export const Lumino = (props: LuminoProps) => {
+export const Lumino = ({
+  id = 'lumino-id',
+  height = '100%',
+  children,
+}: LuminoProps) => {
   const ref = useRef<HTMLDivElement>(null);
-  const { children, id, height } = props;
   useEffect(() => {
     console.log(
       'Lumino useEffect - ref.current:',
@@ -74,11 +77,6 @@ export const Lumino = (props: LuminoProps) => {
   return (
     <div id={id} ref={ref} style={{ height: height, minHeight: height }} />
   );
-};
-
-Lumino.defaultProps = {
-  id: 'lumino-id',
-  height: '100%',
 };
 
 export default Lumino;
