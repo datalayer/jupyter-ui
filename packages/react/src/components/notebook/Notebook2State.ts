@@ -92,12 +92,38 @@ export const notebookStore2 = createStore<Notebook2State>((set, get) => ({
   undo: (id: string): void => {
     // Directly call adapter's undo method which uses NotebookActions
     // This works for both local notebooks and collaborative notebooks
-    get().notebooks.get(id)?.adapter?.undo();
+    const notebook = get().notebooks.get(id);
+    if (!notebook) {
+      console.warn(
+        `[Notebook2State] Cannot undo: notebook with id "${id}" not found`
+      );
+      return;
+    }
+    if (!notebook.adapter) {
+      console.warn(
+        `[Notebook2State] Cannot undo: adapter not available for notebook "${id}"`
+      );
+      return;
+    }
+    notebook.adapter.undo();
   },
   redo: (id: string): void => {
     // Directly call adapter's redo method which uses NotebookActions
     // This works for both local notebooks and collaborative notebooks
-    get().notebooks.get(id)?.adapter?.redo();
+    const notebook = get().notebooks.get(id);
+    if (!notebook) {
+      console.warn(
+        `[Notebook2State] Cannot redo: notebook with id "${id}" not found`
+      );
+      return;
+    }
+    if (!notebook.adapter) {
+      console.warn(
+        `[Notebook2State] Cannot redo: adapter not available for notebook "${id}"`
+      );
+      return;
+    }
+    notebook.adapter.redo();
   },
   reset: () =>
     set((state: Notebook2State) => ({

@@ -128,8 +128,11 @@ const CODE_LANGUAGE_OPTIONS_PRISM: [string, string][] =
   );
 
 // Use Prism options for now until @lexical/code-shiki is installed
-const CODE_LANGUAGE_OPTIONS_SHIKI: [string, string][] =
+const CODE_LANGUAGE_OPTIONS_SHIKI_FALLBACK: [string, string][] =
   CODE_LANGUAGE_OPTIONS_PRISM;
+
+// Fallback to Prism normalization until @lexical/code-shiki is installed
+const normalizeCodeLanguageShiki = normalizeCodeLanguagePrism;
 
 const CODE_THEME_OPTIONS_SHIKI: [string, string][] = [
   ['prism', 'Prism (Default)'],
@@ -620,7 +623,7 @@ export function ToolbarPlugin({
           language
             ? (isCodeHighlighted &&
                 (isCodeShiki
-                  ? normalizeCodeLanguagePrism(language)
+                  ? normalizeCodeLanguageShiki(language)
                   : normalizeCodeLanguagePrism(language))) ||
                 language
             : '',
@@ -949,7 +952,7 @@ export function ToolbarPlugin({
                 disabled={!isEditable}
                 buttonClassName="toolbar-item code-language"
                 buttonLabel={
-                  (CODE_LANGUAGE_OPTIONS_SHIKI.find(
+                  (CODE_LANGUAGE_OPTIONS_SHIKI_FALLBACK.find(
                     opt =>
                       opt[0] ===
                       normalizeCodeLanguagePrism(toolbarState.codeLanguage),
@@ -957,7 +960,7 @@ export function ToolbarPlugin({
                 }
                 buttonAriaLabel="Select language"
               >
-                {CODE_LANGUAGE_OPTIONS_SHIKI.map(([value, name]) => {
+                {CODE_LANGUAGE_OPTIONS_SHIKI_FALLBACK.map(([value, name]) => {
                   return (
                     <DropDownItem
                       className={`item ${dropDownActiveClass(

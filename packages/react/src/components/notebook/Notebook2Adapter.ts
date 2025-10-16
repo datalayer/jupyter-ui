@@ -148,6 +148,11 @@ export class Notebook2Adapter {
 
   /**
    * Undo the last change in the notebook.
+   *
+   * @remarks
+   * If there is no history to undo (e.g., at the beginning of the undo stack),
+   * this operation will have no effect. The notebook must be available and
+   * properly initialized for this operation to succeed.
    */
   undo(): void {
     NotebookActions.undo(this._notebook);
@@ -155,6 +160,11 @@ export class Notebook2Adapter {
 
   /**
    * Redo the last undone change in the notebook.
+   *
+   * @remarks
+   * If there is no history to redo (e.g., no prior undo operations or at the
+   * end of the redo stack), this operation will have no effect. The notebook
+   * must be available and properly initialized for this operation to succeed.
    */
   redo(): void {
     NotebookActions.redo(this._notebook);
