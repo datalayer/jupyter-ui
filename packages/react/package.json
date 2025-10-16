@@ -29,7 +29,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "gulp resources-to-lib && tsc && node scripts/patch-vscode-highlighting.js && webpack",
+    "build": "gulp resources-to-lib && tsc && webpack",
     "build:lib": "tsc",
     "build:prod": "gulp resources-to-lib && tsc && npm run clean && npm run build:lib",
     "build:tsc:watch:res": "gulp resources-to-lib-watch",
