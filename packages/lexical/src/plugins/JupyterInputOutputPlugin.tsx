@@ -24,6 +24,8 @@ import {
   $createNodeSelection,
   $setSelection,
   SELECT_ALL_COMMAND,
+  $getRoot,
+  $isElementNode,
 } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import {
@@ -83,6 +85,30 @@ export type JupyterInputOutputPluginProps = {
 
 export const INSERT_JUPYTER_INPUT_OUTPUT_COMMAND =
   createCommand<JupyterInputOutputProps>();
+
+/**
+ * Command to execute the currently focused/selected Jupyter cell.
+ * Dispatching this command will execute the code in the cell where the cursor is located.
+ */
+export const RUN_JUPYTER_CELL_COMMAND = createCommand<void>();
+
+/**
+ * Command to execute all Jupyter cells in the document.
+ * Dispatching this command will execute all cells in sequential order.
+ */
+export const RUN_ALL_JUPYTER_CELLS_COMMAND = createCommand<void>();
+
+/**
+ * Command to restart the Jupyter kernel.
+ * Dispatching this command will restart the kernel session.
+ */
+export const RESTART_JUPYTER_KERNEL_COMMAND = createCommand<void>();
+
+/**
+ * Command to clear all outputs from all Jupyter cells in the document.
+ * Dispatching this command will clear the outputs of all cells without affecting the code.
+ */
+export const CLEAR_ALL_OUTPUTS_COMMAND = createCommand<void>();
 
 export const JupyterInputOutputPlugin = (
   props?: JupyterInputOutputPluginProps,
@@ -613,6 +639,174 @@ export const JupyterInputOutputPlugin = (
       COMMAND_PRIORITY_EDITOR,
     );
   }, [editor, kernel]);
+
+  /**
+   * Helper function to execute code for a given input node.
+   * Centralizes adapter/kernel setup and code execution logic.
+   */
+  const executeInputNode = useCallback(
+    (node: JupyterInputNode, kernelToUse: Kernel) => {
+      const code = node.getTextContent();
+      const jupyterInputNodeUuid = node.getJupyterInputNodeUuid();
+      const jupyterOutputNodeKey =
+        INPUT_UUID_TO_OUTPUT_KEY.get(jupyterInputNodeUuid);
+
+      if (jupyterOutputNodeKey) {
+        const jupyterOutputNode = $getNodeByKey(jupyterOutputNodeKey);
+        if (jupyterOutputNode) {
+          // Update kernel using public API before execution
+          (jupyterOutputNode as JupyterOutputNode).updateKernel(kernelToUse);
+          (jupyterOutputNode as JupyterOutputNode).executeCode(code);
+          return true;
+        }
+      }
+      return false;
+    },
+    [],
+  );
+
+  // Handle RUN_JUPYTER_CELL_COMMAND - execute currently focused cell
+  useEffect(() => {
+    return editor.registerCommand(
+      RUN_JUPYTER_CELL_COMMAND,
+      () => {
+        if (!kernel) {
+          console.warn('❌ No kernel available for cell execution');
+          return false;
+        }
+
+        const selection = $getSelection();
+        if (!selection) return false;
+
+        const nodes = selection.getNodes();
+        const node = nodes[0];
+
+        // Find parent JupyterInputNode using public API
+        const parentNode = node?.getParent();
+        if (parentNode && $isJupyterInputNode(parentNode)) {
+          // Use shared helper to execute the cell
+          return executeInputNode(parentNode, kernel);
+        }
+        return false;
+      },
+      COMMAND_PRIORITY_EDITOR,
+    );
+  }, [editor, kernel, executeInputNode]);
+
+  // Handle RUN_ALL_JUPYTER_CELLS_COMMAND - execute all cells in document order
+  useEffect(() => {
+    return editor.registerCommand(
+      RUN_ALL_JUPYTER_CELLS_COMMAND,
+      () => {
+        if (!kernel) {
+          console.warn('❌ No kernel available for running all cells');
+          return false;
+        }
+
+        // Collect all JupyterInputNodes in document order using public API
+        const inputNodes: JupyterInputNode[] = [];
+
+        function collectJupyterInputNodes(node: LexicalNode) {
+          if ($isJupyterInputNode(node)) {
+            inputNodes.push(node);
+          }
+          if ($isElementNode(node)) {
+            const children = node.getChildren();
+            for (const child of children) {
+              collectJupyterInputNodes(child);
+            }
+          }
+        }
+
+        const root = $getRoot();
+        collectJupyterInputNodes(root);
+
+        if (inputNodes.length === 0) {
+          console.warn('❌ No Jupyter cells found to execute');
+          return false;
+        }
+
+        console.log(
+          `🚀 Executing ${inputNodes.length} cells in document order`,
+        );
+
+        // Execute each cell in document order using shared helper
+        inputNodes.forEach((node: JupyterInputNode) => {
+          executeInputNode(node, kernel);
+        });
+
+        return true;
+      },
+      COMMAND_PRIORITY_EDITOR,
+    );
+  }, [editor, kernel, executeInputNode]);
+
+  // Handle RESTART_JUPYTER_KERNEL_COMMAND - restart the kernel
+  useEffect(() => {
+    return editor.registerCommand(
+      RESTART_JUPYTER_KERNEL_COMMAND,
+      () => {
+        if (!kernel?.session?.kernel) {
+          console.warn('❌ No kernel session available to restart');
+          return false;
+        }
+
+        // Execute restart asynchronously without blocking
+        (async () => {
+          try {
+            if (!kernel.session.kernel) {
+              console.error('❌ Kernel became null during restart');
+              return;
+            }
+            console.log('🔄 Restarting kernel...');
+            await kernel.session.kernel.restart();
+            console.log('✅ Kernel restarted successfully');
+          } catch (error) {
+            console.error('❌ Failed to restart kernel:', error);
+          }
+        })();
+
+        return true;
+      },
+      COMMAND_PRIORITY_EDITOR,
+    );
+  }, [editor, kernel]);
+
+  // Handle CLEAR_ALL_OUTPUTS_COMMAND - clear outputs from all cells
+  useEffect(() => {
+    return editor.registerCommand(
+      CLEAR_ALL_OUTPUTS_COMMAND,
+      () => {
+        let clearedCount = 0;
+
+        // Traverse document tree and clear all JupyterOutputNode outputs
+        function clearJupyterOutputs(node: LexicalNode) {
+          if (node instanceof JupyterOutputNode) {
+            node.setOutputs([]);
+            clearedCount++;
+          }
+          if ($isElementNode(node)) {
+            const children = node.getChildren();
+            for (const child of children) {
+              clearJupyterOutputs(child);
+            }
+          }
+        }
+
+        const root = $getRoot();
+        clearJupyterOutputs(root);
+
+        if (clearedCount > 0) {
+          console.log(`✅ Cleared outputs from ${clearedCount} cells`);
+        } else {
+          console.warn('❌ No Jupyter cells found to clear');
+        }
+
+        return true;
+      },
+      COMMAND_PRIORITY_EDITOR,
+    );
+  }, [editor]);
 
   return null;
 };

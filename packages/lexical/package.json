@@ -131,6 +131,7 @@
     "prettier": "^3.5.3",
     "process": "^0.11.10",
     "raw-loader": "^4.0.2",
+    "react-is": "^19.2.0",
     "rimraf": "^6.0.1",
     "stream": "^0.0.2",
     "stream-browserify": "^2.0.2",
