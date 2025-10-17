@@ -75,6 +75,23 @@ export const Output = (props: IOutputProps) => {
     useState<KernelMessage.Status>('unknown');
   const [outputs, setOutputs] = useState<IOutput[] | undefined>(propsOutputs);
   const [adapter, setAdapter] = useState<OutputAdapter>();
+
+  // Sync outputs when propsOutputs changes
+  useEffect(() => {
+    setOutputs(propsOutputs);
+  }, [propsOutputs]);
+
+  // Force Lumino widget update when executeTrigger changes
+  useEffect(() => {
+    if (lumino && adapter?.outputArea) {
+      console.warn(
+        '🔄 Forcing Lumino widget update due to executeTrigger change:',
+        executeTrigger
+      );
+      adapter.outputArea.update();
+    }
+  }, [executeTrigger, lumino, adapter]);
+
   useEffect(() => {
     if (!id) {
       setId(newUuid());
@@ -215,6 +232,8 @@ export const Output = (props: IOutputProps) => {
       {outputs && (
         <Box
           sx={{
+            margin: 0,
+            padding: 0,
             '& .jp-OutputArea': {
               fontSize: '10px',
             },
@@ -233,15 +252,22 @@ export const Output = (props: IOutputProps) => {
             },
           }}
         >
-          {lumino
-            ? adapter && <Lumino>{adapter.outputArea}</Lumino>
-            : outputs && (
+          {(() => {
+            const currentAdapter = adapter || propsAdapter;
+            return lumino ? (
+              currentAdapter ? (
+                <Lumino>{currentAdapter.outputArea}</Lumino>
+              ) : null
+            ) : (
+              outputs && (
                 <>
                   {outputs.map((output: IOutput, index: number) => {
                     return <OutputRenderer key={index} output={output} />;
                   })}
                 </>
-              )}
+              )
+            );
+          })()}
         </Box>
       )}
     </>

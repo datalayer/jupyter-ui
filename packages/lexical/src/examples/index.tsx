@@ -5,8 +5,9 @@
  */
 
 import { createRoot } from 'react-dom/client';
-// import App from "./AppSimple";
-import App from './AppNbformat';
+import App from './AppSimple';
+// import App from './AppNbformat';
+// import { ManualKernelControlExample } from './ManualKernelControl';
 
 import '../../style/index.css';
 

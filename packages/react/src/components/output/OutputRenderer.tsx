@@ -5,6 +5,14 @@
  */
 
 import { IOutput } from '@jupyterlab/nbformat';
+import AnsiToHtml from 'ansi-to-html';
+
+const ansiConverter = new AnsiToHtml({
+  fg: '#000',
+  bg: '#fff',
+  newline: false,
+  escapeXML: false,
+});
 
 type Props = {
   output: IOutput;
@@ -66,7 +74,10 @@ export const OutputRenderer = (props: Props) => {
   let img: string | undefined;
   switch (output.output_type) {
     case 'error': {
-      plain = (output.traceback as string[]).join('\n');
+      // Convert ANSI escape codes to HTML for colored error output
+      const tracebackText = (output.traceback as string[]).join('\n');
+      html = ansiConverter.toHtml(tracebackText);
+      plain = tracebackText;
       break;
     }
     case 'stream': {

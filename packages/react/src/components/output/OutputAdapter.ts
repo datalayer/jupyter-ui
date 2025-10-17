@@ -126,6 +126,13 @@ export class OutputAdapter {
     this._outputArea.model.clear();
   }
 
+  public setOutputs(outputs: IOutput[]) {
+    this._outputArea.model.clear();
+    outputs.forEach(output => {
+      this._outputArea.model.add(output);
+    });
+  }
+
   get kernel(): Kernel | undefined {
     return this._kernel;
   }
