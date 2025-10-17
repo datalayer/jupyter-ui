@@ -17,7 +17,16 @@ module.exports = tseslint.config(
     languageOptions: {
       parserOptions: {
         tsconfigRootDir: path.resolve(__dirname),
-        projectService: true,
+        projectService: {
+          allowDefaultProject: [
+            '*.config.js',
+            '*.config.ts',
+            '.commitlintrc.js',
+            '.eslintrc.js',
+            '.lintstagedrc.js',
+            'gulpfile.js',
+          ],
+        },
       },
     },
   },

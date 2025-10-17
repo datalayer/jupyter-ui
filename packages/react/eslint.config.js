@@ -10,6 +10,8 @@
  */
 
 // For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import storybook from 'eslint-plugin-storybook';
 import js from '@eslint/js';
 import globals from 'globals';
@@ -18,6 +20,9 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import prettier from 'eslint-plugin-prettier';
 import tseslint from 'typescript-eslint';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 export default tseslint.config(
   {
@@ -33,6 +38,9 @@ export default tseslint.config(
       '**/storybook-static/**',
       '**/.next/**',
       'tsconfig.tsbuildinfo',
+      '*.config.js',
+      'scripts/**/*.js',
+      'gulpfile.js',
     ],
   },
   {
@@ -56,8 +64,16 @@ export default tseslint.config(
       parserOptions: {
         ecmaFeatures: {
           jsx: true,
-          tsconfigRootDir: __dirname,
         },
+        projectService: {
+          allowDefaultProject: [
+            '*.js',
+            '*.mjs',
+            '*.cjs',
+            'playwright.config.ts',
+          ],
+        },
+        tsconfigRootDir: __dirname,
       },
     },
     settings: {
@@ -170,9 +186,18 @@ export default tseslint.config(
   },
   // Config files (Node.js environment)
   {
-    files: ['*.config.{js,mjs,cjs}', 'gulpfile.{js,mjs,cjs}'],
+    files: [
+      '*.config.{js,mjs,cjs}',
+      'gulpfile.{js,mjs,cjs}',
+      'scripts/**/*.js',
+    ],
     languageOptions: {
+      ecmaVersion: 2020,
+      sourceType: 'module',
       globals: globals.node,
+    },
+    rules: {
+      'no-console': 'off',
     },
   },
   storybook.configs['flat/recommended']

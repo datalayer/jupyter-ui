@@ -4,14 +4,26 @@
  * MIT License
  */
 
-const webpack = require('webpack');
-const path = require('path');
+import webpack from 'webpack';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
+import { createRequire } from 'module';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const require = createRequire(import.meta.url);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
   transpilePackages: ['@jupyterlab/settingregistry', '@jupyterlite/settings'],
-  webpack: (config: any, options: any) => {
+  // Skip Next.js built-in ESLint during build (monorepo has its own ESLint setup)
+  // This avoids ESLint 9 compatibility warnings from Next.js 14's ESLint config
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  webpack: (config, options) => {
+
     config.resolve.fallback = {
       ...config.resolve.fallback,
       buffer: require.resolve('buffer/'),
@@ -25,14 +37,14 @@ const nextConfig = {
     config.resolve.alias = {
       ...config.resolve.alias,
       json5: require.resolve('json5/lib/index.js'),
-      '~': path.resolve(__dirname, 'node_modules'),
     };
-    // Add a plugin to strip `~` from import paths
-    config.plugins.push(
-      new webpack.NormalModuleReplacementPlugin(/^~(.*)/, (resource: any) => {
-        resource.request = resource.request.replace(/^~/, '');
-      }),
-    );
+
+    // Add resolve modules to look in monorepo node_modules
+    config.resolve.modules = [
+      ...(config.resolve.modules || []),
+      resolve(__dirname, '../../node_modules'),
+      'node_modules',
+    ];
     config.module.rules.push(
       { test: /\.js.map$/, type: 'asset/resource' },
       {
@@ -87,4 +99,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;

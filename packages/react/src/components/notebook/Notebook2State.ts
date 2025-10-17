@@ -8,7 +8,7 @@ import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
 import * as nbformat from '@jupyterlab/nbformat';
 import { NotebookCommandIds } from './NotebookCommands';
-import { Notebook2Adapter}  from './Notebook2Adapter';
+import { Notebook2Adapter } from './Notebook2Adapter';
 
 export type INotebook2State = {
   adapter?: Notebook2Adapter;
@@ -35,6 +35,8 @@ export type Notebook2State = INotebooks2State & {
   insertBelow: (mutation: CellMutation) => void;
   delete: (id: string) => void;
   changeCellType: (mutation: CellMutation) => void;
+  undo: (id: string) => void;
+  redo: (id: string) => void;
   reset: () => void;
 };
 
@@ -86,6 +88,42 @@ export const notebookStore2 = createStore<Notebook2State>((set, get) => ({
     get()
       .notebooks.get(mutation.id)
       ?.adapter?.changeCellType(mutation.cellType);
+  },
+  undo: (id: string): void => {
+    // Directly call adapter's undo method which uses NotebookActions
+    // This works for both local notebooks and collaborative notebooks
+    const notebook = get().notebooks.get(id);
+    if (!notebook) {
+      console.warn(
+        `[Notebook2State] Cannot undo: notebook with id "${id}" not found`
+      );
+      return;
+    }
+    if (!notebook.adapter) {
+      console.warn(
+        `[Notebook2State] Cannot undo: adapter not available for notebook "${id}"`
+      );
+      return;
+    }
+    notebook.adapter.undo();
+  },
+  redo: (id: string): void => {
+    // Directly call adapter's redo method which uses NotebookActions
+    // This works for both local notebooks and collaborative notebooks
+    const notebook = get().notebooks.get(id);
+    if (!notebook) {
+      console.warn(
+        `[Notebook2State] Cannot redo: notebook with id "${id}" not found`
+      );
+      return;
+    }
+    if (!notebook.adapter) {
+      console.warn(
+        `[Notebook2State] Cannot redo: adapter not available for notebook "${id}"`
+      );
+      return;
+    }
+    notebook.adapter.redo();
   },
   reset: () =>
     set((state: Notebook2State) => ({

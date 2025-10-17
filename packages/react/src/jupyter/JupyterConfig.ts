@@ -71,6 +71,15 @@ export const getJupyterServerToken = () => {
 };
 
 /**
+ * Reset the Jupyter configuration.
+ * This is useful when reusing webviews or remounting the application
+ * to ensure stale configuration doesn't persist.
+ */
+export const resetJupyterConfig = () => {
+  config = undefined;
+};
+
+/**
  * Method to load the Jupyter configuration from the host HTML page.
  */
 export const loadJupyterConfig = (

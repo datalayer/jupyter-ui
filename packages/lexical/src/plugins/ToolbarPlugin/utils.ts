@@ -11,13 +11,13 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import {$createCodeNode} from '@lexical/code';
+import { $createCodeNode } from '@lexical/code';
 import {
   INSERT_CHECK_LIST_COMMAND,
   INSERT_ORDERED_LIST_COMMAND,
   INSERT_UNORDERED_LIST_COMMAND,
 } from '@lexical/list';
-import {$isDecoratorBlockNode} from '@lexical/react/LexicalDecoratorBlockNode';
+import { $isDecoratorBlockNode } from '@lexical/react/LexicalDecoratorBlockNode';
 import {
   $createHeadingNode,
   $createQuoteNode,
@@ -25,9 +25,9 @@ import {
   $isQuoteNode,
   HeadingTagType,
 } from '@lexical/rich-text';
-import {$patchStyleText, $setBlocksType} from '@lexical/selection';
-import {$isTableSelection} from '@lexical/table';
-import {$getNearestBlockElementAncestorOrThrow} from '@lexical/utils';
+import { $patchStyleText, $setBlocksType } from '@lexical/selection';
+import { $isTableSelection } from '@lexical/table';
+import { $getNearestBlockElementAncestorOrThrow } from '@lexical/utils';
 import {
   $createParagraphNode,
   $getSelection,
@@ -42,7 +42,6 @@ import {
   MIN_ALLOWED_FONT_SIZE,
 } from '../../context/ToolbarContext';
 
-// eslint-disable-next-line no-shadow
 export enum UpdateFontSizeType {
   increment = 1,
   decrement,

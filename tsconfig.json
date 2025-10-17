@@ -26,7 +26,6 @@
     { "path": "./packages/react" },
     { "path": "./packages/lexical" },
     { "path": "./packages/docusaurus-plugin" },
-    { "path": "./packages/vscode" },
     { "path": "./storybook" },
     { "path": "./examples/vite" },
     { "path": "./examples/next-js" },

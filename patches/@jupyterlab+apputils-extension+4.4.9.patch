@@ -1,0 +1,14 @@
+diff --git a/node_modules/@jupyterlab/apputils-extension/style/notification.css b/node_modules/@jupyterlab/apputils-extension/style/notification.css
+index f84dac3..9cf698c 100644
+--- a/node_modules/@jupyterlab/apputils-extension/style/notification.css
++++ b/node_modules/@jupyterlab/apputils-extension/style/notification.css
+@@ -3,7 +3,8 @@
+  * Distributed under the terms of the Modified BSD License.
+  */
+ 
+-@import '~react-toastify/dist/ReactToastify.min.css';
++/* Commented out to avoid webpack resolution issues with ~ prefix in Next.js */
++/* @import '~react-toastify/dist/ReactToastify.min.css'; */
+ 
+ :root {
+   --toastify-color-light: var(--jp-layout-color1);

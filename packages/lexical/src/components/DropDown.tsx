@@ -67,7 +67,8 @@ export function DropDownItem({
       onClick={onClick}
       ref={ref}
       title={title}
-      type="button">
+      type="button"
+    >
       {children}
     </button>
   );
@@ -89,7 +90,7 @@ export function DropDownItems({
 
   const registerItem = useCallback(
     (itemRef: React.RefObject<null | HTMLButtonElement>) => {
-      setItems((prev) => (prev ? [...prev, itemRef] : [itemRef]));
+      setItems(prev => (prev ? [...prev, itemRef] : [itemRef]));
     },
     [setItems],
   );
@@ -108,7 +109,7 @@ export function DropDownItems({
     if (key === 'Escape' || key === 'Tab') {
       onClose();
     } else if (key === 'ArrowUp') {
-      setHighlightedItem((prev) => {
+      setHighlightedItem(prev => {
         if (!prev) {
           return items[0];
         }
@@ -116,7 +117,7 @@ export function DropDownItems({
         return items[index === -1 ? items.length - 1 : index];
       });
     } else if (key === 'ArrowDown') {
-      setHighlightedItem((prev) => {
+      setHighlightedItem(prev => {
         if (!prev) {
           return items[0];
         }
@@ -184,7 +185,7 @@ export function DropDown({
     const dropDown = dropDownRef.current;
 
     if (showDropDown && button !== null && dropDown !== null) {
-      const {top, left} = button.getBoundingClientRect();
+      const { top, left } = button.getBoundingClientRect();
       dropDown.style.top = `${top + button.offsetHeight + dropDownPadding}px`;
       dropDown.style.left = `${Math.min(
         left,
@@ -225,7 +226,7 @@ export function DropDown({
         const button = buttonRef.current;
         const dropDown = dropDownRef.current;
         if (button !== null && dropDown !== null) {
-          const {top} = button.getBoundingClientRect();
+          const { top } = button.getBoundingClientRect();
           const newPosition = top + button.offsetHeight + dropDownPadding;
           if (newPosition !== dropDown.getBoundingClientRect().top) {
             dropDown.style.top = `${newPosition}px`;
@@ -249,7 +250,8 @@ export function DropDown({
         aria-label={buttonAriaLabel || buttonLabel}
         className={buttonClassName}
         onClick={() => setShowDropDown(!showDropDown)}
-        ref={buttonRef}>
+        ref={buttonRef}
+      >
         {buttonIconClassName && <span className={buttonIconClassName} />}
         {buttonLabel && (
           <span className="text dropdown-button-text">{buttonLabel}</span>
