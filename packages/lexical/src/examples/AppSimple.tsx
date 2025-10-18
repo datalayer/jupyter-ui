@@ -4,7 +4,8 @@
  * MIT License
  */
 
-import { Button } from '@primer/react';
+import { useState } from 'react';
+import { Button, ButtonGroup } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { ThreeBarsIcon } from '@primer/octicons-react';
 import { Jupyter } from '@datalayer/jupyter-react';
@@ -42,12 +43,66 @@ const LexicalEditor = () => {
 };
 
 export const AppSimple = () => {
+  // Get initial state from URL or localStorage
+  const getInitialKernelState = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const kernelParam = urlParams.get('kernel');
+    if (kernelParam !== null) {
+      return kernelParam === 'true';
+    }
+    const stored = localStorage.getItem('hasKernel');
+    return stored === 'true';
+  };
+
+  const [hasKernel] = useState(getInitialKernelState);
+
+  const toggleKernel = (newValue: boolean) => {
+    localStorage.setItem('hasKernel', String(newValue));
+    const url = new URL(window.location.href);
+    url.searchParams.set('kernel', String(newValue));
+    window.location.href = url.toString();
+  };
+
   return (
     <>
       <div className="App">
         <h1>Jupyter UI ❤️ Lexical</h1>
+        <ButtonGroup>
+          <Button
+            variant={!hasKernel ? 'primary' : 'default'}
+            onClick={() => toggleKernel(false)}
+            sx={{
+              fontWeight: !hasKernel ? 'bold' : 'normal',
+              backgroundColor: !hasKernel ? '#0969da' : 'transparent',
+              color: !hasKernel ? 'white' : 'inherit',
+              '&:hover': {
+                backgroundColor: !hasKernel ? '#0860ca' : '#f3f4f6',
+              },
+            }}
+          >
+            No Runtime
+          </Button>
+          <Button
+            variant={hasKernel ? 'primary' : 'default'}
+            onClick={() => toggleKernel(true)}
+            sx={{
+              fontWeight: hasKernel ? 'bold' : 'normal',
+              backgroundColor: hasKernel ? '#0969da' : 'transparent',
+              color: hasKernel ? 'white' : 'inherit',
+              '&:hover': {
+                backgroundColor: hasKernel ? '#0860ca' : '#f3f4f6',
+              },
+            }}
+          >
+            With Runtime
+          </Button>
+        </ButtonGroup>
+        <p style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
+          Current mode:{' '}
+          <strong>{hasKernel ? 'Runtime Connected' : 'No Runtime'}</strong>
+        </p>
       </div>
-      <Jupyter startDefaultKernel>
+      <Jupyter startDefaultKernel={hasKernel}>
         <LexicalProvider>
           <LexicalEditor />
         </LexicalProvider>

@@ -192,13 +192,7 @@ export const ComponentPickerMenuPlugin = ({
       new ComponentPickerOption('Jupyter Cell', {
         icon: <i className="icon code" />,
         keywords: ['javascript', 'python', 'js', 'codeblock', 'jupyter'],
-        disabled: !kernel, // Disable if no kernel is available
         onSelect: () => {
-          // Only execute if kernel is available (should not be called if disabled)
-          if (!kernel) {
-            return;
-          }
-
           editor.dispatchCommand(INSERT_JUPYTER_INPUT_OUTPUT_COMMAND, {
             code: initCode,
             outputs: DEFAULT_INITIAL_OUTPUTS,

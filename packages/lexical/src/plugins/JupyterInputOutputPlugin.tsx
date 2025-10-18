@@ -17,8 +17,6 @@ import {
   KEY_ENTER_COMMAND,
   COMMAND_PRIORITY_LOW,
   $createLineBreakNode,
-  $createParagraphNode,
-  $createTextNode,
   $createRangeSelection,
   LexicalNode,
   $getNodeByKey,
@@ -39,6 +37,7 @@ import { UUID } from '@lumino/coreutils';
 import { IOutput } from '@jupyterlab/nbformat';
 import type { IOutputAreaModel } from '@jupyterlab/outputarea';
 import { Session } from '@jupyterlab/services';
+import { createNoKernelWarning } from '../nodes/jupyterUtils';
 import {
   $createJupyterInputNode,
   JupyterInputNode,
@@ -62,7 +61,11 @@ export const DEFAULT_INITIAL_OUTPUTS: IOutput[] = [
   {
     output_type: 'execute_result',
     data: {
-      'text/html': ['<p>Type code in the cell and Shift+Enter to execute.</p>'],
+      'text/html': [
+        '<div style="color: #888; font-size: 11px; font-style: italic; padding: 0; margin: 0;">',
+        'Press <kbd style="font-size: 10px; padding: 1px 4px; background: #f0f0f0; border: 1px solid #ccc; border-radius: 3px;">Shift+Enter</kbd> to execute. Please connect to execute code.',
+        '</div>',
+      ],
     },
     execution_count: 0,
     metadata: {},
@@ -355,63 +358,52 @@ export const JupyterInputOutputPlugin = (
           if (parentNode && $isJupyterInputNode(parentNode)) {
             if (event.shiftKey) {
               // Shift+Enter: Execute code
-              console.warn('🚀 Shift+Enter detected, starting execution flow');
               event.preventDefault();
               const code = parentNode.getTextContent();
-              console.warn('🔍 Code to execute:', code.slice(0, 100));
               const jupyterInputNodeUuid = (
                 parentNode as JupyterInputNode
               ).getJupyterInputNodeUuid();
-              console.warn('🆔 Input UUID:', jupyterInputNodeUuid);
-
-              // Check if kernel is available
-              console.warn('🔧 Plugin kernel available:', !!kernel);
-              if (kernel) {
-                console.warn('🔧 Kernel details:', {
-                  id: kernel.id,
-                  session: !!kernel.session,
-                });
-              }
 
               const jupyterOutputNodeKey =
                 INPUT_UUID_TO_OUTPUT_KEY.get(jupyterInputNodeUuid);
-              console.warn(
-                '🔗 Found existing output key:',
-                jupyterOutputNodeKey,
-              );
 
               if (jupyterOutputNodeKey) {
-                const jupyterOutputNode = $getNodeByKey(jupyterOutputNodeKey);
+                const jupyterOutputNode = $getNodeByKey(
+                  jupyterOutputNodeKey,
+                ) as JupyterOutputNode;
                 if (jupyterOutputNode) {
-                  console.warn('♻️ Executing on existing output node');
                   // Check the existing output node's adapter kernel
-                  const existingAdapter = (
-                    jupyterOutputNode as JupyterOutputNode
-                  ).__outputAdapter;
-                  console.warn(
-                    '🔧 Existing OutputAdapter kernel:',
-                    !!existingAdapter.kernel,
-                  );
+                  const existingAdapter = jupyterOutputNode.__outputAdapter;
+
+                  // Get writable node ONCE at the start
+                  const writableNode =
+                    jupyterOutputNode.getWritable() as JupyterOutputNode;
+
+                  // Update kernel if needed
                   if (!existingAdapter.kernel && kernel) {
-                    console.warn(
-                      '🔄 Updating existing OutputAdapter with kernel',
-                    );
-                    // Update kernel directly without triggering render
                     existingAdapter.kernel = kernel;
-                    console.warn('✅ Kernel updated directly on adapter');
                   }
-                  // Execute code on existing output node
-                  (jupyterOutputNode as JupyterOutputNode).executeCode(code);
+
+                  // Set the code
+                  writableNode.__code = code;
+
+                  // Handle execution
+                  if (!existingAdapter.kernel) {
+                    // Show user-facing warning
+                    const warningOutput = createNoKernelWarning();
+                    // Update BOTH the node's outputs AND the adapter's model
+                    writableNode.__outputs = [warningOutput];
+                    existingAdapter.setOutputs([warningOutput]);
+                    writableNode.__renderTrigger++;
+                  } else {
+                    existingAdapter.execute(code);
+                  }
+
                   return true;
                 }
               }
-              console.warn('🆕 Creating new output node');
               // Create new output node
               const outputAdapter = new OutputAdapter(newUuid(), kernel, []);
-              console.warn(
-                '🔧 New OutputAdapter kernel:',
-                !!outputAdapter.kernel,
-              );
               const jupyterOutputNode = $createJupyterOutputNode(
                 code,
                 outputAdapter,
@@ -426,12 +418,8 @@ export const JupyterInputOutputPlugin = (
               const nodeSelection = $createNodeSelection();
               nodeSelection.add(parentNode.__key);
               $setSelection(nodeSelection);
-              console.warn('🟢 Code execution completed');
               return true;
             }
-            console.warn(
-              '🟢 Regular Enter in JupyterInputNode - inserting line break',
-            );
             // Regular Enter: Insert a line break directly
             const selection = $getSelection();
             if ($isRangeSelection(selection)) {
@@ -443,7 +431,6 @@ export const JupyterInputOutputPlugin = (
             return false;
           }
         }
-        console.warn('🟢 Not in JupyterInputNode - returning false');
         return false;
       },
       COMMAND_PRIORITY_LOW, // Changed to LOW so INSERT_LINE_BREAK_COMMAND can handle regular Enter
@@ -507,26 +494,13 @@ export const JupyterInputOutputPlugin = (
         const { code, outputs } = props;
         const selection = $getSelection();
         if ($isRangeSelection(selection)) {
-          // Check if kernel is undefined
-          if (!kernel) {
-            // Clear any existing selection content
-            selection.removeText();
-
-            // Create a paragraph with the message
-            const paragraph = $createParagraphNode();
-            const textNode = $createTextNode(
-              'A runtime is needed to insert Jupyter Cells',
-            );
-            paragraph.append(textNode);
-            selection.insertNodes([paragraph]);
-            return true;
-          }
-
           // Clear any existing selection content
           selection.removeText();
 
           // Create the input node with the code content
           const jupyterCodeNode = $createJupyterInputNode('python');
+          const jupyterCodeUuid = jupyterCodeNode.getJupyterInputNodeUuid();
+
           selection.insertNodes([jupyterCodeNode]);
 
           // Add the code content to the input node
@@ -534,14 +508,14 @@ export const JupyterInputOutputPlugin = (
             selection.insertRawText(code);
           }
 
-          // Create the output node
+          // Create the output node with kernel (may be undefined - that's OK!)
           const outputAdapter = new OutputAdapter(newUuid(), kernel, outputs);
           const jupyterOutputNode = $createJupyterOutputNode(
             code,
             outputAdapter,
             outputs || [],
             true,
-            jupyterCodeNode.getJupyterInputNodeUuid(),
+            jupyterCodeUuid,
             UUID.uuid4(),
           );
 
@@ -559,8 +533,12 @@ export const JupyterInputOutputPlugin = (
             },
           );
 
-          // Insert the output node immediately after the input node
-          jupyterCodeNode.insertAfter(jupyterOutputNode);
+          // Get the parent to insert the output node
+          const parent = jupyterCodeNode.getParent();
+          if (parent) {
+            // Insert the output node immediately after the input node
+            jupyterCodeNode.insertAfter(jupyterOutputNode);
+          }
 
           // Position cursor at the beginning of the jupyter-input node
           jupyterCodeNode.selectStart();
