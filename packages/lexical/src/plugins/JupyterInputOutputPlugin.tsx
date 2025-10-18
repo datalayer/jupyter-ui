@@ -13,6 +13,7 @@ import {
   COMMAND_PRIORITY_EDITOR,
   INSERT_LINE_BREAK_COMMAND,
   COMMAND_PRIORITY_HIGH,
+  COMMAND_PRIORITY_CRITICAL,
   KEY_ENTER_COMMAND,
   COMMAND_PRIORITY_LOW,
   $createLineBreakNode,
@@ -43,7 +44,6 @@ import {
   JupyterInputNode,
   $isJupyterInputNode,
 } from '../nodes/JupyterInputNode';
-import { $isJupyterInputHighlightNode } from '../nodes/JupyterInputHighlightNode';
 import { registerCodeHighlighting } from '../nodes/JupyterInputHighlighter';
 import {
   JupyterOutputNode,
@@ -451,101 +451,36 @@ export const JupyterInputOutputPlugin = (
   }, [editor, kernel]);
 
   // Handle Ctrl+A to select all content within a Jupyter input cell
-  // Use Lexical command system with HIGH priority to intercept before default behavior
+  // Use CRITICAL priority to run before Lexical's internal select-all handler
   useEffect(() => {
     return editor.registerCommand<KeyboardEvent>(
       SELECT_ALL_COMMAND,
       (event: KeyboardEvent) => {
-        console.log(
-          '🎯 SELECT_ALL_COMMAND intercepted before default behavior',
-        );
-
         const selection = $getSelection();
         if (!$isRangeSelection(selection)) {
-          console.log('❌ No range selection available');
-          return false; // Let default behavior handle it
+          return false;
         }
 
-        // Debug: Log current selection details BEFORE default Ctrl+A
-        console.log('📍 Current selection details (BEFORE default Ctrl+A):', {
-          anchorKey: selection.anchor.key,
-          anchorOffset: selection.anchor.offset,
-          anchorType: selection.anchor.type,
-          focusKey: selection.focus.key,
-          focusOffset: selection.focus.offset,
-          focusType: selection.focus.type,
-        });
-
-        // Start from the anchor node and traverse up the hierarchy
-        const anchorNode = selection.anchor.getNode();
-        console.log('🔍 Anchor node details (BEFORE default Ctrl+A):', {
-          type: anchorNode.getType(),
-          key: anchorNode.getKey(),
-          textContent: anchorNode.getTextContent?.()?.slice(0, 50) || 'N/A',
-          parent: anchorNode.getParent()?.getType() || 'No parent',
-        });
-
-        // Also check the focus node in case it's different
-        const focusNode = selection.focus.getNode();
-        if (focusNode !== anchorNode) {
-          console.log('🔍 Focus node (different from anchor):', {
-            type: focusNode.getType(),
-            key: focusNode.getKey(),
-            textContent: focusNode.getTextContent?.()?.slice(0, 50) || 'N/A',
-            parent: focusNode.getParent()?.getType() || 'No parent',
-          });
-        }
-
-        let currentNode: LexicalNode | null = anchorNode;
+        // Traverse up from current node to find parent JupyterInputNode
+        let currentNode: LexicalNode | null = selection.anchor.getNode();
         let jupyterInputNode: JupyterInputNode | null = null;
         let depth = 0;
-        const maxDepth = 20; // Prevent infinite loops
+        const maxDepth = 20;
 
-        // Traverse up the tree hierarchy
         while (currentNode && depth < maxDepth) {
-          const nodeType = currentNode.getType();
-          const nodeKey = currentNode.getKey();
-          const isJupyterInput = $isJupyterInputNode(currentNode);
-          const isJupyterHighlight = $isJupyterInputHighlightNode(currentNode);
-
-          console.log(
-            `🔍 Depth ${depth}: ${nodeType} (${nodeKey}) - isJupyterInput: ${isJupyterInput}, isJupyterHighlight: ${isJupyterHighlight}`,
-          );
-
-          // Direct check: Is this node a JupyterInputNode?
-          if (isJupyterInput) {
+          if ($isJupyterInputNode(currentNode)) {
             jupyterInputNode = currentNode as JupyterInputNode;
-            console.log(`🎯 SUCCESS: Found JupyterInputNode at depth ${depth}`);
             break;
           }
 
-          // If this is a JupyterInputHighlightNode, continue traversing up
-          // (the parent should be a JupyterInputNode)
-          if (isJupyterHighlight) {
-            console.log(
-              `🔍 Found JupyterInputHighlightNode at depth ${depth}, continuing traversal...`,
-            );
-          }
-
-          // Move to parent
-          const parentNode: LexicalNode | null = currentNode.getParent();
-          if (parentNode) {
-            currentNode = parentNode;
-            depth++;
-          } else {
-            console.log(`🔍 No parent at depth ${depth}, reached root`);
-            break;
-          }
-        }
-
-        if (depth >= maxDepth) {
-          console.warn(`🔍 Max depth ${maxDepth} reached, stopping traversal`);
+          currentNode = currentNode.getParent();
+          depth++;
         }
 
         if (jupyterInputNode) {
-          console.log(
-            '🎯 SUCCESS: Found JupyterInputNode, selecting all content within cell',
-          );
+          // Prevent default browser behavior only when we're handling the event
+          event.preventDefault();
+          event.stopPropagation();
 
           // Select all content within the Jupyter input node
           const rangeSelection = $createRangeSelection();
@@ -556,16 +491,12 @@ export const JupyterInputOutputPlugin = (
             'element',
           );
           $setSelection(rangeSelection);
-
-          return true; // Prevent default Ctrl+A behavior
+          return true; // Prevent default select-all behavior
         }
 
-        console.log(
-          '❌ No JupyterInputNode found in hierarchy - allowing default Ctrl+A',
-        );
-        return false; // Let default behavior handle it
+        return false; // Allow default select-all if not in Jupyter cell
       },
-      COMMAND_PRIORITY_HIGH, // HIGH priority to intercept before default behavior
+      COMMAND_PRIORITY_CRITICAL,
     );
   }, [editor]);
 
