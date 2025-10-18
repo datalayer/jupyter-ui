@@ -174,6 +174,10 @@ export const Output = (props: IOutputProps) => {
       return () => {
         // kernel.connection.then(k => k.shutdown().then(() => console.log(`Kernel ${k.id} is terminated.`)));
       };
+    } else {
+      // Reset kernel status when kernel becomes undefined (e.g., runtime terminated)
+      // This prevents zombie progress bars from showing
+      setKernelStatus('idle');
     }
   }, [kernel]);
   const executeRequest = outputStore.getExecuteRequest(sourceId);
@@ -218,7 +222,7 @@ export const Output = (props: IOutputProps) => {
       {adapter && (
         <Box display="flex">
           <Box flexGrow={1}>
-            {kernelStatus !== 'idle' && showKernelProgressBar && (
+            {kernel && kernelStatus !== 'idle' && showKernelProgressBar && (
               <KernelProgressBar />
             )}
           </Box>
