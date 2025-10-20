@@ -25,7 +25,7 @@ import {
 } from './utils';
 
 export function $convertToMarkdownString(): string {
-  const output = [];
+  const output: string[] = [];
   const children = $getRoot().getChildren();
 
   for (const child of children) {
@@ -56,7 +56,7 @@ function exportTopLevelElementOrDecorator(node: LexicalNode): string | null {
 }
 
 function exportChildren(node: ElementNode): string {
-  const output = [];
+  const output: string[] = [];
   const children = node.getChildren();
 
   for (const child of children) {

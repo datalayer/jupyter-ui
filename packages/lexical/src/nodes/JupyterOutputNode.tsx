@@ -28,6 +28,7 @@ import {
   Kernel,
 } from '@datalayer/jupyter-react';
 import { createNoKernelWarning } from './jupyterUtils';
+import { isJupyterOutputNodeOrphaned } from './JupyterOutputNodeUtils';
 
 export type SerializedJupyterOutputNode = Spread<
   {
@@ -191,7 +192,10 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
 
   /** @override */
   isIsolated(): boolean {
-    return false;
+    // Treat orphaned output nodes as isolated blocks for editing purposes
+    // Return true only for orphaned nodes so they are handled as isolated blocks
+    // Normal output nodes with valid parents remain non-isolated
+    return isJupyterOutputNodeOrphaned(this);
   }
 
   /** @override */
@@ -223,7 +227,15 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
 
   /** @override */
   remove(_preserveEmptyParent?: boolean): void {
-    // Do not delete JupyterOutputNode.
+    // Check if this output node is orphaned (parent input node was deleted)
+    if (isJupyterOutputNodeOrphaned(this)) {
+      // Allow deletion of orphaned output nodes
+      // Explicitly set preserveEmptyParent to false for orphaned nodes,
+      // since their parent has already been deleted and we do not want to preserve an
+      // empty parent.
+      super.remove(false);
+    }
+    // Otherwise, do not delete (output nodes with valid parents are protected)
   }
 
   removeForce(): void {
