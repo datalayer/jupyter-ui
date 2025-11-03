@@ -20,9 +20,12 @@ import {
   Completer,
   CompleterModel,
   CompletionHandler,
+  InlineCompleter,
   KernelCompleterProvider,
   ProviderReconciliator,
+  type IInlineCompletionProvider,
 } from '@jupyterlab/completer';
+import { nullTranslator } from '@jupyterlab/translation';
 import { PathExt, type IChangedArgs } from '@jupyterlab/coreutils';
 import { Context, type DocumentRegistry } from '@jupyterlab/docregistry';
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
@@ -84,6 +87,28 @@ const DEFAULT_EXTENSIONS = new Array<NotebookExtension>();
 const FALLBACK_NOTEBOOK_PATH = '.datalayer/ping.ipynb';
 
 /**
+ * Generate settings for inline completion providers.
+ * Each provider needs to be explicitly enabled with settings.
+ */
+function generateInlineProviderSettings(
+  providers: IInlineCompletionProvider[] | undefined
+): Record<string, any> {
+  const settings: Record<string, any> = {};
+  if (providers) {
+    providers.forEach(provider => {
+      const providerSchema = provider.schema?.default as any;
+      settings[provider.identifier] = {
+        enabled: true,
+        debouncerDelay: providerSchema?.debouncerDelay ?? 200,
+        timeout: providerSchema?.timeout ?? 15000,
+        autoFillInMiddle: true,
+      };
+    });
+  }
+  return settings;
+}
+
+/**
  * Base notebook component properties
  */
 export interface INotebook2BaseProps {
@@ -129,6 +154,12 @@ export interface INotebook2BaseProps {
    * and save the content.
    */
   path?: string;
+  /**
+   * Custom inline completion providers.
+   *
+   * Platform-specific providers can be injected here (e.g., VS Code LLM, custom AI models).
+   */
+  inlineProviders?: IInlineCompletionProvider[];
 }
 
 /**
@@ -141,6 +172,12 @@ export interface INotebook2BaseProps {
  * This component is not connected to any React stores.
  */
 export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
+  console.log('[Notebook2Base] Component rendering with props:', {
+    hasInlineProviders: !!props.inlineProviders,
+    inlineProvidersCount: props.inlineProviders?.length,
+    inlineProviders: props.inlineProviders,
+  });
+
   const {
     commands,
     extensions = DEFAULT_EXTENSIONS,
@@ -176,26 +213,146 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
   );
 
   useEffect(() => {
+    console.log(
+      '[Notebook2Base] Setting up completer with inlineProviders:',
+      props.inlineProviders
+    );
     const completer = new Completer({ model: new CompleterModel() });
     // Dummy widget to initialize
     const widget = new Widget();
+
+    const inlineProvidersSettings = generateInlineProviderSettings(
+      props.inlineProviders
+    );
+    console.log(
+      '[Notebook2Base] Generated settings for providers:',
+      inlineProvidersSettings
+    );
+
     const reconciliator = new ProviderReconciliator({
       context: {
         widget,
       },
       providers: [new KernelCompleterProvider()],
+      inlineProviders: props.inlineProviders,
+      inlineProvidersSettings,
       timeout: COMPLETER_TIMEOUT_MILLISECONDS,
     });
-    const handler = new CompletionHandler({ completer, reconciliator });
+    console.log(
+      '[Notebook2Base] ProviderReconciliator created with inlineProviders:',
+      props.inlineProviders
+    );
+    console.log('[Notebook2Base] ProviderReconciliator object:', reconciliator);
+
+    // Create InlineCompleter widget if inline providers are configured
+    let inlineCompleter: InlineCompleter | undefined;
+    if (props.inlineProviders && props.inlineProviders.length > 0) {
+      console.log('[Notebook2Base] Creating InlineCompleter widget');
+      const trans = nullTranslator.load('jupyterlab');
+      inlineCompleter = new InlineCompleter({
+        model: new InlineCompleter.Model(),
+        trans,
+      });
+
+      // Configure inline completer settings
+      const providerSettings: any = {};
+      props.inlineProviders?.forEach(provider => {
+        providerSettings[provider.identifier] = { enabled: true };
+      });
+
+      inlineCompleter.configure({
+        showWidget: 'always',
+        showShortcuts: true,
+        streamingAnimation: 'none',
+        suppressIfTabCompleterActive: false,
+        minLines: 1,
+        maxLines: 10,
+        editorResizeDelay: 250,
+        reserveSpaceForLongest: false,
+        providers: providerSettings,
+      });
+
+      Widget.attach(inlineCompleter, document.body);
+
+      // Set up keyboard shortcut for accepting inline completions
+      // Tab key should accept the current suggestion
+      const handleKeyDown = (event: KeyboardEvent) => {
+        if (
+          event.key === 'Tab' &&
+          !event.shiftKey &&
+          !event.ctrlKey &&
+          !event.metaKey &&
+          !event.altKey
+        ) {
+          // Check if there's an active inline completion
+          if (
+            inlineCompleter &&
+            inlineCompleter.model &&
+            inlineCompleter.current
+          ) {
+            console.log(
+              '[Notebook2Base] Tab pressed - accepting inline completion'
+            );
+            event.preventDefault();
+            event.stopPropagation();
+            inlineCompleter.accept();
+            return false;
+          }
+        }
+        // Escape to reject
+        if (event.key === 'Escape') {
+          if (
+            inlineCompleter &&
+            inlineCompleter.model &&
+            inlineCompleter.current
+          ) {
+            console.log(
+              '[Notebook2Base] Escape pressed - rejecting inline completion'
+            );
+            event.preventDefault();
+            event.stopPropagation();
+            inlineCompleter.model.reset();
+            return false;
+          }
+        }
+      };
+
+      document.addEventListener('keydown', handleKeyDown, true);
+
+      // Store cleanup function for keyboard handler
+      const cleanupKeyboard = () => {
+        document.removeEventListener('keydown', handleKeyDown, true);
+      };
+
+      console.log(
+        '[Notebook2Base] InlineCompleter created, configured, attached, and keyboard handlers set up'
+      );
+
+      // Store the cleanup function on the inlineCompleter for later cleanup
+      (inlineCompleter as any)._keyboardCleanup = cleanupKeyboard;
+    }
+
+    const handler = new CompletionHandler({
+      completer,
+      reconciliator,
+      inlineCompleter,
+    });
     completer.hide();
     Widget.attach(completer, document.body);
     setCompleter(handler);
     return () => {
       handler.dispose();
       completer.dispose();
+      if (inlineCompleter) {
+        // Clean up keyboard listeners
+        if ((inlineCompleter as any)._keyboardCleanup) {
+          (inlineCompleter as any)._keyboardCleanup();
+        }
+        inlineCompleter.dispose();
+      }
       widget.dispose();
     };
-  }, []);
+  }, [props.inlineProviders]);
 
   // Widget factory.
   const [widgetFactory, setWidgetFactory] =
@@ -440,15 +597,43 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
           }
           const editor = panel.content.activeCell?.editor;
           const provider = new KernelCompleterProvider();
+          const inlineProvidersSettings = generateInlineProviderSettings(
+            props.inlineProviders
+          );
+          // Create a dummy session if none exists to enable inline completions without a kernel
+          const sessionForCompletion = changes.newValue || ({} as any);
+          console.log(
+            '[Notebook2Base] Creating ProviderReconciliator with editor and session',
+            {
+              hasEditor: !!editor,
+              hasSession: !!changes.newValue,
+              usingDummySession: !changes.newValue,
+              inlineProviders: props.inlineProviders,
+              inlineProvidersSettings,
+            }
+          );
           const reconciliator = new ProviderReconciliator({
             context: {
               widget: panel,
               editor,
-              session: changes.newValue,
+              session: sessionForCompletion,
             },
             providers: [provider],
+            inlineProviders: props.inlineProviders,
+            inlineProvidersSettings,
             timeout: COMPLETER_TIMEOUT_MILLISECONDS,
           });
+          console.log(
+            '[Notebook2Base] ProviderReconciliator with editor created:',
+            reconciliator
+          );
+
+          // Update the inline completer's editor if it exists
+          if (completer.inlineCompleter) {
+            completer.inlineCompleter.editor = editor;
+            console.log('[Notebook2Base] Updated InlineCompleter editor');
+          }
+
           completer.editor = editor;
           completer.reconciliator = reconciliator;
         };
@@ -477,11 +662,16 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
           );
         }
         completer.editor = null;
+        const inlineProvidersSettings = generateInlineProviderSettings(
+          props.inlineProviders
+        );
         completer.reconciliator = new ProviderReconciliator({
           context: {
             widget: new Widget(),
           },
           providers: [new KernelCompleterProvider()],
+          inlineProviders: props.inlineProviders,
+          inlineProvidersSettings,
           timeout: COMPLETER_TIMEOUT_MILLISECONDS,
         });
       }
@@ -687,6 +877,16 @@ export function useNotebookModel(options: IOptions): NotebookModel | null {
     id,
   } = options;
 
+  console.log('[useNotebookModel] Hook called with options:', {
+    hasCollaborationProvider: !!collaborationProvider,
+    hasNbformat: !!nbformat,
+    readonly,
+    hasUrl: !!url,
+    path,
+    hasServiceManager: !!serviceManager,
+    id,
+  });
+
   // Generate the notebook model
   // There are three posibilities (by priority order):
   // - Connection to a collaborative document
@@ -695,11 +895,13 @@ export function useNotebookModel(options: IOptions): NotebookModel | null {
   const [model, setModel] = useState<NotebookModel | null>(null);
 
   useEffect(() => {
+    console.log('[useNotebookModel] useEffect running');
     let isMounted = true;
     const disposable = new DisposableSet();
 
     // Handle new collaboration provider
     if (collaborationProvider && serviceManager && id) {
+      console.log('[useNotebookModel] Setting up collaboration');
       const setupCollaboration = async () => {
         try {
           const sharedModel = new YNotebook();
@@ -711,12 +913,16 @@ export function useNotebookModel(options: IOptions): NotebookModel | null {
           });
 
           if (isMounted) {
+            console.log('[useNotebookModel] Creating collaboration model');
             const model = new NotebookModel({
               collaborationEnabled: true,
               disableDocumentWideUndoRedo: true,
               sharedModel,
             });
             model.readOnly = readonly;
+            console.log(
+              '[useNotebookModel] Calling setModel with collaboration model'
+            );
             setModel(model);
 
             disposable.add({
@@ -735,25 +941,49 @@ export function useNotebookModel(options: IOptions): NotebookModel | null {
 
       setupCollaboration();
     } else {
+      console.log(
+        '[useNotebookModel] No collaboration, creating standard model'
+      );
       const createModel = (nbformat: INotebookContent | undefined) => {
-        const model = new NotebookModel();
-        if (nbformat) {
-          nbformat.cells.forEach(cell => {
-            cell.metadata['editable'] = !readonly;
-          });
-          model.fromJSON(nbformat);
+        console.log(
+          '[useNotebookModel] createModel called with nbformat:',
+          !!nbformat
+        );
+        try {
+          const model = new NotebookModel();
+          console.log('[useNotebookModel] NotebookModel created');
+          if (nbformat) {
+            nbformat.cells.forEach(cell => {
+              cell.metadata['editable'] = !readonly;
+            });
+            console.log('[useNotebookModel] About to call model.fromJSON');
+            model.fromJSON(nbformat);
+            console.log(
+              '[useNotebookModel] model.fromJSON completed successfully'
+            );
+          }
+          model.readOnly = readonly;
+          console.log(
+            '[useNotebookModel] Calling setModel with standard model'
+          );
+          setModel(model);
+        } catch (error) {
+          console.error('[useNotebookModel] Error creating model:', error);
+          throw error;
         }
-        model.readOnly = readonly;
-        setModel(model);
       };
 
       if (!nbformat && url) {
+        console.log('[useNotebookModel] Loading from URL:', url);
         loadFromUrl(url).then(nbformat => {
           if (isMounted) {
             createModel(nbformat);
           }
         });
       } else {
+        console.log(
+          '[useNotebookModel] Creating model directly (nbformat provided or no URL)'
+        );
         createModel(nbformat);
       }
     }
@@ -772,6 +1002,7 @@ export function useNotebookModel(options: IOptions): NotebookModel | null {
     id,
   ]);
 
+  console.log('[useNotebookModel] Returning model:', !!model);
   return model;
 }
 
