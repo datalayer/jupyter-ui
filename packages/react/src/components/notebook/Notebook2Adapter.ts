@@ -155,7 +155,21 @@ export class Notebook2Adapter {
    * properly initialized for this operation to succeed.
    */
   undo(): void {
-    NotebookActions.undo(this._notebook);
+    const notebook = this._notebook;
+
+    // If we're in edit mode and have an active cell with an editor,
+    // try to undo in the cell editor first
+    if (notebook.mode === 'edit' && notebook.activeCell?.editor) {
+      const editor = notebook.activeCell.editor;
+      // CodeMirror editor has an undo method
+      if (editor && typeof (editor as any).undo === 'function') {
+        (editor as any).undo();
+        return;
+      }
+    }
+
+    // Otherwise, undo at the notebook level (add/remove cells, etc.)
+    NotebookActions.undo(notebook);
   }
 
   /**
@@ -167,7 +181,21 @@ export class Notebook2Adapter {
    * must be available and properly initialized for this operation to succeed.
    */
   redo(): void {
-    NotebookActions.redo(this._notebook);
+    const notebook = this._notebook;
+
+    // If we're in edit mode and have an active cell with an editor,
+    // try to redo in the cell editor first
+    if (notebook.mode === 'edit' && notebook.activeCell?.editor) {
+      const editor = notebook.activeCell.editor;
+      // CodeMirror editor has a redo method
+      if (editor && typeof (editor as any).redo === 'function') {
+        (editor as any).redo();
+        return;
+      }
+    }
+
+    // Otherwise, redo at the notebook level (add/remove cells, etc.)
+    NotebookActions.redo(notebook);
   }
 
   /**
