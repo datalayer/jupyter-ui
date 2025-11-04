@@ -20,4 +20,4 @@ export type {
   CompletionHandler,
 } from '@jupyterlab/completer';
 export type { NotebookPanel } from '@jupyterlab/notebook';
-export type { Cell } from '@jupyterlab/cells';
+export type { Cell as JupyterCell } from '@jupyterlab/cells';
