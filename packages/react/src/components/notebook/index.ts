@@ -18,3 +18,4 @@ export * from './content';
 export * from './marked';
 export * from './model';
 export * from './toolbar';
+export { notebookStore2 } from './Notebook2State';
