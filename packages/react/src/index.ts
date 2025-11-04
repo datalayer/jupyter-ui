@@ -10,3 +10,14 @@ export * from './jupyter';
 export * from './state';
 export * from './theme';
 export * from './utils';
+
+// Re-export JupyterLab completion types for platform-specific providers
+export type {
+  IInlineCompletionProvider,
+  IInlineCompletionContext,
+  IInlineCompletionItem,
+  IInlineCompletionList,
+  CompletionHandler,
+} from '@jupyterlab/completer';
+export type { NotebookPanel } from '@jupyterlab/notebook';
+export type { Cell as JupyterCell } from '@jupyterlab/cells';

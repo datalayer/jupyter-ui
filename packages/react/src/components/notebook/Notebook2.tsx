@@ -18,6 +18,7 @@ import { useKernelId, useNotebookModel, Notebook2Base } from './Notebook2Base';
 import type { NotebookExtension } from './NotebookExtensions';
 import type { INotebookToolbarProps } from './toolbar';
 import { ICollaborationProvider } from '../../jupyter';
+import type { IInlineCompletionProvider } from '@jupyterlab/completer';
 
 import './Notebook.css';
 
@@ -111,6 +112,12 @@ export interface INotebook2Props {
    * Callback on session connection changed.
    */
   onSessionConnection?: OnSessionConnection;
+  /**
+   * Custom inline completion providers.
+   *
+   * Platform-specific providers can be injected here (e.g., VS Code LLM, custom AI models).
+   */
+  inlineProviders?: IInlineCompletionProvider[];
 }
 
 /**
@@ -133,6 +140,7 @@ export function Notebook2(
     height = '100vh',
     maxHeight = '100vh',
     id,
+    inlineProviders,
     nbformat,
     onNotebookModelChanged,
     onSessionConnection,
@@ -163,7 +171,12 @@ export function Notebook2(
   });
 
   useEffect(() => {
+    console.log('[Notebook2] useEffect - model changed:', {
+      model: !!model,
+      isLoading,
+    });
     if (model) {
+      console.log('[Notebook2] Setting isLoading to false');
       setIsLoading(false);
     }
     onNotebookModelChanged?.(model);
@@ -186,6 +199,13 @@ export function Notebook2(
       serviceManager.user.userChanged.disconnect(setUserIdentity);
     };
   }, [collaborationProvider, model, serviceManager]);
+
+  console.log('[Notebook2] Rendering:', {
+    isLoading,
+    hasModel: !!model,
+    hasServiceManager: !!serviceManager,
+    hasInlineProviders: !!inlineProviders,
+  });
 
   return isLoading ? (
     <Loader key="notebook-loader" />
@@ -248,6 +268,7 @@ export function Notebook2(
             commands={commands}
             id={id}
             extensions={extensions}
+            inlineProviders={inlineProviders}
             kernelId={kernelId}
             model={model}
             path={path}
