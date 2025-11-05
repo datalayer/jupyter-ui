@@ -465,20 +465,74 @@ export const JupyterInputOutputPlugin = (
         }
 
         if (jupyterInputNode) {
-          // Prevent default browser behavior only when we're handling the event
           event.preventDefault();
           event.stopPropagation();
 
-          // Select all content within the Jupyter input node
-          const rangeSelection = $createRangeSelection();
-          rangeSelection.anchor.set(jupyterInputNode.getKey(), 0, 'element');
-          rangeSelection.focus.set(
-            jupyterInputNode.getKey(),
-            jupyterInputNode.getChildrenSize(),
-            'element',
-          );
-          $setSelection(rangeSelection);
-          return true; // Prevent default select-all behavior
+          // Check if entire cell is already selected by looking at the selection range
+          const isCollapsed = selection.isCollapsed();
+          const cellKey = jupyterInputNode.getKey();
+          const cellSize = jupyterInputNode.getChildrenSize();
+
+          // Selection is considered "entire cell" if it spans from offset 0 to childrenSize
+          // We need to check if selection covers the full range, regardless of anchor/focus order
+          let selectionCoversEntireCell = false;
+
+          if (!isCollapsed) {
+            // Get the anchor and focus nodes
+            const anchorNode = selection.anchor.getNode();
+            const focusNode = selection.focus.getNode();
+
+            // Check if both anchor and focus are within or at the jupyter input node
+            const anchorInCell =
+              anchorNode.getKey() === cellKey ||
+              anchorNode.getParent()?.getKey() === cellKey;
+            const focusInCell =
+              focusNode.getKey() === cellKey ||
+              focusNode.getParent()?.getKey() === cellKey;
+
+            if (anchorInCell && focusInCell) {
+              // Get text content to check if entire cell is selected
+              const selectedText = selection.getTextContent();
+              const cellText = jupyterInputNode.getTextContent();
+              selectionCoversEntireCell = selectedText === cellText;
+            }
+          }
+
+          console.warn('[SELECT_ALL] Check:', {
+            isCollapsed,
+            selectionCoversEntireCell,
+            selectedText: selection.getTextContent().substring(0, 50),
+            cellText: jupyterInputNode.getTextContent().substring(0, 50),
+          });
+
+          if (selectionCoversEntireCell) {
+            // Second Cmd+A: Select ENTIRE document
+            console.warn(
+              '[SELECT_ALL] Second press - selecting entire document',
+            );
+            const root = $getRoot();
+            const rangeSelection = $createRangeSelection();
+            rangeSelection.anchor.set(root.getKey(), 0, 'element');
+            rangeSelection.focus.set(
+              root.getKey(),
+              root.getChildrenSize(),
+              'element',
+            );
+            $setSelection(rangeSelection);
+            return true;
+          } else {
+            // First Cmd+A: Select all content within current cell
+            console.warn('[SELECT_ALL] First press - selecting current cell');
+            const rangeSelection = $createRangeSelection();
+            rangeSelection.anchor.set(jupyterInputNode.getKey(), 0, 'element');
+            rangeSelection.focus.set(
+              jupyterInputNode.getKey(),
+              cellSize,
+              'element',
+            );
+            $setSelection(rangeSelection);
+            return true;
+          }
         }
 
         return false; // Allow default select-all if not in Jupyter cell
