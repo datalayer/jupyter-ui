@@ -13,3 +13,4 @@ export * from './JupyterInputNode';
 export * from './JupyterOutputNode';
 export * from './JupyterCellNode';
 export * from './YouTubeNode';
+export * from './InlineCompletionNode';
