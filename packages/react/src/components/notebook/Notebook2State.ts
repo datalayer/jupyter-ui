@@ -37,6 +37,7 @@ export type Notebook2State = INotebooks2State & {
   changeCellType: (mutation: CellMutation) => void;
   undo: (id: string) => void;
   redo: (id: string) => void;
+  clearAllOutputs: (id: string) => void;
   reset: () => void;
 };
 
@@ -124,6 +125,23 @@ export const notebookStore2 = createStore<Notebook2State>((set, get) => ({
       return;
     }
     notebook.adapter.redo();
+  },
+  clearAllOutputs: (id: string): void => {
+    // Clear all outputs from all cells in the notebook
+    const notebook = get().notebooks.get(id);
+    if (!notebook) {
+      console.warn(
+        `[Notebook2State] Cannot clear outputs: notebook with id "${id}" not found`
+      );
+      return;
+    }
+    if (!notebook.adapter) {
+      console.warn(
+        `[Notebook2State] Cannot clear outputs: adapter not available for notebook "${id}"`
+      );
+      return;
+    }
+    notebook.adapter.clearAllOutputs();
   },
   reset: () =>
     set((state: Notebook2State) => ({

@@ -79,6 +79,11 @@ export interface INotebook2Props {
    */
   serviceManager: ServiceManager.IManager;
   /**
+   * Service manager version - increment to force kernel recreation.
+   * Used when switching between service managers of the same type.
+   */
+  serviceManagerVersion?: number;
+  /**
    * Whether to start a default kernel or not.
    */
   startDefaultKernel?: boolean;
@@ -158,6 +163,7 @@ export function Notebook2(
     requestedKernelId: props.kernelId,
     kernels: serviceManager.kernels,
     startDefaultKernel,
+    serviceManagerVersion: props.serviceManagerVersion,
   });
 
   const model = useNotebookModel({

@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import type { ISessionContext } from '@jupyterlab/apputils';
 import type { Cell, CodeCell, ICellModel } from '@jupyterlab/cells';
 import { type IEditorServices } from '@jupyterlab/codeeditor';
@@ -172,12 +172,6 @@ export interface INotebook2BaseProps {
  * This component is not connected to any React stores.
  */
 export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
-  console.log('[Notebook2Base] Component rendering with props:', {
-    hasInlineProviders: !!props.inlineProviders,
-    inlineProvidersCount: props.inlineProviders?.length,
-    inlineProviders: props.inlineProviders,
-  });
-
   const {
     commands,
     extensions = DEFAULT_EXTENSIONS,
@@ -195,7 +189,24 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
   const [completer, setCompleter] = useState<CompletionHandler | null>(null);
   const [adapter, setAdapter] = useState<Notebook2Adapter | null>(null);
 
+  // Ref to store panel so kernelChanged handler can access it
+  const panelRef = useRef<NotebookPanel | null>(null);
+
+  // Ref to prevent concurrent changeKernel calls
+
   const id = useMemo(() => props.id || newUuid(), [props.id]);
+
+  // Create a stable key based on the inline providers to prevent unnecessary re-renders
+  // This ensures the useEffect only runs when the actual providers change, not just the array reference
+  const inlineProvidersKey = useMemo(() => {
+    if (!props.inlineProviders || props.inlineProviders.length === 0) {
+      return '';
+    }
+    return props.inlineProviders
+      .map(p => p.identifier)
+      .sort()
+      .join(',');
+  }, [props.inlineProviders]);
   const path = useMemo(
     () => props.path || FALLBACK_NOTEBOOK_PATH,
     [props.path]
@@ -213,20 +224,12 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
   );
 
   useEffect(() => {
-    console.log(
-      '[Notebook2Base] Setting up completer with inlineProviders:',
-      props.inlineProviders
-    );
     const completer = new Completer({ model: new CompleterModel() });
     // Dummy widget to initialize
     const widget = new Widget();
 
     const inlineProvidersSettings = generateInlineProviderSettings(
       props.inlineProviders
-    );
-    console.log(
-      '[Notebook2Base] Generated settings for providers:',
-      inlineProvidersSettings
     );
 
     const reconciliator = new ProviderReconciliator({
@@ -352,7 +355,8 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
       }
       widget.dispose();
     };
-  }, [props.inlineProviders]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inlineProvidersKey]); // Using key instead of props.inlineProviders to prevent infinite re-renders
 
   // Widget factory.
   const [widgetFactory, setWidgetFactory] =
@@ -427,7 +431,8 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
       // Initialization must not trigger revert in case we set up the model content
       path !== FALLBACK_NOTEBOOK_PATH ? path : undefined,
       onSessionConnection,
-      !serviceManager
+      !serviceManager,
+      panelRef
     );
     setContext(thisContext);
     return () => {
@@ -437,13 +442,107 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
     };
   }, [id, serviceManager, model, onSessionConnection, path]);
 
+  // Update kernel preference when kernelId changes
+  // This must happen BEFORE changeKernel so that session.initialize() can find the kernel
+  useEffect(() => {
+    if (context && kernelId) {
+      console.log(
+        `[Notebook2Base] Setting kernelPreference.id to: ${kernelId}`
+      );
+      context.sessionContext.kernelPreference = {
+        ...context.sessionContext.kernelPreference,
+        id: kernelId,
+      };
+    }
+  }, [context, kernelId]);
+
   // Set kernel
   useEffect(() => {
-    if (context && kernelId && !context.sessionContext.isDisposed) {
-      context.sessionContext.changeKernel({ id: kernelId }).catch(reason => {
+    console.log('[Notebook2Base] changeKernel useEffect triggered', {
+      hasContext: !!context,
+      kernelId,
+      isDisposed: context?.sessionContext?.isDisposed,
+      currentKernelId: context?.sessionContext?.session?.kernel?.id,
+      isReady: (context as any)?._isReady,
+    });
+
+    if (!context || !kernelId || context.sessionContext.isDisposed) {
+      console.log('[Notebook2Base] Skipping changeKernel:', {
+        reason: !context
+          ? 'no context'
+          : !kernelId
+            ? 'no kernelId'
+            : 'context is disposed',
+      });
+      return;
+    }
+
+    // Wait for context to be ready (session initialized)
+    if (!(context as any)._isReady) {
+      console.log(
+        '[Notebook2Base] Skipping changeKernel: context not ready yet'
+      );
+      return;
+    }
+
+    // Check if kernel is already the current one
+    if (context.sessionContext.session?.kernel?.id === kernelId) {
+      console.log(
+        `[Notebook2Base] Kernel already set to: ${kernelId}, skipping changeKernel`
+      );
+      return;
+    }
+
+    console.log(`[Notebook2Base] Calling changeKernel to: ${kernelId}`);
+
+    // Strategy: Try changeKernel first. If it fails (returns false), restart session.
+    // This happens when switching service managers - the kernel exists in a different
+    // kernel manager than the one the session was created with.
+    context.sessionContext
+      .changeKernel({ id: kernelId })
+      .then(() => {
+        const newKernelId = context.sessionContext.session?.kernel?.id;
+        const success = newKernelId === kernelId;
+
+        console.log(`[Notebook2Base] changeKernel COMPLETED to: ${kernelId}`, {
+          actualKernelId: newKernelId,
+          success,
+          hasPanel: !!panelRef.current,
+          cellCount: panelRef.current?.content?.widgets?.length,
+        });
+
+        // If kernel didn't change, it means the kernel manager changed
+        // Need to restart the session with the new manager
+        if (!success) {
+          console.warn(
+            `[Notebook2Base] changeKernel failed (kernel manager mismatch), restarting session...`
+          );
+
+          // Shut down current session and restart with new kernel
+          return context.sessionContext.shutdown().then(() => {
+            console.log(
+              `[Notebook2Base] Session shutdown complete, initializing with kernel ${kernelId}`
+            );
+            return context.sessionContext.initialize().then(() => {
+              console.log(
+                `[Notebook2Base] Session initialized, changing to kernel ${kernelId}`
+              );
+              return context.sessionContext.changeKernel({ id: kernelId });
+            });
+          });
+        }
+      })
+      .then(() => {
+        const finalKernelId = context.sessionContext.session?.kernel?.id;
+        console.log(`[Notebook2Base] Final kernel after restart:`, {
+          kernelId: finalKernelId,
+          expected: kernelId,
+          success: finalKernelId === kernelId,
+        });
+      })
+      .catch(reason => {
         console.error('Failed to change kernel model.', reason);
       });
-    }
   }, [context, kernelId]);
 
   // Notebook
@@ -506,6 +605,7 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
       }
     }
     setPanel(thisPanel);
+    panelRef.current = thisPanel; // Update ref for kernelChanged handler
     if (!thisPanel) {
       setExtensionComponents([]);
       setAdapter(null);
@@ -528,6 +628,7 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
       }
       setPanel(panel => (panel === thisPanel ? null : panel));
       setAdapter(adapter => (adapter === thisAdapter ? null : adapter));
+      panelRef.current = null; // Clear ref
     };
   }, [context, extensions, features.commands, widgetFactory]);
 
@@ -657,7 +758,7 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
           panel?.content.activeCellChanged.disconnect(onActiveCellChanged);
         }
         if (onSessionChanged) {
-          panel?.context.sessionContext.sessionChanged.connect(
+          panel?.context.sessionContext.sessionChanged.disconnect(
             onSessionChanged
           );
         }
@@ -676,7 +777,8 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
         });
       }
     };
-  }, [completer, panel, tracker]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [completer, panel, tracker, id, inlineProvidersKey]); // Using inlineProvidersKey instead of props.inlineProviders
 
   useEffect(() => {
     const onKeyDown = (event: any) => {
@@ -761,10 +863,24 @@ export function useKernelId(
          * Default: false
          */
         startDefaultKernel?: boolean;
+        /**
+         * Service manager version - increment to force kernel recreation.
+         * Used when switching between service managers of the same type.
+         */
+        serviceManagerVersion?: number;
       }
     | undefined = {}
 ): string | undefined {
-  const { kernels, requestedKernelId, startDefaultKernel = false } = options;
+  const {
+    kernels,
+    requestedKernelId,
+    startDefaultKernel = false,
+    serviceManagerVersion,
+  } = options;
+
+  // Track which kernels are in use (should NOT be shut down)
+  // Key: kernel ID, Value: true if kernel is active/in-use
+  const kernelsInUse = useRef<Set<string>>(new Set());
 
   // Define the kernel to be used.
   // - Check the provided kernel id exists
@@ -773,54 +889,88 @@ export function useKernelId(
   useEffect(() => {
     let isMounted = true;
     let connection: Kernel.IKernelConnection | undefined;
+
+    console.warn(
+      `[useKernelId] Effect triggered: {hasKernels: ${!!kernels}, requestedKernelId: ${requestedKernelId}, startDefaultKernel: ${startDefaultKernel}}`
+    );
+
+    // Reset kernel ID when kernels manager changes
+    // This ensures we start fresh with a new service manager
+    setKernelId(undefined);
+
     if (kernels) {
       (async () => {
         let newKernelId: string | undefined;
         await kernels.ready;
+        console.warn(`[useKernelId] Kernels ready, checking for kernel...`);
+
         if (requestedKernelId) {
           for (const model of kernels.running()) {
             if (model.id === requestedKernelId) {
               newKernelId = requestedKernelId;
+              console.warn(
+                `[useKernelId] Found requested kernel: ${requestedKernelId}`
+              );
               break;
             }
           }
         }
 
         if (!newKernelId && startDefaultKernel && isMounted) {
-          console.log('Starting new kernel.');
+          console.warn('[useKernelId] Creating new kernel...');
           connection = await kernels.startNew();
           if (isMounted) {
             newKernelId = connection.id;
+            console.warn(`[useKernelId] Kernel created: ${newKernelId}`);
           } else {
+            console.warn('[useKernelId] Component unmounted, disposing kernel');
             connection.dispose();
           }
+        } else {
+          console.warn(
+            `[useKernelId] Not creating kernel: {hasNewKernelId: ${!!newKernelId}, startDefaultKernel: ${startDefaultKernel}, isMounted: ${isMounted}}`
+          );
         }
 
-        if (isMounted) {
+        if (isMounted && newKernelId) {
           setKernelId(newKernelId);
+          // Mark this kernel as in-use so cleanup doesn't shut it down
+          kernelsInUse.current.add(newKernelId);
+          console.warn(`[useKernelId] Kernel ${newKernelId} marked as IN-USE`);
         }
       })();
+    } else {
+      console.warn('[useKernelId] No kernels manager available');
     }
 
     return () => {
       isMounted = false;
       if (connection) {
-        // A new kernel was started
-        console.log(`Shutting down kernel '${connection.id}'.`);
-        connection
-          .shutdown()
-          .catch(reason => {
-            console.warn(
-              `Failed to shutdown kernel '${connection?.id}'.`,
-              reason
-            );
-          })
-          .finally(() => {
-            connection?.dispose();
-          });
+        const isInUse = kernelsInUse.current.has(connection.id);
+        if (!isInUse) {
+          // Only shutdown kernels that were created but never used
+          console.log(
+            `[useKernelId] Shutting down unused kernel '${connection.id}'.`
+          );
+          connection
+            .shutdown()
+            .catch(reason => {
+              console.warn(
+                `Failed to shutdown kernel '${connection?.id}'.`,
+                reason
+              );
+            })
+            .finally(() => {
+              connection?.dispose();
+            });
+        } else {
+          console.log(
+            `[useKernelId] NOT shutting down kernel '${connection.id}' - it's IN-USE`
+          );
+        }
       }
     };
-  }, [kernels, requestedKernelId, startDefaultKernel]);
+  }, [kernels, requestedKernelId, startDefaultKernel, serviceManagerVersion]);
 
   return kernelId;
 }
@@ -1153,7 +1303,8 @@ function initializeContext(
   id: string,
   path?: string,
   onSessionConnection?: OnSessionConnection,
-  serverLess: boolean = false
+  serverLess: boolean = false,
+  panelRef?: React.MutableRefObject<NotebookPanel | null>
 ) {
   const shuntContentManager = path ? false : true;
 
@@ -1292,6 +1443,47 @@ function initializeContext(
           kernelConnection.handleComms
         );
         (kernelConnection as any).handleComms = true;
+      }
+
+      // CRITICAL: Update all cell widgets when kernel changes
+      // This ensures CodeCell widgets pick up the new kernel instead of keeping stale references
+      const panel = panelRef?.current;
+      if (!panel || !kernelConnection) {
+        console.log(
+          '[initializeContext] Kernel changed but skipping cell update',
+          {
+            hasPanel: !!panel,
+            hasNewKernel: !!kernelConnection,
+          }
+        );
+        return;
+      }
+
+      console.log(
+        '[initializeContext] Kernel changed, updating all cell widgets',
+        {
+          newKernelId: kernelConnection.id,
+          cellCount: panel.content.widgets.length,
+        }
+      );
+
+      // Update the session in all cell output areas to use the new kernel
+      for (const cell of panel.content.widgets) {
+        if (cell.model.type === 'code') {
+          const codeCell = cell as CodeCell;
+          if (codeCell.outputArea) {
+            console.log(
+              `[initializeContext] Updating kernel reference for cell ${cell.model.id}`
+            );
+            // Clear the cached future so next execution fetches fresh kernel from session
+            (codeCell.outputArea as any)._future = null;
+            // CRITICAL: Update the session reference in the output area
+            if (context.sessionContext.session) {
+              (codeCell.outputArea as any).sessionContext =
+                context.sessionContext;
+            }
+          }
+        }
       }
     }
   );
