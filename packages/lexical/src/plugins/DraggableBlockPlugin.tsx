@@ -175,6 +175,54 @@ function isOnMenu(element: HTMLElement): boolean {
   return !!element.closest(`.${DRAGGABLE_BLOCK_MENU_CLASSNAME}`);
 }
 
+/**
+ * Helper function to find the scrolling container and get scroll offsets.
+ * Checks if the element itself has scrollable overflow, then checks parent.
+ */
+function getScrollingContainer(elem: HTMLElement): {
+  element: HTMLElement;
+  scrollTop: number;
+  scrollLeft: number;
+} {
+  // Check if the element itself is scrollable
+  const style = window.getComputedStyle(elem);
+  const hasScrollY = style.overflowY === 'auto' || style.overflowY === 'scroll';
+  const hasScrollX = style.overflowX === 'auto' || style.overflowX === 'scroll';
+
+  if (hasScrollY || hasScrollX) {
+    return {
+      element: elem,
+      scrollTop: elem.scrollTop || 0,
+      scrollLeft: elem.scrollLeft || 0,
+    };
+  }
+
+  // Check parent element
+  const parent = elem.parentElement;
+  if (parent) {
+    const parentStyle = window.getComputedStyle(parent);
+    const parentHasScrollY =
+      parentStyle.overflowY === 'auto' || parentStyle.overflowY === 'scroll';
+    const parentHasScrollX =
+      parentStyle.overflowX === 'auto' || parentStyle.overflowX === 'scroll';
+
+    if (parentHasScrollY || parentHasScrollX) {
+      return {
+        element: parent,
+        scrollTop: parent.scrollTop || 0,
+        scrollLeft: parent.scrollLeft || 0,
+      };
+    }
+  }
+
+  // No scrolling container found
+  return {
+    element: elem,
+    scrollTop: 0,
+    scrollLeft: 0,
+  };
+}
+
 function setMenuPosition(
   targetElem: HTMLElement | null,
   floatingElem: HTMLElement,
@@ -191,11 +239,12 @@ function setMenuPosition(
   const floatingElemRect = floatingElem.getBoundingClientRect();
   const anchorElementRect = anchorElem.getBoundingClientRect();
 
-  const top =
-    targetRect.top +
-    (parseInt(targetStyle.lineHeight, 10) - floatingElemRect.height) / 2 -
-    anchorElementRect.top;
+  const { scrollTop } = getScrollingContainer(anchorElem);
 
+  // Calculate position with scroll compensation
+  const lineHeight = parseInt(targetStyle.lineHeight, 10);
+  const topOffset = (lineHeight - floatingElemRect.height) / 2;
+  const top = targetRect.top + topOffset - anchorElementRect.top + scrollTop;
   const left = SPACE;
 
   floatingElem.style.opacity = '1';
@@ -228,6 +277,9 @@ function setTargetLine(
   const { top: anchorTop, width: anchorWidth } =
     anchorElem.getBoundingClientRect();
   const { marginTop, marginBottom } = getCollapsedMargins(targetBlockElem);
+
+  const { scrollTop } = getScrollingContainer(anchorElem);
+
   let lineTop = targetBlockElemTop;
   if (mouseY >= targetBlockElemTop) {
     lineTop += targetBlockElemHeight + marginBottom / 2;
@@ -235,7 +287,7 @@ function setTargetLine(
     lineTop -= marginTop / 2;
   }
 
-  const top = lineTop - anchorTop - TARGET_LINE_HALF_HEIGHT;
+  const top = lineTop - anchorTop - TARGET_LINE_HALF_HEIGHT + scrollTop;
   const left = TEXT_BOX_HORIZONTAL_PADDING - SPACE;
 
   targetLineElem.style.transform = `translate(${left}px, ${top}px)`;
@@ -257,19 +309,27 @@ function useDraggableBlockMenu(
   anchorElem: HTMLElement,
   isEditable: boolean,
 ): JSX.Element {
-  const scrollerElem = anchorElem.parentElement;
-
   const menuRef = useRef<HTMLDivElement>(null);
   const targetLineRef = useRef<HTMLDivElement>(null);
   const isDraggingBlockRef = useRef<boolean>(false);
   const [draggableBlockElem, setDraggableBlockElem] =
     useState<HTMLElement | null>(null);
 
+  // Get theme classes from editor config
+  const theme = editor._config.theme;
+  const menuThemeClass = theme.draggableBlockMenu || '';
+  const targetLineThemeClass = theme.draggableBlockTargetLine || '';
+
   useEffect(() => {
     function onMouseMove(event: MouseEvent) {
       const target = event.target;
       if (!isHTMLElement(target)) {
         setDraggableBlockElem(null);
+        return;
+      }
+
+      // Performance optimization: Early exit if mouse is outside editor area
+      if (!anchorElem.contains(target)) {
         return;
       }
 
@@ -286,14 +346,17 @@ function useDraggableBlockMenu(
       setDraggableBlockElem(null);
     }
 
-    scrollerElem?.addEventListener('mousemove', onMouseMove);
-    scrollerElem?.addEventListener('mouseleave', onMouseLeave);
+    // BUGFIX: Attach to document instead of scrollerElem to ensure mouse events
+    // work even after scrolling. The scrollerElem approach fails when content scrolls
+    // because the mouse event coordinates become misaligned with element positions.
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseleave', onMouseLeave);
 
     return () => {
-      scrollerElem?.removeEventListener('mousemove', onMouseMove);
-      scrollerElem?.removeEventListener('mouseleave', onMouseLeave);
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseleave', onMouseLeave);
     };
-  }, [scrollerElem, anchorElem, editor]);
+  }, [anchorElem, editor]);
 
   useEffect(() => {
     if (menuRef.current) {
@@ -412,7 +475,7 @@ function useDraggableBlockMenu(
   return createPortal(
     <>
       <div
-        className="icon draggable-block-menu"
+        className={`icon draggable-block-menu ${menuThemeClass}`}
         ref={menuRef}
         draggable
         onDragStart={onDragStart}
@@ -420,7 +483,10 @@ function useDraggableBlockMenu(
       >
         <div className={isEditable ? 'icon' : ''} />
       </div>
-      <div className="draggable-block-target-line" ref={targetLineRef} />
+      <div
+        className={`draggable-block-target-line ${targetLineThemeClass}`}
+        ref={targetLineRef}
+      />
     </>,
     anchorElem,
   );
