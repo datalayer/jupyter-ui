@@ -18,8 +18,11 @@
 .draggable-block-menu .icon {
   width: 16px;
   height: 16px;
-  opacity: 0.3;
+  opacity: 0.4;
   background-image: url(./icons/draggable-block-menu.svg);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .draggable-block-menu:active {
@@ -27,7 +30,12 @@
 }
 
 .draggable-block-menu:hover {
-  background-color: #efefef;
+  background-color: rgba(128, 128, 128, 0.1);
+  opacity: 1;
+}
+
+.draggable-block-menu:hover .icon {
+  opacity: 0.8;
 }
 
 .draggable-block-target-line {
