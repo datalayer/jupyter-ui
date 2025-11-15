@@ -132,8 +132,8 @@ export function CellSidebarButton(props: ICellSidebarProps): JSX.Element {
       <IconButton
         size="small"
         color="secondary"
-        aria-label="Add code cell above"
-        title="Add code cell above"
+        aria-label="Add code cell below"
+        title="Add code cell below"
         onClick={e => {
           e.preventDefault();
           commands.execute(NotebookCommandIds.insertBelow).catch(reason => {
