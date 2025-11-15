@@ -135,8 +135,8 @@ export const CellToolbarComponent = (props: ICellToolbarComponentProps) => {
         <IconButton
           size="small"
           color="secondary"
-          aria-label="Add code cell above"
-          title="Add code cell above"
+          aria-label="Add code cell below"
+          title="Add code cell below"
           onClick={e => {
             e.preventDefault();
             notebookStore.insertBelow({
