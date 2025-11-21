@@ -24,6 +24,10 @@ coverage
 typedoc
 storybook-static
 
+# Generated documentation
+packages/lexical/docs/
+packages/react/docs/
+
 **/*.vsix
 
 *.exclude.*

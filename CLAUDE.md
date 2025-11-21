@@ -64,3 +64,70 @@ const provider = new JupyterCollaborationProvider({
 - Use npm, not yarn
 - Prefer editing over creating files
 - Run checks after changes: `npm run check:fix`
+
+## Critical: Package Loading Side Effects (November 2024)
+
+### Problem: Lumino Widget Initialization Crash
+
+**Background:**
+The `@datalayer/jupyter-lexical` package includes Jupyter output nodes (`JupyterOutputNode`, `JupyterCellNode`) that create Lumino widgets during module initialization. When this package is imported, it immediately initializes these widgets.
+
+**Issue:**
+If lexical is imported in contexts where it's not needed (e.g., notebook-only tools), the Lumino widget initialization runs prematurely and crashes with:
+
+```text
+Cannot set properties of undefined (setting 'class-name')
+```
+
+**Root Cause:**
+
+- `packages/lexical/src/index.ts` exports `./plugins` and `./nodes`
+- These modules create Lumino `OutputArea` widgets on load
+- If DOM isn't ready or initialization order is wrong → crash
+
+### Solution: Lazy Loading Pattern
+
+**DO:**
+
+- Import lexical **only when actually needed** for lexical editing
+- Separate imports by use case (notebook vs lexical)
+- Use dynamic imports for optional features
+
+**DON'T:**
+
+- Import lexical in notebook-only code
+- Create combined adapters that import both `@datalayer/jupyter-react` and `@datalayer/jupyter-lexical`
+- Mix package imports unless both are actively needed
+
+### Example: ag-ui Adapter Fix
+
+The `@datalayer/core` package had a combined hooks file that imported both packages:
+
+```typescript
+// ❌ BAD - Causes crash when only notebook tools are needed
+import { ... } from '@datalayer/jupyter-lexical';
+import { ... } from '@datalayer/jupyter-react';
+```
+
+**Fixed by splitting into separate files:**
+
+```typescript
+// ✅ GOOD - notebookHooks.tsx (notebook only)
+import { ... } from '@datalayer/jupyter-react';
+
+// ✅ GOOD - lexicalHooks.tsx (lexical only)
+import { ... } from '@datalayer/jupyter-lexical';
+```
+
+This ensures lexical code only loads when lexical editing is actually used.
+
+### Testing After Changes
+
+If you modify lexical or react packages, test that:
+
+1. **Notebook-only code** doesn't trigger lexical loading
+2. **Lexical code** loads correctly when needed
+3. **No crashes** during module initialization
+4. **Bundle size** doesn't include unused packages
+
+Check consuming packages (like `@datalayer/core`) to ensure they use proper separation patterns.

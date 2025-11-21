@@ -51,16 +51,12 @@ const Notebook2Example = () => {
         <ActionBar.IconButton
           icon={ChevronUpIcon}
           aria-label="Insert Code"
-          onClick={() =>
-            runStore2.insertAbove({ id: NOTEBOOK_ID, cellType: 'code' })
-          }
+          onClick={() => runStore2.insertAbove(NOTEBOOK_ID, 'code')}
         ></ActionBar.IconButton>
         <ActionBar.IconButton
           icon={ChevronDownIcon}
           aria-label="Insert Code"
-          onClick={() =>
-            runStore2.insertBelow({ id: NOTEBOOK_ID, cellType: 'code' })
-          }
+          onClick={() => runStore2.insertBelow(NOTEBOOK_ID, 'code')}
         ></ActionBar.IconButton>
       </ActionBar>
       <JupyterReactTheme>

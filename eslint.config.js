@@ -163,6 +163,9 @@ module.exports = tseslint.config(
       '**/empty-shim.js',
       'packages/ipyreactive/**',
       'packages/ipyscript/**',
+      // Generated documentation
+      'packages/lexical/docs/**',
+      'packages/react/docs/**',
     ],
   },
 );

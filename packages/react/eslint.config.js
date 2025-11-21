@@ -37,6 +37,7 @@ export default tseslint.config(
       '**/*.min.js',
       '**/storybook-static/**',
       '**/.next/**',
+      '**/typedoc/**',
       'tsconfig.tsbuildinfo',
       '*.config.js',
       'scripts/**/*.js',
