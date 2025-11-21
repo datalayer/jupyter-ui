@@ -1,0 +1,6 @@
+lib
+dist
+build
+typedoc
+node_modules
+*.d.ts
