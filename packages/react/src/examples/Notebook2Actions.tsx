@@ -52,14 +52,14 @@ const Notebook2Example = () => {
           icon={ChevronUpIcon}
           aria-label="Insert Code"
           onClick={() =>
-            runStore2.insertAbove({ id: NOTEBOOK_ID, cellType: 'code' })
+            runStore2.insertAbove({ id: NOTEBOOK_ID, type: 'code' })
           }
         ></ActionBar.IconButton>
         <ActionBar.IconButton
           icon={ChevronDownIcon}
           aria-label="Insert Code"
           onClick={() =>
-            runStore2.insertBelow({ id: NOTEBOOK_ID, cellType: 'code' })
+            runStore2.insertBelow({ id: NOTEBOOK_ID, type: 'code' })
           }
         ></ActionBar.IconButton>
       </ActionBar>
