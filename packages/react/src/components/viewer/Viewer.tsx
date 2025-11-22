@@ -10,7 +10,7 @@ import InputViewer from './input/InputViewer';
 // import OutputViewer from './output/OutputViewer';
 import { newUuid } from '../../utils/Utils';
 
-type IViewerProps = {
+export type IViewerProps = {
   nbformat?: INotebookContent;
   nbformatUrl?: string;
   outputs: boolean;

@@ -14,12 +14,12 @@ import { RestartIcon } from '@datalayer/icons-react';
 import OutputAdapter from '../output/OutputAdapter';
 import Kernel from '../../jupyter/kernel/Kernel';
 
-type Props = {
+export type KernelActionMenuProps = {
   kernel?: Kernel;
   outputAdapter?: OutputAdapter;
 };
 
-export const KernelActionMenu = (props: Props) => {
+export const KernelActionMenu = (props: KernelActionMenuProps) => {
   const { kernel, outputAdapter } = props;
   return (
     <ActionMenu>

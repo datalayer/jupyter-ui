@@ -52,7 +52,10 @@ const FILTER_BUTTON_CLASS = 'filter-button';
 const FILTER_LIST_CLASS = 'filter-list';
 const FILTERED_BUTTON_CLASS = 'filtered-variable-button';
 
-type FILTER_TYPES = 'type' | 'name';
+/**
+ * Valid filter types for the variable inspector.
+ */
+export type FILTER_TYPES = 'type' | 'name';
 
 /**
  * A panel that renders the variables

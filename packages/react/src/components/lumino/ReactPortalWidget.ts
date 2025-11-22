@@ -11,7 +11,7 @@ import { Message, MessageLoop } from '@lumino/messaging';
 import { ISignal, Signal } from '@lumino/signaling';
 import { Widget } from '@lumino/widgets';
 
-type ReactRenderElement =
+export type ReactRenderElement =
   | Array<React.ReactElement<any>>
   | React.ReactElement<any>;
 

@@ -122,7 +122,7 @@ class CellSidebarFactory implements IDisposable {
   }
 }
 
-type ICellSidebarExtensionOptions = {
+export type ICellSidebarExtensionOptions = {
   commands?: CommandRegistry;
   factory?: React.JSXElementConstructor<ICellSidebarProps>;
   nbgrader?: boolean;
@@ -144,9 +144,7 @@ export class CellSidebarExtension implements NotebookExtension {
   /**
    * Constructor
    *
-   * @param commands Command registry
-   * @param factory Cell sidebar React component factory
-   * @param nbgrader Whether to activate nbgrader feature or not.
+   * @param options Cell sidebar extension options
    */
   constructor(options: ICellSidebarExtensionOptions = {}) {
     this.factory = options.factory ?? CellSidebar;

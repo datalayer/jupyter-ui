@@ -13,15 +13,31 @@ import {
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import type { ISharedNotebook } from '@jupyter/ydoc';
 
+/**
+ * Custom notebook model factory for Jupyter React.
+ */
 export class JupyterReactNotebookModelFactory extends NotebookModelFactory {
   private _nbformat?: INotebookContent;
   private _readonly: boolean;
 
-  /** @override */
+  /**
+   * Construct a new Jupyter React notebook model factory.
+   * @param options - The model factory options
+   */
   constructor(options: DatalayerNotebookModelFactory.IOptions) {
     super(options);
     this._nbformat = options.nbformat;
     this._readonly = options.readonly;
+  }
+
+  /** @inheritDoc */
+  override get disableDocumentWideUndoRedo(): boolean {
+    return super.disableDocumentWideUndoRedo;
+  }
+
+  /** @inheritDoc */
+  override set disableDocumentWideUndoRedo(value: boolean) {
+    super.disableDocumentWideUndoRedo = value;
   }
 
   /** @override */
@@ -43,10 +59,27 @@ export class JupyterReactNotebookModelFactory extends NotebookModelFactory {
   }
 }
 
+/**
+ * Namespace for Datalayer notebook model factory.
+ */
 export declare namespace DatalayerNotebookModelFactory {
+  /**
+   * Options for creating a Datalayer notebook model factory.
+   */
   interface IOptions extends NotebookModelFactory.IOptions {
+    /**
+     * Initial notebook content in nbformat.
+     */
     nbformat?: INotebookContent;
+    /**
+     * Whether the notebook should be readonly.
+     */
     readonly: boolean;
+    /**
+     * Defines if the document can be undo/redo.
+     * @alpha
+     */
+    disableDocumentWideUndoRedo?: boolean;
   }
 }
 

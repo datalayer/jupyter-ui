@@ -1,5 +1,18 @@
 {
   "entryPoints": ["./src/index.ts"],
   "out": "typedoc",
-  "exclude": ["src/examples"]
+  "exclude": ["src/examples"],
+  "treatWarningsAsErrors": true,
+  "externalSymbolLinkMappings": {
+    "@lumino/widgets": {
+      "Widget.Flag.IsVisible": "https://lumino.readthedocs.io/en/latest/api/modules/widgets.html#widget"
+    },
+    "@types/react": {
+      "React.Component.render": "https://react.dev/reference/react/Component#render",
+      "React.Component.setState": "https://react.dev/reference/react/Component#setstate",
+      "React.NewLifecycle.getSnapshotBeforeUpdate": "https://react.dev/reference/react/Component#getsnapshotbeforeupdate",
+      "React.StaticLifecycle.getDerivedStateFromProps": "https://react.dev/reference/react/Component#static-getderivedstatefromprops",
+      "React.ComponentLifecycle.componentDidMount": "https://react.dev/reference/react/Component#componentdidmount"
+    }
+  }
 }

@@ -14,7 +14,7 @@ import { IModel } from '@jupyterlab/services/lib/kernel/kernel';
 import { ISpecModel } from '@jupyterlab/services/lib/kernelspec/kernelspec';
 import { useJupyter } from '../../jupyter/JupyterContext';
 
-type Props = {
+export type KernelSelectorProps = {
   selectKernel: (kernelModel: IModel) => void;
   selectKernelSpec: (kernelSpecModel: ISpecModel) => void;
 };
@@ -25,7 +25,7 @@ type KernelSpecs =
     }
   | undefined;
 
-export const KernelSelector = (props: Props) => {
+export const KernelSelector = (props: KernelSelectorProps) => {
   const { selectKernel, selectKernelSpec } = props;
   const { serviceManager } = useJupyter();
   const [kernels, setKernels] = useState<IModel[]>();

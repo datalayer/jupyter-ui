@@ -8,7 +8,7 @@ import { useRef, useEffect } from 'react';
 import { Widget, BoxPanel } from '@lumino/widgets';
 import { Box } from '@primer/react';
 
-type LuminoBoxProps = {
+export type LuminoBoxProps = {
   id?: string;
   height: number | string;
   children: Widget;

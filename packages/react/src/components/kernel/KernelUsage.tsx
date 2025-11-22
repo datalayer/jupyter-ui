@@ -71,11 +71,11 @@ print(f"""{{
   "host_virtual_memory": {str(host_virtual_memory)}
 }}""")
 `;
-type Props = {
+export type KernelUsageProps = {
   kernel?: Kernel;
 };
 
-export const KernelUsage = (props: Props) => {
+export const KernelUsage = (props: KernelUsageProps) => {
   const { kernel } = props;
   const [usage, setUsage] = useState({});
   const [virtualMemoryTotal, setVirtualMemoryTotal] = useState<number>();

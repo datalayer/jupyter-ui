@@ -83,6 +83,15 @@ export class HTMLManager extends ManagerBase {
   }
 
   /**
+   * Filter serialized widget state to remove any ID's already present in manager.
+   * @param serialized_state - Serialized state to filter
+   * @returns A copy of the state, with its 'state' attribute filtered
+   */
+  protected filterExistingModelState(serialized_state: any): any {
+    return super.filterExistingModelState(serialized_state);
+  }
+
+  /**
    * Placeholder implementation for _get_comm_info.
    */
   _get_comm_info(): Promise<Record<string, unknown>> {

@@ -42,7 +42,7 @@ function* activePlugins(
  *
  * #### Notes
  * The JupyterLiteServer application is a Lumino application without
- * a shell. Its sole purpose is to create a custom {@link import('@jupyterlab/services').ServiceManager.IManager}.
+ * a shell. Its sole purpose is to create a custom ServiceManager.
  *
  * @returns A promise resolving in a jupyterlite server application
  */

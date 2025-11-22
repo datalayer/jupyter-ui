@@ -14,7 +14,7 @@ const ansiConverter = new AnsiToHtml({
   escapeXML: false,
 });
 
-type Props = {
+export type OutputRendererProps = {
   output: IOutput;
 };
 /*
@@ -67,7 +67,7 @@ type Props = {
   ]
 },
 */
-export const OutputRenderer = (props: Props) => {
+export const OutputRenderer = (props: OutputRendererProps) => {
   const { output } = props;
   let plain: string | undefined;
   let html: string | undefined;

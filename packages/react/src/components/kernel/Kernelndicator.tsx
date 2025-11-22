@@ -91,7 +91,7 @@ export const toKernelState = (
   return (connectionStatus + '-' + status) as ExecutionState;
 };
 
-type KernelIndicatorProps = {
+export type KernelIndicatorProps = {
   kernel?: IKernelConnection | null;
   env?: Environment;
 };

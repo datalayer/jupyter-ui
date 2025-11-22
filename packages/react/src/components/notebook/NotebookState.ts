@@ -38,47 +38,47 @@ export interface INotebooksState {
   notebooks: Map<string, INotebookState>;
 }
 
-type NotebookUpdate = {
+export type NotebookUpdate = {
   id: string;
   state: Partial<INotebookState>;
 };
-type NotebookChangeId = {
+export type NotebookChangeId = {
   id: string;
   notebookChange: NotebookChange;
 };
-type NotebookModelId = {
+export type NotebookModelId = {
   id: string;
   notebookModel: INotebookModel;
 };
-type TocModelId = {
+export type TocModelId = {
   id: string;
   tocModel: TableOfContents.Model;
 };
-type CellModelId = {
+export type CellModelId = {
   id: string;
   cellModel?: Cell<ICellModel>;
 };
-type KernelStatusMutation = {
+export type KernelStatusMutation = {
   id: string;
   kernelStatus: JupyterKernel.Status;
 };
-type KernelChangeMutation = {
+export type KernelChangeMutation = {
   id: string;
   kernel: Kernel;
 };
-type ReactPortalsMutation = {
+export type ReactPortalsMutation = {
   id: string;
   portals: ReactPortal[];
 };
-type PortalDisplayMutation = {
+export type PortalDisplayMutation = {
   id: string;
   portalDisplay: PortalDisplay | undefined;
 };
-type DateMutation = {
+export type DateMutation = {
   id: string;
   date: Date | undefined;
 };
-type CellMutation = {
+export type CellMutation = {
   id: string;
   cellType: nbformat.CellType;
   source?: string;

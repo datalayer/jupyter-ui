@@ -13,7 +13,7 @@ import {
 } from '@jupyterlab/services';
 import { Box, Text, Label, Button } from '@primer/react';
 
-type IKernelDetectiveProps = {
+export type IKernelDetectiveProps = {
   serviceManager?: ServiceManager.IManager;
 };
 

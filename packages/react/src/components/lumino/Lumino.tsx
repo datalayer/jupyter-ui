@@ -7,7 +7,7 @@
 import { useRef, useEffect } from 'react';
 import { Widget } from '@lumino/widgets';
 
-type LuminoProps = {
+export type LuminoProps = {
   id?: string;
   height?: string | number;
   children: Widget;

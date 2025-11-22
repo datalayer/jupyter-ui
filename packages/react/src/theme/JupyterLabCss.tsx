@@ -18,7 +18,7 @@ const GlobalStyle = createGlobalStyle<any>`
   }
 `;
 
-type JupyterLabCssProps = {
+export type JupyterLabCssProps = {
   colormode?: Colormode;
 };
 
