@@ -18,13 +18,13 @@ import { NotebookPanel } from '@jupyterlab/notebook';
 import { ServiceManager } from '@jupyterlab/services';
 import { JupyterLabAppProps } from './JupyterLabApp';
 
-type Plugin = JupyterFrontEndPlugin<any, any, any> & {
+export type Plugin = JupyterFrontEndPlugin<any, any, any> & {
   service: any;
 };
 
-type Plugins = Map<string, Plugin>;
+export type Plugins = Map<string, Plugin>;
 
-type Props = JupyterLabAppProps & {
+export type JupyterLabAppAdapterProps = JupyterLabAppProps & {
   serviceManager: ServiceManager.IManager;
   collaborative?: boolean;
 };
@@ -36,7 +36,7 @@ export class JupyterLabAppAdapter {
   private _ready: Promise<void>;
   private _readyResolve: () => void;
 
-  constructor(props: Props, jupyterlab?: JupyterLab) {
+  constructor(props: JupyterLabAppAdapterProps, jupyterlab?: JupyterLab) {
     if (jupyterlab) {
       this._jupyterLab = jupyterlab;
       this._ready = new Promise((resolve, _) => {
@@ -52,7 +52,7 @@ export class JupyterLabAppAdapter {
     this.load(props);
   }
 
-  private async load(props: Props) {
+  private async load(props: JupyterLabAppAdapterProps) {
     const {
       disabledPlugins,
       hostId,

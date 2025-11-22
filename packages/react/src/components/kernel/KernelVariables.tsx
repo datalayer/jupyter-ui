@@ -13,11 +13,11 @@ import {
 } from './variables/variablesinspector';
 import { VariableInspectorPanel } from './variables/widget';
 
-type Props = {
+export type KernelVariablesProps = {
   kernel?: Kernel;
 };
 
-export const KernelVariables = (props: Props) => {
+export const KernelVariables = (props: KernelVariablesProps) => {
   const { kernel } = props;
   const [panel, setPanel] = useState<VariableInspectorPanel>();
   useEffect(() => {

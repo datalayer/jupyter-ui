@@ -23,7 +23,7 @@ import { EditorView } from 'codemirror';
 import OutputAdapter from '../output/OutputAdapter';
 import Kernel from '../../jupyter/kernel/Kernel';
 
-type Props = {
+export type CodeMirrorOutputToolbarProps = {
   editorView?: EditorView;
   codePre?: string;
   kernel: Kernel;
@@ -31,7 +31,7 @@ type Props = {
   executeCode: (editorView?: EditorView, code?: string) => void;
 };
 
-const CodeMirrorOutputToolbarMenu = (props: Props) => {
+const CodeMirrorOutputToolbarMenu = (props: CodeMirrorOutputToolbarProps) => {
   const { executeCode, outputAdapter, editorView } = props;
   return (
     <ActionMenu>
@@ -96,7 +96,9 @@ const KernelStatus: React.FC<{ color: string }> = ({ color }) => (
   />
 );
 
-export const CodeMirrorOutputToolbar = (props: Props) => {
+export const CodeMirrorOutputToolbar = (
+  props: CodeMirrorOutputToolbarProps
+) => {
   const { executeCode, editorView, kernel, codePre } = props;
   const { theme } = useTheme();
   const okColor = useMemo(

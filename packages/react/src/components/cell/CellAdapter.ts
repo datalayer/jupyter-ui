@@ -70,7 +70,7 @@ import getMarked from '../notebook/marked/marked';
 import CellCommands from './CellCommands';
 import { cellsStore } from './CellState';
 
-interface BoxOptions {
+export interface BoxOptions {
   showToolbar?: boolean;
 }
 

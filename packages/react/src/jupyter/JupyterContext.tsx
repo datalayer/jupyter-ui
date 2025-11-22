@@ -36,7 +36,7 @@ export type JupyterPropsType = {
   /**
    * URL to fetch a JupyterLite kernel (i.e. in-browser kernel).
    *
-   * If defined, {@link serverUrls} and {@link defaultKernelName}
+   * If defined, `serverUrls` and `defaultKernelName`
    * will be ignored and the component will run this in-browser
    * kernel.
    *
@@ -117,7 +117,7 @@ export type JupyterContextType = {
    * You can also set it to dynamically import any jupyterlite
    * kernel package.
    *
-   * If defined, {@link serverUrls} and {@link defaultKernelName}
+   * If defined, `serverUrls` and `defaultKernelName`
    * will be ignored and the component will run this in-browser
    * kernel.
    *

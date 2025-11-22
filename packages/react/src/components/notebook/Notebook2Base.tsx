@@ -751,7 +751,7 @@ export function useKernelId(
         /**
          * Kernel ID to connect to
          *
-         * If the kernel does not exist and {@link startDefaultKernel} is `true`,
+         * If the kernel does not exist and `startDefaultKernel` is `true`,
          * another kernel will be started.
          */
         requestedKernelId?: string;
@@ -825,7 +825,7 @@ export function useKernelId(
   return kernelId;
 }
 
-type IOptions = {
+export type IOptions = {
   /**
    * Collaboration provider for the notebook.
    */
@@ -862,9 +862,12 @@ type IOptions = {
  * Hook to handle a notebook model.
  *
  * The notebook content may come from 3 sources:
- * - {@link nbformat}: The notebook content
- * - {@link url}: A URL to fetch the notebook content from
- * - {@link collaborationProvider}: A collaboration provider for real-time editing
+ * - `nbformat`: The notebook content
+ * - `url`: A URL to fetch the notebook content from
+ * - `collaborationProvider`: A collaboration provider for real-time editing
+ *
+ * @param options - Configuration options for the notebook model
+ * @returns The notebook model or null if not yet initialized
  */
 export function useNotebookModel(options: IOptions): NotebookModel | null {
   const {

@@ -72,8 +72,8 @@ export class KernelConnector {
 
   /**
    * Executes the given request on the kernel associated with the connector.
-   * @param content: IExecuteRequestMsg to forward to the kernel.
-   * @param ioCallback: Callable to forward IOPub messages of the kernel to.
+   * @param content IExecuteRequestMsg to forward to the kernel.
+   * @param ioCallback Callable to forward IOPub messages of the kernel to.
    * @returns Promise<KernelMessage.IExecuteReplyMsg>
    */
   fetch(

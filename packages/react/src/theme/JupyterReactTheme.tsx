@@ -46,7 +46,7 @@ export function useJupyterReactColormode(): Colormode {
   return colormode;
 }
 
-type IJupyterLabThemeProps = {
+export type IJupyterLabThemeProps = {
   colormode?: Colormode;
   loadJupyterLabCss?: boolean;
   theme?: Record<string, any>;

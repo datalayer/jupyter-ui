@@ -8,12 +8,12 @@ import IPyWidgetsAttached from './ipywidgets/IPyWidgetsAttached';
 
 import './OutputIPyWidgets.css';
 
-type Props = {
+export type OutputIPyWidgetsProps = {
   view: any;
   state: any;
 };
 
-export const OutputIPyWidgets = (props: Props) => {
+export const OutputIPyWidgets = (props: OutputIPyWidgetsProps) => {
   const { view, state } = props;
   return (
     <>

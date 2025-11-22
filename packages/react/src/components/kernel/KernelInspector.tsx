@@ -10,11 +10,11 @@ import Kernel from '../../jupyter/kernel/Kernel';
 import { KernelSpyView } from './inspector/widget';
 import { Box } from '@primer/react';
 
-type Props = {
+export type KernelInspectorProps = {
   kernel?: Kernel;
 };
 
-export const KernelInspector = (props: Props) => {
+export const KernelInspector = (props: KernelInspectorProps) => {
   const { kernel } = props;
   const [kernelSpyView, setKernelSpyView] = useState<KernelSpyView>();
   useEffect(() => {

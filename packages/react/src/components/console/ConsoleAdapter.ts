@@ -25,7 +25,7 @@ import { Kernel } from '../../jupyter/kernel';
 
 const DEFAULT_CONSOLE_PATH = 'console-path';
 
-class ConsoleAdapter {
+export class ConsoleAdapter {
   private _panel: BoxPanel;
   private _code?: string;
 

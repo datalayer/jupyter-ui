@@ -8,12 +8,12 @@ import { ICell, IOutput } from '@jupyterlab/nbformat';
 import Lumino from '../../lumino/Lumino';
 import OutputViewerAdapter from './OutputViewerAdapter';
 
-type Props = {
+export type OutputViewerProps = {
   cell: ICell;
   adaptPlotly: boolean;
 };
 
-export const OutputViewer = (props: Props) => {
+export const OutputViewer = (props: OutputViewerProps) => {
   const { cell, adaptPlotly } = props;
   const outputs = cell.outputs ? (cell.outputs as IOutput[]) : undefined;
   const outputAdapter = new OutputViewerAdapter(adaptPlotly, outputs);
@@ -32,6 +32,6 @@ export const OutputViewer = (props: Props) => {
 
 OutputViewer.defaultProps = {
   adaptPlotly: false,
-} as Partial<Props>;
+} as Partial<OutputViewerProps>;
 
 export default OutputViewer;

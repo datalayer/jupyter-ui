@@ -139,6 +139,15 @@ export abstract class LabWidgetManager
   }
 
   /**
+   * Filter serialized widget state to remove any ID's already present in manager.
+   * @param serialized_state - Serialized state to filter
+   * @returns A copy of the state, with its 'state' attribute filtered
+   */
+  protected filterExistingModelState(serialized_state: any): any {
+    return super.filterExistingModelState(serialized_state);
+  }
+
+  /**
    * Create a comm.
    */
   async _create_comm(
