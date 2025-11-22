@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025 Datalayer, Inc.
+ * Copyright (c) 2021-2023 Datalayer, Inc.
  *
  * MIT License
  */
@@ -36,7 +36,7 @@ import { listAvailableBlocksOperation } from './operations/listAvailableBlocks';
 
 // Import types
 import type { ToolDefinition } from './core/schema';
-import type { ToolOperation } from '@datalayer/jupyter-react';
+import type { ToolOperation } from './core/interfaces';
 
 /**
  * Array of all lexical tool definitions

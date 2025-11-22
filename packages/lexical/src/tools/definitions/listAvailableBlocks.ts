@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2025 Datalayer, Inc.
+ * Copyright (c) 2021-2023 Datalayer, Inc.
  *
  * MIT License
  */

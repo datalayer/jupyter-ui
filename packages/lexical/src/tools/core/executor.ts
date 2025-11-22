@@ -11,9 +11,7 @@
  * @module tools/core/executor
  */
 
-// NOTE: This executor is designed for notebooks, not lexical documents
-// Commenting out for now as this import doesn't exist in lexical package
-// import type { Notebook2State } from '../../components/notebook/Notebook2State';
+import type { LexicalState } from '../../state/LexicalState';
 
 /**
  * Tool executor interface - abstracts how operations are executed.
@@ -23,7 +21,7 @@ export interface ToolExecutor {
   /**
    * Execute a tool operation
    *
-   * @param operationName - Name of the operation (e.g., "insertCell", "runCell")
+   * @param operationName - Name of the operation (e.g., "insertBlock", "runBlock")
    * @param args - Operation arguments
    * @returns Result from execution
    */
@@ -31,31 +29,28 @@ export interface ToolExecutor {
 }
 
 /**
- * Default executor - directly calls Notebook2State store methods.
+ * Default executor - directly calls LexicalState store methods.
  * Uses 1:1 mapping between operation names and store methods with no transformation.
- *
- * NOTE: This class is designed for notebooks, not lexical documents.
- * It's kept here for reference but may need adaptation for lexical use.
  *
  * @example
  * ```typescript
- * const executor = new DefaultExecutor(notebookId, notebookStore);
- * await executor.execute("insertCell", { type: "code", source: "print('hi')" });
+ * const executor = new DefaultExecutor(lexicalId, lexicalStore);
+ * await executor.execute("insertBlock", { type: "paragraph", source: "Hello world" });
  * ```
  */
 export class DefaultExecutor implements ToolExecutor {
   constructor(
-    private notebookId: string,
-    private store: any, // Notebook2State - commented out as it doesn't exist in lexical package
+    private lexicalId: string,
+    private store: LexicalState,
   ) {}
 
   /**
-   * Execute an operation by directly calling the corresponding Notebook2State method.
+   * Execute an operation by directly calling the corresponding LexicalState method.
    *
-   * Operation names map 1:1 to Notebook2State method names (e.g., "insertCell" → store.insertCell).
-   * All args are passed directly to the store method with notebookId injected.
+   * Operation names map 1:1 to LexicalState method names (e.g., "insertBlock" → store.insertBlock).
+   * All args are passed directly to the store method with lexicalId injected.
    *
-   * @param operationName - Name of the operation (e.g., "insertCell", "runCell")
+   * @param operationName - Name of the operation (e.g., "insertBlock", "runBlock")
    * @param args - Operation arguments (passed directly to store method)
    * @returns Result from store method
    */
@@ -71,11 +66,11 @@ export class DefaultExecutor implements ToolExecutor {
       );
     }
 
-    // Inject notebookId into args and call store method
+    // Inject lexicalId into args and call store method
     const payload =
       typeof args === 'object' && args !== null
-        ? { id: this.notebookId, ...args }
-        : { id: this.notebookId };
+        ? { id: this.lexicalId, ...args }
+        : { id: this.lexicalId };
 
     return await (method as (args: unknown) => Promise<unknown>).call(
       this.store,
