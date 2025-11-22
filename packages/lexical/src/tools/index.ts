@@ -22,6 +22,7 @@ import { readAllBlocksTool } from './definitions/readAllBlocks';
 import { runBlockTool } from './definitions/runBlock';
 import { runAllBlocksTool } from './definitions/runAllBlocks';
 import { listAvailableBlocksTool } from './definitions/listAvailableBlocks';
+import { executeCodeTool } from './definitions/executeCode';
 
 // Import all operations
 import { insertBlockOperation } from './operations/insertBlock';
@@ -33,6 +34,7 @@ import { readAllBlocksOperation } from './operations/readAllBlocks';
 import { runBlockOperation } from './operations/runBlock';
 import { runAllBlocksOperation } from './operations/runAllBlocks';
 import { listAvailableBlocksOperation } from './operations/listAvailableBlocks';
+import { executeCodeOperation } from './operations/executeCode';
 
 // Import types
 import type { ToolDefinition } from './core/schema';
@@ -51,6 +53,7 @@ export const lexicalToolDefinitions: ToolDefinition[] = [
   runBlockTool,
   runAllBlocksTool,
   listAvailableBlocksTool,
+  executeCodeTool,
 ];
 
 /**
@@ -70,6 +73,7 @@ export const lexicalToolOperations: Record<
   runBlock: runBlockOperation,
   runAllBlocks: runAllBlocksOperation,
   listAvailableBlocks: listAvailableBlocksOperation,
+  executeCode: executeCodeOperation,
 };
 
 /**
@@ -92,5 +96,6 @@ export * from './operations/readAllBlocks';
 export * from './operations/runBlock';
 export * from './operations/runAllBlocks';
 export * from './operations/listAvailableBlocks';
+export * from './operations/executeCode';
 export * from '../state';
 export * from './utils';

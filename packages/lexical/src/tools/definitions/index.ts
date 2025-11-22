@@ -21,3 +21,4 @@ export * from './readAllBlocks';
 export * from './runBlock';
 export * from './runAllBlocks';
 export * from './listAvailableBlocks';
+export * from './executeCode';

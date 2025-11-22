@@ -50,9 +50,11 @@ export interface OperationResult {
 export class LexicalAdapter {
   private _editor: LexicalEditor;
   private _defaultBlockType: string = 'paragraph';
+  private _serviceManager?: any; // ServiceManager from @jupyterlab/services
 
-  constructor(editor: LexicalEditor) {
+  constructor(editor: LexicalEditor, serviceManager?: any) {
     this._editor = editor;
+    this._serviceManager = serviceManager;
   }
 
   /**
@@ -560,6 +562,114 @@ export class LexicalAdapter {
           `[LexicalAdapter] Unknown block type: ${block.block_type}`,
         );
         return null;
+    }
+  }
+
+  /**
+   * Execute code directly in the kernel without creating a block.
+   *
+   * This method sends code execution requests directly to the kernel,
+   * bypassing the lexical document model. Useful for:
+   * - Variable inspection
+   * - Environment setup
+   * - Background tasks
+   * - Tool introspection
+   *
+   * @param code - Code to execute
+   * @param options - Execution options
+   * @returns Promise with execution result including outputs
+   */
+  async executeCode(
+    code: string,
+    options: {
+      storeHistory?: boolean;
+      silent?: boolean;
+      stopOnError?: boolean;
+    } = {},
+  ): Promise<{
+    success: boolean;
+    outputs?: Array<{
+      type: 'stream' | 'execute_result' | 'display_data' | 'error';
+      content: unknown;
+    }>;
+    executionCount?: number;
+    error?: string;
+  }> {
+    if (!this._serviceManager) {
+      return {
+        success: false,
+        error:
+          'No ServiceManager available. LexicalAdapter requires a ServiceManager to execute code.',
+      };
+    }
+
+    const kernel = this._serviceManager.sessions?.running()?.next()
+      ?.value?.kernel;
+
+    if (!kernel) {
+      return {
+        success: false,
+        error: 'No active kernel session',
+      };
+    }
+
+    try {
+      const future = kernel.requestExecute({
+        code,
+        stop_on_error: options.stopOnError ?? true,
+        store_history: options.storeHistory ?? false,
+        silent: options.silent ?? false,
+        allow_stdin: false,
+      });
+
+      const outputs: Array<{
+        type: 'stream' | 'execute_result' | 'display_data' | 'error';
+        content: unknown;
+      }> = [];
+
+      let executionCount: number | undefined;
+
+      // Collect outputs
+      future.onIOPub = (msg: any) => {
+        const msgType = msg.header.msg_type;
+
+        if (msgType === 'stream') {
+          outputs.push({
+            type: 'stream',
+            content: msg.content,
+          });
+        } else if (msgType === 'execute_result') {
+          outputs.push({
+            type: 'execute_result',
+            content: msg.content,
+          });
+          executionCount = (msg.content as any).execution_count;
+        } else if (msgType === 'display_data') {
+          outputs.push({
+            type: 'display_data',
+            content: msg.content,
+          });
+        } else if (msgType === 'error') {
+          outputs.push({
+            type: 'error',
+            content: msg.content,
+          });
+        }
+      };
+
+      // Wait for execution to complete
+      await future.done;
+
+      return {
+        success: true,
+        outputs,
+        executionCount,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+      };
     }
   }
 }

@@ -17,6 +17,7 @@ export * from '../operations/readCell';
 export * from '../operations/readAllCells';
 export * from '../operations/runCell';
 export * from '../operations/runAllCells';
+export * from '../operations/executeCode';
 
 export * from './interfaces';
 export * from './formatter';

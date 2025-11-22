@@ -424,6 +424,107 @@ export class Notebook2Adapter {
   }
 
   /**
+   * Execute code directly in the kernel without creating a cell.
+   *
+   * This method sends code execution requests directly to the kernel,
+   * bypassing the notebook cell model. Useful for:
+   * - Variable inspection
+   * - Environment setup
+   * - Background tasks
+   * - Tool introspection
+   *
+   * @param code - Code to execute
+   * @param options - Execution options
+   * @returns Promise with execution result including outputs
+   */
+  async executeCode(
+    code: string,
+    options: {
+      storeHistory?: boolean;
+      silent?: boolean;
+      stopOnError?: boolean;
+    } = {}
+  ): Promise<{
+    success: boolean;
+    outputs?: Array<{
+      type: 'stream' | 'execute_result' | 'display_data' | 'error';
+      content: unknown;
+    }>;
+    executionCount?: number;
+    error?: string;
+  }> {
+    const sessionContext = this._panel.sessionContext;
+
+    if (!sessionContext || !sessionContext.session?.kernel) {
+      return {
+        success: false,
+        error: 'No active kernel session',
+      };
+    }
+
+    const kernel = sessionContext.session.kernel;
+
+    try {
+      const future = kernel.requestExecute({
+        code,
+        stop_on_error: options.stopOnError ?? true,
+        store_history: options.storeHistory ?? false,
+        silent: options.silent ?? false,
+        allow_stdin: false,
+      });
+
+      const outputs: Array<{
+        type: 'stream' | 'execute_result' | 'display_data' | 'error';
+        content: unknown;
+      }> = [];
+
+      let executionCount: number | undefined;
+
+      // Collect outputs
+      future.onIOPub = msg => {
+        const msgType = msg.header.msg_type;
+
+        if (msgType === 'stream') {
+          outputs.push({
+            type: 'stream',
+            content: msg.content,
+          });
+        } else if (msgType === 'execute_result') {
+          outputs.push({
+            type: 'execute_result',
+            content: msg.content,
+          });
+          executionCount = (msg.content as any).execution_count;
+        } else if (msgType === 'display_data') {
+          outputs.push({
+            type: 'display_data',
+            content: msg.content,
+          });
+        } else if (msgType === 'error') {
+          outputs.push({
+            type: 'error',
+            content: msg.content,
+          });
+        }
+      };
+
+      // Wait for execution to complete
+      await future.done;
+
+      return {
+        success: true,
+        outputs,
+        executionCount,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+      };
+    }
+  }
+
+  /**
    * Dispose of the adapter.
    */
   dispose(): void {

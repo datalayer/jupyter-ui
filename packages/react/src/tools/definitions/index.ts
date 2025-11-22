@@ -18,3 +18,4 @@ export * from './readCell';
 export * from './readAllCells';
 export * from './runCell';
 export * from './runAllCells';
+export * from './executeCode';
