@@ -199,6 +199,18 @@ export class Notebook2Adapter {
   }
 
   /**
+   * Clear all outputs from all cells in the notebook.
+   *
+   * @remarks
+   * This will remove all execution outputs from all cells in the notebook,
+   * including output displays, execution counts, and error messages.
+   * The notebook must be available and properly initialized for this operation to succeed.
+   */
+  clearAllOutputs(): void {
+    NotebookActions.clearAllOutputs(this._notebook);
+  }
+
+  /**
    * Dispose of the adapter.
    */
   dispose(): void {
