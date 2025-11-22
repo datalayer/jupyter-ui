@@ -100,7 +100,7 @@ export const loadJupyterConfig = (
     terminals,
   } = props;
   if (config) {
-    console.log('Returning existing Jupyter React config', config);
+    // console.log('Returning existing Jupyter React config', config);
     return config;
   }
   config = {
@@ -154,6 +154,6 @@ export const loadJupyterConfig = (
     );
     PageConfig.setOption('mathjaxConfig', 'TeX-AMS_CHTML-full,Safe');
   }
-  console.log('Created config for Jupyter React', config);
+  // console.log('Created config for Jupyter React', config);
   return config;
 };
