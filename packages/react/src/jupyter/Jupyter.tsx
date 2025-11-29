@@ -41,26 +41,25 @@ const ErrorFallback = ({ error, resetErrorBoundary }: any) => {
  * The Jupyter context. This handles the needed initialization
  * and ensure the Primer theme providers is available.
  */
-export const Jupyter = (props: JupyterProps) => {
-  const {
-    children,
-    collaborative,
-    colormode,
-    defaultKernelName,
-    disableCssLoading = false,
-    initCode,
-    jupyterServerUrl,
-    jupyterServerToken,
-    lite,
-    serverless,
-    serviceManager,
-    startDefaultKernel,
-    skeleton,
-    terminals,
-    theme,
-    useRunningKernelId,
-    useRunningKernelIndex,
-  } = props;
+export const Jupyter = ({
+  children,
+  collaborative,
+  colormode = 'light',
+  defaultKernelName,
+  disableCssLoading = false,
+  initCode,
+  jupyterServerUrl,
+  jupyterServerToken,
+  lite,
+  serverless,
+  serviceManager,
+  startDefaultKernel,
+  skeleton,
+  terminals = false,
+  theme = jupyterLabTheme,
+  useRunningKernelId,
+  useRunningKernelIndex,
+}: JupyterProps) => {
   const config = useMemo(() => {
     return loadJupyterConfig({
       collaborative,
@@ -69,7 +68,7 @@ export const Jupyter = (props: JupyterProps) => {
       lite,
       terminals,
     });
-  }, [props]);
+  }, [collaborative, jupyterServerUrl, jupyterServerToken, lite, terminals]);
   return (
     <ErrorBoundary
       FallbackComponent={ErrorFallback}
@@ -107,13 +106,6 @@ export const Jupyter = (props: JupyterProps) => {
       </ThemeProvider>
     </ErrorBoundary>
   );
-};
-
-Jupyter.defaultProps = {
-  colormode: 'light',
-  disableCssLoading: false,
-  terminals: false,
-  theme: jupyterLabTheme,
 };
 
 export default Jupyter;

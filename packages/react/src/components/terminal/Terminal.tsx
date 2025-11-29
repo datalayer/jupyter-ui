@@ -12,8 +12,11 @@ import { useJupyter } from './../../jupyter/JupyterContext';
 import LuminoBox from '../lumino/LuminoBox';
 import useTerminalStore from './TerminalState';
 
-export const Terminal = (props: Terminal.ITerminalOptions) => {
-  const { height } = props;
+export const Terminal = ({
+  height = '100%',
+  colormode = 'dark',
+  ...rest
+}: Terminal.ITerminalOptions) => {
   const terminalStore = useTerminalStore();
   const { serverSettings } = useJupyter();
   const [adapter, setAdapter] = useState<TerminalAdapter>();
@@ -21,7 +24,9 @@ export const Terminal = (props: Terminal.ITerminalOptions) => {
     if (serverSettings) {
       const adapter = new TerminalAdapter({
         serverSettings,
-        ...props,
+        height,
+        colormode,
+        ...rest,
       });
       terminalStore.setAdapter(adapter);
       setAdapter(adapter);
@@ -52,10 +57,5 @@ export namespace Terminal {
     initCode?: string;
   }
 }
-
-Terminal.defaultProps = {
-  height: '100%',
-  colormode: 'dark',
-} as Partial<Terminal.ITerminalOptions>;
 
 export default Terminal;

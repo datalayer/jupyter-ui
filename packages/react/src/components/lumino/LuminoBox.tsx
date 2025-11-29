@@ -10,13 +10,16 @@ import { Box } from '@primer/react';
 
 export type LuminoBoxProps = {
   id?: string;
-  height: number | string;
+  height?: number | string;
   children: Widget;
 };
 
-export const LuminoBox = (props: LuminoBoxProps) => {
+export const LuminoBox = ({
+  id = 'lumino-box-id',
+  height = '100%',
+  children,
+}: LuminoBoxProps) => {
   const ref = useRef<HTMLDivElement>(null);
-  const { id, height, children } = props;
   useEffect(() => {
     if (ref && ref.current) {
       const boxPanel = new BoxPanel();
@@ -51,11 +54,6 @@ export const LuminoBox = (props: LuminoBoxProps) => {
       <div id={id} ref={ref} />
     </Box>
   );
-};
-
-LuminoBox.defaultProps = {
-  id: 'lumino-box-id',
-  height: '100%',
 };
 
 export default LuminoBox;

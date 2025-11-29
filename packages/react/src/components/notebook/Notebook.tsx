@@ -58,19 +58,20 @@ export type INotebookProps = {
   collaborationProvider?: ICollaborationProvider;
   extensions?: NotebookExtension[];
   height?: string;
-  id: string;
+  id?: string;
   kernel?: Kernel;
   kernelClients?: JupyterKernel.IKernelConnection[];
   kernelTransfer?: KernelTransfer;
   lite?: Lite;
   maxHeight?: string;
   nbformat?: INotebookContent;
+  nbgrader?: boolean;
   onSessionConnection?: OnSessionConnection;
   path?: string;
   readonly?: boolean;
   renderId?: number;
   renderers?: IRenderMime.IRendererFactory[];
-  serverless: boolean;
+  serverless?: boolean;
   serviceManager?: ServiceManager.IManager;
   startDefaultKernel?: boolean;
   url?: string;
@@ -93,33 +94,41 @@ export type INotebookProps = {
  * @returns A Notebook React.js component.
  */
 export const Notebook = (props: INotebookProps) => {
-  const { serviceManager, defaultKernel, lite } = useJupyter({
-    lite: props.lite,
-    serverless: props.serverless,
-    serviceManager: props.serviceManager,
-    startDefaultKernel: props.startDefaultKernel,
-    useRunningKernelId: props.useRunningKernelId,
-    useRunningKernelIndex: props.useRunningKernelIndex,
-  });
   const {
     Toolbar,
+    cellSidebarMargin = 120,
     collaborationProvider: collaborationProviderProp,
-    extensions,
-    height,
-    maxHeight,
+    extensions = [],
+    height = '100vh',
+    id: providedId,
+    kernel: kernelProp,
+    lite: liteProp,
+    maxHeight = '100vh',
     nbformat,
     path,
-    readonly,
-    serverless,
+    readonly = false,
+    serverless = false,
+    serviceManager: serviceManagerProp,
+    startDefaultKernel = false,
     url,
+    useRunningKernelId,
+    useRunningKernelIndex,
   } = props;
-  const [id, _] = useState(props.id || newUuid());
+  const { serviceManager, defaultKernel, lite } = useJupyter({
+    lite: liteProp,
+    serverless,
+    serviceManager: serviceManagerProp,
+    startDefaultKernel,
+    useRunningKernelId,
+    useRunningKernelIndex,
+  });
+  const [id, _] = useState(providedId || newUuid());
   const [adapter, setAdapter] = useState<NotebookAdapter>();
   const [isLoading, setIsLoading] = useState(false);
   const [extensionComponents, setExtensionComponents] = useState(
     new Array<JSX.Element>()
   );
-  const kernel = props.kernel ?? defaultKernel;
+  const kernel = kernelProp ?? defaultKernel;
   const notebookStore = useNotebookStore();
   const portals = notebookStore.selectNotebookPortals(id);
 
@@ -140,7 +149,7 @@ export const Notebook = (props: INotebookProps) => {
     console.log('Created adapter:', adapter);
     // Update the local state.
     setAdapter(adapter);
-    extensions!.forEach(extension => {
+    extensions.forEach(extension => {
       extension.init({
         notebookId: id,
         commands: adapter.commands,
@@ -444,10 +453,10 @@ export const Notebook = (props: INotebookProps) => {
             display: 'none',
           },
           '& .jp-Cell': {
-            width: `calc(100% - ${props.cellSidebarMargin!}px)`,
+            width: `calc(100% - ${cellSidebarMargin}px)`,
           },
           '& .jp-Notebook-footer': {
-            width: `calc(100% - ${props.cellSidebarMargin! + 82}px)`,
+            width: `calc(100% - ${cellSidebarMargin + 82}px)`,
           },
           '& .jp-CodeMirrorEditor': {
             cursor: 'text !important',
@@ -483,21 +492,5 @@ export const Notebook = (props: INotebookProps) => {
     </Box>
   );
 };
-
-Notebook.defaultProps = {
-  cellMetadataPanel: false,
-  cellSidebarMargin: 120,
-  collaborative: undefined,
-  extensions: [],
-  height: '100vh',
-  kernelClients: [],
-  maxHeight: '100vh',
-  nbgrader: false,
-  readonly: false,
-  renderId: 0,
-  renderers: [],
-  serverless: false,
-  startDefaultKernel: false,
-} as Partial<INotebookProps>;
 
 export default Notebook;

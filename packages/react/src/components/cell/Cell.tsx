@@ -23,7 +23,7 @@ export type ICellProps = {
   /**
    * An id that can be provided to identify unique cell
    */
-  id: string;
+  id?: string;
   /**
    * Cell source
    */
@@ -43,27 +43,27 @@ export type ICellProps = {
   /**
    * Cell type
    */
-  type: 'code' | 'markdown' | 'raw';
+  type?: 'code' | 'markdown' | 'raw';
   /**
    * Custom kernel for the cell. Falls back to the defaultKernel if not provided.
    */
   kernel?: Kernel;
 };
 
-export const Cell = (props: ICellProps) => {
-  const {
-    autoStart,
-    outputs = [],
-    showToolbar,
-    source = '',
-    startDefaultKernel = false,
-    type,
-    kernel: kernelProps,
-  } = props;
+export const Cell = ({
+  autoStart = true,
+  outputs = [],
+  showToolbar = true,
+  source = '',
+  startDefaultKernel = true,
+  type = 'code',
+  kernel: kernelProps,
+  id: providedId,
+}: ICellProps) => {
   const { defaultKernel, serverSettings } = useJupyter({
     startDefaultKernel,
   });
-  const [id] = useState(props.id || newUuid());
+  const [id] = useState(providedId || newUuid());
   const [adapter, setAdapter] = useState<CellAdapter>();
   const cellsStore = useCellsStore();
   const handleCellInitEvents = (adapter: CellAdapter) => {
@@ -169,14 +169,5 @@ export const Cell = (props: ICellProps) => {
     <Box>Loading Jupyter Cell...</Box>
   );
 };
-
-Cell.defaultProps = {
-  autoStart: true,
-  source: '',
-  outputs: [],
-  showToolbar: true,
-  startDefaultKernel: true,
-  type: 'code',
-} as Partial<ICellProps>;
 
 export default Cell;
