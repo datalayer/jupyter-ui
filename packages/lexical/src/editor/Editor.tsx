@@ -62,10 +62,14 @@ import { TreeViewPlugin } from '../plugins';
 import { OnSessionConnection } from '@datalayer/jupyter-react';
 import { ToolbarPlugin } from '../plugins/ToolbarPlugin';
 import { ToolbarContext } from '../context/ToolbarContext';
-
-import './../../style/index.css';
+import { LexicalConfigProvider } from '../context/LexicalConfigContext';
+import { LexicalStatePlugin } from '../plugins/LexicalStatePlugin';
 
 type Props = {
+  /** Unique identifier for this Lexical document (required for tool operations) */
+  id?: string;
+  /** Service manager for kernel operations (required when id is provided) */
+  serviceManager?: any;
   notebook?: INotebookContent;
   onSessionConnection?: OnSessionConnection;
 };
@@ -115,7 +119,7 @@ const EditorContextPlugin = () => {
 };
 
 export function EditorContainer(props: Props) {
-  const { notebook, onSessionConnection } = props;
+  const { id, notebook, onSessionConnection } = props;
   const { defaultKernel } = useJupyter();
   const [editor] = useLexicalComposerContext();
   const [activeEditor, setActiveEditor] = useState(editor);
@@ -156,6 +160,7 @@ export function EditorContainer(props: Props) {
         <HistoryPlugin />
         <TreeViewPlugin />
         <AutoFocusPlugin />
+        {id && <LexicalStatePlugin />}
         <TablePlugin />
         <ListPlugin />
         <CheckListPlugin />
@@ -195,7 +200,10 @@ export function EditorContainer(props: Props) {
 }
 
 export function Editor(props: Props) {
-  return (
+  const { id, serviceManager } = props;
+
+  // Wrap with LexicalConfigProvider if id is provided (for tool operations)
+  const content = (
     <LexicalComposer initialConfig={initialConfig}>
       <ToolbarContext>
         <div className="editor-shell">
@@ -203,6 +211,15 @@ export function Editor(props: Props) {
         </div>
       </ToolbarContext>
     </LexicalComposer>
+  );
+
+  // Only wrap with config provider if id is provided
+  return id ? (
+    <LexicalConfigProvider lexicalId={id} serviceManager={serviceManager}>
+      {content}
+    </LexicalConfigProvider>
+  ) : (
+    content
   );
 }
 

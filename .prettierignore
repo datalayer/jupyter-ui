@@ -57,3 +57,7 @@ patches/
 
 # Markdown files with specific formatting
 CHANGELOG.md
+
+# Generated documentation
+packages/lexical/docs/
+packages/react/docs/

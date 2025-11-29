@@ -534,11 +534,28 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
   // Update notebook store when adapter changes
   useEffect(() => {
     if (adapter) {
+      console.log(`[Notebook2Base] ✅ Registering adapter for notebook: ${id}`);
+      console.log(
+        `[Notebook2Base] Adapter has getCells:`,
+        typeof adapter.getCells
+      );
+      console.log(
+        `[Notebook2Base] Adapter cell count:`,
+        adapter.getCellCount()
+      );
       const currentNotebooks = notebookStore2.getState().notebooks;
       const updatedNotebooks = new Map(currentNotebooks);
       updatedNotebooks.set(id, { adapter });
       notebookStore2.getState().setNotebooks2(updatedNotebooks);
+      console.log(
+        `[Notebook2Base] Store now has ${updatedNotebooks.size} notebooks`
+      );
+      console.log(
+        `[Notebook2Base] Notebook IDs:`,
+        Array.from(updatedNotebooks.keys())
+      );
     } else {
+      console.log(`[Notebook2Base] ⚠️  No adapter yet for notebook: ${id}`);
       const currentNotebooks = notebookStore2.getState().notebooks;
       if (currentNotebooks.has(id)) {
         const updatedNotebooks = new Map(currentNotebooks);

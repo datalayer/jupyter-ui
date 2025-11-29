@@ -12,4 +12,5 @@ export * from './hooks';
 export * from './nodes';
 export * from './plugins';
 export * from './themes';
+export * from './tools';
 export * from './utils';

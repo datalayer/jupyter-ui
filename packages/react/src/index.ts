@@ -9,6 +9,7 @@ export * from './components';
 export * from './jupyter';
 export * from './state';
 export * from './theme';
+export * from './tools';
 export * from './utils';
 
 // Re-export JupyterLab completion types for platform-specific providers
