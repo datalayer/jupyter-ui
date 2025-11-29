@@ -10,10 +10,7 @@
  * @module tools/core/operations/deleteBlock
  */
 
-import type {
-  ToolOperation,
-  LexicalExecutionContext,
-} from '../core/interfaces';
+import type { ToolOperation, ToolExecutionContext } from '../core/interfaces';
 import type { LexicalBlock } from '../core/types';
 import { readAllBlocksOperation } from './readAllBlocks';
 import { validateWithZod } from '../core/zodUtils';
@@ -53,20 +50,20 @@ export interface DeleteBlockResult {
  *
  * IDs are stable identifiers so deletion order does not matter (unlike index-based deletion).
  *
- * Uses lexicalId as the universal identifier (matches Lexical component).
+ * Uses documentId as the universal identifier (matches Lexical component).
  *
  * Architecture:
- * - Core layer: Works with lexicalId (platform-agnostic)
- * - VS Code adapter: Converts lexicalId → documentUri via registry
+ * - Core layer: Works with documentId (platform-agnostic)
+ * - VS Code adapter: Converts documentId → documentUri via registry
  * - Internal command: Uses documentUri to send message to webview
- * - Webview: Lexical component uses same lexicalId
+ * - Webview: Lexical component uses same documentId
  *
  * @example
  * ```typescript
  * // Delete blocks
  * await deleteBlockOperation.execute(
  *   { ids: ["block-123", "block-456", "block-789"] },
- *   { lexicalId: "doc-1", executeCommand }
+ *   { documentId: "doc-1", executeCommand }
  * );
  * ```
  */
@@ -78,7 +75,7 @@ export const deleteBlockOperation: ToolOperation<
 
   async execute(
     params: unknown,
-    context: LexicalExecutionContext,
+    context: ToolExecutionContext,
   ): Promise<DeleteBlockResult> {
     // Validate params using Zod
     const validatedParams = validateWithZod(
@@ -88,13 +85,13 @@ export const deleteBlockOperation: ToolOperation<
     );
 
     const { ids } = validatedParams;
-    const { lexicalId } = context;
+    const { documentId } = context;
 
     // Validate context
-    if (!lexicalId) {
+    if (!documentId) {
       throw new Error(
-        'Lexical ID is required for deleteBlock operation. ' +
-          'Ensure the tool execution context includes a valid lexicalId.',
+        'Document ID is required for deleteBlock operation. ' +
+          'Ensure the tool execution context includes a valid documentId.',
       );
     }
 

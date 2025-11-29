@@ -50,12 +50,12 @@ export const readAllCellsOperation: ToolOperation<
     );
 
     const { format = 'brief' } = validatedParams;
-    const { notebookId } = context;
+    const { documentId } = context;
 
-    if (!notebookId) {
+    if (!documentId) {
       return {
         success: false,
-        error: 'Notebook ID is required for this operation.',
+        error: 'Document ID is required for this operation.',
       };
     }
 

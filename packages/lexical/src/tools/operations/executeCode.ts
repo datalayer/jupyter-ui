@@ -11,10 +11,7 @@
  * @module tools/operations/executeCode
  */
 
-import type {
-  ToolOperation,
-  LexicalExecutionContext,
-} from '../core/interfaces';
+import type { ToolOperation, ToolExecutionContext } from '../core/interfaces';
 import { validateWithZod } from '../core/zodUtils';
 import {
   executeCodeParamsSchema,
@@ -54,11 +51,11 @@ export const executeCodeOperation: ToolOperation<
 
   async execute(
     params: unknown,
-    context: LexicalExecutionContext,
+    context: ToolExecutionContext,
   ): Promise<ExecuteCodeResult> {
     console.log('[executeCodeOperation] Called with params:', params);
     console.log('[executeCodeOperation] Context:', {
-      lexicalId: context.lexicalId,
+      documentId: context.documentId,
       hasExecutor: !!context.executor,
     });
 
@@ -71,12 +68,12 @@ export const executeCodeOperation: ToolOperation<
 
     console.log('[executeCodeOperation] Validated params:', validatedParams);
 
-    const { lexicalId } = context;
+    const { documentId } = context;
 
-    if (!lexicalId) {
+    if (!documentId) {
       return {
         success: false,
-        error: 'Lexical ID is required for this operation.',
+        error: 'Document ID is required for this operation.',
       };
     }
 
@@ -95,10 +92,10 @@ export const executeCodeOperation: ToolOperation<
       });
 
       // Call executor (uses this.name for DRY principle)
-      const result = await context.executor.execute<ExecuteCodeResult>(
+      const result = (await context.executor.execute(
         this.name,
         validatedParams,
-      );
+      )) as ExecuteCodeResult;
 
       console.log('[executeCodeOperation] Executor result:', result);
       return result;

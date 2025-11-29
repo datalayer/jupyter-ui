@@ -16,73 +16,11 @@ import type {
   LexicalMetadata,
   RegisteredNodeInfo,
 } from './types';
+import type { ToolExecutionContext } from '@datalayer/jupyter-react';
 
 // Re-export types for convenience
 export type { LexicalBlock, LexicalMetadata, RegisteredNodeInfo };
-
-/**
- * Base tool execution context - common to all operations
- */
-export interface BaseExecutionContext {
-  /**
-   * Datalayer SDK for API operations
-   * (Required for notebook/runtime creation tools)
-   */
-  sdk?: unknown; // DatalayerClient (avoid circular import)
-
-  /**
-   * Authentication provider
-   * (Required for authenticated operations)
-   */
-  auth?: unknown; // AuthProvider (avoid circular import)
-
-  /**
-   * Response format for tool results
-   * - "json": Standard JSON format (default) - structured data
-   * - "toon": TOON format - human/LLM-readable with compact syntax
-   */
-  format?: 'json' | 'toon';
-
-  /**
-   * Platform-agnostic command execution callback.
-   * Allows operations to invoke platform-specific commands without direct dependencies.
-   *
-   * Operations call this with namespaced command names (e.g., "notebook.insertCell", "lexical.insertBlock").
-   * The platform adapter is responsible for mapping these to the appropriate implementation.
-   *
-   * @param command - Command name with namespace prefix (e.g., "notebook.insertCell")
-   * @param args - Command arguments (platform adapter handles any necessary conversions)
-   * @returns Command result
-   */
-  executeCommand?: <T = void>(command: string, args: unknown) => Promise<T>;
-
-  /**
-   * Platform-specific extras (escape hatch for special cases)
-   * Use this to pass additional context that doesn't fit in the standard interface.
-   */
-  extras?: Record<string, unknown>;
-}
-
-/**
- * Lexical-specific execution context
- * Used by all Lexical block operations (insertBlock, deleteBlock, readBlocks)
- */
-export interface LexicalExecutionContext extends BaseExecutionContext {
-  /**
-   * Lexical document ID - universal identifier for both local and remote documents
-   * - Local documents: Same as file URI (e.g., "file:///path/to/document.lexical")
-   * - Remote documents: Datalayer document UID (e.g., "01KAJ42KE2XKM7NBNZV568KXQX")
-   */
-  lexicalId: string;
-
-  /**
-   * Executor for calling lexical store operations
-   * Used in ag-ui environments to directly call store methods
-   */
-  executor?: {
-    execute<T = unknown>(operationName: string, args?: unknown): Promise<T>;
-  };
-}
+export type { ToolExecutionContext };
 
 /**
  * Core tool operation interface - platform agnostic.
@@ -107,11 +45,11 @@ export interface ToolOperation<TParams, TResult> {
    * ToolDefinition (schema), not here. Operations are pure implementation.
    *
    * @param params - Tool-specific parameters
-   * @param context - Execution context (lexicalId, SDK, auth)
+   * @param context - Execution context (documentId, executor, SDK, auth)
    * @returns Operation result
    * @throws Error if operation fails
    */
-  execute(params: TParams, context: LexicalExecutionContext): Promise<TResult>;
+  execute(params: TParams, context: ToolExecutionContext): Promise<TResult>;
 }
 
 /**

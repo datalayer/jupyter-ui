@@ -34,20 +34,20 @@ export interface ToolExecutor {
  *
  * @example
  * ```typescript
- * const executor = new DefaultExecutor(notebookId, notebookStore);
+ * const executor = new DefaultExecutor(documentId, notebookStore);
  * await executor.execute("insertCell", { type: "code", index: 0, source: "print('hi')" });
- * // Calls: store.insertCell(notebookId, "code", 0, "print('hi')")
+ * // Calls: store.insertCell(documentId, "code", 0, "print('hi')")
  * ```
  */
 export class DefaultExecutor implements ToolExecutor {
   constructor(
-    private notebookId: string,
+    private documentId: string,
     private store: Notebook2State
   ) {}
 
   /**
    * Execute an operation by calling the corresponding Notebook2State method.
-   * Builds payload with notebookId and spreads values as individual parameters.
+   * Builds payload with documentId and spreads values as individual parameters.
    *
    * @param operationName - Name of the operation (e.g., "insertCell", "deleteCell")
    * @param args - Operation arguments as an object
@@ -55,7 +55,7 @@ export class DefaultExecutor implements ToolExecutor {
    */
   async execute(operationName: string, args: unknown): Promise<unknown> {
     console.log(
-      `[DefaultExecutor] Executing: ${operationName} for notebook: ${this.notebookId}`
+      `[DefaultExecutor] Executing: ${operationName} for document: ${this.documentId}`
     );
     console.log(`[DefaultExecutor] Args:`, args);
 
@@ -82,8 +82,8 @@ export class DefaultExecutor implements ToolExecutor {
     // Build payload: { id, ...args } - pass as single object parameter
     const payload =
       typeof args === 'object' && args !== null
-        ? { id: this.notebookId, ...args }
-        : { id: this.notebookId };
+        ? { id: this.documentId, ...args }
+        : { id: this.documentId };
 
     console.log(`[DefaultExecutor] Calling method with payload:`, payload);
 

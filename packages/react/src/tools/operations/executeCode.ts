@@ -56,12 +56,12 @@ export const executeCodeOperation: ToolOperation<
     // Validate params using Zod schema
     validateWithZod(executeCodeParamsSchema, params, this.name);
 
-    const { notebookId } = context;
+    const { documentId } = context;
 
-    if (!notebookId) {
+    if (!documentId) {
       return {
         success: false,
-        error: 'Notebook ID is required for this operation.',
+        error: 'Document ID is required for this operation.',
       };
     }
 

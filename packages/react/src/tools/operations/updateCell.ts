@@ -33,7 +33,7 @@ export interface UpdateCellResult {
  * ```typescript
  * await updateCellOperation.execute(
  *   { index: 0, source: 'print("Updated")' },
- *   { notebookId: 'file:///notebook.ipynb', executor }
+ *   { documentId: 'file:///notebook.ipynb', executor }
  * );
  * ```
  */
@@ -54,10 +54,10 @@ export const updateCellOperation: ToolOperation<
       params,
       this.name
     );
-    const { notebookId } = context;
+    const { documentId } = context;
 
-    if (!notebookId) {
-      throw new Error('Notebook ID is required for updateCell operation.');
+    if (!documentId) {
+      throw new Error('Document ID is required for updateCell operation.');
     }
 
     if (!context.executor) {

@@ -10,10 +10,7 @@
  * @module tools/core/operations/updateBlock
  */
 
-import type {
-  ToolOperation,
-  LexicalExecutionContext,
-} from '../core/interfaces';
+import type { ToolOperation, ToolExecutionContext } from '../core/interfaces';
 import { validateWithZod } from '../core/zodUtils';
 import {
   updateBlockParamsSchema,
@@ -43,7 +40,7 @@ export interface UpdateBlockResult {
  * Allows updating block type, source content, and/or properties.
  * At least one of type, source, or properties must be provided.
  *
- * Uses lexicalId as the universal identifier (matches Lexical component).
+ * Uses documentId as the universal identifier (matches Lexical component).
  */
 export const updateBlockOperation: ToolOperation<
   UpdateBlockParams,
@@ -53,7 +50,7 @@ export const updateBlockOperation: ToolOperation<
 
   async execute(
     params: unknown,
-    context: LexicalExecutionContext,
+    context: ToolExecutionContext,
   ): Promise<UpdateBlockResult> {
     // Validate params using Zod
     const validatedParams = validateWithZod(
@@ -63,7 +60,7 @@ export const updateBlockOperation: ToolOperation<
     );
 
     const { id, type, source, properties } = validatedParams;
-    const { lexicalId } = context;
+    const { documentId } = context;
 
     // Validate that at least one update field is provided
     if (
@@ -77,10 +74,10 @@ export const updateBlockOperation: ToolOperation<
     }
 
     // Validate context
-    if (!lexicalId) {
+    if (!documentId) {
       throw new Error(
-        'Lexical ID is required for updateBlock operation. ' +
-          'Ensure the tool execution context includes a valid lexicalId.',
+        'Document ID is required for updateBlock operation. ' +
+          'Ensure the tool execution context includes a valid documentId.',
       );
     }
 

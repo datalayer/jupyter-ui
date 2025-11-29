@@ -66,7 +66,7 @@ export interface ReadCellResult {
  * ```typescript
  * const result = await readCellOperation.execute(
  *   { index: 0 },
- *   { notebookId: 'file:///notebook.ipynb', executor }
+ *   { documentId: 'file:///notebook.ipynb', executor }
  * );
  * ```
  */
@@ -89,12 +89,12 @@ export const readCellOperation: ToolOperation<ReadCellParams, ReadCellResult> =
 
       // Now TypeScript knows params is ReadCellParams!
       const { index } = params;
-      const { notebookId } = context;
+      const { documentId } = context;
 
-      if (!notebookId) {
+      if (!documentId) {
         return {
           success: false,
-          error: 'Notebook ID is required for this operation.',
+          error: 'Document ID is required for this operation.',
         };
       }
 

@@ -10,10 +10,7 @@
  * @module tools/core/operations/insertBlock
  */
 
-import type {
-  ToolOperation,
-  LexicalExecutionContext,
-} from '../core/interfaces';
+import type { ToolOperation, ToolExecutionContext } from '../core/interfaces';
 import { validateWithZod } from '../core/zodUtils';
 import {
   insertBlockParamsSchema,
@@ -52,7 +49,7 @@ export const insertBlockOperation: ToolOperation<
 
   async execute(
     params: unknown,
-    context: LexicalExecutionContext,
+    context: ToolExecutionContext,
   ): Promise<InsertBlockResult> {
     // Validate params using Zod
     const validatedParams = validateWithZod(
@@ -62,13 +59,13 @@ export const insertBlockOperation: ToolOperation<
     );
 
     const { afterId, type, source, properties } = validatedParams;
-    const { lexicalId } = context;
+    const { documentId } = context;
 
     // Validate context
-    if (!lexicalId) {
+    if (!documentId) {
       throw new Error(
-        'Lexical ID is required for insertBlock operation. ' +
-          'Ensure the tool execution context includes a valid lexicalId.',
+        'Document ID is required for insertBlock operation. ' +
+          'Ensure the tool execution context includes a valid documentId.',
       );
     }
 

@@ -10,10 +10,7 @@
  * @module tools/core/operations/runBlock
  */
 
-import type {
-  ToolOperation,
-  LexicalExecutionContext,
-} from '../core/interfaces';
+import type { ToolOperation, ToolExecutionContext } from '../core/interfaces';
 import { readAllBlocksOperation } from './readAllBlocks';
 import { validateWithZod } from '../core/zodUtils';
 import { runBlockParamsSchema, type RunBlockParams } from '../schemas/runBlock';
@@ -38,7 +35,7 @@ export interface RunBlockResult {
  * Only works on executable blocks like jupyter-cell or code blocks with executable: true.
  * Includes bounds validation, elapsed time tracking, and execution results with outputs.
  *
- * Uses lexicalId as the universal identifier (matches Lexical component).
+ * Uses documentId as the universal identifier (matches Lexical component).
  */
 export const runBlockOperation: ToolOperation<RunBlockParams, RunBlockResult> =
   {
@@ -46,7 +43,7 @@ export const runBlockOperation: ToolOperation<RunBlockParams, RunBlockResult> =
 
     async execute(
       params: unknown,
-      context: LexicalExecutionContext,
+      context: ToolExecutionContext,
     ): Promise<RunBlockResult> {
       // Validate params using Zod schema
       const {
@@ -55,12 +52,12 @@ export const runBlockOperation: ToolOperation<RunBlockParams, RunBlockResult> =
         stream = false,
         progressInterval = 5,
       } = validateWithZod(runBlockParamsSchema, params, this.name);
-      const { lexicalId } = context;
+      const { documentId } = context;
 
-      if (!lexicalId) {
+      if (!documentId) {
         return {
           success: false,
-          error: 'Lexical ID is required for this operation.',
+          error: 'Document ID is required for this operation.',
         };
       }
 

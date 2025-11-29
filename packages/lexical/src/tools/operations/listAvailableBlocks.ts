@@ -13,10 +13,7 @@
  * @module tools/core/operations/listAvailableBlocks
  */
 
-import type {
-  ToolOperation,
-  LexicalExecutionContext,
-} from '../core/interfaces';
+import type { ToolOperation, ToolExecutionContext } from '../core/interfaces';
 import type { RegisteredNodeInfo } from '../core/types';
 import { validateWithZod } from '../core/zodUtils';
 import {
@@ -307,7 +304,7 @@ export const listAvailableBlocksOperation: ToolOperation<
 
   async execute(
     params: unknown,
-    context: LexicalExecutionContext,
+    context: ToolExecutionContext,
   ): Promise<ListAvailableBlocksResult> {
     // Validate params using Zod
     const validatedParams = validateWithZod(
@@ -317,25 +314,28 @@ export const listAvailableBlocksOperation: ToolOperation<
     );
 
     const { category } = validatedParams;
-    const { lexicalId } = context;
+    const { documentId } = context;
 
     try {
       let types = DEFAULT_BLOCK_TYPES;
 
       // Try to get dynamically registered types from the document
-      // This is optional - if no lexicalId or executor, we fall back to DEFAULT_BLOCK_TYPES
-      if (lexicalId && context.executor) {
+      // This is optional - if no documentId or executor, we fall back to DEFAULT_BLOCK_TYPES
+      if (documentId && context.executor) {
         try {
           // Call executor to get registered nodes
-          const registeredNodes = await context.executor.execute<
-            RegisteredNodeInfo[]
-          >('listAvailableBlocks', {});
+          const registeredNodes = (await context.executor.execute(
+            'listAvailableBlocks',
+            {},
+          )) as RegisteredNodeInfo[];
 
           if (registeredNodes && registeredNodes.length > 0) {
             // Lexical nodes have types like: "paragraph", "heading", "code", "quote",
             // "list", "listitem", "table", "equation", "image", "youtube", "jupyter-cell"
             const registeredTypes = new Set(
-              registeredNodes.map(node => node.type.toLowerCase()),
+              registeredNodes.map((node: RegisteredNodeInfo) =>
+                node.type.toLowerCase(),
+              ),
             );
 
             // Filter to only schemas for registered node types

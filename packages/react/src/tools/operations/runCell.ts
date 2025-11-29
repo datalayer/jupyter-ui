@@ -47,12 +47,12 @@ export const runCellOperation: ToolOperation<RunCellParams, RunCellResult> = {
       stream = false,
       progressInterval = 5,
     } = validateWithZod(runCellParamsSchema, params, this.name);
-    const { notebookId } = context;
+    const { documentId } = context;
 
-    if (!notebookId) {
+    if (!documentId) {
       return {
         success: false,
-        error: 'Notebook ID is required for this operation.',
+        error: 'Document ID is required for this operation.',
       };
     }
 

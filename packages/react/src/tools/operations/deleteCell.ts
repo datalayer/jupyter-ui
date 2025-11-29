@@ -51,13 +51,13 @@ export interface DeleteCellResult {
  * // Delete single cell
  * await deleteCellOperation.execute(
  *   { indices: [2] },
- *   { notebookId: "file:///path/to/notebook.ipynb", executor }
+ *   { documentId: "file:///path/to/notebook.ipynb", executor }
  * );
  *
  * // Delete multiple cells
  * await deleteCellOperation.execute(
  *   { indices: [1, 3, 5] },
- *   { notebookId: "file:///path/to/notebook.ipynb", executor }
+ *   { documentId: "file:///path/to/notebook.ipynb", executor }
  * );
  * ```
  */
@@ -77,12 +77,12 @@ export const deleteCellOperation: ToolOperation<
       params,
       this.name
     );
-    const { notebookId } = context;
+    const { documentId } = context;
 
-    if (!notebookId) {
+    if (!documentId) {
       throw new Error(
-        'Notebook ID is required for deleteCell operation. ' +
-          'Ensure the tool execution context includes a valid notebookId.'
+        'Document ID is required for deleteCell operation. ' +
+          'Ensure the tool execution context includes a valid documentId.'
       );
     }
 

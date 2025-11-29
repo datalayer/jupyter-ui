@@ -10,10 +10,7 @@
  * @module tools/core/operations/readBlock
  */
 
-import type {
-  ToolOperation,
-  LexicalExecutionContext,
-} from '../core/interfaces';
+import type { ToolOperation, ToolExecutionContext } from '../core/interfaces';
 import type { LexicalBlock } from '../core/types';
 import { readAllBlocksOperation } from './readAllBlocks';
 import { validateWithZod } from '../core/zodUtils';
@@ -41,7 +38,7 @@ export interface ReadBlockResult {
  *
  * Returns the block with the specified block_id for inspection.
  *
- * Uses lexicalId as the universal identifier (matches Lexical component).
+ * Uses documentId as the universal identifier (matches Lexical component).
  */
 export const readBlockOperation: ToolOperation<
   ReadBlockParams,
@@ -51,7 +48,7 @@ export const readBlockOperation: ToolOperation<
 
   async execute(
     params: unknown,
-    context: LexicalExecutionContext,
+    context: ToolExecutionContext,
   ): Promise<ReadBlockResult> {
     // Validate params using Zod
     const validatedParams = validateWithZod(
@@ -61,13 +58,13 @@ export const readBlockOperation: ToolOperation<
     );
 
     const { id } = validatedParams;
-    const { lexicalId } = context;
+    const { documentId } = context;
 
     // Validate context
-    if (!lexicalId) {
+    if (!documentId) {
       throw new Error(
-        'Lexical ID is required for readBlock operation. ' +
-          'Ensure the tool execution context includes a valid lexicalId.',
+        'Document ID is required for readBlock operation. ' +
+          'Ensure the tool execution context includes a valid documentId.',
       );
     }
 
@@ -101,9 +98,9 @@ export const readBlockOperation: ToolOperation<
       }
 
       // Call executor (uses this.name for DRY principle)
-      const block = await context.executor.execute<LexicalBlock>(this.name, {
+      const block = (await context.executor.execute(this.name, {
         blockId: id,
-      });
+      })) as LexicalBlock;
 
       return {
         success: true,

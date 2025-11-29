@@ -33,7 +33,7 @@ export interface InsertCellResult {
  * ```typescript
  * await insertCellOperation.execute(
  *   { type: 'code', source: 'print("Hello")' },
- *   { notebookId: 'file:///path/to/notebook.ipynb', executor }
+ *   { documentId: 'file:///path/to/notebook.ipynb', executor }
  * );
  * ```
  */
@@ -53,13 +53,13 @@ export const insertCellOperation: ToolOperation<
       params,
       this.name
     );
-    const { notebookId } = context;
+    const { documentId } = context;
 
     // Validate context
-    if (!notebookId) {
+    if (!documentId) {
       throw new Error(
-        'Notebook ID is required for insertCell operation. ' +
-          'Ensure the tool execution context includes a valid notebookId.'
+        'Document ID is required for insertCell operation. ' +
+          'Ensure the tool execution context includes a valid documentId.'
       );
     }
 

@@ -19,8 +19,8 @@ export interface ToolExecutionContext {
   /** Tool executor (DefaultExecutor, BridgeExecutor, etc.) */
   executor: ToolExecutor;
 
-  /** Notebook identifier (file URI or document UID) */
-  notebookId?: string;
+  /** Document identifier - universal for notebooks, lexicals, etc. (file URI or document UID) */
+  documentId?: string;
 
   /** Response format: "json" (default) or "toon" */
   format?: 'json' | 'toon';

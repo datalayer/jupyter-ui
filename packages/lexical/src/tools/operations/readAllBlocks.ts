@@ -10,10 +10,7 @@
  * @module tools/core/operations/readAllBlocks
  */
 
-import type {
-  ToolOperation,
-  LexicalExecutionContext,
-} from '../core/interfaces';
+import type { ToolOperation, ToolExecutionContext } from '../core/interfaces';
 import type { LexicalBlock, BriefBlock } from '../core/types';
 import { validateWithZod } from '../core/zodUtils';
 import {
@@ -54,7 +51,7 @@ export const readAllBlocksOperation: ToolOperation<
 
   async execute(
     params: unknown,
-    context: LexicalExecutionContext,
+    context: ToolExecutionContext,
   ): Promise<ReadAllBlocksResult> {
     // Validate params using Zod
     const validatedParams = validateWithZod(
@@ -64,13 +61,13 @@ export const readAllBlocksOperation: ToolOperation<
     );
 
     const { format = 'brief' } = validatedParams;
-    const { lexicalId } = context;
+    const { documentId } = context;
 
     // Validate context
-    if (!lexicalId) {
+    if (!documentId) {
       throw new Error(
-        'Lexical ID is required for readAllBlocks operation. ' +
-          'Ensure the tool execution context includes a valid lexicalId.',
+        'Document ID is required for readAllBlocks operation. ' +
+          'Ensure the tool execution context includes a valid documentId.',
       );
     }
 
@@ -84,9 +81,9 @@ export const readAllBlocksOperation: ToolOperation<
 
     try {
       // Call executor with format parameter
-      const blocks = await context.executor.execute<
-        LexicalBlock[] | BriefBlock[]
-      >(this.name, { format });
+      const blocks = (await context.executor.execute(this.name, {
+        format,
+      })) as LexicalBlock[] | BriefBlock[];
 
       return {
         success: true,

@@ -81,7 +81,7 @@ describe('OperationRunner', () => {
     mockExecutor = new MockExecutor();
     baseContext = {
       executor: mockExecutor,
-      notebookId: 'test-notebook-123',
+      documentId: 'test-notebook-123',
     };
   });
 
@@ -242,12 +242,12 @@ describe('OperationRunner', () => {
   });
 
   describe('Error handling', () => {
-    it('should throw error when notebookId is missing', async () => {
+    it('should throw error when documentId is missing', async () => {
       await expect(
         runner.execute(
           readCellOperation,
           { index: 0 },
-          { executor: mockExecutor } // no notebookId
+          { executor: mockExecutor } // no documentId
         )
       ).rejects.toThrow();
     });
@@ -257,7 +257,7 @@ describe('OperationRunner', () => {
         runner.execute(
           readCellOperation,
           { index: 0 },
-          { notebookId: 'test-123' } as ToolExecutionContext // no executor
+          { documentId: 'test-123' } as ToolExecutionContext // no executor
         )
       ).rejects.toThrow();
     });

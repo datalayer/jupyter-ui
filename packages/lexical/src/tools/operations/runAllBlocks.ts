@@ -10,10 +10,7 @@
  * @module tools/core/operations/runAllBlocks
  */
 
-import type {
-  ToolOperation,
-  LexicalExecutionContext,
-} from '../core/interfaces';
+import type { ToolOperation, ToolExecutionContext } from '../core/interfaces';
 import { validateWithZod } from '../core/zodUtils';
 import {
   runAllBlocksParamsSchema,
@@ -40,7 +37,7 @@ export interface RunAllBlocksResult {
  * Runs all executable blocks (jupyter-cell, code blocks with executable: true) in sequence.
  * Only executable blocks are run; other block types are skipped.
  *
- * Uses lexicalId as the universal identifier (matches Lexical component).
+ * Uses documentId as the universal identifier (matches Lexical component).
  */
 export const runAllBlocksOperation: ToolOperation<
   RunAllBlocksParams,
@@ -50,18 +47,18 @@ export const runAllBlocksOperation: ToolOperation<
 
   async execute(
     params: unknown,
-    context: LexicalExecutionContext,
+    context: ToolExecutionContext,
   ): Promise<RunAllBlocksResult> {
     // Validate params using Zod
     validateWithZod(runAllBlocksParamsSchema, params || {}, 'runAllBlocks');
 
-    const { lexicalId } = context;
+    const { documentId } = context;
 
     // Validate context
-    if (!lexicalId) {
+    if (!documentId) {
       throw new Error(
-        'Lexical ID is required for runAllBlocks operation. ' +
-          'Ensure the tool execution context includes a valid lexicalId.',
+        'Document ID is required for runAllBlocks operation. ' +
+          'Ensure the tool execution context includes a valid documentId.',
       );
     }
 
@@ -75,10 +72,10 @@ export const runAllBlocksOperation: ToolOperation<
 
     try {
       // Call executor (uses this.name for DRY principle)
-      const executedCount = await context.executor.execute<number>(
+      const executedCount = (await context.executor.execute(
         this.name,
         {},
-      );
+      )) as number;
 
       return {
         success: true,
