@@ -34,8 +34,7 @@ type Props = {
   theme?: Colormode;
 };
 
-export const JupyterLabAppCss = (props: Props) => {
-  const { theme } = props;
+export const JupyterLabAppCss = ({ theme = 'light' }: Props) => {
   useEffect(() => {
     switch (theme) {
       case 'light': {
@@ -50,9 +49,5 @@ export const JupyterLabAppCss = (props: Props) => {
   }, [theme]);
   return <div id="dla-JupyterLabAppCss-id"></div>;
 };
-
-JupyterLabAppCss.defaultProps = {
-  theme: 'light',
-} as Partial<Props>;
 
 export default JupyterLabAppCss;
