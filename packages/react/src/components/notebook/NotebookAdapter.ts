@@ -54,6 +54,7 @@ import { CommandRegistry } from '@lumino/commands';
 import { BoxPanel, Widget } from '@lumino/widgets';
 import { Kernel, Lite, WidgetLabRenderer, WidgetManager } from '../../jupyter';
 import { KernelTransfer, OnSessionConnection } from '../../state';
+import { newUuid } from '../../utils';
 import { JupyterReactContentFactory } from './content/JupyterReactContentFactory';
 import { getMarked } from './marked/marked';
 import { JupyterReactNotebookModelFactory } from './model/JupyterReactNotebookModelFactory';
@@ -94,15 +95,15 @@ export class NotebookAdapter {
   constructor(props: INotebookProps) {
     console.log('Creating a new Notebook Adapter.');
 
-    this._id = props.id;
+    this._id = props.id ?? newUuid();
     this._kernel = props.kernel;
-    this._kernelClients = props.kernelClients;
+    this._kernelClients = props.kernelClients ?? [];
     this._lite = props.lite;
     this._nbformat = props.nbformat;
     this._path = props.path;
-    this._readonly = props.readonly!;
-    this._renderers = props.renderers!;
-    this._serverless = props.serverless;
+    this._readonly = props.readonly ?? false;
+    this._renderers = props.renderers ?? [];
+    this._serverless = props.serverless ?? false;
     this._serviceManager = props.serviceManager!;
     this._url = props.url;
     this._useVSCodeTheme = props.useVSCodeTheme ?? true; // Default to true for backwards compatibility
