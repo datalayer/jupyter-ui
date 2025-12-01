@@ -10,11 +10,13 @@ import OutputViewerAdapter from './OutputViewerAdapter';
 
 export type OutputViewerProps = {
   cell: ICell;
-  adaptPlotly: boolean;
+  adaptPlotly?: boolean;
 };
 
-export const OutputViewer = (props: OutputViewerProps) => {
-  const { cell, adaptPlotly } = props;
+export const OutputViewer = ({
+  cell,
+  adaptPlotly = false,
+}: OutputViewerProps) => {
   const outputs = cell.outputs ? (cell.outputs as IOutput[]) : undefined;
   const outputAdapter = new OutputViewerAdapter(adaptPlotly, outputs);
   switch (cell.cell_type) {
@@ -29,9 +31,5 @@ export const OutputViewer = (props: OutputViewerProps) => {
       return <></>;
   }
 };
-
-OutputViewer.defaultProps = {
-  adaptPlotly: false,
-} as Partial<OutputViewerProps>;
 
 export default OutputViewer;

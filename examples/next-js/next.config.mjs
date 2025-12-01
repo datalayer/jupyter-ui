@@ -23,7 +23,6 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   webpack: (config, options) => {
-
     config.resolve.fallback = {
       ...config.resolve.fallback,
       buffer: require.resolve('buffer/'),

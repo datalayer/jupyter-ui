@@ -14,7 +14,7 @@ import {
   CellSidebarExtension,
   CellSidebarButton,
 } from '@datalayer/jupyter-react';
-import { Box } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { PrimerTheme } from './PrimerTheme';
 import { useMemo } from 'react';
 
@@ -23,8 +23,10 @@ type INotebookComponentProps = {
   theme?: PrimerTheme;
 };
 
-export const NotebookComponent = (props: INotebookComponentProps) => {
-  //  const { colorMode, theme } = props;
+export const NotebookComponent = ({
+  colorMode = 'light',
+  theme,
+}: INotebookComponentProps) => {
   const { defaultKernel, serviceManager } = useJupyter({
     jupyterServerUrl: 'https://oss.datalayer.run/api/jupyter-server',
     jupyterServerToken:
@@ -40,7 +42,7 @@ export const NotebookComponent = (props: INotebookComponentProps) => {
       {defaultKernel && serviceManager ? (
         <>
           <div style={{ fontSize: 20 }}>Jupyter Notebook in Next.js</div>
-          <JupyterReactTheme>
+          <JupyterReactTheme colormode={colorMode} theme={theme}>
             <Box
               sx={{
                 '& .jp-NotebookPanel': {
@@ -75,11 +77,6 @@ export const NotebookComponent = (props: INotebookComponentProps) => {
       )}
     </>
   );
-};
-
-NotebookComponent.defaultProps = {
-  colorMode: 'light' as 'light' | 'dark',
-  theme: undefined,
 };
 
 export default NotebookComponent;

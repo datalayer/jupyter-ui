@@ -24,42 +24,50 @@ import JupyterLabAppCss from './JupyterLabAppCss';
 
 export type JupyterLabAppProps = {
   PluginType?: any;
-  devMode: boolean;
-  disabledPlugins: Array<string>;
-  headless: boolean;
-  height: string | number;
-  hostId: string;
+  devMode?: boolean;
+  disabledPlugins?: Array<string>;
+  headless?: boolean;
+  height?: string | number;
+  hostId?: string;
   mimeRendererPromises?: Array<Promise<IRenderMime.IExtensionModule>>;
-  mimeRenderers: Array<IRenderMime.IExtensionModule>;
-  nosplash: boolean;
-  onJupyterLab: (jupyterLabAppdapter: JupyterLabAppAdapter) => void;
+  mimeRenderers?: Array<IRenderMime.IExtensionModule>;
+  nosplash?: boolean;
+  onJupyterLab?: (jupyterLabAppdapter: JupyterLabAppAdapter) => void;
   onPlugin?: (plugin: any) => void;
   pluginId?: string;
   pluginPromises?: Array<Promise<JupyterLab.IPluginModule>>;
-  plugins: Array<JupyterLab.IPluginModule>;
-  position: string;
-  serverless: boolean;
-  serviceManager: ServiceManager.IManager;
-  startDefaultKernel: boolean;
-  theme: Colormode;
-  width: string | number;
+  plugins?: Array<JupyterLab.IPluginModule>;
+  position?: string;
+  serverless?: boolean;
+  serviceManager?: ServiceManager.IManager;
+  startDefaultKernel?: boolean;
+  theme?: Colormode;
+  width?: string | number;
 };
 
 const JupyterLabAppComponent = (props: JupyterLabAppProps) => {
   const {
     PluginType,
-    headless,
-    height,
-    hostId,
-    onJupyterLab,
+    devMode = false,
+    disabledPlugins = [],
+    headless = false,
+    height = '100vh',
+    hostId = 'app-example-id',
+    mimeRendererPromises,
+    mimeRenderers = [],
+    nosplash = false,
+    onJupyterLab = (_: JupyterLabAppAdapter) => {},
     onPlugin,
     pluginId,
-    position,
-    serverless,
+    pluginPromises,
+    plugins = [],
+    position = 'relative',
+    serverless = false,
     serviceManager: propsServiceManager,
-    startDefaultKernel,
-    theme,
-    width,
+    startDefaultKernel = false,
+    theme = 'light',
+    width = '100%',
+    ...restProps
   } = props;
   const { serviceManager } = useJupyter({
     serverless,
@@ -68,23 +76,39 @@ const JupyterLabAppComponent = (props: JupyterLabAppProps) => {
   });
   const defaultMimeExtensionPromises = useMemo(
     () =>
-      props.mimeRendererPromises ??
-      JupyterLabAppCorePlugins().mimeExtensionPromises,
-    []
+      mimeRendererPromises ?? JupyterLabAppCorePlugins().mimeExtensionPromises,
+    [mimeRendererPromises]
   );
   const defaultExtensionPromises = useMemo(
-    () => props.pluginPromises ?? JupyterLabAppCorePlugins().extensionPromises,
-    []
+    () => pluginPromises ?? JupyterLabAppCorePlugins().extensionPromises,
+    [pluginPromises]
   );
   const ref = useRef<HTMLDivElement>(null);
   const [_, setAdapter] = useState<JupyterLabAppAdapter>();
   useEffect(() => {
     if (ref && serviceManager) {
       const adapter = new JupyterLabAppAdapter({
-        ...props,
+        PluginType,
+        devMode,
+        disabledPlugins,
+        headless,
+        height,
+        hostId,
         mimeRendererPromises: defaultMimeExtensionPromises,
+        mimeRenderers,
+        nosplash,
+        onJupyterLab,
+        onPlugin,
+        pluginId,
         pluginPromises: defaultExtensionPromises,
+        plugins,
+        position,
+        serverless,
         serviceManager,
+        startDefaultKernel,
+        theme,
+        width,
+        ...restProps,
       });
       adapter.ready.then(() => {
         onJupyterLab(adapter!);
@@ -114,23 +138,6 @@ const JupyterLabAppComponent = (props: JupyterLabAppProps) => {
     </>
   );
 };
-
-JupyterLabAppComponent.defaultProps = {
-  devMode: false,
-  disabledPlugins: [],
-  headless: false,
-  height: '100vh',
-  hostId: 'app-example-id',
-  mimeRenderers: [],
-  onJupyterLab: (_: JupyterLabAppAdapter) => {},
-  plugins: [],
-  position: 'relative',
-  nosplash: false,
-  serverless: false,
-  startDefaultKernel: false,
-  theme: 'light',
-  width: '100%',
-} as Partial<JupyterLabAppProps>;
 
 export const JupyterLabApp = memo(JupyterLabAppComponent);
 

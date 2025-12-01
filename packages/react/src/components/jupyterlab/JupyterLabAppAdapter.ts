@@ -54,17 +54,17 @@ export class JupyterLabAppAdapter {
 
   private async load(props: JupyterLabAppAdapterProps) {
     const {
-      disabledPlugins,
+      disabledPlugins = [],
       hostId,
-      plugins: extensions,
-      mimeRenderers: mimeExtensions,
+      plugins: extensions = [],
+      mimeRenderers: mimeExtensions = [],
       nosplash,
-      pluginPromises: extensionPromises,
-      mimeRendererPromises: mimeExtensionPromises,
+      pluginPromises: extensionPromises = [],
+      mimeRendererPromises: mimeExtensionPromises = [],
       devMode,
       serviceManager,
     } = props;
-    const mimeExtensionResolved = await Promise.all(mimeExtensionPromises!);
+    const mimeExtensionResolved = await Promise.all(mimeExtensionPromises);
     mimeExtensions.push(...mimeExtensionResolved);
     this._shell = new LabShell();
     this._jupyterLab = new JupyterLab({
@@ -81,7 +81,7 @@ export class JupyterLabAppAdapter {
         matches: [],
       },
     });
-    const extensionResolved = await Promise.all(extensionPromises!);
+    const extensionResolved = await Promise.all(extensionPromises);
     disabledPlugins.push(
       '@jupyterlab/notebook-extension:language-server',
       '@jupyterlab/notebook-extension:update-raw-mimetype',

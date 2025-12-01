@@ -21,56 +21,70 @@ import { useOutputsStore } from './OutputState';
 
 import './Output.css';
 
+const DEFAULT_OUTPUTS: IOutput[] = [
+  {
+    output_type: 'execute_result',
+    data: {
+      'text/html': ['<p>Type code in the cell and Shift+Enter to execute.</p>'],
+    },
+    execution_count: 0,
+    metadata: {},
+  },
+];
+
 export type IOutputProps = {
   adapter?: OutputAdapter;
-  autoRun: boolean;
-  clearTrigger: number;
-  code: string;
+  autoRun?: boolean;
+  clearTrigger?: number;
+  code?: string;
   codePre?: string;
-  disableRun: boolean;
-  executeTrigger: number;
-  id: string;
+  disableRun?: boolean;
+  executeTrigger?: number;
+  id?: string;
   insertText?: (payload?: any) => string;
   kernel?: Kernel;
-  lumino: boolean;
+  lumino?: boolean;
   model?: IOutputAreaModel;
   onExecutionPhaseChanged?: (phaseOutput: IExecutionPhaseOutput) => void;
   outputs?: IOutput[];
   receipt?: string;
   showControl?: boolean;
-  showEditor: boolean;
+  showEditor?: boolean;
   showKernelProgressBar?: boolean;
   suppressCodeExecutionErrors?: boolean;
-  toolbarPosition: 'up' | 'middle' | 'none';
+  toolbarPosition?: 'up' | 'middle' | 'none';
+  notifyOnComplete?: boolean;
 };
 
-export const Output = (props: IOutputProps) => {
-  const {
-    adapter: propsAdapter,
-    autoRun,
-    clearTrigger,
-    code,
-    codePre,
-    disableRun,
-    executeTrigger,
-    id: sourceId,
-    insertText,
-    kernel: propsKernel,
-    lumino,
-    model,
-    onExecutionPhaseChanged,
-    outputs: propsOutputs,
-    receipt,
-    showControl,
-    showEditor,
-    showKernelProgressBar = true,
-    suppressCodeExecutionErrors = false,
-    toolbarPosition,
-  } = props;
+export const Output = ({
+  adapter: propsAdapter,
+  autoRun = false,
+  clearTrigger = 0,
+  code = '',
+  codePre,
+  disableRun = false,
+  executeTrigger = 0,
+  id: sourceId,
+  insertText,
+  kernel: propsKernel,
+  lumino = true,
+  model,
+  onExecutionPhaseChanged,
+  outputs: propsOutputs = DEFAULT_OUTPUTS,
+  receipt,
+  showControl = true,
+  showEditor = false,
+  showKernelProgressBar = true,
+  suppressCodeExecutionErrors = false,
+  toolbarPosition = 'up',
+  notifyOnComplete = false,
+}: IOutputProps) => {
+  void notifyOnComplete;
   const { defaultKernel } = useJupyter();
   const outputStore = useOutputsStore();
   const kernel = propsKernel ?? propsAdapter?.kernel ?? defaultKernel;
-  const [id, setId] = useState<string | undefined>(sourceId);
+  const [id, setId] = useState<string>(() => sourceId ?? newUuid());
+  const resolvedSourceId = sourceId ?? id;
   const [kernelStatus, setKernelStatus] =
     useState<KernelMessage.Status>('unknown');
   const [outputs, setOutputs] = useState<IOutput[] | undefined>(propsOutputs);
@@ -93,10 +107,10 @@ export const Output = (props: IOutputProps) => {
   }, [executeTrigger, lumino, adapter]);
 
   useEffect(() => {
-    if (!id) {
-      setId(newUuid());
+    if (sourceId && sourceId !== id) {
+      setId(sourceId);
     }
-  }, [id]);
+  }, [sourceId, id]);
   useEffect(() => {
     const outputsCallback = (
       model: IOutputAreaModel,
@@ -117,7 +131,7 @@ export const Output = (props: IOutputProps) => {
             const out = val.data['text/html']; // val.data['application/vnd.jupyter.stdout'];
             if (out) {
               if ((out as string).indexOf(receipt) > -1) {
-                outputStore.setGradeSuccess(sourceId, true);
+                outputStore.setGradeSuccess(resolvedSourceId, true);
               }
             }
           }
@@ -180,7 +194,7 @@ export const Output = (props: IOutputProps) => {
       setKernelStatus('idle');
     }
   }, [kernel]);
-  const executeRequest = outputStore.getExecuteRequest(sourceId);
+  const executeRequest = outputStore.getExecuteRequest(resolvedSourceId);
   useEffect(() => {
     if (adapter && executeRequest && executeRequest === id) {
       adapter.execute(code, onExecutionPhaseChanged);
@@ -277,28 +291,5 @@ export const Output = (props: IOutputProps) => {
     </>
   );
 };
-
-Output.defaultProps = {
-  autoRun: false,
-  clearTrigger: 0,
-  disableRun: false,
-  executeTrigger: 0,
-  showControl: true,
-  lumino: true,
-  outputs: [
-    {
-      output_type: 'execute_result',
-      data: {
-        'text/html': [
-          '<p>Type code in the cell and Shift+Enter to execute.</p>',
-        ],
-      },
-      execution_count: 0,
-      metadata: {},
-    },
-  ],
-  notifyOnComplete: false,
-  toolbarPosition: 'up',
-} as Partial<IOutputProps>;
 
 export default Output;
