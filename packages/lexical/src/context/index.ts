@@ -4,6 +4,7 @@
  * MIT License
  */
 
+export * from './LexicalConfigContext';
 export * from './LexicalContext';
 export * from './SettingsContext';
 export * from './ToolbarContext';

@@ -17,6 +17,7 @@ export * from './ImagesPlugin';
 export * from './JupyterCellPlugin';
 export * from './JupyterInputOutputPlugin';
 export * from './LexicalInlineCompletionPlugin';
+export * from './LexicalStatePlugin';
 export * from './ListMaxIndentLevelPlugin';
 export * from './MarkdownPlugin';
 export * from './NbformatContentPlugin';
