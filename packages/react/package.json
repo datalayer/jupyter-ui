@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyter-react",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "description": "Jupyter React - React.js components 100% compatible with Jupyter.",
   "license": "MIT",
   "main": "lib/index.js",
@@ -235,8 +235,7 @@
     "stylelint": "^16.26.1",
     "stylelint-config-recommended": "^17.0.0",
     "stylelint-config-standard": "^39.0.1",
-    "stylelint-csstree-validator": "^3.0.0",
-    "stylelint-prettier": "^5.0.0",
+    "stylelint-prettier": "^5.0.3",
     "svg-url-loader": "^7.1.1",
     "ts-jest": "^29.0.5",
     "ts-loader": "^9.4.3",
@@ -312,9 +311,6 @@
       "stylelint-config-recommended",
       "stylelint-config-standard",
       "stylelint-prettier/recommended"
-    ],
-    "plugins": [
-      "stylelint-csstree-validator"
     ],
     "rules": {
       "csstree/validator": true,
