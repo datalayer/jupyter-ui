@@ -312,9 +312,6 @@
       "stylelint-config-standard",
       "stylelint-prettier/recommended"
     ],
-    "plugins": [
-      "stylelint-csstree-validator"
-    ],
     "rules": {
       "csstree/validator": true,
       "property-no-vendor-prefix": null,
