@@ -265,7 +265,9 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
 
   public updateKernel(kernel: Kernel | undefined) {
     const self = this.getWritable();
-    self.__outputAdapter.kernel = kernel;
+    if (self.__outputAdapter) {
+      self.__outputAdapter.kernel = kernel;
+    }
   }
 }
 
