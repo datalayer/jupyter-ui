@@ -37,7 +37,7 @@ import { UUID } from '@lumino/coreutils';
 import { IOutput } from '@jupyterlab/nbformat';
 import type { IOutputAreaModel } from '@jupyterlab/outputarea';
 import { Session } from '@jupyterlab/services';
-import { createNoKernelWarning } from '../nodes/jupyterUtils';
+import { createNoRuntimeWarning } from '../nodes/jupyterUtils';
 import {
   $createJupyterInputNode,
   JupyterInputNode,
@@ -63,7 +63,7 @@ export const DEFAULT_INITIAL_OUTPUTS: IOutput[] = [
     data: {
       'text/html': [
         '<div style="color: #888; font-size: 11px; font-style: italic; padding: 0; margin: 0;">',
-        'Press <kbd style="font-size: 10px; padding: 1px 4px; background: #f0f0f0; border: 1px solid #ccc; border-radius: 3px;">Shift+Enter</kbd> to execute. Please connect to execute code.',
+        'Press <kbd style="font-size: 10px; padding: 1px 4px; background: #f0f0f0; border: 1px solid #ccc; border-radius: 3px;">Shift+Enter</kbd> to execute.',
         '</div>',
       ],
     },
@@ -390,7 +390,7 @@ export const JupyterInputOutputPlugin = (
                   // Handle execution
                   if (!existingAdapter.kernel) {
                     // Show user-facing warning
-                    const warningOutput = createNoKernelWarning();
+                    const warningOutput = createNoRuntimeWarning();
                     // Update BOTH the node's outputs AND the adapter's model
                     writableNode.__outputs = [warningOutput];
                     existingAdapter.setOutputs([warningOutput]);

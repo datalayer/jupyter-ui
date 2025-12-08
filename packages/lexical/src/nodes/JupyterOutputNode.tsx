@@ -27,7 +27,7 @@ import {
   newUuid,
   Kernel,
 } from '@datalayer/jupyter-react';
-import { createNoKernelWarning } from './jupyterUtils';
+import { createNoRuntimeWarning } from './jupyterUtils';
 import { isJupyterOutputNodeOrphaned } from './JupyterOutputNodeUtils';
 
 export type SerializedJupyterOutputNode = Spread<
@@ -248,7 +248,7 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
 
     if (!self.__outputAdapter.kernel) {
       // Show user-facing warning instead of just logging
-      const warningOutput = createNoKernelWarning();
+      const warningOutput = createNoRuntimeWarning();
 
       // Update BOTH the node's outputs AND the adapter's model
       self.__outputs = [warningOutput];
