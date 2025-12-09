@@ -84,8 +84,13 @@ const JupyterLabAppComponent = (props: JupyterLabAppProps) => {
     [pluginPromises]
   );
   const ref = useRef<HTMLDivElement>(null);
+  const adapterRef = useRef<JupyterLabAppAdapter | null>(null);
   const [_, setAdapter] = useState<JupyterLabAppAdapter>();
   useEffect(() => {
+    // Guard against creating multiple adapters
+    if (adapterRef.current) {
+      return;
+    }
     if (ref && serviceManager) {
       const adapter = new JupyterLabAppAdapter({
         PluginType,
@@ -117,6 +122,7 @@ const JupyterLabAppComponent = (props: JupyterLabAppProps) => {
           onPlugin(plugin);
         }
       });
+      adapterRef.current = adapter;
       setAdapter(adapter);
     }
   }, [hostId, ref, serviceManager, theme]);
