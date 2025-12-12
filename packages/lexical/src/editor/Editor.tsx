@@ -173,10 +173,7 @@ export function EditorContainer(props: Props) {
           kernel={defaultKernel}
           onSessionConnection={onSessionConnection}
         />
-        <ComponentPickerMenuPlugin
-          initCode="print('🪐 ⚛️ Hello Jupyter UI')"
-          kernel={defaultKernel}
-        />
+        <ComponentPickerMenuPlugin kernel={defaultKernel} />
         <EquationsPlugin />
         <ImagesPlugin />
         <HashtagPlugin />

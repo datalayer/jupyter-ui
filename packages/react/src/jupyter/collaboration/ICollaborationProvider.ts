@@ -118,9 +118,7 @@ export interface ICollaborationProvider extends IDisposable {
  *
  * This class provides common functionality for all collaboration providers.
  */
-export abstract class CollaborationProviderBase
-  implements ICollaborationProvider
-{
+export abstract class CollaborationProviderBase implements ICollaborationProvider {
   protected _status: CollaborationStatus = CollaborationStatus.Disconnected;
   protected _provider: WebsocketProvider | null = null;
   protected _sharedModel: YNotebook | null = null;
