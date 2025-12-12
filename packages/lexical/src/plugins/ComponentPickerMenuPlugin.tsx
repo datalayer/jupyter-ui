@@ -130,7 +130,7 @@ export interface ComponentPickerMenuPluginProps {
 
 export const ComponentPickerMenuPlugin = ({
   kernel,
-  initCode = "print('Hello Jupyter UI')",
+  initCode = '',
 }: ComponentPickerMenuPluginProps = {}): JSX.Element => {
   const [editor] = useLexicalComposerContext();
   const [modal, showModal] = useModal();
