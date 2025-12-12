@@ -397,9 +397,8 @@ export class LexicalAdapter {
         // Handle different block types that require command insertion
         if (block.block_type === 'equation') {
           // Import equation command dynamically
-          const { INSERT_EQUATION_COMMAND } = await import(
-            '../plugins/EquationsPlugin'
-          );
+          const { INSERT_EQUATION_COMMAND } =
+            await import('../plugins/EquationsPlugin');
 
           // Extract equation data from block
           const source = Array.isArray(block.source)
@@ -472,9 +471,8 @@ export class LexicalAdapter {
           }, 10);
         } else if (block.block_type === 'jupyter-cell') {
           // Import jupyter command dynamically
-          const { INSERT_JUPYTER_INPUT_OUTPUT_COMMAND } = await import(
-            '../plugins/JupyterInputOutputPlugin'
-          );
+          const { INSERT_JUPYTER_INPUT_OUTPUT_COMMAND } =
+            await import('../plugins/JupyterInputOutputPlugin');
 
           // For jupyter-cell, we need to:
           // 1. Create a placeholder paragraph at the target location

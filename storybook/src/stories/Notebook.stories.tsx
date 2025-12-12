@@ -34,9 +34,8 @@ const Template = (args, { globals: { labComparison = true }, ...rest }) => {
   const lite = {
     true: true,
     false: false,
-    '@jupyterlite/javascript-kernel-extension': import(
-      '@jupyterlite/javascript-kernel-extension'
-    ),
+    '@jupyterlite/javascript-kernel-extension':
+      import('@jupyterlite/javascript-kernel-extension'),
   }[args.browser];
 
   const kernelName =
