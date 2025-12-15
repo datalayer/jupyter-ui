@@ -375,6 +375,55 @@ export class LexicalAdapter {
   }
 
   /**
+   * Clear all outputs from all Jupyter cells in the lexical document.
+   *
+   * @remarks
+   * Removes all execution outputs from all jupyter-cell blocks. This operation:
+   * - Clears outputs but preserves cell source code
+   * - Resets execution counts for jupyter cells
+   * - Cannot be undone
+   *
+   * @returns Promise with operation result
+   */
+  async clearAllOutputs(): Promise<OperationResult> {
+    return new Promise(resolve => {
+      this._editor.update(() => {
+        let clearedCount = 0;
+
+        // Traverse document tree and clear all JupyterOutputNode outputs
+        function clearJupyterOutputs(node: any) {
+          // Check if node is a JupyterOutputNode by checking its type
+          if (node.getType && node.getType() === 'jupyter-output') {
+            // Use outputAdapter.clear() to properly clear the OutputArea model
+            if (node.__outputAdapter) {
+              node.__outputAdapter.clear();
+              clearedCount++;
+            }
+          }
+          // Traverse children if this is an element node
+          if (node.getChildren) {
+            const children = node.getChildren();
+            for (const child of children) {
+              clearJupyterOutputs(child);
+            }
+          }
+        }
+
+        const root = $getRoot();
+        clearJupyterOutputs(root);
+
+        resolve({
+          success: true,
+          message:
+            clearedCount > 0
+              ? `Cleared outputs from ${clearedCount} jupyter cells`
+              : 'No jupyter cells found to clear',
+        });
+      });
+    });
+  }
+
+  /**
    * Check if a block type requires command-based insertion
    */
   private requiresCommand(blockType: string): boolean {

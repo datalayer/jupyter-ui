@@ -15,7 +15,7 @@
 
 import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
-import { LexicalAdapter } from './LexicalAdapter';
+import { LexicalAdapter, type OperationResult } from './LexicalAdapter';
 import type {
   LexicalBlock,
   BlockFormat,
@@ -116,6 +116,7 @@ export type LexicalState = ILexicalsState & {
     silent?: boolean,
     stopOnError?: boolean,
   ) => Promise<any>;
+  clearAllOutputs: (id: string) => Promise<OperationResult>;
 
   // Additional utility methods
   getBlockCount: (id: string) => Promise<number>;
@@ -304,6 +305,15 @@ export const lexicalStore = createStore<LexicalState>((set, get) => ({
           params.stopOnError,
         )) ?? { success: false, error: 'Adapter not found' }
     );
+  },
+
+  clearAllOutputs: async (id: string): Promise<OperationResult> => {
+    const params = typeof id === 'object' ? id : { id };
+    const adapter = get().lexicals.get(params.id as string)?.adapter;
+    if (!adapter) {
+      return { success: false, error: 'Adapter not found' };
+    }
+    return await adapter.clearAllOutputs();
   },
 
   getBlockCount: async (id: string): Promise<number> => {
