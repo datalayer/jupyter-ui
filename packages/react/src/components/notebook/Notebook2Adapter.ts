@@ -719,6 +719,19 @@ export class Notebook2Adapter {
   }
 
   /**
+   * Clear all outputs from all cells in the notebook.
+   *
+   * @remarks
+   * Removes all execution outputs from all cells. This operation:
+   * - Clears outputs but preserves cell source code
+   * - Resets execution counts
+   * - Cannot be undone
+   */
+  clearAllOutputs(): void {
+    NotebookActions.clearAllOutputs(this._notebook);
+  }
+
+  /**
    * Execute code directly in the kernel without creating a cell.
    *
    * This method sends code execution requests directly to the kernel,

@@ -76,6 +76,7 @@ export type Notebook2State = INotebooks2State & {
     { execution_count?: number | null; outputs?: Array<string> } | undefined
   >;
   runAllCells: (id: string) => void;
+  clearAllOutputs: (id: string) => void;
 
   // Original methods (from legacy API)
   run: (id: string) => void;
@@ -208,6 +209,9 @@ export const notebookStore2 = createStore<Notebook2State>((set, get) => ({
   runAllCells: (id: any): void => {
     const params = typeof id === 'object' ? id : { id };
     get().notebooks.get(params.id)?.adapter?.runAllCells();
+  },
+  clearAllOutputs: (id: string): void => {
+    get().notebooks.get(id)?.adapter?.clearAllOutputs();
   },
 
   // Original methods (from legacy API)

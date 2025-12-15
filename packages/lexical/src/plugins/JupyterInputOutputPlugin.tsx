@@ -745,8 +745,11 @@ export const JupyterInputOutputPlugin = (
         // Traverse document tree and clear all JupyterOutputNode outputs
         function clearJupyterOutputs(node: LexicalNode) {
           if (node instanceof JupyterOutputNode) {
-            node.setOutputs([]);
-            clearedCount++;
+            // Use outputAdapter.clear() to properly clear the OutputArea model
+            if (node.__outputAdapter) {
+              node.__outputAdapter.clear();
+              clearedCount++;
+            }
           }
           if ($isElementNode(node)) {
             const children = node.getChildren();
