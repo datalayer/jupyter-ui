@@ -17,7 +17,12 @@
  */
 
 import type { LexicalEditor } from 'lexical';
-import { $getRoot, $createParagraphNode, $createTextNode } from 'lexical';
+import {
+  $getRoot,
+  $getSelection,
+  $createParagraphNode,
+  $createTextNode,
+} from 'lexical';
 import {
   $createHeadingNode,
   $createQuoteNode,
@@ -219,9 +224,47 @@ export class LexicalAdapter {
   }
 
   /**
-   * Run a specific block (jupyter-cell or jupyter-input)
+   * Run a specific block (jupyter-cell or jupyter-input).
+   * If blockId is not provided, attempts to run the currently focused block.
    */
-  async runBlock(blockId: string): Promise<OperationResult> {
+  async runBlock(blockId?: string): Promise<OperationResult> {
+    // If no blockId provided, find the currently focused jupyter-cell
+    if (!blockId) {
+      let foundBlockId: string | null = null;
+
+      this._editor.getEditorState().read(() => {
+        const selection = $getSelection();
+        if (!selection) return;
+
+        const nodes = selection.getNodes();
+        if (nodes.length === 0) return;
+
+        const node = nodes[0];
+
+        // Find parent jupyter-cell or jupyter-input
+        let current: any = node;
+        while (current) {
+          const type = current.getType();
+          if (type === 'jupyter-cell' || type === 'jupyter-input') {
+            foundBlockId = current.getKey();
+            break;
+          }
+          const parent = current.getParent();
+          if (!parent) break;
+          current = parent;
+        }
+      });
+
+      if (!foundBlockId) {
+        return {
+          success: false,
+          error: 'No jupyter cell is currently focused',
+        };
+      }
+
+      blockId = foundBlockId;
+    }
+
     const block = await this.getBlockById(blockId);
     if (!block) {
       return {
