@@ -5,6 +5,7 @@
  */
 
 export * from './AutoEmbedPlugin';
+export * from './AutoIndentPlugin';
 export * from './AutoLinkPlugin';
 export * from './CodeActionMenuPlugin';
 export * from './CommentPlugin';

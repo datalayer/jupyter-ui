@@ -4,6 +4,7 @@
  * MIT License
  */
 
+export * from './autoindent';
 export * from './components';
 export * from './context';
 export * from './convert';
