@@ -37,10 +37,28 @@ import {
   JupyterInputNode,
 } from '../nodes/JupyterInputNode';
 import { $createJupyterInputHighlightNode } from '../nodes/JupyterInputHighlightNode';
+import { $isInlineCompletionNode } from '../nodes/InlineCompletionNode';
 
 export interface AutoIndentPluginProps extends AutoIndentOptions {
   /** Enable the plugin (default: true) */
   enabled?: boolean;
+}
+
+/**
+ * Check if there's an active inline completion in the given JupyterInputNode
+ * @param parentNode - The JupyterInputNode to check
+ * @returns true if an InlineCompletionNode is found, false otherwise
+ */
+function hasActiveInlineCompletion(parentNode: JupyterInputNode): boolean {
+  const children = parentNode.getChildren();
+
+  for (const child of children) {
+    if ($isInlineCompletionNode(child)) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 /**
@@ -112,6 +130,12 @@ export function AutoIndentPlugin({
           if (!parentCodeBlock) {
             // Not in code block, let default Tab behavior happen
             return false;
+          }
+
+          // CRITICAL: Check for active inline completion first!
+          // If there's a completion suggestion, let inline completion plugin handle Tab
+          if (hasActiveInlineCompletion(parentCodeBlock)) {
+            return false; // Let LexicalInlineCompletionPlugin accept the suggestion
           }
 
           // Prevent default Tab behavior (focus navigation)
