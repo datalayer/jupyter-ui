@@ -76,7 +76,7 @@ import { newUuid, remoteUserCursors } from '../../utils';
 import { Lumino } from '../lumino';
 import { Loader } from '../utils';
 import type { NotebookExtension } from './NotebookExtensions';
-import { addNotebookCommands } from './NotebookCommands';
+import { addNotebookCommands, NotebookPanelProvider } from './NotebookCommands';
 import { Notebook2Adapter } from './Notebook2Adapter';
 import { notebookStore2 } from './Notebook2State';
 
@@ -384,6 +384,9 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
     };
   }, [contentFactory, features]);
 
+  // Panel provider - persists across React re-renders to avoid tracker.currentWidget becoming null
+  const panelProvider = useMemo(() => new NotebookPanelProvider(), []);
+
   // Tracker & commands.
   const [tracker, setTracker] = useState<NotebookTracker | null>(null);
   useEffect(() => {
@@ -395,6 +398,7 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
           features.commands,
           completer,
           thisTracker!,
+          panelProvider,
           props.path
         )
       : null;
@@ -404,7 +408,7 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
       thisTracker?.dispose();
       setTracker(tracker => (tracker === thisTracker ? null : tracker));
     };
-  }, [completer, id, features.commands, props.path]);
+  }, [completer, id, features.commands, props.path, panelProvider]);
 
   // Context
   const [context, setContext] = useState<Context<NotebookModel> | null>(null);
@@ -455,6 +459,9 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
     if (context) {
       thisPanel = widgetFactory?.createNew(context) ?? null;
       if (thisPanel) {
+        // Update panel provider with persistent references
+        panelProvider.setPanel(thisPanel, context);
+
         // Create the adapter
         thisAdapter = new Notebook2Adapter(
           features.commands,
@@ -512,6 +519,9 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
     }
 
     return () => {
+      // Clear panel provider to avoid stale references
+      panelProvider.setPanel(null, null);
+
       widgetsManager?.dispose();
       if (thisAdapter) {
         thisAdapter.dispose();
@@ -529,7 +539,7 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
       setPanel(panel => (panel === thisPanel ? null : panel));
       setAdapter(adapter => (adapter === thisAdapter ? null : adapter));
     };
-  }, [context, extensions, features.commands, widgetFactory]);
+  }, [context, extensions, features.commands, widgetFactory, panelProvider]);
 
   // Update notebook store when adapter changes
   useEffect(() => {
