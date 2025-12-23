@@ -109,7 +109,7 @@ export const DEFAULT_CONFIG: InlineCompletionConfig = {
     contextAfter: -1, // Entire document
   },
   debounceMs: 200,
-  manualTriggerKey: 'Ctrl+Space',
+  manualTriggerKey: 'Alt+Space', // Cross-platform: Option+Space on Mac, Alt+Space elsewhere
 };
 
 /**
