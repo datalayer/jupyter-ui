@@ -47,7 +47,9 @@ import {
   COMMAND_PRIORITY_HIGH,
   KEY_TAB_COMMAND,
   KEY_ESCAPE_COMMAND,
+  createCommand,
   type LexicalNode,
+  type LexicalCommand,
 } from 'lexical';
 import {
   $isJupyterInputNode,
@@ -58,6 +60,19 @@ import {
   $createInlineCompletionNode,
   $isInlineCompletionNode,
 } from '../nodes/InlineCompletionNode';
+import {
+  mergeConfig,
+  type PartialInlineCompletionConfig,
+  type InlineCompletionConfig,
+} from './InlineCompletionConfig';
+import { extractContext } from './InlineCompletionContextExtractor';
+
+/**
+ * Command to manually trigger inline completion.
+ * Dispatched by keyboard shortcut (e.g., Ctrl+Space).
+ */
+export const TRIGGER_INLINE_COMPLETION_COMMAND: LexicalCommand<void> =
+  createCommand('TRIGGER_INLINE_COMPLETION_COMMAND');
 
 /**
  * Provider interface for LLM completion services.
@@ -89,6 +104,8 @@ export interface CompletionRequest {
   offset: number;
   /** Programming language (e.g., 'python') */
   language?: string;
+  /** Content type: 'code' for Jupyter cells, 'prose' for natural language */
+  contentType?: 'code' | 'prose';
 }
 
 /**
@@ -123,10 +140,18 @@ export interface CompletionItem {
 export interface LexicalInlineCompletionPluginProps {
   /** Array of completion providers (currently uses first one) */
   providers: IInlineCompletionProvider[];
-  /** Debounce delay in milliseconds before requesting completion */
+  /**
+   * Debounce delay in milliseconds before requesting completion.
+   * @deprecated Use config.debounceMs instead
+   */
   debounceMs?: number;
   /** Whether completions are enabled */
   enabled?: boolean;
+  /**
+   * Configuration for inline completions.
+   * Supports both code and prose content types with flexible triggering.
+   */
+  config?: PartialInlineCompletionConfig;
 }
 
 /**
@@ -138,13 +163,21 @@ export interface LexicalInlineCompletionPluginProps {
  */
 export function LexicalInlineCompletionPlugin({
   providers,
-  debounceMs = 200,
+  debounceMs: deprecatedDebounceMs,
   enabled = true,
+  config: userConfig,
 }: LexicalInlineCompletionPluginProps): null {
   const [editor] = useLexicalComposerContext();
   const [currentCompletion, setCurrentCompletion] = useState<string | null>(
     null,
   );
+
+  // Merge user config with defaults
+  const config: InlineCompletionConfig = mergeConfig(userConfig);
+
+  // Support deprecated debounceMs prop (overrides config if provided)
+  const debounceMs = deprecatedDebounceMs ?? config.debounceMs;
+
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastRequestRef = useRef<string>('');
   const lastCellTextRef = useRef<string>('');
@@ -172,7 +205,12 @@ export function LexicalInlineCompletionPlugin({
    * Request completion from providers
    */
   const requestCompletion = useCallback(
-    async (cellText: string, cursorOffset: number, language: string) => {
+    async (
+      cellText: string,
+      cursorOffset: number,
+      language: string,
+      contentType: 'code' | 'prose' = 'code',
+    ) => {
       if (!providers || providers.length === 0) {
         console.warn('[InlineCompletionPlugin] ❌ No provider configured');
         return;
@@ -182,6 +220,7 @@ export function LexicalInlineCompletionPlugin({
 
       try {
         console.warn('[InlineCompletionPlugin] 📡 Requesting completion:', {
+          contentType,
           textLength: cellText.length,
           cursorOffset,
           language,
@@ -195,7 +234,7 @@ export function LexicalInlineCompletionPlugin({
         const after = cellText.substring(cursorOffset);
 
         const result = await provider.fetch(
-          { text: cellText, offset: cursorOffset, language },
+          { text: cellText, offset: cursorOffset, language, contentType },
           { before, after },
         );
 
@@ -264,147 +303,190 @@ export function LexicalInlineCompletionPlugin({
           key: anchorNode.getKey(),
         });
 
-        const jupyterInputNode = findJupyterInputParent(anchorNode);
+        // Detect content type (code vs prose)
+        const contentType = detectContentType(anchorNode);
+        console.warn('[InlineCompletionPlugin] Content type:', contentType);
 
-        if (!jupyterInputNode) {
-          console.warn('[InlineCompletionPlugin] ❌ Not in JupyterInputNode');
-          setCurrentCompletion(null);
-          return;
-        }
-
-        console.warn('[InlineCompletionPlugin] ✅ Inside JupyterInputNode');
-
-        // Get cell text and cursor position
-        const cellText = jupyterInputNode.getTextContent();
-        const cursorOffset = getCursorOffset(jupyterInputNode, selection);
-
-        // Check if cell text actually changed (not just cursor movement)
-        if (cellText === lastCellTextRef.current) {
+        // Check if auto-trigger is enabled for this content type
+        const contentConfig =
+          contentType === 'code' ? config.code : config.prose;
+        if (contentConfig.triggerMode !== 'auto') {
           console.warn(
-            '[InlineCompletionPlugin] ⏭️ Cell text unchanged, skipping (cursor movement only)',
-          );
-          return;
-        }
-
-        // Update last cell text
-        lastCellTextRef.current = cellText;
-
-        console.warn('[InlineCompletionPlugin] Cell state:', {
-          cellLength: cellText.length,
-          cursorOffset,
-          lastChars: cellText.substring(
-            Math.max(0, cursorOffset - 20),
-            cursorOffset,
-          ),
-        });
-
-        // Check if there's ANY non-whitespace content before cursor
-        // (either on current line or previous lines)
-        const textBeforeCursor = cellText.substring(0, cursorOffset);
-
-        if (textBeforeCursor.trim().length === 0) {
-          console.warn(
-            '[InlineCompletionPlugin] ❌ No content before cursor (empty or whitespace only)',
+            '[InlineCompletionPlugin] ❌ Auto-trigger disabled for',
+            contentType,
           );
           setCurrentCompletion(null);
           return;
         }
 
-        // Also check if current line is empty (e.g., just pressed Enter)
-        // Find start of current line
-        const lineStart = textBeforeCursor.lastIndexOf('\n') + 1;
-        const currentLineBeforeCursor = textBeforeCursor.substring(lineStart);
-        if (currentLineBeforeCursor.trim().length === 0) {
-          console.warn(
-            '[InlineCompletionPlugin] ❌ Current line is empty (no completion on blank lines)',
-          );
-          setCurrentCompletion(null);
-          return;
-        }
+        // For code: require JupyterInputNode (backward compatibility)
+        if (contentType === 'code') {
+          const jupyterInputNode = findJupyterInputParent(anchorNode);
+          if (!jupyterInputNode) {
+            console.warn('[InlineCompletionPlugin] ❌ Not in JupyterInputNode');
+            setCurrentCompletion(null);
+            return;
+          }
+          console.warn('[InlineCompletionPlugin] ✅ Inside JupyterInputNode');
 
-        // Only request at end of line (current line, not entire cell)
-        const textAfterCursor = cellText.substring(cursorOffset);
-        const nextNewline = textAfterCursor.indexOf('\n');
+          // Get cell text and cursor position
+          const cellText = jupyterInputNode.getTextContent();
+          const cursorOffset = getCursorOffset(jupyterInputNode, selection);
 
-        // Get text after cursor on CURRENT LINE only (before next newline)
-        const textAfterCursorOnLine =
-          nextNewline === -1
-            ? textAfterCursor
-            : textAfterCursor.substring(0, nextNewline);
-
-        console.warn('[InlineCompletionPlugin] After cursor:', {
-          nextNewline,
-          onCurrentLine: textAfterCursorOnLine,
-          trimmedOnLineLength: textAfterCursorOnLine.trim().length,
-        });
-
-        // Check if there's text after cursor ON THE CURRENT LINE
-        if (textAfterCursorOnLine.trim().length > 0) {
-          let hasCompletionNode = false;
-          const children = jupyterInputNode.getChildren();
-          for (const child of children) {
-            if ($isInlineCompletionNode(child)) {
-              hasCompletionNode = true;
-              break;
-            }
+          // Check if cell text actually changed (not just cursor movement)
+          if (cellText === lastCellTextRef.current) {
+            console.warn(
+              '[InlineCompletionPlugin] ⏭️ Cell text unchanged, skipping (cursor movement only)',
+            );
+            return;
           }
 
-          console.warn('[InlineCompletionPlugin] Text after cursor check:', {
-            textAfterLength: textAfterCursor.trim().length,
-            hasCompletionNode,
-            childrenCount: children.length,
+          // Update last cell text
+          lastCellTextRef.current = cellText;
+
+          console.warn('[InlineCompletionPlugin] Cell state:', {
+            cellLength: cellText.length,
+            cursorOffset,
+            lastChars: cellText.substring(
+              Math.max(0, cursorOffset - 20),
+              cursorOffset,
+            ),
           });
 
-          if (!hasCompletionNode) {
+          // Check if there's ANY non-whitespace content before cursor
+          const textBeforeCursor = cellText.substring(0, cursorOffset);
+
+          if (textBeforeCursor.trim().length === 0) {
             console.warn(
-              '[InlineCompletionPlugin] ❌ Not at end of line (no completion node found)',
+              '[InlineCompletionPlugin] ❌ No content before cursor',
             );
             setCurrentCompletion(null);
             return;
           }
-          // If we found our completion node, continue (don't clear it)
-          console.warn(
-            '[InlineCompletionPlugin] ✅ Has completion node, allowing',
-          );
-        }
 
-        // Debounce requests
-        if (debounceTimerRef.current) {
-          clearTimeout(debounceTimerRef.current);
-        }
-
-        const requestKey = `${cellText}:${cursorOffset}`;
-
-        if (cellText.trim().length < 2) {
-          console.warn('[InlineCompletionPlugin] ❌ Text too short');
-          setCurrentCompletion(null);
-          lastRequestRef.current = '';
-          return;
-        }
-
-        // Schedule timer even if same request (debounce behavior)
-        console.warn(
-          '[InlineCompletionPlugin] ⏰ Scheduling request in',
-          debounceMs,
-          'ms',
-          requestKey === lastRequestRef.current
-            ? '(same request)'
-            : '(new request)',
-        );
-
-        debounceTimerRef.current = setTimeout(() => {
-          console.warn('[InlineCompletionPlugin] 🚀 Firing completion request');
-
-          // Only make actual request if different from last
-          if (requestKey !== lastRequestRef.current) {
-            lastRequestRef.current = requestKey;
-            requestCompletionRef.current?.(cellText, cursorOffset, 'python');
-          } else {
-            console.warn(
-              '[InlineCompletionPlugin] ⏭️ Same as last completed request, skipping API call',
-            );
+          // Check if current line is empty
+          const lineStart = textBeforeCursor.lastIndexOf('\n') + 1;
+          const currentLineBeforeCursor = textBeforeCursor.substring(lineStart);
+          if (currentLineBeforeCursor.trim().length === 0) {
+            console.warn('[InlineCompletionPlugin] ❌ Current line is empty');
+            setCurrentCompletion(null);
+            return;
           }
-        }, debounceMs);
+
+          // Only request at end of line
+          const textAfterCursor = cellText.substring(cursorOffset);
+          const nextNewline = textAfterCursor.indexOf('\n');
+          const textAfterCursorOnLine =
+            nextNewline === -1
+              ? textAfterCursor
+              : textAfterCursor.substring(0, nextNewline);
+
+          if (textAfterCursorOnLine.trim().length > 0) {
+            let hasCompletionNode = false;
+            const children = jupyterInputNode.getChildren();
+            for (const child of children) {
+              if ($isInlineCompletionNode(child)) {
+                hasCompletionNode = true;
+                break;
+              }
+            }
+
+            if (!hasCompletionNode) {
+              console.warn('[InlineCompletionPlugin] ❌ Not at end of line');
+              setCurrentCompletion(null);
+              return;
+            }
+          }
+
+          // Debounce requests
+          if (debounceTimerRef.current) {
+            clearTimeout(debounceTimerRef.current);
+          }
+
+          const requestKey = `${cellText}:${cursorOffset}`;
+
+          if (cellText.trim().length < 2) {
+            console.warn('[InlineCompletionPlugin] ❌ Text too short');
+            setCurrentCompletion(null);
+            lastRequestRef.current = '';
+            return;
+          }
+
+          // Schedule timer
+          console.warn(
+            '[InlineCompletionPlugin] ⏰ Scheduling code completion in',
+            debounceMs,
+            'ms',
+          );
+
+          debounceTimerRef.current = setTimeout(() => {
+            if (requestKey !== lastRequestRef.current) {
+              lastRequestRef.current = requestKey;
+              requestCompletionRef.current?.(
+                cellText,
+                cursorOffset,
+                contentConfig.language || 'python',
+                'code',
+              );
+            }
+          }, debounceMs);
+        } else {
+          // Prose content - extract context and request completion
+          console.warn('[InlineCompletionPlugin] Handling prose content');
+
+          // Extract context with configured scope
+          const context = extractContext(
+            contentType,
+            anchorNode,
+            selection,
+            contentConfig.contextBefore,
+            contentConfig.contextAfter,
+          );
+
+          // Check if text actually changed
+          if (context.fullText === lastCellTextRef.current) {
+            console.warn(
+              '[InlineCompletionPlugin] ⏭️ Prose text unchanged, skipping',
+            );
+            return;
+          }
+
+          lastCellTextRef.current = context.fullText;
+
+          // Minimum content check
+          if (context.before.trim().length < 10) {
+            console.warn('[InlineCompletionPlugin] ❌ Prose text too short');
+            setCurrentCompletion(null);
+            return;
+          }
+
+          // Debounce requests
+          if (debounceTimerRef.current) {
+            clearTimeout(debounceTimerRef.current);
+          }
+
+          const requestKey = `prose:${context.fullText.length}`;
+
+          // Schedule timer
+          console.warn(
+            '[InlineCompletionPlugin] ⏰ Scheduling prose completion in',
+            debounceMs,
+            'ms',
+          );
+
+          debounceTimerRef.current = setTimeout(() => {
+            if (requestKey !== lastRequestRef.current) {
+              lastRequestRef.current = requestKey;
+              // Request prose completion with extracted context
+              requestCompletionRef.current?.(
+                context.fullText,
+                context.before.length, // Cursor offset is at end of "before" text
+                contentConfig.language || 'markdown',
+                'prose',
+              );
+            }
+          }, debounceMs);
+        }
       });
     });
   }, [editor, enabled, debounceMs]); // Removed requestCompletion dependency
@@ -667,7 +749,224 @@ export function LexicalInlineCompletionPlugin({
     );
   }, [editor, enabled, currentCompletion]);
 
+  /**
+   * Keyboard shortcut listener for manual trigger
+   */
+  useEffect(() => {
+    if (!enabled) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (matchesShortcut(event, config.manualTriggerKey)) {
+        console.warn(
+          '[InlineCompletionPlugin] ⌨️ Manual trigger shortcut pressed',
+        );
+        event.preventDefault();
+        editor.dispatchCommand(TRIGGER_INLINE_COMPLETION_COMMAND, undefined);
+      }
+    };
+
+    const rootElement = editor.getRootElement();
+    if (rootElement) {
+      rootElement.addEventListener('keydown', handleKeyDown);
+      console.warn(
+        '[InlineCompletionPlugin] 🎧 Keyboard shortcut listener registered:',
+        config.manualTriggerKey,
+      );
+
+      return () => {
+        rootElement.removeEventListener('keydown', handleKeyDown);
+        console.warn(
+          '[InlineCompletionPlugin] 🔇 Keyboard shortcut listener removed',
+        );
+      };
+    }
+
+    return undefined;
+  }, [editor, enabled, config.manualTriggerKey]);
+
+  /**
+   * Handle manual trigger command (e.g., Ctrl+Space)
+   * Supports both code and prose content types
+   */
+  useEffect(() => {
+    if (!enabled) return;
+
+    return editor.registerCommand(
+      TRIGGER_INLINE_COMPLETION_COMMAND,
+      () => {
+        console.warn('[InlineCompletionPlugin] 🎯 Manual trigger activated');
+
+        editor.getEditorState().read(() => {
+          const selection = $getSelection();
+
+          if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
+            console.warn(
+              '[InlineCompletionPlugin] ❌ Invalid selection for manual trigger',
+            );
+            return;
+          }
+
+          const anchorNode = selection.anchor.getNode();
+
+          // Detect content type
+          const contentType = detectContentType(anchorNode);
+          console.warn(
+            '[InlineCompletionPlugin] Manual trigger content type:',
+            contentType,
+          );
+
+          // Check if manual trigger is enabled for this content type
+          const contentConfig =
+            contentType === 'code' ? config.code : config.prose;
+          if (contentConfig.triggerMode === 'disabled') {
+            console.warn(
+              '[InlineCompletionPlugin] ❌ Manual trigger disabled for',
+              contentType,
+            );
+            return;
+          }
+
+          // Clear any pending debounce timer
+          if (debounceTimerRef.current) {
+            clearTimeout(debounceTimerRef.current);
+            debounceTimerRef.current = null;
+          }
+
+          if (contentType === 'code') {
+            // Code cell manual trigger
+            const jupyterInputNode = findJupyterInputParent(anchorNode);
+
+            if (!jupyterInputNode) {
+              console.warn(
+                '[InlineCompletionPlugin] ❌ Not in JupyterInputNode for manual trigger',
+              );
+              return;
+            }
+
+            const cellText = jupyterInputNode.getTextContent();
+            const cursorOffset = getCursorOffset(jupyterInputNode, selection);
+
+            console.warn(
+              '[InlineCompletionPlugin] 🚀 Firing manual code completion request',
+            );
+
+            const requestKey = `${cellText}:${cursorOffset}`;
+            lastRequestRef.current = requestKey;
+            requestCompletionRef.current?.(
+              cellText,
+              cursorOffset,
+              contentConfig.language || 'python',
+              'code',
+            );
+          } else {
+            // Prose manual trigger
+            console.warn(
+              '[InlineCompletionPlugin] 🚀 Firing manual prose completion request',
+            );
+
+            // Extract context with configured scope
+            const context = extractContext(
+              contentType,
+              anchorNode,
+              selection,
+              contentConfig.contextBefore,
+              contentConfig.contextAfter,
+            );
+
+            // Minimum content check
+            if (context.before.trim().length < 10) {
+              console.warn(
+                '[InlineCompletionPlugin] ❌ Prose text too short for completion',
+              );
+              return;
+            }
+
+            const requestKey = `prose:manual:${context.fullText.length}`;
+            lastRequestRef.current = requestKey;
+            requestCompletionRef.current?.(
+              context.fullText,
+              context.before.length,
+              contentConfig.language || 'markdown',
+              'prose',
+            );
+          }
+        });
+
+        return true;
+      },
+      COMMAND_PRIORITY_HIGH,
+    );
+  }, [editor, enabled, config]);
+
   return null;
+}
+
+/**
+ * Parse keyboard shortcut string and check if event matches.
+ * Supports format: "Modifier+Key" (e.g., "Ctrl+Space", "Cmd+Shift+I")
+ *
+ * @param event - Keyboard event to check
+ * @param shortcut - Shortcut string from config
+ * @returns True if event matches shortcut
+ */
+function matchesShortcut(event: KeyboardEvent, shortcut: string): boolean {
+  const parts = shortcut.split('+').map(s => s.trim().toLowerCase());
+  const key = parts[parts.length - 1]; // Last part is the key
+  const modifiers = parts.slice(0, -1); // Everything else is modifiers
+
+  // Check key match (case-insensitive)
+  if (event.key.toLowerCase() !== key) {
+    return false;
+  }
+
+  // Check modifiers
+  const hasCtrl = modifiers.includes('ctrl');
+  const hasCmd = modifiers.includes('cmd') || modifiers.includes('meta');
+  const hasShift = modifiers.includes('shift');
+  const hasAlt = modifiers.includes('alt');
+
+  // On macOS, treat Ctrl as Cmd
+  const isMac =
+    typeof navigator !== 'undefined' &&
+    /Mac|iPhone|iPod|iPad/.test(navigator.userAgent);
+  const needsCtrlOrCmd = hasCtrl || hasCmd;
+  const eventHasCtrlOrCmd = isMac ? event.metaKey : event.ctrlKey;
+
+  if (needsCtrlOrCmd && !eventHasCtrlOrCmd) {
+    return false;
+  }
+
+  if (hasShift && !event.shiftKey) {
+    return false;
+  }
+
+  if (hasAlt && !event.altKey) {
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Detect content type based on cursor position.
+ * Returns 'code' if inside a JupyterInputNode, 'prose' otherwise.
+ *
+ * @param anchorNode - The node at the cursor position
+ * @returns 'code' or 'prose'
+ */
+function detectContentType(anchorNode: LexicalNode): 'code' | 'prose' {
+  let current: LexicalNode | null = anchorNode;
+
+  // Traverse up the tree looking for JupyterInputNode
+  while (current) {
+    if ($isJupyterInputNode(current)) {
+      return 'code';
+    }
+    current = current.getParent();
+  }
+
+  // Not in a Jupyter cell - must be prose
+  return 'prose';
 }
 
 /**
