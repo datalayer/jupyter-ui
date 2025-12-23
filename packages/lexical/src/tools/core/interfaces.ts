@@ -16,7 +16,7 @@ import type {
   LexicalMetadata,
   RegisteredNodeInfo,
 } from './types';
-import type { ToolExecutionContext } from '@datalayer/jupyter-react';
+import type { ToolExecutionContext } from '@datalayer/jupyter-react/lib/tools/core';
 
 // Re-export types for convenience
 export type { LexicalBlock, LexicalMetadata, RegisteredNodeInfo };

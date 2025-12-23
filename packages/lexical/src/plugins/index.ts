@@ -15,6 +15,7 @@ export * from './EquationsPlugin';
 export * from './FloatingTextFormatToolbarPlugin';
 export * from './HorizontalRulePlugin';
 export * from './ImagesPlugin';
+export * from './InlineCompletionConfig';
 export * from './JupyterCellPlugin';
 export * from './JupyterInputOutputPlugin';
 export * from './LexicalInlineCompletionPlugin';

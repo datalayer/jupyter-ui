@@ -183,13 +183,6 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
     onSessionConnection,
   } = props;
 
-  console.log('[NotebookBase] Component rendering with props:', {
-    hasInlineProviders: !!props.inlineProviders,
-    inlineProvidersCount: props.inlineProviders?.length,
-    inlineProviders: props.inlineProviders,
-    kernelId,
-  });
-
   const [isLoading, setIsLoading] = useState(true);
   const [extensionComponents, setExtensionComponents] = useState(
     new Array<JSX.Element>()
@@ -215,20 +208,12 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
   );
 
   useEffect(() => {
-    console.log(
-      '[NotebookBase] Setting up completer with inlineProviders:',
-      props.inlineProviders
-    );
     const completer = new Completer({ model: new CompleterModel() });
     // Dummy widget to initialize
     const widget = new Widget();
 
     const inlineProvidersSettings = generateInlineProviderSettings(
       props.inlineProviders
-    );
-    console.log(
-      '[NotebookBase] Generated settings for providers:',
-      inlineProvidersSettings
     );
 
     const reconciliator = new ProviderReconciliator({
@@ -240,16 +225,10 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
       inlineProvidersSettings,
       timeout: COMPLETER_TIMEOUT_MILLISECONDS,
     });
-    console.log(
-      '[NotebookBase] ProviderReconciliator created with inlineProviders:',
-      props.inlineProviders
-    );
-    console.log('[NotebookBase] ProviderReconciliator object:', reconciliator);
 
     // Create InlineCompleter widget if inline providers are configured
     let inlineCompleter: InlineCompleter | undefined;
     if (props.inlineProviders && props.inlineProviders.length > 0) {
-      console.log('[NotebookBase] Creating InlineCompleter widget');
       const trans = nullTranslator.load('jupyterlab');
       inlineCompleter = new InlineCompleter({
         model: new InlineCompleter.Model(),
@@ -292,9 +271,6 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
             inlineCompleter.model &&
             inlineCompleter.current
           ) {
-            console.log(
-              '[NotebookBase] Tab pressed - accepting inline completion'
-            );
             event.preventDefault();
             event.stopPropagation();
             inlineCompleter.accept();
@@ -308,9 +284,6 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
             inlineCompleter.model &&
             inlineCompleter.current
           ) {
-            console.log(
-              '[NotebookBase] Escape pressed - rejecting inline completion'
-            );
             event.preventDefault();
             event.stopPropagation();
             inlineCompleter.model.reset();
@@ -325,10 +298,6 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
       const cleanupKeyboard = () => {
         document.removeEventListener('keydown', handleKeyDown, true);
       };
-
-      console.log(
-        '[NotebookBase] InlineCompleter created, configured, attached, and keyboard handlers set up'
-      );
 
       // Store the cleanup function on the inlineCompleter for later cleanup
       (inlineCompleter as any)._keyboardCleanup = cleanupKeyboard;
@@ -554,25 +523,11 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
   // Update notebook store when adapter changes
   useEffect(() => {
     if (adapter) {
-      console.log(`[NotebookBase] Registering adapter for notebook: ${id}`);
-      console.log(
-        `[NotebookBase] Adapter has getCells:`,
-        typeof adapter.getCells
-      );
-      console.log(`[NotebookBase] Adapter cell count:`, adapter.getCellCount());
       const currentNotebooks = notebookStore.getState().notebooks;
       const updatedNotebooks = new Map(currentNotebooks);
       updatedNotebooks.set(id, { adapter, portals: [] });
       notebookStore.getState().setNotebooks(updatedNotebooks);
-      console.log(
-        `[NotebookBase] Store now has ${updatedNotebooks.size} notebooks`
-      );
-      console.log(
-        `[NotebookBase] Notebook IDs:`,
-        Array.from(updatedNotebooks.keys())
-      );
     } else {
-      console.log(`[NotebookBase] ⚠️  No adapter yet for notebook: ${id}`);
       const currentNotebooks = notebookStore.getState().notebooks;
       if (currentNotebooks.has(id)) {
         const updatedNotebooks = new Map(currentNotebooks);
@@ -636,16 +591,6 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
           );
           // Create a dummy session if none exists to enable inline completions without a kernel
           const sessionForCompletion = changes.newValue || ({} as any);
-          console.log(
-            '[NotebookBase] Creating ProviderReconciliator with editor and session',
-            {
-              hasEditor: !!editor,
-              hasSession: !!changes.newValue,
-              usingDummySession: !changes.newValue,
-              inlineProviders: props.inlineProviders,
-              inlineProvidersSettings,
-            }
-          );
           const reconciliator = new ProviderReconciliator({
             context: {
               widget: panel,
@@ -657,15 +602,10 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
             inlineProvidersSettings,
             timeout: COMPLETER_TIMEOUT_MILLISECONDS,
           });
-          console.log(
-            '[NotebookBase] ProviderReconciliator with editor created:',
-            reconciliator
-          );
 
           // Update the inline completer's editor if it exists
           if (completer.inlineCompleter) {
             completer.inlineCompleter.editor = editor;
-            console.log('[NotebookBase] Updated InlineCompleter editor');
           }
 
           completer.editor = editor;
@@ -848,7 +788,6 @@ export function useKernelId(
 
         // Start a new default kernel if none found and one requested.
         if (!foundKernelId && startDefaultKernel && isMounted) {
-          console.log('Starting a new default kernel.');
           const connection = await kernels.startNew();
           if (isMounted) {
             foundKernelId = connection.id;
@@ -874,7 +813,6 @@ export function useKernelId(
   useEffect(() => {
     return () => {
       if (startedConnection) {
-        console.log(`Shutting down kernel '${startedConnection.id}'.`);
         startedConnection
           .shutdown()
           .catch(reason => {
@@ -948,16 +886,6 @@ export function useNotebookModel(options: IOptions): NotebookModel | null {
     id,
   } = options;
 
-  console.log('[useNotebookModel] Hook called with options:', {
-    hasCollaborationProvider: !!collaborationProvider,
-    hasNbformat: !!nbformat,
-    readonly,
-    hasUrl: !!url,
-    path,
-    hasServiceManager: !!serviceManager,
-    id,
-  });
-
   // Generate the notebook model
   // There are three posibilities (by priority order):
   // - Connection to a collaborative document
@@ -966,13 +894,11 @@ export function useNotebookModel(options: IOptions): NotebookModel | null {
   const [model, setModel] = useState<NotebookModel | null>(null);
 
   useEffect(() => {
-    console.log('[useNotebookModel] useEffect running');
     let isMounted = true;
     const disposable = new DisposableSet();
 
     // Handle new collaboration provider
     if (collaborationProvider && serviceManager && id) {
-      console.log('[useNotebookModel] Setting up collaboration');
       const setupCollaboration = async () => {
         try {
           const sharedModel = new YNotebook();
@@ -984,16 +910,12 @@ export function useNotebookModel(options: IOptions): NotebookModel | null {
           });
 
           if (isMounted) {
-            console.log('[useNotebookModel] Creating collaboration model');
             const model = new NotebookModel({
               collaborationEnabled: true,
               disableDocumentWideUndoRedo: true,
               sharedModel,
             });
             model.readOnly = readonly;
-            console.log(
-              '[useNotebookModel] Calling setModel with collaboration model'
-            );
             setModel(model);
 
             disposable.add({
@@ -1012,31 +934,16 @@ export function useNotebookModel(options: IOptions): NotebookModel | null {
 
       setupCollaboration();
     } else {
-      console.log(
-        '[useNotebookModel] No collaboration, creating standard model'
-      );
       const createModel = (nbformat: INotebookContent | undefined) => {
-        console.log(
-          '[useNotebookModel] createModel called with nbformat:',
-          !!nbformat
-        );
         try {
           const model = new NotebookModel();
-          console.log('[useNotebookModel] NotebookModel created');
           if (nbformat) {
             nbformat.cells.forEach(cell => {
               cell.metadata['editable'] = !readonly;
             });
-            console.log('[useNotebookModel] About to call model.fromJSON');
             model.fromJSON(nbformat);
-            console.log(
-              '[useNotebookModel] model.fromJSON completed successfully'
-            );
           }
           model.readOnly = readonly;
-          console.log(
-            '[useNotebookModel] Calling setModel with standard model'
-          );
           setModel(model);
         } catch (error) {
           console.error('[useNotebookModel] Error creating model:', error);
@@ -1045,16 +952,12 @@ export function useNotebookModel(options: IOptions): NotebookModel | null {
       };
 
       if (!nbformat && url) {
-        console.log('[useNotebookModel] Loading from URL:', url);
         loadFromUrl(url).then(nbformat => {
           if (isMounted) {
             createModel(nbformat);
           }
         });
       } else {
-        console.log(
-          '[useNotebookModel] Creating model directly (nbformat provided or no URL)'
-        );
         createModel(nbformat);
       }
     }
@@ -1073,7 +976,6 @@ export function useNotebookModel(options: IOptions): NotebookModel | null {
     id,
   ]);
 
-  console.log('[useNotebookModel] Returning model:', !!model);
   return model;
 }
 
@@ -1341,7 +1243,6 @@ function initializeContext(
       >
     ) => {
       const session = args.newValue;
-      console.log('Current Jupyter Session Connection.', session);
       onSessionConnection?.(session ?? undefined);
     }
   );
@@ -1355,12 +1256,7 @@ function initializeContext(
       >
     ) => {
       const kernelConnection = args.newValue;
-      console.log('Current Jupyter Kernel Connection.', kernelConnection);
       if (kernelConnection && !kernelConnection.handleComms) {
-        console.log(
-          'Updating the current Kernel Connection to enforce Comms support.',
-          kernelConnection.handleComms
-        );
         (kernelConnection as any).handleComms = true;
       }
     }

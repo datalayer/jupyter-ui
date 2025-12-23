@@ -122,29 +122,33 @@ export const JupyterInputOutputPlugin = (
   const isMovingNodes = useRef(false);
 
   // Function to update all existing output nodes with the current kernel
+  // CRITICAL: Must run even when kernel is undefined (runtime terminated)!
   const updateAllOutputNodesWithKernel = useCallback(() => {
-    if (!kernel || isUpdatingKernels.current) return;
+    if (isUpdatingKernels.current) return;
 
     isUpdatingKernels.current = true;
-    editor.update(
-      () => {
-        editor.getEditorState()._nodeMap.forEach(node => {
-          if (node instanceof JupyterOutputNode) {
-            // Update the kernel for this output node
-            node.updateKernel(kernel);
-          }
-        });
-      },
-      { discrete: true },
-    ); // Use discrete to prevent triggering update listeners
-    isUpdatingKernels.current = false;
+
+    // Defer editor.update to next microtask to avoid flushSync warning
+    // This ensures React's render phase completes before we update the editor
+    queueMicrotask(() => {
+      editor.update(
+        () => {
+          editor.getEditorState()._nodeMap.forEach(node => {
+            if (node instanceof JupyterOutputNode) {
+              // Update the kernel for this output node (even if undefined!)
+              node.updateKernel(kernel);
+            }
+          });
+        },
+        { discrete: true },
+      ); // Use discrete to prevent triggering update listeners
+      isUpdatingKernels.current = false;
+    });
   }, [kernel, editor]);
 
-  // Update output nodes when kernel becomes available
+  // Update output nodes when kernel changes (including when it becomes undefined!)
   useEffect(() => {
-    if (kernel) {
-      updateAllOutputNodesWithKernel();
-    }
+    updateAllOutputNodesWithKernel();
   }, [kernel, updateAllOutputNodesWithKernel]);
 
   // Restore mutation listeners with proper recursion protection

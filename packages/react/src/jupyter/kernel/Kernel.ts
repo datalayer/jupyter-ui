@@ -78,10 +78,6 @@ export class Kernel {
         return kernelModel.id === model.id;
       });
       if (existingKernelModel) {
-        console.log(
-          'Creating a session to an existing Jupyter Kernel model.',
-          existingKernelModel
-        );
         const path = 'kernel-' + kernelModel.id;
         this._path = path;
         this._session = await this._sessionManager.startNew(
@@ -101,10 +97,6 @@ export class Kernel {
           }
         );
       } else {
-        console.log(
-          'Something is wrong... can not find an existing model for',
-          kernelModel
-        );
         return;
       }
     } else {
@@ -155,9 +147,6 @@ export class Kernel {
       );
       this._kernelConnection.info.then(info => {
         this._info = info;
-        console.log('Kernel Information', info);
-        console.log('Kernel Session', this._session);
-        console.log('Kernel Details', this.toJSON());
       });
     }
   }

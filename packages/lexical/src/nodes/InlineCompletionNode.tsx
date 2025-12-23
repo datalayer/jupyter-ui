@@ -178,10 +178,6 @@ export class InlineCompletionNode extends DecoratorNode<React.ReactElement> {
    * @returns React element displaying ghost text
    */
   decorate(): React.ReactElement {
-    console.warn(
-      '[InlineCompletionNode] 🎨 decorate() called with text:',
-      this.__completionText.substring(0, 50),
-    );
     return <InlineCompletionComponent completionText={this.__completionText} />;
   }
 
@@ -247,10 +243,6 @@ export function $isInlineCompletionNode(
 function InlineCompletionComponent({
   completionText,
 }: InlineCompletionNodeProps): React.ReactElement {
-  console.warn(
-    '[InlineCompletionComponent] 🖼️ Rendering with text:',
-    completionText.substring(0, 50),
-  );
   return (
     <span
       className="inline-completion-text"

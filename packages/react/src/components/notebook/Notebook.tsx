@@ -177,12 +177,7 @@ export function Notebook(
   });
 
   useEffect(() => {
-    console.log('[Notebook] useEffect - model changed:', {
-      model: !!model,
-      isLoading,
-    });
     if (model) {
-      console.log('[Notebook] Setting isLoading to false');
       setIsLoading(false);
     }
     onNotebookModelChanged?.(model);
@@ -205,13 +200,6 @@ export function Notebook(
       serviceManager.user.userChanged.disconnect(setUserIdentity);
     };
   }, [collaborationProvider, model, serviceManager]);
-
-  console.log('[Notebook] Rendering:', {
-    isLoading,
-    hasModel: !!model,
-    hasServiceManager: !!serviceManager,
-    hasInlineProviders: !!inlineProviders,
-  });
 
   return isLoading ? (
     <Loader key="notebook-loader" />
