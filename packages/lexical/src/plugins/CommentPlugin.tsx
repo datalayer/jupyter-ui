@@ -40,7 +40,7 @@ import {
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin';
-import { useCollaborationContext } from '@lexical/react/LexicalCollaborationContext';
+import { useCollaborationContext } from '@datalayer/lexical-loro';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
@@ -701,19 +701,28 @@ function CommentsPanel({
 
 function useCollabAuthorName(): string {
   const collabContext = useCollaborationContext();
-  const { yjsDocMap, name } = collabContext;
-  return yjsDocMap.has('comments') ? name : 'Playground User';
+  const { name } = collabContext;
+  // Use collaboration username (from Datalayer auth or OS username)
+  // No longer checking yjsDocMap since we're using Loro, not Yjs
+  return name || 'User';
 }
 
 export function CommentPlugin({
   providerFactory,
+  showCommentsPanel = true,
+  showFloatingAddButton = true,
+  showToggleButton = true,
+  commentsPanelContainer,
 }: {
   providerFactory?: (
     id: string,
     yjsDocMap: Map<string, Doc>,
   ) => WebsocketProvider;
+  showCommentsPanel?: boolean;
+  showFloatingAddButton?: boolean;
+  showToggleButton?: boolean;
+  commentsPanelContainer?: HTMLElement;
 }): JSX.Element {
-  const collabContext = useCollaborationContext();
   const [editor] = useLexicalComposerContext();
   const commentStore = useMemo(() => new CommentStore(editor), [editor]);
   const comments = useCommentStore(commentStore);
@@ -724,14 +733,11 @@ export function CommentPlugin({
   const [activeIDs, setActiveIDs] = useState<Array<string>>([]);
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [showComments, setShowComments] = useState(false);
-  const { yjsDocMap } = collabContext;
 
+  // Sync external showCommentsPanel prop with internal showComments state
   useEffect(() => {
-    if (providerFactory) {
-      const provider = providerFactory('comments', yjsDocMap);
-      return commentStore.registerCollaboration(provider);
-    }
-  }, [commentStore, providerFactory, yjsDocMap]);
+    setShowComments(showCommentsPanel);
+  }, [showCommentsPanel]);
 
   const cancelAddComment = useCallback(() => {
     editor.update(() => {
@@ -959,7 +965,8 @@ export function CommentPlugin({
           />,
           document.body,
         )}
-      {activeAnchorKey !== null &&
+      {showFloatingAddButton &&
+        activeAnchorKey !== null &&
         activeAnchorKey !== undefined &&
         !showCommentInput &&
         createPortal(
@@ -970,18 +977,19 @@ export function CommentPlugin({
           />,
           document.body,
         )}
-      {createPortal(
-        <Button
-          className={`CommentPlugin_ShowCommentsButton ${
-            showComments ? 'active' : ''
-          }`}
-          onClick={() => setShowComments(!showComments)}
-          title={showComments ? 'Hide Comments' : 'Show Comments'}
-        >
-          <i className="comments" />
-        </Button>,
-        document.body,
-      )}
+      {showToggleButton &&
+        createPortal(
+          <Button
+            className={`CommentPlugin_ShowCommentsButton ${
+              showComments ? 'active' : ''
+            }`}
+            onClick={() => setShowComments(!showComments)}
+            title={showComments ? 'Hide Comments' : 'Show Comments'}
+          >
+            <i className="comments" />
+          </Button>,
+          document.body,
+        )}
       {showComments &&
         createPortal(
           <CommentsPanel
@@ -991,7 +999,7 @@ export function CommentPlugin({
             activeIDs={activeIDs}
             markNodeMap={markNodeMap}
           />,
-          document.body,
+          commentsPanelContainer || document.body,
         )}
     </>
   );
