@@ -22,6 +22,42 @@ import {
 } from '@jupyterlab/notebook';
 import { nullTranslator } from '@jupyterlab/translation';
 import { IYText } from '@jupyter/ydoc';
+import { Context } from '@jupyterlab/docregistry';
+import { INotebookModel } from '@jupyterlab/notebook';
+
+/**
+ * Provider for notebook panel and context that persists across React re-renders.
+ * This solves the issue where tracker.currentWidget becomes null after React updates.
+ */
+export class NotebookPanelProvider {
+  private _panel: NotebookPanel | null = null;
+  private _context: Context<INotebookModel> | null = null;
+
+  /**
+   * Update the panel and context references.
+   */
+  setPanel(
+    panel: NotebookPanel | null,
+    context: Context<INotebookModel> | null
+  ) {
+    this._panel = panel;
+    this._context = context;
+  }
+
+  /**
+   * Get the current panel.
+   */
+  getPanel(): NotebookPanel | null {
+    return this._panel;
+  }
+
+  /**
+   * Get the current context.
+   */
+  getContext(): Context<INotebookModel> | null {
+    return this._context;
+  }
+}
 
 /**
  * The map of command ids used by the notebook.
@@ -68,6 +104,7 @@ export const NotebookCommandIds = {
  * @param commands Command registry
  * @param completerHandler Completion handler
  * @param tracker Notebook tracker
+ * @param panelProvider Provider for persistent panel/context references
  * @param path Notebook path
  * @returns Commands disposer
  */
@@ -75,6 +112,7 @@ export function addNotebookCommands(
   commands: CommandRegistry,
   completerHandler: CompletionHandler,
   tracker: NotebookTracker,
+  panelProvider: NotebookPanelProvider,
   path?: string
 ): DisposableSet {
   const allCommands = new DisposableSet();
@@ -247,12 +285,33 @@ export function addNotebookCommands(
     commands.addCommand(NotebookCommandIds.runAndAdvance, {
       label: 'Run and Advance',
       execute: () => {
-        return tracker.currentWidget
-          ? NotebookActions.runAndAdvance(
-              tracker.currentWidget.content,
-              tracker.currentWidget.context.sessionContext
-            )
-          : undefined;
+        // Use panelProvider instead of tracker.currentWidget to avoid null reference after React re-renders
+        const panel = panelProvider.getPanel();
+        const context = panelProvider.getContext();
+
+        if (!panel || !context) {
+          return Promise.resolve();
+        }
+
+        const sessionContext = context.sessionContext;
+        const kernel = sessionContext.session?.kernel;
+
+        // Only block if kernel is explicitly starting/restarting
+        if (
+          kernel &&
+          (kernel.status === 'starting' ||
+            kernel.status === 'restarting' ||
+            kernel.status === 'autorestarting')
+        ) {
+          return Promise.resolve();
+        }
+
+        // If no kernel or session not ready, don't execute
+        if (!sessionContext.isReady || !kernel) {
+          return Promise.resolve();
+        }
+
+        return NotebookActions.runAndAdvance(panel.content, sessionContext);
       },
     })
   );
@@ -260,12 +319,33 @@ export function addNotebookCommands(
     commands.addCommand(NotebookCommandIds.run, {
       label: 'Run',
       execute: () => {
-        return tracker.currentWidget
-          ? NotebookActions.run(
-              tracker.currentWidget.content,
-              tracker.currentWidget.context.sessionContext
-            )
-          : undefined;
+        // Use panelProvider instead of tracker.currentWidget to avoid null reference after React re-renders
+        const panel = panelProvider.getPanel();
+        const context = panelProvider.getContext();
+
+        if (!panel || !context) {
+          return Promise.resolve();
+        }
+
+        const sessionContext = context.sessionContext;
+        const kernel = sessionContext.session?.kernel;
+
+        // Only block if kernel is explicitly starting/restarting
+        if (
+          kernel &&
+          (kernel.status === 'starting' ||
+            kernel.status === 'restarting' ||
+            kernel.status === 'autorestarting')
+        ) {
+          return Promise.resolve();
+        }
+
+        // If no kernel or session not ready, don't execute
+        if (!sessionContext.isReady || !kernel) {
+          return Promise.resolve();
+        }
+
+        return NotebookActions.run(panel.content, sessionContext);
       },
     })
   );
@@ -273,12 +353,33 @@ export function addNotebookCommands(
     commands.addCommand(NotebookCommandIds.runAll, {
       label: 'Run all',
       execute: () => {
-        return tracker.currentWidget
-          ? NotebookActions.runAll(
-              tracker.currentWidget.content,
-              tracker.currentWidget.context.sessionContext
-            )
-          : undefined;
+        // Use panelProvider instead of tracker.currentWidget to avoid null reference after React re-renders
+        const panel = panelProvider.getPanel();
+        const context = panelProvider.getContext();
+
+        if (!panel || !context) {
+          return Promise.resolve();
+        }
+
+        const sessionContext = context.sessionContext;
+        const kernel = sessionContext.session?.kernel;
+
+        // Only block if kernel is explicitly starting/restarting
+        if (
+          kernel &&
+          (kernel.status === 'starting' ||
+            kernel.status === 'restarting' ||
+            kernel.status === 'autorestarting')
+        ) {
+          return Promise.resolve();
+        }
+
+        // If no kernel or session not ready, don't execute
+        if (!sessionContext.isReady || !kernel) {
+          return Promise.resolve();
+        }
+
+        return NotebookActions.runAll(panel.content, sessionContext);
       },
     })
   );

@@ -59,7 +59,7 @@ import { JupyterReactContentFactory } from './content/JupyterReactContentFactory
 import { getMarked } from './marked/marked';
 import { JupyterReactNotebookModelFactory } from './model/JupyterReactNotebookModelFactory';
 import { INotebookProps } from './Notebook';
-import { addNotebookCommands } from './NotebookCommands';
+import { addNotebookCommands, NotebookPanelProvider } from './NotebookCommands';
 
 const FALLBACK_NOTEBOOK_PATH = '.datalayer/ping.ipynb';
 
@@ -81,6 +81,7 @@ export class NotebookAdapter {
   private _notebookModelFactory?: JupyterReactNotebookModelFactory;
   private _notebookPanel?: NotebookPanel;
   private _onSessionConnection?: OnSessionConnection;
+  private _panelProvider: NotebookPanelProvider;
   private _path?: string;
   private _readonly: boolean;
   private _renderers: IRenderMime.IRendererFactory[];
@@ -116,6 +117,7 @@ export class NotebookAdapter {
     this._boxPanel.spacing = 0;
 
     this._commands = new CommandRegistry();
+    this._panelProvider = new NotebookPanelProvider();
 
     if (props.url) {
       this.loadFromUrl(props.url).then(nbformat => {
@@ -411,6 +413,9 @@ export class NotebookAdapter {
       this._notebookPanel = notebookFactory?.createNew(
         this._context
       ) as NotebookPanel;
+
+      // Update panel provider with persistent references
+      this._panelProvider.setPanel(this._notebookPanel, this._context);
     }
 
     const completerHandler = this.setupCompleter(this._notebookPanel!);
@@ -421,6 +426,7 @@ export class NotebookAdapter {
           this._commands,
           completerHandler,
           this._tracker!,
+          this._panelProvider,
           this._path
         );
       } catch {

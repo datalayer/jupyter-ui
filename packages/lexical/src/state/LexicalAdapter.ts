@@ -79,6 +79,14 @@ export class LexicalAdapter {
   }
 
   /**
+   * Get the service manager instance.
+   * Provides access to kernel connections for monitoring and operations.
+   */
+  get serviceManager(): any {
+    return this._serviceManager;
+  }
+
+  /**
    * Set the default block type for new blocks.
    * Similar to Notebook2Adapter.setDefaultCellType()
    */
