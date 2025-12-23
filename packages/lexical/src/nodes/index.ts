@@ -4,6 +4,7 @@
  * MIT License
  */
 
+export * from './CommentThreadNode';
 export * from './CounterNode';
 export * from './EquationNode';
 export * from './ImageNode';

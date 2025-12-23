@@ -52,6 +52,9 @@ module.exports = {
   optimization: {
     minimize,
   },
+  experiments: {
+    asyncWebAssembly: true,
+  },
   output: {
     publicPath: 'http://localhost:3211/',
     filename: '[name].[contenthash].jupyter-lexical.js',
@@ -163,6 +166,11 @@ module.exports = {
         generator: {
           filename: 'schema/[name][ext][query]',
         },
+      },
+      // WebAssembly files (loro-crdt)
+      {
+        test: /\.wasm$/,
+        type: 'webassembly/async',
       },
     ],
   },

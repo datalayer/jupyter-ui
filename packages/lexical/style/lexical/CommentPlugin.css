@@ -54,8 +54,9 @@ i.add-comment {
   position: fixed;
   width: 250px;
   min-height: 80px;
-  background-color: #fff;
+  background-color: var(--vscode-editorWidget-background, #fff);
   box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--vscode-editorWidget-border, transparent);
   border-radius: 5px;
   z-index: 24;
   animation: show-input-box 0.4s ease;
@@ -131,18 +132,19 @@ i.add-comment {
 
 .CommentPlugin_CommentInputBox_Editor {
   position: relative;
-  border: 1px solid #ccc;
-  background-color: #fff;
+  border: 1px solid var(--vscode-input-border, #ccc);
+  background-color: var(--vscode-input-background, #fff);
   border-radius: 5px;
   font-size: 15px;
-  caret-color: rgb(5, 5, 5);
+  caret-color: var(--vscode-editorCursor-foreground, rgb(5, 5, 5));
+  color: var(--vscode-input-foreground, #000);
   display: block;
   padding: 9px 10px 10px 9px;
   min-height: 80px;
 }
 
 .CommentPlugin_CommentInputBox_Editor:focus {
-  outline: 1px solid rgb(66, 135, 245);
+  outline: 1px solid var(--vscode-focusBorder, rgb(66, 135, 245));
 }
 
 .CommentPlugin_ShowCommentsButton {
@@ -176,13 +178,13 @@ i.comments {
   position: fixed;
   right: 0;
   width: 300px;
-  height: calc(100% - 88px);
-  top: 88px;
-  background-color: #fff;
-  border-top-left-radius: 10px;
+  height: 100%;
+  top: 0;
+  background-color: var(--vscode-sideBar-background, #fff);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   animation: show-comments 0.2s ease;
   z-index: 25;
+  border-left: 1px solid var(--vscode-panel-border, #eee);
 }
 
 @keyframes show-comments {
@@ -197,42 +199,50 @@ i.comments {
 }
 
 .CommentPlugin_CommentsPanel_Heading {
-  padding-left: 15px;
-  padding-top: 10px;
+  padding: 11px 20px;
   margin: 0;
-  height: 34px;
-  border-bottom: 1px solid #eee;
-  font-size: 20px;
+  height: auto;
+  border-bottom: none;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   display: block;
   width: 100%;
-  color: #444;
+  color: var(--vscode-sideBarTitle-foreground, #6c6c6c);
   overflow: hidden;
 }
 
 .CommentPlugin_CommentsPanel_Editor {
   position: relative;
-  border: 1px solid #ccc;
-  background-color: #fff;
+  border: 1px solid var(--vscode-input-border, #ccc);
+  background-color: var(--vscode-input-background, #fff);
   border-radius: 5px;
   font-size: 15px;
-  caret-color: rgb(5, 5, 5);
+  caret-color: var(--vscode-editorCursor-foreground, rgb(5, 5, 5));
+  color: var(--vscode-input-foreground, #000);
   display: block;
-  padding: 9px 10px 10px 9px;
+  padding: 9px 30px 10px 9px; /* Add right padding for send button */
   min-height: 20px;
 }
 
 .CommentPlugin_CommentsPanel_Editor::before {
-  content: '';
-  width: 30px;
-  height: 20px;
-  float: right;
+  /* Remove float - use padding instead */
+  display: none;
 }
 
 .CommentPlugin_CommentsPanel_SendButton {
   position: absolute;
-  right: 10px;
-  top: 8px;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%); /* Center vertically */
   background: none;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .CommentPlugin_CommentsPanel_SendButton:hover {
@@ -266,7 +276,7 @@ i.send {
 }
 
 .CommentPlugin_CommentsPanel_Empty {
-  color: #777;
+  color: var(--vscode-descriptionForeground, #777);
   font-size: 15px;
   text-align: center;
   position: absolute;
@@ -303,11 +313,11 @@ i.send {
 
 .CommentPlugin_CommentsPanel_List_Comment p {
   margin: 0;
-  color: #444;
+  color: var(--vscode-foreground, #444);
 }
 
 .CommentPlugin_CommentsPanel_List_Details {
-  color: #444;
+  color: var(--vscode-foreground, #444);
   padding-bottom: 5px;
   vertical-align: top;
 }
@@ -324,11 +334,11 @@ i.send {
 .CommentPlugin_CommentsPanel_List_Thread {
   padding: 0 0 0 0;
   margin: 0;
-  border-top: 1px solid #eee;
-  border-bottom: 1px solid #eee;
+  border-top: 1px solid var(--vscode-panel-border, #eee);
+  border-bottom: 1px solid var(--vscode-panel-border, #eee);
   position: relative;
   transition: all 0.2s linear;
-  border-left: 0 solid #eee;
+  border-left: 0 solid var(--vscode-panel-border, #eee);
 }
 
 .CommentPlugin_CommentsPanel_List_Thread:first-child,
@@ -342,12 +352,12 @@ i.send {
 }
 
 .CommentPlugin_CommentsPanel_List_Thread.interactive:hover {
-  background-color: #fafafa;
+  background-color: var(--vscode-list-hoverBackground, #fafafa);
 }
 
 .CommentPlugin_CommentsPanel_List_Thread.active {
-  background-color: #fafafa;
-  border-left: 15px solid #eee;
+  background-color: var(--vscode-list-activeSelectionBackground, #fafafa);
+  border-left: 15px solid var(--vscode-panel-border, #eee);
   cursor: inherit;
 }
 
