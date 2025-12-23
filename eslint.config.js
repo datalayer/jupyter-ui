@@ -173,6 +173,8 @@ module.exports = tseslint.config(
       // Generated documentation
       'packages/lexical/docs/**',
       'packages/react/docs/**',
+      // Vendored third-party code
+      '**/vendor/**',
     ],
   },
 );

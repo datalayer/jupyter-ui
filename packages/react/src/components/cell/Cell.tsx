@@ -8,7 +8,8 @@ import { useState, useEffect } from 'react';
 import { CodeCell, MarkdownCell } from '@jupyterlab/cells';
 import { IOutput } from '@jupyterlab/nbformat';
 import { Box } from '@datalayer/primer-addons';
-import { Kernel } from '../../jupyter/kernel/Kernel';
+import { useJupyter } from './../../jupyter';
+import Kernel from '../../jupyter/kernel/Kernel';
 import { newUuid } from '../../utils';
 import { Lumino } from '../lumino';
 import { CellAdapter } from './CellAdapter';
@@ -44,20 +45,24 @@ export type ICellProps = {
    */
   type?: 'code' | 'markdown' | 'raw';
   /**
-   * Custom kernel for the cell.
+   * Custom kernel for the cell. Falls back to the defaultKernel if not provided.
    */
   kernel?: Kernel;
 };
 
 export const Cell = ({
   autoStart = true,
-  id: providedId,
-  kernel,
   outputs = [],
   showToolbar = true,
   source = '',
+  startDefaultKernel = true,
   type = 'code',
+  kernel: kernelProps,
+  id: providedId,
 }: ICellProps) => {
+  const { defaultKernel, serverSettings } = useJupyter({
+    startDefaultKernel,
+  });
   const [id] = useState(providedId || newUuid());
   const [adapter, setAdapter] = useState<CellAdapter>();
   const cellsStore = useCellsStore();
@@ -86,21 +91,44 @@ export const Cell = ({
     });
   };
   useEffect(() => {
-    if (!adapter) {
-      kernel?.ready.then(() => {
-        const adapter = new CellAdapter({
+    const kernelToUse = kernelProps || defaultKernel;
+
+    // CRITICAL: When runtime terminates, dispose the adapter to reset cell state
+    // This prevents cells from staying in a broken "executing" state
+    if (!kernelToUse || !serverSettings) {
+      if (adapter) {
+        // Dispose underlying components - CellAdapter doesn't have a dispose method
+        try {
+          adapter.sessionContext?.dispose();
+          adapter.panel?.dispose();
+        } catch (error) {
+          console.error('[Cell] Error disposing adapter:', error);
+        }
+        setAdapter(undefined);
+        cellsStore.setKernelSessionAvailable(id, false);
+      }
+      return;
+    }
+
+    // Create new adapter if we have runtime but no adapter
+    if (id && serverSettings && kernelToUse && !adapter) {
+      let dblClickHandler: ((event: Event) => void) | null = null;
+
+      kernelToUse.ready.then(() => {
+        const newAdapter = new CellAdapter({
           id,
           type,
           source,
           outputs,
-          kernel,
+          kernel: kernelToUse,
           boxOptions: { showToolbar },
         });
-        setAdapter(adapter);
-        cellsStore.setAdapter(id, adapter);
+        setAdapter(newAdapter);
+        cellsStore.setAdapter(id, newAdapter);
         cellsStore.setSource(id, source);
-        handleCellInitEvents(adapter);
-        const handleDblClick = (event: Event) => {
+        handleCellInitEvents(newAdapter);
+
+        dblClickHandler = (event: Event) => {
           let target = event.target as HTMLElement;
           /**
            * Find the DOM searching by the markdown output class (since child elements can be clicked also)
@@ -110,17 +138,33 @@ export const Cell = ({
             target = target.parentElement as HTMLElement;
           }
           if (target && target.classList.contains('jp-MarkdownOutput')) {
-            (adapter.cell as MarkdownCell).rendered = false;
+            (newAdapter.cell as MarkdownCell).rendered = false;
           }
         };
         // Adds the event for double click and the removal on component's destroy
-        document.addEventListener('dblclick', handleDblClick);
-        return () => {
-          document.removeEventListener('dblclick', handleDblClick);
-        };
+        document.addEventListener('dblclick', dblClickHandler);
       });
+
+      // Cleanup function for component unmount or when dependencies change
+      return () => {
+        if (dblClickHandler) {
+          document.removeEventListener('dblclick', dblClickHandler);
+        }
+        // Note: Don't dispose adapter here - it will be disposed by the next effect run
+        // when runtime becomes unavailable, or by component unmount
+      };
     }
-  }, [source, kernel]);
+  }, [
+    source,
+    kernelProps,
+    defaultKernel,
+    serverSettings,
+    adapter,
+    id,
+    type,
+    outputs,
+    showToolbar,
+  ]);
   return adapter ? (
     <Box
       sx={{

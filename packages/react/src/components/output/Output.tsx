@@ -82,7 +82,17 @@ export const Output = ({
   void notifyOnComplete;
   const { defaultKernel } = useJupyter();
   const outputStore = useOutputsStore();
-  const kernel = propsKernel ?? propsAdapter?.kernel ?? defaultKernel;
+  // CRITICAL: If adapter exists, use adapter.kernel even if undefined
+  // Don't fall back to defaultKernel when adapter.kernel is explicitly set to undefined (runtime terminated)
+  const resolvedKernel =
+    propsKernel ?? (propsAdapter ? propsAdapter.kernel : defaultKernel);
+  // CRITICAL: Treat disconnected kernels as undefined (runtime terminated)
+  // Don't show indicator or menu for disconnected kernels
+  const kernel =
+    resolvedKernel &&
+    resolvedKernel.connection?.connectionStatus !== 'disconnected'
+      ? resolvedKernel
+      : undefined;
   const [id, setId] = useState<string>(() => sourceId ?? newUuid());
   const resolvedSourceId = sourceId ?? id;
   const [kernelStatus, setKernelStatus] =
@@ -98,10 +108,6 @@ export const Output = ({
   // Force Lumino widget update when executeTrigger changes
   useEffect(() => {
     if (lumino && adapter?.outputArea) {
-      console.warn(
-        '🔄 Forcing Lumino widget update due to executeTrigger change:',
-        executeTrigger
-      );
       adapter.outputArea.update();
     }
   }, [executeTrigger, lumino, adapter]);
@@ -116,10 +122,16 @@ export const Output = ({
       model: IOutputAreaModel,
       _: IOutputAreaModel.ChangedArgs
     ) => {
-      setOutputs(model.toJSON());
-      if (id) {
-        outputStore.setModel(id, model);
+      // CRITICAL: When kernel is undefined/disconnected, FREEZE outputs - don't update from model changes
+      // This prevents outputs from being cleared when runtime terminates
+      // Only update outputs when we have an active kernel
+      if (kernel) {
+        setOutputs(model.toJSON());
+        if (id) {
+          outputStore.setModel(id, model);
+        }
       }
+      // If no kernel, keep the last known outputs (don't clear them)
     };
     const receiptCallback = (
       model: IOutputAreaModel,
@@ -138,12 +150,14 @@ export const Output = ({
         });
       }
     };
-    if (id && kernel) {
+    // CRITICAL: Use propsAdapter if provided, even when kernel is undefined (runtime terminated)
+    // This preserves outputs after runtime termination
+    if (id && (propsAdapter || kernel)) {
       const adapter =
         propsAdapter ??
         new OutputAdapter(
           id,
-          kernel,
+          kernel!,
           outputs ?? [],
           model,
           suppressCodeExecutionErrors
@@ -233,16 +247,19 @@ export const Output = ({
           />
         </Box>
       )}
-      {adapter && (
+      {(adapter || propsAdapter) && (
         <Box display="flex">
           <Box flexGrow={1}>
             {kernel && kernelStatus !== 'idle' && showKernelProgressBar && (
               <KernelProgressBar />
             )}
           </Box>
-          {showControl && (
+          {showControl && kernel && (adapter || propsAdapter) && (
             <Box style={{ marginTop: '-13px' }}>
-              <KernelActionMenu kernel={kernel} outputAdapter={adapter} />
+              <KernelActionMenu
+                kernel={kernel}
+                outputAdapter={adapter || propsAdapter}
+              />
             </Box>
           )}
         </Box>

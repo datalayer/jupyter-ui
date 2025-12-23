@@ -130,6 +130,12 @@ export const CodeMirrorOutputToolbar = (
     }
     return nokColor;
   };
+  // CRITICAL: Hide toolbar when no kernel (runtime terminated)
+  // Don't show running indicator or three-dot menu if kernel is undefined
+  if (!kernel) {
+    return null;
+  }
+
   return (
     <Box display="flex">
       <Box flexGrow={1} />

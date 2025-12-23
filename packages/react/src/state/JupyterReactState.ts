@@ -72,7 +72,6 @@ export type JupyterReactState = {
 };
 
 export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
-  collaborative: false,
   version: '',
   jupyterLabAdapter: undefined,
   jupyterConfig: undefined,
@@ -139,16 +138,20 @@ export function useJupyterReactStoreFromProps(
   } = props;
 
   const jupyterConfig = useMemo<IJupyterConfig>(() => {
-    const config = loadJupyterConfig({
-      collaborative: false,
+    return loadJupyterConfig({
       lite,
       jupyterServerUrl,
       jupyterServerToken,
       terminals,
     });
-    jupyterReactStore.getState().setJupyterConfig(config);
-    return config;
   }, []);
+
+  // Set config in store during effect phase (not render phase)
+  // This fixes React warning: "Cannot update a component while rendering a different component"
+  // Components must handle undefined config during first render (see useJupyter hook)
+  useEffect(() => {
+    jupyterReactStore.getState().setJupyterConfig(jupyterConfig);
+  }, [jupyterConfig]);
 
   const [serviceManager, setServiceManager] = useState<
     ServiceManager.IManager | undefined
@@ -160,7 +163,6 @@ export function useJupyterReactStoreFromProps(
 
   useEffect(() => {
     if (propsServiceManager) {
-      console.log('Setting Service Manager from props', propsServiceManager);
       setServiceManager(propsServiceManager);
       jupyterReactStore.getState().setServiceManager(propsServiceManager);
     }
@@ -218,12 +220,7 @@ export function useJupyterReactStoreFromProps(
 
   // Setup a Kernel if needed.
   useEffect(() => {
-    console.log(
-      'Checking kernels for the new Service Manager:',
-      serviceManager
-    );
     serviceManager?.kernels.ready.then(async () => {
-      console.log('Jupyter Kernel Manager is ready', serviceManager.kernels);
       if (useRunningKernelIndex > -1) {
         await serviceManager.sessions.refreshRunning();
         const runnings = Array.from(serviceManager.kernels.running());
@@ -248,7 +245,6 @@ export function useJupyterReactStoreFromProps(
         setIsLoading(false);
         jupyterReactStore.getState().kernelIsLoading = false;
       } else if (startDefaultKernel) {
-        console.log('Starting the default Jupyter Kernel', defaultKernelName);
         const defaultKernel = new Kernel({
           kernelName: defaultKernelName,
           kernelSpecName: defaultKernelName,
@@ -257,7 +253,6 @@ export function useJupyterReactStoreFromProps(
           sessionManager: serviceManager.sessions,
         });
         defaultKernel.ready.then(async () => {
-          console.log('The default Jupyter Kernel is ready', defaultKernelName);
           if (initCode) {
             try {
               await defaultKernel.execute(initCode)?.done;
@@ -274,7 +269,13 @@ export function useJupyterReactStoreFromProps(
     });
   }, [serviceManager]);
 
-  return useStore(jupyterReactStore);
+  // Return store state with locally computed jupyterConfig
+  // This ensures jupyterConfig is available even on first render
+  // (before useEffect sets it in the store)
+  return {
+    ...useStore(jupyterReactStore),
+    jupyterConfig, // Override with local computed value
+  };
 }
 
 export default useJupyterReactStore;

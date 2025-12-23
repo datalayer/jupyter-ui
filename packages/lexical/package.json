@@ -30,7 +30,7 @@
   },
   "scripts": {
     "build": "npm run validate:tools && gulp resources-to-lib && cross-env NODE_OPTIONS=--max-old-space-size=16384 tsc && webpack && npm run build:lib",
-    "build:vite": "vite build",
+    "build:vite": "npm run validate:tools && vite build",
     "build:lib": "npm run validate:tools && cross-env NODE_OPTIONS=--max-old-space-size=16384 tsc",
     "build:prod": "npm run validate:tools && gulp resources-to-lib && tsc && jlpm clean && jlpm build:lib",
     "build:tsc:watch": "run-p 'build:tsc:watch:*'",
@@ -117,6 +117,7 @@
     "@types/uuid": "^8.3.0",
     "@typescript-eslint/eslint-plugin": "^8.29.1",
     "@typescript-eslint/parser": "^8.29.1",
+    "@vitejs/plugin-react": "^4.3.0",
     "babel-loader": "^9.1.2",
     "bundle-loader": "^0.5.6",
     "css-loader": "^7.1.2",
@@ -149,9 +150,9 @@
     "typedoc": "^0.28.2",
     "typescript": "^5.8.3",
     "url-loader": "^3.0.0",
-    "watch": "^1.0.2",
     "vite": "^5.4.0",
-    "@vitejs/plugin-react": "^4.3.0",
+    "vite-plugin-dts": "^4.5.4",
+    "watch": "^1.0.2",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.9.3"

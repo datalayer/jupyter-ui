@@ -27,7 +27,6 @@ import {
   newUuid,
   Kernel,
 } from '@datalayer/jupyter-react';
-import { createNoRuntimeWarning } from './jupyterUtils';
 import { isJupyterOutputNodeOrphaned } from './JupyterOutputNodeUtils';
 
 export type SerializedJupyterOutputNode = Spread<
@@ -200,10 +199,22 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
 
   /** @override */
   decorate(_editor: LexicalEditor, _config: EditorConfig) {
+    // CRITICAL: Cache outputs and never clear them!
+    // Try to get fresh outputs from model, but if empty/cleared, use cached __outputs
+    const modelOutputs = this.__outputAdapter?.outputArea?.model?.toJSON();
+
+    // If model has outputs, update our cache AND use them
+    if (modelOutputs && modelOutputs.length > 0) {
+      const self = this.getWritable();
+      self.__outputs = modelOutputs;
+    }
+
+    // Always use cached __outputs (which now contains last known good outputs)
+    const currentOutputs = this.__outputs || [];
     return (
       <Output
         code={this.getJupyterInput()}
-        outputs={this.__outputs}
+        outputs={currentOutputs}
         adapter={this.__outputAdapter}
         id={this.__jupyterOutputNodeUuid}
         executeTrigger={this.getExecuteTrigger() + this.__renderTrigger}
@@ -247,15 +258,8 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
     self.__code = code;
 
     if (!self.__outputAdapter.kernel) {
-      // Show user-facing warning instead of just logging
-      const warningOutput = createNoRuntimeWarning();
-
-      // Update BOTH the node's outputs AND the adapter's model
-      self.__outputs = [warningOutput];
-      self.__outputAdapter.setOutputs([warningOutput]);
-
-      // Force re-render by incrementing renderTrigger
-      self.__renderTrigger++;
+      // CRITICAL: No kernel - do nothing, keep old outputs visible
+      // Don't show warning, don't clear outputs, just return
       return;
     }
 
@@ -267,6 +271,9 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
     const self = this.getWritable();
     if (self.__outputAdapter) {
       self.__outputAdapter.kernel = kernel;
+      // Force Output component to re-render with updated kernel
+      self.__renderTrigger++;
+      // Don't clear outputs - keep old execution results visible
     }
   }
 }

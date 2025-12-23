@@ -53,28 +53,47 @@ export abstract class LabWidgetManager
   constructor(rendermime: IRenderMimeRegistry) {
     super();
     this._rendermime = rendermime;
-    const requireJsScript = document.createElement('script');
-    const cdnOnlyScript = document.createElement('script');
-    cdnOnlyScript.setAttribute('data-jupyter-widgets-cdn-only', 'true');
-    document.body.appendChild(cdnOnlyScript);
-    requireJsScript.src =
-      'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js';
-    document.body.appendChild(requireJsScript);
-    requireJsScript.onload = () => {
-      (window as any).define('@jupyter-widgets/base', base);
-      (window as any).define('@jupyter-widgets/controls', controls);
-      this._registry = new SemVerCache<ExportData>();
-      this.register({
-        name: '@jupyter-widgets/base',
-        version: base.JUPYTER_WIDGETS_VERSION,
-        exports: () => import('@jupyter-widgets/base') as any,
-      });
-      this.register({
-        name: '@jupyter-widgets/controls',
-        version: controls.JUPYTER_CONTROLS_VERSION,
-        exports: () => import('@jupyter-widgets/controls') as any,
-      });
+
+    // Setup RequireJS on window (loaded from CDN)
+    // Note: Using CDN approach due to template literal corruption issues with bundled version
+    // See REQUIREJS_TROUBLESHOOTING.md for details
+    if (typeof window !== 'undefined' && !(window as any).requirejs) {
+      // Load RequireJS from CDN
+      const script = document.createElement('script');
+      script.src =
+        'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.8/require.min.js';
+      script.async = false;
+      document.head.appendChild(script);
+
+      // Add CDN marker for libembed-amd compatibility
+      const cdnOnlyScript = document.createElement('script');
+      cdnOnlyScript.setAttribute('data-jupyter-widgets-cdn-only', 'true');
+      document.body.appendChild(cdnOnlyScript);
+    }
+
+    // Setup widget modules (wait for requirejs to be available)
+    const initWidgets = () => {
+      if ((window as any).define) {
+        (window as any).define('@jupyter-widgets/base', base);
+        (window as any).define('@jupyter-widgets/controls', controls);
+
+        this._registry = new SemVerCache<ExportData>();
+        this.register({
+          name: '@jupyter-widgets/base',
+          version: base.JUPYTER_WIDGETS_VERSION,
+          exports: () => import('@jupyter-widgets/base') as any,
+        });
+        this.register({
+          name: '@jupyter-widgets/controls',
+          version: controls.JUPYTER_CONTROLS_VERSION,
+          exports: () => import('@jupyter-widgets/controls') as any,
+        });
+      } else {
+        // Retry if requirejs not yet available
+        setTimeout(initWidgets, 10);
+      }
     };
+    initWidgets();
   }
 
   /**
