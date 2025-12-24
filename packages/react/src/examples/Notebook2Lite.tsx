@@ -6,6 +6,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { Session } from '@jupyterlab/services';
 import { Text } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { INotebookContent } from '@jupyterlab/nbformat';
@@ -19,17 +20,15 @@ import {
   KernelIndicator,
 } from '../components';
 import { CellToolbarExtension } from './extensions';
-
-import nbformat from './notebooks/NotebookExample1.ipynb.json';
-import { Session } from '@jupyterlab/services';
 import { OnSessionConnection } from '../state';
+
+import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
 const Notebook2Lite = () => {
   const { serviceManager, defaultKernel } = useJupyter({
     lite: true,
     startDefaultKernel: true,
   });
-  const [kernelReady, setKernelReady] = useState(false);
   const [session, setSession] = useState<Session.ISessionConnection>();
   const onSessionConnection: OnSessionConnection = (
     session: Session.ISessionConnection | undefined
@@ -48,36 +47,32 @@ const Notebook2Lite = () => {
     ],
     []
   );
-  useEffect(() => {
-    if (defaultKernel) {
-      defaultKernel.ready.then(() => setKernelReady(true));
-    }
-  }, [defaultKernel]);
-
-  return serviceManager && defaultKernel && kernelReady ? (
-    <JupyterReactTheme>
-      <Box display="flex">
-        <Box>
-          <Text>Kernel Indicator</Text>
+  return serviceManager ? (
+    defaultKernel && (
+      <JupyterReactTheme>
+        <Box as="h1">A Jupyter Notebook with a Lite Kernel</Box>
+        <Box display="flex">
+          <Box>
+            <Text>Kernel Indicator</Text>
+          </Box>
+          <Box ml={3}>
+            <KernelIndicator kernel={session?.kernel} />
+          </Box>
         </Box>
-        <Box ml={3}>
-          <KernelIndicator kernel={session?.kernel} />
-        </Box>
-      </Box>
-      <Notebook2
-        nbformat={nbformat as INotebookContent}
-        id="notebook-nbformat-id"
-        startDefaultKernel={false}
-        kernelId={defaultKernel?.id}
-        serviceManager={serviceManager}
-        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        extensions={extensions}
-        onSessionConnection={onSessionConnection}
-        Toolbar={NotebookToolbar}
-      />
-    </JupyterReactTheme>
+        <Notebook2
+          nbformat={NBFORMAT as INotebookContent}
+          id="notebook2-lite-id"
+          serviceManager={serviceManager}
+          kernelId={defaultKernel.id}
+          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+          extensions={extensions}
+          onSessionConnection={onSessionConnection}
+          Toolbar={NotebookToolbar}
+        />
+      </JupyterReactTheme>
+    )
   ) : (
-    <Box>Loading Jupyter Lite...</Box>
+    <Box>Loading Notebook2 Lite...</Box>
   );
 };
 

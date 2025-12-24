@@ -9,11 +9,13 @@
  * Uncomment the one you want to run.
  */
 const ENTRY =
-  // './src/app/App';
-  // './src/examples/Bokeh';
-  // './src/examples/Bqplot';
-  // './src/examples/Cell';
-  './src/examples/CellLite';
+  // Use ExampleSelector for a UI to pick examples at runtime
+  './src/examples/ExampleSelector';
+// './src/app/App';
+// './src/examples/Bokeh';
+// './src/examples/Bqplot';
+// './src/examples/Cell';
+// './src/examples/CellLite';
 // './src/examples/Cells';
 // './src/examples/CellsExecute';
 // './src/examples/Console';

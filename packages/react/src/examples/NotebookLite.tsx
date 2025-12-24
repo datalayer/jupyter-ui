@@ -4,18 +4,18 @@
  * MIT License
  */
 
+import { useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { Session } from '@jupyterlab/services';
 import { Text } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
-import { useMemo, useState } from 'react';
-import { createRoot } from 'react-dom/client';
 import { CellSidebarExtension, KernelIndicator, Notebook } from '../components';
 import { OnSessionConnection } from '../state';
 import { JupyterReactTheme } from '../theme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
-import nbformat from './notebooks/Lite.ipynb.json';
+import NBFORMAT from './notebooks/Lite.ipynb.json';
 
 const NotebookLite = () => {
   const [session, setSession] = useState<Session.ISessionConnection>();
@@ -42,9 +42,9 @@ const NotebookLite = () => {
         </Box>
       </Box>
       <Notebook
-        startDefaultKernel
         lite
-        nbformat={nbformat as INotebookContent}
+        startDefaultKernel
+        nbformat={NBFORMAT as INotebookContent}
         id="notebook-lite-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         onSessionConnection={onSessionConnection}
