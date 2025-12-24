@@ -37,6 +37,7 @@ export default tseslint.config(
       '*.config.js',
       'scripts/**/*.js',
       'gulpfile.js',
+      'entries.js',
     ],
   },
   {
@@ -180,29 +181,6 @@ export default tseslint.config(
 
       // Prettier integration
       'prettier/prettier': 'warn',
-    },
-  },
-  // Explicitly allow project service to parse local JS entry selectors
-  {
-    files: ['entries.js'],
-    languageOptions: {
-      parser: tseslint.parser,
-      parserOptions: {
-        projectService: {
-          allowDefaultProject: [
-            '*.config.js',
-            '*.config.ts',
-            '.commitlintrc.js',
-            '.eslintrc.js',
-            '.lintstagedrc.js',
-            'gulpfile.js',
-            'packages/react/vite.config.ts',
-            'packages/react/entries.js',
-            'entries.js',
-          ],
-        },
-        tsconfigRootDir: __dirname,
-      },
     },
   },
   // Config files (Node.js environment)

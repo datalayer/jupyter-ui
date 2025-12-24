@@ -36,7 +36,7 @@ print(f"👋 Hello Jupyter UI Lite - Platform: {sys.platform} - IPython: {get_ip
       />
     </JupyterReactTheme>
   ) : (
-    <Box>Loading Jupyter Lite...</Box>
+    <Box>Loading Cell Lite...</Box>
   );
 };
 
