@@ -21,7 +21,7 @@ const ENTRY =
   // './src/examples/Bokeh';
   // './src/examples/Bqplot';
   // './src/examples/Cell';
-  // './src/examples/CellLite';
+  './src/examples/CellLite';
   // './src/examples/Cells';
   // './src/examples/CellsExecute';
   // './src/examples/Console';
@@ -46,7 +46,7 @@ const ENTRY =
   // './src/examples/Matplotlib';
   // './src/examples/Notebook';
   // './src/examples/Notebook2';
-  './src/examples/Notebook2Actions';
+  // './src/examples/Notebook2Actions';
 // './src/examples/Notebook2Collaborative';
 // './src/examples/Notebook2Lite';
 // './src/examples/NotebookCellSidebar';

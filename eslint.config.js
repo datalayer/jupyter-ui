@@ -25,6 +25,7 @@ module.exports = tseslint.config(
             '.eslintrc.js',
             '.lintstagedrc.js',
             'gulpfile.js',
+            'packages/react/vite.config.ts',
           ],
         },
       },
