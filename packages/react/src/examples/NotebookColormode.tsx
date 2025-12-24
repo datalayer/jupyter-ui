@@ -8,17 +8,20 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { Text, ToggleSwitch } from '@primer/react';
+import { useJupyter } from '../jupyter';
+import { JupyterReactTheme } from '../theme';
 import { CellSidebarExtension } from '../components';
-import { Notebook } from '../components/notebook/Notebook';
-import { Jupyter } from '../jupyter/Jupyter';
-import { Colormode } from '../theme/JupyterLabColormode';
+import { Notebook2 } from '../components/notebook/Notebook2';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-import nbformat from './notebooks/NotebookExample1.ipynb.json';
+import { useJupyterReactStore } from '../state';
+
+import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookColormode = () => {
-  const [colormode, setColormode] = useState<Colormode>('light');
+  const { serviceManager } = useJupyter();
+  const { colormode, setColormode } = useJupyterReactStore();
   const [isOn, setIsOn] = useState(false);
-  const extensions = useMemo(() => [new CellSidebarExtension()], []);
+  const extensions = useMemo(() => [new CellSidebarExtension()], [colormode]);
   useEffect(() => {
     if (isOn) {
       setColormode('dark');
@@ -34,7 +37,7 @@ const NotebookColormode = () => {
   }, []);
   return (
     <>
-      <Jupyter startDefaultKernel colormode={colormode}>
+      <JupyterReactTheme>
         <Text
           fontSize={2}
           fontWeight="bold"
@@ -52,14 +55,18 @@ const NotebookColormode = () => {
           statusLabelPosition="end"
           aria-labelledby="switch-label"
         />
-        <Notebook
-          nbformat={nbformat as INotebookContent}
-          id="notebook-model-id"
-          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-          extensions={extensions}
-          Toolbar={NotebookToolbar}
-        />
-      </Jupyter>
+        {serviceManager && (
+          <Notebook2
+            nbformat={NBFORMAT as INotebookContent}
+            serviceManager={serviceManager}
+            startDefaultKernel
+            id="notebook-model-id"
+            height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+            extensions={extensions}
+            Toolbar={NotebookToolbar}
+          />
+        )}
+      </JupyterReactTheme>
     </>
   );
 };

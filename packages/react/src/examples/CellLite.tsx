@@ -11,7 +11,7 @@ import { useJupyter } from '../jupyter';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { Cell } from '../components/cell/Cell';
 
-const CellLiteExample = () => {
+const CellLite = () => {
   const { serviceManager, defaultKernel } = useJupyter({
     lite: true,
     startDefaultKernel: true,
@@ -44,4 +44,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<CellLiteExample />);
+root.render(<CellLite />);

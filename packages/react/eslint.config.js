@@ -4,11 +4,6 @@
  * MIT License
  */
 
-/*
- * Copyright (c) 2023-2025 Datalayer, Inc.
- * Distributed under the terms of the Modified BSD License.
- */
-
 // For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -69,8 +64,10 @@ export default tseslint.config(
         projectService: {
           allowDefaultProject: [
             '*.js',
+            '*.ts',
             '*.mjs',
             '*.cjs',
+              'entries.js',
             'playwright.config.ts',
           ],
         },
@@ -183,6 +180,29 @@ export default tseslint.config(
 
       // Prettier integration
       'prettier/prettier': 'warn',
+    },
+  },
+  // Explicitly allow project service to parse local JS entry selectors
+  {
+    files: ['entries.js'],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        projectService: {
+          allowDefaultProject: [
+            '*.config.js',
+            '*.config.ts',
+            '.commitlintrc.js',
+            '.eslintrc.js',
+            '.lintstagedrc.js',
+            'gulpfile.js',
+            'packages/react/vite.config.ts',
+            'packages/react/entries.js',
+            'entries.js',
+          ],
+        },
+        tsconfigRootDir: __dirname,
+      },
     },
   },
   // Config files (Node.js environment)
