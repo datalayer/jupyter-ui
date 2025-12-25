@@ -50,7 +50,7 @@ import {
 } from '@jupyterlab/rendermime';
 import type {
   Contents,
-  Kernel,
+  Kernel as JupyterKernel,
   ServiceManager,
   Session,
   SessionManager,
@@ -67,6 +67,7 @@ import { Banner } from '@primer/react/experimental';
 import { EditorView } from 'codemirror';
 import {
   ICollaborationProvider,
+  Kernel,
   WIDGET_MIMETYPE,
   WidgetLabRenderer,
   WidgetManager,
@@ -172,12 +173,6 @@ export interface INotebook2BaseProps {
  * This component is not connected to any React stores.
  */
 export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
-  console.log('[Notebook2Base] Component rendering with props:', {
-    hasInlineProviders: !!props.inlineProviders,
-    inlineProvidersCount: props.inlineProviders?.length,
-    inlineProviders: props.inlineProviders,
-  });
-
   const {
     commands,
     extensions = DEFAULT_EXTENSIONS,
@@ -187,6 +182,13 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
     model,
     onSessionConnection,
   } = props;
+
+  console.log('[Notebook2Base] Component rendering with props:', {
+    hasInlineProviders: !!props.inlineProviders,
+    inlineProvidersCount: props.inlineProviders?.length,
+    inlineProviders: props.inlineProviders,
+    kernelId,
+  });
 
   const [isLoading, setIsLoading] = useState(true);
   const [extensionComponents, setExtensionComponents] = useState(
@@ -444,6 +446,7 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
   // Set kernel
   useEffect(() => {
     if (context && kernelId && !context.sessionContext.isDisposed) {
+      console.log('----------DLA', kernelId);
       context.sessionContext.changeKernel({ id: kernelId }).catch(reason => {
         console.error('Failed to change kernel model.', reason);
       });
@@ -774,7 +777,11 @@ export function useKernelId(
         /**
          * Kernels manager
          */
-        kernels?: Kernel.IManager;
+        kernels?: JupyterKernel.IManager;
+        /**
+         * Kernel to connect to
+         */
+        kernel?: Kernel;
         /**
          * Kernel ID to connect to
          *
@@ -791,16 +798,21 @@ export function useKernelId(
       }
     | undefined = {}
 ): string | undefined {
-  const { kernels, requestedKernelId, startDefaultKernel = false } = options;
+  const {
+    kernels,
+    kernel,
+    requestedKernelId,
+    startDefaultKernel = false,
+  } = options;
 
   // Define the kernel to be used.
   // - Check the provided kernel id exists
   // - If no kernel found, start a new one if required
-  const [kernelId, setKernelId] = useState<string | undefined>(undefined);
+  const [kernelId, setKernelId] = useState<string | undefined>(kernel?.id);
   useEffect(() => {
     let isMounted = true;
-    let connection: Kernel.IKernelConnection | undefined;
-    if (kernels) {
+    let connection: JupyterKernel.IKernelConnection | undefined;
+    if (!kernelId && kernels) {
       (async () => {
         let newKernelId: string | undefined;
         await kernels.ready;
@@ -847,7 +859,7 @@ export function useKernelId(
           });
       }
     };
-  }, [kernels, requestedKernelId, startDefaultKernel]);
+  }, [kernels, kernel, requestedKernelId, startDefaultKernel, kernelId]);
 
   return kernelId;
 }
@@ -1309,8 +1321,8 @@ function initializeContext(
     (
       _,
       args: IChangedArgs<
-        Kernel.IKernelConnection | null,
-        Kernel.IKernelConnection | null,
+        JupyterKernel.IKernelConnection | null,
+        JupyterKernel.IKernelConnection | null,
         'kernel'
       >
     ) => {

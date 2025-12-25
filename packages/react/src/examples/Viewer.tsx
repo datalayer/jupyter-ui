@@ -16,12 +16,12 @@ const JupyterViewerExample = () => {
     <>
       <Box m={3}>
         <Jupyter serverless>
-          <Text as="h1">Jupyter Viewer with Plotly outputs</Text>
+          <Text as="h1">Viewer with Plotly outputs</Text>
           <Viewer
             nbformatUrl="https://raw.githubusercontent.com/datalayer-examples/notebooks/main/daily-stock.ipynb"
             outputs
           />
-          <Text as="h1">Jupyter Viewer without outputs</Text>
+          <Text as="h1">Viewer without outputs</Text>
           <Viewer nbformat={matplotlib} outputs={false} />
         </Jupyter>
       </Box>

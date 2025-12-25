@@ -4,7 +4,6 @@
  * MIT License
  */
 
-import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Box } from '@datalayer/primer-addons';
 import { useJupyter } from '../jupyter';
@@ -16,19 +15,9 @@ const CellLite = () => {
     lite: true,
     startDefaultKernel: true,
   });
-  const [kernelReady, setKernelReady] = useState(false);
-
-  useEffect(() => {
-    if (defaultKernel) {
-      defaultKernel.ready.then(() => {
-        setKernelReady(true);
-      });
-    }
-  }, [defaultKernel]);
-
-  return serviceManager && defaultKernel && kernelReady ? (
+  return serviceManager && defaultKernel ? (
     <JupyterReactTheme>
-      <Box as="h1">A Jupyter Cell with a Lite Kernel</Box>
+      <Box as="h1">Cell with a Lite Kernel</Box>
       <Cell
         source={`import sys
 print(f"👋 Hello Jupyter UI Lite - Platform: {sys.platform} - IPython: {get_ipython()}")`}

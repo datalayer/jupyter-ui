@@ -21,7 +21,7 @@ const NotebookLess = () => {
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
     <JupyterReactTheme>
-      <Box as="h1">A Jupyter Notebook with a Less Service Manager</Box>
+      <Box as="h1">Notebook with a Less Service Manager</Box>
       <Notebook
         serverless
         nbformat={nbformat as INotebookContent}

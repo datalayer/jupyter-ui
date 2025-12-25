@@ -42,7 +42,7 @@ const NotebookOnSessionConnection = () => {
   };
   return (
     <JupyterReactTheme>
-      <Box as="h1">A Jupyter Notebook listening to Kernel Sessions</Box>
+      <Box as="h1">Notebook listening to Kernel Sessions</Box>
       <KernelDetective serviceManager={serviceManager} />
       <Box>
         <Text as="h3">Kernel Sessions</Text>

@@ -32,7 +32,7 @@ const NotebookLite = () => {
   };
   return (
     <JupyterReactTheme>
-      <Box as="h1">A Jupyter Notebook with a Lite Kernel</Box>
+      <Box as="h1">Notebook with a Lite Kernel</Box>
       <Box display="flex">
         <Box>
           <Text>Kernel Indicator</Text>

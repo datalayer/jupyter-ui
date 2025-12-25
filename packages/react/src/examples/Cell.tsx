@@ -34,7 +34,7 @@ const CellExample = () => {
   );
   return (
     <JupyterReactTheme>
-      <Box as="h1">A Jupyter Cell</Box>
+      <Box as="h1">Cell</Box>
       <Box>Source: {cellsStore.getSource(CELL_ID)}</Box>
       <Box>Outputs Count: {cellsStore.getOutputsCount(CELL_ID)}</Box>
       <Box>

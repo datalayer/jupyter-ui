@@ -16,9 +16,18 @@
  * The selector UI uses Primer React components and persists selection.
  */
 
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
-import { ThemeProvider, BaseStyles, ActionMenu, ActionList, Box, Text, Spinner, Flash, TextInput } from '@primer/react';
+import {
+  ThemeProvider,
+  BaseStyles,
+  Text,
+  Spinner,
+  Flash,
+  ActionList,
+  TextInput,
+} from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { SearchIcon } from '@primer/octicons-react';
 
 const LOCAL_STORAGE_KEY = 'jupyter-react-selected-example';
@@ -42,9 +51,15 @@ const EXAMPLES: Array<{ name: string; path: string }> = [
   { name: 'Jupyter Context', path: 'JupyterContext' },
   { name: 'JupyterLab App', path: 'JupyterLabApp' },
   { name: 'JupyterLab App Headless', path: 'JupyterLabAppHeadless' },
-  { name: 'JupyterLab App Headless Serverless', path: 'JupyterLabAppHeadlessServerless' },
+  {
+    name: 'JupyterLab App Headless Serverless',
+    path: 'JupyterLabAppHeadlessServerless',
+  },
   { name: 'JupyterLab App Serverless', path: 'JupyterLabAppServerless' },
-  { name: 'JupyterLab App Service Manager', path: 'JupyterLabAppServiceManager' },
+  {
+    name: 'JupyterLab App Service Manager',
+    path: 'JupyterLabAppServiceManager',
+  },
   { name: 'JupyterLab Theme', path: 'JupyterLabTheme' },
   { name: 'Kernel Execute', path: 'KernelExecute' },
   { name: 'Kernel Executor', path: 'KernelExecutor' },
@@ -73,7 +88,10 @@ const EXAMPLES: Array<{ name: string; path: string }> = [
   { name: 'Notebook Nbformat Change', path: 'NotebookNbformatChange' },
   { name: 'Notebook No Context', path: 'NotebookNoContext' },
   { name: 'Notebook No Primer', path: 'NotebookNoPrimer' },
-  { name: 'Notebook On Session Connection', path: 'NotebookOnSessionConnection' },
+  {
+    name: 'Notebook On Session Connection',
+    path: 'NotebookOnSessionConnection',
+  },
   { name: 'Notebook Path', path: 'NotebookPath' },
   { name: 'Notebook Path Change', path: 'NotebookPathChange' },
   { name: 'Notebook Readonly', path: 'NotebookReadonly' },
@@ -116,7 +134,8 @@ const importExample = (path: string): Promise<unknown> => {
     JupyterContext: () => import('./JupyterContext'),
     JupyterLabApp: () => import('./JupyterLabApp'),
     JupyterLabAppHeadless: () => import('./JupyterLabAppHeadless'),
-    JupyterLabAppHeadlessServerless: () => import('./JupyterLabAppHeadlessServerless'),
+    JupyterLabAppHeadlessServerless: () =>
+      import('./JupyterLabAppHeadlessServerless'),
     JupyterLabAppServerless: () => import('./JupyterLabAppServerless'),
     JupyterLabAppServiceManager: () => import('./JupyterLabAppServiceManager'),
     JupyterLabTheme: () => import('./JupyterLabTheme'),
@@ -212,10 +231,10 @@ const saveExample = (path: string): void => {
 };
 
 /**
- * Example Selector Header component.
- * Renders a sticky header with a filtered search dropdown for selecting examples.
+ * Example Selector Sidebar component.
+ * Renders a right sidebar with a filtered list for selecting examples.
  */
-const ExampleSelectorHeader = ({
+const ExampleSelectorSidebar = ({
   selectedPath,
   onSelect,
   isLoading,
@@ -226,147 +245,95 @@ const ExampleSelectorHeader = ({
   isLoading: boolean;
   error: string | null;
 }) => {
-  const selectedExample = EXAMPLES.find(e => e.path === selectedPath) || EXAMPLES[0];
-  const [filterText, setFilterText] = useState('');
-  const [isOpen, setIsOpen] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [filter, setFilter] = useState('');
 
   // Filter examples based on search text
-  const filteredExamples = useMemo(() => {
-    if (!filterText) return EXAMPLES;
-    const lower = filterText.toLowerCase();
-    return EXAMPLES.filter(
-      e => e.name.toLowerCase().includes(lower) || e.path.toLowerCase().includes(lower)
-    );
-  }, [filterText]);
-
-  // Focus input when dropdown opens
-  useEffect(() => {
-    if (isOpen && inputRef.current) {
-      // Small delay to ensure the overlay is rendered
-      setTimeout(() => inputRef.current?.focus(), 50);
-    }
-  }, [isOpen]);
-
-  // Clear filter when dropdown closes
-  useEffect(() => {
-    if (!isOpen) {
-      setFilterText('');
-    }
-  }, [isOpen]);
+  const filteredExamples = EXAMPLES.filter(
+    example =>
+      example.name.toLowerCase().includes(filter.toLowerCase()) ||
+      example.path.toLowerCase().includes(filter.toLowerCase())
+  );
 
   return (
     <Box
       sx={{
-        position: 'sticky',
+        position: 'fixed',
         top: 0,
-        zIndex: 1000,
+        right: 0,
+        height: '100vh',
+        width: '320px',
         backgroundColor: 'canvas.default',
-        borderBottom: '1px solid',
+        borderLeft: '1px solid',
         borderColor: 'border.default',
-        px: 3,
-        py: 2,
+        display: 'flex',
+        flexDirection: 'column',
+        zIndex: 1000,
       }}
     >
-      <Box display="flex" alignItems="center" justifyContent="space-between">
-        <Box display="flex" alignItems="center">
-          <Text as="span" fontWeight="bold" mr={3}>
-            📓 Jupyter React
-          </Text>
-          {/* FilteredSearch pattern: ActionMenu + TextInput */}
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'stretch',
-            }}
-          >
-            <ActionMenu open={isOpen} onOpenChange={setIsOpen}>
-              <ActionMenu.Button
-                disabled={isLoading}
-                sx={{
-                  borderTopRightRadius: 0,
-                  borderBottomRightRadius: 0,
-                  borderRight: 0,
-                }}
-              >
-                {selectedExample.name}
-              </ActionMenu.Button>
-              <ActionMenu.Overlay width="medium">
-                <Box sx={{ p: 2, borderBottom: '1px solid', borderColor: 'border.default' }}>
-                  <TextInput
-                    ref={inputRef}
-                    leadingVisual={SearchIcon}
-                    placeholder="Filter examples..."
-                    value={filterText}
-                    onChange={e => setFilterText(e.target.value)}
-                    sx={{ width: '100%' }}
-                    aria-label="Filter examples"
-                  />
-                </Box>
-                <ActionList selectionVariant="single" sx={{ maxHeight: '400px', overflowY: 'auto' }}>
-                  {filteredExamples.length === 0 ? (
-                    <ActionList.Item disabled>
-                      No examples match &ldquo;{filterText}&rdquo;
-                    </ActionList.Item>
-                  ) : (
-                    filteredExamples.map(example => (
-                      <ActionList.Item
-                        key={example.path}
-                        selected={example.path === selectedPath}
-                        onSelect={() => {
-                          onSelect(example.path);
-                          setIsOpen(false);
-                        }}
-                      >
-                        <ActionList.LeadingVisual>
-                          <Text sx={{ fontFamily: 'mono', fontSize: 0, color: 'fg.muted' }}>
-                            {example.path.substring(0, 2)}
-                          </Text>
-                        </ActionList.LeadingVisual>
-                        {example.name}
-                        <ActionList.Description variant="block">
-                          {example.path}
-                        </ActionList.Description>
-                      </ActionList.Item>
-                    ))
-                  )}
-                </ActionList>
-              </ActionMenu.Overlay>
-            </ActionMenu>
-            <TextInput
-              leadingVisual={SearchIcon}
-              placeholder="Search examples..."
-              value={filterText}
-              onChange={e => {
-                setFilterText(e.target.value);
-                if (!isOpen) setIsOpen(true);
-              }}
-              onFocus={() => {
-                if (!isOpen) setIsOpen(true);
-              }}
-              sx={{
-                borderTopLeftRadius: 0,
-                borderBottomLeftRadius: 0,
-                width: '200px',
-              }}
-              aria-label="Search examples"
-            />
-          </Box>
-          {isLoading && (
-            <Box ml={2}>
-              <Spinner size="small" />
-            </Box>
-          )}
-        </Box>
-        <Text as="span" fontSize={0} color="fg.muted">
-          {selectedExample.path}
+      <Box
+        sx={{
+          px: 3,
+          py: 2,
+          borderBottom: '1px solid',
+          borderColor: 'border.default',
+        }}
+      >
+        <Text as="div" fontWeight="bold" fontSize={2}>
+          📓 Examples
         </Text>
+        {isLoading && (
+          <Box mt={2} display="flex" alignItems="center">
+            <Spinner size="small" />
+            <Text ml={2} fontSize={1} color="fg.muted">
+              Loading...
+            </Text>
+          </Box>
+        )}
       </Box>
       {error && (
-        <Flash variant="danger" sx={{ mt: 2 }}>
-          {error}
-        </Flash>
+        <Box px={3} py={2}>
+          <Flash variant="danger">{error}</Flash>
+        </Box>
       )}
+      <Box
+        sx={{
+          px: 2,
+          py: 2,
+          borderBottom: '1px solid',
+          borderColor: 'border.default',
+        }}
+      >
+        <TextInput
+          leadingVisual={SearchIcon}
+          placeholder="Filter examples..."
+          value={filter}
+          onChange={e => setFilter(e.target.value)}
+          sx={{ width: '100%' }}
+          aria-label="Filter examples"
+        />
+      </Box>
+      <Box sx={{ flex: 1, overflow: 'auto' }}>
+        <ActionList selectionVariant="single">
+          {filteredExamples.length === 0 ? (
+            <ActionList.Item disabled>
+              No examples match &ldquo;{filter}&rdquo;
+            </ActionList.Item>
+          ) : (
+            filteredExamples.map(example => (
+              <ActionList.Item
+                key={example.path}
+                selected={example.path === selectedPath}
+                onSelect={() => onSelect(example.path)}
+              >
+                {example.name}
+                <ActionList.Description variant="block">
+                  {example.path}
+                </ActionList.Description>
+              </ActionList.Item>
+            ))
+          )}
+        </ActionList>
+      </Box>
     </Box>
   );
 };
@@ -381,6 +348,16 @@ const ExampleSelector = () => {
   const [error, setError] = useState<string | null>(null);
   const exampleContainerRef = useRef<HTMLDivElement>(null);
   const hasLoadedRef = useRef(false);
+
+  useEffect(() => {
+    // Add margin to body to account for sidebar width (medium = 320px)
+    document.body.style.marginRight = '320px';
+
+    return () => {
+      // Cleanup: remove margin when component unmounts
+      document.body.style.marginRight = '';
+    };
+  }, []);
 
   useEffect(() => {
     // Only load once on mount - examples render themselves to DOM
@@ -418,14 +395,12 @@ const ExampleSelector = () => {
   return (
     <ThemeProvider colorMode="auto">
       <BaseStyles>
-        <ExampleSelectorHeader
+        <ExampleSelectorSidebar
           selectedPath={selectedPath}
           onSelect={handleSelect}
           isLoading={isLoading}
           error={error}
         />
-        {/* Examples render themselves to document.body, this is just a placeholder */}
-        <div ref={exampleContainerRef} />
       </BaseStyles>
     </ThemeProvider>
   );
@@ -434,8 +409,7 @@ const ExampleSelector = () => {
 // Create and mount the selector
 const selectorDiv = document.createElement('div');
 selectorDiv.id = 'example-selector-root';
-// Insert at the beginning of body so the header appears on top
-document.body.insertBefore(selectorDiv, document.body.firstChild);
+document.body.appendChild(selectorDiv);
 
 const root = createRoot(selectorDiv);
 root.render(<ExampleSelector />);

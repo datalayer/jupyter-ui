@@ -19,9 +19,7 @@ const NotebookLite = () => {
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
     <Jupyter lite>
-      <Box as="h1">
-        A Jupyter Notebook with a Lite Kernel (with a Jupyter Context)
-      </Box>
+      <Box as="h1">Notebook with a Lite Kernel (with a Jupyter Context)</Box>
       <Notebook
         nbformat={NBFORMAT as INotebookContent}
         id="notebook-lite-context-id"
