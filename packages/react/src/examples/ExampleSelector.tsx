@@ -28,7 +28,7 @@ import {
   TextInput,
 } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
-import { SearchIcon } from '@primer/octicons-react';
+import { SearchIcon, CheckIcon } from '@primer/octicons-react';
 
 const LOCAL_STORAGE_KEY = 'jupyter-react-selected-example';
 
@@ -319,18 +319,26 @@ const ExampleSelectorSidebar = ({
               No examples match &ldquo;{filter}&rdquo;
             </ActionList.Item>
           ) : (
-            filteredExamples.map(example => (
-              <ActionList.Item
-                key={example.path}
-                selected={example.path === selectedPath}
-                onSelect={() => onSelect(example.path)}
-              >
-                {example.name}
-                <ActionList.Description variant="block">
-                  {example.path}
-                </ActionList.Description>
-              </ActionList.Item>
-            ))
+            filteredExamples.map(example => {
+              const isSelected = example.path === selectedPath;
+              return (
+                <ActionList.Item
+                  key={example.path}
+                  selected={isSelected}
+                  onSelect={() => onSelect(example.path)}
+                >
+                  {isSelected && (
+                    <ActionList.LeadingVisual>
+                      <CheckIcon />
+                    </ActionList.LeadingVisual>
+                  )}
+                  {example.name}
+                  <ActionList.Description variant="block">
+                    {example.path}
+                  </ActionList.Description>
+                </ActionList.Item>
+              );
+            })
           )}
         </ActionList>
       </Box>
@@ -340,61 +348,89 @@ const ExampleSelectorSidebar = ({
 
 /**
  * Main ExampleSelector component.
- * Renders the header and loads the selected example dynamically.
+ * Renders the sidebar and loads the selected example in an iframe.
  */
 const ExampleSelector = () => {
-  const [selectedPath, _setSelectedPath] = useState<string>(getSelectedExample);
+  const [selectedPath, setSelectedPath] = useState<string>(getSelectedExample);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const exampleContainerRef = useRef<HTMLDivElement>(null);
-  const hasLoadedRef = useRef(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
     // Add margin to body to account for sidebar width (medium = 320px)
     document.body.style.marginRight = '320px';
+    document.body.style.margin = '0';
+    document.body.style.padding = '0';
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.margin = '0';
+    document.documentElement.style.padding = '0';
+    document.documentElement.style.overflow = 'hidden';
 
     return () => {
-      // Cleanup: remove margin when component unmounts
+      // Cleanup: remove styles when component unmounts
       document.body.style.marginRight = '';
+      document.body.style.margin = '';
+      document.body.style.padding = '';
+      document.body.style.overflow = '';
+      document.documentElement.style.margin = '';
+      document.documentElement.style.padding = '';
+      document.documentElement.style.overflow = '';
     };
   }, []);
 
-  useEffect(() => {
-    // Only load once on mount - examples render themselves to DOM
-    if (hasLoadedRef.current) {
-      return;
-    }
-    hasLoadedRef.current = true;
-
-    setIsLoading(true);
-    setError(null);
-
-    importExample(selectedPath)
-      .then(() => {
-        setIsLoading(false);
-      })
-      .catch(err => {
-        console.error('Failed to load example:', err);
-        setError(`Failed to load example "${selectedPath}": ${err.message}`);
-        setIsLoading(false);
-      });
-  }, []); // Empty deps - only run once on mount
+  // Build the iframe URL for the selected example
+  const getExampleUrl = (path: string) => {
+    const url = new URL(window.location.href);
+    url.searchParams.set('example', path);
+    url.searchParams.set('standalone', 'true');
+    return url.toString();
+  };
 
   const handleSelect = (path: string) => {
     if (path === selectedPath) return;
 
-    // Save selection and reload page with new example
+    // Save selection
     saveExample(path);
 
-    // Update URL and reload
+    // Update URL without reloading
     const url = new URL(window.location.href);
     url.searchParams.set('example', path);
-    window.location.href = url.toString();
+    window.history.pushState({}, '', url.toString());
+
+    // Update state to reload iframe
+    setIsLoading(true);
+    setError(null);
+    setSelectedPath(path);
+  };
+
+  const handleIframeLoad = () => {
+    setIsLoading(false);
+  };
+
+  const handleIframeError = () => {
+    setError(`Failed to load example "${selectedPath}"`);
+    setIsLoading(false);
   };
 
   return (
     <ThemeProvider colorMode="auto">
       <BaseStyles>
+        {/* Main content iframe */}
+        <iframe
+          ref={iframeRef}
+          src={getExampleUrl(selectedPath)}
+          onLoad={handleIframeLoad}
+          onError={handleIframeError}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: 'calc(100vw - 320px)',
+            height: '100vh',
+            border: 'none',
+          }}
+          title={`Example: ${selectedPath}`}
+        />
         <ExampleSelectorSidebar
           selectedPath={selectedPath}
           onSelect={handleSelect}
@@ -406,13 +442,25 @@ const ExampleSelector = () => {
   );
 };
 
-// Create and mount the selector
-const selectorDiv = document.createElement('div');
-selectorDiv.id = 'example-selector-root';
-document.body.appendChild(selectorDiv);
+// Check if we're in standalone mode (loaded in iframe)
+const urlParams = new URLSearchParams(window.location.search);
+const isStandalone = urlParams.get('standalone') === 'true';
 
-const root = createRoot(selectorDiv);
-root.render(<ExampleSelector />);
+if (isStandalone) {
+  // In standalone mode, just load the example directly
+  const examplePath = urlParams.get('example') || 'CellLite';
+  importExample(examplePath).catch(err => {
+    console.error('Failed to load example:', err);
+  });
+} else {
+  // Normal mode: render the selector with sidebar
+  const selectorDiv = document.createElement('div');
+  selectorDiv.id = 'example-selector-root';
+  document.body.appendChild(selectorDiv);
+
+  const root = createRoot(selectorDiv);
+  root.render(<ExampleSelector />);
+}
 
 export { EXAMPLES, getSelectedExample, saveExample };
 export default ExampleSelector;
