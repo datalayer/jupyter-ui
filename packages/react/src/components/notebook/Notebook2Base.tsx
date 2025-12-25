@@ -446,7 +446,6 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
   // Set kernel
   useEffect(() => {
     if (context && kernelId && !context.sessionContext.isDisposed) {
-      console.log('----------DLA', kernelId);
       context.sessionContext.changeKernel({ id: kernelId }).catch(reason => {
         console.error('Failed to change kernel model.', reason);
       });
@@ -800,7 +799,7 @@ export function useKernelId(
 ): string | undefined {
   const {
     kernels,
-    kernel,
+    kernel, // TODO Use kernel from props.
     requestedKernelId,
     startDefaultKernel = false,
   } = options;
@@ -808,11 +807,11 @@ export function useKernelId(
   // Define the kernel to be used.
   // - Check the provided kernel id exists
   // - If no kernel found, start a new one if required
-  const [kernelId, setKernelId] = useState<string | undefined>(kernel?.id);
+  const [kernelId, setKernelId] = useState<string | undefined>(undefined);
   useEffect(() => {
     let isMounted = true;
     let connection: JupyterKernel.IKernelConnection | undefined;
-    if (!kernelId && kernels) {
+    if (kernels) {
       (async () => {
         let newKernelId: string | undefined;
         await kernels.ready;
@@ -859,7 +858,7 @@ export function useKernelId(
           });
       }
     };
-  }, [kernels, kernel, requestedKernelId, startDefaultKernel, kernelId]);
+  }, [kernels, requestedKernelId, startDefaultKernel, kernelId]);
 
   return kernelId;
 }

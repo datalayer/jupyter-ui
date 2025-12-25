@@ -16,10 +16,12 @@ import {
 } from '../components';
 import { CellToolbarExtension } from './extensions';
 
-import nbformat from './notebooks/NotebookExample1.ipynb.json';
+import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
 const Notebook2Example = () => {
-  const { serviceManager } = useJupyter();
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
   const extensions = useMemo(
     () => [
       new CellToolbarExtension(),
@@ -27,27 +29,27 @@ const Notebook2Example = () => {
     ],
     []
   );
-  return serviceManager ? (
+  return serviceManager && defaultKernel ? (
     <JupyterReactTheme>
       <Notebook2
-        nbformat={nbformat as INotebookContent}
+        nbformat={NBFORMAT as INotebookContent}
         id="notebook2-nbformat-id"
-        startDefaultKernel
+        kernelId={defaultKernel.id}
         serviceManager={serviceManager}
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         extensions={extensions}
         /*
-          collaborationServer={{
-            baseURL: 'https://prod1.datalayer.run',
-            token: '',
-            documentName: '',
-            type: 'datalayer'
-          }}
-          */
+        collaborationServer={{
+          baseURL: 'https://prod1.datalayer.run',
+          token: '',
+          documentName: '',
+          type: 'datalayer'
+        }}
+        */
       />
     </JupyterReactTheme>
   ) : (
-    <></>
+    <>Loading Notebook...</>
   );
 };
 

@@ -103,7 +103,6 @@ export const Cell = ({
           kernel: kernelToUse,
           boxOptions: { showToolbar },
         });
-        console.log('-------DLA', adapter);
         setAdapter(adapter);
         cellsStore.setAdapter(id, adapter);
         cellsStore.setSource(id, source);
