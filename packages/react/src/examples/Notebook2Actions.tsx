@@ -71,7 +71,7 @@ const Notebook2Example = () => {
       </JupyterReactTheme>
     </>
   ) : (
-    <>Loading Notebook...</>
+    <></>
   );
 };
 

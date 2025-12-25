@@ -9,25 +9,25 @@ import { createRoot } from 'react-dom/client';
 import { Text } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { INotebookContent } from '@jupyterlab/nbformat';
+import { Session } from '@jupyterlab/services';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { useJupyter } from '../jupyter';
 import {
-  Notebook2,
   CellSidebarExtension,
   CellSidebarButton,
-  NotebookToolbar,
   KernelIndicator,
+  Notebook2,
+  NotebookToolbar,
 } from '../components';
 import { CellToolbarExtension } from './extensions';
-import { Session } from '@jupyterlab/services';
 import { OnSessionConnection } from '../state';
 
 import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
-const Notebook2Example = () => {
-  const { serviceManager } = useJupyter({
+const Notebook2Lite = () => {
+  const { serviceManager, defaultKernel } = useJupyter({
     lite: true,
-    startDefaultKernel: false,
+    startDefaultKernel: true,
   });
   const [session, setSession] = useState<Session.ISessionConnection>();
   const extensions = useMemo(
@@ -41,13 +41,13 @@ const Notebook2Example = () => {
     session: Session.ISessionConnection | undefined
   ) => {
     console.log(
-      'Received a Kernel Session.',
+      '---DLA Received a Kernel Session.',
       session?.id,
-      session?.kernel?.clientId
+      session?.kernel?.id
     );
     setSession(session);
   };
-  return serviceManager ? (
+  return serviceManager && defaultKernel ? (
     <JupyterReactTheme>
       <Box display="flex">
         <Box>
@@ -58,16 +58,14 @@ const Notebook2Example = () => {
         </Box>
       </Box>
       <Notebook2
-        nbformat={NBFORMAT as INotebookContent}
         id="notebook2-nbformat-id"
-        // kernel={defaultKernel}
-        //        kernelId={defaultKernel.id}
-        startDefaultKernel
+        kernelId={defaultKernel.id}
         serviceManager={serviceManager}
+        nbformat={NBFORMAT as INotebookContent}
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         extensions={extensions}
-        onSessionConnection={onSessionConnection}
         Toolbar={NotebookToolbar}
+        onSessionConnection={onSessionConnection}
       />
     </JupyterReactTheme>
   ) : (
@@ -79,4 +77,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<Notebook2Example />);
+root.render(<Notebook2Lite />);

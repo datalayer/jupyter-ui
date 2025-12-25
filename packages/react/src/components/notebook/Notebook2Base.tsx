@@ -774,13 +774,13 @@ export function useKernelId(
   options:
     | {
         /**
-         * Kernels manager
-         */
-        kernels?: JupyterKernel.IManager;
-        /**
          * Kernel to connect to
          */
         kernel?: Kernel;
+        /**
+         * Kernels manager
+         */
+        kernels?: JupyterKernel.IManager;
         /**
          * Kernel ID to connect to
          *
@@ -798,8 +798,8 @@ export function useKernelId(
     | undefined = {}
 ): string | undefined {
   const {
+    kernel,
     kernels,
-    kernel, // TODO Use kernel from props.
     requestedKernelId,
     startDefaultKernel = false,
   } = options;
@@ -807,35 +807,38 @@ export function useKernelId(
   // Define the kernel to be used.
   // - Check the provided kernel id exists
   // - If no kernel found, start a new one if required
-  const [kernelId, setKernelId] = useState<string | undefined>(undefined);
+  const [kernelId, setKernelId] = useState<string | undefined>(kernel?.id);
   useEffect(() => {
     let isMounted = true;
     let connection: JupyterKernel.IKernelConnection | undefined;
-    if (kernels) {
+    if (kernel) {
+      setKernelId(kernel.id);
+      connection = kernel.connection ?? undefined;
+    } else if (kernels) {
       (async () => {
-        let newKernelId: string | undefined;
+        let kernelId: string | undefined;
         await kernels.ready;
         if (requestedKernelId) {
           for (const model of kernels.running()) {
             if (model.id === requestedKernelId) {
-              newKernelId = requestedKernelId;
+              kernelId = requestedKernelId;
               break;
             }
           }
         }
 
-        if (!newKernelId && startDefaultKernel && isMounted) {
+        if (!kernelId && startDefaultKernel && isMounted) {
           console.log('Starting new kernel.');
           connection = await kernels.startNew();
           if (isMounted) {
-            newKernelId = connection.id;
+            kernelId = connection.id;
           } else {
             connection.dispose();
           }
         }
 
         if (isMounted) {
-          setKernelId(newKernelId);
+          setKernelId(kernelId);
         }
       })();
     }
@@ -858,7 +861,7 @@ export function useKernelId(
           });
       }
     };
-  }, [kernels, requestedKernelId, startDefaultKernel, kernelId]);
+  }, [kernels, kernel, requestedKernelId, startDefaultKernel, kernelId]);
 
   return kernelId;
 }

@@ -34,7 +34,7 @@ const Notebook2Example = () => {
       <Notebook2
         nbformat={NBFORMAT as INotebookContent}
         id="notebook2-nbformat-id"
-        kernelId={defaultKernel.id}
+        kernel={defaultKernel}
         serviceManager={serviceManager}
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         extensions={extensions}
@@ -49,7 +49,7 @@ const Notebook2Example = () => {
       />
     </JupyterReactTheme>
   ) : (
-    <>Loading Notebook...</>
+    <></>
   );
 };
 
