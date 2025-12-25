@@ -16,7 +16,7 @@ import {
 } from '../components';
 import { CellToolbarExtension } from './extensions';
 
-import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
+import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
 const Notebook2Example = () => {
   const { serviceManager } = useJupyter();
@@ -30,16 +30,24 @@ const Notebook2Example = () => {
   return serviceManager ? (
     <JupyterReactTheme>
       <Notebook2
+        nbformat={nbformat as INotebookContent}
+        id="notebook2-nbformat-id"
         startDefaultKernel
-        nbformat={NBFORMAT as INotebookContent}
-        id="notebook-nbformat-id"
         serviceManager={serviceManager}
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         extensions={extensions}
+        /*
+          collaborationServer={{
+            baseURL: 'https://prod1.datalayer.run',
+            token: '',
+            documentName: '',
+            type: 'datalayer'
+          }}
+          */
       />
     </JupyterReactTheme>
   ) : (
-    <>Loading Notebook2 Example...</>
+    <></>
   );
 };
 

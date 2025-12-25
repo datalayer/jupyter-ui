@@ -26,12 +26,6 @@ const CellExample = () => {
   const { defaultKernel } = useJupyter({ startDefaultKernel: true });
   const cellsStore = useCellsStore();
   const kernelsStore = useKernelsStore();
-  console.log(
-    'Jupyter Cell Outputs',
-    (
-      cellsStore.getAdapter(CELL_ID)?.cell as CodeCell
-    )?.outputArea.model.toJSON()
-  );
   return (
     <JupyterReactTheme>
       <Box as="h1">Cell</Box>
