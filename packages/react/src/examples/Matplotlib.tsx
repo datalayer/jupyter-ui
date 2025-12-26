@@ -4,29 +4,30 @@
  * MIT License
  */
 
-import { INotebookContent } from '@jupyterlab/nbformat';
 import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
+import { INotebookContent } from '@jupyterlab/nbformat';
+import { JupyterLabCss, JupyterReactTheme } from '../theme';
 import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
-import { Jupyter } from '../jupyter/Jupyter';
-import { JupyterLabCss } from '../theme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-import notebook from './notebooks/Matplotlib.ipynb.json';
+
+import NBFORMAT from './notebooks/Matplotlib.ipynb.json';
 
 const MatplotlibExample = () => {
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
-    <Jupyter disableCssLoading>
+    <JupyterReactTheme>
       <JupyterLabCss colormode="light" />
       <Notebook
-        nbformat={notebook as INotebookContent}
         id="notebook-matplotlib-id"
+        startDefaultKernel
+        nbformat={NBFORMAT as INotebookContent}
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         extensions={extensions}
         Toolbar={NotebookToolbar}
       />
-    </Jupyter>
+    </JupyterReactTheme>
   );
 };
 

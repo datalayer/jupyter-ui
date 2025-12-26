@@ -6,6 +6,7 @@
 import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Button } from '@primer/react';
+import { PlayIcon } from '@primer/octicons-react';
 import { Box } from '@datalayer/primer-addons';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { useJupyter } from '../jupyter/JupyterContext';
@@ -61,6 +62,7 @@ const CellsExecuteExample = () => {
           <Button
             onClick={onExecuteClick}
             disabled={executionDisable}
+            leadingVisual={() => <PlayIcon />}
             style={{
               marginLeft: '50px',
               marginTop: '20px',

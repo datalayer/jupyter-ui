@@ -18,7 +18,9 @@ import { useJupyterReactStore } from '../state';
 import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookColormodeExample = () => {
-  const { serviceManager } = useJupyter();
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
   const { colormode, setColormode } = useJupyterReactStore();
   const [isOn, setIsOn] = useState(false);
   const extensions = useMemo(() => [new CellSidebarExtension()], [colormode]);
@@ -36,38 +38,36 @@ const NotebookColormodeExample = () => {
     setIsOn(on);
   }, []);
   return (
-    <>
-      <JupyterReactTheme>
-        <Text
-          fontSize={2}
-          fontWeight="bold"
-          id="switch-label"
-          display="block"
-          mb={1}
-        >
-          {colormode === 'light' ? 'Light' : 'Dark'} Mode
-        </Text>
-        <ToggleSwitch
-          size="small"
-          onClick={onClick}
-          onChange={handleSwitchChange}
-          checked={isOn}
-          statusLabelPosition="end"
-          aria-labelledby="switch-label"
+    <JupyterReactTheme>
+      <Text
+        fontSize={2}
+        fontWeight="bold"
+        id="switch-label"
+        display="block"
+        mb={1}
+      >
+        {colormode === 'light' ? 'Light' : 'Dark'} Mode
+      </Text>
+      <ToggleSwitch
+        size="small"
+        onClick={onClick}
+        onChange={handleSwitchChange}
+        checked={isOn}
+        statusLabelPosition="end"
+        aria-labelledby="switch-label"
+      />
+      {serviceManager && defaultKernel && (
+        <Notebook2
+          id="notebook-model-id"
+          nbformat={NBFORMAT as INotebookContent}
+          kernel={defaultKernel}
+          serviceManager={serviceManager}
+          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+          extensions={extensions}
+          Toolbar={NotebookToolbar}
         />
-        {serviceManager && (
-          <Notebook2
-            nbformat={NBFORMAT as INotebookContent}
-            serviceManager={serviceManager}
-            startDefaultKernel
-            id="notebook-model-id"
-            height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-            extensions={extensions}
-            Toolbar={NotebookToolbar}
-          />
-        )}
-      </JupyterReactTheme>
-    </>
+      )}
+    </JupyterReactTheme>
   );
 };
 

@@ -7,6 +7,7 @@
 import { createRoot } from 'react-dom/client';
 import { Button, Label } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
+import { PlayIcon } from '@primer/octicons-react';
 import { JupyterReactTheme } from '../theme';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { useKernelsStore } from '../jupyter/kernel/KernelState';
@@ -28,7 +29,7 @@ const CellExample = () => {
   return (
     <JupyterReactTheme>
       <Box as="h1">Cell</Box>
-      <Box>Source: {cellsStore.getSource(CELL_ID)}</Box>
+      <Box as="pre">Source: {cellsStore.getSource(CELL_ID)}</Box>
       <Box>Outputs Count: {cellsStore.getOutputsCount(CELL_ID)}</Box>
       <Box>
         Kernel State:{' '}
@@ -42,16 +43,19 @@ const CellExample = () => {
           {defaultKernel && kernelsStore.getExecutionPhase(defaultKernel.id)}
         </Label>
       </Box>
-      <Box display="flex">
-        <Box ml={3}>
-          <KernelIndicator
-            kernel={defaultKernel?.connection}
-            label="Kernel Indicator"
-          />
-        </Box>
+      <Box>
+        <KernelIndicator
+          kernel={defaultKernel?.connection}
+          label="Kernel Indicator"
+        />
       </Box>
       <Box>
-        <Button onClick={() => cellsStore.execute(CELL_ID)}>Run cell</Button>
+        <Button
+          leadingVisual={() => <PlayIcon />}
+          onClick={() => cellsStore.execute(CELL_ID)}
+        >
+          Run cell
+        </Button>
       </Box>
       {defaultKernel && (
         <Cell id={CELL_ID} source={DEFAULT_SOURCE} kernel={defaultKernel} />

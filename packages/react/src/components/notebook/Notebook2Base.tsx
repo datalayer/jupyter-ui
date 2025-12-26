@@ -441,7 +441,7 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
       factory.dispose();
       setContext(context => (context === thisContext ? null : context));
     };
-  }, [id, serviceManager, model, onSessionConnection, path]);
+  }, [id, serviceManager, model, path]);
 
   // Set kernel
   useEffect(() => {

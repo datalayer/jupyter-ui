@@ -4,23 +4,20 @@
  * MIT License
  */
 
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import useNotebookStore from '../components/notebook/NotebookState';
-import {
-  CellSidebarExtension,
-  Jupyter,
-  Kernel,
-  Notebook,
-  useJupyter,
-} from '../index';
+import { useNotebookStore } from '../components/notebook/NotebookState';
+import { useJupyter, Jupyter, Kernel } from '../jupyter';
+import { CellSidebarExtension, Notebook } from '../components';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 const NOTEBOOK_ID = 'notebook';
+
 const NOTEBOOK_WIDTH = '100%';
+
 const NOTEBOOK_HEIGHT = 500;
 
-const JUPYTER_KERNEL_NAME = 'python';
+const KERNEL_NAME = 'python';
 
 let IS_INITIALIZED = false;
 
@@ -35,8 +32,8 @@ const useKernel = () => {
     kernelManager?.ready.then(() => {
       const customKernel = new Kernel({
         kernelManager,
-        kernelName: JUPYTER_KERNEL_NAME,
-        kernelSpecName: JUPYTER_KERNEL_NAME,
+        kernelName: KERNEL_NAME,
+        kernelSpecName: KERNEL_NAME,
         kernelspecsManager: serviceManager.kernelspecs,
         sessionManager: serviceManager.sessions,
       });
@@ -58,9 +55,7 @@ const NotebookInitExample = () => {
   const kernel = useKernel();
   const notebookStore = useNotebookStore();
   const notebook = notebookStore.selectNotebook(NOTEBOOK_ID);
-
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
-
   useEffect(() => {
     if (notebook && !IS_INITIALIZED) {
       notebook.adapter?.notebookPanel?.model?.contentChanged.connect(_ => {
@@ -77,17 +72,24 @@ const NotebookInitExample = () => {
       });
     }
   }, [kernel, notebook]);
-  return kernel ? (
-    <Notebook
-      path="ipywidgets.ipynb"
-      id={NOTEBOOK_ID}
-      kernel={kernel}
-      height={`calc(${NOTEBOOK_HEIGHT}px - 2.6rem)`}
-      extensions={extensions}
-      Toolbar={NotebookToolbar}
-    />
-  ) : (
-    <></>
+  return (
+    <Jupyter startDefaultKernel={false}>
+      <div style={{ width: NOTEBOOK_WIDTH, height: NOTEBOOK_HEIGHT }}>
+        {kernel ? (
+          <Notebook
+            path="ipywidgets.ipynb"
+            id={NOTEBOOK_ID}
+            kernel={kernel}
+            height={`calc(${NOTEBOOK_HEIGHT}px - 2.6rem)`}
+            extensions={extensions}
+            Toolbar={NotebookToolbar}
+          />
+        ) : (
+          <></>
+        )}
+        ;
+      </div>
+    </Jupyter>
   );
 };
 
@@ -95,10 +97,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(
-  <Jupyter startDefaultKernel={false}>
-    <div style={{ width: NOTEBOOK_WIDTH, height: NOTEBOOK_HEIGHT }}>
-      <NotebookInitExample />
-    </div>
-  </Jupyter>
-);
+root.render(<NotebookInitExample />);

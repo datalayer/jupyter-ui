@@ -6,7 +6,6 @@
 
 import { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Box } from '@datalayer/primer-addons';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { Session } from '@jupyterlab/services';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
@@ -46,18 +45,14 @@ const Notebook2LiteExample = () => {
     <JupyterReactTheme>
       {serviceManager && defaultKernel && (
         <>
-          <Box>
-            <KernelIndicator
-              kernel={defaultKernel.connection}
-              label="Kernel Connection Indicator"
-            />
-          </Box>
-          <Box>
-            <KernelIndicator
-              kernel={session?.kernel}
-              label="Kernel Session Indicator"
-            />
-          </Box>
+          <KernelIndicator
+            kernel={defaultKernel.connection}
+            label="Kernel Connection Indicator"
+          />
+          <KernelIndicator
+            kernel={session?.kernel}
+            label="Kernel Session Indicator"
+          />
           <Notebook2
             id="notebook2-nbformat-id"
             kernel={defaultKernel}
