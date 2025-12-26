@@ -6,12 +6,11 @@
 
 import { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Text } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { Session } from '@jupyterlab/services';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
-import { useJupyter } from '../jupyter';
+import { useJupyter } from '../jupyter/JupyterContext';
 import {
   CellSidebarExtension,
   CellSidebarButton,
@@ -43,26 +42,26 @@ const Notebook2LiteExample = () => {
     console.log('Kernel Session.', session?.id, session?.kernel?.id);
     setSession(session);
   };
-  return serviceManager && defaultKernel ? (
+  return (
     <JupyterReactTheme>
       <Box display="flex">
         <Box ml={3}>
           <KernelIndicator kernel={session?.kernel} label="Kernel Indicator" />
         </Box>
       </Box>
-      <Notebook2
-        id="notebook2-nbformat-id"
-        kernel={defaultKernel}
-        serviceManager={serviceManager}
-        nbformat={NBFORMAT as INotebookContent}
-        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        extensions={extensions}
-        Toolbar={NotebookToolbar}
-        onSessionConnection={onSessionConnection}
-      />
+      {serviceManager && defaultKernel && (
+        <Notebook2
+          id="notebook2-nbformat-id"
+          kernel={defaultKernel}
+          serviceManager={serviceManager}
+          nbformat={NBFORMAT as INotebookContent}
+          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+          extensions={extensions}
+          Toolbar={NotebookToolbar}
+          onSessionConnection={onSessionConnection}
+        />
+      )}
     </JupyterReactTheme>
-  ) : (
-    <></>
   );
 };
 

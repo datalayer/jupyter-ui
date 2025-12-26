@@ -99,10 +99,12 @@ export const loadJupyterConfig = (
     lite,
     terminals,
   } = props;
+  /*
   if (config) {
     // console.log('Returning existing Jupyter React config', config);
     return config;
   }
+  */
   config = {
     jupyterServerUrl: jupyterServerUrl ?? DEFAULT_JUPYTER_SERVER_URL,
     jupyterServerToken: jupyterServerToken ?? DEFAULT_JUPYTER_SERVER_TOKEN,

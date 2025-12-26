@@ -49,7 +49,12 @@ function* activePlugins(
 export async function createLiteServer(): Promise<JupyterLiteServer> {
   PageConfig.setOption(
     'serviceWorkerUrl',
-    'http://localhost:3208/service-worker.js'
+    window.location.protocol +
+      '//' +
+      window.location.host +
+      ':' +
+      window.location.port +
+      '/service-worker.js'
   );
   const litePluginsToRegister: any[] = [];
   // Load the base jupyterlite server extensions.

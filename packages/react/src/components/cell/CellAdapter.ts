@@ -44,13 +44,7 @@ import {
   RenderMimeRegistry,
   standardRendererFactories as initialFactories,
 } from '@jupyterlab/rendermime';
-import {
-  Session,
-  ServerConnection,
-  SessionManager,
-  KernelManager,
-  KernelSpecManager,
-} from '@jupyterlab/services';
+import { Session, SessionManager } from '@jupyterlab/services';
 import { runIcon } from '@jupyterlab/ui-components';
 import {
   createStandaloneCell,
@@ -85,38 +79,22 @@ export class CellAdapter {
   private _iPyWidgetsClassicManager?: ClassicWidgetManager;
 
   public constructor(options: CellAdapter.ICellAdapterOptions) {
-    const { id, type, source, outputs, serverSettings, kernel, boxOptions } =
-      options;
+    const { id, type, source, outputs, kernel, boxOptions } = options;
     this._id = id;
     this._outputs = outputs;
     this._kernel = kernel;
     this._type = type;
-    this.setupCell(type, source, serverSettings, kernel, boxOptions);
+    this.setupCell(type, source, kernel, boxOptions);
   }
 
   private setupCell(
     type = 'code',
     source: string,
-    serverSettings: ServerConnection.ISettings,
     kernel: Kernel,
     boxOptions?: BoxOptions
   ) {
-    const kernelManager =
-      kernel.kernelManager ??
-      new KernelManager({
-        serverSettings,
-      });
-    const sessionManager =
-      kernel.sessionManager ??
-      new SessionManager({
-        serverSettings,
-        kernelManager,
-      });
-    const specsManager =
-      kernel.kernelSpecManager ??
-      new KernelSpecManager({
-        serverSettings,
-      });
+    const sessionManager = kernel.sessionManager;
+    const specsManager = kernel.kernelSpecManager;
     const kernelPreference: ISessionContext.IKernelPreference = kernel
       ? {
           id: kernel.id,
@@ -611,7 +589,6 @@ export namespace CellAdapter {
     type: 'code' | 'markdown' | 'raw';
     source: string;
     outputs: IOutput[];
-    serverSettings: ServerConnection.ISettings;
     kernel: Kernel;
     boxOptions?: BoxOptions;
   };

@@ -6,9 +6,15 @@
 
 import { createRoot } from 'react-dom/client';
 import { Box } from '@datalayer/primer-addons';
-import { useJupyter } from '../jupyter';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { useJupyter } from '../jupyter/JupyterContext';
 import { Cell } from '../components/cell/Cell';
+
+const CODE = `import sys
+
+print("👋 Hello Jupyter UI Lite")
+print(f"Platform: {sys.platform}")
+print(f"IPython: {get_ipython()}")`;
 
 const CellLiteExample = () => {
   const { defaultKernel } = useJupyter({
@@ -16,16 +22,12 @@ const CellLiteExample = () => {
     lite: true,
   });
   return (
-    defaultKernel && (
-      <JupyterReactTheme>
-        <Box as="h1">Cell with a Lite Kernel</Box>
-        <Cell
-          source={`import sys
-print(f"👋 Hello Jupyter UI Lite - Platform: {sys.platform} - IPython: {get_ipython()}")`}
-          kernel={defaultKernel}
-        />
-      </JupyterReactTheme>
-    )
+    <JupyterReactTheme>
+      <Box as="h1">Cell with a Lite Kernel</Box>
+      {defaultKernel && (
+        <Cell id="jupyter-cell-lite-1" source={CODE} kernel={defaultKernel} />
+      )}
+    </JupyterReactTheme>
   );
 };
 
