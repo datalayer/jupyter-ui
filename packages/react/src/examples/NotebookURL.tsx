@@ -13,11 +13,7 @@ import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolba
 
 const NOTEBOOK_ID = 'notebook-id';
 
-const div = document.createElement('div');
-document.body.appendChild(div);
-const root = createRoot(div);
-
-root.render(
+const NotebookURLExample = () => (
   <JupyterReactTheme>
     <Notebook
       url="https://raw.githubusercontent.com/datalayer/jupyter-ui/main/packages/react/src/examples/notebooks/IPyWidgetsExampleWithState.ipynb.json"
@@ -28,3 +24,9 @@ root.render(
     />
   </JupyterReactTheme>
 );
+
+const div = document.createElement('div');
+document.body.appendChild(div);
+const root = createRoot(div);
+
+root.render(<NotebookURLExample />);

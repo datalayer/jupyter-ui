@@ -20,7 +20,7 @@ import { jupyterLabTheme, JupyterReactTheme } from '../theme';
 
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
-const NotebookThemeColormode = () => {
+const NotebookThemeColormodeExample = () => {
   const { serviceManager } = useJupyter();
   const { colormode, setColormode } = useJupyterReactStore();
   const [theme, setTheme] = useState<any>(jupyterLabTheme);
@@ -116,4 +116,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookThemeColormode />);
+root.render(<NotebookThemeColormodeExample />);

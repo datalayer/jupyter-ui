@@ -42,7 +42,7 @@ const SOURCE_4 =
 const SOURCE_ID_5 = 'output-id-5';
 const SOURCE_5 = 'print(2+2)';
 
-const OutputWithMonitoring = ({
+const OutputWithMonitoringExample = ({
   title,
   id,
   code,
@@ -144,14 +144,14 @@ const root = createRoot(div);
 
 root.render(
   <Jupyter startDefaultKernel>
-    <OutputWithMonitoring
+    <OutputWithMonitoringExample
       title="Output with error code"
       key="1"
       id={SOURCE_ID_1}
       code={SOURCE_1}
     />
 
-    <OutputWithMonitoring
+    <OutputWithMonitoringExample
       title="Output with correct code"
       key="2"
       id={SOURCE_ID_2}
@@ -159,21 +159,21 @@ root.render(
       output={OUTPUTS_2}
     />
 
-    <OutputWithMonitoring
+    <OutputWithMonitoringExample
       title="Code with no output"
       key="3"
       id={SOURCE_ID_3}
       code={SOURCE_3}
     />
 
-    <OutputWithMonitoring
+    <OutputWithMonitoringExample
       title="Code generating warning"
       key="4"
       id={SOURCE_ID_4}
       code={SOURCE_4}
     />
 
-    <OutputWithMonitoring
+    <OutputWithMonitoringExample
       title="Code with stream output"
       key="5"
       id={SOURCE_ID_5}

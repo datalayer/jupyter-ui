@@ -13,7 +13,7 @@ import { cellSourceAsString } from './../utils/Utils';
 
 import nbformat from './notebooks/NotebookOutputs.ipynb.json';
 
-const OutputsIpynb = () => {
+const OutputsIpynbExample = () => {
   return (
     <>
       <Text as="h1">Outputs from IPYNB</Text>
@@ -42,6 +42,6 @@ const root = createRoot(div);
 
 root.render(
   <Jupyter startDefaultKernel>
-    <OutputsIpynb />
+    <OutputsIpynbExample />
   </Jupyter>
 );

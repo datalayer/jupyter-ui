@@ -16,7 +16,7 @@ import nbformat from './notebooks/NotebookToCExample.ipynb.json';
 import { Box, Button } from '@primer/react';
 import { JupyterLayoutFactory } from './extensions/toc/JupyterLayoutFactory';
 
-const NotebookToc = () => {
+const NotebookTocExample = () => {
   const [layout, setLayout] = useState<'react' | 'jupyter'>('jupyter');
 
   const extensions = useMemo(
@@ -58,4 +58,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookToc />);
+root.render(<NotebookTocExample />);

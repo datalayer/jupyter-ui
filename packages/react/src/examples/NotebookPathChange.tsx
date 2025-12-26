@@ -15,7 +15,7 @@ const PATH_1 = 'ipywidgets.ipynb';
 
 const PATH_2 = 'matplotlib.ipynb';
 
-const NotebookPathChange = () => {
+const NotebookPathChangeExample = () => {
   const [path, setPath] = useState<string>(PATH_1);
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   const changePath = () => {
@@ -54,4 +54,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookPathChange />);
+root.render(<NotebookPathChangeExample />);
