@@ -52,13 +52,13 @@ export type ICellProps = {
 
 export const Cell = ({
   autoStart = true,
+  id: providedId,
+  kernel: kernelProps,
   outputs = [],
   showToolbar = true,
   source = '',
   startDefaultKernel = true,
   type = 'code',
-  kernel: kernelProps,
-  id: providedId,
 }: ICellProps) => {
   const { serverSettings } = useJupyter({
     startDefaultKernel,

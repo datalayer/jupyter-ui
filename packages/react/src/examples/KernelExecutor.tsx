@@ -68,7 +68,7 @@ const KernelExecutorExample = () => {
       {outputAreaModel && (
         <Box>
           <Heading>Kernel Executor</Heading>
-          <Text>15 Streaming Output</Text>
+          <Text>15 streaming outputs.</Text>
           <pre>{CODE}</pre>
           <Output model={outputAreaModel} />
         </Box>

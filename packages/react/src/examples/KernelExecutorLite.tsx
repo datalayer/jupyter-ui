@@ -71,15 +71,15 @@ const KernelExecutorLiteExample = () => {
     <JupyterReactTheme>
       <Box>
         <Heading>Kernel Executor Lite</Heading>
-        <Text>15 streaming outputs</Text>
+        <Text>15 streaming outputs.</Text>
         <Text as="pre">{CODE}</Text>
       </Box>
       <Box ml={3} display="flex">
         <Box>
-          <Text>Kernel Indicator</Text>
-        </Box>
-        <Box>
-          <KernelIndicator kernel={defaultKernel?.connection} />
+          <KernelIndicator
+            kernel={defaultKernel?.connection}
+            label="Kernel Indicator"
+          />
         </Box>
       </Box>
       {outputAreaModel && (

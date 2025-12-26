@@ -34,11 +34,8 @@ const NotebookLiteExample = () => {
     <JupyterReactTheme>
       <Box as="h1">Notebook with a Lite Kernel</Box>
       <Box display="flex">
-        <Box>
-          <Text>Kernel Indicator</Text>
-        </Box>
         <Box ml={3}>
-          <KernelIndicator kernel={session?.kernel} />
+          <KernelIndicator kernel={session?.kernel} label="Kernel Indicator" />
         </Box>
       </Box>
       <Notebook

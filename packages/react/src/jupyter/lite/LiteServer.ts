@@ -54,8 +54,9 @@ export async function createLiteServer(): Promise<JupyterLiteServer> {
   const litePluginsToRegister: any[] = [];
   // Load the base jupyterlite server extensions.
   const baseServerExtension =
-    await import('../../jupyterlite/server-extension');
+    await import('../../jupyterlite/server-extension/index');
   for (const plugin of activePlugins(baseServerExtension)) {
+    console.log('Activating JupyterLite server plugin', plugin.id);
     litePluginsToRegister.push(plugin);
   }
   // Create the in-browser JupyterLite Server.

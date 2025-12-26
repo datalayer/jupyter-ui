@@ -17,8 +17,9 @@ const NotebookNoPrimerExample = () => (
   <>
     <JupyterLabCss colormode="dark" />
     <Notebook
-      path="ipywidgets.ipynb"
       id={NOTEBOOK_ID}
+      startDefaultKernel
+      path="ipywidgets.ipynb"
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       extensions={[new CellSidebarExtension({ factory: CellSidebarButton })]}
       Toolbar={NotebookToolbar}

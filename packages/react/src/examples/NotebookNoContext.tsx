@@ -13,11 +13,14 @@ import { CellSidebarExtension } from '../components';
 
 const NOTEBOOK_ID = 'notebook-id';
 
+const COLORMODE = 'dark';
+
 const NotebookNoContextExample = () => (
-  <JupyterReactTheme colormode={colormode}>
+  <JupyterReactTheme colormode={COLORMODE}>
     <Notebook
-      path="ipywidgets.ipynb"
       id={NOTEBOOK_ID}
+      startDefaultKernel
+      path="ipywidgets.ipynb"
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       extensions={[new CellSidebarExtension({ factory: CellSidebarButton })]}
       Toolbar={NotebookToolbar}
@@ -28,7 +31,5 @@ const NotebookNoContextExample = () => (
 const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
-
-const colormode = 'light';
 
 root.render(<NotebookNoContextExample />);

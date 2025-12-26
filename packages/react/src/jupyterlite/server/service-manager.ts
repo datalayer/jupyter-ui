@@ -15,7 +15,7 @@ export class ServiceWorkerManager implements IServiceWorkerManager {
     fullWorkerUrl.searchParams.set('enableCache', enableCache);
     void this.initialize(fullWorkerUrl.href).catch(console.warn);
     */
-    void this.initialize('http://localhost:3208/service-worker.js').catch(
+    void this.initialize(PageConfig.getOption('serviceWorkerUrl')).catch(
       console.warn
     );
   }

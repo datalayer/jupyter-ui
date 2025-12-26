@@ -14,13 +14,14 @@ import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolba
 
 import NBFORMAT from './notebooks/PyGWalker.ipynb.json';
 
-const PyGWalker = () => {
+const PyGWalkerExample = () => {
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
     <JupyterReactTheme>
       <Notebook
-        nbformat={NBFORMAT as INotebookContent}
         id="notebook-pygwalker-id"
+        startDefaultKernel
+        nbformat={NBFORMAT as INotebookContent}
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         extensions={extensions}
         Toolbar={NotebookToolbar}
@@ -33,4 +34,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<PyGWalker />);
+root.render(<PyGWalkerExample />);

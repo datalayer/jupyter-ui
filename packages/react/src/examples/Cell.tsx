@@ -43,9 +43,11 @@ const CellExample = () => {
         </Label>
       </Box>
       <Box display="flex">
-        <Box>Kernel Indicator:</Box>
         <Box ml={3}>
-          <KernelIndicator kernel={defaultKernel && defaultKernel.connection} />
+          <KernelIndicator
+            kernel={defaultKernel?.connection}
+            label="Kernel Indicator"
+          />
         </Box>
       </Box>
       <Box>

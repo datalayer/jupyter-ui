@@ -146,7 +146,7 @@ module.exports = {
         // In .ts and .tsx files (both of which compile to .js), svg files
         // must be loaded as a raw string instead of data URIs.
         test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-        issuer: /\.js$/,
+        issuer: /\.[jt]sx?$/,
         type: 'asset/source',
       },
       {

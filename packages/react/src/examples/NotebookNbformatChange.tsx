@@ -4,13 +4,14 @@
  * MIT License
  */
 
-import { INotebookContent } from '@jupyterlab/nbformat';
-import { Box, Button, ButtonGroup } from '@primer/react';
 import { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { INotebookContent } from '@jupyterlab/nbformat';
+import { Button, ButtonGroup } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
-import useNotebookStore from '../components/notebook/NotebookState';
+import { useNotebookStore } from '../components/notebook/NotebookState';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 
 import NBFORMAT_1 from './notebooks/NotebookExample1.ipynb.json';
@@ -37,7 +38,7 @@ const NotebookNbformatChangeExample = () => {
     }
   };
   return (
-    <>
+    <JupyterReactTheme>
       <Box display="flex">
         <ButtonGroup>
           <Button variant="default" size="small" onClick={changeNbformat}>
@@ -47,12 +48,12 @@ const NotebookNbformatChangeExample = () => {
       </Box>
       <Notebook
         id={NOTEBOOK_ID}
+        startDefaultKernel
         nbformat={nbformat}
         height="700px"
         extensions={extensions}
-        startDefaultKernel
       />
-    </>
+    </JupyterReactTheme>
   );
 };
 
@@ -60,8 +61,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(
-  <JupyterReactTheme>
-    <NotebookNbformatChangeExample />
-  </JupyterReactTheme>
-);
+root.render(<NotebookNbformatChangeExample />);

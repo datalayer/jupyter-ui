@@ -49,10 +49,10 @@ export const KernelExecuteLiteExample = () => {
         <Heading>Kernel Execute Lite</Heading>
         <Box ml={3} display="flex">
           <Box>
-            <Text>Kernel Indicator</Text>
-          </Box>
-          <Box>
-            <KernelIndicator kernel={defaultKernel?.connection} />
+            <KernelIndicator
+              kernel={defaultKernel?.connection}
+              label="Kernel Indicator"
+            />
           </Box>
         </Box>
         <Box>

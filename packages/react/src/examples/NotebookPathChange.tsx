@@ -4,9 +4,10 @@
  * MIT License
  */
 
-import { Box, Button, Text } from '@primer/react';
 import { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { Button, Text } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
@@ -41,8 +42,9 @@ const NotebookPathChangeExample = () => {
         </Text>
       </Box>
       <Notebook
-        path={path}
         id="notebook-path-change-id"
+        startDefaultKernel
+        path={path}
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         extensions={extensions}
       />

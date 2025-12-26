@@ -177,8 +177,8 @@ export function useJupyterReactStoreFromProps(
     if (!serviceManager) {
       if (lite) {
         createLiteServiceManager(lite).then(serviceManager => {
-          setServiceManager(serviceManager);
           jupyterReactStore.getState().setServiceManager(serviceManager);
+          setServiceManager(serviceManager);
         });
         return;
       }
@@ -223,14 +223,13 @@ export function useJupyterReactStoreFromProps(
       serviceManager
     );
     serviceManager?.kernels.ready.then(async () => {
-      const kernelManager = serviceManager.kernels;
-      console.log('Jupyter Kernel Manager is ready', kernelManager);
+      console.log('Jupyter Kernel Manager is ready', serviceManager.kernels);
       if (useRunningKernelIndex > -1) {
         await serviceManager.sessions.refreshRunning();
-        const runnings = Array.from(kernelManager.running());
+        const runnings = Array.from(serviceManager.kernels.running());
         const model = runnings[useRunningKernelIndex];
         const existingKernel = new Kernel({
-          kernelManager,
+          kernelManager: serviceManager.kernels,
           kernelName: model.name,
           kernelSpecName: model.name,
           kernelModel: model,
@@ -251,7 +250,7 @@ export function useJupyterReactStoreFromProps(
       } else if (startDefaultKernel) {
         console.log('Starting the default Jupyter Kernel', defaultKernelName);
         const defaultKernel = new Kernel({
-          kernelManager,
+          kernelManager: serviceManager.kernels,
           kernelName: defaultKernelName,
           kernelSpecName: defaultKernelName,
           kernelspecsManager: serviceManager.kernelspecs,

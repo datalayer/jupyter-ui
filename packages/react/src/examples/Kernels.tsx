@@ -6,7 +6,7 @@
 
 import { createRoot } from 'react-dom/client';
 import { useState } from 'react';
-import { Heading, Textarea, Button, PageHeader, Text } from '@primer/react';
+import { Heading, Textarea, Button, Text } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { IModel } from '@jupyterlab/services/lib/kernel/kernel';
 import { ISpecModel } from '@jupyterlab/services/lib/kernelspec/kernelspec';
@@ -104,7 +104,8 @@ const KernelExamples = () => {
     console.log('Jupyter Kernelspec model', specModel);
   };
   return (
-    <>
+    <JupyterReactTheme>
+      <Box as="h1">Kernels</Box>
       <Box display="flex">
         <Box>
           <KernelExecResultView />
@@ -286,7 +287,7 @@ const KernelExamples = () => {
           <KernelInspector kernel={kernel} />
         </Box>
       </Box>
-    </>
+    </JupyterReactTheme>
   );
 };
 
@@ -294,9 +295,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(
-  <JupyterReactTheme>
-    <PageHeader>The Kernel Components</PageHeader>
-    <KernelExamples />
-  </JupyterReactTheme>
-);
+root.render(<KernelExamples />);

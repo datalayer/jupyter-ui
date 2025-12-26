@@ -23,15 +23,10 @@ import {
   IServiceWorkerManager,
   ServiceWorkerManager,
 } from '../server';
-
 import { ISessions, Sessions } from '@jupyterlite/session';
-
 import { ISettings, Settings } from '@jupyterlite/settings';
-
 import { ITranslation, Translation } from '@jupyterlite/translation';
-
 import { ILocalForage, ensureMemoryStorage } from '@jupyterlite/localforage';
-
 import localforage from 'localforage';
 
 /**

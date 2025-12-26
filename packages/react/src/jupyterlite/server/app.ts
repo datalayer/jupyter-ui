@@ -2,13 +2,9 @@
 // Distributed under the terms of the Modified BSD License.
 
 import { Event, ServerConnection, ServiceManager } from '@jupyterlab/services';
-
 import { Application, IPlugin } from '@lumino/application';
-
 import { Signal, Stream } from '@lumino/signaling';
-
 import { WebSocket } from 'mock-socket';
-
 import { Router } from './router';
 
 export type JupyterLiteServerPlugin<T> = IPlugin<JupyterLiteServer, T>;
@@ -120,6 +116,7 @@ export class JupyterLiteServer extends Application<never> {
     if (!(req instanceof Request)) {
       throw Error('Request info is not a Request');
     }
+    console.log('---DLA JupyterLiteServer handling request:', req);
     return this._router.route(req);
   }
 
