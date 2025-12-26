@@ -11,14 +11,15 @@ import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-import nbformat from './notebooks/PyGWalker.ipynb.json';
+
+import NBFORMAT from './notebooks/PyGWalker.ipynb.json';
 
 const PyGWalker = () => {
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
     <JupyterReactTheme>
       <Notebook
-        nbformat={nbformat as INotebookContent}
+        nbformat={NBFORMAT as INotebookContent}
         id="notebook-pygwalker-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         extensions={extensions}

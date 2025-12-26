@@ -7,9 +7,8 @@
 import {
   JupyterLiteServer,
   JupyterLiteServerPlugin,
-} from '@jupyterlite/server';
+} from '../../jupyterlite/server';
 import { PageConfig } from '@jupyterlab/coreutils';
-import { loadJupyterConfig } from '../JupyterConfig';
 
 /**
  * Iterate over active plugins in an extension.
@@ -48,9 +47,14 @@ function* activePlugins(
  * @returns A promise resolving in a jupyterlite server application
  */
 export async function createLiteServer(): Promise<JupyterLiteServer> {
+  PageConfig.setOption(
+    'serviceWorkerUrl',
+    'http://localhost:3208/service-worker.js'
+  );
   const litePluginsToRegister: any[] = [];
   // Load the base jupyterlite server extensions.
-  const baseServerExtension = await import('@jupyterlite/server-extension');
+  const baseServerExtension =
+    await import('../../jupyterlite/server-extension');
   for (const plugin of activePlugins(baseServerExtension)) {
     litePluginsToRegister.push(plugin);
   }

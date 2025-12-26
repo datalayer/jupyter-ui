@@ -10,14 +10,15 @@ import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-import nbformat from './notebooks/NotebookExample1.ipynb.json';
 import CellSidebarSource from './extensions/cellsidebars/CellSidebarSource';
+
+import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookCellSidebarExample = () => (
   <JupyterReactTheme>
     <Notebook
       startDefaultKernel
-      nbformat={nbformat as INotebookContent}
+      nbformat={NBFORMAT as INotebookContent}
       id="notebook-cell-sidebar-id"
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       cellSidebarMargin={160}

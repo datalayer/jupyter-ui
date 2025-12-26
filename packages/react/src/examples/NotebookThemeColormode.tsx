@@ -18,7 +18,7 @@ import {
 import { useJupyterReactStore } from '../state';
 import { jupyterLabTheme, JupyterReactTheme } from '../theme';
 
-import nbformat from './notebooks/NotebookExample1.ipynb.json';
+import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookThemeColormodeExample = () => {
   const { serviceManager } = useJupyter();
@@ -98,7 +98,7 @@ const NotebookThemeColormodeExample = () => {
         </Box>
         {serviceManager && (
           <Notebook2
-            nbformat={nbformat as INotebookContent}
+            nbformat={NBFORMAT as INotebookContent}
             serviceManager={serviceManager}
             startDefaultKernel
             id="notebook-model-id"

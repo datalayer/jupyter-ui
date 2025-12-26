@@ -45,9 +45,9 @@ export type ICellProps = {
    */
   type?: 'code' | 'markdown' | 'raw';
   /**
-   * Custom kernel for the cell. Falls back to the defaultKernel if not provided.
+   * Custom kernel for the cell.
    */
-  kernel?: Kernel;
+  kernel: Kernel;
 };
 
 export const Cell = ({
@@ -60,7 +60,7 @@ export const Cell = ({
   kernel: kernelProps,
   id: providedId,
 }: ICellProps) => {
-  const { defaultKernel, serverSettings } = useJupyter({
+  const { serverSettings } = useJupyter({
     startDefaultKernel,
   });
   const [id] = useState(providedId || newUuid());
@@ -91,7 +91,7 @@ export const Cell = ({
     });
   };
   useEffect(() => {
-    const kernelToUse = kernelProps || defaultKernel;
+    const kernelToUse = kernelProps;
     if (id && serverSettings && kernelToUse && !adapter) {
       kernelToUse.ready.then(() => {
         const adapter = new CellAdapter({

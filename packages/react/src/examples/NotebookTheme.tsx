@@ -4,15 +4,16 @@
  * MIT License
  */
 
-import { INotebookContent } from '@jupyterlab/nbformat';
-import { Text, ToggleSwitch, theme as primerTheme } from '@primer/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { INotebookContent } from '@jupyterlab/nbformat';
+import { Text, ToggleSwitch, theme as primerTheme } from '@primer/react';
 import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
 import { jupyterLabTheme, JupyterReactTheme } from '../theme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-import nbformat from './notebooks/NotebookExample1.ipynb.json';
+
+import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookThemeExample = () => {
   const [theme, setTheme] = useState<any>(jupyterLabTheme);
@@ -52,7 +53,7 @@ const NotebookThemeExample = () => {
           aria-labelledby="switch-label"
         />
         <Notebook
-          nbformat={nbformat as INotebookContent}
+          nbformat={NBFORMAT as INotebookContent}
           id="notebook-model-id"
           height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
           extensions={extensions}

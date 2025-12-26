@@ -249,7 +249,7 @@ export function useJupyterReactStoreFromProps(
         setIsLoading(false);
         jupyterReactStore.getState().kernelIsLoading = false;
       } else if (startDefaultKernel) {
-        console.log('Starting a Jupyter Kernel:', defaultKernelName);
+        console.log('Starting the default Jupyter Kernel', defaultKernelName);
         const defaultKernel = new Kernel({
           kernelManager,
           kernelName: defaultKernelName,
@@ -258,6 +258,7 @@ export function useJupyterReactStoreFromProps(
           sessionManager: serviceManager.sessions,
         });
         defaultKernel.ready.then(async () => {
+          console.log('The default Jupyter Kernel is ready', defaultKernelName);
           if (initCode) {
             try {
               await defaultKernel.execute(initCode)?.done;
@@ -265,7 +266,6 @@ export function useJupyterReactStoreFromProps(
               console.error('Failed to execute the initial code', error);
             }
           }
-          console.log('Jupyter Kernel is ready', defaultKernel);
           setKernel(defaultKernel);
           jupyterReactStore.getState().kernel = defaultKernel;
           setIsLoading(false);

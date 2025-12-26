@@ -19,7 +19,8 @@ import {
 import { createServerSettings } from '../jupyter/JupyterContext';
 import { JupyterReactTheme } from '../theme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-import nbformat from './notebooks/NotebookExample1.ipynb.json';
+
+import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookServiceManagerExample = () => {
   const [serverless, setServerless] = useState(true);
@@ -57,7 +58,7 @@ const NotebookServiceManagerExample = () => {
       </Box>
       <Notebook
         extensions={extensions}
-        nbformat={nbformat as INotebookContent}
+        nbformat={NBFORMAT as INotebookContent}
         serviceManager={serviceManager}
         serverless={serverless}
         readonly={readonly}

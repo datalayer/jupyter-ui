@@ -5,10 +5,12 @@
  */
 import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Button, Box } from '@primer/react';
-import { cellsStore, ICellsState } from '../components/cell/CellState';
+import { Button } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
-import Cell from '../components/cell/Cell';
+import { useJupyter } from '../jupyter/JupyterContext';
+import { cellsStore, ICellsState } from '../components/cell/CellState';
+import { Cell } from '../components/cell/Cell';
 
 const CODE_CELL_1 = `import time
 print("Cell 1 start...")
@@ -21,6 +23,7 @@ time.sleep(3)
 print("Cell 2 end.")`;
 
 const CellsExecuteExample = () => {
+  const { defaultKernel } = useJupyter({ startDefaultKernel: true });
   const [executionDisable, setExecutionDisable] = useState(false);
   useEffect(() => {
     const handleChange = (newState: ICellsState) => {
@@ -36,32 +39,37 @@ const CellsExecuteExample = () => {
   };
   return (
     <JupyterReactTheme>
-      <Box style={{ marginTop: '20px' }}>
-        <Cell
-          id="1"
-          type="code"
-          source={CODE_CELL_1}
-          autoStart={false}
-          showToolbar={false}
-        />
-        <Cell
-          id="2"
-          type="code"
-          source={CODE_CELL_2}
-          autoStart={false}
-          showToolbar={false}
-        />
-        <Button
-          onClick={onExecuteClick}
-          disabled={executionDisable}
-          style={{
-            marginLeft: '50px',
-            marginTop: '20px',
-          }}
-        >
-          Execute all
-        </Button>
-      </Box>
+      <Box as="h1">Cells Execute Example</Box>
+      {defaultKernel && (
+        <Box style={{ marginTop: '20px' }}>
+          <Cell
+            id="1"
+            type="code"
+            source={CODE_CELL_1}
+            autoStart={false}
+            showToolbar={false}
+            kernel={defaultKernel}
+          />
+          <Cell
+            id="2"
+            type="code"
+            source={CODE_CELL_2}
+            autoStart={false}
+            showToolbar={false}
+            kernel={defaultKernel}
+          />
+          <Button
+            onClick={onExecuteClick}
+            disabled={executionDisable}
+            style={{
+              marginLeft: '50px',
+              marginTop: '20px',
+            }}
+          >
+            Execute all
+          </Button>
+        </Box>
+      )}
     </JupyterReactTheme>
   );
 };

@@ -9,7 +9,7 @@ import { Text } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { KernelIndicator } from '../components/kernel/Kernelndicator';
+import { KernelIndicator } from '../components/kernel/KernelIndicator';
 import { Output } from '../components/output/Output';
 import { Jupyter } from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';

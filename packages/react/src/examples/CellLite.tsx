@@ -11,21 +11,21 @@ import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { Cell } from '../components/cell/Cell';
 
 const CellLiteExample = () => {
-  const { serviceManager, defaultKernel } = useJupyter({
-    lite: true,
+  const { defaultKernel } = useJupyter({
     startDefaultKernel: true,
+    lite: true,
   });
-  return serviceManager && defaultKernel ? (
-    <JupyterReactTheme>
-      <Box as="h1">Cell with a Lite Kernel</Box>
-      <Cell
-        source={`import sys
+  return (
+    defaultKernel && (
+      <JupyterReactTheme>
+        <Box as="h1">Cell with a Lite Kernel</Box>
+        <Cell
+          source={`import sys
 print(f"👋 Hello Jupyter UI Lite - Platform: {sys.platform} - IPython: {get_ipython()}")`}
-        kernel={defaultKernel}
-      />
-    </JupyterReactTheme>
-  ) : (
-    <Box>Loading Cell Lite...</Box>
+          kernel={defaultKernel}
+        />
+      </JupyterReactTheme>
+    )
   );
 };
 

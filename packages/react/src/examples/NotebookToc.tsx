@@ -4,17 +4,19 @@
  * MIT License
  */
 
-import { INotebookContent } from '@jupyterlab/nbformat';
 import { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { Button } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
+import { INotebookContent } from '@jupyterlab/nbformat';
 import { Notebook } from '../components/notebook/Notebook';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { NotebookToolbar } from '../components/notebook/toolbar/NotebookToolbar';
 import { TocExtension } from './extensions/toc/TocExtension';
 import { ReactLayoutFactory } from './extensions/toc/ReactLayoutFactory';
-import nbformat from './notebooks/NotebookToCExample.ipynb.json';
-import { Box, Button } from '@primer/react';
 import { JupyterLayoutFactory } from './extensions/toc/JupyterLayoutFactory';
+
+import NBFORMAT from './notebooks/NotebookToCExample.ipynb.json';
 
 const NotebookTocExample = () => {
   const [layout, setLayout] = useState<'react' | 'jupyter'>('jupyter');
@@ -43,7 +45,7 @@ const NotebookTocExample = () => {
       </Box>
       <Notebook
         key={layout}
-        nbformat={nbformat as INotebookContent}
+        nbformat={NBFORMAT as INotebookContent}
         extensions={extensions}
         id="notebook-toc-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).

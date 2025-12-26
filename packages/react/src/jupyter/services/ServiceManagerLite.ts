@@ -43,6 +43,5 @@ export const createLiteServiceManager = (
     console.log('Lite Service Manager is created', liteServiceManager);
     return liteServiceManager;
   });
-  // TODO remove `as any` once we bump to jupyterlite 0.6.x.
-  return liteServiceManager as any;
+  return liteServiceManager;
 };

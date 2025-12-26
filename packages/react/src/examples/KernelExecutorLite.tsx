@@ -13,6 +13,7 @@ import { KernelMessage } from '@jupyterlab/services';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { Output } from '../components/output/Output';
+import { KernelIndicator } from '../components/kernel/KernelIndicator';
 import {
   IOPubMessageHook,
   ShellMessageHook,
@@ -28,8 +29,11 @@ for i in range(0, 15):
 
 print("🔁 I am done with looping!")`;
 
-const KernelExecutorExample = () => {
-  const { defaultKernel } = useJupyter({ startDefaultKernel: true });
+const KernelExecutorLiteExample = () => {
+  const { defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+    lite: true,
+  });
   const [outputAreaModel, setOutputAreaModel] = useState<IOutputAreaModel>();
   const [finalOutputAreaModel, setFinalOutputAreaModel] =
     useState<IOutputAreaModel>();
@@ -65,11 +69,21 @@ const KernelExecutorExample = () => {
   }, [defaultKernel?.connection]);
   return (
     <JupyterReactTheme>
+      <Box>
+        <Heading>Kernel Executor Lite</Heading>
+        <Text>15 streaming outputs</Text>
+        <Text as="pre">{CODE}</Text>
+      </Box>
+      <Box ml={3} display="flex">
+        <Box>
+          <Text>Kernel Indicator</Text>
+        </Box>
+        <Box>
+          <KernelIndicator kernel={defaultKernel?.connection} />
+        </Box>
+      </Box>
       {outputAreaModel && (
         <Box>
-          <Heading>Kernel Executor</Heading>
-          <Text>15 Streaming Output</Text>
-          <pre>{CODE}</pre>
           <Output model={outputAreaModel} />
         </Box>
       )}
@@ -92,4 +106,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<KernelExecutorExample />);
+root.render(<KernelExecutorLiteExample />);

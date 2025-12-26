@@ -7,12 +7,11 @@
 import { createRoot } from 'react-dom/client';
 import { Button, Label } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
-import { CodeCell } from '@jupyterlab/cells';
 import { JupyterReactTheme } from '../theme';
 import { useJupyter } from '../jupyter/JupyterContext';
-import { Cell } from '../components/cell/Cell';
-import { KernelIndicator } from '../components/kernel/Kernelndicator';
 import { useKernelsStore } from '../jupyter/kernel/KernelState';
+import { KernelIndicator } from '../components/kernel/KernelIndicator';
+import { Cell } from '../components/cell/Cell';
 import { useCellsStore } from '../components/cell/CellState';
 
 const CELL_ID = 'cell-example-1';
@@ -52,7 +51,9 @@ const CellExample = () => {
       <Box>
         <Button onClick={() => cellsStore.execute(CELL_ID)}>Run cell</Button>
       </Box>
-      <Cell source={DEFAULT_SOURCE} id={CELL_ID} kernel={defaultKernel} />
+      {defaultKernel && (
+        <Cell id={CELL_ID} source={DEFAULT_SOURCE} kernel={defaultKernel} />
+      )}
     </JupyterReactTheme>
   );
 };

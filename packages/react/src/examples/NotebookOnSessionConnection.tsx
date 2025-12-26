@@ -19,7 +19,7 @@ import { useJupyter } from '../jupyter';
 import { OnSessionConnection } from '../state';
 import { JupyterReactTheme } from '../theme';
 
-import nbformat from './notebooks/NotebookExample1.ipynb.json';
+import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookOnSessionConnectionExample = () => {
   const { serviceManager } = useJupyter();
@@ -61,7 +61,7 @@ const NotebookOnSessionConnectionExample = () => {
         })}
       </Box>
       <Notebook
-        nbformat={nbformat as INotebookContent}
+        nbformat={NBFORMAT as INotebookContent}
         id="notebook-on-kernel-connection-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         onSessionConnection={onSessionConnection}

@@ -6,14 +6,18 @@
 
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Heading, Textarea, Button } from '@primer/react';
+import { Heading, Text, Textarea, Button } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { KernelIndicator } from '../components/kernel/KernelIndicator';
 import { KernelProgressBar } from './../components/kernel/KernelProgressBar';
 
-export const KernelExecuteExample = () => {
-  const { defaultKernel } = useJupyter({ startDefaultKernel: true });
+export const KernelExecuteLiteExample = () => {
+  const { defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+    lite: true,
+  });
   const [running, setRunning] = useState(false);
   const [code, setCode] = useState('');
   const [result, setResult] = useState<string>();
@@ -42,7 +46,15 @@ export const KernelExecuteExample = () => {
   return (
     <JupyterReactTheme>
       <Box m={3}>
-        <Heading>Kernel Execute</Heading>
+        <Heading>Kernel Execute Lite</Heading>
+        <Box ml={3} display="flex">
+          <Box>
+            <Text>Kernel Indicator</Text>
+          </Box>
+          <Box>
+            <KernelIndicator kernel={defaultKernel?.connection} />
+          </Box>
+        </Box>
         <Box>
           <Textarea
             placeholder="Enter some code, e.g. print('1+1'), and click on the Execute button."
@@ -88,4 +100,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<KernelExecuteExample />);
+root.render(<KernelExecuteLiteExample />);
