@@ -25,7 +25,7 @@ import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
 const Notebook2LiteExample = () => {
   const { serviceManager, defaultKernel } = useJupyter({
-    lite: true,
+    lite: false,
     startDefaultKernel: true,
   });
   const [session, setSession] = useState<Session.ISessionConnection>();
@@ -44,22 +44,31 @@ const Notebook2LiteExample = () => {
   };
   return (
     <JupyterReactTheme>
-      <Box display="flex">
-        <Box ml={3}>
-          <KernelIndicator kernel={session?.kernel} label="Kernel Indicator" />
-        </Box>
-      </Box>
       {serviceManager && defaultKernel && (
-        <Notebook2
-          id="notebook2-nbformat-id"
-          kernel={defaultKernel}
-          serviceManager={serviceManager}
-          nbformat={NBFORMAT as INotebookContent}
-          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-          extensions={extensions}
-          Toolbar={NotebookToolbar}
-          onSessionConnection={onSessionConnection}
-        />
+        <>
+          <Box>
+            <KernelIndicator
+              kernel={defaultKernel.connection}
+              label="Kernel Connection Indicator"
+            />
+          </Box>
+          <Box>
+            <KernelIndicator
+              kernel={session?.kernel}
+              label="Kernel Session Indicator"
+            />
+          </Box>
+          <Notebook2
+            id="notebook2-nbformat-id"
+            kernel={defaultKernel}
+            serviceManager={serviceManager}
+            nbformat={NBFORMAT as INotebookContent}
+            height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+            extensions={extensions}
+            Toolbar={NotebookToolbar}
+            onSessionConnection={onSessionConnection}
+          />
+        </>
       )}
     </JupyterReactTheme>
   );

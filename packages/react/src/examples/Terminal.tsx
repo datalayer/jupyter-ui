@@ -5,13 +5,13 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import { Jupyter } from '../jupyter/Jupyter';
-import Terminal from '../components/terminal/Terminal';
+import { JupyterReactTheme } from '../theme';
+import { Terminal } from '../components/terminal/Terminal';
 
 const TerminalExample = () => (
-  <Jupyter startDefaultKernel={false} terminals>
+  <JupyterReactTheme>
     <Terminal colormode="dark" height="800px" />
-  </Jupyter>
+  </JupyterReactTheme>
 );
 
 const div = document.createElement('div');

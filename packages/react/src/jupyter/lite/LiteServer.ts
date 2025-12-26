@@ -52,8 +52,6 @@ export async function createLiteServer(): Promise<JupyterLiteServer> {
     window.location.protocol +
       '//' +
       window.location.host +
-      ':' +
-      window.location.port +
       '/service-worker.js'
   );
   const litePluginsToRegister: any[] = [];

@@ -18,8 +18,9 @@ const IPyWidgetsStateExample = () => {
   return (
     <JupyterReactTheme>
       <Notebook
-        nbformat={notebook as INotebookContent}
         id="notebook-id"
+        startDefaultKernel
+        nbformat={notebook as INotebookContent}
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         extensions={extensions}
         Toolbar={NotebookToolbar}

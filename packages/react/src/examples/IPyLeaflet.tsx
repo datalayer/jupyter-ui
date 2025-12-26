@@ -16,8 +16,9 @@ const IPyLeafletExample = () => {
   return (
     <JupyterReactTheme>
       <Notebook
-        path="ipyleaflet.ipynb"
         id="notebook-ipyleaflet-id"
+        startDefaultKernel
+        path="ipyleaflet.ipynb"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         extensions={extensions}
         Toolbar={NotebookToolbar}

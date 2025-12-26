@@ -28,7 +28,9 @@ import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 const NOTEBOOK_ID = 'notebook-nbformat-id';
 
 const Notebook2ActionsExample = () => {
-  const { serviceManager } = useJupyter();
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
   const runStore2 = useNotebookStore2();
 
   const extensions = useMemo(
@@ -39,39 +41,39 @@ const Notebook2ActionsExample = () => {
     []
   );
 
-  return serviceManager ? (
+  return (
     <>
       <ActionBar aria-label="Toolbar">
         <ActionBar.IconButton
           icon={PlayIcon}
           aria-label="Run"
           onClick={() => runStore2.run(NOTEBOOK_ID)}
-        ></ActionBar.IconButton>
+        />
         <ActionBar.Divider />
         <ActionBar.IconButton
           icon={ChevronUpIcon}
           aria-label="Insert Code"
           onClick={() => runStore2.insertAbove(NOTEBOOK_ID, 'code')}
-        ></ActionBar.IconButton>
+        />
         <ActionBar.IconButton
           icon={ChevronDownIcon}
           aria-label="Insert Code"
           onClick={() => runStore2.insertBelow(NOTEBOOK_ID, 'code')}
-        ></ActionBar.IconButton>
+        />
       </ActionBar>
       <JupyterReactTheme>
-        <Notebook2
-          nbformat={NBFORMAT as INotebookContent}
-          id={NOTEBOOK_ID}
-          startDefaultKernel
-          serviceManager={serviceManager}
-          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-          extensions={extensions}
-        />
+        {serviceManager && defaultKernel && (
+          <Notebook2
+            id={NOTEBOOK_ID}
+            nbformat={NBFORMAT as INotebookContent}
+            serviceManager={serviceManager}
+            kernel={defaultKernel}
+            height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+            extensions={extensions}
+          />
+        )}
       </JupyterReactTheme>
     </>
-  ) : (
-    <></>
   );
 };
 

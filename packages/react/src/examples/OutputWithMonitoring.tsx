@@ -42,7 +42,7 @@ const SOURCE_4 =
 const SOURCE_ID_5 = 'output-id-5';
 const SOURCE_5 = 'print(2+2)';
 
-const OutputWithMonitoringExample = ({
+const OutputWithMonitoringView = ({
   title,
   id,
   code,
@@ -57,13 +57,11 @@ const OutputWithMonitoringExample = ({
   const outputStore = useOutputsStore();
   const [execTrigger, setExecTrigger] = useState(0);
   const [executionLog, setExecutionLog] = useState<string[]>([]);
-
   console.log(
     'Outputs',
     outputStore.getModel(id)?.toJSON(),
     outputStore.getInput(id)
   );
-
   const handleExecutionPhaseChanged = (phaseOutput: IExecutionPhaseOutput) => {
     switch (phaseOutput.executionPhase) {
       case ExecutionPhase.running:
@@ -96,7 +94,6 @@ const OutputWithMonitoringExample = ({
         break;
     }
   };
-
   return (
     <>
       <Text as="h1">{title}</Text>
@@ -122,7 +119,6 @@ const OutputWithMonitoringExample = ({
           })}
         </div>
       </div>
-
       <Output
         autoRun={false}
         code={code}
@@ -138,42 +134,34 @@ const OutputWithMonitoringExample = ({
   );
 };
 
-const div = document.createElement('div');
-document.body.appendChild(div);
-const root = createRoot(div);
-
-root.render(
+const OutputWithMonitoringExample = () => (
   <Jupyter startDefaultKernel>
-    <OutputWithMonitoringExample
+    <OutputWithMonitoringView
       title="Output with error code"
       key="1"
       id={SOURCE_ID_1}
       code={SOURCE_1}
     />
-
-    <OutputWithMonitoringExample
+    <OutputWithMonitoringView
       title="Output with correct code"
       key="2"
       id={SOURCE_ID_2}
       code={SOURCE_2}
       output={OUTPUTS_2}
     />
-
-    <OutputWithMonitoringExample
+    <OutputWithMonitoringView
       title="Code with no output"
       key="3"
       id={SOURCE_ID_3}
       code={SOURCE_3}
     />
-
-    <OutputWithMonitoringExample
+    <OutputWithMonitoringView
       title="Code generating warning"
       key="4"
       id={SOURCE_ID_4}
       code={SOURCE_4}
     />
-
-    <OutputWithMonitoringExample
+    <OutputWithMonitoringView
       title="Code with stream output"
       key="5"
       id={SOURCE_ID_5}
@@ -181,3 +169,9 @@ root.render(
     />
   </Jupyter>
 );
+
+const div = document.createElement('div');
+document.body.appendChild(div);
+const root = createRoot(div);
+
+root.render(<OutputWithMonitoringExample />);

@@ -8,7 +8,6 @@ import { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { Session } from '@jupyterlab/services';
-import { Text } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { CellSidebarExtension, KernelIndicator, Notebook } from '../components';
 import { OnSessionConnection } from '../state';
@@ -33,10 +32,8 @@ const NotebookLiteExample = () => {
   return (
     <JupyterReactTheme>
       <Box as="h1">Notebook with a Lite Kernel</Box>
-      <Box display="flex">
-        <Box ml={3}>
-          <KernelIndicator kernel={session?.kernel} label="Kernel Indicator" />
-        </Box>
+      <Box>
+        <KernelIndicator kernel={session?.kernel} label="Kernel Indicator" />
       </Box>
       <Notebook
         lite

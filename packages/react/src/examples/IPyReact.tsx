@@ -16,8 +16,9 @@ const IPyReactExample = () => {
   return (
     <JupyterReactTheme>
       <Notebook
-        path="ipyreact.ipynb"
         id="notebook-ipyreact-id"
+        startDefaultKernel
+        path="ipyreact.ipynb"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         extensions={extensions}
         Toolbar={NotebookToolbar}
