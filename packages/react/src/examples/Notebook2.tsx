@@ -7,8 +7,8 @@
 import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { Box } from '@datalayer/primer-addons';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { useJupyter } from '../jupyter';
 import {
   CellSidebarExtension,

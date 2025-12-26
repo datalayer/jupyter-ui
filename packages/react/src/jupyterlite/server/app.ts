@@ -116,7 +116,13 @@ export class JupyterLiteServer extends Application<never> {
     if (!(req instanceof Request)) {
       throw Error('Request info is not a Request');
     }
-    return this._router.route(req);
+    const resp = this._router.route(req);
+    console.log(
+      '---DLA JupyterLiteServer handling request:',
+      req.method,
+      req.url
+    );
+    return resp;
   }
 
   /**

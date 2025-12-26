@@ -114,7 +114,9 @@ export const KernelIndicator = (props: KernelIndicatorProps) => {
     }
   }, [kernel]);
   return connectionStatus && status ? (
-    <Tooltip text={`${connectionStatus} - ${status} - ${env?.display_name}`}>
+    <Tooltip
+      text={`${connectionStatus} - ${status} - ${env?.display_name} - ${kernel?.id}`}
+    >
       <Button variant="invisible">
         <span
           style={{

@@ -24,7 +24,7 @@ import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
 const Notebook2LiteExample = () => {
   const { serviceManager, defaultKernel } = useJupyter({
-    lite: false,
+    lite: true,
     startDefaultKernel: true,
   });
   const [session, setSession] = useState<Session.ISessionConnection>();
