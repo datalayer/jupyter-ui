@@ -5,13 +5,14 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import { Box, Text } from '@primer/react';
+import { Text } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { Jupyter } from '../jupyter/Jupyter';
 import { Viewer } from '../components/viewer/Viewer';
 
 import matplotlib from './notebooks/Matplotlib.ipynb.json';
 
-const JupyterViewerExample = () => {
+const ViewerExample = () => {
   return (
     <>
       <Box m={3}>
@@ -33,4 +34,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<JupyterViewerExample />);
+root.render(<ViewerExample />);

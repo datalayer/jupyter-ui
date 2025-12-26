@@ -23,11 +23,11 @@ import {
 } from '../components';
 import { CellToolbarExtension } from './extensions';
 
-import nbformat from './notebooks/NotebookExample1.ipynb.json';
+import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
 const NOTEBOOK_ID = 'notebook-nbformat-id';
 
-const Notebook2Example = () => {
+const Notebook2ActionsExample = () => {
   const { serviceManager } = useJupyter();
   const runStore2 = useNotebookStore2();
 
@@ -61,7 +61,7 @@ const Notebook2Example = () => {
       </ActionBar>
       <JupyterReactTheme>
         <Notebook2
-          nbformat={nbformat as INotebookContent}
+          nbformat={NBFORMAT as INotebookContent}
           id={NOTEBOOK_ID}
           startDefaultKernel
           serviceManager={serviceManager}
@@ -79,4 +79,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<Notebook2Example />);
+root.render(<Notebook2ActionsExample />);

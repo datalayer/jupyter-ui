@@ -24,7 +24,7 @@ import { OnSessionConnection } from '../state';
 
 import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
-const Notebook2Lite = () => {
+const Notebook2LiteExample = () => {
   const { serviceManager, defaultKernel } = useJupyter({
     lite: true,
     startDefaultKernel: true,
@@ -40,11 +40,7 @@ const Notebook2Lite = () => {
   const onSessionConnection: OnSessionConnection = (
     session: Session.ISessionConnection | undefined
   ) => {
-    console.log(
-      '---DLA Received a Kernel Session.',
-      session?.id,
-      session?.kernel?.id
-    );
+    console.log('Kernel Session.', session?.id, session?.kernel?.id);
     setSession(session);
   };
   return serviceManager && defaultKernel ? (
@@ -59,7 +55,7 @@ const Notebook2Lite = () => {
       </Box>
       <Notebook2
         id="notebook2-nbformat-id"
-        kernelId={defaultKernel.id}
+        kernel={defaultKernel}
         serviceManager={serviceManager}
         nbformat={NBFORMAT as INotebookContent}
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
@@ -77,4 +73,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<Notebook2Lite />);
+root.render(<Notebook2LiteExample />);

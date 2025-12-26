@@ -11,7 +11,7 @@ import { Notebook } from '../components/notebook/Notebook';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
-const IPyReact = () => {
+const IPyReactExample = () => {
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
     <JupyterReactTheme>
@@ -30,4 +30,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<IPyReact />);
+root.render(<IPyReactExample />);

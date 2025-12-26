@@ -5,7 +5,7 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import { Box } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { Jupyter } from '../jupyter/Jupyter';
 import Console from '../components/console/Console';
 

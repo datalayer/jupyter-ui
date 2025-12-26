@@ -5,7 +5,7 @@
  */
 
 /**
- * ExampleSelector - A runtime example picker for Jupyter React.
+ * Examples - A runtime example picker for Jupyter React.
  *
  * This module provides a dynamic example selector that:
  * 1. Reads the example from URL query parameter (?example=CellLite)
@@ -234,7 +234,7 @@ const saveExample = (path: string): void => {
  * Example Selector Sidebar component.
  * Renders a right sidebar with a filtered list for selecting examples.
  */
-const ExampleSelectorSidebar = ({
+const ExamplesSidebar = ({
   selectedPath,
   onSelect,
   isLoading,
@@ -347,10 +347,10 @@ const ExampleSelectorSidebar = ({
 };
 
 /**
- * Main ExampleSelector component.
+ * Main Examples component.
  * Renders the sidebar and loads the selected example in an iframe.
  */
-const ExampleSelector = () => {
+const Examples = () => {
   const [selectedPath, setSelectedPath] = useState<string>(getSelectedExample);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -431,7 +431,7 @@ const ExampleSelector = () => {
           }}
           title={`Example: ${selectedPath}`}
         />
-        <ExampleSelectorSidebar
+        <ExamplesSidebar
           selectedPath={selectedPath}
           onSelect={handleSelect}
           isLoading={isLoading}
@@ -459,8 +459,8 @@ if (isStandalone) {
   document.body.appendChild(selectorDiv);
 
   const root = createRoot(selectorDiv);
-  root.render(<ExampleSelector />);
+  root.render(<Examples />);
 }
 
 export { EXAMPLES, getSelectedExample, saveExample };
-export default ExampleSelector;
+export default Examples;

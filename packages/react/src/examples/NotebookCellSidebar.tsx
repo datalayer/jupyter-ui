@@ -13,7 +13,7 @@ import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolba
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 import CellSidebarSource from './extensions/cellsidebars/CellSidebarSource';
 
-const NotebookCellSidebar = () => (
+const NotebookCellSidebarExample = () => (
   <JupyterReactTheme>
     <Notebook
       startDefaultKernel
@@ -31,4 +31,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookCellSidebar />);
+root.render(<NotebookCellSidebarExample />);

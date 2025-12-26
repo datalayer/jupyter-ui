@@ -15,7 +15,7 @@ import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolba
 import { CellToolbarExtension } from './extensions';
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
-const NotebookCellToolbar = () => {
+const NotebookCellToolbarExample = () => {
   const extensions = useMemo(
     () => [
       new CellToolbarExtension(),
@@ -41,4 +41,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookCellToolbar />);
+root.render(<NotebookCellToolbarExample />);

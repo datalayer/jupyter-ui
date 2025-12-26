@@ -20,7 +20,7 @@ print("Cell 2 start...")
 time.sleep(3)
 print("Cell 2 end.")`;
 
-const CellsExecute = () => {
+const CellsExecuteExample = () => {
   const [executionDisable, setExecutionDisable] = useState(false);
   useEffect(() => {
     const handleChange = (newState: ICellsState) => {
@@ -70,4 +70,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<CellsExecute />);
+root.render(<CellsExecuteExample />);

@@ -9,8 +9,8 @@
  * Uncomment the one you want to run.
  */
 const ENTRY =
-  // Use ExampleSelector for a UI to pick examples at runtime
-  './src/examples/ExampleSelector';
+  // Use Examples for a UI to pick examples at runtime
+  './src/examples/Examples';
 // './src/app/App';
 // './src/examples/Bokeh';
 // './src/examples/Bqplot';

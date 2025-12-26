@@ -14,7 +14,7 @@ import { JupyterLabCss } from '../theme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import notebook from './notebooks/Matplotlib.ipynb.json';
 
-const Matplotlib = () => {
+const MatplotlibExample = () => {
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
     <Jupyter disableCssLoading>
@@ -34,4 +34,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<Matplotlib />);
+root.render(<MatplotlibExample />);

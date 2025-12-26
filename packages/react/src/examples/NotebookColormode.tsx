@@ -17,7 +17,7 @@ import { useJupyterReactStore } from '../state';
 
 import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
-const NotebookColormode = () => {
+const NotebookColormodeExample = () => {
   const { serviceManager } = useJupyter();
   const { colormode, setColormode } = useJupyterReactStore();
   const [isOn, setIsOn] = useState(false);
@@ -75,4 +75,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookColormode />);
+root.render(<NotebookColormodeExample />);

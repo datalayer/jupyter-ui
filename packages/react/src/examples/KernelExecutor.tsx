@@ -6,7 +6,8 @@
 
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Box, Heading } from '@primer/react';
+import { Heading } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { IOutputAreaModel } from '@jupyterlab/outputarea';
 import { KernelMessage } from '@jupyterlab/services';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
@@ -24,7 +25,7 @@ for i in range(0, 15):
 
 print("🔁 I am done with looping!")`;
 
-const KernelExecutorView = () => {
+const KernelExecutorExample = () => {
   const { defaultKernel } = useJupyter({ startDefaultKernel: true });
   const [outputAreaModel, setOutputAreaModel] = useState<IOutputAreaModel>();
   const [finalOutputAreaModel, setFinalOutputAreaModel] =
@@ -60,7 +61,7 @@ const KernelExecutorView = () => {
     }
   }, [defaultKernel?.connection]);
   return (
-    <>
+    <JupyterReactTheme>
       {outputAreaModel && (
         <Box>
           <Heading>Streaming Output</Heading>
@@ -78,14 +79,6 @@ const KernelExecutorView = () => {
           <Output model={finalOutputAreaModel} showControl={false} />
         </Box>
       )}
-    </>
-  );
-};
-
-const KernelExecutor = () => {
-  return (
-    <JupyterReactTheme>
-      <KernelExecutorView />
     </JupyterReactTheme>
   );
 };
@@ -94,4 +87,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<KernelExecutor />);
+root.render(<KernelExecutorExample />);

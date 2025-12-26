@@ -160,7 +160,7 @@ const data: Array<Repo> = [
   },
 ];
 
-const JupyterLabTheme = () => {
+const JupyterLabThemeExample = () => {
   const [colormode, setColormode] = useState<Colormode>('light');
   const [tokens, setTokens] = useState([...mockTokens].slice(0, 3));
   const [isOn, setIsOn] = useState(false);
@@ -532,4 +532,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<JupyterLabTheme />);
+root.render(<JupyterLabThemeExample />);
