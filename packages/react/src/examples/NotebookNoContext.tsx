@@ -13,13 +13,7 @@ import { CellSidebarExtension } from '../components';
 
 const NOTEBOOK_ID = 'notebook-id';
 
-const div = document.createElement('div');
-document.body.appendChild(div);
-const root = createRoot(div);
-
-const colormode = 'light';
-
-root.render(
+const NotebookNoContextExample = () => (
   <JupyterReactTheme colormode={colormode}>
     <Notebook
       path="ipywidgets.ipynb"
@@ -30,3 +24,11 @@ root.render(
     />
   </JupyterReactTheme>
 );
+
+const div = document.createElement('div');
+document.body.appendChild(div);
+const root = createRoot(div);
+
+const colormode = 'light';
+
+root.render(<NotebookNoContextExample />);

@@ -15,7 +15,7 @@ import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolba
 
 import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
-const NotebookLite = () => {
+const NotebookLiteExample = () => {
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
     <Jupyter lite>
@@ -35,4 +35,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookLite />);
+root.render(<NotebookLiteExample />);

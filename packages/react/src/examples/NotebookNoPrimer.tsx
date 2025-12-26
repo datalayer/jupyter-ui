@@ -13,11 +13,7 @@ import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolba
 
 const NOTEBOOK_ID = 'notebook-id';
 
-const div = document.createElement('div');
-document.body.appendChild(div);
-const root = createRoot(div);
-
-root.render(
+const NotebookNoPrimerExample = () => (
   <>
     <JupyterLabCss colormode="dark" />
     <Notebook
@@ -29,3 +25,9 @@ root.render(
     />
   </>
 );
+
+const div = document.createElement('div');
+document.body.appendChild(div);
+const root = createRoot(div);
+
+root.render(<NotebookNoPrimerExample />);

@@ -19,7 +19,7 @@ import NBFORMAT_2 from './notebooks/NotebookExample2.ipynb.json';
 
 const NOTEBOOK_ID = 'notebook-model-change-id';
 
-const NotebookNbformatChange = () => {
+const NotebookNbformatChangeExample = () => {
   const notebookStore = useNotebookStore();
   const [nbformat, setNbformat] = useState(NBFORMAT_1);
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
@@ -62,6 +62,6 @@ const root = createRoot(div);
 
 root.render(
   <JupyterReactTheme>
-    <NotebookNbformatChange />
+    <NotebookNbformatChangeExample />
   </JupyterReactTheme>
 );

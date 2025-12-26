@@ -21,7 +21,7 @@ import { JupyterReactTheme } from '../theme';
 
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
-const NotebookOnSessionConnection = () => {
+const NotebookOnSessionConnectionExample = () => {
   const { serviceManager } = useJupyter();
   const [sessions, setSessions] = useState<Array<Session.ISessionConnection>>(
     []
@@ -77,4 +77,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookOnSessionConnection />);
+root.render(<NotebookOnSessionConnectionExample />);

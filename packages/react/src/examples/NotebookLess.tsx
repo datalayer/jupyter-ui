@@ -16,7 +16,7 @@ import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolba
 import { CellSidebarExtension } from '../components';
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
-const NotebookLess = () => {
+const NotebookLessExample = () => {
   const serviceManager = useMemo(() => new ServiceManagerLess(), []);
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
@@ -40,4 +40,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookLess />);
+root.render(<NotebookLessExample />);

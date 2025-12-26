@@ -17,7 +17,7 @@ import notebook from './notebooks/NotebookExample1.ipynb.json';
 
 const NOTEBOOK_ID = 'notebook-model-id';
 
-const NotebookExternalContent = () => {
+const NotebookExternalContentExample = () => {
   const [nbformat, setNbformat] = useState<INotebookContent>();
   const [updatedNbFormat, setUpdatedNbFormat] = useState<INotebookContent>();
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
@@ -76,6 +76,6 @@ const root = createRoot(div);
 
 root.render(
   <JupyterReactTheme>
-    <NotebookExternalContent />
+    <NotebookExternalContentExample />
   </JupyterReactTheme>
 );

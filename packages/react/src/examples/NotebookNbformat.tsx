@@ -17,7 +17,7 @@ import { JupyterReactTheme } from '../theme';
 
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
-const NotebookNbformat = () => {
+const NotebookNbformatExample = () => {
   const { serviceManager } = useJupyter();
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
@@ -43,4 +43,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookNbformat />);
+root.render(<NotebookNbformatExample />);

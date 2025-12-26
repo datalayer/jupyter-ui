@@ -17,7 +17,7 @@ import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolba
 
 import NBFORMAT from './notebooks/Lite.ipynb.json';
 
-const NotebookLite = () => {
+const NotebookLiteExample = () => {
   const [session, setSession] = useState<Session.ISessionConnection>();
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   const onSessionConnection: OnSessionConnection = (
@@ -59,4 +59,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookLite />);
+root.render(<NotebookLiteExample />);

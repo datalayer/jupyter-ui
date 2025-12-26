@@ -13,7 +13,7 @@ import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSideb
 import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
-const NotebookKernel = () => {
+const NotebookKernelExample = () => {
   const { kernelManager, serviceManager } = useJupyter();
   const kernel = useMemo(() => {
     if (kernelManager && serviceManager) {
@@ -45,4 +45,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookKernel />);
+root.render(<NotebookKernelExample />);

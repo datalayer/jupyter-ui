@@ -18,7 +18,7 @@ import { ExecTimeExtension } from './extensions';
 
 import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
-const NotebookExtension = () => {
+const NotebookExtensionExample = () => {
   const extensions = useMemo(
     () => [
       new ExecTimeExtension(),
@@ -43,4 +43,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookExtension />);
+root.render(<NotebookExtensionExample />);

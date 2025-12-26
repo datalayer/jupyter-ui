@@ -54,7 +54,7 @@ const useKernel = () => {
   return kernel;
 };
 
-const NotebookInit: React.FC = () => {
+const NotebookInitExample = () => {
   const kernel = useKernel();
   const notebookStore = useNotebookStore();
   const notebook = notebookStore.selectNotebook(NOTEBOOK_ID);
@@ -98,7 +98,7 @@ const root = createRoot(div);
 root.render(
   <Jupyter startDefaultKernel={false}>
     <div style={{ width: NOTEBOOK_WIDTH, height: NOTEBOOK_HEIGHT }}>
-      <NotebookInit />
+      <NotebookInitExample />
     </div>
   </Jupyter>
 );
