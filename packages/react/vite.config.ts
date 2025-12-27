@@ -227,14 +227,7 @@ export default defineConfig(({ mode }) => {
         // Force pre-bundle jupyterlab packages to ensure single instances
         '@jupyterlab/coreutils',
         '@jupyterlab/services',
-        // Force pre-bundle all jupyterlite packages together
-        '@jupyterlite/server',
-        '@jupyterlite/server-extension',
-        '@jupyterlite/kernel',
-        '@jupyterlite/session',
-        '@jupyterlite/contents',
         '@jupyterlite/pyodide-kernel',
-        '@jupyterlite/pyodide-kernel-extension',
       ],
       esbuildOptions: {
         loader: {

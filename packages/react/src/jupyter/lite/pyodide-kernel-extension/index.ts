@@ -2,6 +2,7 @@
 // Distributed under the terms of the Modified BSD License.
 
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
+// import { PyodideKernel } from '@jupyterlite/pyodide-kernel';
 import {
   IServiceWorkerManager,
   JupyterLiteServer,

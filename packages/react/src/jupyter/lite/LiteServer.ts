@@ -9,6 +9,7 @@ import {
   JupyterLiteServer,
   JupyterLiteServerPlugin,
 } from './server';
+// import * as baseServerExtension from './server-extension/index';
 
 /**
  * Iterate over active plugins in an extension.
