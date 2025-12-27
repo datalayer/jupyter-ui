@@ -74,13 +74,11 @@ const KernelExecutorLiteExample = () => {
         <Text>15 streaming outputs.</Text>
         <Text as="pre">{CODE}</Text>
       </Box>
-      <Box ml={3} display="flex">
-        <Box>
-          <KernelIndicator
-            kernel={defaultKernel?.connection}
-            label="Kernel Indicator"
-          />
-        </Box>
+      <Box>
+        <KernelIndicator
+          kernel={defaultKernel?.connection}
+          label="Kernel Indicator"
+        />
       </Box>
       {outputAreaModel && (
         <Box>

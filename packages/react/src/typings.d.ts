@@ -4,6 +4,16 @@
  * MIT License
  */
 
+declare module '*.json' {
+  const value: any;
+  export default value;
+}
+
+declare module '*?text' {
+  const value: string;
+  export default value;
+}
+
 declare module '*.jpg' {
   const value: any;
   export default value;
@@ -24,7 +34,7 @@ declare module '*.gif' {
   export default value;
 }
 
-declare module '*.svg' {
+declare module '*.svg' {0
   const value: any;
   export default value;
 }
@@ -77,4 +87,10 @@ declare module 'jupyterlab-plotly/lib/jupyterlab-plugin' {
 declare module 'jupyterlab-plotly/lib/plotly-renderer' {
   const value: any;
   export default value;
+}
+
+declare module 'localforage-memoryStorageDriver' {
+  import { LocalForageDriver } from 'localforage';
+  const memoryStorageDriver: LocalForageDriver;
+  export default memoryStorageDriver;
 }

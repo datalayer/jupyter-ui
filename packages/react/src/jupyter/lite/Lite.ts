@@ -4,8 +4,7 @@
  * MIT License
  */
 
-//import type { JupyterLiteServerPlugin } from '../../jupyterlite/server';
-import type { JupyterLiteServerPlugin } from '@jupyterlite/server';
+import type { JupyterLiteServerPlugin } from './server';
 
 export type Lite =
   | boolean

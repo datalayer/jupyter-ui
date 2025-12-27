@@ -8,8 +8,7 @@ import { PageConfig } from '@jupyterlab/coreutils';
 import {
   JupyterLiteServer,
   JupyterLiteServerPlugin,
-  //} from '../../jupyterlite/server';
-} from '@jupyterlite/server';
+} from './server';
 
 /**
  * Iterate over active plugins in an extension.
@@ -68,8 +67,7 @@ export async function createLiteServer(): Promise<JupyterLiteServer> {
   const litePluginsToRegister: any[] = [];
   // Load the base jupyterlite server extensions.
   const baseServerExtension =
-    //    await import('../../jupyterlite/server-extension/index');
-    await import('@jupyterlite/server-extension');
+    await import('./server-extension/index');
 
   for (const plugin of activePlugins(baseServerExtension)) {
     console.log('Activating JupyterLite server plugin', plugin.id);

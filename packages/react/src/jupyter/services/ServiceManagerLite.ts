@@ -14,8 +14,7 @@ export const createLiteServiceManager = (
     // Load the browser kernel.
     const mod =
       typeof lite === 'boolean'
-        ? //        ? await import('../../jupyterlite/pyodide-kernel-extension/index')
-          await import('@jupyterlite/pyodide-kernel-extension')
+        ? await import('../lite/pyodide-kernel-extension/index')
         : await lite;
     // Load the module manually to get the list of plugin IDs.
     let data = mod.default;

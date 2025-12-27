@@ -46,7 +46,7 @@ export type ICellProps = {
   /**
    * Custom kernel for the cell.
    */
-  kernel: Kernel;
+  kernel?: Kernel;
 };
 
 export const Cell = ({
@@ -87,7 +87,7 @@ export const Cell = ({
   };
   useEffect(() => {
     if (!adapter) {
-      kernel.ready.then(() => {
+      kernel?.ready.then(() => {
         const adapter = new CellAdapter({
           id,
           type,

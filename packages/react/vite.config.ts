@@ -225,10 +225,8 @@ export default defineConfig(({ mode }) => {
         // Force pre-bundle mock-socket to handle exports properly
         'mock-socket',
         // Force pre-bundle jupyterlab packages to ensure single instances
-        '@jupyterlab/services',
-        '@jupyterlab/services/lib/kernel/serialize',
-        '@jupyterlab/services/lib/kernel/messages',
         '@jupyterlab/coreutils',
+        '@jupyterlab/services',
         // Force pre-bundle all jupyterlite packages together
         '@jupyterlite/server',
         '@jupyterlite/server-extension',
