@@ -11,7 +11,7 @@ import { Box } from '@datalayer/primer-addons';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { KernelIndicator } from '../components/kernel/KernelIndicator';
-import { KernelProgressBar } from './../components/kernel/KernelProgressBar';
+import { KernelProgressBar } from '../components/kernel/KernelProgressBar';
 
 export const KernelExecuteLiteExample = () => {
   const { defaultKernel } = useJupyter({

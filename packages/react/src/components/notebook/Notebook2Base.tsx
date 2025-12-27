@@ -812,64 +812,85 @@ export function useKernelId(
     startDefaultKernel = false,
   } = options;
 
+  // Track the kernel prop ID as a string to avoid object reference issues
+  const kernelPropId = kernel?.id;
+
   // Define the kernel to be used.
   // - Check the provided kernel id exists
   // - If no kernel found, start a new one if required
-  const [kernelId, setKernelId] = useState<string | undefined>(kernel?.id);
+  const [kernelId, setKernelId] = useState<string | undefined>(kernelPropId);
+  // Track if we started a connection (to know if we should dispose it)
+  const [startedConnection, setStartedConnection] = useState<
+    JupyterKernel.IKernelConnection | undefined
+  >(undefined);
+
   useEffect(() => {
     let isMounted = true;
-    let connection: JupyterKernel.IKernelConnection | undefined;
-    if (kernel) {
-      setKernelId(kernel.id);
-      connection = kernel.connection ?? undefined;
-    } else if (kernels) {
+
+    // If a kernel is provided via props, use its ID
+    if (kernelPropId) {
+      setKernelId(prev => (prev !== kernelPropId ? kernelPropId : prev));
+      return;
+    }
+
+    // No kernel provided, check if we need to find or start one
+    if (kernels) {
       (async () => {
-        let kernelId: string | undefined;
+        let foundKernelId: string | undefined;
         await kernels.ready;
+
+        // Check if requested kernel exists
         if (requestedKernelId) {
           for (const model of kernels.running()) {
             if (model.id === requestedKernelId) {
-              kernelId = requestedKernelId;
+              foundKernelId = requestedKernelId;
               break;
             }
           }
         }
 
-        if (!kernelId && startDefaultKernel && isMounted) {
+        // Start a new kernel if none found and requested
+        if (!foundKernelId && startDefaultKernel && isMounted) {
           console.log('Starting new kernel.');
-          connection = await kernels.startNew();
+          const connection = await kernels.startNew();
           if (isMounted) {
-            kernelId = connection.id;
+            foundKernelId = connection.id;
+            setStartedConnection(connection);
           } else {
             connection.dispose();
           }
         }
 
         if (isMounted) {
-          setKernelId(kernelId);
+          setKernelId(prev => (prev !== foundKernelId ? foundKernelId : prev));
         }
       })();
     }
 
     return () => {
       isMounted = false;
-      if (connection) {
-        // A new kernel was started
-        console.log(`Shutting down kernel '${connection.id}'.`);
-        connection
+    };
+  }, [kernels, kernelPropId, requestedKernelId, startDefaultKernel]);
+
+  // Cleanup: shutdown the kernel we started when component unmounts
+  useEffect(() => {
+    return () => {
+      if (startedConnection) {
+        console.log(`Shutting down kernel '${startedConnection.id}'.`);
+        startedConnection
           .shutdown()
           .catch(reason => {
             console.warn(
-              `Failed to shutdown kernel '${connection?.id}'.`,
+              `Failed to shutdown kernel '${startedConnection?.id}'.`,
               reason
             );
           })
           .finally(() => {
-            connection?.dispose();
+            startedConnection?.dispose();
           });
       }
     };
-  }, [kernels, kernel, requestedKernelId, startDefaultKernel, kernelId]);
+  }, [startedConnection]);
 
   return kernelId;
 }
