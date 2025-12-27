@@ -1233,7 +1233,7 @@ function initializeContext(
           },
         });
         (context!.sessionContext as any)._handleNewSession(session);
-        // Dispose the previous KernelConnection to avoid errors with Comms.
+        // TODO Dispose the previous KernelConnection to avoid errors with Comms.
         // this._kernel?.connection?.dispose();
       } catch (err) {
         void (context!.sessionContext as any)._handleSessionError(err);

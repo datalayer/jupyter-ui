@@ -250,9 +250,9 @@ export function useJupyterReactStoreFromProps(
       } else if (startDefaultKernel) {
         console.log('Starting the default Jupyter Kernel', defaultKernelName);
         const defaultKernel = new Kernel({
-          kernelManager: serviceManager.kernels,
           kernelName: defaultKernelName,
           kernelSpecName: defaultKernelName,
+          kernelManager: serviceManager.kernels,
           kernelspecsManager: serviceManager.kernelspecs,
           sessionManager: serviceManager.sessions,
         });

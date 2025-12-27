@@ -12,7 +12,7 @@ import { Cell } from '../components/cell/Cell';
 
 const CODE = `import sys
 
-print("👋 Hello Jupyter UI Lite")
+print("👋 Hello Jupyter React Lite")
 print(f"Platform: {sys.platform}")
 print(f"IPython: {get_ipython()}")`;
 

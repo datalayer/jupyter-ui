@@ -22,8 +22,8 @@ const { ENTRY } = require('./entries.js');
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
-  const IS_LOCAL_JUPYTER_SERVER = env.LOCAL_JUPYTER_SERVER === 'true';
-  const IS_NO_CONFIG = env.NO_CONFIG === 'true';
+  //  const IS_LOCAL_JUPYTER_SERVER = env.LOCAL_JUPYTER_SERVER === 'true';
+  //  const IS_NO_CONFIG = env.NO_CONFIG === 'true';
 
   // Determine which index.html to use based on environment
   // Note: Vite uses index.html at root, so we'll handle config via env vars instead
@@ -140,10 +140,7 @@ export default defineConfig(({ mode }) => {
             ENTRY.match(/\.(t|j)sx?$/) !== null ? ENTRY : `${ENTRY}.tsx`;
           const resolvedEntry = entryWithExt.replace('./', '/');
           // Replace the placeholder entry point with the actual ENTRY
-          return html.replace(
-            /src="[^\"]+\.tsx"/,
-            `src="${resolvedEntry}"`
-          );
+          return html.replace(/src="[^"]+\.tsx"/, `src="${resolvedEntry}"`);
         },
       },
     ],
@@ -159,6 +156,12 @@ export default defineConfig(({ mode }) => {
         // Polyfill stream for browser
         { find: 'stream', replacement: 'stream-browserify' },
       ],
+    },
+
+    // Configure how CommonJS modules are handled
+    ssr: {
+      // Force these CommonJS packages to be bundled properly
+      noExternal: ['mime'],
     },
 
     // Define global variables
@@ -211,7 +214,30 @@ export default defineConfig(({ mode }) => {
     },
 
     optimizeDeps: {
-      include: ['react', 'react-dom', '@primer/react', 'yjs', 'y-websocket'],
+      include: [
+        'react',
+        'react-dom',
+        '@primer/react',
+        'yjs',
+        'y-websocket',
+        // Force pre-bundle mime to handle CommonJS default export
+        'mime',
+        // Force pre-bundle mock-socket to handle exports properly
+        'mock-socket',
+        // Force pre-bundle jupyterlab packages to ensure single instances
+        '@jupyterlab/services',
+        '@jupyterlab/services/lib/kernel/serialize',
+        '@jupyterlab/services/lib/kernel/messages',
+        '@jupyterlab/coreutils',
+        // Force pre-bundle all jupyterlite packages together
+        '@jupyterlite/server',
+        '@jupyterlite/server-extension',
+        '@jupyterlite/kernel',
+        '@jupyterlite/session',
+        '@jupyterlite/contents',
+        '@jupyterlite/pyodide-kernel',
+        '@jupyterlite/pyodide-kernel-extension',
+      ],
       esbuildOptions: {
         loader: {
           '.whl': 'text',
@@ -224,10 +250,14 @@ export default defineConfig(({ mode }) => {
       },
       // Exclude packages that have issues with pre-bundling
       exclude: [
-        '@jupyterlite/pyodide-kernel',
         // Exclude theme CSS to allow ?raw imports to work
         '@jupyterlab/theme-light-extension',
         '@jupyterlab/theme-dark-extension',
+        // Exclude JupyterLite packages for better debugging (source maps)
+        // '@jupyterlite/kernel',
+        // '@jupyterlite/pyodide-kernel',
+        // '@jupyterlite/session',
+        // '@jupyterlite/contents',
       ],
     },
 
