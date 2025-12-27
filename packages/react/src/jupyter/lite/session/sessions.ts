@@ -25,7 +25,7 @@ export class Sessions implements ISessions {
             return;
           }
           // find the session associated with the kernel
-          const session = this._sessions.find((s) => s.kernel?.id === kernelId);
+          const session = this._sessions.find(s => s.kernel?.id === kernelId);
           if (!session) {
             return;
           }
@@ -59,7 +59,7 @@ export class Sessions implements ISessions {
    * @param id The id of the session.
    */
   async get(id: string): Promise<Session.IModel> {
-    const session = this._sessions.find((s) => s.id === id);
+    const session = this._sessions.find(s => s.id === id);
     if (!session) {
       throw Error(`Session ${id} not found`);
     }
@@ -84,7 +84,7 @@ export class Sessions implements ISessions {
    */
   async patch(options: Session.IModel): Promise<Session.IModel> {
     const { id, path, name, kernel } = options;
-    const index = this._sessions.findIndex((s) => s.id === id);
+    const index = this._sessions.findIndex(s => s.id === id);
     const session = this._sessions[index];
     if (!session) {
       throw Error(`Session ${id} not found`);
@@ -99,7 +99,7 @@ export class Sessions implements ISessions {
       // Kernel id takes precedence over name.
       if (kernel.id) {
         const session = this._sessions.find(
-          (session) => session.kernel?.id === kernel?.id,
+          session => session.kernel?.id === kernel?.id
         );
         if (session) {
           patched.kernel = session.kernel;
@@ -135,18 +135,21 @@ export class Sessions implements ISessions {
    */
   async startNew(options: Session.IModel): Promise<Session.IModel> {
     const { path, name } = options;
-    const running = this._sessions.find((s) => s.name === name);
+    const running = this._sessions.find(s => s.name === name);
     if (running) {
       return running;
     }
     const kernelName = options.kernel?.name ?? '';
     const id = options.id ?? UUID.uuid4();
     const nameOrPath = options.name ?? options.path;
-    const dirname = PathExt.dirname(options.name) || PathExt.dirname(options.path);
+    const dirname =
+      PathExt.dirname(options.name) || PathExt.dirname(options.path);
     const hasDrive = nameOrPath.includes(':');
     const driveName = hasDrive ? nameOrPath.split(':')[0] : '';
     // add drive name if missing (top level directory)
-    const location = dirname.includes(driveName) ? dirname : `${driveName}:${dirname}`;
+    const location = dirname.includes(driveName)
+      ? dirname
+      : `${driveName}:${dirname}`;
     const kernel = await this._kernels.startNew({
       id,
       name: kernelName,
@@ -176,7 +179,7 @@ export class Sessions implements ISessions {
    * @param id The id of the session to shut down.
    */
   async shutdown(id: string): Promise<void> {
-    const session = this._sessions.find((s) => s.id === id);
+    const session = this._sessions.find(s => s.id === id);
     if (!session) {
       throw Error(`Session ${id} not found`);
     }

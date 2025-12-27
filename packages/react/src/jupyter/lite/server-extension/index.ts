@@ -9,12 +9,7 @@ import {
   IContents,
   IBroadcastChannelWrapper,
 } from '../contents';
-import {
-  IKernels,
-  Kernels,
-  IKernelSpecs,
-  KernelSpecs,
-} from '../kernel';
+import { IKernels, Kernels, IKernelSpecs, KernelSpecs } from '../kernel';
 import { ILicenses, Licenses } from '../licenses';
 import {
   JupyterLiteServer,
@@ -313,14 +308,15 @@ const kernelsRoutesPlugin: JupyterLiteServerPlugin<void> = {
     });
 
     // POST /api/kernels - Start a kernel
-    app.router.post(
-      '/api/kernels',
-      async (req: Router.IRequest) => {
-        const name = req.body!['name'] as string ?? "python";
-        const res = await kernels.startNew({id: "123", name: name, location: "/"});
-        return new Response(JSON.stringify(res));
-      }
-    );
+    app.router.post('/api/kernels', async (req: Router.IRequest) => {
+      const name = (req.body!['name'] as string) ?? 'python';
+      const res = await kernels.startNew({
+        id: '123',
+        name: name,
+        location: '/',
+      });
+      return new Response(JSON.stringify(res));
+    });
 
     // POST /api/kernels/{kernel_id}/restart - Restart a kernel
     app.router.post(

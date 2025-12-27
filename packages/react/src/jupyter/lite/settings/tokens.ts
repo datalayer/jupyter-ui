@@ -4,7 +4,9 @@ import { JSONObject, PartialJSONObject, Token } from '@lumino/coreutils';
 /**
  * The token for the settings service.
  */
-export const ISettings = new Token<ISettings>('@jupyterlite/settings:ISettings');
+export const ISettings = new Token<ISettings>(
+  '@jupyterlite/settings:ISettings'
+);
 
 /**
  * The settings file to request

@@ -107,7 +107,7 @@ export class Settings implements ISettings {
     // return existing user settings if they exist
     const storage = await this.storage;
     const settings = await Promise.all(
-      all.map(async (plugin) => {
+      all.map(async plugin => {
         const { id } = plugin;
         const raw = ((await storage.getItem(id)) as string) ?? plugin.raw;
         return {
@@ -115,7 +115,7 @@ export class Settings implements ISettings {
           raw,
           settings: json5.parse(raw),
         };
-      }),
+      })
     );
     return { settings };
   }
@@ -168,7 +168,7 @@ export namespace Settings {
  */
 namespace Private {
   const _overrides: Record<string, IPlugin['schema']['default']> = JSON.parse(
-    PageConfig.getOption('settingsOverrides') || '{}',
+    PageConfig.getOption('settingsOverrides') || '{}'
   );
 
   /**
@@ -182,7 +182,9 @@ namespace Private {
         // probably malformed, or only provides keyboard shortcuts, etc.
         plugin.schema.properties = {};
       }
-      for (const [prop, propDefault] of Object.entries(_overrides[plugin.id] || {})) {
+      for (const [prop, propDefault] of Object.entries(
+        _overrides[plugin.id] || {}
+      )) {
         plugin.schema.properties[prop].default = propDefault;
       }
     }

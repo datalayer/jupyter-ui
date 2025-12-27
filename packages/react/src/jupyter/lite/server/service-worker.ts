@@ -18,8 +18,14 @@ let enableCache = false;
 /**
  * Install event listeners
  */
-(self as any as ServiceWorkerGlobalScope).addEventListener('install', onInstall);
-(self as any as ServiceWorkerGlobalScope).addEventListener('activate', onActivate);
+(self as any as ServiceWorkerGlobalScope).addEventListener(
+  'install',
+  onInstall
+);
+(self as any as ServiceWorkerGlobalScope).addEventListener(
+  'activate',
+  onActivate
+);
 (self as any as ServiceWorkerGlobalScope).addEventListener('fetch', onFetch);
 
 // Event handlers

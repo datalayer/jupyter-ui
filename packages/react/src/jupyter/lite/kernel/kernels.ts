@@ -1,12 +1,18 @@
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
 import { IObservableMap, ObservableMap } from '@jupyterlab/observables';
 import { KernelAPI, Kernel, KernelMessage } from '@jupyterlab/services';
-import { deserialize, serialize } from '@jupyterlab/services/lib/kernel/serialize';
+import {
+  deserialize,
+  serialize,
+} from '@jupyterlab/services/lib/kernel/serialize';
 import { supportedKernelWebSocketProtocols } from '@jupyterlab/services/lib/kernel/messages';
 import { UUID } from '@lumino/coreutils';
 import { ISignal, Signal } from '@lumino/signaling';
 import { Mutex } from 'async-mutex';
-import { Server as WebSocketServer, Client as WebSocketClient } from 'mock-socket';
+import {
+  Server as WebSocketServer,
+  Client as WebSocketClient,
+} from 'mock-socket';
 import { IKernel, IKernels, IKernelSpecs } from './tokens';
 
 /**
@@ -62,7 +68,7 @@ export class Kernels implements IKernels {
     const hook = (
       kernelId: string,
       clientId: string,
-      socket: WebSocketClient,
+      socket: WebSocketClient
     ): void => {
       const kernel = this._kernels.get(kernelId);
 
@@ -102,7 +108,7 @@ export class Kernels implements IKernels {
           } else {
             void processMsg(msg);
           }
-        },
+        }
       );
 
       const removeClient = () => {
@@ -122,7 +128,7 @@ export class Kernels implements IKernels {
       Kernels.WS_BASE_URL,
       KernelAPI.KERNEL_SERVICE_URL,
       encodeURIComponent(kernelId),
-      'channels',
+      'channels'
     );
     const runningKernel = this._kernels.get(kernelId);
     if (runningKernel) {
@@ -137,7 +143,9 @@ export class Kernels implements IKernels {
       const clientId = msg.header.session;
       const socket = this._clients.get(clientId);
       if (!socket) {
-        console.warn(`Trying to send message on removed socket for kernel ${kernelId}`);
+        console.warn(
+          `Trying to send message on removed socket for kernel ${kernelId}`
+        );
         return;
       }
 
@@ -145,7 +153,7 @@ export class Kernels implements IKernels {
       // process iopub messages
       if (msg.channel === 'iopub') {
         const clients = this._kernelClients.get(kernelId);
-        clients?.forEach((id) => {
+        clients?.forEach(id => {
           this._clients.get(id)?.send(message);
         });
         return;
@@ -176,7 +184,7 @@ export class Kernels implements IKernels {
 
     // clean up closed connection
     wsServer.on('close', (): void => {
-      this._clients.keys().forEach((clientId) => {
+      this._clients.keys().forEach(clientId => {
         const socket = this._clients.get(clientId);
         if (socket?.readyState === WebSocket.CLOSED) {
           this._clients.delete(clientId);
@@ -217,7 +225,7 @@ export class Kernels implements IKernels {
    * List the running kernels.
    */
   async list(): Promise<Kernel.IModel[]> {
-    return [...this._kernels.values()].map((kernel) => ({
+    return [...this._kernels.values()].map(kernel => ({
       id: kernel.id,
       name: kernel.name,
     }));
@@ -243,7 +251,9 @@ export class Kernels implements IKernels {
   private _clients = new ObservableMap<WebSocketClient>();
   private _kernelClients = new ObservableMap<Set<string>>();
   private _kernelspecs: IKernelSpecs;
-  private _changed = new Signal<this, IObservableMap.IChangedArgs<IKernel>>(this);
+  private _changed = new Signal<this, IObservableMap.IChangedArgs<IKernel>>(
+    this
+  );
 }
 
 /**

@@ -68,7 +68,7 @@ export default tseslint.config(
             '*.ts',
             '*.mjs',
             '*.cjs',
-              'entries.js',
+            'entries.js',
             'playwright.config.ts',
           ],
         },

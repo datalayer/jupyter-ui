@@ -4,7 +4,10 @@
 import { Contents as ServerContents } from '@jupyterlab/services';
 import { TDriveRequest, DRIVE_API_PATH, TDriveMethod } from './drivefs';
 import { IBroadcastChannelWrapper } from './tokens';
-import { IDriveContentsProcessor, DriveContentsProcessor } from './drivecontents';
+import {
+  IDriveContentsProcessor,
+  DriveContentsProcessor,
+} from './drivecontents';
 
 /** A broadcaster for the ServiceWorker */
 export class BroadcastChannelWrapper implements IBroadcastChannelWrapper {
@@ -50,7 +53,7 @@ export class BroadcastChannelWrapper implements IBroadcastChannelWrapper {
 
   /** Handle a message received on the BroadcastChannel */
   protected _onMessage = async <T extends TDriveMethod>(
-    event: MessageEvent<TDriveRequest<T>>,
+    event: MessageEvent<TDriveRequest<T>>
   ): Promise<void> => {
     if (!this._channel) {
       return;
@@ -63,7 +66,8 @@ export class BroadcastChannelWrapper implements IBroadcastChannelWrapper {
       return;
     }
 
-    const response = await this._driveContentsProcessor.processDriveRequest(request);
+    const response =
+      await this._driveContentsProcessor.processDriveRequest(request);
 
     this._channel.postMessage(response);
   };

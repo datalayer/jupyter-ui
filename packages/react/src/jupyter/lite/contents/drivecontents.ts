@@ -1,6 +1,11 @@
 import { PathExt } from '@jupyterlab/coreutils';
 import { Contents } from '@jupyterlab/services';
-import { BLOCK_SIZE, TDriveMethod, TDriveRequest, TDriveResponse } from './drivefs';
+import {
+  BLOCK_SIZE,
+  TDriveMethod,
+  TDriveRequest,
+  TDriveResponse,
+} from './drivefs';
 import { DIR_MODE, FILE_MODE } from './emscripten';
 
 export interface IDriveContentsProcessor {
@@ -10,7 +15,7 @@ export interface IDriveContentsProcessor {
    * @param request the request
    */
   processDriveRequest<T extends TDriveMethod>(
-    request: TDriveRequest<T>,
+    request: TDriveRequest<T>
   ): Promise<TDriveResponse<T>>;
 
   /**
@@ -18,7 +23,9 @@ export interface IDriveContentsProcessor {
    *
    * @param request the request
    */
-  readdir(request: TDriveRequest<'readdir'>): Promise<TDriveResponse<'readdir'>>;
+  readdir(
+    request: TDriveRequest<'readdir'>
+  ): Promise<TDriveResponse<'readdir'>>;
 
   /**
    * Process the request to remove a directory
@@ -39,7 +46,9 @@ export interface IDriveContentsProcessor {
    *
    * @param request the request
    */
-  getmode(request: TDriveRequest<'getmode'>): Promise<TDriveResponse<'getmode'>>;
+  getmode(
+    request: TDriveRequest<'getmode'>
+  ): Promise<TDriveResponse<'getmode'>>;
 
   /**
    * Process the request to check if a node exist
@@ -60,7 +69,9 @@ export interface IDriveContentsProcessor {
    *
    * @param request the request
    */
-  getattr(request: TDriveRequest<'getattr'>): Promise<TDriveResponse<'getattr'>>;
+  getattr(
+    request: TDriveRequest<'getattr'>
+  ): Promise<TDriveResponse<'getattr'>>;
 
   /**
    * Process the request to get the content of a file
@@ -88,7 +99,7 @@ export class DriveContentsProcessor implements IDriveContentsProcessor {
   }
 
   async processDriveRequest<T extends TDriveMethod>(
-    request: TDriveRequest<T>,
+    request: TDriveRequest<T>
   ): Promise<TDriveResponse<T>> {
     switch (request.method) {
       case 'readdir':
@@ -120,34 +131,50 @@ export class DriveContentsProcessor implements IDriveContentsProcessor {
           TDriveResponse<T>
         >;
       case 'get':
-        return this.get(request as TDriveRequest<'get'>) as Promise<TDriveResponse<T>>;
+        return this.get(request as TDriveRequest<'get'>) as Promise<
+          TDriveResponse<T>
+        >;
       case 'put':
-        return this.put(request as TDriveRequest<'put'>) as Promise<TDriveResponse<T>>;
+        return this.put(request as TDriveRequest<'put'>) as Promise<
+          TDriveResponse<T>
+        >;
     }
 
     throw `Drive request ${request.method} does not exist.`;
   }
 
-  async readdir(request: TDriveRequest<'readdir'>): Promise<TDriveResponse<'readdir'>> {
-    const model = await this.contentsManager.get(request.path, { content: true });
+  async readdir(
+    request: TDriveRequest<'readdir'>
+  ): Promise<TDriveResponse<'readdir'>> {
+    const model = await this.contentsManager.get(request.path, {
+      content: true,
+    });
     let response: string[] = [];
     if (model.type === 'directory' && model.content) {
-      response = model.content.map((subcontent: Contents.IModel) => subcontent.name);
+      response = model.content.map(
+        (subcontent: Contents.IModel) => subcontent.name
+      );
     }
     return response;
   }
 
-  async rmdir(request: TDriveRequest<'rmdir'>): Promise<TDriveResponse<'rmdir'>> {
+  async rmdir(
+    request: TDriveRequest<'rmdir'>
+  ): Promise<TDriveResponse<'rmdir'>> {
     await this.contentsManager.delete(request.path);
     return null;
   }
 
-  async rename(request: TDriveRequest<'rename'>): Promise<TDriveResponse<'rename'>> {
+  async rename(
+    request: TDriveRequest<'rename'>
+  ): Promise<TDriveResponse<'rename'>> {
     await this.contentsManager.rename(request.path, request.data.newPath);
     return null;
   }
 
-  async getmode(request: TDriveRequest<'getmode'>): Promise<TDriveResponse<'getmode'>> {
+  async getmode(
+    request: TDriveRequest<'getmode'>
+  ): Promise<TDriveResponse<'getmode'>> {
     const model = await this.contentsManager.get(request.path);
     let response: number;
     if (model.type === 'directory') {
@@ -158,7 +185,9 @@ export class DriveContentsProcessor implements IDriveContentsProcessor {
     return response;
   }
 
-  async lookup(request: TDriveRequest<'lookup'>): Promise<TDriveResponse<'lookup'>> {
+  async lookup(
+    request: TDriveRequest<'lookup'>
+  ): Promise<TDriveResponse<'lookup'>> {
     let response: TDriveResponse<'lookup'>;
 
     try {
@@ -174,7 +203,9 @@ export class DriveContentsProcessor implements IDriveContentsProcessor {
     return response;
   }
 
-  async mknod(request: TDriveRequest<'mknod'>): Promise<TDriveResponse<'mknod'>> {
+  async mknod(
+    request: TDriveRequest<'mknod'>
+  ): Promise<TDriveResponse<'mknod'>> {
     const model = await this.contentsManager.newUntitled({
       path: PathExt.dirname(request.path),
       type: request.data.mode === DIR_MODE ? 'directory' : 'file',
@@ -184,7 +215,9 @@ export class DriveContentsProcessor implements IDriveContentsProcessor {
     return null;
   }
 
-  async getattr(request: TDriveRequest<'getattr'>): Promise<TDriveResponse<'getattr'>> {
+  async getattr(
+    request: TDriveRequest<'getattr'>
+  ): Promise<TDriveResponse<'getattr'>> {
     const model = await this.contentsManager.get(request.path);
     // create a default date for drives that send incomplete information
     // for nested foldes and files
@@ -207,14 +240,18 @@ export class DriveContentsProcessor implements IDriveContentsProcessor {
   }
 
   async get(request: TDriveRequest<'get'>): Promise<TDriveResponse<'get'>> {
-    const model = await this.contentsManager.get(request.path, { content: true });
+    const model = await this.contentsManager.get(request.path, {
+      content: true,
+    });
 
     let response;
 
     if (model.type !== 'directory') {
       response = {
         content:
-          model.format === 'json' ? JSON.stringify(model.content) : model.content,
+          model.format === 'json'
+            ? JSON.stringify(model.content)
+            : model.content,
         format: model.format,
       };
     }

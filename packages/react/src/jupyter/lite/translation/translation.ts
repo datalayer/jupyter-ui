@@ -18,7 +18,7 @@ export class Translation {
   async get(locale: string): Promise<JSONObject> {
     const apiURL = URLExt.join(
       PageConfig.getBaseUrl(),
-      `api/translations/${locale}.json`,
+      `api/translations/${locale}.json`
     );
     try {
       const response = await fetch(apiURL);
@@ -31,7 +31,8 @@ export class Translation {
         const prev = this._prevLocale;
         json.data[prev].displayName = json.data[prev].nativeName;
         if (prev !== 'en') {
-          json.data['en'].displayName = `${json.data['en'].nativeName} (default)`;
+          json.data['en'].displayName =
+            `${json.data['en'].nativeName} (default)`;
         }
       }
       this._prevLocale = locale;

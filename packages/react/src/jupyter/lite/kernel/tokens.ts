@@ -141,7 +141,9 @@ export namespace IKernel {
 /**
  * The token for the kernel spec service.
  */
-export const IKernelSpecs = new Token<IKernelSpecs>('@jupyterlite/kernel:IKernelSpecs');
+export const IKernelSpecs = new Token<IKernelSpecs>(
+  '@jupyterlite/kernel:IKernelSpecs'
+);
 
 /**
  * The interface for the kernel specs service.
@@ -180,30 +182,30 @@ export interface IWorkerKernel {
   initialize(options: IWorkerKernel.IOptions): Promise<void>;
   execute(
     content: KernelMessage.IExecuteRequestMsg['content'],
-    parent: any,
+    parent: any
   ): Promise<KernelMessage.IExecuteReplyMsg['content']>;
   complete(
     content: KernelMessage.ICompleteRequestMsg['content'],
-    parent: any,
+    parent: any
   ): Promise<KernelMessage.ICompleteReplyMsg['content']>;
   inspect(
     content: KernelMessage.IInspectRequestMsg['content'],
-    parent: any,
+    parent: any
   ): Promise<KernelMessage.IInspectReplyMsg['content']>;
   isComplete(
     content: KernelMessage.IIsCompleteRequestMsg['content'],
-    parent: any,
+    parent: any
   ): Promise<KernelMessage.IIsCompleteReplyMsg['content']>;
   commInfo(
     content: KernelMessage.ICommInfoRequestMsg['content'],
-    parent: any,
+    parent: any
   ): Promise<KernelMessage.ICommInfoReplyMsg['content']>;
   commOpen(content: KernelMessage.ICommOpenMsg, parent: any): Promise<void>;
   commMsg(content: KernelMessage.ICommMsgMsg, parent: any): Promise<void>;
   commClose(content: KernelMessage.ICommCloseMsg, parent: any): Promise<void>;
   inputReply(
     content: KernelMessage.IInputReplyMsg['content'],
-    parent: any,
+    parent: any
   ): Promise<void>;
 }
 
@@ -222,4 +224,4 @@ export namespace IWorkerKernel {
   }
 }
 
-export interface IRemoteKernel extends Remote<IWorkerKernel> {}
+export type IRemoteKernel = Remote<IWorkerKernel>;
