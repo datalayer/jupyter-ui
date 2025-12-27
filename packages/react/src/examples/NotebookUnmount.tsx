@@ -15,7 +15,7 @@ import Kernel from '../jupyter/kernel/Kernel';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import notebook from './notebooks/NotebookExample1.ipynb.json';
 
-const NotebookUnmount = () => {
+const NotebookUnmountExample = () => {
   const { kernelManager, serviceManager } = useJupyter();
   const [showNotebook, setShowNotebook] = useState(false);
   const [kernel, setKernel] = useState<Kernel>();
@@ -79,6 +79,6 @@ const root = createRoot(div);
 
 root.render(
   <JupyterReactTheme>
-    <NotebookUnmount />
+    <NotebookUnmountExample />
   </JupyterReactTheme>
 );

@@ -13,7 +13,7 @@ import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolba
 
 const NOTEBOOK_ID = 'notebook-id';
 
-const NotebookPath = () => (
+const NotebookPathExample = () => (
   <JupyterReactTheme>
     <Notebook
       path="ipywidgets.ipynb"
@@ -29,4 +29,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookPath />);
+root.render(<NotebookPathExample />);

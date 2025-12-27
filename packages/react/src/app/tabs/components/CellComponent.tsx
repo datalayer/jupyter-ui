@@ -4,12 +4,19 @@
  * MIT License
  */
 
-import Cell from '../../../components/cell/Cell';
+import { useJupyter } from '../../../jupyter';
+import { Cell } from '../../../components/cell/Cell';
 
 export const CellComponent = () => {
+  const { defaultKernel } = useJupyter({ startDefaultKernel: true });
   return (
     <>
-      <Cell source="print('Hello 🪐 ⚛️ Jupyter React')" />
+      {defaultKernel && (
+        <Cell
+          source="print('Hello 🪐 ⚛️ Jupyter React')"
+          kernel={defaultKernel}
+        />
+      )}
     </>
   );
 };

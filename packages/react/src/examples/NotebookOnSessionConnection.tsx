@@ -19,9 +19,9 @@ import { useJupyter } from '../jupyter';
 import { OnSessionConnection } from '../state';
 import { JupyterReactTheme } from '../theme';
 
-import nbformat from './notebooks/NotebookExample1.ipynb.json';
+import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
-const NotebookOnSessionConnection = () => {
+const NotebookOnSessionConnectionExample = () => {
   const { serviceManager } = useJupyter();
   const [sessions, setSessions] = useState<Array<Session.ISessionConnection>>(
     []
@@ -42,7 +42,7 @@ const NotebookOnSessionConnection = () => {
   };
   return (
     <JupyterReactTheme>
-      <Box as="h1">A Jupyter Notebook listening to Kernel Sessions</Box>
+      <Box as="h1">Notebook listening to Kernel Sessions</Box>
       <KernelDetective serviceManager={serviceManager} />
       <Box>
         <Text as="h3">Kernel Sessions</Text>
@@ -61,7 +61,7 @@ const NotebookOnSessionConnection = () => {
         })}
       </Box>
       <Notebook
-        nbformat={nbformat as INotebookContent}
+        nbformat={NBFORMAT as INotebookContent}
         id="notebook-on-kernel-connection-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         onSessionConnection={onSessionConnection}
@@ -77,4 +77,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookOnSessionConnection />);
+root.render(<NotebookOnSessionConnectionExample />);

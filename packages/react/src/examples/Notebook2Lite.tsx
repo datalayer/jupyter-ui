@@ -6,37 +6,28 @@
 
 import { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Text } from '@primer/react';
-import { Box } from '@datalayer/primer-addons';
 import { INotebookContent } from '@jupyterlab/nbformat';
+import { Session } from '@jupyterlab/services';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
-import { useJupyter } from '../jupyter';
+import { useJupyter } from '../jupyter/JupyterContext';
 import {
-  Notebook2,
   CellSidebarExtension,
   CellSidebarButton,
-  NotebookToolbar,
   KernelIndicator,
+  Notebook2,
+  NotebookToolbar,
 } from '../components';
 import { CellToolbarExtension } from './extensions';
-
-import nbformat from './notebooks/NotebookExample1.ipynb.json';
-import { Session } from '@jupyterlab/services';
 import { OnSessionConnection } from '../state';
 
-const Notebook2Example = () => {
-  const { serviceManager } = useJupyter({ lite: true });
+import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
+
+const Notebook2LiteExample = () => {
+  const { serviceManager, defaultKernel } = useJupyter({
+    lite: true,
+    startDefaultKernel: true,
+  });
   const [session, setSession] = useState<Session.ISessionConnection>();
-  const onSessionConnection: OnSessionConnection = (
-    session: Session.ISessionConnection | undefined
-  ) => {
-    console.log(
-      'Received a Kernel Session.',
-      session?.id,
-      session?.kernel?.clientId
-    );
-    setSession(session);
-  };
   const extensions = useMemo(
     () => [
       new CellToolbarExtension(),
@@ -44,29 +35,45 @@ const Notebook2Example = () => {
     ],
     []
   );
-  return serviceManager ? (
+  const onSessionConnection: OnSessionConnection = (
+    session: Session.ISessionConnection | undefined
+  ) => {
+    console.log('Kernel Session.', session?.id, session?.kernel?.id);
+    setSession(session);
+  };
+  return (
     <JupyterReactTheme>
-      <Box display="flex">
-        <Box>
-          <Text>Kernel Indicator</Text>
-        </Box>
-        <Box ml={3}>
-          <KernelIndicator kernel={session?.kernel} />
-        </Box>
-      </Box>
-      <Notebook2
-        nbformat={nbformat as INotebookContent}
-        id="notebook-nbformat-id"
-        startDefaultKernel
-        serviceManager={serviceManager}
-        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        extensions={extensions}
-        onSessionConnection={onSessionConnection}
-        Toolbar={NotebookToolbar}
-      />
+      {serviceManager && defaultKernel && (
+        <>
+          <div
+            style={{
+              display: 'inline-flex',
+              gap: '12px',
+              alignItems: 'center',
+            }}
+          >
+            <KernelIndicator
+              kernel={defaultKernel.connection}
+              label="Kernel Connection Indicator"
+            />
+            <KernelIndicator
+              kernel={session?.kernel}
+              label="Kernel Session Indicator"
+            />
+          </div>
+          <Notebook2
+            id="notebook2-nbformat-id"
+            kernel={defaultKernel}
+            serviceManager={serviceManager}
+            nbformat={NBFORMAT as INotebookContent}
+            height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+            extensions={extensions}
+            Toolbar={NotebookToolbar}
+            onSessionConnection={onSessionConnection}
+          />
+        </>
+      )}
     </JupyterReactTheme>
-  ) : (
-    <></>
   );
 };
 
@@ -74,4 +81,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<Notebook2Example />);
+root.render(<Notebook2LiteExample />);

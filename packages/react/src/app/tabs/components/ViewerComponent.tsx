@@ -5,8 +5,7 @@
  */
 
 import Viewer from '../../../components/viewer/Viewer';
-
-// import nbformat from '../../../examples/notebooks/IPyWidgetsExample.ipynb.json';
+// import NBFORMAT from '../../../examples/notebooks/IPyWidgetsExample.ipynb.json';
 
 export const ViewerComponent = () => {
   return (

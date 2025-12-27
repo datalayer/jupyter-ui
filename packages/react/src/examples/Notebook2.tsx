@@ -7,19 +7,23 @@
 import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
+import { Box } from '@datalayer/primer-addons';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { useJupyter } from '../jupyter';
 import {
-  Notebook2,
   CellSidebarExtension,
   CellSidebarButton,
+  KernelIndicator,
+  Notebook2,
 } from '../components';
 import { CellToolbarExtension } from './extensions';
 
-import nbformat from './notebooks/NotebookExample1.ipynb.json';
+import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
 const Notebook2Example = () => {
-  const { serviceManager } = useJupyter();
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
   const extensions = useMemo(
     () => [
       new CellToolbarExtension(),
@@ -27,19 +31,35 @@ const Notebook2Example = () => {
     ],
     []
   );
-  return serviceManager ? (
+  return (
     <JupyterReactTheme>
-      <Notebook2
-        nbformat={nbformat as INotebookContent}
-        id="notebook-nbformat-id"
-        startDefaultKernel
-        serviceManager={serviceManager}
-        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        extensions={extensions}
-      />
+      {serviceManager && defaultKernel && (
+        <>
+          <Box>
+            <KernelIndicator
+              kernel={defaultKernel?.connection}
+              label="Kernel Indicator"
+            />
+          </Box>
+          <Notebook2
+            nbformat={NBFORMAT as INotebookContent}
+            id="notebook2-nbformat-id"
+            kernel={defaultKernel}
+            serviceManager={serviceManager}
+            height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+            extensions={extensions}
+            /*
+            collaborationServer={{
+              baseURL: 'https://prod1.datalayer.run',
+              token: '',
+              documentName: '',
+              type: 'datalayer'
+            }}
+            */
+          />
+        </>
+      )}
     </JupyterReactTheme>
-  ) : (
-    <></>
   );
 };
 

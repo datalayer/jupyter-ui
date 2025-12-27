@@ -20,7 +20,7 @@ const PYTHON_KERNEL_NAME = 'python';
 
 const DENO_KERNEL_NAME = 'deno';
 
-const NotebookKernelChange = () => {
+const NotebookKernelChangeExample = () => {
   const { kernelManager, serviceManager, kernel } = useJupyter();
   const [message, setMessage] = useState('');
   const notebookStore = useNotebookStore();
@@ -83,4 +83,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookKernelChange />);
+root.render(<NotebookKernelChangeExample />);

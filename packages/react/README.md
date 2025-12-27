@@ -6,7 +6,7 @@
 
 > Jupyter React is a set of [React.js](https://reactjs.org) components that allow a frontend developer to build data products compatible with the [Jupyter](https://jupyter.org) ecosystem. The user interface delivers executable notebooks and cells.
 
-The below image shows a gallery of the available React.js components ready to be used in you custom application. These open source components are used to build the online [Datalayer service](https://datalayer.io), a collaborative platform for data analysis.
+The below image shows a gallery of the available React.js components ready to be used in you custom application. These open source components are used to build the online [Datalayer service](https://datalayer.ai), a collaborative platform for data analysis.
 
 <div align="center" style="text-align: center">
   <img alt="Jupyter React Gallery" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-gallery.gif" />
@@ -45,3 +45,76 @@ Jupyter React can be used in any React.js application. Install the latest `@data
 ## Releases
 
 Jupyter React is released in [Npm.js](https://www.npmjs.com/package/@datalayer/jupyter-react) and [PyPI](https://pypi.org/project/jupyter-react).
+
+## Development
+
+### Running Examples
+
+This package includes multiple example applications demonstrating various Jupyter React components. You can run these examples using either **Vite** (recommended) or **Webpack**.
+
+#### Using Vite (Recommended)
+
+Vite provides faster development server startup and hot module replacement (HMR).
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server (default example: Notebook2Actions)
+npm run dev:vite
+
+# Or use these alternative commands
+npm run start:vite              # Same as dev:vite
+npm run start-local:vite        # Use local Jupyter server (http://localhost:8686)
+npm run start-noconfig:vite     # Run without config
+npm run build:vite              # Production build
+npm run preview:vite            # Preview production build
+```
+
+The dev server runs on http://localhost:3208.
+
+To run a different example, edit the entry point in `index.html`:
+
+```html
+<script type="module" src="/src/examples/YourExample.tsx"></script>
+```
+
+#### Using Webpack
+
+Webpack is still available for backward compatibility.
+
+```bash
+# Start development server
+npm run start:webpack
+
+# Or use these alternative commands
+npm run start-local:webpack     # Use local Jupyter server
+npm run start-noconfig          # Run without config (webpack)
+npm run build:webpack           # Production build with webpack
+```
+
+### Available Examples
+
+The following examples are available in `src/examples/`:
+
+- **Notebook2Actions** - Notebook with action bar controls
+- **Cell** / **CellLite** - Single cell examples
+- **Notebook** / **NotebookLite** - Full notebook examples
+- **Console** / **ConsoleLite** - Console examples
+- **IPyWidgets** - IPyWidgets integration
+- **JupyterLabApp** - Full JupyterLab application
+- **Terminal** - Terminal component
+- And many more...
+
+### Building the Library
+
+```bash
+# Build TypeScript library
+npm run build:lib
+
+# Full build (resources + TypeScript + webpack)
+npm run build
+
+# Production build
+npm run build:prod
+```

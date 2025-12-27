@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect, ReactElement } from 'react';
-import { Button, Tooltip } from '@primer/react';
+import { Button, Tooltip, Text } from '@primer/react';
 import {
   CircleBlackIcon,
   CircleBrownIcon,
@@ -92,12 +92,13 @@ export const toKernelState = (
 };
 
 export type KernelIndicatorProps = {
+  label?: string;
   kernel?: IKernelConnection | null;
   env?: Environment;
 };
 
 export const KernelIndicator = (props: KernelIndicatorProps) => {
-  const { kernel, env } = props;
+  const { label = '', kernel, env } = props;
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>();
   const [status, setStatus] = useState<KernelMessage.Status>();
   useEffect(() => {
@@ -113,15 +114,35 @@ export const KernelIndicator = (props: KernelIndicatorProps) => {
     }
   }, [kernel]);
   return connectionStatus && status ? (
-    <Tooltip text={`${connectionStatus} - ${status} - ${env?.display_name}`}>
+    <Tooltip
+      text={`${connectionStatus} - ${status} - ${env?.display_name} - ${kernel?.id}`}
+    >
       <Button variant="invisible">
-        {KERNEL_STATES.get(toKernelState(connectionStatus, status)) ?? <></>}
+        <span
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+          }}
+        >
+          {label ? <Text>{label}</Text> : null}
+          {KERNEL_STATES.get(toKernelState(connectionStatus, status)) ?? <></>}
+        </span>
       </Button>
     </Tooltip>
   ) : (
     <Tooltip text="Undefined state">
       <Button variant="invisible">
-        {KERNEL_STATES.get('undefined') ?? <></>}
+        <span
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+          }}
+        >
+          {label ? <Text>{label}</Text> : null}
+          {KERNEL_STATES.get('undefined') ?? <></>}
+        </span>
       </Button>
     </Tooltip>
   );

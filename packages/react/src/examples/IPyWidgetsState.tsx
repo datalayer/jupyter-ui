@@ -13,13 +13,14 @@ import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import notebook from './notebooks/IPyWidgetsExampleWithState.ipynb.json';
 
-const IPyWidgetsState = () => {
+const IPyWidgetsStateExample = () => {
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
     <JupyterReactTheme>
       <Notebook
-        nbformat={notebook as INotebookContent}
         id="notebook-id"
+        startDefaultKernel
+        nbformat={notebook as INotebookContent}
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         extensions={extensions}
         Toolbar={NotebookToolbar}
@@ -32,4 +33,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<IPyWidgetsState />);
+root.render(<IPyWidgetsStateExample />);

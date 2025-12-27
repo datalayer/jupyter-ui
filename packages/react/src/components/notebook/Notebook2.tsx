@@ -7,18 +7,18 @@
 import React, { useEffect, useState } from 'react';
 import { createGlobalStyle } from 'styled-components';
 import type { INotebookContent } from '@jupyterlab/nbformat';
+import type { IInlineCompletionProvider } from '@jupyterlab/completer';
 import type { NotebookModel } from '@jupyterlab/notebook';
 import type { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import type { ServiceManager } from '@jupyterlab/services';
 import type { CommandRegistry } from '@lumino/commands';
 import { Box } from '@datalayer/primer-addons';
+import { ICollaborationProvider, Kernel } from '../../jupyter';
 import type { OnSessionConnection } from '../../state';
 import { Loader } from '../utils';
 import { useKernelId, useNotebookModel, Notebook2Base } from './Notebook2Base';
 import type { NotebookExtension } from './NotebookExtensions';
 import type { INotebookToolbarProps } from './toolbar';
-import { ICollaborationProvider } from '../../jupyter';
-import type { IInlineCompletionProvider } from '@jupyterlab/completer';
 
 import './Notebook.css';
 
@@ -54,6 +54,10 @@ export interface INotebook2Props {
    * Notebook ID.
    */
   id: string;
+  /**
+   * Kernel to connect to.
+   */
+  kernel?: Kernel;
   /**
    * Kernel ID to connect to.
    */
@@ -132,15 +136,16 @@ export function Notebook2(
 ): JSX.Element {
   const {
     Toolbar,
-    children,
     cellSidebarMargin = 120,
+    children,
     collaborationProvider,
     commands,
     extensions,
     height = '100vh',
-    maxHeight = '100vh',
     id,
     inlineProviders,
+    kernel,
+    maxHeight = '100vh',
     nbformat,
     onNotebookModelChanged,
     onSessionConnection,
@@ -155,8 +160,9 @@ export function Notebook2(
   const [isLoading, setIsLoading] = useState(true);
 
   const kernelId = useKernelId({
-    requestedKernelId: props.kernelId,
+    kernel,
     kernels: serviceManager.kernels,
+    requestedKernelId: props.kernelId,
     startDefaultKernel,
   });
 

@@ -13,7 +13,7 @@ import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import { JupyterCollaborationProvider } from '../jupyter/collaboration/providers/JupyterCollaborationProvider';
 
-const NotebookCollaborative = () => {
+const NotebookCollaborativeExample = () => {
   const extensions = useMemo(
     () => [new CellSidebarExtension({ factory: CellSidebarButton })],
     []
@@ -44,4 +44,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookCollaborative />);
+root.render(<NotebookCollaborativeExample />);

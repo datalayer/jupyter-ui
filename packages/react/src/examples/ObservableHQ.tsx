@@ -11,7 +11,7 @@ import { Notebook } from '../components/notebook/Notebook';
 import { Jupyter } from '../jupyter/Jupyter';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
-const ObservableHQ = () => {
+const ObservableHQExample = () => {
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
     <Jupyter defaultKernelName="deno">
@@ -29,4 +29,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<ObservableHQ />);
+root.render(<ObservableHQExample />);

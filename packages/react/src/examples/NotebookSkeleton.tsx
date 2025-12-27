@@ -14,11 +14,7 @@ import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolba
 
 const NOTEBOOK_ID = 'notebook-id';
 
-const div = document.createElement('div');
-document.body.appendChild(div);
-const root = createRoot(div);
-
-root.render(
+const NotebookSkeletonExample = () => (
   <Jupyter skeleton={<ContentLoader count={3} />}>
     <Notebook
       path="ipywidgets.ipynb"
@@ -29,3 +25,9 @@ root.render(
     />
   </Jupyter>
 );
+
+const div = document.createElement('div');
+document.body.appendChild(div);
+const root = createRoot(div);
+
+root.render(<NotebookSkeletonExample />);

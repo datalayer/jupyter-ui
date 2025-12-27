@@ -18,7 +18,7 @@ import * as plotlyPlugins from 'jupyterlab-plotly/lib/jupyterlab-plugin';
 
 import * as plotlyMimeRenderers from 'jupyterlab-plotly/lib/plotly-renderer';
 
-const JupyterLabAppServiceManager = () => {
+const JupyterLabAppServiceManagerExample = () => {
   const [serviceManager, _] = useState(new ServiceManagerLess());
   const onJupyterLab = async (jupyterLabAdapter: JupyterLabAppAdapter) => {
     const jupyterLab = jupyterLabAdapter.jupyterLab;
@@ -55,6 +55,6 @@ const root = createRoot(div);
 root.render(
   <JupyterReactTheme>
     <h1>JupyterLab Application with Service Manager</h1>
-    <JupyterLabAppServiceManager />
+    <JupyterLabAppServiceManagerExample />
   </JupyterReactTheme>
 );

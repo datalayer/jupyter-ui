@@ -99,10 +99,12 @@ export const loadJupyterConfig = (
     lite,
     terminals,
   } = props;
+  /*
   if (config) {
     // console.log('Returning existing Jupyter React config', config);
     return config;
   }
+  */
   config = {
     jupyterServerUrl: jupyterServerUrl ?? DEFAULT_JUPYTER_SERVER_URL,
     jupyterServerToken: jupyterServerToken ?? DEFAULT_JUPYTER_SERVER_TOKEN,
@@ -140,8 +142,8 @@ export const loadJupyterConfig = (
   if (lite) {
     setJupyterServerUrl(location.protocol + '//' + location.host);
   }
-  if (!config.insideJupyterLab) {
-    // If not inside JupyterLab, mimick JupyterLab behavior...
+  if (!config.insideJupyterLab && !lite) {
+    // If not inside JupyterLab and not lite, mimick JupyterLab behavior...
     PageConfig.setOption('baseUrl', getJupyterServerUrl());
     PageConfig.setOption('wsUrl', getJupyterServerUrl().replace(/^http/, 'ws'));
     PageConfig.setOption('token', getJupyterServerToken());

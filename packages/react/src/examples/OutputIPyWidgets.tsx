@@ -13,10 +13,10 @@ import { view, state } from './notebooks/OutputIPyWidgetsExample';
 
 const OutputIPyWidgetsExample = () => {
   return (
-    <>
+    <JupyterReactTheme>
       <Text as="h1">Output IPyWidgets</Text>
       <OutputIPyWidgets view={view} state={state} />
-    </>
+    </JupyterReactTheme>
   );
 };
 
@@ -24,8 +24,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 
 const root = createRoot(div);
-root.render(
-  <JupyterReactTheme>
-    <OutputIPyWidgetsExample />
-  </JupyterReactTheme>
-);
+root.render(<OutputIPyWidgetsExample />);

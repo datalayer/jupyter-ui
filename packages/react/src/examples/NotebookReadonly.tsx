@@ -10,16 +10,17 @@ import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
-const NotebookReadonly = () => {
+import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
+
+const NotebookReadonlyExample = () => {
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
     <JupyterReactTheme>
       <Notebook
         readonly
         serverless
-        nbformat={nbformat}
+        nbformat={NBFORMAT}
         extensions={extensions}
         id="notebook-model-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
@@ -33,4 +34,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookReadonly />);
+root.render(<NotebookReadonlyExample />);

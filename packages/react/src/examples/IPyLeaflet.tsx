@@ -11,13 +11,14 @@ import { Notebook } from '../components/notebook/Notebook';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
-const IPyLeaflet = () => {
+const IPyLeafletExample = () => {
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
     <JupyterReactTheme>
       <Notebook
-        path="ipyleaflet.ipynb"
         id="notebook-ipyleaflet-id"
+        startDefaultKernel
+        path="ipyleaflet.ipynb"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         extensions={extensions}
         Toolbar={NotebookToolbar}
@@ -30,4 +31,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<IPyLeaflet />);
+root.render(<IPyLeafletExample />);

@@ -5,7 +5,7 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import { Box } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import Console from '../components/console/Console';
 
@@ -15,7 +15,7 @@ const root = createRoot(div);
 
 root.render(
   <JupyterReactTheme>
-    <Box as="h1">A Jupyter Console</Box>
+    <Box as="h1">Console</Box>
     <Console code={"print('👋 Hello Jupyter Console')"} />
   </JupyterReactTheme>
 );

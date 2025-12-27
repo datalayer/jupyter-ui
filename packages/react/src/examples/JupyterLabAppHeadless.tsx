@@ -35,7 +35,7 @@ const PATHS = ['ipywidgets.ipynb', 'plotly.ipynb'];
 
 const PATH_INDEX = 1;
 
-const JupyterLabAppHeadless = () => {
+const JupyterLabAppHeadlessExample = () => {
   const [notebookBoxPanel, setNotebookBoxPanel] = useState<BoxPanel>();
   const [theme, setTheme] = useState<Colormode>('light');
   const [jupyterLabAdapter, setJupyterlabAdapter] =
@@ -142,4 +142,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<JupyterLabAppHeadless />);
+root.render(<JupyterLabAppHeadlessExample />);

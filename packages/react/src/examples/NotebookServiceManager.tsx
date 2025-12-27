@@ -19,9 +19,10 @@ import {
 import { createServerSettings } from '../jupyter/JupyterContext';
 import { JupyterReactTheme } from '../theme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
-const NotebookServiceManager = () => {
+import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
+
+const NotebookServiceManagerExample = () => {
   const [serverless, setServerless] = useState(true);
   const [readonly, setReadonly] = useState(true);
   const [serviceManager, setServiceManager] = useState(
@@ -57,7 +58,7 @@ const NotebookServiceManager = () => {
       </Box>
       <Notebook
         extensions={extensions}
-        nbformat={nbformat as INotebookContent}
+        nbformat={NBFORMAT as INotebookContent}
         serviceManager={serviceManager}
         serverless={serverless}
         readonly={readonly}
@@ -73,4 +74,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookServiceManager />);
+root.render(<NotebookServiceManagerExample />);

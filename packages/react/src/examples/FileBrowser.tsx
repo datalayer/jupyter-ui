@@ -7,13 +7,13 @@
 import { createRoot } from 'react-dom/client';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { useJupyter } from './../jupyter/JupyterContext';
-import FileBrowser from '../components/filebrowser/FileBrowser';
+import { FileBrowser } from '../components/filebrowser/FileBrowser';
 
 const FileBrowserExample = () => {
   const { serviceManager } = useJupyter();
   return serviceManager ? (
     <>
-      <h1>Jupyter React - File Browser Example</h1>
+      <h1>File Browser Example</h1>
       <FileBrowser serviceManager={serviceManager} />
     </>
   ) : (

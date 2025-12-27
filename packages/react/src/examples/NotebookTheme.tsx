@@ -4,17 +4,18 @@
  * MIT License
  */
 
-import { INotebookContent } from '@jupyterlab/nbformat';
-import { Text, ToggleSwitch, theme as primerTheme } from '@primer/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { INotebookContent } from '@jupyterlab/nbformat';
+import { Text, ToggleSwitch, theme as primerTheme } from '@primer/react';
 import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
 import { jupyterLabTheme, JupyterReactTheme } from '../theme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
-const NotebookTheme = () => {
+import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
+
+const NotebookThemeExample = () => {
   const [theme, setTheme] = useState<any>(jupyterLabTheme);
   const [isOn, setIsOn] = useState(false);
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
@@ -52,7 +53,7 @@ const NotebookTheme = () => {
           aria-labelledby="switch-label"
         />
         <Notebook
-          nbformat={nbformat as INotebookContent}
+          nbformat={NBFORMAT as INotebookContent}
           id="notebook-model-id"
           height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
           extensions={extensions}
@@ -68,4 +69,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookTheme />);
+root.render(<NotebookThemeExample />);

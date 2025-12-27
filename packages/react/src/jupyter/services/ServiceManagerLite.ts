@@ -14,7 +14,7 @@ export const createLiteServiceManager = (
     // Load the browser kernel.
     const mod =
       typeof lite === 'boolean'
-        ? await import('@jupyterlite/pyodide-kernel-extension')
+        ? await import('../lite/pyodide-kernel-extension/index')
         : await lite;
     // Load the module manually to get the list of plugin IDs.
     let data = mod.default;
@@ -43,6 +43,5 @@ export const createLiteServiceManager = (
     console.log('Lite Service Manager is created', liteServiceManager);
     return liteServiceManager;
   });
-  // TODO remove `as any` once we bump to jupyterlite 0.6.x.
-  return liteServiceManager as any;
+  return liteServiceManager;
 };

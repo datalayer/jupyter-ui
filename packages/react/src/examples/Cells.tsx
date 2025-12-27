@@ -5,25 +5,29 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import { Box } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
-import Cell from '../components/cell/Cell';
+import { useJupyter } from '../jupyter/JupyterContext';
+import { Cell } from '../components/cell/Cell';
+
+const CellsExample = () => {
+  const { defaultKernel } = useJupyter({ startDefaultKernel: true });
+  return (
+    <JupyterReactTheme>
+      <Box as="h1">Cells Example</Box>
+      {defaultKernel && (
+        <>
+          <Cell source={'print("Hello from Cell 1")'} kernel={defaultKernel} />
+          <Cell source={'print("Hello from Cell 2")'} kernel={defaultKernel} />
+          <Cell source={'print("Hello from Cell 3")'} kernel={defaultKernel} />
+        </>
+      )}
+    </JupyterReactTheme>
+  );
+};
 
 const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(
-  <JupyterReactTheme>
-    <Box as="h1">Jupyter Cells wrapped in a single Jupyter Context</Box>
-    <Cell id="cell-1" source="x=1" />
-    <Cell id="cell-2" source="print(x)" />
-    <Cell
-      id="cell-3"
-      source={`import random
-
-r = random.randint(0,9)`}
-    />
-    <Cell source="print(f'Random integer: {r}')" />
-  </JupyterReactTheme>
-);
+root.render(<CellsExample />);
