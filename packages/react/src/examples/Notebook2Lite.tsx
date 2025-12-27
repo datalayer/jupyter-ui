@@ -45,14 +45,22 @@ const Notebook2LiteExample = () => {
     <JupyterReactTheme>
       {serviceManager && defaultKernel && (
         <>
-          <KernelIndicator
-            kernel={defaultKernel.connection}
-            label="Kernel Connection Indicator"
-          />
-          <KernelIndicator
-            kernel={session?.kernel}
-            label="Kernel Session Indicator"
-          />
+          <div
+            style={{
+              display: 'inline-flex',
+              gap: '12px',
+              alignItems: 'center',
+            }}
+          >
+            <KernelIndicator
+              kernel={defaultKernel.connection}
+              label="Kernel Connection Indicator"
+            />
+            <KernelIndicator
+              kernel={session?.kernel}
+              label="Kernel Session Indicator"
+            />
+          </div>
           <Notebook2
             id="notebook2-nbformat-id"
             kernel={defaultKernel}

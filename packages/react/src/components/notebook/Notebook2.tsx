@@ -166,8 +166,6 @@ export function Notebook2(
     startDefaultKernel,
   });
 
-  console.log('---DLA useKernelId:', kernelId);
-
   const model = useNotebookModel({
     collaborationProvider,
     nbformat,

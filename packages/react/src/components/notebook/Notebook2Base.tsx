@@ -415,33 +415,36 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
   // Context
   const [context, setContext] = useState<Context<NotebookModel> | null>(null);
   useEffect(() => {
-    const factory = new DummyModelFactory(model);
-    const thisContext = new Context<NotebookModel>({
-      factory,
-      manager: serviceManager ?? (new NoServiceManager() as any),
-      path,
-      kernelPreference: {
-        shouldStart: false,
-        canStart: false,
-        autoStartDefault: false,
-        shutdownOnDispose: false,
-      },
-    });
-    initializeContext(
-      thisContext,
-      id,
-      // Initialization must not trigger revert in case we set up the model content
-      path !== FALLBACK_NOTEBOOK_PATH ? path : undefined,
-      onSessionConnection,
-      !serviceManager
-    );
-    setContext(thisContext);
-    return () => {
-      thisContext.dispose();
-      factory.dispose();
-      setContext(context => (context === thisContext ? null : context));
-    };
-  }, [id, serviceManager, model, path]);
+    if (kernelId) {
+      const factory = new DummyModelFactory(model);
+      const thisContext = new Context<NotebookModel>({
+        factory,
+        manager: serviceManager ?? (new NoServiceManager() as any),
+        path,
+        kernelPreference: {
+          id: kernelId,
+          shouldStart: false,
+          canStart: false,
+          autoStartDefault: false,
+          shutdownOnDispose: false,
+        },
+      });
+      initializeContext(
+        thisContext,
+        id,
+        // Initialization must not trigger revert in case we set up the model content
+        path !== FALLBACK_NOTEBOOK_PATH ? path : undefined,
+        onSessionConnection,
+        !serviceManager
+      );
+      setContext(thisContext);
+      return () => {
+        thisContext.dispose();
+        factory.dispose();
+        setContext(context => (context === thisContext ? null : context));
+      };
+    }
+  }, [id, kernelId, serviceManager, model, path]);
 
   // Set kernel
   useEffect(() => {
@@ -449,6 +452,11 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
       context.sessionContext.changeKernel({ id: kernelId }).catch(reason => {
         console.error('Failed to change kernel model.', reason);
       });
+      /*
+      context.sessionContext.changeKernel({ id: kernelId }).catch(reason => {
+        console.error('Failed to change kernel model.', reason);
+      });
+      */
     }
   }, [context, kernelId]);
 
@@ -1201,14 +1209,13 @@ function initializeContext(
 ) {
   const shuntContentManager = path ? false : true;
 
-  // TODO we should implement our own thing rather this ugly Javascript patch.
+  // TODO we should implement our own thing rather this Javascript patch.
   // These are fixes on the Context and the SessionContext to have more control on the kernel launch.
   (context.sessionContext as any)._initialize = async (): Promise<boolean> => {
     const manager = context.sessionContext.sessionManager as SessionManager;
     await manager.ready;
     await manager.refreshRunning();
     const model = find(manager.running(), model => {
-      // !! we need to set the kernelPreference id
       return (
         model.kernel?.id === (context.sessionContext.kernelPreference.id ?? '')
       );
@@ -1227,7 +1234,7 @@ function initializeContext(
         });
         (context!.sessionContext as any)._handleNewSession(session);
         // Dispose the previous KernelConnection to avoid errors with Comms.
-        this._kernel?.connection?.dispose();
+        // this._kernel?.connection?.dispose();
       } catch (err) {
         void (context!.sessionContext as any)._handleSessionError(err);
         return Promise.reject(err);
