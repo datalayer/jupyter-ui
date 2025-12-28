@@ -199,6 +199,7 @@
     "@types/diff": "^7.0.2",
     "@types/jest": "^29.4.0",
     "@types/marked": "^4.0.1",
+    "@types/mime": "^3.0.1",
     "@types/node": "^22.14.1",
     "@types/plotly.js": "^2.12.31",
     "@types/react": "18.3.20",

@@ -1,7 +1,8 @@
 import { PromiseDelegate } from '@lumino/coreutils';
 import { ISignal, Signal } from '@lumino/signaling';
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
-import { IServiceWorkerManager, WORKER_NAME } from './tokens';
+// import { WORKER_NAME } from './tokens';
+import { IServiceWorkerManager } from './tokens';
 
 const VERSION = PageConfig.getOption('appVersion');
 const SW_PING_ENDPOINT = '/api/service-worker-heartbeat';
