@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyter-react",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Jupyter React - React.js components 100% compatible with Jupyter.",
   "license": "MIT",
   "main": "lib/index.js",

@@ -22,42 +22,43 @@ const { ENTRY } = require('./entries.js');
 export default defineConfig(({ mode }) => {
   return {
     plugins: [
-      // Serve /pypi/*.whl and /pypi/*.json files from local source
-      {
-        name: 'pypi-server',
-        enforce: 'pre',
-        configureServer(server) {
-          server.middlewares.use((req, res, next) => {
-            const url = req.url || '';
-            // Only handle /pypi/* requests
-            if (!url.startsWith('/pypi/')) return next();
-
-            const cleanUrl = decodeURIComponent(url.split('?')[0]);
-            const fileName = cleanUrl.replace('/pypi/', '');
-
-            // Serve from local pypi folder in source
-            const localPath = resolve(
-              __dirname,
-              'src/jupyter/lite/pyodide-kernel/pypi',
-              fileName
-            );
-
-            if (existsSync(localPath)) {
-              res.statusCode = 200;
-              if (fileName.endsWith('.whl')) {
-                res.setHeader('Content-Type', 'application/octet-stream');
-              } else if (fileName.endsWith('.json')) {
-                res.setHeader('Content-Type', 'application/json');
-              }
-              createReadStream(localPath).pipe(res);
-              return;
-            }
-
-            console.log('[pypi-server] Not found:', localPath);
-            next();
-          });
-        },
-      },
+      // NOTE: pypi-server plugin commented out - wheels are now served from CDN
+      // Uncomment to serve /pypi/*.whl and /pypi/*.json files from local source
+      // {
+      //   name: 'pypi-server',
+      //   enforce: 'pre',
+      //   configureServer(server) {
+      //     server.middlewares.use((req, res, next) => {
+      //       const url = req.url || '';
+      //       // Only handle /pypi/* requests
+      //       if (!url.startsWith('/pypi/')) return next();
+      //
+      //       const cleanUrl = decodeURIComponent(url.split('?')[0]);
+      //       const fileName = cleanUrl.replace('/pypi/', '');
+      //
+      //       // Serve from local pypi folder in source
+      //       const localPath = resolve(
+      //         __dirname,
+      //         'src/jupyter/lite/pyodide-kernel/pypi',
+      //         fileName
+      //       );
+      //
+      //       if (existsSync(localPath)) {
+      //         res.statusCode = 200;
+      //         if (fileName.endsWith('.whl')) {
+      //           res.setHeader('Content-Type', 'application/octet-stream');
+      //         } else if (fileName.endsWith('.json')) {
+      //           res.setHeader('Content-Type', 'application/json');
+      //         }
+      //         createReadStream(localPath).pipe(res);
+      //         return;
+      //       }
+      //
+      //       console.log('[pypi-server] Not found:', localPath);
+      //       next();
+      //     });
+      //   },
+      // },
       react(),
       treatAsCommonjs(),
       // Plugin to handle dynamic ?raw CSS imports from node_modules (JupyterLab themes)
