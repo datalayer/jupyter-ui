@@ -18,7 +18,7 @@
           "size": 2731,
           "upload_time": "2025-01-15T14:41:51.279101Z",
           "upload_time_iso_8601": "2025-01-15T14:41:51.279101Z",
-          "url": "./ipykernel-6.9.2-py3-none-any.whl",
+          "url": "https://assets.datalayer.tech/pypi/ipykernel-6.9.2-py3-none-any.whl",
           "yanked": false,
           "yanked_reason": null
         }
@@ -44,7 +44,7 @@
           "size": 7233,
           "upload_time": "2025-01-15T14:41:51.279101Z",
           "upload_time_iso_8601": "2025-01-15T14:41:51.279101Z",
-          "url": "./piplite-0.5.1-py3-none-any.whl",
+          "url": "https://assets.datalayer.tech/pypi/piplite-0.5.1-py3-none-any.whl",
           "yanked": false,
           "yanked_reason": null
         }
@@ -70,7 +70,7 @@
           "size": 11009,
           "upload_time": "2025-01-15T14:41:51.279101Z",
           "upload_time_iso_8601": "2025-01-15T14:41:51.279101Z",
-          "url": "./pyodide_kernel-0.5.1-py3-none-any.whl",
+          "url": "https://assets.datalayer.tech/pypi/pyodide_kernel-0.5.1-py3-none-any.whl",
           "yanked": false,
           "yanked_reason": null
         }
@@ -96,7 +96,7 @@
           "size": 2369,
           "upload_time": "2025-01-15T14:41:51.280101Z",
           "upload_time_iso_8601": "2025-01-15T14:41:51.280101Z",
-          "url": "./widgetsnbextension-3.6.999-py3-none-any.whl",
+          "url": "https://assets.datalayer.tech/pypi/widgetsnbextension-3.6.999-py3-none-any.whl",
           "yanked": false,
           "yanked_reason": null
         }
@@ -118,7 +118,7 @@
           "size": 2370,
           "upload_time": "2025-01-15T14:41:51.280101Z",
           "upload_time_iso_8601": "2025-01-15T14:41:51.280101Z",
-          "url": "./widgetsnbextension-4.0.999-py3-none-any.whl",
+          "url": "https://assets.datalayer.tech/pypi/widgetsnbextension-4.0.999-py3-none-any.whl",
           "yanked": false,
           "yanked_reason": null
         }
