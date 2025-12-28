@@ -47,13 +47,11 @@ export const KernelExecuteLiteExample = () => {
     <JupyterReactTheme>
       <Box m={3}>
         <Heading>Kernel Execute Lite</Heading>
-        <Box ml={3} display="flex">
-          <Box>
-            <KernelIndicator
-              kernel={defaultKernel?.connection}
-              label="Kernel Indicator"
-            />
-          </Box>
+        <Box>
+          <KernelIndicator
+            kernel={defaultKernel?.connection}
+            label="Kernel Indicator"
+          />
         </Box>
         <Box>
           <Textarea

@@ -16,8 +16,9 @@ const NOTEBOOK_ID = 'notebook-id';
 const NotebookURLExample = () => (
   <JupyterReactTheme>
     <Notebook
-      url="https://raw.githubusercontent.com/datalayer/jupyter-ui/main/packages/react/src/examples/notebooks/IPyWidgetsExampleWithState.ipynb.json"
       id={NOTEBOOK_ID}
+      startDefaultKernel
+      url="https://raw.githubusercontent.com/datalayer/jupyter-ui/main/packages/react/src/examples/notebooks/IPyWidgetsExampleWithState.ipynb.json"
       height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
       extensions={[new CellSidebarExtension({ factory: CellSidebarButton })]}
       Toolbar={NotebookToolbar}

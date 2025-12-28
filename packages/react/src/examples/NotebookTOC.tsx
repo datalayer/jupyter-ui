@@ -18,7 +18,7 @@ import { JupyterLayoutFactory } from './extensions/toc/JupyterLayoutFactory';
 
 import NBFORMAT from './notebooks/NotebookToCExample.ipynb.json';
 
-const NotebookTocExample = () => {
+const NotebookTOCExample = () => {
   const [layout, setLayout] = useState<'react' | 'jupyter'>('jupyter');
 
   const extensions = useMemo(
@@ -60,4 +60,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookTocExample />);
+root.render(<NotebookTOCExample />);

@@ -255,6 +255,13 @@ export default defineConfig(({ mode }) => {
         // Pre-bundle comlink and coincident for worker communication
         'comlink',
         'coincident',
+        // Pre-bundle xterm packages for proper ESM interop
+        '@xterm/xterm',
+        '@xterm/addon-fit',
+        '@xterm/addon-webgl',
+        '@xterm/addon-canvas',
+        '@xterm/addon-web-links',
+        '@xterm/addon-search',
       ],
       esbuildOptions: {
         loader: {
