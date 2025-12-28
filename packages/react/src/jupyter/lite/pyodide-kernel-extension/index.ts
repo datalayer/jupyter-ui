@@ -11,7 +11,7 @@ import {
 import { IKernel, IKernelSpecs } from '../kernel';
 import { IBroadcastChannelWrapper } from '../contents';
 
-// @ts-ignore
+// @ts-expect-error - JSON import is not typed
 export * as KERNEL_SETTINGS_SCHEMA from '../../../../schema/kernel.v0.schema.json';
 
 import KERNEL_ICON_SVG_STR from '../../../../style/icons/pyodide.svg';
@@ -84,11 +84,14 @@ const kernel: JupyterLiteServerPlugin<void> = {
       },
       create: async (options: IKernel.IOptions): Promise<IKernel> => {
         const { PyodideKernel } = await import('@jupyterlite/pyodide-kernel');
-
+        /*
+        TODO Restore this...
         const mountDrive = !!(
           (serviceWorker?.enabled && broadcastChannel?.enabled) ||
           crossOriginIsolated
         );
+        */
+        const mountDrive = false;
 
         if (mountDrive) {
           console.info('Pyodide contents will be synced with Jupyter Contents');

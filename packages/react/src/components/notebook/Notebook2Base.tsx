@@ -554,7 +554,7 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
   // Update notebook store when adapter changes
   useEffect(() => {
     if (adapter) {
-      console.log(`[Notebook2Base] ✅ Registering adapter for notebook: ${id}`);
+      console.log(`[Notebook2Base] Registering adapter for notebook: ${id}`);
       console.log(
         `[Notebook2Base] Adapter has getCells:`,
         typeof adapter.getCells

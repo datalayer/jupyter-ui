@@ -4,10 +4,11 @@
  * MIT License
  */
 
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { treatAsCommonjs } from 'vite-plugin-treat-umd-as-commonjs';
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
+import { transformSync } from 'esbuild';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { createRequire } from 'module';
@@ -20,18 +21,195 @@ const require = createRequire(import.meta.url);
 const { ENTRY } = require('./entries.js');
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '');
-
-  //  const IS_LOCAL_JUPYTER_SERVER = env.LOCAL_JUPYTER_SERVER === 'true';
-  //  const IS_NO_CONFIG = env.NO_CONFIG === 'true';
-
-  // Determine which index.html to use based on environment
-  // Note: Vite uses index.html at root, so we'll handle config via env vars instead
-
   return {
     plugins: [
       react(),
       treatAsCommonjs(),
+      // Serve pyodide workers as classic scripts to support importScripts
+      {
+        name: 'pyodide-worker-serve-raw',
+        enforce: 'pre',
+        configureServer(server) {
+          server.middlewares.use((req, res, next) => {
+            const url = req.url || '';
+            const isPyodideWorker =
+              url.includes('comlink.worker.js') ||
+              url.includes('coincident.worker.js') ||
+              url.includes('worker.js?worker_file');
+
+            if (!isPyodideWorker) {
+              return next();
+            }
+
+            // Strip type=module to avoid module treatment
+            const cleanUrl = url
+              .replace('&type=module', '')
+              .replace('?type=module&', '?')
+              .replace('?type=module', '')
+              .split('?')[0];
+
+            const fileName = cleanUrl.split('/').pop();
+            if (!fileName) {
+              return next();
+            }
+
+            const candidatePaths = [
+              resolve(
+                __dirname,
+                'node_modules',
+                '@jupyterlite/pyodide-kernel/lib',
+                fileName
+              ),
+              resolve(
+                __dirname,
+                '../../node_modules',
+                '@jupyterlite/pyodide-kernel/lib',
+                fileName
+              ),
+              resolve(
+                __dirname,
+                '../../../node_modules',
+                '@jupyterlite/pyodide-kernel/lib',
+                fileName
+              ),
+              resolve(
+                __dirname,
+                '../../../../node_modules',
+                '@jupyterlite/pyodide-kernel/lib',
+                fileName
+              ),
+              resolve(
+                __dirname,
+                '../../../../../node_modules',
+                '@jupyterlite/pyodide-kernel/lib',
+                fileName
+              ),
+              // Vite prebundled deps location
+              resolve(__dirname, 'node_modules', '.vite', 'deps', fileName),
+            ];
+
+            for (const candidate of candidatePaths) {
+              if (existsSync(candidate)) {
+                const content = readFileSync(candidate, 'utf-8');
+                // Force classic worker by transpiling to IIFE
+                const { code } = transformSync(content, {
+                  format: 'iife',
+                  target: 'es2019',
+                });
+                res.setHeader('Content-Type', 'application/javascript');
+                res.statusCode = 200;
+                res.end(code);
+                return;
+              }
+            }
+
+            // Fall through to next handler if not found
+            next();
+          });
+        },
+      },
+      // Serve wheel files as binary without transformation (prevents corruption)
+      {
+        name: 'wheel-serve-binary',
+        enforce: 'pre',
+        configureServer(server) {
+          server.middlewares.use((req, res, next) => {
+            const url = req.url || '';
+            if (!url.includes('.whl')) {
+              return next();
+            }
+
+            // Strip query and decode path
+            const cleanUrl = decodeURIComponent(url.split('?')[0]);
+
+            // Handle Vite /@fs/ absolute path prefix
+            const absoluteFromFs = cleanUrl.startsWith('/@fs/')
+              ? cleanUrl.replace('/@fs', '')
+              : null;
+
+            const fileName = cleanUrl.split('/').pop();
+            const candidatePaths = [
+              absoluteFromFs,
+              fileName
+                ? resolve(
+                    __dirname,
+                    'node_modules',
+                    '@jupyterlite/pyodide-kernel/pypi',
+                    fileName
+                  )
+                : null,
+              fileName
+                ? resolve(
+                    __dirname,
+                    '../../node_modules',
+                    '@jupyterlite/pyodide-kernel/pypi',
+                    fileName
+                  )
+                : null,
+              fileName
+                ? resolve(
+                    __dirname,
+                    '../../../node_modules',
+                    '@jupyterlite/pyodide-kernel/pypi',
+                    fileName
+                  )
+                : null,
+              fileName
+                ? resolve(
+                    __dirname,
+                    '../../../../node_modules',
+                    '@jupyterlite/pyodide-kernel/pypi',
+                    fileName
+                  )
+                : null,
+              fileName
+                ? resolve(
+                    __dirname,
+                    '../../../../../node_modules',
+                    '@jupyterlite/pyodide-kernel/pypi',
+                    fileName
+                  )
+                : null,
+            ].filter(Boolean) as string[];
+
+            for (const candidate of candidatePaths) {
+              if (existsSync(candidate)) {
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/octet-stream');
+                const stream = createReadStream(candidate);
+                stream.pipe(res);
+                stream.on('error', () => next());
+                return;
+              }
+            }
+
+            next();
+          });
+        },
+      },
+      // Plugin to intercept pyodide kernel worker requests and serve as classic workers
+      {
+        name: 'pyodide-worker-classic',
+        enforce: 'pre',
+        configureServer(server) {
+          server.middlewares.use((req, res, next) => {
+            // Intercept worker file requests with type=module and redirect without it
+            if (
+              req.url &&
+              req.url.includes('worker') &&
+              req.url.includes('type=module')
+            ) {
+              // Remove type=module from the URL and re-request
+              const newUrl = req.url
+                .replace('&type=module', '')
+                .replace('?type=module&', '?')
+                .replace('?type=module', '');
+              req.url = newUrl;
+            }
+            next();
+          });
+        },
+      },
       // Plugin to handle dynamic ?raw CSS imports from node_modules (JupyterLab themes)
       {
         name: 'jupyterlab-theme-css-raw',
@@ -74,7 +252,6 @@ export default defineConfig(({ mode }) => {
                 // Try next path
               }
             }
-
             console.warn(`Could not load theme CSS: ${cssPath}`);
             console.warn(`Tried paths:`, possiblePaths);
             return 'export default "";';
@@ -132,6 +309,49 @@ export default defineConfig(({ mode }) => {
           return null;
         },
       },
+      // Plugin to handle pyodide kernel workers - ensure they're not treated as ES modules
+      {
+        name: 'pyodide-worker-handler',
+        enforce: 'post',
+        transform(code, id) {
+          // Transform any code that creates workers with type: 'module'
+          if (
+            code.includes('new Worker') &&
+            code.includes('type') &&
+            (id.includes('@jupyterlite/pyodide-kernel') ||
+              id.includes('comlink') ||
+              id.includes('coincident'))
+          ) {
+            // Remove type: "module" or type: 'module' from new Worker calls
+            let transformed = code.replace(
+              /new Worker\(([^)]+),\s*\{\s*type:\s*["']module["']\s*\}/g,
+              'new Worker($1)'
+            );
+            // Also handle cases where type: "module" is in the options object
+            transformed = transformed.replace(
+              /type:\s*["']module["']\s*,?\s*/g,
+              ''
+            );
+            if (transformed !== code) {
+              return { code: transformed, map: null };
+            }
+          }
+          return null;
+        },
+      },
+      // Plugin to handle worker file requests - strip type=module from URLs
+      {
+        name: 'worker-url-handler',
+        enforce: 'pre',
+        resolveId(source, importer) {
+          // Remove type=module from worker URLs
+          if (source.includes('?') && source.includes('type=module')) {
+            const cleaned = source.replace(/[?&]type=module/, '');
+            return this.resolve(cleaned, importer, { skipSelf: true });
+          }
+          return null;
+        },
+      },
       // Plugin to inject the ENTRY into index.html
       {
         name: 'inject-entry',
@@ -143,24 +363,9 @@ export default defineConfig(({ mode }) => {
           return html.replace(/src="[^"]+\.tsx"/, `src="${resolvedEntry}"`);
         },
       },
-      // Plugin to serve service-worker.js at root (like webpack's asset/resource rule)
-      {
-        name: 'serve-service-worker',
-        configureServer(server) {
-          server.middlewares.use((req, res, next) => {
-            // Serve the service worker TypeScript file as JavaScript
-            if (req.url?.startsWith('/service-worker.js')) {
-              req.url = '/src/jupyter/lite/server/service-worker.ts';
-            }
-            next();
-          });
-        },
-      },
     ],
-
     // Include these file types as assets
     assetsInclude: ['**/*.whl', '**/*.raw.css'],
-
     resolve: {
       extensions: ['.tsx', '.ts', '.jsx', '.js'],
       alias: [
@@ -170,20 +375,17 @@ export default defineConfig(({ mode }) => {
         { find: 'stream', replacement: 'stream-browserify' },
       ],
     },
-
     // Configure how CommonJS modules are handled
     ssr: {
       // Force these CommonJS packages to be bundled properly
       noExternal: ['mime'],
     },
-
     // Define global variables
     define: {
       global: 'globalThis',
       __webpack_public_path__: '""',
       'process.env': {},
     },
-
     server: {
       port: 3208,
       open: false,
@@ -192,12 +394,11 @@ export default defineConfig(({ mode }) => {
         // Allow serving files from node_modules (needed for dynamic CSS imports)
         allow: ['..'],
       },
+      middlewareMode: false,
     },
-
     preview: {
       port: 3208,
     },
-
     build: {
       outDir: 'dist',
       sourcemap: mode !== 'production',
@@ -225,7 +426,6 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
-
     optimizeDeps: {
       include: [
         'react',
@@ -244,7 +444,7 @@ export default defineConfig(({ mode }) => {
         // Force pre-bundle jupyterlab packages to ensure single instances
         '@jupyterlab/coreutils',
         '@jupyterlab/services',
-        '@jupyterlite/pyodide-kernel',
+        // '@jupyterlite/pyodide-kernel',
       ],
       esbuildOptions: {
         loader: {
@@ -261,14 +461,24 @@ export default defineConfig(({ mode }) => {
         // Exclude theme CSS to allow ?raw imports to work
         '@jupyterlab/theme-light-extension',
         '@jupyterlab/theme-dark-extension',
-        // Exclude JupyterLite packages for better debugging (source maps)
-        // '@jupyterlite/kernel',
-        // '@jupyterlite/pyodide-kernel',
-        // '@jupyterlite/session',
-        // '@jupyterlite/contents',
+        // Exclude packages for better debugging (source maps)
+        // '...',
+        // Exclude packages with worker files to prevent dep optimization issues
+        '@jupyterlite/pyodide-kernel',
+        'comlink',
       ],
     },
-
+    // Worker configuration
+    worker: {
+      format: 'iife',
+      plugins: () => [],
+      rollupOptions: {
+        output: {
+          entryFileNames: '[name].js',
+          format: 'iife',
+        },
+      },
+    },
     // CSS handling
     css: {
       devSourcemap: true,
