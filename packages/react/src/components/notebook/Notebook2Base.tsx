@@ -50,7 +50,7 @@ import {
 } from '@jupyterlab/rendermime';
 import type {
   Contents,
-  Kernel,
+  Kernel as JupyterKernel,
   ServiceManager,
   Session,
   SessionManager,
@@ -67,6 +67,7 @@ import { Banner } from '@primer/react/experimental';
 import { EditorView } from 'codemirror';
 import {
   ICollaborationProvider,
+  Kernel,
   WIDGET_MIMETYPE,
   WidgetLabRenderer,
   WidgetManager,
@@ -172,12 +173,6 @@ export interface INotebook2BaseProps {
  * This component is not connected to any React stores.
  */
 export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
-  console.log('[Notebook2Base] Component rendering with props:', {
-    hasInlineProviders: !!props.inlineProviders,
-    inlineProvidersCount: props.inlineProviders?.length,
-    inlineProviders: props.inlineProviders,
-  });
-
   const {
     commands,
     extensions = DEFAULT_EXTENSIONS,
@@ -187,6 +182,13 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
     model,
     onSessionConnection,
   } = props;
+
+  console.log('[Notebook2Base] Component rendering with props:', {
+    hasInlineProviders: !!props.inlineProviders,
+    inlineProvidersCount: props.inlineProviders?.length,
+    inlineProviders: props.inlineProviders,
+    kernelId,
+  });
 
   const [isLoading, setIsLoading] = useState(true);
   const [extensionComponents, setExtensionComponents] = useState(
@@ -413,33 +415,36 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
   // Context
   const [context, setContext] = useState<Context<NotebookModel> | null>(null);
   useEffect(() => {
-    const factory = new DummyModelFactory(model);
-    const thisContext = new Context<NotebookModel>({
-      factory,
-      manager: serviceManager ?? (new NoServiceManager() as any),
-      path,
-      kernelPreference: {
-        shouldStart: false,
-        canStart: false,
-        autoStartDefault: false,
-        shutdownOnDispose: false,
-      },
-    });
-    initializeContext(
-      thisContext,
-      id,
-      // Initialization must not trigger revert in case we set up the model content
-      path !== FALLBACK_NOTEBOOK_PATH ? path : undefined,
-      onSessionConnection,
-      !serviceManager
-    );
-    setContext(thisContext);
-    return () => {
-      thisContext.dispose();
-      factory.dispose();
-      setContext(context => (context === thisContext ? null : context));
-    };
-  }, [id, serviceManager, model, onSessionConnection, path]);
+    if (kernelId) {
+      const factory = new DummyModelFactory(model);
+      const thisContext = new Context<NotebookModel>({
+        factory,
+        manager: serviceManager ?? (new NoServiceManager() as any),
+        path,
+        kernelPreference: {
+          id: kernelId,
+          shouldStart: false,
+          canStart: false,
+          autoStartDefault: false,
+          shutdownOnDispose: false,
+        },
+      });
+      initializeContext(
+        thisContext,
+        id,
+        // Initialization must not trigger revert in case we set up the model content
+        path !== FALLBACK_NOTEBOOK_PATH ? path : undefined,
+        onSessionConnection,
+        !serviceManager
+      );
+      setContext(thisContext);
+      return () => {
+        thisContext.dispose();
+        factory.dispose();
+        setContext(context => (context === thisContext ? null : context));
+      };
+    }
+  }, [id, kernelId, serviceManager, model, path]);
 
   // Set kernel
   useEffect(() => {
@@ -447,6 +452,11 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
       context.sessionContext.changeKernel({ id: kernelId }).catch(reason => {
         console.error('Failed to change kernel model.', reason);
       });
+      /*
+      context.sessionContext.changeKernel({ id: kernelId }).catch(reason => {
+        console.error('Failed to change kernel model.', reason);
+      });
+      */
     }
   }, [context, kernelId]);
 
@@ -544,7 +554,7 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
   // Update notebook store when adapter changes
   useEffect(() => {
     if (adapter) {
-      console.log(`[Notebook2Base] ✅ Registering adapter for notebook: ${id}`);
+      console.log(`[Notebook2Base] Registering adapter for notebook: ${id}`);
       console.log(
         `[Notebook2Base] Adapter has getCells:`,
         typeof adapter.getCells
@@ -772,9 +782,13 @@ export function useKernelId(
   options:
     | {
         /**
+         * Kernel to connect to
+         */
+        kernel?: Kernel;
+        /**
          * Kernels manager
          */
-        kernels?: Kernel.IManager;
+        kernels?: JupyterKernel.IManager;
         /**
          * Kernel ID to connect to
          *
@@ -791,63 +805,92 @@ export function useKernelId(
       }
     | undefined = {}
 ): string | undefined {
-  const { kernels, requestedKernelId, startDefaultKernel = false } = options;
+  const {
+    kernel,
+    kernels,
+    requestedKernelId,
+    startDefaultKernel = false,
+  } = options;
+
+  // Track the kernel prop ID as a string to avoid object reference issues
+  const kernelPropId = kernel?.id;
 
   // Define the kernel to be used.
   // - Check the provided kernel id exists
   // - If no kernel found, start a new one if required
-  const [kernelId, setKernelId] = useState<string | undefined>(undefined);
+  const [kernelId, setKernelId] = useState<string | undefined>(kernelPropId);
+  // Track if we started a connection (to know if we should dispose it)
+  const [startedConnection, setStartedConnection] = useState<
+    JupyterKernel.IKernelConnection | undefined
+  >(undefined);
+
   useEffect(() => {
     let isMounted = true;
-    let connection: Kernel.IKernelConnection | undefined;
+
+    // If a kernel is provided via props, use its ID
+    if (kernelPropId) {
+      setKernelId(prev => (prev !== kernelPropId ? kernelPropId : prev));
+      return;
+    }
+
+    // No kernel provided, check if we need to find or start one
     if (kernels) {
       (async () => {
-        let newKernelId: string | undefined;
+        let foundKernelId: string | undefined;
         await kernels.ready;
+
+        // Check if requested kernel exists
         if (requestedKernelId) {
           for (const model of kernels.running()) {
             if (model.id === requestedKernelId) {
-              newKernelId = requestedKernelId;
+              foundKernelId = requestedKernelId;
               break;
             }
           }
         }
 
-        if (!newKernelId && startDefaultKernel && isMounted) {
+        // Start a new kernel if none found and requested
+        if (!foundKernelId && startDefaultKernel && isMounted) {
           console.log('Starting new kernel.');
-          connection = await kernels.startNew();
+          const connection = await kernels.startNew();
           if (isMounted) {
-            newKernelId = connection.id;
+            foundKernelId = connection.id;
+            setStartedConnection(connection);
           } else {
             connection.dispose();
           }
         }
 
         if (isMounted) {
-          setKernelId(newKernelId);
+          setKernelId(prev => (prev !== foundKernelId ? foundKernelId : prev));
         }
       })();
     }
 
     return () => {
       isMounted = false;
-      if (connection) {
-        // A new kernel was started
-        console.log(`Shutting down kernel '${connection.id}'.`);
-        connection
+    };
+  }, [kernels, kernelPropId, requestedKernelId, startDefaultKernel]);
+
+  // Cleanup: shutdown the kernel we started when component unmounts
+  useEffect(() => {
+    return () => {
+      if (startedConnection) {
+        console.log(`Shutting down kernel '${startedConnection.id}'.`);
+        startedConnection
           .shutdown()
           .catch(reason => {
             console.warn(
-              `Failed to shutdown kernel '${connection?.id}'.`,
+              `Failed to shutdown kernel '${startedConnection?.id}'.`,
               reason
             );
           })
           .finally(() => {
-            connection?.dispose();
+            startedConnection?.dispose();
           });
       }
     };
-  }, [kernels, requestedKernelId, startDefaultKernel]);
+  }, [startedConnection]);
 
   return kernelId;
 }
@@ -1187,14 +1230,13 @@ function initializeContext(
 ) {
   const shuntContentManager = path ? false : true;
 
-  // TODO we should implement our own thing rather this ugly Javascript patch.
+  // TODO we should implement our own thing rather this Javascript patch.
   // These are fixes on the Context and the SessionContext to have more control on the kernel launch.
   (context.sessionContext as any)._initialize = async (): Promise<boolean> => {
     const manager = context.sessionContext.sessionManager as SessionManager;
     await manager.ready;
     await manager.refreshRunning();
     const model = find(manager.running(), model => {
-      // !! we need to set the kernelPreference id
       return (
         model.kernel?.id === (context.sessionContext.kernelPreference.id ?? '')
       );
@@ -1212,8 +1254,8 @@ function initializeContext(
           },
         });
         (context!.sessionContext as any)._handleNewSession(session);
-        // Dispose the previous KernelConnection to avoid errors with Comms.
-        this._kernel?.connection?.dispose();
+        // TODO Dispose the previous KernelConnection to avoid errors with Comms.
+        // this._kernel?.connection?.dispose();
       } catch (err) {
         void (context!.sessionContext as any)._handleSessionError(err);
         return Promise.reject(err);
@@ -1309,8 +1351,8 @@ function initializeContext(
     (
       _,
       args: IChangedArgs<
-        Kernel.IKernelConnection | null,
-        Kernel.IKernelConnection | null,
+        JupyterKernel.IKernelConnection | null,
+        JupyterKernel.IKernelConnection | null,
         'kernel'
       >
     ) => {

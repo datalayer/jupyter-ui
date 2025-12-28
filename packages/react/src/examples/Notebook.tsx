@@ -11,11 +11,7 @@ import { Notebook } from '../components/notebook/Notebook';
 import { JupyterReactTheme } from '../theme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
-const div = document.createElement('div');
-document.body.appendChild(div);
-const root = createRoot(div);
-
-root.render(
+const NotebookExample = () => (
   <JupyterReactTheme>
     <Notebook
       path="ipywidgets.ipynb"
@@ -27,3 +23,9 @@ root.render(
     />
   </JupyterReactTheme>
 );
+
+const div = document.createElement('div');
+document.body.appendChild(div);
+const root = createRoot(div);
+
+root.render(<NotebookExample />);

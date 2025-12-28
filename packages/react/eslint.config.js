@@ -4,11 +4,6 @@
  * MIT License
  */
 
-/*
- * Copyright (c) 2023-2025 Datalayer, Inc.
- * Distributed under the terms of the Modified BSD License.
- */
-
 // For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -42,6 +37,7 @@ export default tseslint.config(
       '*.config.js',
       'scripts/**/*.js',
       'gulpfile.js',
+      'entries.js',
     ],
   },
   {
@@ -69,8 +65,10 @@ export default tseslint.config(
         projectService: {
           allowDefaultProject: [
             '*.js',
+            '*.ts',
             '*.mjs',
             '*.cjs',
+            'entries.js',
             'playwright.config.ts',
           ],
         },

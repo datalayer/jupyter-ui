@@ -15,19 +15,21 @@ import {
 } from '../components';
 import { JupyterReactTheme } from '../theme';
 
-import nbformat from './notebooks/NotebookExample1.ipynb.json';
+import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
-const NotebookNbformat = () => {
-  const { serviceManager } = useJupyter();
+const NotebookNbformatExample = () => {
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
     <JupyterReactTheme>
-      {serviceManager ? (
+      {serviceManager && defaultKernel ? (
         <Notebook2
-          nbformat={nbformat as INotebookContent}
+          nbformat={NBFORMAT as INotebookContent}
           id="notebook-nbformat-id"
           serviceManager={serviceManager}
-          startDefaultKernel
+          kernel={defaultKernel}
           height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
           extensions={extensions}
           Toolbar={NotebookToolbar}
@@ -43,4 +45,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookNbformat />);
+root.render(<NotebookNbformatExample />);

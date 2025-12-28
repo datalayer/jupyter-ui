@@ -12,19 +12,19 @@ import { Notebook } from '../components/notebook/Notebook';
 import { ServiceManagerLess } from '../jupyter';
 import { JupyterReactTheme } from '../theme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-
 import { CellSidebarExtension } from '../components';
-import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
-const NotebookLess = () => {
+import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
+
+const NotebookLessExample = () => {
   const serviceManager = useMemo(() => new ServiceManagerLess(), []);
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
     <JupyterReactTheme>
-      <Box as="h1">A Jupyter Notebook with a Less Service Manager</Box>
+      <Box as="h1">Notebook with a Less Service Manager</Box>
       <Notebook
         serverless
-        nbformat={nbformat as INotebookContent}
+        nbformat={NBFORMAT as INotebookContent}
         id="notebook-less-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         readonly
@@ -40,4 +40,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookLess />);
+root.render(<NotebookLessExample />);

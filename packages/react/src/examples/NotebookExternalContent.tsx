@@ -4,20 +4,21 @@
  * MIT License
  */
 
-import { INotebookContent } from '@jupyterlab/nbformat';
-import { ZapIcon } from '@primer/octicons-react';
-import { Box, IconButton } from '@primer/react';
 import { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { CellSidebarExtension } from '../components';
+import { INotebookContent } from '@jupyterlab/nbformat';
+import { ZapIcon } from '@primer/octicons-react';
+import { IconButton } from '@primer/react';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { Notebook } from '../components/notebook/Notebook';
 import { notebookStore } from '../components/notebook/NotebookState';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
-import notebook from './notebooks/NotebookExample1.ipynb.json';
+import { CellSidebarExtension } from '../components';
+
+import NBMODEL from './notebooks/NotebookExample1.ipynb.json';
 
 const NOTEBOOK_ID = 'notebook-model-id';
 
-const NotebookExternalContent = () => {
+const NotebookExternalContentExample = () => {
   const [nbformat, setNbformat] = useState<INotebookContent>();
   const [updatedNbFormat, setUpdatedNbFormat] = useState<INotebookContent>();
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
@@ -27,7 +28,7 @@ const NotebookExternalContent = () => {
   useEffect(() => {
     // Set nbformat with any content.
     // This may come from an external storage that you fetch in this react effect.
-    setNbformat(notebook);
+    setNbformat(NBMODEL);
   }, []);
   useEffect(() => {
     if (model) {
@@ -43,28 +44,27 @@ const NotebookExternalContent = () => {
     alert('Save this notebook: ' + JSON.stringify(updatedNbFormat));
   };
   return nbformat ? (
-    <>
-      <Box>
-        <IconButton
-          variant="invisible"
-          size="small"
-          color="primary"
-          aria-label="Save"
-          title="Save"
-          onClick={e => {
-            e.preventDefault();
-            saveNotebook();
-          }}
-          icon={ZapIcon}
-        />
-      </Box>
+    <JupyterReactTheme>
+      <IconButton
+        variant="invisible"
+        size="small"
+        color="primary"
+        aria-label="Save"
+        title="Save"
+        icon={ZapIcon}
+        onClick={e => {
+          e.preventDefault();
+          saveNotebook();
+        }}
+      />
       <Notebook
-        nbformat={nbformat}
         id={NOTEBOOK_ID}
+        startDefaultKernel
+        nbformat={nbformat}
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         extensions={extensions}
       />
-    </>
+    </JupyterReactTheme>
   ) : (
     <></>
   );
@@ -74,8 +74,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(
-  <JupyterReactTheme>
-    <NotebookExternalContent />
-  </JupyterReactTheme>
-);
+root.render(<NotebookExternalContentExample />);

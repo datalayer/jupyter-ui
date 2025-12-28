@@ -14,7 +14,7 @@ import {
   CellSidebarButton,
 } from '../components';
 
-const Notebook2Collaborative = () => {
+const Notebook2CollaborativeExample = () => {
   const { serviceManager } = useJupyter();
   const extensions = useMemo(
     () => [new CellSidebarExtension({ factory: CellSidebarButton })],
@@ -47,4 +47,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<Notebook2Collaborative />);
+root.render(<Notebook2CollaborativeExample />);

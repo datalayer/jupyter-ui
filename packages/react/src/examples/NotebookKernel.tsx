@@ -8,12 +8,12 @@ import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Kernel, useJupyter } from '../jupyter';
 import { JupyterReactTheme } from '../theme';
-import { CellSidebarExtension } from '../components';
-import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
 import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
+import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
+import { CellSidebarExtension } from '../components/notebook/cell/sidebar/CellSidebarExtension';
 
-const NotebookKernel = () => {
+const NotebookKernelExample = () => {
   const { kernelManager, serviceManager } = useJupyter();
   const kernel = useMemo(() => {
     if (kernelManager && serviceManager) {
@@ -45,4 +45,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookKernel />);
+root.render(<NotebookKernelExample />);

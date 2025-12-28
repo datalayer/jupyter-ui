@@ -8,17 +8,22 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { Text, ToggleSwitch } from '@primer/react';
+import { useJupyter } from '../jupyter';
+import { JupyterReactTheme } from '../theme';
 import { CellSidebarExtension } from '../components';
-import { Notebook } from '../components/notebook/Notebook';
-import { Jupyter } from '../jupyter/Jupyter';
-import { Colormode } from '../theme/JupyterLabColormode';
+import { Notebook2 } from '../components/notebook/Notebook2';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-import nbformat from './notebooks/NotebookExample1.ipynb.json';
+import { useJupyterReactStore } from '../state';
 
-const NotebookColormode = () => {
-  const [colormode, setColormode] = useState<Colormode>('light');
+import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
+
+const NotebookColormodeExample = () => {
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
+  const { colormode, setColormode } = useJupyterReactStore();
   const [isOn, setIsOn] = useState(false);
-  const extensions = useMemo(() => [new CellSidebarExtension()], []);
+  const extensions = useMemo(() => [new CellSidebarExtension()], [colormode]);
   useEffect(() => {
     if (isOn) {
       setColormode('dark');
@@ -33,34 +38,36 @@ const NotebookColormode = () => {
     setIsOn(on);
   }, []);
   return (
-    <>
-      <Jupyter startDefaultKernel colormode={colormode}>
-        <Text
-          fontSize={2}
-          fontWeight="bold"
-          id="switch-label"
-          display="block"
-          mb={1}
-        >
-          {colormode === 'light' ? 'Light' : 'Dark'} Mode
-        </Text>
-        <ToggleSwitch
-          size="small"
-          onClick={onClick}
-          onChange={handleSwitchChange}
-          checked={isOn}
-          statusLabelPosition="end"
-          aria-labelledby="switch-label"
-        />
-        <Notebook
-          nbformat={nbformat as INotebookContent}
+    <JupyterReactTheme>
+      <Text
+        fontSize={2}
+        fontWeight="bold"
+        id="switch-label"
+        display="block"
+        mb={1}
+      >
+        {colormode === 'light' ? 'Light' : 'Dark'} Mode
+      </Text>
+      <ToggleSwitch
+        size="small"
+        onClick={onClick}
+        onChange={handleSwitchChange}
+        checked={isOn}
+        statusLabelPosition="end"
+        aria-labelledby="switch-label"
+      />
+      {serviceManager && defaultKernel && (
+        <Notebook2
           id="notebook-model-id"
+          nbformat={NBFORMAT as INotebookContent}
+          kernel={defaultKernel}
+          serviceManager={serviceManager}
           height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
           extensions={extensions}
           Toolbar={NotebookToolbar}
         />
-      </Jupyter>
-    </>
+      )}
+    </JupyterReactTheme>
   );
 };
 
@@ -68,4 +75,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookColormode />);
+root.render(<NotebookColormodeExample />);

@@ -114,21 +114,26 @@ export class Kernel {
         document.cookie = this.cookieName + '=' + path;
       }
       this._path = path;
-      this._session = await this._sessionManager.startNew(
-        {
-          name: this._kernelName,
-          path: this._path,
-          type: this._kernelType,
-          kernel: {
-            name: this._kernelSpecName,
+      try {
+        this._session = await this._sessionManager.startNew(
+          {
+            name: this._kernelName,
+            path: this._path,
+            type: this._kernelType,
+            kernel: {
+              name: this._kernelSpecName,
+            },
           },
-        },
-        {
-          kernelConnectionOptions: {
-            handleComms: true,
-          },
-        }
-      );
+          {
+            kernelConnectionOptions: {
+              handleComms: true,
+            },
+          }
+        );
+      } catch (error) {
+        console.error('Failed to start new kernel session:', error);
+        return;
+      }
     }
     this._kernelConnection = this._session.kernel;
     const updateConnectionStatus = () => {
@@ -150,9 +155,9 @@ export class Kernel {
       );
       this._kernelConnection.info.then(info => {
         this._info = info;
-        console.log('Kernel Information.', info);
-        console.log('Kernel Session.', this._session);
-        console.log('Kernel Details.', this.toJSON());
+        console.log('Kernel Information', info);
+        console.log('Kernel Session', this._session);
+        console.log('Kernel Details', this.toJSON());
       });
     }
   }

@@ -11,13 +11,13 @@ import { Jupyter } from '../jupyter';
 import { Output } from '../components/output/Output';
 import { cellSourceAsString } from './../utils/Utils';
 
-import nbformat from './notebooks/NotebookOutputs.ipynb.json';
+import NBFORMAT from './notebooks/NotebookOutputs.ipynb.json';
 
-const OutputsIpynb = () => {
+const OutputsIpynbExample = () => {
   return (
     <>
       <Text as="h1">Outputs from IPYNB</Text>
-      {(nbformat as INotebookContent).cells.map((cell, index) => {
+      {(NBFORMAT as INotebookContent).cells.map((cell, index) => {
         return (
           <>
             {cell.outputs && (
@@ -42,6 +42,6 @@ const root = createRoot(div);
 
 root.render(
   <Jupyter startDefaultKernel>
-    <OutputsIpynb />
+    <OutputsIpynbExample />
   </Jupyter>
 );

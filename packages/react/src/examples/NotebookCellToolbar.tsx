@@ -13,9 +13,10 @@ import { Notebook } from '../components/notebook/Notebook';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import { CellToolbarExtension } from './extensions';
-import nbformat from './notebooks/NotebookExample1.ipynb.json';
 
-const NotebookCellToolbar = () => {
+import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
+
+const NotebookCellToolbarExample = () => {
   const extensions = useMemo(
     () => [
       new CellToolbarExtension(),
@@ -27,7 +28,7 @@ const NotebookCellToolbar = () => {
     <JupyterReactTheme>
       <Notebook
         startDefaultKernel
-        nbformat={nbformat as INotebookContent}
+        nbformat={NBFORMAT as INotebookContent}
         extensions={extensions}
         id="notebook-cell-toolbar-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
@@ -41,4 +42,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookCellToolbar />);
+root.render(<NotebookCellToolbarExample />);

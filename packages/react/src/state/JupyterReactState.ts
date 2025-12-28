@@ -177,8 +177,8 @@ export function useJupyterReactStoreFromProps(
     if (!serviceManager) {
       if (lite) {
         createLiteServiceManager(lite).then(serviceManager => {
-          setServiceManager(serviceManager);
           jupyterReactStore.getState().setServiceManager(serviceManager);
+          setServiceManager(serviceManager);
         });
         return;
       }
@@ -223,14 +223,13 @@ export function useJupyterReactStoreFromProps(
       serviceManager
     );
     serviceManager?.kernels.ready.then(async () => {
-      const kernelManager = serviceManager.kernels;
-      console.log('Jupyter Kernel Manager is ready', kernelManager);
+      console.log('Jupyter Kernel Manager is ready', serviceManager.kernels);
       if (useRunningKernelIndex > -1) {
         await serviceManager.sessions.refreshRunning();
-        const runnings = Array.from(kernelManager.running());
+        const runnings = Array.from(serviceManager.kernels.running());
         const model = runnings[useRunningKernelIndex];
         const existingKernel = new Kernel({
-          kernelManager,
+          kernelManager: serviceManager.kernels,
           kernelName: model.name,
           kernelSpecName: model.name,
           kernelModel: model,
@@ -249,15 +248,16 @@ export function useJupyterReactStoreFromProps(
         setIsLoading(false);
         jupyterReactStore.getState().kernelIsLoading = false;
       } else if (startDefaultKernel) {
-        console.log('Starting a Jupyter Kernel:', defaultKernelName);
+        console.log('Starting the default Jupyter Kernel', defaultKernelName);
         const defaultKernel = new Kernel({
-          kernelManager,
           kernelName: defaultKernelName,
           kernelSpecName: defaultKernelName,
+          kernelManager: serviceManager.kernels,
           kernelspecsManager: serviceManager.kernelspecs,
           sessionManager: serviceManager.sessions,
         });
         defaultKernel.ready.then(async () => {
+          console.log('The default Jupyter Kernel is ready', defaultKernelName);
           if (initCode) {
             try {
               await defaultKernel.execute(initCode)?.done;
@@ -265,7 +265,6 @@ export function useJupyterReactStoreFromProps(
               console.error('Failed to execute the initial code', error);
             }
           }
-          console.log('Jupyter Kernel is ready', defaultKernel);
           setKernel(defaultKernel);
           jupyterReactStore.getState().kernel = defaultKernel;
           setIsLoading(false);

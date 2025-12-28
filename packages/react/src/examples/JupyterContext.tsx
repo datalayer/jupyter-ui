@@ -185,7 +185,7 @@ const Outputs = () => {
 
 const JupyterContextExample = () => {
   const [index, setIndex] = useState(1);
-  const { serviceManager } = useJupyter();
+  const { serviceManager, defaultKernel } = useJupyter();
   const extensionsButton = useMemo(
     () => [new CellSidebarExtension({ factory: CellSidebarButton })],
     []
@@ -214,7 +214,7 @@ const JupyterContextExample = () => {
         <hr />
         <CellPreview id={cellId} />
         <CellToolbar id={cellId} />
-        <Cell id={cellId} />
+        {defaultKernel && <Cell id={cellId} kernel={defaultKernel} />}
         <hr />
         <Notebook
           nbformat={notebook as INotebookContent}

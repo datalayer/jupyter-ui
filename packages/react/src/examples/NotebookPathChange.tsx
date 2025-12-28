@@ -4,9 +4,10 @@
  * MIT License
  */
 
-import { Box, Button, Text } from '@primer/react';
 import { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { Button, Text } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
@@ -15,7 +16,7 @@ const PATH_1 = 'ipywidgets.ipynb';
 
 const PATH_2 = 'matplotlib.ipynb';
 
-const NotebookPathChange = () => {
+const NotebookPathChangeExample = () => {
   const [path, setPath] = useState<string>(PATH_1);
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   const changePath = () => {
@@ -41,8 +42,9 @@ const NotebookPathChange = () => {
         </Text>
       </Box>
       <Notebook
-        path={path}
         id="notebook-path-change-id"
+        startDefaultKernel
+        path={path}
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         extensions={extensions}
       />
@@ -54,4 +56,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookPathChange />);
+root.render(<NotebookPathChangeExample />);

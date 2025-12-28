@@ -7,12 +7,12 @@
 import { createRoot } from 'react-dom/client';
 import { Button, Label } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
-import { CodeCell } from '@jupyterlab/cells';
+import { PlayIcon } from '@primer/octicons-react';
 import { JupyterReactTheme } from '../theme';
 import { useJupyter } from '../jupyter/JupyterContext';
-import { Cell } from '../components/cell/Cell';
-import { KernelIndicator } from '../components/kernel/Kernelndicator';
 import { useKernelsStore } from '../jupyter/kernel/KernelState';
+import { KernelIndicator } from '../components/kernel/KernelIndicator';
+import { Cell } from '../components/cell/Cell';
 import { useCellsStore } from '../components/cell/CellState';
 
 const CELL_ID = 'cell-example-1';
@@ -26,16 +26,10 @@ const CellExample = () => {
   const { defaultKernel } = useJupyter({ startDefaultKernel: true });
   const cellsStore = useCellsStore();
   const kernelsStore = useKernelsStore();
-  console.log(
-    'Jupyter Cell Outputs',
-    (
-      cellsStore.getAdapter(CELL_ID)?.cell as CodeCell
-    )?.outputArea.model.toJSON()
-  );
   return (
     <JupyterReactTheme>
-      <Box as="h1">A Jupyter Cell</Box>
-      <Box>Source: {cellsStore.getSource(CELL_ID)}</Box>
+      <Box as="h1">Cell</Box>
+      <Box as="pre">Source: {cellsStore.getSource(CELL_ID)}</Box>
       <Box>Outputs Count: {cellsStore.getOutputsCount(CELL_ID)}</Box>
       <Box>
         Kernel State:{' '}
@@ -49,16 +43,23 @@ const CellExample = () => {
           {defaultKernel && kernelsStore.getExecutionPhase(defaultKernel.id)}
         </Label>
       </Box>
-      <Box display="flex">
-        <Box>Kernel Indicator:</Box>
-        <Box ml={3}>
-          <KernelIndicator kernel={defaultKernel && defaultKernel.connection} />
-        </Box>
+      <Box>
+        <KernelIndicator
+          kernel={defaultKernel?.connection}
+          label="Kernel Indicator"
+        />
       </Box>
       <Box>
-        <Button onClick={() => cellsStore.execute(CELL_ID)}>Run cell</Button>
+        <Button
+          leadingVisual={() => <PlayIcon />}
+          onClick={() => cellsStore.execute(CELL_ID)}
+        >
+          Run cell
+        </Button>
       </Box>
-      <Cell source={DEFAULT_SOURCE} id={CELL_ID} kernel={defaultKernel} />
+      {defaultKernel && (
+        <Cell id={CELL_ID} source={DEFAULT_SOURCE} kernel={defaultKernel} />
+      )}
     </JupyterReactTheme>
   );
 };

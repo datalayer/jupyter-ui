@@ -328,7 +328,7 @@ export class NotebookAdapter {
         >
       ) => {
         const session = args.newValue;
-        console.log('Current Jupyter Session Connection.', session);
+        console.log('Current Jupyter Session Connection', session);
         if (this._onSessionConnection) {
           if (session) {
             this._onSessionConnection(session);

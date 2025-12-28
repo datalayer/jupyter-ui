@@ -30,6 +30,8 @@ packages/react/docs/
 
 **/*.vsix
 
+**/*.whl
+
 *.exclude.*
 
 yarn.lock

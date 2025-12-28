@@ -12,7 +12,7 @@ import { Notebook } from '../components/notebook/Notebook';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
-const Vega = () => (
+const VegaExample = () => (
   <JupyterReactTheme>
     <Notebook
       path="vega/Vega.ipynb"
@@ -29,4 +29,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<Vega />);
+root.render(<VegaExample />);

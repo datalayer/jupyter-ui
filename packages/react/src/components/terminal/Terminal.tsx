@@ -18,7 +18,7 @@ export const Terminal = ({
   ...rest
 }: Terminal.ITerminalOptions) => {
   const terminalStore = useTerminalStore();
-  const { serverSettings } = useJupyter();
+  const { serverSettings } = useJupyter({ terminals: true });
   const [adapter, setAdapter] = useState<TerminalAdapter>();
   useEffect(() => {
     if (serverSettings) {

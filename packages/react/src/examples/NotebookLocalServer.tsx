@@ -14,7 +14,7 @@ import { Jupyter, useJupyter } from '../jupyter';
 import { JupyterReactTheme } from '../theme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
-const NotebookJupyter = () => (
+const NotebookJupyterExample = () => (
   <Jupyter
     jupyterServerUrl="http://localhost:8686/api/jupyter-server"
     jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
@@ -30,7 +30,7 @@ const NotebookJupyter = () => (
   </Jupyter>
 );
 
-const NotebookJupyterReactTheme = () => {
+const NotebookJupyterReactThemeExample = () => {
   useJupyter({
     jupyterServerUrl: 'http://localhost:8686/api/jupyter-server',
     jupyterServerToken:
@@ -61,8 +61,8 @@ const root = createRoot(div);
 root.render(
   <>
     <Text as="h1">Local Jupyter Server (with a Jupyter Context)</Text>
-    <NotebookJupyter />
+    <NotebookJupyterExample />
     <Text as="h1">Local Jupyter Server (with a Jupyter React Theme)</Text>
-    <NotebookJupyterReactTheme />
+    <NotebookJupyterReactThemeExample />
   </>
 );

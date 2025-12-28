@@ -16,9 +16,9 @@ import {
 import { JupyterReactTheme } from '../theme';
 import { ExecTimeExtension } from './extensions';
 
-import nbformat from './notebooks/NotebookExample1.ipynb.json';
+import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
-const NotebookExtension = () => {
+const NotebookExtensionExample = () => {
   const extensions = useMemo(
     () => [
       new ExecTimeExtension(),
@@ -29,7 +29,7 @@ const NotebookExtension = () => {
   return (
     <JupyterReactTheme>
       <Notebook
-        nbformat={nbformat as INotebookContent}
+        nbformat={NBFORMAT as INotebookContent}
         extensions={extensions}
         id="notebook-extension-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
@@ -43,4 +43,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<NotebookExtension />);
+root.render(<NotebookExtensionExample />);

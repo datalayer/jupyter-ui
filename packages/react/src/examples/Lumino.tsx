@@ -18,8 +18,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(
-  <>
-    <LuminoExample />
-  </>
-);
+root.render(<LuminoExample />);

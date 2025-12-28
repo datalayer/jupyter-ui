@@ -12,7 +12,7 @@ export * from './KernelLauncher';
 export * from './KernelProgressBar';
 export * from './Kernels';
 export * from './KernelSelector';
-export * from './Kernelndicator';
+export * from './KernelIndicator';
 export * from './KernelUsage';
 export * from './KernelVariables';
 export * from './inspector';

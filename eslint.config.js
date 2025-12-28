@@ -25,6 +25,8 @@ module.exports = tseslint.config(
             '.eslintrc.js',
             '.lintstagedrc.js',
             'gulpfile.js',
+            'packages/*/entries.js',
+            'packages/*/vite.config.ts',
           ],
         },
       },
@@ -58,6 +60,9 @@ module.exports = tseslint.config(
         global: 'readonly',
         setImmediate: 'readonly',
         clearImmediate: 'readonly',
+        module: 'readonly',
+        require: 'readonly',
+        exports: 'readonly',
       },
     },
     settings: {

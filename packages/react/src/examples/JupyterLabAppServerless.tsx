@@ -16,7 +16,7 @@ import * as plotlyPlugins from 'jupyterlab-plotly/lib/jupyterlab-plugin';
 
 import * as plotlyMimeRenderers from 'jupyterlab-plotly/lib/plotly-renderer';
 
-const JupyterLabAppServerless = () => {
+const JupyterLabAppServerlessExample = () => {
   const onJupyterLab = async (jupyterLabAdapter: JupyterLabAppAdapter) => {
     const jupyterLab = jupyterLabAdapter.jupyterLab;
     console.log('JupyterLab is ready', jupyterLab);
@@ -54,6 +54,6 @@ const root = createRoot(div);
 root.render(
   <JupyterReactTheme>
     <h1>JupyterLab Serverless Application</h1>
-    <JupyterLabAppServerless />
+    <JupyterLabAppServerlessExample />
   </JupyterReactTheme>
 );

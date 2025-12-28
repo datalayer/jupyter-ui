@@ -4,24 +4,24 @@
  * MIT License
  */
 
-import { INotebookContent } from '@jupyterlab/nbformat';
-import { Box, Button } from '@primer/react';
 import { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { INotebookContent } from '@jupyterlab/nbformat';
+import { Button } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
 import { useJupyter } from '../jupyter/JupyterContext';
-import Kernel from '../jupyter/kernel/Kernel';
+import { Kernel } from '../jupyter/kernel/Kernel';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
-import notebook from './notebooks/NotebookExample1.ipynb.json';
 
-const NotebookUnmount = () => {
+import NOTEBOOK from './notebooks/NotebookExample1.ipynb.json';
+
+const NotebookUnmountExample = () => {
   const { kernelManager, serviceManager } = useJupyter();
   const [showNotebook, setShowNotebook] = useState(false);
   const [kernel, setKernel] = useState<Kernel>();
-
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
-
   useEffect(() => {
     if (serviceManager && kernelManager) {
       const kernel = new Kernel({
@@ -44,7 +44,7 @@ const NotebookUnmount = () => {
     setShowNotebook(false);
   };
   return (
-    <>
+    <JupyterReactTheme>
       {showNotebook && kernel ? (
         <>
           <Box display="flex">
@@ -53,9 +53,10 @@ const NotebookUnmount = () => {
             </Button>
           </Box>
           <Notebook
-            nbformat={notebook as INotebookContent}
             id="notebook-unmount-id"
-            //                kernel={kernel}
+            startDefaultKernel
+            nbformat={NOTEBOOK as INotebookContent}
+            // kernel={kernel}
             height="700px"
             extensions={extensions}
           />
@@ -69,7 +70,7 @@ const NotebookUnmount = () => {
           </Box>
         </>
       )}
-    </>
+    </JupyterReactTheme>
   );
 };
 
@@ -77,8 +78,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(
-  <JupyterReactTheme>
-    <NotebookUnmount />
-  </JupyterReactTheme>
-);
+root.render(<NotebookUnmountExample />);

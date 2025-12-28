@@ -6,13 +6,14 @@
 
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Box, Heading, Textarea, Button } from '@primer/react';
+import { Heading, Textarea, Button } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
-import KernelProgressBar from './../components/kernel/KernelProgressBar';
+import { KernelProgressBar } from './../components/kernel/KernelProgressBar';
 
-export const KernelExecuteView = () => {
-  const { defaultKernel: kernel } = useJupyter({ startDefaultKernel: true });
+export const KernelExecuteExample = () => {
+  const { defaultKernel } = useJupyter({ startDefaultKernel: true });
   const [running, setRunning] = useState(false);
   const [code, setCode] = useState('');
   const [result, setResult] = useState<string>();
@@ -22,7 +23,7 @@ export const KernelExecuteView = () => {
   const exec = () => {
     setRunning(true);
     setResult('');
-    kernel
+    defaultKernel
       ?.execute(code)
       ?.result.then((result: string) => {
         setResult(result);
@@ -36,55 +37,49 @@ export const KernelExecuteView = () => {
       });
   };
   const interrupt = () => {
-    kernel?.interrupt();
+    defaultKernel?.interrupt();
   };
   return (
-    <Box m={3}>
-      <Heading>Wait on code execution</Heading>
-      <Box>
-        <Textarea
-          placeholder="Enter some code, e.g. print('1+1'), and click on the Execute button."
-          onChange={handleChange}
-          value={code}
-        />
-        <Box mt={3} display="flex">
-          <Box>
-            <Button
-              disabled={!kernel || running}
-              onClick={exec}
-              variant={!kernel || running ? 'default' : 'primary'}
-            >
-              Execute
-            </Button>
-          </Box>
-          <Box ml={3}>
-            <Button disabled={!running} onClick={interrupt} variant="danger">
-              Interrupt
-            </Button>
-          </Box>
-        </Box>
-      </Box>
-      {running && (
-        <Box mt={3}>
-          <KernelProgressBar />
-        </Box>
-      )}
-      {result && (
-        <Box mt={3}>
-          <Heading as="h3">Result</Heading>
-          <Box>
-            <pre>{result}</pre>
-          </Box>
-        </Box>
-      )}
-    </Box>
-  );
-};
-
-const KernelExecute = () => {
-  return (
     <JupyterReactTheme>
-      <KernelExecuteView />
+      <Box m={3}>
+        <Heading>Kernel Execute</Heading>
+        <Box>
+          <Textarea
+            placeholder="Enter some code, e.g. print('1+1'), and click on the Execute button."
+            onChange={handleChange}
+            value={code}
+          />
+          <Box mt={3} display="flex">
+            <Box>
+              <Button
+                disabled={!defaultKernel || running}
+                onClick={exec}
+                variant={!defaultKernel || running ? 'default' : 'primary'}
+              >
+                Execute
+              </Button>
+            </Box>
+            <Box ml={3}>
+              <Button disabled={!running} onClick={interrupt} variant="danger">
+                Interrupt
+              </Button>
+            </Box>
+          </Box>
+        </Box>
+        {running && (
+          <Box mt={3}>
+            <KernelProgressBar />
+          </Box>
+        )}
+        {result && (
+          <Box mt={3}>
+            <Heading as="h3">Result</Heading>
+            <Box>
+              <pre>{result}</pre>
+            </Box>
+          </Box>
+        )}
+      </Box>
     </JupyterReactTheme>
   );
 };
@@ -93,4 +88,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<KernelExecute />);
+root.render(<KernelExecuteExample />);

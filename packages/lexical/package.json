@@ -63,7 +63,7 @@
   },
   "dependencies": {
     "@datalayer/icons-react": "^1.0.0",
-    "@datalayer/jupyter-react": "^1.1.8",
+    "@datalayer/jupyter-react": "^1.2.0",
     "@datalayer/lexical-loro": "^0.1.0",
     "@datalayer/primer-addons": "^1.0.4",
     "@jupyterlab/application": "^4.0.0",

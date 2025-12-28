@@ -9,7 +9,7 @@ import { Text } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { KernelIndicator } from '../components/kernel/Kernelndicator';
+import { KernelIndicator } from '../components/kernel/KernelIndicator';
 import { Output } from '../components/output/Output';
 import { Jupyter } from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
@@ -63,7 +63,7 @@ const OUTPUTS_3: IOutput[] = [
   },
 ];
 
-const OutputIPyWidgets = () => {
+const OutputIPyWidgetsExample = () => {
   const outputStore = useOutputsStore();
   console.log(
     'Outputs from Code IPyWidgets',
@@ -78,7 +78,7 @@ const OutputIPyWidgets = () => {
   );
 };
 
-const OutputNoEditorNoAutorun = () => {
+const OutputNoEditorNoAutorunExample = () => {
   const outputStore = useOutputsStore();
   console.log(
     'Outputs 1',
@@ -98,7 +98,7 @@ const OutputNoEditorNoAutorun = () => {
   );
 };
 
-const OutputNoEditor = () => {
+const OutputNoEditorExample = () => {
   const { defaultKernel } = useJupyter({ startDefaultKernel: true });
   return (
     <>
@@ -114,7 +114,7 @@ const OutputNoEditor = () => {
   );
 };
 
-const OutputNoEditorError = () => {
+const OutputNoEditorErrorExample = () => {
   const { defaultKernel } = useJupyter({ startDefaultKernel: true });
   return (
     <>
@@ -130,7 +130,7 @@ const OutputNoEditorError = () => {
   );
 };
 
-const OutputEditor = () => {
+const OutputEditorExample = () => {
   const { defaultKernel } = useJupyter();
   const outputStore = useOutputsStore();
   console.log(
@@ -153,7 +153,7 @@ const OutputEditor = () => {
   );
 };
 
-const OutputEmpty = () => {
+const OutputEmptyExample = () => {
   const { kernelManager, serviceManager } = useJupyter();
   const outputStore = useOutputsStore();
   const kernelsStore = useKernelsStore();
@@ -208,11 +208,11 @@ const root = createRoot(div);
 
 root.render(
   <Jupyter startDefaultKernel>
-    <OutputIPyWidgets />
-    <OutputNoEditorNoAutorun />
-    <OutputNoEditor />
-    <OutputNoEditorError />
-    <OutputEditor />
-    <OutputEmpty />
+    <OutputIPyWidgetsExample />
+    <OutputNoEditorNoAutorunExample />
+    <OutputNoEditorExample />
+    <OutputNoEditorErrorExample />
+    <OutputEditorExample />
+    <OutputEmptyExample />
   </Jupyter>
 );
