@@ -11,7 +11,6 @@ import { readFileSync, existsSync, createReadStream } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { createRequire } from 'module';
-import { transformSync } from 'esbuild';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -23,262 +22,44 @@ const { ENTRY } = require('./entries.js');
 export default defineConfig(({ mode }) => {
   return {
     plugins: [
-      // Inject a runtime shim to force classic workers for pyodide worker URLs
+      // Serve /pypi/*.whl and /pypi/*.json files from local source
       {
-        name: 'pyodide-worker-constructor-shim',
-        enforce: 'pre',
-        transformIndexHtml(html) {
-          const shim = `\n<script>\n(() => {\n  const OriginalWorker = window.Worker;\n  if (!OriginalWorker) return;\n  window.Worker = function(url, options) {\n    const urlString = typeof url === 'string' ? url : String(url);\n    if (urlString.includes('comlink.worker') || urlString.includes('coincident.worker')) {\n      // Force classic worker by dropping the type option\n      return new OriginalWorker(urlString);\n    }\n    return new OriginalWorker(url, options);\n  };\n  window.Worker.prototype = OriginalWorker.prototype;\n  Object.defineProperty(window.Worker, 'name', { value: 'Worker' });\n})();\n</script>\n`;
-          return html.replace('</head>', `${shim}</head>`);
-        },
-      },
-      // Transform pyodide wheel URL imports to use proper HTTP URLs instead of file:// paths
-      {
-        name: 'pyodide-wheel-url-transform',
-        enforce: 'post',
-        transform(code, id) {
-          // Only transform files from @jupyterlite/pyodide-kernel
-          if (!id.includes('@jupyterlite/pyodide-kernel')) return null;
-
-          // Replace wheel URL exports with absolute HTTP URLs
-          // The bundled wheel exports use new URL() which results in file:///@fs/... paths
-          // We need full HTTP URLs for micropip to recognize as remote
-          if (code.includes('.whl')) {
-            let transformed = code;
-
-            // Replace /@fs/.../pypi/*.whl paths with absolute HTTP URL expressions
-            transformed = transformed.replace(
-              /["']?\/?@fs\/[^"']*\/pypi\/([^"']+\.whl)["']?/g,
-              '(self.location.origin + "/pypi/$1")'
-            );
-
-            // Also replace any new URL(...whl..., import.meta.url) patterns
-            transformed = transformed.replace(
-              /new\s+URL\s*\(\s*["']([^"']*\.whl)["']\s*,\s*import\.meta\.url\s*\)(?:\.href)?/g,
-              '(self.location.origin + "/pypi/$1")'
-            );
-
-            if (transformed !== code) {
-              console.log(
-                '[pyodide-wheel-url-transform] Transformed wheel URLs in:',
-                id
-              );
-              return { code: transformed, map: null };
-            }
-          }
-          return null;
-        },
-      },
-      // Serve /pypi/*.whl files as binary from node_modules
-      {
-        name: 'pypi-wheel-server',
+        name: 'pypi-server',
         enforce: 'pre',
         configureServer(server) {
           server.middlewares.use((req, res, next) => {
             const url = req.url || '';
-            // Only handle /pypi/*.whl requests
-            if (!url.startsWith('/pypi/') || !url.includes('.whl'))
-              return next();
+            // Only handle /pypi/* requests
+            if (!url.startsWith('/pypi/')) return next();
 
             const cleanUrl = decodeURIComponent(url.split('?')[0]);
             const fileName = cleanUrl.replace('/pypi/', '');
 
-            const candidatePaths = [
-              resolve(
-                __dirname,
-                '../../../../../node_modules/@jupyterlite/pyodide-kernel/pypi',
-                fileName
-              ),
-              resolve(
-                __dirname,
-                '../../../../node_modules/@jupyterlite/pyodide-kernel/pypi',
-                fileName
-              ),
-              resolve(
-                __dirname,
-                '../../../node_modules/@jupyterlite/pyodide-kernel/pypi',
-                fileName
-              ),
-              resolve(
-                __dirname,
-                '../../node_modules/@jupyterlite/pyodide-kernel/pypi',
-                fileName
-              ),
-              resolve(
-                __dirname,
-                'node_modules/@jupyterlite/pyodide-kernel/pypi',
-                fileName
-              ),
-            ];
+            // Serve from local pypi folder in source
+            const localPath = resolve(
+              __dirname,
+              'src/jupyter/lite/pyodide-kernel/pypi',
+              fileName
+            );
 
-            for (const candidate of candidatePaths) {
-              if (existsSync(candidate)) {
-                console.log('[pypi-wheel-server] Serving wheel:', candidate);
-                res.statusCode = 200;
+            if (existsSync(localPath)) {
+              res.statusCode = 200;
+              if (fileName.endsWith('.whl')) {
                 res.setHeader('Content-Type', 'application/octet-stream');
-                createReadStream(candidate).pipe(res);
-                return;
+              } else if (fileName.endsWith('.json')) {
+                res.setHeader('Content-Type', 'application/json');
               }
+              createReadStream(localPath).pipe(res);
+              return;
             }
 
+            console.log('[pypi-server] Not found:', localPath);
             next();
           });
         },
       },
       react(),
       treatAsCommonjs(),
-      // Transform worker creation to use classic workers instead of module workers for pyodide
-      {
-        name: 'pyodide-worker-classic-transform',
-        enforce: 'post',
-        transform(code, id) {
-          // Only transform JS/TS files that might create workers
-          if (!id.match(/\.(js|ts|mjs|mts)$/)) return null;
-
-          // Look for Worker constructor calls with type: 'module' and worker URLs
-          // Match patterns like: new Worker(new URL("...worker.js...", import.meta.url), { type: "module" })
-          if (
-            code.includes('type') &&
-            code.includes('module') &&
-            code.includes('Worker')
-          ) {
-            // Replace { type: "module" } or { type: 'module' } with {} for worker constructors
-            // This regex matches Worker constructor with type: module option
-            const transformed = code.replace(
-              /new\s+Worker\s*\(\s*([^,]+),\s*\{\s*type\s*:\s*["']module["']\s*\}\s*\)/g,
-              'new Worker($1)'
-            );
-            if (transformed !== code) {
-              console.log(
-                '[pyodide-worker-classic-transform] Transformed worker creation in:',
-                id
-              );
-              return { code: transformed, map: null };
-            }
-          }
-          return null;
-        },
-      },
-      // Serve pyodide worker files as classic scripts (IIFE) to support importScripts()
-      {
-        name: 'pyodide-worker-classic',
-        enforce: 'pre',
-        configureServer(server) {
-          // Add middleware at the very beginning of the stack
-          server.middlewares.use((req, res, next) => {
-            const url = req.url || '';
-
-            // Match any worker file request that Vite is trying to serve as module
-            const isWorkerModuleRequest =
-              url.includes('worker') && url.includes('type=module');
-
-            if (!isWorkerModuleRequest) {
-              return next();
-            }
-
-            console.log(
-              '[pyodide-worker-classic] Intercepting worker request:',
-              url
-            );
-
-            // Clean URL: decode and strip query params
-            const cleanUrl = decodeURIComponent(url.split('?')[0]);
-
-            // Handle Vite /@fs/ absolute path prefix
-            const absolutePath = cleanUrl.startsWith('/@fs/')
-              ? cleanUrl.slice(4) // Remove /@fs prefix
-              : null;
-
-            // Try absolute path first
-            if (absolutePath && existsSync(absolutePath)) {
-              console.log(
-                '[pyodide-worker-classic] Serving from absolute path:',
-                absolutePath
-              );
-              try {
-                const content = readFileSync(absolutePath, 'utf-8');
-                // Transpile to IIFE to remove ES module syntax and support importScripts()
-                const { code } = transformSync(content, {
-                  format: 'iife',
-                  target: 'es2020',
-                  minify: false,
-                });
-                res.setHeader('Content-Type', 'application/javascript');
-                res.statusCode = 200;
-                res.end(code);
-                return;
-              } catch (e) {
-                console.error(
-                  '[pyodide-worker-classic] Error transforming worker:',
-                  e
-                );
-              }
-            }
-
-            // Fallback: try to find file by name in node_modules
-            const fileName = cleanUrl.split('/').pop();
-            if (fileName) {
-              const candidatePaths = [
-                resolve(
-                  __dirname,
-                  '../../../../../node_modules/@jupyterlite/pyodide-kernel/lib',
-                  fileName
-                ),
-                resolve(
-                  __dirname,
-                  '../../../../node_modules/@jupyterlite/pyodide-kernel/lib',
-                  fileName
-                ),
-                resolve(
-                  __dirname,
-                  '../../../node_modules/@jupyterlite/pyodide-kernel/lib',
-                  fileName
-                ),
-                resolve(
-                  __dirname,
-                  '../../node_modules/@jupyterlite/pyodide-kernel/lib',
-                  fileName
-                ),
-                resolve(
-                  __dirname,
-                  'node_modules/@jupyterlite/pyodide-kernel/lib',
-                  fileName
-                ),
-                // Also check .vite/deps for prebundled workers
-                resolve(__dirname, 'node_modules/.vite/deps', fileName),
-              ];
-
-              for (const candidate of candidatePaths) {
-                if (existsSync(candidate)) {
-                  console.log(
-                    '[pyodide-worker-classic] Serving from candidate path:',
-                    candidate
-                  );
-                  try {
-                    const content = readFileSync(candidate, 'utf-8');
-                    const { code } = transformSync(content, {
-                      format: 'iife',
-                      target: 'es2020',
-                      minify: false,
-                    });
-                    res.setHeader('Content-Type', 'application/javascript');
-                    res.statusCode = 200;
-                    res.end(code);
-                    return;
-                  } catch (e) {
-                    console.error(
-                      '[pyodide-worker-classic] Error transforming worker:',
-                      e
-                    );
-                  }
-                }
-              }
-            }
-
-            next();
-          });
-        },
-      },
       // Plugin to handle dynamic ?raw CSS imports from node_modules (JupyterLab themes)
       {
         name: 'jupyterlab-theme-css-raw',
@@ -462,6 +243,8 @@ export default defineConfig(({ mode }) => {
         'mime',
         // Force pre-bundle mock-socket to handle exports properly
         'mock-socket',
+        // Force pre-bundle styled-components and its CJS deps together
+        'styled-components',
         // Force pre-bundle lumino packages to ensure single Token instances
         '@lumino/coreutils',
         '@lumino/application',
@@ -469,7 +252,9 @@ export default defineConfig(({ mode }) => {
         // Force pre-bundle jupyterlab packages to ensure single instances
         '@jupyterlab/coreutils',
         '@jupyterlab/services',
-        // '@jupyterlite/pyodide-kernel',
+        // Pre-bundle comlink and coincident for worker communication
+        'comlink',
+        'coincident',
       ],
       esbuildOptions: {
         loader: {
@@ -486,11 +271,6 @@ export default defineConfig(({ mode }) => {
         // Exclude theme CSS to allow ?raw imports to work
         '@jupyterlab/theme-light-extension',
         '@jupyterlab/theme-dark-extension',
-        // Exclude packages for better debugging (source maps)
-        // '...',
-        // Exclude packages with worker files to prevent dep optimization issues
-        '@jupyterlite/pyodide-kernel',
-        'comlink',
       ],
     },
     // Worker configuration

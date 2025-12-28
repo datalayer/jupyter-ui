@@ -2,7 +2,6 @@
 // Distributed under the terms of the Modified BSD License.
 
 import { PageConfig, URLExt } from '@jupyterlab/coreutils';
-// import { PyodideKernel } from '@jupyterlite/pyodide-kernel';
 import {
   IServiceWorkerManager,
   JupyterLiteServer,
@@ -83,7 +82,7 @@ const kernel: JupyterLiteServerPlugin<void> = {
         },
       },
       create: async (options: IKernel.IOptions): Promise<IKernel> => {
-        const { PyodideKernel } = await import('@jupyterlite/pyodide-kernel');
+        const { PyodideKernel } = await import('../pyodide-kernel/index');
         /*
         TODO Restore this...
         const mountDrive = !!(

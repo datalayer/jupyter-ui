@@ -77,13 +77,6 @@ export class Kernels implements IKernels {
     ): void => {
       const kernel = this._kernels.get(kernelId);
 
-      console.log(
-        '--- DLA hooking kernel client',
-        clientId,
-        'to kernel',
-        kernelId
-      );
-
       if (!kernel) {
         throw Error(`No kernel ${kernelId}`);
       }

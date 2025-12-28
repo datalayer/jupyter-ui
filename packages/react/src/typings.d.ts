@@ -39,6 +39,11 @@ declare module '*.svg' {
   export default value;
 }
 
+declare module '*.whl' {
+  const res: string;
+  export default res;
+}
+
 declare module '*/style/index.js' {
   const value: any;
   export default value;
