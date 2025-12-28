@@ -5,17 +5,14 @@
  * A WebWorker entrypoint that uses coincident to handle postMessage details
  */
 import coincident from 'coincident';
-
 import {
   ContentsAPI,
   DriveFS,
   TDriveMethod,
   TDriveRequest,
   TDriveResponse,
-} from '@jupyterlite/contents';
-
+} from '../contents';
 import { IPyodideWorkerKernel } from './tokens';
-
 import { PyodideRemoteKernel } from './worker';
 
 const workerAPI = coincident(self) as IPyodideWorkerKernel;

@@ -1,12 +1,9 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
 
-import type Pyodide from 'pyodide';
-
-import type { DriveFS } from '@jupyterlite/contents';
-
 import { KernelMessage } from '@jupyterlab/services';
-
+import type Pyodide from 'pyodide';
+import type { DriveFS } from '../contents';
 import type { IPyodideWorkerKernel } from './tokens';
 
 export class PyodideRemoteKernel {
@@ -159,7 +156,7 @@ export class PyodideRemoteKernel {
       const mountpoint = '/drive';
       const { FS, PATH, ERRNO_CODES } = this._pyodide;
       const { baseUrl } = options;
-      const { DriveFS } = await import('@jupyterlite/contents');
+      const { DriveFS } = await import('../contents');
 
       const driveFS = new DriveFS({
         FS: FS as any,

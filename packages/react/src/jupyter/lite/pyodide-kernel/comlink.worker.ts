@@ -6,15 +6,8 @@
  */
 
 import { expose } from 'comlink';
-
-import {
-  ContentsAPI,
-  DriveFS,
-  ServiceWorkerContentsAPI,
-} from '@jupyterlite/contents';
-
+import { ContentsAPI, DriveFS, ServiceWorkerContentsAPI } from '../contents';
 import { IPyodideWorkerKernel } from './tokens';
-
 import { PyodideRemoteKernel } from './worker';
 
 /**
