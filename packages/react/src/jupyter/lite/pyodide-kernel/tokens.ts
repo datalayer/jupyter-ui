@@ -5,12 +5,8 @@
  * Definitions for the Pyodide kernel.
  */
 
-import {
-  TDriveMethod,
-  TDriveRequest,
-  TDriveResponse,
-} from '@jupyterlite/contents';
-import { IWorkerKernel } from '@jupyterlite/kernel';
+import { TDriveMethod, TDriveRequest, TDriveResponse } from '../contents';
+import { IWorkerKernel } from '../kernel';
 
 /**
  * The schema for a Warehouse-like index, as used by piplite.
