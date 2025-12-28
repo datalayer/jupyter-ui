@@ -1,13 +1,56 @@
-// Wheel URLs dynamically extracted from all.json
+// Wheel URLs extracted from pypi/all.json
 // These are full HTTP URLs that micropip can fetch
+// Inlined to avoid webpack/bundler issues with JSON imports
 
-// Import the local all.json file
-import allJson from './pypi/all.json';
+// The all.json content inlined as a TypeScript object
+// This should match the content of ./pypi/all.json
+const allJson = {
+  ipykernel: {
+    releases: {
+      '6.9.2': [
+        {
+          url: 'https://assets.datalayer.tech/pypi/ipykernel-6.9.2-py3-none-any.whl',
+        },
+      ],
+    },
+  },
+  piplite: {
+    releases: {
+      '0.5.1': [
+        {
+          url: 'https://assets.datalayer.tech/pypi/piplite-0.5.1-py3-none-any.whl',
+        },
+      ],
+    },
+  },
+  'pyodide-kernel': {
+    releases: {
+      '0.5.1': [
+        {
+          url: 'https://assets.datalayer.tech/pypi/pyodide_kernel-0.5.1-py3-none-any.whl',
+        },
+      ],
+    },
+  },
+  widgetsnbextension: {
+    releases: {
+      '3.6.999': [
+        {
+          url: 'https://assets.datalayer.tech/pypi/widgetsnbextension-3.6.999-py3-none-any.whl',
+        },
+      ],
+      '4.0.999': [
+        {
+          url: 'https://assets.datalayer.tech/pypi/widgetsnbextension-4.0.999-py3-none-any.whl',
+        },
+      ],
+    },
+  },
+} as const;
 
 // Type for the all.json structure
 interface AllJsonRelease {
   url: string;
-  filename: string;
   [key: string]: unknown;
 }
 
@@ -23,8 +66,10 @@ interface AllJson {
 
 // Get the wheel URL for a package and version
 function getWheelUrl(packageName: string, version?: string): string {
-  const pkg = (allJson as AllJson)[packageName];
+  const pkg = (allJson as unknown as AllJson)[packageName];
   if (!pkg) {
+    console.error('all.json contents:', allJson);
+    console.error('Looking for package:', packageName);
     throw new Error(`Package ${packageName} not found in all.json`);
   }
   const versions = Object.keys(pkg.releases);
@@ -39,7 +84,7 @@ function getWheelUrl(packageName: string, version?: string): string {
 // Export the all.json URL (from CDN for piplite to fetch package index)
 export const allJSONUrl = {
   default:
-    (allJson as AllJson)['piplite']?.releases['0.5.1']?.[0]?.url?.replace(
+    allJson['piplite']?.releases['0.5.1']?.[0]?.url?.replace(
       /piplite-.*\.whl$/,
       'all.json'
     ) || 'https://assets.datalayer.tech/pypi/all.json',

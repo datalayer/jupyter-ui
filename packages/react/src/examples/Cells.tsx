@@ -14,7 +14,7 @@ const CellsExample = () => {
   const { defaultKernel } = useJupyter({ startDefaultKernel: true });
   return (
     <JupyterReactTheme>
-      <Box as="h1">Cells Example</Box>
+      <Box as="h1">Cells</Box>
       {defaultKernel && (
         <>
           <Cell source={'print("Hello from Cell 1")'} kernel={defaultKernel} />
