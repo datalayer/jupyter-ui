@@ -105,7 +105,7 @@ const config: StorybookConfig = {
         resourceQuery: /text/,
         type: 'asset/resource',
         generator: {
-          filename: '[name][ext]',
+          filename: 'lite-[name][ext]',
         },
       },
       // Rules for pyodide kernel assets

@@ -26,7 +26,7 @@ const PYODIDE_CDN_URL =
 /**
  * The id for the extension, and key in the litePlugins.
  */
-const PLUGIN_ID = '@jupyterlite/pyodide-kernel-extension:kernel';
+const PLUGIN_ID = '@datalayer/jupyter-react/pyodide-kernel-extension:kernel';
 
 /**
  * A plugin to register the Pyodide kernel.

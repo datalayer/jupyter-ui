@@ -187,7 +187,7 @@ module.exports = {
         resourceQuery: /text/,
         type: 'asset/resource',
         generator: {
-          filename: '[name][ext]',
+          filename: 'lite-[name][ext]',
         },
       },
       // Rule for pyodide kernel and Python wheel files

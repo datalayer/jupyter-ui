@@ -60,7 +60,7 @@ export async function createLiteServer(): Promise<JupyterLiteServer> {
     window.location.protocol +
       '//' +
       window.location.host +
-      '/service-worker.js'
+      '/lite-service-worker.js'
   );
   const litePluginsToRegister: any[] = [];
   // Load the base jupyterlite server extensions.

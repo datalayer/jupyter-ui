@@ -43,7 +43,7 @@ export namespace IServiceWorkerManager {
    */
   export interface IOptions {
     /**
-     * URL to load the worker file. Default to "{baseURL}/service-worker.js"
+     * URL to load the worker file. Default to "{baseURL}/lite-service-worker.js"
      */
     workerUrl?: string;
   }

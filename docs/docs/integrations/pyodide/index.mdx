@@ -13,13 +13,13 @@ add the following rules to support in-browser kernels:
        ... the rules for the JavaScript and CSS assets
       */
       // Rule for the JupyterLite service worker.
-      // !important this must result in a file named `service-worker.js`
+      // !important this must result in a file named `lite-service-worker.js`
       // to be served at the root of your website.
       {
         resourceQuery: /text/,
         type: 'asset/resource',
         generator: {
-          filename: '[name][ext]',
+          filename: 'lite-[name][ext]',
         },
       },
       // Rule for pyodide kernel
