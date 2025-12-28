@@ -143,6 +143,19 @@ export default defineConfig(({ mode }) => {
           return html.replace(/src="[^"]+\.tsx"/, `src="${resolvedEntry}"`);
         },
       },
+      // Plugin to serve service-worker.js at root (like webpack's asset/resource rule)
+      {
+        name: 'serve-service-worker',
+        configureServer(server) {
+          server.middlewares.use((req, res, next) => {
+            // Serve the service worker TypeScript file as JavaScript
+            if (req.url?.startsWith('/service-worker.js')) {
+              req.url = '/src/jupyter/lite/server/service-worker.ts';
+            }
+            next();
+          });
+        },
+      },
     ],
 
     // Include these file types as assets
@@ -224,6 +237,10 @@ export default defineConfig(({ mode }) => {
         'mime',
         // Force pre-bundle mock-socket to handle exports properly
         'mock-socket',
+        // Force pre-bundle lumino packages to ensure single Token instances
+        '@lumino/coreutils',
+        '@lumino/application',
+        '@lumino/signaling',
         // Force pre-bundle jupyterlab packages to ensure single instances
         '@jupyterlab/coreutils',
         '@jupyterlab/services',

@@ -505,7 +505,6 @@ const sessionsRoutesPlugin: JupyterLiteServerPlugin<void> = {
     // POST /api/sessions - Create a new session or return an existing session if a session of the same name already exists
     app.router.post('/api/sessions', async (req: Router.IRequest) => {
       const options = req.body as any;
-      console.log('---------- DLA', options);
       const session = await sessions.startNew(options);
       return new Response(JSON.stringify(session), { status: 201 });
     });

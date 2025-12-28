@@ -54,9 +54,16 @@ export class Kernels implements IKernels {
   async startNew(options: Kernels.IKernelOptions): Promise<Kernel.IModel> {
     const { id, name, location } = options;
 
+    console.log('--- DLA 0 kernelspecs factories', this._kernelspecs.factories);
+
     const factory = this._kernelspecs.factories.get(name);
     // bail if there is no factory associated with the requested kernel
     if (!factory) {
+      console.error(
+        'No factory associated with',
+        name,
+        this._kernelspecs.factories
+      );
       return { id, name };
     }
 
@@ -71,6 +78,13 @@ export class Kernels implements IKernels {
       socket: WebSocketClient
     ): void => {
       const kernel = this._kernels.get(kernelId);
+
+      console.log(
+        '--- DLA 3 hooking kernel client',
+        clientId,
+        'to kernel',
+        kernelId
+      );
 
       if (!kernel) {
         throw Error(`No kernel ${kernelId}`);
@@ -130,6 +144,9 @@ export class Kernels implements IKernels {
       encodeURIComponent(kernelId),
       'channels'
     );
+
+    console.log('---------- DLA 1', kernelUrl);
+
     const runningKernel = this._kernels.get(kernelId);
     if (runningKernel) {
       return {
@@ -176,6 +193,7 @@ export class Kernels implements IKernels {
       mock: false,
       selectProtocol: () => KERNEL_WEBSOCKET_PROTOCOL,
     });
+    console.log('---------- DLA 2', wsServer, kernelUrl);
     wsServer.on('connection', (socket: WebSocketClient): void => {
       const url = new URL(socket.url);
       const clientId = url.searchParams.get('session_id') ?? '';

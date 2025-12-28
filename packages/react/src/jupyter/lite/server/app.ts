@@ -7,16 +7,6 @@ import { Signal, Stream } from '@lumino/signaling';
 import { WebSocket } from 'mock-socket';
 import { Router } from './router';
 
-// Replace global WebSocket with mock-socket for JupyterLite
-// This ensures all WebSocket connections use the mock implementation
-if (typeof window !== 'undefined') {
-  (window as any).WebSocket = WebSocket;
-  (globalThis as any).WebSocket = WebSocket;
-  console.log('[JupyterLite] Global WebSocket replaced with mock-socket');
-}
-
-export type JupyterLiteServerPlugin<T> = IPlugin<JupyterLiteServer, T>;
-
 /**
  * A local event manager service.
  *
@@ -124,16 +114,7 @@ export class JupyterLiteServer extends Application<never> {
     if (!(req instanceof Request)) {
       throw Error('Request info is not a Request');
     }
-    const resp = this._router.route(req);
-    /*
-    console.log(
-      '---DLA JupyterLiteServer handling request:',
-      (this.router as any)['_routes'].length,
-      req.method,
-      req.url
-    );
-    */
-    return resp;
+    return this._router.route(req);
   }
 
   /**
@@ -213,3 +194,5 @@ export namespace JupyterLiteServer {
       | IPlugin<JupyterLiteServer, any>[];
   }
 }
+
+export type JupyterLiteServerPlugin<T> = IPlugin<JupyterLiteServer, T>;
