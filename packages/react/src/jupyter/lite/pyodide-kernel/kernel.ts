@@ -44,11 +44,11 @@ export class PyodideKernel extends BaseKernel implements IKernel {
    */
   protected initWorker(options: PyodideKernel.IOptions): Worker {
     if (crossOriginIsolated) {
-      return new Worker(new URL('./coincident.worker.ts', import.meta.url), {
+      return new Worker(new URL('./coincident.worker.js', import.meta.url), {
         type: 'module',
       });
     } else {
-      return new Worker(new URL('./comlink.worker.ts', import.meta.url), {
+      return new Worker(new URL('./comlink.worker.js', import.meta.url), {
         type: 'module',
       });
     }
