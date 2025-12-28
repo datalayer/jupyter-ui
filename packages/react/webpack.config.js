@@ -42,13 +42,25 @@ module.exports = {
   },
   devServer: {
     port: 3208,
-    historyApiFallback: true,
+    historyApiFallback: {
+      // Don't rewrite /pypi/* requests - let them pass through to static serving
+      rewrites: [
+        { from: /^\/pypi\//, to: context => context.parsedUrl.pathname },
+      ],
+    },
     hot: !IS_PRODUCTION,
     https: false,
     server: 'http',
     client: {
       overlay: false,
     },
+    // Serve pypi files from local source directory
+    static: [
+      {
+        directory: path.join(__dirname, 'src/jupyter/lite/pyodide-kernel/pypi'),
+        publicPath: '/pypi',
+      },
+    ],
   },
   devtool,
   optimization: {
