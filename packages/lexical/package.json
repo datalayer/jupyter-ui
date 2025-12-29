@@ -35,6 +35,7 @@
     "build:tsc:watch": "run-p 'build:tsc:watch:*'",
     "build:tsc:watch:res": "gulp resources-to-lib-watch",
     "build:tsc:watch:tsc": "tsc --watch",
+    "build:webpack": "webpack-cli build",
     "clean": "rimraf node_modules lib dist build tsconfig.tsbuildinfo",
     "clean:all": "jlpm clean:lib && jlpm clean:labextension && jlpm clean:lintcache",
     "clean:labextension": "rimraf datalayer/labextension",

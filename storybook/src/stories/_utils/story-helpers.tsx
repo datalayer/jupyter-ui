@@ -10,7 +10,10 @@ import { createGlobalStyle } from 'styled-components';
 import { Icon } from '@primer/octicons-react';
 import { ThemeProvider, themeGet, BaseStyles } from '@primer/react';
 // import { theme } from '@primer/react';
-import { jupyterLabTheme as theme } from '@datalayer/jupyter-react';
+import {
+  jupyterLabTheme as theme,
+  JupyterReactTheme,
+} from '@datalayer/jupyter-react';
 
 // we don't import StoryContext from storybook because of exports that conflict
 // with primer/react more: https://github.com/primer/react/runs/6129115026?check_suite_focus=true
@@ -40,21 +43,23 @@ export const withThemeProvider = (
   if (context.parameters.disableThemeDecorator) return Story(context);
   const { colorScheme } = context.globals;
   return (
-    <ThemeProvider
-      theme={theme}
-      colorMode={colormodeFromScheme(colorScheme)}
-      dayScheme={colorScheme}
-      nightScheme={colorScheme}
-    >
-      {colorScheme.startsWith('light') ? (
-        <GlobalStyle $lightTheme />
-      ) : (
-        <GlobalStyle />
-      )}
-      <BaseStyles>
-        <div id="html-addon-root">{Story(context)}</div>
-      </BaseStyles>
-    </ThemeProvider>
+    <JupyterReactTheme>
+      <ThemeProvider
+        theme={theme}
+        colorMode={colormodeFromScheme(colorScheme)}
+        dayScheme={colorScheme}
+        nightScheme={colorScheme}
+      >
+        {colorScheme.startsWith('light') ? (
+          <GlobalStyle $lightTheme />
+        ) : (
+          <GlobalStyle />
+        )}
+        <BaseStyles>
+          <div id="html-addon-root">{Story(context)}</div>
+        </BaseStyles>
+      </ThemeProvider>
+    </JupyterReactTheme>
   );
 };
 

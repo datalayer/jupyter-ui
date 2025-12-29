@@ -4,25 +4,25 @@
  * MIT License
  */
 
+import { useMemo } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { JupyterReactTheme, Notebook } from '@datalayer/jupyter-react';
+import { INotebookContent } from '@jupyterlab/nbformat';
+import {
+  JupyterReactTheme,
+  Notebook,
+  useJupyter,
+  CellSidebarExtension,
+  CellSidebarButton,
+  KernelIndicator,
+} from '@datalayer/jupyter-react';
+import { Box } from '@primer/react';
+
+import nbformat1 from './examples/NotebookExample1.ipynb.json';
 
 const meta: Meta<typeof Notebook> = {
   title: 'Components/Notebook',
   component: Notebook,
   argTypes: {
-    lite: {
-      control: 'radio',
-      options: [
-        'true',
-        'false',
-        '@datalayer/jupyter-react/lib/jupyter/lite/pyodide-kernel-extension',
-      ],
-      table: {
-        // Switching live does not work
-        disable: true,
-      },
-    },
     initCode: {
       control: 'text',
     },
@@ -33,44 +33,73 @@ export default meta;
 
 type Story = StoryObj<typeof Notebook | { initCode?: string }>;
 
-const Template = (args, { globals: { labComparison = true }, ...rest }) => {
-  const { browser, initCode, ...others } = args;
-  const lite = {
-    true: true,
-    false: false,
-    '@datalayer/jupyter-react/lib/jupyter/lite/pyodide-kernel-extension':
-      import('@datalayer/jupyter-react/lib/jupyter/lite/pyodide-kernel-extension'),
-  }[args.browser];
+const NotebookWithKernel = (props: {
+  nbformat: INotebookContent;
+  id: string;
+  height?: string;
+  maxHeight?: string;
+  cellSidebarMargin?: number;
+  readonly?: boolean;
+}) => {
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
+  const extensions = useMemo(
+    () => [new CellSidebarExtension({ factory: CellSidebarButton })],
+    [],
+  );
+  return (
+    <>
+      {serviceManager && defaultKernel ? (
+        <>
+          <Box>
+            <KernelIndicator
+              kernel={defaultKernel?.connection}
+              label="Kernel Indicator"
+            />
+          </Box>
+          <Notebook
+            nbformat={props.nbformat}
+            id={props.id}
+            kernel={defaultKernel}
+            serviceManager={serviceManager}
+            height={props.height || 'calc(100vh - 2.6rem)'}
+            maxHeight={props.maxHeight}
+            cellSidebarMargin={props.cellSidebarMargin}
+            readonly={props.readonly}
+            extensions={extensions}
+          />
+        </>
+      ) : (
+        <Box>Loading Jupyter...</Box>
+      )}
+    </>
+  );
+};
 
-  const kernelName =
-    args.browser ===
-    '@datalayer/jupyter-react/lib/jupyter/lite/pyodide-kernel-extension'
-      ? 'javascript'
-      : undefined;
+const Template = (
+  args,
+  { globals: { labComparison: _labComparison = true }, ..._rest },
+) => {
+  const { browser: _browser, initCode: _initCode, ...others } = args;
 
   return (
-    <JupyterReactTheme
-    //      startDefaultKernel={true}
-    //      lite={lite}
-    //      initCode={initCode}
-    //      defaultKernelName={kernelName}
-    //      jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
-    //      jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
-    >
-      <Notebook {...others} />
+    <JupyterReactTheme>
+      <NotebookWithKernel {...others} />
     </JupyterReactTheme>
   );
 };
 
 export const Default: Story = {
-  render: (args, options) =>
+  render: (args, _options) =>
     Template.bind({})(args, { globals: { labComparison: true } }),
 };
 Default.args = {
   //  lite: false,
   initCode: '',
   path: undefined,
-  id: undefined,
+  id: 'notebook-default-id',
+  nbformat: nbformat1 as INotebookContent,
   //  cellMetadataPanel: false,
   cellSidebarMargin: 120,
   height: '100vh',
@@ -80,13 +109,13 @@ Default.args = {
 };
 
 export const Playground: Story = {
-  render: (args, options) =>
+  render: (args, _options) =>
     Template.bind({})(args, { globals: { labComparison: true } }),
 };
 Playground.args = {
   ...Default.args,
   path: 'ipywidgets.ipynb',
-  id: 'id-1',
+  id: 'playground-id',
 };
 
 const WIDGETS_EXAMPLE = {
@@ -233,7 +262,7 @@ await micropip.install('ipympl')`,
 };
 
 export const IpywidgetsState: Story = {
-  render: (args, options) =>
+  render: (args, _options) =>
     Template.bind({})(args, { globals: { labComparison: true } }),
 };
 IpywidgetsState.args = {
@@ -244,7 +273,7 @@ IpywidgetsState.args = {
 };
 
 export const Matplotlib: Story = {
-  render: (args, options) =>
+  render: (args, _options) =>
     Template.bind({})(args, { globals: { labComparison: true } }),
 };
 Matplotlib.args = {
@@ -253,7 +282,7 @@ Matplotlib.args = {
 };
 
 export const LitePython: Story = {
-  render: (args, options) =>
+  render: (args, _options) =>
     Template.bind({})(args, { globals: { labComparison: true } }),
 };
 LitePython.args = {
@@ -263,7 +292,7 @@ LitePython.args = {
 };
 
 export const LitePythonInit: Story = {
-  render: (args, options) =>
+  render: (args, _options) =>
     Template.bind({})(args, { globals: { labComparison: true } }),
 };
 LitePythonInit.args = {
