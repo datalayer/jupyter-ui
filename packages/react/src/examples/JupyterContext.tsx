@@ -199,7 +199,7 @@ const JupyterContextExample = () => {
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
     <>
-      <Jupyter
+      <JupyterReactTheme
         jupyterServerUrl={DEFAULT_JUPYTER_SERVER_URL}
         jupyterServerToken={DEFAULT_JUPYTER_SERVER_TOKEN}
         serverless={index === 0}
@@ -248,7 +248,7 @@ const JupyterContextExample = () => {
         {serviceManager && <FileBrowser serviceManager={serviceManager} />}
         <hr />
         <Terminal />
-      </Jupyter>
+      </JupyterReactTheme>
     </>
   );
 };

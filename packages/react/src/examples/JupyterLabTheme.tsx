@@ -7,7 +7,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
-  Box,
   Button,
   Heading,
   Text,
@@ -43,7 +42,8 @@ import {
   RocketIcon,
   CheckIcon,
 } from '@primer/octicons-react';
-import { Jupyter } from '../jupyter/Jupyter';
+import { Box } from '@datalayer/primer-addons';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { Colormode } from '../theme/JupyterLabColormode';
 import { jupyterLabTheme as theme } from '../theme/themes';
 
@@ -181,7 +181,7 @@ const JupyterLabThemeExample = () => {
     setTokens(tokens.filter(token => token.id !== tokenId));
   };
   return (
-    <Jupyter theme={theme} colormode={colormode} startDefaultKernel>
+    <JupyterReactTheme theme={theme} colormode={colormode}>
       <PageLayout containerWidth="full" padding="normal">
         <PageLayout.Header>
           <PageHeader>
@@ -524,7 +524,7 @@ const JupyterLabThemeExample = () => {
           </Box>
         </PageLayout.Content>
       </PageLayout>
-    </Jupyter>
+    </JupyterReactTheme>
   );
 };
 

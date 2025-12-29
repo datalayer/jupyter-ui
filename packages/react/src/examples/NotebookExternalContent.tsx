@@ -10,8 +10,9 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 import { ZapIcon } from '@primer/octicons-react';
 import { IconButton } from '@primer/react';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { useJupyter } from '../jupyter';
 import { Notebook2 } from '../components/notebook/Notebook2';
-import { notebookStore } from '../components/notebook/NotebookState';
+// import { notebookStore2 } from '../components/notebook/Notebook2State';
 import { CellSidebarExtension } from '../components';
 
 import NBMODEL from './notebooks/NotebookExample1.ipynb.json';
@@ -19,17 +20,23 @@ import NBMODEL from './notebooks/NotebookExample1.ipynb.json';
 const NOTEBOOK_ID = 'notebook-model-id';
 
 const NotebookExternalContentExample = () => {
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
   const [nbformat, setNbformat] = useState<INotebookContent>();
-  const [updatedNbFormat, setUpdatedNbFormat] = useState<INotebookContent>();
+  const [updatedNbFormat, _] = useState<INotebookContent>();
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
-  const model = notebookStore
+  /*
+  const model = notebookStore2
     .getState()
-    .selectNotebookModel(NOTEBOOK_ID)?.model;
+    .selectNotebookModel2(NOTEBOOK_ID)?.model;
+  */
   useEffect(() => {
     // Set nbformat with any content.
     // This may come from an external storage that you fetch in this react effect.
     setNbformat(NBMODEL);
   }, []);
+  /*
   useEffect(() => {
     if (model) {
       model.contentChanged.connect(model => {
@@ -38,12 +45,13 @@ const NotebookExternalContentExample = () => {
       });
     }
   }, [model]);
+  */
   const saveNotebook = () => {
     // Do whatever you want with the updated notebook
     // You may persist it to an external storage that a call to an API.
     alert('Save this notebook: ' + JSON.stringify(updatedNbFormat));
   };
-  return nbformat ? (
+  return (
     <JupyterReactTheme>
       <IconButton
         variant="invisible"
@@ -57,16 +65,17 @@ const NotebookExternalContentExample = () => {
           saveNotebook();
         }}
       />
-      <Notebook2
-        id={NOTEBOOK_ID}
-        startDefaultKernel
-        nbformat={nbformat}
-        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        extensions={extensions}
-      />
+      {serviceManager && defaultKernel && nbformat && (
+        <Notebook2
+          id={NOTEBOOK_ID}
+          kernel={defaultKernel}
+          serviceManager={serviceManager}
+          nbformat={nbformat}
+          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+          extensions={extensions}
+        />
+      )}
     </JupyterReactTheme>
-  ) : (
-    <></>
   );
 };
 

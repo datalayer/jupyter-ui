@@ -8,17 +8,21 @@ import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import {
-  Notebook,
+  Notebook2,
   CellSidebarExtension,
   CellSidebarButton,
   NotebookToolbar,
 } from '../components';
 import { JupyterReactTheme } from '../theme';
+import { useJupyter } from '../jupyter';
 import { ExecTimeExtension } from './extensions';
 
 import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookExtensionExample = () => {
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
   const extensions = useMemo(
     () => [
       new ExecTimeExtension(),
@@ -28,13 +32,17 @@ const NotebookExtensionExample = () => {
   );
   return (
     <JupyterReactTheme>
-      <Notebook2
-        nbformat={NBFORMAT as INotebookContent}
-        extensions={extensions}
-        id="notebook-extension-id"
-        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        Toolbar={NotebookToolbar}
-      />
+      {serviceManager && defaultKernel && (
+        <Notebook2
+          nbformat={NBFORMAT as INotebookContent}
+          kernel={defaultKernel}
+          serviceManager={serviceManager}
+          extensions={extensions}
+          id="notebook-extension-id"
+          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+          Toolbar={NotebookToolbar}
+        />
+      )}
     </JupyterReactTheme>
   );
 };
