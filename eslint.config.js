@@ -28,6 +28,7 @@ module.exports = tseslint.config(
             'packages/*/entries.js',
             'packages/*/vite.config.ts',
             'storybook/.storybook/*.ts',
+            'examples/next-js/next.config.ts',
           ],
         },
       },
