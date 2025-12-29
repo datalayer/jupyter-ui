@@ -4,25 +4,14 @@
  * MIT License
  */
 
-import webpack from 'webpack';
-import { fileURLToPath } from 'url';
-import { dirname, resolve } from 'path';
-import { createRequire } from 'module';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const require = createRequire(import.meta.url);
+const webpack = require('webpack');
+const path = require('path');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
   transpilePackages: ['@jupyterlab/settingregistry', '@jupyterlite/settings'],
-  // Skip Next.js built-in ESLint during build (monorepo has its own ESLint setup)
-  // This avoids ESLint 9 compatibility warnings from Next.js 14's ESLint config
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  webpack: (config, options) => {
+  webpack: (config: any, options: any) => {
     config.resolve.fallback = {
       ...config.resolve.fallback,
       buffer: require.resolve('buffer/'),
@@ -30,20 +19,26 @@ const nextConfig = {
     config.plugins.push(
       new webpack.ProvidePlugin({
         Buffer: ['buffer', 'Buffer'],
-      }),
+      })
     );
     // Fix json5 import issue for JupyterLab packages
     config.resolve.alias = {
       ...config.resolve.alias,
-      json5: require.resolve('json5/lib/index.js'),
+      'json5': require.resolve('json5/lib/index.js'),
+      // Handle ~ prefix in CSS imports (JupyterLab style convention)
+      '~react-toastify': 'react-toastify',
+      '~@lumino': '@lumino',
+      '~@jupyterlab': '@jupyterlab',
     };
-
-    // Add resolve modules to look in monorepo node_modules
-    config.resolve.modules = [
-      ...(config.resolve.modules || []),
-      resolve(__dirname, '../../node_modules'),
-      'node_modules',
-    ];
+    // Add a plugin to strip `~` from import paths (for JS imports)
+    config.plugins.push(
+      new webpack.NormalModuleReplacementPlugin(
+        /^~(.*)/,
+        (resource: any) => {
+          resource.request = resource.request.replace(/^~/, '');
+        },
+      ),
+    );    
     config.module.rules.push(
       { test: /\.js.map$/, type: 'asset/resource' },
       {
@@ -93,9 +88,9 @@ const nextConfig = {
           filename: 'schema/[name][ext][query]',
         },
       },
-    );
-    return config;
+    )
+    return config
   },
-};
+}
 
-export default nextConfig;
+module.exports = nextConfig;
