@@ -41,9 +41,7 @@ test = [
 ]
 
 [project.scripts]
-ji = "jupyter_react.application:main"
-jupyter-react = "jupyter_react.application:main"
-jupyter-react-server = "jupyter_react.serverapplication:main"
+jupyter-react = "jupyter_react.serverapplication:main"
 
 [tool.hatch.version]
 path = "jupyter_react/__version__.py"
@@ -53,6 +51,8 @@ artifacts = [
   "jupyter_react/static",
   "jupyter_react/templates"
 ]
+
+[tool.hatch.build.hooks.custom]
 
 [tool.hatch.build.targets.sdist]
 exclude = [".github", "binder", ".yarn"]

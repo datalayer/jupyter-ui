@@ -41,9 +41,7 @@ test = [
 ]
 
 [project.scripts]
-ji = "jupyter_lexical.application:main"
-jupyter-lexical = "jupyter_lexical.application:main"
-jupyter-lexical-server = "jupyter_lexical.serverapplication:main"
+jupyter-lexical = "jupyter_lexical.serverapplication:main"
 
 [tool.hatch.version]
 path = "jupyter_lexical/__version__.py"
@@ -53,6 +51,8 @@ artifacts = [
   "jupyter_lexical/static",
   "jupyter_lexical/templates"
 ]
+
+[tool.hatch.build.hooks.custom]
 
 [tool.hatch.build.targets.sdist]
 exclude = [".github", "binder", ".yarn"]
