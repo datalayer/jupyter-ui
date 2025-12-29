@@ -3,7 +3,7 @@ import { Remote, wrap } from 'comlink';
 import { PromiseDelegate } from '@lumino/coreutils';
 import { PageConfig } from '@jupyterlab/coreutils';
 import { Contents, KernelMessage } from '@jupyterlab/services';
-import { BaseKernel, IKernel } from '@jupyterlite/kernel';
+import { BaseKernel, IKernel } from '../kernel';
 import { IPyodideWorkerKernel, IRemotePyodideWorkerKernel } from './tokens';
 import { allJSONUrl, pipliteWheelUrl } from './_pypi';
 import {
