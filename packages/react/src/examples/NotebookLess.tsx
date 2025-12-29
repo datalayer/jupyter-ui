@@ -4,13 +4,13 @@
  * MIT License
  */
 
-import { INotebookContent } from '@jupyterlab/nbformat';
-import { Box } from '@primer/react';
 import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Notebook2 } from '../components/notebook/Notebook2';
+import { INotebookContent } from '@jupyterlab/nbformat';
+import { Box } from '@datalayer/primer-addons';
 import { ServiceManagerLess } from '../jupyter';
 import { JupyterReactTheme } from '../theme';
+import { Notebook2 } from '../components/notebook/Notebook2';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import { CellSidebarExtension } from '../components';
 
@@ -22,16 +22,18 @@ const NotebookLessExample = () => {
   return (
     <JupyterReactTheme>
       <Box as="h1">Notebook with a Less Service Manager</Box>
-      <Notebook2
-        serverless
-        nbformat={NBFORMAT as INotebookContent}
-        id="notebook-less-id"
-        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        readonly
-        serviceManager={serviceManager}
-        extensions={extensions}
-        Toolbar={NotebookToolbar}
-      />
+      {serviceManager && (
+        <Notebook2
+          // serverless
+          nbformat={NBFORMAT as INotebookContent}
+          id="notebook-less-id"
+          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+          readonly
+          serviceManager={serviceManager}
+          extensions={extensions}
+          Toolbar={NotebookToolbar}
+        />
+      )}
     </JupyterReactTheme>
   );
 };
