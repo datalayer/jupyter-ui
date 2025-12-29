@@ -8,7 +8,7 @@ import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import {
-  Notebook2,
+  Notebook,
   CellSidebarExtension,
   CellSidebarButton,
   NotebookToolbar,
@@ -33,7 +33,7 @@ const NotebookExtensionExample = () => {
   return (
     <JupyterReactTheme>
       {serviceManager && defaultKernel && (
-        <Notebook2
+        <Notebook
           nbformat={NBFORMAT as INotebookContent}
           kernel={defaultKernel}
           serviceManager={serviceManager}

@@ -10,7 +10,7 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 import { Box } from '@datalayer/primer-addons';
 import { ServiceManagerLess } from '../jupyter';
 import { JupyterReactTheme } from '../theme';
-import { Notebook2 } from '../components/notebook/Notebook2';
+import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import { CellSidebarExtension } from '../components';
 
@@ -23,7 +23,7 @@ const NotebookLessExample = () => {
     <JupyterReactTheme>
       <Box as="h1">Notebook with a Less Service Manager</Box>
       {serviceManager && (
-        <Notebook2
+        <Notebook
           // serverless
           nbformat={NBFORMAT as INotebookContent}
           id="notebook-less-id"

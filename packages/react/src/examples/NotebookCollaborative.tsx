@@ -9,12 +9,12 @@ import { createRoot } from 'react-dom/client';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { useJupyter, JupyterCollaborationProvider } from '../jupyter';
 import {
-  Notebook2,
+  Notebook,
   CellSidebarExtension,
   CellSidebarButton,
 } from '../components';
 
-const Notebook2CollaborativeExample = () => {
+const NotebookCollaborativeExample = () => {
   const { serviceManager } = useJupyter();
   const extensions = useMemo(
     () => [new CellSidebarExtension({ factory: CellSidebarButton })],
@@ -28,7 +28,7 @@ const Notebook2CollaborativeExample = () => {
 
   return serviceManager ? (
     <JupyterReactTheme>
-      <Notebook2
+      <Notebook
         path="collaboration.ipynb"
         id="notebook2-collaboration-id"
         startDefaultKernel
@@ -47,4 +47,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<Notebook2CollaborativeExample />);
+root.render(<NotebookCollaborativeExample />);

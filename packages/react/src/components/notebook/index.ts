@@ -4,12 +4,11 @@
  * MIT License
  */
 
-export * from './Notebook2';
-export * from './Notebook2Base';
-export * from './Notebook2Adapter';
-export * from './Notebook2State';
+export * from './Notebook';
+export * from './NotebookBase';
+export * from './NotebookAdapter';
 export * from './NotebookCommands';
-export * from './Notebook2State';
+export * from './NotebookState';
 export * from './NotebookExtensions';
 export * from './cell';
 export * from './content';

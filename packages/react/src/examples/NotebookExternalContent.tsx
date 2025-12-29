@@ -11,8 +11,8 @@ import { ZapIcon } from '@primer/octicons-react';
 import { IconButton } from '@primer/react';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { useJupyter } from '../jupyter';
-import { Notebook2 } from '../components/notebook/Notebook2';
-// import { notebookStore2 } from '../components/notebook/Notebook2State';
+import { Notebook } from '../components/notebook/Notebook';
+// import { notebookStore } from '../components/notebook/NotebookState';
 import { CellSidebarExtension } from '../components';
 
 import NBMODEL from './notebooks/NotebookExample1.ipynb.json';
@@ -27,7 +27,7 @@ const NotebookExternalContentExample = () => {
   const [updatedNbFormat, _] = useState<INotebookContent>();
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   /*
-  const model = notebookStore2
+  const model = notebookStore
     .getState()
     .selectNotebookModel2(NOTEBOOK_ID)?.model;
   */
@@ -66,7 +66,7 @@ const NotebookExternalContentExample = () => {
         }}
       />
       {serviceManager && defaultKernel && nbformat && (
-        <Notebook2
+        <Notebook
           id={NOTEBOOK_ID}
           kernel={defaultKernel}
           serviceManager={serviceManager}

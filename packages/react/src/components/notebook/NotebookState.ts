@@ -8,21 +8,21 @@ import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
 import * as nbformat from '@jupyterlab/nbformat';
 import { NotebookCommandIds } from './NotebookCommands';
-import { Notebook2Adapter } from './Notebook2Adapter';
+import { NotebookAdapter } from './NotebookAdapter';
 
-export type INotebook2State = {
-  adapter?: Notebook2Adapter;
+export type INotebookState = {
+  adapter?: NotebookAdapter;
 };
 
-export interface INotebooks2State {
-  notebooks: Map<string, INotebook2State>;
+export interface INotebooksState {
+  notebooks: Map<string, INotebookState>;
 }
 
-export type Notebook2State = INotebooks2State & {
+export type NotebookState = INotebooksState & {
   // Core store methods
-  setNotebooks2: (notebooks: Map<string, INotebook2State>) => void;
-  selectNotebook2: (id: string) => INotebook2State | undefined;
-  selectNotebookAdapter2: (id: string) => Notebook2Adapter | undefined;
+  setNotebooks: (notebooks: Map<string, INotebookState>) => void;
+  selectNotebook: (id: string) => INotebookState | undefined;
+  selectNotebookAdapter2: (id: string) => NotebookAdapter | undefined;
 
   // Tool operation methods (1:1 with tool operations) - individual parameters
   // Note: params after id are optional because executor passes them as object: { id, ...params }
@@ -91,14 +91,14 @@ export type Notebook2State = INotebooks2State & {
   reset: () => void;
 };
 
-export const notebookStore2 = createStore<Notebook2State>((set, get) => ({
-  notebooks: new Map<string, INotebook2State>(),
-  setNotebooks2: (notebooks: Map<string, INotebook2State>) =>
-    set((state: Notebook2State) => ({ notebooks })),
-  selectNotebook2: (id: string): INotebook2State | undefined => {
+export const notebookStore = createStore<NotebookState>((set, get) => ({
+  notebooks: new Map<string, INotebookState>(),
+  setNotebooks: (notebooks: Map<string, INotebookState>) =>
+    set((state: NotebookState) => ({ notebooks })),
+  selectNotebook: (id: string): INotebookState | undefined => {
     return get().notebooks.get(id);
   },
-  selectNotebookAdapter2: (id: string): Notebook2Adapter | undefined => {
+  selectNotebookAdapter2: (id: string): NotebookAdapter | undefined => {
     const notebook = get().notebooks.get(id);
     if (notebook) {
       return notebook.adapter;
@@ -247,15 +247,15 @@ export const notebookStore2 = createStore<Notebook2State>((set, get) => ({
     get().notebooks.get(id)?.adapter?.redo();
   },
   reset: () =>
-    set((state: Notebook2State) => ({
-      notebooks: new Map<string, INotebook2State>(),
+    set((state: NotebookState) => ({
+      notebooks: new Map<string, INotebookState>(),
     })),
 }));
 
-export function useNotebookStore2(): Notebook2State;
-export function useNotebookStore2<T>(selector: (state: Notebook2State) => T): T;
-export function useNotebookStore2<T>(selector?: (state: Notebook2State) => T) {
-  return useStore(notebookStore2, selector!);
+export function useNotebookStore(): NotebookState;
+export function useNotebookStore<T>(selector: (state: NotebookState) => T): T;
+export function useNotebookStore<T>(selector?: (state: NotebookState) => T) {
+  return useStore(notebookStore, selector!);
 }
 
-export default useNotebookStore2;
+export default useNotebookStore;

@@ -8,7 +8,7 @@ import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useJupyter } from '../jupyter';
 import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
-import { Notebook2 } from '../components/notebook/Notebook2';
+import { Notebook } from '../components/notebook/Notebook';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import { CellSidebarExtension } from '../components';
@@ -28,7 +28,7 @@ const NotebookNoContextExample = () => {
   return (
     <JupyterReactTheme colormode={COLORMODE}>
       {serviceManager && defaultKernel && (
-        <Notebook2
+        <Notebook
           id={NOTEBOOK_ID}
           kernel={defaultKernel}
           serviceManager={serviceManager}

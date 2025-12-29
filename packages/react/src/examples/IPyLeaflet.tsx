@@ -9,7 +9,7 @@ import { createRoot } from 'react-dom/client';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { useJupyter } from '../jupyter';
 import { CellSidebarExtension } from '../components';
-import { Notebook2 } from '../components/notebook/Notebook2';
+import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 const IPyLeafletExample = () => {
@@ -20,7 +20,7 @@ const IPyLeafletExample = () => {
   return (
     <JupyterReactTheme>
       {serviceManager && defaultKernel && (
-        <Notebook2
+        <Notebook
           id="notebook-ipyleaflet-id"
           kernel={defaultKernel}
           serviceManager={serviceManager}

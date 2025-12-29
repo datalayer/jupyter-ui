@@ -9,7 +9,7 @@ import { CellSidebarExtension } from '../components';
 import { useJupyter } from '../jupyter';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
-import { Notebook2 } from '../components/notebook/Notebook2';
+import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 const NOTEBOOK_ID = 'notebook-id';
@@ -21,7 +21,7 @@ const NotebookURLExample = () => {
   return (
     <JupyterReactTheme>
       {serviceManager && defaultKernel && (
-        <Notebook2
+        <Notebook
           id={NOTEBOOK_ID}
           kernel={defaultKernel}
           serviceManager={serviceManager}

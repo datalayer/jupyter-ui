@@ -7,7 +7,7 @@
 import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { CellSidebarExtension } from '../components';
-import { Notebook2 } from '../components/notebook/Notebook2';
+import { Notebook } from '../components/notebook/Notebook';
 import { useJupyter } from '../jupyter';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
@@ -20,7 +20,7 @@ const BokehExample = () => {
   return (
     <JupyterReactTheme>
       {serviceManager && defaultKernel && (
-        <Notebook2
+        <Notebook
           path="bokeh.ipynb"
           id="notebook-bokeh-id"
           kernel={defaultKernel}

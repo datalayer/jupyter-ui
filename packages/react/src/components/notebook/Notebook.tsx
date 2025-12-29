@@ -16,7 +16,7 @@ import { Box } from '@datalayer/primer-addons';
 import { ICollaborationProvider, Kernel } from '../../jupyter';
 import type { OnSessionConnection } from '../../state';
 import { Loader } from '../utils';
-import { useKernelId, useNotebookModel, Notebook2Base } from './Notebook2Base';
+import { useKernelId, useNotebookModel, NotebookBase } from './NotebookBase';
 import type { NotebookExtension } from './NotebookExtensions';
 import type { INotebookToolbarProps } from './toolbar';
 
@@ -34,7 +34,7 @@ const GlobalStyle = createGlobalStyle<any>`
 /**
  * Simple notebook component properties
  */
-export interface INotebook2Props {
+export interface INotebookProps {
   /**
    * Collaboration provider instance.
    */
@@ -131,8 +131,8 @@ export interface INotebook2Props {
  * - You must provide the appropriate service manager
  * - You can specify the kernel id to use; if it is not defined or empty and startDefaultKernel is true, a new kernel will be started.
  */
-export function Notebook2(
-  props: React.PropsWithChildren<INotebook2Props>
+export function Notebook(
+  props: React.PropsWithChildren<INotebookProps>
 ): JSX.Element {
   const {
     Toolbar,
@@ -177,12 +177,12 @@ export function Notebook2(
   });
 
   useEffect(() => {
-    console.log('[Notebook2] useEffect - model changed:', {
+    console.log('[Notebook] useEffect - model changed:', {
       model: !!model,
       isLoading,
     });
     if (model) {
-      console.log('[Notebook2] Setting isLoading to false');
+      console.log('[Notebook] Setting isLoading to false');
       setIsLoading(false);
     }
     onNotebookModelChanged?.(model);
@@ -206,7 +206,7 @@ export function Notebook2(
     };
   }, [collaborationProvider, model, serviceManager]);
 
-  console.log('[Notebook2] Rendering:', {
+  console.log('[Notebook] Rendering:', {
     isLoading,
     hasModel: !!model,
     hasServiceManager: !!serviceManager,
@@ -270,7 +270,7 @@ export function Notebook2(
         {children}
         <GlobalStyle />
         {model && serviceManager && (
-          <Notebook2Base
+          <NotebookBase
             commands={commands}
             id={id}
             extensions={extensions}

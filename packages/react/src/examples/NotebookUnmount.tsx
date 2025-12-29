@@ -13,7 +13,7 @@ import { useJupyter } from '../jupyter';
 import { Kernel } from '../jupyter/kernel/Kernel';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { CellSidebarExtension } from '../components';
-import { Notebook2 } from '../components/notebook/Notebook2';
+import { Notebook } from '../components/notebook/Notebook';
 
 import NOTEBOOK from './notebooks/NotebookExample1.ipynb.json';
 
@@ -55,7 +55,7 @@ const NotebookUnmountExample = () => {
             </Button>
           </Box>
           {kernel && serviceManager && (
-            <Notebook2
+            <Notebook
               id="notebook-unmount-id"
               kernel={kernel}
               serviceManager={serviceManager}

@@ -9,7 +9,7 @@ import { createRoot } from 'react-dom/client';
 import { useJupyter } from '../jupyter';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { CellSidebarExtension } from '../components';
-import { Notebook2 } from '../components/notebook/Notebook2';
+import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 const PlotlyExample = () => {
@@ -20,7 +20,7 @@ const PlotlyExample = () => {
   return (
     <JupyterReactTheme>
       {serviceManager && defaultKernel && (
-        <Notebook2
+        <Notebook
           id="notebook-plotly-id"
           path="plotly.ipynb"
           kernel={defaultKernel}

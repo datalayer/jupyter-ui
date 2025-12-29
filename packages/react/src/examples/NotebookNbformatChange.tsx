@@ -12,8 +12,8 @@ import { Box } from '@datalayer/primer-addons';
 import { useJupyter } from '../jupyter';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { CellSidebarExtension } from '../components';
-import { Notebook2 } from '../components/notebook/Notebook2';
-// import { useNotebookStore2 } from '../components/notebook/Notebook2State';
+import { Notebook } from '../components/notebook/Notebook';
+// import { useNotebookStore } from '../components/notebook/NotebookState';
 
 import NBFORMAT_1 from './notebooks/NotebookExample1.ipynb.json';
 
@@ -25,7 +25,7 @@ const NotebookNbformatChangeExample = () => {
   const { serviceManager, defaultKernel } = useJupyter({
     startDefaultKernel: true,
   });
-//  const notebookStore = useNotebookStore2();
+//  const notebookStore = useNotebookStore();
   const [nbformat, setNbformat] = useState(NBFORMAT_1);
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   const changeNbformat = () => {
@@ -53,7 +53,7 @@ const NotebookNbformatChangeExample = () => {
         </ButtonGroup>
       </Box>
       {serviceManager && defaultKernel && (
-        <Notebook2
+        <Notebook
           id={NOTEBOOK_ID}
           kernel={defaultKernel}
           serviceManager={serviceManager}

@@ -6,7 +6,7 @@
 
 import { useMemo } from 'react';
 import { CellSidebarExtension } from '../../../components';
-import { Notebook2 } from '../../../components/notebook/Notebook2';
+import { Notebook } from '../../../components/notebook/Notebook';
 import { useJupyter } from '../../../jupyter';
 import { CellSidebarButton } from './../../../components/notebook/cell/sidebar/CellSidebarButton';
 
@@ -23,7 +23,7 @@ export const NotebookComponent = () => {
   return (
     <>
       {serviceManager && defaultKernel && (
-        <Notebook2
+        <Notebook
           kernel={defaultKernel}
           serviceManager={serviceManager}
           nbformat={NBFORMAT}

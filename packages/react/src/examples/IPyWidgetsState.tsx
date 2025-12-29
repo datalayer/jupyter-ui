@@ -10,7 +10,7 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { useJupyter } from '../jupyter';
 import { CellSidebarExtension } from '../components';
-import { Notebook2 } from '../components/notebook/Notebook2';
+import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 import NBMODEL from './notebooks/IPyWidgetsExampleWithState.ipynb.json';
@@ -23,7 +23,7 @@ const IPyWidgetsStateExample = () => {
   return (
     <JupyterReactTheme>
       {serviceManager && defaultKernel && (
-        <Notebook2
+        <Notebook
           id="notebook-id"
           kernel={defaultKernel}
           serviceManager={serviceManager}

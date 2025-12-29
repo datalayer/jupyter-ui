@@ -12,7 +12,7 @@ import { Box } from '@datalayer/primer-addons';
 import { useJupyter } from '../jupyter';
 import {
   CellSidebarExtension,
-  Notebook2,
+  Notebook,
   NotebookToolbar,
 } from '../components';
 import { useJupyterReactStore } from '../state';
@@ -97,7 +97,7 @@ const NotebookThemeColormodeExample = () => {
           </Box>
         </Box>
         {serviceManager && (
-          <Notebook2
+          <Notebook
             nbformat={NBFORMAT as INotebookContent}
             serviceManager={serviceManager}
             startDefaultKernel

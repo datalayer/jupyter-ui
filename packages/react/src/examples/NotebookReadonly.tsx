@@ -8,7 +8,7 @@ import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useJupyter } from '../jupyter';
 import { CellSidebarExtension } from '../components';
-import { Notebook2 } from '../components/notebook/Notebook2';
+import { Notebook } from '../components/notebook/Notebook';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
@@ -22,7 +22,7 @@ const NotebookReadonlyExample = () => {
   return (
     <JupyterReactTheme>
       {serviceManager && (
-        <Notebook2
+        <Notebook
           readonly
           nbformat={NBFORMAT}
           serviceManager={serviceManager}

@@ -8,7 +8,7 @@ import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useJupyter } from '../jupyter';
 import { JupyterReactTheme } from '../theme';
-import { Notebook2 } from '../components/notebook/Notebook2';
+import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
 import { CellSidebarExtension } from '../components/notebook/cell/sidebar/CellSidebarExtension';
@@ -24,7 +24,7 @@ const NotebookKernelExample = () => {
   return (
     <JupyterReactTheme>
       {serviceManager && defaultKernel && (
-        <Notebook2
+        <Notebook
           path="ipywidgets.ipynb"
           id="notebook-kernel-id"
           kernel={defaultKernel}

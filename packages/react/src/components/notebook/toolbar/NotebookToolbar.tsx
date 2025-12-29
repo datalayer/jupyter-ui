@@ -15,7 +15,7 @@ import {
   ZapIcon,
   PaperAirplaneIcon,
 } from '@primer/octicons-react';
-import { useNotebookStore2 } from '../Notebook2State';
+import { useNotebookStore } from '../NotebookState';
 
 export type INotebookToolbarProps = {
   notebookId: string;
@@ -23,7 +23,7 @@ export type INotebookToolbarProps = {
 
 export const NotebookToolbar = (props: INotebookToolbarProps) => {
   const { notebookId } = props;
-  const notebookStore = useNotebookStore2();
+  const notebookStore = useNotebookStore();
   const [type, setType] = useState('code');
   // TODO Fix this...
   // const kernelStatus = notebookStore.selectKernelStatus(notebookId);

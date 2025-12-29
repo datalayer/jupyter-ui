@@ -14,7 +14,7 @@ import { useJupyter } from '../jupyter';
 import {
   CellSidebarExtension,
   KernelDetective,
-  Notebook2,
+  Notebook,
   NotebookToolbar,
 } from '../components';
 import { OnSessionConnection } from '../state';
@@ -64,7 +64,7 @@ const NotebookOnSessionConnectionExample = () => {
         })}
       </Box>
       {serviceManager && defaultKernel && (
-        <Notebook2
+        <Notebook
           id="notebook-on-kernel-connection-id"
           kernel={defaultKernel}
           serviceManager={serviceManager}

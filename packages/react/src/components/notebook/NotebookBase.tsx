@@ -78,8 +78,8 @@ import { Lumino } from '../lumino';
 import { Loader } from '../utils';
 import type { NotebookExtension } from './NotebookExtensions';
 import { addNotebookCommands, NotebookPanelProvider } from './NotebookCommands';
-import { Notebook2Adapter } from './Notebook2Adapter';
-import { notebookStore2 } from './Notebook2State';
+import { NotebookAdapter } from './NotebookAdapter';
+import { notebookStore } from './NotebookState';
 
 const COMPLETER_TIMEOUT_MILLISECONDS = 1000;
 
@@ -112,7 +112,7 @@ function generateInlineProviderSettings(
 /**
  * Base notebook component properties
  */
-export interface INotebook2BaseProps {
+export interface INotebookBaseProps {
   /**
    * Custom command registry.
    *
@@ -172,7 +172,7 @@ export interface INotebook2BaseProps {
  * Important
  * This component is not connected to any React stores.
  */
-export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
+export function NotebookBase(props: INotebookBaseProps): JSX.Element {
   const {
     commands,
     extensions = DEFAULT_EXTENSIONS,
@@ -183,7 +183,7 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
     onSessionConnection,
   } = props;
 
-  console.log('[Notebook2Base] Component rendering with props:', {
+  console.log('[NotebookBase] Component rendering with props:', {
     hasInlineProviders: !!props.inlineProviders,
     inlineProvidersCount: props.inlineProviders?.length,
     inlineProviders: props.inlineProviders,
@@ -195,7 +195,7 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
     new Array<JSX.Element>()
   );
   const [completer, setCompleter] = useState<CompletionHandler | null>(null);
-  const [adapter, setAdapter] = useState<Notebook2Adapter | null>(null);
+  const [adapter, setAdapter] = useState<NotebookAdapter | null>(null);
 
   const id = useMemo(() => props.id || newUuid(), [props.id]);
   const path = useMemo(
@@ -216,7 +216,7 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
 
   useEffect(() => {
     console.log(
-      '[Notebook2Base] Setting up completer with inlineProviders:',
+      '[NotebookBase] Setting up completer with inlineProviders:',
       props.inlineProviders
     );
     const completer = new Completer({ model: new CompleterModel() });
@@ -227,7 +227,7 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
       props.inlineProviders
     );
     console.log(
-      '[Notebook2Base] Generated settings for providers:',
+      '[NotebookBase] Generated settings for providers:',
       inlineProvidersSettings
     );
 
@@ -241,15 +241,15 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
       timeout: COMPLETER_TIMEOUT_MILLISECONDS,
     });
     console.log(
-      '[Notebook2Base] ProviderReconciliator created with inlineProviders:',
+      '[NotebookBase] ProviderReconciliator created with inlineProviders:',
       props.inlineProviders
     );
-    console.log('[Notebook2Base] ProviderReconciliator object:', reconciliator);
+    console.log('[NotebookBase] ProviderReconciliator object:', reconciliator);
 
     // Create InlineCompleter widget if inline providers are configured
     let inlineCompleter: InlineCompleter | undefined;
     if (props.inlineProviders && props.inlineProviders.length > 0) {
-      console.log('[Notebook2Base] Creating InlineCompleter widget');
+      console.log('[NotebookBase] Creating InlineCompleter widget');
       const trans = nullTranslator.load('jupyterlab');
       inlineCompleter = new InlineCompleter({
         model: new InlineCompleter.Model(),
@@ -293,7 +293,7 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
             inlineCompleter.current
           ) {
             console.log(
-              '[Notebook2Base] Tab pressed - accepting inline completion'
+              '[NotebookBase] Tab pressed - accepting inline completion'
             );
             event.preventDefault();
             event.stopPropagation();
@@ -309,7 +309,7 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
             inlineCompleter.current
           ) {
             console.log(
-              '[Notebook2Base] Escape pressed - rejecting inline completion'
+              '[NotebookBase] Escape pressed - rejecting inline completion'
             );
             event.preventDefault();
             event.stopPropagation();
@@ -327,7 +327,7 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
       };
 
       console.log(
-        '[Notebook2Base] InlineCompleter created, configured, attached, and keyboard handlers set up'
+        '[NotebookBase] InlineCompleter created, configured, attached, and keyboard handlers set up'
       );
 
       // Store the cleanup function on the inlineCompleter for later cleanup
@@ -464,7 +464,7 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
   const [panel, setPanel] = useState<NotebookPanel | null>(null);
   useEffect(() => {
     let thisPanel: NotebookPanel | null = null;
-    let thisAdapter: Notebook2Adapter | null = null;
+    let thisAdapter: NotebookAdapter | null = null;
     let widgetsManager: WidgetManager | null = null;
     if (context) {
       thisPanel = widgetFactory?.createNew(context) ?? null;
@@ -473,7 +473,7 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
         panelProvider.setPanel(thisPanel, context);
 
         // Create the adapter
-        thisAdapter = new Notebook2Adapter(
+        thisAdapter = new NotebookAdapter(
           features.commands,
           thisPanel,
           context
@@ -554,33 +554,33 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
   // Update notebook store when adapter changes
   useEffect(() => {
     if (adapter) {
-      console.log(`[Notebook2Base] Registering adapter for notebook: ${id}`);
+      console.log(`[NotebookBase] Registering adapter for notebook: ${id}`);
       console.log(
-        `[Notebook2Base] Adapter has getCells:`,
+        `[NotebookBase] Adapter has getCells:`,
         typeof adapter.getCells
       );
       console.log(
-        `[Notebook2Base] Adapter cell count:`,
+        `[NotebookBase] Adapter cell count:`,
         adapter.getCellCount()
       );
-      const currentNotebooks = notebookStore2.getState().notebooks;
+      const currentNotebooks = notebookStore.getState().notebooks;
       const updatedNotebooks = new Map(currentNotebooks);
       updatedNotebooks.set(id, { adapter });
-      notebookStore2.getState().setNotebooks2(updatedNotebooks);
+      notebookStore.getState().setNotebooks(updatedNotebooks);
       console.log(
-        `[Notebook2Base] Store now has ${updatedNotebooks.size} notebooks`
+        `[NotebookBase] Store now has ${updatedNotebooks.size} notebooks`
       );
       console.log(
-        `[Notebook2Base] Notebook IDs:`,
+        `[NotebookBase] Notebook IDs:`,
         Array.from(updatedNotebooks.keys())
       );
     } else {
-      console.log(`[Notebook2Base] ⚠️  No adapter yet for notebook: ${id}`);
-      const currentNotebooks = notebookStore2.getState().notebooks;
+      console.log(`[NotebookBase] ⚠️  No adapter yet for notebook: ${id}`);
+      const currentNotebooks = notebookStore.getState().notebooks;
       if (currentNotebooks.has(id)) {
         const updatedNotebooks = new Map(currentNotebooks);
         updatedNotebooks.delete(id);
-        notebookStore2.getState().setNotebooks2(updatedNotebooks);
+        notebookStore.getState().setNotebooks(updatedNotebooks);
       }
     }
   }, [adapter, id]);
@@ -640,7 +640,7 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
           // Create a dummy session if none exists to enable inline completions without a kernel
           const sessionForCompletion = changes.newValue || ({} as any);
           console.log(
-            '[Notebook2Base] Creating ProviderReconciliator with editor and session',
+            '[NotebookBase] Creating ProviderReconciliator with editor and session',
             {
               hasEditor: !!editor,
               hasSession: !!changes.newValue,
@@ -661,14 +661,14 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
             timeout: COMPLETER_TIMEOUT_MILLISECONDS,
           });
           console.log(
-            '[Notebook2Base] ProviderReconciliator with editor created:',
+            '[NotebookBase] ProviderReconciliator with editor created:',
             reconciliator
           );
 
           // Update the inline completer's editor if it exists
           if (completer.inlineCompleter) {
             completer.inlineCompleter.editor = editor;
-            console.log('[Notebook2Base] Updated InlineCompleter editor');
+            console.log('[NotebookBase] Updated InlineCompleter editor');
           }
 
           completer.editor = editor;
@@ -731,11 +731,11 @@ export function Notebook2Base(props: INotebook2BaseProps): JSX.Element {
   // Cleanup notebook from store on unmount
   useEffect(() => {
     return () => {
-      const currentNotebooks = notebookStore2.getState().notebooks;
+      const currentNotebooks = notebookStore.getState().notebooks;
       if (currentNotebooks.has(id)) {
         const updatedNotebooks = new Map(currentNotebooks);
         updatedNotebooks.delete(id);
-        notebookStore2.getState().setNotebooks2(updatedNotebooks);
+        notebookStore.getState().setNotebooks(updatedNotebooks);
       }
     };
   }, [id]);

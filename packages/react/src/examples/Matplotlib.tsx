@@ -10,7 +10,7 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 import { JupyterLabCss, JupyterReactTheme } from '../theme';
 import { useJupyter } from '../jupyter';
 import { CellSidebarExtension } from '../components';
-import { Notebook2 } from '../components/notebook/Notebook2';
+import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 import NBFORMAT from './notebooks/Matplotlib.ipynb.json';
@@ -24,7 +24,7 @@ const MatplotlibExample = () => {
     <JupyterReactTheme>
       <JupyterLabCss colormode="light" />
       {serviceManager && defaultKernel && (
-        <Notebook2
+        <Notebook
           id="notebook-matplotlib-id"
           kernel={defaultKernel}
           serviceManager={serviceManager}

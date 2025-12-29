@@ -6,10 +6,10 @@
 
 import { useEffect, useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
-import { useNotebookStore2 } from '../components/notebook/Notebook2State';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { useJupyter } from '../jupyter';
-import { CellSidebarExtension, Notebook2 } from '../components';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { CellSidebarExtension, Notebook } from '../components';
+import { useNotebookStore } from '../components/notebook/NotebookState';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 const NOTEBOOK_ID = 'notebook';
@@ -24,8 +24,8 @@ const NotebookInitExample = () => {
   const { serviceManager, defaultKernel } = useJupyter({
     startDefaultKernel: true,
   });
-  const notebookStore = useNotebookStore2();
-  const notebook = notebookStore.selectNotebook2(NOTEBOOK_ID);
+  const notebookStore = useNotebookStore();
+  const notebook = notebookStore.selectNotebook(NOTEBOOK_ID);
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   useEffect(() => {
     if (notebook && !IS_INITIALIZED) {
@@ -49,7 +49,7 @@ const NotebookInitExample = () => {
     <JupyterReactTheme>
       <div style={{ width: NOTEBOOK_WIDTH, height: NOTEBOOK_HEIGHT }}>
         {serviceManager && defaultKernel && (
-          <Notebook2
+          <Notebook
             path="ipywidgets.ipynb"
             id={NOTEBOOK_ID}
             kernel={defaultKernel}

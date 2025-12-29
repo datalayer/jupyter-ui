@@ -9,7 +9,7 @@ import { createRoot } from 'react-dom/client';
 import { useJupyter } from '../jupyter';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { CellSidebarExtension } from '../components';
-import { Notebook2 } from '../components/notebook/Notebook2';
+import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 const ObservableHQExample = () => {
@@ -21,7 +21,7 @@ const ObservableHQExample = () => {
   return (
     <JupyterReactTheme>
       {serviceManager && defaultKernel && (
-        <Notebook2
+        <Notebook
           id="notebook-deno-id"
           path="deno/display-js/Observable Plot.ipynb"
           kernel={defaultKernel}

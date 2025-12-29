@@ -11,7 +11,7 @@ import { Box } from '@datalayer/primer-addons';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { useJupyter } from '../jupyter';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
-import { Notebook2 } from '../components/notebook/Notebook2';
+import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from '../components/notebook/toolbar/NotebookToolbar';
 import { TocExtension } from './extensions/toc/TocExtension';
 import { ReactLayoutFactory } from './extensions/toc/ReactLayoutFactory';
@@ -47,7 +47,7 @@ const NotebookTOCExample = () => {
         </Button>
       </Box>
       {serviceManager && defaultKernel && (
-        <Notebook2
+        <Notebook
           kernel={defaultKernel}
           serviceManager={serviceManager}
           nbformat={NBFORMAT as INotebookContent}

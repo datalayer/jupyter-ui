@@ -11,7 +11,7 @@ import { Box } from '@datalayer/primer-addons';
 import { useJupyter } from '../jupyter';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { CellSidebarExtension } from '../components';
-import { Notebook2 } from '../components/notebook/Notebook2';
+import { Notebook } from '../components/notebook/Notebook';
 
 const PATH_1 = 'ipywidgets.ipynb';
 
@@ -46,7 +46,7 @@ const NotebookPathChangeExample = () => {
         </Text>
       </Box>
       {serviceManager && defaultKernel && (
-        <Notebook2
+        <Notebook
           id="notebook-path-change-id"
           kernel={defaultKernel}
           serviceManager={serviceManager}

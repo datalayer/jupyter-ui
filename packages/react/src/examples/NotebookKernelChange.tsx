@@ -12,8 +12,8 @@ import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { useJupyter } from '../jupyter/JupyterUse';
 import { Kernel } from '../jupyter/kernel/Kernel';
 import { CellSidebarExtension } from '../components';
-import { Notebook2 } from '../components/notebook/Notebook2';
-// import { useNotebookStore2 } from '../components/notebook/Notebook2State';
+import { Notebook } from '../components/notebook/Notebook';
+// import { useNotebookStore } from '../components/notebook/NotebookState';
 
 const NOTEBOOK_ID = 'notebook-kernel-change-id';
 
@@ -26,8 +26,8 @@ const NotebookKernelChangeExample = () => {
     startDefaultKernel: true,
   });
   const [message, _] = useState('');
-//  const notebookStore = useNotebookStore2();
-//  const notebook = notebookStore.selectNotebook2(NOTEBOOK_ID);
+//  const notebookStore = useNotebookStore();
+//  const notebook = notebookStore.selectNotebook(NOTEBOOK_ID);
 
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
 
@@ -77,7 +77,7 @@ const NotebookKernelChangeExample = () => {
         </Box>
       )}
       {serviceManager && defaultKernel && (
-        <Notebook2
+        <Notebook
           id={NOTEBOOK_ID}
           kernel={defaultKernel}
           serviceManager={serviceManager}

@@ -16,7 +16,7 @@ import * as nbformat from '@jupyterlab/nbformat';
 import { NotebookCommandIds } from './NotebookCommands';
 import * as Diff from 'diff';
 
-export class Notebook2Adapter {
+export class NotebookAdapter {
   private _commands: CommandRegistry;
   private _panel: NotebookPanel;
   private _notebook: Notebook;
@@ -232,16 +232,16 @@ export class Notebook2Adapter {
     source: string;
     outputs?: unknown[];
   }> {
-    console.log('[Notebook2Adapter.getCells] Called');
+    console.log('[NotebookAdapter.getCells] Called');
     const cells = this._notebook.model?.cells;
     if (!cells) {
       console.log(
-        '[Notebook2Adapter.getCells] No cells model, returning empty array'
+        '[NotebookAdapter.getCells] No cells model, returning empty array'
       );
       return [];
     }
 
-    console.log(`[Notebook2Adapter.getCells] Found ${cells.length} cells`);
+    console.log(`[NotebookAdapter.getCells] Found ${cells.length} cells`);
 
     const result: Array<{
       index: number;
@@ -260,7 +260,7 @@ export class Notebook2Adapter {
           outputs:
             cell.type === 'code' ? (cell as any).outputs?.toJSON() : undefined,
         };
-        console.log(`[Notebook2Adapter.getCells] Cell ${i}:`, {
+        console.log(`[NotebookAdapter.getCells] Cell ${i}:`, {
           type: cellData.type,
           sourceLength: cellData.source.length,
         });
@@ -268,7 +268,7 @@ export class Notebook2Adapter {
       }
     }
 
-    console.log(`[Notebook2Adapter.getCells] Returning ${result.length} cells`);
+    console.log(`[NotebookAdapter.getCells] Returning ${result.length} cells`);
     return result;
   }
 
@@ -346,7 +346,7 @@ export class Notebook2Adapter {
   insertAt(cellIndex: number, source?: string): void {
     const cellCount = this.getCellCount();
 
-    console.log('[Notebook2Adapter.insertAt] Called with:', {
+    console.log('[NotebookAdapter.insertAt] Called with:', {
       cellIndex,
       sourceLength: source?.length || 0,
       sourcePreview: source?.substring(0, 50),
@@ -366,7 +366,7 @@ export class Notebook2Adapter {
     // Normalize -1 to append position (matches Jupyter MCP Server)
     const actualIndex = cellIndex === -1 ? cellCount : cellIndex;
 
-    console.log('[Notebook2Adapter.insertAt] Normalized index:', {
+    console.log('[NotebookAdapter.insertAt] Normalized index:', {
       originalIndex: cellIndex,
       actualIndex,
       cellCount,
@@ -375,7 +375,7 @@ export class Notebook2Adapter {
     // Insert at the actual index
     if (actualIndex >= cellCount) {
       // Append at end
-      console.log('[Notebook2Adapter.insertAt] Appending at end');
+      console.log('[NotebookAdapter.insertAt] Appending at end');
       if (cellCount > 0) {
         this.setActiveCell(cellCount - 1);
       }
@@ -383,13 +383,13 @@ export class Notebook2Adapter {
     } else {
       // Insert at specific position
       console.log(
-        `[Notebook2Adapter.insertAt] Inserting at index ${actualIndex}`
+        `[NotebookAdapter.insertAt] Inserting at index ${actualIndex}`
       );
       this.setActiveCell(actualIndex);
       this.insertAbove(source);
     }
 
-    console.log('[Notebook2Adapter.insertAt] After insertion:', {
+    console.log('[NotebookAdapter.insertAt] After insertion:', {
       cellCount: this.getCellCount(),
       activeCell: this._notebook.activeCellIndex,
     });
@@ -467,7 +467,7 @@ export class Notebook2Adapter {
       for (const idx of indices) {
         if (idx < 0 || idx >= cellCount) {
           console.error(
-            `[Notebook2Adapter.deleteCell] Index ${idx} is out of range (cell count: ${cellCount})`
+            `[NotebookAdapter.deleteCell] Index ${idx} is out of range (cell count: ${cellCount})`
           );
           throw new Error(
             `Cell index ${idx} is out of range. Notebook has ${cellCount} cells.`
@@ -480,7 +480,7 @@ export class Notebook2Adapter {
       const sortedIndices = [...indices].sort((a, b) => b - a);
 
       console.log(
-        `[Notebook2Adapter.deleteCell] Deleting ${sortedIndices.length} cell(s) in reverse order:`,
+        `[NotebookAdapter.deleteCell] Deleting ${sortedIndices.length} cell(s) in reverse order:`,
         sortedIndices
       );
 
@@ -494,7 +494,7 @@ export class Notebook2Adapter {
       const activeCell = this._notebook.activeCell;
 
       if (!activeCell) {
-        console.warn('[Notebook2Adapter.deleteCell] No active cell to delete');
+        console.warn('[NotebookAdapter.deleteCell] No active cell to delete');
         return; // Safely return without deleting
       }
 
@@ -863,8 +863,8 @@ export class Notebook2Adapter {
    */
   dispose(): void {
     // Clean up any resources if needed
-    // The panel, notebook, and context are managed by Notebook2Base
+    // The panel, notebook, and context are managed by NotebookBase
   }
 }
 
-export default Notebook2Adapter;
+export default NotebookAdapter;

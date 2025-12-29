@@ -22,8 +22,8 @@ import { Console } from '../components/console/Console';
 import { FileBrowser } from '../components/filebrowser/FileBrowser';
 import { FileManagerJupyterLab } from '../components/filemanager/FileManagerJupyterLab';
 import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
-import { Notebook2 } from '../components/notebook/Notebook2';
-import { useNotebookStore2 } from '../components/notebook/Notebook2State';
+import { Notebook } from '../components/notebook/Notebook';
+import { useNotebookStore } from '../components/notebook/NotebookState';
 import { Output } from '../components/output/Output';
 import { Terminal } from '../components/terminal/Terminal';
 import { CellSidebarExtension } from '../components';
@@ -101,7 +101,7 @@ const CellToolbar = (props: ICellToolProps) => {
 };
 
 const NotebookToolbar = () => {
-  const notebookStore = useNotebookStore2();
+  const notebookStore = useNotebookStore();
   return (
     <Box display="flex">
       <ButtonGroup>
@@ -135,7 +135,7 @@ const NotebookKernelChange = () => {
   const { kernelManager, serviceManager, defaultKernel } = useJupyter({
     startDefaultKernel: true,
   });
-//  const notebookStore = useNotebookStore2();
+//  const notebookStore = useNotebookStore();
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   const changeKernel = () => {
     if (serviceManager && kernelManager) {
@@ -162,7 +162,7 @@ const NotebookKernelChange = () => {
         </ButtonGroup>
       </Box>
       {serviceManager && defaultKernel && (
-        <Notebook2
+        <Notebook
           path="test.ipynb"
           kernel={defaultKernel}
           serviceManager={serviceManager}
@@ -232,7 +232,7 @@ const JupyterContextExample = () => {
         {defaultKernel && <Cell id={cellId} kernel={defaultKernel} />}
         <hr />
         {serviceManager && defaultKernel && (
-          <Notebook2
+          <Notebook
             nbformat={NBFORMAT as INotebookContent}
             id={NOTEBOOK_ID_3}
             kernel={defaultKernel}
@@ -249,7 +249,7 @@ const JupyterContextExample = () => {
         <hr />
         <NotebookToolbar />
         {serviceManager && defaultKernel && (
-          <Notebook2
+          <Notebook
             path="ipywidgets.ipynb"
             kernel={defaultKernel}
             serviceManager={serviceManager}

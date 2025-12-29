@@ -11,7 +11,7 @@
  * @module tools/core/executor
  */
 
-import type { Notebook2State } from '../../components/notebook/Notebook2State';
+import type { NotebookState } from '../../components/notebook/NotebookState';
 
 /**
  * Tool executor interface - abstracts how operations are executed.
@@ -29,7 +29,7 @@ export interface ToolExecutor {
 }
 
 /**
- * Default executor - directly calls Notebook2State store methods.
+ * Default executor - directly calls NotebookState store methods.
  * Calls methods with individual parameters by spreading the payload object.
  *
  * @example
@@ -42,11 +42,11 @@ export interface ToolExecutor {
 export class DefaultExecutor implements ToolExecutor {
   constructor(
     private documentId: string,
-    private store: Notebook2State
+    private store: NotebookState
   ) {}
 
   /**
-   * Execute an operation by calling the corresponding Notebook2State method.
+   * Execute an operation by calling the corresponding NotebookState method.
    * Builds payload with documentId and spreads values as individual parameters.
    *
    * @param operationName - Name of the operation (e.g., "insertCell", "deleteCell")

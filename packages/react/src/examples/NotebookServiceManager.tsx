@@ -19,7 +19,7 @@ import { JupyterReactTheme } from '../theme';
 import { createServerSettings } from '../utils';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import { CellSidebarExtension } from '../components';
-import { Notebook2 } from '../components/notebook/Notebook2';
+import { Notebook } from '../components/notebook/Notebook';
 
 import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
@@ -57,7 +57,7 @@ const NotebookServiceManagerExample = () => {
         </Box>
         <Box ml={3}>Token: {serviceManager.serverSettings.token}</Box>
       </Box>
-      <Notebook2
+      <Notebook
         id="notebook-model-id"
         serviceManager={serviceManager}
         startDefaultKernel={!serverless}

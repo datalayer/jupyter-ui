@@ -25,9 +25,9 @@ import { IJupyterConfig, loadJupyterConfig } from '../jupyter/JupyterConfig';
 import { cellsStore, CellsState } from '../components/cell/CellState';
 import { consoleStore, ConsoleState } from '../components/console/ConsoleState';
 import {
-  notebookStore2,
-  Notebook2State,
-} from '../components/notebook/Notebook2State';
+  notebookStore,
+  NotebookState,
+} from '../components/notebook/NotebookState';
 import { outputsStore, OutputState } from '../components/output/OutputState';
 import {
   terminalStore,
@@ -51,7 +51,7 @@ export type JupyterReactState = {
   jupyterConfig?: IJupyterConfig;
   kernel?: Kernel;
   kernelIsLoading: boolean;
-  notebookStore: Notebook2State;
+  notebookStore: NotebookState;
   outputStore: OutputState;
   serviceManager?: ServiceManager.IManager;
   terminalStore: TerminalState;
@@ -82,7 +82,7 @@ export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
   serverSettings: undefined,
   cellsStore: cellsStore.getState(),
   consoleStore: consoleStore.getState(),
-  notebookStore: notebookStore2.getState(),
+  notebookStore: notebookStore.getState(),
   outputStore: outputsStore.getState(),
   terminalStore: terminalStore.getState(),
   colormode: 'light',

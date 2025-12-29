@@ -11,7 +11,7 @@ import { useJupyter } from '../jupyter';
 import { jupyterLabTheme, JupyterReactTheme } from '../theme';
 import { Text, ToggleSwitch, theme as primerTheme } from '@primer/react';
 import { CellSidebarExtension } from '../components';
-import { Notebook2 } from '../components/notebook/Notebook2';
+import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
@@ -57,7 +57,7 @@ const NotebookThemeExample = () => {
           aria-labelledby="switch-label"
         />
         {serviceManager && defaultKernel && (
-          <Notebook2
+          <Notebook
             id="notebook-theme-id"
             kernel={defaultKernel}
             serviceManager={serviceManager}
