@@ -18,7 +18,7 @@ const NOTEBOOK_WIDTH = '100%';
 
 const NOTEBOOK_HEIGHT = 500;
 
-const IS_INITIALIZED = false;
+let IS_INITIALIZED = false;
 
 const NotebookInitExample = () => {
   const { serviceManager, defaultKernel } = useJupyter({
@@ -29,20 +29,18 @@ const NotebookInitExample = () => {
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   useEffect(() => {
     if (notebook && !IS_INITIALIZED) {
-      /*
-      notebook.adapter?.notebookPanel?.model?.contentChanged.connect(_ => {
+      notebook.adapter?.panel?.model?.contentChanged.connect(_ => {
         if (!IS_INITIALIZED) {
           IS_INITIALIZED = true;
-          //          console.log("You can use one of these commands:", notebook.adapter?.commands.listCommands());
-          //          notebook.adapter?.commands.execute("notebook:run-all");
-          notebookStore.insertAbove({
-            id: NOTEBOOK_ID,
-            cellType: 'code',
-            source: 'print("Hello 🪐 ⚛️ Jupyter React")',
-          });
+          // console.log("You can use one of these commands:", notebook.adapter?.commands.listCommands());
+          // notebook.adapter?.commands.execute("notebook:run-all");
+          notebookStore.insertAbove(
+            NOTEBOOK_ID,
+            'code',
+            'print("Hello 🪐 ⚛️ Jupyter React")'
+          );
         }
       });
-      */
     }
   }, [defaultKernel, notebook]);
   return (

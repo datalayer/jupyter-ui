@@ -93,21 +93,21 @@ const Tabs = () => {
         <UnderlineNav.Item
           href=""
           aria-current={tab === 'editor' ? 'page' : undefined}
-          //          onClick={(e: any) => goToTab(e, 'editor', notebook?.model)}
+          onClick={(e: any) => goToTab(e, 'editor', notebook?.model)}
         >
           Editor
         </UnderlineNav.Item>
         <UnderlineNav.Item
           href=""
           aria-current={tab === 'notebook' ? 'page' : undefined}
-          //          onClick={(e: any) => goToTab(e, 'notebook', notebook?.model)}
+          onClick={(e: any) => goToTab(e, 'notebook', notebook?.model)}
         >
           Notebook
         </UnderlineNav.Item>
         <UnderlineNav.Item
           href=""
           aria-current={tab === 'nbformat' ? 'page' : undefined}
-          //          onClick={(e: any) => goToTab(e, 'nbformat', notebook?.model)}
+          onClick={(e: any) => goToTab(e, 'nbformat', notebook?.model)}
         >
           NbFormat
         </UnderlineNav.Item>

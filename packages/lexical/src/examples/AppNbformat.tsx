@@ -5,10 +5,10 @@
  */
 
 import { useState, useMemo } from 'react';
-// import { $getRoot } from 'lexical';
+import { $getRoot } from 'lexical';
 import styled from 'styled-components';
 import {
-  //  useNotebookStore,
+  useNotebookStore,
   useJupyter,
   JupyterReactTheme,
   Notebook,
@@ -20,8 +20,8 @@ import { UnderlineNav, Button } from '@primer/react';
 import { ThreeBarsIcon } from '@primer/octicons-react';
 import { JSONTree } from 'react-json-tree';
 import { INotebookContent } from '@jupyterlab/nbformat';
-// import { INotebookModel } from '@jupyterlab/notebook';
-// import { lexicalToNbformat } from './..';
+import { INotebookModel } from '@jupyterlab/notebook';
+import { lexicalToNbformat } from './..';
 import { useLexical, LexicalProvider, Editor } from './..';
 
 import INITIAL_LEXICAL_MODEL from './content/Example.lexical.json';
@@ -43,8 +43,8 @@ const Tabs = () => {
   const { serviceManager, defaultKernel } = useJupyter({
     startDefaultKernel: true,
   });
-  //  const notebookStore = useNotebookStore();
-  const [tab, _] = useState<TabType>('editor');
+  const notebookStore = useNotebookStore();
+  const [tab, setTab] = useState<TabType>('editor');
   const [nbformat, setNbformat] = useState<INotebookContent>(
     INITIAL_NBFORMAT_MODEL,
   );
@@ -52,7 +52,6 @@ const Tabs = () => {
     () => [new CellSidebarExtension({ factory: CellSidebar })],
     [],
   );
-  /*
   const notebook = notebookStore.selectNotebook(NOTEBOOK_UID);
   const goToTab = (
     e: any,
@@ -80,28 +79,27 @@ const Tabs = () => {
     }
     setTab(toTab);
   };
-  */
   return (
     <Box className="center">
       <UnderlineNav aria-label="Underline Navigation">
         <UnderlineNav.Item
           href=""
           aria-current={tab === 'editor' ? 'page' : undefined}
-          //          onClick={e => goToTab(e, 'editor', notebook?.model)}
+          onClick={e => goToTab(e, 'editor', notebook?.model)}
         >
           Editor
         </UnderlineNav.Item>
         <UnderlineNav.Item
           href=""
           aria-current={tab === 'notebook' ? 'page' : undefined}
-          //          onClick={e => goToTab(e, 'notebook', notebook?.model)}
+          onClick={e => goToTab(e, 'notebook', notebook?.model)}
         >
           Notebook
         </UnderlineNav.Item>
         <UnderlineNav.Item
           href=""
           aria-current={tab === 'nbformat' ? 'page' : undefined}
-          //          onClick={e => goToTab(e, 'nbformat', notebook?.model)}
+          onClick={e => goToTab(e, 'nbformat', notebook?.model)}
         >
           NbFormat
         </UnderlineNav.Item>

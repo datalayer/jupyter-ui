@@ -4,27 +4,24 @@
  * MIT License
  */
 
-// import { TableOfContents, TableOfContentsTree } from '@jupyterlab/toc';
-// import { useEffect, useState } from 'react';
-// import { useNotebookStore } from '../../../components';
+import { TableOfContents, TableOfContentsTree } from '@jupyterlab/toc';
+import { useEffect, useState } from 'react';
+import { useNotebookStore } from '../../../components';
 
 export interface TocTreeProps {
   notebookId: string;
 }
 
 /** Custom CSS Variables */
-/*
 const CustomCssVarStyles = {
   '--base-height-multiplier': '8', // Size scaling ratio
   '--jp-inverse-layout-color3': '#a8a8a8', // Icon color
   '--type-ramp-base-font-size': '14px', // Font size
 } as React.CSSProperties;
-*/
 
 /** Table of Contents Tree Component */
-const TocTree = ({ notebookId }: TocTreeProps) => {
-  /*
-  const model = useNotebookStore(state=> state.selectTocModel(notebookId));
+export const TocTree = ({ notebookId }: TocTreeProps) => {
+  const model = useNotebookStore(state => state.selectTocModel(notebookId));
   const [, setCount] = useState(0);
   const update = () => setCount(c => c + 1);
 
@@ -59,8 +56,6 @@ const TocTree = ({ notebookId }: TocTreeProps) => {
   ) : (
     <>Empty</>
   );
-    */
-  return <>ToC Tree - TODO Fix</>;
 };
 
 export default TocTree;

@@ -6,14 +6,14 @@
 
 import { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-// import { INotebookContent } from '@jupyterlab/nbformat';
+import { INotebookContent } from '@jupyterlab/nbformat';
 import { Button, ButtonGroup } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { useJupyter } from '../jupyter';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
-// import { useNotebookStore } from '../components/notebook/NotebookState';
+import { useNotebookStore } from '../components/notebook/NotebookState';
 
 import NBFORMAT_1 from './notebooks/NotebookExample1.ipynb.json';
 
@@ -25,18 +25,16 @@ const NotebookNbformatChangeExample = () => {
   const { serviceManager, defaultKernel } = useJupyter({
     startDefaultKernel: true,
   });
-  //  const notebookStore = useNotebookStore();
+  const notebookStore = useNotebookStore();
   const [nbformat, setNbformat] = useState(NBFORMAT_1);
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   const changeNbformat = () => {
-    /*
     console.log(
       'Notebook Nbformat from store',
       notebookStore.notebooks
         .get(NOTEBOOK_ID)
         ?.model?.toJSON() as INotebookContent
     );
-    */
     if (nbformat === NBFORMAT_1) {
       setNbformat(NBFORMAT_2);
     } else {

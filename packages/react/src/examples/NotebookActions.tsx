@@ -31,8 +31,7 @@ const NotebookActionsExample = () => {
   const { serviceManager, defaultKernel } = useJupyter({
     startDefaultKernel: true,
   });
-  const runStore2 = useNotebookStore();
-
+  const notebookStore = useNotebookStore();
   const extensions = useMemo(
     () => [
       new CellToolbarExtension(),
@@ -40,25 +39,24 @@ const NotebookActionsExample = () => {
     ],
     []
   );
-
   return (
     <>
       <ActionBar aria-label="Toolbar">
         <ActionBar.IconButton
           icon={PlayIcon}
           aria-label="Run"
-          onClick={() => runStore2.run(NOTEBOOK_ID)}
+          onClick={() => notebookStore.run(NOTEBOOK_ID)}
         />
         <ActionBar.Divider />
         <ActionBar.IconButton
           icon={ChevronUpIcon}
           aria-label="Insert Code"
-          onClick={() => runStore2.insertAbove(NOTEBOOK_ID, 'code')}
+          onClick={() => notebookStore.insertAbove(NOTEBOOK_ID, 'code')}
         />
         <ActionBar.IconButton
           icon={ChevronDownIcon}
           aria-label="Insert Code"
-          onClick={() => runStore2.insertBelow(NOTEBOOK_ID, 'code')}
+          onClick={() => notebookStore.insertBelow(NOTEBOOK_ID, 'code')}
         />
       </ActionBar>
       <JupyterReactTheme>

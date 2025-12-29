@@ -25,9 +25,7 @@ export const NotebookToolbar = (props: INotebookToolbarProps) => {
   const { notebookId } = props;
   const notebookStore = useNotebookStore();
   const [type, setType] = useState('code');
-  // TODO Fix this...
-  // const kernelStatus = notebookStore.selectKernelStatus(notebookId);
-  const kernelStatus = undefined;
+  const kernelStatus = notebookStore.selectKernelStatus(notebookId);
   const handleChangeCellType = (newType: string) => {
     setType(newType);
   };
@@ -59,12 +57,10 @@ export const NotebookToolbar = (props: INotebookToolbarProps) => {
           title="Save"
           onClick={e => {
             e.preventDefault();
-            /*
             notebookStore.save({
               id: notebookId,
               date: new Date(),
             });
-            */
           }}
           icon={ZapIcon}
         />
