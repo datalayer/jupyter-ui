@@ -5,8 +5,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { Jupyter, JupyterProps, Terminal } from '@datalayer/jupyter-react';
-import React from 'react';
+import { JupyterReactTheme, Terminal } from '@datalayer/jupyter-react';
 
 const meta: Meta<typeof Terminal> = {
   title: 'Components/Terminal',
@@ -23,18 +22,18 @@ const meta: Meta<typeof Terminal> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Terminal | typeof Jupyter>;
+type Story = StoryObj<typeof Terminal | typeof JupyterReactTheme>;
 
 const Template = (args, { globals: { labComparison } }) => {
   return (
-    <Jupyter
-      startDefaultKernel={false}
-      jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
-      jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
-      terminals={true}
+    <JupyterReactTheme
+    //      startDefaultKernel={false}
+    //      jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
+    //      jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+    //      terminals={true}
     >
       <Terminal {...args} />
-    </Jupyter>
+    </JupyterReactTheme>
   );
 };
 

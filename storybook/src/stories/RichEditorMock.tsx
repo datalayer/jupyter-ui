@@ -7,7 +7,7 @@
 import { Button } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { ThreeBarsIcon } from '@primer/octicons-react';
-import { Jupyter } from '@datalayer/jupyter-react';
+import { JupyterReactTheme } from '@datalayer/jupyter-react';
 import {
   useLexical,
   Editor,
@@ -52,14 +52,14 @@ export const RichEditorMock = () => {
       <div className="App">
         <h1>Jupyter UI ❤️ Lexical</h1>
       </div>
-      <Jupyter
-        startDefaultKernel={!isTestEnvironment}
-        serverless={isTestEnvironment}
+      <JupyterReactTheme
+      //        startDefaultKernel={!isTestEnvironment}
+      //        serverless={isTestEnvironment}
       >
         <LexicalProvider>
           <LexicalEditor />
         </LexicalProvider>
-      </Jupyter>
+      </JupyterReactTheme>
       <div className="other App">
         <br />
         <a href="https://datalayer.ai" target="_blank" rel="noreferrer">

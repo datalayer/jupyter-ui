@@ -16,13 +16,13 @@ This component displays a Jupyter Console.
 <Canvas
   of={ConsoleStories.Default}
   source={{
-    code: `<Jupyter
+    code: `<JupyterReactTheme
     startDefaultKernel={true}
     jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
     jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
 >
     <Console />
-</Jupyter>`,
+</JupyterReactTheme>`,
   }}
 />
 
@@ -43,12 +43,12 @@ you can simply set `lite` to `true`:
 <Canvas
   of={ConsoleStories.LitePython}
   source={{
-    code: `<Jupyter
+    code: `<JupyterReactTheme
     startDefaultKernel={true}
     lite={true}
 >
     <Console />
-</Jupyter>`,
+</JupyterReactTheme>`,
   }}
 />
 
@@ -60,7 +60,7 @@ the [JavaScript kernel](https://github.com/jupyterlite/jupyterlite/tree/main/py/
   source={{
     code: `<Jupyter
     startDefaultKernel={true}
-    lite={import('@jupyterlite/javascript-kernel-extension')}
+    lite={import('@datalayer/jupyter-react/lib/jupyter/lite/pyodide-kernel-extension')}
     defaultKernelName={'javascript'}
 >
     <Console />
