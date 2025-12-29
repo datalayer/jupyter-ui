@@ -56,10 +56,7 @@ export const CellToolbarComponent = (props: ICellToolbarComponentProps) => {
           title="Add code cell above"
           onClick={e => {
             e.preventDefault();
-            notebookStore.insertAbove(
-              notebookId,
-              'code',
-            );
+            notebookStore.insertAbove(notebookId, 'code');
           }}
           icon={ChevronUpIcon}
           variant="invisible"
@@ -73,10 +70,7 @@ export const CellToolbarComponent = (props: ICellToolbarComponentProps) => {
           title="Add markdown cell above"
           onClick={e => {
             e.preventDefault();
-            notebookStore.insertAbove(
-              notebookId,
-              'markdown',
-            );
+            notebookStore.insertAbove(notebookId, 'markdown');
           }}
           icon={ChevronUpIcon}
           variant="invisible"
@@ -92,10 +86,7 @@ export const CellToolbarComponent = (props: ICellToolbarComponentProps) => {
             variant="invisible"
             onClick={e => {
               e.preventDefault();
-              notebookStore.changeCellType(
-                notebookId,
-                'markdown',
-              );
+              notebookStore.changeCellType(notebookId, 'markdown');
             }}
           />
         ) : (
@@ -107,10 +98,7 @@ export const CellToolbarComponent = (props: ICellToolbarComponentProps) => {
             size="small"
             onClick={(e: any) => {
               e.preventDefault();
-              notebookStore.changeCellType(
-                notebookId,
-                'code',
-              );
+              notebookStore.changeCellType(notebookId, 'code');
             }}
           />
         )}
@@ -123,10 +111,7 @@ export const CellToolbarComponent = (props: ICellToolbarComponentProps) => {
           title="Add markdown cell below"
           onClick={e => {
             e.preventDefault();
-            notebookStore.insertBelow(
-              notebookId,
-              'markdown',
-            );
+            notebookStore.insertBelow(notebookId, 'markdown');
           }}
           icon={ChevronDownIcon}
           variant="invisible"
@@ -140,10 +125,7 @@ export const CellToolbarComponent = (props: ICellToolbarComponentProps) => {
           title="Add code cell below"
           onClick={e => {
             e.preventDefault();
-            notebookStore.insertBelow(
-              notebookId,
-              'code',
-            );
+            notebookStore.insertBelow(notebookId, 'code');
           }}
           icon={ChevronDownIcon}
           variant="invisible"

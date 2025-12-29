@@ -28,7 +28,9 @@ const NotebookNoPrimerExample = () => {
           serviceManager={serviceManager}
           path="ipywidgets.ipynb"
           height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-          extensions={[new CellSidebarExtension({ factory: CellSidebarButton })]}
+          extensions={[
+            new CellSidebarExtension({ factory: CellSidebarButton }),
+          ]}
           Toolbar={NotebookToolbar}
         />
       )}

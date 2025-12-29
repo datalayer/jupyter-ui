@@ -6,12 +6,7 @@
 
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import {
-  Text,
-  ToggleSwitch,
-  ThemeProvider,
-  useTheme,
-} from '@primer/react';
+import { Text, ToggleSwitch, ThemeProvider, useTheme } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { ThemeManager } from '@jupyterlab/apputils';
 import { RunningSessions } from '@jupyterlab/running';

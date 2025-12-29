@@ -559,10 +559,7 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
         `[NotebookBase] Adapter has getCells:`,
         typeof adapter.getCells
       );
-      console.log(
-        `[NotebookBase] Adapter cell count:`,
-        adapter.getCellCount()
-      );
+      console.log(`[NotebookBase] Adapter cell count:`, adapter.getCellCount());
       const currentNotebooks = notebookStore.getState().notebooks;
       const updatedNotebooks = new Map(currentNotebooks);
       updatedNotebooks.set(id, { adapter });

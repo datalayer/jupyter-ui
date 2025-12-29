@@ -27,12 +27,14 @@ const VegaExample = () => {
           serviceManager={serviceManager}
           renderers={[vega3Renderer]}
           height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-          extensions={[new CellSidebarExtension({ factory: CellSidebarButton })]}
+          extensions={[
+            new CellSidebarExtension({ factory: CellSidebarButton }),
+          ]}
           Toolbar={NotebookToolbar}
         />
       )}
     </JupyterReactTheme>
-  )
+  );
 };
 
 const div = document.createElement('div');

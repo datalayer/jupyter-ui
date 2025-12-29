@@ -26,8 +26,8 @@ const NotebookKernelChangeExample = () => {
     startDefaultKernel: true,
   });
   const [message, _] = useState('');
-//  const notebookStore = useNotebookStore();
-//  const notebook = notebookStore.selectNotebook(NOTEBOOK_ID);
+  //  const notebookStore = useNotebookStore();
+  //  const notebook = notebookStore.selectNotebook(NOTEBOOK_ID);
 
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
 

@@ -135,7 +135,7 @@ const NotebookKernelChange = () => {
   const { kernelManager, serviceManager, defaultKernel } = useJupyter({
     startDefaultKernel: true,
   });
-//  const notebookStore = useNotebookStore();
+  //  const notebookStore = useNotebookStore();
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   const changeKernel = () => {
     if (serviceManager && kernelManager) {
@@ -209,11 +209,11 @@ const JupyterContextExample = () => {
   return (
     <>
       <JupyterReactTheme
-//        jupyterServerUrl={DEFAULT_JUPYTER_SERVER_URL}
-//        jupyterServerToken={DEFAULT_JUPYTER_SERVER_TOKEN}
-//        serverless={index === 0}
-//        terminals
-//        startDefaultKernel
+      //        jupyterServerUrl={DEFAULT_JUPYTER_SERVER_URL}
+      //        jupyterServerToken={DEFAULT_JUPYTER_SERVER_TOKEN}
+      //        serverless={index === 0}
+      //        terminals
+      //        startDefaultKernel
       >
         <SegmentedControl
           onChange={index => setIndex(index)}

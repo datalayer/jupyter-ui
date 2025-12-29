@@ -8,11 +8,7 @@ import { useMemo } from 'react';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { createRoot } from 'react-dom/client';
 import { useJupyter } from '../jupyter';
-import {
-  Notebook,
-  CellSidebarExtension,
-  NotebookToolbar,
-} from '../components';
+import { Notebook, CellSidebarExtension, NotebookToolbar } from '../components';
 import { JupyterReactTheme } from '../theme';
 
 import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';

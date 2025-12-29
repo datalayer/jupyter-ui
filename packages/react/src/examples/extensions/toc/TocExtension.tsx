@@ -15,7 +15,7 @@ import { BoxPanel } from '@lumino/widgets';
 import {
   NotebookExtension,
   INotebookExtensionProps,
-//  notebookStore,
+  //  notebookStore,
 } from '../../../components';
 import { JupyterLayoutFactory } from './JupyterLayoutFactory';
 
@@ -53,7 +53,7 @@ export class TocExtension implements NotebookExtension {
   }
 
   init(props: INotebookExtensionProps) {
-//    this._props = props;
+    //    this._props = props;
 
     this._tocRegistry = new TableOfContentsRegistry();
     this._tocTracker = new TableOfContentsTracker();

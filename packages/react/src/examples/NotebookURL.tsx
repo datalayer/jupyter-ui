@@ -27,12 +27,14 @@ const NotebookURLExample = () => {
           serviceManager={serviceManager}
           url="https://raw.githubusercontent.com/datalayer/jupyter-ui/main/packages/react/src/examples/notebooks/IPyWidgetsExampleWithState.ipynb.json"
           height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-          extensions={[new CellSidebarExtension({ factory: CellSidebarButton })]}
+          extensions={[
+            new CellSidebarExtension({ factory: CellSidebarButton }),
+          ]}
           Toolbar={NotebookToolbar}
         />
       )}
     </JupyterReactTheme>
-  )
+  );
 };
 
 const div = document.createElement('div');

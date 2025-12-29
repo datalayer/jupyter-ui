@@ -10,11 +10,7 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 import { Text, ToggleSwitch, theme as primerTheme } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { useJupyter } from '../jupyter';
-import {
-  CellSidebarExtension,
-  Notebook,
-  NotebookToolbar,
-} from '../components';
+import { CellSidebarExtension, Notebook, NotebookToolbar } from '../components';
 import { useJupyterReactStore } from '../state';
 import { jupyterLabTheme, JupyterReactTheme } from '../theme';
 

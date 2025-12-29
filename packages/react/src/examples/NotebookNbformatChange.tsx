@@ -25,7 +25,7 @@ const NotebookNbformatChangeExample = () => {
   const { serviceManager, defaultKernel } = useJupyter({
     startDefaultKernel: true,
   });
-//  const notebookStore = useNotebookStore();
+  //  const notebookStore = useNotebookStore();
   const [nbformat, setNbformat] = useState(NBFORMAT_1);
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   const changeNbformat = () => {

@@ -21,7 +21,7 @@ const NotebookSkeletonExample = () => {
   });
   return (
     <JupyterReactTheme
-      // skeleton={<ContentLoader count={3} />}
+    // skeleton={<ContentLoader count={3} />}
     >
       {serviceManager && defaultKernel && (
         <Notebook
@@ -30,7 +30,9 @@ const NotebookSkeletonExample = () => {
           serviceManager={serviceManager}
           path="ipywidgets.ipynb"
           height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-          extensions={[new CellSidebarExtension({ factory: CellSidebarButton })]}
+          extensions={[
+            new CellSidebarExtension({ factory: CellSidebarButton }),
+          ]}
           Toolbar={NotebookToolbar}
         />
       )}

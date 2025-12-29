@@ -140,20 +140,11 @@ export const NotebookToolbar = (props: INotebookToolbarProps) => {
           onClick={e => {
             e.preventDefault();
             if (type === 'raw') {
-              notebookStore.insertBelow(
-                notebookId,
-                'raw',
-              );
+              notebookStore.insertBelow(notebookId, 'raw');
             } else if (type === 'code') {
-              notebookStore.insertBelow(
-                notebookId,
-                'code',
-              );
+              notebookStore.insertBelow(notebookId, 'code');
             } else if (type === 'markdown') {
-              notebookStore.insertBelow(
-                notebookId,
-                'markdown',
-              );
+              notebookStore.insertBelow(notebookId, 'markdown');
             }
           }}
           style={{ color: 'grey' }}

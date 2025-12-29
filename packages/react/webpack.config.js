@@ -75,8 +75,14 @@ module.exports = {
     alias: {
       stream: 'stream-browserify',
       // Map .worker.js to .worker.ts for development (workers reference .js for published package)
-      './coincident.worker.js': path.resolve(__dirname, 'src/jupyter/lite/pyodide-kernel/coincident.worker.ts'),
-      './comlink.worker.js': path.resolve(__dirname, 'src/jupyter/lite/pyodide-kernel/comlink.worker.ts'),
+      './coincident.worker.js': path.resolve(
+        __dirname,
+        'src/jupyter/lite/pyodide-kernel/coincident.worker.ts'
+      ),
+      './comlink.worker.js': path.resolve(
+        __dirname,
+        'src/jupyter/lite/pyodide-kernel/comlink.worker.ts'
+      ),
     },
     fallback: {
       assert: require.resolve('assert/'),
