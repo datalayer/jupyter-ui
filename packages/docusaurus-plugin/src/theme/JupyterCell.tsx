@@ -24,8 +24,8 @@ const JupyterCell = (props: JupyterCellProps) => {
         // const { JupyterReactTheme } = require('@datalayer/jupyter-react/lib/theme');
         // const { useJupyter } = require('@datalayer/jupyter-react/lib/jupyter/JupyterContext');
         const {
-          Jupyter,
-        } = require('@datalayer/jupyter-react/lib/jupyter/Jupyter');
+          JupyterReactTheme,
+        } = require('@datalayer/jupyter-react/lib/theme/JupyterReactTheme');
         const {
           Cell,
         } = require('@datalayer/jupyter-react/lib/components/cell/Cell');
@@ -39,14 +39,14 @@ const JupyterCell = (props: JupyterCellProps) => {
         */
         return (
           <>
-            <Jupyter
-              jupyterServerUrl={jupyterServerUrl}
-              jupyterServerToken={jupyterServerToken}
-              startDefaultKernel
-              skeleton={<ContentLoader />}
+            <JupyterReactTheme
+            //              jupyterServerUrl={jupyterServerUrl}
+            //              jupyterServerToken={jupyterServerToken}
+            //              startDefaultKernel
+            //              skeleton={<ContentLoader />}
             >
               <Cell source={source} />
-            </Jupyter>
+            </JupyterReactTheme>
           </>
         );
       }}
