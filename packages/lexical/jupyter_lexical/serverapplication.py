@@ -89,8 +89,9 @@ class JupyterLexicalExtensionApp(ExtensionAppJinjaMixin, ExtensionApp):
     def initialize_handlers(self):
         self.log.debug("Jupyter Lexical Config {}".format(self.settings['jupyter_lexical_jinja2_env']))
         handlers = [
-            ("jupyter_lexical", IndexHandler),
-            (url_path_join("jupyter_lexical", "config"), ConfigHandler),
+            (url_path_join(self.name, "config"), ConfigHandler),
+            (r"/jupyter_lexical/(.+)$", IndexHandler),
+            (r"/jupyter_lexical/?", IndexHandler),
         ]
         self.handlers.extend(handlers)
 

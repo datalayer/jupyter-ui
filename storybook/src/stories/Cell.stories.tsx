@@ -5,28 +5,18 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { JupyterReactTheme, Cell } from '@datalayer/jupyter-react';
-import { colormodeFromScheme } from './_utils/story-helpers';
+import { Box } from '@primer/react';
+import {
+  JupyterReactTheme,
+  Cell,
+  useJupyter,
+  KernelIndicator,
+} from '@datalayer/jupyter-react';
 
 const meta: Meta<typeof Cell> = {
   title: 'Components/Cell',
   component: Cell,
   argTypes: {
-    lite: {
-      control: 'radio',
-      options: [
-        'true',
-        'false',
-        '@datalayer/jupyter-react/lib/jupyter/lite/pyodide-kernel-extension',
-      ],
-      table: {
-        // Switching live does not work
-        disable: true,
-      },
-    },
-    initCode: {
-      control: 'text',
-    },
     source: {
       control: 'text',
     },
@@ -38,51 +28,61 @@ const meta: Meta<typeof Cell> = {
 
 export default meta;
 
-type Story = StoryObj<
-  typeof Cell | typeof JupyterReactTheme | { lite: string }
->;
+type Story = StoryObj<typeof Cell>;
 
-const Template = (args, { globals: { colorScheme } }) => {
-  const { browser, initCode, ...others } = args;
-  const lite = {
-    true: true,
-    false: false,
-    '@datalayer/jupyter-react/lib/jupyter/lite/pyodide-kernel-extension':
-      import('@datalayer/jupyter-react/lib/jupyter/lite/pyodide-kernel-extension'),
-  }[args.browser];
+type CellWithKernelProps = {
+  id?: string;
+  source?: string;
+  autoStart?: boolean;
+};
 
-  const kernelName =
-    args.browser ===
-    '@datalayer/jupyter-react/lib/jupyter/lite/pyodide-kernel-extension'
-      ? 'javascript'
-      : undefined;
+const CellWithKernel = (props: CellWithKernelProps) => {
+  const { id = 'cell-story-id', source = '', autoStart = false } = props;
+  const { defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
+  return (
+    <>
+      {defaultKernel ? (
+        <>
+          <Box mb={2}>
+            <KernelIndicator
+              kernel={defaultKernel?.connection}
+              label="Kernel Indicator"
+            />
+          </Box>
+          <Cell
+            id={id}
+            source={source}
+            kernel={defaultKernel}
+            autoStart={autoStart}
+          />
+        </>
+      ) : (
+        <Box>Loading Jupyter kernel...</Box>
+      )}
+    </>
+  );
+};
+
+const Template = (args, { globals: { colorScheme: _colorScheme } }) => {
+  const { browser: _browser, initCode: _initCode, ...others } = args;
 
   return (
-    <JupyterReactTheme
-    //      startDefaultKernel={true}
-    //      lite={lite}
-    //      initCode={initCode}
-    //      colormode={colormodeFromScheme(colorScheme)}
-    //      defaultKernelName={kernelName}
-    //      jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
-    //      jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
-    >
-      <Cell {...others} />
+    <JupyterReactTheme>
+      <CellWithKernel {...others} />
     </JupyterReactTheme>
   );
 };
 
 export const Default: Story = Template.bind({}) as Story;
 Default.args = {
-  lite: 'false',
-  //  initCode: '',
-  source: '',
+  source: `print("Hello from Jupyter Cell!")`,
   autoStart: false,
 };
 
 export const Confettis: Story = Template.bind({}) as Story;
 Confettis.args = {
-  lite: 'false',
   source: `import ipyreact
 class ConfettiWidget(ipyreact.ReactWidget):
   _esm = """
@@ -122,24 +122,5 @@ ax2.plot(x2, y2, '.-')
 ax2.set_xlabel('time (s)')
 ax2.set_ylabel('Undamped')
 plt.show()`,
-  autoStart: true,
-};
-
-export const LitePython: Story = Template.bind({}) as Story;
-LitePython.args = {
-  ...Playground.args,
-  lite: 'true',
-  source: `import sys
-print(f"{sys.platform=}")
-
-${Playground.args.source ?? ''}`,
-};
-
-export const WithInitialization: Story = Template.bind({}) as Story;
-WithInitialization.args = {
-  ...Default.args,
-  lite: 'true',
-  //  initCode: 'import micropip\nawait micropip.install("ipywidgets")',
-  source: '# ipywidgets is imported at initialization\nimport ipywidgets',
   autoStart: true,
 };

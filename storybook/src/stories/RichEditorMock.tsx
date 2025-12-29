@@ -15,6 +15,7 @@ import {
 } from '@datalayer/jupyter-lexical';
 
 import LEXICAL_MODEL from '@datalayer/jupyter-lexical/lib/examples/content/Example.lexical.json';
+
 import NBFORMAT_MODEL from '@datalayer/jupyter-lexical/lib/examples/content/Example.ipynb.json';
 
 const LexicalEditor = () => {

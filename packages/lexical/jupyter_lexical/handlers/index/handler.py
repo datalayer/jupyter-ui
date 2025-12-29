@@ -14,6 +14,6 @@ class IndexHandler(BaseTemplateHandler):
     """The handler for the index."""
 
     @tornado.web.authenticated
-    def get(self):
+    def get(self, path = ""):
         """The index page."""
         self.write(self.render_template("index.html"))

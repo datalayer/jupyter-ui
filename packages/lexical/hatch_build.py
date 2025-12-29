@@ -21,13 +21,13 @@ def build_javascript():
         cwd=here,
     )
     check_call(
-        ['npm', 'run', 'build:webpack', '--', '--mode=production'],
+        ['npm', 'run', 'build:webpack', '--mode=production'],
         cwd=here,
     )
     for file in glob.glob(r'./dist/*.*'):
         shutil.copy(
             file,
-            './jupyter_react/static/'
+            './jupyter_lexical/static/'
         )
 
 

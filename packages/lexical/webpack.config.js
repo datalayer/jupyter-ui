@@ -57,7 +57,7 @@ module.exports = {
   },
   output: {
     publicPath: 'http://localhost:3211/',
-    filename: '[name].[contenthash].jupyter-lexical.js',
+    filename: '[name].jupyter-lexical.js',
   },
   resolve: {
     extensions: ['.tsx', '.ts', 'jsx', '.js'],

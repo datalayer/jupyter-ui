@@ -76,6 +76,13 @@
     "typescript-eslint": "^8.39.1"
   },
   "resolutions": {
+    "@microsoft/fast-colors": "5.3.1",
+    "@microsoft/fast-components": "2.30.6",
+    "@microsoft/fast-element": "1.13.0",
+    "@microsoft/fast-foundation": "2.49.6",
+    "@microsoft/fast-react-wrapper": "0.3.24",
+    "@microsoft/fast-web-utilities": "5.4.1",
+    "@microsoft/load-themed-styles": "1.10.295",
     "@types/react": "^18.3.20",
     "@types/react-dom": "^18.3.6",
     "react": "^18.3.1",
@@ -83,6 +90,13 @@
     "typescript": "^5.8.3"
   },
   "overrides": {
+    "@microsoft/fast-colors": "5.3.1",
+    "@microsoft/fast-components": "2.30.6",
+    "@microsoft/fast-element": "1.13.0",
+    "@microsoft/fast-foundation": "2.49.6",
+    "@microsoft/fast-react-wrapper": "0.3.24",
+    "@microsoft/fast-web-utilities": "5.4.1",
+    "@microsoft/load-themed-styles": "1.10.295",
     "@types/react": "^18.3.20",
     "@types/react-dom": "^18.3.6",
     "react": "^18.3.1",
