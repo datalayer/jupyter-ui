@@ -1,0 +1,56 @@
+name: Storybook
+
+on:
+  push:
+    branches: 'main'
+  pull_request:
+    branches: '*'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  storybook-build-run:
+    name: Build Storybook Stories
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build all packages
+        run: npm run build
+
+      - name: Install Playwright
+        run: npx playwright install chromium --with-deps
+        working-directory: storybook
+
+      - name: Build Storybook
+        run: npm run build:storybook
+        working-directory: storybook
+
+      - name: Serve Storybook and run all tests
+        run: |
+          npx serve -l 6006 storybook-static &
+          npx wait-on http://localhost:6006 --timeout 30000
+          npm run test:all:ci
+        working-directory: storybook
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: storybook-build-run-results
+          path: |
+            storybook/test-results/
+            storybook/html-report/

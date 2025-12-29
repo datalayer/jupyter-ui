@@ -19,7 +19,7 @@ import { IBroadcastChannelWrapper } from '../contents';
 // @ts-expect-error - JSON import is not typed
 export * as KERNEL_SETTINGS_SCHEMA from '../../../../schema/kernel.v0.schema.json';
 
-import KERNEL_ICON_SVG_STR from '../../../../style/icons/pyodide.svg';
+import KERNEL_ICON_SVG_STR from '../../../../style/icons/pyodide/pyodide.svg';
 
 const KERNEL_ICON_URL = `data:image/svg+xml;base64,${btoa(KERNEL_ICON_SVG_STR)}`;
 
