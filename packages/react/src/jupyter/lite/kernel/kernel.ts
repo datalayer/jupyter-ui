@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 import { KernelMessage } from '@jupyterlab/services';
 import { ISignal, Signal } from '@lumino/signaling';
 import { IKernel } from './tokens';

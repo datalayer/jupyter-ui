@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 import { Token } from '@lumino/coreutils';
 
 import { ISignal } from '@lumino/signaling';

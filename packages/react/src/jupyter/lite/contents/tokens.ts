@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 import { IDisposable } from '@lumino/disposable';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { PageConfig } from '@jupyterlab/coreutils';
