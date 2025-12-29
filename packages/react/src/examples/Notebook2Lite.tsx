@@ -9,7 +9,7 @@ import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { Session } from '@jupyterlab/services';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
-import { useJupyter } from '../jupyter/JupyterContext';
+import { useJupyter } from '../jupyter/JupyterUse';
 import {
   CellSidebarExtension,
   CellSidebarButton,

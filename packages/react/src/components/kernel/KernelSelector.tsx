@@ -12,7 +12,7 @@ import {
 } from '@datalayer/icons-react';
 import { IModel } from '@jupyterlab/services/lib/kernel/kernel';
 import { ISpecModel } from '@jupyterlab/services/lib/kernelspec/kernelspec';
-import { useJupyter } from '../../jupyter/JupyterContext';
+import { useJupyter } from '../../jupyter/JupyterUse';
 
 export type KernelSelectorProps = {
   selectKernel: (kernelModel: IModel) => void;

@@ -33,9 +33,9 @@ import {
   terminalStore,
   TerminalState,
 } from '../components/terminal/TerminalState';
+import { IJupyterProps } from '../jupyter';
 import { Colormode } from '../theme';
 import { createServerSettings, ensureJupyterAuth } from '../utils';
-import { JupyterPropsType } from '../jupyter/JupyterContext';
 
 export type OnSessionConnection = (
   kernelConnection: Session.ISessionConnection | undefined
@@ -119,10 +119,10 @@ export function useJupyterReactStore<T>(
 }
 
 export function useJupyterReactStoreFromProps(
-  props: JupyterPropsType
+  props: IJupyterProps
 ): JupyterReactState;
 export function useJupyterReactStoreFromProps(
-  props: JupyterPropsType
+  props: IJupyterProps
 ): JupyterReactState {
   const {
     defaultKernelName = DEFAULT_KERNEL_NAME,

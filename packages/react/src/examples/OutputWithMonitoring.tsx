@@ -10,7 +10,7 @@ import { createRoot } from 'react-dom/client';
 import { IOutput } from '@jupyterlab/nbformat';
 import { Button, Text } from '@primer/react';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
-import { useJupyter } from '../jupyter/JupyterContext';
+import { useJupyter } from '../jupyter';
 import { IExecutionPhaseOutput } from '../jupyter/kernel';
 import { ExecutionPhase } from '../jupyter/kernel/KernelState';
 import { Output } from '../components/output/Output';

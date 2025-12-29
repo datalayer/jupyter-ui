@@ -9,13 +9,13 @@ import { createRoot } from 'react-dom/client';
 import { INotebookContent, IOutput } from '@jupyterlab/nbformat';
 import { Button, ButtonGroup, SegmentedControl } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
-import { useJupyter } from '../jupyter/JupyterContext';
+import { useJupyter } from '../jupyter';
 import { Kernel } from '../jupyter/kernel/Kernel';
 // import {
 //   DEFAULT_JUPYTER_SERVER_TOKEN,
 //   DEFAULT_JUPYTER_SERVER_URL,
 // } from '../jupyter';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { Cell } from '../components/cell/Cell';
 import { useCellsStore } from '../components/cell/CellState';
 import { Console } from '../components/console/Console';

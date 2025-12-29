@@ -15,7 +15,7 @@ import {
 import { ServiceManager } from '@jupyterlab/services';
 import { JSONExt } from '@lumino/coreutils';
 import { IModel } from '@jupyterlab/services/lib/kernel/kernel';
-import { useJupyter } from '../../jupyter/JupyterContext';
+import { useJupyter } from '../../jupyter/JupyterUse';
 
 type KerneSpecInfos = {
   description: string;

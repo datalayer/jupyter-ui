@@ -6,7 +6,7 @@
 
 import { createRoot } from 'react-dom/client';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
-import { useJupyter } from './../jupyter/JupyterContext';
+import { useJupyter } from './../jupyter/JupyterUse';
 import { FileBrowser } from '../components/filebrowser/FileBrowser';
 
 const FileBrowserExample = () => {

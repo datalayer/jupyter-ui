@@ -9,7 +9,7 @@ import { Button, Label } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { PlayIcon } from '@primer/octicons-react';
 import { JupyterReactTheme } from '../theme';
-import { useJupyter } from '../jupyter/JupyterContext';
+import { useJupyter } from '../jupyter/JupyterUse';
 import { useKernelsStore } from '../jupyter/kernel/KernelState';
 import { KernelIndicator } from '../components/kernel/KernelIndicator';
 import { Cell } from '../components/cell/Cell';

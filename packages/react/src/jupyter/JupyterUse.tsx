@@ -16,7 +16,7 @@ import { Kernel } from './kernel';
 /**
  * The type for Jupyter props.
  */
-export type JupyterPropsType = {
+export type IJupyterProps = {
   /**
    * Whether the component is collaborative or not.
    */
@@ -86,7 +86,7 @@ export type JupyterPropsType = {
 /**
  * The type for Jupyter context.
  */
-export type JupyterContextType = {
+export type IJupyterContext = {
   /**
    * Default kernel
    */
@@ -145,12 +145,12 @@ export type JupyterContextType = {
 /*
  * Use Jupyter hook.
  */
-export const useJupyter = (props?: JupyterPropsType): JupyterContextType => {
+export const useJupyter = (props?: IJupyterProps): IJupyterContext => {
   // Always call the hook, but only use its result if there's no context
   const { jupyterConfig, kernel, kernelIsLoading, serviceManager } =
     useJupyterReactStoreFromProps(props ?? {});
 
-  const storeContext: JupyterContextType = {
+  const context: IJupyterContext = {
     defaultKernel: kernel,
     jupyterServerUrl: jupyterConfig!.jupyterServerUrl,
     kernel,
@@ -161,5 +161,5 @@ export const useJupyter = (props?: JupyterPropsType): JupyterContextType => {
     serverSettings: serviceManager?.serverSettings,
     serviceManager,
   };
-  return storeContext;
+  return context;
 };

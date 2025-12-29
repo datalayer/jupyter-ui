@@ -9,11 +9,11 @@ import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { Button } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
-import { CellSidebarExtension } from '../components';
-import { Notebook2 } from '../components/notebook/Notebook2';
-import { useJupyter } from '../jupyter/JupyterContext';
+import { useJupyter } from '../jupyter';
 import { Kernel } from '../jupyter/kernel/Kernel';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { CellSidebarExtension } from '../components';
+import { Notebook2 } from '../components/notebook/Notebook2';
 
 import NOTEBOOK from './notebooks/NotebookExample1.ipynb.json';
 

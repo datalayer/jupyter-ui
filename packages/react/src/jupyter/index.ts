@@ -6,9 +6,9 @@
 
 export * from './JupyterAuthError';
 export * from './JupyterConfig';
-export * from './JupyterContext';
 export * from './JupyterDefaults';
 export * from './JupyterHandlers';
+export * from './JupyterUse';
 export * from './collaboration';
 export * from './ipywidgets';
 export * from './kernel';

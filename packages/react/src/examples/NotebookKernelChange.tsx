@@ -9,7 +9,7 @@ import { createRoot } from 'react-dom/client';
 import { Button, Flash } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
-import { useJupyter } from '../jupyter/JupyterContext';
+import { useJupyter } from '../jupyter/JupyterUse';
 import { Kernel } from '../jupyter/kernel/Kernel';
 import { CellSidebarExtension } from '../components';
 import { Notebook2 } from '../components/notebook/Notebook2';
