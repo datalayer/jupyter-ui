@@ -290,11 +290,11 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
     { execution_count?: number | null; outputs?: Array<string> } | undefined
   > => {
     const params = typeof id === 'object' ? id : { id };
+    // Use params.id to look up the adapter; runCell is then called with no arguments to run the active cell.
     const adapter = get().notebooks.get(params.id)?.adapter;
     if (!adapter) {
       return undefined;
     }
-    // runCell on adapter expects { index?, timeoutSeconds?, etc. } not { id }
     return await adapter.runCell();
   },
   runAllCells: (id: string | { id: string }): void => {
@@ -439,9 +439,7 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
     const notebooks = get().notebooks;
     const notebook = notebooks.get(kernelChange.id);
     if (notebook) {
-      // TODO: assignKernel method needs to be implemented in NotebookAdapter
-      // notebook.adapter?.assignKernel(kernelChange.kernel);
-      void kernelChange.kernel; // Silence unused variable warning
+      notebook.adapter?.assignKernel(kernelChange.kernel);
       set((_state: NotebookState) => ({ notebooks }));
     }
   },

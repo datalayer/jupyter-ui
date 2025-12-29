@@ -35,6 +35,7 @@ const NotebookInitExample = () => {
           // console.log("You can use one of these commands:", notebook.adapter?.commands.listCommands());
           // notebook.adapter?.commands.execute("notebook:run-all");
           notebookStore.insertAbove(
+            NOTEBOOK_ID,
             'code',
             'print("Hello 🪐 ⚛️ Jupyter React")'
           );

@@ -14,6 +14,7 @@ import { Context } from '@jupyterlab/docregistry';
 import { NotebookModel } from '@jupyterlab/notebook';
 import { KernelMessage } from '@jupyterlab/services';
 import * as nbformat from '@jupyterlab/nbformat';
+import { Kernel } from '../../jupyter/kernel/Kernel';
 import { NotebookCommandIds } from './NotebookCommands';
 import * as Diff from 'diff';
 
@@ -100,6 +101,25 @@ export class NotebookAdapter {
       return this._kernelInfo;
     }
     return null;
+  }
+
+  /**
+   * Assign a new kernel to the notebook.
+   *
+   * @param kernel - The Kernel instance to assign to the notebook
+   *
+   * @remarks
+   * This method changes the kernel associated with the notebook's session context.
+   * It uses the kernel's id to request a kernel change through the session context.
+   * The kernel info cache is cleared when a new kernel is assigned.
+   */
+  assignKernel(kernel: Kernel): void {
+    // Clear the cached kernel info since we're changing kernels
+    this._kernelInfo = null;
+    // Change the kernel using the session context
+    this._context?.sessionContext.changeKernel({
+      id: kernel.id,
+    });
   }
 
   /**
