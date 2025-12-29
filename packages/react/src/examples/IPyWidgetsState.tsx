@@ -4,27 +4,35 @@
  * MIT License
  */
 
-import { INotebookContent } from '@jupyterlab/nbformat';
 import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
+import { INotebookContent } from '@jupyterlab/nbformat';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { useJupyter } from '../jupyter';
 import { CellSidebarExtension } from '../components';
 import { Notebook2 } from '../components/notebook/Notebook2';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-import notebook from './notebooks/IPyWidgetsExampleWithState.ipynb.json';
+
+import NBMODEL from './notebooks/IPyWidgetsExampleWithState.ipynb.json';
 
 const IPyWidgetsStateExample = () => {
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
     <JupyterReactTheme>
-      <Notebook2
-        id="notebook-id"
-        startDefaultKernel
-        nbformat={notebook as INotebookContent}
-        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        extensions={extensions}
-        Toolbar={NotebookToolbar}
-      />
+      {serviceManager && defaultKernel && (
+        <Notebook2
+          id="notebook-id"
+          kernel={defaultKernel}
+          serviceManager={serviceManager}
+          nbformat={NBMODEL as INotebookContent}
+          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+          extensions={extensions}
+          Toolbar={NotebookToolbar}
+        />
+      )}
     </JupyterReactTheme>
   );
 };

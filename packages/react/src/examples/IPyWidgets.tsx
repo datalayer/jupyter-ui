@@ -9,22 +9,30 @@ import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { CellSidebarExtension } from '../components';
 import { Notebook2 } from '../components/notebook/Notebook2';
+import { useJupyter } from '../jupyter';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
-import notebook from './notebooks/IPyWidgetsExample.ipynb.json';
+
+import NBMODEL from './notebooks/IPyWidgetsExample.ipynb.json';
 
 const IPyWidgetsExample = () => {
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
     <JupyterReactTheme>
-      <Notebook2
-        id="notebook-id"
-        startDefaultKernel
-        nbformat={notebook as INotebookContent}
-        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        extensions={extensions}
-        Toolbar={NotebookToolbar}
-      />
+      {serviceManager && defaultKernel && (
+        <Notebook2
+          id="notebook-id"
+          kernel={defaultKernel}
+          serviceManager={serviceManager}
+          nbformat={NBMODEL as INotebookContent}
+          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+          extensions={extensions}
+          Toolbar={NotebookToolbar}
+        />
+      )}
     </JupyterReactTheme>
   );
 };
