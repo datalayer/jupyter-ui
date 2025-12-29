@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 import { IJavaScriptWorkerKernel } from './tokens';
 import { KernelMessage } from '@jupyterlab/services';
 import objectInspect from 'object-inspect';
