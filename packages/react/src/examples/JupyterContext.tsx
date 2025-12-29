@@ -135,7 +135,7 @@ const NotebookKernelChange = () => {
   const { kernelManager, serviceManager, defaultKernel } = useJupyter({
     startDefaultKernel: true,
   });
-  //  const notebookStore = useNotebookStore();
+  const notebookStore = useNotebookStore();
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   const changeKernel = () => {
     if (serviceManager && kernelManager) {
@@ -147,7 +147,7 @@ const NotebookKernelChange = () => {
         sessionManager: serviceManager.sessions,
       });
       kernel.ready.then(() => {
-        // notebookStore.changeKernel({ id: NOTEBOOK_ID_2, kernel });
+        notebookStore.changeKernel({ id: NOTEBOOK_ID_2, kernel });
         alert('Kernel is changed.');
       });
     }

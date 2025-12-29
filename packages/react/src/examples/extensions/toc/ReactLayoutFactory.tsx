@@ -8,8 +8,8 @@ import { NotebookPanel } from '@jupyterlab/notebook';
 import { TocLayoutFactory } from './TocExtension';
 import { TableOfContents } from '@jupyterlab/toc';
 import { BoxPanel } from '@lumino/widgets';
-import TocComponent from './TocComponent';
-import { Box } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
+import { TocTree } from './TocComponent';
 
 /**
  * React ToC Layout Factory.
@@ -30,7 +30,7 @@ export class ReactLayoutFactory implements TocLayoutFactory {
           zIndex: 1000,
         }}
       >
-        <TocComponent notebookId={notebookId} />
+        <TocTree notebookId={notebookId} />
       </Box>
     );
   }

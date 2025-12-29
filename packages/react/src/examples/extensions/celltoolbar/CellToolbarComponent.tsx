@@ -25,8 +25,7 @@ export const CellToolbarComponent = (props: ICellToolbarComponentProps) => {
   const { extensionProps } = props;
   const notebookId = extensionProps.notebookId;
   const notebookStore = useNotebookStore();
-  // const activeCell = notebookStore.selectActiveCell(notebookId);
-  const activeCell = undefined;
+  const activeCell = notebookStore.selectActiveCell(notebookId);
   return activeCell ? (
     <Box
       display="flex"

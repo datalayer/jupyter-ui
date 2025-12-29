@@ -562,7 +562,7 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
       console.log(`[NotebookBase] Adapter cell count:`, adapter.getCellCount());
       const currentNotebooks = notebookStore.getState().notebooks;
       const updatedNotebooks = new Map(currentNotebooks);
-      updatedNotebooks.set(id, { adapter });
+      updatedNotebooks.set(id, { adapter, portals: [] });
       notebookStore.getState().setNotebooks(updatedNotebooks);
       console.log(
         `[NotebookBase] Store now has ${updatedNotebooks.size} notebooks`
