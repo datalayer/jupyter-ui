@@ -4,25 +4,64 @@
  * MIT License
  */
 
+import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
-import { CellSidebarExtension } from '../components';
-import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
-import { Notebook } from '../components/notebook/Notebook';
-import { JupyterReactTheme } from '../theme';
-import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
+import { INotebookContent } from '@jupyterlab/nbformat';
+import { Box } from '@datalayer/primer-addons';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { useJupyter } from '../jupyter';
+import {
+  CellSidebarExtension,
+  CellSidebarButton,
+  KernelIndicator,
+  Notebook,
+} from '../components';
+import { CellToolbarExtension } from './extensions';
 
-const NotebookExample = () => (
-  <JupyterReactTheme>
-    <Notebook
-      path="ipywidgets.ipynb"
-      id="notebook-id"
-      startDefaultKernel
-      height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-      extensions={[new CellSidebarExtension({ factory: CellSidebarButton })]}
-      Toolbar={NotebookToolbar}
-    />
-  </JupyterReactTheme>
-);
+import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
+
+const NotebookExample = () => {
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
+  const extensions = useMemo(
+    () => [
+      new CellToolbarExtension(),
+      new CellSidebarExtension({ factory: CellSidebarButton }),
+    ],
+    []
+  );
+  return (
+    <JupyterReactTheme>
+      {serviceManager && defaultKernel && (
+        <>
+          <Box>
+            <KernelIndicator
+              kernel={defaultKernel?.connection}
+              label="Kernel Indicator"
+            />
+          </Box>
+          <Notebook
+            nbformat={NBFORMAT as INotebookContent}
+            id="notebook2-nbformat-id"
+            kernel={defaultKernel}
+            serviceManager={serviceManager}
+            height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+            extensions={extensions}
+            /*
+            collaborationServer={{
+              baseURL: 'https://prod1.datalayer.run',
+              token: '',
+              documentName: '',
+              type: 'datalayer'
+            }}
+            */
+          />
+        </>
+      )}
+    </JupyterReactTheme>
+  );
+};
 
 const div = document.createElement('div');
 document.body.appendChild(div);

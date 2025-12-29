@@ -7,7 +7,7 @@
 import { createRoot } from 'react-dom/client';
 import { Box } from '@datalayer/primer-addons';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
-import { useJupyter } from '../jupyter/JupyterContext';
+import { useJupyter } from '../jupyter/JupyterUse';
 import { Cell } from '../components/cell/Cell';
 
 const CellsExample = () => {

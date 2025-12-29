@@ -7,7 +7,7 @@
 import { createRoot } from 'react-dom/client';
 import { Text } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
-import { Jupyter } from '../jupyter/Jupyter';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { Viewer } from '../components/viewer/Viewer';
 
 import matplotlib from './notebooks/Matplotlib.ipynb.json';
@@ -16,7 +16,7 @@ const ViewerExample = () => {
   return (
     <>
       <Box m={3}>
-        <Jupyter serverless>
+        <JupyterReactTheme>
           <Text as="h1">Viewer with Plotly outputs</Text>
           <Viewer
             nbformatUrl="https://raw.githubusercontent.com/datalayer-examples/notebooks/main/daily-stock.ipynb"
@@ -24,7 +24,7 @@ const ViewerExample = () => {
           />
           <Text as="h1">Viewer without outputs</Text>
           <Viewer nbformat={matplotlib} outputs={false} />
-        </Jupyter>
+        </JupyterReactTheme>
       </Box>
     </>
   );

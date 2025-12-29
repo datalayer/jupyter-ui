@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { Button, ButtonGroup } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { ThreeBarsIcon } from '@primer/octicons-react';
-import { Jupyter } from '@datalayer/jupyter-react';
+import { JupyterReactTheme } from '@datalayer/jupyter-react';
 import { useLexical, Editor, LexicalProvider } from '..';
 
 import LEXICAL_MODEL from './content/Example.lexical.json';
@@ -102,11 +102,11 @@ export const AppSimple = () => {
           <strong>{hasKernel ? 'Runtime Connected' : 'No Runtime'}</strong>
         </p>
       </div>
-      <Jupyter startDefaultKernel={hasKernel}>
+      <JupyterReactTheme>
         <LexicalProvider>
           <LexicalEditor />
         </LexicalProvider>
-      </Jupyter>
+      </JupyterReactTheme>
       <div className="other App">
         <div
           style={{

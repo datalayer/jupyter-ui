@@ -18,7 +18,7 @@
  */
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { Jupyter } from '@datalayer/jupyter-react';
+import { JupyterReactTheme } from '@datalayer/jupyter-react';
 import { ServerConnection, ServiceManager } from '@jupyterlab/services';
 import { Button, ButtonGroup } from '@primer/react';
 
@@ -257,11 +257,11 @@ export const ManualKernelControlExample: React.FC = () => {
         style={{ border: '1px solid #ccc', padding: '10px', marginTop: '20px' }}
       >
         <h3>Jupyter Component</h3>
-        <Jupyter
-          serviceManager={serviceManager}
-          startDefaultKernel={startDefaultKernel}
-          lite={false}
-          collaborative={false}
+        <JupyterReactTheme
+        //          serviceManager={serviceManager}
+        //          startDefaultKernel={startDefaultKernel}
+        //          lite={false}
+        //          collaborative={false}
         >
           <div style={{ padding: '20px' }}>
             {runtimeConnected ? (
@@ -281,7 +281,7 @@ export const ManualKernelControlExample: React.FC = () => {
               </div>
             )}
           </div>
-        </Jupyter>
+        </JupyterReactTheme>
       </div>
 
       {/* Code Reference */}

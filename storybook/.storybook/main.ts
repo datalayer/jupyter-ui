@@ -123,7 +123,17 @@ const config: StorybookConfig = {
           filename: 'schema/[name][ext][query]',
         },
       },
+      // Rule for WebAssembly modules
+      {
+        test: /\.wasm$/,
+        type: 'webassembly/async',
+      },
     );
+    // Enable WebAssembly support
+    config.experiments = {
+      ...config.experiments,
+      asyncWebAssembly: true,
+    };
     return config;
   },
   docs: {

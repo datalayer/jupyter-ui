@@ -15,7 +15,7 @@ import {
   ZapIcon,
   PaperAirplaneIcon,
 } from '@primer/octicons-react';
-import useNotebookStore from '../NotebookState';
+import { useNotebookStore } from '../NotebookState';
 
 export type INotebookToolbarProps = {
   notebookId: string;
@@ -25,7 +25,9 @@ export const NotebookToolbar = (props: INotebookToolbarProps) => {
   const { notebookId } = props;
   const notebookStore = useNotebookStore();
   const [type, setType] = useState('code');
-  const kernelStatus = notebookStore.selectKernelStatus(notebookId);
+  // TODO Fix this...
+  // const kernelStatus = notebookStore.selectKernelStatus(notebookId);
+  const kernelStatus = undefined;
   const handleChangeCellType = (newType: string) => {
     setType(newType);
   };
@@ -57,10 +59,12 @@ export const NotebookToolbar = (props: INotebookToolbarProps) => {
           title="Save"
           onClick={e => {
             e.preventDefault();
+            /*
             notebookStore.save({
               id: notebookId,
               date: new Date(),
             });
+            */
           }}
           icon={ZapIcon}
         />
@@ -136,20 +140,11 @@ export const NotebookToolbar = (props: INotebookToolbarProps) => {
           onClick={e => {
             e.preventDefault();
             if (type === 'raw') {
-              notebookStore.insertBelow({
-                id: notebookId,
-                cellType: 'raw',
-              });
+              notebookStore.insertBelow(notebookId, 'raw');
             } else if (type === 'code') {
-              notebookStore.insertBelow({
-                id: notebookId,
-                cellType: 'code',
-              });
+              notebookStore.insertBelow(notebookId, 'code');
             } else if (type === 'markdown') {
-              notebookStore.insertBelow({
-                id: notebookId,
-                cellType: 'markdown',
-              });
+              notebookStore.insertBelow(notebookId, 'markdown');
             }
           }}
           style={{ color: 'grey' }}

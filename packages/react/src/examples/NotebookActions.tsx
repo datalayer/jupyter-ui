@@ -16,8 +16,8 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { useJupyter } from '../jupyter';
 import {
-  useNotebookStore2,
-  Notebook2,
+  useNotebookStore,
+  Notebook,
   CellSidebarExtension,
   CellSidebarButton,
 } from '../components';
@@ -27,11 +27,11 @@ import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
 const NOTEBOOK_ID = 'notebook-nbformat-id';
 
-const Notebook2ActionsExample = () => {
+const NotebookActionsExample = () => {
   const { serviceManager, defaultKernel } = useJupyter({
     startDefaultKernel: true,
   });
-  const runStore2 = useNotebookStore2();
+  const runStore2 = useNotebookStore();
 
   const extensions = useMemo(
     () => [
@@ -63,7 +63,7 @@ const Notebook2ActionsExample = () => {
       </ActionBar>
       <JupyterReactTheme>
         {serviceManager && defaultKernel && (
-          <Notebook2
+          <Notebook
             id={NOTEBOOK_ID}
             nbformat={NBFORMAT as INotebookContent}
             serviceManager={serviceManager}
@@ -81,4 +81,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<Notebook2ActionsExample />);
+root.render(<NotebookActionsExample />);

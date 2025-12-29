@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 import coincident from 'coincident';
 import { Remote, wrap } from 'comlink';
 import { PromiseDelegate } from '@lumino/coreutils';

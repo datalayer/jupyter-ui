@@ -9,8 +9,9 @@ import { createRoot } from 'react-dom/client';
 import { Button } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { Notebook } from '../components/notebook/Notebook';
+import { useJupyter } from '../jupyter';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from '../components/notebook/toolbar/NotebookToolbar';
 import { TocExtension } from './extensions/toc/TocExtension';
 import { ReactLayoutFactory } from './extensions/toc/ReactLayoutFactory';
@@ -19,8 +20,10 @@ import { JupyterLayoutFactory } from './extensions/toc/JupyterLayoutFactory';
 import NBFORMAT from './notebooks/NotebookToCExample.ipynb.json';
 
 const NotebookTOCExample = () => {
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
   const [layout, setLayout] = useState<'react' | 'jupyter'>('jupyter');
-
   const extensions = useMemo(
     () => [
       new TocExtension({
@@ -43,15 +46,18 @@ const NotebookTOCExample = () => {
           Use {layout === 'react' ? 'Jupyter' : 'React'} Layout
         </Button>
       </Box>
-      <Notebook
-        key={layout}
-        nbformat={NBFORMAT as INotebookContent}
-        extensions={extensions}
-        id="notebook-toc-id"
-        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        Toolbar={NotebookToolbar}
-        serverless
-      />
+      {serviceManager && defaultKernel && (
+        <Notebook
+          kernel={defaultKernel}
+          serviceManager={serviceManager}
+          nbformat={NBFORMAT as INotebookContent}
+          key={layout}
+          extensions={extensions}
+          id="notebook-toc-id"
+          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+          Toolbar={NotebookToolbar}
+        />
+      )}
     </JupyterReactTheme>
   );
 };

@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 import { Box } from '@primer/react';
 import { ITerminal } from '@jupyterlab/terminal';
 import TerminalAdapter from './TerminalAdapter';
-import { useJupyter } from './../../jupyter/JupyterContext';
+import { useJupyter } from './../../jupyter/JupyterUse';
 import LuminoBox from '../lumino/LuminoBox';
 import useTerminalStore from './TerminalState';
 

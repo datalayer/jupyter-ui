@@ -4,11 +4,12 @@
  * MIT License
  */
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
-import { useNotebookStore } from '../components/notebook/NotebookState';
-import { useJupyter, Jupyter, Kernel } from '../jupyter';
+import { useJupyter } from '../jupyter';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { CellSidebarExtension, Notebook } from '../components';
+import { useNotebookStore } from '../components/notebook/NotebookState';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 const NOTEBOOK_ID = 'notebook';
@@ -17,47 +18,18 @@ const NOTEBOOK_WIDTH = '100%';
 
 const NOTEBOOK_HEIGHT = 500;
 
-const KERNEL_NAME = 'python';
-
-let IS_INITIALIZED = false;
-
-const useKernel = () => {
-  const { kernelManager, serviceManager } = useJupyter();
-  const [kernel, setKernel] = useState<Kernel>();
-  useEffect(() => {
-    if (!serviceManager) {
-      return;
-    }
-    let startedKernel: Kernel;
-    kernelManager?.ready.then(() => {
-      const customKernel = new Kernel({
-        kernelManager,
-        kernelName: KERNEL_NAME,
-        kernelSpecName: KERNEL_NAME,
-        kernelspecsManager: serviceManager.kernelspecs,
-        sessionManager: serviceManager.sessions,
-      });
-      customKernel.ready.then(() => {
-        startedKernel = customKernel;
-        setKernel(customKernel);
-      });
-    });
-    return () => {
-      if (startedKernel) {
-        kernelManager?.shutdown(startedKernel.id).then();
-      }
-    };
-  }, [kernelManager, serviceManager]);
-  return kernel;
-};
+const IS_INITIALIZED = false;
 
 const NotebookInitExample = () => {
-  const kernel = useKernel();
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
   const notebookStore = useNotebookStore();
   const notebook = notebookStore.selectNotebook(NOTEBOOK_ID);
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   useEffect(() => {
     if (notebook && !IS_INITIALIZED) {
+      /*
       notebook.adapter?.notebookPanel?.model?.contentChanged.connect(_ => {
         if (!IS_INITIALIZED) {
           IS_INITIALIZED = true;
@@ -70,26 +42,25 @@ const NotebookInitExample = () => {
           });
         }
       });
+      */
     }
-  }, [kernel, notebook]);
+  }, [defaultKernel, notebook]);
   return (
-    <Jupyter startDefaultKernel={false}>
+    <JupyterReactTheme>
       <div style={{ width: NOTEBOOK_WIDTH, height: NOTEBOOK_HEIGHT }}>
-        {kernel ? (
+        {serviceManager && defaultKernel && (
           <Notebook
             path="ipywidgets.ipynb"
             id={NOTEBOOK_ID}
-            kernel={kernel}
+            kernel={defaultKernel}
+            serviceManager={serviceManager}
             height={`calc(${NOTEBOOK_HEIGHT}px - 2.6rem)`}
             extensions={extensions}
             Toolbar={NotebookToolbar}
           />
-        ) : (
-          <></>
         )}
-        ;
       </div>
-    </Jupyter>
+    </JupyterReactTheme>
   );
 };
 

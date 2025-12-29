@@ -4,30 +4,31 @@
  * MIT License
  */
 
-import { INotebookContent, IOutput } from '@jupyterlab/nbformat';
-import { Box, Button, ButtonGroup, SegmentedControl } from '@primer/react';
 import { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import Cell from '../components/cell/Cell';
-import { useCellsStore } from '../components/cell/CellState';
-import Console from '../components/console/Console';
-import FileBrowser from '../components/filebrowser/FileBrowser';
-import FileManagerJupyterLab from '../components/filemanager/FileManagerJupyterLab';
-import CellSidebarButton from '../components/notebook/cell/sidebar/CellSidebarButton';
-import { Notebook } from '../components/notebook/Notebook';
-import useNotebookStore from '../components/notebook/NotebookState';
-import Output from '../components/output/Output';
-import Terminal from '../components/terminal/Terminal';
-import {
-  DEFAULT_JUPYTER_SERVER_TOKEN,
-  DEFAULT_JUPYTER_SERVER_URL,
-} from '../jupyter';
-import { Jupyter } from '../jupyter/Jupyter';
-import { useJupyter } from '../jupyter/JupyterContext';
+import { INotebookContent, IOutput } from '@jupyterlab/nbformat';
+import { Button, ButtonGroup, SegmentedControl } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
+import { useJupyter } from '../jupyter';
 import { Kernel } from '../jupyter/kernel/Kernel';
-
+// import {
+//   DEFAULT_JUPYTER_SERVER_TOKEN,
+//   DEFAULT_JUPYTER_SERVER_URL,
+// } from '../jupyter';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { Cell } from '../components/cell/Cell';
+import { useCellsStore } from '../components/cell/CellState';
+import { Console } from '../components/console/Console';
+import { FileBrowser } from '../components/filebrowser/FileBrowser';
+import { FileManagerJupyterLab } from '../components/filemanager/FileManagerJupyterLab';
+import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
+import { Notebook } from '../components/notebook/Notebook';
+import { useNotebookStore } from '../components/notebook/NotebookState';
+import { Output } from '../components/output/Output';
+import { Terminal } from '../components/terminal/Terminal';
 import { CellSidebarExtension } from '../components';
-import notebook from './notebooks/NotebookExample1.ipynb.json';
+
+import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
 const SOURCE_1 = '1+1';
 
@@ -107,12 +108,14 @@ const NotebookToolbar = () => {
         <Button
           variant="default"
           size="small"
-          onClick={() =>
+          onClick={() => {
+            /*
             notebookStore.save({
               id: NOTEBOOK_ID_1,
               date: new Date(),
             })
-          }
+            */
+          }}
         >
           Save the notebook
         </Button>
@@ -129,8 +132,10 @@ const NotebookToolbar = () => {
 };
 
 const NotebookKernelChange = () => {
-  const { kernelManager, serviceManager } = useJupyter();
-  const notebookStore = useNotebookStore();
+  const { kernelManager, serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
+  //  const notebookStore = useNotebookStore();
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   const changeKernel = () => {
     if (serviceManager && kernelManager) {
@@ -142,7 +147,7 @@ const NotebookKernelChange = () => {
         sessionManager: serviceManager.sessions,
       });
       kernel.ready.then(() => {
-        notebookStore.changeKernel({ id: NOTEBOOK_ID_2, kernel });
+        // notebookStore.changeKernel({ id: NOTEBOOK_ID_2, kernel });
         alert('Kernel is changed.');
       });
     }
@@ -156,7 +161,15 @@ const NotebookKernelChange = () => {
           </Button>
         </ButtonGroup>
       </Box>
-      <Notebook path="test.ipynb" extensions={extensions} id={NOTEBOOK_ID_2} />
+      {serviceManager && defaultKernel && (
+        <Notebook
+          path="test.ipynb"
+          kernel={defaultKernel}
+          serviceManager={serviceManager}
+          extensions={extensions}
+          id={NOTEBOOK_ID_2}
+        />
+      )}
     </>
   );
 };
@@ -185,7 +198,9 @@ const Outputs = () => {
 
 const JupyterContextExample = () => {
   const [index, setIndex] = useState(1);
-  const { serviceManager, defaultKernel } = useJupyter();
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
   const extensionsButton = useMemo(
     () => [new CellSidebarExtension({ factory: CellSidebarButton })],
     []
@@ -193,12 +208,12 @@ const JupyterContextExample = () => {
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
     <>
-      <Jupyter
-        jupyterServerUrl={DEFAULT_JUPYTER_SERVER_URL}
-        jupyterServerToken={DEFAULT_JUPYTER_SERVER_TOKEN}
-        serverless={index === 0}
-        terminals
-        startDefaultKernel
+      <JupyterReactTheme
+      //        jupyterServerUrl={DEFAULT_JUPYTER_SERVER_URL}
+      //        jupyterServerToken={DEFAULT_JUPYTER_SERVER_TOKEN}
+      //        serverless={index === 0}
+      //        terminals
+      //        startDefaultKernel
       >
         <SegmentedControl
           onChange={index => setIndex(index)}
@@ -216,24 +231,32 @@ const JupyterContextExample = () => {
         <CellToolbar id={cellId} />
         {defaultKernel && <Cell id={cellId} kernel={defaultKernel} />}
         <hr />
-        <Notebook
-          nbformat={notebook as INotebookContent}
-          id={NOTEBOOK_ID_3}
-          height="300px"
-          extensions={extensionsButton}
-          Toolbar={NotebookToolbar}
-        />
+        {serviceManager && defaultKernel && (
+          <Notebook
+            nbformat={NBFORMAT as INotebookContent}
+            id={NOTEBOOK_ID_3}
+            kernel={defaultKernel}
+            serviceManager={serviceManager}
+            height="300px"
+            extensions={extensionsButton}
+            Toolbar={NotebookToolbar}
+          />
+        )}
         <hr />
         <Console />
         <hr />
         <Outputs />
         <hr />
         <NotebookToolbar />
-        <Notebook
-          path="ipywidgets.ipynb"
-          extensions={extensions}
-          id={NOTEBOOK_ID_1}
-        />
+        {serviceManager && defaultKernel && (
+          <Notebook
+            path="ipywidgets.ipynb"
+            kernel={defaultKernel}
+            serviceManager={serviceManager}
+            extensions={extensions}
+            id={NOTEBOOK_ID_1}
+          />
+        )}
         <hr />
         <NotebookKernelChange />
         <hr />
@@ -242,7 +265,7 @@ const JupyterContextExample = () => {
         {serviceManager && <FileBrowser serviceManager={serviceManager} />}
         <hr />
         <Terminal />
-      </Jupyter>
+      </JupyterReactTheme>
     </>
   );
 };

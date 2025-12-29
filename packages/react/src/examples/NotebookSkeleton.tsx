@@ -4,27 +4,41 @@
  * MIT License
  */
 
-import { ContentLoader } from '@datalayer/primer-addons';
 import { createRoot } from 'react-dom/client';
+// import { ContentLoader } from '@datalayer/primer-addons';
+import { useJupyter } from '../jupyter';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { CellSidebarExtension } from '../components';
 import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
 import { Notebook } from '../components/notebook/Notebook';
-import { Jupyter } from '../jupyter/Jupyter';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 const NOTEBOOK_ID = 'notebook-id';
 
-const NotebookSkeletonExample = () => (
-  <Jupyter skeleton={<ContentLoader count={3} />}>
-    <Notebook
-      path="ipywidgets.ipynb"
-      id={NOTEBOOK_ID}
-      height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-      extensions={[new CellSidebarExtension({ factory: CellSidebarButton })]}
-      Toolbar={NotebookToolbar}
-    />
-  </Jupyter>
-);
+const NotebookSkeletonExample = () => {
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
+  return (
+    <JupyterReactTheme
+    // skeleton={<ContentLoader count={3} />}
+    >
+      {serviceManager && defaultKernel && (
+        <Notebook
+          id={NOTEBOOK_ID}
+          kernel={defaultKernel}
+          serviceManager={serviceManager}
+          path="ipywidgets.ipynb"
+          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+          extensions={[
+            new CellSidebarExtension({ factory: CellSidebarButton }),
+          ]}
+          Toolbar={NotebookToolbar}
+        />
+      )}
+    </JupyterReactTheme>
+  );
+};
 
 const div = document.createElement('div');
 document.body.appendChild(div);

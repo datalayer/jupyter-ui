@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { $getRoot } from 'lexical';
 import styled from 'styled-components';
 import {
@@ -15,13 +15,15 @@ import {
 } from '@datalayer/jupyter-lexical';
 import {
   useNotebookStore,
-  Jupyter,
+  useJupyter,
+  JupyterReactTheme,
   Notebook,
   CellSidebar,
   CellSidebarExtension,
 } from '@datalayer/jupyter-react';
-import { Box, Button, UnderlineNav } from '@primer/react';
+import { Button, UnderlineNav } from '@primer/react';
 import { ThreeBarsIcon } from '@primer/octicons-react';
+import { Box } from '@datalayer/primer-addons';
 import { JSONTree } from 'react-json-tree';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { INotebookModel } from '@jupyterlab/notebook';
@@ -46,10 +48,17 @@ const StyledNotebook = styled.div`
 
 const Tabs = () => {
   const { editor } = useLexical();
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
   const notebookStore = useNotebookStore();
   const [tab, setTab] = useState<TabType>('editor');
   const [notebookContent, setNotebookContent] = useState<INotebookContent>(
     INITIAL_NBFORMAT_MODEL,
+  );
+  const extensions = useMemo(
+    () => [new CellSidebarExtension({ factory: CellSidebar })],
+    [],
   );
   const notebook = notebookStore.selectNotebook(NOTEBOOK_UID);
   const goToTab = (
@@ -84,21 +93,21 @@ const Tabs = () => {
         <UnderlineNav.Item
           href=""
           aria-current={tab === 'editor' ? 'page' : undefined}
-          onClick={(e: any) => goToTab(e, 'editor', notebook?.model)}
+          //          onClick={(e: any) => goToTab(e, 'editor', notebook?.model)}
         >
           Editor
         </UnderlineNav.Item>
         <UnderlineNav.Item
           href=""
           aria-current={tab === 'notebook' ? 'page' : undefined}
-          onClick={(e: any) => goToTab(e, 'notebook', notebook?.model)}
+          //          onClick={(e: any) => goToTab(e, 'notebook', notebook?.model)}
         >
           Notebook
         </UnderlineNav.Item>
         <UnderlineNav.Item
           href=""
           aria-current={tab === 'nbformat' ? 'page' : undefined}
-          onClick={(e: any) => goToTab(e, 'nbformat', notebook?.model)}
+          //          onClick={(e: any) => goToTab(e, 'nbformat', notebook?.model)}
         >
           NbFormat
         </UnderlineNav.Item>
@@ -124,11 +133,15 @@ const Tabs = () => {
       {tab === 'notebook' && (
         <StyledNotebook>
           <Box mb={3}>
-            <Notebook
-              id={NOTEBOOK_UID}
-              nbformat={notebookContent}
-              extensions={[new CellSidebarExtension({ factory: CellSidebar })]}
-            />
+            {serviceManager && defaultKernel && (
+              <Notebook
+                id={NOTEBOOK_UID}
+                kernel={defaultKernel}
+                serviceManager={serviceManager}
+                nbformat={notebookContent}
+                extensions={extensions}
+              />
+            )}
             <Button
               onClick={(e: React.MouseEvent) => {
                 e.preventDefault();
@@ -155,11 +168,11 @@ export function AppNbformat() {
       <div className="App">
         <h1>Jupyter UI ❤️ Lexical</h1>
       </div>
-      <Jupyter startDefaultKernel>
+      <JupyterReactTheme>
         <LexicalProvider>
           <Tabs />
         </LexicalProvider>
-      </Jupyter>
+      </JupyterReactTheme>
       <div className="other App">
         <br />
         <a href="https://datalayer.ai" target="_blank" rel="noreferrer">

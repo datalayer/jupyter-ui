@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { useJupyter } from './../../../jupyter/JupyterContext';
+import { useJupyter } from './../../../jupyter/JupyterUse';
 import { FileBrowser } from '../../../components/filebrowser/FileBrowser';
 
 export const FileBrowserComponent = () => {

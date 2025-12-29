@@ -8,11 +8,7 @@ import { useMemo } from 'react';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { createRoot } from 'react-dom/client';
 import { useJupyter } from '../jupyter';
-import {
-  Notebook2,
-  CellSidebarExtension,
-  NotebookToolbar,
-} from '../components';
+import { Notebook, CellSidebarExtension, NotebookToolbar } from '../components';
 import { JupyterReactTheme } from '../theme';
 
 import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
@@ -25,7 +21,7 @@ const NotebookNbformatExample = () => {
   return (
     <JupyterReactTheme>
       {serviceManager && defaultKernel ? (
-        <Notebook2
+        <Notebook
           nbformat={NBFORMAT as INotebookContent}
           id="notebook-nbformat-id"
           serviceManager={serviceManager}

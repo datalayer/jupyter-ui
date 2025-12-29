@@ -16,9 +16,6 @@ import { setupPrimerPortals } from '@datalayer/primer-addons';
 import {
   getJupyterServerUrl,
   createLiteServiceManager,
-  ensureJupyterAuth,
-  createServerSettings,
-  JupyterPropsType,
   DEFAULT_KERNEL_NAME,
 } from '../jupyter';
 import { ServiceManagerLess } from '../jupyter/services';
@@ -36,7 +33,9 @@ import {
   terminalStore,
   TerminalState,
 } from '../components/terminal/TerminalState';
+import { IJupyterProps } from '../jupyter';
 import { Colormode } from '../theme';
+import { createServerSettings, ensureJupyterAuth } from '../utils';
 
 export type OnSessionConnection = (
   kernelConnection: Session.ISessionConnection | undefined
@@ -120,10 +119,10 @@ export function useJupyterReactStore<T>(
 }
 
 export function useJupyterReactStoreFromProps(
-  props: JupyterPropsType
+  props: IJupyterProps
 ): JupyterReactState;
 export function useJupyterReactStoreFromProps(
-  props: JupyterPropsType
+  props: IJupyterProps
 ): JupyterReactState {
   const {
     defaultKernelName = DEFAULT_KERNEL_NAME,
@@ -141,6 +140,7 @@ export function useJupyterReactStoreFromProps(
 
   const jupyterConfig = useMemo<IJupyterConfig>(() => {
     const config = loadJupyterConfig({
+      collaborative: false,
       lite,
       jupyterServerUrl,
       jupyterServerToken,

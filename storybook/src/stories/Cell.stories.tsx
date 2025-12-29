@@ -5,7 +5,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { Jupyter, Cell } from '@datalayer/jupyter-react';
+import { JupyterReactTheme, Cell } from '@datalayer/jupyter-react';
 import { colormodeFromScheme } from './_utils/story-helpers';
 
 const meta: Meta<typeof Cell> = {
@@ -14,7 +14,11 @@ const meta: Meta<typeof Cell> = {
   argTypes: {
     lite: {
       control: 'radio',
-      options: ['true', 'false', '@jupyterlite/javascript-kernel-extension'],
+      options: [
+        'true',
+        'false',
+        '@datalayer/jupyter-react/lib/jupyter/lite/pyodide-kernel-extension',
+      ],
       table: {
         // Switching live does not work
         disable: true,
@@ -34,41 +38,44 @@ const meta: Meta<typeof Cell> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Cell | typeof Jupyter | { lite: string }>;
+type Story = StoryObj<
+  typeof Cell | typeof JupyterReactTheme | { lite: string }
+>;
 
 const Template = (args, { globals: { colorScheme } }) => {
   const { browser, initCode, ...others } = args;
   const lite = {
     true: true,
     false: false,
-    '@jupyterlite/javascript-kernel-extension':
-      import('@jupyterlite/javascript-kernel-extension'),
+    '@datalayer/jupyter-react/lib/jupyter/lite/pyodide-kernel-extension':
+      import('@datalayer/jupyter-react/lib/jupyter/lite/pyodide-kernel-extension'),
   }[args.browser];
 
   const kernelName =
-    args.browser === '@jupyterlite/javascript-kernel-extension'
+    args.browser ===
+    '@datalayer/jupyter-react/lib/jupyter/lite/pyodide-kernel-extension'
       ? 'javascript'
       : undefined;
 
   return (
-    <Jupyter
-      startDefaultKernel={true}
-      lite={lite}
-      initCode={initCode}
-      colormode={colormodeFromScheme(colorScheme)}
-      defaultKernelName={kernelName}
-      jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
-      jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+    <JupyterReactTheme
+    //      startDefaultKernel={true}
+    //      lite={lite}
+    //      initCode={initCode}
+    //      colormode={colormodeFromScheme(colorScheme)}
+    //      defaultKernelName={kernelName}
+    //      jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
+    //      jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
     >
       <Cell {...others} />
-    </Jupyter>
+    </JupyterReactTheme>
   );
 };
 
 export const Default: Story = Template.bind({}) as Story;
 Default.args = {
   lite: 'false',
-  initCode: '',
+  //  initCode: '',
   source: '',
   autoStart: false,
 };
@@ -132,7 +139,7 @@ export const WithInitialization: Story = Template.bind({}) as Story;
 WithInitialization.args = {
   ...Default.args,
   lite: 'true',
-  initCode: 'import micropip\nawait micropip.install("ipywidgets")',
+  //  initCode: 'import micropip\nawait micropip.install("ipywidgets")',
   source: '# ipywidgets is imported at initialization\nimport ipywidgets',
   autoStart: true,
 };

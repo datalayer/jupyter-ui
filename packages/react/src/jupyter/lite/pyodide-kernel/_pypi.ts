@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 // Wheel URLs extracted from pypi/all.json
 // These are full HTTP URLs that micropip can fetch
 // Inlined to avoid webpack/bundler issues with JSON imports

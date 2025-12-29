@@ -4,21 +4,19 @@
  * MIT License
  */
 
-import React, { createContext, useContext } from 'react';
 import {
   Kernel as JupyterKernel,
   ServerConnection,
   ServiceManager,
 } from '@jupyterlab/services';
 import { useJupyterReactStoreFromProps } from '../state';
-import { requestAPI } from './JupyterHandlers';
 import { Lite } from './lite';
 import { Kernel } from './kernel';
 
 /**
  * The type for Jupyter props.
  */
-export type JupyterPropsType = {
+export type IJupyterProps = {
   /**
    * Whether the component is collaborative or not.
    */
@@ -88,7 +86,7 @@ export type JupyterPropsType = {
 /**
  * The type for Jupyter context.
  */
-export type JupyterContextType = {
+export type IJupyterContext = {
   /**
    * Default kernel
    */
@@ -144,45 +142,15 @@ export type JupyterContextType = {
   serverSettings?: ServerConnection.ISettings;
 };
 
-/**
- * The Jupyter context properties type.
- */
-export type JupyterContextProps = React.PropsWithChildren<JupyterPropsType>;
-
-/**
- * The instance for the Jupyter context.
- */
-export const JupyterContext = createContext<JupyterContextType | undefined>(
-  undefined
-);
-
-/**
- * The type for the Jupyter context consumer.
- */
-export const JupyterContextConsumer = JupyterContext.Consumer;
-
-/**
- * The type for the Jupyter context provider.
- */
-const JupyterProvider = JupyterContext.Provider;
-
 /*
- * User Jupyter hook.
+ * Use Jupyter hook.
  */
-export const useJupyter = (props?: JupyterPropsType): JupyterContextType => {
-  const context = useContext(JupyterContext);
+export const useJupyter = (props?: IJupyterProps): IJupyterContext => {
   // Always call the hook, but only use its result if there's no context
   const { jupyterConfig, kernel, kernelIsLoading, serviceManager } =
     useJupyterReactStoreFromProps(props ?? {});
 
-  if (context) {
-    // We are within a React Context, just return the JupyterContext.
-    // The provided props are irrelevant in this case.
-    return context;
-  }
-  // We are not within a React Context....
-  // so create a JupyterContext from the store based on the provided props.
-  const storeContext: JupyterContextType = {
+  const context: IJupyterContext = {
     defaultKernel: kernel,
     jupyterServerUrl: jupyterConfig!.jupyterServerUrl,
     kernel,
@@ -193,75 +161,5 @@ export const useJupyter = (props?: JupyterPropsType): JupyterContextType => {
     serverSettings: serviceManager?.serverSettings,
     serviceManager,
   };
-  return storeContext;
-};
-
-/**
- * Utility method to ensure the Jupyter context
- * is authenticated with the Jupyter server.
- */
-export const ensureJupyterAuth = async (
-  serverSettings: ServerConnection.ISettings
-): Promise<boolean> => {
-  try {
-    await requestAPI<any>(serverSettings, 'api', '');
-    return true;
-  } catch (reason) {
-    console.log('The Jupyter Server API has failed with reason', reason);
-    return false;
-  }
-};
-
-/*
- *
- */
-export const createServerSettings = (
-  jupyterServerUrl: string,
-  jupyterServerToken: string
-) => {
-  return ServerConnection.makeSettings({
-    baseUrl: jupyterServerUrl,
-    wsUrl: jupyterServerUrl.replace(/^http/, 'ws'),
-    token: jupyterServerToken,
-    appendToken: true,
-    init: {
-      mode: 'cors',
-      credentials: 'include',
-      cache: 'no-store',
-    },
-  });
-};
-
-/**
- * The Jupyter context provider.
- */
-export const JupyterContextProvider: React.FC<JupyterContextProps> = props => {
-  const { children, skeleton } = props;
-  const {
-    jupyterServerUrl,
-    kernel,
-    kernelIsLoading,
-    lite,
-    serverSettings,
-    serviceManager,
-  } = useJupyter(props);
-  return (
-    <JupyterProvider
-      value={{
-        defaultKernel: kernel,
-        // FIXME we should not expose sub attributes to promote single source of truth (like URLs coming from serverSettings).
-        jupyterServerUrl,
-        kernel,
-        kernelIsLoading,
-        kernelManager: serviceManager?.kernels,
-        lite,
-        serverSettings,
-        serverless: props.serverless ?? false,
-        serviceManager,
-      }}
-    >
-      {kernelIsLoading && skeleton}
-      {children}
-    </JupyterProvider>
-  );
+  return context;
 };

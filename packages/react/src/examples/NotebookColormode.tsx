@@ -11,7 +11,7 @@ import { Text, ToggleSwitch } from '@primer/react';
 import { useJupyter } from '../jupyter';
 import { JupyterReactTheme } from '../theme';
 import { CellSidebarExtension } from '../components';
-import { Notebook2 } from '../components/notebook/Notebook2';
+import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import { useJupyterReactStore } from '../state';
 
@@ -57,7 +57,7 @@ const NotebookColormodeExample = () => {
         aria-labelledby="switch-label"
       />
       {serviceManager && defaultKernel && (
-        <Notebook2
+        <Notebook
           id="notebook-model-id"
           nbformat={NBFORMAT as INotebookContent}
           kernel={defaultKernel}

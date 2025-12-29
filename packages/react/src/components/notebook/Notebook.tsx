@@ -4,43 +4,23 @@
  * MIT License
  */
 
-import { YNotebook } from '@jupyter/ydoc';
-import { Cell, ICellModel } from '@jupyterlab/cells';
+import React, { useEffect, useState } from 'react';
 import { createGlobalStyle } from 'styled-components';
-import { INotebookContent } from '@jupyterlab/nbformat';
-import { NotebookModel } from '@jupyterlab/notebook';
-import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
-import { Kernel as JupyterKernel, ServiceManager } from '@jupyterlab/services';
-import { Box } from '@primer/react';
-import { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { KernelTransfer, OnSessionConnection } from '../../state';
-import { newUuid } from '../../utils';
-import { asObservable, Lumino } from '../lumino';
-import {
-  ICollaborationProvider,
-  CollaborationStatus,
-  Kernel,
-  Lite,
-  useJupyter,
-} from './../../jupyter';
-import { CellMetadataEditor } from './cell/metadata';
-import { NotebookAdapter } from './NotebookAdapter';
-import { useNotebookStore } from './NotebookState';
-import { INotebookToolbarProps } from './toolbar';
+import type { INotebookContent } from '@jupyterlab/nbformat';
+import type { IInlineCompletionProvider } from '@jupyterlab/completer';
+import type { NotebookModel } from '@jupyterlab/notebook';
+import type { IRenderMime } from '@jupyterlab/rendermime-interfaces';
+import type { ServiceManager } from '@jupyterlab/services';
+import type { CommandRegistry } from '@lumino/commands';
+import { Box } from '@datalayer/primer-addons';
+import { ICollaborationProvider, Kernel } from '../../jupyter';
+import type { OnSessionConnection } from '../../state';
 import { Loader } from '../utils';
-import { NotebookExtension } from './NotebookExtensions';
+import { useKernelId, useNotebookModel, NotebookBase } from './NotebookBase';
+import type { NotebookExtension } from './NotebookExtensions';
+import type { INotebookToolbarProps } from './toolbar';
 
 import './Notebook.css';
-
-export type ExternalIPyWidgets = {
-  name: string;
-  version: string;
-};
-
-export type BundledIPyWidgets = ExternalIPyWidgets & {
-  module: any;
-};
 
 const GlobalStyle = createGlobalStyle<any>`
   .dla-Box-Notebook .jp-Cell .dla-CellSidebar-Container {
@@ -51,368 +31,191 @@ const GlobalStyle = createGlobalStyle<any>`
   }
 `;
 
-export type INotebookProps = {
-  Toolbar?: (props: INotebookToolbarProps) => JSX.Element;
-  cellMetadataPanel?: boolean;
-  cellSidebarMargin?: number;
+/**
+ * Simple notebook component properties
+ */
+export interface INotebookProps {
+  /**
+   * Collaboration provider instance.
+   */
   collaborationProvider?: ICollaborationProvider;
+  /**
+   * Custom command registry.
+   *
+   * Note:
+   * Providing it allows to command the component from an higher level.
+   */
+  commands?: CommandRegistry;
+  /**
+   * Notebook extensions.
+   */
   extensions?: NotebookExtension[];
-  height?: string;
-  id?: string;
+  /**
+   * Notebook ID.
+   */
+  id: string;
+  /**
+   * Kernel to connect to.
+   */
   kernel?: Kernel;
-  kernelClients?: JupyterKernel.IKernelConnection[];
-  kernelTransfer?: KernelTransfer;
-  lite?: Lite;
-  maxHeight?: string;
+  /**
+   * Kernel ID to connect to.
+   */
+  kernelId?: string;
+  /**
+   * Notebook initial content.
+   */
   nbformat?: INotebookContent;
-  nbgrader?: boolean;
-  onSessionConnection?: OnSessionConnection;
+  /**
+   * Notebook file path.
+   */
   path?: string;
+  /**
+   * Whether the notebook is read-only or not.
+   */
   readonly?: boolean;
-  renderId?: number;
+  /**
+   * Additional cell output renderers.
+   */
   renderers?: IRenderMime.IRendererFactory[];
-  serverless?: boolean;
-  serviceManager?: ServiceManager.IManager;
+  /**
+   * Jupyter service manager.
+   */
+  serviceManager: ServiceManager.IManager;
+  /**
+   * Whether to start a default kernel or not.
+   */
   startDefaultKernel?: boolean;
+  /**
+   * React toolbar component factory.
+   */
+  Toolbar?: React.JSXElementConstructor<INotebookToolbarProps>;
+  /**
+   * URL to fetch the notebook content from.
+   */
   url?: string;
-  useVSCodeTheme?: boolean; // Enable VS Code theme integration when available
   /**
-   * The Kernel Id to use, as defined in the Kernel API.
+   * Margin in pixels on the right side of cells.
+   *
+   * This is typically needed when cell sidebar is injected as extension.
    */
-  useRunningKernelId?: string;
+  cellSidebarMargin?: number;
   /**
-   * The index (aka position) of the Kernel to use in the list of kernels.
+   * CSS height of the component.
    */
-  useRunningKernelIndex?: number;
-};
+  height?: string;
+  /**
+   * CSS max-height of the component.
+   */
+  maxHeight?: string;
+  /**
+   * Callback on notebook model changed.
+   */
+  onNotebookModelChanged?: (model: NotebookModel | null) => void;
+  /**
+   * Callback on session connection changed.
+   */
+  onSessionConnection?: OnSessionConnection;
+  /**
+   * Custom inline completion providers.
+   *
+   * Platform-specific providers can be injected here (e.g., VS Code LLM, custom AI models).
+   */
+  inlineProviders?: IInlineCompletionProvider[];
+}
 
 /**
- * This component creates a Notebook as a collection of cells
- * with sidebars.
+ * Simple notebook component without adapter and stores.
  *
- * @param props The notebook properties.
- * @returns A Notebook React.js component.
+ * Notes:
+ * - You must provide the appropriate service manager
+ * - You can specify the kernel id to use; if it is not defined or empty and startDefaultKernel is true, a new kernel will be started.
  */
-export const Notebook = (props: INotebookProps) => {
+export function Notebook(
+  props: React.PropsWithChildren<INotebookProps>
+): JSX.Element {
   const {
     Toolbar,
     cellSidebarMargin = 120,
-    collaborationProvider: collaborationProviderProp,
-    extensions = [],
+    children,
+    collaborationProvider,
+    commands,
+    extensions,
     height = '100vh',
-    id: providedId,
-    kernel: kernelProp,
-    lite: liteProp,
+    id,
+    inlineProviders,
+    kernel,
     maxHeight = '100vh',
     nbformat,
+    onNotebookModelChanged,
+    onSessionConnection,
     path,
     readonly = false,
-    serverless = false,
-    serviceManager: serviceManagerProp,
+    renderers,
+    serviceManager,
     startDefaultKernel = false,
     url,
-    useRunningKernelId,
-    useRunningKernelIndex,
   } = props;
-  const { serviceManager, defaultKernel, lite } = useJupyter({
-    lite: liteProp,
-    serverless,
-    serviceManager: serviceManagerProp,
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  const kernelId = useKernelId({
+    kernel,
+    kernels: serviceManager.kernels,
+    requestedKernelId: props.kernelId,
     startDefaultKernel,
-    useRunningKernelId,
-    useRunningKernelIndex,
   });
-  const [id, _] = useState(providedId || newUuid());
-  const [adapter, setAdapter] = useState<NotebookAdapter>();
-  const [isLoading, setIsLoading] = useState(false);
-  const [extensionComponents, setExtensionComponents] = useState(
-    new Array<JSX.Element>()
-  );
-  const kernel = kernelProp ?? defaultKernel;
-  const notebookStore = useNotebookStore();
-  const portals = notebookStore.selectNotebookPortals(id);
 
-  // Bootstrap the Notebook Adapter.
-  const bootstrapAdapter = async (
-    //    collaborative: ICollaborative,
-    serviceManager?: ServiceManager.IManager,
-    kernel?: Kernel
-  ) => {
-    console.log('bootstrapAdapter called with kernel:', kernel);
-    const adapter = new NotebookAdapter({
-      ...props,
-      id,
-      lite,
-      kernel,
-      serviceManager,
+  const model = useNotebookModel({
+    collaborationProvider,
+    nbformat,
+    readonly,
+    url,
+    path,
+    serviceManager,
+    id,
+  });
+
+  useEffect(() => {
+    console.log('[Notebook] useEffect - model changed:', {
+      model: !!model,
+      isLoading,
     });
-    console.log('Created adapter:', adapter);
-    // Update the local state.
-    setAdapter(adapter);
-    extensions.forEach(extension => {
-      extension.init({
-        notebookId: id,
-        commands: adapter.commands,
-        panel: adapter.notebookPanel!,
-        adapter,
-      });
-      extension.createNew(adapter.notebookPanel!, adapter.context!);
-      setExtensionComponents(
-        extensionComponents.concat(extension.component ?? <></>)
-      );
-    });
-    // Update the notebook state with the adapter.
-    notebookStore.update({ id, state: { adapter } });
-    // Update the notebook state further to events.
-    adapter.notebookPanel?.content.modelChanged.connect((notebook, _) => {
-      if (notebook.model) {
-        notebookStore.changeModel({ id, notebookModel: notebook.model });
-      }
-    });
-    adapter.notebookPanel?.content.activeCellChanged.connect((_, cellModel) => {
-      if (cellModel === null) {
-        notebookStore.activeCellChange({ id, cellModel: undefined });
-      } else {
-        notebookStore.activeCellChange({ id, cellModel });
-      }
-    });
-    adapter.notebookPanel?.sessionContext.statusChanged.connect(
-      (_, kernelStatus) => {
-        notebookStore.changeKernelStatus({ id, kernelStatus });
-      }
-    );
-    // Add more UI behavior when the Service Manager is ready.
-    adapter.serviceManager.ready.then(() => {
-      if (!readonly) {
-        const cellModel = adapter.notebookPanel!.content.activeCell;
-        if (cellModel) {
-          notebookStore.activeCellChange({ id, cellModel });
-        }
-        const activeCellChanged$ = asObservable(
-          adapter.notebookPanel!.content.activeCellChanged
+    if (model) {
+      console.log('[Notebook] Setting isLoading to false');
+      setIsLoading(false);
+    }
+    onNotebookModelChanged?.(model);
+  }, [model, onNotebookModelChanged]);
+
+  useEffect(() => {
+    // Set user identity if collaborating using Jupyter collaboration
+    const setUserIdentity = () => {
+      if (collaborationProvider && model) {
+        // Yjs details are hidden from the interface
+        (model.sharedModel as any).awareness.setLocalStateField(
+          'user',
+          serviceManager.user.identity
         );
-        activeCellChanged$.subscribe((cellModel: Cell<ICellModel>) => {
-          notebookStore.activeCellChange({ id, cellModel });
-          const panelDiv = document.getElementById(
-            'right-panel-id'
-          ) as HTMLDivElement;
-          if (panelDiv) {
-            const cellMetadataOptions = (
-              <Box mt={3}>
-                <CellMetadataEditor cellModel={cellModel.model} />
-              </Box>
-            );
-            const portal = createPortal(cellMetadataOptions, panelDiv);
-            notebookStore.setPortalDisplay({
-              id,
-              portalDisplay: { portal, pinned: false },
-            });
-          }
-        });
-      }
-    });
-  };
-  //
-  const createAdapter = (
-    serviceManager?: ServiceManager.IManager,
-    kernel?: Kernel
-  ) => {
-    if (!kernel) {
-      bootstrapAdapter(serviceManager, kernel);
-    } else {
-      kernel.ready.then(() => {
-        bootstrapAdapter(serviceManager, kernel);
-      });
-    }
-  };
-  const disposeAdapter = () => {
-    adapter?.notebookPanel?.disposed.connect((slot, _) => {
-      if (adapter) {
-        notebookStore.dispose(id);
-        setAdapter(undefined);
-      }
-    });
-    adapter?.notebookPanel?.dispose();
-  };
-  // Mutation Effects.
-  useEffect(() => {
-    // fix: issue-396 When `serviceManager` changes, the `Notebook` component will recreate the `NotebookAdapter` instance. The old `NotebookAdapter` is not properly disposed, causing shortcut key listener conflicts.
-    if (adapter) {
-      adapter.dispose();
-      setAdapter(undefined);
-    }
-    if (serviceManager && serverless) {
-      createAdapter(serviceManager, kernel);
-    } else if (serviceManager && kernel) {
-      createAdapter(serviceManager, kernel);
-    }
-  }, [serviceManager, kernel]);
-
-  useEffect(() => {
-    // Set up collaboration using the new provider system
-    let collaborationProvider: ICollaborationProvider | null = null;
-    let isMounted = true;
-    let sharedModel: YNotebook | null = null;
-
-    const connect = async () => {
-      if (!adapter?.notebookPanel || !isMounted) {
-        return;
-      }
-
-      // Use the provided collaboration provider
-      if (collaborationProviderProp) {
-        collaborationProvider = collaborationProviderProp;
-      }
-
-      if (!collaborationProvider) {
-        return;
-      }
-
-      try {
-        sharedModel = new YNotebook();
-
-        // Set up event handlers
-        const handleStatusChange = (
-          _: ICollaborationProvider,
-          status: CollaborationStatus
-        ) => {
-          if (
-            status === CollaborationStatus.Connected &&
-            adapter?.notebookPanel
-          ) {
-            // Create a new model using the synchronized shared model
-            const model = new NotebookModel({
-              collaborationEnabled: true,
-              disableDocumentWideUndoRedo: true,
-              sharedModel: sharedModel!,
-            });
-
-            // Store the old model for disposal
-            const oldModel = adapter.notebookPanel.content.model;
-
-            // Safely update the model
-            try {
-              // Update the model without triggering widget reattachment
-              adapter.notebookPanel.content.model = model;
-
-              // Update the notebook store with the new model
-              notebookStore.changeModel({ id, notebookModel: model });
-
-              // Force the notebook panel to update its content
-              adapter.notebookPanel.update();
-
-              // Dispose the old model after successful update
-              if (oldModel && oldModel !== model) {
-                oldModel.dispose();
-              }
-
-              console.log(
-                'Notebook model updated with collaboration. Cell count:',
-                model.cells?.length
-              );
-            } catch (error) {
-              console.error('Error updating notebook model:', error);
-              // Restore the old model if update fails
-              if (oldModel && !oldModel.isDisposed) {
-                adapter.notebookPanel.content.model = oldModel;
-              }
-            }
-          }
-        };
-
-        const handleError = (_: ICollaborationProvider, error: Error) => {
-          console.error('Collaboration error:', error);
-          // Handle collaboration errors
-          if (error.message.includes('session expired')) {
-            // Attempt to reconnect
-            if (isMounted && collaborationProvider && sharedModel) {
-              collaborationProvider
-                .connect(sharedModel, id)
-                .catch(console.error);
-            }
-          }
-        };
-
-        collaborationProvider.events.statusChanged.connect(handleStatusChange);
-        collaborationProvider.events.errorOccurred.connect(handleError);
-
-        // Connect to collaboration service
-        await collaborationProvider.connect(sharedModel, id, {
-          serviceManager,
-          path: props.path, // Pass the notebook's path to the collaboration provider
-        });
-
-        console.log(
-          'Collaboration is setup with provider:',
-          collaborationProvider.type
-        );
-      } catch (error) {
-        console.error('Failed to setup collaboration:', error);
-        setIsLoading(false);
       }
     };
-
-    if (collaborationProviderProp) {
-      // Don't set isLoading to true here as it causes the Lumino widget to unmount
-      // setIsLoading(true);
-      connect()
-        .catch(error => {
-          console.error('Failed to setup collaboration connection.', error);
-        })
-        .finally(() => {
-          if (isMounted) {
-            // setIsLoading(false);
-          }
-        });
-    }
-
+    setUserIdentity();
+    serviceManager.user.userChanged.connect(setUserIdentity);
     return () => {
-      isMounted = false;
-      collaborationProvider?.dispose();
-      sharedModel?.dispose();
+      serviceManager.user.userChanged.disconnect(setUserIdentity);
     };
-  }, [adapter?.notebookPanel, collaborationProviderProp]);
+  }, [collaborationProvider, model, serviceManager]);
 
-  useEffect(() => {
-    if (adapter && adapter.kernel !== kernel) {
-      adapter.setKernel(kernel);
-    }
-  }, [kernel]);
-  useEffect(() => {
-    if (adapter && adapter.readonly !== readonly) {
-      adapter.setReadonly(readonly!);
-    }
-  }, [readonly]);
-  useEffect(() => {
-    if (adapter && adapter.serverless !== serverless) {
-      adapter.setServerless(serverless);
-    }
-  }, [serverless]);
-  useEffect(() => {
-    if (adapter && adapter.nbformat !== nbformat) {
-      adapter.setNbformat(nbformat);
-    }
-  }, [nbformat]);
-  useEffect(() => {
-    if (adapter && path && adapter.path !== path) {
-      disposeAdapter();
-      createAdapter(serviceManager);
-    }
-  }, [path]);
-  useEffect(() => {
-    if (adapter && url && adapter.url !== url) {
-      disposeAdapter();
-      createAdapter(serviceManager);
-    }
-  }, [url]);
-  // Dispose Effects.
-  useEffect(() => {
-    return () => {
-      disposeAdapter();
-    };
-  }, []);
-  //
-  return (
+  console.log('[Notebook] Rendering:', {
+    isLoading,
+    hasModel: !!model,
+    hasServiceManager: !!serviceManager,
+    hasInlineProviders: !!inlineProviders,
+  });
+
+  return isLoading ? (
+    <Loader key="notebook-loader" />
+  ) : (
     <Box
       style={{ height, width: '100%', position: 'relative' }}
       id="dla-Jupyter-Notebook"
@@ -421,12 +224,10 @@ export const Notebook = (props: INotebookProps) => {
       <Box
         className="dla-Box-Notebook"
         sx={{
-          '& .dla-Jupyter-Notebook': {
-            height,
-            maxHeight,
-            width: '100%',
-            overflowY: 'hidden',
-          },
+          height,
+          maxHeight,
+          width: '100%',
+          overflowY: 'hidden',
           '& .datalayer-NotebookPanel-header': {
             minHeight: '50px',
           },
@@ -436,8 +237,8 @@ export const Notebook = (props: INotebookProps) => {
             overflowY: 'scroll',
           },
           '& .jp-NotebookPanel': {
-            height: '100% !important',
-            width: '100% !important',
+            //            height: '100% !important',
+            //            width: '100% !important',
           },
           '& .jp-Toolbar': {
             display: 'none',
@@ -466,31 +267,23 @@ export const Notebook = (props: INotebookProps) => {
           },
         }}
       >
-        <>{portals?.map((portal: React.ReactPortal) => portal)}</>
+        {children}
         <GlobalStyle />
-        <Box>
-          {extensionComponents.map((extensionComponent, index) => {
-            return (
-              <Box key={`${extensionComponent}-${index}`}>
-                {extensionComponent}
-              </Box>
-            );
-          })}
-        </Box>
-        {isLoading ? (
-          <Loader />
-        ) : (
-          <Box>
-            {adapter ? (
-              <Lumino id={id}>{adapter.panel}</Lumino>
-            ) : (
-              <div>No adapter available</div>
-            )}
-          </Box>
+        {model && serviceManager && (
+          <NotebookBase
+            commands={commands}
+            id={id}
+            extensions={extensions}
+            inlineProviders={inlineProviders}
+            kernelId={kernelId}
+            model={model}
+            path={path}
+            renderers={renderers}
+            serviceManager={serviceManager}
+            onSessionConnection={onSessionConnection}
+          />
         )}
       </Box>
     </Box>
   );
-};
-
-export default Notebook;
+}

@@ -4,30 +4,38 @@
  * MIT License
  */
 
-import { rendererFactory as geojsonRenderer } from '@jupyterlab/geojson-extension';
 import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
-import { CellSidebarExtension } from '../components';
-import CellSidebarButton from '../components/notebook/cell/sidebar/CellSidebarButton';
-import { Notebook } from '../components/notebook/Notebook';
+import { rendererFactory as geojsonRenderer } from '@jupyterlab/geojson-extension';
+import { useJupyter } from '../jupyter';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { CellSidebarExtension } from '../components';
+import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
+import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 const GeoJsonExample = () => {
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
   const extensions = useMemo(
     () => [new CellSidebarExtension({ factory: CellSidebarButton })],
     []
   );
   return (
     <JupyterReactTheme>
-      <Notebook
-        path="renderers/geojson-1.ipynb"
-        id="notebook-geojson-id"
-        renderers={[geojsonRenderer]}
-        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        extensions={extensions}
-        Toolbar={NotebookToolbar}
-      />
+      {serviceManager && defaultKernel && (
+        <Notebook
+          path="renderers/geojson-1.ipynb"
+          id="notebook-geojson-id"
+          kernel={defaultKernel}
+          serviceManager={serviceManager}
+          renderers={[geojsonRenderer]}
+          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+          extensions={extensions}
+          Toolbar={NotebookToolbar}
+        />
+      )}
     </JupyterReactTheme>
   );
 };

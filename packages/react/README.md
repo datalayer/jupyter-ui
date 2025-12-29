@@ -4,6 +4,16 @@
 
 # 🪐 ⚛️ Jupyter React
 
+> [!IMPORTANT]
+> **Jupyter React 2.0 Released!** 🎉
+>
+> This major release includes **breaking changes** for the `Jupyter` and `Notebook` components:
+>
+> - The `Notebook2` component is now the default `Notebook`
+> - Instead of using `startDefaultKernel` prop on components, use the `useJupyter({ startDefaultKernel: true })` hook to get `serviceManager` and `defaultKernel`, then pass them explicitly to `Notebook2`
+> - Notebook component now require `kernel` and `serviceManager` props with conditional rendering
+> - See the [examples](./src/examples) for migration patterns (e.g., [PyGWalker.tsx](./src/examples/PyGWalker.tsx))
+
 > Jupyter React is a set of [React.js](https://reactjs.org) components that allow a frontend developer to build data products compatible with the [Jupyter](https://jupyter.org) ecosystem. The user interface delivers executable notebooks and cells.
 
 The below image shows a gallery of the available React.js components ready to be used in you custom application. These open source components are used to build the online [Datalayer service](https://datalayer.ai), a collaborative platform for data analysis.

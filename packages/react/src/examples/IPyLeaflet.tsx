@@ -6,23 +6,30 @@
 
 import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { useJupyter } from '../jupyter';
 import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 const IPyLeafletExample = () => {
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
     <JupyterReactTheme>
-      <Notebook
-        id="notebook-ipyleaflet-id"
-        startDefaultKernel
-        path="ipyleaflet.ipynb"
-        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        extensions={extensions}
-        Toolbar={NotebookToolbar}
-      />
+      {serviceManager && defaultKernel && (
+        <Notebook
+          id="notebook-ipyleaflet-id"
+          kernel={defaultKernel}
+          serviceManager={serviceManager}
+          path="ipyleaflet.ipynb"
+          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+          extensions={extensions}
+          Toolbar={NotebookToolbar}
+        />
+      )}
     </JupyterReactTheme>
   );
 };

@@ -4,787 +4,867 @@
  * MIT License
  */
 
-import { WIDGET_MIMETYPE } from '@jupyter-widgets/html-manager/lib/output_renderers';
-import { ISharedAttachmentsCell, IYText } from '@jupyter/ydoc';
-import { Cell, ICellModel, MarkdownCell } from '@jupyterlab/cells';
-import { IEditorServices } from '@jupyterlab/codeeditor';
-import {
-  CodeMirrorEditorFactory,
-  CodeMirrorMimeTypeService,
-  EditorExtensionRegistry,
-  EditorLanguageRegistry,
-  EditorThemeRegistry,
-  ybinding,
-} from '@jupyterlab/codemirror';
-import {
-  Completer,
-  CompleterModel,
-  CompletionHandler,
-  KernelCompleterProvider,
-  ProviderReconciliator,
-} from '@jupyterlab/completer';
-import { IChangedArgs } from '@jupyterlab/coreutils';
-import { Context, DocumentRegistry } from '@jupyterlab/docregistry';
-import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
-import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
-import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
-import { CellType, IAttachments, INotebookContent } from '@jupyterlab/nbformat';
-import {
-  INotebookModel,
-  Notebook,
-  NotebookPanel,
-  NotebookTracker,
-  NotebookWidgetFactory,
-  StaticNotebook,
-} from '@jupyterlab/notebook';
-import {
-  RenderMimeRegistry,
-  standardRendererFactories,
-} from '@jupyterlab/rendermime';
-import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
-import {
-  Contents,
-  Kernel as JupyterKernel,
-  ServiceManager,
-  Session,
-  SessionManager,
-} from '@jupyterlab/services';
-import { find } from '@lumino/algorithm';
 import { CommandRegistry } from '@lumino/commands';
-import { BoxPanel, Widget } from '@lumino/widgets';
-import { Kernel, Lite, WidgetLabRenderer, WidgetManager } from '../../jupyter';
-import { KernelTransfer, OnSessionConnection } from '../../state';
-import { newUuid } from '../../utils';
-import { JupyterReactContentFactory } from './content/JupyterReactContentFactory';
-import { getMarked } from './marked/marked';
-import { JupyterReactNotebookModelFactory } from './model/JupyterReactNotebookModelFactory';
-import { INotebookProps } from './Notebook';
-import { addNotebookCommands, NotebookPanelProvider } from './NotebookCommands';
-
-const FALLBACK_NOTEBOOK_PATH = '.datalayer/ping.ipynb';
+import {
+  NotebookPanel,
+  NotebookActions,
+  type Notebook,
+} from '@jupyterlab/notebook';
+import { Context } from '@jupyterlab/docregistry';
+import { NotebookModel } from '@jupyterlab/notebook';
+import * as nbformat from '@jupyterlab/nbformat';
+import { NotebookCommandIds } from './NotebookCommands';
+import * as Diff from 'diff';
 
 export class NotebookAdapter {
-  private _boxPanel: BoxPanel;
   private _commands: CommandRegistry;
-  private _contentFactory: JupyterReactContentFactory;
-  private _context?: Context<INotebookModel>;
-  private _documentRegistry?: DocumentRegistry;
-  private _iPyWidgetsManager?: WidgetManager;
-  private _id: string;
-  private _kernel?: Kernel;
-  private _kernelConnection: JupyterKernel.IKernelConnection | null | undefined;
-  private _kernelClients?: JupyterKernel.IKernelConnection[];
-  private _kernelTransfer?: KernelTransfer;
-  private _lite?: Lite;
-  private _mimeTypeService: CodeMirrorMimeTypeService;
-  private _nbformat?: INotebookContent;
-  private _notebookModelFactory?: JupyterReactNotebookModelFactory;
-  private _notebookPanel?: NotebookPanel;
-  private _onSessionConnection?: OnSessionConnection;
-  private _panelProvider: NotebookPanelProvider;
-  private _path?: string;
-  private _readonly: boolean;
-  private _renderers: IRenderMime.IRendererFactory[];
-  private _rendermime?: RenderMimeRegistry;
-  private _serverless: boolean;
-  private _serviceManager: ServiceManager.IManager;
-  private _tracker?: NotebookTracker;
-  private _url?: string;
+  private _panel: NotebookPanel;
+  private _notebook: Notebook;
+  private _context: Context<NotebookModel>;
+  private _defaultCellType: nbformat.CellType = 'code';
 
-  private _useVSCodeTheme: boolean;
-
-  constructor(props: INotebookProps) {
-    console.log('Creating a new Notebook Adapter.');
-
-    this._id = props.id ?? newUuid();
-    this._kernel = props.kernel;
-    this._kernelClients = props.kernelClients ?? [];
-    this._lite = props.lite;
-    this._nbformat = props.nbformat;
-    this._path = props.path;
-    this._readonly = props.readonly ?? false;
-    this._renderers = props.renderers ?? [];
-    this._serverless = props.serverless ?? false;
-    this._serviceManager = props.serviceManager!;
-    this._url = props.url;
-    this._useVSCodeTheme = props.useVSCodeTheme ?? true; // Default to true for backwards compatibility
-
-    this._kernelTransfer = props.kernelTransfer;
-    this._onSessionConnection = props.onSessionConnection;
-
-    this._boxPanel = new BoxPanel();
-    this._boxPanel.addClass('dla-Jupyter-Notebook');
-    this._boxPanel.spacing = 0;
-
-    this._commands = new CommandRegistry();
-    this._panelProvider = new NotebookPanelProvider();
-
-    if (props.url) {
-      this.loadFromUrl(props.url).then(nbformat => {
-        this._nbformat = nbformat;
-        this.setupAdapter();
-      });
-    } else {
-      this.setupAdapter();
-    }
+  constructor(
+    commands: CommandRegistry,
+    panel: NotebookPanel,
+    context: Context<NotebookModel>
+  ) {
+    this._commands = commands;
+    this._panel = panel;
+    this._notebook = panel.content;
+    this._context = context;
   }
 
-  async loadFromUrl(url: string) {
-    return fetch(url)
-      .then(response => {
-        return response.text();
-      })
-      .then(nb => {
-        return JSON.parse(nb);
-      });
-  }
-
-  notebookKeydownListener = (event: KeyboardEvent) => {
-    this._commands?.processKeydownEvent(event);
-  };
-
-  setupCompleter(notebookPanel: NotebookPanel) {
-    const editor =
-      notebookPanel.content.activeCell &&
-      notebookPanel.content.activeCell.editor;
-    const sessionContext = notebookPanel.context.sessionContext;
-    const model = new CompleterModel();
-    const completer = new Completer({ editor, model });
-    const timeout = 1000;
-    const provider = new KernelCompleterProvider();
-    const reconciliator = new ProviderReconciliator({
-      context: {
-        widget: notebookPanel,
-        editor,
-        session: sessionContext.session,
-      },
-      providers: [provider],
-      timeout,
-    });
-    const handler = new CompletionHandler({ completer, reconciliator });
-
-    sessionContext.ready.then(() => {
-      const provider = new KernelCompleterProvider();
-      const reconciliator = new ProviderReconciliator({
-        context: {
-          widget: this._notebookPanel!,
-          editor,
-          session: sessionContext.session,
-        },
-        providers: [provider],
-        timeout: timeout,
-      });
-      handler.reconciliator = reconciliator;
-    });
-    handler.editor = editor;
-    notebookPanel.content.activeCellChanged.connect(
-      (notebook: Notebook, cell: Cell<ICellModel> | null) => {
-        if (cell) {
-          cell.ready.then(() => {
-            handler.editor = cell && cell.editor;
-          });
-        }
-      }
-    );
-    completer.hide();
-    Widget.attach(completer, document.body);
-    return handler;
-  }
-
-  initializeContext() {
-    const isNbFormat =
-      this._path !== undefined && this._path !== '' ? false : true;
-
-    this._context = new Context({
-      manager: this._serviceManager,
-      factory: this._notebookModelFactory!,
-      path: this._path ?? FALLBACK_NOTEBOOK_PATH,
-      kernelPreference: {
-        id: this._kernel?.id,
-        shouldStart: false,
-        canStart: false,
-        autoStartDefault: false,
-        shutdownOnDispose: false,
-      },
-    });
-
-    this._iPyWidgetsManager = new WidgetManager(
-      this._context,
-      this._rendermime!,
-      { saveState: false }
-    );
-    const ipywidgetsRendererFactory: IRenderMime.IRendererFactory = {
-      safe: true,
-      mimeTypes: [WIDGET_MIMETYPE],
-      defaultRank: 1,
-      createRenderer: options =>
-        new WidgetLabRenderer(options, this._iPyWidgetsManager),
-    };
-    this._rendermime!.addFactory(ipywidgetsRendererFactory, 1);
-    this._kernelClients?.map(kernelClient => {
-      this._iPyWidgetsManager?.registerWithKernel(kernelClient);
-    });
-
-    // These are fixes on the Context and the SessionContext to have more control on the kernel launch.
-    (this._context.sessionContext as any)._initialize =
-      async (): Promise<boolean> => {
-        const manager = (this._context!.sessionContext as any)
-          .sessionManager as SessionManager;
-        await manager.ready;
-        await manager.refreshRunning();
-        const model = find(manager.running(), model => {
-          return model.kernel?.id === this._kernel?.id;
-        });
-        if (model) {
-          try {
-            const session = manager.connectTo({
-              model: {
-                ...model,
-                path: this._path ?? model.path,
-                name: this._path ?? model.name,
-              },
-              kernelConnectionOptions: {
-                handleComms: true,
-              },
-            });
-            (this._context!.sessionContext as any)._handleNewSession(session);
-            // Dispose the previous KernelConnection to avoid errors with Comms.
-            this._kernel?.connection?.dispose();
-          } catch (err) {
-            void (this._context!.sessionContext as any)._handleSessionError(
-              err
-            );
-            return Promise.reject(err);
-          }
-        }
-        return await (this._context!.sessionContext as any)._startIfNecessary();
-      };
-    if (isNbFormat) {
-      // If nbformat is provided and we don't want to interact with the Content Manager.
-      (this._context as any)._populate = async (): Promise<void> => {
-        (this._context as any)._isPopulated = true;
-        (this._context as any)._isReady = true;
-        (this._context as any)._populatedPromise.resolve(void 0);
-        // Add a checkpoint if none exists and the file is writable.
-        // Force skip this step for nbformat notebooks.
-        // await (this._context as any)._maybeCheckpoint(false);
-        if ((this._context as any).isDisposed) {
-          return;
-        }
-        // Update the kernel preference.
-        const name =
-          (this._context as any)._model.defaultKernelName ||
-          (this._context as any).sessionContext.kernelPreference.name;
-        (this._context as any).sessionContext.kernelPreference = {
-          ...(this._context as any).sessionContext.kernelPreference,
-          name,
-          language: (this._context as any)._model.defaultKernelLanguage,
-        };
-        // Note: we don't wait on the session to initialize
-        // so that the user can be shown the content before
-        // any kernel has started.
-        void (this._context as any).sessionContext
-          .initialize()
-          .then((shouldSelect: boolean) => {
-            if (shouldSelect) {
-              void (this._context as any)._dialogs.selectKernel(
-                (this._context!.sessionContext as any).sessionContext
-              );
-            }
-          });
-      };
-      (this._context as any).initialize = async (
-        isNew: boolean
-      ): Promise<void> => {
-        (this._context as Context<INotebookModel>).model.dirty = false;
-        const now = new Date().toISOString();
-        const model: Contents.IModel = {
-          path: this._id,
-          name: this._id,
-          type: 'notebook',
-          content: undefined,
-          writable: true,
-          created: now,
-          last_modified: now,
-          mimetype: 'application/x-ipynb+json',
-          format: 'json',
-        };
-        (this._context as any)._updateContentsModel(model);
-        await (this._context as any)._populate();
-        (
-          this._context as Context<INotebookModel>
-        ).model.sharedModel.clearUndoHistory();
-      };
-    }
-
-    // Setup the context listeners.
-    this._context.sessionContext.sessionChanged.connect(
-      (
-        _,
-        args: IChangedArgs<
-          Session.ISessionConnection | null,
-          Session.ISessionConnection | null,
-          'session'
-        >
-      ) => {
-        const session = args.newValue;
-        console.log('Current Jupyter Session Connection', session);
-        if (this._onSessionConnection) {
-          if (session) {
-            this._onSessionConnection(session);
-            this._iPyWidgetsManager?.registerWithKernel(session.kernel);
-            const model = this._notebookPanel?.model;
-            if (model) {
-              this._iPyWidgetsManager?.restoreWidgets(model);
-            }
-          }
-        }
-      }
-    );
-    this._context.sessionContext.kernelChanged.connect(
-      (
-        _,
-        args: IChangedArgs<
-          JupyterKernel.IKernelConnection | null,
-          JupyterKernel.IKernelConnection | null,
-          'kernel'
-        >
-      ) => {
-        const kernelConnection = args.newValue;
-        this._kernelConnection = kernelConnection;
-        console.log('Current Jupyter Kernel Connection.', kernelConnection);
-        if (kernelConnection && !kernelConnection.handleComms) {
-          console.log(
-            'Updating the current Kernel Connection to enforce Comms support.',
-            kernelConnection.handleComms
-          );
-          (kernelConnection as any).handleComms = true;
-        }
-        /*
-      this._iPyWidgetsManager?.registerWithKernel(kernelConnection);
-      this._iPyWidgetsManager?.restoreWidgets(this._notebookPanel?.model!)
-      if (this._onSessionConnection) {
-        this._onSessionConnection(kernelConnection);
-      }
-      */
-      }
-    );
-    this._context.sessionContext.ready.then(() => {
-      if (this._onSessionConnection) {
-        this._onSessionConnection(
-          this._context?.sessionContext.session ?? undefined
-        );
-      }
-      const kernelConnection = this._context?.sessionContext.session?.kernel;
-      this._kernelConnection = kernelConnection;
-      if (this._kernelTransfer) {
-        if (kernelConnection) {
-          kernelConnection.connectionStatusChanged.connect((_, status) => {
-            if (status === 'connected') {
-              this._kernelTransfer!.transfer(kernelConnection);
-            }
-          });
-        }
-      }
-    });
-
-    if (!this._notebookPanel) {
-      // Create the Notebook Panel if not yet done.
-      /*
-      // Option 1 to create the Notebook Panel.
-      const content = new Notebook({
-        rendermime: this._rendermime!,
-        contentFactory: this._contentFactory,
-        mimeTypeService: this._mimeTypeService,
-        notebookConfig: {
-          ...StaticNotebook.defaultNotebookConfig,
-          windowingMode: 'none',
-          recordTiming: true,
-        }
-      });
-      this._notebookPanel = new NotebookPanel({
-        context: this._context,
-        content,
-      });
-      */
-      // Option 2 to create the Notebook Panel.
-      const notebookFactory =
-        this._documentRegistry?.getWidgetFactory('Notebook');
-      this._notebookPanel = notebookFactory?.createNew(
-        this._context
-      ) as NotebookPanel;
-
-      // Update panel provider with persistent references
-      this._panelProvider.setPanel(this._notebookPanel, this._context);
-    }
-
-    const completerHandler = this.setupCompleter(this._notebookPanel!);
-
-    if (!this._readonly) {
-      try {
-        addNotebookCommands(
-          this._commands,
-          completerHandler,
-          this._tracker!,
-          this._panelProvider,
-          this._path
-        );
-      } catch {
-        // no-op.
-        // The commands may already be registered...
-      }
-    }
-
-    this._boxPanel.addWidget(this._notebookPanel);
-    BoxPanel.setStretch(this._notebookPanel, 0);
-    window.addEventListener('resize', () => {
-      this._notebookPanel?.update();
-    });
-
-    this._context.initialize(isNbFormat).then(() => {
-      if (isNbFormat) {
-        this._notebookPanel?.model?.fromJSON(this._nbformat!);
-      }
-    });
-  }
-
-  private setupAdapter(): void {
-    document.addEventListener('keydown', this.notebookKeydownListener, true);
-
-    const initialFactories = standardRendererFactories.filter(
-      factory => factory.mimeTypes[0] !== 'text/javascript'
-    );
-    /*
-    const ipywidgetsRendererFactory: IRenderMime.IRendererFactory =  {
-      safe: true,
-      mimeTypes: [WIDGET_MIMETYPE],
-      defaultRank: 1,
-      createRenderer: options =>
-        new WidgetLabRenderer(options, this._iPyWidgetsManager!),
-    };
-    initialFactories.push(ipywidgetsRendererFactory);
-    */
-    initialFactories.push(jsonRendererFactory);
-    initialFactories.push(javascriptRendererFactory);
-
-    this._renderers.map(renderer => initialFactories.push(renderer));
-
-    const languages = new EditorLanguageRegistry();
-    // Register default languages.
-    for (const language of EditorLanguageRegistry.getDefaultLanguages()) {
-      languages.addLanguage(language);
-    }
-    // Add Jupyter Markdown flavor here to support code block highlighting.
-    languages.addLanguage({
-      name: 'ipythongfm',
-      mime: 'text/x-ipythongfm',
-      load: async () => {
-        // TODO: add support for LaTeX.
-        const m = await import('@codemirror/lang-markdown');
-        return m.markdown({
-          codeLanguages: (info: string) => languages.findBest(info) as any,
-        });
-      },
-    });
-
-    this._rendermime = new RenderMimeRegistry({
-      initialFactories,
-      latexTypesetter: new MathJaxTypesetter(),
-      markdownParser: getMarked(languages),
-    });
-
-    this._documentRegistry = new DocumentRegistry({});
-    this._mimeTypeService = new CodeMirrorMimeTypeService(languages);
-
-    const themes = new EditorThemeRegistry();
-    for (const theme of EditorThemeRegistry.getDefaultThemes()) {
-      themes.addTheme(theme);
-    }
-    // Store useVSCodeTheme flag on window for the patch to access
-    if (typeof window !== 'undefined') {
-      (window as any).__useVSCodeTheme = this._useVSCodeTheme;
-    }
-    const editorExtensions = () => {
-      const registry = new EditorExtensionRegistry();
-      for (const extensionFactory of EditorExtensionRegistry.getDefaultExtensions(
-        { themes }
-      )) {
-        registry.addExtension(extensionFactory);
-      }
-      registry.addExtension({
-        name: 'shared-model-binding',
-        factory: options => {
-          const sharedModel = options.model.sharedModel as IYText;
-          return EditorExtensionRegistry.createImmutableExtension(
-            ybinding({
-              ytext: sharedModel.ysource,
-              undoManager: sharedModel.undoManager ?? undefined,
-            })
-          );
-        },
-      });
-      return registry;
-    };
-    const factoryService = new CodeMirrorEditorFactory({
-      extensions: editorExtensions(),
-      languages,
-    });
-    const editorServices: IEditorServices = {
-      factoryService,
-      mimeTypeService: this._mimeTypeService,
-    };
-    const editorFactory = editorServices.factoryService.newInlineEditor;
-    this._contentFactory = new JupyterReactContentFactory({ editorFactory });
-
-    this._tracker = new NotebookTracker({ namespace: this._id });
-
-    const notebookWidgetFactory = new NotebookWidgetFactory({
-      name: 'Notebook',
-      label: 'Notebook',
-      modelName: 'notebook',
-      fileTypes: ['notebook'],
-      defaultFor: ['notebook'],
-      preferKernel: true,
-      autoStartDefault: false,
-      canStartKernel: false,
-      shutdownOnClose: false,
-      rendermime: this._rendermime,
-      contentFactory: this._contentFactory,
-      mimeTypeService: editorServices.mimeTypeService,
-      notebookConfig: {
-        ...StaticNotebook.defaultNotebookConfig,
-        recordTiming: true,
-      },
-    });
-    notebookWidgetFactory.widgetCreated.connect((sender, notebookPanel) => {
-      notebookPanel.context.pathChanged.connect(() => {
-        this._tracker?.save(notebookPanel);
-      });
-      this._tracker?.add(notebookPanel);
-    });
-    this._documentRegistry.addWidgetFactory(notebookWidgetFactory);
-
-    this._notebookModelFactory = new JupyterReactNotebookModelFactory({
-      nbformat: this._nbformat,
-      readonly: this._readonly,
-    });
-    this._documentRegistry.addModelFactory(this._notebookModelFactory);
-
-    this.initializeContext();
-  }
-
-  get id(): string {
-    return this._id;
-  }
-
-  get readonly(): boolean {
-    return this._readonly;
-  }
-
-  get serverless(): boolean {
-    return this._serverless;
-  }
-
-  get lite(): Lite | undefined {
-    return this._lite;
-  }
-
-  get path(): string | undefined {
-    return this._path;
-  }
-
-  get url(): string | undefined {
-    return this._url;
-  }
-
-  get nbformat(): INotebookContent | undefined {
-    return this._nbformat;
-  }
-
-  get kernel(): Kernel | undefined {
-    return this._kernel;
-  }
-
-  get kernelConnection(): JupyterKernel.IKernelConnection | null | undefined {
-    return this._kernelConnection;
-  }
-
-  get notebookPanel(): NotebookPanel | undefined {
-    return this._notebookPanel;
-  }
-
-  get context(): Context<INotebookModel> | undefined {
-    return this._context;
-  }
-
-  set notebookPanel(notebookPanel: NotebookPanel | undefined) {
-    this._notebookPanel = notebookPanel;
-  }
-
-  get panel(): BoxPanel {
-    return this._boxPanel;
-  }
-
+  /**
+   * Get the command registry.
+   */
   get commands(): CommandRegistry {
     return this._commands;
   }
 
-  get serviceManager(): ServiceManager.IManager {
-    return this._serviceManager;
-  }
-
-  /*
-   * Only use this method to change an adapter with a nbformat.
+  /**
+   * Get the notebook panel.
    */
-  setNbformat(nbformat?: INotebookContent) {
-    if (!nbformat) {
-      throw new Error(
-        'The nbformat should first be set via the constructor of NotebookAdapter'
-      );
+  get panel(): NotebookPanel {
+    return this._panel;
+  }
+
+  /**
+   * Get the notebook widget.
+   */
+  get notebook(): Notebook {
+    return this._notebook;
+  }
+
+  /**
+   * Get the notebook context.
+   */
+  get context(): Context<NotebookModel> {
+    return this._context;
+  }
+
+  /**
+   * Set the default cell type for new cells.
+   */
+  setDefaultCellType(cellType: nbformat.CellType): void {
+    this._defaultCellType = cellType;
+  }
+
+  /**
+   * Get the default cell type for new cells.
+   */
+  get defaultCellType(): nbformat.CellType {
+    return this._defaultCellType;
+  }
+
+  /**
+   * Insert a new cell above the active cell.
+   */
+  insertAbove(source?: string): void {
+    const notebook = this._notebook;
+
+    // Insert above using NotebookActions
+    NotebookActions.insertAbove(notebook);
+
+    // Always set the cell type to match _defaultCellType
+    // (NotebookActions may create cells with a different default type)
+    NotebookActions.changeCellType(notebook, this._defaultCellType);
+
+    // Set the source if provided
+    if (source && notebook.activeCell) {
+      notebook.activeCell.model.sharedModel.setSource(source);
     }
-    if (this._nbformat !== nbformat) {
-      this._nbformat = nbformat;
-      this._notebookPanel?.model?.fromJSON(nbformat);
+
+    // Enter edit mode
+    notebook.mode = 'edit';
+  }
+
+  /**
+   * Insert a new cell below the active cell.
+   */
+  insertBelow(source?: string): void {
+    const notebook = this._notebook;
+
+    // Insert below using NotebookActions
+    NotebookActions.insertBelow(notebook);
+
+    // Always set the cell type to match _defaultCellType
+    // (NotebookActions may create cells with a different default type)
+    NotebookActions.changeCellType(notebook, this._defaultCellType);
+
+    // Set the source if provided
+    if (source && notebook.activeCell) {
+      notebook.activeCell.model.sharedModel.setSource(source);
+    }
+
+    // Enter edit mode
+    notebook.mode = 'edit';
+  }
+
+  /**
+   * Change the type of the active cell.
+   */
+  changeCellType(cellType: nbformat.CellType): void {
+    const notebook = this._notebook;
+
+    if (notebook.activeCell && notebook.activeCell.model.type !== cellType) {
+      NotebookActions.changeCellType(notebook, cellType);
     }
   }
 
-  setServiceManager(serviceManager: ServiceManager.IManager, lite?: Lite) {
-    this._lite = lite;
-    this._serviceManager = serviceManager;
-    this._nbformat = this._notebookPanel?.model?.toJSON() as INotebookContent;
-    //    this.initializeContext();
+  /**
+   * Delete the currently selected cells.
+   */
+  deleteCells(): void {
+    const notebook = this._notebook;
+    NotebookActions.deleteCells(notebook);
   }
 
-  setKernel(kernel?: Kernel) {
-    if (this._kernel === kernel) {
-      return;
-    }
-    this._kernel = kernel;
-    this.initializeContext();
+  /**
+   * Get the notebook model.
+   */
+  get model(): NotebookModel | null {
+    return this._context.model;
   }
 
-  setReadonly(readonly: boolean) {
-    if (this._readonly !== readonly) {
-      this._readonly = readonly;
-      this._notebookPanel?.content.widgets.forEach(cell => {
-        cell.syncEditable = true;
-        cell.model.sharedModel.setMetadata('editable', !readonly);
-      });
-      const cells = this._context?.model.cells;
-      if (cells) {
-        Array.from(cells).forEach(cell => {
-          cell.setMetadata('editable', !readonly);
-        });
-      }
-      this._notebookPanel?.content.widgets.forEach(cell => {
-        cell.saveEditableState();
-      });
-    }
-  }
+  /**
+   * Undo the last change in the notebook.
+   *
+   * @remarks
+   * If there is no history to undo (e.g., at the beginning of the undo stack),
+   * this operation will have no effect. The notebook must be available and
+   * properly initialized for this operation to succeed.
+   */
+  undo(): void {
+    const notebook = this._notebook;
 
-  setServerless(serverless: boolean) {
-    if (this._serverless !== serverless) {
-      this._serverless = serverless;
-      //      this.initializeContext();
-    }
-  }
-
-  setPath(path: string) {
-    if (this._path !== path) {
-      this._path = path;
-      this.initializeContext();
-    }
-  }
-
-  assignKernel(kernel: Kernel) {
-    this._kernel = kernel;
-    this._context?.sessionContext.changeKernel({
-      id: kernel.id,
-    });
-  }
-
-  setDefaultCellType = (cellType: CellType) => {
-    this._notebookPanel!.content!.notebookConfig!.defaultCell! = cellType;
-  };
-
-  changeCellType = (cellType: CellType) => {
-    // NotebookActions.changeCellType(this._notebookPanel?.content!, cellType);
-    const notebook = this._notebookPanel!.content!;
-    const notebookSharedModel = notebook.model!.sharedModel;
-    notebook.widgets.forEach((child, index) => {
-      if (!notebook.isSelectedOrActive(child)) {
+    // If we're in edit mode and have an active cell with an editor,
+    // try to undo in the cell editor first
+    if (notebook.mode === 'edit' && notebook.activeCell?.editor) {
+      const editor = notebook.activeCell.editor;
+      // CodeMirror editor has an undo method
+      if (editor && typeof (editor as any).undo === 'function') {
+        (editor as any).undo();
         return;
       }
-      if (child.model.type !== cellType) {
-        const raw = child.model.toJSON();
-        notebookSharedModel.transact(() => {
-          notebookSharedModel.deleteCell(index);
-          const newCell = notebookSharedModel.insertCell(index, {
-            cell_type: cellType,
-            source: raw.source,
-            metadata: raw.metadata,
-          });
-          if (raw.attachments && ['markdown', 'raw'].includes(cellType)) {
-            (newCell as ISharedAttachmentsCell).attachments =
-              raw.attachments as IAttachments;
-          }
+    }
+
+    // Otherwise, undo at the notebook level (add/remove cells, etc.)
+    NotebookActions.undo(notebook);
+  }
+
+  /**
+   * Redo the last undone change in the notebook.
+   *
+   * @remarks
+   * If there is no history to redo (e.g., no prior undo operations or at the
+   * end of the redo stack), this operation will have no effect. The notebook
+   * must be available and properly initialized for this operation to succeed.
+   */
+  redo(): void {
+    const notebook = this._notebook;
+
+    // If we're in edit mode and have an active cell with an editor,
+    // try to redo in the cell editor first
+    if (notebook.mode === 'edit' && notebook.activeCell?.editor) {
+      const editor = notebook.activeCell.editor;
+      // CodeMirror editor has a redo method
+      if (editor && typeof (editor as any).redo === 'function') {
+        (editor as any).redo();
+        return;
+      }
+    }
+
+    // Otherwise, redo at the notebook level (add/remove cells, etc.)
+    NotebookActions.redo(notebook);
+  }
+
+  /**
+   * Set the active cell by index.
+   *
+   * @param index - The index of the cell to activate (0-based)
+   *
+   * @remarks
+   * This method programmatically selects a cell at the specified index.
+   * If the index is out of bounds, the operation has no effect.
+   */
+  setActiveCell(index: number): void {
+    const notebook = this._notebook;
+    const cellCount = notebook.model?.cells.length ?? 0;
+
+    if (index >= 0 && index < cellCount) {
+      notebook.activeCellIndex = index;
+    }
+  }
+
+  /**
+   * Get all cells from the notebook.
+   *
+   * @returns Array of cell data including type, source, and outputs
+   *
+   * @remarks
+   * This method extracts cell information from the notebook model.
+   * For code cells, outputs are included. Returns an empty array if
+   * the notebook model is not available.
+   */
+  getCells(): Array<{
+    index: number;
+    type: nbformat.CellType;
+    source: string;
+    outputs?: unknown[];
+  }> {
+    console.log('[NotebookAdapter.getCells] Called');
+    const cells = this._notebook.model?.cells;
+    if (!cells) {
+      console.log(
+        '[NotebookAdapter.getCells] No cells model, returning empty array'
+      );
+      return [];
+    }
+
+    console.log(`[NotebookAdapter.getCells] Found ${cells.length} cells`);
+
+    const result: Array<{
+      index: number;
+      type: nbformat.CellType;
+      source: string;
+      outputs?: unknown[];
+    }> = [];
+
+    for (let i = 0; i < cells.length; i++) {
+      const cell = cells.get(i);
+      if (cell) {
+        const cellData = {
+          index: i,
+          type: cell.type as nbformat.CellType,
+          source: cell.sharedModel.getSource(),
+          outputs:
+            cell.type === 'code' ? (cell as any).outputs?.toJSON() : undefined,
+        };
+        console.log(`[NotebookAdapter.getCells] Cell ${i}:`, {
+          type: cellData.type,
+          sourceLength: cellData.source.length,
         });
+        result.push(cellData);
       }
-      if (cellType === 'markdown') {
-        // Fetch the new widget and unrender it.
-        child = notebook.widgets[index];
-        (child as MarkdownCell).rendered = false;
+    }
+
+    console.log(`[NotebookAdapter.getCells] Returning ${result.length} cells`);
+    return result;
+  }
+
+  /**
+   * Read all cells from the notebook (alias for getCells).
+   *
+   * @param format - Response format: 'brief' returns preview only, 'detailed' returns full content
+   * @returns Array of cell data - brief or detailed based on format
+   *
+   * @remarks
+   * This method is an alias for getCells() to match the readAllCells tool operation.
+   * Provides a consistent naming convention for read operations.
+   * Supports brief format (index, type, 40-char preview) and detailed format (full content).
+   */
+  readAllCells(format: 'brief' | 'detailed' = 'brief'): Array<{
+    index: number;
+    type: string;
+    preview?: string;
+    source?: string;
+    execution_count?: number | null;
+    outputs?: unknown[];
+  }> {
+    const cells = this.getCells();
+    return cells.map((cell, index) => {
+      // Get execution count for code cells
+      const cellModel = this._notebook.model?.cells.get(index);
+      const execution_count =
+        cellModel?.type === 'code'
+          ? ((cellModel as any).executionCount ?? null)
+          : null;
+
+      if (format === 'brief') {
+        // Brief format: index, type, 40-char preview
+        return {
+          index,
+          type: cell.type,
+          preview: cell.source.substring(0, 40),
+        };
+      } else {
+        // Detailed format: full content with source, execution_count, outputs
+        return {
+          index,
+          type: cell.type,
+          source: cell.source,
+          execution_count,
+          outputs: cell.outputs,
+        };
       }
     });
-    notebook.deselectAll();
-  };
+  }
 
-  insertAbove = (source?: string): void => {
-    const notebook = this._notebookPanel!.content!;
-    const model = this._notebookPanel!.context.model!;
-    const newIndex = notebook.activeCell ? notebook.activeCellIndex : 0;
-    model.sharedModel.insertCell(newIndex, {
-      cell_type: notebook.notebookConfig.defaultCell,
-      source,
-      metadata:
-        notebook.notebookConfig.defaultCell === 'code'
-          ? {
-              // This is an empty cell created by user, thus is trusted
-              trusted: true,
-            }
-          : {},
+  /**
+   * Get the total number of cells in the notebook.
+   *
+   * @returns The number of cells, or 0 if the notebook model is not available
+   */
+  getCellCount(): number {
+    return this._notebook.model?.cells.length ?? 0;
+  }
+
+  /**
+   * Insert a new cell at a specific index.
+   *
+   * @param cellIndex - The index where the cell should be inserted (0-based)
+   * @param source - Optional source code/text for the new cell
+   *
+   * @remarks
+   * This method inserts a cell at the specified position by:
+   * 1. Setting the active cell to cellIndex
+   * 2. Calling insertAbove to insert before that cell
+   *
+   * Note: The cell type is determined by _defaultCellType, which should be set
+   * before calling this method (typically done by the store layer).
+   */
+  insertAt(cellIndex: number, source?: string): void {
+    const cellCount = this.getCellCount();
+
+    console.log('[NotebookAdapter.insertAt] Called with:', {
+      cellIndex,
+      sourceLength: source?.length || 0,
+      sourcePreview: source?.substring(0, 50),
+      currentActiveCell: this._notebook.activeCellIndex,
+      cellCount,
+      defaultCellType: this._defaultCellType,
     });
-    // Make the newly inserted cell active.
-    notebook.activeCellIndex = newIndex;
-    notebook.deselectAll();
-  };
 
-  insertBelow = (source?: string): void => {
-    const notebook = this._notebookPanel!.content!;
-    const model = this._notebookPanel!.context.model!;
-    const newIndex = notebook.activeCell ? notebook.activeCellIndex + 1 : 0;
-    model.sharedModel.insertCell(newIndex, {
-      cell_type: notebook.notebookConfig.defaultCell,
-      source,
-      metadata:
-        notebook.notebookConfig.defaultCell === 'code'
-          ? {
-              // This is an empty cell created by user, thus is trusted.
-              trusted: true,
-            }
-          : {},
+    // Validate cell index is within bounds (matches Jupyter MCP Server)
+    if (cellIndex < -1 || cellIndex > cellCount) {
+      throw new Error(
+        `Index ${cellIndex} is outside valid range [-1, ${cellCount}]. ` +
+          `Use -1 to append at end.`
+      );
+    }
+
+    // Normalize -1 to append position (matches Jupyter MCP Server)
+    const actualIndex = cellIndex === -1 ? cellCount : cellIndex;
+
+    console.log('[NotebookAdapter.insertAt] Normalized index:', {
+      originalIndex: cellIndex,
+      actualIndex,
+      cellCount,
     });
-    // Make the newly inserted cell active.
-    notebook.activeCellIndex = newIndex;
-    notebook.deselectAll();
-  };
 
-  dispose = () => {
-    document.removeEventListener('keydown', this.notebookKeydownListener, true);
-    this._context?.dispose();
-    this._notebookPanel?.dispose();
-    this._boxPanel.dispose();
-  };
+    // Insert at the actual index
+    if (actualIndex >= cellCount) {
+      // Append at end
+      console.log('[NotebookAdapter.insertAt] Appending at end');
+      if (cellCount > 0) {
+        this.setActiveCell(cellCount - 1);
+      }
+      this.insertBelow(source);
+    } else {
+      // Insert at specific position
+      console.log(
+        `[NotebookAdapter.insertAt] Inserting at index ${actualIndex}`
+      );
+      this.setActiveCell(actualIndex);
+      this.insertAbove(source);
+    }
+
+    console.log('[NotebookAdapter.insertAt] After insertion:', {
+      cellCount: this.getCellCount(),
+      activeCell: this._notebook.activeCellIndex,
+    });
+  }
+
+  /**
+   * NEW ALIGNED TOOL METHODS
+   * These methods align 1:1 with tool operation names for seamless integration
+   */
+
+  /**
+   * Insert a cell at a specific index (aligned with insertCell tool).
+   *
+   * @param cellType - Type of cell to insert (code, markdown, or raw)
+   * @param cellIndex - Index where to insert (0-based). If undefined, inserts at end.
+   * @param source - Optional source code/text for the cell
+   */
+  insertCell(
+    cellType: nbformat.CellType,
+    cellIndex?: number,
+    source?: string
+  ): void {
+    this.setDefaultCellType(cellType);
+    // Default to cell count (end of notebook) if index not provided
+    const targetIndex = cellIndex ?? this.getCellCount();
+    this.insertAt(targetIndex, source);
+  }
+
+  /**
+   * Insert multiple cells at a specific index (aligned with insertCells tool).
+   *
+   * More efficient than calling insertCell multiple times.
+   * Cells are inserted sequentially starting at the given index.
+   *
+   * @param cells - Array of cells to insert (each with type and source)
+   * @param cellIndex - Index where to insert first cell (0-based). Use large number for end.
+   */
+  insertCells(
+    cells: Array<{ type: nbformat.CellType; source: string }>,
+    cellIndex: number
+  ): void {
+    let currentIndex = cellIndex;
+    for (const cell of cells) {
+      this.setDefaultCellType(cell.type);
+      this.insertAt(currentIndex, cell.source);
+      currentIndex++;
+    }
+  }
+
+  /**
+   * Delete cell(s) at the specified index/indices (aligned with deleteCell tool and Jupyter MCP Server).
+   *
+   * @param index - Single cell index, array of indices, or undefined.
+   *   - Single number: Deletes that cell
+   *   - Array: Deletes all cells at those indices (in reverse order to prevent shifting)
+   *   - Undefined: Deletes the active cell if one exists
+   *
+   * @remarks
+   * This method matches the Jupyter MCP Server behavior:
+   * - Validates ALL indices are in range before deleting any
+   * - Deletes in reverse order (highest to lowest) to prevent index shifting
+   * - Throws error with MCP-compatible message format if any index is out of range
+   *
+   * @throws {Error} If any index is out of range
+   */
+  deleteCell(index?: number | number[]): void {
+    const cells = this._notebook.model?.cells;
+    const cellCount = cells?.length ?? 0;
+
+    if (index !== undefined) {
+      // Convert single index to array for unified handling
+      const indices = Array.isArray(index) ? index : [index];
+
+      // Validate ALL indices first (match Jupyter MCP Server error format)
+      for (const idx of indices) {
+        if (idx < 0 || idx >= cellCount) {
+          console.error(
+            `[NotebookAdapter.deleteCell] Index ${idx} is out of range (cell count: ${cellCount})`
+          );
+          throw new Error(
+            `Cell index ${idx} is out of range. Notebook has ${cellCount} cells.`
+          );
+        }
+      }
+
+      // Sort indices in REVERSE order (highest to lowest) to prevent index shifting
+      // This matches the Jupyter MCP Server behavior
+      const sortedIndices = [...indices].sort((a, b) => b - a);
+
+      console.log(
+        `[NotebookAdapter.deleteCell] Deleting ${sortedIndices.length} cell(s) in reverse order:`,
+        sortedIndices
+      );
+
+      // Delete each cell in reverse order
+      for (const idx of sortedIndices) {
+        this.setActiveCell(idx);
+        this.deleteCells();
+      }
+    } else {
+      // No index provided: check if there's an active cell to delete
+      const activeCell = this._notebook.activeCell;
+
+      if (!activeCell) {
+        console.warn('[NotebookAdapter.deleteCell] No active cell to delete');
+        return; // Safely return without deleting
+      }
+
+      // Active cell exists, safe to delete
+      this.deleteCells();
+    }
+  }
+
+  /**
+   * Updates cell source at the specified index and returns a diff.
+   * Matches MCP server's overwrite_cell_source behavior.
+   *
+   * @param index - Cell index (0-based)
+   * @param source - New cell source content
+   * @returns Diff string showing changes made
+   * @throws Error if cell index is out of range or cell not found
+   */
+  updateCell(index: number, source: string): string {
+    // Validate cell index
+    const cellCount = this._notebook.model?.sharedModel.cells.length ?? 0;
+
+    if (index < 0 || index >= cellCount) {
+      throw new Error(
+        `Cell index ${index} is out of range. Notebook has ${cellCount} cells.`
+      );
+    }
+
+    // Get the cell at the specified index
+    const cellModel = this._notebook.model?.cells.get(index);
+    if (!cellModel) {
+      throw new Error(`Cell at index ${index} not found.`);
+    }
+
+    // Store old source before updating
+    const oldSource = cellModel.sharedModel.getSource();
+
+    // Update the cell source
+    cellModel.sharedModel.setSource(source);
+
+    // Generate diff (matches MCP server behavior)
+    const patch = Diff.createPatch(
+      `cell_${index}`,
+      oldSource,
+      source,
+      'before',
+      'after',
+      { context: 3 }
+    );
+
+    return patch;
+  }
+
+  /**
+   * Get a cell's content by index or active cell (aligned with getCell tool and MCP Server).
+   *
+   * @param index - Optional cell index (0-based). If not provided, returns active cell.
+   * @param includeOutputs - Whether to include cell outputs (default: true)
+   * @returns Cell data or undefined if not found
+   */
+  getCell(
+    index?: number,
+    includeOutputs: boolean = true
+  ):
+    | {
+        type: nbformat.CellType;
+        source: string;
+        execution_count?: number | null;
+        outputs?: unknown[];
+      }
+    | undefined {
+    if (index !== undefined) {
+      // Get cell at specific index
+      const cells = this.getCells();
+      const cell = cells[index];
+      if (!cell) return undefined;
+
+      // Get execution count for code cells
+      const cellModel = this._notebook.model?.cells.get(index);
+      const execution_count =
+        cellModel?.type === 'code'
+          ? ((cellModel as any).executionCount ?? null)
+          : null;
+
+      return {
+        type: cell.type,
+        source: cell.source,
+        execution_count,
+        outputs: includeOutputs ? cell.outputs : undefined,
+      };
+    } else {
+      // Get active cell
+      const activeCell = this._notebook.activeCell;
+      if (!activeCell) return undefined;
+
+      const execution_count =
+        activeCell.model.type === 'code'
+          ? ((activeCell.model as any).executionCount ?? null)
+          : null;
+
+      return {
+        type: activeCell.model.type,
+        source: activeCell.model.sharedModel.getSource(),
+        execution_count,
+        outputs:
+          includeOutputs && activeCell.model.type === 'code'
+            ? (activeCell.model as any).outputs?.toJSON()
+            : undefined,
+      };
+    }
+  }
+
+  /**
+   * Run a cell and optionally capture outputs (aligned with runCell tool).
+   *
+   * @param params - Parameters for cell execution
+   * @param params.index - Cell index to run (optional, defaults to active cell)
+   * @param params.timeoutSeconds - Timeout in seconds (optional, for future use)
+   * @param params.stream - Enable streaming progress (optional, for future use)
+   * @param params.progressInterval - Progress update interval (optional, for future use)
+   * @returns Promise resolving to execution result with outputs
+   */
+  async runCell(params?: {
+    index?: number;
+    timeoutSeconds?: number;
+    stream?: boolean;
+    progressInterval?: number;
+  }): Promise<{
+    execution_count?: number | null;
+    outputs?: Array<string>;
+  }> {
+    const { index } = params || {};
+    // Note: timeoutSeconds, stream, progressInterval are accepted for future use
+    // but timeout/streaming logic is handled at the operation layer
+
+    // Set active cell if index provided
+    if (index !== undefined) {
+      this.setActiveCell(index);
+    }
+
+    const targetIndex = index ?? this._notebook.activeCellIndex;
+    if (targetIndex === -1) {
+      throw new Error('No active cell to execute');
+    }
+
+    // Execute the cell using JupyterLab's NotebookActions
+    await NotebookActions.run(this._notebook, this._context.sessionContext);
+
+    // Wait a brief moment for outputs to be available
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    // Capture outputs after execution
+    const cellData = this.getCell(targetIndex, true);
+
+    if (!cellData) {
+      return {
+        execution_count: null,
+        outputs: [],
+      };
+    }
+
+    // Convert outputs to string array (matching MCP format)
+    const outputs: Array<string> = [];
+    if (cellData.outputs && Array.isArray(cellData.outputs)) {
+      for (const output of cellData.outputs) {
+        if (typeof output === 'string') {
+          outputs.push(output);
+        } else if (output && typeof output === 'object') {
+          // Handle different output types
+          const outputObj = output as Record<string, unknown>;
+
+          if (outputObj.output_type === 'stream') {
+            const text = outputObj.text;
+            if (typeof text === 'string') {
+              outputs.push(text);
+            } else if (Array.isArray(text)) {
+              outputs.push(text.join(''));
+            }
+          } else if (
+            outputObj.output_type === 'execute_result' ||
+            outputObj.output_type === 'display_data'
+          ) {
+            const data = outputObj.data as Record<string, unknown> | undefined;
+            if (data) {
+              // Prefer text/plain output
+              if (data['text/plain']) {
+                const text = data['text/plain'];
+                if (typeof text === 'string') {
+                  outputs.push(text);
+                } else if (Array.isArray(text)) {
+                  outputs.push(text.join(''));
+                }
+              }
+            }
+          } else if (outputObj.output_type === 'error') {
+            // Format error output
+            const ename = outputObj.ename ?? 'Error';
+            const evalue = outputObj.evalue ?? '';
+            const traceback = outputObj.traceback;
+            if (Array.isArray(traceback) && traceback.length > 0) {
+              outputs.push(
+                `[ERROR: ${ename}: ${evalue}]\n${traceback.join('\n')}`
+              );
+            } else {
+              outputs.push(`[ERROR: ${ename}: ${evalue}]`);
+            }
+          }
+        }
+      }
+    }
+
+    return {
+      execution_count: cellData.execution_count,
+      outputs,
+    };
+  }
+
+  /**
+   * Run all cells in the notebook (aligned with runAllCells tool).
+   */
+  runAllCells(): void {
+    this._commands.execute(NotebookCommandIds.runAll);
+  }
+
+  /**
+   * Clear all outputs from all cells in the notebook.
+   *
+   * @remarks
+   * Removes all execution outputs from all cells. This operation:
+   * - Clears outputs but preserves cell source code
+   * - Resets execution counts
+   * - Cannot be undone
+   */
+  clearAllOutputs(): void {
+    NotebookActions.clearAllOutputs(this._notebook);
+  }
+
+  /**
+   * Execute code directly in the kernel without creating a cell.
+   *
+   * This method sends code execution requests directly to the kernel,
+   * bypassing the notebook cell model. Useful for:
+   * - Variable inspection
+   * - Environment setup
+   * - Background tasks
+   * - Tool introspection
+   *
+   * @param code - Code to execute
+   * @param options - Execution options
+   * @returns Promise with execution result including outputs
+   */
+  async executeCode(
+    code: string,
+    options: {
+      timeout?: number;
+    } = {}
+  ): Promise<{
+    success: boolean;
+    outputs?: Array<{
+      type: 'stream' | 'execute_result' | 'display_data' | 'error';
+      content: unknown;
+    }>;
+    executionCount?: number;
+    error?: string;
+  }> {
+    const sessionContext = this._panel.sessionContext;
+
+    if (!sessionContext || !sessionContext.session?.kernel) {
+      return {
+        success: false,
+        error: 'No active kernel session',
+      };
+    }
+
+    const kernel = sessionContext.session.kernel;
+
+    try {
+      const future = kernel.requestExecute({
+        code,
+        stop_on_error: true, // Internal default: stop on error
+        store_history: false, // Internal default: don't store in history
+        silent: false, // Internal default: not silent (show outputs)
+        allow_stdin: false,
+      });
+
+      const outputs: Array<{
+        type: 'stream' | 'execute_result' | 'display_data' | 'error';
+        content: unknown;
+      }> = [];
+
+      let executionCount: number | undefined;
+
+      // Collect outputs
+      future.onIOPub = msg => {
+        const msgType = msg.header.msg_type;
+
+        if (msgType === 'stream') {
+          outputs.push({
+            type: 'stream',
+            content: msg.content,
+          });
+        } else if (msgType === 'execute_result') {
+          outputs.push({
+            type: 'execute_result',
+            content: msg.content,
+          });
+          executionCount = (msg.content as any).execution_count;
+        } else if (msgType === 'display_data') {
+          outputs.push({
+            type: 'display_data',
+            content: msg.content,
+          });
+        } else if (msgType === 'error') {
+          outputs.push({
+            type: 'error',
+            content: msg.content,
+          });
+        }
+      };
+
+      // Handle timeout if specified (default: 30 seconds, max: 60)
+      const timeoutMs = (options.timeout ?? 30) * 1000;
+
+      const executionPromise = future.done;
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => {
+          reject(
+            new Error(
+              `Execution timeout after ${options.timeout ?? 30} seconds`
+            )
+          );
+        }, timeoutMs);
+      });
+
+      try {
+        await Promise.race([executionPromise, timeoutPromise]);
+      } catch (timeoutError) {
+        // Interrupt kernel on timeout
+        try {
+          await kernel.interrupt();
+        } catch (interruptError) {
+          console.error('Failed to interrupt kernel:', interruptError);
+        }
+
+        return {
+          success: false,
+          error: `Execution exceeded ${options.timeout ?? 30} seconds and was interrupted`,
+          outputs,
+        };
+      }
+
+      return {
+        success: true,
+        outputs,
+        executionCount,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+      };
+    }
+  }
+
+  /**
+   * Dispose of the adapter.
+   */
+  dispose(): void {
+    // Clean up any resources if needed
+    // The panel, notebook, and context are managed by NotebookBase
+  }
 }
 
 export default NotebookAdapter;

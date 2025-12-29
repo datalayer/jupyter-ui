@@ -5,7 +5,7 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { Jupyter, Notebook } from '@datalayer/jupyter-react';
+import { JupyterReactTheme, Notebook } from '@datalayer/jupyter-react';
 
 const meta: Meta<typeof Notebook> = {
   title: 'Components/Notebook',
@@ -13,7 +13,11 @@ const meta: Meta<typeof Notebook> = {
   argTypes: {
     lite: {
       control: 'radio',
-      options: ['true', 'false', '@jupyterlite/javascript-kernel-extension'],
+      options: [
+        'true',
+        'false',
+        '@datalayer/jupyter-react/lib/jupyter/lite/pyodide-kernel-extension',
+      ],
       table: {
         // Switching live does not work
         disable: true,
@@ -34,26 +38,27 @@ const Template = (args, { globals: { labComparison = true }, ...rest }) => {
   const lite = {
     true: true,
     false: false,
-    '@jupyterlite/javascript-kernel-extension':
-      import('@jupyterlite/javascript-kernel-extension'),
+    '@datalayer/jupyter-react/lib/jupyter/lite/pyodide-kernel-extension':
+      import('@datalayer/jupyter-react/lib/jupyter/lite/pyodide-kernel-extension'),
   }[args.browser];
 
   const kernelName =
-    args.browser === '@jupyterlite/javascript-kernel-extension'
+    args.browser ===
+    '@datalayer/jupyter-react/lib/jupyter/lite/pyodide-kernel-extension'
       ? 'javascript'
       : undefined;
 
   return (
-    <Jupyter
-      startDefaultKernel={true}
-      lite={lite}
-      initCode={initCode}
-      defaultKernelName={kernelName}
-      jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
-      jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+    <JupyterReactTheme
+    //      startDefaultKernel={true}
+    //      lite={lite}
+    //      initCode={initCode}
+    //      defaultKernelName={kernelName}
+    //      jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
+    //      jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
     >
       <Notebook {...others} />
-    </Jupyter>
+    </JupyterReactTheme>
   );
 };
 
@@ -62,11 +67,11 @@ export const Default: Story = {
     Template.bind({})(args, { globals: { labComparison: true } }),
 };
 Default.args = {
-  lite: false,
+  //  lite: false,
   initCode: '',
   path: undefined,
   id: undefined,
-  cellMetadataPanel: false,
+  //  cellMetadataPanel: false,
   cellSidebarMargin: 120,
   height: '100vh',
   maxHeight: '100vh',
@@ -253,7 +258,7 @@ export const LitePython: Story = {
 };
 LitePython.args = {
   ...Default.args,
-  lite: true,
+  //  lite: true,
   nbformat: INIT_EXAMPLE,
 };
 
@@ -263,7 +268,7 @@ export const LitePythonInit: Story = {
 };
 LitePythonInit.args = {
   ...Default.args,
-  lite: true,
+  //  lite: true,
   initCode: `import micropip
 await micropip.install('ipywidgets')
 await micropip.install('bqplot')

@@ -11,7 +11,7 @@ import { Box } from '@datalayer/primer-addons';
 import { IModel } from '@jupyterlab/services/lib/kernel/kernel';
 import { ISpecModel } from '@jupyterlab/services/lib/kernelspec/kernelspec';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
-import { useJupyter } from '../jupyter/JupyterContext';
+import { useJupyter } from '../jupyter/JupyterUse';
 import {
   KERNEL_STATES,
   KernelProgressBar,

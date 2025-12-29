@@ -10,7 +10,7 @@ import { KernelMessage } from '@jupyterlab/services';
 import { Box } from '@datalayer/primer-addons';
 import { useEffect, useState } from 'react';
 import { Lumino } from '../lumino/Lumino';
-import { useJupyter } from '../../jupyter/JupyterContext';
+import { useJupyter } from '../../jupyter/JupyterUse';
 import { IExecutionPhaseOutput, Kernel } from '../../jupyter/kernel';
 import { newUuid } from '../../utils';
 import { KernelActionMenu, KernelProgressBar } from '../kernel';

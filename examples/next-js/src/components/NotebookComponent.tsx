@@ -9,7 +9,7 @@
 import {
   useJupyter,
   JupyterReactTheme,
-  Notebook2,
+  Notebook,
   NotebookToolbar,
   CellSidebarExtension,
   CellSidebarButton,
@@ -59,7 +59,7 @@ export const NotebookComponent = ({
                 },
               }}
             >
-              <Notebook2
+              <Notebook
                 path="ipywidgets.ipynb"
                 id="notebook-nextjs-1"
                 cellSidebarMargin={120}

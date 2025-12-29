@@ -6,7 +6,7 @@
 
 import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Kernel, useJupyter } from '../jupyter';
+import { useJupyter } from '../jupyter';
 import { JupyterReactTheme } from '../theme';
 import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
@@ -14,29 +14,26 @@ import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSideb
 import { CellSidebarExtension } from '../components/notebook/cell/sidebar/CellSidebarExtension';
 
 const NotebookKernelExample = () => {
-  const { kernelManager, serviceManager } = useJupyter();
-  const kernel = useMemo(() => {
-    if (kernelManager && serviceManager) {
-      return new Kernel({
-        kernelManager,
-        kernelName: 'python3',
-        kernelSpecName: 'python3',
-        kernelType: 'notebook',
-        kernelspecsManager: serviceManager.kernelspecs,
-        sessionManager: serviceManager.sessions,
-      });
-    }
-  }, [kernelManager, serviceManager]);
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
+  const extensions = useMemo(
+    () => [new CellSidebarExtension({ factory: CellSidebarButton })],
+    []
+  );
   return (
     <JupyterReactTheme>
-      <Notebook
-        path="ipywidgets.ipynb"
-        id="notebook-kernel-id"
-        kernel={kernel}
-        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        extensions={[new CellSidebarExtension({ factory: CellSidebarButton })]}
-        Toolbar={NotebookToolbar}
-      />
+      {serviceManager && defaultKernel && (
+        <Notebook
+          path="ipywidgets.ipynb"
+          id="notebook-kernel-id"
+          kernel={defaultKernel}
+          serviceManager={serviceManager}
+          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+          extensions={extensions}
+          Toolbar={NotebookToolbar}
+        />
+      )}
     </JupyterReactTheme>
   );
 };

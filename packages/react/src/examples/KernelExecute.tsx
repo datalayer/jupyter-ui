@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Heading, Textarea, Button } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
-import { useJupyter } from '../jupyter/JupyterContext';
+import { useJupyter } from '../jupyter/JupyterUse';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { KernelProgressBar } from './../components/kernel/KernelProgressBar';
 

@@ -8,6 +8,7 @@ import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { JupyterLabCss, JupyterReactTheme } from '../theme';
+import { useJupyter } from '../jupyter';
 import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
@@ -15,18 +16,24 @@ import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolba
 import NBFORMAT from './notebooks/Matplotlib.ipynb.json';
 
 const MatplotlibExample = () => {
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
     <JupyterReactTheme>
       <JupyterLabCss colormode="light" />
-      <Notebook
-        id="notebook-matplotlib-id"
-        startDefaultKernel
-        nbformat={NBFORMAT as INotebookContent}
-        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        extensions={extensions}
-        Toolbar={NotebookToolbar}
-      />
+      {serviceManager && defaultKernel && (
+        <Notebook
+          id="notebook-matplotlib-id"
+          kernel={defaultKernel}
+          serviceManager={serviceManager}
+          nbformat={NBFORMAT as INotebookContent}
+          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+          extensions={extensions}
+          Toolbar={NotebookToolbar}
+        />
+      )}
     </JupyterReactTheme>
   );
 };

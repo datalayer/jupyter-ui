@@ -4,7 +4,9 @@
  * MIT License
  */
 
+import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
+import { useJupyter } from '../jupyter';
 import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
 import { Notebook } from '../components/notebook/Notebook';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
@@ -15,18 +17,30 @@ const NOTEBOOK_ID = 'notebook-id';
 
 const COLORMODE = 'dark';
 
-const NotebookNoContextExample = () => (
-  <JupyterReactTheme colormode={COLORMODE}>
-    <Notebook
-      id={NOTEBOOK_ID}
-      startDefaultKernel
-      path="ipywidgets.ipynb"
-      height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-      extensions={[new CellSidebarExtension({ factory: CellSidebarButton })]}
-      Toolbar={NotebookToolbar}
-    />
-  </JupyterReactTheme>
-);
+const NotebookNoContextExample = () => {
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
+  const extensions = useMemo(
+    () => [new CellSidebarExtension({ factory: CellSidebarButton })],
+    []
+  );
+  return (
+    <JupyterReactTheme colormode={COLORMODE}>
+      {serviceManager && defaultKernel && (
+        <Notebook
+          id={NOTEBOOK_ID}
+          kernel={defaultKernel}
+          serviceManager={serviceManager}
+          path="ipywidgets.ipynb"
+          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+          extensions={extensions}
+          Toolbar={NotebookToolbar}
+        />
+      )}
+    </JupyterReactTheme>
+  );
+};
 
 const div = document.createElement('div');
 document.body.appendChild(div);

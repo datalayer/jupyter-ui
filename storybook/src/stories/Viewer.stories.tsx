@@ -5,7 +5,8 @@
  */
 
 import type { Meta, StoryObj } from '@storybook/react';
-import { Jupyter, Viewer } from '@datalayer/jupyter-react';
+import { JupyterReactTheme, Viewer } from '@datalayer/jupyter-react';
+
 import nbformat1 from './examples/NotebookExample1.ipynb.json';
 import nbformat2 from './examples/NotebookExample2.ipynb.json';
 
@@ -25,15 +26,17 @@ const meta: Meta<typeof Viewer> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Viewer | typeof Jupyter | { nbformatUrl: string }>;
+type Story = StoryObj<
+  typeof Viewer | typeof JupyterReactTheme | { nbformatUrl: string }
+>;
 
 const Template = (args, { globals: { labComparison } }) => {
   const { nbformat, nbformatUrl, outputs, ...others } = args;
   return (
-    <Jupyter
-      jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
-      jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
-      startDefaultKernel={false}
+    <JupyterReactTheme
+    //      jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
+    //      jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+    //      startDefaultKernel={false}
     >
       <Viewer
         nbformat={nbformat}
@@ -41,7 +44,7 @@ const Template = (args, { globals: { labComparison } }) => {
         outputs={outputs}
         {...others}
       />
-    </Jupyter>
+    </JupyterReactTheme>
   );
 };
 

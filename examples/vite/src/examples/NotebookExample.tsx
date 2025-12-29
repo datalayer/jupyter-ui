@@ -5,9 +5,9 @@
  */
 
 import { useMemo } from 'react';
-import { Box } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import {
-  Notebook2,
+  Notebook,
   Kernel,
   NotebookToolbar,
   CellSidebarExtension,
@@ -31,9 +31,10 @@ export const NotebookExample = (props: INotebookExampleProps) => {
   return (
     <>
       <Box as="h1">A Jupyter Notebook</Box>
-      <Notebook2
+      <Notebook
         path="ipywidgets.ipynb"
         id={NOTEBOOK_ID}
+        kernel={kernel}
         serviceManager={serviceManager}
         kernelId={kernel.id}
         extensions={extensions}

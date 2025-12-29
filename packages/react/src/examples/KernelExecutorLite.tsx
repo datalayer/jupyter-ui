@@ -11,7 +11,7 @@ import { Box } from '@datalayer/primer-addons';
 import { IOutputAreaModel } from '@jupyterlab/outputarea';
 import { KernelMessage } from '@jupyterlab/services';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
-import { useJupyter } from '../jupyter/JupyterContext';
+import { useJupyter } from '../jupyter/JupyterUse';
 import { Output } from '../components/output/Output';
 import { KernelIndicator } from '../components/kernel/KernelIndicator';
 import {
