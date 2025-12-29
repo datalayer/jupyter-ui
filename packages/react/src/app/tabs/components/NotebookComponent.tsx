@@ -4,23 +4,35 @@
  * MIT License
  */
 
+import { useMemo } from 'react';
 import { CellSidebarExtension } from '../../../components';
-import Notebook from '../../../components/notebook/Notebook';
-import CellSidebarNew from './../../../components/notebook/cell/sidebar/CellSidebarButton';
+import { Notebook2 } from '../../../components/notebook/Notebook2';
+import { useJupyter } from '../../../jupyter';
+import { CellSidebarButton } from './../../../components/notebook/cell/sidebar/CellSidebarButton';
 
 import NBFORMAT from './../../..//examples/notebooks/NotebookExample1.ipynb.json';
 
 export const NotebookComponent = () => {
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
+  const extensions = useMemo(
+    () => [new CellSidebarExtension({ factory: CellSidebarButton })],
+    []
+  );
   return (
     <>
-      <Notebook
-        startDefaultKernel
-        nbformat={NBFORMAT}
-        id="notebook-id"
-        cellSidebarMargin={60}
-        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        extensions={[new CellSidebarExtension({ factory: CellSidebarNew })]}
-      />
+      {serviceManager && defaultKernel && (
+        <Notebook2
+          kernel={defaultKernel}
+          serviceManager={serviceManager}
+          nbformat={NBFORMAT}
+          id="notebook-id"
+          cellSidebarMargin={60}
+          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+          extensions={extensions}
+        />
+      )}
     </>
   );
 };
