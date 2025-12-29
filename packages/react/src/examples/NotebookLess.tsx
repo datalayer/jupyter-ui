@@ -8,7 +8,7 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 import { Box } from '@primer/react';
 import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Notebook } from '../components/notebook/Notebook';
+import { Notebook2 } from '../components/notebook/Notebook2';
 import { ServiceManagerLess } from '../jupyter';
 import { JupyterReactTheme } from '../theme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
@@ -22,7 +22,7 @@ const NotebookLessExample = () => {
   return (
     <JupyterReactTheme>
       <Box as="h1">Notebook with a Less Service Manager</Box>
-      <Notebook
+      <Notebook2
         serverless
         nbformat={NBFORMAT as INotebookContent}
         id="notebook-less-id"

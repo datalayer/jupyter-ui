@@ -7,13 +7,13 @@
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { INotebookModel, NotebookPanel } from '@jupyterlab/notebook';
 import { CommandRegistry } from '@lumino/commands';
-import { NotebookAdapter } from './NotebookAdapter';
+import { Notebook2Adapter } from './Notebook2Adapter';
 
 export type INotebookExtensionProps = {
   notebookId: string;
   commands: CommandRegistry;
   panel: NotebookPanel;
-  adapter?: NotebookAdapter;
+  adapter?: Notebook2Adapter;
 };
 
 export type NotebookExtension = DocumentRegistry.IWidgetExtension<

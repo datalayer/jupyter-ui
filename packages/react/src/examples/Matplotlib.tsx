@@ -9,7 +9,7 @@ import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { JupyterLabCss, JupyterReactTheme } from '../theme';
 import { CellSidebarExtension } from '../components';
-import { Notebook } from '../components/notebook/Notebook';
+import { Notebook2 } from '../components/notebook/Notebook2';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 import NBFORMAT from './notebooks/Matplotlib.ipynb.json';
@@ -19,7 +19,7 @@ const MatplotlibExample = () => {
   return (
     <JupyterReactTheme>
       <JupyterLabCss colormode="light" />
-      <Notebook
+      <Notebook2
         id="notebook-matplotlib-id"
         startDefaultKernel
         nbformat={NBFORMAT as INotebookContent}

@@ -9,7 +9,7 @@ import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { Box } from '@datalayer/primer-addons';
 import { CellSidebarExtension } from '../components';
-import { Notebook } from '../components/notebook/Notebook';
+import { Notebook2 } from '../components/notebook/Notebook2';
 import { Jupyter } from '../jupyter/Jupyter';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
@@ -20,7 +20,7 @@ const NotebookLiteExample = () => {
   return (
     <Jupyter lite>
       <Box as="h1">Notebook with a Lite Kernel (with a Jupyter Context)</Box>
-      <Notebook
+      <Notebook2
         nbformat={NBFORMAT as INotebookContent}
         id="notebook-lite-context-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).

@@ -76,7 +76,7 @@ const NotebookInitExample = () => {
     <Jupyter startDefaultKernel={false}>
       <div style={{ width: NOTEBOOK_WIDTH, height: NOTEBOOK_HEIGHT }}>
         {kernel ? (
-          <Notebook
+          <Notebook2
             path="ipywidgets.ipynb"
             id={NOTEBOOK_ID}
             kernel={kernel}

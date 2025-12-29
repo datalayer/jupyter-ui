@@ -16,9 +16,6 @@ import { setupPrimerPortals } from '@datalayer/primer-addons';
 import {
   getJupyterServerUrl,
   createLiteServiceManager,
-  ensureJupyterAuth,
-  createServerSettings,
-  JupyterPropsType,
   DEFAULT_KERNEL_NAME,
 } from '../jupyter';
 import { ServiceManagerLess } from '../jupyter/services';
@@ -28,15 +25,17 @@ import { IJupyterConfig, loadJupyterConfig } from '../jupyter/JupyterConfig';
 import { cellsStore, CellsState } from '../components/cell/CellState';
 import { consoleStore, ConsoleState } from '../components/console/ConsoleState';
 import {
-  notebookStore,
-  NotebookState,
-} from '../components/notebook/NotebookState';
+  notebookStore2,
+  Notebook2State,
+} from '../components/notebook/Notebook2State';
 import { outputsStore, OutputState } from '../components/output/OutputState';
 import {
   terminalStore,
   TerminalState,
 } from '../components/terminal/TerminalState';
 import { Colormode } from '../theme';
+import { createServerSettings, ensureJupyterAuth } from '../utils';
+import { JupyterPropsType } from '../jupyter/JupyterContext';
 
 export type OnSessionConnection = (
   kernelConnection: Session.ISessionConnection | undefined
@@ -52,7 +51,7 @@ export type JupyterReactState = {
   jupyterConfig?: IJupyterConfig;
   kernel?: Kernel;
   kernelIsLoading: boolean;
-  notebookStore: NotebookState;
+  notebookStore: Notebook2State;
   outputStore: OutputState;
   serviceManager?: ServiceManager.IManager;
   terminalStore: TerminalState;
@@ -83,7 +82,7 @@ export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
   serverSettings: undefined,
   cellsStore: cellsStore.getState(),
   consoleStore: consoleStore.getState(),
-  notebookStore: notebookStore.getState(),
+  notebookStore: notebookStore2.getState(),
   outputStore: outputsStore.getState(),
   terminalStore: terminalStore.getState(),
   colormode: 'light',
@@ -141,6 +140,7 @@ export function useJupyterReactStoreFromProps(
 
   const jupyterConfig = useMemo<IJupyterConfig>(() => {
     const config = loadJupyterConfig({
+      collaborative: false,
       lite,
       jupyterServerUrl,
       jupyterServerToken,

@@ -8,7 +8,7 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { CellSidebarExtension } from '../components';
-import { Notebook } from '../components/notebook/Notebook';
+import { Notebook2 } from '../components/notebook/Notebook2';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import notebook from './notebooks/IPyWidgetsExampleWithState.ipynb.json';
@@ -17,7 +17,7 @@ const IPyWidgetsStateExample = () => {
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
     <JupyterReactTheme>
-      <Notebook
+      <Notebook2
         id="notebook-id"
         startDefaultKernel
         nbformat={notebook as INotebookContent}

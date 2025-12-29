@@ -8,8 +8,8 @@ import { rendererFactory as geojsonRenderer } from '@jupyterlab/geojson-extensio
 import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { CellSidebarExtension } from '../components';
-import CellSidebarButton from '../components/notebook/cell/sidebar/CellSidebarButton';
-import { Notebook } from '../components/notebook/Notebook';
+import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
+import { Notebook2 } from '../components/notebook/Notebook2';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
@@ -20,7 +20,7 @@ const GeoJsonExample = () => {
   );
   return (
     <JupyterReactTheme>
-      <Notebook
+      <Notebook2
         path="renderers/geojson-1.ipynb"
         id="notebook-geojson-id"
         renderers={[geojsonRenderer]}

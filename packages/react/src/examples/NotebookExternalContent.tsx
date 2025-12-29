@@ -10,7 +10,7 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 import { ZapIcon } from '@primer/octicons-react';
 import { IconButton } from '@primer/react';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
-import { Notebook } from '../components/notebook/Notebook';
+import { Notebook2 } from '../components/notebook/Notebook2';
 import { notebookStore } from '../components/notebook/NotebookState';
 import { CellSidebarExtension } from '../components';
 
@@ -57,7 +57,7 @@ const NotebookExternalContentExample = () => {
           saveNotebook();
         }}
       />
-      <Notebook
+      <Notebook2
         id={NOTEBOOK_ID}
         startDefaultKernel
         nbformat={nbformat}

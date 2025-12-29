@@ -28,7 +28,7 @@ const NotebookExtensionExample = () => {
   );
   return (
     <JupyterReactTheme>
-      <Notebook
+      <Notebook2
         nbformat={NBFORMAT as INotebookContent}
         extensions={extensions}
         id="notebook-extension-id"

@@ -5,8 +5,10 @@
  */
 
 import { ICell, IOutput } from '@jupyterlab/nbformat';
+import { ServerConnection } from '@jupyterlab/services';
 import { UUID } from '@lumino/coreutils';
 import { ulid } from 'ulid';
+import { requestAPI } from '../jupyter';
 
 export const newUlid = () => {
   return ulid();
@@ -96,3 +98,39 @@ export const getCookie = (name: string): string | null => {
 export async function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+/**
+ * Utility method to ensure the Jupyter context
+ * is authenticated with the Jupyter server.
+ */
+export const ensureJupyterAuth = async (
+  serverSettings: ServerConnection.ISettings
+): Promise<boolean> => {
+  try {
+    await requestAPI<any>(serverSettings, 'api', '');
+    return true;
+  } catch (reason) {
+    console.log('The Jupyter Server API has failed with reason', reason);
+    return false;
+  }
+};
+
+/*
+ *
+ */
+export const createServerSettings = (
+  jupyterServerUrl: string,
+  jupyterServerToken: string
+) => {
+  return ServerConnection.makeSettings({
+    baseUrl: jupyterServerUrl,
+    wsUrl: jupyterServerUrl.replace(/^http/, 'ws'),
+    token: jupyterServerToken,
+    appendToken: true,
+    init: {
+      mode: 'cors',
+      credentials: 'include',
+      cache: 'no-store',
+    },
+  });
+};

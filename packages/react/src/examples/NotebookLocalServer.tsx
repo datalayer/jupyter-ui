@@ -9,29 +9,42 @@ import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { CellSidebarExtension } from '../components';
 import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
-import { Notebook } from '../components/notebook/Notebook';
-import { Jupyter, useJupyter } from '../jupyter';
+import { Notebook2 } from '../components/notebook/Notebook2';
+import { useJupyter } from '../jupyter';
 import { JupyterReactTheme } from '../theme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
-const NotebookJupyterExample = () => (
-  <Jupyter
-    jupyterServerUrl="http://localhost:8686/api/jupyter-server"
-    jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
-    startDefaultKernel
-  >
-    <Notebook
-      path="ipywidgets.ipynb"
-      id="notebook-jupyter-id"
-      height="calc(100vh - 250px)" // (Height - Toolbar Height).
-      extensions={[new CellSidebarExtension({ factory: CellSidebarButton })]}
-      Toolbar={NotebookToolbar}
-    />
-  </Jupyter>
-);
+const NotebookJupyterExample = () => {
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+    jupyterServerUrl: 'https://oss.datalayer.tech/api/jupyter-server',
+    jupyterServerToken:
+      '60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6',
+  });
+  const extensions = useMemo(
+    () => [new CellSidebarExtension({ factory: CellSidebarButton })],
+    []
+  );
+  return (
+    <JupyterReactTheme>
+      {serviceManager && defaultKernel && (
+        <Notebook2
+          id="notebook-jupyter-react-theme-id"
+          kernel={defaultKernel}
+          serviceManager={serviceManager}
+          path="ipywidgets.ipynb"
+          height="calc(100vh - 250px)" // (Height - Toolbar Height).
+          extensions={extensions}
+          Toolbar={NotebookToolbar}
+        />
+      )}
+    </JupyterReactTheme>
+  );
+};
 
 const NotebookJupyterReactThemeExample = () => {
-  useJupyter({
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
     jupyterServerUrl: 'http://localhost:8686/api/jupyter-server',
     jupyterServerToken:
       '60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6',
@@ -42,14 +55,17 @@ const NotebookJupyterReactThemeExample = () => {
   );
   return (
     <JupyterReactTheme>
-      <Notebook
-        startDefaultKernel
-        path="ipywidgets.ipynb"
-        id="notebook-jupyter-react-themeid"
-        height="calc(100vh - 250px)" // (Height - Toolbar Height).
-        extensions={extensions}
-        Toolbar={NotebookToolbar}
-      />
+      {serviceManager && defaultKernel && (
+        <Notebook2
+          id="notebook-jupyter-react-theme-id"
+          kernel={defaultKernel}
+          serviceManager={serviceManager}
+          path="ipywidgets.ipynb"
+          height="calc(100vh - 250px)" // (Height - Toolbar Height).
+          extensions={extensions}
+          Toolbar={NotebookToolbar}
+        />
+      )}
     </JupyterReactTheme>
   );
 };

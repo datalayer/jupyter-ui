@@ -10,7 +10,7 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 import { Button } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { CellSidebarExtension } from '../components';
-import { Notebook } from '../components/notebook/Notebook';
+import { Notebook2 } from '../components/notebook/Notebook2';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { Kernel } from '../jupyter/kernel/Kernel';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
@@ -18,7 +18,9 @@ import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import NOTEBOOK from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookUnmountExample = () => {
-  const { kernelManager, serviceManager } = useJupyter();
+  const { kernelManager, serviceManager } = useJupyter({
+    startDefaultKernel: true,
+  });
   const [showNotebook, setShowNotebook] = useState(false);
   const [kernel, setKernel] = useState<Kernel>();
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
@@ -52,14 +54,17 @@ const NotebookUnmountExample = () => {
               Unmount
             </Button>
           </Box>
-          <Notebook
-            id="notebook-unmount-id"
-            startDefaultKernel
-            nbformat={NOTEBOOK as INotebookContent}
-            // kernel={kernel}
-            height="700px"
-            extensions={extensions}
-          />
+          {kernel && serviceManager && (
+            <Notebook2
+              id="notebook-unmount-id"
+              kernel={kernel}
+              serviceManager={serviceManager}
+              nbformat={NOTEBOOK as INotebookContent}
+              // kernel={kernel}
+              height="700px"
+              extensions={extensions}
+            />
+          )}
         </>
       ) : (
         <>

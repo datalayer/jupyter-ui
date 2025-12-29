@@ -6,25 +6,34 @@
 
 import { createRoot } from 'react-dom/client';
 import { CellSidebarExtension } from '../components';
-import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
-import { Notebook } from '../components/notebook/Notebook';
+import { useJupyter } from '../jupyter';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
+import { Notebook2 } from '../components/notebook/Notebook2';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 const NOTEBOOK_ID = 'notebook-id';
 
-const NotebookURLExample = () => (
-  <JupyterReactTheme>
-    <Notebook
-      id={NOTEBOOK_ID}
-      startDefaultKernel
-      url="https://raw.githubusercontent.com/datalayer/jupyter-ui/main/packages/react/src/examples/notebooks/IPyWidgetsExampleWithState.ipynb.json"
-      height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-      extensions={[new CellSidebarExtension({ factory: CellSidebarButton })]}
-      Toolbar={NotebookToolbar}
-    />
-  </JupyterReactTheme>
-);
+const NotebookURLExample = () => {
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
+  return (
+    <JupyterReactTheme>
+      {serviceManager && defaultKernel && (
+        <Notebook2
+          id={NOTEBOOK_ID}
+          kernel={defaultKernel}
+          serviceManager={serviceManager}
+          url="https://raw.githubusercontent.com/datalayer/jupyter-ui/main/packages/react/src/examples/notebooks/IPyWidgetsExampleWithState.ipynb.json"
+          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+          extensions={[new CellSidebarExtension({ factory: CellSidebarButton })]}
+          Toolbar={NotebookToolbar}
+        />
+      )}
+    </JupyterReactTheme>
+  )
+};
 
 const div = document.createElement('div');
 document.body.appendChild(div);

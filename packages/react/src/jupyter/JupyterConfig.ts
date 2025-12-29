@@ -5,12 +5,20 @@
  */
 
 import { PageConfig } from '@jupyterlab/coreutils';
-import { JupyterProps } from './Jupyter';
 import {
   DEFAULT_JUPYTER_SERVER_URL,
   DEFAULT_JUPYTER_SERVER_TOKEN,
   DEFAULT_API_KERNEL_PREFIX_URL,
 } from './JupyterDefaults';
+import { Lite } from './lite';
+
+export type JupyterProps = {
+  collaborative?: boolean;
+  jupyterServerUrl?: string;
+  jupyterServerToken?: string;
+  lite?: Lite;
+  terminals?: boolean;
+};
 
 /**
  * Type definition for the Jupyter Configuration.
@@ -83,14 +91,7 @@ export const resetJupyterConfig = () => {
  * Method to load the Jupyter configuration from the host HTML page.
  */
 export const loadJupyterConfig = (
-  props: Pick<
-    JupyterProps,
-    | 'collaborative'
-    | 'jupyterServerToken'
-    | 'jupyterServerUrl'
-    | 'lite'
-    | 'terminals'
-  > = {}
+  props: Partial<JupyterProps> = {}
 ): IJupyterConfig => {
   const {
     collaborative,

@@ -8,7 +8,7 @@ import { Box, Button, Flash } from '@primer/react';
 import { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { CellSidebarExtension } from '../components';
-import { Notebook } from '../components/notebook/Notebook';
+import { Notebook2 } from '../components/notebook/Notebook2';
 import useNotebookStore from '../components/notebook/NotebookState';
 import { Jupyter } from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
@@ -69,7 +69,7 @@ const NotebookKernelChangeExample = () => {
           <Flash>{message}</Flash>
         </Box>
       )}
-      <Notebook
+      <Notebook2
         id={NOTEBOOK_ID}
         path="test.ipynb"
         height="500px"

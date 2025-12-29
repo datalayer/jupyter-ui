@@ -7,19 +7,18 @@
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
-  Box,
   Text,
   ToggleSwitch,
   ThemeProvider,
   useTheme,
 } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { ThemeManager } from '@jupyterlab/apputils';
 import { RunningSessions } from '@jupyterlab/running';
-import { Jupyter } from '../jupyter/Jupyter';
 import { Colormode } from '../theme/JupyterLabColormode';
-import Lumino from '../components/lumino/Lumino';
-import JupyterLabApp from '../components/jupyterlab/JupyterLabApp';
-import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter';
+import { Lumino } from '../components/lumino/Lumino';
+import { JupyterLabApp } from '../components/jupyterlab/JupyterLabApp';
+import { JupyterLabAppAdapter } from '../components/jupyterlab/JupyterLabAppAdapter';
 
 import * as lightThemePlugins from '@jupyterlab/theme-light-extension';
 import * as darkThemePlugins from '@jupyterlab/theme-dark-extension';
@@ -58,51 +57,49 @@ const RunningSessionsExample = () => {
   };
   return (
     <>
-      <Jupyter startDefaultKernel={false} disableCssLoading colormode="light">
-        <ThemeProvider
-          colorMode={theme === 'light' ? 'day' : 'night'}
-          dayScheme="light"
-          nightScheme="dark_high_contrast"
-        >
-          <Box display="flex" color="fg.default" bg="canvas.default">
-            <Box mr={3}>
-              <Text as="h2">JupyterLab Headless Application</Text>
+      <ThemeProvider
+        colorMode={theme === 'light' ? 'day' : 'night'}
+        dayScheme="light"
+        nightScheme="dark_high_contrast"
+      >
+        <Box display="flex" color="fg.default" bg="canvas.default">
+          <Box mr={3}>
+            <Text as="h2">JupyterLab Headless Application</Text>
+          </Box>
+          <Box>
+            <Box>
+              <Text
+                fontSize={2}
+                fontWeight="bold"
+                id="switch-label"
+                display="block"
+                mb={1}
+              >
+                Dark theme
+              </Text>
             </Box>
             <Box>
-              <Box>
-                <Text
-                  fontSize={2}
-                  fontWeight="bold"
-                  id="switch-label"
-                  display="block"
-                  mb={1}
-                >
-                  Dark theme
-                </Text>
-              </Box>
-              <Box>
-                <ToggleSwitch
-                  size="small"
-                  onClick={onSwitchClick}
-                  onChange={handleSwitchChange}
-                  checked={isDark}
-                  statusLabelPosition="end"
-                  aria-labelledby="switch-label"
-                />
-              </Box>
+              <ToggleSwitch
+                size="small"
+                onClick={onSwitchClick}
+                onChange={handleSwitchChange}
+                checked={isDark}
+                statusLabelPosition="end"
+                aria-labelledby="switch-label"
+              />
             </Box>
           </Box>
-        </ThemeProvider>
-        {runningSessions && <Lumino height="300px">{runningSessions}</Lumino>}
-        <JupyterLabApp
-          plugins={[lightThemePlugins, darkThemePlugins, runningPlugins]}
-          headless
-          onJupyterLab={onJupyterLab}
-          pluginId="@jupyterlab/apputils-extension:themes"
-          PluginType={ThemeManager}
-          onPlugin={onPlugin}
-        />
-      </Jupyter>
+        </Box>
+      </ThemeProvider>
+      {runningSessions && <Lumino height="300px">{runningSessions}</Lumino>}
+      <JupyterLabApp
+        plugins={[lightThemePlugins, darkThemePlugins, runningPlugins]}
+        headless
+        onJupyterLab={onJupyterLab}
+        pluginId="@jupyterlab/apputils-extension:themes"
+        PluginType={ThemeManager}
+        onPlugin={onPlugin}
+      />
     </>
   );
 };

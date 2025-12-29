@@ -7,15 +7,19 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
+import { useJupyter } from '../jupyter';
+import { jupyterLabTheme, JupyterReactTheme } from '../theme';
 import { Text, ToggleSwitch, theme as primerTheme } from '@primer/react';
 import { CellSidebarExtension } from '../components';
-import { Notebook } from '../components/notebook/Notebook';
-import { jupyterLabTheme, JupyterReactTheme } from '../theme';
+import { Notebook2 } from '../components/notebook/Notebook2';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookThemeExample = () => {
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
   const [theme, setTheme] = useState<any>(jupyterLabTheme);
   const [isOn, setIsOn] = useState(false);
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
@@ -52,14 +56,18 @@ const NotebookThemeExample = () => {
           statusLabelPosition="end"
           aria-labelledby="switch-label"
         />
-        <Notebook
-          nbformat={NBFORMAT as INotebookContent}
-          id="notebook-model-id"
-          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-          extensions={extensions}
-          Toolbar={NotebookToolbar}
-          startDefaultKernel
-        />
+        {serviceManager && defaultKernel && (
+          <Notebook2
+            id="notebook-theme-id"
+            kernel={defaultKernel}
+            serviceManager={serviceManager}
+            nbformat={NBFORMAT as INotebookContent}
+            height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+            extensions={extensions}
+            Toolbar={NotebookToolbar}
+            startDefaultKernel
+          />
+        )}
       </JupyterReactTheme>
     </>
   );

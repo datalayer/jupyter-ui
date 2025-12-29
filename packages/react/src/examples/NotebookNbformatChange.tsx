@@ -10,7 +10,7 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 import { Button, ButtonGroup } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { CellSidebarExtension } from '../components';
-import { Notebook } from '../components/notebook/Notebook';
+import { Notebook2 } from '../components/notebook/Notebook2';
 import { useNotebookStore } from '../components/notebook/NotebookState';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 
@@ -46,7 +46,7 @@ const NotebookNbformatChangeExample = () => {
           </Button>
         </ButtonGroup>
       </Box>
-      <Notebook
+      <Notebook2
         id={NOTEBOOK_ID}
         startDefaultKernel
         nbformat={nbformat}

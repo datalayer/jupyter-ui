@@ -4,25 +4,28 @@
  * MIT License
  */
 
-import { INotebookContent } from '@jupyterlab/nbformat';
-import { Session } from '@jupyterlab/services';
-import { Box, Label, Text } from '@primer/react';
 import { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { INotebookContent } from '@jupyterlab/nbformat';
+import { Session } from '@jupyterlab/services';
+import { Label, Text } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
+import { useJupyter } from '../jupyter';
 import {
   CellSidebarExtension,
   KernelDetective,
-  Notebook,
+  Notebook2,
   NotebookToolbar,
 } from '../components';
-import { useJupyter } from '../jupyter';
 import { OnSessionConnection } from '../state';
 import { JupyterReactTheme } from '../theme';
 
 import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
 const NotebookOnSessionConnectionExample = () => {
-  const { serviceManager } = useJupyter();
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
   const [sessions, setSessions] = useState<Array<Session.ISessionConnection>>(
     []
   );
@@ -60,15 +63,18 @@ const NotebookOnSessionConnectionExample = () => {
           );
         })}
       </Box>
-      <Notebook
-        nbformat={NBFORMAT as INotebookContent}
-        id="notebook-on-kernel-connection-id"
-        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        onSessionConnection={onSessionConnection}
-        startDefaultKernel
-        extensions={extensions}
-        Toolbar={NotebookToolbar}
-      />
+      {serviceManager && defaultKernel && (
+        <Notebook2
+          id="notebook-on-kernel-connection-id"
+          kernel={defaultKernel}
+          serviceManager={serviceManager}
+          nbformat={NBFORMAT as INotebookContent}
+          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+          onSessionConnection={onSessionConnection}
+          extensions={extensions}
+          Toolbar={NotebookToolbar}
+        />
+      )}
     </JupyterReactTheme>
   );
 };

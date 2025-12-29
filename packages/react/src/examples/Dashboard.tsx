@@ -8,7 +8,7 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { CellSidebarExtension } from '../components';
-import { Notebook } from '../components/notebook/Notebook';
+import { Notebook2 } from '../components/notebook/Notebook2';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import notebook from './notebooks/IPyWidgetsExample.ipynb.json';
@@ -18,7 +18,7 @@ const DashboardExample = () => {
 
   return (
     <JupyterReactTheme>
-      <Notebook
+      <Notebook2
         nbformat={notebook as INotebookContent}
         id="notebook-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).

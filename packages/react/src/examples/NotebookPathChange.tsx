@@ -9,7 +9,7 @@ import { createRoot } from 'react-dom/client';
 import { Button, Text } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { CellSidebarExtension } from '../components';
-import { Notebook } from '../components/notebook/Notebook';
+import { Notebook2 } from '../components/notebook/Notebook2';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 
 const PATH_1 = 'ipywidgets.ipynb';
@@ -41,7 +41,7 @@ const NotebookPathChangeExample = () => {
           {path}
         </Text>
       </Box>
-      <Notebook
+      <Notebook2
         id="notebook-path-change-id"
         startDefaultKernel
         path={path}

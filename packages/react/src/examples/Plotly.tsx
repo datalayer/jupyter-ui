@@ -6,23 +6,31 @@
 
 import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
-import { CellSidebarExtension } from '../components';
-import { Notebook } from '../components/notebook/Notebook';
+import { useJupyter } from '../jupyter';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { CellSidebarExtension } from '../components';
+import { Notebook2 } from '../components/notebook/Notebook2';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 const PlotlyExample = () => {
+  const { serviceManager, defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
     <JupyterReactTheme>
-      <Notebook
-        path="plotly.ipynb"
-        id="notebook-plotly-id"
-        height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-        extensions={extensions}
-        startDefaultKernel
-        Toolbar={NotebookToolbar}
-      />
+      {serviceManager && defaultKernel && (
+        <Notebook2
+          id="notebook-plotly-id"
+          path="plotly.ipynb"
+          kernel={defaultKernel}
+          serviceManager={serviceManager}
+          height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+          extensions={extensions}
+          startDefaultKernel
+          Toolbar={NotebookToolbar}
+        />
+      )}
     </JupyterReactTheme>
   );
 };

@@ -14,7 +14,7 @@ import {
   SquareIcon,
   XIcon,
 } from '@primer/octicons-react';
-import { useNotebookStore, INotebookExtensionProps } from '../../../components';
+import { useNotebookStore2, INotebookExtensionProps } from '../../../components';
 
 type ICellToolbarComponentProps = {
   cell: CodeCell;
@@ -24,8 +24,9 @@ type ICellToolbarComponentProps = {
 export const CellToolbarComponent = (props: ICellToolbarComponentProps) => {
   const { extensionProps } = props;
   const notebookId = extensionProps.notebookId;
-  const notebookStore = useNotebookStore();
-  const activeCell = notebookStore.selectActiveCell(notebookId);
+  const notebookStore = useNotebookStore2();
+  // const activeCell = notebookStore.selectActiveCell(notebookId);
+  const activeCell = undefined;
   return activeCell ? (
     <Box
       display="flex"
@@ -55,10 +56,10 @@ export const CellToolbarComponent = (props: ICellToolbarComponentProps) => {
           title="Add code cell above"
           onClick={e => {
             e.preventDefault();
-            notebookStore.insertAbove({
-              id: notebookId,
-              cellType: 'code',
-            });
+            notebookStore.insertAbove(
+              notebookId,
+              'code',
+            );
           }}
           icon={ChevronUpIcon}
           variant="invisible"
@@ -72,17 +73,17 @@ export const CellToolbarComponent = (props: ICellToolbarComponentProps) => {
           title="Add markdown cell above"
           onClick={e => {
             e.preventDefault();
-            notebookStore.insertAbove({
-              id: notebookId,
-              cellType: 'markdown',
-            });
+            notebookStore.insertAbove(
+              notebookId,
+              'markdown',
+            );
           }}
           icon={ChevronUpIcon}
           variant="invisible"
         />
       </Box>
       <Box>
-        {activeCell.model.type === 'code' ? (
+        {(activeCell as any).model.type === 'code' ? (
           <IconButton
             aria-label="Convert to markdow cell"
             title="Convert to markdow cell"
@@ -91,10 +92,10 @@ export const CellToolbarComponent = (props: ICellToolbarComponentProps) => {
             variant="invisible"
             onClick={e => {
               e.preventDefault();
-              notebookStore.changeCellType({
-                id: notebookId,
-                cellType: 'markdown',
-              });
+              notebookStore.changeCellType(
+                notebookId,
+                'markdown',
+              );
             }}
           />
         ) : (
@@ -106,10 +107,10 @@ export const CellToolbarComponent = (props: ICellToolbarComponentProps) => {
             size="small"
             onClick={(e: any) => {
               e.preventDefault();
-              notebookStore.changeCellType({
-                id: notebookId,
-                cellType: 'code',
-              });
+              notebookStore.changeCellType(
+                notebookId,
+                'code',
+              );
             }}
           />
         )}
@@ -122,10 +123,10 @@ export const CellToolbarComponent = (props: ICellToolbarComponentProps) => {
           title="Add markdown cell below"
           onClick={e => {
             e.preventDefault();
-            notebookStore.insertBelow({
-              id: notebookId,
-              cellType: 'markdown',
-            });
+            notebookStore.insertBelow(
+              notebookId,
+              'markdown',
+            );
           }}
           icon={ChevronDownIcon}
           variant="invisible"
@@ -139,10 +140,10 @@ export const CellToolbarComponent = (props: ICellToolbarComponentProps) => {
           title="Add code cell below"
           onClick={e => {
             e.preventDefault();
-            notebookStore.insertBelow({
-              id: notebookId,
-              cellType: 'code',
-            });
+            notebookStore.insertBelow(
+              notebookId,
+              'code',
+            );
           }}
           icon={ChevronDownIcon}
           variant="invisible"

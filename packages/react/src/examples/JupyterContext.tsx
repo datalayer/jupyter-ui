@@ -4,30 +4,30 @@
  * MIT License
  */
 
-import { INotebookContent, IOutput } from '@jupyterlab/nbformat';
-import { Box, Button, ButtonGroup, SegmentedControl } from '@primer/react';
 import { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import Cell from '../components/cell/Cell';
+import { INotebookContent, IOutput } from '@jupyterlab/nbformat';
+import { Button, ButtonGroup, SegmentedControl } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
+import { Cell } from '../components/cell/Cell';
 import { useCellsStore } from '../components/cell/CellState';
-import Console from '../components/console/Console';
-import FileBrowser from '../components/filebrowser/FileBrowser';
-import FileManagerJupyterLab from '../components/filemanager/FileManagerJupyterLab';
-import CellSidebarButton from '../components/notebook/cell/sidebar/CellSidebarButton';
-import { Notebook } from '../components/notebook/Notebook';
-import useNotebookStore from '../components/notebook/NotebookState';
-import Output from '../components/output/Output';
-import Terminal from '../components/terminal/Terminal';
+import { Console } from '../components/console/Console';
+import { FileBrowser } from '../components/filebrowser/FileBrowser';
+import { FileManagerJupyterLab } from '../components/filemanager/FileManagerJupyterLab';
+import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
+import { Notebook2 } from '../components/notebook/Notebook2';
+import { useNotebookStore2 } from '../components/notebook/Notebook2State';
+import { Output } from '../components/output/Output';
+import { Terminal } from '../components/terminal/Terminal';
 import {
   DEFAULT_JUPYTER_SERVER_TOKEN,
   DEFAULT_JUPYTER_SERVER_URL,
 } from '../jupyter';
-import { Jupyter } from '../jupyter/Jupyter';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { Kernel } from '../jupyter/kernel/Kernel';
-
 import { CellSidebarExtension } from '../components';
-import notebook from './notebooks/NotebookExample1.ipynb.json';
+
+import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
 const SOURCE_1 = '1+1';
 
@@ -100,7 +100,7 @@ const CellToolbar = (props: ICellToolProps) => {
 };
 
 const NotebookToolbar = () => {
-  const notebookStore = useNotebookStore();
+  const notebookStore = useNotebookStore2();
   return (
     <Box display="flex">
       <ButtonGroup>
@@ -108,10 +108,12 @@ const NotebookToolbar = () => {
           variant="default"
           size="small"
           onClick={() =>
+            /*
             notebookStore.save({
               id: NOTEBOOK_ID_1,
               date: new Date(),
             })
+            */
           }
         >
           Save the notebook
@@ -156,7 +158,11 @@ const NotebookKernelChange = () => {
           </Button>
         </ButtonGroup>
       </Box>
-      <Notebook path="test.ipynb" extensions={extensions} id={NOTEBOOK_ID_2} />
+      <Notebook2
+        path="test.ipynb"
+        extensions={extensions}
+        id={NOTEBOOK_ID_2}
+        />
     </>
   );
 };
@@ -216,8 +222,8 @@ const JupyterContextExample = () => {
         <CellToolbar id={cellId} />
         {defaultKernel && <Cell id={cellId} kernel={defaultKernel} />}
         <hr />
-        <Notebook
-          nbformat={notebook as INotebookContent}
+        <Notebook2
+          nbformat={NBFORMAT as INotebookContent}
           id={NOTEBOOK_ID_3}
           height="300px"
           extensions={extensionsButton}
@@ -229,7 +235,7 @@ const JupyterContextExample = () => {
         <Outputs />
         <hr />
         <NotebookToolbar />
-        <Notebook
+        <Notebook2
           path="ipywidgets.ipynb"
           extensions={extensions}
           id={NOTEBOOK_ID_1}

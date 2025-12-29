@@ -5,16 +5,16 @@
  * MIT License
  */
 
-import { IOutput } from '@jupyterlab/nbformat';
-import { Button, Text } from '@primer/react';
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Output } from '../components/output/Output';
-import { useOutputsStore } from '../components/output/OutputState';
-import { Jupyter } from '../jupyter/Jupyter';
+import { IOutput } from '@jupyterlab/nbformat';
+import { Button, Text } from '@primer/react';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { IExecutionPhaseOutput } from '../jupyter/kernel';
 import { ExecutionPhase } from '../jupyter/kernel/KernelState';
+import { Output } from '../components/output/Output';
+import { useOutputsStore } from '../components/output/OutputState';
 
 const SOURCE_ID_1 = 'output-id-1';
 const SOURCE_1 = 'fail';
@@ -135,7 +135,7 @@ const OutputWithMonitoringView = ({
 };
 
 const OutputWithMonitoringExample = () => (
-  <Jupyter startDefaultKernel>
+  <JupyterReactTheme>
     <OutputWithMonitoringView
       title="Output with error code"
       key="1"
@@ -167,7 +167,7 @@ const OutputWithMonitoringExample = () => (
       id={SOURCE_ID_5}
       code={SOURCE_5}
     />
-  </Jupyter>
+  </JupyterReactTheme>
 );
 
 const div = document.createElement('div');

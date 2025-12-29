@@ -4,19 +4,19 @@
  * MIT License
  */
 
+import { useEffect, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 import { IOutput } from '@jupyterlab/nbformat';
 import { Text } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
-import { useEffect, useState } from 'react';
-import { createRoot } from 'react-dom/client';
-import { KernelIndicator } from '../components/kernel/KernelIndicator';
-import { Output } from '../components/output/Output';
-import { Jupyter } from '../jupyter/Jupyter';
+import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { useJupyter } from '../jupyter/JupyterContext';
 import { Kernel } from '../jupyter/kernel/Kernel';
 import { useKernelsStore } from '../jupyter/kernel/KernelState';
-import { newUuid } from '../utils/Utils';
+import { KernelIndicator } from '../components/kernel/KernelIndicator';
+import { Output } from '../components/output/Output';
 import { useOutputsStore } from './../components/output/OutputState';
+import { newUuid } from '../utils/Utils';
 
 const SOURCE_ID_0 = 'output-id-0';
 const CODE_O = `from ipywidgets import IntSlider
@@ -207,12 +207,12 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <Jupyter startDefaultKernel>
+  <JupyterReactTheme>
     <OutputIPyWidgetsExample />
     <OutputNoEditorNoAutorunExample />
     <OutputNoEditorExample />
     <OutputNoEditorErrorExample />
     <OutputEditorExample />
     <OutputEmptyExample />
-  </Jupyter>
+  </JupyterReactTheme>
 );

@@ -4,7 +4,8 @@
  * MIT License
  */
 
-import { NotebookPanel, NotebookToCFactory } from '@jupyterlab/notebook';
+import { NotebookPanel } from '@jupyterlab/notebook';
+// import { NotebookToCFactory } from '@jupyterlab/notebook';
 import {
   TableOfContents,
   TableOfContentsRegistry,
@@ -14,12 +15,12 @@ import { BoxPanel } from '@lumino/widgets';
 import {
   NotebookExtension,
   INotebookExtensionProps,
-  notebookStore,
+//  notebookStore2,
 } from '../../../components';
 import { JupyterLayoutFactory } from './JupyterLayoutFactory';
 
 /**
- * A factory to layout ToC Panel
+ * A factory to layout ToC Panel.
  */
 export interface TocLayoutFactory {
   /** layout ToC Panel */
@@ -41,24 +42,26 @@ export interface TocExtensionOptions {
 
 /** Table of Contents Extension */
 export class TocExtension implements NotebookExtension {
-  private _props: INotebookExtensionProps;
+  // private _props: INotebookExtensionProps;
+  // private _notebookPanel: NotebookPanel;
   private _tocRegistry: TableOfContentsRegistry;
   private _tocTracker: TableOfContentsTracker;
   private _layoutFactory: TocLayoutFactory;
-  private _notebookPanel: NotebookPanel;
 
   constructor(options: TocExtensionOptions) {
     this._layoutFactory = options.factory ?? new JupyterLayoutFactory();
   }
 
   init(props: INotebookExtensionProps) {
-    this._props = props;
+//    this._props = props;
 
     this._tocRegistry = new TableOfContentsRegistry();
     this._tocTracker = new TableOfContentsTracker();
   }
 
   createNew(notebookPanel: NotebookPanel) {
+    /*
+    TODO Fix
     this._notebookPanel = notebookPanel;
     const adapter = this._props.adapter;
     // create factory
@@ -70,6 +73,7 @@ export class TocExtension implements NotebookExtension {
       rendermime!.sanitizer
     );
     this._tocRegistry.add(nbTocFactory);
+    */
 
     notebookPanel.context.ready.then(() => {
       // retrieve model
@@ -87,10 +91,13 @@ export class TocExtension implements NotebookExtension {
       }
 
       if (model) {
-        notebookStore
+        /*
+        TODO Fix
+        notebookStore2
           .getState()
           .changeTocModel({ id: this._props.notebookId, tocModel: model });
         this._layoutFactory.setModel(model);
+        */
       }
     });
 
@@ -100,11 +107,15 @@ export class TocExtension implements NotebookExtension {
   }
 
   get component(): JSX.Element | null {
+    /*
+    TODO Fix
     return this._layoutFactory.layout(
       this._props.adapter!.panel,
       this._notebookPanel,
       this._props.notebookId
     );
+    */
+    return null;
   }
 }
 

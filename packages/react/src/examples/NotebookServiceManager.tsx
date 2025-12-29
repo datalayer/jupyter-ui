@@ -4,21 +4,22 @@
  * MIT License
  */
 
-import { INotebookContent } from '@jupyterlab/nbformat';
-import { ServiceManager } from '@jupyterlab/services';
-import { Box, Button } from '@primer/react';
 import { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { CellSidebarExtension } from '../components';
-import { Notebook } from '../components/notebook/Notebook';
+import { INotebookContent } from '@jupyterlab/nbformat';
+import { ServiceManager } from '@jupyterlab/services';
+import { Button } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import {
   getJupyterServerToken,
   getJupyterServerUrl,
   ServiceManagerLess,
 } from '../jupyter';
-import { createServerSettings } from '../jupyter/JupyterContext';
 import { JupyterReactTheme } from '../theme';
+import { createServerSettings } from '../utils';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
+import { CellSidebarExtension } from '../components';
+import { Notebook2 } from '../components/notebook/Notebook2';
 
 import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
@@ -56,13 +57,13 @@ const NotebookServiceManagerExample = () => {
         </Box>
         <Box ml={3}>Token: {serviceManager.serverSettings.token}</Box>
       </Box>
-      <Notebook
+      <Notebook2
+        id="notebook-model-id"
+        serviceManager={serviceManager}
+        startDefaultKernel={!serverless}
         extensions={extensions}
         nbformat={NBFORMAT as INotebookContent}
-        serviceManager={serviceManager}
-        serverless={serverless}
         readonly={readonly}
-        id="notebook-model-id"
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         Toolbar={NotebookToolbar}
       />
