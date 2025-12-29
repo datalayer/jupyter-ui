@@ -45,7 +45,7 @@
     "stream-browserify": "^2.0.2",
     "url-loader": "^4.1.1",
     "utf-8-validate": "^5.0.5",
-    "webpack-dev-server": "^4.9.3"
+    "webpack-dev-server": "^5.2.2"
   },
   "browserslist": {
     "production": [
