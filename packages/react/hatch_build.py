@@ -21,7 +21,7 @@ def build_javascript():
         cwd=here,
     )
     check_call(
-        ['npm', 'run', 'build:webpack', '--', '--mode=production'],
+        ['npm', 'run', 'build:vite'],
         cwd=here,
     )
     for file in glob.glob(r'./dist/*.*'):

@@ -11,6 +11,10 @@ from traitlets.config import Configurable
 
 from jupyter_server.utils import url_path_join
 from jupyter_server.extension.application import ExtensionApp, ExtensionAppJinjaMixin
+from jupyter_server.base.handlers import FileFindHandler
+
+from jupyterlab_server import LabServerApp
+from jupyterlab_server.config import get_page_config
 
 from jupyter_react.__version__ import __version__
 
@@ -84,13 +88,35 @@ class JupyterReactExtensionApp(ExtensionAppJinjaMixin, ExtensionApp):
         self.log.debug("Jupyter React Config {}".format(self.config))
 
     def initialize_templates(self):
-        self.serverapp.jinja_template_vars.update({"jupyter_react_version" : __version__})
+        page_config = self.serverapp.web_app.settings.setdefault("page_config_data", {})
+        page_config.update(get_page_config(
+            labextensions_path=self.serverapp.web_app.settings.get("labextensions_path", []),
+            logger=self.log
+        ))
+        httpUrl = self.serverapp.public_url.rstrip('/')
+        wsUrl = httpUrl.replace('https://', 'wss://').replace('http://', 'ws://')
+        fullStaticUrl = url_path_join(self.serverapp.base_url, "static", self.name)
+        page_config.setdefault("token", self.serverapp.identity_provider.token)
+        page_config.setdefault("baseUrl", self.serverapp.base_url)
+        page_config.setdefault("httpUrl", httpUrl)
+        page_config.setdefault("wsUrl", wsUrl)
+        page_config.setdefault("fullStaticUrl", fullStaticUrl)
+        self.serverapp.jinja_template_vars.update({
+            "jupyter_react_version": __version__,
+            "page_config": page_config,
+        })
 
     def initialize_handlers(self):
         self.log.debug("Jupyter React Config {}".format(self.settings['jupyter_react_jinja2_env']))
         handlers = [
-            ("jupyter_react", IndexHandler),
-            (url_path_join("jupyter_react", "config"), ConfigHandler),
+            (self.name, IndexHandler),
+            (url_path_join(self.name, "config"), ConfigHandler),
+            # Serve static files at /static/jupyter_react/ to match webpack publicPath
+            (
+                url_path_join("static", self.name, "(.*)"),
+                FileFindHandler,
+                {"path": DEFAULT_STATIC_FILES_PATH, "no_cache_paths": ["/"]},
+            ),
         ]
         self.handlers.extend(handlers)
 
