@@ -765,6 +765,30 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
   );
 }
 
+type IUseKernelIdOptions = {
+  /**
+   * Kernel to connect to
+   */
+  kernel?: Kernel;
+  /**
+   * Kernels manager
+   */
+  kernels?: JupyterKernel.IManager;
+  /**
+   * Kernel ID to connect to
+   *
+   * If the kernel does not exist and `startDefaultKernel` is `true`,
+   * another kernel will be started.
+   */
+  requestedKernelId?: string;
+  /**
+   * Whether or not to start a default kernel.
+   *
+   * Default: false
+   */
+  startDefaultKernel?: boolean;
+};
+
 /**
  * Get the kernel ID to connect to.
  *
@@ -776,31 +800,7 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
  * If the hook starts the kernel, it will shut it down when unmounting.
  */
 export function useKernelId(
-  options:
-    | {
-        /**
-         * Kernel to connect to
-         */
-        kernel?: Kernel;
-        /**
-         * Kernels manager
-         */
-        kernels?: JupyterKernel.IManager;
-        /**
-         * Kernel ID to connect to
-         *
-         * If the kernel does not exist and `startDefaultKernel` is `true`,
-         * another kernel will be started.
-         */
-        requestedKernelId?: string;
-        /**
-         * Whether or not to start a default kernel.
-         *
-         * Default: false
-         */
-        startDefaultKernel?: boolean;
-      }
-    | undefined = {}
+  options: IUseKernelIdOptions | undefined = {}
 ): string | undefined {
   const {
     kernel,
@@ -846,12 +846,13 @@ export function useKernelId(
           }
         }
 
-        // Start a new kernel if none found and requested
+        // Start a new default kernel if none found and one requested.
         if (!foundKernelId && startDefaultKernel && isMounted) {
-          console.log('Starting new kernel.');
+          console.log('Starting a new default kernel.');
           const connection = await kernels.startNew();
           if (isMounted) {
             foundKernelId = connection.id;
+            setKernelId(foundKernelId);
             setStartedConnection(connection);
           } else {
             connection.dispose();

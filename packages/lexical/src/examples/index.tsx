@@ -4,6 +4,9 @@
  * MIT License
  */
 
+// Setup Prism globally FIRST - must be before all other imports
+import './setup-prism';
+
 import { createRoot } from 'react-dom/client';
 import App from './AppSimple';
 // import App from './AppNbformat';

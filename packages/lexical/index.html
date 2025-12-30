@@ -7,19 +7,21 @@
 <!doctype html>
 <html>
   <head>
-    <title>⚛️ Jupyter React Example</title>
-    <script id="datalayer-config-data" type="application/json"></script>
-    <script id="jupyter-config-data" type="application/json"></script>
-    <script
-      data-jupyter-widgets-cdn="https://cdn.jsdelivr.net/npm/"
-      data-jupyter-widgets-cdn-only="true"
-    ></script>
+    <title>Jupyter UI for Lexical Example</title>
+    <script id="datalayer-config-data" type="application/json">
+      {
+        "jupyterServerUrl": "https://oss.datalayer.run/api/jupyter-server",
+        "jupyterServerToken": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+      }
+    </script>
     <link
       rel="shortcut icon"
       href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAC7SURBVFiF7ZU9CgIxEIXfTHbPopfYc+pJ9AALtmJnZSOIoJWFoCTzLHazxh/Ebpt5EPIxM8XXTCKTxYyMCYwJFhOYCo4JFiMuu317PZwaqEBUIar4YMmskL73DytGjgu4gAt4PDJdzkkzMBloBhqBgcu69XW+1I+rNSQESNDuaMEhdP/Fj/7oW+ACLuACHk/3F5BAfuMLBjm8/ZnxNvNtHmY4b7Ztut0bqStoVSHfWj9Z6mr8LXABF3CBB3nvkDfEVN6PAAAAAElFTkSuQmCC"
       type="image/x-icon"
     />
+    <script type="module" src="./src/examples/index.tsx"></script>
   </head>
-
-  <body></body>
+  <body>
+    <div id="root"></div>
+  </body>
 </html>

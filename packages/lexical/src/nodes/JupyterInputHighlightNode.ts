@@ -127,6 +127,10 @@ export class JupyterInputHighlightNode extends TextNode {
       this.__highlightType,
     );
     addClassNamesToElement(element, className);
+    // Add Prism-compatible token classes so theme CSS (prism.css) can style spans
+    if (this.__highlightType) {
+      element.classList.add('token', this.__highlightType);
+    }
     return element;
   }
 
@@ -146,6 +150,16 @@ export class JupyterInputHighlightNode extends TextNode {
       }
       if (nextClassName) {
         addClassNamesToElement(dom, nextClassName);
+      }
+    }
+    if (prevNode.__highlightType !== this.__highlightType) {
+      if (prevNode.__highlightType) {
+        dom.classList.remove('token', prevNode.__highlightType);
+      }
+      if (this.__highlightType) {
+        dom.classList.add('token', this.__highlightType);
+      } else {
+        dom.classList.remove('token');
       }
     }
     return update;

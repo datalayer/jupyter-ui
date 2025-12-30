@@ -20,7 +20,12 @@ const require = createRequire(import.meta.url);
 const { ENTRY } = require('./entries.js');
 
 export default defineConfig(({ mode }) => {
+  // Base path for assets - configurable via VITE_BASE_URL env var
+  // Default is empty (for dev server), set to '/static/jupyter_react/' when built with hatch
+  const baseUrl = process.env.VITE_BASE_URL || '';
+
   return {
+    base: baseUrl || '/',
     plugins: [
       // NOTE: pypi-server plugin commented out - wheels are now served from CDN
       // Uncomment to serve /pypi/*.whl and /pypi/*.json files from local source

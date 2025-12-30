@@ -275,7 +275,7 @@ const ExamplesSidebar = ({
         }}
       >
         <Text as="div" fontWeight="bold" fontSize={2}>
-          📓 Jupyter React Examples
+          📓 ⚛️ Jupyter React Examples
         </Text>
         {isLoading && (
           <Box mt={2} display="flex" alignItems="center">

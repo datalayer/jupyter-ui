@@ -120,7 +120,9 @@ const EditorContextPlugin = () => {
 
 export function EditorContainer(props: Props) {
   const { id, notebook, onSessionConnection } = props;
-  const { defaultKernel } = useJupyter();
+  const { defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
   const [editor] = useLexicalComposerContext();
   const [activeEditor, setActiveEditor] = useState(editor);
   const [_, setIsLinkEditMode] = useState<boolean>(false);

@@ -32,17 +32,6 @@ import {
 import { INPUT_UUID_TO_CODE_KEY } from '../plugins/JupyterInputOutputPlugin';
 
 import * as Prism from 'prismjs';
-import 'prismjs/components/prism-clike';
-import 'prismjs/components/prism-javascript';
-import 'prismjs/components/prism-markup';
-import 'prismjs/components/prism-markdown';
-import 'prismjs/components/prism-c';
-import 'prismjs/components/prism-css';
-import 'prismjs/components/prism-objectivec';
-import 'prismjs/components/prism-sql';
-import 'prismjs/components/prism-python';
-import 'prismjs/components/prism-rust';
-import 'prismjs/components/prism-swift';
 
 type SerializedCodeNode = Spread<
   {
@@ -57,8 +46,9 @@ type SerializedCodeNode = Spread<
 const mapToPrismLanguage = (
   language: string | null | undefined,
 ): string | null | undefined => {
+  const prismLangs = (Prism as any)?.languages;
   // eslint-disable-next-line no-prototype-builtins
-  return language != null && Prism.languages.hasOwnProperty(language)
+  return language != null && prismLangs && prismLangs.hasOwnProperty(language)
     ? language
     : undefined;
 };

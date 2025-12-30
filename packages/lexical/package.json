@@ -30,6 +30,7 @@
   },
   "scripts": {
     "build": "npm run validate:tools && gulp resources-to-lib && cross-env NODE_OPTIONS=--max-old-space-size=16384 tsc && webpack && npm run build:lib",
+    "build:vite": "vite build",
     "build:lib": "npm run validate:tools && cross-env NODE_OPTIONS=--max-old-space-size=16384 tsc",
     "build:prod": "npm run validate:tools && gulp resources-to-lib && tsc && jlpm clean && jlpm build:lib",
     "build:tsc:watch": "run-p 'build:tsc:watch:*'",
@@ -54,6 +55,7 @@
     "start": "run-p -c 'start:*'",
     "start_:jupyter": "cd ./../.. && make start-jupyter-server",
     "start:webpack": "webpack serve",
+    "start:vite": "vite dev",
     "stylelint": "jlpm stylelint:check --fix",
     "stylelint:check": "stylelint --cache \"style/**/*.css\"",
     "test": "jest --coverage",
@@ -148,6 +150,8 @@
     "typescript": "^5.8.3",
     "url-loader": "^3.0.0",
     "watch": "^1.0.2",
+    "vite": "^5.4.0",
+    "@vitejs/plugin-react": "^4.3.0",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.9.3"

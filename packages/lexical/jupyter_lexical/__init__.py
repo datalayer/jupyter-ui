@@ -10,6 +10,6 @@ from .serverapplication import JupyterLexicalExtensionApp
 
 def _jupyter_server_extension_points() -> List[Dict[str, Any]]:
     return [{
-        "module": "jupyter_react",
+        "module": "jupyter_lexical",
         "app": JupyterLexicalExtensionApp,
     }]
