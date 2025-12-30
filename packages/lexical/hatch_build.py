@@ -4,6 +4,7 @@
 
 import glob
 import os
+import re
 
 from subprocess import check_call
 
@@ -15,46 +16,75 @@ from hatchling.builders.hooks.plugin.interface import BuildHookInterface
 here = os.path.abspath(os.path.dirname(__file__))
 
 
+def patch_package_json_requires(file_path):
+    """Patch built JS files to replace require('../package.json') patterns.
+    
+    This is similar to the patch for @jupyter-widgets/controls that replaces:
+      require('../package.json').version -> hardcoded version string
+    
+    This prevents RequireJS from intercepting these calls at runtime.
+    """
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    original_content = content
+    
+    # Pattern to match require("../package.json") or require('../package.json')
+    # and similar patterns like require("./package.json")
+    patterns = [
+        # require("../package.json").version or require('../package.json').version
+        (r'require\(["\']\.\.?/package\.json["\']\)\.version', '"0.0.0"'),
+        # require("../package.json") or require('../package.json') standalone
+        (r'require\(["\']\.\.?/package\.json["\']\)', '{version:"0.0.0"}'),
+    ]
+    
+    for pattern, replacement in patterns:
+        content = re.sub(pattern, replacement, content)
+    
+    if content != original_content:
+        with open(file_path, 'w', encoding='utf-8') as f:
+            f.write(content)
+        print(f"Patched package.json requires in: {file_path}")
+
+
 def clean_dist():
+    """Remove the contents of the dist folder and tsconfig.tsbuildinfo."""
     dist_path = os.path.join(here, 'dist')
     if os.path.exists(dist_path):
         shutil.rmtree(dist_path)
+        print(f"Cleaned dist folder: {dist_path}")
+    
+    # Also remove tsconfig.tsbuildinfo if it exists
+    tsbuildinfo_path = os.path.join(here, 'tsconfig.tsbuildinfo')
+    if os.path.exists(tsbuildinfo_path):
+        os.remove(tsbuildinfo_path)
+        print(f"Removed tsconfig.tsbuildinfo: {tsbuildinfo_path}")
 
 
 def build_javascript():
     # Install deps
     check_call(
-        ['jlpm', 'install'],
+        ['npm', 'i'],
         cwd=here,
     )
 
-    # Step 1: Vite build (copied under static/vite/)
     clean_dist()
     vite_env = os.environ.copy()
-    vite_env['VITE_BASE_URL'] = '/static/jupyter_lexical/vite/'
+    vite_env['VITE_BASE_URL'] = '/static/jupyter_lexical/'
     check_call(
-        ['jlpm', 'run', 'build:vite'],
+        ['npm', 'run', 'build:vite'],
         cwd=here,
         env=vite_env,
     )
-    os.makedirs('./jupyter_lexical/static/vite', exist_ok=True)
-    for file in glob.glob(r'./dist/*.*'):
-        shutil.copy(
-            file,
-            './jupyter_lexical/static/vite/'
-        )
-
-    # Step 2: Webpack build (legacy) copied to static root
-    clean_dist()
-    check_call(
-        ['jlpm', 'run', 'build:webpack', '--mode=production'],
-        cwd=here,
-    )
-    for file in glob.glob(r'./dist/*.*'):
-        shutil.copy(
-            file,
-            './jupyter_lexical/static/'
-        )
+    # Copy built files recursively to static folder
+    dist_path = os.path.join(here, 'dist')
+    static_path = os.path.join(here, 'jupyter_lexical', 'static')
+    if os.path.exists(static_path):
+        shutil.rmtree(static_path)
+    shutil.copytree(dist_path, static_path)
+    # Patch JS files to remove package.json requires
+    for file in glob.glob(os.path.join(static_path, '**', '*.js'), recursive=True):
+        patch_package_json_requires(file)
 
 
 class JupyterBuildHook(BuildHookInterface):

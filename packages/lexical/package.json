@@ -58,6 +58,7 @@
     "start:vite": "vite dev",
     "stylelint": "jlpm stylelint:check --fix",
     "stylelint:check": "stylelint --cache \"style/**/*.css\"",
+    "vite": "vite",
     "test": "jest --coverage",
     "typedoc": "typedoc ./src",
     "validate:tools": "node scripts/validate-tools-sync.js",
