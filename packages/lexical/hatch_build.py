@@ -24,7 +24,7 @@ def clean_dist():
 def build_javascript():
     # Install deps
     check_call(
-        ['npm', 'install'],
+        ['jlpm', 'install'],
         cwd=here,
     )
 
@@ -33,7 +33,7 @@ def build_javascript():
     vite_env = os.environ.copy()
     vite_env['VITE_BASE_URL'] = '/static/jupyter_lexical/vite/'
     check_call(
-        ['npm', 'run', 'build:vite'],
+        ['jlpm', 'run', 'build:vite'],
         cwd=here,
         env=vite_env,
     )
@@ -47,7 +47,7 @@ def build_javascript():
     # Step 2: Webpack build (legacy) copied to static root
     clean_dist()
     check_call(
-        ['npm', 'run', 'build:webpack', '--mode=production'],
+        ['jlpm', 'run', 'build:webpack', '--mode=production'],
         cwd=here,
     )
     for file in glob.glob(r'./dist/*.*'):

@@ -48,15 +48,21 @@ def patch_package_json_requires(file_path):
 
 
 def clean_dist():
-    """Remove the contents of the dist folder."""
+    """Remove the contents of the dist folder and tsconfig.tsbuildinfo."""
     dist_path = os.path.join(here, 'dist')
     if os.path.exists(dist_path):
         shutil.rmtree(dist_path)
         print(f"Cleaned dist folder: {dist_path}")
+    
+    # Also remove tsconfig.tsbuildinfo if it exists
+    tsbuildinfo_path = os.path.join(here, 'tsconfig.tsbuildinfo')
+    if os.path.exists(tsbuildinfo_path):
+        os.remove(tsbuildinfo_path)
+        print(f"Removed tsconfig.tsbuildinfo: {tsbuildinfo_path}")
 
 
-def build_javascript():
-    # Step 1: Build Vite bundle for the server extension
+def build_vite_bundle():
+    """Build Vite bundle for the server extension."""
     clean_dist()
     check_call(
         ['jlpm', 'install'],
@@ -66,27 +72,33 @@ def build_javascript():
     build_env = os.environ.copy()
     build_env['VITE_BASE_URL'] = '/static/jupyter_react/'
     check_call(
-        ['jlpm', 'run', 'build:vite'],
+        ['npm', 'run', 'build:vite'],
         cwd=here,
         env=build_env,
     )
-    # Copy and patch built files
-    for file in glob.glob(r'./dist/*.*'):
-        shutil.copy(
-            file,
-            './jupyter_react/static/'
-        )
-        # Patch JS files to remove package.json requires
-        if file.endswith('.js'):
-            static_file = os.path.join('./jupyter_react/static/', os.path.basename(file))
-            patch_package_json_requires(static_file)
-    
-    # Step 2: Build JupyterLab extension
+    # Copy built files recursively to static folder
+    dist_path = os.path.join(here, 'dist')
+    static_path = os.path.join(here, 'jupyter_react', 'static')
+    if os.path.exists(static_path):
+        shutil.rmtree(static_path)
+    shutil.copytree(dist_path, static_path)
+    # Patch JS files to remove package.json requires
+    for file in glob.glob(os.path.join(static_path, '**', '*.js'), recursive=True):
+        patch_package_json_requires(file)
+
+
+def build_jupyterlab_extension():
+    """Build JupyterLab extension."""
     clean_dist()
     check_call(
-        ['jlpm', 'run', 'build', 'build', '--mode=production'],
+        ['jlpm', 'run', 'build', '--mode=production'],
         cwd=here,
     )
+
+
+def build_javascript():
+    build_vite_bundle()
+#    build_jupyterlab_extension()
 
 
 class JupyterBuildHook(BuildHookInterface):
