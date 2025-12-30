@@ -47,16 +47,26 @@ def patch_package_json_requires(file_path):
         print(f"Patched package.json requires in: {file_path}")
 
 
+def clean_dist():
+    """Remove the contents of the dist folder."""
+    dist_path = os.path.join(here, 'dist')
+    if os.path.exists(dist_path):
+        shutil.rmtree(dist_path)
+        print(f"Cleaned dist folder: {dist_path}")
+
+
 def build_javascript():
+    # Step 1: Build Vite bundle for the server extension
+    clean_dist()
     check_call(
-        ['npm', 'install'],
+        ['jlpm', 'install'],
         cwd=here,
     )
     # Set VITE_BASE_URL for the build so dynamic imports use the correct path
     build_env = os.environ.copy()
     build_env['VITE_BASE_URL'] = '/static/jupyter_react/'
     check_call(
-        ['npm', 'run', 'build:vite'],
+        ['jlpm', 'run', 'build:vite'],
         cwd=here,
         env=build_env,
     )
@@ -70,6 +80,13 @@ def build_javascript():
         if file.endswith('.js'):
             static_file = os.path.join('./jupyter_react/static/', os.path.basename(file))
             patch_package_json_requires(static_file)
+    
+    # Step 2: Build JupyterLab extension
+    clean_dist()
+    check_call(
+        ['jlpm', 'run', 'build', 'build', '--mode=production'],
+        cwd=here,
+    )
 
 
 class JupyterBuildHook(BuildHookInterface):

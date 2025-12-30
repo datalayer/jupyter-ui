@@ -6,17 +6,6 @@
 
 import type { LexicalCommand, LexicalEditor, LexicalNode } from 'lexical';
 import * as Prism from 'prismjs';
-import 'prismjs/components/prism-clike';
-import 'prismjs/components/prism-javascript';
-import 'prismjs/components/prism-markup';
-import 'prismjs/components/prism-markdown';
-import 'prismjs/components/prism-c';
-import 'prismjs/components/prism-css';
-import 'prismjs/components/prism-objectivec';
-import 'prismjs/components/prism-sql';
-import 'prismjs/components/prism-python';
-import 'prismjs/components/prism-rust';
-import 'prismjs/components/prism-swift';
 import { mergeRegister } from '@lexical/utils';
 import {
   $createLineBreakNode,
@@ -234,11 +223,14 @@ function codeNodeTransform(node: JupyterInputNode, editor: LexicalEditor) {
     () => {
       updateAndRetainSelection(node, () => {
         const code = node.getTextContent();
-        const tokens = Prism.tokenize(
-          code,
-          Prism.languages[node.getLanguage() || ''] ||
-            Prism.languages[DEFAULT_CODE_LANGUAGE],
-        );
+        // Prefer global Prism if the import was tree-shaken or deferred.
+        const prism = (globalThis as any).Prism || Prism;
+        const language = node.getLanguage() || DEFAULT_CODE_LANGUAGE;
+        const grammar =
+          prism?.languages?.[language] ||
+          prism?.languages?.[DEFAULT_CODE_LANGUAGE];
+        const tokens =
+          prism && grammar ? prism.tokenize(code, grammar) : [code];
         const highlightNodes = getHighlightNodes(tokens);
         const diffRange = getDiffRange(node.getChildren(), highlightNodes);
         const { from, to, nodesForReplacement } = diffRange;

@@ -80,7 +80,7 @@ export const AppSimple = () => {
               },
             }}
           >
-            No Runtime
+            Without Runtime
           </Button>
           <Button
             variant={hasKernel ? 'primary' : 'default'}
