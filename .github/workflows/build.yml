@@ -32,3 +32,6 @@ jobs:
       - name: Run the build
         run: |
           npm run build
+      - name: Build with Vite
+        run: |
+          cd packages/react && npm run build:vite
