@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 // Setup Prism globally BEFORE language components are imported
 import Prism from 'prismjs';
 
