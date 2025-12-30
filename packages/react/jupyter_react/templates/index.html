@@ -12,8 +12,8 @@
 
     <script id="jupyter-config-data" type="application/json">
       {
-        "baseUrl": "{{page_config["httpUrl"] | e}}{{page_config["baseUrl"] | e}}",
-        "wsUrl": "{{page_config["wsUrl"] | e}}{{page_config["baseUrl"] | e}}",
+        "baseUrl": "{{page_config["baseUrl"] | e}}",
+        "wsUrl": "{{page_config["wsUrl"] | e}}",
         "token": "{{page_config["token"] | e}}",
         "fullStaticUrl": "{{page_config["fullStaticUrl"] | e}}",
         "disableRTC": "false",
@@ -42,22 +42,6 @@
 
     <!-- Needed for ipywidgets -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
-    <script>
-      // Configure RequireJS to handle package.json imports that may be left in bundled code
-      // This prevents "Module name '../package.json' has not been loaded yet" errors
-      if (typeof require !== 'undefined' && require.config) {
-        require.config({
-          paths: {
-            // Map package.json references to empty modules (the version is already bundled)
-            '../package.json': 'data:application/javascript,define({version:"0.0.0"})',
-            './package.json': 'data:application/javascript,define({version:"0.0.0"})'
-          }
-        });
-        // Define the modules directly to avoid loading
-        define('../package.json', [], function() { return { version: '0.0.0' }; });
-        define('./package.json', [], function() { return { version: '0.0.0' }; });
-      }
-    </script>
     <link
       rel="shortcut icon"
       href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAN1wAADdcBQiibeAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAC7SURBVFiF7ZU9CgIxEIXfTHbPopfYc+pJ9AALtmJnZSOIoJWFoCTzLHazxh/Ebpt5EPIxM8XXTCKTxYyMCYwJFhOYCo4JFiMuu317PZwaqEBUIar4YMmskL73DytGjgu4gAt4PDJdzkkzMBloBhqBgcu69XW+1I+rNSQESNDuaMEhdP/Fj/7oW+ACLuACHk/3F5BAfuMLBjm8/ZnxNvNtHmY4b7Ztut0bqStoVSHfWj9Z6mr8LXABF3CBB3nvkDfEVN6PAAAAAElFTkSuQmCC"

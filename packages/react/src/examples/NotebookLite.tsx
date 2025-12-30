@@ -48,8 +48,8 @@ const NotebookLiteExample = () => {
           <div
             style={{
               display: 'inline-flex',
-              gap: '12px',
               alignItems: 'center',
+              //              gap: '12px',
             }}
           >
             <KernelIndicator
