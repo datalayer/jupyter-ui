@@ -88,35 +88,39 @@ export function getJupyterEmbedConfig(): IJupyterEmbedConfig {
 
 /**
  * Parse configuration from a script tag's data attributes
+ * Supports both data-server-url and data-jupyter-server-url patterns
  */
 export function parseConfigFromScript(
   script: HTMLScriptElement,
 ): Partial<IJupyterEmbedConfig> {
   const config: Partial<IJupyterEmbedConfig> = {};
 
-  if (script.dataset.serverUrl) {
-    config.serverUrl = script.dataset.serverUrl;
+  // Support both data-server-url and data-jupyter-server-url
+  if (script.dataset.serverUrl || script.dataset.jupyterServerUrl) {
+    config.serverUrl = script.dataset.serverUrl || script.dataset.jupyterServerUrl;
   }
-  if (script.dataset.wsUrl) {
-    config.wsUrl = script.dataset.wsUrl;
+  if (script.dataset.wsUrl || script.dataset.jupyterWsUrl) {
+    config.wsUrl = script.dataset.wsUrl || script.dataset.jupyterWsUrl;
   }
-  if (script.dataset.token) {
-    config.token = script.dataset.token;
+  if (script.dataset.token || script.dataset.jupyterToken) {
+    config.token = script.dataset.token || script.dataset.jupyterToken;
   }
-  if (script.dataset.kernel) {
-    config.defaultKernel = script.dataset.kernel;
+  if (script.dataset.kernel || script.dataset.jupyterKernel) {
+    config.defaultKernel = script.dataset.kernel || script.dataset.jupyterKernel;
   }
-  if (script.dataset.autoStart !== undefined) {
-    config.autoStartKernel = script.dataset.autoStart !== 'false';
+  if (script.dataset.autoStart !== undefined || script.dataset.jupyterAutoStart !== undefined) {
+    const val = script.dataset.autoStart ?? script.dataset.jupyterAutoStart;
+    config.autoStartKernel = val !== 'false';
   }
-  if (script.dataset.lazyLoad !== undefined) {
-    config.lazyLoad = script.dataset.lazyLoad !== 'false';
+  if (script.dataset.lazyLoad !== undefined || script.dataset.jupyterLazyLoad !== undefined) {
+    const val = script.dataset.lazyLoad ?? script.dataset.jupyterLazyLoad;
+    config.lazyLoad = val !== 'false';
   }
-  if (script.dataset.theme) {
-    config.theme = script.dataset.theme as 'light' | 'dark';
+  if (script.dataset.theme || script.dataset.jupyterTheme) {
+    config.theme = (script.dataset.theme || script.dataset.jupyterTheme) as 'light' | 'dark';
   }
-  if (script.dataset.basePath) {
-    config.basePath = script.dataset.basePath;
+  if (script.dataset.basePath || script.dataset.jupyterBasePath) {
+    config.basePath = script.dataset.basePath || script.dataset.jupyterBasePath;
   }
 
   return config;

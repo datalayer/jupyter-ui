@@ -16,14 +16,31 @@ import {
 } from './types';
 
 /**
+ * Helper to get attribute with fallback to prefixed version
+ */
+function getAttr(
+  element: HTMLElement,
+  short: string,
+  prefixed?: string,
+): string | null {
+  return (
+    element.getAttribute(short) ||
+    (prefixed ? element.getAttribute(prefixed) : null)
+  );
+}
+
+/**
  * Parse embed options from an HTML element's data attributes and child elements
  */
 export function parseElementOptions(element: HTMLElement): EmbedOptions | null {
-  const type = element.getAttribute(DATA_ATTRIBUTES.TYPE);
+  // Support both data-type="cell" and data-jupyter-embed="cell" patterns
+  const type =
+    element.getAttribute(DATA_ATTRIBUTES.TYPE) ||
+    element.getAttribute(DATA_ATTRIBUTES.JUPYTER_EMBED);
 
   if (!type) {
     console.warn(
-      '[jupyter-embed] Element missing data-type attribute:',
+      '[jupyter-embed] Element missing data-type or data-jupyter-embed attribute:',
       element,
     );
     return null;
@@ -31,12 +48,19 @@ export function parseElementOptions(element: HTMLElement): EmbedOptions | null {
 
   const baseOptions = {
     id: element.getAttribute(DATA_ATTRIBUTES.ID) || undefined,
-    height: element.getAttribute(DATA_ATTRIBUTES.HEIGHT) || undefined,
-    theme: element.getAttribute(DATA_ATTRIBUTES.THEME) as
+    height:
+      getAttr(element, DATA_ATTRIBUTES.HEIGHT, 'data-jupyter-height') ||
+      undefined,
+    theme: getAttr(element, DATA_ATTRIBUTES.THEME, 'data-jupyter-theme') as
       | 'light'
       | 'dark'
       | undefined,
-    autoExecute: element.getAttribute(DATA_ATTRIBUTES.AUTO_EXECUTE) !== 'false',
+    autoExecute:
+      getAttr(
+        element,
+        DATA_ATTRIBUTES.AUTO_EXECUTE,
+        'data-jupyter-auto-execute',
+      ) !== 'false',
   };
 
   switch (type) {
@@ -66,7 +90,8 @@ function parseCellOptions(
   baseOptions: any,
 ): ICellEmbedOptions {
   // Get source from data attribute or from child <code> elements
-  let source = element.getAttribute(DATA_ATTRIBUTES.SOURCE) || '';
+  let source =
+    getAttr(element, DATA_ATTRIBUTES.SOURCE, 'data-jupyter-source') || '';
 
   // Check for source-code child element
   const sourceElement = element.querySelector(
@@ -88,13 +113,20 @@ function parseCellOptions(
     ...baseOptions,
     type: 'cell',
     cellType:
-      (element.getAttribute(DATA_ATTRIBUTES.CELL_TYPE) as
+      (getAttr(element, DATA_ATTRIBUTES.CELL_TYPE, 'data-jupyter-cell-type') as
         | 'code'
         | 'markdown'
         | 'raw') || 'code',
     source,
-    showToolbar: element.getAttribute(DATA_ATTRIBUTES.SHOW_TOOLBAR) !== 'false',
-    kernel: element.getAttribute(DATA_ATTRIBUTES.KERNEL) || undefined,
+    showToolbar:
+      getAttr(
+        element,
+        DATA_ATTRIBUTES.SHOW_TOOLBAR,
+        'data-jupyter-show-toolbar',
+      ) !== 'false',
+    kernel:
+      getAttr(element, DATA_ATTRIBUTES.KERNEL, 'data-jupyter-kernel') ||
+      undefined,
   };
 }
 
@@ -120,12 +152,22 @@ function parseNotebookOptions(
   return {
     ...baseOptions,
     type: 'notebook',
-    path: element.getAttribute(DATA_ATTRIBUTES.PATH) || undefined,
-    url: element.getAttribute(DATA_ATTRIBUTES.URL) || undefined,
+    path:
+      getAttr(element, DATA_ATTRIBUTES.PATH, 'data-jupyter-path') || undefined,
+    url: getAttr(element, DATA_ATTRIBUTES.URL, 'data-jupyter-url') || undefined,
     content,
-    readonly: element.getAttribute(DATA_ATTRIBUTES.READONLY) === 'true',
-    showToolbar: element.getAttribute(DATA_ATTRIBUTES.SHOW_TOOLBAR) !== 'false',
-    kernel: element.getAttribute(DATA_ATTRIBUTES.KERNEL) || undefined,
+    readonly:
+      getAttr(element, DATA_ATTRIBUTES.READONLY, 'data-jupyter-readonly') ===
+      'true',
+    showToolbar:
+      getAttr(
+        element,
+        DATA_ATTRIBUTES.SHOW_TOOLBAR,
+        'data-jupyter-show-toolbar',
+      ) !== 'false',
+    kernel:
+      getAttr(element, DATA_ATTRIBUTES.KERNEL, 'data-jupyter-kernel') ||
+      undefined,
   };
 }
 
@@ -148,13 +190,14 @@ function parseViewerOptions(
     }
   }
 
-  const outputsAttr = element.getAttribute('data-outputs');
+  const outputsAttr = getAttr(element, 'data-outputs', 'data-jupyter-outputs');
 
   return {
     ...baseOptions,
     type: 'viewer',
-    path: element.getAttribute(DATA_ATTRIBUTES.PATH) || undefined,
-    url: element.getAttribute(DATA_ATTRIBUTES.URL) || undefined,
+    path:
+      getAttr(element, DATA_ATTRIBUTES.PATH, 'data-jupyter-path') || undefined,
+    url: getAttr(element, DATA_ATTRIBUTES.URL, 'data-jupyter-url') || undefined,
     content,
     outputs: outputsAttr !== 'false',
   };
@@ -170,10 +213,18 @@ function parseTerminalOptions(
   return {
     ...baseOptions,
     type: 'terminal',
-    name: element.getAttribute(DATA_ATTRIBUTES.TERMINAL_NAME) || undefined,
+    name:
+      getAttr(
+        element,
+        DATA_ATTRIBUTES.TERMINAL_NAME,
+        'data-jupyter-terminal-name',
+      ) || undefined,
     colorMode:
-      (element.getAttribute(DATA_ATTRIBUTES.COLOR_MODE) as 'light' | 'dark') ||
-      undefined,
+      (getAttr(
+        element,
+        DATA_ATTRIBUTES.COLOR_MODE,
+        'data-jupyter-color-mode',
+      ) as 'light' | 'dark') || undefined,
   };
 }
 
@@ -184,7 +235,8 @@ function parseConsoleOptions(
   element: HTMLElement,
   baseOptions: any,
 ): IConsoleEmbedOptions {
-  let initCode = element.getAttribute(DATA_ATTRIBUTES.INIT_CODE) || '';
+  let initCode =
+    getAttr(element, DATA_ATTRIBUTES.INIT_CODE, 'data-jupyter-init-code') || '';
 
   // Check for pre-execute-code child element
   const preExecuteElement = element.querySelector(
@@ -197,7 +249,9 @@ function parseConsoleOptions(
   return {
     ...baseOptions,
     type: 'console',
-    kernel: element.getAttribute(DATA_ATTRIBUTES.KERNEL) || undefined,
+    kernel:
+      getAttr(element, DATA_ATTRIBUTES.KERNEL, 'data-jupyter-kernel') ||
+      undefined,
     initCode,
   };
 }
@@ -250,12 +304,19 @@ function parseOutputOptions(
     }
   }
 
+  // Also check for code from data attribute
+  if (!code) {
+    code = getAttr(element, 'data-code', 'data-jupyter-code') || undefined;
+  }
+
   return {
     ...baseOptions,
     type: 'output',
     outputs,
     code,
-    autoRun: element.getAttribute(DATA_ATTRIBUTES.AUTO_RUN) === 'true',
+    autoRun:
+      getAttr(element, DATA_ATTRIBUTES.AUTO_RUN, 'data-jupyter-auto-run') ===
+      'true',
   };
 }
 

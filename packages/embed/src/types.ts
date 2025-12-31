@@ -189,6 +189,7 @@ export type EmbedOptions =
 
 /**
  * Data attributes used on HTML elements for auto-initialization
+ * Supports both short form (data-type) and prefixed form (data-jupyter-type)
  */
 export const DATA_ATTRIBUTES = {
   // Main marker
@@ -197,11 +198,16 @@ export const DATA_ATTRIBUTES = {
   // Component type
   TYPE: 'data-type',
 
-  // Common options
+  // Common options (short form)
   ID: 'data-id',
   HEIGHT: 'data-height',
   THEME: 'data-theme',
   AUTO_EXECUTE: 'data-auto-execute',
+
+  // Common options (prefixed form)
+  JUPYTER_HEIGHT: 'data-jupyter-height',
+  JUPYTER_THEME: 'data-jupyter-theme',
+  JUPYTER_AUTO_EXECUTE: 'data-jupyter-auto-execute',
 
   // Cell options
   CELL_TYPE: 'data-cell-type',
@@ -209,20 +215,39 @@ export const DATA_ATTRIBUTES = {
   SHOW_TOOLBAR: 'data-show-toolbar',
   KERNEL: 'data-kernel',
 
+  // Cell options (prefixed form)
+  JUPYTER_CELL_TYPE: 'data-jupyter-cell-type',
+  JUPYTER_SOURCE: 'data-jupyter-source',
+  JUPYTER_SHOW_TOOLBAR: 'data-jupyter-show-toolbar',
+  JUPYTER_KERNEL: 'data-jupyter-kernel',
+
   // Notebook options
   PATH: 'data-path',
   URL: 'data-url',
   READONLY: 'data-readonly',
 
+  // Notebook options (prefixed form)
+  JUPYTER_PATH: 'data-jupyter-path',
+  JUPYTER_URL: 'data-jupyter-url',
+  JUPYTER_READONLY: 'data-jupyter-readonly',
+
   // Terminal options
   TERMINAL_NAME: 'data-terminal-name',
   COLOR_MODE: 'data-color-mode',
 
+  // Terminal options (prefixed form)
+  JUPYTER_TERMINAL_NAME: 'data-jupyter-terminal-name',
+  JUPYTER_COLOR_MODE: 'data-jupyter-color-mode',
+
   // Console options
   INIT_CODE: 'data-init-code',
+  JUPYTER_INIT_CODE: 'data-jupyter-init-code',
 
   // Output options
   AUTO_RUN: 'data-auto-run',
+  CODE: 'data-code',
+  JUPYTER_AUTO_RUN: 'data-jupyter-auto-run',
+  JUPYTER_CODE: 'data-jupyter-code',
 
   // Content holders
   CONTENT_PRE_EXECUTE: 'pre-execute-code',

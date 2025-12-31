@@ -45,9 +45,16 @@ build-prod: ## clean and build production
 	npm run build:prod
 
 .PHONY: build-all
-build-all: build-prod ## build all formats (IIFE + ESM chunked)
-	@echo -e "\033[1;32m📦 Building ESM chunked version...\033[0m"
+build-all: build-prod ## build all formats (IIFE + ESM + Lazy chunked)
+	@echo -e "\033[1;32m📦 Building ESM version...\033[0m"
 	npm run build:esm
+	@echo -e "\033[1;32m📦 Building Lazy chunked version...\033[0m"
+	npm run build:lazy
+
+.PHONY: build-lazy
+build-lazy: ## build lazy-loading chunked version
+	@echo -e "\033[1;32m📦 Building lazy-loading chunked version...\033[0m"
+	npm run build:lazy
 
 .PHONY: clean
 clean: ## remove build artifacts
@@ -100,6 +107,25 @@ example-esm: ## build ESM and serve chunked example
 	@cp -r dist-esm/* examples/
 	npx serve examples -p 3456
 
+.PHONY: example-lazy
+example-lazy: ## build lazy and serve code-split example
+	@echo -e "\033[1;32m📦 Building lazy-loading chunked version...\033[0m"
+	npm run build:lazy
+	@echo -e "\033[1;32m🌐 Serving lazy example on http://localhost:3456...\033[0m"
+	@echo -e "\033[1;33m💡 Open http://localhost:3456/index-lazy.html to test lazy loading\033[0m"
+	@cp dist-lazy/jupyter-embed.lazy.js examples/
+	@cp -r dist-lazy/chunks examples/
+	npx serve examples -p 3456
+
+.PHONY: run-lazy
+run-lazy: build-lazy ## build lazy version and serve from dist-lazy
+	@echo -e "\033[1;32m🚀 Serving lazy-loading version on http://localhost:3456...\033[0m"
+	@echo -e "\033[1;33m💡 Open http://localhost:3456 to test lazy loading\033[0m"
+	@echo -e "\033[1;33m💡 Examples use hosted Jupyter server at https://oss.datalayer.run/api/jupyter-server\033[0m"
+	@cp examples/index-lazy.html dist-lazy/index.html
+	@sed -i 's|src="./jupyter-embed.lazy.js"|src="./jupyter-embed.lazy.js"|g' dist-lazy/index.html
+	npx serve dist-lazy -p 3456
+
 .PHONY: run
 run: build ## build and serve examples
 	@echo -e "\033[1;32m🚀 Building and serving examples on http://localhost:3456...\033[0m"
@@ -143,12 +169,19 @@ deploy-build: build-all ## prepare artifacts for deployment
 	@mkdir -p build
 	@cp -r dist/* build/
 	@cp examples/index.html build/
-	@# Include ESM chunked build if available
+	@# Include ESM build if available
 	@if [ -d "dist-esm" ]; then \
-		echo -e "\033[1;32m📦 Including ESM chunked build...\033[0m"; \
+		echo -e "\033[1;32m📦 Including ESM build...\033[0m"; \
 		mkdir -p build/esm; \
 		cp -r dist-esm/* build/esm/; \
 		cp examples/index-esm.html build/esm/index.html; \
+	fi
+	@# Include lazy chunked build if available
+	@if [ -d "dist-lazy" ]; then \
+		echo -e "\033[1;32m📦 Including lazy-loading chunked build...\033[0m"; \
+		mkdir -p build/lazy; \
+		cp -r dist-lazy/* build/lazy/; \
+		cp examples/index-lazy.html build/lazy/index.html; \
 	fi
 	@echo -e "\033[1;32m✅ Artifacts ready in ./build\033[0m"
 

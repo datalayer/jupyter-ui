@@ -12,6 +12,16 @@
       "import": "./lib/index.js",
       "require": "./lib/index.js"
     },
+    "./core": {
+      "types": "./lib/core.d.ts",
+      "import": "./lib/core.js",
+      "require": "./lib/core.js"
+    },
+    "./lazy": {
+      "types": "./lib/lazy-entry.d.ts",
+      "import": "./lib/lazy-entry.js",
+      "require": "./lib/lazy-entry.js"
+    },
     "./cell": {
       "types": "./lib/cell.d.ts",
       "import": "./lib/cell.js",

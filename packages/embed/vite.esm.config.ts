@@ -69,38 +69,9 @@ export default defineConfig({
         assetFileNames: 'assets/[name]-[hash][extname]',
         // Handle circular dependencies in CommonJS modules
         hoistTransitiveImports: false,
-        // Split vendor dependencies for better caching
-        // Keep JupyterLab packages together to avoid circular dependency TDZ errors
-        manualChunks: (id) => {
-          if (id.includes('node_modules')) {
-            // React and related packages (~150KB)
-            if (id.includes('react') || id.includes('scheduler')) {
-              return 'vendor-react';
-            }
-            // Lumino (~200KB)
-            if (id.includes('@lumino')) {
-              return 'vendor-lumino';
-            }
-            // CodeMirror (~800KB)
-            if (id.includes('@codemirror') || id.includes('codemirror')) {
-              return 'vendor-codemirror';
-            }
-            // xterm (~400KB)
-            if (id.includes('@xterm') || id.includes('xterm')) {
-              return 'vendor-xterm';
-            }
-            // MathJax (~500KB)
-            if (id.includes('mathjax')) {
-              return 'vendor-mathjax';
-            }
-            // Keep ALL JupyterLab packages in one chunk to avoid TDZ errors
-            // from circular dependencies between services, cells, notebook, etc.
-            if (id.includes('@jupyterlab')) {
-              return 'vendor-jupyterlab';
-            }
-          }
-          return undefined;
-        },
+        // Disable chunking - JupyterLab has too many circular dependencies
+        // that cause TDZ (Temporal Dead Zone) errors when split
+        inlineDynamicImports: true,
       },
     },
     sourcemap: true,
