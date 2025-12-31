@@ -9,7 +9,7 @@
  * This chunk is loaded on-demand when an Output component is needed
  */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   JupyterReactTheme,
   Output,

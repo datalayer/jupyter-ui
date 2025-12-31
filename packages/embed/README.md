@@ -439,6 +439,47 @@ jupyter server --ServerApp.allow_origin='*' --ServerApp.token='your-token'
 | ESM (single)  | `npm run build`     | `dist/jupyter-embed.esm.js` | 13 MB (3.4 MB gzip) | ES module import            |
 | ESM (chunked) | `npm run build:esm` | `dist-esm/`                 | 11 MB total         | Production with caching     |
 
+## Development
+
+### Running Examples Locally
+
+Build the lazy-loading version and serve examples on http://localhost:3456:
+
+```bash
+make example
+```
+
+This will:
+
+- Build the lazy-loading chunked version (`build:lazy`)
+- Copy artifacts to the `examples/` directory
+- Serve examples at:
+  - http://localhost:3456/ - Standard examples (index.html)
+  - http://localhost:3456/index-lazy.html - Lazy loading demo
+
+The examples use the hosted Jupyter server at `https://oss.datalayer.run/api/jupyter-server`.
+
+### Deploying to CDN
+
+Deploy to the production CDN (https://jupyter-embed.datalayer.tech):
+
+```bash
+make deploy
+```
+
+This will:
+
+- Build the lazy-loading version
+- Prepare deployment artifacts in `build/`:
+  - `jupyter-embed.lazy.js` - Main entry point (~100KB)
+  - `chunks/` - Component chunks (loaded on-demand)
+  - `index.html` - Standard examples
+  - `index-lazy.html` - Lazy loading demo
+- Upload to S3 bucket `s3://datalayer-jupyter-embed/`
+- Invalidate CloudFront cache for immediate availability
+
+**Note:** Deployment requires AWS credentials with the `datalayer` profile configured.
+
 ## License
 
 MIT © [Datalayer](https://datalayer.io)

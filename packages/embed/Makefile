@@ -192,6 +192,7 @@ deploy: deploy-build ## build and deploy to CDN
 		--paths "/*" \
 		--profile datalayer && \
 	echo -e "\033[1;32m✨ Deployed to https://jupyter-embed.datalayer.tech\033[0m"
+	echo -e "\033[1;32m✨ Deployed to https://jupyter-embed.datalayer.tech/index-lazy\033[0m"
 
 ##@ Utilities
 
