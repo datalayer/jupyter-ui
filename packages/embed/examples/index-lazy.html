@@ -186,8 +186,30 @@
         data-jupyter-embed="output"
         data-jupyter-code="print('Hello from lazy-loaded output!')"
         data-jupyter-auto-run="true"
-        data-jupyter-height="100px"
-      ></div>
+        data-jupyter-height="550px"
+      >
+        <code data-type="source-code">
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Create data
+x = np.linspace(-5, 5, 50)
+y = np.linspace(-5, 5, 50)
+X, Y = np.meshgrid(x, y)
+Z = np.sin(np.sqrt(X**2 + Y**2))
+
+# Create 3D plot
+fig = plt.figure(figsize=(8, 6))
+ax = fig.add_subplot(111, projection='3d')
+surf = ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.8)
+ax.set_xlabel('X axis')
+ax.set_ylabel('Y axis')
+ax.set_zlabel('Z axis')
+ax.set_title('3D Surface: sin(√(x² + y²))')
+fig.colorbar(surf)
+plt.show()
+        </code>
+      </div>
     </div>
 
     <!-- Scroll spacer to demonstrate lazy loading -->

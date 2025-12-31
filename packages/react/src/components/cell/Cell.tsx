@@ -7,6 +7,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { CodeCell, MarkdownCell } from '@jupyterlab/cells';
 import { IOutput } from '@jupyterlab/nbformat';
+import { Spinner } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { Kernel } from '../../jupyter/kernel/Kernel';
 import { newUuid } from '../../utils';
@@ -162,7 +163,9 @@ export const Cell = ({
       <Lumino>{adapter.panel}</Lumino>
     </Box>
   ) : (
-    <Box>Loading Jupyter Cell...</Box>
+    <Box display="flex" justifyContent="center" alignItems="center" p={4}>
+      <Spinner size="medium" />
+    </Box>
   );
 };
 
