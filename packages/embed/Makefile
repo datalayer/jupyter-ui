@@ -78,6 +78,8 @@ example: build ## build and serve examples
 	@echo -e "\033[1;32m🌐 Building and serving examples on http://localhost:3456...\033[0m"
 	@echo -e "\033[1;33m💡 Make sure you have a Jupyter server running on http://localhost:8888\033[0m"
 	@echo -e "\033[1;33m   Run: jupyter lab --NotebookApp.token='test-secret' --NotebookApp.allow_origin='*'\033[0m"
+	@mkdir -p examples/dist
+	@cp -r dist/* examples/dist/
 	npm run example
 
 .PHONY: example-dev
@@ -100,6 +102,8 @@ run: build ## start both Jupyter server and examples (use Ctrl+C to stop both)
 	@echo -e "\033[1;33m   Examples: http://localhost:3456\033[0m"
 	@echo -e "\033[1;33m   Press Ctrl+C to stop both servers\033[0m"
 	@echo ""
+	@mkdir -p examples/dist
+	@cp -r dist/* examples/dist/
 	@trap 'kill 0' SIGINT; \
 	jupyter lab --NotebookApp.token='test-secret' --NotebookApp.allow_origin='*' --port=8888 --no-browser & \
 	sleep 3 && \

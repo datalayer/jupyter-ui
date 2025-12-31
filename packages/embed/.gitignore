@@ -3,6 +3,9 @@
 /dist
 *.tsbuildinfo
 
+# Copied dist files in examples
+/examples/dist
+
 # Dependencies
 /node_modules
 
