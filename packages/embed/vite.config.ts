@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { defineConfig } from 'vite';
+import { defineConfig, PluginOption } from 'vite';
 import react from '@vitejs/plugin-react';
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
 import { resolve } from 'path';
@@ -14,7 +14,7 @@ export default defineConfig({
   plugins: [
     react(),
     // Inject CSS into JS bundle for single-file distribution
-    cssInjectedByJsPlugin(),
+    cssInjectedByJsPlugin() as PluginOption,
     {
       name: 'raw-css-as-string',
       enforce: 'pre',
@@ -70,29 +70,17 @@ export default defineConfig({
         assetFileNames: 'jupyter-embed.[ext]',
         // Provide global variable names for external imports
         globals: {},
-        // Use inlineDynamicImports for IIFE to avoid chunk issues
+        // Prevent circular dependency issues
         inlineDynamicImports: true,
-        // Ensure hoisting is disabled to prevent TDZ errors
-        hoistTransitiveImports: false,
-        // Use SystemJS format to avoid initialization issues
-        format: 'iife',
-        // Ensure proper module initialization order
-        preserveModules: false,
       },
     },
     // Generate source maps for debugging
     sourcemap: true,
     // Minimize for production
     minify: 'terser',
-    // Set target to modern browsers to use proper module syntax
-    target: 'es2020',
     terserOptions: {
       compress: {
         drop_console: false, // Keep console logs for debugging
-      },
-      // Ensure terser doesn't break initialization order
-      mangle: {
-        toplevel: false,
       },
     },
     // Output to dist folder

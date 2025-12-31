@@ -4,11 +4,12 @@
  * MIT License
  */
 
+import { useEffect, useState } from 'react';
 import { IOutput } from '@jupyterlab/nbformat';
 import { IOutputAreaModel } from '@jupyterlab/outputarea';
 import { KernelMessage } from '@jupyterlab/services';
-import { Box, Spinner } from '@datalayer/primer-addons';
-import { useEffect, useState } from 'react';
+import { Spinner } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { Lumino } from '../lumino/Lumino';
 import { useJupyter } from '../../jupyter/JupyterUse';
 import { IExecutionPhaseOutput, Kernel } from '../../jupyter/kernel';
@@ -272,6 +273,24 @@ export const Output = ({
         >
           {(() => {
             const currentAdapter = adapter || propsAdapter;
+            const isExecuting =
+              kernelStatus === 'busy' || kernelStatus === 'restarting';
+            const hasNoOutputs = !outputs || outputs.length === 0;
+
+            // Show spinner if kernel is executing and no outputs yet
+            if (isExecuting && hasNoOutputs) {
+              return (
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  p={3}
+                >
+                  <Spinner size="medium" />
+                </Box>
+              );
+            }
+
             return lumino ? (
               currentAdapter ? (
                 <Lumino>{currentAdapter.outputArea}</Lumino>

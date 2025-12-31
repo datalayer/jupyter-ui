@@ -104,20 +104,25 @@
     <p>
       This page demonstrates how to embed Jupyter components into any web page
       using
-      <code>@datalayer/jupyter-embed</code>, part of the open source
+      <code>@datalayer/jupyter-embed</code>.
+    </p>
+    <p>
+      Simply include the <code>jupyter-embed.js</code> javascript and add HTML
+      elements with the appropriate data attributes. The examples below showcase
+      various embedding options like cell, notebook and output display and can
+      be executed in live.
+    </p>
+
+    <p style="color: #59595c; font-size: 14px; margin-top: 30px">
+      Made with ❤️ by
+      <a href="https://datalayer.ai" target="_blank">Datalayer</a> - Part of the
       <a href="https://github.com/datalayer/jupyter-ui" target="_blank"
         >Jupyter UI</a
       >
-      repository (MIT License). Simply include the script and add HTML elements
-      with the appropriate data attributes.
+      repository (MIT License).
     </p>
 
-    <p style="color: #59595c; font-size: 14px">
-      Made with ❤️ by
-      <a href="https://datalayer.ai" target="_blank">Datalayer</a>
-    </p>
-
-    <h2 style="margin-top: 40px">Output Display</h2>
+    <h2 style="margin-top: 30px">Output Display</h2>
     <div class="example">
       <div class="example-title">Live Python Execution</div>
       <div class="example-description">
@@ -200,18 +205,6 @@ plt.show()
           ]
         </script>
       </div>
-
-      <pre><code>&lt;div data-jupyter-embed data-type="output"&gt;
-  &lt;script type="application/json"&gt;
-    [
-      {
-        "output_type": "stream",
-        "name": "stdout",
-        "text": "Hello from static output!\\n"
-      }
-    ]
-  &lt;/script&gt;
-&lt;/div&gt;</code></pre>
     </div>
 
     <h2>Code Cell</h2>
@@ -225,13 +218,13 @@ plt.show()
       <div
         data-jupyter-embed
         data-type="cell"
-        data-height="200px"
+        data-height="400px"
         data-auto-execute="true"
       >
         <code data-type="source-code">
           # Calculate the first 10 Fibonacci numbers def fibonacci(n): fib = [0,
           1] for i in range(2, n): fib.append(fib[i-1] + fib[i-2]) return
-          fib[:n] print(fibonacci(10))
+          fib[:n] print(fibonacci(100))
         </code>
       </div>
 
@@ -303,7 +296,7 @@ print(fibonacci(10))
         data-jupyter-embed
         data-type="notebook"
         data-path="test.ipynb"
-        data-height="300px"
+        data-height="500px"
         data-show-toolbar="true"
       ></div>
 
@@ -322,7 +315,7 @@ print(fibonacci(10))
         Embed a notebook with inline content.
       </div>
 
-      <div data-jupyter-embed data-type="notebook" data-height="200px">
+      <div data-jupyter-embed data-type="notebook" data-height="400px">
         <script type="application/json">
           {
             "cells": [
@@ -376,7 +369,7 @@ print(fibonacci(10))
                 "source": [
                   "# Read-Only Notebook\n",
                   "\n",
-                  "This notebook is displayed in **viewer mode** - no editing, just viewing!"
+                  "This notebook is displayed in **view mode** - no editing, just viewing!"
                 ]
               },
               {
@@ -393,9 +386,15 @@ print(fibonacci(10))
                   "\n",
                   "plt.figure(figsize=(8, 4))\n",
                   "plt.plot(x, y)\n",
-                  "plt.title('Sine Wave')\n",
-                  "plt.show()"
+                  "plt.title('Sine Wave')\n"
                 ]
+              },
+              {
+                "cell_type": "code",
+                "execution_count": null,
+                "metadata": {},
+                "outputs": [],
+                "source": ["plt.show()"]
               }
             ],
             "metadata": {
@@ -430,8 +429,8 @@ print(fibonacci(10))
   &lt;/script&gt;
 &lt;/div&gt;</code></pre>
     </div>
+    <h2>🚧 Terminal</h2>
     <!---
-    <h2>Terminal</h2>
     <div class="example">
       <div class="example-title">Interactive Terminal</div>
       <div class="example-description">
@@ -453,8 +452,8 @@ print(fibonacci(10))
 &gt;&lt;/div&gt;</code></pre>
     </div>
 -->
+    <h2>🚧 Console</h2>
     <!--
-    <h2>Console</h2>
     <div class="example">
       <div class="example-title">Interactive Console</div>
       <div class="example-description">
