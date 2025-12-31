@@ -86,11 +86,12 @@ lint-check: ## check linting without fixing
 ##@ Examples
 
 .PHONY: example
-example: build ## build and serve examples
+example: build-lazy ## build lazy and serve examples
 	@echo -e "\033[1;32m🌐 Building and serving examples on http://localhost:3456...\033[0m"
 	@echo -e "\033[1;33m💡 Examples use hosted Jupyter server at https://oss.datalayer.run/api/jupyter-server\033[0m"
-	@cp dist/jupyter-embed.js examples/
-	npm run example
+	@cp dist-lazy/jupyter-embed.lazy.js examples/
+	@cp -r dist-lazy/chunks examples/
+	npx serve examples -p 3456
 
 .PHONY: example-dev
 example-dev: ## serve examples in development mode
@@ -163,26 +164,14 @@ publish-dry: build-prod ## dry run publish to npm
 ##@ Deploy
 
 .PHONY: deploy-build
-deploy-build: build-all ## prepare artifacts for deployment
+deploy-build: build-lazy ## prepare artifacts for deployment
 	@echo -e "\033[1;32m📦 Preparing deployment artifacts...\033[0m"
 	@rm -rf build
 	@mkdir -p build
-	@cp -r dist/* build/
+	@# Copy lazy-loading build as the main version
+	@cp dist-lazy/jupyter-embed.lazy.js build/
+	@cp -r dist-lazy/chunks build/
 	@cp examples/index.html build/
-	@# Include ESM build if available
-	@if [ -d "dist-esm" ]; then \
-		echo -e "\033[1;32m📦 Including ESM build...\033[0m"; \
-		mkdir -p build/esm; \
-		cp -r dist-esm/* build/esm/; \
-		cp examples/index-esm.html build/esm/index.html; \
-	fi
-	@# Include lazy chunked build if available
-	@if [ -d "dist-lazy" ]; then \
-		echo -e "\033[1;32m📦 Including lazy-loading chunked build...\033[0m"; \
-		mkdir -p build/lazy; \
-		cp -r dist-lazy/* build/lazy/; \
-		cp examples/index-lazy.html build/lazy/index.html; \
-	fi
 	@echo -e "\033[1;32m✅ Artifacts ready in ./build\033[0m"
 
 .PHONY: deploy
