@@ -41,9 +41,9 @@ const JupyterCellInner = (props: JupyterCellProps) => {
 
     const loadModules = async () => {
       const [jupyterUseModule, themeModule, cellModule] = await Promise.all([
-        import('@datalayer/jupyter-react/lib/jupyter/JupyterUse'),
-        import('@datalayer/jupyter-react/lib/theme/JupyterReactTheme'),
-        import('@datalayer/jupyter-react/lib/components/cell/Cell'),
+        import('@datalayer/jupyter-react/jupyter'),
+        import('@datalayer/jupyter-react/theme'),
+        import('@datalayer/jupyter-react/cell'),
       ]);
       setModules({
         useJupyter: jupyterUseModule.useJupyter,

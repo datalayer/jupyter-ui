@@ -15,12 +15,8 @@ const Cell = (props: any) => {
     >
       {() => {
         // Keep the import via require in the BrowserOnly code block.
-        const {
-          JupyterReactTheme,
-        } = require('@datalayer/jupyter-react/lib/theme/JupyterReactTheme');
-        const {
-          Cell,
-        } = require('@datalayer/jupyter-react/lib/components/cell/Cell');
+        const { JupyterReactTheme } = require('@datalayer/jupyter-react/theme');
+        const { Cell } = require('@datalayer/jupyter-react/cell');
         return (
           <>
             <JupyterReactTheme
