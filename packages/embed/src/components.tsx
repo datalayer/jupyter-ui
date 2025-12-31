@@ -130,8 +130,7 @@ interface ITerminalEmbedProps {
 }
 
 const TerminalEmbedInner: React.FC<ITerminalEmbedProps> = ({ options }) => {
-  useJupyterEmbed(); // Initialize connection
-
+  // Terminal component handles its own Jupyter connection with terminals: true
   return (
     <div style={{ height: options.height || '400px' }}>
       <Terminal colormode={options.colorMode || options.theme || 'light'} />
