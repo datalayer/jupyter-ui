@@ -1,2 +1,0 @@
-import{u as e}from"./JupyterReactTheme-CX3WbnDJ.js";const r=r=>{const{jupyterConfig:s,kernel:n,kernelIsLoading:t,serviceManager:l}=e(r??{});return{defaultKernel:n,jupyterServerUrl:s.jupyterServerUrl,kernel:n,kernelIsLoading:t,kernelManager:l?.kernels,lite:r?.lite,serverless:r?.serverless??!1,serverSettings:l?.serverSettings,serviceManager:l}};export{r as u};
-//# sourceMappingURL=JupyterUse-0A4JMZk-.js.map
