@@ -12,22 +12,32 @@ cd packages/react
 npm start-local
 ```
 
-The Jupyter Server and the Jupyter Token can be provided in the [Jupyter Context](/docs/components/context)
+The Jupyter Server and the Jupyter Token can be provided in [JupyterReactTheme](/themes) or via the `useJupyter` hook:
 
 ```ts
-const NotebookLocalJupyter = () => (
-  <Jupyter
-    jupyterServerUrl="http://localhost:8686/api/jupyter-server"
-    jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
-    startDefaultKernel
-  >
-    <Notebook
-      path="ipywidgets.ipynb"
-      id="notebook-jupyter-id"
-      height="calc(100vh - 250px)" // (Height - Toolbar Height).
-    />
-  </Jupyter>
-)
+const NotebookLocalJupyter = () => {
+  const { serviceManager, defaultKernel } = useJupyter({
+    jupyterServerUrl: "http://localhost:8686/api/jupyter-server",
+    jupyterServerToken: "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6",
+    startDefaultKernel: true,
+  });
+
+  if (!serviceManager || !defaultKernel) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <JupyterReactTheme>
+      <Notebook
+        path="ipywidgets.ipynb"
+        serviceManager={serviceManager}
+        kernel={defaultKernel}
+        id="notebook-jupyter-id"
+        height="calc(100vh - 250px)"
+      />
+    </JupyterReactTheme>
+  );
+};
 ```
 
 Alternatively, you can to define a `script` tag in the head section your host index HTML page information for your React applicatio with those 2 configurations (see for example the content of this [index-local.html](https://github.com/datalayer/jupyter-ui/blob/main/packages/react/public/index-local.html)).
@@ -141,7 +151,7 @@ c.IdentityProvider.cookie_options = {
 
 :::info
 
-If you are using the [JupyterLabApp](/docs/components/jupyterlab-app) component, additional information will be needed (see [index-local.html](https://github.com/datalayer/jupyter-ui/blob/main/packages/react/public/index-local.html))
+If you are using the [JupyterLabApp](/components/jupyterlabapp) component, additional information will be needed (see [index-local.html](https://github.com/datalayer/jupyter-ui/blob/main/packages/react/public/index-local.html))
 
 ```html
 <script id="jupyter-config-data" type="application/json">

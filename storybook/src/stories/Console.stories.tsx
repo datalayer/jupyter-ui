@@ -13,11 +13,7 @@ const meta: Meta<typeof Console> = {
   argTypes: {
     lite: {
       control: 'radio',
-      options: [
-        'true',
-        'false',
-        '@datalayer/jupyter-react/lib/jupyter/lite/pyodide-kernel-extension',
-      ],
+      options: ['true', 'false', 'pyodide', 'javascript'],
       table: {
         // Switching live does not work
         disable: true,
@@ -47,15 +43,20 @@ const Template = (args, { globals: { labComparison } }) => {
   const lite = {
     true: true,
     false: false,
-    '@datalayer/jupyter-react/lib/jupyter/lite/pyodide-kernel-extension':
-      import('@datalayer/jupyter-react/lib/jupyter/lite/pyodide-kernel-extension'),
+    pyodide: import('@datalayer/jupyter-react/lite').then(
+      m => m.pyodideKernelExtension,
+    ),
+    javascript: import('@datalayer/jupyter-react/lite').then(
+      m => m.javascriptKernelExtension,
+    ),
   }[args.browser];
 
   const kernelName =
-    args.browser ===
-    '@datalayer/jupyter-react/lib/jupyter/lite/pyodide-kernel-extension'
+    args.browser === 'javascript'
       ? 'javascript'
-      : undefined;
+      : args.browser === 'pyodide'
+        ? 'python'
+        : undefined;
 
   return (
     <JupyterReactTheme
@@ -88,6 +89,6 @@ LitePython.args = {
 export const LiteJavascript: Story = Template.bind({}) as Story;
 LiteJavascript.args = {
   ...Default.args,
-  lite: '@datalayer/jupyter-react/lib/jupyter/lite/pyodide-kernel-extension',
+  lite: 'javascript',
   code: "a = 'hello';\nArray(4).fill(`${a} the world`);",
 };

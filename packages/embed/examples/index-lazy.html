@@ -1,0 +1,292 @@
+<!--
+  ~ Copyright (c) 2021-2023 Datalayer, Inc.
+  ~
+  ~ MIT License
+-->
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🪐 🌐 Jupyter Embed - Lazy Loading Demo</title>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+          Cantarell, sans-serif;
+        max-width: 1200px;
+        margin: 0;
+        padding: 20px;
+        background: radial-gradient(
+          circle at top,
+          #f4faff 0,
+          #e3f3ff 35%,
+          #e9f7f1 75%,
+          #ffffff 100%
+        );
+        min-height: 100vh;
+      }
+      h1 {
+        color: #59595c;
+        border-bottom: 2px solid #16a085;
+        padding-bottom: 10px;
+      }
+      h2 {
+        color: #59595c;
+        margin-top: 40px;
+      }
+      .example {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #1abc9c;
+      }
+      .example-title {
+        font-weight: bold;
+        color: #117a65;
+        margin-bottom: 10px;
+      }
+      .example-description {
+        color: #59595c;
+        margin-bottom: 15px;
+        font-size: 14px;
+      }
+      pre {
+        background: #f8f8f8;
+        padding: 15px;
+        border-radius: 4px;
+        overflow-x: auto;
+        font-size: 13px;
+        border-left: 3px solid #16a085;
+      }
+      code {
+        font-family: 'Fira Code', 'Monaco', 'Menlo', monospace;
+      }
+      a {
+        color: #117a65;
+      }
+      a:hover {
+        color: #16a085;
+      }
+      .stats {
+        background: #e8f8f5;
+        border: 1px solid #1abc9c;
+        border-radius: 8px;
+        padding: 15px;
+        margin: 20px 0;
+      }
+      .stats-title {
+        font-weight: bold;
+        color: #117a65;
+        margin-bottom: 10px;
+      }
+      .stats-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 0;
+        border-bottom: 1px solid #d5f5e3;
+      }
+      .stats-item:last-child {
+        border-bottom: none;
+      }
+      .badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: bold;
+      }
+      .badge-lazy {
+        background: #d5f5e3;
+        color: #117a65;
+      }
+      .badge-loaded {
+        background: #fef9e7;
+        color: #9a7b4f;
+      }
+      #chunk-status {
+        font-family: monospace;
+        font-size: 12px;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      "
+    >
+      <a href="https://datalayer.ai" target="_blank" rel="noopener noreferrer">
+        <img
+          src="https://assets.datalayer.tech/datalayer-25.svg"
+          alt="Datalayer"
+          height="28"
+        />
+      </a>
+      <span class="badge badge-lazy">LAZY LOADING MODE</span>
+    </div>
+
+    <h1>🪐 Jupyter Embed - Lazy Loading Demo</h1>
+
+    <p>
+      This demo shows the <strong>lazy-loading</strong> version of Jupyter Embed.
+      Components are loaded on-demand when they scroll into view, reducing initial page 
+      load time to deliver jupyter components efficiently.
+    </p>
+
+    <div class="stats">
+      <div class="stats-title">📊 Loading Statistics</div>
+      <div class="stats-item">
+        <span>Initial bundle size:</span>
+        <span id="initial-size">~100KB (bootstrap only)</span>
+      </div>
+      <div class="stats-item">
+        <span>Total potential size:</span>
+        <span>~13MB (all components)</span>
+      </div>
+      <div class="stats-item">
+        <span>Chunks loaded:</span>
+        <span id="chunks-loaded">0</span>
+      </div>
+      <div id="chunk-status"></div>
+    </div>
+
+    <!-- Code Cell Example -->
+    <h2>🔢 Code Cell (Lazy)</h2>
+    <div class="example">
+      <div class="example-title">Python Code Cell</div>
+      <div class="example-description">
+        The Cell component chunk will be loaded when you scroll here.
+        Watch the "Chunks loaded" counter above!
+      </div>
+      <div
+        data-jupyter-embed="cell"
+        data-jupyter-cell-type="code"
+        data-jupyter-code="import numpy as np&#10;import matplotlib.pyplot as plt&#10;&#10;x = np.linspace(0, 2*np.pi, 100)&#10;plt.plot(x, np.sin(x))&#10;plt.title('Sine Wave')&#10;plt.show()"
+        data-jupyter-height="550px"
+        data-jupyter-auto-execute="false"
+      ></div>
+    </div>
+
+    <!-- Output Example -->
+    <h2>📤 Output Component (Lazy)</h2>
+    <div class="example">
+      <div class="example-title">Code Execution Output</div>
+      <div class="example-description">
+        The Output component chunk will be loaded when you scroll here.
+      </div>
+      <div
+        data-jupyter-embed="output"
+        data-jupyter-auto-run="true"
+        data-jupyter-height="550px"
+      >
+        <code data-jupyter-source-code>
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Create data
+x = np.linspace(-5, 5, 50)
+y = np.linspace(-5, 5, 50)
+X, Y = np.meshgrid(x, y)
+Z = np.sin(np.sqrt(X**2 + Y**2))
+
+# Create 3D plot
+fig = plt.figure(figsize=(8, 6))
+ax = fig.add_subplot(111, projection='3d')
+surf = ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.8)
+ax.set_xlabel('X axis')
+ax.set_ylabel('Y axis')
+ax.set_zlabel('Z axis')
+ax.set_title('3D Surface: sin(√(x² + y²))')
+fig.colorbar(surf)
+plt.show()
+        </code>
+      </div>
+    </div>
+
+    <!-- Scroll spacer to demonstrate lazy loading -->
+    <div style="height: 50px;"></div>
+
+    <!-- Terminal Example -->
+    <h2>💻 Terminal (Lazy)</h2>
+    <div class="example">
+      <div class="example-title">Interactive Terminal</div>
+      <div class="example-description">
+        The Terminal component chunk (including xterm.js) will be loaded when
+        you scroll here.
+      </div>
+      <div
+        data-jupyter-embed="terminal"
+        data-jupyter-height="300px"
+        data-jupyter-color-mode="dark"
+      ></div>
+    </div>
+
+    <!-- Scroll spacer -->
+    <div style="height: 50px;"></div>
+
+    <!-- Notebook Example -->
+    <h2>📓 Notebook (Lazy)</h2>
+    <div class="example">
+      <div class="example-title">Full Notebook</div>
+      <div class="example-description">
+        The Notebook component chunk will be loaded when you scroll here.
+        This is the largest chunk as it includes all notebook editing features.
+      </div>
+      <div
+        data-jupyter-embed="notebook"
+        data-jupyter-height="400px"
+      ></div>
+    </div>
+
+    <hr style="margin: 40px 0; border: none; border-top: 1px solid #e0e0e0" />
+
+    <p style="color: #666; font-size: 14px">
+      Open DevTools Network tab to see chunks being loaded on-demand as you
+      scroll!
+    </p>
+
+    <!-- Load the lazy version of jupyter-embed -->
+    <script type="module">
+      // Track chunk loading
+      let chunksLoaded = 0;
+      const chunkStatus = document.getElementById('chunk-status');
+      const chunksLoadedEl = document.getElementById('chunks-loaded');
+      
+      // Monitor for chunk loads
+      const observer = new PerformanceObserver((list) => {
+        for (const entry of list.getEntries()) {
+          if (entry.name.includes('chunks/') && entry.initiatorType === 'script') {
+            chunksLoaded++;
+            chunksLoadedEl.textContent = chunksLoaded;
+            const chunkName = entry.name.split('/').pop();
+            const size = entry.transferSize ? `(${(entry.transferSize / 1024).toFixed(1)}KB)` : '';
+            chunkStatus.innerHTML += `<div>✅ Loaded: ${chunkName} ${size}</div>`;
+          }
+        }
+      });
+      
+      try {
+        observer.observe({ entryTypes: ['resource'] });
+      } catch (e) {
+        console.log('PerformanceObserver not available');
+      }
+    </script>
+    
+    <script
+      type="module"
+      src="./jupyter-embed.lazy.js"
+      data-jupyter-server-url="https://oss.datalayer.run/api/jupyter-server"
+      data-jupyter-token="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+      data-jupyter-lazy-load="true"
+      data-jupyter-auto-start-kernel="true"
+    ></script>
+  </body>
+</html>

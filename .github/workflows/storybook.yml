@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: '*'
 
+env:
+  NODE_OPTIONS: '--max-old-space-size=8192'
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true

@@ -1,7 +1,370 @@
 ---
-description: A Vite example.
+description: Integrate Jupyter React components with Vite for modern, fast web applications with proper configuration and build optimization.
 ---
 
-# Vite
+# Vite Integration
 
-The example can be found in the [jupyter-react-vite-example](https://github.com/datalayer-examples/jupyter-react-vite-example) repository.
+[Vite](https://vitejs.dev) is a modern build tool that provides lightning-fast development server and optimized production builds. This guide shows you how to properly configure Vite to work with Jupyter React components.
+
+:::tip Live Example
+See the working example at [jupyter-react-vite-example.vercel.app](https://jupyter-react-vite-example.vercel.app)
+
+Source code: [jupyter-react-vite-example](https://github.com/datalayer-examples/jupyter-react-vite-example)
+:::
+
+## Quick Start
+
+```bash
+npm install @datalayer/jupyter-react @datalayer/primer-addons
+npm install -D vite @vitejs/plugin-react vite-plugin-treat-umd-as-commonjs
+```
+
+```bash
+npm run dev
+```
+
+## Critical Dependencies
+
+### Required Runtime Dependencies
+
+```json
+{
+  "dependencies": {
+    "@datalayer/jupyter-react": "^2.0.0",
+    "@datalayer/primer-addons": "^1.0.4",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  }
+}
+```
+
+### Required Dev Dependencies
+
+```json
+{
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.6.0",
+    "vite": "^7.0.4",
+    "vite-plugin-treat-umd-as-commonjs": "^0.1.4"
+  }
+}
+```
+
+:::warning Critical Plugin
+**`vite-plugin-treat-umd-as-commonjs`** is essential for handling JupyterLab's UMD modules. Without this plugin, you'll encounter module resolution errors.
+:::
+
+## Vite Configuration
+
+The Vite configuration requires several critical plugins and settings to work properly with Jupyter components:
+
+### Complete Configuration
+
+```typescript
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { treatAsCommonjs } from 'vite-plugin-treat-umd-as-commonjs';
+
+export default defineConfig({
+  plugins: [
+    react(),
+    // Handle JupyterLab UMD modules
+    treatAsCommonjs(),
+    // Handle .raw.css imports from JupyterLab
+    {
+      name: 'raw-css-as-string',
+      enforce: 'pre',
+      async resolveId(source, importer) {
+        if (source.endsWith('.raw.css') && !source.includes('?raw')) {
+          const resolved = await this.resolve(source + '?raw', importer, {
+            skipSelf: true,
+          });
+          if (resolved) return resolved.id;
+          return null;
+        }
+        return null;
+      },
+    },
+    // Handle ?text imports (service workers, etc.)
+    {
+      name: 'fix-text-query',
+      enforce: 'pre',
+      async resolveId(source, importer) {
+        if (source.includes('?text')) {
+          const fixed = source.replace('?text', '?raw');
+          const resolved = await this.resolve(fixed, importer, {
+            skipSelf: true,
+          });
+          if (resolved) return resolved.id;
+          return fixed;
+        }
+        return null;
+      },
+    },
+  ],
+  // Include non-standard assets
+  assetsInclude: ['**/*.whl', '**/*.raw.css'],
+  resolve: {
+    alias: [
+      {
+        // Handle webpack-style ~ imports in CSS
+        find: /^~(.*)$/,
+        replacement: '$1',
+      },
+    ],
+  },
+  define: {
+    // Jupyter components expect these globals
+    global: 'globalThis',
+    __webpack_public_path__: '""',
+  },
+  worker: {
+    format: 'es',
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        // Preserve Python wheel files in pypi/ directory
+        assetFileNames: assetInfo => {
+          if (/pypi\//.test(assetInfo.name)) {
+            return 'pypi/[name][extname]';
+          }
+          return 'assets/[name][extname]';
+        },
+      },
+    },
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      loader: {
+        // Treat .whl files as text
+        '.whl': 'text',
+      },
+    },
+  },
+});
+```
+
+### Why Each Configuration Matters
+
+#### 1. **treatAsCommonjs Plugin** ⚠️ Critical
+
+JupyterLab packages use UMD modules which Vite doesn't handle natively. This plugin is absolutely required.
+
+```typescript
+treatAsCommonjs();
+```
+
+Without this: Module resolution errors and runtime crashes.
+
+#### 2. **raw-css-as-string Plugin** ⚠️ Required
+
+JupyterLab imports CSS files with `.raw.css` extension to get the CSS as a string (not injected styles).
+
+```typescript
+{
+  name: 'raw-css-as-string',
+  enforce: 'pre',
+  // ... converts .raw.css imports to ?raw queries
+}
+```
+
+Without this: CSS loading errors from `@jupyterlab/apputils-extension`.
+
+#### 3. **fix-text-query Plugin** ⚠️ Required
+
+Jupyter Lite uses `?text` imports for service workers. Vite expects `?raw` instead.
+
+```typescript
+{
+  name: 'fix-text-query',
+  enforce: 'pre',
+  // ... converts ?text to ?raw
+}
+```
+
+Without this: Service worker loading failures.
+
+#### 4. **Tilde Alias Resolution** ⚠️ Required
+
+JupyterLab CSS uses webpack-style `~` prefix for npm imports (e.g., `~react-toastify`).
+
+```typescript
+resolve: {
+  alias: [
+    {
+      find: /^~(.*)$/,
+      replacement: '$1',
+    },
+  ],
+}
+```
+
+Without this: CSS import errors like `Cannot resolve ~react-toastify`.
+
+#### 5. **Global Definitions** ⚠️ Required
+
+Jupyter components expect specific globals that may not exist in Vite's environment.
+
+```typescript
+define: {
+  global: 'globalThis',
+  __webpack_public_path__: '""',
+}
+```
+
+Without this: Runtime errors about undefined `global` or `__webpack_public_path__`.
+
+#### 6. **Asset Handling** 🔧 Important
+
+Handle special file types like Python wheels and raw CSS files.
+
+```typescript
+assetsInclude: ['**/*.whl', '**/*.raw.css'],
+optimizeDeps: {
+  esbuildOptions: {
+    loader: { '.whl': 'text' },
+  },
+}
+```
+
+## HTML Setup
+
+Add these scripts to your `index.html` **before** loading your app:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jupyter React Vite</title>
+
+    <!-- Required for IPyWidgets -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script type="module">
+      globalThis.__webpack_public_path__ = '';
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+```
+
+:::warning IPyWidgets Requirement
+**RequireJS** is essential for IPyWidgets to load widget modules dynamically. Without it, custom widgets won't render.
+:::
+
+## Common Issues and Solutions
+
+### Module Resolution Errors
+
+**Problem:** `Cannot find module '@jupyterlab/...'`
+
+**Solution:** Ensure `vite-plugin-treat-umd-as-commonjs` is installed and configured.
+
+### CSS Import Errors
+
+**Problem:** `Cannot resolve ~react-toastify` or similar CSS imports
+
+**Solution:** Add the tilde alias in `resolve.alias` configuration.
+
+### Service Worker Errors
+
+**Problem:** `Cannot load service-worker?text`
+
+**Solution:** Add the `fix-text-query` plugin.
+
+### IPyWidgets Not Rendering
+
+**Problem:** Custom widgets show as "Loading widget..." forever
+
+**Solution:** Add RequireJS script in your HTML.
+
+### Production Build Fails
+
+**Problem:** Build succeeds but runtime errors in production
+
+**Solution:** Check that all plugins have `enforce: 'pre'` and verify global definitions.
+
+## Development Workflow
+
+```bash
+# Development server with HMR
+npm run dev
+
+# Production build
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+## Example Application
+
+```tsx
+import { JupyterReactTheme, Jupyter, Cell } from '@datalayer/jupyter-react';
+
+function App() {
+  return (
+    <JupyterReactTheme>
+      <Jupyter startDefaultKernel={true}>
+        <Cell source="print('Hello from Jupyter!')" />
+      </Jupyter>
+    </JupyterReactTheme>
+  );
+}
+
+export default App;
+```
+
+## Performance Optimization
+
+### Code Splitting
+
+Vite automatically splits vendor code. For Jupyter components:
+
+```typescript
+build: {
+  rollupOptions: {
+    output: {
+      manualChunks: {
+        'jupyter-core': ['@jupyterlab/services', '@jupyterlab/coreutils'],
+        'jupyter-ui': ['@datalayer/jupyter-react'],
+      },
+    },
+  },
+}
+```
+
+### Tree Shaking
+
+Import only what you need:
+
+```typescript
+// ✅ Good - tree-shakeable
+import { Cell, Notebook } from '@datalayer/jupyter-react';
+
+// ❌ Bad - imports everything
+import * as JupyterReact from '@datalayer/jupyter-react';
+```
+
+## Troubleshooting Checklist
+
+Before asking for help, verify:
+
+- [ ] `vite-plugin-treat-umd-as-commonjs` is installed and in plugins array
+- [ ] All three custom plugins (`raw-css-as-string`, `fix-text-query`) are configured with `enforce: 'pre'`
+- [ ] Tilde alias is configured in `resolve.alias`
+- [ ] Global definitions (`global`, `__webpack_public_path__`) are set
+- [ ] RequireJS is loaded in HTML before your app
+- [ ] React 18.3.1+ is installed (not 19.x which has breaking changes)
+
+## See Also
+
+- [Next.js Integration](../next-js) - For server-side rendering
+- [Docusaurus Integration](../docusaurus) - For documentation sites
+- [Embed Package](../../integrations/embed) - For simple HTML embedding
+- [Vite Documentation](https://vitejs.dev) - Official Vite docs

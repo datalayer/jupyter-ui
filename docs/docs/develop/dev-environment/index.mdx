@@ -1,10 +1,37 @@
 # Development Environment
 
+Choose the way you want to develop Jupyter UI:
+
+1. [With Conda](/develop/dev-environment/conda)
+1. [With VS Code Devcontainers](/develop/dev-environment/devcontainers)
+
+Once you have applied the steps described in one of the above 2 options, you are ready to develop following the next steps.
+
+```bash
+# Install the dependencies. This will take some time, be patient. 👍
+npm install
+```
+
+```bash
+# Build the source code. This will also take some time, be also patient. 🙂
+npm run build
+```
+
+If you just want to develop the core package `@datalayer/jupyter-react` of the repository, go to the sub folder and work there.
+
+```bash
+cd packages/react
+npm run build
+```
+
 :::caution
 
-🚨 Only npm is supported - yarn, pnpm... may work, or not...
+Only npm is supported - yarn, pnpm... may work, or not...
 
-For yarn, Create a `.yarnrc.yml` file in the root of your project to use `node_modules`.
+<br />
+If you want to use yarn, create a `.yarnrc.yml` file in the root of your project
+to use `node_modules`.
+<br />
 
 ```yaml
 enableImmutableInstalls: false
@@ -27,27 +54,3 @@ packageExtensions:
 ```
 
 :::
-
-Choose the way you want to develop Jupyter UI:
-
-1. [With Conda](/docs/develop/dev-environment/conda)
-1. [With VS Code Devcontainers](/docs/develop/dev-environment/devcontainers)
-
-Once you have applied the steps described in one of the above 2 options, you are ready to develop following the next steps.
-
-```bash
-# Install the dependencies. This will take some time, be patient. 👍
-npm install
-```
-
-```bash
-# Build the source code. This will also take some time, be also patient. 🙂
-npm run build
-```
-
-If you just want to develop the core package `@datalayer/jupyter-react` of the repository, go to the sub folder and work there.
-
-```bash
-cd packages/react
-npm run build
-```

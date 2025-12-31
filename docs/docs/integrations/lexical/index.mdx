@@ -1,0 +1,193 @@
+---
+description: Jupyter Lexical - Rich document editor with executable Jupyter cells
+---
+
+import ModalImage from 'react-modal-image';
+
+# 🪐 📝 Jupyter Lexical
+
+`@datalayer/jupyter-lexical` provides a rich document editor built on [Lexical](https://lexical.dev/) that integrates executable Jupyter cells directly into your documents. It combines the power of a modern WYSIWYG editor with Jupyter's computational capabilities.
+
+## Overview
+
+Jupyter Lexical allows you to create interactive documents that blend rich text, markdown, and executable code cells. It's perfect for:
+
+- **Technical Documentation** - Write documentation with live, executable examples
+- **Educational Content** - Create interactive tutorials and courses
+- **Reports & Dashboards** - Build dynamic reports with embedded computations
+- **Literate Programming** - Mix prose and code in a single document
+
+## Installation
+
+```bash
+npm install @datalayer/jupyter-lexical
+# or
+yarn add @datalayer/jupyter-lexical
+```
+
+## Quick Start
+
+```jsx
+import { LexicalEditor, JupyterCellNode } from '@datalayer/jupyter-lexical';
+
+function App() {
+  return (
+    <LexicalEditor
+      jupyterServerUrl="http://localhost:8888"
+      jupyterServerToken="your-token"
+    />
+  );
+}
+```
+
+## Features
+
+### Rich Text Editing
+
+- **WYSIWYG Editing** - Full rich text editing with formatting toolbar
+- **Markdown Support** - Write in markdown with live preview
+- **Code Blocks** - Syntax-highlighted code blocks for any language
+- **Tables** - Create and edit tables
+- **Lists** - Ordered and unordered lists with nesting
+- **Images & Media** - Embed images and media content
+
+### Jupyter Integration
+
+- **Executable Cells** - Run Python, Julia, R code directly in the document
+- **Output Display** - Rich output rendering (text, images, HTML, plots)
+- **Kernel Management** - Connect to local or remote Jupyter kernels
+- **IPyWidgets** - Interactive widgets support
+- **Cell Toolbar** - Run, clear, and manage individual cells
+
+### Document Features
+
+- **Export** - Export to Jupyter notebook (.ipynb), Markdown, HTML
+- **Import** - Import existing Jupyter notebooks
+- **Collaboration** - Real-time collaborative editing (coming soon)
+- **Theming** - Light and dark theme support
+
+## Components
+
+### LexicalEditor
+
+The main editor component:
+
+```jsx
+<LexicalEditor
+  // Jupyter server configuration
+  jupyterServerUrl="http://localhost:8888"
+  jupyterServerToken="your-token"
+  // Editor options
+  initialContent={content}
+  readOnly={false}
+  theme="light"
+  // Callbacks
+  onChange={editorState => console.log(editorState)}
+  onSave={content => saveDocument(content)}
+/>
+```
+
+### JupyterCellNode
+
+A custom Lexical node for executable Jupyter cells:
+
+```jsx
+import { $createJupyterCellNode } from '@datalayer/jupyter-lexical';
+
+// In your Lexical editor command
+editor.update(() => {
+  const cellNode = $createJupyterCellNode({
+    source: 'print("Hello, World!")',
+    language: 'python',
+  });
+  // Insert the node
+});
+```
+
+### Plugins
+
+Jupyter Lexical provides several plugins:
+
+| Plugin                | Description              |
+| --------------------- | ------------------------ |
+| `JupyterPlugin`       | Core Jupyter integration |
+| `ToolbarPlugin`       | Formatting toolbar       |
+| `CodeHighlightPlugin` | Syntax highlighting      |
+| `MarkdownPlugin`      | Markdown shortcuts       |
+| `TablePlugin`         | Table editing            |
+
+## Python Package
+
+Jupyter Lexical also ships as a Python package for Jupyter Server integration:
+
+```bash
+pip install jupyter-lexical
+```
+
+Start the Lexical editor server:
+
+```bash
+jupyter lexical
+```
+
+Access at `http://localhost:8888/jupyter_lexical/`
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────┐
+│              Lexical Editor                 │
+│  ┌─────────────────────────────────────┐   │
+│  │         Rich Text Nodes             │   │
+│  │  (Paragraphs, Headings, Lists...)   │   │
+│  └─────────────────────────────────────┘   │
+│  ┌─────────────────────────────────────┐   │
+│  │       JupyterCellNode               │   │
+│  │  ┌─────────────────────────────┐   │   │
+│  │  │    @datalayer/jupyter-react │   │   │
+│  │  │         Cell Component      │   │   │
+│  │  └─────────────────────────────┘   │   │
+│  └─────────────────────────────────────┘   │
+└─────────────────────────────────────────────┘
+                     │
+                     ▼
+            Jupyter Server / Kernel
+```
+
+## Examples
+
+### Basic Document with Code Cell
+
+```jsx
+import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import {
+  LexicalEditor,
+  JupyterPlugin,
+  initialConfig,
+} from '@datalayer/jupyter-lexical';
+
+function MyDocument() {
+  return (
+    <LexicalComposer initialConfig={initialConfig}>
+      <LexicalEditor />
+      <JupyterPlugin serverUrl="http://localhost:8888" token="your-token" />
+    </LexicalComposer>
+  );
+}
+```
+
+### Converting Notebook to Lexical
+
+```jsx
+import { notebookToLexical } from '@datalayer/jupyter-lexical';
+
+// Load a notebook and convert to Lexical format
+const notebook = await fetch('/api/notebooks/demo.ipynb').then(r => r.json());
+const lexicalState = notebookToLexical(notebook);
+```
+
+## Related
+
+- [Lexical](https://lexical.dev/) - The underlying editor framework
+- [@datalayer/jupyter-react](/components) - Core Jupyter React components
+- [JupyterLab](https://jupyterlab.readthedocs.io/) - The full Jupyter IDE

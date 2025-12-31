@@ -1,0 +1,308 @@
+<!--
+  ~ Copyright (c) 2021-2023 Datalayer, Inc.
+  ~
+  ~ MIT License
+-->
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🪐 🌐 Jupyter Embed - ESM Build (Chunked)</title>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+          Cantarell, sans-serif;
+        max-width: 1200px;
+        margin: 0;
+        padding: 20px;
+        background: radial-gradient(
+          circle at top,
+          #f4faff 0,
+          #e3f3ff 35%,
+          #e9f7f1 75%,
+          #ffffff 100%
+        );
+        min-height: 100vh;
+      }
+      h1 {
+        color: #59595c;
+        border-bottom: 2px solid #16a085;
+        padding-bottom: 10px;
+      }
+      h2 {
+        color: #59595c;
+        margin-top: 40px;
+      }
+      .info-box {
+        background: #e8f6f3;
+        border: 1px solid #16a085;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      .info-box h3 {
+        color: #117a65;
+        margin-top: 0;
+      }
+      .example {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 20px 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #1abc9c;
+      }
+      .example-title {
+        font-weight: bold;
+        color: #117a65;
+        margin-bottom: 10px;
+      }
+      .example-description {
+        color: #59595c;
+        margin-bottom: 15px;
+        font-size: 14px;
+      }
+      pre {
+        background: #f8f8f8;
+        padding: 15px;
+        border-radius: 4px;
+        overflow-x: auto;
+        font-size: 13px;
+        border-left: 3px solid #16a085;
+      }
+      code {
+        font-family: 'Fira Code', 'Monaco', 'Menlo', monospace;
+      }
+      a {
+        color: #117a65;
+      }
+      a:hover {
+        color: #16a085;
+      }
+      .chunk-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 10px;
+        margin: 15px 0;
+      }
+      .chunk-item {
+        background: #f8f8f8;
+        padding: 10px;
+        border-radius: 4px;
+        font-size: 13px;
+      }
+      .chunk-name {
+        font-weight: bold;
+        color: #117a65;
+      }
+      .chunk-size {
+        color: #666;
+      }
+      /* Hide uninitialized embeds to prevent flash of unstyled content */
+      [data-jupyter-embed]:not([data-jupyter-initialized]) {
+        visibility: hidden;
+        min-height: 100px;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      "
+    >
+      <a href="https://datalayer.ai" target="_blank" rel="noopener noreferrer">
+        <img
+          src="https://assets.datalayer.tech/datalayer-25.svg"
+          alt="Datalayer"
+          height="28"
+        />
+      </a>
+      <a
+        href="https://github.com/sponsors/datalayer"
+        target="_blank"
+        rel="noopener noreferrer"
+        style="
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          background: #f6f0ff;
+          color: #8957e5;
+          padding: 6px 12px;
+          border-radius: 6px;
+          font-size: 13px;
+          font-weight: 500;
+          text-decoration: none;
+          transition: background 0.2s;
+        "
+      >
+        ❤️ Sponsor
+      </a>
+    </div>
+
+    <h1>🪐 Jupyter Embed - ESM Build (Chunked)</h1>
+
+    <div class="info-box">
+      <h3>📦 ES Module Build with Vendor Chunking</h3>
+      <p>
+        This example uses the ESM build with automatic vendor chunking. The
+        browser loads chunks on demand and caches them independently, improving
+        load times for repeat visitors.
+      </p>
+
+      <h4>Chunk Distribution:</h4>
+      <div class="chunk-list">
+        <div class="chunk-item">
+          <span class="chunk-name">vendor-react</span><br />
+          <span class="chunk-size">822 KB (177 KB gzip)</span>
+        </div>
+        <div class="chunk-item">
+          <span class="chunk-name">vendor-codemirror</span><br />
+          <span class="chunk-size">1.7 MB (579 KB gzip)</span>
+        </div>
+        <div class="chunk-item">
+          <span class="chunk-name">vendor-jupyter-core</span><br />
+          <span class="chunk-size">1.2 MB (300 KB gzip)</span>
+        </div>
+        <div class="chunk-item">
+          <span class="chunk-name">vendor-mathjax</span><br />
+          <span class="chunk-size">864 KB (203 KB gzip)</span>
+        </div>
+        <div class="chunk-item">
+          <span class="chunk-name">vendor-xterm</span><br />
+          <span class="chunk-size">489 KB (119 KB gzip)</span>
+        </div>
+        <div class="chunk-item">
+          <span class="chunk-name">vendor-lumino</span><br />
+          <span class="chunk-size">200 KB (49 KB gzip)</span>
+        </div>
+      </div>
+
+      <h4>Benefits:</h4>
+      <ul>
+        <li>
+          <strong>Independent caching:</strong> Vendor chunks rarely change and
+          are cached separately
+        </li>
+        <li>
+          <strong>Parallel loading:</strong> Browser can load multiple chunks
+          simultaneously
+        </li>
+        <li>
+          <strong>Faster updates:</strong> Only changed code needs to be
+          re-downloaded
+        </li>
+      </ul>
+    </div>
+
+    <h2>Example: Code Cell</h2>
+
+    <div class="example">
+      <div class="example-title">Interactive Python Cell</div>
+      <div class="example-description">
+        A simple Python cell that executes on the server.
+      </div>
+
+      <div
+        data-jupyter-embed="cell"
+        data-jupyter-code="import sys&#10;print(f'Python {sys.version}')"
+        data-jupyter-height="200px"
+        data-jupyter-auto-execute="true"
+        data-jupyter-show-toolbar="true"
+      ></div>
+    </div>
+
+    <h2>Example: Output Only</h2>
+
+    <div class="example">
+      <div class="example-title">Static Output</div>
+      <div class="example-description">
+        Display output from code execution without showing the code editor.
+      </div>
+
+      <div
+        data-jupyter-embed="output"
+        data-jupyter-code="import matplotlib.pyplot as plt&#10;import numpy as np&#10;&#10;fig = plt.figure(figsize=(8, 4))&#10;x = np.linspace(0, 10, 100)&#10;plt.plot(x, np.sin(x), label='sin(x)')&#10;plt.plot(x, np.cos(x), label='cos(x)')&#10;plt.legend()&#10;plt.title('Trigonometric Functions')&#10;plt.grid(True, alpha=0.3)&#10;plt.show()"
+        data-jupyter-height="350px"
+        data-jupyter-auto-run="true"
+      ></div>
+    </div>
+
+    <h2>Example: Terminal</h2>
+
+    <div class="example">
+      <div class="example-title">Interactive Terminal</div>
+      <div class="example-description">
+        A full terminal session connected to the server.
+      </div>
+
+      <div
+        data-jupyter-embed="terminal"
+        data-jupyter-height="300px"
+        data-jupyter-show-toolbar="false"
+      ></div>
+    </div>
+
+    <h2>Usage</h2>
+
+    <div class="example">
+      <div class="example-title">ESM Script Tag</div>
+      <div class="example-description">
+        Use <code>type="module"</code> to load the ESM build. The browser
+        automatically loads required chunks.
+      </div>
+
+      <pre><code>&lt;!-- Configuration --&gt;
+&lt;script type="application/json" data-jupyter-embed-config&gt;
+{
+  "serverUrl": "https://oss.datalayer.run/api/jupyter-server",
+  "token": "your-token-here",
+  "defaultKernel": "python3"
+}
+&lt;/script&gt;
+
+&lt;!-- ESM Build (chunks loaded automatically) --&gt;
+&lt;script type="module" src="jupyter-embed.esm.js"&gt;&lt;/script&gt;</code></pre>
+    </div>
+
+    <!-- Load the Jupyter Embed script -->
+    <!-- Configuration using hosted OSS Jupyter server -->
+    <script type="application/json" data-jupyter-embed-config>
+      {
+        "serverUrl": "https://oss.datalayer.run/api/jupyter-server",
+        "token": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6",
+        "defaultKernel": "python3",
+        "lazyLoad": false,
+        "theme": "light"
+      }
+    </script>
+
+    <!-- Use the ESM build with vendor chunking -->
+    <script type="module" src="jupyter-embed.esm.js"></script>
+
+    <footer
+      style="
+        margin-top: 60px;
+        padding-top: 20px;
+        border-top: 1px solid #ddd;
+        color: #666;
+        font-size: 14px;
+      "
+    >
+      <p>
+        <strong>@datalayer/jupyter-embed</strong> (ESM Build) - Part of
+        <a href="https://github.com/datalayer/jupyter-ui">Jupyter UI</a> by
+        <a href="https://datalayer.io">Datalayer</a>
+      </p>
+      <p style="font-size: 12px; color: #999">
+        Open DevTools Network tab to see chunk loading in action.
+      </p>
+    </footer>
+  </body>
+</html>

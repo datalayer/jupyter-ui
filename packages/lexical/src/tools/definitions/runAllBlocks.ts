@@ -11,7 +11,7 @@
  */
 
 import type { ToolDefinition } from '../core';
-import { zodToToolParameters } from '@datalayer/jupyter-react/lib/tools/core/zodUtils';
+import { zodToToolParameters } from '@datalayer/jupyter-react';
 import { runAllBlocksParamsSchema } from '../schemas/runAllBlocks';
 
 /**

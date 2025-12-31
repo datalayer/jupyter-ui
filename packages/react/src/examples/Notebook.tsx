@@ -48,14 +48,6 @@ const NotebookExample = () => {
             serviceManager={serviceManager}
             height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
             extensions={extensions}
-            /*
-            collaborationServer={{
-              baseURL: 'https://prod1.datalayer.run',
-              token: '',
-              documentName: '',
-              type: 'datalayer'
-            }}
-            */
           />
         </>
       )}

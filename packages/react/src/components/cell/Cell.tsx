@@ -4,9 +4,10 @@
  * MIT License
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { CodeCell, MarkdownCell } from '@jupyterlab/cells';
 import { IOutput } from '@jupyterlab/nbformat';
+import { Spinner } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { Kernel } from '../../jupyter/kernel/Kernel';
 import { newUuid } from '../../utils';
@@ -61,6 +62,8 @@ export const Cell = ({
   const [id] = useState(providedId || newUuid());
   const [adapter, setAdapter] = useState<CellAdapter>();
   const cellsStore = useCellsStore();
+  // Use refs to prevent multiple adapter creations
+  const adapterCreatingRef = useRef(false);
   const handleCellInitEvents = (adapter: CellAdapter) => {
     adapter.cell.model.contentChanged.connect((cellModel, _) => {
       cellsStore.setSource(id, cellModel.sharedModel.getSource());
@@ -86,8 +89,10 @@ export const Cell = ({
     });
   };
   useEffect(() => {
-    if (!adapter) {
-      kernel?.ready.then(() => {
+    // Guard against multiple adapter creations using a ref
+    if (!adapter && !adapterCreatingRef.current && kernel) {
+      adapterCreatingRef.current = true;
+      kernel.ready.then(() => {
         const adapter = new CellAdapter({
           id,
           type,
@@ -158,7 +163,9 @@ export const Cell = ({
       <Lumino>{adapter.panel}</Lumino>
     </Box>
   ) : (
-    <Box>Loading Jupyter Cell...</Box>
+    <Box display="flex" justifyContent="center" alignItems="center" p={4}>
+      <Spinner size="medium" />
+    </Box>
   );
 };
 

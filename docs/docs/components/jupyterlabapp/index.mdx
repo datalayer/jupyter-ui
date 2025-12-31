@@ -1,0 +1,186 @@
+---
+description: The JupyterLabApp component - Full JupyterLab as a React component.
+---
+
+# 🪐 JupyterLabApp Component
+
+The `JupyterLabApp` component embeds a complete JupyterLab application inside your React application. This gives you access to the full JupyterLab interface including the file browser, notebook editor, terminal, and all JupyterLab extensions.
+
+## Overview
+
+Unlike other Jupyter UI components that provide individual pieces of functionality, `JupyterLabApp` renders the entire JupyterLab application. This is useful when you need:
+
+- Full JupyterLab UI within your application
+- Access to JupyterLab's plugin system
+- All JupyterLab features without building custom UI
+
+## Installation
+
+```bash
+npm install @datalayer/jupyter-react
+# or
+yarn add @datalayer/jupyter-react
+```
+
+## Basic Usage
+
+```tsx
+import { JupyterLabApp, JupyterReactTheme } from '@datalayer/jupyter-react';
+
+function App() {
+  return (
+    <JupyterReactTheme>
+      <JupyterLabApp hostId="jupyterlab-app" height="100vh" />
+    </JupyterReactTheme>
+  );
+}
+```
+
+## Props
+
+| Prop                   | Type                             | Default            | Description                                         |
+| ---------------------- | -------------------------------- | ------------------ | --------------------------------------------------- |
+| `hostId`               | `string`                         | `'app-example-id'` | DOM element ID for the JupyterLab container         |
+| `height`               | `string \| number`               | `'100vh'`          | Height of the JupyterLab container                  |
+| `width`                | `string \| number`               | `'100%'`           | Width of the JupyterLab container                   |
+| `position`             | `string`                         | `'relative'`       | CSS position property                               |
+| `theme`                | `'light' \| 'dark'`              | `'light'`          | Color theme for JupyterLab                          |
+| `headless`             | `boolean`                        | `false`            | Run JupyterLab without UI (for programmatic access) |
+| `nosplash`             | `boolean`                        | `false`            | Disable the splash screen                           |
+| `devMode`              | `boolean`                        | `false`            | Enable development mode                             |
+| `serverless`           | `boolean`                        | `false`            | Run without a Jupyter server                        |
+| `startDefaultKernel`   | `boolean`                        | `false`            | Start a default kernel on load                      |
+| `serviceManager`       | `ServiceManager`                 | -                  | Custom JupyterLab service manager                   |
+| `plugins`              | `JupyterLab.IPluginModule[]`     | `[]`               | Additional JupyterLab plugins to load               |
+| `pluginPromises`       | `Promise<IPluginModule>[]`       | Core plugins       | Async plugin modules to load                        |
+| `disabledPlugins`      | `string[]`                       | `[]`               | Plugin IDs to disable                               |
+| `mimeRenderers`        | `IRenderMime.IExtensionModule[]` | `[]`               | Custom MIME renderers                               |
+| `mimeRendererPromises` | `Promise<IExtensionModule>[]`    | Core renderers     | Async MIME renderer modules                         |
+| `onJupyterLab`         | `(adapter) => void`              | -                  | Callback when JupyterLab is ready                   |
+| `onPlugin`             | `(plugin) => void`               | -                  | Callback when a specific plugin is loaded           |
+| `pluginId`             | `string`                         | -                  | Plugin ID to pass to `onPlugin`                     |
+| `PluginType`           | `any`                            | -                  | Type of plugin for `onPlugin`                       |
+
+## Examples
+
+### With Custom Dimensions
+
+```tsx
+<JupyterLabApp
+  hostId="my-jupyterlab"
+  height="600px"
+  width="100%"
+  position="relative"
+/>
+```
+
+### Dark Theme
+
+```tsx
+<JupyterLabApp hostId="jupyterlab-dark" theme="dark" height="100vh" />
+```
+
+### Accessing JupyterLab Adapter
+
+The `onJupyterLab` callback gives you access to the `JupyterLabAppAdapter` which provides programmatic control:
+
+```tsx
+import { JupyterLabApp, JupyterLabAppAdapter } from '@datalayer/jupyter-react';
+
+function App() {
+  const handleJupyterLab = (adapter: JupyterLabAppAdapter) => {
+    // Access JupyterLab services
+    const commands = adapter.commands;
+    const shell = adapter.shell;
+
+    // Execute commands
+    commands.execute('filebrowser:toggle-main');
+
+    // Access registered services
+    const themeManager = adapter.service(
+      '@jupyterlab/apputils-extension:themes',
+    );
+  };
+
+  return (
+    <JupyterLabApp hostId="jupyterlab-app" onJupyterLab={handleJupyterLab} />
+  );
+}
+```
+
+### Headless Mode
+
+Run JupyterLab without the UI for programmatic operations:
+
+```tsx
+<JupyterLabApp
+  hostId="jupyterlab-headless"
+  headless={true}
+  onJupyterLab={adapter => {
+    // Use adapter for programmatic operations
+    // UI is hidden but services are available
+  }}
+/>
+```
+
+### Disabling Plugins
+
+```tsx
+<JupyterLabApp
+  hostId="jupyterlab-custom"
+  disabledPlugins={[
+    '@jupyterlab/terminal-extension:plugin',
+    '@jupyterlab/git:plugin',
+  ]}
+/>
+```
+
+### Custom Plugins
+
+```tsx
+import myPlugin from './myPlugin';
+
+<JupyterLabApp
+  hostId="jupyterlab-extended"
+  plugins={[myPlugin]}
+  pluginPromises={[import('@jupyterlab/git')]}
+/>;
+```
+
+## JupyterLabAppAdapter
+
+The adapter provides access to JupyterLab internals:
+
+| Property/Method        | Type                  | Description                                    |
+| ---------------------- | --------------------- | ---------------------------------------------- |
+| `jupyterLab`           | `JupyterLab`          | The JupyterLab application instance            |
+| `shell`                | `LabShell`            | The JupyterLab shell (main UI container)       |
+| `commands`             | `CommandRegistry`     | Command registry for executing actions         |
+| `docRegistry`          | `DocumentRegistry`    | Document type registry                         |
+| `ready`                | `Promise<void>`       | Promise that resolves when JupyterLab is ready |
+| `service(pluginId)`    | `(id: string) => any` | Get a registered service by plugin ID          |
+| `getNotebookTracker()` | `INotebookTracker`    | Get the notebook tracker                       |
+| `getNotebookPanel(id)` | `NotebookPanel`       | Get a notebook panel by ID                     |
+
+## Styling
+
+The component automatically includes JupyterLab CSS. You can customize styles:
+
+```css
+/* Target the JupyterLab shell */
+#jupyterlab-app .jp-LabShell {
+  /* Custom styles */
+}
+
+/* Target specific panels */
+#jupyterlab-app .jp-SideBar {
+  width: 250px;
+}
+```
+
+## Notes
+
+- The component creates a single JupyterLab instance per `hostId`
+- Multiple `JupyterLabApp` components require unique `hostId` values
+- Use `headless={true}` when you only need programmatic access to JupyterLab services
+- The component is memoized to prevent unnecessary re-renders

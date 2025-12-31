@@ -1,0 +1,48 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
+/* Base styles for Jupyter Embed containers */
+.jupyter-embed-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Ensure proper sizing */
+[data-jupyter-embed] {
+  display: block;
+  position: relative;
+}
+
+/* Loading state */
+[data-jupyter-embed][data-jupyter-initializing] {
+  min-height: 100px;
+}
+
+[data-jupyter-embed][data-jupyter-initializing]::after {
+  content: 'Loading Jupyter...';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #666;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+}
+
+/* Error state */
+[data-jupyter-embed][data-jupyter-error]::after {
+  content: 'Failed to load Jupyter component';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #d32f2f;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+}

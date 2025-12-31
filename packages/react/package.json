@@ -4,6 +4,72 @@
   "description": "Jupyter React - React.js components 100% compatible with Jupyter.",
   "license": "MIT",
   "main": "lib/index.js",
+  "module": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "import": "./lib/index.js",
+      "require": "./lib/index.js"
+    },
+    "./core": {
+      "types": "./lib/core.d.ts",
+      "import": "./lib/core.js",
+      "require": "./lib/core.js"
+    },
+    "./lazy": {
+      "types": "./lib/lazy-entry.d.ts",
+      "import": "./lib/lazy-entry.js",
+      "require": "./lib/lazy-entry.js"
+    },
+    "./cell": {
+      "types": "./lib/cell.d.ts",
+      "import": "./lib/cell.js",
+      "require": "./lib/cell.js"
+    },
+    "./notebook": {
+      "types": "./lib/notebook.d.ts",
+      "import": "./lib/notebook.js",
+      "require": "./lib/notebook.js"
+    },
+    "./output": {
+      "types": "./lib/output.d.ts",
+      "import": "./lib/output.js",
+      "require": "./lib/output.js"
+    },
+    "./terminal": {
+      "types": "./lib/terminal.d.ts",
+      "import": "./lib/terminal.js",
+      "require": "./lib/terminal.js"
+    },
+    "./console": {
+      "types": "./lib/console.d.ts",
+      "import": "./lib/console.js",
+      "require": "./lib/console.js"
+    },
+    "./viewer": {
+      "types": "./lib/viewer.d.ts",
+      "import": "./lib/viewer.js",
+      "require": "./lib/viewer.js"
+    },
+    "./jupyter": {
+      "types": "./lib/jupyter-context.d.ts",
+      "import": "./lib/jupyter-context.js",
+      "require": "./lib/jupyter-context.js"
+    },
+    "./theme": {
+      "types": "./lib/theme-entry.d.ts",
+      "import": "./lib/theme-entry.js",
+      "require": "./lib/theme-entry.js"
+    },
+    "./lite": {
+      "types": "./lib/lite-entry.d.ts",
+      "import": "./lib/lite-entry.js",
+      "require": "./lib/lite-entry.js"
+    },
+    "./style": "./style/index.js",
+    "./style/*": "./style/*"
+  },
   "files": [
     "lib/**/*.{css,d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
     "style/**/*.{css,js,eot,gif,html,jpg,json,png,svg,woff2,ttf}",

@@ -19,6 +19,9 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         # os: [ubuntu-latest, windows-latest, macos-latest]
+    env:
+      # Increase Node.js heap size for large builds (embed package bundles all deps)
+      NODE_OPTIONS: '--max-old-space-size=8192'
     steps:
       - name: Checkout
         uses: actions/checkout@v4

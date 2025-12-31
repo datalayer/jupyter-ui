@@ -28,11 +28,44 @@ The Jupyter(Lab) notebook is a tool that allows data scientist to analyse datase
 
 In terms of technical stack, the Jupyter(Lab) user interface is built on top of Lumino, which is an imperative way to build user interface and **can not** be consumed by industry standard declarative frameworks like React.js. As a user interface developer, if you want to create a custom data product on top of Jupyter, you have to stick to Lumino and carry-on the full notebook interface not tailored to your specific needs. This is not what you want. You just want to expose what you need, you want to develop with your favorite toolkit (like React.js) and you also want to integrate on a per-component basis the Jupyter functionality in your application.
 
-Although a developer can embed a React.js component into JupyterLab, the reverse is not possible: you can not embed JupyterLab into a React.js application. To solve that issue, Jupyter-React ships components to easily create a React.js data product compatible with the Jupyter ecosystem. Those components can be used in any React.js application, and also in static websites like Docusaurus, Next.js or Remix. They wrap underneath the JupyterLab code and allow developing React.js applications with code execution capability. State management is based on Redux, and Mobx is to be added.
+Although a developer can embed a React.js component into JupyterLab, the reverse is not possible: you can not embed JupyterLab into a React.js application. To solve that issue, Jupyter-React ships components to easily create a React.js data product compatible with the Jupyter ecosystem. Those components can be used in any React.js application, and also in static websites like Docusaurus, Next.js or Remix. They wrap underneath the JupyterLab code and allow developing React.js applications with code execution capability. State management is based on Zustand.
 
-<div align="center" style="text-align: center">
-  <img alt="Jupyter React Communication" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-communication.png" />
-</div>
+```mermaid
+flowchart LR
+    subgraph Host["Host React Application"]
+        HA[Components]
+    end
+
+    subgraph Zustand["Zustand Store"]
+        ZA[Actions]
+        ZS[State]
+    end
+
+    subgraph JupyterUI["Jupyter UI"]
+        JR[React Components]
+    end
+
+    subgraph JupyterLab["JupyterLab/Lumino"]
+        LC[Commands]
+        LS[Signals]
+        LW[Widgets]
+    end
+
+    subgraph Kernel["Jupyter Server"]
+        K[Kernel]
+    end
+
+    HA -->|"dispatch"| ZA
+    ZA -->|"proxy"| LC
+    LC -->|"execute"| LW
+    LW -->|"request"| K
+
+    K -->|"response"| LS
+    LS -->|"emit"| ZS
+    ZS -->|"subscribe"| HA
+
+    JR -.->|"wraps"| LW
+```
 
 IPyWidgets are supported (the Comm feature needs to be fixed). JupyterLite and PyScript support is on the roadmap. Autocompletion is also available.
 

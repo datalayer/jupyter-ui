@@ -1,6 +1,3 @@
-# Attic folder - excluded from formatting
-attic/
-
 # Dependencies
 node_modules/
 **/node_modules/
@@ -61,3 +58,7 @@ CHANGELOG.md
 # Generated documentation
 packages/lexical/docs/
 packages/react/docs/
+
+# Embd
+
+packages/embed/examples/

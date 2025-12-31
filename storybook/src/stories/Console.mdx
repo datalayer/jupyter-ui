@@ -60,7 +60,7 @@ the [JavaScript kernel](https://github.com/jupyterlite/jupyterlite/tree/main/py/
   source={{
     code: `<Jupyter
     startDefaultKernel={true}
-    lite={import('@datalayer/jupyter-react/lib/jupyter/lite/pyodide-kernel-extension')}
+    lite={import('@datalayer/jupyter-react/lite').then(m => m.javascriptKernelExtension)}
     defaultKernelName={'javascript'}
 >
     <Console />

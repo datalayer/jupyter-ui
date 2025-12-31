@@ -18,6 +18,9 @@ module.exports = {
   favicon: 'img/favicon.ico',
   organizationName: 'datalayer',
   projectName: 'Jupyter UI',
+  markdown: {
+    mermaid: true,
+  },
   plugins: [
     '@datalayer/jupyter-docusaurus-plugin',
     '@docusaurus/theme-live-codeblock',
@@ -49,12 +52,6 @@ module.exports = {
         src: 'img/datalayer/logo.svg',
       },
       items: [
-        {
-          type: 'doc',
-          docId: 'about/index',
-          position: 'left',
-          label: 'About',
-        },
         {
           type: 'doc',
           docId: 'develop/index',
@@ -189,13 +186,11 @@ module.exports = {
       '@docusaurus/preset-classic',
       {
         docs: {
+          routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/datalayer/jupyter-ui/edit/main',
         },
-        blog: {
-          showReadingTime: true,
-          editUrl: 'https://datalayer.blog',
-        },
+        blog: false,
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
         },
