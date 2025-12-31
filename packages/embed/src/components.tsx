@@ -7,12 +7,13 @@
 import React from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import {
-  Jupyter,
+  JupyterReactTheme,
   Cell,
   Notebook,
   Terminal,
   Console,
   Output,
+  useJupyter,
 } from '@datalayer/jupyter-react';
 import { getJupyterEmbedConfig } from './config';
 import {
@@ -25,27 +26,27 @@ import {
 } from './types';
 
 /**
- * Wrapper component that provides Jupyter context
+ * Hook to get Jupyter context from config
+ */
+const useJupyterEmbed = () => {
+  const config = getJupyterEmbedConfig();
+  return useJupyter({
+    jupyterServerUrl: config.serverUrl || '',
+    jupyterServerToken: config.token || '',
+    startDefaultKernel: config.autoStartKernel,
+    defaultKernelName: config.defaultKernel,
+  });
+};
+
+/**
+ * Wrapper component that provides Jupyter theme
  */
 interface IJupyterWrapperProps {
   children: React.ReactNode;
 }
 
 const JupyterWrapper: React.FC<IJupyterWrapperProps> = ({ children }) => {
-  const config = getJupyterEmbedConfig();
-
-  return (
-    <Jupyter
-      jupyterServerUrl={config.serverUrl || ''}
-      jupyterServerToken={config.token || ''}
-      startDefaultKernel={config.autoStartKernel}
-      defaultKernelName={config.defaultKernel}
-      collaborative={false}
-      terminals={true}
-    >
-      {children}
-    </Jupyter>
-  );
+  return <JupyterReactTheme>{children}</JupyterReactTheme>;
 };
 
 /**
@@ -55,18 +56,27 @@ interface ICellEmbedProps {
   options: ICellEmbedOptions;
 }
 
+const CellEmbedInner: React.FC<ICellEmbedProps> = ({ options }) => {
+  const { defaultKernel } = useJupyterEmbed();
+
+  return (
+    <div style={{ height: options.height || '200px' }}>
+      <Cell
+        id={options.id}
+        source={options.source || ''}
+        type={options.cellType || 'code'}
+        autoStart={options.autoExecute}
+        showToolbar={options.showToolbar}
+        kernel={defaultKernel}
+      />
+    </div>
+  );
+};
+
 const CellEmbed: React.FC<ICellEmbedProps> = ({ options }) => {
   return (
     <JupyterWrapper>
-      <div style={{ height: options.height || '200px' }}>
-        <Cell
-          id={options.id}
-          source={options.source || ''}
-          type={options.cellType || 'code'}
-          autoStart={options.autoExecute}
-          showToolbar={options.showToolbar}
-        />
-      </div>
+      <CellEmbedInner options={options} />
     </JupyterWrapper>
   );
 };
@@ -78,20 +88,33 @@ interface INotebookEmbedProps {
   options: INotebookEmbedOptions;
 }
 
-const NotebookEmbed: React.FC<INotebookEmbedProps> = ({ options }) => {
+const NotebookEmbedInner: React.FC<INotebookEmbedProps> = ({ options }) => {
+  const { serviceManager, defaultKernel } = useJupyterEmbed();
   const nbformat =
     typeof options.content === 'object' ? options.content : undefined;
 
+  if (!serviceManager) {
+    return <div>Loading Jupyter services...</div>;
+  }
+
+  return (
+    <div style={{ height: options.height || '500px' }}>
+      <Notebook
+        id={options.id || 'embedded-notebook'}
+        path={options.path}
+        nbformat={nbformat as any}
+        readonly={options.readonly}
+        serviceManager={serviceManager}
+        kernel={defaultKernel}
+      />
+    </div>
+  );
+};
+
+const NotebookEmbed: React.FC<INotebookEmbedProps> = ({ options }) => {
   return (
     <JupyterWrapper>
-      <div style={{ height: options.height || '500px' }}>
-        <Notebook
-          id={options.id || 'embedded-notebook'}
-          path={options.path}
-          nbformat={nbformat as any}
-          readonly={options.readonly}
-        />
-      </div>
+      <NotebookEmbedInner options={options} />
     </JupyterWrapper>
   );
 };
@@ -103,12 +126,20 @@ interface ITerminalEmbedProps {
   options: ITerminalEmbedOptions;
 }
 
+const TerminalEmbedInner: React.FC<ITerminalEmbedProps> = ({ options }) => {
+  useJupyterEmbed(); // Initialize connection
+
+  return (
+    <div style={{ height: options.height || '400px' }}>
+      <Terminal colormode={options.colorMode || options.theme || 'light'} />
+    </div>
+  );
+};
+
 const TerminalEmbed: React.FC<ITerminalEmbedProps> = ({ options }) => {
   return (
     <JupyterWrapper>
-      <div style={{ height: options.height || '400px' }}>
-        <Terminal colorMode={options.colorMode || options.theme || 'light'} />
-      </div>
+      <TerminalEmbedInner options={options} />
     </JupyterWrapper>
   );
 };
@@ -120,12 +151,20 @@ interface IConsoleEmbedProps {
   options: IConsoleEmbedOptions;
 }
 
+const ConsoleEmbedInner: React.FC<IConsoleEmbedProps> = ({ options }) => {
+  useJupyterEmbed(); // Initialize connection
+
+  return (
+    <div style={{ height: options.height || '400px' }}>
+      <Console />
+    </div>
+  );
+};
+
 const ConsoleEmbed: React.FC<IConsoleEmbedProps> = ({ options }) => {
   return (
     <JupyterWrapper>
-      <div style={{ height: options.height || '400px' }}>
-        <Console />
-      </div>
+      <ConsoleEmbedInner options={options} />
     </JupyterWrapper>
   );
 };
@@ -137,12 +176,20 @@ interface IOutputEmbedProps {
   options: IOutputEmbedOptions;
 }
 
+const OutputEmbedInner: React.FC<IOutputEmbedProps> = ({ options }) => {
+  const { defaultKernel } = useJupyterEmbed();
+
+  return (
+    <div style={{ height: options.height || 'auto' }}>
+      <Output outputs={options.outputs || []} kernel={defaultKernel} />
+    </div>
+  );
+};
+
 const OutputEmbed: React.FC<IOutputEmbedProps> = ({ options }) => {
   return (
     <JupyterWrapper>
-      <div style={{ height: options.height || 'auto' }}>
-        <Output outputs={options.outputs || []} />
-      </div>
+      <OutputEmbedInner options={options} />
     </JupyterWrapper>
   );
 };

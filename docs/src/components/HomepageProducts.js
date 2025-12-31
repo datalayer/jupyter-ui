@@ -20,9 +20,9 @@ const ProductList = [
     Svg: ReactJsSvg,
     description: (
       <>
-        <strong>@datalayer/jupyter-react</strong> provides Notebook, Cell, Terminal,
-        Console, Output, and File Browser components to build custom Jupyter UIs
-        with React.js.
+        <strong>@datalayer/jupyter-react</strong> provides Notebook, Cell,
+        Terminal, Console, Output, and File Browser components to build custom
+        Jupyter UIs with React.js.
       </>
     ),
   },
@@ -32,7 +32,12 @@ const ProductList = [
     description: (
       <>
         <strong>@datalayer/jupyter-lexical</strong> combines the{' '}
-        <a href="https://lexical.dev" target="_blank" rel="noreferrer" style={{ textDecoration: 'underline' }}>
+        <a
+          href="https://lexical.dev"
+          target="_blank"
+          rel="noreferrer"
+          style={{ textDecoration: 'underline' }}
+        >
           Lexical
         </a>{' '}
         rich text editor with executable Jupyter cells for literate programming.
@@ -45,7 +50,8 @@ const ProductList = [
     description: (
       <>
         <strong>@datalayer/jupyter-embed</strong> lets you add executable Python
-        to any website using simple HTML data attributes - no React knowledge required.
+        to any website using simple HTML data attributes - no React knowledge
+        required.
       </>
     ),
   },
@@ -54,8 +60,9 @@ const ProductList = [
     Svg: JupyterSvg,
     description: (
       <>
-        Built on top of JupyterLab internals. Connects to standard Jupyter servers
-        and supports kernels, IPyWidgets, and the full Jupyter ecosystem.
+        Built on top of JupyterLab internals. Connects to standard Jupyter
+        servers and supports kernels, IPyWidgets, and the full Jupyter
+        ecosystem.
       </>
     ),
   },
@@ -82,7 +89,8 @@ const ProductList = [
     Svg: OpenSourceSvg,
     description: (
       <>
-        MIT licensed and built on renowned open source libraries. View the code on{' '}
+        MIT licensed and built on renowned open source libraries. View the code
+        on{' '}
         <a
           href="https://github.com/datalayer/jupyter-ui"
           target="_blank"
@@ -90,7 +98,8 @@ const ProductList = [
           style={{ textDecoration: 'underline' }}
         >
           GitHub
-        </a>.
+        </a>
+        .
       </>
     ),
   },

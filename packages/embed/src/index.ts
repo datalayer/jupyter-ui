@@ -57,7 +57,7 @@ export {
 
 // Re-export useful things from jupyter-react for advanced usage
 export {
-  Jupyter,
+  JupyterReactTheme,
   Cell,
   Notebook,
   Terminal,

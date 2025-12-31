@@ -31,18 +31,18 @@ Add the script to your HTML page:
 
 ```html
 <script type="application/json" data-jupyter-embed-config>
-{
-  "serverUrl": "http://localhost:8888",
-  "token": "your-jupyter-token",
-  "defaultKernel": "python3"
-}
+  {
+    "serverUrl": "http://localhost:8888",
+    "token": "your-jupyter-token",
+    "defaultKernel": "python3"
+  }
 </script>
 ```
 
 Or via data attributes on the script tag:
 
 ```html
-<script 
+<script
   src="jupyter-embed.js"
   data-server-url="http://localhost:8888"
   data-token="your-token"
@@ -54,25 +54,19 @@ Or via data attributes on the script tag:
 ```html
 <!-- Code Cell -->
 <div data-jupyter-embed data-type="cell">
-  <code data-type="source-code">
-print("Hello, Jupyter!")
-  </code>
+  <code data-type="source-code"> print("Hello, Jupyter!") </code>
 </div>
 
 <!-- Notebook from file -->
-<div 
-  data-jupyter-embed 
+<div
+  data-jupyter-embed
   data-type="notebook"
   data-path="notebooks/demo.ipynb"
   data-height="500px"
 ></div>
 
 <!-- Terminal -->
-<div 
-  data-jupyter-embed 
-  data-type="terminal"
-  data-height="300px"
-></div>
+<div data-jupyter-embed data-type="terminal" data-height="300px"></div>
 ```
 
 ## Installation
@@ -85,7 +79,10 @@ print("Hello, Jupyter!")
 
 <!-- ES Module -->
 <script type="module">
-  import { configureJupyterEmbed, initJupyterEmbeds } from 'https://unpkg.com/@datalayer/jupyter-embed/dist/jupyter-embed.esm.js';
+  import {
+    configureJupyterEmbed,
+    initJupyterEmbeds,
+  } from 'https://unpkg.com/@datalayer/jupyter-embed/dist/jupyter-embed.esm.js';
 </script>
 ```
 
@@ -98,11 +95,14 @@ yarn add @datalayer/jupyter-embed
 ```
 
 ```javascript
-import { configureJupyterEmbed, initJupyterEmbeds } from '@datalayer/jupyter-embed';
+import {
+  configureJupyterEmbed,
+  initJupyterEmbeds,
+} from '@datalayer/jupyter-embed';
 
 configureJupyterEmbed({
   serverUrl: 'http://localhost:8888',
-  token: 'your-token'
+  token: 'your-token',
 });
 
 initJupyterEmbeds();
@@ -110,23 +110,23 @@ initJupyterEmbeds();
 
 ## Configuration Options
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `serverUrl` | string | `''` | Jupyter server URL |
-| `wsUrl` | string | derived | WebSocket URL (auto-derived from serverUrl) |
-| `token` | string | `''` | Authentication token |
-| `defaultKernel` | string | `'python3'` | Default kernel name |
-| `autoStartKernel` | boolean | `true` | Auto-start kernel |
-| `lazyLoad` | boolean | `true` | Lazy load components when visible |
-| `theme` | `'light'` \| `'dark'` | `'light'` | Theme |
-| `basePath` | string | `'/'` | Base path for Jupyter server |
+| Option            | Type                  | Default     | Description                                 |
+| ----------------- | --------------------- | ----------- | ------------------------------------------- |
+| `serverUrl`       | string                | `''`        | Jupyter server URL                          |
+| `wsUrl`           | string                | derived     | WebSocket URL (auto-derived from serverUrl) |
+| `token`           | string                | `''`        | Authentication token                        |
+| `defaultKernel`   | string                | `'python3'` | Default kernel name                         |
+| `autoStartKernel` | boolean               | `true`      | Auto-start kernel                           |
+| `lazyLoad`        | boolean               | `true`      | Lazy load components when visible           |
+| `theme`           | `'light'` \| `'dark'` | `'light'`   | Theme                                       |
+| `basePath`        | string                | `'/'`       | Base path for Jupyter server                |
 
 ## Component Types
 
 ### Code Cell
 
 ```html
-<div 
+<div
   data-jupyter-embed
   data-type="cell"
   data-cell-type="code"
@@ -135,14 +135,12 @@ initJupyterEmbeds();
   data-show-toolbar="true"
   data-kernel="python3"
 >
-  <code data-type="source-code">
-# Your Python code here
-print("Hello!")
-  </code>
+  <code data-type="source-code"> # Your Python code here print("Hello!") </code>
 </div>
 ```
 
 **Attributes:**
+
 - `data-cell-type`: `code` | `markdown` | `raw` (default: `code`)
 - `data-height`: CSS height value
 - `data-auto-execute`: Auto-run on load (default: `true`)
@@ -153,7 +151,7 @@ print("Hello!")
 
 ```html
 <!-- From server path -->
-<div 
+<div
   data-jupyter-embed
   data-type="notebook"
   data-path="path/to/notebook.ipynb"
@@ -163,7 +161,7 @@ print("Hello!")
 ></div>
 
 <!-- From URL -->
-<div 
+<div
   data-jupyter-embed
   data-type="notebook"
   data-url="https://example.com/notebook.ipynb"
@@ -185,7 +183,7 @@ print("Hello!")
 ### Terminal
 
 ```html
-<div 
+<div
   data-jupyter-embed
   data-type="terminal"
   data-height="300px"
@@ -197,15 +195,14 @@ print("Hello!")
 ### Console
 
 ```html
-<div 
+<div
   data-jupyter-embed
   data-type="console"
   data-height="400px"
   data-kernel="python3"
 >
   <code data-type="pre-execute-code">
-# Code to run on console start
-import numpy as np
+    # Code to run on console start import numpy as np
   </code>
 </div>
 ```
@@ -234,7 +231,7 @@ JupyterEmbed.configureJupyterEmbed({
   serverUrl: 'http://localhost:8888',
   token: 'your-token',
   defaultKernel: 'python3',
-  lazyLoad: true
+  lazyLoad: true,
 });
 
 // Initialize all embeds in page
@@ -248,7 +245,7 @@ const element = document.getElementById('my-embed');
 JupyterEmbed.renderEmbed(element, {
   type: 'cell',
   source: 'print("Hello")',
-  autoExecute: true
+  autoExecute: true,
 });
 
 // Unmount specific embed
@@ -263,21 +260,21 @@ JupyterEmbed.destroyJupyterEmbeds();
 For React applications, you can use the components directly:
 
 ```jsx
-import { 
-  JupyterWrapper, 
-  CellEmbed, 
-  NotebookEmbed 
+import {
+  JupyterWrapper,
+  CellEmbed,
+  NotebookEmbed,
 } from '@datalayer/jupyter-embed';
 
 function App() {
   return (
     <div>
-      <CellEmbed 
+      <CellEmbed
         options={{
           type: 'cell',
           source: 'print("Hello!")',
-          autoExecute: true
-        }} 
+          autoExecute: true,
+        }}
       />
     </div>
   );

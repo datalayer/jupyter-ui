@@ -29,7 +29,8 @@
   left: 50%;
   transform: translate(-50%, -50%);
   color: #666;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 14px;
 }
 
@@ -41,6 +42,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   color: #d32f2f;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 14px;
 }
