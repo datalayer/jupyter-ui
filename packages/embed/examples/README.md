@@ -72,16 +72,19 @@ The `index.html` file demonstrates:
 ## Troubleshooting
 
 **"Failed to connect to kernel"**
+
 - Ensure Jupyter server is running on port 8888
 - Check that the token matches (`test-secret`)
 - Verify CORS is enabled with `--NotebookApp.allow_origin='*'`
 
 **"Script not loading"**
+
 - Make sure you built the package: `npm run build`
 - Check that `../dist/jupyter-embed.js` exists
 - Look in browser console for detailed errors
 
 **"Cannot execute cells"**
+
 - Verify the kernel name is correct (default: `python3`)
 - Check browser console for kernel connection errors
 - Ensure the Jupyter server has the specified kernel installed
