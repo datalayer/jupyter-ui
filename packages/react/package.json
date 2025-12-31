@@ -67,6 +67,16 @@
       "import": "./lib/lite-entry.js",
       "require": "./lib/lite-entry.js"
     },
+    "./lite/pyodide-kernel-extension": {
+      "types": "./lib/jupyter/lite/pyodide-kernel-extension/index.d.ts",
+      "import": "./lib/jupyter/lite/pyodide-kernel-extension/index.js",
+      "require": "./lib/jupyter/lite/pyodide-kernel-extension/index.js"
+    },
+    "./lite/javascript-kernel-extension": {
+      "types": "./lib/jupyter/lite/javascript-kernel-extension/index.d.ts",
+      "import": "./lib/jupyter/lite/javascript-kernel-extension/index.js",
+      "require": "./lib/jupyter/lite/javascript-kernel-extension/index.js"
+    },
     "./style": "./style/index.js",
     "./style/*": "./style/*"
   },
