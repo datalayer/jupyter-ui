@@ -14,7 +14,7 @@ ENV_NAME=datalayer
 
 .SILENT: init install
 
-.PHONY: build publish
+.PHONY: build deploy
 
 help: ## display this help
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
@@ -37,7 +37,7 @@ build: ## build
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 	  npm run build )
 
-publish: build ## publish
+deploy: build ## deploy
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 	  aws s3 cp \
 		./build \
