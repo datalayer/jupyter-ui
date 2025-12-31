@@ -28,7 +28,4 @@ export * from './types';
 export * from './executor';
 
 // Import shared utilities from react package
-export {
-  type ToolConfig,
-  type ToolDefinition,
-} from '@datalayer/jupyter-react';
+export { type ToolConfig, type ToolDefinition } from '@datalayer/jupyter-react';
