@@ -1,0 +1,215 @@
+---
+description: Output component for displaying code execution results
+---
+
+# Output
+
+The `Output` component displays the results of code execution, supporting rich output types including text, HTML, images, plots, and IPyWidgets.
+
+## Overview
+
+The Output component is a versatile display area that renders execution results from Jupyter kernels. It can work standalone or be combined with an editor to create interactive code execution experiences.
+
+## Installation
+
+```bash
+npm install @datalayer/jupyter-react
+# or
+yarn add @datalayer/jupyter-react
+```
+
+## Basic Usage
+
+```tsx
+import { Output, Jupyter } from '@datalayer/jupyter-react';
+
+function App() {
+  return (
+    <Jupyter>
+      <Output code="print('Hello, World!')" autoRun={true} showEditor={true} />
+    </Jupyter>
+  );
+}
+```
+
+## Props
+
+| Prop                          | Type                         | Default         | Description                          |
+| ----------------------------- | ---------------------------- | --------------- | ------------------------------------ |
+| `code`                        | `string`                     | `''`            | The code to execute                  |
+| `autoRun`                     | `boolean`                    | `false`         | Automatically run code on mount      |
+| `showEditor`                  | `boolean`                    | `false`         | Show code editor above output        |
+| `showControl`                 | `boolean`                    | `true`          | Show run/stop control buttons        |
+| `showKernelProgressBar`       | `boolean`                    | `true`          | Show kernel execution progress       |
+| `outputs`                     | `IOutput[]`                  | Default message | Initial outputs to display           |
+| `kernel`                      | `Kernel`                     | Default kernel  | Specific kernel to use               |
+| `lumino`                      | `boolean`                    | `true`          | Use Lumino widget rendering          |
+| `disableRun`                  | `boolean`                    | `false`         | Disable code execution               |
+| `executeTrigger`              | `number`                     | `0`             | Trigger execution when changed       |
+| `clearTrigger`                | `number`                     | `0`             | Trigger output clear when changed    |
+| `toolbarPosition`             | `'up' \| 'middle' \| 'none'` | `'up'`          | Position of the toolbar              |
+| `suppressCodeExecutionErrors` | `boolean`                    | `false`         | Suppress error outputs               |
+| `codePre`                     | `string`                     | -               | Code to run before main code         |
+| `insertText`                  | `function`                   | -               | Function to insert text into editor  |
+| `onExecutionPhaseChanged`     | `function`                   | -               | Callback for execution phase changes |
+| `receipt`                     | `string`                     | -               | String to match for grade success    |
+
+## Examples
+
+### Display Pre-computed Outputs
+
+```tsx
+import { Output, Jupyter } from '@datalayer/jupyter-react';
+
+function PrecomputedOutput() {
+  const outputs = [
+    {
+      output_type: 'execute_result',
+      data: {
+        'text/html': ['<h2>Pre-computed Result</h2>'],
+      },
+      execution_count: 1,
+      metadata: {},
+    },
+  ];
+
+  return (
+    <Jupyter>
+      <Output outputs={outputs} showEditor={false} />
+    </Jupyter>
+  );
+}
+```
+
+### Interactive Code Editor with Output
+
+```tsx
+import { Output, Jupyter } from '@datalayer/jupyter-react';
+
+function InteractiveOutput() {
+  return (
+    <Jupyter>
+      <Output
+        code={`import matplotlib.pyplot as plt
+import numpy as np
+
+x = np.linspace(0, 10, 100)
+plt.plot(x, np.sin(x))
+plt.title('Sine Wave')
+plt.show()`}
+        showEditor={true}
+        showControl={true}
+        autoRun={false}
+      />
+    </Jupyter>
+  );
+}
+```
+
+### Programmatic Execution
+
+```tsx
+import { useState } from 'react';
+import { Output, Jupyter } from '@datalayer/jupyter-react';
+
+function ProgrammaticExecution() {
+  const [trigger, setTrigger] = useState(0);
+
+  return (
+    <Jupyter>
+      <button onClick={() => setTrigger(t => t + 1)}>Run Code</button>
+      <Output
+        code="print('Executed!')"
+        executeTrigger={trigger}
+        showEditor={false}
+      />
+    </Jupyter>
+  );
+}
+```
+
+### Execution Phase Tracking
+
+```tsx
+import { Output, Jupyter } from '@datalayer/jupyter-react';
+
+function TrackedOutput() {
+  const handlePhaseChange = phaseOutput => {
+    console.log('Phase:', phaseOutput.phase);
+    console.log('Output:', phaseOutput.output);
+  };
+
+  return (
+    <Jupyter>
+      <Output
+        code="for i in range(5): print(i)"
+        autoRun={true}
+        onExecutionPhaseChanged={handlePhaseChange}
+      />
+    </Jupyter>
+  );
+}
+```
+
+## Output Types Supported
+
+The Output component can render various Jupyter output types:
+
+- **Text/Plain**: Plain text output
+- **Text/HTML**: Rendered HTML content
+- **Image/PNG**: PNG images (matplotlib plots, etc.)
+- **Image/JPEG**: JPEG images
+- **Image/SVG+XML**: SVG graphics
+- **Application/JSON**: JSON data
+- **Application/vnd.jupyter.widget-view+json**: IPyWidgets
+- **Text/LaTeX**: Mathematical equations
+- **Text/Markdown**: Markdown content
+
+## State Management
+
+The Output component integrates with Zustand for state management:
+
+```tsx
+import { useOutputsStore } from '@datalayer/jupyter-react';
+
+function OutputController() {
+  const outputStore = useOutputsStore();
+
+  // Get adapter for an output
+  const adapter = outputStore.getAdapter('my-output-id');
+
+  // Execute code programmatically
+  adapter?.execute('print("Hello")');
+
+  // Get current outputs
+  const model = outputStore.getModel('my-output-id');
+
+  return null;
+}
+```
+
+## Styling
+
+The Output component uses JupyterLab's styling by default. You can customize it:
+
+```css
+.dla-Output-container {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.dla-Output-editor {
+  margin-bottom: 8px;
+}
+
+.jp-OutputArea-output {
+  /* Customize output area */
+}
+```
+
+## Related Components
+
+- [Cell](/components/cell) - Full cell with input and output
+- [Notebook](/components/notebook) - Collection of cells
+- [Console](/components/console) - REPL-style interface

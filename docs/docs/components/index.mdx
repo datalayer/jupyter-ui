@@ -1,9 +1,63 @@
 import DocCardList from '@theme/DocCardList';
 import ModalImage from 'react-modal-image';
 
-# Components
+# 🪐 ⚛️ Components
 
-As a React.js developer, you just write a few lines of code get a live notebook or live cell in your application.
+Jupyter UI provides a comprehensive set of React.js components for building interactive data applications. As a React.js developer, you just write a few lines of code to get a live notebook, cell, terminal, or any Jupyter component in your application.
+
+## Packages Overview
+
+Jupyter UI is organized into several packages:
+
+| Package                      | Description                                        | npm                                                                                                                         |
+| ---------------------------- | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `@datalayer/jupyter-react`   | Core React components for Jupyter                  | [![npm](https://img.shields.io/npm/v/@datalayer/jupyter-react)](https://www.npmjs.com/package/@datalayer/jupyter-react)     |
+| `@datalayer/jupyter-lexical` | Rich document editor with executable Jupyter cells | [![npm](https://img.shields.io/npm/v/@datalayer/jupyter-lexical)](https://www.npmjs.com/package/@datalayer/jupyter-lexical) |
+| `@datalayer/jupyter-embed`   | Drop-in embed script for any website               | [![npm](https://img.shields.io/npm/v/@datalayer/jupyter-embed)](https://www.npmjs.com/package/@datalayer/jupyter-embed)     |
+
+## @datalayer/jupyter-react Components
+
+The main package provides the following components:
+
+### Core Components
+
+| Component                        | Description                                          |
+| -------------------------------- | ---------------------------------------------------- |
+| [JupyterReactTheme](/themes)     | Theme provider for Jupyter configuration and styling |
+| [Cell](/components/cell)         | Single executable code or markdown cell              |
+| [Notebook](/components/notebook) | Full Jupyter notebook with all features              |
+| [Console](/components/console)   | Interactive REPL-style console                       |
+| [Terminal](/components/terminal) | Full terminal emulator                               |
+| [Output](/components/output)     | Display Jupyter outputs (text, images, HTML, etc.)   |
+
+### File & Navigation Components
+
+| Component                                | Description                               |
+| ---------------------------------------- | ----------------------------------------- |
+| [File Browser](/components/file-browser) | Browse and manage files on Jupyter server |
+| [File Manager](/components/file-manager) | Advanced file management interface        |
+| [Viewer](/components/viewer)             | Read-only notebook viewer                 |
+
+### Kernel Components
+
+| Component                    | Description                      |
+| ---------------------------- | -------------------------------- |
+| [Kernel](/components/kernel) | Kernel management and status     |
+| Kernel Selector              | Select from available kernels    |
+| Kernel Status                | Display kernel connection status |
+| Kernel Variables             | Inspect kernel variables         |
+| Kernel Logs                  | View kernel output logs          |
+
+### UI Components
+
+| Component                                    | Description                          |
+| -------------------------------------------- | ------------------------------------ |
+| [Button](/components/button)                 | Jupyter-styled buttons               |
+| [JupyterLab App](/components/jupyterlab-app) | Full JupyterLab as a React component |
+| Commands                                     | Command palette integration          |
+| Dialog                                       | Modal dialogs                        |
+| Settings                                     | Settings editor                      |
+| CodeMirror                                   | Code editor component                |
 
 <ModalImage
   small="https://jupyter-examples.datalayer.tech/jupyter-react-snippet.png"
@@ -11,7 +65,22 @@ As a React.js developer, you just write a few lines of code get a live notebook 
   alt="Jupyter UI Snippet"
 />
 
-Jupyter UI can be used in any React.js application with the `@datalayer/jupyter-react` npm package.
+## Quick Example
+
+```jsx
+import { Jupyter, Cell } from '@datalayer/jupyter-react';
+
+function App() {
+  return (
+    <Jupyter
+      jupyterServerUrl="http://localhost:8888"
+      jupyterServerToken="your-token"
+    >
+      <Cell source="print('Hello, Jupyter!')" />
+    </Jupyter>
+  );
+}
+```
 
 <ModalImage
   small="https://jupyter-examples.datalayer.tech/jupyter-react-notebook.png"
@@ -19,21 +88,26 @@ Jupyter UI can be used in any React.js application with the `@datalayer/jupyter-
   alt="Jupyter UI Notebook"
 />
 
+## Features
+
 :::note
 
 The Jupyter UI components support:
 
-- Predefined Zustand actions.
-- Everything is created in a single React tree to ensure Jupyter UI components can use any context created by the host application.
-- IPyWidgets and Panel interactive widgets are supported.
-- Collaborative RTC is also supported.
-- Plays nice with Primer React, Material-UI, Storybook, Docusaurus, Styled Components, Emotion.js... and many other standard libraries.
-- A React.js context for Authentication, Authorization and Theming.
-- Benefits from current and new JupyterLab development, eg edit mode navigation, colored-collapser, collaborative cursor.
-- Authentication via Jupyter tokens.
-- Theming.
-- Terminals.
+- **State Management**: Predefined Zustand actions for reactive state
+- **Single React Tree**: Components integrate into your application's React tree
+- **IPyWidgets**: Full support for interactive widgets
+- **Collaboration**: Real-time collaborative editing (RTC)
+- **Theming**: Works with Primer React, Material-UI, and custom themes
+- **In-Browser Kernels**: Pyodide and JupyterLite support
+- **Authentication**: Jupyter token-based authentication
+- **Terminals**: Full terminal emulator support
 
 :::
+
+## Related Packages
+
+- **[@datalayer/jupyter-lexical](/components/lexical)** - Rich document editor with Jupyter cells
+- **[@datalayer/jupyter-embed](/components/embed)** - Easy embedding for any website
 
 <DocCardList />

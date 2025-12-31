@@ -1,16 +1,36 @@
+---
+slug: /
+---
+
+import { StorybookView } from '@theme/StorybookView';
+
 import ModalImage from 'react-modal-image';
 
 # 🪐 ⚛️ About Jupyter UI
 
-Jupyter UI is a set of [React.js](https://reactjs.org) components that allow a Web application developer to build [Data Products and Data Platforms](https://datalayer.tech/docs/glossary) compatible with the [Jupyter](https://jupyter.org) ecosystem. The user interface delivers executable notebooks, cells, terminals, file browsers and allows the developer to manage a full integrated React tree instead of relying on iframes to display the Jupyter Notebooks.
-
 Jupyter(Lab) Notebook is a tool that allows Data Scientists to analyse datasets. However, it is not easy to create a custom user interface integrated in an existing application. Jupyter UI, [an open-source library](https://github.com/datalayer/jupyter-ui), fills that gap and provides components that a developer can easily integrate in any React.js application.
 
-We ensure React.js as a first-class citizen in the Jupyter:
+Jupyter UI is a set of [React.js](https://reactjs.org) components that allow a Web application developer to build [Data Products and Data Platforms](https://datalayer.tech/docs/glossary) compatible with the [Jupyter](https://jupyter.org) ecosystem. The user interface delivers executable notebooks, cells, terminals, file browsers, and rich text editors with code execution, allowing the developer to manage a full integrated React tree instead of relying on iframes to display the Jupyter Notebooks.
 
-- [Components](/docs/components): JupyterLab visual as React.js components
-- [Integrations](/docs/integrations): Integrate Jupyter in Docusaurus, Next.js...
-- [Themes](/docs/themes): Themes for your data analysis.
+<StorybookView story="components-notebook--default" />
+
+## Packages
+
+The Jupyter UI repository provides three main packages:
+
+| Package                        | npm                                                                                                                         | Description                                                        |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| **@datalayer/jupyter-react**   | [![npm](https://img.shields.io/npm/v/@datalayer/jupyter-react)](https://www.npmjs.com/package/@datalayer/jupyter-react)     | Core React components for Jupyter (Notebook, Cell, Terminal, etc.) |
+| **@datalayer/jupyter-lexical** | [![npm](https://img.shields.io/npm/v/@datalayer/jupyter-lexical)](https://www.npmjs.com/package/@datalayer/jupyter-lexical) | Lexical editor with executable Jupyter cells                       |
+| **@datalayer/jupyter-embed**   | [![npm](https://img.shields.io/npm/v/@datalayer/jupyter-embed)](https://www.npmjs.com/package/@datalayer/jupyter-embed)     | Easy embedding via HTML data attributes                            |
+
+We ensure React.js as a first-class citizen in the Jupyter ecosystem:
+
+- [Components](/components): JupyterLab visuals as React.js components
+- [Lexical](/components/lexical): Rich text editor with executable code
+- [Embed](/components/embed): Drop-in embedding for any website
+- [Integrations](/integrations): Integrate Jupyter in Docusaurus, Next.js...
+- [Themes](/themes): Themes for your data analysis
 
 ## Why?
 
@@ -40,16 +60,42 @@ To solve the above issues, Jupyter UI ships components to easily create a React.
 
 The Jupyter UI components expose JupyterLab visuals as React.js components and offers a bi-directional communication between React.js/Zustand and JupyterLab/Lumino.
 
-```
-Host application -> Zustand Actions -> Jupyter UI -> JupyterLab Commands
-Host application <- Redux State <- Jupyter UI <- JupyterLab Signals
-```
+```mermaid
+flowchart LR
+    subgraph Host["Host React Application"]
+        HA[Components]
+    end
 
-<ModalImage
-  small="https://jupyter-examples.datalayer.tech/jupyter-react-communication.png"
-  large="https://jupyter-examples.datalayer.tech/jupyter-react-communication.png"
-  alt="Jupyter UI Communication"
-/>
+    subgraph Zustand["Zustand Store"]
+        ZA[Actions]
+        ZS[State]
+    end
+
+    subgraph JupyterUI["Jupyter UI"]
+        JR[React Components]
+    end
+
+    subgraph JupyterLab["JupyterLab/Lumino"]
+        LC[Commands]
+        LS[Signals]
+        LW[Widgets]
+    end
+
+    subgraph Kernel["Jupyter Server"]
+        K[Kernel]
+    end
+
+    HA -->|"dispatch"| ZA
+    ZA -->|"proxy"| LC
+    LC -->|"execute"| LW
+    LW -->|"request"| K
+
+    K -->|"response"| LS
+    LS -->|"emit"| ZS
+    ZS -->|"subscribe"| HA
+
+    JR -.->|"wraps"| LW
+```
 
 JupyterLab/Lumino is heavily built on top of factories. Jupyter UI uses those to create the ad-hoc widgets. IPyWidgets and Comm are supported. JupyterLite and PyScript support is on the roadmap. Autocompletion is also available.
 

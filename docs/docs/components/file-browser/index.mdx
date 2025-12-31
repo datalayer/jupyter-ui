@@ -1,0 +1,171 @@
+---
+description: File Browser component for navigating Jupyter server contents
+---
+
+# File Browser
+
+The `FileBrowser` component provides a tree view interface for navigating files and directories on a Jupyter server.
+
+## Overview
+
+The File Browser component connects to a Jupyter server's contents API and displays the file system as an interactive tree view using GitHub's Primer design system.
+
+## Installation
+
+```bash
+npm install @datalayer/jupyter-react
+# or
+yarn add @datalayer/jupyter-react
+```
+
+## Basic Usage
+
+```tsx
+import { FileBrowser, Jupyter, useJupyter } from '@datalayer/jupyter-react';
+
+function FileBrowserExample() {
+  const { serviceManager } = useJupyter();
+
+  if (!serviceManager) {
+    return <div>Loading...</div>;
+  }
+
+  return <FileBrowser serviceManager={serviceManager} />;
+}
+
+function App() {
+  return (
+    <Jupyter>
+      <FileBrowserExample />
+    </Jupyter>
+  );
+}
+```
+
+## Props
+
+| Prop             | Type                      | Required | Description                               |
+| ---------------- | ------------------------- | -------- | ----------------------------------------- |
+| `serviceManager` | `ServiceManager.IManager` | Yes      | JupyterLab service manager for API access |
+
+## Features
+
+### Tree View Display
+
+The file browser displays:
+
+- **Folders**: Shown with directory icons, expandable to reveal contents
+- **Files**: Shown with file icons
+- **Sorting**: Folders appear before files, alphabetically sorted
+
+### Automatic Loading
+
+The component automatically:
+
+1. Connects to the Jupyter server on mount
+2. Loads the root directory contents
+3. Recursively loads subdirectory contents
+4. Updates the view when navigation occurs
+
+## Example with Full Application
+
+```tsx
+import { useState } from 'react';
+import {
+  FileBrowser,
+  Jupyter,
+  useJupyter,
+  Notebook,
+} from '@datalayer/jupyter-react';
+
+function FileExplorer() {
+  const { serviceManager } = useJupyter();
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+
+  if (!serviceManager) {
+    return <div>Connecting to Jupyter server...</div>;
+  }
+
+  return (
+    <div style={{ display: 'flex', gap: '16px' }}>
+      <div style={{ width: '250px', borderRight: '1px solid #e0e0e0' }}>
+        <h3>Files</h3>
+        <FileBrowser serviceManager={serviceManager} />
+      </div>
+      <div style={{ flex: 1 }}>
+        {selectedFile?.endsWith('.ipynb') ? (
+          <Notebook path={selectedFile} />
+        ) : (
+          <div>Select a notebook to open</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <Jupyter
+      jupyterServerUrl="http://localhost:8888"
+      jupyterServerToken="your-token"
+    >
+      <FileExplorer />
+    </Jupyter>
+  );
+}
+```
+
+## Styling
+
+The FileBrowser uses Primer's TreeView component for styling. You can customize the appearance:
+
+```css
+/* Custom file browser container */
+.file-browser-container {
+  padding: 8px;
+  background: #f6f8fa;
+  border-radius: 6px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Customize tree view items */
+.TreeView-item {
+  padding: 4px 8px;
+}
+
+.TreeView-item:hover {
+  background: #e1e4e8;
+}
+```
+
+## Integration with JupyterLab Services
+
+The FileBrowser uses JupyterLab's `contents` API under the hood:
+
+```tsx
+import { ServiceManager } from '@jupyterlab/services';
+
+// The serviceManager provides access to:
+// - contents: File operations (list, read, write, delete)
+// - sessions: Notebook sessions
+// - kernels: Kernel management
+// - terminals: Terminal sessions
+```
+
+## Limitations
+
+Current limitations:
+
+- Read-only browsing (no file operations)
+- No drag-and-drop support
+- No context menus
+- No file type filtering
+
+For a full-featured file manager, see the [File Manager](/components/file-manager) component.
+
+## Related Components
+
+- [File Manager](/components/file-manager) - Full JupyterLab file browser widget
+- [Notebook](/components/notebook) - For opening notebook files
+- [Viewer](/components/viewer) - For viewing various file types

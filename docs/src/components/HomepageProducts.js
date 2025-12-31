@@ -16,39 +16,55 @@ import OpenSourceSvg from '../../static/img/open-source.svg';
 
 const ProductList = [
   {
-    title: 'React.js components',
+    title: 'React.js Components',
     Svg: ReactJsSvg,
     description: (
       <>
-        A variety of React.js components from Notebook, Cell, Output and
-        Terminal allow you to get the best of Jupyter, with authentication and
-        authorization.
+        <strong>@datalayer/jupyter-react</strong> provides Notebook, Cell, Terminal,
+        Console, Output, and File Browser components to build custom Jupyter UIs
+        with React.js.
       </>
     ),
   },
   {
-    title: '100% compatible with Jupyter',
+    title: 'Lexical Editor',
+    Svg: MemoSvg,
+    description: (
+      <>
+        <strong>@datalayer/jupyter-lexical</strong> combines the{' '}
+        <a href="https://lexical.dev" target="_blank" rel="noreferrer" style={{ textDecoration: 'underline' }}>
+          Lexical
+        </a>{' '}
+        rich text editor with executable Jupyter cells for literate programming.
+      </>
+    ),
+  },
+  {
+    title: 'Easy Embedding',
+    Svg: RocketSvg,
+    description: (
+      <>
+        <strong>@datalayer/jupyter-embed</strong> lets you add executable Python
+        to any website using simple HTML data attributes - no React knowledge required.
+      </>
+    ),
+  },
+  {
+    title: '100% Jupyter Compatible',
     Svg: JupyterSvg,
     description: (
       <>
-        If you need more batteries for Jupyter, have a look to our{' '}
-        <a
-          href="./docs/category/components"
-          style={{ textDecoration: 'underline' }}
-        >
-          Jupyter components
-        </a>
-        .
+        Built on top of JupyterLab internals. Connects to standard Jupyter servers
+        and supports kernels, IPyWidgets, and the full Jupyter ecosystem.
       </>
     ),
   },
   {
-    title: 'Components with a Storybook',
+    title: 'Interactive Storybook',
     Svg: BricksSvg,
     description: (
       <>
-        You build your custom Data Product with well crafted Datalayer UI
-        components. Have a look at the{' '}
+        Explore all components in our{' '}
         <a
           href="https://jupyter-ui-storybook.datalayer.tech"
           target="_blank"
@@ -56,38 +72,25 @@ const ProductList = [
           style={{ textDecoration: 'underline' }}
         >
           Storybook
-        </a>
-        .
+        </a>{' '}
+        with live examples and documentation.
       </>
     ),
   },
   {
-    title: 'Literate Notebook',
-    Svg: MemoSvg,
-    description: (
-      <>
-        For a truly collaborative and accessible notebook, Literate Notebook is
-        a better single-page editor for your data analysis.
-      </>
-    ),
-  },
-  {
-    title: 'Easy to use',
-    Svg: RocketSvg,
-    description: (
-      <>
-        Juyter UI is designed from the ground up to be easily installed, used
-        and extended to get your custom data analysis up and running quickly.
-      </>
-    ),
-  },
-  {
-    title: 'Open source',
+    title: 'Open Source',
     Svg: OpenSourceSvg,
     description: (
       <>
-        Jupyter UI is built on top of renowed open source libraries and is also
-        fully opensource.
+        MIT licensed and built on renowned open source libraries. View the code on{' '}
+        <a
+          href="https://github.com/datalayer/jupyter-ui"
+          target="_blank"
+          rel="noreferrer"
+          style={{ textDecoration: 'underline' }}
+        >
+          GitHub
+        </a>.
       </>
     ),
   },

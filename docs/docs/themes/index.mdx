@@ -1,5 +1,131 @@
-import DocCardList from '@theme/DocCardList';
+---
+description: The JupyterReactTheme component for styling Jupyter UI components.
+---
 
-# Themes
+# 🪐 Themes
 
-<DocCardList />
+The `JupyterReactTheme` component is the main wrapper for all Jupyter UI components. It provides theming, color mode management, and integrates with GitHub's Primer design system.
+
+## Basic Usage
+
+Wrap your Jupyter components inside `JupyterReactTheme` to get proper styling:
+
+```tsx
+import { JupyterReactTheme, Cell } from '@datalayer/jupyter-react';
+
+root.render(
+  <JupyterReactTheme>
+    <Cell />
+  </JupyterReactTheme>,
+);
+```
+
+## Props
+
+The `JupyterReactTheme` component accepts the following props:
+
+| Prop                | Type                  | Default           | Description                           |
+| ------------------- | --------------------- | ----------------- | ------------------------------------- |
+| `colormode`         | `'light' \| 'dark'`   | `'light'`         | The color mode for the theme          |
+| `loadJupyterLabCss` | `boolean`             | `true`            | Whether to load JupyterLab CSS styles |
+| `theme`             | `Record<string, any>` | `jupyterLabTheme` | Custom theme object for Primer        |
+| `baseStyles`        | `CSSProperties`       | -                 | Custom base styles to apply           |
+
+## Color Mode
+
+You can specify the color mode when creating the theme:
+
+```tsx
+import { JupyterReactTheme, Notebook } from '@datalayer/jupyter-react';
+
+// Light mode (default)
+<JupyterReactTheme colormode="light">
+  <Notebook path="example.ipynb" />
+</JupyterReactTheme>
+
+// Dark mode
+<JupyterReactTheme colormode="dark">
+  <Notebook path="example.ipynb" />
+</JupyterReactTheme>
+```
+
+### Accessing Color Mode
+
+Use the `useJupyterReactColormode` hook to access the current color mode from within your components:
+
+```tsx
+import { useJupyterReactColormode } from '@datalayer/jupyter-react';
+
+function MyComponent() {
+  const colormode = useJupyterReactColormode();
+
+  return (
+    <div
+      style={{
+        background: colormode === 'dark' ? '#1e1e1e' : '#ffffff',
+      }}
+    >
+      Current mode: {colormode}
+    </div>
+  );
+}
+```
+
+## Using JupyterLabCss Directly
+
+If you prefer not to use the full theme wrapper, you can use the `JupyterLabCss` component directly:
+
+```tsx
+import { JupyterLabCss, Cell } from '@datalayer/jupyter-react';
+
+root.render(
+  <>
+    <JupyterLabCss colormode="dark" />
+    <Cell />
+  </>,
+);
+```
+
+## Automatic Theme Detection
+
+The `JupyterReactTheme` component automatically:
+
+1. **Detects JupyterLab embedding**: If running inside JupyterLab, it syncs with JupyterLab's theme manager
+2. **Respects system preferences**: When not in JupyterLab, it can respond to the browser's `prefers-color-scheme` setting
+3. **Syncs with store**: Color mode changes from the Jupyter React store are automatically reflected
+
+## Custom Themes
+
+You can provide a custom theme object based on Primer's theme structure:
+
+```tsx
+import { JupyterReactTheme, jupyterLabTheme } from '@datalayer/jupyter-react';
+
+const customTheme = {
+  ...jupyterLabTheme,
+  colors: {
+    ...jupyterLabTheme.colors,
+    // Custom color overrides
+  },
+};
+
+<JupyterReactTheme theme={customTheme}>
+  <Cell />
+</JupyterReactTheme>;
+```
+
+## Integration with Primer React
+
+`JupyterReactTheme` wraps Primer's `ThemeProvider` and `BaseStyles`, so all Primer React components work seamlessly:
+
+```tsx
+import { JupyterReactTheme, Cell } from '@datalayer/jupyter-react';
+import { Button, Box } from '@primer/react';
+
+<JupyterReactTheme>
+  <Box p={3}>
+    <Button variant="primary">Run</Button>
+    <Cell />
+  </Box>
+</JupyterReactTheme>;
+```

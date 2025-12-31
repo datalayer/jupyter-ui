@@ -1,0 +1,349 @@
+---
+description: Jupyter Embed - Easily embed Jupyter components into any website
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# 🪐 🌐 Jupyter Embed
+
+`@datalayer/jupyter-embed` allows you to embed interactive Jupyter components (cells, notebooks, terminals, consoles) into any web page with just a script tag and HTML data attributes. Powered by the full Jupyter ecosystem.
+
+## Overview
+
+Convert any website or blog into an interactive learning platform with Jupyter. No React knowledge required - just add HTML elements with data attributes.
+
+## Quick Start
+
+### 1. Include the Script
+
+```html
+<script src="https://unpkg.com/@datalayer/jupyter-embed/dist/jupyter-embed.js"></script>
+```
+
+### 2. Configure the Connection
+
+```html
+<script type="application/json" data-jupyter-embed-config>
+  {
+    "serverUrl": "http://localhost:8888",
+    "token": "your-jupyter-token",
+    "defaultKernel": "python3"
+  }
+</script>
+```
+
+### 3. Add Embed Elements
+
+```html
+<div data-jupyter-embed data-type="cell" data-height="200px">
+  <code data-type="source-code"> print("Hello, Jupyter!") </code>
+</div>
+```
+
+That's it! The script automatically finds and initializes all elements with `data-jupyter-embed`.
+
+## Installation
+
+<Tabs>
+<TabItem value="cdn" label="CDN">
+
+```html
+<!-- IIFE bundle (adds JupyterEmbed global) -->
+<script src="https://unpkg.com/@datalayer/jupyter-embed/dist/jupyter-embed.js"></script>
+```
+
+</TabItem>
+<TabItem value="esm" label="ES Module">
+
+```html
+<script type="module">
+  import {
+    configureJupyterEmbed,
+    initJupyterEmbeds,
+  } from 'https://unpkg.com/@datalayer/jupyter-embed/dist/jupyter-embed.esm.js';
+</script>
+```
+
+</TabItem>
+<TabItem value="npm" label="npm">
+
+```bash
+npm install @datalayer/jupyter-embed
+```
+
+```javascript
+import {
+  configureJupyterEmbed,
+  initJupyterEmbeds,
+} from '@datalayer/jupyter-embed';
+```
+
+</TabItem>
+</Tabs>
+
+## Configuration Options
+
+| Option            | Type                  | Default     | Description                            |
+| ----------------- | --------------------- | ----------- | -------------------------------------- |
+| `serverUrl`       | string                | `''`        | Jupyter server URL                     |
+| `wsUrl`           | string                | auto        | WebSocket URL (derived from serverUrl) |
+| `token`           | string                | `''`        | Authentication token                   |
+| `defaultKernel`   | string                | `'python3'` | Default kernel name                    |
+| `autoStartKernel` | boolean               | `true`      | Auto-start kernel on load              |
+| `lazyLoad`        | boolean               | `true`      | Only initialize when visible           |
+| `theme`           | `'light'` \| `'dark'` | `'light'`   | UI theme                               |
+
+## Component Types
+
+### Code Cell
+
+Interactive code cell with execution capability:
+
+```html
+<div
+  data-jupyter-embed
+  data-type="cell"
+  data-cell-type="code"
+  data-height="200px"
+  data-auto-execute="false"
+>
+  <code data-type="source-code">
+    import numpy as np import matplotlib.pyplot as plt x = np.linspace(0, 10,
+    100) plt.plot(x, np.sin(x)) plt.show()
+  </code>
+</div>
+```
+
+**Attributes:**
+
+- `data-cell-type`: `code` | `markdown` | `raw`
+- `data-height`: CSS height value
+- `data-auto-execute`: Run on load (`true`/`false`)
+- `data-show-toolbar`: Show cell toolbar
+- `data-kernel`: Kernel name override
+
+### Markdown Cell
+
+```html
+<div data-jupyter-embed data-type="cell" data-cell-type="markdown">
+  <code data-type="source-code">
+    # Welcome to Jupyter! This is **markdown** with: - Lists - *Formatting* -
+    And more!
+  </code>
+</div>
+```
+
+### Notebook
+
+Full notebook from a file path or inline content:
+
+<Tabs>
+<TabItem value="path" label="From Path">
+
+```html
+<div
+  data-jupyter-embed
+  data-type="notebook"
+  data-path="notebooks/demo.ipynb"
+  data-height="500px"
+  data-show-toolbar="true"
+></div>
+```
+
+</TabItem>
+<TabItem value="inline" label="Inline Content">
+
+```html
+<div data-jupyter-embed data-type="notebook" data-height="400px">
+  <script type="application/json">
+    {
+      "cells": [
+        {
+          "cell_type": "markdown",
+          "source": ["# My Inline Notebook"]
+        },
+        {
+          "cell_type": "code",
+          "source": ["print('Hello!')"]
+        }
+      ],
+      "metadata": {
+        "kernelspec": { "name": "python3" }
+      },
+      "nbformat": 4,
+      "nbformat_minor": 4
+    }
+  </script>
+</div>
+```
+
+</TabItem>
+</Tabs>
+
+### Terminal
+
+Full terminal session:
+
+```html
+<div
+  data-jupyter-embed
+  data-type="terminal"
+  data-height="300px"
+  data-color-mode="dark"
+></div>
+```
+
+### Console
+
+Jupyter console (REPL):
+
+```html
+<div
+  data-jupyter-embed
+  data-type="console"
+  data-height="400px"
+  data-kernel="python3"
+>
+  <code data-type="pre-execute-code">
+    # This runs when the console starts import numpy as np import pandas as pd
+  </code>
+</div>
+```
+
+### Output Display
+
+Display pre-computed outputs without a kernel:
+
+```html
+<div data-jupyter-embed data-type="output">
+  <script type="application/json">
+    [
+      {
+        "output_type": "stream",
+        "name": "stdout",
+        "text": "Hello, World!\n"
+      },
+      {
+        "output_type": "execute_result",
+        "data": {
+          "text/html": "<h3>Rich HTML Output</h3>"
+        }
+      }
+    ]
+  </script>
+</div>
+```
+
+## JavaScript API
+
+For advanced control, use the JavaScript API:
+
+```javascript
+// Configure connection
+JupyterEmbed.configureJupyterEmbed({
+  serverUrl: 'http://localhost:8888',
+  token: 'your-token',
+  defaultKernel: 'python3',
+  lazyLoad: true,
+});
+
+// Initialize all embeds on page
+JupyterEmbed.initJupyterEmbeds();
+
+// Initialize embeds added dynamically (e.g., after AJAX)
+JupyterEmbed.initAddedJupyterEmbeds(containerElement);
+
+// Render programmatically
+const element = document.getElementById('my-embed');
+JupyterEmbed.renderEmbed(element, {
+  type: 'cell',
+  source: 'print("Hello")',
+  autoExecute: true,
+});
+
+// Clean up
+JupyterEmbed.destroyJupyterEmbeds();
+```
+
+## Styling
+
+Hide uninitialized embeds to prevent flash of unstyled content:
+
+```css
+[data-jupyter-embed]:not([data-jupyter-initialized]) {
+  visibility: hidden;
+  min-height: 100px;
+}
+```
+
+## Server Requirements
+
+Your Jupyter server needs to:
+
+- Accept CORS connections from your domain
+- Have authentication configured (token or none)
+- Support WebSocket connections
+
+Example server configuration:
+
+```bash
+jupyter server \
+  --ServerApp.allow_origin='*' \
+  --ServerApp.token='your-token' \
+  --ServerApp.disable_check_xsrf=True
+```
+
+## Use Cases
+
+### Interactive Tutorials
+
+```html
+<h2>Learn Python</h2>
+<p>Try running this code:</p>
+
+<div data-jupyter-embed data-type="cell">
+  <code data-type="source-code">
+    # Your first Python program name = "World" print(f"Hello, {name}!")
+  </code>
+</div>
+
+<p>Now try changing the name!</p>
+```
+
+### Documentation with Live Examples
+
+```html
+<h2>API Reference: numpy.linspace</h2>
+<p>Creates evenly spaced numbers over an interval.</p>
+
+<div data-jupyter-embed data-type="cell" data-auto-execute="true">
+  <code data-type="source-code">
+    import numpy as np np.linspace(0, 10, 5) # 5 numbers from 0 to 10
+  </code>
+</div>
+```
+
+### Blog Posts
+
+```html
+<article>
+  <h1>Data Visualization with Matplotlib</h1>
+
+  <p>Let's create a simple plot:</p>
+
+  <div data-jupyter-embed data-type="cell" data-height="400px">
+    <code data-type="source-code">
+      import matplotlib.pyplot as plt import numpy as np x = np.linspace(0,
+      2*np.pi, 100) plt.figure(figsize=(10, 6)) plt.plot(x, np.sin(x),
+      label='sin(x)') plt.plot(x, np.cos(x), label='cos(x)') plt.legend()
+      plt.title('Trigonometric Functions') plt.show()
+    </code>
+  </div>
+</article>
+```
+
+## Related
+
+- [@datalayer/jupyter-react](/components) - Core React components
+- [@datalayer/jupyter-lexical](/components/lexical) - Rich document editor

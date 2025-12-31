@@ -1,0 +1,388 @@
+<!--
+  ~ Copyright (c) 2021-2023 Datalayer, Inc.
+  ~
+  ~ MIT License
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jupyter Embed - Examples</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    h1 {
+      color: #333;
+      border-bottom: 2px solid #f37726;
+      padding-bottom: 10px;
+    }
+    h2 {
+      color: #555;
+      margin-top: 40px;
+    }
+    .example {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .example-title {
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .example-description {
+      color: #666;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+    pre {
+      background: #f8f8f8;
+      padding: 15px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 13px;
+    }
+    code {
+      font-family: 'Fira Code', 'Monaco', 'Menlo', monospace;
+    }
+    /* Hide uninitialized embeds to prevent flash of unstyled content */
+    [data-jupyter-embed]:not([data-jupyter-initialized]) {
+      visibility: hidden;
+      min-height: 100px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🪐 Jupyter Embed Examples</h1>
+  
+  <p>
+    This page demonstrates how to embed Jupyter components into any web page using
+    <code>@datalayer/jupyter-embed</code>. Simply include the script and add HTML elements
+    with the appropriate data attributes.
+  </p>
+
+  <h2>Configuration</h2>
+  <div class="example">
+    <div class="example-title">Global Configuration</div>
+    <div class="example-description">
+      Configure the Jupyter server connection via a script tag or data attributes.
+    </div>
+    <pre><code>&lt;!-- Option 1: Data attributes on the script tag --&gt;
+&lt;script 
+  src="jupyter-embed.js"
+  data-server-url="http://localhost:8888"
+  data-token="your-token-here"
+  data-kernel="python3"
+&gt;&lt;/script&gt;
+
+&lt;!-- Option 2: JSON configuration --&gt;
+&lt;script type="application/json" data-jupyter-embed-config&gt;
+{
+  "serverUrl": "http://localhost:8888",
+  "token": "your-token-here",
+  "defaultKernel": "python3",
+  "lazyLoad": true,
+  "theme": "light"
+}
+&lt;/script&gt;</code></pre>
+  </div>
+
+  <h2>Code Cell</h2>
+  <div class="example">
+    <div class="example-title">Basic Python Cell</div>
+    <div class="example-description">
+      An interactive code cell that can execute Python code.
+    </div>
+    
+    <!-- Example: Simple code cell -->
+    <div 
+      data-jupyter-embed
+      data-type="cell"
+      data-height="200px"
+      data-auto-execute="false"
+    >
+      <code data-type="source-code">
+# Calculate the first 10 Fibonacci numbers
+def fibonacci(n):
+    fib = [0, 1]
+    for i in range(2, n):
+        fib.append(fib[i-1] + fib[i-2])
+    return fib[:n]
+
+print(fibonacci(10))
+      </code>
+    </div>
+
+    <pre><code>&lt;div 
+  data-jupyter-embed
+  data-type="cell"
+  data-height="200px"
+  data-auto-execute="false"
+&gt;
+  &lt;code data-type="source-code"&gt;
+# Calculate the first 10 Fibonacci numbers
+def fibonacci(n):
+    fib = [0, 1]
+    for i in range(2, n):
+        fib.append(fib[i-1] + fib[i-2])
+    return fib[:n]
+
+print(fibonacci(10))
+  &lt;/code&gt;
+&lt;/div&gt;</code></pre>
+  </div>
+
+  <div class="example">
+    <div class="example-title">Auto-executing Cell</div>
+    <div class="example-description">
+      A cell that automatically executes when loaded.
+    </div>
+    
+    <div 
+      data-jupyter-embed
+      data-type="cell"
+      data-height="150px"
+      data-auto-execute="true"
+    >
+      <code data-type="source-code">
+import sys
+print(f"Python version: {sys.version}")
+      </code>
+    </div>
+  </div>
+
+  <div class="example">
+    <div class="example-title">Markdown Cell</div>
+    <div class="example-description">
+      A markdown cell for rich text content.
+    </div>
+    
+    <div 
+      data-jupyter-embed
+      data-type="cell"
+      data-cell-type="markdown"
+      data-height="150px"
+    >
+      <code data-type="source-code">
+# Welcome to Jupyter Embed!
+
+This is a **markdown** cell with:
+- Rich formatting
+- Lists
+- And more!
+      </code>
+    </div>
+  </div>
+
+  <h2>Notebook</h2>
+  <div class="example">
+    <div class="example-title">Notebook from Path</div>
+    <div class="example-description">
+      Load a notebook from the Jupyter server by path.
+    </div>
+    
+    <div 
+      data-jupyter-embed
+      data-type="notebook"
+      data-path="examples/demo.ipynb"
+      data-height="500px"
+      data-show-toolbar="true"
+    ></div>
+
+    <pre><code>&lt;div 
+  data-jupyter-embed
+  data-type="notebook"
+  data-path="examples/demo.ipynb"
+  data-height="500px"
+  data-show-toolbar="true"
+&gt;&lt;/div&gt;</code></pre>
+  </div>
+
+  <div class="example">
+    <div class="example-title">Inline Notebook</div>
+    <div class="example-description">
+      Embed a notebook with inline content.
+    </div>
+    
+    <div 
+      data-jupyter-embed
+      data-type="notebook"
+      data-height="400px"
+    >
+      <script type="application/json">
+        {
+          "cells": [
+            {
+              "cell_type": "markdown",
+              "source": ["# Inline Notebook\n", "This notebook is embedded inline!"]
+            },
+            {
+              "cell_type": "code",
+              "source": ["print('Hello from inline notebook!')"]
+            }
+          ],
+          "metadata": {
+            "kernelspec": {
+              "name": "python3",
+              "display_name": "Python 3"
+            }
+          },
+          "nbformat": 4,
+          "nbformat_minor": 4
+        }
+      </script>
+    </div>
+  </div>
+
+  <h2>Terminal</h2>
+  <div class="example">
+    <div class="example-title">Interactive Terminal</div>
+    <div class="example-description">
+      A full terminal session connected to the Jupyter server.
+    </div>
+    
+    <div 
+      data-jupyter-embed
+      data-type="terminal"
+      data-height="300px"
+      data-color-mode="dark"
+    ></div>
+
+    <pre><code>&lt;div 
+  data-jupyter-embed
+  data-type="terminal"
+  data-height="300px"
+  data-color-mode="dark"
+&gt;&lt;/div&gt;</code></pre>
+  </div>
+
+  <h2>Console</h2>
+  <div class="example">
+    <div class="example-title">Interactive Console</div>
+    <div class="example-description">
+      A Jupyter console for interactive Python sessions.
+    </div>
+    
+    <div 
+      data-jupyter-embed
+      data-type="console"
+      data-height="400px"
+      data-kernel="python3"
+    >
+      <code data-type="pre-execute-code">
+# This code runs when the console starts
+import numpy as np
+import pandas as pd
+print("NumPy and Pandas are ready!")
+      </code>
+    </div>
+
+    <pre><code>&lt;div 
+  data-jupyter-embed
+  data-type="console"
+  data-height="400px"
+  data-kernel="python3"
+&gt;
+  &lt;code data-type="pre-execute-code"&gt;
+# This code runs when the console starts
+import numpy as np
+import pandas as pd
+print("NumPy and Pandas are ready!")
+  &lt;/code&gt;
+&lt;/div&gt;</code></pre>
+  </div>
+
+  <h2>Output Display</h2>
+  <div class="example">
+    <div class="example-title">Static Output</div>
+    <div class="example-description">
+      Display pre-computed Jupyter outputs without a kernel.
+    </div>
+    
+    <div 
+      data-jupyter-embed
+      data-type="output"
+    >
+      <script type="application/json">
+        [
+          {
+            "output_type": "stream",
+            "name": "stdout",
+            "text": "Hello, World!\n"
+          },
+          {
+            "output_type": "execute_result",
+            "data": {
+              "text/html": "<h3 style='color: #f37726;'>Jupyter Embed</h3><p>Rendered HTML output!</p>"
+            },
+            "metadata": {},
+            "execution_count": 1
+          }
+        ]
+      </script>
+    </div>
+  </div>
+
+  <h2>Programmatic API</h2>
+  <div class="example">
+    <div class="example-title">JavaScript API</div>
+    <div class="example-description">
+      Use the JavaScript API for advanced control.
+    </div>
+    <pre><code>// Configure the connection
+JupyterEmbed.configureJupyterEmbed({
+  serverUrl: 'http://localhost:8888',
+  token: 'your-token',
+  defaultKernel: 'python3',
+  lazyLoad: true
+});
+
+// Manually initialize embeds
+JupyterEmbed.initJupyterEmbeds();
+
+// Initialize embeds added after page load (e.g., in SPA)
+JupyterEmbed.initAddedJupyterEmbeds(container);
+
+// Render a component programmatically
+const element = document.getElementById('my-cell');
+JupyterEmbed.renderEmbed(element, {
+  type: 'cell',
+  source: 'print("Hello!")',
+  autoExecute: true
+});
+
+// Clean up
+JupyterEmbed.destroyJupyterEmbeds();</code></pre>
+  </div>
+
+  <!-- Load the Jupyter Embed script -->
+  <!-- In production, use the CDN URL -->
+  <script type="application/json" data-jupyter-embed-config>
+    {
+      "serverUrl": "http://localhost:8888",
+      "token": "",
+      "defaultKernel": "python3",
+      "lazyLoad": true,
+      "theme": "light"
+    }
+  </script>
+  <script type="module" src="./dist/jupyter-embed.esm.js"></script>
+  
+  <footer style="margin-top: 60px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 14px;">
+    <p>
+      <strong>@datalayer/jupyter-embed</strong> - 
+      Part of <a href="https://github.com/datalayer/jupyter-ui">Jupyter UI</a> by 
+      <a href="https://datalayer.io">Datalayer</a>
+    </p>
+  </footer>
+</body>
+</html>
