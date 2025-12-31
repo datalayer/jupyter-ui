@@ -144,14 +144,25 @@
         data-auto-run="true"
       >
         <code data-type="source-code">
-          import numpy as np import matplotlib.pyplot as plt # Create data x =
-          np.linspace(-5, 5, 50) y = np.linspace(-5, 5, 50) X, Y =
-          np.meshgrid(x, y) Z = np.sin(np.sqrt(X**2 + Y**2)) # Create 3D plot
-          fig = plt.figure(figsize=(8, 6)) ax = fig.add_subplot(111,
-          projection='3d') surf = ax.plot_surface(X, Y, Z, cmap='viridis',
-          alpha=0.8) ax.set_xlabel('X axis') ax.set_ylabel('Y axis')
-          ax.set_zlabel('Z axis') ax.set_title('3D Surface: sin(√(x² + y²))')
-          fig.colorbar(surf) plt.show()
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Create data
+x = np.linspace(-5, 5, 50)
+y = np.linspace(-5, 5, 50)
+X, Y = np.meshgrid(x, y)
+Z = np.sin(np.sqrt(X**2 + Y**2))
+
+# Create 3D plot
+fig = plt.figure(figsize=(8, 6))
+ax = fig.add_subplot(111, projection='3d')
+surf = ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.8)
+ax.set_xlabel('X axis')
+ax.set_ylabel('Y axis')
+ax.set_zlabel('Z axis')
+ax.set_title('3D Surface: sin(√(x² + y²))')
+fig.colorbar(surf)
+plt.show()
         </code>
       </div>
 
@@ -229,9 +240,14 @@ plt.show()
         data-auto-execute="true"
       >
         <code data-type="source-code">
-          # Calculate the first 100 Fibonacci numbers def fibonacci(n): fib =
-          [0, 1] for i in range(2, n): fib.append(fib[i-1] + fib[i-2]) return
-          fib[:n] print(fibonacci(100))
+# Calculate the first 100 Fibonacci numbers
+def fibonacci(n):
+    fib = [0, 1]
+    for i in range(2, n):
+        fib.append(fib[i-1] + fib[i-2])
+    return fib[:n]
+
+print(fibonacci(100))
         </code>
       </div>
 
@@ -268,7 +284,8 @@ print(fibonacci(100))
         data-auto-execute="true"
       >
         <code data-type="source-code">
-          import sys print(f"Python version: {sys.version}")
+import sys
+print(f"Python version: {sys.version}")
         </code>
       </div>
     </div>

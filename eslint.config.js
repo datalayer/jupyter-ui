@@ -173,6 +173,7 @@ module.exports = tseslint.config(
       // Generated documentation
       'packages/lexical/docs/**',
       'packages/react/docs/**',
+      'packages/embed/examples/**',
     ],
   },
 );
