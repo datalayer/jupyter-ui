@@ -847,12 +847,22 @@ export class NotebookAdapter {
 
       try {
         await Promise.race([executionPromise, timeoutPromise]);
-      } catch (timeoutError) {
+      } catch (error) {
+        // Log timeout error for debugging
+        console.warn(
+          `Cell execution timed out after ${options.timeout ?? 30} seconds:`,
+          error
+        );
+
         // Interrupt kernel on timeout
         try {
           await kernel.interrupt();
         } catch (interruptError) {
-          // Silently handle interrupt error
+          // Log interrupt errors as a warning to aid in diagnosing kernel communication issues
+          console.warn(
+            'Failed to interrupt kernel after execution timeout:',
+            interruptError
+          );
         }
 
         return {

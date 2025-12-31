@@ -74,8 +74,9 @@ export function disableKernelReconnect(
 
       for (const session of runningSessions) {
         if (session.kernel && session.kernel.id) {
-          // Access private _reconnectLimit property to disable auto-reconnect
-          // CRITICAL: Use -1 to disable, NOT 0 (0 might mean "reconnect immediately")
+          // Access private _reconnectLimit property to prevent further auto-reconnect attempts.
+          // NOTE: Using -1 here is based on the current JupyterLab KernelConnection implementation.
+          // If JupyterLab changes the semantics of _reconnectLimit, this value may need to be updated.
           (session.kernel as any)._reconnectLimit = -1;
           disabledKernelIds.add(session.kernel.id);
           count++;
@@ -109,9 +110,15 @@ export function disableKernelReconnect(
                   kernelConnection &&
                   kernelConnection._reconnectLimit !== undefined
                 ) {
-                  kernelConnection._reconnectLimit = -1;
-                  disabledKernelIds.add(kernelModel.id);
-                  count++;
+                  const connectionId =
+                    (kernelConnection as any).id ?? kernelModel.id;
+
+                  // Avoid double-disabling / double-counting
+                  if (!disabledKernelIds.has(connectionId)) {
+                    kernelConnection._reconnectLimit = -1;
+                    disabledKernelIds.add(connectionId);
+                    count++;
+                  }
                 }
               }
             } else if (kernelsMap instanceof Map) {

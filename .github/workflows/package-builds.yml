@@ -94,29 +94,34 @@ jobs:
           node-version: '22'
       - name: Install dependencies
         run: npm install
+      - name: Build React package first (dependency)
+        run: cd packages/react && npm run build:lib
       - name: Build Docusaurus plugin
         run: cd packages/docusaurus-plugin && npm run build
 
-  # IPyReactive package
-  ipyreactive:
-    name: '@datalayer/ipyreactive'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - name: Install dependencies
-        run: npm install
-      - name: Build IPyReactive
-        run: cd packages/ipyreactive && npm run build
+  # # Native package
+  # native:
+  #   name: '@datalayer/jupyter-native'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     - name: Setup Node
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '22'
+  #     - name: Install dependencies
+  #       run: npm install
+  #     - name: Build Native package
+  #       run: cd packages/native && npm run build
 
-  # IPyScript package
-  ipyscript:
-    name: '@datalayer/ipyscript'
+  # Embed package
+  embed:
+    name: '@datalayer/jupyter-embed'
     runs-on: ubuntu-latest
+    env:
+      # Increase Node.js heap size for vite build (bundles all dependencies)
+      NODE_OPTIONS: '--max-old-space-size=8192'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -126,21 +131,7 @@ jobs:
           node-version: '22'
       - name: Install dependencies
         run: npm install
-      - name: Build IPyScript
-        run: cd packages/ipyscript && npm run build
-
-  # Native package
-  native:
-    name: '@datalayer/jupyter-native'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - name: Install dependencies
-        run: npm install
-      - name: Build Native package
-        run: cd packages/native && npm run build
+      - name: Build React package first (dependency)
+        run: cd packages/react && npm run build:lib
+      - name: Build Embed package
+        run: cd packages/embed && npm run build

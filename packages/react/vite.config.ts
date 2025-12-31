@@ -8,7 +8,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { treatAsCommonjs } from 'vite-plugin-treat-umd-as-commonjs';
 import dts from 'vite-plugin-dts';
-import { readFileSync, existsSync, createReadStream } from 'fs';
+import { readFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { createRequire } from 'module';
@@ -119,7 +119,7 @@ export default defineConfig(({ mode }) => {
               try {
                 const cssContent = readFileSync(resolvedPath, 'utf-8');
                 return `export default ${JSON.stringify(cssContent)};`;
-              } catch (e) {
+              } catch {
                 // Try next path
               }
             }
@@ -230,7 +230,7 @@ export default defineConfig(({ mode }) => {
       outDir: mode === 'production' ? 'lib' : 'dist',
       sourcemap: mode !== 'production',
       minify: mode === 'production',
-      emptyOutDir: false,
+      emptyOutDir: mode === 'production',
       lib:
         mode === 'production'
           ? {
@@ -254,7 +254,7 @@ export default defineConfig(({ mode }) => {
                 entryFileNames: '[name].js',
                 chunkFileNames: '[name].js',
                 assetFileNames: assetInfo => {
-                  const name = assetInfo.names?.[0] || assetInfo.name || '';
+                  const name = assetInfo.name || '';
                   if (name.endsWith('.css')) {
                     return '[name][extname]';
                   }
@@ -271,7 +271,7 @@ export default defineConfig(({ mode }) => {
                 entryFileNames: '[name].jupyter-react.js',
                 chunkFileNames: '[name]-[hash].js',
                 assetFileNames: assetInfo => {
-                  const name = assetInfo.names?.[0] || assetInfo.name || '';
+                  const name = assetInfo.name || '';
                   if (/pypi\//.test(name)) {
                     return 'pypi/[name][extname]';
                   }

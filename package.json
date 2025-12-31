@@ -43,7 +43,7 @@
     "lint:fix": "eslint 'packages/react/src/**/*.{js,jsx,ts,tsx}' 'packages/lexical/src/**/*.{js,jsx,ts,tsx}' 'storybook/src/**/*.{js,jsx,ts,tsx}' --fix",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md,mdx,yml,yaml,css,html}\"",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,md,mdx,yml,yaml,css,html}\"",
-    "type-check": "tsc --build --noEmit",
+    "type-check": "tsc --noEmit",
     "check": "npm run format:check && npm run lint && npm run type-check",
     "check:fix": "npm run format && npm run lint:fix && npm run type-check",
     "postinstall": "patch-package",

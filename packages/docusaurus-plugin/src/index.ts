@@ -33,7 +33,7 @@ export default function (
             stream: 'stream-browserify',
           },
           fallback: {
-            assert: path.resolve(__dirname, 'node_modules/assert/'),
+            assert: 'assert/',
           },
         },
         module: {

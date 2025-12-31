@@ -107,7 +107,7 @@ export default defineConfig(({ mode }) => {
       outDir: mode === 'production' ? 'lib' : 'dist',
       sourcemap: mode !== 'production',
       minify: mode === 'production',
-      emptyOutDir: false,
+      emptyOutDir: mode === 'production',
       lib:
         mode === 'production'
           ? {
@@ -135,7 +135,7 @@ export default defineConfig(({ mode }) => {
                 entryFileNames: '[name].js',
                 chunkFileNames: '[name].js',
                 assetFileNames: assetInfo => {
-                  const name = assetInfo.names?.[0] || assetInfo.name || '';
+                  const name = assetInfo.name || '';
                   if (name.endsWith('.css')) {
                     return '[name][extname]';
                   }

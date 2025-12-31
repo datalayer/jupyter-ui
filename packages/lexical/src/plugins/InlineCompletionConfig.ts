@@ -85,8 +85,8 @@ export interface InlineCompletionConfig {
 
   /**
    * Keyboard shortcut for manual trigger.
-   * Format: "Modifier+Key" (e.g., "Ctrl+Space", "Cmd+Shift+I")
-   * @default 'Ctrl+Space'
+   * Format: "Modifier+Key" (e.g., "Ctrl+Alt+I", "Cmd+Shift+K")
+   * @default 'Ctrl+Alt+I'
    */
   manualTriggerKey: string;
 }
@@ -94,7 +94,7 @@ export interface InlineCompletionConfig {
 /**
  * Default configuration with user-approved settings.
  * - Code: Auto-trigger with entire document context
- * - Prose: Manual trigger (Ctrl+Space) with entire document context
+ * - Prose: Manual trigger (Ctrl+Alt+I) with entire document context
  */
 export const DEFAULT_CONFIG: InlineCompletionConfig = {
   code: {

@@ -175,8 +175,10 @@ export function LexicalInlineCompletionPlugin({
   // Merge user config with defaults
   const config: InlineCompletionConfig = mergeConfig(userConfig);
 
-  // Support deprecated debounceMs prop (overrides config if provided)
-  const debounceMs = deprecatedDebounceMs ?? config.debounceMs;
+  // Debounce precedence: userConfig (new) > deprecatedDebounceMs (old) > default
+  // Note: Using ?? operator, so 0 values will fall through (not a realistic use case)
+  const debounceMs =
+    userConfig?.debounceMs ?? deprecatedDebounceMs ?? config.debounceMs;
 
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastRequestRef = useRef<string>('');
@@ -402,7 +404,7 @@ export function LexicalInlineCompletionPlugin({
         }
       });
     });
-  }, [editor, enabled, debounceMs]); // Removed requestCompletion dependency
+  }, [editor, enabled, debounceMs, config.code, config.prose]);
 
   /**
    * Insert/update/remove the InlineCompletionNode based on currentCompletion
@@ -580,6 +582,10 @@ export function LexicalInlineCompletionPlugin({
         'Meta',
         'Shift',
         'Dead',
+        'CapsLock',
+        'NumLock',
+        'ScrollLock',
+        'Fn',
       ];
       if (modifierKeys.includes(event.key)) {
         return; // Skip modifier-only events
@@ -772,14 +778,12 @@ function matchesShortcut(event: KeyboardEvent, shortcut: string): boolean {
   const hasShift = modifiers.includes('shift');
   const hasAlt = modifiers.includes('alt');
 
-  // On macOS, treat Ctrl as Cmd
-  const isMac =
-    typeof navigator !== 'undefined' &&
-    /Mac|iPhone|iPod|iPad/.test(navigator.userAgent);
-  const needsCtrlOrCmd = hasCtrl || hasCmd;
-  const eventHasCtrlOrCmd = isMac ? event.metaKey : event.ctrlKey;
+  // Check specific modifier requirements
+  if (hasCtrl && !event.ctrlKey) {
+    return false;
+  }
 
-  if (needsCtrlOrCmd && !eventHasCtrlOrCmd) {
+  if (hasCmd && !event.metaKey) {
     return false;
   }
 

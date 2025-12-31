@@ -199,18 +199,14 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
 
   /** @override */
   decorate(_editor: LexicalEditor, _config: EditorConfig) {
-    // CRITICAL: Cache outputs and never clear them!
-    // Try to get fresh outputs from model, but if empty/cleared, use cached __outputs
+    // Try to get fresh outputs from model, but if empty/cleared, use cached __outputs.
+    // NOTE: Avoid mutating node state here; decorate() should remain a pure render.
     const modelOutputs = this.__outputAdapter?.outputArea?.model?.toJSON();
 
-    // If model has outputs, update our cache AND use them
+    let currentOutputs = this.__outputs || [];
     if (modelOutputs && modelOutputs.length > 0) {
-      const self = this.getWritable();
-      self.__outputs = modelOutputs;
+      currentOutputs = modelOutputs;
     }
-
-    // Always use cached __outputs (which now contains last known good outputs)
-    const currentOutputs = this.__outputs || [];
     return (
       <Output
         code={this.getJupyterInput()}

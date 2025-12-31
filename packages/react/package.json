@@ -17,6 +17,11 @@
       "import": "./lib/core.js",
       "require": "./lib/core.js"
     },
+    "./tools": {
+      "types": "./lib/tools/index.d.ts",
+      "import": "./lib/tools/index.js",
+      "require": "./lib/tools/index.js"
+    },
     "./lazy": {
       "types": "./lib/lazy-entry.d.ts",
       "import": "./lib/lazy-entry.js",
@@ -105,8 +110,8 @@
     "access": "public"
   },
   "scripts": {
-    "build": "npm run validate:tools && gulp resources-to-lib && tsc && webpack",
-    "build:lib": "npm run validate:tools && tsc",
+    "build": "npm run validate:tools && gulp resources-to-lib && tsc --build && webpack",
+    "build:lib": "npm run validate:tools && gulp resources-to-lib && tsc --build",
     "build:prod": "npm run validate:tools && gulp resources-to-lib && tsc && npm run clean && npm run build:lib",
     "build:tsc:watch:res": "gulp resources-to-lib-watch",
     "build:tsc:watch:tsc": "tsc --watch",
@@ -130,8 +135,8 @@
     "prettier:check": "npm run prettier:base --check",
     "preview:vite": "vite preview",
     "start": "run-p -c 'start:*'",
-    "start:vite": "vite dev",
-    "start:webpack": "webpack serve",
+    "start:vite": "node ../../scripts/check-oss-server.js && vite dev",
+    "start:webpack": "node ../../scripts/check-oss-server.js && webpack serve",
     "start-noconfig": "cross-env NO_CONFIG=true webpack serve",
     "start-noconfig:vite": "cross-env NO_CONFIG=true vite",
     "start-local": "run-p -c 'start-local:*'",

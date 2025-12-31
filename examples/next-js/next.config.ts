@@ -5,16 +5,16 @@
  */
 
 const webpack = require('webpack');
-const path = require('path');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
   transpilePackages: ['@jupyterlab/settingregistry', '@jupyterlite/settings'],
-  webpack: (config: any, options: any) => {
+  webpack: (config: any, _options: any) => {
     config.resolve.fallback = {
       ...config.resolve.fallback,
-      buffer: path.resolve(__dirname, 'node_modules/buffer/'),
+      // @ts-expect-error - require.resolve is valid Node.js function
+      buffer: require.resolve('buffer/'),
     };
     config.plugins.push(
       new webpack.ProvidePlugin({
@@ -24,7 +24,8 @@ const nextConfig = {
     // Fix json5 import issue for JupyterLab packages
     config.resolve.alias = {
       ...config.resolve.alias,
-      json5: path.resolve(__dirname, 'node_modules/json5/lib/index.js'),
+      // @ts-expect-error - require.resolve is valid Node.js function
+      json5: require.resolve('json5/lib/index.js'),
       // Handle ~ prefix in CSS imports (JupyterLab style convention)
       '~react-toastify': 'react-toastify',
       '~@lumino': '@lumino',
