@@ -104,36 +104,13 @@
     <p>
       This page demonstrates how to embed Jupyter components into any web page
       using
-      <code>@datalayer/jupyter-embed</code>. Simply include the script and add
-      HTML elements with the appropriate data attributes.
+      <code>@datalayer/jupyter-embed</code>, part of the open source
+      <a href="https://github.com/datalayer/jupyter-ui" target="_blank"
+        >Jupyter UI</a
+      >
+      repository (MIT License). Simply include the script and add HTML elements
+      with the appropriate data attributes.
     </p>
-
-    <h2>Configuration</h2>
-    <div class="example">
-      <div class="example-title">Global Configuration</div>
-      <div class="example-description">
-        Configure the Jupyter server connection via a script tag or data
-        attributes.
-      </div>
-      <pre><code>&lt;!-- Option 1: Data attributes on the script tag --&gt;
-&lt;script 
-  src="jupyter-embed.js"
-  data-server-url="https://oss.datalayer.run/api/jupyter-server"
-  data-token="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
-  data-kernel="python3"
-&gt;&lt;/script&gt;
-
-&lt;!-- Option 2: JSON configuration --&gt;
-&lt;script type="application/json" data-jupyter-embed-config&gt;
-{
-  "serverUrl": "https://oss.datalayer.run/api/jupyter-server",
-  "token": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6",
-  "defaultKernel": "python3",
-  "lazyLoad": true,
-  "theme": "light"
-}
-&lt;/script&gt;</code></pre>
-    </div>
 
     <h2>Output Display</h2>
     <div class="example">
@@ -382,6 +359,33 @@ print("NumPy and Pandas are ready!")
 &lt;/div&gt;</code></pre>
     </div>
     -->
+
+    <h2>Configuration</h2>
+    <div class="example">
+      <div class="example-title">Global Configuration</div>
+      <div class="example-description">
+        Configure the Jupyter server connection via a script tag or data
+        attributes.
+      </div>
+      <pre><code>&lt;!-- Option 1: Data attributes on the script tag --&gt;
+&lt;script 
+  src="jupyter-embed.js"
+  data-server-url="https://oss.datalayer.run/api/jupyter-server"
+  data-token="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
+  data-kernel="python3"
+&gt;&lt;/script&gt;
+
+&lt;!-- Option 2: JSON configuration --&gt;
+&lt;script type="application/json" data-jupyter-embed-config&gt;
+{
+  "serverUrl": "https://oss.datalayer.run/api/jupyter-server",
+  "token": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6",
+  "defaultKernel": "python3",
+  "lazyLoad": true,
+  "theme": "light"
+}
+&lt;/script&gt;</code></pre>
+    </div>
 
     <h2>Programmatic API</h2>
     <div class="example">
