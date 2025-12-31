@@ -211,10 +211,10 @@
 
       <div
         data-jupyter-embed="cell"
-        data-jupyter-source="import sys&#10;print(f'Python {sys.version}')"
+        data-jupyter-code="import sys&#10;print(f'Python {sys.version}')"
+        data-jupyter-height="200px"
         data-jupyter-auto-execute="true"
         data-jupyter-show-toolbar="true"
-        style="height: 200px"
       ></div>
     </div>
 
@@ -228,9 +228,9 @@
 
       <div
         data-jupyter-embed="output"
-        data-jupyter-source="import matplotlib.pyplot as plt&#10;import numpy as np&#10;&#10;fig = plt.figure(figsize=(8, 4))&#10;x = np.linspace(0, 10, 100)&#10;plt.plot(x, np.sin(x), label='sin(x)')&#10;plt.plot(x, np.cos(x), label='cos(x)')&#10;plt.legend()&#10;plt.title('Trigonometric Functions')&#10;plt.grid(True, alpha=0.3)&#10;plt.show()"
-        data-jupyter-auto-execute="true"
-        style="height: 350px"
+        data-jupyter-code="import matplotlib.pyplot as plt&#10;import numpy as np&#10;&#10;fig = plt.figure(figsize=(8, 4))&#10;x = np.linspace(0, 10, 100)&#10;plt.plot(x, np.sin(x), label='sin(x)')&#10;plt.plot(x, np.cos(x), label='cos(x)')&#10;plt.legend()&#10;plt.title('Trigonometric Functions')&#10;plt.grid(True, alpha=0.3)&#10;plt.show()"
+        data-jupyter-height="350px"
+        data-jupyter-auto-run="true"
       ></div>
     </div>
 
@@ -244,8 +244,8 @@
 
       <div
         data-jupyter-embed="terminal"
+        data-jupyter-height="300px"
         data-jupyter-show-toolbar="false"
-        style="height: 300px"
       ></div>
     </div>
 

@@ -88,7 +88,10 @@ lint-check: ## check linting without fixing
 .PHONY: example
 example: build-lazy ## build lazy and serve examples
 	@echo -e "\033[1;32m🌐 Building and serving examples on http://localhost:3456...\033[0m"
+	@echo -e "\033[1;32m🌐 Building and serving examples on http://localhost:3456/index-lazy...\033[0m"
+	@echo
 	@echo -e "\033[1;33m💡 Examples use hosted Jupyter server at https://oss.datalayer.run/api/jupyter-server\033[0m"
+	@echo
 	@cp dist-lazy/jupyter-embed.lazy.js examples/
 	@cp -r dist-lazy/chunks examples/
 	npx serve examples -p 3456

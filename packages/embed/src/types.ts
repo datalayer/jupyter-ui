@@ -249,9 +249,14 @@ export const DATA_ATTRIBUTES = {
   JUPYTER_AUTO_RUN: 'data-jupyter-auto-run',
   JUPYTER_CODE: 'data-jupyter-code',
 
-  // Content holders
+  // Content holders (short form uses data-type="x", prefixed form uses data-jupyter-x)
   CONTENT_PRE_EXECUTE: 'pre-execute-code',
   CONTENT_SOURCE: 'source-code',
   CONTENT_SOLUTION: 'solution-code',
   CONTENT_HINT: 'hint',
+  // Prefixed content holders
+  JUPYTER_CONTENT_PRE_EXECUTE: 'data-jupyter-pre-execute-code',
+  JUPYTER_CONTENT_SOURCE: 'data-jupyter-source-code',
+  JUPYTER_CONTENT_SOLUTION: 'data-jupyter-solution-code',
+  JUPYTER_CONTENT_HINT: 'data-jupyter-hint',
 } as const;

@@ -59,20 +59,23 @@ Or via data attributes on the script tag:
 
 ```html
 <!-- Code Cell -->
-<div data-jupyter-embed data-type="cell">
-  <code data-type="source-code"> print("Hello, Jupyter!") </code>
+<div
+  data-jupyter-embed="cell"
+  data-jupyter-height="200px"
+  data-jupyter-auto-execute="true"
+>
+  <code data-jupyter-source-code> print("Hello, Jupyter!") </code>
 </div>
 
 <!-- Notebook from file -->
 <div
-  data-jupyter-embed
-  data-type="notebook"
-  data-path="notebooks/demo.ipynb"
-  data-height="500px"
+  data-jupyter-embed="notebook"
+  data-jupyter-path="notebooks/demo.ipynb"
+  data-jupyter-height="500px"
 ></div>
 
 <!-- Terminal -->
-<div data-jupyter-embed data-type="terminal" data-height="300px"></div>
+<div data-jupyter-embed="terminal" data-jupyter-height="300px"></div>
 ```
 
 ## Installation
@@ -98,21 +101,25 @@ For better caching and faster repeat visits, use the chunked ESM build:
 
 ```html
 <!-- ESM build with automatic chunk loading -->
-<script type="module" src="https://cdn.example.com/jupyter-embed.esm.js"></script>
+<script
+  type="module"
+  src="https://cdn.example.com/jupyter-embed.esm.js"
+></script>
 ```
 
 The ESM build automatically loads vendor chunks on demand:
 
-| Chunk | Size | Gzipped | Description |
-|-------|------|---------|-------------|
-| `vendor-react` | 822 KB | 177 KB | React/ReactDOM |
-| `vendor-codemirror` | 1.7 MB | 579 KB | CodeMirror editor |
-| `vendor-jupyter-core` | 1.2 MB | 300 KB | JupyterLab core |
-| `vendor-mathjax` | 864 KB | 203 KB | Math rendering |
-| `vendor-xterm` | 489 KB | 119 KB | Terminal emulator |
-| `vendor-lumino` | 200 KB | 49 KB | Lumino widgets |
+| Chunk                 | Size   | Gzipped | Description       |
+| --------------------- | ------ | ------- | ----------------- |
+| `vendor-react`        | 822 KB | 177 KB  | React/ReactDOM    |
+| `vendor-codemirror`   | 1.7 MB | 579 KB  | CodeMirror editor |
+| `vendor-jupyter-core` | 1.2 MB | 300 KB  | JupyterLab core   |
+| `vendor-mathjax`      | 864 KB | 203 KB  | Math rendering    |
+| `vendor-xterm`        | 489 KB | 119 KB  | Terminal emulator |
+| `vendor-lumino`       | 200 KB | 49 KB   | Lumino widgets    |
 
 **Benefits:**
+
 - Vendor chunks are cached independently (they rarely change)
 - Browser loads chunks in parallel
 - Only changed code needs re-downloading on updates
@@ -158,54 +165,90 @@ initJupyterEmbeds();
 | `theme`           | `'light'` \| `'dark'` | `'light'`   | Theme                                       |
 | `basePath`        | string                | `'/'`       | Base path for Jupyter server                |
 
+## Attribute Convention
+
+All attributes use the `data-jupyter-*` prefix for clarity and to avoid conflicts with other libraries.
+
+### Attribute Patterns
+
+| Component    | Source Code                                              | Auto-Execute                | Height                |
+| ------------ | -------------------------------------------------------- | --------------------------- | --------------------- |
+| **Cell**     | `data-jupyter-code` or `<code data-jupyter-source-code>` | `data-jupyter-auto-execute` | `data-jupyter-height` |
+| **Output**   | `data-jupyter-code` or `<code data-jupyter-source-code>` | `data-jupyter-auto-run`     | `data-jupyter-height` |
+| **Terminal** | N/A                                                      | N/A                         | `data-jupyter-height` |
+| **Notebook** | N/A                                                      | N/A                         | `data-jupyter-height` |
+| **Console**  | `<code data-jupyter-pre-execute-code>`                   | N/A                         | `data-jupyter-height` |
+
+### Backward Compatibility
+
+Short-form attributes (without `data-jupyter-` prefix) are also supported for backward compatibility:
+
+| Prefixed Form (Recommended)       | Short Form (Legacy)                       |
+| --------------------------------- | ----------------------------------------- |
+| `data-jupyter-embed="cell"`       | `data-jupyter-embed` + `data-type="cell"` |
+| `data-jupyter-height`             | `data-height`                             |
+| `data-jupyter-auto-execute`       | `data-auto-execute`                       |
+| `data-jupyter-code`               | `data-source` or `data-code`              |
+| `<code data-jupyter-source-code>` | `<code data-type="source-code">`          |
+
 ## Component Types
 
 ### Code Cell
 
 ```html
 <div
-  data-jupyter-embed
-  data-type="cell"
-  data-cell-type="code"
-  data-height="200px"
-  data-auto-execute="false"
-  data-show-toolbar="true"
-  data-kernel="python3"
+  data-jupyter-embed="cell"
+  data-jupyter-cell-type="code"
+  data-jupyter-height="200px"
+  data-jupyter-auto-execute="true"
+  data-jupyter-show-toolbar="true"
+  data-jupyter-kernel="python3"
 >
-  <code data-type="source-code"> # Your Python code here print("Hello!") </code>
+  <code data-jupyter-source-code>
+    # Your Python code here print("Hello!")
+  </code>
 </div>
+```
+
+Or using inline code attribute:
+
+```html
+<div
+  data-jupyter-embed="cell"
+  data-jupyter-code="print('Hello!')"
+  data-jupyter-height="200px"
+  data-jupyter-auto-execute="true"
+></div>
 ```
 
 **Attributes:**
 
-- `data-cell-type`: `code` | `markdown` | `raw` (default: `code`)
-- `data-height`: CSS height value
-- `data-auto-execute`: Auto-run on load (default: `true`)
-- `data-show-toolbar`: Show cell toolbar (default: `true`)
-- `data-kernel`: Kernel name override
+- `data-jupyter-cell-type`: `code` | `markdown` | `raw` (default: `code`)
+- `data-jupyter-height`: CSS height value
+- `data-jupyter-auto-execute`: Auto-run on load (default: `true`)
+- `data-jupyter-show-toolbar`: Show cell toolbar (default: `true`)
+- `data-jupyter-kernel`: Kernel name override
 
 ### Notebook
 
 ```html
 <!-- From server path -->
 <div
-  data-jupyter-embed
-  data-type="notebook"
-  data-path="path/to/notebook.ipynb"
-  data-height="500px"
-  data-readonly="false"
-  data-show-toolbar="true"
+  data-jupyter-embed="notebook"
+  data-jupyter-path="path/to/notebook.ipynb"
+  data-jupyter-height="500px"
+  data-jupyter-readonly="false"
+  data-jupyter-show-toolbar="true"
 ></div>
 
 <!-- From URL -->
 <div
-  data-jupyter-embed
-  data-type="notebook"
-  data-url="https://example.com/notebook.ipynb"
+  data-jupyter-embed="notebook"
+  data-jupyter-url="https://example.com/notebook.ipynb"
 ></div>
 
 <!-- Inline content -->
-<div data-jupyter-embed data-type="notebook">
+<div data-jupyter-embed="notebook">
   <script type="application/json">
     {
       "cells": [...],
@@ -221,11 +264,10 @@ initJupyterEmbeds();
 
 ```html
 <div
-  data-jupyter-embed
-  data-type="terminal"
-  data-height="300px"
-  data-color-mode="dark"
-  data-terminal-name="main"
+  data-jupyter-embed="terminal"
+  data-jupyter-height="300px"
+  data-jupyter-color-mode="dark"
+  data-jupyter-terminal-name="main"
 ></div>
 ```
 
@@ -233,12 +275,11 @@ initJupyterEmbeds();
 
 ```html
 <div
-  data-jupyter-embed
-  data-type="console"
-  data-height="400px"
-  data-kernel="python3"
+  data-jupyter-embed="console"
+  data-jupyter-height="400px"
+  data-jupyter-kernel="python3"
 >
-  <code data-type="pre-execute-code">
+  <code data-jupyter-pre-execute-code>
     # Code to run on console start import numpy as np
   </code>
 </div>
@@ -247,7 +288,27 @@ initJupyterEmbeds();
 ### Output (Display Only)
 
 ```html
-<div data-jupyter-embed data-type="output">
+<!-- Execute code and display output -->
+<div
+  data-jupyter-embed="output"
+  data-jupyter-height="300px"
+  data-jupyter-auto-run="true"
+>
+  <code data-jupyter-source-code>
+    import matplotlib.pyplot as plt import numpy as np x = np.linspace(0, 10,
+    100) plt.plot(x, np.sin(x)) plt.title('Sine Wave') plt.show()
+  </code>
+</div>
+
+<!-- Or with inline code attribute -->
+<div
+  data-jupyter-embed="output"
+  data-jupyter-code="print('Hello, World!')"
+  data-jupyter-auto-run="true"
+></div>
+
+<!-- Pre-computed output (no execution) -->
+<div data-jupyter-embed="output">
   <script type="application/json">
     [
       {
@@ -357,12 +418,14 @@ jupyter server --ServerApp.allow_origin='*' --ServerApp.token='your-token'
 ## Browser Support
 
 ### IIFE Build (Single File)
+
 - Chrome 80+
 - Firefox 75+
 - Safari 13.1+
 - Edge 80+
 
 ### ESM Build (Chunked)
+
 - Chrome 61+ (ES modules support)
 - Firefox 60+
 - Safari 11+
@@ -370,11 +433,11 @@ jupyter server --ServerApp.allow_origin='*' --ServerApp.token='your-token'
 
 ## Build Outputs
 
-| Build | Command | Output | Size | Use Case |
-|-------|---------|--------|------|----------|
-| IIFE | `npm run build` | `dist/jupyter-embed.js` | 13 MB (3.4 MB gzip) | Simple script tag inclusion |
-| ESM (single) | `npm run build` | `dist/jupyter-embed.esm.js` | 13 MB (3.4 MB gzip) | ES module import |
-| ESM (chunked) | `npm run build:esm` | `dist-esm/` | 11 MB total | Production with caching |
+| Build         | Command             | Output                      | Size                | Use Case                    |
+| ------------- | ------------------- | --------------------------- | ------------------- | --------------------------- |
+| IIFE          | `npm run build`     | `dist/jupyter-embed.js`     | 13 MB (3.4 MB gzip) | Simple script tag inclusion |
+| ESM (single)  | `npm run build`     | `dist/jupyter-embed.esm.js` | 13 MB (3.4 MB gzip) | ES module import            |
+| ESM (chunked) | `npm run build:esm` | `dist-esm/`                 | 11 MB total         | Production with caching     |
 
 ## License
 

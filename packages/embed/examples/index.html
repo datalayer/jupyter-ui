@@ -192,12 +192,11 @@
 
       <!-- Example: Simple code cell -->
       <div
-        data-jupyter-embed
-        data-type="cell"
-        data-height="400px"
-        data-auto-execute="true"
+        data-jupyter-embed="cell"
+        data-jupyter-height="400px"
+        data-jupyter-auto-execute="true"
       >
-        <code data-type="source-code">
+        <code data-jupyter-source-code>
 # Calculate the first 100 Fibonacci numbers
 def fibonacci(n):
     fib = [0, 1]
@@ -211,11 +210,11 @@ print(fibonacci(100))
 
       <pre><code>&lt;div 
   data-jupyter-embed
-  data-type="cell"
-  data-height="200px"
-  data-auto-execute="true"
+  data-jupyter-embed="cell"
+  data-jupyter-height="200px"
+  data-jupyter-auto-execute="true"
 &gt;
-  &lt;code data-type="source-code"&gt;
+  &lt;code data-jupyter-source-code&gt;
 # Calculate the first 100 Fibonacci numbers
 def fibonacci(n):
     fib = [0, 1]
@@ -235,12 +234,11 @@ print(fibonacci(100))
       </div>
 
       <div
-        data-jupyter-embed
-        data-type="cell"
-        data-height="150px"
-        data-auto-execute="true"
+        data-jupyter-embed="cell"
+        data-jupyter-height="150px"
+        data-jupyter-auto-execute="true"
       >
-        <code data-type="source-code">
+        <code data-jupyter-source-code>
 import sys
 print(f"Python version: {sys.version}")
         </code>
@@ -254,12 +252,11 @@ print(f"Python version: {sys.version}")
       </div>
 
       <div
-        data-jupyter-embed
-        data-type="cell"
-        data-cell-type="markdown"
-        data-height="300px"
+        data-jupyter-embed="cell"
+        data-jupyter-cell-type="markdown"
+        data-jupyter-height="300px"
       >
-        <code data-type="source-code">
+        <code data-jupyter-source-code>
           # Welcome to Jupyter Embed! This is a **markdown** cell with: - Rich
           formatting - Lists - And more! > 👉 Double-click me to edit.
         </code>
@@ -276,12 +273,11 @@ print(f"Python version: {sys.version}")
       </div>
 
       <div
-        data-jupyter-embed
-        data-type="output"
-        data-height="550px"
-        data-auto-run="true"
+        data-jupyter-embed="output"
+        data-jupyter-height="550px"
+        data-jupyter-auto-run="true"
       >
-        <code data-type="source-code">
+        <code data-jupyter-source-code>
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -305,12 +301,11 @@ plt.show()
       </div>
 
       <pre><code>&lt;div 
-  data-jupyter-embed 
-  data-type="output"
-  data-height="200px"
-  data-auto-run="true"
+  data-jupyter-embed="output"
+  data-jupyter-height="200px"
+  data-jupyter-auto-run="true"
 &gt;
-  &lt;code data-type="source-code"&gt;
+  &lt;code data-jupyter-source-code&gt;
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -341,7 +336,7 @@ plt.show()
         results without a kernel.
       </div>
 
-      <div data-jupyter-embed data-type="output">
+      <div data-jupyter-embed="output">
         <script type="application/json">
           [
             {
@@ -372,17 +367,16 @@ plt.show()
       </div>
 
       <div
-        data-jupyter-embed
-        data-type="terminal"
-        data-height="300px"
-        data-color-mode="dark"
+        data-jupyter-embed="terminal"
+        data-jupyter-height="300px"
+        data-jupyter-color-mode="dark"
       ></div>
 
       <pre><code>&lt;div 
   data-jupyter-embed
-  data-type="terminal"
-  data-height="300px"
-  data-color-mode="dark"
+  data-jupyter-embed="terminal"
+  data-jupyter-height="300px"
+  data-jupyter-color-mode="dark"
 &gt;&lt;/div&gt;</code></pre>
     </div>
 
@@ -395,19 +389,18 @@ plt.show()
       </div>
 
       <div
-        data-jupyter-embed
-        data-type="notebook"
-        data-path="test.ipynb"
-        data-height="500px"
-        data-show-toolbar="true"
+        data-jupyter-embed="notebook"
+        data-jupyter-path="test.ipynb"
+        data-jupyter-height="500px"
+        data-jupyter-show-toolbar="true"
       ></div>
 
       <pre><code>&lt;div 
   data-jupyter-embed
-  data-type="notebook"
-  data-path="test.ipynb"
-  data-height="300px"
-  data-show-toolbar="true"
+  data-jupyter-embed="notebook"
+  data-jupyter-path="test.ipynb"
+  data-jupyter-height="300px"
+  data-jupyter-show-toolbar="true"
 &gt;&lt;/div&gt;</code></pre>
     </div>
 
@@ -417,7 +410,7 @@ plt.show()
         Embed a notebook with inline content.
       </div>
 
-      <div data-jupyter-embed data-type="notebook" data-height="400px">
+      <div data-jupyter-embed="notebook" data-jupyter-height="400px">
         <script type="application/json">
           {
             "cells": [
@@ -461,7 +454,7 @@ plt.show()
         Display a notebook in read-only mode without editing capabilities.
       </div>
 
-      <div data-jupyter-embed data-type="viewer" data-height="400px">
+      <div data-jupyter-embed="viewer" data-jupyter-height="400px">
         <script type="application/json">
           {
             "cells": [
@@ -511,7 +504,7 @@ plt.show()
         </script>
       </div>
 
-      <pre><code>&lt;div data-jupyter-embed data-type="viewer" data-height="400px"&gt;
+      <pre><code>&lt;div data-jupyter-embed="viewer" data-jupyter-height="400px"&gt;
   &lt;script type="application/json"&gt;
     {
       "cells": [
@@ -542,12 +535,11 @@ plt.show()
 
       <div style="height: 520px; overflow: hidden">
         <div
-          data-jupyter-embed
-          data-type="console"
-          data-height="520px"
-          data-kernel="python3"
+          data-jupyter-embed="console"
+          data-jupyter-height="520px"
+          data-jupyter-kernel="python3"
         >
-          <code data-type="pre-execute-code">
+          <code data-jupyter-pre-execute-code>
             # This code runs when the console starts import numpy as np import
             pandas as pd print("NumPy and Pandas are ready!")
           </code>
@@ -556,11 +548,11 @@ plt.show()
 
       <pre><code>&lt;div 
   data-jupyter-embed
-  data-type="console"
-  data-height="400px"
-  data-kernel="python3"
+  data-jupyter-embed="console"
+  data-jupyter-height="400px"
+  data-jupyter-kernel="python3"
 &gt;
-  &lt;code data-type="pre-execute-code"&gt;
+  &lt;code data-jupyter-pre-execute-code&gt;
 # This code runs when the console starts
 import numpy as np
 import pandas as pd
@@ -597,7 +589,7 @@ print("NumPy and Pandas are ready!")
 &lt;/script&gt;</code></pre>
     </div>
 
-    <h2>Programmatic API</h2>
+    <h2>🔌 Programmatic API</h2>
     <div class="example">
       <div class="example-title">JavaScript API</div>
       <div class="example-description">

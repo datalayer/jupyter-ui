@@ -137,8 +137,8 @@
 
     <p>
       This demo shows the <strong>lazy-loading</strong> version of Jupyter Embed.
-      Components are loaded on-demand when they scroll into view, dramatically
-      reducing initial page load time.
+      Components are loaded on-demand when they scroll into view, reducing initial page 
+      load time to deliver jupyter components efficiently.
     </p>
 
     <div class="stats">
@@ -169,8 +169,8 @@
       <div
         data-jupyter-embed="cell"
         data-jupyter-cell-type="code"
-        data-jupyter-source="import numpy as np&#10;import matplotlib.pyplot as plt&#10;&#10;x = np.linspace(0, 2*np.pi, 100)&#10;plt.plot(x, np.sin(x))&#10;plt.title('Sine Wave')&#10;plt.show()"
-        data-jupyter-height="350px"
+        data-jupyter-code="import numpy as np&#10;import matplotlib.pyplot as plt&#10;&#10;x = np.linspace(0, 2*np.pi, 100)&#10;plt.plot(x, np.sin(x))&#10;plt.title('Sine Wave')&#10;plt.show()"
+        data-jupyter-height="550px"
         data-jupyter-auto-execute="false"
       ></div>
     </div>
@@ -184,11 +184,10 @@
       </div>
       <div
         data-jupyter-embed="output"
-        data-jupyter-code="print('Hello from lazy-loaded output!')"
         data-jupyter-auto-run="true"
         data-jupyter-height="550px"
       >
-        <code data-type="source-code">
+        <code data-jupyter-source-code>
 import numpy as np
 import matplotlib.pyplot as plt
 

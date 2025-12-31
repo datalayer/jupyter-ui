@@ -90,20 +90,30 @@ function parseCellOptions(
   baseOptions: any,
 ): ICellEmbedOptions {
   // Get source from data attribute or from child <code> elements
+  // Support both data-source/data-jupyter-source and data-code/data-jupyter-code
   let source =
-    getAttr(element, DATA_ATTRIBUTES.SOURCE, 'data-jupyter-source') || '';
+    getAttr(element, DATA_ATTRIBUTES.SOURCE, 'data-jupyter-source') ||
+    getAttr(element, DATA_ATTRIBUTES.CODE, 'data-jupyter-code') ||
+    '';
 
-  // Check for source-code child element
-  const sourceElement = element.querySelector(
+  // Check for source-code child element (supports both data-type="source-code" and data-jupyter-source-code)
+  let sourceElement = element.querySelector(
     `[data-type="${DATA_ATTRIBUTES.CONTENT_SOURCE}"]`,
   );
+  if (!sourceElement) {
+    sourceElement = element.querySelector(
+      `[${DATA_ATTRIBUTES.JUPYTER_CONTENT_SOURCE}]`,
+    );
+  }
   if (sourceElement) {
     source = extractCode(sourceElement);
   }
 
-  // Fallback: check for direct <code> child without data-type
+  // Fallback: check for direct <code> child without data-type or data-jupyter-source-code
   if (!source) {
-    const codeElement = element.querySelector('code:not([data-type])');
+    const codeElement = element.querySelector(
+      'code:not([data-type]):not([data-jupyter-source-code])',
+    );
     if (codeElement) {
       source = extractCode(codeElement);
     }
@@ -238,10 +248,15 @@ function parseConsoleOptions(
   let initCode =
     getAttr(element, DATA_ATTRIBUTES.INIT_CODE, 'data-jupyter-init-code') || '';
 
-  // Check for pre-execute-code child element
-  const preExecuteElement = element.querySelector(
+  // Check for pre-execute-code child element (supports both data-type="pre-execute-code" and data-jupyter-pre-execute-code)
+  let preExecuteElement = element.querySelector(
     `[data-type="${DATA_ATTRIBUTES.CONTENT_PRE_EXECUTE}"]`,
   );
+  if (!preExecuteElement) {
+    preExecuteElement = element.querySelector(
+      `[${DATA_ATTRIBUTES.JUPYTER_CONTENT_PRE_EXECUTE}]`,
+    );
+  }
   if (preExecuteElement) {
     initCode = extractCode(preExecuteElement);
   }
@@ -283,10 +298,15 @@ function parseOutputOptions(
   let outputs: any[] = [];
   let code: string | undefined;
 
-  // Check for source code
-  const sourceElement = element.querySelector(
+  // Check for source code (supports both data-type="source-code" and data-jupyter-source-code)
+  let sourceElement = element.querySelector(
     `[data-type="${DATA_ATTRIBUTES.CONTENT_SOURCE}"]`,
   );
+  if (!sourceElement) {
+    sourceElement = element.querySelector(
+      `[${DATA_ATTRIBUTES.JUPYTER_CONTENT_SOURCE}]`,
+    );
+  }
   if (sourceElement) {
     code = extractCode(sourceElement);
   }
