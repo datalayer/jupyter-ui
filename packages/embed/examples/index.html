@@ -18,7 +18,14 @@
         max-width: 1200px;
         margin: 0;
         padding: 20px;
-        background: #f5f5f5;
+        background: radial-gradient(
+          circle at top,
+          #f4faff 0,
+          #e3f3ff 35%,
+          #e9f7f1 75%,
+          #ffffff 100%
+        );
+        min-height: 100vh;
       }
       h1 {
         color: #59595c;
@@ -222,8 +229,8 @@ plt.show()
         data-auto-execute="true"
       >
         <code data-type="source-code">
-          # Calculate the first 10 Fibonacci numbers def fibonacci(n): fib = [0,
-          1] for i in range(2, n): fib.append(fib[i-1] + fib[i-2]) return
+          # Calculate the first 100 Fibonacci numbers def fibonacci(n): fib =
+          [0, 1] for i in range(2, n): fib.append(fib[i-1] + fib[i-2]) return
           fib[:n] print(fibonacci(100))
         </code>
       </div>
@@ -235,14 +242,14 @@ plt.show()
   data-auto-execute="true"
 &gt;
   &lt;code data-type="source-code"&gt;
-# Calculate the first 10 Fibonacci numbers
+# Calculate the first 100 Fibonacci numbers
 def fibonacci(n):
     fib = [0, 1]
     for i in range(2, n):
         fib.append(fib[i-1] + fib[i-2])
     return fib[:n]
 
-print(fibonacci(10))
+print(fibonacci(100))
   &lt;/code&gt;
 &lt;/div&gt;</code></pre>
     </div>
