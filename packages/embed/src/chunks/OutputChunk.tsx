@@ -9,11 +9,12 @@
  * This chunk is loaded on-demand when an Output component is needed
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   JupyterReactTheme,
   Output,
   useJupyter,
+  Kernel,
 } from '@datalayer/jupyter-react';
 import { getJupyterEmbedConfig } from '../config';
 import type { IOutputEmbedOptions } from '../types';
@@ -38,15 +39,46 @@ interface IOutputChunkProps {
 
 const OutputInner: React.FC<IOutputChunkProps> = ({ options }) => {
   const { defaultKernel } = useJupyterEmbed();
+  const [kernelReady, setKernelReady] = useState(false);
+  const [readyKernel, setReadyKernel] = useState<Kernel | undefined>(undefined);
+
+  // Wait for kernel to be ready before rendering Output
+  useEffect(() => {
+    if (defaultKernel) {
+      console.log(
+        '[OutputChunk] Waiting for kernel to be ready...',
+        defaultKernel,
+      );
+      defaultKernel.ready
+        .then(() => {
+          console.log('[OutputChunk] Kernel is ready!');
+          setReadyKernel(defaultKernel);
+          setKernelReady(true);
+        })
+        .catch((err: Error) => {
+          console.error('[OutputChunk] Kernel ready failed:', err);
+        });
+    }
+  }, [defaultKernel]);
+
+  // Show loading state while kernel is not ready
+  if (!kernelReady) {
+    return (
+      <div style={{ height: options.height || 'auto', padding: '10px' }}>
+        <div>Waiting for kernel...</div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ height: options.height || 'auto' }}>
-      <Output 
-        outputs={options.outputs || []} 
-        kernel={defaultKernel}
+      <Output
+        outputs={options.outputs || []}
+        kernel={readyKernel}
         code={options.code}
         autoRun={options.autoRun}
         showEditor={false}
+        lumino={true}
       />
     </div>
   );
