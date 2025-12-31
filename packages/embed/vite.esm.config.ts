@@ -6,12 +6,12 @@
 
 /**
  * Vite configuration for ES modules build with vendor chunking
- * 
+ *
  * This is Phase 1 of the code-splitting strategy:
  * - Uses existing codebase with no changes
  * - Outputs ES modules that browsers can cache independently
  * - Automatically splits vendor dependencies into cacheable chunks
- * 
+ *
  * Usage:
  *   <script type="module" src="https://cdn/jupyter-embed.esm.js"></script>
  */

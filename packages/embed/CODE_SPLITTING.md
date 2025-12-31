@@ -13,6 +13,7 @@ We propose a **multi-phase approach** from simple to complex:
 Use Vite's native ES module output with automatic vendor chunking. This requires no architecture changes - just a config update.
 
 **Output structure:**
+
 ```
 dist-esm/
 ├── jupyter-embed.js      # Main entry (~50KB, imports chunks)
@@ -26,12 +27,14 @@ dist-esm/
 ```
 
 **Usage:**
+
 ```html
 <!-- ES Module version - browsers load only needed chunks -->
 <script type="module" src="https://cdn/jupyter-embed.js"></script>
 ```
 
 **Benefits:**
+
 - No code changes required
 - Browser handles chunk loading automatically
 - Chunks are cached independently
@@ -42,10 +45,12 @@ dist-esm/
 A lightweight bootstrap script that detects which components are needed and loads only those.
 
 **Files:**
+
 - `src/bootstrap.ts` - Minimal loader (~50KB)
 - `src/chunks/*.tsx` - Component-specific chunks
 
 **Build output:**
+
 ```
 dist-chunked/
 ├── jupyter-embed.js      # Bootstrap loader (~50KB)
@@ -86,13 +91,13 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
-      formats: ['es'],  // ES modules only
+      formats: ['es'], // ES modules only
       fileName: () => 'jupyter-embed.js',
     },
     rollupOptions: {
       output: {
         // Automatic code splitting
-        manualChunks: (id) => {
+        manualChunks: id => {
           if (id.includes('node_modules')) {
             if (id.includes('react')) return 'vendor-react';
             if (id.includes('@jupyterlab')) return 'vendor-jupyterlab';
@@ -111,28 +116,29 @@ export default defineConfig({
 
 ### Phase 1 Build Output (Actual)
 
-| Chunk | Size | Gzipped | Description |
-|-------|------|---------|-------------|
-| jupyter-embed.esm.js | 5.4MB | 1.9MB | Main entry + shared code |
-| vendor-codemirror | 1.7MB | 579KB | CodeMirror editor |
-| vendor-jupyter-core | 1.2MB | 300KB | JupyterLab core |
-| vendor-mathjax | 864KB | 203KB | Math rendering |
-| vendor-react | 822KB | 177KB | React/ReactDOM |
-| vendor-xterm | 489KB | 119KB | Terminal emulator |
-| vendor-lumino | 200KB | 49KB | Lumino widgets |
-| vendor-jupyter-renderers | 157KB | 43KB | Output renderers |
-| vendor-jupyter-notebook | 143KB | 35KB | Notebook components |
-| vendor-jupyter-services | 104KB | 23KB | Jupyter server API |
-| **Total** | ~11MB | ~3.5MB | All chunks combined |
+| Chunk                    | Size  | Gzipped | Description              |
+| ------------------------ | ----- | ------- | ------------------------ |
+| jupyter-embed.esm.js     | 5.4MB | 1.9MB   | Main entry + shared code |
+| vendor-codemirror        | 1.7MB | 579KB   | CodeMirror editor        |
+| vendor-jupyter-core      | 1.2MB | 300KB   | JupyterLab core          |
+| vendor-mathjax           | 864KB | 203KB   | Math rendering           |
+| vendor-react             | 822KB | 177KB   | React/ReactDOM           |
+| vendor-xterm             | 489KB | 119KB   | Terminal emulator        |
+| vendor-lumino            | 200KB | 49KB    | Lumino widgets           |
+| vendor-jupyter-renderers | 157KB | 43KB    | Output renderers         |
+| vendor-jupyter-notebook  | 143KB | 35KB    | Notebook components      |
+| vendor-jupyter-services  | 104KB | 23KB    | Jupyter server API       |
+| **Total**                | ~11MB | ~3.5MB  | All chunks combined      |
 
 ### Comparison
 
-| Build Type | Total Size | Gzipped | Notes |
-|------------|-----------|---------|-------|
-| IIFE (current) | 13MB | 3.4MB | Single file, no caching benefit |
-| ESM (Phase 1) | 11MB | 3.5MB | Chunks cached independently |
+| Build Type     | Total Size | Gzipped | Notes                           |
+| -------------- | ---------- | ------- | ------------------------------- |
+| IIFE (current) | 13MB       | 3.4MB   | Single file, no caching benefit |
+| ESM (Phase 1)  | 11MB       | 3.5MB   | Chunks cached independently     |
 
 **Key Benefit**: While total size is similar, ESM allows browsers to:
+
 - Cache vendor chunks separately (they rarely change)
 - Load chunks in parallel
 - Skip downloading cached chunks on repeat visits
@@ -140,11 +146,13 @@ export default defineConfig({
 ### Future Optimization (Phase 3)
 
 To significantly reduce initial load, the `@datalayer/jupyter-react` package needs to be refactored with:
+
 - Separate entry points per component
 - Dynamic imports for heavy dependencies
 - Tree-shaking friendly exports
 
 This would enable load scenarios like:
+
 - **Output only**: ~2MB (skip codemirror, notebook, terminal)
 - **Cell only**: ~3MB (skip notebook, terminal)
 - **Terminal only**: ~2MB (skip notebook, codemirror)
@@ -157,6 +165,7 @@ This would enable load scenarios like:
 ## CDN Deployment
 
 For ES modules to work from CDN, ensure:
+
 1. Correct MIME type: `application/javascript`
 2. CORS headers for cross-origin modules
 3. Immutable cache headers for chunked files
@@ -190,8 +199,14 @@ import { Jupyter } from '@datalayer/jupyter-react/jupyter';
 import { Theme } from '@datalayer/jupyter-react/theme';
 
 // Or the traditional import (still works for backwards compatibility):
-import { Cell, Notebook, Output, Terminal, Console, Viewer } from '@datalayer/jupyter-react';
+import {
+  Cell,
+  Notebook,
+  Output,
+  Terminal,
+  Console,
+  Viewer,
+} from '@datalayer/jupyter-react';
 ```
 
 These entry points are defined in `packages/react/package.json` exports field, enabling bundlers to tree-shake unused components.
-

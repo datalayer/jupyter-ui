@@ -11,9 +11,9 @@ import { JupyterSkeleton } from './JupyterSkeleton';
 /**
  * Lazy-loaded Terminal component
  */
-const TerminalImpl = lazy(() => 
+const TerminalImpl = lazy(() =>
   import('../components/terminal/Terminal').then(module => ({
-    default: module.Terminal
+    default: module.Terminal,
   }))
 );
 
@@ -30,10 +30,10 @@ export interface ILazyTerminalProps extends TerminalNamespace.ITerminalOptions {
 
 /**
  * Lazy-loaded Terminal component with built-in Suspense boundary
- * 
+ *
  * @example
  * ```tsx
- * <LazyTerminal 
+ * <LazyTerminal
  *   height="400px"
  *   colormode="dark"
  * />
@@ -45,10 +45,7 @@ export const LazyTerminal: React.FC<ILazyTerminalProps> = ({
   ...terminalProps
 }) => {
   const defaultFallback = (
-    <JupyterSkeleton 
-      height={skeletonHeight} 
-      componentType="terminal"
-    />
+    <JupyterSkeleton height={skeletonHeight} componentType="terminal" />
   );
 
   return (

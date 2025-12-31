@@ -6,7 +6,7 @@
 
 /**
  * Viewer component entry point
- * 
+ *
  * This is a separate entry point for tree-shaking.
  * Import from '@datalayer/jupyter-react/viewer' for smaller bundles.
  */

@@ -6,10 +6,10 @@
 
 /**
  * Vite configuration for bootstrap-only build (ultra-minimal)
- * 
+ *
  * This creates the smallest possible initial payload - just the parser
  * and initialization logic. React and all components are loaded on-demand.
- * 
+ *
  * Expected output:
  *   dist-bootstrap/
  *     jupyter-embed.js              - Bootstrap (~10-30KB)
@@ -64,7 +64,7 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        chunkFileNames: (chunkInfo) => {
+        chunkFileNames: chunkInfo => {
           const name = chunkInfo.name || 'chunk';
           return `chunks/${name}-[hash].js`;
         },
@@ -72,29 +72,37 @@ export default defineConfig({
         // Enable code splitting - this is the key!
         inlineDynamicImports: false,
         // Manual chunks for vendor splitting
-        manualChunks: (id) => {
+        manualChunks: id => {
           // React core
-          if (id.includes('node_modules/react/') || 
-              id.includes('node_modules/react-dom/') ||
-              id.includes('node_modules/scheduler/')) {
+          if (
+            id.includes('node_modules/react/') ||
+            id.includes('node_modules/react-dom/') ||
+            id.includes('node_modules/scheduler/')
+          ) {
             return 'vendor-react';
           }
-          
+
           // Primer UI
-          if (id.includes('node_modules/@primer/') || 
-              id.includes('node_modules/@datalayer/primer-addons')) {
+          if (
+            id.includes('node_modules/@primer/') ||
+            id.includes('node_modules/@datalayer/primer-addons')
+          ) {
             return 'vendor-primer';
           }
 
           // xterm
-          if (id.includes('node_modules/xterm') || 
-              id.includes('node_modules/@xterm/')) {
+          if (
+            id.includes('node_modules/xterm') ||
+            id.includes('node_modules/@xterm/')
+          ) {
             return 'vendor-xterm';
           }
 
           // CodeMirror
-          if (id.includes('node_modules/@codemirror/') ||
-              id.includes('node_modules/@lezer/')) {
+          if (
+            id.includes('node_modules/@codemirror/') ||
+            id.includes('node_modules/@lezer/')
+          ) {
             return 'vendor-codemirror';
           }
 
@@ -102,7 +110,7 @@ export default defineConfig({
           if (id.includes('node_modules/mathjax')) {
             return 'vendor-mathjax';
           }
-          
+
           return undefined;
         },
       },

@@ -6,11 +6,11 @@
 
 /**
  * Vite configuration for lazy-loading build with proper code splitting
- * 
+ *
  * This build uses dynamic imports (React.lazy) to enable true code splitting.
  * The main entry point is kept small (~100KB) and component chunks are loaded
  * on-demand when rendered.
- * 
+ *
  * Output structure:
  *   dist-lazy/
  *     jupyter-embed.lazy.js        - Main entry (~100KB)
@@ -23,7 +23,7 @@
  *       jupyter-viewer-[hash].js   - Viewer component chunk
  *       vendor-react-[hash].js     - React runtime
  *       vendor-jupyterlab-[hash].js - Shared JupyterLab code
- * 
+ *
  * Usage:
  *   <script type="module" src="https://cdn/jupyter-embed.lazy.js"></script>
  */
@@ -77,7 +77,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         // Chunk file names with hash for caching
-        chunkFileNames: (chunkInfo) => {
+        chunkFileNames: chunkInfo => {
           // Give descriptive names to our component chunks
           const name = chunkInfo.name || 'chunk';
           return `chunks/${name}-[hash].js`;
@@ -87,29 +87,37 @@ export default defineConfig({
         // This is the key difference from the non-lazy build
         inlineDynamicImports: false,
         // Manual chunks for vendor splitting
-        manualChunks: (id) => {
+        manualChunks: id => {
           // React core - shared by all
-          if (id.includes('node_modules/react/') || 
-              id.includes('node_modules/react-dom/') ||
-              id.includes('node_modules/scheduler/')) {
+          if (
+            id.includes('node_modules/react/') ||
+            id.includes('node_modules/react-dom/') ||
+            id.includes('node_modules/scheduler/')
+          ) {
             return 'vendor-react';
           }
-          
+
           // Primer/UI components - shared by all
-          if (id.includes('node_modules/@primer/') || 
-              id.includes('node_modules/@datalayer/primer-addons')) {
+          if (
+            id.includes('node_modules/@primer/') ||
+            id.includes('node_modules/@datalayer/primer-addons')
+          ) {
             return 'vendor-primer';
           }
 
           // xterm.js - only needed for terminal
-          if (id.includes('node_modules/xterm') || 
-              id.includes('node_modules/@xterm/')) {
+          if (
+            id.includes('node_modules/xterm') ||
+            id.includes('node_modules/@xterm/')
+          ) {
             return 'vendor-xterm';
           }
 
           // CodeMirror - needed for cells and notebooks
-          if (id.includes('node_modules/@codemirror/') ||
-              id.includes('node_modules/@lezer/')) {
+          if (
+            id.includes('node_modules/@codemirror/') ||
+            id.includes('node_modules/@lezer/')
+          ) {
             return 'vendor-codemirror';
           }
 
@@ -121,7 +129,7 @@ export default defineConfig({
           // Let Rollup handle JupyterLab modules naturally
           // They'll be included with the component that imports them
           // This avoids TDZ issues from splitting tightly coupled modules
-          
+
           return undefined;
         },
       },

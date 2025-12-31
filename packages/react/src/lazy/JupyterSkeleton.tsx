@@ -24,12 +24,18 @@ export interface IJupyterSkeletonProps {
   /**
    * Component type being loaded (for accessibility)
    */
-  componentType?: 'cell' | 'notebook' | 'terminal' | 'console' | 'output' | 'viewer';
+  componentType?:
+    | 'cell'
+    | 'notebook'
+    | 'terminal'
+    | 'console'
+    | 'output'
+    | 'viewer';
 }
 
 /**
  * Skeleton loading component for lazy-loaded Jupyter components.
- * 
+ *
  * Use this as a fallback in Suspense boundaries when lazy-loading
  * heavy Jupyter components.
  */
@@ -39,9 +45,11 @@ export const JupyterSkeleton: React.FC<IJupyterSkeletonProps> = ({
   text,
   componentType,
 }) => {
-  const displayText = text ?? (componentType 
-    ? `Loading Jupyter ${componentType}...`
-    : 'Loading Jupyter component...');
+  const displayText =
+    text ??
+    (componentType
+      ? `Loading Jupyter ${componentType}...`
+      : 'Loading Jupyter component...');
 
   return (
     <Box

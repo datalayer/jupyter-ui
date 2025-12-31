@@ -11,9 +11,9 @@ import { JupyterSkeleton } from './JupyterSkeleton';
 /**
  * Lazy-loaded Notebook component
  */
-const NotebookImpl = lazy(() => 
+const NotebookImpl = lazy(() =>
   import('../components/notebook/Notebook').then(module => ({
-    default: module.Notebook
+    default: module.Notebook,
   }))
 );
 
@@ -30,26 +30,21 @@ export interface ILazyNotebookProps extends INotebookProps {
 
 /**
  * Lazy-loaded Notebook component with built-in Suspense boundary
- * 
+ *
  * @example
  * ```tsx
- * <LazyNotebook 
+ * <LazyNotebook
  *   id="my-notebook"
  *   serviceManager={serviceManager}
  *   nbformat={notebookContent}
  * />
  * ```
  */
-export const LazyNotebook: React.FC<React.PropsWithChildren<ILazyNotebookProps>> = ({
-  fallback,
-  skeletonHeight = '400px',
-  ...notebookProps
-}) => {
+export const LazyNotebook: React.FC<
+  React.PropsWithChildren<ILazyNotebookProps>
+> = ({ fallback, skeletonHeight = '400px', ...notebookProps }) => {
   const defaultFallback = (
-    <JupyterSkeleton 
-      height={skeletonHeight} 
-      componentType="notebook"
-    />
+    <JupyterSkeleton height={skeletonHeight} componentType="notebook" />
   );
 
   return (

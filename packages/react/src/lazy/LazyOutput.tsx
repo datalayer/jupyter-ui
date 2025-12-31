@@ -11,9 +11,9 @@ import { JupyterSkeleton } from './JupyterSkeleton';
 /**
  * Lazy-loaded Output component
  */
-const OutputImpl = lazy(() => 
+const OutputImpl = lazy(() =>
   import('../components/output/Output').then(module => ({
-    default: module.Output
+    default: module.Output,
   }))
 );
 
@@ -30,10 +30,10 @@ export interface ILazyOutputProps extends IOutputProps {
 
 /**
  * Lazy-loaded Output component with built-in Suspense boundary
- * 
+ *
  * @example
  * ```tsx
- * <LazyOutput 
+ * <LazyOutput
  *   code="print('Hello!')"
  *   kernel={kernel}
  *   autoRun={true}
@@ -46,10 +46,7 @@ export const LazyOutput: React.FC<ILazyOutputProps> = ({
   ...outputProps
 }) => {
   const defaultFallback = (
-    <JupyterSkeleton 
-      height={skeletonHeight} 
-      componentType="output"
-    />
+    <JupyterSkeleton height={skeletonHeight} componentType="output" />
   );
 
   return (

@@ -10,14 +10,14 @@ import { JupyterSkeleton } from './JupyterSkeleton';
 
 /**
  * Lazy-loaded Cell component
- * 
+ *
  * This component wraps the Cell component with React.lazy for code splitting.
  * The heavy JupyterLab cell dependencies are only loaded when this component
  * is rendered.
  */
-const CellImpl = lazy(() => 
+const CellImpl = lazy(() =>
   import('../components/cell/Cell').then(module => ({
-    default: module.Cell
+    default: module.Cell,
   }))
 );
 
@@ -34,14 +34,14 @@ export interface ILazyCellProps extends ICellProps {
 
 /**
  * Lazy-loaded Cell component with built-in Suspense boundary
- * 
+ *
  * This component automatically provides a loading state while the
  * Cell component is being loaded.
- * 
+ *
  * @example
  * ```tsx
- * <LazyCell 
- *   source="print('Hello, World!')" 
+ * <LazyCell
+ *   source="print('Hello, World!')"
  *   kernel={kernel}
  *   autoStart={true}
  * />
@@ -53,10 +53,7 @@ export const LazyCell: React.FC<ILazyCellProps> = ({
   ...cellProps
 }) => {
   const defaultFallback = (
-    <JupyterSkeleton 
-      height={skeletonHeight} 
-      componentType="cell"
-    />
+    <JupyterSkeleton height={skeletonHeight} componentType="cell" />
   );
 
   return (
@@ -68,7 +65,7 @@ export const LazyCell: React.FC<ILazyCellProps> = ({
 
 /**
  * Raw lazy Cell component without Suspense boundary
- * 
+ *
  * Use this when you want to manage the Suspense boundary yourself,
  * e.g., when loading multiple components together.
  */

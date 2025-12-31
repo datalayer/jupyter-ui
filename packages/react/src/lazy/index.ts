@@ -6,14 +6,14 @@
 
 /**
  * Lazy-loaded components for code splitting
- * 
+ *
  * This module provides React.lazy wrappers around heavy Jupyter components.
  * Use these when you want to enable proper code splitting and reduce initial
  * bundle size.
- * 
+ *
  * Usage:
  *   import { LazyCell, LazyNotebook } from '@datalayer/jupyter-react/lazy';
- *   
+ *
  *   <Suspense fallback={<JupyterSkeleton />}>
  *     <LazyCell source="print('hello')" />
  *   </Suspense>

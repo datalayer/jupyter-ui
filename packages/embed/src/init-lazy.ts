@@ -158,7 +158,7 @@ export function destroyJupyterEmbedsLazy(): void {
  */
 function autoInitLazy(): void {
   console.log('[jupyter-embed] autoInitLazy called');
-  
+
   // Find our script tag and parse config from it
   const scripts = document.querySelectorAll('script[src*="jupyter-embed"]');
   console.log('[jupyter-embed] Found script tags:', scripts.length);

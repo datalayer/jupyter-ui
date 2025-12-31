@@ -10,10 +10,7 @@
  */
 
 import React from 'react';
-import {
-  JupyterReactTheme,
-  Viewer,
-} from '@datalayer/jupyter-react';
+import { JupyterReactTheme, Viewer } from '@datalayer/jupyter-react';
 import type { IViewerEmbedOptions } from '../types';
 
 interface IViewerChunkProps {
@@ -21,11 +18,12 @@ interface IViewerChunkProps {
 }
 
 const ViewerInner: React.FC<IViewerChunkProps> = ({ options }) => {
-  const nbformat = typeof options.content === 'object' ? options.content : undefined;
+  const nbformat =
+    typeof options.content === 'object' ? options.content : undefined;
 
   return (
     <div style={{ height: options.height || 'auto' }}>
-      <Viewer 
+      <Viewer
         nbformat={nbformat as any}
         nbformatUrl={options.url}
         outputs={options.outputs !== false}

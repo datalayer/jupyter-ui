@@ -11,9 +11,9 @@ import { JupyterSkeleton } from './JupyterSkeleton';
 /**
  * Lazy-loaded Viewer component
  */
-const ViewerImpl = lazy(() => 
+const ViewerImpl = lazy(() =>
   import('../components/viewer/Viewer').then(module => ({
-    default: module.Viewer
+    default: module.Viewer,
   }))
 );
 
@@ -30,10 +30,10 @@ export interface ILazyViewerProps extends IViewerProps {
 
 /**
  * Lazy-loaded Viewer component with built-in Suspense boundary
- * 
+ *
  * @example
  * ```tsx
- * <LazyViewer 
+ * <LazyViewer
  *   nbformat={notebookContent}
  *   outputs={true}
  * />
@@ -45,10 +45,7 @@ export const LazyViewer: React.FC<ILazyViewerProps> = ({
   ...viewerProps
 }) => {
   const defaultFallback = (
-    <JupyterSkeleton 
-      height={skeletonHeight} 
-      componentType="viewer"
-    />
+    <JupyterSkeleton height={skeletonHeight} componentType="viewer" />
   );
 
   return (

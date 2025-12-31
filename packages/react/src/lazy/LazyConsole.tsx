@@ -11,9 +11,9 @@ import { JupyterSkeleton } from './JupyterSkeleton';
 /**
  * Lazy-loaded Console component
  */
-const ConsoleImpl = lazy(() => 
+const ConsoleImpl = lazy(() =>
   import('../components/console/Console').then(module => ({
-    default: module.Console
+    default: module.Console,
   }))
 );
 
@@ -30,7 +30,7 @@ export interface ILazyConsoleProps extends ConsoleNamespace.IConsoleOptions {
 
 /**
  * Lazy-loaded Console component with built-in Suspense boundary
- * 
+ *
  * @example
  * ```tsx
  * <LazyConsole code="print('Hello!')" />
@@ -42,10 +42,7 @@ export const LazyConsole: React.FC<ILazyConsoleProps> = ({
   ...consoleProps
 }) => {
   const defaultFallback = (
-    <JupyterSkeleton 
-      height={skeletonHeight} 
-      componentType="console"
-    />
+    <JupyterSkeleton height={skeletonHeight} componentType="console" />
   );
 
   return (

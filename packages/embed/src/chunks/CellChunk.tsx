@@ -10,11 +10,7 @@
  */
 
 import React from 'react';
-import {
-  JupyterReactTheme,
-  Cell,
-  useJupyter,
-} from '@datalayer/jupyter-react';
+import { JupyterReactTheme, Cell, useJupyter } from '@datalayer/jupyter-react';
 import { getJupyterEmbedConfig } from '../config';
 import type { ICellEmbedOptions } from '../types';
 

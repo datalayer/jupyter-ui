@@ -174,7 +174,9 @@ deploy-build: build-lazy ## prepare artifacts for deployment
 	@# Copy lazy-loading build as the main version
 	@cp dist-lazy/jupyter-embed.lazy.js build/
 	@cp -r dist-lazy/chunks build/
+	@# Copy both example HTML files
 	@cp examples/index.html build/
+	@cp examples/index-lazy.html build/
 	@echo -e "\033[1;32m✅ Artifacts ready in ./build\033[0m"
 
 .PHONY: deploy

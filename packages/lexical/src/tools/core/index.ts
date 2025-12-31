@@ -31,4 +31,4 @@ export * from './executor';
 export {
   type ToolConfig,
   type ToolDefinition,
-} from '@datalayer/jupyter-react/lib/tools/core';
+} from '@datalayer/jupyter-react';

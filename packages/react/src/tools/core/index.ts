@@ -24,3 +24,4 @@ export * from './executor';
 export * from './operationRunner';
 export * from './schema';
 export * from './types';
+export * from './zodUtils';

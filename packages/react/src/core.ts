@@ -6,22 +6,22 @@
 
 /**
  * Core entry point - lightweight providers and utilities
- * 
+ *
  * This entry point contains only the minimal code needed to bootstrap
  * a Jupyter React application:
  * - Theme provider (JupyterReactTheme)
  * - Context and hooks (useJupyter)
  * - State management
  * - Kernel management (without heavy cell/notebook implementations)
- * 
+ *
  * Import heavy components from the lazy entry point:
  *   import { LazyCell, LazyNotebook } from '@datalayer/jupyter-react/lazy';
- * 
+ *
  * @example
  * ```tsx
  * import { JupyterReactTheme, useJupyter } from '@datalayer/jupyter-react/core';
  * import { LazyCell } from '@datalayer/jupyter-react/lazy';
- * 
+ *
  * function App() {
  *   return (
  *     <JupyterReactTheme>

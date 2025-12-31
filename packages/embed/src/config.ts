@@ -97,7 +97,8 @@ export function parseConfigFromScript(
 
   // Support both data-server-url and data-jupyter-server-url
   if (script.dataset.serverUrl || script.dataset.jupyterServerUrl) {
-    config.serverUrl = script.dataset.serverUrl || script.dataset.jupyterServerUrl;
+    config.serverUrl =
+      script.dataset.serverUrl || script.dataset.jupyterServerUrl;
   }
   if (script.dataset.wsUrl || script.dataset.jupyterWsUrl) {
     config.wsUrl = script.dataset.wsUrl || script.dataset.jupyterWsUrl;
@@ -106,18 +107,27 @@ export function parseConfigFromScript(
     config.token = script.dataset.token || script.dataset.jupyterToken;
   }
   if (script.dataset.kernel || script.dataset.jupyterKernel) {
-    config.defaultKernel = script.dataset.kernel || script.dataset.jupyterKernel;
+    config.defaultKernel =
+      script.dataset.kernel || script.dataset.jupyterKernel;
   }
-  if (script.dataset.autoStart !== undefined || script.dataset.jupyterAutoStart !== undefined) {
+  if (
+    script.dataset.autoStart !== undefined ||
+    script.dataset.jupyterAutoStart !== undefined
+  ) {
     const val = script.dataset.autoStart ?? script.dataset.jupyterAutoStart;
     config.autoStartKernel = val !== 'false';
   }
-  if (script.dataset.lazyLoad !== undefined || script.dataset.jupyterLazyLoad !== undefined) {
+  if (
+    script.dataset.lazyLoad !== undefined ||
+    script.dataset.jupyterLazyLoad !== undefined
+  ) {
     const val = script.dataset.lazyLoad ?? script.dataset.jupyterLazyLoad;
     config.lazyLoad = val !== 'false';
   }
   if (script.dataset.theme || script.dataset.jupyterTheme) {
-    config.theme = (script.dataset.theme || script.dataset.jupyterTheme) as 'light' | 'dark';
+    config.theme = (script.dataset.theme || script.dataset.jupyterTheme) as
+      | 'light'
+      | 'dark';
   }
   if (script.dataset.basePath || script.dataset.jupyterBasePath) {
     config.basePath = script.dataset.basePath || script.dataset.jupyterBasePath;

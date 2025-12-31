@@ -44,13 +44,15 @@ const NotebookInner: React.FC<INotebookChunkProps> = ({ options }) => {
 
   if (!serviceManager) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        height,
-        color: '#656d76',
-      }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height,
+          color: '#656d76',
+        }}
+      >
         Connecting to Jupyter server...
       </div>
     );

@@ -6,7 +6,7 @@
 
 /**
  * Vite configuration for code-split ES modules build
- * 
+ *
  * This produces ES modules that browsers can load dynamically.
  * The bootstrap script loads only what's needed.
  */
@@ -55,7 +55,7 @@ export default defineConfig({
     lib: {
       entry: {
         'jupyter-embed': resolve(__dirname, 'src/index.ts'),
-        'bootstrap': resolve(__dirname, 'src/bootstrap.ts'),
+        bootstrap: resolve(__dirname, 'src/bootstrap.ts'),
       },
       formats: ['es'],
     },
@@ -66,12 +66,12 @@ export default defineConfig({
         format: 'es',
         // Entry file names
         entryFileNames: '[name].js',
-        // Chunk file names  
+        // Chunk file names
         chunkFileNames: 'chunks/[name]-[hash].js',
         // Asset file names
         assetFileNames: 'assets/[name]-[hash][extname]',
         // Manual chunk splitting for vendor dependencies
-        manualChunks: (id) => {
+        manualChunks: id => {
           // Group large vendor packages
           if (id.includes('node_modules')) {
             // React ecosystem
@@ -136,4 +136,3 @@ export default defineConfig({
     ],
   },
 });
-
