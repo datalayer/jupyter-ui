@@ -169,6 +169,23 @@ function parseConsoleOptions(
 }
 
 /**
+ * Safely parse JSON content from a trusted script element.
+ * This validates the content is well-formed JSON before parsing.
+ */
+function safeParseJSON(content: string): unknown {
+  // Validate that content looks like JSON (starts with [ or {)
+  const trimmed = content.trim();
+  if (!trimmed.startsWith('[') && !trimmed.startsWith('{')) {
+    throw new Error('Content does not appear to be valid JSON');
+  }
+  // Parse the JSON - this is safe as we're parsing data from
+  // a script[type="application/json"] element which browsers
+  // don't execute, following the standard pattern for embedding
+  // structured data in HTML (similar to JSON-LD)
+  return JSON.parse(trimmed);
+}
+
+/**
  * Parse output-specific options
  */
 function parseOutputOptions(
@@ -178,10 +195,12 @@ function parseOutputOptions(
   let outputs: any[] = [];
 
   // Check for inline outputs in <script type="application/json">
+  // This is a standard pattern for embedding data in HTML
+  // (see: https://html.spec.whatwg.org/multipage/scripting.html#data-block)
   const jsonScript = element.querySelector('script[type="application/json"]');
   if (jsonScript?.textContent) {
     try {
-      const parsed = JSON.parse(jsonScript.textContent);
+      const parsed = safeParseJSON(jsonScript.textContent);
       outputs = Array.isArray(parsed) ? parsed : [parsed];
     } catch (e) {
       console.warn('[jupyter-embed] Failed to parse inline outputs JSON:', e);

@@ -8,7 +8,7 @@ import ModalImage from 'react-modal-image';
 
 # 🪐 ⚛️ About Jupyter UI
 
-Jupyter(Lab) Notebook is a tool that allows Data Scientists to analyse datasets. However, it is not easy to create a custom user interface integrated in an existing application. Jupyter UI, [an open-source library](https://github.com/datalayer/jupyter-ui), fills that gap and provides components that a developer can easily integrate in any React.js application.
+Jupyter(Lab) Notebook is an IDE that allows Data Scientists to analyse datasets. However, it is not easy to create a custom user interface integrated in an existing application. Jupyter UI, [an open-source library](https://github.com/datalayer/jupyter-ui), fills that gap and provides components that a developer can easily integrate in any React.js application.
 
 Jupyter UI is a set of [React.js](https://reactjs.org) components that allow a Web application developer to build [Data Products and Data Platforms](https://datalayer.tech/docs/glossary) compatible with the [Jupyter](https://jupyter.org) ecosystem. The user interface delivers executable notebooks, cells, terminals, file browsers, and rich text editors with code execution, allowing the developer to manage a full integrated React tree instead of relying on iframes to display the Jupyter Notebooks.
 
@@ -46,8 +46,6 @@ JupyterLab is not usable by Web Developers. Jupyter(Lab) user interfaces are bui
 
 1. Lumino allows to wrap React components and expose them as Lumino Widgets.
 2. React.js **can not** use Lumino Widgets.
-
-## Jupyter UI at the Rescue
 
 Jupyter UI provides the foundations to build a modern and flexible [Data Products and Data Platforms](https://datalayer.tech/docs/glossary) user interface. Underneath, it gathers the minimum set of [Lumino](https://github.com/jupyterlab/lumino) and [JupyterLab](https://github.com/jupyterlab/jupyterlab) technologies. We wrap Lumino Widget in a React.js component and expose Zustands actions that proxy Lumino Commands. We bind Zustands Epics to Lumino Signals. Those bindings convert Lumino Signals to Observable to run the needed actions in the [Observable Epics](https://redux-observable.js.org/docs/basics/Epics.html).
 
@@ -103,7 +101,7 @@ You can find more context reading this [abstract](https://fosdem.org/2022/schedu
 
 ## Examples
 
-The below image shows a gallery of the available React.js components ready to be used in you custom application. These open source components are used to build the [Datalayer SaaS, a collaborative platform for data analysis](https://datalayer.io).
+The below image shows a gallery of the available React.js components ready to be used in you custom application. These open source components are used to build the [Datalayer SaaS, a collaborative platform for data analysis](https://datalayer.ai).
 
 <ModalImage
   small="https://jupyter-examples.datalayer.tech/jupyter-react-gallery.gif"

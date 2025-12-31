@@ -1,33 +1,5 @@
 # Development Environment
 
-:::caution
-
-🚨 Only npm is supported - yarn, pnpm... may work, or not...
-
-For yarn, Create a `.yarnrc.yml` file in the root of your project to use `node_modules`.
-
-```yaml
-enableImmutableInstalls: false
-enableInlineBuilds: false
-enableTelemetry: false
-httpTimeout: 60000
-nodeLinker: node-modules
-npmRegistryServer: 'https://registry.yarnpkg.com'
-
-# This will fix the build error with @lerna/legacy-package-management
-# See https://github.com/lerna/repro/pull/11
-packageExtensions:
-  '@lerna/legacy-package-management@*':
-    dependencies:
-      '@lerna/child-process': '*'
-      'js-yaml': '*'
-      'rimraf': '*'
-    peerDependencies:
-      'nx': '*'
-```
-
-:::
-
 Choose the way you want to develop Jupyter UI:
 
 1. [With Conda](/develop/dev-environment/conda)
@@ -51,3 +23,34 @@ If you just want to develop the core package `@datalayer/jupyter-react` of the r
 cd packages/react
 npm run build
 ```
+
+:::caution
+
+Only npm is supported - yarn, pnpm... may work, or not...
+
+<br />
+If you want to use yarn, create a `.yarnrc.yml` file in the root of your project
+to use `node_modules`.
+<br />
+
+```yaml
+enableImmutableInstalls: false
+enableInlineBuilds: false
+enableTelemetry: false
+httpTimeout: 60000
+nodeLinker: node-modules
+npmRegistryServer: 'https://registry.yarnpkg.com'
+
+# This will fix the build error with @lerna/legacy-package-management
+# See https://github.com/lerna/repro/pull/11
+packageExtensions:
+  '@lerna/legacy-package-management@*':
+    dependencies:
+      '@lerna/child-process': '*'
+      'js-yaml': '*'
+      'rimraf': '*'
+    peerDependencies:
+      'nx': '*'
+```
+
+:::

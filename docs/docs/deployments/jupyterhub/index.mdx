@@ -1,3 +1,135 @@
-# 🚧 JupyterHub
+---
+description: Deploy Jupyter UI components with JupyterHub for multi-user environments.
+---
 
-Deployment for JupyterHub is a Work in Progress (WIP).
+# JupyterHub
+
+JupyterHub deployment for Jupyter UI is currently under development and needs community contributions to complete the integration.
+
+## Current Status
+
+Jupyter UI components are compatible with JupyterHub's authentication system since `@datalayer/jupyter-react` is built as a Jupyter Server extension. Initial proof-of-concept deployments have been successful, but complete documentation and production-ready configurations are still in progress.
+
+## Known Working Approach
+
+Based on community experimentation ([#191](https://github.com/datalayer/jupyter-ui/issues/191)), the following approach has been validated:
+
+### 1. Install Jupyter UI
+
+```bash
+cd /path/to/jupyter-ui
+pip install -e .
+```
+
+### 2. Configure JupyterHub
+
+Update your `jupyterhub_config.py`:
+
+```python
+# Set the default landing page to Jupyter UI
+c.Spawner.default_url = '/jupyter_react'
+
+# Configure the single-user app (if needed)
+c.Spawner.environment = {
+    'JUPYTERHUB_SINGLEUSER_APP': 'jupyter_react.serverextension'
+}
+```
+
+### 3. Launch and Access
+
+The Jupyter UI application will be accessible at:
+
+```
+http://your-jupyterhub-domain/jupyter_react
+```
+
+## Known Limitations
+
+- **Base URL Handling**: Some JavaScript assets may not load correctly with custom base URLs. The `index.html` template needs updates to properly include JupyterHub's `base_url`.
+- **Asset Paths**: Static assets may require path adjustments in production configurations.
+- **Incomplete Documentation**: Setup steps need to be fully documented and tested across different JupyterHub configurations.
+
+## Integration Options
+
+Several approaches are being explored:
+
+### Option 1: JUPYTERHUB_SINGLEUSER_APP
+
+Use JupyterHub's environment variable to specify a custom application:
+
+```python
+c.Spawner.environment = {
+    'JUPYTERHUB_SINGLEUSER_APP': 'your.custom.module'
+}
+```
+
+Reference: [JupyterHub User Environment Configuration](https://jupyterhub.readthedocs.io/en/stable/howto/configuration/config-user-env.html#switching-back-to-the-classic-notebook)
+
+### Option 2: Custom Spawner
+
+Create a custom spawner that launches Jupyter UI. See:
+
+- [JupyterHub Spawners Documentation](https://jupyterhub.readthedocs.io/en/stable/reference/spawners.html)
+- [jhub-apps](https://github.com/nebari-dev/jhub-apps) - Modern launcher integration
+
+### Option 3: Proxy Integration
+
+Use JupyterHub's configurable HTTP proxy to serve Jupyter UI alongside other services.
+
+## We Need Your Help! 🙋
+
+This deployment method needs community contributions to become production-ready. We're looking for help with:
+
+### 🐛 Testing & Bug Reports
+
+- Test Jupyter UI with different JupyterHub configurations (Docker, Kubernetes, bare metal)
+- Report issues with authentication, base URL handling, or asset loading
+- Validate the setup on different operating systems and environments
+
+### 📝 Documentation
+
+- Document step-by-step installation procedures
+- Create configuration examples for common setups
+- Write troubleshooting guides based on real deployment experiences
+
+### 💻 Code Contributions
+
+- Fix base URL handling in templates
+- Improve static asset path resolution
+- Add JupyterHub-specific configuration options
+- Create example Helm charts for Kubernetes deployments
+
+### 🔧 Infrastructure
+
+- Create Docker images with Jupyter UI + JupyterHub
+- Build example deployment configurations (docker-compose, k8s manifests)
+- Test with different authentication providers (OAuth, LDAP, etc.)
+
+## How to Contribute
+
+1. **Join the discussion** on [GitHub Issue #191](https://github.com/datalayer/jupyter-ui/issues/191)
+2. **Share your experience** - Even partial setups or failed attempts help others
+3. **Submit PRs** for documentation improvements or bug fixes
+4. **Test and report** your deployment configuration
+
+## Related Issues
+
+- [#191 - JupyterHub Support](https://github.com/datalayer/jupyter-ui/issues/191) - Main tracking issue
+- [#230 - Unable to connect with local JupyterHub](https://github.com/datalayer/jupyter-ui/issues/230) - Related connection issues
+
+## Resources
+
+- [JupyterHub Documentation](https://jupyterhub.readthedocs.io/)
+- [JupyterHub REST API](https://jupyterhub.readthedocs.io/en/stable/reference/rest-api.html)
+- [JupyterHub Spawners](https://jupyterhub.readthedocs.io/en/stable/reference/spawners.html)
+- [jhub-apps](https://github.com/nebari-dev/jhub-apps) - Modern app launcher for JupyterHub
+
+## Community Support
+
+If you're working on a JupyterHub deployment or have questions:
+
+- **GitHub Discussions**: Share configurations and ask questions
+- **Issue Tracker**: Report bugs or request features
+- **Pull Requests**: Submit improvements to documentation or code
+
+Your contributions will help make Jupyter UI a robust solution for JupyterHub multi-user environments!
