@@ -11,7 +11,7 @@
     "incremental": true,
     "jsx": "react-jsx",
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "noEmitOnError": true,
     "noImplicitAny": false,
     "noUnusedLocals": false,
