@@ -353,17 +353,19 @@ JupyterEmbed.destroyJupyterEmbeds();</code></pre>
     </div>
 
     <!-- Load the Jupyter Embed script -->
-    <!-- In production, use the CDN URL -->
+    <!-- Configuration for local development -->
     <script type="application/json" data-jupyter-embed-config>
       {
         "serverUrl": "http://localhost:8888",
-        "token": "",
+        "token": "test-secret",
         "defaultKernel": "python3",
-        "lazyLoad": true,
+        "lazyLoad": false,
         "theme": "light"
       }
     </script>
-    <script type="module" src="./dist/jupyter-embed.esm.js"></script>
+    
+    <!-- Use the built IIFE bundle -->
+    <script src="../dist/jupyter-embed.js"></script>
 
     <footer
       style="
