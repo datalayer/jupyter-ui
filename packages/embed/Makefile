@@ -87,7 +87,9 @@ lint-check: ## check linting without fixing
 
 .PHONY: example
 example: build-lazy ## build lazy and serve examples
+	@echo
 	@echo -e "\033[1;32m🌐 Building and serving examples on http://localhost:3456...\033[0m"
+	@echo
 	@echo -e "\033[1;32m🌐 Building and serving examples on http://localhost:3456/index-lazy...\033[0m"
 	@echo
 	@echo -e "\033[1;33m💡 Examples use hosted Jupyter server at https://oss.datalayer.run/api/jupyter-server\033[0m"
@@ -107,7 +109,9 @@ example-esm: ## build ESM and serve chunked example
 	@echo -e "\033[1;32m📦 Building ESM chunked version...\033[0m"
 	npm run build:esm
 	@echo -e "\033[1;32m🌐 Serving ESM example on http://localhost:3456...\033[0m"
+	@echo
 	@echo -e "\033[1;33m💡 Open http://localhost:3456/index-esm.html to test chunked loading\033[0m"
+	@echo
 	@cp -r dist-esm/* examples/
 	npx serve examples -p 3456
 
@@ -115,8 +119,11 @@ example-esm: ## build ESM and serve chunked example
 example-lazy: ## build lazy and serve code-split example
 	@echo -e "\033[1;32m📦 Building lazy-loading chunked version...\033[0m"
 	npm run build:lazy
+	@echo
 	@echo -e "\033[1;32m🌐 Serving lazy example on http://localhost:3456...\033[0m"
+	@echo
 	@echo -e "\033[1;33m💡 Open http://localhost:3456/index-lazy.html to test lazy loading\033[0m"
+	@echo
 	@cp dist-lazy/jupyter-embed.lazy.js examples/
 	@cp -r dist-lazy/chunks examples/
 	npx serve examples -p 3456
@@ -124,8 +131,10 @@ example-lazy: ## build lazy and serve code-split example
 .PHONY: run-lazy
 run-lazy: build-lazy ## build lazy version and serve from dist-lazy
 	@echo -e "\033[1;32m🚀 Serving lazy-loading version on http://localhost:3456...\033[0m"
+	@echo
 	@echo -e "\033[1;33m💡 Open http://localhost:3456 to test lazy loading\033[0m"
 	@echo -e "\033[1;33m💡 Examples use hosted Jupyter server at https://oss.datalayer.run/api/jupyter-server\033[0m"
+	@echo
 	@cp examples/index-lazy.html dist-lazy/index.html
 	@sed -i 's|src="./jupyter-embed.lazy.js"|src="./jupyter-embed.lazy.js"|g' dist-lazy/index.html
 	npx serve dist-lazy -p 3456
