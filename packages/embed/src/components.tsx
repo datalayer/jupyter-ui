@@ -13,6 +13,7 @@ import {
   Terminal,
   Console,
   Output,
+  Viewer,
   useJupyter,
 } from '@datalayer/jupyter-react';
 import { getJupyterEmbedConfig } from './config';
@@ -23,6 +24,7 @@ import {
   ITerminalEmbedOptions,
   IConsoleEmbedOptions,
   IOutputEmbedOptions,
+  IViewerEmbedOptions,
 } from './types';
 
 /**
@@ -183,7 +185,13 @@ const OutputEmbedInner: React.FC<IOutputEmbedProps> = ({ options }) => {
 
   return (
     <div style={{ height: options.height || 'auto' }}>
-      <Output outputs={options.outputs || []} kernel={defaultKernel} />
+      <Output
+        outputs={options.outputs || []}
+        kernel={defaultKernel}
+        code={options.code}
+        autoRun={options.autoRun}
+        showEditor={false}
+      />
     </div>
   );
 };
@@ -192,6 +200,36 @@ const OutputEmbed: React.FC<IOutputEmbedProps> = ({ options }) => {
   return (
     <JupyterWrapper>
       <OutputEmbedInner options={options} />
+    </JupyterWrapper>
+  );
+};
+
+/**
+ * Viewer embed component
+ */
+interface IViewerEmbedProps {
+  options: IViewerEmbedOptions;
+}
+
+const ViewerEmbedInner: React.FC<IViewerEmbedProps> = ({ options }) => {
+  const nbformat =
+    typeof options.content === 'object' ? options.content : undefined;
+
+  return (
+    <div style={{ height: options.height || 'auto' }}>
+      <Viewer
+        nbformat={nbformat as any}
+        nbformatUrl={options.url}
+        outputs={options.outputs !== false}
+      />
+    </div>
+  );
+};
+
+const ViewerEmbed: React.FC<IViewerEmbedProps> = ({ options }) => {
+  return (
+    <JupyterWrapper>
+      <ViewerEmbedInner options={options} />
     </JupyterWrapper>
   );
 };
@@ -237,6 +275,9 @@ export function renderEmbed(
       break;
     case 'notebook':
       component = <NotebookEmbed options={options} />;
+      break;
+    case 'viewer':
+      component = <ViewerEmbed options={options} />;
       break;
     case 'terminal':
       component = <TerminalEmbed options={options} />;
@@ -284,6 +325,7 @@ export {
   JupyterWrapper,
   CellEmbed,
   NotebookEmbed,
+  ViewerEmbed,
   TerminalEmbed,
   ConsoleEmbed,
   OutputEmbed,

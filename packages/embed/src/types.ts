@@ -137,6 +137,43 @@ export interface IOutputEmbedOptions extends IEmbedElementOptions {
    * Output data to display
    */
   outputs?: any[];
+
+  /**
+   * Code to execute (optional)
+   */
+  code?: string;
+
+  /**
+   * Auto-run code on load
+   */
+  autoRun?: boolean;
+}
+
+/**
+ * Options specific to Viewer embeds (read-only notebook display)
+ */
+export interface IViewerEmbedOptions extends IEmbedElementOptions {
+  type: 'viewer';
+
+  /**
+   * Notebook path to load from Jupyter server
+   */
+  path?: string;
+
+  /**
+   * URL to fetch notebook JSON from
+   */
+  url?: string;
+
+  /**
+   * Inline notebook content (nbformat)
+   */
+  content?: any;
+
+  /**
+   * Whether to show outputs (default: true)
+   */
+  outputs?: boolean;
 }
 
 /**
@@ -145,6 +182,7 @@ export interface IOutputEmbedOptions extends IEmbedElementOptions {
 export type EmbedOptions =
   | ICellEmbedOptions
   | INotebookEmbedOptions
+  | IViewerEmbedOptions
   | ITerminalEmbedOptions
   | IConsoleEmbedOptions
   | IOutputEmbedOptions;
@@ -182,6 +220,9 @@ export const DATA_ATTRIBUTES = {
 
   // Console options
   INIT_CODE: 'data-init-code',
+
+  // Output options
+  AUTO_RUN: 'data-auto-run',
 
   // Content holders
   CONTENT_PRE_EXECUTE: 'pre-execute-code',

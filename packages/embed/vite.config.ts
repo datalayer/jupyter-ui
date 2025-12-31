@@ -70,6 +70,8 @@ export default defineConfig({
         assetFileNames: 'jupyter-embed.[ext]',
         // Provide global variable names for external imports
         globals: {},
+        // Prevent circular dependency issues
+        inlineDynamicImports: true,
       },
     },
     // Generate source maps for debugging
@@ -104,5 +106,9 @@ export default defineConfig({
         replacement: resolve(__dirname, 'src'),
       },
     ],
+  },
+  // Optimize dependencies
+  optimizeDeps: {
+    include: ['@xterm/xterm', '@xterm/addon-fit', '@xterm/addon-web-links'],
   },
 });

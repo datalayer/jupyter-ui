@@ -48,7 +48,7 @@
     "build:prod": "npm run clean && npm run build",
     "clean": "rimraf lib dist tsconfig.tsbuildinfo",
     "dev": "vite",
-    "example": "npm run build && npx serve examples -p 3456",
+    "example": "npx serve examples -p 3456",
     "example:dev": "vite dev --config vite.example.config.ts",
     "lint": "eslint . --cache --ext .ts,.tsx --fix",
     "lint:check": "eslint . --cache --ext .ts,.tsx",

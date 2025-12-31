@@ -8,6 +8,7 @@ import {
   EmbedOptions,
   ICellEmbedOptions,
   INotebookEmbedOptions,
+  IViewerEmbedOptions,
   ITerminalEmbedOptions,
   IConsoleEmbedOptions,
   IOutputEmbedOptions,
@@ -43,6 +44,8 @@ export function parseElementOptions(element: HTMLElement): EmbedOptions | null {
       return parseCellOptions(element, baseOptions);
     case 'notebook':
       return parseNotebookOptions(element, baseOptions);
+    case 'viewer':
+      return parseViewerOptions(element, baseOptions);
     case 'terminal':
       return parseTerminalOptions(element, baseOptions);
     case 'console':
@@ -127,6 +130,37 @@ function parseNotebookOptions(
 }
 
 /**
+ * Parse viewer-specific options
+ */
+function parseViewerOptions(
+  element: HTMLElement,
+  baseOptions: any,
+): IViewerEmbedOptions {
+  let content: string | object | undefined = undefined;
+
+  // Check for inline content in <script type="application/json">
+  const jsonScript = element.querySelector('script[type="application/json"]');
+  if (jsonScript?.textContent) {
+    try {
+      content = JSON.parse(jsonScript.textContent);
+    } catch (e) {
+      console.warn('[jupyter-embed] Failed to parse inline viewer JSON:', e);
+    }
+  }
+
+  const outputsAttr = element.getAttribute('data-outputs');
+
+  return {
+    ...baseOptions,
+    type: 'viewer',
+    path: element.getAttribute(DATA_ATTRIBUTES.PATH) || undefined,
+    url: element.getAttribute(DATA_ATTRIBUTES.URL) || undefined,
+    content,
+    outputs: outputsAttr !== 'false',
+  };
+}
+
+/**
  * Parse terminal-specific options
  */
 function parseTerminalOptions(
@@ -193,6 +227,15 @@ function parseOutputOptions(
   baseOptions: any,
 ): IOutputEmbedOptions {
   let outputs: any[] = [];
+  let code: string | undefined;
+
+  // Check for source code
+  const sourceElement = element.querySelector(
+    `[data-type="${DATA_ATTRIBUTES.CONTENT_SOURCE}"]`,
+  );
+  if (sourceElement) {
+    code = extractCode(sourceElement);
+  }
 
   // Check for inline outputs in <script type="application/json">
   // This is a standard pattern for embedding data in HTML
@@ -211,6 +254,8 @@ function parseOutputOptions(
     ...baseOptions,
     type: 'output',
     outputs,
+    code,
+    autoRun: element.getAttribute(DATA_ATTRIBUTES.AUTO_RUN) === 'true',
   };
 }
 

@@ -16,7 +16,7 @@
           -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
           Cantarell, sans-serif;
         max-width: 1200px;
-        margin: 0 auto;
+        margin: 0;
         padding: 20px;
         background: #f5f5f5;
       }
@@ -112,30 +112,85 @@
       with the appropriate data attributes.
     </p>
 
-    <h2>Output Display</h2>
+    <h2 style="margin-top: 40px">Output Display</h2>
     <div class="example">
-      <div class="example-title">Static Output</div>
+      <div class="example-title">Live Python Execution</div>
       <div class="example-description">
-        Display pre-computed Jupyter outputs without a kernel. This example
-        shows a 3D matplotlib surface plot.
+        Execute Python code and display the output. This example creates a 3D
+        surface plot with matplotlib.
+      </div>
+
+      <div
+        data-jupyter-embed
+        data-type="output"
+        data-height="500px"
+        data-auto-run="true"
+      >
+        <code data-type="source-code">
+          import numpy as np import matplotlib.pyplot as plt # Create data x =
+          np.linspace(-5, 5, 50) y = np.linspace(-5, 5, 50) X, Y =
+          np.meshgrid(x, y) Z = np.sin(np.sqrt(X**2 + Y**2)) # Create 3D plot
+          fig = plt.figure(figsize=(8, 6)) ax = fig.add_subplot(111,
+          projection='3d') surf = ax.plot_surface(X, Y, Z, cmap='viridis',
+          alpha=0.8) ax.set_xlabel('X axis') ax.set_ylabel('Y axis')
+          ax.set_zlabel('Z axis') ax.set_title('3D Surface: sin(√(x² + y²))')
+          fig.colorbar(surf) plt.show()
+        </code>
+      </div>
+
+      <pre><code>&lt;div 
+  data-jupyter-embed 
+  data-type="output"
+  data-height="200px"
+  data-auto-run="true"
+&gt;
+  &lt;code data-type="source-code"&gt;
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Create data
+x = np.linspace(-5, 5, 50)
+y = np.linspace(-5, 5, 50)
+X, Y = np.meshgrid(x, y)
+Z = np.sin(np.sqrt(X**2 + Y**2))
+
+# Create 3D plot
+fig = plt.figure(figsize=(8, 6))
+ax = fig.add_subplot(111, projection='3d')
+surf = ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.8)
+ax.set_xlabel('X axis')
+ax.set_ylabel('Y axis')
+ax.set_zlabel('Z axis')
+ax.set_title('3D Surface: sin(√(x² + y²))')
+fig.colorbar(surf)
+plt.show()
+  &lt;/code&gt;
+&lt;/div&gt;</code></pre>
+    </div>
+
+    <div class="example">
+      <div class="example-title">Static Pre-computed Output</div>
+      <div class="example-description">
+        Display pre-rendered output without executing code. Useful for showing
+        results without a kernel.
       </div>
 
       <div data-jupyter-embed data-type="output">
         <script type="application/json">
           [
             {
+              "output_type": "stream",
+              "name": "stdout",
+              "text": "This is pre-computed output\nNo kernel needed!\n"
+            },
+            {
               "output_type": "execute_result",
               "data": {
-                "text/html": "<div style='text-align: center;'><h3 style='color: #16A085; margin-bottom: 10px;'>🎨 3D Surface Plot</h3><p style='color: #59595C; font-size: 14px;'>Pre-rendered matplotlib visualization</p></div><img src='https://matplotlib.org/stable/_images/sphx_glr_surface3d_001.png' alt='3D Surface Plot' style='max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);' />",
-                "text/plain": "<Figure size 640x480 with 1 Axes>"
+                "text/html": "<div style='padding: 15px; background: linear-gradient(135deg, #117A65 0%, #1ABC9C 100%); border-radius: 8px; color: white; text-align: center;'><h3 style='margin: 0;'>✨ Static Result</h3></div>",
+                "text/plain": "Result"
               },
               "metadata": {},
               "execution_count": 1
-            },
-            {
-              "output_type": "stream",
-              "name": "stdout",
-              "text": "Generated 3D surface plot: z = sin(sqrt(x² + y²))\nGrid: 50x50 points | Range: [-5, 5]\n"
             }
           ]
         </script>
@@ -145,18 +200,9 @@
   &lt;script type="application/json"&gt;
     [
       {
-        "output_type": "execute_result",
-        "data": {
-          "text/html": "&lt;h3&gt;Result&lt;/h3&gt;",
-          "text/plain": "Result"
-        },
-        "metadata": {},
-        "execution_count": 1
-      },
-      {
         "output_type": "stream",
         "name": "stdout",
-        "text": "Hello from static output!\n"
+        "text": "Hello from static output!\\n"
       }
     ]
   &lt;/script&gt;
@@ -236,7 +282,7 @@ print(fibonacci(10))
       >
         <code data-type="source-code">
           # Welcome to Jupyter Embed! This is a **markdown** cell with: - Rich
-          formatting - Lists - And more! Double-click me to edit.
+          formatting - Lists - And more! > 👉 Double-click me to edit.
         </code>
       </div>
     </div>
@@ -277,14 +323,74 @@ print(fibonacci(10))
             "cells": [
               {
                 "cell_type": "markdown",
+                "metadata": {},
                 "source": [
                   "# Inline Notebook\n",
+                  "\n",
                   "This notebook is embedded inline!"
                 ]
               },
               {
                 "cell_type": "code",
+                "execution_count": null,
+                "metadata": {},
+                "outputs": [],
                 "source": ["print('Hello from inline notebook!')"]
+              }
+            ],
+            "metadata": {
+              "kernelspec": {
+                "name": "python3",
+                "display_name": "Python 3"
+              },
+              "language_info": {
+                "name": "python",
+                "version": "3.10.0"
+              }
+            },
+            "nbformat": 4,
+            "nbformat_minor": 4
+          }
+        </script>
+      </div>
+    </div>
+
+    <div class="example">
+      <div class="example-title">Notebook Viewer (Read-only)</div>
+      <div class="example-description">
+        Display a notebook in read-only mode without editing capabilities.
+      </div>
+
+      <div data-jupyter-embed data-type="viewer" data-height="400px">
+        <script type="application/json">
+          {
+            "cells": [
+              {
+                "cell_type": "markdown",
+                "metadata": {},
+                "source": [
+                  "# Read-Only Notebook\n",
+                  "\n",
+                  "This notebook is displayed in **viewer mode** - no editing, just viewing!"
+                ]
+              },
+              {
+                "cell_type": "code",
+                "execution_count": null,
+                "metadata": {},
+                "outputs": [],
+                "source": [
+                  "import matplotlib.pyplot as plt\n",
+                  "import numpy as np\n",
+                  "\n",
+                  "x = np.linspace(0, 10, 100)\n",
+                  "y = np.sin(x)\n",
+                  "\n",
+                  "plt.figure(figsize=(8, 4))\n",
+                  "plt.plot(x, y)\n",
+                  "plt.title('Sine Wave')\n",
+                  "plt.show()"
+                ]
               }
             ],
             "metadata": {
@@ -298,6 +404,26 @@ print(fibonacci(10))
           }
         </script>
       </div>
+
+      <pre><code>&lt;div data-jupyter-embed data-type="viewer" data-height="400px"&gt;
+  &lt;script type="application/json"&gt;
+    {
+      "cells": [
+        {
+          "cell_type": "markdown",
+          "source": ["# My Notebook"]
+        },
+        {
+          "cell_type": "code",
+          "source": ["print('Hello!')"]
+        }
+      ],
+      "metadata": {},
+      "nbformat": 4,
+      "nbformat_minor": 4
+    }
+  &lt;/script&gt;
+&lt;/div&gt;</code></pre>
     </div>
 
     <h2>Terminal</h2>
@@ -395,8 +521,8 @@ print("NumPy and Pandas are ready!")
       </div>
       <pre><code>// Configure the connection
 JupyterEmbed.configureJupyterEmbed({
-  serverUrl: 'http://localhost:8888',
-  token: 'your-token',
+  serverUrl: 'https://oss.datalayer.run/api/jupyter-server',
+  token: '60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6',
   defaultKernel: 'python3',
   lazyLoad: true
 });
