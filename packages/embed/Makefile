@@ -44,6 +44,11 @@ build-prod: ## clean and build production
 	@echo -e "\033[1;32m🚀 Building production...\033[0m"
 	npm run build:prod
 
+.PHONY: build-all
+build-all: build-prod ## build all formats (IIFE + ESM chunked)
+	@echo -e "\033[1;32m📦 Building ESM chunked version...\033[0m"
+	npm run build:esm
+
 .PHONY: clean
 clean: ## remove build artifacts
 	@echo -e "\033[1;32m🧹 Cleaning build artifacts...\033[0m"
@@ -86,6 +91,15 @@ example-dev: ## serve examples in development mode
 	@echo -e "\033[1;33m💡 Examples use hosted Jupyter server at https://oss.datalayer.run/api/jupyter-server\033[0m"
 	npm run example:dev
 
+.PHONY: example-esm
+example-esm: ## build ESM and serve chunked example
+	@echo -e "\033[1;32m📦 Building ESM chunked version...\033[0m"
+	npm run build:esm
+	@echo -e "\033[1;32m🌐 Serving ESM example on http://localhost:3456...\033[0m"
+	@echo -e "\033[1;33m💡 Open http://localhost:3456/index-esm.html to test chunked loading\033[0m"
+	@cp -r dist-esm/* examples/
+	npx serve examples -p 3456
+
 .PHONY: run
 run: build ## build and serve examples
 	@echo -e "\033[1;32m🚀 Building and serving examples on http://localhost:3456...\033[0m"
@@ -123,12 +137,19 @@ publish-dry: build-prod ## dry run publish to npm
 ##@ Deploy
 
 .PHONY: deploy-build
-deploy-build: build-prod ## prepare artifacts for deployment
+deploy-build: build-all ## prepare artifacts for deployment
 	@echo -e "\033[1;32m📦 Preparing deployment artifacts...\033[0m"
 	@rm -rf build
 	@mkdir -p build
 	@cp -r dist/* build/
 	@cp examples/index.html build/
+	@# Include ESM chunked build if available
+	@if [ -d "dist-esm" ]; then \
+		echo -e "\033[1;32m📦 Including ESM chunked build...\033[0m"; \
+		mkdir -p build/esm; \
+		cp -r dist-esm/* build/esm/; \
+		cp examples/index-esm.html build/esm/index.html; \
+	fi
 	@echo -e "\033[1;32m✅ Artifacts ready in ./build\033[0m"
 
 .PHONY: deploy

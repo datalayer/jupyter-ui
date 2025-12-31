@@ -92,6 +92,37 @@ Or via data attributes on the script tag:
 </script>
 ```
 
+### ESM Build with Vendor Chunking (Recommended for Production)
+
+For better caching and faster repeat visits, use the chunked ESM build:
+
+```html
+<!-- ESM build with automatic chunk loading -->
+<script type="module" src="https://cdn.example.com/jupyter-embed.esm.js"></script>
+```
+
+The ESM build automatically loads vendor chunks on demand:
+
+| Chunk | Size | Gzipped | Description |
+|-------|------|---------|-------------|
+| `vendor-react` | 822 KB | 177 KB | React/ReactDOM |
+| `vendor-codemirror` | 1.7 MB | 579 KB | CodeMirror editor |
+| `vendor-jupyter-core` | 1.2 MB | 300 KB | JupyterLab core |
+| `vendor-mathjax` | 864 KB | 203 KB | Math rendering |
+| `vendor-xterm` | 489 KB | 119 KB | Terminal emulator |
+| `vendor-lumino` | 200 KB | 49 KB | Lumino widgets |
+
+**Benefits:**
+- Vendor chunks are cached independently (they rarely change)
+- Browser loads chunks in parallel
+- Only changed code needs re-downloading on updates
+
+Build the ESM version with:
+
+```bash
+npm run build:esm
+```
+
 ### npm (Node.js / Bundler)
 
 ```bash
@@ -325,10 +356,25 @@ jupyter server --ServerApp.allow_origin='*' --ServerApp.token='your-token'
 
 ## Browser Support
 
+### IIFE Build (Single File)
 - Chrome 80+
 - Firefox 75+
 - Safari 13.1+
 - Edge 80+
+
+### ESM Build (Chunked)
+- Chrome 61+ (ES modules support)
+- Firefox 60+
+- Safari 11+
+- Edge 79+
+
+## Build Outputs
+
+| Build | Command | Output | Size | Use Case |
+|-------|---------|--------|------|----------|
+| IIFE | `npm run build` | `dist/jupyter-embed.js` | 13 MB (3.4 MB gzip) | Simple script tag inclusion |
+| ESM (single) | `npm run build` | `dist/jupyter-embed.esm.js` | 13 MB (3.4 MB gzip) | ES module import |
+| ESM (chunked) | `npm run build:esm` | `dist-esm/` | 11 MB total | Production with caching |
 
 ## License
 

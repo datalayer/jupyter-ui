@@ -1,12 +1,17 @@
 # Build outputs
 /lib
 /dist
+/dist-esm
 /build
 *.tsbuildinfo
 
 # Copied dist files in examples
 /examples/dist
-/examples/jupyter-embed.js
+/examples/dist-esm
+/examples/assets
+/examples/chunks
+/examples/*.js
+/examples/*.js.map
 
 # Dependencies
 /node_modules
