@@ -70,17 +70,29 @@ export default defineConfig({
         assetFileNames: 'jupyter-embed.[ext]',
         // Provide global variable names for external imports
         globals: {},
-        // Prevent circular dependency issues
+        // Use inlineDynamicImports for IIFE to avoid chunk issues
         inlineDynamicImports: true,
+        // Ensure hoisting is disabled to prevent TDZ errors
+        hoistTransitiveImports: false,
+        // Use SystemJS format to avoid initialization issues
+        format: 'iife',
+        // Ensure proper module initialization order
+        preserveModules: false,
       },
     },
     // Generate source maps for debugging
     sourcemap: true,
     // Minimize for production
     minify: 'terser',
+    // Set target to modern browsers to use proper module syntax
+    target: 'es2020',
     terserOptions: {
       compress: {
         drop_console: false, // Keep console logs for debugging
+      },
+      // Ensure terser doesn't break initialization order
+      mangle: {
+        toplevel: false,
       },
     },
     // Output to dist folder
