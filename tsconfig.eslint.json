@@ -27,6 +27,7 @@
     "**/docusaurus.config.js"
   ],
   "exclude": [
+    "packages/embed/examples/index.html",
     "node_modules",
     "dist",
     "build",
