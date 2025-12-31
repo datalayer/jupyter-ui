@@ -35,6 +35,7 @@ const useJupyterEmbed = () => {
     jupyterServerToken: config.token || '',
     startDefaultKernel: config.autoStartKernel,
     defaultKernelName: config.defaultKernel,
+    terminals: true,
   });
 };
 
@@ -92,13 +93,14 @@ const NotebookEmbedInner: React.FC<INotebookEmbedProps> = ({ options }) => {
   const { serviceManager, defaultKernel } = useJupyterEmbed();
   const nbformat =
     typeof options.content === 'object' ? options.content : undefined;
+  const height = options.height || '500px';
 
   if (!serviceManager) {
     return <div>Loading Jupyter services...</div>;
   }
 
   return (
-    <div style={{ height: options.height || '500px' }}>
+    <div style={{ height }}>
       <Notebook
         id={options.id || 'embedded-notebook'}
         path={options.path}
@@ -106,6 +108,7 @@ const NotebookEmbedInner: React.FC<INotebookEmbedProps> = ({ options }) => {
         readonly={options.readonly}
         serviceManager={serviceManager}
         kernel={defaultKernel}
+        height={height}
       />
     </div>
   );

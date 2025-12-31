@@ -1,10 +1,12 @@
 # Build outputs
 /lib
 /dist
+/build
 *.tsbuildinfo
 
 # Copied dist files in examples
 /examples/dist
+/examples/jupyter-embed.js
 
 # Dependencies
 /node_modules

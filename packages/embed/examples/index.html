@@ -21,12 +21,12 @@
         background: #f5f5f5;
       }
       h1 {
-        color: #333;
-        border-bottom: 2px solid #f37726;
+        color: #59595c;
+        border-bottom: 2px solid #16a085;
         padding-bottom: 10px;
       }
       h2 {
-        color: #555;
+        color: #59595c;
         margin-top: 40px;
       }
       .example {
@@ -35,14 +35,15 @@
         padding: 20px;
         margin: 20px 0;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #1abc9c;
       }
       .example-title {
         font-weight: bold;
-        color: #333;
+        color: #117a65;
         margin-bottom: 10px;
       }
       .example-description {
-        color: #666;
+        color: #59595c;
         margin-bottom: 15px;
         font-size: 14px;
       }
@@ -52,9 +53,16 @@
         border-radius: 4px;
         overflow-x: auto;
         font-size: 13px;
+        border-left: 3px solid #16a085;
       }
       code {
         font-family: 'Fira Code', 'Monaco', 'Menlo', monospace;
+      }
+      a {
+        color: #117a65;
+      }
+      a:hover {
+        color: #16a085;
       }
       /* Hide uninitialized embeds to prevent flash of unstyled content */
       [data-jupyter-embed]:not([data-jupyter-initialized]) {
@@ -64,7 +72,34 @@
     </style>
   </head>
   <body>
-    <h1>🪐 Jupyter Embed Examples</h1>
+    <div
+      style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      "
+    >
+      <a href="https://datalayer.ai" target="_blank" rel="noopener noreferrer">
+        <img
+          src="https://assets.datalayer.tech/datalayer-25.svg"
+          alt="Datalayer"
+          height="28"
+        />
+      </a>
+      <a
+        href="https://github.com/sponsors/datalayer"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <img
+          src="https://img.shields.io/static/v1?label=Become%20a%20Sponsor&message=%E2%9D%A4&logo=GitHub&style=flat&color=1ABC9C"
+          alt="Become a Sponsor"
+        />
+      </a>
+    </div>
+
+    <h1>🪐 ⚛️ Jupyter Embed Examples</h1>
 
     <p>
       This page demonstrates how to embed Jupyter components into any web page
@@ -83,21 +118,51 @@
       <pre><code>&lt;!-- Option 1: Data attributes on the script tag --&gt;
 &lt;script 
   src="jupyter-embed.js"
-  data-server-url="http://localhost:8888"
-  data-token="your-token-here"
+  data-server-url="https://oss.datalayer.run/api/jupyter-server"
+  data-token="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
   data-kernel="python3"
 &gt;&lt;/script&gt;
 
 &lt;!-- Option 2: JSON configuration --&gt;
 &lt;script type="application/json" data-jupyter-embed-config&gt;
 {
-  "serverUrl": "http://localhost:8888",
-  "token": "your-token-here",
+  "serverUrl": "https://oss.datalayer.run/api/jupyter-server",
+  "token": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6",
   "defaultKernel": "python3",
   "lazyLoad": true,
   "theme": "light"
 }
 &lt;/script&gt;</code></pre>
+    </div>
+
+    <h2>Output Display</h2>
+    <div class="example">
+      <div class="example-title">Static Output</div>
+      <div class="example-description">
+        Display pre-computed Jupyter outputs without a kernel. This example
+        shows a 3D matplotlib surface plot.
+      </div>
+
+      <div data-jupyter-embed data-type="output">
+        <script type="application/json">
+          [
+            {
+              "output_type": "execute_result",
+              "data": {
+                "text/html": "<div style='text-align: center;'><h3 style='color: #16A085; margin-bottom: 10px;'>🎨 3D Surface Plot</h3><p style='color: #59595C; font-size: 14px;'>Pre-rendered matplotlib visualization</p></div><img src='https://matplotlib.org/stable/_images/sphx_glr_surface3d_001.png' alt='3D Surface Plot' style='max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);' />",
+                "text/plain": "<Figure size 640x480 with 1 Axes>"
+              },
+              "metadata": {},
+              "execution_count": 1
+            },
+            {
+              "output_type": "stream",
+              "name": "stdout",
+              "text": "Generated 3D surface plot: z = sin(sqrt(x² + y²))\nGrid: 50x50 points | Range: [-5, 5]\n"
+            }
+          ]
+        </script>
+      </div>
     </div>
 
     <h2>Code Cell</h2>
@@ -112,7 +177,7 @@
         data-jupyter-embed
         data-type="cell"
         data-height="200px"
-        data-auto-execute="false"
+        data-auto-execute="true"
       >
         <code data-type="source-code">
           # Calculate the first 10 Fibonacci numbers def fibonacci(n): fib = [0,
@@ -125,7 +190,7 @@
   data-jupyter-embed
   data-type="cell"
   data-height="200px"
-  data-auto-execute="false"
+  data-auto-execute="true"
 &gt;
   &lt;code data-type="source-code"&gt;
 # Calculate the first 10 Fibonacci numbers
@@ -140,6 +205,7 @@ print(fibonacci(10))
 &lt;/div&gt;</code></pre>
     </div>
 
+    <h2>More Cells</h2>
     <div class="example">
       <div class="example-title">Auto-executing Cell</div>
       <div class="example-description">
@@ -168,11 +234,11 @@ print(fibonacci(10))
         data-jupyter-embed
         data-type="cell"
         data-cell-type="markdown"
-        data-height="150px"
+        data-height="300px"
       >
         <code data-type="source-code">
           # Welcome to Jupyter Embed! This is a **markdown** cell with: - Rich
-          formatting - Lists - And more!
+          formatting - Lists - And more! Double-click me to edit.
         </code>
       </div>
     </div>
@@ -187,16 +253,16 @@ print(fibonacci(10))
       <div
         data-jupyter-embed
         data-type="notebook"
-        data-path="examples/demo.ipynb"
-        data-height="500px"
+        data-path="test.ipynb"
+        data-height="300px"
         data-show-toolbar="true"
       ></div>
 
       <pre><code>&lt;div 
   data-jupyter-embed
   data-type="notebook"
-  data-path="examples/demo.ipynb"
-  data-height="500px"
+  data-path="test.ipynb"
+  data-height="300px"
   data-show-toolbar="true"
 &gt;&lt;/div&gt;</code></pre>
     </div>
@@ -265,16 +331,18 @@ print(fibonacci(10))
         A Jupyter console for interactive Python sessions.
       </div>
 
-      <div
-        data-jupyter-embed
-        data-type="console"
-        data-height="400px"
-        data-kernel="python3"
-      >
-        <code data-type="pre-execute-code">
-          # This code runs when the console starts import numpy as np import
-          pandas as pd print("NumPy and Pandas are ready!")
-        </code>
+      <div style="height: 520px; overflow: hidden">
+        <div
+          data-jupyter-embed
+          data-type="console"
+          data-height="520px"
+          data-kernel="python3"
+        >
+          <code data-type="pre-execute-code">
+            # This code runs when the console starts import numpy as np import
+            pandas as pd print("NumPy and Pandas are ready!")
+          </code>
+        </div>
       </div>
 
       <pre><code>&lt;div 
@@ -290,34 +358,6 @@ import pandas as pd
 print("NumPy and Pandas are ready!")
   &lt;/code&gt;
 &lt;/div&gt;</code></pre>
-    </div>
-
-    <h2>Output Display</h2>
-    <div class="example">
-      <div class="example-title">Static Output</div>
-      <div class="example-description">
-        Display pre-computed Jupyter outputs without a kernel.
-      </div>
-
-      <div data-jupyter-embed data-type="output">
-        <script type="application/json">
-          [
-            {
-              "output_type": "stream",
-              "name": "stdout",
-              "text": "Hello, World!\n"
-            },
-            {
-              "output_type": "execute_result",
-              "data": {
-                "text/html": "<h3 style='color: #f37726;'>Jupyter Embed</h3><p>Rendered HTML output!</p>"
-              },
-              "metadata": {},
-              "execution_count": 1
-            }
-          ]
-        </script>
-      </div>
     </div>
 
     <h2>Programmatic API</h2>
@@ -353,11 +393,11 @@ JupyterEmbed.destroyJupyterEmbeds();</code></pre>
     </div>
 
     <!-- Load the Jupyter Embed script -->
-    <!-- Configuration for local development -->
+    <!-- Configuration using hosted OSS Jupyter server -->
     <script type="application/json" data-jupyter-embed-config>
       {
-        "serverUrl": "http://localhost:8888",
-        "token": "test-secret",
+        "serverUrl": "https://oss.datalayer.run/api/jupyter-server",
+        "token": "60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6",
         "defaultKernel": "python3",
         "lazyLoad": false,
         "theme": "light"
@@ -365,7 +405,7 @@ JupyterEmbed.destroyJupyterEmbeds();</code></pre>
     </script>
 
     <!-- Use the built IIFE bundle -->
-    <script src="../dist/jupyter-embed.js"></script>
+    <script src="jupyter-embed.js"></script>
 
     <footer
       style="

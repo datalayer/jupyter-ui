@@ -9,6 +9,8 @@
 [![npm version](https://img.shields.io/npm/v/@datalayer/jupyter-embed.svg)](https://www.npmjs.com/package/@datalayer/jupyter-embed)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+**🚀 Live Demo:** [jupyter-embed.datalayer.tech](https://jupyter-embed.datalayer.tech)
+
 ## Overview
 
 `@datalayer/jupyter-embed` allows you to convert any website or blog into an interactive Jupyter-powered learning platform. Simply add a script tag and HTML elements with data attributes to embed:

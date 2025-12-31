@@ -76,39 +76,22 @@ lint-check: ## check linting without fixing
 .PHONY: example
 example: build ## build and serve examples
 	@echo -e "\033[1;32m🌐 Building and serving examples on http://localhost:3456...\033[0m"
-	@echo -e "\033[1;33m💡 Make sure you have a Jupyter server running on http://localhost:8888\033[0m"
-	@echo -e "\033[1;33m   Run: jupyter lab --NotebookApp.token='test-secret' --NotebookApp.allow_origin='*'\033[0m"
-	@mkdir -p examples/dist
-	@cp -r dist/* examples/dist/
+	@echo -e "\033[1;33m💡 Examples use hosted Jupyter server at https://oss.datalayer.run/api/jupyter-server\033[0m"
+	@cp dist/jupyter-embed.js examples/
 	npm run example
 
 .PHONY: example-dev
 example-dev: ## serve examples in development mode
 	@echo -e "\033[1;32m🌐 Starting example development server...\033[0m"
-	@echo -e "\033[1;33m💡 Make sure you have a Jupyter server running on http://localhost:8888\033[0m"
+	@echo -e "\033[1;33m💡 Examples use hosted Jupyter server at https://oss.datalayer.run/api/jupyter-server\033[0m"
 	npm run example:dev
 
-.PHONY: jupyter
-jupyter: ## start Jupyter server for examples
-	@echo -e "\033[1;32m🪐 Starting Jupyter server...\033[0m"
-	@echo -e "\033[1;33m   Server URL: http://localhost:8888\033[0m"
-	@echo -e "\033[1;33m   Token: test-secret\033[0m"
-	jupyter lab --NotebookApp.token='test-secret' --NotebookApp.allow_origin='*' --port=8888
-
 .PHONY: run
-run: build ## start both Jupyter server and examples (use Ctrl+C to stop both)
-	@echo -e "\033[1;32m🚀 Starting Jupyter server and examples...\033[0m"
-	@echo -e "\033[1;33m   Jupyter: http://localhost:8888 (token: test-secret)\033[0m"
-	@echo -e "\033[1;33m   Examples: http://localhost:3456\033[0m"
-	@echo -e "\033[1;33m   Press Ctrl+C to stop both servers\033[0m"
-	@echo ""
-	@mkdir -p examples/dist
-	@cp -r dist/* examples/dist/
-	@trap 'kill 0' SIGINT; \
-	jupyter lab --NotebookApp.token='test-secret' --NotebookApp.allow_origin='*' --port=8888 --no-browser & \
-	sleep 3 && \
-	npx serve examples -p 3456 & \
-	wait
+run: build ## build and serve examples
+	@echo -e "\033[1;32m🚀 Building and serving examples on http://localhost:3456...\033[0m"
+	@echo -e "\033[1;33m💡 Examples use hosted Jupyter server at https://oss.datalayer.run/api/jupyter-server\033[0m"
+	@cp dist/jupyter-embed.js examples/
+	npx serve examples -p 3456
 
 ##@ Testing
 
@@ -136,6 +119,31 @@ publish: build-prod ## publish to npm (requires auth)
 publish-dry: build-prod ## dry run publish to npm
 	@echo -e "\033[1;32m📋 Dry run npm publish...\033[0m"
 	npm publish --dry-run
+
+##@ Deploy
+
+.PHONY: deploy-build
+deploy-build: build-prod ## prepare artifacts for deployment
+	@echo -e "\033[1;32m📦 Preparing deployment artifacts...\033[0m"
+	@rm -rf build
+	@mkdir -p build
+	@cp -r dist/* build/
+	@cp examples/index.html build/
+	@echo -e "\033[1;32m✅ Artifacts ready in ./build\033[0m"
+
+.PHONY: deploy
+deploy: deploy-build ## build and deploy to CDN
+	@echo -e "\033[1;32m🚀 Deploying to CDN...\033[0m"
+	aws s3 cp \
+		./build \
+		s3://datalayer-jupyter-embed/ \
+		--recursive \
+		--profile datalayer && \
+	aws cloudfront create-invalidation \
+		--distribution-id E2GVE84L6ODMKY \
+		--paths "/*" \
+		--profile datalayer && \
+	echo -e "\033[1;32m✨ Deployed to https://jupyter-embed.datalayer.tech\033[0m"
 
 ##@ Utilities
 

@@ -20,12 +20,10 @@ const NotebookCollaborativeExample = () => {
     () => [new CellSidebarExtension({ factory: CellSidebarButton })],
     []
   );
-
   const collaborationProvider = useMemo(
     () => new JupyterCollaborationProvider(),
     []
   );
-
   return serviceManager ? (
     <JupyterReactTheme>
       <Notebook
@@ -36,6 +34,14 @@ const NotebookCollaborativeExample = () => {
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         extensions={extensions}
         collaborationProvider={collaborationProvider}
+        /*
+        collaborationServer={{
+          baseURL: 'https://prod1.datalayer.run',
+          token: '',
+          documentName: '',
+          type: 'datalayer'
+        }}
+        */
       />
     </JupyterReactTheme>
   ) : (
