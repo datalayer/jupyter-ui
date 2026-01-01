@@ -292,16 +292,10 @@ export class NotebookAdapter {
     source: string;
     outputs?: unknown[];
   }> {
-    console.log('[NotebookAdapter.getCells] Called');
     const cells = this._notebook.model?.cells;
     if (!cells) {
-      console.log(
-        '[NotebookAdapter.getCells] No cells model, returning empty array'
-      );
       return [];
     }
-
-    console.log(`[NotebookAdapter.getCells] Found ${cells.length} cells`);
 
     const result: Array<{
       index: number;
@@ -320,15 +314,10 @@ export class NotebookAdapter {
           outputs:
             cell.type === 'code' ? (cell as any).outputs?.toJSON() : undefined,
         };
-        console.log(`[NotebookAdapter.getCells] Cell ${i}:`, {
-          type: cellData.type,
-          sourceLength: cellData.source.length,
-        });
         result.push(cellData);
       }
     }
 
-    console.log(`[NotebookAdapter.getCells] Returning ${result.length} cells`);
     return result;
   }
 
@@ -406,15 +395,6 @@ export class NotebookAdapter {
   insertAt(cellIndex: number, source?: string): void {
     const cellCount = this.getCellCount();
 
-    console.log('[NotebookAdapter.insertAt] Called with:', {
-      cellIndex,
-      sourceLength: source?.length || 0,
-      sourcePreview: source?.substring(0, 50),
-      currentActiveCell: this._notebook.activeCellIndex,
-      cellCount,
-      defaultCellType: this._defaultCellType,
-    });
-
     // Validate cell index is within bounds (matches Jupyter MCP Server)
     if (cellIndex < -1 || cellIndex > cellCount) {
       throw new Error(
@@ -426,33 +406,18 @@ export class NotebookAdapter {
     // Normalize -1 to append position (matches Jupyter MCP Server)
     const actualIndex = cellIndex === -1 ? cellCount : cellIndex;
 
-    console.log('[NotebookAdapter.insertAt] Normalized index:', {
-      originalIndex: cellIndex,
-      actualIndex,
-      cellCount,
-    });
-
     // Insert at the actual index
     if (actualIndex >= cellCount) {
       // Append at end
-      console.log('[NotebookAdapter.insertAt] Appending at end');
       if (cellCount > 0) {
         this.setActiveCell(cellCount - 1);
       }
       this.insertBelow(source);
     } else {
       // Insert at specific position
-      console.log(
-        `[NotebookAdapter.insertAt] Inserting at index ${actualIndex}`
-      );
       this.setActiveCell(actualIndex);
       this.insertAbove(source);
     }
-
-    console.log('[NotebookAdapter.insertAt] After insertion:', {
-      cellCount: this.getCellCount(),
-      activeCell: this._notebook.activeCellIndex,
-    });
   }
 
   /**
@@ -526,9 +491,6 @@ export class NotebookAdapter {
       // Validate ALL indices first (match Jupyter MCP Server error format)
       for (const idx of indices) {
         if (idx < 0 || idx >= cellCount) {
-          console.error(
-            `[NotebookAdapter.deleteCell] Index ${idx} is out of range (cell count: ${cellCount})`
-          );
           throw new Error(
             `Cell index ${idx} is out of range. Notebook has ${cellCount} cells.`
           );
@@ -538,11 +500,6 @@ export class NotebookAdapter {
       // Sort indices in REVERSE order (highest to lowest) to prevent index shifting
       // This matches the Jupyter MCP Server behavior
       const sortedIndices = [...indices].sort((a, b) => b - a);
-
-      console.log(
-        `[NotebookAdapter.deleteCell] Deleting ${sortedIndices.length} cell(s) in reverse order:`,
-        sortedIndices
-      );
 
       // Delete each cell in reverse order
       for (const idx of sortedIndices) {
@@ -890,12 +847,22 @@ export class NotebookAdapter {
 
       try {
         await Promise.race([executionPromise, timeoutPromise]);
-      } catch (timeoutError) {
+      } catch (error) {
+        // Log timeout error for debugging
+        console.warn(
+          `Cell execution timed out after ${options.timeout ?? 30} seconds:`,
+          error
+        );
+
         // Interrupt kernel on timeout
         try {
           await kernel.interrupt();
         } catch (interruptError) {
-          console.error('Failed to interrupt kernel:', interruptError);
+          // Log interrupt errors as a warning to aid in diagnosing kernel communication issues
+          console.warn(
+            'Failed to interrupt kernel after execution timeout:',
+            interruptError
+          );
         }
 
         return {

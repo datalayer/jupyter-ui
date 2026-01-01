@@ -72,14 +72,12 @@ export type JupyterReactState = {
 };
 
 export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
-  collaborative: false,
   version: '',
   jupyterLabAdapter: undefined,
   jupyterConfig: undefined,
   kernelIsLoading: true,
   kernel: undefined,
   serviceManager: undefined,
-  serverSettings: undefined,
   cellsStore: cellsStore.getState(),
   consoleStore: consoleStore.getState(),
   notebookStore: notebookStore.getState(),
@@ -87,22 +85,22 @@ export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
   terminalStore: terminalStore.getState(),
   colormode: 'light',
   setJupyterLabAdapter: (jupyterLabAdapter: JupyterLabAppAdapter) => {
-    set(state => ({ jupyterLabAdapter }));
+    set(_state => ({ jupyterLabAdapter }));
   },
   setJupyterConfig: (jupyterConfig?: IJupyterConfig) => {
-    set(state => ({ jupyterConfig }));
+    set(_state => ({ jupyterConfig }));
   },
   setServiceManager: (serviceManager?: ServiceManager.IManager) => {
-    set(state => ({ serviceManager }));
+    set(_state => ({ serviceManager }));
   },
   setVersion: version => {
     if (version && !get().version) {
-      set(state => ({ version }));
+      set(_state => ({ version }));
     }
   },
   setColormode: colormode => {
     setupPrimerPortals(colormode);
-    set(state => ({ colormode }));
+    set(_state => ({ colormode }));
   },
 }));
 

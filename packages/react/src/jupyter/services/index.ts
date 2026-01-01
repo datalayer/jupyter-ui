@@ -7,3 +7,4 @@
 export * from './JupyterServices';
 export * from './ServiceManagerLite';
 export * from './ServiceManagerLess';
+export * from './serviceManagerUtils';

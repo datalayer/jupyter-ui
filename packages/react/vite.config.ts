@@ -7,7 +7,8 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { treatAsCommonjs } from 'vite-plugin-treat-umd-as-commonjs';
-import { readFileSync, existsSync, createReadStream } from 'fs';
+import dts from 'vite-plugin-dts';
+import { readFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { createRequire } from 'module';
@@ -25,7 +26,8 @@ export default defineConfig(({ mode }) => {
   const baseUrl = process.env.VITE_BASE_URL || '';
 
   return {
-    base: baseUrl || '/',
+    // Use relative base in production library mode for proper asset resolution
+    base: mode === 'production' ? './' : baseUrl || '/',
     plugins: [
       // NOTE: pypi-server plugin commented out - wheels are now served from CDN
       // Uncomment to serve /pypi/*.whl and /pypi/*.json files from local source
@@ -66,6 +68,19 @@ export default defineConfig(({ mode }) => {
       // },
       react(),
       treatAsCommonjs(),
+      // Generate TypeScript declaration files in production mode
+      ...(mode === 'production'
+        ? [
+            dts({
+              outDir: 'lib',
+              include: ['src/**/*.ts', 'src/**/*.tsx'],
+              exclude: ['src/**/*.test.ts', 'src/**/*.spec.ts'],
+              copyDtsFiles: true,
+              staticImport: true,
+              insertTypesEntry: true,
+            }),
+          ]
+        : []),
       // Plugin to handle dynamic ?raw CSS imports from node_modules (JupyterLab themes)
       {
         name: 'jupyterlab-theme-css-raw',
@@ -104,7 +119,7 @@ export default defineConfig(({ mode }) => {
               try {
                 const cssContent = readFileSync(resolvedPath, 'utf-8');
                 return `export default ${JSON.stringify(cssContent)};`;
-              } catch (e) {
+              } catch {
                 // Try next path
               }
             }
@@ -212,31 +227,61 @@ export default defineConfig(({ mode }) => {
       port: 3208,
     },
     build: {
-      outDir: 'dist',
+      outDir: mode === 'production' ? 'lib' : 'dist',
       sourcemap: mode !== 'production',
       minify: mode === 'production',
-      rollupOptions: {
-        input: {
-          main: './index.html',
-        },
-        output: {
-          entryFileNames: '[name].jupyter-react.js',
-          chunkFileNames: '[name]-[hash].js',
-          // Handle special asset file names
-          assetFileNames: assetInfo => {
-            const name = assetInfo.name || '';
-            // Place pypi files in the pypi folder
-            if (/pypi\//.test(name)) {
-              return 'pypi/[name][extname]';
+      emptyOutDir: mode === 'production',
+      lib:
+        mode === 'production'
+          ? {
+              entry: resolve(__dirname, 'src/index.ts'),
+              formats: ['es'],
             }
-            // Place schema files in the schema folder
-            if (/schema\//.test(name)) {
-              return 'schema/[name][extname]';
+          : undefined,
+      rollupOptions:
+        mode === 'production'
+          ? {
+              external: [
+                'react',
+                'react-dom',
+                /@jupyterlab\/.*/,
+                /@lumino\/.*/,
+                /@jupyter\/.*/,
+              ],
+              output: {
+                preserveModules: true,
+                preserveModulesRoot: 'src',
+                entryFileNames: '[name].js',
+                chunkFileNames: '[name].js',
+                assetFileNames: assetInfo => {
+                  const name = assetInfo.name || '';
+                  if (name.endsWith('.css')) {
+                    return '[name][extname]';
+                  }
+                  // Worker files in assets/
+                  return 'assets/[name][extname]';
+                },
+              },
             }
-            return 'assets/[name]-[hash][extname]';
-          },
-        },
-      },
+          : {
+              input: {
+                main: './index.html',
+              },
+              output: {
+                entryFileNames: '[name].jupyter-react.js',
+                chunkFileNames: '[name]-[hash].js',
+                assetFileNames: assetInfo => {
+                  const name = assetInfo.name || '';
+                  if (/pypi\//.test(name)) {
+                    return 'pypi/[name][extname]';
+                  }
+                  if (/schema\//.test(name)) {
+                    return 'schema/[name][extname]';
+                  }
+                  return 'assets/[name]-[hash][extname]';
+                },
+              },
+            },
     },
     optimizeDeps: {
       include: [
@@ -288,7 +333,7 @@ export default defineConfig(({ mode }) => {
     },
     // Worker configuration
     worker: {
-      format: 'iife',
+      format: mode === 'production' ? 'es' : 'iife',
       plugins: () => [],
     },
     // CSS handling

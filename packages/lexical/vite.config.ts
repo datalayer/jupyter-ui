@@ -10,6 +10,7 @@
 
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import dts from 'vite-plugin-dts';
 import { resolve } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -21,9 +22,26 @@ export default defineConfig(({ mode }) => {
   const baseUrl = process.env.VITE_BASE_URL || '/';
 
   return {
-    base: baseUrl || '/',
+    base: mode === 'production' ? './' : baseUrl || '/',
     plugins: [
       react(),
+      // Generate TypeScript declaration files in production mode
+      ...(mode === 'production'
+        ? [
+            dts({
+              outDir: 'lib',
+              include: ['src/**/*.ts', 'src/**/*.tsx'],
+              exclude: [
+                'src/**/*.test.ts',
+                'src/**/*.spec.ts',
+                'src/examples/**',
+              ],
+              copyDtsFiles: true,
+              staticImport: true,
+              insertTypesEntry: true,
+            }),
+          ]
+        : []),
       // Plugin to handle ?raw CSS imports (.raw.css files)
       {
         name: 'raw-css-as-string',
@@ -86,19 +104,55 @@ export default defineConfig(({ mode }) => {
       hmr: true,
     },
     build: {
-      outDir: 'dist',
+      outDir: mode === 'production' ? 'lib' : 'dist',
       sourcemap: mode !== 'production',
       minify: mode === 'production',
-      rollupOptions: {
-        input: {
-          main: resolve(__dirname, 'src/examples/index.tsx'),
-        },
-        output: {
-          entryFileNames: '[name].jupyter-lexical.js',
-          chunkFileNames: '[name]-[hash].js',
-          assetFileNames: 'assets/[name]-[hash][extname]',
-        },
-      },
+      emptyOutDir: mode === 'production',
+      lib:
+        mode === 'production'
+          ? {
+              entry: resolve(__dirname, 'src/index.ts'),
+              formats: ['es'],
+            }
+          : undefined,
+      rollupOptions:
+        mode === 'production'
+          ? {
+              external: [
+                'react',
+                'react-dom',
+                '@datalayer/jupyter-react',
+                /@datalayer\/jupyter-react\/.*/,
+                /@jupyterlab\/.*/,
+                /@lumino\/.*/,
+                /@jupyter\/.*/,
+                /@lexical\/.*/,
+                /^lexical$/,
+              ],
+              output: {
+                preserveModules: true,
+                preserveModulesRoot: 'src',
+                entryFileNames: '[name].js',
+                chunkFileNames: '[name].js',
+                assetFileNames: assetInfo => {
+                  const name = assetInfo.name || '';
+                  if (name.endsWith('.css')) {
+                    return '[name][extname]';
+                  }
+                  return 'assets/[name][extname]';
+                },
+              },
+            }
+          : {
+              input: {
+                main: resolve(__dirname, 'src/examples/index.tsx'),
+              },
+              output: {
+                entryFileNames: '[name].jupyter-lexical.js',
+                chunkFileNames: '[name]-[hash].js',
+                assetFileNames: 'assets/[name]-[hash][extname]',
+              },
+            },
     },
     assetsInclude: ['**/*.wasm', '**/*.raw.css'],
     define: {

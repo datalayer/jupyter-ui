@@ -174,6 +174,8 @@ module.exports = tseslint.config(
       'packages/lexical/docs/**',
       'packages/react/docs/**',
       'packages/embed/examples/**',
+      // Vendored third-party code
+      '**/vendor/**',
     ],
   },
 );

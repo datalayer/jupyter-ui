@@ -1,0 +1,137 @@
+name: Package Builds
+
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+    branches:
+      - '*'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # React package - Webpack build
+  react-webpack:
+    name: '@datalayer/jupyter-react (webpack)'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install
+      - name: Build React package (webpack)
+        run: cd packages/react && npm run build:lib
+
+  # React package - Vite build
+  react-vite:
+    name: '@datalayer/jupyter-react (vite)'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install
+      - name: Build React package (vite)
+        run: cd packages/react && npm run build:vite
+
+  # Lexical package - Webpack build
+  lexical-webpack:
+    name: '@datalayer/jupyter-lexical (webpack)'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install
+      - name: Build React package first (dependency)
+        run: cd packages/react && npm run build:lib
+      - name: Build Lexical package (webpack)
+        run: cd packages/lexical && npm run build:lib
+
+  # Lexical package - Vite build
+  lexical-vite:
+    name: '@datalayer/jupyter-lexical (vite)'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install
+      - name: Build React library (vite in production mode)
+        run: cd packages/react && npm run build:vite -- --mode production
+      - name: Build Lexical package (vite)
+        run: cd packages/lexical && npm run build:vite
+
+  # Docusaurus plugin
+  docusaurus-plugin:
+    name: '@datalayer/jupyter-docusaurus-plugin'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install
+      - name: Build React package first (dependency)
+        run: cd packages/react && npm run build:lib
+      - name: Build Docusaurus plugin
+        run: cd packages/docusaurus-plugin && npm run build
+
+  # # Native package
+  # native:
+  #   name: '@datalayer/jupyter-native'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #     - name: Setup Node
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: '22'
+  #     - name: Install dependencies
+  #       run: npm install
+  #     - name: Build Native package
+  #       run: cd packages/native && npm run build
+
+  # Embed package
+  embed:
+    name: '@datalayer/jupyter-embed'
+    runs-on: ubuntu-latest
+    env:
+      # Increase Node.js heap size for vite build (bundles all dependencies)
+      NODE_OPTIONS: '--max-old-space-size=8192'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install
+      - name: Build React package first (dependency)
+        run: cd packages/react && npm run build:lib
+      - name: Build Embed package
+        run: cd packages/embed && npm run build

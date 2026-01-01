@@ -4,7 +4,6 @@
   "exclude": ["node_modules", "src/example"],
   "compilerOptions": {
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": "/",
     "rootDir": "./src",
     "allowJs": false,
     "allowSyntheticDefaultImports": true,
