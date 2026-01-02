@@ -21,13 +21,28 @@ yarn add @datalayer/jupyter-react
 ## Basic Usage
 
 ```tsx
-import { Output, Jupyter } from '@datalayer/jupyter-react';
+import {
+  Output,
+  JupyterReactTheme,
+  useJupyter,
+} from '@datalayer/jupyter-react';
 
 function App() {
+  const { defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
+
   return (
-    <Jupyter>
-      <Output code="print('Hello, World!')" autoRun={true} showEditor={true} />
-    </Jupyter>
+    <JupyterReactTheme>
+      {defaultKernel && (
+        <Output
+          kernel={defaultKernel}
+          code="print('Hello, World!')"
+          autoRun={true}
+          showEditor={true}
+        />
+      )}
+    </JupyterReactTheme>
   );
 }
 ```
@@ -59,7 +74,7 @@ function App() {
 ### Display Pre-computed Outputs
 
 ```tsx
-import { Output, Jupyter } from '@datalayer/jupyter-react';
+import { Output, JupyterReactTheme } from '@datalayer/jupyter-react';
 
 function PrecomputedOutput() {
   const outputs = [
@@ -74,9 +89,9 @@ function PrecomputedOutput() {
   ];
 
   return (
-    <Jupyter>
+    <JupyterReactTheme>
       <Output outputs={outputs} showEditor={false} />
-    </Jupyter>
+    </JupyterReactTheme>
   );
 }
 ```
@@ -84,24 +99,35 @@ function PrecomputedOutput() {
 ### Interactive Code Editor with Output
 
 ```tsx
-import { Output, Jupyter } from '@datalayer/jupyter-react';
+import {
+  Output,
+  JupyterReactTheme,
+  useJupyter,
+} from '@datalayer/jupyter-react';
 
 function InteractiveOutput() {
+  const { defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
+
   return (
-    <Jupyter>
-      <Output
-        code={`import matplotlib.pyplot as plt
+    <JupyterReactTheme>
+      {defaultKernel && (
+        <Output
+          kernel={defaultKernel}
+          code={`import matplotlib.pyplot as plt
 import numpy as np
 
 x = np.linspace(0, 10, 100)
 plt.plot(x, np.sin(x))
 plt.title('Sine Wave')
 plt.show()`}
-        showEditor={true}
-        showControl={true}
-        autoRun={false}
-      />
-    </Jupyter>
+          showEditor={true}
+          showControl={true}
+          autoRun={false}
+        />
+      )}
+    </JupyterReactTheme>
   );
 }
 ```
@@ -110,20 +136,32 @@ plt.show()`}
 
 ```tsx
 import { useState } from 'react';
-import { Output, Jupyter } from '@datalayer/jupyter-react';
+import {
+  Output,
+  JupyterReactTheme,
+  useJupyter,
+} from '@datalayer/jupyter-react';
 
 function ProgrammaticExecution() {
   const [trigger, setTrigger] = useState(0);
+  const { defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
 
   return (
-    <Jupyter>
-      <button onClick={() => setTrigger(t => t + 1)}>Run Code</button>
-      <Output
-        code="print('Executed!')"
-        executeTrigger={trigger}
-        showEditor={false}
-      />
-    </Jupyter>
+    <JupyterReactTheme>
+      {defaultKernel && (
+        <>
+          <button onClick={() => setTrigger(t => t + 1)}>Run Code</button>
+          <Output
+            kernel={defaultKernel}
+            code="print('Executed!')"
+            executeTrigger={trigger}
+            showEditor={false}
+          />
+        </>
+      )}
+    </JupyterReactTheme>
   );
 }
 ```
@@ -131,22 +169,33 @@ function ProgrammaticExecution() {
 ### Execution Phase Tracking
 
 ```tsx
-import { Output, Jupyter } from '@datalayer/jupyter-react';
+import {
+  Output,
+  JupyterReactTheme,
+  useJupyter,
+} from '@datalayer/jupyter-react';
 
 function TrackedOutput() {
+  const { defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
+
   const handlePhaseChange = phaseOutput => {
     console.log('Phase:', phaseOutput.phase);
     console.log('Output:', phaseOutput.output);
   };
 
   return (
-    <Jupyter>
-      <Output
-        code="for i in range(5): print(i)"
-        autoRun={true}
-        onExecutionPhaseChanged={handlePhaseChange}
-      />
-    </Jupyter>
+    <JupyterReactTheme>
+      {defaultKernel && (
+        <Output
+          kernel={defaultKernel}
+          code="for i in range(5): print(i)"
+          autoRun={true}
+          onExecutionPhaseChanged={handlePhaseChange}
+        />
+      )}
+    </JupyterReactTheme>
   );
 }
 ```

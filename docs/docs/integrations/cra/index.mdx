@@ -2,7 +2,7 @@
 description: A Create React Application example.
 ---
 
-# Create React Application (Deprecated)
+# Create React Application Integration (Deprecated)
 
 :::warning
 
@@ -101,14 +101,16 @@ Update `src/App.tsx` to import the `Jupyter` and `Notebook` component and change
 
 ```ts
 // App.tsx
-import { Notebook, Jupyter } from "@datalayer/jupyter-react";
+import { Notebook, JupyterReactTheme, useJupyter } from "@datalayer/jupyter-react";
 
 function App() {
+  const { serviceManager } = useJupyter();
+
   return (
-    <Jupyter>
-      <Notebook path="ping.ipynb" />
-    </Jupyter>
-  )
+    <JupyterReactTheme>
+      {serviceManager && <Notebook serviceManager={serviceManager} path="ping.ipynb" />}
+    </JupyterReactTheme>
+  );
 }
 
 export default App;

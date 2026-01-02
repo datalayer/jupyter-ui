@@ -13,12 +13,20 @@ This component displays a Jupyter Cell.
 <StorybookView story="components-cell--default" />
 
 ```jsx
-<Jupyter
-  jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
-  jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
->
-  <Cell />
-</Jupyter>
+function CellExample() {
+  const { defaultKernel } = useJupyter({
+    jupyterServerUrl: 'https://oss.datalayer.run/api/jupyter-server',
+    jupyterServerToken:
+      '60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6',
+    startDefaultKernel: true,
+  });
+
+  return (
+    <JupyterReactTheme>
+      {defaultKernel && <Cell kernel={defaultKernel} />}
+    </JupyterReactTheme>
+  );
+}
 ```
 
 ```jsx live
@@ -46,17 +54,29 @@ plt.show()
 
 ## With in-browser Kernel
 
-You can use an in-browser kernel by setting the `lite` property of `Jupyter` component:
+You can use an in-browser kernel by setting the `lite` property in `useJupyter` hook:
 
 <StorybookView story="components-cell--lite-python" />
 
 ```jsx
-<Jupyter lite={true}>
-  <Cell
-    source={`import sys
-print(f"{sys.platform=}")
+function CellLiteExample() {
+  const { defaultKernel } = useJupyter({
+    lite: true,
+    startDefaultKernel: true,
+  });
+
+  return (
+    <JupyterReactTheme>
+      {defaultKernel && (
+        <Cell
+          kernel={defaultKernel}
+          source={`import sys
+print(f"{sys.platform=")}
 
 #...`}
-  />
-</Jupyter>
+        />
+      )}
+    </JupyterReactTheme>
+  );
+}
 ```

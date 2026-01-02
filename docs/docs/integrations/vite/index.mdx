@@ -305,14 +305,18 @@ npm run preview
 ## Example Application
 
 ```tsx
-import { JupyterReactTheme, Jupyter, Cell } from '@datalayer/jupyter-react';
+import { JupyterReactTheme, Cell, useJupyter } from '@datalayer/jupyter-react';
 
 function App() {
+  const { defaultKernel } = useJupyter({
+    startDefaultKernel: true,
+  });
+
   return (
     <JupyterReactTheme>
-      <Jupyter startDefaultKernel={true}>
-        <Cell source="print('Hello from Jupyter!')" />
-      </Jupyter>
+      {defaultKernel && (
+        <Cell kernel={defaultKernel} source="print('Hello from Jupyter!')" />
+      )}
     </JupyterReactTheme>
   );
 }
@@ -366,5 +370,5 @@ Before asking for help, verify:
 
 - [Next.js Integration](../next-js) - For server-side rendering
 - [Docusaurus Integration](../docusaurus) - For documentation sites
-- [Embed Package](../../deployments/embed) - For simple HTML embedding
+- [Embed Package](../../deployments/jupyter-embed) - For simple HTML embedding
 - [Vite Documentation](https://vitejs.dev) - Official Vite docs

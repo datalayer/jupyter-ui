@@ -21,7 +21,11 @@ yarn add @datalayer/jupyter-react
 ## Basic Usage
 
 ```tsx
-import { FileBrowser, Jupyter, useJupyter } from '@datalayer/jupyter-react';
+import {
+  FileBrowser,
+  JupyterReactTheme,
+  useJupyter,
+} from '@datalayer/jupyter-react';
 
 function FileBrowserExample() {
   const { serviceManager } = useJupyter();
@@ -30,14 +34,10 @@ function FileBrowserExample() {
     return <div>Loading...</div>;
   }
 
-  return <FileBrowser serviceManager={serviceManager} />;
-}
-
-function App() {
   return (
-    <Jupyter>
-      <FileBrowserExample />
-    </Jupyter>
+    <JupyterReactTheme>
+      <FileBrowser serviceManager={serviceManager} />
+    </JupyterReactTheme>
   );
 }
 ```
@@ -73,13 +73,16 @@ The component automatically:
 import { useState } from 'react';
 import {
   FileBrowser,
-  Jupyter,
+  JupyterReactTheme,
   useJupyter,
   Notebook,
 } from '@datalayer/jupyter-react';
 
 function FileExplorer() {
-  const { serviceManager } = useJupyter();
+  const { serviceManager } = useJupyter({
+    jupyterServerUrl: 'http://localhost:8888',
+    jupyterServerToken: 'your-token',
+  });
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
   if (!serviceManager) {
@@ -87,30 +90,21 @@ function FileExplorer() {
   }
 
   return (
-    <div style={{ display: 'flex', gap: '16px' }}>
-      <div style={{ width: '250px', borderRight: '1px solid #e0e0e0' }}>
-        <h3>Files</h3>
-        <FileBrowser serviceManager={serviceManager} />
+    <JupyterReactTheme>
+      <div style={{ display: 'flex', gap: '16px' }}>
+        <div style={{ width: '250px', borderRight: '1px solid #e0e0e0' }}>
+          <h3>Files</h3>
+          <FileBrowser serviceManager={serviceManager} />
+        </div>
+        <div style={{ flex: 1 }}>
+          {selectedFile?.endsWith('.ipynb') ? (
+            <Notebook serviceManager={serviceManager} path={selectedFile} />
+          ) : (
+            <div>Select a notebook to open</div>
+          )}
+        </div>
       </div>
-      <div style={{ flex: 1 }}>
-        {selectedFile?.endsWith('.ipynb') ? (
-          <Notebook path={selectedFile} />
-        ) : (
-          <div>Select a notebook to open</div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function App() {
-  return (
-    <Jupyter
-      jupyterServerUrl="http://localhost:8888"
-      jupyterServerToken="your-token"
-    >
-      <FileExplorer />
-    </Jupyter>
+    </JupyterReactTheme>
   );
 }
 ```

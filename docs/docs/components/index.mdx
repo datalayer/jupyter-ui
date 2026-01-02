@@ -59,25 +59,24 @@ The main package provides the following components:
 | Settings                                    | Settings editor                      |
 | CodeMirror                                  | Code editor component                |
 
-<ModalImage
-  small="https://jupyter-examples.datalayer.tech/jupyter-react-snippet.png"
-  large="https://jupyter-examples.datalayer.tech/jupyter-react-snippet.png"
-  alt="Jupyter UI Snippet"
-/>
-
 ## Quick Example
 
 ```jsx
-import { Jupyter, Cell } from '@datalayer/jupyter-react';
+import { JupyterReactTheme, Cell, useJupyter } from '@datalayer/jupyter-react';
 
 function App() {
+  const { defaultKernel } = useJupyter({
+    jupyterServerUrl: 'http://localhost:8888',
+    jupyterServerToken: 'your-token',
+    startDefaultKernel: true,
+  });
+
   return (
-    <Jupyter
-      jupyterServerUrl="http://localhost:8888"
-      jupyterServerToken="your-token"
-    >
-      <Cell source="print('Hello, Jupyter!')" />
-    </Jupyter>
+    <JupyterReactTheme>
+      {defaultKernel && (
+        <Cell kernel={defaultKernel} source="print('Hello, Jupyter!')" />
+      )}
+    </JupyterReactTheme>
   );
 }
 ```
@@ -108,6 +107,6 @@ The Jupyter UI components support:
 ## Related Packages
 
 - **[@datalayer/jupyter-lexical](/integrations/lexical)** - Rich document editor with Jupyter cells
-- **[@datalayer/jupyter-embed](/deployments/embed)** - Easy embedding for any website
+- **[@datalayer/jupyter-embed](/deployments/jupyter-embed)** - Easy embedding for any website
 
 <DocCardList />

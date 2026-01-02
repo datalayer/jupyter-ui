@@ -13,15 +13,22 @@ import ModalImage from 'react-modal-image';
 <StorybookView story="components-notebook--default" />
 
 ```jsx
-<Jupyter
-  jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
-  jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
->
-  <Notebook />
-</Jupyter>
+function NotebookExample() {
+  const { serviceManager } = useJupyter({
+    jupyterServerUrl: 'https://oss.datalayer.run/api/jupyter-server',
+    jupyterServerToken:
+      '60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6',
+  });
+
+  return (
+    <JupyterReactTheme>
+      {serviceManager && <Notebook serviceManager={serviceManager} />}
+    </JupyterReactTheme>
+  );
+}
 ```
 
-You can set the following props to connect it to a running Jupyter Server:
+You can set the following props in `useJupyter` hook to connect it to a running Jupyter Server:
 
 - `jupyterServerUrl`: The server URL
 - `jupyterServerToken`: The server authentication token
@@ -41,40 +48,48 @@ you can simply set `lite` to `true`:
 
 <StorybookView story="components-notebook--lite-python" />
 
-```jsx
-<Jupyter
-    lite={true}
->
-    <Notebook
-      ipywidgets={'classic'}
-      {/* Include a default content */}
-      nbformat={{
-        cells: [
-          {
-            cell_type: 'code',
-            outputs: [],
-            source:
-              "import micropip\nawait micropip.install('ipywidgets')",
-          },
-          {
-            cell_type: 'code',
-            outputs: [],
-            source: 'import ipywidgets as widgets\nw = widgets.IntSlider()\nw',
-          }
-        ],
-        metadata: {
-          kernelspec: {
-            display_name: 'Python 3 (ipykernel)',
-            language: 'python',
-            name: 'python3',
-          },
-        },
-        nbformat: 4,
-        nbformat_minor: 5,
-      }}
-    />
-</Jupyter>
-```
+````jsx
+function NotebookLiteExample() {
+  const { defaultKernel } = useJupyter({
+    lite: true,
+    startDefaultKernel: true,
+  });
+
+  return (
+    <JupyterReactTheme>
+      {defaultKernel && (
+        <Notebook
+          kernel={defaultKernel}
+          ipywidgets={'classic'}
+          nbformat={{
+            cells: [
+              {
+                cell_type: 'code',
+                outputs: [],
+                source:
+                  "import micropip\nawait micropip.install('ipywidgets')",
+              },
+              {
+                cell_type: 'code',
+                outputs: [],
+                source: 'import ipywidgets as widgets\nw = widgets.IntSlider()\nw',
+              }
+            ],
+            metadata: {
+              kernelspec: {
+                display_name: 'Python 3 (ipykernel)',
+                language: 'python',
+                name: 'python3',
+              },
+            },
+            nbformat: 4,
+            nbformat_minor: 5,
+          }}
+        />
+      )}
+    </JupyterReactTheme>
+  );
+}
 
 ## More Examples
 
@@ -89,10 +104,20 @@ The below picture is an example of Notebook into a React.js component.
 In this first example, the Jupyter Server will be fetched for the `test.ipynb` notebook `ipynb` file content.
 
 ```jsx
-<Jupyter terminals={true} collaborative={true}>
-  <Notebook path="test.ipynb" />
-</Jupyter>
-```
+function NotebookCollaborativeExample() {
+  const { serviceManager } = useJupyter({
+    terminals: true,
+    collaborative: true,
+  });
+
+  return (
+    <JupyterReactTheme>
+      {serviceManager && (
+        <Notebook serviceManager={serviceManager} path="test.ipynb" />
+      )}
+    </JupyterReactTheme>
+  );
+}
 
 Alternatively, you can get a notebook "ipynb" content from any JSON file compatible with the `INotebookContent` interface.
 
@@ -100,9 +125,23 @@ Alternatively, you can get a notebook "ipynb" content from any JSON file compati
 import { INotebookContent } from '@jupyterlab/nbformat';
 import nbformat from "./NotebookExample.ipynb.json";
 
-<Jupyter terminals={true} collaborative={true}>
-  <Notebook nbformat={nbformat as INotebookContent} />
-</Jupyter>
-```
+function NotebookNbformatExample() {
+  const { serviceManager } = useJupyter({
+    terminals: true,
+    collaborative: true,
+  });
+
+  return (
+    <JupyterReactTheme>
+      {serviceManager && (
+        <Notebook
+          serviceManager={serviceManager}
+          nbformat={nbformat as INotebookContent}
+        />
+      )}
+    </JupyterReactTheme>
+  );
+}
 
 The available properties for the Notebook component are listed on the [TypeDoc page](https://typedoc.datalayer.tech/datalayer/jupyter-react/0.9.0/types/INotebookProps.html).
+````

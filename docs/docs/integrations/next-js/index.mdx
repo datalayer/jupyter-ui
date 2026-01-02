@@ -1,10 +1,10 @@
 ---
-description: Example with Next.js.
+description: Integration with Next.js.
 ---
 
 import ModalImage from 'react-modal-image';
 
-# Next.js
+# Next.js Integration
 
 An example with [Next.js](https://nextjs.org) is available in this [dedicated repository](https://github.com/datalayer-examples/jupyter-nextjs-example) as in this [repository folder](https://github.com/datalayer/jupyter-ui/tree/main/examples/next-js).
 
@@ -35,7 +35,12 @@ The components should ideally reside outside of the `app` folder. Add `'use clie
 ```js
 'use client';
 
-import { Jupyter, Notebook, CellSidebar } from '@datalayer/jupyter-react';
+import {
+  JupyterReactTheme,
+  Notebook,
+  CellSidebar,
+  useJupyter,
+} from '@datalayer/jupyter-react';
 
 // ...
 ```
