@@ -4,7 +4,8 @@
  * MIT License
  */
 
-import { Box, Button, Label } from '@primer/react';
+import { Button, Label } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import {
   Cell,
   KernelIndicator,
@@ -48,7 +49,7 @@ export const CellExample = (props: ICellExampleProps) => {
       <Box>
         <Button onClick={() => cellsStore.execute(CELL_ID)}>Run cell</Button>
       </Box>
-      <Cell source={DEFAULT_SOURCE} id={CELL_ID} />
+      <Cell source={DEFAULT_SOURCE} id={CELL_ID} kernel={kernel} />
     </>
   );
 };

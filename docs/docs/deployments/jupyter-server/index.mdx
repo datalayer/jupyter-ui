@@ -102,10 +102,11 @@ The values defined in the Jupyter context are taking precedence on the values se
 
 If you are delivering the React.js web application from a different URL than your Jupyter Server, the Jupyter Server should be configured to accept Cross-origin request with for example in the `jupyter_server_config.py` the following traits.
 
-:::warning
+:::info
 
 Please tune the following example to fit your security requirements, this is in no way production-ready configuration.
 
+<br/>
 <details>
 
 <summary>⚠️ Use the following at your own risk!.</summary>
@@ -153,6 +154,7 @@ c.IdentityProvider.cookie_options = {
 
 If you are using the [JupyterLabApp](/components/jupyterlabapp) component, additional information will be needed (see [index-local.html](https://github.com/datalayer/jupyter-ui/blob/main/packages/react/public/index-local.html))
 
+<br/>
 ```html
 <script id="jupyter-config-data" type="application/json">
   {
