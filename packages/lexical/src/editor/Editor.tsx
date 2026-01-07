@@ -30,6 +30,7 @@ import { CodeNode } from '@lexical/code';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { useJupyter } from '@datalayer/jupyter-react';
 import {
+  CommentThreadNode,
   CounterNode,
   EquationNode,
   ImageNode,
@@ -87,6 +88,7 @@ const initialConfig = {
   nodes: [
     AutoLinkNode,
     CodeNode,
+    CommentThreadNode,
     CounterNode,
     EquationNode,
     HashtagNode,

@@ -29,9 +29,9 @@
     "access": "public"
   },
   "scripts": {
-    "build": "npm run validate:tools && gulp resources-to-lib && cross-env NODE_OPTIONS=--max-old-space-size=16384 tsc && webpack && npm run build:lib",
+    "build": "npm run validate:tools && gulp resources-to-lib && cross-env NODE_OPTIONS=--max-old-space-size=16384 tsc && node scripts/fix-esm-imports.js && webpack && npm run build:lib",
     "build:vite": "npm run validate:tools && vite build",
-    "build:lib": "npm run validate:tools && cross-env NODE_OPTIONS=--max-old-space-size=16384 tsc",
+    "build:lib": "npm run validate:tools && cross-env NODE_OPTIONS=--max-old-space-size=16384 tsc && node scripts/fix-esm-imports.js",
     "build:prod": "npm run validate:tools && gulp resources-to-lib && tsc && jlpm clean && jlpm build:lib",
     "build:tsc:watch": "run-p 'build:tsc:watch:*'",
     "build:tsc:watch:res": "gulp resources-to-lib-watch",

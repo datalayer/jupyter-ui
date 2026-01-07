@@ -13,7 +13,7 @@
 import type { ToolOperation, ToolExecutionContext } from '../core/interfaces';
 import type { LexicalBlock } from '../core/types';
 import { readAllBlocksOperation } from './readAllBlocks';
-import { validateWithZod } from '@datalayer/jupyter-react';
+import { validateWithZod } from '@datalayer/jupyter-react/tools';
 import {
   deleteBlockParamsSchema,
   type DeleteBlockParams,
