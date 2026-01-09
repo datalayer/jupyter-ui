@@ -72,6 +72,16 @@ export const insertCellOperation: ToolOperation<
     }
 
     try {
+      // Determine the actual insert index
+      let actualIndex = index;
+      if (actualIndex === undefined) {
+        // Get current cell count to determine actual insertion position
+        const cells = (await context.executor.execute('readAllCells', {
+          format: 'brief',
+        })) as unknown[];
+        actualIndex = cells?.length ?? 0;
+      }
+
       // Call executor (uses this.name for DRY principle)
       await context.executor.execute(this.name, {
         type,
@@ -79,11 +89,11 @@ export const insertCellOperation: ToolOperation<
         index, // undefined means insert at end
       });
 
-      // Return success result
+      // Return success result with correct index
       return {
         success: true,
-        index: index ?? -1,
-        message: `Cell inserted at index ${index ?? -1}`,
+        index: actualIndex,
+        message: `Cell inserted at index ${actualIndex}`,
       };
     } catch (error) {
       // Convert error to result with failure status
