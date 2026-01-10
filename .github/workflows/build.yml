@@ -14,12 +14,13 @@ concurrency:
 
 jobs:
   build:
-    name: Run build on ${{ matrix.os }}
+    name: Run build on ${{ matrix.os }} - Node ${{ matrix.node-version }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
+        node-version: ['22', '24']
         # os: [ubuntu-latest, windows-latest, macos-latest]
     env:
       # Increase Node.js heap size for large builds (embed package bundles all deps)
@@ -30,7 +31,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: ${{ matrix.node-version }}
       - name: Install the npm dependencies
         run: |
           npm install

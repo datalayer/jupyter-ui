@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ISessionContext } from '@jupyterlab/apputils';
 import type { Cell, CodeCell, ICellModel } from '@jupyterlab/cells';
 import { type IEditorServices } from '@jupyterlab/codeeditor';
@@ -383,37 +383,48 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
 
   // Context
   const [context, setContext] = useState<Context<NotebookModel> | null>(null);
+  // Capture initial kernelId for context creation, but don't recreate context when it changes
+  const initialKernelIdRef = useRef(kernelId);
   useEffect(() => {
-    if (kernelId) {
-      const factory = new DummyModelFactory(model);
-      const thisContext = new Context<NotebookModel>({
-        factory,
-        manager: serviceManager ?? (new NoServiceManager() as any),
-        path,
-        kernelPreference: {
-          id: kernelId,
-          shouldStart: false,
-          canStart: false,
-          autoStartDefault: false,
-          shutdownOnDispose: false,
-        },
-      });
-      initializeContext(
-        thisContext,
-        id,
-        // Initialization must not trigger revert in case we set up the model content
-        path !== FALLBACK_NOTEBOOK_PATH ? path : undefined,
-        onSessionConnection,
-        !serviceManager
-      );
-      setContext(thisContext);
-      return () => {
-        thisContext.dispose();
-        factory.dispose();
-        setContext(context => (context === thisContext ? null : context));
-      };
-    }
-  }, [id, kernelId, serviceManager, model, path]);
+    // Create context once for the notebook, using the initial kernelId
+    // Subsequent kernel changes are handled via changeKernel() API (see useEffect below)
+    const factory = new DummyModelFactory(model);
+    const thisContext = new Context<NotebookModel>({
+      factory,
+      manager: serviceManager ?? (new NoServiceManager() as any),
+      path,
+      kernelPreference: initialKernelIdRef.current
+        ? {
+            // Use initial kernelId if available (e.g., reopening notebook with selected kernel)
+            id: initialKernelIdRef.current,
+            shouldStart: false,
+            canStart: false,
+            autoStartDefault: false,
+            shutdownOnDispose: false,
+          }
+        : {
+            // No kernel preference when notebook opens without a kernel
+            shouldStart: false,
+            canStart: false,
+            autoStartDefault: false,
+            shutdownOnDispose: false,
+          },
+    });
+    initializeContext(
+      thisContext,
+      id,
+      // Initialization must not trigger revert in case we set up the model content
+      path !== FALLBACK_NOTEBOOK_PATH ? path : undefined,
+      onSessionConnection,
+      !serviceManager
+    );
+    setContext(thisContext);
+    return () => {
+      thisContext.dispose();
+      factory.dispose();
+      setContext(context => (context === thisContext ? null : context));
+    };
+  }, [id, serviceManager, model, path]);
 
   // Set kernel
   useEffect(() => {
@@ -935,20 +946,15 @@ export function useNotebookModel(options: IOptions): NotebookModel | null {
       setupCollaboration();
     } else {
       const createModel = (nbformat: INotebookContent | undefined) => {
-        try {
-          const model = new NotebookModel();
-          if (nbformat) {
-            nbformat.cells.forEach(cell => {
-              cell.metadata['editable'] = !readonly;
-            });
-            model.fromJSON(nbformat);
-          }
-          model.readOnly = readonly;
-          setModel(model);
-        } catch (error) {
-          console.error('[useNotebookModel] Error creating model:', error);
-          throw error;
+        const model = new NotebookModel();
+        if (nbformat) {
+          nbformat.cells.forEach(cell => {
+            cell.metadata['editable'] = !readonly;
+          });
+          model.fromJSON(nbformat);
         }
+        model.readOnly = readonly;
+        setModel(model);
       };
 
       if (!nbformat && url) {

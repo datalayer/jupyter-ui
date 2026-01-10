@@ -15,15 +15,18 @@ concurrency:
 jobs:
   # React package - Webpack build
   react-webpack:
-    name: '@datalayer/jupyter-react (webpack)'
+    name: '@datalayer/jupyter-react (webpack) - Node ${{ matrix.node-version }}'
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['22', '24']
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: ${{ matrix.node-version }}
       - name: Install dependencies
         run: npm install
       - name: Build React package (webpack)
@@ -31,15 +34,18 @@ jobs:
 
   # React package - Vite build
   react-vite:
-    name: '@datalayer/jupyter-react (vite)'
+    name: '@datalayer/jupyter-react (vite) - Node ${{ matrix.node-version }}'
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['22', '24']
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: ${{ matrix.node-version }}
       - name: Install dependencies
         run: npm install
       - name: Build React package (vite)
@@ -47,15 +53,18 @@ jobs:
 
   # Lexical package - Webpack build
   lexical-webpack:
-    name: '@datalayer/jupyter-lexical (webpack)'
+    name: '@datalayer/jupyter-lexical (webpack) - Node ${{ matrix.node-version }}'
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['22', '24']
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: ${{ matrix.node-version }}
       - name: Install dependencies
         run: npm install
       - name: Build React package first (dependency)
@@ -65,15 +74,18 @@ jobs:
 
   # Lexical package - Vite build
   lexical-vite:
-    name: '@datalayer/jupyter-lexical (vite)'
+    name: '@datalayer/jupyter-lexical (vite) - Node ${{ matrix.node-version }}'
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['22', '24']
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: ${{ matrix.node-version }}
       - name: Install dependencies
         run: npm install
       - name: Build React library (vite in production mode)
@@ -83,15 +95,18 @@ jobs:
 
   # Docusaurus plugin
   docusaurus-plugin:
-    name: '@datalayer/jupyter-docusaurus-plugin'
+    name: '@datalayer/jupyter-docusaurus-plugin - Node ${{ matrix.node-version }}'
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['22', '24']
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: ${{ matrix.node-version }}
       - name: Install dependencies
         run: npm install
       - name: Build React package first (dependency)
@@ -117,8 +132,11 @@ jobs:
 
   # Embed package
   embed:
-    name: '@datalayer/jupyter-embed'
+    name: '@datalayer/jupyter-embed - Node ${{ matrix.node-version }}'
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['22', '24']
     env:
       # Increase Node.js heap size for vite build (bundles all dependencies)
       NODE_OPTIONS: '--max-old-space-size=8192'
@@ -128,7 +146,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: ${{ matrix.node-version }}
       - name: Install dependencies
         run: npm install
       - name: Build React package first (dependency)

@@ -11,7 +11,7 @@
  */
 
 import type { ToolOperation, ToolExecutionContext } from '../core/interfaces';
-import { validateWithZod } from '@datalayer/jupyter-react';
+import { validateWithZod } from '@datalayer/jupyter-react/tools';
 import {
   updateBlockParamsSchema,
   type UpdateBlockParams,

@@ -110,8 +110,8 @@
     "access": "public"
   },
   "scripts": {
-    "build": "npm run validate:tools && gulp resources-to-lib && tsc --build && webpack",
-    "build:lib": "npm run validate:tools && gulp resources-to-lib && tsc --build",
+    "build": "npm run validate:tools && gulp resources-to-lib && tsc --build && node scripts/fix-esm-imports.js && webpack",
+    "build:lib": "npm run validate:tools && gulp resources-to-lib && tsc --build && node scripts/fix-esm-imports.js",
     "build:prod": "npm run validate:tools && gulp resources-to-lib && tsc && npm run clean && npm run build:lib",
     "build:tsc:watch:res": "gulp resources-to-lib-watch",
     "build:tsc:watch:tsc": "tsc --watch",

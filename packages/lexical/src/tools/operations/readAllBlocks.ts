@@ -12,7 +12,7 @@
 
 import type { ToolOperation, ToolExecutionContext } from '../core/interfaces';
 import type { LexicalBlock, BriefBlock } from '../core/types';
-import { validateWithZod } from '@datalayer/jupyter-react';
+import { validateWithZod } from '@datalayer/jupyter-react/tools';
 import {
   readAllBlocksParamsSchema,
   type ReadAllBlocksParams,

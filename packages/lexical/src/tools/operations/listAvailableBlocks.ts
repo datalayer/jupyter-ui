@@ -15,7 +15,7 @@
 
 import type { ToolOperation, ToolExecutionContext } from '../core/interfaces';
 import type { RegisteredNodeInfo } from '../core/types';
-import { validateWithZod } from '@datalayer/jupyter-react';
+import { validateWithZod } from '@datalayer/jupyter-react/tools';
 import {
   listAvailableBlocksParamsSchema,
   type ListAvailableBlocksParams,
