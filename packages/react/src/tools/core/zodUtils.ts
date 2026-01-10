@@ -102,6 +102,31 @@ export function zodToToolParameters(
         prop.type = 'number';
       } else if (typeName === 'ZodBoolean' || typeName === 'boolean') {
         prop.type = 'boolean';
+      } else if (typeName === 'ZodArray' || typeName === 'array') {
+        prop.type = 'array';
+        // Get the inner type of the array
+        const innerType = zodField._def?.type || zodField.def?.type;
+        const innerTypeName =
+          innerType?._def?.typeName ||
+          innerType?._def?.type ||
+          innerType?.def?.type;
+        // Map inner type to JSON Schema item type
+        if (innerTypeName === 'ZodString' || innerTypeName === 'string') {
+          prop.items = { type: 'string' };
+        } else if (
+          innerTypeName === 'ZodNumber' ||
+          innerTypeName === 'number'
+        ) {
+          prop.items = { type: 'number' };
+        } else if (
+          innerTypeName === 'ZodBoolean' ||
+          innerTypeName === 'boolean'
+        ) {
+          prop.items = { type: 'boolean' };
+        } else {
+          // Default to string items for unknown inner types
+          prop.items = { type: 'string' };
+        }
       } else if (typeName === 'ZodEnum' || typeName === 'enum') {
         prop.type = 'string';
         // Enum values can be in different places depending on Zod version:
@@ -117,6 +142,9 @@ export function zodToToolParameters(
         prop.enum = Array.isArray(enumValues)
           ? enumValues
           : Object.keys(enumValues || {});
+      } else {
+        // Fallback: Default to string type for unknown types to ensure valid JSON Schema
+        prop.type = 'string';
       }
 
       properties[key] = prop;

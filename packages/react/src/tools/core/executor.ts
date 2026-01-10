@@ -54,26 +54,12 @@ export class DefaultExecutor implements ToolExecutor {
    * @returns Result from store method
    */
   async execute(operationName: string, args: unknown): Promise<unknown> {
-    console.log(
-      `[DefaultExecutor] Executing: ${operationName} for document: ${this.documentId}`
-    );
-    console.log(`[DefaultExecutor] Args:`, args);
-
     // Get the store method directly (1:1 mapping, no transformation)
     const method = (this.store as unknown as Record<string, unknown>)[
       operationName
     ];
 
     if (typeof method !== 'function') {
-      console.error(
-        `[DefaultExecutor] Method '${operationName}' not found in store!`
-      );
-      console.error(
-        `[DefaultExecutor] Available methods:`,
-        Object.keys(this.store).filter(
-          k => typeof (this.store as any)[k] === 'function'
-        )
-      );
       throw new Error(
         `Store method '${operationName}' not found or not a function`
       );
@@ -85,14 +71,11 @@ export class DefaultExecutor implements ToolExecutor {
         ? { id: this.documentId, ...args }
         : { id: this.documentId };
 
-    console.log(`[DefaultExecutor] Calling method with payload:`, payload);
-
     // Call method with payload object as first parameter
     // Methods will check if first param is object and destructure accordingly
     const methodFn = method as (payload: unknown) => unknown;
     const result = await methodFn.call(this.store, payload);
 
-    console.log(`[DefaultExecutor] Result:`, result);
     return result;
   }
 }
