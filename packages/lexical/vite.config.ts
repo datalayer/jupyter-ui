@@ -104,6 +104,7 @@ export default defineConfig(({ mode }) => {
       hmr: true,
     },
     build: {
+      target: 'esnext',
       outDir: mode === 'production' ? 'lib' : 'dist',
       sourcemap: mode !== 'production',
       minify: mode === 'production',
@@ -161,6 +162,9 @@ export default defineConfig(({ mode }) => {
       'process.env': {},
     },
     optimizeDeps: {
+      esbuildOptions: {
+        target: 'esnext',
+      },
       include: ['react', 'react-dom'],
       // Exclude lexical packages from pre-bundling - they have broken exports maps
       // The alias in resolve.alias handles resolving them

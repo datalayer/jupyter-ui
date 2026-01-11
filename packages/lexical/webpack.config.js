@@ -35,6 +35,7 @@ if (IS_PRODUCTION) {
 module.exports = {
   entry: ['./src/examples/index'],
   mode: mode,
+  target: ["web", "es2022"],
   watchOptions: {
     aggregateTimeout: 300,
     poll: 5000, // Seems to stabilise HMR file change detection.
@@ -53,6 +54,7 @@ module.exports = {
     minimize,
   },
   experiments: {
+    topLevelAwait: true,
     asyncWebAssembly: true,
   },
   output: {
