@@ -58,17 +58,10 @@ export class DefaultExecutor implements ToolExecutor {
     operationName: string,
     args?: unknown,
   ): Promise<T> {
-    console.log('[DefaultExecutor] ========== EXECUTE CALLED ==========');
-    console.log('[DefaultExecutor] Operation name:', operationName);
-    console.log('[DefaultExecutor] Args:', JSON.stringify(args, null, 2));
-    console.log('[DefaultExecutor] Lexical ID:', this.lexicalId);
-
     // Get the store method directly (1:1 mapping, no transformation)
     const method = (this.store as unknown as Record<string, unknown>)[
       operationName
     ];
-
-    console.log('[DefaultExecutor] Store method found:', typeof method);
 
     if (typeof method !== 'function') {
       console.error(
@@ -85,19 +78,12 @@ export class DefaultExecutor implements ToolExecutor {
         ? { id: this.lexicalId, ...args }
         : { id: this.lexicalId };
 
-    console.log(
-      '[DefaultExecutor] Injected payload:',
-      JSON.stringify(payload, null, 2),
-    );
-    console.log('[DefaultExecutor] Calling store method:', operationName);
-
     try {
       const result = await (method as (args: unknown) => Promise<T>).call(
         this.store,
         payload,
       );
 
-      console.log('[DefaultExecutor] ✓ Store method returned:', result);
       return result;
     } catch (error) {
       console.error('[DefaultExecutor] ❌ ERROR calling store method:', error);

@@ -12,6 +12,7 @@
  */
 
 import { createContext, useContext } from 'react';
+import { ServiceManager } from '@jupyterlab/services';
 
 /**
  * Configuration passed down to Lexical plugins
@@ -20,7 +21,7 @@ export interface LexicalConfig {
   /** Unique identifier for this Lexical document */
   lexicalId: string;
   /** Service manager for kernel operations (optional) */
-  serviceManager?: any;
+  serviceManager?: ServiceManager.IManager;
 }
 
 /**
@@ -57,7 +58,7 @@ export function useLexicalConfig(): LexicalConfig {
  */
 export interface LexicalConfigProviderProps {
   lexicalId: string;
-  serviceManager?: any;
+  serviceManager?: ServiceManager.IManager;
   children: React.ReactNode;
 }
 

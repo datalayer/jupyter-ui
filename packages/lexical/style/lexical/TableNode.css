@@ -1,0 +1,287 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
+/* Table container styles - matches VS Code theme */
+.PlaygroundEditorTheme__table {
+  border-collapse: collapse !important;
+  border-spacing: 0 !important;
+  max-width: 100% !important;
+  overflow-y: scroll !important;
+  table-layout: fixed !important;
+  width: max-content !important;
+  margin: 20px 0 !important;
+  border: 1px solid var(--vscode-editorGroup-border, rgba(128, 128, 128, 0.35)) !important;
+}
+
+/* Table cell styles */
+.PlaygroundEditorTheme__tableCell {
+  border: 1px solid var(--vscode-editorGroup-border, rgba(128, 128, 128, 0.35)) !important;
+  min-width: 75px !important;
+  width: 75px !important;
+  vertical-align: top !important;
+  text-align: start !important;
+  padding: 8px 10px !important;
+  position: relative !important;
+  outline: none !important;
+  background-color: var(--vscode-editor-background, transparent) !important;
+  color: var(--vscode-editor-foreground, inherit) !important;
+}
+
+/* Table header cell styles */
+.PlaygroundEditorTheme__tableCellHeader {
+  border: 1px solid var(--vscode-editorGroup-border, rgba(128, 128, 128, 0.35)) !important;
+  min-width: 75px !important;
+  width: 75px !important;
+  vertical-align: top !important;
+  text-align: start !important;
+  padding: 8px 10px !important;
+  position: relative !important;
+  outline: none !important;
+  background-color: var(
+    --vscode-editorGroupHeader-tabsBackground,
+    rgba(128, 128, 128, 0.1)
+  ) !important;
+  color: var(--vscode-editor-foreground, inherit) !important;
+  font-weight: bold !important;
+}
+
+/* Cell focus styles */
+.PlaygroundEditorTheme__tableCell:focus,
+.PlaygroundEditorTheme__tableCellHeader:focus {
+  outline: 2px solid var(--vscode-focusBorder, rgb(60, 132, 244)) !important;
+  outline-offset: -2px;
+}
+
+/* Cell selection styles */
+.PlaygroundEditorTheme__tableCellSelected {
+  background-color: var(
+    --vscode-list-activeSelectionBackground,
+    rgba(60, 132, 244, 0.15)
+  ) !important;
+}
+
+/* Placeholder for empty cells */
+.PlaygroundEditorTheme__tableCell:empty::after {
+  content: '';
+  display: block;
+  min-height: 20px;
+}
+
+/* Cell resize handles */
+.PlaygroundEditorTheme__tableCellResizer {
+  position: absolute;
+  right: -4px;
+  bottom: 0;
+  width: 8px;
+  top: 0;
+  cursor: ew-resize;
+  user-select: none;
+  z-index: 10;
+}
+
+.PlaygroundEditorTheme__tableCellResizer:after {
+  content: '';
+  position: absolute;
+  right: 3px;
+  top: 0;
+  height: 100%;
+  width: 2px;
+  background-color: transparent;
+}
+
+.PlaygroundEditorTheme__tableCellResizer:hover:after,
+.PlaygroundEditorTheme__tableCellResizer:active:after {
+  background-color: var(--vscode-focusBorder, #3c84f4);
+}
+
+/* Table action menu - CHEVRON BUTTON */
+.PlaygroundEditorTheme__tableCellActionButtonContainer {
+  display: flex !important;
+  gap: 4px !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  will-change: transform !important;
+  z-index: 999 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.PlaygroundEditorTheme__tableCellActionButton {
+  background-color: var(
+    --vscode-button-secondaryBackground,
+    rgba(128, 128, 128, 0.1)
+  ) !important;
+  color: var(--vscode-button-secondaryForeground, inherit) !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  border: 1px solid var(--vscode-editorGroup-border, rgba(128, 128, 128, 0.35)) !important;
+  position: relative !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  padding: 4px 8px !important;
+  font-size: 14px !important;
+  min-width: 24px !important;
+  min-height: 24px !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.PlaygroundEditorTheme__tableCellActionButton:after {
+  content: '▼' !important;
+  font-size: 10px !important;
+  display: block !important;
+  line-height: 1 !important;
+}
+
+.PlaygroundEditorTheme__tableCellActionButton:hover {
+  background-color: var(
+    --vscode-button-secondaryHoverBackground,
+    rgba(128, 128, 128, 0.2)
+  ) !important;
+}
+
+/* Table Scrollable Wrapper - for TableScrollShadowPlugin */
+.PlaygroundEditorTheme__tableScrollableWrapper {
+  overflow-x: auto;
+  margin: 0px 25px 30px 0px;
+}
+
+.PlaygroundEditorTheme__tableScrollRight {
+  box-shadow: inset -10px 0 10px rgba(0, 0, 0, 0.15);
+}
+
+.PlaygroundEditorTheme__tableScrollLeft {
+  box-shadow: inset 10px 0 10px rgba(0, 0, 0, 0.15);
+}
+
+.PlaygroundEditorTheme__tableScrollMiddle {
+  box-shadow:
+    inset 10px 0 10px rgba(0, 0, 0, 0.15),
+    inset -10px 0 10px rgba(0, 0, 0, 0.15);
+}
+
+.PlaygroundEditorTheme__tableScrollableWrapper > .PlaygroundEditorTheme__table {
+  /* Remove the table's vertical margin and put it on the wrapper */
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.PlaygroundEditorTheme__tableAlignmentCenter {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.PlaygroundEditorTheme__tableAlignmentRight {
+  margin-left: auto;
+}
+
+.PlaygroundEditorTheme__table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  overflow-y: scroll;
+  overflow-x: scroll;
+  table-layout: fixed;
+  width: fit-content;
+  margin-top: 25px;
+  margin-bottom: 30px;
+}
+
+.PlaygroundEditorTheme__tableScrollableWrapper.PlaygroundEditorTheme__tableFrozenRow {
+  /* position:sticky needs overflow:clip or visible */
+  overflow-x: clip;
+}
+
+.PlaygroundEditorTheme__tableFrozenRow tr:nth-of-type(1) > td {
+  overflow: clip;
+  background-color: var(--vscode-editor-background, #ffffff);
+  position: sticky;
+  z-index: 2;
+  top: 44px;
+}
+
+/* Table hover action buttons - Add Column */
+.PlaygroundEditorTheme__tableAddColumns {
+  position: absolute !important;
+  background-color: var(--vscode-button-secondaryBackground, #eee) !important;
+  /* Let plugin set dimensions, just constrain them */
+  min-width: 15px !important;
+  max-width: 20px !important;
+  min-height: 20px !important;
+  animation: table-controls 0.2s ease !important;
+  border: 0 !important;
+  cursor: pointer !important;
+  z-index: 999 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.PlaygroundEditorTheme__tableAddColumns:after {
+  content: '+' !important;
+  display: block !important;
+  font-size: 14px !important;
+  text-align: center !important;
+  line-height: 20px !important;
+  color: var(--vscode-editor-foreground, #666) !important;
+  opacity: 0.7 !important;
+}
+
+.PlaygroundEditorTheme__tableAddColumns:hover,
+.PlaygroundEditorTheme__tableAddRows:hover {
+  background-color: var(--vscode-button-hoverBackground, #c9dbf0) !important;
+}
+
+/* Table hover action buttons - Add Row */
+.PlaygroundEditorTheme__tableAddRows {
+  position: absolute !important;
+  /* Let plugin set dimensions, just constrain them */
+  min-width: 50px !important;
+  min-height: 15px !important;
+  max-height: 20px !important;
+  background-color: var(--vscode-button-secondaryBackground, #eee) !important;
+  animation: table-controls 0.2s ease !important;
+  border: 0 !important;
+  cursor: pointer !important;
+  z-index: 999 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.PlaygroundEditorTheme__tableAddRows:after {
+  content: '+' !important;
+  display: block !important;
+  font-size: 14px !important;
+  text-align: center !important;
+  line-height: 20px !important;
+  color: var(--vscode-editor-foreground, #666) !important;
+  opacity: 0.7 !important;
+}
+
+@keyframes table-controls {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Table cell resizer ruler */
+.PlaygroundEditorTheme__tableCellResizeRuler {
+  display: block;
+  position: absolute;
+  width: 1px;
+  background-color: var(--vscode-focusBorder, rgb(60, 132, 244));
+  height: 100%;
+  top: 0;
+}

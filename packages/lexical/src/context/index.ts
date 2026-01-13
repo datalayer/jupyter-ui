@@ -4,7 +4,10 @@
  * MIT License
  */
 
+export * from './CommentsContext';
+export * from './EmbedHandlersContext';
 export * from './LexicalConfigContext';
 export * from './LexicalContext';
 export * from './SettingsContext';
+export * from './ThemeContext';
 export * from './ToolbarContext';

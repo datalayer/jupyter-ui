@@ -71,10 +71,21 @@ export type JupyterReactState = {
   setColormode: (colormode: Colormode) => void;
 };
 
+// Module-level default configuration
+// This ensures the store is NEVER undefined, preventing crashes when child components
+// access it during initial render. Updates to match props happen after render completes.
+const DEFAULT_CONFIG: IJupyterConfig = loadJupyterConfig({
+  collaborative: false,
+  lite: false,
+  jupyterServerUrl: undefined,
+  jupyterServerToken: undefined,
+  terminals: false,
+});
+
 export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
   version: '',
   jupyterLabAdapter: undefined,
-  jupyterConfig: undefined,
+  jupyterConfig: DEFAULT_CONFIG,
   kernelIsLoading: true,
   kernel: undefined,
   serviceManager: undefined,
@@ -103,6 +114,11 @@ export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
     set(_state => ({ colormode }));
   },
 }));
+
+// Module-level flag to ensure config is only initialized once
+// This prevents render-during-render warnings when multiple components
+// call useJupyterReactStoreFromProps simultaneously
+let configInitializationScheduled = false;
 
 // TODO Reuse code portions from JupyterContext.
 export function useJupyterReactStore(): JupyterReactState;
@@ -137,6 +153,10 @@ export function useJupyterReactStoreFromProps(
   } = props;
 
   const jupyterConfig = useMemo<IJupyterConfig>(() => {
+    // Store always has DEFAULT_CONFIG, so we can safely access it
+    const storeConfig = jupyterReactStore.getState().jupyterConfig!;
+
+    // Create config from props
     const config = loadJupyterConfig({
       collaborative: false,
       lite,
@@ -144,9 +164,24 @@ export function useJupyterReactStoreFromProps(
       jupyterServerToken,
       terminals,
     });
-    jupyterReactStore.getState().setJupyterConfig(config);
+
+    // Check if config needs updating (compare actual IJupyterConfig fields)
+    const needsUpdate =
+      storeConfig.jupyterServerUrl !== config.jupyterServerUrl ||
+      storeConfig.jupyterServerToken !== config.jupyterServerToken;
+
+    // Defer update to after render completes (prevents render-during-render warning)
+    if (needsUpdate && !configInitializationScheduled) {
+      configInitializationScheduled = true;
+      queueMicrotask(() => {
+        jupyterReactStore.getState().setJupyterConfig(config);
+        configInitializationScheduled = false; // Reset flag for future updates
+      });
+    }
+
+    // Return the config from props (components use this immediately)
     return config;
-  }, []);
+  }, [lite, jupyterServerUrl, jupyterServerToken, terminals]);
 
   const [serviceManager, setServiceManager] = useState<
     ServiceManager.IManager | undefined
@@ -158,7 +193,6 @@ export function useJupyterReactStoreFromProps(
 
   useEffect(() => {
     if (propsServiceManager) {
-      console.log('Setting Service Manager from props', propsServiceManager);
       setServiceManager(propsServiceManager);
       jupyterReactStore.getState().setServiceManager(propsServiceManager);
     }
@@ -216,12 +250,7 @@ export function useJupyterReactStoreFromProps(
 
   // Setup a Kernel if needed.
   useEffect(() => {
-    console.log(
-      'Checking kernels for the new Service Manager:',
-      serviceManager
-    );
     serviceManager?.kernels.ready.then(async () => {
-      console.log('Jupyter Kernel Manager is ready', serviceManager.kernels);
       if (useRunningKernelIndex > -1) {
         await serviceManager.sessions.refreshRunning();
         const runnings = Array.from(serviceManager.kernels.running());
@@ -246,7 +275,6 @@ export function useJupyterReactStoreFromProps(
         setIsLoading(false);
         jupyterReactStore.getState().kernelIsLoading = false;
       } else if (startDefaultKernel) {
-        console.log('Starting the default Jupyter Kernel', defaultKernelName);
         const defaultKernel = new Kernel({
           kernelName: defaultKernelName,
           kernelSpecName: defaultKernelName,
@@ -255,7 +283,6 @@ export function useJupyterReactStoreFromProps(
           sessionManager: serviceManager.sessions,
         });
         defaultKernel.ready.then(async () => {
-          console.log('The default Jupyter Kernel is ready', defaultKernelName);
           if (initCode) {
             try {
               await defaultKernel.execute(initCode)?.done;

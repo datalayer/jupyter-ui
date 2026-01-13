@@ -67,6 +67,7 @@ import {
   Placeholder,
 } from '..';
 import { useLayoutEffectImpl as useLayoutEffect } from '..';
+import { useComments } from '../context/CommentsContext';
 
 export const INSERT_INLINE_COMMAND: LexicalCommand<void> = createCommand();
 
@@ -709,21 +710,18 @@ function useCollabAuthorName(): string {
 
 export function CommentPlugin({
   providerFactory,
-  showCommentsPanel = true,
   showFloatingAddButton = true,
-  showToggleButton = true,
   commentsPanelContainer,
 }: {
   providerFactory?: (
     id: string,
     yjsDocMap: Map<string, Doc>,
   ) => WebsocketProvider;
-  showCommentsPanel?: boolean;
   showFloatingAddButton?: boolean;
-  showToggleButton?: boolean;
   commentsPanelContainer?: HTMLElement;
 }): JSX.Element {
   const [editor] = useLexicalComposerContext();
+  const { showComments, setShowComments } = useComments();
   const commentStore = useMemo(() => new CommentStore(editor), [editor]);
   const comments = useCommentStore(commentStore);
   const markNodeMap = useMemo<Map<string, Set<NodeKey>>>(() => {
@@ -732,12 +730,6 @@ export function CommentPlugin({
   const [activeAnchorKey, setActiveAnchorKey] = useState<NodeKey | null>();
   const [activeIDs, setActiveIDs] = useState<Array<string>>([]);
   const [showCommentInput, setShowCommentInput] = useState(false);
-  const [showComments, setShowComments] = useState(false);
-
-  // Sync external showCommentsPanel prop with internal showComments state
-  useEffect(() => {
-    setShowComments(showCommentsPanel);
-  }, [showCommentsPanel]);
 
   const cancelAddComment = useCallback(() => {
     editor.update(() => {
@@ -975,19 +967,6 @@ export function CommentPlugin({
             editor={editor}
             onAddComment={onAddComment}
           />,
-          document.body,
-        )}
-      {showToggleButton &&
-        createPortal(
-          <Button
-            className={`CommentPlugin_ShowCommentsButton ${
-              showComments ? 'active' : ''
-            }`}
-            onClick={() => setShowComments(!showComments)}
-            title={showComments ? 'Hide Comments' : 'Show Comments'}
-          >
-            <i className="comments" />
-          </Button>,
           document.body,
         )}
       {showComments &&

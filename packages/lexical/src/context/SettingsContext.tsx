@@ -33,7 +33,7 @@ type SettingsContextShape = {
 };
 
 const Context: React.Context<SettingsContextShape> = createContext({
-  setOption: (name: SettingName, value: boolean) => {
+  setOption: (_name: SettingName, _value: boolean) => {
     return;
   },
   settings: INITIAL_SETTINGS,

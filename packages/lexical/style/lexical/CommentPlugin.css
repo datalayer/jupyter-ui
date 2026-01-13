@@ -147,33 +147,6 @@ i.add-comment {
   outline: 1px solid var(--vscode-focusBorder, rgb(66, 135, 245));
 }
 
-.CommentPlugin_ShowCommentsButton {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  background-color: #ddd;
-  border-radius: 10px;
-}
-
-i.comments {
-  background-size: contain;
-  display: inline-block;
-  height: 20px;
-  width: 20px;
-  vertical-align: -10px;
-  background-image: url(./icons/comments.svg);
-  opacity: 0.5;
-  transition: opacity 0.2s linear;
-}
-
-.CommentPlugin_ShowCommentsButton:hover i.comments {
-  opacity: 1;
-}
-
-.CommentPlugin_ShowCommentsButton.active {
-  background-color: #ccc;
-}
-
 .CommentPlugin_CommentsPanel {
   position: fixed;
   right: 0;

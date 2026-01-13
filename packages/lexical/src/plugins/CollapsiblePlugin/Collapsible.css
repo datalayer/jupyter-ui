@@ -1,0 +1,115 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
+/**
+ * Generic collapsible styles - theme-agnostic
+ * Environment-specific overrides should be added separately
+ */
+
+.Collapsible__container {
+  background: #f8f8f8;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  margin: 12px 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.Collapsible__title {
+  cursor: pointer;
+  padding: 12px 12px 12px 36px;
+  position: relative;
+  font-weight: 600;
+  font-size: 14px;
+  /* Aggressively remove list styling */
+  list-style: none;
+  list-style-type: none;
+  display: block;
+  outline: none;
+  color: #333;
+  user-select: none;
+  transition: background-color 0.15s ease;
+  margin: 0;
+  /* Remove browser default summary styling */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.Collapsible__title:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+/* Remove default paragraph margins inside title */
+.Collapsible__title p {
+  margin: 0 !important;
+  padding: 0 !important;
+  display: inline;
+}
+
+/* Aggressively hide default details marker */
+.Collapsible__title::marker,
+.Collapsible__title::-webkit-details-marker {
+  display: none !important;
+  content: none !important;
+}
+
+/* Remove the marker in all possible ways */
+summary.Collapsible__title {
+  list-style: none;
+}
+
+summary.Collapsible__title::-webkit-details-marker {
+  display: none;
+}
+
+summary.Collapsible__title::marker {
+  display: none;
+}
+
+/* Arrow icon - right arrow when closed (►) */
+.Collapsible__title::before {
+  content: '▶';
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: #555;
+  transition: all 0.15s ease;
+  opacity: 0.9;
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  line-height: 12px;
+  text-align: center;
+}
+
+/* Arrow icon - down arrow when open (▼) */
+.Collapsible__container[open] > .Collapsible__title::before {
+  content: '▼';
+  opacity: 1;
+}
+
+/* Content area */
+.Collapsible__content {
+  padding: 12px 16px 16px 36px;
+}
+
+/* Remove default paragraph margins inside content */
+.Collapsible__content > p:first-child {
+  margin-top: 0;
+}
+
+.Collapsible__content > p:last-child {
+  margin-bottom: 0;
+}
+
+/* Collapsed state (for Chrome workaround) */
+.Collapsible__collapsed .Collapsible__content {
+  display: none;
+  user-select: none;
+}

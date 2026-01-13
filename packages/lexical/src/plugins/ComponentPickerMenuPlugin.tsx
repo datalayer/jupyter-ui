@@ -25,7 +25,9 @@ import {
 } from '@lexical/react/LexicalTypeaheadMenuPlugin';
 import { $createHeadingNode, $createQuoteNode } from '@lexical/rich-text';
 import { $setBlocksType } from '@lexical/selection';
-import { INSERT_TABLE_COMMAND } from '@lexical/table';
+import { INSERT_COLLAPSIBLE_COMMAND } from './CollapsiblePlugin';
+import { INSERT_EXCALIDRAW_COMMAND } from './ExcalidrawPlugin';
+import { INSERT_TABLE_WITH_DIALOG_COMMAND } from './TablePlugin';
 import {
   $createParagraphNode,
   $getSelection,
@@ -163,8 +165,7 @@ export const ComponentPickerMenuPlugin = ({
           icon: <i className="icon table" />,
           keywords: ['table'],
           onSelect: () =>
-            // @ts-expect-error Correct types, but since they're dynamic TS doesn't like it.
-            editor.dispatchCommand(INSERT_TABLE_COMMAND, { columns, rows }),
+            editor.dispatchCommand(INSERT_TABLE_WITH_DIALOG_COMMAND, undefined),
         }),
       );
     } else if (partialTableMatch) {
@@ -177,8 +178,10 @@ export const ComponentPickerMenuPlugin = ({
               icon: <i className="icon table" />,
               keywords: ['table'],
               onSelect: () =>
-                // @ts-expect-error Correct types, but since they're dynamic TS doesn't like it.
-                editor.dispatchCommand(INSERT_TABLE_COMMAND, { columns, rows }),
+                editor.dispatchCommand(
+                  INSERT_TABLE_WITH_DIALOG_COMMAND,
+                  undefined,
+                ),
             }),
         ),
       );
@@ -256,6 +259,38 @@ export const ComponentPickerMenuPlugin = ({
         keywords: ['check list', 'todo list'],
         onSelect: () =>
           editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined),
+      }),
+      new ComponentPickerOption('Table', {
+        icon: <i className="icon table" />,
+        keywords: ['table', 'grid', 'spreadsheet'],
+        onSelect: () =>
+          editor.dispatchCommand(INSERT_TABLE_WITH_DIALOG_COMMAND, undefined),
+      }),
+      new ComponentPickerOption('Collapsible Container', {
+        icon: <i className="icon chevron-down" />,
+        keywords: [
+          'collapsible',
+          'collapse',
+          'expand',
+          'toggle',
+          'accordion',
+          'container',
+        ],
+        onSelect: () =>
+          editor.dispatchCommand(INSERT_COLLAPSIBLE_COMMAND, undefined),
+      }),
+      new ComponentPickerOption('Excalidraw', {
+        icon: <i className="icon diagram-2" />,
+        keywords: [
+          'excalidraw',
+          'drawing',
+          'diagram',
+          'sketch',
+          'whiteboard',
+          'draw',
+        ],
+        onSelect: () =>
+          editor.dispatchCommand(INSERT_EXCALIDRAW_COMMAND, undefined),
       }),
       new ComponentPickerOption('Quote', {
         icon: <i className="icon quote" />,

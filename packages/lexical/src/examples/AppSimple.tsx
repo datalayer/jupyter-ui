@@ -4,12 +4,12 @@
  * MIT License
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, ButtonGroup } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { ThreeBarsIcon } from '@primer/octicons-react';
 import { JupyterReactTheme } from '@datalayer/jupyter-react';
-import { useLexical, Editor, LexicalProvider } from '..';
+import { useLexical, Editor, LexicalProvider, nbformatToLexical } from '..';
 
 import LEXICAL_MODEL from './content/Example.lexical.json';
 
@@ -17,11 +17,22 @@ import NBFORMAT_MODEL from './content/Example.ipynb.json';
 
 const LexicalEditor = () => {
   const { editor } = useLexical();
+
+  // Load the Lexical model on mount
+  useEffect(() => {
+    if (editor) {
+      // Defer setEditorState to avoid flushSync warning during React render
+      queueMicrotask(() => {
+        const editorState = editor.parseEditorState(LEXICAL_MODEL as any);
+        editor.setEditorState(editorState);
+      });
+    }
+  }, [editor]);
+
   return (
     <Box className="center">
       <Box>
         <Editor
-          notebook={NBFORMAT_MODEL}
           onSessionConnection={session => {
             console.log('Session changed:', session);
           }}
@@ -30,12 +41,11 @@ const LexicalEditor = () => {
           onClick={(e: React.MouseEvent) => {
             e.preventDefault();
             if (editor) {
-              const editorState = editor.parseEditorState(LEXICAL_MODEL as any);
-              editor.setEditorState(editorState);
+              nbformatToLexical(NBFORMAT_MODEL as any, editor);
             }
           }}
         >
-          Load Lexical Model
+          Load Notebook Model
         </Button>
       </Box>
     </Box>

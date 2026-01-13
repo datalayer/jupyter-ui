@@ -94,12 +94,6 @@ export class LanguageIndentRegistry {
     }
 
     this.configs.set(config.language, config);
-
-    if (this.options.debug) {
-      console.log(
-        `[LanguageIndentRegistry] Registered language: ${config.language} (tabSize=${config.tabSize})`,
-      );
-    }
   }
 
   /**
@@ -230,13 +224,6 @@ export class LanguageIndentRegistry {
 
     this.configs.set(normalized, updated);
 
-    if (this.options.debug) {
-      console.log(
-        `[LanguageIndentRegistry] Updated config for: ${language}`,
-        updates,
-      );
-    }
-
     return true;
   }
 
@@ -255,10 +242,6 @@ export class LanguageIndentRegistry {
    */
   clear(): void {
     this.configs.clear();
-
-    if (this.options.debug) {
-      console.log('[LanguageIndentRegistry] Cleared all configurations');
-    }
   }
 
   /**
@@ -268,10 +251,6 @@ export class LanguageIndentRegistry {
   reset(): void {
     this.clear();
     this.registerDefaultLanguages();
-
-    if (this.options.debug) {
-      console.log('[LanguageIndentRegistry] Reset to default configurations');
-    }
   }
 }
 
