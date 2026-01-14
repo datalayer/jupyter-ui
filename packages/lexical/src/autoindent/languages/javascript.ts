@@ -132,7 +132,7 @@ export const javascriptIndentConfig: LanguageIndentConfig = {
         // Check if line is a case or default label in switch statement
         return /^\s*(case\s+.*:|default:)/.test(line);
       },
-      apply: (currentIndent: number, context) => {
+      apply: (currentIndent: number, _context) => {
         // Case labels are typically at the same level as switch
         // This is a simplified heuristic
         return currentIndent;

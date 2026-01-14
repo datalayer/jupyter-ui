@@ -5,67 +5,20 @@
         "children": [
           {
             "detail": 0,
-            "format": 0,
+            "format": 1,
             "mode": "normal",
             "style": "",
-            "text": "print",
-            "type": "jupyter-input-highlight",
-            "version": 1,
-            "highlightType": "keyword"
-          },
-          {
-            "detail": 0,
-            "format": 0,
-            "mode": "normal",
-            "style": "",
-            "text": "(",
-            "type": "jupyter-input-highlight",
-            "version": 1,
-            "highlightType": "punctuation"
-          },
-          {
-            "detail": 0,
-            "format": 0,
-            "mode": "normal",
-            "style": "",
-            "text": "'Cell 1'",
-            "type": "jupyter-input-highlight",
-            "version": 1,
-            "highlightType": "string"
-          },
-          {
-            "detail": 0,
-            "format": 0,
-            "mode": "normal",
-            "style": "",
-            "text": ")",
-            "type": "jupyter-input-highlight",
-            "version": 1,
-            "highlightType": "punctuation"
+            "text": "Lexical Editor - Complete Feature Showcase",
+            "type": "text",
+            "version": 1
           }
         ],
         "direction": "ltr",
         "format": "",
         "indent": 0,
-        "type": "jupyter-input",
+        "type": "heading",
         "version": 1,
-        "language": "python",
-        "jupyterInputNodeUuid": "63cf52e9-1bff-4309-945b-68527dbb1c27"
-      },
-      {
-        "format": "",
-        "type": "jupyter-output",
-        "version": 1,
-        "source": "print('Cell 1')",
-        "outputs": [
-          {
-            "name": "stdout",
-            "text": "Cell 1\n",
-            "output_type": "stream"
-          }
-        ],
-        "jupyterInputNodeUuid": "63cf52e9-1bff-4309-945b-68527dbb1c27",
-        "jupyterOutputNodeUuid": "25e7cca4-6f6a-4bbc-8a32-c3760b90dc2f"
+        "tag": "h1"
       },
       {
         "children": [
@@ -74,7 +27,649 @@
             "format": 0,
             "mode": "normal",
             "style": "",
-            "text": "Next...",
+            "text": "This example demonstrates ",
+            "type": "text",
+            "version": 1
+          },
+          {
+            "detail": 0,
+            "format": 1,
+            "mode": "normal",
+            "style": "",
+            "text": "all major features",
+            "type": "text",
+            "version": 1
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": " of the Lexical editor: rich text formatting, tables, collapsibles, Excalidraw diagrams, equations, images, code blocks, lists, and Jupyter code execution. Use ",
+            "type": "text",
+            "version": 1
+          },
+          {
+            "detail": 0,
+            "format": 8,
+            "mode": "normal",
+            "style": "",
+            "text": "/",
+            "type": "text",
+            "version": 1
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": " to open the command menu.",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "paragraph",
+        "version": 1
+      },
+      {
+        "type": "horizontalrule",
+        "version": 1
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 1,
+            "mode": "normal",
+            "style": "",
+            "text": "1. Text Formatting",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "heading",
+        "version": 1,
+        "tag": "h2"
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "Text can be ",
+            "type": "text",
+            "version": 1
+          },
+          {
+            "detail": 0,
+            "format": 1,
+            "mode": "normal",
+            "style": "",
+            "text": "bold",
+            "type": "text",
+            "version": 1
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": ", ",
+            "type": "text",
+            "version": 1
+          },
+          {
+            "detail": 0,
+            "format": 2,
+            "mode": "normal",
+            "style": "",
+            "text": "italic",
+            "type": "text",
+            "version": 1
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": ", ",
+            "type": "text",
+            "version": 1
+          },
+          {
+            "detail": 0,
+            "format": 8,
+            "mode": "normal",
+            "style": "",
+            "text": "underlined",
+            "type": "text",
+            "version": 1
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": ", ",
+            "type": "text",
+            "version": 1
+          },
+          {
+            "detail": 0,
+            "format": 4,
+            "mode": "normal",
+            "style": "",
+            "text": "strikethrough",
+            "type": "text",
+            "version": 1
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": ", and ",
+            "type": "text",
+            "version": 1
+          },
+          {
+            "detail": 0,
+            "format": 16,
+            "mode": "normal",
+            "style": "",
+            "text": "inline code",
+            "type": "text",
+            "version": 1
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": ". You can also visit ",
+            "type": "text",
+            "version": 1
+          },
+          {
+            "children": [
+              {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "https://datalayer.io",
+                "type": "text",
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "type": "link",
+            "version": 1,
+            "rel": "noreferrer",
+            "target": "_blank",
+            "title": null,
+            "url": "https://datalayer.io"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": " (auto-linked URL).",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "paragraph",
+        "version": 1
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 1,
+            "mode": "normal",
+            "style": "",
+            "text": "Heading 3",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "heading",
+        "version": 1,
+        "tag": "h3"
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "Headings from H1 to H6 are supported.",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "paragraph",
+        "version": 1
+      },
+      {
+        "type": "horizontalrule",
+        "version": 1
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 1,
+            "mode": "normal",
+            "style": "",
+            "text": "2. Lists",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "heading",
+        "version": 1,
+        "tag": "h2"
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 1,
+            "mode": "normal",
+            "style": "",
+            "text": "Bulleted List:",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "paragraph",
+        "version": 1
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "First item",
+                "type": "text",
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "type": "listitem",
+            "version": 1,
+            "value": 1
+          },
+          {
+            "children": [
+              {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Second item",
+                "type": "text",
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "type": "listitem",
+            "version": 1,
+            "value": 2
+          },
+          {
+            "children": [
+              {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Third item",
+                "type": "text",
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "type": "listitem",
+            "version": 1,
+            "value": 3
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "list",
+        "version": 1,
+        "listType": "bullet",
+        "start": 1,
+        "tag": "ul"
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 1,
+            "mode": "normal",
+            "style": "",
+            "text": "Numbered List:",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "paragraph",
+        "version": 1
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Step one",
+                "type": "text",
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "type": "listitem",
+            "version": 1,
+            "value": 1
+          },
+          {
+            "children": [
+              {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Step two",
+                "type": "text",
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "type": "listitem",
+            "version": 1,
+            "value": 2
+          },
+          {
+            "children": [
+              {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Step three",
+                "type": "text",
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "type": "listitem",
+            "version": 1,
+            "value": 3
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "list",
+        "version": 1,
+        "listType": "number",
+        "start": 1,
+        "tag": "ol"
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 1,
+            "mode": "normal",
+            "style": "",
+            "text": "Checklist:",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "paragraph",
+        "version": 1
+      },
+      {
+        "children": [
+          {
+            "checked": true,
+            "children": [
+              {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Tables working",
+                "type": "text",
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "type": "listitem",
+            "version": 1,
+            "value": 1
+          },
+          {
+            "checked": true,
+            "children": [
+              {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Collapsibles working",
+                "type": "text",
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "type": "listitem",
+            "version": 1,
+            "value": 2
+          },
+          {
+            "checked": true,
+            "children": [
+              {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "Excalidraw working",
+                "type": "text",
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "type": "listitem",
+            "version": 1,
+            "value": 3
+          },
+          {
+            "checked": false,
+            "children": [
+              {
+                "detail": 0,
+                "format": 0,
+                "mode": "normal",
+                "style": "",
+                "text": "More features to explore!",
+                "type": "text",
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "type": "listitem",
+            "version": 1,
+            "value": 4
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "list",
+        "version": 1,
+        "listType": "check",
+        "start": 1,
+        "tag": "ul"
+      },
+      {
+        "type": "horizontalrule",
+        "version": 1
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 1,
+            "mode": "normal",
+            "style": "",
+            "text": "3. Quote Blocks",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "heading",
+        "version": 1,
+        "tag": "h2"
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "The best way to predict the future is to invent it.",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "quote",
+        "version": 1
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 2,
+            "mode": "normal",
+            "style": "",
+            "text": "— Alan Kay",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "right",
+        "indent": 0,
+        "type": "paragraph",
+        "version": 1
+      },
+      {
+        "type": "horizontalrule",
+        "version": 1
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 1,
+            "mode": "normal",
+            "style": "",
+            "text": "4. Code Blocks",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "heading",
+        "version": 1,
+        "tag": "h2"
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "Python example:",
             "type": "text",
             "version": 1
           }
@@ -92,64 +687,17 @@
             "format": 0,
             "mode": "normal",
             "style": "",
-            "text": "print",
-            "type": "jupyter-input-highlight",
-            "version": 1,
-            "highlightType": "keyword"
-          },
-          {
-            "detail": 0,
-            "format": 0,
-            "mode": "normal",
-            "style": "",
-            "text": "(",
-            "type": "jupyter-input-highlight",
-            "version": 1,
-            "highlightType": "punctuation"
-          },
-          {
-            "detail": 0,
-            "format": 0,
-            "mode": "normal",
-            "style": "",
-            "text": "'Cell 2'",
-            "type": "jupyter-input-highlight",
-            "version": 1,
-            "highlightType": "string"
-          },
-          {
-            "detail": 0,
-            "format": 0,
-            "mode": "normal",
-            "style": "",
-            "text": ")",
-            "type": "jupyter-input-highlight",
-            "version": 1,
-            "highlightType": "punctuation"
+            "text": "def greet(name):\n    return f\"Hello, {name}!\"\n\nprint(greet(\"World\"))",
+            "type": "text",
+            "version": 1
           }
         ],
         "direction": "ltr",
         "format": "",
         "indent": 0,
-        "type": "jupyter-input",
+        "type": "code",
         "version": 1,
-        "language": "python",
-        "jupyterInputNodeUuid": "1465bc96-0fbc-4327-9557-02b627ae6b23"
-      },
-      {
-        "format": "",
-        "type": "jupyter-output",
-        "version": 1,
-        "source": "print('Cell 2')",
-        "outputs": [
-          {
-            "name": "stdout",
-            "text": "Cell 2\n",
-            "output_type": "stream"
-          }
-        ],
-        "jupyterInputNodeUuid": "1465bc96-0fbc-4327-9557-02b627ae6b23",
-        "jupyterOutputNodeUuid": "9c0d20d7-42a8-482f-80fa-31fd6f9c234b"
+        "language": "python"
       },
       {
         "children": [
@@ -158,7 +706,7 @@
             "format": 0,
             "mode": "normal",
             "style": "",
-            "text": "More...",
+            "text": "JavaScript example:",
             "type": "text",
             "version": 1
           }
@@ -176,10 +724,972 @@
             "format": 0,
             "mode": "normal",
             "style": "",
-            "text": "print",
+            "text": "const greet = (name) => {\n  return `Hello, ${name}!`;\n};\n\nconsole.log(greet(\"World\"));",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "code",
+        "version": 1,
+        "language": "javascript"
+      },
+      {
+        "type": "horizontalrule",
+        "version": 1
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 1,
+            "mode": "normal",
+            "style": "",
+            "text": "5. Math Equations",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "heading",
+        "version": 1,
+        "tag": "h2"
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "Inline equation: ",
+            "type": "text",
+            "version": 1
+          },
+          {
+            "type": "equation",
+            "version": 1,
+            "equation": "E = mc^2",
+            "inline": true
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": " is Einstein's famous equation.",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "paragraph",
+        "version": 1
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "Block equation (quadratic formula):",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "paragraph",
+        "version": 1
+      },
+      {
+        "children": [
+          {
+            "type": "equation",
+            "version": 1,
+            "equation": "x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}",
+            "inline": false
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "paragraph",
+        "version": 1
+      },
+      {
+        "type": "horizontalrule",
+        "version": 1
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 1,
+            "mode": "normal",
+            "style": "",
+            "text": "6. Tables",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "heading",
+        "version": 1,
+        "tag": "h2"
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "Hover over table cells to add rows and columns:",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "paragraph",
+        "version": 1
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "detail": 0,
+                            "format": 1,
+                            "mode": "normal",
+                            "style": "",
+                            "text": "Name",
+                            "type": "text",
+                            "version": 1
+                          }
+                        ],
+                        "direction": "ltr",
+                        "format": "",
+                        "indent": 0,
+                        "type": "paragraph",
+                        "version": 1
+                      }
+                    ],
+                    "backgroundColor": null,
+                    "colSpan": 1,
+                    "headerState": 1,
+                    "rowSpan": 1,
+                    "type": "tablecell",
+                    "version": 1
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "detail": 0,
+                            "format": 1,
+                            "mode": "normal",
+                            "style": "",
+                            "text": "Age",
+                            "type": "text",
+                            "version": 1
+                          }
+                        ],
+                        "direction": "ltr",
+                        "format": "",
+                        "indent": 0,
+                        "type": "paragraph",
+                        "version": 1
+                      }
+                    ],
+                    "backgroundColor": null,
+                    "colSpan": 1,
+                    "headerState": 1,
+                    "rowSpan": 1,
+                    "type": "tablecell",
+                    "version": 1
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "detail": 0,
+                            "format": 1,
+                            "mode": "normal",
+                            "style": "",
+                            "text": "City",
+                            "type": "text",
+                            "version": 1
+                          }
+                        ],
+                        "direction": "ltr",
+                        "format": "",
+                        "indent": 0,
+                        "type": "paragraph",
+                        "version": 1
+                      }
+                    ],
+                    "backgroundColor": null,
+                    "colSpan": 1,
+                    "headerState": 1,
+                    "rowSpan": 1,
+                    "type": "tablecell",
+                    "version": 1
+                  }
+                ],
+                "type": "tablerow",
+                "version": 1
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "detail": 0,
+                            "format": 0,
+                            "mode": "normal",
+                            "style": "",
+                            "text": "Alice",
+                            "type": "text",
+                            "version": 1
+                          }
+                        ],
+                        "direction": "ltr",
+                        "format": "",
+                        "indent": 0,
+                        "type": "paragraph",
+                        "version": 1
+                      }
+                    ],
+                    "backgroundColor": null,
+                    "colSpan": 1,
+                    "headerState": 0,
+                    "rowSpan": 1,
+                    "type": "tablecell",
+                    "version": 1
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "detail": 0,
+                            "format": 0,
+                            "mode": "normal",
+                            "style": "",
+                            "text": "25",
+                            "type": "text",
+                            "version": 1
+                          }
+                        ],
+                        "direction": "ltr",
+                        "format": "",
+                        "indent": 0,
+                        "type": "paragraph",
+                        "version": 1
+                      }
+                    ],
+                    "backgroundColor": null,
+                    "colSpan": 1,
+                    "headerState": 0,
+                    "rowSpan": 1,
+                    "type": "tablecell",
+                    "version": 1
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "detail": 0,
+                            "format": 0,
+                            "mode": "normal",
+                            "style": "",
+                            "text": "Boston",
+                            "type": "text",
+                            "version": 1
+                          }
+                        ],
+                        "direction": "ltr",
+                        "format": "",
+                        "indent": 0,
+                        "type": "paragraph",
+                        "version": 1
+                      }
+                    ],
+                    "backgroundColor": null,
+                    "colSpan": 1,
+                    "headerState": 0,
+                    "rowSpan": 1,
+                    "type": "tablecell",
+                    "version": 1
+                  }
+                ],
+                "type": "tablerow",
+                "version": 1
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "detail": 0,
+                            "format": 0,
+                            "mode": "normal",
+                            "style": "",
+                            "text": "Bob",
+                            "type": "text",
+                            "version": 1
+                          }
+                        ],
+                        "direction": "ltr",
+                        "format": "",
+                        "indent": 0,
+                        "type": "paragraph",
+                        "version": 1
+                      }
+                    ],
+                    "backgroundColor": null,
+                    "colSpan": 1,
+                    "headerState": 0,
+                    "rowSpan": 1,
+                    "type": "tablecell",
+                    "version": 1
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "detail": 0,
+                            "format": 0,
+                            "mode": "normal",
+                            "style": "",
+                            "text": "30",
+                            "type": "text",
+                            "version": 1
+                          }
+                        ],
+                        "direction": "ltr",
+                        "format": "",
+                        "indent": 0,
+                        "type": "paragraph",
+                        "version": 1
+                      }
+                    ],
+                    "backgroundColor": null,
+                    "colSpan": 1,
+                    "headerState": 0,
+                    "rowSpan": 1,
+                    "type": "tablecell",
+                    "version": 1
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "detail": 0,
+                            "format": 0,
+                            "mode": "normal",
+                            "style": "",
+                            "text": "New York",
+                            "type": "text",
+                            "version": 1
+                          }
+                        ],
+                        "direction": "ltr",
+                        "format": "",
+                        "indent": 0,
+                        "type": "paragraph",
+                        "version": 1
+                      }
+                    ],
+                    "backgroundColor": null,
+                    "colSpan": 1,
+                    "headerState": 0,
+                    "rowSpan": 1,
+                    "type": "tablecell",
+                    "version": 1
+                  }
+                ],
+                "type": "tablerow",
+                "version": 1
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "detail": 0,
+                            "format": 0,
+                            "mode": "normal",
+                            "style": "",
+                            "text": "Carol",
+                            "type": "text",
+                            "version": 1
+                          }
+                        ],
+                        "direction": "ltr",
+                        "format": "",
+                        "indent": 0,
+                        "type": "paragraph",
+                        "version": 1
+                      }
+                    ],
+                    "backgroundColor": null,
+                    "colSpan": 1,
+                    "headerState": 0,
+                    "rowSpan": 1,
+                    "type": "tablecell",
+                    "version": 1
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "detail": 0,
+                            "format": 0,
+                            "mode": "normal",
+                            "style": "",
+                            "text": "28",
+                            "type": "text",
+                            "version": 1
+                          }
+                        ],
+                        "direction": "ltr",
+                        "format": "",
+                        "indent": 0,
+                        "type": "paragraph",
+                        "version": 1
+                      }
+                    ],
+                    "backgroundColor": null,
+                    "colSpan": 1,
+                    "headerState": 0,
+                    "rowSpan": 1,
+                    "type": "tablecell",
+                    "version": 1
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "detail": 0,
+                            "format": 0,
+                            "mode": "normal",
+                            "style": "",
+                            "text": "Seattle",
+                            "type": "text",
+                            "version": 1
+                          }
+                        ],
+                        "direction": "ltr",
+                        "format": "",
+                        "indent": 0,
+                        "type": "paragraph",
+                        "version": 1
+                      }
+                    ],
+                    "backgroundColor": null,
+                    "colSpan": 1,
+                    "headerState": 0,
+                    "rowSpan": 1,
+                    "type": "tablecell",
+                    "version": 1
+                  }
+                ],
+                "type": "tablerow",
+                "version": 1
+              }
+            ],
+            "type": "table",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "paragraph",
+        "version": 1
+      },
+      {
+        "type": "horizontalrule",
+        "version": 1
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 1,
+            "mode": "normal",
+            "style": "",
+            "text": "7. Collapsible Sections",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "heading",
+        "version": 1,
+        "tag": "h2"
+      },
+      {
+        "children": [
+          {
+            "children": [
+              {
+                "detail": 0,
+                "format": 1,
+                "mode": "normal",
+                "style": "",
+                "text": "▶ Click to expand: Advanced Features",
+                "type": "text",
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "type": "collapsible-title",
+            "version": 1
+          },
+          {
+            "children": [
+              {
+                "children": [
+                  {
+                    "detail": 0,
+                    "format": 0,
+                    "mode": "normal",
+                    "style": "",
+                    "text": "Collapsible sections can contain any content including:",
+                    "type": "text",
+                    "version": 1
+                  }
+                ],
+                "direction": "ltr",
+                "format": "",
+                "indent": 0,
+                "type": "paragraph",
+                "version": 1
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "Tables",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ],
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 0,
+                    "type": "listitem",
+                    "version": 1,
+                    "value": 1
+                  },
+                  {
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "Code blocks",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ],
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 0,
+                    "type": "listitem",
+                    "version": 1,
+                    "value": 2
+                  },
+                  {
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "Images and diagrams",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ],
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 0,
+                    "type": "listitem",
+                    "version": 1,
+                    "value": 3
+                  },
+                  {
+                    "children": [
+                      {
+                        "detail": 0,
+                        "format": 0,
+                        "mode": "normal",
+                        "style": "",
+                        "text": "Jupyter code cells",
+                        "type": "text",
+                        "version": 1
+                      }
+                    ],
+                    "direction": "ltr",
+                    "format": "",
+                    "indent": 0,
+                    "type": "listitem",
+                    "version": 1,
+                    "value": 4
+                  }
+                ],
+                "direction": "ltr",
+                "format": "",
+                "indent": 0,
+                "type": "list",
+                "version": 1,
+                "listType": "bullet",
+                "start": 1,
+                "tag": "ul"
+              },
+              {
+                "children": [
+                  {
+                    "detail": 0,
+                    "format": 0,
+                    "mode": "normal",
+                    "style": "",
+                    "text": "Example Python code:",
+                    "type": "text",
+                    "version": 1
+                  }
+                ],
+                "direction": "ltr",
+                "format": "",
+                "indent": 0,
+                "type": "paragraph",
+                "version": 1
+              },
+              {
+                "children": [
+                  {
+                    "detail": 0,
+                    "format": 0,
+                    "mode": "normal",
+                    "style": "",
+                    "text": "print",
+                    "type": "jupyter-input-highlight",
+                    "version": 1,
+                    "highlightType": "keyword"
+                  },
+                  {
+                    "detail": 0,
+                    "format": 0,
+                    "mode": "normal",
+                    "style": "",
+                    "text": "(",
+                    "type": "jupyter-input-highlight",
+                    "version": 1,
+                    "highlightType": "punctuation"
+                  },
+                  {
+                    "detail": 0,
+                    "format": 0,
+                    "mode": "normal",
+                    "style": "",
+                    "text": "'Hidden content!'",
+                    "type": "jupyter-input-highlight",
+                    "version": 1,
+                    "highlightType": "string"
+                  },
+                  {
+                    "detail": 0,
+                    "format": 0,
+                    "mode": "normal",
+                    "style": "",
+                    "text": ")",
+                    "type": "jupyter-input-highlight",
+                    "version": 1,
+                    "highlightType": "punctuation"
+                  }
+                ],
+                "direction": "ltr",
+                "format": "",
+                "indent": 0,
+                "type": "jupyter-input",
+                "version": 1,
+                "language": "python",
+                "jupyterInputNodeUuid": "collapsible-demo-uuid"
+              },
+              {
+                "format": "",
+                "type": "jupyter-output",
+                "version": 1,
+                "source": "print('Hidden content!')",
+                "outputs": [
+                  {
+                    "name": "stdout",
+                    "text": "Hidden content!\n",
+                    "output_type": "stream"
+                  }
+                ],
+                "jupyterInputNodeUuid": "collapsible-demo-uuid",
+                "jupyterOutputNodeUuid": "collapsible-demo-output-uuid"
+              }
+            ],
+            "direction": "ltr",
+            "format": "",
+            "indent": 0,
+            "type": "collapsible-content",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "collapsible-container",
+        "version": 1,
+        "open": true
+      },
+      {
+        "type": "horizontalrule",
+        "version": 1
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 1,
+            "mode": "normal",
+            "style": "",
+            "text": "8. Excalidraw Diagrams",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "heading",
+        "version": 1,
+        "tag": "h2"
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "Double-click to edit the diagram:",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "paragraph",
+        "version": 1
+      },
+      {
+        "children": [
+          {
+            "type": "excalidraw",
+            "version": 1,
+            "data": "{\"elements\":[{\"type\":\"rectangle\",\"version\":1,\"versionNonce\":1,\"isDeleted\":false,\"id\":\"rect1\",\"fillStyle\":\"hachure\",\"strokeWidth\":1,\"strokeStyle\":\"solid\",\"roughness\":1,\"opacity\":100,\"angle\":0,\"x\":100,\"y\":100,\"strokeColor\":\"#1e1e1e\",\"backgroundColor\":\"#a5d8ff\",\"width\":200,\"height\":100,\"seed\":1,\"groupIds\":[],\"frameId\":null,\"roundness\":{\"type\":3},\"boundElements\":[{\"type\":\"text\",\"id\":\"text1\"}],\"updated\":1,\"link\":null,\"locked\":false},{\"type\":\"text\",\"version\":1,\"versionNonce\":1,\"isDeleted\":false,\"id\":\"text1\",\"fillStyle\":\"hachure\",\"strokeWidth\":1,\"strokeStyle\":\"solid\",\"roughness\":1,\"opacity\":100,\"angle\":0,\"x\":150,\"y\":130,\"strokeColor\":\"#1e1e1e\",\"backgroundColor\":\"transparent\",\"width\":100,\"height\":40,\"seed\":1,\"groupIds\":[],\"frameId\":null,\"roundness\":null,\"boundElements\":[],\"updated\":1,\"link\":null,\"locked\":false,\"fontSize\":20,\"fontFamily\":1,\"text\":\"Lexical\",\"textAlign\":\"center\",\"verticalAlign\":\"middle\",\"containerId\":\"rect1\",\"originalText\":\"Lexical\",\"lineHeight\":1.25,\"baseline\":34},{\"type\":\"arrow\",\"version\":1,\"versionNonce\":1,\"isDeleted\":false,\"id\":\"arrow1\",\"fillStyle\":\"hachure\",\"strokeWidth\":1,\"strokeStyle\":\"solid\",\"roughness\":1,\"opacity\":100,\"angle\":0,\"x\":200,\"y\":200,\"strokeColor\":\"#1e1e1e\",\"backgroundColor\":\"transparent\",\"width\":0,\"height\":100,\"seed\":1,\"groupIds\":[],\"frameId\":null,\"roundness\":{\"type\":2},\"boundElements\":[],\"updated\":1,\"link\":null,\"locked\":false,\"startBinding\":null,\"endBinding\":null,\"lastCommittedPoint\":null,\"startArrowhead\":null,\"endArrowhead\":\"arrow\",\"points\":[[0,0],[0,100]]},{\"type\":\"ellipse\",\"version\":1,\"versionNonce\":1,\"isDeleted\":false,\"id\":\"ellipse1\",\"fillStyle\":\"hachure\",\"strokeWidth\":1,\"strokeStyle\":\"solid\",\"roughness\":1,\"opacity\":100,\"angle\":0,\"x\":120,\"y\":320,\"strokeColor\":\"#1e1e1e\",\"backgroundColor\":\"#b2f2bb\",\"width\":160,\"height\":80,\"seed\":1,\"groupIds\":[],\"frameId\":null,\"roundness\":{\"type\":2},\"boundElements\":[{\"type\":\"text\",\"id\":\"text2\"}],\"updated\":1,\"link\":null,\"locked\":false},{\"type\":\"text\",\"version\":1,\"versionNonce\":1,\"isDeleted\":false,\"id\":\"text2\",\"fillStyle\":\"hachure\",\"strokeWidth\":1,\"strokeStyle\":\"solid\",\"roughness\":1,\"opacity\":100,\"angle\":0,\"x\":160,\"y\":340,\"strokeColor\":\"#1e1e1e\",\"backgroundColor\":\"transparent\",\"width\":80,\"height\":40,\"seed\":1,\"groupIds\":[],\"frameId\":null,\"roundness\":null,\"boundElements\":[],\"updated\":1,\"link\":null,\"locked\":false,\"fontSize\":20,\"fontFamily\":1,\"text\":\"Features\",\"textAlign\":\"center\",\"verticalAlign\":\"middle\",\"containerId\":\"ellipse1\",\"originalText\":\"Features\",\"lineHeight\":1.25,\"baseline\":34}],\"appState\":{\"gridSize\":null,\"viewBackgroundColor\":\"#ffffff\"},\"files\":{}}",
+            "width": "inherit",
+            "height": "inherit"
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "paragraph",
+        "version": 1
+      },
+      {
+        "type": "horizontalrule",
+        "version": 1
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 1,
+            "mode": "normal",
+            "style": "",
+            "text": "9. Jupyter Code Execution",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "heading",
+        "version": 1,
+        "tag": "h2"
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "Execute Python code directly in the editor:",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "paragraph",
+        "version": 1
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "import",
             "type": "jupyter-input-highlight",
             "version": 1,
             "highlightType": "keyword"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": " ",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "plain"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "matplotlib.pyplot",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "plain"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": " ",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "plain"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "as",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "keyword"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": " ",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "plain"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "plt\n",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "plain"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "plt",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "plain"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": ".",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "punctuation"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "plot",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "plain"
           },
           {
             "detail": 0,
@@ -196,7 +1706,207 @@
             "format": 0,
             "mode": "normal",
             "style": "",
-            "text": "'Cell 3'",
+            "text": "[",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "punctuation"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "1",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "number"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": ",",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "punctuation"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": " ",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "plain"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "2",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "number"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": ",",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "punctuation"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": " ",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "plain"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "3",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "number"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": ",",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "punctuation"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": " ",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "plain"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "4",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "number"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": ",",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "punctuation"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": " ",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "plain"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "5",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "number"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "]",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "punctuation"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": ")\n",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "punctuation"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "plt",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "plain"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": ".",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "punctuation"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "title",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "plain"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "(",
+            "type": "jupyter-input-highlight",
+            "version": 1,
+            "highlightType": "punctuation"
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "'Simple Plot'",
             "type": "jupyter-input-highlight",
             "version": 1,
             "highlightType": "string"
@@ -218,22 +1928,48 @@
         "type": "jupyter-input",
         "version": 1,
         "language": "python",
-        "jupyterInputNodeUuid": "d792c092-60df-4fec-ad16-dd36a0213159"
+        "jupyterInputNodeUuid": "plot-demo-uuid"
       },
       {
         "format": "",
         "type": "jupyter-output",
         "version": 1,
-        "source": "print('Cell 3')",
+        "source": "import matplotlib.pyplot as plt\nplt.plot([1, 2, 3, 4, 5])\nplt.title('Simple Plot')",
         "outputs": [
           {
-            "name": "stdout",
-            "text": "Cell 3\n",
-            "output_type": "stream"
+            "data": {
+              "text/plain": "Text(0.5, 1.0, 'Simple Plot')"
+            },
+            "execution_count": 1,
+            "metadata": {},
+            "output_type": "execute_result"
           }
         ],
-        "jupyterInputNodeUuid": "d792c092-60df-4fec-ad16-dd36a0213159",
-        "jupyterOutputNodeUuid": "fc0cb97b-b295-4e5c-a70b-dab9222b3a78"
+        "jupyterInputNodeUuid": "plot-demo-uuid",
+        "jupyterOutputNodeUuid": "plot-demo-output-uuid"
+      },
+      {
+        "type": "horizontalrule",
+        "version": 1
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 1,
+            "mode": "normal",
+            "style": "",
+            "text": "10. YouTube Videos",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "heading",
+        "version": 1,
+        "tag": "h2"
       },
       {
         "children": [
@@ -242,7 +1978,7 @@
             "format": 0,
             "mode": "normal",
             "style": "",
-            "text": "Done!",
+            "text": "Embed YouTube videos directly:",
             "type": "text",
             "version": 1
           }
@@ -257,7 +1993,66 @@
         "format": "",
         "type": "youtube",
         "version": 1,
-        "videoID": "dh2RK-c1dZA"
+        "videoID": "lO2p9LQB7ds"
+      },
+      {
+        "type": "horizontalrule",
+        "version": 1
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 1,
+            "mode": "normal",
+            "style": "",
+            "text": "Try It Yourself!",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "heading",
+        "version": 1,
+        "tag": "h2"
+      },
+      {
+        "children": [
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": "Type ",
+            "type": "text",
+            "version": 1
+          },
+          {
+            "detail": 0,
+            "format": 16,
+            "mode": "normal",
+            "style": "",
+            "text": "/",
+            "type": "text",
+            "version": 1
+          },
+          {
+            "detail": 0,
+            "format": 0,
+            "mode": "normal",
+            "style": "",
+            "text": " to open the insert menu and try these features yourself. Use the toolbar at the top for quick access to formatting options. Drag blocks by clicking the handle on the left side of any block.",
+            "type": "text",
+            "version": 1
+          }
+        ],
+        "direction": "ltr",
+        "format": "",
+        "indent": 0,
+        "type": "paragraph",
+        "version": 1
       }
     ],
     "direction": "ltr",

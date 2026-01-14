@@ -33,6 +33,7 @@ import {
   CommentThreadNode,
   CounterNode,
   EquationNode,
+  ExcalidrawNode,
   ImageNode,
   JupyterInputHighlightNode,
   JupyterInputNode,
@@ -43,10 +44,16 @@ import {
   AutoEmbedPlugin,
   AutoLinkPlugin,
   CodeActionMenuPlugin,
+  CollapsibleContainerNode,
+  CollapsibleContentNode,
+  CollapsiblePlugin,
+  CollapsibleTitleNode,
   CommentPlugin,
   ComponentPickerMenuPlugin,
   DraggableBlockPlugin,
   EquationsPlugin,
+  ExcalidrawPlugin,
+  FloatingLinkEditorPlugin,
   FloatingTextFormatToolbarPlugin,
   HorizontalRulePlugin,
   ImagesPlugin,
@@ -54,11 +61,15 @@ import {
   ListMaxIndentLevelPlugin,
   MarkdownPlugin,
   NbformatContentPlugin,
+  TableActionMenuPlugin,
+  TableCellResizerPlugin,
+  TableHoverActionsV2Plugin,
   TableOfContentsPlugin,
   YouTubePlugin,
 } from './..';
 import { commentTheme } from '../themes';
 import { useLexical } from '../context';
+import { CommentsProvider } from '../context/CommentsContext';
 import { TreeViewPlugin } from '../plugins';
 import { OnSessionConnection } from '@datalayer/jupyter-react';
 import { ToolbarPlugin } from '../plugins/ToolbarPlugin';
@@ -88,9 +99,13 @@ const initialConfig = {
   nodes: [
     AutoLinkNode,
     CodeNode,
+    CollapsibleContainerNode,
+    CollapsibleContentNode,
+    CollapsibleTitleNode,
     CommentThreadNode,
     CounterNode,
     EquationNode,
+    ExcalidrawNode,
     HashtagNode,
     HeadingNode,
     HorizontalRuleNode,
@@ -127,9 +142,14 @@ export function EditorContainer(props: Props) {
   });
   const [editor] = useLexicalComposerContext();
   const [activeEditor, setActiveEditor] = useState(editor);
-  const [_, setIsLinkEditMode] = useState<boolean>(false);
+  const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
+
+  // Debug: Log when isLinkEditMode changes
+  useEffect(() => {
+    console.log('[Editor] isLinkEditMode changed to:', isLinkEditMode);
+  }, [isLinkEditMode]);
 
   const onRef = (_floatingAnchorElem: HTMLDivElement) => {
     if (_floatingAnchorElem !== null) {
@@ -165,7 +185,11 @@ export function EditorContainer(props: Props) {
         <TreeViewPlugin />
         <AutoFocusPlugin />
         {id && <LexicalStatePlugin />}
+        <CollapsiblePlugin />
         <TablePlugin />
+        <TableCellResizerPlugin />
+        <TableActionMenuPlugin />
+        <TableHoverActionsV2Plugin />
         <ListPlugin />
         <CheckListPlugin />
         <LinkPlugin />
@@ -179,6 +203,7 @@ export function EditorContainer(props: Props) {
         />
         <ComponentPickerMenuPlugin kernel={defaultKernel} />
         <EquationsPlugin />
+        <ExcalidrawPlugin />
         <ImagesPlugin />
         <HashtagPlugin />
         <HorizontalRulePlugin />
@@ -192,7 +217,15 @@ export function EditorContainer(props: Props) {
         {floatingAnchorElem && (
           <>
             <DraggableBlockPlugin anchorElem={floatingAnchorElem} />
-            <FloatingTextFormatToolbarPlugin anchorElem={floatingAnchorElem} />
+            <FloatingLinkEditorPlugin
+              anchorElem={floatingAnchorElem}
+              isLinkEditMode={isLinkEditMode}
+              setIsLinkEditMode={setIsLinkEditMode}
+            />
+            <FloatingTextFormatToolbarPlugin
+              anchorElem={floatingAnchorElem}
+              setIsLinkEditMode={setIsLinkEditMode}
+            />
           </>
         )}
       </div>
@@ -206,11 +239,13 @@ export function Editor(props: Props) {
   // Wrap with LexicalConfigProvider if id is provided (for tool operations)
   const content = (
     <LexicalComposer initialConfig={initialConfig}>
-      <ToolbarContext>
-        <div className="editor-shell">
-          <EditorContainer {...props} />
-        </div>
-      </ToolbarContext>
+      <CommentsProvider>
+        <ToolbarContext>
+          <div className="editor-shell">
+            <EditorContainer {...props} />
+          </div>
+        </ToolbarContext>
+      </CommentsProvider>
     </LexicalComposer>
   );
 

@@ -15,25 +15,34 @@ const EMAIL_MATCHER =
 const MATCHERS = [
   (text: string) => {
     const match = URL_MATCHER.exec(text);
-    return (
-      match && {
+    if (match) {
+      const url = match[0].startsWith('http')
+        ? match[0]
+        : `https://${match[0]}`;
+      return {
         index: match.index,
         length: match[0].length,
         text: match[0],
-        url: match[0],
-      }
-    );
+        url,
+        attributes: {
+          rel: 'noopener noreferrer',
+          target: '_blank',
+        },
+      };
+    }
+    return null;
   },
   (text: string) => {
     const match = EMAIL_MATCHER.exec(text);
-    return (
-      match && {
+    if (match) {
+      return {
         index: match.index,
         length: match[0].length,
         text: match[0],
         url: `mailto:${match[0]}`,
-      }
-    );
+      };
+    }
+    return null;
   },
 ];
 

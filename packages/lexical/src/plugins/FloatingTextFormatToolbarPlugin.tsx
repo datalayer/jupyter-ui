@@ -42,6 +42,7 @@ function TextFormatFloatingToolbar({
   isStrikethrough,
   isSubscript,
   isSuperscript,
+  setIsLinkEditMode,
 }: {
   editor: LexicalEditor;
   anchorElem: HTMLElement;
@@ -53,16 +54,19 @@ function TextFormatFloatingToolbar({
   isSubscript: boolean;
   isSuperscript: boolean;
   isUnderline: boolean;
+  setIsLinkEditMode: (value: boolean) => void;
 }): JSX.Element {
   const popupCharStylesEditorRef = useRef<HTMLDivElement | null>(null);
 
   const insertLink = useCallback(() => {
     if (!isLink) {
-      editor.dispatchCommand(TOGGLE_LINK_COMMAND, 'https://');
+      setIsLinkEditMode(true);
+      editor.dispatchCommand(TOGGLE_LINK_COMMAND, 'https://example.com');
     } else {
+      setIsLinkEditMode(false);
       editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
     }
-  }, [editor, isLink]);
+  }, [editor, isLink, setIsLinkEditMode]);
 
   const insertComment = () => {
     editor.dispatchCommand(INSERT_INLINE_COMMAND, undefined);
@@ -228,6 +232,7 @@ function TextFormatFloatingToolbar({
 function useFloatingTextFormatToolbar(
   editor: LexicalEditor,
   anchorElem: HTMLElement,
+  setIsLinkEditMode: (value: boolean) => void,
 ): JSX.Element | null {
   const [isText, setIsText] = useState(false);
   const [isLink, setIsLink] = useState(false);
@@ -329,6 +334,7 @@ function useFloatingTextFormatToolbar(
       isSuperscript={isSuperscript}
       isUnderline={isUnderline}
       isCode={isCode}
+      setIsLinkEditMode={setIsLinkEditMode}
     />,
     anchorElem,
   );
@@ -336,11 +342,13 @@ function useFloatingTextFormatToolbar(
 
 export function FloatingTextFormatToolbarPlugin({
   anchorElem = document.body,
+  setIsLinkEditMode,
 }: {
   anchorElem?: HTMLElement;
+  setIsLinkEditMode: (value: boolean) => void;
 }): JSX.Element | null {
   const [editor] = useLexicalComposerContext();
-  return useFloatingTextFormatToolbar(editor, anchorElem);
+  return useFloatingTextFormatToolbar(editor, anchorElem, setIsLinkEditMode);
 }
 
 export default FloatingTextFormatToolbarPlugin;

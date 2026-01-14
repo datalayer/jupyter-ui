@@ -131,7 +131,7 @@ export class CommentStore {
   addComment(
     commentOrThread: Comment | Thread,
     thread?: Thread,
-    offset?: number,
+    _offset?: number,
   ): void {
     this._editor.update(() => {
       if (thread !== undefined && commentOrThread.type === 'comment') {

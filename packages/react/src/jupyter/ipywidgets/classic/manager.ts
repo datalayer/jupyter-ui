@@ -48,7 +48,6 @@ export class ClassicWidgetManager extends HTMLManager {
     (this as any).comm_target_name = 'jupyter.widget';
 
     const initializeManager = () => {
-      console.warn('ClassicWidgetManager: Initializing widget manager');
       (window as any).define('@jupyter-widgets/base', base);
       (window as any).define('@jupyter-widgets/controls', controls);
       this._registry = new SemVerCache<ExportData>();
@@ -66,20 +65,13 @@ export class ClassicWidgetManager extends HTMLManager {
         version: controls.JUPYTER_CONTROLS_VERSION,
         exports: () => import('@jupyter-widgets/controls') as any,
       });
-      console.warn(
-        'ClassicWidgetManager: Widget manager initialized, resolving ready promise'
-      );
       this._ready.resolve(true);
     };
 
     // Check if RequireJS is already available
     if ((window as any).require && (window as any).define) {
-      console.warn(
-        'ClassicWidgetManager: RequireJS already available, initializing immediately'
-      );
       initializeManager();
     } else {
-      console.warn('ClassicWidgetManager: Loading RequireJS');
       const requireJsScript = document.createElement('script');
       const cdnOnlyScript = document.createElement('script');
       cdnOnlyScript.setAttribute('data-jupyter-widgets-cdn-only', 'true');
@@ -88,7 +80,6 @@ export class ClassicWidgetManager extends HTMLManager {
         'https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js';
       document.body.appendChild(requireJsScript);
       requireJsScript.onload = () => {
-        console.warn('ClassicWidgetManager: RequireJS loaded, initializing');
         initializeManager();
       };
       requireJsScript.onerror = error => {
@@ -131,14 +122,10 @@ export class ClassicWidgetManager extends HTMLManager {
         );
         return;
       }
-      console.log(
-        `ClassicWidgetManager: Registering comm target with kernel for ${(this as any).comm_target_name}`
-      );
       this._commRegistration = kernelConnection.registerCommTarget(
         (this as any).comm_target_name,
         this._handleCommOpen
       );
-      console.log('ClassicWidgetManager: Successfully registered comm target.');
     } else {
       // Clear kernel when disconnecting
       (this as any).kernel = null;
@@ -150,16 +137,8 @@ export class ClassicWidgetManager extends HTMLManager {
     message: KernelMessage.ICommOpenMsg
   ): Promise<void> {
     try {
-      console.log(
-        'ClassicWidgetManager: Handling comm open for',
-        message.content.target_name,
-        'with comm_id',
-        message.content.comm_id
-      );
       const classicComm = new shims.services.Comm(comm);
-      console.log('ClassicWidgetManager: Created classic comm wrapper');
       await this.handle_comm_open(classicComm, message);
-      console.log('ClassicWidgetManager: Successfully handled comm open');
     } catch (error) {
       console.error('ClassicWidgetManager: Error in _handleCommOpen:', error);
       throw error;
@@ -181,7 +160,7 @@ export class ClassicWidgetManager extends HTMLManager {
     return Promise.resolve(view).then(view => {
       Widget.attach(view.luminoWidget, el);
       view.on('remove', () => {
-        console.log('The IPyWidgets view is removed', view);
+        // View removed
       });
       //      return view;
     });

@@ -29,6 +29,9 @@ import { $isListNode, ListNode } from '@lexical/list';
 import { INSERT_EMBED_COMMAND } from '@lexical/react/LexicalAutoEmbedPlugin';
 import { INSERT_HORIZONTAL_RULE_COMMAND } from '@lexical/react/LexicalHorizontalRuleNode';
 import { $isHeadingNode } from '@lexical/rich-text';
+import { INSERT_COLLAPSIBLE_COMMAND } from '../CollapsiblePlugin';
+import { INSERT_EXCALIDRAW_COMMAND } from '../ExcalidrawPlugin';
+import { INSERT_TABLE_WITH_DIALOG_COMMAND } from '../TablePlugin';
 import {
   $getSelectionStyleValueForProperty,
   $isParentElementRTL,
@@ -70,6 +73,7 @@ import {
   blockTypeToBlockName,
   useToolbarState,
 } from '../../context/ToolbarContext';
+import { useComments } from '../../context/CommentsContext';
 import useModal from '../../hooks/useModal';
 import catTypingGif from '../../images/yellow-flower-small.jpg';
 import { DropDown, DropDownItem } from '../..';
@@ -833,12 +837,20 @@ export function ToolbarPlugin({
 
   const insertLink = useCallback(() => {
     if (!toolbarState.isLink) {
+      console.log(
+        '[ToolbarPlugin] Creating new link, calling setIsLinkEditMode(true)',
+      );
       setIsLinkEditMode(true);
+      console.log(
+        '[ToolbarPlugin] setIsLinkEditMode(true) called, now dispatching TOGGLE_LINK_COMMAND',
+      );
       activeEditor.dispatchCommand(
         TOGGLE_LINK_COMMAND,
         sanitizeUrl('https://'),
       );
+      console.log('[ToolbarPlugin] TOGGLE_LINK_COMMAND dispatched');
     } else {
+      console.log('[ToolbarPlugin] Removing link, setting edit mode false');
       setIsLinkEditMode(false);
       activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
     }
@@ -1250,6 +1262,42 @@ export function ToolbarPlugin({
                 </DropDownItem>
                 <DropDownItem
                   onClick={() => {
+                    activeEditor.dispatchCommand(
+                      INSERT_TABLE_WITH_DIALOG_COMMAND,
+                      undefined,
+                    );
+                  }}
+                  className="item"
+                >
+                  <i className="icon table" />
+                  <span className="text">Table</span>
+                </DropDownItem>
+                <DropDownItem
+                  onClick={() => {
+                    activeEditor.dispatchCommand(
+                      INSERT_COLLAPSIBLE_COMMAND,
+                      undefined,
+                    );
+                  }}
+                  className="item"
+                >
+                  <i className="icon chevron-down" />
+                  <span className="text">Collapsible</span>
+                </DropDownItem>
+                <DropDownItem
+                  onClick={() => {
+                    activeEditor.dispatchCommand(
+                      INSERT_EXCALIDRAW_COMMAND,
+                      undefined,
+                    );
+                  }}
+                  className="item"
+                >
+                  <i className="icon diagram-2" />
+                  <span className="text">Excalidraw</span>
+                </DropDownItem>
+                <DropDownItem
+                  onClick={() => {
                     showModal('Insert Image', onClose => (
                       <InsertImageDialog
                         activeEditor={activeEditor}
@@ -1315,9 +1363,29 @@ export function ToolbarPlugin({
         editor={activeEditor}
         isRTL={toolbarState.isRTL}
       />
+      <Divider />
+      <CommentsToggleButton />
 
       {modal}
     </div>
+  );
+}
+
+function CommentsToggleButton() {
+  const { showComments, toggleComments } = useComments();
+
+  return (
+    <button
+      onClick={toggleComments}
+      className="toolbar-item spaced"
+      aria-label={showComments ? 'Hide Comments' : 'Show Comments'}
+      title={showComments ? 'Hide Comments' : 'Show Comments'}
+      type="button"
+    >
+      <i
+        className={showComments ? 'format comments-active' : 'format comments'}
+      />
+    </button>
   );
 }
 

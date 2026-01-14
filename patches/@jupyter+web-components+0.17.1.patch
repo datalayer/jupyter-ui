@@ -1,0 +1,14 @@
+diff --git a/node_modules/@jupyter/web-components/dist/esm/utilities/theme/applyTheme.js b/node_modules/@jupyter/web-components/dist/esm/utilities/theme/applyTheme.js
+index c5cd9a1..44eca8a 100644
+--- a/node_modules/@jupyter/web-components/dist/esm/utilities/theme/applyTheme.js
++++ b/node_modules/@jupyter/web-components/dist/esm/utilities/theme/applyTheme.js
+@@ -158,7 +158,8 @@ export function applyJupyterTheme() {
+             const parsedColor = parseColor(layoutColor);
+             if (parsedColor) {
+                 isDark_ = isDark(SwatchRGB.create(parsedColor.r, parsedColor.g, parsedColor.b));
+-                console.debug(`Theme is ${isDark_ ? 'dark' : 'light'} based on '${BASE_LAYOUT_COLOR}' value: ${layoutColor}.`);
++                // Removed console.debug - creates unnecessary console noise
++                // console.debug(`Theme is ${isDark_ ? 'dark' : 'light'} based on '${BASE_LAYOUT_COLOR}' value: ${layoutColor}.`);
+             }
+         }
+     }

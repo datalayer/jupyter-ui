@@ -53,20 +53,12 @@ export const executeCodeOperation: ToolOperation<
     params: unknown,
     context: ToolExecutionContext,
   ): Promise<ExecuteCodeResult> {
-    console.log('[executeCodeOperation] Called with params:', params);
-    console.log('[executeCodeOperation] Context:', {
-      documentId: context.documentId,
-      hasExecutor: !!context.executor,
-    });
-
     // Validate params using Zod
     const validatedParams = validateWithZod(
       executeCodeParamsSchema as any,
       params,
       'executeCode',
     ) as ExecuteCodeParams;
-
-    console.log('[executeCodeOperation] Validated params:', validatedParams);
 
     const { documentId } = context;
 
@@ -86,18 +78,12 @@ export const executeCodeOperation: ToolOperation<
     }
 
     try {
-      console.log('[executeCodeOperation] Calling executor.execute with:', {
-        operationName: this.name,
-        validatedParams,
-      });
-
       // Call executor (uses this.name for DRY principle)
       const result = (await context.executor.execute(
         this.name,
         validatedParams,
       )) as ExecuteCodeResult;
 
-      console.log('[executeCodeOperation] Executor result:', result);
       return result;
     } catch (error) {
       const errorMessage =

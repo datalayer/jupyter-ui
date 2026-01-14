@@ -34,7 +34,8 @@ interface IViewState {
   model_id: string;
 }
 */
-const ajv = new Ajv();
+// Disable strictTypes to suppress union type warnings in widget schemas
+const ajv = new Ajv({ strictTypes: false });
 const model_validate = ajv.compile(widget_state_schema);
 const view_validate = ajv.compile(widget_view_schema);
 

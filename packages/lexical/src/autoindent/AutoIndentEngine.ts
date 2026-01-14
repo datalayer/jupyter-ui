@@ -44,17 +44,18 @@ import { LanguageIndentRegistry } from './LanguageIndentRegistry';
  */
 export class AutoIndentEngine {
   private registry: LanguageIndentRegistry;
-  private debug: boolean;
+  // @ts-expect-error - Debug field preserved for future use, logging currently disabled
+  private _debug: boolean;
 
   /**
    * Create a new autoindent engine
    *
    * @param registry - Language configuration registry
-   * @param debug - Enable debug logging
+   * @param debug - Enable debug logging (currently unused - logging disabled)
    */
   constructor(registry: LanguageIndentRegistry, debug = false) {
     this.registry = registry;
-    this.debug = debug;
+    this._debug = debug;
   }
 
   /**
@@ -83,12 +84,6 @@ export class AutoIndentEngine {
         resultSpaces = currentLineIndent + rule.indentAmount;
         shouldIndent = true;
         triggeredRule = rule.name;
-
-        if (this.debug) {
-          console.log(
-            `[AutoIndentEngine] Indent triggered by rule: ${rule.name}`,
-          );
-        }
         break; // Use first matching rule
       }
     }
@@ -101,12 +96,6 @@ export class AutoIndentEngine {
           // line should be dedented. The current line maintains its indent.
           shouldDedent = true;
           triggeredRule = rule.name;
-
-          if (this.debug) {
-            console.log(
-              `[AutoIndentEngine] Dedent triggered by rule: ${rule.name}`,
-            );
-          }
           break;
         }
       }
@@ -117,12 +106,6 @@ export class AutoIndentEngine {
       for (const customRule of config.customRules) {
         if (customRule.condition(context.currentLine, context)) {
           resultSpaces = customRule.apply(resultSpaces, context);
-
-          if (this.debug) {
-            console.log(
-              `[AutoIndentEngine] Custom rule applied: ${customRule.name}`,
-            );
-          }
           break; // Use first matching custom rule
         }
       }
@@ -137,15 +120,6 @@ export class AutoIndentEngine {
       shouldDedent,
       triggeredRule,
     };
-
-    if (this.debug) {
-      console.log('[AutoIndentEngine] Indent calculation:', {
-        input: context.currentLine,
-        language: context.language,
-        currentIndent: currentLineIndent,
-        result,
-      });
-    }
 
     return result;
   }
