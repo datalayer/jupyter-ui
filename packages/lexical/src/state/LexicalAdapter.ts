@@ -16,7 +16,7 @@
  * @module tools/state/LexicalAdapter
  */
 
-import type { LexicalEditor } from 'lexical';
+import type { LexicalEditor, LexicalNode } from 'lexical';
 import {
   $getRoot,
   $getSelection,
@@ -803,7 +803,7 @@ export class LexicalAdapter {
       }
 
       case 'horizontalrule': {
-        return $createHorizontalRuleNode();
+        return $createHorizontalRuleNode() as unknown as LexicalNode;
       }
 
       case 'listitem': {

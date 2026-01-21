@@ -19,6 +19,7 @@ import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
 import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
+import { HorizontalRulePlugin as LexicalHorizontalRulePlugin } from '@lexical/react/LexicalHorizontalRulePlugin';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
@@ -55,7 +56,6 @@ import {
   ExcalidrawPlugin,
   FloatingLinkEditorPlugin,
   FloatingTextFormatToolbarPlugin,
-  HorizontalRulePlugin,
   ImagesPlugin,
   JupyterInputOutputPlugin,
   ListMaxIndentLevelPlugin,
@@ -206,7 +206,7 @@ export function EditorContainer(props: Props) {
         <ExcalidrawPlugin />
         <ImagesPlugin />
         <HashtagPlugin />
-        <HorizontalRulePlugin />
+        <LexicalHorizontalRulePlugin />
         <YouTubePlugin />
         <NbformatContentPlugin notebook={notebook} />
         <CodeActionMenuPlugin />
