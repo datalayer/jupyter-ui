@@ -45,7 +45,7 @@ export type InsertBlockMutation = {
   id: string; // lexical document ID
   type: string;
   source: string;
-  properties?: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
   afterId: string;
 };
 
@@ -54,7 +54,7 @@ export type InsertBlocksMutation = {
   blocks: Array<{
     type: string;
     source: string;
-    properties?: Record<string, unknown>;
+    metadata?: Record<string, unknown>;
   }>;
   afterId: string;
 };
@@ -64,7 +64,7 @@ export type UpdateBlockMutation = {
   blockId: string;
   type?: string;
   source?: string;
-  properties?: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
 };
 
 export type DeleteBlockMutation = {
@@ -91,15 +91,15 @@ export type LexicalState = ILexicalsState & {
     id: string,
     type?: string,
     source?: string,
-    properties?: Record<string, unknown>,
+    metadata?: Record<string, unknown>,
     afterId?: string,
-  ) => Promise<void>;
+  ) => Promise<OperationResult>;
   updateBlock: (
     id: string,
     blockId?: string,
     type?: string,
     source?: string,
-    properties?: Record<string, unknown>,
+    metadata?: Record<string, unknown>,
   ) => Promise<void>;
   deleteBlock: (id: string, blockId?: string) => Promise<void>;
   readBlock: (id: string, blockId?: string) => Promise<LexicalBlock | null>;
@@ -117,9 +117,16 @@ export type LexicalState = ILexicalsState & {
     stopOnError?: boolean,
   ) => Promise<any>;
   clearAllOutputs: (id: string) => Promise<OperationResult>;
+  restartKernel: (id: string) => Promise<OperationResult>;
 
   // Additional utility methods
   getBlockCount: (id: string) => Promise<number>;
+  listAvailableBlocks: (id: string) => Promise<{
+    success: boolean;
+    types?: any[];
+    count?: number;
+    error?: string;
+  }>;
   reset: () => void;
 };
 
@@ -145,14 +152,14 @@ export const lexicalStore = createStore<LexicalState>((set, get) => ({
     id: string,
     type?: string,
     source?: string,
-    properties?: Record<string, unknown>,
+    metadata?: Record<string, unknown>,
     afterId?: string,
-  ): Promise<void> => {
+  ): Promise<OperationResult> => {
     // Accept object from executor, destructure it
     const params =
       typeof id === 'object'
         ? (id as any)
-        : { id, type, source, properties, afterId };
+        : { id, type, source, metadata, afterId };
 
     const adapter = get().lexicals.get(params.id)?.adapter;
     if (!adapter) {
@@ -163,13 +170,16 @@ export const lexicalStore = createStore<LexicalState>((set, get) => ({
       block_id: '', // Will be assigned by editor
       block_type: params.type,
       source: params.source,
-      metadata: params.properties,
+      metadata: params.metadata,
     };
 
     const result = await adapter.insertBlock(block, params.afterId);
     if (!result.success) {
       throw new Error(result.error || 'Failed to insert block');
     }
+
+    // Return the result with blockId
+    return result;
   },
 
   updateBlock: async (
@@ -177,13 +187,13 @@ export const lexicalStore = createStore<LexicalState>((set, get) => ({
     blockId?: string,
     type?: string,
     source?: string,
-    properties?: Record<string, unknown>,
+    metadata?: Record<string, unknown>,
   ): Promise<void> => {
     // Accept object from executor, destructure it
     const params =
       typeof id === 'object'
         ? (id as any)
-        : { id, blockId, type, source, properties };
+        : { id, blockId, type, source, metadata };
 
     const adapter = get().lexicals.get(params.id)?.adapter;
     if (!adapter) {
@@ -203,7 +213,7 @@ export const lexicalStore = createStore<LexicalState>((set, get) => ({
       source: params.source ?? existingBlock.source,
       metadata: {
         ...existingBlock.metadata,
-        ...params.properties,
+        ...params.metadata,
       },
     };
 
@@ -316,9 +326,57 @@ export const lexicalStore = createStore<LexicalState>((set, get) => ({
     return await adapter.clearAllOutputs();
   },
 
+  restartKernel: async (id: string): Promise<OperationResult> => {
+    const params = typeof id === 'object' ? id : { id };
+    const adapter = get().lexicals.get(params.id as string)?.adapter;
+    if (!adapter) {
+      return { success: false, error: 'Adapter not found' };
+    }
+    return await adapter.restartKernel();
+  },
+
   getBlockCount: async (id: string): Promise<number> => {
     const blocks = await get().readAllBlocks(id);
     return blocks.length;
+  },
+
+  listAvailableBlocks: async (
+    id: string,
+  ): Promise<{
+    success: boolean;
+    types?: any[];
+    count?: number;
+    error?: string;
+  }> => {
+    console.log('[LexicalState] 🔍 listAvailableBlocks CALLED with:', { id });
+
+    // Delegate to adapter (following consistent pattern with all other operations)
+    const params = typeof id === 'object' ? id : { id };
+    console.log('[LexicalState] 📦 Processed params:', params);
+
+    // Special case: this operation is static and doesn't require a document
+    // If no document is found, call the operation directly
+    const adapter = get().lexicals.get(params.id as string)?.adapter;
+    console.log('[LexicalState] 🔧 Adapter found?', !!adapter);
+
+    if (!adapter) {
+      console.log('[LexicalState] 🚀 Calling operation directly (no adapter)');
+      // Call operation directly without adapter (static operation)
+      const { listAvailableBlocksOperation } =
+        await import('../tools/operations/listAvailableBlocks');
+      console.log('[LexicalState] 📥 Operation imported, executing...');
+      const result = await listAvailableBlocksOperation.execute(
+        { type: 'all' },
+        { documentId: 'static', executor: null as any },
+      );
+      console.log('[LexicalState] ✅ Operation result:', result);
+      return result;
+    }
+
+    console.log('[LexicalState] 🔗 Delegating to adapter');
+    const result = await adapter.listAvailableBlocks();
+    console.log('[LexicalState] ✅ Adapter result:', result);
+    return result;
   },
 
   reset: () => set({ lexicals: new Map() }),

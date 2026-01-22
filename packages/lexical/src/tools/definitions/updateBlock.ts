@@ -17,14 +17,14 @@ import { updateBlockParamsSchema } from '../schemas/updateBlock';
 /**
  * Tool definition for updating an existing block
  *
- * Modifies block type, source content, and/or properties.
+ * Modifies block type, source content, and/or metadata.
  */
 export const updateBlockTool: ToolDefinition = {
   name: 'datalayer_updateBlock',
   displayName: 'Update Lexical Block',
   toolReferenceName: 'updateBlock',
   description:
-    'Update an existing block in the currently open Lexical document. Use listAvailableBlocks to get available blocks. Can modify block type, source content, and/or properties. Requires id from readAllBlocks. At least one of type, source, or properties must be provided. Properties are merged with existing metadata. Works on active .lexical file.',
+    'Update an existing block in the currently open Lexical document. CRITICAL: DO NOT use markdown syntax (like # for headings) in source field - use plain text and specify block type/metadata instead. Inline formatting like **bold** or *italic* is automatically converted. Use listAvailableBlocks to get available block types. Can modify block type, source content, and/or metadata. Requires id from readAllBlocks. At least one of type, source, or metadata must be provided. Metadata is merged with existing metadata. Works on active .lexical file.',
 
   parameters: zodToToolParameters(updateBlockParamsSchema),
 
@@ -35,12 +35,12 @@ export const updateBlockTool: ToolDefinition = {
       id: string;
       type?: string;
       source?: string;
-      properties?: Record<string, unknown>;
+      metadata?: Record<string, unknown>;
     }) => {
       const updates: string[] = [];
       if (params.type) updates.push(`type to ${params.type}`);
       if (params.source) updates.push('source');
-      if (params.properties) updates.push('properties');
+      if (params.metadata) updates.push('metadata');
       return `Update block ${params.id} (${updates.join(', ')})?`;
     },
     invocationMessage: (params: { id: string }) =>

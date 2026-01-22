@@ -37,10 +37,21 @@ export class OperationRunner {
     params: TParams,
     context: ToolExecutionContext
   ): Promise<TResult | string> {
+    console.log('[OperationRunner] 🚀 execute CALLED');
+    console.log('[OperationRunner] Operation:', operation.name);
+    console.log('[OperationRunner] Params:', params);
+    console.log('[OperationRunner] Context:', context);
+
     // Execute operation (returns pure typed data)
+    console.log('[OperationRunner] 📞 Calling operation.execute...');
     const result = await operation.execute(params, context);
+    console.log('[OperationRunner] ✅ Operation completed, result:', result);
 
     // Apply formatting based on context.format
-    return formatResponse(result, context.format);
+    console.log('[OperationRunner] 🎨 Applying formatting...');
+    const formatted = formatResponse(result, context.format);
+    console.log('[OperationRunner] ✅ Formatted result:', formatted);
+
+    return formatted;
   }
 }

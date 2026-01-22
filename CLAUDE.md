@@ -65,6 +65,95 @@ const provider = new JupyterCollaborationProvider({
 - Prefer editing over creating files
 - Run checks after changes: `npm run check:fix`
 
+## Recent Changes
+
+### Output Component & KernelActionMenu Improvements (January 2025)
+
+**Status**: ✅ COMPLETED - All improvements tested and working in VS Code extension
+
+#### What Changed
+
+1. **KernelActionMenu Always Visible** (`packages/react/src/components/kernel/KernelActionMenu.tsx`)
+   - Three dot menu now visible regardless of kernel connection state
+   - All menu items always rendered with appropriate disabled states
+   - "Interrupt kernel" and "Restart kernel" disabled when no kernel
+   - "Clear outputs" always enabled (works with or without kernel)
+   - Added `onClearOutputs?: () => void` callback prop for custom clear logic
+
+2. **Progress Bar Conditional Display** (`packages/react/src/components/output/Output.tsx`)
+   - Progress bar only shows when kernel is connected and not idle
+   - Space preserved with transparent background when inactive
+   - Prevents visual jumping in the UI
+
+3. **Clear Outputs Functionality** (`packages/react/src/components/output/Output.tsx`)
+   - Works from both toolbar and three dot menu
+   - Functions correctly with or without kernel connection
+   - Fixed adapter/propsAdapter logic to match rendering behavior
+   - Added `handleClearOutputs` callback that checks both `adapter` and `propsAdapter`
+
+4. **Architecture Improvement**
+   - Removed VS Code-specific CSS from `Output.css`
+   - Platform-specific styling now handled by consuming packages
+   - Keeps jupyter-react library platform-agnostic
+
+#### Key Technical Details
+
+**The Adapter/PropsAdapter Issue**:
+Fixed mismatch between clear logic and rendering logic:
+
+```typescript
+// Rendering logic (line 356 in Output.tsx)
+const currentAdapter = adapter || propsAdapter;
+return lumino ? (currentAdapter ? <Lumino>{currentAdapter.outputArea}</Lumino> : null) : ...
+
+// Fixed clear logic to match
+const currentAdapter = adapter || propsAdapter;
+if (currentAdapter) {
+  currentAdapter.clear(); // Now matches rendering logic
+}
+```
+
+**Conditional Rendering vs Disabled Props**:
+Changed from conditional rendering to disabled props:
+
+```typescript
+// Before: Hidden when no kernel
+{kernel && <ActionList.Item onSelect={...}>Interrupt kernel</ActionList.Item>}
+
+// After: Always visible, disabled when no kernel
+<ActionList.Item disabled={!kernel} onSelect={...}>Interrupt kernel</ActionList.Item>
+```
+
+#### Integration Pattern for Consuming Packages
+
+The jupyter-react package now provides:
+
+- Generic components without platform-specific styling
+- `onClearOutputs` callback prop for custom clear logic
+- Always-visible menu with disabled states
+
+Consuming packages (like vscode-datalayer) can:
+
+- Apply platform-specific CSS overrides
+- Provide custom clear callbacks that match their rendering strategy
+- Theme components using their platform's variables
+
+**Example** (VS Code extension):
+
+```typescript
+// Custom CSS in vscode-datalayer/webview/styles/vscode-primer-overrides.css
+[class*="ActionMenu-"] {
+  background-color: var(--vscode-menu-background) !important;
+}
+
+// Custom clear callback in Output component
+<KernelActionMenu
+  kernel={kernel}
+  outputAdapter={adapter}
+  onClearOutputs={handleClearOutputs} // Custom logic for VS Code
+/>
+```
+
 ## Critical: Package Loading Side Effects (November 2024)
 
 ### Problem: Lumino Widget Initialization Crash

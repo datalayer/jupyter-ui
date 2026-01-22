@@ -136,8 +136,18 @@ export const deleteBlockOperation: ToolOperation<
       // Store information about blocks before deletion
       const deletedBlocks: DeletedBlockInfo[] = [];
 
-      // Delete each block (order doesn't matter - IDs are stable)
-      for (const id of ids) {
+      // Sort IDs in reverse order to delete children before parents (collapsibles last)
+      // This prevents cascading deletions from causing "block not found" errors
+      const sortedIds = [...ids].sort((a, b) => {
+        // Find positions in document
+        const indexA = blocks.findIndex(block => block.block_id === a);
+        const indexB = blocks.findIndex(block => block.block_id === b);
+        // Sort in reverse order (higher index first)
+        return indexB - indexA;
+      });
+
+      // Delete each block in reverse order
+      for (const id of sortedIds) {
         // Find and store block info before deletion
         const block = blocks.find(b => b.block_id === id);
 
@@ -147,16 +157,30 @@ export const deleteBlockOperation: ToolOperation<
         }
 
         // Execute deletion via executor
-        await context.executor!.execute(this.name, {
-          blockId: id,
-        });
+        // Catch "block not found" errors - block was already deleted by cascading deletion
+        try {
+          await context.executor!.execute(this.name, {
+            blockId: id,
+          });
 
-        // Track deletion
-        deletedBlocks.push({
-          id: block.block_id,
-          type: block.block_type,
-          source: block.source,
-        });
+          // Track successful deletion
+          deletedBlocks.push({
+            id: block.block_id,
+            type: block.block_type,
+            source: block.source,
+          });
+        } catch (error) {
+          // If block not found, it was likely deleted by cascading deletion (parent collapsible removed)
+          // Skip and continue - this is expected behavior
+          const errorMessage =
+            error instanceof Error ? error.message : String(error);
+          if (errorMessage.includes('not found')) {
+            // Block was already deleted (cascaded), skip it
+            continue;
+          }
+          // Re-throw other errors
+          throw error;
+        }
       }
 
       // Format message similar to deleteCell pattern

@@ -145,18 +145,14 @@ export interface LexicalBlock {
 export type BlockFormat = 'brief' | 'detailed';
 
 /**
- * Brief block representation for structure queries
- * Includes block_id, block_type, and a 40-char content preview
+ * Brief block representation for structure queries (CSV-serializable)
+ * Fields: block_id, block_type, preview, collapsible
  */
 export interface BriefBlock {
-  /** Unique block identifier */
   block_id: string;
-
-  /** Block type identifier */
   block_type: string;
-
-  /** 40-character preview of block content (empty for horizontalrule) */
   preview: string;
+  collapsible?: string;
 }
 
 /**

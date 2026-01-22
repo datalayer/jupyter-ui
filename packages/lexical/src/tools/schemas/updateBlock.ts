@@ -22,10 +22,13 @@ export const updateBlockParamsSchema = z.object({
       "New block type (e.g., 'paragraph', 'heading', 'code', 'list-item')",
     ),
   source: z.string().optional().describe('New block source content'),
-  properties: z
-    .record(z.string(), z.unknown())
-    .optional()
-    .describe('New block metadata and properties'),
+  metadata: z.preprocess(val => {
+    // Convert empty strings to undefined (common LLM mistake)
+    if (val === '' || val === null) return undefined;
+    // Convert non-object values to undefined
+    if (typeof val !== 'object' || Array.isArray(val)) return undefined;
+    return val;
+  }, z.record(z.string(), z.unknown()).optional().describe('New block metadata (aligned with Jupyter format)')),
 });
 
 export type UpdateBlockParams = z.infer<typeof updateBlockParamsSchema>;

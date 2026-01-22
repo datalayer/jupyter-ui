@@ -27,7 +27,7 @@ import { ListItemNode, ListNode } from '@lexical/list';
 import { HashtagNode } from '@lexical/hashtag';
 import { MarkNode } from '@lexical/mark';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
-import { CodeNode } from '@lexical/code';
+import { CodeNode, CodeHighlightNode } from '@lexical/code';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { useJupyter } from '@datalayer/jupyter-react';
 import {
@@ -45,6 +45,7 @@ import {
   AutoEmbedPlugin,
   AutoLinkPlugin,
   CodeActionMenuPlugin,
+  CodeBlockHighlightPlugin,
   CollapsibleContainerNode,
   CollapsibleContentNode,
   CollapsiblePlugin,
@@ -99,6 +100,7 @@ const initialConfig = {
   nodes: [
     AutoLinkNode,
     CodeNode,
+    CodeHighlightNode,
     CollapsibleContainerNode,
     CollapsibleContentNode,
     CollapsibleTitleNode,
@@ -210,6 +212,7 @@ export function EditorContainer(props: Props) {
         <YouTubePlugin />
         <NbformatContentPlugin notebook={notebook} />
         <CodeActionMenuPlugin />
+        <CodeBlockHighlightPlugin />
         <AutoEmbedPlugin />
         <EditorContextPlugin />
         <TableOfContentsPlugin />

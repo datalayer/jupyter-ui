@@ -37,8 +37,8 @@ export interface UpdateBlockResult {
 /**
  * Update block operation - modifies an existing block in a Lexical document
  *
- * Allows updating block type, source content, and/or properties.
- * At least one of type, source, or properties must be provided.
+ * Allows updating block type, source content, and/or metadata.
+ * At least one of type, source, or metadata must be provided.
  *
  * Uses documentId as the universal identifier (matches Lexical component).
  */
@@ -59,17 +59,13 @@ export const updateBlockOperation: ToolOperation<
       'updateBlock',
     ) as UpdateBlockParams;
 
-    const { id, type, source, properties } = validatedParams;
+    const { id, type, source, metadata } = validatedParams;
     const { documentId } = context;
 
     // Validate that at least one update field is provided
-    if (
-      type === undefined &&
-      source === undefined &&
-      properties === undefined
-    ) {
+    if (type === undefined && source === undefined && metadata === undefined) {
       throw new Error(
-        'At least one of type, source, or properties must be provided for updateBlock operation.',
+        'At least one of type, source, or metadata must be provided for updateBlock operation.',
       );
     }
 
@@ -96,13 +92,13 @@ export const updateBlockOperation: ToolOperation<
         blockId: id,
         type,
         source,
-        properties,
+        metadata,
       });
 
       const updatedFields = [
         type !== undefined && 'type',
         source !== undefined && 'source',
-        properties !== undefined && 'properties',
+        metadata !== undefined && 'metadata',
       ]
         .filter(Boolean)
         .join(', ');

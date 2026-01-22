@@ -9,6 +9,7 @@ export * from './AutoIndentPlugin';
 export * from './AutoLinkPlugin';
 export { default as FloatingLinkEditorPlugin } from './FloatingLinkEditorPlugin';
 export { default as CodeActionMenuPlugin } from './CodeActionMenuPlugin';
+export { CodeBlockHighlightPlugin } from './CodeHighlightPlugin';
 export * from './CollapsiblePlugin';
 export * from './CommentPlugin';
 export * from './ComponentPickerMenuPlugin';
