@@ -210,35 +210,14 @@ export const Output = ({
       adapter.clear();
     }
   }, [clearTrigger, adapter]);
-  useEffect(() => {
-    console.log(
-      '[Output] KernelActionMenu render state - adapter:',
-      !!adapter,
-      'kernel:',
-      !!kernel,
-      'showControl:',
-      showControl
-    );
-  }, [adapter, kernel, showControl]);
 
   const handleClearOutputs = () => {
-    console.log(
-      '[Output] handleClearOutputs called - adapter:',
-      !!adapter,
-      'propsAdapter:',
-      !!propsAdapter,
-      'outputs length:',
-      outputs?.length
-    );
-
     // Use same logic as rendering: check both adapter and propsAdapter
     const currentAdapter = adapter || propsAdapter;
 
     if (currentAdapter) {
-      console.log('[Output] Calling currentAdapter.clear()');
       currentAdapter.clear();
     } else {
-      console.log('[Output] No adapter, clearing outputs state directly');
       // If no adapter, clear outputs state directly
       setOutputs([]);
     }

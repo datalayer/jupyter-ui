@@ -158,9 +158,6 @@ function TableHoverActionsV2({
   );
 
   const { refs, floatingStyles, update } = useFloating({
-    elements: {
-      reference: virtualRef.current as unknown as Element,
-    },
     middleware: [
       offset({ mainAxis: -TOP_BUTTON_OVERHANG }),
       shift({
@@ -177,9 +174,6 @@ function TableHoverActionsV2({
     floatingStyles: leftFloatingStyles,
     update: updateLeft,
   } = useFloating({
-    elements: {
-      reference: leftVirtualRef.current as unknown as Element,
-    },
     middleware: [
       offset({ mainAxis: -LEFT_BUTTON_OVERHANG }),
       shift({

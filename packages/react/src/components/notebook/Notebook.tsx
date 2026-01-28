@@ -7,7 +7,10 @@
 import React, { useEffect, useState } from 'react';
 import { createGlobalStyle } from 'styled-components';
 import type { INotebookContent } from '@jupyterlab/nbformat';
-import type { IInlineCompletionProvider } from '@jupyterlab/completer';
+import type {
+  ICompletionProvider,
+  IInlineCompletionProvider,
+} from '@jupyterlab/completer';
 import type { NotebookModel } from '@jupyterlab/notebook';
 import type { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import type { ServiceManager } from '@jupyterlab/services';
@@ -122,6 +125,13 @@ export interface INotebookProps {
    * Platform-specific providers can be injected here (e.g., VS Code LLM, custom AI models).
    */
   inlineProviders?: IInlineCompletionProvider[];
+  /**
+   * Custom Tab completion providers for dropdown menu.
+   *
+   * These providers are used for traditional dropdown completions (triggered by Tab key).
+   * Platform-specific providers can be injected here (e.g., LSP servers).
+   */
+  providers?: ICompletionProvider[];
 }
 
 /**
@@ -150,6 +160,7 @@ export function Notebook(
     onNotebookModelChanged,
     onSessionConnection,
     path,
+    providers,
     readonly = false,
     renderers,
     serviceManager,
@@ -263,6 +274,7 @@ export function Notebook(
             id={id}
             extensions={extensions}
             inlineProviders={inlineProviders}
+            providers={providers}
             kernelId={kernelId}
             model={model}
             path={path}
