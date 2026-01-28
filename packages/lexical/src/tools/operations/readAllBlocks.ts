@@ -81,30 +81,10 @@ export const readAllBlocksOperation: ToolOperation<
 
     try {
       // Call executor with format parameter
+      // NOTE: Don't pass 'id' - DefaultExecutor injects it automatically
       const blocks = (await context.executor.execute(this.name, {
         format,
       })) as LexicalBlock[] | BriefBlock[];
-
-      // Convert brief format to CSV for concise TOON output
-      if (format === 'brief') {
-        const briefBlocks = blocks as BriefBlock[];
-        const csvRows = ['block_id,type,preview,collapsible'];
-
-        briefBlocks.forEach(block => {
-          // Replace commas in preview to avoid CSV issues
-          const preview = block.preview.replace(/,/g, ';');
-          const collapsible = block.collapsible || '';
-          csvRows.push(
-            `${block.block_id},${block.block_type},${preview},${collapsible}`,
-          );
-        });
-
-        return {
-          success: true,
-          blocks: csvRows.join('\n') as any,
-          blockCount: briefBlocks.length,
-        };
-      }
 
       return {
         success: true,

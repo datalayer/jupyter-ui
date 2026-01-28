@@ -16,9 +16,13 @@ import { z } from 'zod';
  * Schema for updateCell parameters
  *
  * Validates cell index and new source content.
+ * Coerces string numbers to actual numbers (LLMs often pass "0" instead of 0).
  */
 export const updateCellParamsSchema = z.object({
-  index: z.number().int().nonnegative().describe('Cell index (0-based)'),
+  index: z.preprocess(
+    val => (typeof val === 'string' ? parseInt(val, 10) : val),
+    z.number().int().nonnegative().describe('Cell index (0-based)')
+  ),
   source: z.string().describe('New cell source content'),
 });
 

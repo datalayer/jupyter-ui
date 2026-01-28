@@ -15,7 +15,7 @@
 // Import all tool definitions
 import { insertBlockTool } from './definitions/insertBlock';
 import { updateBlockTool } from './definitions/updateBlock';
-import { deleteBlockTool } from './definitions/deleteBlock';
+import { deleteBlocksTool } from './definitions/deleteBlocks';
 import { readBlockTool } from './definitions/readBlock';
 import { readAllBlocksTool } from './definitions/readAllBlocks';
 import { runBlockTool } from './definitions/runBlock';
@@ -26,7 +26,7 @@ import { executeCodeTool } from './definitions/executeCode';
 // Import all operations
 import { insertBlockOperation } from './operations/insertBlock';
 import { updateBlockOperation } from './operations/updateBlock';
-import { deleteBlockOperation } from './operations/deleteBlock';
+import { deleteBlocksOperation } from './operations/deleteBlocks';
 import { readBlockOperation } from './operations/readBlock';
 import { readAllBlocksOperation } from './operations/readAllBlocks';
 import { runBlockOperation } from './operations/runBlock';
@@ -44,7 +44,7 @@ import type { ToolOperation } from './core/interfaces';
 export const lexicalToolDefinitions: ToolDefinition[] = [
   insertBlockTool,
   updateBlockTool,
-  deleteBlockTool,
+  deleteBlocksTool,
   readBlockTool,
   readAllBlocksTool,
   runBlockTool,
@@ -63,7 +63,7 @@ export const lexicalToolOperations: Record<
 > = {
   insertBlock: insertBlockOperation,
   updateBlock: updateBlockOperation,
-  deleteBlock: deleteBlockOperation,
+  deleteBlocks: deleteBlocksOperation,
   readBlock: readBlockOperation,
   readAllBlocks: readAllBlocksOperation,
   runBlock: runBlockOperation,
@@ -85,7 +85,7 @@ export * from './core';
 export * from './definitions';
 export * from './operations/insertBlock';
 export * from './operations/updateBlock';
-export * from './operations/deleteBlock';
+export * from './operations/deleteBlocks';
 export * from './operations/readBlock';
 export * from './operations/readAllBlocks';
 export * from './operations/runBlock';

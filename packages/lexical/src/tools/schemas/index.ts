@@ -12,7 +12,7 @@
 
 export * from './insertBlock';
 export * from './updateBlock';
-export * from './deleteBlock';
+export * from './deleteBlocks';
 export * from './readBlock';
 export * from './readAllBlocks';
 export * from './runBlock';

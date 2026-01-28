@@ -19,7 +19,7 @@ export const insertCellTool: ToolDefinition = {
   displayName: 'Insert Notebook Cell',
   toolReferenceName: 'insertCell',
   description:
-    'IMPORTANT: Call readAllCells first to see the current notebook structure and determine the correct insertion point. Then, insert a code or markdown cell into a Jupyter notebook at a specified position or at the end',
+    'Insert cells into Jupyter notebooks (.ipynb files ONLY). For Lexical documents (.dlex), use insertBlock with type="jupyter-cell" instead. IMPORTANT: Call readAllCells first to see the current notebook structure and determine the correct insertion point. Then, insert a code or markdown cell into a Jupyter notebook at a specified position or at the end',
 
   parameters: zodToToolParameters(insertCellParamsSchema),
 
@@ -35,5 +35,5 @@ export const insertCellTool: ToolDefinition = {
     priority: 'high',
   },
 
-  tags: ['cell', 'notebook', 'manipulation', 'create'],
+  tags: ['cell', 'notebook', 'manipulation', 'insert'],
 };

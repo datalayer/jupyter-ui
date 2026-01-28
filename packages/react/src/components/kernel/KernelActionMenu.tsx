@@ -70,12 +70,8 @@ export const KernelActionMenu = (props: KernelActionMenuProps) => {
                 !!outputAdapter
               );
               if (onClearOutputs) {
-                console.log(
-                  '[KernelActionMenu] Calling onClearOutputs callback'
-                );
                 onClearOutputs();
               } else if (outputAdapter) {
-                console.log('[KernelActionMenu] Calling outputAdapter.clear()');
                 outputAdapter.clear();
               } else {
                 console.warn('[KernelActionMenu] No clear method available!');

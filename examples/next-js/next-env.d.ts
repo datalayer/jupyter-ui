@@ -1,9 +1,3 @@
-/*
- * Copyright (c) 2021-2023 Datalayer, Inc.
- *
- * MIT License
- */
-
 /// <reference types="next" />
 /// <reference types="next/image-types/global" />
 

@@ -11,7 +11,7 @@
  */
 
 export * from './insertCell';
-export * from './deleteCell';
+export * from './deleteCells';
 export * from './updateCell';
 export * from './readCell';
 export * from './readAllCells';

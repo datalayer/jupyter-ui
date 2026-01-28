@@ -7,28 +7,28 @@
 /**
  * Tool definition for deleting blocks from Lexical documents
  *
- * @module tools/definitions/tools/deleteBlock
+ * @module tools/definitions/tools/deleteBlocks
  */
 
 import type { ToolDefinition } from '../core';
 import { zodToToolParameters } from '@datalayer/jupyter-react/tools';
-import { deleteBlockParamsSchema } from '../schemas/deleteBlock';
+import { deleteBlocksParamsSchema } from '../schemas/deleteBlocks';
 
 /**
  * Tool definition for deleting one or more blocks from a Lexical document
  *
  * This tool permanently removes blocks by their IDs. Supports both single and multi-delete operations.
  */
-export const deleteBlockTool: ToolDefinition = {
-  name: 'datalayer_deleteBlock',
+export const deleteBlocksTool: ToolDefinition = {
+  name: 'datalayer_deleteBlocks',
   displayName: 'Delete Lexical Block(s)',
-  toolReferenceName: 'deleteBlock',
+  toolReferenceName: 'deleteBlocks',
   description:
-    'Delete one or more blocks from the currently open Lexical document by block_id. Supports single block deletion (pass string) or multi-delete (pass array of strings). WORKFLOW: 1) Call readAllBlocks to get block_id values, 2) Pass block_id(s) to delete. Validates all IDs exist before deletion. This permanently removes blocks and changes appear immediately. Works on active .lexical file.',
+    'Delete one or more blocks from the currently open Lexical document by block_id. Pass array of block IDs to delete. WORKFLOW: 1) Call readAllBlocks to get block_id values, 2) Pass block_id array to delete. Validates all IDs exist before deletion. This permanently removes blocks and changes appear immediately. Works on active .lexical file.',
 
-  parameters: zodToToolParameters(deleteBlockParamsSchema),
+  parameters: zodToToolParameters(deleteBlocksParamsSchema),
 
-  operation: 'deleteBlock',
+  operation: 'deleteBlocks',
 
   config: {
     confirmationMessage: (params: { ids: string[] }) => {

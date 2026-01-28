@@ -15,7 +15,7 @@
 // Re-export operations
 export * from '../operations/insertBlock';
 export * from '../operations/updateBlock';
-export * from '../operations/deleteBlock';
+export * from '../operations/deleteBlocks';
 export * from '../operations/readBlock';
 export * from '../operations/readAllBlocks';
 export * from '../operations/runBlock';

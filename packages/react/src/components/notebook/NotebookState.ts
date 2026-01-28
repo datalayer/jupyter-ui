@@ -104,6 +104,7 @@ export type NotebookState = INotebooksState & {
     index?: number
   ) => void;
   deleteCell: (id: string, index?: number) => void;
+  deleteCells: (id: string, indices?: number[]) => void;
   updateCell: (id: string, index?: number, source?: string) => void;
   readCell: (
     id: string,
@@ -223,7 +224,19 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
   },
   deleteCell: (id: string, index?: number): void => {
     const params = typeof id === 'object' ? id : { id, index };
-    get().notebooks.get(params.id)?.adapter?.deleteCell(params.index);
+    // Single cell deletion - delegates to adapter's deleteCell with array
+    const adapter = get().notebooks.get(params.id)?.adapter;
+    if (adapter && params.index !== undefined) {
+      adapter.deleteCell([params.index]);
+    }
+  },
+  deleteCells: (id: string, indices?: number[]): void => {
+    const params = typeof id === 'object' ? id : { id, indices };
+    // Multiple cells deletion
+    const adapter = get().notebooks.get(params.id)?.adapter;
+    if (adapter && params.indices) {
+      adapter.deleteCell(params.indices);
+    }
   },
   updateCell: (id: string, index?: number, source?: string): void => {
     const params = typeof id === 'object' ? id : { id, index, source };
@@ -326,7 +339,8 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
     get().notebooks.get(id)?.adapter?.insertBelow(source);
   },
   delete: (id: string): void => {
-    get().notebooks.get(id)?.adapter?.deleteCell();
+    // Legacy method - delete currently selected cells
+    get().notebooks.get(id)?.adapter?.deleteCells();
   },
   changeCellType: (id: string, type: nbformat.CellType) => {
     get().notebooks.get(id)?.adapter?.changeCellType(type);

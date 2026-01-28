@@ -341,9 +341,78 @@ export class LexicalAdapter {
   }
 
   /**
-   * Delete a block by ID
+   * Delete multiple blocks by their IDs.
+   * Handles complex logic including validation, sorting, and cascading deletions.
+   *
+   * @param blockIds - Array of block IDs to delete
+   * @returns Promise with operation result including deleted blocks info
    */
-  async deleteBlock(blockId: string): Promise<OperationResult> {
+  async deleteBlock(
+    blockIds: string[],
+  ): Promise<OperationResult & { deletedBlocks?: Array<{ id: string }> }> {
+    try {
+      // Read all blocks to validate IDs exist and get positions
+      const blocks = await this.getBlocks('detailed');
+      const blockIdSet = new Set(blocks.map(block => block.block_id));
+
+      // Validate ALL IDs exist
+      const missingIds: string[] = [];
+      for (const id of blockIds) {
+        if (!blockIdSet.has(id)) {
+          missingIds.push(id);
+        }
+      }
+
+      if (missingIds.length > 0) {
+        return {
+          success: false,
+          error: `Block ID(s) not found: ${missingIds.join(', ')}. Document has ${blocks.length} blocks.`,
+        };
+      }
+
+      // Sort IDs in reverse order to delete children before parents (collapsibles last)
+      // This prevents cascading deletions from causing "block not found" errors
+      const sortedIds = [...blockIds].sort((a, b) => {
+        const indexA = blocks.findIndex(block => block.block_id === a);
+        const indexB = blocks.findIndex(block => block.block_id === b);
+        // Sort in reverse order (higher index first)
+        return indexB - indexA;
+      });
+
+      const deletedBlocks: Array<{ id: string }> = [];
+
+      // Delete each block in reverse order
+      for (const blockId of sortedIds) {
+        const result = await this._deleteSingleBlock(blockId);
+
+        if (result.success) {
+          deletedBlocks.push({ id: blockId });
+        } else if (result.error?.includes('not found')) {
+          // Block was already deleted by cascading deletion (parent collapsible removed)
+          // This is expected behavior, skip and continue
+          continue;
+        } else {
+          // Other errors should propagate
+          return result;
+        }
+      }
+
+      return {
+        success: true,
+        deletedBlocks,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+      };
+    }
+  }
+
+  /**
+   * Delete a single block by ID (internal helper).
+   */
+  private async _deleteSingleBlock(blockId: string): Promise<OperationResult> {
     return new Promise(resolve => {
       this._editor.update(() => {
         try {
@@ -414,7 +483,7 @@ export class LexicalAdapter {
     block: LexicalBlock,
   ): Promise<OperationResult> {
     // For now, implement as delete + insert
-    const deleteResult = await this.deleteBlock(blockId);
+    const deleteResult = await this.deleteBlock([blockId]);
     if (!deleteResult.success) {
       return deleteResult;
     }
@@ -938,6 +1007,15 @@ export class LexicalAdapter {
                 }
               });
 
+              if (!blockId) {
+                resolve({
+                  success: false,
+                  error:
+                    'Failed to create jupyter-cell: INSERT_JUPYTER_INPUT_OUTPUT_COMMAND did not create a jupyter-input node',
+                });
+                return;
+              }
+
               resolve({ success: true, blockId });
             }, 20);
           }, 10);
@@ -945,11 +1023,43 @@ export class LexicalAdapter {
           // Import YouTube command dynamically
           const { INSERT_YOUTUBE_COMMAND } =
             await import('../plugins/YouTubePlugin');
-          // Get videoID from source field (11-character YouTube video ID)
+          // Get videoID from source field (11-character YouTube video ID or full URL)
           const sourceText = Array.isArray(block.source)
             ? block.source.join('\n')
             : block.source;
-          const videoID = sourceText?.trim() || 'lO2p9LQB7ds';
+
+          // Extract video ID from various YouTube URL formats
+          const extractVideoID = (input: string): string => {
+            const trimmed = input.trim();
+
+            // If it's already just an ID (11 chars, alphanumeric + - and _)
+            if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) {
+              return trimmed;
+            }
+
+            // Extract from various URL formats:
+            // - https://www.youtube.com/watch?v=VIDEO_ID
+            // - https://youtu.be/VIDEO_ID
+            // - https://youtube.com/watch?v=VIDEO_ID
+            // - https://m.youtube.com/watch?v=VIDEO_ID
+
+            // Try youtu.be format first
+            const shortMatch = trimmed.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+            if (shortMatch) {
+              return shortMatch[1];
+            }
+
+            // Try youtube.com/watch?v= format
+            const watchMatch = trimmed.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
+            if (watchMatch) {
+              return watchMatch[1];
+            }
+
+            // Fallback to default if no valid ID found
+            return 'lO2p9LQB7ds';
+          };
+
+          const videoID = extractVideoID(sourceText || '');
 
           // Insert using marker technique
           await this.insertWithMarker(afterBlockId, () => {

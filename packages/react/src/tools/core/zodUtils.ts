@@ -59,16 +59,21 @@ export function zodToToolParameters(
       // Build property schema
       const prop: Record<string, any> = {};
 
-      // Unwrap optional/default modifiers to get to the base type
+      // Unwrap optional/default/effects/pipe modifiers to get to the base type
       // Support both Zod v3 (def/def) and Zod v4 (_def)
       let isOptional = false;
       while (
         zodField._def?.typeName === 'ZodOptional' ||
         zodField._def?.typeName === 'ZodDefault' ||
+        zodField._def?.typeName === 'ZodEffects' ||
         zodField._def?.type === 'optional' ||
         zodField._def?.type === 'default' ||
+        zodField._def?.type === 'effects' ||
+        zodField._def?.type === 'pipe' ||
         zodField.def?.type === 'optional' ||
-        zodField.def?.type === 'default'
+        zodField.def?.type === 'default' ||
+        zodField.def?.type === 'effects' ||
+        zodField.def?.type === 'pipe'
       ) {
         if (
           zodField._def?.typeName === 'ZodOptional' ||
@@ -78,8 +83,15 @@ export function zodToToolParameters(
           isOptional = true;
         }
         // Unwrap to get the inner type - try all possible paths
+        // For Zod v4 pipe (preprocess): use _def.out
+        // For ZodEffects: use _def.schema
+        // For optional/default: use _def.innerType
         zodField =
-          zodField._def?.innerType || zodField.def?.innerType || zodField;
+          zodField._def?.out ||
+          zodField._def?.schema ||
+          zodField._def?.innerType ||
+          zodField.def?.innerType ||
+          zodField;
       }
 
       // Extract description (check at each level)
@@ -104,8 +116,37 @@ export function zodToToolParameters(
         prop.type = 'boolean';
       } else if (typeName === 'ZodArray' || typeName === 'array') {
         prop.type = 'array';
-        // Get the inner type of the array
-        const innerType = zodField._def?.type || zodField.def?.type;
+        // Get the inner element type of the array
+        // Zod v4 uses _def.element (NOT _def.type which is the string "ZodArray")
+        // Zod v3 uses def.element
+        let innerType = zodField._def?.element || zodField.def?.element;
+
+        // Unwrap ZodEffects/pipe (preprocess) to get actual type
+        // Zod v4 uses type: "pipe" with _def.out for the output schema
+        // Zod v3 uses type: "effects" with _def.schema
+        let iterations = 0;
+        while (innerType && iterations < 10) {
+          iterations++;
+          const effectType = innerType._def?.type || innerType.def?.type;
+          const effectTypeName = innerType._def?.typeName;
+
+          if (
+            effectType === 'pipe' ||
+            effectType === 'effects' ||
+            effectTypeName === 'ZodEffects'
+          ) {
+            // Zod v4 pipe: output schema is in _def.out
+            // Zod v3 effects: output schema is in _def.schema
+            innerType =
+              innerType._def?.out ||
+              innerType._def?.schema ||
+              innerType.def?.schema ||
+              innerType;
+          } else {
+            break;
+          }
+        }
+
         const innerTypeName =
           innerType?._def?.typeName ||
           innerType?._def?.type ||
@@ -142,6 +183,12 @@ export function zodToToolParameters(
         prop.enum = Array.isArray(enumValues)
           ? enumValues
           : Object.keys(enumValues || {});
+      } else if (typeName === 'ZodRecord' || typeName === 'record') {
+        // Handle z.record() which creates a dictionary/object with string keys
+        // Convert to JSON Schema object type
+        prop.type = 'object';
+        // ZodRecord allows arbitrary keys, so we don't specify additionalProperties: false
+        // This is equivalent to { "type": "object" } in JSON Schema
       } else {
         // Fallback: Default to string type for unknown types to ensure valid JSON Schema
         prop.type = 'string';

@@ -10,7 +10,7 @@
  * @module tools/schemas
  */
 
-export * from './deleteCell';
+export * from './deleteCells';
 export * from './insertCell';
 export * from './updateCell';
 export * from './readCell';

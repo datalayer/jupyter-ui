@@ -102,6 +102,10 @@ export type LexicalState = ILexicalsState & {
     metadata?: Record<string, unknown>,
   ) => Promise<void>;
   deleteBlock: (id: string, blockId?: string) => Promise<void>;
+  deleteBlocks: (
+    id: string,
+    blockIds?: string[],
+  ) => Promise<{ success: boolean; deletedBlocks?: Array<{ id: string }> }>;
   readBlock: (id: string, blockId?: string) => Promise<LexicalBlock | null>;
   readAllBlocks: (
     id: string,
@@ -224,7 +228,7 @@ export const lexicalStore = createStore<LexicalState>((set, get) => ({
   },
 
   deleteBlock: async (id: string, blockId?: string): Promise<void> => {
-    // Accept object from executor, destructure it
+    // Single block deletion - delegates to deleteBlocks
     const params = typeof id === 'object' ? (id as any) : { id, blockId };
 
     const adapter = get().lexicals.get(params.id)?.adapter;
@@ -232,10 +236,35 @@ export const lexicalStore = createStore<LexicalState>((set, get) => ({
       throw new Error(`Lexical document ${params.id} not found`);
     }
 
-    const result = await adapter.deleteBlock(params.blockId);
+    const result = await adapter.deleteBlock([params.blockId]);
     if (!result.success) {
       throw new Error(result.error || 'Failed to delete block');
     }
+  },
+
+  deleteBlocks: async (
+    id: string,
+    blockIds?: string[],
+  ): Promise<{ success: boolean; deletedBlocks?: Array<{ id: string }> }> => {
+    // Multiple blocks deletion - handles array of IDs
+    const params = typeof id === 'object' ? (id as any) : { id, blockIds };
+
+    const adapter = get().lexicals.get(params.id)?.adapter;
+    if (!adapter) {
+      throw new Error(`Lexical document ${params.id} not found`);
+    }
+
+    // Ensure blockIds is an array
+    const idsArray = Array.isArray(params.blockIds)
+      ? params.blockIds
+      : [params.blockIds];
+
+    const result = await adapter.deleteBlock(idsArray);
+    if (!result.success) {
+      throw new Error(result.error || 'Failed to delete block');
+    }
+
+    return result;
   },
 
   readBlock: async (
