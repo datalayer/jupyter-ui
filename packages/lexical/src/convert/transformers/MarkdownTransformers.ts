@@ -9,7 +9,7 @@ import type {
   TextMatchTransformer,
   Transformer,
 } from './../markdown';
-import type { ElementNode, LexicalNode } from 'lexical';
+import type { ElementNode, LexicalNode, Klass } from 'lexical';
 
 import {
   CHECK_LIST,
@@ -53,13 +53,13 @@ import {
 } from '../../nodes/ImageNode';
 
 export const HR: ElementTransformer = {
-  dependencies: [HorizontalRuleNode],
+  dependencies: [HorizontalRuleNode as unknown as Klass<LexicalNode>],
   export: (node: LexicalNode) => {
     return $isHorizontalRuleNode(node) ? '***' : null;
   },
   regExp: /^(---|\*\*\*|___)\s?$/,
   replace: (parentNode, _1, _2, isImport) => {
-    const line = $createHorizontalRuleNode();
+    const line = $createHorizontalRuleNode() as unknown as LexicalNode;
 
     // TODO: Get rid of isImport flag
     if (isImport || parentNode.getNextSibling() != null) {
@@ -68,7 +68,8 @@ export const HR: ElementTransformer = {
       parentNode.insertBefore(line);
     }
 
-    line.selectNext();
+    // Note: selectNext() is not available on HorizontalRuleNode
+    // line.selectNext();
   },
   type: 'element',
 };

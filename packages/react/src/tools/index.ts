@@ -12,7 +12,7 @@
 
 // Import all tool definitions
 import { insertCellTool } from './definitions/insertCell';
-import { deleteCellTool } from './definitions/deleteCell';
+import { deleteCellsTool } from './definitions/deleteCells';
 import { updateCellTool } from './definitions/updateCell';
 import { readCellTool } from './definitions/readCell';
 import { readAllCellsTool } from './definitions/readAllCells';
@@ -21,7 +21,7 @@ import { executeCodeTool } from './definitions/executeCode';
 
 // Import all operations
 import { insertCellOperation } from './operations/insertCell';
-import { deleteCellOperation } from './operations/deleteCell';
+import { deleteCellsOperation } from './operations/deleteCells';
 import { updateCellOperation } from './operations/updateCell';
 import { readCellOperation } from './operations/readCell';
 import { readAllCellsOperation } from './operations/readAllCells';
@@ -37,7 +37,7 @@ import type { ToolOperation } from './core/interfaces';
  */
 export const notebookToolDefinitions: ToolDefinition[] = [
   insertCellTool,
-  deleteCellTool,
+  deleteCellsTool,
   updateCellTool,
   readCellTool,
   readAllCellsTool,
@@ -54,7 +54,7 @@ export const notebookToolOperations: Record<
   ToolOperation<unknown, unknown>
 > = {
   insertCell: insertCellOperation,
-  deleteCell: deleteCellOperation,
+  deleteCells: deleteCellsOperation,
   updateCell: updateCellOperation,
   readCell: readCellOperation,
   readAllCells: readAllCellsOperation,

@@ -31,20 +31,20 @@ export const listAvailableBlocksTool: ToolDefinition = {
   displayName: 'List Available Lexical Blocks',
   toolReferenceName: 'listAvailableBlocks',
   description:
-    "Discover available block types for the currently open Lexical document. Returns schema for all registered blocks including: 'jupyter-cell' (executable code cell with language property), standard blocks (paragraph, heading [NOT markdown - semantic HTML with tag property], code, quote, list, table). Use this to see exact block type names and required properties before calling insertBlock.",
+    "Discover available block types for the currently open Lexical document. Available blocks: paragraph, heading, quote, code, list, horizontalrule, jupyter-cell (executable), equation, image, youtube (video embed), table (data table), collapsible (expandable section). Returns detailed schema including required/optional metadata for each block type. Set type parameter to specific block type (e.g., 'youtube', 'table') or 'all' (default) for all blocks. Use this BEFORE calling insertBlock to see exact type names and required metadata format.",
 
   parameters: zodToToolParameters(listAvailableBlocksParamsSchema),
 
   operation: 'listAvailableBlocks',
 
   config: {
-    confirmationMessage: (params: { category?: string }) =>
-      params.category
-        ? `List available ${params.category} block types?`
+    confirmationMessage: (params: { type?: string }) =>
+      params.type && params.type !== 'all'
+        ? `List details for '${params.type}' block type?`
         : 'List all available block types?',
-    invocationMessage: (params: { category?: string }) =>
-      params.category
-        ? `Listing ${params.category} block types`
+    invocationMessage: (params: { type?: string }) =>
+      params.type && params.type !== 'all'
+        ? `Listing '${params.type}' block type details`
         : 'Listing all available block types',
     requiresConfirmation: false,
     canBeReferencedInPrompt: true,

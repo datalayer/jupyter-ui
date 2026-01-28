@@ -17,7 +17,7 @@
 import { describe, it, expect, beforeEach } from '@jest/globals';
 import { OperationRunner } from '../core/operationRunner';
 import { insertCellOperation } from '../operations/insertCell';
-import { deleteCellOperation } from '../operations/deleteCell';
+import { deleteCellsOperation } from '../operations/deleteCells';
 import { updateCellOperation } from '../operations/updateCell';
 import { readCellOperation } from '../operations/readCell';
 import { readAllCellsOperation } from '../operations/readAllCells';
@@ -125,7 +125,7 @@ describe('OperationRunner', () => {
   describe('deleteCell operation', () => {
     it('should return structured data with format=json', async () => {
       const result = await runner.execute(
-        deleteCellOperation,
+        deleteCellsOperation,
         { indices: [2] },
         { ...baseContext, format: 'json' }
       );
@@ -137,7 +137,7 @@ describe('OperationRunner', () => {
 
     it('should return TOON string with format=toon', async () => {
       const result = await runner.execute(
-        deleteCellOperation,
+        deleteCellsOperation,
         { indices: [2] },
         { ...baseContext, format: 'toon' }
       );

@@ -210,6 +210,19 @@ export const Output = ({
       adapter.clear();
     }
   }, [clearTrigger, adapter]);
+
+  const handleClearOutputs = () => {
+    // Use same logic as rendering: check both adapter and propsAdapter
+    const currentAdapter = adapter || propsAdapter;
+
+    if (currentAdapter) {
+      currentAdapter.clear();
+    } else {
+      // If no adapter, clear outputs state directly
+      setOutputs([]);
+    }
+  };
+
   return (
     <>
       {showEditor && adapter && id && (
@@ -233,61 +246,148 @@ export const Output = ({
           />
         </Box>
       )}
-      {adapter && (
-        <Box display="flex">
-          <Box flexGrow={1}>
-            {kernel && kernelStatus !== 'idle' && showKernelProgressBar && (
-              <KernelProgressBar />
-            )}
-          </Box>
-          {showControl && (
-            <Box style={{ marginTop: '-13px' }}>
-              <KernelActionMenu kernel={kernel} outputAdapter={adapter} />
-            </Box>
-          )}
-        </Box>
-      )}
-      {outputs && (
+      <Box
+        sx={{
+          position: 'relative',
+          margin: 0,
+          padding: 0,
+          paddingTop: '2px',
+          minHeight: '20px',
+        }}
+      >
+        {/* Floating controls (progress bar + action menu) in gap above output */}
         <Box
           sx={{
+            position: 'absolute',
+            top: '-5px',
+            left: 0,
+            right: 0,
+            zIndex: 10,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
             margin: 0,
             padding: 0,
-            '& .jp-OutputArea': {
-              fontSize: '10px',
+            backgroundColor: 'transparent',
+            transition: 'opacity 0.2s ease-in-out',
+            opacity: 1,
+            pointerEvents: 'auto',
+            height: '3px',
+            '& span[data-component="ProgressBar"]': {
+              height: '3px !important',
+              backgroundColor: 'transparent !important',
             },
-            '& .jp-OutputPrompt': {
-              //              display: 'none',
+            '& .Progress': {
+              height: '3px !important',
+              backgroundColor: 'transparent !important',
             },
-            '& .jp-OutputArea-prompt': {
-              display: 'none',
-              //              width: '0px',
+            '& .Progress-item': {
+              height: '3px !important',
             },
-            '& pre': {
-              fontSize: '12px',
-              wordBreak: 'break-all',
-              wordWrap: 'break-word',
-              whiteSpace: 'pre-wrap',
+            '& [role="progressbar"]': {
+              height: '3px !important',
             },
           }}
         >
-          {(() => {
-            const currentAdapter = adapter || propsAdapter;
-            return lumino ? (
-              currentAdapter ? (
-                <Lumino>{currentAdapter.outputArea}</Lumino>
-              ) : null
-            ) : (
-              outputs && (
-                <>
-                  {outputs.map((output: IOutput, index: number) => {
-                    return <OutputRenderer key={index} output={output} />;
-                  })}
-                </>
-              )
-            );
-          })()}
+          <Box
+            flexGrow={1}
+            sx={{
+              height: '3px',
+              backgroundColor:
+                kernel && kernelStatus !== 'idle'
+                  ? 'rgba(128, 128, 128, 0.2)'
+                  : 'transparent',
+              position: 'relative',
+            }}
+          >
+            {kernel && kernelStatus !== 'idle' && showKernelProgressBar && (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: '3px',
+                  backgroundColor: 'transparent',
+                  '& > *': {
+                    backgroundColor: 'transparent !important',
+                  },
+                }}
+              >
+                <KernelProgressBar />
+              </Box>
+            )}
+          </Box>
+          <Box
+            sx={{
+              marginLeft: '4px',
+              height: '3px',
+              display: 'flex',
+              alignItems: 'center',
+              '& button': {
+                height: '12px !important',
+                width: '16px !important',
+                minWidth: '16px !important',
+                padding: '0 !important',
+                borderRadius: '2px !important',
+              },
+              '& button svg': {
+                width: '10px !important',
+                height: '10px !important',
+              },
+            }}
+          >
+            <KernelActionMenu
+              kernel={kernel}
+              outputAdapter={adapter}
+              onClearOutputs={handleClearOutputs}
+            />
+          </Box>
         </Box>
-      )}
+
+        {/* Output area */}
+        {outputs && (
+          <Box
+            sx={{
+              margin: 0,
+              padding: 0,
+              '& .jp-OutputArea': {
+                fontSize: '10px',
+              },
+              '& .jp-OutputPrompt': {
+                //              display: 'none',
+              },
+              '& .jp-OutputArea-prompt': {
+                display: 'none',
+                //              width: '0px',
+              },
+              '& pre': {
+                fontSize: '12px',
+                wordBreak: 'break-all',
+                wordWrap: 'break-word',
+                whiteSpace: 'pre-wrap',
+              },
+            }}
+          >
+            {(() => {
+              const currentAdapter = adapter || propsAdapter;
+              return lumino ? (
+                currentAdapter ? (
+                  <Lumino>{currentAdapter.outputArea}</Lumino>
+                ) : null
+              ) : (
+                outputs && (
+                  <>
+                    {outputs.map((output: IOutput, index: number) => {
+                      return <OutputRenderer key={index} output={output} />;
+                    })}
+                  </>
+                )
+              );
+            })()}
+          </Box>
+        )}
+      </Box>
     </>
   );
 };

@@ -465,57 +465,38 @@ export class NotebookAdapter {
   }
 
   /**
-   * Delete cell(s) at the specified index/indices (aligned with deleteCell tool and Jupyter MCP Server).
+   * Delete multiple cells at the specified indices.
+   * Handles complex logic including validation and reverse-order deletion.
    *
-   * @param index - Single cell index, array of indices, or undefined.
-   *   - Single number: Deletes that cell
-   *   - Array: Deletes all cells at those indices (in reverse order to prevent shifting)
-   *   - Undefined: Deletes the active cell if one exists
+   * @param indices - Array of cell indices to delete
+   * @throws {Error} If any index is out of range
    *
    * @remarks
    * This method matches the Jupyter MCP Server behavior:
    * - Validates ALL indices are in range before deleting any
    * - Deletes in reverse order (highest to lowest) to prevent index shifting
    * - Throws error with MCP-compatible message format if any index is out of range
-   *
-   * @throws {Error} If any index is out of range
    */
-  deleteCell(index?: number | number[]): void {
+  deleteCell(indices: number[]): void {
     const cells = this._notebook.model?.cells;
     const cellCount = cells?.length ?? 0;
 
-    if (index !== undefined) {
-      // Convert single index to array for unified handling
-      const indices = Array.isArray(index) ? index : [index];
-
-      // Validate ALL indices first (match Jupyter MCP Server error format)
-      for (const idx of indices) {
-        if (idx < 0 || idx >= cellCount) {
-          throw new Error(
-            `Cell index ${idx} is out of range. Notebook has ${cellCount} cells.`
-          );
-        }
+    // Validate ALL indices first (match Jupyter MCP Server error format)
+    for (const idx of indices) {
+      if (idx < 0 || idx >= cellCount) {
+        throw new Error(
+          `Cell index ${idx} is out of range. Notebook has ${cellCount} cells.`
+        );
       }
+    }
 
-      // Sort indices in REVERSE order (highest to lowest) to prevent index shifting
-      // This matches the Jupyter MCP Server behavior
-      const sortedIndices = [...indices].sort((a, b) => b - a);
+    // Sort indices in REVERSE order (highest to lowest) to prevent index shifting
+    // This matches the Jupyter MCP Server behavior
+    const sortedIndices = [...indices].sort((a, b) => b - a);
 
-      // Delete each cell in reverse order
-      for (const idx of sortedIndices) {
-        this.setActiveCell(idx);
-        this.deleteCells();
-      }
-    } else {
-      // No index provided: check if there's an active cell to delete
-      const activeCell = this._notebook.activeCell;
-
-      if (!activeCell) {
-        console.warn('[NotebookAdapter.deleteCell] No active cell to delete');
-        return; // Safely return without deleting
-      }
-
-      // Active cell exists, safe to delete
+    // Delete each cell in reverse order
+    for (const idx of sortedIndices) {
+      this.setActiveCell(idx);
       this.deleteCells();
     }
   }

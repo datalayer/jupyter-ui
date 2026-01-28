@@ -19,8 +19,8 @@ import { insertBlockParamsSchema } from '../schemas/insertBlock';
  *
  * Supports inserting various block types:
  * - paragraph: Regular text paragraph
- * - heading: Semantic HTML heading (NOT markdown - use plain text, specify tag property for h1-h6)
- * - code: Code block (specify language in properties)
+ * - heading: Semantic HTML heading (NOT markdown - use plain text, specify tag in metadata for h1-h6)
+ * - code: Code block (specify language in metadata)
  * - quote: Blockquote
  * - list/listitem: List blocks
  * - jupyter-cell: Executable Jupyter code cells
@@ -30,7 +30,7 @@ export const insertBlockTool: ToolDefinition = {
   displayName: 'Insert Lexical Block',
   toolReferenceName: 'insertBlock',
   description:
-    "Insert different type of content with blocks. Use listAvailableBlocks to get availables blocks. When inserting MULTIPLE blocks sequentially (e.g., creating a document outline with heading + paragraph + code), ALWAYS use afterId: 'BOTTOM' for each insertion to append blocks in order. For single insertions, call readAllBlocks first to see document structure. Position blocks using afterId: 'TOP' (beginning), 'BOTTOM' (end - REQUIRED for sequential inserts), or a specific block_id value from readAllBlocks. IMPORTANT: heading blocks are semantic HTML (NOT markdown) - use plain text in source field without # symbols, specify tag property (h1-h6) instead. Use listAvailableBlocks to see all supported types. Works on active .lexical file.",
+    "Insert blocks into Lexical documents (.dlex files). IMPORTANT: Lexical documents support EXECUTABLE JUPYTER CELLS - use type='jupyter-cell' to insert Python/R/Julia code cells that can be executed via kernel (just like .ipynb notebooks). Other block types: paragraph, heading, code (non-executable syntax highlighting), quote, list, table, collapsible, equation, image, youtube, horizontalrule. CRITICAL: DO NOT use markdown syntax in source field. Heading blocks use PLAIN TEXT (no # symbols) - specify tag metadata (h1-h6) instead. Inline formatting like **bold** or *italic* is automatically converted. ALWAYS call listAvailableBlocks FIRST to see block types and required metadata format. When inserting MULTIPLE blocks sequentially (e.g., creating a document outline with heading + paragraph + code), ALWAYS use afterId: 'BOTTOM' for each insertion to append blocks in order. For single insertions, call readAllBlocks first to see document structure. Position blocks using afterId: 'TOP' (beginning), 'BOTTOM' (end - REQUIRED for sequential inserts), or a specific block_id value from readAllBlocks. To insert blocks INSIDE a collapsible: 1) First insert collapsible (type='collapsible'), which returns a blockId, 2) Then insert nested blocks with metadata.collapsible set to that RETURNED BLOCK ID (NOT 'TOP' or 'BOTTOM'). Example: result = insertBlock({type: 'collapsible', source: 'Section', afterId: 'BOTTOM'}); insertBlock({type: 'paragraph', source: 'text', metadata: {collapsible: result.blockId}, afterId: 'BOTTOM'}). DO NOT use position markers (TOP/BOTTOM) as collapsible IDs - they are only for afterId positioning. Works on active .lexical/.dlex file.",
 
   parameters: zodToToolParameters(insertBlockParamsSchema),
 

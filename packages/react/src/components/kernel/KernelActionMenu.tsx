@@ -17,10 +17,11 @@ import Kernel from '../../jupyter/kernel/Kernel';
 export type KernelActionMenuProps = {
   kernel?: Kernel;
   outputAdapter?: OutputAdapter;
+  onClearOutputs?: () => void;
 };
 
 export const KernelActionMenu = (props: KernelActionMenuProps) => {
-  const { kernel, outputAdapter } = props;
+  const { kernel, outputAdapter, onClearOutputs } = props;
   return (
     <ActionMenu>
       <ActionMenu.Anchor>
@@ -32,43 +33,56 @@ export const KernelActionMenu = (props: KernelActionMenuProps) => {
       </ActionMenu.Anchor>
       <ActionMenu.Overlay>
         <ActionList>
-          {kernel && (
-            <ActionList.Item
-              onSelect={e => {
+          <ActionList.Item
+            disabled={!kernel}
+            onSelect={e => {
+              if (kernel) {
                 kernel.interrupt();
-              }}
-            >
-              <ActionList.LeadingVisual>
-                <StopIcon />
-              </ActionList.LeadingVisual>
-              Interrupt kernel
-            </ActionList.Item>
-          )}
-          {kernel && (
-            <ActionList.Item
-              onSelect={e => {
+              }
+            }}
+          >
+            <ActionList.LeadingVisual>
+              <StopIcon />
+            </ActionList.LeadingVisual>
+            Interrupt kernel
+          </ActionList.Item>
+          <ActionList.Item
+            disabled={!kernel}
+            onSelect={e => {
+              if (kernel) {
                 kernel.restart();
-              }}
-            >
-              <ActionList.LeadingVisual>
-                <RestartIcon />
-              </ActionList.LeadingVisual>
-              Restart kernel
-            </ActionList.Item>
-          )}
-          {outputAdapter && (
-            <ActionList.Item
-              variant="danger"
-              onSelect={e => {
+              }
+            }}
+          >
+            <ActionList.LeadingVisual>
+              <RestartIcon />
+            </ActionList.LeadingVisual>
+            Restart kernel
+          </ActionList.Item>
+          <ActionList.Item
+            variant="danger"
+            disabled={false}
+            onSelect={e => {
+              console.log(
+                '[KernelActionMenu] Clear outputs clicked - onClearOutputs:',
+                !!onClearOutputs,
+                'outputAdapter:',
+                !!outputAdapter
+              );
+              if (onClearOutputs) {
+                onClearOutputs();
+              } else if (outputAdapter) {
                 outputAdapter.clear();
-              }}
-            >
-              <ActionList.LeadingVisual>
-                <PaintbrushIcon />
-              </ActionList.LeadingVisual>
-              Clear outputs
-            </ActionList.Item>
-          )}
+              } else {
+                console.warn('[KernelActionMenu] No clear method available!');
+              }
+            }}
+          >
+            <ActionList.LeadingVisual>
+              <PaintbrushIcon />
+            </ActionList.LeadingVisual>
+            Clear outputs
+          </ActionList.Item>
         </ActionList>
       </ActionMenu.Overlay>
     </ActionMenu>

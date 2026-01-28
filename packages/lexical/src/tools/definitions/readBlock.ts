@@ -24,7 +24,7 @@ export const readBlockTool: ToolDefinition = {
   displayName: 'Read Lexical Block',
   toolReferenceName: 'readBlock',
   description:
-    "Read a single block from the currently open Lexical document by its block_id. Use listAvailableBlocks to get available blocks. Returns the block with: block_id, block_type (e.g. 'heading', 'paragraph', 'jupyter-cell'), source (content as string), metadata (properties like level, language). Use block_id values from readAllBlocks. Works on active .lexical file.",
+    "Read a single block from the currently open Lexical document by its block_id. Use listAvailableBlocks to get available block types. Returns the block with: block_id, block_type (e.g. 'heading', 'paragraph', 'jupyter-cell'), source (content as string), metadata (properties like level, language). Use block_id values from readAllBlocks. Works on active .lexical file.",
 
   parameters: zodToToolParameters(readBlockParamsSchema),
 

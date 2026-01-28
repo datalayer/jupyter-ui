@@ -47,6 +47,125 @@ function generatePreview(block: LexicalBlock): string {
     return '';
   }
 
+  // YouTube: show short URL format
+  if (block.block_type === 'youtube') {
+    const videoID = block.metadata?.videoID as string;
+    return videoID ? `youtu.be/${videoID}` : '(no ID)';
+  }
+
+  // Excalidraw: show brief description
+  if (block.block_type === 'excalidraw') {
+    const data = block.metadata?.data as string;
+    if (data) {
+      try {
+        const elements = JSON.parse(data);
+        if (Array.isArray(elements) && elements.length > 0) {
+          // Extract text snippets
+          const textElements = elements.filter(
+            (el: any) => el.type === 'text' && el.text,
+          );
+          const textSnippets = textElements
+            .slice(0, 2)
+            .map((el: any) => el.text.trim())
+            .filter((t: string) => t.length > 0);
+
+          // Count shape types
+          const shapeTypes: Record<string, number> = {};
+          elements.forEach((el: any) => {
+            if (
+              el.type &&
+              el.type !== 'text' &&
+              el.type !== 'freedraw' &&
+              el.type !== 'selection'
+            ) {
+              shapeTypes[el.type] = (shapeTypes[el.type] || 0) + 1;
+            }
+          });
+
+          const shapeParts: string[] = [];
+          // Map Excalidraw types to readable names
+          const typeNames: Record<string, string> = {
+            rectangle: 'rect',
+            ellipse: 'circle',
+            diamond: 'diamond',
+            arrow: 'arrow',
+            line: 'line',
+          };
+          Object.entries(shapeTypes).forEach(([type, count]) => {
+            const name = typeNames[type] || type;
+            shapeParts.push(count > 1 ? `${count} ${name}s` : `${name}`);
+          });
+
+          // Build description
+          const parts: string[] = [];
+          if (shapeParts.length > 0) {
+            parts.push(shapeParts.slice(0, 3).join(', '));
+          }
+          if (textSnippets.length > 0) {
+            const textPart = textSnippets
+              .map(t => `"${t.length > 15 ? t.slice(0, 15) + '...' : t}"`)
+              .join(', ');
+            parts.push(textPart);
+          }
+
+          if (parts.length > 0) {
+            return parts.join(': ');
+          }
+        }
+      } catch (e) {
+        // If parsing fails, fall through to show diagram info
+      }
+    }
+    return '(empty diagram)';
+  }
+
+  // Table: show brief description
+  if (block.block_type === 'table') {
+    const rows = (block.metadata?.rows as number) || 0;
+    const columns = (block.metadata?.columns as number) || 0;
+    return `${rows}×${columns} table`;
+  }
+
+  // Equation: show brief description
+  if (block.block_type === 'equation') {
+    const equation = (block.metadata?.equation as string) || '';
+    const isInline = block.metadata?.inline;
+    const preview =
+      equation.length > 20 ? equation.slice(0, 20) + '...' : equation;
+    return isInline ? `$${preview}$` : `$$${preview}$$`;
+  }
+
+  // Image: show brief description
+  if (block.block_type === 'image') {
+    const altText = (block.metadata?.altText as string) || '';
+    const src = block.metadata?.src as string;
+    if (altText) {
+      return altText.length > maxLength
+        ? altText.slice(0, maxLength - 3) + '...'
+        : altText;
+    }
+    if (src) {
+      // Extract filename from URL
+      const filename = src.split('/').pop() || src;
+      return filename.length > maxLength
+        ? filename.slice(0, maxLength - 3) + '...'
+        : filename;
+    }
+    return '(image)';
+  }
+
+  // Collapsible: show title
+  if (block.block_type === 'collapsible') {
+    const metadataTitle = block.metadata?.title as string;
+    const sourceTitle = Array.isArray(block.source)
+      ? block.source.join(' ')
+      : block.source;
+    const title = metadataTitle || sourceTitle || '';
+    return title.length > maxLength
+      ? title.slice(0, maxLength - 3) + '...'
+      : title || '(untitled)';
+  }
+
   // Get source as string
   const source = Array.isArray(block.source)
     ? block.source.join('\n')
@@ -110,6 +229,81 @@ export function editorStateToBlocks(
         continue;
       }
 
+      // Skip collapsible-title (merged into container)
+      if (childType === 'collapsible-title') {
+        continue;
+      }
+
+      // Special handling for collapsible-container
+      if (childType === 'collapsible-container') {
+        // 1. Add the container block itself
+        const containerBlock = nodeToBlock(child);
+        if (containerBlock) {
+          blocks.push(containerBlock);
+        }
+
+        // 2. Process children inside collapsible-content
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const containerChildren = (child as any).getChildren?.() || [];
+        const contentNode = containerChildren.find(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (c: any) => c.getType() === 'collapsible-content',
+        );
+
+        if (contentNode) {
+          const collapsibleId = child.getKey();
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const contentChildren = (contentNode as any).getChildren?.() || [];
+
+          for (const contentChild of contentChildren) {
+            const contentChildType = contentChild.getType();
+
+            // Handle jupyter-cell merging inside collapsible
+            if (contentChildType === 'jupyter-input') {
+              // Look for paired output in contentChildren
+              let outputNode = null;
+              const contentChildIndex = contentChildren.indexOf(contentChild);
+              for (
+                let j = contentChildIndex + 1;
+                j < contentChildren.length;
+                j++
+              ) {
+                if (contentChildren[j].getType() === 'jupyter-output') {
+                  outputNode = contentChildren[j];
+                  processedOutputIds.add(outputNode.getKey());
+                  break;
+                }
+              }
+
+              const merged = mergeJupyterNodes(contentChild, outputNode);
+              if (merged) {
+                merged.metadata = {
+                  ...merged.metadata,
+                  collapsible: collapsibleId,
+                };
+                blocks.push(merged);
+              }
+            } else if (contentChildType === 'jupyter-output') {
+              // Skip if already processed
+              if (!processedOutputIds.has(contentChild.getKey())) {
+                processedOutputIds.add(contentChild.getKey());
+              }
+            } else {
+              // Regular block inside collapsible
+              const childBlock = nodeToBlock(contentChild);
+              if (childBlock) {
+                childBlock.metadata = {
+                  ...childBlock.metadata,
+                  collapsible: collapsibleId,
+                };
+                blocks.push(childBlock);
+              }
+            }
+          }
+        }
+        continue;
+      }
+
       // For jupyter-input nodes, find and merge with paired output node
       if (childType === 'jupyter-input') {
         const inputNode = child;
@@ -140,13 +334,18 @@ export function editorStateToBlocks(
     }
   });
 
-  // Return brief format if requested (block_id, block_type, and preview)
+  // Return brief format if requested (block_id, block_type, preview, collapsible)
   if (format === 'brief') {
-    return blocks.map(block => ({
-      block_id: block.block_id,
-      block_type: block.block_type,
-      preview: generatePreview(block),
-    }));
+    return blocks.map(block => {
+      const briefBlock: BriefBlock = {
+        block_id: block.block_id,
+        block_type: block.block_type,
+        preview: generatePreview(block),
+        // Always include collapsible (empty string if not inside collapsible) for consistent TOON output
+        collapsible: (block.metadata?.collapsible as string) || '',
+      };
+      return briefBlock;
+    });
   }
 
   return blocks;
@@ -288,25 +487,50 @@ export function nodeToBlock(node: LexicalNode): LexicalBlock | null {
 
   // Paragraph (default)
   if (type === 'paragraph') {
-    // Check if paragraph contains only an equation child
-    // Equations get wrapped in paragraphs by the EquationsPlugin
+    // Check if paragraph contains only special child nodes that get wrapped
+    // Equations and Excalidraw get wrapped in paragraphs by their respective plugins
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const children = 'getChildren' in node ? (node as any).getChildren() : [];
 
-    if (children.length === 1 && children[0].getType() === 'equation') {
-      // Extract the equation child instead of the paragraph
-      const equationNode = children[0];
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const eqAny = equationNode as any;
-      const equation = eqAny.getEquation?.() || eqAny.__equation || '';
-      const inline = eqAny.getInline?.() ?? eqAny.__inline ?? false;
+    if (children.length === 1) {
+      const childType = children[0].getType();
 
-      return {
-        block_id: equationNode.getKey(), // Use equation's ID, not paragraph's
-        block_type: 'equation',
-        source: equation,
-        metadata: { equation, inline },
-      };
+      // Extract equation child
+      if (childType === 'equation') {
+        const equationNode = children[0];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const eqAny = equationNode as any;
+        const equation = eqAny.getEquation?.() || eqAny.__equation || '';
+        const inline = eqAny.getInline?.() ?? eqAny.__inline ?? false;
+
+        return {
+          block_id: equationNode.getKey(), // Use equation's ID, not paragraph's
+          block_type: 'equation',
+          source: equation,
+          metadata: { equation, inline },
+        };
+      }
+
+      // Extract excalidraw child
+      if (childType === 'excalidraw') {
+        const excalidrawNode = children[0];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const exAny = excalidrawNode as any;
+        const data = exAny.__data || '[]';
+        const width = exAny.getWidth?.() || exAny.__width || 'inherit';
+        const height = exAny.getHeight?.() || exAny.__height || 'inherit';
+
+        return {
+          block_id: excalidrawNode.getKey(), // Use excalidraw's ID, not paragraph's
+          block_type: 'excalidraw',
+          source: '',
+          metadata: {
+            data,
+            width: width === 'inherit' ? undefined : width,
+            height: height === 'inherit' ? undefined : height,
+          },
+        };
+      }
     }
 
     // Regular paragraph
@@ -389,15 +613,113 @@ export function nodeToBlock(node: LexicalNode): LexicalBlock | null {
     };
   }
 
+  // YouTube
+  if (type === 'youtube') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const nodeAny = node as any;
+    const videoID = nodeAny.getId?.() || nodeAny.__id || '';
+    return {
+      block_id,
+      block_type: 'youtube',
+      source: '',
+      metadata: { videoID },
+    };
+  }
+
+  // Excalidraw
+  if (type === 'excalidraw') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const nodeAny = node as any;
+    const data = nodeAny.__data || '[]';
+    const width = nodeAny.getWidth?.() || nodeAny.__width || 'inherit';
+    const height = nodeAny.getHeight?.() || nodeAny.__height || 'inherit';
+
+    return {
+      block_id,
+      block_type: 'excalidraw',
+      source: '',
+      metadata: {
+        data,
+        width: width === 'inherit' ? undefined : width,
+        height: height === 'inherit' ? undefined : height,
+      },
+    };
+  }
+
   // Table
   if (type === 'table') {
-    const text = node.getTextContent();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const nodeAny = node as any;
+    const tableRows = nodeAny.getChildren?.() || [];
+    const rows = tableRows.length;
+    const columns = rows > 0 ? tableRows[0].getChildren?.()?.length || 0 : 0;
+
+    // Extract cell data as 2D array for better readability
+    const cellData: string[][] = [];
+    for (const rowNode of tableRows) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const cells = (rowNode as any).getChildren?.() || [];
+      const rowData: string[] = [];
+      for (const cellNode of cells) {
+        rowData.push(cellNode.getTextContent().trim());
+      }
+      cellData.push(rowData);
+    }
+
+    // Create markdown-style table representation for source
+    const markdownTable = cellData
+      .map((row, idx) => {
+        const cells = row.join(' | ');
+        if (idx === 0) {
+          // Add header separator
+          const separator = row.map(() => '---').join(' | ');
+          return `| ${cells} |\n| ${separator} |`;
+        }
+        return `| ${cells} |`;
+      })
+      .join('\n');
+
     return {
       block_id,
       block_type: 'table',
-      source: text,
+      source: markdownTable,
+      metadata: {
+        rows,
+        columns,
+        data: cellData, // Include raw cell data for programmatic access
+      },
     };
   }
+
+  // Collapsible Container - create container block with title only
+  if (type === 'collapsible-container') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const nodeAny = node as any;
+    const open = nodeAny.getOpen?.() || nodeAny.__open || false;
+    const children = nodeAny.getChildren?.() || [];
+
+    let title = '';
+    if (children[0]?.getType() === 'collapsible-title') {
+      title = children[0].getTextContent();
+    }
+
+    return {
+      block_id,
+      block_type: 'collapsible',
+      source: title,
+      metadata: {
+        open,
+        title,
+      },
+    };
+  }
+
+  // Skip collapsible-title (merged into container block)
+  if (type === 'collapsible-title') {
+    return null;
+  }
+
+  // Don't skip collapsible-content - it will be processed by editorStateToBlocks
 
   // Unknown types - return as generic block to avoid data loss
   const text = node.getTextContent();
@@ -559,6 +881,104 @@ export function updateBlock(
 }
 
 /**
+ * Parse markdown formatting from text and convert to Lexical format segments.
+ * Supports: **bold**, *italic*, ***bold+italic***, ~~strikethrough~~, `code`
+ *
+ * @param text - Text potentially containing markdown formatting
+ * @returns Array of {text, format} segments
+ */
+export function parseMarkdownFormatting(
+  text: string,
+): Array<{ text: string; format: number }> {
+  // Lexical format flags
+  const BOLD = 1;
+  const ITALIC = 2;
+  const STRIKETHROUGH = 4;
+  const CODE = 16;
+
+  const segments: Array<{ text: string; format: number }> = [];
+  let currentIndex = 0;
+
+  // Regex patterns for markdown (order matters - check longer patterns first)
+  const patterns = [
+    // Bold + Italic: ***text***
+    { regex: /\*\*\*(.*?)\*\*\*/g, format: BOLD | ITALIC },
+    // Bold: **text**
+    { regex: /\*\*(.*?)\*\*/g, format: BOLD },
+    // Italic: *text* (single asterisk)
+    { regex: /\*(.*?)\*/g, format: ITALIC },
+    // Strikethrough: ~~text~~
+    { regex: /~~(.*?)~~/g, format: STRIKETHROUGH },
+    // Code: `text`
+    { regex: /`(.*?)`/g, format: CODE },
+  ];
+
+  // Find all markdown patterns and their positions
+  const matches: Array<{
+    start: number;
+    end: number;
+    text: string;
+    format: number;
+  }> = [];
+
+  for (const pattern of patterns) {
+    // Reset regex state before using (critical for global flag)
+    pattern.regex.lastIndex = 0;
+    let match: RegExpExecArray | null;
+    while ((match = pattern.regex.exec(text)) !== null) {
+      // Skip if this match overlaps with an already-found match
+      const overlaps = matches.some(
+        m =>
+          (match!.index >= m.start && match!.index < m.end) ||
+          (match!.index + match![0].length > m.start &&
+            match!.index + match![0].length <= m.end),
+      );
+      if (!overlaps) {
+        matches.push({
+          start: match.index,
+          end: match.index + match[0].length,
+          text: match[1], // Captured group (text without markdown syntax)
+          format: pattern.format,
+        });
+      }
+    }
+  }
+
+  // Sort matches by start position
+  matches.sort((a, b) => a.start - b.start);
+
+  // Build segments with formatting
+  for (const match of matches) {
+    // Add plain text before this formatted segment
+    if (match.start > currentIndex) {
+      const plainText = text.substring(currentIndex, match.start);
+      if (plainText) {
+        segments.push({ text: plainText, format: 0 });
+      }
+    }
+
+    // Add formatted segment
+    segments.push({ text: match.text, format: match.format });
+    currentIndex = match.end;
+  }
+
+  // Add remaining plain text
+  if (currentIndex < text.length) {
+    const plainText = text.substring(currentIndex);
+    if (plainText) {
+      segments.push({ text: plainText, format: 0 });
+    }
+  }
+
+  // If no markdown found, return text as single segment
+  if (segments.length === 0) {
+    segments.push({ text, format: 0 });
+  }
+
+  return segments;
+}
+
+/**
  * Convert a LexicalBlock to a Lexical node.
  * Creates the appropriate node type with content.
  */
@@ -571,7 +991,7 @@ function blockToNode(block: LexicalBlock): LexicalNode | null {
   // Helper to create text nodes with formatting
   const createTextNodes = (): LexicalNode[] => {
     if (block.formatting && block.formatting.length > 0) {
-      // Create separate text nodes for each formatted segment
+      // Create separate text nodes for each formatted segment (pre-formatted)
       return block.formatting.map(seg => {
         const textNode = $createTextNode(seg.text);
         if (seg.format) {
@@ -580,8 +1000,15 @@ function blockToNode(block: LexicalBlock): LexicalNode | null {
         return textNode;
       });
     } else {
-      // Simple text node
-      return [textContent ? $createTextNode(textContent) : $createTextNode('')];
+      // Parse markdown formatting from text content
+      const segments = parseMarkdownFormatting(textContent || '');
+      return segments.map(seg => {
+        const textNode = $createTextNode(seg.text);
+        if (seg.format) {
+          textNode.setFormat(seg.format);
+        }
+        return textNode;
+      });
     }
   };
 

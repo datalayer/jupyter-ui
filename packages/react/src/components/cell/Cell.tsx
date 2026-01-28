@@ -153,7 +153,7 @@ export const Cell = ({
           position: 'relative',
         },
         '& .jp-Cell-outputArea': {
-          paddingBottom: '30px',
+          paddingBottom: '2px',
         },
         '& .jp-CodeMirrorEditor': {
           cursor: 'text !important',

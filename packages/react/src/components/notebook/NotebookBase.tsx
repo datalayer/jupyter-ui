@@ -23,6 +23,7 @@ import {
   InlineCompleter,
   KernelCompleterProvider,
   ProviderReconciliator,
+  type ICompletionProvider,
   type IInlineCompletionProvider,
 } from '@jupyterlab/completer';
 import { nullTranslator } from '@jupyterlab/translation';
@@ -161,6 +162,13 @@ export interface INotebookBaseProps {
    * Platform-specific providers can be injected here (e.g., VS Code LLM, custom AI models).
    */
   inlineProviders?: IInlineCompletionProvider[];
+  /**
+   * Custom Tab completion providers for dropdown menu.
+   *
+   * These providers are used for traditional dropdown completions (triggered by Tab key).
+   * Platform-specific providers can be injected here (e.g., LSP servers).
+   */
+  providers?: ICompletionProvider[];
 }
 
 /**
@@ -216,11 +224,17 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
       props.inlineProviders
     );
 
+    // Use custom providers if provided, otherwise use default KernelCompleterProvider
+    const dropdownProviders =
+      props.providers && props.providers.length > 0
+        ? [new KernelCompleterProvider(), ...props.providers]
+        : [new KernelCompleterProvider()];
+
     const reconciliator = new ProviderReconciliator({
       context: {
         widget,
       },
-      providers: [new KernelCompleterProvider()],
+      providers: dropdownProviders,
       inlineProviders: props.inlineProviders,
       inlineProvidersSettings,
       timeout: COMPLETER_TIMEOUT_MILLISECONDS,
@@ -256,7 +270,7 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
       Widget.attach(inlineCompleter, document.body);
 
       // Set up keyboard shortcut for accepting inline completions
-      // Tab key should accept the current suggestion
+      // Tab key should accept the current suggestion OR cancel pending requests
       const handleKeyDown = (event: KeyboardEvent) => {
         if (
           event.key === 'Tab' &&
@@ -265,16 +279,23 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
           !event.metaKey &&
           !event.altKey
         ) {
-          // Check if there's an active inline completion
+          // Check if there's an active inline completion showing
           if (
             inlineCompleter &&
             inlineCompleter.model &&
             inlineCompleter.current
           ) {
+            // Accept the visible suggestion
             event.preventDefault();
             event.stopPropagation();
             inlineCompleter.accept();
             return false;
+          } else if (inlineCompleter && inlineCompleter.model) {
+            // No visible suggestion but model exists
+            // Cancel any pending inline completion requests
+            // This allows Tab to invoke dropdown completer instead
+            inlineCompleter.model.reset();
+            // Let Tab propagate to invoke dropdown completer
           }
         }
         // Escape to reject
@@ -602,13 +623,20 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
           );
           // Create a dummy session if none exists to enable inline completions without a kernel
           const sessionForCompletion = changes.newValue || ({} as any);
+
+          // Use custom providers if provided, otherwise use default KernelCompleterProvider
+          const dropdownProviders =
+            props.providers && props.providers.length > 0
+              ? [provider, ...props.providers]
+              : [provider];
+
           const reconciliator = new ProviderReconciliator({
             context: {
               widget: panel,
               editor,
               session: sessionForCompletion,
             },
-            providers: [provider],
+            providers: dropdownProviders,
             inlineProviders: props.inlineProviders,
             inlineProvidersSettings,
             timeout: COMPLETER_TIMEOUT_MILLISECONDS,
@@ -650,11 +678,18 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
         const inlineProvidersSettings = generateInlineProviderSettings(
           props.inlineProviders
         );
+
+        // Use custom providers if provided, otherwise use default KernelCompleterProvider
+        const dropdownProviders =
+          props.providers && props.providers.length > 0
+            ? [new KernelCompleterProvider(), ...props.providers]
+            : [new KernelCompleterProvider()];
+
         completer.reconciliator = new ProviderReconciliator({
           context: {
             widget: new Widget(),
           },
-          providers: [new KernelCompleterProvider()],
+          providers: dropdownProviders,
           inlineProviders: props.inlineProviders,
           inlineProvidersSettings,
           timeout: COMPLETER_TIMEOUT_MILLISECONDS,

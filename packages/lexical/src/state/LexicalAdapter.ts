@@ -16,7 +16,7 @@
  * @module tools/state/LexicalAdapter
  */
 
-import type { LexicalEditor } from 'lexical';
+import type { LexicalEditor, LexicalNode } from 'lexical';
 import {
   $getRoot,
   $getSelection,
@@ -37,7 +37,10 @@ import type {
   BlockFormat,
   BriefBlock,
 } from '../tools/core/types';
-import { editorStateToBlocks } from '../tools/utils/blocks';
+import {
+  editorStateToBlocks,
+  parseMarkdownFormatting,
+} from '../tools/utils/blocks';
 
 /**
  * Result of a document operation
@@ -169,6 +172,165 @@ export class LexicalAdapter {
     // Debug logging removed to satisfy ESLint no-console rule
     // console.log(`[LexicalAdapter] insertBlock: type=${block.block_type}, afterBlockId=${afterBlockId}`);
 
+    // STEP 0: Check if source contains block-level markdown
+    const sourceText = Array.isArray(block.source)
+      ? block.source.join('\n')
+      : block.source;
+
+    if (this.containsBlockLevelMarkdown(sourceText)) {
+      // Parse into multiple blocks
+      const parsedBlocks = this.parseMarkdownToBlocks(sourceText);
+
+      if (parsedBlocks.length > 1) {
+        // Insert each block sequentially
+        let currentAfterBlockId = afterBlockId;
+        let lastBlockId: string | undefined;
+
+        for (const parsedBlock of parsedBlocks) {
+          // Preserve original block's metadata (e.g., collapsible)
+          parsedBlock.metadata = {
+            ...parsedBlock.metadata,
+            ...block.metadata,
+          };
+
+          // Insert block
+          const result = await this.insertBlock(
+            parsedBlock,
+            currentAfterBlockId,
+          );
+
+          if (!result.success) {
+            return result; // Return first error
+          }
+
+          // Chain insertions: next block goes after this one
+          if (result.blockId) {
+            lastBlockId = result.blockId;
+            currentAfterBlockId = result.blockId;
+          }
+        }
+
+        return {
+          success: true,
+          blockId: lastBlockId,
+          message: `Inserted ${parsedBlocks.length} blocks from markdown`,
+        };
+      }
+    }
+
+    // Special case: block belongs inside a collapsible
+    if (block.metadata?.collapsible) {
+      const collapsibleId = block.metadata.collapsible as string;
+
+      // Detect common mistake: using position markers as collapsible IDs
+      if (collapsibleId === 'TOP' || collapsibleId === 'BOTTOM') {
+        return Promise.resolve({
+          success: false,
+          error:
+            `Invalid collapsible ID: "${collapsibleId}". ` +
+            `To insert blocks inside a collapsible: ` +
+            `1) First insert the collapsible container (returns blockId), ` +
+            `2) Then insert nested blocks with properties.collapsible set to that blockId. ` +
+            `Use afterId for positioning (TOP/BOTTOM/blockId), not properties.collapsible.`,
+        });
+      }
+
+      return new Promise(resolve => {
+        this._editor.update(() => {
+          const root = $getRoot();
+          const children = root.getChildren();
+
+          // Find the collapsible container
+          const collapsible = children.find(c => c.getKey() === collapsibleId);
+
+          if (
+            !collapsible ||
+            collapsible.getType() !== 'collapsible-container'
+          ) {
+            resolve({
+              success: false,
+              error: `Collapsible container ${collapsibleId} not found`,
+            });
+            return;
+          }
+
+          // Find the collapsible-content node
+          const containerChildren = (collapsible as any).getChildren?.() || [];
+          const contentNode = containerChildren.find(
+            (c: any) => c.getType() === 'collapsible-content',
+          );
+
+          if (!contentNode) {
+            resolve({
+              success: false,
+              error: `Collapsible content node not found in ${collapsibleId}`,
+            });
+            return;
+          }
+
+          // Strategy: Insert the block normally (at root level), then move it into the collapsible-content
+          // This works for both simple and complex block types
+
+          // Remove collapsible from metadata to avoid recursion
+          const blockForInsertion: LexicalBlock = {
+            ...block,
+            metadata: { ...block.metadata, collapsible: undefined },
+          };
+
+          // Insert at root level using normal insertion logic
+          this.insertBlock(blockForInsertion, 'BOTTOM')
+            .then(result => {
+              if (!result.success || !result.blockId) {
+                resolve({
+                  success: false,
+                  error: `Failed to insert ${block.block_type}: ${result.error || 'Unknown error'}`,
+                });
+                return;
+              }
+
+              // Now move the inserted node into the collapsible-content
+              setTimeout(() => {
+                this._editor.update(() => {
+                  const root = $getRoot();
+                  const children = root.getChildren();
+
+                  // Find the node we just inserted
+                  const insertedNode = children.find(
+                    c => c.getKey() === result.blockId,
+                  );
+
+                  if (!insertedNode) {
+                    resolve({
+                      success: false,
+                      error: `Could not find inserted node ${result.blockId}`,
+                    });
+                    return;
+                  }
+
+                  // Remove from root
+                  insertedNode.remove();
+
+                  // Append to collapsible content
+                  contentNode.append(insertedNode);
+
+                  resolve({
+                    success: true,
+                    blockId: result.blockId,
+                    message: `Block of type '${block.block_type}' inserted inside collapsible ${collapsibleId}`,
+                  });
+                });
+              }, 50); // Wait a bit longer to ensure command-based insertions complete
+            })
+            .catch(error => {
+              resolve({
+                success: false,
+                error: `Failed to insert block: ${error.message || String(error)}`,
+              });
+            });
+        });
+      });
+    }
+
     // Handle special block types that require commands
     if (this.requiresCommand(block.block_type)) {
       return this.insertViaCommand(block, afterBlockId);
@@ -179,15 +341,103 @@ export class LexicalAdapter {
   }
 
   /**
-   * Delete a block by ID
+   * Delete multiple blocks by their IDs.
+   * Handles complex logic including validation, sorting, and cascading deletions.
+   *
+   * @param blockIds - Array of block IDs to delete
+   * @returns Promise with operation result including deleted blocks info
    */
-  async deleteBlock(blockId: string): Promise<OperationResult> {
+  async deleteBlock(
+    blockIds: string[],
+  ): Promise<OperationResult & { deletedBlocks?: Array<{ id: string }> }> {
+    try {
+      // Read all blocks to validate IDs exist and get positions
+      const blocks = await this.getBlocks('detailed');
+      const blockIdSet = new Set(blocks.map(block => block.block_id));
+
+      // Validate ALL IDs exist
+      const missingIds: string[] = [];
+      for (const id of blockIds) {
+        if (!blockIdSet.has(id)) {
+          missingIds.push(id);
+        }
+      }
+
+      if (missingIds.length > 0) {
+        return {
+          success: false,
+          error: `Block ID(s) not found: ${missingIds.join(', ')}. Document has ${blocks.length} blocks.`,
+        };
+      }
+
+      // Sort IDs in reverse order to delete children before parents (collapsibles last)
+      // This prevents cascading deletions from causing "block not found" errors
+      const sortedIds = [...blockIds].sort((a, b) => {
+        const indexA = blocks.findIndex(block => block.block_id === a);
+        const indexB = blocks.findIndex(block => block.block_id === b);
+        // Sort in reverse order (higher index first)
+        return indexB - indexA;
+      });
+
+      const deletedBlocks: Array<{ id: string }> = [];
+
+      // Delete each block in reverse order
+      for (const blockId of sortedIds) {
+        const result = await this._deleteSingleBlock(blockId);
+
+        if (result.success) {
+          deletedBlocks.push({ id: blockId });
+        } else if (result.error?.includes('not found')) {
+          // Block was already deleted by cascading deletion (parent collapsible removed)
+          // This is expected behavior, skip and continue
+          continue;
+        } else {
+          // Other errors should propagate
+          return result;
+        }
+      }
+
+      return {
+        success: true,
+        deletedBlocks,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+      };
+    }
+  }
+
+  /**
+   * Delete a single block by ID (internal helper).
+   */
+  private async _deleteSingleBlock(blockId: string): Promise<OperationResult> {
     return new Promise(resolve => {
       this._editor.update(() => {
         try {
           const root = $getRoot();
-          const children = root.getChildren();
-          const node = children.find(child => child.getKey() === blockId);
+
+          // Helper function to recursively search for node by key
+          const findNodeByKey = (node: any, targetKey: string): any => {
+            if (node.getKey() === targetKey) {
+              return node;
+            }
+
+            // Check children if the node has them
+            if ('getChildren' in node) {
+              const children = node.getChildren();
+              for (const child of children) {
+                const found = findNodeByKey(child, targetKey);
+                if (found) return found;
+              }
+            }
+
+            return null;
+          };
+
+          // Search for the node recursively
+          const node = findNodeByKey(root, blockId);
 
           if (!node) {
             resolve({
@@ -197,7 +447,23 @@ export class LexicalAdapter {
             return;
           }
 
-          node.remove();
+          const nodeType = node.getType();
+          const parent = node.getParent();
+
+          // For equation and excalidraw nodes, always remove the parent paragraph wrapper
+          // These are always wrapped in paragraphs by their respective plugins
+          if (
+            (nodeType === 'equation' || nodeType === 'excalidraw') &&
+            parent &&
+            parent.getType() === 'paragraph'
+          ) {
+            // Remove the paragraph wrapper
+            parent.remove();
+          } else {
+            // Normal node - remove it directly
+            node.remove();
+          }
+
           resolve({ success: true });
         } catch (error) {
           resolve({
@@ -217,7 +483,7 @@ export class LexicalAdapter {
     block: LexicalBlock,
   ): Promise<OperationResult> {
     // For now, implement as delete + insert
-    const deleteResult = await this.deleteBlock(blockId);
+    const deleteResult = await this.deleteBlock([blockId]);
     if (!deleteResult.success) {
       return deleteResult;
     }
@@ -302,8 +568,8 @@ export class LexicalAdapter {
             let jupyterOutputNode: any = null;
             let code = '';
 
-            // Find the jupyter-input and jupyter-output nodes
-            const findNodes = (node: any) => {
+            // Find the jupyter-input and jupyter-output nodes (recursively)
+            const findNodes = (node: any): boolean => {
               if (
                 node.getType() === 'jupyter-cell' &&
                 node.getKey() === blockId
@@ -317,6 +583,7 @@ export class LexicalAdapter {
                     jupyterOutputNode = child;
                   }
                 });
+                return true; // Found it
               } else if (
                 node.getType() === 'jupyter-input' &&
                 node.getKey() === blockId
@@ -331,11 +598,26 @@ export class LexicalAdapter {
                     }
                   });
                 }
+                return true; // Found it
               }
+
+              // Recursively search children (for collapsibles and other containers)
+              const children = node.getChildren?.() || [];
+              for (const child of children) {
+                if (findNodes(child)) {
+                  return true; // Found in descendant
+                }
+              }
+
+              return false; // Not found
             };
 
-            // Search through document
-            root.getChildren().forEach(findNodes);
+            // Search through document recursively
+            for (const child of root.getChildren()) {
+              if (findNodes(child)) {
+                break; // Stop after finding the target
+              }
+            }
 
             if (!jupyterOutputNode) {
               reject(
@@ -475,10 +757,56 @@ export class LexicalAdapter {
   }
 
   /**
+   * Restart the Jupyter kernel.
+   * Dispatches the RESTART_JUPYTER_KERNEL_COMMAND which is handled by JupyterInputOutputPlugin.
+   */
+  async restartKernel(): Promise<OperationResult> {
+    return new Promise(resolve => {
+      // Import command dynamically to avoid circular dependencies
+      import('../plugins/JupyterInputOutputPlugin')
+        .then(module => {
+          const { RESTART_JUPYTER_KERNEL_COMMAND } = module;
+
+          // Dispatch the restart command
+          const handled = this._editor.dispatchCommand(
+            RESTART_JUPYTER_KERNEL_COMMAND,
+            undefined,
+          );
+
+          if (handled) {
+            resolve({
+              success: true,
+              message: 'Kernel restart initiated',
+            });
+          } else {
+            resolve({
+              success: false,
+              error: 'RESTART_JUPYTER_KERNEL_COMMAND was not handled',
+            });
+          }
+        })
+        .catch(error => {
+          resolve({
+            success: false,
+            error: `Failed to load restart command: ${error.message}`,
+          });
+        });
+    });
+  }
+
+  /**
    * Check if a block type requires command-based insertion
    */
   private requiresCommand(blockType: string): boolean {
-    return ['jupyter-cell', 'image', 'equation'].includes(blockType);
+    return [
+      'jupyter-cell',
+      'image',
+      'equation',
+      'youtube',
+      'excalidraw',
+      'table',
+      'collapsible',
+    ].includes(blockType);
   }
 
   /**
@@ -567,7 +895,24 @@ export class LexicalAdapter {
               inline,
             });
 
-            resolve({ success: true });
+            // Find the newly inserted equation node and get its ID
+            let blockId: string | undefined;
+            setTimeout(() => {
+              this._editor.getEditorState().read(() => {
+                const root = $getRoot();
+                const children = root.getChildren();
+
+                // Find newest equation node
+                for (let i = children.length - 1; i >= 0; i--) {
+                  if (children[i].getType() === 'equation') {
+                    blockId = children[i].getKey();
+                    break;
+                  }
+                }
+              });
+
+              resolve({ success: true, blockId });
+            }, 20);
           }, 10);
         } else if (block.block_type === 'jupyter-cell') {
           // Import jupyter command dynamically
@@ -646,8 +991,320 @@ export class LexicalAdapter {
               commandPayload,
             );
 
-            resolve({ success: true });
+            // Find the newly inserted jupyter-input node and get its ID
+            let blockId: string | undefined;
+            setTimeout(() => {
+              this._editor.getEditorState().read(() => {
+                const root = $getRoot();
+                const children = root.getChildren();
+
+                // Find newest jupyter-input node
+                for (let i = children.length - 1; i >= 0; i--) {
+                  if (children[i].getType() === 'jupyter-input') {
+                    blockId = children[i].getKey();
+                    break;
+                  }
+                }
+              });
+
+              if (!blockId) {
+                resolve({
+                  success: false,
+                  error:
+                    'Failed to create jupyter-cell: INSERT_JUPYTER_INPUT_OUTPUT_COMMAND did not create a jupyter-input node',
+                });
+                return;
+              }
+
+              resolve({ success: true, blockId });
+            }, 20);
           }, 10);
+        } else if (block.block_type === 'youtube') {
+          // Import YouTube command dynamically
+          const { INSERT_YOUTUBE_COMMAND } =
+            await import('../plugins/YouTubePlugin');
+          // Get videoID from source field (11-character YouTube video ID or full URL)
+          const sourceText = Array.isArray(block.source)
+            ? block.source.join('\n')
+            : block.source;
+
+          // Extract video ID from various YouTube URL formats
+          const extractVideoID = (input: string): string => {
+            const trimmed = input.trim();
+
+            // If it's already just an ID (11 chars, alphanumeric + - and _)
+            if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) {
+              return trimmed;
+            }
+
+            // Extract from various URL formats:
+            // - https://www.youtube.com/watch?v=VIDEO_ID
+            // - https://youtu.be/VIDEO_ID
+            // - https://youtube.com/watch?v=VIDEO_ID
+            // - https://m.youtube.com/watch?v=VIDEO_ID
+
+            // Try youtu.be format first
+            const shortMatch = trimmed.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+            if (shortMatch) {
+              return shortMatch[1];
+            }
+
+            // Try youtube.com/watch?v= format
+            const watchMatch = trimmed.match(/[?&]v=([a-zA-Z0-9_-]{11})/);
+            if (watchMatch) {
+              return watchMatch[1];
+            }
+
+            // Fallback to default if no valid ID found
+            return 'lO2p9LQB7ds';
+          };
+
+          const videoID = extractVideoID(sourceText || '');
+
+          // Insert using marker technique
+          await this.insertWithMarker(afterBlockId, () => {
+            this._editor.dispatchCommand(INSERT_YOUTUBE_COMMAND, videoID);
+          });
+
+          // Find the newly inserted YouTube node and get its ID
+          let blockId: string | undefined;
+          setTimeout(() => {
+            this._editor.getEditorState().read(() => {
+              const root = $getRoot();
+              const children = root.getChildren();
+
+              // Find newest youtube node
+              for (let i = children.length - 1; i >= 0; i--) {
+                if (children[i].getType() === 'youtube') {
+                  blockId = children[i].getKey();
+                  break;
+                }
+              }
+            });
+
+            resolve({ success: true, blockId });
+          }, 20);
+        } else if (block.block_type === 'excalidraw') {
+          // Import Excalidraw node dynamically
+          const { $createExcalidrawNode } =
+            await import('../nodes/ExcalidrawNode');
+          const { $wrapNodeInElement } = await import('@lexical/utils');
+          const { $isRootOrShadowRoot } = await import('lexical');
+
+          const data = (block.metadata?.data as string) || '[]';
+          const width = block.metadata?.width as number | undefined;
+          const height = block.metadata?.height as number | undefined;
+
+          let blockId: string | undefined;
+
+          this._editor.update(() => {
+            const node = $createExcalidrawNode(
+              data,
+              width || 'inherit',
+              height || 'inherit',
+            );
+            this.insertNodeAtPosition(node, afterBlockId);
+
+            // Capture block ID
+            blockId = node.getKey();
+
+            // Wrap in paragraph if at root
+            if ($isRootOrShadowRoot(node.getParentOrThrow())) {
+              $wrapNodeInElement(node, $createParagraphNode).selectEnd();
+            }
+          });
+
+          resolve({ success: true, blockId });
+        } else if (block.block_type === 'table') {
+          // Import table command dynamically
+          const { INSERT_TABLE_COMMAND } = await import('@lexical/table');
+          const {
+            $getTableCellNodeFromLexicalNode,
+            $getTableNodeFromLexicalNodeOrThrow,
+          } = await import('@lexical/table');
+
+          // Parse table data from source if provided as markdown
+          let rows = (block.metadata?.rows as number) || 2;
+          let columns = (block.metadata?.columns as number) || 2;
+          let data = block.metadata?.data as string[][] | undefined;
+          const includeHeaders = block.metadata?.includeHeaders !== false;
+
+          // CRITICAL: If data is provided directly in metadata, infer dimensions from it
+          if (data && Array.isArray(data) && data.length > 0) {
+            rows = data.length;
+            columns = data[0].length;
+            console.log('[Table] Inferred dimensions from metadata.data:', {
+              rows,
+              columns,
+            });
+          }
+
+          // If source contains markdown table, parse it
+          const sourceText = Array.isArray(block.source)
+            ? block.source.join('\n')
+            : block.source;
+
+          if (
+            sourceText &&
+            typeof sourceText === 'string' &&
+            sourceText.includes('|')
+          ) {
+            try {
+              console.log('[Table] Parsing source:', sourceText);
+              // Parse markdown table
+              const lines = sourceText.split('\n').filter(line => line.trim());
+              console.log('[Table] Split lines:', lines);
+              const tableData: string[][] = [];
+
+              for (const line of lines) {
+                console.log('[Table] Processing line:', line);
+                // Skip separator rows like |---|---|
+                if (line.match(/^\|?[\s-|]+\|?$/)) {
+                  console.log('[Table] Skipping separator line');
+                  continue;
+                }
+
+                // Extract cell values
+                const cells = line
+                  .split('|')
+                  .slice(1, -1) // Remove empty strings from start/end
+                  .map(cell => cell.trim());
+
+                console.log('[Table] Extracted cells:', cells);
+                if (cells.length > 0) {
+                  tableData.push(cells);
+                }
+              }
+
+              console.log('[Table] Final tableData:', tableData);
+              if (tableData.length > 0) {
+                data = tableData;
+                rows = tableData.length;
+                columns = tableData[0].length;
+                console.log('[Table] Setting rows:', rows, 'columns:', columns);
+              }
+            } catch (e) {
+              // If parsing fails, use defaults
+              console.warn('Failed to parse table source as markdown:', e);
+            }
+          }
+
+          await this.insertWithMarker(afterBlockId, () => {
+            this._editor.dispatchCommand(INSERT_TABLE_COMMAND, {
+              rows: rows.toString(),
+              columns: columns.toString(),
+              includeHeaders,
+            });
+          });
+
+          // Find the newly inserted table node and get its ID
+          let blockId: string | undefined;
+          setTimeout(() => {
+            this._editor.update(() => {
+              const root = $getRoot();
+              const children = root.getChildren();
+
+              // Find the newest table
+              for (let i = children.length - 1; i >= 0; i--) {
+                if (children[i].getType() === 'table') {
+                  // Capture block ID
+                  blockId = children[i].getKey();
+
+                  // Populate table cells with data if provided
+                  if (data && data.length > 0) {
+                    try {
+                      const tableNode = $getTableNodeFromLexicalNodeOrThrow(
+                        children[i],
+                      );
+                      const tableRows = (tableNode as any).getChildren();
+
+                      // Populate each cell with data
+                      for (
+                        let rowIdx = 0;
+                        rowIdx < Math.min(data.length, tableRows.length);
+                        rowIdx++
+                      ) {
+                        const rowNode = tableRows[rowIdx];
+                        const cellNodes = (rowNode as any).getChildren();
+
+                        for (
+                          let colIdx = 0;
+                          colIdx <
+                          Math.min(data[rowIdx].length, cellNodes.length);
+                          colIdx++
+                        ) {
+                          const cellNode = $getTableCellNodeFromLexicalNode(
+                            cellNodes[colIdx],
+                          );
+                          if (cellNode) {
+                            // Clear existing content and add new text
+                            cellNode.clear();
+                            cellNode.append(
+                              $createTextNode(data[rowIdx][colIdx]),
+                            );
+                          }
+                        }
+                      }
+                    } catch (error) {
+                      console.warn('Failed to populate table data:', error);
+                    }
+                  }
+                  break;
+                }
+              }
+            });
+
+            resolve({ success: true, blockId });
+          }, 20);
+        } else if (block.block_type === 'collapsible') {
+          // Import collapsible command dynamically
+          const { INSERT_COLLAPSIBLE_COMMAND } =
+            await import('../plugins/CollapsiblePlugin');
+          const open = (block.metadata?.open as boolean) ?? true;
+
+          // Title comes from source field
+          const title = Array.isArray(block.source)
+            ? block.source.join('\n')
+            : block.source || '';
+
+          // Insert empty collapsible structure
+          await this.insertWithMarker(afterBlockId, () => {
+            this._editor.dispatchCommand(INSERT_COLLAPSIBLE_COMMAND, undefined);
+          });
+
+          // Find the newly inserted collapsible node and get its ID
+          let blockId: string | undefined;
+          setTimeout(() => {
+            this._editor.update(() => {
+              const root = $getRoot();
+              const children = root.getChildren();
+
+              // Find newest collapsible
+              for (let i = children.length - 1; i >= 0; i--) {
+                if (children[i].getType() === 'collapsible-container') {
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  const container = children[i] as any;
+
+                  // Capture block ID
+                  blockId = container.getKey();
+
+                  // Set open state
+                  container.setOpen?.(open);
+
+                  // Populate title
+                  const containerChildren = container.getChildren();
+                  if (containerChildren[0] && title) {
+                    containerChildren[0].clear();
+                    containerChildren[0].append($createTextNode(title));
+                  }
+                  // Note: content is empty - blocks will be inserted separately with metadata.collapsible
+                  break;
+                }
+              }
+            });
+
+            resolve({ success: true, blockId });
+          }, 20);
         } else {
           resolve({
             success: false,
@@ -742,9 +1399,15 @@ export class LexicalAdapter {
           return textNode;
         });
       } else {
-        return [
-          textContent ? $createTextNode(textContent) : $createTextNode(''),
-        ];
+        // Parse markdown formatting from text content
+        const segments = parseMarkdownFormatting(textContent || '');
+        return segments.map(seg => {
+          const textNode = $createTextNode(seg.text);
+          if (seg.format) {
+            textNode.setFormat(seg.format);
+          }
+          return textNode;
+        });
       }
     };
 
@@ -791,10 +1454,17 @@ export class LexicalAdapter {
           const listItem = $createListItemNode();
           list.append(listItem);
         } else {
-          // Create a list item for each line
+          // Create a list item for each line with inline markdown parsing
           items.forEach(itemText => {
             const listItem = $createListItemNode();
-            listItem.append($createTextNode(itemText));
+            const segments = parseMarkdownFormatting(itemText);
+            segments.forEach(seg => {
+              const textNode = $createTextNode(seg.text);
+              if (seg.format) {
+                textNode.setFormat(seg.format);
+              }
+              listItem.append(textNode);
+            });
             list.append(listItem);
           });
         }
@@ -803,7 +1473,7 @@ export class LexicalAdapter {
       }
 
       case 'horizontalrule': {
-        return $createHorizontalRuleNode();
+        return $createHorizontalRuleNode() as unknown as LexicalNode;
       }
 
       case 'listitem': {
@@ -818,6 +1488,155 @@ export class LexicalAdapter {
       default:
         return null;
     }
+  }
+
+  /**
+   * Check if text contains block-level markdown that should be split into multiple blocks
+   */
+  private containsBlockLevelMarkdown(text: string): boolean {
+    if (!text || typeof text !== 'string') return false;
+
+    // Check for headings
+    if (/^#{1,6}\s+.+$/m.test(text)) return true;
+
+    // Check for lists (bullet or numbered)
+    if (/^[\s]*[-*+]\s+.+$/m.test(text)) return true;
+    if (/^[\s]*\d+\.\s+.+$/m.test(text)) return true;
+
+    // Check for multiple paragraphs (separated by blank lines)
+    if (/\n\s*\n/.test(text)) return true;
+
+    return false;
+  }
+
+  /**
+   * Parse markdown text into multiple LexicalBlock objects
+   */
+  private parseMarkdownToBlocks(text: string): LexicalBlock[] {
+    const blocks: LexicalBlock[] = [];
+    const lines = text.split('\n');
+
+    let currentBlock: {
+      type: string;
+      lines: string[];
+      metadata?: Record<string, unknown>;
+    } | null = null;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const trimmed = line.trim();
+
+      // Empty line - finish current block
+      if (trimmed === '') {
+        if (currentBlock && currentBlock.lines.length > 0) {
+          blocks.push(this.createBlockFromParsed(currentBlock));
+          currentBlock = null;
+        }
+        continue;
+      }
+
+      // Heading (# through ######)
+      const headingMatch = trimmed.match(/^(#{1,6})\s+(.+)$/);
+      if (headingMatch) {
+        // Finish previous block
+        if (currentBlock && currentBlock.lines.length > 0) {
+          blocks.push(this.createBlockFromParsed(currentBlock));
+        }
+
+        // Create heading block
+        const level = headingMatch[1].length;
+        blocks.push({
+          block_id: '', // Will be assigned on insertion
+          block_type: 'heading',
+          source: headingMatch[2],
+          metadata: { tag: `h${level}` },
+        });
+        currentBlock = null;
+        continue;
+      }
+
+      // Bullet list item (-, *, +)
+      const bulletMatch = trimmed.match(/^[-*+]\s+(.+)$/);
+      if (bulletMatch) {
+        // Start or continue list
+        if (!currentBlock || currentBlock.type !== 'list-bullet') {
+          if (currentBlock && currentBlock.lines.length > 0) {
+            blocks.push(this.createBlockFromParsed(currentBlock));
+          }
+          currentBlock = {
+            type: 'list-bullet',
+            lines: [bulletMatch[1]],
+            metadata: { listType: 'bullet' },
+          };
+        } else {
+          currentBlock.lines.push(bulletMatch[1]);
+        }
+        continue;
+      }
+
+      // Numbered list item (1., 2., etc.)
+      const numberedMatch = trimmed.match(/^\d+\.\s+(.+)$/);
+      if (numberedMatch) {
+        // Start or continue numbered list
+        if (!currentBlock || currentBlock.type !== 'list-number') {
+          if (currentBlock && currentBlock.lines.length > 0) {
+            blocks.push(this.createBlockFromParsed(currentBlock));
+          }
+          currentBlock = {
+            type: 'list-number',
+            lines: [numberedMatch[1]],
+            metadata: { listType: 'number' },
+          };
+        } else {
+          currentBlock.lines.push(numberedMatch[1]);
+        }
+        continue;
+      }
+
+      // Regular paragraph text
+      if (!currentBlock || currentBlock.type.startsWith('list-')) {
+        // Lists don't continue across non-list lines
+        if (currentBlock && currentBlock.lines.length > 0) {
+          blocks.push(this.createBlockFromParsed(currentBlock));
+        }
+        currentBlock = { type: 'paragraph', lines: [line] };
+      } else {
+        // Continue current paragraph
+        currentBlock.lines.push(line);
+      }
+    }
+
+    // Finish last block
+    if (currentBlock && currentBlock.lines.length > 0) {
+      blocks.push(this.createBlockFromParsed(currentBlock));
+    }
+
+    return blocks;
+  }
+
+  /**
+   * Create a LexicalBlock from parsed markdown
+   */
+  private createBlockFromParsed(parsed: {
+    type: string;
+    lines: string[];
+    metadata?: Record<string, unknown>;
+  }): LexicalBlock {
+    if (parsed.type === 'list-bullet' || parsed.type === 'list-number') {
+      return {
+        block_id: '',
+        block_type: 'list',
+        source: parsed.lines.join('\n'),
+        metadata: parsed.metadata || {},
+      };
+    }
+
+    return {
+      block_id: '',
+      block_type: parsed.type,
+      source: parsed.lines.join('\n'),
+      metadata: parsed.metadata || {},
+    };
   }
 
   /**
@@ -959,6 +1778,125 @@ export class LexicalAdapter {
         outputs,
         executionCount,
       };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+      };
+    }
+  }
+
+  /**
+   * Insert a block using marker technique (for command-based insertion).
+   * This ensures correct positioning when commands don't support afterId.
+   */
+  private async insertWithMarker(
+    afterBlockId: string | undefined,
+    dispatchFn: () => void,
+  ): Promise<void> {
+    return new Promise(resolve => {
+      this._editor.update(() => {
+        const root = $getRoot();
+        const children = root.getChildren();
+
+        const marker = $createParagraphNode();
+        marker.append($createTextNode('__MARKER__'));
+
+        if (afterBlockId === 'TOP') {
+          if (children.length > 0) {
+            children[0].insertBefore(marker);
+          } else {
+            root.append(marker);
+          }
+        } else if (afterBlockId === 'BOTTOM' || !afterBlockId) {
+          root.append(marker);
+        } else {
+          const target = children.find(c => c.getKey() === afterBlockId);
+          if (target) {
+            target.insertAfter(marker);
+          } else {
+            throw new Error(`Block ${afterBlockId} not found`);
+          }
+        }
+      });
+
+      setTimeout(() => {
+        this._editor.update(() => {
+          const root = $getRoot();
+          const marker = root
+            .getChildren()
+            .find(
+              c =>
+                c.getType() === 'paragraph' &&
+                c.getTextContent() === '__MARKER__',
+            );
+          if (marker) {
+            marker.selectEnd();
+            marker.remove();
+          }
+        });
+
+        dispatchFn();
+        resolve();
+      }, 10);
+    });
+  }
+
+  /**
+   * Insert a node at a specific position (for direct node insertion).
+   */
+  private insertNodeAtPosition(
+    node: LexicalNode,
+    afterBlockId: string | undefined,
+  ): void {
+    const root = $getRoot();
+    const children = root.getChildren();
+
+    if (afterBlockId === 'TOP') {
+      if (children.length > 0) {
+        children[0].insertBefore(node);
+      } else {
+        root.append(node);
+      }
+    } else if (afterBlockId === 'BOTTOM' || !afterBlockId) {
+      root.append(node);
+    } else {
+      const target = children.find(c => c.getKey() === afterBlockId);
+      if (target) {
+        target.insertAfter(node);
+      } else {
+        throw new Error(`Block ${afterBlockId} not found`);
+      }
+    }
+  }
+
+  /**
+   * List available block types with their schemas.
+   * This operation returns static block type definitions and doesn't require editor access.
+   *
+   * @param category - Optional category filter
+   * @returns Promise with available block types, count, and categories
+   */
+  async listAvailableBlocks(): Promise<{
+    success: boolean;
+    types?: any[];
+    count?: number;
+    error?: string;
+  }> {
+    try {
+      // Import and execute the operation
+      const { listAvailableBlocksOperation } =
+        await import('../tools/operations/listAvailableBlocks');
+
+      const result = await listAvailableBlocksOperation.execute(
+        { type: 'all' },
+        {
+          documentId: 'static-operation', // Not used for this operation
+          executor: null as any, // Not used for this operation
+        },
+      );
+
+      return result;
     } catch (error) {
       return {
         success: false,

@@ -12,23 +12,14 @@
 
 import { z } from 'zod';
 
-export const blockCategorySchema = z.enum([
-  'text',
-  'heading',
-  'code',
-  'media',
-  'list',
-  'table',
-  'jupyter',
-]);
-
 export const listAvailableBlocksParamsSchema = z.object({
-  category: blockCategorySchema
-    .optional()
-    .describe('Optional category filter for block types'),
+  type: z.preprocess(val => {
+    // Always default to 'all' if undefined, null, or empty string
+    if (val === undefined || val === null || val === '') return 'all';
+    return val;
+  }, z.string().default('all').describe('Block type to filter (e.g., "youtube", "table", "paragraph") or "all" to return all available blocks. Default: "all".')),
 });
 
-export type BlockCategory = z.infer<typeof blockCategorySchema>;
 export type ListAvailableBlocksParams = z.infer<
   typeof listAvailableBlocksParamsSchema
 >;

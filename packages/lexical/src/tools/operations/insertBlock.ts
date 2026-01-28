@@ -24,6 +24,9 @@ export interface InsertBlockResult {
   /** Whether the operation succeeded */
   success: boolean;
 
+  /** ID of the newly inserted block */
+  blockId?: string;
+
   /** Success message describing the insertion */
   message?: string;
 
@@ -36,8 +39,8 @@ export interface InsertBlockResult {
  *
  * Supports inserting various block types:
  * - paragraph: Regular text paragraph
- * - heading: Heading block (specify tag: h1-h6 in properties)
- * - code: Code block (specify language in properties)
+ * - heading: Heading block (specify tag: h1-h6 in metadata)
+ * - code: Code block (specify language in metadata)
  * - quote: Blockquote
  * - list/listitem: List blocks
  */
@@ -58,7 +61,7 @@ export const insertBlockOperation: ToolOperation<
       'insertBlock',
     ) as InsertBlockParams;
 
-    const { afterId, type, source, properties } = validatedParams;
+    const { afterId, type, source, metadata } = validatedParams;
     const { documentId } = context;
 
     // Validate context
@@ -80,10 +83,10 @@ export const insertBlockOperation: ToolOperation<
     try {
       // Call executor with individual parameters (matches notebook pattern)
       // The state method will handle creating the LexicalBlock object
-      await context.executor.execute(this.name, {
+      const result: any = await context.executor.execute(this.name, {
         type,
         source,
-        properties,
+        metadata,
         afterId,
       });
 
@@ -96,6 +99,7 @@ export const insertBlockOperation: ToolOperation<
 
       return {
         success: true,
+        blockId: result?.blockId,
         message,
       };
     } catch (error) {

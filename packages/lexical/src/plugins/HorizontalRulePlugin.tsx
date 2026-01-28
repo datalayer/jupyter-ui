@@ -13,6 +13,7 @@ import {
   $getSelection,
   $isRangeSelection,
   COMMAND_PRIORITY_EDITOR,
+  type LexicalNode,
 } from 'lexical';
 import { useEffect } from 'react';
 
@@ -29,7 +30,8 @@ export const HorizontalRulePlugin = (): null => {
         }
         const focusNode = selection.focus.getNode();
         if (focusNode !== null) {
-          const horizontalRuleNode = $createHorizontalRuleNode();
+          const horizontalRuleNode =
+            $createHorizontalRuleNode() as unknown as LexicalNode;
           selection.insertParagraph();
           selection.focus
             .getNode()

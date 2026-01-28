@@ -66,6 +66,10 @@ import {
   type InlineCompletionConfig,
 } from './InlineCompletionConfig';
 import { extractContext } from './InlineCompletionContextExtractor';
+import {
+  LSP_MENU_STATE_COMMAND,
+  LSP_COMPLETION_INSERTED_COMMAND,
+} from './LSPTabCompletionPlugin';
 
 /**
  * Command to manually trigger inline completion.
@@ -171,20 +175,25 @@ export function LexicalInlineCompletionPlugin({
   const [currentCompletion, setCurrentCompletion] = useState<string | null>(
     null,
   );
+  const [lspMenuOpen, setLspMenuOpen] = useState<boolean>(false);
 
   // Merge user config with defaults
   const config: InlineCompletionConfig = mergeConfig(userConfig);
 
   // Debounce precedence: userConfig (new) > deprecatedDebounceMs (old) > default
   // Note: Using ?? operator, so 0 values will fall through (not a realistic use case)
+  // INCREASED DEFAULT: 500ms instead of 200ms for better typing experience
   const debounceMs =
-    userConfig?.debounceMs ?? deprecatedDebounceMs ?? config.debounceMs;
+    userConfig?.debounceMs ??
+    deprecatedDebounceMs ??
+    Math.max(config.debounceMs, 500);
 
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const lastRequestRef = useRef<string>('');
   const lastCellTextRef = useRef<string>('');
   const completionNodeKeyRef = useRef<string | null>(null);
   const requestCompletionRef = useRef<typeof requestCompletion | null>(null);
+  const lspInsertionTimeRef = useRef<number>(0); // Timestamp of last LSP completion insertion
 
   /**
    * Cleanup on unmount
@@ -197,6 +206,56 @@ export function LexicalInlineCompletionPlugin({
       }
     };
   }, []); // Only on mount/unmount
+
+  /**
+   * Listen for LSP menu state changes.
+   * When LSP dropdown opens, cancel pending inline completions and clear current completion.
+   */
+  useEffect(() => {
+    if (!enabled) return;
+
+    return editor.registerCommand(
+      LSP_MENU_STATE_COMMAND,
+      (isOpen: boolean) => {
+        setLspMenuOpen(isOpen);
+
+        if (isOpen) {
+          // LSP menu opened - cancel pending inline completion request
+          if (debounceTimerRef.current) {
+            clearTimeout(debounceTimerRef.current);
+            debounceTimerRef.current = null;
+          }
+          // Clear any visible inline completion
+          setCurrentCompletion(null);
+        }
+
+        return false; // Don't prevent other listeners
+      },
+      COMMAND_PRIORITY_LOW,
+    );
+  }, [editor, enabled]);
+
+  /**
+   * Listen for LSP completion insertion.
+   * When LSP completion is inserted, suppress inline completions briefly.
+   */
+  useEffect(() => {
+    if (!enabled) return;
+
+    return editor.registerCommand(
+      LSP_COMPLETION_INSERTED_COMMAND,
+      () => {
+        // Record timestamp of LSP insertion
+        lspInsertionTimeRef.current = Date.now();
+
+        // Clear any visible inline completion
+        setCurrentCompletion(null);
+
+        return false; // Don't prevent other listeners
+      },
+      COMMAND_PRIORITY_LOW,
+    );
+  }, [editor, enabled]);
 
   /**
    * Request completion from providers
@@ -253,6 +312,21 @@ export function LexicalInlineCompletionPlugin({
 
     return editor.registerUpdateListener(({ editorState }) => {
       editorState.read(() => {
+        // Don't request inline completions if LSP dropdown menu is active
+        if (lspMenuOpen) {
+          setCurrentCompletion(null);
+          return;
+        }
+
+        // Suppress inline completions for 300ms after LSP completion insertion
+        // This prevents inline completion from appearing immediately after accepting LSP completion
+        const timeSinceLspInsertion = Date.now() - lspInsertionTimeRef.current;
+        const LSP_SUPPRESSION_MS = 300;
+        if (timeSinceLspInsertion < LSP_SUPPRESSION_MS) {
+          setCurrentCompletion(null);
+          return;
+        }
+
         const selection = $getSelection();
 
         if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
@@ -404,7 +478,7 @@ export function LexicalInlineCompletionPlugin({
         }
       });
     });
-  }, [editor, enabled, debounceMs, config.code, config.prose]);
+  }, [editor, enabled, debounceMs, config.code, config.prose, lspMenuOpen]);
 
   /**
    * Insert/update/remove the InlineCompletionNode based on currentCompletion
@@ -538,6 +612,24 @@ export function LexicalInlineCompletionPlugin({
               const textNode = $createTextNode(currentCompletion);
               completionNode.replace(textNode);
               completionNodeKeyRef.current = null;
+
+              // FIX: Move cursor to end of inserted text
+              // Select the entire inserted text node
+              textNode.select();
+              // Then collapse the selection to the end
+              const newSelection = $getSelection();
+              if ($isRangeSelection(newSelection)) {
+                newSelection.anchor.set(
+                  textNode.getKey(),
+                  currentCompletion.length,
+                  'text',
+                );
+                newSelection.focus.set(
+                  textNode.getKey(),
+                  currentCompletion.length,
+                  'text',
+                );
+              }
             }
           }
 

@@ -5,26 +5,26 @@
  */
 
 /**
- * Delete cell tool definition.
+ * Delete cells tool definition.
  *
- * @module tools/definitions/deleteCell
+ * @module tools/definitions/deleteCells
  */
 
 import type { ToolDefinition } from '../core/schema';
 import { zodToToolParameters } from '../core/zodUtils';
-import { deleteCellParamsSchema } from '../schemas/deleteCell';
+import { deleteCellsParamsSchema } from '../schemas/deleteCells';
 
-export const deleteCellTool: ToolDefinition = {
-  name: 'datalayer_deleteCell',
+export const deleteCellsTool: ToolDefinition = {
+  name: 'datalayer_deleteCells',
   displayName: 'Delete Notebook Cell(s)',
-  toolReferenceName: 'deleteCell',
+  toolReferenceName: 'deleteCells',
   description:
     'Deletes one or more cells from a Jupyter notebook at the specified indices. Cells are deleted in reverse order to prevent index shifting.',
 
   // Generate parameters from Zod schema (single source of truth)
-  parameters: zodToToolParameters(deleteCellParamsSchema),
+  parameters: zodToToolParameters(deleteCellsParamsSchema),
 
-  operation: 'deleteCell',
+  operation: 'deleteCells',
 
   config: {
     confirmationMessage: (params: { indices: number[] }) =>

@@ -64,9 +64,6 @@ export class DefaultExecutor implements ToolExecutor {
     ];
 
     if (typeof method !== 'function') {
-      console.error(
-        '[DefaultExecutor] ❌ Store method not found or not a function!',
-      );
       throw new Error(
         `Store method '${operationName}' not found or not a function`,
       );
@@ -86,11 +83,7 @@ export class DefaultExecutor implements ToolExecutor {
 
       return result;
     } catch (error) {
-      console.error('[DefaultExecutor] ❌ ERROR calling store method:', error);
-      console.error(
-        '[DefaultExecutor] Error stack:',
-        error instanceof Error ? error.stack : 'N/A',
-      );
+      console.error('[DefaultExecutor] Error calling store method:', error);
       throw error;
     }
   }

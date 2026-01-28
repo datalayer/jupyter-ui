@@ -81,6 +81,7 @@ export const readAllBlocksOperation: ToolOperation<
 
     try {
       // Call executor with format parameter
+      // NOTE: Don't pass 'id' - DefaultExecutor injects it automatically
       const blocks = (await context.executor.execute(this.name, {
         format,
       })) as LexicalBlock[] | BriefBlock[];
