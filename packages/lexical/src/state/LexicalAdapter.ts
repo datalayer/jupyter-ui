@@ -22,6 +22,7 @@ import {
   $getSelection,
   $createParagraphNode,
   $createTextNode,
+  $getNodeByKey,
 } from 'lexical';
 import {
   $createHeadingNode,
@@ -41,6 +42,7 @@ import {
   editorStateToBlocks,
   parseMarkdownFormatting,
 } from '../tools/utils/blocks';
+import { INPUT_UUID_TO_OUTPUT_KEY } from '../plugins/JupyterInputOutputPlugin';
 
 /**
  * Result of a document operation
@@ -589,14 +591,11 @@ export class LexicalAdapter {
                 node.getKey() === blockId
               ) {
                 code = node.getTextContent();
-                // Find corresponding output node (sibling)
-                const parent = node.getParent();
-                if (parent) {
-                  parent.getChildren().forEach((sibling: any) => {
-                    if (sibling.getType() === 'jupyter-output') {
-                      jupyterOutputNode = sibling;
-                    }
-                  });
+                // Find corresponding output node using UUID map (prevents output mixing!)
+                const inputUuid = node.getJupyterInputNodeUuid();
+                const outputKey = INPUT_UUID_TO_OUTPUT_KEY.get(inputUuid);
+                if (outputKey) {
+                  jupyterOutputNode = $getNodeByKey(outputKey);
                 }
                 return true; // Found it
               }
