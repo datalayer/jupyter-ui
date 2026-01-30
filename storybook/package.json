@@ -31,8 +31,8 @@
     "test:all:ci": "test-storybook --ci --maxWorkers=2 --url http://localhost:6006 && node test-storybook.js"
   },
   "dependencies": {
-    "@datalayer/jupyter-lexical": "^1.0.0",
-    "@datalayer/jupyter-react": "^2.0.0",
+    "@datalayer/jupyter-lexical": "^1.0.9",
+    "@datalayer/jupyter-react": "^2.0.3",
     "react": "18.3.1",
     "react-dom": "18.3.1"
   },

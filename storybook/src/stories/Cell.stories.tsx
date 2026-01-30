@@ -96,7 +96,7 @@ class ConfettiWidget(ipyreact.ReactWidget):
             CLICK here for some CONFETTIS
           </button>
           <h2>You have {value || 0} wishe{ (value > 1) && 's' } so far...</h2>
-          <quote>Powered by Ξ Datalayer</quote>
+          <quote>Powered by ☰ Datalayer</quote>
         </>
       )
     };"""

@@ -25,7 +25,7 @@
 
 import { defineConfig, PluginOption } from 'vite';
 import react from '@vitejs/plugin-react';
-import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
+import cssInjectedByJsPlugin from './vite-plugins/cssInjectedByJs';
 import { resolve } from 'path';
 
 export default defineConfig({

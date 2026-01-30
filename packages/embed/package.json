@@ -61,7 +61,7 @@
     "watch": "tsc -w"
   },
   "dependencies": {
-    "@datalayer/jupyter-react": "^2.0.0",
+    "@datalayer/jupyter-react": "^2.0.3",
     "@datalayer/primer-addons": "^1.0.4",
     "@primer/react": "^36.0.0",
     "react": "^18.3.1",
@@ -83,7 +83,6 @@
     "serve": "^14.2.0",
     "typescript": "^5.0.0",
     "vite": "^5.0.0",
-    "vite-plugin-css-injected-by-js": "^3.0.0",
     "vite-plugin-treat-umd-as-commonjs": "^0.1.4"
   }
 }
