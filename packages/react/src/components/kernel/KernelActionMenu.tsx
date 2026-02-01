@@ -37,7 +37,9 @@ export const KernelActionMenu = (props: KernelActionMenuProps) => {
             disabled={!kernel}
             onSelect={e => {
               if (kernel) {
-                kernel.interrupt();
+                kernel.interrupt().catch(err => {
+                  console.error('[KernelActionMenu] Interrupt failed:', err);
+                });
               }
             }}
           >
@@ -50,7 +52,9 @@ export const KernelActionMenu = (props: KernelActionMenuProps) => {
             disabled={!kernel}
             onSelect={e => {
               if (kernel) {
-                kernel.restart();
+                kernel.restart().catch(err => {
+                  console.error('[KernelActionMenu] Restart failed:', err);
+                });
               }
             }}
           >
@@ -63,18 +67,12 @@ export const KernelActionMenu = (props: KernelActionMenuProps) => {
             variant="danger"
             disabled={false}
             onSelect={e => {
-              console.log(
-                '[KernelActionMenu] Clear outputs clicked - onClearOutputs:',
-                !!onClearOutputs,
-                'outputAdapter:',
-                !!outputAdapter
-              );
               if (onClearOutputs) {
                 onClearOutputs();
               } else if (outputAdapter) {
                 outputAdapter.clear();
               } else {
-                console.warn('[KernelActionMenu] No clear method available!');
+                console.warn('[KernelActionMenu] No clear method available');
               }
             }}
           >

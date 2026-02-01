@@ -70,6 +70,7 @@ export class LexicalAdapter {
   private _editor: LexicalEditor;
   private _defaultBlockType: string = 'paragraph';
   private _serviceManager?: any; // ServiceManager from @jupyterlab/services
+  private _runAllAbortController: AbortController | null = null;
 
   constructor(editor: LexicalEditor, serviceManager?: any) {
     this._editor = editor;
@@ -679,31 +680,68 @@ export class LexicalAdapter {
    * Run all executable blocks in the document
    */
   async runAllBlocks(): Promise<OperationResult> {
-    const blocks = await this.getBlocks();
-    const executableBlocks = blocks.filter(
-      b => b.block_type === 'jupyter-cell',
-    );
+    console.log('[LexicalAdapter] runAllBlocks called');
 
-    // Debug logging removed to satisfy ESLint no-console rule
-    // console.log(`[LexicalAdapter] Running ${executableBlocks.length} executable blocks`);
-
-    for (const block of executableBlocks) {
-      const result = await this.runBlock(block.block_id);
-      if (!result.success) {
-        return {
-          success: false,
-          error: `Failed to run block ${block.block_id}: ${result.error}`,
-        };
-      }
+    // Abort any existing run-all operation
+    if (this._runAllAbortController) {
+      console.log('[LexicalAdapter] Aborting previous run-all operation');
+      this._runAllAbortController.abort();
     }
 
-    return {
-      success: true,
-      blockId:
-        executableBlocks.length > 0
-          ? executableBlocks[executableBlocks.length - 1].block_id
-          : undefined,
-    };
+    // Create new abort controller for this run
+    this._runAllAbortController = new AbortController();
+    const signal = this._runAllAbortController.signal;
+    console.log('[LexicalAdapter] Created new AbortController');
+
+    try {
+      const blocks = await this.getBlocks();
+      const executableBlocks = blocks.filter(
+        b => b.block_type === 'jupyter-cell',
+      );
+
+      console.log(
+        `[LexicalAdapter] Running ${executableBlocks.length} executable blocks`,
+      );
+
+      for (const block of executableBlocks) {
+        // Check if aborted before running next block
+        if (signal.aborted) {
+          console.log('[LexicalAdapter] Run-all aborted, stopping execution');
+          return {
+            success: false,
+            error: 'Run all blocks was cancelled (new run all started)',
+          };
+        }
+
+        console.log(`[LexicalAdapter] Running block ${block.block_id}`);
+        const result = await this.runBlock(block.block_id);
+        if (!result.success) {
+          console.error(
+            `[LexicalAdapter] Block ${block.block_id} failed:`,
+            result.error,
+          );
+          return {
+            success: false,
+            error: `Failed to run block ${block.block_id}: ${result.error}`,
+          };
+        }
+      }
+
+      console.log('[LexicalAdapter] All blocks executed successfully');
+      return {
+        success: true,
+        blockId:
+          executableBlocks.length > 0
+            ? executableBlocks[executableBlocks.length - 1].block_id
+            : undefined,
+      };
+    } finally {
+      // Clean up controller if this is still the active one
+      if (this._runAllAbortController?.signal === signal) {
+        console.log('[LexicalAdapter] Clearing AbortController');
+        this._runAllAbortController = null;
+      }
+    }
   }
 
   /**

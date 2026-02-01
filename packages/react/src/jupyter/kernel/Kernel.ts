@@ -254,14 +254,48 @@ export class Kernel {
    * Interrupt the kernel
    */
   interrupt(): Promise<void> {
-    return this._kernelConnection?.interrupt() ?? Promise.resolve();
+    console.log(
+      '[Kernel] interrupt() called. _kernelConnection exists:',
+      !!this._kernelConnection
+    );
+    if (!this._kernelConnection) {
+      console.warn('[Kernel] No kernel connection available for interrupt');
+      return Promise.resolve();
+    }
+    console.log('[Kernel] Calling _kernelConnection.interrupt()');
+    return this._kernelConnection
+      .interrupt()
+      .then(() => {
+        console.log('[Kernel] Kernel interrupt request sent successfully');
+      })
+      .catch(err => {
+        console.error('[Kernel] Kernel interrupt failed:', err);
+        throw err;
+      });
   }
 
   /**
    * Restart the kernel
    */
   restart(): Promise<void> {
-    return this._kernelConnection?.restart() ?? Promise.resolve();
+    console.log(
+      '[Kernel] restart() called. _kernelConnection exists:',
+      !!this._kernelConnection
+    );
+    if (!this._kernelConnection) {
+      console.warn('[Kernel] No kernel connection available for restart');
+      return Promise.resolve();
+    }
+    console.log('[Kernel] Calling _kernelConnection.restart()');
+    return this._kernelConnection
+      .restart()
+      .then(() => {
+        console.log('[Kernel] Kernel restart request sent successfully');
+      })
+      .catch(err => {
+        console.error('[Kernel] Kernel restart failed:', err);
+        throw err;
+      });
   }
 
   /**
