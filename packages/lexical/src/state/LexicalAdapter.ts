@@ -680,18 +680,14 @@ export class LexicalAdapter {
    * Run all executable blocks in the document
    */
   async runAllBlocks(): Promise<OperationResult> {
-    console.log('[LexicalAdapter] runAllBlocks called');
-
     // Abort any existing run-all operation
     if (this._runAllAbortController) {
-      console.log('[LexicalAdapter] Aborting previous run-all operation');
       this._runAllAbortController.abort();
     }
 
     // Create new abort controller for this run
     this._runAllAbortController = new AbortController();
     const signal = this._runAllAbortController.signal;
-    console.log('[LexicalAdapter] Created new AbortController');
 
     try {
       const blocks = await this.getBlocks();
@@ -699,21 +695,15 @@ export class LexicalAdapter {
         b => b.block_type === 'jupyter-cell',
       );
 
-      console.log(
-        `[LexicalAdapter] Running ${executableBlocks.length} executable blocks`,
-      );
-
       for (const block of executableBlocks) {
         // Check if aborted before running next block
         if (signal.aborted) {
-          console.log('[LexicalAdapter] Run-all aborted, stopping execution');
           return {
             success: false,
             error: 'Run all blocks was cancelled (new run all started)',
           };
         }
 
-        console.log(`[LexicalAdapter] Running block ${block.block_id}`);
         const result = await this.runBlock(block.block_id);
         if (!result.success) {
           console.error(
@@ -727,7 +717,6 @@ export class LexicalAdapter {
         }
       }
 
-      console.log('[LexicalAdapter] All blocks executed successfully');
       return {
         success: true,
         blockId:
@@ -738,7 +727,6 @@ export class LexicalAdapter {
     } finally {
       // Clean up controller if this is still the active one
       if (this._runAllAbortController?.signal === signal) {
-        console.log('[LexicalAdapter] Clearing AbortController');
         this._runAllAbortController = null;
       }
     }
@@ -1170,10 +1158,6 @@ export class LexicalAdapter {
           if (data && Array.isArray(data) && data.length > 0) {
             rows = data.length;
             columns = data[0].length;
-            console.log('[Table] Inferred dimensions from metadata.data:', {
-              rows,
-              columns,
-            });
           }
 
           // If source contains markdown table, parse it
@@ -1187,17 +1171,13 @@ export class LexicalAdapter {
             sourceText.includes('|')
           ) {
             try {
-              console.log('[Table] Parsing source:', sourceText);
               // Parse markdown table
               const lines = sourceText.split('\n').filter(line => line.trim());
-              console.log('[Table] Split lines:', lines);
               const tableData: string[][] = [];
 
               for (const line of lines) {
-                console.log('[Table] Processing line:', line);
                 // Skip separator rows like |---|---|
                 if (line.match(/^\|?[\s-|]+\|?$/)) {
-                  console.log('[Table] Skipping separator line');
                   continue;
                 }
 
@@ -1207,22 +1187,18 @@ export class LexicalAdapter {
                   .slice(1, -1) // Remove empty strings from start/end
                   .map(cell => cell.trim());
 
-                console.log('[Table] Extracted cells:', cells);
                 if (cells.length > 0) {
                   tableData.push(cells);
                 }
               }
 
-              console.log('[Table] Final tableData:', tableData);
               if (tableData.length > 0) {
                 data = tableData;
                 rows = tableData.length;
                 columns = tableData[0].length;
-                console.log('[Table] Setting rows:', rows, 'columns:', columns);
               }
             } catch (e) {
               // If parsing fails, use defaults
-              console.warn('Failed to parse table source as markdown:', e);
             }
           }
 
@@ -1283,7 +1259,7 @@ export class LexicalAdapter {
                         }
                       }
                     } catch (error) {
-                      console.warn('Failed to populate table data:', error);
+                      // Silently fail if table population doesn't work
                     }
                   }
                   break;
