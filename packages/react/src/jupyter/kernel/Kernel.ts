@@ -254,14 +254,26 @@ export class Kernel {
    * Interrupt the kernel
    */
   interrupt(): Promise<void> {
-    return this._kernelConnection?.interrupt() ?? Promise.resolve();
+    if (!this._kernelConnection) {
+      return Promise.resolve();
+    }
+    return this._kernelConnection.interrupt().catch(err => {
+      console.error('[Kernel] Kernel interrupt failed:', err);
+      throw err;
+    });
   }
 
   /**
    * Restart the kernel
    */
   restart(): Promise<void> {
-    return this._kernelConnection?.restart() ?? Promise.resolve();
+    if (!this._kernelConnection) {
+      return Promise.resolve();
+    }
+    return this._kernelConnection.restart().catch(err => {
+      console.error('[Kernel] Kernel restart failed:', err);
+      throw err;
+    });
   }
 
   /**

@@ -22,6 +22,7 @@ import {
   $getSelection,
   $createParagraphNode,
   $createTextNode,
+  $getNodeByKey,
 } from 'lexical';
 import {
   $createHeadingNode,
@@ -41,6 +42,7 @@ import {
   editorStateToBlocks,
   parseMarkdownFormatting,
 } from '../tools/utils/blocks';
+import { INPUT_UUID_TO_OUTPUT_KEY } from '../plugins/JupyterInputOutputPlugin';
 
 /**
  * Result of a document operation
@@ -68,6 +70,7 @@ export class LexicalAdapter {
   private _editor: LexicalEditor;
   private _defaultBlockType: string = 'paragraph';
   private _serviceManager?: any; // ServiceManager from @jupyterlab/services
+  private _runAllAbortController: AbortController | null = null;
 
   constructor(editor: LexicalEditor, serviceManager?: any) {
     this._editor = editor;
@@ -589,14 +592,11 @@ export class LexicalAdapter {
                 node.getKey() === blockId
               ) {
                 code = node.getTextContent();
-                // Find corresponding output node (sibling)
-                const parent = node.getParent();
-                if (parent) {
-                  parent.getChildren().forEach((sibling: any) => {
-                    if (sibling.getType() === 'jupyter-output') {
-                      jupyterOutputNode = sibling;
-                    }
-                  });
+                // Find corresponding output node using UUID map (prevents output mixing!)
+                const inputUuid = node.getJupyterInputNodeUuid();
+                const outputKey = INPUT_UUID_TO_OUTPUT_KEY.get(inputUuid);
+                if (outputKey) {
+                  jupyterOutputNode = $getNodeByKey(outputKey);
                 }
                 return true; // Found it
               }
@@ -680,31 +680,56 @@ export class LexicalAdapter {
    * Run all executable blocks in the document
    */
   async runAllBlocks(): Promise<OperationResult> {
-    const blocks = await this.getBlocks();
-    const executableBlocks = blocks.filter(
-      b => b.block_type === 'jupyter-cell',
-    );
-
-    // Debug logging removed to satisfy ESLint no-console rule
-    // console.log(`[LexicalAdapter] Running ${executableBlocks.length} executable blocks`);
-
-    for (const block of executableBlocks) {
-      const result = await this.runBlock(block.block_id);
-      if (!result.success) {
-        return {
-          success: false,
-          error: `Failed to run block ${block.block_id}: ${result.error}`,
-        };
-      }
+    // Abort any existing run-all operation
+    if (this._runAllAbortController) {
+      this._runAllAbortController.abort();
     }
 
-    return {
-      success: true,
-      blockId:
-        executableBlocks.length > 0
-          ? executableBlocks[executableBlocks.length - 1].block_id
-          : undefined,
-    };
+    // Create new abort controller for this run
+    this._runAllAbortController = new AbortController();
+    const signal = this._runAllAbortController.signal;
+
+    try {
+      const blocks = await this.getBlocks();
+      const executableBlocks = blocks.filter(
+        b => b.block_type === 'jupyter-cell',
+      );
+
+      for (const block of executableBlocks) {
+        // Check if aborted before running next block
+        if (signal.aborted) {
+          return {
+            success: false,
+            error: 'Run all blocks was cancelled (new run all started)',
+          };
+        }
+
+        const result = await this.runBlock(block.block_id);
+        if (!result.success) {
+          console.error(
+            `[LexicalAdapter] Block ${block.block_id} failed:`,
+            result.error,
+          );
+          return {
+            success: false,
+            error: `Failed to run block ${block.block_id}: ${result.error}`,
+          };
+        }
+      }
+
+      return {
+        success: true,
+        blockId:
+          executableBlocks.length > 0
+            ? executableBlocks[executableBlocks.length - 1].block_id
+            : undefined,
+      };
+    } finally {
+      // Clean up controller if this is still the active one
+      if (this._runAllAbortController?.signal === signal) {
+        this._runAllAbortController = null;
+      }
+    }
   }
 
   /**
@@ -1133,10 +1158,6 @@ export class LexicalAdapter {
           if (data && Array.isArray(data) && data.length > 0) {
             rows = data.length;
             columns = data[0].length;
-            console.log('[Table] Inferred dimensions from metadata.data:', {
-              rows,
-              columns,
-            });
           }
 
           // If source contains markdown table, parse it
@@ -1150,17 +1171,13 @@ export class LexicalAdapter {
             sourceText.includes('|')
           ) {
             try {
-              console.log('[Table] Parsing source:', sourceText);
               // Parse markdown table
               const lines = sourceText.split('\n').filter(line => line.trim());
-              console.log('[Table] Split lines:', lines);
               const tableData: string[][] = [];
 
               for (const line of lines) {
-                console.log('[Table] Processing line:', line);
                 // Skip separator rows like |---|---|
                 if (line.match(/^\|?[\s-|]+\|?$/)) {
-                  console.log('[Table] Skipping separator line');
                   continue;
                 }
 
@@ -1170,22 +1187,18 @@ export class LexicalAdapter {
                   .slice(1, -1) // Remove empty strings from start/end
                   .map(cell => cell.trim());
 
-                console.log('[Table] Extracted cells:', cells);
                 if (cells.length > 0) {
                   tableData.push(cells);
                 }
               }
 
-              console.log('[Table] Final tableData:', tableData);
               if (tableData.length > 0) {
                 data = tableData;
                 rows = tableData.length;
                 columns = tableData[0].length;
-                console.log('[Table] Setting rows:', rows, 'columns:', columns);
               }
             } catch (e) {
               // If parsing fails, use defaults
-              console.warn('Failed to parse table source as markdown:', e);
             }
           }
 
@@ -1246,7 +1259,7 @@ export class LexicalAdapter {
                         }
                       }
                     } catch (error) {
-                      console.warn('Failed to populate table data:', error);
+                      // Silently fail if table population doesn't work
                     }
                   }
                   break;

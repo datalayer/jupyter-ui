@@ -81,6 +81,8 @@ export const lexicalTools = {
 };
 
 // Re-export everything for convenience
+// NOTE: Do NOT export '../state' or './utils' here - they contain UI code (lexical imports)
+// that cannot load in Node.js environment (causes CSS import errors)
 export * from './core';
 export * from './definitions';
 export * from './operations/insertBlock';
@@ -92,5 +94,3 @@ export * from './operations/runBlock';
 export * from './operations/runAllBlocks';
 export * from './operations/listAvailableBlocks';
 export * from './operations/executeCode';
-export * from '../state';
-export * from './utils';

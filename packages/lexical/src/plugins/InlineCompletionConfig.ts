@@ -85,8 +85,8 @@ export interface InlineCompletionConfig {
 
   /**
    * Keyboard shortcut for manual trigger.
-   * Format: "Modifier+Key" (e.g., "Ctrl+Alt+I", "Cmd+Shift+K")
-   * @default 'Ctrl+Alt+I'
+   * Format: "Modifier+Key" (e.g., "Ctrl+Space", "Cmd+I")
+   * @default 'Ctrl+Space'
    */
   manualTriggerKey: string;
 }
@@ -94,7 +94,7 @@ export interface InlineCompletionConfig {
 /**
  * Default configuration with user-approved settings.
  * - Code: Auto-trigger with entire document context
- * - Prose: Manual trigger (Ctrl+Alt+I) with entire document context
+ * - Prose: Manual trigger (Ctrl+Space) with entire document context
  */
 export const DEFAULT_CONFIG: InlineCompletionConfig = {
   code: {
@@ -109,7 +109,7 @@ export const DEFAULT_CONFIG: InlineCompletionConfig = {
     contextAfter: -1, // Entire document
   },
   debounceMs: 200,
-  manualTriggerKey: 'Ctrl+Alt+I', // Cross-platform: Cmd+Option+I on Mac, Ctrl+Alt+I elsewhere
+  manualTriggerKey: 'Cmd+Shift+,', // Command+Shift+Comma (Mac-friendly, unlikely to conflict)
 };
 
 /**

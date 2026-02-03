@@ -11,7 +11,14 @@
  * @module tools/core/executor
  */
 
-import type { NotebookState } from '../../components/notebook/NotebookState';
+/**
+ * Minimal NotebookState interface for tool executor.
+ * This avoids importing from UI components which would load React/Primer at runtime.
+ * Only used internally by DefaultExecutor.
+ */
+interface NotebookState {
+  [key: string]: unknown;
+}
 
 /**
  * Tool executor interface - abstracts how operations are executed.

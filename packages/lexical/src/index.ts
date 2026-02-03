@@ -12,6 +12,7 @@ export * from './editor';
 export * from './hooks';
 export * from './nodes';
 export * from './plugins';
+export * from './state';
 export * from './themes';
 export * from './tools';
 export * from './utils';

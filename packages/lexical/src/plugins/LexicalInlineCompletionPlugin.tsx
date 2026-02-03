@@ -36,7 +36,7 @@
  * ```
  */
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import {
   $getSelection,
@@ -120,6 +120,10 @@ export interface CompletionContext {
   before: string;
   /** Text after cursor */
   after: string;
+  /** Whether the cursor is in a code cell (jupyter-cell) */
+  inCodeCell?: boolean;
+  /** Trigger kind (auto or manual) */
+  triggerKind?: 'auto' | 'manual';
 }
 
 /**
@@ -177,8 +181,11 @@ export function LexicalInlineCompletionPlugin({
   );
   const [lspMenuOpen, setLspMenuOpen] = useState<boolean>(false);
 
-  // Merge user config with defaults
-  const config: InlineCompletionConfig = mergeConfig(userConfig);
+  // Merge user config with defaults (recompute when userConfig changes)
+  const config: InlineCompletionConfig = useMemo(
+    () => mergeConfig(userConfig),
+    [userConfig],
+  );
 
   // Debounce precedence: userConfig (new) > deprecatedDebounceMs (old) > default
   // Note: Using ?? operator, so 0 values will fall through (not a realistic use case)
@@ -266,6 +273,7 @@ export function LexicalInlineCompletionPlugin({
       cursorOffset: number,
       language: string,
       contentType: 'code' | 'prose' = 'code',
+      trigger: 'auto' | 'manual' = 'auto',
     ) => {
       if (!providers || providers.length === 0) {
         return;
@@ -279,7 +287,12 @@ export function LexicalInlineCompletionPlugin({
 
         const result = await provider.fetch(
           { text: cellText, offset: cursorOffset, language, contentType },
-          { before, after },
+          {
+            before,
+            after,
+            inCodeCell: contentType === 'code',
+            triggerKind: trigger,
+          },
         );
 
         if (result && result.items && result.items.length > 0) {
@@ -312,6 +325,15 @@ export function LexicalInlineCompletionPlugin({
 
     return editor.registerUpdateListener(({ editorState }) => {
       editorState.read(() => {
+        // Don't trigger if config is not yet available (prevents race condition on mount)
+        if (!config) {
+          console.log(
+            '[InlineCompletionPlugin] Config not ready, skipping auto-trigger',
+          );
+          setCurrentCompletion(null);
+          return;
+        }
+
         // Don't request inline completions if LSP dropdown menu is active
         if (lspMenuOpen) {
           setCurrentCompletion(null);
@@ -342,8 +364,14 @@ export function LexicalInlineCompletionPlugin({
         // Check if auto-trigger is enabled for this content type
         const contentConfig =
           contentType === 'code' ? config.code : config.prose;
+        console.log('[InlineCompletionPlugin] Auto-trigger check:', {
+          contentType,
+          triggerMode: contentConfig.triggerMode,
+          willTrigger: contentConfig.triggerMode === 'auto',
+        });
         if (contentConfig.triggerMode !== 'auto') {
-          setCurrentCompletion(null);
+          // Manual mode - don't auto-trigger, but preserve existing completions
+          // (Manual completions are triggered via keyboard shortcut command)
           return;
         }
 
@@ -429,6 +457,7 @@ export function LexicalInlineCompletionPlugin({
                 cursorOffset,
                 contentConfig.language || 'python',
                 'code',
+                'auto', // Auto-triggered by typing
               );
             }
           }, debounceMs);
@@ -472,6 +501,7 @@ export function LexicalInlineCompletionPlugin({
                 context.before.length, // Cursor offset is at end of "before" text
                 contentConfig.language || 'markdown',
                 'prose',
+                'auto', // Auto-triggered by typing
               );
             }
           }, debounceMs);
@@ -755,6 +785,7 @@ export function LexicalInlineCompletionPlugin({
               cursorOffset,
               contentConfig.language || 'python',
               'code',
+              'manual', // Manually triggered by keyboard shortcut
             );
           } else {
             // Prose manual trigger
@@ -778,6 +809,7 @@ export function LexicalInlineCompletionPlugin({
               context.before.length,
               contentConfig.language || 'markdown',
               'prose',
+              'manual', // Manually triggered by keyboard shortcut
             );
           }
         });

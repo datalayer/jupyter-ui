@@ -98,10 +98,6 @@ export const Output = ({
   // Force Lumino widget update when executeTrigger changes
   useEffect(() => {
     if (lumino && adapter?.outputArea) {
-      console.warn(
-        '🔄 Forcing Lumino widget update due to executeTrigger change:',
-        executeTrigger
-      );
       adapter.outputArea.update();
     }
   }, [executeTrigger, lumino, adapter]);
@@ -188,12 +184,9 @@ export const Output = ({
       return () => {
         // kernel.connection.then(k => k.shutdown().then(() => console.log(`Kernel ${k.id} is terminated.`)));
       };
-    } else {
-      // Reset kernel status when kernel becomes undefined (e.g., runtime terminated)
-      // This prevents zombie progress bars from showing
-      setKernelStatus('idle');
     }
-  }, [kernel]);
+  }, [kernel, adapter, onExecutionPhaseChanged, resolvedSourceId]);
+
   const executeRequest = outputStore.getExecuteRequest(resolvedSourceId);
   useEffect(() => {
     if (adapter && executeRequest && executeRequest === id) {
