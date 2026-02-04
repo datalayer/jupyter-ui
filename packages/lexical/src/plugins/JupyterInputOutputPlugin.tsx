@@ -43,6 +43,7 @@ import {
   JupyterInputNode,
   $isJupyterInputNode,
 } from '../nodes/JupyterInputNode';
+import { $createJupyterInputHighlightNode } from '../nodes/JupyterInputHighlightNode';
 import { registerCodeHighlighting } from '../nodes/JupyterInputHighlighter';
 import {
   JupyterOutputNode,
@@ -549,24 +550,110 @@ export const JupyterInputOutputPlugin = (
     return editor.registerCommand(
       INSERT_JUPYTER_INPUT_OUTPUT_COMMAND,
       (props: JupyterInputOutputProps) => {
+        console.log(
+          '[JupyterInputOutputPlugin] 🔵 INSERT_JUPYTER_INPUT_OUTPUT_COMMAND triggered',
+        );
+        console.log('[JupyterInputOutputPlugin] Props:', props);
+
         const { code, outputs } = props;
         const selection = $getSelection();
-        if ($isRangeSelection(selection)) {
-          // Clear any existing selection content
-          selection.removeText();
 
-          // Create the input node with the code content
+        console.log(
+          '[JupyterInputOutputPlugin] Selection exists?',
+          !!selection,
+        );
+        console.log(
+          '[JupyterInputOutputPlugin] Is RangeSelection?',
+          $isRangeSelection(selection),
+        );
+
+        if ($isRangeSelection(selection)) {
+          // Don't remove text - marker was already removed and selection is collapsed
+
+          // Create the input node
           const jupyterCodeNode = $createJupyterInputNode('python');
           const jupyterCodeUuid = jupyterCodeNode.getJupyterInputNodeUuid();
 
-          selection.insertNodes([jupyterCodeNode]);
+          console.log('[JupyterInputOutputPlugin] ✅ Created JupyterInputNode');
+          console.log('[JupyterInputOutputPlugin] Node UUID:', jupyterCodeUuid);
+          console.log(
+            '[JupyterInputOutputPlugin] Node type:',
+            jupyterCodeNode.getType(),
+          );
+          console.log(
+            '[JupyterInputOutputPlugin] Node children before append:',
+            jupyterCodeNode.getChildrenSize(),
+          );
 
-          // Add the code content to the input node
+          // Add code content BEFORE inserting the node
           if (code) {
-            selection.insertRawText(code);
+            console.log(
+              '[JupyterInputOutputPlugin] 📝 Code provided, length:',
+              code.length,
+            );
+            console.log(
+              '[JupyterInputOutputPlugin] Code content:',
+              code.substring(0, 100),
+            );
+
+            // Create a JupyterInputHighlightNode with the code text
+            const codeNode = $createJupyterInputHighlightNode(code);
+            console.log(
+              '[JupyterInputOutputPlugin] ✅ Created JupyterInputHighlightNode',
+            );
+            console.log(
+              '[JupyterInputOutputPlugin] CodeNode type:',
+              codeNode.getType(),
+            );
+            console.log(
+              '[JupyterInputOutputPlugin] CodeNode text length:',
+              codeNode.getTextContent().length,
+            );
+
+            jupyterCodeNode.append(codeNode);
+            console.log(
+              '[JupyterInputOutputPlugin] ✅ Appended code to JupyterInputNode',
+            );
+            console.log(
+              '[JupyterInputOutputPlugin] Node children after append:',
+              jupyterCodeNode.getChildrenSize(),
+            );
+            console.log(
+              '[JupyterInputOutputPlugin] Node text content:',
+              jupyterCodeNode.getTextContent(),
+            );
+          } else {
+            console.log('[JupyterInputOutputPlugin] ⚠️ No code provided');
           }
 
+          console.log(
+            '[JupyterInputOutputPlugin] 🚀 Inserting node into document...',
+          );
+          console.log('[JupyterInputOutputPlugin] Selection before insert:', {
+            anchorKey: selection.anchor.key,
+            anchorOffset: selection.anchor.offset,
+            focusKey: selection.focus.key,
+            focusOffset: selection.focus.offset,
+          });
+
+          // Now insert the complete node with its content
+          selection.insertNodes([jupyterCodeNode]);
+
+          console.log('[JupyterInputOutputPlugin] ✅ Node inserted');
+          console.log(
+            '[JupyterInputOutputPlugin] Node key after insert:',
+            jupyterCodeNode.getKey(),
+          );
+          console.log(
+            '[JupyterInputOutputPlugin] Node parent:',
+            jupyterCodeNode.getParent()?.getType(),
+          );
+
           // Create the output node with kernel (may be undefined - that's OK!)
+          console.log('[JupyterInputOutputPlugin] 📤 Creating output node...');
+          console.log('[JupyterInputOutputPlugin] Kernel available?', !!kernel);
+          console.log('[JupyterInputOutputPlugin] Outputs:', outputs);
+
           const outputAdapter = new OutputAdapter(newUuid(), kernel, outputs);
           const jupyterOutputNode = $createJupyterOutputNode(
             code,
@@ -575,6 +662,14 @@ export const JupyterInputOutputPlugin = (
             true,
             jupyterCodeUuid,
             UUID.uuid4(),
+          );
+
+          console.log(
+            '[JupyterInputOutputPlugin] ✅ Created JupyterOutputNode',
+          );
+          console.log(
+            '[JupyterInputOutputPlugin] Output node type:',
+            jupyterOutputNode.getType(),
           );
 
           outputAdapter.outputArea.model.changed.connect(
@@ -593,13 +688,34 @@ export const JupyterInputOutputPlugin = (
 
           // Get the parent to insert the output node
           const parent = jupyterCodeNode.getParent();
+          console.log(
+            '[JupyterInputOutputPlugin] Parent node:',
+            parent?.getType(),
+          );
+
           if (parent) {
-            // Insert the output node immediately after the input node
+            console.log(
+              '[JupyterInputOutputPlugin] 🚀 Inserting output node after input node...',
+            );
             jupyterCodeNode.insertAfter(jupyterOutputNode);
+            console.log('[JupyterInputOutputPlugin] ✅ Output node inserted');
+          } else {
+            console.log(
+              '[JupyterInputOutputPlugin] ⚠️ No parent found, cannot insert output node',
+            );
           }
 
           // Position cursor at the beginning of the jupyter-input node
+          console.log('[JupyterInputOutputPlugin] 📍 Positioning cursor...');
           jupyterCodeNode.selectStart();
+
+          console.log(
+            '[JupyterInputOutputPlugin] 🎉 INSERT_JUPYTER_INPUT_OUTPUT_COMMAND completed successfully',
+          );
+        } else {
+          console.log(
+            '[JupyterInputOutputPlugin] ❌ Selection is not a RangeSelection',
+          );
         }
         return true;
       },

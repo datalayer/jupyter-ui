@@ -172,15 +172,17 @@ export class LexicalAdapter {
     block: LexicalBlock,
     afterBlockId: string,
   ): Promise<OperationResult> {
-    // Debug logging removed to satisfy ESLint no-console rule
-    // console.log(`[LexicalAdapter] insertBlock: type=${block.block_type}, afterBlockId=${afterBlockId}`);
-
     // STEP 0: Check if source contains block-level markdown
+    // IMPORTANT: Skip markdown parsing for block types that are NOT prose
+    // (jupyter-cell, code, etc. contain # characters that aren't markdown headings)
     const sourceText = Array.isArray(block.source)
       ? block.source.join('\n')
       : block.source;
 
-    if (this.containsBlockLevelMarkdown(sourceText)) {
+    const shouldParseMarkdown =
+      block.block_type === 'paragraph' || block.block_type === 'text';
+
+    if (shouldParseMarkdown && this.containsBlockLevelMarkdown(sourceText)) {
       // Parse into multiple blocks
       const parsedBlocks = this.parseMarkdownToBlocks(sourceText);
 
@@ -841,9 +843,6 @@ export class LexicalAdapter {
     block: LexicalBlock,
     afterBlockId: string,
   ): Promise<OperationResult> {
-    // Debug logging removed to satisfy ESLint no-console rule
-    // console.log(`[LexicalAdapter] Inserting ${block.block_type} via command`);
-
     // eslint-disable-next-line no-async-promise-executor
     return new Promise(async resolve => {
       try {
@@ -944,41 +943,6 @@ export class LexicalAdapter {
           const { INSERT_JUPYTER_INPUT_OUTPUT_COMMAND } =
             await import('../plugins/JupyterInputOutputPlugin');
 
-          // For jupyter-cell, we need to:
-          // 1. Create a placeholder paragraph at the target location
-          // 2. Dispatch the command to insert the jupyter cell
-          // 3. Remove the placeholder
-
-          this._editor.update(() => {
-            const root = $getRoot();
-            const children = root.getChildren();
-
-            // Create a temporary marker paragraph
-            const marker = $createParagraphNode();
-            marker.append($createTextNode('__JUPYTER_CELL_MARKER__'));
-
-            // Insert marker at the target position
-            if (afterBlockId === 'TOP') {
-              if (children.length > 0) {
-                children[0].insertBefore(marker);
-              } else {
-                root.append(marker);
-              }
-            } else if (afterBlockId === 'BOTTOM' || !afterBlockId) {
-              root.append(marker);
-            } else {
-              const targetBlock = children.find(
-                child => child.getKey() === afterBlockId,
-              );
-              if (targetBlock) {
-                targetBlock.insertAfter(marker);
-              } else {
-                throw new Error(`Block ID ${afterBlockId} not found`);
-              }
-            }
-          });
-
-          // Now dispatch the command to insert jupyter cell
           const source = Array.isArray(block.source)
             ? block.source.join('\n')
             : block.source;
@@ -989,61 +953,59 @@ export class LexicalAdapter {
             loading: '',
           };
 
-          // Dispatch the command - this will be handled by the jupyter plugin
-          setTimeout(() => {
-            this._editor.update(() => {
-              // Find and select the marker
-              const root = $getRoot();
-              const children = root.getChildren();
-              const markerNode = children.find(
-                child =>
-                  child.getType() === 'paragraph' &&
-                  child.getTextContent() === '__JUPYTER_CELL_MARKER__',
-              );
+          // NO MARKERS - directly set selection and dispatch
+          let blockId: string | undefined;
 
-              if (markerNode) {
-                // Select the marker node before removing it
-                // This ensures the INSERT command will insert at this position
-                markerNode.selectEnd();
-                // Remove the marker - the command will insert at selection
-                markerNode.remove();
+          this._editor.update(() => {
+            const root = $getRoot();
+            const children = root.getChildren();
+
+            // Set selection at target position
+            if (afterBlockId === 'TOP') {
+              if (children.length > 0) {
+                children[0].selectStart();
+              } else {
+                root.selectStart();
               }
-            });
+            } else if (afterBlockId === 'BOTTOM' || !afterBlockId) {
+              root.selectEnd();
+            } else {
+              const targetBlock = children.find(
+                child => child.getKey() === afterBlockId,
+              );
+              if (targetBlock) {
+                targetBlock.selectEnd();
+              } else {
+                throw new Error(`Block ID ${afterBlockId} not found`);
+              }
+            }
 
-            // Dispatch the insert command
+            // Dispatch command with selection already set
             this._editor.dispatchCommand(
               INSERT_JUPYTER_INPUT_OUTPUT_COMMAND,
               commandPayload,
             );
 
-            // Find the newly inserted jupyter-input node and get its ID
-            let blockId: string | undefined;
-            setTimeout(() => {
-              this._editor.getEditorState().read(() => {
-                const root = $getRoot();
-                const children = root.getChildren();
+            // Find the newly created node immediately (same update)
+            const newChildren = $getRoot().getChildren();
 
-                // Find newest jupyter-input node
-                for (let i = children.length - 1; i >= 0; i--) {
-                  if (children[i].getType() === 'jupyter-input') {
-                    blockId = children[i].getKey();
-                    break;
-                  }
-                }
-              });
-
-              if (!blockId) {
-                resolve({
-                  success: false,
-                  error:
-                    'Failed to create jupyter-cell: INSERT_JUPYTER_INPUT_OUTPUT_COMMAND did not create a jupyter-input node',
-                });
-                return;
+            for (let i = newChildren.length - 1; i >= 0; i--) {
+              if (newChildren[i].getType() === 'jupyter-input') {
+                blockId = newChildren[i].getKey();
+                break;
               }
+            }
+          });
 
-              resolve({ success: true, blockId });
-            }, 20);
-          }, 10);
+          if (!blockId) {
+            resolve({
+              success: false,
+              error: 'Failed to create jupyter-cell',
+            });
+            return;
+          }
+
+          resolve({ success: true, blockId });
         } else if (block.block_type === 'youtube') {
           // Import YouTube command dynamically
           const { INSERT_YOUTUBE_COMMAND } =

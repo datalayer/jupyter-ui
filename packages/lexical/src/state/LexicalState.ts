@@ -386,25 +386,19 @@ export const lexicalStore = createStore<LexicalState>((set, get) => ({
     // Special case: this operation is static and doesn't require a document
     // If no document is found, call the operation directly
     const adapter = get().lexicals.get(params.id as string)?.adapter;
-    console.log('[LexicalState] 🔧 Adapter found?', !!adapter);
 
     if (!adapter) {
-      console.log('[LexicalState] 🚀 Calling operation directly (no adapter)');
       // Call operation directly without adapter (static operation)
       const { listAvailableBlocksOperation } =
         await import('../tools/operations/listAvailableBlocks');
-      console.log('[LexicalState] 📥 Operation imported, executing...');
       const result = await listAvailableBlocksOperation.execute(
         { type: 'all' },
         { documentId: 'static', executor: null as any },
       );
-      console.log('[LexicalState] ✅ Operation result:', result);
       return result;
     }
 
-    console.log('[LexicalState] 🔗 Delegating to adapter');
     const result = await adapter.listAvailableBlocks();
-    console.log('[LexicalState] ✅ Adapter result:', result);
     return result;
   },
 
