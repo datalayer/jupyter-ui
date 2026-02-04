@@ -27,6 +27,7 @@ module.exports = tseslint.config(
             'gulpfile.js',
             'packages/*/entries.js',
             'packages/*/vite.config.ts',
+            'packages/*/vite-plugins/*.ts',
             'packages/*/*.config.js',
             'packages/*/gulpfile.js',
             'packages/*/scripts/*.js',
