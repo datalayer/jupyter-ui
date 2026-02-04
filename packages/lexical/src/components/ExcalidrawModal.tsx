@@ -130,7 +130,7 @@ export default function ExcalidrawModal({
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        onDelete();
+        onClose();
       }
     };
 
@@ -139,7 +139,7 @@ export default function ExcalidrawModal({
     return () => {
       currentModalRef?.removeEventListener('keydown', onKeyDown);
     };
-  }, [elements, files, onDelete]);
+  }, [elements, files, onClose]);
 
   const save = () => {
     if (elements?.some(el => !el.isDeleted)) {

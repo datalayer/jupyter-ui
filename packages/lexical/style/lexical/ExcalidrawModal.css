@@ -102,14 +102,14 @@
   flex-shrink: 0 !important;
 }
 
-/* Hide radio inputs visually but keep them accessible for keyboard navigation */
+/* Hide radio inputs visually but keep them accessible for keyboard and pointer navigation */
 .ExcalidrawModal__row .excalidraw label input[type='radio'],
 .ExcalidrawModal__row .excalidraw label input[type='checkbox'] {
   position: absolute !important;
   opacity: 0 !important;
   width: 1px !important;
   height: 1px !important;
-  pointer-events: none !important;
+  /* REMOVED: pointer-events: none - it was blocking toolbar interaction */
 }
 
 /* Ensure labels (containing hidden inputs + SVGs) center their visible content */

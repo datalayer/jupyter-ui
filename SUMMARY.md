@@ -34,8 +34,7 @@ jupyter-ui/
 ├── packages/           # Core library packages
 │   ├── react/         # Main React component library (generic)
 │   ├── lexical/       # Rich text editor integration
-│   ├── docusaurus-plugin/  # Docusaurus integration
-│   └── vscode/        # VS Code extension
+│   └── docusaurus-plugin/  # Docusaurus integration
 ├── examples/          # Framework integration examples
 │   ├── vite/         # Vite example
 │   ├── next-js/      # Next.js integration
@@ -109,17 +108,6 @@ Plugin enabling Jupyter notebook integration in Docusaurus documentation sites.
 - Interactive code execution
 - Syntax highlighting
 - Theme integration
-
-### 4. datalayer-jupyter-vscode (v0.0.2)
-
-VS Code extension for notebook editing using the Jupyter UI components.
-
-**Features:**
-
-- Custom notebook editor
-- Kernel management within VS Code
-- Runtime picker
-- WebView-based rendering
 
 ## Development Infrastructure
 

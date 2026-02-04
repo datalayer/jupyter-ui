@@ -72,6 +72,14 @@ export const insertBlockOperation: ToolOperation<
       );
     }
 
+    // Default metadata for jupyter-cell blocks when metadata is missing
+    // This handles cases where agents forget to include metadata
+    const finalMetadata =
+      type === 'jupyter-cell' &&
+      (!metadata || Object.keys(metadata).length === 0)
+        ? { language: 'python' }
+        : metadata;
+
     // Ensure executor is available
     if (!context.executor) {
       throw new Error(
@@ -86,7 +94,7 @@ export const insertBlockOperation: ToolOperation<
       const result: any = await context.executor.execute(this.name, {
         type,
         source,
-        metadata,
+        metadata: finalMetadata,
         afterId,
       });
 

@@ -5,8 +5,19 @@
  */
 
 import { build } from 'vite';
-import type { OutputAsset, OutputBundle, OutputChunk, ModuleFormat } from 'rollup';
-import type { BuildOptions, ResolvedConfig, Plugin, UserConfig, ConfigEnv } from 'vite';
+import type {
+  OutputAsset,
+  OutputBundle,
+  OutputChunk,
+  ModuleFormat,
+} from 'rollup';
+import type {
+  BuildOptions,
+  ResolvedConfig,
+  Plugin,
+  UserConfig,
+  ConfigEnv,
+} from 'vite';
 
 interface InjectCodeOptions {
   styleId?: string | (() => string);
@@ -14,8 +25,14 @@ interface InjectCodeOptions {
   attributes?: { [key: string]: string } | undefined;
 }
 
-export type InjectCode = (cssCode: string, options: InjectCodeOptions) => string;
-export type InjectCodeFunction = (cssCode: string, options: InjectCodeOptions) => void;
+export type InjectCode = (
+  cssCode: string,
+  options: InjectCodeOptions,
+) => string;
+export type InjectCodeFunction = (
+  cssCode: string,
+  options: InjectCodeOptions,
+) => void;
 
 export interface DevOptions {
   enableDev?: boolean;
@@ -51,7 +68,10 @@ interface BuildCSSInjectionConfiguration extends CSSInjectionConfiguration {
 
 const cssInjectedByJsId = '\0vite/all-css';
 
-const defaultInjectCode: InjectCode = (cssCode, { styleId, useStrictCSP, attributes }) => {
+const defaultInjectCode: InjectCode = (
+  cssCode,
+  { styleId, useStrictCSP, attributes },
+) => {
   let attributesInjection = '';
 
   for (const attribute in attributes) {
@@ -59,7 +79,9 @@ const defaultInjectCode: InjectCode = (cssCode, { styleId, useStrictCSP, attribu
   }
 
   return `try{if(typeof document != 'undefined'){var elementStyle = document.createElement('style');${
-    typeof styleId == 'string' && styleId.length > 0 ? `elementStyle.id = '${styleId}';` : ''
+    typeof styleId == 'string' && styleId.length > 0
+      ? `elementStyle.id = '${styleId}';`
+      : ''
   }${
     useStrictCSP
       ? `elementStyle.nonce = document.head.querySelector('meta[property=csp-nonce]')?.content;`
@@ -117,9 +139,13 @@ async function buildCSSInjectionCode({
 
 function resolveInjectionCode(
   cssCode: string,
-  injectCode: ((cssCode: string, options: InjectCodeOptions) => string) | undefined,
-  injectCodeFunction: ((cssCode: string, options: InjectCodeOptions) => void) | undefined,
-  { styleId, useStrictCSP, attributes }: InjectCodeOptions
+  injectCode:
+    | ((cssCode: string, options: InjectCodeOptions) => string)
+    | undefined,
+  injectCodeFunction:
+    | ((cssCode: string, options: InjectCodeOptions) => void)
+    | undefined,
+  { styleId, useStrictCSP, attributes }: InjectCodeOptions,
 ) {
   const injectionOptions = { styleId, useStrictCSP, attributes };
   if (injectCodeFunction) {
@@ -147,7 +173,10 @@ function injectionCSSCodePlugin({
     load(id: string) {
       if (id == cssInjectedByJsId) {
         const cssCode = JSON.stringify(cssToInject.trim());
-        return resolveInjectionCode(cssCode, injectCode, injectCodeFunction, { styleId, useStrictCSP });
+        return resolveInjectionCode(cssCode, injectCode, injectCodeFunction, {
+          styleId,
+          useStrictCSP,
+        });
       }
       return null;
     },
@@ -155,7 +184,9 @@ function injectionCSSCodePlugin({
 }
 
 function removeLinkStyleSheets(html: string, cssFileName: string): string {
-  const removeCSS = new RegExp(`<link rel=".*"[^>]*?href=".*/?${cssFileName}"[^>]*?>`);
+  const removeCSS = new RegExp(
+    `<link rel=".*"[^>]*?href=".*/?${cssFileName}"[^>]*?>`,
+  );
   return html.replace(removeCSS, '');
 }
 
@@ -164,11 +195,16 @@ function warnLog(msg: string) {
 }
 
 function debugLog(msg: string) {
+  // eslint-disable-next-line no-console
   console.debug(`\x1b[34m \n${msg} \x1b[39m`);
 }
 
-function isJsOutputChunk(chunk: OutputAsset | OutputChunk): chunk is OutputChunk {
-  return chunk.type == 'chunk' && chunk.fileName.match(/.[cm]?js(?:\?.+)?$/) != null;
+function isJsOutputChunk(
+  chunk: OutputAsset | OutputChunk,
+): chunk is OutputChunk {
+  return (
+    chunk.type == 'chunk' && chunk.fileName.match(/.[cm]?js(?:\?.+)?$/) != null
+  );
 }
 
 function defaultJsAssetsFilter(chunk: OutputChunk): boolean {
@@ -183,14 +219,22 @@ function extractCss(bundle: OutputBundle, cssName: string): string {
   if (cssAsset !== undefined && cssAsset.source) {
     const cssSource = cssAsset.source;
     cssSourceCache[cssName] =
-      cssSource instanceof Uint8Array ? new TextDecoder().decode(cssSource) : `${cssSource}`;
+      cssSource instanceof Uint8Array
+        ? new TextDecoder().decode(cssSource)
+        : `${cssSource}`;
   }
 
   return cssSourceCache[cssName] ?? '';
 }
 
-function concatCssAndDeleteFromBundle(bundle: OutputBundle, cssAssets: string[]): string {
-  return cssAssets.reduce(function extractCssAndDeleteFromBundle(previous: string, cssName: string): string {
+function concatCssAndDeleteFromBundle(
+  bundle: OutputBundle,
+  cssAssets: string[],
+): string {
+  return cssAssets.reduce(function extractCssAndDeleteFromBundle(
+    previous: string,
+    cssName: string,
+  ): string {
     const cssSource = extractCss(bundle, cssName);
     delete bundle[cssName];
 
@@ -200,23 +244,29 @@ function concatCssAndDeleteFromBundle(bundle: OutputBundle, cssAssets: string[])
 
 function buildJsCssMap(
   bundle: OutputBundle,
-  jsAssetsFilterFunction?: PluginConfiguration['jsAssetsFilterFunction']
+  jsAssetsFilterFunction?: PluginConfiguration['jsAssetsFilterFunction'],
 ): Record<string, string[]> {
   const chunksWithCss: Record<string, string[]> = {};
 
   const bundleKeys = getJsTargetBundleKeys(
     bundle,
-    typeof jsAssetsFilterFunction == 'function' ? jsAssetsFilterFunction : () => true
+    typeof jsAssetsFilterFunction == 'function'
+      ? jsAssetsFilterFunction
+      : () => true,
   );
   if (bundleKeys.length === 0) {
     throw new Error(
-      'Unable to locate the JavaScript asset for adding the CSS injection code. It is recommended to review your configurations.'
+      'Unable to locate the JavaScript asset for adding the CSS injection code. It is recommended to review your configurations.',
     );
   }
 
   for (const key of bundleKeys) {
     const chunk = bundle[key];
-    if (chunk.type === 'asset' || !chunk.viteMetadata || chunk.viteMetadata.importedCss.size === 0) {
+    if (
+      chunk.type === 'asset' ||
+      !chunk.viteMetadata ||
+      chunk.viteMetadata.importedCss.size === 0
+    ) {
       continue;
     }
 
@@ -230,10 +280,10 @@ function buildJsCssMap(
 
 function getJsTargetBundleKeys(
   bundle: OutputBundle,
-  jsAssetsFilterFunction?: PluginConfiguration['jsAssetsFilterFunction']
+  jsAssetsFilterFunction?: PluginConfiguration['jsAssetsFilterFunction'],
 ): string[] {
   if (typeof jsAssetsFilterFunction != 'function') {
-    const jsAssets = Object.keys(bundle).filter((i) => {
+    const jsAssets = Object.keys(bundle).filter(i => {
       const asset = bundle[i];
       return isJsOutputChunk(asset) && defaultJsAssetsFilter(asset);
     });
@@ -246,12 +296,12 @@ function getJsTargetBundleKeys(
     if (jsAssets.length > 1) {
       warnLog(
         `[vite-plugin-css-injected-by-js] has identified "${jsTargetFileName}" as one of the multiple output files marked as "entry" to put the CSS injection code.` +
-          'However, if this is not the intended file to add the CSS injection code, you can use the "jsAssetsFilterFunction" parameter to specify the desired output file (read docs).'
+          'However, if this is not the intended file to add the CSS injection code, you can use the "jsAssetsFilterFunction" parameter to specify the desired output file (read docs).',
       );
       if (process.env.VITE_CSS_INJECTED_BY_JS_DEBUG) {
         const jsAssetsStr = jsAssets.join(', ');
         debugLog(
-          `[vite-plugin-css-injected-by-js] identified js file targets: ${jsAssetsStr}. Selected "${jsTargetFileName}".\n`
+          `[vite-plugin-css-injected-by-js] identified js file targets: ${jsAssetsStr}. Selected "${jsTargetFileName}".\n`,
         );
       }
     }
@@ -273,19 +323,23 @@ async function relativeCssInjection(
   bundle: OutputBundle,
   assetsWithCss: Record<string, string[]>,
   buildCssCode: (css: string) => Promise<OutputChunk | null>,
-  topExecutionPriorityFlag: boolean
+  topExecutionPriorityFlag: boolean,
 ): Promise<void> {
   for (const [jsAssetName, cssAssets] of Object.entries(assetsWithCss)) {
-    process.env.VITE_CSS_INJECTED_BY_JS_DEBUG &&
-      debugLog(`[vite-plugin-css-injected-by-js] Relative CSS: ${jsAssetName}: [ ${cssAssets.join(',')} ]`);
+    if (process.env.VITE_CSS_INJECTED_BY_JS_DEBUG) {
+      debugLog(
+        `[vite-plugin-css-injected-by-js] Relative CSS: ${jsAssetName}: [ ${cssAssets.join(',')} ]`,
+      );
+    }
     const assetCss = concatCssAndDeleteFromBundle(bundle, cssAssets);
-    const cssInjectionCode = assetCss.length > 0 ? (await buildCssCode(assetCss))?.code : '';
+    const cssInjectionCode =
+      assetCss.length > 0 ? (await buildCssCode(assetCss))?.code : '';
 
     const jsAsset = bundle[jsAssetName] as OutputChunk;
     jsAsset.code = buildOutputChunkWithCssInjectionCode(
       jsAsset.code,
       cssInjectionCode ?? '',
-      topExecutionPriorityFlag
+      topExecutionPriorityFlag,
     );
   }
 }
@@ -298,17 +352,23 @@ async function globalCssInjection(
   cssAssets: string[],
   buildCssCode: (css: string) => Promise<OutputChunk | null>,
   jsAssetsFilterFunction: PluginConfiguration['jsAssetsFilterFunction'],
-  topExecutionPriorityFlag: boolean
+  topExecutionPriorityFlag: boolean,
 ) {
-  const jsTargetBundleKeys = getJsTargetBundleKeys(bundle, jsAssetsFilterFunction);
+  const jsTargetBundleKeys = getJsTargetBundleKeys(
+    bundle,
+    jsAssetsFilterFunction,
+  );
   if (jsTargetBundleKeys.length == 0) {
     throw new Error(
-      'Unable to locate the JavaScript asset for adding the CSS injection code. It is recommended to review your configurations.'
+      'Unable to locate the JavaScript asset for adding the CSS injection code. It is recommended to review your configurations.',
     );
   }
 
-  process.env.VITE_CSS_INJECTED_BY_JS_DEBUG &&
-    debugLog(`[vite-plugin-css-injected-by-js] Global CSS Assets: [${cssAssets.join(',')}]`);
+  if (process.env.VITE_CSS_INJECTED_BY_JS_DEBUG) {
+    debugLog(
+      `[vite-plugin-css-injected-by-js] Global CSS Assets: [${cssAssets.join(',')}]`,
+    );
+  }
   const allCssCode = concatCssAndDeleteFromBundle(bundle, cssAssets);
   let cssInjectionCode: string = '';
 
@@ -322,7 +382,11 @@ async function globalCssInjection(
   for (const jsTargetKey of jsTargetBundleKeys) {
     const jsAsset = bundle[jsTargetKey] as OutputChunk;
 
-    if (jsAsset.facadeModuleId != null && jsAsset.isEntry && cssInjectionCode != '') {
+    if (
+      jsAsset.facadeModuleId != null &&
+      jsAsset.isEntry &&
+      cssInjectionCode != ''
+    ) {
       if (jsAsset.facadeModuleId != previousFacadeModuleId) {
         globalCSSCodeEntryCache.clear();
       }
@@ -335,15 +399,20 @@ async function globalCssInjection(
       jsAsset.facadeModuleId != null &&
       typeof globalCSSCodeEntryCache.get(jsAsset.facadeModuleId) == 'string'
     ) {
-      cssInjectionCode = globalCSSCodeEntryCache.get(jsAsset.facadeModuleId) as string;
+      cssInjectionCode = globalCSSCodeEntryCache.get(
+        jsAsset.facadeModuleId,
+      ) as string;
     }
 
-    process.env.VITE_CSS_INJECTED_BY_JS_DEBUG &&
-      debugLog(`[vite-plugin-css-injected-by-js] Global CSS inject: ${jsAsset.fileName}`);
+    if (process.env.VITE_CSS_INJECTED_BY_JS_DEBUG) {
+      debugLog(
+        `[vite-plugin-css-injected-by-js] Global CSS inject: ${jsAsset.fileName}`,
+      );
+    }
     jsAsset.code = buildOutputChunkWithCssInjectionCode(
       jsAsset.code,
       cssInjectionCode ?? '',
-      topExecutionPriorityFlag
+      topExecutionPriorityFlag,
     );
   }
 }
@@ -351,7 +420,7 @@ async function globalCssInjection(
 function buildOutputChunkWithCssInjectionCode(
   jsAssetCode: string,
   cssInjectionCode: string,
-  topExecutionPriorityFlag: boolean
+  topExecutionPriorityFlag: boolean,
 ): string {
   const appCode = jsAssetCode.replace(/\/\*\s*empty css\s*\*\//g, '');
   let output = topExecutionPriorityFlag ? '' : appCode;
@@ -361,13 +430,19 @@ function buildOutputChunkWithCssInjectionCode(
   return output;
 }
 
-function clearImportedCssViteMetadataFromBundle(bundle: OutputBundle, unusedCssAssets: string[]): void {
+function clearImportedCssViteMetadataFromBundle(
+  bundle: OutputBundle,
+  unusedCssAssets: string[],
+): void {
   for (const key in bundle) {
     const chunk = bundle[key] as OutputChunk;
     if (chunk.viteMetadata && chunk.viteMetadata.importedCss.size > 0) {
       const importedCssFileNames = chunk.viteMetadata.importedCss;
-      importedCssFileNames.forEach((importedCssFileName) => {
-        if (!unusedCssAssets.includes(importedCssFileName) && chunk.viteMetadata) {
+      importedCssFileNames.forEach(importedCssFileName => {
+        if (
+          !unusedCssAssets.includes(importedCssFileName) &&
+          chunk.viteMetadata
+        ) {
           chunk.viteMetadata.importedCss = new Set();
         }
       });
@@ -376,14 +451,19 @@ function clearImportedCssViteMetadataFromBundle(bundle: OutputBundle, unusedCssA
 }
 
 function isCSSRequest(request: string): boolean {
-  const CSS_LANGS_RE = /\.(css|less|sass|scss|styl|stylus|pcss|postcss|sss)(?:$|\?)/;
+  const CSS_LANGS_RE =
+    /\.(css|less|sass|scss|styl|stylus|pcss|postcss|sss)(?:$|\?)/;
 
   return CSS_LANGS_RE.test(request);
 }
 
 export default function cssInjectedByJsPlugin({
   cssAssetsFilterFunction,
-  dev: { enableDev, removeStyleCode, removeStyleCodeFunction } = {} as DevOptions,
+  dev: {
+    enableDev,
+    removeStyleCode,
+    removeStyleCodeFunction,
+  } = {} as DevOptions,
   injectCode,
   injectCodeFunction,
   injectionCodeFormat,
@@ -397,7 +477,8 @@ export default function cssInjectedByJsPlugin({
 }: PluginConfiguration | undefined = {}): Plugin[] {
   let config: ResolvedConfig;
 
-  const topExecutionPriorityFlag = typeof topExecutionPriority == 'boolean' ? topExecutionPriority : true;
+  const topExecutionPriorityFlag =
+    typeof topExecutionPriority == 'boolean' ? topExecutionPriority : true;
 
   const plugins: Plugin[] = [
     {
@@ -414,7 +495,7 @@ export default function cssInjectedByJsPlugin({
             if (!config.build.cssCodeSplit) {
               config.build.cssCodeSplit = true;
               warnLog(
-                `[vite-plugin-css-injected-by-js] Override of 'build.cssCodeSplit' option to true, it must be true when 'relativeCSSInjection' is enabled.`
+                `[vite-plugin-css-injected-by-js] Override of 'build.cssCodeSplit' option to true, it must be true when 'relativeCSSInjection' is enabled.`,
               );
             }
           }
@@ -432,7 +513,9 @@ export default function cssInjectedByJsPlugin({
           buildCSSInjectionCode({
             buildOptions: config.build,
             cssToInject:
-              typeof preRenderCSSCode == 'function' ? preRenderCSSCode(cssToInject) : cssToInject,
+              typeof preRenderCSSCode == 'function'
+                ? preRenderCSSCode(cssToInject)
+                : cssToInject,
             injectCode,
             injectCodeFunction,
             injectionCodeFormat,
@@ -441,42 +524,59 @@ export default function cssInjectedByJsPlugin({
           });
 
         const cssAssetsFilter = (asset: OutputAsset): boolean => {
-          return typeof cssAssetsFilterFunction == 'function' ? cssAssetsFilterFunction(asset) : true;
+          return typeof cssAssetsFilterFunction == 'function'
+            ? cssAssetsFilterFunction(asset)
+            : true;
         };
 
         const cssAssets = Object.keys(bundle).filter(
-          (i) =>
+          i =>
             bundle[i].type == 'asset' &&
             bundle[i].fileName.endsWith('.css') &&
-            cssAssetsFilter(bundle[i] as OutputAsset)
+            cssAssetsFilter(bundle[i] as OutputAsset),
         );
 
         let unusedCssAssets: string[] = [];
         if (relativeCSSInjection) {
           const assetsWithCss = buildJsCssMap(bundle, jsAssetsFilterFunction);
-          await relativeCssInjection(bundle, assetsWithCss, buildCssCode, topExecutionPriorityFlag);
+          await relativeCssInjection(
+            bundle,
+            assetsWithCss,
+            buildCssCode,
+            topExecutionPriorityFlag,
+          );
 
-          unusedCssAssets = cssAssets.filter((cssAsset) => !!bundle[cssAsset]);
+          unusedCssAssets = cssAssets.filter(cssAsset => !!bundle[cssAsset]);
           if (!suppressUnusedCssWarning) {
             const unusedCssAssetsString = unusedCssAssets.join(',');
-            unusedCssAssetsString.length > 0 &&
+            if (unusedCssAssetsString.length > 0) {
               warnLog(
-                `[vite-plugin-css-injected-by-js] Some CSS assets were not included in any known JS: ${unusedCssAssetsString}`
+                `[vite-plugin-css-injected-by-js] Some CSS assets were not included in any known JS: ${unusedCssAssetsString}`,
               );
+            }
           }
         } else {
           const allCssAssets = Object.keys(bundle).filter(
-            (i) => bundle[i].type == 'asset' && bundle[i].fileName.endsWith('.css')
+            i =>
+              bundle[i].type == 'asset' && bundle[i].fileName.endsWith('.css'),
           );
 
-          unusedCssAssets = allCssAssets.filter((cssAsset) => !cssAssets.includes(cssAsset));
+          unusedCssAssets = allCssAssets.filter(
+            cssAsset => !cssAssets.includes(cssAsset),
+          );
 
-          await globalCssInjection(bundle, cssAssets, buildCssCode, jsAssetsFilterFunction, topExecutionPriorityFlag);
+          await globalCssInjection(
+            bundle,
+            cssAssets,
+            buildCssCode,
+            jsAssetsFilterFunction,
+            topExecutionPriorityFlag,
+          );
         }
 
         clearImportedCssViteMetadataFromBundle(bundle, unusedCssAssets);
 
-        const htmlFiles = Object.keys(bundle).filter((i) => i.endsWith('.html'));
+        const htmlFiles = Object.keys(bundle).filter(i => i.endsWith('.html'));
         for (const name of htmlFiles) {
           const htmlChunk = bundle[name] as OutputAsset;
           let replacedHtml =
@@ -496,7 +596,9 @@ export default function cssInjectedByJsPlugin({
   ];
 
   if (enableDev) {
-    warnLog('[vite-plugin-css-injected-by-js] Experimental dev mode activated! Please, for any error open a issue.');
+    warnLog(
+      '[vite-plugin-css-injected-by-js] Experimental dev mode activated! Please, for any error open a issue.',
+    );
 
     plugins.push({
       name: 'vite-plugin-css-injected-by-js-dev',
@@ -513,9 +615,10 @@ export default function cssInjectedByJsPlugin({
                         })()
                     }`;
 
-          let removeStyleFunction: (id: string) => string = removeStyleCode || defaultRemoveStyleCode;
+          let removeStyleFunction: (id: string) => string =
+            removeStyleCode || defaultRemoveStyleCode;
           if (removeStyleCodeFunction) {
-            removeStyleFunction = (id) => `(${removeStyleCodeFunction})("${id}")`;
+            removeStyleFunction = id => `(${removeStyleCodeFunction})("${id}")`;
           }
 
           let injectionCode = src.replace(
@@ -523,12 +626,20 @@ export default function cssInjectedByJsPlugin({
             ';\n' +
               removeStyleFunction(id) +
               ';\n' +
-              resolveInjectionCode('__vite__css', injectCode, injectCodeFunction, {
-                attributes: { type: 'text/css', ['data-vite-dev-id']: id },
-              })
+              resolveInjectionCode(
+                '__vite__css',
+                injectCode,
+                injectCodeFunction,
+                {
+                  attributes: { type: 'text/css', ['data-vite-dev-id']: id },
+                },
+              ),
           );
 
-          injectionCode = injectionCode.replace('__vite__removeStyle(__vite__id)', removeStyleFunction(id));
+          injectionCode = injectionCode.replace(
+            '__vite__removeStyle(__vite__id)',
+            removeStyleFunction(id),
+          );
 
           return {
             code: injectionCode,

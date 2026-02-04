@@ -20,12 +20,11 @@ Jupyter UI is a set of [React.js](https://react.dev) components that allow a fro
 
 ## 📦 Packages
 
-| Package                                                              | Version                                                                                                                                                                                         | Description                             |
-| -------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
-| [@datalayer/jupyter-react](./packages/react)                         | [![npm](https://img.shields.io/npm/v/@datalayer/jupyter-react)](https://www.npmjs.com/package/@datalayer/jupyter-react)                                                                         | Generic React components for Jupyter    |
-| [@datalayer/jupyter-lexical](./packages/lexical)                     | [![npm](https://img.shields.io/npm/v/@datalayer/jupyter-lexical)](https://www.npmjs.com/package/@datalayer/jupyter-lexical)                                                                     | Rich text editor with Lexical framework |
-| [@datalayer/jupyter-docusaurus-plugin](./packages/docusaurus-plugin) | [![npm](https://img.shields.io/npm/v/@datalayer/jupyter-docusaurus-plugin)](https://www.npmjs.com/package/@datalayer/jupyter-docusaurus-plugin)                                                 | Docusaurus plugin for Jupyter notebooks |
-| [datalayer-jupyter-vscode](./packages/vscode)                        | [![marketplace](https://img.shields.io/visual-studio-marketplace/v/datalayer.datalayer-jupyter-vscode)](https://marketplace.visualstudio.com/items?itemName=datalayer.datalayer-jupyter-vscode) | VS Code extension                       |
+| Package                                                              | Version                                                                                                                                         | Description                             |
+| -------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| [@datalayer/jupyter-react](./packages/react)                         | [![npm](https://img.shields.io/npm/v/@datalayer/jupyter-react)](https://www.npmjs.com/package/@datalayer/jupyter-react)                         | Generic React components for Jupyter    |
+| [@datalayer/jupyter-lexical](./packages/lexical)                     | [![npm](https://img.shields.io/npm/v/@datalayer/jupyter-lexical)](https://www.npmjs.com/package/@datalayer/jupyter-lexical)                     | Rich text editor with Lexical framework |
+| [@datalayer/jupyter-docusaurus-plugin](./packages/docusaurus-plugin) | [![npm](https://img.shields.io/npm/v/@datalayer/jupyter-docusaurus-plugin)](https://www.npmjs.com/package/@datalayer/jupyter-docusaurus-plugin) | Docusaurus plugin for Jupyter notebooks |
 
 ## 🚀 Quick Start
 
