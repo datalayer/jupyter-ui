@@ -9,6 +9,7 @@ import React, {
   CSSProperties,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import { BaseStyles, ThemeProvider } from '@primer/react';
@@ -70,66 +71,107 @@ export function JupyterReactTheme(
     theme = jupyterLabTheme,
     ...rest
   } = props;
-  const { colormode: colormodeFromStore, jupyterLabAdapter } =
-    useJupyterReactStore();
-  const [colormode, setColormode] = useState(colormodeProps);
-  const [inJupyterLab, setInJupterLab] = useState<boolean | undefined>(
-    undefined
-  );
-  useEffect(() => {
+  const {
+    colormode: colormodeFromStore,
+    setColormode: setColormodeStore,
+    jupyterLabAdapter,
+  } = useJupyterReactStore();
+  const hasColormodeProp = 'colormode' in props;
+
+  // Detect JupyterLab synchronously — loadJupyterConfig() only reads the DOM,
+  // no need to defer to an effect (which caused a blank first frame).
+  const [inJupyterLab] = useState(() => {
     const { insideJupyterLab } = loadJupyterConfig();
-    setInJupterLab(insideJupyterLab);
-  }, []);
+    return insideJupyterLab;
+  });
+
+  // Determine the effective colormode:
+  // - If a colormode prop is passed, it takes priority (external control)
+  // - Otherwise, follow the Zustand store (internal/store control)
+  const effectiveColormode = hasColormodeProp
+    ? colormodeProps
+    : colormodeFromStore;
+  const [colormode, setColormode] = useState(effectiveColormode);
+
+  // Keep a ref to track if we've synced the prop to the store to avoid
+  // redundant store updates that trigger re-renders.
+  const syncedRef = useRef(false);
+
+  // Sync prop → local state when prop changes
   useEffect(() => {
-    if (colormodeFromStore !== colormode) {
+    if (hasColormodeProp) {
+      if (colormode !== colormodeProps) {
+        setColormode(colormodeProps);
+      }
+    } else if (colormodeFromStore !== colormode) {
       setColormode(colormodeFromStore);
     }
-  }, [colormodeFromStore, inJupyterLab]);
+  }, [colormodeFromStore, colormode, colormodeProps, hasColormodeProp]);
+
+  // Sync prop → store (so children reading the store directly also get the right value)
   useEffect(() => {
-    if (inJupyterLab !== undefined) {
-      function colorSchemeFromMedia({ matches }: { matches: boolean }) {
-        /*
-        // TODO manage the case where user change the colormode
-        const colormode = matches ? 'dark' : 'light';
-        setColormode(colormode);
-        setupPrimerPortals(colormode);
-        */
+    if (hasColormodeProp && colormodeFromStore !== colormodeProps) {
+      setColormodeStore(colormodeProps);
+      syncedRef.current = true;
+    }
+  }, [colormodeFromStore, colormodeProps, hasColormodeProp, setColormodeStore]);
+
+  // Also sync prop to store eagerly on mount to avoid the initial 'light' frame
+  if (
+    hasColormodeProp &&
+    !syncedRef.current &&
+    colormodeFromStore !== colormodeProps
+  ) {
+    setColormodeStore(colormodeProps);
+    syncedRef.current = true;
+  }
+
+  useEffect(() => {
+    function colorSchemeFromMedia({ matches }: { matches: boolean }) {
+      /*
+      // TODO manage the case where user change the colormode
+      const colormode = matches ? 'dark' : 'light';
+      setColormode(colormode);
+      setupPrimerPortals(colormode);
+      */
+    }
+    function updateColorMode(themeManager: IThemeManager) {
+      if (hasColormodeProp) {
+        return;
       }
-      function updateColorMode(themeManager: IThemeManager) {
-        const colormode =
-          themeManager.theme && !themeManager.isLight(themeManager.theme)
-            ? 'dark'
-            : 'light';
-        setColormode(colormode);
-        setupPrimerPortals(colormode);
-      }
-      if (inJupyterLab) {
-        const themeManager = jupyterLabAdapter?.service(
-          '@jupyterlab/apputils-extension:themes'
-        ) as IThemeManager;
-        if (themeManager) {
-          updateColorMode(themeManager);
-          themeManager.themeChanged.connect(updateColorMode);
-          return () => {
-            themeManager.themeChanged.disconnect(updateColorMode);
-          };
-        }
-      } else {
-        colorSchemeFromMedia({
-          matches: window.matchMedia('(prefers-color-scheme: dark)').matches,
-        });
-        window
-          .matchMedia('(prefers-color-scheme: dark)')
-          .addEventListener('change', colorSchemeFromMedia);
+      const colormode =
+        themeManager.theme && !themeManager.isLight(themeManager.theme)
+          ? 'dark'
+          : 'light';
+      setColormode(colormode);
+      setupPrimerPortals(colormode);
+    }
+    if (inJupyterLab) {
+      const themeManager = jupyterLabAdapter?.service(
+        '@jupyterlab/apputils-extension:themes'
+      ) as IThemeManager;
+      if (themeManager) {
+        updateColorMode(themeManager);
+        themeManager.themeChanged.connect(updateColorMode);
         return () => {
-          window
-            .matchMedia('(prefers-color-scheme: dark)')
-            .removeEventListener('change', colorSchemeFromMedia);
+          themeManager.themeChanged.disconnect(updateColorMode);
         };
       }
+    } else {
+      colorSchemeFromMedia({
+        matches: window.matchMedia('(prefers-color-scheme: dark)').matches,
+      });
+      window
+        .matchMedia('(prefers-color-scheme: dark)')
+        .addEventListener('change', colorSchemeFromMedia);
+      return () => {
+        window
+          .matchMedia('(prefers-color-scheme: dark)')
+          .removeEventListener('change', colorSchemeFromMedia);
+      };
     }
-  }, [inJupyterLab, jupyterLabAdapter]);
-  return inJupyterLab !== undefined ? (
+  }, [inJupyterLab, jupyterLabAdapter, hasColormodeProp]);
+  return (
     <JupyterReactColormodeContext.Provider value={colormode}>
       {loadJupyterLabCss && <JupyterLabCss colormode={colormode} />}
       <ThemeProvider
@@ -150,8 +192,6 @@ export function JupyterReactTheme(
         </BaseStyles>
       </ThemeProvider>
     </JupyterReactColormodeContext.Provider>
-  ) : (
-    <></>
   );
 }
 
