@@ -58,6 +58,12 @@ export type JupyterReactState = {
   version: string;
   colormode: Colormode;
   /**
+   * Optional background color override.
+   * When set (e.g. by JupyterReactTheme), notebook extensions such as
+   * cell sidebars can read this value and render with the same background.
+   */
+  backgroundColor?: string;
+  /**
    * JupyterLabApp adapter.
    */
   jupyterLabAdapter?: JupyterLabAppAdapter;
@@ -69,6 +75,7 @@ export type JupyterReactState = {
   setServiceManager: (serviceManager?: ServiceManager.IManager) => void;
   setVersion: (version: string) => void;
   setColormode: (colormode: Colormode) => void;
+  setBackgroundColor: (backgroundColor?: string) => void;
 };
 
 // Module-level default configuration
@@ -95,6 +102,7 @@ export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
   outputStore: outputsStore.getState(),
   terminalStore: terminalStore.getState(),
   colormode: 'light',
+  backgroundColor: undefined,
   setJupyterLabAdapter: (jupyterLabAdapter: JupyterLabAppAdapter) => {
     set(_state => ({ jupyterLabAdapter }));
   },
@@ -120,6 +128,9 @@ export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
         : colormode;
     setupPrimerPortals(resolved);
     set(_state => ({ colormode }));
+  },
+  setBackgroundColor: (backgroundColor?: string) => {
+    set(_state => ({ backgroundColor }));
   },
 }));
 

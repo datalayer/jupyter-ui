@@ -19,6 +19,25 @@ import {
   INotebookExtensionProps,
 } from '../../NotebookExtensions';
 import { JupyterReactTheme, Colormode } from '../../../../theme';
+import { useJupyterReactStore } from '../../../../state';
+
+/**
+ * Wrapper component that reads the backgroundColor from the Zustand store
+ * and passes it to JupyterReactTheme. This ensures sidebar extensions
+ * render with the same background as the notebook.
+ */
+function ThemedSidebarWrapper({
+  children,
+}: {
+  children: React.ReactNode;
+}): JSX.Element {
+  const backgroundColor = useJupyterReactStore(state => state.backgroundColor);
+  return (
+    <JupyterReactTheme backgroundColor={backgroundColor}>
+      {children}
+    </JupyterReactTheme>
+  );
+}
 
 class CellSidebarFactory implements IDisposable {
   private _isDisposed = false;
@@ -67,13 +86,13 @@ class CellSidebarFactory implements IDisposable {
     if (cell) {
       const SidebarFactory = this.factory;
       const sidebar = ReactWidget.create(
-        <JupyterReactTheme>
+        <ThemedSidebarWrapper>
           <SidebarFactory
             commands={this.commands}
             model={model}
             nbgrader={this.nbgrader}
           />
-        </JupyterReactTheme>
+        </ThemedSidebarWrapper>
       );
       // Position sidebar wrapper
       sidebar.node.style.width = `${this.sidebarWidth}px`;

@@ -80,6 +80,7 @@ export function JupyterReactTheme(
   const {
     colormode: colormodeFromStore,
     setColormode: setColormodeStore,
+    setBackgroundColor: setBackgroundColorStore,
     jupyterLabAdapter,
   } = useJupyterReactStore();
   const hasColormodeProp = 'colormode' in props;
@@ -142,6 +143,12 @@ export function JupyterReactTheme(
       syncedRef.current = true;
     }
   }
+
+  // Sync backgroundColor prop → store so notebook extensions (sidebars, etc.)
+  // can read it from the store and render with the same background.
+  useEffect(() => {
+    setBackgroundColorStore(backgroundColor);
+  }, [backgroundColor, setBackgroundColorStore]);
 
   useEffect(() => {
     function colorSchemeFromMedia({ matches }: { matches: boolean }) {
