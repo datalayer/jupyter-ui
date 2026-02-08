@@ -110,7 +110,15 @@ export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
     }
   },
   setColormode: colormode => {
-    setupPrimerPortals(colormode);
+    // Resolve 'auto' to the actual OS preference before calling
+    // setupPrimerPortals, which sets DOM data-attributes for Primer.
+    const resolved =
+      colormode === 'auto'
+        ? window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark'
+          : 'light'
+        : colormode;
+    setupPrimerPortals(resolved);
     set(_state => ({ colormode }));
   },
 }));

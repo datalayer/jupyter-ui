@@ -55,6 +55,11 @@ export type IJupyterLabThemeProps = {
    * Base styles
    */
   baseStyles?: CSSProperties;
+  /**
+   * Background color override. When provided, this replaces the default
+   * `var(--bgColor-default)` so each theme can set its own background.
+   */
+  backgroundColor?: string;
 };
 
 /**
@@ -69,6 +74,7 @@ export function JupyterReactTheme(
     colormode: colormodeProps = 'light',
     loadJupyterLabCss = true,
     theme = jupyterLabTheme,
+    backgroundColor,
     ...rest
   } = props;
   const {
@@ -77,6 +83,16 @@ export function JupyterReactTheme(
     jupyterLabAdapter,
   } = useJupyterReactStore();
   const hasColormodeProp = 'colormode' in props;
+
+  // Resolve 'auto' → actual OS preference ('light' or 'dark').
+  const resolveColormode = (cm: Colormode): 'light' | 'dark' => {
+    if (cm === 'auto') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light';
+    }
+    return cm;
+  };
 
   // Detect JupyterLab synchronously — loadJupyterConfig() only reads the DOM,
   // no need to defer to an effect (which caused a blank first frame).
@@ -88,52 +104,53 @@ export function JupyterReactTheme(
   // Determine the effective colormode:
   // - If a colormode prop is passed, it takes priority (external control)
   // - Otherwise, follow the Zustand store (internal/store control)
-  const effectiveColormode = hasColormodeProp
-    ? colormodeProps
-    : colormodeFromStore;
+  // Then resolve 'auto' to the actual OS preference.
+  const effectiveColormode = resolveColormode(
+    hasColormodeProp ? colormodeProps : colormodeFromStore
+  );
   const [colormode, setColormode] = useState(effectiveColormode);
 
   // Keep a ref to track if we've synced the prop to the store to avoid
   // redundant store updates that trigger re-renders.
   const syncedRef = useRef(false);
 
-  // Sync prop → local state when prop changes
+  // Sync prop → local state when prop changes (always resolve 'auto')
   useEffect(() => {
-    if (hasColormodeProp) {
-      if (colormode !== colormodeProps) {
-        setColormode(colormodeProps);
-      }
-    } else if (colormodeFromStore !== colormode) {
-      setColormode(colormodeFromStore);
+    const resolved = resolveColormode(
+      hasColormodeProp ? colormodeProps : colormodeFromStore
+    );
+    if (colormode !== resolved) {
+      setColormode(resolved);
     }
   }, [colormodeFromStore, colormode, colormodeProps, hasColormodeProp]);
 
   // Sync prop → store (so children reading the store directly also get the right value)
+  // Store the resolved value, not 'auto'.
   useEffect(() => {
-    if (hasColormodeProp && colormodeFromStore !== colormodeProps) {
-      setColormodeStore(colormodeProps);
+    const resolved = resolveColormode(colormodeProps);
+    if (hasColormodeProp && colormodeFromStore !== resolved) {
+      setColormodeStore(resolved);
       syncedRef.current = true;
     }
   }, [colormodeFromStore, colormodeProps, hasColormodeProp, setColormodeStore]);
 
   // Also sync prop to store eagerly on mount to avoid the initial 'light' frame
-  if (
-    hasColormodeProp &&
-    !syncedRef.current &&
-    colormodeFromStore !== colormodeProps
-  ) {
-    setColormodeStore(colormodeProps);
-    syncedRef.current = true;
+  if (hasColormodeProp && !syncedRef.current) {
+    const resolved = resolveColormode(colormodeProps);
+    if (colormodeFromStore !== resolved) {
+      setColormodeStore(resolved);
+      syncedRef.current = true;
+    }
   }
 
   useEffect(() => {
     function colorSchemeFromMedia({ matches }: { matches: boolean }) {
-      /*
-      // TODO manage the case where user change the colormode
-      const colormode = matches ? 'dark' : 'light';
-      setColormode(colormode);
-      setupPrimerPortals(colormode);
-      */
+      // When colormode is 'auto', react to OS changes in real time.
+      if (hasColormodeProp && colormodeProps === 'auto') {
+        const resolved = matches ? 'dark' : 'light';
+        setColormode(resolved);
+        setupPrimerPortals(resolved);
+      }
     }
     function updateColorMode(themeManager: IThemeManager) {
       if (hasColormodeProp) {
@@ -170,7 +187,7 @@ export function JupyterReactTheme(
           .removeEventListener('change', colorSchemeFromMedia);
       };
     }
-  }, [inJupyterLab, jupyterLabAdapter, hasColormodeProp]);
+  }, [inJupyterLab, jupyterLabAdapter, hasColormodeProp, colormodeProps]);
   return (
     <JupyterReactColormodeContext.Provider value={colormode}>
       {loadJupyterLabCss && <JupyterLabCss colormode={colormode} />}
@@ -182,12 +199,15 @@ export function JupyterReactTheme(
       >
         <BaseStyles
           style={{
-            backgroundColor: 'var(--bgColor-default)',
+            backgroundColor: backgroundColor ?? 'var(--bgColor-default)',
             color: 'var(--fgColor-default)',
             fontSize: 'var(--text-body-size-medium)',
           }}
           {...rest}
         >
+          {backgroundColor && (
+            <style>{`.jp-Notebook { background-color: ${backgroundColor} !important; }`}</style>
+          )}
           {children}
         </BaseStyles>
       </ThemeProvider>
