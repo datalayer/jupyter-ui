@@ -569,6 +569,50 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
     }
   }, [adapter, id]);
 
+  // Propagate kernel status to the notebook store so that toolbar buttons
+  // (run, run-all, interrupt, …) can enable/disable themselves reactively.
+  useEffect(() => {
+    if (!panel) {
+      return;
+    }
+    const sessionContext = panel.context.sessionContext;
+
+    // ISessionContext.statusChanged tracks kernel status across kernel
+    // changes automatically — no need to manually subscribe per-kernel.
+    const onStatusChanged = (
+      _: ISessionContext,
+      status: JupyterKernel.Status
+    ) => {
+      notebookStore.getState().changeKernelStatus({ id, kernelStatus: status });
+    };
+
+    sessionContext.statusChanged.connect(onStatusChanged);
+
+    // Push the current status if a kernel is already connected
+    // (handles the case where the kernel was set before this effect ran).
+    const kernel = sessionContext.session?.kernel;
+    if (kernel) {
+      notebookStore
+        .getState()
+        .changeKernelStatus({ id, kernelStatus: kernel.status });
+    }
+
+    // Also wait for the session context to be ready, in case the kernel
+    // connection is still being established.
+    sessionContext.ready.then(() => {
+      const k = sessionContext.session?.kernel;
+      if (k) {
+        notebookStore
+          .getState()
+          .changeKernelStatus({ id, kernelStatus: k.status });
+      }
+    });
+
+    return () => {
+      sessionContext.statusChanged.disconnect(onStatusChanged);
+    };
+  }, [panel, id]);
+
   useEffect(() => {
     let isMounted = true;
     let onActiveCellChanged:
