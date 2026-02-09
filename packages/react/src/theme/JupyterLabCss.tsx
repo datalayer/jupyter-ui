@@ -88,9 +88,6 @@ export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
       document.body.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
         const href = link.getAttribute('href') || '';
         if (href.includes(oppositeTheme)) {
-          console.log(
-            `[JupyterLabCss] Removing conflicting theme link: ${href}`
-          );
           link.remove();
         }
       });
@@ -103,9 +100,6 @@ export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
           if (node instanceof HTMLLinkElement && node.rel === 'stylesheet') {
             const href = node.getAttribute('href') || '';
             if (href.includes(oppositeTheme)) {
-              console.log(
-                `[JupyterLabCss] Observer removing conflicting theme link: ${href}`
-              );
               node.remove();
             }
           }
@@ -115,9 +109,6 @@ export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
     observer.observe(document.body, { childList: true });
 
     // Inject the JupyterLab theme stylesheet in a retrievable node.
-    console.log(
-      `[JupyterLabCss] Loading theme variables for colormode: ${colormode}`
-    );
     theme
       ?.then(module => {
         const css = module.default;
@@ -135,9 +126,6 @@ export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
             `<style ${DATA_JUPYTERLAB_THEME}="${colormode}">
 ${css}
 </style>`
-          );
-          console.log(
-            `[JupyterLabCss] Injected style tag for ${colormode} at end of body`
           );
         }
       })
