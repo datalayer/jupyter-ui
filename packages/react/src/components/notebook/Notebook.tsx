@@ -233,7 +233,7 @@ export function Notebook(
           '& .jp-Notebook': {
             flex: '1 1 auto !important',
             height: '100%',
-            overflowY: 'scroll',
+            overflowY: 'hidden',
           },
           '& .jp-NotebookPanel': {
             //            height: '100% !important',

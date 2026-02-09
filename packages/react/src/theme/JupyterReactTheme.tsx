@@ -22,6 +22,10 @@ import { useJupyterReactStore } from '../state';
 import '@primer/primitives/dist/css/functional/themes/light.css';
 import '@primer/primitives/dist/css/functional/themes/dark.css';
 
+// Color-mode-aware scrollbar styles for JupyterLab containers.
+// Must be loaded alongside the theme since it relies on [data-color-mode].
+import '../../style/base.css';
+
 import '@primer/primitives/dist/css/base/typography/typography.css';
 import '@primer/primitives/dist/css/functional/size/border.css';
 import '@primer/primitives/dist/css/functional/size/breakpoints.css';
