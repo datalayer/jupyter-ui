@@ -878,13 +878,29 @@ export function useKernelId(
 
         // Start a new default kernel if none found and one requested.
         if (!foundKernelId && startDefaultKernel && isMounted) {
-          const connection = await kernels.startNew();
-          if (isMounted) {
-            foundKernelId = connection.id;
-            setKernelId(foundKernelId);
-            setStartedConnection(connection);
+          // First, try to reuse an existing running kernel (e.g. pre-warmed)
+          await kernels.refreshRunning();
+          const runningKernels = [...kernels.running()];
+          if (runningKernels.length > 0) {
+            // Connect to the first running kernel instead of starting a new one
+            const connection = kernels.connectTo({ model: runningKernels[0] });
+            if (isMounted) {
+              foundKernelId = connection.id;
+              setKernelId(foundKernelId);
+              // Don't track as startedConnection since we didn't create this kernel
+            } else {
+              connection.dispose();
+            }
           } else {
-            connection.dispose();
+            // No running kernels found, start a new one as fallback
+            const connection = await kernels.startNew();
+            if (isMounted) {
+              foundKernelId = connection.id;
+              setKernelId(foundKernelId);
+              setStartedConnection(connection);
+            } else {
+              connection.dispose();
+            }
           }
         }
 
