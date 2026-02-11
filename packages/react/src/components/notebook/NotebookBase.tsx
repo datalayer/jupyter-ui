@@ -569,6 +569,50 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
     }
   }, [adapter, id]);
 
+  // Propagate kernel status to the notebook store so that toolbar buttons
+  // (run, run-all, interrupt, …) can enable/disable themselves reactively.
+  useEffect(() => {
+    if (!panel) {
+      return;
+    }
+    const sessionContext = panel.context.sessionContext;
+
+    // ISessionContext.statusChanged tracks kernel status across kernel
+    // changes automatically — no need to manually subscribe per-kernel.
+    const onStatusChanged = (
+      _: ISessionContext,
+      status: JupyterKernel.Status
+    ) => {
+      notebookStore.getState().changeKernelStatus({ id, kernelStatus: status });
+    };
+
+    sessionContext.statusChanged.connect(onStatusChanged);
+
+    // Push the current status if a kernel is already connected
+    // (handles the case where the kernel was set before this effect ran).
+    const kernel = sessionContext.session?.kernel;
+    if (kernel) {
+      notebookStore
+        .getState()
+        .changeKernelStatus({ id, kernelStatus: kernel.status });
+    }
+
+    // Also wait for the session context to be ready, in case the kernel
+    // connection is still being established.
+    sessionContext.ready.then(() => {
+      const k = sessionContext.session?.kernel;
+      if (k) {
+        notebookStore
+          .getState()
+          .changeKernelStatus({ id, kernelStatus: k.status });
+      }
+    });
+
+    return () => {
+      sessionContext.statusChanged.disconnect(onStatusChanged);
+    };
+  }, [panel, id]);
+
   useEffect(() => {
     let isMounted = true;
     let onActiveCellChanged:
@@ -834,13 +878,29 @@ export function useKernelId(
 
         // Start a new default kernel if none found and one requested.
         if (!foundKernelId && startDefaultKernel && isMounted) {
-          const connection = await kernels.startNew();
-          if (isMounted) {
-            foundKernelId = connection.id;
-            setKernelId(foundKernelId);
-            setStartedConnection(connection);
+          // First, try to reuse an existing running kernel (e.g. pre-warmed)
+          await kernels.refreshRunning();
+          const runningKernels = [...kernels.running()];
+          if (runningKernels.length > 0) {
+            // Connect to the first running kernel instead of starting a new one
+            const connection = kernels.connectTo({ model: runningKernels[0] });
+            if (isMounted) {
+              foundKernelId = connection.id;
+              setKernelId(foundKernelId);
+              // Don't track as startedConnection since we didn't create this kernel
+            } else {
+              connection.dispose();
+            }
           } else {
-            connection.dispose();
+            // No running kernels found, start a new one as fallback
+            const connection = await kernels.startNew();
+            if (isMounted) {
+              foundKernelId = connection.id;
+              setKernelId(foundKernelId);
+              setStartedConnection(connection);
+            } else {
+              connection.dispose();
+            }
           }
         }
 

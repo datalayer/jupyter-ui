@@ -9,6 +9,7 @@ import React, {
   CSSProperties,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import { BaseStyles, ThemeProvider } from '@primer/react';
@@ -20,6 +21,10 @@ import { useJupyterReactStore } from '../state';
 
 import '@primer/primitives/dist/css/functional/themes/light.css';
 import '@primer/primitives/dist/css/functional/themes/dark.css';
+
+// Color-mode-aware scrollbar styles for JupyterLab containers.
+// Must be loaded alongside the theme since it relies on [data-color-mode].
+import '../../style/base.css';
 
 import '@primer/primitives/dist/css/base/typography/typography.css';
 import '@primer/primitives/dist/css/functional/size/border.css';
@@ -54,6 +59,11 @@ export type IJupyterLabThemeProps = {
    * Base styles
    */
   baseStyles?: CSSProperties;
+  /**
+   * Background color override. When provided, this replaces the default
+   * `var(--bgColor-default)` so each theme can set its own background.
+   */
+  backgroundColor?: string;
 };
 
 /**
@@ -68,68 +78,128 @@ export function JupyterReactTheme(
     colormode: colormodeProps = 'light',
     loadJupyterLabCss = true,
     theme = jupyterLabTheme,
+    backgroundColor,
     ...rest
   } = props;
-  const { colormode: colormodeFromStore, jupyterLabAdapter } =
-    useJupyterReactStore();
-  const [colormode, setColormode] = useState(colormodeProps);
-  const [inJupyterLab, setInJupterLab] = useState<boolean | undefined>(
-    undefined
-  );
-  useEffect(() => {
-    const { insideJupyterLab } = loadJupyterConfig();
-    setInJupterLab(insideJupyterLab);
-  }, []);
-  useEffect(() => {
-    if (colormodeFromStore !== colormode) {
-      setColormode(colormodeFromStore);
+  const {
+    colormode: colormodeFromStore,
+    setColormode: setColormodeStore,
+    setBackgroundColor: setBackgroundColorStore,
+    jupyterLabAdapter,
+  } = useJupyterReactStore();
+  const hasColormodeProp = 'colormode' in props;
+
+  // Resolve 'auto' → actual OS preference ('light' or 'dark').
+  const resolveColormode = (cm: Colormode): 'light' | 'dark' => {
+    if (cm === 'auto') {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light';
     }
-  }, [colormodeFromStore, inJupyterLab]);
+    return cm;
+  };
+
+  // Detect JupyterLab synchronously — loadJupyterConfig() only reads the DOM,
+  // no need to defer to an effect (which caused a blank first frame).
+  const [inJupyterLab] = useState(() => {
+    const { insideJupyterLab } = loadJupyterConfig();
+    return insideJupyterLab;
+  });
+
+  // Determine the effective colormode:
+  // - If a colormode prop is passed, it takes priority (external control)
+  // - Otherwise, follow the Zustand store (internal/store control)
+  // Then resolve 'auto' to the actual OS preference.
+  const effectiveColormode = resolveColormode(
+    hasColormodeProp ? colormodeProps : colormodeFromStore
+  );
+  const [colormode, setColormode] = useState(effectiveColormode);
+
+  // Keep a ref to track if we've synced the prop to the store to avoid
+  // redundant store updates that trigger re-renders.
+  const syncedRef = useRef(false);
+
+  // Sync prop → local state when prop changes (always resolve 'auto')
   useEffect(() => {
-    if (inJupyterLab !== undefined) {
-      function colorSchemeFromMedia({ matches }: { matches: boolean }) {
-        /*
-        // TODO manage the case where user change the colormode
-        const colormode = matches ? 'dark' : 'light';
-        setColormode(colormode);
-        setupPrimerPortals(colormode);
-        */
+    const resolved = resolveColormode(
+      hasColormodeProp ? colormodeProps : colormodeFromStore
+    );
+    if (colormode !== resolved) {
+      setColormode(resolved);
+    }
+  }, [colormodeFromStore, colormode, colormodeProps, hasColormodeProp]);
+
+  // Sync prop → store (so children reading the store directly also get the right value)
+  // Store the resolved value, not 'auto'.
+  useEffect(() => {
+    const resolved = resolveColormode(colormodeProps);
+    if (hasColormodeProp && colormodeFromStore !== resolved) {
+      setColormodeStore(resolved);
+      syncedRef.current = true;
+    }
+  }, [colormodeFromStore, colormodeProps, hasColormodeProp, setColormodeStore]);
+
+  // Also sync prop to store eagerly on mount to avoid the initial 'light' frame
+  if (hasColormodeProp && !syncedRef.current) {
+    const resolved = resolveColormode(colormodeProps);
+    if (colormodeFromStore !== resolved) {
+      setColormodeStore(resolved);
+      syncedRef.current = true;
+    }
+  }
+
+  // Sync backgroundColor prop → store so notebook extensions (sidebars, etc.)
+  // can read it from the store and render with the same background.
+  useEffect(() => {
+    setBackgroundColorStore(backgroundColor);
+  }, [backgroundColor, setBackgroundColorStore]);
+
+  useEffect(() => {
+    function colorSchemeFromMedia({ matches }: { matches: boolean }) {
+      // When colormode is 'auto', react to OS changes in real time.
+      if (hasColormodeProp && colormodeProps === 'auto') {
+        const resolved = matches ? 'dark' : 'light';
+        setColormode(resolved);
+        setupPrimerPortals(resolved);
       }
-      function updateColorMode(themeManager: IThemeManager) {
-        const colormode =
-          themeManager.theme && !themeManager.isLight(themeManager.theme)
-            ? 'dark'
-            : 'light';
-        setColormode(colormode);
-        setupPrimerPortals(colormode);
+    }
+    function updateColorMode(themeManager: IThemeManager) {
+      if (hasColormodeProp) {
+        return;
       }
-      if (inJupyterLab) {
-        const themeManager = jupyterLabAdapter?.service(
-          '@jupyterlab/apputils-extension:themes'
-        ) as IThemeManager;
-        if (themeManager) {
-          updateColorMode(themeManager);
-          themeManager.themeChanged.connect(updateColorMode);
-          return () => {
-            themeManager.themeChanged.disconnect(updateColorMode);
-          };
-        }
-      } else {
-        colorSchemeFromMedia({
-          matches: window.matchMedia('(prefers-color-scheme: dark)').matches,
-        });
-        window
-          .matchMedia('(prefers-color-scheme: dark)')
-          .addEventListener('change', colorSchemeFromMedia);
+      const colormode =
+        themeManager.theme && !themeManager.isLight(themeManager.theme)
+          ? 'dark'
+          : 'light';
+      setColormode(colormode);
+      setupPrimerPortals(colormode);
+    }
+    if (inJupyterLab) {
+      const themeManager = jupyterLabAdapter?.service(
+        '@jupyterlab/apputils-extension:themes'
+      ) as IThemeManager;
+      if (themeManager) {
+        updateColorMode(themeManager);
+        themeManager.themeChanged.connect(updateColorMode);
         return () => {
-          window
-            .matchMedia('(prefers-color-scheme: dark)')
-            .removeEventListener('change', colorSchemeFromMedia);
+          themeManager.themeChanged.disconnect(updateColorMode);
         };
       }
+    } else {
+      colorSchemeFromMedia({
+        matches: window.matchMedia('(prefers-color-scheme: dark)').matches,
+      });
+      window
+        .matchMedia('(prefers-color-scheme: dark)')
+        .addEventListener('change', colorSchemeFromMedia);
+      return () => {
+        window
+          .matchMedia('(prefers-color-scheme: dark)')
+          .removeEventListener('change', colorSchemeFromMedia);
+      };
     }
-  }, [inJupyterLab, jupyterLabAdapter]);
-  return inJupyterLab !== undefined ? (
+  }, [inJupyterLab, jupyterLabAdapter, hasColormodeProp, colormodeProps]);
+  return (
     <JupyterReactColormodeContext.Provider value={colormode}>
       {loadJupyterLabCss && <JupyterLabCss colormode={colormode} />}
       <ThemeProvider
@@ -140,18 +210,19 @@ export function JupyterReactTheme(
       >
         <BaseStyles
           style={{
-            backgroundColor: 'var(--bgColor-default)',
+            backgroundColor: backgroundColor ?? 'var(--bgColor-default)',
             color: 'var(--fgColor-default)',
             fontSize: 'var(--text-body-size-medium)',
           }}
           {...rest}
         >
+          {backgroundColor && (
+            <style>{`.jp-Notebook { background-color: ${backgroundColor} !important; }`}</style>
+          )}
           {children}
         </BaseStyles>
       </ThemeProvider>
     </JupyterReactColormodeContext.Provider>
-  ) : (
-    <></>
   );
 }
 

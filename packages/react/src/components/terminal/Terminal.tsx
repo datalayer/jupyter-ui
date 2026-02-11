@@ -6,6 +6,7 @@
 
 import { useState, useEffect } from 'react';
 import { Box } from '@primer/react';
+import { ServerConnection } from '@jupyterlab/services';
 import { ITerminal } from '@jupyterlab/terminal';
 import TerminalAdapter from './TerminalAdapter';
 import { useJupyter } from './../../jupyter/JupyterUse';
@@ -15,10 +16,14 @@ import useTerminalStore from './TerminalState';
 export const Terminal = ({
   height = '100%',
   colormode = 'dark',
+  serverSettings: serverSettingsProp,
   ...rest
 }: Terminal.ITerminalOptions) => {
   const terminalStore = useTerminalStore();
-  const { serverSettings } = useJupyter({ terminals: true });
+  const { serverSettings: serverSettingsFromStore } = useJupyter({
+    terminals: true,
+  });
+  const serverSettings = serverSettingsProp ?? serverSettingsFromStore;
   const [adapter, setAdapter] = useState<TerminalAdapter>();
   useEffect(() => {
     if (serverSettings) {
@@ -51,6 +56,12 @@ export namespace Terminal {
   export interface ITerminalOptions {
     height?: string;
     colormode?: ITerminal.Theme;
+    /**
+     * Server connection settings to use for the terminal.
+     * When provided, the terminal connects to this specific server
+     * instead of using the global Jupyter store settings.
+     */
+    serverSettings?: ServerConnection.ISettings;
     /**
      * Code to be executed at terminal startup
      */

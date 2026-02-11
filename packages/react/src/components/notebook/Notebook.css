@@ -12,15 +12,12 @@
   min-height: fit-content;
 }
 
-::-webkit-scrollbar {
-  height: 10px;
-  width: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: rgba(128, 128, 128, 0.374);
-  border-radius: 10px;
-}
+/*
+ * Scrollbar styling is now handled globally in style/base.css
+ * with proper color-mode awareness via [data-color-mode] selectors.
+ * Removed the unscoped ::-webkit-scrollbar rules that applied globally
+ * and didn't adapt to dark mode.
+ */
 
 .dla-CellSidebar-Container {
   position: relative;

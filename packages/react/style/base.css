@@ -3,3 +3,136 @@
  *
  * MIT License
  */
+
+/*
+ * Color-mode-aware scrollbar styles for JupyterLab containers.
+ *
+ * Scoped to elements inside [data-color-mode] (Primer's BaseStyles wrapper)
+ * that have JupyterLab classes, so they only apply inside JupyterReactTheme
+ * and don't leak to the rest of the page.
+ *
+ * Uses [data-color-mode="dark"] to switch to the dark palette.
+ * In light mode, scrollbars are transparent/subtle (matching browser default).
+ * In dark mode, scrollbars use translucent light-grey to blend with dark backgrounds.
+ *
+ * These replace the unscoped ::-webkit-scrollbar rules that were previously
+ * in Notebook.css and didn't adapt to dark mode.
+ */
+
+/* ── Scrollbar sizing (both modes) ──────────────────────────────────────── */
+
+[data-color-mode] .jp-Notebook ::-webkit-scrollbar,
+[data-color-mode] .jp-WindowedPanel-outer::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* ── Light mode ─────────────────────────────────────────────────────────── */
+
+[data-color-mode='light'] .jp-Notebook ::-webkit-scrollbar-track,
+[data-color-mode='light'] .jp-WindowedPanel-outer::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+[data-color-mode='light'] .jp-Notebook ::-webkit-scrollbar-thumb,
+[data-color-mode='light'] .jp-WindowedPanel-outer::-webkit-scrollbar-thumb {
+  background-color: rgba(128, 128, 128, 0.35);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+[data-color-mode='light'] .jp-Notebook ::-webkit-scrollbar-thumb:hover,
+[data-color-mode='light']
+  .jp-WindowedPanel-outer::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(128, 128, 128, 0.55);
+}
+
+[data-color-mode='light'] .jp-Notebook ::-webkit-scrollbar-corner,
+[data-color-mode='light'] .jp-WindowedPanel-outer::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* ── Dark mode ──────────────────────────────────────────────────────────── */
+
+[data-color-mode='dark'] .jp-Notebook ::-webkit-scrollbar-track,
+[data-color-mode='dark'] .jp-WindowedPanel-outer::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+[data-color-mode='dark'] .jp-Notebook ::-webkit-scrollbar-thumb,
+[data-color-mode='dark'] .jp-WindowedPanel-outer::-webkit-scrollbar-thumb {
+  background-color: rgba(160, 160, 160, 0.3);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+[data-color-mode='dark'] .jp-Notebook ::-webkit-scrollbar-thumb:hover,
+[data-color-mode='dark']
+  .jp-WindowedPanel-outer::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(160, 160, 160, 0.5);
+}
+
+[data-color-mode='dark'] .jp-Notebook ::-webkit-scrollbar-corner,
+[data-color-mode='dark'] .jp-WindowedPanel-outer::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* ── Firefox (scrollbar-color / scrollbar-width) ────────────────────────── */
+
+[data-color-mode='light'] .jp-WindowedPanel-outer {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(128, 128, 128, 0.35) transparent;
+}
+
+[data-color-mode='dark'] .jp-WindowedPanel-outer {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(160, 160, 160, 0.3) transparent;
+}
+
+/* ── Lumino custom ScrollBar widget ─────────────────────────────────────
+ * Override the hardcoded light-grey colors from @lumino/widgets/style/scrollbar.css
+ * and @jupyterlab/application/style/scrollbar.css with theme-aware values.
+ */
+
+[data-color-mode] .lm-ScrollBar-track {
+  background: transparent;
+}
+
+[data-color-mode] .lm-ScrollBar-thumb {
+  background: rgba(128, 128, 128, 0.35);
+  border-radius: 4px;
+}
+
+[data-color-mode] .lm-ScrollBar-thumb:hover {
+  background: rgba(128, 128, 128, 0.55);
+}
+
+[data-color-mode] .lm-ScrollBar-button {
+  background-color: transparent;
+}
+
+[data-color-mode='dark'] .lm-ScrollBar-track {
+  background: transparent;
+}
+
+[data-color-mode='dark'] .lm-ScrollBar-thumb {
+  background: rgba(160, 160, 160, 0.3);
+}
+
+[data-color-mode='dark'] .lm-ScrollBar-thumb:hover {
+  background: rgba(160, 160, 160, 0.5);
+}
+
+[data-color-mode='dark'] .lm-ScrollBar-button {
+  background-color: transparent;
+}
+
+[data-color-mode='dark'] .lm-ScrollBar[data-orientation='horizontal'] {
+  border-top-color: rgba(128, 128, 128, 0.2);
+}
+
+[data-color-mode='dark'] .lm-ScrollBar[data-orientation='vertical'] {
+  border-left-color: rgba(128, 128, 128, 0.2);
+}

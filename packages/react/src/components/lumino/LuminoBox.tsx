@@ -5,6 +5,7 @@
  */
 
 import { useRef, useEffect } from 'react';
+import { MessageLoop } from '@lumino/messaging';
 import { Widget, BoxPanel } from '@lumino/widgets';
 import { Box } from '@primer/react';
 
@@ -30,7 +31,15 @@ export const LuminoBox = ({
       } catch (e) {
         console.warn('Exception while attaching Lumino widget.', e);
       }
+      // Observe the container for size changes and notify the Lumino widget.
+      const observer = new ResizeObserver(() => {
+        if (boxPanel.isAttached) {
+          MessageLoop.sendMessage(boxPanel, Widget.ResizeMessage.UnknownSize);
+        }
+      });
+      observer.observe(ref.current);
       return () => {
+        observer.disconnect();
         try {
           if (boxPanel.isAttached || boxPanel.node.isConnected) {
             boxPanel.dispose();

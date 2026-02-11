@@ -10,10 +10,12 @@ import { Box } from '@datalayer/primer-addons';
 import {
   PlusIcon,
   PlayIcon,
-  StopIcon,
+  SquareFillIcon,
   TrashIcon,
-  ZapIcon,
-  PaperAirplaneIcon,
+  DownloadIcon,
+  IterationsIcon,
+  CodeIcon,
+  MarkdownIcon,
 } from '@primer/octicons-react';
 import { useNotebookStore } from '../NotebookState';
 
@@ -24,149 +26,131 @@ export type INotebookToolbarProps = {
 export const NotebookToolbar = (props: INotebookToolbarProps) => {
   const { notebookId } = props;
   const notebookStore = useNotebookStore();
-  const [type, setType] = useState('code');
+  const [insertType, setInsertType] = useState<'code' | 'markdown'>('code');
+
   const kernelStatus = notebookStore.selectKernelStatus(notebookId);
-  const handleChangeCellType = (newType: string) => {
-    setType(newType);
-  };
+  const isBusy = kernelStatus === 'busy';
+  const isIdle = kernelStatus === 'idle';
+
+  // ---- Handlers ----
+  const handleSave = () =>
+    notebookStore.save({ id: notebookId, date: new Date() });
+  const handleRun = () => notebookStore.run(notebookId);
+  const handleRunAll = () => notebookStore.runAll(notebookId);
+  const handleInterrupt = () => notebookStore.interrupt(notebookId);
+  const handleDelete = () => notebookStore.delete(notebookId);
+  const handleInsert = () => notebookStore.insertBelow(notebookId, insertType);
+
   return (
     <Box
-      display="flex"
-      pt={1}
-      pb={1}
       sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
         width: '100%',
+        px: 3,
+        py: '6px',
         borderBottomWidth: 1,
         borderBottomStyle: 'solid',
         borderColor: 'border.default',
+        bg: 'canvas.subtle',
+        gap: 2,
+        minHeight: '36px',
       }}
     >
-      <Box
-        sx={{
-          display: 'flex',
-          width: '50%',
-          paddingLeft: '7vw',
-          gap: '0.75vw',
-        }}
-      >
+      {/* ── Left section: primary actions ── */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        {/* Save */}
         <IconButton
           variant="invisible"
           size="small"
-          color="primary"
-          aria-label="Save"
-          title="Save"
-          onClick={e => {
-            e.preventDefault();
-            notebookStore.save({
-              id: notebookId,
-              date: new Date(),
-            });
-          }}
-          icon={ZapIcon}
+          aria-label="Save notebook"
+          description="Save notebook (⌘S)"
+          onClick={handleSave}
+          icon={DownloadIcon}
         />
+
+        {/* Separator */}
+        <Box sx={{ width: '1px', height: 16, bg: 'border.default', mx: 1 }} />
+
+        {/* Run cell */}
         <IconButton
           variant="invisible"
           size="small"
-          color="secondary"
           aria-label="Run cell"
-          title="Run cell"
-          onClick={e => {
-            e.preventDefault();
-            notebookStore.run(notebookId);
-          }}
-          style={{ color: 'grey' }}
+          description="Run cell (⇧↵)"
+          onClick={handleRun}
           icon={PlayIcon}
-          disabled={kernelStatus !== 'idle'}
+          disabled={!isIdle}
+          sx={{ color: 'success.fg' }}
         />
+
+        {/* Run all cells */}
         <IconButton
           variant="invisible"
           size="small"
-          color="secondary"
           aria-label="Run all cells"
-          title="Run all cells"
-          onClick={e => {
-            e.preventDefault();
-            notebookStore.runAll(notebookId);
-          }}
-          style={{ color: 'grey' }}
-          icon={PaperAirplaneIcon}
-          disabled={kernelStatus !== 'idle'}
+          description="Run all cells"
+          onClick={handleRunAll}
+          icon={IterationsIcon}
+          disabled={!isIdle}
         />
+
+        {/* Interrupt kernel */}
         <IconButton
           variant="invisible"
           size="small"
-          color="error"
-          aria-label="Interrupt"
-          onClick={e => {
-            e.preventDefault();
-            notebookStore.interrupt(notebookId);
-          }}
-          icon={StopIcon}
-          disabled={kernelStatus !== 'busy'}
+          aria-label="Interrupt kernel"
+          description="Interrupt kernel (⌘I)"
+          onClick={handleInterrupt}
+          icon={SquareFillIcon}
+          disabled={!isBusy}
+          sx={{ color: isBusy ? 'danger.fg' : undefined }}
         />
+
+        {/* Separator */}
+        <Box sx={{ width: '1px', height: 16, bg: 'border.default', mx: 1 }} />
+
+        {/* Delete cell */}
         <IconButton
           variant="invisible"
           size="small"
-          color="error"
-          aria-label="Delete"
-          title="Delete"
-          onClick={e => {
-            e.preventDefault();
-            notebookStore.delete(notebookId);
-          }}
+          aria-label="Delete cell"
+          description="Delete cell"
+          onClick={handleDelete}
           icon={TrashIcon}
         />
       </Box>
-      <Box
-        sx={{
-          display: 'flex',
-          width: '50%',
-          paddingRight: '7vw',
-          gap: '0.75vw',
-          justifyContent: 'flex-end',
-          alignItems: 'center',
-        }}
-      >
+
+      {/* ── Right section: insert cell + type picker ── */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        {/* Insert cell below */}
         <IconButton
           variant="invisible"
           size="small"
-          color="primary"
-          aria-label="Insert cell"
-          title="Insert cell"
-          onClick={e => {
-            e.preventDefault();
-            if (type === 'raw') {
-              notebookStore.insertBelow(notebookId, 'raw');
-            } else if (type === 'code') {
-              notebookStore.insertBelow(notebookId, 'code');
-            } else if (type === 'markdown') {
-              notebookStore.insertBelow(notebookId, 'markdown');
-            }
-          }}
-          style={{ color: 'grey' }}
+          aria-label={`Insert ${insertType} cell below`}
+          description={`Insert ${insertType} cell below`}
+          onClick={handleInsert}
           icon={PlusIcon}
         />
+
+        {/* Cell type selector */}
         <ButtonGroup>
           <Button
-            variant={type === 'code' ? 'primary' : 'invisible'}
-            onClick={() => handleChangeCellType('code')}
+            variant={insertType === 'code' ? 'primary' : 'invisible'}
             size="small"
+            onClick={() => setInsertType('code')}
+            leadingVisual={CodeIcon}
           >
             Code
           </Button>
           <Button
-            variant={type === 'markdown' ? 'primary' : 'invisible'}
-            onClick={() => handleChangeCellType('markdown')}
+            variant={insertType === 'markdown' ? 'primary' : 'invisible'}
             size="small"
+            onClick={() => setInsertType('markdown')}
+            leadingVisual={MarkdownIcon}
           >
             Markdown
-          </Button>
-          <Button
-            variant={type === 'raw' ? 'primary' : 'invisible'}
-            onClick={() => handleChangeCellType('raw')}
-            size="small"
-          >
-            Raw
           </Button>
         </ButtonGroup>
       </Box>
