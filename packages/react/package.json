@@ -150,8 +150,9 @@
     "typedoc": "typedoc ./src",
     "validate:tools": "node scripts/validate-tools-sync.js",
     "vite": "vite",
-    "watch": "run-p watch:src",
-    "watch:src": "tsc -w"
+    "watch": "run-p watch:lib",
+    "watch:lib": "tsc -w",
+    "watch:sr": "tsc -w"
   },
   "dependencies": {
     "@codemirror/lang-python": "^6.0.1",

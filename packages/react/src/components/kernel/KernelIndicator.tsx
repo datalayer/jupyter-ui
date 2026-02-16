@@ -117,12 +117,26 @@ export const KernelIndicator = (props: KernelIndicatorProps) => {
     <Tooltip
       text={`${connectionStatus} - ${status} - ${env?.display_name} - ${kernel?.id}`}
     >
-      <Button variant="invisible">
+      <Button
+        variant="invisible"
+        sx={{
+          p: 1,
+          minWidth: 'auto',
+          aspectRatio: '1 / 1',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         <span
           style={{
             display: 'inline-flex',
             alignItems: 'center',
+            justifyContent: 'center',
             gap: '6px',
+            fontSize: '16px',
+            lineHeight: 1,
+            verticalAlign: 'middle',
           }}
         >
           {label ? <Text>{label}</Text> : null}
@@ -132,12 +146,26 @@ export const KernelIndicator = (props: KernelIndicatorProps) => {
     </Tooltip>
   ) : (
     <Tooltip text="Undefined state">
-      <Button variant="invisible">
+      <Button
+        variant="invisible"
+        sx={{
+          p: 1,
+          minWidth: 'auto',
+          aspectRatio: '1 / 1',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         <span
           style={{
             display: 'inline-flex',
             alignItems: 'center',
+            justifyContent: 'center',
             gap: '6px',
+            fontSize: '16px',
+            lineHeight: 1,
+            verticalAlign: 'middle',
           }}
         >
           {label ? <Text>{label}</Text> : null}
