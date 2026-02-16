@@ -20,6 +20,14 @@ export const Lumino = ({
   children,
 }: LuminoProps) => {
   const ref = useRef<HTMLDivElement>(null);
+  // Track whether the React component is still mounted so the deferred
+  // cleanup microtask can skip work when the DOM container is already gone.
+  const mountedRef = useRef(true);
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
   useEffect(() => {
     if (ref && ref.current && children) {
       try {
@@ -51,13 +59,29 @@ export const Lumino = ({
       observer.observe(ref.current);
       return () => {
         observer.disconnect();
-        try {
-          if (children && (children.isAttached || children.node.isConnected)) {
-            Widget.detach(children);
+        // Defer Lumino widget detachment to avoid synchronous React root
+        // unmount during React's own render/commit cycle.  Lumino's
+        // Widget.detach → onBeforeDetach → ReactWidget._rootDOM.unmount()
+        // triggers "Attempted to synchronously unmount a root while React
+        // was already rendering" when called from a passive effect cleanup.
+        // Using queueMicrotask lets the current React commit finish first.
+        const widget = children;
+        queueMicrotask(() => {
+          try {
+            // Skip detach if the component unmounted — the widget will be
+            // cleaned up by NotebookBase's panel.dispose() instead.
+            // Attempting to detach here after the DOM container is removed
+            // would cause "Widget is not attached".
+            if (!mountedRef.current) {
+              return;
+            }
+            if (widget && !widget.isDisposed && widget.isAttached) {
+              Widget.detach(widget);
+            }
+          } catch (e) {
+            console.warn('Exception while detaching Lumino widget.', e);
           }
-        } catch (e) {
-          console.warn('Exception while detaching Lumino widget.', e);
-        }
+        });
       };
     }
   }, [ref, children]);

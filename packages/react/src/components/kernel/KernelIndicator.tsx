@@ -6,6 +6,7 @@
 
 import { useState, useEffect, ReactElement } from 'react';
 import { Button, Tooltip, Text } from '@primer/react';
+import { XCircleFillIcon } from '@primer/octicons-react';
 import {
   CircleBlackIcon,
   CircleBrownIcon,
@@ -36,6 +37,7 @@ export type ExecutionState =
   | 'connected-restarting'
   | 'connected-autorestarting'
   | 'connected-dead'
+  | 'disconnected'
   | 'disconnecting'
   | 'undefined';
 
@@ -74,6 +76,7 @@ export const KERNEL_STATES: Map<ExecutionState, ReactElement> = new Map([
     <CircleHollowRedIcon key="connected-autorestarting" />,
   ],
   ['connected-dead', <CircleRedIcon key="connected-dead" />],
+  ['disconnected', <XCircleFillIcon key="disconnected" size={16} />],
   ['disconnecting', <CircleBrownIcon key="disconnecting" />],
   ['undefined', <CircleBlackIcon key="undefined" />],
 ]);

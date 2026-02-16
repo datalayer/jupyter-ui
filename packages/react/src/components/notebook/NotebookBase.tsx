@@ -333,16 +333,19 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
     Widget.attach(completer, document.body);
     setCompleter(handler);
     return () => {
-      handler.dispose();
-      completer.dispose();
-      if (inlineCompleter) {
-        // Clean up keyboard listeners
-        if ((inlineCompleter as any)._keyboardCleanup) {
-          (inlineCompleter as any)._keyboardCleanup();
+      // Defer Lumino widget disposal out of React's render cycle to avoid
+      // "synchronously unmount a root while React was already rendering".
+      queueMicrotask(() => {
+        handler.dispose();
+        completer.dispose();
+        if (inlineCompleter) {
+          if ((inlineCompleter as any)._keyboardCleanup) {
+            (inlineCompleter as any)._keyboardCleanup();
+          }
+          inlineCompleter.dispose();
         }
-        inlineCompleter.dispose();
-      }
-      widget.dispose();
+        widget.dispose();
+      });
     };
   }, [props.inlineProviders]);
 
@@ -533,20 +536,38 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
       // Clear panel provider to avoid stale references
       panelProvider.setPanel(null, null);
 
-      widgetsManager?.dispose();
-      if (thisAdapter) {
-        thisAdapter.dispose();
-      }
-      if (thisPanel) {
-        if (thisPanel.content) {
-          Signal.clearData(thisPanel.content);
+      // Defer Lumino widget disposal to the next microtask so it runs
+      // *after* React finishes the current render/commit cycle.
+      // Lumino's Widget.dispose() synchronously walks the widget tree and
+      // calls VDOMWidget.onBeforeDetach → ReactDOMRoot.unmount().  When
+      // this cleanup runs inside React's passive-effect phase the
+      // synchronous unmount races with the in-progress render, producing:
+      //   "Attempted to synchronously unmount a root while React was
+      //    already rendering."
+      queueMicrotask(() => {
+        widgetsManager?.dispose();
+        if (thisAdapter) {
+          thisAdapter.dispose();
         }
-        try {
-          thisPanel.dispose();
-        } catch (reason) {
-          // No-op
+        if (thisPanel && !thisPanel.isDisposed) {
+          if (thisPanel.content) {
+            Signal.clearData(thisPanel.content);
+          }
+          try {
+            // If the panel is still attached to a live DOM parent, detach
+            // it before calling dispose(). This prevents Lumino's internal
+            // layout disposal from trying to detach child widgets (cells)
+            // that are no longer in the document — avoiding the
+            // "Widget is not attached" error cascade.
+            if (thisPanel.isAttached) {
+              Widget.detach(thisPanel);
+            }
+            thisPanel.dispose();
+          } catch (reason) {
+            // No-op: widget tree may already be partially torn down.
+          }
         }
-      }
+      });
       setPanel(panel => (panel === thisPanel ? null : panel));
       setAdapter(adapter => (adapter === thisAdapter ? null : adapter));
     };
@@ -630,7 +651,10 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
       | null = null;
     if (panel) {
       if (tracker) {
-        if (!tracker.has(panel)) {
+        // Guard: don't add an already-disposed panel to the tracker.
+        // This can happen when a stale cleanup effect disposes the panel
+        // just before this mount effect runs (React concurrent mode race).
+        if (!panel.isDisposed && !tracker.has(panel)) {
           tracker.add(panel).catch(reason => {
             console.error(`Failed to track the notebook panel '${id}'.`);
           });
