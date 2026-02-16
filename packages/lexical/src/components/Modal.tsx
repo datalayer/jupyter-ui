@@ -4,8 +4,15 @@
  * MIT License
  */
 
-import { ReactNode, useEffect, useRef } from 'react';
+/**
+ * Modal - Migrated from custom CSS overlay to Primer React Dialog.
+ * Keeps the same export signature so all consumers work unchanged.
+ */
+
+import { ReactNode, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { Box, Heading, IconButton } from '@primer/react';
+import { XIcon } from '@primer/octicons-react';
 
 function PortalImpl({
   onClose,
@@ -19,57 +26,85 @@ function PortalImpl({
   title: string;
 }) {
   const modalRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (modalRef.current !== null) {
-      modalRef.current.focus();
-    }
-  }, []);
-  useEffect(() => {
-    let modalOverlayElement: HTMLElement | null = null;
-    const handler = (event: KeyboardEvent) => {
-      if (event.keyCode === 27) {
-        onClose();
-      }
-    };
-    const clickOutsideHandler = (event: MouseEvent) => {
-      const target = event.target;
+  const overlayRef = useRef<HTMLDivElement>(null);
+
+  const handleOverlayClick = useCallback(
+    (event: React.MouseEvent) => {
       if (
-        modalRef.current !== null &&
-        !modalRef.current.contains(target as Node) &&
-        closeOnClickOutside
+        closeOnClickOutside &&
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
       ) {
         onClose();
       }
-    };
-    if (modalRef.current !== null) {
-      modalOverlayElement = modalRef.current?.parentElement;
-      if (modalOverlayElement !== null) {
-        modalOverlayElement?.addEventListener('click', clickOutsideHandler);
+    },
+    [closeOnClickOutside, onClose],
+  );
+
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
       }
-    }
-    window.addEventListener('keydown', handler);
-    return () => {
-      window.removeEventListener('keydown', handler);
-      if (modalOverlayElement !== null) {
-        modalOverlayElement?.removeEventListener('click', clickOutsideHandler);
-      }
-    };
-  }, [closeOnClickOutside, onClose]);
+    },
+    [onClose],
+  );
+
   return (
-    <div className="Modal__overlay" role="dialog">
-      <div className="Modal__modal" tabIndex={-1} ref={modalRef}>
-        <h2 className="Modal__title">{title}</h2>
-        <button
-          className="Modal__closeButton"
-          aria-label="Close modal"
-          type="button"
-          onClick={onClose}
+    <Box
+      ref={overlayRef}
+      role="dialog"
+      onClick={handleOverlayClick}
+      onKeyDown={handleKeyDown}
+      sx={{
+        position: 'fixed',
+        inset: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        bg: 'primer.canvas.backdrop',
+        zIndex: 100,
+      }}
+    >
+      <Box
+        ref={modalRef}
+        tabIndex={-1}
+        sx={{
+          bg: 'canvas.overlay',
+          border: '1px solid',
+          borderColor: 'border.default',
+          borderRadius: 2,
+          boxShadow: 'shadow.large',
+          p: 3,
+          minWidth: 300,
+          maxWidth: '90vw',
+          maxHeight: '90vh',
+          overflow: 'auto',
+          position: 'relative',
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            mb: 2,
+          }}
         >
-          X
-        </button>
-        <div className="Modal__content">{children}</div>
-      </div>
-    </div>
+          <Heading as="h2" sx={{ fontSize: 2, m: 0 }}>
+            {title}
+          </Heading>
+          <IconButton
+            icon={XIcon}
+            aria-label="Close modal"
+            variant="invisible"
+            onClick={onClose}
+            size="small"
+          />
+        </Box>
+        <Box>{children}</Box>
+      </Box>
+    </Box>
   );
 }
 

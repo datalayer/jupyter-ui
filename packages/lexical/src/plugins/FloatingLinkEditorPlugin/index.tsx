@@ -13,8 +13,6 @@
  */
 import type { JSX } from 'react';
 
-import './index.css';
-
 import {
   $createLinkNode,
   $isAutoLinkNode,
@@ -41,6 +39,18 @@ import {
 import { Dispatch, useCallback, useEffect, useRef, useState } from 'react';
 import * as React from 'react';
 import { createPortal } from 'react-dom';
+import {
+  Box,
+  IconButton,
+  TextInput as PrimerTextInput,
+  Link,
+} from '@primer/react';
+import {
+  CheckIcon,
+  PencilIcon,
+  TrashIcon,
+  XIcon,
+} from '@primer/octicons-react';
 
 import { getSelectedNode } from '../../utils/getSelectedNode';
 import { setFloatingElemPositionForLinkEditor } from '../../utils/setFloatingElemPositionForLinkEditor';
@@ -323,71 +333,101 @@ function FloatingLinkEditor({
   };
 
   return (
-    <div ref={editorRef} className="link-editor">
+    <Box
+      ref={editorRef}
+      sx={{
+        position: 'absolute',
+        zIndex: 10,
+        top: '-10000px',
+        left: '-10000px',
+        opacity: 0,
+        bg: 'canvas.overlay',
+        border: '1px solid',
+        borderColor: 'border.default',
+        borderRadius: 2,
+        boxShadow: 'shadow.large',
+        transition: 'opacity 0.15s ease',
+        p: 1,
+        minWidth: 250,
+      }}
+    >
       {!isLink ? null : isLinkEditMode ? (
-        <div className="link-editor-row">
-          <input
-            ref={inputRef}
-            className="link-input"
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <PrimerTextInput
+            ref={inputRef as any}
             value={editedLinkUrl}
-            onChange={event => {
-              setEditedLinkUrl(event.target.value);
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setEditedLinkUrl(e.target.value);
             }}
-            onKeyDown={event => {
-              monitorInputInteraction(event);
-            }}
+            onKeyDown={monitorInputInteraction as any}
+            size="small"
+            block
+            sx={{ flex: 1 }}
           />
-          <div
-            className="link-cancel"
-            role="button"
-            tabIndex={0}
-            onMouseDown={preventDefault}
-            onClick={() => {
-              setIsLinkEditMode(false);
-            }}
+          <IconButton
+            icon={XIcon}
+            aria-label="Cancel"
+            variant="invisible"
+            size="small"
+            onMouseDown={preventDefault as any}
+            onClick={() => setIsLinkEditMode(false)}
           />
-          <div
-            className="link-confirm"
-            role="button"
-            tabIndex={0}
-            onMouseDown={preventDefault}
-            onClick={handleLinkSubmission}
+          <IconButton
+            icon={CheckIcon}
+            aria-label="Confirm"
+            variant="invisible"
+            size="small"
+            onMouseDown={preventDefault as any}
+            onClick={handleLinkSubmission as any}
           />
-        </div>
+        </Box>
       ) : (
-        <div className="link-editor-row">
-          <div className="link-view">
-            <a
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Box
+            sx={{
+              flex: 1,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              fontSize: 1,
+              px: 1,
+            }}
+          >
+            <Link
               href={sanitizeUrl(linkUrl)}
               target="_blank"
               rel="noopener noreferrer"
+              sx={{ fontSize: 1 }}
             >
               {linkUrl}
-            </a>
-          </div>
-          <div
-            className="link-edit"
-            role="button"
-            tabIndex={0}
-            onMouseDown={preventDefault}
-            onClick={event => {
+            </Link>
+          </Box>
+          <IconButton
+            icon={PencilIcon}
+            aria-label="Edit link"
+            variant="invisible"
+            size="small"
+            onMouseDown={preventDefault as any}
+            onClick={(event: React.MouseEvent) => {
               event.preventDefault();
               setEditedLinkUrl(linkUrl);
               setIsLinkEditMode(true);
             }}
           />
-          <div
-            className="link-trash"
-            role="button"
-            tabIndex={0}
-            onMouseDown={preventDefault}
+          <IconButton
+            icon={TrashIcon}
+            aria-label="Remove link"
+            variant="invisible"
+            size="small"
+            sx={{ color: 'danger.fg' }}
+            onMouseDown={preventDefault as any}
             onClick={() => {
               editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
             }}
           />
-        </div>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 }
 

@@ -12,6 +12,18 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import {
+  Box,
+  Heading,
+  IconButton,
+  Text,
+  Button as PrimerButton,
+} from '@primer/react';
+import {
+  CommentIcon,
+  PaperAirplaneIcon,
+  TrashIcon,
+} from '@primer/octicons-react';
 import type {
   EditorState,
   LexicalCommand,
@@ -62,7 +74,6 @@ import {
 import CommentEditorTheme from '../themes/CommentEditorTheme';
 import {
   useModal,
-  Button,
   LexicalContentEditable as ContentEditable,
   Placeholder,
 } from '..';
@@ -108,14 +119,15 @@ function AddCommentBox({
   }, [anchorKey, editor, updatePosition]);
 
   return (
-    <div className="CommentPlugin_AddCommentBox" ref={boxRef}>
-      <button
-        className="CommentPlugin_AddCommentBox_button"
+    <Box ref={boxRef} sx={{ position: 'absolute', zIndex: 10 }}>
+      <IconButton
+        icon={CommentIcon}
+        aria-label="Add comment"
+        variant="invisible"
+        size="small"
         onClick={onAddComment}
-      >
-        <i className="icon add-comment" />
-      </button>
-    </div>
+      />
+    </Box>
   );
 }
 
@@ -341,21 +353,23 @@ function CommentInputBox({
         onEscape={onEscape}
         onChange={onChange}
       />
-      <div className="CommentPlugin_CommentInputBox_Buttons">
-        <Button
+      <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 2 }}>
+        <PrimerButton
           onClick={cancelAddComment}
-          className="CommentPlugin_CommentInputBox_Button"
+          variant="invisible"
+          size="small"
         >
           Cancel
-        </Button>
-        <Button
+        </PrimerButton>
+        <PrimerButton
           onClick={submitComment}
           disabled={!canSubmit}
-          className="CommentPlugin_CommentInputBox_Button primary"
+          variant="primary"
+          size="small"
         >
           Comment
-        </Button>
-      </div>
+        </PrimerButton>
+      </Box>
     </div>
   );
 }
@@ -403,13 +417,14 @@ function CommentsComposer({
         editorRef={editorRef}
         placeholder={placeholder}
       />
-      <Button
-        className="CommentPlugin_CommentsPanel_SendButton"
+      <IconButton
+        icon={PaperAirplaneIcon}
+        aria-label="Send comment"
+        variant="invisible"
+        size="small"
         onClick={submitComment}
         disabled={!canSubmit}
-      >
-        <i className="send" />
-      </Button>
+      />
     </>
   );
 }
@@ -433,23 +448,25 @@ function ShowDeleteCommentOrThreadDialog({
   return (
     <>
       Are you sure you want to delete this {commentOrThread.type}?
-      <div className="Modal__content">
-        <Button
+      <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 3 }}>
+        <PrimerButton
+          variant="danger"
           onClick={() => {
             deleteCommentOrThread(commentOrThread, thread);
             onClose();
           }}
         >
           Delete
-        </Button>{' '}
-        <Button
+        </PrimerButton>{' '}
+        <PrimerButton
+          variant="invisible"
           onClick={() => {
             onClose();
           }}
         >
           Cancel
-        </Button>
-      </div>
+        </PrimerButton>
+      </Box>
     </>
   );
 }
@@ -474,25 +491,36 @@ function CommentsPanelListComment({
   const [modal, showModal] = useModal();
 
   return (
-    <li className="CommentPlugin_CommentsPanel_List_Comment">
-      <div className="CommentPlugin_CommentsPanel_List_Details">
-        <span className="CommentPlugin_CommentsPanel_List_Comment_Author">
-          {comment.author}
-        </span>
-        <span className="CommentPlugin_CommentsPanel_List_Comment_Time">
+    <Box
+      as="li"
+      sx={{ p: 2, borderBottom: '1px solid', borderColor: 'border.muted' }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+        <Text sx={{ fontWeight: 'bold', fontSize: 1 }}>{comment.author}</Text>
+        <Text sx={{ color: 'fg.muted', fontSize: 0 }}>
           · {seconds > -10 ? 'Just now' : rtf.format(minutes, 'minute')}
-        </span>
-      </div>
-      <p
-        className={
-          comment.deleted ? 'CommentPlugin_CommentsPanel_DeletedComment' : ''
-        }
+        </Text>
+      </Box>
+      <Text
+        as="p"
+        sx={{
+          fontSize: 1,
+          m: 0,
+          ...(comment.deleted
+            ? { color: 'fg.subtle', fontStyle: 'italic' }
+            : {}),
+        }}
       >
         {comment.content}
-      </p>
+      </Text>
       {!comment.deleted && (
         <>
-          <Button
+          <IconButton
+            icon={TrashIcon}
+            aria-label="Delete comment"
+            variant="invisible"
+            size="small"
+            sx={{ color: 'danger.fg', mt: 1 }}
             onClick={() => {
               showModal('Delete Comment', onClose => (
                 <ShowDeleteCommentOrThreadDialog
@@ -503,14 +531,11 @@ function CommentsPanelListComment({
                 />
               ));
             }}
-            className="CommentPlugin_CommentsPanel_List_DeleteButton"
-          >
-            <i className="delete" />
-          </Button>
+          />
           {modal}
         </>
       )}
-    </li>
+    </Box>
   );
 }
 
@@ -561,7 +586,7 @@ function CommentsPanelList({
   }, [counter]);
 
   return (
-    <ul className="CommentPlugin_CommentsPanel_List" ref={listRef}>
+    <Box as="ul" ref={listRef} sx={{ listStyle: 'none', m: 0, p: 0 }}>
       {comments.map(commentOrThread => {
         const id = commentOrThread.id;
         if (commentOrThread.type === 'thread') {
@@ -595,20 +620,44 @@ function CommentsPanelList({
           };
 
           return (
-            <li
+            <Box
+              as="li"
               key={id}
               onClick={handleClickThread}
-              className={`CommentPlugin_CommentsPanel_List_Thread ${
-                markNodeMap.has(id) ? 'interactive' : ''
-              } ${activeIDs.indexOf(id) === -1 ? '' : 'active'}`}
+              sx={{
+                p: 2,
+                borderBottom: '1px solid',
+                borderColor: 'border.muted',
+                cursor: markNodeMap.has(id) ? 'pointer' : 'default',
+                bg:
+                  activeIDs.indexOf(id) === -1
+                    ? 'canvas.default'
+                    : 'accent.subtle',
+                '&:hover': markNodeMap.has(id) ? { bg: 'canvas.subtle' } : {},
+              }}
             >
-              <div className="CommentPlugin_CommentsPanel_List_Thread_QuoteBox">
-                <blockquote className="CommentPlugin_CommentsPanel_List_Thread_Quote">
+              <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+                <Box
+                  as="blockquote"
+                  sx={{
+                    flex: 1,
+                    m: 0,
+                    pl: 2,
+                    borderLeft: '3px solid',
+                    borderColor: 'accent.muted',
+                    color: 'fg.muted',
+                    fontSize: 1,
+                  }}
+                >
                   {'> '}
                   <span>{commentOrThread.quote}</span>
-                </blockquote>
-                {/* INTRODUCE DELETE THREAD HERE*/}
-                <Button
+                </Box>
+                <IconButton
+                  icon={TrashIcon}
+                  aria-label="Delete thread"
+                  variant="invisible"
+                  size="small"
+                  sx={{ color: 'danger.fg' }}
                   onClick={() => {
                     showModal('Delete Thread', onClose => (
                       <ShowDeleteCommentOrThreadDialog
@@ -618,13 +667,10 @@ function CommentsPanelList({
                       />
                     ));
                   }}
-                  className="CommentPlugin_CommentsPanel_List_DeleteButton"
-                >
-                  <i className="delete" />
-                </Button>
+                />
                 {modal}
-              </div>
-              <ul className="CommentPlugin_CommentsPanel_List_Thread_Comments">
+              </Box>
+              <Box as="ul" sx={{ listStyle: 'none', m: 0, p: 0, mt: 2 }}>
                 {commentOrThread.comments.map(comment => (
                   <CommentsPanelListComment
                     key={comment.id}
@@ -634,15 +680,15 @@ function CommentsPanelList({
                     rtf={rtf}
                   />
                 ))}
-              </ul>
-              <div className="CommentPlugin_CommentsPanel_List_Thread_Editor">
+              </Box>
+              <Box sx={{ mt: 2 }}>
                 <CommentsComposer
                   submitAddComment={submitAddComment}
                   thread={commentOrThread}
                   placeholder="Reply to comment..."
                 />
-              </div>
-            </li>
+              </Box>
+            </Box>
           );
         }
         return (
@@ -654,7 +700,7 @@ function CommentsPanelList({
           />
         );
       })}
-    </ul>
+    </Box>
   );
 }
 
@@ -682,10 +728,31 @@ function CommentsPanel({
   const isEmpty = comments.length === 0;
 
   return (
-    <div className="CommentPlugin CommentPlugin_CommentsPanel">
-      <h2 className="CommentPlugin_CommentsPanel_Heading">Comments</h2>
+    <Box
+      sx={{
+        bg: 'canvas.default',
+        border: '1px solid',
+        borderColor: 'border.default',
+        borderRadius: 2,
+        overflow: 'hidden',
+      }}
+    >
+      <Heading
+        as="h2"
+        sx={{
+          fontSize: 2,
+          p: 3,
+          borderBottom: '1px solid',
+          borderColor: 'border.muted',
+          m: 0,
+        }}
+      >
+        Comments
+      </Heading>
       {isEmpty ? (
-        <div className="CommentPlugin_CommentsPanel_Empty">No Comments</div>
+        <Box sx={{ p: 3, color: 'fg.muted', textAlign: 'center' }}>
+          No Comments
+        </Box>
       ) : (
         <CommentsPanelList
           activeIDs={activeIDs}
@@ -696,7 +763,7 @@ function CommentsPanel({
           markNodeMap={markNodeMap}
         />
       )}
-    </div>
+    </Box>
   );
 }
 

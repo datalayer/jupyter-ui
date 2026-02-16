@@ -7,6 +7,7 @@
 import { useCallback, useState } from 'react';
 import Button from '../components/Button';
 import KatexRenderer from './KatexRenderer';
+import { Box, Text, Textarea, TextInput } from '@primer/react';
 
 type Props = {
   initialEquation?: string;
@@ -27,41 +28,51 @@ export const KatexEquationAlterer = ({
   }, [setInline, inline]);
   return (
     <>
-      <div className="KatexEquationAlterer_defaultRow">
-        Inline
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+        <Text sx={{ fontSize: 1 }}>Inline</Text>
         <input type="checkbox" checked={inline} onChange={onCheckboxChange} />
-      </div>
-      <div className="KatexEquationAlterer_defaultRow">Equation </div>
-      <div className="KatexEquationAlterer_centerRow">
+      </Box>
+      <Text sx={{ fontSize: 1, fontWeight: 'bold', mb: 1 }}>Equation</Text>
+      <Box sx={{ mb: 2 }}>
         {inline ? (
-          <input
-            onChange={event => {
+          <TextInput
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               setEquation(event.target.value);
             }}
             value={equation}
-            className="KatexEquationAlterer_textArea"
+            block
           />
         ) : (
-          <textarea
-            onChange={event => {
+          <Textarea
+            onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) => {
               setEquation(event.target.value);
             }}
             value={equation}
-            className="KatexEquationAlterer_textArea"
+            block
+            rows={6}
           />
         )}
-      </div>
-      <div className="KatexEquationAlterer_defaultRow">Visualization </div>
-      <div className="KatexEquationAlterer_centerRow">
+      </Box>
+      <Text sx={{ fontSize: 1, fontWeight: 'bold', mb: 1 }}>Visualization</Text>
+      <Box
+        sx={{
+          mb: 2,
+          p: 2,
+          border: '1px solid',
+          borderColor: 'border.default',
+          borderRadius: 2,
+          textAlign: 'center',
+        }}
+      >
         <KatexRenderer
           equation={equation}
           inline={false}
           onClick={() => null}
         />
-      </div>
-      <div className="KatexEquationAlterer_dialogActions">
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
         <Button onClick={onClick}>Confirm</Button>
-      </div>
+      </Box>
     </>
   );
 };

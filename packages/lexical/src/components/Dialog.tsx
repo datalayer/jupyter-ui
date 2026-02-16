@@ -4,7 +4,13 @@
  * MIT License
  */
 
+/**
+ * Dialog helpers - Migrated from custom CSS to Primer React Box.
+ * Keeps the same export signature so all consumers work unchanged.
+ */
+
 import { ReactNode } from 'react';
+import { Box } from '@primer/react';
 
 type Props = Readonly<{
   'data-test-id'?: string;
@@ -12,7 +18,11 @@ type Props = Readonly<{
 }>;
 
 export function DialogButtonsList({ children }: Props): JSX.Element {
-  return <div className="DialogButtonsList">{children}</div>;
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 3 }}>
+      {children}
+    </Box>
+  );
 }
 
 export function DialogActions({
@@ -20,8 +30,17 @@ export function DialogActions({
   children,
 }: Props): JSX.Element {
   return (
-    <div className="DialogActions" data-test-id={dataTestId}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        gap: 2,
+        mt: 3,
+      }}
+      data-test-id={dataTestId}
+    >
       {children}
-    </div>
+    </Box>
   );
 }

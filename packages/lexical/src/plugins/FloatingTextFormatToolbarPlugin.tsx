@@ -4,10 +4,22 @@
  * MIT License
  */
 
-/*
- * Copyright (c) 2021-2024 Datalayer, Inc.
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
- * Datalayer License
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+/**
+ * FloatingTextFormatToolbarPlugin - Primer React based floating inline toolbar.
+ *
+ * Migrated from custom CSS/HTML buttons to the @datalayer/primer-addons
+ * FloatingToolbar component with Octicon icons.
+ *
+ * Accepts `extraItems` for extensibility (e.g., AI actions from agent-runtimes).
+ *
+ * @module plugins/FloatingTextFormatToolbarPlugin
  */
 
 import { $isCodeHighlightNode } from '@lexical/code';
@@ -18,221 +30,43 @@ import {
   $getSelection,
   $isRangeSelection,
   $isTextNode,
-  COMMAND_PRIORITY_LOW,
   FORMAT_TEXT_COMMAND,
   LexicalEditor,
-  SELECTION_CHANGE_COMMAND,
 } from 'lexical';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { getDOMRangeRect } from '../utils';
+import {
+  BoldIcon,
+  CodeIcon,
+  CommentIcon,
+  ItalicIcon,
+  LinkIcon,
+  StrikethroughIcon,
+} from '@primer/octicons-react';
+
+// @primer/octicons-react does not include an UnderlineIcon.
+// Provide a lightweight 16×16 SVG matching the Octicon grid.
+const UnderlineIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+    <path d="M4.5 2v5.5a3.5 3.5 0 1 0 7 0V2H13v5.5a5 5 0 0 1-10 0V2h1.5Z" />
+    <rect x="2" y="14" width="12" height="1.5" rx=".75" />
+  </svg>
+);
+
+import { FloatingToolbar, type ToolbarItem } from '@datalayer/primer-addons';
+
 import { getSelectedNode } from '../utils';
-import { setFloatingElemPosition } from '../utils';
 import { INSERT_INLINE_COMMAND } from './CommentPlugin';
 
-function TextFormatFloatingToolbar({
-  editor,
-  anchorElem,
-  isLink,
-  isBold,
-  isItalic,
-  isUnderline,
-  isCode,
-  isStrikethrough,
-  isSubscript,
-  isSuperscript,
-  setIsLinkEditMode,
-}: {
-  editor: LexicalEditor;
-  anchorElem: HTMLElement;
-  isBold: boolean;
-  isCode: boolean;
-  isItalic: boolean;
-  isLink: boolean;
-  isStrikethrough: boolean;
-  isSubscript: boolean;
-  isSuperscript: boolean;
-  isUnderline: boolean;
-  setIsLinkEditMode: (value: boolean) => void;
-}): JSX.Element {
-  const popupCharStylesEditorRef = useRef<HTMLDivElement | null>(null);
-
-  const insertLink = useCallback(() => {
-    if (!isLink) {
-      setIsLinkEditMode(true);
-      editor.dispatchCommand(TOGGLE_LINK_COMMAND, 'https://example.com');
-    } else {
-      setIsLinkEditMode(false);
-      editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
-    }
-  }, [editor, isLink, setIsLinkEditMode]);
-
-  const insertComment = () => {
-    editor.dispatchCommand(INSERT_INLINE_COMMAND, undefined);
-  };
-
-  const updateTextFormatFloatingToolbar = useCallback(() => {
-    const selection = $getSelection();
-
-    const popupCharStylesEditorElem = popupCharStylesEditorRef.current;
-    const nativeSelection = window.getSelection();
-
-    if (popupCharStylesEditorElem === null) {
-      return;
-    }
-
-    const rootElement = editor.getRootElement();
-    if (
-      selection !== null &&
-      nativeSelection !== null &&
-      !nativeSelection.isCollapsed &&
-      rootElement !== null &&
-      rootElement.contains(nativeSelection.anchorNode)
-    ) {
-      const rangeRect = getDOMRangeRect(nativeSelection, rootElement);
-
-      setFloatingElemPosition(rangeRect, popupCharStylesEditorElem, anchorElem);
-    }
-  }, [editor, anchorElem]);
-
-  useEffect(() => {
-    const scrollerElem = anchorElem.parentElement;
-
-    const update = () => {
-      editor.getEditorState().read(() => {
-        updateTextFormatFloatingToolbar();
-      });
-    };
-
-    window.addEventListener('resize', update);
-    if (scrollerElem) {
-      scrollerElem.addEventListener('scroll', update);
-    }
-
-    return () => {
-      window.removeEventListener('resize', update);
-      if (scrollerElem) {
-        scrollerElem.removeEventListener('scroll', update);
-      }
-    };
-  }, [editor, updateTextFormatFloatingToolbar, anchorElem]);
-
-  useEffect(() => {
-    editor.getEditorState().read(() => {
-      updateTextFormatFloatingToolbar();
-    });
-    return mergeRegister(
-      editor.registerUpdateListener(({ editorState }) => {
-        editorState.read(() => {
-          updateTextFormatFloatingToolbar();
-        });
-      }),
-
-      editor.registerCommand(
-        SELECTION_CHANGE_COMMAND,
-        () => {
-          updateTextFormatFloatingToolbar();
-          return false;
-        },
-        COMMAND_PRIORITY_LOW,
-      ),
-    );
-  }, [editor, updateTextFormatFloatingToolbar]);
-
-  return (
-    <div ref={popupCharStylesEditorRef} className="floating-text-format-popup">
-      {editor.isEditable() && (
-        <>
-          <button
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
-            }}
-            className={'popup-item spaced ' + (isBold ? 'active' : '')}
-            aria-label="Format text as bold"
-          >
-            <i className="format bold" />
-          </button>
-          <button
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
-            }}
-            className={'popup-item spaced ' + (isItalic ? 'active' : '')}
-            aria-label="Format text as italics"
-          >
-            <i className="format italic" />
-          </button>
-          <button
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
-            }}
-            className={'popup-item spaced ' + (isUnderline ? 'active' : '')}
-            aria-label="Format text to underlined"
-          >
-            <i className="format underline" />
-          </button>
-          <button
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
-            }}
-            className={'popup-item spaced ' + (isStrikethrough ? 'active' : '')}
-            aria-label="Format text with a strikethrough"
-          >
-            <i className="format strikethrough" />
-          </button>
-          <button
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript');
-            }}
-            className={'popup-item spaced ' + (isSubscript ? 'active' : '')}
-            title="Subscript"
-            aria-label="Format Subscript"
-          >
-            <i className="format subscript" />
-          </button>
-          <button
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript');
-            }}
-            className={'popup-item spaced ' + (isSuperscript ? 'active' : '')}
-            title="Superscript"
-            aria-label="Format Superscript"
-          >
-            <i className="format superscript" />
-          </button>
-          <button
-            onClick={() => {
-              editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code');
-            }}
-            className={'popup-item spaced ' + (isCode ? 'active' : '')}
-            aria-label="Insert code block"
-          >
-            <i className="format code" />
-          </button>
-          <button
-            onClick={insertLink}
-            className={'popup-item spaced ' + (isLink ? 'active' : '')}
-            aria-label="Insert link"
-          >
-            <i className="format link" />
-          </button>
-        </>
-      )}
-      <button
-        onClick={insertComment}
-        className={'popup-item spaced'}
-        aria-label="Insert comment"
-      >
-        <i className="format add-comment" />
-      </button>
-    </div>
-  );
-}
+// ------------------------------------------------------------------
+// Hook: selection state tracking
+// ------------------------------------------------------------------
 
 function useFloatingTextFormatToolbar(
   editor: LexicalEditor,
   anchorElem: HTMLElement,
   setIsLinkEditMode: (value: boolean) => void,
+  extraItems?: ToolbarItem[],
 ): JSX.Element | null {
   const [isText, setIsText] = useState(false);
   const [isLink, setIsLink] = useState(false);
@@ -318,37 +152,175 @@ function useFloatingTextFormatToolbar(
     );
   }, [editor, updatePopup]);
 
-  if (!isText || isLink) {
-    return null;
-  }
+  // Build toolbar items from state
+  const insertLink = useCallback(() => {
+    if (!isLink) {
+      setIsLinkEditMode(true);
+      editor.dispatchCommand(TOGGLE_LINK_COMMAND, 'https://example.com');
+    } else {
+      setIsLinkEditMode(false);
+      editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+    }
+  }, [editor, isLink, setIsLinkEditMode]);
 
-  return createPortal(
-    <TextFormatFloatingToolbar
-      editor={editor}
-      anchorElem={anchorElem}
-      isLink={isLink}
-      isBold={isBold}
-      isItalic={isItalic}
-      isStrikethrough={isStrikethrough}
-      isSubscript={isSubscript}
-      isSuperscript={isSuperscript}
-      isUnderline={isUnderline}
-      isCode={isCode}
-      setIsLinkEditMode={setIsLinkEditMode}
-    />,
-    anchorElem,
+  const items = useMemo((): ToolbarItem[] => {
+    if (!editor.isEditable()) {
+      // Read-only: just comments
+      return [
+        {
+          key: 'comment',
+          type: 'button',
+          order: 100,
+          ariaLabel: 'Insert comment',
+          icon: CommentIcon,
+          onClick: () =>
+            editor.dispatchCommand(INSERT_INLINE_COMMAND, undefined),
+        },
+      ];
+    }
+
+    return [
+      {
+        key: 'bold',
+        type: 'button',
+        order: 0,
+        ariaLabel: 'Format text as bold',
+        title: 'Bold',
+        icon: BoldIcon,
+        isActive: isBold,
+        onClick: () => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold'),
+      },
+      {
+        key: 'italic',
+        type: 'button',
+        order: 1,
+        ariaLabel: 'Format text as italics',
+        title: 'Italic',
+        icon: ItalicIcon,
+        isActive: isItalic,
+        onClick: () => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic'),
+      },
+      {
+        key: 'underline',
+        type: 'button',
+        order: 2,
+        ariaLabel: 'Format text to underlined',
+        title: 'Underline',
+        icon: UnderlineIcon,
+        isActive: isUnderline,
+        onClick: () => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline'),
+      },
+      {
+        key: 'strikethrough',
+        type: 'button',
+        order: 3,
+        ariaLabel: 'Format text with a strikethrough',
+        title: 'Strikethrough',
+        icon: StrikethroughIcon,
+        isActive: isStrikethrough,
+        onClick: () =>
+          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough'),
+      },
+      {
+        key: 'subscript',
+        type: 'button',
+        order: 4,
+        ariaLabel: 'Format Subscript',
+        title: 'Subscript',
+        icon: undefined,
+        label: 'x₂',
+        isActive: isSubscript,
+        onClick: () => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'subscript'),
+      },
+      {
+        key: 'superscript',
+        type: 'button',
+        order: 5,
+        ariaLabel: 'Format Superscript',
+        title: 'Superscript',
+        icon: undefined,
+        label: 'x²',
+        isActive: isSuperscript,
+        onClick: () =>
+          editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'superscript'),
+      },
+      {
+        key: 'code',
+        type: 'button',
+        order: 6,
+        ariaLabel: 'Insert code block',
+        title: 'Code',
+        icon: CodeIcon,
+        isActive: isCode,
+        onClick: () => editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'code'),
+      },
+      {
+        key: 'link',
+        type: 'button',
+        order: 7,
+        ariaLabel: 'Insert link',
+        title: 'Link',
+        icon: LinkIcon,
+        isActive: isLink,
+        onClick: insertLink,
+      },
+      {
+        key: 'comment',
+        type: 'button',
+        order: 8,
+        ariaLabel: 'Insert comment',
+        title: 'Comment',
+        icon: CommentIcon,
+        onClick: () => editor.dispatchCommand(INSERT_INLINE_COMMAND, undefined),
+      },
+    ];
+  }, [
+    editor,
+    isBold,
+    isItalic,
+    isUnderline,
+    isStrikethrough,
+    isSubscript,
+    isSuperscript,
+    isCode,
+    isLink,
+    insertLink,
+  ]);
+
+  const isVisible = isText && !isLink;
+
+  return (
+    <FloatingToolbar
+      items={items}
+      extraItems={extraItems}
+      anchorElement={anchorElem}
+      isVisible={isVisible}
+      ariaLabel="Floating text format toolbar"
+    />
   );
 }
+
+// ------------------------------------------------------------------
+// Plugin component
+// ------------------------------------------------------------------
 
 export function FloatingTextFormatToolbarPlugin({
   anchorElem = document.body,
   setIsLinkEditMode,
+  extraItems,
 }: {
   anchorElem?: HTMLElement;
   setIsLinkEditMode: (value: boolean) => void;
+  /** Extra items from consumers (e.g. AI actions from agent-runtimes) */
+  extraItems?: ToolbarItem[];
 }): JSX.Element | null {
   const [editor] = useLexicalComposerContext();
-  return useFloatingTextFormatToolbar(editor, anchorElem, setIsLinkEditMode);
+  return useFloatingTextFormatToolbar(
+    editor,
+    anchorElem,
+    setIsLinkEditMode,
+    extraItems,
+  );
 }
 
 export default FloatingTextFormatToolbarPlugin;

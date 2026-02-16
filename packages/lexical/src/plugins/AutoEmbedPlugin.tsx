@@ -16,11 +16,14 @@ import {
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useMemo, useState } from 'react';
 import * as ReactDOM from 'react-dom';
+import { Box, Text } from '@primer/react';
+import { VideoIcon } from '@primer/octicons-react';
 
 import useModal from '../hooks/useModal';
 import Button from '../components/Button';
 import { DialogActions } from '../components/Dialog';
 import { INSERT_YOUTUBE_COMMAND } from './YouTubePlugin';
+import { TextInput as PrimerTextInput } from '@primer/react';
 
 interface PlaygroundEmbedConfig extends EmbedConfig {
   // Human readable name of the embeded content e.g. Tweet or Google Map.
@@ -45,7 +48,7 @@ export const YoutubeEmbedConfig: PlaygroundEmbedConfig = {
   exampleUrl: 'https://www.youtube.com/watch?v=jNQXAC9IVRw',
 
   // Icon for display.
-  icon: <i className="icon youtube" />,
+  icon: <VideoIcon size={16} />,
 
   insertNode: (editor: LexicalEditor, result: EmbedMatchResult) => {
     editor.dispatchCommand(INSERT_YOUTUBE_COMMAND, result.id);
@@ -88,24 +91,27 @@ function AutoEmbedMenuItem({
   onMouseEnter: () => void;
   option: AutoEmbedOption;
 }) {
-  let className = 'item';
-  if (isSelected) {
-    className += ' selected';
-  }
   return (
-    <li
+    <Box
+      as="li"
       key={option.key}
       tabIndex={-1}
-      className={className}
       ref={option.setRefElement}
       role="option"
       aria-selected={isSelected}
       id={'typeahead-item-' + index}
       onMouseEnter={onMouseEnter}
       onClick={onClick}
+      sx={{
+        p: 2,
+        cursor: 'pointer',
+        bg: isSelected ? 'actionListItem.default.selectedBg' : 'transparent',
+        '&:hover': { bg: 'actionListItem.default.hoverBg' },
+        borderRadius: 1,
+      }}
     >
-      <span className="text">{option.title}</span>
-    </li>
+      <Text sx={{ fontSize: 1 }}>{option.title}</Text>
+    </Box>
   );
 }
 
@@ -121,8 +127,17 @@ function AutoEmbedMenu({
   options: Array<AutoEmbedOption>;
 }) {
   return (
-    <div className="typeahead-popover">
-      <ul>
+    <Box
+      sx={{
+        bg: 'canvas.overlay',
+        border: '1px solid',
+        borderColor: 'border.default',
+        borderRadius: 2,
+        boxShadow: 'shadow.large',
+        p: 1,
+      }}
+    >
+      <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
         {options.map((option: AutoEmbedOption, i: number) => (
           <AutoEmbedMenuItem
             index={i}
@@ -134,7 +149,7 @@ function AutoEmbedMenu({
           />
         ))}
       </ul>
-    </div>
+    </Box>
   );
 }
 
@@ -183,20 +198,18 @@ export function AutoEmbedDialog({
 
   return (
     <div style={{ width: '600px' }}>
-      <div className="Input__wrapper">
-        <input
-          type="text"
-          className="Input__input"
-          placeholder={embedConfig.exampleUrl}
-          value={text}
-          data-test-id={`${embedConfig.type}-embed-modal-url`}
-          onChange={e => {
-            const { value } = e.target;
-            setText(value);
-            validateText(value);
-          }}
-        />
-      </div>
+      <PrimerTextInput
+        type="text"
+        placeholder={embedConfig.exampleUrl}
+        value={text}
+        data-test-id={`${embedConfig.type}-embed-modal-url`}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          const { value } = e.target;
+          setText(value);
+          validateText(value);
+        }}
+        block
+      />
       <DialogActions>
         <Button
           disabled={!embedResult}
@@ -252,9 +265,13 @@ export const AutoEmbedPlugin = (): JSX.Element => {
         ) =>
           anchorElementRef.current
             ? ReactDOM.createPortal(
-                <div
-                  className="typeahead-popover auto-embed-menu"
-                  style={{
+                <Box
+                  sx={{
+                    bg: 'canvas.overlay',
+                    border: '1px solid',
+                    borderColor: 'border.default',
+                    borderRadius: 2,
+                    boxShadow: 'shadow.large',
                     marginLeft: anchorElementRef.current.style.width,
                     width: 200,
                   }}
@@ -270,7 +287,7 @@ export const AutoEmbedPlugin = (): JSX.Element => {
                       setHighlightedIndex(index);
                     }}
                   />
-                </div>,
+                </Box>,
                 anchorElementRef.current,
               )
             : null

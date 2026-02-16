@@ -1,0 +1,148 @@
+/*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ *
+ */
+
+.ExcalidrawModal__overlay {
+  display: flex;
+  align-items: center;
+  position: fixed;
+  flex-direction: column;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  flex-grow: 0px;
+  flex-shrink: 1px;
+  z-index: 100;
+  background-color: rgba(40, 40, 40, 0.6);
+}
+.ExcalidrawModal__actions {
+  text-align: end;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  z-index: 1;
+}
+.ExcalidrawModal__actions button {
+  background-color: #fff;
+  border-radius: 5px;
+}
+.ExcalidrawModal__row {
+  position: relative;
+  padding: 40px 5px 5px;
+  width: 70vw;
+  height: 90vh;
+  border-radius: 8px;
+  box-shadow:
+    0 12px 28px 0 rgba(0, 0, 0, 0.2),
+    0 2px 4px 0 rgba(0, 0, 0, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+}
+.ExcalidrawModal__row > div {
+  border-radius: 5px;
+}
+.ExcalidrawModal__modal {
+  position: relative;
+  z-index: 10;
+  top: 50px;
+  width: auto;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  background-color: #eee;
+}
+.ExcalidrawModal__discardModal {
+  margin-top: 60px;
+  text-align: center;
+}
+
+/* Ensure Excalidraw canvas is interactive */
+.ExcalidrawModal__row .excalidraw,
+.ExcalidrawModal__row canvas {
+  pointer-events: auto !important;
+  touch-action: none !important;
+}
+
+/* Remove VS Code's blue button background - let Excalidraw handle colors */
+.ExcalidrawModal__row .excalidraw button:not(.color-picker__button) {
+  background: none !important;
+  background-color: transparent !important;
+  /* Preserve Excalidraw's button layout */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  /* Ensure icon color is visible - use dark color for light theme, light for dark theme */
+  color: var(--color-on-surface, #1e1e1e) !important;
+}
+
+/* Color picker buttons - use their swatch color and enforce square shape */
+.ExcalidrawModal__row .excalidraw .color-picker__button {
+  background-color: var(--swatch-color) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 1rem !important;
+  height: 1rem !important;
+  min-width: 1rem !important;
+  min-height: 1rem !important;
+  padding: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+/* Hide radio inputs visually but keep them accessible for keyboard and pointer navigation */
+.ExcalidrawModal__row .excalidraw label input[type='radio'],
+.ExcalidrawModal__row .excalidraw label input[type='checkbox'] {
+  position: absolute !important;
+  opacity: 0 !important;
+  width: 1px !important;
+  height: 1px !important;
+  /* REMOVED: pointer-events: none - it was blocking toolbar interaction */
+}
+
+/* Ensure labels (containing hidden inputs + SVGs) center their visible content */
+.ExcalidrawModal__row .excalidraw label {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+}
+
+/* Ensure SVG icons in buttons maintain proper size and color */
+.ExcalidrawModal__row .excalidraw button svg,
+.ExcalidrawModal__row .excalidraw label svg,
+.ExcalidrawModal__row .excalidraw .ToolIcon__icon svg {
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  min-height: 20px !important;
+  /* Keep outlined icons outlined - only set stroke color for visibility */
+  stroke: currentColor !important;
+}
+
+/* Layer buttons need slightly larger icons */
+.ExcalidrawModal__row .excalidraw .zIndexButton svg {
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  min-height: 24px !important;
+}
+
+/* Ensure images and embedded content within Excalidraw are interactive */
+.ExcalidrawModal__row .excalidraw img,
+.ExcalidrawModal__row .excalidraw [data-type='image'],
+.ExcalidrawModal__row .excalidraw .excalidraw-image {
+  pointer-events: auto !important;
+}

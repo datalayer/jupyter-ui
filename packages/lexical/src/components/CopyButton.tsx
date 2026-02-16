@@ -12,6 +12,8 @@ import {
   LexicalEditor,
 } from 'lexical';
 import { $isCodeNode } from '@lexical/code';
+import { IconButton } from '@primer/react';
+import { CopyIcon, CheckIcon } from '@primer/octicons-react';
 import { useDebounce } from '../hooks';
 
 interface Props {
@@ -56,12 +58,13 @@ export function CopyButton({ editor, getCodeDOMNode }: Props) {
   }
 
   return (
-    <button className="menu-item" onClick={handleClick} aria-label="copy">
-      {isCopyCompleted ? (
-        <i className="format success" />
-      ) : (
-        <i className="format copy" />
-      )}
-    </button>
+    <IconButton
+      icon={isCopyCompleted ? CheckIcon : CopyIcon}
+      size="small"
+      variant="invisible"
+      onClick={handleClick}
+      aria-label="copy"
+      sx={isCopyCompleted ? { color: 'success.fg' } : undefined}
+    />
   );
 }

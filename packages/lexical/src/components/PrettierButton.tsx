@@ -8,6 +8,8 @@ import { $isCodeNode } from '@lexical/code';
 import { $getNearestNodeFromDOMNode, LexicalEditor } from 'lexical';
 import { Options } from 'prettier';
 import { useState } from 'react';
+import { IconButton, Box } from '@primer/react';
+import { CodeIcon, AlertIcon } from '@primer/octicons-react';
 
 interface Props {
   lang: string;
@@ -133,23 +135,41 @@ export function PrettierButton({ lang, editor, getCodeDOMNode }: Props) {
   }
 
   return (
-    <div className="prettier-wrapper">
-      <button
-        className="menu-item"
+    <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+      <IconButton
+        icon={syntaxError ? AlertIcon : CodeIcon}
+        size="small"
+        variant="invisible"
         onClick={handleClick}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         aria-label="prettier"
-      >
-        {syntaxError ? (
-          <i className="format prettier-error" />
-        ) : (
-          <i className="format prettier" />
-        )}
-      </button>
+        sx={syntaxError ? { color: 'danger.fg' } : undefined}
+      />
       {tipsVisible ? (
-        <pre className="code-error-tips">{syntaxError}</pre>
+        <Box
+          as="pre"
+          sx={{
+            position: 'absolute',
+            top: '100%',
+            left: 0,
+            zIndex: 10,
+            p: 2,
+            mt: 1,
+            fontSize: 0,
+            bg: 'danger.subtle',
+            color: 'danger.fg',
+            borderRadius: 2,
+            borderWidth: 1,
+            borderStyle: 'solid',
+            borderColor: 'danger.muted',
+            maxWidth: '300px',
+            whiteSpace: 'pre-wrap',
+          }}
+        >
+          {syntaxError}
+        </Box>
       ) : null}
-    </div>
+    </Box>
   );
 }

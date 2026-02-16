@@ -29,8 +29,8 @@ import {
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
+import { Box, Button as PrimerButton } from '@primer/react';
 
-import Button from './Button';
 import Modal from './Modal';
 import { useTheme } from '../context/ThemeContext';
 
@@ -179,23 +179,27 @@ export default function ExcalidrawModal({
         closeOnClickOutside={false}
       >
         Are you sure you want to discard the changes?
-        <div className="ExcalidrawModal__discardModal">
-          <Button
+        <Box
+          sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 3 }}
+        >
+          <PrimerButton
+            variant="danger"
             onClick={() => {
               setDiscardModalOpen(false);
               onClose();
             }}
           >
             Discard
-          </Button>{' '}
-          <Button
+          </PrimerButton>{' '}
+          <PrimerButton
+            variant="invisible"
             onClick={() => {
               setDiscardModalOpen(false);
             }}
           >
             Cancel
-          </Button>
-        </div>
+          </PrimerButton>
+        </Box>
       </Modal>
     );
   }
@@ -214,13 +218,33 @@ export default function ExcalidrawModal({
   };
 
   return createPortal(
-    <div className="ExcalidrawModal__overlay" role="dialog">
-      <div
-        className="ExcalidrawModal__modal"
+    <Box
+      role="dialog"
+      sx={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 100,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        bg: 'rgba(0,0,0,0.5)',
+      }}
+    >
+      <Box
         ref={excaliDrawModelRef}
         tabIndex={-1}
+        sx={{
+          bg: 'canvas.default',
+          borderRadius: 2,
+          boxShadow: 'shadow.large',
+          width: '80vw',
+          height: '80vh',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+        }}
       >
-        <div className="ExcalidrawModal__row">
+        <Box sx={{ flex: 1, position: 'relative' }}>
           {discardModalOpen && <ShowDiscardDialog />}
           <Excalidraw
             onChange={onChange}
@@ -232,17 +256,26 @@ export default function ExcalidrawModal({
             }}
             theme={theme}
           />
-          <div className="ExcalidrawModal__actions">
-            <button className="action-button" onClick={discard}>
+          <Box
+            sx={{
+              display: 'flex',
+              gap: 2,
+              justifyContent: 'flex-end',
+              p: 2,
+              borderTop: '1px solid',
+              borderColor: 'border.default',
+            }}
+          >
+            <PrimerButton variant="invisible" onClick={discard}>
               Discard
-            </button>
-            <button className="action-button" onClick={save}>
+            </PrimerButton>
+            <PrimerButton variant="primary" onClick={save}>
               Save
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>,
+            </PrimerButton>
+          </Box>
+        </Box>
+      </Box>
+    </Box>,
     document.body,
   );
 }
