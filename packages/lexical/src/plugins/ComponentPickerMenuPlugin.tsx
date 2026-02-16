@@ -287,8 +287,12 @@ export const ComponentPickerMenuPlugin = ({
       new ComponentPickerOption('Table', {
         icon: <TableIcon size={16} />,
         keywords: ['table', 'grid', 'spreadsheet'],
-        onSelect: () =>
-          editor.dispatchCommand(INSERT_TABLE_WITH_DIALOG_COMMAND, undefined),
+        onSelect: () => {
+          console.log(
+            '[ComponentPicker] Table selected, dispatching INSERT_TABLE_WITH_DIALOG_COMMAND',
+          );
+          editor.dispatchCommand(INSERT_TABLE_WITH_DIALOG_COMMAND, undefined);
+        },
       }),
       new ComponentPickerOption('Collapsible Container', {
         icon: <ChevronDownIcon size={16} />,

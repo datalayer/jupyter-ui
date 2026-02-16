@@ -10,8 +10,8 @@
  * MIT License
  */
 
-import { useState } from 'react';
-import { createPortal } from 'react-dom';
+import { useRef, useState } from 'react';
+import { Dialog, FormControl, TextInput, Box } from '@primer/react';
 
 type Props = {
   onConfirm: (rows: number, columns: number) => void;
@@ -24,6 +24,7 @@ export default function TableInsertModal({
 }: Props): JSX.Element {
   const [rows, setRows] = useState<string>('5');
   const [columns, setColumns] = useState<string>('5');
+  const rowsInputRef = useRef<HTMLInputElement>(null);
 
   const handleConfirm = () => {
     const rowCount = parseInt(rows, 10);
@@ -37,60 +38,57 @@ export default function TableInsertModal({
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
       handleConfirm();
-    } else if (event.key === 'Escape') {
-      onClose();
     }
   };
 
-  return createPortal(
-    <div className="TableInsertModal__overlay" onClick={onClose}>
-      <div
-        className="TableInsertModal__modal"
-        onClick={e => e.stopPropagation()}
+  return (
+    <Dialog
+      title="Insert Table"
+      onClose={() => onClose()}
+      width="small"
+      height="auto"
+      initialFocusRef={rowsInputRef as React.RefObject<HTMLElement>}
+      footerButtons={[
+        {
+          buttonType: 'default',
+          content: 'Cancel',
+          onClick: onClose,
+        },
+        {
+          buttonType: 'primary',
+          content: 'Confirm',
+          onClick: handleConfirm,
+        },
+      ]}
+    >
+      <Box
+        sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}
         onKeyDown={handleKeyDown}
       >
-        <h2 className="TableInsertModal__title">Insert Table</h2>
-        <div className="TableInsertModal__content">
-          <div className="TableInsertModal__field">
-            <label htmlFor="table-rows">Rows</label>
-            <input
-              id="table-rows"
-              type="number"
-              min="1"
-              max="500"
-              value={rows}
-              onChange={e => setRows(e.target.value)}
-              autoFocus
-            />
-          </div>
-          <div className="TableInsertModal__field">
-            <label htmlFor="table-columns">Columns</label>
-            <input
-              id="table-columns"
-              type="number"
-              min="1"
-              max="50"
-              value={columns}
-              onChange={e => setColumns(e.target.value)}
-            />
-          </div>
-        </div>
-        <div className="TableInsertModal__actions">
-          <button
-            className="TableInsertModal__button TableInsertModal__button--cancel"
-            onClick={onClose}
-          >
-            Cancel
-          </button>
-          <button
-            className="TableInsertModal__button TableInsertModal__button--confirm"
-            onClick={handleConfirm}
-          >
-            Confirm
-          </button>
-        </div>
-      </div>
-    </div>,
-    document.body,
+        <FormControl>
+          <FormControl.Label>Rows</FormControl.Label>
+          <TextInput
+            ref={rowsInputRef}
+            type="number"
+            min={1}
+            max={500}
+            value={rows}
+            onChange={e => setRows(e.target.value)}
+            block
+          />
+        </FormControl>
+        <FormControl>
+          <FormControl.Label>Columns</FormControl.Label>
+          <TextInput
+            type="number"
+            min={1}
+            max={50}
+            value={columns}
+            onChange={e => setColumns(e.target.value)}
+            block
+          />
+        </FormControl>
+      </Box>
+    </Dialog>
   );
 }

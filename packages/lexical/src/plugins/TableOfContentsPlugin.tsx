@@ -126,7 +126,24 @@ function TableOfContentsList({
   }, [tableOfContents, editor]);
 
   return (
-    <Box sx={{ p: 2 }}>
+    <Box
+      sx={{
+        position: 'fixed',
+        top: '100px',
+        right: 0,
+        width: '220px',
+        maxHeight: '300px',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        zIndex: 1,
+        bg: 'canvas.default',
+        borderLeft: '1px solid',
+        borderColor: 'border.default',
+        borderRadius: 2,
+        boxShadow: 'shadow.small',
+        p: 2,
+      }}
+    >
       <Box as="ul" sx={{ listStyle: 'none', m: 0, p: 0 }}>
         {tableOfContents.map(([key, text, tag], index) => {
           const isSelected = selectedKey === key;
