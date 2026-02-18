@@ -19,7 +19,7 @@ export const updateCellTool: ToolDefinition = {
   displayName: 'Update Notebook Cell',
   toolReferenceName: 'updateCell',
   description:
-    "Updates (overwrites) a cell's source code at the specified index. Does NOT execute the cell.",
+    "Updates (overwrites) a cell's source code at the specified index and executes it. For code cells this runs the code; for markdown cells this renders them.",
 
   parameters: zodToToolParameters(updateCellParamsSchema),
 
