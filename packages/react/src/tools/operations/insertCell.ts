@@ -16,6 +16,7 @@ import {
   insertCellParamsSchema,
   type InsertCellParams,
 } from '../schemas/insertCell';
+import type { RunCellResult } from './runCell';
 
 /**
  * Result from insertCell operation.
@@ -24,6 +25,11 @@ export interface InsertCellResult {
   success: boolean;
   index: number;
   message: string;
+  /** Execution result when the inserted cell is a code cell */
+  execution?: {
+    execution_count?: number | null;
+    outputs?: Array<string>;
+  };
 }
 
 /**
@@ -72,15 +78,14 @@ export const insertCellOperation: ToolOperation<
     }
 
     try {
+      // Get current cell count for verification
+      const cellsBefore = (await context.executor.execute('readAllCells', {
+        format: 'brief',
+      })) as unknown[];
+      const countBefore = cellsBefore?.length ?? 0;
+
       // Determine the actual insert index
-      let actualIndex = index;
-      if (actualIndex === undefined) {
-        // Get current cell count to determine actual insertion position
-        const cells = (await context.executor.execute('readAllCells', {
-          format: 'brief',
-        })) as unknown[];
-        actualIndex = cells?.length ?? 0;
-      }
+      const actualIndex = index ?? countBefore;
 
       // Call executor (uses this.name for DRY principle)
       await context.executor.execute(this.name, {
@@ -89,12 +94,48 @@ export const insertCellOperation: ToolOperation<
         index, // undefined means insert at end
       });
 
-      // Return success result with correct index
-      return {
-        success: true,
-        index: actualIndex,
-        message: `Cell inserted at index ${actualIndex}`,
-      };
+      // Verify insertion by checking cell count increased
+      const cellsAfter = (await context.executor.execute('readAllCells', {
+        format: 'brief',
+      })) as unknown[];
+      const countAfter = cellsAfter?.length ?? 0;
+
+      if (countAfter <= countBefore) {
+        return {
+          success: false,
+          index: actualIndex,
+          message: `Failed to insert cell at index ${actualIndex} — cell was not added to the notebook (cell count unchanged: ${countBefore}). This can happen if the notebook model is not fully initialised.`,
+        };
+      }
+
+      // Auto-execute cells after successful insertion.
+      // For code cells this runs the code; for markdown cells this renders them.
+      try {
+        const runResult = (await context.executor.execute('runCell', {
+          index: actualIndex,
+        })) as RunCellResult | undefined;
+
+        return {
+          success: true,
+          index: actualIndex,
+          message: `Cell inserted and executed at index ${actualIndex}`,
+          execution: runResult
+            ? {
+                execution_count: runResult.execution_count,
+                outputs: runResult.outputs,
+              }
+            : undefined,
+        };
+      } catch (execError) {
+        // Insertion succeeded but execution failed — still report success
+        const execMsg =
+          execError instanceof Error ? execError.message : String(execError);
+        return {
+          success: true,
+          index: actualIndex,
+          message: `Cell inserted at index ${actualIndex} but execution failed: ${execMsg}`,
+        };
+      }
     } catch (error) {
       // Convert error to result with failure status
       const errorMessage =

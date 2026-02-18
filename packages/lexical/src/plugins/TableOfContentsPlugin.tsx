@@ -9,13 +9,15 @@ import type { HeadingTagType } from '@lexical/rich-text';
 import type { NodeKey } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { TableOfContentsPlugin as LexicalTableOfContentsPlugin } from '@lexical/react/LexicalTableOfContentsPlugin';
+import { Box } from '@primer/react';
 
-function indent(tagName: HeadingTagType) {
+function indent(tagName: HeadingTagType): number {
   if (tagName === 'h2') {
-    return 'heading2';
+    return 3;
   } else if (tagName === 'h3') {
-    return 'heading3';
+    return 5;
   }
+  return 0;
 }
 
 function TableOfContentsList({
@@ -124,57 +126,82 @@ function TableOfContentsList({
   }, [tableOfContents, editor]);
 
   return (
-    <div className="table-of-contents">
-      <ul className="headings">
+    <Box
+      sx={{
+        position: 'fixed',
+        top: '100px',
+        right: 0,
+        width: '220px',
+        maxHeight: '300px',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        zIndex: 1,
+        bg: 'canvas.default',
+        borderLeft: '1px solid',
+        borderColor: 'border.default',
+        borderRadius: 2,
+        boxShadow: 'shadow.small',
+        p: 2,
+      }}
+    >
+      <Box as="ul" sx={{ listStyle: 'none', m: 0, p: 0 }}>
         {tableOfContents.map(([key, text, tag], index) => {
+          const isSelected = selectedKey === key;
+          const displayText =
+            ('' + text).length > 27 ? text.substring(0, 27) + '...' : text;
           if (index === 0) {
             return (
-              <div key={key} className="normal-heading-wrapper">
-                <div
-                  className="first-heading"
-                  onClick={() => scrollToNode(key, index)}
-                  role="button"
-                  tabIndex={0}
-                >
-                  {('' + text).length > 20
-                    ? text.substring(0, 20) + '...'
-                    : text}
-                </div>
-                <br />
-              </div>
+              <Box
+                as="li"
+                key={key}
+                onClick={() => scrollToNode(key, index)}
+                role="button"
+                tabIndex={0}
+                sx={{
+                  cursor: 'pointer',
+                  fontWeight: 'bold',
+                  fontSize: 1,
+                  p: 1,
+                  borderRadius: 1,
+                  color: isSelected ? 'accent.fg' : 'fg.default',
+                  bg: isSelected ? 'accent.subtle' : 'transparent',
+                  '&:hover': { bg: 'canvas.subtle' },
+                  mb: 1,
+                }}
+              >
+                {('' + text).length > 20 ? text.substring(0, 20) + '...' : text}
+              </Box>
             );
           } else {
             return (
-              <div
+              <Box
+                as="li"
                 key={key}
-                className={`normal-heading-wrapper ${
-                  selectedKey === key ? 'selected-heading-wrapper' : ''
-                }`}
+                onClick={() => scrollToNode(key, index)}
+                role="button"
+                tabIndex={0}
+                sx={{
+                  cursor: 'pointer',
+                  fontSize: 1,
+                  p: 1,
+                  pl: indent(tag),
+                  borderRadius: 1,
+                  color: isSelected ? 'accent.fg' : 'fg.muted',
+                  bg: isSelected ? 'accent.subtle' : 'transparent',
+                  borderLeft: isSelected
+                    ? '2px solid'
+                    : '2px solid transparent',
+                  borderColor: isSelected ? 'accent.fg' : 'transparent',
+                  '&:hover': { bg: 'canvas.subtle' },
+                }}
               >
-                <div
-                  key={key}
-                  onClick={() => scrollToNode(key, index)}
-                  role="button"
-                  className={indent(tag)}
-                  tabIndex={0}
-                >
-                  <li
-                    className={`normal-heading ${
-                      selectedKey === key ? 'selected-heading' : ''
-                    }
-                    `}
-                  >
-                    {('' + text).length > 27
-                      ? text.substring(0, 27) + '...'
-                      : text}
-                  </li>
-                </div>
-              </div>
+                {displayText}
+              </Box>
             );
           }
         })}
-      </ul>
-    </div>
+      </Box>
+    </Box>
   );
 }
 

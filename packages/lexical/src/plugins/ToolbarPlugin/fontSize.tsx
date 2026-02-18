@@ -14,6 +14,8 @@
 
 import { LexicalEditor } from 'lexical';
 import * as React from 'react';
+import { IconButton } from '@primer/react';
+import { DashIcon, PlusIcon } from '@primer/octicons-react';
 
 import {
   MAX_ALLOWED_FONT_SIZE,
@@ -120,8 +122,10 @@ export default function FontSize({
 
   return (
     <>
-      <button
-        type="button"
+      <IconButton
+        icon={DashIcon}
+        size="small"
+        variant="invisible"
         disabled={
           disabled ||
           (selectionFontSize !== '' &&
@@ -130,12 +134,8 @@ export default function FontSize({
         onClick={() =>
           updateFontSize(editor, UpdateFontSizeType.decrement, inputValue)
         }
-        className="toolbar-item font-decrement"
-        aria-label="Decrease font size"
-        title={`Decrease font size (${SHORTCUTS.DECREASE_FONT_SIZE})`}
-      >
-        <i className="format minus-icon" />
-      </button>
+        aria-label={`Decrease font size (${SHORTCUTS.DECREASE_FONT_SIZE})`}
+      />
 
       <input
         type="number"
@@ -150,8 +150,10 @@ export default function FontSize({
         onBlur={handleInputBlur}
       />
 
-      <button
-        type="button"
+      <IconButton
+        icon={PlusIcon}
+        size="small"
+        variant="invisible"
         disabled={
           disabled ||
           (selectionFontSize !== '' &&
@@ -160,12 +162,8 @@ export default function FontSize({
         onClick={() =>
           updateFontSize(editor, UpdateFontSizeType.increment, inputValue)
         }
-        className="toolbar-item font-increment"
-        aria-label="Increase font size"
-        title={`Increase font size (${SHORTCUTS.INCREASE_FONT_SIZE})`}
-      >
-        <i className="format add-icon" />
-      </button>
+        aria-label={`Increase font size (${SHORTCUTS.INCREASE_FONT_SIZE})`}
+      />
     </>
   );
 }

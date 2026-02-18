@@ -16,6 +16,7 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { $getNearestNodeFromDOMNode, isHTMLElement } from 'lexical';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { Box, Text } from '@primer/react';
 
 import { CopyButton } from './components/CopyButton';
 import { canBePrettier, PrettierButton } from './components/PrettierButton';
@@ -138,8 +139,25 @@ function CodeActionMenuContainer({
   return (
     <>
       {isShown ? (
-        <div className="code-action-menu-container" style={{ ...position }}>
-          <div className="code-highlight-language">{codeFriendlyName}</div>
+        <Box
+          className="code-action-menu-container"
+          sx={{
+            position: 'absolute',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            p: 1,
+            bg: 'canvas.overlay',
+            border: '1px solid',
+            borderColor: 'border.default',
+            borderRadius: 2,
+            boxShadow: 'shadow.medium',
+            ...position,
+          }}
+        >
+          <Text sx={{ fontSize: 0, color: 'fg.muted', px: 1 }}>
+            {codeFriendlyName}
+          </Text>
           <CopyButton editor={editor} getCodeDOMNode={getCodeDOMNode} />
           {canBePrettier(normalizedLang) ? (
             <PrettierButton
@@ -148,7 +166,7 @@ function CodeActionMenuContainer({
               lang={normalizedLang}
             />
           ) : null}
-        </div>
+        </Box>
       ) : null}
     </>
   );

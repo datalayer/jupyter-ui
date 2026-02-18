@@ -16,6 +16,7 @@ import {
   updateCellParamsSchema,
   type UpdateCellParams,
 } from '../schemas/updateCell';
+import type { RunCellResult } from './runCell';
 
 /**
  * Result from updateCell operation.
@@ -24,6 +25,11 @@ export interface UpdateCellResult {
   success: boolean;
   message: string;
   diff?: string;
+  /** Execution result after the cell is updated and run */
+  execution?: {
+    execution_count?: number | null;
+    outputs?: Array<string>;
+  };
 }
 
 /**
@@ -72,15 +78,38 @@ export const updateCellOperation: ToolOperation<
       })) as string;
 
       // Format message like MCP server
-      const message = diff
+      const diffMessage = diff
         ? `Cell ${index} overwritten successfully:\n\n\`\`\`diff\n${diff}\n\`\`\``
         : `Cell ${index} overwritten successfully - no changes detected`;
 
-      return {
-        success: true,
-        message,
-        diff,
-      };
+      // Auto-execute the cell after successful update.
+      // For code cells this runs the code; for markdown cells this renders them.
+      try {
+        const runResult = (await context.executor.execute('runCell', {
+          index,
+        })) as RunCellResult | undefined;
+
+        return {
+          success: true,
+          message: `${diffMessage}\nCell executed successfully.`,
+          diff,
+          execution: runResult
+            ? {
+                execution_count: runResult.execution_count,
+                outputs: runResult.outputs,
+              }
+            : undefined,
+        };
+      } catch (execError) {
+        // Update succeeded but execution failed — still report success
+        const execMsg =
+          execError instanceof Error ? execError.message : String(execError);
+        return {
+          success: true,
+          message: `${diffMessage}\nExecution failed: ${execMsg}`,
+          diff,
+        };
+      }
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);

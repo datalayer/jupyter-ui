@@ -4,8 +4,13 @@
  * MIT License
  */
 
+/**
+ * Button - Migrated from custom CSS to Primer React Button.
+ * Keeps the same export signature so all consumers work unchanged.
+ */
+
 import { ReactNode } from 'react';
-import joinClasses from '../utils/join';
+import { Button as PrimerButton } from '@primer/react';
 
 export const Button = ({
   'data-test-id': dataTestId,
@@ -25,21 +30,18 @@ export const Button = ({
   title?: string;
 }): JSX.Element => {
   return (
-    <button
+    <PrimerButton
       disabled={disabled}
-      className={joinClasses(
-        'Button__root',
-        small && 'Button__small',
-        disabled && 'Button__disabled',
-        className,
-      )}
       onClick={onClick}
       title={title}
       aria-label={title}
+      size={small ? 'small' : 'medium'}
+      variant="default"
+      className={className}
       {...(dataTestId && { 'data-test-id': dataTestId })}
     >
       {children}
-    </button>
+    </PrimerButton>
   );
 };
 

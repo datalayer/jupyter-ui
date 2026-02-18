@@ -4,6 +4,13 @@
  * MIT License
  */
 
+/**
+ * TextInput - Migrated from custom CSS to Primer React TextInput.
+ * Keeps the same export signature so all consumers work unchanged.
+ */
+
+import { FormControl, TextInput as PrimerTextInput } from '@primer/react';
+
 type Props = Readonly<{
   'data-test-id'?: string;
   label: string;
@@ -20,19 +27,19 @@ export const TextInput = ({
   'data-test-id': dataTestId,
 }: Props): JSX.Element => {
   return (
-    <div className="Input__wrapper">
-      <label className="Input__label">{label}</label>
-      <input
+    <FormControl>
+      <FormControl.Label>{label}</FormControl.Label>
+      <PrimerTextInput
         type="text"
-        className="Input__input"
         placeholder={placeholder}
         value={value}
-        onChange={e => {
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
           onChange(e.target.value);
         }}
         data-test-id={dataTestId}
+        block
       />
-    </div>
+    </FormControl>
   );
 };
 

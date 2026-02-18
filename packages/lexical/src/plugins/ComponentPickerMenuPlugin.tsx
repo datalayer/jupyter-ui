@@ -4,6 +4,13 @@
  * MIT License
  */
 
+/**
+ * ComponentPickerMenuPlugin - Slash command menu.
+ *
+ * Migrated from custom CSS icon classes to Primer Octicons
+ * and Primer-styled popover container.
+ */
+
 import { $createCodeNode } from '@lexical/code';
 import {
   INSERT_CHECK_LIST_COMMAND,
@@ -11,7 +18,6 @@ import {
   INSERT_UNORDERED_LIST_COMMAND,
 } from '@lexical/list';
 import { INSERT_EMBED_COMMAND } from '@lexical/react/LexicalAutoEmbedPlugin';
-// import { INSERT_JUPYTER_CELL_COMMAND } from './JupyINSERT_JUPYTER_CELL_COMMANDterCellPlugin';
 import {
   INSERT_JUPYTER_INPUT_OUTPUT_COMMAND,
   DEFAULT_INITIAL_OUTPUTS,
@@ -38,6 +44,24 @@ import {
 import { useCallback, useMemo, useState } from 'react';
 import * as ReactDOM from 'react-dom';
 import { Kernel } from '@datalayer/jupyter-react';
+import { Box, Text } from '@primer/react';
+import {
+  ChecklistIcon,
+  ChevronDownIcon,
+  CodeIcon,
+  DashIcon,
+  FileMediaIcon,
+  HashIcon,
+  ListOrderedIcon,
+  ListUnorderedIcon,
+  MoveToEndIcon,
+  MoveToStartIcon,
+  NoteIcon,
+  PencilIcon,
+  QuoteIcon,
+  TableIcon,
+  TypographyIcon,
+} from '@primer/octicons-react';
 
 import useModal from '../hooks/useModal';
 import catTypingGif from '../images/yellow-flower-small.jpg';
@@ -46,17 +70,11 @@ import { InsertEquationDialog } from './EquationsPlugin';
 import { INSERT_IMAGE_COMMAND, InsertImageDialog } from './ImagesPlugin';
 
 class ComponentPickerOption extends MenuOption {
-  // What shows up in the editor
   title: string;
-  // Icon for display
   icon?: JSX.Element;
-  // For extra searching.
   keywords: Array<string>;
-  // TBD
   keyboardShortcut?: string;
-  // What happens when you select this option?
   onSelect: (queryString: string) => void;
-  // Whether this option is disabled
   disabled?: boolean;
 
   constructor(
@@ -92,22 +110,14 @@ function ComponentPickerMenuItem({
   onMouseEnter: () => void;
   option: ComponentPickerOption;
 }) {
-  let className = 'item';
-  if (isSelected && !option.disabled) {
-    className += ' selected';
-  }
-  if (option.disabled) {
-    className += ' disabled';
-  }
-
   const handleClick = option.disabled ? undefined : onClick;
   const handleMouseEnter = option.disabled ? undefined : onMouseEnter;
 
   return (
-    <li
+    <Box
+      as="li"
       key={option.key}
-      tabIndex={option.disabled ? -1 : -1}
-      className={className}
+      tabIndex={-1}
       ref={option.setRefElement}
       role="option"
       aria-selected={isSelected && !option.disabled}
@@ -115,13 +125,38 @@ function ComponentPickerMenuItem({
       id={'typeahead-item-' + index}
       onMouseEnter={handleMouseEnter}
       onClick={handleClick}
-      style={
-        option.disabled ? { opacity: 0.5, cursor: 'not-allowed' } : undefined
-      }
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 2,
+        px: 2,
+        py: '6px',
+        borderRadius: 2,
+        cursor: option.disabled ? 'not-allowed' : 'pointer',
+        opacity: option.disabled ? 0.5 : 1,
+        bg:
+          isSelected && !option.disabled
+            ? 'actionListItem.default.selectedBg'
+            : 'transparent',
+        color: 'fg.default',
+        '&:hover': !option.disabled
+          ? { bg: 'actionListItem.default.hoverBg' }
+          : {},
+        listStyle: 'none',
+      }}
     >
-      {option.icon}
-      <span className="text">{option.title}</span>
-    </li>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          color: 'fg.muted',
+          flexShrink: 0,
+        }}
+      >
+        {option.icon}
+      </Box>
+      <Text sx={{ fontSize: 1 }}>{option.title}</Text>
+    </Box>
   );
 }
 
@@ -162,7 +197,7 @@ export const ComponentPickerMenuPlugin = ({
 
       options.push(
         new ComponentPickerOption(`${rows}x${columns} Table`, {
-          icon: <i className="icon table" />,
+          icon: <TableIcon size={16} />,
           keywords: ['table'],
           onSelect: () =>
             editor.dispatchCommand(INSERT_TABLE_WITH_DIALOG_COMMAND, undefined),
@@ -175,7 +210,7 @@ export const ComponentPickerMenuPlugin = ({
         ...Array.from({ length: 5 }, (_, i) => i + 1).map(
           columns =>
             new ComponentPickerOption(`${rows}x${columns} Table`, {
-              icon: <i className="icon table" />,
+              icon: <TableIcon size={16} />,
               keywords: ['table'],
               onSelect: () =>
                 editor.dispatchCommand(
@@ -193,7 +228,7 @@ export const ComponentPickerMenuPlugin = ({
   const options = useMemo(() => {
     const baseOptions = [
       new ComponentPickerOption('Jupyter Cell', {
-        icon: <i className="icon code" />,
+        icon: <CodeIcon size={16} />,
         keywords: ['javascript', 'python', 'js', 'codeblock', 'jupyter'],
         onSelect: () => {
           editor.dispatchCommand(INSERT_JUPYTER_INPUT_OUTPUT_COMMAND, {
@@ -203,19 +238,8 @@ export const ComponentPickerMenuPlugin = ({
           });
         },
       }),
-      /*
-      new ComponentPickerOption('Jupyter Cell', {
-        icon: <i className="icon code" />,
-        keywords: ['javascript', 'python', 'js', 'codeblock', 'jupyter'],
-        onSelect: () => {
-          const selection = $getSelection();
-          const code = selection?.getTextContent() || "";
-          editor.dispatchCommand(INSERT_JUPYTER_CELL_COMMAND, { code, outputs: code ? [] : DEFAULT_INITIAL_OUTPUTS });
-        }
-      }),
-      */
       new ComponentPickerOption('Paragraph', {
-        icon: <i className="icon paragraph" />,
+        icon: <TypographyIcon size={16} />,
         keywords: ['normal', 'paragraph', 'p', 'text'],
         onSelect: () =>
           editor.update(() => {
@@ -228,7 +252,7 @@ export const ComponentPickerMenuPlugin = ({
       ...Array.from({ length: 3 }, (_, i) => i + 1).map(
         n =>
           new ComponentPickerOption(`Heading ${n}`, {
-            icon: <i className={`icon h${n}`} />,
+            icon: <HashIcon size={16} />,
             keywords: ['heading', 'header', `h${n}`],
             onSelect: () =>
               editor.update(() => {
@@ -243,31 +267,35 @@ export const ComponentPickerMenuPlugin = ({
           }),
       ),
       new ComponentPickerOption('Numbered List', {
-        icon: <i className="icon number" />,
+        icon: <ListOrderedIcon size={16} />,
         keywords: ['numbered list', 'ordered list', 'ol'],
         onSelect: () =>
           editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined),
       }),
       new ComponentPickerOption('Bulleted List', {
-        icon: <i className="icon bullet" />,
+        icon: <ListUnorderedIcon size={16} />,
         keywords: ['bulleted list', 'unordered list', 'ul'],
         onSelect: () =>
           editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined),
       }),
       new ComponentPickerOption('Check List', {
-        icon: <i className="icon check" />,
+        icon: <ChecklistIcon size={16} />,
         keywords: ['check list', 'todo list'],
         onSelect: () =>
           editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined),
       }),
       new ComponentPickerOption('Table', {
-        icon: <i className="icon table" />,
+        icon: <TableIcon size={16} />,
         keywords: ['table', 'grid', 'spreadsheet'],
-        onSelect: () =>
-          editor.dispatchCommand(INSERT_TABLE_WITH_DIALOG_COMMAND, undefined),
+        onSelect: () => {
+          console.log(
+            '[ComponentPicker] Table selected, dispatching INSERT_TABLE_WITH_DIALOG_COMMAND',
+          );
+          editor.dispatchCommand(INSERT_TABLE_WITH_DIALOG_COMMAND, undefined);
+        },
       }),
       new ComponentPickerOption('Collapsible Container', {
-        icon: <i className="icon chevron-down" />,
+        icon: <ChevronDownIcon size={16} />,
         keywords: [
           'collapsible',
           'collapse',
@@ -280,7 +308,7 @@ export const ComponentPickerMenuPlugin = ({
           editor.dispatchCommand(INSERT_COLLAPSIBLE_COMMAND, undefined),
       }),
       new ComponentPickerOption('Excalidraw', {
-        icon: <i className="icon diagram-2" />,
+        icon: <PencilIcon size={16} />,
         keywords: [
           'excalidraw',
           'drawing',
@@ -293,7 +321,7 @@ export const ComponentPickerMenuPlugin = ({
           editor.dispatchCommand(INSERT_EXCALIDRAW_COMMAND, undefined),
       }),
       new ComponentPickerOption('Quote', {
-        icon: <i className="icon quote" />,
+        icon: <QuoteIcon size={16} />,
         keywords: ['block quote'],
         onSelect: () =>
           editor.update(() => {
@@ -304,7 +332,7 @@ export const ComponentPickerMenuPlugin = ({
           }),
       }),
       new ComponentPickerOption('Code', {
-        icon: <i className="icon code" />,
+        icon: <CodeIcon size={16} />,
         keywords: ['javascript', 'python', 'js', 'codeblock'],
         onSelect: () =>
           editor.update(() => {
@@ -314,7 +342,6 @@ export const ComponentPickerMenuPlugin = ({
               if (selection.isCollapsed()) {
                 $setBlocksType(selection, () => $createCodeNode());
               } else {
-                // Will this ever happen?
                 const textContent = selection.getTextContent();
                 const codeNode = $createCodeNode();
                 selection.insertNodes([codeNode]);
@@ -324,7 +351,7 @@ export const ComponentPickerMenuPlugin = ({
           }),
       }),
       new ComponentPickerOption('Divider', {
-        icon: <i className="icon horizontal-rule" />,
+        icon: <DashIcon size={16} />,
         keywords: ['horizontal rule', 'divider', 'hr'],
         onSelect: () =>
           editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined),
@@ -339,7 +366,7 @@ export const ComponentPickerMenuPlugin = ({
           }),
       ),
       new ComponentPickerOption('Equation', {
-        icon: <i className="icon equation" />,
+        icon: <NoteIcon size={16} />,
         keywords: ['equation', 'latex', 'math'],
         onSelect: () =>
           showModal('Insert Equation', onClose => (
@@ -347,7 +374,7 @@ export const ComponentPickerMenuPlugin = ({
           )),
       }),
       new ComponentPickerOption('GIF', {
-        icon: <i className="icon gif" />,
+        icon: <FileMediaIcon size={16} />,
         keywords: ['gif', 'animate', 'image', 'file'],
         onSelect: () =>
           editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
@@ -356,20 +383,26 @@ export const ComponentPickerMenuPlugin = ({
           }),
       }),
       new ComponentPickerOption('Image', {
-        icon: <i className="icon image" />,
+        icon: <FileMediaIcon size={16} />,
         keywords: ['image', 'photo', 'picture', 'file'],
         onSelect: () =>
           showModal('Insert Image', onClose => (
             <InsertImageDialog activeEditor={editor} onClose={onClose} />
           )),
       }),
-      ...['left', 'center', 'right', 'justify'].map(
+      ...(['left', 'center', 'right', 'justify'] as const).map(
         alignment =>
           new ComponentPickerOption(`Align ${alignment}`, {
-            icon: <i className={`icon ${alignment}-align`} />,
+            icon:
+              alignment === 'left' ? (
+                <MoveToStartIcon size={16} />
+              ) : alignment === 'right' ? (
+                <MoveToEndIcon size={16} />
+              ) : (
+                <DashIcon size={16} />
+              ),
             keywords: ['align', 'justify', alignment],
             onSelect: () =>
-              // @ts-expect-error Correct types, but since they're dynamic TS doesn't like it.
               editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, alignment),
           }),
       ),
@@ -399,7 +432,6 @@ export const ComponentPickerMenuPlugin = ({
       closeMenu: () => void,
       matchingString: string,
     ) => {
-      // Don't allow selection of disabled options
       if (selectedOption.disabled) {
         return;
       }
@@ -429,8 +461,20 @@ export const ComponentPickerMenuPlugin = ({
         ) =>
           anchorElementRef.current && options.length
             ? ReactDOM.createPortal(
-                <div className="typeahead-popover component-picker-menu">
-                  <ul>
+                <Box
+                  sx={{
+                    bg: 'canvas.overlay',
+                    border: '1px solid',
+                    borderColor: 'border.default',
+                    borderRadius: 2,
+                    boxShadow: 'shadow.large',
+                    p: 1,
+                    maxHeight: 300,
+                    overflow: 'auto',
+                    minWidth: 200,
+                  }}
+                >
+                  <Box as="ul" sx={{ listStyle: 'none', m: 0, p: 0 }}>
                     {options.map((option, i: number) => (
                       <ComponentPickerMenuItem
                         index={i}
@@ -450,8 +494,8 @@ export const ComponentPickerMenuPlugin = ({
                         option={option}
                       />
                     ))}
-                  </ul>
-                </div>,
+                  </Box>
+                </Box>,
                 anchorElementRef.current,
               )
             : null

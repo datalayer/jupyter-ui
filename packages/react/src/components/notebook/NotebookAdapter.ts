@@ -437,10 +437,27 @@ export class NotebookAdapter {
     cellIndex?: number,
     source?: string
   ): void {
+    const countBefore = this.getCellCount();
     this.setDefaultCellType(cellType);
     // Default to cell count (end of notebook) if index not provided
-    const targetIndex = cellIndex ?? this.getCellCount();
-    this.insertAt(targetIndex, source);
+    const targetIndex = cellIndex ?? countBefore;
+    try {
+      this.insertAt(targetIndex, source);
+    } catch (error) {
+      console.error(
+        `[NotebookAdapter] insertCell failed at index ${targetIndex}:`,
+        error
+      );
+      throw error;
+    }
+    const countAfter = this.getCellCount();
+    if (countAfter <= countBefore) {
+      console.warn(
+        `[NotebookAdapter] insertCell at index ${targetIndex}: cell count did not increase ` +
+          `(before=${countBefore}, after=${countAfter}). ` +
+          `The Yjs shared model may not be properly initialised.`
+      );
+    }
   }
 
   /**

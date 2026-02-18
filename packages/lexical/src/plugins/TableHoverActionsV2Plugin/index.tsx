@@ -13,8 +13,6 @@
  */
 import type { JSX } from 'react';
 
-import './index.css';
-
 import {
   autoUpdate,
   offset,
@@ -42,8 +40,9 @@ import {
 } from 'lexical';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { ActionMenu, ActionList, IconButton, Box } from '@primer/react';
+import { PlusIcon, SortDescIcon } from '@primer/octicons-react';
 
-import DropDown, { DropDownItem } from '../../components/DropDown';
 import { getThemeSelector } from '../../utils/getThemeSelector';
 
 const INDICATOR_SIZE_PX = 18;
@@ -411,7 +410,7 @@ function TableHoverActionsV2({
 
   return (
     <>
-      <div
+      <Box
         ref={node => {
           floatingElemRef.current = node;
           refs.setFloating(node);
@@ -419,47 +418,51 @@ function TableHoverActionsV2({
         style={{
           ...floatingStyles,
           opacity: isVisible ? 1 : 0,
-          display: isVisible ? 'block' : 'none',
+          display: isVisible ? 'flex' : 'none',
         }}
-        className="floating-top-actions"
+        sx={{ alignItems: 'center', gap: 1, zIndex: 10 }}
       >
-        <DropDown
-          buttonAriaLabel="Sort column"
-          buttonClassName="floating-filter-indicator"
-        >
-          <DropDownItem
-            className="item"
-            onClick={() => handleSortColumn('desc')}
+        <ActionMenu>
+          <ActionMenu.Button
+            aria-label="Sort column"
+            variant="invisible"
+            size="small"
           >
-            Sort Ascending
-          </DropDownItem>
-          <DropDownItem
-            className="item"
-            onClick={() => handleSortColumn('asc')}
-          >
-            Sort Descending
-          </DropDownItem>
-        </DropDown>
-        <button
-          className="floating-add-indicator"
+            <SortDescIcon size={16} />
+          </ActionMenu.Button>
+          <ActionMenu.Overlay>
+            <ActionList>
+              <ActionList.Item onSelect={() => handleSortColumn('desc')}>
+                Sort Ascending
+              </ActionList.Item>
+              <ActionList.Item onSelect={() => handleSortColumn('asc')}>
+                Sort Descending
+              </ActionList.Item>
+            </ActionList>
+          </ActionMenu.Overlay>
+        </ActionMenu>
+        <IconButton
+          icon={PlusIcon}
           aria-label="Add column"
-          type="button"
+          variant="invisible"
+          size="small"
           onClick={handleAddColumn}
         />
-      </div>
-      <button
-        ref={node => {
+      </Box>
+      <IconButton
+        ref={(node: HTMLButtonElement | null) => {
           leftFloatingElemRef.current = node;
           leftRefs.setFloating(node);
         }}
         style={{
           ...leftFloatingStyles,
           opacity: isLeftVisible ? 1 : 0,
-          display: isLeftVisible ? 'block' : 'none',
+          display: isLeftVisible ? 'inline-flex' : 'none',
         }}
-        className="floating-add-indicator"
+        icon={PlusIcon}
         aria-label="Add row"
-        type="button"
+        variant="invisible"
+        size="small"
         onClick={handleAddRow}
       />
     </>
