@@ -108,42 +108,34 @@ export const insertCellOperation: ToolOperation<
         };
       }
 
-      // Auto-execute code cells after successful insertion
-      if (type === 'code') {
-        try {
-          const runResult = (await context.executor.execute('runCell', {
-            index: actualIndex,
-          })) as RunCellResult | undefined;
+      // Auto-execute cells after successful insertion.
+      // For code cells this runs the code; for markdown cells this renders them.
+      try {
+        const runResult = (await context.executor.execute('runCell', {
+          index: actualIndex,
+        })) as RunCellResult | undefined;
 
-          return {
-            success: true,
-            index: actualIndex,
-            message: `Cell inserted and executed at index ${actualIndex}`,
-            execution: runResult
-              ? {
-                  execution_count: runResult.execution_count,
-                  outputs: runResult.outputs,
-                }
-              : undefined,
-          };
-        } catch (execError) {
-          // Insertion succeeded but execution failed — still report success
-          const execMsg =
-            execError instanceof Error ? execError.message : String(execError);
-          return {
-            success: true,
-            index: actualIndex,
-            message: `Cell inserted at index ${actualIndex} but execution failed: ${execMsg}`,
-          };
-        }
+        return {
+          success: true,
+          index: actualIndex,
+          message: `Cell inserted and executed at index ${actualIndex}`,
+          execution: runResult
+            ? {
+                execution_count: runResult.execution_count,
+                outputs: runResult.outputs,
+              }
+            : undefined,
+        };
+      } catch (execError) {
+        // Insertion succeeded but execution failed — still report success
+        const execMsg =
+          execError instanceof Error ? execError.message : String(execError);
+        return {
+          success: true,
+          index: actualIndex,
+          message: `Cell inserted at index ${actualIndex} but execution failed: ${execMsg}`,
+        };
       }
-
-      // Non-code cells (markdown, raw) — no execution needed
-      return {
-        success: true,
-        index: actualIndex,
-        message: `Cell inserted at index ${actualIndex}`,
-      };
     } catch (error) {
       // Convert error to result with failure status
       const errorMessage =
