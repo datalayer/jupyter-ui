@@ -205,22 +205,38 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
   ): void => {
     // Accept object from executor, destructure it
     const params = typeof id === 'object' ? id : { id, type, index, source };
-    get()
-      .notebooks.get(params.id as string)
-      ?.adapter?.insertCell(
-        params.type as nbformat.CellType,
-        params.index,
-        params.source as string | undefined
+    const notebook = get().notebooks.get(params.id as string);
+    if (!notebook) {
+      console.warn(
+        `[NotebookState] insertCell: notebook '${params.id}' not found in store`
       );
+      return;
+    }
+    if (!notebook.adapter) {
+      console.warn(
+        `[NotebookState] insertCell: adapter not initialised for notebook '${params.id}'`
+      );
+      return;
+    }
+    notebook.adapter.insertCell(
+      params.type as nbformat.CellType,
+      params.index,
+      params.source as string | undefined
+    );
   },
   insertCells: (id: string, cells?: unknown[], index?: number): void => {
     const params = typeof id === 'object' ? id : { id, cells, index };
-    get()
-      .notebooks.get(params.id as string)
-      ?.adapter?.insertCells(
-        params.cells as Array<{ type: nbformat.CellType; source: string }>,
-        params.index as number
+    const notebook = get().notebooks.get(params.id as string);
+    if (!notebook?.adapter) {
+      console.warn(
+        `[NotebookState] insertCells: notebook or adapter not found for '${params.id}'`
       );
+      return;
+    }
+    notebook.adapter.insertCells(
+      params.cells as Array<{ type: nbformat.CellType; source: string }>,
+      params.index as number
+    );
   },
   deleteCell: (id: string, index?: number): void => {
     const params = typeof id === 'object' ? id : { id, index };
@@ -298,17 +314,37 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
     );
   },
   runCell: async (
-    id: string | { id: string }
+    id:
+      | string
+      | {
+          id: string;
+          index?: number;
+          timeoutSeconds?: number;
+          stream?: boolean;
+          progressInterval?: number;
+        }
   ): Promise<
     { execution_count?: number | null; outputs?: Array<string> } | undefined
   > => {
     const params = typeof id === 'object' ? id : { id };
-    // Use params.id to look up the adapter; runCell is then called with no arguments to run the active cell.
     const adapter = get().notebooks.get(params.id)?.adapter;
     if (!adapter) {
+      console.warn(
+        `[NotebookState] runCell: adapter not found for notebook '${params.id}'`
+      );
       return undefined;
     }
-    return await adapter.runCell();
+    // Forward index/timeout/stream/progressInterval to the adapter
+    return await adapter.runCell({
+      index: (params as Record<string, unknown>).index as number | undefined,
+      timeoutSeconds: (params as Record<string, unknown>).timeoutSeconds as
+        | number
+        | undefined,
+      stream: (params as Record<string, unknown>).stream as boolean | undefined,
+      progressInterval: (params as Record<string, unknown>).progressInterval as
+        | number
+        | undefined,
+    });
   },
   runAllCells: (id: string | { id: string }): void => {
     const params = typeof id === 'object' ? id : { id };
