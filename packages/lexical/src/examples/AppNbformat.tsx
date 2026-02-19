@@ -159,7 +159,7 @@ const Tabs = () => {
   );
 };
 
-export function AppNbformat() {
+export function App() {
   return (
     <>
       <div className="App">
@@ -221,4 +221,4 @@ export function AppNbformat() {
   );
 }
 
-export default AppNbformat;
+export default App;

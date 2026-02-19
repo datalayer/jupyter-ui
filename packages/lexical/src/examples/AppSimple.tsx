@@ -52,9 +52,9 @@ const LexicalEditor = () => {
   );
 };
 
-export const AppSimple = () => {
+export const App = () => {
   // Get initial state from URL or localStorage
-  const getInitialKernelState = () => {
+  const getInitialRuntimeState = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const kernelParam = urlParams.get('kernel');
     if (kernelParam !== null) {
@@ -64,7 +64,7 @@ export const AppSimple = () => {
     return stored === 'true';
   };
 
-  const [hasKernel] = useState(getInitialKernelState);
+  const [hasKernel] = useState(getInitialRuntimeState);
 
   const toggleKernel = (newValue: boolean) => {
     localStorage.setItem('hasKernel', String(newValue));
@@ -151,4 +151,4 @@ export const AppSimple = () => {
   );
 };
 
-export default AppSimple;
+export default App;
