@@ -46,7 +46,7 @@ body .editor-shell {
 
 .editor-shell header h1 {
   text-align: left;
-  color: #333;
+  color: var(--fgColor-default, #333);
   display: inline-block;
   margin: 20px 0 0 0;
 }
@@ -55,14 +55,14 @@ body .editor-shell {
   margin: 20px auto;
   border-radius: 2px;
   max-width: 1100px;
-  color: #000;
+  color: var(--fgColor-default, #000);
   position: relative;
   line-height: 1.7;
   font-weight: 400;
 }
 
 .editor-shell .editor-container {
-  background: #fff;
+  background: var(--bgColor-default, #fff);
   position: relative;
   display: block;
   border-bottom-left-radius: 10px;
@@ -105,8 +105,8 @@ body .editor-shell {
 
 .tree-view-output {
   display: block;
-  background: #222;
-  color: #fff;
+  background: var(--bgColor-emphasis, #222);
+  color: var(--fgColor-onEmphasis, #fff);
   padding: 0;
   font-size: 12px;
   margin: 1px auto 10px auto;
@@ -122,7 +122,7 @@ pre::-webkit-scrollbar {
 }
 
 pre::-webkit-scrollbar-thumb {
-  background: #999;
+  background: var(--fgColor-muted, #999);
 }
 
 .editor-dev-button {
@@ -135,8 +135,8 @@ pre::-webkit-scrollbar-thumb {
   border: none;
   cursor: pointer;
   outline: none;
-  box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.3);
-  background-color: #444;
+  box-shadow: var(--shadow-resting-medium, 0px 1px 10px rgba(0, 0, 0, 0.3));
+  background-color: var(--bgColor-emphasis, #444);
 }
 
 .editor-dev-button::after {
@@ -152,11 +152,11 @@ pre::-webkit-scrollbar-thumb {
 }
 
 .editor-dev-button:hover {
-  background-color: #555;
+  background-color: var(--bgColor-neutral-emphasis, #555);
 }
 
 .editor-dev-button.active {
-  background-color: rgb(233, 35, 35);
+  background-color: var(--bgColor-danger-emphasis, rgb(233, 35, 35));
 }
 
 .test-recorder-toolbar {
@@ -174,8 +174,8 @@ pre::-webkit-scrollbar-thumb {
   border: none;
   cursor: pointer;
   outline: none;
-  box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.4);
-  background-color: #222;
+  box-shadow: var(--shadow-resting-small, 1px 2px 2px rgba(0, 0, 0, 0.4));
+  background-color: var(--bgColor-emphasis, #222);
   transition: box-shadow 50ms ease-out;
 }
 
@@ -256,12 +256,12 @@ pre::-webkit-scrollbar-thumb {
 }
 
 .mention:focus {
-  box-shadow: rgb(180 213 255) 0px 0px 0px 2px;
+  box-shadow: var(--focus-outlineColor, rgb(180 213 255)) 0px 0px 0px 2px;
   outline: none;
 }
 
 .characters-limit {
-  color: #888;
+  color: var(--fgColor-muted, #888);
   font-size: 12px;
   text-align: right;
   display: block;
@@ -295,9 +295,9 @@ pre::-webkit-scrollbar-thumb {
 
 .switch {
   display: block;
-  color: #444;
+  color: var(--fgColor-default, #444);
   margin: 5px 0;
-  background-color: rgba(238, 238, 238, 0.7);
+  background-color: var(--bgColor-muted, rgba(238, 238, 238, 0.7));
   padding: 5px 10px;
   border-radius: 10px;
 }
@@ -320,7 +320,7 @@ pre::-webkit-scrollbar-thumb {
 }
 
 .switch button {
-  background-color: rgb(206, 208, 212);
+  background-color: var(--borderColor-default, rgb(206, 208, 212));
   height: 24px;
   box-sizing: border-box;
   border-radius: 12px;
@@ -346,12 +346,12 @@ pre::-webkit-scrollbar-thumb {
   width: 20px;
   height: 20px;
   border-radius: 12px;
-  background-color: white;
+  background-color: var(--bgColor-default, white);
   transition: transform 0.2s;
 }
 
 .switch button[aria-checked='true'] {
-  background-color: rgb(24, 119, 242);
+  background-color: var(--bgColor-accent-emphasis, rgb(24, 119, 242));
 }
 
 .switch button[aria-checked='true'] span {
@@ -371,7 +371,7 @@ pre::-webkit-scrollbar-thumb {
 }
 
 .editor-shell .editor-image img.focused {
-  outline: 2px solid rgb(60, 132, 244);
+  outline: 2px solid var(--borderColor-accent-emphasis, rgb(60, 132, 244));
   user-select: none;
 }
 
@@ -396,10 +396,10 @@ pre::-webkit-scrollbar-thumb {
   right: 0;
   padding: 0;
   margin: 0;
-  border-top: 1px solid #fff;
-  background-color: rgba(255, 255, 255, 0.9);
+  border-top: 1px solid var(--borderColor-default, #fff);
+  background-color: var(--overlay-bgColor, rgba(255, 255, 255, 0.9));
   min-width: 100px;
-  color: #000;
+  color: var(--fgColor-default, #000);
   overflow: hidden;
 }
 
@@ -412,17 +412,17 @@ pre::-webkit-scrollbar-thumb {
   width: 30%;
   padding: 10px;
   margin: 0 auto;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--borderColor-muted, rgba(255, 255, 255, 0.3));
   border-radius: 5px;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--bgColor-emphasis, rgba(0, 0, 0, 0.5));
   min-width: 100px;
-  color: #fff;
+  color: var(--fgColor-onEmphasis, #fff);
   cursor: pointer;
   user-select: none;
 }
 
 .editor-shell .editor-image .image-caption-button:hover {
-  background-color: rgba(60, 132, 244, 0.5);
+  background-color: var(--bgColor-accent-emphasis, rgba(60, 132, 244, 0.5));
 }
 
 .editor-shell .editor-image .image-resizer {
@@ -430,8 +430,8 @@ pre::-webkit-scrollbar-thumb {
   width: 7px;
   height: 7px;
   position: absolute;
-  background-color: rgb(60, 132, 244);
-  border: 1px solid #fff;
+  background-color: var(--bgColor-accent-emphasis, rgb(60, 132, 244));
+  border: 1px solid var(--fgColor-onEmphasis, #fff);
 }
 
 .editor-shell .editor-image .image-resizer.image-resizer-n {
@@ -484,7 +484,7 @@ pre::-webkit-scrollbar-thumb {
 
 .emoji {
   color: transparent;
-  caret-color: rgb(5, 5, 5);
+  caret-color: var(--fgColor-default, rgb(5, 5, 5));
   background-size: 16px 16px;
   background-position: center;
   background-repeat: no-repeat;
@@ -523,7 +523,7 @@ pre::-webkit-scrollbar-thumb {
 }
 
 .keyword {
-  color: rgb(241, 118, 94);
+  color: var(--fgColor-danger, rgb(241, 118, 94));
   font-weight: bold;
 }
 
@@ -628,7 +628,7 @@ table.disable-selection br::selection {
   border: 0;
   position: relative;
   border-radius: 15px;
-  color: #222;
+  color: var(--fgColor-default, #222);
   display: inline-block;
   cursor: pointer;
 }
@@ -650,7 +650,7 @@ table.disable-selection br::selection {
   border: 0;
   background: none;
   flex: 1;
-  color: #fff;
+  color: var(--fgColor-onEmphasis, #fff);
   font-size: 12px;
 }
 
@@ -666,7 +666,7 @@ table.disable-selection br::selection {
   right: 15px;
   position: absolute;
   background: none;
-  color: #fff;
+  color: var(--fgColor-onEmphasis, #fff);
 }
 
 .debug-timetravel-button:hover {
@@ -681,7 +681,7 @@ table.disable-selection br::selection {
   right: 85px;
   position: absolute;
   background: none;
-  color: #fff;
+  color: var(--fgColor-onEmphasis, #fff);
 }
 
 .debug-treetype-button:hover {
@@ -690,7 +690,7 @@ table.disable-selection br::selection {
 
 .connecting {
   font-size: 15px;
-  color: #999;
+  color: var(--fgColor-muted, #999);
   overflow: hidden;
   position: absolute;
   text-overflow: ellipsis;
@@ -724,7 +724,7 @@ table.disable-selection br::selection {
   margin: 25px;
   padding: 20px 10px;
   position: relative;
-  border: 1px solid #e8e8e8;
+  border: 1px solid var(--borderColor-default, #e8e8e8);
   font-family: 'Reenie Beanie';
   font-size: 24px;
   border-bottom-right-radius: 60px 5px;
@@ -820,7 +820,7 @@ table.disable-selection br::selection {
 }
 
 .excalidraw-button.selected {
-  outline: 2px solid rgb(60, 132, 244);
+  outline: 2px solid var(--borderColor-accent-emphasis, rgb(60, 132, 244));
   user-select: none;
 }
 
@@ -860,7 +860,7 @@ table.disable-selection br::selection {
 }
 
 .editor-equation.focused {
-  outline: 2px solid rgb(60, 132, 244);
+  outline: 2px solid var(--borderColor-accent-emphasis, rgb(60, 132, 244));
 }
 
 hr {
@@ -874,12 +874,12 @@ hr:after {
   content: '';
   display: block;
   height: 2px;
-  background-color: #ccc;
+  background-color: var(--borderColor-default, #ccc);
   line-height: 2px;
 }
 
 hr.selected {
-  outline: 2px solid rgb(60, 132, 244);
+  outline: 2px solid var(--borderColor-accent-emphasis, rgb(60, 132, 244));
   user-select: none;
 }
 
@@ -911,7 +911,7 @@ hr.selected {
   position: absolute;
   top: -2px;
   width: 20px;
-  border-top: 1px solid black;
+  border-top: 1px solid var(--borderColor-default, black);
   animation: CursorBlink 1.1s steps(2, start) infinite;
 }
 

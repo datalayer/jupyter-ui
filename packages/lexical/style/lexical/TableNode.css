@@ -13,12 +13,12 @@
   table-layout: fixed !important;
   width: max-content !important;
   margin: 20px 0 !important;
-  border: 1px solid var(--vscode-editorGroup-border, rgba(128, 128, 128, 0.35)) !important;
+  border: 1px solid var(--borderColor-default, rgba(128, 128, 128, 0.35)) !important;
 }
 
 /* Table cell styles */
 .PlaygroundEditorTheme__tableCell {
-  border: 1px solid var(--vscode-editorGroup-border, rgba(128, 128, 128, 0.35)) !important;
+  border: 1px solid var(--borderColor-default, rgba(128, 128, 128, 0.35)) !important;
   min-width: 75px !important;
   width: 75px !important;
   vertical-align: top !important;
@@ -26,13 +26,13 @@
   padding: 8px 10px !important;
   position: relative !important;
   outline: none !important;
-  background-color: var(--vscode-editor-background, transparent) !important;
-  color: var(--vscode-editor-foreground, inherit) !important;
+  background-color: var(--bgColor-default, transparent) !important;
+  color: var(--fgColor-default, inherit) !important;
 }
 
 /* Table header cell styles */
 .PlaygroundEditorTheme__tableCellHeader {
-  border: 1px solid var(--vscode-editorGroup-border, rgba(128, 128, 128, 0.35)) !important;
+  border: 1px solid var(--borderColor-default, rgba(128, 128, 128, 0.35)) !important;
   min-width: 75px !important;
   width: 75px !important;
   vertical-align: top !important;
@@ -40,25 +40,22 @@
   padding: 8px 10px !important;
   position: relative !important;
   outline: none !important;
-  background-color: var(
-    --vscode-editorGroupHeader-tabsBackground,
-    rgba(128, 128, 128, 0.1)
-  ) !important;
-  color: var(--vscode-editor-foreground, inherit) !important;
+  background-color: var(--bgColor-muted, rgba(128, 128, 128, 0.1)) !important;
+  color: var(--fgColor-default, inherit) !important;
   font-weight: bold !important;
 }
 
 /* Cell focus styles */
 .PlaygroundEditorTheme__tableCell:focus,
 .PlaygroundEditorTheme__tableCellHeader:focus {
-  outline: 2px solid var(--vscode-focusBorder, rgb(60, 132, 244)) !important;
+  outline: 2px solid var(--borderColor-accent-emphasis, rgb(60, 132, 244)) !important;
   outline-offset: -2px;
 }
 
 /* Cell selection styles */
 .PlaygroundEditorTheme__tableCellSelected {
   background-color: var(
-    --vscode-list-activeSelectionBackground,
+    --bgColor-accent-muted,
     rgba(60, 132, 244, 0.15)
   ) !important;
 }
@@ -94,7 +91,7 @@
 
 .PlaygroundEditorTheme__tableCellResizer:hover:after,
 .PlaygroundEditorTheme__tableCellResizer:active:after {
-  background-color: var(--vscode-focusBorder, #3c84f4);
+  background-color: var(--borderColor-accent-emphasis, #3c84f4);
 }
 
 /* Table action menu - CHEVRON BUTTON */
@@ -112,14 +109,14 @@
 
 .PlaygroundEditorTheme__tableCellActionButton {
   background-color: var(
-    --vscode-button-secondaryBackground,
+    --control-bgColor-rest,
     rgba(128, 128, 128, 0.1)
   ) !important;
-  color: var(--vscode-button-secondaryForeground, inherit) !important;
+  color: var(--fgColor-default, inherit) !important;
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
-  border: 1px solid var(--vscode-editorGroup-border, rgba(128, 128, 128, 0.35)) !important;
+  border: 1px solid var(--borderColor-default, rgba(128, 128, 128, 0.35)) !important;
   position: relative !important;
   border-radius: 4px !important;
   cursor: pointer !important;
@@ -142,7 +139,7 @@
 
 .PlaygroundEditorTheme__tableCellActionButton:hover {
   background-color: var(
-    --vscode-button-secondaryHoverBackground,
+    --control-bgColor-hover,
     rgba(128, 128, 128, 0.2)
   ) !important;
 }
@@ -200,7 +197,7 @@
 
 .PlaygroundEditorTheme__tableFrozenRow tr:nth-of-type(1) > td {
   overflow: clip;
-  background-color: var(--vscode-editor-background, #ffffff);
+  background-color: var(--bgColor-default, #ffffff);
   position: sticky;
   z-index: 2;
   top: 44px;
@@ -209,7 +206,7 @@
 /* Table hover action buttons - Add Column */
 .PlaygroundEditorTheme__tableAddColumns {
   position: absolute !important;
-  background-color: var(--vscode-button-secondaryBackground, #eee) !important;
+  background-color: var(--control-bgColor-rest, #eee) !important;
   /* Let plugin set dimensions, just constrain them */
   min-width: 15px !important;
   max-width: 20px !important;
@@ -230,13 +227,13 @@
   font-size: 14px !important;
   text-align: center !important;
   line-height: 20px !important;
-  color: var(--vscode-editor-foreground, #666) !important;
+  color: var(--fgColor-default, #666) !important;
   opacity: 0.7 !important;
 }
 
 .PlaygroundEditorTheme__tableAddColumns:hover,
 .PlaygroundEditorTheme__tableAddRows:hover {
-  background-color: var(--vscode-button-hoverBackground, #c9dbf0) !important;
+  background-color: var(--control-bgColor-hover, #c9dbf0) !important;
 }
 
 /* Table hover action buttons - Add Row */
@@ -246,7 +243,7 @@
   min-width: 50px !important;
   min-height: 15px !important;
   max-height: 20px !important;
-  background-color: var(--vscode-button-secondaryBackground, #eee) !important;
+  background-color: var(--control-bgColor-rest, #eee) !important;
   animation: table-controls 0.2s ease !important;
   border: 0 !important;
   cursor: pointer !important;
@@ -263,7 +260,7 @@
   font-size: 14px !important;
   text-align: center !important;
   line-height: 20px !important;
-  color: var(--vscode-editor-foreground, #666) !important;
+  color: var(--fgColor-default, #666) !important;
   opacity: 0.7 !important;
 }
 
@@ -281,7 +278,7 @@
   display: block;
   position: absolute;
   width: 1px;
-  background-color: var(--vscode-focusBorder, rgb(60, 132, 244));
+  background-color: var(--borderColor-accent-emphasis, rgb(60, 132, 244));
   height: 100%;
   top: 0;
 }

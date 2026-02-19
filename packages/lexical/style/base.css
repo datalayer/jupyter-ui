@@ -9,7 +9,8 @@ html {
 }
 
 body {
-  background: white;
+  background: var(--bgColor-default, white);
+  color: var(--fgColor-default, #1f2328);
   margin: 0;
   padding: 0;
   overflow-y: scroll;
