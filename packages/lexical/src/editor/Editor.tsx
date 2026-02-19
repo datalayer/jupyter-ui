@@ -13,7 +13,6 @@ import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
-import { TablePlugin } from '@lexical/react/LexicalTablePlugin';
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
@@ -66,6 +65,7 @@ import {
   TableCellResizerPlugin,
   TableHoverActionsV2Plugin,
   TableOfContentsPlugin,
+  TablePlugin,
   YouTubePlugin,
 } from './..';
 import { commentTheme } from '../themes';
