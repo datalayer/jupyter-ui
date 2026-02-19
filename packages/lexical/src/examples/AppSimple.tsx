@@ -12,7 +12,7 @@ import {
   ToggleSwitch,
   Text,
 } from '@primer/react';
-import { Box } from '@datalayer/primer-addons';
+import { Box, setupPrimerPortals } from '@datalayer/primer-addons';
 import { MoonIcon, SunIcon, ThreeBarsIcon } from '@primer/octicons-react';
 import { JupyterReactTheme } from '@datalayer/jupyter-react';
 import { useLexical, Editor, LexicalProvider, nbformatToLexical } from '..';
@@ -141,6 +141,13 @@ export const App = () => {
 
   const [hasRuntime] = useState(getInitialRuntimeState);
   const [colorMode, setColorMode] = useState<ColorMode>(getInitialColorMode);
+
+  // Setup Primer portals on load and whenever colorMode changes
+  useEffect(() => {
+    const primerColormode =
+      colorMode === 'night' || colorMode === 'dark' ? 'dark' : 'light';
+    setupPrimerPortals(primerColormode);
+  }, [colorMode]);
 
   const toggleRuntime = (newValue: boolean) => {
     localStorage.setItem('hasRuntime', String(newValue));
