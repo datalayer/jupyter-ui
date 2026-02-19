@@ -13,6 +13,7 @@ import react from '@vitejs/plugin-react';
 import dts from 'vite-plugin-dts';
 import { resolve } from 'path';
 import { fileURLToPath } from 'url';
+import { readFileSync } from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = resolve(__filename, '..');
@@ -89,6 +90,48 @@ export default defineConfig(({ mode }) => {
           return null;
         },
       },
+      // Plugin to handle dynamic ?raw CSS imports from node_modules (JupyterLab themes)
+      {
+        name: 'jupyterlab-theme-css-raw',
+        enforce: 'pre',
+        resolveId(source) {
+          if (
+            source.includes('@jupyterlab/theme-') &&
+            source.endsWith('.css?raw')
+          ) {
+            return '\0' + source;
+          }
+          return null;
+        },
+        load(id) {
+          if (
+            id.startsWith('\0') &&
+            id.includes('@jupyterlab/theme-') &&
+            id.endsWith('.css?raw')
+          ) {
+            const cssPath = id.slice(1).replace('?raw', '');
+            const possiblePaths = [
+              resolve(__dirname, 'node_modules', cssPath),
+              resolve(__dirname, '../../node_modules', cssPath),
+              resolve(__dirname, '../../../node_modules', cssPath),
+              resolve(__dirname, '../../../../node_modules', cssPath),
+              resolve(__dirname, '../../../../../node_modules', cssPath),
+            ];
+            for (const resolvedPath of possiblePaths) {
+              try {
+                const cssContent = readFileSync(resolvedPath, 'utf-8');
+                return `export default ${JSON.stringify(cssContent)};`;
+              } catch {
+                // Try next path
+              }
+            }
+            console.warn(`Could not load theme CSS: ${cssPath}`);
+            console.warn(`Tried paths:`, possiblePaths);
+            return 'export default "";';
+          }
+          return null;
+        },
+      },
     ],
     resolve: {
       alias: [
@@ -102,6 +145,10 @@ export default defineConfig(({ mode }) => {
       port: 3211,
       open: false,
       hmr: true,
+      fs: {
+        // Allow serving files from node_modules (needed for dynamic CSS imports in monorepo)
+        allow: ['..'],
+      },
     },
     build: {
       target: 'esnext',
@@ -164,11 +211,20 @@ export default defineConfig(({ mode }) => {
     optimizeDeps: {
       esbuildOptions: {
         target: 'esnext',
+        loader: {
+          '.css': 'text',
+        },
       },
       include: ['react', 'react-dom'],
       // Exclude lexical packages from pre-bundling - they have broken exports maps
       // The alias in resolve.alias handles resolving them
-      exclude: ['@lexical/react', '@lexical/rich-text'],
+      exclude: [
+        '@lexical/react',
+        '@lexical/rich-text',
+        // Exclude theme CSS to allow ?raw imports to work
+        '@jupyterlab/theme-light-extension',
+        '@jupyterlab/theme-dark-extension',
+      ],
     },
   };
 });

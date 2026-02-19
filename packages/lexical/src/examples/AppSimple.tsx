@@ -5,16 +5,13 @@
  */
 
 import { useState, useEffect } from 'react';
-import {
-  BaseStyles,
-  Button,
-  ThemeProvider,
-  ToggleSwitch,
-  Text,
-} from '@primer/react';
+import { Button, ToggleSwitch, Text } from '@primer/react';
 import { Box, setupPrimerPortals } from '@datalayer/primer-addons';
 import { MoonIcon, SunIcon, ThreeBarsIcon } from '@primer/octicons-react';
-import { JupyterReactTheme } from '@datalayer/jupyter-react';
+import {
+  JupyterReactTheme,
+  useJupyterReactStore,
+} from '@datalayer/jupyter-react';
 import { useLexical, Editor, LexicalProvider, nbformatToLexical } from '..';
 import { ThemeContext } from '../context/ThemeContext';
 import type { ThemeType } from '../context/ThemeContext';
@@ -144,12 +141,15 @@ export const App = () => {
   const [hasRuntime] = useState(getInitialRuntimeState);
   const [colorMode, setColorMode] = useState<ColorMode>(getInitialColorMode);
 
-  // Setup Primer portals on load and whenever colorMode changes
+  const { setColormode } = useJupyterReactStore();
+
+  // Setup Primer portals and sync JupyterReact store on color mode change
   useEffect(() => {
     const primerColormode =
       colorMode === 'night' || colorMode === 'dark' ? 'dark' : 'light';
     setupPrimerPortals(primerColormode);
-  }, [colorMode]);
+    setColormode(primerColormode);
+  }, [colorMode, setColormode]);
 
   const toggleRuntime = (newValue: boolean) => {
     localStorage.setItem('hasRuntime', String(newValue));
@@ -159,8 +159,18 @@ export const App = () => {
   };
 
   return (
-    <ThemeProvider colorMode={colorMode}>
-      <BaseStyles>
+    <JupyterReactTheme
+      colormode={
+        colorMode === 'night' || colorMode === 'dark' ? 'dark' : 'light'
+      }
+    >
+      <ThemeContext.Provider
+        value={{
+          theme: (colorMode === 'night' || colorMode === 'dark'
+            ? 'dark'
+            : 'light') as ThemeType,
+        }}
+      >
         <div className="App">
           <AppToolbar
             hasRuntime={hasRuntime}
@@ -172,23 +182,9 @@ export const App = () => {
             }}
           />
         </div>
-        <JupyterReactTheme
-          colormode={
-            colorMode === 'night' || colorMode === 'dark' ? 'dark' : 'light'
-          }
-        >
-          <ThemeContext.Provider
-            value={{
-              theme: (colorMode === 'night' || colorMode === 'dark'
-                ? 'dark'
-                : 'light') as ThemeType,
-            }}
-          >
-            <LexicalProvider>
-              <LexicalEditor />
-            </LexicalProvider>
-          </ThemeContext.Provider>
-        </JupyterReactTheme>
+        <LexicalProvider>
+          <LexicalEditor />
+        </LexicalProvider>
         <div className="other App">
           <div
             style={{
@@ -207,20 +203,9 @@ export const App = () => {
               Datalayer, Inc.
             </a>
           </h2>
-          <ul>
-            <li>
-              <a
-                href="https://github.com/datalayer/jupyter-ui"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Jupyter UI
-              </a>
-            </li>
-          </ul>
         </div>
-      </BaseStyles>
-    </ThemeProvider>
+      </ThemeContext.Provider>
+    </JupyterReactTheme>
   );
 };
 

@@ -107,6 +107,12 @@
   opacity: 1 !important;
 }
 
+/* Ensure ActionMenu anchor wrapper doesn't add extra height */
+.PlaygroundEditorTheme__tableCellActionButtonContainer > * {
+  display: flex !important;
+  align-items: center !important;
+}
+
 .PlaygroundEditorTheme__tableCellActionButton {
   background-color: var(
     --control-bgColor-rest,

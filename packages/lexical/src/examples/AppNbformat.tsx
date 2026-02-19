@@ -204,17 +204,6 @@ export function App() {
               Datalayer, Inc.
             </a>
           </h2>
-          <ul>
-            <li>
-              <a
-                href="https://github.com/datalayer/jupyter-ui"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Jupyter UI
-              </a>
-            </li>
-          </ul>
         </div>
       </div>
     </>
