@@ -16,6 +16,8 @@ import { Box, setupPrimerPortals } from '@datalayer/primer-addons';
 import { MoonIcon, SunIcon, ThreeBarsIcon } from '@primer/octicons-react';
 import { JupyterReactTheme } from '@datalayer/jupyter-react';
 import { useLexical, Editor, LexicalProvider, nbformatToLexical } from '..';
+import { ThemeContext } from '../context/ThemeContext';
+import type { ThemeType } from '../context/ThemeContext';
 
 type ColorMode = 'day' | 'night' | 'light' | 'dark' | 'auto';
 
@@ -175,9 +177,17 @@ export const App = () => {
             colorMode === 'night' || colorMode === 'dark' ? 'dark' : 'light'
           }
         >
-          <LexicalProvider>
-            <LexicalEditor />
-          </LexicalProvider>
+          <ThemeContext.Provider
+            value={{
+              theme: (colorMode === 'night' || colorMode === 'dark'
+                ? 'dark'
+                : 'light') as ThemeType,
+            }}
+          >
+            <LexicalProvider>
+              <LexicalEditor />
+            </LexicalProvider>
+          </ThemeContext.Provider>
         </JupyterReactTheme>
         <div className="other App">
           <div
