@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Button, ButtonGroup } from '@primer/react';
+import { Button, ToggleSwitch, Text } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { ThreeBarsIcon } from '@primer/octicons-react';
 import { JupyterReactTheme } from '@datalayer/jupyter-react';
@@ -56,20 +56,20 @@ export const App = () => {
   // Get initial state from URL or localStorage
   const getInitialRuntimeState = () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const kernelParam = urlParams.get('kernel');
-    if (kernelParam !== null) {
-      return kernelParam === 'true';
+    const runtimeParam = urlParams.get('runtime');
+    if (runtimeParam !== null) {
+      return runtimeParam === 'true';
     }
-    const stored = localStorage.getItem('hasKernel');
-    return stored === 'true';
+    const stored = localStorage.getItem('hasRuntime');
+    return stored !== 'false';
   };
 
-  const [hasKernel] = useState(getInitialRuntimeState);
+  const [hasRuntime] = useState(getInitialRuntimeState);
 
-  const toggleKernel = (newValue: boolean) => {
-    localStorage.setItem('hasKernel', String(newValue));
+  const toggleRuntime = (newValue: boolean) => {
+    localStorage.setItem('hasRuntime', String(newValue));
     const url = new URL(window.location.href);
-    url.searchParams.set('kernel', String(newValue));
+    url.searchParams.set('runtime', String(newValue));
     window.location.href = url.toString();
   };
 
@@ -77,40 +77,20 @@ export const App = () => {
     <>
       <div className="App">
         <h1>Jupyter UI ❤️ Lexical</h1>
-        <ButtonGroup>
-          <Button
-            variant={!hasKernel ? 'primary' : 'default'}
-            onClick={() => toggleKernel(false)}
-            sx={{
-              fontWeight: !hasKernel ? 'bold' : 'normal',
-              backgroundColor: !hasKernel ? '#0969da' : 'transparent',
-              color: !hasKernel ? 'white' : 'inherit',
-              '&:hover': {
-                backgroundColor: !hasKernel ? '#0860ca' : '#f3f4f6',
-              },
-            }}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Text
+            id="runtime-toggle-label"
+            sx={{ fontSize: 1, color: 'fg.muted' }}
           >
-            Without Runtime
-          </Button>
-          <Button
-            variant={hasKernel ? 'primary' : 'default'}
-            onClick={() => toggleKernel(true)}
-            sx={{
-              fontWeight: hasKernel ? 'bold' : 'normal',
-              backgroundColor: hasKernel ? '#0969da' : 'transparent',
-              color: hasKernel ? 'white' : 'inherit',
-              '&:hover': {
-                backgroundColor: hasKernel ? '#0860ca' : '#f3f4f6',
-              },
-            }}
-          >
-            With Runtime
-          </Button>
-        </ButtonGroup>
-        <p style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
-          Current mode:{' '}
-          <strong>{hasKernel ? 'Runtime Connected' : 'No Runtime'}</strong>
-        </p>
+            Runtime
+          </Text>
+          <ToggleSwitch
+            checked={hasRuntime}
+            onClick={() => toggleRuntime(!hasRuntime)}
+            statusLabelPosition="end"
+            aria-labelledby="runtime-toggle-label"
+          />
+        </Box>
       </div>
       <JupyterReactTheme>
         <LexicalProvider>
