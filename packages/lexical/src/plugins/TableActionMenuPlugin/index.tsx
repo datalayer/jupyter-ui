@@ -40,12 +40,19 @@ import {
   $setSelection,
   COMMAND_PRIORITY_CRITICAL,
   getDOMSelection,
-  isDOMNode,
   SELECTION_CHANGE_COMMAND,
 } from 'lexical';
 import { ReactPortal, useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ActionList, Box, IconButton } from '@primer/react';
+import {
+  ActionList,
+  ActionMenu,
+  BaseStyles,
+  IconButton,
+  ThemeProvider,
+} from '@primer/react';
+
+import { useTheme } from '../../context/ThemeContext';
 import {
   ChevronDownIcon,
   ArrowUpIcon,
@@ -105,9 +112,7 @@ function currentCellBackgroundColor(editor: LexicalEditor): null | string {
 }
 
 type TableCellActionMenuProps = Readonly<{
-  contextRef: { current: null | HTMLElement };
   onClose: () => void;
-  setIsMenuOpen: (isOpen: boolean) => void;
   showColorPickerModal: (
     title: string,
     showModal: (onClose: () => void) => JSX.Element,
@@ -119,13 +124,10 @@ type TableCellActionMenuProps = Readonly<{
 function TableActionMenu({
   onClose,
   tableCellNode: _tableCellNode,
-  setIsMenuOpen,
-  contextRef,
   cellMerge,
   showColorPickerModal,
 }: TableCellActionMenuProps) {
   const [editor] = useLexicalComposerContext();
-  const dropDownRef = useRef<HTMLDivElement | null>(null);
   const [tableCellNode, updateTableCellNode] = useState(_tableCellNode);
   const [selectionCounts, updateSelectionCounts] = useState({
     columns: 1,
@@ -170,59 +172,6 @@ function TableActionMenu({
       setCanUnmergeCell($canUnmerge());
     });
   }, [editor]);
-
-  useEffect(() => {
-    const menuButtonElement = contextRef.current;
-    const dropDownElement = dropDownRef.current;
-    const rootElement = editor.getRootElement();
-
-    if (
-      menuButtonElement != null &&
-      dropDownElement != null &&
-      rootElement != null
-    ) {
-      const rootEleRect = rootElement.getBoundingClientRect();
-      const menuButtonRect = menuButtonElement.getBoundingClientRect();
-      dropDownElement.style.opacity = '1';
-      const dropDownElementRect = dropDownElement.getBoundingClientRect();
-      const margin = 5;
-      let leftPosition = menuButtonRect.right + margin;
-      if (
-        leftPosition + dropDownElementRect.width > window.innerWidth ||
-        leftPosition + dropDownElementRect.width > rootEleRect.right
-      ) {
-        const position =
-          menuButtonRect.left - dropDownElementRect.width - margin;
-        leftPosition = (position < 0 ? margin : position) + window.pageXOffset;
-      }
-      dropDownElement.style.left = `${leftPosition + window.pageXOffset}px`;
-
-      let topPosition = menuButtonRect.top;
-      if (topPosition + dropDownElementRect.height > window.innerHeight) {
-        const position = menuButtonRect.bottom - dropDownElementRect.height;
-        topPosition = position < 0 ? margin : position;
-      }
-      dropDownElement.style.top = `${topPosition}px`;
-    }
-  }, [contextRef, dropDownRef, editor]);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        dropDownRef.current != null &&
-        contextRef.current != null &&
-        isDOMNode(event.target) &&
-        !dropDownRef.current.contains(event.target) &&
-        !contextRef.current.contains(event.target)
-      ) {
-        setIsMenuOpen(false);
-      }
-    }
-
-    window.addEventListener('click', handleClickOutside);
-
-    return () => window.removeEventListener('click', handleClickOutside);
-  }, [setIsMenuOpen, contextRef]);
 
   const clearTableSelection = useCallback(() => {
     editor.update(() => {
@@ -496,162 +445,142 @@ function TableActionMenu({
     }
   }
 
-  return createPortal(
-    <Box
-      ref={dropDownRef}
-      onClick={(e: React.MouseEvent) => {
-        e.stopPropagation();
-      }}
-      sx={{
-        position: 'fixed',
-        zIndex: 10,
-        opacity: 0,
-        bg: 'canvas.overlay',
-        border: '1px solid',
-        borderColor: 'border.default',
-        borderRadius: 2,
-        boxShadow: 'shadow.large',
-        minWidth: 200,
-        py: 1,
-      }}
-    >
-      <ActionList>
-        {mergeCellButton}
-        <ActionList.Item
-          onSelect={() =>
-            showColorPickerModal('Cell background color', () => (
-              <ColorPicker
-                color={backgroundColor}
-                onChange={handleCellBackgroundColor}
-              />
-            ))
-          }
-          data-test-id="table-background-color"
-        >
-          Background color
+  return (
+    <ActionList>
+      {mergeCellButton}
+      <ActionList.Item
+        onSelect={() =>
+          showColorPickerModal('Cell background color', () => (
+            <ColorPicker
+              color={backgroundColor}
+              onChange={handleCellBackgroundColor}
+            />
+          ))
+        }
+        data-test-id="table-background-color"
+      >
+        Background color
+      </ActionList.Item>
+      <ActionList.Item
+        onSelect={() => toggleRowStriping()}
+        data-test-id="table-row-striping"
+      >
+        Toggle Row Striping
+      </ActionList.Item>
+      <ActionList.Group title="Vertical Align">
+        <ActionList.Item onSelect={() => formatVerticalAlign('top')}>
+          <ActionList.LeadingVisual>
+            <ArrowUpIcon />
+          </ActionList.LeadingVisual>
+          Top Align
         </ActionList.Item>
-        <ActionList.Item
-          onSelect={() => toggleRowStriping()}
-          data-test-id="table-row-striping"
-        >
-          Toggle Row Striping
+        <ActionList.Item onSelect={() => formatVerticalAlign('middle')}>
+          <ActionList.LeadingVisual>
+            <DashIcon />
+          </ActionList.LeadingVisual>
+          Middle Align
         </ActionList.Item>
-        <ActionList.Group title="Vertical Align">
-          <ActionList.Item onSelect={() => formatVerticalAlign('top')}>
-            <ActionList.LeadingVisual>
-              <ArrowUpIcon />
-            </ActionList.LeadingVisual>
-            Top Align
-          </ActionList.Item>
-          <ActionList.Item onSelect={() => formatVerticalAlign('middle')}>
-            <ActionList.LeadingVisual>
-              <DashIcon />
-            </ActionList.LeadingVisual>
-            Middle Align
-          </ActionList.Item>
-          <ActionList.Item onSelect={() => formatVerticalAlign('bottom')}>
-            <ActionList.LeadingVisual>
-              <ArrowDownIcon />
-            </ActionList.LeadingVisual>
-            Bottom Align
-          </ActionList.Item>
-        </ActionList.Group>
-        <ActionList.Item
-          onSelect={() => toggleFirstRowFreeze()}
-          data-test-id="table-freeze-first-row"
-        >
-          Toggle First Row Freeze
+        <ActionList.Item onSelect={() => formatVerticalAlign('bottom')}>
+          <ActionList.LeadingVisual>
+            <ArrowDownIcon />
+          </ActionList.LeadingVisual>
+          Bottom Align
         </ActionList.Item>
-        <ActionList.Item
-          onSelect={() => toggleFirstColumnFreeze()}
-          data-test-id="table-freeze-first-column"
-        >
-          Toggle First Column Freeze
-        </ActionList.Item>
-        <ActionList.Divider />
-        <ActionList.Item
-          onSelect={() => insertTableRowAtSelection(false)}
-          data-test-id="table-insert-row-above"
-        >
-          Insert{' '}
-          {selectionCounts.rows === 1 ? 'row' : `${selectionCounts.rows} rows`}{' '}
-          above
-        </ActionList.Item>
-        <ActionList.Item
-          onSelect={() => insertTableRowAtSelection(true)}
-          data-test-id="table-insert-row-below"
-        >
-          Insert{' '}
-          {selectionCounts.rows === 1 ? 'row' : `${selectionCounts.rows} rows`}{' '}
-          below
-        </ActionList.Item>
-        <ActionList.Divider />
-        <ActionList.Item
-          onSelect={() => insertTableColumnAtSelection(false)}
-          data-test-id="table-insert-column-before"
-        >
-          Insert{' '}
-          {selectionCounts.columns === 1
-            ? 'column'
-            : `${selectionCounts.columns} columns`}{' '}
-          left
-        </ActionList.Item>
-        <ActionList.Item
-          onSelect={() => insertTableColumnAtSelection(true)}
-          data-test-id="table-insert-column-after"
-        >
-          Insert{' '}
-          {selectionCounts.columns === 1
-            ? 'column'
-            : `${selectionCounts.columns} columns`}{' '}
-          right
-        </ActionList.Item>
-        <ActionList.Divider />
-        <ActionList.Item
-          onSelect={() => deleteTableColumnAtSelection()}
-          data-test-id="table-delete-columns"
-          variant="danger"
-        >
-          Delete column
-        </ActionList.Item>
-        <ActionList.Item
-          onSelect={() => deleteTableRowAtSelection()}
-          data-test-id="table-delete-rows"
-          variant="danger"
-        >
-          Delete row
-        </ActionList.Item>
-        <ActionList.Item
-          onSelect={() => deleteTableAtSelection()}
-          data-test-id="table-delete"
-          variant="danger"
-        >
-          Delete table
-        </ActionList.Item>
-        <ActionList.Divider />
-        <ActionList.Item
-          onSelect={() => toggleTableRowIsHeader()}
-          data-test-id="table-row-header"
-        >
-          {(tableCellNode.__headerState & TableCellHeaderStates.ROW) ===
-          TableCellHeaderStates.ROW
-            ? 'Remove'
-            : 'Add'}{' '}
-          row header
-        </ActionList.Item>
-        <ActionList.Item
-          onSelect={() => toggleTableColumnIsHeader()}
-          data-test-id="table-column-header"
-        >
-          {(tableCellNode.__headerState & TableCellHeaderStates.COLUMN) ===
-          TableCellHeaderStates.COLUMN
-            ? 'Remove'
-            : 'Add'}{' '}
-          column header
-        </ActionList.Item>
-      </ActionList>
-    </Box>,
-    document.body,
+      </ActionList.Group>
+      <ActionList.Item
+        onSelect={() => toggleFirstRowFreeze()}
+        data-test-id="table-freeze-first-row"
+      >
+        Toggle First Row Freeze
+      </ActionList.Item>
+      <ActionList.Item
+        onSelect={() => toggleFirstColumnFreeze()}
+        data-test-id="table-freeze-first-column"
+      >
+        Toggle First Column Freeze
+      </ActionList.Item>
+      <ActionList.Divider />
+      <ActionList.Item
+        onSelect={() => insertTableRowAtSelection(false)}
+        data-test-id="table-insert-row-above"
+      >
+        Insert{' '}
+        {selectionCounts.rows === 1 ? 'row' : `${selectionCounts.rows} rows`}{' '}
+        above
+      </ActionList.Item>
+      <ActionList.Item
+        onSelect={() => insertTableRowAtSelection(true)}
+        data-test-id="table-insert-row-below"
+      >
+        Insert{' '}
+        {selectionCounts.rows === 1 ? 'row' : `${selectionCounts.rows} rows`}{' '}
+        below
+      </ActionList.Item>
+      <ActionList.Divider />
+      <ActionList.Item
+        onSelect={() => insertTableColumnAtSelection(false)}
+        data-test-id="table-insert-column-before"
+      >
+        Insert{' '}
+        {selectionCounts.columns === 1
+          ? 'column'
+          : `${selectionCounts.columns} columns`}{' '}
+        left
+      </ActionList.Item>
+      <ActionList.Item
+        onSelect={() => insertTableColumnAtSelection(true)}
+        data-test-id="table-insert-column-after"
+      >
+        Insert{' '}
+        {selectionCounts.columns === 1
+          ? 'column'
+          : `${selectionCounts.columns} columns`}{' '}
+        right
+      </ActionList.Item>
+      <ActionList.Divider />
+      <ActionList.Item
+        onSelect={() => deleteTableColumnAtSelection()}
+        data-test-id="table-delete-columns"
+        variant="danger"
+      >
+        Delete column
+      </ActionList.Item>
+      <ActionList.Item
+        onSelect={() => deleteTableRowAtSelection()}
+        data-test-id="table-delete-rows"
+        variant="danger"
+      >
+        Delete row
+      </ActionList.Item>
+      <ActionList.Item
+        onSelect={() => deleteTableAtSelection()}
+        data-test-id="table-delete"
+        variant="danger"
+      >
+        Delete table
+      </ActionList.Item>
+      <ActionList.Divider />
+      <ActionList.Item
+        onSelect={() => toggleTableRowIsHeader()}
+        data-test-id="table-row-header"
+      >
+        {(tableCellNode.__headerState & TableCellHeaderStates.ROW) ===
+        TableCellHeaderStates.ROW
+          ? 'Remove'
+          : 'Add'}{' '}
+        row header
+      </ActionList.Item>
+      <ActionList.Item
+        onSelect={() => toggleTableColumnIsHeader()}
+        data-test-id="table-column-header"
+      >
+        {(tableCellNode.__headerState & TableCellHeaderStates.COLUMN) ===
+        TableCellHeaderStates.COLUMN
+          ? 'Remove'
+          : 'Add'}{' '}
+        column header
+      </ActionList.Item>
+    </ActionList>
   );
 }
 
@@ -884,6 +813,8 @@ function TableCellActionMenuContainer({
     prevTableCellDOM.current = tableCellNode;
   }, [prevTableCellDOM, tableCellNode]);
 
+  const { theme } = useTheme();
+
   return (
     <div
       className="PlaygroundEditorTheme__tableCellActionButtonContainer"
@@ -891,28 +822,31 @@ function TableCellActionMenuContainer({
     >
       {tableCellNode != null && (
         <>
-          <IconButton
-            icon={ChevronDownIcon}
-            aria-label="Table cell menu"
-            variant="invisible"
-            size="small"
-            onClick={(e: React.MouseEvent) => {
-              e.stopPropagation();
-              setIsMenuOpen(!isMenuOpen);
-            }}
-            ref={menuRootRef as any}
-          />
           {colorPickerModal}
-          {isMenuOpen && (
-            <TableActionMenu
-              contextRef={menuRootRef}
-              setIsMenuOpen={setIsMenuOpen}
-              onClose={() => setIsMenuOpen(false)}
-              tableCellNode={tableCellNode}
-              cellMerge={cellMerge}
-              showColorPickerModal={showColorPickerModal}
-            />
-          )}
+          <ActionMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+            <ActionMenu.Anchor>
+              <IconButton
+                icon={ChevronDownIcon}
+                aria-label="Table cell menu"
+                variant="invisible"
+                size="small"
+                ref={menuRootRef as any}
+                sx={{ p: 0, width: 20, height: 20 }}
+              />
+            </ActionMenu.Anchor>
+            <ActionMenu.Overlay align="end" side="outside-bottom">
+              <ThemeProvider colorMode={theme === 'dark' ? 'night' : 'day'}>
+                <BaseStyles>
+                  <TableActionMenu
+                    onClose={() => setIsMenuOpen(false)}
+                    tableCellNode={tableCellNode}
+                    cellMerge={cellMerge}
+                    showColorPickerModal={showColorPickerModal}
+                  />
+                </BaseStyles>
+              </ThemeProvider>
+            </ActionMenu.Overlay>
+          </ActionMenu>
         </>
       )}
     </div>

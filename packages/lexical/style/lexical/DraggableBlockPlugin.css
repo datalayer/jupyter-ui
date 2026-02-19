@@ -30,7 +30,7 @@
 }
 
 .draggable-block-menu:hover {
-  background-color: rgba(128, 128, 128, 0.1);
+  background-color: var(--bgColor-neutral-muted, rgba(128, 128, 128, 0.1));
   opacity: 1;
 }
 

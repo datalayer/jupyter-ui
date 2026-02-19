@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyter-lexical",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Jupyter UI for Lexical",
   "license": "MIT",
   "main": "lib/index.js",
@@ -69,7 +69,7 @@
     "@datalayer/icons-react": "^1.0.0",
     "@datalayer/jupyter-react": "^2.0.3",
     "@datalayer/lexical-loro": "^0.1.0",
-    "@datalayer/primer-addons": "^1.0.4",
+    "@datalayer/primer-addons": "^1.0.8",
     "@floating-ui/react": "^0.27.16",
     "@jupyterlab/application": "^4.0.0",
     "@jupyterlab/coreutils": "^6.0.0",

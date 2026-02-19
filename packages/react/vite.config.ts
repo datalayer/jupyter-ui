@@ -113,6 +113,7 @@ export default defineConfig(({ mode }) => {
               resolve(__dirname, '../../../node_modules', cssPath),
               resolve(__dirname, '../../../../node_modules', cssPath),
               resolve(__dirname, '../../../../../node_modules', cssPath),
+              resolve(__dirname, '../../../../../../node_modules', cssPath),
             ];
 
             for (const resolvedPath of possiblePaths) {

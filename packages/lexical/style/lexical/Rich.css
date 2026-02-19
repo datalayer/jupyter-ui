@@ -6,12 +6,12 @@
 
 .other h2 {
   font-size: 18px;
-  color: #444;
+  color: var(--fgColor-muted, #444);
   margin-bottom: 7px;
 }
 
 .other a {
-  color: #777;
+  color: var(--fgColor-muted, #777);
   text-decoration: underline;
   font-size: 14px;
 }
@@ -29,7 +29,7 @@
 
 h1 {
   font-size: 24px;
-  color: #333;
+  color: var(--fgColor-default, #333);
 }
 
 .ltr {
@@ -44,7 +44,7 @@ h1 {
   margin: 20px auto 20px auto;
   border-radius: 2px;
   max-width: 100%;
-  color: #000;
+  color: var(--fgColor-default, #000);
   position: relative;
   line-height: 20px;
   font-weight: 400;
@@ -54,7 +54,7 @@ h1 {
 }
 
 .editor-inner {
-  background: #fff;
+  background: var(--bgColor-default, #fff);
   position: relative;
 }
 
@@ -62,16 +62,16 @@ h1 {
   min-height: 150px;
   resize: none;
   font-size: 15px;
-  caret-color: rgb(5, 5, 5);
+  caret-color: var(--fgColor-default, rgb(5, 5, 5));
   position: relative;
   tab-size: 1;
   outline: 0;
   padding: 15px 10px;
-  caret-color: #444;
+  caret-color: var(--fgColor-default, #444);
 }
 
 .editor-placeholder {
-  color: #999;
+  color: var(--fgColor-muted, #999);
   overflow: hidden;
   position: absolute;
   text-overflow: ellipsis;
@@ -104,21 +104,21 @@ h1 {
 }
 
 .editor-text-code {
-  background-color: rgb(240, 242, 245);
+  background-color: var(--bgColor-muted, rgb(240, 242, 245));
   padding: 1px 0.25rem;
   font-family: Menlo, Consolas, Monaco, monospace;
   font-size: 94%;
 }
 
 .editor-link {
-  color: rgb(33, 111, 219);
+  color: var(--fgColor-accent, rgb(33, 111, 219));
   text-decoration: none;
 }
 
 .tree-view-output {
   display: block;
-  background: #222;
-  color: #fff;
+  background: var(--bgColor-emphasis, #222);
+  color: var(--fgColor-onEmphasis, #fff);
   padding: 5px;
   font-size: 12px;
   white-space: pre-wrap;
@@ -132,7 +132,7 @@ h1 {
 }
 
 .editor-code {
-  background-color: rgb(240, 242, 245);
+  background-color: var(--bgColor-muted, rgb(240, 242, 245));
   font-family: Menlo, Consolas, Monaco, monospace;
   display: block;
   padding: 8px 8px 8px 52px;
@@ -150,12 +150,12 @@ h1 {
 .editor-code:before {
   content: attr(data-gutter);
   position: absolute;
-  background-color: #eee;
+  background-color: var(--bgColor-muted, #eee);
   left: 0;
   top: 0;
-  border-right: 1px solid #ccc;
+  border-right: 1px solid var(--borderColor-default, #ccc);
   padding: 8px;
-  color: #777;
+  color: var(--fgColor-muted, #777);
   white-space: pre-wrap;
   text-align: right;
   min-width: 25px;
@@ -168,39 +168,39 @@ h1 {
   font-size: 10px;
   text-transform: uppercase;
   position: absolute;
-  color: rgba(0, 0, 0, 0.5);
+  color: var(--fgColor-muted, rgba(0, 0, 0, 0.5));
 }
 
 .editor-tokenComment {
-  color: slategray;
+  color: var(--codeMirror-syntax-fgColor-comment, slategray);
 }
 
 .editor-tokenPunctuation {
-  color: #999;
+  color: var(--fgColor-muted, #999);
 }
 
 .editor-tokenProperty {
-  color: #905;
+  color: var(--codeMirror-syntax-fgColor-constant, #905);
 }
 
 .editor-tokenSelector {
-  color: #690;
+  color: var(--codeMirror-syntax-fgColor-string, #690);
 }
 
 .editor-tokenOperator {
-  color: #9a6e3a;
+  color: var(--codeMirror-syntax-fgColor-variable, #9a6e3a);
 }
 
 .editor-tokenAttr {
-  color: #07a;
+  color: var(--codeMirror-syntax-fgColor-keyword, #07a);
 }
 
 .editor-tokenVariable {
-  color: #e90;
+  color: var(--codeMirror-syntax-fgColor-variable, #e90);
 }
 
 .editor-tokenFunction {
-  color: #dd4a68;
+  color: var(--codeMirror-syntax-fgColor-entity, #dd4a68);
 }
 
 .editor-paragraph {
@@ -215,7 +215,7 @@ h1 {
 
 .editor-heading-h1 {
   font-size: 24px;
-  color: rgb(5, 5, 5);
+  color: var(--fgColor-default, rgb(5, 5, 5));
   font-weight: 400;
   margin: 0;
   margin-bottom: 12px;
@@ -224,7 +224,7 @@ h1 {
 
 .editor-heading-h2 {
   font-size: 15px;
-  color: rgb(101, 103, 107);
+  color: var(--fgColor-muted, rgb(101, 103, 107));
   font-weight: 700;
   margin: 0;
   margin-top: 10px;
@@ -236,8 +236,8 @@ h1 {
   margin: 0;
   margin-left: 20px;
   font-size: 15px;
-  color: rgb(101, 103, 107);
-  border-left-color: rgb(206, 208, 212);
+  color: var(--fgColor-muted, rgb(101, 103, 107));
+  border-left-color: var(--borderColor-default, rgb(206, 208, 212));
   border-left-width: 4px;
   border-left-style: solid;
   padding-left: 16px;
@@ -269,7 +269,7 @@ pre::-webkit-scrollbar {
 }
 
 pre::-webkit-scrollbar-thumb {
-  background: #999;
+  background: var(--fgColor-muted, #999);
 }
 
 .debug-timetravel-panel {
@@ -289,7 +289,7 @@ pre::-webkit-scrollbar-thumb {
   border: 0;
   background: none;
   flex: 1;
-  color: #fff;
+  color: var(--fgColor-onEmphasis, #fff);
   font-size: 12px;
 }
 
@@ -305,7 +305,7 @@ pre::-webkit-scrollbar-thumb {
   right: 15px;
   position: absolute;
   background: none;
-  color: #fff;
+  color: var(--fgColor-onEmphasis, #fff);
 }
 
 .debug-timetravel-button:hover {
@@ -343,7 +343,7 @@ pre::-webkit-scrollbar-thumb {
   display: flex;
   box-sizing: content-box !important;
   margin-bottom: 1px;
-  background: #fff;
+  background: var(--bgColor-default, #fff);
   padding: 4px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
@@ -384,7 +384,7 @@ pre::-webkit-scrollbar-thumb {
 }
 
 .toolbar button.toolbar-item.active {
-  background-color: rgba(223, 232, 250, 0.3);
+  background-color: var(--bgColor-accent-muted, rgba(223, 232, 250, 0.3));
 }
 
 .toolbar button.toolbar-item.active i {
@@ -392,12 +392,12 @@ pre::-webkit-scrollbar-thumb {
 }
 
 .toolbar .toolbar-item:hover:not([disabled]) {
-  background-color: #eee;
+  background-color: var(--bgColor-muted, #eee);
 }
 
 .toolbar .divider {
   width: 1px;
-  background-color: #eee;
+  background-color: var(--borderColor-muted, #eee);
   margin: 0 4px;
 }
 
@@ -412,7 +412,7 @@ pre::-webkit-scrollbar-thumb {
   -moz-appearance: none;
   width: 70px;
   font-size: 14px;
-  color: #777;
+  color: var(--fgColor-muted, #777);
   text-overflow: ellipsis;
 }
 
@@ -427,7 +427,7 @@ pre::-webkit-scrollbar-thumb {
   width: 200px;
   vertical-align: middle;
   font-size: 14px;
-  color: #777;
+  color: var(--fgColor-muted, #777);
   text-overflow: ellipsis;
   width: 70px;
   overflow: hidden;
@@ -473,7 +473,7 @@ i.chevron-down {
 }
 
 #block-controls button:hover {
-  background-color: #efefef;
+  background-color: var(--bgColor-muted, #efefef);
 }
 
 #block-controls button:focus-visible {
@@ -519,19 +519,21 @@ i.chevron-down {
   z-index: 100;
   display: block;
   position: fixed;
-  box-shadow:
+  box-shadow: var(
+    --shadow-floating-medium,
     0 12px 28px 0 rgba(0, 0, 0, 0.2),
     0 2px 4px 0 rgba(0, 0, 0, 0.1),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5)
+  );
   border-radius: 8px;
   min-height: 40px;
-  background-color: #fff;
+  background-color: var(--overlay-bgColor, #fff);
 }
 
 .dropdown .item {
   margin: 0 8px 0 8px;
   padding: 8px;
-  color: #050505;
+  color: var(--fgColor-default, #050505);
   cursor: pointer;
   line-height: 16px;
   font-size: 15px;
@@ -540,7 +542,7 @@ i.chevron-down {
   flex-direction: row;
   flex-shrink: 0;
   justify-content: space-between;
-  background-color: #fff;
+  background-color: var(--overlay-bgColor, #fff);
   border-radius: 8px;
   border: 0;
   max-width: 264px;
@@ -561,7 +563,7 @@ i.chevron-down {
 }
 
 .dropdown .item .shortcut {
-  color: #939393;
+  color: var(--fgColor-muted, #939393);
   align-self: flex-end;
 }
 
@@ -581,7 +583,7 @@ i.chevron-down {
 }
 
 .dropdown .item:hover {
-  background-color: #eee;
+  background-color: var(--bgColor-muted, #eee);
 }
 
 .dropdown .item .text {
@@ -605,7 +607,7 @@ i.chevron-down {
 
 .dropdown .divider {
   width: auto;
-  background-color: #eee;
+  background-color: var(--borderColor-muted, #eee);
   margin: 4px 8px;
   height: 1px;
 }

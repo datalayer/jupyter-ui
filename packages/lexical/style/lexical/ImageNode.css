@@ -9,7 +9,7 @@
   border: 0px;
   resize: none;
   cursor: text;
-  caret-color: rgb(5, 5, 5);
+  caret-color: var(--fgColor-default, rgb(5, 5, 5));
   display: block;
   position: relative;
   tab-size: 1;
@@ -24,7 +24,7 @@
 
 .ImageNode__placeholder {
   font-size: 12px;
-  color: #888;
+  color: var(--fgColor-muted, #888);
   overflow: hidden;
   position: absolute;
   text-overflow: ellipsis;

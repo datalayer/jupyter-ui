@@ -10,8 +10,8 @@
  */
 
 .Collapsible__container {
-  background: #f8f8f8;
-  border: 1px solid #e0e0e0;
+  background: var(--bgColor-muted, #f8f8f8);
+  border: 1px solid var(--borderColor-default, #e0e0e0);
   border-radius: 6px;
   margin: 12px 0;
   padding: 0;
@@ -29,7 +29,7 @@
   list-style-type: none;
   display: block;
   outline: none;
-  color: #333;
+  color: var(--fgColor-default, #333);
   user-select: none;
   transition: background-color 0.15s ease;
   margin: 0;
@@ -40,7 +40,7 @@
 }
 
 .Collapsible__title:hover {
-  background-color: rgba(0, 0, 0, 0.04);
+  background-color: var(--bgColor-neutral-muted, rgba(0, 0, 0, 0.04));
 }
 
 /* Remove default paragraph margins inside title */
@@ -78,7 +78,7 @@ summary.Collapsible__title::marker {
   top: 50%;
   transform: translateY(-50%);
   font-size: 12px;
-  color: #555;
+  color: var(--fgColor-muted, #555);
   transition: all 0.15s ease;
   opacity: 0.9;
   display: inline-block;

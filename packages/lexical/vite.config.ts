@@ -13,6 +13,7 @@ import react from '@vitejs/plugin-react';
 import dts from 'vite-plugin-dts';
 import { resolve } from 'path';
 import { fileURLToPath } from 'url';
+import { readFileSync } from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = resolve(__filename, '..');
@@ -80,11 +81,67 @@ export default defineConfig(({ mode }) => {
         name: 'css-raw-to-string',
         enforce: 'pre',
         transform(code, id) {
-          if (id.includes('.css?raw')) {
+          // Only match explicit ?raw query — not absolute paths that happen to contain 'raw'
+          if (/\.css\?raw$/.test(id)) {
             return {
               code: `export default ${JSON.stringify(code)};`,
               map: null,
             };
+          }
+          return null;
+        },
+      },
+      // Plugin to handle dynamic ?raw CSS imports from node_modules (JupyterLab themes)
+      // This uses resolveId + load to physically read the CSS file from disk
+      // for dynamic imports like: import('@jupyterlab/theme-dark-extension/style/variables.css?raw')
+      {
+        name: 'jupyterlab-theme-css-raw',
+        enforce: 'pre',
+        resolveId(source) {
+          // Handle bare specifier imports with ?raw
+          if (
+            source.includes('@jupyterlab/theme-') &&
+            source.endsWith('.css?raw')
+          ) {
+            return '\0' + source;
+          }
+          // Also handle without ?raw — Vite may strip it for CSS files
+          if (
+            source.includes('@jupyterlab/theme-') &&
+            source.includes('variables.css') &&
+            !source.endsWith('.css?raw')
+          ) {
+            return '\0' + source + '?raw';
+          }
+          return null;
+        },
+        load(id) {
+          if (
+            id.startsWith('\0') &&
+            id.includes('@jupyterlab/theme-') &&
+            (id.endsWith('.css?raw') || id.includes('variables.css'))
+          ) {
+            const cssPath = id.slice(1).replace('?raw', '');
+            const possiblePaths = [
+              resolve(__dirname, 'node_modules', cssPath),
+              resolve(__dirname, '../../node_modules', cssPath),
+              resolve(__dirname, '../../../node_modules', cssPath),
+              resolve(__dirname, '../../../../node_modules', cssPath),
+              resolve(__dirname, '../../../../../node_modules', cssPath),
+              resolve(__dirname, '../../../../../../node_modules', cssPath),
+            ];
+            for (const resolvedPath of possiblePaths) {
+              try {
+                const cssContent = readFileSync(resolvedPath, 'utf-8');
+                return `export default ${JSON.stringify(cssContent)};`;
+              } catch {
+                // Try next path
+              }
+            }
+            console.warn(
+              `[jupyterlab-theme-css-raw] Could not load theme CSS: ${cssPath}`,
+            );
+            return 'export default "";';
           }
           return null;
         },
@@ -102,6 +159,11 @@ export default defineConfig(({ mode }) => {
       port: 3211,
       open: false,
       hmr: true,
+      fs: {
+        // Allow serving files from the entire monorepo root
+        // node_modules are at ../../../../../../node_modules (src/node_modules)
+        allow: [resolve(__dirname, '../../../../../../')],
+      },
     },
     build: {
       target: 'esnext',
@@ -164,11 +226,20 @@ export default defineConfig(({ mode }) => {
     optimizeDeps: {
       esbuildOptions: {
         target: 'esnext',
+        loader: {
+          '.css': 'text',
+        },
       },
       include: ['react', 'react-dom'],
       // Exclude lexical packages from pre-bundling - they have broken exports maps
       // The alias in resolve.alias handles resolving them
-      exclude: ['@lexical/react', '@lexical/rich-text'],
+      exclude: [
+        '@lexical/react',
+        '@lexical/rich-text',
+        // Exclude theme CSS to allow ?raw imports to work
+        '@jupyterlab/theme-light-extension',
+        '@jupyterlab/theme-dark-extension',
+      ],
     },
   };
 });

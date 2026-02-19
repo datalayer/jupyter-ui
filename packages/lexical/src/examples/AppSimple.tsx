@@ -5,11 +5,18 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Button, ButtonGroup } from '@primer/react';
-import { Box } from '@datalayer/primer-addons';
-import { ThreeBarsIcon } from '@primer/octicons-react';
-import { JupyterReactTheme } from '@datalayer/jupyter-react';
+import { Button, ToggleSwitch, Text } from '@primer/react';
+import { Box, setupPrimerPortals } from '@datalayer/primer-addons';
+import { MoonIcon, SunIcon, ThreeBarsIcon } from '@primer/octicons-react';
+import {
+  JupyterReactTheme,
+  useJupyterReactStore,
+} from '@datalayer/jupyter-react';
 import { useLexical, Editor, LexicalProvider, nbformatToLexical } from '..';
+import { ThemeContext } from '../context/ThemeContext';
+import type { ThemeType } from '../context/ThemeContext';
+
+type ColorMode = 'day' | 'night' | 'light' | 'dark' | 'auto';
 
 import LEXICAL_MODEL from './content/Example.lexical.json';
 
@@ -52,103 +59,154 @@ const LexicalEditor = () => {
   );
 };
 
-export const AppSimple = () => {
+const AppToolbar = (props: {
+  hasRuntime: boolean;
+  toggleRuntime: (v: boolean) => void;
+  colorMode: ColorMode;
+  setColorMode: (mode: ColorMode) => void;
+}) => {
+  const { hasRuntime, toggleRuntime, colorMode, setColorMode } = props;
+  const isDark = colorMode === 'night' || colorMode === 'dark';
+
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        width: '100%',
+      }}
+    >
+      <h1 style={{ margin: 0, flex: 1, textAlign: 'center' }}>
+        Jupyter UI ❤️ Lexical
+      </h1>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 3,
+          marginLeft: 'auto',
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <SunIcon size={16} />
+          <ToggleSwitch
+            size="small"
+            defaultChecked={isDark}
+            onChange={(on: boolean) => setColorMode(on ? 'night' : 'day')}
+            statusLabelPosition="end"
+            aria-labelledby="colormode-toggle-label"
+          />
+          <MoonIcon size={16} />
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Text
+            id="runtime-toggle-label"
+            sx={{ fontSize: 0, color: 'fg.muted' }}
+          >
+            Runtime
+          </Text>
+          <ToggleSwitch
+            size="small"
+            defaultChecked={hasRuntime}
+            onChange={(on: boolean) => toggleRuntime(on)}
+            statusLabelPosition="end"
+            aria-labelledby="runtime-toggle-label"
+          />
+        </Box>
+      </Box>
+    </Box>
+  );
+};
+
+export const App = () => {
   // Get initial state from URL or localStorage
-  const getInitialKernelState = () => {
+  const getInitialRuntimeState = () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const kernelParam = urlParams.get('kernel');
-    if (kernelParam !== null) {
-      return kernelParam === 'true';
+    const runtimeParam = urlParams.get('runtime');
+    if (runtimeParam !== null) {
+      return runtimeParam === 'true';
     }
-    const stored = localStorage.getItem('hasKernel');
-    return stored === 'true';
+    const stored = localStorage.getItem('hasRuntime');
+    return stored !== 'false';
   };
 
-  const [hasKernel] = useState(getInitialKernelState);
+  const getInitialColorMode = (): ColorMode => {
+    const stored = localStorage.getItem('colorMode');
+    if (stored === 'day' || stored === 'night') {
+      return stored;
+    }
+    return 'day';
+  };
 
-  const toggleKernel = (newValue: boolean) => {
-    localStorage.setItem('hasKernel', String(newValue));
+  const [hasRuntime] = useState(getInitialRuntimeState);
+  const [colorMode, setColorMode] = useState<ColorMode>(getInitialColorMode);
+
+  const { setColormode } = useJupyterReactStore();
+
+  // Setup Primer portals and sync JupyterReact store on color mode change
+  useEffect(() => {
+    const primerColormode =
+      colorMode === 'night' || colorMode === 'dark' ? 'dark' : 'light';
+    setupPrimerPortals(primerColormode);
+    setColormode(primerColormode);
+  }, [colorMode, setColormode]);
+
+  const toggleRuntime = (newValue: boolean) => {
+    localStorage.setItem('hasRuntime', String(newValue));
     const url = new URL(window.location.href);
-    url.searchParams.set('kernel', String(newValue));
+    url.searchParams.set('runtime', String(newValue));
     window.location.href = url.toString();
   };
 
   return (
-    <>
-      <div className="App">
-        <h1>Jupyter UI ❤️ Lexical</h1>
-        <ButtonGroup>
-          <Button
-            variant={!hasKernel ? 'primary' : 'default'}
-            onClick={() => toggleKernel(false)}
-            sx={{
-              fontWeight: !hasKernel ? 'bold' : 'normal',
-              backgroundColor: !hasKernel ? '#0969da' : 'transparent',
-              color: !hasKernel ? 'white' : 'inherit',
-              '&:hover': {
-                backgroundColor: !hasKernel ? '#0860ca' : '#f3f4f6',
-              },
+    <JupyterReactTheme
+      colormode={
+        colorMode === 'night' || colorMode === 'dark' ? 'dark' : 'light'
+      }
+    >
+      <ThemeContext.Provider
+        value={{
+          theme: (colorMode === 'night' || colorMode === 'dark'
+            ? 'dark'
+            : 'light') as ThemeType,
+        }}
+      >
+        <div className="App">
+          <AppToolbar
+            hasRuntime={hasRuntime}
+            toggleRuntime={toggleRuntime}
+            colorMode={colorMode}
+            setColorMode={(mode: ColorMode) => {
+              localStorage.setItem('colorMode', mode);
+              setColorMode(mode);
             }}
-          >
-            Without Runtime
-          </Button>
-          <Button
-            variant={hasKernel ? 'primary' : 'default'}
-            onClick={() => toggleKernel(true)}
-            sx={{
-              fontWeight: hasKernel ? 'bold' : 'normal',
-              backgroundColor: hasKernel ? '#0969da' : 'transparent',
-              color: hasKernel ? 'white' : 'inherit',
-              '&:hover': {
-                backgroundColor: hasKernel ? '#0860ca' : '#f3f4f6',
-              },
-            }}
-          >
-            With Runtime
-          </Button>
-        </ButtonGroup>
-        <p style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
-          Current mode:{' '}
-          <strong>{hasKernel ? 'Runtime Connected' : 'No Runtime'}</strong>
-        </p>
-      </div>
-      <JupyterReactTheme>
+          />
+        </div>
         <LexicalProvider>
           <LexicalEditor />
         </LexicalProvider>
-      </JupyterReactTheme>
-      <div className="other App">
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            textAlign: 'center',
-          }}
-        >
-          <a href="https://datalayer.ai" target="_blank" rel="noreferrer">
-            <ThreeBarsIcon />
-          </a>
-        </div>
-        <h2>
-          <a href="https://datalayer.ai" target="_blank" rel="noreferrer">
-            Datalayer, Inc.
-          </a>
-        </h2>
-        <ul>
-          <li>
-            <a
-              href="https://github.com/datalayer/jupyter-ui"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Jupyter UI
+        <div className="other App">
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+            }}
+          >
+            <a href="https://datalayer.ai" target="_blank" rel="noreferrer">
+              <ThreeBarsIcon />
             </a>
-          </li>
-        </ul>
-      </div>
-    </>
+          </div>
+          <h2>
+            <a href="https://datalayer.ai" target="_blank" rel="noreferrer">
+              Datalayer, Inc.
+            </a>
+          </h2>
+        </div>
+      </ThemeContext.Provider>
+    </JupyterReactTheme>
   );
 };
 
-export default AppSimple;
+export default App;

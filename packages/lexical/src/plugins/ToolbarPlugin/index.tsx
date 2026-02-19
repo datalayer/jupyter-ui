@@ -746,6 +746,7 @@ export function ToolbarPlugin({
         group: 'block',
         ariaLabel: 'Formatting options for text style',
         label: blockTypeToBlockName[toolbarState.blockType],
+        minWidth: 110,
         options: blockOptions,
         disabled: !isEditable,
       });
@@ -770,6 +771,7 @@ export function ToolbarPlugin({
               ? normalizeCodeLanguageShiki(toolbarState.codeLanguage)
               : normalizeCodeLanguagePrism(toolbarState.codeLanguage)),
         ) || ['', ''])[1],
+        minWidth: 90,
         disabled: !isEditable,
         options: langOptions.map(([value, name]) => ({
           key: value,
@@ -789,6 +791,7 @@ export function ToolbarPlugin({
           label: (CODE_THEME_OPTIONS_SHIKI.find(
             opt => opt[0] === toolbarState.codeTheme,
           ) || ['', ''])[1],
+          minWidth: 90,
           disabled: !isEditable,
           options: CODE_THEME_OPTIONS_SHIKI.map(([value, name]) => ({
             key: value,
@@ -808,6 +811,7 @@ export function ToolbarPlugin({
         ariaLabel: 'Font family',
         icon: TypographyIcon,
         label: toolbarState.fontFamily,
+        minWidth: 90,
         disabled: !isEditable,
         options: FONT_FAMILY_OPTIONS.map(([value, name]) => ({
           key: value,
@@ -912,6 +916,19 @@ export function ToolbarPlugin({
       });
 
       // ---- More formatting dropdown ----
+      // Compute label from the first active option so the trigger shows
+      // the current selection (same pattern as block-format / font-family).
+      const moreFormattingActiveLabel = (() => {
+        if (toolbarState.isLowercase) return 'Lowercase';
+        if (toolbarState.isUppercase) return 'Uppercase';
+        if (toolbarState.isCapitalize) return 'Capitalize';
+        if (toolbarState.isStrikethrough) return 'Strikethrough';
+        if (toolbarState.isSubscript) return 'Subscript';
+        if (toolbarState.isSuperscript) return 'Superscript';
+        if (toolbarState.isHighlight) return 'Highlight';
+        return 'More';
+      })();
+
       result.push({
         key: 'more-formatting',
         type: 'dropdown',
@@ -919,6 +936,8 @@ export function ToolbarPlugin({
         group: 'format',
         ariaLabel: 'More formatting options',
         icon: TriangleDownIcon,
+        label: moreFormattingActiveLabel,
+        minWidth: 95,
         disabled: !isEditable,
         options: [
           {
@@ -1104,6 +1123,7 @@ export function ToolbarPlugin({
       group: 'align',
       ariaLabel: 'Text alignment',
       label: formatOption.name,
+      minWidth: 95,
       icon: RowsIcon,
       disabled: !isEditable,
       options: [

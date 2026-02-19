@@ -159,7 +159,7 @@ const Tabs = () => {
   );
 };
 
-export function AppNbformat() {
+export function App() {
   return (
     <>
       <div className="App">
@@ -204,21 +204,10 @@ export function AppNbformat() {
               Datalayer, Inc.
             </a>
           </h2>
-          <ul>
-            <li>
-              <a
-                href="https://github.com/datalayer/jupyter-ui"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Jupyter UI
-              </a>
-            </li>
-          </ul>
         </div>
       </div>
     </>
   );
 }
 
-export default AppNbformat;
+export default App;

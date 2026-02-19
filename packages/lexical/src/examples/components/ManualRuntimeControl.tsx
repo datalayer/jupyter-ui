@@ -5,16 +5,16 @@
  */
 
 /**
- * Example: Manual Kernel Control from External Component
+ * Example: Manual Runtime Control from External Component
  *
  * This example demonstrates how to programmatically control the Jupyter component's
- * kernel state from an external component, such as a VSCode extension.
+ * runtime state from an external component, such as a VSCode extension.
  *
  * Use cases:
  * - VSCode extension detecting runtime termination
  * - User manually disconnecting from a server
  * - Switching between different Jupyter servers
- * - Implementing custom kernel lifecycle management
+ * - Implementing custom runtime lifecycle management
  */
 
 import React, { useState, useCallback, useEffect } from 'react';
@@ -39,7 +39,7 @@ class RuntimeMonitor {
   }
 
   /**
-   * Simulate runtime termination (e.g., kernel crash, server disconnect)
+   * Simulate runtime termination (e.g., runtime crash, server disconnect)
    */
   simulateRuntimeTermination(): void {
     console.log('🔴 Runtime terminated!');
@@ -72,13 +72,13 @@ class RuntimeMonitor {
 const runtimeMonitor = new RuntimeMonitor();
 
 /**
- * Main component demonstrating manual kernel control
+ * Main component demonstrating manual runtime control
  */
-export const ManualKernelControlExample: React.FC = () => {
+export const ManualRuntimeControlExample: React.FC = () => {
   const [serviceManager, setServiceManager] = useState<
     ServiceManager | undefined
   >(undefined);
-  const [startDefaultKernel, setStartDefaultKernel] = useState<boolean>(true);
+  const [startDefaultRuntime, setStartDefaultRuntime] = useState<boolean>(true);
   const [runtimeConnected, setRuntimeConnected] = useState<boolean>(true);
   const [statusMessage, setStatusMessage] =
     useState<string>('Runtime connected');
@@ -122,7 +122,7 @@ export const ManualKernelControlExample: React.FC = () => {
         serviceManager.dispose();
       }
       setServiceManager(undefined);
-      setStatusMessage('Runtime disconnected - No kernel available');
+      setStatusMessage('Runtime disconnected - No runtime available');
     }
 
     // Cleanup on unmount
@@ -153,7 +153,7 @@ export const ManualKernelControlExample: React.FC = () => {
    */
   const handleDisconnect = useCallback(() => {
     console.log('👤 User requested disconnect');
-    setStartDefaultKernel(false);
+    setStartDefaultRuntime(false);
     setRuntimeConnected(false);
   }, []);
 
@@ -162,7 +162,7 @@ export const ManualKernelControlExample: React.FC = () => {
    */
   const handleConnect = useCallback(() => {
     console.log('👤 User requested connect');
-    setStartDefaultKernel(true);
+    setStartDefaultRuntime(true);
     setRuntimeConnected(true);
   }, []);
 
@@ -182,7 +182,7 @@ export const ManualKernelControlExample: React.FC = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h1>Manual Kernel Control Example</h1>
+      <h1>Manual Runtime Control Example</h1>
 
       {/* Status Display */}
       <div
@@ -202,8 +202,8 @@ export const ManualKernelControlExample: React.FC = () => {
         <strong>ServiceManager:</strong>{' '}
         {serviceManager ? 'Available ✅' : 'Not Available ❌'}
         <br />
-        <strong>Start Default Kernel:</strong>{' '}
-        {startDefaultKernel ? 'Yes' : 'No'}
+        <strong>Start Default Runtime:</strong>{' '}
+        {startDefaultRuntime ? 'Yes' : 'No'}
       </div>
 
       {/* Manual Control Buttons */}
@@ -302,13 +302,13 @@ class RuntimeManager {
   private _onDidChangeState = new vscode.EventEmitter<boolean>();
   public readonly onDidChangeState = this._onDidChangeState.event;
 
-  // Detect kernel termination
-  public handleKernelTerminated(): void {
+  // Detect runtime termination
+  public handleRuntimeTerminated(): void {
     this._onDidChangeState.fire(false);
   }
 
-  // Detect kernel started
-  public handleKernelStarted(): void {
+  // Detect runtime started
+  public handleRuntimeStarted(): void {
     this._onDidChangeState.fire(true);
   }
 }
@@ -332,7 +332,7 @@ useEffect(() => {
 // 4. Control Jupyter component
 <Jupyter
   serviceManager={hasRuntime ? serviceManager : undefined}
-  startDefaultKernel={hasRuntime}
+  startDefaultRuntime={hasRuntime}
 />
 `}
         </pre>
@@ -403,4 +403,4 @@ useEffect(() => {
   );
 };
 
-export default ManualKernelControlExample;
+export default ManualRuntimeControlExample;

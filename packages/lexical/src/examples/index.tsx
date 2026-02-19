@@ -9,9 +9,7 @@ import './setup-prism';
 
 import { createRoot } from 'react-dom/client';
 import { setupPrimerPortals } from '@datalayer/primer-addons';
-import App from './AppSimple';
-// import App from './AppNbformat';
-// import { ManualKernelControlExample } from './ManualKernelControl';
+import { App } from './AppSimple';
 
 import '../../style/index.css';
 

@@ -4,32 +4,13 @@
  * MIT License
  */
 
-@import url('Button.css');
-@import url('CodeActionMenuPlugin.css');
-/* Collapsible.css - now imported directly in src/plugins/CollapsiblePlugin/index.ts */
 @import url('CommentEditorTheme.css');
-@import url('CommentPlugin.css');
 @import url('ContentEditable.css');
-@import url('Dialog.css');
 @import url('DraggableBlockPlugin.css');
 @import url('Editor.css');
 @import url('EquationEditor.css');
-@import url('ExcalidrawModal.css');
-@import url('ExcalidrawNode.css');
-@import url('FloatingTextFormatToolbarPlugin.css');
 @import url('ImageNode.css');
-@import url('Input.css');
-@import url('Jupyter.css');
-@import url('KatexEquationAlterer.css');
-@import url('Modal.css');
-@import url('FontSize.css');
 @import url('Placeholder.css');
-@import url('PrettierButton.css');
 @import url('Rich.css');
 @import url('TableNode.css');
-@import url('TableInsertModal.css');
-/* TableCellResizer.css - now imported directly in src/plugins/TableCellResizer/index.tsx */
-@import url('ColorPicker.css');
-@import url('TableOfContentsPlugin.css');
 @import url('Theme.css');
-@import url('ToolbarPlugin.css');

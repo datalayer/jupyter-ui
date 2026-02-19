@@ -16,7 +16,8 @@ import {
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useMemo, useState } from 'react';
 import * as ReactDOM from 'react-dom';
-import { Box, Text } from '@primer/react';
+import { Box, Text, ThemeProvider, BaseStyles } from '@primer/react';
+import { useTheme } from '../context/ThemeContext';
 import { VideoIcon } from '@primer/octicons-react';
 
 import useModal from '../hooks/useModal';
@@ -225,6 +226,7 @@ export function AutoEmbedDialog({
 
 export const AutoEmbedPlugin = (): JSX.Element => {
   const [modal, showModal] = useModal();
+  const { theme } = useTheme();
 
   const openEmbedModal = (embedConfig: PlaygroundEmbedConfig) => {
     showModal(`Embed ${embedConfig.contentName}`, onClose => (
@@ -265,29 +267,36 @@ export const AutoEmbedPlugin = (): JSX.Element => {
         ) =>
           anchorElementRef.current
             ? ReactDOM.createPortal(
-                <Box
-                  sx={{
-                    bg: 'canvas.overlay',
-                    border: '1px solid',
-                    borderColor: 'border.default',
-                    borderRadius: 2,
-                    boxShadow: 'shadow.large',
-                    marginLeft: anchorElementRef.current.style.width,
-                    width: 200,
-                  }}
-                >
-                  <AutoEmbedMenu
-                    options={options}
-                    selectedItemIndex={selectedIndex}
-                    onOptionClick={(option: AutoEmbedOption, index: number) => {
-                      setHighlightedIndex(index);
-                      selectOptionAndCleanUp(option);
-                    }}
-                    onOptionMouseEnter={(index: number) => {
-                      setHighlightedIndex(index);
-                    }}
-                  />
-                </Box>,
+                <ThemeProvider colorMode={theme === 'dark' ? 'night' : 'day'}>
+                  <BaseStyles>
+                    <Box
+                      sx={{
+                        bg: 'canvas.overlay',
+                        border: '1px solid',
+                        borderColor: 'border.default',
+                        borderRadius: 2,
+                        boxShadow: 'shadow.large',
+                        marginLeft: anchorElementRef.current.style.width,
+                        width: 200,
+                      }}
+                    >
+                      <AutoEmbedMenu
+                        options={options}
+                        selectedItemIndex={selectedIndex}
+                        onOptionClick={(
+                          option: AutoEmbedOption,
+                          index: number,
+                        ) => {
+                          setHighlightedIndex(index);
+                          selectOptionAndCleanUp(option);
+                        }}
+                        onOptionMouseEnter={(index: number) => {
+                          setHighlightedIndex(index);
+                        }}
+                      />
+                    </Box>
+                  </BaseStyles>
+                </ThemeProvider>,
                 anchorElementRef.current,
               )
             : null

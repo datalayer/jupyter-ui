@@ -26,10 +26,10 @@
 }
 
 .EquationEditor_inputBackground {
-  background-color: #eee;
+  background-color: var(--bgColor-muted, #eee);
 }
 
 .EquationEditor_dollarSign {
   text-align: left;
-  color: #b0b0b0;
+  color: var(--fgColor-muted, #b0b0b0);
 }

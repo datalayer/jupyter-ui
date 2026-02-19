@@ -6,7 +6,7 @@
 
 .Placeholder__root {
   font-size: 15px;
-  color: #999;
+  color: var(--fgColor-muted, #999);
   overflow: hidden;
   position: absolute;
   text-overflow: ellipsis;
