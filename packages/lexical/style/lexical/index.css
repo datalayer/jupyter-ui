@@ -4,7 +4,6 @@
  * MIT License
  */
 
-@import url('ColorPicker.css');
 @import url('CommentEditorTheme.css');
 @import url('ContentEditable.css');
 @import url('DraggableBlockPlugin.css');
@@ -12,9 +11,7 @@
 @import url('EquationEditor.css');
 @import url('ExcalidrawNode.css');
 @import url('ImageNode.css');
-@import url('Jupyter.css');
 @import url('Placeholder.css');
 @import url('Rich.css');
-@import url('TableInsertModal.css');
 @import url('TableNode.css');
 @import url('Theme.css');

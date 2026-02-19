@@ -10,6 +10,7 @@
  * Datalayer License
  */
 
+import type { CSSProperties } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
@@ -169,7 +170,7 @@ function EscapeHandlerPlugin({
 }
 
 function PlainTextEditor({
-  className,
+  style,
   autoFocus,
   onEscape,
   onChange,
@@ -177,7 +178,7 @@ function PlainTextEditor({
   placeholder = 'Type a comment...',
 }: {
   autoFocus?: boolean;
-  className?: string;
+  style?: CSSProperties;
   editorRef?: { current: null | LexicalEditor };
   onChange: (editorState: EditorState, editor: LexicalEditor) => void;
   onEscape: (e: KeyboardEvent) => boolean;
@@ -194,9 +195,9 @@ function PlainTextEditor({
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
-      <div className="CommentPlugin CommentPlugin_CommentInputBox_EditorContainer">
+      <Box sx={{ position: 'relative', m: '10px', borderRadius: 2 }}>
         <PlainTextPlugin
-          contentEditable={<ContentEditable className={className} />}
+          contentEditable={<ContentEditable style={style} />}
           placeholder={<Placeholder>{placeholder}</Placeholder>}
           ErrorBoundary={LexicalErrorBoundary}
         />
@@ -206,7 +207,7 @@ function PlainTextEditor({
         <EscapeHandlerPlugin onEscape={onEscape} />
         <ClearEditorPlugin />
         {editorRef !== undefined && <EditorRefPlugin editorRef={editorRef} />}
-      </div>
+      </Box>
     </LexicalComposer>
   );
 }
@@ -347,13 +348,45 @@ function CommentInputBox({
   const onChange = useOnChange(setContent, setCanSubmit);
 
   return (
-    <div className="CommentPlugin_CommentInputBox" ref={boxRef}>
+    <Box
+      ref={boxRef}
+      sx={{
+        display: 'block',
+        position: 'absolute',
+        width: 250,
+        minHeight: 80,
+        bg: 'canvas.default',
+        boxShadow: 'shadow.medium',
+        borderRadius: 2,
+        zIndex: 24,
+      }}
+    >
       <PlainTextEditor
-        className="CommentPlugin_CommentInputBox_Editor"
+        style={{
+          position: 'relative',
+          border: '1px solid',
+          borderColor: 'var(--borderColor-default, #ccc)',
+          backgroundColor: 'var(--bgColor-default, #fff)',
+          borderRadius: '6px',
+          fontSize: '15px',
+          caretColor: 'rgb(5, 5, 5)',
+          display: 'block',
+          padding: '9px 10px 10px 9px',
+          minHeight: '80px',
+        }}
         onEscape={onEscape}
         onChange={onChange}
       />
-      <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 2 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          gap: 2,
+          justifyContent: 'flex-end',
+          mt: 2,
+          px: 2,
+          pb: 2,
+        }}
+      >
         <PrimerButton
           onClick={cancelAddComment}
           variant="invisible"
@@ -370,7 +403,7 @@ function CommentInputBox({
           Comment
         </PrimerButton>
       </Box>
-    </div>
+    </Box>
   );
 }
 
@@ -408,7 +441,18 @@ function CommentsComposer({
   return (
     <>
       <PlainTextEditor
-        className="CommentPlugin_CommentsPanel_Editor"
+        style={{
+          position: 'relative',
+          border: '1px solid',
+          borderColor: 'var(--borderColor-default, #ccc)',
+          backgroundColor: 'var(--bgColor-default, #fff)',
+          borderRadius: '6px',
+          fontSize: '15px',
+          caretColor: 'rgb(5, 5, 5)',
+          display: 'block',
+          padding: '9px 10px 10px 9px',
+          minHeight: '20px',
+        }}
         autoFocus={false}
         onEscape={() => {
           return true;
