@@ -81,7 +81,8 @@ export default defineConfig(({ mode }) => {
         name: 'css-raw-to-string',
         enforce: 'pre',
         transform(code, id) {
-          if (id.includes('.css?raw')) {
+          // Only match explicit ?raw query — not absolute paths that happen to contain 'raw'
+          if (/\.css\?raw$/.test(id)) {
             return {
               code: `export default ${JSON.stringify(code)};`,
               map: null,
@@ -91,15 +92,26 @@ export default defineConfig(({ mode }) => {
         },
       },
       // Plugin to handle dynamic ?raw CSS imports from node_modules (JupyterLab themes)
+      // This uses resolveId + load to physically read the CSS file from disk
+      // for dynamic imports like: import('@jupyterlab/theme-dark-extension/style/variables.css?raw')
       {
         name: 'jupyterlab-theme-css-raw',
         enforce: 'pre',
         resolveId(source) {
+          // Handle bare specifier imports with ?raw
           if (
             source.includes('@jupyterlab/theme-') &&
             source.endsWith('.css?raw')
           ) {
             return '\0' + source;
+          }
+          // Also handle without ?raw — Vite may strip it for CSS files
+          if (
+            source.includes('@jupyterlab/theme-') &&
+            source.includes('variables.css') &&
+            !source.endsWith('.css?raw')
+          ) {
+            return '\0' + source + '?raw';
           }
           return null;
         },
@@ -107,7 +119,7 @@ export default defineConfig(({ mode }) => {
           if (
             id.startsWith('\0') &&
             id.includes('@jupyterlab/theme-') &&
-            id.endsWith('.css?raw')
+            (id.endsWith('.css?raw') || id.includes('variables.css'))
           ) {
             const cssPath = id.slice(1).replace('?raw', '');
             const possiblePaths = [
@@ -116,6 +128,7 @@ export default defineConfig(({ mode }) => {
               resolve(__dirname, '../../../node_modules', cssPath),
               resolve(__dirname, '../../../../node_modules', cssPath),
               resolve(__dirname, '../../../../../node_modules', cssPath),
+              resolve(__dirname, '../../../../../../node_modules', cssPath),
             ];
             for (const resolvedPath of possiblePaths) {
               try {
@@ -125,8 +138,9 @@ export default defineConfig(({ mode }) => {
                 // Try next path
               }
             }
-            console.warn(`Could not load theme CSS: ${cssPath}`);
-            console.warn(`Tried paths:`, possiblePaths);
+            console.warn(
+              `[jupyterlab-theme-css-raw] Could not load theme CSS: ${cssPath}`,
+            );
             return 'export default "";';
           }
           return null;
@@ -146,8 +160,9 @@ export default defineConfig(({ mode }) => {
       open: false,
       hmr: true,
       fs: {
-        // Allow serving files from node_modules (needed for dynamic CSS imports in monorepo)
-        allow: ['..'],
+        // Allow serving files from the entire monorepo root
+        // node_modules are at ../../../../../../node_modules (src/node_modules)
+        allow: [resolve(__dirname, '../../../../../../')],
       },
     },
     build: {
