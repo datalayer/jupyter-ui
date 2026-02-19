@@ -163,7 +163,11 @@ export const App = () => {
             }}
           />
         </div>
-        <JupyterReactTheme>
+        <JupyterReactTheme
+          colormode={
+            colorMode === 'night' || colorMode === 'dark' ? 'dark' : 'light'
+          }
+        >
           <LexicalProvider>
             <LexicalEditor />
           </LexicalProvider>
