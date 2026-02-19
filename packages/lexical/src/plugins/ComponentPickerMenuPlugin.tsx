@@ -44,7 +44,8 @@ import {
 import { useCallback, useMemo, useState } from 'react';
 import * as ReactDOM from 'react-dom';
 import { Kernel } from '@datalayer/jupyter-react';
-import { Box, Text } from '@primer/react';
+import { Box, Text, ThemeProvider, BaseStyles } from '@primer/react';
+import { useTheme } from '../context/ThemeContext';
 import {
   ChecklistIcon,
   ChevronDownIcon,
@@ -172,6 +173,7 @@ export const ComponentPickerMenuPlugin = ({
   const [editor] = useLexicalComposerContext();
   const [modal, showModal] = useModal();
   const [queryString, setQueryString] = useState<string | null>(null);
+  const { theme } = useTheme();
 
   const checkForTriggerMatch = useBasicTypeaheadTriggerMatch('/', {
     minLength: 0,
@@ -461,41 +463,45 @@ export const ComponentPickerMenuPlugin = ({
         ) =>
           anchorElementRef.current && options.length
             ? ReactDOM.createPortal(
-                <Box
-                  sx={{
-                    bg: 'canvas.overlay',
-                    border: '1px solid',
-                    borderColor: 'border.default',
-                    borderRadius: 2,
-                    boxShadow: 'shadow.large',
-                    p: 1,
-                    maxHeight: 300,
-                    overflow: 'auto',
-                    minWidth: 200,
-                  }}
-                >
-                  <Box as="ul" sx={{ listStyle: 'none', m: 0, p: 0 }}>
-                    {options.map((option, i: number) => (
-                      <ComponentPickerMenuItem
-                        index={i}
-                        isSelected={selectedIndex === i}
-                        onClick={() => {
-                          if (!option.disabled) {
-                            setHighlightedIndex(i);
-                            selectOptionAndCleanUp(option);
-                          }
-                        }}
-                        onMouseEnter={() => {
-                          if (!option.disabled) {
-                            setHighlightedIndex(i);
-                          }
-                        }}
-                        key={option.key}
-                        option={option}
-                      />
-                    ))}
-                  </Box>
-                </Box>,
+                <ThemeProvider colorMode={theme === 'dark' ? 'night' : 'day'}>
+                  <BaseStyles>
+                    <Box
+                      sx={{
+                        bg: 'canvas.overlay',
+                        border: '1px solid',
+                        borderColor: 'border.default',
+                        borderRadius: 2,
+                        boxShadow: 'shadow.large',
+                        p: 1,
+                        maxHeight: 300,
+                        overflow: 'auto',
+                        minWidth: 200,
+                      }}
+                    >
+                      <Box as="ul" sx={{ listStyle: 'none', m: 0, p: 0 }}>
+                        {options.map((option, i: number) => (
+                          <ComponentPickerMenuItem
+                            index={i}
+                            isSelected={selectedIndex === i}
+                            onClick={() => {
+                              if (!option.disabled) {
+                                setHighlightedIndex(i);
+                                selectOptionAndCleanUp(option);
+                              }
+                            }}
+                            onMouseEnter={() => {
+                              if (!option.disabled) {
+                                setHighlightedIndex(i);
+                              }
+                            }}
+                            key={option.key}
+                            option={option}
+                          />
+                        ))}
+                      </Box>
+                    </Box>
+                  </BaseStyles>
+                </ThemeProvider>,
                 anchorElementRef.current,
               )
             : null
