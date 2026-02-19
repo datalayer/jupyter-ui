@@ -20,6 +20,7 @@ import {
   Text,
   Button as PrimerButton,
 } from '@primer/react';
+import { Overlay } from '@datalayer/primer-addons';
 import {
   CommentIcon,
   PaperAirplaneIcon,
@@ -775,10 +776,12 @@ function CommentsPanel({
     <Box
       sx={{
         bg: 'canvas.default',
-        border: '1px solid',
-        borderColor: 'border.default',
         borderRadius: 2,
         overflow: 'hidden',
+        width: '100%',
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
       }}
     >
       <Heading
@@ -822,17 +825,17 @@ function useCollabAuthorName(): string {
 export function CommentPlugin({
   providerFactory,
   showFloatingAddButton = true,
-  commentsPanelContainer,
 }: {
   providerFactory?: (
     id: string,
     yjsDocMap: Map<string, Doc>,
   ) => WebsocketProvider;
   showFloatingAddButton?: boolean;
-  commentsPanelContainer?: HTMLElement;
 }): JSX.Element {
   const [editor] = useLexicalComposerContext();
   const { showComments, setShowComments } = useComments();
+  const overlayOpenButtonRef = useRef<HTMLButtonElement>(null);
+  const overlayCloseButtonRef = useRef<HTMLButtonElement>(null);
   const commentStore = useMemo(() => new CommentStore(editor), [editor]);
   const comments = useCommentStore(commentStore);
   const markNodeMap = useMemo<Map<string, Set<NodeKey>>>(() => {
@@ -1080,17 +1083,28 @@ export function CommentPlugin({
           />,
           document.body,
         )}
-      {showComments &&
-        createPortal(
+      <button
+        ref={overlayOpenButtonRef}
+        style={{ display: 'none' }}
+        aria-hidden="true"
+      />
+      <Overlay
+        isOpen={showComments}
+        setIsOpen={setShowComments}
+        openButtonRef={overlayOpenButtonRef}
+        closeButtonRef={overlayCloseButtonRef}
+        direction="right"
+        width="350px"
+        content={
           <CommentsPanel
             comments={comments}
             submitAddComment={submitAddComment}
             deleteCommentOrThread={deleteCommentOrThread}
             activeIDs={activeIDs}
             markNodeMap={markNodeMap}
-          />,
-          commentsPanelContainer || document.body,
-        )}
+          />
+        }
+      />
     </>
   );
 }
