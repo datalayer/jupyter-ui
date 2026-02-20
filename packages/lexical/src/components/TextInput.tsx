@@ -4,11 +4,6 @@
  * MIT License
  */
 
-/**
- * TextInput - Migrated from custom CSS to Primer React TextInput.
- * Keeps the same export signature so all consumers work unchanged.
- */
-
 import { FormControl, TextInput as PrimerTextInput } from '@primer/react';
 
 type Props = Readonly<{

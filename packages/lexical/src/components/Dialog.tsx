@@ -4,11 +4,6 @@
  * MIT License
  */
 
-/**
- * Dialog helpers - Migrated from custom CSS to Primer React Box.
- * Keeps the same export signature so all consumers work unchanged.
- */
-
 import { ReactNode } from 'react';
 import { Box } from '@primer/react';
 

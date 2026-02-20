@@ -5,17 +5,7 @@
  */
 
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-/**
  * FloatingTextFormatToolbarPlugin - Primer React based floating inline toolbar.
- *
- * Migrated from custom CSS/HTML buttons to the @datalayer/primer-addons
- * FloatingToolbar component with Octicon icons.
  *
  * Accepts `extraItems` for extensibility (e.g., AI actions from agent-runtimes).
  *
@@ -30,6 +20,7 @@ import {
   $getSelection,
   $isRangeSelection,
   $isTextNode,
+  COMMAND_PRIORITY_LOW,
   FORMAT_TEXT_COMMAND,
   LexicalEditor,
 } from 'lexical';
@@ -149,6 +140,15 @@ function useFloatingTextFormatToolbar(
           setIsText(false);
         }
       }),
+      // Hide the floating toolbar when a comment is being added
+      editor.registerCommand(
+        INSERT_INLINE_COMMAND,
+        () => {
+          setIsText(false);
+          return false; // Don't prevent other handlers from running
+        },
+        COMMAND_PRIORITY_LOW,
+      ),
     );
   }, [editor, updatePopup]);
 

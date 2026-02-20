@@ -24,6 +24,11 @@ import {
 } from 'lexical';
 
 import { setDomHiddenUntilFound } from './CollapsibleUtils';
+import {
+  ensureCollapsibleStyles,
+  applyStyles,
+  containerStyles,
+} from './CollapsibleStyles';
 
 type SerializedCollapsibleContainerNode = Spread<
   {
@@ -83,6 +88,7 @@ export class CollapsibleContainerNode extends ElementNode {
   }
 
   createDOM(config: EditorConfig, editor: LexicalEditor): HTMLElement {
+    ensureCollapsibleStyles();
     // details is not well supported in Chrome #5582
     let dom: HTMLElement;
     if (IS_CHROME) {
@@ -100,6 +106,7 @@ export class CollapsibleContainerNode extends ElementNode {
       dom = detailsDom;
     }
     dom.classList.add('Collapsible__container');
+    applyStyles(dom, containerStyles);
 
     return dom;
   }

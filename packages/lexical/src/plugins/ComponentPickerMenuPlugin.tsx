@@ -6,9 +6,6 @@
 
 /**
  * ComponentPickerMenuPlugin - Slash command menu.
- *
- * Migrated from custom CSS icon classes to Primer Octicons
- * and Primer-styled popover container.
  */
 
 import { $createCodeNode } from '@lexical/code';

@@ -4,11 +4,6 @@
  * MIT License
  */
 
-/**
- * Button - Migrated from custom CSS to Primer React Button.
- * Keeps the same export signature so all consumers work unchanged.
- */
-
 import { ReactNode } from 'react';
 import { Button as PrimerButton } from '@primer/react';
 

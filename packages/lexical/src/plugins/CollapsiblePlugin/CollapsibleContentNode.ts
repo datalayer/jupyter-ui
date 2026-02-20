@@ -18,6 +18,11 @@ import {
 
 import { $isCollapsibleContainerNode } from './CollapsibleContainerNode';
 import { domOnBeforeMatch, setDomHiddenUntilFound } from './CollapsibleUtils';
+import {
+  ensureCollapsibleStyles,
+  applyStyles,
+  contentStyles,
+} from './CollapsibleStyles';
 
 type SerializedCollapsibleContentNode = SerializedElementNode;
 
@@ -40,8 +45,10 @@ export class CollapsibleContentNode extends ElementNode {
   }
 
   createDOM(config: EditorConfig, editor: LexicalEditor): HTMLElement {
+    ensureCollapsibleStyles();
     const dom = document.createElement('div');
     dom.classList.add('Collapsible__content');
+    applyStyles(dom, contentStyles);
     if (IS_CHROME) {
       editor.getEditorState().read(() => {
         const containerNode = this.getParentOrThrow();

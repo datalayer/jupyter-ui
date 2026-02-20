@@ -19,6 +19,11 @@ import {
 
 import { $isCollapsibleContainerNode } from './CollapsibleContainerNode';
 import { $isCollapsibleContentNode } from './CollapsibleContentNode';
+import {
+  ensureCollapsibleStyles,
+  applyStyles,
+  titleStyles,
+} from './CollapsibleStyles';
 
 export function $convertSummaryElement(
   _domNode: HTMLElement,
@@ -50,8 +55,10 @@ export class CollapsibleTitleNode extends ElementNode {
   }
 
   createDOM(config: EditorConfig, editor: LexicalEditor): HTMLElement {
+    ensureCollapsibleStyles();
     const dom = document.createElement('summary');
     dom.classList.add('Collapsible__title');
+    applyStyles(dom, titleStyles);
     if (IS_CHROME) {
       dom.addEventListener('click', () => {
         editor.update(() => {

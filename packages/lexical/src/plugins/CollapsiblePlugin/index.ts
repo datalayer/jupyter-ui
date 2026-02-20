@@ -4,8 +4,6 @@
  * MIT License
  */
 
-import './Collapsible.css';
-
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import {
   $findMatchingParent,

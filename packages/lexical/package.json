@@ -63,6 +63,7 @@
     "typedoc": "typedoc ./src",
     "validate:tools": "node scripts/validate-tools-sync.js",
     "watch": "run-p watch:src",
+    "watch:lib": "tsc -w",
     "watch:src": "tsc -w"
   },
   "dependencies": {

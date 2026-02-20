@@ -5,17 +5,6 @@
  */
 
 /**
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-/**
- * DropDown - Migrated from custom portal/CSS to Primer React ActionMenu.
- * Keeps the same export signature and children-based API so all consumers
- * work unchanged.
- *
  * DropDownItem children are rendered as ActionList.Item inside ActionMenu.
  */
 
