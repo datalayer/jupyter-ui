@@ -495,6 +495,14 @@ function ShowDeleteCommentOrThreadDialog({
       Are you sure you want to delete this {commentOrThread.type}?
       <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 3 }}>
         <PrimerButton
+          variant="invisible"
+          onClick={() => {
+            onClose();
+          }}
+        >
+          Cancel
+        </PrimerButton>
+        <PrimerButton
           variant="danger"
           onClick={() => {
             deleteCommentOrThread(commentOrThread, thread);
@@ -502,14 +510,6 @@ function ShowDeleteCommentOrThreadDialog({
           }}
         >
           Delete
-        </PrimerButton>{' '}
-        <PrimerButton
-          variant="invisible"
-          onClick={() => {
-            onClose();
-          }}
-        >
-          Cancel
         </PrimerButton>
       </Box>
     </>

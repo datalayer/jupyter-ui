@@ -195,15 +195,18 @@ export function App() {
               textAlign: 'center',
             }}
           >
-            <a href="https://datalayer.ai" target="_blank" rel="noreferrer">
+            <a
+              href="https://datalayer.ai"
+              target="_blank"
+              rel="noreferrer"
+              style={{ marginRight: 8 }}
+            >
               <ThreeBarsIcon />
             </a>
-          </div>
-          <h2>
             <a href="https://datalayer.ai" target="_blank" rel="noreferrer">
               Datalayer, Inc.
             </a>
-          </h2>
+          </div>
         </div>
       </div>
     </>

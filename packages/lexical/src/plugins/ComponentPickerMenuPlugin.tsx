@@ -12,6 +12,7 @@
  */
 
 import { $createCodeNode } from '@lexical/code';
+import { fetchRandomGif } from '../utils/giphy';
 import {
   INSERT_CHECK_LIST_COMMAND,
   INSERT_ORDERED_LIST_COMMAND,
@@ -65,7 +66,6 @@ import {
 } from '@primer/octicons-react';
 
 import useModal from '../hooks/useModal';
-import catTypingGif from '../images/yellow-flower-small.jpg';
 import { EmbedConfigs } from './AutoEmbedPlugin';
 import { InsertEquationDialog } from './EquationsPlugin';
 import { INSERT_IMAGE_COMMAND, InsertImageDialog } from './ImagesPlugin';
@@ -378,11 +378,13 @@ export const ComponentPickerMenuPlugin = ({
       new ComponentPickerOption('GIF', {
         icon: <FileMediaIcon size={16} />,
         keywords: ['gif', 'animate', 'image', 'file'],
-        onSelect: () =>
-          editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
-            altText: 'Cat typing on a laptop',
-            src: catTypingGif,
-          }),
+        onSelect: () => {
+          fetchRandomGif().then(result => {
+            if (result) {
+              editor.dispatchCommand(INSERT_IMAGE_COMMAND, result);
+            }
+          });
+        },
       }),
       new ComponentPickerOption('Image', {
         icon: <FileMediaIcon size={16} />,

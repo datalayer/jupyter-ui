@@ -22,6 +22,7 @@
  */
 
 import type { JSX } from 'react';
+import { fetchRandomGif } from '../../utils/giphy';
 import {
   $isCodeNode,
   getCodeLanguageOptions as getCodeLanguageOptionsPrism,
@@ -116,7 +117,6 @@ import {
 } from '../../context/ToolbarContext';
 import { useComments } from '../../context/CommentsContext';
 import useModal from '../../hooks/useModal';
-import catTypingGif from '../../images/yellow-flower-small.jpg';
 import { getSelectedNode } from '../../utils/getSelectedNode';
 import { sanitizeUrl } from '../../utils/url';
 import { EmbedConfigs } from '../AutoEmbedPlugin';
@@ -1069,11 +1069,13 @@ export function ToolbarPlugin({
           {
             key: 'gif',
             label: 'GIF',
-            onClick: () =>
-              insertGifOnClick({
-                altText: 'Cat typing on a laptop',
-                src: catTypingGif,
-              }),
+            onClick: () => {
+              fetchRandomGif().then(result => {
+                if (result) {
+                  insertGifOnClick(result);
+                }
+              });
+            },
           },
           {
             key: 'equation',

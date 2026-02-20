@@ -6,12 +6,12 @@
 
 import { useState } from 'react';
 import { LexicalEditor } from 'lexical';
+import { fetchRandomGif } from './../utils/giphy';
 import { Button } from './../components/Button';
 import { TextInput } from './../components/TextInput';
 import { FileInput } from './../components/FileInput';
 import { INSERT_IMAGE_COMMAND } from './../plugins/ImagesPlugin';
 import { InsertImagePayload } from './../plugins/ImagesPlugin';
-import yellowFlowerImage from '../images/yellow-flower-small.jpg';
 
 export function InsertImageUriDialogBody({
   onClick,
@@ -119,12 +119,13 @@ export function InsertImageDialog({
         <div className="ToolbarPlugin__dialogButtonsList">
           <Button
             data-test-id="image-modal-option-sample"
-            onClick={() =>
-              onClick({
-                altText: 'Yellow flower in tilt shift lens',
-                src: yellowFlowerImage,
-              })
-            }
+            onClick={() => {
+              fetchRandomGif().then(result => {
+                if (result) {
+                  onClick(result);
+                }
+              });
+            }}
           >
             Sample
           </Button>

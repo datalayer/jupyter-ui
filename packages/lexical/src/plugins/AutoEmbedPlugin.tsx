@@ -14,7 +14,7 @@ import {
   URL_MATCHER,
 } from '@lexical/react/LexicalAutoEmbedPlugin';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import * as ReactDOM from 'react-dom';
 import { Box, Text, ThemeProvider, BaseStyles } from '@primer/react';
 import { useTheme } from '../context/ThemeContext';
@@ -197,9 +197,16 @@ export function AutoEmbedDialog({
     }
   };
 
+  const inputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    // Focus the input when the dialog opens
+    inputRef.current?.focus();
+  }, []);
+
   return (
-    <div style={{ width: '600px' }}>
+    <div>
       <PrimerTextInput
+        ref={inputRef}
         type="text"
         placeholder={embedConfig.exampleUrl}
         value={text}

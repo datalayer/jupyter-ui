@@ -5,6 +5,7 @@
  */
 
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { fetchRandomGif } from '../utils/giphy';
 import { $wrapNodeInElement, mergeRegister } from '@lexical/utils';
 import {
   $createParagraphNode,
@@ -27,7 +28,6 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { CAN_USE_DOM } from './../utils/canUseDOM';
 
-import yellowFlowerImage from '../images/yellow-flower-small.jpg';
 import {
   $createImageNode,
   $isImageNode,
@@ -169,20 +169,13 @@ export function InsertImageDialog({
         <DialogButtonsList>
           <Button
             data-test-id="image-modal-option-sample"
-            onClick={() =>
-              onClick(
-                hasModifier.current
-                  ? {
-                      altText:
-                        'Daylight fir trees forest glacier green high ice landscape',
-                      src: yellowFlowerImage,
-                    }
-                  : {
-                      altText: 'Yellow flower in tilt shift lens',
-                      src: yellowFlowerImage,
-                    },
-              )
-            }
+            onClick={() => {
+              fetchRandomGif().then(result => {
+                if (result) {
+                  onClick(result);
+                }
+              });
+            }}
           >
             Sample
           </Button>

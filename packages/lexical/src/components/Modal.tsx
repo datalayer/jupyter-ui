@@ -24,7 +24,12 @@ export const Modal = ({
   title: string;
 }): JSX.Element => {
   return (
-    <Dialog title={title} onClose={() => onClose()} width="large" height="auto">
+    <Dialog
+      title={title}
+      onClose={() => onClose()}
+      width="medium"
+      height="auto"
+    >
       {children}
     </Dialog>
   );
