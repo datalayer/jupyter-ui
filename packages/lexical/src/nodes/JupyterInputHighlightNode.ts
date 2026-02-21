@@ -34,7 +34,7 @@ import {
   removeClassNamesFromElement,
 } from '@lexical/utils';
 
-export const DEFAULT_CODE_LANGUAGE = 'javascript';
+export const DEFAULT_CODE_LANGUAGE = 'python';
 
 type SerializedCodeHighlightNode = Spread<
   {
