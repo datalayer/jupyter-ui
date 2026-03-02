@@ -4,11 +4,6 @@
  * MIT License
  */
 
-/*
- * Copyright (c) 2023-2025 Datalayer, Inc.
- * Distributed under the terms of the Modified BSD License.
- */
-
 const JUPYTERLAB_COLLABORATORS_COLORS = {
   '--jp-collaborator-color1': '#ffad8e',
   '--jp-collaborator-color2': '#dac83d',
