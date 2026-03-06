@@ -1,0 +1,2 @@
+function t(){return{mangle:!1,walkTokens(t){if("link"!==t.type)return;if(!t.href.startsWith("mailto:"))return;const e=t.href.substring(7),n=function(t){let e,n,r="";const o=t.length;for(e=0;e<o;e++)n=t.charCodeAt(e),Math.random()>.5&&(n="x"+n.toString(16)),r+="&#"+n+";";return r}(e);t.href=`mailto:${n}`,1===t.tokens.length&&"text"===t.tokens[0].type&&t.tokens[0].text===e&&(t.text=n,t.tokens[0].text=n)}}}export{t as mangle};
+//# sourceMappingURL=index-D5E55D1z.js.map
