@@ -82,6 +82,11 @@
       "import": "./lib/jupyter/lite/javascript-kernel-extension/index.js",
       "require": "./lib/jupyter/lite/javascript-kernel-extension/index.js"
     },
+    "./lib/css/PrismCss": {
+      "types": "./lib/css/PrismCss.d.ts",
+      "import": "./lib/css/PrismCss.js",
+      "require": "./lib/css/PrismCss.js"
+    },
     "./style": "./style/index.js",
     "./style/*": "./style/*"
   },
