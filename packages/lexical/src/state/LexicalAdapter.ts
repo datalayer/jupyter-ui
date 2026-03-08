@@ -953,59 +953,74 @@ export class LexicalAdapter {
             loading: '',
           };
 
-          // NO MARKERS - directly set selection and dispatch
-          let blockId: string | undefined;
-
+          // Dispatch command inside editor.update() so it runs synchronously.
+          // We create an empty paragraph at the target position so the command
+          // handler's selection.insertNodes() inserts at root level.
           this._editor.update(() => {
             const root = $getRoot();
             const children = root.getChildren();
 
-            // Set selection at target position
+            // Create an empty target paragraph at the desired position
+            const targetParagraph = $createParagraphNode();
+
             if (afterBlockId === 'TOP') {
               if (children.length > 0) {
-                children[0].selectStart();
+                children[0].insertBefore(targetParagraph);
               } else {
-                root.selectStart();
+                root.append(targetParagraph);
               }
             } else if (afterBlockId === 'BOTTOM' || !afterBlockId) {
-              root.selectEnd();
+              root.append(targetParagraph);
             } else {
               const targetBlock = children.find(
                 child => child.getKey() === afterBlockId,
               );
               if (targetBlock) {
-                targetBlock.selectEnd();
+                targetBlock.insertAfter(targetParagraph);
               } else {
                 throw new Error(`Block ID ${afterBlockId} not found`);
               }
             }
 
-            // Dispatch command with selection already set
+            // Select inside the empty paragraph so the command inserts here
+            targetParagraph.selectStart();
+
+            // Dispatch command - handler runs synchronously within this update
             this._editor.dispatchCommand(
               INSERT_JUPYTER_INPUT_OUTPUT_COMMAND,
               commandPayload,
             );
-
-            // Find the newly created node immediately (same update)
-            const newChildren = $getRoot().getChildren();
-
-            for (let i = newChildren.length - 1; i >= 0; i--) {
-              if (newChildren[i].getType() === 'jupyter-input') {
-                blockId = newChildren[i].getKey();
-                break;
-              }
-            }
           });
 
-          if (!blockId) {
-            resolve({
-              success: false,
-              error: 'Failed to create jupyter-cell',
+          // Find the newly created node after the update commits.
+          // Use recursive search since the node may end up nested.
+          let blockId: string | undefined;
+          setTimeout(() => {
+            this._editor.getEditorState().read(() => {
+              const root = $getRoot();
+              const findLastByType = (
+                node: LexicalNode,
+                type: string,
+              ): LexicalNode | null => {
+                let result: LexicalNode | null = null;
+                if (node.getType() === type) result = node;
+                if (
+                  'getChildren' in node &&
+                  typeof (node as any).getChildren === 'function'
+                ) {
+                  for (const child of (node as any).getChildren()) {
+                    const found = findLastByType(child, type);
+                    if (found) result = found;
+                  }
+                }
+                return result;
+              };
+              const inputNode = findLastByType(root, 'jupyter-input');
+              if (inputNode) blockId = inputNode.getKey();
             });
-            return;
-          }
 
-          resolve({ success: true, blockId });
+            resolve({ success: true, blockId });
+          }, 20);
         } else if (block.block_type === 'youtube') {
           // Import YouTube command dynamically
           const { INSERT_YOUTUBE_COMMAND } =
