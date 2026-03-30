@@ -5,7 +5,7 @@
  */
 
 import type { LexicalCommand, LexicalEditor, LexicalNode } from 'lexical';
-import * as Prism from 'prismjs';
+import Prism from '@datalayer/jupyter-react/lib/css/PrismCss';
 import { mergeRegister } from '@lexical/utils';
 import {
   $createLineBreakNode,

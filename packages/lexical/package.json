@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyter-lexical",
-  "version": "1.0.14",
+  "version": "1.0.16",
   "description": "Jupyter UI for Lexical",
   "license": "MIT",
   "main": "lib/index.js",
@@ -68,9 +68,10 @@
   },
   "dependencies": {
     "@datalayer/icons-react": "^1.0.0",
-    "@datalayer/jupyter-react": "^2.0.3",
+    "@datalayer/jupyter-react": "^2.0.7",
     "@datalayer/lexical-loro": "^1.0.0",
-    "@datalayer/primer-addons": "^1.0.8",
+    "@datalayer/primer-addons": "^1.0.12",
+    "@excalidraw/excalidraw": "^0.18.0",
     "@floating-ui/react": "^0.27.16",
     "@jupyterlab/application": "^4.0.0",
     "@jupyterlab/coreutils": "^6.0.0",
@@ -87,7 +88,6 @@
     "@lexical/utils": "^0.35.0",
     "@lexical/yjs": "^0.35.0",
     "autoprefixer": "^10.4.21",
-    "@excalidraw/excalidraw": "^0.18.0",
     "katex": "^0.16.21",
     "lexical": "^0.35.0",
     "lodash-es": "^4.17.21",
