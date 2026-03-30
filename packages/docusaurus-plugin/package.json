@@ -23,8 +23,8 @@
   },
   "dependencies": {
     "@datalayer/icons-react": "^1.0.0",
-    "@datalayer/jupyter-react": "^2.0.3",
-    "@datalayer/primer-addons": "^1.0.4",
+    "@datalayer/jupyter-react": "^2.0.7",
+    "@datalayer/primer-addons": "^1.0.12",
     "@docusaurus/core": "^3.5.2",
     "@docusaurus/types": "^3.5.2"
   },
