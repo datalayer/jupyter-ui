@@ -11,6 +11,8 @@ import {
   JupyterFrontEndPlugin,
   JupyterFrontEnd,
   LabShell,
+  ILayoutRestorer,
+  IRouter,
 } from '@jupyterlab/application';
 import { IThemeManager, IWindowResolver } from '@jupyterlab/apputils';
 import { PageConfig } from '@jupyterlab/coreutils';
@@ -38,6 +40,33 @@ export class JupyterLabAppAdapter {
   private _ready: Promise<void>;
   private _readyResolve: () => void;
 
+  private normalizeKernelSpecResources(
+    specs: any,
+    serviceManager: ServiceManager.IManager
+  ): void {
+    if (!specs?.kernelspecs) {
+      return;
+    }
+    const baseUrl = serviceManager.serverSettings.baseUrl;
+    if (!baseUrl) {
+      return;
+    }
+    Object.values(specs.kernelspecs).forEach((spec: any) => {
+      if (!spec?.resources) {
+        return;
+      }
+      Object.entries(spec.resources).forEach(([resourceName, resourceUrl]) => {
+        if (typeof resourceUrl !== 'string' || !resourceUrl) {
+          return;
+        }
+        if (/^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(resourceUrl)) {
+          return;
+        }
+        spec.resources[resourceName] = new URL(resourceUrl, baseUrl).toString();
+      });
+    });
+  }
+
   constructor(props: JupyterLabAppAdapterProps, jupyterlab?: JupyterLab) {
     if (jupyterlab) {
       this._jupyterLab = jupyterlab;
@@ -54,6 +83,28 @@ export class JupyterLabAppAdapter {
     this.load(props);
   }
 
+  private async waitForShellAttachment(timeoutMs = 10000): Promise<void> {
+    const shell = this._jupyterLab.shell;
+    if (shell.isAttached) {
+      return;
+    }
+    await new Promise<void>(resolve => {
+      const deadline = Date.now() + timeoutMs;
+      const check = () => {
+        if (shell.isAttached) {
+          resolve();
+          return;
+        }
+        if (Date.now() >= deadline) {
+          resolve();
+          return;
+        }
+        window.requestAnimationFrame(check);
+      };
+      check();
+    });
+  }
+
   private async load(props: JupyterLabAppAdapterProps) {
     const {
       disabledPlugins = [],
@@ -68,12 +119,25 @@ export class JupyterLabAppAdapter {
     } = props;
     const mimeExtensionResolved = await Promise.all(mimeExtensionPromises);
     mimeExtensions.push(...mimeExtensionResolved);
+    const browserBaseUrl = new URL('.', window.location.href).toString();
+    const embeddedPaths: JupyterFrontEnd.IPaths = {
+      urls: {
+        ...JupyterLab.defaultPaths.urls,
+        // In embedded mode, JupyterLab must route against the host page
+        // origin, not the remote Jupyter Server base URL.
+        base: browserBaseUrl,
+      },
+      directories: {
+        ...JupyterLab.defaultPaths.directories,
+      },
+    };
     this._shell = new LabShell();
     this._jupyterLab = new JupyterLab({
       shell: this._shell,
       mimeExtensions,
       devMode,
       serviceManager,
+      paths: embeddedPaths,
       disabled: {
         matches: [],
         patterns: [],
@@ -83,6 +147,20 @@ export class JupyterLabAppAdapter {
         matches: [],
       },
     });
+
+    // Some Jupyter servers return kernelspec icon resources as root-relative
+    // paths (e.g. `/api/jupyter-server/kernelspecs/...`). In embedded dev
+    // mode that resolves against localhost and causes 404s. Normalize those
+    // URLs to the configured Jupyter server origin.
+    this.normalizeKernelSpecResources(
+      serviceManager.kernelspecs.specs,
+      serviceManager
+    );
+    serviceManager.kernelspecs.specsChanged.connect((_, specs) => {
+      this.normalizeKernelSpecResources(specs, serviceManager);
+    });
+
+    this._plugins = (this._jupyterLab as any)['pluginRegistry']['_plugins'];
     const extensionResolved = await Promise.all(extensionPromises);
     disabledPlugins.push(
       '@jupyterlab/notebook-extension:language-server',
@@ -125,7 +203,7 @@ export class JupyterLabAppAdapter {
     // disposal never runs.
     const themeLoadGuard: JupyterFrontEndPlugin<void> = {
       id: '@datalayer/jupyter-react:theme-load-guard',
-      description: 'Serialize ThemeManager _loadSettings reentry during boot.',
+      description: 'Prevent ThemeManager loadCSS deadlocks in embedded mode.',
       autoStart: true,
       requires: [IThemeManager],
       activate: (_app, themeManager: IThemeManager) => {
@@ -133,75 +211,141 @@ export class JupyterLabAppAdapter {
         if (tm.__datalayerThemeLoadGuardPatched) {
           return;
         }
-        const logPrefix = '[jupyter-react][theme-guard]';
-        const previousLoadSettings = tm._loadSettings;
-        if (typeof previousLoadSettings !== 'function') {
+        const CANCELED_THEME_LOAD =
+          '[jupyter-react] canceled detached theme load';
+        const previousLoadCSS =
+          typeof tm.loadCSS === 'function' ? tm.loadCSS.bind(tm) : null;
+        const previousOnError =
+          typeof tm._onError === 'function' ? tm._onError.bind(tm) : null;
+        if (!previousLoadCSS) {
           return;
         }
-        const originalLoadSettings = previousLoadSettings.bind(tm);
 
-        const markOutstanding = () => {
-          const outstanding = tm._outstanding as Promise<unknown> | null;
+        if (previousOnError) {
+          tm._onError = (reason: unknown) => {
+            const message = String(reason ?? '');
+            if (message.includes(CANCELED_THEME_LOAD)) {
+              return;
+            }
+            previousOnError(reason);
+          };
+        }
+
+        tm.loadCSS = (path: string) => {
+          const basePromise = previousLoadCSS(path) as Promise<void>;
+          const link = tm._links?.[tm._links.length - 1] as
+            | HTMLLinkElement
+            | undefined;
+          if (!link) {
+            return basePromise;
+          }
+
+          const detachedGuard = new Promise<void>((_resolve, reject) => {
+            let detachedAt = 0;
+            const clear = () => {
+              window.clearInterval(intervalHandle);
+              window.clearTimeout(timeoutHandle);
+            };
+            const finish = () => {
+              clear();
+            };
+            const cancel = () => {
+              clear();
+              reject(new Error(`${CANCELED_THEME_LOAD}: ${link.href}`));
+            };
+            const intervalHandle = window.setInterval(() => {
+              if (link.isConnected) {
+                detachedAt = 0;
+                return;
+              }
+              if (!detachedAt) {
+                detachedAt = Date.now();
+              }
+              const replacementConnected = (tm._links || []).some(
+                (candidate: HTMLLinkElement) =>
+                  candidate !== link &&
+                  candidate.href === link.href &&
+                  candidate.isConnected
+              );
+              // If the original link was detached and a replacement is now
+              // connected (or it remains detached for a short grace period),
+              // cancel this stale load so `_loadTheme` cannot apply an
+              // out-of-date theme when users switch quickly.
+              if (replacementConnected || Date.now() - detachedAt > 500) {
+                cancel();
+              }
+            }, 50);
+            const timeoutHandle = window.setTimeout(finish, 15000);
+            basePromise.finally(finish);
+          });
+
+          return Promise.race([basePromise, detachedGuard]);
+        };
+
+        tm.__datalayerThemeLoadGuardPatched = true;
+      },
+    };
+    // In embedded mode, persisted tracker restoration can replay stale
+    // workspace entries (editors, mime documents, cloned outputs, notebooks,
+    // etc.) and leave `app.restored` pending indefinitely. Keep the shell
+    // layout restorer service available, but skip tracker replay entirely.
+    const notebookRestoreGuard: JupyterFrontEndPlugin<void> = {
+      id: '@datalayer/jupyter-react:notebook-restore-guard',
+      description:
+        'Disable tracker restoration replay in embedded JupyterLab mode.',
+      autoStart: true,
+      requires: [ILayoutRestorer],
+      activate: (_app, restorer: ILayoutRestorer) => {
+        const lr = restorer as any;
+        if (lr.__datalayerNotebookRestoreGuardPatched) {
+          return;
+        }
+        const previousRestore =
+          typeof lr.restore === 'function' ? lr.restore.bind(lr) : null;
+        if (!previousRestore) {
+          return;
+        }
+        lr.restore = (..._args: any[]) => Promise.resolve();
+        lr.__datalayerNotebookRestoreGuardPatched = true;
+      },
+    };
+    // In embedded mode, the application main plugin can try to sync browser
+    // location to Jupyter Server workspace URLs (e.g.
+    // `/api/jupyter-server/lab/workspaces/...`). That hijacks the host page
+    // URL and can keep the loading UX in a bad state. Keep routing behavior
+    // for in-app commands, but suppress these workspace URL rewrites.
+    const routerNavigateGuard: JupyterFrontEndPlugin<void> = {
+      id: '@datalayer/jupyter-react:router-navigate-guard',
+      description: 'Prevent embedded URL rewrite to Jupyter workspace paths.',
+      autoStart: true,
+      requires: [IRouter],
+      activate: (_app, router: IRouter) => {
+        const r = router as any;
+        if (r.__datalayerRouterNavigateGuardPatched) {
+          return;
+        }
+        const previousNavigate =
+          typeof r.navigate === 'function' ? r.navigate.bind(r) : null;
+        if (!previousNavigate) {
+          return;
+        }
+        r.navigate = (path: string, options?: any) => {
           if (
-            !outstanding ||
-            tm.__datalayerTrackedOutstanding === outstanding
+            typeof path === 'string' &&
+            (path.startsWith('/api/jupyter-server/lab/workspaces') ||
+              path.startsWith('/lab/workspaces'))
           ) {
             return;
           }
-          tm.__datalayerTrackedOutstanding = outstanding;
-          tm.__datalayerOutstandingPending = true;
-          Promise.resolve(outstanding).finally(() => {
-            if (tm.__datalayerTrackedOutstanding !== outstanding) {
-              return;
-            }
-            tm.__datalayerOutstandingPending = false;
-            // Mirror JupyterLab's intent: once the outstanding load settles,
-            // allow subsequent settings loads to proceed.
-            if (tm._outstanding === outstanding) {
-              tm._outstanding = null;
-            }
-          });
+          return previousNavigate(path, options);
         };
-
-        const guardedLoadSettings = () => {
-          markOutstanding();
-          if (tm.__datalayerOutstandingPending) {
-            console.debug(`${logPrefix} _loadSettings deferred`, {
-              current: tm._current,
-              requestedTheme: tm._settings?.composite?.theme,
-            });
-            if (!tm.__datalayerThemeReloadQueued) {
-              tm.__datalayerThemeReloadQueued = true;
-              Promise.resolve(tm.__datalayerTrackedOutstanding).finally(() => {
-                tm.__datalayerThemeReloadQueued = false;
-                guardedLoadSettings();
-              });
-            }
-            return;
-          }
-          console.debug(`${logPrefix} _loadSettings run`, {
-            current: tm._current,
-            requestedTheme: tm._settings?.composite?.theme,
-          });
-          originalLoadSettings();
-          markOutstanding();
-        };
-
-        const settings = tm._settings;
-        if (settings?.changed?.disconnect) {
-          settings.changed.disconnect(previousLoadSettings, tm);
-        }
-        tm._loadSettings = guardedLoadSettings;
-        if (settings?.changed?.connect) {
-          settings.changed.connect(tm._loadSettings, tm);
-        }
-
-        tm.__datalayerThemeLoadGuardPatched = true;
-        console.debug(`${logPrefix} patched`);
+        r.__datalayerRouterNavigateGuardPatched = true;
       },
     };
     extensions.push(resolverStub as any);
     extensions.push(themeLoadGuard as any);
+    extensions.push(notebookRestoreGuard as any);
+    extensions.push(routerNavigateGuard as any);
     // Disable the splash plugin entirely when `nosplash` is requested.
     //
     // We must filter the plugin BEFORE `registerPluginModules` rather than
@@ -247,19 +391,18 @@ export class JupyterLabAppAdapter {
       this._jupyterLab.deregisterPlugin("@jupyterlab/filebrowser-extension:default-file-browser", true);
     }
     */
-    this._jupyterLab
-      .start({
-        hostID: hostId,
-        bubblingKeydown: true, // TODO Check this prop.
-        startPlugins: [],
-        ignorePlugins: [],
-      })
-      .then(() => {
-        //      this._plugins = (this._jupyterLab as any)['_plugins'];
-        //      this._readyResolve();
-      });
-    this._jupyterLab.restored.then(() => {
-      this._plugins = (this._jupyterLab as any)['_plugins'];
+    const startPromise = this._jupyterLab.start({
+      hostID: hostId,
+      bubblingKeydown: true, // TODO Check this prop.
+      startPlugins: [],
+      ignorePlugins: [],
+    });
+    Promise.all([startPromise, this._jupyterLab.started]).then(async () => {
+      await this.waitForShellAttachment();
+      await new Promise<void>(resolve =>
+        window.requestAnimationFrame(() => resolve())
+      );
+      this._plugins = (this._jupyterLab as any)['pluginRegistry']['_plugins'];
       this._readyResolve();
     });
   }
@@ -313,11 +456,21 @@ export class JupyterLabAppAdapter {
   }
 
   plugin(id: string): Plugin | undefined {
-    return this._plugins.get(id);
+    const plugins =
+      this._plugins ||
+      ((this._jupyterLab as any)?.['pluginRegistry']?.['_plugins'] as
+        | Plugins
+        | undefined);
+    return plugins?.get(id);
   }
 
   service(id: string): Plugin['service'] {
-    return this._plugins.get(id)?.service;
+    const plugins =
+      this._plugins ||
+      ((this._jupyterLab as any)?.['pluginRegistry']?.['_plugins'] as
+        | Plugins
+        | undefined);
+    return plugins?.get(id)?.service;
   }
 
   async notebook(path: string) {

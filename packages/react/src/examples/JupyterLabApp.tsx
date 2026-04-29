@@ -12,6 +12,8 @@ import { JupyterLabApp, JupyterLabAppAdapter } from '../components/jupyterlab';
 import * as lightThemePlugins from '@jupyterlab/theme-light-extension';
 import * as darkThemePlugins from '@jupyterlab/theme-dark-extension';
 import * as ipywidgetsPlugins from '@jupyter-widgets/jupyterlab-manager';
+// import * as collaborationDocProviderPlugins from '@jupyter/docprovider-extension';
+// import * as collaborationPlugins from '@jupyter/collaboration-extension';
 import * as plotlyPlugins from 'jupyterlab-plotly/lib/jupyterlab-plugin';
 
 import * as plotlyMimeRenderers from 'jupyterlab-plotly/lib/plotly-renderer';
@@ -32,12 +34,12 @@ const JupyterLabAppExample = () => {
     <JupyterLabApp
       plugins={[
         darkThemePlugins,
-        lightThemePlugins,
         ipywidgetsPlugins,
+        lightThemePlugins,
         plotlyPlugins,
       ]}
       mimeRenderers={[plotlyMimeRenderers]}
-      //      nosplash
+      // nosplash
       height="calc(100vh - 74px)"
       onJupyterLab={onJupyterLab}
     />

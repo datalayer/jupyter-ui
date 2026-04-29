@@ -20,6 +20,7 @@ const GlobalStyle = createGlobalStyle<any>`
 
 export type JupyterLabCssProps = {
   colormode?: Colormode;
+  manageThemeLinks?: boolean;
 };
 
 /**
@@ -31,7 +32,7 @@ let isLoaded = false;
  * Components loading the JupyterLab CSS stylesheets.
  */
 export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
-  const { colormode = 'light' } = props;
+  const { colormode = 'light', manageThemeLinks = true } = props;
   useEffect(() => {
     if (isLoaded) {
       // no-op
@@ -59,6 +60,9 @@ export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
   }, [colormode]);
 
   useEffect(() => {
+    if (!manageThemeLinks) {
+      return;
+    }
     let theme;
     switch (colormode) {
       case 'light': {
@@ -139,7 +143,7 @@ ${css}
     return () => {
       observer.disconnect();
     };
-  }, [colormode]);
+  }, [colormode, manageThemeLinks]);
   return (
     <div id="dla-JupyterLabCss-id">
       <GlobalStyle />

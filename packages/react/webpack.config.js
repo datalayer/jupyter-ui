@@ -124,6 +124,8 @@ module.exports = {
         exclude: [
           // Exclude packages with missing or broken source maps
           /node_modules\/@plotly\/mapbox-gl/,
+          /node_modules\/plotly\.js\//,
+          /node_modules\/@jupyter-widgets\/jupyterlab-manager\//,
           /node_modules\/vscode-jsonrpc/,
           /node_modules\/langium/,
           /node_modules\/@mermaid-js\/parser/,

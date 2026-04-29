@@ -174,7 +174,7 @@ export function JupyterReactTheme(
       setColormode(colormode);
       setupPrimerPortals(colormode);
     }
-    if (inJupyterLab) {
+    if (jupyterLabAdapter) {
       const themeManager = jupyterLabAdapter?.service(
         '@jupyterlab/apputils-extension:themes'
       ) as IThemeManager;
@@ -201,7 +201,12 @@ export function JupyterReactTheme(
   }, [inJupyterLab, jupyterLabAdapter, hasColormodeProp, colormodeProps]);
   return (
     <JupyterReactColormodeContext.Provider value={colormode}>
-      {loadJupyterLabCss && <JupyterLabCss colormode={colormode} />}
+      {loadJupyterLabCss && (
+        <JupyterLabCss
+          colormode={colormode}
+          manageThemeLinks={!jupyterLabAdapter}
+        />
+      )}
       <ThemeProvider
         colorMode={colormode}
         theme={theme}
