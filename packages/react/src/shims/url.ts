@@ -14,11 +14,13 @@
 
 import * as legacyUrl from 'url/';
 
+const legacyUrlCompat = legacyUrl as any;
+
 export const parse = legacyUrl.parse;
 export const format = legacyUrl.format;
 export const resolve = legacyUrl.resolve;
-export const resolveObject = legacyUrl.resolveObject;
-export const Url = (legacyUrl as any).Url;
+export const resolveObject = legacyUrlCompat.resolveObject;
+export const Url = legacyUrlCompat.Url;
 
 export const pathToFileURL = (inputPath: string): URL => {
   const normalized = String(inputPath).replace(/\\/g, '/');
