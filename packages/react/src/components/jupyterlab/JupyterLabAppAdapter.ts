@@ -88,6 +88,9 @@ export class JupyterLabAppAdapter {
       '@jupyterlab/fileeditor-extension:language-server',
       '@jupyterlab/apputils-extension:sessionDialogs'
     );
+    const ignorePlugins = nosplash
+      ? ['@jupyterlab/apputils-extension:splash']
+      : [];
     const disabledPluginsSet = new Set(disabledPlugins);
     extensionResolved.forEach(ext => {
       if (Array.isArray(ext.default)) {
@@ -103,12 +106,6 @@ export class JupyterLabAppAdapter {
       }
     });
     this._jupyterLab.registerPluginModules(extensions);
-    if (nosplash) {
-      this._jupyterLab.deregisterPlugin(
-        '@jupyterlab/apputils-extension:splash',
-        true
-      );
-    }
     /*
     if (collaborative) {
       this._jupyterLab.deregisterPlugin("@jupyterlab/filebrowser-extension:default-file-browser", true);
@@ -119,7 +116,7 @@ export class JupyterLabAppAdapter {
         hostID: hostId,
         bubblingKeydown: true, // TODO Check this prop.
         startPlugins: [], // How is this used in JupyterLab core?
-        ignorePlugins: [], // How is this used in JupyterLab core?
+        ignorePlugins,
       })
       .then(() => {
         //      this._plugins = (this._jupyterLab as any)['_plugins'];

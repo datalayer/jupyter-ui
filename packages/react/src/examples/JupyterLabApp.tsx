@@ -10,6 +10,7 @@ import { JupyterReactTheme } from '../theme';
 import { JupyterLabApp, JupyterLabAppAdapter } from '../components/jupyterlab';
 
 import * as lightThemePlugins from '@jupyterlab/theme-light-extension';
+import * as darkThemePlugins from '@jupyterlab/theme-dark-extension';
 import * as ipywidgetsPlugins from '@jupyter-widgets/jupyterlab-manager';
 import * as plotlyPlugins from 'jupyterlab-plotly/lib/jupyterlab-plugin';
 
@@ -27,8 +28,14 @@ const JupyterLabAppExample = () => {
   };
   return (
     <JupyterLabApp
-      plugins={[lightThemePlugins, ipywidgetsPlugins, plotlyPlugins]}
+      plugins={[
+        darkThemePlugins,
+        lightThemePlugins,
+        ipywidgetsPlugins,
+        plotlyPlugins,
+      ]}
       mimeRenderers={[plotlyMimeRenderers]}
+      nosplash
       height="calc(100vh - 74px)"
       onJupyterLab={onJupyterLab}
     />
