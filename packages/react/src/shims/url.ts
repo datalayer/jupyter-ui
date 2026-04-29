@@ -1,4 +1,10 @@
 /*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
+/*
  * Browser shim for Node's `url` module APIs used by transitive deps
  * (notably postcss map generator in Vite dev mode).
  *

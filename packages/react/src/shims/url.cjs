@@ -1,4 +1,10 @@
 /*
+ * Copyright (c) 2021-2023 Datalayer, Inc.
+ *
+ * MIT License
+ */
+
+/*
  * CommonJS shim for Node's `url` module APIs in browser builds.
  * Keeps legacy parse/format APIs and adds pathToFileURL/fileURLToPath.
  */
