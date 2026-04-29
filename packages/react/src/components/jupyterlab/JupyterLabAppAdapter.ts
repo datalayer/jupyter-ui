@@ -40,6 +40,24 @@ export class JupyterLabAppAdapter {
   private _ready: Promise<void>;
   private _readyResolve: () => void;
 
+  private normalizeJupyterModule<T>(mod: T): T {
+    if (
+      mod &&
+      typeof mod === 'object' &&
+      typeof (mod as any).hasOwnProperty !== 'function'
+    ) {
+      const normalized = { ...(mod as Record<string, unknown>) } as Record<
+        string,
+        unknown
+      >;
+      if ('default' in normalized && !('__esModule' in normalized)) {
+        normalized.__esModule = true;
+      }
+      return normalized as T;
+    }
+    return mod;
+  }
+
   private normalizeKernelSpecResources(
     specs: any,
     serviceManager: ServiceManager.IManager
@@ -119,6 +137,9 @@ export class JupyterLabAppAdapter {
     } = props;
     const mimeExtensionResolved = await Promise.all(mimeExtensionPromises);
     mimeExtensions.push(...mimeExtensionResolved);
+    const normalizedMimeExtensions = mimeExtensions.map(mod =>
+      this.normalizeJupyterModule(mod)
+    );
     const browserBaseUrl = new URL('.', window.location.href).toString();
     const embeddedPaths: JupyterFrontEnd.IPaths = {
       urls: {
@@ -134,7 +155,7 @@ export class JupyterLabAppAdapter {
     this._shell = new LabShell();
     this._jupyterLab = new JupyterLab({
       shell: this._shell,
-      mimeExtensions,
+      mimeExtensions: normalizedMimeExtensions,
       devMode,
       serviceManager,
       paths: embeddedPaths,
@@ -385,7 +406,10 @@ export class JupyterLabAppAdapter {
         }
       }
     });
-    this._jupyterLab.registerPluginModules(extensions);
+    const normalizedExtensions = extensions.map(mod =>
+      this.normalizeJupyterModule(mod)
+    );
+    this._jupyterLab.registerPluginModules(normalizedExtensions);
     /*
     if (collaborative) {
       this._jupyterLab.deregisterPlugin("@jupyterlab/filebrowser-extension:default-file-browser", true);
