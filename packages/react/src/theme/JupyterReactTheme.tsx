@@ -160,6 +160,9 @@ export function JupyterReactTheme(
       if (hasColormodeProp && colormodeProps === 'auto') {
         const resolved = matches ? 'dark' : 'light';
         setColormode(resolved);
+        if (colormodeFromStore !== resolved) {
+          setColormodeStore(resolved);
+        }
         setupPrimerPortals(resolved);
       }
     }
@@ -172,9 +175,12 @@ export function JupyterReactTheme(
           ? 'dark'
           : 'light';
       setColormode(colormode);
+      if (colormodeFromStore !== colormode) {
+        setColormodeStore(colormode);
+      }
       setupPrimerPortals(colormode);
     }
-    if (inJupyterLab) {
+    if (jupyterLabAdapter) {
       const themeManager = jupyterLabAdapter?.service(
         '@jupyterlab/apputils-extension:themes'
       ) as IThemeManager;
@@ -198,10 +204,22 @@ export function JupyterReactTheme(
           .removeEventListener('change', colorSchemeFromMedia);
       };
     }
-  }, [inJupyterLab, jupyterLabAdapter, hasColormodeProp, colormodeProps]);
+  }, [
+    inJupyterLab,
+    jupyterLabAdapter,
+    hasColormodeProp,
+    colormodeProps,
+    colormodeFromStore,
+    setColormodeStore,
+  ]);
   return (
     <JupyterReactColormodeContext.Provider value={colormode}>
-      {loadJupyterLabCss && <JupyterLabCss colormode={colormode} />}
+      {loadJupyterLabCss && (
+        <JupyterLabCss
+          colormode={colormode}
+          manageThemeLinks={!jupyterLabAdapter}
+        />
+      )}
       <ThemeProvider
         colorMode={colormode}
         theme={theme}
