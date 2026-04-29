@@ -20,6 +20,8 @@ const JupyterLabAppExample = () => {
   const onJupyterLab = async (jupyterLabAdapter: JupyterLabAppAdapter) => {
     const jupyterLab = jupyterLabAdapter.jupyterLab;
     console.log('JupyterLab is ready', jupyterLab);
+    (window as any).__lab = jupyterLab;
+    (window as any).__adapter = jupyterLabAdapter;
     jupyterLab.commands
       .execute('notebook:create-new', { kernelName: 'python3' })
       .then((notebookPanel: NotebookPanel) => {
@@ -35,7 +37,7 @@ const JupyterLabAppExample = () => {
         plotlyPlugins,
       ]}
       mimeRenderers={[plotlyMimeRenderers]}
-      nosplash
+      //      nosplash
       height="calc(100vh - 74px)"
       onJupyterLab={onJupyterLab}
     />
