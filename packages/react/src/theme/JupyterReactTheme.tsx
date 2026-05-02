@@ -183,11 +183,26 @@ export function JupyterReactTheme(
         '@jupyterlab/apputils-extension:themes'
       ) as IThemeManager;
       if (themeManager) {
-        updateColorMode(themeManager);
-        themeManager.themeChanged.connect(updateColorMode);
-        return () => {
-          themeManager.themeChanged.disconnect(updateColorMode);
-        };
+        // When an explicit colormode prop is provided, drive the JupyterLab
+        // theme manager to match — otherwise the server-loaded theme link
+        // stays and `--jp-*` CSS vars do not switch.
+        if (hasColormodeProp) {
+          const resolved = resolveColormode(colormodeProps);
+          const desiredTheme =
+            resolved === 'dark' ? 'JupyterLab Dark' : 'JupyterLab Light';
+          if (themeManager.theme !== desiredTheme) {
+            themeManager.setTheme(desiredTheme).catch(() => {
+              /* swallow — best effort */
+            });
+          }
+          setupPrimerPortals(resolved);
+        } else {
+          updateColorMode(themeManager);
+          themeManager.themeChanged.connect(updateColorMode);
+          return () => {
+            themeManager.themeChanged.disconnect(updateColorMode);
+          };
+        }
       }
     } else {
       colorSchemeFromMedia({
@@ -215,7 +230,11 @@ export function JupyterReactTheme(
       {loadJupyterLabCss && (
         <JupyterLabCss
           colormode={colormode}
-          manageThemeLinks={!jupyterLabAdapter}
+          // When an explicit colormode prop is provided, force theme-link
+          // management even if a JupyterLabAdapter is present — otherwise the
+          // server-loaded JupyterLab theme variables would override our
+          // requested colormode.
+          manageThemeLinks={hasColormodeProp || !jupyterLabAdapter}
         />
       )}
       <ThemeProvider
