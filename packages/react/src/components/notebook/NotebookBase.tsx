@@ -369,6 +369,9 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
       mimeTypeService: features.editorServices.mimeTypeService,
       notebookConfig: {
         ...StaticNotebook.defaultNotebookConfig,
+        // Avoid JL windowing null-cell sizing races that cause repeated
+        // estimateWidgetSize crashes and visible editor blinking.
+        windowingMode: 'none',
         recordTiming: true,
       },
     });
@@ -738,7 +741,7 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
           panel?.content.activeCellChanged.disconnect(onActiveCellChanged);
         }
         if (onSessionChanged) {
-          panel?.context.sessionContext.sessionChanged.connect(
+          panel?.context.sessionContext.sessionChanged.disconnect(
             onSessionChanged
           );
         }
@@ -1297,7 +1300,7 @@ function initializeContext(
     (context as any)._isDisposed = true;
     context.sessionContext.dispose();
     (context as any)._disposed.emit(void 0);
-    Signal.clearData(this);
+    Signal.clearData(context);
   };
 
   if (shuntContentManager) {
@@ -1398,12 +1401,14 @@ function initializeContext(
  * Service manager facade for missing manager.
  */
 class NoServiceManager {
+  private readonly _additionalDrives = new Set<string>();
+
   readonly contents = Object.freeze({
     fileChanged: { connect: () => {} },
     getSharedModelFactory(path: string): null {
       return null;
     },
-    localPath(path: string): string {
+    localPath: (path: string): string => {
       const parts = path.split('/');
       const firstParts = parts[0].split(':');
       if (

@@ -4,31 +4,30 @@
  * MIT License
  */
 
-import { useState, useEffect } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { Button, ToggleSwitch, Text } from '@primer/react';
-import { Box, setupPrimerPortals } from '@datalayer/primer-addons';
-import { MoonIcon, SunIcon, ThreeBarsIcon } from '@primer/octicons-react';
 import {
-  JupyterReactTheme,
-  useJupyterReactStore,
-} from '@datalayer/jupyter-react';
-import { useLexical, Editor, LexicalProvider, nbformatToLexical } from '..';
-import { ThemeContext } from '../context/ThemeContext';
-import type { ThemeType } from '../context/ThemeContext';
-
-type ColorMode = 'day' | 'night' | 'light' | 'dark' | 'auto';
+  AppearanceControlsWithStore,
+  Box,
+  createThemeStore,
+} from '@datalayer/primer-addons';
+import { ThreeBarsIcon } from '@primer/octicons-react';
+import {
+  useLexical,
+  Editor,
+  LexicalProvider,
+  LexicalPrimerThemeProvider,
+  nbformatToLexical,
+} from '..';
 
 import LEXICAL_MODEL from './content/Example.lexical.json';
-
 import NBFORMAT_MODEL from './content/Example.ipynb.json';
 
 const LexicalEditor = () => {
   const { editor } = useLexical();
 
-  // Load the Lexical model on mount
   useEffect(() => {
     if (editor) {
-      // Defer setEditorState to avoid flushSync warning during React render
       queueMicrotask(() => {
         const editorState = editor.parseEditorState(LEXICAL_MODEL as any);
         editor.setEditorState(editorState);
@@ -62,11 +61,9 @@ const LexicalEditor = () => {
 const AppToolbar = (props: {
   hasRuntime: boolean;
   toggleRuntime: (v: boolean) => void;
-  colorMode: ColorMode;
-  setColorMode: (mode: ColorMode) => void;
+  themeStore: ReturnType<typeof createThemeStore>;
 }) => {
-  const { hasRuntime, toggleRuntime, colorMode, setColorMode } = props;
-  const isDark = colorMode === 'night' || colorMode === 'dark';
+  const { hasRuntime, toggleRuntime, themeStore } = props;
 
   return (
     <Box
@@ -87,17 +84,7 @@ const AppToolbar = (props: {
           marginLeft: 'auto',
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <SunIcon size={16} />
-          <ToggleSwitch
-            size="small"
-            defaultChecked={isDark}
-            onChange={(on: boolean) => setColorMode(on ? 'night' : 'day')}
-            statusLabelPosition="end"
-            aria-labelledby="colormode-toggle-label"
-          />
-          <MoonIcon size={16} />
-        </Box>
+        <AppearanceControlsWithStore useStore={themeStore} />
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Text
             id="runtime-toggle-label"
@@ -119,7 +106,6 @@ const AppToolbar = (props: {
 };
 
 export const App = () => {
-  // Get initial state from URL or localStorage
   const getInitialRuntimeState = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const runtimeParam = urlParams.get('runtime');
@@ -130,26 +116,15 @@ export const App = () => {
     return stored !== 'false';
   };
 
-  const getInitialColorMode = (): ColorMode => {
-    const stored = localStorage.getItem('colorMode');
-    if (stored === 'day' || stored === 'night') {
-      return stored;
-    }
-    return 'day';
-  };
-
   const [hasRuntime] = useState(getInitialRuntimeState);
-  const [colorMode, setColorMode] = useState<ColorMode>(getInitialColorMode);
-
-  const { setColormode } = useJupyterReactStore();
-
-  // Setup Primer portals and sync JupyterReact store on color mode change
-  useEffect(() => {
-    const primerColormode =
-      colorMode === 'night' || colorMode === 'dark' ? 'dark' : 'light';
-    setupPrimerPortals(primerColormode);
-    setColormode(primerColormode);
-  }, [colorMode, setColormode]);
+  const themeStore = useMemo(
+    () =>
+      createThemeStore('jupyter-lexical-primer-theme-example', {
+        colorMode: 'auto',
+        theme: 'matrix',
+      }),
+    [],
+  );
 
   const toggleRuntime = (newValue: boolean) => {
     localStorage.setItem('hasRuntime', String(newValue));
@@ -159,56 +134,40 @@ export const App = () => {
   };
 
   return (
-    <JupyterReactTheme
-      colormode={
-        colorMode === 'night' || colorMode === 'dark' ? 'dark' : 'light'
-      }
-    >
-      <ThemeContext.Provider
-        value={{
-          theme: (colorMode === 'night' || colorMode === 'dark'
-            ? 'dark'
-            : 'light') as ThemeType,
-        }}
-      >
-        <div className="App">
-          <AppToolbar
-            hasRuntime={hasRuntime}
-            toggleRuntime={toggleRuntime}
-            colorMode={colorMode}
-            setColorMode={(mode: ColorMode) => {
-              localStorage.setItem('colorMode', mode);
-              setColorMode(mode);
-            }}
-          />
-        </div>
-        <LexicalProvider>
-          <LexicalEditor />
-        </LexicalProvider>
-        <div className="other App">
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              textAlign: 'center',
-            }}
+    <LexicalPrimerThemeProvider useStore={themeStore}>
+      <div className="App">
+        <AppToolbar
+          hasRuntime={hasRuntime}
+          toggleRuntime={toggleRuntime}
+          themeStore={themeStore}
+        />
+      </div>
+      <LexicalProvider>
+        <LexicalEditor />
+      </LexicalProvider>
+      <div className="other App">
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            textAlign: 'center',
+          }}
+        >
+          <a
+            href="https://datalayer.ai"
+            target="_blank"
+            rel="noreferrer"
+            style={{ marginRight: 8 }}
           >
-            <a
-              href="https://datalayer.ai"
-              target="_blank"
-              rel="noreferrer"
-              style={{ marginRight: 8 }}
-            >
-              <ThreeBarsIcon />
-            </a>
-            <a href="https://datalayer.ai" target="_blank" rel="noreferrer">
-              Datalayer, Inc.
-            </a>
-          </div>
+            <ThreeBarsIcon />
+          </a>
+          <a href="https://datalayer.ai" target="_blank" rel="noreferrer">
+            Datalayer, Inc.
+          </a>
         </div>
-      </ThemeContext.Provider>
-    </JupyterReactTheme>
+      </div>
+    </LexicalPrimerThemeProvider>
   );
 };
 

@@ -9,6 +9,7 @@ import React, {
   CSSProperties,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from 'react';
@@ -130,23 +131,20 @@ export function JupyterReactTheme(
   }, [colormodeFromStore, colormode, colormodeProps, hasColormodeProp]);
 
   // Sync prop → store (so children reading the store directly also get the right value)
-  // Store the resolved value, not 'auto'.
-  useEffect(() => {
-    const resolved = resolveColormode(colormodeProps);
-    if (hasColormodeProp && colormodeFromStore !== resolved) {
-      setColormodeStore(resolved);
-      syncedRef.current = true;
+  // Store the resolved value, not 'auto'. Use useLayoutEffect so the store is
+  // updated before the first paint, avoiding an initial 'light' flash without
+  // performing a setState during render (which causes a React warning when an
+  // ancestor subscribes to the same store).
+  useLayoutEffect(() => {
+    if (!hasColormodeProp) {
+      return;
     }
-  }, [colormodeFromStore, colormodeProps, hasColormodeProp, setColormodeStore]);
-
-  // Also sync prop to store eagerly on mount to avoid the initial 'light' frame
-  if (hasColormodeProp && !syncedRef.current) {
     const resolved = resolveColormode(colormodeProps);
     if (colormodeFromStore !== resolved) {
       setColormodeStore(resolved);
-      syncedRef.current = true;
     }
-  }
+    syncedRef.current = true;
+  }, [colormodeFromStore, colormodeProps, hasColormodeProp, setColormodeStore]);
 
   // Sync backgroundColor prop → store so notebook extensions (sidebars, etc.)
   // can read it from the store and render with the same background.

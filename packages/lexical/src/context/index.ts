@@ -11,3 +11,4 @@ export * from './LexicalContext';
 export * from './SettingsContext';
 export * from './ThemeContext';
 export * from './ToolbarContext';
+export * from './LexicalPrimerThemeProvider';
