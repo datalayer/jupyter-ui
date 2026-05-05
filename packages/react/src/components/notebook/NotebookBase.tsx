@@ -31,7 +31,6 @@ import { PathExt, type IChangedArgs } from '@jupyterlab/coreutils';
 import { Context, type DocumentRegistry } from '@jupyterlab/docregistry';
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
 import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
-import { createMarkdownParser } from '@jupyterlab/markedparser-extension';
 import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
 import type { INotebookContent } from '@jupyterlab/nbformat';
 import {
@@ -77,6 +76,7 @@ import type { OnSessionConnection } from '../../state';
 import { newUuid, remoteUserCursors } from '../../utils';
 import { Lumino } from '../lumino';
 import { Loader } from '../utils';
+import { getMarked } from './marked/marked';
 import type { NotebookExtension } from './NotebookExtensions';
 import { addNotebookCommands, NotebookPanelProvider } from './NotebookCommands';
 import { NotebookAdapter } from './NotebookAdapter';
@@ -1159,7 +1159,7 @@ class CommonFeatures {
     this._rendermime = new RenderMimeRegistry({
       initialFactories,
       latexTypesetter: new MathJaxTypesetter(),
-      markdownParser: createMarkdownParser(languages),
+      markdownParser: getMarked(languages),
     });
 
     const mimeTypeService = new CodeMirrorMimeTypeService(languages);

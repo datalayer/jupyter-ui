@@ -50,6 +50,7 @@ export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
     import('@jupyterlab/codemirror/style/index.js');
     import('@jupyterlab/codeeditor/style/index.js');
     import('@jupyterlab/cells/style/index.js');
+    import('@jupyterlab/mathjax-extension/style/index.js');
     import('@jupyterlab/notebook/style/index.js');
     import('@jupyterlab/filebrowser/style/index.js');
     import('@jupyterlab/terminal/style/index.js');
