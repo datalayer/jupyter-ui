@@ -30,9 +30,7 @@ const preprocessMath = (content: string): string => {
   const withInlineMath = withBlockMath.replace(
     /(^|[^$\\])\$([^\n$]+?)\$/g,
     (_match, prefix: string, expression: string) =>
-      `${prefix}<span class="math inline">\\(${escapeHtml(
-        expression.trim()
-      )}\\)</span>`
+      `${prefix}<span class="math inline">\\(${escapeHtml(expression.trim())}\\)</span>`
   );
 
   return withInlineMath.replace(/@@JUPYTER_REACT_FENCE_(\d+)@@/g, (_m, i) => {
@@ -44,6 +42,14 @@ const preprocessMath = (content: string): string => {
 const inlineMathRule = /^\$(?!\s)([^$\n]|\\\$)+?(?<!\s)\$/;
 const blockMathRule = /^\$\$([\s\S]+?)\$\$(?:\n|$)/;
 
+const getTokenText = (token: unknown): string => {
+  if (typeof token !== 'object' || token === null || !('text' in token)) {
+    return '';
+  }
+  const value = (token as { text?: unknown }).text;
+  return typeof value === 'string' ? value : '';
+};
+
 export const getMarked = (
   languages: IEditorLanguageRegistry
 ): IMarkdownParser => {
@@ -52,11 +58,11 @@ export const getMarked = (
     render: (content: string): Promise<string> =>
       new Promise<string>((resolve, reject) => {
         const preprocessedContent = preprocessMath(content);
-        marked(preprocessedContent, (err: any, content: string) => {
+        marked(preprocessedContent, (err: Error | null, html?: string) => {
           if (err) {
             reject(err);
           } else {
-            resolve(content);
+            resolve(html ?? '');
           }
         });
       }),
@@ -93,8 +99,10 @@ namespace Private {
               text: match[1].trim(),
             };
           },
-          renderer(token: any) {
-            return `<div class="math display">\\[${escapeHtml(token.text)}\\]</div>`;
+          renderer(token) {
+            return `<div class="math display">\\[${escapeHtml(
+              getTokenText(token)
+            )}\\]</div>`;
           },
         },
         {
@@ -116,8 +124,10 @@ namespace Private {
               text: raw.slice(1, -1),
             };
           },
-          renderer(token: any) {
-            return `<span class="math inline">\\(${escapeHtml(token.text)}\\)</span>`;
+          renderer(token) {
+            return `<span class="math inline">\\(${escapeHtml(
+              getTokenText(token)
+            )}\\)</span>`;
           },
         },
       ],
