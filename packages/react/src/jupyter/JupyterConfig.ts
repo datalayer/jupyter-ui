@@ -151,11 +151,6 @@ export const loadJupyterConfig = (
     PageConfig.setOption('collaborative', String(collaborative));
     PageConfig.setOption('disableRTC', String(!collaborative));
     PageConfig.setOption('terminalsAvailable', String(terminals));
-    PageConfig.setOption(
-      'mathjaxUrl',
-      'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js'
-    );
-    PageConfig.setOption('mathjaxConfig', 'TeX-AMS_CHTML-full,Safe');
   }
   // console.log('Created config for Jupyter React', config);
   return config;

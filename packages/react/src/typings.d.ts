@@ -99,3 +99,7 @@ declare module 'localforage-memoryStorageDriver' {
   const memoryStorageDriver: LocalForageDriver;
   export default memoryStorageDriver;
 }
+
+declare module 'url/' {
+  export * from 'url';
+}
