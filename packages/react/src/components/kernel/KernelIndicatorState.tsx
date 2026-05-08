@@ -150,6 +150,9 @@ export type KernelIndicatorMetaInput = {
   status?: KernelMessage.Status;
   envDisplayName?: string;
   kernelId?: string;
+  kernelName?: string;
+  clientId?: string;
+  username?: string;
 };
 
 export type KernelIndicatorMeta = {
@@ -177,8 +180,23 @@ export const getKernelIndicatorMeta = (
 
   const tooltip =
     input.connectionStatus && input.status
-      ? `${input.connectionStatus} - ${input.status} - ${input.envDisplayName ?? 'unknown-env'} - ${kernelIdLabel}`
-      : label;
+      ? [
+          `State: ${stateLabel}`,
+          `Connection: ${input.connectionStatus}`,
+          `Status: ${input.status}`,
+          `Environment: ${input.envDisplayName ?? 'unknown-env'}`,
+          `Kernel: ${input.kernelName ?? 'unknown-kernel'}`,
+          `Kernel ID: ${kernelIdLabel}`,
+          `Client ID: ${input.clientId ?? 'unknown-client'}`,
+          `User: ${input.username ?? 'unknown-user'}`,
+        ].join('\n')
+      : [
+          `State: ${stateLabel}`,
+          `Kernel: ${input.kernelName ?? 'unknown-kernel'}`,
+          `Kernel ID: ${kernelIdLabel}`,
+          `Client ID: ${input.clientId ?? 'unknown-client'}`,
+          `User: ${input.username ?? 'unknown-user'}`,
+        ].join('\n');
 
   return {
     state: resolvedState,
