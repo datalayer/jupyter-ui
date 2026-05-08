@@ -6,7 +6,7 @@
 
 import { createStore } from 'zustand/vanilla';
 import { useStore } from 'zustand';
-import { ExecutionState } from './../../components/kernel/KernelIndicator';
+import { ExecutionState } from './../../components/kernel/KernelIndicatorState';
 
 export enum ExecutionPhase {
   ready_to_run = 'READY_TO_RUN',
