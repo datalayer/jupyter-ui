@@ -14,12 +14,14 @@ import {
 import { Environment } from '../environment/Environment';
 import {
   getKernelIndicatorMeta,
+  KERNEL_STATE_LABELS,
   renderKernelStateGlyph,
   type ExecutionState,
 } from './KernelIndicatorState';
 
 export type KernelIndicatorProps = {
   label?: string;
+  overlayTitle?: string;
   kernel?: IKernelConnection | null;
   env?: Environment;
   state?: ExecutionState;
@@ -27,6 +29,7 @@ export type KernelIndicatorProps = {
 
 export const KernelIndicator = ({
   label = '',
+  overlayTitle = 'Sandbox Details',
   kernel,
   env,
   state,
@@ -128,6 +131,21 @@ export const KernelIndicator = ({
     },
   ];
 
+  const legendStates: ExecutionState[] = [
+    'connecting',
+    'connected-unknown',
+    'connected-starting',
+    'connected-idle',
+    'connected-busy',
+    'connected-terminating',
+    'connected-restarting',
+    'connected-autorestarting',
+    'connected-dead',
+    'disconnecting',
+    'disconnected',
+    'undefined',
+  ];
+
   return (
     <ActionMenu>
       <ActionMenu.Anchor>
@@ -170,30 +188,20 @@ export const KernelIndicator = ({
           sx={{
             px: 2,
             py: 1,
-            borderBottom: '1px solid',
-            borderColor: 'border.default',
             display: 'flex',
-            alignItems: 'center',
-            gap: 2,
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            gap: 1,
           }}
         >
-          {renderKernelStateGlyph(meta.state)}
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            <Text sx={{ fontSize: 1, fontWeight: 'bold' }}>
-              Sandbox Details
-            </Text>
+          <Text sx={{ fontSize: 1, fontWeight: 'bold' }}>{overlayTitle}</Text>
+          <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1 }}>
+            {renderKernelStateGlyph(meta.state)}
             <Text sx={{ fontSize: 0, color: 'fg.muted' }}>{meta.state}</Text>
           </Box>
         </Box>
         <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Box
-            sx={{
-              p: 2,
-              border: '1px solid',
-              borderColor: 'border.default',
-              borderRadius: 2,
-            }}
-          >
+          <Box sx={{ p: 2 }}>
             <Text sx={{ fontSize: 0, color: 'fg.muted', mb: 2 }}>Runtime</Text>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               {runtimeDetails.map(detail => (
@@ -207,14 +215,7 @@ export const KernelIndicator = ({
             </Box>
           </Box>
 
-          <Box
-            sx={{
-              p: 2,
-              border: '1px solid',
-              borderColor: 'border.default',
-              borderRadius: 2,
-            }}
-          >
+          <Box sx={{ p: 2 }}>
             <Text sx={{ fontSize: 0, color: 'fg.muted', mb: 2 }}>Identity</Text>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               {identityDetails.map(detail => (
@@ -228,14 +229,7 @@ export const KernelIndicator = ({
             </Box>
           </Box>
 
-          <Box
-            sx={{
-              p: 2,
-              border: '1px solid',
-              borderColor: 'border.default',
-              borderRadius: 2,
-            }}
-          >
+          <Box sx={{ p: 2 }}>
             <Text sx={{ fontSize: 0, color: 'fg.muted', mb: 2 }}>Server</Text>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               {serverDetails.map(detail => (
@@ -245,6 +239,35 @@ export const KernelIndicator = ({
                 >
                   {detail.label}: {detail.value}
                 </Text>
+              ))}
+            </Box>
+          </Box>
+
+          <Box sx={{ p: 2 }}>
+            <Text sx={{ fontSize: 0, color: 'fg.muted', mb: 2 }}>
+              State Legend
+            </Text>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                gap: 2,
+              }}
+            >
+              {legendStates.map(legendState => (
+                <Box
+                  key={legendState}
+                  sx={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 1,
+                  }}
+                >
+                  {renderKernelStateGlyph(legendState)}
+                  <Text sx={{ fontSize: 0, color: 'fg.default' }}>
+                    {KERNEL_STATE_LABELS[legendState]}
+                  </Text>
+                </Box>
               ))}
             </Box>
           </Box>
