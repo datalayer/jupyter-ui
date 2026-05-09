@@ -29,6 +29,7 @@ type KernelStateVisual = {
   color: string;
   kind?: 'dot' | 'ring' | 'plus' | 'x';
   pulse?: boolean;
+  blink?: boolean;
 };
 
 export const KERNEL_STATE_LABELS: Record<ExecutionState, string> = {
@@ -47,21 +48,21 @@ export const KERNEL_STATE_LABELS: Record<ExecutionState, string> = {
 };
 
 export const KERNEL_STATE_VISUALS: Record<ExecutionState, KernelStateVisual> = {
-  connecting: { color: 'accent.fg', kind: 'plus' },
+  connecting: { color: 'accent.fg', blink: true },
   'connected-unknown': { color: 'fg.muted' },
-  'connected-starting': { color: 'attention.fg' },
+  'connected-starting': { color: 'attention.fg', blink: true },
   'connected-idle': { color: 'success.fg' },
   'connected-busy': { color: 'attention.fg', pulse: true },
-  'connected-terminating': { color: 'fg.muted' },
-  'connected-restarting': { color: 'accent.fg' },
+  'connected-terminating': { color: 'danger.fg', blink: true },
+  'connected-restarting': { color: 'accent.fg', blink: true },
   'connected-autorestarting': {
     color: 'danger.fg',
     kind: 'ring',
-    pulse: true,
+    blink: true,
   },
   'connected-dead': { color: 'danger.fg' },
   disconnected: { color: 'fg.muted', kind: 'x' },
-  disconnecting: { color: 'neutral.emphasis' },
+  disconnecting: { color: 'neutral.emphasis', blink: true },
   undefined: { color: 'fg.muted' },
 };
 
@@ -83,13 +84,35 @@ const KERNEL_BUSY_PULSE_KEYFRAMES = {
   },
 } as const;
 
+const KERNEL_BLINK_KEYFRAMES = {
+  '0%': {
+    opacity: 1,
+  },
+  '50%': {
+    opacity: 0.35,
+  },
+  '100%': {
+    opacity: 1,
+  },
+} as const;
+
 export const renderKernelStateGlyph = (state: ExecutionState): ReactElement => {
   const visual = KERNEL_STATE_VISUALS[state];
   const kind = visual.kind ?? 'dot';
 
   if (kind === 'plus') {
     return (
-      <Box as="span" sx={{ display: 'inline-flex', color: visual.color }}>
+      <Box
+        as="span"
+        sx={{
+          display: 'inline-flex',
+          color: visual.color,
+          ...(visual.blink && {
+            animation: 'kernel-blink 1s ease-in-out infinite',
+            '@keyframes kernel-blink': KERNEL_BLINK_KEYFRAMES,
+          }),
+        }}
+      >
         <PlusCircleIcon />
       </Box>
     );
@@ -97,8 +120,22 @@ export const renderKernelStateGlyph = (state: ExecutionState): ReactElement => {
 
   if (kind === 'x') {
     return (
-      <Box as="span" sx={{ display: 'inline-flex', color: visual.color }}>
-        <XCircleFillIcon size={16} />
+      <Box
+        as="span"
+        sx={{
+          display: 'inline-flex',
+          color: visual.color,
+          width: 10,
+          height: 10,
+          alignItems: 'center',
+          justifyContent: 'center',
+          ...(visual.blink && {
+            animation: 'kernel-blink 1s ease-in-out infinite',
+            '@keyframes kernel-blink': KERNEL_BLINK_KEYFRAMES,
+          }),
+        }}
+      >
+        <XCircleFillIcon size={10} />
       </Box>
     );
   }
@@ -118,6 +155,10 @@ export const renderKernelStateGlyph = (state: ExecutionState): ReactElement => {
         ...(visual.pulse && {
           animation: 'kernel-busy-fade 1.2s ease-in-out infinite',
           '@keyframes kernel-busy-fade': KERNEL_BUSY_PULSE_KEYFRAMES,
+        }),
+        ...(visual.blink && {
+          animation: 'kernel-blink 1s ease-in-out infinite',
+          '@keyframes kernel-blink': KERNEL_BLINK_KEYFRAMES,
         }),
       }}
     />

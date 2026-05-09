@@ -25,6 +25,10 @@ export type KernelIndicatorProps = {
   kernel?: IKernelConnection | null;
   env?: Environment;
   state?: ExecutionState;
+  environmentName?: string;
+  memory?: string;
+  cpu?: string;
+  gpu?: string;
 };
 
 export const KernelIndicator = ({
@@ -33,6 +37,10 @@ export const KernelIndicator = ({
   kernel,
   env,
   state,
+  environmentName,
+  memory,
+  cpu,
+  gpu,
 }: KernelIndicatorProps) => {
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>();
   const [status, setStatus] = useState<KernelMessage.Status>();
@@ -68,11 +76,14 @@ export const KernelIndicator = ({
     };
   }, [kernel]);
 
+  const resolvedEnvironmentName =
+    environmentName || env?.display_name || 'browser-runtime';
+
   const meta = getKernelIndicatorMeta({
     state,
     connectionStatus,
     status,
-    envDisplayName: env?.display_name,
+    envDisplayName: resolvedEnvironmentName,
     kernelId: kernel?.id,
     kernelName: kernel?.name,
     clientId: kernel?.clientId,
@@ -99,7 +110,13 @@ export const KernelIndicator = ({
     { label: 'State', value: meta.state },
     { label: 'Connection', value: connectionStatus ?? 'unknown' },
     { label: 'Status', value: status ?? 'unknown' },
-    { label: 'Environment', value: env?.display_name ?? 'unknown-env' },
+  ];
+
+  const environmentDetails: Array<{ label: string; value: string }> = [
+    { label: 'Name', value: resolvedEnvironmentName },
+    { label: 'CPU', value: cpu ?? 'n/a' },
+    { label: 'Memory', value: memory ?? 'n/a' },
+    { label: 'GPU', value: gpu ?? 'n/a' },
   ];
 
   const identityDetails: Array<{ label: string; value: string }> = [
@@ -183,7 +200,7 @@ export const KernelIndicator = ({
           </Button>
         </Tooltip>
       </ActionMenu.Anchor>
-      <ActionMenu.Overlay width="medium">
+      <ActionMenu.Overlay width="large">
         <Box
           sx={{
             px: 2,
@@ -205,6 +222,22 @@ export const KernelIndicator = ({
             <Text sx={{ fontSize: 0, color: 'fg.muted', mb: 2 }}>Runtime</Text>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
               {runtimeDetails.map(detail => (
+                <Text
+                  key={detail.label}
+                  sx={{ fontSize: 0, wordBreak: 'break-word' }}
+                >
+                  {detail.label}: {detail.value}
+                </Text>
+              ))}
+            </Box>
+          </Box>
+
+          <Box sx={{ p: 2 }}>
+            <Text sx={{ fontSize: 0, color: 'fg.muted', mb: 2 }}>
+              Environment
+            </Text>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              {environmentDetails.map(detail => (
                 <Text
                   key={detail.label}
                   sx={{ fontSize: 0, wordBreak: 'break-word' }}
