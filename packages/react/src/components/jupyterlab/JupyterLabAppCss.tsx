@@ -47,7 +47,17 @@ export const JupyterLabAppCss = ({ theme = 'light' }: Props) => {
       }
     }
   }, [theme]);
-  return <div id="dla-JupyterLabAppCss-id"></div>;
+  return (
+    <>
+      <div id="dla-JupyterLabAppCss-id"></div>
+      <style>
+        {`#jupyterlab-splash {
+  top: 0;
+  left: 0;
+}`}
+      </style>
+    </>
+  );
 };
 
 export default JupyterLabAppCss;

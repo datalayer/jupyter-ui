@@ -10,25 +10,40 @@ import styled from 'styled-components';
 import {
   useNotebookStore,
   useJupyter,
-  JupyterReactTheme,
   Notebook,
   CellSidebar,
   CellSidebarExtension,
 } from '@datalayer/jupyter-react';
-import { Box } from '@datalayer/primer-addons';
+import {
+  AppearanceControlsWithStore,
+  Box,
+  createThemeStore,
+} from '@datalayer/primer-addons';
 import { UnderlineNav, Button } from '@primer/react';
 import { ThreeBarsIcon } from '@primer/octicons-react';
 import { JSONTree } from 'react-json-tree';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { INotebookModel } from '@jupyterlab/notebook';
 import { lexicalToNbformat } from './..';
-import { useLexical, LexicalProvider, Editor } from './..';
+import {
+  useLexical,
+  LexicalProvider,
+  Editor,
+  LexicalPrimerThemeProvider,
+} from './..';
 
 import INITIAL_LEXICAL_MODEL from './content/Example.lexical.json';
 
 import INITIAL_NBFORMAT_MODEL from './content/Example.ipynb.json';
 
 const NOTEBOOK_UID = 'notebook-uid-lexical';
+const useNbformatPrimerThemeStore = createThemeStore(
+  'jupyter-lexical-nbformat-primer-theme-example',
+  {
+    colorMode: 'auto',
+    theme: 'matrix',
+  },
+);
 
 type TabType = 'editor' | 'notebook' | 'nbformat';
 
@@ -165,11 +180,14 @@ export function App() {
       <div className="App">
         <h1>Jupyter UI ❤️ Lexical</h1>
       </div>
-      <JupyterReactTheme>
+      <Box sx={{ px: 3, py: 2 }}>
+        <AppearanceControlsWithStore useStore={useNbformatPrimerThemeStore} />
+      </Box>
+      <LexicalPrimerThemeProvider useStore={useNbformatPrimerThemeStore}>
         <LexicalProvider>
           <Tabs />
         </LexicalProvider>
-      </JupyterReactTheme>
+      </LexicalPrimerThemeProvider>
       <div className="other App">
         {/* Tailwind v4 Button - Using Tailwind Utility Classes */}
         <div className="flex flex-col items-center gap-4 my-8">

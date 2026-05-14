@@ -37,6 +37,14 @@ export const Terminal = ({
       setAdapter(adapter);
     }
   }, [serverSettings]);
+
+  // Apply theme updates in-place so color-mode changes are immediate
+  // without recreating the terminal session (and losing content).
+  useEffect(() => {
+    if (adapter) {
+      adapter.setTheme(colormode);
+    }
+  }, [adapter, colormode]);
   return adapter ? (
     <Box
       sx={{

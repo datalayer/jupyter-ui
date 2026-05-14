@@ -9,6 +9,7 @@ import React, {
   CSSProperties,
   useContext,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from 'react';
@@ -130,23 +131,20 @@ export function JupyterReactTheme(
   }, [colormodeFromStore, colormode, colormodeProps, hasColormodeProp]);
 
   // Sync prop → store (so children reading the store directly also get the right value)
-  // Store the resolved value, not 'auto'.
-  useEffect(() => {
-    const resolved = resolveColormode(colormodeProps);
-    if (hasColormodeProp && colormodeFromStore !== resolved) {
-      setColormodeStore(resolved);
-      syncedRef.current = true;
+  // Store the resolved value, not 'auto'. Use useLayoutEffect so the store is
+  // updated before the first paint, avoiding an initial 'light' flash without
+  // performing a setState during render (which causes a React warning when an
+  // ancestor subscribes to the same store).
+  useLayoutEffect(() => {
+    if (!hasColormodeProp) {
+      return;
     }
-  }, [colormodeFromStore, colormodeProps, hasColormodeProp, setColormodeStore]);
-
-  // Also sync prop to store eagerly on mount to avoid the initial 'light' frame
-  if (hasColormodeProp && !syncedRef.current) {
     const resolved = resolveColormode(colormodeProps);
     if (colormodeFromStore !== resolved) {
       setColormodeStore(resolved);
-      syncedRef.current = true;
     }
-  }
+    syncedRef.current = true;
+  }, [colormodeFromStore, colormodeProps, hasColormodeProp, setColormodeStore]);
 
   // Sync backgroundColor prop → store so notebook extensions (sidebars, etc.)
   // can read it from the store and render with the same background.
@@ -160,6 +158,9 @@ export function JupyterReactTheme(
       if (hasColormodeProp && colormodeProps === 'auto') {
         const resolved = matches ? 'dark' : 'light';
         setColormode(resolved);
+        if (colormodeFromStore !== resolved) {
+          setColormodeStore(resolved);
+        }
         setupPrimerPortals(resolved);
       }
     }
@@ -172,18 +173,36 @@ export function JupyterReactTheme(
           ? 'dark'
           : 'light';
       setColormode(colormode);
+      if (colormodeFromStore !== colormode) {
+        setColormodeStore(colormode);
+      }
       setupPrimerPortals(colormode);
     }
-    if (inJupyterLab) {
+    if (jupyterLabAdapter) {
       const themeManager = jupyterLabAdapter?.service(
         '@jupyterlab/apputils-extension:themes'
       ) as IThemeManager;
       if (themeManager) {
-        updateColorMode(themeManager);
-        themeManager.themeChanged.connect(updateColorMode);
-        return () => {
-          themeManager.themeChanged.disconnect(updateColorMode);
-        };
+        // When an explicit colormode prop is provided, drive the JupyterLab
+        // theme manager to match — otherwise the server-loaded theme link
+        // stays and `--jp-*` CSS vars do not switch.
+        if (hasColormodeProp) {
+          const resolved = resolveColormode(colormodeProps);
+          const desiredTheme =
+            resolved === 'dark' ? 'JupyterLab Dark' : 'JupyterLab Light';
+          if (themeManager.theme !== desiredTheme) {
+            themeManager.setTheme(desiredTheme).catch(() => {
+              /* swallow — best effort */
+            });
+          }
+          setupPrimerPortals(resolved);
+        } else {
+          updateColorMode(themeManager);
+          themeManager.themeChanged.connect(updateColorMode);
+          return () => {
+            themeManager.themeChanged.disconnect(updateColorMode);
+          };
+        }
       }
     } else {
       colorSchemeFromMedia({
@@ -198,10 +217,26 @@ export function JupyterReactTheme(
           .removeEventListener('change', colorSchemeFromMedia);
       };
     }
-  }, [inJupyterLab, jupyterLabAdapter, hasColormodeProp, colormodeProps]);
+  }, [
+    inJupyterLab,
+    jupyterLabAdapter,
+    hasColormodeProp,
+    colormodeProps,
+    colormodeFromStore,
+    setColormodeStore,
+  ]);
   return (
     <JupyterReactColormodeContext.Provider value={colormode}>
-      {loadJupyterLabCss && <JupyterLabCss colormode={colormode} />}
+      {loadJupyterLabCss && (
+        <JupyterLabCss
+          colormode={colormode}
+          // When an explicit colormode prop is provided, force theme-link
+          // management even if a JupyterLabAdapter is present — otherwise the
+          // server-loaded JupyterLab theme variables would override our
+          // requested colormode.
+          manageThemeLinks={hasColormodeProp || !jupyterLabAdapter}
+        />
+      )}
       <ThemeProvider
         colorMode={colormode}
         theme={theme}

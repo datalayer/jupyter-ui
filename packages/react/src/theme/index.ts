@@ -10,6 +10,7 @@ export * from './JupyterLabColormode';
 export * from './JupyterLabCss';
 export * from './JupyterPalette';
 export * from './JupyterReactTheme';
+export * from './usePrimerThemeBridge';
 
 // Do NOT export JupyterLabCssImports here...
 // !!! Leave this export commented otherwise webpack may break in consumers

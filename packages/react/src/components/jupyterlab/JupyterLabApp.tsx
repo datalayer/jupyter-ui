@@ -11,6 +11,7 @@ import { PageConfig } from '@jupyterlab/coreutils';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { ServiceManager } from '@jupyterlab/services';
 import { useJupyter } from '../../jupyter/JupyterUse';
+import { useJupyterReactStore } from '../../state';
 import { Colormode } from '../../theme/JupyterLabColormode';
 import { JupyterLabAppCorePlugins } from './JupyterLabAppPlugins';
 import JupyterLabAppAdapter from './JupyterLabAppAdapter';
@@ -74,6 +75,9 @@ const JupyterLabAppComponent = (props: JupyterLabAppProps) => {
     serviceManager: propsServiceManager,
     startDefaultKernel,
   });
+  const setJupyterLabAdapter = useJupyterReactStore(
+    state => state.setJupyterLabAdapter
+  );
   const defaultMimeExtensionPromises = useMemo(
     () =>
       mimeRendererPromises ?? JupyterLabAppCorePlugins().mimeExtensionPromises,
@@ -116,6 +120,7 @@ const JupyterLabAppComponent = (props: JupyterLabAppProps) => {
         ...restProps,
       });
       adapter.ready.then(() => {
+        setJupyterLabAdapter(adapter);
         onJupyterLab(adapter!);
         if (pluginId && PluginType && onPlugin) {
           const plugin = adapter!.service(pluginId) as typeof PluginType;

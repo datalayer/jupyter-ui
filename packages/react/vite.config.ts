@@ -200,6 +200,19 @@ export default defineConfig(({ mode }) => {
       alias: [
         // Handle ~ prefix in imports (commonly used for node_modules)
         { find: /^~(.*)$/, replacement: '$1' },
+        // json5 is consumed with named exports by JupyterLab settingregistry.
+        {
+          find: /^json5$/,
+          replacement: resolve(__dirname, 'src/shims/json5.ts'),
+        },
+        // Prevent Vite from externalizing Node builtins used by browser bundles.
+        {
+          find: /^node:url$/,
+          replacement: resolve(__dirname, 'src/shims/url.cjs'),
+        },
+        { find: /^url$/, replacement: resolve(__dirname, 'src/shims/url.cjs') },
+        { find: /^node:path$/, replacement: 'path-browserify' },
+        { find: /^path$/, replacement: 'path-browserify' },
         // Polyfill stream for browser
         { find: 'stream', replacement: 'stream-browserify' },
       ],
@@ -221,7 +234,11 @@ export default defineConfig(({ mode }) => {
       hmr: true,
       fs: {
         // Allow serving files from node_modules (needed for dynamic CSS imports)
-        allow: ['..'],
+        allow: [
+          '..',
+          // Monorepo root `src/` where shared node_modules are installed.
+          resolve(__dirname, '../../../../../'),
+        ],
       },
     },
     preview: {
@@ -314,6 +331,8 @@ export default defineConfig(({ mode }) => {
         '@xterm/addon-canvas',
         '@xterm/addon-web-links',
         '@xterm/addon-search',
+        // Ensure builtin polyfills are optimized for browser dev runtime
+        'path-browserify',
       ],
       esbuildOptions: {
         loader: {

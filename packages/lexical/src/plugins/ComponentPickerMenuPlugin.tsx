@@ -465,6 +465,13 @@ export const ComponentPickerMenuPlugin = ({
                 <ThemeProvider colorMode={theme === 'dark' ? 'night' : 'day'}>
                   <BaseStyles>
                     <Box
+                      onMouseDown={e => {
+                        // Prevent the editor from losing focus/selection when
+                        // the user clicks the scrollbar or any padding of the
+                        // menu, which would otherwise cause the typeahead
+                        // plugin to dismiss the menu.
+                        e.preventDefault();
+                      }}
                       sx={{
                         bg: 'canvas.overlay',
                         border: '1px solid',

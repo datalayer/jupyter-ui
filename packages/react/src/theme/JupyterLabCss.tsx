@@ -20,6 +20,7 @@ const GlobalStyle = createGlobalStyle<any>`
 
 export type JupyterLabCssProps = {
   colormode?: Colormode;
+  manageThemeLinks?: boolean;
 };
 
 /**
@@ -31,7 +32,7 @@ let isLoaded = false;
  * Components loading the JupyterLab CSS stylesheets.
  */
 export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
-  const { colormode = 'light' } = props;
+  const { colormode = 'light', manageThemeLinks = true } = props;
   useEffect(() => {
     if (isLoaded) {
       // no-op
@@ -39,18 +40,19 @@ export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
     }
     isLoaded = true;
     import('@jupyterlab/apputils/style/index.js');
-    import('@jupyterlab/rendermime/style/index.js');
-    import('@jupyterlab/codeeditor/style/index.js');
     import('@jupyterlab/cells/style/index.js');
-    import('@jupyterlab/documentsearch/style/index.js');
-    import('@jupyterlab/outputarea/style/index.js');
-    import('@jupyterlab/console/style/index.js');
-    import('@jupyterlab/completer/style/index.js');
+    import('@jupyterlab/cells/style/index.js');
+    import('@jupyterlab/codeeditor/style/index.js');
+    import('@jupyterlab/codeeditor/style/index.js');
     import('@jupyterlab/codemirror/style/index.js');
-    import('@jupyterlab/codeeditor/style/index.js');
-    import('@jupyterlab/cells/style/index.js');
-    import('@jupyterlab/notebook/style/index.js');
+    import('@jupyterlab/completer/style/index.js');
+    import('@jupyterlab/console/style/index.js');
+    import('@jupyterlab/documentsearch/style/index.js');
     import('@jupyterlab/filebrowser/style/index.js');
+    import('@jupyterlab/mathjax-extension/style/index.js');
+    import('@jupyterlab/notebook/style/index.js');
+    import('@jupyterlab/outputarea/style/index.js');
+    import('@jupyterlab/rendermime/style/index.js');
     import('@jupyterlab/terminal/style/index.js');
     import('@jupyterlab/ui-components/style/index.js');
     // ipywidgets.
@@ -59,6 +61,9 @@ export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
   }, [colormode]);
 
   useEffect(() => {
+    if (!manageThemeLinks) {
+      return;
+    }
     let theme;
     switch (colormode) {
       case 'light': {
@@ -139,7 +144,7 @@ ${css}
     return () => {
       observer.disconnect();
     };
-  }, [colormode]);
+  }, [colormode, manageThemeLinks]);
   return (
     <div id="dla-JupyterLabCss-id">
       <GlobalStyle />
