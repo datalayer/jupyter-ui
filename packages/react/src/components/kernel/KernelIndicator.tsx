@@ -20,6 +20,39 @@ import {
   type ExecutionState,
 } from './KernelIndicatorState';
 
+export type KernelIndicatorPosition =
+  | 'n'
+  | 's'
+  | 'e'
+  | 'w'
+  | 'ne'
+  | 'nw'
+  | 'se'
+  | 'sw';
+
+function overlayTransformForPosition(
+  position: KernelIndicatorPosition
+): string {
+  switch (position) {
+    case 'n':
+      return 'translate(-50%, -100%)';
+    case 's':
+      return 'translateX(-50%)';
+    case 'e':
+      return 'translateY(-50%)';
+    case 'w':
+      return 'translate(-100%, -50%)';
+    case 'ne':
+      return 'translate(0, -100%)';
+    case 'nw':
+      return 'translate(-100%, -100%)';
+    case 'se':
+      return 'translate(0, 0)';
+    case 'sw':
+      return 'translate(-100%, 0)';
+  }
+}
+
 export type KernelIndicatorProps = {
   label?: string;
   overlayTitle?: string;
@@ -30,6 +63,18 @@ export type KernelIndicatorProps = {
   memory?: string;
   cpu?: string;
   gpu?: string;
+  /**
+   * Position of the details overlay relative to the indicator trigger.
+   * Follows the same direction model as the Primer Tooltip.
+   * Defaults to 's' (below, centered).
+   */
+  position?: KernelIndicatorPosition;
+  /**
+   * When true (default), the trigger renders with a 1px border and a
+   * `canvas.default` background. Set to false to render a borderless,
+   * transparent trigger (useful when embedding in headers/toolbars).
+   */
+  bordered?: boolean;
 };
 
 export const KernelIndicator = ({
@@ -42,6 +87,8 @@ export const KernelIndicator = ({
   memory,
   cpu,
   gpu,
+  position = 's',
+  bordered = true,
 }: KernelIndicatorProps) => {
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>();
   const [status, setStatus] = useState<KernelMessage.Status>();
@@ -49,7 +96,29 @@ export const KernelIndicator = ({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const overlayRef = useRef<HTMLDivElement | null>(null);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [overlayPosition, setOverlayPosition] = useState({ top: 0, left: 0 });
+
+  const cancelScheduledClose = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  };
+
+  const scheduleClose = () => {
+    cancelScheduledClose();
+    closeTimerRef.current = setTimeout(() => {
+      setShowDetails(false);
+      closeTimerRef.current = null;
+    }, 120);
+  };
+
+  useEffect(() => {
+    return () => {
+      cancelScheduledClose();
+    };
+  }, []);
 
   useEffect(() => {
     if (!kernel) {
@@ -126,10 +195,46 @@ export const KernelIndicator = ({
       if (!triggerRect) {
         return;
       }
-      setOverlayPosition({
-        top: triggerRect.bottom + 8,
-        left: triggerRect.left + triggerRect.width / 2,
-      });
+      const centerX = triggerRect.left + triggerRect.width / 2;
+      const centerY = triggerRect.top + triggerRect.height / 2;
+      const gap = 8;
+      let top = triggerRect.bottom + gap;
+      let left = centerX;
+      switch (position) {
+        case 'n':
+          top = triggerRect.top - gap;
+          left = centerX;
+          break;
+        case 's':
+          top = triggerRect.bottom + gap;
+          left = centerX;
+          break;
+        case 'e':
+          top = centerY;
+          left = triggerRect.right + gap;
+          break;
+        case 'w':
+          top = centerY;
+          left = triggerRect.left - gap;
+          break;
+        case 'ne':
+          top = triggerRect.top - gap;
+          left = triggerRect.left;
+          break;
+        case 'nw':
+          top = triggerRect.top - gap;
+          left = triggerRect.right;
+          break;
+        case 'se':
+          top = triggerRect.bottom + gap;
+          left = triggerRect.left;
+          break;
+        case 'sw':
+          top = triggerRect.bottom + gap;
+          left = triggerRect.right;
+          break;
+      }
+      setOverlayPosition({ top, left });
     };
 
     updateOverlayPosition();
@@ -140,7 +245,7 @@ export const KernelIndicator = ({
       window.removeEventListener('resize', updateOverlayPosition);
       window.removeEventListener('scroll', updateOverlayPosition, true);
     };
-  }, [showDetails]);
+  }, [showDetails, position]);
 
   const resolvedEnvironmentName =
     environmentName || env?.display_name || 'browser-runtime';
@@ -239,8 +344,13 @@ export const KernelIndicator = ({
     <Box
       ref={containerRef}
       sx={{ position: 'relative', display: 'inline-flex' }}
-      onMouseEnter={() => setShowDetails(true)}
+      onMouseEnter={() => {
+        cancelScheduledClose();
+        setShowDetails(true);
+      }}
+      onMouseLeave={scheduleClose}
       onFocus={() => setShowDetails(true)}
+      onBlur={scheduleClose}
     >
       <Button
         ref={triggerRef}
@@ -253,10 +363,10 @@ export const KernelIndicator = ({
           alignItems: 'center',
           justifyContent: 'center',
           lineHeight: 0,
-          border: '1px solid',
-          borderColor: 'border.default',
+          border: bordered ? '1px solid' : 'none',
+          borderColor: bordered ? 'border.default' : 'transparent',
           borderRadius: 2,
-          bg: 'canvas.default',
+          bg: bordered ? 'canvas.default' : 'transparent',
         }}
       >
         <span
@@ -279,11 +389,13 @@ export const KernelIndicator = ({
         createPortal(
           <Box
             ref={overlayRef}
+            onMouseEnter={cancelScheduledClose}
+            onMouseLeave={scheduleClose}
             sx={{
               position: 'fixed',
               top: `${overlayPosition.top}px`,
               left: `${overlayPosition.left}px`,
-              transform: 'translateX(-50%)',
+              transform: overlayTransformForPosition(position),
               zIndex: 99999,
               minWidth: 560,
               maxWidth: 'min(980px, 96vw)',
