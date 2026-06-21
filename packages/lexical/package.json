@@ -71,7 +71,7 @@
     "@datalayer/jupyter-react": "^2.0.8",
     "@datalayer/lexical-loro": "^1.0.0",
     "@datalayer/primer-addons": "^1.0.12",
-    "@excalidraw/excalidraw": "^0.18.0",
+    "@excalidraw/excalidraw": "^0.18.1",
     "@floating-ui/react": "^0.27.16",
     "@jupyterlab/application": "^4.0.0",
     "@jupyterlab/coreutils": "^6.0.0",

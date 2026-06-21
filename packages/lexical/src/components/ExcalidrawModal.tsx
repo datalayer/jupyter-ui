@@ -10,20 +10,19 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import type {
   AppState,
   BinaryFiles,
   ExcalidrawImperativeAPI,
   ExcalidrawInitialDataState,
 } from '@excalidraw/excalidraw/types';
-import type { JSX } from 'react';
-
-import '@excalidraw/excalidraw/index.css';
 import { Excalidraw } from '@excalidraw/excalidraw';
 import { useEffect, useRef, useState } from 'react';
 import { Box, Dialog, Button as PrimerButton } from '@primer/react';
-
 import { useTheme } from '../context/ThemeContext';
+
+import '@excalidraw/excalidraw/index.css';
 
 export type ExcalidrawInitialElements = ExcalidrawInitialDataState['elements'];
 
