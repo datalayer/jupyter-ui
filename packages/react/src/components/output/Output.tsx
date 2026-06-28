@@ -134,8 +134,9 @@ export const Output = ({
         });
       }
     };
-    if (id && kernel) {
-      const adapter =
+    let nextAdapter: OutputAdapter | undefined;
+    if (id) {
+      nextAdapter =
         propsAdapter ??
         new OutputAdapter(
           id,
@@ -144,26 +145,35 @@ export const Output = ({
           model,
           suppressCodeExecutionErrors
         );
-      setAdapter(adapter);
-      outputStore.setAdapter(id, adapter);
+      setAdapter(nextAdapter);
+      outputStore.setAdapter(id, nextAdapter);
       if (model) {
         outputStore.setModel(id, model);
       }
-      if (code) {
-        outputStore.setInput(id, code);
-      }
-      adapter.outputArea.model.changed.connect(outputsCallback);
+      outputStore.setInput(id, code);
+      nextAdapter.outputArea.model.changed.connect(outputsCallback);
       if (receipt) {
-        adapter.outputArea.model.changed.connect(receiptCallback);
+        nextAdapter.outputArea.model.changed.connect(receiptCallback);
       }
     }
     return () => {
-      if (adapter) {
-        adapter.outputArea.model.changed.disconnect(outputsCallback);
-        adapter.outputArea.model.changed.disconnect(receiptCallback);
+      if (nextAdapter) {
+        nextAdapter.outputArea.model.changed.disconnect(outputsCallback);
+        nextAdapter.outputArea.model.changed.disconnect(receiptCallback);
       }
     };
-  }, [id, kernel]);
+  }, [
+    id,
+    kernel,
+    propsAdapter,
+    outputs,
+    model,
+    suppressCodeExecutionErrors,
+    code,
+    receipt,
+    outputStore,
+    resolvedSourceId,
+  ]);
   useEffect(() => {
     if (adapter) {
       if (autoRun) {
@@ -218,7 +228,7 @@ export const Output = ({
 
   return (
     <>
-      {showEditor && adapter && id && (
+      {showEditor && (adapter || propsAdapter) && id && (
         <Box
           sx={{
             '& .cm-editor': {
@@ -233,7 +243,7 @@ export const Output = ({
             disableRun={disableRun}
             insertText={insertText}
             kernel={kernel}
-            outputAdapter={adapter}
+            outputAdapter={adapter || propsAdapter!}
             sourceId={id}
             toolbarPosition={toolbarPosition}
           />
@@ -332,7 +342,7 @@ export const Output = ({
           >
             <KernelActionMenu
               kernel={kernel}
-              outputAdapter={adapter}
+              outputAdapter={adapter || propsAdapter}
               onClearOutputs={handleClearOutputs}
             />
           </Box>
