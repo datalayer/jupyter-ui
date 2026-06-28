@@ -246,36 +246,44 @@ export function CellMetadataEditor(
           </ActionList.Description>
         </ActionList.Item>
       </ActionList.Group>
-      {cellGradeType !== NbGraderType.NotGraded && (
-        <ActionList.Group title="NbGrader Metadata" variant="subtle">
-          <ActionList.Item onSelect={e => e.preventDefault()}>
-            Grade ID:{' '}
-            {
-              <TextInput
-                block
-                value={nbGrade.grade_id}
-                onChange={e => {
-                  e.preventDefault();
-                  handleGradeIdChange(cellModel, e.target.value);
-                }}
-              />
-            }
-          </ActionList.Item>
-          <ActionList.Item>
-            Points:{' '}
-            {
-              <TextInput
-                block
-                value={nbGrade.points}
-                onChange={e => {
-                  e.preventDefault();
-                  handlePointsChange(cellModel, e.target.value);
-                }}
-              />
-            }
-          </ActionList.Item>
-        </ActionList.Group>
-      )}
+      {(() => {
+        const isNotGraded = cellGradeType === NbGraderType.NotGraded;
+        return (
+          <ActionList.Group title="NbGrader Metadata" variant="subtle">
+            <ActionList.Item
+              disabled={isNotGraded}
+              onSelect={e => e.preventDefault()}
+            >
+              Grade ID{' '}
+              {
+                <TextInput
+                  block
+                  disabled={isNotGraded}
+                  value={nbGrade.grade_id}
+                  onChange={e => {
+                    e.preventDefault();
+                    handleGradeIdChange(cellModel, e.target.value);
+                  }}
+                />
+              }
+            </ActionList.Item>
+            <ActionList.Item disabled={isNotGraded}>
+              Points{' '}
+              {
+                <TextInput
+                  block
+                  disabled={isNotGraded}
+                  value={nbGrade.points}
+                  onChange={e => {
+                    e.preventDefault();
+                    handlePointsChange(cellModel, e.target.value);
+                  }}
+                />
+              }
+            </ActionList.Item>
+          </ActionList.Group>
+        );
+      })()}
       {/*
       <ActionList.Group title="NbGrader total points" variant="subtle">
         <ActionList.Item>
