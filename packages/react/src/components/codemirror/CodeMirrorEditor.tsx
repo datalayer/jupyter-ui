@@ -40,11 +40,39 @@ export const CodeMirrorEditor = (props: {
   } = props;
   const outputStore = useOutputsStore();
   const [view, setView] = useState<EditorView>();
+  const disableRunRef = useRef(disableRun);
+  const outputAdapterRef = useRef(outputAdapter);
+  const kernelRef = useRef(kernel);
   const dataset = outputStore.getDataset(sourceId);
   const source = outputStore.getInput(sourceId);
   const editorDiv = useRef<HTMLDivElement>();
+
+  useEffect(() => {
+    disableRunRef.current = disableRun;
+  }, [disableRun]);
+
+  useEffect(() => {
+    outputAdapterRef.current = outputAdapter;
+  }, [outputAdapter]);
+
+  useEffect(() => {
+    kernelRef.current = kernel;
+    if (outputAdapterRef.current) {
+      outputAdapterRef.current.kernel = kernel;
+    }
+  }, [kernel]);
+
   const setEditorSource = (source: string | undefined) => {
-    if (view && source) {
+    if (view && source !== undefined) {
+      // Avoid echoing the value back into the editor. The update listener
+      // writes every keystroke to the outputs store, which re-renders this
+      // component with an identical `source`. Re-dispatching a full-document
+      // replacement in that case collapses the selection and jumps the cursor
+      // back to the start. Only update when the content actually differs (e.g.
+      // an external reset).
+      if (view.state.doc.toString() === source) {
+        return;
+      }
       view.dispatch({
         changes: {
           from: 0,
@@ -65,16 +93,20 @@ export const CodeMirrorEditor = (props: {
     }
   };
   const executeCode = (editorView: EditorView, code?: string) => {
-    if (disableRun) {
+    if (disableRunRef.current) {
       alert(
         'Code execution is disabled for this editor. There should be a button on the page to run this editor.'
       );
       return true;
     }
+    const adapter = outputAdapterRef.current;
+    if (kernelRef.current) {
+      adapter.kernel = kernelRef.current;
+    }
     if (code) {
-      outputAdapter.execute(code);
+      adapter.execute(code);
     } else {
-      outputAdapter.execute(editorView.state.doc.toString());
+      adapter.execute(editorView.state.doc.toString());
     }
     return true;
   };
@@ -96,6 +128,15 @@ export const CodeMirrorEditor = (props: {
             },
           ])
         ),
+        EditorView.domEventHandlers({
+          keydown: (event, view) => {
+            if (!(event.shiftKey && event.key === 'Enter')) {
+              return false;
+            }
+            event.preventDefault();
+            return executeCode(view);
+          },
+        }),
         basicSetup,
         language.of(python()),
         EditorView.lineWrapping,

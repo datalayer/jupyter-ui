@@ -35,10 +35,12 @@ export function CellMetadataEditor(
     cellModel.getMetadata('nbgrader') ?? { grade_id: newUlid(), points: 1 }
   );
   useEffect(() => {
-    setNbGrade({
-      grade_id: nbGrade.grade_id ?? newUlid(),
-      points: nbGrade.points ?? 1,
-    });
+    if (nbGrade.grade_id === undefined || nbGrade.points === undefined) {
+      setNbGrade(prev => ({
+        grade_id: prev.grade_id ?? newUlid(),
+        points: prev.points ?? 1,
+      }));
+    }
   }, [nbGrade]);
   const handleGradeIdChange = useCallback(
     (cellModel: ICellModel, gradeId: string) => {

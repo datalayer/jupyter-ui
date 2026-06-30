@@ -385,7 +385,11 @@ export const JupyterInputOutputPlugin = (
                     jupyterOutputNode.getWritable() as JupyterOutputNode;
 
                   // Update kernel if needed
-                  if (!existingAdapter.kernel && kernel) {
+                  // Always sync the adapter's kernel to the current kernel
+                  // prop. Otherwise a cell that previously executed on the
+                  // browser (Pyodide) kernel would keep that stale kernel even
+                  // after a remote runtime is assigned.
+                  if (existingAdapter.kernel !== kernel) {
                     existingAdapter.kernel = kernel;
                   }
 

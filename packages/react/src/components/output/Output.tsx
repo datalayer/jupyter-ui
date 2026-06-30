@@ -166,12 +166,11 @@ export const Output = ({
     id,
     kernel,
     propsAdapter,
-    outputs,
+    propsOutputs,
     model,
     suppressCodeExecutionErrors,
     code,
     receipt,
-    outputStore,
     resolvedSourceId,
   ]);
   useEffect(() => {
