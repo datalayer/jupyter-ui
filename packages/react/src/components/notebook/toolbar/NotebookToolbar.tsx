@@ -41,6 +41,23 @@ export const NotebookToolbar = (props: INotebookToolbarProps) => {
   const handleDelete = () => notebookStore.delete(notebookId);
   const handleInsert = () => notebookStore.insertBelow(notebookId, insertType);
 
+  const activeTypeButtonSx = {
+    bg: 'btn.primary.bg',
+    color: 'btn.primary.text',
+    borderColor: 'btn.primary.border',
+    '&:hover': {
+      bg: 'btn.primary.hoverBg',
+    },
+  } as const;
+
+  const inactiveTypeButtonSx = {
+    color: 'fg.default',
+    bg: 'canvas.default',
+    '&:hover': {
+      bg: 'canvas.subtle',
+    },
+  } as const;
+
   return (
     <Box
       sx={{
@@ -137,18 +154,26 @@ export const NotebookToolbar = (props: INotebookToolbarProps) => {
         {/* Cell type selector */}
         <ButtonGroup>
           <Button
-            variant={insertType === 'code' ? 'primary' : 'invisible'}
+            variant="default"
             size="small"
             onClick={() => setInsertType('code')}
             leadingVisual={CodeIcon}
+            sx={
+              insertType === 'code' ? activeTypeButtonSx : inactiveTypeButtonSx
+            }
           >
             Code
           </Button>
           <Button
-            variant={insertType === 'markdown' ? 'primary' : 'invisible'}
+            variant="default"
             size="small"
             onClick={() => setInsertType('markdown')}
             leadingVisual={MarkdownIcon}
+            sx={
+              insertType === 'markdown'
+                ? activeTypeButtonSx
+                : inactiveTypeButtonSx
+            }
           >
             Markdown
           </Button>
