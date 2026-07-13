@@ -26,13 +26,7 @@ import {
 } from '@jupyterlab/cells';
 import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
 import { ICell, ILanguageInfoMetadata } from '@jupyterlab/nbformat';
-import {
-  createStandaloneCell,
-  YCodeCell,
-  YMarkdownCell,
-  YRawCell,
-  IYText,
-} from '@jupyter/ydoc';
+import { createStandaloneCell, IYText } from '@jupyter/ydoc';
 import { rendererFactory as plotlyFactory } from './../../../jupyter/renderers/plotly/PlotlyRenderer';
 import { newUuid } from '../../../utils/Utils';
 import { getMarked } from './../../notebook/marked/marked';
@@ -100,10 +94,18 @@ export const InputViewer = (props: Props) => {
   const id = (cell.id as string) || newUuid();
   switch (cell.cell_type) {
     case 'code': {
+      type CodeCellOptions = NonNullable<
+        ConstructorParameters<typeof CodeCellModel>[0]
+      >;
+      const sharedModel = createStandaloneCell(
+        cell
+      ) as unknown as ConstructorParameters<
+        typeof CodeCellModel
+      >[0] as CodeCellOptions['sharedModel'];
       const codeCell = new CodeCell({
         rendermime,
         model: new CodeCellModel({
-          sharedModel: createStandaloneCell(cell) as YCodeCell,
+          sharedModel,
         }),
         contentFactory: new Cell.ContentFactory({
           editorFactory: factoryService.newInlineEditor.bind(factoryService),
@@ -119,11 +121,19 @@ export const InputViewer = (props: Props) => {
       );
     }
     case 'markdown': {
+      type MarkdownCellOptions = NonNullable<
+        ConstructorParameters<typeof MarkdownCellModel>[0]
+      >;
+      const sharedModel = createStandaloneCell(
+        cell
+      ) as unknown as ConstructorParameters<
+        typeof MarkdownCellModel
+      >[0] as MarkdownCellOptions['sharedModel'];
       const markdownCell = new MarkdownCell({
         rendermime,
         showEditorForReadOnlyMarkdown: false,
         model: new MarkdownCellModel({
-          sharedModel: createStandaloneCell(cell) as YMarkdownCell,
+          sharedModel,
         }),
         contentFactory: new Cell.ContentFactory({
           editorFactory: factoryService.newInlineEditor.bind(factoryService),
@@ -136,9 +146,17 @@ export const InputViewer = (props: Props) => {
       );
     }
     case 'raw': {
+      type RawCellOptions = NonNullable<
+        ConstructorParameters<typeof RawCellModel>[0]
+      >;
+      const sharedModel = createStandaloneCell(
+        cell
+      ) as unknown as ConstructorParameters<
+        typeof RawCellModel
+      >[0] as RawCellOptions['sharedModel'];
       const rawCell = new RawCell({
         model: new RawCellModel({
-          sharedModel: createStandaloneCell(cell) as YRawCell,
+          sharedModel,
         }),
         contentFactory: new Cell.ContentFactory({
           editorFactory: factoryService.newInlineEditor.bind(factoryService),

@@ -39,7 +39,7 @@ import {
   FORMAT_ELEMENT_COMMAND,
   TextNode,
 } from 'lexical';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, type MouseEvent } from 'react';
 import * as ReactDOM from 'react-dom';
 import { Kernel } from '@datalayer/jupyter-react';
 import { Box, Text, ThemeProvider, BaseStyles } from '@primer/react';
@@ -465,7 +465,7 @@ export const ComponentPickerMenuPlugin = ({
                 <ThemeProvider colorMode={theme === 'dark' ? 'night' : 'day'}>
                   <BaseStyles>
                     <Box
-                      onMouseDown={e => {
+                      onMouseDown={(e: MouseEvent<HTMLDivElement>) => {
                         // Prevent the editor from losing focus/selection when
                         // the user clicks the scrollbar or any padding of the
                         // menu, which would otherwise cause the typeahead

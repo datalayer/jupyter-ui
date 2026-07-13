@@ -5,14 +5,13 @@
  */
 
 import { TextInput as BaseTextInput, TextInputProps } from '@primer/react';
-import type { BetterSystemStyleObject } from '@primer/react';
 import type { FC } from 'react';
 
 /**
  * Primer button tuned to fit JupyterLab dialog button
  */
 export const TextInput: FC<TextInputProps> = props => {
-  const sx: BetterSystemStyleObject = {
+  const sx: NonNullable<TextInputProps['sx']> = {
     border: 'none',
     ':focus-within': {
       borderColor: 'inherit',

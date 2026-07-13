@@ -10,8 +10,6 @@ import {
   NotebookModelFactory,
   NotebookModel,
 } from '@jupyterlab/notebook';
-import { DocumentRegistry } from '@jupyterlab/docregistry';
-import type { ISharedNotebook } from '@jupyter/ydoc';
 
 /**
  * Custom notebook model factory for Jupyter React.
@@ -41,8 +39,8 @@ export class JupyterReactNotebookModelFactory extends NotebookModelFactory {
   }
 
   /** @override */
-  createNew(
-    options: DocumentRegistry.IModelOptions<ISharedNotebook>
+  override createNew(
+    options?: Parameters<NotebookModelFactory['createNew']>[0]
   ): INotebookModel {
     if (this._nbformat) {
       this._nbformat.cells.forEach(cell => {

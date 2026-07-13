@@ -56,7 +56,7 @@ import type {
   SessionManager,
 } from '@jupyterlab/services';
 import type { ISessionConnection } from '@jupyterlab/services/lib/session/session';
-import { YNotebook, type ISharedNotebook, type IYText } from '@jupyter/ydoc';
+import { YNotebook, type IYText } from '@jupyter/ydoc';
 import { find } from '@lumino/algorithm';
 import { CommandRegistry } from '@lumino/commands';
 import { DisposableSet } from '@lumino/disposable';
@@ -259,6 +259,7 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
         showWidget: 'always',
         showShortcuts: true,
         streamingAnimation: 'none',
+        ghostSyntaxHighlighting: false,
         suppressIfTabCompleterActive: false,
         minLines: 1,
         maxLines: 10,
@@ -640,8 +641,8 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
   useEffect(() => {
     let isMounted = true;
     let onActiveCellChanged:
-      | ((notebook: Notebook, cell: Cell<ICellModel> | null) => void)
-      | null = null;
+      ((notebook: Notebook, cell: Cell<ICellModel> | null) => void) | null =
+      null;
     let onSessionChanged:
       | ((
           _: ISessionContext,
@@ -1046,7 +1047,7 @@ export function useNotebookModel(options: IOptions): NotebookModel | null {
             const model = new NotebookModel({
               collaborationEnabled: true,
               disableDocumentWideUndoRedo: true,
-              sharedModel,
+              sharedModel: sharedModel as any,
             });
             model.readOnly = readonly;
             setModel(model);
@@ -1242,9 +1243,7 @@ class DummyModelFactory extends NotebookModelFactory {
     super();
   }
 
-  createNew(
-    options?: DocumentRegistry.IModelOptions<ISharedNotebook>
-  ): NotebookModel {
+  createNew(options?: DocumentRegistry.IModelOptions): NotebookModel {
     return this.model;
   }
 }

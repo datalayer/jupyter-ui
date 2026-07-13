@@ -46,12 +46,7 @@ import {
 } from '@jupyterlab/rendermime';
 import { Session, SessionManager } from '@jupyterlab/services';
 import { runIcon } from '@jupyterlab/ui-components';
-import {
-  createStandaloneCell,
-  YCodeCell,
-  IYText,
-  YMarkdownCell,
-} from '@jupyter/ydoc';
+import { createStandaloneCell, IYText } from '@jupyter/ydoc';
 import { execute as executeOutput } from './../output/OutputExecutor';
 import {
   ClassicWidgetManager,
@@ -241,17 +236,25 @@ export class CellAdapter {
       editorFactory: factoryService.newInlineEditor.bind(factoryService),
     });
     if (type === 'code') {
+      type CodeCellOptions = NonNullable<
+        ConstructorParameters<typeof CodeCellModel>[0]
+      >;
+      const sharedModel =
+        cellModel as unknown as CodeCellOptions['sharedModel'];
       this._cell = new CodeCell({
         rendermime,
-        model: new CodeCellModel({ sharedModel: cellModel as YCodeCell }),
+        model: new CodeCellModel({ sharedModel }),
         contentFactory: contentFactory,
       });
     } else if (type === 'markdown') {
+      type MarkdownCellOptions = NonNullable<
+        ConstructorParameters<typeof MarkdownCellModel>[0]
+      >;
+      const sharedModel =
+        cellModel as unknown as MarkdownCellOptions['sharedModel'];
       this._cell = new MarkdownCell({
         rendermime,
-        model: new MarkdownCellModel({
-          sharedModel: cellModel as YMarkdownCell,
-        }),
+        model: new MarkdownCellModel({ sharedModel }),
         contentFactory: contentFactory,
       });
     }

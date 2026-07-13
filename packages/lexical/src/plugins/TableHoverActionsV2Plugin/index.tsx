@@ -404,7 +404,7 @@ function TableHoverActionsV2({
   return (
     <>
       <Box
-        ref={node => {
+        ref={(node: HTMLDivElement | null) => {
           floatingElemRef.current = node;
           refs.setFloating(node);
         }}

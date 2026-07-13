@@ -53,7 +53,7 @@
     "@mdx-js/react": "^3.1.0",
     "@mermaid-js/mermaid-zenuml": "^0.2.0",
     "@playwright/test": "^1.40.1",
-    "@primer/octicons-react": "^19.15.1",
+    "@primer/octicons-react": "^19.29.1",
     "@storybook/addon-docs": "^9.1.2",
     "@storybook/addon-links": "^9.1.2",
     "@storybook/react-webpack5": "^9.1.2",

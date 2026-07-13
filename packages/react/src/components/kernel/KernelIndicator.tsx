@@ -21,14 +21,7 @@ import {
 } from './KernelIndicatorState';
 
 export type KernelIndicatorPosition =
-  | 'n'
-  | 's'
-  | 'e'
-  | 'w'
-  | 'ne'
-  | 'nw'
-  | 'se'
-  | 'sw';
+  'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
 
 function overlayTransformForPosition(
   position: KernelIndicatorPosition
@@ -79,7 +72,7 @@ export type KernelIndicatorProps = {
 
 export const KernelIndicator = ({
   label = '',
-  overlayTitle = 'Sandbox Details',
+  overlayTitle = 'Code Sandbox Details',
   kernel,
   env,
   state,
