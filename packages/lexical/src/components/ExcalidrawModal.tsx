@@ -90,6 +90,26 @@ export default function ExcalidrawModal({
     excaliDrawModelRef.current?.focus();
   }, []);
 
+  // Excalidraw caches its container's pointer offsets on mount. When it mounts
+  // inside a dialog that is still being positioned/animated, those offsets are
+  // stale, which makes pointer selection land off-target (you have to click a
+  // bit aside the elements). Recompute the offsets once the dialog has settled
+  // and whenever the window is resized while the modal is open.
+  useEffect(() => {
+    if (!excalidrawAPI || !isShown) {
+      return;
+    }
+    const refresh = () => excalidrawAPI.refresh();
+    const raf = requestAnimationFrame(refresh);
+    const timer = setTimeout(refresh, 300);
+    window.addEventListener('resize', refresh);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(timer);
+      window.removeEventListener('resize', refresh);
+    };
+  }, [excalidrawAPI, isShown]);
+
   const save = () => {
     if (elements?.some(el => !el.isDeleted)) {
       const appState = excalidrawAPI?.getAppState();
