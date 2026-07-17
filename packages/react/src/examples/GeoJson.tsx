@@ -8,7 +8,7 @@ import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { rendererFactory as geojsonRenderer } from '@jupyterlab/geojson-extension';
 import { useJupyter } from '../jupyter';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { CellSidebarExtension } from '../components';
 import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
 import { Notebook } from '../components/notebook/Notebook';
@@ -23,7 +23,7 @@ const GeoJsonExample = () => {
     []
   );
   return (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       {serviceManager && defaultKernel && (
         <Notebook
           path="renderers/geojson-1.ipynb"
@@ -36,7 +36,7 @@ const GeoJsonExample = () => {
           Toolbar={NotebookToolbar}
         />
       )}
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 

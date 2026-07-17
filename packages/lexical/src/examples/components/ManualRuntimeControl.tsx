@@ -92,7 +92,7 @@ export const ManualRuntimeControlExample: React.FC = () => {
         try {
           // Create ServerConnection settings
           const serverSettings = ServerConnection.makeSettings({
-            baseUrl: 'https://oss.datalayer.run/api/jupyter-server',
+            baseUrl: 'https://prod1.datalayer.run/api/jupyter-server',
             token: 'YOUR_TOKEN_HERE',
             appendToken: true,
           });

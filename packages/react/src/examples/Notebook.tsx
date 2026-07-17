@@ -7,7 +7,7 @@
 import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { Box } from '@datalayer/primer-addons';
+import { Box, DatalayerThemeProvider } from '@datalayer/primer-addons';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { useJupyter } from '../jupyter';
 import {
@@ -17,6 +17,7 @@ import {
   Notebook,
 } from '../components';
 import { CellToolbarExtension } from './extensions';
+import { useExampleThemeSettings } from './themeStore';
 
 import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
@@ -24,6 +25,8 @@ const NotebookExample = () => {
   const { serviceManager, defaultKernel } = useJupyter({
     startDefaultKernel: true,
   });
+  const { colorMode, themeConfig, resolvedMode, backgroundColor } =
+    useExampleThemeSettings();
   const extensions = useMemo(
     () => [
       new CellToolbarExtension(),
@@ -32,26 +35,32 @@ const NotebookExample = () => {
     []
   );
   return (
-    <JupyterReactTheme>
-      {serviceManager && defaultKernel && (
-        <>
-          <Box>
-            <KernelIndicator
-              kernel={defaultKernel?.connection}
-              label="Kernel Indicator"
+    <DatalayerThemeProvider
+      colorMode={colorMode}
+      theme={themeConfig.primerTheme}
+      themeStyles={themeConfig.themeStyles}
+    >
+      <JupyterReactTheme colormode={resolvedMode} backgroundColor={backgroundColor}>
+        {serviceManager && defaultKernel && (
+          <>
+            <Box>
+              <KernelIndicator
+                kernel={defaultKernel?.connection}
+                label="Kernel Indicator"
+              />
+            </Box>
+            <Notebook
+              nbformat={NBFORMAT as INotebookContent}
+              id="notebook2-nbformat-id"
+              kernel={defaultKernel}
+              serviceManager={serviceManager}
+              height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+              extensions={extensions}
             />
-          </Box>
-          <Notebook
-            nbformat={NBFORMAT as INotebookContent}
-            id="notebook2-nbformat-id"
-            kernel={defaultKernel}
-            serviceManager={serviceManager}
-            height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-            extensions={extensions}
-          />
-        </>
-      )}
-    </JupyterReactTheme>
+          </>
+        )}
+      </JupyterReactTheme>
+    </DatalayerThemeProvider>
   );
 };
 

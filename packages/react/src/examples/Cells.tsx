@@ -5,16 +5,23 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import { Box } from '@datalayer/primer-addons';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { Box, Heading } from '@primer/react';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { useJupyter } from '../jupyter/JupyterUse';
 import { Cell } from '../components/cell/Cell';
 
 const CellsExample = () => {
   const { defaultKernel } = useJupyter({ startDefaultKernel: true });
   return (
-    <JupyterReactTheme>
-      <Box as="h1">Cells</Box>
+    <ExampleJupyterReactTheme>
+      <Box sx={{ px: 3, py: 2, bg: 'canvas.default' }}>
+        <Heading
+          as="h1"
+          sx={{ m: 0, fontSize: 4, fontWeight: 'bold' }}
+        >
+          Cells
+        </Heading>
+      </Box>
       {defaultKernel && (
         <>
           <Cell source={'print("Hello from Cell 1")'} kernel={defaultKernel} />
@@ -22,7 +29,7 @@ const CellsExample = () => {
           <Cell source={'print("Hello from Cell 3")'} kernel={defaultKernel} />
         </>
       )}
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 

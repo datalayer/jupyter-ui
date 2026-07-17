@@ -11,7 +11,7 @@ import { CellSidebarExtension } from '../components';
 import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
 import { Notebook } from '../components/notebook/Notebook';
 import { useJupyter } from '../jupyter';
-import { JupyterReactTheme } from '../theme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 const NotebookJupyterExample = () => {
@@ -26,7 +26,7 @@ const NotebookJupyterExample = () => {
     []
   );
   return (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       {serviceManager && defaultKernel && (
         <Notebook
           id="notebook-jupyter-react-theme-id"
@@ -38,7 +38,7 @@ const NotebookJupyterExample = () => {
           Toolbar={NotebookToolbar}
         />
       )}
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 
@@ -54,7 +54,7 @@ const NotebookJupyterReactThemeExample = () => {
     []
   );
   return (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       {serviceManager && defaultKernel && (
         <Notebook
           id="notebook-jupyter-react-theme-id"
@@ -66,7 +66,7 @@ const NotebookJupyterReactThemeExample = () => {
           Toolbar={NotebookToolbar}
         />
       )}
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 

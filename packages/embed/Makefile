@@ -92,7 +92,7 @@ example: build-lazy ## build lazy and serve examples
 	@echo
 	@echo -e "\033[1;32m🌐 Building and serving examples on http://localhost:3456/index-lazy...\033[0m"
 	@echo
-	@echo -e "\033[1;33m💡 Examples use hosted Jupyter server at https://oss.datalayer.run/api/jupyter-server\033[0m"
+	@echo -e "\033[1;33m💡 Examples use hosted Jupyter server at https://prod1.datalayer.run/api/jupyter-server\033[0m"
 	@echo
 	@cp dist-lazy/jupyter-embed.lazy.js examples/
 	@cp -r dist-lazy/chunks examples/
@@ -101,7 +101,7 @@ example: build-lazy ## build lazy and serve examples
 .PHONY: example-dev
 example-dev: ## serve examples in development mode
 	@echo -e "\033[1;32m🌐 Starting example development server...\033[0m"
-	@echo -e "\033[1;33m💡 Examples use hosted Jupyter server at https://oss.datalayer.run/api/jupyter-server\033[0m"
+	@echo -e "\033[1;33m💡 Examples use hosted Jupyter server at https://prod1.datalayer.run/api/jupyter-server\033[0m"
 	npm run example:dev
 
 .PHONY: example-esm
@@ -133,7 +133,7 @@ run-lazy: build-lazy ## build lazy version and serve from dist-lazy
 	@echo -e "\033[1;32m🚀 Serving lazy-loading version on http://localhost:3456...\033[0m"
 	@echo
 	@echo -e "\033[1;33m💡 Open http://localhost:3456 to test lazy loading\033[0m"
-	@echo -e "\033[1;33m💡 Examples use hosted Jupyter server at https://oss.datalayer.run/api/jupyter-server\033[0m"
+	@echo -e "\033[1;33m💡 Examples use hosted Jupyter server at https://prod1.datalayer.run/api/jupyter-server\033[0m"
 	@echo
 	@cp examples/index-lazy.html dist-lazy/index.html
 	@sed -i 's|src="./jupyter-embed.lazy.js"|src="./jupyter-embed.lazy.js"|g' dist-lazy/index.html
@@ -142,7 +142,7 @@ run-lazy: build-lazy ## build lazy version and serve from dist-lazy
 .PHONY: run
 run: build ## build and serve examples
 	@echo -e "\033[1;32m🚀 Building and serving examples on http://localhost:3456...\033[0m"
-	@echo -e "\033[1;33m💡 Examples use hosted Jupyter server at https://oss.datalayer.run/api/jupyter-server\033[0m"
+	@echo -e "\033[1;33m💡 Examples use hosted Jupyter server at https://prod1.datalayer.run/api/jupyter-server\033[0m"
 	@cp dist/jupyter-embed.js examples/
 	npx serve examples -p 3456
 

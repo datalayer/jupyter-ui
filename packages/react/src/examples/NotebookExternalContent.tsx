@@ -9,7 +9,7 @@ import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { ZapIcon } from '@primer/octicons-react';
 import { IconButton } from '@primer/react';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { useJupyter } from '../jupyter';
 import { Notebook } from '../components/notebook/Notebook';
 // import { notebookStore } from '../components/notebook/NotebookState';
@@ -52,7 +52,7 @@ const NotebookExternalContentExample = () => {
     alert('Save this notebook: ' + JSON.stringify(updatedNbFormat));
   };
   return (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       <IconButton
         variant="invisible"
         size="small"
@@ -75,7 +75,7 @@ const NotebookExternalContentExample = () => {
           extensions={extensions}
         />
       )}
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 

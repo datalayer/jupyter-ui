@@ -67,7 +67,10 @@ const JupyterLabAppHeadlessExample = () => {
   };
   return (
     <>
-      <JupyterReactTheme colormode="light">
+      <JupyterReactTheme
+        colormode={theme}
+        backgroundColor="var(--bgColor-default)"
+      >
         <ThemeProvider
           colorMode={theme === 'light' ? 'day' : 'night'}
           dayScheme="light"
@@ -75,7 +78,9 @@ const JupyterLabAppHeadlessExample = () => {
         >
           <Box display="flex" color="fg.default" bg="canvas.default">
             <Box mr={3}>
-              <Text as="h2">JupyterLab Headless Application</Text>
+                <Text as="h2" sx={{ m: 0, color: 'fg.default' }}>
+                  JupyterLab Headless Application
+                </Text>
             </Box>
             <Box>
               <Box>

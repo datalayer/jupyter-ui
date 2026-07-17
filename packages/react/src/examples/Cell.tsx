@@ -6,7 +6,10 @@
 
 import { createRoot } from 'react-dom/client';
 import { Button, Label } from '@primer/react';
-import { Box } from '@datalayer/primer-addons';
+import {
+  Box,
+  DatalayerThemeProvider,
+} from '@datalayer/primer-addons';
 import { PlayIcon } from '@primer/octicons-react';
 import { JupyterReactTheme } from '../theme';
 import { useJupyter } from '../jupyter/JupyterUse';
@@ -14,6 +17,7 @@ import { useKernelsStore } from '../jupyter/kernel/KernelState';
 import { KernelIndicator } from '../components/kernel/KernelIndicator';
 import { Cell } from '../components/cell/Cell';
 import { useCellsStore } from '../components/cell/CellState';
+import { useExampleThemeSettings } from './themeStore';
 
 const CELL_ID = 'cell-example-1';
 
@@ -26,41 +30,52 @@ const CellExample = () => {
   const { defaultKernel } = useJupyter({ startDefaultKernel: true });
   const cellsStore = useCellsStore();
   const kernelsStore = useKernelsStore();
+  const { colorMode, themeConfig, resolvedMode, backgroundColor } =
+    useExampleThemeSettings();
+
   return (
-    <JupyterReactTheme>
-      <Box as="h1">Cell</Box>
-      <Box as="pre">Source: {cellsStore.getSource(CELL_ID)}</Box>
-      <Box>Outputs Count: {cellsStore.getOutputsCount(CELL_ID)}</Box>
-      <Box>
-        Kernel State:{' '}
-        <Label>
-          {defaultKernel && kernelsStore.getExecutionState(defaultKernel.id)}
-        </Label>
-      </Box>
-      <Box>
-        Kernel Phase:{' '}
-        <Label>
-          {defaultKernel && kernelsStore.getExecutionPhase(defaultKernel.id)}
-        </Label>
-      </Box>
-      <Box>
-        <KernelIndicator
-          kernel={defaultKernel?.connection}
-          label="Kernel Indicator"
-        />
-      </Box>
-      <Box>
-        <Button
-          leadingVisual={() => <PlayIcon />}
-          onClick={() => cellsStore.execute(CELL_ID)}
-        >
-          Run cell
-        </Button>
-      </Box>
-      {defaultKernel && (
-        <Cell id={CELL_ID} source={DEFAULT_SOURCE} kernel={defaultKernel} />
-      )}
-    </JupyterReactTheme>
+    <DatalayerThemeProvider
+      colorMode={colorMode}
+      theme={themeConfig.primerTheme}
+      themeStyles={themeConfig.themeStyles}
+    >
+      <JupyterReactTheme colormode={resolvedMode} backgroundColor={backgroundColor}>
+        <Box as="h1">Cell</Box>
+        <Box as="pre">Source: {cellsStore.getSource(CELL_ID)}</Box>
+        <Box>Outputs Count: {cellsStore.getOutputsCount(CELL_ID)}</Box>
+        <Box>
+          Kernel State:{' '}
+          <Label>
+            {defaultKernel && kernelsStore.getExecutionState(defaultKernel.id)}
+          </Label>
+        </Box>
+        <Box>
+          Kernel Phase:{' '}
+          <Label>
+            {defaultKernel && kernelsStore.getExecutionPhase(defaultKernel.id)}
+          </Label>
+        </Box>
+        <Box>
+          <KernelIndicator
+            kernel={defaultKernel?.connection}
+            label="Kernel Indicator"
+            position="sw"
+            bordered={false}
+          />
+        </Box>
+        <Box>
+          <Button
+            leadingVisual={() => <PlayIcon />}
+            onClick={() => cellsStore.execute(CELL_ID)}
+          >
+            Run cell
+          </Button>
+        </Box>
+        {defaultKernel && (
+          <Cell id={CELL_ID} source={DEFAULT_SOURCE} kernel={defaultKernel} />
+        )}
+      </JupyterReactTheme>
+    </DatalayerThemeProvider>
   );
 };
 

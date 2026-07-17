@@ -10,7 +10,7 @@ import { Heading, Textarea, Button, Text } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { IModel } from '@jupyterlab/services/lib/kernel/kernel';
 import { ISpecModel } from '@jupyterlab/services/lib/kernelspec/kernelspec';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { useJupyter } from '../jupyter/JupyterUse';
 import {
   KERNEL_STATES,
@@ -104,7 +104,7 @@ const KernelExamples = () => {
     console.log('Jupyter Kernelspec model', specModel);
   };
   return (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       <Box as="h1">Kernels</Box>
       <Box display="flex">
         <Box>
@@ -287,7 +287,7 @@ const KernelExamples = () => {
           <KernelInspector kernel={kernel} />
         </Box>
       </Box>
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 

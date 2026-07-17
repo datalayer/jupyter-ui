@@ -51,7 +51,11 @@ const NotebookThemeColormodeExample = () => {
   }, []);
   return (
     <>
-      <JupyterReactTheme theme={theme}>
+      <JupyterReactTheme
+        theme={theme}
+        colormode={colormode}
+        backgroundColor="var(--bgColor-default)"
+      >
         <Box display="flex">
           <Box mr={3}>
             <Text

@@ -7,7 +7,7 @@
 import { useEffect, useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useJupyter } from '../jupyter';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { CellSidebarExtension, Notebook } from '../components';
 import { useNotebookStore } from '../components/notebook/NotebookState';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
@@ -44,7 +44,7 @@ const NotebookInitExample = () => {
     }
   }, [defaultKernel, notebook]);
   return (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       <div style={{ width: NOTEBOOK_WIDTH, height: NOTEBOOK_HEIGHT }}>
         {serviceManager && defaultKernel && (
           <Notebook
@@ -58,7 +58,7 @@ const NotebookInitExample = () => {
           />
         )}
       </div>
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 

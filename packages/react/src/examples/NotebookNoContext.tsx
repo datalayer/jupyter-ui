@@ -26,7 +26,10 @@ const NotebookNoContextExample = () => {
     []
   );
   return (
-    <JupyterReactTheme colormode={COLORMODE}>
+    <JupyterReactTheme
+      colormode={COLORMODE}
+      backgroundColor="var(--bgColor-default)"
+    >
       {serviceManager && defaultKernel && (
         <Notebook
           id={NOTEBOOK_ID}

@@ -10,7 +10,7 @@ import { Button } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { useJupyter } from '../jupyter';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from '../components/notebook/toolbar/NotebookToolbar';
 import { TocExtension } from './extensions/toc/TocExtension';
@@ -36,7 +36,7 @@ const NotebookTOCExample = () => {
     [layout]
   );
   return (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       <Box>
         <Button
           onClick={() => {
@@ -58,7 +58,7 @@ const NotebookTOCExample = () => {
           Toolbar={NotebookToolbar}
         />
       )}
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 

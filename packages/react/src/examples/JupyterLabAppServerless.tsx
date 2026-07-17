@@ -5,7 +5,8 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { Box, Text } from '@primer/react';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import JupyterLabApp from '../components/jupyterlab/JupyterLabApp';
 import JupyterLabAppAdapter from '../components/jupyterlab/JupyterLabAppAdapter';
 
@@ -52,8 +53,12 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <JupyterReactTheme>
-    <h1>JupyterLab Serverless Application</h1>
+  <ExampleJupyterReactTheme>
+    <Box sx={{ px: 3, py: 2, bg: 'canvas.default' }}>
+      <Text as="h1" sx={{ m: 0, color: 'fg.default', fontSize: 4, fontWeight: 'bold' }}>
+        JupyterLab Serverless Application
+      </Text>
+    </Box>
     <JupyterLabAppServerlessExample />
-  </JupyterReactTheme>
+  </ExampleJupyterReactTheme>
 );

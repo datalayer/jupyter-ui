@@ -7,6 +7,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
+import { useSystemColorMode } from '@datalayer/primer-addons';
 import { useJupyter } from '../jupyter';
 import { jupyterLabTheme, JupyterReactTheme } from '../theme';
 import { Text, ToggleSwitch, theme as primerTheme } from '@primer/react';
@@ -22,6 +23,7 @@ const NotebookThemeExample = () => {
   });
   const [theme, setTheme] = useState<any>(jupyterLabTheme);
   const [isOn, setIsOn] = useState(false);
+  const systemMode = useSystemColorMode();
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   const onClick = useCallback(() => {
     setIsOn(!isOn);
@@ -38,7 +40,11 @@ const NotebookThemeExample = () => {
   }, []);
   return (
     <>
-      <JupyterReactTheme theme={theme}>
+      <JupyterReactTheme
+        theme={theme}
+        colormode={systemMode}
+        backgroundColor="var(--bgColor-default)"
+      >
         <Text
           fontSize={2}
           fontWeight="bold"

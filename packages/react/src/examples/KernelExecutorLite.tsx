@@ -10,7 +10,7 @@ import { Heading, Text } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { IOutputAreaModel } from '@jupyterlab/outputarea';
 import { KernelMessage } from '@jupyterlab/services';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { useJupyter } from '../jupyter/JupyterUse';
 import { Output } from '../components/output/Output';
 import { KernelIndicator } from '../components/kernel/KernelIndicator';
@@ -68,7 +68,7 @@ const KernelExecutorLiteExample = () => {
     }
   }, [defaultKernel?.connection]);
   return (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       <Box>
         <Heading>Kernel Executor Lite</Heading>
         <Text>15 streaming outputs.</Text>
@@ -96,7 +96,7 @@ const KernelExecutorLiteExample = () => {
           <Output model={finalOutputAreaModel} showControl={false} />
         </Box>
       )}
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 

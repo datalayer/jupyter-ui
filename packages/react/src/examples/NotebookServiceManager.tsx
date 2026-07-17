@@ -15,7 +15,7 @@ import {
   getJupyterServerUrl,
   ServiceManagerLess,
 } from '../jupyter';
-import { JupyterReactTheme } from '../theme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { createServerSettings } from '../utils';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import { CellSidebarExtension } from '../components';
@@ -48,7 +48,7 @@ const NotebookServiceManagerExample = () => {
     }
   };
   return (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       <Box display="flex">
         <Box>
           <Button onClick={e => changeServiceManager()}>
@@ -67,7 +67,7 @@ const NotebookServiceManagerExample = () => {
         height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
         Toolbar={NotebookToolbar}
       />
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 

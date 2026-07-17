@@ -8,7 +8,7 @@ import { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { INotebookContent, IOutput } from '@jupyterlab/nbformat';
 import { Button, ButtonGroup, SegmentedControl } from '@primer/react';
-import { Box } from '@datalayer/primer-addons';
+import { Box, DatalayerThemeProvider } from '@datalayer/primer-addons';
 import { useJupyter } from '../jupyter';
 import { Kernel } from '../jupyter/kernel/Kernel';
 // import {
@@ -27,6 +27,7 @@ import { useNotebookStore } from '../components/notebook/NotebookState';
 import { Output } from '../components/output/Output';
 import { Terminal } from '../components/terminal/Terminal';
 import { CellSidebarExtension } from '../components';
+import { useExampleThemeSettings } from './themeStore';
 
 import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
@@ -201,19 +202,27 @@ const JupyterContextExample = () => {
   const { serviceManager, defaultKernel } = useJupyter({
     startDefaultKernel: true,
   });
+  const { colorMode, themeConfig, resolvedMode, backgroundColor } =
+    useExampleThemeSettings();
   const extensionsButton = useMemo(
     () => [new CellSidebarExtension({ factory: CellSidebarButton })],
     []
   );
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
-    <>
+    <DatalayerThemeProvider
+      colorMode={colorMode}
+      theme={themeConfig.primerTheme}
+      themeStyles={themeConfig.themeStyles}
+    >
       <JupyterReactTheme
-      //        jupyterServerUrl={DEFAULT_JUPYTER_SERVER_URL}
-      //        jupyterServerToken={DEFAULT_JUPYTER_SERVER_TOKEN}
-      //        serverless={index === 0}
-      //        terminals
-      //        startDefaultKernel
+        colormode={resolvedMode}
+        backgroundColor={backgroundColor}
+        //        jupyterServerUrl={DEFAULT_JUPYTER_SERVER_URL}
+        //        jupyterServerToken={DEFAULT_JUPYTER_SERVER_TOKEN}
+        //        serverless={index === 0}
+        //        terminals
+        //        startDefaultKernel
       >
         <SegmentedControl
           onChange={index => setIndex(index)}
@@ -266,7 +275,7 @@ const JupyterContextExample = () => {
         <hr />
         <Terminal />
       </JupyterReactTheme>
-    </>
+    </DatalayerThemeProvider>
   );
 };
 

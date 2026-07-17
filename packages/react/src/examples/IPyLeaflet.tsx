@@ -6,7 +6,7 @@
 
 import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { useJupyter } from '../jupyter';
 import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
@@ -18,7 +18,7 @@ const IPyLeafletExample = () => {
   });
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       {serviceManager && defaultKernel && (
         <Notebook
           id="notebook-ipyleaflet-id"
@@ -30,7 +30,7 @@ const IPyLeafletExample = () => {
           Toolbar={NotebookToolbar}
         />
       )}
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 

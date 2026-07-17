@@ -13,7 +13,7 @@ import {
   CellSidebarButton,
   NotebookToolbar,
 } from '../components';
-import { JupyterReactTheme } from '../theme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { useJupyter } from '../jupyter';
 import { ExecTimeExtension } from './extensions';
 
@@ -31,7 +31,7 @@ const NotebookExtensionExample = () => {
     []
   );
   return (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       {serviceManager && defaultKernel && (
         <Notebook
           nbformat={NBFORMAT as INotebookContent}
@@ -43,7 +43,7 @@ const NotebookExtensionExample = () => {
           Toolbar={NotebookToolbar}
         />
       )}
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 

@@ -8,7 +8,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Button, Flash } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { useJupyter } from '../jupyter/JupyterUse';
 import { Kernel } from '../jupyter/kernel/Kernel';
 import { CellSidebarExtension } from '../components';
@@ -60,7 +60,7 @@ const NotebookKernelChangeExample = () => {
     }
   };
   return (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       <Box display="flex">
         <Box>
           <Button variant="default" size="small" onClick={changeKernel}>
@@ -91,7 +91,7 @@ const NotebookKernelChangeExample = () => {
           extensions={extensions}
         />
       )}
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 

@@ -9,7 +9,7 @@ import { createRoot } from 'react-dom/client';
 import { Heading, Textarea, Button } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { useJupyter } from '../jupyter/JupyterUse';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { KernelProgressBar } from './../components/kernel/KernelProgressBar';
 
 export const KernelExecuteExample = () => {
@@ -40,7 +40,7 @@ export const KernelExecuteExample = () => {
     defaultKernel?.interrupt();
   };
   return (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       <Box m={3}>
         <Heading>Kernel Execute</Heading>
         <Box>
@@ -80,7 +80,7 @@ export const KernelExecuteExample = () => {
           </Box>
         )}
       </Box>
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 

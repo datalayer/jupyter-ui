@@ -21,7 +21,7 @@ const MatplotlibExample = () => {
   });
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       <JupyterLabCss colormode="light" />
       {serviceManager && defaultKernel && (
         <Notebook
@@ -34,7 +34,7 @@ const MatplotlibExample = () => {
           Toolbar={NotebookToolbar}
         />
       )}
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 

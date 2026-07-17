@@ -6,7 +6,7 @@
 
 import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { useJupyter, JupyterCollaborationProvider } from '../jupyter';
 import {
   Notebook,
@@ -25,7 +25,7 @@ const NotebookCollaborativeExample = () => {
     []
   );
   return serviceManager ? (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       <Notebook
         path="collaboration.ipynb"
         id="notebook2-collaboration-id"
@@ -43,7 +43,7 @@ const NotebookCollaborativeExample = () => {
         }}
         */
       />
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   ) : (
     <></>
   );

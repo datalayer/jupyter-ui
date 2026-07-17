@@ -7,10 +7,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { Text, ToggleSwitch } from '@primer/react';
+import { Box, Text, ToggleSwitch } from '@primer/react';
 import { useJupyter } from '../jupyter';
 import { JupyterReactTheme } from '../theme';
 import { CellSidebarExtension } from '../components';
+import { KernelIndicator } from '../components/kernel/KernelIndicator';
 import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import { useJupyterReactStore } from '../state';
@@ -38,7 +39,10 @@ const NotebookColormodeExample = () => {
     setIsOn(on);
   }, []);
   return (
-    <JupyterReactTheme>
+    <JupyterReactTheme
+      colormode={colormode}
+      backgroundColor="var(--bgColor-default)"
+    >
       <Text
         fontSize={2}
         fontWeight="bold"
@@ -56,6 +60,14 @@ const NotebookColormodeExample = () => {
         statusLabelPosition="end"
         aria-labelledby="switch-label"
       />
+      <Box sx={{ mt: 2, display: 'inline-flex' }}>
+        <KernelIndicator
+          kernel={defaultKernel?.connection}
+          label="Kernel Indicator"
+          position="sw"
+          bordered={false}
+        />
+      </Box>
       {serviceManager && defaultKernel && (
         <Notebook
           id="notebook-model-id"

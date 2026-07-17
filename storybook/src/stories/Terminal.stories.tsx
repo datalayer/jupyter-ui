@@ -28,7 +28,7 @@ const Template = (args, { globals: { labComparison } }) => {
   return (
     <JupyterReactTheme
     //      startDefaultKernel={false}
-    //      jupyterServerUrl="https://oss.datalayer.run/api/jupyter-server"
+    //      jupyterServerUrl="https://prod1.datalayer.run/api/jupyter-server"
     //      jupyterServerToken="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
     //      terminals={true}
     >
