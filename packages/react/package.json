@@ -172,7 +172,7 @@
     "@jupyter/web-components": "^0.17.1",
     "@jupyter/docprovider-extension": "^4.3.0",
     "@jupyter/collaboration-extension": "^4.3.0",
-    "@jupyter/ydoc": "^3.4.1",
+    "@jupyter/ydoc": "^4.1.1",
     "@jupyterlab/application": "^4.0.0",
     "@jupyterlab/application-extension": "^4.0.0",
     "@jupyterlab/apputils": "^4.0.0",
