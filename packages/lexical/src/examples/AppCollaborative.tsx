@@ -23,7 +23,7 @@ const AppCollaborative = () => {
     <LexicalPrimerThemeProvider useStore={useExampleThemeStore}>
       <Box sx={{ p: 3 }}>
         <Heading as="h2" sx={{ mb: 2 }}>
-          Lexical Collaborative (Iframe)
+          Lexical Collaborative
         </Heading>
         <Text as="p" sx={{ mb: 3, color: 'fg.muted' }}>
           Two standalone lexical examples side by side using

@@ -4,11 +4,19 @@
  * MIT License
  */
 
-import { useState, useRef } from 'react';
-import { Text, Spinner, Flash, ActionList, TextInput } from '@primer/react';
+import { useEffect, useMemo, useState, useRef } from 'react';
+import { Text, Flash, ActionList, TextInput, Button } from '@primer/react';
+import { SignOutIcon, PencilAiIcon } from '@primer/octicons-react';
 import { SearchIcon, CheckIcon } from '@primer/octicons-react';
-import { AppearanceControlsWithStore, Box } from '@datalayer/primer-addons';
-import { LexicalPrimerThemeProvider } from '..';
+import {
+  AppearanceControlsWithStore,
+  Box,
+  DatalayerThemeProvider,
+} from '@datalayer/primer-addons';
+import { useCoreStore, coreStore, iamStore } from '@datalayer/core';
+import { SignInSimple } from '@datalayer/core/lib/views/iam';
+import { UserBadge } from '@datalayer/core/lib/views/profile';
+import { useSimpleAuthStore } from '@datalayer/core/lib/views/otel';
 import { useExampleThemeSettings, useExampleThemeStore } from './themeStore';
 
 const LOCAL_STORAGE_KEY = 'jupyter-lexical-selected-example';
@@ -20,7 +28,7 @@ const EXAMPLES: Array<{ name: string; path: string; description: string }> = [
     description: 'Current lexical example.',
   },
   {
-    name: 'Lexical Collaborative (Iframe)',
+    name: 'Lexical Collaborative',
     path: 'AppCollaborative',
     description: 'Two side-by-side iframe collaborators.',
   },
@@ -53,18 +61,53 @@ const saveExample = (path: string): void => {
   }
 };
 
+const parseJwtPayload = (token: string): Record<string, unknown> | null => {
+  const parts = token.split('.');
+  if (parts.length !== 3 || !parts[1]) {
+    return null;
+  }
+  try {
+    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const padded = base64.padEnd(Math.ceil(base64.length / 4) * 4, '=');
+    return JSON.parse(atob(padded)) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+};
+
+const isExpiredJwt = (token: string): boolean => {
+  const payload = parseJwtPayload(token);
+  if (!payload) {
+    // Non-JWT tokens (for example API keys) should not be treated as expired.
+    return false;
+  }
+  const exp = payload.exp;
+  if (typeof exp !== 'number') {
+    return false;
+  }
+  const nowSeconds = Math.floor(Date.now() / 1000);
+  return nowSeconds >= exp;
+};
+
+const syncTokenToIamStore = (token: string | undefined) => {
+  iamStore.setState({ token });
+};
+
 const ExamplesSidebar = ({
   selectedPath,
   onSelect,
   isLoading,
   error,
+  onSignOut,
 }: {
   selectedPath: string;
   onSelect: (path: string) => void;
   isLoading: boolean;
   error: string | null;
+  onSignOut: () => void;
 }) => {
   const [filter, setFilter] = useState('');
+  const token = useSimpleAuthStore(state => state.token);
 
   const filteredExamples = EXAMPLES.filter(
     example =>
@@ -102,12 +145,18 @@ const ExamplesSidebar = ({
         <Box mt={2}>
           <AppearanceControlsWithStore useStore={useExampleThemeStore} />
         </Box>
-        {isLoading && (
-          <Box mt={2} display="flex" alignItems="center">
-            <Spinner size="small" />
-            <Text ml={2} fontSize={1} color="fg.muted">
-              Loading...
-            </Text>
+
+        {token && (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 2 }}>
+            <UserBadge token={token} variant="small" />
+            <Button
+              size="small"
+              variant="invisible"
+              leadingVisual={SignOutIcon}
+              onClick={onSignOut}
+            >
+              Sign out
+            </Button>
           </Box>
         )}
       </Box>
@@ -175,8 +224,49 @@ const Examples = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const { backgroundColor } = useExampleThemeSettings();
+  const { colorMode, themeConfig, backgroundColor } = useExampleThemeSettings();
   const frameBackgroundColor = backgroundColor ?? 'var(--bgColor-default)';
+
+  const token = useSimpleAuthStore(state => state.token);
+  const setAuth = useSimpleAuthStore(state => state.setAuth);
+  const clearAuth = useSimpleAuthStore(state => state.clearAuth);
+  const configuration = useCoreStore(state => state.configuration);
+
+  const isAuthenticated = !!token && !isExpiredJwt(token);
+
+  const loginUrl = useMemo(() => {
+    const iamUrl = (
+      configuration?.iamUrl ||
+      configuration?.datalayerUrl ||
+      'https://prod1.datalayer.run'
+    ).replace(/\/$/, '');
+    return `${iamUrl}/api/iam/v1/login`;
+  }, [configuration?.iamUrl, configuration?.datalayerUrl]);
+
+  // Keep iamStore aligned with persisted auth token on load/refresh.
+  useEffect(() => {
+    syncTokenToIamStore(token || undefined);
+  }, [token]);
+
+  // Auto-detect expired token and force re-authentication (agent-runtimes pattern).
+  useEffect(() => {
+    if (token && isExpiredJwt(token)) {
+      clearAuth();
+      syncTokenToIamStore(undefined);
+    }
+  }, [token, clearAuth]);
+
+  const handleSignIn = (newToken: string, handle: string) => {
+    setAuth(newToken, handle);
+    syncTokenToIamStore(newToken);
+    coreStore.getState().setConfiguration({ token: newToken });
+  };
+
+  const handleSignOut = () => {
+    clearAuth();
+    syncTokenToIamStore(undefined);
+    iamStore.getState().logout();
+  };
 
   const getExampleUrl = (path: string) => {
     const url = new URL(window.location.href);
@@ -199,33 +289,67 @@ const Examples = () => {
   };
 
   return (
-    <LexicalPrimerThemeProvider useStore={useExampleThemeStore}>
-      <iframe
-        ref={iframeRef}
-        src={getExampleUrl(selectedPath)}
-        onLoad={() => setIsLoading(false)}
-        onError={() => {
-          setError(`Failed to load example "${selectedPath}"`);
-          setIsLoading(false);
-        }}
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: 'calc(100vw - 320px)',
-          height: '100vh',
-          border: 'none',
-          background: frameBackgroundColor,
-        }}
-        title={`Lexical Example: ${selectedPath}`}
-      />
+    <DatalayerThemeProvider
+      colorMode={colorMode}
+      theme={themeConfig.primerTheme}
+      themeStyles={themeConfig.themeStyles}
+    >
+      {isAuthenticated ? (
+        <iframe
+          ref={iframeRef}
+          src={getExampleUrl(selectedPath)}
+          onLoad={() => setIsLoading(false)}
+          onError={() => {
+            setError(`Failed to load example "${selectedPath}"`);
+            setIsLoading(false);
+          }}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: 'calc(100vw - 320px)',
+            height: '100vh',
+            border: 'none',
+            background: frameBackgroundColor,
+          }}
+          title={`Lexical Example: ${selectedPath}`}
+        />
+      ) : (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: 'calc(100vw - 320px)',
+            height: '100vh',
+            overflow: 'auto',
+            bg: 'canvas.backdrop',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            p: 3,
+          }}
+        >
+          <Box sx={{ width: '100%', maxWidth: 640 }}>
+            <SignInSimple
+              onSignIn={handleSignIn}
+              onApiKeySignIn={apiKey => handleSignIn(apiKey, 'api-key-user')}
+              loginUrl={loginUrl}
+              title="Jupyter Lexical Examples"
+              description="Sign in to use the online Spacer collaboration service."
+              leadingIcon={<PencilAiIcon size={24} />}
+            />
+          </Box>
+        </Box>
+      )}
       <ExamplesSidebar
         selectedPath={selectedPath}
         onSelect={handleSelect}
         isLoading={isLoading}
         error={error}
+        onSignOut={handleSignOut}
       />
-    </LexicalPrimerThemeProvider>
+    </DatalayerThemeProvider>
   );
 };
 

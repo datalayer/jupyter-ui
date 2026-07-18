@@ -8,6 +8,8 @@ import { useState, useEffect, useMemo } from 'react';
 import { Button, ToggleSwitch, Text } from '@primer/react';
 import { AppearanceControlsWithStore, Box } from '@datalayer/primer-addons';
 import { ThreeBarsIcon } from '@primer/octicons-react';
+import { useCoreStore } from '@datalayer/core';
+import { useSimpleAuthStore } from '@datalayer/core/lib/views/otel';
 import {
   useLexical,
   Editor,
@@ -22,17 +24,26 @@ import NBFORMAT_MODEL from './content/Example.ipynb.json';
 
 const LexicalEditor = () => {
   const { editor } = useLexical();
+  const configuration = useCoreStore(state => state.configuration);
+  const authToken = useSimpleAuthStore(state => state.token);
   const urlParams = new URLSearchParams(window.location.search);
   const isCollaborative =
     urlParams.get('collab') === 'true' || urlParams.get('collabRoom') !== null;
   const collabRoom =
     urlParams.get('collabRoom') || 'jupyter-lexical-collaboration-room';
   const collabPane = urlParams.get('collabPane') || '1';
-  const collabWs =
+  const spacerBaseUrl =
+    configuration?.spacerUrl ||
+    configuration?.datalayerUrl ||
+    'https://prod1.datalayer.run';
+  const collabWsBase =
     urlParams.get('collabWs') ||
-    new URL('/api/spacer/v1/lexical/ws', window.location.origin)
-      .toString()
-      .replace(/^http/, 'ws');
+    `${spacerBaseUrl.replace(/\/$/, '').replace(/^http/, 'ws')}/api/spacer/v1/lexical/ws`;
+  const collabToken =
+    urlParams.get('collabToken') || authToken || configuration?.token || '';
+  const collabWs = collabToken
+    ? `${collabWsBase}${collabWsBase.includes('?') ? '&' : '?'}token=${encodeURIComponent(collabToken)}`
+    : collabWsBase;
 
   const collaboration = useMemo(() => {
     if (!isCollaborative) {
