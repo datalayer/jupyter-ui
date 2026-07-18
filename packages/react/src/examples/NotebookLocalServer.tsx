@@ -17,7 +17,7 @@ import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolba
 const NotebookJupyterExample = () => {
   const { serviceManager, defaultKernel } = useJupyter({
     startDefaultKernel: true,
-    jupyterServerUrl: 'https://oss.datalayer.tech/api/jupyter-server',
+    jupyterServerUrl: 'https://prod1.datalayer.tech/api/jupyter-server',
     jupyterServerToken:
       '60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6',
   });

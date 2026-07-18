@@ -5,6 +5,7 @@
  */
 
 import { createThemeStore } from '@datalayer/primer-addons';
+import { themeConfigs, useSystemColorMode } from '@datalayer/primer-addons';
 
 /**
  * Shared theme store for jupyter-lexical examples.
@@ -19,5 +20,28 @@ export const useExampleThemeStore = createThemeStore(
     theme: 'datalayer',
   },
 );
+
+/**
+ * Resolve colormode/background from the shared lexical examples theme store.
+ */
+export const useExampleThemeSettings = () => {
+  const { colorMode, theme: themeVariant } = useExampleThemeStore();
+  const systemMode = useSystemColorMode();
+  const resolvedMode = colorMode === 'auto' ? systemMode : colorMode;
+  const themeConfig = themeConfigs[themeVariant];
+  const modeStyles =
+    resolvedMode === 'dark'
+      ? themeConfig.themeStyles.dark
+      : themeConfig.themeStyles.light;
+  const backgroundColor =
+    (modeStyles as Record<string, string>).backgroundColor ?? undefined;
+
+  return {
+    colorMode,
+    resolvedMode,
+    themeConfig,
+    backgroundColor,
+  };
+};
 
 export default useExampleThemeStore;

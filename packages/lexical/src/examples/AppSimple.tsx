@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Button, ToggleSwitch, Text } from '@primer/react';
 import { AppearanceControlsWithStore, Box } from '@datalayer/primer-addons';
 import { ThreeBarsIcon } from '@primer/octicons-react';
@@ -22,6 +22,41 @@ import NBFORMAT_MODEL from './content/Example.ipynb.json';
 
 const LexicalEditor = () => {
   const { editor } = useLexical();
+  const urlParams = new URLSearchParams(window.location.search);
+  const isCollaborative =
+    urlParams.get('collab') === 'true' || urlParams.get('collabRoom') !== null;
+  const collabRoom =
+    urlParams.get('collabRoom') || 'jupyter-lexical-collaboration-room';
+  const collabPane = urlParams.get('collabPane') || '1';
+  const collabWs =
+    urlParams.get('collabWs') ||
+    new URL('/api/spacer/v1/lexical/ws', window.location.origin)
+      .toString()
+      .replace(/^http/, 'ws');
+
+  const collaboration = useMemo(() => {
+    if (!isCollaborative) {
+      return undefined;
+    }
+
+    const color = collabPane === '2' ? '#db61a2' : '#1570ef';
+    const username = collabPane === '2' ? 'Collaborator 2' : 'Collaborator 1';
+
+    return {
+      id: collabRoom,
+      websocketUrl: collabWs,
+      username,
+      cursorColor: color,
+      awarenessData: {
+        user: {
+          id: `pane-${collabPane}`,
+          username,
+          name: username,
+          color,
+        },
+      },
+    };
+  }, [collabPane, collabRoom, collabWs, isCollaborative]);
 
   useEffect(() => {
     if (editor) {
@@ -36,6 +71,8 @@ const LexicalEditor = () => {
     <Box className="center">
       <Box>
         <Editor
+          id={collaboration?.id}
+          collaboration={collaboration}
           onSessionConnection={session => {
             console.log('Session changed:', session);
           }}

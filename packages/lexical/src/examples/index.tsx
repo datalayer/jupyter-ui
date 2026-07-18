@@ -9,7 +9,10 @@ import './setup-prism';
 
 import { createRoot } from 'react-dom/client';
 import { setupPrimerPortals } from '@datalayer/primer-addons';
-import { App } from './AppSimple';
+import { App as AppSimple } from './AppSimple';
+import AppCollaborative from './AppCollaborative';
+import Examples from './Examples';
+import { useExampleThemeStore } from './themeStore';
 
 import '../../style/index.css';
 
@@ -20,4 +23,33 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(<App />);
+const urlParams = new URLSearchParams(window.location.search);
+const isStandalone = urlParams.get('standalone') === 'true';
+
+if (isStandalone) {
+  const examplePath = urlParams.get('example') || 'AppSimple';
+  const modules: Record<string, JSX.Element> = {
+    AppSimple: <AppSimple />,
+    AppCollaborative: <AppCollaborative />,
+  };
+
+  if (typeof window !== 'undefined') {
+    window.addEventListener('storage', event => {
+      if (!event.key || !event.key.includes('jupyter-lexical-examples-theme')) {
+        return;
+      }
+      const persist = (
+        useExampleThemeStore as unknown as {
+          persist?: { rehydrate?: () => void };
+        }
+      ).persist;
+      if (persist?.rehydrate) {
+        persist.rehydrate();
+      }
+    });
+  }
+
+  root.render(modules[examplePath] ?? <AppSimple />);
+} else {
+  root.render(<Examples />);
+}

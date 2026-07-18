@@ -6,6 +6,10 @@
 
 import { useState, useEffect } from 'react';
 import { EditorState } from 'lexical';
+import {
+  createWebsocketProvider,
+  LoroCollaborationPlugin,
+} from '@datalayer/lexical-loro';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { HashtagPlugin } from '@lexical/react/LexicalHashtagPlugin';
@@ -85,6 +89,14 @@ type Props = {
   serviceManager?: any;
   notebook?: INotebookContent;
   onSessionConnection?: OnSessionConnection;
+  collaboration?: {
+    id: string;
+    websocketUrl: string;
+    username?: string;
+    cursorColor?: string;
+    awarenessData?: Record<string, unknown>;
+    providerFactory?: typeof createWebsocketProvider;
+  };
 };
 
 function Placeholder() {
@@ -138,7 +150,7 @@ const EditorContextPlugin = () => {
 };
 
 export function EditorContainer(props: Props) {
-  const { id, notebook, onSessionConnection } = props;
+  const { id, notebook, onSessionConnection, collaboration } = props;
   const { defaultKernel } = useJupyter({
     startDefaultKernel: true,
   });
@@ -171,6 +183,20 @@ export function EditorContainer(props: Props) {
         setIsLinkEditMode={setIsLinkEditMode}
       />
       <div className="editor-inner">
+        {collaboration && (
+          <LoroCollaborationPlugin
+            id={collaboration.id}
+            shouldBootstrap
+            showCollaborators
+            username={collaboration.username}
+            cursorColor={collaboration.cursorColor}
+            awarenessData={collaboration.awarenessData}
+            providerFactory={
+              collaboration.providerFactory ?? createWebsocketProvider
+            }
+            websocketUrl={collaboration.websocketUrl}
+          />
+        )}
         <RichTextPlugin
           contentEditable={
             <div className="editor-scroller">
