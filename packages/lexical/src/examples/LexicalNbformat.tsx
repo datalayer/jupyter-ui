@@ -112,8 +112,8 @@ const Tabs = () => {
         <Box>
           <Editor
             notebook={nbformat}
-            onSessionConnection={session => {
-              console.log('Session changed:', session);
+            onSessionConnection={() => {
+              // Intentionally no-op: avoid noisy session logs on reconnection/state updates.
             }}
           />
           <Button

@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Button, ToggleSwitch, Text, Heading } from '@primer/react';
 import { AppearanceControlsWithStore, Box } from '@datalayer/primer-addons';
 import { useCoreStore } from '@datalayer/core';
@@ -21,7 +21,9 @@ import { useExampleThemeStore } from './themeStore';
 import LEXICAL_MODEL from './content/Example.lexical.json';
 import NBFORMAT_MODEL from './content/Example.ipynb.json';
 
-const LexicalEditor = () => {
+const INITIAL_LEXICAL_STATE = JSON.stringify(LEXICAL_MODEL);
+
+const LexicalEditor = ({ hasRuntime }: { hasRuntime: boolean }) => {
   const { editor } = useLexical();
   const configuration = useCoreStore(state => state.configuration);
   const authToken = useSimpleAuthStore(state => state.token);
@@ -57,6 +59,11 @@ const LexicalEditor = () => {
       websocketUrl: collabWs,
       username,
       cursorColor: color,
+      // Only the first pane seeds the initial rich document. The second pane
+      // starts empty and receives the content through Loro synchronization,
+      // which avoids duplicating the seed into the shared CRDT.
+      initialEditorState:
+        collabPane === '2' ? undefined : INITIAL_LEXICAL_STATE,
       awarenessData: {
         user: {
           id: `pane-${collabPane}`,
@@ -68,14 +75,9 @@ const LexicalEditor = () => {
     };
   }, [collabPane, collabRoom, collabWs, isCollaborative]);
 
-  useEffect(() => {
-    if (editor) {
-      queueMicrotask(() => {
-        const editorState = editor.parseEditorState(LEXICAL_MODEL as any);
-        editor.setEditorState(editorState);
-      });
-    }
-  }, [editor]);
+  const handleSessionConnection = useCallback(() => {
+    // Intentionally no-op: avoid noisy session logs on reconnection/state updates.
+  }, []);
 
   return (
     <Box className="center">
@@ -83,9 +85,9 @@ const LexicalEditor = () => {
         <Editor
           id={collaboration?.id}
           collaboration={collaboration}
-          onSessionConnection={session => {
-            console.log('Session changed:', session);
-          }}
+          initialEditorState={INITIAL_LEXICAL_STATE}
+          runtimeEnabled={hasRuntime}
+          onSessionConnection={handleSessionConnection}
         />
         <Button
           onClick={(e: React.MouseEvent) => {
@@ -157,9 +159,15 @@ const AppToolbar = (props: {
 export const LexicalSimple = () => {
   const getInitialRuntimeState = () => {
     const urlParams = new URLSearchParams(window.location.search);
+    const isCollabMode =
+      urlParams.get('collab') === 'true' ||
+      urlParams.get('collabRoom') !== null;
     const runtimeParam = urlParams.get('runtime');
     if (runtimeParam !== null) {
       return runtimeParam === 'true';
+    }
+    if (isCollabMode) {
+      return false;
     }
     const stored = localStorage.getItem('hasRuntime');
     return stored !== 'false';
@@ -188,7 +196,7 @@ export const LexicalSimple = () => {
         />
       </div>
       <LexicalProvider>
-        <LexicalEditor />
+        <LexicalEditor hasRuntime={hasRuntime} />
       </LexicalProvider>
     </LexicalPrimerThemeProvider>
   );

@@ -388,6 +388,17 @@ export function ToolbarPlugin({
   const $updateToolbar = useCallback(() => {
     const selection = $getSelection();
     if ($isRangeSelection(selection)) {
+      // When the editor state is replaced (e.g. nbformat import or initial
+      // state swap), a pending selection can still reference nodes that no
+      // longer exist. Reading such a Point throws "Point.getNode: node not
+      // found". Bail out safely instead of crashing the toolbar listener.
+      if (
+        $getNodeByKey(selection.anchor.key) == null ||
+        $getNodeByKey(selection.focus.key) == null
+      ) {
+        return;
+      }
+
       if (activeEditor !== editor && $isEditorIsNestedEditor(activeEditor)) {
         const rootElement = activeEditor.getRootElement();
         updateToolbarState(

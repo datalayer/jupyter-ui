@@ -18,6 +18,7 @@ const buildPaneUrl = (pane: '1' | '2', roomId: string) => {
   url.searchParams.set('collab', 'true');
   url.searchParams.set('collabRoom', roomId);
   url.searchParams.set('collabPane', pane);
+  url.searchParams.set('runtime', 'false');
   return url.toString();
 };
 

@@ -4,8 +4,9 @@
  * MIT License
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { EditorState } from 'lexical';
+import { InitialEditorStateType } from '@lexical/react/LexicalComposer';
 import {
   createWebsocketProvider,
   LoroCollaborationPlugin,
@@ -89,14 +90,43 @@ type Props = {
   serviceManager?: any;
   notebook?: INotebookContent;
   onSessionConnection?: OnSessionConnection;
+  runtimeEnabled?: boolean;
+  initialEditorState?: InitialEditorStateType;
   collaboration?: {
     id: string;
     websocketUrl: string;
     username?: string;
     cursorColor?: string;
+    initialEditorState?: InitialEditorStateType;
     awarenessData?: Record<string, unknown>;
     providerFactory?: typeof createWebsocketProvider;
   };
+};
+
+const RuntimePlugins = ({
+  runtimeEnabled,
+  onSessionConnection,
+}: {
+  runtimeEnabled: boolean;
+  onSessionConnection?: OnSessionConnection;
+}) => {
+  const { defaultKernel } = useJupyter({
+    startDefaultKernel: runtimeEnabled,
+  });
+
+  if (!runtimeEnabled) {
+    return null;
+  }
+
+  return (
+    <>
+      <JupyterInputOutputPlugin
+        kernel={defaultKernel}
+        onSessionConnection={onSessionConnection}
+      />
+      <ComponentPickerMenuPlugin kernel={defaultKernel} />
+    </>
+  );
 };
 
 function Placeholder() {
@@ -150,10 +180,13 @@ const EditorContextPlugin = () => {
 };
 
 export function EditorContainer(props: Props) {
-  const { id, notebook, onSessionConnection, collaboration } = props;
-  const { defaultKernel } = useJupyter({
-    startDefaultKernel: true,
-  });
+  const {
+    id,
+    notebook,
+    onSessionConnection,
+    collaboration,
+    runtimeEnabled = true,
+  } = props;
   const [editor] = useLexicalComposerContext();
   const [activeEditor, setActiveEditor] = useState(editor);
   const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
@@ -190,6 +223,7 @@ export function EditorContainer(props: Props) {
             showCollaborators
             username={collaboration.username}
             cursorColor={collaboration.cursorColor}
+            initialEditorState={collaboration.initialEditorState}
             awarenessData={collaboration.awarenessData}
             providerFactory={
               collaboration.providerFactory ?? createWebsocketProvider
@@ -225,11 +259,10 @@ export function EditorContainer(props: Props) {
         <ListMaxIndentLevelPlugin maxDepth={7} />
         <MarkdownPlugin />
         {/* <JupyterCellPlugin /> */}
-        <JupyterInputOutputPlugin
-          kernel={defaultKernel}
+        <RuntimePlugins
+          runtimeEnabled={runtimeEnabled}
           onSessionConnection={onSessionConnection}
         />
-        <ComponentPickerMenuPlugin kernel={defaultKernel} />
         <EquationsPlugin />
         <ExcalidrawPlugin />
         <ImagesPlugin />
@@ -263,11 +296,21 @@ export function EditorContainer(props: Props) {
 }
 
 export function Editor(props: Props) {
-  const { id, serviceManager } = props;
+  const { id, serviceManager, collaboration, initialEditorState } = props;
+
+  const lexicalInitialConfig = useMemo(
+    () => ({
+      ...initialConfig,
+      // In collaboration mode, initial content must go through the
+      // collaboration bootstrap path so all peers stay aligned.
+      editorState: collaboration ? undefined : initialEditorState,
+    }),
+    [collaboration, initialEditorState],
+  );
 
   // Wrap with LexicalConfigProvider if id is provided (for tool operations)
   const content = (
-    <LexicalComposer initialConfig={initialConfig}>
+    <LexicalComposer initialConfig={lexicalInitialConfig}>
       <CommentsProvider>
         <ToolbarContext>
           <div className="editor-shell">

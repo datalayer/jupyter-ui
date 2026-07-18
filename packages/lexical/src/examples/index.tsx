@@ -10,10 +10,6 @@ import './setup-prism';
 import { createRoot } from 'react-dom/client';
 import { coreStore, iamStore } from '@datalayer/core';
 import { useSimpleAuthStore } from '@datalayer/core/lib/views/otel';
-import { LexicalSimple } from './LexicalSimple';
-import LexicalCollaborative from './LexicalCollaborative';
-import LexicalNbformat from './LexicalNbformat';
-import Examples from './Examples';
 import { useExampleThemeStore } from './themeStore';
 
 import '../../style/primer-primitives.css';
@@ -69,8 +65,11 @@ const loadCoreConfiguration = () => {
       unknown
     >;
 
-    const envToken = import.meta.env.VITE_DATALAYER_API_KEY as
-      string | undefined;
+    const envToken = (
+      import.meta as ImportMeta & {
+        env?: { VITE_DATALAYER_API_KEY?: string };
+      }
+    ).env?.VITE_DATALAYER_API_KEY;
     const rawToken = typeof raw.token === 'string' ? raw.token : '';
     const token =
       rawToken && !rawToken.startsWith('%VITE_') ? rawToken : envToken || '';
@@ -134,13 +133,28 @@ const root = createRoot(div);
 const urlParams = new URLSearchParams(window.location.search);
 const isStandalone = urlParams.get('standalone') === 'true';
 
+const renderStandaloneExample = async (examplePath: string) => {
+  switch (examplePath) {
+    case 'LexicalCollaborative': {
+      const module = await import('./LexicalCollaborative');
+      root.render(<module.default />);
+      return;
+    }
+    case 'LexicalNbformat': {
+      const module = await import('./LexicalNbformat');
+      root.render(<module.default />);
+      return;
+    }
+    case 'LexicalSimple':
+    default: {
+      const module = await import('./LexicalSimple');
+      root.render(<module.LexicalSimple />);
+    }
+  }
+};
+
 if (isStandalone) {
   const examplePath = urlParams.get('example') || 'LexicalSimple';
-  const modules: Record<string, JSX.Element> = {
-    LexicalSimple: <LexicalSimple />,
-    LexicalCollaborative: <LexicalCollaborative />,
-    LexicalNbformat: <LexicalNbformat />,
-  };
 
   if (typeof window !== 'undefined') {
     window.addEventListener('storage', event => {
@@ -158,7 +172,9 @@ if (isStandalone) {
     });
   }
 
-  root.render(modules[examplePath] ?? <LexicalSimple />);
+  void renderStandaloneExample(examplePath);
 } else {
-  root.render(<Examples />);
+  void import('./Examples').then(module => {
+    root.render(<module.default />);
+  });
 }
