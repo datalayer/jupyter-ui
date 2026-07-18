@@ -24,13 +24,18 @@ const LOCAL_STORAGE_KEY = 'jupyter-lexical-selected-example';
 const EXAMPLES: Array<{ name: string; path: string; description: string }> = [
   {
     name: 'Lexical Simple',
-    path: 'AppSimple',
+    path: 'LexicalSimple',
     description: 'Current lexical example.',
   },
   {
     name: 'Lexical Collaborative',
-    path: 'AppCollaborative',
+    path: 'LexicalCollaborative',
     description: 'Two side-by-side iframe collaborators.',
+  },
+  {
+    name: 'Lexical Nbformat',
+    path: 'LexicalNbformat',
+    description: 'Notebook (nbformat) rendered in lexical.',
   },
 ];
 
@@ -50,7 +55,7 @@ const getSelectedExample = (): string => {
     // localStorage unavailable
   }
 
-  return 'AppSimple';
+  return 'LexicalSimple';
 };
 
 const saveExample = (path: string): void => {

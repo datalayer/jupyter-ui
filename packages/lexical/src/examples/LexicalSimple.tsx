@@ -5,9 +5,8 @@
  */
 
 import { useState, useEffect, useMemo } from 'react';
-import { Button, ToggleSwitch, Text } from '@primer/react';
+import { Button, ToggleSwitch, Text, Heading } from '@primer/react';
 import { AppearanceControlsWithStore, Box } from '@datalayer/primer-addons';
-import { ThreeBarsIcon } from '@primer/octicons-react';
 import { useCoreStore } from '@datalayer/core';
 import { useSimpleAuthStore } from '@datalayer/core/lib/views/otel';
 import {
@@ -114,13 +113,18 @@ const AppToolbar = (props: {
     <Box
       sx={{
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         width: '100%',
       }}
     >
-      <h1 style={{ margin: 0, flex: 1, textAlign: 'center' }}>
-        Jupyter UI ❤️ Lexical
-      </h1>
+      <Box sx={{ flex: 1, textAlign: 'left' }}>
+        <Heading as="h2" sx={{ mb: 1 }}>
+          Lexical Simple
+        </Heading>
+        <Text as="p" sx={{ m: 0, color: 'fg.muted' }}>
+          Current lexical example.
+        </Text>
+      </Box>
       <Box
         sx={{
           display: 'flex',
@@ -150,7 +154,7 @@ const AppToolbar = (props: {
   );
 };
 
-export const App = () => {
+export const LexicalSimple = () => {
   const getInitialRuntimeState = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const runtimeParam = urlParams.get('runtime');
@@ -186,30 +190,8 @@ export const App = () => {
       <LexicalProvider>
         <LexicalEditor />
       </LexicalProvider>
-      <div className="other App">
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            textAlign: 'center',
-          }}
-        >
-          <a
-            href="https://datalayer.ai"
-            target="_blank"
-            rel="noreferrer"
-            style={{ marginRight: 8 }}
-          >
-            <ThreeBarsIcon />
-          </a>
-          <a href="https://datalayer.ai" target="_blank" rel="noreferrer">
-            Datalayer, Inc.
-          </a>
-        </div>
-      </div>
     </LexicalPrimerThemeProvider>
   );
 };
 
-export default App;
+export default LexicalSimple;

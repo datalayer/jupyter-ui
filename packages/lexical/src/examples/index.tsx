@@ -8,18 +8,16 @@
 import './setup-prism';
 
 import { createRoot } from 'react-dom/client';
-import { setupPrimerPortals } from '@datalayer/primer-addons';
 import { coreStore, iamStore } from '@datalayer/core';
 import { useSimpleAuthStore } from '@datalayer/core/lib/views/otel';
-import { App as AppSimple } from './AppSimple';
-import AppCollaborative from './AppCollaborative';
+import { LexicalSimple } from './LexicalSimple';
+import LexicalCollaborative from './LexicalCollaborative';
+import LexicalNbformat from './LexicalNbformat';
 import Examples from './Examples';
 import { useExampleThemeStore } from './themeStore';
 
+import '../../style/primer-primitives.css';
 import '../../style/index.css';
-
-// Ensure Primer portals (Dialog, Tooltip, etc.) render correctly on document.body
-setupPrimerPortals();
 
 const PROD_RUN_URL = 'https://prod1.datalayer.run';
 
@@ -137,10 +135,11 @@ const urlParams = new URLSearchParams(window.location.search);
 const isStandalone = urlParams.get('standalone') === 'true';
 
 if (isStandalone) {
-  const examplePath = urlParams.get('example') || 'AppSimple';
+  const examplePath = urlParams.get('example') || 'LexicalSimple';
   const modules: Record<string, JSX.Element> = {
-    AppSimple: <AppSimple />,
-    AppCollaborative: <AppCollaborative />,
+    LexicalSimple: <LexicalSimple />,
+    LexicalCollaborative: <LexicalCollaborative />,
+    LexicalNbformat: <LexicalNbformat />,
   };
 
   if (typeof window !== 'undefined') {
@@ -159,7 +158,7 @@ if (isStandalone) {
     });
   }
 
-  root.render(modules[examplePath] ?? <AppSimple />);
+  root.render(modules[examplePath] ?? <LexicalSimple />);
 } else {
   root.render(<Examples />);
 }

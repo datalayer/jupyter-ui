@@ -15,8 +15,7 @@ import {
   CellSidebarExtension,
 } from '@datalayer/jupyter-react';
 import { AppearanceControlsWithStore, Box } from '@datalayer/primer-addons';
-import { UnderlineNav, Button, Heading } from '@primer/react';
-import { ThreeBarsIcon } from '@primer/octicons-react';
+import { UnderlineNav, Button, Heading, Text } from '@primer/react';
 import { JSONTree } from 'react-json-tree';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { INotebookModel } from '@jupyterlab/notebook';
@@ -164,24 +163,26 @@ const Tabs = () => {
   );
 };
 
-export function App() {
+export function LexicalNbformat() {
   return (
     <>
       <LexicalPrimerThemeProvider useStore={useExampleThemeStore}>
         <Box
           sx={{
             display: 'flex',
-            alignItems: 'center',
+            alignItems: 'flex-start',
             px: 3,
             py: 2,
           }}
         >
-          <Heading
-            as="h1"
-            sx={{ m: 0, flex: 1, textAlign: 'center', fontSize: 4 }}
-          >
-            Jupyter UI ❤️ Lexical
-          </Heading>
+          <Box sx={{ flex: 1 }}>
+            <Heading as="h2" sx={{ mb: 1 }}>
+              Lexical Nbformat
+            </Heading>
+            <Text as="p" sx={{ m: 0, color: 'fg.muted' }}>
+              Notebook (nbformat) rendered in lexical.
+            </Text>
+          </Box>
           <AppearanceControlsWithStore useStore={useExampleThemeStore} />
         </Box>
         <LexicalProvider>
@@ -204,31 +205,9 @@ export function App() {
             </span>
           </div>
         </div>
-        <div className="other App">
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              textAlign: 'center',
-            }}
-          >
-            <a
-              href="https://datalayer.ai"
-              target="_blank"
-              rel="noreferrer"
-              style={{ marginRight: 8 }}
-            >
-              <ThreeBarsIcon />
-            </a>
-            <a href="https://datalayer.ai" target="_blank" rel="noreferrer">
-              Datalayer, Inc.
-            </a>
-          </div>
-        </div>
       </div>
     </>
   );
 }
 
-export default App;
+export default LexicalNbformat;

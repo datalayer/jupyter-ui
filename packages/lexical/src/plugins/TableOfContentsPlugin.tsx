@@ -9,7 +9,56 @@ import type { HeadingTagType } from '@lexical/rich-text';
 import type { NodeKey } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { TableOfContentsPlugin as LexicalTableOfContentsPlugin } from '@lexical/react/LexicalTableOfContentsPlugin';
-import { Box } from '@primer/react';
+import { Box, Text, Tooltip } from '@primer/react';
+import { ListUnorderedIcon, XIcon } from '@primer/octicons-react';
+
+export type TocCollapsePosition =
+  | 'top-left'
+  | 'top-right'
+  | 'bottom-left'
+  | 'bottom-right'
+  | 'center-left'
+  | 'center-right'
+  | 'top'
+  | 'bottom'
+  | 'left'
+  | 'right'
+  | 'center';
+
+export interface TableOfContentsPluginProps {
+  showByDefault?: boolean;
+  collapsePosition?: TocCollapsePosition;
+}
+
+function getFloatingPosition(
+  position: TocCollapsePosition,
+): Record<string, string> {
+  switch (position) {
+    case 'top-left':
+      return { top: '16px', left: '16px' };
+    case 'top-right':
+      return { top: '16px', right: '16px' };
+    case 'bottom-left':
+      return { bottom: '16px', left: '16px' };
+    case 'center-left':
+      return { top: '50%', left: '16px', transform: 'translateY(-50%)' };
+    case 'center-right':
+      return { top: '50%', right: '16px', transform: 'translateY(-50%)' };
+    case 'top':
+      return { top: '16px', left: '50%', transform: 'translateX(-50%)' };
+    case 'bottom':
+      return { bottom: '16px', left: '50%', transform: 'translateX(-50%)' };
+    case 'left':
+      return { top: '50%', left: '16px', transform: 'translateY(-50%)' };
+    case 'right':
+      return { top: '50%', right: '16px', transform: 'translateY(-50%)' };
+    case 'center':
+      return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
+    case 'bottom-right':
+    default:
+      return { bottom: '16px', right: '16px' };
+  }
+}
 
 function indent(tagName: HeadingTagType): number {
   if (tagName === 'h2') {
@@ -22,8 +71,12 @@ function indent(tagName: HeadingTagType): number {
 
 function TableOfContentsList({
   tableOfContents,
+  onClose,
+  collapsePosition,
 }: {
   tableOfContents: Array<[key: NodeKey, text: string, tag: HeadingTagType]>;
+  onClose: () => void;
+  collapsePosition: TocCollapsePosition;
 }): JSX.Element {
   const [selectedKey, setSelectedKey] = useState('');
   const selectedIndex = useRef(0);
@@ -129,21 +182,57 @@ function TableOfContentsList({
     <Box
       sx={{
         position: 'fixed',
-        top: '100px',
-        right: 0,
+        ...getFloatingPosition(collapsePosition),
         width: '220px',
         maxHeight: '300px',
         overflowY: 'auto',
         overflowX: 'hidden',
-        zIndex: 1,
+        zIndex: 20,
         bg: 'canvas.default',
-        borderLeft: '1px solid',
+        border: '1px solid',
         borderColor: 'border.default',
         borderRadius: 2,
         boxShadow: 'shadow.small',
         p: 2,
       }}
     >
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          mb: 2,
+        }}
+      >
+        <Text sx={{ fontSize: 1, fontWeight: 'bold', color: 'fg.default' }}>
+          Table of Contents
+        </Text>
+        <Box
+          as="button"
+          type="button"
+          onClick={onClose}
+          aria-label="Close table of contents"
+          title="Close"
+          sx={{
+            appearance: 'none',
+            border: '1px solid',
+            borderColor: 'border.default',
+            borderRadius: 1,
+            bg: 'canvas.default',
+            color: 'fg.default',
+            width: '24px',
+            height: '24px',
+            p: 0,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            '&:hover': { bg: 'canvas.subtle' },
+          }}
+        >
+          <XIcon size={12} />
+        </Box>
+      </Box>
       <Box as="ul" sx={{ listStyle: 'none', m: 0, p: 0 }}>
         {tableOfContents.map(([key, text, tag], index) => {
           const isSelected = selectedKey === key;
@@ -205,11 +294,56 @@ function TableOfContentsList({
   );
 }
 
-export const TableOfContentsPlugin = () => {
+export const TableOfContentsPlugin = ({
+  showByDefault = false,
+  collapsePosition = 'bottom-right',
+}: TableOfContentsPluginProps = {}) => {
+  const [isOpen, setIsOpen] = useState<boolean>(showByDefault);
+
   return (
     <LexicalTableOfContentsPlugin>
       {(tableOfContents: any) => {
-        return <TableOfContentsList tableOfContents={tableOfContents} />;
+        if (!isOpen) {
+          return (
+            <Tooltip text="Open TOC" direction="w">
+              <Box
+                as="button"
+                type="button"
+                onClick={() => setIsOpen(true)}
+                aria-label="Open table of contents"
+                title="Open TOC"
+                sx={{
+                  position: 'fixed',
+                  ...getFloatingPosition(collapsePosition),
+                  zIndex: 20,
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '999px',
+                  border: '1px solid',
+                  borderColor: 'border.default',
+                  bg: 'canvas.overlay',
+                  color: 'fg.default',
+                  boxShadow: 'shadow.medium',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  '&:hover': { bg: 'canvas.subtle' },
+                }}
+              >
+                <ListUnorderedIcon size={16} />
+              </Box>
+            </Tooltip>
+          );
+        }
+
+        return (
+          <TableOfContentsList
+            tableOfContents={tableOfContents}
+            onClose={() => setIsOpen(false)}
+            collapsePosition={collapsePosition}
+          />
+        );
       }}
     </LexicalTableOfContentsPlugin>
   );
