@@ -100,6 +100,11 @@ type Props = {
     initialEditorState?: InitialEditorStateType;
     awarenessData?: Record<string, unknown>;
     providerFactory?: typeof createWebsocketProvider;
+    onIdentityResolved?: (identity: {
+      name: string;
+      color: string;
+      clientID: number;
+    }) => void;
   };
 };
 
@@ -114,16 +119,14 @@ const RuntimePlugins = ({
     startDefaultKernel: runtimeEnabled,
   });
 
-  if (!runtimeEnabled) {
-    return null;
-  }
-
   return (
     <>
-      <JupyterInputOutputPlugin
-        kernel={defaultKernel}
-        onSessionConnection={onSessionConnection}
-      />
+      {runtimeEnabled && (
+        <JupyterInputOutputPlugin
+          kernel={defaultKernel}
+          onSessionConnection={onSessionConnection}
+        />
+      )}
       <ComponentPickerMenuPlugin kernel={defaultKernel} />
     </>
   );
@@ -229,6 +232,7 @@ export function EditorContainer(props: Props) {
               collaboration.providerFactory ?? createWebsocketProvider
             }
             websocketUrl={collaboration.websocketUrl}
+            onIdentityResolved={collaboration.onIdentityResolved}
           />
         )}
         <RichTextPlugin

@@ -4,10 +4,16 @@
  * MIT License
  */
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Box, Button, Heading, Text } from '@primer/react';
 import { LexicalPrimerThemeProvider } from '..';
 import { useExampleThemeStore } from './themeStore';
+
+type CollaboratorIdentity = {
+  name: string;
+  color: string;
+  clientID: number;
+};
 
 const DEFAULT_ROOM_ID = 'jupyter-lexical-collab-room-1';
 
@@ -18,7 +24,10 @@ const buildPaneUrl = (pane: '1' | '2', roomId: string) => {
   url.searchParams.set('collab', 'true');
   url.searchParams.set('collabRoom', roomId);
   url.searchParams.set('collabPane', pane);
-  url.searchParams.set('runtime', 'false');
+  // Enable the Jupyter plugin with runtime assignment in each collaborative
+  // pane, exactly as the standalone Lexical Simple example does. LexicalSimple
+  // reads this `runtime` param and passes it to `Editor` via `runtimeEnabled`.
+  url.searchParams.set('runtime', 'true');
   return url.toString();
 };
 
@@ -39,16 +48,63 @@ const generateRoomId = () =>
 
 const LexicalCollaborative = () => {
   const [roomId, setRoomId] = useState<string>(() => getRoomIdFromUrl());
+  const [identities, setIdentities] = useState<{
+    '1'?: CollaboratorIdentity;
+    '2'?: CollaboratorIdentity;
+  }>({});
 
   const roomUrl = useMemo(() => buildRoomUrl(roomId), [roomId]);
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      // Only trust messages from the same origin (the panes are iframes of
+      // this same app).
+      if (event.origin !== window.location.origin) {
+        return;
+      }
+      const data = event.data;
+      if (
+        !data ||
+        data.type !== 'lexical-collaborator-identity' ||
+        (data.pane !== '1' && data.pane !== '2')
+      ) {
+        return;
+      }
+      setIdentities(prev => ({
+        ...prev,
+        [data.pane]: {
+          name: data.name,
+          color: data.color,
+          clientID: data.clientID,
+        },
+      }));
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
 
   const handleNewRoom = () => {
     const nextRoomId = generateRoomId();
     setRoomId(nextRoomId);
+    setIdentities({});
     const url = new URL(window.location.href);
     url.searchParams.set('example', 'LexicalCollaborative');
     url.searchParams.set('collabRoom', nextRoomId);
     window.history.replaceState({}, '', url.toString());
+  };
+
+  const renderPaneTitle = (pane: '1' | '2') => {
+    const identity = identities[pane];
+    const fallback = `Collaborator ${pane}`;
+    if (!identity) {
+      return fallback;
+    }
+    const shortClientId = String(identity.clientID).slice(0, 4);
+    return (
+      <Text as="span" sx={{ color: identity.color, fontWeight: 'bold' }}>
+        {`${identity.name} ${shortClientId}`}
+      </Text>
+    );
   };
 
   return (
@@ -123,7 +179,7 @@ const LexicalCollaborative = () => {
                 bg: 'canvas.subtle',
               }}
             >
-              Collaborator 1
+              {renderPaneTitle('1')}
             </Box>
             <iframe
               src={buildPaneUrl('1', roomId)}
@@ -153,7 +209,7 @@ const LexicalCollaborative = () => {
                 bg: 'canvas.subtle',
               }}
             >
-              Collaborator 2
+              {renderPaneTitle('2')}
             </Box>
             <iframe
               src={buildPaneUrl('2', roomId)}

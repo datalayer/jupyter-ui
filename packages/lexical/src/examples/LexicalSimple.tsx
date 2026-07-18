@@ -64,6 +64,26 @@ const LexicalEditor = ({ hasRuntime }: { hasRuntime: boolean }) => {
       // which avoids duplicating the seed into the shared CRDT.
       initialEditorState:
         collabPane === '2' ? undefined : INITIAL_LEXICAL_STATE,
+      onIdentityResolved: (identity: {
+        name: string;
+        color: string;
+        clientID: number;
+      }) => {
+        // Report the resolved collaborator identity to the parent window
+        // (the LexicalCollaborative example renders the pane titles).
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage(
+            {
+              type: 'lexical-collaborator-identity',
+              pane: collabPane,
+              name: identity.name,
+              color: identity.color,
+              clientID: identity.clientID,
+            },
+            '*',
+          );
+        }
+      },
       awarenessData: {
         user: {
           id: `pane-${collabPane}`,

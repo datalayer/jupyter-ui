@@ -33,7 +33,10 @@ build-prod: ## build-prod
 	git clean -fdx
 	python -m build
 
-publish-npm: clean build ## publish
+examples: ## examples
+	npm run start
+
+publish-npm: clean build ## publish-npm
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		npm publish )
 	echo open https://www.npmjs.com/package/@datalayer/jupyter-lexical
@@ -44,7 +47,7 @@ typedoc: ## generate typedoc
 		npm run typedoc --tsconfig ./tsconfig.json && \
 		open typedoc/index.html )
 
-typedoc-publish: typedoc ## deploy typedoc
+typedoc-publish: typedoc ## publish typedoc
 	aws s3 rm \
 		s3://datalayer-typedoc/datalayer/jupyter-lexical/0.0.1/ \
 		--recursive \

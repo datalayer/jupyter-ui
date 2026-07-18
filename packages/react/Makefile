@@ -29,6 +29,9 @@ build: ## build
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		npm run build )
 
+examples: ## examples
+	npm run start
+
 publish-npm: clean build ## publish-npm
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		npm publish )
@@ -40,7 +43,7 @@ typedoc: ## generate typedoc
 		npm run typedoc --tsconfig ./tsconfig.json && \
 		open typedoc/index.html )
 
-publish-typedoc: typedoc ## deploy typedoc
+publish-typedoc: typedoc ## publish typedoc
 	aws s3 rm \
 		s3://datalayer-typedoc/datalayer/jupyter-react/0.9.0/ \
 		--recursive \

@@ -180,7 +180,7 @@ export function LexicalNbformat() {
               Lexical Nbformat
             </Heading>
             <Text as="p" sx={{ m: 0, color: 'fg.muted' }}>
-              Notebook (nbformat) rendered in lexical.
+              Jupyter Notebook (nbformat) rendered in lexical.
             </Text>
           </Box>
           <AppearanceControlsWithStore useStore={useExampleThemeStore} />

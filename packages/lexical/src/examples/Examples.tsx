@@ -35,7 +35,7 @@ const EXAMPLES: Array<{ name: string; path: string; description: string }> = [
   {
     name: 'Lexical Nbformat',
     path: 'LexicalNbformat',
-    description: 'Notebook (nbformat) rendered in lexical.',
+    description: 'Jupyter Notebook (nbformat) rendered in lexical.',
   },
 ];
 
