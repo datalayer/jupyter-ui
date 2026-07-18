@@ -18,22 +18,11 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
-import {
-  Text,
-  Spinner,
-  Flash,
-  ActionList,
-  TextInput,
-} from '@primer/react';
-import {
-  AppearanceControlsWithStore,
-  Box,
-  DatalayerThemeProvider,
-  themeConfigs,
-  useSystemColorMode,
-} from '@datalayer/primer-addons';
+import { Text, Spinner, Flash, ActionList, TextInput } from '@primer/react';
+import { AppearanceControlsWithStore, Box } from '@datalayer/primer-addons';
 import { SearchIcon, CheckIcon } from '@primer/octicons-react';
-import { useExampleThemeStore } from './themeStore';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
+import { useExampleThemeSettings, useExampleThemeStore } from './themeStore';
 
 const LOCAL_STORAGE_KEY = 'jupyter-react-selected-example';
 
@@ -361,16 +350,8 @@ const Examples = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const { colorMode, theme: themeVariant } = useExampleThemeStore();
-  const systemMode = useSystemColorMode();
-  const resolvedMode = colorMode === 'auto' ? systemMode : colorMode;
-  const themeConfig = themeConfigs[themeVariant];
-  const modeStyles =
-    resolvedMode === 'dark'
-      ? themeConfig.themeStyles.dark
-      : themeConfig.themeStyles.light;
-  const frameBackgroundColor =
-    (modeStyles as Record<string, string>).backgroundColor ?? 'var(--bgColor-default)';
+  const { backgroundColor } = useExampleThemeSettings();
+  const frameBackgroundColor = backgroundColor ?? 'var(--bgColor-default)';
 
   useEffect(() => {
     // Add margin to body to account for sidebar width (medium = 320px)
@@ -433,11 +414,7 @@ const Examples = () => {
   };
 
   return (
-    <DatalayerThemeProvider
-      colorMode={colorMode}
-      theme={themeConfig.primerTheme}
-      themeStyles={themeConfig.themeStyles}
-    >
+    <ExampleJupyterReactTheme>
       {/* Main content iframe */}
       <iframe
         ref={iframeRef}
@@ -461,7 +438,7 @@ const Examples = () => {
         isLoading={isLoading}
         error={error}
       />
-    </DatalayerThemeProvider>
+    </ExampleJupyterReactTheme>
   );
 };
 
@@ -474,7 +451,10 @@ if (isStandalone) {
   const examplePath = urlParams.get('example') || 'CellLite';
   const colormode = urlParams.get('colormode');
   const theme = urlParams.get('theme');
-  const nextState: Partial<{ colorMode: 'light' | 'dark' | 'auto'; theme: string }> = {};
+  const nextState: Partial<{
+    colorMode: 'light' | 'dark' | 'auto';
+    theme: string;
+  }> = {};
   if (colormode === 'light' || colormode === 'dark' || colormode === 'auto') {
     nextState.colorMode = colormode;
   }
@@ -494,9 +474,11 @@ if (isStandalone) {
       if (!event.key || !event.key.includes('jupyter-react-examples-theme')) {
         return;
       }
-      const persist = (useExampleThemeStore as unknown as {
-        persist?: { rehydrate?: () => void };
-      }).persist;
+      const persist = (
+        useExampleThemeStore as unknown as {
+          persist?: { rehydrate?: () => void };
+        }
+      ).persist;
       if (persist?.rehydrate) {
         persist.rehydrate();
       } else if (event.newValue) {

@@ -4,13 +4,9 @@
  * MIT License
  */
 
-import { useMemo, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Button, ToggleSwitch, Text } from '@primer/react';
-import {
-  AppearanceControlsWithStore,
-  Box,
-  createThemeStore,
-} from '@datalayer/primer-addons';
+import { AppearanceControlsWithStore, Box } from '@datalayer/primer-addons';
 import { ThreeBarsIcon } from '@primer/octicons-react';
 import {
   useLexical,
@@ -19,6 +15,7 @@ import {
   LexicalPrimerThemeProvider,
   nbformatToLexical,
 } from '..';
+import { useExampleThemeStore } from './themeStore';
 
 import LEXICAL_MODEL from './content/Example.lexical.json';
 import NBFORMAT_MODEL from './content/Example.ipynb.json';
@@ -61,7 +58,7 @@ const LexicalEditor = () => {
 const AppToolbar = (props: {
   hasRuntime: boolean;
   toggleRuntime: (v: boolean) => void;
-  themeStore: ReturnType<typeof createThemeStore>;
+  themeStore: typeof useExampleThemeStore;
 }) => {
   const { hasRuntime, toggleRuntime, themeStore } = props;
 
@@ -117,14 +114,10 @@ export const App = () => {
   };
 
   const [hasRuntime] = useState(getInitialRuntimeState);
-  const themeStore = useMemo(
-    () =>
-      createThemeStore('jupyter-lexical-primer-theme-example', {
-        colorMode: 'auto',
-        theme: 'matrix',
-      }),
-    [],
-  );
+  // Shared, persisted examples theme store (same pattern as jupyter-react
+  // examples): the selector updates the store, and the provider below passes
+  // the selected theme + colormode down so the example updates accordingly.
+  const themeStore = useExampleThemeStore;
 
   const toggleRuntime = (newValue: boolean) => {
     localStorage.setItem('hasRuntime', String(newValue));

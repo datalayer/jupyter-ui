@@ -29,7 +29,7 @@ const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
       const text = await res.text();
       try {
         const parsed = JSON.parse(text);
-        console.log(JSON.stringify(parsed, null, 2));
+//        console.log(JSON.stringify(parsed, null, 2));
       } catch {
         console.log(text.trim());
       }

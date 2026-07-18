@@ -14,12 +14,8 @@ import {
   CellSidebar,
   CellSidebarExtension,
 } from '@datalayer/jupyter-react';
-import {
-  AppearanceControlsWithStore,
-  Box,
-  createThemeStore,
-} from '@datalayer/primer-addons';
-import { UnderlineNav, Button } from '@primer/react';
+import { AppearanceControlsWithStore, Box } from '@datalayer/primer-addons';
+import { UnderlineNav, Button, Heading } from '@primer/react';
 import { ThreeBarsIcon } from '@primer/octicons-react';
 import { JSONTree } from 'react-json-tree';
 import { INotebookContent } from '@jupyterlab/nbformat';
@@ -31,19 +27,13 @@ import {
   Editor,
   LexicalPrimerThemeProvider,
 } from './..';
+import { useExampleThemeStore } from './themeStore';
 
 import INITIAL_LEXICAL_MODEL from './content/Example.lexical.json';
 
 import INITIAL_NBFORMAT_MODEL from './content/Example.ipynb.json';
 
 const NOTEBOOK_UID = 'notebook-uid-lexical';
-const useNbformatPrimerThemeStore = createThemeStore(
-  'jupyter-lexical-nbformat-primer-theme-example',
-  {
-    colorMode: 'auto',
-    theme: 'matrix',
-  },
-);
 
 type TabType = 'editor' | 'notebook' | 'nbformat';
 
@@ -177,13 +167,23 @@ const Tabs = () => {
 export function App() {
   return (
     <>
-      <div className="App">
-        <h1>Jupyter UI ❤️ Lexical</h1>
-      </div>
-      <Box sx={{ px: 3, py: 2 }}>
-        <AppearanceControlsWithStore useStore={useNbformatPrimerThemeStore} />
-      </Box>
-      <LexicalPrimerThemeProvider useStore={useNbformatPrimerThemeStore}>
+      <LexicalPrimerThemeProvider useStore={useExampleThemeStore}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            px: 3,
+            py: 2,
+          }}
+        >
+          <Heading
+            as="h1"
+            sx={{ m: 0, flex: 1, textAlign: 'center', fontSize: 4 }}
+          >
+            Jupyter UI ❤️ Lexical
+          </Heading>
+          <AppearanceControlsWithStore useStore={useExampleThemeStore} />
+        </Box>
         <LexicalProvider>
           <Tabs />
         </LexicalProvider>

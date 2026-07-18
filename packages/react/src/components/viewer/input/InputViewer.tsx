@@ -24,9 +24,9 @@ import {
   MarkdownCellModel,
   RawCellModel,
 } from '@jupyterlab/cells';
-import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
 import { ICell, ILanguageInfoMetadata } from '@jupyterlab/nbformat';
 import { createStandaloneCell, IYText } from '@jupyter/ydoc';
+import { createLatexTypesetter } from '../../../jupyter/createLatexTypesetter';
 import { rendererFactory as plotlyFactory } from './../../../jupyter/renderers/plotly/PlotlyRenderer';
 import { newUuid } from '../../../utils/Utils';
 import { getMarked } from './../../notebook/marked/marked';
@@ -80,7 +80,7 @@ languages.addLanguage({
 const renderFactories = standardRendererFactories.concat(plotlyFactory);
 const rendermime = new RenderMimeRegistry({
   initialFactories: renderFactories,
-  latexTypesetter: new MathJaxTypesetter(),
+  latexTypesetter: createLatexTypesetter(),
   markdownParser: getMarked(languages),
 });
 

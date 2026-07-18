@@ -31,7 +31,6 @@ import { PathExt, type IChangedArgs } from '@jupyterlab/coreutils';
 import { Context, type DocumentRegistry } from '@jupyterlab/docregistry';
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
 import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
-import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
 import type * as nbformat from '@jupyterlab/nbformat';
 import type { INotebookContent } from '@jupyterlab/nbformat';
 import {
@@ -75,6 +74,7 @@ import {
   WidgetLabRenderer,
   WidgetManager,
 } from '../../jupyter';
+import { createLatexTypesetter } from '../../jupyter/createLatexTypesetter';
 import type { OnSessionConnection } from '../../state';
 import { newUuid, remoteUserCursors } from '../../utils';
 import { Lumino } from '../lumino';
@@ -1277,7 +1277,7 @@ class CommonFeatures {
 
     this._rendermime = new RenderMimeRegistry({
       initialFactories,
-      latexTypesetter: new MathJaxTypesetter(),
+      latexTypesetter: createLatexTypesetter(),
       markdownParser: getMarked(languages),
     });
 
