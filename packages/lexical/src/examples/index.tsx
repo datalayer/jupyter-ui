@@ -145,6 +145,11 @@ const renderStandaloneExample = async (examplePath: string) => {
       root.render(<module.default />);
       return;
     }
+    case 'Notebook': {
+      const module = await import('./Notebook');
+      root.render(<module.default />);
+      return;
+    }
     case 'LexicalSimple':
     default: {
       const module = await import('./LexicalSimple');

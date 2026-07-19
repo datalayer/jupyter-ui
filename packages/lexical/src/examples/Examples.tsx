@@ -37,6 +37,11 @@ const EXAMPLES: Array<{ name: string; path: string; description: string }> = [
     path: 'LexicalNbformat',
     description: 'Jupyter Notebook (nbformat) rendered in lexical.',
   },
+  {
+    name: 'Notebook',
+    path: 'Notebook',
+    description: 'Jupyter Notebook rendered directly with jupyter-react.',
+  },
 ];
 
 const getSelectedExample = (): string => {

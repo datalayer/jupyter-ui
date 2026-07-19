@@ -28,6 +28,8 @@ import {
 } from './..';
 import { useExampleThemeStore } from './themeStore';
 
+import '@datalayer/jupyter-react/style/index.css';
+
 import INITIAL_LEXICAL_MODEL from './content/Example.lexical.json';
 
 import INITIAL_NBFORMAT_MODEL from './content/Example.ipynb.json';
@@ -64,7 +66,7 @@ const Tabs = () => {
   ) => {
     e.preventDefault();
     if (tab === 'notebook' && toTab === 'editor') {
-      if (notebookModel && editor) {
+      if (notebookModel) {
         setNbformat(notebookModel.toJSON() as INotebookContent);
       }
     }
@@ -77,7 +79,7 @@ const Tabs = () => {
       });
     }
     if (tab === 'notebook' && toTab === 'nbformat') {
-      if (notebookModel && editor) {
+      if (notebookModel) {
         setNbformat(notebookModel.toJSON() as INotebookContent);
       }
     }
@@ -139,7 +141,7 @@ const Tabs = () => {
                 id={NOTEBOOK_UID}
                 kernel={defaultKernel}
                 serviceManager={serviceManager}
-                nbformat={INITIAL_NBFORMAT_MODEL}
+                nbformat={nbformat}
                 extensions={extensions}
               />
             )}
