@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { $getRoot } from 'lexical';
 import styled from 'styled-components';
 import {
@@ -44,6 +44,9 @@ const StyledNotebook = styled.div`
   }
 `;
 
+const cloneNotebookContent = (model: INotebookContent): INotebookContent =>
+  JSON.parse(JSON.stringify(model)) as INotebookContent;
+
 const Tabs = () => {
   const { editor } = useLexical();
   const { serviceManager, defaultKernel } = useJupyter({
@@ -55,19 +58,52 @@ const Tabs = () => {
   const [nbformat, setNbformat] = useState<INotebookContent>(
     INITIAL_NBFORMAT_MODEL,
   );
+  const notebookModelRef = useRef<INotebookModel | null>(null);
   const extensions = useMemo(
     () => [new CellSidebarExtension({ factory: CellSidebar })],
     [],
   );
   const notebook = notebookStore.selectNotebook(NOTEBOOK_UID);
 
+  const handleNotebookModelChanged = useCallback(
+    (model: INotebookModel | null) => {
+      notebookModelRef.current = model;
+    },
+    [],
+  );
+
+  useEffect(() => {
+    const model = notebookModelRef.current;
+    if (!model) {
+      return;
+    }
+
+    const syncSnapshot = () => {
+      const snapshot = cloneNotebookContent(model.toJSON() as INotebookContent);
+      setNbformat(snapshot);
+    };
+
+    syncSnapshot();
+
+    // Keep a live snapshot from notebook edits so switching back to Editor
+    // always uses the latest cell content.
+    model.contentChanged.connect(syncSnapshot);
+    return () => {
+      model.contentChanged.disconnect(syncSnapshot);
+    };
+  }, [notebook?.model]);
+
   const syncNotebookModelToEditor = (model?: INotebookModel) => {
     const currentModel =
-      model ?? notebookStore.selectNotebook(NOTEBOOK_UID)?.model;
+      model ??
+      notebookModelRef.current ??
+      notebookStore.selectNotebook(NOTEBOOK_UID)?.model;
     if (!currentModel) {
       return;
     }
-    const notebookJson = currentModel.toJSON() as INotebookContent;
+    const notebookJson = cloneNotebookContent(
+      currentModel.toJSON() as INotebookContent,
+    );
     setNbformat(notebookJson);
     // Ensure editor rebuilds from the latest notebook snapshot when returning
     // from the Notebook tab.
@@ -95,7 +131,9 @@ const Tabs = () => {
     }
     if (tab === 'notebook' && toTab === 'nbformat') {
       if (notebookModel) {
-        setNbformat(notebookModel.toJSON() as INotebookContent);
+        setNbformat(
+          cloneNotebookContent(notebookModel.toJSON() as INotebookContent),
+        );
       }
     }
     setTab(toTab);
@@ -122,7 +160,7 @@ const Tabs = () => {
           aria-current={tab === 'nbformat' ? 'page' : undefined}
           onClick={e => goToTab(e, 'nbformat', notebook?.model)}
         >
-          NbFormat
+          Nbformat
         </UnderlineNav.Item>
       </UnderlineNav>
       {tab === 'editor' && (
@@ -159,6 +197,7 @@ const Tabs = () => {
                 serviceManager={serviceManager}
                 nbformat={nbformat}
                 extensions={extensions}
+                onNotebookModelChanged={handleNotebookModelChanged}
               />
             )}
             <Button
@@ -174,7 +213,7 @@ const Tabs = () => {
       )}
       {tab === 'nbformat' && (
         <Box>
-          <JSONTree data={nbformat} />;
+          <JSONTree data={nbformat} shouldExpandNodeInitially={() => true} />
         </Box>
       )}
     </Box>

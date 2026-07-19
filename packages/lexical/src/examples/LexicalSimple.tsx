@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
 
 import { useState, useMemo, useCallback } from 'react';
 import { Button, ToggleSwitch, Text, Heading } from '@primer/react';
-import { AppearanceControlsWithStore, Box } from '@datalayer/primer-addons';
+import { Box } from '@datalayer/primer-addons';
 import { useCoreStore } from '@datalayer/core';
 import { useSimpleAuthStore } from '@datalayer/core/lib/views/otel';
 import {
@@ -127,9 +127,8 @@ const LexicalEditor = ({ hasRuntime }: { hasRuntime: boolean }) => {
 const AppToolbar = (props: {
   hasRuntime: boolean;
   toggleRuntime: (v: boolean) => void;
-  themeStore: typeof useExampleThemeStore;
 }) => {
-  const { hasRuntime, toggleRuntime, themeStore } = props;
+  const { hasRuntime, toggleRuntime } = props;
 
   return (
     <Box
@@ -155,7 +154,6 @@ const AppToolbar = (props: {
           marginLeft: 'auto',
         }}
       >
-        <AppearanceControlsWithStore useStore={themeStore} />
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Text
             id="runtime-toggle-label"
@@ -208,13 +206,7 @@ export const LexicalSimple = () => {
 
   return (
     <LexicalPrimerThemeProvider useStore={themeStore}>
-      <div className="App">
-        <AppToolbar
-          hasRuntime={hasRuntime}
-          toggleRuntime={toggleRuntime}
-          themeStore={themeStore}
-        />
-      </div>
+      <AppToolbar hasRuntime={hasRuntime} toggleRuntime={toggleRuntime} />
       <LexicalProvider>
         <LexicalEditor hasRuntime={hasRuntime} />
       </LexicalProvider>

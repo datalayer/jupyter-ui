@@ -28,7 +28,7 @@ build-prod: ## build-prod
 	python -m build
 
 examples: ## examples
-	npm run start:webpack
+	npm run start:vite
 
 publish-npm: clean build ## publish-npm
 	npm publish

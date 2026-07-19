@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -27,14 +27,22 @@ export const nbformatToLexical = (
     root.clear();
     root.selectStart();
 
-    notebook.cells.map((cell, index) => {
+    notebook.cells.forEach((cell, index) => {
       let code = '';
-      if (typeof cell.source === 'object') {
-        code = (cell.source as string[]).join('\n');
-      }
-      if (typeof cell.source === 'string') {
+      if (Array.isArray(cell.source)) {
+        // In nbformat, `source` is an array of lines where each line already
+        // carries its own trailing newline. Join with '' (not '\n') so cells
+        // are reconstructed verbatim instead of gaining spurious blank lines.
+        code = (cell.source as string[]).join('');
+      } else if (typeof cell.source === 'string') {
         code = cell.source as string;
       }
+      // Always anchor the selection at the end of the document before inserting
+      // the next cell. Inserting a block node can leave the collapsed selection
+      // pointing inside the freshly inserted node, which caused the following
+      // cell to be inserted *before* and merged into the previous one (e.g.
+      // "plt.show()x=1").
+      root.selectEnd();
       if (cell.cell_type === 'markdown') {
         $convertFromMarkdownString(code, TRANSFORMERS);
       }

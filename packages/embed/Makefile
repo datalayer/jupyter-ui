@@ -192,9 +192,9 @@ deploy: deploy-build ## build and deploy to CDN
 	aws cloudfront create-invalidation \
 		--distribution-id E2GVE84L6ODMKY \
 		--paths "/*" \
-		--profile datalayer && \
-	echo -e "\033[1;32m✨ Deployed to https://jupyter-embed.datalayer.tech\033[0m"
-	echo -e "\033[1;32m✨ Deployed to https://jupyter-embed.datalayer.tech/index-lazy\033[0m"
+		--profile datalayer
+	@echo -e "\033[1;32m✨ Deployed to https://jupyter-embed.datalayer.tech\033[0m"
+	@echo -e "\033[1;32m✨ Deployed to https://jupyter-embed.datalayer.tech/index-lazy\033[0m"
 
 ##@ Utilities
 
