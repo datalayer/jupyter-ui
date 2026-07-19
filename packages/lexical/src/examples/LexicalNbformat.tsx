@@ -19,7 +19,7 @@ import { UnderlineNav, Button, Heading, Text } from '@primer/react';
 import { JSONTree } from 'react-json-tree';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { INotebookModel } from '@jupyterlab/notebook';
-import { lexicalToNbformat } from './..';
+import { lexicalToNbformat, nbformatToLexical } from './..';
 import {
   useLexical,
   LexicalProvider,
@@ -67,16 +67,22 @@ const Tabs = () => {
     e.preventDefault();
     if (tab === 'notebook' && toTab === 'editor') {
       if (notebookModel) {
-        setNbformat(notebookModel.toJSON() as INotebookContent);
+        const notebookJson = notebookModel.toJSON() as INotebookContent;
+        setNbformat(notebookJson);
+        if (editor) {
+          nbformatToLexical(notebookJson, editor);
+        }
       }
     }
     if (tab === 'editor' && toTab === 'notebook') {
-      editor?.update(() => {
-        const root = $getRoot();
-        const children = root.getChildren();
-        const nbformat = lexicalToNbformat(children);
-        setNbformat(nbformat);
-      });
+      if (editor) {
+        const nextNbformat = editor.getEditorState().read(() => {
+          const root = $getRoot();
+          const children = root.getChildren();
+          return lexicalToNbformat(children);
+        });
+        setNbformat(nextNbformat);
+      }
     }
     if (tab === 'notebook' && toTab === 'nbformat') {
       if (notebookModel) {

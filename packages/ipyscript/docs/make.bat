@@ -1,4 +1,4 @@
-rem Copyright (c) 2021-2023 Datalayer, Inc.
+rem Copyright (c) 2021-Present Datalayer, Inc.
 rem
 rem MIT License
 
