@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -51,6 +51,7 @@ const Tabs = () => {
   });
   const notebookStore = useNotebookStore();
   const [tab, setTab] = useState<TabType>('editor');
+  const [editorVersion, setEditorVersion] = useState(0);
   const [nbformat, setNbformat] = useState<INotebookContent>(
     INITIAL_NBFORMAT_MODEL,
   );
@@ -59,6 +60,20 @@ const Tabs = () => {
     [],
   );
   const notebook = notebookStore.selectNotebook(NOTEBOOK_UID);
+
+  const syncNotebookModelToEditor = (model?: INotebookModel) => {
+    const currentModel =
+      model ?? notebookStore.selectNotebook(NOTEBOOK_UID)?.model;
+    if (!currentModel) {
+      return;
+    }
+    const notebookJson = currentModel.toJSON() as INotebookContent;
+    setNbformat(notebookJson);
+    // Ensure editor rebuilds from the latest notebook snapshot when returning
+    // from the Notebook tab.
+    setEditorVersion(version => version + 1);
+  };
+
   const goToTab = (
     e: any,
     toTab: TabType,
@@ -66,13 +81,7 @@ const Tabs = () => {
   ) => {
     e.preventDefault();
     if (tab === 'notebook' && toTab === 'editor') {
-      if (notebookModel) {
-        const notebookJson = notebookModel.toJSON() as INotebookContent;
-        setNbformat(notebookJson);
-        if (editor) {
-          nbformatToLexical(notebookJson, editor);
-        }
-      }
+      syncNotebookModelToEditor(notebookModel);
     }
     if (tab === 'editor' && toTab === 'notebook') {
       if (editor) {
@@ -119,6 +128,7 @@ const Tabs = () => {
       {tab === 'editor' && (
         <Box>
           <Editor
+            key={`editor-${editorVersion}`}
             notebook={nbformat}
             onSessionConnection={() => {
               // Intentionally no-op: avoid noisy session logs on reconnection/state updates.

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -7,11 +7,12 @@
 import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { JupyterLabCss, JupyterReactTheme } from '../theme';
+import { JupyterLabCss } from '../theme';
 import { useJupyter } from '../jupyter';
 import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 
 import NBFORMAT from './notebooks/Matplotlib.ipynb.json';
 

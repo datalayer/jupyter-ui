@@ -19,7 +19,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Text, Spinner, Flash, ActionList, TextInput } from '@primer/react';
-import { AppearanceControlsWithStore, Box } from '@datalayer/primer-addons';
+import {
+  AppearanceControlsWithStore,
+  Box,
+  themeConfigs,
+} from '@datalayer/primer-addons';
 import { SearchIcon, CheckIcon } from '@primer/octicons-react';
 import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { useExampleThemeSettings, useExampleThemeStore } from './themeStore';

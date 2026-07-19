@@ -7,11 +7,6 @@
 
 SHELL=/bin/bash
 
-CONDA=source $$(conda info --base)/etc/profile.d/conda.sh
-CONDA_ACTIVATE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda activate
-CONDA_DEACTIVATE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda deactivate
-CONDA_REMOVE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda remove -y --all -n
-
 ENV_NAME=datalayer
 
 .PHONY: help typedoc typedoc-publish
@@ -26,26 +21,23 @@ clean: ## clean
 		npm run clean )
 
 build: ## build
-	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		npm run build )
+	npm run build
 
 build-prod: ## build-prod
 	git clean -fdx
 	python -m build
 
 examples: ## examples
-	npm run start
+	npm run start:webpack
 
 publish-npm: clean build ## publish-npm
-	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		npm publish )
+	npm publish
 	echo open https://www.npmjs.com/package/@datalayer/jupyter-lexical
 
 typedoc: ## generate typedoc
-	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		rm -fr typedoc && \
-		npm run typedoc --tsconfig ./tsconfig.json && \
-		open typedoc/index.html )
+	rm -fr typedoc && \
+	npm run typedoc --tsconfig ./tsconfig.json && \
+	open typedoc/index.html
 
 typedoc-publish: typedoc ## publish typedoc
 	aws s3 rm \

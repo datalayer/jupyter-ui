@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -7,6 +7,7 @@
 import { useMemo } from 'react';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { Box, DatalayerThemeProvider } from '@datalayer/primer-addons';
+import { Heading, Text } from '@primer/react';
 import { JupyterReactTheme } from '@datalayer/jupyter-react';
 import { useJupyter } from '@datalayer/jupyter-react';
 import {
@@ -41,15 +42,35 @@ const NotebookExample = () => {
       <JupyterReactTheme
         colormode={resolvedMode}
         backgroundColor={backgroundColor}
+        useBaseStyles={false}
       >
-        {serviceManager && defaultKernel && (
-          <>
-            <Box>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            px: 3,
+            py: 2,
+          }}
+        >
+          <Box sx={{ flex: 1 }}>
+            <Heading as="h2" sx={{ mb: 1 }}>
+              Notebook
+            </Heading>
+            <Text as="p" sx={{ m: 0, color: 'fg.muted' }}>
+              Jupyter notebook example in lexical.
+            </Text>
+            <Box sx={{ mt: 2 }}>
               <KernelIndicator
                 kernel={defaultKernel?.connection}
-                label="Kernel Indicator"
+                label="Kernel"
+                bordered={false}
+                position="bottom-right"
               />
             </Box>
+          </Box>
+        </Box>
+        {serviceManager && defaultKernel && (
+          <>
             <Notebook
               nbformat={NBFORMAT as INotebookContent}
               id="notebook2-nbformat-id"

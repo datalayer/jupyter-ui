@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -14,11 +14,8 @@ const CellsExample = () => {
   const { defaultKernel } = useJupyter({ startDefaultKernel: true });
   return (
     <ExampleJupyterReactTheme>
-      <Box sx={{ px: 3, py: 2, bg: 'canvas.default' }}>
-        <Heading
-          as="h1"
-          sx={{ m: 0, fontSize: 4, fontWeight: 'bold' }}
-        >
+      <Box sx={{ px: 3, py: 2 }}>
+        <Heading as="h1" sx={{ m: 0, fontSize: 4, fontWeight: 'bold' }}>
           Cells
         </Heading>
       </Box>

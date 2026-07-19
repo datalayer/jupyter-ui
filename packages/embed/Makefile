@@ -4,13 +4,6 @@
 
 SHELL=/bin/bash
 
-CONDA=source $$(conda info --base)/etc/profile.d/conda.sh
-CONDA_ACTIVATE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda activate
-CONDA_DEACTIVATE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda deactivate
-CONDA_REMOVE=source $$(conda info --base)/etc/profile.d/conda.sh ; conda remove -y --all -n
-
-ENV_NAME=datalayer
-
 .DEFAULT_GOAL := help
 
 .PHONY: help
