@@ -19,7 +19,7 @@ import { UnderlineNav, Button, Heading, Text } from '@primer/react';
 import { JSONTree } from 'react-json-tree';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { INotebookModel } from '@jupyterlab/notebook';
-import { lexicalToNbformat, nbformatToLexical } from './..';
+import { lexicalToNbformat } from './..';
 import {
   useLexical,
   LexicalProvider,
@@ -213,7 +213,7 @@ const Tabs = () => {
       )}
       {tab === 'nbformat' && (
         <Box>
-          <JSONTree data={nbformat} shouldExpandNodeInitially={() => true} />
+          <JSONTree data={nbformat} />
         </Box>
       )}
     </Box>
