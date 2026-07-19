@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -254,9 +254,10 @@ const ExamplesSidebar = ({
         right: 0,
         height: '100vh',
         width: '320px',
-        backgroundColor: 'canvas.default',
+        backgroundColor: 'var(--bgColor-default)',
         borderLeft: '1px solid',
-        borderColor: 'border.default',
+        borderColor: 'var(--borderColor-default)',
+        color: 'var(--fgColor-default)',
         display: 'flex',
         flexDirection: 'column',
         zIndex: 1000,
@@ -266,11 +267,17 @@ const ExamplesSidebar = ({
         sx={{
           px: 3,
           py: 2,
+          backgroundColor: 'var(--bgColor-muted)',
           borderBottom: '1px solid',
-          borderColor: 'border.default',
+          borderColor: 'var(--borderColor-default)',
         }}
       >
-        <Text as="div" fontWeight="bold" fontSize={2}>
+        <Text
+          as="div"
+          fontWeight="bold"
+          fontSize={2}
+          sx={{ color: 'var(--fgColor-accent)' }}
+        >
           📓 ⚛️ Jupyter React Examples
         </Text>
         <Box mt={2}>
@@ -295,7 +302,7 @@ const ExamplesSidebar = ({
           px: 2,
           py: 2,
           borderBottom: '1px solid',
-          borderColor: 'border.default',
+          borderColor: 'var(--borderColor-default)',
         }}
       >
         <TextInput

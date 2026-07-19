@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -7,7 +7,7 @@
 import { createRoot } from 'react-dom/client';
 import { INotebookContent, IOutput } from '@jupyterlab/nbformat';
 import { Text } from '@primer/react';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { Output } from '../components/output/Output';
 import { cellSourceAsString } from './../utils/Utils';
 
@@ -15,7 +15,7 @@ import NBFORMAT from './notebooks/NotebookOutputs.ipynb.json';
 
 const OutputsIpynbExample = () => {
   return (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       <Text as="h1">Outputs from IPYNB</Text>
       {(NBFORMAT as INotebookContent).cells.map((cell, index) => {
         return (
@@ -32,7 +32,7 @@ const OutputsIpynbExample = () => {
           </>
         );
       })}
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 

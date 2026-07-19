@@ -1,15 +1,12 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
 
 import { createRoot } from 'react-dom/client';
 import { Button, Label } from '@primer/react';
-import {
-  Box,
-  DatalayerThemeProvider,
-} from '@datalayer/primer-addons';
+import { Box, DatalayerThemeProvider } from '@datalayer/primer-addons';
 import { PlayIcon } from '@primer/octicons-react';
 import { JupyterReactTheme } from '../theme';
 import { useJupyter } from '../jupyter/JupyterUse';
@@ -39,7 +36,11 @@ const CellExample = () => {
       theme={themeConfig.primerTheme}
       themeStyles={themeConfig.themeStyles}
     >
-      <JupyterReactTheme colormode={resolvedMode} backgroundColor={backgroundColor}>
+      <JupyterReactTheme
+        colormode={resolvedMode}
+        backgroundColor={backgroundColor}
+        useBaseStyles={false}
+      >
         <Box as="h1">Cell</Box>
         <Box as="pre">Source: {cellsStore.getSource(CELL_ID)}</Box>
         <Box>Outputs Count: {cellsStore.getOutputsCount(CELL_ID)}</Box>

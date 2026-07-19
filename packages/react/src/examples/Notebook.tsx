@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -40,7 +40,11 @@ const NotebookExample = () => {
       theme={themeConfig.primerTheme}
       themeStyles={themeConfig.themeStyles}
     >
-      <JupyterReactTheme colormode={resolvedMode} backgroundColor={backgroundColor}>
+      <JupyterReactTheme
+        colormode={resolvedMode}
+        backgroundColor={backgroundColor}
+        useBaseStyles={false}
+      >
         {serviceManager && defaultKernel && (
           <>
             <Box>

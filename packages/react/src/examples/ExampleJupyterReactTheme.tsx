@@ -6,7 +6,10 @@
 
 import { PropsWithChildren } from 'react';
 import { DatalayerThemeProvider } from '@datalayer/primer-addons';
-import { JupyterReactTheme, type IJupyterLabThemeProps } from '../theme/JupyterReactTheme';
+import {
+  JupyterReactTheme,
+  type IJupyterLabThemeProps,
+} from '../theme/JupyterReactTheme';
 import { useExampleThemeSettings } from './themeStore';
 
 type ExampleJupyterReactThemeProps = Omit<
@@ -33,6 +36,7 @@ export const ExampleJupyterReactTheme = ({
       <JupyterReactTheme
         colormode={resolvedMode}
         backgroundColor={backgroundColor}
+        useBaseStyles={false}
         {...rest}
       >
         {children}

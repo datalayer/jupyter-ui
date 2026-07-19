@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -30,7 +30,11 @@ const CellLiteExample = () => {
       theme={themeConfig.primerTheme}
       themeStyles={themeConfig.themeStyles}
     >
-      <JupyterReactTheme colormode={resolvedMode} backgroundColor={backgroundColor}>
+      <JupyterReactTheme
+        colormode={resolvedMode}
+        backgroundColor={backgroundColor}
+        useBaseStyles={false}
+      >
         <Box as="h1">Cell with a Lite Kernel</Box>
         {defaultKernel && (
           <Cell id="jupyter-cell-lite-1" source={CODE} kernel={defaultKernel} />

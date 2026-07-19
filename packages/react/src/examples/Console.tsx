@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -20,7 +20,11 @@ const ConsoleExample = () => {
       theme={themeConfig.primerTheme}
       themeStyles={themeConfig.themeStyles}
     >
-      <JupyterReactTheme colormode={resolvedMode} backgroundColor={backgroundColor}>
+      <JupyterReactTheme
+        colormode={resolvedMode}
+        backgroundColor={backgroundColor}
+        useBaseStyles={false}
+      >
         <Box as="h1">Console</Box>
         <Console code={"print('👋 Hello Jupyter Console')"} />
       </JupyterReactTheme>
@@ -32,6 +36,4 @@ const div = document.createElement('div');
 document.body.appendChild(div);
 const root = createRoot(div);
 
-root.render(
-  <ConsoleExample />
-);
+root.render(<ConsoleExample />);
