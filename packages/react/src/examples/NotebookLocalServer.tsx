@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -11,13 +11,13 @@ import { CellSidebarExtension } from '../components';
 import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
 import { Notebook } from '../components/notebook/Notebook';
 import { useJupyter } from '../jupyter';
-import { JupyterReactTheme } from '../theme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 const NotebookJupyterExample = () => {
   const { serviceManager, defaultKernel } = useJupyter({
     startDefaultKernel: true,
-    jupyterServerUrl: 'https://oss.datalayer.tech/api/jupyter-server',
+    jupyterServerUrl: 'https://prod1.datalayer.tech/api/jupyter-server',
     jupyterServerToken:
       '60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6',
   });
@@ -26,7 +26,7 @@ const NotebookJupyterExample = () => {
     []
   );
   return (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       {serviceManager && defaultKernel && (
         <Notebook
           id="notebook-jupyter-react-theme-id"
@@ -38,7 +38,7 @@ const NotebookJupyterExample = () => {
           Toolbar={NotebookToolbar}
         />
       )}
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 
@@ -54,7 +54,7 @@ const NotebookJupyterReactThemeExample = () => {
     []
   );
   return (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       {serviceManager && defaultKernel && (
         <Notebook
           id="notebook-jupyter-react-theme-id"
@@ -66,7 +66,7 @@ const NotebookJupyterReactThemeExample = () => {
           Toolbar={NotebookToolbar}
         />
       )}
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 

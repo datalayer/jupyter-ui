@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Copyright (c) 2021-2023 Datalayer, Inc.
+# Copyright (c) 2021-Present Datalayer, Inc.
 #
 # MIT License
 
@@ -26,6 +26,7 @@ function kill_port() {
 }
 
 kill_port 3208
+kill_port 3211
 kill_port 6006
 kill_port 8686
 kill_port 8888

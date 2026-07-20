@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -11,7 +11,7 @@ import { Text } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { useJupyter } from '../jupyter';
 import { Kernel } from '../jupyter/kernel/Kernel';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { useKernelsStore } from '../jupyter/kernel/KernelState';
 import { KernelIndicator } from '../components/kernel/KernelIndicator';
 import { Output } from '../components/output/Output';
@@ -207,12 +207,12 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <JupyterReactTheme>
+  <ExampleJupyterReactTheme>
     <OutputIPyWidgetsExample />
     <OutputNoEditorNoAutorunExample />
     <OutputNoEditorExample />
     <OutputNoEditorErrorExample />
     <OutputEditorExample />
     <OutputEmptyExample />
-  </JupyterReactTheme>
+  </ExampleJupyterReactTheme>
 );

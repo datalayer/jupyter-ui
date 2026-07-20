@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -9,7 +9,7 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 import { createRoot } from 'react-dom/client';
 import { useJupyter } from '../jupyter';
 import { Notebook, CellSidebarExtension, NotebookToolbar } from '../components';
-import { JupyterReactTheme } from '../theme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 
 import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
@@ -19,7 +19,7 @@ const NotebookNbformatExample = () => {
   });
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       {serviceManager && defaultKernel ? (
         <Notebook
           nbformat={NBFORMAT as INotebookContent}
@@ -33,7 +33,7 @@ const NotebookNbformatExample = () => {
       ) : (
         <></>
       )}
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 

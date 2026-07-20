@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -26,7 +26,10 @@ const NotebookNoContextExample = () => {
     []
   );
   return (
-    <JupyterReactTheme colormode={COLORMODE}>
+    <JupyterReactTheme
+      colormode={COLORMODE}
+      backgroundColor="var(--bgColor-default)"
+    >
       {serviceManager && defaultKernel && (
         <Notebook
           id={NOTEBOOK_ID}

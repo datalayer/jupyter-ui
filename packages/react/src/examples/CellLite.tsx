@@ -1,14 +1,15 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
 
 import { createRoot } from 'react-dom/client';
-import { Box } from '@datalayer/primer-addons';
+import { Box, DatalayerThemeProvider } from '@datalayer/primer-addons';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { useJupyter } from '../jupyter/JupyterUse';
 import { Cell } from '../components/cell/Cell';
+import { useExampleThemeSettings } from './themeStore';
 
 const CODE = `import sys
 
@@ -21,13 +22,25 @@ const CellLiteExample = () => {
     startDefaultKernel: true,
     lite: true,
   });
+  const { colorMode, themeConfig, resolvedMode, backgroundColor } =
+    useExampleThemeSettings();
   return (
-    <JupyterReactTheme>
-      <Box as="h1">Cell with a Lite Kernel</Box>
-      {defaultKernel && (
-        <Cell id="jupyter-cell-lite-1" source={CODE} kernel={defaultKernel} />
-      )}
-    </JupyterReactTheme>
+    <DatalayerThemeProvider
+      colorMode={colorMode}
+      theme={themeConfig.primerTheme}
+      themeStyles={themeConfig.themeStyles}
+    >
+      <JupyterReactTheme
+        colormode={resolvedMode}
+        backgroundColor={backgroundColor}
+        useBaseStyles={false}
+      >
+        <Box as="h1">Cell with a Lite Kernel</Box>
+        {defaultKernel && (
+          <Cell id="jupyter-cell-lite-1" source={CODE} kernel={defaultKernel} />
+        )}
+      </JupyterReactTheme>
+    </DatalayerThemeProvider>
   );
 };
 

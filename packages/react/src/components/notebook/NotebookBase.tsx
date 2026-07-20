@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -31,7 +31,7 @@ import { PathExt, type IChangedArgs } from '@jupyterlab/coreutils';
 import { Context, type DocumentRegistry } from '@jupyterlab/docregistry';
 import { rendererFactory as javascriptRendererFactory } from '@jupyterlab/javascript-extension';
 import { rendererFactory as jsonRendererFactory } from '@jupyterlab/json-extension';
-import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
+import type * as nbformat from '@jupyterlab/nbformat';
 import type { INotebookContent } from '@jupyterlab/nbformat';
 import {
   NotebookModel,
@@ -59,12 +59,14 @@ import type { ISessionConnection } from '@jupyterlab/services/lib/session/sessio
 import { YNotebook, type IYText } from '@jupyter/ydoc';
 import { find } from '@lumino/algorithm';
 import { CommandRegistry } from '@lumino/commands';
+import { JSONExt } from '@lumino/coreutils';
 import { DisposableSet } from '@lumino/disposable';
 import { Signal } from '@lumino/signaling';
 import { Widget } from '@lumino/widgets';
 import { Box } from '@datalayer/primer-addons';
 import { Banner } from '@primer/react/experimental';
 import { EditorView } from 'codemirror';
+import * as Y from 'yjs';
 import {
   ICollaborationProvider,
   Kernel,
@@ -72,6 +74,7 @@ import {
   WidgetLabRenderer,
   WidgetManager,
 } from '../../jupyter';
+import { createLatexTypesetter } from '../../jupyter/createLatexTypesetter';
 import type { OnSessionConnection } from '../../state';
 import { newUuid, remoteUserCursors } from '../../utils';
 import { Lumino } from '../lumino';
@@ -87,6 +90,124 @@ const COMPLETER_TIMEOUT_MILLISECONDS = 1000;
 const DEFAULT_EXTENSIONS = new Array<NotebookExtension>();
 
 const FALLBACK_NOTEBOOK_PATH = '.datalayer/ping.ipynb';
+
+function createYText(value: string): Y.Text {
+  const text = new Y.Text();
+  if (value) {
+    text.insert(0, value);
+  }
+  return text;
+}
+
+function createYMapFromRecord(record: Record<string, unknown>): Y.Map<unknown> {
+  return new Y.Map(Object.entries(record));
+}
+
+function createYOutputMap(output: nbformat.IOutput): Y.Map<any> {
+  const copy = JSONExt.deepCopy(output) as any;
+  if (copy.output_type === 'stream' && copy.text !== undefined) {
+    const { text, ...outputWithoutText } = copy;
+    const ytext = new Y.Text();
+    const normalized = text instanceof Array ? text.join() : (text as string);
+    if (normalized) {
+      ytext.insert(0, normalized);
+    }
+    return new Y.Map([...Object.entries(outputWithoutText), ['text', ytext]]);
+  }
+  return new Y.Map(Object.entries(copy));
+}
+
+function toCellSource(source: nbformat.MultilineString | undefined): string {
+  if (source == null) {
+    return '';
+  }
+  return typeof source === 'string' ? source : source.join('');
+}
+
+function createCellYModel(
+  cell: nbformat.IBaseCell,
+  useId: boolean
+): Y.Map<any> {
+  const ymodel = new Y.Map<any>();
+  ymodel.set('cell_type', cell.cell_type);
+  ymodel.set('source', createYText(toCellSource(cell.source)));
+  ymodel.set(
+    'metadata',
+    createYMapFromRecord(
+      JSONExt.deepCopy(cell.metadata ?? {}) as Record<string, unknown>
+    )
+  );
+
+  if (useId && (cell as any).id) {
+    ymodel.set('id', (cell as any).id);
+  }
+
+  if (cell.cell_type === 'code') {
+    const codeCell = cell as nbformat.ICodeCell;
+    const youtputs = new Y.Array<Y.Map<any>>();
+    const outputs = (codeCell.outputs ?? []).map(output =>
+      createYOutputMap(output)
+    );
+    if (outputs.length > 0) {
+      youtputs.insert(0, outputs);
+    }
+    ymodel.set('outputs', youtputs);
+    ymodel.set('execution_count', codeCell.execution_count ?? null);
+  }
+
+  if (cell.cell_type === 'markdown' || cell.cell_type === 'raw') {
+    const attachments = (cell as nbformat.IRawCell | nbformat.IMarkdownCell)
+      .attachments;
+    if (attachments) {
+      ymodel.set(
+        'attachments',
+        createYMapFromRecord(
+          JSONExt.deepCopy(attachments) as Record<string, unknown>
+        )
+      );
+    }
+  }
+
+  return ymodel;
+}
+
+function populateNotebookModelFromJSON(
+  model: NotebookModel,
+  content: INotebookContent,
+  readonly: boolean
+): void {
+  const sharedModel = model.sharedModel as unknown as YNotebook & {
+    _ycells: Y.Array<Y.Map<any>>;
+  };
+  const nbformat = content.nbformat ?? 4;
+  const nbformatMinor = content.nbformat_minor ?? 5;
+  const useId = nbformat === 4 && nbformatMinor >= 5;
+  const metadata = JSONExt.deepCopy(content.metadata ?? {});
+  delete (metadata as Record<string, unknown>).orig_nbformat;
+  const normalizedCells = content.cells.map(cell => ({
+    ...cell,
+    metadata: {
+      ...(cell.metadata ?? {}),
+      editable: !readonly,
+    },
+  }));
+
+  sharedModel.transact(() => {
+    sharedModel.nbformat = nbformat;
+    sharedModel.nbformat_minor = nbformatMinor;
+    sharedModel.metadata = metadata;
+
+    const ycells = sharedModel._ycells;
+    ycells.delete(0, ycells.length);
+
+    const next = normalizedCells.map(cell =>
+      createCellYModel(cell as nbformat.IBaseCell, useId)
+    );
+    if (next.length > 0) {
+      ycells.insert(0, next);
+    }
+  });
+}
 
 /**
  * Generate settings for inline completion providers.
@@ -1071,10 +1192,7 @@ export function useNotebookModel(options: IOptions): NotebookModel | null {
       const createModel = (nbformat: INotebookContent | undefined) => {
         const model = new NotebookModel();
         if (nbformat) {
-          nbformat.cells.forEach(cell => {
-            cell.metadata['editable'] = !readonly;
-          });
-          model.fromJSON(nbformat);
+          populateNotebookModelFromJSON(model, nbformat, readonly);
         }
         model.readOnly = readonly;
         setModel(model);
@@ -1159,7 +1277,7 @@ class CommonFeatures {
 
     this._rendermime = new RenderMimeRegistry({
       initialFactories,
-      latexTypesetter: new MathJaxTypesetter(),
+      latexTypesetter: createLatexTypesetter(),
       markdownParser: getMarked(languages),
     });
 

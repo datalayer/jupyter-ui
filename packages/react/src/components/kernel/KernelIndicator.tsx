@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -21,10 +21,53 @@ import {
 } from './KernelIndicatorState';
 
 export type KernelIndicatorPosition =
+  | 'n'
+  | 's'
+  | 'e'
+  | 'w'
+  | 'ne'
+  | 'nw'
+  | 'se'
+  | 'sw'
+  | 'top'
+  | 'bottom'
+  | 'left'
+  | 'right'
+  | 'top-left'
+  | 'top-right'
+  | 'bottom-left'
+  | 'bottom-right';
+
+type NormalizedKernelIndicatorPosition =
   'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
 
-function overlayTransformForPosition(
+function normalizePosition(
   position: KernelIndicatorPosition
+): NormalizedKernelIndicatorPosition {
+  switch (position) {
+    case 'top':
+      return 'n';
+    case 'bottom':
+      return 's';
+    case 'left':
+      return 'w';
+    case 'right':
+      return 'e';
+    case 'top-left':
+      return 'nw';
+    case 'top-right':
+      return 'ne';
+    case 'bottom-left':
+      return 'sw';
+    case 'bottom-right':
+      return 'se';
+    default:
+      return position;
+  }
+}
+
+function overlayTransformForPosition(
+  position: NormalizedKernelIndicatorPosition
 ): string {
   switch (position) {
     case 'n':
@@ -91,6 +134,7 @@ export const KernelIndicator = ({
   const overlayRef = useRef<HTMLDivElement | null>(null);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [overlayPosition, setOverlayPosition] = useState({ top: 0, left: 0 });
+  const normalizedPosition = normalizePosition(position);
 
   const cancelScheduledClose = () => {
     if (closeTimerRef.current) {
@@ -194,6 +238,38 @@ export const KernelIndicator = ({
       let top = triggerRect.bottom + gap;
       let left = centerX;
       switch (position) {
+        case 'top':
+          top = triggerRect.top - gap;
+          left = centerX;
+          break;
+        case 'bottom':
+          top = triggerRect.bottom + gap;
+          left = centerX;
+          break;
+        case 'right':
+          top = centerY;
+          left = triggerRect.right + gap;
+          break;
+        case 'left':
+          top = centerY;
+          left = triggerRect.left - gap;
+          break;
+        case 'top-right':
+          top = triggerRect.top - gap;
+          left = triggerRect.left;
+          break;
+        case 'top-left':
+          top = triggerRect.top - gap;
+          left = triggerRect.right;
+          break;
+        case 'bottom-right':
+          top = triggerRect.bottom + gap;
+          left = triggerRect.left;
+          break;
+        case 'bottom-left':
+          top = triggerRect.bottom + gap;
+          left = triggerRect.right;
+          break;
         case 'n':
           top = triggerRect.top - gap;
           left = centerX;
@@ -388,7 +464,7 @@ export const KernelIndicator = ({
               position: 'fixed',
               top: `${overlayPosition.top}px`,
               left: `${overlayPosition.left}px`,
-              transform: overlayTransformForPosition(position),
+              transform: overlayTransformForPosition(normalizedPosition),
               zIndex: 99999,
               minWidth: 560,
               maxWidth: 'min(980px, 96vw)',

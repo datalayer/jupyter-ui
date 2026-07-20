@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -121,6 +121,14 @@ export const JupyterInputOutputPlugin = (
   const [editor] = useLexicalComposerContext();
   const isUpdatingKernels = useRef(false);
   const isMovingNodes = useRef(false);
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   // Function to update all existing output nodes with the current kernel
   // CRITICAL: Must run even when kernel is undefined (runtime terminated)!
@@ -132,8 +140,25 @@ export const JupyterInputOutputPlugin = (
     // Defer editor.update to next microtask to avoid flushSync warning
     // This ensures React's render phase completes before we update the editor
     queueMicrotask(() => {
+      if (!isMountedRef.current || editor.getRootElement() == null) {
+        isUpdatingKernels.current = false;
+        return;
+      }
+
       editor.update(
         () => {
+          // Replaced editor states can temporarily leave selection points
+          // referencing removed nodes. Clear invalid range selections so this
+          // maintenance update does not throw Point.getNode errors.
+          const selection = $getSelection();
+          if ($isRangeSelection(selection)) {
+            const anchorNode = $getNodeByKey(selection.anchor.key);
+            const focusNode = $getNodeByKey(selection.focus.key);
+            if (!anchorNode || !focusNode) {
+              $setSelection(null);
+            }
+          }
+
           editor.getEditorState()._nodeMap.forEach(node => {
             if (node instanceof JupyterOutputNode) {
               // Update the kernel for this output node (even if undefined!)

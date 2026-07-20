@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -20,7 +20,7 @@ import {
   Text,
   Button as PrimerButton,
 } from '@primer/react';
-import { Overlay } from '@datalayer/primer-addons';
+import { SideOverlay } from '@datalayer/primer-addons';
 import {
   CommentIcon,
   PaperAirplaneIcon,
@@ -845,6 +845,13 @@ export function CommentPlugin({
   const [activeIDs, setActiveIDs] = useState<Array<string>>([]);
   const [showCommentInput, setShowCommentInput] = useState(false);
 
+  const setCommentsOverlayOpen = useCallback(
+    (next: boolean | ((previousState: boolean) => boolean)) => {
+      setShowComments(typeof next === 'function' ? next(showComments) : next);
+    },
+    [setShowComments, showComments],
+  );
+
   const cancelAddComment = useCallback(() => {
     editor.update(() => {
       const selection = $getSelection();
@@ -1088,9 +1095,9 @@ export function CommentPlugin({
         style={{ display: 'none' }}
         aria-hidden="true"
       />
-      <Overlay
+      <SideOverlay
         isOpen={showComments}
-        setIsOpen={setShowComments}
+        setIsOpen={setCommentsOverlayOpen}
         openButtonRef={overlayOpenButtonRef}
         closeButtonRef={overlayCloseButtonRef}
         direction="right"

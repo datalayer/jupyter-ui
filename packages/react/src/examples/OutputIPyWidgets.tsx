@@ -1,22 +1,22 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
 
 import { createRoot } from 'react-dom/client';
 import { Text } from '@primer/react';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import OutputIPyWidgets from '../components/output/OutputIPyWidgets';
 
 import { view, state } from './notebooks/OutputIPyWidgetsExample';
 
 const OutputIPyWidgetsExample = () => {
   return (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       <Text as="h1">Output IPyWidgets</Text>
       <OutputIPyWidgets view={view} state={state} />
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 

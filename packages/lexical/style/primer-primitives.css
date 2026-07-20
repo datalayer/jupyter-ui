@@ -1,0 +1,23 @@
+/*
+ * Copyright (c) 2021-Present Datalayer, Inc.
+ *
+ * MIT License
+ */
+
+/*
+ * Copyright (c) 2025-2026 Datalayer, Inc.
+ * Distributed under the terms of the Modified BSD License.
+ */
+
+@import url('~@primer/primitives/dist/css/base/size/size.css');
+@import url('~@primer/primitives/dist/css/base/typography/typography.css');
+@import url('~@primer/primitives/dist/css/base/motion/motion.css');
+@import url('~@primer/primitives/dist/css/functional/size/border.css');
+@import url('~@primer/primitives/dist/css/functional/size/breakpoints.css');
+@import url('~@primer/primitives/dist/css/functional/size/size-coarse.css');
+@import url('~@primer/primitives/dist/css/functional/size/size-fine.css');
+@import url('~@primer/primitives/dist/css/functional/size/size.css');
+@import url('~@primer/primitives/dist/css/functional/size/viewport.css');
+@import url('~@primer/primitives/dist/css/functional/themes/light.css');
+@import url('~@primer/primitives/dist/css/functional/themes/dark.css');
+@import url('~@primer/primitives/dist/css/functional/typography/typography.css');

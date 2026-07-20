@@ -1,6 +1,6 @@
 /* eslint-disable no-case-declarations */
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { IOutput } from '@jupyterlab/nbformat';
 import { Button, Text } from '@primer/react';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { useJupyter } from '../jupyter';
 import { IExecutionPhaseOutput } from '../jupyter/kernel';
 import { ExecutionPhase } from '../jupyter/kernel/KernelState';
@@ -41,6 +41,7 @@ const SOURCE_4 =
 
 const SOURCE_ID_5 = 'output-id-5';
 const SOURCE_5 = 'print(2+2)';
+const EMPTY_OUTPUTS: IOutput[] = [];
 
 const OutputWithMonitoringView = ({
   title,
@@ -125,7 +126,7 @@ const OutputWithMonitoringView = ({
         id={id}
         kernel={defaultKernel}
         executeTrigger={execTrigger}
-        outputs={output ? output : []}
+        outputs={output ?? EMPTY_OUTPUTS}
         onExecutionPhaseChanged={handleExecutionPhaseChanged}
         suppressCodeExecutionErrors
         showEditor
@@ -135,7 +136,7 @@ const OutputWithMonitoringView = ({
 };
 
 const OutputWithMonitoringExample = () => (
-  <JupyterReactTheme>
+  <ExampleJupyterReactTheme>
     <OutputWithMonitoringView
       title="Output with error code"
       key="1"
@@ -167,7 +168,7 @@ const OutputWithMonitoringExample = () => (
       id={SOURCE_ID_5}
       code={SOURCE_5}
     />
-  </JupyterReactTheme>
+  </ExampleJupyterReactTheme>
 );
 
 const div = document.createElement('div');

@@ -1,21 +1,21 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
 
 import { createRoot } from 'react-dom/client';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { useJupyter } from './../jupyter/JupyterUse';
 import { FileBrowser } from '../components/filebrowser/FileBrowser';
 
 const FileBrowserExample = () => {
   const { serviceManager } = useJupyter();
   return serviceManager ? (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       <h1>File Browser</h1>
       <FileBrowser serviceManager={serviceManager} />
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   ) : (
     <></>
   );

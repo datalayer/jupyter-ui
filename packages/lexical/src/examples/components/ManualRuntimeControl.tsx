@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -92,7 +92,7 @@ export const ManualRuntimeControlExample: React.FC = () => {
         try {
           // Create ServerConnection settings
           const serverSettings = ServerConnection.makeSettings({
-            baseUrl: 'https://oss.datalayer.run/api/jupyter-server',
+            baseUrl: 'https://prod1.datalayer.run/api/jupyter-server',
             token: 'YOUR_TOKEN_HERE',
             appendToken: true,
           });
@@ -258,10 +258,11 @@ export const ManualRuntimeControlExample: React.FC = () => {
       >
         <h3>Jupyter Component</h3>
         <JupyterReactTheme
-        //          serviceManager={serviceManager}
-        //          startDefaultKernel={startDefaultKernel}
-        //          lite={false}
-        //          collaborative={false}
+          useBaseStyles={false}
+          //          serviceManager={serviceManager}
+          //          startDefaultKernel={startDefaultKernel}
+          //          lite={false}
+          //          collaborative={false}
         >
           <div style={{ padding: '20px' }}>
             {runtimeConnected ? (

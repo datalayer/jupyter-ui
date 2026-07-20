@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -499,8 +499,8 @@ export class ServiceManagerLess implements ServiceManager.IManager {
     this.serverSettings =
       serverSettings ??
       ServerConnection.makeSettings({
-        baseUrl: 'https://oss.datalayer.run/api/jupyter-server',
-        wsUrl: 'wss://oss.datalayer.run/api/jupyter-server',
+        baseUrl: 'https://prod1.datalayer.run/api/jupyter-server',
+        wsUrl: 'wss://prod1.datalayer.run/api/jupyter-server',
         token:
           '60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6',
       });

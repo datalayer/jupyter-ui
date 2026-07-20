@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -10,7 +10,7 @@ import { INotebookContent } from '@jupyterlab/nbformat';
 import { Button, ButtonGroup } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { useJupyter } from '../jupyter';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
 import { useNotebookStore } from '../components/notebook/NotebookState';
@@ -42,7 +42,7 @@ const NotebookNbformatChangeExample = () => {
     }
   };
   return (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       <Box display="flex">
         <ButtonGroup>
           <Button variant="default" size="small" onClick={changeNbformat}>
@@ -60,7 +60,7 @@ const NotebookNbformatChangeExample = () => {
           extensions={extensions}
         />
       )}
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 

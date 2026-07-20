@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -10,7 +10,7 @@ import { useJupyter } from '../jupyter';
 import { CellSidebarExtension } from '../components';
 import { CellSidebarButton } from '../components/notebook/cell/sidebar/CellSidebarButton';
 import { Notebook } from '../components/notebook/Notebook';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 const VegaExample = () => {
@@ -18,7 +18,7 @@ const VegaExample = () => {
     startDefaultKernel: true,
   });
   return (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       {serviceManager && defaultKernel && (
         <Notebook
           path="vega/Vega.ipynb"
@@ -33,7 +33,7 @@ const VegaExample = () => {
           Toolbar={NotebookToolbar}
         />
       )}
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 

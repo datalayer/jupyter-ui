@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyter-react",
-  "version": "2.0.9",
+  "version": "2.0.10",
   "description": "Jupyter React - React.js components 100% compatible with Jupyter.",
   "license": "MIT",
   "main": "lib/index.js",
@@ -172,7 +172,7 @@
     "@jupyter/web-components": "^0.17.1",
     "@jupyter/docprovider-extension": "^4.3.0",
     "@jupyter/collaboration-extension": "^4.3.0",
-    "@jupyter/ydoc": "^3.4.1",
+    "@jupyter/ydoc": "^4.1.1",
     "@jupyterlab/application": "^4.0.0",
     "@jupyterlab/application-extension": "^4.0.0",
     "@jupyterlab/apputils": "^4.0.0",
