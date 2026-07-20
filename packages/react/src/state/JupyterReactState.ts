@@ -126,8 +126,16 @@ export const jupyterReactStore = createStore<JupyterReactState>((set, get) => ({
           ? 'dark'
           : 'light'
         : colormode;
+
+    // Avoid triggering a store update when the effective mode is unchanged.
+    // Multiple theme boundaries can call this setter during mount.
+    if (get().colormode === resolved) {
+      setupPrimerPortals(resolved);
+      return;
+    }
+
     setupPrimerPortals(resolved);
-    set(_state => ({ colormode }));
+    set(_state => ({ colormode: resolved }));
   },
   setBackgroundColor: (backgroundColor?: string) => {
     set(_state => ({ backgroundColor }));
@@ -207,7 +215,9 @@ export function useJupyterReactStoreFromProps(
   >(propsServiceManager);
   const [_, setKernel] = useState<Kernel>();
   const [__, setIsLoading] = useState<boolean>(
-    startDefaultKernel || useRunningKernelIndex > -1
+    startDefaultKernel ||
+      useRunningKernelIndex > -1 ||
+      Boolean(useRunningKernelId)
   );
 
   useEffect(() => {
@@ -293,6 +303,39 @@ export function useJupyterReactStoreFromProps(
         jupyterReactStore.getState().kernel = existingKernel;
         setIsLoading(false);
         jupyterReactStore.getState().kernelIsLoading = false;
+      } else if (useRunningKernelId) {
+        await serviceManager.sessions.refreshRunning();
+        const runnings = Array.from(serviceManager.kernels.running());
+        const model = runnings.find(
+          running => running.id === useRunningKernelId
+        );
+        if (model) {
+          const existingKernel = new Kernel({
+            kernelManager: serviceManager.kernels,
+            kernelName: model.name,
+            kernelSpecName: model.name,
+            kernelModel: model,
+            kernelspecsManager: serviceManager.kernelspecs,
+            sessionManager: serviceManager.sessions,
+          });
+          if (initCode) {
+            try {
+              await existingKernel.execute(initCode)?.done;
+            } catch (error) {
+              console.error('Failed to execute the initial code', error);
+            }
+          }
+          setKernel(existingKernel);
+          jupyterReactStore.getState().kernel = existingKernel;
+          setIsLoading(false);
+          jupyterReactStore.getState().kernelIsLoading = false;
+        } else {
+          console.warn(
+            `No running kernel found with id "${useRunningKernelId}".`
+          );
+          setIsLoading(false);
+          jupyterReactStore.getState().kernelIsLoading = false;
+        }
       } else if (startDefaultKernel) {
         const defaultKernel = new Kernel({
           kernelName: defaultKernelName,
@@ -316,7 +359,7 @@ export function useJupyterReactStoreFromProps(
         });
       }
     });
-  }, [serviceManager]);
+  }, [serviceManager, useRunningKernelId, useRunningKernelIndex]);
 
   return useStore(jupyterReactStore);
 }
