@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -11,7 +11,7 @@ import { Button } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { useJupyter } from '../jupyter';
 import { Kernel } from '../jupyter/kernel/Kernel';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
 
@@ -46,7 +46,7 @@ const NotebookUnmountExample = () => {
     setShowNotebook(false);
   };
   return (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       {showNotebook && kernel ? (
         <>
           <Box display="flex">
@@ -75,7 +75,7 @@ const NotebookUnmountExample = () => {
           </Box>
         </>
       )}
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 

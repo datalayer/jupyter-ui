@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { $getRoot } from 'lexical';
 import styled from 'styled-components';
 import {
@@ -14,13 +14,8 @@ import {
   CellSidebar,
   CellSidebarExtension,
 } from '@datalayer/jupyter-react';
-import {
-  AppearanceControlsWithStore,
-  Box,
-  createThemeStore,
-} from '@datalayer/primer-addons';
-import { UnderlineNav, Button } from '@primer/react';
-import { ThreeBarsIcon } from '@primer/octicons-react';
+import { AppearanceControlsWithStore, Box } from '@datalayer/primer-addons';
+import { UnderlineNav, Button, Heading, Text } from '@primer/react';
 import { JSONTree } from 'react-json-tree';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { INotebookModel } from '@jupyterlab/notebook';
@@ -31,19 +26,15 @@ import {
   Editor,
   LexicalPrimerThemeProvider,
 } from './..';
+import { useExampleThemeStore } from './themeStore';
+
+import '@datalayer/jupyter-react/style/index.css';
 
 import INITIAL_LEXICAL_MODEL from './content/Example.lexical.json';
 
 import INITIAL_NBFORMAT_MODEL from './content/Example.ipynb.json';
 
 const NOTEBOOK_UID = 'notebook-uid-lexical';
-const useNbformatPrimerThemeStore = createThemeStore(
-  'jupyter-lexical-nbformat-primer-theme-example',
-  {
-    colorMode: 'auto',
-    theme: 'matrix',
-  },
-);
 
 type TabType = 'editor' | 'notebook' | 'nbformat';
 
@@ -53,6 +44,9 @@ const StyledNotebook = styled.div`
   }
 `;
 
+const cloneNotebookContent = (model: INotebookContent): INotebookContent =>
+  JSON.parse(JSON.stringify(model)) as INotebookContent;
+
 const Tabs = () => {
   const { editor } = useLexical();
   const { serviceManager, defaultKernel } = useJupyter({
@@ -60,14 +54,62 @@ const Tabs = () => {
   });
   const notebookStore = useNotebookStore();
   const [tab, setTab] = useState<TabType>('editor');
+  const [editorVersion, setEditorVersion] = useState(0);
   const [nbformat, setNbformat] = useState<INotebookContent>(
     INITIAL_NBFORMAT_MODEL,
   );
+  const notebookModelRef = useRef<INotebookModel | null>(null);
   const extensions = useMemo(
     () => [new CellSidebarExtension({ factory: CellSidebar })],
     [],
   );
   const notebook = notebookStore.selectNotebook(NOTEBOOK_UID);
+
+  const handleNotebookModelChanged = useCallback(
+    (model: INotebookModel | null) => {
+      notebookModelRef.current = model;
+    },
+    [],
+  );
+
+  useEffect(() => {
+    const model = notebookModelRef.current;
+    if (!model) {
+      return;
+    }
+
+    const syncSnapshot = () => {
+      const snapshot = cloneNotebookContent(model.toJSON() as INotebookContent);
+      setNbformat(snapshot);
+    };
+
+    syncSnapshot();
+
+    // Keep a live snapshot from notebook edits so switching back to Editor
+    // always uses the latest cell content.
+    model.contentChanged.connect(syncSnapshot);
+    return () => {
+      model.contentChanged.disconnect(syncSnapshot);
+    };
+  }, [notebook?.model]);
+
+  const syncNotebookModelToEditor = (model?: INotebookModel) => {
+    const currentModel =
+      model ??
+      notebookModelRef.current ??
+      notebookStore.selectNotebook(NOTEBOOK_UID)?.model;
+    if (!currentModel) {
+      return;
+    }
+    const notebookJson = cloneNotebookContent(
+      currentModel.toJSON() as INotebookContent,
+    );
+    setNbformat(notebookJson);
+    // Ensure editor rebuilds from the latest notebook snapshot when returning
+    // from the Notebook tab.
+    setEditorVersion(version => version + 1);
+  };
+
   const goToTab = (
     e: any,
     toTab: TabType,
@@ -75,21 +117,23 @@ const Tabs = () => {
   ) => {
     e.preventDefault();
     if (tab === 'notebook' && toTab === 'editor') {
-      if (notebookModel && editor) {
-        setNbformat(notebookModel.toJSON() as INotebookContent);
-      }
+      syncNotebookModelToEditor(notebookModel);
     }
     if (tab === 'editor' && toTab === 'notebook') {
-      editor?.update(() => {
-        const root = $getRoot();
-        const children = root.getChildren();
-        const nbformat = lexicalToNbformat(children);
-        setNbformat(nbformat);
-      });
+      if (editor) {
+        const nextNbformat = editor.getEditorState().read(() => {
+          const root = $getRoot();
+          const children = root.getChildren();
+          return lexicalToNbformat(children);
+        });
+        setNbformat(nextNbformat);
+      }
     }
     if (tab === 'notebook' && toTab === 'nbformat') {
-      if (notebookModel && editor) {
-        setNbformat(notebookModel.toJSON() as INotebookContent);
+      if (notebookModel) {
+        setNbformat(
+          cloneNotebookContent(notebookModel.toJSON() as INotebookContent),
+        );
       }
     }
     setTab(toTab);
@@ -116,15 +160,16 @@ const Tabs = () => {
           aria-current={tab === 'nbformat' ? 'page' : undefined}
           onClick={e => goToTab(e, 'nbformat', notebook?.model)}
         >
-          NbFormat
+          Nbformat
         </UnderlineNav.Item>
       </UnderlineNav>
       {tab === 'editor' && (
         <Box>
           <Editor
+            key={`editor-${editorVersion}`}
             notebook={nbformat}
-            onSessionConnection={session => {
-              console.log('Session changed:', session);
+            onSessionConnection={() => {
+              // Intentionally no-op: avoid noisy session logs on reconnection/state updates.
             }}
           />
           <Button
@@ -150,8 +195,9 @@ const Tabs = () => {
                 id={NOTEBOOK_UID}
                 kernel={defaultKernel}
                 serviceManager={serviceManager}
-                nbformat={INITIAL_NBFORMAT_MODEL}
+                nbformat={nbformat}
                 extensions={extensions}
+                onNotebookModelChanged={handleNotebookModelChanged}
               />
             )}
             <Button
@@ -167,23 +213,35 @@ const Tabs = () => {
       )}
       {tab === 'nbformat' && (
         <Box>
-          <JSONTree data={nbformat} />;
+          <JSONTree data={nbformat} />
         </Box>
       )}
     </Box>
   );
 };
 
-export function App() {
+export function LexicalNbformat() {
   return (
     <>
-      <div className="App">
-        <h1>Jupyter UI ❤️ Lexical</h1>
-      </div>
-      <Box sx={{ px: 3, py: 2 }}>
-        <AppearanceControlsWithStore useStore={useNbformatPrimerThemeStore} />
-      </Box>
-      <LexicalPrimerThemeProvider useStore={useNbformatPrimerThemeStore}>
+      <LexicalPrimerThemeProvider useStore={useExampleThemeStore}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            px: 3,
+            py: 2,
+          }}
+        >
+          <Box sx={{ flex: 1 }}>
+            <Heading as="h2" sx={{ mb: 1 }}>
+              Lexical Nbformat
+            </Heading>
+            <Text as="p" sx={{ m: 0, color: 'fg.muted' }}>
+              Jupyter Notebook (nbformat) rendered in lexical.
+            </Text>
+          </Box>
+          <AppearanceControlsWithStore useStore={useExampleThemeStore} />
+        </Box>
         <LexicalProvider>
           <Tabs />
         </LexicalProvider>
@@ -204,31 +262,9 @@ export function App() {
             </span>
           </div>
         </div>
-        <div className="other App">
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              textAlign: 'center',
-            }}
-          >
-            <a
-              href="https://datalayer.ai"
-              target="_blank"
-              rel="noreferrer"
-              style={{ marginRight: 8 }}
-            >
-              <ThreeBarsIcon />
-            </a>
-            <a href="https://datalayer.ai" target="_blank" rel="noreferrer">
-              Datalayer, Inc.
-            </a>
-          </div>
-        </div>
       </div>
     </>
   );
 }
 
-export default App;
+export default LexicalNbformat;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -18,17 +18,15 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
+import { Text, Spinner, Flash, ActionList, TextInput } from '@primer/react';
 import {
-  ThemeProvider,
-  BaseStyles,
-  Text,
-  Spinner,
-  Flash,
-  ActionList,
-  TextInput,
-} from '@primer/react';
-import { Box } from '@datalayer/primer-addons';
+  AppearanceControlsWithStore,
+  Box,
+  themeConfigs,
+} from '@datalayer/primer-addons';
 import { SearchIcon, CheckIcon } from '@primer/octicons-react';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
+import { useExampleThemeSettings, useExampleThemeStore } from './themeStore';
 
 const LOCAL_STORAGE_KEY = 'jupyter-react-selected-example';
 
@@ -260,9 +258,10 @@ const ExamplesSidebar = ({
         right: 0,
         height: '100vh',
         width: '320px',
-        backgroundColor: 'canvas.default',
+        backgroundColor: 'var(--bgColor-default)',
         borderLeft: '1px solid',
-        borderColor: 'border.default',
+        borderColor: 'var(--borderColor-default)',
+        color: 'var(--fgColor-default)',
         display: 'flex',
         flexDirection: 'column',
         zIndex: 1000,
@@ -272,13 +271,22 @@ const ExamplesSidebar = ({
         sx={{
           px: 3,
           py: 2,
+          backgroundColor: 'var(--bgColor-muted)',
           borderBottom: '1px solid',
-          borderColor: 'border.default',
+          borderColor: 'var(--borderColor-default)',
         }}
       >
-        <Text as="div" fontWeight="bold" fontSize={2}>
+        <Text
+          as="div"
+          fontWeight="bold"
+          fontSize={2}
+          sx={{ color: 'var(--fgColor-accent)' }}
+        >
           📓 ⚛️ Jupyter React Examples
         </Text>
+        <Box mt={2}>
+          <AppearanceControlsWithStore useStore={useExampleThemeStore} />
+        </Box>
         {isLoading && (
           <Box mt={2} display="flex" alignItems="center">
             <Spinner size="small" />
@@ -298,7 +306,7 @@ const ExamplesSidebar = ({
           px: 2,
           py: 2,
           borderBottom: '1px solid',
-          borderColor: 'border.default',
+          borderColor: 'var(--borderColor-default)',
         }}
       >
         <TextInput
@@ -353,6 +361,8 @@ const Examples = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const { backgroundColor } = useExampleThemeSettings();
+  const frameBackgroundColor = backgroundColor ?? 'var(--bgColor-default)';
 
   useEffect(() => {
     // Add margin to body to account for sidebar width (medium = 320px)
@@ -376,7 +386,11 @@ const Examples = () => {
     };
   }, []);
 
-  // Build the iframe URL for the selected example
+  // Build the iframe URL for the selected example.
+  // IMPORTANT: colormode/theme are intentionally NOT encoded in the URL so
+  // changing them does not mutate the iframe `src` (which would reload the
+  // frame). The standalone example instead reads the shared, persisted theme
+  // store and stays in sync live via the `storage` event (see below).
   const getExampleUrl = (path: string) => {
     const url = new URL(window.location.href);
     url.searchParams.set('example', path);
@@ -411,32 +425,31 @@ const Examples = () => {
   };
 
   return (
-    <ThemeProvider colorMode="auto">
-      <BaseStyles>
-        {/* Main content iframe */}
-        <iframe
-          ref={iframeRef}
-          src={getExampleUrl(selectedPath)}
-          onLoad={handleIframeLoad}
-          onError={handleIframeError}
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: 'calc(100vw - 320px)',
-            height: '100vh',
-            border: 'none',
-          }}
-          title={`Example: ${selectedPath}`}
-        />
-        <ExamplesSidebar
-          selectedPath={selectedPath}
-          onSelect={handleSelect}
-          isLoading={isLoading}
-          error={error}
-        />
-      </BaseStyles>
-    </ThemeProvider>
+    <ExampleJupyterReactTheme>
+      {/* Main content iframe */}
+      <iframe
+        ref={iframeRef}
+        src={getExampleUrl(selectedPath)}
+        onLoad={handleIframeLoad}
+        onError={handleIframeError}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: 'calc(100vw - 320px)',
+          height: '100vh',
+          border: 'none',
+          background: frameBackgroundColor,
+        }}
+        title={`Example: ${selectedPath}`}
+      />
+      <ExamplesSidebar
+        selectedPath={selectedPath}
+        onSelect={handleSelect}
+        isLoading={isLoading}
+        error={error}
+      />
+    </ExampleJupyterReactTheme>
   );
 };
 
@@ -447,6 +460,51 @@ const isStandalone = urlParams.get('standalone') === 'true';
 if (isStandalone) {
   // In standalone mode, just load the example directly
   const examplePath = urlParams.get('example') || 'CellLite';
+  const colormode = urlParams.get('colormode');
+  const theme = urlParams.get('theme');
+  const nextState: Partial<{
+    colorMode: 'light' | 'dark' | 'auto';
+    theme: string;
+  }> = {};
+  if (colormode === 'light' || colormode === 'dark' || colormode === 'auto') {
+    nextState.colorMode = colormode;
+  }
+  if (theme && Object.prototype.hasOwnProperty.call(themeConfigs, theme)) {
+    nextState.theme = theme;
+  }
+  if (Object.keys(nextState).length > 0) {
+    useExampleThemeStore.setState(nextState as any);
+  }
+  // Keep the standalone example in sync with theme/colormode changes made in
+  // the parent selector shell WITHOUT reloading. The shell persists the shared
+  // theme store to localStorage; that write fires a `storage` event in this
+  // iframe document, so we rehydrate the store from storage to apply the new
+  // theme/colormode reactively (SPA behavior, no iframe reload).
+  if (typeof window !== 'undefined') {
+    window.addEventListener('storage', event => {
+      if (!event.key || !event.key.includes('jupyter-react-examples-theme')) {
+        return;
+      }
+      const persist = (
+        useExampleThemeStore as unknown as {
+          persist?: { rehydrate?: () => void };
+        }
+      ).persist;
+      if (persist?.rehydrate) {
+        persist.rehydrate();
+      } else if (event.newValue) {
+        try {
+          const parsed = JSON.parse(event.newValue);
+          const state = parsed?.state ?? parsed;
+          if (state && typeof state === 'object') {
+            useExampleThemeStore.setState(state as any);
+          }
+        } catch {
+          // Ignore malformed storage payloads.
+        }
+      }
+    });
+  }
   importExample(examplePath).catch(err => {
     console.error('Failed to load example:', err);
   });

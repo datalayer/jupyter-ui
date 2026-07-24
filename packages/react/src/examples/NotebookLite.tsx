@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -8,6 +8,7 @@ import { useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { Session } from '@jupyterlab/services';
+import { DatalayerThemeProvider } from '@datalayer/primer-addons';
 import { JupyterReactTheme } from '../theme/JupyterReactTheme';
 import { useJupyter } from '../jupyter/JupyterUse';
 import {
@@ -19,6 +20,7 @@ import {
 } from '../components';
 import { CellToolbarExtension } from './extensions';
 import { OnSessionConnection } from '../state';
+import { useExampleThemeSettings } from './themeStore';
 
 import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
@@ -27,6 +29,8 @@ const NotebookLiteExample = () => {
     lite: true,
     startDefaultKernel: true,
   });
+  const { colorMode, themeConfig, resolvedMode, backgroundColor } =
+    useExampleThemeSettings();
   const [session, setSession] = useState<Session.ISessionConnection>();
   const extensions = useMemo(
     () => [
@@ -42,38 +46,48 @@ const NotebookLiteExample = () => {
     setSession(session);
   };
   return (
-    <JupyterReactTheme>
-      {serviceManager && defaultKernel && (
-        <>
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              //              gap: '12px',
-            }}
-          >
-            <KernelIndicator
-              kernel={defaultKernel.connection}
-              label="Kernel Connection Indicator"
+    <DatalayerThemeProvider
+      colorMode={colorMode}
+      theme={themeConfig.primerTheme}
+      themeStyles={themeConfig.themeStyles}
+    >
+      <JupyterReactTheme
+        colormode={resolvedMode}
+        backgroundColor={backgroundColor}
+        useBaseStyles={false}
+      >
+        {serviceManager && defaultKernel && (
+          <>
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                //              gap: '12px',
+              }}
+            >
+              <KernelIndicator
+                kernel={defaultKernel.connection}
+                label="Kernel Connection Indicator"
+              />
+              <KernelIndicator
+                kernel={session?.kernel}
+                label="Kernel Session Indicator"
+              />
+            </div>
+            <Notebook
+              id="notebook2-nbformat-id"
+              kernel={defaultKernel}
+              serviceManager={serviceManager}
+              nbformat={NBFORMAT as INotebookContent}
+              height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
+              extensions={extensions}
+              Toolbar={NotebookToolbar}
+              onSessionConnection={onSessionConnection}
             />
-            <KernelIndicator
-              kernel={session?.kernel}
-              label="Kernel Session Indicator"
-            />
-          </div>
-          <Notebook
-            id="notebook2-nbformat-id"
-            kernel={defaultKernel}
-            serviceManager={serviceManager}
-            nbformat={NBFORMAT as INotebookContent}
-            height="calc(100vh - 2.6rem)" // (Height - Toolbar Height).
-            extensions={extensions}
-            Toolbar={NotebookToolbar}
-            onSessionConnection={onSessionConnection}
-          />
-        </>
-      )}
-    </JupyterReactTheme>
+          </>
+        )}
+      </JupyterReactTheme>
+    </DatalayerThemeProvider>
   );
 };
 

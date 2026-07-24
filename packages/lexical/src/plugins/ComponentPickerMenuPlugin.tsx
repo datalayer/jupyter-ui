@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -42,8 +42,7 @@ import {
 import { useCallback, useMemo, useState, type MouseEvent } from 'react';
 import * as ReactDOM from 'react-dom';
 import { Kernel } from '@datalayer/jupyter-react';
-import { Box, Text, ThemeProvider, BaseStyles } from '@primer/react';
-import { useTheme } from '../context/ThemeContext';
+import { Box, Text } from '@primer/react';
 import {
   ChecklistIcon,
   ChevronDownIcon,
@@ -170,7 +169,6 @@ export const ComponentPickerMenuPlugin = ({
   const [editor] = useLexicalComposerContext();
   const [modal, showModal] = useModal();
   const [queryString, setQueryString] = useState<string | null>(null);
-  const { theme } = useTheme();
 
   const checkForTriggerMatch = useBasicTypeaheadTriggerMatch('/', {
     minLength: 0,
@@ -462,52 +460,48 @@ export const ComponentPickerMenuPlugin = ({
         ) =>
           anchorElementRef.current && options.length
             ? ReactDOM.createPortal(
-                <ThemeProvider colorMode={theme === 'dark' ? 'night' : 'day'}>
-                  <BaseStyles>
-                    <Box
-                      onMouseDown={(e: MouseEvent<HTMLDivElement>) => {
-                        // Prevent the editor from losing focus/selection when
-                        // the user clicks the scrollbar or any padding of the
-                        // menu, which would otherwise cause the typeahead
-                        // plugin to dismiss the menu.
-                        e.preventDefault();
-                      }}
-                      sx={{
-                        bg: 'canvas.overlay',
-                        border: '1px solid',
-                        borderColor: 'border.default',
-                        borderRadius: 2,
-                        boxShadow: 'shadow.large',
-                        p: 1,
-                        maxHeight: 300,
-                        overflow: 'auto',
-                        minWidth: 200,
-                      }}
-                    >
-                      <Box as="ul" sx={{ listStyle: 'none', m: 0, p: 0 }}>
-                        {options.map((option, i: number) => (
-                          <ComponentPickerMenuItem
-                            index={i}
-                            isSelected={selectedIndex === i}
-                            onClick={() => {
-                              if (!option.disabled) {
-                                setHighlightedIndex(i);
-                                selectOptionAndCleanUp(option);
-                              }
-                            }}
-                            onMouseEnter={() => {
-                              if (!option.disabled) {
-                                setHighlightedIndex(i);
-                              }
-                            }}
-                            key={option.key}
-                            option={option}
-                          />
-                        ))}
-                      </Box>
-                    </Box>
-                  </BaseStyles>
-                </ThemeProvider>,
+                <Box
+                  onMouseDown={(e: MouseEvent<HTMLDivElement>) => {
+                    // Prevent the editor from losing focus/selection when
+                    // the user clicks the scrollbar or any padding of the
+                    // menu, which would otherwise cause the typeahead
+                    // plugin to dismiss the menu.
+                    e.preventDefault();
+                  }}
+                  sx={{
+                    bg: 'canvas.overlay',
+                    border: '1px solid',
+                    borderColor: 'border.default',
+                    borderRadius: 2,
+                    boxShadow: 'shadow.large',
+                    p: 1,
+                    maxHeight: 300,
+                    overflow: 'auto',
+                    minWidth: 200,
+                  }}
+                >
+                  <Box as="ul" sx={{ listStyle: 'none', m: 0, p: 0 }}>
+                    {options.map((option, i: number) => (
+                      <ComponentPickerMenuItem
+                        index={i}
+                        isSelected={selectedIndex === i}
+                        onClick={() => {
+                          if (!option.disabled) {
+                            setHighlightedIndex(i);
+                            selectOptionAndCleanUp(option);
+                          }
+                        }}
+                        onMouseEnter={() => {
+                          if (!option.disabled) {
+                            setHighlightedIndex(i);
+                          }
+                        }}
+                        key={option.key}
+                        option={option}
+                      />
+                    ))}
+                  </Box>
+                </Box>,
                 anchorElementRef.current,
               )
             : null

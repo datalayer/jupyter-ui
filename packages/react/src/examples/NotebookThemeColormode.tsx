@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -51,7 +51,11 @@ const NotebookThemeColormodeExample = () => {
   }, []);
   return (
     <>
-      <JupyterReactTheme theme={theme}>
+      <JupyterReactTheme
+        theme={theme}
+        colormode={colormode}
+        backgroundColor="var(--bgColor-default)"
+      >
         <Box display="flex">
           <Box mr={3}>
             <Text

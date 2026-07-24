@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -59,7 +59,18 @@ export class JupyterCollaborationProvider extends CollaborationProviderBase {
     documentId: string,
     options?: Record<string, any>
   ): Promise<void> {
-    if (this.isConnected) {
+    // Guard against a second connection on the same provider instance.
+    // A provider may be shared by multiple notebook views (e.g. two panes of
+    // the same collaborative document in a single tab). Without also guarding
+    // the `Connecting` state and an already-created provider, a race between
+    // the two near-simultaneous `connect()` calls would open two websockets to
+    // the same room in the same tab, which floods the awareness/sync channel
+    // and freezes the browser. Collapsing to a single live connection avoids it.
+    if (
+      this.isConnected ||
+      this._status === CollaborationStatus.Connecting ||
+      this._provider
+    ) {
       console.warn('Already connected to Jupyter collaboration service');
       return;
     }

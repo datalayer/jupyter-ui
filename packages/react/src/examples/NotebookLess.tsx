@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -9,7 +9,7 @@ import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { Box } from '@datalayer/primer-addons';
 import { ServiceManagerLess } from '../jupyter';
-import { JupyterReactTheme } from '../theme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { Notebook } from '../components/notebook/Notebook';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 import { CellSidebarExtension } from '../components';
@@ -20,7 +20,7 @@ const NotebookLessExample = () => {
   const serviceManager = useMemo(() => new ServiceManagerLess(), []);
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       <Box as="h1">Notebook with a Less Service Manager</Box>
       {serviceManager && (
         <Notebook
@@ -34,7 +34,7 @@ const NotebookLessExample = () => {
           Toolbar={NotebookToolbar}
         />
       )}
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -57,6 +57,12 @@ export type IJupyterLabThemeProps = {
   loadJupyterLabCss?: boolean;
   theme?: Record<string, any>;
   /**
+   * Whether to wrap children in Primer BaseStyles.
+   * Disable this when an outer provider already applies BaseStyles
+   * (e.g. DatalayerThemeProvider) to avoid resetting font tokens.
+   */
+  useBaseStyles?: boolean;
+  /**
    * Base styles
    */
   baseStyles?: CSSProperties;
@@ -79,6 +85,7 @@ export function JupyterReactTheme(
     colormode: colormodeProps = 'light',
     loadJupyterLabCss = true,
     theme = jupyterLabTheme,
+    useBaseStyles = true,
     backgroundColor,
     ...rest
   } = props;
@@ -243,19 +250,34 @@ export function JupyterReactTheme(
         dayScheme="light"
         nightScheme="dark"
       >
-        <BaseStyles
-          style={{
-            backgroundColor: backgroundColor ?? 'var(--bgColor-default)',
-            color: 'var(--fgColor-default)',
-            fontSize: 'var(--text-body-size-medium)',
-          }}
-          {...rest}
-        >
-          {backgroundColor && (
-            <style>{`.jp-Notebook { background-color: ${backgroundColor} !important; }`}</style>
-          )}
-          {children}
-        </BaseStyles>
+        {useBaseStyles ? (
+          <BaseStyles
+            style={{
+              backgroundColor: backgroundColor ?? 'var(--bgColor-default)',
+              color: 'var(--fgColor-default)',
+              fontSize: 'var(--text-body-size-medium)',
+            }}
+            {...rest}
+          >
+            {backgroundColor && (
+              <style>{`.jp-Notebook { background-color: ${backgroundColor} !important; }`}</style>
+            )}
+            {children}
+          </BaseStyles>
+        ) : (
+          <div
+            style={{
+              backgroundColor: backgroundColor ?? 'var(--bgColor-default)',
+              color: 'var(--fgColor-default)',
+              fontSize: 'var(--text-body-size-medium)',
+            }}
+          >
+            {backgroundColor && (
+              <style>{`.jp-Notebook { background-color: ${backgroundColor} !important; }`}</style>
+            )}
+            {children}
+          </div>
+        )}
       </ThemeProvider>
     </JupyterReactColormodeContext.Provider>
   );

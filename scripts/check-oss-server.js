@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
 
 const OSS_SERVER_URL =
-  'https://oss.datalayer.run/api/jupyter-server/api/kernels/';
+  'https://prod1.datalayer.run/api/jupyter-server/api/kernels/';
 // Public demo token for Datalayer OSS Jupyter Server - not a secret
 const TOKEN =
   '60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6';
@@ -29,7 +29,7 @@ const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
       const text = await res.text();
       try {
         const parsed = JSON.parse(text);
-        console.log(JSON.stringify(parsed, null, 2));
+//        console.log(JSON.stringify(parsed, null, 2));
       } catch {
         console.log(text.trim());
       }
@@ -50,7 +50,7 @@ const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
     } else {
       console.error('❌ Datalayer OSS Jupyter Server is not accessible:', err.message);
     }
-    console.error('   Make sure https://oss.datalayer.run is running');
+    console.error('   Make sure https://prod1.datalayer.run is running');
     console.error('   Examples will attempt to connect anyway.');
     console.error('');
     process.exit(0);

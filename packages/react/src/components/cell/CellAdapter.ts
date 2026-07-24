@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -32,7 +32,6 @@ import {
   EditorExtensionRegistry,
   EditorThemeRegistry,
 } from '@jupyterlab/codemirror';
-import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
 import {
   Completer,
   CompleterModel,
@@ -53,6 +52,7 @@ import {
   WIDGET_MIMETYPE,
   WidgetRenderer,
 } from '../../jupyter/ipywidgets/classic';
+import { createLatexTypesetter } from '../../jupyter/createLatexTypesetter';
 import { requireLoader as loader } from '../../jupyter/ipywidgets/libembed-amd';
 import Kernel from '../../jupyter/kernel/Kernel';
 import getMarked from '../notebook/marked/marked';
@@ -204,7 +204,7 @@ export class CellAdapter {
     );
     const rendermime = new RenderMimeRegistry({
       initialFactories,
-      latexTypesetter: new MathJaxTypesetter(),
+      latexTypesetter: createLatexTypesetter(),
       markdownParser: getMarked(languages),
     });
     this._iPyWidgetsClassicManager = new ClassicWidgetManager({ loader });

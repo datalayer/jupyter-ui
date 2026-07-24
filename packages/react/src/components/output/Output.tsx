@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -31,6 +31,27 @@ const DEFAULT_OUTPUTS: IOutput[] = [
     metadata: {},
   },
 ];
+
+const areOutputsEquivalent = (
+  previous: IOutput[] | undefined,
+  next: IOutput[] | undefined
+) => {
+  if (previous === next) {
+    return true;
+  }
+  if (!previous || !next) {
+    return false;
+  }
+  if (previous.length !== next.length) {
+    return false;
+  }
+  for (let index = 0; index < previous.length; index += 1) {
+    if (previous[index] !== next[index]) {
+      return false;
+    }
+  }
+  return true;
+};
 
 export type IOutputProps = {
   adapter?: OutputAdapter;
@@ -92,7 +113,11 @@ export const Output = ({
 
   // Sync outputs when propsOutputs changes
   useEffect(() => {
-    setOutputs(propsOutputs);
+    setOutputs(previousOutputs =>
+      areOutputsEquivalent(previousOutputs, propsOutputs)
+        ? previousOutputs
+        : propsOutputs
+    );
   }, [propsOutputs]);
 
   // Force Lumino widget update when executeTrigger changes
@@ -166,7 +191,7 @@ export const Output = ({
     id,
     kernel,
     propsAdapter,
-    propsOutputs,
+    outputs,
     model,
     suppressCodeExecutionErrors,
     code,

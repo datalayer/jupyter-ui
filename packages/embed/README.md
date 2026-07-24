@@ -57,7 +57,7 @@ Here's a complete, minimal HTML file that embeds an interactive Jupyter cell. Co
     <script
       type="module"
       src="https://jupyter-embed.datalayer.tech/jupyter-embed.lazy.js"
-      data-jupyter-server-url="https://oss.datalayer.run/api/jupyter-server"
+      data-jupyter-server-url="https://prod1.datalayer.run/api/jupyter-server"
       data-jupyter-token="60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6"
       data-jupyter-lazy-load="true"
       data-jupyter-auto-start-kernel="true"
@@ -502,7 +502,7 @@ This will:
   - http://localhost:3456/ - Standard examples (index.html)
   - http://localhost:3456/index-lazy.html - Lazy loading demo
 
-The examples use the hosted Jupyter server at `https://oss.datalayer.run/api/jupyter-server`.
+The examples use the hosted Jupyter server at `https://prod1.datalayer.run/api/jupyter-server`.
 
 ### Deploying to CDN
 

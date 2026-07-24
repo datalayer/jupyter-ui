@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -13,7 +13,7 @@ import {
   PlayIcon,
 } from '@primer/octicons-react';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { useJupyter } from '../jupyter';
 import {
   useNotebookStore,
@@ -59,7 +59,7 @@ const NotebookActionsExample = () => {
           onClick={() => notebookStore.insertBelow(NOTEBOOK_ID, 'code')}
         />
       </ActionBar>
-      <JupyterReactTheme>
+      <ExampleJupyterReactTheme>
         {serviceManager && defaultKernel && (
           <Notebook
             id={NOTEBOOK_ID}
@@ -70,7 +70,7 @@ const NotebookActionsExample = () => {
             extensions={extensions}
           />
         )}
-      </JupyterReactTheme>
+      </ExampleJupyterReactTheme>
     </>
   );
 };

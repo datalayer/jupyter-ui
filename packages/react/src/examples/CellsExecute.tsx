@@ -1,14 +1,13 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
 import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Button } from '@primer/react';
+import { Box, Button, Heading } from '@primer/react';
 import { PlayIcon } from '@primer/octicons-react';
-import { Box } from '@datalayer/primer-addons';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { useJupyter } from '../jupyter/JupyterUse';
 import { cellsStore, ICellsState } from '../components/cell/CellState';
 import { Cell } from '../components/cell/Cell';
@@ -39,10 +38,17 @@ const CellsExecuteExample = () => {
     cellsStore.getState().execute();
   };
   return (
-    <JupyterReactTheme>
-      <Box as="h1">Cells Execute Example</Box>
+    <ExampleJupyterReactTheme>
+      <Box sx={{ px: 3, py: 2, bg: 'canvas.default' }}>
+        <Heading
+          as="h1"
+          sx={{ m: 0, fontSize: 4, fontWeight: 'bold' }}
+        >
+          Cells Execute
+        </Heading>
+      </Box>
       {defaultKernel && (
-        <Box style={{ marginTop: '20px' }}>
+        <Box sx={{ mt: 3 }}>
           <Cell
             id="1"
             type="code"
@@ -63,16 +69,13 @@ const CellsExecuteExample = () => {
             onClick={onExecuteClick}
             disabled={executionDisable}
             leadingVisual={() => <PlayIcon />}
-            style={{
-              marginLeft: '50px',
-              marginTop: '20px',
-            }}
+            sx={{ ml: 5, mt: 3 }}
           >
             Execute all
           </Button>
         </Box>
       )}
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 

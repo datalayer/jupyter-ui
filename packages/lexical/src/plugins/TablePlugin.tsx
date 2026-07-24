@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -33,17 +33,12 @@ export function TablePlugin(): JSX.Element {
     return editor.registerCommand(
       INSERT_TABLE_WITH_DIALOG_COMMAND,
       () => {
-        console.log(
-          '[TablePlugin] INSERT_TABLE_WITH_DIALOG_COMMAND received, opening modal',
-        );
         setModalOpen(true);
         return true;
       },
       COMMAND_PRIORITY_EDITOR,
     );
   }, [editor]);
-
-  console.log('[TablePlugin] render, isModalOpen:', isModalOpen);
 
   const handleConfirm = (rows: number, columns: number) => {
     editor.dispatchCommand(INSERT_TABLE_COMMAND, {

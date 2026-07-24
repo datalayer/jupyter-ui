@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyter-lexical",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "Jupyter UI for Lexical",
   "license": "MIT",
   "main": "lib/index.js",
@@ -67,6 +67,7 @@
     "watch:src": "tsc -w"
   },
   "dependencies": {
+    "@datalayer/core": "^1.1.47",
     "@datalayer/icons-react": "^1.0.0",
     "@datalayer/jupyter-react": "^2.0.8",
     "@datalayer/lexical-loro": "^1.0.0",

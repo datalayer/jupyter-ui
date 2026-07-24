@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -9,7 +9,7 @@ import { createRoot } from 'react-dom/client';
 import { useJupyter } from '../jupyter';
 import { CellSidebarExtension } from '../components';
 import { Notebook } from '../components/notebook/Notebook';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { NotebookToolbar } from './../components/notebook/toolbar/NotebookToolbar';
 
 import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
@@ -20,7 +20,7 @@ const NotebookReadonlyExample = () => {
   });
   const extensions = useMemo(() => [new CellSidebarExtension()], []);
   return (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       {serviceManager && (
         <Notebook
           readonly
@@ -32,7 +32,7 @@ const NotebookReadonlyExample = () => {
           Toolbar={NotebookToolbar}
         />
       )}
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -44,15 +44,8 @@ import {
 } from 'lexical';
 import { ReactPortal, useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import {
-  ActionList,
-  ActionMenu,
-  BaseStyles,
-  IconButton,
-  ThemeProvider,
-} from '@primer/react';
+import { ActionList, ActionMenu, IconButton } from '@primer/react';
 
-import { useTheme } from '../../context/ThemeContext';
 import {
   ChevronDownIcon,
   ArrowUpIcon,
@@ -813,8 +806,6 @@ function TableCellActionMenuContainer({
     prevTableCellDOM.current = tableCellNode;
   }, [prevTableCellDOM, tableCellNode]);
 
-  const { theme } = useTheme();
-
   return (
     <div
       className="PlaygroundEditorTheme__tableCellActionButtonContainer"
@@ -835,16 +826,12 @@ function TableCellActionMenuContainer({
               />
             </ActionMenu.Anchor>
             <ActionMenu.Overlay align="end" side="outside-bottom">
-              <ThemeProvider colorMode={theme === 'dark' ? 'night' : 'day'}>
-                <BaseStyles>
-                  <TableActionMenu
-                    onClose={() => setIsMenuOpen(false)}
-                    tableCellNode={tableCellNode}
-                    cellMerge={cellMerge}
-                    showColorPickerModal={showColorPickerModal}
-                  />
-                </BaseStyles>
-              </ThemeProvider>
+              <TableActionMenu
+                onClose={() => setIsMenuOpen(false)}
+                tableCellNode={tableCellNode}
+                cellMerge={cellMerge}
+                showColorPickerModal={showColorPickerModal}
+              />
             </ActionMenu.Overlay>
           </ActionMenu>
         </>

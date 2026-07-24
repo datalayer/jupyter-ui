@@ -1,13 +1,14 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
 
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { Box, Text } from '@primer/react';
 import { NotebookPanel } from '@jupyterlab/notebook';
-import { JupyterReactTheme } from '../theme/JupyterReactTheme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { ServiceManagerLess } from '../jupyter';
 import { JupyterLabApp, JupyterLabAppAdapter } from '../components/jupyterlab';
 
@@ -53,8 +54,12 @@ document.body.appendChild(div);
 const root = createRoot(div);
 
 root.render(
-  <JupyterReactTheme>
-    <h1>JupyterLab Application with Service Manager</h1>
+  <ExampleJupyterReactTheme>
+    <Box sx={{ px: 3, py: 2, bg: 'canvas.default' }}>
+      <Text as="h1" sx={{ m: 0, color: 'fg.default', fontSize: 4, fontWeight: 'bold' }}>
+        JupyterLab Application with Service Manager
+      </Text>
+    </Box>
     <JupyterLabAppServiceManagerExample />
-  </JupyterReactTheme>
+  </ExampleJupyterReactTheme>
 );

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Datalayer, Inc.
+ * Copyright (c) 2021-Present Datalayer, Inc.
  *
  * MIT License
  */
@@ -18,7 +18,7 @@ import {
   NotebookToolbar,
 } from '../components';
 import { OnSessionConnection } from '../state';
-import { JupyterReactTheme } from '../theme';
+import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 
 import NBFORMAT from './notebooks/NotebookExample1.ipynb.json';
 
@@ -44,7 +44,7 @@ const NotebookOnSessionConnectionExample = () => {
     }
   };
   return (
-    <JupyterReactTheme>
+    <ExampleJupyterReactTheme>
       <Box as="h1">Notebook listening to Kernel Sessions</Box>
       <KernelDetective serviceManager={serviceManager} />
       <Box>
@@ -75,7 +75,7 @@ const NotebookOnSessionConnectionExample = () => {
           Toolbar={NotebookToolbar}
         />
       )}
-    </JupyterReactTheme>
+    </ExampleJupyterReactTheme>
   );
 };
 
