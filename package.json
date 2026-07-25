@@ -90,6 +90,7 @@
     "@types/react-dom": "^18.3.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "webpack/eslint-scope": "5.1.1",
     "typescript": "^5.8.3"
   },
   "overrides": {
@@ -104,6 +105,9 @@
     "@types/react-dom": "^18.3.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "webpack": {
+      "eslint-scope": "5.1.1"
+    },
     "typescript": "^5.8.3"
   }
 }

@@ -380,7 +380,6 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
         showWidget: 'always',
         showShortcuts: true,
         streamingAnimation: 'none',
-        ghostSyntaxHighlighting: false,
         suppressIfTabCompleterActive: false,
         minLines: 1,
         maxLines: 10,
