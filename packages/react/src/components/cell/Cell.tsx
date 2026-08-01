@@ -163,7 +163,14 @@ export const Cell = ({
       <Lumino>{adapter.panel}</Lumino>
     </Box>
   ) : (
-    <Box display="flex" justifyContent="center" alignItems="center" p={4}>
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        p: 4,
+      }}
+    >
       <Spinner size="medium" />
     </Box>
   );
