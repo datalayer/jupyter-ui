@@ -41,20 +41,23 @@ export const NotebookToolbar = (props: INotebookToolbarProps) => {
   const handleDelete = () => notebookStore.delete(notebookId);
   const handleInsert = () => notebookStore.insertBelow(notebookId, insertType);
 
+  // Reference the CSS custom properties emitted by DatalayerThemeProvider so
+  // the selected state follows the active theme instead of the default Primer
+  // theme-object blue that `btn.primary.*` scale keys resolve to.
   const activeTypeButtonSx = {
-    bg: 'btn.primary.bg',
-    color: 'btn.primary.text',
-    borderColor: 'btn.primary.border',
+    bg: 'var(--button-primary-bgColor-rest)',
+    color: 'var(--button-primary-fgColor-rest)',
+    borderColor: 'var(--button-primary-borderColor-rest)',
     '&:hover': {
-      bg: 'btn.primary.hoverBg',
+      bg: 'var(--button-primary-bgColor-hover)',
     },
   } as const;
 
   const inactiveTypeButtonSx = {
-    color: 'fg.default',
-    bg: 'canvas.default',
+    color: 'var(--fgColor-default)',
+    bg: 'var(--bgColor-default)',
     '&:hover': {
-      bg: 'canvas.subtle',
+      bg: 'var(--bgColor-muted)',
     },
   } as const;
 
