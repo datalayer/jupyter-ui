@@ -222,10 +222,21 @@ export function useJupyterReactStoreFromProps(
 
   useEffect(() => {
     if (propsServiceManager) {
+      setKernel(undefined);
+      jupyterReactStore.getState().kernel = undefined;
+      const shouldLoad =
+        startDefaultKernel || useRunningKernelIndex > -1 || Boolean(useRunningKernelId);
+      setIsLoading(shouldLoad);
+      jupyterReactStore.getState().kernelIsLoading = shouldLoad;
       setServiceManager(propsServiceManager);
       jupyterReactStore.getState().setServiceManager(propsServiceManager);
     }
-  }, [propsServiceManager]);
+  }, [
+    propsServiceManager,
+    startDefaultKernel,
+    useRunningKernelId,
+    useRunningKernelIndex,
+  ]);
 
   // Setup a Service Manager if needed.
   useEffect(() => {
@@ -280,10 +291,60 @@ export function useJupyterReactStoreFromProps(
   // Setup a Kernel if needed.
   useEffect(() => {
     serviceManager?.kernels.ready.then(async () => {
+      const waitForRunningKernelByMatcher = async (
+        matcher: (model: JupyterKernel.IModel) => boolean
+      ): Promise<JupyterKernel.IModel | undefined> => {
+        const maxAttempts = 20;
+        const retryDelayMs = 500;
+        for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+          await serviceManager.sessions.refreshRunning();
+          const runnings = Array.from(serviceManager.kernels.running());
+          const model = runnings.find(matcher);
+          if (model) {
+            return model;
+          }
+          if (attempt < maxAttempts - 1) {
+            await new Promise<void>(resolve => {
+              window.setTimeout(resolve, retryDelayMs);
+            });
+          }
+        }
+        return undefined;
+      };
+
+      const waitForRunningKernelByIndex = async (
+        index: number
+      ): Promise<JupyterKernel.IModel | undefined> => {
+        const maxAttempts = 20;
+        const retryDelayMs = 500;
+        for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+          await serviceManager.sessions.refreshRunning();
+          const runnings = Array.from(serviceManager.kernels.running());
+          const model = runnings[index];
+          if (model) {
+            return model;
+          }
+          if (attempt < maxAttempts - 1) {
+            await new Promise<void>(resolve => {
+              window.setTimeout(resolve, retryDelayMs);
+            });
+          }
+        }
+        return undefined;
+      };
+
       if (useRunningKernelIndex > -1) {
-        await serviceManager.sessions.refreshRunning();
-        const runnings = Array.from(serviceManager.kernels.running());
-        const model = runnings[useRunningKernelIndex];
+        const model = await waitForRunningKernelByIndex(useRunningKernelIndex);
+        if (!model) {
+          console.warn(
+            `No running kernel found at index ${useRunningKernelIndex}.`
+          );
+          setKernel(undefined);
+          jupyterReactStore.getState().kernel = undefined;
+          setIsLoading(false);
+          jupyterReactStore.getState().kernelIsLoading = false;
+          return;
+        }
         const existingKernel = new Kernel({
           kernelManager: serviceManager.kernels,
           kernelName: model.name,
@@ -304,9 +365,7 @@ export function useJupyterReactStoreFromProps(
         setIsLoading(false);
         jupyterReactStore.getState().kernelIsLoading = false;
       } else if (useRunningKernelId) {
-        await serviceManager.sessions.refreshRunning();
-        const runnings = Array.from(serviceManager.kernels.running());
-        const model = runnings.find(
+        const model = await waitForRunningKernelByMatcher(
           running => running.id === useRunningKernelId
         );
         if (model) {
@@ -333,6 +392,8 @@ export function useJupyterReactStoreFromProps(
           console.warn(
             `No running kernel found with id "${useRunningKernelId}".`
           );
+          setKernel(undefined);
+          jupyterReactStore.getState().kernel = undefined;
           setIsLoading(false);
           jupyterReactStore.getState().kernelIsLoading = false;
         }

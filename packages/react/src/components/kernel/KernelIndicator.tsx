@@ -6,7 +6,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Box, Button, Text } from '@primer/react';
+import { Box, Button, Link, Text } from '@primer/react';
 import { KernelMessage } from '@jupyterlab/services';
 import {
   ConnectionStatus,
@@ -66,6 +66,30 @@ function normalizePosition(
   }
 }
 
+function isHttpLikeUrl(value: string): boolean {
+  const candidate = String(value || '').trim().toLowerCase();
+  return (
+    candidate.startsWith('http://') ||
+    candidate.startsWith('https://') ||
+    candidate.startsWith('ws://') ||
+    candidate.startsWith('wss://')
+  );
+}
+
+function toOpenableHref(value: string): string {
+  const candidate = String(value || '').trim();
+  const withBrowserHost = candidate.replace(
+    /^(https?:\/\/)0\.0\.0\.0(?=[:/]|$)/,
+    '$1localhost'
+  );
+  if (withBrowserHost.startsWith('ws://')) {
+    return `http://${withBrowserHost.slice('ws://'.length)}`;
+  }
+  if (withBrowserHost.startsWith('wss://')) {
+    return `https://${withBrowserHost.slice('wss://'.length)}`;
+  }
+  return withBrowserHost;
+}
 function overlayTransformForPosition(
   position: NormalizedKernelIndicatorPosition
 ): string {
@@ -633,7 +657,18 @@ export const KernelIndicator = ({
                       key={detail.label}
                       sx={{ fontSize: 0, wordBreak: 'break-word' }}
                     >
-                      {detail.label}: {detail.value}
+                      {detail.label}:{' '}
+                      {isHttpLikeUrl(detail.value) ? (
+                        <Link
+                          href={toOpenableHref(detail.value)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {detail.value}
+                        </Link>
+                      ) : (
+                        detail.value
+                      )}
                     </Text>
                   ))}
                 </Box>
