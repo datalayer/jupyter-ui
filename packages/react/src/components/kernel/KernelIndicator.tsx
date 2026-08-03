@@ -513,7 +513,7 @@ export const KernelIndicator = ({
                 gap: 1,
                 borderBottom: '1px solid',
                 borderColor: 'border.default',
-                bg: 'canvas.subtle',
+                bg: 'canvas.default',
               }}
             >
               <Text sx={{ fontSize: 2, fontWeight: 600, color: 'fg.default' }}>
