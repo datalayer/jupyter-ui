@@ -195,20 +195,28 @@ export function Notebook(
   }, [model, onNotebookModelChanged]);
 
   useEffect(() => {
+    // Not every service manager carries a user manager: the services of a
+    // remote code sandbox are built from the kernels, the sessions and the
+    // contents of one pod, and nothing identifies a user there. The identity
+    // on the cursors is then left to whoever owns the collaboration session.
+    const users = serviceManager.user;
+    if (!users) {
+      return;
+    }
     // Set user identity if collaborating using Jupyter collaboration
     const setUserIdentity = () => {
       if (collaborationProvider && model) {
         // Yjs details are hidden from the interface
         (model.sharedModel as any).awareness.setLocalStateField(
           'user',
-          serviceManager.user.identity
+          users.identity
         );
       }
     };
     setUserIdentity();
-    serviceManager.user.userChanged.connect(setUserIdentity);
+    users.userChanged.connect(setUserIdentity);
     return () => {
-      serviceManager.user.userChanged.disconnect(setUserIdentity);
+      users.userChanged.disconnect(setUserIdentity);
     };
   }, [collaborationProvider, model, serviceManager]);
 

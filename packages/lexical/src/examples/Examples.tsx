@@ -253,11 +253,10 @@ const Examples = () => {
   const loginUrl = useMemo(() => {
     const iamUrl = (
       configuration?.iamUrl ||
-      configuration?.datalayerUrl ||
-      'https://prod1.datalayer.run'
+        'https://prod1.datalayer.run'
     ).replace(/\/$/, '');
     return `${iamUrl}/api/iam/v1/login`;
-  }, [configuration?.iamUrl, configuration?.datalayerUrl]);
+  }, [configuration?.iamUrl]);
 
   // Keep iamStore aligned with persisted auth token on load/refresh.
   useEffect(() => {
