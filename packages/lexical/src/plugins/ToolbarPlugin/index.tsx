@@ -328,13 +328,28 @@ export function ToolbarPlugin({
   setActiveEditor,
   setIsLinkEditMode,
   extraItems,
+  hiddenItems,
 }: {
   editor: LexicalEditor;
   activeEditor: LexicalEditor;
   setActiveEditor: Dispatch<LexicalEditor>;
   setIsLinkEditMode: Dispatch<boolean>;
-  /** Extra toolbar items registered by consumers (e.g. agent-runtimes) */
+  /**
+   * Extra toolbar items registered by consumers (e.g. agent-runtimes).
+   *
+   * They are merged with the items of the editor and the whole toolbar is
+   * ordered by the `order` of each item. The editor numbers its own items
+   * from zero upwards, so a negative order places an extra item before them
+   * and an order above 100 after them. A `spacer` item pushes what follows
+   * it to the trailing edge.
+   */
   extraItems?: ToolbarItem[];
+  /**
+   * Keys of the items of the editor to leave out, e.g. to replace one of them
+   * with an extra item. The keys are the ones built below — `undo`, `redo`,
+   * `block-type`, `font-family`, `comments`…
+   */
+  hiddenItems?: string[];
 }): JSX.Element {
   const [selectedElementKey, setSelectedElementKey] = useState<NodeKey | null>(
     null,
@@ -1212,10 +1227,18 @@ export function ToolbarPlugin({
     selectedElementKey,
   ]);
 
+  const visibleItems = useMemo(() => {
+    if (!hiddenItems?.length) {
+      return items;
+    }
+    const hidden = new Set(hiddenItems);
+    return items.filter(item => !hidden.has(item.key));
+  }, [items, hiddenItems]);
+
   return (
     <>
       <Toolbar
-        items={items}
+        items={visibleItems}
         extraItems={extraItems}
         ariaLabel="Editor toolbar"
       />
