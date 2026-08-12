@@ -138,6 +138,8 @@ export function useNotebookToolbarItems(notebookId: string): ToolbarItem[] {
         ariaLabel: 'Interrupt kernel',
         title: 'Interrupt kernel (⌘I)',
         icon: SquareFillIcon,
+        // Only while the kernel runs something: there is nothing to
+        // interrupt otherwise.
         disabled: !isBusy,
         onClick: () => notebookStore.interrupt(notebookId),
       },
