@@ -14,8 +14,8 @@ import { useJupyter } from '../../jupyter/JupyterUse';
 import { useJupyterReactStore } from '../../state';
 import { Colormode } from '../../theme/JupyterLabColormode';
 import { JupyterLabAppCorePlugins } from './JupyterLabAppPlugins';
-import JupyterLabAppAdapter from './JupyterLabAppAdapter';
-import JupyterLabAppCss from './JupyterLabAppCss';
+import { JupyterLabAppAdapter } from './JupyterLabAppAdapter';
+import { JupyterLabAppCss } from './JupyterLabAppCss';
 
 // The webpack public path needs to be set before loading the CSS assets.
 (globalThis as any).__webpack_public_path__ =
