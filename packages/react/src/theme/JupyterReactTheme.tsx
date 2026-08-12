@@ -159,71 +159,111 @@ export function JupyterReactTheme(
     setBackgroundColorStore(backgroundColor);
   }, [backgroundColor, setBackgroundColorStore]);
 
+  /**
+   * Follow the color mode of the surroundings, or impose the one asked for.
+   *
+   * Three cases, in this order:
+   *
+   * - a `colormode` property is given: it wins, and JupyterLab is told about
+   *   it — leaving its theme alone would keep the `--jp-*` variables of the
+   *   other one;
+   * - the page is a JupyterLab: its theme rules, and every change of it is
+   *   followed. The theme manager is a service of a plugin that activates on
+   *   its own schedule, so it is waited for rather than read once;
+   * - neither: the preference of the operating system.
+   *
+   * The resolved mode is written to the store, which is what the components
+   * rendered outside of this provider — the views of an extension, the
+   * portals of Primer — read.
+   */
   useEffect(() => {
-    function colorSchemeFromMedia({ matches }: { matches: boolean }) {
-      // When colormode is 'auto', react to OS changes in real time.
-      if (hasColormodeProp && colormodeProps === 'auto') {
-        const resolved = matches ? 'dark' : 'light';
-        setColormode(resolved);
-        if (colormodeFromStore !== resolved) {
-          setColormodeStore(resolved);
-        }
-        setupPrimerPortals(resolved);
+    let disposed = false;
+    let disconnect: (() => void) | undefined;
+
+    const colorSchemeFromMedia = ({ matches }: { matches: boolean }) => {
+      const resolved = matches ? 'dark' : 'light';
+      setColormode(resolved);
+      if (colormodeFromStore !== resolved) {
+        setColormodeStore(resolved);
       }
-    }
-    function updateColorMode(themeManager: IThemeManager) {
-      if (hasColormodeProp) {
-        return;
-      }
-      const colormode =
+      setupPrimerPortals(resolved);
+    };
+    const followSystem = () => {
+      const media = window.matchMedia('(prefers-color-scheme: dark)');
+      colorSchemeFromMedia({ matches: media.matches });
+      media.addEventListener('change', colorSchemeFromMedia);
+      disconnect = () => {
+        media.removeEventListener('change', colorSchemeFromMedia);
+      };
+    };
+    const updateColorMode = (themeManager: IThemeManager) => {
+      const resolved =
         themeManager.theme && !themeManager.isLight(themeManager.theme)
           ? 'dark'
           : 'light';
-      setColormode(colormode);
-      if (colormodeFromStore !== colormode) {
-        setColormodeStore(colormode);
+      setColormode(resolved);
+      if (colormodeFromStore !== resolved) {
+        setColormodeStore(resolved);
       }
-      setupPrimerPortals(colormode);
-    }
-    if (jupyterLabAdapter) {
-      const themeManager = jupyterLabAdapter?.service(
-        '@jupyterlab/apputils-extension:themes'
-      ) as IThemeManager;
-      if (themeManager) {
-        // When an explicit colormode prop is provided, drive the JupyterLab
-        // theme manager to match — otherwise the server-loaded theme link
-        // stays and `--jp-*` CSS vars do not switch.
-        if (hasColormodeProp) {
-          const resolved = resolveColormode(colormodeProps);
-          const desiredTheme =
-            resolved === 'dark' ? 'JupyterLab Dark' : 'JupyterLab Light';
-          if (themeManager.theme !== desiredTheme) {
-            themeManager.setTheme(desiredTheme).catch(() => {
-              /* swallow — best effort */
-            });
-          }
-          setupPrimerPortals(resolved);
-        } else {
-          updateColorMode(themeManager);
-          themeManager.themeChanged.connect(updateColorMode);
-          return () => {
-            themeManager.themeChanged.disconnect(updateColorMode);
-          };
-        }
+      setupPrimerPortals(resolved);
+    };
+    const follow = (themeManager: IThemeManager) => {
+      if (disposed) {
+        return;
       }
-    } else {
-      colorSchemeFromMedia({
-        matches: window.matchMedia('(prefers-color-scheme: dark)').matches,
-      });
-      window
-        .matchMedia('(prefers-color-scheme: dark)')
-        .addEventListener('change', colorSchemeFromMedia);
-      return () => {
-        window
-          .matchMedia('(prefers-color-scheme: dark)')
-          .removeEventListener('change', colorSchemeFromMedia);
+      updateColorMode(themeManager);
+      themeManager.themeChanged.connect(updateColorMode);
+      disconnect = () => {
+        themeManager.themeChanged.disconnect(updateColorMode);
       };
+    };
+    const themeManagerOf = (): IThemeManager | undefined =>
+      (jupyterLabAdapter?.service(
+        '@jupyterlab/apputils-extension:themes'
+      ) as IThemeManager | null) ?? undefined;
+
+    if (!jupyterLabAdapter) {
+      // Only the system is left to follow; a `colormode` property is already
+      // held in the state, and there is no application to tell about it.
+      if (!hasColormodeProp || colormodeProps === 'auto') {
+        followSystem();
+      }
+    } else if (hasColormodeProp) {
+      const resolved = resolveColormode(colormodeProps);
+      const desiredTheme =
+        resolved === 'dark' ? 'JupyterLab Dark' : 'JupyterLab Light';
+      const themeManager = themeManagerOf();
+      if (themeManager && themeManager.theme !== desiredTheme) {
+        themeManager.setTheme(desiredTheme).catch(() => {
+          /* swallow — best effort */
+        });
+      }
+      setupPrimerPortals(resolved);
+    } else {
+      const themeManager = themeManagerOf();
+      if (themeManager) {
+        follow(themeManager);
+      } else {
+        // The plugin providing the theme manager has not activated yet; the
+        // application tells when everything has.
+        void jupyterLabAdapter.jupyterLab?.restored
+          .then(() => {
+            const late = themeManagerOf();
+            if (late) {
+              follow(late);
+            } else {
+              followSystem();
+            }
+          })
+          .catch(() => {
+            /* the application never settled; nothing to follow */
+          });
+      }
     }
+    return () => {
+      disposed = true;
+      disconnect?.();
+    };
   }, [
     inJupyterLab,
     jupyterLabAdapter,

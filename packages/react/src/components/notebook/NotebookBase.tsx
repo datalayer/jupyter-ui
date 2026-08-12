@@ -1016,11 +1016,28 @@ export function useKernelId(
 
         // Check if requested kernel exists
         if (requestedKernelId) {
-          for (const model of kernels.running()) {
-            if (model.id === requestedKernelId) {
-              foundKernelId = requestedKernelId;
-              break;
+          const isRunning = () => {
+            for (const model of kernels.running()) {
+              if (model.id === requestedKernelId) {
+                return true;
+              }
             }
+            return false;
+          };
+          // `running()` replays the last poll of the manager, and a manager
+          // built for a kernel that was just assigned — the services of a
+          // code sandbox, say — has polled nothing yet. Asking the server
+          // before concluding that the kernel does not exist is what keeps
+          // the notebook from ending up with no kernel at all.
+          if (!isRunning()) {
+            try {
+              await kernels.refreshRunning();
+            } catch (reason) {
+              console.warn('Failed to list the running kernels.', reason);
+            }
+          }
+          if (isRunning()) {
+            foundKernelId = requestedKernelId;
           }
         }
 
