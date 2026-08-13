@@ -4,11 +4,7 @@
 
 # 🪐 ⚛️ Jupyter UI
 
-[![Build Status](https://github.com/datalayer/jupyter-ui/actions/workflows/build.yml/badge.svg)](https://github.com/datalayer/jupyter-ui/actions/workflows/build.yml)
-[![npm version](https://img.shields.io/npm/v/@datalayer/jupyter-react)](https://www.npmjs.com/package/@datalayer/jupyter-react)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-blue)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-18.3.1-blue)](https://reactjs.org/)
+[![Build Status](https://github.com/datalayer/jupyter-ui/actions/workflows/build.yml/badge.svg)](https://github.com/datalayer/jupyter-ui/actions/workflows/build.yml) [![npm version](https://img.shields.io/npm/v/@datalayer/jupyter-react)](https://www.npmjs.com/package/@datalayer/jupyter-react) [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-blue)](https://www.typescriptlang.org/) [![React](https://img.shields.io/badge/React-18.3.1-blue)](https://reactjs.org/)
 
 <table>
 <tr><td>

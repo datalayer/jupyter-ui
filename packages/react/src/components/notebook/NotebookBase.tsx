@@ -376,7 +376,12 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
         providerSettings[provider.identifier] = { enabled: true };
       });
 
+      // Start from the defaults of the installed JupyterLab and override only
+      // what this notebook cares about: `IInlineCompleterSettings` gains
+      // fields across 4.x — `ghostSyntaxHighlighting` in 4.6 — and every one
+      // of them is required, so listing them here breaks on the next release.
       inlineCompleter.configure({
+        ...InlineCompleter.defaultSettings,
         showWidget: 'always',
         showShortcuts: true,
         streamingAnimation: 'none',
