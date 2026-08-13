@@ -53,7 +53,7 @@ const loadCoreConfiguration = () => {
   if (!datalayerConfigElement?.textContent) {
     ensureJupyterConfigData(`${PROD_RUN_URL}/api/jupyter-server`, '');
     coreStore.getState().setConfiguration({
-      datalayerUrl: PROD_RUN_URL,
+      iamUrl: PROD_RUN_URL,
       spacerUrl: PROD_RUN_URL,
     });
     return;
@@ -75,7 +75,7 @@ const loadCoreConfiguration = () => {
       rawToken && !rawToken.startsWith('%VITE_') ? rawToken : envToken || '';
 
     const runUrlCandidate =
-      (typeof raw.datalayerUrl === 'string' && raw.datalayerUrl) ||
+      (typeof raw.iamUrl === 'string' && raw.iamUrl) ||
       (typeof raw.runUrl === 'string' && raw.runUrl) ||
       PROD_RUN_URL;
     const runUrl = runUrlCandidate.replace(/\/$/, '');
@@ -94,7 +94,6 @@ const loadCoreConfiguration = () => {
     ensureJupyterConfigData(jupyterServerUrl, jupyterServerToken);
 
     coreStore.getState().setConfiguration({
-      datalayerUrl: runUrl,
       iamUrl: runUrl,
       spacerUrl,
       token,
@@ -118,7 +117,7 @@ const loadCoreConfiguration = () => {
     console.error('Failed to parse datalayer-config-data:', error);
     ensureJupyterConfigData(`${PROD_RUN_URL}/api/jupyter-server`, '');
     coreStore.getState().setConfiguration({
-      datalayerUrl: PROD_RUN_URL,
+      iamUrl: PROD_RUN_URL,
       spacerUrl: PROD_RUN_URL,
     });
   }

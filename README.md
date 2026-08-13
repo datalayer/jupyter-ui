@@ -10,11 +10,28 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-blue)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18.3.1-blue)](https://reactjs.org/)
 
-> React.js components 💯% compatible with 🪐 Jupyter.
->
-> Documentation: https://jupyter-ui.datalayer.tech
->
-> Storybook: https://jupyter-ui-storybook.datalayer.tech
+<table>
+<tr><td>
+
+<a href="https://datalayer.ai"><img alt="Datalayer" src="https://assets.datalayer.tech/datalayer-25.svg" height="22"/></a>
+
+[![Built and maintained by Datalayer](https://img.shields.io/badge/Built%20and%20maintained%20by-Datalayer%20%C2%B7%20datalayer.ai-1ABC9C?style=for-the-badge&logo=jupyter&logoColor=white&labelColor=0E7C6B)](https://datalayer.ai)
+
+**React.js components 💯% compatible with 🪐 Jupyter.**
+
+📖 [Documentation](https://jupyter-ui.datalayer.tech) &nbsp;·&nbsp; 🎨 [Storybook](https://jupyter-ui-storybook.datalayer.tech) &nbsp;·&nbsp; 💬 [Community](https://jupyter-ui.datalayer.tech/community)
+
+**Free and open source, MIT** — drop the components into your own app and point them at any
+Jupyter Server you already run.
+
+Built and maintained by [**Datalayer**](https://datalayer.ai), which builds its own Notebooks
+on these very components — and can host the Code Sandboxes they execute on, GPUs included, so
+your product ships without a Jupyter Server to operate.
+
+[![Discover Datalayer](https://img.shields.io/badge/%E2%86%92%20Discover%20Datalayer-datalayer.ai-1ABC9C?style=for-the-badge&labelColor=0E7C6B)](https://datalayer.ai)
+
+</td></tr>
+</table>
 
 Jupyter UI is a set of [React.js](https://react.dev) components that allow a frontend/webapp developer to build data products compatible with the [Jupyter](https://jupyter.org) ecosystem. The user interface delivers executable notebooks, cells, terminals, file browsers and allows the developer to manage a full integrated React tree instead of relying on iframes to display the Jupyter notebooks.
 

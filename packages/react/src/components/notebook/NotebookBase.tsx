@@ -891,17 +891,52 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
   }, [completer, panel, tracker]);
 
   useEffect(() => {
-    const onKeyDown = (event: any) => {
+    const node = panel?.node;
+    if (!node) {
+      return;
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      /*
+       * Only the keys pressed in this notebook.
+       *
+       * The listener has to be a global one — see below — so it is told
+       * apart here: another notebook of the page, a widget of the host
+       * application, anything outside this panel keeps its own keys.
+       */
+      const target = event.target as Node | null;
+      if (!target || !node.contains(target)) {
+        return;
+      }
       features.commands.processKeydownEvent(event);
     };
-    // FIXME It would be better to add the listener to the Box wrapping the panel
-    // but this requires the use of the latest version of JupyterLab/Lumino that
-    // capture event at bubbling phase for keyboard shortcuts rather than at capture phase.
-    document.addEventListener('keydown', onKeyDown, true);
+    /*
+     * On the window, in the capture phase, and for a reason.
+     *
+     * A Lumino command registry claims a keystroke by preventing its default
+     * and stopping its propagation, and `processKeydownEvent` bails on an
+     * event whose default is already prevented: the first registry to see a
+     * keystroke decides what happens to it.
+     *
+     * Inside JupyterLab there are two of them. The application registers its
+     * own listener on `document`, in the capture phase, when it starts — long
+     * before this notebook is mounted — and its notebook key bindings are
+     * written against `.jp-Notebook`, which is exactly the markup rendered
+     * here. It would therefore claim `Shift+Enter` and run it against the
+     * notebook *it* tracks, which is not this one, leaving this notebook with
+     * a keystroke that does nothing. The match depends on the classes the
+     * notebook wears at that moment — focus, edit or command mode — which is
+     * why it only happens some of the time.
+     *
+     * The capture phase reaches the window before the document, so listening
+     * there is what puts this notebook first for its own keys. Everything it
+     * does not match keeps travelling to the application, which handles it as
+     * it always did.
+     */
+    window.addEventListener('keydown', onKeyDown, true);
     return () => {
-      document.removeEventListener('keydown', onKeyDown, true);
+      window.removeEventListener('keydown', onKeyDown, true);
     };
-  }, [features.commands]);
+  }, [features.commands, panel]);
 
   // Cleanup notebook from store on unmount
   useEffect(() => {
@@ -1016,11 +1051,28 @@ export function useKernelId(
 
         // Check if requested kernel exists
         if (requestedKernelId) {
-          for (const model of kernels.running()) {
-            if (model.id === requestedKernelId) {
-              foundKernelId = requestedKernelId;
-              break;
+          const isRunning = () => {
+            for (const model of kernels.running()) {
+              if (model.id === requestedKernelId) {
+                return true;
+              }
             }
+            return false;
+          };
+          // `running()` replays the last poll of the manager, and a manager
+          // built for a kernel that was just assigned — the services of a
+          // code sandbox, say — has polled nothing yet. Asking the server
+          // before concluding that the kernel does not exist is what keeps
+          // the notebook from ending up with no kernel at all.
+          if (!isRunning()) {
+            try {
+              await kernels.refreshRunning();
+            } catch (reason) {
+              console.warn('Failed to list the running kernels.', reason);
+            }
+          }
+          if (isRunning()) {
+            foundKernelId = requestedKernelId;
           }
         }
 

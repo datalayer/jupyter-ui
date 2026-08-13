@@ -35,7 +35,6 @@ const LexicalEditor = ({ hasRuntime }: { hasRuntime: boolean }) => {
   const collabPane = urlParams.get('collabPane') || '1';
   const spacerBaseUrl =
     configuration?.spacerUrl ||
-    configuration?.datalayerUrl ||
     'https://prod1.datalayer.run';
   const collabWsBase =
     urlParams.get('collabWs') ||
