@@ -102,6 +102,12 @@ module.exports = {
         },
         {
           type: 'doc',
+          docId: 'community/index',
+          position: 'left',
+          label: 'Community',
+        },
+        {
+          type: 'doc',
           docId: 'license/index',
           position: 'left',
           label: 'License',

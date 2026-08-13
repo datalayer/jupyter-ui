@@ -148,6 +148,48 @@ export class Kernel {
       this._kernelConnection.info.then(info => {
         this._info = info;
       });
+      void this.restoreStatus();
+    }
+  }
+
+  /**
+   * Learn the state of a kernel that was already running.
+   *
+   * A connection starts on `unknown` and is moved by the status messages the
+   * kernel broadcasts. A kernel that is already idle broadcasts nothing, so a
+   * connection made to one — an existing kernel assigned to a notebook, or a
+   * page that comes back — would read `unknown` until something happens to
+   * it: the indicator says the kernel is in an unknown state, and everything
+   * that waits for it waits for nothing.
+   *
+   * The server knows the state, and answers it on the kernel model. It is
+   * written on the connection through the same path the status messages take;
+   * `_updateStatus` is internal, and it is the only way in — the front end of
+   * `jupyter-server-nbmodel` restores a refreshed page the same way.
+   */
+  protected async restoreStatus(): Promise<void> {
+    const connection = this._kernelConnection as
+      | (JupyterKernel.IKernelConnection & {
+          _updateStatus?: (status: JupyterKernel.Status) => void;
+        })
+      | null;
+    if (!connection?._updateStatus || connection.status !== 'unknown') {
+      return;
+    }
+    try {
+      await this._kernelManager.refreshRunning();
+      const model = find(
+        Array.from(this._kernelManager.running()),
+        running => running.id === connection.id
+      );
+      const status = model?.execution_state as JupyterKernel.Status | undefined;
+      // Between the request and its answer the kernel may have said what it
+      // is doing; what it said itself is never overwritten.
+      if (status && connection.status === 'unknown') {
+        connection._updateStatus(status);
+      }
+    } catch (reason) {
+      console.warn('Failed to read the state of the kernel.', reason);
     }
   }
 
