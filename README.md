@@ -254,3 +254,15 @@ npm run check:fix    # Run format, lint fix, and type-check
 Copyright (c) 2022-2025 Datalayer, Inc.
 
 Released under the terms of the MIT license (see [LICENSE](./LICENSE)).
+
+---
+
+<div align="center">
+
+**If this project is helpful to you, please give us a ⭐️**
+
+Made with ❤️ by [Datalayer](https://datalayer.ai)
+
+<img src="https://assets.datalayer.tech/datalayer-25.svg" alt="Datalayer Logo" width="200"></img>
+
+</div>
