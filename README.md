@@ -6,19 +6,13 @@
 
 [![Build Status](https://github.com/datalayer/jupyter-ui/actions/workflows/build.yml/badge.svg)](https://github.com/datalayer/jupyter-ui/actions/workflows/build.yml) [![npm version](https://img.shields.io/npm/v/@datalayer/jupyter-react)](https://www.npmjs.com/package/@datalayer/jupyter-react) [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) [![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-blue)](https://www.typescriptlang.org/) [![React](https://img.shields.io/badge/React-18.3.1-blue)](https://reactjs.org/)
 
-<table>
-<tr><td>
-
-<a href="https://datalayer.ai"><img alt="Datalayer" src="https://assets.datalayer.tech/datalayer-25.svg" height="22"/></a>
-
 [![Built and maintained by Datalayer](https://img.shields.io/badge/Built%20and%20maintained%20by-Datalayer%20%C2%B7%20datalayer.ai-1ABC9C?style=for-the-badge&logo=jupyter&logoColor=white&labelColor=0E7C6B)](https://datalayer.ai)
 
-**React.js components 💯% compatible with 🪐 Jupyter.**
+**React.js components 💯% compatible with 🪐 Jupyter**
 
 📖 [Documentation](https://jupyter-ui.datalayer.tech) &nbsp;·&nbsp; 🎨 [Storybook](https://jupyter-ui-storybook.datalayer.tech) &nbsp;·&nbsp; 💬 [Community](https://jupyter-ui.datalayer.tech/community)
 
-**Free and open source, MIT** — drop the components into your own app and point them at any
-Jupyter Server you already run.
+**Free and open source, MIT** — drop the components into your own app and point them at any Jupyter Server you already run.
 
 Built and maintained by [**Datalayer**](https://datalayer.ai), which builds its own Notebooks
 on these very components — and can host the Code Sandboxes they execute on, GPUs included, so
@@ -26,8 +20,7 @@ your product ships without a Jupyter Server to operate.
 
 [![Discover Datalayer](https://img.shields.io/badge/%E2%86%92%20Discover%20Datalayer-datalayer.ai-1ABC9C?style=for-the-badge&labelColor=0E7C6B)](https://datalayer.ai)
 
-</td></tr>
-</table>
+---
 
 Jupyter UI is a set of [React.js](https://react.dev) components that allow a frontend/webapp developer to build data products compatible with the [Jupyter](https://jupyter.org) ecosystem. The user interface delivers executable notebooks, cells, terminals, file browsers and allows the developer to manage a full integrated React tree instead of relying on iframes to display the Jupyter notebooks.
 
@@ -38,6 +31,42 @@ Jupyter UI is a set of [React.js](https://react.dev) components that allow a fro
 | [@datalayer/jupyter-react](./packages/react)                         | [![npm](https://img.shields.io/npm/v/@datalayer/jupyter-react)](https://www.npmjs.com/package/@datalayer/jupyter-react)                         | Generic React components for Jupyter    |
 | [@datalayer/jupyter-lexical](./packages/lexical)                     | [![npm](https://img.shields.io/npm/v/@datalayer/jupyter-lexical)](https://www.npmjs.com/package/@datalayer/jupyter-lexical)                     | Rich text editor with Lexical framework |
 | [@datalayer/jupyter-docusaurus-plugin](./packages/docusaurus-plugin) | [![npm](https://img.shields.io/npm/v/@datalayer/jupyter-docusaurus-plugin)](https://www.npmjs.com/package/@datalayer/jupyter-docusaurus-plugin) | Docusaurus plugin for Jupyter notebooks |
+
+## ✨ Features
+
+### Core Components
+
+- **📓 Notebook** - Full notebook interface with cells, outputs, and toolbar
+- **📝 Cell** - Individual code/markdown cells with execution
+- **💻 Console** - Interactive Jupyter console
+- **🖥️ Terminal** - Web-based terminal interface
+- **📁 FileBrowser** - File system navigation and management
+- **⚙️ Kernel Management** - Kernel lifecycle and execution control
+- **📊 Output Rendering** - Display of execution results, plots, and widgets
+
+### Advanced Features
+
+- **🔌 IPyWidgets Support** - Full support for interactive widgets
+- **👥 Collaborative Editing** - Pluggable provider system supporting:
+  - Jupyter collaboration (WebSocket-based with Y.js)
+  - Custom providers via `ICollaborationProvider` interface
+- **🎨 Theming** - JupyterLab theme support with dark/light modes
+- **🔧 Extensible** - Plugin system for custom functionality
+- **🚀 Performance** - Virtual scrolling, lazy loading, and optimizations
+- **🔒 Security** - Token authentication, CORS, XSS protection
+
+## Architecture Highlights
+
+- **🏗️ Clean Architecture** - Modular, composable components with clear interfaces
+- **🔄 Composition Pattern** - Components compose rather than inherit for maximum flexibility
+- **🔌 Provider System** - Pluggable collaboration providers for different backends
+- **📦 One-way Dependencies** - Core depends on jupyter-react, not vice versa
+
+<div align="center" style="text-align: center">
+  <img alt="Jupyter UI Gallery" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-gallery.gif" />
+</div>
+
+The above image shows a gallery of the available React.js components ready to be used in you custom application. These open source components are used to build [Datalayer](https://datalayer.io), a collaborative platform for data analysis.
 
 ## 🚀 Quick Start
 
@@ -103,9 +132,7 @@ class MyCustomProvider extends CollaborationProviderBase {
 }
 
 // Use it with any Notebook component
-const provider = new MyCustomProvider({
-  /* config */
-});
+const provider = new MyCustomProvider({/* config */});
 <Notebook collaborationProvider={provider} path="notebook.ipynb" />;
 ```
 
@@ -140,42 +167,6 @@ You can try the CodeSandbox examples:
 - [Simple Cell Component](https://codesandbox.io/p/sandbox/jupyter-react-cra-cell-te6hii-te6hii) - You may need to refresh the sandbox navigator
 
 We host a Storybook on ✨ https://jupyter-ui-storybook.datalayer.tech that showcases various low-level and high-level React.js components useful to build a Data Product.
-
-## ✨ Features
-
-### Core Components
-
-- **📓 Notebook** - Full notebook interface with cells, outputs, and toolbar
-- **📝 Cell** - Individual code/markdown cells with execution
-- **💻 Console** - Interactive Jupyter console
-- **🖥️ Terminal** - Web-based terminal interface
-- **📁 FileBrowser** - File system navigation and management
-- **⚙️ Kernel Management** - Kernel lifecycle and execution control
-- **📊 Output Rendering** - Display of execution results, plots, and widgets
-
-### Advanced Features
-
-- **🔌 IPyWidgets Support** - Full support for interactive widgets
-- **👥 Collaborative Editing** - Pluggable provider system supporting:
-  - Jupyter collaboration (WebSocket-based with Y.js)
-  - Custom providers via `ICollaborationProvider` interface
-- **🎨 Theming** - JupyterLab theme support with dark/light modes
-- **🔧 Extensible** - Plugin system for custom functionality
-- **🚀 Performance** - Virtual scrolling, lazy loading, and optimizations
-- **🔒 Security** - Token authentication, CORS, XSS protection
-
-### Architecture Highlights
-
-- **🏗️ Clean Architecture** - Modular, composable components with clear interfaces
-- **🔄 Composition Pattern** - Components compose rather than inherit for maximum flexibility
-- **🔌 Provider System** - Pluggable collaboration providers for different backends
-- **📦 One-way Dependencies** - Core depends on jupyter-react, not vice versa
-
-<div align="center" style="text-align: center">
-  <img alt="Jupyter UI Gallery" src="https://datalayer-jupyter-examples.s3.amazonaws.com/jupyter-react-gallery.gif" />
-</div>
-
-The above image shows a gallery of the available React.js components ready to be used in you custom application. These open source components are used to build [Datalayer](https://datalayer.io), a collaborative platform for data analysis.
 
 ## Why?
 
