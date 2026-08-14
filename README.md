@@ -263,6 +263,6 @@ Released under the terms of the MIT license (see [LICENSE](./LICENSE)).
 
 Made with ❤️ by [Datalayer](https://datalayer.ai)
 
-<img src="https://assets.datalayer.tech/datalayer-25.svg" alt="Datalayer Logo" width="200"></img>
+<img src="https://assets.datalayer.tech/datalayer-25.svg" alt="Datalayer Logo" width="200"/>
 
 </div>
