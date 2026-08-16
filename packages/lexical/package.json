@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyter-lexical",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "description": "Jupyter UI for Lexical",
   "license": "MIT",
   "main": "lib/index.js",
