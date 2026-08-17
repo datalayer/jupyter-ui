@@ -48,12 +48,13 @@ import {
   standardRendererFactories,
   type IRenderMime,
 } from '@jupyterlab/rendermime';
-import type {
-  Contents,
-  Kernel as JupyterKernel,
-  ServiceManager,
-  Session,
-  SessionManager,
+import {
+  KernelAPI,
+  type Contents,
+  type Kernel as JupyterKernel,
+  type ServiceManager,
+  type Session,
+  type SessionManager,
 } from '@jupyterlab/services';
 import type { ISessionConnection } from '@jupyterlab/services/lib/session/session';
 import { YNotebook, type IYText } from '@jupyter/ydoc';
@@ -108,7 +109,11 @@ function createYOutputMap(output: nbformat.IOutput): Y.Map<any> {
   if (copy.output_type === 'stream' && copy.text !== undefined) {
     const { text, ...outputWithoutText } = copy;
     const ytext = new Y.Text();
-    const normalized = text instanceof Array ? text.join() : (text as string);
+    // join('') — nbformat multiline text is a list of lines that already
+    // carry their newlines; the default join(',') would thread commas
+    // through every stream output loaded from disk.
+    const normalized =
+      text instanceof Array ? text.join('') : (text as string);
     if (normalized) {
       ytext.insert(0, normalized);
     }
@@ -726,40 +731,87 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
       return;
     }
     const sessionContext = panel.context.sessionContext;
+    const push = (status?: JupyterKernel.Status) => {
+      if (status) {
+        notebookStore
+          .getState()
+          .changeKernelStatus({ id, kernelStatus: status });
+      }
+    };
 
     // ISessionContext.statusChanged tracks kernel status across kernel
-    // changes automatically — no need to manually subscribe per-kernel.
+    // changes — the ordinary channel.
     const onStatusChanged = (
       _: ISessionContext,
       status: JupyterKernel.Status
     ) => {
-      notebookStore.getState().changeKernelStatus({ id, kernelStatus: status });
+      push(status);
     };
-
     sessionContext.statusChanged.connect(onStatusChanged);
 
-    // Push the current status if a kernel is already connected
-    // (handles the case where the kernel was set before this effect ran).
-    const kernel = sessionContext.session?.kernel;
-    if (kernel) {
-      notebookStore
-        .getState()
-        .changeKernelStatus({ id, kernelStatus: kernel.status });
-    }
-
-    // Also wait for the session context to be ready, in case the kernel
-    // connection is still being established.
-    sessionContext.ready.then(() => {
-      const k = sessionContext.session?.kernel;
-      if (k) {
-        notebookStore
-          .getState()
-          .changeKernelStatus({ id, kernelStatus: k.status });
+    /*
+     * The connection itself, as a second witness.
+     *
+     * The kernel indicator of the toolbar subscribes the kernel connection
+     * directly, and some session paths of the Datalayer editors — a code
+     * sandbox assigned to a space notebook — do not relay every status
+     * change through the session context: the indicator then shows busy
+     * while the store still says idle, and the Interrupt button stays
+     * disabled with a visibly running kernel. Following the connection here
+     * keeps the store on the same source of truth as the indicator,
+     * re-hooked whenever the session changes kernels.
+     */
+    let kernelConnection: JupyterKernel.IKernelConnection | null = null;
+    const onKernelStatus = (
+      _: unknown,
+      status: JupyterKernel.Status
+    ): void => {
+      push(status);
+    };
+    const hookKernel = () => {
+      const connection = sessionContext.session?.kernel ?? null;
+      if (connection === kernelConnection) {
+        return;
       }
-    });
+      kernelConnection?.statusChanged.disconnect(onKernelStatus);
+      kernelConnection = connection;
+      kernelConnection?.statusChanged.connect(onKernelStatus);
+      push(kernelConnection?.status);
+      /*
+       * A page opened while the kernel is mid-execution — a refresh over a
+       * long-running cell — has a connection that only learns its status
+       * from the NEXT status message, which a kernel deep in a cell may not
+       * send for minutes: the connection reports 'unknown' and the
+       * Interrupt button stays disabled with a visibly running kernel.
+       * The REST model always knows, so seed from it — and only while the
+       * connection still says 'unknown', so a live status that arrived in
+       * the meantime is never overwritten by this slower answer.
+       */
+      if (connection) {
+        void KernelAPI.getKernelModel(connection.id, connection.serverSettings)
+          .then(model => {
+            if (
+              model?.execution_state &&
+              kernelConnection === connection &&
+              connection.status === 'unknown'
+            ) {
+              push(model.execution_state as JupyterKernel.Status);
+            }
+          })
+          .catch(() => undefined);
+      }
+    };
+    const onKernelChanged = () => hookKernel();
+    sessionContext.kernelChanged.connect(onKernelChanged);
+    hookKernel();
+    // Also once the session context settles, in case the kernel connection
+    // was still being established when this effect ran.
+    void sessionContext.ready.then(hookKernel);
 
     return () => {
       sessionContext.statusChanged.disconnect(onStatusChanged);
+      sessionContext.kernelChanged.disconnect(onKernelChanged);
+      kernelConnection?.statusChanged.disconnect(onKernelStatus);
     };
   }, [panel, id]);
 
@@ -1415,6 +1467,20 @@ class CommonFeatures {
 class DummyModelFactory extends NotebookModelFactory {
   constructor(protected model: NotebookModel) {
     super();
+  }
+
+  /*
+   * The context of a notebook component holds a model that already exists —
+   * see `createNew` — and its path is most often the fallback session path,
+   * not a document of the server. Declaring the factory collaborative would
+   * make the `Context` constructor ask the drive for a shared model on that
+   * path: on a server with `jupyter-collaboration`, the drive answers with a
+   * fresh YNotebook CONNECTED to the room of the fallback path — an orphan
+   * connection `createNew` then discards, but which keeps merging into, and
+   * saving, the one room every editor of this kind shares.
+   */
+  get collaborative(): boolean {
+    return false;
   }
 
   createNew(options?: DocumentRegistry.IModelOptions): NotebookModel {

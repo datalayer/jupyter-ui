@@ -4,14 +4,17 @@
  * MIT License
  */
 
+import { useEffect, useState } from 'react';
 import {
   ChevronDownIcon,
   ChevronUpIcon,
   PlayIcon,
+  SquareFillIcon,
   SquareIcon,
   XIcon,
 } from '@primer/octicons-react';
 import { Box, IconButton } from '@primer/react';
+import type { ICodeCellModel } from '@jupyterlab/cells';
 import { NotebookCommandIds } from '../../NotebookCommands';
 import {
   DATALAYER_CELL_SIDEBAR_CLASS_NAME,
@@ -20,6 +23,36 @@ import {
 
 export function CellSidebarButton(props: ICellSidebarProps): JSX.Element {
   const { commands, model } = props;
+  /*
+   * Whether this cell is being executed, so the run button can turn into an
+   * interrupt button for as long as it runs.
+   *
+   * The execution state lives on the cell model and is written by whoever
+   * runs the cell — JupyterLab for a browser execution, the shared document
+   * for a server-side one — so following the model covers both.
+   */
+  const codeModel = model.type === 'code' ? (model as ICodeCellModel) : null;
+  const [isRunning, setIsRunning] = useState(
+    codeModel?.executionState === 'running'
+  );
+  useEffect(() => {
+    if (!codeModel) {
+      return;
+    }
+    const onStateChanged = (
+      _: ICodeCellModel,
+      args: { name: string; newValue: unknown }
+    ) => {
+      if (args.name === 'executionState') {
+        setIsRunning(args.newValue === 'running');
+      }
+    };
+    codeModel.stateChanged.connect(onStateChanged);
+    setIsRunning(codeModel.executionState === 'running');
+    return () => {
+      codeModel.stateChanged.disconnect(onStateChanged);
+    };
+  }, [codeModel]);
   return (
     <Box
       className={DATALAYER_CELL_SIDEBAR_CLASS_NAME}
@@ -33,20 +66,37 @@ export function CellSidebarButton(props: ICellSidebarProps): JSX.Element {
         },
       }}
     >
-      <IconButton
-        size="small"
-        color="secondary"
-        aria-label="Run cell"
-        title="Run cell"
-        onClick={e => {
-          e.preventDefault();
-          commands.execute(NotebookCommandIds.run).catch(reason => {
-            console.error('Failed to run cell.', reason);
-          });
-        }}
-        icon={PlayIcon}
-        variant="invisible"
-      />
+      {isRunning ? (
+        <IconButton
+          size="small"
+          color="danger"
+          aria-label="Interrupt kernel"
+          title="Interrupt kernel"
+          onClick={e => {
+            e.preventDefault();
+            commands.execute(NotebookCommandIds.interrupt).catch(reason => {
+              console.error('Failed to interrupt the kernel.', reason);
+            });
+          }}
+          icon={SquareFillIcon}
+          variant="invisible"
+        />
+      ) : (
+        <IconButton
+          size="small"
+          color="secondary"
+          aria-label="Run cell"
+          title="Run cell"
+          onClick={e => {
+            e.preventDefault();
+            commands.execute(NotebookCommandIds.run).catch(reason => {
+              console.error('Failed to run cell.', reason);
+            });
+          }}
+          icon={PlayIcon}
+          variant="invisible"
+        />
+      )}
       <IconButton
         size="small"
         color="secondary"
