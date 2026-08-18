@@ -223,11 +223,22 @@ export const KernelIndicator = ({
     let disposed = false;
     let timer: ReturnType<typeof setTimeout> | undefined;
     const askServer = async (): Promise<void> => {
-      if (
-        disposed ||
-        kernel.connectionStatus !== 'connected' ||
-        kernel.status !== 'unknown'
-      ) {
+      if (disposed || kernel.status !== 'unknown') {
+        // Disposed, or the kernel has spoken for itself: nothing left to ask.
+        return;
+      }
+      if (kernel.connectionStatus !== 'connected') {
+        /*
+         * Still connecting — come back rather than give up.
+         *
+         * This ran the moment the effect did, when a page that has just been
+         * reloaded is invariably still opening its websocket, and returning
+         * here scheduled nothing: the poll never happened, and the sandbox
+         * stayed at "connected-unknown" for as long as the kernel had nothing
+         * to announce — which, for one busy with a long cell, is until that
+         * cell ends.
+         */
+        timer = setTimeout(() => void askServer(), 1_000);
         return;
       }
       try {
