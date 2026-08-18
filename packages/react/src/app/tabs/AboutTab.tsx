@@ -6,7 +6,7 @@
 
 import { useState } from 'react';
 import { PageHeader, Label, Text, Link, Box } from '@primer/react';
-import { ECharlesIcon } from '@datalayer/icons-react/eggs';
+import { SkubbleIcon } from '@datalayer/icons-react/eggs';
 
 type Props = {
   version: string;
@@ -46,7 +46,7 @@ export const AboutTab = (props: Props): JSX.Element => {
             onClick={e => setEgg(true)}
           />
         ) : (
-          <ECharlesIcon size={300} onClick={e => setEgg(false)} />
+          <SkubbleIcon size={300} onClick={e => setEgg(false)} />
         )}
       </Box>
     </>
