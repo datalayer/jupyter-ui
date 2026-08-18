@@ -7,7 +7,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Box, Button, Link, Text } from '@primer/react';
-import { KernelMessage } from '@jupyterlab/services';
+import { KernelAPI, KernelMessage } from '@jupyterlab/services';
 import {
   ConnectionStatus,
   IKernelConnection,
@@ -206,7 +206,54 @@ export const KernelIndicator = ({
     kernel.connectionStatusChanged.connect(handleConnectionChange);
     kernel.statusChanged.connect(handleStatusChange);
 
+    /*
+     * What the server says, while the kernel says nothing.
+     *
+     * A kernel announces its state only at the edges of a request, and a
+     * connection made to one that is already running has heard none of them:
+     * it reports `unknown` — "connected-unknown" here — until the kernel next
+     * speaks, which for an idle sandbox may be never. Asking the kernel does
+     * not help either: the reply travels the shell channel, behind whatever
+     * it is already doing, and the status messages around it can be missed
+     * while the iopub subscription is still settling.
+     *
+     * The server keeps the state of every kernel it manages and answers at
+     * once, so it stands in until the kernel speaks for itself.
+     */
+    let disposed = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const askServer = async (): Promise<void> => {
+      if (
+        disposed ||
+        kernel.connectionStatus !== 'connected' ||
+        kernel.status !== 'unknown'
+      ) {
+        return;
+      }
+      try {
+        const model = await KernelAPI.getKernelModel(
+          kernel.id,
+          kernel.serverSettings
+        );
+        if (
+          !disposed &&
+          model?.execution_state &&
+          kernel.status === 'unknown'
+        ) {
+          setStatus(model.execution_state as KernelMessage.Status);
+        }
+      } catch (reason) {
+        // The server does not answer for it; the kernel will, in time.
+      }
+      if (!disposed) {
+        timer = setTimeout(() => void askServer(), 5_000);
+      }
+    };
+    void askServer();
+
     return () => {
+      disposed = true;
+      clearTimeout(timer);
       kernel.connectionStatusChanged.disconnect(handleConnectionChange);
       kernel.statusChanged.disconnect(handleStatusChange);
     };

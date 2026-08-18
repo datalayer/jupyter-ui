@@ -90,7 +90,41 @@ const COMPLETER_TIMEOUT_MILLISECONDS = 1000;
 
 const DEFAULT_EXTENSIONS = new Array<NotebookExtension>();
 
-const FALLBACK_NOTEBOOK_PATH = '.datalayer/ping.ipynb';
+/**
+ * Where the sessions of the notebooks that have no file of their own live.
+ *
+ * A notebook edited without a file — one of a Datalayer space, one built from
+ * a model — still needs a session for its kernel, and a session is named by a
+ * path. Those paths name nothing on the server: the directory says so.
+ */
+const EPHEMERAL_NOTEBOOK_DIR = '.datalayer/';
+
+/**
+ * The path a notebook that names none falls back to: its own.
+ *
+ * There was one shared path here — `.datalayer/ping.ipynb` — and every editor
+ * without a file of its own used it. The server keeps ONE session per path, so
+ * those editors shared a single session: the sandbox of a notebook showed up
+ * under the name of the hack, a second notebook assigning a sandbox took the
+ * place of the first, and a local notebook asking for a kernel was answered
+ * with a session that named a file nobody had opened. Named after the notebook
+ * itself, each editor gets a session of its own.
+ *
+ * @param id Identifier of the notebook, which is its path when it has one
+ */
+function fallbackNotebookPath(id: string): string {
+  // The identifier of a local notebook IS its path; of a notebook of a space,
+  // its uid. Either way it names one notebook, and never a directory — and an
+  // identifier that already ends in the extension keeps the one it has.
+  const stem = id.replace(/[/\\]/g, ' ').replace(/\s+/g, ' ').trim() || 'notebook';
+  const named = stem.endsWith('.ipynb') ? stem : `${stem}.ipynb`;
+  return `${EPHEMERAL_NOTEBOOK_DIR}${named}`;
+}
+
+/** Whether a path names a file of the server, or only a session. */
+function isEphemeralPath(path: string): boolean {
+  return path.startsWith(EPHEMERAL_NOTEBOOK_DIR);
+}
 
 function createYText(value: string): Y.Text {
   const text = new Y.Text();
@@ -283,6 +317,15 @@ export interface INotebookBaseProps {
    */
   path?: string;
   /**
+   * Whether the path names a session of this notebook, never a file of it.
+   *
+   * A host that holds the document itself — the editor of a local notebook
+   * has the context of JupyterLab for that — wants the session named after
+   * the notebook without this component reading or writing the file under
+   * it, which its own context already does.
+   */
+  sessionOnly?: boolean;
+  /**
    * Custom inline completion providers.
    *
    * Platform-specific providers can be injected here (e.g., VS Code LLM, custom AI models).
@@ -311,6 +354,7 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
     commands,
     extensions = DEFAULT_EXTENSIONS,
     kernelId,
+    sessionOnly,
     renderers,
     serviceManager,
     model,
@@ -326,8 +370,8 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
 
   const id = useMemo(() => props.id || newUuid(), [props.id]);
   const path = useMemo(
-    () => props.path || FALLBACK_NOTEBOOK_PATH,
-    [props.path]
+    () => props.path || fallbackNotebookPath(id),
+    [id, props.path]
   );
   const features = useMemo(
     () => new CommonFeatures({ commands, renderers }),
@@ -571,8 +615,11 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
     initializeContext(
       thisContext,
       id,
-      // Initialization must not trigger revert in case we set up the model content
-      path !== FALLBACK_NOTEBOOK_PATH ? path : undefined,
+      // Initialization must not trigger revert in case we set up the model
+      // content: a path that names no file — one under the ephemeral
+      // directory, or one the host declares session-only — is handed over as
+      // undefined, which shunts the contents manager.
+      !sessionOnly && !isEphemeralPath(path) ? path : undefined,
       onSessionConnection,
       !serviceManager
     );
@@ -712,7 +759,20 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
     if (adapter) {
       const currentNotebooks = notebookStore.getState().notebooks;
       const updatedNotebooks = new Map(currentNotebooks);
-      updatedNotebooks.set(id, { adapter, portals: [] });
+      /*
+       * The model belongs in the entry as much as the adapter does.
+       *
+       * `INotebookState` declares it and consumers read it — the collaborators
+       * of an editor, a notebook copied to disk, a notebook stating what it
+       * runs on. It was only ever written by `changeModel`, which nothing
+       * calls, so every one of those reads answered `undefined`. Registered
+       * with the adapter it is rebuilt with, which is when it changes.
+       */
+      updatedNotebooks.set(id, {
+        adapter,
+        model: adapter.model ?? undefined,
+        portals: []
+      });
       notebookStore.getState().setNotebooks(updatedNotebooks);
     } else {
       const currentNotebooks = notebookStore.getState().notebooks;
@@ -731,6 +791,8 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
       return;
     }
     const sessionContext = panel.context.sessionContext;
+    /** Pending asks of the server, cleared with the effect. */
+    const serverPolls: ReturnType<typeof setTimeout>[] = [];
     const push = (status?: JupyterKernel.Status) => {
       if (status) {
         notebookStore
@@ -788,17 +850,49 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
        * the meantime is never overwritten by this slower answer.
        */
       if (connection) {
-        void KernelAPI.getKernelModel(connection.id, connection.serverSettings)
-          .then(model => {
-            if (
-              model?.execution_state &&
-              kernelConnection === connection &&
-              connection.status === 'unknown'
-            ) {
-              push(model.execution_state as JupyterKernel.Status);
-            }
-          })
-          .catch(() => undefined);
+        /*
+         * Asked again while the connection stays deaf.
+         *
+         * A kernel says `busy` as a request starts and `idle` as it ends, and
+         * nothing in between, so a connection made mid-cell hears nothing at
+         * all until that cell finishes. One answer from the server would go
+         * stale the moment the cell ends, and the buttons would stay disabled
+         * over an idle kernel; asked again, they follow it.
+         */
+        const followFromServer = () => {
+          if (kernelConnection !== connection || connection.status !== 'unknown') {
+            return;
+          }
+          void KernelAPI.getKernelModel(connection.id, connection.serverSettings)
+            .then(model => {
+              if (
+                model?.execution_state &&
+                kernelConnection === connection &&
+                connection.status === 'unknown'
+              ) {
+                push(model.execution_state as JupyterKernel.Status);
+                serverPolls.push(setTimeout(followFromServer, 5_000));
+              }
+            })
+            .catch(() => undefined);
+        };
+        followFromServer();
+        /*
+         * And ask the kernel itself, so the CONNECTION learns its state too.
+         *
+         * The seeding above tells this store, which the toolbar buttons read;
+         * the indicator reads the connection, which stays `unknown` until a
+         * status message reaches it. A kernel connected to while it sits idle
+         * sends none — the editor reopened on the sandbox it was left on shows
+         * "connected" with an unknown state for ever. The reply to this
+         * request carries them, which is why JupyterLab sends the same request
+         * whenever a connection opens.
+         */
+        if (connection.status === 'unknown') {
+          void Promise.resolve(connection.requestKernelInfo?.()).catch(
+            () => undefined
+          );
+        }
       }
     };
     const onKernelChanged = () => hookKernel();
@@ -809,6 +903,7 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
     void sessionContext.ready.then(hookKernel);
 
     return () => {
+      serverPolls.forEach(clearTimeout);
       sessionContext.statusChanged.disconnect(onStatusChanged);
       sessionContext.kernelChanged.disconnect(onKernelChanged);
       kernelConnection?.statusChanged.disconnect(onKernelStatus);

@@ -113,6 +113,27 @@ export function JupyterReactTheme(
     const { insideJupyterLab } = loadJupyterConfig();
     return insideJupyterLab;
   });
+  /**
+   * Whether a JupyterLab of this page has applied a theme.
+   *
+   * The theme manager states what it applied on the body of the document —
+   * `data-jp-theme-light` and `data-jp-theme-name` — and restates it on every
+   * change. That is the whole signal, and it asks nothing of the application:
+   * a view rendered by an extension has no application object at hand, and
+   * the one it can read from the store arrives whenever the plugin that puts
+   * it there happens to activate. It is also what says the `--jp-*` variables
+   * of the page belong to JupyterLab and must not be written over.
+   */
+  const jupyterLabColormode = (): 'light' | 'dark' | undefined => {
+    const light = document.body.dataset.jpThemeLight;
+    if (light === undefined) {
+      return undefined;
+    }
+    return light === 'false' ? 'dark' : 'light';
+  };
+  const [jupyterLabThemed, setJupyterLabThemed] = useState(
+    () => jupyterLabColormode() !== undefined
+  );
 
   // Determine the effective colormode:
   // - If a colormode prop is passed, it takes priority (external control)
@@ -167,9 +188,10 @@ export function JupyterReactTheme(
    * - a `colormode` property is given: it wins, and JupyterLab is told about
    *   it — leaving its theme alone would keep the `--jp-*` variables of the
    *   other one;
-   * - the page is a JupyterLab: its theme rules, and every change of it is
-   *   followed. The theme manager is a service of a plugin that activates on
-   *   its own schedule, so it is waited for rather than read once;
+   * - the page is a JupyterLab, or holds one: its theme rules, and every
+   *   change of it is followed — through what the theme manager states on the
+   *   body, which is there whether or not this page can reach the plugin that
+   *   provides the manager, and whenever that plugin activated;
    * - neither: the preference of the operating system.
    *
    * The resolved mode is written to the store, which is what the components
@@ -177,44 +199,55 @@ export function JupyterReactTheme(
    * portals of Primer — read.
    */
   useEffect(() => {
-    let disposed = false;
     let disconnect: (() => void) | undefined;
 
-    const colorSchemeFromMedia = ({ matches }: { matches: boolean }) => {
-      const resolved = matches ? 'dark' : 'light';
+    const applyColormode = (resolved: 'light' | 'dark') => {
       setColormode(resolved);
       if (colormodeFromStore !== resolved) {
         setColormodeStore(resolved);
       }
       setupPrimerPortals(resolved);
     };
-    const followSystem = () => {
+    const followSystem = (): (() => void) => {
       const media = window.matchMedia('(prefers-color-scheme: dark)');
+      const colorSchemeFromMedia = ({ matches }: { matches: boolean }) => {
+        applyColormode(matches ? 'dark' : 'light');
+      };
       colorSchemeFromMedia({ matches: media.matches });
       media.addEventListener('change', colorSchemeFromMedia);
-      disconnect = () => {
+      return () => {
         media.removeEventListener('change', colorSchemeFromMedia);
       };
     };
-    const updateColorMode = (themeManager: IThemeManager) => {
-      const resolved =
-        themeManager.theme && !themeManager.isLight(themeManager.theme)
-          ? 'dark'
-          : 'light';
-      setColormode(resolved);
-      if (colormodeFromStore !== resolved) {
-        setColormodeStore(resolved);
+    const followJupyterLab = (): (() => void) => {
+      let stopFollowingSystem: (() => void) | undefined;
+      const apply = () => {
+        const resolved = jupyterLabColormode();
+        if (!resolved) {
+          return;
+        }
+        setJupyterLabThemed(true);
+        stopFollowingSystem?.();
+        stopFollowingSystem = undefined;
+        applyColormode(resolved);
+      };
+      // The attributes of the body, not the theme manager: what the theme
+      // manager applied is on the body whether or not this page can reach the
+      // plugin that provides it, and it is rewritten on every change.
+      const observer = new MutationObserver(apply);
+      observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['data-jp-theme-light', 'data-jp-theme-name'],
+      });
+      apply();
+      if (!jupyterLabColormode()) {
+        // The application has not themed itself yet — the preference of the
+        // system stands in until it does, and gives way when it does.
+        stopFollowingSystem = followSystem();
       }
-      setupPrimerPortals(resolved);
-    };
-    const follow = (themeManager: IThemeManager) => {
-      if (disposed) {
-        return;
-      }
-      updateColorMode(themeManager);
-      themeManager.themeChanged.connect(updateColorMode);
-      disconnect = () => {
-        themeManager.themeChanged.disconnect(updateColorMode);
+      return () => {
+        observer.disconnect();
+        stopFollowingSystem?.();
       };
     };
     const themeManagerOf = (): IThemeManager | undefined =>
@@ -222,13 +255,9 @@ export function JupyterReactTheme(
         '@jupyterlab/apputils-extension:themes'
       ) as IThemeManager | null) ?? undefined;
 
-    if (!jupyterLabAdapter) {
-      // Only the system is left to follow; a `colormode` property is already
-      // held in the state, and there is no application to tell about it.
-      if (!hasColormodeProp || colormodeProps === 'auto') {
-        followSystem();
-      }
-    } else if (hasColormodeProp) {
+    if (hasColormodeProp) {
+      // The property wins, and JupyterLab is told about it — leaving its theme
+      // alone would keep the `--jp-*` variables of the other one.
       const resolved = resolveColormode(colormodeProps);
       const desiredTheme =
         resolved === 'dark' ? 'JupyterLab Dark' : 'JupyterLab Light';
@@ -239,34 +268,23 @@ export function JupyterReactTheme(
         });
       }
       setupPrimerPortals(resolved);
-    } else {
-      const themeManager = themeManagerOf();
-      if (themeManager) {
-        follow(themeManager);
-      } else {
-        // The plugin providing the theme manager has not activated yet; the
-        // application tells when everything has.
-        void jupyterLabAdapter.jupyterLab?.restored
-          .then(() => {
-            const late = themeManagerOf();
-            if (late) {
-              follow(late);
-            } else {
-              followSystem();
-            }
-          })
-          .catch(() => {
-            /* the application never settled; nothing to follow */
-          });
+      if (!jupyterLabAdapter && colormodeProps === 'auto') {
+        disconnect = followSystem();
       }
+    } else if (inJupyterLab || jupyterLabThemed || jupyterLabAdapter) {
+      // The page is a JupyterLab, or holds one: its theme rules, and every
+      // change of it is followed.
+      disconnect = followJupyterLab();
+    } else {
+      disconnect = followSystem();
     }
     return () => {
-      disposed = true;
       disconnect?.();
     };
   }, [
     inJupyterLab,
     jupyterLabAdapter,
+    jupyterLabThemed,
     hasColormodeProp,
     colormodeProps,
     colormodeFromStore,
@@ -281,7 +299,10 @@ export function JupyterReactTheme(
           // management even if a JupyterLabAdapter is present — otherwise the
           // server-loaded JupyterLab theme variables would override our
           // requested colormode.
-          manageThemeLinks={hasColormodeProp || !jupyterLabAdapter}
+          manageThemeLinks={
+            hasColormodeProp ||
+            !(jupyterLabAdapter || inJupyterLab || jupyterLabThemed)
+          }
         />
       )}
       <ThemeProvider

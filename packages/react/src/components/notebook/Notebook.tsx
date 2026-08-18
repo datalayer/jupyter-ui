@@ -74,6 +74,11 @@ export interface INotebookProps {
    */
   path?: string;
   /**
+   * Whether the path names a session of this notebook, never a file of it —
+   * for a host that holds the document itself. See `INotebookBaseProps`.
+   */
+  sessionOnly?: boolean;
+  /**
    * Whether the notebook is read-only or not.
    */
   readonly?: boolean;
@@ -286,6 +291,7 @@ export function Notebook(
             kernelId={kernelId}
             model={model}
             path={path}
+            sessionOnly={props.sessionOnly}
             renderers={renderers}
             serviceManager={serviceManager}
             onSessionConnection={onSessionConnection}

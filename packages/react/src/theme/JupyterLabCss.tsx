@@ -60,6 +60,25 @@ export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
     import('@jupyter-widgets/controls/css/widgets-base.css');
   }, [colormode]);
 
+  /*
+   * Let go of the variables of a JupyterLab that owns them.
+   *
+   * The injection below pins the `--jp-*` variables of one color mode at the
+   * end of the body, over anything the theme manager of a JupyterLab appends.
+   * That is right when nothing else themes the page — and wrong the moment
+   * something does: whatever was pinned keeps winning, so a theme picked from
+   * the menu of the application changes its links and nothing on screen. The
+   * decision is not fixed for the life of the component either, as the
+   * application it is rendered in is discovered after the first render, so
+   * what was pinned before is dropped here rather than left behind.
+   */
+  useEffect(() => {
+    if (manageThemeLinks) {
+      return;
+    }
+    document.body.querySelector(`style[${DATA_JUPYTERLAB_THEME}]`)?.remove();
+  }, [manageThemeLinks]);
+
   useEffect(() => {
     if (!manageThemeLinks) {
       return;
@@ -83,20 +102,38 @@ export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
       colormode === 'dark' ? 'theme-light-extension' : 'theme-dark-extension';
 
     /**
-     * Remove any <link> tags from JupyterLab's theme manager that conflict
-     * with the desired colormode. The theme manager's loadCSS() appends
+     * Silence the <link> tags of JupyterLab's theme manager that conflict with
+     * the desired colormode. The theme manager's loadCSS() appends
      * <link rel="stylesheet"> to <body> asynchronously, so we need both:
      * 1. Immediate cleanup of existing links
      * 2. A MutationObserver to catch links added after our injection
+     *
+     * Disabled, never removed: a link that is taken out of the document is not
+     * given back, and the theme manager holds it as loaded — so a page that
+     * stops being themed from here, once it turns out to be a JupyterLab of
+     * its own, would be left with no theme variables at all. Disabling is the
+     * same effect and is undone below.
      */
-    function removeConflictingThemeLinks() {
-      document.body.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
-        const href = link.getAttribute('href') || '';
-        if (href.includes(oppositeTheme)) {
-          link.remove();
-        }
-      });
+    const silenced = new Set<HTMLLinkElement>();
+    function silence(link: HTMLLinkElement) {
+      if (!link.disabled) {
+        link.disabled = true;
+        silenced.add(link);
+      }
     }
+    function silenceConflictingThemeLinks() {
+      document.body
+        .querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]')
+        .forEach(link => {
+          if ((link.getAttribute('href') || '').includes(oppositeTheme)) {
+            silence(link);
+          }
+        });
+    }
+
+    // The variables are read from a module, which arrives after this effect
+    // may have been undone: nothing is pinned once it no longer applies.
+    let disposed = false;
 
     // Observe <body> for new <link> nodes added by the theme manager
     const observer = new MutationObserver(mutations => {
@@ -105,7 +142,7 @@ export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
           if (node instanceof HTMLLinkElement && node.rel === 'stylesheet') {
             const href = node.getAttribute('href') || '';
             if (href.includes(oppositeTheme)) {
-              node.remove();
+              silence(node);
             }
           }
         }
@@ -117,13 +154,13 @@ export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
     theme
       ?.then(module => {
         const css = module.default;
-        if (css) {
+        if (css && !disposed) {
           // Remove any previously injected theme style tag
           document.body
             .querySelector(`style[${DATA_JUPYTERLAB_THEME}]`)
             ?.remove();
-          // Remove any conflicting theme links already in the DOM
-          removeConflictingThemeLinks();
+          // Silence any conflicting theme links already in the DOM
+          silenceConflictingThemeLinks();
           // Inject at the END of body so it takes precedence over
           // any <link> tags the JupyterLab theme manager may have appended.
           document.body.insertAdjacentHTML(
@@ -142,7 +179,12 @@ ${css}
       });
 
     return () => {
+      disposed = true;
       observer.disconnect();
+      silenced.forEach(link => {
+        link.disabled = false;
+      });
+      silenced.clear();
     };
   }, [colormode, manageThemeLinks]);
   return (
