@@ -4,7 +4,13 @@
  * MIT License
  */
 
-import { syncPortalThemeStyles } from '@datalayer/primer-addons';
+import {
+  getPrimerPortalRoot,
+  syncPortalThemeStyles,
+} from '@datalayer/primer-addons';
+
+/** The class JupyterLab scopes its themed rules to. */
+const JUPYTERLAB_THEMED_CONTAINER = 'jp-ThemedContainer';
 
 /**
  * The theme of a JupyterLab page reaches Primer's PORTALS as well.
@@ -26,6 +32,7 @@ import { syncPortalThemeStyles } from '@datalayer/primer-addons';
  * provider mounts comes out in the theme of the page.
  */
 export function syncJupyterLabPortalTheme(): void {
+  markPortalRootAsThemedContainer();
   // Custom properties are outside the CSSProperties type, by design.
   syncPortalThemeStyles({
     fontFamily: 'var(--jp-ui-font-family, sans-serif)',
@@ -40,26 +47,30 @@ export function syncJupyterLabPortalTheme(): void {
     '--borderColor-default': 'var(--jp-border-color1, #e0e0e0)',
     '--borderColor-muted': 'var(--jp-border-color2, #eeeeee)',
     '--fgColor-accent': 'var(--jp-brand-color1, #1976d2)',
-    /*
-     * The BUTTONS of an overlay, after JupyterLab rather than after Primer.
-     *
-     * On the page these three come from a rule `JupyterLabCss` scopes to
-     * `.jp-ThemedContainer button`, and JupyterLab puts that class on its
-     * SHELL: under an installed extension the shell is the body, so a
-     * portaled button is inside it, while a React application mounting
-     * JupyterLab into a div of its own leaves the portal root outside — and
-     * every dialog button came out in Primer's default green.
-     *
-     * Carried as tokens rather than by borrowing the class. Marking this
-     * root `jp-ThemedContainer` did make the buttons right, and brought the
-     * layout rules of JupyterLab with it onto an element Primer measures
-     * against: the wrapper Primer positions its overlays in was displaced,
-     * and menus opened off the screen. Tokens theme without relayouting.
-     */
-    '--button-primary-bgColor-rest': 'var(--jp-brand-color1, #1976d2)',
-    '--button-primary-bgColor-hover': 'var(--jp-brand-color0, #0d47a1)',
-    '--button-primary-bgColor-active': 'var(--jp-brand-color0, #3a4047ff)',
   } as Parameters<typeof syncPortalThemeStyles>[0]);
+}
+
+/**
+ * Make the portal root a themed container of JupyterLab.
+ *
+ * What gives a control the look of the application is not a token but a
+ * RULE: JupyterLab scopes `border-radius`, the UI font and the focus ring
+ * to `.jp-ThemedContainer button`, and jupyter-react maps the brand colour
+ * the same way. JupyterLab puts that class on its SHELL — which is the body
+ * under an installed extension, so portaled content is inside it and themed
+ * by accident, and a div of its own in a React application, leaving the
+ * portal root outside it and every overlay drawn in Primer's default look.
+ *
+ * Marking the root itself is what closes that gap for good: every rule the
+ * theme scopes to that class reaches the overlays, the ones written today
+ * and the ones added later, without a list of tokens to keep in step. It
+ * relies on the root being pinned to the origin of the document, which is
+ * where `setupPrimerPortals` puts it — left in the flow of the body, the
+ * layout rules that come with the class displace the element Primer
+ * measures its overlays against.
+ */
+function markPortalRootAsThemedContainer(): void {
+  getPrimerPortalRoot()?.classList.add(JUPYTERLAB_THEMED_CONTAINER);
 }
 
 export default syncJupyterLabPortalTheme;
