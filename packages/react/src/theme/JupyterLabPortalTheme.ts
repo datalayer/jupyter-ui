@@ -16,6 +16,14 @@ const PORTAL_ROOT_SELECTOR = '#__primerPortalRoot__';
 const MIRROR_STYLE_ID = 'dla-JupyterLab-portal-theme';
 
 /**
+ * Whether a page asked for this bridge.
+ *
+ * Only a JupyterLab does, from its entry point. It is what separates a view
+ * asking for the bridge to be applied again from a page turning it on.
+ */
+let engaged = false;
+
+/**
  * The theme of a JupyterLab page reaches Primer's PORTALS as well.
  *
  * A dialog, a menu, a tooltip renders under the portal root — a child of
@@ -27,14 +35,30 @@ const MIRROR_STYLE_ID = 'dla-JupyterLab-portal-theme';
  * portal root, where they outrank the stylesheet; the `var()` indirection
  * keeps them live when JupyterLab switches theme.
  *
- * One call is enough for the lifetime of the page — the values are
- * indirections, not snapshots — so it belongs wherever a portal root is
- * set up on a JupyterLab page: `JupyterReactTheme` calls it when it themes
- * itself after JupyterLab, and a JupyterLab extension entry calls it right
- * after `setupPrimerPortals()`, so even an overlay opened before any theme
- * provider mounts comes out in the theme of the page.
+ * A JupyterLab ASKS for this; no component decides it. The portal root is
+ * a single element for the whole document, and what is written on it holds
+ * for every overlay the page opens — not only for the ones belonging to the
+ * view that happens to be on screen. An application that shows a notebook
+ * among its own pages, as the Datalayer web application does, would have
+ * every menu and every dialog of the application repainted in the theme of
+ * JupyterLab by the mere presence of that notebook. So the call belongs to
+ * the ENTRY POINT of a JupyterLab, beside `setupPrimerPortals()`: the
+ * extension of the pip distribution, and the applications that run a
+ * JupyterLab as a React page. Nowhere else — a `JupyterReactTheme` that
+ * mounts is not the page becoming a JupyterLab.
+ *
+ * That one call holds for the lifetime of the page: the values below are
+ * indirections rather than snapshots, so a change of theme needs no second
+ * call. Rules that arrive later are picked up by
+ * `refreshJupyterLabPortalTheme`, which a view may ask for freely — it does
+ * nothing on a page that never engaged the bridge.
  */
 export function syncJupyterLabPortalTheme(): void {
+  engaged = true;
+  applyJupyterLabPortalTheme();
+}
+
+function applyJupyterLabPortalTheme(): void {
   mirrorThemedRulesOntoPortalRoot();
   // Custom properties are outside the CSSProperties type, by design.
   syncPortalThemeStyles({
@@ -98,6 +122,31 @@ function mirrorThemedRulesOntoPortalRoot(): void {
     collectMirroredRules(rules, mirrored);
   }
   styleElement().textContent = mirrored.join('\n');
+}
+
+/**
+ * Apply the bridge again, for a page that asked for it and for no other.
+ *
+ * Two things move under it. The rules copied below are only as complete as
+ * the document was when they were copied, and a JupyterLab is not finished
+ * loading when its entry point runs: the ones jupyter-react scopes to the
+ * themed container — the brand colour of the buttons among them — are
+ * written by styled-components as the first themed view renders, INTO an
+ * existing stylesheet through the CSSOM, which changes no node of the
+ * document and so cannot be watched for. And the tokens are written inline
+ * on a portal root every theme provider of the page writes on in turn, so
+ * the last to render decides. The view that brings either says so here.
+ *
+ * Saying so is not asking for it: on a page that never engaged the bridge —
+ * a web application showing a notebook among its own pages — this does
+ * nothing at all, and the overlays of the application keep the theme of the
+ * application.
+ */
+export function refreshJupyterLabPortalTheme(): void {
+  if (!engaged) {
+    return;
+  }
+  applyJupyterLabPortalTheme();
 }
 
 /** Walk a rule list, keeping the conditions (`@media`, `@supports`) around. */

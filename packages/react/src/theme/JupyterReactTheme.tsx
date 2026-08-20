@@ -16,7 +16,7 @@ import React, {
 import { BaseStyles, ThemeProvider } from '@primer/react';
 import { IThemeManager } from '@jupyterlab/apputils';
 import { setupPrimerPortals } from '@datalayer/primer-addons';
-import { syncJupyterLabPortalTheme as syncJupyterLabPortalThemeTokens } from './JupyterLabPortalTheme';
+import { refreshJupyterLabPortalTheme } from './JupyterLabPortalTheme';
 import { Colormode, JupyterLabCss, jupyterLabTheme } from '../theme';
 import { loadJupyterConfig } from '../jupyter';
 import { useJupyterReactStore } from '../state';
@@ -203,25 +203,26 @@ export function JupyterReactTheme(
     let disconnect: (() => void) | undefined;
 
     /*
-     * The theme of the page reaches Primer's portals as well — the bridge
-     * lives in `JupyterLabPortalTheme`, shared with the extension entries
-     * that set portals up before any provider mounts. Here it runs only
-     * when the page actually is (or holds) a JupyterLab.
+     * The overlays of the page are not turned into JupyterLab ones here.
+     *
+     * Primer draws every overlay of the document under ONE root, so what is
+     * written on it is written for the whole page — and this provider is
+     * mounted by whoever shows a notebook, which is not the same thing as
+     * the page being a JupyterLab. A web application showing a notebook
+     * among its own pages had its own menus and its own dialogs repainted
+     * in the theme of JupyterLab, and left that way. A JupyterLab asks for
+     * that bridge from its entry point instead; what is said here is only
+     * that a themed view has rendered — the moment the rules the bridge
+     * copies are written — which does nothing at all on a page that never
+     * asked for it. See `JupyterLabPortalTheme`.
      */
-    const syncJupyterLabPortalTheme = () => {
-      if (!(inJupyterLab || jupyterLabThemed || jupyterLabAdapter)) {
-        return;
-      }
-      syncJupyterLabPortalThemeTokens();
-    };
-
     const applyColormode = (resolved: 'light' | 'dark') => {
       setColormode(resolved);
       if (colormodeFromStore !== resolved) {
         setColormodeStore(resolved);
       }
       setupPrimerPortals(resolved);
-      syncJupyterLabPortalTheme();
+      refreshJupyterLabPortalTheme();
     };
     const followSystem = (): (() => void) => {
       const media = window.matchMedia('(prefers-color-scheme: dark)');
@@ -283,7 +284,7 @@ export function JupyterReactTheme(
         });
       }
       setupPrimerPortals(resolved);
-      syncJupyterLabPortalTheme();
+      refreshJupyterLabPortalTheme();
       if (!jupyterLabAdapter && colormodeProps === 'auto') {
         disconnect = followSystem();
       }
