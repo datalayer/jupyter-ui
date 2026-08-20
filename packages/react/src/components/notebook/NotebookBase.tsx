@@ -633,16 +633,40 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
 
   // Set kernel
   useEffect(() => {
-    if (context && kernelId && !context.sessionContext.isDisposed) {
-      context.sessionContext.changeKernel({ id: kernelId }).catch(reason => {
-        console.error('Failed to change kernel model.', reason);
-      });
-      /*
-      context.sessionContext.changeKernel({ id: kernelId }).catch(reason => {
-        console.error('Failed to change kernel model.', reason);
-      });
-      */
+    if (!context || !kernelId || context.sessionContext.isDisposed) {
+      return;
     }
+    /*
+     * The session of this path is ADOPTED before its kernel is changed.
+     *
+     * `changeKernel` changes the kernel of the session the context has —
+     * and starts a session when it has none, which is how a notebook ended
+     * up with two. A host that runs its own session context for the same
+     * document (the editors of Datalayer do) had already created one for
+     * this path: this context knew nothing of it, made a second, and both
+     * bound the same kernel. Letting go of the sandbox then tore down one
+     * of the two and the notebook stayed attached to the other.
+     *
+     * `initialize` connects to the session already serving the path when
+     * there is one, and starts nothing when there is not — the preference
+     * of this context forbids it. So the kernel is changed on the one
+     * session either way, and a notebook standing alone still gets the one
+     * session `changeKernel` creates for it.
+     */
+    const bind = async () => {
+      try {
+        if (!context.sessionContext.session) {
+          await context.sessionContext.initialize();
+        }
+        if (context.sessionContext.isDisposed) {
+          return;
+        }
+        await context.sessionContext.changeKernel({ id: kernelId });
+      } catch (reason) {
+        console.error('Failed to change kernel model.', reason);
+      }
+    };
+    void bind();
   }, [context, kernelId]);
 
   // Notebook
