@@ -28,7 +28,7 @@ export default function (
           plugins: 'prepend',
         },
         resolve: {
-          extensions: ['.tsx', '.ts', 'jsx', '.js'],
+          extensions: ['.tsx', '.ts', '.jsx', '.js'],
           alias: {
             stream: 'stream-browserify',
           },

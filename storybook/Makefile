@@ -21,6 +21,10 @@ help: ## display this help
 
 default: help ## default target is help
 
+start: ## start
+	($(CONDA_ACTIVATE) ${ENV_NAME}; \
+	  npm run storybook )
+
 start-storybook: ## start-storybook
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 	  npm run storybook )

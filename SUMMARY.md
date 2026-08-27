@@ -98,7 +98,7 @@ Integration with Meta's Lexical framework for rich text editing in notebooks.
 - Toolbar and formatting controls
 - Output rendering within the editor
 
-### 3. @datalayer/jupyter-docusaurus-plugin (v0.1.2)
+### 3. @datalayer/jupyter-docusaurus-plugin (v1.0.0)
 
 Plugin enabling Jupyter notebook integration in Docusaurus documentation sites.
 
