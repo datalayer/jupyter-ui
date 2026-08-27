@@ -19,11 +19,11 @@ const PROD_RUN_URL = 'https://prod1.datalayer.run';
 
 /**
  * jupyter-react's `loadJupyterConfig` reads the `jupyter-config-data` DOM
- * element (falling back to a hard-coded `oss.datalayer.run` default when it is
+ * element (falling back to a hard-coded `prod1.datalayer.run` default when it is
  * absent). The lexical examples only ship a `datalayer-config-data` element, so
  * we mirror the relevant fields into a `jupyter-config-data` element to ensure
  * every `useJupyter()` call targets the configured Jupyter server instead of
- * the `oss.datalayer.run` fallback.
+ * the `prod1.datalayer.run` fallback.
  */
 const ensureJupyterConfigData = (
   jupyterServerUrl: string,
