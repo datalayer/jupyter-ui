@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { PageConfig, URLExt } from '@jupyterlab/coreutils';
+import { URLExt } from '@jupyterlab/coreutils';
 import { IObservableMap, ObservableMap } from '@jupyterlab/observables';
 import { KernelAPI, Kernel, KernelMessage } from '@jupyterlab/services';
 import {
@@ -37,8 +37,9 @@ export class Kernels implements IKernels {
    * @param options The instantiation options
    */
   constructor(options: Kernels.IOptions) {
-    const { kernelspecs } = options;
+    const { kernelspecs, wsBaseUrl } = options;
     this._kernelspecs = kernelspecs;
+    this._wsBaseUrl = wsBaseUrl;
     // Forward the changed signal from _kernels
     this._kernels.changed.connect((_, args) => {
       this._changed.emit(args);
@@ -58,17 +59,36 @@ export class Kernels implements IKernels {
    * @param options The kernel start options.
    */
   async startNew(options: Kernels.IKernelOptions): Promise<Kernel.IModel> {
-    const { id, name, location } = options;
+    const { id, location } = options;
 
-    const factory = this._kernelspecs.factories.get(name);
-    // bail if there is no factory associated with the requested kernel
+    // A notebook names the kernel it was written against — almost always
+    // `python3`, the name a real Jupyter server uses. In the browser there is
+    // one Python kernel and it is called `python`, so an unknown name resolves
+    // to the default rather than failing: the notebook asked for Python and
+    // Python is what is here.
+    let name = options.name;
+    let factory = this._kernelspecs.factories.get(name);
     if (!factory) {
-      console.error(
-        'No factory associated with',
-        name,
-        this._kernelspecs.factories
+      const fallback = this._kernelspecs.defaultKernelName;
+      const fallbackFactory = this._kernelspecs.factories.get(fallback);
+      if (fallbackFactory) {
+        console.warn(
+          `No kernel named '${name}'; starting the default '${fallback}' instead.`
+        );
+        name = fallback;
+        factory = fallbackFactory;
+      }
+    }
+    if (!factory) {
+      // Nothing to run this on. Throwing beats returning a model with no
+      // kernel behind it: that shape makes JupyterLab believe the kernel
+      // started, and the failure surfaces later as `Kernel died unexpectedly`
+      // with nothing to point at.
+      const available = [...this._kernelspecs.factories.keys()];
+      throw new Error(
+        `No kernel named '${options.name}' is available in the browser` +
+          (available.length ? `; this page has ${available.join(', ')}.` : '.')
       );
-      return { id, name };
     }
 
     // create a synchronization mechanism to allow only one message
@@ -136,7 +156,7 @@ export class Kernels implements IKernels {
 
     // There is one server per kernel which handles multiple clients
     const kernelUrl = URLExt.join(
-      Kernels.WS_BASE_URL,
+      this._wsBaseUrl,
       KernelAPI.KERNEL_SERVICE_URL,
       encodeURIComponent(kernelId),
       'channels'
@@ -263,6 +283,7 @@ export class Kernels implements IKernels {
   private _clients = new ObservableMap<WebSocketClient>();
   private _kernelClients = new ObservableMap<Set<string>>();
   private _kernelspecs: IKernelSpecs;
+  private _wsBaseUrl: string;
   private _changed = new Signal<this, IObservableMap.IChangedArgs<IKernel>>(
     this
   );
@@ -280,6 +301,14 @@ export namespace Kernels {
      * The kernel specs service.
      */
     kernelspecs: IKernelSpecs;
+
+    /**
+     * WebSocket base URL owned by this JupyterLite service manager.
+     *
+     * This must not be read later from PageConfig: another runtime target can
+     * change that global while this in-page manager is still alive.
+     */
+    wsBaseUrl: string;
   }
 
   /**
@@ -302,8 +331,4 @@ export namespace Kernels {
     location: string;
   }
 
-  /**
-   * The base url for the Kernels manager
-   */
-  export const WS_BASE_URL = PageConfig.getBaseUrl().replace(/^http/, 'ws');
 }

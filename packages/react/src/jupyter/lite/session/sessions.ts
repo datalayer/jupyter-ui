@@ -156,11 +156,32 @@ export class Sessions implements ISessions {
     const location = dirname.includes(driveName)
       ? dirname
       : `${driveName}:${dirname}`;
-    const kernel = await this._kernels.startNew({
-      id,
-      name: kernelName,
-      location,
-    });
+    /*
+     * A session may be asked to adopt a kernel that is already running.
+     * `SessionContext.changeKernel({ id })` does exactly that whenever
+     * something else started one first — which is how a notebook attaches its
+     * session to the kernel it just started.
+     *
+     * Reading only the name and starting another left two kernels alive for
+     * one notebook: two Pyodide boots in one page, and the client talking to
+     * whichever of them the session happened to report.
+     */
+    const requestedKernelId = options.kernel?.id;
+    const runningKernel = requestedKernelId
+      ? await this._kernels.get(requestedKernelId)
+      : undefined;
+    const kernel = runningKernel
+      ? { id: runningKernel.id, name: runningKernel.name }
+      : await this._kernels.startNew({
+          /*
+           * A kernel id of its own. The session id names the session; handing
+           * it to the kernel as well makes one identifier stand for two
+           * things, so shutting down either looks like shutting down both.
+           */
+          id: requestedKernelId ?? UUID.uuid4(),
+          name: kernelName,
+          location,
+        });
     const session: Session.IModel = {
       id,
       path,
@@ -173,8 +194,12 @@ export class Sessions implements ISessions {
     };
     this._sessions.push(session);
 
-    // clean up the session on kernel shutdown
-    void this._handleKernelShutdown({ kernelId: id, sessionId: session.id });
+    // Clean up the session when its kernel shuts down. Keyed by the kernel's
+    // own id, which is no longer the session's.
+    void this._handleKernelShutdown({
+      kernelId: kernel.id,
+      sessionId: session.id,
+    });
 
     return session;
   }

@@ -8,6 +8,7 @@
 // Distributed under the terms of the Modified BSD License.
 
 import { PageConfig } from '@jupyterlab/coreutils';
+import { UUID } from '@lumino/coreutils';
 import { Contents as ServerContents, KernelSpec } from '@jupyterlab/services';
 import {
   BroadcastChannelWrapper,
@@ -295,7 +296,10 @@ const kernelsPlugin: JupyterLiteServerPlugin<IKernels> = {
   provides: IKernels,
   requires: [IKernelSpecs],
   activate: (app: JupyterLiteServer, kernelspecs: IKernelSpecs) => {
-    return new Kernels({ kernelspecs });
+    return new Kernels({
+      kernelspecs,
+      wsBaseUrl: app.serviceManager.serverSettings.wsUrl,
+    });
   },
 };
 
@@ -308,7 +312,10 @@ const kernelsRoutesPlugin: JupyterLiteServerPlugin<void> = {
   requires: [IKernels],
   activate: (app: JupyterLiteServer, kernels: IKernels) => {
     // GET /api/kernels - List the running kernels
-    app.router.get('/api/kernels', async (req: Router.IRequest) => {
+    // Anchor the collection route: Router uses RegExp matching, so the plain
+    // `/api/kernels` pattern also consumes `/api/kernels/<id>` and makes the
+    // model route below unreachable during WebSocket reconnects.
+    app.router.get('^/api/kernels/?$', async (req: Router.IRequest) => {
       const res = await kernels.list();
       return new Response(JSON.stringify(res));
     });
@@ -317,14 +324,44 @@ const kernelsRoutesPlugin: JupyterLiteServerPlugin<void> = {
     app.router.post('/api/kernels', async (req: Router.IRequest) => {
       const name = (req.body!['name'] as string) ?? 'python';
       const res = await kernels.startNew({
-        id: '123',
+        // A fresh id per kernel. The id becomes the kernel's WebSocket URL and
+        // mock-socket allows one server per URL, so the fixed `'123'` this
+        // used to send meant a second kernel collided with the first:
+        // `A mock server is already listening on this url`.
+        id: UUID.uuid4(),
         name: name,
         location: '/',
       });
-      return new Response(JSON.stringify(res));
+      // 201, not 200: `@jupyterlab/services` rejects anything else from this
+      // route — `startNew` throws `Invalid response: 200` and the notebook is
+      // left without a kernel. The DELETE route below already says 204.
+      return new Response(JSON.stringify(res), { status: 201 });
     });
 
     // POST /api/kernels/{kernel_id}/restart - Restart a kernel
+    /*
+     * GET /api/kernels/{kernel_id} - The model of one kernel.
+     *
+     * Not optional, however little it looks used. When a kernel's WebSocket
+     * closes early, `@jupyterlab/services` asks this route whether the kernel
+     * is still there: an answer means the close was transient and the client
+     * reconnects, and an error means the kernel is gone. Without the route the
+     * request fails, every early close is read as a death, and the notebook
+     * reports `Kernel died unexpectedly` for a kernel that is running.
+     */
+    app.router.get(
+      '/api/kernels/(.+)',
+      async (req: Router.IRequest, kernelId: string) => {
+        const kernel = await kernels.get(kernelId);
+        if (!kernel) {
+          return new Response(null, { status: 404 });
+        }
+        return new Response(
+          JSON.stringify({ id: kernel.id, name: kernel.name })
+        );
+      }
+    );
+
     app.router.post(
       '/api/kernels/(.*)/restart',
       async (req: Router.IRequest, kernelId: string) => {
