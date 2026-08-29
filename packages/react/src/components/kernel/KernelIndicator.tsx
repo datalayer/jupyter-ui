@@ -7,12 +7,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Box, Button, Link, Text } from '@primer/react';
-import { KernelAPI, KernelMessage } from '@jupyterlab/services';
-import {
+import type { KernelMessage } from '@jupyterlab/services';
+import * as KernelAPI from '@jupyterlab/services/lib/kernel/restapi';
+import type {
   ConnectionStatus,
   IKernelConnection,
 } from '@jupyterlab/services/lib/kernel/kernel';
-import { Environment } from '../environment/Environment';
+import type { Environment } from '../environment/Environment';
 import {
   getKernelIndicatorMeta,
   KERNEL_STATE_LABELS,

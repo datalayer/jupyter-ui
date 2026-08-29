@@ -62,6 +62,11 @@
       "import": "./lib/jupyter-context.js",
       "require": "./lib/jupyter-context.js"
     },
+    "./kernel-indicator": {
+      "types": "./lib/kernel-indicator-entry.d.ts",
+      "import": "./lib/kernel-indicator-entry.js",
+      "require": "./lib/kernel-indicator-entry.js"
+    },
     "./theme": {
       "types": "./lib/theme-entry.d.ts",
       "import": "./lib/theme-entry.js",

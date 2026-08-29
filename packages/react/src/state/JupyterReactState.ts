@@ -224,9 +224,14 @@ export function useJupyterReactStoreFromProps(
     return config;
   }, [lite, jupyterServerUrl, jupyterServerToken, terminals]);
 
+  // Seeded from the props, then from the store: a component reached without a
+  // manager of its own should use the one the application already published —
+  // a JupyterLite sandbox running in this page, say — rather than build a
+  // second one from the configured server URL and poll a host nobody asked
+  // for. The store is what "the fallback" means; building was skipping it.
   const [serviceManager, setServiceManager] = useState<
     ServiceManager.IManager | undefined
-  >(propsServiceManager);
+  >(propsServiceManager ?? jupyterReactStore.getState().serviceManager);
   const [_, setKernel] = useState<Kernel>();
   const [__, setIsLoading] = useState<boolean>(
     startDefaultKernel ||
@@ -261,6 +266,13 @@ export function useJupyterReactStoreFromProps(
       return;
     }
     if (!serviceManager) {
+      // Published by something else in the application while this component
+      // was mounting — adopt it rather than racing it with a second manager.
+      const published = jupyterReactStore.getState().serviceManager;
+      if (published) {
+        setServiceManager(published);
+        return;
+      }
       if (lite) {
         createLiteServiceManager(lite).then(serviceManager => {
           jupyterReactStore.getState().setServiceManager(serviceManager);
