@@ -68,7 +68,9 @@ function normalizePosition(
 }
 
 function isHttpLikeUrl(value: string): boolean {
-  const candidate = String(value || '').trim().toLowerCase();
+  const candidate = String(value || '')
+    .trim()
+    .toLowerCase();
   return (
     candidate.startsWith('http://') ||
     candidate.startsWith('https://') ||
@@ -118,6 +120,12 @@ export type KernelIndicatorProps = {
   label?: string;
   overlayTitle?: string;
   kernel?: IKernelConnection | null;
+  /** Kernel identity supplied by status-only integrations without a connection. */
+  kernelId?: string;
+  kernelName?: string;
+  /** Server details supplied by status-only integrations. */
+  serverUrl?: string;
+  websocketUrl?: string;
   env?: Environment;
   state?: ExecutionState;
   environmentName?: string;
@@ -142,6 +150,10 @@ export const KernelIndicator = ({
   label = '',
   overlayTitle = 'Code Sandbox Details',
   kernel,
+  kernelId,
+  kernelName,
+  serverUrl,
+  websocketUrl,
   env,
   state,
   environmentName,
@@ -407,8 +419,8 @@ export const KernelIndicator = ({
     connectionStatus,
     status,
     envDisplayName: resolvedEnvironmentName,
-    kernelId: kernel?.id,
-    kernelName: kernel?.name,
+    kernelId: kernel?.id ?? kernelId,
+    kernelName: kernel?.name ?? kernelName,
     clientId: kernel?.clientId,
     username: kernel?.username,
   });
@@ -443,8 +455,11 @@ export const KernelIndicator = ({
   ];
 
   const identityDetails: Array<{ label: string; value: string }> = [
-    { label: 'Kernel Name', value: kernel?.name ?? 'unknown-kernel' },
-    { label: 'Kernel ID', value: kernel?.id ?? 'no-kernel' },
+    {
+      label: 'Kernel Name',
+      value: kernel?.name ?? kernelName ?? 'unknown-kernel',
+    },
+    { label: 'Kernel ID', value: kernel?.id ?? kernelId ?? 'no-kernel' },
     { label: 'Client ID', value: kernel?.clientId ?? 'unknown-client' },
     { label: 'User', value: kernel?.username ?? 'unknown-user' },
   ];
@@ -455,11 +470,13 @@ export const KernelIndicator = ({
       value:
         kernelAny?.serverSettings?.baseUrl ??
         kernelAny?.serverSettings?.appUrl ??
+        serverUrl ??
         'unknown-url',
     },
     {
       label: 'WebSocket URL',
-      value: kernelAny?.serverSettings?.wsUrl ?? 'unknown-ws-url',
+      value:
+        kernelAny?.serverSettings?.wsUrl ?? websocketUrl ?? 'unknown-ws-url',
     },
     {
       label: 'Path',
