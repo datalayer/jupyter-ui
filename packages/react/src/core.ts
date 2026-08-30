@@ -52,6 +52,9 @@ export {
 
 export {
   loadJupyterConfig,
+  // The read-only question. `loadJupyterConfig` answers it too, and writes the
+  // page's Jupyter URLs on the way past — never ask it during a render.
+  isServedByJupyterLab,
   type IJupyterConfig,
 } from './jupyter/JupyterConfig';
 

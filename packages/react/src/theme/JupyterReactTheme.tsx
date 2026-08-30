@@ -18,7 +18,7 @@ import { IThemeManager } from '@jupyterlab/apputils';
 import { setupPrimerPortals } from '@datalayer/primer-addons';
 import { refreshJupyterLabPortalTheme } from './JupyterLabPortalTheme';
 import { Colormode, JupyterLabCss, jupyterLabTheme } from '../theme';
-import { loadJupyterConfig } from '../jupyter';
+import { isServedByJupyterLab } from '../jupyter';
 import { useJupyterReactStore } from '../state';
 
 import '@primer/primitives/dist/css/functional/themes/light.css';
@@ -108,12 +108,20 @@ export function JupyterReactTheme(
     return cm;
   };
 
-  // Detect JupyterLab synchronously — loadJupyterConfig() only reads the DOM,
-  // no need to defer to an effect (which caused a blank first frame).
-  const [inJupyterLab] = useState(() => {
-    const { insideJupyterLab } = loadJupyterConfig();
-    return insideJupyterLab;
-  });
+  /*
+   * Detect JupyterLab synchronously, without touching anything.
+   *
+   * It used to ask `loadJupyterConfig()`, on the stated grounds that the call
+   * "only reads the DOM". It does not: it rebuilds the module configuration
+   * and writes `baseUrl` and `wsUrl` into the shared `PageConfig`. So every
+   * render of this theme quietly repointed the whole page at the server named
+   * in `jupyter-config-data` — which broke an in-page JupyterLite kernel that
+   * had pointed the page at its own origin moments earlier, with cells that
+   * ran into silence and no error anywhere to say why.
+   *
+   * `isServedByJupyterLab` answers the same question and writes nothing.
+   */
+  const [inJupyterLab] = useState(isServedByJupyterLab);
   /**
    * Whether a JupyterLab of this page has applied a theme.
    *
