@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { useEffect } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
 import { createGlobalStyle } from 'styled-components';
 import { Colormode } from './JupyterLabColormode';
 
@@ -23,10 +23,93 @@ export type JupyterLabCssProps = {
   manageThemeLinks?: boolean;
 };
 
+/** Resolves when the JupyterLab stylesheets are in the document. */
+let cssReady: Promise<void> | null = null;
+
+/** Subscribers waiting to re-render once the stylesheets have landed. */
+const cssListeners = new Set<() => void>();
+
 /**
- * Global flag avoiding loading styles more than once.
+ * Load the JupyterLab stylesheets, once, and say when they are in.
+ *
+ * These arrive as eighteen separate dynamic `import()`s — that is, eighteen
+ * webpack chunks fetched over the network — and until they land, anything
+ * rendered against them is drawn with no rules at all. Firing them from an
+ * effect and returning immediately, which is what this used to do, means the
+ * first visit to a page with a notebook on it paints an unstyled notebook and
+ * then repairs itself; a reload looks correct only because the chunks are in
+ * the browser cache by then. That is the whole of the "broken layout until I
+ * refresh" report.
+ *
+ * So the work is exposed as a promise the components that actually need these
+ * rules can wait on, rather than a fire-and-forget effect.
+ *
+ * It resolves on failure too. A chunk that 404s must leave a caller showing an
+ * ugly notebook — which is where we were — and never a caller waiting forever
+ * on a stylesheet that is not coming.
  */
-let isLoaded = false;
+export function loadJupyterLabCss(): Promise<void> {
+  if (cssReady) {
+    return cssReady;
+  }
+  cssReady = Promise.all([
+    import('@jupyterlab/apputils/style/index.js'),
+    import('@jupyterlab/cells/style/index.js'),
+    import('@jupyterlab/codeeditor/style/index.js'),
+    import('@jupyterlab/codemirror/style/index.js'),
+    import('@jupyterlab/completer/style/index.js'),
+    import('@jupyterlab/console/style/index.js'),
+    import('@jupyterlab/documentsearch/style/index.js'),
+    import('@jupyterlab/filebrowser/style/index.js'),
+    import('@jupyterlab/mathjax-extension/style/index.js'),
+    import('@jupyterlab/notebook/style/index.js'),
+    import('@jupyterlab/outputarea/style/index.js'),
+    import('@jupyterlab/rendermime/style/index.js'),
+    import('@jupyterlab/terminal/style/index.js'),
+    import('@jupyterlab/ui-components/style/index.js'),
+    // ipywidgets.
+    import('@jupyter-widgets/base/css/index.css'),
+    import('@jupyter-widgets/controls/css/widgets-base.css'),
+  ])
+    .catch(() => undefined)
+    .then(() => {
+      cssLoaded = true;
+      for (const notify of cssListeners) {
+        notify();
+      }
+    });
+  return cssReady;
+}
+
+let cssLoaded = false;
+
+function subscribeToCss(notify: () => void): () => void {
+  cssListeners.add(notify);
+  return () => {
+    cssListeners.delete(notify);
+  };
+}
+
+/**
+ * Whether the JupyterLab stylesheets are in the document yet.
+ *
+ * For components that are unreadable without them — a notebook, a console —
+ * so they can hold their first paint instead of flashing an unstyled one.
+ * Returns `true` synchronously once the sheets are in, so a second notebook on
+ * the same page never waits.
+ */
+export function useJupyterLabCssLoaded(): boolean {
+  useEffect(() => {
+    void loadJupyterLabCss();
+  }, []);
+  return useSyncExternalStore(
+    subscribeToCss,
+    () => cssLoaded,
+    // Server render: assume present rather than withhold content from a
+    // crawler that will never run the effect.
+    () => true
+  );
+}
 
 /**
  * Components loading the JupyterLab CSS stylesheets.
@@ -34,30 +117,7 @@ let isLoaded = false;
 export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
   const { colormode = 'light', manageThemeLinks = true } = props;
   useEffect(() => {
-    if (isLoaded) {
-      // no-op
-      return;
-    }
-    isLoaded = true;
-    import('@jupyterlab/apputils/style/index.js');
-    import('@jupyterlab/cells/style/index.js');
-    import('@jupyterlab/cells/style/index.js');
-    import('@jupyterlab/codeeditor/style/index.js');
-    import('@jupyterlab/codeeditor/style/index.js');
-    import('@jupyterlab/codemirror/style/index.js');
-    import('@jupyterlab/completer/style/index.js');
-    import('@jupyterlab/console/style/index.js');
-    import('@jupyterlab/documentsearch/style/index.js');
-    import('@jupyterlab/filebrowser/style/index.js');
-    import('@jupyterlab/mathjax-extension/style/index.js');
-    import('@jupyterlab/notebook/style/index.js');
-    import('@jupyterlab/outputarea/style/index.js');
-    import('@jupyterlab/rendermime/style/index.js');
-    import('@jupyterlab/terminal/style/index.js');
-    import('@jupyterlab/ui-components/style/index.js');
-    // ipywidgets.
-    import('@jupyter-widgets/base/css/index.css');
-    import('@jupyter-widgets/controls/css/widgets-base.css');
+    void loadJupyterLabCss();
   }, [colormode]);
 
   /*
