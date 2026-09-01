@@ -33,7 +33,30 @@ function ThemedSidebarWrapper({
 }): JSX.Element {
   const backgroundColor = useJupyterReactStore(state => state.backgroundColor);
   return (
-    <JupyterReactTheme backgroundColor={backgroundColor}>
+    /*
+      No JupyterLab CSS from here.
+
+      This theme is nested inside a notebook that already has one, and it
+      exists for a single reason: to give the sidebar the same background and
+      Primer context as the cells beside it. Loading the global JupyterLab
+      stylesheets a second time is at best redundant — and it was not at best.
+
+      `JupyterLabCss` also *manages* those styles, and a nested instance
+      manages them on behalf of the whole document. This one is rendered with
+      no `colormode` prop, so its `manageThemeLinks` is decided entirely by
+      whether the page looks like a JupyterLab — a registered adapter, a theme
+      attribute on the body — and on a Datalayer runtime page it does. The
+      moment that turned true, this instance's effect removed
+      `style[data-jupyterlab-theme]` from the document: the variables the
+      notebook's own theme had injected a moment earlier.
+
+      That is the "cell renders correctly and then collapses" report. It never
+      appeared in the examples because nothing there registers an adapter.
+    */
+    <JupyterReactTheme
+      backgroundColor={backgroundColor}
+      loadJupyterLabCss={false}
+    >
       {children}
     </JupyterReactTheme>
   );

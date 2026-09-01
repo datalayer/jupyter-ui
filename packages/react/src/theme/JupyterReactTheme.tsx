@@ -18,7 +18,7 @@ import { IThemeManager } from '@jupyterlab/apputils';
 import { setupPrimerPortals } from '@datalayer/primer-addons';
 import { refreshJupyterLabPortalTheme } from './JupyterLabPortalTheme';
 import { Colormode, JupyterLabCss, jupyterLabTheme } from '../theme';
-import { isServedByJupyterLab } from '../jupyter';
+import { ensureJupyterConfig, isServedByJupyterLab } from '../jupyter';
 import { useJupyterReactStore } from '../state';
 
 import '@primer/primitives/dist/css/functional/themes/light.css';
@@ -121,7 +121,17 @@ export function JupyterReactTheme(
    *
    * `isServedByJupyterLab` answers the same question and writes nothing.
    */
-  const [inJupyterLab] = useState(isServedByJupyterLab);
+  const [inJupyterLab] = useState(() => {
+    /*
+     * Building the configuration is the half of `loadJupyterConfig` that was
+     * always wanted here. Removing that call to stop it repointing the page
+     * also stopped the singleton being built — and nothing else in this
+     * package builds it, so four accessors began throwing. `ensureJupyterConfig`
+     * writes nothing to `PageConfig`.
+     */
+    ensureJupyterConfig();
+    return isServedByJupyterLab();
+  });
   /**
    * Whether a JupyterLab of this page has applied a theme.
    *

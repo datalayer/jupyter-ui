@@ -75,6 +75,42 @@ export const isServedByJupyterLab = (): boolean => {
 };
 
 /**
+ * Make sure the module configuration exists, without repointing the page.
+ *
+ * `loadJupyterConfig` does two separable things: it builds this singleton,
+ * which four accessors below refuse to work without, and it writes `baseUrl`
+ * and `wsUrl` into the shared `PageConfig`. Only the second was ever a
+ * problem — a component calling it during render moved every Jupyter
+ * connection on the page — and when that call was removed from
+ * `JupyterReactTheme` the first went with it. Nothing else in this package
+ * called `loadJupyterConfig`, so the singleton stopped being built at all and
+ * every one of those accessors began throwing "Jupyter React Config must be
+ * loaded first".
+ *
+ * This is the half that was wanted: it adopts whatever `PageConfig` already
+ * says rather than deciding for it, so a JupyterLite kernel that has pointed
+ * the page at its own origin keeps it.
+ *
+ * Idempotent, and safe to call during a render.
+ */
+export const ensureJupyterConfig = (): IJupyterConfig => {
+  if (config) {
+    return config;
+  }
+  const baseUrl = PageConfig.getOption('baseUrl');
+  config = {
+    // Read, never written. Whoever set `baseUrl` — a JupyterLite server, a
+    // host application, JupyterLab itself — is the authority on it.
+    jupyterServerUrl: baseUrl || DEFAULT_JUPYTER_SERVER_URL,
+    jupyterServerToken:
+      PageConfig.getOption('token') || DEFAULT_JUPYTER_SERVER_TOKEN,
+    insideJupyterLab: isServedByJupyterLab(),
+    insideJupyterHub: PageConfig.getOption('hubHost') !== '',
+  };
+  return config;
+};
+
+/**
  * Setter for jupyterServerUrl.
  */
 export const setJupyterServerUrl = (jupyterServerUrl: string) => {

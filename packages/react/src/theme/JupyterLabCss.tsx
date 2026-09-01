@@ -4,7 +4,7 @@
  * MIT License
  */
 
-import { useEffect, useSyncExternalStore } from 'react';
+import { useEffect, useRef, useSyncExternalStore } from 'react';
 import { createGlobalStyle } from 'styled-components';
 import { Colormode } from './JupyterLabColormode';
 
@@ -22,6 +22,17 @@ export type JupyterLabCssProps = {
   colormode?: Colormode;
   manageThemeLinks?: boolean;
 };
+
+/**
+ * Which run of the theme effect currently owns the injected variables.
+ *
+ * The injection waits on a dynamic import, and the question when it lands is
+ * not "does the effect that started me still exist" but "has anything newer
+ * asked for a different theme". Those came to the same thing only by
+ * accident, and where they differ — an effect torn down while its chunk is
+ * still in flight — the old test threw the variables away for good.
+ */
+let themeEpoch = 0;
 
 /** Resolves when the JupyterLab stylesheets are in the document. */
 let cssReady: Promise<void> | null = null;
@@ -44,40 +55,70 @@ const cssListeners = new Set<() => void>();
  * So the work is exposed as a promise the components that actually need these
  * rules can wait on, rather than a fire-and-forget effect.
  *
- * It resolves on failure too. A chunk that 404s must leave a caller showing an
- * ugly notebook — which is where we were — and never a caller waiting forever
- * on a stylesheet that is not coming.
+ * It resolves on failure too — but only once every one of them has settled. A
+ * chunk that 404s must leave a caller showing an ugly notebook, never a caller
+ * waiting forever on a stylesheet that is not coming; it must equally not
+ * release a caller while the other fifteen are still arriving.
  */
 export function loadJupyterLabCss(): Promise<void> {
   if (cssReady) {
     return cssReady;
   }
-  cssReady = Promise.all([
-    import('@jupyterlab/apputils/style/index.js'),
-    import('@jupyterlab/cells/style/index.js'),
-    import('@jupyterlab/codeeditor/style/index.js'),
-    import('@jupyterlab/codemirror/style/index.js'),
-    import('@jupyterlab/completer/style/index.js'),
-    import('@jupyterlab/console/style/index.js'),
-    import('@jupyterlab/documentsearch/style/index.js'),
-    import('@jupyterlab/filebrowser/style/index.js'),
-    import('@jupyterlab/mathjax-extension/style/index.js'),
-    import('@jupyterlab/notebook/style/index.js'),
-    import('@jupyterlab/outputarea/style/index.js'),
-    import('@jupyterlab/rendermime/style/index.js'),
-    import('@jupyterlab/terminal/style/index.js'),
-    import('@jupyterlab/ui-components/style/index.js'),
+  const sheets: [string, Promise<unknown>][] = [
+    ['@jupyterlab/apputils/style/index.js', import('@jupyterlab/apputils/style/index.js')],
+    ['@jupyterlab/cells/style/index.js', import('@jupyterlab/cells/style/index.js')],
+    ['@jupyterlab/codeeditor/style/index.js', import('@jupyterlab/codeeditor/style/index.js')],
+    ['@jupyterlab/codemirror/style/index.js', import('@jupyterlab/codemirror/style/index.js')],
+    ['@jupyterlab/completer/style/index.js', import('@jupyterlab/completer/style/index.js')],
+    ['@jupyterlab/console/style/index.js', import('@jupyterlab/console/style/index.js')],
+    ['@jupyterlab/documentsearch/style/index.js', import('@jupyterlab/documentsearch/style/index.js')],
+    ['@jupyterlab/filebrowser/style/index.js', import('@jupyterlab/filebrowser/style/index.js')],
+    ['@jupyterlab/mathjax-extension/style/index.js', import('@jupyterlab/mathjax-extension/style/index.js')],
+    ['@jupyterlab/notebook/style/index.js', import('@jupyterlab/notebook/style/index.js')],
+    ['@jupyterlab/outputarea/style/index.js', import('@jupyterlab/outputarea/style/index.js')],
+    ['@jupyterlab/rendermime/style/index.js', import('@jupyterlab/rendermime/style/index.js')],
+    ['@jupyterlab/terminal/style/index.js', import('@jupyterlab/terminal/style/index.js')],
+    ['@jupyterlab/ui-components/style/index.js', import('@jupyterlab/ui-components/style/index.js')],
     // ipywidgets.
-    import('@jupyter-widgets/base/css/index.css'),
-    import('@jupyter-widgets/controls/css/widgets-base.css'),
-  ])
-    .catch(() => undefined)
-    .then(() => {
+    ['@jupyter-widgets/base/css/index.css', import('@jupyter-widgets/base/css/index.css')],
+    ['@jupyter-widgets/controls/css/widgets-base.css', import('@jupyter-widgets/controls/css/widgets-base.css')],
+  ];
+
+  /*
+   * `allSettled`, and emphatically not `Promise.all`.
+   *
+   * `Promise.all` rejects the instant any one of these rejects, and the
+   * `.catch` that followed it then announced the stylesheets were ready while
+   * the other fifteen were still in flight. A notebook waiting on this would
+   * be released against a partial stylesheet — styled enough to look
+   * deliberate, wrong enough to be unusable — and because the rejection was
+   * swallowed, with nothing in the console to say so. `allSettled` waits for
+   * every one of them however they end.
+   */
+  cssReady = Promise.allSettled(sheets.map(([, loading]) => loading)).then(
+    results => {
+      const failed = results
+        .map((result, index) =>
+          result.status === 'rejected' ? sheets[index][0] : null,
+        )
+        .filter((name): name is string => name !== null);
+      if (failed.length > 0) {
+        // Loudly. A stylesheet that does not arrive is the difference between
+        // a notebook and a wall of unstyled text, and the previous silence
+        // here is why that had to be diagnosed by reading rather than by
+        // looking.
+        console.error(
+          `[jupyter-react] ${failed.length} JupyterLab stylesheet(s) failed to load; ` +
+            'the notebook will render without them: ' +
+            failed.join(', '),
+        );
+      }
       cssLoaded = true;
       for (const notify of cssListeners) {
         notify();
       }
-    });
+    },
+  );
   return cssReady;
 }
 
@@ -132,11 +173,26 @@ export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
    * application it is rendered in is discovered after the first render, so
    * what was pinned before is dropped here rather than left behind.
    */
+  /*
+   * Whether *this* instance is the one that injected the variables.
+   *
+   * The cleanup below used to remove `style[data-jupyterlab-theme]` whatever
+   * put it there. That is right for an instance undoing its own work — it
+   * pinned a colormode, then discovered a JupyterLab owns the page, and gets
+   * out of the way — and catastrophic for one that never injected anything:
+   * it deletes the variables another, live theme is relying on, and the
+   * notebook collapses to unstyled text in front of the reader.
+   *
+   * A component may only take back what it put there.
+   */
+  const injectedHere = useRef(false);
+
   useEffect(() => {
-    if (manageThemeLinks) {
+    if (manageThemeLinks || !injectedHere.current) {
       return;
     }
     document.body.querySelector(`style[${DATA_JUPYTERLAB_THEME}]`)?.remove();
+    injectedHere.current = false;
   }, [manageThemeLinks]);
 
   useEffect(() => {
@@ -191,9 +247,29 @@ export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
         });
     }
 
-    // The variables are read from a module, which arrives after this effect
-    // may have been undone: nothing is pinned once it no longer applies.
-    let disposed = false;
+    /*
+     * Claim this run, so a later one can supersede it.
+     *
+     * This replaces a `disposed` flag set by the effect's own cleanup, and
+     * the difference is the bug. The `--jp-*` variables are read from a
+     * dynamically imported module, and if the effect was cleaned up before
+     * that import resolved — a remount, a colormode that settled a beat
+     * later — the injection was skipped and never attempted again, because
+     * nothing re-runs an effect whose dependencies have not changed. The page
+     * was then left with the structural JupyterLab CSS and none of the
+     * variables: a notebook that lays out but is entirely unstyled, and
+     * `style[data-jupyterlab-theme]` simply absent from the document.
+     *
+     * It only showed up where the tree was still churning when the notebook
+     * mounted — arriving at a runtime page straight from creating the agent,
+     * rather than from a list or a reload, where the notebook mounts into
+     * something settled and the chunk is already cached.
+     *
+     * What must not happen is a *stale* colormode landing on top of a newer
+     * one. That is an ordering question, and an epoch answers it exactly.
+     */
+    themeEpoch += 1;
+    const epoch = themeEpoch;
 
     // Observe <body> for new <link> nodes added by the theme manager
     const observer = new MutationObserver(mutations => {
@@ -214,7 +290,8 @@ export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
     theme
       ?.then(module => {
         const css = module.default;
-        if (css && !disposed) {
+        // Superseded only by a newer run, not by our own teardown.
+        if (css && epoch === themeEpoch) {
           // Remove any previously injected theme style tag
           document.body
             .querySelector(`style[${DATA_JUPYTERLAB_THEME}]`)
@@ -229,6 +306,7 @@ export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
 ${css}
 </style>`
           );
+          injectedHere.current = true;
         }
       })
       .catch(err => {
@@ -239,7 +317,6 @@ ${css}
       });
 
     return () => {
-      disposed = true;
       observer.disconnect();
       silenced.forEach(link => {
         link.disabled = false;
