@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import type React from 'react';
 import { ReactWidget } from '@jupyterlab/apputils';
 import type { Cell, ICellModel } from '@jupyterlab/cells';

@@ -11,6 +11,7 @@
  * @module lexical/plugins/LSPCompletionMenu
  */
 
+import type { JSX } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import type { LSPCompletionItem, LSPCompletionItemKind } from './lspTypes';
 

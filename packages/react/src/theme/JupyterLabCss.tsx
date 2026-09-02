@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import { useEffect, useRef, useSyncExternalStore } from 'react';
 import { createGlobalStyle } from 'styled-components';
 import { Colormode } from './JupyterLabColormode';

@@ -10,6 +10,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import type { LexicalCommand } from 'lexical';
 
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';

@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import { useState } from 'react';
 import { PageHeader, Label, Text, Link, Box } from '@primer/react';
 import { SkubbleIcon } from '@datalayer/icons-react/eggs';

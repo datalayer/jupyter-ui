@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import { useEffect, useState } from 'react';
 import {
   ChevronDownIcon,

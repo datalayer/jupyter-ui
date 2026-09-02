@@ -10,6 +10,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { TablePlugin as LexicalTablePlugin } from '@lexical/react/LexicalTablePlugin';
 import { INSERT_TABLE_COMMAND } from '@lexical/table';

@@ -8,6 +8,7 @@
  * ComponentPickerMenuPlugin - Slash command menu.
  */
 
+import type { JSX } from 'react';
 import { $createCodeNode } from '@lexical/code';
 import { fetchRandomGif } from '../utils/giphy';
 import {

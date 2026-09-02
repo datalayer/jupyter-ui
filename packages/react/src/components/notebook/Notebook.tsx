@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import React, { useEffect, useState } from 'react';
 import { createGlobalStyle } from 'styled-components';
 import type { INotebookContent } from '@jupyterlab/nbformat';

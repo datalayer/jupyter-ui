@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import { FormControl, TextInput as PrimerTextInput } from '@primer/react';
 
 type Props = Readonly<{

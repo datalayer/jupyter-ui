@@ -10,6 +10,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import type { PropsWithChildren } from 'react';
 import { Box, DatalayerThemeProvider } from '@datalayer/primer-addons';
 import {

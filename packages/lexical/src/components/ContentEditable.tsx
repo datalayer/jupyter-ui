@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import type { CSSProperties } from 'react';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 

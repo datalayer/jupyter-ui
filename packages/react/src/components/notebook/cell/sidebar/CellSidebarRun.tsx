@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import { PlayIcon } from '@primer/octicons-react';
 import { Box, Button } from '@primer/react';
 import { NotebookCommandIds } from '../../NotebookCommands';

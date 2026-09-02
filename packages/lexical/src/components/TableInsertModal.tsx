@@ -10,6 +10,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import { useRef, useState } from 'react';
 import { Dialog, FormControl, TextInput, Box } from '@primer/react';
 

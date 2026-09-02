@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import { useState } from 'react';
 import { LexicalEditor } from 'lexical';
 import { fetchRandomGif } from './../utils/giphy';

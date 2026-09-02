@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import { ChangeEvent, RefObject } from 'react';
 
 type BaseEquationEditorProps = {

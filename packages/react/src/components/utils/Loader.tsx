@@ -10,6 +10,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import { Box, Heading, Spinner } from '@primer/react';
 
 export function Loader(props: { message?: string }): JSX.Element {

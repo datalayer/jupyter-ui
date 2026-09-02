@@ -10,6 +10,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import type {
   EditorConfig,
   ElementFormatType,

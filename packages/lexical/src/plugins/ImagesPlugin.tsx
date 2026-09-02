@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { fetchRandomGif } from '../utils/giphy';
 import { $wrapNodeInElement, mergeRegister } from '@lexical/utils';

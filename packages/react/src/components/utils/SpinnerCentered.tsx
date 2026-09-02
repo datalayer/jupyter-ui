@@ -10,6 +10,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import { Box, Spinner } from '@primer/react';
 
 export function SpinnerCentered(): JSX.Element {

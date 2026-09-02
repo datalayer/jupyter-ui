@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import type { HeadingTagType } from '@lexical/rich-text';
 import type { NodeKey } from 'lexical';

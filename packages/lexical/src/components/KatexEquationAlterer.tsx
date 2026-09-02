@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import { useCallback, useState } from 'react';
 import Button from '../components/Button';
 import KatexRenderer from './KatexRenderer';

@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import { ICellModel } from '@jupyterlab/cells';
 import { CheckIcon } from '@primer/octicons-react';
 import { ActionList, TextInput } from '@primer/react';
