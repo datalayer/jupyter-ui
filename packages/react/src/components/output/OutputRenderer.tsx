@@ -8,8 +8,8 @@ import { IOutput } from '@jupyterlab/nbformat';
 import AnsiToHtml from 'ansi-to-html';
 
 const ansiConverter = new AnsiToHtml({
-  fg: '#000',
-  bg: '#fff',
+  fg: 'currentColor',
+  bg: 'transparent',
   newline: false,
   escapeXML: false,
 });
@@ -72,12 +72,14 @@ export const OutputRenderer = (props: OutputRendererProps) => {
   let plain: string | undefined;
   let html: string | undefined;
   let img: string | undefined;
+  const isError =
+    output.output_type === 'error' ||
+    (output.output_type === 'stream' && output.name === 'stderr');
   switch (output.output_type) {
     case 'error': {
       // Convert ANSI escape codes to HTML for colored error output
       const tracebackText = (output.traceback as string[]).join('\n');
       html = ansiConverter.toHtml(tracebackText);
-      plain = tracebackText;
       break;
     }
     case 'stream': {
@@ -98,7 +100,7 @@ export const OutputRenderer = (props: OutputRendererProps) => {
       if (data) {
         const image_png = data['image/png'];
         if (image_png) {
-          img = image_png;
+          img = Array.isArray(image_png) ? image_png.join('') : image_png;
         }
       }
       break;
@@ -106,8 +108,12 @@ export const OutputRenderer = (props: OutputRendererProps) => {
     case 'execute_result': {
       const data = output.data as any;
       if (data) {
+        const image_png = data['image/png'];
+        if (image_png) {
+          img = Array.isArray(image_png) ? image_png.join('') : image_png;
+        }
         const text_plain = data['text/plain'];
-        if (text_plain) {
+        if (text_plain && !img) {
           if (typeof text_plain === 'string') {
             plain = text_plain;
           } else if (Array.isArray(text_plain)) {
@@ -117,7 +123,7 @@ export const OutputRenderer = (props: OutputRendererProps) => {
           }
         }
         const text_html = data['text/html'];
-        if (text_html) {
+        if (text_html && !img) {
           if (typeof text_html === 'string') {
             html = text_html;
           } else {
@@ -132,15 +138,34 @@ export const OutputRenderer = (props: OutputRendererProps) => {
     <>
       {plain && (
         <pre
+          className={isError ? 'jp-RenderedText' : undefined}
+          data-mime-type={
+            isError ? 'application/vnd.jupyter.stderr' : undefined
+          }
           style={{
-            color: 'black',
-            backgroundColor: 'white',
+            color: isError
+              ? 'var(--jp-error-color1, var(--fgColor-danger, #d32f2f))'
+              : 'inherit',
+            backgroundColor: 'transparent',
           }}
         >
           {plain}
         </pre>
       )}
-      {html && (
+      {html && isError && (
+        <pre
+          className="jp-RenderedText"
+          data-mime-type="application/vnd.jupyter.stderr"
+          style={{
+            color:
+              'var(--jp-error-color1, var(--fgColor-danger, #d32f2f))',
+            backgroundColor: 'transparent',
+            whiteSpace: 'pre-wrap',
+          }}
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
+      )}
+      {html && !isError && (
         <div>
           <div dangerouslySetInnerHTML={{ __html: html }} />
         </div>

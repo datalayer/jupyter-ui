@@ -45,7 +45,7 @@ export const CodeMirrorEditor = (props: {
   const kernelRef = useRef(kernel);
   const dataset = outputStore.getDataset(sourceId);
   const source = outputStore.getInput(sourceId);
-  const editorDiv = useRef<HTMLDivElement>();
+  const editorDiv = useRef<HTMLDivElement | undefined>(undefined);
 
   useEffect(() => {
     disableRunRef.current = disableRun;

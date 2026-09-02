@@ -88,8 +88,8 @@ export function AutoIndentPlugin({
   const [editor] = useLexicalComposerContext();
 
   // Create registry and engine (stable references)
-  const registryRef = useRef<LanguageIndentRegistry>();
-  const engineRef = useRef<AutoIndentEngine>();
+  const registryRef = useRef<LanguageIndentRegistry | undefined>(undefined);
+  const engineRef = useRef<AutoIndentEngine | undefined>(undefined);
 
   if (!registryRef.current) {
     registryRef.current = new LanguageIndentRegistry({

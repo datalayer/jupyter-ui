@@ -8,7 +8,7 @@ import { useState, useEffect, useRef } from 'react';
 
 export const Countdown = (props: { count: number }) => {
   const [count, setCount] = useState(props.count);
-  const intervalRef = useRef<number>();
+  const intervalRef = useRef<number | undefined>(undefined);
   const decreaseNum = () => setCount(prev => prev - 1);
   useEffect(() => {
     setCount(props.count);

@@ -378,9 +378,15 @@ export const JupyterInputOutputPlugin = (
 
   // Handle Enter key - distinguish between Enter and Shift+Enter
   useEffect(() => {
-    return editor.registerCommand<KeyboardEvent>(
+    return editor.registerCommand<KeyboardEvent | null>(
       KEY_ENTER_COMMAND,
       event => {
+        // Lexical 0.49 types this command's payload as nullable. The browser
+        // always supplies the event, and with none there is no modifier key to
+        // read, so decline the command rather than guess at Shift.
+        if (!event) {
+          return false;
+        }
         const selection = $getSelection();
         const node = selection?.getNodes()[0];
         if (node?.__parent) {
