@@ -187,74 +187,83 @@ export const JupyterInputOutputPlugin = (
 
         for (const [nodeKey, mutation] of mutatedNodes) {
           if (mutation === 'destroyed') {
-            editor.update(
-              () => {
-                let jupyterInputNodeUuid: string | undefined;
-                let jupyterOutputNodeUuid: string | undefined;
+            // Mutation listeners run in the middle of a commit; starting a
+            // new update from here recurses into nested commits on lexical
+            // 0.49 (stack overflow, then reconciler recovery remounting
+            // every decorator). Defer off the commit stack first.
+            queueMicrotask(() =>
+              editor.update(
+                () => {
+                  let jupyterInputNodeUuid: string | undefined;
+                  let jupyterOutputNodeUuid: string | undefined;
 
-                // Find the UUID for the destroyed input node
-                INPUT_UUID_TO_CODE_KEY.forEach(
-                  (codeKey: NodeKey, codeUuid: UUID) => {
-                    if (codeKey === nodeKey) {
-                      jupyterInputNodeUuid = codeUuid;
-                      jupyterOutputNodeUuid =
-                        INPUT_UUID_TO_OUTPUT_UUID.get(codeUuid);
-                    }
-                  },
-                );
-
-                if (jupyterInputNodeUuid && jupyterOutputNodeUuid) {
-                  // Remove the corresponding output node
-                  const outputNodeKey = OUTPUT_UUID_TO_OUTPUT_KEY.get(
-                    jupyterOutputNodeUuid,
+                  // Find the UUID for the destroyed input node
+                  INPUT_UUID_TO_CODE_KEY.forEach(
+                    (codeKey: NodeKey, codeUuid: UUID) => {
+                      if (codeKey === nodeKey) {
+                        jupyterInputNodeUuid = codeUuid;
+                        jupyterOutputNodeUuid =
+                          INPUT_UUID_TO_OUTPUT_UUID.get(codeUuid);
+                      }
+                    },
                   );
-                  if (outputNodeKey) {
-                    const outputNode = $getNodeByKey(outputNodeKey);
-                    if (outputNode) {
-                      outputNode.markDirty();
-                      (outputNode as JupyterOutputNode).removeForce();
-                    }
-                  }
 
-                  // Clean up all map entries
-                  INPUT_UUID_TO_CODE_KEY.delete(jupyterInputNodeUuid);
-                  INPUT_UUID_TO_OUTPUT_KEY.delete(jupyterInputNodeUuid);
-                  INPUT_UUID_TO_OUTPUT_UUID.delete(jupyterInputNodeUuid);
-                  OUTPUT_UUID_TO_CODE_UUID.delete(jupyterOutputNodeUuid);
-                  OUTPUT_UUID_TO_OUTPUT_KEY.delete(jupyterOutputNodeUuid);
-                }
-              },
-              { discrete: true },
+                  if (jupyterInputNodeUuid && jupyterOutputNodeUuid) {
+                    // Remove the corresponding output node
+                    const outputNodeKey = OUTPUT_UUID_TO_OUTPUT_KEY.get(
+                      jupyterOutputNodeUuid,
+                    );
+                    if (outputNodeKey) {
+                      const outputNode = $getNodeByKey(outputNodeKey);
+                      if (outputNode) {
+                        outputNode.markDirty();
+                        (outputNode as JupyterOutputNode).removeForce();
+                      }
+                    }
+
+                    // Clean up all map entries
+                    INPUT_UUID_TO_CODE_KEY.delete(jupyterInputNodeUuid);
+                    INPUT_UUID_TO_OUTPUT_KEY.delete(jupyterInputNodeUuid);
+                    INPUT_UUID_TO_OUTPUT_UUID.delete(jupyterInputNodeUuid);
+                    OUTPUT_UUID_TO_CODE_UUID.delete(jupyterOutputNodeUuid);
+                    OUTPUT_UUID_TO_OUTPUT_KEY.delete(jupyterOutputNodeUuid);
+                  }
+                },
+                { discrete: true },
+              ),
             );
           } else if (mutation === 'updated') {
-            // Only move nodes if they're actually out of position
-            editor.update(
-              () => {
-                const inputNode = $getNodeByKey(nodeKey);
-                if (inputNode && $isJupyterInputNode(inputNode)) {
-                  const inputUuid = inputNode.getJupyterInputNodeUuid();
-                  const outputKey = INPUT_UUID_TO_OUTPUT_KEY.get(inputUuid);
+            // Only move nodes if they're actually out of position — and off
+            // the commit stack, for the same reason as above.
+            queueMicrotask(() =>
+              editor.update(
+                () => {
+                  const inputNode = $getNodeByKey(nodeKey);
+                  if (inputNode && $isJupyterInputNode(inputNode)) {
+                    const inputUuid = inputNode.getJupyterInputNodeUuid();
+                    const outputKey = INPUT_UUID_TO_OUTPUT_KEY.get(inputUuid);
 
-                  if (outputKey) {
-                    const outputNode = $getNodeByKey(outputKey);
-                    if (outputNode) {
-                      const inputNextSibling = inputNode.getNextSibling();
+                    if (outputKey) {
+                      const outputNode = $getNodeByKey(outputKey);
+                      if (outputNode) {
+                        const inputNextSibling = inputNode.getNextSibling();
 
-                      // Only move if the output node is not immediately after the input node
-                      if (inputNextSibling !== outputNode) {
-                        isMovingNodes.current = true;
-                        try {
-                          outputNode.remove(false);
-                          inputNode.insertAfter(outputNode);
-                        } finally {
-                          isMovingNodes.current = false;
+                        // Only move if the output node is not immediately after the input node
+                        if (inputNextSibling !== outputNode) {
+                          isMovingNodes.current = true;
+                          try {
+                            outputNode.remove(false);
+                            inputNode.insertAfter(outputNode);
+                          } finally {
+                            isMovingNodes.current = false;
+                          }
                         }
                       }
                     }
                   }
-                }
-              },
-              { discrete: true },
+                },
+                { discrete: true },
+              ),
             );
           }
         }
@@ -272,38 +281,41 @@ export const JupyterInputOutputPlugin = (
 
         for (const [nodeKey, mutation] of mutatedNodes) {
           if (mutation === 'updated') {
-            editor.update(
-              () => {
-                const outputNode = $getNodeByKey(nodeKey);
-                if (outputNode) {
-                  const outputUuid = (
-                    outputNode as JupyterOutputNode
-                  ).getJupyterOutputNodeUuid();
-                  const inputUuid = OUTPUT_UUID_TO_CODE_UUID.get(outputUuid);
+            // Off the commit stack, as in the input-node listener above.
+            queueMicrotask(() =>
+              editor.update(
+                () => {
+                  const outputNode = $getNodeByKey(nodeKey);
+                  if (outputNode) {
+                    const outputUuid = (
+                      outputNode as JupyterOutputNode
+                    ).getJupyterOutputNodeUuid();
+                    const inputUuid = OUTPUT_UUID_TO_CODE_UUID.get(outputUuid);
 
-                  if (inputUuid) {
-                    const inputKey = INPUT_UUID_TO_CODE_KEY.get(inputUuid);
-                    if (inputKey) {
-                      const inputNode = $getNodeByKey(inputKey);
-                      if (inputNode) {
-                        const inputNextSibling = inputNode.getNextSibling();
+                    if (inputUuid) {
+                      const inputKey = INPUT_UUID_TO_CODE_KEY.get(inputUuid);
+                      if (inputKey) {
+                        const inputNode = $getNodeByKey(inputKey);
+                        if (inputNode) {
+                          const inputNextSibling = inputNode.getNextSibling();
 
-                        // Only move if this output node is not immediately after its input node
-                        if (inputNextSibling !== outputNode) {
-                          isMovingNodes.current = true;
-                          try {
-                            outputNode.remove(false);
-                            inputNode.insertAfter(outputNode);
-                          } finally {
-                            isMovingNodes.current = false;
+                          // Only move if this output node is not immediately after its input node
+                          if (inputNextSibling !== outputNode) {
+                            isMovingNodes.current = true;
+                            try {
+                              outputNode.remove(false);
+                              inputNode.insertAfter(outputNode);
+                            } finally {
+                              isMovingNodes.current = false;
+                            }
                           }
                         }
                       }
                     }
                   }
-                }
-              },
-              { discrete: true },
+                },
+                { discrete: true },
+              ),
             );
           }
         }
@@ -707,17 +719,44 @@ export const JupyterInputOutputPlugin = (
             jupyterOutputNode.getType(),
           );
 
+          const jupyterOutputNodeKey = jupyterOutputNode.getKey();
           outputAdapter.outputArea.model.changed.connect(
             (
               outputModel: IOutputAreaModel,
               _args: IOutputAreaModel.ChangedArgs,
             ) => {
-              editor.update(
-                () => {
-                  jupyterOutputNode.setOutputs(outputModel.toJSON());
-                },
-                { discrete: true },
-              ); // Use discrete to avoid cluttering undo stack
+              // The signal fires synchronously from wherever the model was
+              // touched — a kernel IOPub message, a React passive effect, or
+              // the middle of a Lexical commit. Since lexical 0.49 an update
+              // started on such a stack is deferred into recursive commits
+              // (stack overflow, then a corrupted key→DOM map and endless
+              // decorator remounts), so hop off the current stack first.
+              queueMicrotask(() => {
+                const outputs = outputModel.toJSON();
+                editor.update(
+                  () => {
+                    const node = $getNodeByKey(jupyterOutputNodeKey);
+                    if (!(node instanceof JupyterOutputNode)) {
+                      return;
+                    }
+                    const previous = node.getOutputs();
+                    if (
+                      previous.length !== outputs.length ||
+                      JSON.stringify(previous) !== JSON.stringify(outputs)
+                    ) {
+                      node.setOutputs(outputs);
+                    }
+                    // The first model change proves the auto-run started;
+                    // burn the flag so a decorator remount (view switch,
+                    // reconciler recovery) re-renders the outputs instead of
+                    // re-executing the code.
+                    if (node.getAutoRun()) {
+                      node.setAutoRun(false);
+                    }
+                  },
+                  { discrete: true },
+                ); // Use discrete to avoid cluttering undo stack
+              });
             },
           );
 

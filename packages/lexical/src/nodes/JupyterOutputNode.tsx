@@ -59,7 +59,7 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
 
   /** @override */
   static clone(node: JupyterOutputNode) {
-    return new JupyterOutputNode(
+    const clone = new JupyterOutputNode(
       node.getJupyterInput(),
       node.__outputAdapter,
       node.__outputs,
@@ -68,6 +68,13 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
       node.__jupyterOutputNodeUuid,
       node.__key,
     );
+    // The constructor zeroes the triggers; a clone is a new *version* of the
+    // same node, not a new cell. Losing the counters made the decorator's
+    // executeTrigger prop oscillate across versions (1 → 0 → 1), and every
+    // rising edge re-executed the cell.
+    clone.__executeTrigger = node.__executeTrigger;
+    clone.__renderTrigger = node.__renderTrigger;
+    return clone;
   }
 
   /** @override */
@@ -191,6 +198,16 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
   }
 
   /** @override */
+  isInline(): boolean {
+    // A block, not an inline: the output sits at the root beside its input.
+    // DecoratorNode defaults to inline, and since lexical 0.49 the root
+    // normalization transform wraps every inline child of the root in a
+    // fresh paragraph on each commit — which fought the keep-together
+    // mutation listeners in an endless wrap/unwrap cycle.
+    return false;
+  }
+
+  /** @override */
   isIsolated(): boolean {
     // Treat orphaned output nodes as isolated blocks for editing purposes
     // Return true only for orphaned nodes so they are handled as isolated blocks
@@ -265,8 +282,14 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
   }
 
   public updateKernel(kernel: Kernel | undefined) {
-    const self = this.getWritable();
-    if (self.__outputAdapter) {
+    // The kernel plugin sweeps every output node whenever its kernel effect
+    // runs. The adapter is shared across node versions, so read it from the
+    // latest version and only take a writable clone when the kernel actually
+    // changed — an unconditional bump marked every node dirty on every sweep
+    // and re-triggered executions.
+    const latest = this.getLatest();
+    if (latest.__outputAdapter && latest.__outputAdapter.kernel !== kernel) {
+      const self = this.getWritable();
       self.__outputAdapter.kernel = kernel;
       // Force Output component to re-render with updated kernel
       self.__renderTrigger++;

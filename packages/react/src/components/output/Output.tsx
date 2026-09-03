@@ -8,7 +8,7 @@ import { IOutput } from '@jupyterlab/nbformat';
 import { IOutputAreaModel } from '@jupyterlab/outputarea';
 import { KernelMessage } from '@jupyterlab/services';
 import { Box } from '@datalayer/primer-addons';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Lumino } from '../lumino/Lumino';
 import { useJupyter } from '../../jupyter/JupyterUse';
 import { IExecutionPhaseOutput, Kernel } from '../../jupyter/kernel';
@@ -110,6 +110,9 @@ export const Output = ({
     useState<KernelMessage.Status>('unknown');
   const [outputs, setOutputs] = useState<IOutput[] | undefined>(propsOutputs);
   const [adapter, setAdapter] = useState<OutputAdapter>();
+  // Seeded with the mount-time value: only a trigger that *rises* after
+  // mount means "execute now" (see the executeTrigger effect below).
+  const lastExecuteTriggerRef = useRef(executeTrigger);
 
   // Sync outputs when propsOutputs changes
   useEffect(() => {
@@ -228,7 +231,12 @@ export const Output = ({
     }
   }, [executeRequest, adapter]);
   useEffect(() => {
-    if (adapter && executeTrigger > 0) {
+    // Only a trigger that moves after mount is a request to execute. A fresh
+    // mount with a non-zero trigger is a remounted decorator (a Lexical
+    // reconcile, a view switch) whose cell already ran — executing there
+    // turned every remount into a kernel round-trip.
+    if (adapter && executeTrigger > lastExecuteTriggerRef.current) {
+      lastExecuteTriggerRef.current = executeTrigger;
       adapter.execute(code, onExecutionPhaseChanged);
     }
   }, [executeTrigger]);
