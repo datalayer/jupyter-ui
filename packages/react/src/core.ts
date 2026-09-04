@@ -55,8 +55,16 @@ export {
   // The read-only question. `loadJupyterConfig` answers it too, and writes the
   // page's Jupyter URLs on the way past — never ask it during a render.
   isServedByJupyterLab,
+  setJupyterServerUrl,
+  setJupyterServerToken,
+  getJupyterServerUrl,
+  getJupyterServerToken,
   type IJupyterConfig,
 } from './jupyter/JupyterConfig';
+
+// Server settings for a hand-rolled ServiceManager — lean, so a host that
+// only points at a server does not pay for the component library.
+export { createServerSettings } from './utils/Utils';
 
 // Kernel management - lightweight kernel handling
 export { Kernel } from './jupyter/kernel/Kernel';
