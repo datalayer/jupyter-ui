@@ -231,7 +231,10 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
         outputs={currentOutputs}
         adapter={this.__outputAdapter}
         id={this.__jupyterOutputNodeUuid}
-        executeTrigger={this.getExecuteTrigger() + this.__renderTrigger}
+        executeTrigger={this.getExecuteTrigger()}
+        // A repaint is not a run: a kernel arriving must redraw the area with
+        // the outputs it already has, not execute the cell again.
+        renderTrigger={this.__renderTrigger}
         autoRun={this.__autoRun}
         lumino={true}
       />
@@ -291,7 +294,8 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
     if (latest.__outputAdapter && latest.__outputAdapter.kernel !== kernel) {
       const self = this.getWritable();
       self.__outputAdapter.kernel = kernel;
-      // Force Output component to re-render with updated kernel
+      // Force Output component to re-render with updated kernel — a
+      // repaint only; the cell keeps its outputs and is not run again.
       self.__renderTrigger++;
       // Don't clear outputs - keep old execution results visible
     }
