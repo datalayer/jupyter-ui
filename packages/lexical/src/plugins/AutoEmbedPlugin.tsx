@@ -15,7 +15,7 @@ import {
   URL_MATCHER,
 } from '@lexical/react/LexicalAutoEmbedPlugin';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as ReactDOM from 'react-dom';
 import { Box, Text } from '@primer/react';
 import { VideoIcon } from '@primer/octicons-react';
@@ -92,12 +92,23 @@ function AutoEmbedMenuItem({
   onMouseEnter: () => void;
   option: AutoEmbedOption;
 }) {
+  /*
+   * Lexical's `MenuOption` tracks its own element through `setRefElement`.
+   * Handed straight to `ref`, the React Compiler's lint takes `option` for a
+   * ref object and refuses every read of it during render (`option.title`,
+   * `option.disabled`): a callback keeps the registration where a ref
+   * callback belongs, and the option an ordinary value.
+   */
+  const setElement = useCallback(
+    (element: HTMLElement | null) => option.setRefElement(element),
+    [option],
+  );
   return (
     <Box
       as="li"
       key={option.key}
       tabIndex={-1}
-      ref={option.setRefElement}
+      ref={setElement}
       role="option"
       aria-selected={isSelected}
       id={'typeahead-item-' + index}
@@ -275,6 +286,15 @@ export const AutoEmbedPlugin = (): JSX.Element => {
             ? ReactDOM.createPortal(
                 <Box
                   sx={{
+                    // Above whatever the host stacks around the editor. The
+                    // menu is portaled into Lexical's anchor — absolutely
+                    // positioned, `z-index: auto` — so a page that keeps its
+                    // editor on a sheet with a z-index of its own painted the
+                    // sheet over the menu, and typing `/` showed nothing.
+                    // The anchor is not a stacking context, so this joins the
+                    // root one and wins.
+                    position: 'relative',
+                    zIndex: 1000,
                     bg: 'canvas.overlay',
                     border: '1px solid',
                     borderColor: 'border.default',

@@ -108,6 +108,17 @@ function ComponentPickerMenuItem({
   onMouseEnter: () => void;
   option: ComponentPickerOption;
 }) {
+  /*
+   * Lexical's `MenuOption` tracks its own element through `setRefElement`.
+   * Handed straight to `ref`, the React Compiler's lint takes `option` for a
+   * ref object and refuses every read of it during render (`option.title`,
+   * `option.disabled`): a callback keeps the registration where a ref
+   * callback belongs, and the option an ordinary value.
+   */
+  const setElement = useCallback(
+    (element: HTMLElement | null) => option.setRefElement(element),
+    [option],
+  );
   const handleClick = option.disabled ? undefined : onClick;
   const handleMouseEnter = option.disabled ? undefined : onMouseEnter;
 
@@ -116,7 +127,7 @@ function ComponentPickerMenuItem({
       as="li"
       key={option.key}
       tabIndex={-1}
-      ref={option.setRefElement}
+      ref={setElement}
       role="option"
       aria-selected={isSelected && !option.disabled}
       aria-disabled={option.disabled}
@@ -470,6 +481,15 @@ export const ComponentPickerMenuPlugin = ({
                     e.preventDefault();
                   }}
                   sx={{
+                    // Above whatever the host stacks around the editor. The
+                    // menu is portaled into Lexical's anchor — absolutely
+                    // positioned, `z-index: auto` — so a page that keeps its
+                    // editor on a sheet with a z-index of its own painted the
+                    // sheet over the menu, and typing `/` showed nothing.
+                    // The anchor is not a stacking context, so this joins the
+                    // root one and wins.
+                    position: 'relative',
+                    zIndex: 1000,
                     bg: 'canvas.overlay',
                     border: '1px solid',
                     borderColor: 'border.default',
