@@ -47,7 +47,7 @@ export const executeCodeOperation: ToolOperation<
   ExecuteCodeParams,
   ExecuteCodeResult
 > = {
-  name: 'executeCode',
+  name: 'executeCodeInNotebook',
 
   async execute(
     params: unknown,
@@ -81,7 +81,9 @@ export const executeCodeOperation: ToolOperation<
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      throw new Error(`Failed to execute code: ${errorMessage}`);
+      throw new Error(`Failed to execute code: ${errorMessage}`, {
+        cause: error,
+      });
     }
   },
 };

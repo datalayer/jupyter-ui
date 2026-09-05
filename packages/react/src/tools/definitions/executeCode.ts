@@ -15,11 +15,12 @@ import { zodToToolParameters } from '../core/zodUtils';
 import { executeCodeParamsSchema } from '../schemas/executeCode';
 
 export const executeCodeTool: ToolDefinition = {
-  name: 'datalayer_executeCode',
-  displayName: 'Execute Code in Kernel',
-  toolReferenceName: 'executeCode',
+  name: 'datalayer_executeCodeInNotebook',
+  displayName: 'Execute Code in Notebook Kernel',
+  toolReferenceName: 'executeCodeInNotebook',
   description:
-    'Execute code directly in the kernel (not saved to notebook) on the current activated notebook.\n\n' +
+    'Execute code directly in the notebook kernel (not saved to the notebook) on the current activated notebook. ' +
+    'Named for the notebook so it is never confused with the document kernel tool.\n\n' +
     'Recommended to use in following cases:\n' +
     '1. Execute Jupyter magic commands (e.g., %timeit, %pip install xxx)\n' +
     '2. Performance profiling and debugging\n' +
@@ -32,7 +33,7 @@ export const executeCodeTool: ToolDefinition = {
 
   parameters: zodToToolParameters(executeCodeParamsSchema),
 
-  operation: 'executeCode',
+  operation: 'executeCodeInNotebook',
 
   config: {
     confirmationMessage: (params: { code: string }) =>

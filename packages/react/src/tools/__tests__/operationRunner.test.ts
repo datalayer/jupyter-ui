@@ -47,7 +47,7 @@ class MockExecutor implements ToolExecutor {
           index: (params as { index: number }).index,
         };
 
-      case 'executeCode':
+      case 'executeCodeInNotebook':
         return {
           success: true,
           outputs: [

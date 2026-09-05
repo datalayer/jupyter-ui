@@ -69,7 +69,7 @@ export const lexicalToolOperations: Record<
   runBlock: runBlockOperation,
   runAllBlocks: runAllBlocksOperation,
   listAvailableBlocks: listAvailableBlocksOperation,
-  executeCode: executeCodeOperation,
+  executeCodeInDocument: executeCodeOperation,
 };
 
 /**

@@ -59,7 +59,7 @@ export const notebookToolOperations: Record<
   readCell: readCellOperation,
   readAllCells: readAllCellsOperation,
   runCell: runCellOperation,
-  executeCode: executeCodeOperation,
+  executeCodeInNotebook: executeCodeOperation,
 };
 
 /**

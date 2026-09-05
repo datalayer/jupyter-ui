@@ -47,18 +47,23 @@ export const executeCodeOperation: ToolOperation<
   ExecuteCodeParams,
   ExecuteCodeResult
 > = {
-  name: 'executeCode',
+  name: 'executeCodeInDocument',
 
   async execute(
     params: unknown,
     context: ToolExecutionContext,
   ): Promise<ExecuteCodeResult> {
     // Validate params using Zod
-    const validatedParams = validateWithZod(
-      executeCodeParamsSchema as any,
+    // The schema is typed against this package's zod; the validator is
+    // typed against jupyter-react's. Same shape, so it is stated as such
+    // rather than widened to `any`.
+    const validatedParams = validateWithZod<ExecuteCodeParams>(
+      executeCodeParamsSchema as unknown as Parameters<
+        typeof validateWithZod<ExecuteCodeParams>
+      >[0],
       params,
-      'executeCode',
-    ) as ExecuteCodeParams;
+      'executeCodeInDocument',
+    );
 
     const { documentId } = context;
 
@@ -88,7 +93,9 @@ export const executeCodeOperation: ToolOperation<
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      throw new Error(`Failed to execute code: ${errorMessage}`);
+      throw new Error(`Failed to execute code: ${errorMessage}`, {
+        cause: error,
+      });
     }
   },
 };
