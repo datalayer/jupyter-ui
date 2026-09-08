@@ -105,7 +105,18 @@ export type NotebookState = INotebooksState & {
   ) => void;
   deleteCell: (id: string, index?: number) => void;
   deleteCells: (id: string, indices?: number[]) => void;
-  updateCell: (id: string, index?: number, source?: string) => void;
+  /**
+   * Overwrite a cell's source, answering with a diff of what changed.
+   *
+   * The diff is the point: it is what the `updateCell` tool reports back, so
+   * whoever asked for the edit can see what it did rather than take
+   * "successfully" on trust.
+   */
+  updateCell: (
+    id: string,
+    index?: number,
+    source?: string
+  ) => string | undefined;
   readCell: (
     id: string,
     index?: number,
@@ -254,9 +265,16 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
       adapter.deleteCell(params.indices);
     }
   },
-  updateCell: (id: string, index?: number, source?: string): void => {
+  updateCell: (
+    id: string,
+    index?: number,
+    source?: string
+  ): string | undefined => {
     const params = typeof id === 'object' ? id : { id, index, source };
-    get()
+    // Returned, not discarded: the adapter computes the diff and the tool
+    // renders it. Dropping it here made every edit report "no changes
+    // detected", whatever it had actually changed.
+    return get()
       .notebooks.get(params.id as string)
       ?.adapter?.updateCell(params.index as number, params.source as string);
   },

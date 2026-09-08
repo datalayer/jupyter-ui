@@ -37,21 +37,17 @@ export class OperationRunner {
     params: TParams,
     context: ToolExecutionContext
   ): Promise<TResult | string> {
-    console.log('[OperationRunner] 🚀 execute CALLED');
-    console.log('[OperationRunner] Operation:', operation.name);
-    console.log('[OperationRunner] Params:', params);
-    console.log('[OperationRunner] Context:', context);
-
-    // Execute operation (returns pure typed data)
-    console.log('[OperationRunner] 📞 Calling operation.execute...');
+    /*
+     * Nothing is logged here.
+     *
+     * This used to print the operation, its parameters, the whole context and
+     * the result on every single tool call. The context carries `extras`,
+     * which is where platforms put their SDK handles and credentials, so the
+     * logging was both unreadable and a place for a token to end up in a
+     * browser console. A caller that wants to watch tool traffic can wrap the
+     * executor, which sees the same calls without the context.
+     */
     const result = await operation.execute(params, context);
-    console.log('[OperationRunner] ✅ Operation completed, result:', result);
-
-    // Apply formatting based on context.format
-    console.log('[OperationRunner] 🎨 Applying formatting...');
-    const formatted = formatResponse(result, context.format);
-    console.log('[OperationRunner] ✅ Formatted result:', formatted);
-
-    return formatted;
+    return formatResponse(result, context.format);
   }
 }

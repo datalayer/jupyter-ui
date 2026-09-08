@@ -76,7 +76,10 @@ export default function ExcalidrawModal({
   onDelete,
   onClose,
 }: Props): JSX.Element | null {
-  const { theme } = useTheme();
+  // Anchored on the modal's own element, so the drawing canvas follows the
+  // themed region it is rendered into rather than the page at large.
+  const [themeAnchor, setThemeAnchor] = useState<HTMLDivElement | null>(null);
+  const { theme } = useTheme(themeAnchor);
 
   const excaliDrawModelRef = useRef<HTMLDivElement | null>(null);
   const [excalidrawAPI, setExcalidrawAPI] =
@@ -164,7 +167,10 @@ export default function ExcalidrawModal({
         }}
       >
         <Box
-          ref={excaliDrawModelRef}
+          ref={(element: HTMLDivElement | null) => {
+            excaliDrawModelRef.current = element;
+            setThemeAnchor(element);
+          }}
           tabIndex={-1}
           sx={{
             height: 'calc(80vh - 140px)',

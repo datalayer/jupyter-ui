@@ -12,3 +12,4 @@
 
 export * from './LexicalAdapter';
 export * from './LexicalState';
+export * from './LexicalToolRegistry';

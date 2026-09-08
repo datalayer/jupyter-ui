@@ -97,7 +97,14 @@ export default function ExcalidrawImage({
   width = 'inherit',
   height = 'inherit',
 }: Props): JSX.Element {
-  const { theme } = useTheme();
+  /*
+   * The mode is read from this element's own position in the DOM, so a
+   * drawing inside a dark editor exports dark even when the page around it is
+   * light. `useState` rather than `useRef` for the node: the hook has to
+   * re-run once the element exists, and a ref assignment does not re-render.
+   */
+  const [node, setNode] = useState<HTMLDivElement | null>(null);
+  const { theme } = useTheme(node);
   const [Svg, setSvg] = useState<SVGElement | null>(null);
   const [cssVersion, setCssVersion] = useState(0);
 
@@ -207,11 +214,10 @@ export default function ExcalidrawImage({
 
   return (
     <div
-      ref={node => {
-        if (node) {
-          if (imageContainerRef) {
-            imageContainerRef.current = node;
-          }
+      ref={element => {
+        setNode(element);
+        if (element && imageContainerRef) {
+          imageContainerRef.current = element;
         }
       }}
       className={rootClassName ?? ''}

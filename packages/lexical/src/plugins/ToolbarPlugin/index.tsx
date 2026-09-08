@@ -23,7 +23,7 @@ import { INSERT_EMBED_COMMAND } from '@lexical/react/LexicalAutoEmbedPlugin';
 import { INSERT_HORIZONTAL_RULE_COMMAND } from '@lexical/react/LexicalHorizontalRuleNode';
 import { $isHeadingNode } from '@lexical/rich-text';
 import { INSERT_COLLAPSIBLE_COMMAND } from '../CollapsiblePlugin';
-import { INSERT_EXCALIDRAW_COMMAND } from '../ExcalidrawPlugin';
+import { INSERT_EXCALIDRAW_COMMAND } from '../excalidraw';
 import { INSERT_TABLE_WITH_DIALOG_COMMAND } from '../TablePlugin';
 import {
   $getSelectionStyleValueForProperty,

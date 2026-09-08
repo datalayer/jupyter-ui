@@ -73,6 +73,11 @@ export { useKernelsStore } from './jupyter/kernel/KernelState';
 
 // State management - for advanced usage
 export {
+  // The store itself, not only its hooks: an application that builds its own
+  // service manager publishes it here, and every `useJupyter()` without one
+  // of its own then adopts it instead of building a second from the page
+  // config. Same module as the hooks below, so this costs nothing.
+  jupyterReactStore,
   useJupyterReactStore,
   useJupyterReactStoreFromProps,
 } from './state/JupyterReactState';

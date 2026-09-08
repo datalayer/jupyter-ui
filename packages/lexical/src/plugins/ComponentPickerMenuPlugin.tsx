@@ -31,7 +31,7 @@ import {
 import { $createHeadingNode, $createQuoteNode } from '@lexical/rich-text';
 import { $setBlocksType } from '@lexical/selection';
 import { INSERT_COLLAPSIBLE_COMMAND } from './CollapsiblePlugin';
-import { INSERT_EXCALIDRAW_COMMAND } from './ExcalidrawPlugin';
+import { INSERT_EXCALIDRAW_COMMAND } from './excalidraw';
 import { INSERT_TABLE_WITH_DIALOG_COMMAND } from './TablePlugin';
 import {
   $createParagraphNode,

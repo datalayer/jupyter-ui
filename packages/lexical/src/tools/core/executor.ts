@@ -58,6 +58,35 @@ export class DefaultExecutor implements ToolExecutor {
     operationName: string,
     args?: unknown,
   ): Promise<T> {
+    /*
+     * A mounted plugin's own tools come first.
+     *
+     * The store knows how to insert a block because every document has
+     * blocks; it has no idea what an Excalidraw scene is, and it should not
+     * have to. A plugin registers its handlers when it mounts, and they are
+     * looked up here — so a tool can be added by a plugin without the store
+     * growing a method for it, and disappears again when the plugin unmounts.
+     */
+    const handler = this.store.selectPluginToolHandler?.(
+      this.lexicalId,
+      operationName,
+    );
+    if (handler) {
+      const adapter = this.store.selectLexicalAdapter(this.lexicalId);
+      if (!adapter) {
+        throw new Error(
+          `Lexical document ${this.lexicalId} not found: ` +
+            `'${operationName}' needs an editor to act on.`,
+        );
+      }
+      return (await handler(
+        adapter,
+        (typeof args === 'object' && args !== null
+          ? args
+          : {}) as Record<string, unknown>,
+      )) as T;
+    }
+
     // Get the store method directly (1:1 mapping, no transformation)
     const method = (this.store as unknown as Record<string, unknown>)[
       operationName

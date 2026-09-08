@@ -27,6 +27,7 @@ import {
   $isListNode,
 } from '@lexical/list';
 import type { LexicalBlock, BlockFormat, BriefBlock } from '../core/types';
+import { describeScene, parseScene } from '../../plugins/excalidraw/scene';
 
 /**
  * Generate a 40-character preview of block content.
@@ -39,7 +40,7 @@ import type { LexicalBlock, BlockFormat, BriefBlock } from '../core/types';
  * @param block - Block to generate preview for
  * @returns 40-char preview string (with "..." if truncated)
  */
-function generatePreview(block: LexicalBlock): string {
+export function generatePreview(block: LexicalBlock): string {
   const maxLength = 40;
 
   // Empty preview for horizontal rules
@@ -53,70 +54,20 @@ function generatePreview(block: LexicalBlock): string {
     return videoID ? `youtu.be/${videoID}` : '(no ID)';
   }
 
-  // Excalidraw: show brief description
+  /*
+   * Excalidraw: what is in the drawing.
+   *
+   * This used to read the node's data as a bare array of elements, which is
+   * the shape a *new* node is created with and never the shape a saved one
+   * has — the modal writes `{elements, appState, files}`. So the array check
+   * failed for every drawing anybody had actually drawn, and each one
+   * previewed as "(empty diagram)". `parseScene` reads both shapes, and
+   * `describeScene` is the same sentence `excalidrawListDrawings` gives, so a
+   * drawing reads the same whichever tool found it.
+   */
   if (block.block_type === 'excalidraw') {
-    const data = block.metadata?.data as string;
-    if (data) {
-      try {
-        const elements = JSON.parse(data);
-        if (Array.isArray(elements) && elements.length > 0) {
-          // Extract text snippets
-          const textElements = elements.filter(
-            (el: any) => el.type === 'text' && el.text,
-          );
-          const textSnippets = textElements
-            .slice(0, 2)
-            .map((el: any) => el.text.trim())
-            .filter((t: string) => t.length > 0);
-
-          // Count shape types
-          const shapeTypes: Record<string, number> = {};
-          elements.forEach((el: any) => {
-            if (
-              el.type &&
-              el.type !== 'text' &&
-              el.type !== 'freedraw' &&
-              el.type !== 'selection'
-            ) {
-              shapeTypes[el.type] = (shapeTypes[el.type] || 0) + 1;
-            }
-          });
-
-          const shapeParts: string[] = [];
-          // Map Excalidraw types to readable names
-          const typeNames: Record<string, string> = {
-            rectangle: 'rect',
-            ellipse: 'circle',
-            diamond: 'diamond',
-            arrow: 'arrow',
-            line: 'line',
-          };
-          Object.entries(shapeTypes).forEach(([type, count]) => {
-            const name = typeNames[type] || type;
-            shapeParts.push(count > 1 ? `${count} ${name}s` : `${name}`);
-          });
-
-          // Build description
-          const parts: string[] = [];
-          if (shapeParts.length > 0) {
-            parts.push(shapeParts.slice(0, 3).join(', '));
-          }
-          if (textSnippets.length > 0) {
-            const textPart = textSnippets
-              .map(t => `"${t.length > 15 ? t.slice(0, 15) + '...' : t}"`)
-              .join(', ');
-            parts.push(textPart);
-          }
-
-          if (parts.length > 0) {
-            return parts.join(': ');
-          }
-        }
-      } catch (e) {
-        // If parsing fails, fall through to show diagram info
-      }
-    }
-    return '(empty diagram)';
+    const scene = parseScene(block.metadata?.data as string);
+    return scene.elements.length > 0 ? describeScene(scene) : '(empty diagram)';
   }
 
   // Table: show brief description

@@ -15,7 +15,7 @@ export * from './CommentPlugin';
 export * from './ComponentPickerMenuPlugin';
 export * from './DraggableBlockPlugin';
 export * from './EquationsPlugin';
-export * from './ExcalidrawPlugin';
+export * from './excalidraw';
 export * from './FloatingTextFormatToolbarPlugin';
 export * from './HorizontalRulePlugin';
 export * from './ImagesPlugin';

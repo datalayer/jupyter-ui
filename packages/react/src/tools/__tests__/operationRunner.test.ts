@@ -23,28 +23,96 @@ import { readCellOperation } from '../operations/readCell';
 import { readAllCellsOperation } from '../operations/readAllCells';
 import { runCellOperation } from '../operations/runCell';
 import { executeCodeOperation } from '../operations/executeCode';
-import type { ToolExecutor, ToolExecutionContext } from '../core/interfaces';
+import type {
+  ToolExecutor,
+  ToolExecutionContext,
+  ToolOperation,
+} from '../core/interfaces';
 
 /**
- * Mock executor for testing
+ * A notebook, near enough.
+ *
+ * The previous stand-in was a lookup table: `readAllCells` handed back the
+ * same two cells whatever had happened, and `insertCell` answered
+ * `{success: true}` without inserting anything. That is not a notebook, and
+ * one of the operations noticed — `insertCell` verifies its own work by
+ * counting cells before and after, so against a table that never changes it
+ * concluded, correctly, that nothing had been inserted.
+ *
+ * This one holds cells and edits them. It is the smallest thing that makes
+ * the operations' verification steps mean something, and it is what the
+ * platform adapters actually do: `NotebookState.readAllCells` answers with an
+ * array, and `updateCell` answers with a diff.
  */
-class MockExecutor implements ToolExecutor {
+class FakeNotebookExecutor implements ToolExecutor {
+  cells: Array<{ type: string; source: string }> = [
+    { type: 'code', source: 'print("hello")' },
+    { type: 'markdown', source: '# Title' },
+    { type: 'code', source: 'x = 1' },
+  ];
+
+  /** Every call made, so a test can check what an operation did. */
+  readonly calls: Array<{ operation: string; params: unknown }> = [];
+
   async execute(operation: string, params: unknown): Promise<unknown> {
-    // Mock responses based on operation type
+    this.calls.push({ operation, params });
+    const args = (params ?? {}) as Record<string, any>;
+
     switch (operation) {
       case 'readAllCells':
-        return {
-          cells: [
-            { type: 'code', source: 'print("hello")', index: 0 },
-            { type: 'markdown', source: '# Title', index: 1 },
-          ],
-        };
+        // An array, which is what the store answers with — not a wrapper
+        // object. `insertCell` and `readAllCells` both count it directly.
+        return this.cells.map((cell, index) => ({
+          index,
+          type: cell.type,
+          source: cell.source,
+        }));
 
-      case 'readCell':
+      case 'readCell': {
+        const cell = this.cells[args.index];
+        if (!cell) {
+          throw new Error(`Cell index ${args.index} is out of range.`);
+        }
+        return { type: cell.type, source: cell.source, index: args.index };
+      }
+
+      case 'insertCell': {
+        const at = args.index ?? this.cells.length;
+        this.cells.splice(at, 0, {
+          type: args.type ?? 'code',
+          source: args.source ?? '',
+        });
+        return { success: true };
+      }
+
+      case 'updateCell': {
+        const cell = this.cells[args.index];
+        if (!cell) {
+          throw new Error(`Cell index ${args.index} is out of range.`);
+        }
+        const before = cell.source;
+        cell.source = args.source;
+        // A diff string, which is what `NotebookAdapter.updateCell` returns
+        // and what the tool renders back to whoever asked for the edit.
+        return `- ${before}\n+ ${cell.source}`;
+      }
+
+      case 'deleteCells': {
+        const indices = [...((args.indices as number[]) ?? [])].sort(
+          (a, b) => b - a,
+        );
+        for (const index of indices) {
+          this.cells.splice(index, 1);
+        }
+        return { success: true };
+      }
+
+      case 'runCell':
         return {
-          type: 'code',
-          source: 'print("test")',
-          index: (params as { index: number }).index,
+          success: true,
+          index: args.index,
+          execution_count: 1,
+          outputs: [],
         };
 
       case 'executeCodeInNotebook':
@@ -59,12 +127,6 @@ class MockExecutor implements ToolExecutor {
           executionCount: 1,
         };
 
-      case 'runCell':
-      case 'updateCell':
-      case 'deleteCell':
-      case 'insertCell':
-        return { success: true };
-
       default:
         return { success: true };
     }
@@ -73,12 +135,12 @@ class MockExecutor implements ToolExecutor {
 
 describe('OperationRunner', () => {
   let runner: OperationRunner;
-  let mockExecutor: ToolExecutor;
+  let mockExecutor: FakeNotebookExecutor;
   let baseContext: ToolExecutionContext;
 
   beforeEach(() => {
     runner = new OperationRunner();
-    mockExecutor = new MockExecutor();
+    mockExecutor = new FakeNotebookExecutor();
     baseContext = {
       executor: mockExecutor,
       documentId: 'test-notebook-123',
@@ -97,6 +159,26 @@ describe('OperationRunner', () => {
       expect(result).toHaveProperty('success', true);
       expect(result).toHaveProperty('index');
       expect(result).toHaveProperty('message');
+      // The operation verifies its own work by counting cells; check that
+      // the work was real and not just reported.
+      expect(mockExecutor.cells).toHaveLength(4);
+      expect(mockExecutor.cells[3].source).toBe('print("hello")');
+    });
+
+    it('reports failure when the cell did not actually arrive', async () => {
+      // An adapter that accepts the call and inserts nothing is the case the
+      // count check exists for. It must not be reported as success.
+      mockExecutor.execute = async (operation: string) =>
+        operation === 'readAllCells' ? [] : { success: true };
+
+      const result: any = await runner.execute(
+        insertCellOperation,
+        { type: 'code', source: 'print("hello")' },
+        { ...baseContext, format: 'json' }
+      );
+
+      expect(result.success).toBe(false);
+      expect(result.message).toMatch(/not added/);
     });
 
     it('should return TOON string with format=toon', async () => {
@@ -156,7 +238,29 @@ describe('OperationRunner', () => {
 
       expect(typeof result).toBe('object');
       expect(result).toHaveProperty('success', true);
-      expect(result).toHaveProperty('index', 1);
+      // No `index`: an update answers with what changed, not with where.
+      expect(result).not.toHaveProperty('index');
+      expect(mockExecutor.cells[1].source).toBe('print("updated")');
+    });
+
+    it('shows what changed, rather than only that something did', async () => {
+      /*
+       * The diff is the whole value of the message: "overwritten
+       * successfully" on its own is not something a reader can check. It
+       * travels adapter → store → operation, and the store used to drop it —
+       * so every edit reported "no changes detected" however much it had
+       * changed.
+       */
+      const result: any = await runner.execute(
+        updateCellOperation,
+        { index: 1, source: 'print("updated")' },
+        { ...baseContext, format: 'json' }
+      );
+
+      expect(result.diff).toBe('- # Title\n+ print("updated")');
+      expect(result.message).toContain('# Title');
+      expect(result.message).not.toContain('no changes detected');
+      expect(result.message).not.toContain('[object Object]');
     });
   });
 
@@ -242,15 +346,56 @@ describe('OperationRunner', () => {
   });
 
   describe('Error handling', () => {
-    it('should throw error when documentId is missing', async () => {
-      await expect(
-        runner.execute(
-          readCellOperation,
-          { index: 0 },
-          { executor: mockExecutor } // no documentId
-        )
-      ).rejects.toThrow();
-    });
+    /*
+     * A missing document is reported two different ways, depending on which
+     * operation was called: the readers answer with `{success: false, error}`
+     * and the writers throw. That split is not a rule anybody wrote down —
+     * `runCell` and `executeCode` are on the soft side despite not being
+     * readers — so it is pinned here rather than assumed. Unifying it is a
+     * change to what every agent sees at runtime, and this test is what would
+     * have to be rewritten deliberately to make it.
+     */
+    // Typed loosely, and mutably: `it.each` will not take a readonly table.
+    type Case = [string, ToolOperation<any, any>, unknown];
+
+    const SOFT: Case[] = [
+      ['readCell', readCellOperation, { index: 0 }],
+      ['readAllCells', readAllCellsOperation, {}],
+      ['runCell', runCellOperation, { index: 0 }],
+      ['executeCode', executeCodeOperation, { code: 'print(1)' }],
+    ];
+
+    const HARD: Case[] = [
+      ['insertCell', insertCellOperation, { type: 'code', source: 'x' }],
+      ['updateCell', updateCellOperation, { index: 0, source: 'x' }],
+      ['deleteCells', deleteCellsOperation, { indices: [0] }],
+    ];
+
+    it.each(SOFT)(
+      '%s answers with a failure result when there is no document',
+      async (_name, operation, params) => {
+        const result: any = await runner.execute(
+          operation,
+          params,
+          { executor: mockExecutor, format: 'json' } // no documentId
+        );
+
+        expect(result.success).toBe(false);
+        expect(result.error).toMatch(/Document ID is required/);
+      }
+    );
+
+    it.each(HARD)(
+      '%s throws when there is no document',
+      async (_name, operation, params) => {
+        await expect(
+          runner.execute(operation, params, {
+            executor: mockExecutor,
+            format: 'json',
+          })
+        ).rejects.toThrow(/Document ID is required/);
+      }
+    );
 
     it('should throw error when executor is missing', async () => {
       await expect(
@@ -260,6 +405,18 @@ describe('OperationRunner', () => {
           { documentId: 'test-123' } as ToolExecutionContext // no executor
         )
       ).rejects.toThrow();
+    });
+
+    it('lets an adapter failure reach the caller, named', async () => {
+      // An out-of-range index is the adapter's to refuse, and the operation
+      // has to pass that on rather than swallow it into a false success.
+      await expect(
+        runner.execute(
+          updateCellOperation,
+          { index: 99, source: 'x' },
+          baseContext
+        )
+      ).rejects.toThrow(/out of range/);
     });
 
     it('should throw error with invalid params', async () => {
