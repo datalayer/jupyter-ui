@@ -203,13 +203,33 @@ export default function ExcalidrawImage({
   );
 
   if (shouldUseEditorBackground) {
-    // Read current CSS variable for container background
-    const docStyle = getComputedStyle(document.documentElement);
-    const cssVar = docStyle
-      .getPropertyValue('--vscode-editor-background')
-      .trim();
+    /*
+     * The document's own background, named rather than computed.
+     *
+     * This used to read `--vscode-editor-background` off
+     * `document.documentElement` and fall back to a literal `#ffffff`. Both
+     * halves were wrong for a Datalayer surface: nothing here sets the VSCode
+     * variable, and Primer declares its variables on the theme provider's
+     * wrapper rather than on the root element — so the lookup always missed
+     * and every drawing was painted pure white, however cream, sand or ivory
+     * the page around it was.
+     *
+     * Left as a `var()` chain instead of resolving it in JS, because that is
+     * what makes it *stay* right. CSS resolves each variable against the
+     * nearest ancestor that declares it, which is exactly the enclosing themed
+     * region, and re-resolves on its own when the theme changes — including
+     * the case a computed colour could never catch, where the palette changes
+     * but the colour mode does not (`datalayer` to `sand`, both light).
+     *
+     * The order is the hosts this editor runs in: Primer first, since every
+     * Datalayer surface carries it and `JupyterReactTheme` maps JupyterLab's
+     * palette onto it; then JupyterLab's own, then VSCode's, and only then a
+     * literal, chosen for the colour mode in effect.
+     */
+    const fallback = theme === 'dark' ? '#1e1e1e' : '#ffffff';
     containerStyle.backgroundColor =
-      cssVar || (theme === 'dark' ? '#1e1e1e' : '#ffffff');
+      `var(--bgColor-default, var(--jp-layout-color0, ` +
+      `var(--vscode-editor-background, ${fallback})))`;
   }
 
   return (
