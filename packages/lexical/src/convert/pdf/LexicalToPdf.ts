@@ -48,6 +48,7 @@ import {
   elementToRaster,
   equationToRaster,
   imageToRaster,
+  inlineSvgOf,
   svgToRaster,
   type Raster,
 } from './raster';
@@ -78,6 +79,8 @@ export interface PdfPicture {
   pxHeight: number;
   cssWidth: number;
   cssHeight: number;
+  /** For an equation: CSS pixels hanging below the text baseline. */
+  depth?: number;
 }
 
 /** Pictures by node key (outputs: `key:index`). */
@@ -131,7 +134,14 @@ type LineItem =
       background?: PdfColor;
       space: boolean;
     }
-  | { kind: 'picture'; picture: PdfPicture; width: number; height: number }
+  | {
+      kind: 'picture';
+      picture: PdfPicture;
+      width: number;
+      height: number;
+      /** Points below the baseline; centred in the line when undefined. */
+      depth?: number;
+    }
   | { kind: 'newline' };
 
 interface Line {
@@ -157,6 +167,7 @@ async function toPicture(raster: Raster | null): Promise<PdfPicture | null> {
     pxHeight: raster.canvas.height,
     cssWidth: raster.cssWidth,
     cssHeight: raster.cssHeight,
+    depth: raster.depth,
   };
 }
 
@@ -174,6 +185,7 @@ export async function collectPictures(
     options.resolveElement
       ? options.resolveElement(key)
       : editor.getElementByKey(key);
+  const bodyPx = (options.fontSize ?? 11) / POINTS_PER_PIXEL;
   const put = async (
     key: string,
     raster: Promise<Raster | null> | Raster | null,
@@ -186,7 +198,7 @@ export async function collectPictures(
   const inlines = async (runs: InlineRun[]) => {
     for (const run of runs) {
       if (run.kind === 'equation') {
-        await put(run.key, equationToRaster(run.equation, true));
+        await put(run.key, equationToRaster(run.equation, true, 3, bodyPx));
       }
     }
   };
@@ -228,10 +240,11 @@ export async function collectPictures(
           const el = element(block.key);
           if (el) {
             const canvas = el.querySelector('canvas');
+            const svg = canvas ? null : inlineSvgOf(el);
             await put(
               block.key,
               (canvas && canvasElementToRaster(canvas)) ??
-                elementToRaster(el, 2),
+                (svg ? svgToRaster(svg, 2) : elementToRaster(el, 2)),
             );
           }
           break;
@@ -296,6 +309,37 @@ export async function collectPictures(
   };
   await blocks(document.blocks);
   return pictures;
+}
+
+/** Adjacent text items of one style joined: one operator, one link, one line. */
+function coalesce(items: LineItem[]): LineItem[] {
+  const out: LineItem[] = [];
+  for (const item of items) {
+    const last = out[out.length - 1];
+    if (
+      item.kind === 'text' &&
+      last &&
+      last.kind === 'text' &&
+      last.font === item.font &&
+      last.size === item.size &&
+      last.color === item.color &&
+      last.shift === item.shift &&
+      last.link === item.link &&
+      !!last.underline === !!item.underline &&
+      !!last.strike === !!item.strike &&
+      last.background === item.background
+    ) {
+      out[out.length - 1] = {
+        ...last,
+        text: last.text + item.text,
+        width: last.width + item.width,
+        space: last.space && item.space,
+      };
+    } else {
+      out.push({ ...item });
+    }
+  }
+  return out;
 }
 
 /** Where the cursor is: a page and a distance from its top. */
@@ -397,14 +441,20 @@ class PdfLayout {
       if (run.kind === 'equation') {
         const picture = this.pictures.get(run.key);
         if (picture) {
-          const height = Math.min(
-            picture.cssHeight * POINTS_PER_PIXEL,
-            style.size * 3,
-          );
-          const width =
-            (picture.cssWidth * POINTS_PER_PIXEL * height) /
-            (picture.cssHeight * POINTS_PER_PIXEL);
-          items.push({ kind: 'picture', picture, width, height });
+          const natural = picture.cssHeight * POINTS_PER_PIXEL;
+          const height = Math.min(natural, style.size * 2.2);
+          const factor = height / natural;
+          const width = picture.cssWidth * POINTS_PER_PIXEL * factor;
+          items.push({
+            kind: 'picture',
+            picture,
+            width,
+            height,
+            depth:
+              picture.depth === undefined
+                ? undefined
+                : picture.depth * POINTS_PER_PIXEL * factor,
+          });
         } else {
           items.push(
             ...this.items(
@@ -501,7 +551,15 @@ class PdfLayout {
       }
       const height = Math.max(
         lineHeight,
-        ...current.map(item => (item.kind === 'picture' ? item.height + 2 : 0)),
+        ...current.map(item =>
+          item.kind === 'picture'
+            ? item.depth === undefined
+              ? item.height + 2
+              : // Above the baseline it needs height − depth; the baseline
+                // sits at about 70% of the line.
+                (item.height - item.depth) / 0.7 + 1
+            : 0,
+        ),
       );
       lines.push({ items: current, width: currentWidth, height });
       current = [];
@@ -558,9 +616,12 @@ class PdfLayout {
     let cx = x + Math.max(0, offset);
     const baseline =
       this.y + line.height - (line.height - style.size) / 2 - style.size * 0.22;
-    for (const item of line.items) {
+    for (const item of coalesce(line.items)) {
       if (item.kind === 'picture') {
-        const top = this.y + (line.height - item.height) / 2;
+        const top =
+          item.depth === undefined
+            ? this.y + (line.height - item.height) / 2
+            : Math.max(this.y, baseline + item.depth - item.height);
         this.page.image(
           this.image(item.picture),
           cx,
@@ -882,29 +943,30 @@ class PdfLayout {
           : depth % 3 === 1
             ? '–'
             : '·';
+    const markerX = this.x;
     items.forEach((item, i) => {
       const [first, ...rest] = item.blocks;
       const drawMarker = (baseline: number) => {
         if (item.checked !== null) {
           const side = this.baseSize * 0.8;
           const top = baseline - side + 1;
-          this.page.rect(this.x, top, side, side, {
+          this.page.rect(markerX, top, side, side, {
             stroke: COLORS.muted,
             fill: item.checked ? COLORS.muted : undefined,
           });
           if (item.checked) {
             this.page.line(
-              this.x + side * 0.22,
+              markerX + side * 0.22,
               top + side * 0.55,
-              this.x + side * 0.42,
+              markerX + side * 0.42,
               top + side * 0.75,
               '#ffffff',
               1.2,
             );
             this.page.line(
-              this.x + side * 0.42,
+              markerX + side * 0.42,
               top + side * 0.75,
-              this.x + side * 0.8,
+              markerX + side * 0.8,
               top + side * 0.28,
               '#ffffff',
               1.2,
@@ -916,7 +978,7 @@ class PdfLayout {
         const font = fontFor({});
         const width = textWidth(text, font, this.baseSize);
         this.page.text(
-          this.x + gutter - width - 5,
+          markerX + gutter - width - 5,
           baseline,
           text,
           font,

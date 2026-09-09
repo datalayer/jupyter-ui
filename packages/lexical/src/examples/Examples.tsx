@@ -51,6 +51,12 @@ const EXAMPLES: Array<{ name: string; path: string; description: string }> = [
       'One template per Overleaf category, rendered and edited in Lexical.',
   },
   {
+    name: 'PDF Export',
+    path: 'LexicalPdf',
+    description:
+      'The document to PDF four ways: print, vector, snapshot, Typst.',
+  },
+  {
     name: 'Notebook',
     path: 'Notebook',
     description: 'Jupyter Notebook rendered directly with jupyter-react.',

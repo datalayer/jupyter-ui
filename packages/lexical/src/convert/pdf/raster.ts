@@ -20,6 +20,11 @@ export interface Raster {
   /** The size in CSS pixels the drawing had on screen. */
   cssWidth: number;
   cssHeight: number;
+  /**
+   * For an equation: how far, in CSS pixels, the picture hangs below the
+   * text baseline, so it can be set on the line like a glyph.
+   */
+  depth?: number;
 }
 
 /** Whether a real canvas is available (not under jsdom). */
@@ -169,6 +174,35 @@ export function canvasElementToRaster(
   }
 }
 
+/**
+ * The first inline `<svg>` of `element` as a standalone document, its size
+ * taken from the element on screen (or the viewBox) when it is relative —
+ * drawings render that way, and an SVG needs a size to be an image.
+ */
+export function inlineSvgOf(element: HTMLElement): string | null {
+  const svg = element.querySelector('svg');
+  if (!svg) {
+    return null;
+  }
+  const clone = svg.cloneNode(true) as SVGSVGElement;
+  clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  const rect = svg.getBoundingClientRect();
+  const viewBox = (svg.getAttribute('viewBox') ?? '')
+    .split(/[\s,]+/)
+    .map(Number);
+  const relative = (value: string | null) => !value || /%$/.test(value);
+  if (
+    relative(svg.getAttribute('width')) ||
+    relative(svg.getAttribute('height'))
+  ) {
+    const width = rect.width || (viewBox.length === 4 ? viewBox[2] : 300);
+    const height = rect.height || (viewBox.length === 4 ? viewBox[3] : 150);
+    clone.setAttribute('width', String(Math.round(width)));
+    clone.setAttribute('height', String(Math.round(height)));
+  }
+  return new XMLSerializer().serializeToString(clone);
+}
+
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const image = new Image();
@@ -218,15 +252,149 @@ export async function imageToRaster(
   }
 }
 
-/** An SVG document as a raster, `scale` pixels per SVG unit. */
-export function svgToRaster(svg: string, scale = 2): Promise<Raster | null> {
-  const url = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-  return imageToRaster(url, 4_000_000 * scale);
+/** The `width`/`height` attributes of an SVG root, in CSS pixels. */
+function svgSize(svg: string): { width: number; height: number } | null {
+  const root = /<svg\b[^>]*>/.exec(svg)?.[0];
+  if (!root) {
+    return null;
+  }
+  const read = (name: string) => {
+    const value = new RegExp(`\\s${name}="([\\d.]+)(px)?"`).exec(root)?.[1];
+    return value ? Number(value) : NaN;
+  };
+  const width = read('width');
+  const height = read('height');
+  return Number.isFinite(width) &&
+    Number.isFinite(height) &&
+    width > 0 &&
+    height > 0
+    ? { width, height }
+    : null;
 }
 
 /**
- * An equation typeset by KaTeX off screen and drawn, at `scale` pixels per
- * CSS pixel, so it prints crisply.
+ * An SVG document as a raster at `scale` device pixels per CSS pixel. The
+ * root must carry a size in pixels (see `inlineSvgOf`, `mathToSvg`).
+ */
+export async function svgToRaster(
+  svg: string,
+  scale = 2,
+): Promise<Raster | null> {
+  const size = svgSize(svg);
+  const scaled = size
+    ? svg.replace(/<svg\b[^>]*>/, root =>
+        root
+          .replace(/\swidth="[^"]*"/, ` width="${size.width * scale}"`)
+          .replace(/\sheight="[^"]*"/, ` height="${size.height * scale}"`),
+      )
+    : svg;
+  const url = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(scaled)}`;
+  const raster = await imageToRaster(url, 16_000_000);
+  if (raster && size) {
+    raster.cssWidth = size.width;
+    raster.cssHeight = size.height;
+  }
+  return raster;
+}
+
+/** TeX typeset by MathJax as SVG, with its size and baseline in CSS pixels. */
+export interface MathSvg {
+  svg: string;
+  width: number;
+  height: number;
+  /** How far the picture hangs below the baseline. */
+  depth: number;
+}
+
+type MathJaxConverter = (
+  tex: string,
+  display: boolean,
+) => {
+  svg: string;
+  widthEx: number;
+  heightEx: number;
+  depthEx: number;
+};
+
+let mathJaxConverter: Promise<MathJaxConverter> | null = null;
+
+/** MathJax's TeX → SVG pipeline, loaded on first use (it is large). */
+function loadMathJax(): Promise<MathJaxConverter> {
+  if (!mathJaxConverter) {
+    mathJaxConverter = (async () => {
+      const [
+        { mathjax },
+        { TeX },
+        { SVG },
+        { liteAdaptor },
+        { RegisterHTMLHandler },
+        { AllPackages },
+      ] = await Promise.all([
+        import('mathjax-full/js/mathjax.js'),
+        import('mathjax-full/js/input/tex.js'),
+        import('mathjax-full/js/output/svg.js'),
+        import('mathjax-full/js/adaptors/liteAdaptor.js'),
+        import('mathjax-full/js/handlers/html.js'),
+        import('mathjax-full/js/input/tex/AllPackages.js'),
+      ]);
+      const adaptor = liteAdaptor();
+      RegisterHTMLHandler(adaptor);
+      const document = mathjax.document('', {
+        InputJax: new TeX({ packages: AllPackages }),
+        OutputJax: new SVG({ fontCache: 'local' }),
+      });
+      return (tex: string, display: boolean) => {
+        const node = document.convert(tex, { display });
+        const svg = adaptor.innerHTML(node);
+        const root = /<svg\b[^>]*>/.exec(svg)?.[0] ?? '';
+        const ex = (name: string) =>
+          Number(new RegExp(`${name}="(-?[\\d.]+)ex"`).exec(root)?.[1] ?? 0);
+        const align = /vertical-align:\s*(-?[\d.]+)ex/.exec(root)?.[1];
+        return {
+          svg,
+          widthEx: ex('width'),
+          heightEx: ex('height'),
+          depthEx: align ? -Number(align) : 0,
+        };
+      };
+    })();
+    mathJaxConverter.catch(() => {
+      mathJaxConverter = null;
+    });
+  }
+  return mathJaxConverter;
+}
+
+/**
+ * `tex` as an SVG sized for text of `fontSizePx`, or `null` when MathJax
+ * cannot be loaded. Works without a DOM, so a server can use it too.
+ */
+export async function mathToSvg(
+  tex: string,
+  display: boolean,
+  fontSizePx = 16,
+): Promise<MathSvg | null> {
+  try {
+    const convert = await loadMathJax();
+    const { svg, widthEx, heightEx, depthEx } = convert(tex, display);
+    // MathJax measures in ex; its fonts put 1ex at about 0.43em.
+    const exPx = fontSizePx * 0.43;
+    const width = Math.max(1, Math.ceil(widthEx * exPx));
+    const height = Math.max(1, Math.ceil(heightEx * exPx));
+    const sized = svg.replace(/<svg\b[^>]*>/, root =>
+      root
+        .replace(/\swidth="[^"]*"/, ` width="${width}"`)
+        .replace(/\sheight="[^"]*"/, ` height="${height}"`),
+    );
+    return { svg: sized, width, height, depth: Math.max(0, depthEx * exPx) };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * An equation as a picture at `scale` device pixels per CSS pixel: typeset
+ * by MathJax as SVG when it loads, else by KaTeX off screen and drawn.
  */
 export async function equationToRaster(
   equation: string,
@@ -237,6 +405,16 @@ export async function equationToRaster(
   if (!canRaster()) {
     return null;
   }
+  // MathJax first: vector glyphs, a known baseline, no layout quirks.
+  const math = await mathToSvg(equation, !inline, fontSizePx);
+  if (math) {
+    const raster = await svgToRaster(math.svg, scale);
+    if (raster) {
+      raster.depth = math.depth;
+      return raster;
+    }
+  }
+  // Else KaTeX on an off-screen element, drawn by html2canvas.
   const host = document.createElement('div');
   host.style.cssText = `position:fixed;left:-10000px;top:0;padding:2px 4px;font-size:${fontSizePx}px;color:#000;background:#fff;display:inline-block;white-space:nowrap`;
   document.body.appendChild(host);

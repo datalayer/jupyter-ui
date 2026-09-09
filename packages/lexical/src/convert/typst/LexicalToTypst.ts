@@ -34,6 +34,7 @@ import {
   dataUrlToBytes,
   elementToRaster,
   imageToRaster,
+  inlineSvgOf,
 } from '../pdf/raster';
 
 export interface TypstExportOptions {
@@ -70,8 +71,8 @@ export interface TypstDocument {
 export function escapeTypst(text: string): string {
   return text
     .replace(/\\/g, '\\\\')
-    .replace(/[*_`#$<>@[\]~]/g, match => `\\${match}`)
     .replace(/\/(?=[/*])/g, '\\/')
+    .replace(/[*_`#$<>@[\]~]/g, match => `\\${match}`)
     .replace(
       /(^|\n)([=\-+.])/g,
       (_m, before: string, char: string) => `${before}\\${char}`,
@@ -111,6 +112,15 @@ function inlineMath(equation: string, mitex: boolean): string {
 
 function displayMath(equation: string, mitex: boolean): string {
   return mitex ? `#mitex(${rawString(equation)})` : rawBlock(equation, 'latex');
+}
+
+/**
+ * An SVG as Typst can take it: `@font-face` rules go, because Typst tries
+ * to open their `src` as a file and refuses (drawings embed their fonts as
+ * data URLs); the text falls back to Typst's fonts.
+ */
+export function svgForTypst(svg: string): string {
+  return svg.replace(/@font-face\s*\{[^}]*\}/g, '');
 }
 
 function joinText(text: string | string[] | undefined): string {
@@ -189,19 +199,54 @@ class TypstEmitter {
       : this.editor.getElementByKey(key);
   }
 
-  private async pictureOfElement(key: string): Promise<string | null> {
+  /** A picture of a rendered element, with its size on screen in CSS pixels. */
+  private async pictureOfElement(
+    key: string,
+  ): Promise<{ path: string; width: number; height: number } | null> {
     const element = this.element(key);
     if (!element || !canRaster()) {
       return null;
     }
+    const rect = element.getBoundingClientRect();
     const canvas = element.querySelector('canvas');
+    if (!canvas) {
+      const svg = inlineSvgOf(element);
+      if (svg) {
+        return {
+          path: this.picture(new TextEncoder().encode(svgForTypst(svg)), 'svg'),
+          width: rect.width,
+          height: rect.height,
+        };
+      }
+    }
     const raster =
       (canvas && canvasElementToRaster(canvas)) ??
       (await elementToRaster(element, 2));
     if (!raster) {
       return null;
     }
-    return this.picture(await canvasToPng(raster.canvas), 'png');
+    return {
+      path: this.picture(await canvasToPng(raster.canvas), 'png'),
+      width: raster.cssWidth,
+      height: raster.cssHeight,
+    };
+  }
+
+  /**
+   * `#image(...)` for a picture of `width × height` CSS pixels: at most 80%
+   * of the text width and at most 12 cm tall, at its own size when smaller.
+   */
+  private imageCall(path: string, width?: number, height?: number): string {
+    if (!width || !height) {
+      return `#image(${typstString(path)}, width: 80%)`;
+    }
+    const textWidthCm = 17;
+    const maxHeightCm = 12;
+    let widthCm = Math.min(0.8 * textWidthCm, (width * 0.75) / 28.35);
+    if ((widthCm * height) / width > maxHeightCm) {
+      widthCm = (maxHeightCm * width) / height;
+    }
+    return `#image(${typstString(path)}, width: ${widthCm.toFixed(2)}cm)`;
   }
 
   private async pictureOfImage(src: string): Promise<string | null> {
@@ -307,9 +352,9 @@ class TypstEmitter {
       case 'embed':
         return `#link(${typstString(block.url)})[${escapeTypst(block.label)}]`;
       case 'drawing': {
-        const path = await this.pictureOfElement(block.key);
-        return path
-          ? `#image(${typstString(path)}, width: 80%)`
+        const picture = await this.pictureOfElement(block.key);
+        return picture
+          ? `#align(center)[${this.imageCall(picture.path, picture.width, picture.height)}]`
           : `#emph[${escapeTypst(block.label)}]`;
       }
       default:
@@ -434,10 +479,10 @@ class TypstEmitter {
             ),
           );
         } else if (data['text/html'] !== undefined) {
-          const path = await this.pictureOfElement(key);
+          const picture = await this.pictureOfElement(key);
           parts.push(
-            path
-              ? `#image(${typstString(path)}, width: 100%)`
+            picture
+              ? this.imageCall(picture.path, picture.width, picture.height)
               : rawBlock(
                   joinText(data['text/plain'] as string | string[] | undefined),
                   null,
@@ -467,6 +512,7 @@ class TypstEmitter {
       '#set heading(numbering: none)',
       '#show link: set text(fill: rgb("#0969da"))',
       '#show raw.where(block: true): block.with(fill: luma(246), inset: 8pt, radius: 4pt, width: 100%)',
+      '#show heading: set text(hyphenate: false)',
       '#show heading.where(level: 1): set text(size: 1.7em)',
       '#show heading.where(level: 2): set text(size: 1.35em)',
     ];

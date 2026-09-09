@@ -41,10 +41,7 @@ import { $isYouTubeNode } from '../../nodes/YouTubeNode';
 import { $isJupyterInputNode } from '../../nodes/JupyterInputNode';
 import { $isJupyterOutputNode } from '../../nodes/JupyterOutputNode';
 import { $isExcalidrawNode } from '../../nodes/ExcalidrawNode';
-import {
-  $isLayoutContainerNode,
-  getItemsCountFromTemplate,
-} from '../../nodes/LayoutContainerNode';
+import { $isLayoutContainerNode } from '../../nodes/LayoutContainerNode';
 import { $isLayoutItemNode } from '../../nodes/LayoutItemNode';
 import { $isCollapsibleContainerNode } from '../../plugins/CollapsiblePlugin/CollapsibleContainerNode';
 import { $isCollapsibleTitleNode } from '../../plugins/CollapsiblePlugin/CollapsibleTitleNode';
@@ -395,9 +392,10 @@ export function $blockOf(node: LexicalNode): Block | null {
   }
   if ($isLayoutContainerNode(node)) {
     const items = node.getChildren().filter($isLayoutItemNode);
+    const template = node.getTemplateColumns().trim();
     const count = Math.max(
       items.length,
-      getItemsCountFromTemplate(node.getTemplateColumns()),
+      template ? template.split(/\s+/).length : 0,
     );
     return {
       kind: 'columns',
@@ -496,9 +494,68 @@ export function $blockOf(node: LexicalNode): Block | null {
   return null;
 }
 
+/** An element that is a block of its own, not part of a line of text. */
+function $isBlockLevel(node: LexicalNode): boolean {
+  return (
+    ($isElementNode(node) &&
+      !$isLinkNode(node) &&
+      !node.isInline() &&
+      !$isParagraphNode(node)) ||
+    $isTableNode(node) ||
+    $isListNode(node) ||
+    $isCodeNode(node) ||
+    // Pictures and embeds sit in paragraphs as decorators; on a page they
+    // are blocks of their own.
+    $isImageNode(node) ||
+    $isExcalidrawNode(node) ||
+    $isYouTubeNode(node) ||
+    ($isEquationNode(node) && !node.__inline)
+  );
+}
+
+/**
+ * A paragraph that holds blocks (a table pasted into one, say): its inline
+ * runs as paragraphs, its blocks as themselves, in order.
+ */
+function $splitMixedParagraph(paragraph: ElementNode): Block[] {
+  const blocks: Block[] = [];
+  let pending: LexicalNode[] = [];
+  const flush = () => {
+    if (pending.length) {
+      const inlines = $inlinesOfNodes(pending);
+      if (inlines.length) {
+        blocks.push({
+          kind: 'paragraph',
+          inlines,
+          align: alignmentOf(paragraph),
+          indent: paragraph.getIndent(),
+        });
+      }
+      pending = [];
+    }
+  };
+  for (const child of paragraph.getChildren()) {
+    if ($isBlockLevel(child)) {
+      flush();
+      const block = $blockOf(child);
+      if (block) {
+        blocks.push(block);
+      }
+    } else {
+      pending.push(child);
+    }
+  }
+  flush();
+  return blocks;
+}
+
 export function $blocksOf(nodes: LexicalNode[]): Block[] {
   const blocks: Block[] = [];
   for (const node of nodes) {
+    if ($isParagraphNode(node) && node.getChildren().some($isBlockLevel)) {
+      blocks.push(...$splitMixedParagraph(node));
+      continue;
+    }
     const block = $blockOf(node);
     if (block) {
       blocks.push(block);

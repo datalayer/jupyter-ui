@@ -98,8 +98,33 @@ transformers?)`, built on transformers shaped after `@lexical/markdown`'s
   letter, assignment, newsletter, poster, presentation, thesis), each in the
   idiom of the category's best-known template.
 
+- **PDF** — four routes, one extension each, all in the browser and all
+  TypeScript (`PdfExportExtension` bundles them; commands and functions in
+  `src/extensions/PdfExportExtension.ts`):
+  1. `PdfPrintExtension` / `PRINT_PDF_COMMAND` — the rendered document,
+     cloned into a hidden iframe with the page's stylesheets and a print
+     stylesheet, printed by the browser (what JupyterLab does). Highest
+     fidelity; the reader saves as PDF from the dialog.
+  2. `PdfDocumentExtension` / `EXPORT_PDF_DOCUMENT_COMMAND` — a vector PDF
+     laid out from the document model (`src/convert/pdf`: a small PDF writer
+     over the standard 14 fonts, a layout engine for headings, paragraphs,
+     lists, code, tables, columns, quotes, boxes). Text stays text; pictures
+     — equations through KaTeX, images, drawings, rich outputs — are drawn by
+     the browser and placed as JPEGs. Runs headless with `pictures: false`.
+  3. `PdfSnapshotExtension` / `EXPORT_PDF_SNAPSHOT_COMMAND` — the editor
+     drawn to a canvas with html2canvas and cut into page images at the
+     whitest row near each cut. Everything as shown, nothing selectable.
+  4. `PdfTypesetExtension` / `EXPORT_PDF_TYPESET_COMMAND` — the document as
+     Typst markup (`src/convert/typst`), compiled by the Typst engine in
+     WebAssembly, fetched from a CDN on first use (`loadTypstEngine`; both
+     URLs configurable). Real typesetting; LaTeX math through the `mitex`
+     package from Typst's registry.
+
 The `LexicalFormats` example shows all of them on one document: Markdown
 and LaTeX sources you can edit and apply, a live notebook, the nbformat
 JSON, and the LaTeX rendered by reading it back into a read-only editor.
 The `LexicalLatex` example ("LaTeX Templates") reads each template into an
 editable editor beside its source, each written to the other on leaving.
+The `LexicalPdf` example ("PDF Export") runs the four PDF routes on the
+sample document side by side, with a preview of each result; both other
+examples carry an "Export PDF" menu.

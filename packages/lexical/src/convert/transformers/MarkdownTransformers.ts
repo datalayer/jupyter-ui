@@ -32,6 +32,7 @@ import {
   TableCellNode,
   TableNode,
   TableRowNode,
+  $isTableCellNode,
 } from '@lexical/table';
 import {
   $createParagraphNode,
@@ -147,6 +148,8 @@ export const EQUATION: TextMatchTransformer = {
 
 // Very primitive table setup
 const TABLE_ROW_REG_EXP = /^(?:\|)(.+)(?:\|)\s?$/;
+/** A cell of a GFM divider row: dashes, with optional alignment colons. */
+const TABLE_DIVIDER_CELL_REG_EXP = /^:?-+:?$/;
 
 export const TABLE: ElementTransformer = {
   dependencies: [TableNode, TableRowNode, TableCellNode],
@@ -173,6 +176,18 @@ export const TABLE: ElementTransformer = {
       }
 
       output.push(`| ${rowOutput.join(' | ')} |`);
+      // GFM wants a divider after the header row; Lexical marks such a row
+      // by its cells' header state.
+      if (
+        output.length === 1 &&
+        $isTableRowNode(row) &&
+        row.getChildrenSize() > 0 &&
+        row
+          .getChildren()
+          .every(cell => $isTableCellNode(cell) && cell.hasHeader())
+      ) {
+        output.push(`| ${rowOutput.map(() => '---').join(' | ')} |`);
+      }
     }
 
     return output.join('\n');
@@ -217,14 +232,57 @@ export const TABLE: ElementTransformer = {
       sibling = previousSibling;
     }
 
+    // A GFM divider row (`| --- | :-: |`) is not content: it names the row
+    // before it the header.
+    const dividerIndex = rows.findIndex(cells =>
+      cells.every(cell =>
+        TABLE_DIVIDER_CELL_REG_EXP.test(cell.getTextContent().trim()),
+      ),
+    );
+    if (dividerIndex === 0) {
+      // The rows before it were already made a table, line by line: the
+      // divider names that table's last row the header, and goes.
+      const previous = parentNode.getPreviousSibling();
+      if ($isTableNode(previous)) {
+        const lastRow = previous.getLastChild();
+        if ($isTableRowNode(lastRow)) {
+          lastRow.getChildren().forEach(cell => {
+            if ($isTableCellNode(cell)) {
+              cell.setHeaderStyles(
+                TableCellHeaderStates.ROW,
+                TableCellHeaderStates.ROW,
+              );
+            }
+          });
+        }
+        parentNode.remove();
+        return;
+      }
+    }
+    const headerRows = dividerIndex > 0 ? dividerIndex : 0;
+    if (dividerIndex >= 0) {
+      rows.splice(dividerIndex, 1);
+    }
+    if (rows.length === 0) {
+      parentNode.remove();
+      return;
+    }
+
     const table = $createTableNode();
 
-    for (const cells of rows) {
+    for (const [rowIndex, cells] of rows.entries()) {
       const tableRow = $createTableRowNode();
       table.append(tableRow);
 
       for (let i = 0; i < maxCells; i++) {
-        tableRow.append(i < cells.length ? cells[i] : createTableCell(null));
+        const cell = i < cells.length ? cells[i] : createTableCell(null);
+        if (rowIndex < headerRows) {
+          cell.setHeaderStyles(
+            TableCellHeaderStates.ROW,
+            TableCellHeaderStates.ROW,
+          );
+        }
+        tableRow.append(cell);
       }
     }
 

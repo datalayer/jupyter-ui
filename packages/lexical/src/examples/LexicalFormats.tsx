@@ -109,6 +109,7 @@ const download = (filename: string, text: string, type: string) => {
 };
 
 import { LatexView, SourceEditor } from './components/LatexViews';
+import { PdfExportMenu } from './components/PdfExportMenu';
 
 // ─── Tabs ──────────────────────────────────────────────────────────────────
 
@@ -317,6 +318,10 @@ const FormatsTabs = () => {
           <Button leadingVisual={UndoIcon} onClick={reset}>
             Reset document
           </Button>
+          <PdfExportMenu
+            getEditor={() => editor ?? null}
+            filename="lexical-formats"
+          />
         </Box>
       </Box>
 

@@ -86,7 +86,7 @@ const REPLACEMENTS: Record<string, string> = {
   '≥': '>=',
   '≠': '!=',
   '≈': '~',
-  '∎': '■', // end of proof → kept as a box below
+  '∎': '#', // end of proof
   '■': '#',
   '□': '[ ]',
   '☐': '[ ]',

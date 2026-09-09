@@ -41,6 +41,7 @@ import {
 } from '../convert';
 import { LexicalPrimerThemeProvider } from './..';
 import { LatexView, SourceEditor } from './components/LatexViews';
+import { PdfExportMenu } from './components/PdfExportMenu';
 import { useExampleThemeStore } from './themeStore';
 
 import '@datalayer/jupyter-react/style/index.css';
@@ -190,6 +191,10 @@ const LatexTemplates = () => {
         >
           Download .tex
         </Button>
+        <PdfExportMenu
+          getEditor={() => latexEditorRef.current}
+          filename={template.id}
+        />
       </Box>
       <Text as="p" sx={{ color: 'fg.muted', fontSize: 0, m: 0, mb: 2 }}>
         {summary.join(' · ')}
