@@ -78,9 +78,11 @@ import {
 } from '../../jupyter';
 import { createLatexTypesetter } from '../../jupyter/createLatexTypesetter';
 import type { OnSessionConnection } from '../../state';
+import { useJupyterReactStore } from '../../state';
 import { newUuid, remoteUserCursors } from '../../utils';
 import { Lumino } from '../lumino';
-import { Loader } from '../utils';
+import { watchFirstPaint } from './firstPaint';
+import { NotebookSkeleton } from './NotebookSkeleton';
 import { getMarked } from './marked/marked';
 import type { NotebookExtension } from './NotebookExtensions';
 import { addNotebookCommands, NotebookPanelProvider } from './NotebookCommands';
@@ -117,7 +119,8 @@ function fallbackNotebookPath(id: string): string {
   // The identifier of a local notebook IS its path; of a notebook of a space,
   // its uid. Either way it names one notebook, and never a directory — and an
   // identifier that already ends in the extension keeps the one it has.
-  const stem = id.replace(/[/\\]/g, ' ').replace(/\s+/g, ' ').trim() || 'notebook';
+  const stem =
+    id.replace(/[/\\]/g, ' ').replace(/\s+/g, ' ').trim() || 'notebook';
   const named = stem.endsWith('.ipynb') ? stem : `${stem}.ipynb`;
   return `${EPHEMERAL_NOTEBOOK_DIR}${named}`;
 }
@@ -147,8 +150,7 @@ function createYOutputMap(output: nbformat.IOutput): Y.Map<any> {
     // join('') — nbformat multiline text is a list of lines that already
     // carry their newlines; the default join(',') would thread commas
     // through every stream output loaded from disk.
-    const normalized =
-      text instanceof Array ? text.join('') : (text as string);
+    const normalized = text instanceof Array ? text.join('') : (text as string);
     if (normalized) {
       ytext.insert(0, normalized);
     }
@@ -339,6 +341,14 @@ export interface INotebookBaseProps {
    * Platform-specific providers can be injected here (e.g., LSP servers).
    */
   providers?: ICompletionProvider[];
+  /**
+   * Whether the model has its content from its source.
+   *
+   * True for a model built here from content; for a shared document, true
+   * once its room has synced. Until then a model with no cells is not empty
+   * but waiting, and the skeleton stays over the panel. Defaults to true.
+   */
+  synced?: boolean;
 }
 
 /**
@@ -360,9 +370,26 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
     serviceManager,
     model,
     onSessionConnection,
+    synced = true,
   } = props;
 
   const [isLoading, setIsLoading] = useState(true);
+  /*
+   * Whether the panel's cells are on screen.
+   *
+   * `isLoading` ends when the panel exists; the cells render only once the
+   * panel is attached, and a shared document's cells only once its room has
+   * synced. The skeleton stays over the attached panel until then — see
+   * `watchFirstPaint` for the condition.
+   */
+  const [painted, setPainted] = useState(false);
+  /*
+   * The ground the notebook paints on: the background the theme around it
+   * gave `JupyterReactTheme`, which the store carries for exactly this — so
+   * the skeleton over the panel is on the same ground as the cells under it,
+   * rather than on JupyterLab's white in a page that is not white.
+   */
+  const themeBackground = useJupyterReactStore(state => state.backgroundColor);
   const [extensionComponents, setExtensionComponents] = useState(
     new Array<JSX.Element>()
   );
@@ -779,6 +806,18 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
     };
   }, [context, extensions, features.commands, widgetFactory, panelProvider]);
 
+  // The skeleton stays over the panel until its cells are on screen.
+  useEffect(() => {
+    setPainted(false);
+    if (!panel) {
+      return;
+    }
+    return watchFirstPaint(panel, {
+      synced,
+      onPainted: () => setPainted(true),
+    });
+  }, [panel, synced]);
+
   // Update notebook store when adapter changes
   useEffect(() => {
     if (adapter) {
@@ -796,7 +835,7 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
       updatedNotebooks.set(id, {
         adapter,
         model: adapter.model ?? undefined,
-        portals: []
+        portals: [],
       });
       notebookStore.getState().setNotebooks(updatedNotebooks);
     } else {
@@ -849,10 +888,7 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
      * re-hooked whenever the session changes kernels.
      */
     let kernelConnection: JupyterKernel.IKernelConnection | null = null;
-    const onKernelStatus = (
-      _: unknown,
-      status: JupyterKernel.Status
-    ): void => {
+    const onKernelStatus = (_: unknown, status: JupyterKernel.Status): void => {
       push(status);
     };
     const hookKernel = () => {
@@ -885,10 +921,16 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
          * over an idle kernel; asked again, they follow it.
          */
         const followFromServer = () => {
-          if (kernelConnection !== connection || connection.status !== 'unknown') {
+          if (
+            kernelConnection !== connection ||
+            connection.status !== 'unknown'
+          ) {
             return;
           }
-          void KernelAPI.getKernelModel(connection.id, connection.serverSettings)
+          void KernelAPI.getKernelModel(
+            connection.id,
+            connection.serverSettings
+          )
             .then(model => {
               if (
                 model?.execution_state &&
@@ -1135,12 +1177,34 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
         );
       })}
       {isLoading ? (
-        <Loader key="notebook-loader" />
+        // The notebook's own shape, not a wheel: the cells are what is coming.
+        <NotebookSkeleton key="notebook-loader" />
       ) : panel ? (
-        <Box sx={{ height: '100%' }}>
+        <Box sx={{ height: '100%', position: 'relative' }}>
           <Lumino id={id} key="notebook-container">
             {panel}
           </Lumino>
+          {/*
+            Over the panel, not instead of it: the cells render only once the
+            widget is in the document, so the panel has to be attached under
+            the skeleton for the skeleton to have anything to give way to.
+            Opaque, on the notebook's own ground, until `watchFirstPaint`
+            says the cells are drawn.
+          */}
+          {!painted ? (
+            <Box
+              key="notebook-first-paint"
+              sx={{
+                position: 'absolute',
+                inset: 0,
+                zIndex: 1,
+                overflow: 'hidden',
+                bg: themeBackground ?? 'var(--bgColor-default)',
+              }}
+            >
+              <NotebookSkeleton />
+            </Box>
+          ) : null}
         </Box>
       ) : (
         <Banner

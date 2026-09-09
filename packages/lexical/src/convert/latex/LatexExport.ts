@@ -12,6 +12,12 @@
  * through the text-format transformers. What a node becomes is decided in
  * `LatexTransformers`, never here.
  *
+ * With `document: true` the body is wrapped in a complete document. Its
+ * `\title`, `\author` and `\date` come from the options, or else from the
+ * document's own opening — the `h1`, the italic author line, the date the
+ * importer makes of `\maketitle` — which is then left out of the body, so a
+ * document read and written again keeps one title.
+ *
  * @module convert/latex/LatexExport
  */
 
@@ -21,10 +27,13 @@ import {
   $isDecoratorNode,
   $isElementNode,
   $isLineBreakNode,
+  $isParagraphNode,
   $isTabNode,
   $isTextNode,
 } from 'lexical';
+import { $isHeadingNode } from '@lexical/rich-text';
 import {
+  hasChapters,
   LATEX_TRANSFORMERS,
   latexTransformersByType,
   type LatexExportContext,
@@ -38,10 +47,21 @@ export interface LatexExportOptions {
    * built-in transformers emit (math, graphics, links, listings, ulem, soul).
    */
   document?: boolean;
-  /** The document class of that document; `article` by default. */
+  /**
+   * The document class of that document; `article` by default. A class with
+   * chapters (`book`, `report`, …) writes an `h1` as `\chapter`.
+   */
   documentClass?: string;
-  /** A title, typeset with `\maketitle`. */
+  /** Options of that class, e.g. `twocolumn`. */
+  classOptions?: string[];
+  /**
+   * A title, typeset with `\maketitle`; plain text. Without it, a leading
+   * `h1` is the title.
+   */
   title?: string;
+  /** The author(s) and date of that title; plain text. */
+  author?: string;
+  date?: string;
 }
 
 /** The packages the built-in transformers rely on. */
@@ -53,9 +73,108 @@ export const LATEX_PREAMBLE_PACKAGES = [
   '\\usepackage{graphicx}',
   '\\usepackage{hyperref}',
   '\\usepackage{listings}',
+  '\\usepackage{multicol}',
   '\\usepackage[normalem]{ulem}',
   '\\usepackage{soul}',
 ];
+
+/** What goes in the preamble as the title block, as LaTeX. */
+interface TitleBlock {
+  title: string | null;
+  subtitle: string | null;
+  author: string | null;
+  institute: string | null;
+  date: string | null;
+  /** How many leading blocks the title block took. */
+  consumed: number;
+}
+
+const MONTHS =
+  'january|february|march|april|may|june|july|august|september|october|november|december';
+
+/** `September 2026`, `4 September 2026`, `September 9, 2026`, `2026-09-09`. */
+const DATE_LINE = new RegExp(
+  `^(?:\\d{1,2}(?:st|nd|rd|th)?\\s+(?:${MONTHS})\\s+\\d{4}|(?:${MONTHS})\\s+(?:\\d{1,2},?\\s+)?\\d{4}|\\d{4}-\\d{2}-\\d{2}|\\d{1,2}/\\d{1,2}/\\d{2,4})$`,
+  'i',
+);
+
+/** A paragraph of nothing but italic text: the author line `\maketitle` sets. */
+function $isItalicLine(node: LexicalNode | undefined): node is ElementNode {
+  if (!$isParagraphNode(node) || node.getChildrenSize() === 0) {
+    return false;
+  }
+  return node
+    .getChildren()
+    .every(child => $isTextNode(child) && child.hasFormat('italic'));
+}
+
+function $isPlainLine(node: LexicalNode | undefined): node is ElementNode {
+  return (
+    $isParagraphNode(node) &&
+    node.getChildrenSize() > 0 &&
+    node.getChildren().every(child => $isTextNode(child))
+  );
+}
+
+/**
+ * The title block at the head of `children`: the options first, then what
+ * the importer's rendering of `\maketitle` looks like.
+ */
+function $detectTitleBlock(
+  children: LexicalNode[],
+  options: LatexExportOptions,
+  exportChildren: (node: ElementNode) => string,
+): TitleBlock {
+  const block: TitleBlock = {
+    title: options.title ? escapeLatex(options.title) : null,
+    subtitle: null,
+    author: options.author ? escapeLatex(options.author) : null,
+    institute: null,
+    date: options.date ? escapeLatex(options.date) : null,
+    consumed: 0,
+  };
+  const first = children[0];
+  const isTitle =
+    $isHeadingNode(first) &&
+    first.getTag() === 'h1' &&
+    (options.title === undefined || first.getTextContent() === options.title);
+  if (!isTitle) {
+    return block;
+  }
+  block.title = exportChildren(first);
+  let i = 1;
+  const next = children[i];
+  if ($isHeadingNode(next) && next.getTag() === 'h3') {
+    block.subtitle = exportChildren(next);
+    i++;
+  }
+  if ($isItalicLine(children[i])) {
+    if (!options.author) {
+      block.author = escapeLatex(children[i].getTextContent());
+    }
+    i++;
+    // After the author: a date, and in a talk the institute before it.
+    const beamer = (options.documentClass ?? '').toLowerCase() === 'beamer';
+    for (let n = 0; n < 2 && $isPlainLine(children[i]); n++) {
+      const text = children[i].getTextContent().trim();
+      if (DATE_LINE.test(text)) {
+        if (!options.date) {
+          block.date = escapeLatex(text);
+        }
+        i++;
+        break;
+      }
+      if (beamer && block.institute === null) {
+        block.institute = escapeLatex(text);
+        i++;
+        continue;
+      }
+      break;
+    }
+  }
+  block.consumed = i;
+  return block;
+}
 
 /**
  * A function that, called inside an editor read or update, returns the
@@ -134,25 +253,74 @@ export function createLatexExport(
     return parts.join('');
   };
 
-  const ctx: LatexExportContext = { exportBlock, exportBlocks, exportChildren };
+  const ctx: LatexExportContext = {
+    exportBlock,
+    exportBlocks,
+    exportChildren,
+    chapters: hasChapters(options.documentClass),
+  };
 
   return () => {
-    const body = exportBlocks($getRoot().getChildren());
-    return options.document ? wrapDocument(body, options) : body;
+    const children = $getRoot().getChildren();
+    if (!options.document) {
+      return exportBlocks(children);
+    }
+    const titleBlock = $detectTitleBlock(children, options, exportChildren);
+    return wrapDocument(
+      exportBlocks(children.slice(titleBlock.consumed)),
+      options,
+      titleBlock,
+    );
   };
 }
 
-function wrapDocument(body: string, options: LatexExportOptions): string {
+function wrapDocument(
+  body: string,
+  options: LatexExportOptions,
+  titleBlock: TitleBlock,
+): string {
+  const documentClass = options.documentClass ?? 'article';
+  const classOptions = options.classOptions?.length
+    ? `[${options.classOptions.join(',')}]`
+    : '';
   const lines = [
-    `\\documentclass{${options.documentClass ?? 'article'}}`,
+    `\\documentclass${classOptions}{${documentClass}}`,
     ...LATEX_PREAMBLE_PACKAGES,
   ];
-  if (options.title) {
-    lines.push(`\\title{${escapeLatex(options.title)}}`);
+  const { title, subtitle, author, institute, date } = titleBlock;
+  const lower = documentClass.toLowerCase();
+  if (lower === 'moderncv' && title) {
+    // The person's name is the title of a CV; the role is its subtitle.
+    const space = title.lastIndexOf(' ');
+    lines.push(
+      space === -1
+        ? `\\name{${title}}{}`
+        : `\\name{${title.slice(0, space)}}{${title.slice(space + 1)}}`,
+    );
+    if (subtitle) {
+      lines.push(`\\title{${subtitle}}`);
+    }
+  } else if (title) {
+    if (subtitle && lower === 'beamer') {
+      lines.push(`\\title{${title}}`, `\\subtitle{${subtitle}}`);
+    } else if (subtitle) {
+      lines.push(`\\title{${title}\\\\ \\large ${subtitle}}`);
+    } else {
+      lines.push(`\\title{${title}}`);
+    }
+  }
+  if (title && author) {
+    lines.push(`\\author{${author}}`);
+  }
+  if (title && institute) {
+    lines.push(`\\institute{${institute}}`);
+  }
+  if (title && date) {
+    lines.push(`\\date{${date}}`);
   }
   lines.push('', '\\begin{document}');
-  if (options.title) {
-    lines.push('\\maketitle');
+  if (title) {
+    lines.push(lower === 'moderncv' ? '\\makecvtitle' : '\\maketitle');
   }
   lines.push('', body, '', '\\end{document}', '');
   return lines.join('\n');

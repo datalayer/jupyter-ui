@@ -22,7 +22,10 @@ state, focus on mount — and renders the content editable where it wants it:
 import { AutoFocusExtension } from '@lexical/extension';
 import { LexicalExtensionComposer } from '@lexical/react/LexicalExtensionComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
-import { JupyterLexicalExtension, commentTheme } from '@datalayer/jupyter-lexical';
+import {
+  JupyterLexicalExtension,
+  commentTheme,
+} from '@datalayer/jupyter-lexical';
 import { defineExtension } from 'lexical';
 
 // Module scope: the composer rebuilds the editor whenever this reference changes.
@@ -71,14 +74,32 @@ A document goes in and out of other formats through `src/convert`:
   input with its outputs and one Markdown cell per run of anything else;
   `nbformatToLexical(notebook, editor)` reads a notebook back (the
   input/output plug-in must be mounted for the code cells).
-- **LaTeX** — `$convertToLatexString(transformers?, { document, title })` and
-  `$convertFromLatexString(latex, transformers?)`, built on transformers
-  shaped after `@lexical/markdown`'s (`LATEX_TRANSFORMERS`): headings,
-  paragraphs and text formats, quotes, lists and check lists, listings
-  (`lstlisting`, `minted`, `verbatim`), tables, figures, rules, inline and
-  display math (AMS environments included), links, YouTube embeds. A host
-  adds a node by adding a transformer.
+- **LaTeX** — `$convertToLatexString(transformers?, { document, documentClass,
+classOptions, title, author, date })` and `$convertFromLatexString(latex,
+transformers?)`, built on transformers shaped after `@lexical/markdown`'s
+  (`LATEX_TRANSFORMERS`): the title block (`\title`, `\author`, `\date`,
+  `\maketitle`), headings from `\part` to `\subparagraph`, paragraphs and
+  text formats, quotes and abstracts, theorem environments and proofs,
+  lists, check lists and description lists, listings (`lstlisting`,
+  `minted`, `verbatim`), algorithms, tables (`tabular` and friends,
+  `\multicolumn` as spanning cells), figures, rules, inline and display
+  math (AMS environments included), links, YouTube embeds, footnotes,
+  citations and `thebibliography`, TeX dashes and quotes. `\newcommand`
+  macros from the preamble are expanded. Columns are read into layout
+  nodes: `multicols` (at `\columnbreak`, or evenly), beamer `columns`,
+  side-by-side `minipage`s, and the `twocolumn` class option; they are
+  written back as `multicols`. Beamer frames become sections and their
+  `block`s collapsible boxes; `moderncv` entries and the `letter` class
+  (`\opening`, `\closing`, `\signature`, `\ps`) read as prose. A host adds
+  a node by adding a transformer. `$importLatex` also returns what the
+  preamble said (`LatexDocumentInfo`).
+- **LaTeX templates** — `LATEX_TEMPLATES` holds one document per Overleaf
+  template category (journal article, bibliography, book, calendar, CV,
+  letter, assignment, newsletter, poster, presentation, thesis), each in the
+  idiom of the category's best-known template.
 
 The `LexicalFormats` example shows all of them on one document: Markdown
 and LaTeX sources you can edit and apply, a live notebook, the nbformat
 JSON, and the LaTeX rendered by reading it back into a read-only editor.
+The `LexicalLatex` example ("LaTeX Templates") reads each template into an
+editable editor beside its source, each written to the other on leaving.

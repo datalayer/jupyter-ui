@@ -23,6 +23,8 @@ export const AutoEmbedExtension = defineExtension({
   name: '@datalayer/jupyter-lexical/AutoEmbed',
   dependencies: [
     YouTubeExtension,
-    configExtension(ReactExtension, { decorators: [<AutoEmbedPlugin />] }),
+    configExtension(ReactExtension, {
+      decorators: [<AutoEmbedPlugin key="auto-embed" />],
+    }),
   ],
 });

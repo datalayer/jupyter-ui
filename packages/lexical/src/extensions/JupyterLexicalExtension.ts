@@ -10,8 +10,9 @@
  * Rich text, history, lists and check lists, links and automatic links,
  * hashtags, tables, horizontal rules, highlighted code blocks, markdown
  * shortcuts, images, equations, YouTube embeds, collapsibles, drawings,
- * comment anchors, Jupyter cells, executable inputs with their outputs, the
- * `/` picker, inline completions and the editor's place in the shared store.
+ * comment anchors, Jupyter cells, executable inputs with their outputs,
+ * columns, the `/` picker, inline completions and the editor's place in the
+ * shared store.
  * A host depends on it from its root extension and adds what is its own —
  * the namespace, a theme, an initial state, whether to focus on mount:
  *
@@ -60,6 +61,7 @@ import { ImagesExtension } from './ImagesExtension';
 import { InlineCompletionExtension } from './InlineCompletionExtension';
 import { JupyterCellExtension } from './JupyterCellExtension';
 import { JupyterInputOutputExtension } from './JupyterInputOutputExtension';
+import { LayoutExtension } from './LayoutExtension';
 import { LexicalStateExtension } from './LexicalStateExtension';
 import { ListMaxIndentLevelExtension } from './ListMaxIndentLevelExtension';
 import { MarkdownShortcutsExtension } from './MarkdownShortcutsExtension';
@@ -91,6 +93,7 @@ export const JupyterLexicalExtension = defineExtension({
     CommentExtension,
     JupyterCellExtension,
     JupyterInputOutputExtension,
+    LayoutExtension,
     ComponentPickerMenuExtension,
     InlineCompletionExtension,
     LexicalStateExtension,

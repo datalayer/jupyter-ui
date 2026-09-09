@@ -146,3 +146,50 @@ export function readOption(options: string | null, key: string): string | null {
   const match = new RegExp(`(?:^|,)\\s*${key}\\s*=\\s*([^,]+)`).exec(options);
   return match ? match[1].trim() : null;
 }
+
+/**
+ * Up to `count` consecutive `{…}` arguments starting at `index`; fewer when
+ * the source stops giving them.
+ */
+export function readBraceArguments(
+  text: string,
+  index: number,
+  count: number,
+): { values: string[]; end: number } {
+  const values: string[] = [];
+  let i = index;
+  for (let n = 0; n < count; n++) {
+    const argument = readBraceArgument(text, i);
+    if (!argument) {
+      break;
+    }
+    values.push(argument.value);
+    i = argument.end;
+  }
+  return { values, end: i };
+}
+
+/**
+ * A LaTeX source cut in two: what comes before `\begin{document}` and the
+ * document's body. A fragment without the environment is all body.
+ */
+export function splitDocument(latex: string): {
+  preamble: string;
+  body: string;
+} {
+  const begin = latex.indexOf('\\begin{document}');
+  if (begin === -1) {
+    return { body: latex, preamble: '' };
+  }
+  const start = begin + '\\begin{document}'.length;
+  const end = latex.lastIndexOf('\\end{document}');
+  return {
+    body: end === -1 ? latex.slice(start) : latex.slice(start, end),
+    preamble: latex.slice(0, begin),
+  };
+}
+
+/** `theorem` → `Theorem`: the name of an environment as a label. */
+export function capitalize(word: string): string {
+  return word.charAt(0).toUpperCase() + word.slice(1);
+}

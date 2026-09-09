@@ -26,6 +26,7 @@ import {
   $createTextNode,
   $isElementNode,
   $isParagraphNode,
+  $isTextNode,
 } from 'lexical';
 import {
   $createHeadingNode,
@@ -100,10 +101,29 @@ import {
   JupyterOutputNode,
 } from '../../nodes/JupyterOutputNode';
 import {
+  $createCollapsibleContainerNode,
   $isCollapsibleContainerNode,
   CollapsibleContainerNode,
 } from '../../plugins/CollapsiblePlugin/CollapsibleContainerNode';
-import { escapeLatex, readBraceArgument, readOption } from './utils';
+import { $createCollapsibleTitleNode } from '../../plugins/CollapsiblePlugin/CollapsibleTitleNode';
+import { $createCollapsibleContentNode } from '../../plugins/CollapsiblePlugin/CollapsibleContentNode';
+import {
+  $createLayoutContainerNode,
+  $isLayoutContainerNode,
+  LayoutContainerNode,
+} from '../../nodes/LayoutContainerNode';
+import {
+  $createLayoutItemNode,
+  $isLayoutItemNode,
+  LayoutItemNode,
+} from '../../nodes/LayoutItemNode';
+import {
+  capitalize,
+  escapeLatex,
+  readBraceArgument,
+  readBraceArguments,
+  readOption,
+} from './utils';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -115,14 +135,53 @@ export interface LatexExportContext {
   exportBlock: (node: LexicalNode) => string | null;
   /** Several blocks, separated by blank lines. */
   exportBlocks: (nodes: LexicalNode[]) => string;
+  /** The class has chapters (`book`, `report`): an `h1` is a `\chapter`. */
+  chapters: boolean;
 }
 
-/** What a transformer may call while importing. */
+/** A macro the source defines with `\newcommand`. */
+export interface LatexMacro {
+  name: string;
+  arity: number;
+  /** The default of the first argument when it is optional. */
+  defaultArg: string | null;
+  body: string;
+}
+
+/** What a preamble says about a document. */
+export interface LatexDocumentInfo {
+  documentClass: string | null;
+  classOptions: string[];
+  title: string | null;
+  subtitle: string | null;
+  author: string | null;
+  date: string | null;
+  /** beamer */
+  institute: string | null;
+  /** letter, moderncv */
+  address: string | null;
+  /** letter */
+  signature: string | null;
+  /** moderncv */
+  name: string | null;
+  phone: string | null;
+  email: string | null;
+  homepage: string | null;
+  macros: LatexMacro[];
+}
+
+/** What a transformer may call, and see, while importing. */
 export interface LatexImportContext {
   /** Blocks out of a piece of LaTeX (a list item's body, a quote's body). */
   importBlocks: (latex: string) => LexicalNode[];
   /** Inline nodes out of a piece of LaTeX (a heading's title, a cell). */
   importInline: (latex: string) => LexicalNode[];
+  /** What the preamble said; a transformer may add to it (`\title` in the body). */
+  document: LatexDocumentInfo;
+  /** The relative width a column asked for, for the layout that joins columns. */
+  columnWeights: WeakMap<LexicalNode, number>;
+  /** The document has chapters: `\section` is one level down. */
+  chapters: boolean;
 }
 
 /** A `\begin{name}…\end{name}` found by the importer. */
@@ -199,6 +258,32 @@ export type LatexTransformer =
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
+/** Classes whose top-level heading is `\chapter`. */
+export const CHAPTER_CLASSES = new Set([
+  'book',
+  'report',
+  'memoir',
+  'scrbook',
+  'scrreprt',
+  'amsbook',
+  'thesis',
+  'mitthesis',
+  'phdthesis',
+  'bookest',
+]);
+
+/** Whether `\chapter` is the top level: by class, or because the body uses it. */
+export function hasChapters(
+  documentClass: string | null | undefined,
+  body?: string,
+): boolean {
+  return (
+    CHAPTER_CLASSES.has((documentClass ?? '').toLowerCase()) ||
+    (body !== undefined && /(?<!\\)\\chapter\b/.test(body))
+  );
+}
+
+/** `h1` → `\section` … in a class without chapters. */
 const HEADING_COMMANDS: Record<HeadingTagType, string> = {
   h1: 'section',
   h2: 'subsection',
@@ -208,13 +293,34 @@ const HEADING_COMMANDS: Record<HeadingTagType, string> = {
   h6: 'subparagraph',
 };
 
+/** `h1` → `\chapter` … in a class with chapters. */
+const CHAPTER_HEADING_COMMANDS: Record<HeadingTagType, string> = {
+  h1: 'chapter',
+  h2: 'section',
+  h3: 'subsection',
+  h4: 'subsubsection',
+  h5: 'paragraph',
+  h6: 'subparagraph',
+};
+
 const HEADING_TAGS: Record<string, HeadingTagType> = {
+  part: 'h1',
   chapter: 'h1',
   section: 'h1',
   subsection: 'h2',
   subsubsection: 'h3',
   paragraph: 'h4',
   subparagraph: 'h5',
+};
+
+const CHAPTER_HEADING_TAGS: Record<string, HeadingTagType> = {
+  part: 'h1',
+  chapter: 'h1',
+  section: 'h2',
+  subsection: 'h3',
+  subsubsection: 'h4',
+  paragraph: 'h5',
+  subparagraph: 'h6',
 };
 
 /** `python` → `Python`: the spelling `listings` expects. */
@@ -264,6 +370,7 @@ function outputText(output: nbformat.IOutput): string | null {
       output.traceback
         .join('\n')
         // ANSI colour codes have no place in a listing.
+        // eslint-disable-next-line no-control-regex
         .replace(/\u001b\[[0-9;]*m/g, '')
     );
   }
@@ -363,20 +470,22 @@ function inlineNodesOf(blocks: LexicalNode[]): {
 export const LATEX_HEADING: LatexElementTransformer = {
   type: 'element',
   dependencies: [HeadingNode],
-  export: (node, { exportChildren }) => {
+  export: (node, ctx) => {
     if (!$isHeadingNode(node)) {
       return null;
     }
-    const command = HEADING_COMMANDS[node.getTag()] ?? 'section';
-    return `\\${command}{${exportChildren(node)}}`;
+    const commands = ctx.chapters ? CHAPTER_HEADING_COMMANDS : HEADING_COMMANDS;
+    const command = commands[node.getTag()] ?? 'section';
+    return `\\${command}{${ctx.exportChildren(node)}}`;
   },
   import: {
     kind: 'line',
     regExp:
-      /^\\(chapter|section|subsection|subsubsection|paragraph|subparagraph)\*?\s*\{/,
-    replace: (match, line, { importInline }) => {
+      /^\\(part|chapter|section|subsection|subsubsection|paragraph|subparagraph)\*?\s*(?:\[[^\]]*\])?\s*\{/,
+    replace: (match, line, { importInline, chapters }) => {
       const argument = readBraceArgument(line, match[0].length - 1);
-      const heading = $createHeadingNode(HEADING_TAGS[match[1]] ?? 'h1');
+      const tags = chapters ? CHAPTER_HEADING_TAGS : HEADING_TAGS;
+      const heading = $createHeadingNode(tags[match[1]] ?? 'h1');
       heading.append(...importInline(argument ? argument.value : ''));
       return [heading];
     },
@@ -440,12 +549,14 @@ function importListItems(
   body: string,
   listType: ListType,
   ctx: LatexImportContext,
+  describing = false,
 ): ListNode {
   const list = $createListNode(listType);
   const items = splitTopLevel(body, '\\item').slice(1);
   for (const raw of items) {
     let text = raw;
     let checked: boolean | undefined;
+    let term: string | null = null;
     const optional = /^\s*\[/.test(text) ? readBraceLikeOption(text) : null;
     if (optional) {
       const label = optional.value.trim();
@@ -456,6 +567,9 @@ function importListItems(
         checked = true;
       } else if (label === UNCHECKED_LABEL || /square|Box\b/.test(label)) {
         checked = false;
+      } else if (describing || label) {
+        // `\item[Term] text`: the term leads, in bold.
+        term = label;
       }
       text = text.slice(optional.end);
     }
@@ -466,6 +580,9 @@ function importListItems(
         ? (checked ?? false)
         : undefined,
     );
+    if (term) {
+      item.append(...ctx.importInline(term).map($bolden), $createTextNode(' '));
+    }
     item.append(...inline);
     list.append(item);
     for (const nested of rest) {
@@ -480,6 +597,22 @@ function importListItems(
     }
   }
   return list;
+}
+
+/** `node` in bold, when it is text. */
+function $bolden(node: LexicalNode): LexicalNode {
+  if ($isTextNode(node) && !node.hasFormat('bold')) {
+    node.toggleFormat('bold');
+  }
+  return node;
+}
+
+/** `node` in italics, when it is text. */
+function $italicize(node: LexicalNode): LexicalNode {
+  if ($isTextNode(node) && !node.hasFormat('italic')) {
+    node.toggleFormat('italic');
+  }
+  return node;
 }
 
 function readBraceLikeOption(
@@ -521,7 +654,14 @@ export const LATEX_LIST: LatexElementTransformer = {
         : block.name === 'enumerate'
           ? 'number'
           : 'bullet';
-      return [importListItems(block.body, listType, ctx)];
+      return [
+        importListItems(
+          block.body,
+          listType,
+          ctx,
+          block.name === 'description',
+        ),
+      ];
     },
   },
 };
@@ -601,16 +741,23 @@ export const LATEX_HORIZONTAL_RULE: LatexElementTransformer = {
     $isHorizontalRuleNode(node) ? '\\noindent\\hrulefill' : null,
   import: {
     kind: 'line',
-    regExp: /^(\\noindent\s*)?(\\hrulefill|\\rule\{[^}]*\}\{[^}]*\}|\\hline)$/,
+    regExp:
+      /^(\\noindent\s*)?(\\hrulefill|\\hrule|\\rule\{[^}]*\}\{[^}]*\}|\\hline)$/,
     replace: () => [$createHorizontalRuleNode() as unknown as LexicalNode],
   },
 };
 
 function exportTable(table: TableNode, ctx: LatexExportContext): string {
   const rows = table.getChildren().filter($isTableRowNode) as TableRowNode[];
+  const span = (cell: TableCellNode) => Math.max(1, cell.getColSpan());
   const columns = Math.max(
     1,
-    ...rows.map(row => row.getChildren().filter($isTableCellNode).length),
+    ...rows.map(row =>
+      (row.getChildren().filter($isTableCellNode) as TableCellNode[]).reduce(
+        (sum, cell) => sum + span(cell),
+        0,
+      ),
+    ),
   );
   const lines = [`\\begin{tabular}{|${'l|'.repeat(columns)}}`, '\\hline'];
   rows.forEach((row, rowIndex) => {
@@ -618,8 +765,8 @@ function exportTable(table: TableNode, ctx: LatexExportContext): string {
     const isHeader =
       cells.length > 0 &&
       cells.every(cell => cell.hasHeaderState(TableCellHeaderStates.ROW));
-    const content = cells.map(cell =>
-      cell
+    const content = cells.map(cell => {
+      const text = cell
         .getChildren()
         .map(child =>
           $isElementNode(child)
@@ -627,8 +774,9 @@ function exportTable(table: TableNode, ctx: LatexExportContext): string {
             : ctx.exportBlock(child),
         )
         .filter(Boolean)
-        .join(' '),
-    );
+        .join(' ');
+      return span(cell) > 1 ? `\\multicolumn{${span(cell)}}{l}{${text}}` : text;
+    });
     lines.push(`${content.join(' & ')} \\\\`);
     if (isHeader || rowIndex === rows.length - 1) {
       lines.push('\\hline');
@@ -648,7 +796,6 @@ function importTable(
     .map(row => row.replace(/^\s*\[[^\]]*\]/, ''))
     .map(row => ({
       hlineBefore: /^\s*\\hline/.test(row),
-      hlineAfter: /\\hline\s*$/.test(row),
       text: row.replace(/\\hline/g, '').trim(),
     }))
     .filter(row => row.text !== '');
@@ -661,13 +808,23 @@ function importTable(
   rowsRaw.forEach((row, rowIndex) => {
     const tableRow = $createTableRowNode();
     for (const cellText of splitTopLevel(row.text, '&')) {
+      let content = cellText.trim();
+      let colSpan = 1;
+      // `\multicolumn{2}{c}{Text}`: a cell over two columns.
+      const multi = /^\\multicolumn\s*\{/.exec(content);
+      if (multi) {
+        const args = readBraceArguments(content, multi[0].length - 1, 3);
+        colSpan = Math.max(1, Number(args.values[0]) || 1);
+        content = args.values[2] ?? '';
+      }
       const cell = $createTableCellNode(
         rowIndex === 0 && firstIsHeader
           ? TableCellHeaderStates.ROW
           : TableCellHeaderStates.NO_STATUS,
+        colSpan,
       );
       const paragraph = $createParagraphNode();
-      paragraph.append(...ctx.importInline(cellText.trim()));
+      paragraph.append(...ctx.importInline(content));
       cell.append(paragraph);
       tableRow.append(cell);
     }
@@ -694,7 +851,14 @@ export const LATEX_FLOAT: LatexElementTransformer = {
   export: () => null,
   import: {
     kind: 'environment',
-    names: ['table', 'table*', 'center', 'flushleft', 'flushright', 'minipage'],
+    names: [
+      'table',
+      'table*',
+      'center',
+      'flushleft',
+      'flushright',
+      'titlepage',
+    ],
     replace: (block, { importBlocks }) =>
       importBlocks(
         // A caption has no block of its own; it reads as a paragraph.
@@ -943,21 +1107,565 @@ export const LATEX_LINK: LatexTextMatchTransformer = {
   },
 };
 
+// ─── Documents, columns and the classes' own blocks ────────────────────────
+
+/** A grid template for columns of the given relative widths. */
+export function columnsTemplate(weights: number[]): string {
+  const total =
+    weights.reduce((sum, weight) => sum + weight, 0) || weights.length;
+  return weights
+    .map(weight => `${Math.max(1, Math.round((weight / total) * 100))}fr`)
+    .join(' ');
+}
+
+/** A column holding `blocks` (a paragraph when there are none). */
+export function $columnOf(blocks: LexicalNode[]): LayoutItemNode {
+  const item = $createLayoutItemNode();
+  item.append(...(blocks.length > 0 ? blocks : [$createParagraphNode()]));
+  return item;
+}
+
+/** A layout holding `items` as columns of the given relative widths. */
+export function $columnsOf(
+  items: LayoutItemNode[],
+  weights: number[],
+): LayoutContainerNode {
+  const container = $createLayoutContainerNode(columnsTemplate(weights));
+  for (const item of items) {
+    if (item.isEmpty()) {
+      item.append($createParagraphNode());
+    }
+    container.append(item);
+  }
+  return container;
+}
+
+/** `blocks` dealt into `count` columns of about equal length. */
+export function $splitBlocks(
+  blocks: LexicalNode[],
+  count: number,
+): LexicalNode[][] {
+  const size = Math.max(1, Math.ceil(blocks.length / count));
+  const parts: LexicalNode[][] = [];
+  for (let i = 0; i < count; i++) {
+    parts.push(blocks.slice(i * size, (i + 1) * size));
+  }
+  return parts;
+}
+
+/** The share of the line a width such as `0.3\textwidth` takes; 1 when unknown. */
+function widthWeight(width: string | null): number {
+  if (!width) {
+    return 1;
+  }
+  const match =
+    /^\s*([0-9]*\.?[0-9]+)?\s*\\(?:text|line|column|paper)width/.exec(width);
+  if (match) {
+    return match[1] ? Number(match[1]) : 1;
+  }
+  return 1;
+}
+
+function $paragraphOf(nodes: LexicalNode[]) {
+  const paragraph = $createParagraphNode();
+  paragraph.append(...nodes);
+  return paragraph;
+}
+
+/** The title block `\maketitle` prints, from what the preamble said. */
+export function $titleBlock(
+  document: LatexDocumentInfo,
+  ctx: LatexImportContext,
+): LexicalNode[] {
+  const nodes: LexicalNode[] = [];
+  const heading = (tag: HeadingTagType, text: string) => {
+    const node = $createHeadingNode(tag);
+    node.append(...ctx.importInline(text));
+    nodes.push(node);
+  };
+  if (document.name) {
+    // A CV: the person is the title, the role the subtitle.
+    heading('h1', document.name);
+    if (document.title) {
+      heading('h3', document.title);
+    }
+  } else if (document.title) {
+    heading('h1', document.title);
+    if (document.subtitle) {
+      heading('h3', document.subtitle);
+    }
+  }
+  if (document.author) {
+    const author = document.author.replace(/\s*\\and\b\s*/g, ', ');
+    nodes.push($paragraphOf(ctx.importInline(author).map($italicize)));
+  }
+  if (document.institute) {
+    nodes.push($paragraphOf(ctx.importInline(document.institute)));
+  }
+  if (document.date) {
+    nodes.push($paragraphOf(ctx.importInline(document.date)));
+  }
+  const contact = [
+    document.address,
+    document.phone,
+    document.email,
+    document.homepage,
+  ]
+    .filter((part): part is string => !!part)
+    .join(' · ');
+  if (contact) {
+    nodes.push($paragraphOf(ctx.importInline(contact)));
+  }
+  return nodes;
+}
+
+/** `\title{…}`, `\author{…}`, `\date{…}` in the body: noted, not shown. */
+export const LATEX_META: LatexElementTransformer = {
+  type: 'element',
+  dependencies: [],
+  export: () => null,
+  import: {
+    kind: 'line',
+    regExp: /^\\(title|subtitle|author|date|institute)\s*(?:\[[^\]]*\])?\s*\{/,
+    replace: (match, line, ctx) => {
+      const key = match[1] as
+        'title' | 'subtitle' | 'author' | 'date' | 'institute';
+      const argument = readBraceArgument(line, match[0].length - 1);
+      if (argument) {
+        ctx.document[key] = argument.value;
+      }
+      return [];
+    },
+  },
+};
+
+/** `\maketitle` and its relatives: the title block. */
+export const LATEX_TITLE: LatexElementTransformer = {
+  type: 'element',
+  dependencies: [HeadingNode],
+  export: () => null,
+  import: {
+    kind: 'line',
+    regExp: /^\\(maketitle|titlepage|makecvtitle|maketitlepage)(?![A-Za-z])/,
+    replace: (_match, _line, ctx) => $titleBlock(ctx.document, ctx),
+  },
+};
+
+/**
+ * Columns: `multicols`, beamer's `columns`/`column`, side-by-side
+ * `minipage`s. A single `column` or `minipage` comes back as one column;
+ * the importer joins neighbours into a layout, or unwraps a lone one.
+ */
+export const LATEX_COLUMNS: LatexElementTransformer = {
+  type: 'element',
+  dependencies: [LayoutContainerNode, LayoutItemNode],
+  export: (node, ctx) => {
+    if ($isLayoutContainerNode(node)) {
+      const items = node
+        .getChildren()
+        .filter($isLayoutItemNode) as LayoutItemNode[];
+      const columns = items.map(item => ctx.exportBlocks(item.getChildren()));
+      return `\\begin{multicols}{${Math.max(1, items.length)}}\n${columns.join(
+        '\n\\columnbreak\n',
+      )}\n\\end{multicols}`;
+    }
+    if ($isLayoutItemNode(node)) {
+      return ctx.exportBlocks(node.getChildren());
+    }
+    return null;
+  },
+  import: {
+    kind: 'environment',
+    names: [
+      'multicols',
+      'multicols*',
+      'columns',
+      'column',
+      'minipage',
+      'paracol',
+    ],
+    replace: (block, ctx) => {
+      if (block.name.startsWith('multicols') || block.name === 'paracol') {
+        const count = Math.max(1, Number(block.argument) || 2);
+        const parts = splitTopLevel(block.body, '\\columnbreak');
+        const columns =
+          parts.length > 1
+            ? parts.map(part => ctx.importBlocks(part))
+            : $splitBlocks(ctx.importBlocks(block.body), count);
+        return [
+          $columnsOf(
+            columns.map($columnOf),
+            columns.map(() => 1),
+          ),
+        ];
+      }
+      if (block.name === 'columns') {
+        if (
+          /\\column\s*\{/.test(block.body) &&
+          !/\\begin\{column\}/.test(block.body)
+        ) {
+          // `\column{width}` cuts the body; the environment form is read below.
+          const parts = block.body.split(/\\column\s*\{([^}]*)\}/).slice(1);
+          const items: LayoutItemNode[] = [];
+          const weights: number[] = [];
+          for (let i = 0; i + 1 < parts.length; i += 2) {
+            items.push($columnOf(ctx.importBlocks(parts[i + 1])));
+            weights.push(widthWeight(parts[i]));
+          }
+          return items.length > 0 ? [$columnsOf(items, weights)] : [];
+        }
+        return ctx.importBlocks(block.body);
+      }
+      const item = $columnOf(ctx.importBlocks(block.body));
+      ctx.columnWeights.set(item, widthWeight(block.argument));
+      return [item];
+    },
+  },
+};
+
+const THEOREM_NAMES = [
+  'theorem',
+  'lemma',
+  'proposition',
+  'corollary',
+  'definition',
+  'example',
+  'remark',
+  'claim',
+  'exercise',
+  'solution',
+  'note',
+  'conjecture',
+  'proof',
+];
+
+/** Theorem-like environments: a quote led by the bold name. */
+export const LATEX_THEOREM: LatexElementTransformer = {
+  type: 'element',
+  dependencies: [QuoteNode],
+  export: () => null,
+  import: {
+    kind: 'environment',
+    names: THEOREM_NAMES.flatMap(name => [name, `${name}*`]),
+    replace: (block, ctx) => {
+      const base = block.name.replace(/\*$/, '');
+      const { inline, rest } = inlineNodesOf(ctx.importBlocks(block.body));
+      const quote = $createQuoteNode();
+      const label = $createTextNode(
+        base === 'proof'
+          ? 'Proof.'
+          : `${capitalize(base)}${block.options ? ` (${block.options})` : ''}.`,
+      );
+      label.toggleFormat(base === 'proof' ? 'italic' : 'bold');
+      quote.append(label, $createTextNode(' '), ...inline);
+      if (base === 'proof') {
+        quote.append($createTextNode(' ∎'));
+      }
+      return [quote, ...rest];
+    },
+  },
+};
+
+/** `thebibliography`: a References heading and a numbered list. */
+export const LATEX_BIBLIOGRAPHY: LatexElementTransformer = {
+  type: 'element',
+  dependencies: [ListNode, ListItemNode, HeadingNode],
+  export: () => null,
+  import: {
+    kind: 'environment',
+    names: ['thebibliography'],
+    replace: (block, ctx) => {
+      const list = $createListNode('number');
+      for (const raw of splitTopLevel(block.body, '\\bibitem').slice(1)) {
+        let text = raw;
+        const optional = /^\s*\[/.test(text) ? readBraceLikeOption(text) : null;
+        if (optional) {
+          text = text.slice(optional.end);
+        }
+        const key = readBraceArgument(text, 0);
+        if (key) {
+          text = text.slice(key.end);
+        }
+        const item = $createListItemNode();
+        item.append(...ctx.importInline(text.trim()));
+        list.append(item);
+      }
+      const heading = $createHeadingNode('h2');
+      heading.append($createTextNode('References'));
+      return [heading, list];
+    },
+  },
+};
+
+/** A beamer frame: its title as a heading, then its content. */
+export const LATEX_FRAME: LatexElementTransformer = {
+  type: 'element',
+  dependencies: [HeadingNode],
+  export: () => null,
+  import: {
+    kind: 'environment',
+    names: ['frame'],
+    replace: (block, ctx) => {
+      const nodes: LexicalNode[] = [];
+      if (block.argument && block.argument.trim()) {
+        const heading = $createHeadingNode('h2');
+        heading.append(...ctx.importInline(block.argument));
+        nodes.push(heading);
+      }
+      nodes.push(...ctx.importBlocks(block.body));
+      return nodes;
+    },
+  },
+};
+
+/** `\frametitle{…}` inside a frame. */
+export const LATEX_FRAME_TITLE: LatexElementTransformer = {
+  type: 'element',
+  dependencies: [HeadingNode],
+  export: () => null,
+  import: {
+    kind: 'line',
+    regExp: /^\\(frametitle|framesubtitle)\s*\{/,
+    replace: (match, line, ctx) => {
+      const argument = readBraceArgument(line, match[0].length - 1);
+      const heading = $createHeadingNode(
+        match[1] === 'frametitle' ? 'h2' : 'h3',
+      );
+      heading.append(...ctx.importInline(argument ? argument.value : ''));
+      return [heading];
+    },
+  },
+};
+
+/** A titled box — beamer's blocks, `tcolorbox` — as an open collapsible. */
+export const LATEX_BLOCK: LatexElementTransformer = {
+  type: 'element',
+  dependencies: [CollapsibleContainerNode],
+  export: () => null,
+  import: {
+    kind: 'environment',
+    names: [
+      'block',
+      'alertblock',
+      'exampleblock',
+      'tcolorbox',
+      'mdframed',
+      'infobox',
+    ],
+    replace: (block, ctx) => {
+      const title =
+        (block.argument && block.argument.trim()) ||
+        readOption(block.options, 'title') ||
+        capitalize(block.name.replace(/block$/, '') || 'note');
+      const container = $createCollapsibleContainerNode(true);
+      const titleNode = $createCollapsibleTitleNode();
+      titleNode.append(...ctx.importInline(title));
+      const content = $createCollapsibleContentNode();
+      const blocks = ctx.importBlocks(block.body);
+      content.append(
+        ...(blocks.length > 0 ? blocks : [$createParagraphNode()]),
+      );
+      container.append(titleNode, content);
+      return [container];
+    },
+  },
+};
+
+/** The `letter` environment: the recipient, then the letter. */
+export const LATEX_LETTER: LatexElementTransformer = {
+  type: 'element',
+  dependencies: [],
+  export: () => null,
+  import: {
+    kind: 'environment',
+    names: ['letter'],
+    replace: (block, ctx) => {
+      const nodes: LexicalNode[] = [];
+      if (block.argument && block.argument.trim()) {
+        nodes.push($paragraphOf(ctx.importInline(block.argument)));
+      }
+      nodes.push(...ctx.importBlocks(block.body));
+      return nodes;
+    },
+  },
+};
+
+/** A letter's `\opening`, `\closing` (with the signature), `\ps`, `\encl`, `\cc`. */
+export const LATEX_LETTER_LINES: LatexElementTransformer = {
+  type: 'element',
+  dependencies: [],
+  export: () => null,
+  import: {
+    kind: 'line',
+    regExp: /^\\(opening|closing|ps|encl|cc)\s*\{/,
+    replace: (match, line, ctx) => {
+      const argument = readBraceArgument(line, match[0].length - 1);
+      const text = argument ? argument.value : '';
+      const labels: Record<string, string> = {
+        cc: 'cc: ',
+        encl: 'Enclosures: ',
+        ps: 'P.S. ',
+      };
+      const nodes: LexicalNode[] = [];
+      if (labels[match[1]]) {
+        const label = $createTextNode(labels[match[1]]);
+        label.toggleFormat('bold');
+        nodes.push($paragraphOf([label, ...ctx.importInline(text)]));
+      } else {
+        nodes.push($paragraphOf(ctx.importInline(text)));
+      }
+      if (match[1] === 'closing' && ctx.document.signature) {
+        nodes.push(
+          $paragraphOf(ctx.importInline(ctx.document.signature).map($bolden)),
+        );
+      }
+      return nodes;
+    },
+  },
+};
+
+/** moderncv's entries: `\cventry`, `\cvitem`, `\cvitemwithcomment`, `\cvlistitem`, `\cvdoubleitem`. */
+export const LATEX_CV: LatexElementTransformer = {
+  type: 'element',
+  dependencies: [ListNode, ListItemNode],
+  export: () => null,
+  import: {
+    kind: 'line',
+    regExp:
+      /^\\(cventry|cvitem|cvitemwithcomment|cvlistitem|cvlistdoubleitem|cvdoubleitem)\s*\{/,
+    replace: (match, line, ctx) => {
+      const start = match[0].length - 1;
+      const inline = (text: string) => ctx.importInline(text);
+      switch (match[1]) {
+        case 'cventry': {
+          const [years, title, institution, city, grade, description] =
+            readBraceArguments(line, start, 6).values;
+          const parts: LexicalNode[] = [...inline(title ?? '').map($bolden)];
+          const where = [institution, city].filter(Boolean).join(', ');
+          if (where) {
+            parts.push($createTextNode(' — '), ...inline(where));
+          }
+          if (years) {
+            parts.push(
+              $createTextNode(' ('),
+              ...inline(years),
+              $createTextNode(')'),
+            );
+          }
+          if (grade) {
+            parts.push($createTextNode(', '), ...inline(grade).map($italicize));
+          }
+          if (description) {
+            parts.push($createLineBreakNode(), ...inline(description));
+          }
+          return [$paragraphOf(parts)];
+        }
+        case 'cvitem':
+        case 'cvitemwithcomment': {
+          const [label, text, comment] = readBraceArguments(
+            line,
+            start,
+            3,
+          ).values;
+          const parts: LexicalNode[] = [];
+          if (label) {
+            parts.push(...inline(`${label}: `).map($bolden));
+          }
+          parts.push(...inline(text ?? ''));
+          if (comment) {
+            parts.push(
+              $createTextNode(' — '),
+              ...inline(comment).map($italicize),
+            );
+          }
+          return [$paragraphOf(parts)];
+        }
+        case 'cvdoubleitem': {
+          const [a, b, c, d] = readBraceArguments(line, start, 4).values;
+          const parts: LexicalNode[] = [];
+          if (a) {
+            parts.push(...inline(`${a}: `).map($bolden));
+          }
+          parts.push(...inline(b ?? ''));
+          if (c) {
+            parts.push(
+              $createTextNode(' · '),
+              ...inline(`${c}: `).map($bolden),
+            );
+          }
+          parts.push(...inline(d ?? ''));
+          return [$paragraphOf(parts)];
+        }
+        default: {
+          // cvlistitem, cvlistdoubleitem: bullets, joined by the importer.
+          const list = $createListNode('bullet');
+          for (const text of readBraceArguments(line, start, 2).values) {
+            const item = $createListItemNode();
+            item.append(...inline(text));
+            list.append(item);
+          }
+          return [list];
+        }
+      }
+    },
+  },
+};
+
+/** Algorithms as code; a TikZ picture as a note that one was there. */
+export const LATEX_ALGORITHM: LatexElementTransformer = {
+  type: 'element',
+  dependencies: [CodeNode],
+  export: () => null,
+  import: {
+    kind: 'environment',
+    names: [
+      'algorithm',
+      'algorithm*',
+      'algorithmic',
+      'algorithm2e',
+      'tikzpicture',
+      'circuitikz',
+    ],
+    replace: block => {
+      if (block.name === 'tikzpicture' || block.name === 'circuitikz') {
+        const note = $createTextNode('[TikZ picture]');
+        note.toggleFormat('italic');
+        return [$paragraphOf([note])];
+      }
+      const code = $createCodeNode();
+      code.append($createTextNode(codeBody(block.body).trim()));
+      return [code];
+    },
+  },
+};
+
 // ─── Sets ──────────────────────────────────────────────────────────────────
 
 export const LATEX_ELEMENT_TRANSFORMERS: LatexElementTransformer[] = [
+  LATEX_META,
+  LATEX_TITLE,
   LATEX_HEADING,
+  LATEX_FRAME_TITLE,
   LATEX_QUOTE,
+  LATEX_THEOREM,
   LATEX_LIST,
+  LATEX_BIBLIOGRAPHY,
   LATEX_JUPYTER_INPUT,
   LATEX_JUPYTER_OUTPUT,
   LATEX_CODE,
+  LATEX_ALGORITHM,
   LATEX_TABLE,
   LATEX_FLOAT,
   LATEX_FIGURE,
   LATEX_DISPLAY_EQUATION,
   LATEX_HORIZONTAL_RULE,
   LATEX_YOUTUBE,
+  LATEX_COLUMNS,
+  LATEX_FRAME,
+  LATEX_BLOCK,
+  LATEX_LETTER,
+  LATEX_LETTER_LINES,
+  LATEX_CV,
   LATEX_COLLAPSIBLE,
 ];
 

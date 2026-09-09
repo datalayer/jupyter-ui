@@ -23,6 +23,8 @@ export const ExcalidrawExtension = defineExtension({
   name: '@datalayer/jupyter-lexical/Excalidraw',
   nodes: () => [ExcalidrawNode],
   dependencies: [
-    configExtension(ReactExtension, { decorators: [<ExcalidrawPlugin />] }),
+    configExtension(ReactExtension, {
+      decorators: [<ExcalidrawPlugin key="excalidraw" />],
+    }),
   ],
 });

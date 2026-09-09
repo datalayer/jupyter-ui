@@ -72,6 +72,7 @@
     "@datalayer/jupyter-react": "^2.0.14",
     "@datalayer/lexical-loro": "^1.0.0",
     "@datalayer/primer-addons": "^1.0.12",
+    "@primer/react": "^37.31.0",
     "@excalidraw/excalidraw": "^0.18.1",
     "@excalidraw/mermaid-to-excalidraw": "^2.2.2",
     "@floating-ui/react": "^0.27.16",

@@ -19,8 +19,8 @@ import type { CommandRegistry } from '@lumino/commands';
 import { Box } from '@datalayer/primer-addons';
 import { ICollaborationProvider, Kernel } from '../../jupyter';
 import type { OnSessionConnection } from '../../state';
-import { Loader } from '../utils';
 import { useKernelId, useNotebookModel, NotebookBase } from './NotebookBase';
+import { NotebookSkeleton } from './NotebookSkeleton';
 import type { NotebookExtension } from './NotebookExtensions';
 import type { INotebookToolbarProps } from './toolbar';
 
@@ -176,6 +176,36 @@ export function Notebook(
 
   const [isLoading, setIsLoading] = useState(true);
 
+  /*
+   * Whether the document has its content from its source.
+   *
+   * A local model has it the moment it exists. A shared one is connected
+   * first and synced later, and between the two it has no cells: the panel
+   * below must not take that for an empty notebook. The provider says when
+   * the room has synced; a provider that was already connected when this
+   * mounted synced on an earlier mount.
+   */
+  const [synced, setSynced] = useState(
+    () => !collaborationProvider || collaborationProvider.isConnected
+  );
+  useEffect(() => {
+    if (!collaborationProvider) {
+      setSynced(true);
+      return;
+    }
+    setSynced(collaborationProvider.isConnected);
+    const onSync = (_: unknown, isSynced: boolean) => {
+      if (isSynced) {
+        setSynced(true);
+      }
+    };
+    const { syncStateChanged } = collaborationProvider.events;
+    syncStateChanged.connect(onSync);
+    return () => {
+      syncStateChanged.disconnect(onSync);
+    };
+  }, [collaborationProvider]);
+
   const kernelId = useKernelId({
     kernel,
     kernels: serviceManager.kernels,
@@ -227,7 +257,8 @@ export function Notebook(
   }, [collaborationProvider, model, serviceManager]);
 
   return isLoading ? (
-    <Loader key="notebook-loader" />
+    // The notebook's own shape, not a wheel: the cells are what is coming.
+    <NotebookSkeleton key="notebook-loader" />
   ) : (
     <Box
       style={{ height, width: '100%', position: 'relative' }}
@@ -291,6 +322,7 @@ export function Notebook(
             providers={providers}
             kernelId={kernelId}
             model={model}
+            synced={synced}
             path={path}
             sessionOnly={props.sessionOnly}
             renderers={renderers}

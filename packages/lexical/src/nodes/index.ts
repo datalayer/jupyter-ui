@@ -16,3 +16,5 @@ export * from './JupyterOutputNode';
 export * from './JupyterCellNode';
 export * from './YouTubeNode';
 export * from './InlineCompletionNode';
+export * from './LayoutContainerNode';
+export * from './LayoutItemNode';

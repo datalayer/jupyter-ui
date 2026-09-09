@@ -10,6 +10,8 @@ export * from './NotebookAdapter';
 export * from './NotebookCommands';
 export * from './NotebookState';
 export * from './NotebookExtensions';
+export * from './NotebookSkeleton';
+export * from './firstPaint';
 export * from './cell';
 export * from './content';
 export * from './marked';

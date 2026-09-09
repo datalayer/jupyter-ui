@@ -29,6 +29,7 @@ export * from './InlineCompletionExtension';
 export * from './JupyterCellExtension';
 export * from './JupyterInputOutputExtension';
 export * from './JupyterLexicalExtension';
+export * from './LayoutExtension';
 export * from './LexicalStateExtension';
 export * from './ListMaxIndentLevelExtension';
 export * from './MarkdownShortcutsExtension';

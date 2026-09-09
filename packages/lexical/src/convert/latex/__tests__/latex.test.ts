@@ -318,7 +318,7 @@ describe('import', () => {
     const article = String.raw`
 \documentclass{article}
 \usepackage{amsmath}
-\title{Ignored}
+\title{Notes}
 \begin{document}
 \maketitle
 % a comment line
@@ -378,6 +378,7 @@ Price: \$5, \$\$ more, and \[ x \] displayed.
     update(() => $convertFromLatexString(article));
     expect(blockTypes()).toEqual([
       'heading',
+      'heading',
       'paragraph',
       'heading',
       'list',
@@ -394,6 +395,7 @@ Price: \$5, \$\$ more, and \[ x \] displayed.
     ]);
     read(() => {
       const [
+        title,
         intro,
         paragraph,
         steps,
@@ -405,6 +407,8 @@ Price: \$5, \$\$ more, and \[ x \] displayed.
         figure,
         lines,
       ] = $getRoot().getChildren();
+      expect($isHeadingNode(title) && title.getTag()).toBe('h1');
+      expect(title.getTextContent()).toBe('Notes');
       expect(intro.getTextContent()).toBe('Introduction');
       expect(paragraph.getTextContent()).toBe(
         'Some emphasis, bold code, a footnote (noted), 100% sure… a second line of the same paragraph.',

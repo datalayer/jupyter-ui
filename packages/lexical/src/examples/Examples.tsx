@@ -45,6 +45,12 @@ const EXAMPLES: Array<{ name: string; path: string; description: string }> = [
       'One document, many formats: Markdown, Jupyter notebook, nbformat, LaTeX.',
   },
   {
+    name: 'LaTeX Templates',
+    path: 'LexicalLatex',
+    description:
+      'One template per Overleaf category, rendered and edited in Lexical.',
+  },
+  {
     name: 'Notebook',
     path: 'Notebook',
     description: 'Jupyter Notebook rendered directly with jupyter-react.',

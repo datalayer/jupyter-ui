@@ -75,6 +75,8 @@ const theme: EditorThemeClasses = {
   ltr: 'PlaygroundEditorTheme__ltr',
   mark: 'PlaygroundEditorTheme__mark',
   markOverlap: 'PlaygroundEditorTheme__markOverlap',
+  layoutContainer: 'PlaygroundEditorTheme__layoutContainer',
+  layoutItem: 'PlaygroundEditorTheme__layoutItem',
   paragraph: 'PlaygroundEditorTheme__paragraph',
   quote: 'PlaygroundEditorTheme__quote',
   rtl: 'PlaygroundEditorTheme__rtl',

@@ -9,6 +9,7 @@
 export * from './Button';
 export * from './Commenting';
 export * from './ContentEditable';
+export * from './DocumentSkeleton';
 export * from './DropDown';
 export * from './EquationEditor';
 export * from './FileInput';

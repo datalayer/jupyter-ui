@@ -17,7 +17,7 @@
  * @module editor/Editor
  */
 
-import { useState, useEffect, useMemo } from 'react';
+import { useCallback, useState, useEffect, useMemo } from 'react';
 import { defineExtension, type InitialEditorStateType } from 'lexical';
 import { AutoFocusExtension } from '@lexical/extension';
 import {
@@ -51,6 +51,7 @@ import {
   JupyterLexicalExtension,
 } from '../extensions';
 import { commentTheme } from '../themes';
+import { DocumentSkeleton } from '../components/DocumentSkeleton';
 import { useLexical } from '../context';
 import { CommentsProvider } from '../context/CommentsContext';
 import { ToolbarContext } from '../context/ToolbarContext';
@@ -78,6 +79,8 @@ type Props = {
       color: string;
       clientID: number;
     }) => void;
+    /** Told once the room has sent the document; the editor is drawn then. */
+    onInitialization?: (isInitialized: boolean) => void;
   };
 };
 
@@ -120,11 +123,16 @@ const RuntimePlugins = ({
   const { defaultKernel } = useJupyter({
     startDefaultKernel: runtimeEnabled,
   });
+  // Each is the `Component` of its extension's output: built once when the
+  // editor is, and the same object on every render. The static-components
+  // rule cannot see through the hook and takes them for components made
+  // during render, which would reset their state; these do not.
   const JupyterInputOutput = useExtensionComponent(JupyterInputOutputExtension);
   const ComponentPickerMenu = useExtensionComponent(
     ComponentPickerMenuExtension,
   );
 
+  /* eslint-disable react-hooks/static-components -- stable extension output components, see above */
   return (
     <>
       {runtimeEnabled && (
@@ -136,6 +144,7 @@ const RuntimePlugins = ({
       <ComponentPickerMenu kernel={defaultKernel} />
     </>
   );
+  /* eslint-enable react-hooks/static-components */
 };
 
 function Placeholder() {
@@ -165,6 +174,23 @@ export function EditorContainer(props: Props) {
   const [isLinkEditMode, setIsLinkEditMode] = useState<boolean>(false);
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
+  // A collaborative document is not here until its room has sent the first
+  // snapshot: an editor drawn before that is an empty page with a placeholder
+  // for a document that exists. Without collaboration the state is known at
+  // mount and there is nothing to wait for.
+  // Remembered per room, so another room starts waiting again.
+  const collaborationId = collaboration?.id;
+  const [initializedRoom, setInitializedRoom] = useState<string>();
+  const initialized =
+    collaborationId === undefined || initializedRoom === collaborationId;
+  const onInitialization = collaboration?.onInitialization;
+  const onInitialized = useCallback(
+    (isInitialized: boolean) => {
+      setInitializedRoom(isInitialized ? collaborationId : undefined);
+      onInitialization?.(isInitialized);
+    },
+    [collaborationId, onInitialization],
+  );
 
   const onRef = (_floatingAnchorElem: HTMLDivElement) => {
     if (_floatingAnchorElem !== null) {
@@ -195,17 +221,22 @@ export function EditorContainer(props: Props) {
             }
             websocketUrl={collaboration.websocketUrl}
             onIdentityResolved={collaboration.onIdentityResolved}
+            onInitialization={onInitialized}
           />
         )}
-        <div className="editor-scroller">
-          <div className="editor" ref={onRef}>
-            <ContentEditable
-              className="editor-input"
-              placeholder={<Placeholder />}
-              aria-placeholder={PLACEHOLDER_TEXT}
-            />
+        {initialized ? (
+          <div className="editor-scroller">
+            <div className="editor" ref={onRef}>
+              <ContentEditable
+                className="editor-input"
+                placeholder={<Placeholder />}
+                aria-placeholder={PLACEHOLDER_TEXT}
+              />
+            </div>
           </div>
-        </div>
+        ) : (
+          <DocumentSkeleton maxWidth="100%" />
+        )}
         <TreeViewPlugin />
         {id && <LexicalStatePlugin />}
         <TableCellResizerPlugin />

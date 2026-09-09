@@ -25,7 +25,7 @@ export const TableExtension = defineExtension({
   dependencies: [
     configExtension(LexicalTableExtension, { hasHorizontalScroll: false }),
     configExtension(ReactExtension, {
-      decorators: [<TableInsertDialogPlugin />],
+      decorators: [<TableInsertDialogPlugin key="table-insert-dialog" />],
     }),
   ],
 });

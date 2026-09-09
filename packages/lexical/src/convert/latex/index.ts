@@ -18,4 +18,5 @@
 export * from './LatexTransformers';
 export * from './LatexExport';
 export * from './LatexImport';
-export { escapeLatex } from './utils';
+export * from './templates';
+export { escapeLatex, splitDocument } from './utils';

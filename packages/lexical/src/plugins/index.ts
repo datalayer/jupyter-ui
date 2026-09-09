@@ -22,6 +22,7 @@ export * from './ImagesPlugin';
 export * from './InlineCompletionConfig';
 export * from './JupyterCellPlugin';
 export * from './JupyterInputOutputPlugin';
+export * from './LayoutPlugin';
 export * from './LexicalInlineCompletionPlugin';
 export * from './LexicalStatePlugin';
 export * from './LSPTabCompletionPlugin';
