@@ -42,6 +42,7 @@ import {
   COMMAND_PRIORITY_EDITOR,
   createCommand,
   KEY_ESCAPE_COMMAND,
+  defineExtension,
 } from 'lexical';
 import type { Doc } from 'yjs';
 import {
@@ -52,15 +53,14 @@ import {
   $wrapSelectionInMarkNode,
   MarkNode,
 } from '@lexical/mark';
-import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
-import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
-import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin';
+import { AutoFocusExtension, ClearEditorExtension } from '@lexical/extension';
+import { HistoryExtension } from '@lexical/history';
+import { PlainTextExtension } from '@lexical/plain-text';
 import { useCollaborationContext } from '@datalayer/lexical-loro';
-import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { LexicalExtensionComposer } from '@lexical/react/LexicalExtensionComposer';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
-import { PlainTextPlugin } from '@lexical/react/LexicalPlainTextPlugin';
 import { createDOMRange, createRectsFromDOMRange } from '@lexical/selection';
 import { $isRootTextContentEmpty, $rootTextContent } from '@lexical/text';
 import { mergeRegister, registerNestedElementResolver } from '@lexical/utils';
@@ -75,11 +75,7 @@ import {
   useCommentStore,
 } from '../components';
 import CommentEditorTheme from '../themes/CommentEditorTheme';
-import {
-  useModal,
-  LexicalContentEditable as ContentEditable,
-  Placeholder,
-} from '..';
+import { useModal, Placeholder } from '..';
 import { useLayoutEffectImpl as useLayoutEffect } from '..';
 import { useComments } from '../context/CommentsContext';
 
@@ -134,6 +130,24 @@ function AddCommentBox({
   );
 }
 
+/** The small plain-text editor a comment is typed in. */
+const COMMENT_COMPOSER_EXTENSION = defineExtension({
+  name: '@datalayer/jupyter-lexical/CommentComposer',
+  namespace: 'Commenting',
+  theme: CommentEditorTheme,
+  dependencies: [PlainTextExtension, HistoryExtension, ClearEditorExtension],
+});
+
+/**
+ * The same, focused on mount. A second module-scoped extension rather than a
+ * configuration computed per render: the composer rebuilds the editor
+ * whenever its extension changes.
+ */
+const FOCUSED_COMMENT_COMPOSER_EXTENSION = defineExtension({
+  name: '@datalayer/jupyter-lexical/CommentComposer/Focused',
+  dependencies: [COMMENT_COMPOSER_EXTENSION, AutoFocusExtension],
+});
+
 function EditorRefPlugin({
   editorRef,
 }: {
@@ -186,31 +200,25 @@ function PlainTextEditor({
   onEscape: (e: KeyboardEvent) => boolean;
   placeholder?: string;
 }) {
-  const initialConfig = {
-    namespace: 'Commenting',
-    nodes: [],
-    onError: (error: Error) => {
-      throw error;
-    },
-    theme: CommentEditorTheme,
-  };
+  const extension =
+    autoFocus === false
+      ? COMMENT_COMPOSER_EXTENSION
+      : FOCUSED_COMMENT_COMPOSER_EXTENSION;
 
   return (
-    <LexicalComposer initialConfig={initialConfig}>
+    <LexicalExtensionComposer extension={extension} contentEditable={null}>
       <Box sx={{ position: 'relative', m: '10px', borderRadius: 2 }}>
-        <PlainTextPlugin
-          contentEditable={<ContentEditable style={style} />}
+        <ContentEditable
+          className="ContentEditable__root"
+          style={style}
           placeholder={<Placeholder>{placeholder}</Placeholder>}
-          ErrorBoundary={LexicalErrorBoundary}
+          aria-placeholder={placeholder}
         />
         <OnChangePlugin onChange={onChange} />
-        <HistoryPlugin />
-        {autoFocus !== false && <AutoFocusPlugin />}
         <EscapeHandlerPlugin onEscape={onEscape} />
-        <ClearEditorPlugin />
         {editorRef !== undefined && <EditorRefPlugin editorRef={editorRef} />}
       </Box>
-    </LexicalComposer>
+    </LexicalExtensionComposer>
   );
 }
 

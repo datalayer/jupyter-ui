@@ -9,6 +9,7 @@ export * from './components';
 export * from './context';
 export * from './convert';
 export * from './editor';
+export * from './extensions';
 export * from './hooks';
 export * from './nodes';
 export * from './plugins';

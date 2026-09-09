@@ -4,84 +4,57 @@
  * MIT License
  */
 
+/**
+ * The reference editor of this package, built with Lexical extensions.
+ *
+ * The document is `JupyterLexicalExtension`; what is this editor's own — its
+ * namespace, the theme the stylesheet styles, focus on mount, the initial
+ * state — is the root extension made in `createEditorExtension`. What still
+ * renders as a React plug-in is what needs the host's DOM or context: the
+ * toolbar and the floating menus that hang off an anchor element, the table
+ * menus, the comments panel, the notebook loader, the collaboration provider.
+ *
+ * @module editor/Editor
+ */
+
 import { useState, useEffect, useMemo } from 'react';
-import { EditorState } from 'lexical';
-import { InitialEditorStateType } from '@lexical/react/LexicalComposer';
+import { defineExtension, type InitialEditorStateType } from 'lexical';
+import { AutoFocusExtension } from '@lexical/extension';
 import {
   createWebsocketProvider,
   LoroCollaborationPlugin,
 } from '@datalayer/lexical-loro';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { LexicalComposer } from '@lexical/react/LexicalComposer';
-import { HashtagPlugin } from '@lexical/react/LexicalHashtagPlugin';
-import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
+import { LexicalExtensionComposer } from '@lexical/react/LexicalExtensionComposer';
+import { useExtensionComponent } from '@lexical/react/useExtensionComponent';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
-import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
-import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
-import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
-import { ListPlugin } from '@lexical/react/LexicalListPlugin';
-import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
-import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
-import { HorizontalRuleNode } from '@lexical/react/LexicalHorizontalRuleNode';
-import { HorizontalRulePlugin as LexicalHorizontalRulePlugin } from '@lexical/react/LexicalHorizontalRulePlugin';
-import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
-import { HeadingNode, QuoteNode } from '@lexical/rich-text';
-import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
-import { ListItemNode, ListNode } from '@lexical/list';
-import { HashtagNode } from '@lexical/hashtag';
-import { MarkNode } from '@lexical/mark';
-import { AutoLinkNode, LinkNode } from '@lexical/link';
-import { CodeNode, CodeHighlightNode } from '@lexical/code';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { useJupyter } from '@datalayer/jupyter-react';
+import { useJupyter, OnSessionConnection } from '@datalayer/jupyter-react';
 import {
-  CommentThreadNode,
-  CounterNode,
-  EquationNode,
-  ExcalidrawNode,
-  ImageNode,
-  JupyterInputHighlightNode,
-  JupyterInputNode,
-  JupyterOutputNode,
-  YouTubeNode,
-} from '../nodes';
-import {
-  AutoEmbedPlugin,
-  AutoLinkPlugin,
   CodeActionMenuPlugin,
-  CodeBlockHighlightPlugin,
-  CollapsibleContainerNode,
-  CollapsibleContentNode,
-  CollapsiblePlugin,
-  CollapsibleTitleNode,
   CommentPlugin,
-  ComponentPickerMenuPlugin,
   DraggableBlockPlugin,
-  EquationsPlugin,
-  ExcalidrawPlugin,
   FloatingLinkEditorPlugin,
   FloatingTextFormatToolbarPlugin,
-  ImagesPlugin,
-  JupyterInputOutputPlugin,
-  ListMaxIndentLevelPlugin,
-  MarkdownPlugin,
   NbformatContentPlugin,
   TableActionMenuPlugin,
   TableCellResizerPlugin,
   TableHoverActionsV2Plugin,
   TableOfContentsPlugin,
-  TablePlugin,
-  YouTubePlugin,
-} from './..';
+  TreeViewPlugin,
+} from '../plugins';
+import { ToolbarPlugin } from '../plugins/ToolbarPlugin';
+import { LexicalStatePlugin } from '../plugins/LexicalStatePlugin';
+import {
+  ComponentPickerMenuExtension,
+  JupyterInputOutputExtension,
+  JupyterLexicalExtension,
+} from '../extensions';
 import { commentTheme } from '../themes';
 import { useLexical } from '../context';
 import { CommentsProvider } from '../context/CommentsContext';
-import { TreeViewPlugin } from '../plugins';
-import { OnSessionConnection } from '@datalayer/jupyter-react';
-import { ToolbarPlugin } from '../plugins/ToolbarPlugin';
 import { ToolbarContext } from '../context/ToolbarContext';
 import { LexicalConfigProvider } from '../context/LexicalConfigContext';
-import { LexicalStatePlugin } from '../plugins/LexicalStatePlugin';
 
 type Props = {
   /** Unique identifier for this Lexical document (required for tool operations) */
@@ -108,6 +81,35 @@ type Props = {
   };
 };
 
+export const EDITOR_NAMESPACE = 'Jupyter Lexical Example';
+
+const PLACEHOLDER_TEXT = 'Code and analyse data.';
+
+/**
+ * The root extension of this editor: the shared document plus this editor's
+ * own choices. `initialEditorState` left `undefined` gives an empty paragraph
+ * to type in; `null` leaves the document empty for a collaboration provider
+ * to fill.
+ *
+ * Keep the result stable — the composer rebuilds the editor whenever it
+ * changes — which is what the `useMemo` in `Editor` is for.
+ */
+export function createEditorExtension(
+  initialEditorState?: InitialEditorStateType,
+) {
+  return defineExtension({
+    name: '@datalayer/jupyter-lexical/Editor',
+    namespace: EDITOR_NAMESPACE,
+    theme: commentTheme,
+    dependencies: [JupyterLexicalExtension, AutoFocusExtension],
+    $initialEditorState: initialEditorState,
+  });
+}
+
+/**
+ * The plug-ins that need a kernel: placed here, where the kernel is, through
+ * the output components of their extensions.
+ */
 const RuntimePlugins = ({
   runtimeEnabled,
   onSessionConnection,
@@ -118,59 +120,27 @@ const RuntimePlugins = ({
   const { defaultKernel } = useJupyter({
     startDefaultKernel: runtimeEnabled,
   });
+  const JupyterInputOutput = useExtensionComponent(JupyterInputOutputExtension);
+  const ComponentPickerMenu = useExtensionComponent(
+    ComponentPickerMenuExtension,
+  );
 
   return (
     <>
       {runtimeEnabled && (
-        <JupyterInputOutputPlugin
+        <JupyterInputOutput
           kernel={defaultKernel}
           onSessionConnection={onSessionConnection}
         />
       )}
-      <ComponentPickerMenuPlugin kernel={defaultKernel} />
+      <ComponentPickerMenu kernel={defaultKernel} />
     </>
   );
 };
 
 function Placeholder() {
-  return <div className="editor-placeholder">Code and analyse data.</div>;
+  return <div className="editor-placeholder">{PLACEHOLDER_TEXT}</div>;
 }
-
-const initialConfig = {
-  namespace: 'Jupyter Lexical Example',
-  theme: commentTheme,
-  onError(error: Error) {
-    throw error;
-  },
-  nodes: [
-    AutoLinkNode,
-    CodeNode,
-    CodeHighlightNode,
-    CollapsibleContainerNode,
-    CollapsibleContentNode,
-    CollapsibleTitleNode,
-    CommentThreadNode,
-    CounterNode,
-    EquationNode,
-    ExcalidrawNode,
-    HashtagNode,
-    HeadingNode,
-    HorizontalRuleNode,
-    ImageNode,
-    JupyterInputHighlightNode,
-    JupyterInputNode,
-    JupyterOutputNode,
-    LinkNode,
-    ListItemNode,
-    ListNode,
-    MarkNode,
-    QuoteNode,
-    TableCellNode,
-    TableNode,
-    TableRowNode,
-    YouTubeNode,
-  ],
-};
 
 const EditorContextPlugin = () => {
   const { setEditor } = useLexical();
@@ -196,20 +166,12 @@ export function EditorContainer(props: Props) {
   const [floatingAnchorElem, setFloatingAnchorElem] =
     useState<HTMLDivElement | null>(null);
 
-  // Debug: Log when isLinkEditMode changes
-  useEffect(() => {
-    console.log('[Editor] isLinkEditMode changed to:', isLinkEditMode);
-  }, [isLinkEditMode]);
-
   const onRef = (_floatingAnchorElem: HTMLDivElement) => {
     if (_floatingAnchorElem !== null) {
       setFloatingAnchorElem(_floatingAnchorElem);
     }
   };
 
-  function onChange(_editorState: EditorState) {
-    //    console.log('---', _editorState.toJSON());
-  }
   return (
     <div className="editor-container">
       <ToolbarPlugin
@@ -235,48 +197,26 @@ export function EditorContainer(props: Props) {
             onIdentityResolved={collaboration.onIdentityResolved}
           />
         )}
-        <RichTextPlugin
-          contentEditable={
-            <div className="editor-scroller">
-              <div className="editor" ref={onRef}>
-                <ContentEditable className="editor-input" />
-              </div>
-            </div>
-          }
-          placeholder={<Placeholder />}
-          ErrorBoundary={LexicalErrorBoundary}
-        />
-        <OnChangePlugin onChange={onChange} />
-        <HistoryPlugin />
+        <div className="editor-scroller">
+          <div className="editor" ref={onRef}>
+            <ContentEditable
+              className="editor-input"
+              placeholder={<Placeholder />}
+              aria-placeholder={PLACEHOLDER_TEXT}
+            />
+          </div>
+        </div>
         <TreeViewPlugin />
-        <AutoFocusPlugin />
         {id && <LexicalStatePlugin />}
-        <CollapsiblePlugin />
-        <TablePlugin />
         <TableCellResizerPlugin />
         <TableActionMenuPlugin />
         <TableHoverActionsV2Plugin />
-        <ListPlugin />
-        <CheckListPlugin />
-        <LinkPlugin />
-        <AutoLinkPlugin />
-        <ListMaxIndentLevelPlugin maxDepth={7} />
-        <MarkdownPlugin />
-        {/* <JupyterCellPlugin /> */}
         <RuntimePlugins
           runtimeEnabled={runtimeEnabled}
           onSessionConnection={onSessionConnection}
         />
-        <EquationsPlugin />
-        <ExcalidrawPlugin />
-        <ImagesPlugin />
-        <HashtagPlugin />
-        <LexicalHorizontalRulePlugin />
-        <YouTubePlugin />
         <NbformatContentPlugin notebook={notebook} />
         <CodeActionMenuPlugin />
-        <CodeBlockHighlightPlugin />
-        <AutoEmbedPlugin />
         <EditorContextPlugin />
         <TableOfContentsPlugin />
         <CommentPlugin providerFactory={undefined} />
@@ -302,19 +242,17 @@ export function EditorContainer(props: Props) {
 export function Editor(props: Props) {
   const { id, serviceManager, collaboration, initialEditorState } = props;
 
-  const lexicalInitialConfig = useMemo(
-    () => ({
-      ...initialConfig,
-      // In collaboration mode, initial content must go through the
-      // collaboration bootstrap path so all peers stay aligned.
-      editorState: collaboration ? undefined : initialEditorState,
-    }),
+  // In collaboration mode, initial content must go through the collaboration
+  // bootstrap path so all peers stay aligned.
+  const extension = useMemo(
+    () => createEditorExtension(collaboration ? undefined : initialEditorState),
     [collaboration, initialEditorState],
   );
 
-  // Wrap with LexicalConfigProvider if id is provided (for tool operations)
+  // The content editable is rendered by EditorContainer, where the floating
+  // menus can anchor to it: hence `contentEditable={null}` on the composer.
   const content = (
-    <LexicalComposer initialConfig={lexicalInitialConfig}>
+    <LexicalExtensionComposer extension={extension} contentEditable={null}>
       <CommentsProvider>
         <ToolbarContext>
           <div className="editor-shell">
@@ -322,10 +260,10 @@ export function Editor(props: Props) {
           </div>
         </ToolbarContext>
       </CommentsProvider>
-    </LexicalComposer>
+    </LexicalExtensionComposer>
   );
 
-  // Only wrap with config provider if id is provided
+  // Only wrap with config provider if id is provided (for tool operations)
   return id ? (
     <LexicalConfigProvider lexicalId={id} serviceManager={serviceManager}>
       {content}

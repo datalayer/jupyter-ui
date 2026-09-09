@@ -5,41 +5,20 @@
  */
 
 import { useEffect } from 'react';
-import { $insertNodes, COMMAND_PRIORITY_EDITOR, createCommand } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { IOutput } from '@jupyterlab/nbformat';
-import {
-  JupyterCellNode,
-  $createJupyterCellNode,
-} from '../nodes/JupyterCellNode';
+import { registerJupyterCell } from '../extensions/JupyterCellExtension';
 
 import '@jupyterlab/theme-light-extension/style/variables.css';
 
-export type JupyterCellProps = {
-  code: string;
-  outputs: IOutput[];
-  loading: string;
-  autoStart: boolean;
-};
+export {
+  INSERT_JUPYTER_CELL_COMMAND,
+  type JupyterCellProps,
+} from '../extensions/JupyterCellExtension';
 
-export const INSERT_JUPYTER_CELL_COMMAND = createCommand<JupyterCellProps>();
-
+/** `JupyterCellExtension` for an editor built with `LexicalComposer`. */
 export function JupyterCellPlugin() {
   const [editor] = useLexicalComposerContext();
-  useEffect(() => {
-    if (!editor.hasNodes([JupyterCellNode])) {
-      throw new Error('JupyterCellNode is not registered.');
-    }
-    return editor.registerCommand(
-      INSERT_JUPYTER_CELL_COMMAND,
-      (props: JupyterCellProps) => {
-        const jupyterNode = $createJupyterCellNode(props);
-        $insertNodes([jupyterNode]);
-        return true;
-      },
-      COMMAND_PRIORITY_EDITOR,
-    );
-  }, [editor]);
+  useEffect(() => registerJupyterCell(editor), [editor]);
   return null;
 }
 

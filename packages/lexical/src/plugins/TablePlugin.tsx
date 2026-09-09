@@ -4,12 +4,6 @@
  * MIT License
  */
 
-/**
- * Copyright (c) 2021-2025 Datalayer, Inc.
- *
- * MIT License
- */
-
 import type { JSX } from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { TablePlugin as LexicalTablePlugin } from '@lexical/react/LexicalTablePlugin';
@@ -26,7 +20,12 @@ import TableInsertModal from '../components/TableInsertModal';
 export const INSERT_TABLE_WITH_DIALOG_COMMAND: LexicalCommand<void> =
   createCommand();
 
-export function TablePlugin(): JSX.Element {
+/**
+ * The dialog behind `INSERT_TABLE_WITH_DIALOG_COMMAND`: asks for rows and
+ * columns, then dispatches `INSERT_TABLE_COMMAND`. Table support itself
+ * comes from elsewhere — `TableExtension` or `TablePlugin`.
+ */
+export function TableInsertDialogPlugin(): JSX.Element | null {
   const [editor] = useLexicalComposerContext();
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
 
@@ -53,12 +52,17 @@ export function TablePlugin(): JSX.Element {
     setModalOpen(false);
   };
 
+  return isModalOpen ? (
+    <TableInsertModal onConfirm={handleConfirm} onClose={handleClose} />
+  ) : null;
+}
+
+/** `TableExtension` for an editor built with `LexicalComposer`. */
+export function TablePlugin(): JSX.Element {
   return (
     <>
       <LexicalTablePlugin />
-      {isModalOpen && (
-        <TableInsertModal onConfirm={handleConfirm} onClose={handleClose} />
-      )}
+      <TableInsertDialogPlugin />
     </>
   );
 }
