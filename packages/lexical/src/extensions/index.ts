@@ -35,3 +35,4 @@ export * from './ListMaxIndentLevelExtension';
 export * from './MarkdownShortcutsExtension';
 export * from './TableExtension';
 export * from './YouTubeExtension';
+export * from './PdfExportExtension';

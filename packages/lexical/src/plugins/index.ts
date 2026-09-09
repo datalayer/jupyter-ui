@@ -43,3 +43,4 @@ export { default as TableCellResizerPlugin } from './TableCellResizer';
 export * from './ToolbarPlugin';
 export * from './TreeViewPlugin';
 export * from './YouTubePlugin';
+export * from './PdfExportPlugin';
