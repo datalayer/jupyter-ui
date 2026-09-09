@@ -98,6 +98,33 @@ export const IMAGE: TextMatchTransformer = {
   type: 'text-match',
 };
 
+/**
+ * A paragraph that is one displayed equation: `$$…$$` on a line of its own,
+ * the way a notebook's Markdown cell writes one. Before the inline `$…$`
+ * transformer, which would otherwise read the inside of the `$$` pair and
+ * leave a stray dollar sign on each side.
+ */
+export const DISPLAY_EQUATION: ElementTransformer = {
+  dependencies: [EquationNode],
+  export: (node: LexicalNode) => {
+    if (!$isParagraphNode(node) || node.getChildrenSize() !== 1) {
+      return null;
+    }
+    const equation = node.getFirstChild();
+    if (!$isEquationNode(equation) || equation.__inline) {
+      return null;
+    }
+    return `$$${equation.getEquation()}$$`;
+  },
+  regExp: /^\$\$(.+?)\$\$\s?$/,
+  replace: (parentNode, _children, match) => {
+    const paragraph = $createParagraphNode();
+    paragraph.append($createEquationNode(match[1].trim(), false));
+    parentNode.replace(paragraph);
+  },
+  type: 'element',
+};
+
 export const EQUATION: TextMatchTransformer = {
   dependencies: [EquationNode],
   export: (node, exportChildren, exportFormat) => {
@@ -250,6 +277,7 @@ const mapToTableCells = (textContent: string): Array<TableCellNode> | null => {
 };
 
 export const PLAYGROUND_TRANSFORMERS: Array<Transformer> = [
+  DISPLAY_EQUATION,
   TABLE,
   HR,
   IMAGE,

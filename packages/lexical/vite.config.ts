@@ -239,13 +239,14 @@ export default defineConfig(({ mode }) => {
         target: 'esnext',
       },
       include: ['react', 'react-dom'],
-      // Exclude lexical packages from pre-bundling - they have broken exports maps
-      // The alias in resolve.alias handles resolving them
+      // Every @lexical/* package is pre-bundled, none excluded: an excluded
+      // one is served from source and loads its own `@lexical/html` and
+      // `lexical`, next to the copies inlined in the pre-bundled chunks —
+      // and the extension builder refuses two `@lexical/html/CoreImport`
+      // extensions with the same name.
       exclude: [
         // Use source alias for jupyter-react so Vite transforms its dynamic imports.
         '@datalayer/jupyter-react',
-        '@lexical/react',
-        '@lexical/rich-text',
         // Exclude theme CSS to allow ?raw imports to work
         '@jupyterlab/theme-light-extension',
         '@jupyterlab/theme-dark-extension',

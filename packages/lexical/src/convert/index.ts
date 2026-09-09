@@ -4,5 +4,6 @@
  * MIT License
  */
 
+export * from './latex';
 export * from './LexicalToNbformat';
 export * from './NbformatToLexical';

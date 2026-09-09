@@ -59,3 +59,26 @@ the toolbar, the comments panel and the collaboration provider.
 Every extension keeps a React plug-in of the same name in `src/plugins` for an
 editor still built with `LexicalComposer`; the plug-in is a thin wrapper over
 the extension's `register…` function, so both paths share one implementation.
+
+## Formats
+
+A document goes in and out of other formats through `src/convert`:
+
+- **Markdown** — `$convertToMarkdownString` / `$convertFromMarkdownString`
+  with the package's transformers (tables, images, equations, rules, and
+  fenced code as executable Jupyter inputs).
+- **nbformat** — `lexicalToNbformat(nodes)` writes a code cell per Jupyter
+  input with its outputs and one Markdown cell per run of anything else;
+  `nbformatToLexical(notebook, editor)` reads a notebook back (the
+  input/output plug-in must be mounted for the code cells).
+- **LaTeX** — `$convertToLatexString(transformers?, { document, title })` and
+  `$convertFromLatexString(latex, transformers?)`, built on transformers
+  shaped after `@lexical/markdown`'s (`LATEX_TRANSFORMERS`): headings,
+  paragraphs and text formats, quotes, lists and check lists, listings
+  (`lstlisting`, `minted`, `verbatim`), tables, figures, rules, inline and
+  display math (AMS environments included), links, YouTube embeds. A host
+  adds a node by adding a transformer.
+
+The `LexicalFormats` example shows all of them on one document: Markdown
+and LaTeX sources you can edit and apply, a live notebook, the nbformat
+JSON, and the LaTeX rendered by reading it back into a read-only editor.

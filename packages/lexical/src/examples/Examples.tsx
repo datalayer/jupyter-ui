@@ -15,7 +15,7 @@ import { Text, Flash, ActionList, TextInput, Button } from '@primer/react';
 import { SignOutIcon, PencilAiIcon } from '@primer/octicons-react';
 import { SearchIcon, CheckIcon } from '@primer/octicons-react';
 import {
-  AppearanceControlsWithStore,
+  AppearanceMenuWithStore,
   Box,
   DatalayerThemeProvider,
 } from '@datalayer/primer-addons';
@@ -39,9 +39,10 @@ const EXAMPLES: Array<{ name: string; path: string; description: string }> = [
     description: 'Two side-by-side iframe collaborators.',
   },
   {
-    name: 'Lexical Nbformat',
-    path: 'LexicalNbformat',
-    description: 'Jupyter Notebook (nbformat) rendered in lexical.',
+    name: 'Lexical Formats',
+    path: 'LexicalFormats',
+    description:
+      'One document, many formats: Markdown, Jupyter notebook, nbformat, LaTeX.',
   },
   {
     name: 'Notebook',
@@ -156,25 +157,27 @@ const ExamplesSidebar = ({
         }}
       >
         <Text as="div" fontWeight="bold" fontSize={2}>
-          📓 ✍️ Jupyter Lexical Examples
+          🪐 ✍️ Jupyter Lexical Examples
         </Text>
-        <Box mt={2}>
-          <AppearanceControlsWithStore useStore={useExampleThemeStore} />
-        </Box>
-
-        {token && (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 2 }}>
-            <UserBadge token={token} variant="small" />
-            <Button
-              size="small"
-              variant="invisible"
-              leadingVisual={SignOutIcon}
-              onClick={onSignOut}
-            >
-              Sign out
-            </Button>
+        {/* Who is signed in on the left, the appearance menu on the right. */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 2 }}>
+          {token && (
+            <>
+              <UserBadge token={token} variant="small" />
+              <Button
+                size="small"
+                variant="invisible"
+                leadingVisual={SignOutIcon}
+                onClick={onSignOut}
+              >
+                Sign out
+              </Button>
+            </>
+          )}
+          <Box sx={{ ml: 'auto' }}>
+            <AppearanceMenuWithStore useStore={useExampleThemeStore} />
           </Box>
-        )}
+        </Box>
       </Box>
 
       {error && (
@@ -252,8 +255,7 @@ const Examples = () => {
 
   const loginUrl = useMemo(() => {
     const iamUrl = (
-      configuration?.iamUrl ||
-        'https://prod1.datalayer.run'
+      configuration?.iamUrl || 'https://prod1.datalayer.run'
     ).replace(/\/$/, '');
     return `${iamUrl}/api/iam/v1/login`;
   }, [configuration?.iamUrl]);

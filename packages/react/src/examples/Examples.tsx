@@ -20,7 +20,7 @@ import { useState, useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Text, Spinner, Flash, ActionList, TextInput } from '@primer/react';
 import {
-  AppearanceControlsWithStore,
+  AppearanceMenuWithStore,
   Box,
   themeConfigs,
 } from '@datalayer/primer-addons';
@@ -276,16 +276,17 @@ const ExamplesSidebar = ({
           borderColor: 'var(--borderColor-default)',
         }}
       >
-        <Text
-          as="div"
-          fontWeight="bold"
-          fontSize={2}
-          sx={{ color: 'var(--fgColor-accent)' }}
-        >
-          📓 ⚛️ Jupyter React Examples
-        </Text>
-        <Box mt={2}>
-          <AppearanceControlsWithStore useStore={useExampleThemeStore} />
+        {/* The title on the left, the appearance menu on the right. */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Text
+            as="div"
+            fontWeight="bold"
+            fontSize={2}
+            sx={{ color: 'var(--fgColor-accent)', flex: 1 }}
+          >
+            🪐 ⚛️ Jupyter React Examples
+          </Text>
+          <AppearanceMenuWithStore useStore={useExampleThemeStore} />
         </Box>
         {isLoading && (
           <Box mt={2} display="flex" alignItems="center">

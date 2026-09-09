@@ -139,8 +139,10 @@ const renderStandaloneExample = async (examplePath: string) => {
       root.render(<module.default />);
       return;
     }
-    case 'LexicalNbformat': {
-      const module = await import('./LexicalNbformat');
+    // The old name of LexicalFormats, kept for bookmarks.
+    case 'LexicalNbformat':
+    case 'LexicalFormats': {
+      const module = await import('./LexicalFormats');
       root.render(<module.default />);
       return;
     }

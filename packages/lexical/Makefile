@@ -30,6 +30,9 @@ build-prod: ## build-prod
 examples: ## examples
 	npm run start:vite
 
+start: ## start
+	npm run start:vite
+
 publish-npm: clean build ## publish-npm
 	npm publish
 	echo open https://www.npmjs.com/package/@datalayer/jupyter-lexical
