@@ -23,6 +23,7 @@ import {
 } from '@primer/react';
 import { SideOverlay } from '@datalayer/primer-addons';
 import {
+  CheckIcon,
   CommentIcon,
   PaperAirplaneIcon,
   TrashIcon,
@@ -67,16 +68,27 @@ import { mergeRegister, registerNestedElementResolver } from '@lexical/utils';
 import { WebsocketProvider } from 'y-websocket';
 import {
   Comment,
+  type CommentPerson,
   Comments,
   CommentStore,
   createComment,
   createThread,
+  type ICommentStore,
+  mentionsIn,
   Thread,
   useCommentStore,
-} from '../components';
+} from '../components/Commenting';
+import { Placeholder } from '../components/Placeholder';
+import {
+  CommentPeopleContext,
+  MentionsPlugin,
+  ThreadAssignee,
+} from './CommentPeople';
 import CommentEditorTheme from '../themes/CommentEditorTheme';
-import { useModal, Placeholder } from '..';
-import { useLayoutEffectImpl as useLayoutEffect } from '..';
+// From their modules rather than the package's index: a plug-in importing
+// its own package imports every module of it, itself included.
+import { useModal } from '../hooks/useModal';
+import { useLayoutEffectImpl as useLayoutEffect } from '../hooks/useLayoutEffect';
 import { useComments } from '../context/CommentsContext';
 
 export const INSERT_INLINE_COMMAND: LexicalCommand<void> = createCommand();
@@ -190,6 +202,7 @@ function PlainTextEditor({
   autoFocus,
   onEscape,
   onChange,
+  onMention,
   editorRef,
   placeholder = 'Type a comment...',
 }: {
@@ -198,6 +211,8 @@ function PlainTextEditor({
   editorRef?: { current: null | LexicalEditor };
   onChange: (editorState: EditorState, editor: LexicalEditor) => void;
   onEscape: (e: KeyboardEvent) => boolean;
+  /** Told whom an `@` names, when the store knows who may be named. */
+  onMention?: (person: CommentPerson) => void;
   placeholder?: string;
 }) {
   const extension =
@@ -216,6 +231,7 @@ function PlainTextEditor({
         />
         <OnChangePlugin onChange={onChange} />
         <EscapeHandlerPlugin onEscape={onEscape} />
+        {onMention !== undefined && <MentionsPlugin onMention={onMention} />}
         {editorRef !== undefined && <EditorRefPlugin editorRef={editorRef} />}
       </Box>
     </LexicalExtensionComposer>
@@ -339,6 +355,12 @@ function CommentInputBox({
     return true;
   };
 
+  // Whom an `@` named while the comment was typed (B4-02).
+  const picked = useRef(new Map<string, CommentPerson>());
+  const onMention = useCallback((person: CommentPerson) => {
+    picked.current.set(person.uid, person);
+  }, []);
+
   const submitComment = () => {
     if (canSubmit) {
       let quote = editor.getEditorState().read(() => {
@@ -349,7 +371,16 @@ function CommentInputBox({
         quote = quote.slice(0, 99) + '…';
       }
       submitAddComment(
-        createThread(quote, [createComment(content, author)]),
+        createThread(quote, [
+          createComment(
+            content,
+            author,
+            undefined,
+            undefined,
+            undefined,
+            mentionsIn(content, picked.current.values()),
+          ),
+        ]),
         true,
       );
     }
@@ -386,6 +417,7 @@ function CommentInputBox({
         }}
         onEscape={onEscape}
         onChange={onChange}
+        onMention={onMention}
       />
       <Box
         sx={{
@@ -435,12 +467,29 @@ function CommentsComposer({
   const [canSubmit, setCanSubmit] = useState(false);
   const editorRef = useRef<LexicalEditor>(null);
   const author = useCollabAuthorName();
+  // Whom an `@` named while the reply was typed (B4-02).
+  const picked = useRef(new Map<string, CommentPerson>());
+  const onMention = useCallback((person: CommentPerson) => {
+    picked.current.set(person.uid, person);
+  }, []);
 
   const onChange = useOnChange(setContent, setCanSubmit);
 
   const submitComment = () => {
     if (canSubmit) {
-      submitAddComment(createComment(content, author), false, thread);
+      submitAddComment(
+        createComment(
+          content,
+          author,
+          undefined,
+          undefined,
+          undefined,
+          mentionsIn(content, picked.current.values()),
+        ),
+        false,
+        thread,
+      );
+      picked.current.clear();
       const editor = editorRef.current;
       if (editor !== null) {
         editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
@@ -468,6 +517,7 @@ function CommentsComposer({
           return true;
         }}
         onChange={onChange}
+        onMention={onMention}
         editorRef={editorRef}
         placeholder={placeholder}
       />
@@ -525,6 +575,23 @@ function ShowDeleteCommentOrThreadDialog({
   );
 }
 
+/** How long ago a comment was written, in the largest unit that fits. */
+function whenWritten(rtf: Intl.RelativeTimeFormat, timeStamp: number): string {
+  const seconds = Math.round((timeStamp - Date.now()) / 1000);
+  if (seconds > -10) {
+    return 'Just now';
+  }
+  const minutes = Math.round(seconds / 60);
+  if (minutes > -60) {
+    return rtf.format(minutes, 'minute');
+  }
+  const hours = Math.round(minutes / 60);
+  if (hours > -24) {
+    return rtf.format(hours, 'hour');
+  }
+  return rtf.format(Math.round(hours / 24), 'day');
+}
+
 function CommentsPanelListComment({
   comment,
   deleteComment,
@@ -540,8 +607,6 @@ function CommentsPanelListComment({
   rtf: Intl.RelativeTimeFormat;
   thread?: Thread;
 }): JSX.Element {
-  const seconds = Math.round((comment.timeStamp - performance.now()) / 1000);
-  const minutes = Math.round(seconds / 60);
   const [modal, showModal] = useModal();
 
   return (
@@ -552,7 +617,7 @@ function CommentsPanelListComment({
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
         <Text sx={{ fontWeight: 'bold', fontSize: 1 }}>{comment.author}</Text>
         <Text sx={{ color: 'fg.muted', fontSize: 0 }}>
-          · {seconds > -10 ? 'Just now' : rtf.format(minutes, 'minute')}
+          · {whenWritten(rtf, comment.timeStamp)}
         </Text>
       </Box>
       <Text
@@ -600,6 +665,7 @@ function CommentsPanelList({
   listRef,
   submitAddComment,
   markNodeMap,
+  resolveThread,
 }: {
   activeIDs: Array<string>;
   comments: Comments;
@@ -614,6 +680,8 @@ function CommentsPanelList({
     isInlineComment: boolean,
     thread?: Thread,
   ) => void;
+  /** Offered when the store resolves threads. */
+  resolveThread?: (thread: Thread) => void;
 }): JSX.Element {
   const [editor] = useLexicalComposerContext();
   const [counter, setCounter] = useState(0);
@@ -706,6 +774,19 @@ function CommentsPanelList({
                   {'> '}
                   <span>{commentOrThread.quote}</span>
                 </Box>
+                {resolveThread && (
+                  <IconButton
+                    icon={CheckIcon}
+                    aria-label="Resolve thread"
+                    variant="invisible"
+                    size="small"
+                    onClick={event => {
+                      // Not the thread's own click, which selects its mark.
+                      event.stopPropagation();
+                      resolveThread(commentOrThread);
+                    }}
+                  />
+                )}
                 <IconButton
                   icon={TrashIcon}
                   aria-label="Delete thread"
@@ -724,6 +805,7 @@ function CommentsPanelList({
                 />
                 {modal}
               </Box>
+              <ThreadAssignee thread={commentOrThread} />
               <Box as="ul" sx={{ listStyle: 'none', m: 0, p: 0, mt: 2 }}>
                 {commentOrThread.comments.map(comment => (
                   <CommentsPanelListComment
@@ -764,6 +846,7 @@ function CommentsPanel({
   comments,
   submitAddComment,
   markNodeMap,
+  resolveThread,
 }: {
   activeIDs: Array<string>;
   comments: Comments;
@@ -777,6 +860,7 @@ function CommentsPanel({
     isInlineComment: boolean,
     thread?: Thread,
   ) => void;
+  resolveThread?: (thread: Thread) => void;
 }): JSX.Element {
   const listRef = useRef<HTMLUListElement>(null);
   const isEmpty = comments.length === 0;
@@ -817,6 +901,7 @@ function CommentsPanel({
           listRef={listRef}
           submitAddComment={submitAddComment}
           markNodeMap={markNodeMap}
+          resolveThread={resolveThread}
         />
       )}
     </Box>
@@ -834,18 +919,28 @@ function useCollabAuthorName(): string {
 export function CommentPlugin({
   providerFactory,
   showFloatingAddButton = true,
+  commentStore: givenCommentStore,
 }: {
   providerFactory?: (
     id: string,
     yjsDocMap: Map<string, Doc>,
   ) => WebsocketProvider;
   showFloatingAddButton?: boolean;
+  /**
+   * Where the threads are kept. Without one they are nodes of the document,
+   * which is all a local file has; a platform document passes an
+   * `ApiCommentStore` over its service.
+   */
+  commentStore?: ICommentStore;
 }): JSX.Element {
   const [editor] = useLexicalComposerContext();
   const { showComments, setShowComments } = useComments();
   const overlayOpenButtonRef = useRef<HTMLButtonElement>(null);
   const overlayCloseButtonRef = useRef<HTMLButtonElement>(null);
-  const commentStore = useMemo(() => new CommentStore(editor), [editor]);
+  const commentStore = useMemo<ICommentStore>(
+    () => givenCommentStore ?? new CommentStore(editor),
+    [editor, givenCommentStore],
+  );
   const comments = useCommentStore(commentStore);
   const markNodeMap = useMemo<Map<string, Set<NodeKey>>>(() => {
     return new Map();
@@ -872,41 +967,54 @@ export function CommentPlugin({
     setShowCommentInput(false);
   }, [editor]);
 
+  // Remove a thread's id from the marks highlighting its text.
+  const removeMarks = useCallback(
+    (id: string) => {
+      const markNodeKeys = markNodeMap.get(id);
+      if (markNodeKeys === undefined) {
+        return;
+      }
+      // Do async to avoid causing a React infinite loop
+      setTimeout(() => {
+        editor.update(() => {
+          for (const key of markNodeKeys) {
+            const node: null | MarkNode = $getNodeByKey<MarkNode>(key);
+            if ($isMarkNode(node)) {
+              node.deleteID(id);
+              if (node.getIDs().length === 0) {
+                $unwrapMarkNode(node);
+              }
+            }
+          }
+        });
+      });
+    },
+    [editor, markNodeMap],
+  );
+
   const deleteCommentOrThread = useCallback(
     (comment: Comment | Thread, thread?: Thread) => {
       if (comment.type === 'comment') {
-        const deletionInfo = commentStore.deleteCommentOrThread(
-          comment,
-          thread,
-        );
-        if (!deletionInfo) return;
-        const { markedComment, index } = deletionInfo;
-        commentStore.addComment(markedComment, thread, index);
+        commentStore.deleteComment(comment, thread);
       } else {
-        commentStore.deleteCommentOrThread(comment);
-        // Remove ids from associated marks
-        const id = thread !== undefined ? thread.id : comment.id;
-        const markNodeKeys = markNodeMap.get(id);
-        if (markNodeKeys !== undefined) {
-          // Do async to avoid causing a React infinite loop
-          setTimeout(() => {
-            editor.update(() => {
-              for (const key of markNodeKeys) {
-                const node: null | MarkNode = $getNodeByKey<MarkNode>(key);
-                if ($isMarkNode(node)) {
-                  node.deleteID(id);
-                  if (node.getIDs().length === 0) {
-                    $unwrapMarkNode(node);
-                  }
-                }
-              }
-            });
-          });
-        }
+        commentStore.deleteThread(comment);
+        removeMarks(thread !== undefined ? thread.id : comment.id);
       }
     },
-    [commentStore, editor, markNodeMap],
+    [commentStore, removeMarks],
   );
+
+  // A resolved thread leaves the panel and its highlight leaves the text;
+  // the store keeps what it was about. Offered when the store resolves.
+  const resolveThread = useMemo(() => {
+    if (!commentStore.resolveThread) {
+      return undefined;
+    }
+    return (thread: Thread) => {
+      commentStore.resolveThread?.(thread);
+      removeMarks(thread.id);
+    };
+  }, [commentStore, removeMarks]);
 
   const submitAddComment = useCallback(
     (
@@ -1076,15 +1184,27 @@ export function CommentPlugin({
     editor.dispatchCommand(INSERT_INLINE_COMMAND, undefined);
   };
 
+  // What the composers and the threads may do with people, when the store
+  // knows who may be named (B4-02).
+  const people = useMemo(
+    () => ({
+      searchPeople: commentStore.searchPeople?.bind(commentStore),
+      assignThread: commentStore.assignThread?.bind(commentStore),
+    }),
+    [commentStore],
+  );
+
   return (
-    <>
+    <CommentPeopleContext.Provider value={people}>
       {showCommentInput &&
         createPortal(
-          <CommentInputBox
-            editor={editor}
-            cancelAddComment={cancelAddComment}
-            submitAddComment={submitAddComment}
-          />,
+          <CommentPeopleContext.Provider value={people}>
+            <CommentInputBox
+              editor={editor}
+              cancelAddComment={cancelAddComment}
+              submitAddComment={submitAddComment}
+            />
+          </CommentPeopleContext.Provider>,
           document.body,
         )}
       {showFloatingAddButton &&
@@ -1118,10 +1238,11 @@ export function CommentPlugin({
             deleteCommentOrThread={deleteCommentOrThread}
             activeIDs={activeIDs}
             markNodeMap={markNodeMap}
+            resolveThread={resolveThread}
           />
         }
       />
-    </>
+    </CommentPeopleContext.Provider>
   );
 }
 

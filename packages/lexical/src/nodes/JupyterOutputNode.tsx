@@ -81,6 +81,8 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
   static importJSON(
     serializedNode: SerializedJupyterOutputNode,
   ): JupyterOutputNode {
+    // `updateFromJSON` reads the node's state (`$`), which a document may
+    // carry for others — a generated report marks its outputs as evidence.
     return $createJupyterOutputNode(
       serializedNode.source,
       new OutputAdapter(newUuid(), undefined, serializedNode.outputs),
@@ -88,7 +90,7 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
       false,
       serializedNode.jupyterInputNodeUuid,
       serializedNode.jupyterOutputNodeUuid,
-    );
+    ).updateFromJSON(serializedNode);
   }
 
   /** @override */
@@ -244,6 +246,8 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
   /** @override */
   exportJSON(): SerializedJupyterOutputNode {
     return {
+      // The base carries the node's state (`$`) back out.
+      ...super.exportJSON(),
       type: 'jupyter-output',
       source: this.getJupyterInput(),
       outputs: this.__outputAdapter.outputArea.model.toJSON(),

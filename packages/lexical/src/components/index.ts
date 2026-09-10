@@ -6,6 +6,7 @@
 
 // export * from "./InsertEquationDialog";
 // export * from "./InsertImageDialog";
+export * from './ApiCommentStore';
 export * from './Button';
 export * from './Commenting';
 export * from './ContentEditable';

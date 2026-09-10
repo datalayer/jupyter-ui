@@ -290,7 +290,7 @@
     "@jupyterlab/vega3-extension": "^3.3.0",
     "@jupyterlite/javascript-kernel-extension": "0.3.0",
     "@playwright/test": "^1.40.1",
-    "@primer/octicons-react": "^19.29.1",
+    "@primer/octicons-react": "^19.35.0",
     "@types/codemirror": "^5.60.4",
     "@types/diff": "^7.0.2",
     "@types/emscripten": "^1.39.6",
