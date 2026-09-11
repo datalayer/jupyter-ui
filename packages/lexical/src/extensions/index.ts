@@ -23,6 +23,7 @@ export * from './CommentExtension';
 export * from './ComponentPickerMenuExtension';
 export * from './EquationsExtension';
 export * from './ExcalidrawExtension';
+export * from './ExecutionTreeExtension';
 export * from './HorizontalRuleExtension';
 export * from './ImagesExtension';
 export * from './InlineCompletionExtension';

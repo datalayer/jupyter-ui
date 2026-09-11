@@ -11,7 +11,8 @@
  * hashtags, tables, horizontal rules, highlighted code blocks, markdown
  * shortcuts, images, equations, YouTube embeds, collapsibles, drawings,
  * comment anchors, Jupyter cells, executable inputs with their outputs,
- * columns, the four PDF exports, the `/` picker, inline completions and the
+ * columns, execution trees, the four PDF exports, the `/` picker, inline
+ * completions and the
  * editor's place in the shared store.
  * A host depends on it from its root extension and adds what is its own —
  * the namespace, a theme, an initial state, whether to focus on mount:
@@ -56,6 +57,7 @@ import { CommentExtension } from './CommentExtension';
 import { ComponentPickerMenuExtension } from './ComponentPickerMenuExtension';
 import { EquationsExtension } from './EquationsExtension';
 import { ExcalidrawExtension } from './ExcalidrawExtension';
+import { ExecutionTreeExtension } from './ExecutionTreeExtension';
 import { HorizontalRuleExtension } from './HorizontalRuleExtension';
 import { ImagesExtension } from './ImagesExtension';
 import { InlineCompletionExtension } from './InlineCompletionExtension';
@@ -90,6 +92,7 @@ export const JupyterLexicalExtension = defineExtension({
     YouTubeExtension,
     CollapsibleExtension,
     ExcalidrawExtension,
+    ExecutionTreeExtension,
     AutoEmbedExtension,
     CommentExtension,
     JupyterCellExtension,

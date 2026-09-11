@@ -8,6 +8,7 @@ export * from './CommentThreadNode';
 export * from './CounterNode';
 export * from './EquationNode';
 export * from './ExcalidrawNode';
+export * from './ExecutionTreeNode';
 export * from './ImageNode';
 export * from './JupyterInputHighlightNode';
 export * from './JupyterInputHighlighter';
