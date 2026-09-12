@@ -34,8 +34,9 @@ interface IViewState {
   model_id: string;
 }
 */
-// Create Ajv instance for widget schema validation (using Ajv v6)
-const ajv = new Ajv();
+// Widget buffer paths intentionally contain both object keys (strings) and
+// array indexes (numbers), as defined by the upstream Jupyter widget schema.
+const ajv = new Ajv({ allowUnionTypes: true });
 const model_validate = ajv.compile(widget_state_schema);
 const view_validate = ajv.compile(widget_view_schema);
 
