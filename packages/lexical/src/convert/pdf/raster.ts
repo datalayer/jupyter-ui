@@ -13,7 +13,7 @@
  * @module convert/pdf/raster
  */
 
-import katex from 'katex';
+import { loadKatex } from '../../components/katexLoader';
 
 export interface Raster {
   canvas: HTMLCanvasElement;
@@ -419,6 +419,8 @@ export async function equationToRaster(
   host.style.cssText = `position:fixed;left:-10000px;top:0;padding:2px 4px;font-size:${fontSizePx}px;color:#000;background:#fff;display:inline-block;white-space:nowrap`;
   document.body.appendChild(host);
   try {
+    // Fetched on the first equation, not with every editor: see katexLoader.
+    const katex = await loadKatex();
     katex.render(equation, host, {
       displayMode: !inline,
       throwOnError: false,

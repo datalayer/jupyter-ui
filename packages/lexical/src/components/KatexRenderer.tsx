@@ -5,8 +5,8 @@
  */
 
 import type { JSX } from 'react';
-import katex from 'katex';
 import { useEffect, useRef } from 'react';
+import { loadKatex } from './katexLoader';
 
 export default function KatexRenderer({
   equation,
@@ -20,9 +20,14 @@ export default function KatexRenderer({
   const katexElementRef = useRef(null);
 
   useEffect(() => {
-    const katexElement = katexElementRef.current;
-
-    if (katexElement !== null) {
+    // KaTeX arrives on the first equation drawn: see `katexLoader`. An
+    // equation edited, or unmounted, before it lands is not drawn stale.
+    let cancelled = false;
+    void loadKatex().then(katex => {
+      const katexElement = katexElementRef.current;
+      if (cancelled || katexElement === null) {
+        return;
+      }
       katex.render(equation, katexElement, {
         displayMode: !inline, // true === block display //
         errorColor: '#cc0000',
@@ -31,7 +36,10 @@ export default function KatexRenderer({
         throwOnError: false,
         trust: false,
       });
-    }
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [equation, inline]);
 
   return (

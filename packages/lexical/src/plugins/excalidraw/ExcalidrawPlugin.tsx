@@ -38,11 +38,13 @@ import {
   COMMAND_PRIORITY_EDITOR,
   createCommand,
 } from 'lexical';
-import { useEffect, useState } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 
-import ExcalidrawModal from '../../components/ExcalidrawModal';
 import type { ExcalidrawInitialElements } from '../../components/ExcalidrawModal';
-import { $createExcalidrawNode, ExcalidrawNode } from '../../nodes/ExcalidrawNode';
+import {
+  $createExcalidrawNode,
+  ExcalidrawNode,
+} from '../../nodes/ExcalidrawNode';
 import type { AppState, BinaryFiles } from '@excalidraw/excalidraw/types';
 import { $wrapNodeInElement } from '@lexical/utils';
 import { $createParagraphNode } from 'lexical';
@@ -50,6 +52,17 @@ import { $createParagraphNode } from 'lexical';
 import { useOptionalLexicalConfig } from '../../context/LexicalConfigContext';
 import { lexicalStore } from '../../state/LexicalState';
 import { excalidrawPluginTools } from './tools';
+
+/*
+ * The drawing editor, fetched when someone inserts a drawing.
+ *
+ * Excalidraw is about 260 KiB compressed, and this plugin is mounted in every
+ * editor through `ExcalidrawExtension`: a static import put it in the first
+ * download of any page with a document, whether or not a drawing was ever
+ * inserted. The node already loads its own component lazily; this was the
+ * other door.
+ */
+const ExcalidrawModal = lazy(() => import('../../components/ExcalidrawModal'));
 
 export const INSERT_EXCALIDRAW_COMMAND: LexicalCommand<void> = createCommand();
 
@@ -85,7 +98,9 @@ export function ExcalidrawPlugin(): JSX.Element | null {
     if (!lexicalId) {
       return;
     }
-    lexicalStore.getState().registerPluginTools(lexicalId, excalidrawPluginTools);
+    lexicalStore
+      .getState()
+      .registerPluginTools(lexicalId, excalidrawPluginTools);
     return () => {
       lexicalStore
         .getState()
@@ -124,15 +139,17 @@ export function ExcalidrawPlugin(): JSX.Element | null {
   };
 
   return isModalOpen ? (
-    <ExcalidrawModal
-      initialElements={[]}
-      initialAppState={{} as AppState}
-      initialFiles={{}}
-      isShown={isModalOpen}
-      onSave={onSave}
-      onDelete={onDelete}
-      onClose={onClose}
-      closeOnClickOutside={false}
-    />
+    <Suspense fallback={null}>
+      <ExcalidrawModal
+        initialElements={[]}
+        initialAppState={{} as AppState}
+        initialFiles={{}}
+        isShown={isModalOpen}
+        onSave={onSave}
+        onDelete={onDelete}
+        onClose={onClose}
+        closeOnClickOutside={false}
+      />
+    </Suspense>
   ) : null;
 }

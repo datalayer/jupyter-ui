@@ -5,7 +5,8 @@
  */
 
 import type { JSX } from 'react';
-import 'katex/dist/katex.css';
+// KaTeX's stylesheet arrives with KaTeX, on the first equation: see
+// `components/katexLoader`.
 
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import type { LexicalEditor } from 'lexical';
