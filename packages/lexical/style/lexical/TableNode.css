@@ -4,14 +4,31 @@
  * MIT License
  */
 
-/* Table container styles - matches VS Code theme */
+/*
+ * Table container styles - matches VS Code theme.
+ *
+ * `width: 100%`, not `max-content`: every column carries an explicit pixel
+ * width of its own (`<col>`, set by `@lexical/table` itself — 75px for a
+ * column nobody has resized), and under `table-layout: fixed` those widths
+ * are only the columns' *relative proportions* once the table's own width
+ * is a definite value larger than their sum — the extra space is then
+ * distributed across them (CSS2.1 §17.5.2, and every engine implements
+ * it). `max-content` opted out of that entirely: the table shrank to
+ * exactly the sum of its columns' 75px defaults, which for the common
+ * two-or-three-column table looked like a third of the page rather than
+ * the width actually available. A column a person has since resized still
+ * keeps its own chosen width — resizing sets that column's own `<col>`
+ * width, which is exactly the "explicit proportion" the algorithm above
+ * already respects; nothing here overrides it.
+ */
 .PlaygroundEditorTheme__table {
   border-collapse: collapse !important;
   border-spacing: 0 !important;
   max-width: 100% !important;
+  overflow-x: scroll !important;
   overflow-y: scroll !important;
   table-layout: fixed !important;
-  width: max-content !important;
+  width: 100% !important;
   margin: 20px 0 !important;
   border: 1px solid var(--borderColor-default, rgba(128, 128, 128, 0.35)) !important;
 }
@@ -183,17 +200,6 @@
 
 .PlaygroundEditorTheme__tableAlignmentRight {
   margin-left: auto;
-}
-
-.PlaygroundEditorTheme__table {
-  border-collapse: collapse;
-  border-spacing: 0;
-  overflow-y: scroll;
-  overflow-x: scroll;
-  table-layout: fixed;
-  width: fit-content;
-  margin-top: 25px;
-  margin-bottom: 30px;
 }
 
 .PlaygroundEditorTheme__tableScrollableWrapper.PlaygroundEditorTheme__tableFrozenRow {
