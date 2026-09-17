@@ -135,7 +135,7 @@ export const PdfExportMenu = ({
       </ActionMenu>
       {busy && <Spinner size="small" />}
       {error && (
-        <Text sx={{ color: 'danger.fg', fontSize: 0 }} role="alert">
+        <Text sx={{ color: 'var(--fgColor-danger)', fontSize: 0 }} role="alert">
           {error}
         </Text>
       )}

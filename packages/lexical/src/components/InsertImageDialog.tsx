@@ -13,6 +13,7 @@ import { TextInput } from './../components/TextInput';
 import { FileInput } from './../components/FileInput';
 import { INSERT_IMAGE_COMMAND } from './../plugins/ImagesPlugin';
 import { InsertImagePayload } from './../plugins/ImagesPlugin';
+import { DialogActions, DialogButtonsList } from './Dialog';
 
 export function InsertImageUriDialogBody({
   onClick,
@@ -38,7 +39,7 @@ export function InsertImageUriDialogBody({
         value={altText}
         data-test-id="image-modal-alt-text-input"
       />
-      <div className="ToolbarPlugin__dialogActions">
+      <DialogActions>
         <Button
           data-test-id="image-modal-confirm-btn"
           disabled={isDisabled}
@@ -46,7 +47,7 @@ export function InsertImageUriDialogBody({
         >
           Confirm
         </Button>
-      </div>
+      </DialogActions>
     </>
   );
 }
@@ -89,7 +90,7 @@ export function InsertImageUploadedDialogBody({
         value={altText}
         data-test-id="image-modal-alt-text-input"
       />
-      <div className="ToolbarPlugin__dialogActions">
+      <DialogActions>
         <Button
           data-test-id="image-modal-file-upload-btn"
           disabled={isDisabled}
@@ -97,7 +98,7 @@ export function InsertImageUploadedDialogBody({
         >
           Confirm
         </Button>
-      </div>
+      </DialogActions>
     </>
   );
 }
@@ -117,7 +118,7 @@ export function InsertImageDialog({
   return (
     <>
       {!mode && (
-        <div className="ToolbarPlugin__dialogButtonsList">
+        <DialogButtonsList>
           <Button
             data-test-id="image-modal-option-sample"
             onClick={() => {
@@ -142,7 +143,7 @@ export function InsertImageDialog({
           >
             File
           </Button>
-        </div>
+        </DialogButtonsList>
       )}
       {mode === 'url' && <InsertImageUriDialogBody onClick={onClick} />}
       {mode === 'file' && <InsertImageUploadedDialogBody onClick={onClick} />}

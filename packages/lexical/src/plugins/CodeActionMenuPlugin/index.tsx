@@ -147,15 +147,16 @@ function CodeActionMenuContainer({
             alignItems: 'center',
             gap: 1,
             p: 1,
-            bg: 'canvas.overlay',
+            bg: 'var(--overlay-bgColor)',
             border: '1px solid',
-            borderColor: 'border.default',
+            borderColor: 'var(--borderColor-default)',
             borderRadius: 2,
-            boxShadow: 'shadow.medium',
+            boxShadow:
+              'var(--shadow-resting-medium, 0 1px 1px 0 #25292e1a, 0 3px 6px 0 #25292e1f)',
             ...position,
           }}
         >
-          <Text sx={{ fontSize: 0, color: 'fg.muted', px: 1 }}>
+          <Text sx={{ fontSize: 0, color: 'var(--fgColor-muted)', px: 1 }}>
             {codeFriendlyName}
           </Text>
           <CopyButton editor={editor} getCodeDOMNode={getCodeDOMNode} />
@@ -180,7 +181,7 @@ function getMouseInfo(event: MouseEvent): {
 
   if (isHTMLElement(target)) {
     const codeDOMNode = target.closest<HTMLElement>(
-      'code.PlaygroundEditorTheme__code',
+      'code.JupyterLexicalTheme__code',
     );
     const isOutside = !(
       codeDOMNode ||

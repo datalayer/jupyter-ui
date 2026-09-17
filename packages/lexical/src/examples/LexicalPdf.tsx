@@ -150,7 +150,7 @@ const RouteCard = ({
       data-route={route}
       sx={{
         border: '1px solid',
-        borderColor: 'border.default',
+        borderColor: 'var(--borderColor-default)',
         borderRadius: 2,
         p: 3,
         display: 'flex',
@@ -170,7 +170,9 @@ const RouteCard = ({
               : 'pure TypeScript'}
         </Label>
       </Box>
-      <Text sx={{ fontSize: 1, color: 'fg.muted' }}>{info?.description}</Text>
+      <Text sx={{ fontSize: 1, color: 'var(--fgColor-muted)' }}>
+        {info?.description}
+      </Text>
       <Text sx={{ fontSize: 0 }}>
         <Text sx={{ fontWeight: 'bold' }}>For:</Text> {notes.pros}
       </Text>
@@ -206,7 +208,10 @@ const RouteCard = ({
                 {showTypst ? 'Hide Typst' : 'Show Typst'}
               </Button>
             )}
-            <Text sx={{ fontSize: 0, color: 'fg.muted' }} data-result>
+            <Text
+              sx={{ fontSize: 0, color: 'var(--fgColor-muted)' }}
+              data-result
+            >
               {result.pages || '?'} page{result.pages === 1 ? '' : 's'} ·{' '}
               {(result.bytes.length / 1024).toFixed(0)} KB · {result.ms} ms
             </Text>
@@ -214,7 +219,7 @@ const RouteCard = ({
         )}
       </Box>
       {error && (
-        <Text sx={{ fontSize: 0, color: 'danger.fg' }} role="alert">
+        <Text sx={{ fontSize: 0, color: 'var(--fgColor-danger)' }} role="alert">
           {error}
         </Text>
       )}
@@ -237,7 +242,7 @@ const RouteCard = ({
             fontSize: 0,
             maxHeight: 320,
             overflow: 'auto',
-            bg: 'canvas.subtle',
+            bg: 'var(--bgColor-muted)',
             p: 2,
             borderRadius: 2,
             m: 0,
@@ -275,7 +280,7 @@ const PdfDocument = () => {
         pb: 4,
       }}
     >
-      <Box className="center" sx={{ minWidth: 0 }}>
+      <Box sx={{ minWidth: 0, mx: 'auto', maxWidth: 1100, px: 3 }}>
         <Editor
           initialEditorState={INITIAL_LEXICAL_STATE}
           runtimeEnabled={false}
@@ -294,7 +299,7 @@ export function LexicalPdf() {
           <Heading as="h2" sx={{ mb: 1 }}>
             PDF Export
           </Heading>
-          <Text as="p" sx={{ m: 0, color: 'fg.muted' }}>
+          <Text as="p" sx={{ m: 0, color: 'var(--fgColor-muted)' }}>
             The same document to PDF four ways, all in the browser: print,
             vector layout, raster snapshot, Typst typesetting.
           </Text>

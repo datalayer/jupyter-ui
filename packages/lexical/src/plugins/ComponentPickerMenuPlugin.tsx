@@ -147,7 +147,7 @@ function ComponentPickerMenuItem({
           isSelected && !option.disabled
             ? 'actionListItem.default.selectedBg'
             : 'transparent',
-        color: 'fg.default',
+        color: 'var(--fgColor-default)',
         '&:hover': !option.disabled
           ? { bg: 'actionListItem.default.hoverBg' }
           : {},
@@ -158,7 +158,7 @@ function ComponentPickerMenuItem({
         sx={{
           display: 'flex',
           alignItems: 'center',
-          color: 'fg.muted',
+          color: 'var(--fgColor-muted)',
           flexShrink: 0,
         }}
       >
@@ -490,11 +490,12 @@ export const ComponentPickerMenuPlugin = ({
                     // root one and wins.
                     position: 'relative',
                     zIndex: 1000,
-                    bg: 'canvas.overlay',
+                    bg: 'var(--overlay-bgColor)',
                     border: '1px solid',
-                    borderColor: 'border.default',
+                    borderColor: 'var(--borderColor-default)',
                     borderRadius: 2,
-                    boxShadow: 'shadow.large',
+                    boxShadow:
+                      'var(--shadow-floating-large, 0 0 0 1px #d1d9e0, 0 40px 80px 0 #25292e3d)',
                     p: 1,
                     maxHeight: 300,
                     overflow: 'auto',

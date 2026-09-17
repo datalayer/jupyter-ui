@@ -292,7 +292,7 @@ const FormatsTabs = () => {
     JSON.stringify(content ?? readNbformat(), null, 2);
 
   return (
-    <Box className="center">
+    <Box sx={{ mx: 'auto', maxWidth: 1100, px: 3 }}>
       <UnderlineNav aria-label="Formats">
         {TABS.map(({ key, label }) => (
           <UnderlineNav.Item
@@ -327,7 +327,7 @@ const FormatsTabs = () => {
 
       {tab === 'markdown' && (
         <Box sx={{ mt: 3 }}>
-          <Text as="p" sx={{ color: 'fg.muted', mb: 2 }}>
+          <Text as="p" sx={{ color: 'var(--fgColor-muted)', mb: 2 }}>
             The document as Markdown, through the package&apos;s transformers.
             Edit it here: your changes are applied to the document when you
             leave the tab, or now with Apply.
@@ -370,7 +370,7 @@ const FormatsTabs = () => {
 
       {tab === 'notebook' && (
         <Box sx={{ mt: 3 }}>
-          <Text as="p" sx={{ color: 'fg.muted', mb: 2 }}>
+          <Text as="p" sx={{ color: 'var(--fgColor-muted)', mb: 2 }}>
             The document as a Jupyter notebook, on a live kernel. Cells edited
             or run here are written back to the document when you leave the tab.
           </Text>
@@ -388,7 +388,9 @@ const FormatsTabs = () => {
               }}
             />
           ) : (
-            <Text sx={{ color: 'fg.muted' }}>Waiting for a kernel…</Text>
+            <Text sx={{ color: 'var(--fgColor-muted)' }}>
+              Waiting for a kernel…
+            </Text>
           )}
         </Box>
       )}
@@ -396,7 +398,7 @@ const FormatsTabs = () => {
       {tab === 'nbformat' && (
         <Box sx={{ mt: 3 }}>
           <Box sx={{ display: 'flex', gap: 2, mb: 2, alignItems: 'center' }}>
-            <Text sx={{ color: 'fg.muted', flex: 1 }}>
+            <Text sx={{ color: 'var(--fgColor-muted)', flex: 1 }}>
               The notebook JSON the Notebook tab loads.
             </Text>
             <Button
@@ -419,7 +421,7 @@ const FormatsTabs = () => {
       {tab === 'latex' && (
         <Box sx={{ mt: 3 }}>
           <Box sx={{ display: 'flex', gap: 2, mb: 2, alignItems: 'center' }}>
-            <Text sx={{ color: 'fg.muted', flex: 1 }}>
+            <Text sx={{ color: 'var(--fgColor-muted)', flex: 1 }}>
               The LaTeX read back into an editor, equations through KaTeX. Write
               in it: when you leave the tab it is exported to LaTeX again and
               that LaTeX is read into the document.
@@ -446,7 +448,7 @@ const FormatsTabs = () => {
       {tab === 'latex-readonly' && (
         <Box sx={{ mt: 3 }}>
           <Box sx={{ display: 'flex', gap: 2, mb: 2, alignItems: 'center' }}>
-            <Text sx={{ color: 'fg.muted', flex: 1 }}>
+            <Text sx={{ color: 'var(--fgColor-muted)', flex: 1 }}>
               The same rendering, read-only: what the LaTeX carries of the
               document.
             </Text>
@@ -465,7 +467,7 @@ const FormatsTabs = () => {
 
       {tab === 'latex-source' && (
         <Box sx={{ mt: 3 }}>
-          <Text as="p" sx={{ color: 'fg.muted', mb: 2 }}>
+          <Text as="p" sx={{ color: 'var(--fgColor-muted)', mb: 2 }}>
             The document as LaTeX. Edit it here: your changes are read back into
             the document when you leave the tab, or now with Apply.
           </Text>
@@ -523,7 +525,7 @@ export function LexicalFormats() {
           <Heading as="h2" sx={{ mb: 1 }}>
             {DOCUMENT_TITLE}
           </Heading>
-          <Text as="p" sx={{ m: 0, color: 'fg.muted' }}>
+          <Text as="p" sx={{ m: 0, color: 'var(--fgColor-muted)' }}>
             One document — as rich text, Markdown, a Jupyter notebook, nbformat
             and LaTeX.
           </Text>

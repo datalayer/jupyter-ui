@@ -129,7 +129,10 @@ const LexicalCollaborative = () => {
             flexWrap: 'wrap',
           }}
         >
-          <Text as="p" sx={{ m: 0, color: 'fg.muted', flex: 1, minWidth: 280 }}>
+          <Text
+            as="p"
+            sx={{ m: 0, color: 'var(--fgColor-muted)', flex: 1, minWidth: 280 }}
+          >
             Two standalone lexical examples side by side in the same room.
           </Text>
           <Box
@@ -146,7 +149,7 @@ const LexicalCollaborative = () => {
               title={roomUrl}
               sx={{
                 fontSize: 0,
-                color: 'fg.muted',
+                color: 'var(--fgColor-muted)',
                 fontFamily: 'monospace',
                 maxWidth: 260,
                 wordBreak: 'break-all',
@@ -171,7 +174,7 @@ const LexicalCollaborative = () => {
           <Box
             sx={{
               border: '1px solid',
-              borderColor: 'border.default',
+              borderColor: 'var(--borderColor-default)',
               borderRadius: 2,
               overflow: 'hidden',
             }}
@@ -181,8 +184,8 @@ const LexicalCollaborative = () => {
                 px: 2,
                 py: 1,
                 borderBottom: '1px solid',
-                borderColor: 'border.default',
-                bg: 'canvas.subtle',
+                borderColor: 'var(--borderColor-default)',
+                bg: 'var(--bgColor-muted)',
               }}
             >
               {renderPaneTitle('1')}
@@ -201,7 +204,7 @@ const LexicalCollaborative = () => {
           <Box
             sx={{
               border: '1px solid',
-              borderColor: 'border.default',
+              borderColor: 'var(--borderColor-default)',
               borderRadius: 2,
               overflow: 'hidden',
             }}
@@ -211,8 +214,8 @@ const LexicalCollaborative = () => {
                 px: 2,
                 py: 1,
                 borderBottom: '1px solid',
-                borderColor: 'border.default',
-                bg: 'canvas.subtle',
+                borderColor: 'var(--borderColor-default)',
+                bg: 'var(--bgColor-muted)',
               }}
             >
               {renderPaneTitle('2')}

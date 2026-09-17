@@ -60,7 +60,7 @@ export const KatexEquationAlterer = ({
           mb: 2,
           p: 2,
           border: '1px solid',
-          borderColor: 'border.default',
+          borderColor: 'var(--borderColor-default)',
           borderRadius: 2,
           textAlign: 'center',
         }}

@@ -189,11 +189,12 @@ function TableOfContentsList({
         overflowY: 'auto',
         overflowX: 'hidden',
         zIndex: 20,
-        bg: 'canvas.default',
+        bg: 'var(--bgColor-default)',
         border: '1px solid',
-        borderColor: 'border.default',
+        borderColor: 'var(--borderColor-default)',
         borderRadius: 2,
-        boxShadow: 'shadow.small',
+        boxShadow:
+          'var(--shadow-resting-small, 0 1px 1px 0 #1f23280f, 0 1px 3px 0 #1f23280f)',
         p: 2,
       }}
     >
@@ -205,7 +206,13 @@ function TableOfContentsList({
           mb: 2,
         }}
       >
-        <Text sx={{ fontSize: 1, fontWeight: 'bold', color: 'fg.default' }}>
+        <Text
+          sx={{
+            fontSize: 1,
+            fontWeight: 'bold',
+            color: 'var(--fgColor-default)',
+          }}
+        >
           Table of Contents
         </Text>
         <Box
@@ -217,10 +224,10 @@ function TableOfContentsList({
           sx={{
             appearance: 'none',
             border: '1px solid',
-            borderColor: 'border.default',
+            borderColor: 'var(--borderColor-default)',
             borderRadius: 1,
-            bg: 'canvas.default',
-            color: 'fg.default',
+            bg: 'var(--bgColor-default)',
+            color: 'var(--fgColor-default)',
             width: '24px',
             height: '24px',
             p: 0,
@@ -228,7 +235,7 @@ function TableOfContentsList({
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
-            '&:hover': { bg: 'canvas.subtle' },
+            '&:hover': { bg: 'var(--bgColor-muted)' },
           }}
         >
           <XIcon size={12} />
@@ -255,7 +262,7 @@ function TableOfContentsList({
                   borderRadius: 1,
                   color: isSelected ? 'accent.fg' : 'fg.default',
                   bg: isSelected ? 'accent.subtle' : 'transparent',
-                  '&:hover': { bg: 'canvas.subtle' },
+                  '&:hover': { bg: 'var(--bgColor-muted)' },
                   mb: 1,
                 }}
               >
@@ -282,7 +289,7 @@ function TableOfContentsList({
                     ? '2px solid'
                     : '2px solid transparent',
                   borderColor: isSelected ? 'accent.fg' : 'transparent',
-                  '&:hover': { bg: 'canvas.subtle' },
+                  '&:hover': { bg: 'var(--bgColor-muted)' },
                 }}
               >
                 {displayText}
@@ -321,15 +328,16 @@ export const TableOfContentsPlugin = ({
                   height: '48px',
                   borderRadius: '999px',
                   border: '1px solid',
-                  borderColor: 'border.default',
-                  bg: 'canvas.overlay',
-                  color: 'fg.default',
-                  boxShadow: 'shadow.medium',
+                  borderColor: 'var(--borderColor-default)',
+                  bg: 'var(--overlay-bgColor)',
+                  color: 'var(--fgColor-default)',
+                  boxShadow:
+                    'var(--shadow-resting-medium, 0 1px 1px 0 #25292e1a, 0 3px 6px 0 #25292e1f)',
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   cursor: 'pointer',
-                  '&:hover': { bg: 'canvas.subtle' },
+                  '&:hover': { bg: 'var(--bgColor-muted)' },
                 }}
               >
                 <ListUnorderedIcon size={16} />

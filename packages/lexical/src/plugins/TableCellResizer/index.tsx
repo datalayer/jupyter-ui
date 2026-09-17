@@ -51,7 +51,13 @@ const MIN_COLUMN_WIDTH = 92;
 function TableCellResizer({ editor }: { editor: LexicalEditor }): JSX.Element {
   const targetRef = useRef<HTMLElement | null>(null);
   const resizerRef = useRef<HTMLDivElement | null>(null);
-  const tableRectRef = useRef<ClientRect | null>(null);
+  /*
+    The table's rect is state rather than a ref: the only reader is the
+    styling below, which runs while rendering, and a ref read there does not
+    re-render when it changes (`react-hooks/refs`). Both writers are pointer
+    handlers, where setting state is ordinary.
+  */
+  const [tableRect, setTableRect] = useState<ClientRect | null>(null);
   const [hasTable, setHasTable] = useState(false);
 
   const pointerStartPosRef = useRef<PointerPosition | null>(null);
@@ -62,12 +68,25 @@ function TableCellResizer({ editor }: { editor: LexicalEditor }): JSX.Element {
   const [draggingDirection, updateDraggingDirection] =
     useState<PointerDraggingDirection | null>(null);
 
+  /*
+    Declared before the callbacks that call it: a `const` arrow function is
+    not hoisted, so a caller defined above it reads the binding before it
+    exists (`react-hooks/immutability`).
+  */
+  const getCellNodeHeight = (
+    cell: TableCellNode,
+    activeEditor: LexicalEditor,
+  ): number | undefined => {
+    const domCellNode = activeEditor.getElementByKey(cell.getKey());
+    return domCellNode?.clientHeight;
+  };
+
   const resetState = useCallback(() => {
     updateActiveCell(null);
     targetRef.current = null;
     updateDraggingDirection(null);
     pointerStartPosRef.current = null;
-    tableRectRef.current = null;
+    setTableRect(null);
   }, []);
 
   useEffect(() => {
@@ -146,7 +165,7 @@ function TableCellResizer({ editor }: { editor: LexicalEditor }): JSX.Element {
               }
 
               targetRef.current = target;
-              tableRectRef.current = tableElement.getBoundingClientRect();
+              setTableRect(tableElement.getBoundingClientRect());
               updateActiveCell(cell);
             },
             { editor },
@@ -246,14 +265,6 @@ function TableCellResizer({ editor }: { editor: LexicalEditor }): JSX.Element {
     },
     [activeCell, editor],
   );
-
-  const getCellNodeHeight = (
-    cell: TableCellNode,
-    activeEditor: LexicalEditor,
-  ): number | undefined => {
-    const domCellNode = activeEditor.getElementByKey(cell.getKey());
-    return domCellNode?.clientHeight;
-  };
 
   const getCellColumnIndex = (
     tableCellNode: TableCellNode,
@@ -394,8 +405,6 @@ function TableCellResizer({ editor }: { editor: LexicalEditor }): JSX.Element {
         },
       };
 
-      const tableRect = tableRectRef.current;
-
       if (draggingDirection && pointerCurrentPos && tableRect) {
         if (isHeightChanging(draggingDirection)) {
           styles[draggingDirection].left = `${
@@ -415,7 +424,8 @@ function TableCellResizer({ editor }: { editor: LexicalEditor }): JSX.Element {
           styles[draggingDirection].height = `${tableRect.height}px`;
         }
 
-        styles[draggingDirection].backgroundColor = '#adf';
+        styles[draggingDirection].backgroundColor =
+          'var(--bgColor-accent-emphasis)';
         styles[draggingDirection].mixBlendMode = 'unset';
       }
 
@@ -428,7 +438,7 @@ function TableCellResizer({ editor }: { editor: LexicalEditor }): JSX.Element {
       right: null,
       top: null,
     };
-  }, [activeCell, draggingDirection, pointerCurrentPos]);
+  }, [activeCell, draggingDirection, pointerCurrentPos, tableRect]);
 
   const resizerStyles = getResizers();
 

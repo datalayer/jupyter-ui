@@ -144,7 +144,7 @@ export function PrettierButton({ lang, editor, getCodeDOMNode }: Props) {
         onClick={handleClick}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        sx={syntaxError ? { color: 'danger.fg' } : undefined}
+        sx={syntaxError ? { color: 'var(--fgColor-danger)' } : undefined}
       />
       {tipsVisible ? (
         <Box
@@ -155,10 +155,10 @@ export function PrettierButton({ lang, editor, getCodeDOMNode }: Props) {
             right: 0,
             zIndex: 10,
             p: 2,
-            bg: 'danger.subtle',
-            color: 'danger.fg',
+            bg: 'var(--bgColor-danger-muted)',
+            color: 'var(--fgColor-danger)',
             border: '1px solid',
-            borderColor: 'danger.muted',
+            borderColor: 'var(--bgColor-danger-muted)',
             borderRadius: 2,
             fontSize: 0,
             maxWidth: 300,

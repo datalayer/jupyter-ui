@@ -166,7 +166,7 @@ const LatexTemplates = () => {
   ].filter(Boolean);
 
   return (
-    <Box className="center">
+    <Box sx={{ mx: 'auto', maxWidth: 1100, px: 3 }}>
       <Box
         sx={{
           display: 'flex',
@@ -196,7 +196,10 @@ const LatexTemplates = () => {
           filename={template.id}
         />
       </Box>
-      <Text as="p" sx={{ color: 'fg.muted', fontSize: 0, m: 0, mb: 2 }}>
+      <Text
+        as="p"
+        sx={{ color: 'var(--fgColor-muted)', fontSize: 0, m: 0, mb: 2 }}
+      >
         {summary.join(' · ')}
       </Text>
 
@@ -219,7 +222,7 @@ const LatexTemplates = () => {
 
       {tab === 'latex' && (
         <Box sx={{ mt: 3 }}>
-          <Text as="p" sx={{ color: 'fg.muted', mb: 2 }}>
+          <Text as="p" sx={{ color: 'var(--fgColor-muted)', mb: 2 }}>
             The template read into an editor. Write in it: the source tab shows
             what it has become.
           </Text>
@@ -235,7 +238,7 @@ const LatexTemplates = () => {
 
       {tab === 'source' && (
         <Box sx={{ mt: 3 }}>
-          <Text as="p" sx={{ color: 'fg.muted', mb: 2 }}>
+          <Text as="p" sx={{ color: 'var(--fgColor-muted)', mb: 2 }}>
             The LaTeX. Edit it: the LaTeX tab reads it when you go back.
           </Text>
           <SourceEditor
@@ -259,7 +262,7 @@ export function LexicalLatex() {
           <Heading as="h2" sx={{ mb: 1 }}>
             LaTeX Templates
           </Heading>
-          <Text as="p" sx={{ m: 0, color: 'fg.muted' }}>
+          <Text as="p" sx={{ m: 0, color: 'var(--fgColor-muted)' }}>
             One template per Overleaf category, rendered and edited in Lexical,
             with its source beside.
           </Text>

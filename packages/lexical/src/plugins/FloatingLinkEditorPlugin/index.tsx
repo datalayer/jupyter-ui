@@ -295,8 +295,7 @@ function FloatingLinkEditor({
 
   const handleLinkSubmission = (
     event:
-      | React.KeyboardEvent<HTMLInputElement>
-      | React.MouseEvent<HTMLElement>,
+      React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLElement>,
   ) => {
     event.preventDefault();
     if (lastSelection !== null) {
@@ -334,11 +333,12 @@ function FloatingLinkEditor({
         top: '-10000px',
         left: '-10000px',
         opacity: 0,
-        bg: 'canvas.overlay',
+        bg: 'var(--overlay-bgColor)',
         border: '1px solid',
-        borderColor: 'border.default',
+        borderColor: 'var(--borderColor-default)',
         borderRadius: 2,
-        boxShadow: 'shadow.large',
+        boxShadow:
+          'var(--shadow-floating-large, 0 0 0 1px #d1d9e0, 0 40px 80px 0 #25292e3d)',
         transition: 'opacity 0.15s ease',
         p: 1,
         minWidth: 250,
@@ -412,7 +412,7 @@ function FloatingLinkEditor({
             aria-label="Remove link"
             variant="invisible"
             size="small"
-            sx={{ color: 'danger.fg' }}
+            sx={{ color: 'var(--fgColor-danger)' }}
             onMouseDown={preventDefault as any}
             onClick={() => {
               editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);

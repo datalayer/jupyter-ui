@@ -159,7 +159,7 @@ function getMouseInfo(event: MouseEvent): {
 
   if (isHTMLElement(target)) {
     const codeDOMNode = target.closest<HTMLElement>(
-      'code.PlaygroundEditorTheme__code',
+      'code.JupyterLexicalTheme__code',
     );
     const isOutside = !(
       codeDOMNode ||

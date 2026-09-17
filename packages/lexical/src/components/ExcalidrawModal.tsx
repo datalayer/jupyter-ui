@@ -196,7 +196,7 @@ export default function ExcalidrawModal({
             justifyContent: 'flex-end',
             p: 2,
             borderTop: '1px solid',
-            borderColor: 'border.default',
+            borderColor: 'var(--borderColor-default)',
           }}
         >
           <PrimerButton variant="invisible" onClick={discard}>

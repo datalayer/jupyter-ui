@@ -65,7 +65,7 @@ export function CopyButton({ editor, getCodeDOMNode }: Props) {
       variant="invisible"
       size="small"
       onClick={handleClick}
-      sx={isCopyCompleted ? { color: 'success.fg' } : undefined}
+      sx={isCopyCompleted ? { color: 'var(--fgColor-success)' } : undefined}
     />
   );
 }

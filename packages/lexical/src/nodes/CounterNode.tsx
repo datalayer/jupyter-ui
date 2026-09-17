@@ -69,9 +69,9 @@ export class CounterNode extends DecoratorNode<JSX.Element> {
     elem.style.display = 'block';
     elem.style.padding = '8px';
     elem.style.margin = '8px 0';
-    elem.style.border = '1px solid #ddd';
+    elem.style.border = '1px solid var(--borderColor-default)';
     elem.style.borderRadius = '6px';
-    elem.style.background = '#fafafa';
+    elem.style.background = 'var(--bgColor-muted)';
     return elem;
   }
 

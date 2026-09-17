@@ -6,7 +6,7 @@
 
 import { useState, useMemo, useCallback } from 'react';
 import { Button, ToggleSwitch, Text, Heading } from '@primer/react';
-import { Box } from '@datalayer/primer-addons';
+import { Box, collaboratorColor } from '@datalayer/primer-addons';
 import { useCoreStore } from '@datalayer/core';
 import { useSimpleAuthStore } from '@datalayer/core/lib/views/otel';
 import {
@@ -25,6 +25,8 @@ const INITIAL_LEXICAL_STATE = JSON.stringify(LEXICAL_MODEL);
 
 const LexicalEditor = ({ hasRuntime }: { hasRuntime: boolean }) => {
   const { editor } = useLexical();
+  // Which palette a collaborator's colour comes out of.
+  const { theme: themeVariant, colorMode } = useExampleThemeStore();
   const configuration = useCoreStore(state => state.configuration);
   const authToken = useSimpleAuthStore(state => state.token);
   const urlParams = new URLSearchParams(window.location.search);
@@ -34,8 +36,7 @@ const LexicalEditor = ({ hasRuntime }: { hasRuntime: boolean }) => {
     urlParams.get('collabRoom') || 'jupyter-lexical-collaboration-room';
   const collabPane = urlParams.get('collabPane') || '1';
   const spacerBaseUrl =
-    configuration?.spacerUrl ||
-    'https://prod1.datalayer.run';
+    configuration?.spacerUrl || 'https://prod1.datalayer.run';
   const collabWsBase =
     urlParams.get('collabWs') ||
     `${spacerBaseUrl.replace(/\/$/, '').replace(/^http/, 'ws')}/api/spacer/v1/lexical/ws`;
@@ -50,8 +51,10 @@ const LexicalEditor = ({ hasRuntime }: { hasRuntime: boolean }) => {
       return undefined;
     }
 
-    const color = collabPane === '2' ? '#db61a2' : '#1570ef';
     const username = collabPane === '2' ? 'Collaborator 2' : 'Collaborator 1';
+    // Their colour is the theme's, picked by who they are, so both panes
+    // agree without either being told (see `CollaboratorPalette`).
+    const color = collaboratorColor(username, themeVariant, colorMode);
 
     return {
       id: collabRoom,
@@ -92,14 +95,21 @@ const LexicalEditor = ({ hasRuntime }: { hasRuntime: boolean }) => {
         },
       },
     };
-  }, [collabPane, collabRoom, collabWs, isCollaborative]);
+  }, [
+    collabPane,
+    collabRoom,
+    collabWs,
+    isCollaborative,
+    themeVariant,
+    colorMode,
+  ]);
 
   const handleSessionConnection = useCallback(() => {
     // Intentionally no-op: avoid noisy session logs on reconnection/state updates.
   }, []);
 
   return (
-    <Box className="center">
+    <Box sx={{ mx: 'auto', maxWidth: 1100, px: 3 }}>
       <Box>
         <Editor
           id={collaboration?.id}
@@ -141,7 +151,7 @@ const AppToolbar = (props: {
         <Heading as="h2" sx={{ mb: 1 }}>
           Lexical Simple
         </Heading>
-        <Text as="p" sx={{ m: 0, color: 'fg.muted' }}>
+        <Text as="p" sx={{ m: 0, color: 'var(--fgColor-muted)' }}>
           Current lexical example.
         </Text>
       </Box>
@@ -156,7 +166,7 @@ const AppToolbar = (props: {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Text
             id="runtime-toggle-label"
-            sx={{ fontSize: 0, color: 'fg.muted' }}
+            sx={{ fontSize: 0, color: 'var(--fgColor-muted)' }}
           >
             Runtime
           </Text>

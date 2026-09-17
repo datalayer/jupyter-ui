@@ -152,9 +152,9 @@ const ExamplesSidebar = ({
         right: 0,
         height: '100vh',
         width: '320px',
-        backgroundColor: 'canvas.default',
+        backgroundColor: 'var(--bgColor-default)',
         borderLeft: '1px solid',
-        borderColor: 'border.default',
+        borderColor: 'var(--borderColor-default)',
         display: 'flex',
         flexDirection: 'column',
         zIndex: 1000,
@@ -165,7 +165,7 @@ const ExamplesSidebar = ({
           px: 3,
           py: 2,
           borderBottom: '1px solid',
-          borderColor: 'border.default',
+          borderColor: 'var(--borderColor-default)',
         }}
       >
         <Text as="div" fontWeight="bold" fontSize={2}>
@@ -203,7 +203,7 @@ const ExamplesSidebar = ({
           px: 2,
           py: 2,
           borderBottom: '1px solid',
-          borderColor: 'border.default',
+          borderColor: 'var(--borderColor-default)',
         }}
       >
         <TextInput
@@ -352,7 +352,7 @@ const Examples = () => {
             width: 'calc(100vw - 320px)',
             height: '100vh',
             overflow: 'auto',
-            bg: 'canvas.backdrop',
+            bg: 'var(--overlay-backdrop-bgColor)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',

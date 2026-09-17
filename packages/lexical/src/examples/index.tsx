@@ -12,7 +12,6 @@ import { coreStore, iamStore } from '@datalayer/core';
 import { useSimpleAuthStore } from '@datalayer/core/lib/views/otel';
 import { useExampleThemeStore } from './themeStore';
 
-import '../../style/primer-primitives.css';
 import '../../style/index.css';
 
 const PROD_RUN_URL = 'https://prod1.datalayer.run';

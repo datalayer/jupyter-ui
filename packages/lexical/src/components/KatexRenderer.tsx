@@ -30,7 +30,8 @@ export default function KatexRenderer({
       }
       katex.render(equation, katexElement, {
         displayMode: !inline, // true === block display //
-        errorColor: '#cc0000',
+        // KaTeX paints this itself, so it takes a colour, not a token.
+        errorColor: 'var(--fgColor-danger, #cc0000)',
         output: 'html',
         strict: 'warn',
         throwOnError: false,
@@ -47,14 +48,14 @@ export default function KatexRenderer({
     // inner text from Katex. There didn't seem to be any other way of making this work,
     // without having a physical space.
     <>
-      <span className="spacer"> </span>
+      <span> </span>
       <span
         role="button"
         tabIndex={-1}
         onClick={onClick}
         ref={katexElementRef}
       />
-      <span className="spacer"> </span>
+      <span> </span>
     </>
   );
 }

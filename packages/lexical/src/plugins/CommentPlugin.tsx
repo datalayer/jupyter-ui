@@ -11,13 +11,14 @@
  */
 
 import type { JSX } from 'react';
-import type { CSSProperties } from 'react';
+import type { CSSProperties, RefObject } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
   Box,
   Heading,
   IconButton,
+  Overlay,
   Text,
   Button as PrimerButton,
 } from '@primer/react';
@@ -253,6 +254,9 @@ function useOnChange(
   );
 }
 
+/** The comment card's width — Primer's `small` overlay — which its placement centres on. */
+const CARD_WIDTH = 256;
+
 function CommentInputBox({
   editor,
   cancelAddComment,
@@ -267,7 +271,14 @@ function CommentInputBox({
 }) {
   const [content, setContent] = useState('');
   const [canSubmit, setCanSubmit] = useState(false);
-  const boxRef = useRef<HTMLDivElement>(null);
+  /*
+    Where the card hangs, in viewport coordinates: the overlay takes them as
+    props rather than having them written onto its node, which is what a
+    hand-positioned `div` used to need.
+  */
+  const [at, setAt] = useState<{ left: number; top: number } | null>(null);
+  /* Focus goes back to the document when the card closes. */
+  const returnFocusRef = useRef<HTMLElement | null>(null);
   const selectionState = useMemo(
     () => ({
       container: document.createElement('div'),
@@ -291,17 +302,17 @@ function CommentInputBox({
           focus.getNode(),
           focus.offset,
         );
-        const boxElem = boxRef.current;
-        if (range !== null && boxElem !== null) {
+        if (range !== null) {
           const { left, bottom, width } = range.getBoundingClientRect();
           const selectionRects = createRectsFromDOMRange(editor, range);
           let correctedLeft =
-            selectionRects.length === 1 ? left + width / 2 - 125 : left - 125;
+            selectionRects.length === 1
+              ? left + width / 2 - CARD_WIDTH / 2
+              : left - CARD_WIDTH / 2;
           if (correctedLeft < 10) {
             correctedLeft = 10;
           }
-          boxElem.style.left = `${correctedLeft}px`;
-          boxElem.style.top = `${bottom + 20}px`;
+          setAt({ left: correctedLeft, top: bottom + 20 });
           const selectionRectsLength = selectionRects.length;
           const { container } = selectionState;
           const elements: Array<HTMLSpanElement> = selectionState.elements;
@@ -315,8 +326,9 @@ function CommentInputBox({
               elements[i] = elem;
               container.appendChild(elem);
             }
-            const color = '255, 212, 0';
-            const style = `position:absolute;top:${selectionRect.top}px;left:${selectionRect.left}px;height:${selectionRect.height}px;width:${selectionRect.width}px;background-color:rgba(${color}, 0.3);pointer-events:none;z-index:5;`;
+            const color =
+              'var(--bgColor-attention-muted, rgba(255, 212, 0, 0.3))';
+            const style = `position:absolute;top:${selectionRect.top}px;left:${selectionRect.left}px;height:${selectionRect.height}px;width:${selectionRect.width}px;background-color:${color};pointer-events:none;z-index:5;`;
             elem.style.cssText = style;
           }
           for (let i = elementsLength - 1; i >= selectionRectsLength; i--) {
@@ -330,6 +342,7 @@ function CommentInputBox({
   }, [editor, selectionState]);
 
   useLayoutEffect(() => {
+    returnFocusRef.current = editor.getRootElement();
     updateLocation();
     const container = selectionState.container;
     const body = document.body;
@@ -339,7 +352,7 @@ function CommentInputBox({
         body.removeChild(container);
       };
     }
-  }, [selectionState.container, updateLocation]);
+  }, [editor, selectionState.container, updateLocation]);
 
   useEffect(() => {
     window.addEventListener('resize', updateLocation);
@@ -388,29 +401,45 @@ function CommentInputBox({
 
   const onChange = useOnChange(setContent, setCanSubmit);
 
+  /*
+    A click that lands in the mentions list is not a click outside: the list
+    is portalled (`CommentPeople`, `role="listbox"`), so it sits outside the
+    card's own tree and would otherwise close the card the moment someone
+    picked a person to name.
+  */
+  const onClickOutside = (event: MouseEvent | TouchEvent): void => {
+    const target = event.target;
+    if (target instanceof HTMLElement && target.closest('[role="listbox"]')) {
+      return;
+    }
+    cancelAddComment();
+  };
+
+  if (at === null) {
+    return null;
+  }
+
   return (
-    <Box
-      ref={boxRef}
-      sx={{
-        display: 'block',
-        position: 'absolute',
-        width: 250,
-        minHeight: 80,
-        bg: 'canvas.default',
-        boxShadow: 'shadow.medium',
-        borderRadius: 2,
-        zIndex: 24,
-      }}
+    <Overlay
+      role="dialog"
+      aria-label="Add a comment"
+      width="small"
+      position="fixed"
+      left={at.left}
+      top={at.top}
+      onEscape={cancelAddComment}
+      onClickOutside={onClickOutside}
+      returnFocusRef={returnFocusRef as RefObject<HTMLElement>}
+      preventFocusOnOpen
     >
       <PlainTextEditor
         style={{
           position: 'relative',
-          border: '1px solid',
-          borderColor: 'var(--borderColor-default, #ccc)',
-          backgroundColor: 'var(--bgColor-default, #fff)',
+          border: '1px solid var(--borderColor-default)',
+          backgroundColor: 'var(--bgColor-default)',
           borderRadius: '6px',
           fontSize: '15px',
-          caretColor: 'rgb(5, 5, 5)',
+          caretColor: 'var(--fgColor-default)',
           display: 'block',
           padding: '9px 10px 10px 9px',
           minHeight: '80px',
@@ -445,7 +474,7 @@ function CommentInputBox({
           Comment
         </PrimerButton>
       </Box>
-    </Box>
+    </Overlay>
   );
 }
 
@@ -507,7 +536,7 @@ function CommentsComposer({
           backgroundColor: 'var(--bgColor-default, #fff)',
           borderRadius: '6px',
           fontSize: '15px',
-          caretColor: 'rgb(5, 5, 5)',
+          caretColor: 'var(--fgColor-default)',
           display: 'block',
           padding: '9px 10px 10px 9px',
           minHeight: '20px',
@@ -612,11 +641,15 @@ function CommentsPanelListComment({
   return (
     <Box
       as="li"
-      sx={{ p: 2, borderBottom: '1px solid', borderColor: 'border.muted' }}
+      sx={{
+        p: 2,
+        borderBottom: '1px solid',
+        borderColor: 'var(--borderColor-muted)',
+      }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
         <Text sx={{ fontWeight: 'bold', fontSize: 1 }}>{comment.author}</Text>
-        <Text sx={{ color: 'fg.muted', fontSize: 0 }}>
+        <Text sx={{ color: 'var(--fgColor-muted)', fontSize: 0 }}>
           · {whenWritten(rtf, comment.timeStamp)}
         </Text>
       </Box>
@@ -626,7 +659,7 @@ function CommentsPanelListComment({
           fontSize: 1,
           m: 0,
           ...(comment.deleted
-            ? { color: 'fg.subtle', fontStyle: 'italic' }
+            ? { color: 'var(--fgColor-muted)', fontStyle: 'italic' }
             : {}),
         }}
       >
@@ -639,7 +672,7 @@ function CommentsPanelListComment({
             aria-label="Delete comment"
             variant="invisible"
             size="small"
-            sx={{ color: 'danger.fg', mt: 1 }}
+            sx={{ color: 'var(--fgColor-danger)', mt: 1 }}
             onClick={() => {
               showModal('Delete Comment', onClose => (
                 <ShowDeleteCommentOrThreadDialog
@@ -749,13 +782,15 @@ function CommentsPanelList({
               sx={{
                 p: 2,
                 borderBottom: '1px solid',
-                borderColor: 'border.muted',
+                borderColor: 'var(--borderColor-muted)',
                 cursor: markNodeMap.has(id) ? 'pointer' : 'default',
                 bg:
                   activeIDs.indexOf(id) === -1
                     ? 'canvas.default'
                     : 'accent.subtle',
-                '&:hover': markNodeMap.has(id) ? { bg: 'canvas.subtle' } : {},
+                '&:hover': markNodeMap.has(id)
+                  ? { bg: 'var(--bgColor-muted)' }
+                  : {},
               }}
             >
               <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
@@ -766,8 +801,8 @@ function CommentsPanelList({
                     m: 0,
                     pl: 2,
                     borderLeft: '3px solid',
-                    borderColor: 'accent.muted',
-                    color: 'fg.muted',
+                    borderColor: 'var(--bgColor-accent-muted)',
+                    color: 'var(--fgColor-muted)',
                     fontSize: 1,
                   }}
                 >
@@ -792,7 +827,7 @@ function CommentsPanelList({
                   aria-label="Delete thread"
                   variant="invisible"
                   size="small"
-                  sx={{ color: 'danger.fg' }}
+                  sx={{ color: 'var(--fgColor-danger)' }}
                   onClick={() => {
                     showModal('Delete Thread', onClose => (
                       <ShowDeleteCommentOrThreadDialog
@@ -868,7 +903,7 @@ function CommentsPanel({
   return (
     <Box
       sx={{
-        bg: 'canvas.default',
+        bg: 'var(--bgColor-default)',
         borderRadius: 2,
         overflow: 'hidden',
         width: '100%',
@@ -883,14 +918,14 @@ function CommentsPanel({
           fontSize: 2,
           p: 3,
           borderBottom: '1px solid',
-          borderColor: 'border.muted',
+          borderColor: 'var(--borderColor-muted)',
           m: 0,
         }}
       >
         Comments
       </Heading>
       {isEmpty ? (
-        <Box sx={{ p: 3, color: 'fg.muted', textAlign: 'center' }}>
+        <Box sx={{ p: 3, color: 'var(--fgColor-muted)', textAlign: 'center' }}>
           No Comments
         </Box>
       ) : (
@@ -1196,17 +1231,16 @@ export function CommentPlugin({
 
   return (
     <CommentPeopleContext.Provider value={people}>
-      {showCommentInput &&
-        createPortal(
-          <CommentPeopleContext.Provider value={people}>
-            <CommentInputBox
-              editor={editor}
-              cancelAddComment={cancelAddComment}
-              submitAddComment={submitAddComment}
-            />
-          </CommentPeopleContext.Provider>,
-          document.body,
-        )}
+      {/* No `createPortal` here: `Overlay` portals itself. */}
+      {showCommentInput && (
+        <CommentPeopleContext.Provider value={people}>
+          <CommentInputBox
+            editor={editor}
+            cancelAddComment={cancelAddComment}
+            submitAddComment={submitAddComment}
+          />
+        </CommentPeopleContext.Provider>
+      )}
       {showFloatingAddButton &&
         activeAnchorKey !== null &&
         activeAnchorKey !== undefined &&

@@ -94,9 +94,9 @@ export function SourceEditor({
     <Box
       sx={{
         border: '1px solid',
-        borderColor: 'border.default',
+        borderColor: 'var(--borderColor-default)',
         borderRadius: 2,
-        bg: 'canvas.default',
+        bg: 'var(--bgColor-default)',
       }}
     >
       <LexicalExtensionComposer extension={extension} contentEditable={null}>

@@ -221,7 +221,8 @@ export function LSPCompletionMenu({
         background: 'var(--vscode-editorSuggestWidget-background)',
         border: '1px solid var(--vscode-editorSuggestWidget-border)',
         borderRadius: '4px',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+        boxShadow:
+          'var(--shadow-resting-medium, 0 1px 1px 0 #25292e1a, 0 3px 6px 0 #25292e1f)',
         maxHeight: '300px',
         overflowY: 'auto',
         minWidth: '300px',

@@ -48,6 +48,9 @@ export interface CommentPeople {
 
 export const CommentPeopleContext = createContext<CommentPeople>({});
 
+/** One empty list, so a query with no answer returns the same value every render. */
+const EMPTY_PEOPLE: CommentPerson[] = [];
+
 /** How long typing pauses before people are searched. */
 export const PEOPLE_SEARCH_PAUSE_MS = 250;
 
@@ -57,10 +60,18 @@ export const PEOPLE_SEARCH_PAUSE_MS = 250;
  */
 export function usePeopleSearch(query: string | null): CommentPerson[] {
   const { searchPeople } = useContext(CommentPeopleContext);
-  const [people, setPeople] = useState<CommentPerson[]>([]);
+  /*
+    The answer is kept beside the question it answers, so a new query shows
+    nothing rather than the previous query's people, and the effect never has
+    to empty the list synchronously on its way past — which would render once
+    with the old people and again without them.
+  */
+  const [answer, setAnswer] = useState<{
+    query: string;
+    people: CommentPerson[];
+  } | null>(null);
   useEffect(() => {
     if (!searchPeople || !query) {
-      setPeople([]);
       return;
     }
     let latest = true;
@@ -68,12 +79,12 @@ export function usePeopleSearch(query: string | null): CommentPerson[] {
       searchPeople(query).then(
         found => {
           if (latest) {
-            setPeople(found);
+            setAnswer({ query, people: found });
           }
         },
         () => {
           if (latest) {
-            setPeople([]);
+            setAnswer({ query, people: [] });
           }
         },
       );
@@ -83,7 +94,7 @@ export function usePeopleSearch(query: string | null): CommentPerson[] {
       clearTimeout(timer);
     };
   }, [query, searchPeople]);
-  return people;
+  return answer && answer.query === query ? answer.people : EMPTY_PEOPLE;
 }
 
 class PersonOption extends MenuOption {
@@ -158,11 +169,12 @@ export function MentionsPlugin({
                   listStyle: 'none',
                   m: 0,
                   p: 1,
-                  bg: 'canvas.overlay',
+                  bg: 'var(--overlay-bgColor)',
                   border: '1px solid',
-                  borderColor: 'border.default',
+                  borderColor: 'var(--borderColor-default)',
                   borderRadius: 2,
-                  boxShadow: 'shadow.large',
+                  boxShadow:
+                    'var(--shadow-floating-large, 0 0 0 1px #d1d9e0, 0 40px 80px 0 #25292e3d)',
                   minWidth: 200,
                 }}
               >
@@ -193,7 +205,7 @@ export function MentionsPlugin({
                   >
                     <Text>{personLabel(option.person)}</Text>
                     {option.person.handle ? (
-                      <Text sx={{ color: 'fg.muted', ml: 1 }}>
+                      <Text sx={{ color: 'var(--fgColor-muted)', ml: 1 }}>
                         @{option.person.handle}
                       </Text>
                     ) : null}
@@ -212,7 +224,11 @@ export function MentionsPlugin({
  * Whom a thread is assigned to and, when the store assigns threads, a way to
  * assign it to somebody else or to nobody.
  */
-export function ThreadAssignee({ thread }: { thread: Thread }): JSX.Element | null {
+export function ThreadAssignee({
+  thread,
+}: {
+  thread: Thread;
+}): JSX.Element | null {
   const { searchPeople, assignThread } = useContext(CommentPeopleContext);
   const [picking, setPicking] = useState(false);
   const [query, setQuery] = useState('');
@@ -221,7 +237,10 @@ export function ThreadAssignee({ thread }: { thread: Thread }): JSX.Element | nu
 
   if (!assignThread || !searchPeople) {
     return assignee ? (
-      <Text as="p" sx={{ fontSize: 0, color: 'fg.muted', m: 0, mt: 1 }}>
+      <Text
+        as="p"
+        sx={{ fontSize: 0, color: 'var(--fgColor-muted)', m: 0, mt: 1 }}
+      >
         Assigned to {personLabel(assignee)}
       </Text>
     ) : null;
@@ -242,7 +261,7 @@ export function ThreadAssignee({ thread }: { thread: Thread }): JSX.Element | nu
       }
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <Text sx={{ fontSize: 0, color: 'fg.muted' }}>
+        <Text sx={{ fontSize: 0, color: 'var(--fgColor-muted)' }}>
           {assignee ? `Assigned to ${personLabel(assignee)}` : 'Not assigned'}
         </Text>
         <IconButton

@@ -42,7 +42,7 @@ class RuntimeMonitor {
    * Simulate runtime termination (e.g., runtime crash, server disconnect)
    */
   simulateRuntimeTermination(): void {
-    console.log('🔴 Runtime terminated!');
+    console.warn('🔴 Runtime terminated!');
     this._isConnected = false;
     this.notifyListeners();
   }
@@ -51,7 +51,7 @@ class RuntimeMonitor {
    * Simulate runtime reconnection
    */
   simulateRuntimeReconnection(): void {
-    console.log('🟢 Runtime reconnected!');
+    console.warn('🟢 Runtime reconnected!');
     this._isConnected = true;
     this.notifyListeners();
   }
@@ -105,7 +105,7 @@ export const ManualRuntimeControlExample: React.FC = () => {
           // Wait for ServiceManager to be ready
           await sm.ready;
 
-          console.log('✅ ServiceManager initialized:', sm);
+          console.warn('✅ ServiceManager initialized:', sm);
           setServiceManager(sm);
           setStatusMessage('Runtime connected - ServiceManager ready');
         } catch (error) {
@@ -115,30 +115,33 @@ export const ManualRuntimeControlExample: React.FC = () => {
       };
 
       initServiceManager();
-    } else {
-      // Runtime disconnected - clear ServiceManager
-      if (serviceManager) {
-        console.log('🔌 Disposing ServiceManager...');
+    }
+
+    /*
+      Tearing down belongs in the cleanup, not in an `else`: the runtime going
+      away and this component going away are the same job, and clearing the
+      state here rather than in the effect's body is what keeps the render
+      from cascading (`react-hooks/set-state-in-effect`).
+    */
+    return () => {
+      if (serviceManager && !serviceManager.isDisposed) {
+        console.warn('🔌 Disposing ServiceManager...');
         serviceManager.dispose();
       }
       setServiceManager(undefined);
       setStatusMessage('Runtime disconnected - No runtime available');
-    }
-
-    // Cleanup on unmount
-    return () => {
-      if (serviceManager && !serviceManager.isDisposed) {
-        serviceManager.dispose();
-      }
     };
-  }, [runtimeConnected]); // Re-run when runtime connection state changes
+    // `serviceManager` is what this effect creates; naming it here would tear
+    // the manager down the moment it was made.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [runtimeConnected]);
 
   /**
    * Subscribe to runtime state changes from external monitor
    */
   useEffect(() => {
     const unsubscribe = runtimeMonitor.onStateChange(isConnected => {
-      console.log(
+      console.warn(
         `📡 Runtime state changed: ${isConnected ? 'connected' : 'disconnected'}`,
       );
       setRuntimeConnected(isConnected);
@@ -152,7 +155,7 @@ export const ManualRuntimeControlExample: React.FC = () => {
    * Manual control: Disconnect from runtime
    */
   const handleDisconnect = useCallback(() => {
-    console.log('👤 User requested disconnect');
+    console.warn('👤 User requested disconnect');
     setStartDefaultRuntime(false);
     setRuntimeConnected(false);
   }, []);
@@ -161,7 +164,7 @@ export const ManualRuntimeControlExample: React.FC = () => {
    * Manual control: Connect to runtime
    */
   const handleConnect = useCallback(() => {
-    console.log('👤 User requested connect');
+    console.warn('👤 User requested connect');
     setStartDefaultRuntime(true);
     setRuntimeConnected(true);
   }, []);
@@ -189,8 +192,14 @@ export const ManualRuntimeControlExample: React.FC = () => {
         style={{
           padding: '10px',
           marginBottom: '20px',
-          backgroundColor: runtimeConnected ? '#d4edda' : '#f8d7da',
-          border: `1px solid ${runtimeConnected ? '#c3e6cb' : '#f5c6cb'}`,
+          backgroundColor: runtimeConnected
+            ? 'var(--bgColor-success-muted)'
+            : 'var(--bgColor-danger-muted)',
+          border: `1px solid ${
+            runtimeConnected
+              ? 'var(--borderColor-success-muted)'
+              : 'var(--borderColor-danger-muted)'
+          }`,
           borderRadius: '4px',
         }}
       >
@@ -230,7 +239,7 @@ export const ManualRuntimeControlExample: React.FC = () => {
       {/* Simulate External Events */}
       <div style={{ marginBottom: '20px' }}>
         <h3>Simulate External Events (VSCode Extension)</h3>
-        <p style={{ fontSize: '12px', color: '#666' }}>
+        <p style={{ fontSize: '12px', color: 'var(--fgColor-muted)' }}>
           These simulate events from an external system like a VSCode extension
           detecting runtime changes.
         </p>
@@ -290,7 +299,7 @@ export const ManualRuntimeControlExample: React.FC = () => {
         style={{
           marginTop: '40px',
           padding: '20px',
-          backgroundColor: '#f6f8fa',
+          backgroundColor: 'var(--bgColor-muted)',
           borderRadius: '6px',
         }}
       >
@@ -344,7 +353,7 @@ useEffect(() => {
         style={{
           marginTop: '20px',
           padding: '20px',
-          backgroundColor: '#fff3cd',
+          backgroundColor: 'var(--bgColor-attention-muted)',
           borderRadius: '6px',
         }}
       >
