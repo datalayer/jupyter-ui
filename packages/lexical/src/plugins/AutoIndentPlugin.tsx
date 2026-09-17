@@ -13,7 +13,7 @@
  * @module plugins/AutoIndentPlugin
  */
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import {
   $getSelection,
   $isRangeSelection,
@@ -38,6 +38,7 @@ import {
 } from '../nodes/JupyterInputNode';
 import { $createJupyterInputHighlightNode } from '../nodes/JupyterInputHighlightNode';
 import { $isInlineCompletionNode } from '../nodes/InlineCompletionNode';
+import { debugLog } from '../utils/debugLog';
 
 export interface AutoIndentPluginProps extends AutoIndentOptions {
   /** Enable the plugin (default: true) */
@@ -87,25 +88,19 @@ export function AutoIndentPlugin({
 }: AutoIndentPluginProps): null {
   const [editor] = useLexicalComposerContext();
 
-  // Create registry and engine (stable references)
-  const registryRef = useRef<LanguageIndentRegistry | undefined>(undefined);
-  const engineRef = useRef<AutoIndentEngine | undefined>(undefined);
-
-  if (!registryRef.current) {
-    registryRef.current = new LanguageIndentRegistry({
-      defaultLanguage,
-      customConfigs,
-      debug,
-      fallbackTabSize,
-      preserveTabs,
-    });
-  }
-
-  if (!engineRef.current) {
-    engineRef.current = new AutoIndentEngine(registryRef.current, debug);
-  }
-
-  const engine = engineRef.current;
+  // Create registry and engine once; state's lazy initialiser keeps them
+  // stable across renders without a ref read during render.
+  const [registry] = useState(
+    () =>
+      new LanguageIndentRegistry({
+        defaultLanguage,
+        customConfigs,
+        debug,
+        fallbackTabSize,
+        preserveTabs,
+      }),
+  );
+  const [engine] = useState(() => new AutoIndentEngine(registry, debug));
 
   useEffect(() => {
     if (!enabled) {
@@ -148,7 +143,7 @@ export function AutoIndentPlugin({
           const tabString = engine.getTabString(language);
 
           if (debug) {
-            console.log(
+            debugLog(
               `[AutoIndentPlugin] Tab key pressed - Language: ${language}, inserting: ${JSON.stringify(tabString)}`,
             );
           }
@@ -184,7 +179,7 @@ export function AutoIndentPlugin({
           const tabString = engine.getTabString(language);
 
           if (debug) {
-            console.log(
+            debugLog(
               `[AutoIndentPlugin] INDENT_CONTENT_COMMAND - Language: ${language}, inserting: ${JSON.stringify(tabString)}`,
             );
           }
@@ -238,7 +233,7 @@ export function AutoIndentPlugin({
           const isEmptyLine = trimmedLine.length === 0;
 
           if (debug) {
-            console.log(
+            debugLog(
               `[AutoIndentPlugin] Enter key pressed in ${language} cell - Current line: "${currentLine}", isEmpty: ${isEmptyLine}`,
             );
           }
@@ -249,7 +244,7 @@ export function AutoIndentPlugin({
           // For non-empty lines, calculate based on content
           if (isEmptyLine) {
             if (debug) {
-              console.log(
+              debugLog(
                 `[AutoIndentPlugin] Empty line detected - about to clear whitespace`,
               );
             }
@@ -261,7 +256,7 @@ export function AutoIndentPlugin({
             indentSpaces = engine.getLeadingWhitespace(currentLine).length;
 
             if (debug) {
-              console.log(
+              debugLog(
                 `[AutoIndentPlugin] Empty line - cleared whitespace, preserving ${indentSpaces} spaces for new line`,
               );
             }
@@ -276,7 +271,7 @@ export function AutoIndentPlugin({
             indentSpaces = indentResult.spaces;
 
             if (debug) {
-              console.log(`[AutoIndentPlugin] Indent result:`, indentResult);
+              debugLog(`[AutoIndentPlugin] Indent result:`, indentResult);
             }
           }
 
@@ -290,7 +285,7 @@ export function AutoIndentPlugin({
             selection.insertNodes([indentNode]);
 
             if (debug) {
-              console.log(`[AutoIndentPlugin] Inserted ${indentSpaces} spaces`);
+              debugLog(`[AutoIndentPlugin] Inserted ${indentSpaces} spaces`);
             }
           }
 
@@ -407,7 +402,7 @@ function clearCurrentLineWhitespace(
 ): void {
   if (!$isRangeSelection(selection)) {
     if (debug) {
-      console.log('[clearCurrentLineWhitespace] Not a range selection');
+      debugLog('[clearCurrentLineWhitespace] Not a range selection');
     }
     return;
   }
@@ -416,7 +411,7 @@ function clearCurrentLineWhitespace(
   let currentNode: LexicalNode | null = anchorNode;
 
   if (debug) {
-    console.log('[clearCurrentLineWhitespace] Starting with anchor node:', {
+    debugLog('[clearCurrentLineWhitespace] Starting with anchor node:', {
       type: anchorNode.getType(),
       isTextNode: $isTextNode(anchorNode),
       content: $isTextNode(anchorNode) ? anchorNode.getTextContent() : 'N/A',
@@ -438,7 +433,7 @@ function clearCurrentLineWhitespace(
   while (currentNode) {
     if (currentNode.getType() === 'linebreak') {
       if (debug) {
-        console.log('[clearCurrentLineWhitespace] Hit linebreak, stopping');
+        debugLog('[clearCurrentLineWhitespace] Hit linebreak, stopping');
       }
       break;
     }
@@ -449,12 +444,12 @@ function clearCurrentLineWhitespace(
   }
 
   if (debug) {
-    console.log(
+    debugLog(
       `[clearCurrentLineWhitespace] Found ${lineNodes.length} text nodes to clear`,
     );
     lineNodes.forEach((node, i) => {
       if ($isTextNode(node)) {
-        console.log(
+        debugLog(
           `[clearCurrentLineWhitespace]   Node ${i}: "${node.getTextContent()}"`,
         );
       }
@@ -471,7 +466,7 @@ function clearCurrentLineWhitespace(
   });
 
   if (debug) {
-    console.log(`[clearCurrentLineWhitespace] Cleared ${clearedCount} nodes`);
+    debugLog(`[clearCurrentLineWhitespace] Cleared ${clearedCount} nodes`);
   }
 }
 

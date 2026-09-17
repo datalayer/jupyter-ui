@@ -70,6 +70,7 @@ import {
   LSP_MENU_STATE_COMMAND,
   LSP_COMPLETION_INSERTED_COMMAND,
 } from './LSPTabCompletionPlugin';
+import { debugLog } from '../utils/debugLog';
 
 /**
  * Command to manually trigger inline completion.
@@ -327,7 +328,7 @@ export function LexicalInlineCompletionPlugin({
       editorState.read(() => {
         // Don't trigger if config is not yet available (prevents race condition on mount)
         if (!config) {
-          console.log(
+          debugLog(
             '[InlineCompletionPlugin] Config not ready, skipping auto-trigger',
           );
           setCurrentCompletion(null);
@@ -364,7 +365,7 @@ export function LexicalInlineCompletionPlugin({
         // Check if auto-trigger is enabled for this content type
         const contentConfig =
           contentType === 'code' ? config.code : config.prose;
-        console.log('[InlineCompletionPlugin] Auto-trigger check:', {
+        debugLog('[InlineCompletionPlugin] Auto-trigger check:', {
           contentType,
           triggerMode: contentConfig.triggerMode,
           willTrigger: contentConfig.triggerMode === 'auto',

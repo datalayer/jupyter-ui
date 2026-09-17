@@ -25,6 +25,7 @@ import type {
   LexicalPluginTools,
   LexicalToolHandler,
 } from '../tools/core/pluginTools';
+import { debugLog } from '../utils/debugLog';
 
 /**
  * State for a single Lexical document
@@ -455,11 +456,11 @@ export const lexicalStore = createStore<LexicalState>((set, get) => ({
     count?: number;
     error?: string;
   }> => {
-    console.log('[LexicalState] 🔍 listAvailableBlocks CALLED with:', { id });
+    debugLog('[LexicalState] 🔍 listAvailableBlocks CALLED with:', { id });
 
     // Delegate to adapter (following consistent pattern with all other operations)
     const params = typeof id === 'object' ? id : { id };
-    console.log('[LexicalState] 📦 Processed params:', params);
+    debugLog('[LexicalState] 📦 Processed params:', params);
 
     // Special case: this operation is static and doesn't require a document
     // If no document is found, call the operation directly

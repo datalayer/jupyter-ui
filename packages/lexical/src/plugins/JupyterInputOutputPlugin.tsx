@@ -49,6 +49,7 @@ import {
   JupyterOutputNode,
   $createJupyterOutputNode,
 } from '../nodes/JupyterOutputNode';
+import { debugLog } from '../utils/debugLog';
 
 type UUID = string;
 
@@ -597,19 +598,16 @@ export const JupyterInputOutputPlugin = (
     return editor.registerCommand(
       INSERT_JUPYTER_INPUT_OUTPUT_COMMAND,
       (props: JupyterInputOutputProps) => {
-        console.log(
+        debugLog(
           '[JupyterInputOutputPlugin] 🔵 INSERT_JUPYTER_INPUT_OUTPUT_COMMAND triggered',
         );
-        console.log('[JupyterInputOutputPlugin] Props:', props);
+        debugLog('[JupyterInputOutputPlugin] Props:', props);
 
         const { code, outputs } = props;
         const selection = $getSelection();
 
-        console.log(
-          '[JupyterInputOutputPlugin] Selection exists?',
-          !!selection,
-        );
-        console.log(
+        debugLog('[JupyterInputOutputPlugin] Selection exists?', !!selection);
+        debugLog(
           '[JupyterInputOutputPlugin] Is RangeSelection?',
           $isRangeSelection(selection),
         );
@@ -621,62 +619,62 @@ export const JupyterInputOutputPlugin = (
           const jupyterCodeNode = $createJupyterInputNode('python');
           const jupyterCodeUuid = jupyterCodeNode.getJupyterInputNodeUuid();
 
-          console.log('[JupyterInputOutputPlugin] ✅ Created JupyterInputNode');
-          console.log('[JupyterInputOutputPlugin] Node UUID:', jupyterCodeUuid);
-          console.log(
+          debugLog('[JupyterInputOutputPlugin] ✅ Created JupyterInputNode');
+          debugLog('[JupyterInputOutputPlugin] Node UUID:', jupyterCodeUuid);
+          debugLog(
             '[JupyterInputOutputPlugin] Node type:',
             jupyterCodeNode.getType(),
           );
-          console.log(
+          debugLog(
             '[JupyterInputOutputPlugin] Node children before append:',
             jupyterCodeNode.getChildrenSize(),
           );
 
           // Add code content BEFORE inserting the node
           if (code) {
-            console.log(
+            debugLog(
               '[JupyterInputOutputPlugin] 📝 Code provided, length:',
               code.length,
             );
-            console.log(
+            debugLog(
               '[JupyterInputOutputPlugin] Code content:',
               code.substring(0, 100),
             );
 
             // Create a JupyterInputHighlightNode with the code text
             const codeNode = $createJupyterInputHighlightNode(code);
-            console.log(
+            debugLog(
               '[JupyterInputOutputPlugin] ✅ Created JupyterInputHighlightNode',
             );
-            console.log(
+            debugLog(
               '[JupyterInputOutputPlugin] CodeNode type:',
               codeNode.getType(),
             );
-            console.log(
+            debugLog(
               '[JupyterInputOutputPlugin] CodeNode text length:',
               codeNode.getTextContent().length,
             );
 
             jupyterCodeNode.append(codeNode);
-            console.log(
+            debugLog(
               '[JupyterInputOutputPlugin] ✅ Appended code to JupyterInputNode',
             );
-            console.log(
+            debugLog(
               '[JupyterInputOutputPlugin] Node children after append:',
               jupyterCodeNode.getChildrenSize(),
             );
-            console.log(
+            debugLog(
               '[JupyterInputOutputPlugin] Node text content:',
               jupyterCodeNode.getTextContent(),
             );
           } else {
-            console.log('[JupyterInputOutputPlugin] ⚠️ No code provided');
+            debugLog('[JupyterInputOutputPlugin] ⚠️ No code provided');
           }
 
-          console.log(
+          debugLog(
             '[JupyterInputOutputPlugin] 🚀 Inserting node into document...',
           );
-          console.log('[JupyterInputOutputPlugin] Selection before insert:', {
+          debugLog('[JupyterInputOutputPlugin] Selection before insert:', {
             anchorKey: selection.anchor.key,
             anchorOffset: selection.anchor.offset,
             focusKey: selection.focus.key,
@@ -686,20 +684,20 @@ export const JupyterInputOutputPlugin = (
           // Now insert the complete node with its content
           selection.insertNodes([jupyterCodeNode]);
 
-          console.log('[JupyterInputOutputPlugin] ✅ Node inserted');
-          console.log(
+          debugLog('[JupyterInputOutputPlugin] ✅ Node inserted');
+          debugLog(
             '[JupyterInputOutputPlugin] Node key after insert:',
             jupyterCodeNode.getKey(),
           );
-          console.log(
+          debugLog(
             '[JupyterInputOutputPlugin] Node parent:',
             jupyterCodeNode.getParent()?.getType(),
           );
 
           // Create the output node with kernel (may be undefined - that's OK!)
-          console.log('[JupyterInputOutputPlugin] 📤 Creating output node...');
-          console.log('[JupyterInputOutputPlugin] Kernel available?', !!kernel);
-          console.log('[JupyterInputOutputPlugin] Outputs:', outputs);
+          debugLog('[JupyterInputOutputPlugin] 📤 Creating output node...');
+          debugLog('[JupyterInputOutputPlugin] Kernel available?', !!kernel);
+          debugLog('[JupyterInputOutputPlugin] Outputs:', outputs);
 
           const outputAdapter = new OutputAdapter(newUuid(), kernel, outputs);
           const jupyterOutputNode = $createJupyterOutputNode(
@@ -711,10 +709,8 @@ export const JupyterInputOutputPlugin = (
             UUID.uuid4(),
           );
 
-          console.log(
-            '[JupyterInputOutputPlugin] ✅ Created JupyterOutputNode',
-          );
-          console.log(
+          debugLog('[JupyterInputOutputPlugin] ✅ Created JupyterOutputNode');
+          debugLog(
             '[JupyterInputOutputPlugin] Output node type:',
             jupyterOutputNode.getType(),
           );
@@ -762,32 +758,32 @@ export const JupyterInputOutputPlugin = (
 
           // Get the parent to insert the output node
           const parent = jupyterCodeNode.getParent();
-          console.log(
+          debugLog(
             '[JupyterInputOutputPlugin] Parent node:',
             parent?.getType(),
           );
 
           if (parent) {
-            console.log(
+            debugLog(
               '[JupyterInputOutputPlugin] 🚀 Inserting output node after input node...',
             );
             jupyterCodeNode.insertAfter(jupyterOutputNode);
-            console.log('[JupyterInputOutputPlugin] ✅ Output node inserted');
+            debugLog('[JupyterInputOutputPlugin] ✅ Output node inserted');
           } else {
-            console.log(
+            debugLog(
               '[JupyterInputOutputPlugin] ⚠️ No parent found, cannot insert output node',
             );
           }
 
           // Position cursor at the beginning of the jupyter-input node
-          console.log('[JupyterInputOutputPlugin] 📍 Positioning cursor...');
+          debugLog('[JupyterInputOutputPlugin] 📍 Positioning cursor...');
           jupyterCodeNode.selectStart();
 
-          console.log(
+          debugLog(
             '[JupyterInputOutputPlugin] 🎉 INSERT_JUPYTER_INPUT_OUTPUT_COMMAND completed successfully',
           );
         } else {
-          console.log(
+          debugLog(
             '[JupyterInputOutputPlugin] ❌ Selection is not a RangeSelection',
           );
         }
@@ -883,9 +879,7 @@ export const JupyterInputOutputPlugin = (
           return false;
         }
 
-        console.log(
-          `🚀 Executing ${inputNodes.length} cells in document order`,
-        );
+        debugLog(`🚀 Executing ${inputNodes.length} cells in document order`);
 
         // Execute each cell in document order using shared helper
         inputNodes.forEach((node: JupyterInputNode) => {
@@ -915,9 +909,9 @@ export const JupyterInputOutputPlugin = (
               console.error('❌ Kernel became null during restart');
               return;
             }
-            console.log('🔄 Restarting kernel...');
+            debugLog('🔄 Restarting kernel...');
             await kernel.session.kernel.restart();
-            console.log('✅ Kernel restarted successfully');
+            debugLog('✅ Kernel restarted successfully');
           } catch (error) {
             console.error('❌ Failed to restart kernel:', error);
           }
@@ -957,7 +951,7 @@ export const JupyterInputOutputPlugin = (
         clearJupyterOutputs(root);
 
         if (clearedCount > 0) {
-          console.log(`✅ Cleared outputs from ${clearedCount} cells`);
+          debugLog(`✅ Cleared outputs from ${clearedCount} cells`);
         } else {
           console.warn('❌ No Jupyter cells found to clear');
         }

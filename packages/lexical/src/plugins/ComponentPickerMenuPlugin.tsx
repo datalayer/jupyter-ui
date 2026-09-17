@@ -66,6 +66,7 @@ import useModal from '../hooks/useModal';
 import { EmbedConfigs } from './AutoEmbedPlugin';
 import { InsertEquationDialog } from './EquationsPlugin';
 import { INSERT_IMAGE_COMMAND, InsertImageDialog } from './ImagesPlugin';
+import { debugLog } from '../utils/debugLog';
 
 class ComponentPickerOption extends MenuOption {
   title: string;
@@ -297,7 +298,7 @@ export const ComponentPickerMenuPlugin = ({
         icon: <TableIcon size={16} />,
         keywords: ['table', 'grid', 'spreadsheet'],
         onSelect: () => {
-          console.log(
+          debugLog(
             '[ComponentPicker] Table selected, dispatching INSERT_TABLE_WITH_DIALOG_COMMAND',
           );
           editor.dispatchCommand(INSERT_TABLE_WITH_DIALOG_COMMAND, undefined);

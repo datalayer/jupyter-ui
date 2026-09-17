@@ -19,6 +19,7 @@ import {
   listAvailableBlocksParamsSchema,
   type ListAvailableBlocksParams,
 } from '../schemas/listAvailableBlocks';
+import { debugLog } from '../../utils/debugLog';
 
 /**
  * Example block usage
@@ -411,39 +412,39 @@ export const listAvailableBlocksOperation: ToolOperation<
     params: unknown,
     _context: ToolExecutionContext,
   ): Promise<ListAvailableBlocksResult> {
-    console.log('[listAvailableBlocks] 🔍 execute CALLED');
-    console.log('[listAvailableBlocks] Params:', params);
-    console.log('[listAvailableBlocks] Context:', _context);
+    debugLog('[listAvailableBlocks] 🔍 execute CALLED');
+    debugLog('[listAvailableBlocks] Params:', params);
+    debugLog('[listAvailableBlocks] Context:', _context);
 
     // Validate params using Zod
-    console.log('[listAvailableBlocks] 📝 Validating params...');
+    debugLog('[listAvailableBlocks] 📝 Validating params...');
     const validatedParams = validateWithZod(
       listAvailableBlocksParamsSchema as any,
       params || {},
       'listAvailableBlocks',
     ) as ListAvailableBlocksParams;
-    console.log('[listAvailableBlocks] ✅ Validated params:', validatedParams);
+    debugLog('[listAvailableBlocks] ✅ Validated params:', validatedParams);
 
     try {
       // Use static block type definitions
       // This operation returns schema metadata, not runtime state
-      console.log('[listAvailableBlocks] 📚 Using DEFAULT_BLOCK_TYPES');
+      debugLog('[listAvailableBlocks] 📚 Using DEFAULT_BLOCK_TYPES');
       let types = DEFAULT_BLOCK_TYPES;
 
       // Filter by type if specified
       const requestedType = validatedParams.type || 'all';
-      console.log('[listAvailableBlocks] 🔍 Requested type:', requestedType);
+      debugLog('[listAvailableBlocks] 🔍 Requested type:', requestedType);
 
       if (requestedType !== 'all') {
         types = types.filter(t => t.type === requestedType);
-        console.log(
+        debugLog(
           '[listAvailableBlocks] 🔎 Filtered to',
           types.length,
           'type(s)',
         );
       }
 
-      console.log(
+      debugLog(
         '[listAvailableBlocks] ✅ Returning result with',
         types.length,
         'types',
@@ -457,7 +458,9 @@ export const listAvailableBlocksOperation: ToolOperation<
       console.error('[listAvailableBlocks] ❌ ERROR:', error);
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      throw new Error(`Failed to list available blocks: ${errorMessage}`);
+      throw new Error(`Failed to list available blocks: ${errorMessage}`, {
+        cause: error,
+      });
     }
   },
 };
