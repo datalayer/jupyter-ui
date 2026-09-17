@@ -786,8 +786,8 @@ function CommentsPanelList({
                 cursor: markNodeMap.has(id) ? 'pointer' : 'default',
                 bg:
                   activeIDs.indexOf(id) === -1
-                    ? 'canvas.default'
-                    : 'accent.subtle',
+                    ? 'var(--bgColor-default)'
+                    : 'var(--bgColor-accent-muted)',
                 '&:hover': markNodeMap.has(id)
                   ? { bg: 'var(--bgColor-muted)' }
                   : {},

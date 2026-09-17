@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2021-Present Datalayer, Inc.
+ *
+ * MIT License
+ */
+
 h1 {
   font-size: 24px;
   color: var(--fgColor-default, #333);
@@ -83,36 +89,4 @@ pre::-webkit-scrollbar-thumb {
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-}
-
-.icon.paragraph {
-  background-image: url(icons/text-paragraph.svg);
-}
-
-.icon.large-heading,
-.icon.h1 {
-  background-image: url(icons/type-h1.svg);
-}
-
-.icon.small-heading,
-.icon.h2 {
-  background-image: url(icons/type-h2.svg);
-}
-
-.icon.bullet-list,
-.icon.ul {
-  background-image: url(icons/list-ul.svg);
-}
-
-.icon.numbered-list,
-.icon.ol {
-  background-image: url(icons/list-ol.svg);
-}
-
-.icon.quote {
-  background-image: url(icons/chat-square-quote.svg);
-}
-
-.icon.code {
-  background-image: url(icons/code.svg);
 }

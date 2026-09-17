@@ -131,36 +131,8 @@ pre::-webkit-scrollbar-thumb {
   bottom: 20px;
 }
 
-#options-button::after {
-  background-image: url(icons/gear.svg);
-}
-
-#test-recorder-button::after {
-  background-image: url(icons/journal-code.svg);
-}
-
-#paste-log-button::after {
-  background-image: url(icons/clipboard.svg);
-}
-
-#docs-button::after {
-  background-image: url(icons/file-earmark-text.svg);
-}
-
 #test-recorder-button-snapshot {
   margin-right: auto;
-}
-
-#test-recorder-button-snapshot::after {
-  background-image: url(icons/camera.svg);
-}
-
-#test-recorder-button-copy::after {
-  background-image: url(icons/clipboard.svg);
-}
-
-#test-recorder-button-download::after {
-  background-image: url(icons/download.svg);
 }
 
 @keyframes slide-in {
@@ -227,28 +199,6 @@ pre::-webkit-scrollbar-thumb {
   overflow: hidden;
 }
 
-.editor-shell .editor-image .image-caption-button {
-  display: block;
-  position: absolute;
-  bottom: 20px;
-  left: 0;
-  right: 0;
-  width: 30%;
-  padding: 10px;
-  margin: 0 auto;
-  border: 1px solid var(--borderColor-muted, rgba(255, 255, 255, 0.3));
-  border-radius: 5px;
-  background-color: var(--bgColor-emphasis, rgba(0, 0, 0, 0.5));
-  min-width: 100px;
-  color: var(--fgColor-onEmphasis, #fff);
-  cursor: pointer;
-  user-select: none;
-}
-
-.editor-shell .editor-image .image-caption-button:hover {
-  background-color: var(--bgColor-accent-emphasis, rgba(60, 132, 244, 0.5));
-}
-
 .editor-shell .editor-image .image-resizer {
   display: block;
   width: 7px;
@@ -306,10 +256,6 @@ pre::-webkit-scrollbar-thumb {
   cursor: nw-resize;
 }
 
-.actions i.image {
-  background-image: url(icons/file-image.svg);
-}
-
 .excalidraw-button {
   border: 0;
   padding: 0;
@@ -360,4 +306,85 @@ hr.selected {
   to {
     visibility: hidden;
   }
+}
+
+/*
+  The tree view and its time-travel controls.
+
+  `TreeViewPlugin` hands these names to Lexical's own `TreeView` as props —
+  `viewClassName`, `timeTravelPanelClassName` and the rest — rather than
+  writing them into a `className` attribute, so a sweep that reads class
+  attributes cannot see them. They were pruned as dead once; they are not.
+*/
+.tree-view-output {
+  display: block;
+  background: var(--bgColor-emphasis, #222);
+  color: var(--fgColor-onEmphasis, #fff);
+  padding: 0;
+  font-size: 12px;
+  margin: 1px auto 10px auto;
+  position: relative;
+  overflow: hidden;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.editor-shell .editor-image .image-caption-container .tree-view-output {
+  margin: 0;
+  border-radius: 0;
+}
+
+.debug-timetravel-panel {
+  overflow: hidden;
+  padding: 0 0 10px 0;
+  margin: auto;
+  display: flex;
+}
+
+.debug-timetravel-panel-slider {
+  padding: 0;
+  flex: 8;
+}
+
+.debug-timetravel-panel-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  flex: 1;
+  color: var(--fgColor-onEmphasis, #fff);
+  font-size: 12px;
+}
+
+.debug-timetravel-panel-button:hover {
+  text-decoration: underline;
+}
+
+.debug-timetravel-button {
+  border: 0;
+  padding: 0;
+  font-size: 12px;
+  top: 10px;
+  right: 15px;
+  position: absolute;
+  background: none;
+  color: var(--fgColor-onEmphasis, #fff);
+}
+
+.debug-timetravel-button:hover {
+  text-decoration: underline;
+}
+
+.debug-treetype-button {
+  border: 0;
+  padding: 0;
+  font-size: 12px;
+  top: 10px;
+  right: 85px;
+  position: absolute;
+  background: none;
+  color: var(--fgColor-onEmphasis, #fff);
+}
+
+.debug-treetype-button:hover {
+  text-decoration: underline;
 }

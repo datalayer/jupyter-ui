@@ -11,7 +11,7 @@
  */
 
 import { useEffect, useMemo, useState } from 'react';
-import { Box, Button, Heading, Text } from '@primer/react';
+import { Box, Button, Flash, Heading, Text } from '@primer/react';
 import { LexicalPrimerThemeProvider } from '..';
 import { useExampleThemeStore } from './themeStore';
 
@@ -23,8 +23,30 @@ type CollaboratorIdentity = {
 
 const DEFAULT_ROOM_ID = 'jupyter-lexical-collab-room-1';
 
-const buildPaneUrl = (pane: '1' | '2', roomId: string) => {
+/**
+ * Where the two panes meet by default: the Loro server this repository ships
+ * (`npm run server:loro` in `tech/lexical/loro`, or `server:py:ws`).
+ *
+ * Not the Datalayer spacer. A spacer room is a *document* — the product's own
+ * editor passes the uid of a document the person may open — so an invented
+ * room name is refused however good the token is, and the client retries in a
+ * loop with nothing on screen to say why. Point the panes at a real document
+ * with `?collabWs=wss://…/api/spacer/v1/lexical/ws&collabRoom=<document-uid>`
+ * once signed in.
+ */
+const DEFAULT_WEBSOCKET_URL = 'ws://localhost:1235';
+
+const getWebsocketUrlFromUrl = () =>
+  new URLSearchParams(window.location.search).get('collabWs') ??
+  DEFAULT_WEBSOCKET_URL;
+
+const buildPaneUrl = (
+  pane: '1' | '2',
+  roomId: string,
+  websocketUrl: string,
+) => {
   const url = new URL(window.location.href);
+  url.searchParams.set('collabWs', websocketUrl);
   url.searchParams.set('standalone', 'true');
   url.searchParams.set('example', 'LexicalSimple');
   url.searchParams.set('collab', 'true');
@@ -54,6 +76,8 @@ const generateRoomId = () =>
 
 const LexicalCollaborative = () => {
   const [roomId, setRoomId] = useState<string>(() => getRoomIdFromUrl());
+  const websocketUrl = getWebsocketUrlFromUrl();
+  const isDatalayerRoom = /spacer/.test(websocketUrl);
   const [identities, setIdentities] = useState<{
     '1'?: CollaboratorIdentity;
     '2'?: CollaboratorIdentity;
@@ -164,6 +188,26 @@ const LexicalCollaborative = () => {
           </Box>
         </Box>
 
+        {/* Which server the panes meet on, and what it asks of them. */}
+        <Flash variant={isDatalayerRoom ? 'warning' : 'default'} sx={{ mb: 3 }}>
+          {isDatalayerRoom ? (
+            <>
+              Meeting on the Datalayer spacer at <code>{websocketUrl}</code>. A
+              room there is a document: <code>{roomId}</code> has to be the uid
+              of one you may open, and you have to be signed in, or the panes
+              will be refused and keep retrying.
+            </>
+          ) : (
+            <>
+              Meeting on <code>{websocketUrl}</code>. Start it with{' '}
+              <code>npm run server:loro</code> in <code>tech/lexical/loro</code>
+              . To use a Datalayer document instead, add <code>?collabWs=</code>{' '}
+              with the spacer's lexical websocket and a document uid as the
+              room.
+            </>
+          )}
+        </Flash>
+
         <Box
           sx={{
             display: 'grid',
@@ -191,7 +235,7 @@ const LexicalCollaborative = () => {
               {renderPaneTitle('1')}
             </Box>
             <iframe
-              src={buildPaneUrl('1', roomId)}
+              src={buildPaneUrl('1', roomId, websocketUrl)}
               title="Lexical Collaborator 1"
               style={{
                 width: '100%',
@@ -221,7 +265,7 @@ const LexicalCollaborative = () => {
               {renderPaneTitle('2')}
             </Box>
             <iframe
-              src={buildPaneUrl('2', roomId)}
+              src={buildPaneUrl('2', roomId, websocketUrl)}
               title="Lexical Collaborator 2"
               style={{
                 width: '100%',

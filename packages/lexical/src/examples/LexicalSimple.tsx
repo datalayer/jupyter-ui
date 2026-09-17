@@ -5,10 +5,11 @@
  */
 
 import { useState, useMemo, useCallback } from 'react';
-import { Button, ToggleSwitch, Text, Heading } from '@primer/react';
+import { Button, Flash, Heading, Text, ToggleSwitch } from '@primer/react';
 import { Box, collaboratorColor } from '@datalayer/primer-addons';
 import { useCoreStore } from '@datalayer/core';
 import { useSimpleAuthStore } from '@datalayer/core/lib/views/otel';
+import { useIAMStore } from '@datalayer/core/lib/state/substates';
 import {
   useLexical,
   Editor,
@@ -28,6 +29,16 @@ const LexicalEditor = ({ hasRuntime }: { hasRuntime: boolean }) => {
   // Which palette a collaborator's colour comes out of.
   const { theme: themeVariant, colorMode } = useExampleThemeStore();
   const configuration = useCoreStore(state => state.configuration);
+  /*
+    A Datalayer document room is not open to anyone: the spacer checks an IAM
+    token on the websocket. This reads the same store the product's own
+    document editor reads (`useIAMStore`, see `LiterateEditor` in the
+    landings app), so signing in here is what signing in there is. The older
+    `useSimpleAuthStore` is kept as a fallback for a page that only did the
+    simple sign-in, and `?collabToken=` still overrides both for a quick
+    test against another deployment.
+  */
+  const { token: iamToken } = useIAMStore();
   const authToken = useSimpleAuthStore(state => state.token);
   const urlParams = new URLSearchParams(window.location.search);
   const isCollaborative =
@@ -41,7 +52,18 @@ const LexicalEditor = ({ hasRuntime }: { hasRuntime: boolean }) => {
     urlParams.get('collabWs') ||
     `${spacerBaseUrl.replace(/\/$/, '').replace(/^http/, 'ws')}/api/spacer/v1/lexical/ws`;
   const collabToken =
-    urlParams.get('collabToken') || authToken || configuration?.token || '';
+    urlParams.get('collabToken') ||
+    iamToken ||
+    authToken ||
+    configuration?.token ||
+    '';
+  /*
+    A local server (`?collabWs=ws://localhost:1235`) asks for nothing; the
+    Datalayer spacer does. Saying so beats a websocket that opens and closes
+    with nothing on screen to explain it.
+  */
+  const roomNeedsToken = !urlParams.get('collabWs');
+  const missingToken = isCollaborative && roomNeedsToken && !collabToken;
   const collabWs = collabToken
     ? `${collabWsBase}${collabWsBase.includes('?') ? '&' : '?'}token=${encodeURIComponent(collabToken)}`
     : collabWsBase;
@@ -110,6 +132,14 @@ const LexicalEditor = ({ hasRuntime }: { hasRuntime: boolean }) => {
 
   return (
     <Box sx={{ mx: 'auto', maxWidth: 1100, px: 3 }}>
+      {missingToken ? (
+        <Flash variant="warning" sx={{ mb: 3 }}>
+          Not signed in. A Datalayer document room checks an IAM token on the
+          websocket, so this pane will not join one. Sign in, or point the pane
+          at a server that asks for nothing with{' '}
+          <code>?collabWs=ws://localhost:1235</code>.
+        </Flash>
+      ) : null}
       <Box>
         <Editor
           id={collaboration?.id}
