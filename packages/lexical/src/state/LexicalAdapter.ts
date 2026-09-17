@@ -22,7 +22,6 @@ import {
   $getSelection,
   $createParagraphNode,
   $createTextNode,
-  $getNodeByKey,
 } from 'lexical';
 import {
   $createHeadingNode,
@@ -42,7 +41,7 @@ import {
   editorStateToBlocks,
   parseMarkdownFormatting,
 } from '../tools/utils/blocks';
-import { INPUT_UUID_TO_OUTPUT_KEY } from '../plugins/JupyterInputOutputPlugin';
+import { $jupyterOutputNodeFor } from '../plugins/JupyterInputOutputPlugin';
 
 /**
  * Result of a document operation
@@ -596,10 +595,7 @@ export class LexicalAdapter {
                 code = node.getTextContent();
                 // Find corresponding output node using UUID map (prevents output mixing!)
                 const inputUuid = node.getJupyterInputNodeUuid();
-                const outputKey = INPUT_UUID_TO_OUTPUT_KEY.get(inputUuid);
-                if (outputKey) {
-                  jupyterOutputNode = $getNodeByKey(outputKey);
-                }
+                jupyterOutputNode = $jupyterOutputNodeFor(inputUuid);
                 return true; // Found it
               }
 
@@ -1678,7 +1674,7 @@ export class LexicalAdapter {
     }
 
     // Get a running kernel connection from serviceManager
-    let kernel: any = null;
+    let kernel: any;
 
     try {
       // Refresh the list of running kernels

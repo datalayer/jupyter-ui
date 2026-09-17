@@ -25,6 +25,7 @@ import {
   SELECT_ALL_COMMAND,
   $getRoot,
   $isElementNode,
+  $nodesOfType,
 } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import {
@@ -48,6 +49,7 @@ import { registerCodeHighlighting } from '../nodes/JupyterInputHighlighter';
 import {
   JupyterOutputNode,
   $createJupyterOutputNode,
+  $isJupyterOutputNode,
 } from '../nodes/JupyterOutputNode';
 import { debugLog } from '../utils/debugLog';
 
@@ -58,6 +60,76 @@ export const INPUT_UUID_TO_CODE_KEY = new Map<UUID, NodeKey | undefined>();
 export const INPUT_UUID_TO_OUTPUT_UUID = new Map<UUID, UUID | undefined>();
 export const OUTPUT_UUID_TO_CODE_UUID = new Map<UUID, UUID | undefined>();
 export const OUTPUT_UUID_TO_OUTPUT_KEY = new Map<UUID, NodeKey | undefined>();
+
+/**
+ * The output node that belongs to an input, in the editor of the current
+ * update — found by its uuid, never by key alone.
+ *
+ * The registries above map a uuid to a node key, and a node key means
+ * something only within one editor. Two editors on one page (the loro
+ * example's two panes) hold the same document with the same uuids; the
+ * registry keeps the key of whichever editor registered last, and the other
+ * editor's lookup lands on an unrelated node that happens to carry that key —
+ * which it then "moves" beside its input, and the two editors correct each
+ * other until React gives up. So a key is taken only when the node it names is
+ * the right kind and carries the uuid; otherwise this editor's own nodes are
+ * searched for it.
+ */
+export function $jupyterOutputNodeFor(
+  inputUuid: string,
+): JupyterOutputNode | null {
+  const candidates = $nodesOfType(JupyterOutputNode).filter(
+    candidate => candidate.getJupyterInputNodeUuid() === inputUuid,
+  );
+  if (candidates.length === 0) {
+    return null;
+  }
+  // A document may hold two outputs for one input (an earlier version left
+  // copies behind). They must not take turns at the input's side — every
+  // move is a commit, and two of them correcting each other never end — so
+  // the one already seated after its input is the input's output, always.
+  const seated = candidates.find(candidate => {
+    const before = candidate.getPreviousSibling();
+    return (
+      before !== null &&
+      $isJupyterInputNode(before) &&
+      before.getJupyterInputNodeUuid() === inputUuid
+    );
+  });
+  if (seated) {
+    return seated;
+  }
+  const key = INPUT_UUID_TO_OUTPUT_KEY.get(inputUuid);
+  const byKey = key ? $getNodeByKey(key) : null;
+  if (
+    byKey &&
+    $isJupyterOutputNode(byKey) &&
+    byKey.getJupyterInputNodeUuid() === inputUuid
+  ) {
+    return byKey;
+  }
+  return candidates[0];
+}
+
+/** The input node with this uuid, in the editor of the current update. */
+export function $jupyterInputNodeFor(
+  inputUuid: string,
+): JupyterInputNode | null {
+  const key = INPUT_UUID_TO_CODE_KEY.get(inputUuid);
+  const node = key ? $getNodeByKey(key) : null;
+  if (
+    node &&
+    $isJupyterInputNode(node) &&
+    node.getJupyterInputNodeUuid() === inputUuid
+  ) {
+    return node;
+  }
+  return (
+    $nodesOfType(JupyterInputNode).find(
+      candidate => candidate.getJupyterInputNodeUuid() === inputUuid,
+    ) ?? null
+  );
+}
 
 export const DEFAULT_INITIAL_OUTPUTS: IOutput[] = [
   {
@@ -182,7 +254,7 @@ export const JupyterInputOutputPlugin = (
   useEffect(() => {
     return editor.registerMutationListener(
       JupyterInputNode,
-      (mutatedNodes: Map<NodeKey, any>) => {
+      (mutatedNodes: Map<NodeKey, any>, { prevEditorState }) => {
         // Skip if we're already moving nodes to prevent recursion
         if (isMovingNodes.current) return;
 
@@ -195,31 +267,26 @@ export const JupyterInputOutputPlugin = (
             queueMicrotask(() =>
               editor.update(
                 () => {
-                  let jupyterInputNodeUuid: string | undefined;
-                  let jupyterOutputNodeUuid: string | undefined;
-
-                  // Find the UUID for the destroyed input node
-                  INPUT_UUID_TO_CODE_KEY.forEach(
-                    (codeKey: NodeKey, codeUuid: UUID) => {
-                      if (codeKey === nodeKey) {
-                        jupyterInputNodeUuid = codeUuid;
-                        jupyterOutputNodeUuid =
-                          INPUT_UUID_TO_OUTPUT_UUID.get(codeUuid);
-                      }
-                    },
-                  );
+                  // The destroyed input is gone from this state; the one
+                  // before still has it, uuid and all. (The registry maps
+                  // keys of every editor on the page; a key is not enough.)
+                  const jupyterInputNodeUuid = prevEditorState.read(() => {
+                    const node = $getNodeByKey(nodeKey);
+                    return node && $isJupyterInputNode(node)
+                      ? node.getJupyterInputNodeUuid()
+                      : undefined;
+                  });
+                  const jupyterOutputNodeUuid = jupyterInputNodeUuid
+                    ? INPUT_UUID_TO_OUTPUT_UUID.get(jupyterInputNodeUuid)
+                    : undefined;
 
                   if (jupyterInputNodeUuid && jupyterOutputNodeUuid) {
                     // Remove the corresponding output node
-                    const outputNodeKey = OUTPUT_UUID_TO_OUTPUT_KEY.get(
-                      jupyterOutputNodeUuid,
-                    );
-                    if (outputNodeKey) {
-                      const outputNode = $getNodeByKey(outputNodeKey);
-                      if (outputNode) {
-                        outputNode.markDirty();
-                        (outputNode as JupyterOutputNode).removeForce();
-                      }
+                    const outputNode =
+                      $jupyterOutputNodeFor(jupyterInputNodeUuid);
+                    if (outputNode) {
+                      outputNode.markDirty();
+                      outputNode.removeForce();
                     }
 
                     // Clean up all map entries
@@ -242,22 +309,19 @@ export const JupyterInputOutputPlugin = (
                   const inputNode = $getNodeByKey(nodeKey);
                   if (inputNode && $isJupyterInputNode(inputNode)) {
                     const inputUuid = inputNode.getJupyterInputNodeUuid();
-                    const outputKey = INPUT_UUID_TO_OUTPUT_KEY.get(inputUuid);
+                    const outputNode = $jupyterOutputNodeFor(inputUuid);
 
-                    if (outputKey) {
-                      const outputNode = $getNodeByKey(outputKey);
-                      if (outputNode) {
-                        const inputNextSibling = inputNode.getNextSibling();
+                    if (outputNode) {
+                      const inputNextSibling = inputNode.getNextSibling();
 
-                        // Only move if the output node is not immediately after the input node
-                        if (inputNextSibling !== outputNode) {
-                          isMovingNodes.current = true;
-                          try {
-                            outputNode.remove(false);
-                            inputNode.insertAfter(outputNode);
-                          } finally {
-                            isMovingNodes.current = false;
-                          }
+                      // Only move if the output node is not immediately after the input node
+                      if (inputNextSibling !== outputNode) {
+                        isMovingNodes.current = true;
+                        try {
+                          outputNode.remove(false);
+                          inputNode.insertAfter(outputNode);
+                        } finally {
+                          isMovingNodes.current = false;
                         }
                       }
                     }
@@ -286,30 +350,27 @@ export const JupyterInputOutputPlugin = (
             queueMicrotask(() =>
               editor.update(
                 () => {
-                  const outputNode = $getNodeByKey(nodeKey);
-                  if (outputNode) {
-                    const outputUuid = (
-                      outputNode as JupyterOutputNode
-                    ).getJupyterOutputNodeUuid();
-                    const inputUuid = OUTPUT_UUID_TO_CODE_UUID.get(outputUuid);
+                  const node = $getNodeByKey(nodeKey);
+                  if (node && $isJupyterOutputNode(node)) {
+                    const outputNode = node;
+                    const inputUuid = outputNode.getJupyterInputNodeUuid();
+                    const inputNode = $jupyterInputNodeFor(inputUuid);
+                    // A copy of the input's output stays where it is; only
+                    // the input's output sits beside it.
+                    if (
+                      inputNode &&
+                      $jupyterOutputNodeFor(inputUuid) === outputNode
+                    ) {
+                      const inputNextSibling = inputNode.getNextSibling();
 
-                    if (inputUuid) {
-                      const inputKey = INPUT_UUID_TO_CODE_KEY.get(inputUuid);
-                      if (inputKey) {
-                        const inputNode = $getNodeByKey(inputKey);
-                        if (inputNode) {
-                          const inputNextSibling = inputNode.getNextSibling();
-
-                          // Only move if this output node is not immediately after its input node
-                          if (inputNextSibling !== outputNode) {
-                            isMovingNodes.current = true;
-                            try {
-                              outputNode.remove(false);
-                              inputNode.insertAfter(outputNode);
-                            } finally {
-                              isMovingNodes.current = false;
-                            }
-                          }
+                      // Only move if this output node is not immediately after its input node
+                      if (inputNextSibling !== outputNode) {
+                        isMovingNodes.current = true;
+                        try {
+                          outputNode.remove(false);
+                          inputNode.insertAfter(outputNode);
+                        } finally {
+                          isMovingNodes.current = false;
                         }
                       }
                     }
@@ -413,20 +474,17 @@ export const JupyterInputOutputPlugin = (
                 parentNode as JupyterInputNode
               ).getJupyterInputNodeUuid();
 
-              const jupyterOutputNodeKey =
-                INPUT_UUID_TO_OUTPUT_KEY.get(jupyterInputNodeUuid);
+              const existingOutputNode =
+                $jupyterOutputNodeFor(jupyterInputNodeUuid);
 
-              if (jupyterOutputNodeKey) {
-                const jupyterOutputNode = $getNodeByKey(
-                  jupyterOutputNodeKey,
-                ) as JupyterOutputNode;
-                if (jupyterOutputNode) {
+              {
+                if (existingOutputNode) {
                   // Check the existing output node's adapter kernel
-                  const existingAdapter = jupyterOutputNode.__outputAdapter;
+                  const existingAdapter = existingOutputNode.__outputAdapter;
 
                   // Get writable node ONCE at the start
                   const writableNode =
-                    jupyterOutputNode.getWritable() as JupyterOutputNode;
+                    existingOutputNode.getWritable() as JupyterOutputNode;
 
                   // Update kernel if needed
                   // Always sync the adapter's kernel to the current kernel
@@ -801,17 +859,12 @@ export const JupyterInputOutputPlugin = (
     (node: JupyterInputNode, kernelToUse: Kernel) => {
       const code = node.getTextContent();
       const jupyterInputNodeUuid = node.getJupyterInputNodeUuid();
-      const jupyterOutputNodeKey =
-        INPUT_UUID_TO_OUTPUT_KEY.get(jupyterInputNodeUuid);
-
-      if (jupyterOutputNodeKey) {
-        const jupyterOutputNode = $getNodeByKey(jupyterOutputNodeKey);
-        if (jupyterOutputNode) {
-          // Update kernel using public API before execution
-          (jupyterOutputNode as JupyterOutputNode).updateKernel(kernelToUse);
-          (jupyterOutputNode as JupyterOutputNode).executeCode(code);
-          return true;
-        }
+      const jupyterOutputNode = $jupyterOutputNodeFor(jupyterInputNodeUuid);
+      if (jupyterOutputNode) {
+        // Update kernel using public API before execution
+        jupyterOutputNode.updateKernel(kernelToUse);
+        jupyterOutputNode.executeCode(code);
+        return true;
       }
       return false;
     },
