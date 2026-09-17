@@ -14,6 +14,8 @@ import type { ExcalidrawInitialElements } from './ExcalidrawModal';
 import type { AppState, BinaryFiles } from '@excalidraw/excalidraw/types';
 import type { NodeKey } from 'lexical';
 import type { JSX } from 'react';
+import { IconButton } from '@primer/react';
+import { PencilIcon } from '@primer/octicons-react';
 
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useLexicalEditable } from '@lexical/react/useLexicalEditable';
@@ -205,10 +207,12 @@ export default function ExcalidrawComponent({
             height={height}
           />
           {isSelected && isEditable && (
-            <div
-              className="image-edit-button"
-              role="button"
-              tabIndex={0}
+            <IconButton
+              icon={PencilIcon}
+              aria-label="Edit the drawing"
+              size="small"
+              variant="default"
+              sx={{ position: 'absolute', top: 8, right: 8, zIndex: 10 }}
               onMouseDown={event => event.preventDefault()}
               onClick={openModal}
             />
