@@ -10,6 +10,7 @@ import {
   EditorConfig,
   DecoratorNode,
   LexicalNode,
+  LexicalUpdateJSON,
   NodeKey,
   Spread,
   SerializedLexicalNode,
@@ -255,6 +256,32 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
       jupyterOutputNodeUuid: this.getJupyterOutputNodeUuid(),
       version: 1,
     };
+  }
+
+  /**
+   * Take new data in place.
+   *
+   * A collaborator's edit to this output — its code, or the outputs an
+   * execution produced — arrives as serialized data. Taking it here keeps the
+   * node, its key and its DOM; the alternative, a fresh node in its place,
+   * runs into `remove()` below, which keeps this node standing, so the
+   * document gained a copy on every update.
+   *
+   * @override
+   */
+  updateFromJSON(
+    serializedNode: LexicalUpdateJSON<SerializedJupyterOutputNode>,
+  ): this {
+    const self = super.updateFromJSON(serializedNode);
+    if (serializedNode.source !== undefined) {
+      self.__code = serializedNode.source;
+    }
+    if (serializedNode.outputs !== undefined) {
+      self.__outputs = serializedNode.outputs;
+      self.__outputAdapter.setOutputs(serializedNode.outputs);
+      self.__renderTrigger++;
+    }
+    return self;
   }
 
   /** @override */

@@ -30,6 +30,7 @@ import {
 } from '@codemirror/view';
 import { User } from '@jupyterlab/services';
 import { JSONExt } from '@lumino/coreutils';
+import { collaboratorColor, useThemeStore } from '@datalayer/primer-addons';
 import { Awareness } from 'y-protocols/awareness';
 import {
   createAbsolutePositionFromRelativePosition,
@@ -125,10 +126,35 @@ const remoteSelectionTheme = EditorView.baseTheme({
     border: 'none',
   },
   '.cm-tooltip.jp-remote-userInfo': {
-    color: 'var(--jp-ui-inverse-font-color0)',
+    color: 'var(--fgColor-onEmphasis, #ffffff)',
     padding: '0px 2px',
   },
 });
+
+/**
+ * A collaborator's colour: the theme's palette, picked by their name.
+ *
+ * The identity JupyterLab's server hands out names a colour of its own
+ * (`var(--jp-collaborator-colorN)`), from a palette nothing on this page
+ * defines. The name is what every surface here colours by, so the caret, the
+ * selection and the tooltip agree with the avatars around them.
+ */
+function collaboratorColorOf(
+  user: User.IIdentity | undefined,
+  clientID: number
+): string {
+  const seed =
+    user?.username || user?.display_name || user?.name || String(clientID);
+  const { theme, colorMode } = useThemeStore.getState();
+  const mode =
+    colorMode === 'auto'
+      ? typeof window !== 'undefined' &&
+        window.matchMedia?.('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light'
+      : colorMode;
+  return collaboratorColor(seed, theme, mode);
+}
 
 // TODO fix which user needs update
 const remoteSelectionsAnnotation = Annotation.define();
@@ -220,7 +246,7 @@ const remoteCursorsLayer = layer({
           // Wrap the rectangle marker to set the user color
           cursors.push(
             new RemoteMarker(
-              { borderLeftColor: state.user?.color ?? 'black' },
+              { borderLeftColor: collaboratorColorOf(state.user, clientID) },
               piece
             )
           );
@@ -269,7 +295,7 @@ function getCursorTooltips(state: EditorState): readonly Tooltip[] {
         create: () => {
           const dom = document.createElement('div');
           dom.classList.add('jp-remote-userInfo');
-          dom.style.backgroundColor = state.user?.color ?? 'darkgrey';
+          dom.style.backgroundColor = collaboratorColorOf(state.user, clientID);
           dom.textContent =
             (state as IAwarenessState).user?.display_name ?? 'Anonymous';
           return { dom };
@@ -335,7 +361,7 @@ const remoteSelectionLayer = layer({
           // Wrap the rectangle marker to set the user color
           cursors.push(
             new RemoteMarker(
-              { backgroundColor: state.user?.color ?? 'black' },
+              { backgroundColor: collaboratorColorOf(state.user, clientID) },
               piece
             )
           );

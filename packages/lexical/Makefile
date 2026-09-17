@@ -30,8 +30,8 @@ build-prod: ## build-prod
 examples: ## examples
 	npm run start:vite
 
-start: ## start
-	npm run start:vite
+start: ## start the examples, with the Loro collaboration server beside them
+	npx run-p -c start:vite loro:server
 
 publish-npm: clean build ## publish-npm
 	npm publish

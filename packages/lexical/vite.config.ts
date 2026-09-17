@@ -237,6 +237,13 @@ export default defineConfig(({ mode }) => {
       // Raw CSS strings are handled explicitly via `?raw` and related plugins above.
       esbuildOptions: {
         target: 'esnext',
+        // The ipywidgets embed (jupyter-react's `libembed-amd`) puts an AMD
+        // `define` on the page. A UMD module in the pre-bundle — es6-promise-pool,
+        // which @jupyterlab/services' kernel pool constructs — then registers
+        // with AMD instead of setting `module.exports`, and its ESM default is
+        // an empty object: "import_es6_promise_pool.default is not a
+        // constructor". Inside the pre-bundle there is no AMD.
+        define: { 'define.amd': 'undefined' },
       },
       include: ['react', 'react-dom'],
       // Every @lexical/* package is pre-bundled, none excluded: an excluded

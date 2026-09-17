@@ -9,7 +9,6 @@ export * from './themes';
 export * from './JupyterLabColormode';
 export * from './JupyterLabPortalTheme';
 export * from './JupyterLabCss';
-export * from './JupyterPalette';
 export * from './JupyterReactTheme';
 export * from './usePrimerThemeBridge';
 

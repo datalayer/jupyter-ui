@@ -11,7 +11,10 @@
  */
 
 import { useEffect, useMemo, useState } from 'react';
-import { Box, Button, Flash, Heading, Text } from '@primer/react';
+import { Box, Button, Flash, Heading, Link, Text } from '@primer/react';
+import { useCoreStore } from '@datalayer/core';
+import { useIAMStore } from '@datalayer/core/lib/state/substates';
+import { searchWorkspace } from '@datalayer/core/lib/api/spacer/spaces';
 import { LexicalPrimerThemeProvider } from '..';
 import { useExampleThemeStore } from './themeStore';
 
@@ -24,17 +27,16 @@ type CollaboratorIdentity = {
 const DEFAULT_ROOM_ID = 'jupyter-lexical-collab-room-1';
 
 /**
- * Where the two panes meet by default: the Loro server this repository ships
- * (`npm run server:loro` in `tech/lexical/loro`, or `server:py:ws`).
+ * Where the two panes meet by default: the Loro server `make start` brings up
+ * beside Vite (`scripts/loroServer.mjs`, the `lexical-loro` Python package).
  *
  * Not the Datalayer spacer. A spacer room is a *document* — the product's own
  * editor passes the uid of a document the person may open — so an invented
  * room name is refused however good the token is, and the client retries in a
- * loop with nothing on screen to say why. Point the panes at a real document
- * with `?collabWs=wss://…/api/spacer/v1/lexical/ws&collabRoom=<document-uid>`
- * once signed in.
+ * loop with nothing on screen to say why. The banner below offers a document
+ * of the reader's own instead, once there is one to offer.
  */
-const DEFAULT_WEBSOCKET_URL = 'ws://localhost:1235';
+const DEFAULT_WEBSOCKET_URL = 'ws://localhost:3002';
 
 const getWebsocketUrlFromUrl = () =>
   new URLSearchParams(window.location.search).get('collabWs') ??
@@ -78,6 +80,61 @@ const LexicalCollaborative = () => {
   const [roomId, setRoomId] = useState<string>(() => getRoomIdFromUrl());
   const websocketUrl = getWebsocketUrlFromUrl();
   const isDatalayerRoom = /spacer/.test(websocketUrl);
+
+  /*
+    A document of the reader's own, to offer as the alternative to the local
+    room: its uid is the room, which is what the product's own editor passes
+    and what the spacer accepts. Asked for only while on the local server and
+    only while signed in — there is nothing to list otherwise.
+  */
+  const { configuration } = useCoreStore();
+  const { token: iamToken } = useIAMStore();
+  const spacerUrl = configuration?.spacerUrl;
+  const [ownDocument, setOwnDocument] = useState<{
+    uid: string;
+    name: string;
+  } | null>(null);
+  useEffect(() => {
+    if (isDatalayerRoom || !spacerUrl || !iamToken) {
+      return;
+    }
+    let current = true;
+    searchWorkspace(
+      { baseUrl: spacerUrl, token: iamToken },
+      { types: 'document', max: 1 },
+    )
+      .then(answer => {
+        const item = answer.items?.[0];
+        if (current && item?.uid) {
+          setOwnDocument({
+            uid: item.uid,
+            name:
+              (item.document_name_s as string) ||
+              (item.name_t as string) ||
+              item.uid,
+          });
+        }
+      })
+      .catch(() => undefined);
+    return () => {
+      current = false;
+    };
+  }, [iamToken, isDatalayerRoom, spacerUrl]);
+
+  /** The address that opens this same example on that document's room. */
+  const datalayerRoomUrl = useMemo(() => {
+    if (!ownDocument || !spacerUrl) {
+      return null;
+    }
+    const url = new URL(window.location.href);
+    url.searchParams.set('example', 'LexicalCollaborative');
+    url.searchParams.set('collabRoom', ownDocument.uid);
+    url.searchParams.set(
+      'collabWs',
+      `${spacerUrl.replace(/\/$/, '').replace(/^http/, 'ws')}/api/spacer/v1/lexical/ws`,
+    );
+    return url.toString();
+  }, [ownDocument, spacerUrl]);
   const [identities, setIdentities] = useState<{
     '1'?: CollaboratorIdentity;
     '2'?: CollaboratorIdentity;
@@ -199,11 +256,21 @@ const LexicalCollaborative = () => {
             </>
           ) : (
             <>
-              Meeting on <code>{websocketUrl}</code>. Start it with{' '}
-              <code>npm run server:loro</code> in <code>tech/lexical/loro</code>
-              . To use a Datalayer document instead, add <code>?collabWs=</code>{' '}
-              with the spacer's lexical websocket and a document uid as the
-              room.
+              Meeting on <code>{websocketUrl}</code>, the room{' '}
+              <code>make start</code> brings up beside the examples.
+              {datalayerRoomUrl && ownDocument ? (
+                <>
+                  {' '}
+                  To use a Datalayer document instead, open{' '}
+                  <Link href={datalayerRoomUrl}>{ownDocument.name}</Link>.
+                </>
+              ) : (
+                <>
+                  {' '}
+                  A Datalayer document can host the room too: sign in, and the
+                  first of your documents is offered here.
+                </>
+              )}
             </>
           )}
         </Flash>
