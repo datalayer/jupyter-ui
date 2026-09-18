@@ -9,7 +9,8 @@
  *
  * Rich text, history, lists and check lists, links and automatic links,
  * hashtags, tables, horizontal rules, highlighted code blocks, markdown
- * shortcuts, images, equations, YouTube embeds, collapsibles, drawings,
+ * shortcuts, images, equations, YouTube and Loom videos, videos recorded in
+ * the page, collapsibles, drawings, decks,
  * comment anchors, Jupyter cells, executable inputs with their outputs,
  * columns, execution trees, the four PDF exports, the `/` picker, inline
  * completions and the
@@ -55,6 +56,7 @@ import { CodeBlockHighlightExtension } from './CodeBlockHighlightExtension';
 import { CollapsibleExtension } from './CollapsibleExtension';
 import { CommentExtension } from './CommentExtension';
 import { ComponentPickerMenuExtension } from './ComponentPickerMenuExtension';
+import { DeckExtension } from './DeckExtension';
 import { EquationsExtension } from './EquationsExtension';
 import { ExcalidrawExtension } from './ExcalidrawExtension';
 import { ExecutionTreeExtension } from './ExecutionTreeExtension';
@@ -66,9 +68,11 @@ import { JupyterInputOutputExtension } from './JupyterInputOutputExtension';
 import { LayoutExtension } from './LayoutExtension';
 import { LexicalStateExtension } from './LexicalStateExtension';
 import { ListMaxIndentLevelExtension } from './ListMaxIndentLevelExtension';
+import { LoomExtension } from './LoomExtension';
 import { MarkdownShortcutsExtension } from './MarkdownShortcutsExtension';
 import { PdfExportExtension } from './PdfExportExtension';
 import { TableExtension } from './TableExtension';
+import { VideoExtension } from './VideoExtension';
 import { YouTubeExtension } from './YouTubeExtension';
 
 export const JupyterLexicalExtension = defineExtension({
@@ -90,8 +94,11 @@ export const JupyterLexicalExtension = defineExtension({
     ImagesExtension,
     EquationsExtension,
     YouTubeExtension,
+    LoomExtension,
+    VideoExtension,
     CollapsibleExtension,
     ExcalidrawExtension,
+    DeckExtension,
     ExecutionTreeExtension,
     AutoEmbedExtension,
     CommentExtension,

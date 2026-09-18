@@ -18,7 +18,11 @@
  */
 
 import { useCallback, useState, useEffect, useMemo } from 'react';
-import { defineExtension, type InitialEditorStateType } from 'lexical';
+import {
+  defineExtension,
+  type AnyLexicalExtensionArgument,
+  type InitialEditorStateType,
+} from 'lexical';
 import { AutoFocusExtension } from '@lexical/extension';
 import {
   createWebsocketProvider,
@@ -66,6 +70,12 @@ type Props = {
   onSessionConnection?: OnSessionConnection;
   runtimeEnabled?: boolean;
   initialEditorState?: InitialEditorStateType;
+  /**
+   * More of the document, or the bundled parts configured: what only the
+   * host knows, such as `configExtension(LoomExtension, { publicAppId })`.
+   * Keep the array stable — the editor is rebuilt when it changes.
+   */
+  extensions?: AnyLexicalExtensionArgument[];
   collaboration?: {
     id: string;
     websocketUrl: string;
@@ -92,19 +102,21 @@ const PLACEHOLDER_TEXT = 'Code and analyse data.';
  * The root extension of this editor: the shared document plus this editor's
  * own choices. `initialEditorState` left `undefined` gives an empty paragraph
  * to type in; `null` leaves the document empty for a collaboration provider
- * to fill.
+ * to fill. `extensions` are the host's own additions and configurations,
+ * after the bundle so that a `configExtension` of one of its parts applies.
  *
  * Keep the result stable — the composer rebuilds the editor whenever it
  * changes — which is what the `useMemo` in `Editor` is for.
  */
 export function createEditorExtension(
   initialEditorState?: InitialEditorStateType,
+  extensions: AnyLexicalExtensionArgument[] = [],
 ) {
   return defineExtension({
     name: '@datalayer/jupyter-lexical/Editor',
     namespace: EDITOR_NAMESPACE,
     theme: commentTheme,
-    dependencies: [JupyterLexicalExtension, AutoFocusExtension],
+    dependencies: [JupyterLexicalExtension, AutoFocusExtension, ...extensions],
     $initialEditorState: initialEditorState,
   });
 }
@@ -271,13 +283,18 @@ export function EditorContainer(props: Props) {
 }
 
 export function Editor(props: Props) {
-  const { id, serviceManager, collaboration, initialEditorState } = props;
+  const { id, serviceManager, collaboration, initialEditorState, extensions } =
+    props;
 
   // In collaboration mode, initial content must go through the collaboration
   // bootstrap path so all peers stay aligned.
   const extension = useMemo(
-    () => createEditorExtension(collaboration ? undefined : initialEditorState),
-    [collaboration, initialEditorState],
+    () =>
+      createEditorExtension(
+        collaboration ? undefined : initialEditorState,
+        extensions,
+      ),
+    [collaboration, initialEditorState, extensions],
   );
 
   // The content editable is rendered by EditorContainer, where the floating

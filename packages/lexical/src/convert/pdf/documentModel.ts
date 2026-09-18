@@ -41,6 +41,8 @@ import { $isYouTubeNode } from '../../nodes/YouTubeNode';
 import { $isJupyterInputNode } from '../../nodes/JupyterInputNode';
 import { $isJupyterOutputNode } from '../../nodes/JupyterOutputNode';
 import { $isExcalidrawNode } from '../../nodes/ExcalidrawNode';
+import { $isLoomNode } from '../../nodes/LoomNode';
+import { loomVideoId } from '../../utils/loom';
 import { $isLayoutContainerNode } from '../../nodes/LayoutContainerNode';
 import { $isLayoutItemNode } from '../../nodes/LayoutItemNode';
 import { $isCollapsibleContainerNode } from '../../plugins/CollapsiblePlugin/CollapsibleContainerNode';
@@ -446,6 +448,18 @@ export function $blockOf(node: LexicalNode): Block | null {
   if ($isExcalidrawNode(node)) {
     return { kind: 'drawing', key: node.getKey(), label: 'Drawing' };
   }
+  if ($isLoomNode(node)) {
+    const { url, title } = node.getVideo();
+    if (!loomVideoId(url)) {
+      return null;
+    }
+    return {
+      kind: 'embed',
+      label: title ? `Loom video: ${title}` : 'Loom video',
+      url,
+      key: node.getKey(),
+    };
+  }
   if ($isParagraphNode(node)) {
     const inlines = $inlinesOf(node);
     // A paragraph holding one block equation or one image: that block.
@@ -509,6 +523,7 @@ function $isBlockLevel(node: LexicalNode): boolean {
     $isImageNode(node) ||
     $isExcalidrawNode(node) ||
     $isYouTubeNode(node) ||
+    $isLoomNode(node) ||
     ($isEquationNode(node) && !node.__inline)
   );
 }

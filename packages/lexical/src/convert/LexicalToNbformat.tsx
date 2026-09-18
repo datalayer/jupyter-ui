@@ -26,6 +26,8 @@ import type {
 } from '@jupyterlab/nbformat';
 import { $isEquationNode } from './../nodes/EquationNode';
 import { $isYouTubeNode } from './../nodes/YouTubeNode';
+import { $isLoomNode } from './../nodes/LoomNode';
+import { loomEmbedUrl, loomVideoId } from './../utils/loom';
 import { $isJupyterInputNode } from './../nodes/JupyterInputNode';
 import { $isJupyterOutputNode } from './../nodes/JupyterOutputNode';
 import { exportTopLevelElements } from './markdown/MarkdownExport';
@@ -92,6 +94,20 @@ export const lexicalToNbformat = (nodes: LexicalNode[]): INotebookContent => {
         newCodeCell(
           nextId(),
           `from IPython.display import YouTubeVideo\nYouTubeVideo('${node.getId()}')`,
+          [],
+        ),
+      );
+    } else if ($isLoomNode(node)) {
+      const id = loomVideoId(node.getVideo().url);
+      if (!id) {
+        // A block still waiting for its video: nothing to show in a notebook.
+        continue;
+      }
+      flushMarkdown();
+      cells.push(
+        newCodeCell(
+          nextId(),
+          `from IPython.display import IFrame\nIFrame('${loomEmbedUrl(id)}', width=800, height=450)`,
           [],
         ),
       );

@@ -63,6 +63,57 @@ Every extension keeps a React plug-in of the same name in `src/plugins` for an
 editor still built with `LexicalComposer`; the plug-in is a thin wrapper over
 the extension's `register…` function, so both paths share one implementation.
 
+## Video, Loom and deck blocks
+
+Three block types come with the bundle, and with `/` in the editor:
+
+- **Video** (`VideoExtension`, `VideoNode`): records the screen or the camera
+  with the browser's own `MediaRecorder` — no account, no key, no upload. The
+  file stays in the page's memory: **it is lost when the page reloads**, and
+  nobody else editing the document sees it. Download keeps a copy. After a
+  reload the block says its video is gone rather than pretending it never was.
+- **Loom Video** (`LoomExtension`, `LoomNode`): an empty block that records a
+  [Loom](https://www.loom.com) video — the author signs in to their Loom
+  account, where the video is saved — or takes the address of one, and then
+  shows it. Pasting a Loom address offers to embed it.
+- **Deck Slide** (`DeckExtension`, `DeckNode`): a deck drawn by
+  `@datalayer/decks` from its `DeckSpec`, one title slide to begin with.
+  Double-click it to edit the specification as JSON; Save checks it with
+  `validateDeckSpec` and keeps it only when it has no errors.
+
+Recording with Loom needs a Loom **public app id**. This package keeps none; the host
+gives it from its own configuration:
+
+```ts
+configExtension(LoomExtension, { publicAppId: process.env.LOOM_PUBLIC_APP_ID });
+```
+
+(`<Editor extensions={[…]} />` takes that list, and `<LoomPlugin publicAppId={…} />`
+does the same for an editor built with `LexicalComposer`.) Without one, Loom
+blocks still show and embed videos; only Record is off. The examples read
+`LOOM_PUBLIC_APP_ID` from the shell, or from `.env.local` in this package,
+which git ignores (a bare `.env` it does not — keep the id out of that one):
+
+```sh
+npm run install:react18                           # once, see below
+echo 'LOOM_PUBLIC_APP_ID=…' >> .env.local         # once
+npm run start:vite                                # or start:webpack
+```
+
+The Loom recorder, `@loomhq/record-sdk`, **runs on React 18**: it imports React
+from the page and mounts with `ReactDOM.render`, which React 19 removed. Under
+JupyterLab, which shares React 18, nothing is needed. A React 19 page must give
+the recorder a React 18 of its own — the SDK is imported only when somebody
+presses Record, so without one it is only Record that fails, and the block
+says so. This package's dev servers show both ways, with the pair
+`npm run install:react18` puts in `vendor/react18`:
+
+- **webpack** (`webpack.config.js`): the SDK and all it imports join a module
+  layer, `loom18`, in which `react` and `react-dom` resolve to that pair;
+- **Vite** (`vite.config.ts`): a plugin bundles the SDK apart with esbuild,
+  every `react` import pointed at that pair, and serves the result wherever
+  the source imports the SDK.
+
 ## Formats
 
 A document goes in and out of other formats through `src/convert`:

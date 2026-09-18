@@ -21,12 +21,15 @@
 import type { LexicalEditor } from 'lexical';
 import { $isMarkNode, $unwrapMarkNode } from '@lexical/mark';
 import { $dfs } from '@lexical/utils';
-import type {
-  Comment,
-  CommentPerson,
-  Comments,
-  ICommentStore,
-  Thread,
+import {
+  anonymousAuthor,
+  authorLabel,
+  type Comment,
+  type CommentAuthor,
+  type CommentPerson,
+  type Comments,
+  type ICommentStore,
+  type Thread,
 } from './Commenting';
 
 /** What a thread is about: exactly one of these. */
@@ -42,7 +45,12 @@ export interface CommentRecord {
   anchor: CommentAnchor | null;
   quote: string | null;
   body: string;
-  author: CommentPerson;
+  /**
+   * Who wrote it, as the service recorded it from the writer's token — not
+   * from anything the client sent. `agent_uid` when an agent wrote it for
+   * them.
+   */
+  author: CommentPerson & { agent_uid?: string };
   /** The uids of the people it mentions. */
   mentions?: string[];
   /** A thread's assignee. */
@@ -112,10 +120,29 @@ const newer = (
 ): CommentRecord =>
   known !== undefined && known.updated_at > heard.updated_at ? known : heard;
 
+/**
+ * The principal behind a record's author. The service only takes comments
+ * from somebody signed in, so an author with a uid is a user.
+ */
+const authorOfRecord = (record: CommentRecord): CommentAuthor => {
+  const { uid, handle, name, agent_uid: agentUid } = record.author;
+  if (!uid) {
+    return anonymousAuthor(name || handle);
+  }
+  return {
+    kind: 'user',
+    uid,
+    handle: handle ?? null,
+    name: name ?? null,
+    ...(agentUid ? { agentUid } : {}),
+  };
+};
+
 const commentOf = (record: CommentRecord): Comment => ({
   type: 'comment',
   id: record.uid,
-  author: record.author.name || record.author.handle || record.author.uid,
+  author: authorLabel(authorOfRecord(record)),
+  authorPrincipal: authorOfRecord(record),
   content: record.deleted ? DELETED_CONTENT : record.body,
   deleted: record.deleted,
   ...(record.mentions && record.mentions.length > 0
@@ -160,16 +187,17 @@ export class ApiCommentStore implements ICommentStore {
   /** Present when the backend searches people. */
   readonly searchPeople?: (query: string) => Promise<CommentPerson[]>;
   /** Present when the backend assigns threads. */
-  readonly assignThread?: (thread: Thread, person: CommentPerson | null) => void;
+  readonly assignThread?: (
+    thread: Thread,
+    person: CommentPerson | null,
+  ) => void;
 
   private readonly _editor: LexicalEditor;
   private readonly _backend: CommentsBackend;
   private readonly _options: ApiCommentStoreOptions;
   private readonly _listeners = new Set<() => void>();
   /** What was heard while a read was on its way, a map per read. */
-  private readonly _heardDuringReads = new Set<
-    Map<string, CommentRecord>
-  >();
+  private readonly _heardDuringReads = new Set<Map<string, CommentRecord>>();
   private _records = new Map<string, CommentRecord>();
   private _comments: Comments = [];
 

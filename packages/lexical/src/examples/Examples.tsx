@@ -51,6 +51,12 @@ const EXAMPLES: Array<{ name: string; path: string; description: string }> = [
       'One template per Overleaf category, rendered and edited in Lexical.',
   },
   {
+    name: 'Video, Loom and Deck Blocks',
+    path: 'LexicalBlocks',
+    description:
+      'Record a video in the page or with Loom; draw a deck and edit its specification.',
+  },
+  {
     name: 'PDF Export',
     path: 'LexicalPdf',
     description:

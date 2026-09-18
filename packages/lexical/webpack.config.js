@@ -6,6 +6,7 @@
 
 const webpack = require('webpack');
 const path = require('path');
+const fs = require('fs');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
@@ -32,6 +33,56 @@ if (IS_PRODUCTION) {
   minimize = true;
 }
 
+/*
+ * The Loom recorder's React 18.
+ *
+ * `@loomhq/record-sdk` peers on React 18, imports it from the host and mounts
+ * through `ReactDOM.render`, which React 19 removed; these examples run 19.
+ * So the SDK, and everything it imports however deep, joins a layer of its
+ * own, `loom18`, where `react` and `react-dom` mean the pair installed in
+ * `vendor/react18` (`npm run install:react18`). Libraries it shares with the
+ * page — @emotion and the rest — get instances of their own there, bound to
+ * 18; the page's stay on 19. Without the pair the layer is left out and a
+ * Loom block says why it cannot record. `vite.config.ts` does the same.
+ */
+const REACT_18 = path.resolve(__dirname, 'vendor', 'react18', 'node_modules');
+const HAS_REACT_18 = fs.existsSync(
+  path.join(REACT_18, 'react-dom', 'package.json'),
+);
+const LOOM_18_RESOLVE = {
+  alias: {
+    react: path.join(REACT_18, 'react'),
+    'react-dom': path.join(REACT_18, 'react-dom'),
+  },
+};
+const LOOM_18_RULES = HAS_REACT_18
+  ? [
+      {
+        test: /[\\/]node_modules[\\/]@loomhq[\\/]record-sdk[\\/]/,
+        layer: 'loom18',
+        resolve: LOOM_18_RESOLVE,
+      },
+      { issuerLayer: 'loom18', layer: 'loom18', resolve: LOOM_18_RESOLVE },
+    ]
+  : [];
+
+/*
+ * Loom's public app id: from the shell's environment, or from `.env.local`,
+ * which git ignores (a bare `.env` it does not, so the id does not go there).
+ */
+const LOOM_PUBLIC_APP_ID = (() => {
+  if (process.env.LOOM_PUBLIC_APP_ID) {
+    return process.env.LOOM_PUBLIC_APP_ID;
+  }
+  const file = path.join(__dirname, '.env.local');
+  const line = fs.existsSync(file)
+    ? /^\s*LOOM_PUBLIC_APP_ID\s*=\s*(.*?)\s*$/m.exec(
+        fs.readFileSync(file, 'utf8'),
+      )
+    : null;
+  return line ? line[1].replace(/^(['"])(.*)\1$/, '$2') : '';
+})();
+
 module.exports = {
   entry: ['./src/examples/index'],
   mode: mode,
@@ -56,6 +107,8 @@ module.exports = {
   experiments: {
     topLevelAwait: true,
     asyncWebAssembly: true,
+    // The Loom recorder's React 18 island: see LOOM_18_RULES.
+    layers: true,
   },
   output: {
     publicPath: 'http://localhost:3211/',
@@ -72,6 +125,7 @@ module.exports = {
   },
   module: {
     rules: [
+      ...LOOM_18_RULES,
       {
         test: /\.tsx?$/,
         loader: 'babel-loader',
@@ -181,6 +235,11 @@ module.exports = {
     shim(/@fortawesome/),
     new webpack.ProvidePlugin({
       process: 'process/browser',
+    }),
+    // Loom's public app id, for recording in a Loom block. From the
+    // environment only: this repository is public and keeps no key.
+    new webpack.DefinePlugin({
+      'process.env.LOOM_PUBLIC_APP_ID': JSON.stringify(LOOM_PUBLIC_APP_ID),
     }),
     new HtmlWebpackPlugin({
       title: 'Jupyter Lexical',

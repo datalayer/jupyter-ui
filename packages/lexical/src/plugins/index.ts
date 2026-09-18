@@ -11,6 +11,7 @@ export { default as FloatingLinkEditorPlugin } from './FloatingLinkEditorPlugin'
 export { default as CodeActionMenuPlugin } from './CodeActionMenuPlugin';
 export { CodeBlockHighlightPlugin } from './CodeHighlightPlugin';
 export * from './CollapsiblePlugin';
+export * from './CommentPeople';
 export * from './CommentPlugin';
 export * from './ComponentPickerMenuPlugin';
 export * from './DraggableBlockPlugin';
@@ -43,4 +44,7 @@ export { default as TableCellResizerPlugin } from './TableCellResizer';
 export * from './ToolbarPlugin';
 export * from './TreeViewPlugin';
 export * from './YouTubePlugin';
+export * from './LoomPlugin';
+export * from './VideoPlugin';
+export * from './DeckPlugin';
 export * from './PdfExportPlugin';

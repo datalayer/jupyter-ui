@@ -24,6 +24,8 @@ import useModal from '../hooks/useModal';
 import Button from '../components/Button';
 import { DialogActions } from '../components/Dialog';
 import { INSERT_YOUTUBE_COMMAND } from './YouTubePlugin';
+import { INSERT_LOOM_COMMAND } from '../extensions/LoomExtension';
+import { describeLoomVideo, loomShareUrl, loomVideoId } from '../utils/loom';
 import { TextInput as PrimerTextInput } from '@primer/react';
 
 interface PlaygroundEmbedConfig extends EmbedConfig {
@@ -77,7 +79,26 @@ export const YoutubeEmbedConfig: PlaygroundEmbedConfig = {
   type: 'youtube-video',
 };
 
-export const EmbedConfigs = [YoutubeEmbedConfig];
+export const LoomEmbedConfig: PlaygroundEmbedConfig = {
+  contentName: 'Loom Video',
+  exampleUrl: 'https://www.loom.com/share/c2b5b05f548d4f1492d5c107f0c48dbc',
+  icon: <VideoIcon size={16} />,
+  insertNode: (editor: LexicalEditor, result: EmbedMatchResult) => {
+    // Loom is asked for the title and the recording's shape first; the block
+    // goes in either way, 16:9 when Loom does not answer.
+    void describeLoomVideo(result.url).then(video =>
+      editor.dispatchCommand(INSERT_LOOM_COMMAND, video),
+    );
+  },
+  keywords: ['loom', 'video', 'recording', 'screen'],
+  parseUrl: async (url: string) => {
+    const id = loomVideoId(url);
+    return id ? { id, url: loomShareUrl(id) } : null;
+  },
+  type: 'loom-video',
+};
+
+export const EmbedConfigs = [YoutubeEmbedConfig, LoomEmbedConfig];
 
 function AutoEmbedMenuItem({
   index,

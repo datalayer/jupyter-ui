@@ -16,7 +16,7 @@
  * @module plugins/CommentPeople
  */
 
-import type { JSX } from 'react';
+import type { ComponentType, JSX } from 'react';
 import {
   createContext,
   useCallback,
@@ -26,8 +26,15 @@ import {
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { Box, Button, IconButton, Text, TextInput } from '@primer/react';
-import { PersonAddIcon } from '@primer/octicons-react';
+import {
+  Avatar,
+  Box,
+  Button,
+  IconButton,
+  Text,
+  TextInput,
+} from '@primer/react';
+import { PersonAddIcon, PersonIcon } from '@primer/octicons-react';
 import { $createTextNode, type TextNode } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import {
@@ -36,14 +43,84 @@ import {
   useBasicTypeaheadTriggerMatch,
 } from '@lexical/react/LexicalTypeaheadMenuPlugin';
 import {
+  authorLabel,
   personLabel,
+  type CommentAuthor,
   type CommentPerson,
   type Thread,
 } from '../components/Commenting';
 
+/** What draws an author's picture: the host's own, or `CommentAuthorAvatar`. */
+export type CommentAvatarComponent = ComponentType<{
+  author: CommentAuthor;
+  size: number;
+}>;
+
 export interface CommentPeople {
   searchPeople?: (query: string) => Promise<CommentPerson[]>;
   assignThread?: (thread: Thread, person: CommentPerson | null) => void;
+  /**
+   * Who is commenting: the signed-in principal the host knows, recorded
+   * with every comment written here. Absent, the commenter is anonymous,
+   * by the name the collaboration gave them.
+   */
+  author?: CommentAuthor;
+  /** How an author's picture is drawn; `CommentAuthorAvatar` when absent. */
+  Avatar?: CommentAvatarComponent;
+}
+
+/** A name's initials, at most two: "Ada Lovelace" is "AL". */
+const initialsOf = (label: string): string =>
+  label
+    .split(/[\s._-]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(word => word[0]!.toUpperCase())
+    .join('') || '?';
+
+/**
+ * An author's picture, with nothing but what the comment carries: the
+ * picture when there is one, initials when there is a name, a person when
+ * the author is anonymous. A host that can look principals up passes its
+ * own through `CommentPlugin`'s `Avatar`.
+ */
+export function CommentAuthorAvatar({
+  author,
+  size,
+}: {
+  author: CommentAuthor;
+  size: number;
+}): JSX.Element {
+  const label = authorLabel(author);
+  if (author.avatarUrl) {
+    return <Avatar src={author.avatarUrl} size={size} alt={label} />;
+  }
+  return (
+    <Box
+      as="span"
+      aria-hidden
+      title={label}
+      sx={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexShrink: 0,
+        width: size,
+        height: size,
+        borderRadius: '50%',
+        bg: 'neutral.muted',
+        color: 'fg.muted',
+        fontSize: `${Math.round(size * 0.45)}px`,
+        fontWeight: 'bold',
+      }}
+    >
+      {author.kind === 'anonymous' ? (
+        <PersonIcon size={Math.round(size * 0.65)} />
+      ) : (
+        initialsOf(label)
+      )}
+    </Box>
+  );
 }
 
 export const CommentPeopleContext = createContext<CommentPeople>({});

@@ -12,7 +12,14 @@
 
 import type { JSX } from 'react';
 import type { CSSProperties, RefObject } from 'react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { createPortal } from 'react-dom';
 import {
   Box,
@@ -70,6 +77,10 @@ import { WebsocketProvider } from 'y-websocket';
 import {
   Comment,
   type CommentPerson,
+  anonymousAuthor,
+  authorLabel,
+  authorOf,
+  type CommentAuthor,
   Comments,
   CommentStore,
   createComment,
@@ -81,9 +92,11 @@ import {
 } from '../components/Commenting';
 import { Placeholder } from '../components/Placeholder';
 import {
+  CommentAuthorAvatar,
   CommentPeopleContext,
   MentionsPlugin,
   ThreadAssignee,
+  type CommentAvatarComponent,
 } from './CommentPeople';
 import CommentEditorTheme from '../themes/CommentEditorTheme';
 // From their modules rather than the package's index: a plug-in importing
@@ -286,7 +299,7 @@ function CommentInputBox({
     }),
     [],
   );
-  const author = useCollabAuthorName();
+  const author = useCommentAuthor();
 
   const updateLocation = useCallback(() => {
     editor.getEditorState().read(() => {
@@ -495,7 +508,7 @@ function CommentsComposer({
   const [content, setContent] = useState('');
   const [canSubmit, setCanSubmit] = useState(false);
   const editorRef = useRef<LexicalEditor>(null);
-  const author = useCollabAuthorName();
+  const author = useCommentAuthor();
   // Whom an `@` named while the reply was typed (B4-02).
   const picked = useRef(new Map<string, CommentPerson>());
   const onMention = useCallback((person: CommentPerson) => {
@@ -637,6 +650,9 @@ function CommentsPanelListComment({
   thread?: Thread;
 }): JSX.Element {
   const [modal, showModal] = useModal();
+  const { Avatar: AuthorAvatar = CommentAuthorAvatar } =
+    useContext(CommentPeopleContext);
+  const author = authorOf(comment);
 
   return (
     <Box
@@ -648,7 +664,15 @@ function CommentsPanelListComment({
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-        <Text sx={{ fontWeight: 'bold', fontSize: 1 }}>{comment.author}</Text>
+        <AuthorAvatar author={author} size={20} />
+        <Text sx={{ fontWeight: 'bold', fontSize: 1 }}>
+          {authorLabel(author)}
+        </Text>
+        {author.agentUid && (
+          <Text sx={{ color: 'var(--fgColor-muted)', fontSize: 0 }}>
+            · with an agent
+          </Text>
+        )}
         <Text sx={{ color: 'var(--fgColor-muted)', fontSize: 0 }}>
           · {whenWritten(rtf, comment.timeStamp)}
         </Text>
@@ -943,18 +967,22 @@ function CommentsPanel({
   );
 }
 
-function useCollabAuthorName(): string {
-  const collabContext = useCollaborationContext();
-  const { name } = collabContext;
-  // Use collaboration username (from Datalayer auth or OS username)
-  // No longer checking yjsDocMap since we're using Loro, not Yjs
-  return name || 'User';
+/**
+ * Who is writing: the principal the host named, or — with none — somebody
+ * anonymous, by the name the collaboration gave them.
+ */
+function useCommentAuthor(): CommentAuthor {
+  const { author } = useContext(CommentPeopleContext);
+  const { name } = useCollaborationContext();
+  return author ?? anonymousAuthor(name);
 }
 
 export function CommentPlugin({
   providerFactory,
   showFloatingAddButton = true,
   commentStore: givenCommentStore,
+  author,
+  Avatar,
 }: {
   providerFactory?: (
     id: string,
@@ -967,6 +995,18 @@ export function CommentPlugin({
    * `ApiCommentStore` over its service.
    */
   commentStore?: ICommentStore;
+  /**
+   * Who is commenting, when the host knows: a signed-in principal, by kind
+   * and uid, kept with every comment written here. Absent, comments are
+   * signed with the collaboration name, as somebody anonymous. A platform
+   * store records its own author from the caller's token and ignores this.
+   */
+  author?: CommentAuthor;
+  /**
+   * How an author's picture is drawn: a host that can look principals up by
+   * uid passes its own. `CommentAuthorAvatar` otherwise.
+   */
+  Avatar?: CommentAvatarComponent;
 }): JSX.Element {
   const [editor] = useLexicalComposerContext();
   const { showComments, setShowComments } = useComments();
@@ -1225,8 +1265,10 @@ export function CommentPlugin({
     () => ({
       searchPeople: commentStore.searchPeople?.bind(commentStore),
       assignThread: commentStore.assignThread?.bind(commentStore),
+      author,
+      Avatar,
     }),
-    [commentStore],
+    [commentStore, author, Avatar],
   );
 
   return (

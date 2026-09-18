@@ -32,6 +32,9 @@ import { $createHeadingNode, $createQuoteNode } from '@lexical/rich-text';
 import { $setBlocksType } from '@lexical/selection';
 import { INSERT_COLLAPSIBLE_COMMAND } from './CollapsiblePlugin';
 import { INSERT_EXCALIDRAW_COMMAND } from './excalidraw';
+import { INSERT_DECK_COMMAND } from '../extensions/DeckExtension';
+import { INSERT_LOOM_COMMAND } from '../extensions/LoomExtension';
+import { INSERT_VIDEO_COMMAND } from '../extensions/VideoExtension';
 import { INSERT_TABLE_WITH_DIALOG_COMMAND } from './TablePlugin';
 import {
   $createParagraphNode,
@@ -49,6 +52,7 @@ import {
   ChevronDownIcon,
   CodeIcon,
   DashIcon,
+  DeviceCameraVideoIcon,
   FileMediaIcon,
   HashIcon,
   ListOrderedIcon,
@@ -60,6 +64,7 @@ import {
   QuoteIcon,
   TableIcon,
   TypographyIcon,
+  VideoIcon,
 } from '@primer/octicons-react';
 
 import useModal from '../hooks/useModal';
@@ -329,6 +334,30 @@ export const ComponentPickerMenuPlugin = ({
         ],
         onSelect: () =>
           editor.dispatchCommand(INSERT_EXCALIDRAW_COMMAND, undefined),
+      }),
+      // Recorded by the browser, kept in the page's memory: lost on reload.
+      new ComponentPickerOption('Video', {
+        icon: <DeviceCameraVideoIcon size={16} />,
+        keywords: [
+          'video',
+          'record',
+          'recording',
+          'screen',
+          'camera',
+          'webcam',
+        ],
+        onSelect: () => editor.dispatchCommand(INSERT_VIDEO_COMMAND, undefined),
+      }),
+      // Recorded with Loom, saved to the author's Loom account.
+      new ComponentPickerOption('Loom Video', {
+        icon: <VideoIcon size={16} />,
+        keywords: ['loom', 'video', 'record', 'recording', 'screen'],
+        onSelect: () => editor.dispatchCommand(INSERT_LOOM_COMMAND, undefined),
+      }),
+      new ComponentPickerOption('Deck Slide', {
+        icon: <FileMediaIcon size={16} />,
+        keywords: ['deck', 'slide', 'slides', 'presentation', 'pitch'],
+        onSelect: () => editor.dispatchCommand(INSERT_DECK_COMMAND, undefined),
       }),
       new ComponentPickerOption('Quote', {
         icon: <QuoteIcon size={16} />,

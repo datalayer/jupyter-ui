@@ -46,13 +46,18 @@ import {
   type CommentsListener,
 } from '../../components/ApiCommentStore';
 import { mentionsIn, type Thread } from '../../components/Commenting';
-import { PEOPLE_SEARCH_PAUSE_MS } from '../CommentPeople';
+import {
+  PEOPLE_SEARCH_PAUSE_MS,
+  type CommentAvatarComponent,
+} from '../CommentPeople';
+import type { CommentAuthor } from '../../components/Commenting';
 import { CommentsProvider, useComments } from '../../context/CommentsContext';
 import { CommentExtension } from '../../extensions/CommentExtension';
 import { CommentPlugin } from '../CommentPlugin';
 
-(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT =
-  true;
+(
+  globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }
+).IS_REACT_ACT_ENVIRONMENT = true;
 
 const at = (second: number) =>
   `2026-09-10T10:00:${String(second).padStart(2, '0')}.000Z`;
@@ -156,14 +161,26 @@ function OpenPanel() {
   return null;
 }
 
-function Plugin({ backend }: { backend: CommentsBackend }) {
+function Plugin({
+  backend,
+  Avatar,
+}: {
+  backend: CommentsBackend;
+  Avatar?: CommentAvatarComponent;
+}) {
   const [editor] = useLexicalComposerContext();
   const store = useMemo(
     () => new ApiCommentStore(editor, backend),
     [editor, backend],
   );
   useEffect(() => store.connect(), [store]);
-  return <CommentPlugin commentStore={store} showFloatingAddButton={false} />;
+  return (
+    <CommentPlugin
+      commentStore={store}
+      showFloatingAddButton={false}
+      Avatar={Avatar}
+    />
+  );
 }
 
 let root: Root | undefined;
@@ -181,7 +198,10 @@ const settle = () =>
     await new Promise(resolve => setTimeout(resolve, 0));
   });
 
-async function render(backend: CommentsBackend) {
+async function render(
+  backend: CommentsBackend,
+  Avatar?: CommentAvatarComponent,
+) {
   container = document.createElement('div');
   document.body.appendChild(container);
   root = createRoot(container);
@@ -196,7 +216,7 @@ async function render(backend: CommentsBackend) {
         >
           <CommentsProvider>
             <OpenPanel />
-            <Plugin backend={backend} />
+            <Plugin backend={backend} Avatar={Avatar} />
           </CommentsProvider>
         </LexicalExtensionComposer>
       </ThemeProvider>,
@@ -243,6 +263,37 @@ describe('the comment plug-in over comments a service keeps', () => {
     expect(shown()).toContain('[Deleted Comment]');
     expect(shown()).not.toContain('judge timeout');
     expect(shown()).not.toContain('never mind');
+  });
+
+  it('draws each author through the host avatar, by kind and uid', async () => {
+    const drawn: CommentAuthor[] = [];
+    const Avatar: CommentAvatarComponent = ({ author }) => {
+      drawn.push(author);
+      return <span data-avatar={author.uid} />;
+    };
+    const { backend } = fakeBackend([THREAD, REPLY]);
+    await render(backend, Avatar);
+    expect(
+      Array.from(document.querySelectorAll('[data-avatar]')).map(avatar =>
+        avatar.getAttribute('data-avatar'),
+      ),
+    ).toEqual(['u-ada', 'u-grace']);
+    expect(drawn).toContainEqual({
+      kind: 'user',
+      uid: 'u-ada',
+      handle: 'ada',
+      name: 'Ada Lovelace',
+    });
+  });
+
+  it('draws an author with no picture by their initials', async () => {
+    const { backend } = fakeBackend([THREAD]);
+    await render(backend);
+    expect(
+      Array.from(document.body.querySelectorAll('[title="Ada Lovelace"]')).map(
+        avatar => avatar.textContent,
+      ),
+    ).toContain('AL');
   });
 
   it('shows a comment somebody else writes as it arrives', async () => {
