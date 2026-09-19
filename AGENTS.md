@@ -1,222 +1,63 @@
-# Jupyter UI - Quick Reference
+# AGENTS.md
+
+Guidance for coding agents working in this repository.
 
 ## Overview
 
-React component library for Jupyter notebooks. Monorepo with 4 main packages.
+React components for Jupyter — notebooks, cells, consoles, outputs, terminals,
+file browsers — usable outside JupyterLab. An npm workspaces monorepo run with
+Lerna. Use npm, not yarn. Node >= 20 (`nvm use` reads `.nvmrc`).
+
+| Path                         | What it is                                                                    |
+| ---------------------------- | ----------------------------------------------------------------------------- |
+| `packages/react`             | `@datalayer/jupyter-react`, the components                                    |
+| `packages/lexical`           | `@datalayer/jupyter-lexical`, a Lexical editor with Jupyter cells and outputs |
+| `packages/embed`             | `@datalayer/jupyter-embed`, the components in any web page                    |
+| `packages/docusaurus-plugin` | `@datalayer/jupyter-docusaurus-plugin`                                        |
+| `storybook/`                 | the Storybook                                                                 |
+| `examples/`                  | Vite, Docusaurus and Lexical example apps                                     |
+| `docs/`                      | the documentation site                                                        |
 
 ## Commands
 
 ```bash
-# Setup
-npm install
-npm run build
+npm install && npm run build
 
-# Development
-npm run jupyter:server       # Start Jupyter (port 8686)
-npm run storybook           # Start Storybook (port 6006)
+npm run jupyter:server        # local Jupyter server, port 8686
+npm run storybook             # Storybook, port 6006
+npm run jupyter:ui:vite       # also :docusaurus, :lexical
 
-# React package dev (cd packages/react)
-npm run start               # Remote server config
-npm run start-local         # Local server (webpack + jupyter)
-npm run start-local:webpack # Only webpack
+# in packages/react — the examples, on port 3208
+npm run start                 # against the public Datalayer OSS server
+npm run start-local           # against the local server (starts it too)
 
-# Code quality
-npm run check               # Format, lint, type-check
-npm run check:fix          # Auto-fix and check
+npm test                      # every package's tests
+npm run check                 # format check, lint, type-check
+npm run check:fix             # format, lint --fix, type-check
 ```
 
-## Key Info
+Run `npm run check:fix` after changes.
 
-- **Node.js**: >= 20.0.0 (use .nvmrc)
-- **Server token**: `60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6`
-- **Webpack entry**: Edit `packages/react/webpack.config.js` → `ENTRY` variable
-- **Jupyter config**: `dev/config/jupyter_server_config.py`
+## Key facts
 
-## Collaboration Setup
+- **Which example runs:** `ENTRY` in `packages/react/entries.js`, shared by
+  webpack and Vite. The default, `./src/examples/Examples`, picks one at runtime.
+- **Local server:** `dev/config/jupyter_server_config.py`. Its token is the
+  public demo token
+  `60c1661cc408f978c309d04157af55c9588ff9557c9380e4fb50785750703da6`, which
+  `packages/react/public/index-local.html` also carries.
+- **Collaboration:** the dev config already sets `c.LabApp.collaborative = True`.
+  It needs `pip install jupyter-collaboration`; then open http://localhost:3208/
+  in two windows. In code:
 
-1. Install: `pip install jupyter-collaboration jupyterlab`
-2. Enable: Set `c.LabApp.collaborative = True` in jupyter config
-3. Test: Open http://localhost:3208/ in multiple windows
+  ```tsx
+  const provider = new JupyterCollaborationProvider();
+  <Notebook collaborationProvider={provider} path="notebook.ipynb" />;
+  ```
 
-## Collaboration Providers
-
-```tsx
-// Basic usage
-const provider = new JupyterCollaborationProvider();
-<Notebook collaborationProvider={provider} path="notebook.ipynb" />;
-
-// With config
-const provider = new JupyterCollaborationProvider({
-  path: 'notebook.ipynb',
-  serverSettings: mySettings,
-});
-```
-
-## Troubleshooting
-
-- **Build fails**: Run `npm run type-check`
-- **Lint errors**: Run `npm run lint:fix`
-- **Node version**: Use Node 20+ (`nvm use`)
-- **Collaboration issues**: Check WebSocket connections and jupyter-collaboration installation
-
-## Development Tips
-
-- Use npm, not yarn
-- Prefer editing over creating files
-- Run checks after changes: `npm run check:fix`
-
-## Recent Changes
-
-### Output Component & KernelActionMenu Improvements (January 2025)
-
-**Status**: ✅ COMPLETED - All improvements tested and working in VS Code extension
-
-#### What Changed
-
-1. **KernelActionMenu Always Visible** (`packages/react/src/components/kernel/KernelActionMenu.tsx`)
-   - Three dot menu now visible regardless of kernel connection state
-   - All menu items always rendered with appropriate disabled states
-   - "Interrupt kernel" and "Restart kernel" disabled when no kernel
-   - "Clear outputs" always enabled (works with or without kernel)
-   - Added `onClearOutputs?: () => void` callback prop for custom clear logic
-
-2. **Progress Bar Conditional Display** (`packages/react/src/components/output/Output.tsx`)
-   - Progress bar only shows when kernel is connected and not idle
-   - Space preserved with transparent background when inactive
-   - Prevents visual jumping in the UI
-
-3. **Clear Outputs Functionality** (`packages/react/src/components/output/Output.tsx`)
-   - Works from both toolbar and three dot menu
-   - Functions correctly with or without kernel connection
-   - Fixed adapter/propsAdapter logic to match rendering behavior
-   - Added `handleClearOutputs` callback that checks both `adapter` and `propsAdapter`
-
-4. **Architecture Improvement**
-   - Removed VS Code-specific CSS from `Output.css`
-   - Platform-specific styling now handled by consuming packages
-   - Keeps jupyter-react library platform-agnostic
-
-#### Key Technical Details
-
-**The Adapter/PropsAdapter Issue**:
-Fixed mismatch between clear logic and rendering logic:
-
-```typescript
-// Rendering logic (line 356 in Output.tsx)
-const currentAdapter = adapter || propsAdapter;
-return lumino ? (currentAdapter ? <Lumino>{currentAdapter.outputArea}</Lumino> : null) : ...
-
-// Fixed clear logic to match
-const currentAdapter = adapter || propsAdapter;
-if (currentAdapter) {
-  currentAdapter.clear(); // Now matches rendering logic
-}
-```
-
-**Conditional Rendering vs Disabled Props**:
-Changed from conditional rendering to disabled props:
-
-```typescript
-// Before: Hidden when no kernel
-{kernel && <ActionList.Item onSelect={...}>Interrupt kernel</ActionList.Item>}
-
-// After: Always visible, disabled when no kernel
-<ActionList.Item disabled={!kernel} onSelect={...}>Interrupt kernel</ActionList.Item>
-```
-
-#### Integration Pattern for Consuming Packages
-
-The jupyter-react package now provides:
-
-- Generic components without platform-specific styling
-- `onClearOutputs` callback prop for custom clear logic
-- Always-visible menu with disabled states
-
-Consuming packages (like vscode-datalayer) can:
-
-- Apply platform-specific CSS overrides
-- Provide custom clear callbacks that match their rendering strategy
-- Theme components using their platform's variables
-
-**Example** (VS Code extension):
-
-```typescript
-// Custom CSS in vscode-datalayer/webview/styles/vscode-primer-overrides.css
-[class*="ActionMenu-"] {
-  background-color: var(--vscode-menu-background) !important;
-}
-
-// Custom clear callback in Output component
-<KernelActionMenu
-  kernel={kernel}
-  outputAdapter={adapter}
-  onClearOutputs={handleClearOutputs} // Custom logic for VS Code
-/>
-```
-
-## Critical: Package Loading Side Effects (November 2024)
-
-### Problem: Lumino Widget Initialization Crash
-
-**Background:**
-The `@datalayer/jupyter-lexical` package includes Jupyter output nodes (`JupyterOutputNode`, `JupyterCellNode`) that create Lumino widgets during module initialization. When this package is imported, it immediately initializes these widgets.
-
-**Issue:**
-If lexical is imported in contexts where it's not needed (e.g., notebook-only tools), the Lumino widget initialization runs prematurely and crashes with:
-
-```text
-Cannot set properties of undefined (setting 'class-name')
-```
-
-**Root Cause:**
-
-- `packages/lexical/src/index.ts` exports `./plugins` and `./nodes`
-- These modules create Lumino `OutputArea` widgets on load
-- If DOM isn't ready or initialization order is wrong → crash
-
-### Solution: Lazy Loading Pattern
-
-**DO:**
-
-- Import lexical **only when actually needed** for lexical editing
-- Separate imports by use case (notebook vs lexical)
-- Use dynamic imports for optional features
-
-**DON'T:**
-
-- Import lexical in notebook-only code
-- Create combined adapters that import both `@datalayer/jupyter-react` and `@datalayer/jupyter-lexical`
-- Mix package imports unless both are actively needed
-
-### Example: ag-ui Adapter Fix
-
-The `@datalayer/core` package had a combined hooks file that imported both packages:
-
-```typescript
-// ❌ BAD - Causes crash when only notebook tools are needed
-import { ... } from '@datalayer/jupyter-lexical';
-import { ... } from '@datalayer/jupyter-react';
-```
-
-**Fixed by splitting into separate files:**
-
-```typescript
-// ✅ GOOD - notebookHooks.tsx (notebook only)
-import { ... } from '@datalayer/jupyter-react';
-
-// ✅ GOOD - lexicalHooks.tsx (lexical only)
-import { ... } from '@datalayer/jupyter-lexical';
-```
-
-This ensures lexical code only loads when lexical editing is actually used.
-
-### Testing After Changes
-
-If you modify lexical or react packages, test that:
-
-1. **Notebook-only code** doesn't trigger lexical loading
-2. **Lexical code** loads correctly when needed
-3. **No crashes** during module initialization
-4. **Bundle size** doesn't include unused packages
-
-Check consuming packages (like `@datalayer/core`) to ensure they use proper separation patterns.
+- **Keep `@datalayer/jupyter-react` free of platform styling.** Consumers such as
+  the VS Code extension override its CSS and pass callbacks, e.g.
+  `KernelActionMenu`'s `onClearOutputs`.
+- **Dependency direction:** `jupyter-lexical` depends on `jupyter-react`, never
+  the reverse. Code that only needs notebooks imports `jupyter-react` alone, so
+  Lexical stays out of its bundle.
