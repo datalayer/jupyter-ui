@@ -96,11 +96,14 @@ function fixImportsInFile(filePath) {
       // Resolve the import path relative to this file
       const resolvedPath = path.join(fileDir, importPath);
 
-      // Check if it's a directory (needs /index.js instead of .js)
+      // A file wins over a directory of the same name, as it does for
+      // TypeScript and Node: `./Foo` beside both `Foo.js` and a `Foo/` that
+      // holds only helpers is `./Foo.js`. Picking the directory published
+      // `./CodeActionMenuPlugin/index.js`, which does not exist.
       let extension = '.js';
       if (
-        fs.existsSync(resolvedPath) &&
-        fs.statSync(resolvedPath).isDirectory()
+        !fs.existsSync(`${resolvedPath}.js`) &&
+        fs.existsSync(path.join(resolvedPath, 'index.js'))
       ) {
         extension = '/index.js';
       }
