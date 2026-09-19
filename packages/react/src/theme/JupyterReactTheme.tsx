@@ -185,11 +185,53 @@ export function JupyterReactTheme(
   const [themedAncestor, setThemedAncestor] = useState<
     Element | null | undefined
   >(undefined);
+  /*
+   * Whether ANOTHER JupyterReactTheme is above this one.
+   *
+   * Not the same as `nested`: any themed element counts for that, a Primer
+   * provider of the host page included, and the notebook editor of a web
+   * application sits in the theme of that application while being the only
+   * JupyterReactTheme of the page — the one whose mode, background and
+   * JupyterLab theme are the page's. Below another JupyterReactTheme it is
+   * not: the outer one owns what is shared — the mode and the background of
+   * the store, the theme of JupyterLab and its stylesheets, the notebooks of
+   * the whole document — and this one styles its own subtree only.
+   *
+   * A chat or an editor rendered inside a JupyterLab that is itself under a
+   * JupyterReactTheme used to impose its own theme on all of it: JupyterLab's
+   * theme was set back on every render of it, the menus stayed in the old
+   * mode, and every notebook of the page took its background.
+   *
+   * `undefined` until measured: nothing shared is written on a guess.
+   */
+  const [underAnotherTheme, setUnderAnotherTheme] = useState<
+    boolean | undefined
+  >(undefined);
   useLayoutEffect(() => {
     const own = sentinel.current?.parentElement;
     setThemedAncestor(own?.parentElement?.closest('[data-color-mode]') ?? null);
+    // Every JupyterReactTheme marks its element with a sentinel child.
+    let under = false;
+    for (let el = own?.parentElement ?? null; el; el = el.parentElement) {
+      if (el.querySelector(':scope > [data-jupyter-react-theme-root]')) {
+        under = true;
+        break;
+      }
+    }
+    setUnderAnotherTheme(under);
   }, []);
   const nested = themedAncestor != null;
+  /** This theme owns the shared state: no other JupyterReactTheme is above. */
+  const ownsShared = underAnotherTheme === false;
+  /** What this theme's own notebook rule is scoped by, when it is scoped. */
+  const [scopeId] = useState(
+    () => `jrt-${Math.random().toString(36).slice(2, 10)}`
+  );
+  const notebookBackgroundRule = backgroundColor
+    ? ownsShared
+      ? `.jp-Notebook { background-color: ${backgroundColor} !important; }`
+      : `[data-jupyter-react-theme-root="${scopeId}"] ~ * .jp-Notebook, [data-jupyter-react-theme-root="${scopeId}"] ~ .jp-Notebook { background-color: ${backgroundColor} !important; }`
+    : undefined;
 
   // Keep a ref to track if we've synced the prop to the store to avoid
   // redundant store updates that trigger re-renders.
@@ -215,7 +257,7 @@ export function JupyterReactTheme(
   // performing a setState during render (which causes a React warning when an
   // ancestor subscribes to the same store).
   useLayoutEffect(() => {
-    if (!hasColormodeProp) {
+    if (!hasColormodeProp || !ownsShared) {
       return;
     }
     const resolved = resolveColormode(colormodeProps);
@@ -223,13 +265,23 @@ export function JupyterReactTheme(
       setColormodeStore(resolved);
     }
     syncedRef.current = true;
-  }, [colormodeFromStore, colormodeProps, hasColormodeProp, setColormodeStore]);
+  }, [
+    colormodeFromStore,
+    colormodeProps,
+    hasColormodeProp,
+    ownsShared,
+    setColormodeStore,
+  ]);
 
   // Sync backgroundColor prop → store so notebook extensions (sidebars, etc.)
   // can read it from the store and render with the same background.
+  // The owner only: a theme below another one colours its own subtree.
   useEffect(() => {
+    if (!ownsShared) {
+      return;
+    }
     setBackgroundColorStore(backgroundColor);
-  }, [backgroundColor, setBackgroundColorStore]);
+  }, [backgroundColor, ownsShared, setBackgroundColorStore]);
 
   /**
    * Follow the color mode of the surroundings, or impose the one asked for.
@@ -359,7 +411,7 @@ export function JupyterReactTheme(
       const resolved = resolveColormode(colormodeProps);
       const desiredTheme =
         resolved === 'dark' ? 'JupyterLab Dark' : 'JupyterLab Light';
-      const themeManager = themeManagerOf();
+      const themeManager = ownsShared ? themeManagerOf() : undefined;
       if (themeManager && themeManager.theme !== desiredTheme) {
         themeManager.setTheme(desiredTheme).catch(() => {
           /* swallow — best effort */
@@ -395,6 +447,7 @@ export function JupyterReactTheme(
     setColormodeStore,
     themedAncestor,
     nested,
+    ownsShared,
   ]);
   return (
     <JupyterReactColormodeContext.Provider value={colormode}>
@@ -406,7 +459,7 @@ export function JupyterReactTheme(
           // server-loaded JupyterLab theme variables would override our
           // requested colormode.
           manageThemeLinks={
-            hasColormodeProp ||
+            (hasColormodeProp && underAnotherTheme !== true) ||
             !(jupyterLabAdapter || inJupyterLab || jupyterLabThemed)
           }
         />
@@ -427,10 +480,12 @@ export function JupyterReactTheme(
             {...rest}
           >
             {/* Marks this theme's own element; see `themedAncestor`. */}
-            <span ref={sentinel} hidden data-jupyter-react-theme-root="" />
-            {backgroundColor && (
-              <style>{`.jp-Notebook { background-color: ${backgroundColor} !important; }`}</style>
-            )}
+            <span
+              ref={sentinel}
+              hidden
+              data-jupyter-react-theme-root={scopeId}
+            />
+            {notebookBackgroundRule && <style>{notebookBackgroundRule}</style>}
             {children}
           </BaseStyles>
         ) : (
@@ -441,10 +496,12 @@ export function JupyterReactTheme(
               fontSize: 'var(--text-body-size-medium)',
             }}
           >
-            <span ref={sentinel} hidden data-jupyter-react-theme-root="" />
-            {backgroundColor && (
-              <style>{`.jp-Notebook { background-color: ${backgroundColor} !important; }`}</style>
-            )}
+            <span
+              ref={sentinel}
+              hidden
+              data-jupyter-react-theme-root={scopeId}
+            />
+            {notebookBackgroundRule && <style>{notebookBackgroundRule}</style>}
             {children}
           </div>
         )}
