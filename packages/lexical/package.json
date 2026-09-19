@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyter-lexical",
-  "version": "1.0.23",
+  "version": "1.0.24",
   "description": "Jupyter UI for Lexical",
   "license": "MIT",
   "main": "lib/index.js",
@@ -69,6 +69,10 @@
     "watch:src": "tsc -w"
   },
   "dependencies": {
+    "@atlaskit/icon": "^36.2.0",
+    "@atlaskit/icon-lab": "^7.9.0",
+    "@atlaskit/react-ufo": "^3.14.15",
+    "@atlaskit/tokens": "^11.4.3",
     "@datalayer/core": "^1.1.47",
     "@datalayer/decks": "^1.0.0",
     "@datalayer/icons-react": "^1.0.0",
@@ -76,6 +80,9 @@
     "@datalayer/lexical-loro": "^1.0.0",
     "@datalayer/primer-addons": "^1.0.12",
     "@primer/react": "^37.31.0",
+    "@emotion/cache": "^11.14.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@excalidraw/excalidraw": "^0.18.1",
     "@excalidraw/mermaid-to-excalidraw": "^2.2.2",
     "@floating-ui/react": "^0.27.16",
