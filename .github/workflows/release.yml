@@ -187,5 +187,7 @@ jobs:
               echo "$name@$version is already published, skipping"
               continue
             fi
-            npm publish "$tarball" --provenance --access public
+            # "./": npm reads a bare "dist/x.tgz" as the GitHub shorthand
+            # github:dist/x.tgz and refuses to fetch it (EALLOWGIT).
+            npm publish "./$tarball" --provenance --access public
           done
