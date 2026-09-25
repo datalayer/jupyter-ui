@@ -242,6 +242,10 @@ npm run check        # Run format check, lint, and type-check
 npm run check:fix    # Run format, lint fix, and type-check
 ```
 
+### Releasing
+
+Releases are published to npm and PyPI from a `v*` tag, see [RELEASE.md](./RELEASE.md).
+
 ## 💬 Support
 
 - 📝 [Documentation](https://jupyter-ui.datalayer.tech)

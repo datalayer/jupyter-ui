@@ -1,0 +1,190 @@
+# Copyright (c) 2021-Present Datalayer, Inc.
+#
+# MIT License
+
+# Publishes a release to npm and PyPI when a `v*` tag is pushed, with no
+# stored token: both registries trust this workflow file (OIDC trusted
+# publishing). The tag must equal the @datalayer/jupyter-react version.
+# Every package whose exact version is already published is skipped, so one
+# tag releases whatever was bumped. See RELEASE.md.
+
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  # Same heap as CI: the embed package bundles all its dependencies.
+  NODE_OPTIONS: '--max-old-space-size=8192'
+  # The public npm workspaces this workflow releases.
+  NPM_WORKSPACES: packages/react packages/lexical packages/docusaurus-plugin
+  # The Python packages this workflow releases (directories with a pyproject).
+  PY_PACKAGES: packages/react packages/lexical
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      npm: ${{ steps.plan.outputs.npm }}
+      python: ${{ steps.plan.outputs.python }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Check the tag names the @datalayer/jupyter-react version
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF_NAME#v}"
+          version="$(node -p "require('./packages/react/package.json').version")"
+          echo "tag=$tag @datalayer/jupyter-react=$version"
+          if [ "$tag" != "$version" ]; then
+            echo "::error::Tag v$tag does not match @datalayer/jupyter-react $version"
+            exit 1
+          fi
+
+      - name: Find what is not published yet
+        id: plan
+        run: |
+          set -euo pipefail
+          npm_todo=""
+          for ws in $NPM_WORKSPACES; do
+            name="$(node -p "require('./$ws/package.json').name")"
+            version="$(node -p "require('./$ws/package.json').version")"
+            if npm view "$name@$version" version >/dev/null 2>&1; then
+              echo "npm: $name@$version is already published, skipping"
+            else
+              echo "npm: $name@$version will be published"
+              npm_todo="$npm_todo $ws"
+            fi
+          done
+          py_todo=""
+          for pkg in $PY_PACKAGES; do
+            # The name from pyproject.toml, the version from the file hatch
+            # reads it from (tool.hatch.version.path).
+            read -r name version < <(python - "$pkg" <<'EOF'
+          import re, sys, tomllib
+          pkg = sys.argv[1]
+          meta = tomllib.load(open(f'{pkg}/pyproject.toml', 'rb'))
+          source = open(f"{pkg}/{meta['tool']['hatch']['version']['path']}").read()
+          print(meta['project']['name'], re.search(r"__version__\s*=\s*['\"]([^'\"]+)['\"]", source)[1])
+          EOF
+            )
+            status="$(curl -sL -o /dev/null -w '%{http_code}' "https://pypi.org/pypi/$name/$version/json")"
+            if [ "$status" = "200" ]; then
+              echo "PyPI: $name $version is already published, skipping"
+            else
+              echo "PyPI: $name $version will be published"
+              py_todo="$py_todo $pkg"
+            fi
+          done
+          echo "npm=${npm_todo# }" >> "$GITHUB_OUTPUT"
+          echo "python=${py_todo# }" >> "$GITHUB_OUTPUT"
+
+      - name: Install
+        if: steps.plan.outputs.npm != '' || steps.plan.outputs.python != ''
+        run: npm install
+
+      - name: Build
+        if: steps.plan.outputs.npm != '' || steps.plan.outputs.python != ''
+        run: npm run build
+
+      - name: Pack the npm packages
+        if: steps.plan.outputs.npm != ''
+        run: |
+          set -euo pipefail
+          mkdir -p dist-npm
+          for ws in ${{ steps.plan.outputs.npm }}; do
+            npm pack --workspace "$ws" --pack-destination dist-npm
+          done
+          ls -la dist-npm
+
+      - name: Build the Python packages
+        if: steps.plan.outputs.python != ''
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade build
+          mkdir -p dist-py
+          for pkg in ${{ steps.plan.outputs.python }}; do
+            # --sdist --wheel builds both from the source tree: a wheel built
+            # from the extracted sdist would run the JavaScript build outside
+            # the workspace.
+            python -m build --sdist --wheel --outdir dist-py "$pkg"
+          done
+          ls -la dist-py
+
+      - uses: actions/upload-artifact@v4
+        if: steps.plan.outputs.npm != ''
+        with:
+          name: npm
+          path: dist-npm/*.tgz
+
+      - uses: actions/upload-artifact@v4
+        if: steps.plan.outputs.python != ''
+        with:
+          name: python
+          path: dist-py/*
+
+  pypi:
+    needs: build
+    if: needs.build.outputs.python != ''
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: python
+          path: dist
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          # The build job already skipped published versions; this covers a
+          # re-run after a partial upload.
+          skip-existing: true
+
+  npm:
+    needs: build
+    if: needs.build.outputs.npm != ''
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+      # Trusted publishing needs npm 11.5.1 or later.
+      - run: npm install -g npm@^11.5.1 && npm --version
+      - uses: actions/download-artifact@v4
+        with:
+          name: npm
+          path: dist
+      - name: Publish
+        run: |
+          set -euo pipefail
+          # @datalayer/jupyter-react first: the others depend on it.
+          for tarball in $(ls dist/datalayer-jupyter-react-[0-9]*.tgz 2>/dev/null) $(ls dist/*.tgz | grep -v '/datalayer-jupyter-react-[0-9]'); do
+            name="$(tar -xOzf "$tarball" package/package.json | node -p "JSON.parse(require('fs').readFileSync(0)).name")"
+            version="$(tar -xOzf "$tarball" package/package.json | node -p "JSON.parse(require('fs').readFileSync(0)).version")"
+            if npm view "$name@$version" version >/dev/null 2>&1; then
+              echo "$name@$version is already published, skipping"
+              continue
+            fi
+            npm publish "$tarball" --provenance --access public
+          done

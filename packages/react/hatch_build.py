@@ -64,15 +64,20 @@ def clean_dist():
 def build_vite_bundle():
     """Build Vite bundle for the server extension."""
     clean_dist()
+    # npm, like the rest of the repository (and packages/lexical): jlpm only
+    # exists where JupyterLab is installed, which a release runner is not.
     check_call(
-        ['jlpm', 'install'],
+        ['npm', 'install'],
         cwd=here,
     )
     # Set VITE_BASE_URL for the build so dynamic imports use the correct path
     build_env = os.environ.copy()
     build_env['VITE_BASE_URL'] = '/static/jupyter_react/'
     check_call(
-        ['npm', 'run', 'build:vite'],
+        # `vite build` defaults to the production mode, which is the npm library
+        # build into lib/. The server extension serves the application build,
+        # which every other mode writes to dist/ with VITE_BASE_URL as base.
+        ['npm', 'run', 'build:vite', '--', '--mode', 'development'],
         cwd=here,
         env=build_env,
     )
