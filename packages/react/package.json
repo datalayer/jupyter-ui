@@ -281,6 +281,9 @@
     "zustand": "^4.4.1"
   },
   "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "react-responsive-carousel": "^3.2.23",
+    "vega": "^6.4.0",
     "string-dedent": "^3.0.2",
     "openapi-fetch": "0.9.7",
     "esbuild": "^0.25.0",
