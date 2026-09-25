@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyter-embed",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Easily embed Jupyter components (cells, notebooks, terminals, consoles) into any web page",
   "license": "MIT",
   "main": "lib/index.js",

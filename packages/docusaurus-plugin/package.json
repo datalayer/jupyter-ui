@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyter-docusaurus-plugin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Docusaurus Plugin for Jupyter",
   "main": "lib/index.js",
   "license": "MIT",
