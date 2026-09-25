@@ -6,7 +6,7 @@
 
 import { IOutput } from '@jupyterlab/nbformat';
 import AnsiToHtml from 'ansi-to-html';
-import { Sanitizer } from '@jupyterlab/apputils';
+import DOMPurify from 'dompurify';
 
 const ansiConverter = new AnsiToHtml({
   fg: 'currentColor',
@@ -17,10 +17,10 @@ const ansiConverter = new AnsiToHtml({
   escapeXML: true,
 });
 
-// `text/html` outputs are run through JupyterLab's own sanitizer, as
-// JupyterLab does for a notebook it does not trust: markup and styles stay,
-// scripts and event handlers go.
-const sanitizer = new Sanitizer();
+// Every HTML this renders is sanitized — a `text/html` output, as JupyterLab
+// does for a notebook it does not trust, and the coloured traceback too:
+// markup and styles stay, scripts and event handlers go.
+const sanitize = (html: string): string => DOMPurify.sanitize(html);
 
 export type OutputRendererProps = {
   output: IOutput;
@@ -87,7 +87,7 @@ export const OutputRenderer = (props: OutputRendererProps) => {
     case 'error': {
       // Convert ANSI escape codes to HTML for colored error output
       const tracebackText = (output.traceback as string[]).join('\n');
-      html = ansiConverter.toHtml(tracebackText);
+      html = sanitize(ansiConverter.toHtml(tracebackText));
       break;
     }
     case 'stream': {
@@ -132,7 +132,7 @@ export const OutputRenderer = (props: OutputRendererProps) => {
         }
         const text_html = data['text/html'];
         if (text_html && !img) {
-          html = sanitizer.sanitize(
+          html = sanitize(
             typeof text_html === 'string' ? text_html : text_html.join('\n')
           );
         }

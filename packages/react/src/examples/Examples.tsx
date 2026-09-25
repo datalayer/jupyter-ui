@@ -184,11 +184,9 @@ const importExample = (path: string): Promise<unknown> => {
     Viewer: () => import('./Viewer'),
   };
 
-  // Own keys only: a path from the address such as `constructor` must not
-  // reach a function the map inherits.
-  const loader = Object.prototype.hasOwnProperty.call(modules, path)
-    ? modules[path]
-    : undefined;
+  // A Map, not the object: a path from the address such as `constructor`
+  // must not reach a function the object inherits.
+  const loader = new Map(Object.entries(modules)).get(path);
   if (loader) {
     return loader();
   }

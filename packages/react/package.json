@@ -246,6 +246,7 @@
     "coincident": "^1.2.3",
     "comlink": "^4.4.2",
     "diff": "^8.0.2",
+    "dompurify": "^3.4.16",
     "encoding": "^0.1.13",
     "json5": "^2.2.0",
     "localforage": "^1.9.0",
