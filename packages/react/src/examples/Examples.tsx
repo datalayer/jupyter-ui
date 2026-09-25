@@ -187,7 +187,7 @@ const importExample = (path: string): Promise<unknown> => {
   // A Map, not the object: a path from the address such as `constructor`
   // must not reach a function the object inherits.
   const loader = new Map(Object.entries(modules)).get(path);
-  if (loader) {
+  if (typeof loader === 'function') {
     return loader();
   }
   return Promise.reject(new Error(`Example "${path}" not found`));

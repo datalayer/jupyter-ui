@@ -22,6 +22,9 @@ const ansiConverter = new AnsiToHtml({
 // markup and styles stay, scripts and event handlers go.
 const sanitize = (html: string): string => DOMPurify.sanitize(html);
 
+// A PNG output is base64 and nothing else; anything more is not drawn.
+const BASE64 = /^[A-Za-z0-9+/]+={0,2}$/;
+
 export type OutputRendererProps = {
   output: IOutput;
 };
@@ -108,7 +111,9 @@ export const OutputRenderer = (props: OutputRendererProps) => {
       if (data) {
         const image_png = data['image/png'];
         if (image_png) {
-          img = Array.isArray(image_png) ? image_png.join('') : image_png;
+          img = (
+            Array.isArray(image_png) ? image_png.join('') : image_png
+          ).replace(/\s+/g, '');
         }
       }
       break;
@@ -118,7 +123,9 @@ export const OutputRenderer = (props: OutputRendererProps) => {
       if (data) {
         const image_png = data['image/png'];
         if (image_png) {
-          img = Array.isArray(image_png) ? image_png.join('') : image_png;
+          img = (
+            Array.isArray(image_png) ? image_png.join('') : image_png
+          ).replace(/\s+/g, '');
         }
         const text_plain = data['text/plain'];
         if (text_plain && !img) {
@@ -175,7 +182,7 @@ export const OutputRenderer = (props: OutputRendererProps) => {
           <div dangerouslySetInnerHTML={{ __html: html }} />
         </div>
       )}
-      {img && (
+      {img && BASE64.test(img) && (
         <div>
           <img src={`data:image/png;base64,${img}`} />
         </div>
