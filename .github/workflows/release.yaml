@@ -47,16 +47,20 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Check the tag names the @datalayer/jupyter-react version
+      - name: Check the tag names the version every npm package carries
         run: |
           set -euo pipefail
           tag="${GITHUB_REF_NAME#v}"
-          version="$(node -p "require('./packages/react/package.json').version")"
-          echo "tag=$tag @datalayer/jupyter-react=$version"
-          if [ "$tag" != "$version" ]; then
-            echo "::error::Tag v$tag does not match @datalayer/jupyter-react $version"
-            exit 1
-          fi
+          # The four packages are released together, at one version.
+          for ws in $NPM_WORKSPACES; do
+            name="$(node -p "require('./$ws/package.json').name")"
+            version="$(node -p "require('./$ws/package.json').version")"
+            echo "tag=$tag $name=$version"
+            if [ "$tag" != "$version" ]; then
+              echo "::error::Tag v$tag does not match $name $version"
+              exit 1
+            fi
+          done
 
       - name: Find what is not published yet
         id: plan
