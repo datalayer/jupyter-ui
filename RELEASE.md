@@ -76,7 +76,10 @@ on [npmjs.com](https://www.npmjs.com/) and add a GitHub Actions publisher:
 - Organization or user: `datalayer`
 - Repository: `jupyter-ui`
 - Workflow filename: `release.yml`
-- Environment: leave empty
+- Environment name: `npm`
+
+The `npm` environment exists in the repository settings as well, and its
+protection rules gate every npm publish the same way.
 
 Trusted publishing only applies to a package that already exists on npm. A new
 package needs a first manual `npm publish` before it can be added here and to
