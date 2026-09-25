@@ -77,6 +77,23 @@ function escapeHtml(text: string): string {
     .replace(/"/g, '&quot;');
 }
 
+/**
+ * CSS for inside a `<style>` element: a `</style` in it would end the element
+ * and let the rest be read as markup.
+ */
+function styleText(css: string): string {
+  return css.replace(/<\/style/gi, '<\\/style');
+}
+
+/**
+ * A CSS length or page size given by the caller (`A4`, `18mm`,
+ * `210mm 297mm`), kept to the characters those use; anything else falls
+ * back to `fallback`.
+ */
+function cssToken(value: string | undefined, fallback: string): string {
+  return value && /^[A-Za-z0-9 .%-]+$/.test(value) ? value : fallback;
+}
+
 /** The page's stylesheets, as tags for another document. */
 function stylesheetTags(doc: Document): string {
   const tags: string[] = [];
@@ -86,7 +103,7 @@ function stylesheetTags(doc: Document): string {
         tags.push(`<link rel="stylesheet" href="${escapeHtml(node.href)}">`);
       }
     } else {
-      tags.push(`<style>${node.textContent ?? ''}</style>`);
+      tags.push(`<style>${styleText(node.textContent ?? '')}</style>`);
     }
   });
   return tags.join('\n');
@@ -181,16 +198,16 @@ export function buildPrintHtml(
   const context = ancestorContext(root);
   const title = options.title ?? document.title ?? 'Document';
   return `<!doctype html>
-<html lang="${document.documentElement.lang || 'en'}" class="${escapeHtml(context.classes)}" ${context.attributes}>
+<html lang="${escapeHtml(document.documentElement.lang || 'en')}" class="${escapeHtml(context.classes)}" ${context.attributes}>
 <head>
 <meta charset="utf-8">
 <title>${escapeHtml(title)}</title>
 <base href="${escapeHtml(document.baseURI)}">
 ${stylesheetTags(document)}
 <style>
-@page { size: ${options.pageSize ?? 'A4'}; margin: ${options.margin ?? '18mm'}; }
+@page { size: ${cssToken(options.pageSize, 'A4')}; margin: ${cssToken(options.margin, '18mm')}; }
 ${PRINT_CSS}
-${options.css ?? ''}
+${styleText(options.css ?? '')}
 </style>
 </head>
 <body class="${escapeHtml(context.classes)}" ${context.attributes}>

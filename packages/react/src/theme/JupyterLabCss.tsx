@@ -349,12 +349,11 @@ export function JupyterLabCss(props: JupyterLabCssProps): JSX.Element {
           silenceConflictingThemeLinks();
           // Inject at the END of body so it takes precedence over
           // any <link> tags the JupyterLab theme manager may have appended.
-          document.body.insertAdjacentHTML(
-            'beforeend',
-            `<style ${DATA_JUPYTERLAB_THEME}="${colormode}">
-${css}
-</style>`
-          );
+          // Built as an element, not a string of markup: the CSS is text.
+          const style = document.createElement('style');
+          style.setAttribute(DATA_JUPYTERLAB_THEME, colormode);
+          style.textContent = css;
+          document.body.appendChild(style);
           injectedHere.current = true;
         }
       })

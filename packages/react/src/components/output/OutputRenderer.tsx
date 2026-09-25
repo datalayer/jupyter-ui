@@ -6,13 +6,21 @@
 
 import { IOutput } from '@jupyterlab/nbformat';
 import AnsiToHtml from 'ansi-to-html';
+import { Sanitizer } from '@jupyterlab/apputils';
 
 const ansiConverter = new AnsiToHtml({
   fg: 'currentColor',
   bg: 'transparent',
   newline: false,
-  escapeXML: false,
+  // A traceback is text: markup in it (a repr, an exception message) must be
+  // shown, not parsed. The converter escapes it before adding its colours.
+  escapeXML: true,
 });
+
+// `text/html` outputs are run through JupyterLab's own sanitizer, as
+// JupyterLab does for a notebook it does not trust: markup and styles stay,
+// scripts and event handlers go.
+const sanitizer = new Sanitizer();
 
 export type OutputRendererProps = {
   output: IOutput;
@@ -124,11 +132,9 @@ export const OutputRenderer = (props: OutputRendererProps) => {
         }
         const text_html = data['text/html'];
         if (text_html && !img) {
-          if (typeof text_html === 'string') {
-            html = text_html;
-          } else {
-            html = text_html.join('\n');
-          }
+          html = sanitizer.sanitize(
+            typeof text_html === 'string' ? text_html : text_html.join('\n')
+          );
         }
       }
       break;
