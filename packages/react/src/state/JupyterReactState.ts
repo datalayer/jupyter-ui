@@ -276,16 +276,22 @@ export function useJupyterReactStoreFromProps(
         return;
       }
       /*
-       * Publish the manager this effect made — unless another component
-       * published one while it was being made (the auth check and the lite
-       * start are both asynchronous). Then that one is adopted and this one
-       * disposed, so the application still ends up with a single manager.
+       * Another component may publish a manager while this effect waits (the
+       * auth check and the lite start are both asynchronous). Then that one
+       * is adopted, so the application ends up with a single manager.
        */
-      const commit = (created: ServiceManager.IManager) => {
+      const adoptPublished = (): boolean => {
         const already = jupyterReactStore.getState().serviceManager;
-        if (already && already !== created) {
-          created.dispose();
+        if (already) {
           setServiceManager(already);
+          return true;
+        }
+        return false;
+      };
+      // A manager already made is not disposed when another won: disposing
+      // rejects its polls ("Poll ... is disposed"), and nothing awaits them.
+      const commit = (created: ServiceManager.IManager) => {
+        if (adoptPublished()) {
           return;
         }
         jupyterReactStore.getState().setServiceManager(created);
@@ -321,6 +327,10 @@ export function useJupyterReactStoreFromProps(
           throw new Error(
             'You can not ask for startDefaultKernel and (useRunningKernelId or useRunningKernelIndex) at the same time.'
           );
+        }
+        // Checked before one is made, so none is made for nothing.
+        if (adoptPublished()) {
+          return;
         }
         commit(new ServiceManager({ serverSettings }));
       });
