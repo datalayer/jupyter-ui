@@ -330,7 +330,7 @@ The Lexical package supports plugins for:
 
 ### GitHub Actions Workflows
 
-**build.yml:**
+**build.yaml:**
 
 - Runs on main branch and PRs
 - Build verification across packages
@@ -351,7 +351,7 @@ The Lexical package supports plugins for:
 
 **Other Workflows:**
 
-- `fix-license-header.yml` - Automatic license header corrections
+- `fix-license-header.yaml` - Automatic license header corrections
 - `publish-dev.yml` - Publishes dev versions to GitHub Packages
 
 ## Recent Improvements (2024-2025)
@@ -415,7 +415,7 @@ The Lexical package supports plugins for:
 
 ### Files Modified in Latest Session
 
-- `.github/workflows/build.yml` - Updated Storybook test runner configuration
+- `.github/workflows/build.yaml` - Updated Storybook test runner configuration
 - `storybook/package.json` - Added test:all:ci script
 - `packages/react/src/components/terminal/TerminalAdapter.ts` - Fixed BoxPanel initialization
 
