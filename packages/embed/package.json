@@ -61,7 +61,7 @@
     "watch": "tsc -w"
   },
   "dependencies": {
-    "@datalayer/jupyter-react": "^2.0.14",
+    "@datalayer/jupyter-react": "^2.0.16",
     "@datalayer/primer-addons": "^1.0.12",
     "@primer/react": "^37.31.0",
     "react": "19.2.8",

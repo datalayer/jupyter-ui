@@ -28,7 +28,7 @@
     "kill": "./../../dev/sh/kill.sh || true"
   },
   "dependencies": {
-    "@datalayer/jupyter-lexical": "^1.0.16",
+    "@datalayer/jupyter-lexical": "^1.0.25",
     "@datalayer/primer-addons": "^1.0.12",
     "react": "19.2.8",
     "react-dom": "19.2.8",
