@@ -47,6 +47,8 @@ import { Session, SessionManager } from '@jupyterlab/services';
 import { runIcon } from '@jupyterlab/ui-components';
 import { createStandaloneCell, IYText } from '@jupyter/ydoc';
 import { execute as executeOutput } from './../output/OutputExecutor';
+import { MarimoReactive } from '../../jupyter/marimo/reactive';
+import { DEFAULT_VARIANT, type JupyterVariant } from '../../jupyter/variant';
 import {
   ClassicWidgetManager,
   WIDGET_MIMETYPE,
@@ -70,12 +72,14 @@ export class CellAdapter {
   private _kernel: Kernel;
   private _panel: BoxPanel;
   private _sessionContext: SessionContext;
+  private _variant?: JupyterVariant;
   private _type: 'code' | 'markdown' | 'raw';
   private _iPyWidgetsClassicManager?: ClassicWidgetManager;
 
   public constructor(options: CellAdapter.ICellAdapterOptions) {
-    const { id, type, source, outputs, kernel, boxOptions } = options;
+    const { id, type, source, outputs, kernel, boxOptions, variant } = options;
     this._id = id;
+    this._variant = variant;
     this._outputs = outputs;
     this._kernel = kernel;
     this._type = type;
@@ -461,20 +465,39 @@ export class CellAdapter {
     return this._kernel;
   }
 
-  execute = () => {
+  /** The semantics this cell runs with: its own, else its kernel's. */
+  get variant(): JupyterVariant {
+    return this._variant ?? this._kernel?.variant ?? DEFAULT_VARIANT;
+  }
+
+  /**
+   * Run the cell, and — on a marimo kernel — what depends on it.
+   *
+   * `react: false` runs the cell alone: it is how the kernel's reactive graph
+   * runs this cell as a dependent of another.
+   */
+  execute = ({ react = true }: { react?: boolean } = {}) => {
     if (this._type === 'code') {
       this._iPyWidgetsClassicManager?.registerWithKernel(
         this._kernel.connection
       );
-      this._execute(this._cell as CodeCell);
+      this._execute(this._cell as CodeCell, undefined, react);
     } else if (this._type === 'markdown') {
       (this._cell as MarkdownCell).rendered = true;
     }
   };
 
+  private reactive(): MarimoReactive | undefined {
+    const connection = this._kernel?.connection;
+    return this.variant === 'marimo' && connection
+      ? MarimoReactive.for(connection)
+      : undefined;
+  }
+
   private async _execute(
     cell: CodeCell,
-    metadata?: JSONObject
+    metadata?: JSONObject,
+    react = true
   ): Promise<KernelMessage.IExecuteReplyMsg | void> {
     cellsStore.getState().setIsExecuting(this._id, true);
     const model = cell.model;
@@ -485,6 +508,16 @@ export class CellAdapter {
       }, false);
       cellsStore.getState().setIsExecuting(this._id, false);
       return new Promise(() => {});
+    }
+    const reactive = this.reactive();
+    if (reactive) {
+      reactive.bindRunner(this._id, () =>
+        this._execute(cell, undefined, false)
+      );
+      const registration = await reactive.register(this._id, code);
+      if (registration.error) {
+        reactive.unbindRunner(this._id);
+      }
     }
     const cellId = { cellId: model.sharedModel.getId() };
     metadata = {
@@ -565,6 +598,14 @@ export class CellAdapter {
         model.setMetadata('execution', timingInfo);
       }
       cellsStore.getState().setIsExecuting(this._id, false);
+      if (
+        reactive &&
+        react &&
+        !reactive.reacting &&
+        executeReplyMessage.content.status === 'ok'
+      ) {
+        await reactive.react(this._id);
+      }
       return executeReplyMessage;
     } catch (e) {
       cellsStore.getState().setIsExecuting(this._id, false);
@@ -588,6 +629,8 @@ export class CellAdapter {
 
 export namespace CellAdapter {
   export type ICellAdapterOptions = {
+    /** `marimo` makes the cell reactive on its kernel; defaults to the kernel's variant. */
+    variant?: JupyterVariant;
     id: string;
     type: 'code' | 'markdown' | 'raw';
     source: string;

@@ -155,6 +155,11 @@ const renderStandaloneExample = async (examplePath: string) => {
       root.render(<module.default />);
       return;
     }
+    case 'LexicalMarimo': {
+      const module = await import('./LexicalMarimo');
+      root.render(<module.default />);
+      return;
+    }
     case 'LexicalPdf': {
       const module = await import('./LexicalPdf');
       root.render(<module.default />);

@@ -5,6 +5,7 @@
  */
 
 import type { JSX } from 'react';
+import type { JupyterVariant } from '../../jupyter/variant';
 import React, { useEffect, useState } from 'react';
 import { createGlobalStyle } from 'styled-components';
 import type { INotebookContent } from '@jupyterlab/nbformat';
@@ -83,6 +84,12 @@ export interface INotebookProps {
    * Whether the notebook is read-only or not.
    */
   readonly?: boolean;
+  /**
+   * `marimo` makes the notebook reactive: running a cell re-runs the cells
+   * that depend on what it defines, in dependency order, through Marimo's
+   * own dataflow graph kept in the kernel. `jupyter` by default.
+   */
+  variant?: JupyterVariant;
   /**
    * Additional cell output renderers.
    */
@@ -172,6 +179,7 @@ export function Notebook(
     serviceManager,
     startDefaultKernel = false,
     url,
+    variant,
   } = props;
 
   const [isLoading, setIsLoading] = useState(true);
@@ -328,6 +336,7 @@ export function Notebook(
             renderers={renderers}
             serviceManager={serviceManager}
             onSessionConnection={onSessionConnection}
+            variant={variant}
           />
         )}
       </Box>

@@ -27,6 +27,9 @@ const JUPYTER_REACT_PATH_COOKIE_NAME = 'jupyter-react-kernel-path';
 /**
  * Jupyter Kernel handler
  */
+import { MarimoReactive } from '../marimo/reactive';
+import { DEFAULT_VARIANT, type JupyterVariant } from '../variant';
+
 export class Kernel {
   private _clientId: string;
   private _connectionStatus: ConnectionStatus;
@@ -43,6 +46,7 @@ export class Kernel {
   private _session: ISessionConnection;
   private _sessionId: string;
   private _sessionManager: Session.IManager;
+  private _variant: JupyterVariant;
 
   public constructor(props: Kernel.IKernelProps) {
     const {
@@ -54,7 +58,9 @@ export class Kernel {
       kernelModel,
       path,
       sessionManager,
+      variant,
     } = props;
+    this._variant = variant ?? DEFAULT_VARIANT;
     this._kernelSpecManager = kernelspecsManager;
     this._kernelManager = kernelManager;
     this._kernelName = kernelName;
@@ -237,6 +243,22 @@ export class Kernel {
     return this._session;
   }
 
+  /** Which notebook semantics this kernel follows: `jupyter`, or `marimo`. */
+  get variant(): JupyterVariant {
+    return this._variant;
+  }
+
+  /**
+   * Marimo's reactive graph on this kernel: the cells registered on it and
+   * how they re-run each other. One per connection, shared by every
+   * component on the kernel; `undefined` until the kernel is connected.
+   */
+  get marimo(): MarimoReactive | undefined {
+    return this._kernelConnection
+      ? MarimoReactive.for(this._kernelConnection)
+      : undefined;
+  }
+
   get sessionManager(): Session.IManager {
     return this._sessionManager;
   }
@@ -384,6 +406,11 @@ export namespace Kernel {
      * Kernel model
      */
     kernelModel?: JupyterKernel.IModel;
+    /**
+     * Which notebook semantics the kernel follows; `jupyter` by default.
+     * `marimo` makes every cell on it reactive (see `jupyter/marimo`).
+     */
+    variant?: JupyterVariant;
   };
 }
 

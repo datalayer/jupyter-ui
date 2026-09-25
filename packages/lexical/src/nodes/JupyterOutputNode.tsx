@@ -28,6 +28,7 @@ import {
   OutputAdapter,
   newUuid,
   Kernel,
+  type JupyterVariant,
 } from '@datalayer/jupyter-react';
 import { isJupyterOutputNodeOrphaned } from './JupyterOutputNodeUtils';
 
@@ -38,6 +39,8 @@ export type SerializedJupyterOutputNode = Spread<
     outputs: IOutput[];
     jupyterInputNodeUuid: string;
     jupyterOutputNodeUuid: string;
+    /** `marimo` for a reactive cell; unset means the kernel's own variant. */
+    variant?: JupyterVariant;
     version: 1;
   },
   SerializedLexicalNode
@@ -51,6 +54,7 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
   __jupyterInputNodeUuid: string;
   __jupyterOutputNodeUuid: string;
   __executeTrigger: number;
+  __variant?: JupyterVariant;
   __renderTrigger: number;
 
   /** @override */
@@ -68,6 +72,7 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
       node.__jupyterInputNodeUuid,
       node.__jupyterOutputNodeUuid,
       node.__key,
+      node.__variant,
     );
     // The constructor zeroes the triggers; a clone is a new *version* of the
     // same node, not a new cell. Losing the counters made the decorator's
@@ -86,11 +91,19 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
     // carry for others — a generated report marks its outputs as evidence.
     return $createJupyterOutputNode(
       serializedNode.source,
-      new OutputAdapter(newUuid(), undefined, serializedNode.outputs),
+      new OutputAdapter(
+        newUuid(),
+        undefined,
+        serializedNode.outputs,
+        undefined,
+        false,
+        serializedNode.variant,
+      ),
       serializedNode.outputs,
       false,
       serializedNode.jupyterInputNodeUuid,
       serializedNode.jupyterOutputNodeUuid,
+      serializedNode.variant,
     ).updateFromJSON(serializedNode);
   }
 
@@ -103,8 +116,10 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
     jupyterInputNodeUuid?: string,
     jupyterOutputNodeUuid?: string,
     key?: NodeKey,
+    variant?: JupyterVariant,
   ) {
     super(key);
+    this.__variant = variant;
     this.__jupyterInputNodeUuid = jupyterInputNodeUuid || UUID.uuid4();
     this.__jupyterOutputNodeUuid = jupyterOutputNodeUuid || UUID.uuid4();
     this.__code = source;
@@ -240,6 +255,7 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
         renderTrigger={this.__renderTrigger}
         autoRun={this.__autoRun}
         lumino={true}
+        variant={this.__variant}
       />
     );
   }
@@ -254,6 +270,7 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
       outputs: this.__outputAdapter.outputArea.model.toJSON(),
       jupyterInputNodeUuid: this.getJupyterInputNodeUuid(),
       jupyterOutputNodeUuid: this.getJupyterOutputNodeUuid(),
+      variant: this.__variant,
       version: 1,
     };
   }
@@ -340,6 +357,7 @@ export function $createJupyterOutputNode(
   autoRun: boolean,
   jupyterInputNodeUuid: string,
   jupyterOutputNodeUuid: string,
+  variant?: JupyterVariant,
 ): JupyterOutputNode {
   return new JupyterOutputNode(
     code,
@@ -348,6 +366,8 @@ export function $createJupyterOutputNode(
     autoRun,
     jupyterInputNodeUuid,
     jupyterOutputNodeUuid,
+    undefined,
+    variant,
   );
 }
 

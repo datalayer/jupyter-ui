@@ -15,7 +15,7 @@ import {
 } from 'lexical';
 import { IOutput } from '@jupyterlab/nbformat';
 import { JupyterCellProps } from './../plugins/JupyterCellPlugin';
-import { Cell } from '@datalayer/jupyter-react';
+import { Cell, type JupyterVariant } from '@datalayer/jupyter-react';
 import { debugLog } from '../utils/debugLog';
 
 const TYPE = 'jupyter-cell';
@@ -26,6 +26,7 @@ export class JupyterCellNode extends DecoratorNode<ReactNode> {
   private __loading: string;
   private __autoStart: boolean;
   private __data: any;
+  private __variant?: JupyterVariant;
 
   /** @override */
   static getType() {
@@ -42,6 +43,7 @@ export class JupyterCellNode extends DecoratorNode<ReactNode> {
       node.__autoStart,
       node.__data,
       node.__key,
+      node.__variant,
     );
   }
 
@@ -53,6 +55,7 @@ export class JupyterCellNode extends DecoratorNode<ReactNode> {
     autoStart: boolean,
     data = '[]',
     key?: NodeKey,
+    variant?: JupyterVariant,
   ) {
     super(key);
     this.__code = code;
@@ -60,6 +63,7 @@ export class JupyterCellNode extends DecoratorNode<ReactNode> {
     this.__loading = loading;
     this.__autoStart = autoStart;
     this.__data = data;
+    this.__variant = variant;
   }
 
   /** @override */
@@ -89,6 +93,7 @@ export class JupyterCellNode extends DecoratorNode<ReactNode> {
         source={this.__code}
         outputs={this.__outputs}
         autoStart={this.__autoStart}
+        variant={this.__variant}
       />
     );
   }
@@ -125,6 +130,11 @@ export class JupyterCellNode extends DecoratorNode<ReactNode> {
     return this.__autoStart;
   }
 
+  /** `marimo` for a reactive cell; unset means the kernel's own variant. */
+  get variant(): JupyterVariant | undefined {
+    return this.__variant;
+  }
+
   /** @override */
   setData(data: any) {
     const self = this.getWritable();
@@ -143,6 +153,8 @@ export class JupyterCellNode extends DecoratorNode<ReactNode> {
       n.loading,
       n.autoStart,
       n.data,
+      undefined,
+      n.variant,
     );
   }
 
@@ -154,6 +166,7 @@ export class JupyterCellNode extends DecoratorNode<ReactNode> {
       loading: this.__loading,
       autoStart: this.__autoStart,
       data: this.__data,
+      variant: this.__variant,
       type: TYPE,
       version: 1,
     };

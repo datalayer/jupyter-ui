@@ -21,6 +21,8 @@ import {
   type LexicalEditor,
 } from 'lexical';
 import type { IOutput } from '@jupyterlab/nbformat';
+import type { JupyterVariant } from '@datalayer/jupyter-react';
+import { mergeRegister } from '@lexical/utils';
 import {
   $createJupyterCellNode,
   JupyterCellNode,
@@ -31,9 +33,18 @@ export type JupyterCellProps = {
   outputs: IOutput[];
   loading: string;
   autoStart: boolean;
+  /** `marimo` for a reactive cell; unset means the kernel's own variant. */
+  variant?: JupyterVariant;
 };
 
 export const INSERT_JUPYTER_CELL_COMMAND = createCommand<JupyterCellProps>();
+
+/**
+ * Insert a Marimo cell: a Jupyter cell whose variant is `marimo`, reactive
+ * on the kernel it shares with the document's other Marimo cells.
+ */
+export const INSERT_MARIMO_CELL_COMMAND =
+  createCommand<Omit<JupyterCellProps, 'variant'>>();
 
 /**
  * Handle `INSERT_JUPYTER_CELL_COMMAND` on `editor`.
@@ -44,14 +55,28 @@ export function registerJupyterCell(editor: LexicalEditor): () => void {
   if (!editor.hasNodes([JupyterCellNode])) {
     throw new Error('JupyterCellNode is not registered.');
   }
-  return editor.registerCommand(
-    INSERT_JUPYTER_CELL_COMMAND,
-    (props: JupyterCellProps) => {
-      const jupyterNode = $createJupyterCellNode(props);
-      $insertNodes([jupyterNode]);
-      return true;
-    },
-    COMMAND_PRIORITY_EDITOR,
+  return mergeRegister(
+    editor.registerCommand(
+      INSERT_JUPYTER_CELL_COMMAND,
+      (props: JupyterCellProps) => {
+        const jupyterNode = $createJupyterCellNode(props);
+        $insertNodes([jupyterNode]);
+        return true;
+      },
+      COMMAND_PRIORITY_EDITOR,
+    ),
+    editor.registerCommand(
+      INSERT_MARIMO_CELL_COMMAND,
+      props => {
+        const marimoNode = $createJupyterCellNode({
+          ...props,
+          variant: 'marimo',
+        });
+        $insertNodes([marimoNode]);
+        return true;
+      },
+      COMMAND_PRIORITY_EDITOR,
+    ),
   );
 }
 

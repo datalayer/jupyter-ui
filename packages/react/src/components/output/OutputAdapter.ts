@@ -26,6 +26,8 @@ import {
 import { requireLoader as loader } from '../../jupyter/ipywidgets/libembed-amd';
 import { IExecutionPhaseOutput, Kernel } from '../../jupyter/kernel';
 import { execute } from './OutputExecutor';
+import { MarimoReactive } from '../../jupyter/marimo/reactive';
+import { DEFAULT_VARIANT, type JupyterVariant } from '../../jupyter/variant';
 
 export class OutputAdapter {
   private _id: string;
@@ -35,16 +37,20 @@ export class OutputAdapter {
   private _rendermime: RenderMimeRegistry;
   private _iPyWidgetsManager: ClassicWidgetManager;
   private _suppressCodeExecutionErrors: boolean;
+  private _variant?: JupyterVariant;
+  private _lastCode = '';
 
   public constructor(
     id: string,
     kernel?: Kernel,
     outputs?: IOutput[],
     outputAreaModel?: IOutputAreaModel,
-    suppressCodeExecutionErrors: boolean = false
+    suppressCodeExecutionErrors: boolean = false,
+    variant?: JupyterVariant
   ) {
     this._id = id;
     this._kernel = kernel;
+    this._variant = variant;
     this._suppressCodeExecutionErrors = suppressCodeExecutionErrors;
     this._renderers = standardRendererFactories.filter(
       factory => factory.mimeTypes[0] !== 'text/javascript'
@@ -92,11 +98,41 @@ export class OutputAdapter {
     this.initKernel();
   }
 
+  /**
+   * The semantics this output runs with: its own, else its kernel's.
+   */
+  get variant(): JupyterVariant {
+    return this._variant ?? this._kernel?.variant ?? DEFAULT_VARIANT;
+  }
+
+  /**
+   * Run the code, and — on a marimo kernel — what depends on it.
+   *
+   * The output registers its code in the kernel's reactive graph under its
+   * own id, so other cells on the kernel re-run it when they change what it
+   * reads, and runs the cells that read what it defines. `react: false` is
+   * how the graph runs this output as one of those: the cell alone.
+   */
   public async execute(
     code: string,
-    onExecutionPhaseChanged?: (phaseOutput: IExecutionPhaseOutput) => void
+    onExecutionPhaseChanged?: (phaseOutput: IExecutionPhaseOutput) => void,
+    { react = true }: { react?: boolean } = {}
   ) {
     if (this._kernel) {
+      this._lastCode = code;
+      const reactive = this.reactive();
+      if (reactive) {
+        reactive.bindRunner(this._id, () =>
+          this.execute(this._lastCode, onExecutionPhaseChanged, {
+            react: false,
+          })
+        );
+        const registration = await reactive.register(this._id, code);
+        if (registration.error) {
+          // Not runnable: the kernel will say so with the same error.
+          reactive.unbindRunner(this._id);
+        }
+      }
       this.clear();
       const metadata: JSONObject = {};
       await this._iPyWidgetsManager.ready.promise;
@@ -111,9 +147,24 @@ export class OutputAdapter {
           this._suppressCodeExecutionErrors,
           onExecutionPhaseChanged
         );
-        await done;
+        const reply = await done;
+        if (
+          reactive &&
+          react &&
+          !reactive.reacting &&
+          reply?.content.status === 'ok'
+        ) {
+          await reactive.react(this._id);
+        }
       }
     }
+  }
+
+  private reactive(): MarimoReactive | undefined {
+    const connection = this._kernel?.connection;
+    return this.variant === 'marimo' && connection
+      ? MarimoReactive.for(connection)
+      : undefined;
   }
 
   public interrupt() {

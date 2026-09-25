@@ -5,6 +5,7 @@
  */
 
 import { IOutput } from '@jupyterlab/nbformat';
+import type { JupyterVariant } from '../../jupyter/variant';
 import { IOutputAreaModel } from '@jupyterlab/outputarea';
 import { KernelMessage } from '@jupyterlab/services';
 import { Box } from '@datalayer/primer-addons';
@@ -83,6 +84,12 @@ export type IOutputProps = {
   suppressCodeExecutionErrors?: boolean;
   toolbarPosition?: 'up' | 'middle' | 'none';
   notifyOnComplete?: boolean;
+  /**
+   * `marimo` makes this output reactive on its kernel: it re-runs when a
+   * cell it reads from runs, and runs the cells that read from it. Defaults
+   * to the kernel's own variant.
+   */
+  variant?: JupyterVariant;
 };
 
 export const Output = ({
@@ -108,6 +115,7 @@ export const Output = ({
   suppressCodeExecutionErrors = false,
   toolbarPosition = 'up',
   notifyOnComplete = false,
+  variant,
 }: IOutputProps) => {
   void notifyOnComplete;
   const { defaultKernel } = useJupyter();
@@ -178,7 +186,8 @@ export const Output = ({
           kernel,
           outputs ?? [],
           model,
-          suppressCodeExecutionErrors
+          suppressCodeExecutionErrors,
+          variant
         );
       setAdapter(nextAdapter);
       outputStore.setAdapter(id, nextAdapter);

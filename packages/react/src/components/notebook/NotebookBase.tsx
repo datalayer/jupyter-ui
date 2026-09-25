@@ -5,6 +5,7 @@
  */
 
 import type { JSX } from 'react';
+import { DEFAULT_VARIANT, type JupyterVariant } from '../../jupyter/variant';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ISessionContext } from '@jupyterlab/apputils';
 import type { Cell, CodeCell, ICellModel } from '@jupyterlab/cells';
@@ -277,6 +278,8 @@ function generateInlineProviderSettings(
  * Base notebook component properties
  */
 export interface INotebookBaseProps {
+  /** `marimo` makes the notebook reactive; `jupyter` by default. */
+  variant?: JupyterVariant;
   /**
    * Custom command registry.
    *
@@ -371,6 +374,7 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
     model,
     onSessionConnection,
     synced = true,
+    variant = DEFAULT_VARIANT,
   } = props;
 
   const [isLoading, setIsLoading] = useState(true);
@@ -713,7 +717,8 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
         thisAdapter = new NotebookAdapter(
           features.commands,
           thisPanel,
-          context
+          context,
+          variant
         );
         setAdapter(thisAdapter);
 
