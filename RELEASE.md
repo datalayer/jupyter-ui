@@ -9,7 +9,7 @@ publishing (OIDC): no token is stored in the repository.
 1. Bump the versions of the packages you want to release, in a pull request:
    - npm: `version` in `packages/react/package.json` and
      `packages/lexical/package.json` (and `packages/docusaurus-plugin/package.json`
-     when it changed). Update the `@datalayer/jupyter-react` and
+     or `packages/embed/package.json` when they changed). Update the `@datalayer/jupyter-react` and
      `@datalayer/jupyter-lexical` ranges of the packages that depend on them:
      `packages/lexical`, `packages/docusaurus-plugin`, `packages/embed`,
      `examples/*` and `storybook`.
@@ -46,7 +46,7 @@ server extension.
 whatever was bumped, and leaves the rest alone. A re-run of the workflow for
 the same tag publishes only what is still missing.
 
-`@datalayer/jupyter-embed`, the storybook and the examples are not published.
+The storybook and the examples are not published.
 
 ## One-time setup
 
@@ -69,8 +69,8 @@ reviewers, gate every PyPI upload.
 
 ### npm
 
-For each package, `@datalayer/jupyter-react`, `@datalayer/jupyter-lexical` and
-`@datalayer/jupyter-docusaurus-plugin`, open _Settings → Trusted publishing_
+For each package, `@datalayer/jupyter-react`, `@datalayer/jupyter-lexical`,
+`@datalayer/jupyter-docusaurus-plugin` and `@datalayer/jupyter-embed`, open _Settings → Trusted publishing_
 on [npmjs.com](https://www.npmjs.com/) and add a GitHub Actions publisher:
 
 - Organization or user: `datalayer`

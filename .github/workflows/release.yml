@@ -26,7 +26,7 @@ env:
   # Same heap as CI: the embed package bundles all its dependencies.
   NODE_OPTIONS: '--max-old-space-size=8192'
   # The public npm workspaces this workflow releases.
-  NPM_WORKSPACES: packages/react packages/lexical packages/docusaurus-plugin
+  NPM_WORKSPACES: packages/react packages/lexical packages/docusaurus-plugin packages/embed
   # The Python packages this workflow releases (directories with a pyproject).
   PY_PACKAGES: packages/react packages/lexical
 
