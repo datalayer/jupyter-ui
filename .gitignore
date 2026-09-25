@@ -196,4 +196,6 @@ packages/react/.vscode/launch.json
 *-lock.json
 
 # marimo runtime bundle, built by packages/react/marimo/build.mjs
-packages/react/src/marimo/bundle/
+# (the directory's contents, not the directory: index.d.ts is checked in)
+packages/react/src/marimo/bundle/*
+!packages/react/src/marimo/bundle/index.d.ts
