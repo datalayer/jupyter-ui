@@ -23,6 +23,8 @@ import { readCellOperation } from '../operations/readCell';
 import { readAllCellsOperation } from '../operations/readAllCells';
 import { runCellOperation } from '../operations/runCell';
 import { executeCodeOperation } from '../operations/executeCode';
+import { DefaultExecutor } from '../core/executor';
+import { notebookToolOperations } from '../index';
 import type {
   ToolExecutor,
   ToolExecutionContext,
@@ -115,7 +117,7 @@ class FakeNotebookExecutor implements ToolExecutor {
           outputs: [],
         };
 
-      case 'executeCodeInNotebook':
+      case 'executeCode':
         return {
           success: true,
           outputs: [
@@ -342,6 +344,36 @@ describe('OperationRunner', () => {
 
       expect(typeof result).toBe('string');
       expect(result).toContain('success');
+    });
+
+    /*
+     * The operation was renamed for the agent (`executeCodeInNotebook`);
+     * the notebook store's method was not. Run the real executor against a
+     * store that, like the real one, only has `executeCode`.
+     */
+    it('reaches the store method, executeCode, through the DefaultExecutor', async () => {
+      const calls: unknown[] = [];
+      const store = {
+        executeCode: async (payload: unknown) => {
+          calls.push(payload);
+          return { success: true, outputs: [] };
+        },
+      };
+      const executor = new DefaultExecutor('nb-1', store as never);
+      const result = await runner.execute(
+        executeCodeOperation,
+        { code: '1 + 1' },
+        { executor, documentId: 'nb-1', format: 'json' }
+      );
+      expect(result).toHaveProperty('success', true);
+      expect(calls).toEqual([{ id: 'nb-1', code: '1 + 1' }]);
+    });
+
+    it('still answers to its former operation name', () => {
+      expect(notebookToolOperations.executeCode).toBe(executeCodeOperation);
+      expect(notebookToolOperations.executeCodeInNotebook).toBe(
+        executeCodeOperation
+      );
     });
   });
 

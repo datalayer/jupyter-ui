@@ -60,6 +60,11 @@ export const notebookToolOperations: Record<
   readAllCells: readAllCellsOperation,
   runCell: runCellOperation,
   executeCodeInNotebook: executeCodeOperation,
+  /**
+   * @deprecated The operation's name before it became `executeCodeInNotebook`;
+   * kept so callers that still send it resolve. Removed in the next major.
+   */
+  executeCode: executeCodeOperation,
 };
 
 /**

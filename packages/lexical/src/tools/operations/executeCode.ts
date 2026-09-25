@@ -83,9 +83,10 @@ export const executeCodeOperation: ToolOperation<
     }
 
     try {
-      // Call executor (uses this.name for DRY principle)
+      // The store's method keeps its original name, `executeCode`: the
+      // operation was renamed for the agent, the store it drives was not.
       const result = (await context.executor.execute(
-        this.name,
+        'executeCode',
         validatedParams,
       )) as ExecuteCodeResult;
 

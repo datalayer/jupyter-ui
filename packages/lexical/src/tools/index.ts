@@ -70,6 +70,11 @@ export const lexicalToolOperations: Record<
   runAllBlocks: runAllBlocksOperation,
   listAvailableBlocks: listAvailableBlocksOperation,
   executeCodeInDocument: executeCodeOperation,
+  /**
+   * @deprecated The operation's name before it became `executeCodeInDocument`;
+   * kept so callers that still send it resolve. Removed in the next major.
+   */
+  executeCode: executeCodeOperation,
 };
 
 /**
