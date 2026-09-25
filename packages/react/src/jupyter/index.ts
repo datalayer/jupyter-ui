@@ -13,5 +13,7 @@ export * from './collaboration';
 export * from './ipywidgets';
 export * from './kernel';
 export * from './lite';
+export * from './marimo';
 export * from './renderers';
 export * from './services';
+export * from './variant';

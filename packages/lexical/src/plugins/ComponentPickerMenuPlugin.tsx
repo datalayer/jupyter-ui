@@ -253,6 +253,20 @@ export const ComponentPickerMenuPlugin = ({
           });
         },
       }),
+      // Reactive: running it re-runs the document's other Marimo cells that
+      // read what it defines, and it re-runs when what it reads changes.
+      new ComponentPickerOption('Marimo Cell', {
+        icon: <CodeIcon size={16} />,
+        keywords: ['marimo', 'reactive', 'python', 'cell'],
+        onSelect: () => {
+          editor.dispatchCommand(INSERT_JUPYTER_INPUT_OUTPUT_COMMAND, {
+            code: initCode,
+            outputs: DEFAULT_INITIAL_OUTPUTS,
+            loading: 'Loading...',
+            variant: 'marimo',
+          });
+        },
+      }),
       new ComponentPickerOption('Paragraph', {
         icon: <TypographyIcon size={16} />,
         keywords: ['normal', 'paragraph', 'p', 'text'],

@@ -57,6 +57,12 @@ const EXAMPLES: Array<{ name: string; path: string; description: string }> = [
       'Record a video in the page or with Loom; draw a deck and edit its specification.',
   },
   {
+    name: 'Marimo Cells',
+    path: 'LexicalMarimo',
+    description:
+      'Reactive cells in a document: running one runs the cells that read it.',
+  },
+  {
     name: 'PDF Export',
     path: 'LexicalPdf',
     description:

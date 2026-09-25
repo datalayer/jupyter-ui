@@ -5,6 +5,7 @@
  */
 
 import { useState, useEffect, useMemo, useRef } from 'react';
+import type { JupyterVariant } from '../../jupyter/variant';
 import { CodeCell, MarkdownCell } from '@jupyterlab/cells';
 import { ICell, IOutput } from '@jupyterlab/nbformat';
 import { Spinner } from '@primer/react';
@@ -60,6 +61,12 @@ export type ICellProps = {
    * are ignored in this mode.
    */
   readOnly?: boolean;
+  /**
+   * `marimo` makes this cell reactive on its kernel: running it re-runs the
+   * cells that read what it defines, and it re-runs when what it reads
+   * changes. Defaults to the kernel's own variant.
+   */
+  variant?: JupyterVariant;
 };
 
 export const Cell = ({
@@ -71,6 +78,7 @@ export const Cell = ({
   showToolbar = true,
   source = '',
   type = 'code',
+  variant,
 }: ICellProps) => {
   const [id] = useState(providedId || newUuid());
   const [adapter, setAdapter] = useState<CellAdapter>();
@@ -113,6 +121,7 @@ export const Cell = ({
           outputs,
           kernel,
           boxOptions: { showToolbar },
+          variant,
         });
         setAdapter(adapter);
         cellsStore.setAdapter(id, adapter);

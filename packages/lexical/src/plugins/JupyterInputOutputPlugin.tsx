@@ -33,6 +33,7 @@ import {
   newUuid,
   Kernel,
   OnSessionConnection,
+  type JupyterVariant,
 } from '@datalayer/jupyter-react';
 import { UUID } from '@lumino/coreutils';
 import { IOutput } from '@jupyterlab/nbformat';
@@ -150,6 +151,8 @@ export type JupyterInputOutputProps = {
   code: string;
   outputs?: IOutput[];
   loading?: string;
+  /** `marimo` for a reactive cell; unset means the kernel's own variant. */
+  variant?: JupyterVariant;
 };
 
 export type JupyterInputOutputPluginProps = {
@@ -661,7 +664,7 @@ export const JupyterInputOutputPlugin = (
         );
         debugLog('[JupyterInputOutputPlugin] Props:', props);
 
-        const { code, outputs } = props;
+        const { code, outputs, variant } = props;
         const selection = $getSelection();
 
         debugLog('[JupyterInputOutputPlugin] Selection exists?', !!selection);
@@ -757,7 +760,14 @@ export const JupyterInputOutputPlugin = (
           debugLog('[JupyterInputOutputPlugin] Kernel available?', !!kernel);
           debugLog('[JupyterInputOutputPlugin] Outputs:', outputs);
 
-          const outputAdapter = new OutputAdapter(newUuid(), kernel, outputs);
+          const outputAdapter = new OutputAdapter(
+            newUuid(),
+            kernel,
+            outputs,
+            undefined,
+            false,
+            variant,
+          );
           const jupyterOutputNode = $createJupyterOutputNode(
             code,
             outputAdapter,
@@ -765,6 +775,7 @@ export const JupyterInputOutputPlugin = (
             true,
             jupyterCodeUuid,
             UUID.uuid4(),
+            variant,
           );
 
           debugLog('[JupyterInputOutputPlugin] ✅ Created JupyterOutputNode');

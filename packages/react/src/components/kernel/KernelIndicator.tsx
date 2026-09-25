@@ -5,6 +5,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
+import type { JupyterVariant } from '../../jupyter/variant';
 import { createPortal } from 'react-dom';
 import { Box, Button, Link, Text } from '@primer/react';
 import type { KernelMessage } from '@jupyterlab/services';
@@ -123,6 +124,8 @@ export type KernelIndicatorProps = {
   /** Kernel identity supplied by status-only integrations without a connection. */
   kernelId?: string;
   kernelName?: string;
+  /** The kernel's notebook semantics; `marimo` is shown beside the label. */
+  variant?: JupyterVariant;
   /** Server details supplied by status-only integrations. */
   serverUrl?: string;
   websocketUrl?: string;
@@ -152,6 +155,7 @@ export const KernelIndicator = ({
   kernel,
   kernelId,
   kernelName,
+  variant,
   serverUrl,
   websocketUrl,
   env,
@@ -443,6 +447,7 @@ export const KernelIndicator = ({
 
   const runtimeDetails: Array<{ label: string; value: string }> = [
     { label: 'State', value: meta.state },
+    { label: 'Variant', value: variant ?? 'jupyter' },
     { label: 'Connection', value: connectionStatus ?? 'unknown' },
     { label: 'Status', value: status ?? 'unknown' },
   ];
@@ -550,6 +555,18 @@ export const KernelIndicator = ({
           }}
         >
           {label ? <Text>{label}</Text> : null}
+          {variant && variant !== 'jupyter' ? (
+            <Text
+              sx={{
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.04em',
+                color: 'fg.muted',
+              }}
+            >
+              {variant}
+            </Text>
+          ) : null}
           {renderKernelStateGlyph(meta.state)}
         </span>
       </Button>

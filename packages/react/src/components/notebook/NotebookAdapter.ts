@@ -4,7 +4,10 @@
  * MIT License
  */
 
+import type { Cell } from '@jupyterlab/cells';
 import { CommandRegistry } from '@lumino/commands';
+import { MarimoReactive } from '../../jupyter/marimo/reactive';
+import { DEFAULT_VARIANT, type JupyterVariant } from '../../jupyter/variant';
 import {
   NotebookPanel,
   NotebookActions,
@@ -27,15 +30,98 @@ export class NotebookAdapter {
   private _defaultCellType: nbformat.CellType = 'code';
   private _kernelInfo: KernelMessage.IInfoReply | null = null;
 
+  private _variant: JupyterVariant;
+  private _registered = new Map<string, string>();
+
   constructor(
     commands: CommandRegistry,
     panel: NotebookPanel,
-    context: Context<NotebookModel>
+    context: Context<NotebookModel>,
+    variant: JupyterVariant = DEFAULT_VARIANT
   ) {
     this._commands = commands;
     this._panel = panel;
     this._notebook = panel.content;
     this._context = context;
+    this._variant = variant;
+    if (variant === 'marimo') {
+      NotebookActions.executed.connect(this.onExecuted, this);
+    }
+  }
+
+  /** Which notebook semantics this notebook follows. */
+  get variant(): JupyterVariant {
+    return this._variant;
+  }
+
+  /**
+   * Marimo: a cell ran, so the cells that depend on it run too.
+   *
+   * Every code cell is registered in the kernel's reactive graph under its
+   * model id (only those whose source changed are sent again), each with a
+   * runner that runs that one cell through `NotebookActions.run`; then the
+   * graph runs the dependents of the cell that just ran, in order. Runs the
+   * graph itself starts are recognised (`reacting`) and not reacted to, so
+   * a diamond runs its far corner once.
+   */
+  private onExecuted(
+    _: unknown,
+    args: { notebook: Notebook; cell: Cell; success: boolean }
+  ): void {
+    const { notebook, cell, success } = args;
+    if (notebook !== this._notebook || !success || cell.model.type !== 'code') {
+      return;
+    }
+    const connection = this._context.sessionContext.session?.kernel;
+    if (!connection) {
+      return;
+    }
+    const reactive = MarimoReactive.for(connection);
+    if (reactive.reacting) {
+      return;
+    }
+    void this.react(reactive, cell.model.sharedModel.getId());
+  }
+
+  private async react(reactive: MarimoReactive, cellId: string): Promise<void> {
+    const present = new Set<string>();
+    for (const widget of this._notebook.widgets) {
+      if (widget.model.type !== 'code') {
+        continue;
+      }
+      const id = widget.model.sharedModel.getId();
+      const code = widget.model.sharedModel.getSource();
+      present.add(id);
+      reactive.bindRunner(id, () => this.runOne(id));
+      if (this._registered.get(id) !== code) {
+        const registration = await reactive.register(id, code);
+        if (registration.error) {
+          this._registered.delete(id);
+        } else {
+          this._registered.set(id, code);
+        }
+      }
+    }
+    for (const id of Array.from(this._registered.keys())) {
+      if (!present.has(id)) {
+        this._registered.delete(id);
+        await reactive.remove(id);
+      }
+    }
+    await reactive.react(cellId);
+  }
+
+  /** Run one cell, by its model id, as `NotebookActions.run` would. */
+  private async runOne(cellId: string): Promise<void> {
+    const index = this._notebook.widgets.findIndex(
+      widget => widget.model.sharedModel.getId() === cellId
+    );
+    if (index < 0) {
+      return;
+    }
+    this._notebook.deselectAll();
+    this._notebook.activeCellIndex = index;
+    await NotebookActions.run(this._notebook, this._context.sessionContext);
   }
 
   /**
