@@ -11,7 +11,7 @@ import {
   PlayIcon,
   SquareFillIcon,
   TrashIcon,
-  DownloadIcon,
+  RepoPushIcon,
   IterationsIcon,
   CodeIcon,
   MarkdownIcon,
@@ -100,7 +100,7 @@ export function useNotebookToolbarItems(notebookId: string): ToolbarItem[] {
         group: 'file',
         ariaLabel: 'Save notebook',
         title: 'Save notebook (⌘S)',
-        icon: DownloadIcon,
+        icon: RepoPushIcon,
         onClick: () => notebookStore.save({ id: notebookId, date: new Date() }),
       },
       {

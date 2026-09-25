@@ -58,12 +58,7 @@ export interface IJupyterEmbedBootstrapConfig {
 
 // Component type mapping
 type ComponentType =
-  | 'cell'
-  | 'notebook'
-  | 'terminal'
-  | 'console'
-  | 'output'
-  | 'viewer';
+  'cell' | 'notebook' | 'terminal' | 'console' | 'output' | 'viewer';
 
 // Global state
 let config: IJupyterEmbedBootstrapConfig | null = null;

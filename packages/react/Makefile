@@ -32,6 +32,9 @@ build: ## build
 examples: ## examples
 	npm run start
 
+start: ## start
+	npm run start
+
 publish-npm: clean build ## publish-npm
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		npm publish )

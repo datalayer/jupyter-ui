@@ -23,7 +23,10 @@ import { INSERT_EMBED_COMMAND } from '@lexical/react/LexicalAutoEmbedPlugin';
 import { INSERT_HORIZONTAL_RULE_COMMAND } from '@lexical/react/LexicalHorizontalRuleNode';
 import { $isHeadingNode } from '@lexical/rich-text';
 import { INSERT_COLLAPSIBLE_COMMAND } from '../CollapsiblePlugin';
-import { INSERT_EXCALIDRAW_COMMAND } from '../ExcalidrawPlugin';
+import { INSERT_EXCALIDRAW_COMMAND } from '../excalidraw/ExcalidrawPlugin';
+import { INSERT_DECK_COMMAND } from '../../extensions/DeckExtension';
+import { INSERT_LOOM_COMMAND } from '../../extensions/LoomExtension';
+import { INSERT_VIDEO_COMMAND } from '../../extensions/VideoExtension';
 import { INSERT_TABLE_WITH_DIALOG_COMMAND } from '../TablePlugin';
 import {
   $getSelectionStyleValueForProperty,
@@ -67,6 +70,7 @@ import {
   CodeIcon,
   CommentIcon,
   DashIcon,
+  DeviceCameraVideoIcon,
   FileMediaIcon,
   HistoryIcon,
   HorizontalRuleIcon,
@@ -83,6 +87,7 @@ import {
   TableIcon,
   TriangleDownIcon,
   TypographyIcon,
+  VideoIcon,
   XIcon,
 } from '@primer/octicons-react';
 
@@ -1069,6 +1074,29 @@ export function ToolbarPlugin({
                 undefined,
               ),
           },
+          // Recorded by the browser, kept in the page's memory: lost on reload.
+          {
+            key: 'video',
+            label: 'Video',
+            icon: DeviceCameraVideoIcon,
+            onClick: () =>
+              activeEditor.dispatchCommand(INSERT_VIDEO_COMMAND, undefined),
+          },
+          // Recorded with the author's Loom account, and saved there.
+          {
+            key: 'loom',
+            label: 'Loom Video',
+            icon: VideoIcon,
+            onClick: () =>
+              activeEditor.dispatchCommand(INSERT_LOOM_COMMAND, undefined),
+          },
+          {
+            key: 'deck',
+            label: 'Deck Slide',
+            icon: FileMediaIcon,
+            onClick: () =>
+              activeEditor.dispatchCommand(INSERT_DECK_COMMAND, undefined),
+          },
           {
             key: 'image',
             label: 'Image',
@@ -1103,9 +1131,11 @@ export function ToolbarPlugin({
                 />
               )),
           },
+          // "Embed …", as in the / menu: "Loom Video" alone is the block
+          // that records one.
           ...EmbedConfigs.map(embedConfig => ({
             key: `embed-${embedConfig.type}`,
-            label: embedConfig.contentName,
+            label: `Embed ${embedConfig.contentName}`,
             onClick: () =>
               activeEditor.dispatchCommand(
                 INSERT_EMBED_COMMAND,
@@ -1199,7 +1229,7 @@ export function ToolbarPlugin({
     result.push({
       key: 'comments',
       type: 'button',
-      order: order++,
+      order,
       group: 'comments',
       ariaLabel: showComments ? 'Hide Comments' : 'Show Comments',
       title: showComments ? 'Hide Comments' : 'Show Comments',

@@ -16,6 +16,7 @@ import {
 } from '@jupyterlab/application';
 import { IThemeManager, IWindowResolver } from '@jupyterlab/apputils';
 import { PageConfig } from '@jupyterlab/coreutils';
+import { jupyterLabUrlSpace, ownsJupyterLabPath } from './JupyterLabAppUrls';
 import { DocumentRegistry } from '@jupyterlab/docregistry';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import { NotebookPanel } from '@jupyterlab/notebook';
@@ -126,6 +127,7 @@ export class JupyterLabAppAdapter {
   private async load(props: JupyterLabAppAdapterProps) {
     const {
       disabledPlugins = [],
+      headless,
       hostId,
       plugins: extensions = [],
       mimeRenderers: mimeExtensions = [],
@@ -255,8 +257,7 @@ export class JupyterLabAppAdapter {
         tm.loadCSS = (path: string) => {
           const basePromise = previousLoadCSS(path) as Promise<void>;
           const link = tm._links?.[tm._links.length - 1] as
-            | HTMLLinkElement
-            | undefined;
+            HTMLLinkElement | undefined;
           if (!link) {
             return basePromise;
           }
@@ -330,14 +331,30 @@ export class JupyterLabAppAdapter {
         lr.__datalayerNotebookRestoreGuardPatched = true;
       },
     };
-    // In embedded mode, the application main plugin can try to sync browser
-    // location to Jupyter Server workspace URLs (e.g.
-    // `/api/jupyter-server/lab/workspaces/...`). That hijacks the host page
-    // URL and can keep the loading UX in a bad state. Keep routing behavior
-    // for in-app commands, but suppress these workspace URL rewrites.
+    // An embedded JupyterLab does not own the page it is on.
+    //
+    // `application-extension:main` keeps the browser URL in step with the
+    // shell: it navigates on `modeChanged`, on `currentPathChanged` and
+    // whenever the tree path is updated, each time to whatever
+    // `PageConfig.getUrl()` builds — which is the JupyterLab application
+    // URL, `/lab` by default. In JupyterLab that is the address bar telling
+    // you where you are. Here it is a rewrite of the *host application's*
+    // URL to a path that host never routed: the app then renders whatever
+    // it makes of `/lab`, which in a product with a `/:handle` route is a
+    // profile page for a person called "lab". The `notFound` plugin does
+    // the same on its own account.
+    //
+    // So every navigation into JupyterLab's own URL space is refused. Not
+    // only the workspace paths this guard began with — those were one
+    // symptom of the same thing — but the app URL, the documents URL and
+    // anything under them, however `PageConfig` is configured. In-app
+    // routing is untouched: `router.start()` still matches the URL the host
+    // is on, and commands still run; what stops is JupyterLab writing to a
+    // history it does not own.
+    const appUrlSpace = jupyterLabUrlSpace();
     const routerNavigateGuard: JupyterFrontEndPlugin<void> = {
       id: '@datalayer/jupyter-react:router-navigate-guard',
-      description: 'Prevent embedded URL rewrite to Jupyter workspace paths.',
+      description: 'Keep embedded JupyterLab out of the host page history.',
       autoStart: true,
       requires: [IRouter],
       activate: (_app, router: IRouter) => {
@@ -351,11 +368,7 @@ export class JupyterLabAppAdapter {
           return;
         }
         r.navigate = (path: string, options?: any) => {
-          if (
-            typeof path === 'string' &&
-            (path.startsWith('/api/jupyter-server/lab/workspaces') ||
-              path.startsWith('/lab/workspaces'))
-          ) {
+          if (ownsJupyterLabPath(path, appUrlSpace)) {
             return;
           }
           return previousNavigate(path, options);
@@ -391,6 +404,20 @@ export class JupyterLabAppAdapter {
     // activates with `splash = null`.
     if (nosplash) {
       disabledPlugins.push('@jupyterlab/apputils-extension:splash');
+    }
+    // A headless app has no shell and therefore no status bar. The
+    // notification plugin registers its bell as a status-bar item and, when
+    // there is no status bar to take it, falls back to attaching the widget
+    // straight onto `document.body` with `position: fixed; bottom: 0;
+    // right: 10px` — a JupyterLab affordance floating over an embedding
+    // application that never asked for one, showing a notification count
+    // nobody in that application can act on. Its toasts land on
+    // `document.body` the same way. An embedding app surfaces notifications
+    // through its own UI, so the plugin has nothing to attach to and is
+    // left out. Only `announcements` reads its settings, and that plugin is
+    // itself meaningless embedded.
+    if (headless) {
+      disabledPlugins.push('@jupyterlab/apputils-extension:notification');
     }
     const disabledPluginsSet = new Set(disabledPlugins);
     extensionResolved.forEach(ext => {
@@ -483,8 +510,7 @@ export class JupyterLabAppAdapter {
     const plugins =
       this._plugins ||
       ((this._jupyterLab as any)?.['pluginRegistry']?.['_plugins'] as
-        | Plugins
-        | undefined);
+        Plugins | undefined);
     return plugins?.get(id);
   }
 
@@ -492,8 +518,7 @@ export class JupyterLabAppAdapter {
     const plugins =
       this._plugins ||
       ((this._jupyterLab as any)?.['pluginRegistry']?.['_plugins'] as
-        | Plugins
-        | undefined);
+        Plugins | undefined);
     return plugins?.get(id)?.service;
   }
 

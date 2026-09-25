@@ -13,16 +13,63 @@ import {
   type CommentThreadNode,
 } from '../nodes/CommentThreadNode';
 
+/** Somebody a comment names: its author, a thread's assignee, a mention. */
+export type CommentPerson = {
+  uid: string;
+  handle?: string | null;
+  name?: string | null;
+};
+
+/**
+ * What kind of principal wrote a comment: somebody signed in (`user`), an
+ * agent in its own name (`agent`), or somebody known only by a name
+ * (`anonymous`) — a local file, a collaborator who typed what to be called.
+ */
+export type CommentPrincipalKind = 'user' | 'agent' | 'anonymous';
+
+/**
+ * Who wrote a comment.
+ *
+ * Signed in, a principal is its `kind` and its `uid`: what a platform store
+ * records from the caller's token, and what an avatar is found by. Somebody
+ * anonymous has a `name` and no `uid`.
+ */
+export type CommentAuthor = {
+  kind: CommentPrincipalKind;
+  /** The principal's uid; absent for somebody anonymous. */
+  uid?: string;
+  handle?: string | null;
+  name?: string | null;
+  /** Where the author's picture is, when whoever wrote this knew. */
+  avatarUrl?: string | null;
+  /** The agent that wrote the comment for its author, when one did. */
+  agentUid?: string;
+};
+
 export type Comment = {
+  /**
+   * The author's name as written. Kept beside `authorPrincipal` rather than
+   * replaced by it: a comment lives in the document, and an older editor in
+   * the same room still shows this.
+   */
   author: string;
+  /**
+   * Who the author is. Absent on a comment written before it was kept,
+   * which reads as somebody anonymous named `author`; see `authorOf`.
+   */
+  authorPrincipal?: CommentAuthor;
   content: string;
   deleted: boolean;
   id: string;
+  /** The uids of the people the comment mentions. */
+  mentions?: Array<string>;
   timeStamp: number;
   type: 'comment';
 };
 
 export type Thread = {
+  /** Whom the thread is assigned to, when its store assigns threads. */
+  assignee?: CommentPerson | null;
   comments: Array<Comment>;
   id: string;
   quote: string;
@@ -31,6 +78,71 @@ export type Thread = {
 
 export type Comments = Array<Thread | Comment>;
 
+/**
+ * What `CommentPlugin` reads its threads from and writes them to.
+ *
+ * `CommentStore` keeps the threads in the document, as nodes, which is all a
+ * local file has; `ApiCommentStore` keeps them in a service, which also knows
+ * who may be mentioned or assigned.
+ */
+export interface ICommentStore {
+  getComments(): Comments;
+  /** Open a thread, or add a comment to the thread given. */
+  addComment(commentOrThread: Comment | Thread, thread?: Thread): void;
+  /** Delete a comment; it keeps its place in its thread. */
+  deleteComment(comment: Comment, thread?: Thread): void;
+  /** Delete a thread with its comments. */
+  deleteThread(thread: Thread): void;
+  /** Resolve a thread. A store without resolution leaves this out. */
+  resolveThread?(thread: Thread): void;
+  /** The people who may be named, matching a query. */
+  searchPeople?(query: string): Promise<Array<CommentPerson>>;
+  /** Assign a thread to somebody, or to nobody. */
+  assignThread?(thread: Thread, person: CommentPerson | null): void;
+  registerOnChange(onChange: () => void): () => void;
+}
+
+/** How a person is written in a comment and on a thread. */
+export const personLabel = (person: CommentPerson): string =>
+  person.name || person.handle || person.uid;
+
+/** How an author is written above their comment. */
+export const authorLabel = (author: CommentAuthor): string =>
+  author.name || author.handle || author.uid || 'Anonymous';
+
+/** Somebody known only by `name`: a local file's commenter, say. */
+export const anonymousAuthor = (name?: string | null): CommentAuthor => ({
+  kind: 'anonymous',
+  name: name || 'Anonymous',
+});
+
+/**
+ * Who wrote `comment`, whenever it was written: its principal, or — for a
+ * comment older than that — somebody anonymous by the name it carries.
+ */
+export const authorOf = (comment: Comment): CommentAuthor =>
+  comment.authorPrincipal ?? anonymousAuthor(comment.author);
+
+/**
+ * The uids of the people a comment still names: picked while it was typed,
+ * and still written as `@Name` in its words when it is sent.
+ */
+export function mentionsIn(
+  content: string,
+  picked: Iterable<CommentPerson>,
+): Array<string> {
+  const uids: Array<string> = [];
+  for (const person of picked) {
+    if (
+      content.includes(`@${personLabel(person)}`) &&
+      !uids.includes(person.uid)
+    ) {
+      uids.push(person.uid);
+    }
+  }
+  return uids;
+}
+
 function createUID(): string {
   return Math.random()
     .toString(36)
@@ -38,19 +150,30 @@ function createUID(): string {
     .substr(0, 5);
 }
 
+/**
+ * A comment by `author`: a principal, or — as before principals were kept —
+ * the name of somebody anonymous.
+ */
 export function createComment(
   content: string,
-  author: string,
+  author: CommentAuthor | string,
   id?: string,
   timeStamp?: number,
   deleted?: boolean,
+  mentions?: Array<string>,
 ): Comment {
+  const principal =
+    typeof author === 'string' ? anonymousAuthor(author) : author;
   return {
-    author,
+    author: authorLabel(principal),
+    authorPrincipal: principal,
     content,
     deleted: deleted === undefined ? false : deleted,
     id: id === undefined ? createUID() : id,
-    timeStamp: timeStamp === undefined ? performance.now() : timeStamp,
+    ...(mentions && mentions.length > 0 ? { mentions } : {}),
+    // Milliseconds since the epoch: a comment is read long after the page
+    // that wrote it, and `performance.now()` counts from that page's load.
+    timeStamp: timeStamp === undefined ? Date.now() : timeStamp,
     type: 'comment',
   };
 }
@@ -71,6 +194,9 @@ export function createThread(
 function markDeleted(comment: Comment): Comment {
   return {
     author: comment.author,
+    ...(comment.authorPrincipal
+      ? { authorPrincipal: comment.authorPrincipal }
+      : {}),
     content: '[Deleted Comment]',
     deleted: true,
     id: comment.id,
@@ -86,7 +212,7 @@ function triggerOnChange(commentStore: CommentStore): void {
   }
 }
 
-export class CommentStore {
+export class CommentStore implements ICommentStore {
   _editor: LexicalEditor;
   _changeListeners: Set<() => void>;
 
@@ -158,6 +284,18 @@ export class CommentStore {
     // No need to manually trigger onChange - registerUpdateListener handles it
   }
 
+  /** Delete a comment and put its deleted mark in its place. */
+  deleteComment(comment: Comment, thread?: Thread): void {
+    const deletion = this.deleteCommentOrThread(comment, thread);
+    if (deletion !== null) {
+      this.addComment(deletion.markedComment, thread, deletion.index);
+    }
+  }
+
+  deleteThread(thread: Thread): void {
+    this.deleteCommentOrThread(thread);
+  }
+
   /**
    * Delete a comment from a thread or delete an entire thread.
    * Updates CommentThreadNode in the Lexical editor state, which automatically
@@ -219,11 +357,12 @@ export class CommentStore {
   }
 }
 
-export function useCommentStore(commentStore: CommentStore): Comments {
+export function useCommentStore(commentStore: ICommentStore): Comments {
   const [comments, setComments] = useState<Comments>(
     commentStore.getComments(),
   );
   useEffect(() => {
+    setComments(commentStore.getComments());
     return commentStore.registerOnChange(() => {
       setComments(commentStore.getComments());
     });

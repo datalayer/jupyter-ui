@@ -8,6 +8,7 @@
  * ComponentPickerMenuPlugin - Slash command menu.
  */
 
+import type { JSX } from 'react';
 import { $createCodeNode } from '@lexical/code';
 import { fetchRandomGif } from '../utils/giphy';
 import {
@@ -30,7 +31,10 @@ import {
 import { $createHeadingNode, $createQuoteNode } from '@lexical/rich-text';
 import { $setBlocksType } from '@lexical/selection';
 import { INSERT_COLLAPSIBLE_COMMAND } from './CollapsiblePlugin';
-import { INSERT_EXCALIDRAW_COMMAND } from './ExcalidrawPlugin';
+import { INSERT_EXCALIDRAW_COMMAND } from './excalidraw';
+import { INSERT_DECK_COMMAND } from '../extensions/DeckExtension';
+import { INSERT_LOOM_COMMAND } from '../extensions/LoomExtension';
+import { INSERT_VIDEO_COMMAND } from '../extensions/VideoExtension';
 import { INSERT_TABLE_WITH_DIALOG_COMMAND } from './TablePlugin';
 import {
   $createParagraphNode,
@@ -48,6 +52,7 @@ import {
   ChevronDownIcon,
   CodeIcon,
   DashIcon,
+  DeviceCameraVideoIcon,
   FileMediaIcon,
   HashIcon,
   ListOrderedIcon,
@@ -59,12 +64,14 @@ import {
   QuoteIcon,
   TableIcon,
   TypographyIcon,
+  VideoIcon,
 } from '@primer/octicons-react';
 
 import useModal from '../hooks/useModal';
 import { EmbedConfigs } from './AutoEmbedPlugin';
 import { InsertEquationDialog } from './EquationsPlugin';
 import { INSERT_IMAGE_COMMAND, InsertImageDialog } from './ImagesPlugin';
+import { debugLog } from '../utils/debugLog';
 
 class ComponentPickerOption extends MenuOption {
   title: string;
@@ -107,6 +114,17 @@ function ComponentPickerMenuItem({
   onMouseEnter: () => void;
   option: ComponentPickerOption;
 }) {
+  /*
+   * Lexical's `MenuOption` tracks its own element through `setRefElement`.
+   * Handed straight to `ref`, the React Compiler's lint takes `option` for a
+   * ref object and refuses every read of it during render (`option.title`,
+   * `option.disabled`): a callback keeps the registration where a ref
+   * callback belongs, and the option an ordinary value.
+   */
+  const setElement = useCallback(
+    (element: HTMLElement | null) => option.setRefElement(element),
+    [option],
+  );
   const handleClick = option.disabled ? undefined : onClick;
   const handleMouseEnter = option.disabled ? undefined : onMouseEnter;
 
@@ -115,7 +133,7 @@ function ComponentPickerMenuItem({
       as="li"
       key={option.key}
       tabIndex={-1}
-      ref={option.setRefElement}
+      ref={setElement}
       role="option"
       aria-selected={isSelected && !option.disabled}
       aria-disabled={option.disabled}
@@ -135,7 +153,7 @@ function ComponentPickerMenuItem({
           isSelected && !option.disabled
             ? 'actionListItem.default.selectedBg'
             : 'transparent',
-        color: 'fg.default',
+        color: 'var(--fgColor-default)',
         '&:hover': !option.disabled
           ? { bg: 'actionListItem.default.hoverBg' }
           : {},
@@ -146,7 +164,7 @@ function ComponentPickerMenuItem({
         sx={{
           display: 'flex',
           alignItems: 'center',
-          color: 'fg.muted',
+          color: 'var(--fgColor-muted)',
           flexShrink: 0,
         }}
       >
@@ -285,7 +303,7 @@ export const ComponentPickerMenuPlugin = ({
         icon: <TableIcon size={16} />,
         keywords: ['table', 'grid', 'spreadsheet'],
         onSelect: () => {
-          console.log(
+          debugLog(
             '[ComponentPicker] Table selected, dispatching INSERT_TABLE_WITH_DIALOG_COMMAND',
           );
           editor.dispatchCommand(INSERT_TABLE_WITH_DIALOG_COMMAND, undefined);
@@ -316,6 +334,30 @@ export const ComponentPickerMenuPlugin = ({
         ],
         onSelect: () =>
           editor.dispatchCommand(INSERT_EXCALIDRAW_COMMAND, undefined),
+      }),
+      // Recorded by the browser, kept in the page's memory: lost on reload.
+      new ComponentPickerOption('Video', {
+        icon: <DeviceCameraVideoIcon size={16} />,
+        keywords: [
+          'video',
+          'record',
+          'recording',
+          'screen',
+          'camera',
+          'webcam',
+        ],
+        onSelect: () => editor.dispatchCommand(INSERT_VIDEO_COMMAND, undefined),
+      }),
+      // Recorded with Loom, saved to the author's Loom account.
+      new ComponentPickerOption('Loom Video', {
+        icon: <VideoIcon size={16} />,
+        keywords: ['loom', 'video', 'record', 'recording', 'screen'],
+        onSelect: () => editor.dispatchCommand(INSERT_LOOM_COMMAND, undefined),
+      }),
+      new ComponentPickerOption('Deck Slide', {
+        icon: <FileMediaIcon size={16} />,
+        keywords: ['deck', 'slide', 'slides', 'presentation', 'pitch'],
+        onSelect: () => editor.dispatchCommand(INSERT_DECK_COMMAND, undefined),
       }),
       new ComponentPickerOption('Quote', {
         icon: <QuoteIcon size={16} />,
@@ -469,11 +511,21 @@ export const ComponentPickerMenuPlugin = ({
                     e.preventDefault();
                   }}
                   sx={{
-                    bg: 'canvas.overlay',
+                    // Above whatever the host stacks around the editor. The
+                    // menu is portaled into Lexical's anchor — absolutely
+                    // positioned, `z-index: auto` — so a page that keeps its
+                    // editor on a sheet with a z-index of its own painted the
+                    // sheet over the menu, and typing `/` showed nothing.
+                    // The anchor is not a stacking context, so this joins the
+                    // root one and wins.
+                    position: 'relative',
+                    zIndex: 1000,
+                    bg: 'var(--overlay-bgColor)',
                     border: '1px solid',
-                    borderColor: 'border.default',
+                    borderColor: 'var(--borderColor-default)',
                     borderRadius: 2,
-                    boxShadow: 'shadow.large',
+                    boxShadow:
+                      'var(--shadow-floating-large, 0 0 0 1px #d1d9e0, 0 40px 80px 0 #25292e3d)',
                     p: 1,
                     maxHeight: 300,
                     overflow: 'auto',

@@ -52,8 +52,19 @@ export {
 
 export {
   loadJupyterConfig,
+  // The read-only question. `loadJupyterConfig` answers it too, and writes the
+  // page's Jupyter URLs on the way past — never ask it during a render.
+  isServedByJupyterLab,
+  setJupyterServerUrl,
+  setJupyterServerToken,
+  getJupyterServerUrl,
+  getJupyterServerToken,
   type IJupyterConfig,
 } from './jupyter/JupyterConfig';
+
+// Server settings for a hand-rolled ServiceManager — lean, so a host that
+// only points at a server does not pay for the component library.
+export { createServerSettings } from './utils/Utils';
 
 // Kernel management - lightweight kernel handling
 export { Kernel } from './jupyter/kernel/Kernel';
@@ -62,6 +73,11 @@ export { useKernelsStore } from './jupyter/kernel/KernelState';
 
 // State management - for advanced usage
 export {
+  // The store itself, not only its hooks: an application that builds its own
+  // service manager publishes it here, and every `useJupyter()` without one
+  // of its own then adopts it instead of building a second from the page
+  // config. Same module as the hooks below, so this costs nothing.
+  jupyterReactStore,
   useJupyterReactStore,
   useJupyterReactStoreFromProps,
 } from './state/JupyterReactState';

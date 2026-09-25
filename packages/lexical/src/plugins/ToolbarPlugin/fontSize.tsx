@@ -6,7 +6,7 @@
 
 import { LexicalEditor } from 'lexical';
 import * as React from 'react';
-import { IconButton } from '@primer/react';
+import { IconButton, TextInput } from '@primer/react';
 import { DashIcon, PlusIcon } from '@primer/octicons-react';
 
 import {
@@ -108,9 +108,17 @@ export default function FontSize({
     setInputChangeFlag(false);
   };
 
-  React.useEffect(() => {
+  /*
+    The field follows the selection. Adjusted while rendering rather than in
+    an effect: an effect draws the old size once and the new size a frame
+    later, which is the cascade `react-hooks/set-state-in-effect` is about.
+    This is React's own "adjusting state when a prop changes" shape.
+  */
+  const [shownFor, setShownFor] = React.useState<string>(selectionFontSize);
+  if (shownFor !== selectionFontSize) {
+    setShownFor(selectionFontSize);
     setInputValue(selectionFontSize);
-  }, [selectionFontSize]);
+  }
 
   return (
     <>
@@ -129,17 +137,21 @@ export default function FontSize({
         aria-label={`Decrease font size (${SHORTCUTS.DECREASE_FONT_SIZE})`}
       />
 
-      <input
+      <TextInput
         type="number"
         title="Font size"
+        aria-label="Font size"
         value={inputValue}
         disabled={disabled}
-        className="toolbar-item font-size-input"
+        size="small"
         min={MIN_ALLOWED_FONT_SIZE}
         max={MAX_ALLOWED_FONT_SIZE}
-        onChange={e => setInputValue(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setInputValue(e.target.value)
+        }
         onKeyDown={handleKeyPress}
         onBlur={handleInputBlur}
+        sx={{ width: 56 }}
       />
 
       <IconButton

@@ -113,7 +113,9 @@ export const updateCellOperation: ToolOperation<
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      throw new Error(`Failed to update cell: ${errorMessage}`);
+      throw new Error(`Failed to update cell: ${errorMessage}`, {
+        cause: error,
+      });
     }
   },
 };

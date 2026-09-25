@@ -4,14 +4,14 @@
  * MIT License
  */
 
-import { INPUT_UUID_TO_CODE_KEY } from '../plugins/JupyterInputOutputPlugin';
+import { $jupyterInputNodeFor } from '../plugins/JupyterInputOutputPlugin';
 import type { JupyterOutputNode } from './JupyterOutputNode';
 
 /**
  * Check if a JupyterOutputNode is orphaned (its parent input node was deleted).
  *
  * An output node is considered orphaned if:
- * 1. Its parent input node UUID is not in the INPUT_UUID_TO_CODE_KEY map, OR
+ * 1. No input node with its input uuid exists in this editor, OR
  * 2. The output node has no parent in the Lexical tree
  *
  * @param outputNode - The JupyterOutputNode to check
@@ -20,8 +20,7 @@ import type { JupyterOutputNode } from './JupyterOutputNode';
 export function isJupyterOutputNodeOrphaned(
   outputNode: JupyterOutputNode,
 ): boolean {
-  const inputNodeKey = INPUT_UUID_TO_CODE_KEY.get(
-    outputNode.getJupyterInputNodeUuid(),
-  );
-  return !inputNodeKey || !outputNode.getParent();
+  // By uuid, in this editor: a key in the registry may be another editor's.
+  const inputNode = $jupyterInputNodeFor(outputNode.getJupyterInputNodeUuid());
+  return inputNode === null || !outputNode.getParent();
 }

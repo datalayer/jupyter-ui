@@ -196,8 +196,7 @@ export namespace JupyterLiteServer {
      * The default export.
      */
     default:
-      | IPlugin<JupyterLiteServer, any>
-      | IPlugin<JupyterLiteServer, any>[];
+      IPlugin<JupyterLiteServer, any> | IPlugin<JupyterLiteServer, any>[];
   }
 }
 

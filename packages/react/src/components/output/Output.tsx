@@ -61,6 +61,14 @@ export type IOutputProps = {
   codePre?: string;
   disableRun?: boolean;
   executeTrigger?: number;
+  /**
+   * Bump to make the Lumino output area repaint without running anything —
+   * after its kernel changed, say. Kept apart from `executeTrigger`: folding
+   * the two into one number made every repaint an execution, so a cell
+   * restored with its outputs re-ran the moment a kernel arrived, and crashed
+   * when that kernel was not yet connected.
+   */
+  renderTrigger?: number;
   id?: string;
   insertText?: (payload?: any) => string;
   kernel?: Kernel;
@@ -85,6 +93,7 @@ export const Output = ({
   codePre,
   disableRun = false,
   executeTrigger = 0,
+  renderTrigger = 0,
   id: sourceId,
   insertText,
   kernel: propsKernel,
@@ -120,12 +129,13 @@ export const Output = ({
     );
   }, [propsOutputs]);
 
-  // Force Lumino widget update when executeTrigger changes
+  // Force Lumino widget update when either trigger changes: an execution
+  // repaints, and so does a plain render request.
   useEffect(() => {
     if (lumino && adapter?.outputArea) {
       adapter.outputArea.update();
     }
-  }, [executeTrigger, lumino, adapter]);
+  }, [executeTrigger, renderTrigger, lumino, adapter]);
 
   useEffect(() => {
     if (sourceId && sourceId !== id) {

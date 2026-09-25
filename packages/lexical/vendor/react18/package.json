@@ -1,0 +1,9 @@
+{
+  "name": "jupyter-lexical-react18",
+  "private": true,
+  "description": "React 18 for the Loom recorder, which mounts through ReactDOM.render: the loom18 webpack layer (../../webpack.config.js) and the Vite plugin of the same name (../../vite.config.ts) resolve its react and react-dom here. A standalone project on purpose: the workspace is on React 19, and npm will not place a React 18 pair inside it without breaking its peer resolution.",
+  "dependencies": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  }
+}

@@ -431,9 +431,8 @@ namespace Private {
   );
 
   export function escapeHtml(source: string): string {
-    return String(source).replace(
-      /[&<>"'/]/g,
-      (s: string) => entityMap.get(s)!
+    return String(source).replace(/[&<>"'/]/g, (s: string) =>
+      entityMap.get(s)!
     );
   }
 
@@ -498,7 +497,8 @@ namespace Private {
     filterButtonContent.className = 'filter-button-content';
     const buttonText = document.createElement('div');
     buttonText.className = 'filtered-variable-button-text';
-    buttonText.innerHTML = filterName;
+    // The filter is what the user typed: shown as text, never parsed.
+    buttonText.textContent = filterName;
     const icon = closeIcon.element({
       container: filterButtonContent,
     });

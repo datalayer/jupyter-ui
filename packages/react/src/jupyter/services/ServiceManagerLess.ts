@@ -214,8 +214,7 @@ export class KernelManagerLess implements IKernelManager {
   startNew(
     createOptions?: Partial<Pick<IModel, 'name'>> | undefined,
     connectOptions?:
-      | Omit<IKernelConnection.IOptions, 'serverSettings' | 'model'>
-      | undefined
+      Omit<IKernelConnection.IOptions, 'serverSettings' | 'model'> | undefined
   ): Promise<IKernelConnection> {
     return new Promise(() => {});
   }

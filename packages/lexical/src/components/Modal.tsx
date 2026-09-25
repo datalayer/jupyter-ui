@@ -9,6 +9,7 @@
  * Keeps the same export signature so all consumers work unchanged.
  */
 
+import type { JSX } from 'react';
 import { ReactNode } from 'react';
 import { Dialog } from '@primer/react';
 

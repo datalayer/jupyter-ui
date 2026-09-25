@@ -17,15 +17,6 @@ import { MathJaxTypesetter } from '@jupyterlab/mathjax-extension';
  * initialize in browser-bundled environments.
  */
 export const createLatexTypesetter = () => {
-  // mathjax-full loader relies on Node-style __dirname in this build path.
-  // In browser-only environments this is unavailable and causes runtime errors.
-  if (
-    typeof window !== 'undefined' &&
-    typeof (globalThis as any).__dirname === 'undefined'
-  ) {
-    return undefined;
-  }
-
   try {
     const latexTypesetter = new MathJaxTypesetter();
     const originalTypeset = latexTypesetter.typeset.bind(latexTypesetter);

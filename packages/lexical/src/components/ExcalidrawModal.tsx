@@ -18,7 +18,7 @@ import type {
   ExcalidrawInitialDataState,
 } from '@excalidraw/excalidraw/types';
 import { Excalidraw } from '@excalidraw/excalidraw';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Box, Dialog, Button as PrimerButton } from '@primer/react';
 import { useTheme } from '../context/ThemeContext';
 
@@ -76,9 +76,18 @@ export default function ExcalidrawModal({
   onDelete,
   onClose,
 }: Props): JSX.Element | null {
-  const { theme } = useTheme();
+  // Anchored on the modal's own element, so the drawing canvas follows the
+  // themed region it is rendered into rather than the page at large.
+  const [themeAnchor, setThemeAnchor] = useState<HTMLDivElement | null>(null);
+  const { theme } = useTheme(themeAnchor);
 
   const excaliDrawModelRef = useRef<HTMLDivElement | null>(null);
+  // Stable, so React attaches it once rather than detaching (null) and
+  // reattaching it on every render — each of which set the theme anchor.
+  const attachModal = useCallback((element: HTMLDivElement | null) => {
+    excaliDrawModelRef.current = element;
+    setThemeAnchor(element);
+  }, []);
   const [excalidrawAPI, setExcalidrawAPI] =
     useState<ExcalidrawImperativeAPI | null>(null);
   const [discardModalOpen, setDiscardModalOpen] = useState(false);
@@ -164,7 +173,7 @@ export default function ExcalidrawModal({
         }}
       >
         <Box
-          ref={excaliDrawModelRef}
+          ref={attachModal}
           tabIndex={-1}
           sx={{
             height: 'calc(80vh - 140px)',
@@ -190,7 +199,7 @@ export default function ExcalidrawModal({
             justifyContent: 'flex-end',
             p: 2,
             borderTop: '1px solid',
-            borderColor: 'border.default',
+            borderColor: 'var(--borderColor-default)',
           }}
         >
           <PrimerButton variant="invisible" onClick={discard}>

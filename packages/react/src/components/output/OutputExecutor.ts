@@ -38,10 +38,19 @@ export async function execute(
     onExecutionPhaseChanged,
   });
 
-  const future = kernelExecutor!.future;
+  const future = kernelExecutor?.future;
+  if (!future) {
+    // The kernel handed back nothing to wait on — it is not connected yet, or
+    // no longer is. Said once, in words, rather than thrown from inside an
+    // effect where nobody catches it and the page logs a bare TypeError.
+    console.warn(
+      `execute: the kernel returned no execution for output ${id}; is it connected?`
+    );
+    return undefined;
+  }
   // TODO fix in upstream jupyterlab if possible...
-  (output as any)._onIOPub = future!.onIOPub;
-  (output as any)._onExecuteReply = future!.onReply;
-  output.future = future!;
-  return future?.done;
+  (output as any)._onIOPub = future.onIOPub;
+  (output as any)._onExecuteReply = future.onReply;
+  output.future = future;
+  return future.done;
 }

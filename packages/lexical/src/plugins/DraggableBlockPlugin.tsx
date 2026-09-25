@@ -4,6 +4,8 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
+import { GrabberIcon } from '@primer/octicons-react';
 import {
   DragEvent as ReactDragEvent,
   useEffect,
@@ -475,13 +477,15 @@ function useDraggableBlockMenu(
   return createPortal(
     <>
       <div
-        className={`icon draggable-block-menu ${menuThemeClass}`}
+        className={`draggable-block-menu ${menuThemeClass}`}
         ref={menuRef}
         draggable
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
       >
-        <div className={isEditable ? 'icon' : ''} />
+        {/* Primer's own grabber, rather than an SVG file fetched by a
+            background-image — the last of the playground's icon set. */}
+        {isEditable ? <GrabberIcon size={16} /> : null}
       </div>
       <div
         className={`draggable-block-target-line ${targetLineThemeClass}`}

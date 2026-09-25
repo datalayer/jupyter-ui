@@ -16,6 +16,7 @@ import {
 import { IOutput } from '@jupyterlab/nbformat';
 import { JupyterCellProps } from './../plugins/JupyterCellPlugin';
 import { Cell } from '@datalayer/jupyter-react';
+import { debugLog } from '../utils/debugLog';
 
 const TYPE = 'jupyter-cell';
 
@@ -69,7 +70,7 @@ export class JupyterCellNode extends DecoratorNode<ReactNode> {
     if (className !== undefined) {
       div.className = className;
     }
-    console.log('createDOM', div);
+    debugLog('createDOM', div);
     return div;
   }
 
@@ -80,7 +81,7 @@ export class JupyterCellNode extends DecoratorNode<ReactNode> {
 
   /** @override */
   decorate(editor: LexicalEditor) {
-    console.log(
+    debugLog(
       `decorate -> key: ${this.getKey()} outputs: ${this.__outputs} data: ${this.__data}`,
     );
     return (

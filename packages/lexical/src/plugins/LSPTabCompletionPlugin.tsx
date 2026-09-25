@@ -12,6 +12,7 @@
  * @module lexical/plugins/LSPTabCompletionPlugin
  */
 
+import type { JSX } from 'react';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import {

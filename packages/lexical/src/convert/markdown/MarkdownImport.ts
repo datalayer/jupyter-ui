@@ -290,11 +290,22 @@ function importTextMatchTransformers(
       const startIndex = match.index || 0;
       const endIndex = startIndex + match[0].length;
       let replaceNode;
+      let rightTextNode: TextNode | undefined;
 
       if (startIndex === 0) {
         [replaceNode, textNode] = textNode.splitText(endIndex);
       } else {
-        [, replaceNode, textNode] = textNode.splitText(startIndex, endIndex);
+        // The text before the match stays the node being scanned, so an
+        // earlier match of another transformer is not lost; the text after
+        // it is scanned on its own.
+        [, replaceNode, rightTextNode] = textNode.splitText(
+          startIndex,
+          endIndex,
+        );
+      }
+
+      if (rightTextNode) {
+        importTextMatchTransformers(rightTextNode, textMatchTransformers);
       }
 
       transformer.replace(replaceNode, match);

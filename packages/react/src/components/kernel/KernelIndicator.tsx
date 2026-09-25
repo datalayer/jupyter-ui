@@ -7,12 +7,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Box, Button, Link, Text } from '@primer/react';
-import { KernelMessage } from '@jupyterlab/services';
-import {
+import type { KernelMessage } from '@jupyterlab/services';
+import * as KernelAPI from '@jupyterlab/services/lib/kernel/restapi';
+import type {
   ConnectionStatus,
   IKernelConnection,
 } from '@jupyterlab/services/lib/kernel/kernel';
-import { Environment } from '../environment/Environment';
+import type { Environment } from '../environment/Environment';
 import {
   getKernelIndicatorMeta,
   KERNEL_STATE_LABELS,
@@ -67,7 +68,9 @@ function normalizePosition(
 }
 
 function isHttpLikeUrl(value: string): boolean {
-  const candidate = String(value || '').trim().toLowerCase();
+  const candidate = String(value || '')
+    .trim()
+    .toLowerCase();
   return (
     candidate.startsWith('http://') ||
     candidate.startsWith('https://') ||
@@ -117,6 +120,12 @@ export type KernelIndicatorProps = {
   label?: string;
   overlayTitle?: string;
   kernel?: IKernelConnection | null;
+  /** Kernel identity supplied by status-only integrations without a connection. */
+  kernelId?: string;
+  kernelName?: string;
+  /** Server details supplied by status-only integrations. */
+  serverUrl?: string;
+  websocketUrl?: string;
   env?: Environment;
   state?: ExecutionState;
   environmentName?: string;
@@ -141,6 +150,10 @@ export const KernelIndicator = ({
   label = '',
   overlayTitle = 'Code Sandbox Details',
   kernel,
+  kernelId,
+  kernelName,
+  serverUrl,
+  websocketUrl,
   env,
   state,
   environmentName,
@@ -206,7 +219,65 @@ export const KernelIndicator = ({
     kernel.connectionStatusChanged.connect(handleConnectionChange);
     kernel.statusChanged.connect(handleStatusChange);
 
+    /*
+     * What the server says, while the kernel says nothing.
+     *
+     * A kernel announces its state only at the edges of a request, and a
+     * connection made to one that is already running has heard none of them:
+     * it reports `unknown` — "connected-unknown" here — until the kernel next
+     * speaks, which for an idle sandbox may be never. Asking the kernel does
+     * not help either: the reply travels the shell channel, behind whatever
+     * it is already doing, and the status messages around it can be missed
+     * while the iopub subscription is still settling.
+     *
+     * The server keeps the state of every kernel it manages and answers at
+     * once, so it stands in until the kernel speaks for itself.
+     */
+    let disposed = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const askServer = async (): Promise<void> => {
+      if (disposed || kernel.status !== 'unknown') {
+        // Disposed, or the kernel has spoken for itself: nothing left to ask.
+        return;
+      }
+      if (kernel.connectionStatus !== 'connected') {
+        /*
+         * Still connecting — come back rather than give up.
+         *
+         * This ran the moment the effect did, when a page that has just been
+         * reloaded is invariably still opening its websocket, and returning
+         * here scheduled nothing: the poll never happened, and the sandbox
+         * stayed at "connected-unknown" for as long as the kernel had nothing
+         * to announce — which, for one busy with a long cell, is until that
+         * cell ends.
+         */
+        timer = setTimeout(() => void askServer(), 1_000);
+        return;
+      }
+      try {
+        const model = await KernelAPI.getKernelModel(
+          kernel.id,
+          kernel.serverSettings
+        );
+        if (
+          !disposed &&
+          model?.execution_state &&
+          kernel.status === 'unknown'
+        ) {
+          setStatus(model.execution_state as KernelMessage.Status);
+        }
+      } catch (reason) {
+        // The server does not answer for it; the kernel will, in time.
+      }
+      if (!disposed) {
+        timer = setTimeout(() => void askServer(), 5_000);
+      }
+    };
+    void askServer();
+
     return () => {
+      disposed = true;
+      clearTimeout(timer);
       kernel.connectionStatusChanged.disconnect(handleConnectionChange);
       kernel.statusChanged.disconnect(handleStatusChange);
     };
@@ -348,8 +419,8 @@ export const KernelIndicator = ({
     connectionStatus,
     status,
     envDisplayName: resolvedEnvironmentName,
-    kernelId: kernel?.id,
-    kernelName: kernel?.name,
+    kernelId: kernel?.id ?? kernelId,
+    kernelName: kernel?.name ?? kernelName,
     clientId: kernel?.clientId,
     username: kernel?.username,
   });
@@ -384,8 +455,11 @@ export const KernelIndicator = ({
   ];
 
   const identityDetails: Array<{ label: string; value: string }> = [
-    { label: 'Kernel Name', value: kernel?.name ?? 'unknown-kernel' },
-    { label: 'Kernel ID', value: kernel?.id ?? 'no-kernel' },
+    {
+      label: 'Kernel Name',
+      value: kernel?.name ?? kernelName ?? 'unknown-kernel',
+    },
+    { label: 'Kernel ID', value: kernel?.id ?? kernelId ?? 'no-kernel' },
     { label: 'Client ID', value: kernel?.clientId ?? 'unknown-client' },
     { label: 'User', value: kernel?.username ?? 'unknown-user' },
   ];
@@ -396,11 +470,13 @@ export const KernelIndicator = ({
       value:
         kernelAny?.serverSettings?.baseUrl ??
         kernelAny?.serverSettings?.appUrl ??
+        serverUrl ??
         'unknown-url',
     },
     {
       label: 'WebSocket URL',
-      value: kernelAny?.serverSettings?.wsUrl ?? 'unknown-ws-url',
+      value:
+        kernelAny?.serverSettings?.wsUrl ?? websocketUrl ?? 'unknown-ws-url',
     },
     {
       label: 'Path',

@@ -39,9 +39,7 @@ import {
 import { $createLineBreakNode, $createTextNode, $isTextNode } from 'lexical';
 
 export type Transformer =
-  | ElementTransformer
-  | TextFormatTransformer
-  | TextMatchTransformer;
+  ElementTransformer | TextFormatTransformer | TextMatchTransformer;
 
 export type ElementTransformer = {
   dependencies: Array<Klass<LexicalNode>>;

@@ -56,7 +56,7 @@ const NotebookExample = () => {
             <Heading as="h2" sx={{ mb: 1 }}>
               Notebook
             </Heading>
-            <Text as="p" sx={{ m: 0, color: 'fg.muted' }}>
+            <Text as="p" sx={{ m: 0, color: 'var(--fgColor-muted)' }}>
               Jupyter notebook example in lexical.
             </Text>
             <Box sx={{ mt: 2 }}>

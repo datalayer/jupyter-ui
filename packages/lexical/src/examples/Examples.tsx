@@ -15,7 +15,7 @@ import { Text, Flash, ActionList, TextInput, Button } from '@primer/react';
 import { SignOutIcon, PencilAiIcon } from '@primer/octicons-react';
 import { SearchIcon, CheckIcon } from '@primer/octicons-react';
 import {
-  AppearanceControlsWithStore,
+  AppearanceMenuWithStore,
   Box,
   DatalayerThemeProvider,
 } from '@datalayer/primer-addons';
@@ -39,9 +39,28 @@ const EXAMPLES: Array<{ name: string; path: string; description: string }> = [
     description: 'Two side-by-side iframe collaborators.',
   },
   {
-    name: 'Lexical Nbformat',
-    path: 'LexicalNbformat',
-    description: 'Jupyter Notebook (nbformat) rendered in lexical.',
+    name: 'Lexical Formats',
+    path: 'LexicalFormats',
+    description:
+      'One document, many formats: Markdown, Jupyter notebook, nbformat, LaTeX.',
+  },
+  {
+    name: 'LaTeX Templates',
+    path: 'LexicalLatex',
+    description:
+      'One template per Overleaf category, rendered and edited in Lexical.',
+  },
+  {
+    name: 'Video, Loom and Deck Blocks',
+    path: 'LexicalBlocks',
+    description:
+      'Record a video in the page or with Loom; draw a deck and edit its specification.',
+  },
+  {
+    name: 'PDF Export',
+    path: 'LexicalPdf',
+    description:
+      'The document to PDF four ways: print, vector, snapshot, Typst.',
   },
   {
     name: 'Notebook',
@@ -139,9 +158,9 @@ const ExamplesSidebar = ({
         right: 0,
         height: '100vh',
         width: '320px',
-        backgroundColor: 'canvas.default',
+        backgroundColor: 'var(--bgColor-default)',
         borderLeft: '1px solid',
-        borderColor: 'border.default',
+        borderColor: 'var(--borderColor-default)',
         display: 'flex',
         flexDirection: 'column',
         zIndex: 1000,
@@ -152,29 +171,31 @@ const ExamplesSidebar = ({
           px: 3,
           py: 2,
           borderBottom: '1px solid',
-          borderColor: 'border.default',
+          borderColor: 'var(--borderColor-default)',
         }}
       >
         <Text as="div" fontWeight="bold" fontSize={2}>
-          📓 ✍️ Jupyter Lexical Examples
+          🪐 ✍️ Jupyter Lexical Examples
         </Text>
-        <Box mt={2}>
-          <AppearanceControlsWithStore useStore={useExampleThemeStore} />
-        </Box>
-
-        {token && (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 2 }}>
-            <UserBadge token={token} variant="small" />
-            <Button
-              size="small"
-              variant="invisible"
-              leadingVisual={SignOutIcon}
-              onClick={onSignOut}
-            >
-              Sign out
-            </Button>
+        {/* Who is signed in on the left, the appearance menu on the right. */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 2 }}>
+          {token && (
+            <>
+              <UserBadge token={token} variant="small" />
+              <Button
+                size="small"
+                variant="invisible"
+                leadingVisual={SignOutIcon}
+                onClick={onSignOut}
+              >
+                Sign out
+              </Button>
+            </>
+          )}
+          <Box sx={{ ml: 'auto' }}>
+            <AppearanceMenuWithStore useStore={useExampleThemeStore} />
           </Box>
-        )}
+        </Box>
       </Box>
 
       {error && (
@@ -188,7 +209,7 @@ const ExamplesSidebar = ({
           px: 2,
           py: 2,
           borderBottom: '1px solid',
-          borderColor: 'border.default',
+          borderColor: 'var(--borderColor-default)',
         }}
       >
         <TextInput
@@ -252,8 +273,7 @@ const Examples = () => {
 
   const loginUrl = useMemo(() => {
     const iamUrl = (
-      configuration?.iamUrl ||
-        'https://prod1.datalayer.run'
+      configuration?.iamUrl || 'https://prod1.datalayer.run'
     ).replace(/\/$/, '');
     return `${iamUrl}/api/iam/v1/login`;
   }, [configuration?.iamUrl]);
@@ -338,7 +358,7 @@ const Examples = () => {
             width: 'calc(100vw - 320px)',
             height: '100vh',
             overflow: 'auto',
-            bg: 'canvas.backdrop',
+            bg: 'var(--overlay-backdrop-bgColor)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',

@@ -42,30 +42,13 @@ import '@jupyter-widgets/controls/css/widgets-base.css';
 import '@jupyterlab/theme-light-extension/style/theme.css';
 import '@jupyterlab/theme-light-extension/style/variables.css';
 
-// Jupyter Lexical styles (import individual files to avoid Tailwind processing requirement)
+// Jupyter Lexical styles. The package's own `style/index.css` starts with
+// `@import 'tailwindcss'`, which this Storybook has no Tailwind processing for,
+// so the two aggregates below are imported instead: they are plain CSS, and
+// `lexical/index.css` is the package's own list of its stylesheets, so a file
+// added or removed there cannot leave this list naming one that is gone.
 import '@datalayer/jupyter-lexical/style/base.css';
-import '@datalayer/jupyter-lexical/style/lexical/Button.css';
-import '@datalayer/jupyter-lexical/style/lexical/CodeActionMenuPlugin.css';
-import '@datalayer/jupyter-lexical/style/lexical/CommentEditorTheme.css';
-import '@datalayer/jupyter-lexical/style/lexical/CommentPlugin.css';
-import '@datalayer/jupyter-lexical/style/lexical/ContentEditable.css';
-import '@datalayer/jupyter-lexical/style/lexical/Dialog.css';
-import '@datalayer/jupyter-lexical/style/lexical/DraggableBlockPlugin.css';
-import '@datalayer/jupyter-lexical/style/lexical/Editor.css';
-import '@datalayer/jupyter-lexical/style/lexical/EquationEditor.css';
-import '@datalayer/jupyter-lexical/style/lexical/FloatingTextFormatToolbarPlugin.css';
-import '@datalayer/jupyter-lexical/style/lexical/FontSize.css';
-import '@datalayer/jupyter-lexical/style/lexical/ImageNode.css';
-import '@datalayer/jupyter-lexical/style/lexical/Input.css';
-import '@datalayer/jupyter-lexical/style/lexical/Jupyter.css';
-import '@datalayer/jupyter-lexical/style/lexical/KatexEquationAlterer.css';
-import '@datalayer/jupyter-lexical/style/lexical/Modal.css';
-import '@datalayer/jupyter-lexical/style/lexical/Placeholder.css';
-import '@datalayer/jupyter-lexical/style/lexical/PrettierButton.css';
-import '@datalayer/jupyter-lexical/style/lexical/Rich.css';
-import '@datalayer/jupyter-lexical/style/lexical/TableOfContentsPlugin.css';
-import '@datalayer/jupyter-lexical/style/lexical/Theme.css';
-import '@datalayer/jupyter-lexical/style/lexical/ToolbarPlugin.css';
+import '@datalayer/jupyter-lexical/style/lexical/index.css';
 
 import './custom.css';
 

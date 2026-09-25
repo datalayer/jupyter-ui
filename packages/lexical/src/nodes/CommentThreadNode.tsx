@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import {
   DecoratorNode,
   type EditorConfig,
@@ -79,6 +80,19 @@ export class CommentThreadNode extends DecoratorNode<JSX.Element> {
 
   updateDOM(): boolean {
     // Node is invisible, never needs DOM updates
+    return false;
+  }
+
+  /**
+   * A block, not a run of text — which is what keeps it in the document.
+   *
+   * A thread is appended to the root, and `DecoratorNode` is inline by
+   * default; Lexical does not keep an inline node as a child of the root, so
+   * every thread was dropped on the next reconcile. The comments panel read
+   * the root for threads and always found none, however many comments had
+   * been written.
+   */
+  isInline(): boolean {
     return false;
   }
 

@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import React, {
   createContext,
   CSSProperties,
@@ -16,8 +17,9 @@ import React, {
 import { BaseStyles, ThemeProvider } from '@primer/react';
 import { IThemeManager } from '@jupyterlab/apputils';
 import { setupPrimerPortals } from '@datalayer/primer-addons';
+import { refreshJupyterLabPortalTheme } from './JupyterLabPortalTheme';
 import { Colormode, JupyterLabCss, jupyterLabTheme } from '../theme';
-import { loadJupyterConfig } from '../jupyter';
+import { ensureJupyterConfig, isServedByJupyterLab } from '../jupyter';
 import { useJupyterReactStore } from '../state';
 
 import '@primer/primitives/dist/css/functional/themes/light.css';
@@ -107,12 +109,51 @@ export function JupyterReactTheme(
     return cm;
   };
 
-  // Detect JupyterLab synchronously — loadJupyterConfig() only reads the DOM,
-  // no need to defer to an effect (which caused a blank first frame).
+  /*
+   * Detect JupyterLab synchronously, without touching anything.
+   *
+   * It used to ask `loadJupyterConfig()`, on the stated grounds that the call
+   * "only reads the DOM". It does not: it rebuilds the module configuration
+   * and writes `baseUrl` and `wsUrl` into the shared `PageConfig`. So every
+   * render of this theme quietly repointed the whole page at the server named
+   * in `jupyter-config-data` — which broke an in-page JupyterLite kernel that
+   * had pointed the page at its own origin moments earlier, with cells that
+   * ran into silence and no error anywhere to say why.
+   *
+   * `isServedByJupyterLab` answers the same question and writes nothing.
+   */
   const [inJupyterLab] = useState(() => {
-    const { insideJupyterLab } = loadJupyterConfig();
-    return insideJupyterLab;
+    /*
+     * Building the configuration is the half of `loadJupyterConfig` that was
+     * always wanted here. Removing that call to stop it repointing the page
+     * also stopped the singleton being built — and nothing else in this
+     * package builds it, so four accessors began throwing. `ensureJupyterConfig`
+     * writes nothing to `PageConfig`.
+     */
+    ensureJupyterConfig();
+    return isServedByJupyterLab();
   });
+  /**
+   * Whether a JupyterLab of this page has applied a theme.
+   *
+   * The theme manager states what it applied on the body of the document —
+   * `data-jp-theme-light` and `data-jp-theme-name` — and restates it on every
+   * change. That is the whole signal, and it asks nothing of the application:
+   * a view rendered by an extension has no application object at hand, and
+   * the one it can read from the store arrives whenever the plugin that puts
+   * it there happens to activate. It is also what says the `--jp-*` variables
+   * of the page belong to JupyterLab and must not be written over.
+   */
+  const jupyterLabColormode = (): 'light' | 'dark' | undefined => {
+    const light = document.body.dataset.jpThemeLight;
+    if (light === undefined) {
+      return undefined;
+    }
+    return light === 'false' ? 'dark' : 'light';
+  };
+  const [jupyterLabThemed, setJupyterLabThemed] = useState(
+    () => jupyterLabColormode() !== undefined
+  );
 
   // Determine the effective colormode:
   // - If a colormode prop is passed, it takes priority (external control)
@@ -123,19 +164,92 @@ export function JupyterReactTheme(
   );
   const [colormode, setColormode] = useState(effectiveColormode);
 
+  /*
+   * Whether this theme sits inside another one.
+   *
+   * Primer draws every overlay of the page under ONE portal root, and this
+   * provider used to write its mode on that root whenever it mounted. That is
+   * right for the theme at the top of a page and wrong for every other: the
+   * cell sidebars are each a React root of their own inside the notebook, they
+   * carry no `colormode`, and "no colormode, no JupyterLab" meant "follow the
+   * operating system" — so each sidebar that mounted wrote the OS preference
+   * over the mode the application had chosen, and the next menu came up in
+   * the wrong colour.
+   *
+   * A nested theme follows the themed element above it and writes nothing
+   * shared. Read from the DOM rather than from React context, because the
+   * sidebars are separate React trees: what they share with the page is the
+   * document. `undefined` until measured, so nothing global runs on a guess.
+   */
+  const sentinel = useRef<HTMLSpanElement>(null);
+  const [themedAncestor, setThemedAncestor] = useState<
+    Element | null | undefined
+  >(undefined);
+  /*
+   * Whether ANOTHER JupyterReactTheme is above this one.
+   *
+   * Not the same as `nested`: any themed element counts for that, a Primer
+   * provider of the host page included, and the notebook editor of a web
+   * application sits in the theme of that application while being the only
+   * JupyterReactTheme of the page — the one whose mode, background and
+   * JupyterLab theme are the page's. Below another JupyterReactTheme it is
+   * not: the outer one owns what is shared — the mode and the background of
+   * the store, the theme of JupyterLab and its stylesheets, the notebooks of
+   * the whole document — and this one styles its own subtree only.
+   *
+   * A chat or an editor rendered inside a JupyterLab that is itself under a
+   * JupyterReactTheme used to impose its own theme on all of it: JupyterLab's
+   * theme was set back on every render of it, the menus stayed in the old
+   * mode, and every notebook of the page took its background.
+   *
+   * `undefined` until measured: nothing shared is written on a guess.
+   */
+  const [underAnotherTheme, setUnderAnotherTheme] = useState<
+    boolean | undefined
+  >(undefined);
+  useLayoutEffect(() => {
+    const own = sentinel.current?.parentElement;
+    setThemedAncestor(own?.parentElement?.closest('[data-color-mode]') ?? null);
+    // Every JupyterReactTheme marks its element with a sentinel child.
+    let under = false;
+    for (let el = own?.parentElement ?? null; el; el = el.parentElement) {
+      if (el.querySelector(':scope > [data-jupyter-react-theme-root]')) {
+        under = true;
+        break;
+      }
+    }
+    setUnderAnotherTheme(under);
+  }, []);
+  const nested = themedAncestor != null;
+  /** This theme owns the shared state: no other JupyterReactTheme is above. */
+  const ownsShared = underAnotherTheme === false;
+  /** What this theme's own notebook rule is scoped by, when it is scoped. */
+  const [scopeId] = useState(
+    () => `jrt-${Math.random().toString(36).slice(2, 10)}`
+  );
+  const notebookBackgroundRule = backgroundColor
+    ? ownsShared
+      ? `.jp-Notebook { background-color: ${backgroundColor} !important; }`
+      : `[data-jupyter-react-theme-root="${scopeId}"] ~ * .jp-Notebook, [data-jupyter-react-theme-root="${scopeId}"] ~ .jp-Notebook { background-color: ${backgroundColor} !important; }`
+    : undefined;
+
   // Keep a ref to track if we've synced the prop to the store to avoid
   // redundant store updates that trigger re-renders.
   const syncedRef = useRef(false);
 
   // Sync prop → local state when prop changes (always resolve 'auto')
   useEffect(() => {
+    if (nested && !hasColormodeProp) {
+      // The element above decides; see `followAncestor` below.
+      return;
+    }
     const resolved = resolveColormode(
       hasColormodeProp ? colormodeProps : colormodeFromStore
     );
     if (colormode !== resolved) {
       setColormode(resolved);
     }
-  }, [colormodeFromStore, colormode, colormodeProps, hasColormodeProp]);
+  }, [colormodeFromStore, colormode, colormodeProps, hasColormodeProp, nested]);
 
   // Sync prop → store (so children reading the store directly also get the right value)
   // Store the resolved value, not 'auto'. Use useLayoutEffect so the store is
@@ -143,7 +257,7 @@ export function JupyterReactTheme(
   // performing a setState during render (which causes a React warning when an
   // ancestor subscribes to the same store).
   useLayoutEffect(() => {
-    if (!hasColormodeProp) {
+    if (!hasColormodeProp || !ownsShared) {
       return;
     }
     const resolved = resolveColormode(colormodeProps);
@@ -151,13 +265,23 @@ export function JupyterReactTheme(
       setColormodeStore(resolved);
     }
     syncedRef.current = true;
-  }, [colormodeFromStore, colormodeProps, hasColormodeProp, setColormodeStore]);
+  }, [
+    colormodeFromStore,
+    colormodeProps,
+    hasColormodeProp,
+    ownsShared,
+    setColormodeStore,
+  ]);
 
   // Sync backgroundColor prop → store so notebook extensions (sidebars, etc.)
   // can read it from the store and render with the same background.
+  // The owner only: a theme below another one colours its own subtree.
   useEffect(() => {
+    if (!ownsShared) {
+      return;
+    }
     setBackgroundColorStore(backgroundColor);
-  }, [backgroundColor, setBackgroundColorStore]);
+  }, [backgroundColor, ownsShared, setBackgroundColorStore]);
 
   /**
    * Follow the color mode of the surroundings, or impose the one asked for.
@@ -167,9 +291,10 @@ export function JupyterReactTheme(
    * - a `colormode` property is given: it wins, and JupyterLab is told about
    *   it — leaving its theme alone would keep the `--jp-*` variables of the
    *   other one;
-   * - the page is a JupyterLab: its theme rules, and every change of it is
-   *   followed. The theme manager is a service of a plugin that activates on
-   *   its own schedule, so it is waited for rather than read once;
+   * - the page is a JupyterLab, or holds one: its theme rules, and every
+   *   change of it is followed — through what the theme manager states on the
+   *   body, which is there whether or not this page can reach the plugin that
+   *   provides the manager, and whenever that plugin activated;
    * - neither: the preference of the operating system.
    *
    * The resolved mode is written to the store, which is what the components
@@ -177,44 +302,102 @@ export function JupyterReactTheme(
    * portals of Primer — read.
    */
   useEffect(() => {
-    let disposed = false;
+    if (themedAncestor === undefined) {
+      // Not measured yet: the first layout effect above runs before this.
+      return undefined;
+    }
     let disconnect: (() => void) | undefined;
 
-    const colorSchemeFromMedia = ({ matches }: { matches: boolean }) => {
-      const resolved = matches ? 'dark' : 'light';
+    /*
+     * The overlays of the page are not turned into JupyterLab ones here.
+     *
+     * Primer draws every overlay of the document under ONE root, so what is
+     * written on it is written for the whole page — and this provider is
+     * mounted by whoever shows a notebook, which is not the same thing as
+     * the page being a JupyterLab. A web application showing a notebook
+     * among its own pages had its own menus and its own dialogs repainted
+     * in the theme of JupyterLab, and left that way. A JupyterLab asks for
+     * that bridge from its entry point instead; what is said here is only
+     * that a themed view has rendered — the moment the rules the bridge
+     * copies are written — which does nothing at all on a page that never
+     * asked for it. See `JupyterLabPortalTheme`.
+     */
+    const applyColormode = (resolved: 'light' | 'dark') => {
       setColormode(resolved);
+      if (nested) {
+        // Nothing shared: the theme above owns the store and the portals.
+        return;
+      }
       if (colormodeFromStore !== resolved) {
         setColormodeStore(resolved);
       }
       setupPrimerPortals(resolved);
+      refreshJupyterLabPortalTheme();
     };
-    const followSystem = () => {
+    /*
+     * Inside another theme: wear its mode, and keep wearing it as it changes.
+     * The attribute is what every provider writes on its element, whichever
+     * package it comes from, and it is rewritten on every toggle.
+     */
+    const followAncestor = (ancestor: Element): (() => void) => {
+      const apply = () => {
+        const mode = ancestor.getAttribute('data-color-mode');
+        setColormode(
+          mode === 'dark' || mode === 'night'
+            ? 'dark'
+            : mode === 'light' || mode === 'day'
+              ? 'light'
+              : resolveColormode('auto')
+        );
+      };
+      const observer = new MutationObserver(apply);
+      observer.observe(ancestor, {
+        attributes: true,
+        attributeFilter: ['data-color-mode'],
+      });
+      apply();
+      return () => observer.disconnect();
+    };
+    const followSystem = (): (() => void) => {
       const media = window.matchMedia('(prefers-color-scheme: dark)');
+      const colorSchemeFromMedia = ({ matches }: { matches: boolean }) => {
+        applyColormode(matches ? 'dark' : 'light');
+      };
       colorSchemeFromMedia({ matches: media.matches });
       media.addEventListener('change', colorSchemeFromMedia);
-      disconnect = () => {
+      return () => {
         media.removeEventListener('change', colorSchemeFromMedia);
       };
     };
-    const updateColorMode = (themeManager: IThemeManager) => {
-      const resolved =
-        themeManager.theme && !themeManager.isLight(themeManager.theme)
-          ? 'dark'
-          : 'light';
-      setColormode(resolved);
-      if (colormodeFromStore !== resolved) {
-        setColormodeStore(resolved);
+    const followJupyterLab = (): (() => void) => {
+      let stopFollowingSystem: (() => void) | undefined;
+      const apply = () => {
+        const resolved = jupyterLabColormode();
+        if (!resolved) {
+          return;
+        }
+        setJupyterLabThemed(true);
+        stopFollowingSystem?.();
+        stopFollowingSystem = undefined;
+        applyColormode(resolved);
+      };
+      // The attributes of the body, not the theme manager: what the theme
+      // manager applied is on the body whether or not this page can reach the
+      // plugin that provides it, and it is rewritten on every change.
+      const observer = new MutationObserver(apply);
+      observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['data-jp-theme-light', 'data-jp-theme-name'],
+      });
+      apply();
+      if (!jupyterLabColormode()) {
+        // The application has not themed itself yet — the preference of the
+        // system stands in until it does, and gives way when it does.
+        stopFollowingSystem = followSystem();
       }
-      setupPrimerPortals(resolved);
-    };
-    const follow = (themeManager: IThemeManager) => {
-      if (disposed) {
-        return;
-      }
-      updateColorMode(themeManager);
-      themeManager.themeChanged.connect(updateColorMode);
-      disconnect = () => {
-        themeManager.themeChanged.disconnect(updateColorMode);
+      return () => {
+        observer.disconnect();
+        stopFollowingSystem?.();
       };
     };
     const themeManagerOf = (): IThemeManager | undefined =>
@@ -222,55 +405,49 @@ export function JupyterReactTheme(
         '@jupyterlab/apputils-extension:themes'
       ) as IThemeManager | null) ?? undefined;
 
-    if (!jupyterLabAdapter) {
-      // Only the system is left to follow; a `colormode` property is already
-      // held in the state, and there is no application to tell about it.
-      if (!hasColormodeProp || colormodeProps === 'auto') {
-        followSystem();
-      }
-    } else if (hasColormodeProp) {
+    if (hasColormodeProp) {
+      // The property wins, and JupyterLab is told about it — leaving its theme
+      // alone would keep the `--jp-*` variables of the other one.
       const resolved = resolveColormode(colormodeProps);
       const desiredTheme =
         resolved === 'dark' ? 'JupyterLab Dark' : 'JupyterLab Light';
-      const themeManager = themeManagerOf();
+      const themeManager = ownsShared ? themeManagerOf() : undefined;
       if (themeManager && themeManager.theme !== desiredTheme) {
         themeManager.setTheme(desiredTheme).catch(() => {
           /* swallow — best effort */
         });
       }
-      setupPrimerPortals(resolved);
-    } else {
-      const themeManager = themeManagerOf();
-      if (themeManager) {
-        follow(themeManager);
-      } else {
-        // The plugin providing the theme manager has not activated yet; the
-        // application tells when everything has.
-        void jupyterLabAdapter.jupyterLab?.restored
-          .then(() => {
-            const late = themeManagerOf();
-            if (late) {
-              follow(late);
-            } else {
-              followSystem();
-            }
-          })
-          .catch(() => {
-            /* the application never settled; nothing to follow */
-          });
+      if (!nested) {
+        setupPrimerPortals(resolved);
+        refreshJupyterLabPortalTheme();
       }
+      if (!jupyterLabAdapter && colormodeProps === 'auto') {
+        disconnect = followSystem();
+      }
+    } else if (themedAncestor) {
+      // No mode asked for, and a themed element above: its mode is the one.
+      disconnect = followAncestor(themedAncestor);
+    } else if (inJupyterLab || jupyterLabThemed || jupyterLabAdapter) {
+      // The page is a JupyterLab, or holds one: its theme rules, and every
+      // change of it is followed.
+      disconnect = followJupyterLab();
+    } else {
+      disconnect = followSystem();
     }
     return () => {
-      disposed = true;
       disconnect?.();
     };
   }, [
     inJupyterLab,
     jupyterLabAdapter,
+    jupyterLabThemed,
     hasColormodeProp,
     colormodeProps,
     colormodeFromStore,
     setColormodeStore,
+    themedAncestor,
+    nested,
+    ownsShared,
   ]);
   return (
     <JupyterReactColormodeContext.Provider value={colormode}>
@@ -281,7 +458,10 @@ export function JupyterReactTheme(
           // management even if a JupyterLabAdapter is present — otherwise the
           // server-loaded JupyterLab theme variables would override our
           // requested colormode.
-          manageThemeLinks={hasColormodeProp || !jupyterLabAdapter}
+          manageThemeLinks={
+            (hasColormodeProp && underAnotherTheme !== true) ||
+            !(jupyterLabAdapter || inJupyterLab || jupyterLabThemed)
+          }
         />
       )}
       <ThemeProvider
@@ -299,9 +479,13 @@ export function JupyterReactTheme(
             }}
             {...rest}
           >
-            {backgroundColor && (
-              <style>{`.jp-Notebook { background-color: ${backgroundColor} !important; }`}</style>
-            )}
+            {/* Marks this theme's own element; see `themedAncestor`. */}
+            <span
+              ref={sentinel}
+              hidden
+              data-jupyter-react-theme-root={scopeId}
+            />
+            {notebookBackgroundRule && <style>{notebookBackgroundRule}</style>}
             {children}
           </BaseStyles>
         ) : (
@@ -312,9 +496,12 @@ export function JupyterReactTheme(
               fontSize: 'var(--text-body-size-medium)',
             }}
           >
-            {backgroundColor && (
-              <style>{`.jp-Notebook { background-color: ${backgroundColor} !important; }`}</style>
-            )}
+            <span
+              ref={sentinel}
+              hidden
+              data-jupyter-react-theme-root={scopeId}
+            />
+            {notebookBackgroundRule && <style>{notebookBackgroundRule}</style>}
             {children}
           </div>
         )}

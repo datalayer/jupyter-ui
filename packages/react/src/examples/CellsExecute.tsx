@@ -40,10 +40,7 @@ const CellsExecuteExample = () => {
   return (
     <ExampleJupyterReactTheme>
       <Box sx={{ px: 3, py: 2, bg: 'canvas.default' }}>
-        <Heading
-          as="h1"
-          sx={{ m: 0, fontSize: 4, fontWeight: 'bold' }}
-        >
+        <Heading as="h1" sx={{ m: 0, fontSize: 4, fontWeight: 'bold' }}>
           Cells Execute
         </Heading>
       </Box>

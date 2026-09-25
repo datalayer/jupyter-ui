@@ -10,18 +10,28 @@
  * Datalayer License
  */
 
-import type { CSSProperties } from 'react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { JSX } from 'react';
+import type { CSSProperties, RefObject } from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { createPortal } from 'react-dom';
 import {
   Box,
   Heading,
   IconButton,
+  Overlay,
   Text,
   Button as PrimerButton,
 } from '@primer/react';
 import { SideOverlay } from '@datalayer/primer-addons';
 import {
+  CheckIcon,
   CommentIcon,
   PaperAirplaneIcon,
   TrashIcon,
@@ -41,6 +51,7 @@ import {
   COMMAND_PRIORITY_EDITOR,
   createCommand,
   KEY_ESCAPE_COMMAND,
+  defineExtension,
 } from 'lexical';
 import type { Doc } from 'yjs';
 import {
@@ -51,35 +62,47 @@ import {
   $wrapSelectionInMarkNode,
   MarkNode,
 } from '@lexical/mark';
-import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
-import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
-import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin';
+import { AutoFocusExtension, ClearEditorExtension } from '@lexical/extension';
+import { HistoryExtension } from '@lexical/history';
+import { PlainTextExtension } from '@lexical/plain-text';
 import { useCollaborationContext } from '@datalayer/lexical-loro';
-import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { LexicalExtensionComposer } from '@lexical/react/LexicalExtensionComposer';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
-import { PlainTextPlugin } from '@lexical/react/LexicalPlainTextPlugin';
 import { createDOMRange, createRectsFromDOMRange } from '@lexical/selection';
 import { $isRootTextContentEmpty, $rootTextContent } from '@lexical/text';
 import { mergeRegister, registerNestedElementResolver } from '@lexical/utils';
 import { WebsocketProvider } from 'y-websocket';
 import {
   Comment,
+  type CommentPerson,
+  anonymousAuthor,
+  authorLabel,
+  authorOf,
+  type CommentAuthor,
   Comments,
   CommentStore,
   createComment,
   createThread,
+  type ICommentStore,
+  mentionsIn,
   Thread,
   useCommentStore,
-} from '../components';
-import CommentEditorTheme from '../themes/CommentEditorTheme';
+} from '../components/Commenting';
+import { Placeholder } from '../components/Placeholder';
 import {
-  useModal,
-  LexicalContentEditable as ContentEditable,
-  Placeholder,
-} from '..';
-import { useLayoutEffectImpl as useLayoutEffect } from '..';
+  CommentAuthorAvatar,
+  CommentPeopleContext,
+  MentionsPlugin,
+  ThreadAssignee,
+  type CommentAvatarComponent,
+} from './CommentPeople';
+import CommentEditorTheme from '../themes/CommentEditorTheme';
+// From their modules rather than the package's index: a plug-in importing
+// its own package imports every module of it, itself included.
+import { useModal } from '../hooks/useModal';
+import { useLayoutEffectImpl as useLayoutEffect } from '../hooks/useLayoutEffect';
 import { useComments } from '../context/CommentsContext';
 
 export const INSERT_INLINE_COMMAND: LexicalCommand<void> = createCommand();
@@ -133,6 +156,24 @@ function AddCommentBox({
   );
 }
 
+/** The small plain-text editor a comment is typed in. */
+const COMMENT_COMPOSER_EXTENSION = defineExtension({
+  name: '@datalayer/jupyter-lexical/CommentComposer',
+  namespace: 'Commenting',
+  theme: CommentEditorTheme,
+  dependencies: [PlainTextExtension, HistoryExtension, ClearEditorExtension],
+});
+
+/**
+ * The same, focused on mount. A second module-scoped extension rather than a
+ * configuration computed per render: the composer rebuilds the editor
+ * whenever its extension changes.
+ */
+const FOCUSED_COMMENT_COMPOSER_EXTENSION = defineExtension({
+  name: '@datalayer/jupyter-lexical/CommentComposer/Focused',
+  dependencies: [COMMENT_COMPOSER_EXTENSION, AutoFocusExtension],
+});
+
 function EditorRefPlugin({
   editorRef,
 }: {
@@ -175,6 +216,7 @@ function PlainTextEditor({
   autoFocus,
   onEscape,
   onChange,
+  onMention,
   editorRef,
   placeholder = 'Type a comment...',
 }: {
@@ -183,33 +225,30 @@ function PlainTextEditor({
   editorRef?: { current: null | LexicalEditor };
   onChange: (editorState: EditorState, editor: LexicalEditor) => void;
   onEscape: (e: KeyboardEvent) => boolean;
+  /** Told whom an `@` names, when the store knows who may be named. */
+  onMention?: (person: CommentPerson) => void;
   placeholder?: string;
 }) {
-  const initialConfig = {
-    namespace: 'Commenting',
-    nodes: [],
-    onError: (error: Error) => {
-      throw error;
-    },
-    theme: CommentEditorTheme,
-  };
+  const extension =
+    autoFocus === false
+      ? COMMENT_COMPOSER_EXTENSION
+      : FOCUSED_COMMENT_COMPOSER_EXTENSION;
 
   return (
-    <LexicalComposer initialConfig={initialConfig}>
+    <LexicalExtensionComposer extension={extension} contentEditable={null}>
       <Box sx={{ position: 'relative', m: '10px', borderRadius: 2 }}>
-        <PlainTextPlugin
-          contentEditable={<ContentEditable style={style} />}
+        <ContentEditable
+          className="ContentEditable__root"
+          style={style}
           placeholder={<Placeholder>{placeholder}</Placeholder>}
-          ErrorBoundary={LexicalErrorBoundary}
+          aria-placeholder={placeholder}
         />
         <OnChangePlugin onChange={onChange} />
-        <HistoryPlugin />
-        {autoFocus !== false && <AutoFocusPlugin />}
         <EscapeHandlerPlugin onEscape={onEscape} />
-        <ClearEditorPlugin />
+        {onMention !== undefined && <MentionsPlugin onMention={onMention} />}
         {editorRef !== undefined && <EditorRefPlugin editorRef={editorRef} />}
       </Box>
-    </LexicalComposer>
+    </LexicalExtensionComposer>
   );
 }
 
@@ -228,6 +267,9 @@ function useOnChange(
   );
 }
 
+/** The comment card's width — Primer's `small` overlay — which its placement centres on. */
+const CARD_WIDTH = 256;
+
 function CommentInputBox({
   editor,
   cancelAddComment,
@@ -242,7 +284,14 @@ function CommentInputBox({
 }) {
   const [content, setContent] = useState('');
   const [canSubmit, setCanSubmit] = useState(false);
-  const boxRef = useRef<HTMLDivElement>(null);
+  /*
+    Where the card hangs, in viewport coordinates: the overlay takes them as
+    props rather than having them written onto its node, which is what a
+    hand-positioned `div` used to need.
+  */
+  const [at, setAt] = useState<{ left: number; top: number } | null>(null);
+  /* Focus goes back to the document when the card closes. */
+  const returnFocusRef = useRef<HTMLElement | null>(null);
   const selectionState = useMemo(
     () => ({
       container: document.createElement('div'),
@@ -250,7 +299,7 @@ function CommentInputBox({
     }),
     [],
   );
-  const author = useCollabAuthorName();
+  const author = useCommentAuthor();
 
   const updateLocation = useCallback(() => {
     editor.getEditorState().read(() => {
@@ -266,17 +315,17 @@ function CommentInputBox({
           focus.getNode(),
           focus.offset,
         );
-        const boxElem = boxRef.current;
-        if (range !== null && boxElem !== null) {
+        if (range !== null) {
           const { left, bottom, width } = range.getBoundingClientRect();
           const selectionRects = createRectsFromDOMRange(editor, range);
           let correctedLeft =
-            selectionRects.length === 1 ? left + width / 2 - 125 : left - 125;
+            selectionRects.length === 1
+              ? left + width / 2 - CARD_WIDTH / 2
+              : left - CARD_WIDTH / 2;
           if (correctedLeft < 10) {
             correctedLeft = 10;
           }
-          boxElem.style.left = `${correctedLeft}px`;
-          boxElem.style.top = `${bottom + 20}px`;
+          setAt({ left: correctedLeft, top: bottom + 20 });
           const selectionRectsLength = selectionRects.length;
           const { container } = selectionState;
           const elements: Array<HTMLSpanElement> = selectionState.elements;
@@ -290,8 +339,9 @@ function CommentInputBox({
               elements[i] = elem;
               container.appendChild(elem);
             }
-            const color = '255, 212, 0';
-            const style = `position:absolute;top:${selectionRect.top}px;left:${selectionRect.left}px;height:${selectionRect.height}px;width:${selectionRect.width}px;background-color:rgba(${color}, 0.3);pointer-events:none;z-index:5;`;
+            const color =
+              'var(--bgColor-attention-muted, rgba(255, 212, 0, 0.3))';
+            const style = `position:absolute;top:${selectionRect.top}px;left:${selectionRect.left}px;height:${selectionRect.height}px;width:${selectionRect.width}px;background-color:${color};pointer-events:none;z-index:5;`;
             elem.style.cssText = style;
           }
           for (let i = elementsLength - 1; i >= selectionRectsLength; i--) {
@@ -305,6 +355,7 @@ function CommentInputBox({
   }, [editor, selectionState]);
 
   useLayoutEffect(() => {
+    returnFocusRef.current = editor.getRootElement();
     updateLocation();
     const container = selectionState.container;
     const body = document.body;
@@ -314,7 +365,7 @@ function CommentInputBox({
         body.removeChild(container);
       };
     }
-  }, [selectionState.container, updateLocation]);
+  }, [editor, selectionState.container, updateLocation]);
 
   useEffect(() => {
     window.addEventListener('resize', updateLocation);
@@ -330,6 +381,12 @@ function CommentInputBox({
     return true;
   };
 
+  // Whom an `@` named while the comment was typed (B4-02).
+  const picked = useRef(new Map<string, CommentPerson>());
+  const onMention = useCallback((person: CommentPerson) => {
+    picked.current.set(person.uid, person);
+  }, []);
+
   const submitComment = () => {
     if (canSubmit) {
       let quote = editor.getEditorState().read(() => {
@@ -340,7 +397,16 @@ function CommentInputBox({
         quote = quote.slice(0, 99) + '…';
       }
       submitAddComment(
-        createThread(quote, [createComment(content, author)]),
+        createThread(quote, [
+          createComment(
+            content,
+            author,
+            undefined,
+            undefined,
+            undefined,
+            mentionsIn(content, picked.current.values()),
+          ),
+        ]),
         true,
       );
     }
@@ -348,35 +414,52 @@ function CommentInputBox({
 
   const onChange = useOnChange(setContent, setCanSubmit);
 
+  /*
+    A click that lands in the mentions list is not a click outside: the list
+    is portalled (`CommentPeople`, `role="listbox"`), so it sits outside the
+    card's own tree and would otherwise close the card the moment someone
+    picked a person to name.
+  */
+  const onClickOutside = (event: MouseEvent | TouchEvent): void => {
+    const target = event.target;
+    if (target instanceof HTMLElement && target.closest('[role="listbox"]')) {
+      return;
+    }
+    cancelAddComment();
+  };
+
+  if (at === null) {
+    return null;
+  }
+
   return (
-    <Box
-      ref={boxRef}
-      sx={{
-        display: 'block',
-        position: 'absolute',
-        width: 250,
-        minHeight: 80,
-        bg: 'canvas.default',
-        boxShadow: 'shadow.medium',
-        borderRadius: 2,
-        zIndex: 24,
-      }}
+    <Overlay
+      role="dialog"
+      aria-label="Add a comment"
+      width="small"
+      position="fixed"
+      left={at.left}
+      top={at.top}
+      onEscape={cancelAddComment}
+      onClickOutside={onClickOutside}
+      returnFocusRef={returnFocusRef as RefObject<HTMLElement>}
+      preventFocusOnOpen
     >
       <PlainTextEditor
         style={{
           position: 'relative',
-          border: '1px solid',
-          borderColor: 'var(--borderColor-default, #ccc)',
-          backgroundColor: 'var(--bgColor-default, #fff)',
+          border: '1px solid var(--borderColor-default)',
+          backgroundColor: 'var(--bgColor-default)',
           borderRadius: '6px',
           fontSize: '15px',
-          caretColor: 'rgb(5, 5, 5)',
+          caretColor: 'var(--fgColor-default)',
           display: 'block',
           padding: '9px 10px 10px 9px',
           minHeight: '80px',
         }}
         onEscape={onEscape}
         onChange={onChange}
+        onMention={onMention}
       />
       <Box
         sx={{
@@ -404,7 +487,7 @@ function CommentInputBox({
           Comment
         </PrimerButton>
       </Box>
-    </Box>
+    </Overlay>
   );
 }
 
@@ -425,13 +508,30 @@ function CommentsComposer({
   const [content, setContent] = useState('');
   const [canSubmit, setCanSubmit] = useState(false);
   const editorRef = useRef<LexicalEditor>(null);
-  const author = useCollabAuthorName();
+  const author = useCommentAuthor();
+  // Whom an `@` named while the reply was typed (B4-02).
+  const picked = useRef(new Map<string, CommentPerson>());
+  const onMention = useCallback((person: CommentPerson) => {
+    picked.current.set(person.uid, person);
+  }, []);
 
   const onChange = useOnChange(setContent, setCanSubmit);
 
   const submitComment = () => {
     if (canSubmit) {
-      submitAddComment(createComment(content, author), false, thread);
+      submitAddComment(
+        createComment(
+          content,
+          author,
+          undefined,
+          undefined,
+          undefined,
+          mentionsIn(content, picked.current.values()),
+        ),
+        false,
+        thread,
+      );
+      picked.current.clear();
       const editor = editorRef.current;
       if (editor !== null) {
         editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
@@ -449,7 +549,7 @@ function CommentsComposer({
           backgroundColor: 'var(--bgColor-default, #fff)',
           borderRadius: '6px',
           fontSize: '15px',
-          caretColor: 'rgb(5, 5, 5)',
+          caretColor: 'var(--fgColor-default)',
           display: 'block',
           padding: '9px 10px 10px 9px',
           minHeight: '20px',
@@ -459,6 +559,7 @@ function CommentsComposer({
           return true;
         }}
         onChange={onChange}
+        onMention={onMention}
         editorRef={editorRef}
         placeholder={placeholder}
       />
@@ -516,6 +617,23 @@ function ShowDeleteCommentOrThreadDialog({
   );
 }
 
+/** How long ago a comment was written, in the largest unit that fits. */
+function whenWritten(rtf: Intl.RelativeTimeFormat, timeStamp: number): string {
+  const seconds = Math.round((timeStamp - Date.now()) / 1000);
+  if (seconds > -10) {
+    return 'Just now';
+  }
+  const minutes = Math.round(seconds / 60);
+  if (minutes > -60) {
+    return rtf.format(minutes, 'minute');
+  }
+  const hours = Math.round(minutes / 60);
+  if (hours > -24) {
+    return rtf.format(hours, 'hour');
+  }
+  return rtf.format(Math.round(hours / 24), 'day');
+}
+
 function CommentsPanelListComment({
   comment,
   deleteComment,
@@ -531,19 +649,32 @@ function CommentsPanelListComment({
   rtf: Intl.RelativeTimeFormat;
   thread?: Thread;
 }): JSX.Element {
-  const seconds = Math.round((comment.timeStamp - performance.now()) / 1000);
-  const minutes = Math.round(seconds / 60);
   const [modal, showModal] = useModal();
+  const { Avatar: AuthorAvatar = CommentAuthorAvatar } =
+    useContext(CommentPeopleContext);
+  const author = authorOf(comment);
 
   return (
     <Box
       as="li"
-      sx={{ p: 2, borderBottom: '1px solid', borderColor: 'border.muted' }}
+      sx={{
+        p: 2,
+        borderBottom: '1px solid',
+        borderColor: 'var(--borderColor-muted)',
+      }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-        <Text sx={{ fontWeight: 'bold', fontSize: 1 }}>{comment.author}</Text>
-        <Text sx={{ color: 'fg.muted', fontSize: 0 }}>
-          · {seconds > -10 ? 'Just now' : rtf.format(minutes, 'minute')}
+        <AuthorAvatar author={author} size={20} />
+        <Text sx={{ fontWeight: 'bold', fontSize: 1 }}>
+          {authorLabel(author)}
+        </Text>
+        {author.agentUid && (
+          <Text sx={{ color: 'var(--fgColor-muted)', fontSize: 0 }}>
+            · with an agent
+          </Text>
+        )}
+        <Text sx={{ color: 'var(--fgColor-muted)', fontSize: 0 }}>
+          · {whenWritten(rtf, comment.timeStamp)}
         </Text>
       </Box>
       <Text
@@ -552,7 +683,7 @@ function CommentsPanelListComment({
           fontSize: 1,
           m: 0,
           ...(comment.deleted
-            ? { color: 'fg.subtle', fontStyle: 'italic' }
+            ? { color: 'var(--fgColor-muted)', fontStyle: 'italic' }
             : {}),
         }}
       >
@@ -565,7 +696,7 @@ function CommentsPanelListComment({
             aria-label="Delete comment"
             variant="invisible"
             size="small"
-            sx={{ color: 'danger.fg', mt: 1 }}
+            sx={{ color: 'var(--fgColor-danger)', mt: 1 }}
             onClick={() => {
               showModal('Delete Comment', onClose => (
                 <ShowDeleteCommentOrThreadDialog
@@ -591,6 +722,7 @@ function CommentsPanelList({
   listRef,
   submitAddComment,
   markNodeMap,
+  resolveThread,
 }: {
   activeIDs: Array<string>;
   comments: Comments;
@@ -605,6 +737,8 @@ function CommentsPanelList({
     isInlineComment: boolean,
     thread?: Thread,
   ) => void;
+  /** Offered when the store resolves threads. */
+  resolveThread?: (thread: Thread) => void;
 }): JSX.Element {
   const [editor] = useLexicalComposerContext();
   const [counter, setCounter] = useState(0);
@@ -672,13 +806,15 @@ function CommentsPanelList({
               sx={{
                 p: 2,
                 borderBottom: '1px solid',
-                borderColor: 'border.muted',
+                borderColor: 'var(--borderColor-muted)',
                 cursor: markNodeMap.has(id) ? 'pointer' : 'default',
                 bg:
                   activeIDs.indexOf(id) === -1
-                    ? 'canvas.default'
-                    : 'accent.subtle',
-                '&:hover': markNodeMap.has(id) ? { bg: 'canvas.subtle' } : {},
+                    ? 'var(--bgColor-default)'
+                    : 'var(--bgColor-accent-muted)',
+                '&:hover': markNodeMap.has(id)
+                  ? { bg: 'var(--bgColor-muted)' }
+                  : {},
               }}
             >
               <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
@@ -689,20 +825,33 @@ function CommentsPanelList({
                     m: 0,
                     pl: 2,
                     borderLeft: '3px solid',
-                    borderColor: 'accent.muted',
-                    color: 'fg.muted',
+                    borderColor: 'var(--bgColor-accent-muted)',
+                    color: 'var(--fgColor-muted)',
                     fontSize: 1,
                   }}
                 >
                   {'> '}
                   <span>{commentOrThread.quote}</span>
                 </Box>
+                {resolveThread && (
+                  <IconButton
+                    icon={CheckIcon}
+                    aria-label="Resolve thread"
+                    variant="invisible"
+                    size="small"
+                    onClick={event => {
+                      // Not the thread's own click, which selects its mark.
+                      event.stopPropagation();
+                      resolveThread(commentOrThread);
+                    }}
+                  />
+                )}
                 <IconButton
                   icon={TrashIcon}
                   aria-label="Delete thread"
                   variant="invisible"
                   size="small"
-                  sx={{ color: 'danger.fg' }}
+                  sx={{ color: 'var(--fgColor-danger)' }}
                   onClick={() => {
                     showModal('Delete Thread', onClose => (
                       <ShowDeleteCommentOrThreadDialog
@@ -715,6 +864,7 @@ function CommentsPanelList({
                 />
                 {modal}
               </Box>
+              <ThreadAssignee thread={commentOrThread} />
               <Box as="ul" sx={{ listStyle: 'none', m: 0, p: 0, mt: 2 }}>
                 {commentOrThread.comments.map(comment => (
                   <CommentsPanelListComment
@@ -755,6 +905,7 @@ function CommentsPanel({
   comments,
   submitAddComment,
   markNodeMap,
+  resolveThread,
 }: {
   activeIDs: Array<string>;
   comments: Comments;
@@ -768,6 +919,7 @@ function CommentsPanel({
     isInlineComment: boolean,
     thread?: Thread,
   ) => void;
+  resolveThread?: (thread: Thread) => void;
 }): JSX.Element {
   const listRef = useRef<HTMLUListElement>(null);
   const isEmpty = comments.length === 0;
@@ -775,7 +927,7 @@ function CommentsPanel({
   return (
     <Box
       sx={{
-        bg: 'canvas.default',
+        bg: 'var(--bgColor-default)',
         borderRadius: 2,
         overflow: 'hidden',
         width: '100%',
@@ -790,14 +942,14 @@ function CommentsPanel({
           fontSize: 2,
           p: 3,
           borderBottom: '1px solid',
-          borderColor: 'border.muted',
+          borderColor: 'var(--borderColor-muted)',
           m: 0,
         }}
       >
         Comments
       </Heading>
       {isEmpty ? (
-        <Box sx={{ p: 3, color: 'fg.muted', textAlign: 'center' }}>
+        <Box sx={{ p: 3, color: 'var(--fgColor-muted)', textAlign: 'center' }}>
           No Comments
         </Box>
       ) : (
@@ -808,35 +960,62 @@ function CommentsPanel({
           listRef={listRef}
           submitAddComment={submitAddComment}
           markNodeMap={markNodeMap}
+          resolveThread={resolveThread}
         />
       )}
     </Box>
   );
 }
 
-function useCollabAuthorName(): string {
-  const collabContext = useCollaborationContext();
-  const { name } = collabContext;
-  // Use collaboration username (from Datalayer auth or OS username)
-  // No longer checking yjsDocMap since we're using Loro, not Yjs
-  return name || 'User';
+/**
+ * Who is writing: the principal the host named, or — with none — somebody
+ * anonymous, by the name the collaboration gave them.
+ */
+function useCommentAuthor(): CommentAuthor {
+  const { author } = useContext(CommentPeopleContext);
+  const { name } = useCollaborationContext();
+  return author ?? anonymousAuthor(name);
 }
 
 export function CommentPlugin({
   providerFactory,
   showFloatingAddButton = true,
+  commentStore: givenCommentStore,
+  author,
+  Avatar,
 }: {
   providerFactory?: (
     id: string,
     yjsDocMap: Map<string, Doc>,
   ) => WebsocketProvider;
   showFloatingAddButton?: boolean;
+  /**
+   * Where the threads are kept. Without one they are nodes of the document,
+   * which is all a local file has; a platform document passes an
+   * `ApiCommentStore` over its service.
+   */
+  commentStore?: ICommentStore;
+  /**
+   * Who is commenting, when the host knows: a signed-in principal, by kind
+   * and uid, kept with every comment written here. Absent, comments are
+   * signed with the collaboration name, as somebody anonymous. A platform
+   * store records its own author from the caller's token and ignores this.
+   */
+  author?: CommentAuthor;
+  /**
+   * How an author's picture is drawn: a host that can look principals up by
+   * uid passes its own. `CommentAuthorAvatar` otherwise.
+   */
+  Avatar?: CommentAvatarComponent;
 }): JSX.Element {
   const [editor] = useLexicalComposerContext();
   const { showComments, setShowComments } = useComments();
   const overlayOpenButtonRef = useRef<HTMLButtonElement>(null);
   const overlayCloseButtonRef = useRef<HTMLButtonElement>(null);
-  const commentStore = useMemo(() => new CommentStore(editor), [editor]);
+  const commentStore = useMemo<ICommentStore>(
+    () => givenCommentStore ?? new CommentStore(editor),
+    [editor, givenCommentStore],
+  );
   const comments = useCommentStore(commentStore);
   const markNodeMap = useMemo<Map<string, Set<NodeKey>>>(() => {
     return new Map();
@@ -863,41 +1042,54 @@ export function CommentPlugin({
     setShowCommentInput(false);
   }, [editor]);
 
+  // Remove a thread's id from the marks highlighting its text.
+  const removeMarks = useCallback(
+    (id: string) => {
+      const markNodeKeys = markNodeMap.get(id);
+      if (markNodeKeys === undefined) {
+        return;
+      }
+      // Do async to avoid causing a React infinite loop
+      setTimeout(() => {
+        editor.update(() => {
+          for (const key of markNodeKeys) {
+            const node: null | MarkNode = $getNodeByKey<MarkNode>(key);
+            if ($isMarkNode(node)) {
+              node.deleteID(id);
+              if (node.getIDs().length === 0) {
+                $unwrapMarkNode(node);
+              }
+            }
+          }
+        });
+      });
+    },
+    [editor, markNodeMap],
+  );
+
   const deleteCommentOrThread = useCallback(
     (comment: Comment | Thread, thread?: Thread) => {
       if (comment.type === 'comment') {
-        const deletionInfo = commentStore.deleteCommentOrThread(
-          comment,
-          thread,
-        );
-        if (!deletionInfo) return;
-        const { markedComment, index } = deletionInfo;
-        commentStore.addComment(markedComment, thread, index);
+        commentStore.deleteComment(comment, thread);
       } else {
-        commentStore.deleteCommentOrThread(comment);
-        // Remove ids from associated marks
-        const id = thread !== undefined ? thread.id : comment.id;
-        const markNodeKeys = markNodeMap.get(id);
-        if (markNodeKeys !== undefined) {
-          // Do async to avoid causing a React infinite loop
-          setTimeout(() => {
-            editor.update(() => {
-              for (const key of markNodeKeys) {
-                const node: null | MarkNode = $getNodeByKey(key);
-                if ($isMarkNode(node)) {
-                  node.deleteID(id);
-                  if (node.getIDs().length === 0) {
-                    $unwrapMarkNode(node);
-                  }
-                }
-              }
-            });
-          });
-        }
+        commentStore.deleteThread(comment);
+        removeMarks(thread !== undefined ? thread.id : comment.id);
       }
     },
-    [commentStore, editor, markNodeMap],
+    [commentStore, removeMarks],
   );
+
+  // A resolved thread leaves the panel and its highlight leaves the text;
+  // the store keeps what it was about. Offered when the store resolves.
+  const resolveThread = useMemo(() => {
+    if (!commentStore.resolveThread) {
+      return undefined;
+    }
+    return (thread: Thread) => {
+      commentStore.resolveThread?.(thread);
+      removeMarks(thread.id);
+    };
+  }, [commentStore, removeMarks]);
 
   const submitAddComment = useCallback(
     (
@@ -977,7 +1169,7 @@ export function CommentPlugin({
       editor.registerMutationListener(MarkNode, mutations => {
         editor.getEditorState().read(() => {
           for (const [key, mutation] of mutations) {
-            const node: null | MarkNode = $getNodeByKey(key);
+            const node: null | MarkNode = $getNodeByKey<MarkNode>(key);
             let ids: NodeKey[] = [];
 
             if (mutation === 'destroyed') {
@@ -1067,17 +1259,30 @@ export function CommentPlugin({
     editor.dispatchCommand(INSERT_INLINE_COMMAND, undefined);
   };
 
+  // What the composers and the threads may do with people, when the store
+  // knows who may be named (B4-02).
+  const people = useMemo(
+    () => ({
+      searchPeople: commentStore.searchPeople?.bind(commentStore),
+      assignThread: commentStore.assignThread?.bind(commentStore),
+      author,
+      Avatar,
+    }),
+    [commentStore, author, Avatar],
+  );
+
   return (
-    <>
-      {showCommentInput &&
-        createPortal(
+    <CommentPeopleContext.Provider value={people}>
+      {/* No `createPortal` here: `Overlay` portals itself. */}
+      {showCommentInput && (
+        <CommentPeopleContext.Provider value={people}>
           <CommentInputBox
             editor={editor}
             cancelAddComment={cancelAddComment}
             submitAddComment={submitAddComment}
-          />,
-          document.body,
-        )}
+          />
+        </CommentPeopleContext.Provider>
+      )}
       {showFloatingAddButton &&
         activeAnchorKey !== null &&
         activeAnchorKey !== undefined &&
@@ -1109,10 +1314,11 @@ export function CommentPlugin({
             deleteCommentOrThread={deleteCommentOrThread}
             activeIDs={activeIDs}
             markNodeMap={markNodeMap}
+            resolveThread={resolveThread}
           />
         }
       />
-    </>
+    </CommentPeopleContext.Provider>
   );
 }
 

@@ -4,11 +4,13 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import {
   LexicalEditor,
   EditorConfig,
   DecoratorNode,
   LexicalNode,
+  LexicalUpdateJSON,
   NodeKey,
   Spread,
   SerializedLexicalNode,
@@ -58,7 +60,7 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
 
   /** @override */
   static clone(node: JupyterOutputNode) {
-    return new JupyterOutputNode(
+    const clone = new JupyterOutputNode(
       node.getJupyterInput(),
       node.__outputAdapter,
       node.__outputs,
@@ -67,12 +69,21 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
       node.__jupyterOutputNodeUuid,
       node.__key,
     );
+    // The constructor zeroes the triggers; a clone is a new *version* of the
+    // same node, not a new cell. Losing the counters made the decorator's
+    // executeTrigger prop oscillate across versions (1 → 0 → 1), and every
+    // rising edge re-executed the cell.
+    clone.__executeTrigger = node.__executeTrigger;
+    clone.__renderTrigger = node.__renderTrigger;
+    return clone;
   }
 
   /** @override */
   static importJSON(
     serializedNode: SerializedJupyterOutputNode,
   ): JupyterOutputNode {
+    // `updateFromJSON` reads the node's state (`$`), which a document may
+    // carry for others — a generated report marks its outputs as evidence.
     return $createJupyterOutputNode(
       serializedNode.source,
       new OutputAdapter(newUuid(), undefined, serializedNode.outputs),
@@ -80,7 +91,7 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
       false,
       serializedNode.jupyterInputNodeUuid,
       serializedNode.jupyterOutputNodeUuid,
-    );
+    ).updateFromJSON(serializedNode);
   }
 
   /** @override */
@@ -190,6 +201,16 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
   }
 
   /** @override */
+  isInline(): boolean {
+    // A block, not an inline: the output sits at the root beside its input.
+    // DecoratorNode defaults to inline, and since lexical 0.49 the root
+    // normalization transform wraps every inline child of the root in a
+    // fresh paragraph on each commit — which fought the keep-together
+    // mutation listeners in an endless wrap/unwrap cycle.
+    return false;
+  }
+
+  /** @override */
   isIsolated(): boolean {
     // Treat orphaned output nodes as isolated blocks for editing purposes
     // Return true only for orphaned nodes so they are handled as isolated blocks
@@ -213,7 +234,10 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
         outputs={currentOutputs}
         adapter={this.__outputAdapter}
         id={this.__jupyterOutputNodeUuid}
-        executeTrigger={this.getExecuteTrigger() + this.__renderTrigger}
+        executeTrigger={this.getExecuteTrigger()}
+        // A repaint is not a run: a kernel arriving must redraw the area with
+        // the outputs it already has, not execute the cell again.
+        renderTrigger={this.__renderTrigger}
         autoRun={this.__autoRun}
         lumino={true}
       />
@@ -223,6 +247,8 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
   /** @override */
   exportJSON(): SerializedJupyterOutputNode {
     return {
+      // The base carries the node's state (`$`) back out.
+      ...super.exportJSON(),
       type: 'jupyter-output',
       source: this.getJupyterInput(),
       outputs: this.__outputAdapter.outputArea.model.toJSON(),
@@ -230,6 +256,32 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
       jupyterOutputNodeUuid: this.getJupyterOutputNodeUuid(),
       version: 1,
     };
+  }
+
+  /**
+   * Take new data in place.
+   *
+   * A collaborator's edit to this output — its code, or the outputs an
+   * execution produced — arrives as serialized data. Taking it here keeps the
+   * node, its key and its DOM; the alternative, a fresh node in its place,
+   * runs into `remove()` below, which keeps this node standing, so the
+   * document gained a copy on every update.
+   *
+   * @override
+   */
+  updateFromJSON(
+    serializedNode: LexicalUpdateJSON<SerializedJupyterOutputNode>,
+  ): this {
+    const self = super.updateFromJSON(serializedNode);
+    if (serializedNode.source !== undefined) {
+      self.__code = serializedNode.source;
+    }
+    if (serializedNode.outputs !== undefined) {
+      self.__outputs = serializedNode.outputs;
+      self.__outputAdapter.setOutputs(serializedNode.outputs);
+      self.__renderTrigger++;
+    }
+    return self;
   }
 
   /** @override */
@@ -264,10 +316,17 @@ export class JupyterOutputNode extends DecoratorNode<JSX.Element> {
   }
 
   public updateKernel(kernel: Kernel | undefined) {
-    const self = this.getWritable();
-    if (self.__outputAdapter) {
+    // The kernel plugin sweeps every output node whenever its kernel effect
+    // runs. The adapter is shared across node versions, so read it from the
+    // latest version and only take a writable clone when the kernel actually
+    // changed — an unconditional bump marked every node dirty on every sweep
+    // and re-triggered executions.
+    const latest = this.getLatest();
+    if (latest.__outputAdapter && latest.__outputAdapter.kernel !== kernel) {
+      const self = this.getWritable();
       self.__outputAdapter.kernel = kernel;
-      // Force Output component to re-render with updated kernel
+      // Force Output component to re-render with updated kernel — a
+      // repaint only; the cell keeps its outputs and is not run again.
       self.__renderTrigger++;
       // Don't clear outputs - keep old execution results visible
     }

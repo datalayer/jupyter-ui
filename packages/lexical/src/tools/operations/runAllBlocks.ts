@@ -88,7 +88,9 @@ export const runAllBlocksOperation: ToolOperation<
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      throw new Error(`Failed to run all blocks: ${errorMessage}`);
+      throw new Error(`Failed to run all blocks: ${errorMessage}`, {
+        cause: error,
+      });
     }
   },
 };

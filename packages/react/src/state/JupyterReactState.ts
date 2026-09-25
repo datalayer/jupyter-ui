@@ -224,9 +224,14 @@ export function useJupyterReactStoreFromProps(
     return config;
   }, [lite, jupyterServerUrl, jupyterServerToken, terminals]);
 
+  // Seeded from the props, then from the store: a component reached without a
+  // manager of its own should use the one the application already published —
+  // a JupyterLite sandbox running in this page, say — rather than build a
+  // second one from the configured server URL and poll a host nobody asked
+  // for. The store is what "the fallback" means; building was skipping it.
   const [serviceManager, setServiceManager] = useState<
     ServiceManager.IManager | undefined
-  >(propsServiceManager);
+  >(propsServiceManager ?? jupyterReactStore.getState().serviceManager);
   const [_, setKernel] = useState<Kernel>();
   const [__, setIsLoading] = useState<boolean>(
     startDefaultKernel ||
@@ -239,7 +244,9 @@ export function useJupyterReactStoreFromProps(
       setKernel(undefined);
       jupyterReactStore.getState().setKernel(undefined);
       const shouldLoad =
-        startDefaultKernel || useRunningKernelIndex > -1 || Boolean(useRunningKernelId);
+        startDefaultKernel ||
+        useRunningKernelIndex > -1 ||
+        Boolean(useRunningKernelId);
       setIsLoading(shouldLoad);
       jupyterReactStore.getState().setKernelIsLoading(shouldLoad);
       setServiceManager(propsServiceManager);
@@ -261,11 +268,37 @@ export function useJupyterReactStoreFromProps(
       return;
     }
     if (!serviceManager) {
+      // Published by something else in the application while this component
+      // was mounting — adopt it rather than racing it with a second manager.
+      const published = jupyterReactStore.getState().serviceManager;
+      if (published) {
+        setServiceManager(published);
+        return;
+      }
+      /*
+       * Another component may publish a manager while this effect waits (the
+       * auth check and the lite start are both asynchronous). Then that one
+       * is adopted, so the application ends up with a single manager.
+       */
+      const adoptPublished = (): boolean => {
+        const already = jupyterReactStore.getState().serviceManager;
+        if (already) {
+          setServiceManager(already);
+          return true;
+        }
+        return false;
+      };
+      // A manager already made is not disposed when another won: disposing
+      // rejects its polls ("Poll ... is disposed"), and nothing awaits them.
+      const commit = (created: ServiceManager.IManager) => {
+        if (adoptPublished()) {
+          return;
+        }
+        jupyterReactStore.getState().setServiceManager(created);
+        setServiceManager(created);
+      };
       if (lite) {
-        createLiteServiceManager(lite).then(serviceManager => {
-          jupyterReactStore.getState().setServiceManager(serviceManager);
-          setServiceManager(serviceManager);
-        });
+        createLiteServiceManager(lite).then(commit);
         return;
       }
       const serverSettings = createServerSettings(
@@ -295,9 +328,11 @@ export function useJupyterReactStoreFromProps(
             'You can not ask for startDefaultKernel and (useRunningKernelId or useRunningKernelIndex) at the same time.'
           );
         }
-        const serviceManager = new ServiceManager({ serverSettings });
-        setServiceManager(serviceManager);
-        jupyterReactStore.getState().setServiceManager(serviceManager);
+        // Checked before one is made, so none is made for nothing.
+        if (adoptPublished()) {
+          return;
+        }
+        commit(new ServiceManager({ serverSettings }));
       });
     }
   }, [lite, serverless, jupyterServerUrl]);

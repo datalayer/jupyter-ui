@@ -14,17 +14,23 @@ const VERSION = PageConfig.getOption('appVersion');
 const SW_PING_ENDPOINT = '/api/service-worker-heartbeat';
 export class ServiceWorkerManager implements IServiceWorkerManager {
   constructor(options?: IServiceWorkerManager.IOptions) {
-    /*
-    const workerUrl =
-      options?.workerUrl ?? URLExt.join(PageConfig.getBaseUrl(), WORKER_NAME);
-    const fullWorkerUrl = new URL(workerUrl, window.location.href);
-    const enableCache = PageConfig.getOption('enableServiceWorkerCache') || 'false';
-    fullWorkerUrl.searchParams.set('enableCache', enableCache);
-    void this.initialize(fullWorkerUrl.href).catch(console.warn);
-    */
     const workerUrl = URLExt.join(PageConfig.getOption('serviceWorkerUrl'));
     const fullWorkerUrl = new URL(workerUrl);
-    fullWorkerUrl.searchParams.set('enableCache', 'true');
+    // Off unless the page asks for it, which is upstream's default.
+    //
+    // The worker serves stale-while-revalidate over everything that is not
+    // `/api/`, so with the cache on it answers from its own copy of the app's
+    // JavaScript — which is right for a built site with hashed filenames, and
+    // wrong in front of a dev server, where a module's URL stays the same while
+    // its content changes. Turned on unconditionally, it hands back yesterday's
+    // code and every edit appears to have no effect.
+    //
+    // Syncing the kernel filesystem with the JupyterLite contents does not
+    // depend on this: that goes over the broadcast channel, which the worker
+    // handles either way.
+    const enableCache =
+      PageConfig.getOption('enableServiceWorkerCache') || 'false';
+    fullWorkerUrl.searchParams.set('enableCache', enableCache);
     void this.initialize(fullWorkerUrl.href).catch(console.warn);
   }
 

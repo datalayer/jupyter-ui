@@ -173,7 +173,10 @@ export class PyodideRemoteKernel {
         mountpoint,
       });
       FS.mkdirTree(mountpoint);
-      FS.mount(driveFS, {}, mountpoint);
+      // `pyodide` pulls in `@types/emscripten` >= 1.41, whose `FileSystemType`
+      // requires `syncfs`. JupyterLite 0.3's `DriveFS` implements `mount` only --
+      // it never syncs -- so the cast records the version skew rather than a bug.
+      FS.mount(driveFS as unknown as Emscripten.FileSystemType, {}, mountpoint);
       FS.chdir(mountpoint);
       this._driveFS = driveFS;
     }

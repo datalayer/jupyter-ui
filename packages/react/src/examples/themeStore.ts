@@ -19,13 +19,14 @@ import { themeConfigs, useSystemColorMode } from '@datalayer/primer-addons';
  * Persisted in localStorage so standalone example pages and the examples
  * selector shell stay aligned on refresh.
  */
-export const useExampleThemeStore = createThemeStore(
-  'jupyter-react-examples-theme',
-  {
+// Annotated through `createThemeStore` rather than inferred: the inferred type
+// names zustand from inside `@datalayer/primer-addons`, which is not portable
+// when that package carries its own copy (TS2742).
+export const useExampleThemeStore: ReturnType<typeof createThemeStore> =
+  createThemeStore('jupyter-react-examples-theme', {
     colorMode: 'light',
     theme: 'datalayer',
-  },
-);
+  });
 
 /**
  * Resolve colormode and background color for standalone examples so each page

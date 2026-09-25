@@ -36,6 +36,81 @@ export type IJupyterConfig = {
 let config: IJupyterConfig | undefined = undefined;
 
 /**
+ * Whether this page is a served JupyterLab, read without writing anything.
+ *
+ * `loadJupyterConfig` answers the same question, and answering it is the least
+ * of what it does: it rebuilds the module configuration and writes `baseUrl`
+ * and `wsUrl` into the shared `PageConfig` on the way past. Calling it merely
+ * to ask where the code is running therefore *moves* where every Jupyter
+ * connection on the page is pointed — and a caller that asks during render
+ * does so at a moment nothing else can predict.
+ *
+ * That is not hypothetical. An in-page JupyterLite kernel points the page at
+ * its own origin when it starts; a component asking this question afterwards
+ * put the page back on the remote server named in `jupyter-config-data`, and
+ * the next kernel connection went there. The symptom is a notebook whose cells
+ * run into silence: the kernel is alive and nobody is talking to it.
+ *
+ * Read once and cached, because the answer is a property of the document and
+ * cannot change while the page is open.
+ */
+let servedByJupyterLab: boolean | undefined;
+
+export const isServedByJupyterLab = (): boolean => {
+  if (servedByJupyterLab === undefined) {
+    servedByJupyterLab = false;
+    try {
+      const element = document.getElementById('jupyter-config-data');
+      if (element?.textContent) {
+        servedByJupyterLab =
+          JSON.parse(element.textContent)?.appName === 'JupyterLab';
+      }
+    } catch {
+      // A malformed config is not a JupyterLab, and is not worth a throw
+      // during somebody's render.
+      servedByJupyterLab = false;
+    }
+  }
+  return servedByJupyterLab;
+};
+
+/**
+ * Make sure the module configuration exists, without repointing the page.
+ *
+ * `loadJupyterConfig` does two separable things: it builds this singleton,
+ * which four accessors below refuse to work without, and it writes `baseUrl`
+ * and `wsUrl` into the shared `PageConfig`. Only the second was ever a
+ * problem — a component calling it during render moved every Jupyter
+ * connection on the page — and when that call was removed from
+ * `JupyterReactTheme` the first went with it. Nothing else in this package
+ * called `loadJupyterConfig`, so the singleton stopped being built at all and
+ * every one of those accessors began throwing "Jupyter React Config must be
+ * loaded first".
+ *
+ * This is the half that was wanted: it adopts whatever `PageConfig` already
+ * says rather than deciding for it, so a JupyterLite kernel that has pointed
+ * the page at its own origin keeps it.
+ *
+ * Idempotent, and safe to call during a render.
+ */
+export const ensureJupyterConfig = (): IJupyterConfig => {
+  if (config) {
+    return config;
+  }
+  const baseUrl = PageConfig.getOption('baseUrl');
+  config = {
+    // Read, never written. Whoever set `baseUrl` — a JupyterLite server, a
+    // host application, JupyterLab itself — is the authority on it.
+    jupyterServerUrl: baseUrl || DEFAULT_JUPYTER_SERVER_URL,
+    jupyterServerToken:
+      PageConfig.getOption('token') || DEFAULT_JUPYTER_SERVER_TOKEN,
+    insideJupyterLab: isServedByJupyterLab(),
+    insideJupyterHub: PageConfig.getOption('hubHost') !== '',
+  };
+  return config;
+};
+
+/**
  * Setter for jupyterServerUrl.
  */
 export const setJupyterServerUrl = (jupyterServerUrl: string) => {

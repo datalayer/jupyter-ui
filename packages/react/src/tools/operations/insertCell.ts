@@ -140,7 +140,9 @@ export const insertCellOperation: ToolOperation<
       // Convert error to result with failure status
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      throw new Error(`Failed to insert cell: ${errorMessage}`);
+      throw new Error(`Failed to insert cell: ${errorMessage}`, {
+        cause: error,
+      });
     }
   },
 };

@@ -4,20 +4,37 @@
  * MIT License
  */
 
-/* Table container styles - matches VS Code theme */
-.PlaygroundEditorTheme__table {
+/*
+ * Table container styles - matches VS Code theme.
+ *
+ * `width: 100%`, not `max-content`: every column carries an explicit pixel
+ * width of its own (`<col>`, set by `@lexical/table` itself — 75px for a
+ * column nobody has resized), and under `table-layout: fixed` those widths
+ * are only the columns' *relative proportions* once the table's own width
+ * is a definite value larger than their sum — the extra space is then
+ * distributed across them (CSS2.1 §17.5.2, and every engine implements
+ * it). `max-content` opted out of that entirely: the table shrank to
+ * exactly the sum of its columns' 75px defaults, which for the common
+ * two-or-three-column table looked like a third of the page rather than
+ * the width actually available. A column a person has since resized still
+ * keeps its own chosen width — resizing sets that column's own `<col>`
+ * width, which is exactly the "explicit proportion" the algorithm above
+ * already respects; nothing here overrides it.
+ */
+.JupyterLexicalTheme__table {
   border-collapse: collapse !important;
   border-spacing: 0 !important;
   max-width: 100% !important;
+  overflow-x: scroll !important;
   overflow-y: scroll !important;
   table-layout: fixed !important;
-  width: max-content !important;
+  width: 100% !important;
   margin: 20px 0 !important;
   border: 1px solid var(--borderColor-default, rgba(128, 128, 128, 0.35)) !important;
 }
 
 /* Table cell styles */
-.PlaygroundEditorTheme__tableCell {
+.JupyterLexicalTheme__tableCell {
   border: 1px solid var(--borderColor-default, rgba(128, 128, 128, 0.35)) !important;
   min-width: 75px !important;
   width: 75px !important;
@@ -31,7 +48,7 @@
 }
 
 /* Table header cell styles */
-.PlaygroundEditorTheme__tableCellHeader {
+.JupyterLexicalTheme__tableCellHeader {
   border: 1px solid var(--borderColor-default, rgba(128, 128, 128, 0.35)) !important;
   min-width: 75px !important;
   width: 75px !important;
@@ -46,56 +63,21 @@
 }
 
 /* Cell focus styles */
-.PlaygroundEditorTheme__tableCell:focus,
-.PlaygroundEditorTheme__tableCellHeader:focus {
+.JupyterLexicalTheme__tableCell:focus,
+.JupyterLexicalTheme__tableCellHeader:focus {
   outline: 2px solid var(--borderColor-accent-emphasis, rgb(60, 132, 244)) !important;
   outline-offset: -2px;
 }
 
-/* Cell selection styles */
-.PlaygroundEditorTheme__tableCellSelected {
-  background-color: var(
-    --bgColor-accent-muted,
-    rgba(60, 132, 244, 0.15)
-  ) !important;
-}
-
 /* Placeholder for empty cells */
-.PlaygroundEditorTheme__tableCell:empty::after {
+.JupyterLexicalTheme__tableCell:empty::after {
   content: '';
   display: block;
   min-height: 20px;
 }
 
-/* Cell resize handles */
-.PlaygroundEditorTheme__tableCellResizer {
-  position: absolute;
-  right: -4px;
-  bottom: 0;
-  width: 8px;
-  top: 0;
-  cursor: ew-resize;
-  user-select: none;
-  z-index: 10;
-}
-
-.PlaygroundEditorTheme__tableCellResizer:after {
-  content: '';
-  position: absolute;
-  right: 3px;
-  top: 0;
-  height: 100%;
-  width: 2px;
-  background-color: transparent;
-}
-
-.PlaygroundEditorTheme__tableCellResizer:hover:after,
-.PlaygroundEditorTheme__tableCellResizer:active:after {
-  background-color: var(--borderColor-accent-emphasis, #3c84f4);
-}
-
 /* Table action menu - CHEVRON BUTTON */
-.PlaygroundEditorTheme__tableCellActionButtonContainer {
+.JupyterLexicalTheme__tableCellActionButtonContainer {
   display: flex !important;
   gap: 4px !important;
   position: absolute !important;
@@ -108,166 +90,41 @@
 }
 
 /* Ensure ActionMenu anchor wrapper doesn't add extra height */
-.PlaygroundEditorTheme__tableCellActionButtonContainer > * {
+.JupyterLexicalTheme__tableCellActionButtonContainer > * {
   display: flex !important;
   align-items: center !important;
-}
-
-.PlaygroundEditorTheme__tableCellActionButton {
-  background-color: var(
-    --control-bgColor-rest,
-    rgba(128, 128, 128, 0.1)
-  ) !important;
-  color: var(--fgColor-default, inherit) !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  border: 1px solid var(--borderColor-default, rgba(128, 128, 128, 0.35)) !important;
-  position: relative !important;
-  border-radius: 4px !important;
-  cursor: pointer !important;
-  user-select: none !important;
-  padding: 4px 8px !important;
-  font-size: 14px !important;
-  min-width: 24px !important;
-  min-height: 24px !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
-}
-
-.PlaygroundEditorTheme__tableCellActionButton:after {
-  content: '▼' !important;
-  font-size: 10px !important;
-  display: block !important;
-  line-height: 1 !important;
-}
-
-.PlaygroundEditorTheme__tableCellActionButton:hover {
-  background-color: var(
-    --control-bgColor-hover,
-    rgba(128, 128, 128, 0.2)
-  ) !important;
 }
 
 /* Table Scrollable Wrapper - for TableScrollShadowPlugin */
-.PlaygroundEditorTheme__tableScrollableWrapper {
+.JupyterLexicalTheme__tableScrollableWrapper {
   overflow-x: auto;
   margin: 0px 25px 30px 0px;
 }
 
-.PlaygroundEditorTheme__tableScrollRight {
-  box-shadow: inset -10px 0 10px rgba(0, 0, 0, 0.15);
+/* The shadows that say a wide table has more to the left or the right. */
+.JupyterLexicalTheme__tableScrollRight {
+  box-shadow: inset -10px 0 10px var(--borderColor-muted, rgba(0, 0, 0, 0.15));
 }
 
-.PlaygroundEditorTheme__tableScrollLeft {
-  box-shadow: inset 10px 0 10px rgba(0, 0, 0, 0.15);
+.JupyterLexicalTheme__tableScrollLeft {
+  box-shadow: inset 10px 0 10px var(--borderColor-muted, rgba(0, 0, 0, 0.15));
 }
 
-.PlaygroundEditorTheme__tableScrollMiddle {
+.JupyterLexicalTheme__tableScrollMiddle {
   box-shadow:
-    inset 10px 0 10px rgba(0, 0, 0, 0.15),
-    inset -10px 0 10px rgba(0, 0, 0, 0.15);
+    inset 10px 0 10px var(--borderColor-muted, rgba(0, 0, 0, 0.15)),
+    inset -10px 0 10px var(--borderColor-muted, rgba(0, 0, 0, 0.15));
 }
 
-.PlaygroundEditorTheme__tableScrollableWrapper > .PlaygroundEditorTheme__table {
+.JupyterLexicalTheme__tableScrollableWrapper > .JupyterLexicalTheme__table {
   /* Remove the table's vertical margin and put it on the wrapper */
   margin-top: 0;
   margin-bottom: 0;
 }
 
-.PlaygroundEditorTheme__tableAlignmentCenter {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.PlaygroundEditorTheme__tableAlignmentRight {
-  margin-left: auto;
-}
-
-.PlaygroundEditorTheme__table {
-  border-collapse: collapse;
-  border-spacing: 0;
-  overflow-y: scroll;
-  overflow-x: scroll;
-  table-layout: fixed;
-  width: fit-content;
-  margin-top: 25px;
-  margin-bottom: 30px;
-}
-
-.PlaygroundEditorTheme__tableScrollableWrapper.PlaygroundEditorTheme__tableFrozenRow {
+.JupyterLexicalTheme__tableScrollableWrapper.JupyterLexicalTheme__tableFrozenRow {
   /* position:sticky needs overflow:clip or visible */
   overflow-x: clip;
-}
-
-.PlaygroundEditorTheme__tableFrozenRow tr:nth-of-type(1) > td {
-  overflow: clip;
-  background-color: var(--bgColor-default, #ffffff);
-  position: sticky;
-  z-index: 2;
-  top: 44px;
-}
-
-/* Table hover action buttons - Add Column */
-.PlaygroundEditorTheme__tableAddColumns {
-  position: absolute !important;
-  background-color: var(--control-bgColor-rest, #eee) !important;
-  /* Let plugin set dimensions, just constrain them */
-  min-width: 15px !important;
-  max-width: 20px !important;
-  min-height: 20px !important;
-  animation: table-controls 0.2s ease !important;
-  border: 0 !important;
-  cursor: pointer !important;
-  z-index: 999 !important;
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
-}
-
-.PlaygroundEditorTheme__tableAddColumns:after {
-  content: '+' !important;
-  display: block !important;
-  font-size: 14px !important;
-  text-align: center !important;
-  line-height: 20px !important;
-  color: var(--fgColor-default, #666) !important;
-  opacity: 0.7 !important;
-}
-
-.PlaygroundEditorTheme__tableAddColumns:hover,
-.PlaygroundEditorTheme__tableAddRows:hover {
-  background-color: var(--control-bgColor-hover, #c9dbf0) !important;
-}
-
-/* Table hover action buttons - Add Row */
-.PlaygroundEditorTheme__tableAddRows {
-  position: absolute !important;
-  /* Let plugin set dimensions, just constrain them */
-  min-width: 50px !important;
-  min-height: 15px !important;
-  max-height: 20px !important;
-  background-color: var(--control-bgColor-rest, #eee) !important;
-  animation: table-controls 0.2s ease !important;
-  border: 0 !important;
-  cursor: pointer !important;
-  z-index: 999 !important;
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
-}
-
-.PlaygroundEditorTheme__tableAddRows:after {
-  content: '+' !important;
-  display: block !important;
-  font-size: 14px !important;
-  text-align: center !important;
-  line-height: 20px !important;
-  color: var(--fgColor-default, #666) !important;
-  opacity: 0.7 !important;
 }
 
 @keyframes table-controls {
@@ -277,14 +134,4 @@
   100% {
     opacity: 1;
   }
-}
-
-/* Table cell resizer ruler */
-.PlaygroundEditorTheme__tableCellResizeRuler {
-  display: block;
-  position: absolute;
-  width: 1px;
-  background-color: var(--borderColor-accent-emphasis, rgb(60, 132, 244));
-  height: 100%;
-  top: 0;
 }

@@ -12,6 +12,7 @@ import {
 } from '@jupyterlab/notebook';
 import { Context } from '@jupyterlab/docregistry';
 import { NotebookModel } from '@jupyterlab/notebook';
+import { OutputAreaModel } from '@jupyterlab/outputarea';
 import { KernelMessage } from '@jupyterlab/services';
 import * as nbformat from '@jupyterlab/nbformat';
 import { Kernel } from '../../jupyter/kernel/Kernel';
@@ -760,6 +761,21 @@ export class NotebookAdapter {
    * @param options - Execution options
    * @returns Promise with execution result including outputs
    */
+  /**
+   * The live outputs of the `executeCode` call in flight (or the last one).
+   *
+   * `executeCode` runs without a cell, so its outputs have no output area of
+   * their own — and a UI that wants to *watch* the execution rather than
+   * read its transcript afterwards needs a model that fills as the messages
+   * arrive. Replaced at the start of each call; a consumer that wants one
+   * call's outputs holds the reference it read while that call ran.
+   */
+  private _lastExecuteOutputs: OutputAreaModel | null = null;
+
+  get lastExecuteOutputs(): OutputAreaModel | null {
+    return this._lastExecuteOutputs;
+  }
+
   async executeCode(
     code: string,
     options: {
@@ -801,6 +817,10 @@ export class NotebookAdapter {
 
       let executionCount: number | undefined;
 
+      // The live mirror — see `lastExecuteOutputs`.
+      const liveOutputs = new OutputAreaModel({ trusted: true });
+      this._lastExecuteOutputs = liveOutputs;
+
       // Collect outputs
       future.onIOPub = msg => {
         const msgType = msg.header.msg_type;
@@ -810,22 +830,38 @@ export class NotebookAdapter {
             type: 'stream',
             content: msg.content,
           });
+          liveOutputs.add({
+            output_type: 'stream',
+            ...(msg.content as object),
+          } as nbformat.IOutput);
         } else if (msgType === 'execute_result') {
           outputs.push({
             type: 'execute_result',
             content: msg.content,
           });
           executionCount = (msg.content as any).execution_count;
+          liveOutputs.add({
+            output_type: 'execute_result',
+            ...(msg.content as object),
+          } as nbformat.IOutput);
         } else if (msgType === 'display_data') {
           outputs.push({
             type: 'display_data',
             content: msg.content,
           });
+          liveOutputs.add({
+            output_type: 'display_data',
+            ...(msg.content as object),
+          } as nbformat.IOutput);
         } else if (msgType === 'error') {
           outputs.push({
             type: 'error',
             content: msg.content,
           });
+          liveOutputs.add({
+            output_type: 'error',
+            ...(msg.content as object),
+          } as nbformat.IOutput);
         }
       };
 

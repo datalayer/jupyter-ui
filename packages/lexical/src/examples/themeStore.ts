@@ -19,13 +19,14 @@ import { themeConfigs, useSystemColorMode } from '@datalayer/primer-addons';
  * Mirrors the jupyter-react examples store: persisted in localStorage so all
  * example pages stay aligned on the selected theme and color mode.
  */
-export const useExampleThemeStore = createThemeStore(
-  'jupyter-lexical-examples-theme',
-  {
+// Annotated through `createThemeStore` rather than inferred: the inferred type
+// names zustand from inside `@datalayer/primer-addons`, which is not portable
+// when that package carries its own copy (TS2742).
+export const useExampleThemeStore: ReturnType<typeof createThemeStore> =
+  createThemeStore('jupyter-lexical-examples-theme', {
     colorMode: 'light',
     theme: 'datalayer',
-  },
-);
+  });
 
 /**
  * Resolve colormode/background from the shared lexical examples theme store.

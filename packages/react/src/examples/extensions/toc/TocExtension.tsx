@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import { NotebookPanel } from '@jupyterlab/notebook';
 // import { NotebookToCFactory } from '@jupyterlab/notebook';
 import {

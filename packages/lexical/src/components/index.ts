@@ -6,10 +6,11 @@
 
 // export * from "./InsertEquationDialog";
 // export * from "./InsertImageDialog";
+export * from './ApiCommentStore';
 export * from './Button';
 export * from './Commenting';
 export * from './ContentEditable';
-export * from './DropDown';
+export * from './DocumentSkeleton';
 export * from './EquationEditor';
 export * from './FileInput';
 export * from './ImageResizer';

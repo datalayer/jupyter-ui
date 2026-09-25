@@ -4,12 +4,13 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import type { HeadingTagType } from '@lexical/rich-text';
 import type { NodeKey } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { TableOfContentsPlugin as LexicalTableOfContentsPlugin } from '@lexical/react/LexicalTableOfContentsPlugin';
-import { Box, Text, Tooltip } from '@primer/react';
+import { Box, NavList, Text, Tooltip } from '@primer/react';
 import { ListUnorderedIcon, XIcon } from '@primer/octicons-react';
 
 export type TocCollapsePosition =
@@ -188,11 +189,12 @@ function TableOfContentsList({
         overflowY: 'auto',
         overflowX: 'hidden',
         zIndex: 20,
-        bg: 'canvas.default',
+        bg: 'var(--bgColor-default)',
         border: '1px solid',
-        borderColor: 'border.default',
+        borderColor: 'var(--borderColor-default)',
         borderRadius: 2,
-        boxShadow: 'shadow.small',
+        boxShadow:
+          'var(--shadow-resting-small, 0 1px 1px 0 #1f23280f, 0 1px 3px 0 #1f23280f)',
         p: 2,
       }}
     >
@@ -204,7 +206,13 @@ function TableOfContentsList({
           mb: 2,
         }}
       >
-        <Text sx={{ fontSize: 1, fontWeight: 'bold', color: 'fg.default' }}>
+        <Text
+          sx={{
+            fontSize: 1,
+            fontWeight: 'bold',
+            color: 'var(--fgColor-default)',
+          }}
+        >
           Table of Contents
         </Text>
         <Box
@@ -216,10 +224,10 @@ function TableOfContentsList({
           sx={{
             appearance: 'none',
             border: '1px solid',
-            borderColor: 'border.default',
+            borderColor: 'var(--borderColor-default)',
             borderRadius: 1,
-            bg: 'canvas.default',
-            color: 'fg.default',
+            bg: 'var(--bgColor-default)',
+            color: 'var(--fgColor-default)',
             width: '24px',
             height: '24px',
             p: 0,
@@ -227,69 +235,41 @@ function TableOfContentsList({
             alignItems: 'center',
             justifyContent: 'center',
             cursor: 'pointer',
-            '&:hover': { bg: 'canvas.subtle' },
+            '&:hover': { bg: 'var(--bgColor-muted)' },
           }}
         >
           <XIcon size={12} />
         </Box>
       </Box>
-      <Box as="ul" sx={{ listStyle: 'none', m: 0, p: 0 }}>
+      {/*
+        A table of contents is navigation, so it is Primer's `NavList`: the
+        items carry the current-item state themselves, and each is a real
+        button rather than a `li` wearing `role="button"`. The heading level
+        is the indent, which is the one thing the list does not know.
+      */}
+      <NavList aria-label="Table of contents">
         {tableOfContents.map(([key, text, tag], index) => {
-          const isSelected = selectedKey === key;
           const displayText =
-            ('' + text).length > 27 ? text.substring(0, 27) + '...' : text;
-          if (index === 0) {
-            return (
-              <Box
-                as="li"
-                key={key}
-                onClick={() => scrollToNode(key, index)}
-                role="button"
-                tabIndex={0}
-                sx={{
-                  cursor: 'pointer',
-                  fontWeight: 'bold',
-                  fontSize: 1,
-                  p: 1,
-                  borderRadius: 1,
-                  color: isSelected ? 'accent.fg' : 'fg.default',
-                  bg: isSelected ? 'accent.subtle' : 'transparent',
-                  '&:hover': { bg: 'canvas.subtle' },
-                  mb: 1,
-                }}
-              >
-                {('' + text).length > 20 ? text.substring(0, 20) + '...' : text}
-              </Box>
-            );
-          } else {
-            return (
-              <Box
-                as="li"
-                key={key}
-                onClick={() => scrollToNode(key, index)}
-                role="button"
-                tabIndex={0}
-                sx={{
-                  cursor: 'pointer',
-                  fontSize: 1,
-                  p: 1,
-                  pl: indent(tag),
-                  borderRadius: 1,
-                  color: isSelected ? 'accent.fg' : 'fg.muted',
-                  bg: isSelected ? 'accent.subtle' : 'transparent',
-                  borderLeft: isSelected
-                    ? '2px solid'
-                    : '2px solid transparent',
-                  borderColor: isSelected ? 'accent.fg' : 'transparent',
-                  '&:hover': { bg: 'canvas.subtle' },
-                }}
-              >
-                {displayText}
-              </Box>
-            );
-          }
+            ('' + text).length > 27 ? text.substring(0, 27) + '…' : text;
+          return (
+            <NavList.Item
+              key={key}
+              as="button"
+              type="button"
+              aria-current={selectedKey === key ? 'location' : undefined}
+              onClick={() => scrollToNode(key, index)}
+              sx={{
+                width: '100%',
+                textAlign: 'left',
+                fontWeight: index === 0 ? 'bold' : undefined,
+                pl: index === 0 ? undefined : indent(tag),
+              }}
+            >
+              {displayText}
+            </NavList.Item>
+          );
         })}
-      </Box>
+      </NavList>
     </Box>
   );
 }
@@ -320,15 +300,16 @@ export const TableOfContentsPlugin = ({
                   height: '48px',
                   borderRadius: '999px',
                   border: '1px solid',
-                  borderColor: 'border.default',
-                  bg: 'canvas.overlay',
-                  color: 'fg.default',
-                  boxShadow: 'shadow.medium',
+                  borderColor: 'var(--borderColor-default)',
+                  bg: 'var(--overlay-bgColor)',
+                  color: 'var(--fgColor-default)',
+                  boxShadow:
+                    'var(--shadow-resting-medium, 0 1px 1px 0 #25292e1a, 0 3px 6px 0 #25292e1f)',
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   cursor: 'pointer',
-                  '&:hover': { bg: 'canvas.subtle' },
+                  '&:hover': { bg: 'var(--bgColor-muted)' },
                 }}
               >
                 <ListUnorderedIcon size={16} />

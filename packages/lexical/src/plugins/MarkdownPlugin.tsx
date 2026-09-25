@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
 import { PLAYGROUND_TRANSFORMERS } from '../convert/transformers/MarkdownTransformers';
 

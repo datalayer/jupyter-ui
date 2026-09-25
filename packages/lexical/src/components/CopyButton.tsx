@@ -64,7 +64,7 @@ export function CopyButton({ editor, getCodeDOMNode }: Props) {
       variant="invisible"
       onClick={handleClick}
       aria-label="copy"
-      sx={isCopyCompleted ? { color: 'success.fg' } : undefined}
+      sx={isCopyCompleted ? { color: 'var(--fgColor-success)' } : undefined}
     />
   );
 }

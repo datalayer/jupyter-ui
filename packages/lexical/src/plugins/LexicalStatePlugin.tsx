@@ -10,8 +10,8 @@
  * This plugin:
  * 1. Gets the editor instance from LexicalComposerContext
  * 2. Gets lexicalId and serviceManager from LexicalConfigContext
- * 3. Creates a LexicalAdapter
- * 4. Registers the adapter in the global lexicalStore
+ * 3. Registers the editor through `registerLexicalState`, the same function
+ *    `LexicalStateExtension` uses
  *
  * @module plugins/LexicalStatePlugin
  */
@@ -19,13 +19,12 @@
 import { useEffect } from 'react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useLexicalConfig } from '../context/LexicalConfigContext';
-import { LexicalAdapter } from '../state/LexicalAdapter';
-import { lexicalStore } from '../state/LexicalState';
+import { registerLexicalState } from '../extensions/LexicalStateExtension';
 
 /**
  * Plugin that initializes the LexicalAdapter and registers it in the state store.
  *
- * This plugin should be placed inside the LexicalComposer and wrapped by
+ * This plugin should be placed inside the composer and wrapped by
  * LexicalConfigProvider which provides lexicalId and serviceManager.
  *
  * @returns null - This is an effect-only plugin
@@ -44,24 +43,10 @@ export function LexicalStatePlugin(): null {
   const [editor] = useLexicalComposerContext();
   const { lexicalId, serviceManager } = useLexicalConfig();
 
-  useEffect(() => {
-    // Create adapter with editor and serviceManager
-    const adapter = new LexicalAdapter(editor, serviceManager);
-
-    // Register in global store
-    const currentLexicals = lexicalStore.getState().lexicals;
-    const updatedLexicals = new Map(currentLexicals);
-    updatedLexicals.set(lexicalId, { adapter });
-    lexicalStore.getState().setLexicals(updatedLexicals);
-
-    // Cleanup on unmount
-    return () => {
-      const currentLexicals = lexicalStore.getState().lexicals;
-      const updatedLexicals = new Map(currentLexicals);
-      updatedLexicals.delete(lexicalId);
-      lexicalStore.getState().setLexicals(updatedLexicals);
-    };
-  }, [editor, lexicalId, serviceManager]);
+  useEffect(
+    () => registerLexicalState(editor, lexicalId, serviceManager),
+    [editor, lexicalId, serviceManager],
+  );
 
   return null;
 }

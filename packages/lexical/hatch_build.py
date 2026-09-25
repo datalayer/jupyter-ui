@@ -72,7 +72,10 @@ def build_javascript():
     vite_env = os.environ.copy()
     vite_env['VITE_BASE_URL'] = '/static/jupyter_lexical/'
     check_call(
-        ['npm', 'run', 'build:vite'],
+        # `vite build` defaults to the production mode, which is the npm library
+        # build into lib/. The server extension serves the application build,
+        # which every other mode writes to dist/ with VITE_BASE_URL as base.
+        ['npm', 'run', 'build:vite', '--', '--mode', 'development'],
         cwd=here,
         env=vite_env,
     )

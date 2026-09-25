@@ -17,8 +17,7 @@ help: ## display this help
 default: help ## default target is help
 
 clean: ## clean
-	($(CONDA_ACTIVATE) ${ENV_NAME}; \
-		npm run clean )
+	npm run clean
 
 build: ## build
 	npm run build
@@ -29,6 +28,9 @@ build-prod: ## build-prod
 
 examples: ## examples
 	npm run start:vite
+
+start: ## start the examples, with the Loro collaboration server beside them
+	npx run-p -c start:vite loro:server
 
 publish-npm: clean build ## publish-npm
 	npm publish

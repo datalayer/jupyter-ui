@@ -109,7 +109,9 @@ export const readBlockOperation: ToolOperation<
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      throw new Error(`Failed to read block: ${errorMessage}`);
+      throw new Error(`Failed to read block: ${errorMessage}`, {
+        cause: error,
+      });
     }
   },
 };

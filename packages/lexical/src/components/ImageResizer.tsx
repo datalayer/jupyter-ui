@@ -4,6 +4,8 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
+import { Button } from '@primer/react';
 import * as React from 'react';
 import { useRef } from 'react';
 import type { LexicalEditor } from 'lexical';
@@ -241,15 +243,22 @@ export const ImageResizer = ({
   return (
     <div ref={controlWrapperRef}>
       {!showCaption && (
-        <button
-          className="image-caption-button"
+        <Button
           ref={buttonRef}
+          size="small"
+          sx={{
+            position: 'absolute',
+            bottom: 12,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 10,
+          }}
           onClick={() => {
             setShowCaption(!showCaption);
           }}
         >
           Add Caption
-        </button>
+        </Button>
       )}
       <div
         className="image-resizer image-resizer-n"

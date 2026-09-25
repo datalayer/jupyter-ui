@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ISessionContext } from '@jupyterlab/apputils';
 import type { Cell, CodeCell, ICellModel } from '@jupyterlab/cells';
@@ -48,12 +49,13 @@ import {
   standardRendererFactories,
   type IRenderMime,
 } from '@jupyterlab/rendermime';
-import type {
-  Contents,
-  Kernel as JupyterKernel,
-  ServiceManager,
-  Session,
-  SessionManager,
+import {
+  KernelAPI,
+  type Contents,
+  type Kernel as JupyterKernel,
+  type ServiceManager,
+  type Session,
+  type SessionManager,
 } from '@jupyterlab/services';
 import type { ISessionConnection } from '@jupyterlab/services/lib/session/session';
 import { YNotebook, type IYText } from '@jupyter/ydoc';
@@ -76,9 +78,11 @@ import {
 } from '../../jupyter';
 import { createLatexTypesetter } from '../../jupyter/createLatexTypesetter';
 import type { OnSessionConnection } from '../../state';
+import { useJupyterReactStore } from '../../state';
 import { newUuid, remoteUserCursors } from '../../utils';
 import { Lumino } from '../lumino';
-import { Loader } from '../utils';
+import { watchFirstPaint } from './firstPaint';
+import { NotebookSkeleton } from './NotebookSkeleton';
 import { getMarked } from './marked/marked';
 import type { NotebookExtension } from './NotebookExtensions';
 import { addNotebookCommands, NotebookPanelProvider } from './NotebookCommands';
@@ -89,7 +93,42 @@ const COMPLETER_TIMEOUT_MILLISECONDS = 1000;
 
 const DEFAULT_EXTENSIONS = new Array<NotebookExtension>();
 
-const FALLBACK_NOTEBOOK_PATH = '.datalayer/ping.ipynb';
+/**
+ * Where the sessions of the notebooks that have no file of their own live.
+ *
+ * A notebook edited without a file — one of a Datalayer space, one built from
+ * a model — still needs a session for its kernel, and a session is named by a
+ * path. Those paths name nothing on the server: the directory says so.
+ */
+const EPHEMERAL_NOTEBOOK_DIR = '.datalayer/';
+
+/**
+ * The path a notebook that names none falls back to: its own.
+ *
+ * There was one shared path here — `.datalayer/ping.ipynb` — and every editor
+ * without a file of its own used it. The server keeps ONE session per path, so
+ * those editors shared a single session: the sandbox of a notebook showed up
+ * under the name of the hack, a second notebook assigning a sandbox took the
+ * place of the first, and a local notebook asking for a kernel was answered
+ * with a session that named a file nobody had opened. Named after the notebook
+ * itself, each editor gets a session of its own.
+ *
+ * @param id Identifier of the notebook, which is its path when it has one
+ */
+function fallbackNotebookPath(id: string): string {
+  // The identifier of a local notebook IS its path; of a notebook of a space,
+  // its uid. Either way it names one notebook, and never a directory — and an
+  // identifier that already ends in the extension keeps the one it has.
+  const stem =
+    id.replace(/[/\\]/g, ' ').replace(/\s+/g, ' ').trim() || 'notebook';
+  const named = stem.endsWith('.ipynb') ? stem : `${stem}.ipynb`;
+  return `${EPHEMERAL_NOTEBOOK_DIR}${named}`;
+}
+
+/** Whether a path names a file of the server, or only a session. */
+function isEphemeralPath(path: string): boolean {
+  return path.startsWith(EPHEMERAL_NOTEBOOK_DIR);
+}
 
 function createYText(value: string): Y.Text {
   const text = new Y.Text();
@@ -108,7 +147,10 @@ function createYOutputMap(output: nbformat.IOutput): Y.Map<any> {
   if (copy.output_type === 'stream' && copy.text !== undefined) {
     const { text, ...outputWithoutText } = copy;
     const ytext = new Y.Text();
-    const normalized = text instanceof Array ? text.join() : (text as string);
+    // join('') — nbformat multiline text is a list of lines that already
+    // carry their newlines; the default join(',') would thread commas
+    // through every stream output loaded from disk.
+    const normalized = text instanceof Array ? text.join('') : (text as string);
     if (normalized) {
       ytext.insert(0, normalized);
     }
@@ -278,6 +320,15 @@ export interface INotebookBaseProps {
    */
   path?: string;
   /**
+   * Whether the path names a session of this notebook, never a file of it.
+   *
+   * A host that holds the document itself — the editor of a local notebook
+   * has the context of JupyterLab for that — wants the session named after
+   * the notebook without this component reading or writing the file under
+   * it, which its own context already does.
+   */
+  sessionOnly?: boolean;
+  /**
    * Custom inline completion providers.
    *
    * Platform-specific providers can be injected here (e.g., VS Code LLM, custom AI models).
@@ -290,6 +341,14 @@ export interface INotebookBaseProps {
    * Platform-specific providers can be injected here (e.g., LSP servers).
    */
   providers?: ICompletionProvider[];
+  /**
+   * Whether the model has its content from its source.
+   *
+   * True for a model built here from content; for a shared document, true
+   * once its room has synced. Until then a model with no cells is not empty
+   * but waiting, and the skeleton stays over the panel. Defaults to true.
+   */
+  synced?: boolean;
 }
 
 /**
@@ -306,13 +365,31 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
     commands,
     extensions = DEFAULT_EXTENSIONS,
     kernelId,
+    sessionOnly,
     renderers,
     serviceManager,
     model,
     onSessionConnection,
+    synced = true,
   } = props;
 
   const [isLoading, setIsLoading] = useState(true);
+  /*
+   * Whether the panel's cells are on screen.
+   *
+   * `isLoading` ends when the panel exists; the cells render only once the
+   * panel is attached, and a shared document's cells only once its room has
+   * synced. The skeleton stays over the attached panel until then — see
+   * `watchFirstPaint` for the condition.
+   */
+  const [painted, setPainted] = useState(false);
+  /*
+   * The ground the notebook paints on: the background the theme around it
+   * gave `JupyterReactTheme`, which the store carries for exactly this — so
+   * the skeleton over the panel is on the same ground as the cells under it,
+   * rather than on JupyterLab's white in a page that is not white.
+   */
+  const themeBackground = useJupyterReactStore(state => state.backgroundColor);
   const [extensionComponents, setExtensionComponents] = useState(
     new Array<JSX.Element>()
   );
@@ -321,8 +398,8 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
 
   const id = useMemo(() => props.id || newUuid(), [props.id]);
   const path = useMemo(
-    () => props.path || FALLBACK_NOTEBOOK_PATH,
-    [props.path]
+    () => props.path || fallbackNotebookPath(id),
+    [id, props.path]
   );
   const features = useMemo(
     () => new CommonFeatures({ commands, renderers }),
@@ -376,7 +453,12 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
         providerSettings[provider.identifier] = { enabled: true };
       });
 
+      // Start from the defaults of the installed JupyterLab and override only
+      // what this notebook cares about: `IInlineCompleterSettings` gains
+      // fields across 4.x — `ghostSyntaxHighlighting` in 4.6 — and every one
+      // of them is required, so listing them here breaks on the next release.
       inlineCompleter.configure({
+        ...InlineCompleter.defaultSettings,
         showWidget: 'always',
         showShortcuts: true,
         streamingAnimation: 'none',
@@ -561,8 +643,11 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
     initializeContext(
       thisContext,
       id,
-      // Initialization must not trigger revert in case we set up the model content
-      path !== FALLBACK_NOTEBOOK_PATH ? path : undefined,
+      // Initialization must not trigger revert in case we set up the model
+      // content: a path that names no file — one under the ephemeral
+      // directory, or one the host declares session-only — is handed over as
+      // undefined, which shunts the contents manager.
+      !sessionOnly && !isEphemeralPath(path) ? path : undefined,
       onSessionConnection,
       !serviceManager
     );
@@ -576,16 +661,40 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
 
   // Set kernel
   useEffect(() => {
-    if (context && kernelId && !context.sessionContext.isDisposed) {
-      context.sessionContext.changeKernel({ id: kernelId }).catch(reason => {
-        console.error('Failed to change kernel model.', reason);
-      });
-      /*
-      context.sessionContext.changeKernel({ id: kernelId }).catch(reason => {
-        console.error('Failed to change kernel model.', reason);
-      });
-      */
+    if (!context || !kernelId || context.sessionContext.isDisposed) {
+      return;
     }
+    /*
+     * The session of this path is ADOPTED before its kernel is changed.
+     *
+     * `changeKernel` changes the kernel of the session the context has —
+     * and starts a session when it has none, which is how a notebook ended
+     * up with two. A host that runs its own session context for the same
+     * document (the editors of Datalayer do) had already created one for
+     * this path: this context knew nothing of it, made a second, and both
+     * bound the same kernel. Letting go of the sandbox then tore down one
+     * of the two and the notebook stayed attached to the other.
+     *
+     * `initialize` connects to the session already serving the path when
+     * there is one, and starts nothing when there is not — the preference
+     * of this context forbids it. So the kernel is changed on the one
+     * session either way, and a notebook standing alone still gets the one
+     * session `changeKernel` creates for it.
+     */
+    const bind = async () => {
+      try {
+        if (!context.sessionContext.session) {
+          await context.sessionContext.initialize();
+        }
+        if (context.sessionContext.isDisposed) {
+          return;
+        }
+        await context.sessionContext.changeKernel({ id: kernelId });
+      } catch (reason) {
+        console.error('Failed to change kernel model.', reason);
+      }
+    };
+    void bind();
   }, [context, kernelId]);
 
   // Notebook
@@ -697,12 +806,37 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
     };
   }, [context, extensions, features.commands, widgetFactory, panelProvider]);
 
+  // The skeleton stays over the panel until its cells are on screen.
+  useEffect(() => {
+    setPainted(false);
+    if (!panel) {
+      return;
+    }
+    return watchFirstPaint(panel, {
+      synced,
+      onPainted: () => setPainted(true),
+    });
+  }, [panel, synced]);
+
   // Update notebook store when adapter changes
   useEffect(() => {
     if (adapter) {
       const currentNotebooks = notebookStore.getState().notebooks;
       const updatedNotebooks = new Map(currentNotebooks);
-      updatedNotebooks.set(id, { adapter, portals: [] });
+      /*
+       * The model belongs in the entry as much as the adapter does.
+       *
+       * `INotebookState` declares it and consumers read it — the collaborators
+       * of an editor, a notebook copied to disk, a notebook stating what it
+       * runs on. It was only ever written by `changeModel`, which nothing
+       * calls, so every one of those reads answered `undefined`. Registered
+       * with the adapter it is rebuilt with, which is when it changes.
+       */
+      updatedNotebooks.set(id, {
+        adapter,
+        model: adapter.model ?? undefined,
+        portals: [],
+      });
       notebookStore.getState().setNotebooks(updatedNotebooks);
     } else {
       const currentNotebooks = notebookStore.getState().notebooks;
@@ -721,40 +855,125 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
       return;
     }
     const sessionContext = panel.context.sessionContext;
+    /** Pending asks of the server, cleared with the effect. */
+    const serverPolls: ReturnType<typeof setTimeout>[] = [];
+    const push = (status?: JupyterKernel.Status) => {
+      if (status) {
+        notebookStore
+          .getState()
+          .changeKernelStatus({ id, kernelStatus: status });
+      }
+    };
 
     // ISessionContext.statusChanged tracks kernel status across kernel
-    // changes automatically — no need to manually subscribe per-kernel.
+    // changes — the ordinary channel.
     const onStatusChanged = (
       _: ISessionContext,
       status: JupyterKernel.Status
     ) => {
-      notebookStore.getState().changeKernelStatus({ id, kernelStatus: status });
+      push(status);
     };
-
     sessionContext.statusChanged.connect(onStatusChanged);
 
-    // Push the current status if a kernel is already connected
-    // (handles the case where the kernel was set before this effect ran).
-    const kernel = sessionContext.session?.kernel;
-    if (kernel) {
-      notebookStore
-        .getState()
-        .changeKernelStatus({ id, kernelStatus: kernel.status });
-    }
-
-    // Also wait for the session context to be ready, in case the kernel
-    // connection is still being established.
-    sessionContext.ready.then(() => {
-      const k = sessionContext.session?.kernel;
-      if (k) {
-        notebookStore
-          .getState()
-          .changeKernelStatus({ id, kernelStatus: k.status });
+    /*
+     * The connection itself, as a second witness.
+     *
+     * The kernel indicator of the toolbar subscribes the kernel connection
+     * directly, and some session paths of the Datalayer editors — a code
+     * sandbox assigned to a space notebook — do not relay every status
+     * change through the session context: the indicator then shows busy
+     * while the store still says idle, and the Interrupt button stays
+     * disabled with a visibly running kernel. Following the connection here
+     * keeps the store on the same source of truth as the indicator,
+     * re-hooked whenever the session changes kernels.
+     */
+    let kernelConnection: JupyterKernel.IKernelConnection | null = null;
+    const onKernelStatus = (_: unknown, status: JupyterKernel.Status): void => {
+      push(status);
+    };
+    const hookKernel = () => {
+      const connection = sessionContext.session?.kernel ?? null;
+      if (connection === kernelConnection) {
+        return;
       }
-    });
+      kernelConnection?.statusChanged.disconnect(onKernelStatus);
+      kernelConnection = connection;
+      kernelConnection?.statusChanged.connect(onKernelStatus);
+      push(kernelConnection?.status);
+      /*
+       * A page opened while the kernel is mid-execution — a refresh over a
+       * long-running cell — has a connection that only learns its status
+       * from the NEXT status message, which a kernel deep in a cell may not
+       * send for minutes: the connection reports 'unknown' and the
+       * Interrupt button stays disabled with a visibly running kernel.
+       * The REST model always knows, so seed from it — and only while the
+       * connection still says 'unknown', so a live status that arrived in
+       * the meantime is never overwritten by this slower answer.
+       */
+      if (connection) {
+        /*
+         * Asked again while the connection stays deaf.
+         *
+         * A kernel says `busy` as a request starts and `idle` as it ends, and
+         * nothing in between, so a connection made mid-cell hears nothing at
+         * all until that cell finishes. One answer from the server would go
+         * stale the moment the cell ends, and the buttons would stay disabled
+         * over an idle kernel; asked again, they follow it.
+         */
+        const followFromServer = () => {
+          if (
+            kernelConnection !== connection ||
+            connection.status !== 'unknown'
+          ) {
+            return;
+          }
+          void KernelAPI.getKernelModel(
+            connection.id,
+            connection.serverSettings
+          )
+            .then(model => {
+              if (
+                model?.execution_state &&
+                kernelConnection === connection &&
+                connection.status === 'unknown'
+              ) {
+                push(model.execution_state as JupyterKernel.Status);
+                serverPolls.push(setTimeout(followFromServer, 5_000));
+              }
+            })
+            .catch(() => undefined);
+        };
+        followFromServer();
+        /*
+         * And ask the kernel itself, so the CONNECTION learns its state too.
+         *
+         * The seeding above tells this store, which the toolbar buttons read;
+         * the indicator reads the connection, which stays `unknown` until a
+         * status message reaches it. A kernel connected to while it sits idle
+         * sends none — the editor reopened on the sandbox it was left on shows
+         * "connected" with an unknown state for ever. The reply to this
+         * request carries them, which is why JupyterLab sends the same request
+         * whenever a connection opens.
+         */
+        if (connection.status === 'unknown') {
+          void Promise.resolve(connection.requestKernelInfo?.()).catch(
+            () => undefined
+          );
+        }
+      }
+    };
+    const onKernelChanged = () => hookKernel();
+    sessionContext.kernelChanged.connect(onKernelChanged);
+    hookKernel();
+    // Also once the session context settles, in case the kernel connection
+    // was still being established when this effect ran.
+    void sessionContext.ready.then(hookKernel);
 
     return () => {
+      serverPolls.forEach(clearTimeout);
       sessionContext.statusChanged.disconnect(onStatusChanged);
+      sessionContext.kernelChanged.disconnect(onKernelChanged);
+      kernelConnection?.statusChanged.disconnect(onKernelStatus);
     };
   }, [panel, id]);
 
@@ -958,12 +1177,34 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
         );
       })}
       {isLoading ? (
-        <Loader key="notebook-loader" />
+        // The notebook's own shape, not a wheel: the cells are what is coming.
+        <NotebookSkeleton key="notebook-loader" />
       ) : panel ? (
-        <Box sx={{ height: '100%' }}>
+        <Box sx={{ height: '100%', position: 'relative' }}>
           <Lumino id={id} key="notebook-container">
             {panel}
           </Lumino>
+          {/*
+            Over the panel, not instead of it: the cells render only once the
+            widget is in the document, so the panel has to be attached under
+            the skeleton for the skeleton to have anything to give way to.
+            Opaque, on the notebook's own ground, until `watchFirstPaint`
+            says the cells are drawn.
+          */}
+          {!painted ? (
+            <Box
+              key="notebook-first-paint"
+              sx={{
+                position: 'absolute',
+                inset: 0,
+                zIndex: 1,
+                overflow: 'hidden',
+                bg: themeBackground ?? 'var(--bgColor-default)',
+              }}
+            >
+              <NotebookSkeleton />
+            </Box>
+          ) : null}
         </Box>
       ) : (
         <Banner
@@ -1410,6 +1651,20 @@ class CommonFeatures {
 class DummyModelFactory extends NotebookModelFactory {
   constructor(protected model: NotebookModel) {
     super();
+  }
+
+  /*
+   * The context of a notebook component holds a model that already exists —
+   * see `createNew` — and its path is most often the fallback session path,
+   * not a document of the server. Declaring the factory collaborative would
+   * make the `Context` constructor ask the drive for a shared model on that
+   * path: on a server with `jupyter-collaboration`, the drive answers with a
+   * fresh YNotebook CONNECTED to the room of the fallback path — an orphan
+   * connection `createNew` then discards, but which keeps merging into, and
+   * saving, the one room every editor of this kind shares.
+   */
+  get collaborative(): boolean {
+    return false;
   }
 
   createNew(options?: DocumentRegistry.IModelOptions): NotebookModel {

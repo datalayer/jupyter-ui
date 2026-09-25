@@ -9,7 +9,7 @@
   margin: 0;
   border: 0;
   outline: 0;
-  color: #8421a2;
+  color: var(--fgColor-accent, #8421a2);
   background-color: inherit;
   resize: none;
 }
@@ -19,7 +19,7 @@
   margin: 0;
   border: 0;
   outline: 0;
-  color: #8421a2;
+  color: var(--fgColor-accent, #8421a2);
   background-color: inherit;
   resize: none;
   width: '100%';

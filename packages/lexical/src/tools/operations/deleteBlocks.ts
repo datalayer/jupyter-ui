@@ -119,7 +119,9 @@ export const deleteBlocksOperation: ToolOperation<
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      throw new Error(`Failed to delete block(s): ${errorMessage}`);
+      throw new Error(`Failed to delete block(s): ${errorMessage}`, {
+        cause: error,
+      });
     }
   },
 };

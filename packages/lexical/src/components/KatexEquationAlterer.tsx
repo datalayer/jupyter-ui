@@ -4,10 +4,18 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import { useCallback, useState } from 'react';
 import Button from '../components/Button';
 import KatexRenderer from './KatexRenderer';
-import { Box, Text, Textarea, TextInput } from '@primer/react';
+import {
+  Box,
+  Checkbox,
+  FormControl,
+  Text,
+  Textarea,
+  TextInput,
+} from '@primer/react';
 
 type Props = {
   initialEquation?: string;
@@ -28,9 +36,11 @@ export const KatexEquationAlterer = ({
   }, [setInline, inline]);
   return (
     <>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-        <Text sx={{ fontSize: 1 }}>Inline</Text>
-        <input type="checkbox" checked={inline} onChange={onCheckboxChange} />
+      <Box sx={{ mb: 2 }}>
+        <FormControl>
+          <Checkbox checked={inline} onChange={onCheckboxChange} />
+          <FormControl.Label>Inline</FormControl.Label>
+        </FormControl>
       </Box>
       <Text sx={{ fontSize: 1, fontWeight: 'bold', mb: 1 }}>Equation</Text>
       <Box sx={{ mb: 2 }}>
@@ -59,7 +69,7 @@ export const KatexEquationAlterer = ({
           mb: 2,
           p: 2,
           border: '1px solid',
-          borderColor: 'border.default',
+          borderColor: 'var(--borderColor-default)',
           borderRadius: 2,
           textAlign: 'center',
         }}

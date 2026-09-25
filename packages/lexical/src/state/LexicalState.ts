@@ -21,6 +21,11 @@ import type {
   BlockFormat,
   BriefBlock,
 } from '../tools/core/types';
+import type {
+  LexicalPluginTools,
+  LexicalToolHandler,
+} from '../tools/core/pluginTools';
+import { debugLog } from '../utils/debugLog';
 
 /**
  * State for a single Lexical document
@@ -34,6 +39,15 @@ export type ILexicalState = {
  */
 export interface ILexicalsState {
   lexicals: Map<string, ILexicalState>;
+
+  /**
+   * The tools each document's mounted plugins have contributed.
+   *
+   * Keyed by document id, then by plugin name — so a plugin that mounts twice
+   * on one document contributes one entry, and two documents in the same page
+   * can have different plugins without seeing each other's tools.
+   */
+  pluginTools: Map<string, Map<string, LexicalPluginTools>>;
 }
 
 /**
@@ -85,6 +99,19 @@ export type LexicalState = ILexicalsState & {
   setLexicals: (lexicals: Map<string, ILexicalState>) => void;
   selectLexical: (id: string) => ILexicalState | undefined;
   selectLexicalAdapter: (id: string) => LexicalAdapter | undefined;
+
+  // Tools a mounted plugin brings with it
+  registerPluginTools: (id: string, tools: LexicalPluginTools) => void;
+  unregisterPluginTools: (id: string, name: string) => void;
+  selectPluginTools: (id: string) => LexicalPluginTools[];
+  /** The mounted plugins' names, sorted and joined — a value a React
+   *  subscription can compare cheaply, so a component re-renders when the set
+   *  of plugins changes and not when a block does. */
+  selectPluginToolsKey: (id: string) => string;
+  selectPluginToolHandler: (
+    id: string,
+    operation: string,
+  ) => LexicalToolHandler | undefined;
 
   // Tool-aligned operations - use individual parameters (matches notebook pattern)
   insertBlock: (
@@ -139,6 +166,7 @@ export type LexicalState = ILexicalsState & {
  */
 export const lexicalStore = createStore<LexicalState>((set, get) => ({
   lexicals: new Map<string, ILexicalState>(),
+  pluginTools: new Map<string, Map<string, LexicalPluginTools>>(),
 
   setLexicals: (lexicals: Map<string, ILexicalState>) =>
     set(() => ({ lexicals })),
@@ -149,6 +177,57 @@ export const lexicalStore = createStore<LexicalState>((set, get) => ({
 
   selectLexicalAdapter: (id: string): LexicalAdapter | undefined => {
     return get().lexicals.get(id)?.adapter;
+  },
+
+  registerPluginTools: (id: string, tools: LexicalPluginTools): void => {
+    // A new Map at both levels: Zustand compares by identity, and a
+    // subscriber watching the plugin set has to see that it changed.
+    const pluginTools = new Map(get().pluginTools);
+    const forDocument = new Map(pluginTools.get(id) ?? []);
+    forDocument.set(tools.name, tools);
+    pluginTools.set(id, forDocument);
+    set(() => ({ pluginTools }));
+  },
+
+  unregisterPluginTools: (id: string, name: string): void => {
+    const current = get().pluginTools.get(id);
+    if (!current?.has(name)) {
+      return;
+    }
+    const pluginTools = new Map(get().pluginTools);
+    const forDocument = new Map(current);
+    forDocument.delete(name);
+    if (forDocument.size === 0) {
+      pluginTools.delete(id);
+    } else {
+      pluginTools.set(id, forDocument);
+    }
+    set(() => ({ pluginTools }));
+  },
+
+  selectPluginTools: (id: string): LexicalPluginTools[] => {
+    // Sorted by name so the tool list a document offers is stable across
+    // renders regardless of the order the plugins happened to mount in.
+    return [...(get().pluginTools.get(id)?.values() ?? [])].sort((a, b) =>
+      a.name.localeCompare(b.name),
+    );
+  },
+
+  selectPluginToolsKey: (id: string): string => {
+    return [...(get().pluginTools.get(id)?.keys() ?? [])].sort().join(',');
+  },
+
+  selectPluginToolHandler: (
+    id: string,
+    operation: string,
+  ): LexicalToolHandler | undefined => {
+    for (const tools of get().pluginTools.get(id)?.values() ?? []) {
+      const handler = tools.handlers[operation];
+      if (handler) {
+        return handler;
+      }
+    }
+    return undefined;
   },
 
   // Tool operations - thin wrappers delegating to adapter
@@ -377,11 +456,11 @@ export const lexicalStore = createStore<LexicalState>((set, get) => ({
     count?: number;
     error?: string;
   }> => {
-    console.log('[LexicalState] 🔍 listAvailableBlocks CALLED with:', { id });
+    debugLog('[LexicalState] 🔍 listAvailableBlocks CALLED with:', { id });
 
     // Delegate to adapter (following consistent pattern with all other operations)
     const params = typeof id === 'object' ? id : { id };
-    console.log('[LexicalState] 📦 Processed params:', params);
+    debugLog('[LexicalState] 📦 Processed params:', params);
 
     // Special case: this operation is static and doesn't require a document
     // If no document is found, call the operation directly
@@ -402,7 +481,11 @@ export const lexicalStore = createStore<LexicalState>((set, get) => ({
     return result;
   },
 
-  reset: () => set({ lexicals: new Map() }),
+  reset: () =>
+    set({
+      lexicals: new Map(),
+      pluginTools: new Map(),
+    }),
 }));
 
 /**

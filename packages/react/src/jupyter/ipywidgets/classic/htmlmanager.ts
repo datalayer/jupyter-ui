@@ -163,6 +163,5 @@ export class HTMLManager extends ManagerBase {
    * A loader for a given module name and module version, and returns a promise to a module
    */
   loader:
-    | ((moduleName: string, moduleVersion: string) => Promise<any>)
-    | undefined;
+    ((moduleName: string, moduleVersion: string) => Promise<any>) | undefined;
 }

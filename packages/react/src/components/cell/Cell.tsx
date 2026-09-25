@@ -4,9 +4,9 @@
  * MIT License
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { CodeCell, MarkdownCell } from '@jupyterlab/cells';
-import { IOutput } from '@jupyterlab/nbformat';
+import { ICell, IOutput } from '@jupyterlab/nbformat';
 import { Spinner } from '@primer/react';
 import { Box } from '@datalayer/primer-addons';
 import { Kernel } from '../../jupyter/kernel/Kernel';
@@ -14,6 +14,8 @@ import { newUuid } from '../../utils';
 import { Lumino } from '../lumino';
 import { CellAdapter } from './CellAdapter';
 import { useCellsStore } from './CellState';
+import { InputViewer } from '../viewer/input/InputViewer';
+import { OutputViewer } from '../viewer/output/OutputViewer';
 
 export type ICellProps = {
   /**
@@ -48,6 +50,16 @@ export type ICellProps = {
    * Custom kernel for the cell.
    */
   kernel?: Kernel;
+  /**
+   * Render the cell read-only: the source and the given outputs, statically.
+   *
+   * No kernel, no session, no adapter — the same rendering path as the
+   * notebook `Viewer`, packaged per cell. For showing a cell that already
+   * ran somewhere else (a chat transcript, a report) where an editable cell
+   * wired to nothing would be a lie. `kernel`, `autoStart` and `showToolbar`
+   * are ignored in this mode.
+   */
+  readOnly?: boolean;
 };
 
 export const Cell = ({
@@ -55,6 +67,7 @@ export const Cell = ({
   id: providedId,
   kernel,
   outputs = [],
+  readOnly = false,
   showToolbar = true,
   source = '',
   type = 'code',
@@ -126,6 +139,29 @@ export const Cell = ({
       });
     }
   }, [source, kernel]);
+  /* Built unconditionally so the hook order is stable; costs a small object
+     when unused. `metadata.editable: false` is what the JupyterLab cell
+     reads to refuse edits — the same convention the notebook Viewer uses. */
+  const readOnlyCell = useMemo<ICell>(
+    () =>
+      ({
+        cell_type: type,
+        source,
+        metadata: { editable: false, trusted: true },
+        ...(type === 'code' ? { outputs, execution_count: null } : {}),
+      }) as ICell,
+    [type, source, outputs]
+  );
+  if (readOnly) {
+    return (
+      <Box className="dla-Jupyter-ReadOnlyCell">
+        <InputViewer cell={readOnlyCell} />
+        {type === 'code' && (readOnlyCell.outputs as IOutput[])?.length ? (
+          <OutputViewer cell={readOnlyCell} />
+        ) : null}
+      </Box>
+    );
+  }
   return adapter ? (
     <Box
       sx={{

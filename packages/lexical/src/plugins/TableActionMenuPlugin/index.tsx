@@ -45,6 +45,7 @@ import {
 import { ReactPortal, useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ActionList, ActionMenu, IconButton } from '@primer/react';
+import { ColorPicker } from '@datalayer/primer-addons';
 
 import {
   ChevronDownIcon,
@@ -54,7 +55,6 @@ import {
 } from '@primer/octicons-react';
 
 import useModal from '../../hooks/useModal';
-import ColorPicker from '../../components/ColorPicker';
 
 function computeSelectionCount(selection: TableSelection): {
   columns: number;
@@ -599,7 +599,7 @@ function TableCellActionMenuContainer({
   const checkTableCellOverflow = useCallback(
     (tableCellParentNodeDOM: HTMLElement): boolean => {
       const scrollableContainer = tableCellParentNodeDOM.closest(
-        '.PlaygroundEditorTheme__tableScrollableWrapper',
+        '.JupyterLexicalTheme__tableScrollableWrapper',
       );
       if (scrollableContainer) {
         const containerRect = (
@@ -633,10 +633,10 @@ function TableCellActionMenuContainer({
     function disable() {
       if (menu) {
         menu.classList.remove(
-          'PlaygroundEditorTheme__tableCellActionButtonContainer--active',
+          'JupyterLexicalTheme__tableCellActionButtonContainer--active',
         );
         menu.classList.add(
-          'PlaygroundEditorTheme__tableCellActionButtonContainer--inactive',
+          'JupyterLexicalTheme__tableCellActionButtonContainer--inactive',
         );
       }
       setTableMenuCellNode(null);
@@ -730,11 +730,11 @@ function TableCellActionMenuContainer({
     }
     const enabled = !tableObserver || !tableObserver.isSelecting;
     menu.classList.toggle(
-      'PlaygroundEditorTheme__tableCellActionButtonContainer--active',
+      'JupyterLexicalTheme__tableCellActionButtonContainer--active',
       enabled,
     );
     menu.classList.toggle(
-      'PlaygroundEditorTheme__tableCellActionButtonContainer--inactive',
+      'JupyterLexicalTheme__tableCellActionButtonContainer--inactive',
       !enabled,
     );
     if (enabled) {
@@ -808,7 +808,7 @@ function TableCellActionMenuContainer({
 
   return (
     <div
-      className="PlaygroundEditorTheme__tableCellActionButtonContainer"
+      className="JupyterLexicalTheme__tableCellActionButtonContainer"
       ref={menuButtonRef}
     >
       {tableCellNode != null && (

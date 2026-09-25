@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import type {
   DOMConversionMap,

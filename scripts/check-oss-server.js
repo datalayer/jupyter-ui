@@ -25,11 +25,14 @@ const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
     clearTimeout(timeout);
 
     if (res.ok) {
-      console.log('✅ Datalayer OSS Jupyter Server is running at', OSS_SERVER_URL);
+      console.log(
+        '✅ Datalayer OSS Jupyter Server is running at',
+        OSS_SERVER_URL,
+      );
       const text = await res.text();
       try {
         const parsed = JSON.parse(text);
-//        console.log(JSON.stringify(parsed, null, 2));
+        //        console.log(JSON.stringify(parsed, null, 2));
       } catch {
         console.log(text.trim());
       }
@@ -37,7 +40,10 @@ const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
       process.exit(0);
     }
 
-    console.warn('⚠️  Datalayer OSS Jupyter Server responded with status:', res.status);
+    console.warn(
+      '⚠️  Datalayer OSS Jupyter Server responded with status:',
+      res.status,
+    );
     console.warn(
       '   Server may be unavailable. Examples will attempt to connect anyway.',
     );
@@ -46,9 +52,16 @@ const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
   } catch (err) {
     clearTimeout(timeout);
     if (err.name === 'AbortError') {
-      console.error('⏱️  Datalayer OSS Jupyter Server check timed out after', TIMEOUT_MS, 'ms');
+      console.error(
+        '⏱️  Datalayer OSS Jupyter Server check timed out after',
+        TIMEOUT_MS,
+        'ms',
+      );
     } else {
-      console.error('❌ Datalayer OSS Jupyter Server is not accessible:', err.message);
+      console.error(
+        '❌ Datalayer OSS Jupyter Server is not accessible:',
+        err.message,
+      );
     }
     console.error('   Make sure https://prod1.datalayer.run is running');
     console.error('   Examples will attempt to connect anyway.');

@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import type { LexicalEditor } from 'lexical';
 
 import {
@@ -14,7 +15,7 @@ import {
   URL_MATCHER,
 } from '@lexical/react/LexicalAutoEmbedPlugin';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as ReactDOM from 'react-dom';
 import { Box, Text } from '@primer/react';
 import { VideoIcon } from '@primer/octicons-react';
@@ -23,6 +24,8 @@ import useModal from '../hooks/useModal';
 import Button from '../components/Button';
 import { DialogActions } from '../components/Dialog';
 import { INSERT_YOUTUBE_COMMAND } from './YouTubePlugin';
+import { INSERT_LOOM_COMMAND } from '../extensions/LoomExtension';
+import { describeLoomVideo, loomShareUrl, loomVideoId } from '../utils/loom';
 import { TextInput as PrimerTextInput } from '@primer/react';
 
 interface PlaygroundEmbedConfig extends EmbedConfig {
@@ -76,7 +79,26 @@ export const YoutubeEmbedConfig: PlaygroundEmbedConfig = {
   type: 'youtube-video',
 };
 
-export const EmbedConfigs = [YoutubeEmbedConfig];
+export const LoomEmbedConfig: PlaygroundEmbedConfig = {
+  contentName: 'Loom Video',
+  exampleUrl: 'https://www.loom.com/share/c2b5b05f548d4f1492d5c107f0c48dbc',
+  icon: <VideoIcon size={16} />,
+  insertNode: (editor: LexicalEditor, result: EmbedMatchResult) => {
+    // Loom is asked for the title and the recording's shape first; the block
+    // goes in either way, 16:9 when Loom does not answer.
+    void describeLoomVideo(result.url).then(video =>
+      editor.dispatchCommand(INSERT_LOOM_COMMAND, video),
+    );
+  },
+  keywords: ['loom', 'video', 'recording', 'screen'],
+  parseUrl: async (url: string) => {
+    const id = loomVideoId(url);
+    return id ? { id, url: loomShareUrl(id) } : null;
+  },
+  type: 'loom-video',
+};
+
+export const EmbedConfigs = [YoutubeEmbedConfig, LoomEmbedConfig];
 
 function AutoEmbedMenuItem({
   index,
@@ -91,12 +113,23 @@ function AutoEmbedMenuItem({
   onMouseEnter: () => void;
   option: AutoEmbedOption;
 }) {
+  /*
+   * Lexical's `MenuOption` tracks its own element through `setRefElement`.
+   * Handed straight to `ref`, the React Compiler's lint takes `option` for a
+   * ref object and refuses every read of it during render (`option.title`,
+   * `option.disabled`): a callback keeps the registration where a ref
+   * callback belongs, and the option an ordinary value.
+   */
+  const setElement = useCallback(
+    (element: HTMLElement | null) => option.setRefElement(element),
+    [option],
+  );
   return (
     <Box
       as="li"
       key={option.key}
       tabIndex={-1}
-      ref={option.setRefElement}
+      ref={setElement}
       role="option"
       aria-selected={isSelected}
       id={'typeahead-item-' + index}
@@ -129,11 +162,12 @@ function AutoEmbedMenu({
   return (
     <Box
       sx={{
-        bg: 'canvas.overlay',
+        bg: 'var(--overlay-bgColor)',
         border: '1px solid',
-        borderColor: 'border.default',
+        borderColor: 'var(--borderColor-default)',
         borderRadius: 2,
-        boxShadow: 'shadow.large',
+        boxShadow:
+          'var(--shadow-floating-large, 0 0 0 1px #d1d9e0, 0 40px 80px 0 #25292e3d)',
         p: 1,
       }}
     >
@@ -274,11 +308,21 @@ export const AutoEmbedPlugin = (): JSX.Element => {
             ? ReactDOM.createPortal(
                 <Box
                   sx={{
-                    bg: 'canvas.overlay',
+                    // Above whatever the host stacks around the editor. The
+                    // menu is portaled into Lexical's anchor — absolutely
+                    // positioned, `z-index: auto` — so a page that keeps its
+                    // editor on a sheet with a z-index of its own painted the
+                    // sheet over the menu, and typing `/` showed nothing.
+                    // The anchor is not a stacking context, so this joins the
+                    // root one and wins.
+                    position: 'relative',
+                    zIndex: 1000,
+                    bg: 'var(--overlay-bgColor)',
                     border: '1px solid',
-                    borderColor: 'border.default',
+                    borderColor: 'var(--borderColor-default)',
                     borderRadius: 2,
-                    boxShadow: 'shadow.large',
+                    boxShadow:
+                      'var(--shadow-floating-large, 0 0 0 1px #d1d9e0, 0 40px 80px 0 #25292e3d)',
                     marginLeft: anchorElementRef.current.style.width,
                     width: 200,
                   }}

@@ -12,8 +12,7 @@ import { ISignal, Signal } from '@lumino/signaling';
 import { Widget } from '@lumino/widgets';
 
 export type ReactRenderElement =
-  | Array<React.ReactElement<any>>
-  | React.ReactElement<any>;
+  Array<React.ReactElement<any>> | React.ReactElement<any>;
 
 /**
  * An abstract class for a Lumino widget which renders a React component as a Portal.

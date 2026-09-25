@@ -15,10 +15,249 @@ import { zodToJsonSchema } from 'zod-to-json-schema';
 import type { ToolDefinition } from './schema';
 
 /**
+ * A JSON Schema fragment describing one parameter.
+ */
+type JsonSchemaNode = Record<string, unknown>;
+
+/** Zod v3 keeps its innards on `_def`, Zod v4 on `_def` or `def`. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const defOf = (field: any) => field?._def ?? field?.def;
+
+/**
+ * What kind of schema this is, across both Zod versions.
+ *
+ * v3 answers with a class name (`ZodString`), v4 with a lowercase tag
+ * (`string`). Callers compare against both.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const kindOf = (field: any): string | undefined => {
+  const def = defOf(field);
+  return def?.typeName ?? def?.type;
+};
+
+/** The `.describe()` text, wherever the Zod version keeps it. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const descriptionOf = (field: any): string | undefined =>
+  defOf(field)?.description ?? field?.description;
+
+/**
+ * Strip the wrappers that say *how* a value arrives rather than *what* it is.
+ *
+ * `optional`, `default`, `nullable`, `readonly`, and the `preprocess` pipe all
+ * wrap another schema. JSON Schema has no equivalent for most of them — what
+ * an LLM needs is the shape underneath plus whether the field is required —
+ * so they are peeled off here.
+ *
+ * The description is collected on the way down. `.describe()` can sit on
+ * either side of `.optional()` depending on the order they were written, and
+ * Zod v4 puts it on the instance rather than on `_def`; the outermost one
+ * found wins, which is the one the author wrote last.
+ */
+function unwrap(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  field: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): { schema: any; optional: boolean; description?: string } {
+  let schema = field;
+  let optional = false;
+  let description: string | undefined;
+
+  for (let depth = 0; schema && depth < 20; depth += 1) {
+    description = description ?? descriptionOf(schema);
+    const kind = kindOf(schema);
+    const def = defOf(schema);
+
+    if (
+      kind === 'ZodOptional' ||
+      kind === 'optional' ||
+      kind === 'ZodDefault' ||
+      kind === 'default'
+    ) {
+      optional = true;
+      schema = def?.innerType;
+      continue;
+    }
+    if (
+      kind === 'ZodNullable' ||
+      kind === 'nullable' ||
+      kind === 'ZodReadonly' ||
+      kind === 'readonly'
+    ) {
+      schema = def?.innerType;
+      continue;
+    }
+    if (kind === 'ZodEffects' || kind === 'effects' || kind === 'pipe') {
+      // v4 `preprocess` is a pipe whose `out` is the real schema; v3 keeps it
+      // on `schema`.
+      schema = def?.out ?? def?.schema ?? def?.innerType;
+      continue;
+    }
+    break;
+  }
+
+  return { schema, optional, description };
+}
+
+/** The literal values of an enum, across both Zod versions. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const enumValuesOf = (field: any): unknown[] => {
+  const def = defOf(field);
+  const values =
+    def?.values ??
+    field?.options ??
+    (def?.entries ? Object.keys(def.entries) : null) ??
+    (field?.enum ? Object.keys(field.enum) : null) ??
+    [];
+  return Array.isArray(values) ? values : Object.keys(values ?? {});
+};
+
+/**
+ * One Zod field as a JSON Schema node.
+ *
+ * Recursive, which is the whole point: a tool that takes a list of drawing
+ * elements needs `items` to describe an object with its own properties, not
+ * the string this used to fall back to. `depth` stops a self-referential
+ * schema from running forever; six levels is deeper than any tool parameter
+ * anybody should be writing.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function fieldToJsonSchema(field: any, depth = 0): JsonSchemaNode {
+  const { schema, description } = unwrap(field);
+  const node: JsonSchemaNode = {};
+  if (description) {
+    node.description = description;
+  }
+
+  if (!schema || depth > 6) {
+    node.type = 'string';
+    return node;
+  }
+
+  const kind = kindOf(schema);
+  const def = defOf(schema);
+
+  switch (true) {
+    case kind === 'ZodString' || kind === 'string':
+      node.type = 'string';
+      break;
+
+    case kind === 'ZodNumber' || kind === 'number' || kind === 'int':
+      node.type = 'number';
+      break;
+
+    case kind === 'ZodBoolean' || kind === 'boolean':
+      node.type = 'boolean';
+      break;
+
+    case kind === 'ZodNull' || kind === 'null':
+      node.type = 'null';
+      break;
+
+    case kind === 'ZodEnum' || kind === 'enum' || kind === 'nativeEnum': {
+      node.type = 'string';
+      node.enum = enumValuesOf(schema);
+      break;
+    }
+
+    case kind === 'ZodLiteral' || kind === 'literal': {
+      const values = Array.isArray(def?.values)
+        ? def.values
+        : [def?.value].filter(value => value !== undefined);
+      const [first] = values;
+      node.type =
+        typeof first === 'number'
+          ? 'number'
+          : typeof first === 'boolean'
+            ? 'boolean'
+            : 'string';
+      node.enum = values;
+      break;
+    }
+
+    case kind === 'ZodArray' || kind === 'array': {
+      node.type = 'array';
+      node.items = fieldToJsonSchema(def?.element ?? def?.type, depth + 1);
+      break;
+    }
+
+    case kind === 'ZodObject' || kind === 'object': {
+      Object.assign(node, objectToJsonSchema(schema, depth));
+      break;
+    }
+
+    case kind === 'ZodRecord' || kind === 'record': {
+      // An open map of keys. JSON Schema says "an object", and saying more
+      // than that about keys nobody has named would be a guess.
+      node.type = 'object';
+      break;
+    }
+
+    case kind === 'ZodUnion' || kind === 'union': {
+      const options: unknown[] = def?.options ?? [];
+      const branches = options.map(option =>
+        fieldToJsonSchema(option, depth + 1)
+      );
+      // A union of literals is an enum, which reads far better to a model
+      // than the same thing spelled as a list of one-value branches.
+      const literals = branches.every(
+        branch => Array.isArray(branch.enum) && branch.enum.length > 0
+      );
+      if (literals && branches.length > 0) {
+        node.type = branches[0].type;
+        node.enum = branches.flatMap(branch => branch.enum as unknown[]);
+      } else if (branches.length > 0) {
+        node.anyOf = branches;
+      } else {
+        node.type = 'string';
+      }
+      break;
+    }
+
+    case kind === 'ZodAny' ||
+      kind === 'any' ||
+      kind === 'ZodUnknown' ||
+      kind === 'unknown':
+      // Deliberately typeless: "anything goes" is what the schema said.
+      break;
+
+    default:
+      // Unknown construct. A string is the safest thing to promise.
+      node.type = 'string';
+      break;
+  }
+
+  return node;
+}
+
+/** An object schema's `properties` and `required`, recursively. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function objectToJsonSchema(schema: any, depth: number): JsonSchemaNode {
+  const rawShape = defOf(schema)?.shape;
+  const shape = typeof rawShape === 'function' ? rawShape() : rawShape;
+  const properties: Record<string, JsonSchemaNode> = {};
+  const required: string[] = [];
+
+  for (const [key, value] of Object.entries(shape ?? {})) {
+    properties[key] = fieldToJsonSchema(value, depth + 1);
+    if (!unwrap(value).optional) {
+      required.push(key);
+    }
+  }
+
+  return { type: 'object', properties, required };
+}
+
+/**
  * Converts a Zod schema to ToolDefinition parameters (JSON Schema format).
  *
  * This enables a single source of truth: define the schema once with Zod,
  * and automatically generate the JSON Schema for LLM tool calling.
+ *
+ * Nested structure survives the conversion: an object's properties, an
+ * array's element type, and unions are all described rather than flattened
+ * to `string`. That matters for any tool whose parameters are richer than a
+ * bag of scalars — a list of drawing elements, say — because the model only
+ * sees this JSON Schema, not the Zod schema it came from.
  *
  * @param schema - Zod schema defining the tool's input parameters
  * @returns JSON Schema object compatible with ToolDefinition.parameters
@@ -40,173 +279,9 @@ export function zodToToolParameters(
 ): ToolDefinition['parameters'] {
   // Manual conversion for Zod v3/v4 compatibility
   // zod-to-json-schema@3.x doesn't fully support Zod v4
-  // Handle both Zod v3 (_def.type === 'object') and Zod v4 (_def.typeName === 'ZodObject')
-  const isZodObject =
-    schema?._def?.typeName === 'ZodObject' || schema?._def?.type === 'object';
-
-  if (isZodObject && schema._def?.shape) {
-    // Get shape object - handle both Zod v3 (shape is object) and Zod v4 (shape is function)
-    const shape =
-      typeof schema._def.shape === 'function'
-        ? schema._def.shape()
-        : schema._def.shape;
-    const properties: Record<string, any> = {};
-    const required: string[] = [];
-
-    for (const [key, value] of Object.entries(shape)) {
-      let zodField = value as any;
-
-      // Build property schema
-      const prop: Record<string, any> = {};
-
-      // Unwrap optional/default/effects/pipe modifiers to get to the base type
-      // Support both Zod v3 (def/def) and Zod v4 (_def)
-      let isOptional = false;
-      while (
-        zodField._def?.typeName === 'ZodOptional' ||
-        zodField._def?.typeName === 'ZodDefault' ||
-        zodField._def?.typeName === 'ZodEffects' ||
-        zodField._def?.type === 'optional' ||
-        zodField._def?.type === 'default' ||
-        zodField._def?.type === 'effects' ||
-        zodField._def?.type === 'pipe' ||
-        zodField.def?.type === 'optional' ||
-        zodField.def?.type === 'default' ||
-        zodField.def?.type === 'effects' ||
-        zodField.def?.type === 'pipe'
-      ) {
-        if (
-          zodField._def?.typeName === 'ZodOptional' ||
-          zodField._def?.type === 'optional' ||
-          zodField.def?.type === 'optional'
-        ) {
-          isOptional = true;
-        }
-        // Unwrap to get the inner type - try all possible paths
-        // For Zod v4 pipe (preprocess): use _def.out
-        // For ZodEffects: use _def.schema
-        // For optional/default: use _def.innerType
-        zodField =
-          zodField._def?.out ||
-          zodField._def?.schema ||
-          zodField._def?.innerType ||
-          zodField.def?.innerType ||
-          zodField;
-      }
-
-      // Extract description (check at each level)
-      // Support both Zod v3 (def.description) and Zod v4 (_def.description)
-      const description =
-        (value as any)._def?.description ||
-        (value as any).def?.description ||
-        (value as any).description;
-      if (description) {
-        prop.description = description;
-      }
-
-      // Handle type based on unwrapped field
-      // Support both Zod v3 (def.type) and Zod v4 (_def.typeName or _def.type)
-      const typeName =
-        zodField._def?.typeName || zodField._def?.type || zodField.def?.type;
-      if (typeName === 'ZodString' || typeName === 'string') {
-        prop.type = 'string';
-      } else if (typeName === 'ZodNumber' || typeName === 'number') {
-        prop.type = 'number';
-      } else if (typeName === 'ZodBoolean' || typeName === 'boolean') {
-        prop.type = 'boolean';
-      } else if (typeName === 'ZodArray' || typeName === 'array') {
-        prop.type = 'array';
-        // Get the inner element type of the array
-        // Zod v4 uses _def.element (NOT _def.type which is the string "ZodArray")
-        // Zod v3 uses def.element
-        let innerType = zodField._def?.element || zodField.def?.element;
-
-        // Unwrap ZodEffects/pipe (preprocess) to get actual type
-        // Zod v4 uses type: "pipe" with _def.out for the output schema
-        // Zod v3 uses type: "effects" with _def.schema
-        let iterations = 0;
-        while (innerType && iterations < 10) {
-          iterations++;
-          const effectType = innerType._def?.type || innerType.def?.type;
-          const effectTypeName = innerType._def?.typeName;
-
-          if (
-            effectType === 'pipe' ||
-            effectType === 'effects' ||
-            effectTypeName === 'ZodEffects'
-          ) {
-            // Zod v4 pipe: output schema is in _def.out
-            // Zod v3 effects: output schema is in _def.schema
-            innerType =
-              innerType._def?.out ||
-              innerType._def?.schema ||
-              innerType.def?.schema ||
-              innerType;
-          } else {
-            break;
-          }
-        }
-
-        const innerTypeName =
-          innerType?._def?.typeName ||
-          innerType?._def?.type ||
-          innerType?.def?.type;
-        // Map inner type to JSON Schema item type
-        if (innerTypeName === 'ZodString' || innerTypeName === 'string') {
-          prop.items = { type: 'string' };
-        } else if (
-          innerTypeName === 'ZodNumber' ||
-          innerTypeName === 'number'
-        ) {
-          prop.items = { type: 'number' };
-        } else if (
-          innerTypeName === 'ZodBoolean' ||
-          innerTypeName === 'boolean'
-        ) {
-          prop.items = { type: 'boolean' };
-        } else {
-          // Default to string items for unknown inner types
-          prop.items = { type: 'string' };
-        }
-      } else if (typeName === 'ZodEnum' || typeName === 'enum') {
-        prop.type = 'string';
-        // Enum values can be in different places depending on Zod version:
-        // - Zod v4: _def.values (array)
-        // - Zod v3: def.entries (object), options (array), or enum (object)
-        const enumValues =
-          zodField._def?.values ||
-          zodField.def?.values ||
-          zodField.options ||
-          (zodField.def?.entries ? Object.keys(zodField.def.entries) : null) ||
-          (zodField.enum ? Object.keys(zodField.enum) : null) ||
-          [];
-        prop.enum = Array.isArray(enumValues)
-          ? enumValues
-          : Object.keys(enumValues || {});
-      } else if (typeName === 'ZodRecord' || typeName === 'record') {
-        // Handle z.record() which creates a dictionary/object with string keys
-        // Convert to JSON Schema object type
-        prop.type = 'object';
-        // ZodRecord allows arbitrary keys, so we don't specify additionalProperties: false
-        // This is equivalent to { "type": "object" } in JSON Schema
-      } else {
-        // Fallback: Default to string type for unknown types to ensure valid JSON Schema
-        prop.type = 'string';
-      }
-
-      properties[key] = prop;
-
-      // Mark as required if not optional
-      if (!isOptional) {
-        required.push(key);
-      }
-    }
-
-    return {
-      type: 'object' as const,
-      properties,
-      required,
-    };
+  const kind = kindOf(schema);
+  if ((kind === 'ZodObject' || kind === 'object') && defOf(schema)?.shape) {
+    return objectToJsonSchema(schema, 0) as ToolDefinition['parameters'];
   }
 
   // Fallback to zod-to-json-schema for other schema types
@@ -278,7 +353,8 @@ export function validateWithZod<T>(
 
       throw new Error(
         `Invalid parameters for ${operationName}:\n${issues}\n\n` +
-          `Received: ${JSON.stringify(params)}`
+          `Received: ${JSON.stringify(params)}`,
+        { cause: error }
       );
     }
 

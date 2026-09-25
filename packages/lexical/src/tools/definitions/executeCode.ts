@@ -20,15 +20,15 @@ import { executeCodeParamsSchema } from '../schemas/executeCode';
  * Executes code without creating or modifying blocks in the document.
  */
 export const executeCodeTool: ToolDefinition = {
-  name: 'datalayer_executeCode_lexical',
-  displayName: 'Execute Code in Kernel (Lexical)',
-  toolReferenceName: 'executeCode',
+  name: 'datalayer_executeCodeInDocument',
+  displayName: 'Execute Code in Document Kernel',
+  toolReferenceName: 'executeCodeInDocument',
   description:
-    'Execute code directly in the kernel without creating blocks. Runs code and returns execution results immediately. Useful for quick computations, variable inspection, or running commands that should not appear in the document. Works on the active kernel for the currently open .lexical file.',
+    'Execute code directly in the document kernel without creating blocks. Runs code and returns execution results immediately. Useful for quick computations, variable inspection, or running commands that should not appear in the document. Works on the active kernel for the currently open .lexical file.',
 
   parameters: zodToToolParameters(executeCodeParamsSchema),
 
-  operation: 'executeCode',
+  operation: 'executeCodeInDocument',
 
   config: {
     confirmationMessage: (params: { code: string }) =>

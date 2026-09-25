@@ -121,31 +121,22 @@ export class ExecTimeWidget extends Widget {
         executionTimeNode = document.createElement('div') as HTMLDivElement;
         editorWidget.node.append(executionTimeNode);
       }
-      let positioning;
-      switch (this._settings.positioning) {
-        case 'left':
-          positioning = 'left';
-          break;
-        case 'right':
-          positioning = 'right';
-          break;
-        default:
-          console.error(
-            `'${positioning}' is not a valid type for the setting 'positioning'`
-          );
+      const positioning = this._settings.positioning;
+      if (positioning !== 'left' && positioning !== 'right') {
+        console.error(
+          `'${positioning}' is not a valid type for the setting 'positioning'`
+        );
       }
       const positioningClass = `${EXECUTE_TIME_CLASS}-positioning-${this._settings.positioning}`;
       executionTimeNode.className = `${EXECUTE_TIME_CLASS} ${positioningClass}`;
       const queuedTimeStr = executionMetadata['iopub.status.busy'] as
-        | string
-        | null;
+        string | null;
       const queuedTime = queuedTimeStr ? new Date(queuedTimeStr) : null;
       const startTimeStr = (executionMetadata['shell.execute_reply.started'] ||
         executionMetadata['iopub.execute_input']) as string | null;
       const startTime = startTimeStr ? new Date(startTimeStr) : null;
       const endTimeStr = executionMetadata['shell.execute_reply'] as
-        | string
-        | null;
+        string | null;
       const endTime = endTimeStr ? new Date(endTimeStr) : null;
       let msg = '';
       if (endTime) {

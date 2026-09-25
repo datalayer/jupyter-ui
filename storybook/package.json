@@ -1,6 +1,7 @@
 {
   "name": "@datalayer/jupyter-ui-storybook",
   "version": "0.0.1",
+  "private": true,
   "description": "Jupyter UI Storybook.",
   "license": "MIT",
   "main": "lib/index.js",
@@ -31,8 +32,8 @@
     "test:all:ci": "test-storybook --ci --maxWorkers=2 --url http://localhost:6006 && node test-storybook.js"
   },
   "dependencies": {
-    "@datalayer/jupyter-lexical": "^1.0.16",
-    "@datalayer/jupyter-react": "^2.0.7",
+    "@datalayer/jupyter-lexical": "^1.0.25",
+    "@datalayer/jupyter-react": "^2.0.16",
     "react": "18.3.1",
     "react-dom": "18.3.1"
   },
@@ -43,7 +44,7 @@
     "@babel/preset-env": "^7.20.2",
     "@babel/preset-react": "^7.18.6",
     "@babel/preset-typescript": "^7.21.0",
-    "@jupyterlab/builder": "^4.0.0",
+    "@jupyter/builder": "^1.1.1",
     "@jupyterlab/geojson-extension": "^3.4.0",
     "@jupyterlab/running": "^4.0.0",
     "@jupyterlab/running-extension": "^4.0.0",
@@ -53,7 +54,7 @@
     "@mdx-js/react": "^3.1.0",
     "@mermaid-js/mermaid-zenuml": "^0.2.0",
     "@playwright/test": "^1.40.1",
-    "@primer/octicons-react": "^19.29.1",
+    "@primer/octicons-react": "^19.35.0",
     "@storybook/addon-docs": "^9.1.2",
     "@storybook/addon-links": "^9.1.2",
     "@storybook/react-webpack5": "^9.1.2",

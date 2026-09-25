@@ -160,7 +160,7 @@ export class Contents implements IContents {
 
     // handle the case of "Save As", where the path points to the new file
     // to create, e.g. subfolder/example-copy.ipynb
-    let name = '';
+    let name: string;
     if (path && !extname && item) {
       // directory
       dirname = `${path}/`;

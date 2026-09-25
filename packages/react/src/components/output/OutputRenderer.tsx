@@ -6,13 +6,24 @@
 
 import { IOutput } from '@jupyterlab/nbformat';
 import AnsiToHtml from 'ansi-to-html';
+import DOMPurify from 'dompurify';
 
 const ansiConverter = new AnsiToHtml({
-  fg: '#000',
-  bg: '#fff',
+  fg: 'currentColor',
+  bg: 'transparent',
   newline: false,
-  escapeXML: false,
+  // A traceback is text: markup in it (a repr, an exception message) must be
+  // shown, not parsed. The converter escapes it before adding its colours.
+  escapeXML: true,
 });
+
+// Every HTML this renders is sanitized — a `text/html` output, as JupyterLab
+// does for a notebook it does not trust, and the coloured traceback too:
+// markup and styles stay, scripts and event handlers go.
+const sanitize = (html: string): string => DOMPurify.sanitize(html);
+
+// A PNG output is base64 and nothing else; anything more is not drawn.
+const BASE64 = /^[A-Za-z0-9+/]+={0,2}$/;
 
 export type OutputRendererProps = {
   output: IOutput;
@@ -72,12 +83,14 @@ export const OutputRenderer = (props: OutputRendererProps) => {
   let plain: string | undefined;
   let html: string | undefined;
   let img: string | undefined;
+  const isError =
+    output.output_type === 'error' ||
+    (output.output_type === 'stream' && output.name === 'stderr');
   switch (output.output_type) {
     case 'error': {
       // Convert ANSI escape codes to HTML for colored error output
       const tracebackText = (output.traceback as string[]).join('\n');
-      html = ansiConverter.toHtml(tracebackText);
-      plain = tracebackText;
+      html = sanitize(ansiConverter.toHtml(tracebackText));
       break;
     }
     case 'stream': {
@@ -98,7 +111,9 @@ export const OutputRenderer = (props: OutputRendererProps) => {
       if (data) {
         const image_png = data['image/png'];
         if (image_png) {
-          img = image_png;
+          img = (
+            Array.isArray(image_png) ? image_png.join('') : image_png
+          ).replace(/\s+/g, '');
         }
       }
       break;
@@ -106,8 +121,14 @@ export const OutputRenderer = (props: OutputRendererProps) => {
     case 'execute_result': {
       const data = output.data as any;
       if (data) {
+        const image_png = data['image/png'];
+        if (image_png) {
+          img = (
+            Array.isArray(image_png) ? image_png.join('') : image_png
+          ).replace(/\s+/g, '');
+        }
         const text_plain = data['text/plain'];
-        if (text_plain) {
+        if (text_plain && !img) {
           if (typeof text_plain === 'string') {
             plain = text_plain;
           } else if (Array.isArray(text_plain)) {
@@ -117,12 +138,10 @@ export const OutputRenderer = (props: OutputRendererProps) => {
           }
         }
         const text_html = data['text/html'];
-        if (text_html) {
-          if (typeof text_html === 'string') {
-            html = text_html;
-          } else {
-            html = text_html.join('\n');
-          }
+        if (text_html && !img) {
+          html = sanitize(
+            typeof text_html === 'string' ? text_html : text_html.join('\n')
+          );
         }
       }
       break;
@@ -132,20 +151,38 @@ export const OutputRenderer = (props: OutputRendererProps) => {
     <>
       {plain && (
         <pre
+          className={isError ? 'jp-RenderedText' : undefined}
+          data-mime-type={
+            isError ? 'application/vnd.jupyter.stderr' : undefined
+          }
           style={{
-            color: 'black',
-            backgroundColor: 'white',
+            color: isError
+              ? 'var(--jp-error-color1, var(--fgColor-danger, #d32f2f))'
+              : 'inherit',
+            backgroundColor: 'transparent',
           }}
         >
           {plain}
         </pre>
       )}
-      {html && (
+      {html && isError && (
+        <pre
+          className="jp-RenderedText"
+          data-mime-type="application/vnd.jupyter.stderr"
+          style={{
+            color: 'var(--jp-error-color1, var(--fgColor-danger, #d32f2f))',
+            backgroundColor: 'transparent',
+            whiteSpace: 'pre-wrap',
+          }}
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
+      )}
+      {html && !isError && (
         <div>
           <div dangerouslySetInnerHTML={{ __html: html }} />
         </div>
       )}
-      {img && (
+      {img && BASE64.test(img) && (
         <div>
           <img src={`data:image/png;base64,${img}`} />
         </div>

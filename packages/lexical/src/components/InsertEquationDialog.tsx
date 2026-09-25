@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import { useCallback } from 'react';
 import { LexicalEditor } from 'lexical';
 import { KatexEquationAlterer } from './../components/KatexEquationAlterer';

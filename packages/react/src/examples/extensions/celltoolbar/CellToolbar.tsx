@@ -4,6 +4,7 @@
  * MIT License
  */
 
+import type { JSX } from 'react';
 import { ReactWidget } from '@jupyterlab/apputils';
 import { CodeCell } from '@jupyterlab/cells';
 import { INotebookExtensionProps } from '../../../components';

@@ -26,6 +26,7 @@ export * from '../operations/listAvailableBlocks';
 export * from './interfaces';
 export * from './types';
 export * from './executor';
+export * from './pluginTools';
 
 // Import shared utilities from react package
 export { type ToolConfig, type ToolDefinition } from '@datalayer/jupyter-react';

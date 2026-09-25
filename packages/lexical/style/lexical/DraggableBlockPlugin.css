@@ -15,14 +15,16 @@
   will-change: transform;
 }
 
-.draggable-block-menu .icon {
-  width: 16px;
-  height: 16px;
+/* The grip is a Primer icon now; what is left here is how it sits and how
+   it fades, which belongs to the handle rather than to the glyph. The glyph
+   takes no pointer events: a press that lands on an SVG inside a draggable
+   element never starts a native drag in Chromium, so the handle itself has
+   to be what the pointer hits. */
+.draggable-block-menu svg {
+  display: block;
   opacity: 0.4;
-  background-image: url(./icons/draggable-block-menu.svg);
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
+  color: var(--fgColor-muted);
+  pointer-events: none;
 }
 
 .draggable-block-menu:active {
@@ -34,13 +36,13 @@
   opacity: 1;
 }
 
-.draggable-block-menu:hover .icon {
+.draggable-block-menu:hover svg {
   opacity: 0.8;
 }
 
 .draggable-block-target-line {
   pointer-events: none;
-  background: deepskyblue;
+  background: var(--bgColor-accent-emphasis, deepskyblue);
   height: 4px;
   position: absolute;
   left: 0;

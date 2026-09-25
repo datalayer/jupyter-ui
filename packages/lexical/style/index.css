@@ -4,8 +4,8 @@
  * MIT License
  */
 
-@import 'tailwindcss';
+/* @import 'tailwindcss'; */
 
 @import url('./base.css');
 @import url('./lexical/index.css');
-@import url('./tailwind/custom.css');
+/* @import url('./tailwind/custom.css'); */

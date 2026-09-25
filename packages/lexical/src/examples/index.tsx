@@ -12,18 +12,17 @@ import { coreStore, iamStore } from '@datalayer/core';
 import { useSimpleAuthStore } from '@datalayer/core/lib/views/otel';
 import { useExampleThemeStore } from './themeStore';
 
-import '../../style/primer-primitives.css';
 import '../../style/index.css';
 
 const PROD_RUN_URL = 'https://prod1.datalayer.run';
 
 /**
  * jupyter-react's `loadJupyterConfig` reads the `jupyter-config-data` DOM
- * element (falling back to a hard-coded `oss.datalayer.run` default when it is
+ * element (falling back to a hard-coded `prod1.datalayer.run` default when it is
  * absent). The lexical examples only ship a `datalayer-config-data` element, so
  * we mirror the relevant fields into a `jupyter-config-data` element to ensure
  * every `useJupyter()` call targets the configured Jupyter server instead of
- * the `oss.datalayer.run` fallback.
+ * the `prod1.datalayer.run` fallback.
  */
 const ensureJupyterConfigData = (
   jupyterServerUrl: string,
@@ -139,8 +138,25 @@ const renderStandaloneExample = async (examplePath: string) => {
       root.render(<module.default />);
       return;
     }
-    case 'LexicalNbformat': {
-      const module = await import('./LexicalNbformat');
+    // The old name of LexicalFormats, kept for bookmarks.
+    case 'LexicalNbformat':
+    case 'LexicalFormats': {
+      const module = await import('./LexicalFormats');
+      root.render(<module.default />);
+      return;
+    }
+    case 'LexicalLatex': {
+      const module = await import('./LexicalLatex');
+      root.render(<module.default />);
+      return;
+    }
+    case 'LexicalBlocks': {
+      const module = await import('./LexicalBlocks');
+      root.render(<module.default />);
+      return;
+    }
+    case 'LexicalPdf': {
+      const module = await import('./LexicalPdf');
       root.render(<module.default />);
       return;
     }

@@ -94,7 +94,9 @@ export const readAllBlocksOperation: ToolOperation<
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      throw new Error(`Failed to read all blocks: ${errorMessage}`);
+      throw new Error(`Failed to read all blocks: ${errorMessage}`, {
+        cause: error,
+      });
     }
   },
 };

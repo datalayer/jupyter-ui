@@ -47,6 +47,19 @@ export function useLexicalConfig(): LexicalConfig {
 }
 
 /**
+ * The configuration if there is any, rather than an error if there is not.
+ *
+ * A plugin that contributes tools needs to know which document it is part of,
+ * and the answer is legitimately "none": an editor mounted without an `id` is
+ * not addressable by an agent, so there is nothing to register against. That
+ * is a reason to do nothing, not a reason to throw — which is what
+ * `useLexicalConfig` would do, taking the editor down with it.
+ */
+export function useOptionalLexicalConfig(): LexicalConfig | undefined {
+  return useContext(LexicalConfigContext);
+}
+
+/**
  * Provider component for Lexical configuration
  *
  * @example
