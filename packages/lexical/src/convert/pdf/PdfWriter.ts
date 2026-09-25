@@ -372,9 +372,19 @@ export function countPdfPages(bytes: Uint8Array): number {
       Array.from(bytes.subarray(i, i + step)),
     );
   }
-  const count = /\/Type\s*\/Pages[^>]*\/Count\s+(\d+)/.exec(text);
-  if (count) {
-    return Number(count[1]);
+  // The page tree's `/Count`: the first `/Type /Pages` whose dictionary,
+  // up to the next `>`, carries one. Scanned once — each stretch of text is
+  // read by one candidate, since later `/Type /Pages` before the same `>`
+  // lie inside the stretch the earlier one already read.
+  const pages = /\/Type\s*\/Pages/g;
+  for (let found = pages.exec(text); found; found = pages.exec(text)) {
+    const close = text.indexOf('>', found.index);
+    const end = close < 0 ? text.length : close;
+    const count = /\/Count\s+(\d+)/.exec(text.slice(found.index, end));
+    if (count) {
+      return Number(count[1]);
+    }
+    pages.lastIndex = end;
   }
   return (text.match(/\/Type\s*\/Page\b/g) ?? []).length;
 }

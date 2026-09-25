@@ -292,9 +292,8 @@ export function expandMacros(text: string, macros: LatexMacro[]): string {
 /** What the preamble says about the document. */
 export function parsePreamble(preamble: string): LatexDocumentInfo {
   const info = emptyDocumentInfo();
-  const documentClass = /\\documentclass(?:\[([^\]]*)\])?\{([^}]*)\}/.exec(
-    preamble,
-  );
+  const documentClass =
+    /\\documentclass(?:\[([^[\]\\]*)\])?\{([^{}\\]*)\}/.exec(preamble);
   if (documentClass) {
     info.documentClass = documentClass[2].trim();
     info.classOptions = (documentClass[1] ?? '')

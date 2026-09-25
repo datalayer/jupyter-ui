@@ -469,6 +469,8 @@ export function pdfFilename(
     .trim()
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+    // Runs are single dashes by now, so one at either end is all there is.
+    .replace(/^-/, '')
+    .replace(/-$/, '');
   return `${base || fallback}.pdf`;
 }

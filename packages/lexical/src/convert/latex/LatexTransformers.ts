@@ -890,7 +890,7 @@ export const LATEX_FIGURE: LatexElementTransformer = {
     kind: 'environment',
     names: ['figure', 'figure*', 'wrapfigure'],
     replace: block => {
-      const graphic = /\\includegraphics(?:\[[^\]]*\])?\{([^}]*)\}/.exec(
+      const graphic = /\\includegraphics(?:\[[^[\]]*\])?\{([^{}]*)\}/.exec(
         block.body,
       );
       if (!graphic) {
@@ -1159,7 +1159,9 @@ function widthWeight(width: string | null): number {
     return 1;
   }
   const match =
-    /^\s*([0-9]*\.?[0-9]+)?\s*\\(?:text|line|column|paper)width/.exec(width);
+    /^\s*(?:(\d+(?:\.\d*)?|\.\d+)\s*)?\\(?:text|line|column|paper)width/.exec(
+      width,
+    );
   if (match) {
     return match[1] ? Number(match[1]) : 1;
   }
@@ -1196,7 +1198,10 @@ export function $titleBlock(
     }
   }
   if (document.author) {
-    const author = document.author.replace(/\s*\\and\b\s*/g, ', ');
+    const author = document.author
+      .split(/\\and\b/)
+      .map(part => part.trim())
+      .join(', ');
     nodes.push($paragraphOf(ctx.importInline(author).map($italicize)));
   }
   if (document.institute) {
@@ -1305,7 +1310,7 @@ export const LATEX_COLUMNS: LatexElementTransformer = {
           !/\\begin\{column\}/.test(block.body)
         ) {
           // `\column{width}` cuts the body; the environment form is read below.
-          const parts = block.body.split(/\\column\s*\{([^}]*)\}/).slice(1);
+          const parts = block.body.split(/\\column\s*\{([^{}]*)\}/).slice(1);
           const items: LayoutItemNode[] = [];
           const weights: number[] = [];
           for (let i = 0; i + 1 < parts.length; i += 2) {

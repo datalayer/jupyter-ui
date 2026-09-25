@@ -120,7 +120,7 @@ function displayMath(equation: string, mitex: boolean): string {
  * data URLs); the text falls back to Typst's fonts.
  */
 export function svgForTypst(svg: string): string {
-  return svg.replace(/@font-face\s*\{[^}]*\}/g, '');
+  return svg.replace(/@font-face\s*\{[^{}]*\}/g, '');
 }
 
 function joinText(text: string | string[] | undefined): string {

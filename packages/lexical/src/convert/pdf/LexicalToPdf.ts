@@ -1079,7 +1079,7 @@ class PdfLayout {
       if (nbformat.isStream(output)) {
         const text = (
           Array.isArray(output.text) ? output.text.join('') : output.text
-        ).replace(/\s+$/, '');
+        ).trimEnd();
         if (text) {
           this.code(
             text,

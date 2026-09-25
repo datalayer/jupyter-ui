@@ -1483,11 +1483,11 @@ export class LexicalAdapter {
     if (!text || typeof text !== 'string') return false;
 
     // Check for headings
-    if (/^#{1,6}\s+.+$/m.test(text)) return true;
+    if (/^#{1,6}[ \t]+\S/m.test(text)) return true;
 
     // Check for lists (bullet or numbered)
-    if (/^[\s]*[-*+]\s+.+$/m.test(text)) return true;
-    if (/^[\s]*\d+\.\s+.+$/m.test(text)) return true;
+    if (/^[ \t]*[-*+][ \t]+\S/m.test(text)) return true;
+    if (/^[ \t]*\d+\.[ \t]+\S/m.test(text)) return true;
 
     // Check for multiple paragraphs (separated by blank lines)
     if (/\n\s*\n/.test(text)) return true;
@@ -1522,7 +1522,7 @@ export class LexicalAdapter {
       }
 
       // Heading (# through ######)
-      const headingMatch = trimmed.match(/^(#{1,6})\s+(.+)$/);
+      const headingMatch = trimmed.match(/^(#{1,6})\s+(\S.*)$/);
       if (headingMatch) {
         // Finish previous block
         if (currentBlock && currentBlock.lines.length > 0) {
@@ -1542,7 +1542,7 @@ export class LexicalAdapter {
       }
 
       // Bullet list item (-, *, +)
-      const bulletMatch = trimmed.match(/^[-*+]\s+(.+)$/);
+      const bulletMatch = trimmed.match(/^[-*+]\s+(\S.*)$/);
       if (bulletMatch) {
         // Start or continue list
         if (!currentBlock || currentBlock.type !== 'list-bullet') {
@@ -1561,7 +1561,7 @@ export class LexicalAdapter {
       }
 
       // Numbered list item (1., 2., etc.)
-      const numberedMatch = trimmed.match(/^\d+\.\s+(.+)$/);
+      const numberedMatch = trimmed.match(/^\d+\.\s+(\S.*)$/);
       if (numberedMatch) {
         // Start or continue numbered list
         if (!currentBlock || currentBlock.type !== 'list-number') {

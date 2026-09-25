@@ -147,7 +147,12 @@ const recorders = new Map<string, Promise<LoomRecorder>>();
 export function explainLoomFailure(error: unknown): string {
   const message = error instanceof Error ? error.message : String(error);
   // What React 19 answers the SDK's `ReactDOM.render`.
-  if (/render is not a function|is not a function.*render/i.test(message)) {
+  const lowered = message.toLowerCase();
+  const notAFunction = lowered.indexOf('is not a function');
+  if (
+    lowered.includes('render is not a function') ||
+    (notAFunction >= 0 && lowered.includes('render', notAFunction))
+  ) {
     return 'The Loom recorder needs React 18 and this page runs React 19. See the Loom notes in the jupyter-lexical README to give it one.';
   }
   return `Loom could not start recording: ${message}`;
