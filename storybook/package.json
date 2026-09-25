@@ -1,6 +1,7 @@
 {
   "name": "@datalayer/jupyter-ui-storybook",
   "version": "0.0.1",
+  "private": true,
   "description": "Jupyter UI Storybook.",
   "license": "MIT",
   "main": "lib/index.js",
