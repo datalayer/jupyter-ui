@@ -1,6 +1,6 @@
 # Making a release
 
-Releases are published by the [`release.yml`](.github/workflows/release.yml)
+Releases are published by the [`release.yaml`](.github/workflows/release.yaml)
 workflow when a `v*` tag is pushed. It publishes to npm and PyPI with trusted
 publishing (OIDC): no token is stored in the repository.
 
@@ -60,7 +60,7 @@ _Manage project → Publishing → Add a new publisher → GitHub_ on
 
 - Owner: `datalayer`
 - Repository name: `jupyter-ui`
-- Workflow name: `release.yml`
+- Workflow name: `release.yaml`
 - Environment name: `pypi`
 
 The `pypi` environment exists in the repository settings
@@ -75,7 +75,7 @@ on [npmjs.com](https://www.npmjs.com/) and add a GitHub Actions publisher:
 
 - Organization or user: `datalayer`
 - Repository: `jupyter-ui`
-- Workflow filename: `release.yml`
+- Workflow filename: `release.yaml`
 - Environment name: `npm`
 
 The `npm` environment exists in the repository settings as well, and its
