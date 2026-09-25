@@ -99,7 +99,7 @@ class FakeNotebookExecutor implements ToolExecutor {
 
       case 'deleteCells': {
         const indices = [...((args.indices as number[]) ?? [])].sort(
-          (a, b) => b - a,
+          (a, b) => b - a
         );
         for (const index of indices) {
           this.cells.splice(index, 1);

@@ -56,7 +56,10 @@ const root = createRoot(div);
 root.render(
   <ExampleJupyterReactTheme>
     <Box sx={{ px: 3, py: 2, bg: 'canvas.default' }}>
-      <Text as="h1" sx={{ m: 0, color: 'fg.default', fontSize: 4, fontWeight: 'bold' }}>
+      <Text
+        as="h1"
+        sx={{ m: 0, color: 'fg.default', fontSize: 4, fontWeight: 'bold' }}
+      >
         JupyterLab Application with Service Manager
       </Text>
     </Box>

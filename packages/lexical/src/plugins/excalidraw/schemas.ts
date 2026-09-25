@@ -33,15 +33,7 @@ const colorSchema = z
  */
 export const elementSkeletonSchema = z.object({
   type: z
-    .enum([
-      'rectangle',
-      'ellipse',
-      'diamond',
-      'text',
-      'arrow',
-      'line',
-      'frame',
-    ])
+    .enum(['rectangle', 'ellipse', 'diamond', 'text', 'arrow', 'line', 'frame'])
     .describe('What to draw'),
   x: z.number().describe('Left edge, in scene coordinates'),
   y: z.number().describe('Top edge, in scene coordinates'),
@@ -53,17 +45,17 @@ export const elementSkeletonSchema = z.object({
     .describe(
       'Your own id for this element, so a later arrow can point at it by name. Any string; Excalidraw keeps it.',
     ),
-  text: z
-    .string()
-    .optional()
-    .describe("The text itself, for type 'text'"),
+  text: z.string().optional().describe("The text itself, for type 'text'"),
   label: z
     .string()
     .optional()
     .describe(
       'Text to put inside the shape. Excalidraw binds it to the shape, so moving the shape moves the label.',
     ),
-  fontSize: z.number().optional().describe('Font size in pixels, e.g. 16, 20, 28'),
+  fontSize: z
+    .number()
+    .optional()
+    .describe('Font size in pixels, e.g. 16, 20, 28'),
   strokeColor: colorSchema.optional().describe('Outline colour'),
   backgroundColor: colorSchema.optional().describe('Fill colour'),
   fillStyle: z
@@ -164,9 +156,7 @@ export const excalidrawUpdateElementsParamsSchema = z.object({
   updates: z
     .array(
       z.object({
-        id: z
-          .string()
-          .describe('The element id, from excalidrawReadScene'),
+        id: z.string().describe('The element id, from excalidrawReadScene'),
         x: z.number().optional(),
         y: z.number().optional(),
         width: z.number().optional(),
@@ -224,7 +214,9 @@ export const excalidrawResizeParamsSchema = z.object({
   width: z
     .number()
     .optional()
-    .describe('Rendered width in pixels. Omit to go back to sizing by content.'),
+    .describe(
+      'Rendered width in pixels. Omit to go back to sizing by content.',
+    ),
   height: z
     .number()
     .optional()

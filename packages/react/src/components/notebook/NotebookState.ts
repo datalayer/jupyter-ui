@@ -356,12 +356,10 @@ export const notebookStore = createStore<NotebookState>((set, get) => ({
     return await adapter.runCell({
       index: (params as Record<string, unknown>).index as number | undefined,
       timeoutSeconds: (params as Record<string, unknown>).timeoutSeconds as
-        | number
-        | undefined,
+        number | undefined,
       stream: (params as Record<string, unknown>).stream as boolean | undefined,
       progressInterval: (params as Record<string, unknown>).progressInterval as
-        | number
-        | undefined,
+        number | undefined,
     });
   },
   runAllCells: (id: string | { id: string }): void => {

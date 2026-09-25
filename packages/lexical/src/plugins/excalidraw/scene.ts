@@ -64,7 +64,11 @@ export function parseScene(data: string | undefined | null): ExcalidrawScene {
   }
   // The legacy shape: the elements array on its own.
   if (Array.isArray(parsed)) {
-    return { elements: parsed as ExcalidrawElementData[], appState: {}, files: {} };
+    return {
+      elements: parsed as ExcalidrawElementData[],
+      appState: {},
+      files: {},
+    };
   }
   if (!parsed || typeof parsed !== 'object') {
     return emptyScene();
@@ -87,9 +91,8 @@ export function serializeScene(scene: ExcalidrawScene): string {
 }
 
 /** The elements that are actually on the canvas. */
-export const liveElements = (
-  scene: ExcalidrawScene,
-): ExcalidrawElementData[] => scene.elements.filter(element => !element?.isDeleted);
+export const liveElements = (scene: ExcalidrawScene): ExcalidrawElementData[] =>
+  scene.elements.filter(element => !element?.isDeleted);
 
 /**
  * One element, reduced to what somebody deciding what to do next needs.

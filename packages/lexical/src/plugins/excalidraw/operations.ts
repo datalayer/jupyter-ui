@@ -26,7 +26,10 @@
 import { validateWithZod } from '@datalayer/jupyter-react/tools';
 import type { z } from 'zod';
 
-import type { ToolOperation, ToolExecutionContext } from '../../tools/core/interfaces';
+import type {
+  ToolOperation,
+  ToolExecutionContext,
+} from '../../tools/core/interfaces';
 import type { ExcalidrawElementSummary } from './scene';
 import {
   excalidrawAddElementsParamsSchema,
@@ -82,7 +85,7 @@ function excalidrawOperation<TResult>(
         )) as TResult;
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
-        throw new Error(`Failed to run ${name}: ${message}`);
+        throw new Error(`Failed to run ${name}: ${message}`, { cause: error });
       }
     },
   };

@@ -431,9 +431,8 @@ namespace Private {
   );
 
   export function escapeHtml(source: string): string {
-    return String(source).replace(
-      /[&<>"'/]/g,
-      (s: string) => entityMap.get(s)!
+    return String(source).replace(/[&<>"'/]/g, (s: string) =>
+      entityMap.get(s)!
     );
   }
 

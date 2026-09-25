@@ -173,7 +173,10 @@ describe('an operation refuses a call it cannot make', () => {
     );
 
     expect(calls).toEqual([
-      { name: 'excalidrawReadScene', args: { blockId: '7', detail: 'summary' } },
+      {
+        name: 'excalidrawReadScene',
+        args: { blockId: '7', detail: 'summary' },
+      },
     ]);
     expect(result).toEqual({ blockId: '7', elementCount: 0 });
   });

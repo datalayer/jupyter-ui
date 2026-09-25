@@ -1229,7 +1229,7 @@ export function ToolbarPlugin({
     result.push({
       key: 'comments',
       type: 'button',
-      order: order++,
+      order,
       group: 'comments',
       ariaLabel: showComments ? 'Hide Comments' : 'Show Comments',
       title: showComments ? 'Hide Comments' : 'Show Comments',

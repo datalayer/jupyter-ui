@@ -157,8 +157,7 @@ export const OutputRenderer = (props: OutputRendererProps) => {
           className="jp-RenderedText"
           data-mime-type="application/vnd.jupyter.stderr"
           style={{
-            color:
-              'var(--jp-error-color1, var(--fgColor-danger, #d32f2f))',
+            color: 'var(--jp-error-color1, var(--fgColor-danger, #d32f2f))',
             backgroundColor: 'transparent',
             whiteSpace: 'pre-wrap',
           }}

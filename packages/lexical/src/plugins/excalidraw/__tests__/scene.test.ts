@@ -28,7 +28,11 @@ import {
 
 /** What the modal writes when somebody saves a drawing. */
 const saved = (elements: Record<string, any>[]) =>
-  JSON.stringify({ elements, appState: { viewBackgroundColor: '#fff' }, files: {} });
+  JSON.stringify({
+    elements,
+    appState: { viewBackgroundColor: '#fff' },
+    files: {},
+  });
 
 describe('reading what a node holds', () => {
   it('reads the shape a saved drawing has', () => {
@@ -43,11 +47,12 @@ describe('reading what a node holds', () => {
     expect(scene.appState.viewBackgroundColor).toBe('#fff');
   });
 
-  it("reads the shape a node starts life with", () => {
+  it('reads the shape a node starts life with', () => {
     // `$createExcalidrawNode()` defaults to the string '[]'.
     expect(parseScene('[]').elements).toEqual([]);
-    expect(parseScene(JSON.stringify([{ id: 'a', type: 'ellipse' }])).elements)
-      .toHaveLength(1);
+    expect(
+      parseScene(JSON.stringify([{ id: 'a', type: 'ellipse' }])).elements,
+    ).toHaveLength(1);
   });
 
   it('reads nothing as an empty drawing rather than throwing', () => {

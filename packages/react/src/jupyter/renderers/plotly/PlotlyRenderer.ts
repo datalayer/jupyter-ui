@@ -126,8 +126,7 @@ export class RenderedPlotly extends Widget implements IRenderMime.IRenderer {
 
   private createGraph(model: IRenderMime.IMimeModel): Promise<void> {
     const { data, layout, frames, config } = model.data[this._mimeType] as
-      | any
-      | IPlotlySpec;
+      any | IPlotlySpec;
 
     if (!layout.height) {
       layout.height = 360;

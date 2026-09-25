@@ -138,7 +138,9 @@ export const readCellOperation: ToolOperation<ReadCellParams, ReadCellResult> =
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        throw new Error(`Failed to read cell: ${errorMessage}`);
+        throw new Error(`Failed to read cell: ${errorMessage}`, {
+          cause: error,
+        });
       }
     },
   };

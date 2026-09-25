@@ -73,6 +73,8 @@ describe('updating a cell through the store', () => {
   });
 
   it('answers with nothing for a notebook it does not have', () => {
-    expect(notebookStore.getState().updateCell('missing', 0, 'x')).toBeUndefined();
+    expect(
+      notebookStore.getState().updateCell('missing', 0, 'x')
+    ).toBeUndefined();
   });
 });

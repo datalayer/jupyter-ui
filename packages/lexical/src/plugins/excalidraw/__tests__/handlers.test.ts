@@ -61,7 +61,9 @@ jest.mock(
             y: element.y,
             version: 1,
           });
-          element.boundElements = [{ id: `${skeleton.id}-label`, type: 'text' }];
+          element.boundElements = [
+            { id: `${skeleton.id}-label`, type: 'text' },
+          ];
         }
       }
       return out;
@@ -188,7 +190,10 @@ describe('drawing something new', () => {
     const adapter = makeAdapter();
     const result: any = await excalidrawToolHandlers.excalidrawInsertNode(
       adapter,
-      { afterId: 'TOP', elements: [{ id: 'mine', type: 'ellipse', x: 0, y: 0 }] },
+      {
+        afterId: 'TOP',
+        elements: [{ id: 'mine', type: 'ellipse', x: 0, y: 0 }],
+      },
     );
 
     expect(result.createdIds).toEqual(['mine']);
@@ -207,7 +212,9 @@ describe('drawing something new', () => {
 
 describe('adding to a drawing that exists', () => {
   it('leaves what is already there alone', async () => {
-    makeDrawing('1', { elements: [{ id: 'old', type: 'rectangle', x: 0, y: 0 }] });
+    makeDrawing('1', {
+      elements: [{ id: 'old', type: 'rectangle', x: 0, y: 0 }],
+    });
 
     await excalidrawToolHandlers.excalidrawAddElements(makeAdapter(), {
       blockId: '1',
@@ -220,7 +227,9 @@ describe('adding to a drawing that exists', () => {
   it('will not let a new element overwrite an existing one', async () => {
     // A caller reusing an id it liked would otherwise silently replace a
     // shape somebody else drew.
-    makeDrawing('1', { elements: [{ id: 'box', type: 'rectangle', x: 0, y: 0 }] });
+    makeDrawing('1', {
+      elements: [{ id: 'box', type: 'rectangle', x: 0, y: 0 }],
+    });
 
     const result: any = await excalidrawToolHandlers.excalidrawAddElements(
       makeAdapter(),
@@ -353,12 +362,17 @@ describe('changing what is there', () => {
 
   it('refuses the whole call when an id is wrong', async () => {
     // Half-applying a batch would leave a drawing nobody asked for.
-    makeDrawing('1', { elements: [{ id: 'a', type: 'rectangle', x: 0, y: 0 }] });
+    makeDrawing('1', {
+      elements: [{ id: 'a', type: 'rectangle', x: 0, y: 0 }],
+    });
 
     await expect(
       excalidrawToolHandlers.excalidrawUpdateElements(makeAdapter(), {
         blockId: '1',
-        updates: [{ id: 'a', x: 10 }, { id: 'ghost', x: 10 }],
+        updates: [
+          { id: 'a', x: 10 },
+          { id: 'ghost', x: 10 },
+        ],
       }),
     ).rejects.toThrow(/No element\(s\) 'ghost'/);
     expect(sceneOf('1').elements[0].x).toBe(0);
@@ -380,7 +394,13 @@ describe('taking things out', () => {
           ],
         },
         { id: 'a-label', type: 'text', text: 'Start', containerId: 'a' },
-        { id: 'b', type: 'rectangle', x: 300, y: 0, boundElements: [{ id: 'link', type: 'arrow' }] },
+        {
+          id: 'b',
+          type: 'rectangle',
+          x: 300,
+          y: 0,
+          boundElements: [{ id: 'link', type: 'arrow' }],
+        },
         {
           id: 'link',
           type: 'arrow',
@@ -398,10 +418,11 @@ describe('taking things out', () => {
     });
 
     // The box and its label are gone; the arrow and the other box remain.
-    expect(sceneOf('1').elements.map((e: any) => e.id).sort()).toEqual([
-      'b',
-      'link',
-    ]);
+    expect(
+      sceneOf('1')
+        .elements.map((e: any) => e.id)
+        .sort(),
+    ).toEqual(['b', 'link']);
     const arrow = elementOf('1', 'link');
     expect(arrow.startBinding).toBeNull();
     expect(arrow.endBinding).toEqual({ elementId: 'b', focus: 0, gap: 4 });
@@ -412,7 +433,9 @@ describe('taking things out', () => {
   });
 
   it('empties a drawing without removing it from the document', async () => {
-    makeDrawing('1', { elements: [{ id: 'a', type: 'rectangle', x: 0, y: 0 }] });
+    makeDrawing('1', {
+      elements: [{ id: 'a', type: 'rectangle', x: 0, y: 0 }],
+    });
 
     const result: any = await excalidrawToolHandlers.excalidrawClearScene(
       makeAdapter(),

@@ -27,7 +27,9 @@ import { excalidrawPluginTools } from '../tools';
 const DOC = 'doc-1';
 
 const names = (id: string) =>
-  getLexicalTools(id).definitions.map(definition => definition.toolReferenceName);
+  getLexicalTools(id).definitions.map(
+    definition => definition.toolReferenceName,
+  );
 
 beforeEach(() => {
   lexicalStore.getState().reset();
@@ -63,7 +65,7 @@ describe('a document offers what its plugins brought', () => {
     expect(names(DOC)).not.toContain('excalidrawInsertNode');
   });
 
-  it('keeps one document\'s plugins out of another\'s', () => {
+  it("keeps one document's plugins out of another's", () => {
     // Two editors on one page are composed independently.
     lexicalStore.getState().registerPluginTools(DOC, excalidrawPluginTools);
 
@@ -104,7 +106,7 @@ describe('the key a subscriber watches', () => {
   });
 });
 
-describe('the executor finds the plugin\'s own code', () => {
+describe("the executor finds the plugin's own code", () => {
   const adapter = { marker: 'the adapter' } as any;
 
   beforeEach(() => {
@@ -142,9 +144,9 @@ describe('the executor finds the plugin\'s own code', () => {
     lexicalStore.getState().registerPluginTools(DOC, excalidrawPluginTools);
     const executor = new DefaultExecutor(DOC, lexicalStore.getState());
 
-    await expect(
-      executor.execute('thisIsNotAnOperation', {}),
-    ).rejects.toThrow(/not found or not a function/);
+    await expect(executor.execute('thisIsNotAnOperation', {})).rejects.toThrow(
+      /not found or not a function/,
+    );
   });
 
   it('says the document is missing rather than calling a handler without one', async () => {

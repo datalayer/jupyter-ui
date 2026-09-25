@@ -225,8 +225,18 @@ module.exports = {
         },
       },
       // WebAssembly files (loro-crdt)
+      // loro-crdt >= 1.16 browser build fetches its wasm itself from
+      // `new URL('./loro_wasm_bg.wasm', import.meta.url)`: emit that as a file
+      // URL. Only a wasm `import` goes through async WebAssembly, otherwise the
+      // URL becomes the stringified module Promise and the fetch 404s.
       {
         test: /\.wasm$/,
+        dependency: 'url',
+        type: 'asset/resource',
+      },
+      {
+        test: /\.wasm$/,
+        dependency: { not: ['url'] },
         type: 'webassembly/async',
       },
     ],

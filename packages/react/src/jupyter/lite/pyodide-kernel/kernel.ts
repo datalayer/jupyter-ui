@@ -347,8 +347,7 @@ export class PyodideKernel extends BaseKernel implements IKernel {
   private _contentsProcessor: DriveContentsProcessor | undefined;
   private _worker: Worker;
   private _remoteKernel:
-    | IRemotePyodideWorkerKernel
-    | Remote<IRemotePyodideWorkerKernel>;
+    IRemotePyodideWorkerKernel | Remote<IRemotePyodideWorkerKernel>;
   private _ready = new PromiseDelegate<void>();
 }
 

@@ -66,23 +66,71 @@ export function loadJupyterLabCss(): Promise<void> {
     return cssReady;
   }
   const sheets: [string, Promise<unknown>][] = [
-    ['@jupyterlab/apputils/style/index.js', import('@jupyterlab/apputils/style/index.js')],
-    ['@jupyterlab/cells/style/index.js', import('@jupyterlab/cells/style/index.js')],
-    ['@jupyterlab/codeeditor/style/index.js', import('@jupyterlab/codeeditor/style/index.js')],
-    ['@jupyterlab/codemirror/style/index.js', import('@jupyterlab/codemirror/style/index.js')],
-    ['@jupyterlab/completer/style/index.js', import('@jupyterlab/completer/style/index.js')],
-    ['@jupyterlab/console/style/index.js', import('@jupyterlab/console/style/index.js')],
-    ['@jupyterlab/documentsearch/style/index.js', import('@jupyterlab/documentsearch/style/index.js')],
-    ['@jupyterlab/filebrowser/style/index.js', import('@jupyterlab/filebrowser/style/index.js')],
-    ['@jupyterlab/mathjax-extension/style/index.js', import('@jupyterlab/mathjax-extension/style/index.js')],
-    ['@jupyterlab/notebook/style/index.js', import('@jupyterlab/notebook/style/index.js')],
-    ['@jupyterlab/outputarea/style/index.js', import('@jupyterlab/outputarea/style/index.js')],
-    ['@jupyterlab/rendermime/style/index.js', import('@jupyterlab/rendermime/style/index.js')],
-    ['@jupyterlab/terminal/style/index.js', import('@jupyterlab/terminal/style/index.js')],
-    ['@jupyterlab/ui-components/style/index.js', import('@jupyterlab/ui-components/style/index.js')],
+    [
+      '@jupyterlab/apputils/style/index.js',
+      import('@jupyterlab/apputils/style/index.js'),
+    ],
+    [
+      '@jupyterlab/cells/style/index.js',
+      import('@jupyterlab/cells/style/index.js'),
+    ],
+    [
+      '@jupyterlab/codeeditor/style/index.js',
+      import('@jupyterlab/codeeditor/style/index.js'),
+    ],
+    [
+      '@jupyterlab/codemirror/style/index.js',
+      import('@jupyterlab/codemirror/style/index.js'),
+    ],
+    [
+      '@jupyterlab/completer/style/index.js',
+      import('@jupyterlab/completer/style/index.js'),
+    ],
+    [
+      '@jupyterlab/console/style/index.js',
+      import('@jupyterlab/console/style/index.js'),
+    ],
+    [
+      '@jupyterlab/documentsearch/style/index.js',
+      import('@jupyterlab/documentsearch/style/index.js'),
+    ],
+    [
+      '@jupyterlab/filebrowser/style/index.js',
+      import('@jupyterlab/filebrowser/style/index.js'),
+    ],
+    [
+      '@jupyterlab/mathjax-extension/style/index.js',
+      import('@jupyterlab/mathjax-extension/style/index.js'),
+    ],
+    [
+      '@jupyterlab/notebook/style/index.js',
+      import('@jupyterlab/notebook/style/index.js'),
+    ],
+    [
+      '@jupyterlab/outputarea/style/index.js',
+      import('@jupyterlab/outputarea/style/index.js'),
+    ],
+    [
+      '@jupyterlab/rendermime/style/index.js',
+      import('@jupyterlab/rendermime/style/index.js'),
+    ],
+    [
+      '@jupyterlab/terminal/style/index.js',
+      import('@jupyterlab/terminal/style/index.js'),
+    ],
+    [
+      '@jupyterlab/ui-components/style/index.js',
+      import('@jupyterlab/ui-components/style/index.js'),
+    ],
     // ipywidgets.
-    ['@jupyter-widgets/base/css/index.css', import('@jupyter-widgets/base/css/index.css')],
-    ['@jupyter-widgets/controls/css/widgets-base.css', import('@jupyter-widgets/controls/css/widgets-base.css')],
+    [
+      '@jupyter-widgets/base/css/index.css',
+      import('@jupyter-widgets/base/css/index.css'),
+    ],
+    [
+      '@jupyter-widgets/controls/css/widgets-base.css',
+      import('@jupyter-widgets/controls/css/widgets-base.css'),
+    ],
   ];
 
   /*
@@ -100,7 +148,7 @@ export function loadJupyterLabCss(): Promise<void> {
     results => {
       const failed = results
         .map((result, index) =>
-          result.status === 'rejected' ? sheets[index][0] : null,
+          result.status === 'rejected' ? sheets[index][0] : null
         )
         .filter((name): name is string => name !== null);
       if (failed.length > 0) {
@@ -111,14 +159,14 @@ export function loadJupyterLabCss(): Promise<void> {
         console.error(
           `[jupyter-react] ${failed.length} JupyterLab stylesheet(s) failed to load; ` +
             'the notebook will render without them: ' +
-            failed.join(', '),
+            failed.join(', ')
         );
       }
       cssLoaded = true;
       for (const notify of cssListeners) {
         notify();
       }
-    },
+    }
   );
   return cssReady;
 }

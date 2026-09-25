@@ -43,8 +43,7 @@ export function usePrimerThemeBridge(useStore: PrimerThemeStoreLike) {
     themeConfig,
     themeBackground,
     lexicalTheme: (resolvedMode === 'dark' ? 'dark' : 'light') as
-      | 'light'
-      | 'dark',
+      'light' | 'dark',
   };
 }
 

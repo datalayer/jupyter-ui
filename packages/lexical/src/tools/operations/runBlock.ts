@@ -169,7 +169,9 @@ export const runBlockOperation: ToolOperation<RunBlockParams, RunBlockResult> =
         }
 
         // Regular error (not timeout)
-        throw new Error(`Failed to run block: ${errorMessage}`);
+        throw new Error(`Failed to run block: ${errorMessage}`, {
+          cause: error,
+        });
       }
     },
   };

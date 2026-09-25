@@ -29,7 +29,7 @@ describe('what the model is told a tool takes', () => {
             type: z.enum(['rectangle', 'ellipse']).describe('Shape'),
             x: z.number(),
             label: z.string().optional(),
-          }),
+          })
         )
         .describe('The shapes to draw'),
     });
@@ -78,7 +78,7 @@ describe('what the model is told a tool takes', () => {
     const schema = z.object({
       index: z.preprocess(
         value => (typeof value === 'string' ? Number(value) : value),
-        z.number().int().describe('Cell index (0-based)'),
+        z.number().int().describe('Cell index (0-based)')
       ),
     });
 
@@ -140,8 +140,6 @@ describe('what the model is told a tool takes', () => {
       deep = z.object({ next: deep });
     }
 
-    expect(() =>
-      zodToToolParameters(z.object({ root: deep })),
-    ).not.toThrow();
+    expect(() => zodToToolParameters(z.object({ root: deep }))).not.toThrow();
   });
 });

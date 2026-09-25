@@ -126,8 +126,7 @@ export function parseConfigFromScript(
   }
   if (script.dataset.theme || script.dataset.jupyterTheme) {
     config.theme = (script.dataset.theme || script.dataset.jupyterTheme) as
-      | 'light'
-      | 'dark';
+      'light' | 'dark';
   }
   if (script.dataset.basePath || script.dataset.jupyterBasePath) {
     config.basePath = script.dataset.basePath || script.dataset.jupyterBasePath;

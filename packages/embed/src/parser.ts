@@ -52,9 +52,7 @@ export function parseElementOptions(element: HTMLElement): EmbedOptions | null {
       getAttr(element, DATA_ATTRIBUTES.HEIGHT, 'data-jupyter-height') ||
       undefined,
     theme: getAttr(element, DATA_ATTRIBUTES.THEME, 'data-jupyter-theme') as
-      | 'light'
-      | 'dark'
-      | undefined,
+      'light' | 'dark' | undefined,
     autoExecute:
       getAttr(
         element,
@@ -124,9 +122,7 @@ function parseCellOptions(
     type: 'cell',
     cellType:
       (getAttr(element, DATA_ATTRIBUTES.CELL_TYPE, 'data-jupyter-cell-type') as
-        | 'code'
-        | 'markdown'
-        | 'raw') || 'code',
+        'code' | 'markdown' | 'raw') || 'code',
     source,
     showToolbar:
       getAttr(

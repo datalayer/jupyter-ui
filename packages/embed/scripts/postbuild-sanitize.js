@@ -73,7 +73,9 @@ for (const filePath of jsFiles) {
     fs.writeFileSync(filePath, next, 'utf8');
     changedFiles += 1;
     totalReplacements += fileReplacements;
-    console.log(`[sanitize] patched ${filePath} (${fileReplacements} replacement(s))`);
+    console.log(
+      `[sanitize] patched ${filePath} (${fileReplacements} replacement(s))`,
+    );
   }
 }
 

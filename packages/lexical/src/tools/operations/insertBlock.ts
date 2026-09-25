@@ -113,7 +113,9 @@ export const insertBlockOperation: ToolOperation<
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      throw new Error(`Failed to insert block: ${errorMessage}`);
+      throw new Error(`Failed to insert block: ${errorMessage}`, {
+        cause: error,
+      });
     }
   },
 };

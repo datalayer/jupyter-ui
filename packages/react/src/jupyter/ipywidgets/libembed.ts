@@ -8,6 +8,9 @@
 // Distributed under the terms of the Modified BSD License.
 
 declare let __webpack_public_path__: string;
+// Webpack reads this free variable at runtime to resolve lazy chunks, so the
+// assignment is the point even though nothing in this module reads it back.
+// eslint-disable-next-line no-useless-assignment
 __webpack_public_path__ =
   (window as any).__jupyter_widgets_assets_path__ || __webpack_public_path__;
 

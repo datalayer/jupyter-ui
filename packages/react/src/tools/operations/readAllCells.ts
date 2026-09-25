@@ -80,7 +80,9 @@ export const readAllCellsOperation: ToolOperation<
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      throw new Error(`Failed to read all cells: ${errorMessage}`);
+      throw new Error(`Failed to read all cells: ${errorMessage}`, {
+        cause: error,
+      });
     }
   },
 };

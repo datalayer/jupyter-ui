@@ -78,8 +78,7 @@ export abstract class BaseKernel implements IKernel {
    * Get the last parent header
    */
   get parentHeader():
-    | KernelMessage.IHeader<KernelMessage.MessageType>
-    | undefined {
+    KernelMessage.IHeader<KernelMessage.MessageType> | undefined {
     return this._parentHeader;
   }
 
@@ -245,8 +244,7 @@ export abstract class BaseKernel implements IKernel {
   protected stream(
     content: KernelMessage.IStreamMsg['content'],
     parentHeader:
-      | KernelMessage.IHeader<KernelMessage.MessageType>
-      | undefined = undefined
+      KernelMessage.IHeader<KernelMessage.MessageType> | undefined = undefined
   ): void {
     const parentHeaderValue =
       typeof parentHeader !== 'undefined' ? parentHeader : this._parentHeader;
@@ -270,8 +268,7 @@ export abstract class BaseKernel implements IKernel {
   protected displayData(
     content: KernelMessage.IDisplayDataMsg['content'],
     parentHeader:
-      | KernelMessage.IHeader<KernelMessage.MessageType>
-      | undefined = undefined
+      KernelMessage.IHeader<KernelMessage.MessageType> | undefined = undefined
   ): void {
     // Make sure metadata is always set
     const parentHeaderValue =
@@ -298,8 +295,7 @@ export abstract class BaseKernel implements IKernel {
   protected inputRequest(
     content: KernelMessage.IInputRequestMsg['content'],
     parentHeader:
-      | KernelMessage.IHeader<KernelMessage.MessageType>
-      | undefined = undefined
+      KernelMessage.IHeader<KernelMessage.MessageType> | undefined = undefined
   ): void {
     const parentHeaderValue =
       typeof parentHeader !== 'undefined' ? parentHeader : this._parentHeader;
@@ -325,8 +321,7 @@ export abstract class BaseKernel implements IKernel {
   protected publishExecuteResult(
     content: KernelMessage.IExecuteResultMsg['content'],
     parentHeader:
-      | KernelMessage.IHeader<KernelMessage.MessageType>
-      | undefined = undefined
+      KernelMessage.IHeader<KernelMessage.MessageType> | undefined = undefined
   ): void {
     const parentHeaderValue =
       typeof parentHeader !== 'undefined' ? parentHeader : this._parentHeader;
@@ -351,8 +346,7 @@ export abstract class BaseKernel implements IKernel {
   protected publishExecuteError(
     content: KernelMessage.IErrorMsg['content'],
     parentHeader:
-      | KernelMessage.IHeader<KernelMessage.MessageType>
-      | undefined = undefined
+      KernelMessage.IHeader<KernelMessage.MessageType> | undefined = undefined
   ): void {
     const parentHeaderValue =
       typeof parentHeader !== 'undefined' ? parentHeader : this._parentHeader;
@@ -376,8 +370,7 @@ export abstract class BaseKernel implements IKernel {
   protected updateDisplayData(
     content: KernelMessage.IUpdateDisplayDataMsg['content'],
     parentHeader:
-      | KernelMessage.IHeader<KernelMessage.MessageType>
-      | undefined = undefined
+      KernelMessage.IHeader<KernelMessage.MessageType> | undefined = undefined
   ): void {
     const parentHeaderValue =
       typeof parentHeader !== 'undefined' ? parentHeader : this._parentHeader;
@@ -402,8 +395,7 @@ export abstract class BaseKernel implements IKernel {
   protected clearOutput(
     content: KernelMessage.IClearOutputMsg['content'],
     parentHeader:
-      | KernelMessage.IHeader<KernelMessage.MessageType>
-      | undefined = undefined
+      KernelMessage.IHeader<KernelMessage.MessageType> | undefined = undefined
   ): void {
     const parentHeaderValue =
       typeof parentHeader !== 'undefined' ? parentHeader : this._parentHeader;
@@ -429,8 +421,7 @@ export abstract class BaseKernel implements IKernel {
     metadata: KernelMessage.ICommMsgMsg['metadata'],
     buffers: KernelMessage.ICommMsgMsg['buffers'],
     parentHeader:
-      | KernelMessage.IHeader<KernelMessage.MessageType>
-      | undefined = undefined
+      KernelMessage.IHeader<KernelMessage.MessageType> | undefined = undefined
   ): void {
     const parentHeaderValue =
       typeof parentHeader !== 'undefined' ? parentHeader : this._parentHeader;
@@ -653,7 +644,6 @@ export abstract class BaseKernel implements IKernel {
   private _disposed = new Signal<this, void>(this);
   private _sendMessage: IKernel.SendMessage;
   private _parentHeader:
-    | KernelMessage.IHeader<KernelMessage.MessageType>
-    | undefined = undefined;
+    KernelMessage.IHeader<KernelMessage.MessageType> | undefined = undefined;
   private _parent: KernelMessage.IMessage | undefined = undefined;
 }

@@ -112,7 +112,9 @@ export const updateBlockOperation: ToolOperation<
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      throw new Error(`Failed to update block: ${errorMessage}`);
+      throw new Error(`Failed to update block: ${errorMessage}`, {
+        cause: error,
+      });
     }
   },
 };

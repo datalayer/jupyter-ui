@@ -76,12 +76,16 @@ module.exports = tseslint.config(
     },
     settings: {
       react: {
-        version: 'detect',
+        version: '19.2',
       },
     },
     rules: {
       ...reactPlugin.configs.recommended.rules,
-      ...reactHooksPlugin.configs.recommended.rules,
+      // eslint-plugin-react-hooks 7 folds the React Compiler rules into its
+      // recommended preset. Keep the two classic hook rules, as the
+      // packages/react config does, until the code is migrated to them.
+      'react-hooks/rules-of-hooks': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
       ...prettierConfig.rules,
 
       // TypeScript specific rules

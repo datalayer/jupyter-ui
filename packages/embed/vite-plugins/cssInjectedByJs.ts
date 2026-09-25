@@ -140,11 +140,9 @@ async function buildCSSInjectionCode({
 function resolveInjectionCode(
   cssCode: string,
   injectCode:
-    | ((cssCode: string, options: InjectCodeOptions) => string)
-    | undefined,
+    ((cssCode: string, options: InjectCodeOptions) => string) | undefined,
   injectCodeFunction:
-    | ((cssCode: string, options: InjectCodeOptions) => void)
-    | undefined,
+    ((cssCode: string, options: InjectCodeOptions) => void) | undefined,
   { styleId, useStrictCSP, attributes }: InjectCodeOptions,
 ) {
   const injectionOptions = { styleId, useStrictCSP, attributes };

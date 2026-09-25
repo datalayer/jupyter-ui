@@ -81,9 +81,10 @@ export class DefaultExecutor implements ToolExecutor {
       }
       return (await handler(
         adapter,
-        (typeof args === 'object' && args !== null
-          ? args
-          : {}) as Record<string, unknown>,
+        (typeof args === 'object' && args !== null ? args : {}) as Record<
+          string,
+          unknown
+        >,
       )) as T;
     }
 

@@ -78,9 +78,9 @@ const JupyterLabAppHeadlessServerlessExample = () => {
         >
           <Box display="flex" color="fg.default" bg="canvas.default">
             <Box mr={3}>
-                <Text as="h2" sx={{ m: 0, color: 'fg.default' }}>
-                  JupyterLab Headless Serverless Application
-                </Text>
+              <Text as="h2" sx={{ m: 0, color: 'fg.default' }}>
+                JupyterLab Headless Serverless Application
+              </Text>
             </Box>
             <Box>
               <Box>

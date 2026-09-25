@@ -177,7 +177,7 @@ export const runCellOperation: ToolOperation<RunCellParams, RunCellResult> = {
       }
 
       // Regular error (not timeout)
-      throw new Error(`Failed to run cell: ${errorMessage}`);
+      throw new Error(`Failed to run cell: ${errorMessage}`, { cause: error });
     }
   },
 };

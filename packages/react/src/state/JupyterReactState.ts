@@ -244,7 +244,9 @@ export function useJupyterReactStoreFromProps(
       setKernel(undefined);
       jupyterReactStore.getState().setKernel(undefined);
       const shouldLoad =
-        startDefaultKernel || useRunningKernelIndex > -1 || Boolean(useRunningKernelId);
+        startDefaultKernel ||
+        useRunningKernelIndex > -1 ||
+        Boolean(useRunningKernelId);
       setIsLoading(shouldLoad);
       jupyterReactStore.getState().setKernelIsLoading(shouldLoad);
       setServiceManager(propsServiceManager);

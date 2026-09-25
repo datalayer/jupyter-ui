@@ -14,7 +14,10 @@
  * @module plugins/excalidraw
  */
 
-export { ExcalidrawPlugin, INSERT_EXCALIDRAW_COMMAND } from './ExcalidrawPlugin';
+export {
+  ExcalidrawPlugin,
+  INSERT_EXCALIDRAW_COMMAND,
+} from './ExcalidrawPlugin';
 export { excalidrawPluginTools, excalidrawToolMismatches } from './tools';
 export { excalidrawToolDefinitions } from './definitions';
 export { excalidrawToolOperations } from './operations';

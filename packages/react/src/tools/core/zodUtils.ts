@@ -55,7 +55,7 @@ const descriptionOf = (field: any): string | undefined =>
  */
 function unwrap(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  field: any,
+  field: any
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): { schema: any; optional: boolean; description?: string } {
   let schema = field;
@@ -164,7 +164,12 @@ function fieldToJsonSchema(field: any, depth = 0): JsonSchemaNode {
         ? def.values
         : [def?.value].filter(value => value !== undefined);
       const [first] = values;
-      node.type = typeof first === 'number' ? 'number' : typeof first === 'boolean' ? 'boolean' : 'string';
+      node.type =
+        typeof first === 'number'
+          ? 'number'
+          : typeof first === 'boolean'
+            ? 'boolean'
+            : 'string';
       node.enum = values;
       break;
     }
@@ -190,12 +195,12 @@ function fieldToJsonSchema(field: any, depth = 0): JsonSchemaNode {
     case kind === 'ZodUnion' || kind === 'union': {
       const options: unknown[] = def?.options ?? [];
       const branches = options.map(option =>
-        fieldToJsonSchema(option, depth + 1),
+        fieldToJsonSchema(option, depth + 1)
       );
       // A union of literals is an enum, which reads far better to a model
       // than the same thing spelled as a list of one-value branches.
       const literals = branches.every(
-        branch => Array.isArray(branch.enum) && branch.enum.length > 0,
+        branch => Array.isArray(branch.enum) && branch.enum.length > 0
       );
       if (literals && branches.length > 0) {
         node.type = branches[0].type;
@@ -348,7 +353,8 @@ export function validateWithZod<T>(
 
       throw new Error(
         `Invalid parameters for ${operationName}:\n${issues}\n\n` +
-          `Received: ${JSON.stringify(params)}`
+          `Received: ${JSON.stringify(params)}`,
+        { cause: error }
       );
     }
 

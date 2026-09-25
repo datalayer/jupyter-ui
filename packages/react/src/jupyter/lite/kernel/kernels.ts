@@ -330,5 +330,4 @@ export namespace Kernels {
      */
     location: string;
   }
-
 }

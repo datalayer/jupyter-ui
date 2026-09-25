@@ -94,7 +94,7 @@ export const excalidrawAddElementsTool: ToolDefinition = {
   displayName: 'Add to Drawing',
   toolReferenceName: 'excalidrawAddElements',
   description:
-    'Add elements to a drawing that already exists, leaving what is there alone. Same element format as excalidrawInsertNode. To attach a new arrow to a shape already in the drawing, pass that shape\'s existing element id as `startId` or `endId`. Read the scene first if you need to know where there is room.',
+    "Add elements to a drawing that already exists, leaving what is there alone. Same element format as excalidrawInsertNode. To attach a new arrow to a shape already in the drawing, pass that shape's existing element id as `startId` or `endId`. Read the scene first if you need to know where there is room.",
   parameters: zodToToolParameters(excalidrawAddElementsParamsSchema),
   operation: 'excalidrawAddElements',
   config: {

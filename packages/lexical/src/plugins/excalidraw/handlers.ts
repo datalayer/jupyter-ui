@@ -82,9 +82,9 @@ function requireNode(editor: LexicalEditor, blockId: string): any {
     throw new Error(
       type
         ? `Block '${blockId}' is a '${type}', not a drawing. ` +
-          'Call excalidrawListDrawings to find the drawings in this document.'
+            'Call excalidrawListDrawings to find the drawings in this document.'
         : `No block '${blockId}' in this document. ` +
-          'Call excalidrawListDrawings to find the drawings in this document.',
+            'Call excalidrawListDrawings to find the drawings in this document.',
     );
   }
   return node;
@@ -153,16 +153,8 @@ function toSkeleton(
   element: Record<string, any>,
   id: string,
 ): Record<string, any> {
-  const {
-    label,
-    startId,
-    endId,
-    fontSize,
-    text,
-    children,
-    name,
-    ...rest
-  } = element;
+  const { label, startId, endId, fontSize, text, children, name, ...rest } =
+    element;
 
   const skeleton: Record<string, any> = { ...rest, id };
 
@@ -206,9 +198,8 @@ async function convertElements(
   elements: Record<string, any>[],
   existingIds: Set<string>,
 ): Promise<{ elements: ExcalidrawElementData[]; ids: string[] }> {
-  const { convertToExcalidrawElements } = await import(
-    '@excalidraw/excalidraw'
-  );
+  const { convertToExcalidrawElements } =
+    await import('@excalidraw/excalidraw');
 
   const ids: string[] = [];
   const skeletons = elements.map(element => {
@@ -336,7 +327,10 @@ function bindArrow(
 // The handlers
 // ============================================================================
 
-const insertNode: LexicalToolHandler = async (adapter: LexicalAdapter, args) => {
+const insertNode: LexicalToolHandler = async (
+  adapter: LexicalAdapter,
+  args,
+) => {
   const elements = (args.elements as Record<string, any>[]) ?? [];
   const converted =
     elements.length > 0
@@ -412,7 +406,9 @@ const addElements: LexicalToolHandler = async (
 ) => {
   const blockId = String(args.blockId);
   const scene = readScene(adapter.editor, blockId);
-  const existingIds = new Set(scene.elements.map(element => String(element.id)));
+  const existingIds = new Set(
+    scene.elements.map(element => String(element.id)),
+  );
   const asked = (args.elements as Record<string, any>[]) ?? [];
 
   /*
@@ -490,7 +486,11 @@ const updateElements: LexicalToolHandler = async (
     const redirect = target.type !== 'text' && boundTextOf.get(id);
     if (text !== undefined) {
       if (redirect) {
-        byId.set(redirect, { ...(byId.get(redirect) ?? {}), text, originalText: text });
+        byId.set(redirect, {
+          ...(byId.get(redirect) ?? {}),
+          text,
+          originalText: text,
+        });
       } else {
         fields.text = text;
         fields.originalText = text;
@@ -577,7 +577,9 @@ const connectElements: LexicalToolHandler = async (
   const fromId = String(args.fromId);
   const toId = String(args.toId);
 
-  const existingIds = new Set(scene.elements.map(element => String(element.id)));
+  const existingIds = new Set(
+    scene.elements.map(element => String(element.id)),
+  );
   const { elements: made, ids } = await convertElements(
     [
       {
@@ -669,12 +671,10 @@ const fromMermaid: LexicalToolHandler = async (
   adapter: LexicalAdapter,
   args,
 ) => {
-  const { parseMermaidToExcalidraw } = await import(
-    '@excalidraw/mermaid-to-excalidraw'
-  );
-  const { convertToExcalidrawElements } = await import(
-    '@excalidraw/excalidraw'
-  );
+  const { parseMermaidToExcalidraw } =
+    await import('@excalidraw/mermaid-to-excalidraw');
+  const { convertToExcalidrawElements } =
+    await import('@excalidraw/excalidraw');
 
   let parsed;
   try {
@@ -686,6 +686,7 @@ const fromMermaid: LexicalToolHandler = async (
     throw new Error(
       `That Mermaid source did not parse: ${message}. ` +
         'Flowcharts, sequence diagrams and class diagrams are the ones that convert to shapes.',
+      { cause: error },
     );
   }
 

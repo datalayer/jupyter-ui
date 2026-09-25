@@ -49,7 +49,7 @@ describe('ensureJupyterConfig', () => {
 
   it('makes the accessors usable, which is the whole point', () => {
     expect(() => getJupyterServerUrl()).toThrow(
-      'Jupyter React Config must be loaded first.',
+      'Jupyter React Config must be loaded first.'
     );
     ensureJupyterConfig();
     expect(() => getJupyterServerUrl()).not.toThrow();
