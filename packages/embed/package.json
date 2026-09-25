@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyter-embed",
-  "version": "0.1.1",
+  "version": "2.0.17",
   "description": "Easily embed Jupyter components (cells, notebooks, terminals, consoles) into any web page",
   "license": "MIT",
   "main": "lib/index.js",
@@ -61,8 +61,8 @@
     "watch": "tsc -w"
   },
   "dependencies": {
-    "@datalayer/jupyter-react": "^2.0.16",
-    "@datalayer/primer-addons": "^1.0.12",
+    "@datalayer/jupyter-react": "^2.0.17",
+    "@datalayer/primer-addons": "^1.0.23",
     "@primer/react": "^37.31.0",
     "react": "19.2.8",
     "react-dom": "19.2.8"

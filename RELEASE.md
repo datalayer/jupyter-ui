@@ -6,25 +6,24 @@ publishing (OIDC): no token is stored in the repository.
 
 ## Release steps
 
-1. Bump the versions of the packages you want to release, in a pull request:
-   - npm: `version` in `packages/react/package.json` and
-     `packages/lexical/package.json` (and `packages/docusaurus-plugin/package.json`
-     or `packages/embed/package.json` when they changed). Update the `@datalayer/jupyter-react` and
-     `@datalayer/jupyter-lexical` ranges of the packages that depend on them:
-     `packages/lexical`, `packages/docusaurus-plugin`, `packages/embed`,
-     `examples/*` and `storybook`.
+1. Bump the versions in a pull request:
+   - npm: the four packages share **one version** and are released together —
+     `version` in `packages/react`, `packages/lexical`, `packages/embed` and
+     `packages/docusaurus-plugin` (`package.json`), all equal. Update the ranges
+     of the packages that depend on them to that version: `packages/*`,
+     `examples/*`, `storybook` and `docs`.
    - PyPI: `__version__` in `packages/react/jupyter_react/__version__.py` and
      `packages/lexical/jupyter_lexical/__version__.py`.
 2. Merge the pull request to `main`.
-3. Tag `main` with the `@datalayer/jupyter-react` version and push the tag:
+3. Tag `main` with that version and push the tag:
 
    ```bash
    git checkout main && git pull
    git tag vX.Y.Z && git push origin vX.Y.Z
    ```
 
-   The tag must equal the `version` of `packages/react/package.json`
-   (`v2.0.16` for `2.0.16`), or the workflow stops before publishing anything.
+   The tag must equal the `version` of all four npm packages (`v2.0.17` for
+   `2.0.17`), or the workflow stops before publishing anything.
 
 ## What gets published
 
@@ -41,10 +40,10 @@ packs the npm packages with `npm pack`, and builds each Python package (sdist
 and wheel) with `python -m build`, which bundles the Vite application into the
 server extension.
 
-**A package whose exact version is already published is skipped.** Only the
-`@datalayer/jupyter-react` version is tied to the tag, so one tag releases
-whatever was bumped, and leaves the rest alone. A re-run of the workflow for
-the same tag publishes only what is still missing.
+**A package whose exact version is already published is skipped,** so a
+re-run of the workflow for the same tag publishes only what is still missing.
+The Python packages keep versions of their own and are published when theirs
+is new.
 
 The storybook and the examples are not published.
 
