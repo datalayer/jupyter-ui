@@ -316,7 +316,7 @@ function wasmBesideChunks(outdir) {
     }
     const text = fs.readFileSync(path.join(chunks, file), 'utf8');
     for (const match of text.matchAll(
-      /new URL\((?:\\?["'])\.\/([\w.-]+\.wasm)(?:\\?["']), import\.meta\.url\)/g
+      /new URL\((?:\\?["'])\.\/([\w.-]+\.wasm)(?:\\?["'])\s*,\s*import\.meta\.url\)/g
     )) {
       needed.add(match[1]);
     }
