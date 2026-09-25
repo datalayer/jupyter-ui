@@ -275,11 +275,24 @@ export function useJupyterReactStoreFromProps(
         setServiceManager(published);
         return;
       }
+      /*
+       * Publish the manager this effect made — unless another component
+       * published one while it was being made (the auth check and the lite
+       * start are both asynchronous). Then that one is adopted and this one
+       * disposed, so the application still ends up with a single manager.
+       */
+      const commit = (created: ServiceManager.IManager) => {
+        const already = jupyterReactStore.getState().serviceManager;
+        if (already && already !== created) {
+          created.dispose();
+          setServiceManager(already);
+          return;
+        }
+        jupyterReactStore.getState().setServiceManager(created);
+        setServiceManager(created);
+      };
       if (lite) {
-        createLiteServiceManager(lite).then(serviceManager => {
-          jupyterReactStore.getState().setServiceManager(serviceManager);
-          setServiceManager(serviceManager);
-        });
+        createLiteServiceManager(lite).then(commit);
         return;
       }
       const serverSettings = createServerSettings(
@@ -309,9 +322,7 @@ export function useJupyterReactStoreFromProps(
             'You can not ask for startDefaultKernel and (useRunningKernelId or useRunningKernelIndex) at the same time.'
           );
         }
-        const serviceManager = new ServiceManager({ serverSettings });
-        setServiceManager(serviceManager);
-        jupyterReactStore.getState().setServiceManager(serviceManager);
+        commit(new ServiceManager({ serverSettings }));
       });
     }
   }, [lite, serverless, jupyterServerUrl]);
