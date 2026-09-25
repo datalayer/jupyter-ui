@@ -80,3 +80,35 @@ print(f"{sys.platform=")}
   );
 }
 ```
+
+## Reactive, with Marimo
+
+`variant="marimo"` makes a cell reactive the way a [Marimo](https://marimo.io) notebook is: cells on one kernel share Marimo's dataflow graph, and running a cell runs again every cell that reads what it defined, in dependency order. The graph is kept in the kernel and asked over the Jupyter protocol — the kernel is the ordinary one, with `marimo` installed.
+
+```jsx
+function MarimoCellsExample() {
+  const { defaultKernel } = useJupyter({ startDefaultKernel: true });
+  return (
+    <JupyterReactTheme>
+      {defaultKernel && (
+        <>
+          <Cell
+            id="radius"
+            source="radius = 2"
+            kernel={defaultKernel}
+            variant="marimo"
+          />
+          <Cell
+            id="area"
+            source="area = 3.14159 * radius ** 2\narea"
+            kernel={defaultKernel}
+            variant="marimo"
+          />
+        </>
+      )}
+    </JupyterReactTheme>
+  );
+}
+```
+
+Run the first cell, change `radius` and run it again: the second cell runs on its own. A kernel made with `variant: 'marimo'` (see [Kernel](/components/kernel)) makes every cell on it reactive without a `variant` of its own.

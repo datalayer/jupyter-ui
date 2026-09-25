@@ -48,11 +48,29 @@ import { KernelIndicator } from '@datalayer/jupyter-react';
 
 ### Props
 
-| Prop     | Type                        | Description                      |
-| -------- | --------------------------- | -------------------------------- |
-| `kernel` | `IKernelConnection \| null` | The kernel connection to monitor |
-| `label`  | `string`                    | Optional label to display        |
-| `env`    | `Environment`               | Optional environment information |
+| Prop      | Type                        | Description                                        |
+| --------- | --------------------------- | -------------------------------------------------- |
+| `kernel`  | `IKernelConnection \| null` | The kernel connection to monitor                   |
+| `label`   | `string`                    | Optional label to display                          |
+| `env`     | `Environment`               | Optional environment information                   |
+| `variant` | `'jupyter' \| 'marimo'`     | Shown as a badge; `marimo` marks a reactive kernel |
+
+### A Marimo kernel
+
+A `Kernel` made with `variant: 'marimo'` holds Marimo's dataflow graph: every cell, output and notebook on it is reactive — running one runs the cells that read what it defined — and `kernel.marimo` answers for the graph (`register`, `remove`, `plan`, `graph`, `react`). The kernel is an ordinary one with `marimo` installed; the indicator shows the variant.
+
+```tsx
+const kernel = new Kernel({
+  kernelManager,
+  kernelName: 'marimo',
+  kernelSpecName: 'python',
+  kernelspecsManager: serviceManager.kernelspecs,
+  sessionManager: serviceManager.sessions,
+  variant: 'marimo',
+});
+await kernel.ready;
+const graph = await kernel.marimo?.graph();
+```
 
 ## KernelSelector
 

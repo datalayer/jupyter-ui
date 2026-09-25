@@ -91,6 +91,20 @@ function NotebookLiteExample() {
   );
 }
 
+## Reactive, with Marimo
+
+`variant="marimo"` makes the notebook reactive the way a [Marimo](https://marimo.io) notebook is. Running a cell registers every code cell's source in Marimo's dataflow graph — kept in the kernel and asked over the Jupyter protocol — then runs the cells that depend on what the cell defined, in dependency order. The notebook format, the kernel and the transport do not change; the kernel needs `marimo` installed.
+
+```jsx
+<Notebook
+  nbformat={nbformat}
+  id="notebook-marimo"
+  kernel={defaultKernel}
+  serviceManager={serviceManager}
+  variant="marimo"
+/>
+```
+
 ## More Examples
 
 The below picture is an example of Notebook into a React.js component.
