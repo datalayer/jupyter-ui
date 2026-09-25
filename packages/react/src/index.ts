@@ -7,6 +7,7 @@
 export * from './app';
 export * from './components';
 export * from './jupyter';
+export * from './marimo';
 export * from './state';
 export * from './theme';
 export * from './tools';

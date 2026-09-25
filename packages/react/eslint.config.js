@@ -31,6 +31,11 @@ export default tseslint.config(
       '**/htmlcov/**',
       '**/*.min.js',
       '**/storybook-static/**',
+      // marimo: esbuild-only sources written against marimo's tree, the
+      // vendored marimo packages and the generated runtime bundle.
+      'marimo/**',
+      'marimo-packages/**',
+      'src/marimo/bundle/**',
       '**/.next/**',
       '**/typedoc/**',
       'tsconfig.tsbuildinfo',

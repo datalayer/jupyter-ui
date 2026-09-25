@@ -194,3 +194,6 @@ packages/react/.vscode/launch.json
 !docs/static/img
 !**/static/README.md
 *-lock.json
+
+# marimo runtime bundle, built by packages/react/marimo/build.mjs
+packages/react/src/marimo/bundle/
