@@ -37,7 +37,9 @@ jobs:
           npm install
       - name: Run the build
         run: |
-          npm run build
+          # One package at a time: jupyter-react's marimo bundle, its webpack
+          # build and jupyter-embed's vite build each want several GB.
+          npx lerna run build --concurrency 1
       - name: Build with Vite
         run: |
           cd packages/react && npm run build:vite
