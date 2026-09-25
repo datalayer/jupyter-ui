@@ -66,6 +66,8 @@ export interface MarimoNotebookProps {
   appConfig?: Record<string, unknown>;
   /** Query parameters the notebook reads with `mo.query_params()`. */
   queryParams?: Record<string, string | string[]>;
+  /** Install marimo into a kernel that lacks it (pip, a minute or two); default true. */
+  installMarimo?: boolean;
   /** The height of the notebook's container. */
   height?: string;
 }
@@ -103,6 +105,7 @@ export const MarimoNotebook = (props: MarimoNotebookProps) => {
     config = {},
     appConfig = {},
     queryParams,
+    installMarimo = true,
     height = '100%',
   } = props;
   const container = useRef<HTMLDivElement>(null);
@@ -128,11 +131,7 @@ export const MarimoNotebook = (props: MarimoNotebookProps) => {
         if (cancelled) {
           return;
         }
-        marimo.connectKernel(kernelPort(connection), {
-          filename,
-          code,
-          queryParams,
-        });
+        marimo.connectKernel(kernelPort(connection), { filename, code, queryParams, installMarimo });
         const options: MarimoMountOptions = {
           filename,
           code,

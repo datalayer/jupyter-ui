@@ -36,6 +36,8 @@ export interface MarimoSessionOptions {
   code?: string | null;
   /** Query parameters the notebook reads with `mo.query_params()`. */
   queryParams?: Record<string, string | string[]>;
+  /** Install marimo into a kernel that lacks it (pip; a minute or two). Default true. */
+  installMarimo?: boolean;
 }
 
 /** marimo's mount options; the ones this integration uses. */

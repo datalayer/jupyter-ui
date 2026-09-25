@@ -169,6 +169,11 @@ const marimoResolver = {
  * Every output file gets the host page's React under that name instead.
  */
 const BANNER = [
+  // UMD wrappers bundled from CommonJS (humanize-duration, ...) take the AMD
+  // branch when the host page has an AMD loader (RequireJS, as JupyterLab
+  // pages and the vite examples do), and then never assign module.exports.
+  // Every output file shadows `define` so those wrappers stay CommonJS.
+  'var define = false;',
   'import * as __ext_react from "react";',
   'import * as __ext_react_dom from "react-dom";',
   'const __marimoRequire = name => {',
@@ -276,17 +281,19 @@ function bundlerFriendly(outdir) {
   let touched = 0;
   for (const file of files) {
     const text = fs.readFileSync(file, 'utf8');
+    // Both esbuild's shim forms, as written and as the minifier rewrites them
+    // (`!== "undefined"` becomes `<"u"`).
     const next = text
       .replace(
         /\/\* @vite-ignore \*\//g,
         '/* webpackIgnore: true */ /* @vite-ignore */'
       )
       .replace(
-        /typeof require !== "undefined" \? require :/g,
+        /typeof require(?: !== "undefined"|<"u")\s*\?\s*require\s*:/g,
         'typeof __marimoRequire !== "undefined" ? __marimoRequire :'
       )
       .replace(
-        /typeof require !== "undefined"\) return require\.apply\(/g,
+        /typeof require(?: !== "undefined"|<"u")\)\s*return require\.apply\(/g,
         'typeof __marimoRequire !== "undefined") return __marimoRequire.apply('
       );
     if (next !== text) {

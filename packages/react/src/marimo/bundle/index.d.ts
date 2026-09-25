@@ -36,6 +36,8 @@ export interface MarimoSessionOptions {
   code?: string | null;
   /** Query parameters the notebook reads with `mo.query_params()`. */
   queryParams?: Record<string, string | string[]>;
+  /** Install marimo into a kernel that lacks it (pip; a minute or two). Default true. */
+  installMarimo?: boolean;
 }
 
 /** marimo's mount options; the ones this integration uses. */
@@ -59,10 +61,16 @@ export interface MarimoMountOptions {
 }
 
 /** Hands the kernel to the bridge; call before `mount`. */
-export function connectKernel(port: KernelPort, options?: MarimoSessionOptions): void;
+export function connectKernel(
+  port: KernelPort,
+  options?: MarimoSessionOptions
+): void;
 
 /** Mounts marimo's app into an element. marimo mounts once per page. */
-export function mount(options: MarimoMountOptions, el: Element): Error | undefined;
+export function mount(
+  options: MarimoMountOptions,
+  el: Element
+): Error | undefined;
 
 /** The comm target the kernel host registers. */
 export const COMM_TARGET: string;
