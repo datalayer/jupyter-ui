@@ -91,7 +91,17 @@ export interface MarimoSessionOptions {
   code?: string | null;
   /** Query parameters the notebook reads with `mo.query_params()`. */
   queryParams?: Record<string, string | string[]>;
+  /** Install marimo into a kernel that lacks it (pip; a minute or two). Default true. */
+  installMarimo?: boolean;
 }
+
+/** Whether the kernel can import marimo. */
+const PROBE = 'import marimo';
+/** Installs marimo where the kernel's Python lives. */
+const INSTALL = [
+  'import subprocess, sys',
+  "subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--quiet', 'marimo'])",
+].join('\n');
 
 type Pending = {
   resolve: (value: unknown) => void;
@@ -166,6 +176,25 @@ export class PyodideBridge implements RunRequests, EditRequests {
     this.port = port;
     this.options = options;
     try {
+      store.set(wasmInitStateAtom, {
+        kind: 'loading',
+        message: 'Looking for marimo in the kernel...',
+      });
+      try {
+        await port.execute(PROBE);
+      } catch (missing) {
+        if (options.installMarimo === false) {
+          throw new Error(
+            'The kernel has no marimo: install it there (pip install marimo).'
+          );
+        }
+        Logger.log('marimo is not in the kernel, installing it', missing);
+        store.set(wasmInitStateAtom, {
+          kind: 'loading',
+          message: 'Installing marimo in the kernel (a minute or two)...',
+        });
+        await port.execute(INSTALL);
+      }
       store.set(wasmInitStateAtom, {
         kind: 'loading',
         message: 'Preparing the kernel for marimo...',
