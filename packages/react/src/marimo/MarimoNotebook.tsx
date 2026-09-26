@@ -131,7 +131,12 @@ export const MarimoNotebook = (props: MarimoNotebookProps) => {
         if (cancelled) {
           return;
         }
-        marimo.connectKernel(kernelPort(connection), { filename, code, queryParams, installMarimo });
+        marimo.connectKernel(kernelPort(connection), {
+          filename,
+          code,
+          queryParams,
+          installMarimo,
+        });
         const options: MarimoMountOptions = {
           filename,
           code,
