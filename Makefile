@@ -57,6 +57,20 @@ install: ## install npm dependencies
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		npm )
 
+.PHONY: bump bump-patch bump-minor bump-major
+
+bump: ## bump the version of the four npm packages, asking which part (--python for the PyPI ones)
+	python dev/bump_version.py
+
+bump-patch: ## bump the patch version of the four npm packages (2.0.18 -> 2.0.19)
+	python dev/bump_version.py patch
+
+bump-minor: ## bump the minor version of the four npm packages (2.0.18 -> 2.1.0)
+	python dev/bump_version.py minor
+
+bump-major: ## bump the major version of the four npm packages (2.0.18 -> 3.0.0)
+	python dev/bump_version.py major
+
 jupyter-server: ## start the jupyter server
 	($(CONDA_ACTIVATE) ${ENV_NAME}; \
 		./dev/sh/kill.sh || true )
