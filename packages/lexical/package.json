@@ -74,7 +74,7 @@
     "@atlaskit/react-ufo": "^3.14.15",
     "@atlaskit/tokens": "^11.4.3",
     "@datalayer/core": "^1.2.12",
-    "@datalayer/decks": "^1.0.0",
+    "@datalayer/decks": "^1.0.4",
     "@datalayer/icons-react": "^1.0.0",
     "@datalayer/jupyter-react": "^2.0.18",
     "@datalayer/lexical-loro": "^1.0.0",
