@@ -121,13 +121,14 @@
     "access": "public"
   },
   "scripts": {
-    "build": "npm run validate:tools && gulp resources-to-lib && tsc --build && node scripts/fix-esm-imports.js && webpack",
-    "build:lib": "npm run validate:tools && gulp resources-to-lib && tsc --build && node scripts/fix-esm-imports.js",
+    "build": "npm run validate:tools && gulp resources-to-lib && tsc --build && node scripts/fix-esm-imports.js && npm run build:marimo -- --lib && webpack",
+    "build:lib": "npm run validate:tools && gulp resources-to-lib && tsc --build && node scripts/fix-esm-imports.js && npm run build:marimo -- --lib",
+    "build:marimo": "node marimo/build.mjs",
     "build:prod": "npm run validate:tools && gulp resources-to-lib && tsc && npm run clean && npm run build:lib",
     "build:tsc:watch:res": "gulp resources-to-lib-watch",
     "build:tsc:watch:tsc": "tsc --watch",
-    "build:vite": "npm run validate:tools && vite build",
-    "build:webpack": "cross-env BUILD_APP=true webpack-cli build",
+    "build:vite": "npm run validate:tools && npm run build:marimo -- --lib && cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build",
+    "build:webpack": "npm run build:marimo -- --lib && cross-env BUILD_APP=true webpack-cli build",
     "clean": "rimraf node_modules lib dist build tsconfig.tsbuildinfo",
     "clean:all": "npm run clean:lib && npm run clean:labextension && npm run clean:lintcache",
     "clean:labextension": "rimraf datalayer/labextension",
@@ -279,6 +280,13 @@
     "zustand": "^4.4.1"
   },
   "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "react-responsive-carousel": "^3.2.23",
+    "vega": "^6.4.0",
+    "string-dedent": "^3.0.2",
+    "openapi-fetch": "0.9.7",
+    "esbuild": "^0.25.0",
+    "@marimo-team/frontend": "^0.25.0",
     "@babel/core": "^7.21.0",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@babel/plugin-transform-typescript": "^7.22.10",

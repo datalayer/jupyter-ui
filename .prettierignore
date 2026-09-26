@@ -62,3 +62,7 @@ packages/react/docs/
 # Embd
 
 packages/embed/examples/
+
+# marimo: vendored packages and the generated runtime bundle
+packages/react/marimo-packages/
+packages/react/src/marimo/bundle/

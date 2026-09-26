@@ -35,6 +35,8 @@ header:
     - 'docs/docs'
     - 'packages/lexical/src/ui/PrettierButton.tsx_tmp'
     - 'packages/react/third-party-license.txt'
+    - 'packages/react/marimo-packages'
+    - 'packages/react/src/marimo/bundle'
     - '.husky/_/applypatch-msg'
     - '.husky/_/commit-msg'
     - '.husky/_/h'

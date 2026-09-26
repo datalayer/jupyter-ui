@@ -1,0 +1,84 @@
+- name: OpenAI
+  id: openai
+  description: OpenAI's API for GPT models, including GPT-3.5 and GPT-4.
+  url: https://platform.openai.com/
+
+- name: GitHub Copilot
+  id: github
+  description: GitHub Copilot provides model inference through a Copilot subscription.
+  url: https://pydantic.dev/docs/ai/models/github-copilot/
+
+- name: Amazon Bedrock
+  id: bedrock
+  description: Amazon Bedrock provides access to foundation models from Amazon and leading AI startups via a unified API.
+  url: https://aws.amazon.com/bedrock/
+
+- name: Azure
+  id: azure
+  description: Azure provides access to models via the Azure cloud.
+  url: https://azure.microsoft.com/en-us/products/ai-services/
+
+- name: Anthropic
+  id: anthropic
+  description: Anthropic's Claude models for conversational and completion tasks.
+  url: https://www.anthropic.com/
+
+- name: Google AI
+  id: google
+  description: Google's Vertex AI and PaLM APIs for generative and conversational models.
+  url: https://cloud.google.com/vertex-ai/docs/generative-ai/learn/overview
+
+- name: Ollama
+  id: ollama
+  description: Ollama is a lightweight, open-source model server for running and sharing LLMs.
+  url: https://ollama.ai/
+
+- name: marimo
+  id: marimo
+  description: marimo's hosted models.
+  url: https://docs.marimo.io/guides/editor_features/ai_completion/
+
+- name: DeepSeek
+  id: deepseek
+  description: DeepSeek's API for GPT models.
+  url: https://deepseek.com/
+
+- name: LM Studio
+  id: lmstudio
+  description: LM Studio's API for GPT models.
+  url: https://lmstudio.ai/
+
+- name: OpenRouter
+  id: openrouter
+  description: OpenRouter's API for GPT models.
+  url: https://openrouter.ai/
+
+- name: Mistral
+  id: mistral
+  description: Mistral's API for GPT models.
+  url: https://mistral.ai/
+
+- name: Vercel v0
+  id: vercel
+  description: Vercel's API for GPT models.
+  url: https://vercel.com/
+
+- name: Together AI
+  id: together
+  description: Together AI's API for GPT models.
+  url: https://together.ai/
+
+- name: xAI
+  id: xai
+  description: xAI's API for GPT models.
+  url: https://x.ai/
+
+- name: Weights & Biases
+  id: wandb
+  description: Weights & Biases' hosted models for ML development and AI inference.
+  url: https://wandb.ai/
+
+- name: OpenCode Go
+  id: opencode-go
+  description: Low-cost subscription for reliable access to popular open coding models.
+  url: https://opencode.ai/docs/go/

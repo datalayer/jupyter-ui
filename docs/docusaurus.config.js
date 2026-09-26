@@ -25,6 +25,18 @@ module.exports = {
     '@datalayer/jupyter-docusaurus-plugin',
     '@docusaurus/theme-live-codeblock',
     'docusaurus-lunr-search',
+    // jupyter-react's marimo runtime reaches a `mime` that reads the
+    // filesystem at import time on Node; the browser bundle never calls it.
+    function nodeBuiltinsAreAbsentInTheBrowser() {
+      return {
+        name: 'node-builtins-are-absent-in-the-browser',
+        configureWebpack() {
+          return {
+            resolve: { fallback: { fs: false, path: false, util: false } },
+          };
+        },
+      };
+    },
   ],
   /*
 			'docusaurus-plugin-typedoc',

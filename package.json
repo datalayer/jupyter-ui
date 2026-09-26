@@ -22,7 +22,7 @@
     "linux"
   ],
   "scripts": {
-    "build": "lerna run build",
+    "build": "lerna run build --concurrency 1",
     "build:example": "lerna run --parallel --scope @datalayer/*' build:example",
     "clean": "lerna run clean && rimraf node_modules lib dist build tsconfig.tsbuildinfo",
     "deploy": "lerna run deploy",
@@ -94,6 +94,9 @@
     "typescript": "5.9.3"
   },
   "overrides": {
+    "@marimo-team/marimo-api": "file:./packages/react/marimo-packages/marimo-api",
+    "@marimo-team/smart-cells": "file:./packages/react/marimo-packages/smart-cells",
+    "@marimo-team/llm-info": "file:./packages/react/marimo-packages/llm-info",
     "@microsoft/fast-colors": "5.3.1",
     "@microsoft/fast-components": "2.30.6",
     "@microsoft/fast-element": "1.13.0",
