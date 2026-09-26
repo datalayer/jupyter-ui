@@ -6,7 +6,10 @@ publishing (OIDC): no token is stored in the repository.
 
 ## Release steps
 
-1. Bump the versions in a pull request:
+1. Bump the versions in a pull request — `make bump-patch` (or `bump-minor`,
+   `bump-major`; `make bump` asks) runs `dev/bump_version.py`, which moves
+   every file below at once, or none; add `--python` to the script for the
+   PyPI packages:
    - npm: the four packages share **one version** and are released together —
      `version` in `packages/react`, `packages/lexical`, `packages/embed` and
      `packages/docusaurus-plugin` (`package.json`), all equal. Update the ranges
