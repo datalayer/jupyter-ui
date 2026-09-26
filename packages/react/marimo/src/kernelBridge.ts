@@ -209,6 +209,14 @@ export class PyodideBridge implements RunRequests, EditRequests {
       comm.onMessage(data => this.onCommMessage(data));
       comm.onClose(() => {
         Logger.warn('The marimo comm closed');
+        // Nothing answers any more: every request in flight fails now, and
+        // later ones are refused rather than sent into a closed comm.
+        this.comm = undefined;
+        const gone = new Error('The kernel closed the marimo session.');
+        for (const waiting of this.pending.values()) {
+          waiting.reject(gone);
+        }
+        this.pending.clear();
         this.messageConsumer?.(
           new MessageEvent('message', {
             data: JSON.stringify({

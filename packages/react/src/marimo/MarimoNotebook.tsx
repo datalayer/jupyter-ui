@@ -49,7 +49,13 @@ function prepareDocument(filename: string) {
   tag.textContent = filename;
 }
 
-let mounted = false;
+/**
+ * marimo mounts once per page, so the element it went into is remembered:
+ * an effect that runs again for the same element (React's StrictMode replays
+ * effects) finds its mount under way and leaves it alone; a second notebook
+ * on another element is refused.
+ */
+let mountedOn: Element | null = null;
 
 export interface MarimoNotebookProps {
   /** The kernel that runs the notebook; marimo must be installed in it. */
@@ -117,20 +123,20 @@ export const MarimoNotebook = (props: MarimoNotebookProps) => {
     if (!el || !connection) {
       return;
     }
-    if (mounted) {
+    if (mountedOn === el) {
+      // The same notebook, mounted or mounting already.
+      return;
+    }
+    if (mountedOn) {
       setFailure(
         'marimo is already mounted on this page: one MarimoNotebook at a time.'
       );
       return;
     }
-    mounted = true;
-    let cancelled = false;
+    mountedOn = el;
     prepareDocument(filename);
     void loadRuntime()
       .then(marimo => {
-        if (cancelled) {
-          return;
-        }
         marimo.connectKernel(kernelPort(connection), {
           filename,
           code,
@@ -155,9 +161,7 @@ export const MarimoNotebook = (props: MarimoNotebookProps) => {
         console.error('marimo could not start', error);
         setFailure(error instanceof Error ? error.message : String(error));
       });
-    return () => {
-      cancelled = true;
-    };
+    // No cleanup: marimo's app owns the element for the rest of the page's life.
     // The notebook is mounted once, for the kernel it first sees.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connection]);

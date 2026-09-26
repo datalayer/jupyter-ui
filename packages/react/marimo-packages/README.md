@@ -12,6 +12,6 @@ root `package.json` points the three names at them through `overrides`.
 
 They exist so that marimo's sources compile: marimo-api is its OpenAPI client
 types, smart-cells its cell-language parsers, llm-info its model catalogue.
-Keep them at the version `@marimo-team/frontend` is pinned to. A consumer
-installing `@datalayer/jupyter-react` needs the same three `overrides` until
-marimo publishes these packages.
+Keep them at the version `@marimo-team/frontend` is pinned to. The frontend is
+a development dependency and the bundle it builds ships in `lib/`, so a
+consumer installing `@datalayer/jupyter-react` needs none of this.
