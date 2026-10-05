@@ -4,10 +4,6 @@
  * MIT License
  */
 
-export * from './handler';
-export * from './inspectorscripts';
-export * from './kernelconnector';
-export * from './manager';
-export * from './tokens';
-export * from './variablesinspector';
-export * from './widget';
+export * from './introspection';
+export * from './execution';
+export * from './renderers';
