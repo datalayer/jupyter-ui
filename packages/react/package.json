@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyter-react",
-  "version": "2.0.19",
+  "version": "2.0.20",
   "description": "Jupyter React - React.js components 100% compatible with Jupyter.",
   "license": "MIT",
   "main": "lib/index.js",
@@ -71,6 +71,11 @@
       "types": "./lib/theme-entry.d.ts",
       "import": "./lib/theme-entry.js",
       "require": "./lib/theme-entry.js"
+    },
+    "./marimo": {
+      "types": "./lib/marimo/index.d.ts",
+      "import": "./lib/marimo/index.js",
+      "require": "./lib/marimo/index.js"
     },
     "./lite": {
       "types": "./lib/lite-entry.d.ts",
