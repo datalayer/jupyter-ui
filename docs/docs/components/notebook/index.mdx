@@ -105,6 +105,16 @@ function NotebookLiteExample() {
 />
 ```
 
+## Marimo's own notebook
+
+`MarimoNotebook` shows marimo's own frontend, its kernel hosted inside a Jupyter kernel. It is imported from its own entry point, `@datalayer/jupyter-react/marimo`, so that apps which do not show it never bundle marimo's frontend (about 26 MB, loaded on demand):
+
+```jsx
+import { MarimoNotebook } from '@datalayer/jupyter-react/marimo';
+
+<MarimoNotebook kernel={defaultKernel} />
+```
+
 ## More Examples
 
 The below picture is an example of Notebook into a React.js component.
