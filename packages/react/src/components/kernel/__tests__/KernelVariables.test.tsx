@@ -180,7 +180,7 @@ describe('KernelVariables', () => {
     await flush();
     expect(state()).toBe('ready');
     const names = () =>
-      [...host.querySelectorAll('[data-kernel-variable]')].map(e =>
+      Array.from(host.querySelectorAll('[data-kernel-variable]')).map(e =>
         e.getAttribute('data-kernel-variable')
       );
     expect(names()).toEqual(['a', 'df']);
