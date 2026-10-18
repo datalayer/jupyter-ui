@@ -175,19 +175,7 @@ module.exports = {
           items: [
             {
               label: 'Datalayer',
-              href: 'https://datalayer.io',
-            },
-            {
-              label: 'Datalayer Docs',
-              href: 'https://docs.datalayer.app',
-            },
-            {
-              label: 'Datalayer Tech',
-              href: 'https://datalayer.tech',
-            },
-            {
-              label: 'Datalayer Guide',
-              href: 'https://datalayer.guide',
+              href: 'https://datalayer.ai',
             },
             {
               label: 'Datalayer Blog',
