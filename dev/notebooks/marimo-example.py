@@ -1,3 +1,7 @@
+# Copyright (c) 2021-Present Datalayer, Inc.
+#
+# MIT License
+
 import marimo
 
 __generated_with = "0.25.0"
