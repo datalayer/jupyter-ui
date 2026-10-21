@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyter-react",
-  "version": "2.0.20",
+  "version": "2.0.21",
   "description": "Jupyter React - React.js components 100% compatible with Jupyter.",
   "license": "MIT",
   "main": "lib/index.js",
@@ -126,8 +126,8 @@
     "access": "public"
   },
   "scripts": {
-    "build": "npm run validate:tools && gulp resources-to-lib && tsc --build && node scripts/fix-esm-imports.js && npm run build:marimo -- --lib && webpack",
-    "build:lib": "npm run validate:tools && gulp resources-to-lib && tsc --build && node scripts/fix-esm-imports.js && npm run build:marimo -- --lib",
+    "build": "npm run validate:tools && gulp resources-to-lib && tsc --build && node scripts/fix-esm-imports.js && npm run build:marimo -- --lib && node ../../scripts/fully-specify-lib.mjs lib && webpack",
+    "build:lib": "npm run validate:tools && gulp resources-to-lib && tsc --build && node scripts/fix-esm-imports.js && npm run build:marimo -- --lib && node ../../scripts/fully-specify-lib.mjs lib",
     "build:marimo": "node marimo/build.mjs",
     "build:prod": "npm run validate:tools && gulp resources-to-lib && tsc && npm run clean && npm run build:lib",
     "build:tsc:watch:res": "gulp resources-to-lib-watch",

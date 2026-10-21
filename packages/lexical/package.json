@@ -1,6 +1,6 @@
 {
   "name": "@datalayer/jupyter-lexical",
-  "version": "2.0.20",
+  "version": "2.0.21",
   "description": "Jupyter UI for Lexical",
   "license": "MIT",
   "main": "lib/index.js",
@@ -29,8 +29,9 @@
     "access": "public"
   },
   "scripts": {
-    "build": "npm run validate:tools && gulp resources-to-lib && cross-env NODE_OPTIONS=--max-old-space-size=16384 tsc && node scripts/fix-esm-imports.js && webpack && npm run build:lib",
-    "build:lib": "npm run validate:tools && cross-env NODE_OPTIONS=--max-old-space-size=16384 tsc && node scripts/fix-esm-imports.js",
+    "build": "npm run validate:tools && gulp resources-to-lib && cross-env NODE_OPTIONS=--max-old-space-size=16384 tsc && node scripts/fix-esm-imports.js && node ../../scripts/fully-specify-lib.mjs lib && webpack && npm run build:lib",
+    "build:lib": "npm run validate:tools && cross-env NODE_OPTIONS=--max-old-space-size=16384 tsc && node scripts/fix-esm-imports.js && node ../../scripts/fully-specify-lib.mjs lib",
+    "check:pack": "node ../../scripts/check-npm-pack.mjs",
     "build:prod": "npm run validate:tools && gulp resources-to-lib && tsc && jlpm clean && jlpm build:lib",
     "build:tsc:watch": "run-p 'build:tsc:watch:*'",
     "build:tsc:watch:res": "gulp resources-to-lib-watch",
@@ -76,7 +77,7 @@
     "@datalayer/core": "^1.2.12",
     "@datalayer/decks": "^1.0.4",
     "@datalayer/icons-react": "^1.0.0",
-    "@datalayer/jupyter-react": "^2.0.20",
+    "@datalayer/jupyter-react": "^2.0.21",
     "@datalayer/lexical-loro": "^1.0.0",
     "@datalayer/primer-addons": "^1.0.23",
     "@primer/react": "^37.31.0",

@@ -38,6 +38,9 @@ jobs:
       - name: Run the build
         run: |
           npm run build
+      - name: Check the tarball carries what lib/ imports
+        run: |
+          npm run check:pack --workspace packages/lexical
       - name: Build with Vite
         run: |
           cd packages/react && npm run build:vite
