@@ -108,6 +108,13 @@ jobs:
         if: steps.plan.outputs.npm != '' || steps.plan.outputs.python != ''
         run: npm run build
 
+      # Every relative import of jupyter-lexical's lib/ names a file its
+      # tarball carries, written whole as Node's ESM loader needs it, and no
+      # two of its paths differ only in case (scripts/check-npm-pack.mjs).
+      - name: Check the tarball carries what lib/ imports
+        if: steps.plan.outputs.npm != ''
+        run: npm run check:pack --workspace packages/lexical
+
       - name: Pack the npm packages
         if: steps.plan.outputs.npm != ''
         run: |

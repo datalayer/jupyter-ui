@@ -39,7 +39,11 @@ publishing (OIDC): no token is stored in the repository.
 | PyPI     | `jupyter-lexical`                      | `packages/lexical`           |
 
 The workflow builds the repository as CI does (`npm install`, `npm run build`),
-packs the npm packages with `npm pack`, and builds each Python package (sdist
+checks with `npm run check:pack --workspace packages/lexical` that every
+relative import of jupyter-lexical's `lib/` names a file its tarball carries,
+written whole as Node's ESM loader needs it (the build writes them so,
+`scripts/fully-specify-lib.mjs`, in jupyter-react too), packs the npm packages
+with `npm pack`, and builds each Python package (sdist
 and wheel) with `python -m build`, which bundles the Vite application into the
 server extension.
 
