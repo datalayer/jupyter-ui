@@ -142,9 +142,9 @@ export type KernelIndicatorProps = {
    */
   position?: KernelIndicatorPosition;
   /**
-   * When true (default), the trigger renders with a 1px border and a
-   * `canvas.default` background. Set to false to render a borderless,
-   * transparent trigger (useful when embedding in headers/toolbars).
+   * When true, the trigger renders with a 1px border and a `canvas.default`
+   * background. False (default) renders a borderless, transparent trigger,
+   * as it sits in headers, toolbars and cells.
    */
   bordered?: boolean;
 };
@@ -165,7 +165,7 @@ export const KernelIndicator = ({
   cpu,
   gpu,
   position = 's',
-  bordered = true,
+  bordered = false,
 }: KernelIndicatorProps) => {
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>();
   const [status, setStatus] = useState<KernelMessage.Status>();
