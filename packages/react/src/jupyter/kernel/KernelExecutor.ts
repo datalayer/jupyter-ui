@@ -4,14 +4,7 @@
  * MIT License
  */
 
-import {
-  IDisplayData,
-  IDisplayUpdate,
-  IExecuteResult,
-  IMimeBundle,
-  IOutput,
-  IStream,
-} from '@jupyterlab/nbformat';
+import { IDisplayUpdate, IMimeBundle, IOutput } from '@jupyterlab/nbformat';
 import { IOutputAreaModel, OutputAreaModel } from '@jupyterlab/outputarea';
 import { Kernel as JupyterKernel, KernelMessage } from '@jupyterlab/services';
 import { IClearOutputMsg } from '@jupyterlab/services/lib/kernel/messages';
@@ -306,25 +299,29 @@ export class KernelExecutor {
     const output = { ...message.content, output_type: messageType };
     switch (messageType) {
       case 'execute_result':
-        this._outputs.push(message.content as IExecuteResult);
+        // As nbformat writes it: the content with its output_type.
+        this._outputs.push(output as IOutput);
         this._outputsChanged.emit(this._outputs);
         this._model.add(output);
         this._modelChanged.emit(this._model);
         break;
       case 'display_data':
-        this._outputs.push(message.content as IDisplayData);
+        // As nbformat writes it: the content with its output_type.
+        this._outputs.push(output as IOutput);
         this._outputsChanged.emit(this._outputs);
         this._model.add(output);
         this._modelChanged.emit(this._model);
         break;
       case 'stream':
-        this._outputs.push(message.content as IStream);
+        // As nbformat writes it: the content with its output_type.
+        this._outputs.push(output as IOutput);
         this._outputsChanged.emit(this._outputs);
         this._model.add(output);
         this._modelChanged.emit(this._model);
         break;
       case 'error':
-        this._outputs.push(message.content as IStream);
+        // As nbformat writes it: the content with its output_type.
+        this._outputs.push(output as IOutput);
         this._outputsChanged.emit(this._outputs);
         this._model.add(output);
         this._modelChanged.emit(this._model);
