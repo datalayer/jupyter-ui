@@ -115,6 +115,29 @@ import { MarimoNotebook } from '@datalayer/jupyter-react/marimo';
 <MarimoNotebook kernel={defaultKernel} />
 ```
 
+## CodeMirror extensions
+
+`editorExtensions` adds CodeMirror extensions to the cell editors, after the default ones: a highlight style, a keymap, line wrapping. Each entry is an `IEditorExtensionFactory` from `@jupyterlab/codemirror`, with a `name` no default extension uses. Keep the array reference stable (`useMemo` or a module constant), a new array rebuilds the editors.
+
+```jsx
+import { EditorExtensionRegistry } from '@jupyterlab/codemirror';
+import { EditorView } from '@codemirror/view';
+
+const editorExtensions = [
+  {
+    name: 'line-wrapping',
+    factory: () =>
+      EditorExtensionRegistry.createImmutableExtension(EditorView.lineWrapping),
+  },
+];
+
+<Notebook
+  serviceManager={serviceManager}
+  nbformat={nbformat}
+  editorExtensions={editorExtensions}
+/>;
+```
+
 ## More Examples
 
 The below picture is an example of Notebook into a React.js component.
