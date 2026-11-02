@@ -13,6 +13,7 @@ import type {
   ICompletionProvider,
   IInlineCompletionProvider,
 } from '@jupyterlab/completer';
+import type { IEditorExtensionFactory } from '@jupyterlab/codemirror';
 import type { NotebookModel } from '@jupyterlab/notebook';
 import type { IRenderMime } from '@jupyterlab/rendermime-interfaces';
 import type { ServiceManager } from '@jupyterlab/services';
@@ -90,6 +91,15 @@ export interface INotebookProps {
    * own dataflow graph kept in the kernel. `jupyter` by default.
    */
   variant?: JupyterVariant;
+  /**
+   * Additional CodeMirror extensions for the cell editors, such as a
+   * highlight style or a keymap. They are registered after the default
+   * extensions; each factory needs a `name` no default extension uses.
+   *
+   * Keep the array reference stable between renders (`useMemo`): a new one
+   * rebuilds the editor services.
+   */
+  editorExtensions?: IEditorExtensionFactory[];
   /**
    * Additional cell output renderers.
    */
@@ -176,6 +186,7 @@ export function Notebook(
     providers,
     readonly = false,
     renderers,
+    editorExtensions,
     serviceManager,
     startDefaultKernel = false,
     url,
@@ -334,6 +345,7 @@ export function Notebook(
             path={path}
             sessionOnly={props.sessionOnly}
             renderers={renderers}
+            editorExtensions={editorExtensions}
             serviceManager={serviceManager}
             onSessionConnection={onSessionConnection}
             variant={variant}

@@ -16,6 +16,7 @@ import {
   EditorExtensionRegistry,
   EditorLanguageRegistry,
   EditorThemeRegistry,
+  type IEditorExtensionFactory,
   ybinding,
 } from '@jupyterlab/codemirror';
 import {
@@ -300,6 +301,15 @@ export interface INotebookBaseProps {
    */
   kernelId?: string;
   /**
+   * Additional CodeMirror extensions for the cell editors, such as a
+   * highlight style or a keymap. They are registered after the default
+   * extensions; each factory needs a `name` no default extension uses.
+   *
+   * Keep the array reference stable between renders (`useMemo`): a new one
+   * rebuilds the editor services.
+   */
+  editorExtensions?: IEditorExtensionFactory[];
+  /**
    * Additional cell output renderers.
    */
   renderers?: IRenderMime.IRendererFactory[];
@@ -370,6 +380,7 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
     kernelId,
     sessionOnly,
     renderers,
+    editorExtensions,
     serviceManager,
     model,
     onSessionConnection,
@@ -406,8 +417,8 @@ export function NotebookBase(props: INotebookBaseProps): JSX.Element {
     [id, props.path]
   );
   const features = useMemo(
-    () => new CommonFeatures({ commands, renderers }),
-    [commands, renderers]
+    () => new CommonFeatures({ commands, renderers, editorExtensions }),
+    [commands, renderers, editorExtensions]
   );
   const contentFactory = useMemo(
     () =>
@@ -1545,6 +1556,7 @@ class CommonFeatures {
     options: {
       commands?: CommandRegistry;
       renderers?: IRenderMime.IRendererFactory[];
+      editorExtensions?: IEditorExtensionFactory[];
     } = {}
   ) {
     this._commands = options.commands ?? new CommandRegistry();
@@ -1612,6 +1624,9 @@ class CommonFeatures {
         );
       },
     });
+    for (const extensionFactory of options.editorExtensions ?? []) {
+      editorExtensions.addExtension(extensionFactory);
+    }
     // Fix to deal with Content Security Policy
     const nonce = getNonce();
     if (nonce) {
