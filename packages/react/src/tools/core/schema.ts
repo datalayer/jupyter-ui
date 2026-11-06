@@ -5,63 +5,18 @@
  */
 
 /**
- * Platform-agnostic tool configuration and definition schemas.
+ * Tool configuration and definition schemas.
+ *
+ * Moved to `@datalayer/reactor/tools` (6 November 2026): every host — the
+ * notebook, a Lexical document, a deck, a sheet, an arena — reads one
+ * vocabulary there. Re-exported here so that `@datalayer/jupyter-react/tools`
+ * keeps saying it.
  *
  * @module tools/core/schema
  */
 
-/**
- * Tool configuration interface.
- */
-export interface ToolConfig<TParams = unknown> {
-  /** Confirmation message from parameters */
-  confirmationMessage?: (params: TParams) => string;
-
-  /** Invocation message from parameters */
-  invocationMessage?: (params: TParams) => string;
-
-  /** Require user confirmation */
-  requiresConfirmation?: boolean;
-
-  /** Can be referenced in prompts */
-  canBeReferencedInPrompt?: boolean;
-
-  /** Priority for suggestion ranking */
-  priority?: 'low' | 'medium' | 'high';
-
-  /** Platform-specific config extensions */
-  [key: string]: unknown;
-}
-
-/**
- * Tool definition interface.
- */
-export interface ToolDefinition<TParams = unknown> {
-  /** Vendor-prefixed tool name (e.g., "datalayer_insertCell") */
-  name: string;
-
-  /** Display name */
-  displayName: string;
-
-  /** User-facing reference name (e.g., "insertCell") */
-  toolReferenceName: string;
-
-  /** Tool description */
-  description: string;
-
-  /** JSON Schema for parameters */
-  parameters: {
-    type: 'object';
-    properties: Record<string, unknown>;
-    required?: string[];
-  };
-
-  /** Operation handler name */
-  operation: string;
-
-  /** Tool configuration */
-  config?: ToolConfig<TParams>;
-
-  /** Categorization tags */
-  tags?: string[];
-}
+export type {
+  ToolConfig,
+  ToolDefinition,
+  ToolParameters,
+} from '@datalayer/reactor/tools';

@@ -23,7 +23,7 @@
  * @module plugins/excalidraw/operations
  */
 
-import { validateWithZod } from '@datalayer/jupyter-react/tools';
+import { validateWithZod } from '@datalayer/reactor/tools';
 import type { z } from 'zod';
 
 import type {

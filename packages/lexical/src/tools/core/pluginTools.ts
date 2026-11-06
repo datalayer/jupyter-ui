@@ -31,7 +31,7 @@
  * @module tools/core/pluginTools
  */
 
-import type { ToolDefinition } from '@datalayer/jupyter-react';
+import type { ToolDefinition } from '@datalayer/reactor/tools';
 import type { ToolOperation } from './interfaces';
 
 /**

@@ -381,3 +381,7 @@ All without modifying individual operations!
 ## Testing
 
 See [operationRunner.test.ts](../../__tests__/operationRunner.test.ts) for comprehensive test examples covering all 9 operations.
+
+## Where the core lives
+
+Since 6 November 2026 the platform-agnostic core — `ToolDefinition`, `ToolOperation`, `ToolExecutionContext`, `DefaultExecutor`, `OperationRunner`, `formatResponse`, `zodToToolParameters`, `validateWithZod` — is `@datalayer/reactor/tools`, so that every host (a notebook, a Lexical document, a deck, a sheet, an arena) describes its tools the same way. `@datalayer/jupyter-react/tools` re-exports it; the notebook's definitions, operations and schemas stay here.

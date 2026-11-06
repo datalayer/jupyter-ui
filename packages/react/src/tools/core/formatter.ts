@@ -5,43 +5,14 @@
  */
 
 /**
- * Response formatting utilities for tool operations.
- * Supports JSON (default, structured) and TOON (human/LLM-readable).
+ * How a result goes back to the model: JSON or TOON.
+ *
+ * Moved to `@datalayer/reactor/tools` (6 November 2026): every host — the
+ * notebook, a Lexical document, a deck, a sheet, an arena — reads one
+ * vocabulary there. Re-exported here so that `@datalayer/jupyter-react/tools`
+ * keeps saying it.
  *
  * @module tools/core/formatter
  */
 
-import { encode } from '@toon-format/toon';
-
-/**
- * Format tool response based on requested format.
- *
- * @template T - Type of the data being formatted
- * @param data - Tool result to format
- * @param format - Desired output format ("toon" default, or "json")
- * @returns Formatted response (string for TOON, object for JSON)
- *
- * @example
- * ```typescript
- * // TOON format (default) - returns human-readable string
- * const toonResult = formatResponse({ success: true, cells: [...] });
- * // Returns: "success: true\ncells:\n  - type: code\n    source: print('hello')\n..."
- *
- * // JSON format - returns structured object
- * const jsonResult = formatResponse({ success: true, cells: [...] }, "json");
- * // Returns: { success: true, cells: [...] }
- * ```
- */
-export function formatResponse<T>(
-  data: T,
-  format?: 'json' | 'toon'
-): T | string {
-  // Return JSON (structured object) if explicitly requested
-  if (format === 'json') {
-    return data;
-  }
-
-  // Default to TOON format - encode as human/LLM-readable string
-  // This is the default because most tool operations are called by LLMs
-  return encode(data);
-}
+export { formatResponse } from '@datalayer/reactor/tools';

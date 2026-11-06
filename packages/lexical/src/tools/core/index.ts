@@ -29,4 +29,4 @@ export * from './executor';
 export * from './pluginTools';
 
 // Import shared utilities from react package
-export { type ToolConfig, type ToolDefinition } from '@datalayer/jupyter-react';
+export { type ToolConfig, type ToolDefinition } from '@datalayer/reactor/tools';

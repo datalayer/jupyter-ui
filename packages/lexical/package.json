@@ -78,6 +78,7 @@
     "@datalayer/decks": "^1.0.4",
     "@datalayer/icons-react": "^1.0.0",
     "@datalayer/jupyter-react": "^2.0.21",
+    "@datalayer/reactor": "^1.3.4",
     "@datalayer/lexical-loro": "^1.0.0",
     "@datalayer/primer-addons": "^1.0.23",
     "@primer/react": "^37.31.0",

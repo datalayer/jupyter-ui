@@ -17,7 +17,7 @@
  * @module plugins/excalidraw/definitions
  */
 
-import { zodToToolParameters } from '@datalayer/jupyter-react/tools';
+import { zodToToolParameters } from '@datalayer/reactor/tools';
 import type { ToolDefinition } from '../../tools/core';
 
 import {

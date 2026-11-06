@@ -5,84 +5,15 @@
  */
 
 /**
- * Tool executor interface and implementations.
- * Provides platform-agnostic execution abstraction.
+ * The executor an operation reaches its document through.
+ *
+ * Moved to `@datalayer/reactor/tools` (6 November 2026): every host — the
+ * notebook, a Lexical document, a deck, a sheet, an arena — reads one
+ * vocabulary there. Re-exported here so that `@datalayer/jupyter-react/tools`
+ * keeps saying it.
  *
  * @module tools/core/executor
  */
 
-/**
- * Minimal NotebookState interface for tool executor.
- * This avoids importing from UI components which would load React/Primer at runtime.
- * Only used internally by DefaultExecutor.
- */
-interface NotebookState {
-  [key: string]: unknown;
-}
-
-/**
- * Tool executor interface - abstracts how operations are executed.
- * Platforms can implement this interface to provide custom execution logic.
- */
-export interface ToolExecutor {
-  /**
-   * Execute a tool operation
-   *
-   * @param operationName - Name of the operation (e.g., "insertCell", "runCell")
-   * @param args - Operation arguments
-   * @returns Result from execution
-   */
-  execute(operationName: string, args: unknown): Promise<unknown>;
-}
-
-/**
- * Default executor - directly calls NotebookState store methods.
- * Calls methods with individual parameters by spreading the payload object.
- *
- * @example
- * ```typescript
- * const executor = new DefaultExecutor(documentId, notebookStore);
- * await executor.execute("insertCell", { type: "code", index: 0, source: "print('hi')" });
- * // Calls: store.insertCell(documentId, "code", 0, "print('hi')")
- * ```
- */
-export class DefaultExecutor implements ToolExecutor {
-  constructor(
-    private documentId: string,
-    private store: NotebookState
-  ) {}
-
-  /**
-   * Execute an operation by calling the corresponding NotebookState method.
-   * Builds payload with documentId and spreads values as individual parameters.
-   *
-   * @param operationName - Name of the operation (e.g., "insertCell", "deleteCell")
-   * @param args - Operation arguments as an object
-   * @returns Result from store method
-   */
-  async execute(operationName: string, args: unknown): Promise<unknown> {
-    // Get the store method directly (1:1 mapping, no transformation)
-    const method = (this.store as unknown as Record<string, unknown>)[
-      operationName
-    ];
-
-    if (typeof method !== 'function') {
-      throw new Error(
-        `Store method '${operationName}' not found or not a function`
-      );
-    }
-
-    // Build payload: { id, ...args } - pass as single object parameter
-    const payload =
-      typeof args === 'object' && args !== null
-        ? { id: this.documentId, ...args }
-        : { id: this.documentId };
-
-    // Call method with payload object as first parameter
-    // Methods will check if first param is object and destructure accordingly
-    const methodFn = method as (payload: unknown) => unknown;
-    const result = await methodFn.call(this.store, payload);
-
-    return result;
-  }
-}
+export { DefaultExecutor } from '@datalayer/reactor/tools';
+export type { ToolExecutor } from '@datalayer/reactor/tools';

@@ -19,6 +19,8 @@
  */
 const esModules = [
   '@codemirror',
+  // The tools machinery, an ESM package (6 November 2026).
+  '@datalayer/reactor',
   '@toon-format',
   '@jupyterlab',
   '@jupyter',
@@ -33,6 +35,29 @@ const esModules = [
   'y\\-websocket',
   'yjs',
 ].join('|');
+
+const fs = require('fs');
+const path = require('path');
+
+/*
+ * The reactor exports for `import` only; Jest resolves for `require`, so its
+ * entries are mapped to its built lib, found up the tree (the workspace root's
+ * node_modules here, the repository's in CI).
+ */
+const reactorLib = (() => {
+  let dir = __dirname;
+  for (;;) {
+    const candidate = path.join(dir, 'node_modules', '@datalayer', 'reactor', 'lib');
+    if (fs.existsSync(candidate)) {
+      return candidate;
+    }
+    const parent = path.dirname(dir);
+    if (parent === dir) {
+      throw new Error('@datalayer/reactor is not installed');
+    }
+    dir = parent;
+  }
+})();
 
 module.exports = {
   testEnvironment: 'node',
@@ -68,6 +93,8 @@ module.exports = {
   setupFiles: ['<rootDir>/jest.setup.js'],
   // Stylesheets and binary assets are not what any of these tests are about.
   moduleNameMapper: {
+    '^@datalayer/reactor/tools$': path.join(reactorLib, 'tools', 'index.js'),
+    '^@datalayer/reactor$': path.join(reactorLib, 'index.js'),
     '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
     '\\.(gif|ttf|eot|woff2?|png|jpe?g|svg)$':
       '@jupyterlab/testing/lib/jest-file-mock.js',
