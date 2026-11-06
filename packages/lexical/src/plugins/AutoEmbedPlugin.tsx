@@ -17,7 +17,8 @@ import {
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import * as ReactDOM from 'react-dom';
-import { Box, Text } from '@primer/react';
+import { Text } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { VideoIcon } from '@primer/octicons-react';
 
 import useModal from '../hooks/useModal';

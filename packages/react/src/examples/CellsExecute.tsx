@@ -5,7 +5,8 @@
  */
 import { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Box, Button, Heading } from '@primer/react';
+import { Button, Heading } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { PlayIcon } from '@primer/octicons-react';
 import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { useJupyter } from '../jupyter/JupyterUse';

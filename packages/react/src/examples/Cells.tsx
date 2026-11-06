@@ -5,7 +5,8 @@
  */
 
 import { createRoot } from 'react-dom/client';
-import { Box, Heading } from '@primer/react';
+import { Heading } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { useJupyter } from '../jupyter/JupyterUse';
 import { Cell } from '../components/cell/Cell';

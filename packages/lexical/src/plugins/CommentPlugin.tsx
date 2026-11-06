@@ -22,14 +22,13 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import {
-  Box,
   Heading,
   IconButton,
   Overlay,
   Text,
   Button as PrimerButton,
 } from '@primer/react';
-import { SideOverlay } from '@datalayer/primer-addons';
+import { SideOverlay, Box } from '@datalayer/primer-addons';
 import {
   CheckIcon,
   CommentIcon,

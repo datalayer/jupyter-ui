@@ -5,7 +5,7 @@
  */
 
 import { memo, useState, useEffect, useMemo, useRef } from 'react';
-import { Box } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { JupyterLab } from '@jupyterlab/application';
 import { PageConfig } from '@jupyterlab/coreutils';
 import { IRenderMime } from '@jupyterlab/rendermime-interfaces';

@@ -11,7 +11,8 @@
  */
 
 import type { JSX } from 'react';
-import { Box, Heading, Spinner } from '@primer/react';
+import { Heading, Spinner } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 
 export function Loader(props: { message?: string }): JSX.Element {
   const { message } = props;

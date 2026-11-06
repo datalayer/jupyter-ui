@@ -6,7 +6,7 @@
 
 import type { JSX } from 'react';
 import { ReactNode } from 'react';
-import { Box } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 
 type Props = Readonly<{
   'data-test-id'?: string;

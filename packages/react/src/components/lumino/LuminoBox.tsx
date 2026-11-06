@@ -7,7 +7,7 @@
 import { useRef, useEffect } from 'react';
 import { MessageLoop } from '@lumino/messaging';
 import { Widget, BoxPanel } from '@lumino/widgets';
-import { Box } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 
 export type LuminoBoxProps = {
   id?: string;

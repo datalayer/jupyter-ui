@@ -14,7 +14,8 @@ import {
   SquareIcon,
   XIcon,
 } from '@primer/octicons-react';
-import { Box, IconButton } from '@primer/react';
+import { IconButton } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import type { ICodeCellModel } from '@jupyterlab/cells';
 import { NotebookCommandIds } from '../../NotebookCommands';
 import {

@@ -15,7 +15,8 @@
 import type { JSX } from 'react';
 import type { ElementFormatType, NodeKey } from 'lexical';
 import { useCallback, useState } from 'react';
-import { Box, Button, Text, TextInput } from '@primer/react';
+import { Button, Text, TextInput } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { AlertIcon, VideoIcon } from '@primer/octicons-react';
 import { BlockWithAlignableContents } from '@lexical/react/LexicalBlockWithAlignableContents';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';

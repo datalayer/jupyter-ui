@@ -5,13 +5,8 @@
  */
 
 import { useEffect, useState, useMemo } from 'react';
-import {
-  useTheme,
-  ActionMenu,
-  ActionList,
-  IconButton,
-  Box,
-} from '@primer/react';
+import { useTheme, ActionMenu, ActionList, IconButton } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import {
   KebabHorizontalIcon,
   ArrowRightIcon,

@@ -7,7 +7,8 @@
 import { useEffect, useRef, useState } from 'react';
 import type { JupyterVariant } from '../../jupyter/variant';
 import { createPortal } from 'react-dom';
-import { Box, Button, Link, Text } from '@primer/react';
+import { Button, Link, Text } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import type { KernelMessage } from '@jupyterlab/services';
 import * as KernelAPI from '@jupyterlab/services/lib/kernel/restapi';
 import type {

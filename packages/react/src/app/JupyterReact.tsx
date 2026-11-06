@@ -7,7 +7,7 @@
 import type { JSX } from 'react';
 import { useState, useEffect } from 'react';
 import { JupyterFrontEnd } from '@jupyterlab/application';
-import { Box } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { UnderlineNav } from '@primer/react';
 import { ReactJsIcon, RingedPlanetIcon } from '@datalayer/icons-react';
 import { ServerConnection } from '@jupyterlab/services';

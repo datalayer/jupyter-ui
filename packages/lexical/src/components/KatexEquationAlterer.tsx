@@ -9,13 +9,13 @@ import { useCallback, useState } from 'react';
 import Button from '../components/Button';
 import KatexRenderer from './KatexRenderer';
 import {
-  Box,
   Checkbox,
   FormControl,
   Text,
   Textarea,
   TextInput,
 } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 
 type Props = {
   initialEquation?: string;

@@ -6,7 +6,8 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Box, Checkbox, FormControl, Heading } from '@primer/react';
+import { Checkbox, FormControl, Heading } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { INotebookContent } from '@jupyterlab/nbformat';
 import { ServerConnection } from '@jupyterlab/services';
 import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';

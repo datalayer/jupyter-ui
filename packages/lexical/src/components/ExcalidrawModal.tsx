@@ -19,7 +19,8 @@ import type {
 } from '@excalidraw/excalidraw/types';
 import { Excalidraw } from '@excalidraw/excalidraw';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Box, Dialog, Button as PrimerButton } from '@primer/react';
+import { Dialog, Button as PrimerButton } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { useTheme } from '../context/ThemeContext';
 
 import '@excalidraw/excalidraw/index.css';

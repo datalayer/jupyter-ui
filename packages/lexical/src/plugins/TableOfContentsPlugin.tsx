@@ -10,7 +10,8 @@ import type { HeadingTagType } from '@lexical/rich-text';
 import type { NodeKey } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { TableOfContentsPlugin as LexicalTableOfContentsPlugin } from '@lexical/react/LexicalTableOfContentsPlugin';
-import { Box, NavList, Text, Tooltip } from '@primer/react';
+import { NavList, Text, Tooltip } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { ListUnorderedIcon, XIcon } from '@primer/octicons-react';
 
 export type TocCollapsePosition =

@@ -4,7 +4,8 @@
  * MIT License
  */
 
-import { ActionMenu, Box, Button } from '@primer/react';
+import { ActionMenu, Button } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import {
   ChevronDownIcon,
   ChevronRightIcon,

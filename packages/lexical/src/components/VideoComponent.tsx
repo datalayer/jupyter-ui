@@ -24,13 +24,13 @@ import {
   useSyncExternalStore,
 } from 'react';
 import {
-  Box,
   Button,
   Checkbox,
   FormControl,
   SegmentedControl,
   Text,
 } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import {
   DeviceCameraVideoIcon,
   DownloadIcon,

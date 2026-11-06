@@ -11,7 +11,8 @@
  */
 
 import { useEffect, useMemo, useState } from 'react';
-import { Box, Button, Flash, Heading, Link, Text } from '@primer/react';
+import { Button, Flash, Heading, Link, Text } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { useCoreStore } from '@datalayer/core';
 import { useIAMStore } from '@datalayer/core/lib/state/substates';
 import { searchWorkspace } from '@datalayer/core/lib/api/spacer/spaces';

@@ -7,7 +7,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { INotebookContent } from '@jupyterlab/nbformat';
-import { Box, Text, ToggleSwitch } from '@primer/react';
+import { Text, ToggleSwitch } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { useJupyter } from '../jupyter';
 import { JupyterReactTheme } from '../theme';
 import { CellSidebarExtension } from '../components';

@@ -13,7 +13,8 @@ import {
   SquareIcon,
   XIcon,
 } from '@primer/octicons-react';
-import { ActionMenu, Box, Button } from '@primer/react';
+import { ActionMenu, Button } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { NotebookCommandIds } from '../../NotebookCommands';
 import CellMetadataEditor from '../metadata/CellMetadataEditor';
 import type { ICellModel } from '@jupyterlab/cells';

@@ -6,7 +6,8 @@
 
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Box, Text } from '@primer/react';
+import { Text } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { NotebookPanel } from '@jupyterlab/notebook';
 import { ExampleJupyterReactTheme } from './ExampleJupyterReactTheme';
 import { ServiceManagerLess } from '../jupyter';

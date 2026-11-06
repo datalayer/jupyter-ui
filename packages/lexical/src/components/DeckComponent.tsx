@@ -22,7 +22,8 @@
 import type { ComponentProps, JSX, Ref } from 'react';
 import type { ElementFormatType, NodeKey } from 'lexical';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Box, Dialog, IconButton, Text, Textarea } from '@primer/react';
+import { Dialog, IconButton, Text, Textarea } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { PencilIcon } from '@primer/octicons-react';
 import { BlockWithAlignableContents } from '@lexical/react/LexicalBlockWithAlignableContents';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';

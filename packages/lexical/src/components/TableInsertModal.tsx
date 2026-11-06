@@ -12,7 +12,8 @@
 
 import type { JSX } from 'react';
 import { useRef, useState } from 'react';
-import { Dialog, FormControl, TextInput, Box } from '@primer/react';
+import { Dialog, FormControl, TextInput } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 
 type Props = {
   onConfirm: (rows: number, columns: number) => void;

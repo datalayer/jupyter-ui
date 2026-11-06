@@ -6,7 +6,8 @@
 
 import { useState, useEffect } from 'react';
 import { Table, DataTable, Blankslate } from '@primer/react/experimental';
-import { Box, Text, IconButton, Spinner } from '@primer/react';
+import { Text, IconButton, Spinner } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import {
   CrossMarkIcon,
   JupyterIcon,

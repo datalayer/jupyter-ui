@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 import Lumino from '../lumino/Lumino';
 import Kernel from '../../jupyter/kernel/Kernel';
 import { KernelSpyView } from './inspector/widget';
-import { Box } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 
 export type KernelInspectorProps = {
   kernel?: Kernel;

@@ -46,7 +46,8 @@ import {
 import { useCallback, useMemo, useState, type MouseEvent } from 'react';
 import * as ReactDOM from 'react-dom';
 import { Kernel } from '@datalayer/jupyter-react';
-import { Box, Text } from '@primer/react';
+import { Text } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import {
   ChecklistIcon,
   ChevronDownIcon,

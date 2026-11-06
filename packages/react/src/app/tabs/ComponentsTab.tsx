@@ -5,7 +5,8 @@
  */
 
 import { useState } from 'react';
-import { Box, NavList } from '@primer/react';
+import { NavList } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { JupyterFrontEndProps } from '../JupyterReact';
 import { FileBrowserComponent } from './components/FileBrowserComponent';
 import { CellComponent } from './components/CellComponent';

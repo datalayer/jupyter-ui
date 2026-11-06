@@ -8,7 +8,8 @@ import { $isCodeNode } from '@lexical/code';
 import { $getNearestNodeFromDOMNode, LexicalEditor } from 'lexical';
 import { Options } from 'prettier';
 import { useState } from 'react';
-import { IconButton, Box } from '@primer/react';
+import { IconButton } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { CodeIcon, AlertIcon } from '@primer/octicons-react';
 
 interface Props {

@@ -12,7 +12,8 @@ import {
   SparklinesSpots,
   SparklinesBars,
 } from 'react-sparklines';
-import { Text, Box } from '@primer/react';
+import { Text } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import Kernel from '../../jupyter/kernel/Kernel';
 
 const MAX_ITEMS = 20;

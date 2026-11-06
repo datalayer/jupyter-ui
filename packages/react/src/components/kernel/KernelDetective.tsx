@@ -11,7 +11,8 @@ import {
   Session,
   Kernel,
 } from '@jupyterlab/services';
-import { Box, Text, Label, Button } from '@primer/react';
+import { Text, Label, Button } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 
 export type IKernelDetectiveProps = {
   serviceManager?: ServiceManager.IManager;

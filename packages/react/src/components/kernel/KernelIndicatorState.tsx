@@ -5,7 +5,7 @@
  */
 
 import { ReactElement } from 'react';
-import { Box } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { XCircleFillIcon } from '@primer/octicons-react';
 import { PlusCircleIcon } from '@datalayer/icons-react';
 import { KernelMessage } from '@jupyterlab/services';

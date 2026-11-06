@@ -11,7 +11,8 @@
  */
 
 import type { JSX } from 'react';
-import { Box, Spinner } from '@primer/react';
+import { Spinner } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 
 export function SpinnerCentered(): JSX.Element {
   return (

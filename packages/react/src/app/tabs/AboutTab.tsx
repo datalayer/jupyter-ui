@@ -6,7 +6,8 @@
 
 import type { JSX } from 'react';
 import { useState } from 'react';
-import { PageHeader, Label, Text, Link, Box } from '@primer/react';
+import { PageHeader, Label, Text, Link } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { SkubbleIcon } from '@datalayer/icons-react/eggs';
 
 type Props = {

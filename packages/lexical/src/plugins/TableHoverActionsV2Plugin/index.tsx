@@ -33,7 +33,8 @@ import {
 } from 'lexical';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ActionMenu, ActionList, IconButton, Box } from '@primer/react';
+import { ActionMenu, ActionList, IconButton } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { PlusIcon, SortDescIcon } from '@primer/octicons-react';
 
 import { getThemeSelector } from '../../utils/getThemeSelector';

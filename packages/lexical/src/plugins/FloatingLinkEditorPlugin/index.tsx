@@ -32,12 +32,8 @@ import {
 import { Dispatch, useCallback, useEffect, useRef, useState } from 'react';
 import * as React from 'react';
 import { createPortal } from 'react-dom';
-import {
-  Box,
-  IconButton,
-  TextInput as PrimerTextInput,
-  Link,
-} from '@primer/react';
+import { IconButton, TextInput as PrimerTextInput, Link } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import {
   CheckIcon,
   PencilIcon,

@@ -26,14 +26,8 @@ import {
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
-import {
-  Avatar,
-  Box,
-  Button,
-  IconButton,
-  Text,
-  TextInput,
-} from '@primer/react';
+import { Avatar, Button, IconButton, Text, TextInput } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { PersonAddIcon, PersonIcon } from '@primer/octicons-react';
 import { $createTextNode, type TextNode } from 'lexical';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';

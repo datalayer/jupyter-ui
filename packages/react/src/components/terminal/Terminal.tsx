@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { Box } from '@primer/react';
+import { Box } from '@datalayer/primer-addons';
 import { ServerConnection } from '@jupyterlab/services';
 import { ITerminal } from '@jupyterlab/terminal';
 import TerminalAdapter from './TerminalAdapter';
