@@ -14,7 +14,7 @@ import { useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { type INotebookContent } from '@jupyterlab/nbformat';
 import {
-  AppearanceControlsWithStore,
+  AppearanceControls,
   Box,
   createThemeStore,
   DatalayerThemeProvider,
@@ -60,7 +60,10 @@ const NotebookPrimerThemeExample = () => {
       themeStyles={themeConfig.themeStyles}
     >
       <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 3 }}>
-        <AppearanceControlsWithStore useStore={useNotebookPrimerThemeStore} />
+        <AppearanceControls
+          layout="inline"
+          useStore={useNotebookPrimerThemeStore}
+        />
         <JupyterReactTheme
           colormode={resolvedMode}
           backgroundColor={themeBackground}
