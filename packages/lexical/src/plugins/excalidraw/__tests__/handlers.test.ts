@@ -491,3 +491,32 @@ describe('the canvas and the frame around it', () => {
     expect([node.__width, node.__height]).toEqual(['inherit', 'inherit']);
   });
 });
+
+describe('one host per document', () => {
+  it('hands every call on a document the same host, so its edits queue', async () => {
+    const { lexicalDrawingHost } = await import('../host');
+    const adapter = makeAdapter();
+    expect(lexicalDrawingHost(adapter)).toBe(lexicalDrawingHost(adapter));
+    expect(lexicalDrawingHost(adapter)).not.toBe(lexicalDrawingHost(makeAdapter()));
+  });
+
+  it('keeps both of two edits made at once on one drawing', async () => {
+    makeDrawing('1');
+    const adapter = makeAdapter();
+    await Promise.all([
+      excalidrawToolHandlers.excalidrawAddElements(adapter, {
+        blockId: '1',
+        elements: [{ id: 'a', type: 'rectangle', x: 0, y: 0 }],
+      }),
+      excalidrawToolHandlers.excalidrawAddElements(adapter, {
+        blockId: '1',
+        elements: [{ id: 'b', type: 'rectangle', x: 300, y: 0 }],
+      }),
+    ]);
+    expect(
+      sceneOf('1')
+        .elements.map((e: any) => e.id)
+        .sort(),
+    ).toEqual(['a', 'b']);
+  });
+});

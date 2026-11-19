@@ -65,10 +65,27 @@ function update(editor: LexicalEditor, fn: () => void): Promise<void> {
   });
 }
 
-/** The drawings of the document an adapter is for. */
+/** One host per document: the package queues a drawing's edits by host. */
+const HOSTS = new WeakMap<LexicalAdapter, ExcalidrawDrawingHost>();
+
+/**
+ * The drawings of the document an adapter is for: the same host for every
+ * call on that document, so that two calls on one drawing at once wait for
+ * each other (`serializeDrawingEdit`) rather than one write dropping the
+ * other's change.
+ */
 export function lexicalDrawingHost(
   adapter: LexicalAdapter,
 ): ExcalidrawDrawingHost {
+  let host = HOSTS.get(adapter);
+  if (!host) {
+    host = buildHost(adapter);
+    HOSTS.set(adapter, host);
+  }
+  return host;
+}
+
+function buildHost(adapter: LexicalAdapter): ExcalidrawDrawingHost {
   const editor = adapter.editor;
   return {
     listDrawings: async () => {
