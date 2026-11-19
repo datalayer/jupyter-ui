@@ -5,7 +5,12 @@
  */
 
 /**
- * What the tools do to a drawing.
+ * What the tools do to a drawing in a Lexical document.
+ *
+ * The tools are `@datalayer/reactor-excalidraw`'s, and its own tests cover
+ * their bookkeeping over any host; these run the same calls through the
+ * Lexical host — node lookup by block key, the node's data string, block
+ * insertion, the node's size — so the binding is checked end to end.
  *
  * The editor and Excalidraw itself are stood in for, which leaves exactly the
  * part worth testing: the bookkeeping between a caller's request and a scene
@@ -72,8 +77,15 @@ jest.mock(
   { virtual: true },
 );
 
-import { excalidrawToolHandlers, __testing } from '../handlers';
-import { parseScene, serializeScene, type ExcalidrawScene } from '../scene';
+import {
+  parseScene,
+  serializeScene,
+  type ExcalidrawScene,
+} from '@datalayer/reactor-excalidraw';
+
+import { excalidrawPluginTools } from '../tools';
+
+const excalidrawToolHandlers = excalidrawPluginTools.handlers;
 
 /** A stand-in for the one Excalidraw node the test is about. */
 function makeDrawing(blockId: string, scene: Partial<ExcalidrawScene> = {}) {
@@ -477,34 +489,5 @@ describe('the canvas and the frame around it', () => {
       blockId: '1',
     });
     expect([node.__width, node.__height]).toEqual(['inherit', 'inherit']);
-  });
-});
-
-describe('where an arrow meets a box', () => {
-  const box = (x: number, y: number) => ({
-    id: 'x',
-    type: 'rectangle',
-    x,
-    y,
-    width: 100,
-    height: 100,
-  });
-
-  it('leaves through the side it is heading for', () => {
-    // Straight right: out of the right edge, level with the centre.
-    const point = __testing.edgePoint(box(0, 0), { x: 500, y: 50 });
-    expect(point.x).toBeCloseTo(104, 0);
-    expect(point.y).toBeCloseTo(50, 0);
-  });
-
-  it('leaves through the top when the target is above', () => {
-    const point = __testing.edgePoint(box(0, 0), { x: 50, y: -500 });
-    expect(point.x).toBeCloseTo(50, 0);
-    expect(point.y).toBeCloseTo(-4, 0);
-  });
-
-  it('gives up gracefully on two shapes in the same place', () => {
-    const point = __testing.edgePoint(box(0, 0), { x: 50, y: 50 });
-    expect(point).toEqual({ x: 50, y: 50 });
   });
 });

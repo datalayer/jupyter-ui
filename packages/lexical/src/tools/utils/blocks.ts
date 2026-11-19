@@ -27,7 +27,7 @@ import {
   $isListNode,
 } from '@lexical/list';
 import type { LexicalBlock, BlockFormat, BriefBlock } from '../core/types';
-import { describeScene, parseScene } from '../../plugins/excalidraw/scene';
+import { describeScene, parseScene } from '@datalayer/reactor-excalidraw';
 
 /**
  * Generate a 40-character preview of block content.
