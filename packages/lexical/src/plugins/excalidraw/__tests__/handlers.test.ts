@@ -497,7 +497,9 @@ describe('one host per document', () => {
     const { lexicalDrawingHost } = await import('../host');
     const adapter = makeAdapter();
     expect(lexicalDrawingHost(adapter)).toBe(lexicalDrawingHost(adapter));
-    expect(lexicalDrawingHost(adapter)).not.toBe(lexicalDrawingHost(makeAdapter()));
+    expect(lexicalDrawingHost(adapter)).not.toBe(
+      lexicalDrawingHost(makeAdapter()),
+    );
   });
 
   it('keeps both of two edits made at once on one drawing', async () => {
