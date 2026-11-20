@@ -52,7 +52,7 @@ const reactorLib = (() => {
       'node_modules',
       '@datalayer',
       'reactor',
-      'lib',
+      'lib'
     );
     if (fs.existsSync(candidate)) {
       return candidate;
