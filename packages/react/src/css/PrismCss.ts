@@ -31,6 +31,9 @@ if (typeof window !== 'undefined') {
 //    deduplication. All languages from @lexical/code are included here so
 //    they are guaranteed to load in the correct dependency order.
 import 'prismjs/components/prism-clike.js';
+import 'prismjs/components/prism-bash.js';
+import 'prismjs/components/prism-json.js';
+import 'prismjs/components/prism-yaml.js';
 import 'prismjs/components/prism-javascript.js';
 import 'prismjs/components/prism-markup.js';
 import 'prismjs/components/prism-markdown.js';
