@@ -19,7 +19,8 @@
  * information at transform time, and it is much faster.
  */
 const esModules = [
-  // The tools machinery, an ESM package (6 November 2026).
+  // The tools machinery, an ESM package (6 November 2026), and its plugins
+  // (@datalayer/reactor-excalidraw, matched by the same prefix).
   '@datalayer/reactor',
   '@codemirror',
   '@toon-format',
@@ -41,24 +42,26 @@ const fs = require('fs');
 const path = require('path');
 
 /*
- * The reactor exports for `import` only; Jest resolves for `require`, so its
- * entries are mapped to its built lib, found up the tree (the workspace root's
- * node_modules here, the repository's in CI).
+ * The reactor and its plugins export for `import` only; Jest resolves for
+ * `require`, so their entries are mapped to their built lib, found up the
+ * tree (the workspace root's node_modules here, the repository's in CI).
  */
-const reactorLib = (() => {
+const libOf = name => {
   let dir = __dirname;
   for (;;) {
-    const candidate = path.join(dir, 'node_modules', '@datalayer', 'reactor', 'lib');
+    const candidate = path.join(dir, 'node_modules', '@datalayer', name, 'lib');
     if (fs.existsSync(candidate)) {
       return candidate;
     }
     const parent = path.dirname(dir);
     if (parent === dir) {
-      throw new Error('@datalayer/reactor is not installed');
+      throw new Error(`@datalayer/${name} is not installed`);
     }
     dir = parent;
   }
-})();
+};
+const reactorLib = libOf('reactor');
+const reactorExcalidrawLib = libOf('reactor-excalidraw');
 
 module.exports = {
   testEnvironment: 'node',
@@ -96,6 +99,10 @@ module.exports = {
   moduleNameMapper: {
     '^@datalayer/reactor/tools$': path.join(reactorLib, 'tools', 'index.js'),
     '^@datalayer/reactor$': path.join(reactorLib, 'index.js'),
+    '^@datalayer/reactor-excalidraw$': path.join(
+      reactorExcalidrawLib,
+      'index.js',
+    ),
     '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
     '\\.(gif|ttf|eot|woff2?|png|jpe?g|svg)$':
       '@jupyterlab/testing/lib/jest-file-mock.js',

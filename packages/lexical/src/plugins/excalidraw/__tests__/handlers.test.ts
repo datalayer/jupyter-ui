@@ -5,7 +5,12 @@
  */
 
 /**
- * What the tools do to a drawing.
+ * What the tools do to a drawing in a Lexical document.
+ *
+ * The tools are `@datalayer/reactor-excalidraw`'s, and its own tests cover
+ * their bookkeeping over any host; these run the same calls through the
+ * Lexical host — node lookup by block key, the node's data string, block
+ * insertion, the node's size — so the binding is checked end to end.
  *
  * The editor and Excalidraw itself are stood in for, which leaves exactly the
  * part worth testing: the bookkeeping between a caller's request and a scene
@@ -72,8 +77,15 @@ jest.mock(
   { virtual: true },
 );
 
-import { excalidrawToolHandlers, __testing } from '../handlers';
-import { parseScene, serializeScene, type ExcalidrawScene } from '../scene';
+import {
+  parseScene,
+  serializeScene,
+  type ExcalidrawScene,
+} from '@datalayer/reactor-excalidraw';
+
+import { excalidrawPluginTools } from '../tools';
+
+const excalidrawToolHandlers = excalidrawPluginTools.handlers;
 
 /** A stand-in for the one Excalidraw node the test is about. */
 function makeDrawing(blockId: string, scene: Partial<ExcalidrawScene> = {}) {
@@ -480,31 +492,33 @@ describe('the canvas and the frame around it', () => {
   });
 });
 
-describe('where an arrow meets a box', () => {
-  const box = (x: number, y: number) => ({
-    id: 'x',
-    type: 'rectangle',
-    x,
-    y,
-    width: 100,
-    height: 100,
+describe('one host per document', () => {
+  it('hands every call on a document the same host, so its edits queue', async () => {
+    const { lexicalDrawingHost } = await import('../host');
+    const adapter = makeAdapter();
+    expect(lexicalDrawingHost(adapter)).toBe(lexicalDrawingHost(adapter));
+    expect(lexicalDrawingHost(adapter)).not.toBe(
+      lexicalDrawingHost(makeAdapter()),
+    );
   });
 
-  it('leaves through the side it is heading for', () => {
-    // Straight right: out of the right edge, level with the centre.
-    const point = __testing.edgePoint(box(0, 0), { x: 500, y: 50 });
-    expect(point.x).toBeCloseTo(104, 0);
-    expect(point.y).toBeCloseTo(50, 0);
-  });
-
-  it('leaves through the top when the target is above', () => {
-    const point = __testing.edgePoint(box(0, 0), { x: 50, y: -500 });
-    expect(point.x).toBeCloseTo(50, 0);
-    expect(point.y).toBeCloseTo(-4, 0);
-  });
-
-  it('gives up gracefully on two shapes in the same place', () => {
-    const point = __testing.edgePoint(box(0, 0), { x: 50, y: 50 });
-    expect(point).toEqual({ x: 50, y: 50 });
+  it('keeps both of two edits made at once on one drawing', async () => {
+    makeDrawing('1');
+    const adapter = makeAdapter();
+    await Promise.all([
+      excalidrawToolHandlers.excalidrawAddElements(adapter, {
+        blockId: '1',
+        elements: [{ id: 'a', type: 'rectangle', x: 0, y: 0 }],
+      }),
+      excalidrawToolHandlers.excalidrawAddElements(adapter, {
+        blockId: '1',
+        elements: [{ id: 'b', type: 'rectangle', x: 300, y: 0 }],
+      }),
+    ]);
+    expect(
+      sceneOf('1')
+        .elements.map((e: any) => e.id)
+        .sort(),
+    ).toEqual(['a', 'b']);
   });
 });

@@ -5,63 +5,80 @@
  */
 
 /**
- * The Excalidraw tools, as one thing the plugin can hand over.
+ * The Excalidraw tools, as the plugin hands them to a document.
  *
- * Definitions, operations and handlers travel together because they are three
- * views of the same eleven tools, and a set that has drifted — a definition
- * pointing at an operation nobody wrote, a handler nobody advertises — is a
- * tool that fails at call time rather than at build time. Keeping them
- * adjacent is what the check below is able to exploit.
+ * What the model is told and what validates a call come from
+ * `@datalayer/reactor-excalidraw`; what is Lexical's is where the drawings
+ * are ({@link lexicalDrawingHost}) and the Excalidraw that converts shapes,
+ * imported when a call needs it: it is a very large dependency, and a
+ * document that never draws anything should not pay for it.
  *
  * @module plugins/excalidraw/tools
  */
 
-import type { LexicalPluginTools } from '../../tools/core/pluginTools';
-import { excalidrawToolDefinitions } from './definitions';
-import { excalidrawToolHandlers } from './handlers';
-import { excalidrawToolOperations } from './operations';
+import {
+  createExcalidrawToolHandlers,
+  excalidrawTools,
+  type ExcalidrawConverters,
+} from '@datalayer/reactor-excalidraw';
 
-/**
- * Everything the plugin contributes while it is mounted.
- */
-export const excalidrawPluginTools: LexicalPluginTools = {
-  name: 'excalidraw',
-  definitions: excalidrawToolDefinitions,
-  operations: excalidrawToolOperations,
-  handlers: excalidrawToolHandlers,
+import type {
+  LexicalPluginTools,
+  LexicalToolHandler,
+} from '../../tools/core/pluginTools';
+import type { LexicalAdapter } from '../../state/LexicalAdapter';
+import { lexicalDrawingHost } from './host';
+
+/** The operations that turn shapes into Excalidraw elements. */
+const CONVERTING = new Set([
+  'excalidrawInsertNode',
+  'excalidrawAddElements',
+  'excalidrawConnectElements',
+  'excalidrawFromMermaid',
+]);
+
+/** Excalidraw's conversions, loaded on first use. */
+async function loadConverters(): Promise<ExcalidrawConverters> {
+  const { convertToExcalidrawElements } =
+    await import('@excalidraw/excalidraw');
+  return {
+    convertToExcalidrawElements: (skeletons, options) =>
+      convertToExcalidrawElements(skeletons as any, options as any) as any,
+    parseMermaidToExcalidraw: async (source, options) => {
+      const { parseMermaidToExcalidraw } =
+        await import('@excalidraw/mermaid-to-excalidraw');
+      return parseMermaidToExcalidraw(source, options as any) as any;
+    },
+  };
+}
+
+/** What an operation that converts nothing is given instead. */
+const NOT_CONVERTING: ExcalidrawConverters = {
+  convertToExcalidrawElements: () => {
+    throw new Error('This operation converts no shapes.');
+  },
 };
 
-/**
- * The operation names the three halves disagree about, if any.
- *
- * A definition without an operation is a tool the model can call and nothing
- * answers; an operation without a handler is a call that reaches the executor
- * and finds nothing to run. Neither shows up until an agent tries it, which
- * is far too late — so this is checked in the tests, where it is cheap.
- */
-export function excalidrawToolMismatches(): string[] {
-  const problems: string[] = [];
-  for (const definition of excalidrawToolDefinitions) {
-    if (!excalidrawToolOperations[definition.operation]) {
-      problems.push(
-        `${definition.name} points at operation '${definition.operation}', which does not exist`,
-      );
-    }
-    if (!definition.toolReferenceName.startsWith('excalidraw')) {
-      problems.push(
-        `${definition.name} is not named for the plugin it belongs to`,
-      );
-    }
-  }
-  for (const name of Object.keys(excalidrawToolOperations)) {
-    if (!excalidrawToolHandlers[name]) {
-      problems.push(`operation '${name}' has no handler`);
-    }
-  }
-  for (const name of Object.keys(excalidrawToolHandlers)) {
-    if (!excalidrawToolOperations[name]) {
-      problems.push(`handler '${name}' has no operation`);
-    }
-  }
-  return problems;
-}
+/** One handler per operation, over the document the call is about. */
+const handlers: Record<string, LexicalToolHandler> = Object.fromEntries(
+  Object.keys(excalidrawTools.operations).map(operation => [
+    operation,
+    async (adapter: LexicalAdapter, args: Record<string, unknown>) => {
+      const converters = CONVERTING.has(operation)
+        ? await loadConverters()
+        : NOT_CONVERTING;
+      return createExcalidrawToolHandlers(
+        lexicalDrawingHost(adapter),
+        converters,
+      )[operation](args);
+    },
+  ]),
+);
+
+/** Everything the plugin contributes while it is mounted. */
+export const excalidrawPluginTools: LexicalPluginTools = {
+  name: excalidrawTools.name,
+  definitions: excalidrawTools.definitions,
+  operations: excalidrawTools.operations,
+  handlers,
+};

@@ -47,7 +47,13 @@ const path = require('path');
 const reactorLib = (() => {
   let dir = __dirname;
   for (;;) {
-    const candidate = path.join(dir, 'node_modules', '@datalayer', 'reactor', 'lib');
+    const candidate = path.join(
+      dir,
+      'node_modules',
+      '@datalayer',
+      'reactor',
+      'lib'
+    );
     if (fs.existsSync(candidate)) {
       return candidate;
     }
