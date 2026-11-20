@@ -19,6 +19,7 @@ module.exports = {
   organizationName: 'datalayer',
   projectName: 'Jupyter UI',
   markdown: {
+    format: 'detect',
     mermaid: true,
   },
   plugins: [
