@@ -49,18 +49,40 @@ type PrimerMode = 'day' | 'night';
 const primerModeOf = (docusaurusMode: string | null | undefined): PrimerMode =>
   docusaurusMode === 'dark' ? 'night' : 'day';
 
-const INHERIT = { fontFamily: 'inherit', fontSize: 'inherit', lineHeight: 'inherit', color: 'inherit' };
+/*
+ * BaseStyles' div sits between #__docusaurus (a column flex box) and the
+ * navbar, .main-wrapper and footer: it grows in the root and is a column flex
+ * box itself, so .main-wrapper's flex: 1 still fills a short page and the
+ * footer stays at the bottom.
+ */
+const INHERIT = {
+  fontFamily: 'inherit',
+  fontSize: 'inherit',
+  lineHeight: 'inherit',
+  color: 'inherit',
+  display: 'flex',
+  flexDirection: 'column',
+  flex: '1 0 auto',
+} as const;
 
 export function PrimerRoot({ children }: { children: ReactNode }) {
   const { siteConfig } = useDocusaurusContext();
-  const defaultMode = (siteConfig.themeConfig as { colorMode?: { defaultMode?: string } })?.colorMode?.defaultMode;
-  const [colorMode, setColorMode] = useState<PrimerMode>(primerModeOf(defaultMode));
+  const defaultMode = (
+    siteConfig.themeConfig as { colorMode?: { defaultMode?: string } }
+  )?.colorMode?.defaultMode;
+  const [colorMode, setColorMode] = useState<PrimerMode>(
+    primerModeOf(defaultMode),
+  );
   useEffect(() => {
     const html = document.documentElement;
-    const follow = () => setColorMode(primerModeOf(html.getAttribute('data-theme')));
+    const follow = () =>
+      setColorMode(primerModeOf(html.getAttribute('data-theme')));
     follow();
     const observer = new MutationObserver(follow);
-    observer.observe(html, { attributes: true, attributeFilter: ['data-theme'] });
+    observer.observe(html, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    });
     return () => observer.disconnect();
   }, []);
   return (
