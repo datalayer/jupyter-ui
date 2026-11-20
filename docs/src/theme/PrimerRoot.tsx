@@ -67,14 +67,22 @@ const INHERIT = {
 
 export function PrimerRoot({ children }: { children: ReactNode }) {
   const { siteConfig } = useDocusaurusContext();
-  const defaultMode = (siteConfig.themeConfig as { colorMode?: { defaultMode?: string } })?.colorMode?.defaultMode;
-  const [colorMode, setColorMode] = useState<PrimerMode>(primerModeOf(defaultMode));
+  const defaultMode = (
+    siteConfig.themeConfig as { colorMode?: { defaultMode?: string } }
+  )?.colorMode?.defaultMode;
+  const [colorMode, setColorMode] = useState<PrimerMode>(
+    primerModeOf(defaultMode),
+  );
   useEffect(() => {
     const html = document.documentElement;
-    const follow = () => setColorMode(primerModeOf(html.getAttribute('data-theme')));
+    const follow = () =>
+      setColorMode(primerModeOf(html.getAttribute('data-theme')));
     follow();
     const observer = new MutationObserver(follow);
-    observer.observe(html, { attributes: true, attributeFilter: ['data-theme'] });
+    observer.observe(html, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    });
     return () => observer.disconnect();
   }, []);
   return (
